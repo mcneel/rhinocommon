@@ -1,0 +1,654 @@
+using System;
+using System.Runtime.InteropServices;
+using Rhino;
+using Rhino.Geometry;
+
+namespace Rhino.Geometry
+{
+  /// <summary>
+  /// Enumerates all possible outcomes of a Least-Squares plane fitting operation.
+  /// </summary>
+  public enum PlaneFitResult
+  {
+    /// <summary>
+    /// No plane could be found.
+    /// </summary>
+    Failure = -1,
+
+    /// <summary>
+    /// A plane was successfully fitted.
+    /// </summary>
+    Success = 0,
+
+    /// <summary>
+    /// A valid plane was found, but it is an inconclusive result. 
+    /// This might happen with co-linear points for example.
+    /// </summary>
+    Inconclusive = 1
+  }
+
+  [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 128)]
+  [Serializable()]
+  public struct Plane
+  {
+    // This is a special case struct that does not match it's C++ counterpart (ON_Plane)
+    // The reason we did this was to remove ON_PlaneEquation from the struct and allow for
+    // direct access to member variables without putting the plane equation out of sync.
+    // The ON_Plane work is all done in the exported C functions
+
+    #region members
+    internal Point3d m_origin;
+    internal Vector3d m_xaxis;
+    internal Vector3d m_yaxis;
+    internal Vector3d m_zaxis;
+    #endregion
+
+    #region properties
+    /// <summary>
+    /// Gets or sets the origin point of this plane.
+    /// </summary>
+    public Point3d Origin
+    {
+      get { return m_origin; }
+      set { m_origin = value; }
+    }
+    /// <summary>
+    /// Gets or sets the X coordinate of the origin of this plane.
+    /// </summary>
+    public double OriginX
+    {
+      get { return m_origin.X; }
+      set { m_origin.X = value; }
+    }
+    /// <summary>
+    /// Gets or sets the Y coordinate of the origin of this plane.
+    /// </summary>
+    public double OriginY
+    {
+      get { return m_origin.Y; }
+      set { m_origin.Y = value; }
+    }
+    /// <summary>
+    /// Gets or sets the Z coordinate of the origin of this plane.
+    /// </summary>
+    public double OriginZ
+    {
+      get { return m_origin.Z; }
+      set { m_origin.Z = value; }
+    }
+    /// <summary>
+    /// Gets or sets the Xaxis vector of this plane.
+    /// </summary>
+    public Vector3d XAxis
+    {
+      get { return m_xaxis; }
+      set { m_xaxis = value; }
+    }
+    /// <summary>
+    /// Gets or sets the Yaxis vector of this plane.
+    /// </summary>
+    public Vector3d YAxis
+    {
+      get { return m_yaxis; }
+      set { m_yaxis = value; }
+    }
+    /// <summary>
+    /// Gets or sets the Zaxis vector of this plane.
+    /// </summary>
+    public Vector3d ZAxis
+    {
+      get { return m_zaxis; }
+      set { m_zaxis = value; }
+    }
+    #endregion
+
+    #region constants
+    /// <summary>
+    /// plane coincident with the World XY plane
+    /// </summary>
+    public static Plane WorldXY
+    {
+      get
+      {
+        Plane p = new Plane();
+        p.XAxis = new Vector3d(1, 0, 0);
+        p.YAxis = new Vector3d(0, 1, 0);
+        p.ZAxis = new Vector3d(0, 0, 1);
+        return p;
+      }
+    }
+
+    /// <summary>
+    /// plane coincident with the World YZ plane
+    /// </summary>
+    public static Plane WorldYZ
+    {
+      get
+      {
+        Plane p = new Plane();
+        p.XAxis = new Vector3d(0, 1, 0);
+        p.YAxis = new Vector3d(0, 0, 1);
+        p.ZAxis = new Vector3d(1, 0, 0);
+        return p;
+      }
+    }
+
+    /// <summary>
+    /// plane coincident with the World ZX plane
+    /// </summary>
+    public static Plane WorldZX
+    {
+      get
+      {
+        Plane p = new Plane();
+        p.XAxis = new Vector3d(0, 0, 1);
+        p.YAxis = new Vector3d(1, 0, 0);
+        p.ZAxis = new Vector3d(0, 1, 0);
+        return p;
+      }
+    }
+
+    /// <summary>
+    /// Gets a plane that contains Unset origin and axis vectors.
+    /// </summary>
+    public static Plane Unset
+    {
+      get
+      {
+        Plane p = new Plane();
+        p.Origin = Point3d.Unset;
+        p.XAxis = Vector3d.Unset;
+        p.YAxis = Vector3d.Unset;
+        p.ZAxis = Vector3d.Unset;
+        return p;
+      }
+    }
+    #endregion
+
+    #region constructors
+    /// <summary>Copy constructor</summary>
+    /// <param name="other"></param>
+    public Plane(Plane other)
+    {
+      this = other;
+    }
+
+    ///<summary>
+    ///Construct a plane from a point and a normal vector.
+    ///</summary>
+    ///<param name="origin">Origin point of the plane.</param>
+    ///<param name="normal">Non-zero normal to the plane.</param>
+    ///<seealso>CreateFromNormal</seealso>
+    public Plane(Point3d origin, Vector3d normal)
+      : this()
+    {
+      UnsafeNativeMethods.ON_Plane_CreateFromNormal(ref this, origin, normal);
+    }
+
+    ///<summary>
+    ///Construct a plane from a point and two vectors in the plane.
+    ///</summary>
+    ///<param name='origin'>Origin point of the plane.</param>
+    ///<param name='xDirection'>
+    ///Non-zero vector in the plane that determines the x-axis direction.
+    ///</param>
+    ///<param name='yDirection'>
+    ///Non-zero vector not parallel to x_dir that is used to determine the
+    ///yaxis direction. y_dir does not need to be perpendicular to x_dir.
+    ///</param>
+    public Plane(Point3d origin, Vector3d xDirection, Vector3d yDirection)
+      : this()
+    {
+      UnsafeNativeMethods.ON_Plane_CreateFromFrame(ref this, origin, xDirection, yDirection);
+    }
+
+    ///<summary>
+    ///Construct a plane from three non-colinear points.
+    ///</summary>
+    ///<param name='origin'>Origin point of the plane.</param>
+    ///<param name='xPoint'>
+    ///Second point in the plane. The x-axis will be parallel to x_point-origin.
+    ///</param>
+    ///<param name='yPoint'>
+    ///Third point on the plane that is not colinear with the first two points.
+    ///yaxis*(y_point-origin) will be &gt; 0.
+    ///</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addclippingplane.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addclippingplane.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addclippingplane.py' lang='py'/>
+    /// </example>
+    public Plane(Point3d origin, Point3d xPoint, Point3d yPoint)
+      : this()
+    {
+      UnsafeNativeMethods.ON_Plane_CreateFromPoints(ref this, origin, xPoint, yPoint);
+    }
+
+    ///<summary>
+    /// Construct a plane from an equation
+    /// ax+by+cz=d
+    ///</summary>
+    public Plane(double a, double b, double c, double d)
+      : this()
+    {
+      UnsafeNativeMethods.ON_Plane_CreateFromEquation(ref this, a, b, c, d);
+    }
+
+    /// <summary>Fit a plane through a collection of points.</summary>
+    /// <param name="points">Points to fit to.</param>
+    /// <param name="plane">Resulting plane</param>
+    /// <returns>A value indicating the result of the operation.</returns>
+    public static PlaneFitResult FitPlaneToPoints(System.Collections.Generic.IEnumerable<Point3d> points, out Plane plane)
+    {
+      double max_dev;
+      return FitPlaneToPoints(points, out plane, out max_dev);
+    }
+
+    /// <summary>Fit a plane through a collection of points.</summary>
+    /// <param name="points">Points to fit to.</param>
+    /// <param name="plane">Resulting plane</param>
+    /// <param name="maximumDeviation">The distance from the furthest point to the plane.</param>
+    /// <returns>A value indicating the result of the operation.</returns>
+    public static PlaneFitResult FitPlaneToPoints(System.Collections.Generic.IEnumerable<Point3d> points, out Plane plane, out double maximumDeviation)
+    {
+      plane = new Plane();
+      maximumDeviation = 0.0;
+
+      int count = 0;
+      Point3d[] ptArray = Rhino.Collections.Point3dList.GetConstPointArray(points, out count);
+
+      if (null == ptArray || count < 1) { return PlaneFitResult.Failure; }
+
+      int rc = UnsafeNativeMethods.RHC_FitPlaneToPoints(count, ptArray, ref plane, ref maximumDeviation);
+      if (rc == -1) { return PlaneFitResult.Failure; }
+      if (rc == 0) { return PlaneFitResult.Success; }
+
+      return PlaneFitResult.Inconclusive;
+    }
+    #endregion
+
+    #region operators
+    public static bool operator ==(Plane a, Plane b)
+    {
+      return (a.m_origin == b.m_origin) &&
+             (a.m_xaxis == b.m_xaxis) &&
+             (a.m_yaxis == b.m_yaxis) &&
+             (a.m_zaxis == b.m_zaxis);
+    }
+    public static bool operator !=(Plane a, Plane b)
+    {
+      return (a.m_origin != b.m_origin) ||
+             (a.m_xaxis != b.m_xaxis) ||
+             (a.m_yaxis != b.m_yaxis) ||
+             (a.m_zaxis != b.m_zaxis);
+    }
+    public override bool Equals(object obj)
+    {
+      return ((obj is Plane) && (this == (Plane)obj));
+    }
+    public override int GetHashCode()
+    {
+      // MSDN docs recommend XOR'ing the internal values to get a hash code
+      return m_origin.GetHashCode() ^ m_xaxis.GetHashCode() ^ m_yaxis.GetHashCode() ^ m_zaxis.GetHashCode();
+    }
+    public override string ToString()
+    {
+      string rc = String.Format(System.Globalization.CultureInfo.InvariantCulture,
+        "Origin={0} XAxis={1}, YAxis={2}, ZAxis={3}",
+        Origin, XAxis, YAxis, ZAxis);
+      return rc;
+    }
+    #endregion
+
+    #region properties
+    /// <summary>
+    /// Gets the normal of this plane. This is essentially the ZAxis of the plane.
+    /// </summary>
+    public Vector3d Normal
+    {
+      get { return ZAxis; }
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether or not this is a valid plane. 
+    /// A plane is considered to be valid when all fields contain reasonable 
+    /// information and the equation jibes with point and zaxis.
+    /// </summary>
+    public bool IsValid
+    {
+      get { return UnsafeNativeMethods.ON_Plane_IsValid(ref this); }
+    }
+    #endregion
+
+    #region methods
+    /// <summary>
+    /// Get the plane equation for this plane in the format of Ax+By+Cz+D=0
+    /// </summary>
+    /// <returns>
+    /// Array of four values
+    /// </returns>
+    public double[] GetPlaneEquation()
+    {
+      double[] rc = new double[4];
+      UnsafeNativeMethods.ON_Plane_GetEquation(ref this, rc);
+      return rc;
+    }
+    /// <summary>
+    /// Evaluate a point on the plane.
+    /// </summary>
+    /// <param name="u">evaulation parameter</param>
+    /// <param name="v">evaulation parameter</param>
+    /// <returns>plane.origin + u*plane.xaxis + v*plane.yaxis</returns>
+    public Point3d PointAt(double u, double v)
+    {
+      return (Origin + u * XAxis + v * YAxis);
+    }
+
+    /// <summary>
+    /// Evaluate a point on the plane
+    /// </summary>
+    /// <param name="u">evaulation parameter</param>
+    /// <param name="v">evaulation parameter</param>
+    /// <param name="w">evaulation parameter</param>
+    /// <returns>plane.origin + u*plane.xaxis + v*plane.yaxis + z*plane.zaxis</returns>
+    public Point3d PointAt(double u, double v, double w)
+    {
+      return (Origin + u * XAxis + v * YAxis + w * ZAxis);
+    }
+
+    //David: all extend methods are untested as of yet.
+
+    /// <summary>
+    /// Extend this plane through a Box. 
+    /// </summary>
+    /// <param name="box"></param>
+    /// <param name="s">
+    /// If this function returns True, 
+    /// the s parameter returns the Interval on the plane along the X direction that will 
+    /// encompass the Box.
+    /// </param>
+    /// <param name="t">
+    /// If this function returns True, 
+    /// the t parameter returns the Interval on the plane along the Y direction that will 
+    /// encompass the Box.
+    /// </param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool ExtendThroughBox(BoundingBox box, out Interval s, out Interval t)
+    {
+      s = Interval.Unset;
+      t = Interval.Unset;
+
+      if (!IsValid) { return false; }
+      if (!box.IsValid) { return false; }
+
+      return ExtendThroughPoints(box.GetCorners(), ref s, ref t);
+    }
+    /// <summary>
+    /// Extend this plane through a Box. 
+    /// </summary>
+    /// <param name="box"></param>
+    /// <param name="s">
+    /// If this function returns True, 
+    /// the s parameter returns the Interval on the plane along the X direction that will 
+    /// encompass the Box.
+    /// </param>
+    /// <param name="t">
+    /// If this function returns True, 
+    /// the t parameter returns the Interval on the plane along the Y direction that will 
+    /// encompass the Box.
+    /// </param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool ExtendThroughBox(Box box, out Interval s, out Interval t)
+    {
+      s = Interval.Unset;
+      t = Interval.Unset;
+
+      if (!IsValid) { return false; }
+      if (!box.IsValid) { return false; }
+
+      return ExtendThroughPoints(box.GetCorners(), ref s, ref t);
+    }
+    internal bool ExtendThroughPoints(System.Collections.Generic.IEnumerable<Point3d> pts, ref Interval s, ref Interval t)
+    {
+      double s0 = double.MaxValue;
+      double s1 = double.MinValue;
+      double t0 = double.MaxValue;
+      double t1 = double.MinValue;
+      bool valid = false;
+
+      foreach (Point3d pt in pts)
+      {
+        double sp, tp;
+        if (ClosestParameter(pt, out sp, out tp))
+        {
+          valid = true;
+
+          s0 = Math.Min(s0, sp);
+          s1 = Math.Max(s1, sp);
+          t0 = Math.Min(t0, tp);
+          t1 = Math.Max(t1, tp);
+        }
+      }
+
+      if (valid)
+      {
+        s = new Interval(s0, s1);
+        t = new Interval(t0, t1);
+      }
+      return valid;
+    }
+
+    #region projections
+    /// <summary>
+    /// This method is Obsolete, use ClosestParameter() instead.
+    /// </summary>
+    [Obsolete("This method is Obsolete, use ClosestParameter() instead.")]
+    public bool ClosestParameterTo(Point3d testPoint, out double s, out double t)
+    {
+      return ClosestParameter(testPoint, out s, out t);
+    }
+    /// <summary>
+    /// Gets the parameters of the point on the plane closest to a test point.
+    /// </summary>
+    /// <param name="testPoint">Point to get close to.</param>
+    /// <param name="s">Parameter along plane X-direction.</param>
+    /// <param name="t">Parameter along plane Y-direction.</param>
+    /// <returns>
+    /// True if a parameter could be found, 
+    /// false if the point could not be projected successfully.
+    /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addlineardimension2.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addlineardimension2.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addlineardimension2.py' lang='py'/>
+    /// </example>
+    public bool ClosestParameter(Point3d testPoint, out double s, out double t)
+    {
+      Vector3d v = testPoint - Origin;
+      s = v * XAxis;
+      t = v * YAxis;
+
+      return true;
+    }
+
+    /// <summary>
+    /// This method is Obsolete, use ClosestPoint() instead.
+    /// </summary>
+    [Obsolete("This method is Obsolete, use ClosestPoint() instead.")]
+    public Point3d ClosestPointTo(Point3d testPoint)
+    {
+      return ClosestPoint(testPoint);
+    }
+    /// <summary>
+    /// Gets the point on the plane closest to a test point.
+    /// </summary>
+    /// <param name="testPoint">Point to get close to.</param>
+    /// <returns>
+    /// The point on the plane that is closest to testPoint, 
+    /// or Point3d.Unset on failure.
+    /// </returns>
+    public Point3d ClosestPoint(Point3d testPoint)
+    {
+      double s, t;
+
+      // NOTE: 
+      // ClosestParameterTo does not currently validate input so won't return
+      // false, therefore this function won't actually return an Unset point.
+      // The code should probably be left this way so people check return
+      // codes in case a fast way to validate input is added. The same problem
+      // exists with the C++ sdk. 
+      if (!ClosestParameter(testPoint, out s, out t))
+        return Point3d.Unset;
+      return PointAt(s, t);
+    }
+
+    /// <summary>
+    /// Returns the signed distance from testPoint to its projection onto this plane. 
+    /// If the point is below the plane, a negative distance is returned.
+    /// </summary>
+    /// <param name="testPoint">Point to test.</param>
+    /// <returns>Signed distance from this plane to testPoint.</returns>
+    public double DistanceTo(Point3d testPoint)
+    {
+      return UnsafeNativeMethods.ON_Plane_DistanceTo(ref this, testPoint);
+    }
+
+    /// <summary>
+    /// Convert a point from World space coordinates into Plane space coordinates.
+    /// </summary>
+    /// <param name="ptSample">World point to remap.</param>
+    /// <param name="ptPlane">Point in plane (s,t,d) coordinates.</param>
+    /// <returns>True on success, false on failure.</returns>
+    /// <remarks>D stands for distance, not disease.</remarks>
+    public bool RemapToPlaneSpace(Point3d ptSample, out Point3d ptPlane)
+    {
+      double s, t;
+      if (!ClosestParameter(ptSample, out s, out t))
+      {
+        ptPlane = Point3d.Unset;
+        return false;
+      }
+
+      double d = this.DistanceTo(ptSample);
+
+      ptPlane = new Point3d(s, t, d);
+      return true;
+    }
+    #endregion
+
+    #region transformations
+    /// <summary>
+    /// Flip this plane by swapping out the X and Y axes and inverting the Z axis.
+    /// </summary>
+    public void Flip()
+    {
+      Vector3d v = m_xaxis;
+      m_xaxis = m_yaxis;
+      m_yaxis = v;
+      m_zaxis = -m_zaxis;
+    }
+
+    /// <summary>
+    /// Transform the plane with a Transformation matrix.
+    /// </summary>
+    /// <param name="xform">Transformation to apply to plane.</param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Transform(Transform xform)
+    {
+      return UnsafeNativeMethods.ON_Plane_Transform(ref this, ref xform);
+    }
+
+    /// <summary>
+    /// Translate (move) the plane along a vector.
+    /// </summary>
+    /// <param name="delta">Translation (motion) vector</param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Translate(Vector3d delta)
+    {
+      if (!delta.IsValid)
+        return false;
+
+      this.Origin += delta;
+      return true;
+    }
+
+    /// <summary>
+    /// Rotate the plane about its origin point.
+    /// </summary>
+    /// <param name="sinAngle">Sin(angle).</param>
+    /// <param name="cosAngle">Cos(angle).</param>
+    /// <param name="axis">Axis of rotation.</param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Rotate(double sinAngle, double cosAngle, Vector3d axis)
+    {
+      bool rc = true;
+      if (Vector3d.ValueCompare(axis, ZAxis))
+      {
+        Vector3d x = cosAngle * XAxis + sinAngle * YAxis;
+        Vector3d y = cosAngle * YAxis - sinAngle * XAxis;
+        XAxis = x;
+        YAxis = y;
+      }
+      else
+      {
+        Point3d origin_pt = Origin;
+        rc = Rotate(sinAngle, cosAngle, axis, Origin);
+        Origin = origin_pt; // to kill any fuzz
+      }
+      return rc;
+    }
+
+    /// <summary>
+    /// Rotate the plane about its origin point.
+    /// </summary>
+    /// <param name="angle">Angle in radians.</param>
+    /// <param name="axis">Axis of rotation.</param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Rotate(double angle, Vector3d axis)
+    {
+      return Rotate(Math.Sin(angle), Math.Cos(angle), axis);
+    }
+
+    /// <summary>
+    /// Rotate the plane about a custom anchor point.
+    /// </summary>
+    /// <param name="angle">Angle in radians.</param>
+    /// <param name="axis">Axis of rotation.</param>
+    /// <param name="centerOfRotation">Center of rotation.</param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Rotate(double angle, Vector3d axis, Point3d centerOfRotation)
+    {
+      return Rotate(Math.Sin(angle), Math.Cos(angle), axis, centerOfRotation);
+    }
+
+    /// <summary>Rotate the plane about a custom anchor point.</summary>
+    /// <param name="sinAngle">Sin(angle)</param>
+    /// <param name="cosAngle">Cos(angle)</param>
+    /// <param name="axis">Axis of rotation.</param>
+    /// <param name="centerOfRotation">Center of rotation.</param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Rotate(double sinAngle, double cosAngle, Vector3d axis, Point3d centerOfRotation)
+    {
+      bool rc = false;
+      if (centerOfRotation == Origin)
+      {
+        Transform rot = Rhino.Geometry.Transform.Rotation(sinAngle, cosAngle, axis, Point3d.Origin);
+        XAxis = rot * XAxis;
+        YAxis = rot * YAxis;
+        ZAxis = rot * ZAxis;
+        rc = true;
+      }
+      else
+      {
+        Transform rot = Rhino.Geometry.Transform.Rotation(sinAngle, cosAngle, axis, centerOfRotation);
+        rc = Transform(rot);
+      }
+      return rc;
+    }
+    #endregion
+    #endregion
+  }
+
+  //  public class ON_ClippingPlaneInfo { }
+  //  public class ON_ClippingPlane { }
+}

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Dictionary>
+  <Words>
+    <!--
+      This is a list of case-insensitive words that do not exist in the dictionary
+      but you still want to be considered as recognized by 
+      IdentifiersShouldBeSpelledCorrectly. Do not add compound words (e.g. 'FileName') 
+      to this list as this will cause CompoundWordsShouldBeBeCasedCorrectly to fire on 
+      usages of the compound word stating that they should be changed to their discrete equivalent 
+      (for example 'FileName' -> 'Filename').
+    -->
+    <Recognized>
+      <Word>a</Word>
+      <Word>b</Word>
+      <Word>c</Word>
+      <Word>d</Word>
+      <Word>p</Word>
+      <Word>x</Word>
+      <Word>y</Word>
+      <Word>z</Word>
+      <Word>dx</Word>
+      <Word>dy</Word>
+      <Word>dz</Word>
+      <Word>w</Word>
+      <Word>s</Word>
+      <Word>t</Word>
+      <Word>u</Word>
+      <Word>v</Word>
+      <Word>t0</Word>
+      <Word>t1</Word>
+      <Word>tc</Word>
+      <Word>sqrt</Word>
+      <Word>nurbs</Word>
+      <Word>polyline</Word>
+      <Word>filename</Word>
+      <Word>normals</Word>
+      <Word>autosave</Word>
+      <Word>linetype</Word>
+      <Word>brep</Word>
+      <Word>breps</Word>
+      <Word>xform</Word>
+      <Word>polyedge</Word>
+      <Word>gigameters</Word>
+      <Word>megameters</Word>
+      <Word>lightyears</Word>
+      <Word>microinches</Word>
+      <Word>dekameters</Word>
+      <Word>polysrf</Word>
+      <Word>polycurve</Word>
+      <Word>objref</Word>
+      <Word>xaxis</Word>
+      <Word>yaxis</Word>
+      <Word>zaxis</Word>
+      <Word>idef</Word>
+      <Word>preselected</Word>
+      <Word>sel</Word>
+      <Word>worksession</Word>
+      <Word>nonmanifold</Word>
+      <Word>coord</Word>
+      <Word>osnap</Word>
+      <Word>pickbox</Word>
+      <Word>cplane</Word>
+      <Word>centroid</Word>
+      <Word>bbox</Word>
+      <Word>iges</Word>
+      <Word>cinfinity</Word>
+      <Word>subdomain</Word>
+      <word>isoparametric</word>
+      <Word>reparameterize</Word>
+      <Word>greville</Word>
+      <Word>abscissa</Word>
+      <Word>abscissae</Word>
+      <word>deletable</word>
+      <word>point3d</word>
+      <word>specular</word>
+      <word>unhighlight</word>
+    </Recognized>
+  </Words>
+</Dictionary>

@@ -1,0 +1,95 @@
+using System;
+using Rhino;
+
+namespace examples_cs
+{
+  [System.Runtime.InteropServices.Guid("d31dc306-358e-4e26-a453-620e0f2f9116")]
+  public class ex_custompython : Rhino.Commands.Command
+  {
+    static ex_custompython m_thecommand;
+    public ex_custompython()
+    {
+      // Rhino only creates one instance of each command class defined in a plug-in, so it is
+      // safe to hold on to a static reference.
+      m_thecommand = this;
+    }
+
+    ///<summary>The one and only instance of this command</summary>
+    public static ex_custompython TheCommand
+    {
+      get { return m_thecommand; }
+    }
+
+    ///<returns>The command name as it appears on the Rhino command line</returns>
+    public override string EnglishName
+    {
+      get { return "examples_custompython"; }
+    }
+
+    protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+    {
+      if (null == m_python)
+      {
+        m_python = Rhino.Runtime.PythonScript.Create();
+        if (null == m_python)
+        {
+          RhinoApp.WriteLine("Error: Unable to create an instance of the python engine");
+          return Rhino.Commands.Result.Failure;
+        }
+      }
+      m_python.ScriptContextDoc = new CustomPythonDoc(doc);
+
+      string script = @"
+import rhinoscriptsyntax as rs
+rs.AddLine((0,0,0), (10,10,10))
+";
+      m_python.ExecuteScript(script);
+      return Rhino.Commands.Result.Success;
+    }
+
+    Rhino.Runtime.PythonScript m_python = null;
+  }
+
+  // our fake RhinoDoc
+  public class CustomPythonDoc
+  {
+    RhinoDoc m_doc;
+    public CustomPythonDoc(RhinoDoc doc)
+    {
+      m_doc = doc;
+    }
+    CustomObjectTable m_table = new CustomObjectTable();
+    public CustomObjectTable Objects
+    {
+      get { return m_table; }
+    }
+
+    public Rhino.DocObjects.Tables.ViewTable Views
+    {
+      get
+      {
+        return m_doc.Views;
+      }
+    }
+
+  }
+
+  public class CustomObjectTable
+  {
+    public Guid AddLine(Rhino.Geometry.Point3d p1, Rhino.Geometry.Point3d p2)
+    {
+      Rhino.Geometry.Line l = new Rhino.Geometry.Line(p1, p2);
+      if (l.IsValid)
+      {
+        Guid id = Guid.NewGuid();
+        m_lines_dict.Add(id, l);
+        return id;
+      }
+      return Guid.Empty;
+    }
+
+    System.Collections.Generic.Dictionary<Guid, Rhino.Geometry.Line> m_lines_dict = new System.Collections.Generic.Dictionary<Guid, Rhino.Geometry.Line>();
+  }
+
+}
+

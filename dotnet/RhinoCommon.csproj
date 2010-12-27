@@ -1,0 +1,314 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{ED38373E-290C-4BDE-ACBA-1601484E582A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Rhino</RootNamespace>
+    <AssemblyName>RhinoCommon</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>RDN_StrongName.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;USING_V5_SDK</DefineConstants>
+    <DocumentationFile>Debug\RhinoCommon.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>Release\</OutputPath>
+    <DefineConstants>TRACE;USING_V5_SDK</DefineConstants>
+    <DocumentationFile>Release\RhinoCommon.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>1591</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'GH_Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>GH_Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DocumentationFile>GH_Debug\RhinoCommon.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'GH_Release|AnyCPU' ">
+    <OutputPath>GH_Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>GH_Release\RhinoCommon.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>1591</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Mono|AnyCPU' ">
+    <OutputPath>bin\Mono\</OutputPath>
+    <DefineConstants>TRACE;BUILDING_MONO</DefineConstants>
+    <DocumentationFile>bin\Mono\RhinoCommon.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>1591</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AutoNativeMethods.cs" />
+    <Compile Include="hostutils.cs" />
+    <Compile Include="interop.cs" />
+    <Compile Include="MonoHost.cs" />
+    <Compile Include="opennurbs\ON_MesherUtility.cs" />
+    <Compile Include="opennurbs\opennurbs_3dm_attributes.cs" />
+    <Compile Include="opennurbs\opennurbs_3dm_settings.cs" />
+    <Compile Include="opennurbs\opennurbs_annotation.cs" />
+    <Compile Include="opennurbs\opennurbs_annotation2.cs" />
+    <Compile Include="opennurbs\opennurbs_arccurve.cs" />
+    <Compile Include="opennurbs\opennurbs_array.cs" />
+    <Compile Include="opennurbs\opennurbs_base32.cs" />
+    <Compile Include="opennurbs\opennurbs_base64.cs" />
+    <Compile Include="opennurbs\opennurbs_beam.cs" />
+    <Compile Include="opennurbs\opennurbs_bezier.cs" />
+    <Compile Include="opennurbs\opennurbs_bitmap.cs" />
+    <Compile Include="opennurbs\opennurbs_box.cs" />
+    <Compile Include="opennurbs\opennurbs_brep.cs" />
+    <Compile Include="opennurbs\opennurbs_color.cs" />
+    <Compile Include="opennurbs\opennurbs_crc.cs" />
+    <Compile Include="opennurbs\opennurbs_curveonsurface.cs" />
+    <Compile Include="opennurbs\opennurbs_curveproxy.cs" />
+    <Compile Include="opennurbs\opennurbs_detail.cs" />
+    <Compile Include="opennurbs\opennurbs_dimstyle.cs" />
+    <Compile Include="opennurbs\opennurbs_error.cs" />
+    <Compile Include="opennurbs\opennurbs_evaluate_nurbs.cs" />
+    <Compile Include="opennurbs\opennurbs_extensions.cs" />
+    <Compile Include="opennurbs\opennurbs_font.cs" />
+    <Compile Include="opennurbs\opennurbs_gl.cs" />
+    <Compile Include="opennurbs\opennurbs_group.cs" />
+    <Compile Include="opennurbs\opennurbs_hatch.cs" />
+    <Compile Include="opennurbs\opennurbs_instance.cs" />
+    <Compile Include="opennurbs\opennurbs_intersect.cs" />
+    <Compile Include="opennurbs\opennurbs_intersectionevents.cs" />
+    <Compile Include="opennurbs\opennurbs_knot.cs" />
+    <Compile Include="opennurbs\opennurbs_layer.cs" />
+    <Compile Include="opennurbs\opennurbs_light.cs" />
+    <Compile Include="opennurbs\opennurbs_linecurve.cs" />
+    <Compile Include="opennurbs\opennurbs_linestyle.cs" />
+    <Compile Include="opennurbs\opennurbs_linetype.cs" />
+    <Compile Include="opennurbs\opennurbs_list.cs" />
+    <Compile Include="opennurbs\opennurbs_lookup.cs" />
+    <Compile Include="opennurbs\opennurbs_mapchan.cs" />
+    <Compile Include="opennurbs\opennurbs_massprop.cs" />
+    <Compile Include="opennurbs\opennurbs_material.cs" />
+    <Compile Include="opennurbs\opennurbs_math.cs" />
+    <Compile Include="opennurbs\opennurbs_matrix.cs" />
+    <Compile Include="opennurbs\opennurbs_memory.cs" />
+    <Compile Include="opennurbs\opennurbs_mesh.cs" />
+    <Compile Include="opennurbs\opennurbs_mesh_marker.cs" />
+    <Compile Include="opennurbs\opennurbs_nurbssurface.cs" />
+    <Compile Include="opennurbs\opennurbs_object.cs" />
+    <Compile Include="opennurbs\opennurbs_objref.cs" />
+    <Compile Include="opennurbs\opennurbs_offsetsurface.cs" />
+    <Compile Include="opennurbs\opennurbs_oject_history.cs" />
+    <Compile Include="opennurbs\opennurbs_optimize.cs" />
+    <Compile Include="opennurbs\opennurbs_planesurface.cs" />
+    <Compile Include="opennurbs\opennurbs_pluginlist.cs" />
+    <Compile Include="opennurbs\opennurbs_plus.cs" />
+    <Compile Include="opennurbs\opennurbs_plus_registry.cs" />
+    <Compile Include="opennurbs\opennurbs_pointcloud.cs" />
+    <Compile Include="opennurbs\opennurbs_pointgeometry.cs" />
+    <Compile Include="opennurbs\opennurbs_pointgrid.cs" />
+    <Compile Include="opennurbs\opennurbs_polycurve.cs" />
+    <Compile Include="opennurbs\opennurbs_polyedgecurve.cs" />
+    <Compile Include="opennurbs\opennurbs_polyline.cs" />
+    <Compile Include="opennurbs\opennurbs_polylinecurve.cs" />
+    <Compile Include="opennurbs\opennurbs_rectangle.cs" />
+    <Compile Include="opennurbs\opennurbs_rendering.cs" />
+    <Compile Include="opennurbs\opennurbs_revsurface.cs" />
+    <Compile Include="opennurbs\opennurbs_string.cs" />
+    <Compile Include="opennurbs\opennurbs_sumsurface.cs" />
+    <Compile Include="opennurbs\opennurbs_surface.cs" />
+    <Compile Include="opennurbs\opennurbs_surfaceproxy.cs" />
+    <Compile Include="opennurbs\opennurbs_system.cs" />
+    <Compile Include="opennurbs\opennurbs_textlog.cs" />
+    <Compile Include="opennurbs\opennurbs_texture.cs" />
+    <Compile Include="opennurbs\opennurbs_texture_mapping.cs" />
+    <Compile Include="opennurbs\opennurbs_userdata.cs" />
+    <Compile Include="opennurbs\opennurbs_uuid.cs" />
+    <Compile Include="opennurbs\opennurbs_version.cs" />
+    <Compile Include="opennurbs\opennurbs_viewport.cs" />
+    <Compile Include="opennurbs\opennurbs_workspace.cs" />
+    <Compile Include="opennurbs\opennurbs_x.cs" />
+    <Compile Include="opennurbs\opennurbs_zlib.cs" />
+    <Compile Include="resolver.cs" />
+    <Compile Include="rhino\rhinosdkdisplayconduitutility.cs" />
+    <Compile Include="rhino\Interpolator.cs" />
+    <Compile Include="rhino\RhinoColors.cs" />
+    <Compile Include="rhino\rhinosdkannotationobject.cs" />
+    <Compile Include="rhino\rhinosdkappsettings.cs" />
+    <Compile Include="rhino\rhinosdkbitmap.cs" />
+    <Compile Include="rhino\rhinosdkcageobject.cs" />
+    <Compile Include="rhino\rhinosdkchannelattributes.cs" />
+    <Compile Include="rhino\rhinosdkchecks.cs" />
+    <Compile Include="rhino\rhinosdkclippingplane.cs" />
+    <Compile Include="rhino\rhinosdkcolorbutton.cs" />
+    <Compile Include="rhino\rhinosdkcommand.cs" />
+    <Compile Include="rhino\rhinosdkcommandoption.cs" />
+    <Compile Include="rhino\rhinosdkcommandoptionname.cs" />
+    <Compile Include="rhino\rhinosdkcontextmenu.cs" />
+    <Compile Include="rhino\rhinosdkcurveseam.cs" />
+    <Compile Include="rhino\rhinosdkdetailobject.cs" />
+    <Compile Include="rhino\rhinosdkdialog.cs" />
+    <Compile Include="rhino\rhinosdkdib.cs" />
+    <Compile Include="rhino\rhinosdkdigitizerinfo.cs" />
+    <Compile Include="rhino\rhinosdkdigitizermanager.cs" />
+    <Compile Include="rhino\rhinosdkdimstyle.cs" />
+    <Compile Include="rhino\rhinosdkdimstylecombobox.cs" />
+    <Compile Include="rhino\rhinosdkdirectorymanager.cs" />
+    <Compile Include="rhino\rhinosdkdisplay.cs" />
+    <Compile Include="rhino\rhinosdkdisplayattrsmgr.cs" />
+    <Compile Include="rhino\rhinosdkdisplayconduit.cs" />
+    <Compile Include="rhino\rhinosdkdisplayengine.cs" />
+    <Compile Include="rhino\rhinosdkdisplaypipeline.cs" />
+    <Compile Include="rhino\rhinosdkdisplaypipelineattributes.cs" />
+    <Compile Include="rhino\rhinosdkdisplaypipelinematerial.cs" />
+    <Compile Include="rhino\rhinosdkdoc.cs" />
+    <Compile Include="opennurbs\opennurbs_arc.cs" />
+    <Compile Include="opennurbs\opennurbs_bounding_box.cs" />
+    <Compile Include="opennurbs\opennurbs_circle.cs" />
+    <Compile Include="opennurbs\opennurbs_cone.cs" />
+    <Compile Include="opennurbs\opennurbs_curve.cs" />
+    <Compile Include="opennurbs\opennurbs_cylinder.cs" />
+    <Compile Include="opennurbs\opennurbs_ellipse.cs" />
+    <Compile Include="opennurbs\opennurbs_geometry.cs" />
+    <Compile Include="opennurbs\opennurbs_line.cs" />
+    <Compile Include="opennurbs\opennurbs_nurbscurve.cs" />
+    <Compile Include="opennurbs\opennurbs_plane.cs" />
+    <Compile Include="opennurbs\opennurbs_fpoint.cs" />
+    <Compile Include="opennurbs\opennurbs_quaternion.cs" />
+    <Compile Include="opennurbs\opennurbs_sphere.cs" />
+    <Compile Include="opennurbs\opennurbs_torus.cs" />
+    <Compile Include="opennurbs\opennurbs_xform.cs" />
+    <Compile Include="opennurbs\opennurbs_3dm.cs" />
+    <Compile Include="rhino\rhinosdkbrepobject.cs" />
+    <Compile Include="rhino\rhinosdkcurveobject.cs" />
+    <Compile Include="rhino\rhinosdkdocproperties.cs" />
+    <Compile Include="rhino\rhinosdkeventwatcher.cs" />
+    <Compile Include="rhino\rhinosdkextrude.cs" />
+    <Compile Include="rhino\rhinosdkextrusion.cs" />
+    <Compile Include="rhino\rhinosdkfair.cs" />
+    <Compile Include="rhino\rhinosdkfilemenu.cs" />
+    <Compile Include="rhino\rhinosdkfileoptions.cs" />
+    <Compile Include="rhino\rhinosdkfileutilities.cs" />
+    <Compile Include="rhino\rhinosdkfont.cs" />
+    <Compile Include="rhino\rhinosdkgetplane.cs" />
+    <Compile Include="rhino\rhinosdkgrips.cs" />
+    <Compile Include="rhino\rhinosdkgroup.cs" />
+    <Compile Include="rhino\rhinosdkgroupobject.cs" />
+    <Compile Include="rhino\rhinosdkgumball.cs" />
+    <Compile Include="rhino\rhinosdkhatchobject.cs" />
+    <Compile Include="rhino\rhinosdkhatchpattern.cs" />
+    <Compile Include="rhino\rhinosdkhistoryrecordtable.cs" />
+    <Compile Include="rhino\rhinosdkinstance.cs" />
+    <Compile Include="rhino\rhinosdklayer.cs" />
+    <Compile Include="rhino\rhinosdklight.cs" />
+    <Compile Include="rhino\rhinosdklinetype.cs" />
+    <Compile Include="rhino\rhinosdkloft.cs" />
+    <Compile Include="rhino\rhinosdkmaterial.cs" />
+    <Compile Include="rhino\rhinosdkmeshobject.cs" />
+    <Compile Include="rhino\rhinosdkmouse.cs" />
+    <Compile Include="rhino\rhinosdkobjectattributes.cs" />
+    <Compile Include="rhino\rhinosdkobjecthistory.cs" />
+    <Compile Include="rhino\rhinosdkpagelayoutview.cs" />
+    <Compile Include="rhino\rhinosdkplugin.cs" />
+    <Compile Include="rhino\rhinosdkpointobject.cs" />
+    <Compile Include="rhino\rhinosdkobject.cs" />
+    <Compile Include="opennurbs\opennurbs_3dm_properties.cs" />
+    <Compile Include="opennurbs\opennurbs_point.cs" />
+    <Compile Include="rhino\rhinosdkapp.cs" />
+    <Compile Include="opennurbs\opennurbs_defines.cs" />
+    <Compile Include="rhino\rhinosdkgetfiledialog.cs" />
+    <Compile Include="rhino\rhinosdkgetstring.cs" />
+    <Compile Include="rhino\rhinosdkgetobject.cs" />
+    <Compile Include="rhino\rhinosdkgetpoint.cs" />
+    <Compile Include="Import.cs" />
+    <Compile Include="opennurbs\opennurbs_archive.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="rhino\rhinosdkget.cs" />
+    <Compile Include="rhino\rhinosdkpolyedge.cs" />
+    <Compile Include="rhino\rhinosdkuiprofilecontext.cs" />
+    <Compile Include="rhino\rhinosdkview.cs" />
+    <Compile Include="rhino\rhinosdkviewport.cs" />
+    <Compile Include="rhino\rhinosdkanalysismodes.cs" />
+    <Compile Include="UI\ComboListBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ComboListBox.Designer.cs">
+      <DependentUpon>ComboListBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\StringBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\StringBox.Designer.cs">
+      <DependentUpon>StringBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs.cs" />
+    <Compile Include="UI\EditBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\EditBox.Designer.cs">
+      <DependentUpon>EditBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ListBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ListBox.Designer.cs">
+      <DependentUpon>ListBox.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RDN_StrongName.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\ComboListBox.resx">
+      <DependentUpon>ComboListBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\StringBox.resx">
+      <DependentUpon>StringBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\EditBox.resx">
+      <DependentUpon>EditBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ListBox.resx">
+      <DependentUpon>ListBox.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup Condition=" '$(Configuration)' != 'Mono' ">
+    <PostBuildEvent>"$(ProjectDir)postbuild.bat" $(ConfigurationName)</PostBuildEvent>
+  </PropertyGroup>
+</Project>

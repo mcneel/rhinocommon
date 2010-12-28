@@ -1045,7 +1045,7 @@ namespace Rhino.ApplicationSettings
       get
       {
         int rc = GetInt(idxOSnapModes);
-        return (OSnapModes)rc;
+        return (OsnapModes)rc;
       }
       set
       {

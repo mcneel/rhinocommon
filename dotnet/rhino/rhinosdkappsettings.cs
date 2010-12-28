@@ -842,7 +842,7 @@ namespace Rhino.ApplicationSettings
   };
 
   [FlagsAttribute]
-  public enum OSnapModes : int
+  public enum OsnapModes : int
   {
     None = 0x0,
     Near = 0x1,
@@ -941,8 +941,18 @@ namespace Rhino.ApplicationSettings
     ///<summary>Enables or disables Rhino&apos;s object snap modeling aid.</summary>
     public static bool Osnap
     {
-      get { return GetBool(idxOsnap); }
-      set { SetBool(idxOsnap, value); }
+      get
+      {
+        // The osnap toggle in C++ is m_suspend_osnap which is a double negative
+        // Flip value passed to and returned from C++
+        bool rc = GetBool(idxOsnap);
+        return !rc;
+      }
+      set
+      {
+        value = !value;
+        SetBool(idxOsnap, value);
+      }
     }
     public static bool SnapToLocked
     {
@@ -1013,7 +1023,7 @@ namespace Rhino.ApplicationSettings
       set { SetInt(idxControlPolygonDisplayDensity, value); }
     }
 
-    public static CursorMode OSnapCursorMode
+    public static CursorMode OsnapCursorMode
     {
       get
       {
@@ -1028,12 +1038,19 @@ namespace Rhino.ApplicationSettings
     }
     ///<summary>
     ///Returns or sets Rhino's current object snap mode.
-    ///The mode is a bitwise value based on the OSnapModes enumeration.
+    ///The mode is a bitwise value based on the OsnapModes enumeration.
     ///</summary>
-    public static int OSnapModes
+    public static OsnapModes OsnapModes
     {
-      get { return GetInt(idxOSnapModes); }
-      set { SetInt(idxOSnapModes, value); }
+      get
+      {
+        int rc = GetInt(idxOSnapModes);
+        return (OSnapModes)rc;
+      }
+      set
+      {
+        SetInt(idxOSnapModes, (int)value);
+      }
     }
     ///<summary>radius of mouse pick box in pixels</summary>
     public static int MousePickboxRadius

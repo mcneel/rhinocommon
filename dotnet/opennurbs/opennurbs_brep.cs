@@ -1196,7 +1196,7 @@ namespace Rhino.Geometry
       return IntPtr.Zero;
     }
 
-#if RHINO_V5SR // only available in V5
+#if USING_V5_SDK // only available in V5
     /// <summary>
     /// Pulls one or more points to a brep face
     /// </summary>

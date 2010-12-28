@@ -1,3 +1,5 @@
+@echo postbuild.bat skipped for github build
+exit 0
 @echo postbuild.bat called with args: "%1"
 rem use dir to figure out where this batch file is being called from
 rem DIR

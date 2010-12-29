@@ -46,6 +46,7 @@ Public Class examples_vbCommand
     Test(AddressOf Examples.AddNurbsCurve, doc)
     Test(AddressOf Examples.AddObjectsToGroup, doc)
     Test(AddressOf Examples.AddSphere, doc)
+    Test(AddressOf Examples.DetermineObjectLayer, doc)
     Test(AddressOf Examples.OrientOnSrf, doc)
     Test(AddressOf Examples.AddAnnotationText, doc)
     Test(AddressOf Examples.AddTexture, doc)

@@ -81,6 +81,7 @@
     <Compile Include="ex_custompython.cs" />
     <Compile Include="ex_dividebylength.cs" />
     <Compile Include="ex_findobjectsbyname.cs" />
+    <Compile Include="ex_objectlayer.cs" />
     <Compile Include="ex_orientonsrf.cs" />
     <Compile Include="ex_sellayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

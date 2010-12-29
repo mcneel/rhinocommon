@@ -40,9 +40,10 @@ namespace examples_cs
       examples_csPlugIn.ThePlugIn.IncrementRunCommandCount();
       //Test(Examples.ActiveViewport, doc);
       //Test(Examples.AddBrepBox, doc);
-      Test(Examples.AddChildLayer, doc);
+      //Test(Examples.AddChildLayer, doc);
       //Test(Examples.AddCircle, doc);
       //Test(Examples.DivideByLengthPoints, doc);
+      Test(Examples.DetermineObjectLayer, doc);
       //Test(Examples.AddLayer, doc);
       //Test(Examples.AddBackgroundBitmap, doc);
       //Test(Examples.AddClippingPlane, doc);

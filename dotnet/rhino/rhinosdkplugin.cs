@@ -203,7 +203,8 @@ namespace Rhino.PlugIns
 
       // Set callbacks if they haven't been set yet
       if( null==m_OnLoad || null==m_OnShutDown || null==m_OnGetPlugInObject || 
-          null==m_OnCallWriteDocument || null==m_OnWriteDocument || null==m_OnReadDocument)
+          null==m_OnCallWriteDocument || null==m_OnWriteDocument || null==m_OnReadDocument ||
+          null==m_OnAddPagesToOptions)
       {
         m_OnLoad = InternalOnLoad;
         m_OnShutDown = InternalOnShutdown;
@@ -211,8 +212,18 @@ namespace Rhino.PlugIns
         m_OnCallWriteDocument = InternalCallWriteDocument;
         m_OnWriteDocument = InternalWriteDocument;
         m_OnReadDocument = InternalReadDocument;
+        m_OnAddPagesToOptions = InternalAddPagesToOptions;
         UnsafeNativeMethods.CRhinoPlugIn_SetCallbacks(m_OnLoad, m_OnShutDown, m_OnGetPlugInObject);
         UnsafeNativeMethods.CRhinoPlugIn_SetCallbacks2(m_OnCallWriteDocument, m_OnWriteDocument, m_OnReadDocument);
+
+        // 12 Dec 2010 S. Baer
+        // use empty try/catch for a little while to allow github compiles to catch
+        // up with the current WIP
+        try
+        {
+          UnsafeNativeMethods.CRhinoPlugIn_SetCallbacks3(m_OnAddPagesToOptions);
+        }
+        catch(Exception){}
       }
     }
 
@@ -223,6 +234,7 @@ namespace Rhino.PlugIns
     internal delegate int CallWriteDocumentDelegate(int plugin_serial_number, IntPtr pWriteOptions);
     internal delegate int WriteDocumentDelegate(int plugin_serial_number, int doc_id, IntPtr pBinaryArchive, IntPtr pWriteOptions);
     internal delegate int ReadDocumentDelegate(int plugin_serial_number, int doc_id, IntPtr pBinaryArchive, IntPtr pReadOptions);
+    internal delegate void OnAddPagesToOptionsDelegate(int plugin_serial_number, IntPtr pPageList);
 
     private static OnLoadDelegate m_OnLoad;
     private static OnShutdownDelegate m_OnShutDown;
@@ -230,7 +242,8 @@ namespace Rhino.PlugIns
     private static CallWriteDocumentDelegate m_OnCallWriteDocument;
     private static WriteDocumentDelegate m_OnWriteDocument;
     private static ReadDocumentDelegate m_OnReadDocument;
-
+    private static OnAddPagesToOptionsDelegate m_OnAddPagesToOptions;
+    
 
     private static int InternalOnLoad(int plugin_serial_number)
     {
@@ -359,6 +372,27 @@ namespace Rhino.PlugIns
       }
       return rc;
     }
+    private static void InternalAddPagesToOptions(int plugin_serial_number, IntPtr pPageList)
+    {
+      PlugIn p = LookUpBySerialNumber(plugin_serial_number);
+      if (p != null)
+      {
+        try
+        {
+          System.Collections.Generic.List<Rhino.UI.OptionsDialogPage> pages = new System.Collections.Generic.List<Rhino.UI.OptionsDialogPage>();
+          p.OptionsDialogPages(pages);
+          for (int i = 0; i < pages.Count; i++)
+          {
+            IntPtr ptr = pages[i].ConstructWithRhinoDotNet();
+            if (ptr != IntPtr.Zero)
+              UnsafeNativeMethods.CRhinoPlugIn_AddOptionPage(pPageList, ptr);
+          }
+        }
+        catch (Exception)
+        {
+        }
+      }
+    }
     #endregion
 
     #region default virtual function implementations
@@ -425,6 +459,15 @@ namespace Rhino.PlugIns
     /// </param>
     /// <param name="options">Describes what is being written</param>
     protected virtual void ReadDocument(Rhino.RhinoDoc doc, Rhino.FileIO.BinaryArchiveReader archive, Rhino.FileIO.FileReadOptions options)
+    {
+    }
+
+    /// <summary>
+    /// Override this function if you want to extend the options dialog. This function is
+    /// called whenever the user brings up the Options dialog.
+    /// </summary>
+    /// <param name="pages">list of pages to add your custom options dialog page(s) to</param>
+    protected virtual void OptionsDialogPages( System.Collections.Generic.List<Rhino.UI.OptionsDialogPage> pages )
     {
     }
     #endregion

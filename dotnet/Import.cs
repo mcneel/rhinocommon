@@ -45,6 +45,9 @@ internal partial class UnsafeNativeMethods
     Rhino.PlugIns.PlugIn.ReadDocumentDelegate readdocumentCallback);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoPlugIn_SetCallbacks3(Rhino.PlugIns.PlugIn.OnAddPagesToOptionsDelegate addoptionpagesCallback);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoFileImportPlugIn_SetCallbacks(Rhino.PlugIns.FileImportPlugIn.AddFileType addfiletype,
     Rhino.PlugIns.FileImportPlugIn.ReadFileFunc readfile);
 

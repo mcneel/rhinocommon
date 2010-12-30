@@ -4,7 +4,12 @@ using System.Text;
 
 namespace Rhino.UI
 {
-  class OptionsDialogPage : StackedDialogPage
+  public abstract class OptionsDialogPage : StackedDialogPage
   {
+    public OptionsDialogPage(string englishPageTitle)
+      :base(englishPageTitle)
+    {
+
+    }
   }
 }

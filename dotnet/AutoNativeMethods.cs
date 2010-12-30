@@ -5717,6 +5717,9 @@ internal partial class UnsafeNativeMethods
   //void CRhinoPlugIn_SetCallbacks2(ONCALLWRITEDOCPLUGINPROC oncallwrite, WRITEDOCPLUGINPROC writedoc, READDOCPLUGINPROC readdoc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
+  //void CRhinoPlugIn_SetCallbacks3(ADDOPTIONPAGESPROC onaddoptionpages)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
   //void CRhinoFileImportPlugIn_SetCallbacks(ADDREADFILETYPEPROC addfiletype, READFILEPROC readfile)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
@@ -5749,6 +5752,10 @@ internal partial class UnsafeNativeMethods
   //void CRhinoDigitizerPlugIn_SendRay(int serial_number, ON_3DPOINT_STRUCT point, ON_3DVECTOR_STRUCT vector, unsigned int flags)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDigitizerPlugIn_SendRay(int serial_number, Point3d point, Vector3d vector, uint flags);
+
+  //void CRhinoPlugIn_AddOptionPage(ON_SimpleArray<CRhinoOptionsDialogPage*>* pPageList, CRhinoOptionsDialogPage* pPage)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoPlugIn_AddOptionPage(IntPtr pPageList, IntPtr pPage);
   #endregion
 
 

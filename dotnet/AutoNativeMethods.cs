@@ -2268,6 +2268,26 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Mesh_GetFaceCenter(IntPtr pConstMesh, int faceIndex, ref Point3d center);
+
+  //int ON_Mesh_TopologyVertexIndex(const ON_Mesh* pConstMesh, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Mesh_TopologyVertexIndex(IntPtr pConstMesh, int index);
+
+  //int ON_MeshTopologyVertex_Count(const ON_Mesh* pConstMesh, int topologyVertexIndex, bool vertices)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_MeshTopologyVertex_Count(IntPtr pConstMesh, int topologyVertexIndex, [MarshalAs(UnmanagedType.U1)]bool vertices);
+
+  //void ON_MeshTopologyVertex_GetIndices(const ON_Mesh* pConstMesh, int topologyVertexIndex, int count, /*ARRAY*/int* rc)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_MeshTopologyVertex_GetIndices(IntPtr pConstMesh, int topologyVertexIndex, int count, [In,Out] int[] rc);
+
+  //void ON_MeshTopologyVertex_ConnectedVertices(const ON_Mesh* pConstMesh, int topologyVertexIndex, int count, /*ARRAY*/int* rc)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_MeshTopologyVertex_ConnectedVertices(IntPtr pConstMesh, int topologyVertexIndex, int count, [In,Out] int[] rc);
+
+  //void ON_MeshTopologyVertex_ConnectedFaces(const ON_Mesh* pConstMesh, int topologyVertexIndex, ON_SimpleArray<int>* face_indices)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_MeshTopologyVertex_ConnectedFaces(IntPtr pConstMesh, int topologyVertexIndex, IntPtr face_indices);
   #endregion
 
 

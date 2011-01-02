@@ -1118,7 +1118,7 @@ namespace Rhino.Geometry
     public int[] AdjacentFaces()
     {
       IntPtr pConstBrep = m_brep.ConstPointer();
-      Runtime.INTERNAL_IntArray fi = new Rhino.Runtime.INTERNAL_IntArray();
+      Runtime.InteropWrappers.SimpleArrayInt fi = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
 
       int rc = UnsafeNativeMethods.ON_Brep_EdgeFaceIndices(pConstBrep, m_index, fi.m_ptr);
       if (rc == 0) { return null; }
@@ -1360,7 +1360,7 @@ namespace Rhino.Geometry
     public int[] AdjacentEdges()
     {
       IntPtr pConstBrep = m_brep.ConstPointer();
-      Runtime.INTERNAL_IntArray ei = new Rhino.Runtime.INTERNAL_IntArray();
+      Runtime.InteropWrappers.SimpleArrayInt ei = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
 
       int rc = UnsafeNativeMethods.ON_Brep_FaceEdgeIndices(pConstBrep, m_index, ei.m_ptr);
       if (rc == 0) { return null; }
@@ -1373,7 +1373,7 @@ namespace Rhino.Geometry
     public int[] AdjacentFaces()
     {
       IntPtr pConstBrep = m_brep.ConstPointer();
-      Runtime.INTERNAL_IntArray fi = new Rhino.Runtime.INTERNAL_IntArray();
+      Runtime.InteropWrappers.SimpleArrayInt fi = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
 
       int rc = UnsafeNativeMethods.ON_Brep_FaceFaceIndices(pConstBrep, m_index, fi.m_ptr);
       if (rc == 0) { return null; }

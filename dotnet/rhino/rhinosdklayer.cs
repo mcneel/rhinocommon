@@ -381,7 +381,7 @@ namespace Rhino.DocObjects
     /// <returns>Array of child layers. null if this layer does not have any children</returns>
     public Layer[] GetChildren()
     {
-      Runtime.INTERNAL_IntArray childIndices = new Rhino.Runtime.INTERNAL_IntArray();
+      Runtime.InteropWrappers.SimpleArrayInt childIndices = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
       int index = LayerIndex;
       int count = UnsafeNativeMethods.CRhinoLayerNode_GetChildren(m_doc.m_docId, index, childIndices.m_ptr);
       Layer[] rc = null;

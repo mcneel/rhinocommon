@@ -630,8 +630,8 @@ namespace Rhino.Geometry
       IntPtr ptr_crv_array = crv_array.ConstPointer();
       IntPtr ptr_brp_array = brp_array.ConstPointer();
 
-      Runtime.INTERNAL_IntArray brp_top = new Rhino.Runtime.INTERNAL_IntArray();
-      Runtime.INTERNAL_IntArray crv_top = new Rhino.Runtime.INTERNAL_IntArray();
+      Runtime.InteropWrappers.SimpleArrayInt brp_top = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
+      Runtime.InteropWrappers.SimpleArrayInt crv_top = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
 
       SimpleArrayCurvePointer rc = new SimpleArrayCurvePointer();
       IntPtr ptr_rc = rc.NonConstPointer();

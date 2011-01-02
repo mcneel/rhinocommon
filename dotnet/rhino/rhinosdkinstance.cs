@@ -172,7 +172,7 @@ namespace Rhino.DocObjects
     /// <returns></returns>
     public InstanceDefinition[] GetContainers()
     {
-      Runtime.INTERNAL_IntArray arr = new Rhino.Runtime.INTERNAL_IntArray();
+      Runtime.InteropWrappers.SimpleArrayInt arr = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
       IntPtr ptr = arr.m_ptr;
       int count = UnsafeNativeMethods.CRhinoInstanceDefinition_GetContainers(m_doc.m_docId, m_index, ptr);
       InstanceDefinition[] rc = null;
@@ -565,7 +565,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns></returns>
     public DocObjects.InstanceDefinition[] GetList(bool ignoreDeleted)
     {
-      Runtime.INTERNAL_IntArray arr = new Runtime.INTERNAL_IntArray();
+      Runtime.InteropWrappers.SimpleArrayInt arr = new Runtime.InteropWrappers.SimpleArrayInt();
       IntPtr ptr = arr.m_ptr;
       int count = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetList(m_doc.m_docId, ptr, ignoreDeleted);
       DocObjects.InstanceDefinition[] rc = null;

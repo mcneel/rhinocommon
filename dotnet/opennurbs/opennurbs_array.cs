@@ -91,53 +91,6 @@ namespace Rhino.Runtime
 
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
-  class INTERNAL_IntArray : IDisposable
-  {
-    public IntPtr m_ptr; // ON_SimpleArray<int>
-
-    public INTERNAL_IntArray()
-    {
-      m_ptr = UnsafeNativeMethods.ON_IntArray_New();
-    }
-
-    public int Count
-    {
-      get { return UnsafeNativeMethods.ON_IntArray_Count(m_ptr); }
-    }
-
-    public int[] ToArray()
-    {
-      int count = Count;
-      if (count < 1)
-        return null;
-      int[] rc = new int[count];
-      UnsafeNativeMethods.ON_IntArray_CopyValues(m_ptr, rc);
-      return rc;
-    }
-
-    ~INTERNAL_IntArray()
-    {
-      InternalDispose();
-    }
-
-    public void Dispose()
-    {
-      InternalDispose();
-      GC.SuppressFinalize(this);
-    }
-
-    private void InternalDispose()
-    {
-      if (IntPtr.Zero != m_ptr)
-      {
-        UnsafeNativeMethods.ON_IntArray_Delete(m_ptr);
-        m_ptr = IntPtr.Zero;
-      }
-    }
-  }
-
-  //////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////
   class INTERNAL_ComponentIndexArray : IDisposable
   {
     public IntPtr m_ptr; // ON_SimpleArray<ON_COMPONENT_INDEX>
@@ -299,6 +252,54 @@ namespace Rhino.Runtime
 
 namespace Rhino.Runtime.InteropWrappers
 {
+  /// <summary>
+  /// Wrapper for ON_SimpleArray&lt;int&gt;
+  /// </summary>
+  class SimpleArrayInt : IDisposable
+  {
+    public IntPtr m_ptr; // ON_SimpleArray<int>
+
+    public SimpleArrayInt()
+    {
+      m_ptr = UnsafeNativeMethods.ON_IntArray_New();
+    }
+
+    public int Count
+    {
+      get { return UnsafeNativeMethods.ON_IntArray_Count(m_ptr); }
+    }
+
+    public int[] ToArray()
+    {
+      int count = Count;
+      if (count < 1)
+        return null;
+      int[] rc = new int[count];
+      UnsafeNativeMethods.ON_IntArray_CopyValues(m_ptr, rc);
+      return rc;
+    }
+
+    ~SimpleArrayInt()
+    {
+      InternalDispose();
+    }
+
+    public void Dispose()
+    {
+      InternalDispose();
+      GC.SuppressFinalize(this);
+    }
+
+    private void InternalDispose()
+    {
+      if (IntPtr.Zero != m_ptr)
+      {
+        UnsafeNativeMethods.ON_IntArray_Delete(m_ptr);
+        m_ptr = IntPtr.Zero;
+      }
+    }
+  }
+
   /// <summary>
   /// Wrapper for ON_SimpleArray&lt;double&gt;
   /// </summary>

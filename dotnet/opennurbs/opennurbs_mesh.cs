@@ -1705,7 +1705,7 @@ namespace Rhino.Geometry.Collections
     public int[] GetVertexFaces(int vertexIndex)
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
-      Rhino.Runtime.INTERNAL_IntArray face_ids = new Rhino.Runtime.INTERNAL_IntArray();
+      Rhino.Runtime.InteropWrappers.SimpleArrayInt face_ids = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
       int count = UnsafeNativeMethods.ON_Mesh_GetVertexFaces(pConstMesh, face_ids.m_ptr, vertexIndex);
       int[] ids = null;
       if (count > 0)
@@ -1727,7 +1727,7 @@ namespace Rhino.Geometry.Collections
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
       int[] ids = null;
-      using (Rhino.Runtime.INTERNAL_IntArray vertex_ids = new Rhino.Runtime.INTERNAL_IntArray())
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayInt vertex_ids = new Rhino.Runtime.InteropWrappers.SimpleArrayInt())
       {
         int count = UnsafeNativeMethods.ON_Mesh_GetTopologicalVertices(pConstMesh, vertex_ids.m_ptr, vertexIndex);
         if (count > 0)
@@ -1745,7 +1745,7 @@ namespace Rhino.Geometry.Collections
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
       int[] ids = null;
-      using (Rhino.Runtime.INTERNAL_IntArray vertex_ids = new Rhino.Runtime.INTERNAL_IntArray())
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayInt vertex_ids = new Rhino.Runtime.InteropWrappers.SimpleArrayInt())
       {
         int count = UnsafeNativeMethods.ON_Mesh_GetConnectedVertices(pConstMesh, vertex_ids.m_ptr, vertexIndex);
         if (count > 0)
@@ -1925,6 +1925,86 @@ namespace Rhino.Geometry.Collections
 
         IntPtr ptr = m_mesh.NonConstPointer();
         UnsafeNativeMethods.ON_Mesh_SetTopologyVertex(ptr, index, value);
+      }
+    }
+
+    /// <summary>
+    /// Get the topology vertex index for an existing mesh vertex in the mesh's
+    /// VertexList
+    /// </summary>
+    /// <param name="vertexIndex">index of a vertex in the Mesh.Vertices</param>
+    /// <returns>index of a topology vertex in the Mesh.TopologyVertices</returns>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    public int TopologyVertexIndex(int vertexIndex)
+    {
+      IntPtr ptr = m_mesh.ConstPointer();
+      int rc = UnsafeNativeMethods.ON_Mesh_TopologyVertexIndex(ptr, vertexIndex);
+      if (-1 == rc)
+        throw new IndexOutOfRangeException();
+      return rc;
+    }
+
+    /// <summary>
+    /// Get indices of all mesh vertices that a given topology vertex represents
+    /// </summary>
+    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices</param>
+    /// <returns>
+    /// Indices of all vertices that in Mesh.Vertices that a topology vertex represents.
+    /// </returns>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    public int[] MeshVertexIndices(int topologyVertexIndex)
+    {
+      IntPtr ptr = m_mesh.ConstPointer();
+      int count = UnsafeNativeMethods.ON_MeshTopologyVertex_Count(ptr, topologyVertexIndex, true);
+      if (-1 == count)
+        throw new IndexOutOfRangeException();
+      if (count < 1)
+        return null;
+      int[] rc = new int[count];
+      UnsafeNativeMethods.ON_MeshTopologyVertex_GetIndices(ptr, topologyVertexIndex, count, rc);
+      return rc;
+    }
+
+    /// <summary>
+    /// Get all topological vertices that are connected to a given vertex
+    /// </summary>
+    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices</param>
+    /// <returns>
+    /// Indices of all topological vertices that are connected to this topological vertex.
+    /// null if no vertices are connected to this vertex
+    /// </returns>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    public int[] ConnectedTopologyVertices(int topologyVertexIndex)
+    {
+      IntPtr ptr = m_mesh.ConstPointer();
+      int count = UnsafeNativeMethods.ON_MeshTopologyVertex_Count(ptr, topologyVertexIndex, false);
+      if (-1 == count)
+        throw new IndexOutOfRangeException();
+      if (count < 1)
+        return null;
+      int[] rc = new int[count];
+      UnsafeNativeMethods.ON_MeshTopologyVertex_ConnectedVertices(ptr, topologyVertexIndex, count, rc);
+      return rc;
+    }
+
+    /// <summary>
+    /// Get all faces that are connected to a given vertex
+    /// </summary>
+    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices</param>
+    /// <returns>
+    /// Indices of all faces in Mesh.Faces that are connected to this topological vertex.
+    /// null if no faces are connected to this vertex
+    /// </returns>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    public int[] ConnectedFaces(int topologyVertexIndex)
+    {
+      IntPtr ptr = m_mesh.ConstPointer();
+      if (topologyVertexIndex < 0 || topologyVertexIndex >= this.Count)
+        throw new IndexOutOfRangeException();
+      using (Runtime.InteropWrappers.SimpleArrayInt arr = new Rhino.Runtime.InteropWrappers.SimpleArrayInt())
+      {
+        UnsafeNativeMethods.ON_MeshTopologyVertex_ConnectedFaces(ptr, topologyVertexIndex, arr.m_ptr);
+        return arr.ToArray();
       }
     }
     #endregion

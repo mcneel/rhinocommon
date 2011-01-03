@@ -716,9 +716,31 @@ namespace Rhino.Geometry.Intersect
     /// </returns>
     public static double MeshRay(Mesh mesh, Ray3d ray)
     {
+      int index=0;
       IntPtr pConstMesh = mesh.ConstPointer();
-      return UnsafeNativeMethods.ON_Intersect_MeshRay1(pConstMesh, ref ray);
+      return UnsafeNativeMethods.ON_Intersect_MeshRay1(pConstMesh, ref ray, ref index);
     }
+
+    /// <summary>Finds the first intersection of a ray with a mesh</summary>
+    /// <param name="mesh"></param>
+    /// <param name="ray"></param>
+    /// <param name="meshFaceIndex">face on mesh that ray intersects</param>
+    /// <returns>
+    /// >= 0.0 parameter along ray if successful.
+    /// &lt; 0.0 if no intersection found
+    /// </returns>
+    /// <remarks>
+    /// NOTE: The ray may intersect more than one face in cases where the ray hits
+    /// the edge between two faces or the vertex corner shared by multiple faces.
+    /// In those cases, this function only returns one of the faces hit.
+    /// </remarks>
+    public static double MeshRay(Mesh mesh, Ray3d ray, out int meshFaceIndex)
+    {
+      meshFaceIndex = -1;
+      IntPtr pConstMesh = mesh.ConstPointer();
+      return UnsafeNativeMethods.ON_Intersect_MeshRay1(pConstMesh, ref ray, ref meshFaceIndex);
+    }
+
     /// <summary>
     /// Find the intersection of a mesh and a polyline
     /// </summary>

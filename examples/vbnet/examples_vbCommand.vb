@@ -33,6 +33,7 @@ Public Class examples_vbCommand
     Test(AddressOf Examples.AddBrepBox, doc)
     Test(AddressOf Examples.AddChildLayer, doc)
     Test(AddressOf Examples.AddCircle, doc)
+    Test(AddressOf Examples.AddCylinder, doc)
     Test(AddressOf Examples.DivideByLengthPoints, doc)
     Test(AddressOf Examples.AddLayer, doc)
     Test(AddressOf Examples.AddBackgroundBitmap, doc)

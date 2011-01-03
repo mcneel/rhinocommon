@@ -64,6 +64,7 @@
     <Compile Include="ex_addchildlayer.cs" />
     <Compile Include="ex_addcircle.cs" />
     <Compile Include="ex_addclippingplane.cs" />
+    <Compile Include="ex_addcylinder.cs" />
     <Compile Include="ex_addlayer.cs" />
     <Compile Include="ex_addline.cs" />
     <Compile Include="ex_addlineardimension.cs" />

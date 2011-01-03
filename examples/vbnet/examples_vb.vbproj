@@ -83,6 +83,7 @@
     <Compile Include="ex_addchildlayer.vb" />
     <Compile Include="ex_addcircle.vb" />
     <Compile Include="ex_addclippingplane.vb" />
+    <Compile Include="ex_addcylinder.vb" />
     <Compile Include="ex_addlayer.vb" />
     <Compile Include="ex_addline.vb" />
     <Compile Include="ex_addlineardimension.vb" />

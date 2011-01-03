@@ -42,6 +42,7 @@ namespace examples_cs
       //Test(Examples.AddBrepBox, doc);
       //Test(Examples.AddChildLayer, doc);
       //Test(Examples.AddCircle, doc);
+      Test(Examples.AddCylinder, doc);
       //Test(Examples.DivideByLengthPoints, doc);
       Test(Examples.DetermineObjectLayer, doc);
       //Test(Examples.AddLayer, doc);

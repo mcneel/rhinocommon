@@ -40,6 +40,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="baseCircle">Base circle for cylinder.</param>
     /// <param name="height">Height of cylinder (zero for infinite cylinder).</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addcylinder.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addcylinder.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addcylinder.py' lang='py'/>
+    /// </example>
     public Cylinder(Circle baseCircle, double height)
     {
       m_basecircle = baseCircle;
@@ -170,6 +175,11 @@ namespace Rhino.Geometry
     /// <param name="capBottom">If true, the bottom of the cylinder will be capped.</param>
     /// <param name="capTop">If true, the top of the cylinder will be capped.</param>
     /// <returns>A Brep representation of the cylinder or null.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addcylinder.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addcylinder.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addcylinder.py' lang='py'/>
+    /// </example>
     public Brep ToBrep(bool capBottom, bool capTop)
     {
       return Brep.CreateFromCylinder(this, capBottom, capTop);

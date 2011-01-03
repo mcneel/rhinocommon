@@ -179,6 +179,11 @@ namespace Rhino.Geometry
     ///<param name="origin">Origin point of the plane.</param>
     ///<param name="normal">Non-zero normal to the plane.</param>
     ///<seealso>CreateFromNormal</seealso>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addcylinder.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addcylinder.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addcylinder.py' lang='py'/>
+    /// </example>
     public Plane(Point3d origin, Vector3d normal)
       : this()
     {

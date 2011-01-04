@@ -716,29 +716,34 @@ namespace Rhino.Geometry.Intersect
     /// </returns>
     public static double MeshRay(Mesh mesh, Ray3d ray)
     {
-      int index=0;
       IntPtr pConstMesh = mesh.ConstPointer();
-      return UnsafeNativeMethods.ON_Intersect_MeshRay1(pConstMesh, ref ray, ref index);
+      return UnsafeNativeMethods.ON_Intersect_MeshRay1(pConstMesh, ref ray, IntPtr.Zero);
     }
 
     /// <summary>Finds the first intersection of a ray with a mesh</summary>
     /// <param name="mesh"></param>
     /// <param name="ray"></param>
-    /// <param name="meshFaceIndex">face on mesh that ray intersects</param>
+    /// <param name="meshFaceIndices">faces on mesh that ray intersects</param>
     /// <returns>
     /// >= 0.0 parameter along ray if successful.
     /// &lt; 0.0 if no intersection found
     /// </returns>
     /// <remarks>
-    /// NOTE: The ray may intersect more than one face in cases where the ray hits
+    /// The ray may intersect more than one face in cases where the ray hits
     /// the edge between two faces or the vertex corner shared by multiple faces.
-    /// In those cases, this function only returns one of the faces hit.
     /// </remarks>
-    public static double MeshRay(Mesh mesh, Ray3d ray, out int meshFaceIndex)
+    public static double MeshRay(Mesh mesh, Ray3d ray, out int[] meshFaceIndices)
     {
-      meshFaceIndex = -1;
-      IntPtr pConstMesh = mesh.ConstPointer();
-      return UnsafeNativeMethods.ON_Intersect_MeshRay1(pConstMesh, ref ray, ref meshFaceIndex);
+      meshFaceIndices = null;
+      using (Runtime.InteropWrappers.SimpleArrayInt indices = new Rhino.Runtime.InteropWrappers.SimpleArrayInt())
+      {
+        IntPtr pConstMesh = mesh.ConstPointer();
+        double rc = UnsafeNativeMethods.ON_Intersect_MeshRay1(pConstMesh, ref ray, indices.m_ptr );
+        int[] vals = indices.ToArray();
+        if (vals!=null && vals.Length > 0)
+          meshFaceIndices = vals;
+        return rc;
+      }
     }
 
     /// <summary>

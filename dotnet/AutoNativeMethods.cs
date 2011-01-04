@@ -1583,9 +1583,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Intersect_MeshPlanes4(IntPtr pPolylines);
 
-  //double ON_Intersect_MeshRay1(const ON_Mesh* pMesh, ON_3dRay* ray, int* face_index)
+  //double ON_Intersect_MeshRay1(const ON_Mesh* pMesh, ON_3dRay* ray, ON_SimpleArray<int>* face_indices)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern double ON_Intersect_MeshRay1(IntPtr pMesh, ref Ray3d ray, ref int face_index);
+  internal static extern double ON_Intersect_MeshRay1(IntPtr pMesh, ref Ray3d ray, IntPtr face_indices);
 
   //ON_SimpleArray<ON_CMX_EVENT>* ON_Intersect_MeshPolyline1(const ON_Mesh* pMesh, const ON_PolylineCurve* pCurve, int* count)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

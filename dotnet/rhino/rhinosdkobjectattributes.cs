@@ -121,14 +121,6 @@ namespace Rhino.DocObjects
       set { SetBool(idxIsVisible, value); }
     }
 
-    public override bool IsValid
-    {
-      get
-      {
-        return InternalIsValid();
-      }
-    }
-
     /// <summary>
     /// The Linetype used to display an object is specified in one of two ways.
     /// If LinetypeSource is ON::linetype_from_layer, then the object's layer ON_Layer::Linetype() is used.

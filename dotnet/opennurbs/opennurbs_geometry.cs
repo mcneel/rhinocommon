@@ -479,13 +479,6 @@ namespace Rhino.Geometry
       return rc;
     }
 
-    public override bool IsValid
-    {
-      get
-      {
-        return InternalIsValid();
-      }
-    }
 
     ///// <summary>
     ///// The dimension is typically three. For parameter space trimming curves the

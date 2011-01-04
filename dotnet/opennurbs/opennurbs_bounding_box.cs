@@ -566,6 +566,30 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Computes the intersection of two bounding boxes
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static BoundingBox Intersection(BoundingBox a, BoundingBox b)
+    {
+      BoundingBox rc = BoundingBox.Unset;
+      if( a.IsValid && b.IsValid )
+      {
+        Point3d min = new Point3d();
+        Point3d max = new Point3d();
+        min.X = (a.Min.X >= b.Min.X) ? a.Min.X : b.Min.X;
+        min.Y = (a.Min.Y >= b.Min.Y) ? a.Min.Y : b.Min.Y;
+        min.Z = (a.Min.Z >= b.Min.Z) ? a.Min.Z : b.Min.Z;
+        max.X = (a.Max.X <= b.Max.X) ? a.Max.X : b.Max.X;
+        max.Y = (a.Max.Y <= b.Max.Y) ? a.Max.Y : b.Max.Y;
+        max.Z = (a.Max.Z <= b.Max.Z) ? a.Max.Z : b.Max.Z;
+        rc = new BoundingBox(min, max);
+      }
+      return rc;
+    }
+
+    /// <summary>
     /// Returns a new BoundingBox that represents the union of a bounding box and a point.
     /// </summary>
     /// <param name="box">Box to include in the union.</param>

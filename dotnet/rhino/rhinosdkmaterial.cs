@@ -44,11 +44,6 @@ namespace Rhino.DocObjects
     }
 
     #region properties
-    public override bool IsValid
-    {
-      get { return InternalIsValid(); }
-    }
-
     const int idxIsDeleted = 0;
     const int idxIsReference = 1;
     const int idxIsModified = 2;

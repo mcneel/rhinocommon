@@ -102,9 +102,7 @@ namespace Rhino.Runtime
       }
     }
 
-    protected virtual void OnSwitchToNonConst()
-    {
-    }
+    protected virtual void OnSwitchToNonConst(){}
 
     /// <summary>
     /// If you want to keep a copy of this class around by holding onto it in a variable after a command
@@ -122,10 +120,7 @@ namespace Rhino.Runtime
     /// </summary>
     public virtual bool IsDocumentControlled
     {
-      get
-      {
-        return (IntPtr.Zero==m_ptr);
-      }
+      get { return (IntPtr.Zero==m_ptr); }
     }
 
     internal void ConstructNonConstObject(IntPtr nativePointer)
@@ -143,34 +138,13 @@ namespace Rhino.Runtime
       // we in-place copy
     }
 
-    ~CommonObject()
+    public virtual bool IsValid
     {
-      Dispose(false);
-    }
-
-    public void Dispose()
-    {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-      if (IntPtr.Zero != m_ptr)
+      get
       {
-        UnsafeNativeMethods.ON_Object_Delete(m_ptr);
-        m_ptr = IntPtr.Zero;
-        if (m_unmanaged_memory > 0)
-          GC.RemoveMemoryPressure(m_unmanaged_memory);
+        IntPtr ptr = ConstPointer();
+        return UnsafeNativeMethods.ON_Object_IsValid(ptr);
       }
-    }
-
-    public abstract bool IsValid { get; }
-
-    internal bool InternalIsValid()
-    {
-      IntPtr ptr = ConstPointer();
-      return UnsafeNativeMethods.ON_Object_IsValid(ptr);
     }
 
     internal void ApplyMemoryPressure()
@@ -192,5 +166,28 @@ namespace Rhino.Runtime
       }
     }
 
+    #region IDisposable implementation
+    ~CommonObject()
+    {
+      Dispose(false);
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_ptr)
+      {
+        UnsafeNativeMethods.ON_Object_Delete(m_ptr);
+        m_ptr = IntPtr.Zero;
+        if (m_unmanaged_memory > 0)
+          GC.RemoveMemoryPressure(m_unmanaged_memory);
+      }
+    }
+    #endregion
   }
 }

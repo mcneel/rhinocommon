@@ -46,11 +46,6 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.ON_Object_Duplicate(pConstPointer);
     }
 
-    public override bool IsValid
-    {
-      get { return InternalIsValid(); }
-    }
-
     public Guid Id
     {
       get

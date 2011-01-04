@@ -80,11 +80,6 @@ namespace Rhino.DocObjects
     const int idxIsLocked = 1;
     const int idxIsExpanded = 2;
     #region properties
-    public override bool IsValid
-    {
-      get { return InternalIsValid(); }
-    }
-
     /// <summary>Gets the name of this layer</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_sellayer.vb' lang='vbnet'/>

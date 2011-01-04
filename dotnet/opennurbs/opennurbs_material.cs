@@ -34,14 +34,6 @@ namespace Rhino.DocObjects
       return IntPtr.Zero;
     }
 
-    public override bool IsValid
-    {
-      get
-      {
-        return InternalIsValid();
-      }
-    }
-
     /// <summary>
     /// Set material to default settings
     /// </summary>

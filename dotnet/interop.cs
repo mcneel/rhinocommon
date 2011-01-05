@@ -267,6 +267,25 @@ namespace Rhino.Runtime
       return rc;
     }
 
+    public static object ToOnXform(Rhino.Geometry.Transform source)
+    {
+      object rc = null;
+      Type onType = GetRhinoDotNetType("RMA.OpenNURBS.OnXform");
+      if (null != onType)
+      {
+        double[] vals = new double[16];
+        for( int row=0; row<4; row++ )
+        {
+          for (int column = 0; column < 4; column++)
+          {
+            vals[4 * row + column] = source[row, column];
+          }
+        }
+        rc = System.Activator.CreateInstance(onType, new object[] { vals });
+      }
+      return rc;
+    }
+
     /// <summary>
     /// Convert a Rhino.Display.Viewport to an RMA.Rhino.IRhinoViewport
     /// </summary>

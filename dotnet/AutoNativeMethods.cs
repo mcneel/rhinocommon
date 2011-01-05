@@ -6193,6 +6193,10 @@ internal partial class UnsafeNativeMethods
   //int RHC_RhinoPullPointsToFace( const ON_Brep* pConstBrep, int face_index, int count, /*ARRAY*/const ON_3dPoint* inpoints, ON_SimpleArray<ON_3dPoint>* outpoints, double tolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_RhinoPullPointsToFace(IntPtr pConstBrep, int face_index, int count, Point3d[] inpoints, IntPtr outpoints, double tolerance);
+
+  //void RHC_RhinoKillSplash()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void RHC_RhinoKillSplash();
   #endregion
 
 

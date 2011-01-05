@@ -9,6 +9,14 @@ namespace Rhino
     public static class Dialogs
     {
       /// <summary>
+      /// Destroy the splash screen if it is being displayed
+      /// </summary>
+      public static void KillSplash()
+      {
+        UnsafeNativeMethods.RHC_RhinoKillSplash();
+      }
+
+      /// <summary>
       /// Hides a form, calls a provided function, and then shows the form. This works for
       /// modal forms. Useful for selecting objects or getting points while a modal dialog
       /// is running

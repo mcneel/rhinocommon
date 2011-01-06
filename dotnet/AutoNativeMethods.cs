@@ -1838,6 +1838,45 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region on_linetype.cpp
+  //ON_Linetype* ON_Linetype_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_Linetype_New();
+
+  //void ON_Linetype_Default(ON_Linetype* pLinetype)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Linetype_Default(IntPtr pLinetype);
+
+  //void ON_Linetype_GetLinetypeName(const ON_Linetype* pLinetype, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Linetype_GetLinetypeName(IntPtr pLinetype, IntPtr pStringHolder);
+
+  //void ON_Linetype_SetLinetypeName(ON_Linetype* pLinetype, const RHMONO_STRING* _name)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Linetype_SetLinetypeName(IntPtr pLinetype, [MarshalAs(UnmanagedType.LPWStr)]string _name);
+
+  //int ON_Linetype_GetInt(const ON_Linetype* pLinetype, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Linetype_GetInt(IntPtr pLinetype, int which);
+
+  //void ON_Linetype_SetInt(ON_Linetype* pLinetype, int which, int val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Linetype_SetInt(IntPtr pLinetype, int which, int val);
+
+  //double ON_Linetype_PatternLength(const ON_Linetype* pLinetype)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Linetype_PatternLength(IntPtr pLinetype);
+
+  //ON_UUID ON_Linetype_GetGuid(const ON_Linetype* pLinetype)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ON_Linetype_GetGuid(IntPtr pLinetype);
+
+  //void ON_Linetype_SetGuid(ON_Linetype* pLinetype, ON_UUID value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Linetype_SetGuid(IntPtr pLinetype, Guid value);
+  #endregion
+
+
   #region on_massprop.cpp
   //void ON_MassProperties_Delete( ON_MassProperties* ptr )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5254,6 +5293,22 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region rh_linetype.cpp
+  //ON_UUID CRhinoLinetypeTable_GetLinetypeId(int docId, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoLinetypeTable_GetLinetypeId(int docId, int index);
+
+  //const ON_Linetype* CRhinoLinetypeTable_GetLinetypePointer2(int docId, ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoLinetypeTable_GetLinetypePointer2(int docId, Guid id);
+
+  //bool CRhinoLinetypeTable_CommitChanges(int docId, ON_Linetype* pLinetype, ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoLinetypeTable_CommitChanges(int docId, IntPtr pLinetype, Guid id);
+  #endregion
+
+
   #region rh_material.cpp
   //bool CRhinoMaterial_GetBool( const CRhinoMaterial* pConstRhinoMaterial, int which )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6022,6 +6077,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_CapPlanarHoles(IntPtr pBrep, double tolerance);
 
+  //int RHC_RhinoBrepSplit(const ON_Brep* pConstBrep, const ON_Brep* pConstSplitterBrep, ON_SimpleArray<ON_Brep*>* pBrepArray, double tolerance, bool* toleranceWasRaised)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoBrepSplit(IntPtr pConstBrep, IntPtr pConstSplitterBrep, IntPtr pBrepArray, double tolerance, [MarshalAs(UnmanagedType.U1)]ref bool toleranceWasRaised);
+
   //int RHC_RhinoGetBrepFaceIsoCurves( const ON_Brep* pConstBrep, int face_index, int direction, double parameter, ON_SimpleArray<ON_Curve*>* curves)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_RhinoGetBrepFaceIsoCurves(IntPtr pConstBrep, int face_index, int direction, double parameter, IntPtr curves);
@@ -6194,6 +6253,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool RHC_RhinoArePointsCoplanar(int count, Point3d[] points, double tolerance);
+
+  //int RHC_RhinoCreateSolid( const ON_SimpleArray<const ON_Brep*>* pConstBrepArray, ON_SimpleArray<ON_Brep*>* pBrepArray, double tolerance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoCreateSolid(IntPtr pConstBrepArray, IntPtr pBrepArray, double tolerance);
 
   //int RHC_RhinoPullPointsToFace( const ON_Brep* pConstBrep, int face_index, int count, /*ARRAY*/const ON_3dPoint* inpoints, ON_SimpleArray<ON_3dPoint>* outpoints, double tolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

@@ -1,4 +1,2 @@
-namespace Rhino
-{
-//  public class ON_Linetype { }
-}
+// ON_Linetype has been merged with CRhinoLinetype
+// See rhinosdklinetype.cs

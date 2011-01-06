@@ -71,16 +71,12 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.ON_Object_Duplicate(pConstPointer);
     }
 
-    const int idxLinetypeIndex = 0;
-    const int idxRenderMaterialIndex = 1;
-    const int idxLayerIndex = 2;
-    const int idxIgesLevel = 3;
 
     const int idxIsVisible = 0;
     const int idxIsLocked = 1;
     const int idxIsExpanded = 2;
     #region properties
-    /// <summary>Gets the name of this layer</summary>
+    /// <summary>The name of this layer</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_sellayer.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_sellayer.cs' lang='cs'/>
@@ -300,6 +296,10 @@ namespace Rhino.DocObjects
     }
 
 
+    const int idxLinetypeIndex = 0;
+    const int idxRenderMaterialIndex = 1;
+    const int idxLayerIndex = 2;
+    const int idxIgesLevel = 3;
     int GetInt(int which)
     {
       IntPtr pConstLayer = ConstPointer();

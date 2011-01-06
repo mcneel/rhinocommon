@@ -1,21 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-
 using Rhino;
 using Rhino.Geometry;
 
-namespace Rhino
-{
-  //public class ON_BrepVertex { }
-  //public class ON_BrepEdge { }
-  //public struct ON_BrepTrimPoint { }
-  //public class ON_BrepTrim { }
-  //public class ON_BrepLoop { }
-  //public class ON_BrepFaceSide { }
-  //public class ON_BrepRegion { }
-  //public class ON_BrepRegionTopology { }
-}
 namespace Rhino.Geometry
 {
   /// <summary>
@@ -49,6 +37,9 @@ namespace Rhino.Geometry
     Uniform = 5
   }
 
+  /// <summary>
+  /// Boundary Representation. A surface or polysurface along with trim curve information.
+  /// </summary>
   public class Brep : GeometryBase
   {
     #region statics
@@ -385,6 +376,31 @@ namespace Rhino.Geometry
         return null;
       return new Brep(pNewBrep, null, null);
     }
+
+    /// <summary>
+    /// Creates closed polysurfaces from surfaces and polysurfaces that bound a region in space.
+    /// </summary>
+    /// <param name="breps">
+    /// The intersecting surfaces and polysurfaces to automatically trim and join into closed polysurfaces.
+    /// </param>
+    /// <param name="tolerance">
+    /// The trim and join tolerance. If set to RhinoMath.UnsetValue, Rhino's global absolute tolerance is used
+    /// </param>
+    /// <returns>The resulting polysurfaces on success or null on failure</returns>
+    public static Brep[] CreateSolid(IEnumerable<Brep> breps, double tolerance)
+    {
+      Rhino.Runtime.INTERNAL_BrepArray inbreps = new Rhino.Runtime.INTERNAL_BrepArray();
+      foreach (Brep b in breps)
+        inbreps.AddBrep(b, true);
+      Rhino.Runtime.INTERNAL_BrepArray outbreps = new Rhino.Runtime.INTERNAL_BrepArray();
+      IntPtr pInBreps = inbreps.ConstPointer();
+      IntPtr pOutBreps = outbreps.NonConstPointer();
+      int create_rc = UnsafeNativeMethods.RHC_RhinoCreateSolid(pInBreps, pOutBreps, tolerance);
+      Brep[] rc = outbreps.ToNonConstArray();
+      inbreps.Dispose();
+      outbreps.Dispose();
+      return rc;
+    }
 #endif
 
     /// <summary>
@@ -631,17 +647,41 @@ namespace Rhino.Geometry
       output.Dispose();
       return rc;
     }
+
+    // making static because there will be IEnumerable<Brep> versions of this function
+    public static Curve[] CreateContourCurves(Brep brepToContour, Point3d contourStart, Point3d contourEnd, double interval)
+    {
+      IntPtr pConstBrep = brepToContour.ConstPointer();
+      using (Runtime.InteropWrappers.SimpleArrayCurvePointer outputcurves = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer())
+      {
+        IntPtr pCurves = outputcurves.NonConstPointer();
+        int count = UnsafeNativeMethods.RHC_MakeRhinoContours2(pConstBrep, contourStart, contourEnd, interval, pCurves);
+        if (0 == count)
+          return null;
+        return outputcurves.ToNonConstArray();
+      }
+    }
+    public static Curve[] CreateContourCurves(Brep brepToContour, Plane sectionPlane)
+    {
+      IntPtr pConstBrep = brepToContour.ConstPointer();
+      using (Runtime.InteropWrappers.SimpleArrayCurvePointer outputcurves = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer())
+      {
+        IntPtr pCurves = outputcurves.NonConstPointer();
+        int count = UnsafeNativeMethods.RHC_MakeRhinoContours3(pConstBrep, ref sectionPlane, pCurves);
+        if (0 == count)
+          return null;
+        return outputcurves.ToNonConstArray();
+      }
+    }
     #endregion
 
     #region constructors
-
     internal Brep(IntPtr ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
       : base(ptr, parent_object, obj_ref)
     {
       if (null == parent_object && null == obj_ref)
         ApplyMemoryPressure();
     }
-
     #endregion
 
     #region properties
@@ -949,31 +989,43 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.RHC_RhinoJoinBreps2(pThisBrep, pOther, tolerance, compact);
     }
 
-    // making static because there will be IEnumerable<Brep> versions of this function
-    public static Curve[] CreateContourCurves(Brep brepToContour, Point3d contourStart, Point3d contourEnd, double interval)
+    /// <summary>
+    /// Splits a Brep into pieces
+    /// </summary>
+    /// <param name="splitter"></param>
+    /// <param name="intersectionTolerance"></param>
+    /// <returns></returns>
+    public Brep[] Split(Brep splitter, double intersectionTolerance)
     {
-      IntPtr pConstBrep = brepToContour.ConstPointer();
-      using (Runtime.InteropWrappers.SimpleArrayCurvePointer outputcurves = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer())
-      {
-        IntPtr pCurves = outputcurves.NonConstPointer();
-        int count = UnsafeNativeMethods.RHC_MakeRhinoContours2(pConstBrep, contourStart, contourEnd, interval, pCurves);
-        if (0 == count)
-          return null;
-        return outputcurves.ToNonConstArray();
-      }
+      bool raised;
+      return Split(splitter, intersectionTolerance, out raised);
     }
-    public static Curve[] CreateContourCurves(Brep brepToContour, Plane sectionPlane)
+
+    /// <summary>
+    /// Splits a Brep into pieces
+    /// </summary>
+    /// <param name="splitter"></param>
+    /// <param name="intersectionTolerance"></param>
+    /// <param name="toleranceWasRaised">
+    /// set to true if the split failed at intersectionTolerance but succeeded
+    /// when the tolerance was increased to twice intersectionTolerance.
+    /// </param>
+    /// <returns></returns>
+    public Brep[] Split(Brep splitter, double intersectionTolerance, out bool toleranceWasRaised)
     {
-      IntPtr pConstBrep = brepToContour.ConstPointer();
-      using (Runtime.InteropWrappers.SimpleArrayCurvePointer outputcurves = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer())
+      toleranceWasRaised = false;
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pConstSplitter = splitter.ConstPointer();
+      using (Rhino.Runtime.INTERNAL_BrepArray breps = new Rhino.Runtime.INTERNAL_BrepArray())
       {
-        IntPtr pCurves = outputcurves.NonConstPointer();
-        int count = UnsafeNativeMethods.RHC_MakeRhinoContours3(pConstBrep, ref sectionPlane, pCurves);
-        if (0 == count)
-          return null;
-        return outputcurves.ToNonConstArray();
+        IntPtr pBrepArray = breps.NonConstPointer();
+        int count = UnsafeNativeMethods.RHC_RhinoBrepSplit(pConstThis, pConstSplitter, pBrepArray, intersectionTolerance, ref toleranceWasRaised);
+        if (count > 0)
+          return breps.ToNonConstArray();
       }
+      return null;
     }
+
     #endregion
 
     #region internal helpers

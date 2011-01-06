@@ -287,15 +287,19 @@ namespace Rhino.Runtime
       // Calling SetUnhandledExceptionMode can throw an exception if any windows have already been
       // created. I don't know how this could happen unless someone else starts writing a mono embedding
       // system in Rhino, but just to be careful
-#if !BUILDING_MONO
+
+      /*
+      // System.Windows.Forms does not work well for Mono yet. Skip the winforms exception handler for now
       try
       {
         System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode.CatchException);
       }
-      catch(Exception){}
-
+      catch(Exception)
+      {
+      }
       System.Windows.Forms.Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
-#endif
+      */
+
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
     }
 

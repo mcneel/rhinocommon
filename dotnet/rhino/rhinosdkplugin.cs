@@ -114,8 +114,10 @@ namespace Rhino.PlugIns
           plugin_class = 1;
         else if (rc is FileExportPlugIn)
           plugin_class = 2;
+#if !BUILDING_MONO
         else if (rc is DigitizerPlugIn)
           plugin_class = 3;
+#endif
         else if (rc is RenderPlugIn)
           plugin_class = 4;
 
@@ -842,6 +844,7 @@ namespace Rhino.PlugIns
     protected abstract WriteFileResult WriteFile(string filename, int index, RhinoDoc doc, Rhino.FileIO.FileWriteOptions options);
   }
   
+#if !BUILDING_MONO
   public abstract class DigitizerPlugIn : PlugIn
   {
     protected DigitizerPlugIn()
@@ -1006,7 +1009,7 @@ namespace Rhino.PlugIns
       return flags;
     }
   }
-
+#endif
   // I think there is an RDK version that we are supposed to use instead
   /*public*/ abstract class RenderPlugIn : PlugIn
   {

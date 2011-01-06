@@ -230,9 +230,11 @@ namespace Rhino.DocObjects
       get { return m_index; }
     }
 
-    //[skipping]
-    // int m_sort_index;   
-    // int m_remap_index;
+    /// <summary>
+    /// An object from a work session reference model is reference a
+    /// reference object and cannot be modified.  An object is a reference
+    /// object if, and only if, it is on a reference layer.
+    /// </summary>
     public bool IsReference
     {
       get
@@ -317,9 +319,6 @@ namespace Rhino.DocObjects.Tables
       }
     }
   
-    //[skipping]
-    //const CRhinoInstanceDefinition* operator[]( int idef_index ) const;
-
     /// <summary>Finds the instance definition with a given name</summary>
     /// <param name="instanceDefinitionName">name of instance definition to search for (ignores case)</param>
     /// <param name="ignoreDeletedInstanceDefinitions">true means don't search deleted instance definitions</param>
@@ -428,6 +427,25 @@ namespace Rhino.DocObjects.Tables
       if (null == idef)
         return false;
       return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_ModifyInstanceDefinition(m_doc.m_docId, idef.Index, newName, newDescription, quiet);
+    }
+
+    /// <summary>
+    /// Marks the source path for a linked instance definition as relative or absolute
+    /// </summary>
+    /// <param name="idef"></param>
+    /// <param name="relative">
+    /// if true, the path should be considered as relative
+    /// if false, the path should be considered as absolute
+    /// </param>
+    /// <param name="quiet"></param>
+    /// <returns>
+    /// true if the instance defintion could be modified
+    /// </returns>
+    public bool MakeSourcePathRelative(DocObjects.InstanceDefinition idef, bool relative, bool quiet)
+    {
+      if (null == idef)
+        return false;
+      return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_MakeSourcePathRelative(m_doc.m_docId, idef.Index, relative, quiet);
     }
 
 

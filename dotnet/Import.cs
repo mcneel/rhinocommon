@@ -55,12 +55,12 @@ internal partial class UnsafeNativeMethods
   internal static extern void CRhinoFileExportPlugIn_SetCallbacks(Rhino.PlugIns.FileExportPlugIn.AddFileType addfiletype,
     Rhino.PlugIns.FileExportPlugIn.WriteFileFunc writefile);
 
+#if !BUILDING_MONO
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoDigitizerPlugIn_SetCallbacks(Rhino.PlugIns.DigitizerPlugIn.EnableDigitizerFunc enablefunc,
     Rhino.PlugIns.DigitizerPlugIn.UnitSystemFunc unitsystemfunc,
     Rhino.PlugIns.DigitizerPlugIn.PointToleranceFunc pointtolfunc);
 
-#if !BUILDING_MONO
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern IntPtr CRhinoSkin_New(Rhino.Runtime.Skin.ShowSplashCallback cb);
 #endif

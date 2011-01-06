@@ -5118,6 +5118,11 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoInstanceDefinitionTable_ModifyInstanceDefinition(int docId, int idef_index, [MarshalAs(UnmanagedType.LPWStr)]string _newName, [MarshalAs(UnmanagedType.LPWStr)]string _newDescription, [MarshalAs(UnmanagedType.U1)]bool quiet);
 
+  //bool CRhinoInstanceDefinitionTable_MakeSourcePathRelative( int docId, int idef_index, bool relative, bool quiet)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoInstanceDefinitionTable_MakeSourcePathRelative(int docId, int idef_index, [MarshalAs(UnmanagedType.U1)]bool relative, [MarshalAs(UnmanagedType.U1)]bool quiet);
+
   //int CRhinoInstanceDefinitionTable_GetList( int docId, ON_SimpleArray<int>* pIntArray, bool ignoreDeleted)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoInstanceDefinitionTable_GetList(int docId, IntPtr pIntArray, [MarshalAs(UnmanagedType.U1)]bool ignoreDeleted);

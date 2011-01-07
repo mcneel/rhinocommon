@@ -37,17 +37,9 @@
       m_btnCancel = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
-      // m_lblMessage
-      // 
-      this.m_lblMessage.AutoSize = true;
-      this.m_lblMessage.Location = new System.Drawing.Point(12, 9);
-      this.m_lblMessage.Name = "m_lblMessage";
-      this.m_lblMessage.Size = new System.Drawing.Size(60, 13);
-      this.m_lblMessage.TabIndex = 1;
-      this.m_lblMessage.Text = "Select Item";
-      // 
       // m_btnOk
       // 
+      m_btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       m_btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
       m_btnOk.Location = new System.Drawing.Point(64, 237);
       m_btnOk.Name = "m_btnOk";
@@ -58,6 +50,7 @@
       // 
       // m_btnCancel
       // 
+      m_btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       m_btnCancel.Location = new System.Drawing.Point(145, 237);
       m_btnCancel.Name = "m_btnCancel";
@@ -66,8 +59,20 @@
       m_btnCancel.Text = "Cancel";
       m_btnCancel.UseVisualStyleBackColor = true;
       // 
+      // m_lblMessage
+      // 
+      this.m_lblMessage.AutoSize = true;
+      this.m_lblMessage.Location = new System.Drawing.Point(12, 9);
+      this.m_lblMessage.Name = "m_lblMessage";
+      this.m_lblMessage.Size = new System.Drawing.Size(60, 13);
+      this.m_lblMessage.TabIndex = 1;
+      this.m_lblMessage.Text = "Select Item";
+      // 
       // m_comboBox
       // 
+      this.m_comboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.m_comboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.Simple;
       this.m_comboBox.FormattingEnabled = true;
       this.m_comboBox.Location = new System.Drawing.Point(13, 26);

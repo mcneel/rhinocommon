@@ -456,7 +456,21 @@ namespace Rhino
       }
     }
 
-    //  CRhinoLinetypeTable m_linetype_table;
+    private Rhino.DocObjects.Tables.LinetypeTable m_linetype_table;
+    /// <summary>
+    /// Linetypes in the document
+    /// </summary>
+    public Rhino.DocObjects.Tables.LinetypeTable Linetypes
+    {
+      get
+      {
+        if (null == m_linetype_table)
+        {
+          m_linetype_table = new Rhino.DocObjects.Tables.LinetypeTable(this);
+        }
+        return m_linetype_table;
+      }
+    }
 
     private Rhino.DocObjects.Tables.LayerTable m_layer_table;
     /// <summary>

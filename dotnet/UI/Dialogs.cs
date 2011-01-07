@@ -290,6 +290,26 @@ namespace Rhino
         return rc;
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="title"></param>
+      /// <param name="message"></param>
+      /// <param name="items"></param>
+      /// <param name="checkState"></param>
+      /// <returns></returns>
+      public static bool[] ShowCheckListBox(string title, string message, System.Collections.IList items, System.Collections.Generic.IList<bool> checkState)
+      {
+        bool[] rc = null;
+        if (items != null && items.Count > 0 && checkState != null && checkState.Count == items.Count)
+        {
+          ListBox dlg = new ListBox(title, message, items, checkState);
+          if (dlg.ShowDialog(RhinoApp.MainWindow()) == System.Windows.Forms.DialogResult.OK)
+            rc = dlg.GetCheckedItemStates();
+        }
+        return rc;
+      }
+
       public static System.Windows.Forms.DialogResult ShowEditBox(string title, string message, string defaultText, bool multiline, out string text)
       {
         text = String.Empty;

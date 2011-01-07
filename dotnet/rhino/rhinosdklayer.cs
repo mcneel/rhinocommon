@@ -295,6 +295,18 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <summary>Runtime index used to sort layers in layer dialog</summary>
+    public int SortIndex
+    {
+      get
+      {
+        if (null == m_doc)
+          return -1;
+        int index = LayerIndex;
+        return UnsafeNativeMethods.CRhinoLayer_SortIndex(m_doc.m_docId, index);
+      }
+    }
+
 
     const int idxLinetypeIndex = 0;
     const int idxRenderMaterialIndex = 1;
@@ -655,6 +667,11 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoLayerTable_UndoModifyLayer(m_doc.m_docId, layerIndex, undoRecordSerialNumber);
     }
 
+    public bool UndoModify(int layerIndex)
+    {
+      return UnsafeNativeMethods.CRhinoLayerTable_UndoModifyLayer(m_doc.m_docId, layerIndex, 0);
+    }
+
     /// <summary>Deletes layer</summary>
     /// <param name="layerIndex">
     /// zero based index of layer to delete. This must be in the range 0 &lt;= layerIndex &lt; LayerTable.Count
@@ -688,10 +705,6 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoLayerTable_UndeleteLayer(m_doc.m_docId, layerIndex);
     }
 
-    //[skipping]
-    // void Sort( 
-    // void GetSortedList(
-
     /// <summary>
     /// Gets unused layer name used as default when creating new layers.
     /// </summary>
@@ -706,10 +719,12 @@ namespace Rhino.DocObjects.Tables
     /// </example>
     public string GetUnusedLayerName(bool ignoreDeleted)
     {
-      IntPtr rc = UnsafeNativeMethods.CRhinoLayerTable_GetUnusedLayerName(m_doc.m_docId, ignoreDeleted);
-      if (IntPtr.Zero == rc)
-        return null;
-      return Marshal.PtrToStringUni(rc);
+      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoLayerTable_GetUnusedLayerName(m_doc.m_docId, ignoreDeleted, pString);
+        return sh.ToString();
+      }
     }
     #endregion
   }

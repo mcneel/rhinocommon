@@ -1874,6 +1874,24 @@ internal partial class UnsafeNativeMethods
   //void ON_Linetype_SetGuid(ON_Linetype* pLinetype, ON_UUID value)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Linetype_SetGuid(IntPtr pLinetype, Guid value);
+
+  //int ON_Linetype_AppendSegment(ON_Linetype* pLinetype, double length, bool isSolid)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Linetype_AppendSegment(IntPtr pLinetype, double length, [MarshalAs(UnmanagedType.U1)]bool isSolid);
+
+  //bool ON_Linetype_RemoveSegment(ON_Linetype* pLinetype, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Linetype_RemoveSegment(IntPtr pLinetype, int index);
+
+  //bool ON_Linetype_SetSegment(ON_Linetype* pLinetype, int index, double length, bool isSolid)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Linetype_SetSegment(IntPtr pLinetype, int index, double length, [MarshalAs(UnmanagedType.U1)]bool isSolid);
+
+  //void ON_Linetype_GetSegment(const ON_Linetype* pConstLinetype, int index, double* length, bool* isSolid)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Linetype_GetSegment(IntPtr pConstLinetype, int index, ref double length, [MarshalAs(UnmanagedType.U1)]ref bool isSolid);
   #endregion
 
 
@@ -5184,6 +5202,10 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoLayer_IsReference(int docId, int index);
 
+  //int CRhinoLayer_SortIndex( int docId, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoLayer_SortIndex(int docId, int index);
+
   //ON_UUID CRhinoLayerTable_GetLayerId(int docId, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoLayerTable_GetLayerId(int docId, int index);
@@ -5226,9 +5248,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoLayerTable_AddLayer(int docId, IntPtr pLayer, [MarshalAs(UnmanagedType.U1)]bool referenceLayer);
 
-  //const RHMONO_STRING* CRhinoLayerTable_GetUnusedLayerName(int docId, bool ignoreDeleted)
+  //void CRhinoLayerTable_GetUnusedLayerName(int docId, bool ignoreDeleted, CRhCmnStringHolder* pString)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr CRhinoLayerTable_GetUnusedLayerName(int docId, [MarshalAs(UnmanagedType.U1)]bool ignoreDeleted);
+  internal static extern void CRhinoLayerTable_GetUnusedLayerName(int docId, [MarshalAs(UnmanagedType.U1)]bool ignoreDeleted, IntPtr pString);
 
   //bool CRhinoLayerTable_ModifyLayer(int docId, const ON_Layer* pLayer, int layerIndex, bool quiet)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5306,6 +5328,98 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoLinetypeTable_CommitChanges(int docId, IntPtr pLinetype, Guid id);
+
+  //bool CRhinoLinetype_IsDeleted( int docId, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoLinetype_IsDeleted(int docId, int index);
+
+  //bool CRhinoLinetype_IsReference( int docId, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoLinetype_IsReference(int docId, int index);
+
+  //bool CRhinoLinetype_IsModified( int docId, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoLinetype_IsModified(int docId, int index);
+
+  //int CRhinoLinetypeTable_LinetypeCount(int docId, bool onlyActive)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoLinetypeTable_LinetypeCount(int docId, [MarshalAs(UnmanagedType.U1)]bool onlyActive);
+
+  //int CRhinoLinetypeTable_GetCurrentLinetypeSource(int docId)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoLinetypeTable_GetCurrentLinetypeSource(int docId);
+
+  //void CRhinoLinetypeTable_SetCurrentLinetypeSource(int docId, int source)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoLinetypeTable_SetCurrentLinetypeSource(int docId, int source);
+
+  //int CRhinoLinetypeTable_CurrentLinetypeIndex(int docId)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoLinetypeTable_CurrentLinetypeIndex(int docId);
+
+  //bool CRhinoLinetypeTable_SetCurrentLinetypeIndex(int docId, int index, bool quiet)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoLinetypeTable_SetCurrentLinetypeIndex(int docId, int index, [MarshalAs(UnmanagedType.U1)]bool quiet);
+
+  //int CRhinoLinetypeTable_EffectiveLinetypeIndex(int docId, const CRhinoObject* pConstRhinoObject)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoLinetypeTable_EffectiveLinetypeIndex(int docId, IntPtr pConstRhinoObject);
+
+  //int CRhinoLinetypeTable_FindLinetype(int docId, const RHMONO_STRING* _name, bool ignoreDeleted)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoLinetypeTable_FindLinetype(int docId, [MarshalAs(UnmanagedType.LPWStr)]string _name, [MarshalAs(UnmanagedType.U1)]bool ignoreDeleted);
+
+  //int CRhinoLinetypeTable_FindLinetype2(int docId, ON_UUID id, bool ignoreDeleted)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoLinetypeTable_FindLinetype2(int docId, Guid id, [MarshalAs(UnmanagedType.U1)]bool ignoreDeleted);
+
+  //double CRhinoLinetypeTable_GetLinetypeScale(int docId)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double CRhinoLinetypeTable_GetLinetypeScale(int docId);
+
+  //void CRhinoLinetypeTable_SetLinetypeScale(int docId, double scale)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoLinetypeTable_SetLinetypeScale(int docId, double scale);
+
+  //int CRhinoLinetypeTable_AddLinetype(int docId, const ON_Linetype* pConstLinetype, bool referenceLinetype)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoLinetypeTable_AddLinetype(int docId, IntPtr pConstLinetype, [MarshalAs(UnmanagedType.U1)]bool referenceLinetype);
+
+  //int CRhinoLinetypeTable_AddLinetype2(int docId, const RHMONO_STRING* _name, ON_SimpleArray<double>* pDoubleArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoLinetypeTable_AddLinetype2(int docId, [MarshalAs(UnmanagedType.LPWStr)]string _name, IntPtr pDoubleArray);
+
+  //bool CRhinoLinetypeTable_Modify(int docId, const ON_Linetype* pConstLinetype, int linetype_index, bool quiet)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoLinetypeTable_Modify(int docId, IntPtr pConstLinetype, int linetype_index, [MarshalAs(UnmanagedType.U1)]bool quiet);
+
+  //bool CRhinoLinetypeTable_Un(int docId, int linetype_index, bool undomodify)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoLinetypeTable_Un(int docId, int linetype_index, [MarshalAs(UnmanagedType.U1)]bool undomodify);
+
+  //bool CRhinoLinetypeTable_Delete(int docId, int linetype_index, bool quiet)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoLinetypeTable_Delete(int docId, int linetype_index, [MarshalAs(UnmanagedType.U1)]bool quiet);
+
+  //bool CRhinoLinetypeTable_Delete2(int docId, int count, /*ARRAY*/const int* indices, bool quiet)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoLinetypeTable_Delete2(int docId, int count, int[] indices, [MarshalAs(UnmanagedType.U1)]bool quiet);
+
+  //void CRhinoLinetypeTable_GetUnusedLinetypeName(int docId, bool ignoreDeleted, CRhCmnStringHolder* pString)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoLinetypeTable_GetUnusedLinetypeName(int docId, [MarshalAs(UnmanagedType.U1)]bool ignoreDeleted, IntPtr pString);
+
+  //const wchar_t* CRhinoLinetypeTable_GetString(int docId, bool continuous)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoLinetypeTable_GetString(int docId, [MarshalAs(UnmanagedType.U1)]bool continuous);
   #endregion
 
 

@@ -33,12 +33,14 @@
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ListBox));
       this.m_lblMessage = new System.Windows.Forms.Label();
       this.m_list = new System.Windows.Forms.ListBox();
+      this.m_checkedListBox = new System.Windows.Forms.CheckedListBox();
       m_btnCancel = new System.Windows.Forms.Button();
       m_btnOk = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // m_btnCancel
       // 
+      m_btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       m_btnCancel.Location = new System.Drawing.Point(143, 234);
       m_btnCancel.Name = "m_btnCancel";
@@ -49,6 +51,7 @@
       // 
       // m_btnOk
       // 
+      m_btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       m_btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
       m_btnOk.Location = new System.Drawing.Point(62, 234);
       m_btnOk.Name = "m_btnOk";
@@ -68,17 +71,34 @@
       // 
       // m_list
       // 
+      this.m_list.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.m_list.FormattingEnabled = true;
       this.m_list.Location = new System.Drawing.Point(13, 26);
       this.m_list.Name = "m_list";
       this.m_list.Size = new System.Drawing.Size(205, 199);
       this.m_list.TabIndex = 4;
       // 
+      // m_checkedListBox
+      // 
+      this.m_checkedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_checkedListBox.CheckOnClick = true;
+      this.m_checkedListBox.FormattingEnabled = true;
+      this.m_checkedListBox.Location = new System.Drawing.Point(13, 26);
+      this.m_checkedListBox.Name = "m_checkedListBox";
+      this.m_checkedListBox.Size = new System.Drawing.Size(205, 199);
+      this.m_checkedListBox.TabIndex = 8;
+      this.m_checkedListBox.Visible = false;
+      // 
       // ListBox
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(228, 262);
+      this.Controls.Add(this.m_checkedListBox);
       this.Controls.Add(m_btnCancel);
       this.Controls.Add(m_btnOk);
       this.Controls.Add(this.m_lblMessage);
@@ -97,5 +117,6 @@
 
     private System.Windows.Forms.Label m_lblMessage;
     private System.Windows.Forms.ListBox m_list;
+    private System.Windows.Forms.CheckedListBox m_checkedListBox;
   }
 }

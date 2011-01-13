@@ -732,13 +732,15 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        IntPtr ptr = UnsafeNativeMethods.CRhinoApp_GetString(RhinoApp.idxExecutableFolder);
-        if (IntPtr.Zero == ptr)
-          return null;
-        string s = Marshal.PtrToStringUni(ptr);
-        if (!System.IO.Directory.Exists(s))
-          return null;
-        return new System.IO.DirectoryInfo(s);
+        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.CRhinoApp_GetString(RhinoApp.idxExecutableFolder, pString);
+          string rc = sh.ToString();
+          if (!System.IO.Directory.Exists(rc))
+            return null;
+          return new System.IO.DirectoryInfo(rc);
+        }
       }
     }
 
@@ -747,13 +749,15 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        IntPtr ptr = UnsafeNativeMethods.CRhinoApp_GetString(RhinoApp.idxInstallFolder);
-        if (IntPtr.Zero == ptr)
-          return null;
-        string s = Marshal.PtrToStringUni(ptr);
-        if (!System.IO.Directory.Exists(s))
-          return null;
-        return new System.IO.DirectoryInfo(s);
+        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.CRhinoApp_GetString(RhinoApp.idxInstallFolder, pString);
+          string rc = sh.ToString();
+          if (!System.IO.Directory.Exists(rc))
+            return null;
+          return new System.IO.DirectoryInfo(rc);
+        }
       }
     }
 
@@ -761,10 +765,12 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        IntPtr ptr = UnsafeNativeMethods.CRhinoApp_GetString(RhinoApp.idxHelpFilePath);
-        if (IntPtr.Zero == ptr)
-          return null;
-        return Marshal.PtrToStringUni(ptr);
+        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.CRhinoApp_GetString(RhinoApp.idxHelpFilePath, pString);
+          return sh.ToString();
+        }
       }
     }
 
@@ -772,10 +778,12 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        IntPtr ptr = UnsafeNativeMethods.CRhinoApp_GetString(RhinoApp.idxDefaultRuiFile);
-        if (IntPtr.Zero == ptr)
-          return null;
-        return Marshal.PtrToStringUni(ptr);
+        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.CRhinoApp_GetString(RhinoApp.idxDefaultRuiFile, pString);
+          return sh.ToString();
+        }
       }
     }
   }

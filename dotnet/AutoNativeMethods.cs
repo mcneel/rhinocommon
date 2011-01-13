@@ -3312,9 +3312,9 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoApp_RunScript([MarshalAs(UnmanagedType.LPWStr)]string _script, int echo_mode);
 
-  //const RHMONO_STRING* CRhinoApp_GetString(int which)
+  //void CRhinoApp_GetString(int which, CRhCmnStringHolder* pString)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr CRhinoApp_GetString(int which);
+  internal static extern void CRhinoApp_GetString(int which, IntPtr pString);
 
   //void CRhinoApp_Wait(int ms)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4638,9 +4638,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoGet_Option(IntPtr pRhinoGet);
 
-  //int CRhinoCommandOption_OptionIndex(const CRhinoCommandOption* pOption)
+  //int CRhinoCommandOption_OptionIndex(const CRhinoCommandOption* pOption, bool optionIndex)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int CRhinoCommandOption_OptionIndex(IntPtr pOption);
+  internal static extern int CRhinoCommandOption_OptionIndex(IntPtr pOption, [MarshalAs(UnmanagedType.U1)]bool optionIndex);
 
   //const RHMONO_STRING* CRhinoCommandOption_EnglishName(const CRhinoCommandOption* pOption)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

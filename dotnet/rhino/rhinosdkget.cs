@@ -1554,7 +1554,15 @@ namespace Rhino.Input.Custom
     {
       get
       {
-        return UnsafeNativeMethods.CRhinoCommandOption_OptionIndex(m_ptr);
+        return UnsafeNativeMethods.CRhinoCommandOption_OptionIndex(m_ptr, true);
+      }
+    }
+
+    public int CurrentListOptionIndex
+    {
+      get
+      {
+        return UnsafeNativeMethods.CRhinoCommandOption_OptionIndex(m_ptr, false);
       }
     }
 

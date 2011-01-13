@@ -1013,6 +1013,7 @@ namespace Rhino.PlugIns
   // I think there is an RDK version that we are supposed to use instead
   /*public*/ abstract class RenderPlugIn : PlugIn
   {
+    // Render
   }
 
   public static class LicenseUtils

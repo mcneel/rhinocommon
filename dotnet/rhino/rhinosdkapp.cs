@@ -120,10 +120,12 @@ namespace Rhino
     {
       get
       {
-        IntPtr rc = UnsafeNativeMethods.CRhinoApp_GetString(idxSerialNumber);
-        if (IntPtr.Zero == rc)
-          return null;
-        return Marshal.PtrToStringUni(rc);
+        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.CRhinoApp_GetString(idxSerialNumber, pString);
+          return sh.ToString();
+        }
       }
     }
 
@@ -131,10 +133,12 @@ namespace Rhino
     {
       get
       {
-        IntPtr rc = UnsafeNativeMethods.CRhinoApp_GetString(idxApplicationName);
-        if (IntPtr.Zero == rc)
-          return null;
-        return System.Runtime.InteropServices.Marshal.PtrToStringUni(rc);
+        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.CRhinoApp_GetString(idxApplicationName, pString);
+          return sh.ToString();
+        }
       }
     }
 
@@ -271,10 +275,12 @@ namespace Rhino
     {
       get
       {
-        IntPtr rc = UnsafeNativeMethods.CRhinoApp_GetString(idxCommandPrompt);
-        if (IntPtr.Zero == rc)
-          return null;
-        return System.Runtime.InteropServices.Marshal.PtrToStringUni(rc);
+        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.CRhinoApp_GetString(idxCommandPrompt, pString);
+          return sh.ToString();
+        }
       }
       set
       {

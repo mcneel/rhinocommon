@@ -79,6 +79,7 @@
     <Compile Include="ex_addtexture.cs" />
     <Compile Include="ex_addtorus.cs" />
     <Compile Include="ex_addtruncatedcone.cs" />
+    <Compile Include="ex_commandlineoptions.cs" />
     <Compile Include="ex_custompython.cs" />
     <Compile Include="ex_dividebylength.cs" />
     <Compile Include="ex_findobjectsbyname.cs" />

@@ -486,14 +486,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_BinaryArchive_ReadMeshParameters(IntPtr pArchive);
 
-  //bool ON_BinaryArchive_WriteMeshParameters(ON_BinaryArchive* pArchive, bool bSimple, bool bRefine, bool bJagged, bool bCurvature,
-  //                                                        int min_count, int max_count, int face_type,
-  //                                                        double tolerance, double min_tolerance, double rel_tolerance,
-  //                                                        double grid_amp, double grid_angle, double grid_aspect, double refine_angle,
-  //                                                        double min_edge_length, double max_edge_length)
+  //bool ON_BinaryArchive_WriteMeshParameters(ON_BinaryArchive* pArchive, const ON_MeshParameters* pConstMeshParameters)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_BinaryArchive_WriteMeshParameters(IntPtr pArchive, [MarshalAs(UnmanagedType.U1)]bool bSimple, [MarshalAs(UnmanagedType.U1)]bool bRefine, [MarshalAs(UnmanagedType.U1)]bool bJagged, [MarshalAs(UnmanagedType.U1)]bool bCurvature, int min_count, int max_count, int face_type, double tolerance, double min_tolerance, double rel_tolerance, double grid_amp, double grid_angle, double grid_aspect, double refine_angle, double min_edge_length, double max_edge_length);
+  internal static extern bool ON_BinaryArchive_WriteMeshParameters(IntPtr pArchive, IntPtr pConstMeshParameters);
 
   //bool ON_BinaryArchive_WriteGeometry(ON_BinaryArchive* pArchive, const ON_Geometry* pConstGeometry)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -913,6 +909,10 @@ internal partial class UnsafeNativeMethods
   //                                      double max_edge_length )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Brep_CreateMesh2(IntPtr pConstBrep, IntPtr meshes, [MarshalAs(UnmanagedType.U1)]bool bSimplePlanes, [MarshalAs(UnmanagedType.U1)]bool bRefine, [MarshalAs(UnmanagedType.U1)]bool bJaggedSeams, [MarshalAs(UnmanagedType.U1)]bool bComputeCurvature, int grid_min_count, int grid_max_count, int face_type, double tolerance, double min_tolerance, double relative_tolerance, double grid_amplification, double grid_angle, double grid_aspect_ratio, double refine_angle, double min_edge_length, double max_edge_length);
+
+  //int ON_Brep_CreateMesh3( const ON_Brep* pConstBrep, ON_SimpleArray<ON_Mesh*>* meshes, const ON_MeshParameters* pConstMeshParameters )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_CreateMesh3(IntPtr pConstBrep, IntPtr meshes, IntPtr pConstMeshParameters);
 
   //int ON_Brep_EdgeTrimCount( const ON_Brep* pConstBrep, int edge_index )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -2051,6 +2051,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Mesh_New(IntPtr pOther);
 
+  //ON_Mesh* RHC_RhinoMakePlanarMeshes(const ON_Curve* pCurve, const ON_MeshParameters* pConstMeshParameters)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoMakePlanarMeshes(IntPtr pCurve, IntPtr pConstMeshParameters);
+
   //ON_Mesh* ON_Mesh_FromPlanarCurve(const ON_Curve* pCurve)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Mesh_FromPlanarCurve(IntPtr pCurve);
@@ -2304,9 +2308,38 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_SimpleArray_PolylineCurve_Delete(IntPtr pPolylineCurves, [MarshalAs(UnmanagedType.U1)]bool delete_individual_curves);
 
+  //ON_MeshParameters* ON_MeshParameters_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_MeshParameters_New();
+
   //void ON_MeshParameters_Delete(ON_MeshParameters* pMeshParameters)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_MeshParameters_Delete(IntPtr pMeshParameters);
+
+  //bool ON_MeshParameters_GetBool(const ON_MeshParameters* pConstMeshParameters, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_MeshParameters_GetBool(IntPtr pConstMeshParameters, int which);
+
+  //void ON_MeshParameters_SetBool(ON_MeshParameters* pMeshParameters, int which, bool val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_MeshParameters_SetBool(IntPtr pMeshParameters, int which, [MarshalAs(UnmanagedType.U1)]bool val);
+
+  //double ON_MeshParameters_GetDouble(const ON_MeshParameters* pConstMeshParameters, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_MeshParameters_GetDouble(IntPtr pConstMeshParameters, int which);
+
+  //void ON_MeshParameters_SetDouble(ON_MeshParameters* pMeshParameters, int which, double val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_MeshParameters_SetDouble(IntPtr pMeshParameters, int which, double val);
+
+  //int ON_MeshParameters_GetGridCount(const ON_MeshParameters* pConstMeshParameters, bool mincount)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_MeshParameters_GetGridCount(IntPtr pConstMeshParameters, [MarshalAs(UnmanagedType.U1)]bool mincount);
+
+  //void ON_MeshParameters_SetGridCount(ON_MeshParameters* pMeshParameters, bool mincount, int count)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_MeshParameters_SetGridCount(IntPtr pMeshParameters, [MarshalAs(UnmanagedType.U1)]bool mincount, int count);
 
   //bool ON_MeshParameters_Copy(const ON_MeshParameters* pConstMP, /*ARRAY*/bool* bvals, /*ARRAY*/int* ivals, /*ARRAY*/double* dvals)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4358,6 +4391,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoDocProperties_RemoveNamedView(int docId, int index);
+
+  //ON_MeshParameters* CRhinoDocProperties_RenderMeshSettings(int docId)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoDocProperties_RenderMeshSettings(int docId);
   #endregion
 
 

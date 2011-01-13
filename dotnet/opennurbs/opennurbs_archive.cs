@@ -493,7 +493,7 @@ namespace Rhino.Collections
           break;
         case ItemType.itOnMeshParameters: //46
           {
-            Rhino.Geometry.MeshParameters val = archive.ReadMeshParameters();
+            Rhino.Geometry.MeshingParameters val = archive.ReadMeshingParameters();
             rc = SetItem(key, val);
           }
           break;
@@ -673,7 +673,7 @@ namespace Rhino.Collections
         case ItemType.itOnObject: // 45
           break; // skip
         case ItemType.itOnMeshParameters: // 46
-          archive.WriteMeshParameters((Rhino.Geometry.MeshParameters)val);
+          archive.WriteMeshingParameters((Rhino.Geometry.MeshingParameters)val);
           break;
         case ItemType.itOnGeometry: // 47
           archive.WriteGeometry((Rhino.Geometry.GeometryBase)val);
@@ -786,7 +786,7 @@ namespace Rhino.Collections
     public bool SetItem(string key, Rhino.Geometry.Point3f val) { return SetItem(key, ItemType.itPoint3f, val); }
     public bool SetItem(string key, Rhino.Geometry.Vector3f val) { return SetItem(key, ItemType.itVector3f, val); }
     public bool SetItem(string key, ArchivableDictionary val) { return SetItem(key, ItemType.itOnBinaryArchiveDictionary, val); }
-    public bool SetItem(string key, Rhino.Geometry.MeshParameters val) { return SetItem(key, ItemType.itOnMeshParameters, val); }
+    public bool SetItem(string key, Rhino.Geometry.MeshingParameters val) { return SetItem(key, ItemType.itOnMeshParameters, val); }
     public bool SetItem(string key, Rhino.Geometry.GeometryBase val) { return SetItem(key, ItemType.itOnGeometry, val); }
 
     bool SetItem(string key, ItemType it, object val)
@@ -1265,25 +1265,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteVector3f failed");
     }
 
-    public void WriteMeshParameters(Rhino.Geometry.MeshParameters value)
+    public void WriteMeshingParameters(Rhino.Geometry.MeshingParameters value)
     {
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteMeshParameters(m_ptr,
-                                                          value.m_simple,
-                                                          value.m_refine,
-                                                          value.m_jagged,
-                                                          value.m_curvature,
-                                                          value.m_min_count,
-                                                          value.m_max_count,
-                                                          value.m_facetype,
-                                                          value.m_tolerance,
-                                                          value.m_min_tolerance,
-                                                          value.m_relative_tolerance,
-                                                          value.m_grid_amp,
-                                                          value.m_grid_angle,
-                                                          value.m_grid_aspect,
-                                                          value.m_refine_angle,
-                                                          value.m_min_edge_length,
-                                                          value.m_max_edge_length);
+      IntPtr pMeshParameters = value.ConstPointer();
+      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteMeshParameters(m_ptr, pMeshParameters);
       if( m_bWriteErrorOccured )
         throw new BinaryArchiveException("WriteMeshParameters failed");
     }
@@ -1859,7 +1844,7 @@ namespace Rhino.FileIO
       return new Rhino.Geometry.Vector3f(f[0], f[1], f[2]);
     }
 
-    public Rhino.Geometry.MeshParameters ReadMeshParameters()
+    public Rhino.Geometry.MeshingParameters ReadMeshingParameters()
     {
       IntPtr pMeshParameters = IntPtr.Zero;
       if( !m_bReadErrorOccured )
@@ -1867,9 +1852,7 @@ namespace Rhino.FileIO
       m_bReadErrorOccured = m_bReadErrorOccured || IntPtr.Zero == pMeshParameters;
       if (m_bReadErrorOccured)
         throw new BinaryArchiveException("ReadMeshParameters failed");
-      Rhino.Geometry.MeshParameters rc = Rhino.Geometry.MeshParameters.FromPointer(pMeshParameters);
-      UnsafeNativeMethods.ON_MeshParameters_Delete(pMeshParameters);
-      return rc;
+      return new Rhino.Geometry.MeshingParameters(pMeshParameters);
     }
 
     public Rhino.Geometry.GeometryBase ReadGeometry()

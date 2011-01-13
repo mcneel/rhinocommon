@@ -2,34 +2,372 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-
 using System.Runtime.InteropServices;
 using System.Diagnostics;
-
 using Rhino.Collections;
 using Rhino;
 
-//public class ON_MeshParameters { }
-//public class ON_MeshCurvatureStats { }
-//public class ON_MeshTopologyVertex { }
-//public class ON_MeshTopologyEdge { }
-//public class ON_MeshTopologyFace { }
-//public struct ON_MeshFace { }
-//public struct ON_MeshPart { }
-//public class ON_MeshTopology { }
-//public class ON_MeshNgon { }
-//public class ON_MeshNgonList { }
-//public class ON_MeshPartition { }
-//public class ON_MappingTag { }
-//public class ON_TextureCoordinates { }
-//public class ON_MeshVertexRef : ON_Geometry { }
-//public class ON_MeshEdgeRef : ON_Geometry { }
-//public class ON_MeshFaceRef : ON_Geometry { }
+
 namespace Rhino.Geometry
 {
   /// <summary>
+  /// Settings used for creating a Mesh representation of a Brep
+  /// </summary>
+  public class MeshingParameters : IDisposable
+  {
+    IntPtr m_ptr; // This class is never const
+    internal IntPtr ConstPointer() { return m_ptr; }
+    internal IntPtr NonConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Initial values are same as "Default"
+    /// </summary>
+    public MeshingParameters()
+    {
+      m_ptr = UnsafeNativeMethods.ON_MeshParameters_New();
+    }
+
+    internal MeshingParameters(IntPtr pMeshingParameters)
+    {
+      m_ptr = pMeshingParameters;
+    }
+
+    ~MeshingParameters()
+    {
+      Dispose(false);
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_ptr)
+      {
+        UnsafeNativeMethods.ON_MeshParameters_Delete(m_ptr);
+        m_ptr = IntPtr.Zero;
+      }
+    }
+
+    #region constants
+    /// <summary>
+    /// Gets the MeshingParameters that are currently set for a document.
+    /// These are the same settings that are shown in the DocumentProperties
+    /// Mesh settings user interface.
+    /// </summary>
+    /// <param name="doc"></param>
+    /// <returns></returns>
+    public static MeshingParameters DocumentCurrentSetting(RhinoDoc doc)
+    {
+      IntPtr pMeshParameters = UnsafeNativeMethods.CRhinoDocProperties_RenderMeshSettings(doc.m_docId);
+      if (IntPtr.Zero == pMeshParameters)
+        return null;
+      return new MeshingParameters(pMeshParameters);
+    }
+
+    /// <summary>Gets minimal meshing parameters</summary>
+    public static MeshingParameters Minimal
+    {
+      get
+      {
+        MeshingParameters mp = new MeshingParameters();
+        mp.JaggedSeams = true;
+        mp.RefineGrid = false;
+        mp.SimplePlanes = false;
+        mp.ComputeCurvature = false;
+
+        //mp.Facetype = 0;
+        mp.GridMinCount = 16;
+        mp.GridMaxCount = 0;
+
+        mp.GridAmplification = 1.0;
+        mp.GridAngle = 0.0;
+        mp.GridAspectRatio = 6.0;
+
+        mp.Tolerance = 0.0;
+        mp.MinimumTolerance = 0.0;
+
+        mp.MinimumEdgeLength = 0.0001;
+        mp.MaximumEdgeLength = 0.0;
+
+        mp.RefineAngle = 0.0;
+        mp.RelativeTolerance = 0.0;
+
+        return mp;
+      }
+    }
+
+    /// <summary>
+    /// Gets default meshing parameters
+    /// </summary>
+    public static MeshingParameters Default
+    {
+      get
+      {
+        MeshingParameters mp = new MeshingParameters();
+        /*
+        mp.JaggedSeams = false;
+        mp.RefineGrid = true;
+        mp.SimplePlanes = false;
+        mp.ComputeCurvature = false;
+
+        mp.Facetype = 0;
+        mp.GridMinCount = 0;
+        mp.GridMaxCount = 0;
+
+        mp.GridAmplification = 1.0;
+        mp.GridAngle = (20.0 * Math.PI) / 180.0;
+        mp.GridAspectRatio = 6.0;
+
+        mp.Tolerance = 0.0;
+        mp.MinimumTolerance = 0.0;
+
+        mp.MinimumEdgeLength = 0.0001;
+        mp.MaximumEdgeLength = 0.0;
+
+        mp.RefineAngle = (20.0 * Math.PI) / 180.0;
+        mp.RelativeTolerance = 0.0;
+        */
+        return mp;
+      }
+    }
+
+    /// <summary>
+    /// Gets meshing parameters for coarse meshing. 
+    /// This corresponds with the "Jagged and Faster" default in Rhino.
+    /// </summary>
+    public static MeshingParameters Coarse
+    {
+      get
+      {
+        MeshingParameters mp = new MeshingParameters();
+
+        mp.GridAmplification = 0.0;
+        mp.GridAngle = 0.0;
+        mp.GridAspectRatio = 0.0;
+        mp.RefineAngle = 0.0;
+
+        mp.RelativeTolerance = 0.65;
+        mp.GridMinCount = 16;
+        mp.MinimumEdgeLength = 0.0001;
+        mp.SimplePlanes = true;
+
+        return mp;
+      }
+    }
+    /// <summary>
+    /// Gets meshing parameters for smooth meshing. 
+    /// This corresponds with the "Smooth and Slower" default in Rhino.
+    /// </summary>
+    public static MeshingParameters Smooth
+    {
+      get
+      {
+        MeshingParameters mp = new MeshingParameters();
+
+        mp.GridAmplification = 0.0;
+        mp.GridAngle = 0.0;
+        mp.GridAspectRatio = 0.0;
+
+        mp.RelativeTolerance = 0.8;
+        mp.GridMinCount = 16;
+        mp.MinimumEdgeLength = 0.0001;
+        mp.SimplePlanes = true;
+        mp.RefineAngle = (20.0 * Math.PI) / 180.0;
+
+        return mp;
+      }
+    }
+    #endregion
+
+    #region properties
+    const int idxJaggedSeams = 0;
+    const int idxRefineGrid = 1;
+    const int idxSimplePlanes = 2;
+    const int idxComputeCurvature = 3;
+    bool GetBool(int which)
+    {
+      IntPtr ptr = ConstPointer();
+      return UnsafeNativeMethods.ON_MeshParameters_GetBool(ptr, which);
+    }
+    void SetBool(int which, bool val)
+    {
+      IntPtr ptr = NonConstPointer();
+      UnsafeNativeMethods.ON_MeshParameters_SetBool(ptr, which, val);
+    }
+    /// <summary>
+    /// Gets or sets whether or not the mesh is allowed to have jagged seams. 
+    /// When this flag is set to True, meshes on either side of a Brep Edge will not match up.
+    /// </summary>
+    public bool JaggedSeams
+    {
+      get { return GetBool(idxJaggedSeams); }
+      set { SetBool(idxJaggedSeams, value); }
+    }
+    /// <summary>
+    /// Gets or sets a value indicating whether or not the sampling grid can be refined 
+    /// when certain tolerances are not met.
+    /// </summary>
+    public bool RefineGrid
+    {
+      get { return GetBool(idxRefineGrid); }
+      set { SetBool(idxRefineGrid, value); }
+    }
+    /// <summary>
+    /// Gets or sets a value indicating whether or not planar areas are allowed 
+    /// to be meshed in a simplified manner.
+    /// </summary>
+    public bool SimplePlanes
+    {
+      get { return GetBool(idxSimplePlanes); }
+      set { SetBool(idxSimplePlanes, value); }
+    }
+    /// <summary>
+    /// Gets or sets a value indicating whether or not surface curvature 
+    /// data will be embedded in the mesh.
+    /// </summary>
+    public bool ComputeCurvature
+    {
+      get { return GetBool(idxComputeCurvature); }
+      set { SetBool(idxComputeCurvature, value); }
+    }
+
+
+    int GetGridCount(bool min)
+    {
+      IntPtr ptr = ConstPointer();
+      return UnsafeNativeMethods.ON_MeshParameters_GetGridCount(ptr, min);
+    }
+    void SetGridCount(bool min, int val)
+    {
+      IntPtr ptr = NonConstPointer();
+      UnsafeNativeMethods.ON_MeshParameters_SetGridCount(ptr, min, val);
+    }
+
+    /// <summary>
+    /// Gets or sets the minimum number of grid quads in the initial sampling grid.
+    /// </summary>
+    public int GridMinCount
+    {
+      get { return GetGridCount(true); }
+      set { SetGridCount(true, value); }
+    }
+    /// <summary>
+    /// Gets or sets the maximum number of grid quads in the initial sampling grid.
+    /// </summary>
+    public int GridMaxCount
+    {
+      get { return GetGridCount(false); }
+      set { SetGridCount(false, value); }
+    }
+
+
+    const int idxGridAngle = 0;
+    const int idxGridAspectRatio = 1;
+    const int idxGridAmplification = 2;
+    const int idxTolerance = 3;
+    const int idxMinimumTolerance = 4;
+    const int idxRelativeTolerance = 5;
+    const int idxMinimumEdgeLength = 6;
+    const int idxMaximumEdgeLength = 7;
+    const int idxRefineAngle = 8;
+    double GetDouble(int which)
+    {
+      IntPtr ptr = ConstPointer();
+      return UnsafeNativeMethods.ON_MeshParameters_GetDouble(ptr, which);
+    }
+    void SetDouble(int which, double val)
+    {
+      IntPtr ptr = NonConstPointer();
+      UnsafeNativeMethods.ON_MeshParameters_SetDouble(ptr, which, val);
+    }
+
+    /// <summary>
+    /// Gets or sets the maximum allowed angle difference (in radians) 
+    /// for a single sampling quad. The angle pertains to the surface normals.
+    /// </summary>
+    public double GridAngle
+    {
+      get { return GetDouble(idxGridAngle); }
+      set { SetDouble(idxGridAngle, value); }
+    }
+    /// <summary>
+    /// Gets or sets the maximum allowed aspect ratio of sampling quads.
+    /// </summary>
+    public double GridAspectRatio
+    {
+      get { return GetDouble(idxGridAspectRatio); }
+      set { SetDouble(idxGridAspectRatio, value); }
+    }
+    /// <summary>
+    /// Gets or sets the grid amplification factor. 
+    /// Values lower than 1.0 will decrease the number of initial quads, 
+    /// values higher than 1.0 will increase the number of initial quads.
+    /// </summary>
+    public double GridAmplification
+    {
+      get { return GetDouble(idxGridAmplification); }
+      set { SetDouble(idxGridAmplification, value); }
+    }
+
+    /// <summary>
+    /// Gets or sets the maximum allowed edge deviation. 
+    /// This tolerance is measured between the center of the mesh edge and the surface.
+    /// </summary>
+    public double Tolerance
+    {
+      get { return GetDouble(idxTolerance); }
+      set { SetDouble(idxTolerance, value); }
+    }
+    /// <summary>
+    /// Gets or sets the minimum tolerance.
+    /// </summary>
+    public double MinimumTolerance
+    {
+      get { return GetDouble(idxMinimumTolerance); }
+      set { SetDouble(idxMinimumTolerance, value); }
+    }
+    /// <summary>
+    /// Gets or sets the relative tolerance.
+    /// </summary>
+    public double RelativeTolerance
+    {
+      get { return GetDouble(idxRelativeTolerance); }
+      set { SetDouble(idxRelativeTolerance, value); }
+    }
+
+    /// <summary>
+    /// Gets or sets the minimum allowed mesh edge length.
+    /// </summary>
+    public double MinimumEdgeLength
+    {
+      get { return GetDouble(idxMinimumEdgeLength); }
+      set { SetDouble(idxMinimumEdgeLength, value); }
+    }
+    /// <summary>
+    /// Gets or sets the maximum allowed mesh edge length.
+    /// </summary>
+    public double MaximumEdgeLength
+    {
+      get { return GetDouble(idxMaximumEdgeLength); }
+      set { SetDouble(idxMaximumEdgeLength, value); }
+    }
+
+    public double RefineAngle
+    {
+      get { return GetDouble(idxRefineAngle); }
+      set { SetDouble(idxRefineAngle, value); }
+    }
+    #endregion
+
+  }
+
+  /// <summary>
   /// Represents mesher settings for Brep->Mesh conversions.
   /// </summary>
+  [Obsolete("Will be removed in future WIP. Use MeshingParameters instead")]
   public struct MeshParameters
   {
     #region fields
@@ -388,7 +726,6 @@ namespace Rhino.Geometry
       return new Mesh(ptr, null, null);
     }
 
-#if USING_V5_SDK
     /// <summary>
     /// Attempt to create a mesh from a closed planar curve
     /// </summary>
@@ -397,17 +734,34 @@ namespace Rhino.Geometry
     /// new Mesh on success
     /// null on failure
     /// </returns>
-    static public Mesh CreateFromPlanarBoundary(Curve boundary)
+    [Obsolete("Will be removed in future WIP. Use version that takes MeshingParameters instead")]
+    public static Mesh CreateFromPlanarBoundary(Curve boundary)
     {
-      if (null == boundary)
-        return null;
       IntPtr pCurve = boundary.ConstPointer();
       IntPtr pMesh = UnsafeNativeMethods.ON_Mesh_FromPlanarCurve(pCurve);
       if (IntPtr.Zero == pMesh)
         return null;
       return new Mesh(pMesh, null, null);
     }
-#endif
+
+    /// <summary>
+    /// Attempt to create a mesh from a closed planar curve
+    /// </summary>
+    /// <param name="boundary">must be a closed planar curve</param>
+    /// <param name="parameters">parameters used for creating the mesh</param>
+    /// <returns>
+    /// new Mesh on success
+    /// null on failure
+    /// </returns>
+    public static Mesh CreateFromPlanarBoundary(Curve boundary, MeshingParameters parameters)
+    {
+      IntPtr pCurve = boundary.ConstPointer();
+      IntPtr pMeshParameters = parameters.ConstPointer();
+      IntPtr pMesh = UnsafeNativeMethods.RHC_RhinoMakePlanarMeshes(pCurve, pMeshParameters);
+      if (IntPtr.Zero == pMesh)
+        return null;
+      return new Mesh(pMesh, null, null);
+    }
 
     /// <summary>
     /// Create a mesh from a Brep.
@@ -432,6 +786,7 @@ namespace Rhino.Geometry
     /// <param name="brep">Brep to approximate.</param>
     /// <param name="meshParameters">Parameters to use during meshing.</param>
     /// <returns>An array of meshes.</returns>
+    [Obsolete("Will be removed in future WIP. Use version that takes MeshingParameters class instead")]
     public static Mesh[] CreateFromBrep(Brep brep, MeshParameters meshParameters)
     {
       IntPtr pConstBrep = brep.ConstPointer();
@@ -460,6 +815,27 @@ namespace Rhino.Geometry
         rc = meshes.ToNonConstArray();
       meshes.Dispose();
       return rc;
+    }
+
+    /// <summary>
+    /// Create a mesh from a Brep.
+    /// </summary>
+    /// <param name="brep">Brep to approximate.</param>
+    /// <param name="meshingParameters">Parameters to use during meshing.</param>
+    /// <returns>An array of meshes.</returns>
+    public static Mesh[] CreateFromBrep(Brep brep, MeshingParameters meshingParameters)
+    {
+      IntPtr pConstBrep = brep.ConstPointer();
+      IntPtr pMeshParameters = meshingParameters.ConstPointer();
+      using (Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer())
+      {
+        IntPtr pMeshes = meshes.NonConstPointer();
+        int count = UnsafeNativeMethods.ON_Brep_CreateMesh3(pConstBrep, pMeshes, pMeshParameters);
+        Mesh[] rc = null;
+        if (count > 0)
+          rc = meshes.ToNonConstArray();
+        return rc;
+      }
     }
 
 

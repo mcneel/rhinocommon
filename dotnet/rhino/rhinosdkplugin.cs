@@ -1016,6 +1016,10 @@ namespace Rhino.PlugIns
     // Render
   }
 
+
+  /// <summary>
+  /// License Manager Utilities
+  /// </summary>
   public static class LicenseUtils
   {
     // The entire functionality of this class is implemented through making calls to well defined class names/functions
@@ -1040,6 +1044,54 @@ namespace Rhino.PlugIns
         }
       }
       return m_license_client_assembly;
+    }
+
+    /// <summary>
+    /// Initializes the license manager
+    /// </summary>
+    public static bool Initialize()
+    {
+      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+      if (null == zooAss)
+        return false;
+
+      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+      if (t == null)
+        return false;
+
+      System.Reflection.MethodInfo mi = t.GetMethod("Initialize");
+      if (mi == null)
+        return false;
+
+      object invoke_rc = mi.Invoke(null, null);
+      if (null == invoke_rc)
+        return false;
+
+      return System.Convert.ToBoolean(invoke_rc);
+    }
+
+    /// <summary>
+    /// Sets the license manager's language id.
+    /// </summary>
+    public static bool SetLanguage(int languageid)
+    {
+      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+      if (null == zooAss)
+        return false;
+
+      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+      if (t == null)
+        return false;
+
+      System.Reflection.MethodInfo mi = t.GetMethod("SetLanguage");
+      if (mi == null)
+        return false;
+
+      object invoke_rc = mi.Invoke(null, new object[] { languageid });
+      if (null == invoke_rc)
+        return false;
+
+      return System.Convert.ToBoolean(invoke_rc);
     }
 
     /// <summary>

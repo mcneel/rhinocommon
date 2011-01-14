@@ -201,7 +201,7 @@ namespace Rhino.Geometry
     #region Methods
     public override string ToString()
     {
-      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "[{0},{1}]", m_t0, m_t1);
+      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1}", m_t0, m_t1);
     }
 
     ///// <summary>
@@ -564,7 +564,7 @@ namespace Rhino.Geometry
 
     public override string ToString()
     {
-      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "({0},{1})", X, Y);
+      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1}", X, Y);
     }
 
     public double this[int index]
@@ -988,7 +988,7 @@ namespace Rhino.Geometry
 
     public override string ToString()
     {
-      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "({0},{1},{2})", m_x, m_y, m_z);
+      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1},{2}", m_x, m_y, m_z);
     }
 
     /// <summary>
@@ -1325,7 +1325,7 @@ namespace Rhino.Geometry
 
     public override string ToString()
     {
-      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "({0},{1})", X, Y);
+      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1}", X, Y);
     }
 
     public static Vector2d Unset
@@ -1721,7 +1721,7 @@ namespace Rhino.Geometry
     }
     public override string ToString()
     {
-      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "({0},{1},{2})", m_x, m_y, m_z);
+      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1},{2}", m_x, m_y, m_z);
     }
 
     /// <summary>

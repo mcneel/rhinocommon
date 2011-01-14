@@ -1,10 +1,13 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 
 namespace Rhino.Geometry
 {
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
+  [DebuggerDisplay("({m_x}, {m_y})")]
+  [Serializable()]
   public struct Point2f
   {
     #region members
@@ -80,6 +83,10 @@ namespace Rhino.Geometry
       // MSDN docs recommend XOR'ing the internal values to get a hash code
       return m_x.GetHashCode() ^ m_y.GetHashCode();
     }
+    public override string ToString()
+    {
+      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1}", m_x, m_y);
+    }
     public static bool operator ==(Point2f a, Point2f b)
     {
       return (a.m_x == b.m_x && a.m_y == b.m_y);
@@ -91,6 +98,8 @@ namespace Rhino.Geometry
   }
 
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 12)]
+  [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
+  [Serializable()]
   public struct Point3f
   {
     internal float m_x;
@@ -118,6 +127,11 @@ namespace Rhino.Geometry
       // MSDN docs recommend XOR'ing the internal values to get a hash code
       return m_x.GetHashCode() ^ m_y.GetHashCode() ^ m_z.GetHashCode();
     }
+    public override string ToString()
+    {
+      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1},{2}", m_x, m_y, m_z);
+    }
+
     public static bool operator ==(Point3f a, Point3f b)
     {
       return (a.m_x == b.m_x && a.m_y == b.m_y && a.m_z == b.m_z);
@@ -131,6 +145,8 @@ namespace Rhino.Geometry
   //skipping ON_4fPoint. I don't think I've ever seen this used in Rhino.
 
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
+  [DebuggerDisplay("({m_x}, {m_y})")]
+  [Serializable()]
   public struct Vector2f
   {
     internal float m_x;
@@ -148,6 +164,10 @@ namespace Rhino.Geometry
       // MSDN docs recommend XOR'ing the internal values to get a hash code
       return m_x.GetHashCode() ^ m_y.GetHashCode();
     }
+    public override string ToString()
+    {
+      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1}", m_x, m_y);
+    }
     public static bool operator ==(Vector2f a, Vector2f b)
     {
       return (a.m_x == b.m_x && a.m_y == b.m_y);
@@ -159,6 +179,8 @@ namespace Rhino.Geometry
   }
 
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 12)]
+  [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
+  [Serializable()]
   public struct Vector3f
   {
     #region members
@@ -200,7 +222,7 @@ namespace Rhino.Geometry
 
     public override string ToString()
     {
-      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "({0},{1},{2})", m_x, m_y, m_z);
+      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1},{2}", m_x, m_y, m_z);
     }
 
     public static bool operator ==(Vector3f a, Vector3f b)

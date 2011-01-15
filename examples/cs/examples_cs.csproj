@@ -64,6 +64,7 @@
     <Compile Include="ex_addchildlayer.cs" />
     <Compile Include="ex_addcircle.cs" />
     <Compile Include="ex_addclippingplane.cs" />
+    <Compile Include="ex_addcone.cs" />
     <Compile Include="ex_addcylinder.cs" />
     <Compile Include="ex_addlayer.cs" />
     <Compile Include="ex_addline.cs" />
@@ -79,6 +80,8 @@
     <Compile Include="ex_addtexture.cs" />
     <Compile Include="ex_addtorus.cs" />
     <Compile Include="ex_addtruncatedcone.cs" />
+    <Compile Include="ex_arclengthpoint.cs" />
+    <Compile Include="ex_blockinsertionpoint.cs" />
     <Compile Include="ex_commandlineoptions.cs" />
     <Compile Include="ex_custompython.cs" />
     <Compile Include="ex_dividebylength.cs" />

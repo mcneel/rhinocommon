@@ -42,9 +42,8 @@ namespace examples_cs
       //Test(Examples.AddBrepBox, doc);
       //Test(Examples.AddChildLayer, doc);
       //Test(Examples.AddCircle, doc);
+      //Test(Examples.AddCone, doc);
       //Test(Examples.AddCylinder, doc);
-      //Test(Examples.DivideByLengthPoints, doc);
-      //Test(Examples.DetermineObjectLayer, doc);
       //Test(Examples.AddLayer, doc);
       //Test(Examples.AddBackgroundBitmap, doc);
       //Test(Examples.AddClippingPlane, doc);
@@ -58,10 +57,14 @@ namespace examples_cs
       //Test(Examples.AddObjectsToGroup, doc);
       //Test(Examples.AddSphere, doc);
       //Test(Examples.AddAnnotationText, doc);
-      //Test(Examples.OrientOnSrf, doc);
       //Test(Examples.AddTorus, doc);
       //Test(Examples.AddTruncatedCone, doc);
-      Test(Examples.CommandLineOptions, doc);
+      //Test(Examples.ArcLengthPoint, doc);
+      Test(Examples.BlockInsertionPoint, doc);
+      //Test(Examples.DivideByLengthPoints, doc);
+      //Test(Examples.DetermineObjectLayer, doc);
+      //Test(Examples.OrientOnSrf, doc);
+      //Test(Examples.CommandLineOptions, doc);
       //Test(Examples.FindObjectsByName, doc);
       //Test(Examples.SelLayer, doc);
       return Rhino.Commands.Result.Success;

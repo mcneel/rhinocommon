@@ -83,6 +83,7 @@
     <Compile Include="ex_addchildlayer.vb" />
     <Compile Include="ex_addcircle.vb" />
     <Compile Include="ex_addclippingplane.vb" />
+    <Compile Include="ex_addcone.vb" />
     <Compile Include="ex_addcylinder.vb" />
     <Compile Include="ex_addlayer.vb" />
     <Compile Include="ex_addline.vb" />
@@ -98,6 +99,8 @@
     <Compile Include="ex_addtexture.vb" />
     <Compile Include="ex_addtorus.vb" />
     <Compile Include="ex_addtruncatedcone.vb" />
+    <Compile Include="ex_arclengthpoint.vb" />
+    <Compile Include="ex_blockinsertionpoint.vb" />
     <Compile Include="ex_commandlineoptions.vb" />
     <Compile Include="ex_dividebylength.vb" />
     <Compile Include="ex_findobjectsbyname.vb" />

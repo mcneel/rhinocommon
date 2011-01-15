@@ -57,6 +57,17 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <summary>Basepoint coordinates of a block</summary>
+    public Point3d InsertionPoint
+    {
+      get
+      {
+        Point3d rc = new Point3d(0, 0, 0);
+        rc.Transform(InstanceXform);
+        return rc;
+      }
+    }
+
     /// <summary>
     /// instance definition that this object uses
     /// </summary>
@@ -619,10 +630,4 @@ namespace Rhino.DocObjects.Tables
   //[skipping]
   //void SetRemapIndex( int idef_index, int remap_index );
   }
-}
-
-namespace Rhino
-{
-  // this might be best as a nested class
-  //public class InstanceObjectPiece { }
 }

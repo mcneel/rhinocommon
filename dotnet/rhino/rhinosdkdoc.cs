@@ -3731,35 +3731,37 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Return list of all the section names for user data strings in the document
+    /// Return list of all the section names for user data strings in the document.
+    /// By default a section name is a key that is prefixed with a string separated by a backslash
     /// </summary>
     /// <returns></returns>
     public string[] GetSectionNames()
     {
-      string[] rc = null;
-      try
+      int count = Count;
+      System.Collections.Generic.SortedDictionary<string, bool> section_dict = new SortedDictionary<string, bool>();
+      for (int i = 0; i < count; i++)
       {
-        object rs = Runtime.HostUtils.GetRhinoScriptObject();
-        object invoke_result = rs.GetType().InvokeMember("GetDocumentData", System.Reflection.BindingFlags.InvokeMethod, null, rs, null);
-        object[] items = invoke_result as object[];
-        if (items != null && items.Length > 0)
+        string key = GetKey(i);
+        if (string.IsNullOrEmpty(key))
+          continue;
+        int index = key.IndexOf("\\");
+        if (index > 0)
         {
-          rc = new string[items.Length];
-          for (int i = 0; i < items.Length; i++)
-          {
-            rc[i] = items[i].ToString();
-          }
+          string section = key.Substring(0, index);
+          if (!section_dict.ContainsKey(section))
+            section_dict.Add(section, true);
         }
       }
-      catch (Exception)
-      {
-        rc = null;
-      }
+      count = section_dict.Count;
+      if (count < 1)
+        return null;
+      string[] rc = new string[count];
+      section_dict.Keys.CopyTo(rc, 0);
       return rc;
     }
 
     /// <summary>
-    /// Resturn list of all entry names for a given section of user data strings in the document
+    /// Return list of all entry names for a given section of user data strings in the document
     /// </summary>
     /// <param name="section"></param>
     /// <returns></returns>
@@ -3767,26 +3769,16 @@ namespace Rhino.DocObjects.Tables
     {
       if (String.IsNullOrEmpty(section))
         return null;
-      string[] rc = null;
-      try
+      section += "\\";
+      int count = Count;
+      List<string> rc = new List<string>();
+      for (int i = 0; i < count; i++)
       {
-        object rs = Runtime.HostUtils.GetRhinoScriptObject();
-        object invoke_result = rs.GetType().InvokeMember("GetDocumentData", System.Reflection.BindingFlags.InvokeMethod, null, rs, new object[] { section });
-        object[] items = invoke_result as object[];
-        if (items != null && items.Length > 0)
-        {
-          rc = new string[items.Length];
-          for (int i = 0; i < items.Length; i++)
-          {
-            rc[i] = items[i].ToString();
-          }
-        }
+        string key = GetKey(i);
+        if( key!=null && key.StartsWith(section) )
+          rc.Add( GetValue(i) );
       }
-      catch (Exception)
-      {
-        rc = null;
-      }
-      return rc;
+      return rc.ToArray();
     }
 
 

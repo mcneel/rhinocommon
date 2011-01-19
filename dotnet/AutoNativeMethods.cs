@@ -3372,9 +3372,13 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_appsettings.cpp
-  //const RHMONO_STRING* CRhinoAppSettings_DefaultFontFaceName()
+  //void CRhinoAppearanceSettings_DefaultFontFaceNameSet(const RHMONO_STRING* _name)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr CRhinoAppSettings_DefaultFontFaceName();
+  internal static extern void CRhinoAppearanceSettings_DefaultFontFaceNameSet([MarshalAs(UnmanagedType.LPWStr)]string _name);
+
+  //void CRhinoAppearanceSettings_DefaultFontFaceNameGet(CRhCmnStringHolder* pString)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppearanceSettings_DefaultFontFaceNameGet(IntPtr pString);
 
   //int RhCommandAliasList_Count()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -3677,6 +3681,20 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_displayattrsmgr.cpp
+  //ON_UUID CRhinoDisplayAttrsMgr_Add(DisplayAttrsMgrListDesc* pDescription)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoDisplayAttrsMgr_Add(IntPtr pDescription);
+
+  //bool CRhinoDisplayAttrsMgr_Update(const DisplayAttrsMgrListDesc* pConstDescription)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoDisplayAttrsMgr_Update(IntPtr pConstDescription);
+
+  //bool CRhinoDisplayAttrsMgr_DeleteDescription(ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoDisplayAttrsMgr_DeleteDescription(Guid id);
+
   //DisplayAttrsMgrList* DisplayAttrsMgrList_New()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr DisplayAttrsMgrList_New();
@@ -3987,6 +4005,18 @@ internal partial class UnsafeNativeMethods
   //void CDisplayPipelineAttributes_SetEnglishName(CDisplayPipelineAttributes* pAttrib, const RHMONO_STRING* name)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CDisplayPipelineAttributes_SetEnglishName(IntPtr pAttrib, [MarshalAs(UnmanagedType.LPWStr)]string name);
+
+  //ON_UUID CDisplayPipelineAttributes_GetId(const CDisplayPipelineAttributes* pConstAttrib)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CDisplayPipelineAttributes_GetId(IntPtr pConstAttrib);
+
+  //int CDisplayPipelineAttributes_GetSetInt(CDisplayPipelineAttributes* pAttrib, int which, bool set, int set_val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CDisplayPipelineAttributes_GetSetInt(IntPtr pAttrib, int which, [MarshalAs(UnmanagedType.U1)]bool set, int set_val);
+
+  //double CDisplayPipelineAttributes_GetSetDouble(CDisplayPipelineAttributes* pAttrib, int which, bool set, double set_val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double CDisplayPipelineAttributes_GetSetDouble(IntPtr pAttrib, int which, [MarshalAs(UnmanagedType.U1)]bool set, double set_val);
 
   //bool CDisplayPipelineAttributes_GetSetBool(CDisplayPipelineAttributes* pAttrib, int which, bool set, bool set_val)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

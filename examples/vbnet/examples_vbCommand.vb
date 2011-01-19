@@ -51,6 +51,7 @@ Public Class examples_vbCommand
     Test(AddressOf Examples.AddTexture, doc)
     Test(AddressOf Examples.AddTorus, doc)
     Test(AddressOf Examples.AddTruncatedCone, doc)
+    Test(AddressOf Examples.AdvancedDisplay, doc)
     Test(AddressOf Examples.ArcLengthPoint, doc)
     Test(AddressOf Examples.BlockInsertionPoint, doc)
     Test(AddressOf Examples.CommandLineOptions, doc)

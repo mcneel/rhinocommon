@@ -1008,6 +1008,11 @@ namespace Rhino.Input.Custom
     /// <returns>
     /// option index value (>0) or 0 if option cannot be added
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_advanceddisplay.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_advanceddisplay.cs' lang='cs'/>
+    /// <code source='examples\py\ex_advanceddisplay.py' lang='py'/>
+    /// </example>
     public int AddOption(string englishOption) //, bool hidden)
     {
       return AddOption(englishOption, null);
@@ -1071,6 +1076,11 @@ namespace Rhino.Input.Custom
     /// <returns>
     /// option index value (>0) or 0 if option cannot be added
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
+    /// <code source='examples\py\ex_commandlineoptions.py' lang='py'/>
+    /// </example>
     public int AddOptionDouble(string englishName, ref Rhino.Input.Custom.OptionDouble numberValue)
     {
       return AddOptionDouble(englishName, ref numberValue, null);
@@ -1103,6 +1113,11 @@ namespace Rhino.Input.Custom
     /// <returns>
     /// option index value (>0) or 0 if option cannot be added
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
+    /// <code source='examples\py\ex_commandlineoptions.py' lang='py'/>
+    /// </example>
     public int AddOptionInteger(string englishName, ref Rhino.Input.Custom.OptionInteger intValue)
     {
       return AddOptionInteger(englishName, ref intValue, null);
@@ -1148,6 +1163,11 @@ namespace Rhino.Input.Custom
     /// <param name="englishName"></param>
     /// <param name="toggleValue"></param>
     /// <returns>option index value (>0) or 0 if option cannot be added</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
+    /// <code source='examples\py\ex_commandlineoptions.py' lang='py'/>
+    /// </example>
     public int AddOptionToggle(string englishName, ref Rhino.Input.Custom.OptionToggle toggleValue)
     {
       IntPtr ptr = NonConstPointer();
@@ -1558,6 +1578,11 @@ namespace Rhino.Input.Custom
       }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
+    /// <code source='examples\py\ex_commandlineoptions.py' lang='py'/>
+    /// </example>
     public int CurrentListOptionIndex
     {
       get
@@ -1585,6 +1610,11 @@ namespace Rhino.Input.Custom
     internal readonly string m_offValue;
     internal readonly string m_onValue;
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
+    /// <code source='examples\py\ex_commandlineoptions.py' lang='py'/>
+    /// </example>
     public OptionToggle(bool initialValue, string offValue, string onValue)
     {
       m_initialValue = initialValue;
@@ -1611,6 +1641,11 @@ namespace Rhino.Input.Custom
       }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
+    /// <code source='examples\py\ex_commandlineoptions.py' lang='py'/>
+    /// </example>
     public bool CurrentValue
     {
       get
@@ -1664,6 +1699,11 @@ namespace Rhino.Input.Custom
     /// <param name="initialValue"></param>
     /// <param name="lowerLimit"></param>
     /// <param name="upperLimit"></param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
+    /// <code source='examples\py\ex_commandlineoptions.py' lang='py'/>
+    /// </example>
     public OptionDouble(double initialValue, double lowerLimit, double upperLimit)
     {
       m_initialValue = initialValue;
@@ -1714,6 +1754,11 @@ namespace Rhino.Input.Custom
     }
 
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
+    /// <code source='examples\py\ex_commandlineoptions.py' lang='py'/>
+    /// </example>
     public double CurrentValue
     {
       get
@@ -1767,6 +1812,11 @@ namespace Rhino.Input.Custom
     /// <param name="initialValue"></param>
     /// <param name="lowerLimit"></param>
     /// <param name="upperLimit"></param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
+    /// <code source='examples\py\ex_commandlineoptions.py' lang='py'/>
+    /// </example>
     public OptionInteger(int initialValue, int lowerLimit, int upperLimit)
     {
       m_initialValue = initialValue;
@@ -1816,6 +1866,11 @@ namespace Rhino.Input.Custom
       }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
+    /// <code source='examples\py\ex_commandlineoptions.py' lang='py'/>
+    /// </example>
     public int CurrentValue
     {
       get

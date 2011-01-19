@@ -60,12 +60,13 @@ namespace examples_cs
       //Test(Examples.AddTorus, doc);
       //Test(Examples.AddTruncatedCone, doc);
       //Test(Examples.ArcLengthPoint, doc);
-      Test(Examples.BlockInsertionPoint, doc);
+      Test(Examples.AdvancedDisplay, doc);
+      //Test(Examples.BlockInsertionPoint, doc);
+      //Test(Examples.CommandLineOptions, doc);
       //Test(Examples.DivideByLengthPoints, doc);
       //Test(Examples.DetermineObjectLayer, doc);
-      //Test(Examples.OrientOnSrf, doc);
-      //Test(Examples.CommandLineOptions, doc);
       //Test(Examples.FindObjectsByName, doc);
+      //Test(Examples.OrientOnSrf, doc);
       //Test(Examples.SelLayer, doc);
       return Rhino.Commands.Result.Success;
     }

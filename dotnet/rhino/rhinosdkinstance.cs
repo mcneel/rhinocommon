@@ -58,6 +58,11 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>Basepoint coordinates of a block</summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_blockinsertionpoint.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_blockinsertionpoint.cs' lang='cs'/>
+    /// <code source='examples\py\ex_blockinsertionpoint.py' lang='py'/>
+    /// </example>
     public Point3d InsertionPoint
     {
       get

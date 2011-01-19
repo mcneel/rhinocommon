@@ -99,6 +99,7 @@
     <Compile Include="ex_addtexture.vb" />
     <Compile Include="ex_addtorus.vb" />
     <Compile Include="ex_addtruncatedcone.vb" />
+    <Compile Include="ex_advanceddisplay.vb" />
     <Compile Include="ex_arclengthpoint.vb" />
     <Compile Include="ex_blockinsertionpoint.vb" />
     <Compile Include="ex_commandlineoptions.vb" />

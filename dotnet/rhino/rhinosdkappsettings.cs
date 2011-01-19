@@ -33,11 +33,22 @@ namespace Rhino.ApplicationSettings
 
   public static class AppearanceSettings
   {
-    //public static string DefaultFontFaceName
-    //{
-    //  get{}
-    //  set{}
-    //}
+    public static string DefaultFontFaceName
+    {
+      get
+      {
+        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.CRhinoAppearanceSettings_DefaultFontFaceNameGet(pString);
+          return sh.ToString();
+        }
+      }
+      set
+      {
+        UnsafeNativeMethods.CRhinoAppearanceSettings_DefaultFontFaceNameSet(value);
+      }
+    }
 
 #region Colors
     const int idxDefaultLayerColor = 0;

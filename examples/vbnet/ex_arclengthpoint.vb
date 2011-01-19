@@ -1,6 +1,6 @@
 ﻿Partial Class Examples
   Public Shared Function ArcLengthPoint(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-    Dim objref As Rhino.DocObjects.ObjRef
+    Dim objref As Rhino.DocObjects.ObjRef = Nothing
     Dim rc As Rhino.Commands.Result = Rhino.Input.RhinoGet.GetOneObject("Select curve", True, Rhino.DocObjects.ObjectType.Curve, objref)
     If rc <> Rhino.Commands.Result.Success Then
       Return rc

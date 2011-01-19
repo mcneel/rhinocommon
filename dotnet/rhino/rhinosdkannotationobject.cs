@@ -221,10 +221,9 @@ namespace Rhino.Display
       {
         if (null == m_fontface)
         {
-          if (null == default_font_facename)
+          if (string.IsNullOrEmpty(default_font_facename))
           {
-            IntPtr pDefaultFaceName = UnsafeNativeMethods.CRhinoAppSettings_DefaultFontFaceName();
-            default_font_facename = Marshal.PtrToStringUni(pDefaultFaceName);
+            default_font_facename = ApplicationSettings.AppearanceSettings.DefaultFontFaceName;
           }
           m_fontface = default_font_facename;
         }

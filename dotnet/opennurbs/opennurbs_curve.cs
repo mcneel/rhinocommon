@@ -1643,6 +1643,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="length">Length along the curve between the start point and the returned point.</param>
     /// <returns>Point on the curve at the specified length from the start point or Poin3d.Unset on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_arclengthpoint.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_arclengthpoint.cs' lang='cs'/>
+    /// <code source='examples\py\ex_arclengthpoint.py' lang='py'/>
+    /// </example>
     public Point3d PointAtLength(double length)
     {
       double t;
@@ -1882,6 +1887,11 @@ namespace Rhino.Geometry
     /// Get the length of the curve with a fractional tolerance of 1.0e-8
     /// </summary>
     /// <returns>The length of the curve on success, or zero on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_arclengthpoint.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_arclengthpoint.cs' lang='cs'/>
+    /// <code source='examples\py\ex_arclengthpoint.py' lang='py'/>
+    /// </example>
     public double GetLength()
     {
       // default tolerance used in OpenNURBS

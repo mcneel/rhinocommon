@@ -80,6 +80,7 @@
     <Compile Include="ex_addtexture.cs" />
     <Compile Include="ex_addtorus.cs" />
     <Compile Include="ex_addtruncatedcone.cs" />
+    <Compile Include="ex_advanceddisplay.cs" />
     <Compile Include="ex_arclengthpoint.cs" />
     <Compile Include="ex_blockinsertionpoint.cs" />
     <Compile Include="ex_commandlineoptions.cs" />

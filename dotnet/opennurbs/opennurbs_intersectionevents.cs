@@ -165,7 +165,7 @@ namespace Rhino.Geometry.Intersect
   /// <summary>
   /// Maintains an ordered list of Curve Intersection results.
   /// </summary>
-  public class CurveIntersections : IDisposable
+  public class CurveIntersections : IDisposable, IList<IntersectionEvent>
   {
     #region members
     IntPtr m_ptr; //ON_SimpleArray<ON_X_EVENT>
@@ -251,6 +251,174 @@ namespace Rhino.Geometry.Intersect
 
     #region methods
     private IntPtr ConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Copies all intersection results into another array, departing at an index in the target array.
+    /// </summary>
+    /// <param name="array">The target array. This value cannot be null.</param>
+    /// <param name="arrayIndex">Zero-based index in which to start the copy.</param>
+    /// <exception cref="System.ArgumentNullException">If array is null.</exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">If arrayIndex is less than 0.</exception>
+    /// <exception cref="System.ArgumentException">If array is multi-dimensional; or if arrayIndex is
+    /// larger than or equal to the length of this collection; or this collection contains more 
+    /// IntersectionEvents than the ones that can be stored in array after and including arrayIndex.
+    /// </exception>
+    public void CopyTo(IntersectionEvent[] array, int arrayIndex)
+    {
+      if (array == null)
+        throw new ArgumentNullException("array");
+
+      if (arrayIndex < 0)
+        throw new ArgumentOutOfRangeException("arrayIndex", "The array index must be larger than 0.");
+
+      if (array.Rank != 1)
+        throw new ArgumentException("Array rank must be 1, but this array is multi-dimensional.", "array");
+
+      if (arrayIndex >= array.Length ||
+          this.Count + arrayIndex > array.Length)
+      {
+        throw new ArgumentException("arrayIndex");
+      }
+
+      for (int i = 0; i < this.Count; i++)
+      {
+        array[arrayIndex++] = this[i];
+      }
+    }
+
+    /// <summary>
+    /// Returns an enumerator that is capable of yielding all IntersectionEvents in the collection.
+    /// </summary>
+    /// <returns>The constructed enumerator.</returns>
+    public IEnumerator<IntersectionEvent> GetEnumerator()
+    {
+      for (int i = 0; i < this.Count; i++)
+      {
+        yield return this[i];
+      }
+    }
+    #endregion
+
+    #region explicit implementations of IList<IntersectionEvent> and its base types
+      //that did not seem necessary in normal usage
+
+    /// <summary>
+    /// Gets the intersection event data at the given index; setting always throws an exception.
+    /// </summary>
+    /// <param name="index">Index of intersection event to retrieve.</param>
+    /// <returns>The intersection event.</returns>
+    /// <exception cref="System.NotSupportedException">NotSupportedException is always thrown when
+    /// setting this indexer.</exception>
+    IntersectionEvent IList<IntersectionEvent>.this[int index]
+    {
+      get
+      {
+        return this[index];
+      }
+      set
+      {
+        throw new NotSupportedException("This collection is read-only.");
+      }
+    }
+
+    /// <summary>
+    /// Determines the index of an IntersectionEvent.
+    /// </summary>
+    /// <param name="item">The IntersectionEvent to be found.</param>
+    /// <returns>The index in case the IntersectionEvent was found; -1 otherwise.</returns>
+    int IList<IntersectionEvent>.IndexOf(IntersectionEvent item)
+    {
+      for (int i = 0; i < this.Count; i++)
+      {
+        if (item == this[i])
+          return i;
+      }
+      return -1;
+    }
+
+    /// <summary>
+    /// Inserting is not supported and this method always throws NotSupportedException.
+    /// </summary>
+    /// <param name="index">Inserting is not supported and this value is ignored.</param>
+    /// <param name="item">Inserting is not supported and this value is ignored.</param>
+    /// <exception cref="System.NotSupportedException">NotSupportedException is always thrown.</exception>
+    void IList<IntersectionEvent>.Insert(int index, IntersectionEvent item)
+    {
+      throw new NotSupportedException("This list is read-only.");
+    }
+
+    /// <summary>
+    /// Removal is not supported and this method always throws NotSupportedException.
+    /// </summary>
+    /// <param name="index">Removal is not supported and this value is ignored.</param>
+    /// <exception cref="System.NotSupportedException">NotSupportedException is always thrown.</exception>
+    void IList<IntersectionEvent>.RemoveAt(int index)
+    {
+      throw new NotSupportedException("This list is read-only.");
+    }
+
+    /// <summary>
+    /// Addition is not supported and this method always throws NotSupportedException.
+    /// </summary>
+    /// <param name="item">Addition is not supported and this value is ignored.</param>
+    /// <exception cref="System.NotSupportedException">NotSupportedException is always thrown.</exception>
+    void ICollection<IntersectionEvent>.Add(IntersectionEvent item)
+    {
+      throw new NotSupportedException("This list is read-only.");
+    }
+
+    /// <summary>
+    /// Clearing is not supported and this method always throws NotSupportedException.
+    /// </summary>
+    /// <exception cref="System.NotSupportedException">NotSupportedException is always thrown.</exception>
+    void ICollection<IntersectionEvent>.Clear()
+    {
+      throw new NotSupportedException("This list is read-only.");
+    }
+
+    /// <summary>
+    /// Allows to establish whether this collection contains and IntersectionEvent.
+    /// </summary>
+    /// <param name="item">Object to be found.</param>
+    /// <returns>True if element is contained; otherwise false.</returns>
+    bool ICollection<IntersectionEvent>.Contains(IntersectionEvent item)
+    {
+      for (int i = 0; i < this.Count; i++)
+      {
+        if (item == this[i])
+          return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// This collection is readonly, so this property returns always true.
+    /// </summary>
+    bool ICollection<IntersectionEvent>.IsReadOnly
+    {
+      get
+      {
+        return true;
+      }
+    }
+
+    /// <summary>
+    /// Removal is not supported and this method always throws NotSupportedException.
+    /// </summary>
+    /// <exception cref="System.NotSupportedException">NotSupportedException is always thrown.</exception>
+    bool ICollection<IntersectionEvent>.Remove(IntersectionEvent item)
+    {
+      throw new NotSupportedException("This collection is read-only.");
+    }
+
+    /// <summary>
+    /// Returns a non-generic enumerator that is capable of yielding all IntersectionEvents in the collection.
+    /// </summary>
+    /// <returns>The constructed non-generic enumerator.</returns>
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
     #endregion
   }
 }

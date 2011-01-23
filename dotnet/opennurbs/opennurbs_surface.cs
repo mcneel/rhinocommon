@@ -379,7 +379,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Transpose surface parametertization (swap "s" and "t")
+    /// Transpose surface parameterization (swap "s" and "t")
     /// </summary>
     /// <returns>New transposed surface on success, null on failure.</returns>
     public Surface Transpose()
@@ -390,7 +390,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Evaluate a point at a given parameter
+    /// Evaluate a point at a given parameter.
     /// </summary>
     /// <param name="u">evaluation parameters</param>
     /// <param name="v">evaluation parameters</param>
@@ -404,7 +404,7 @@ namespace Rhino.Geometry
       return rc;
     }
     /// <summary>
-    /// simple evaluation interface - no error handling
+    /// Simple evaluation interface - no error handling.
     /// </summary>
     /// <param name="u"></param>
     /// <param name="v"></param>

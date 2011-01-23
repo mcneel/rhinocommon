@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// A right circular cylinder
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 152)]
-  [Serializable()]
+  [Serializable]
   public struct Cylinder
   {
     #region members

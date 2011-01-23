@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Rhino.Collections
 {
@@ -1700,7 +1699,7 @@ namespace Rhino.FileIO
 
     public System.Drawing.Font ReadFont()
     {
-      System.Drawing.Font rc = null;
+      System.Drawing.Font rc;
 
       string family_name = ReadString();
       float emSize = ReadSingle();

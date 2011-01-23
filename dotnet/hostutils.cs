@@ -1,10 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
-using Rhino.Collections;
 using Rhino.PlugIns;
-using System.Reflection;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Rhino.Runtime
 {
@@ -45,16 +41,14 @@ namespace Rhino.Runtime
     IntPtr m_pSkin;
     protected Skin()
     {
-      if (m_theSingleSkin == null)
+      if (m_theSingleSkin != null) return;
+      // set callback if it hasn't already been set
+      if (null == m_ShowSplash)
       {
-        // set callback if it hasn't already been set
-        if (null == m_ShowSplash)
-        {
-          m_ShowSplash = OnShowSplash;
-        }
-        m_pSkin = UnsafeNativeMethods.CRhinoSkin_New(m_ShowSplash);
-        m_theSingleSkin = this;
+        m_ShowSplash = OnShowSplash;
       }
+      m_pSkin = UnsafeNativeMethods.CRhinoSkin_New(m_ShowSplash);
+      m_theSingleSkin = this;
     }
     protected virtual void ShowSplash() { }
     protected virtual void HideSplash() { }
@@ -572,98 +566,9 @@ namespace Rhino.Runtime
       return false;
     }
 
-    //internal static void InitializeAssemblyResolving()
-    //{
-    //  if (null == m_assembly_resolve)
-    //  {
-    //    m_assembly_resolve = new ResolveEventHandler(CurrentDomain_AssemblyResolve);
-    //    AppDomain.CurrentDomain.AssemblyResolve += m_assembly_resolve;
-    //  }
-    //}
-
     public static void SetInShutDown()
     {
       UnsafeNativeMethods.RhCmn_SetInShutDown();
     }
-
-    //static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-    //{
-    //  HostUtils.DebugString("CurrentDomain_AssemblyResolve called for " + args.Name + "\n");
-    //  if (args.Name.StartsWith("RhinoCommon", StringComparison.OrdinalIgnoreCase) &&
-    //    !args.Name.StartsWith("RhinoCommon.resources", StringComparison.OrdinalIgnoreCase)
-    //    )
-    //    return System.Reflection.Assembly.GetExecutingAssembly();
-
-    //  string searchname = args.Name;
-    //  int index = searchname.IndexOf(',');
-    //  if (index>0)
-    //  {
-    //    searchname = searchname.Substring(0, index);
-    //  }
-
-    //  // See if the assembly is already loaded
-    //  System.Reflection.Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-    //  for (int i = 0; i < assemblies.Length; i++)
-    //  {
-    //    string assname = assemblies[i].FullName;
-    //    if (assname.StartsWith(searchname + ",", StringComparison.OrdinalIgnoreCase))
-    //      return assemblies[i];
-    //  }
-
-
-    //  // Use plug-in directories as search paths. Walk through these directories
-    //  // looking for a dll with the same name as searchname
-    //  string[] directories = Rhino.PlugIns.PlugIn.GetInstalledPlugInFolders();
-    //  if (directories != null && directories.Length>0)
-    //  {
-    //    string pattern = searchname;
-    //    if (!searchname.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) && !searchname.EndsWith(".rhp", StringComparison.OrdinalIgnoreCase))
-    //      pattern += "*";
-
-    //    foreach( string directory in directories )
-    //    {
-    //      string[] files = System.IO.Directory.GetFiles(directory, pattern, System.IO.SearchOption.TopDirectoryOnly);
-    //      if (files == null || files.Length < 1)
-    //        continue;
-
-    //      foreach( string file in files )
-    //      {
-    //        if (file.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)) //TODO: implement .rhp loading
-    //        {
-    //          try
-    //          {
-    //            System.Reflection.Assembly a = System.Reflection.Assembly.LoadFile(file);
-    //            if (a != null)
-    //            {
-    //              bool returnAssembly = true;
-    //              object[] dependencies = a.GetCustomAttributes(typeof(DependencyAttribute), false);
-    //              if (dependencies != null)
-    //              {
-    //                for (int i = 0; i < dependencies.Length; i++)
-    //                {
-    //                  DependencyAttribute dependency = dependencies[i] as DependencyAttribute;
-    //                  if (dependency != null)
-    //                  {
-    //                    System.Guid id = new Guid(dependency.Value);
-    //                    returnAssembly = Rhino.PlugIns.PlugIn.LoadPlugIn(id);
-    //                  }
-    //                }
-    //              }
-
-    //              if (returnAssembly)
-    //                return a;
-    //            }
-    //          }
-    //          catch (Exception) { }
-    //        }
-    //      }
-
-    //    }
-    //  }
-
-    //  return null;
-    //}
-
-    //static ResolveEventHandler m_assembly_resolve;
   }
 }

@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// Represents a world aligned boundingbox defined by the two extreme corner points.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]
-  [Serializable()]
+  [Serializable]
   public struct BoundingBox
   {
     #region members
@@ -109,7 +109,7 @@ namespace Rhino.Geometry
 
     public override string ToString()
     {
-      return m_min.ToString() + " - " + m_max.ToString();
+      return string.Format("{0} - {1}", m_min, m_max);
     }
 
     #region properties
@@ -573,7 +573,7 @@ namespace Rhino.Geometry
     /// <returns></returns>
     public static BoundingBox Intersection(BoundingBox a, BoundingBox b)
     {
-      BoundingBox rc = BoundingBox.Unset;
+      BoundingBox rc = Unset;
       if( a.IsValid && b.IsValid )
       {
         Point3d min = new Point3d();

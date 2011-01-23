@@ -1,9 +1,6 @@
 using System;
 using Rhino.Collections;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
-using Rhino;
-using Rhino.Geometry;
 using Rhino.Runtime.InteropWrappers;
 // don't wrap ON_MeshCurveParameters. It is only needed for the ON_Curve::MeshCurveFunction
 
@@ -237,7 +234,7 @@ namespace Rhino.Geometry
       if (null == points)
         throw new ArgumentNullException("points");
 
-      int count = 0;
+      int count;
       Point3d[] ptArray = Point3dList.GetConstPointArray(points, out count);
       if (count < 2)
         throw new InvalidOperationException("Insufficient points for an interpolated curve");
@@ -258,8 +255,8 @@ namespace Rhino.Geometry
     /// <param name="degree">Degree of curve. The number of control points must be at least degree+1.</param>
     public static Curve CreateControlPointCurve(IEnumerable<Point3d> points, int degree)
     {
-      int count = 0;
-      Point3d[] ptArray = Rhino.Collections.Point3dList.GetConstPointArray(points, out count);
+      int count;
+      Point3d[] ptArray = Point3dList.GetConstPointArray(points, out count);
       if (null == ptArray || count < 2)
         return null;
 
@@ -511,13 +508,13 @@ namespace Rhino.Geometry
       foreach (Curve crv in curves)
       {
         if (crv == null)
-          throw new ArgumentNullException("List of curves contains a null entry");
+          throw new ArgumentNullException("curves");
       }
       List<GeometryBase> g = new List<GeometryBase>();
       foreach (Mesh msh in meshes)
       {
         if (msh == null)
-          throw new ArgumentNullException("List of meshes contains a null entry");
+          throw new ArgumentNullException("meshes");
         g.Add(msh);
       }
 
@@ -587,7 +584,7 @@ namespace Rhino.Geometry
     /// <returns>An array of projected curves or null if the projection set is empty.</returns>
     public static Curve[] ProjectToBrep(Curve curve, IEnumerable<Brep> breps, Vector3d direction, double tolerance, out int[] brepIndices)
     {
-      int[] curveIndices = null;
+      int[] curveIndices;
       IEnumerable<Curve> crvs = new Curve[] { curve };
       return ProjectToBrep(crvs, breps, direction, tolerance, out curveIndices, out brepIndices);
     }
@@ -620,8 +617,8 @@ namespace Rhino.Geometry
       curveIndices = null;
       brepIndices = null;
 
-      foreach (Curve crv in curves) { if (crv == null) { throw new ArgumentNullException("List of curves contains a null entry"); } }
-      foreach (Brep brp in breps) { if (brp == null) { throw new ArgumentNullException("List of breps contains a null entry"); } }
+      foreach (Curve crv in curves) { if (crv == null) { throw new ArgumentNullException("curves"); } }
+      foreach (Brep brp in breps) { if (brp == null) { throw new ArgumentNullException("breps"); } }
 
       SimpleArrayCurvePointer crv_array = new SimpleArrayCurvePointer(curves);
       Runtime.INTERNAL_BrepArray brp_array = new Runtime.INTERNAL_BrepArray();
@@ -630,8 +627,8 @@ namespace Rhino.Geometry
       IntPtr ptr_crv_array = crv_array.ConstPointer();
       IntPtr ptr_brp_array = brp_array.ConstPointer();
 
-      Runtime.InteropWrappers.SimpleArrayInt brp_top = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
-      Runtime.InteropWrappers.SimpleArrayInt crv_top = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
+      SimpleArrayInt brp_top = new SimpleArrayInt();
+      SimpleArrayInt crv_top = new SimpleArrayInt();
 
       SimpleArrayCurvePointer rc = new SimpleArrayCurvePointer();
       IntPtr ptr_rc = rc.NonConstPointer();
@@ -1067,13 +1064,8 @@ namespace Rhino.Geometry
     /// </returns>
     public bool IsCircle(double tolerance)
     {
-      Arc arc = new Arc();
-      if (TryGetArc(out arc, tolerance))
-      {
-        return arc.IsCircle;
-      }
-
-      return false;
+      Arc arc;
+      return TryGetArc(out arc, tolerance) && arc.IsCircle;
     }
     /// <summary>
     /// Try to convert this curve into a Circle using RhinoMath.ZeroTolerance.
@@ -1094,7 +1086,7 @@ namespace Rhino.Geometry
     {
       circle = new Circle();
 
-      Arc arc = new Arc();
+      Arc arc;
       if (TryGetArc(out arc, tolerance))
       {
         if (arc.IsCircle)
@@ -1475,7 +1467,7 @@ namespace Rhino.Geometry
       out int whichGeometry,
       double maximumDistance)
     {
-      Runtime.INTERNAL_GeometryArray geom = new Rhino.Runtime.INTERNAL_GeometryArray(geometry);
+      Runtime.INTERNAL_GeometryArray geom = new Runtime.INTERNAL_GeometryArray(geometry);
       pointOnCurve = Point3d.Unset;
       pointOnObject = Point3d.Unset;
       IntPtr pConstThis = ConstPointer();
@@ -1533,7 +1525,7 @@ namespace Rhino.Geometry
     public bool ClosestPoints(Curve otherCurve, out Point3d pointOnThisCurve, out Point3d pointOnOtherCurve)
     {
       GeometryBase[] a = new GeometryBase[] { otherCurve };
-      int which = 0;
+      int which;
       return ClosestPoints(a, out pointOnThisCurve, out pointOnOtherCurve, out which, 0.0);
     }
 #endif
@@ -2515,9 +2507,7 @@ namespace Rhino.Geometry
         output[0] = GeometryBase.CreateGeometryHelper(leftptr, null) as Curve;
       if (rightptr != IntPtr.Zero)
         output[1] = GeometryBase.CreateGeometryHelper(rightptr, null) as Curve;
-      if (rc)
-        return output;
-      return null;
+      return rc ? output : null;
     }
 
     /// <summary>
@@ -2532,7 +2522,7 @@ namespace Rhino.Geometry
     /// </returns>
     public Curve[] Split(IEnumerable<double> t)
     {
-      Interval domain = this.Domain;
+      Interval domain = Domain;
       RhinoList<double> parameters = new RhinoList<double>(t);
       parameters.Add(domain.Min);
       parameters.Add(domain.Max);
@@ -2544,14 +2534,12 @@ namespace Rhino.Geometry
         double end = parameters[i + 1];
         if ((start - end) > RhinoMath.ZeroTolerance)
         {
-          Curve trimcurve = this.Trim(start, end);
+          Curve trimcurve = Trim(start, end);
           if (trimcurve != null)
             rc.Add(trimcurve);
         }
       }
-      if (rc.Count == 0)
-        return null;
-      return rc.ToArray();
+      return rc.Count == 0 ? null : rc.ToArray();
     }
 
     /// <summary>

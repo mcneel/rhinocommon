@@ -1,7 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Geometry;
 
 namespace Rhino.Geometry
 {
@@ -19,7 +17,7 @@ namespace Rhino.Geometry
   /// containing the circle.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 152)]
-  [Serializable()]
+  [Serializable]
   public struct Arc
   {
     #region members

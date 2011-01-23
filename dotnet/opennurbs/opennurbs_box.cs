@@ -8,7 +8,7 @@ namespace Rhino.Geometry
   /// Represents an orthogonal, oriented box that is not tied to the World Axis directions.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 176)]
-  [Serializable()]
+  [Serializable]
   public struct Box
   {
     #region Members
@@ -98,7 +98,7 @@ namespace Rhino.Geometry
       m_dy = new Interval(y0, y1);
       m_dz = new Interval(z0, z1);
 
-      this.MakeValid();
+      MakeValid();
     }
 
     /// <summary>
@@ -123,7 +123,7 @@ namespace Rhino.Geometry
       m_dy = new Interval(bbox.Min.m_y, bbox.Max.m_y);
       m_dz = new Interval(bbox.Min.m_z, bbox.Max.m_z);
 
-      this.MakeValid();
+      MakeValid();
     }
 
     /// <summary>
@@ -352,9 +352,9 @@ namespace Rhino.Geometry
       double y = pt.m_y;
       double z = pt.m_z;
 
-      if (x < m_dx.Mid) { x = m_dx.T1; } else { x = m_dx.T0; }
-      if (y < m_dy.Mid) { y = m_dy.T1; } else { y = m_dy.T0; }
-      if (z < m_dz.Mid) { z = m_dz.T1; } else { z = m_dz.T0; }
+      x = x < m_dx.Mid ? m_dx.T1 : m_dx.T0;
+      y = y < m_dy.Mid ? m_dy.T1 : m_dy.T0;
+      z = z < m_dz.Mid ? m_dz.T1 : m_dz.T0;
 
       return m_plane.PointAt(x, y, z);
     }

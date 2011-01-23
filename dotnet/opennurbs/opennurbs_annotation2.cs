@@ -1,7 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Geometry;
 
 namespace Rhino.Geometry
 {
@@ -135,8 +133,8 @@ namespace Rhino.Geometry
     {
       IntPtr ptr = UnsafeNativeMethods.ON_LinearDimension2_New();
       ConstructNonConstObject(ptr);
-      this.Plane = dimensionPlane;
-      this.SetLocations(extensionLine1End, extensionLine2End, pointOnDimensionLine);
+      Plane = dimensionPlane;
+      SetLocations(extensionLine1End, extensionLine2End, pointOnDimensionLine);
     }
 
     public static LinearDimension FromPoints(Point3d extensionLine1End, Point3d extensionLine2End, Point3d pointOnDimensionLine)

@@ -1,7 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Geometry;
 
 namespace Rhino.Geometry
 {
@@ -16,7 +14,7 @@ namespace Rhino.Geometry
   ///where center, xaxis and yaxis define the orthonormal frame of the circle's plane.
   ///</summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 136)]
-  [Serializable()]
+  [Serializable]
   public struct Circle
   {
     #region members
@@ -112,12 +110,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Create a circle from two 3d points and a tangent at the first point.
     /// The start/end of the circle is at point "startPoint".
-    ///
-    /// NOTE: May create an Invalid circle
     /// </summary>
     /// <param name="startPoint">Start point of circle.</param>
     /// <param name="tangentAtP">Tangent vector at start.</param>
     /// <param name="pointOnCircle">Point coincident with desired circle.</param>
+    /// <remarks>May create an Invalid circle</remarks>
     public Circle(Point3d startPoint, Vector3d tangentAtP, Point3d pointOnCircle)
       : this()
     {
@@ -241,7 +238,7 @@ namespace Rhino.Geometry
         return new BoundingBox(x0, y0, z0, x1, y1, z1);
       }
     }
-    private double Length2d(double x, double y)
+    private static double Length2d(double x, double y)
     {
       double len;
       x = Math.Abs(x);
@@ -260,7 +257,7 @@ namespace Rhino.Geometry
       //     microscopic vectors that have infinite length!
       //
       //     This code is absolutely necessary.  It is a critical
-      //     part of the bug fix for RR 11217.
+      //     part of the fix for RR 11217.
       if (x > double.Epsilon)
       {
         len = 1.0 / x;
@@ -444,11 +441,13 @@ namespace Rhino.Geometry
     #region transformation methods
     /// <summary>
     /// Transform this circle using an xform matrix. 
-    /// Note, circles may not be transformed accurately if the xform defines a 
-    /// non-euclidian transformation.
     /// </summary>
     /// <param name="xform">Transformation to apply.</param>
     /// <returns>True on success, false on failure.</returns>
+    /// <remarks>
+    /// Circles may not be transformed accurately if the xform defines a 
+    /// non-euclidian transformation.
+    /// </remarks>
     public bool Transform(Transform xform)
     {
       return UnsafeNativeMethods.ON_Circle_Transform(ref this, ref xform);
@@ -467,7 +466,6 @@ namespace Rhino.Geometry
       return m_plane.Rotate(sinAngle, cosAngle, axis);
     }
 
-    // TODO: Requires comments.
     public bool Rotate(double sinAngle, double cosAngle, Vector3d axis, Point3d point)
     {
       return m_plane.Rotate(sinAngle, cosAngle, axis, point);

@@ -1,7 +1,5 @@
 using System;
-using Rhino;
 using Rhino.Geometry;
-using Rhino.Collections;
 using System.Runtime.InteropServices;
 //
 // good marshalling webpage
@@ -25,7 +23,7 @@ class Import
 // 19 Dec. 2010 S. Baer
 // Giulio saw a significant performance increase by marking this class with the
 // SuppressUnmanagedCodeSecurity attribute. See MSDN for details
-[System.Security.SuppressUnmanagedCodeSecurity()]
+[System.Security.SuppressUnmanagedCodeSecurity]
 internal partial class UnsafeNativeMethods
 {
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
@@ -159,7 +157,7 @@ internal partial class UnsafeNativeMethods
   //bool ON_Arc_Copy(ON_Arc* pRdnArc, ON_Arc* pRhCmnArc, bool rdn_to_rhc)
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Arc_Copy(IntPtr pRdnArc, ref Rhino.Geometry.Arc pRhCmnArc, [MarshalAs(UnmanagedType.U1)]bool rdn_to_rhc);
+  internal static extern bool ON_Arc_Copy(IntPtr pRdnArc, ref Arc pRhCmnArc, [MarshalAs(UnmanagedType.U1)]bool rdn_to_rhc);
 
   //void CRhinoMouseCallback_Enable(bool on, RHMOUSECALLBACK_FUNC mouse_cb)
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]

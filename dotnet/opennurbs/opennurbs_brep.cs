@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Geometry;
 
 namespace Rhino.Geometry
 {
@@ -145,7 +142,7 @@ namespace Rhino.Geometry
     ///    \v0_____e0_____\v1
     /// </param>
     /// <returns></returns>
-    public static Brep CreateFromBox(System.Collections.Generic.IEnumerable<Point3d> corners)
+    public static Brep CreateFromBox(IEnumerable<Point3d> corners)
     {
       Point3d[] box_corners = new Point3d[8];
       if (corners == null) { return null; }
@@ -277,7 +274,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="curves"></param>
     /// <returns>resulting brep or null on failure</returns>
-    public static Brep CreateEdgeSurface(System.Collections.Generic.IEnumerable<Curve> curves)
+    public static Brep CreateEdgeSurface(IEnumerable<Curve> curves)
     {
       NurbsCurve[] nurbs_curves = new NurbsCurve[4];
       IntPtr[] pNurbsCurves = new IntPtr[4];
@@ -340,7 +337,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="surface"></param>
     /// <returns>resulting brep or null on failure</returns>
-    public static Brep CreateFromSurface(Rhino.Geometry.Surface surface)
+    public static Brep CreateFromSurface(Surface surface)
     {
       if (null == surface)
         return null;
@@ -395,7 +392,7 @@ namespace Rhino.Geometry
       Rhino.Runtime.INTERNAL_BrepArray outbreps = new Rhino.Runtime.INTERNAL_BrepArray();
       IntPtr pInBreps = inbreps.ConstPointer();
       IntPtr pOutBreps = outbreps.NonConstPointer();
-      int create_rc = UnsafeNativeMethods.RHC_RhinoCreateSolid(pInBreps, pOutBreps, tolerance);
+      UnsafeNativeMethods.RHC_RhinoCreateSolid(pInBreps, pOutBreps, tolerance);
       Brep[] rc = outbreps.ToNonConstArray();
       inbreps.Dispose();
       outbreps.Dispose();
@@ -806,8 +803,6 @@ namespace Rhino.Geometry
       IntPtr outputPtr = output.NonConstPointer();
 
       UnsafeNativeMethods.ON_Brep_DuplicateEdgeCurves(pConstPtr, outputPtr, nakedOnly);
-      if (output == null)
-        return null;
       return output.ToNonConstArray();
     }
 
@@ -823,8 +818,6 @@ namespace Rhino.Geometry
       IntPtr outputPtr = output.NonConstPointer();
 
       UnsafeNativeMethods.ON_Brep_GetWireframe(pConstPtr, density, outputPtr);
-      if (output == null)
-        return null;
       return output.ToNonConstArray();
     }
 
@@ -869,10 +862,7 @@ namespace Rhino.Geometry
       {
         return Point3d.Unset;
       }
-      else
-      {
-        return pt_cp;
-      }
+      return pt_cp;
     }
 
     /// <summary>
@@ -984,7 +974,7 @@ namespace Rhino.Geometry
     /// </remarks>
     public bool Join(Brep otherBrep, double tolerance, bool compact)
     {
-      IntPtr pThisBrep = this.NonConstPointer();
+      IntPtr pThisBrep = NonConstPointer();
       IntPtr pOther = otherBrep.ConstPointer();
       return UnsafeNativeMethods.RHC_RhinoJoinBreps2(pThisBrep, pOther, tolerance, compact);
     }
@@ -1372,7 +1362,7 @@ namespace Rhino.Geometry
     public Curve[] TrimAwareIsoCurve(int direction, double constantParameter)
     {
       IntPtr pConstBrep = m_brep.ConstPointer();
-      Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer curves = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer();
+      Runtime.InteropWrappers.SimpleArrayCurvePointer curves = new Runtime.InteropWrappers.SimpleArrayCurvePointer();
       IntPtr pCurves = curves.NonConstPointer();
       int count = UnsafeNativeMethods.RHC_RhinoGetBrepFaceIsoCurves(pConstBrep, m_index, direction, constantParameter, pCurves);
       Curve[] rc = null;
@@ -1412,7 +1402,7 @@ namespace Rhino.Geometry
     public int[] AdjacentEdges()
     {
       IntPtr pConstBrep = m_brep.ConstPointer();
-      Runtime.InteropWrappers.SimpleArrayInt ei = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
+      Runtime.InteropWrappers.SimpleArrayInt ei = new Runtime.InteropWrappers.SimpleArrayInt();
 
       int rc = UnsafeNativeMethods.ON_Brep_FaceEdgeIndices(pConstBrep, m_index, ei.m_ptr);
       if (rc == 0) { return null; }
@@ -1425,7 +1415,7 @@ namespace Rhino.Geometry
     public int[] AdjacentFaces()
     {
       IntPtr pConstBrep = m_brep.ConstPointer();
-      Runtime.InteropWrappers.SimpleArrayInt fi = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
+      Runtime.InteropWrappers.SimpleArrayInt fi = new Runtime.InteropWrappers.SimpleArrayInt();
 
       int rc = UnsafeNativeMethods.ON_Brep_FaceFaceIndices(pConstBrep, m_index, fi.m_ptr);
       if (rc == 0) { return null; }
@@ -1472,7 +1462,7 @@ namespace Rhino.Geometry.Collections
     /// <param name="index">Index of BrepFace to access.</param>
     /// <exception cref="IndexOutOfRangeException">Thrown when the index is invalid.</exception>
     /// <returns>The BrepFace at [index].</returns>
-    public Rhino.Geometry.BrepFace this[int index]
+    public BrepFace this[int index]
     {
       get
       {
@@ -1482,7 +1472,7 @@ namespace Rhino.Geometry.Collections
           throw new IndexOutOfRangeException();
         }
         if (m_faces == null)
-          m_faces = new System.Collections.Generic.List<BrepFace>(count);
+          m_faces = new List<BrepFace>(count);
         int existing_list_count = m_faces.Count;
         for (int i = existing_list_count; i < count; i++)
         {
@@ -1492,7 +1482,7 @@ namespace Rhino.Geometry.Collections
         return m_faces[index];
       }
     }
-    System.Collections.Generic.List<BrepFace> m_faces; // = null; initialized to null by runtime
+    List<BrepFace> m_faces; // = null; initialized to null by runtime
     #endregion
 
     #region methods
@@ -1547,7 +1537,7 @@ namespace Rhino.Geometry.Collections
     #region IEnumerable Implementation
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return this.GetEnumerator();
+      return GetEnumerator();
     }
     public IEnumerator<BrepFace> GetEnumerator()
     {
@@ -1559,7 +1549,7 @@ namespace Rhino.Geometry.Collections
   internal class BrepFaceEnumerator : IEnumerator<BrepFace>
   {
     #region members
-    BrepFaceList m_list;
+    readonly BrepFaceList m_list;
     int position = -1;
     #endregion
 
@@ -1628,7 +1618,7 @@ namespace Rhino.Geometry.Collections
   /// </summary>
   public class BrepEdgeList : IEnumerable<BrepEdge>
   {
-    private Brep m_brep;
+    readonly Brep m_brep;
 
     #region constructors
     internal BrepEdgeList(Brep ownerBrep)
@@ -1657,7 +1647,7 @@ namespace Rhino.Geometry.Collections
     /// <param name="index">Index of BrepEdge to access.</param>
     /// <exception cref="IndexOutOfRangeException">Thrown when the index is invalid.</exception>
     /// <returns>The BrepEdge at [index].</returns>
-    public Rhino.Geometry.BrepEdge this[int index]
+    public BrepEdge this[int index]
     {
       get
       {
@@ -1667,7 +1657,7 @@ namespace Rhino.Geometry.Collections
           throw new IndexOutOfRangeException();
         }
         if (m_edges == null)
-          m_edges = new System.Collections.Generic.List<BrepEdge>(count);
+          m_edges = new List<BrepEdge>(count);
         int existing_list_count = m_edges.Count;
         for (int i = existing_list_count; i < count; i++)
         {
@@ -1677,7 +1667,7 @@ namespace Rhino.Geometry.Collections
         return m_edges[index];
       }
     }
-    System.Collections.Generic.List<BrepEdge> m_edges; // = null; initialized to null by runtime
+    List<BrepEdge> m_edges; // = null; initialized to null by runtime
     #endregion
 
     #region methods
@@ -1686,7 +1676,7 @@ namespace Rhino.Geometry.Collections
     #region IEnumerable Implementation
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return this.GetEnumerator();
+      return GetEnumerator();
     }
     public IEnumerator<BrepEdge> GetEnumerator()
     {
@@ -1698,7 +1688,7 @@ namespace Rhino.Geometry.Collections
   internal class BrepEdgeEnumerator : IEnumerator<BrepEdge>
   {
     #region members
-    BrepEdgeList m_list;
+    readonly BrepEdgeList m_list;
     int position = -1;
     #endregion
 

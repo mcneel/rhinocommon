@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using Rhino.DocObjects;
 
 namespace Rhino
 {
@@ -73,7 +72,7 @@ namespace Rhino
     /// <param name="from"></param>
     /// <param name="to"></param>
     /// <returns></returns>
-    public static double UnitScale(Rhino.UnitSystem from, Rhino.UnitSystem to)
+    public static double UnitScale(UnitSystem from, UnitSystem to)
     {
       return UnsafeNativeMethods.ONC_UnitScale((int)from, (int)to);
     }
@@ -424,7 +423,7 @@ namespace Rhino
       InLine = 3
     }
 
-    [Flags(), CLSCompliant(false)]
+    [Flags, CLSCompliant(false)]
     public enum ObjectType : uint
     {
       None = 0,
@@ -541,11 +540,11 @@ namespace Rhino.Geometry
   }
 
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
-  [Serializable()]
+  [Serializable]
   public struct ComponentIndex
   {
-    private uint m_type;
-    private int m_index;
+    private readonly uint m_type;
+    private readonly int m_index;
 
     private ComponentIndex(ComponentIndexType type, int index)
     {

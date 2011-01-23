@@ -822,11 +822,13 @@ namespace Rhino.Geometry
     {
       return new ControlPoint(pt);
     }
-    public static implicit operator Vector3d(Point3d pt)
+    //David: made this operator explicit on jan-22 2011, it was causing problems with the VB compiler.
+    public static explicit operator Vector3d(Point3d pt)
     {
       return new Vector3d(pt);
     }
-    public static implicit operator Point3d(Vector3d vec)
+    //David: made this operator explicit on jan-22 2011, it was causing problems with the VB compiler.
+    public static explicit operator Point3d(Vector3d vec)
     {
       return new Point3d(vec);
     }

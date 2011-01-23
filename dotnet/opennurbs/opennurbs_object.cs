@@ -1,12 +1,10 @@
 using System;
-using System.Runtime.InteropServices;
 
 namespace Rhino.Runtime
 {
-  [Serializable()]
+  [Serializable]
   public class DocumentCollectedException : Exception
   {
-    public DocumentCollectedException() { }
   }
 
   /// <summary>
@@ -78,7 +76,7 @@ namespace Rhino.Runtime
     {
       if ( IntPtr.Zero==m_ptr )
       {
-        bool applymempressure = false;
+        bool applymempressure;
         IntPtr pNewPointer = _InternalDuplicate(out applymempressure);
         m_ptr = pNewPointer;
         if (applymempressure)
@@ -132,7 +130,6 @@ namespace Rhino.Runtime
     {
       m__parent = parentObject;
       m_subobject_index = subobject_index;
-      // NOTE:
       // We may want to call GC.SuppressFinalize in this situation. This does mean
       // that we would have to tell the GC that the object needs finalization if
       // we in-place copy

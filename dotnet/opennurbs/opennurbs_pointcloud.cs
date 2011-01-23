@@ -2,10 +2,6 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
-using Rhino;
-using Rhino.Geometry;
 
 namespace Rhino.Geometry
 {
@@ -16,8 +12,9 @@ namespace Rhino.Geometry
   public class PointCloudItem
   {
     #region fields
-    PointCloud m_parent;
-    int m_index = -1;
+
+    readonly PointCloud m_parent;
+    readonly int m_index = -1;
     #endregion
 
     #region constructors
@@ -192,9 +189,9 @@ namespace Rhino.Geometry
     }
     public PointCloud(IEnumerable<Point3d> points)
     {
-      int count = 0;
+      int count;
       Point3d[] ptArray = Rhino.Collections.Point3dList.GetConstPointArray(points, out count);
-      IntPtr ptr = IntPtr.Zero;
+      IntPtr ptr;
       if (null == ptArray || count < 1)
       {
         ptr = UnsafeNativeMethods.ON_PointCloud_New();
@@ -216,7 +213,7 @@ namespace Rhino.Geometry
     const int idx_PointCount = 0;
     const int idx_NormalCount = 1;
     const int idx_ColorCount = 2;
-    const int idx_HiddenCount = 3;
+    //const int idx_HiddenCount = 3;
     const int idx_HiddenPointCount = 4;
 
     #region properties
@@ -413,7 +410,7 @@ namespace Rhino.Geometry
     /// <param name="points">Points to append.</param>
     public void AddRange(IEnumerable<Point3d> points)
     {
-      int count = 0;
+      int count;
       Point3d[] ptArray = Rhino.Collections.Point3dList.GetConstPointArray(points, out count);
       if (ptArray == null) { return; }
 
@@ -487,7 +484,7 @@ namespace Rhino.Geometry
       if (index < 0) { throw new IndexOutOfRangeException("Index must be larger than or equal to zero"); }
       if (index > Count) { throw new IndexOutOfRangeException("Index must be smaller than or equal to Count"); }
 
-      int count = 0;
+      int count;
       Point3d[] ptArray = Rhino.Collections.Point3dList.GetConstPointArray(points, out count);
       if (ptArray == null) { return; }
 
@@ -573,7 +570,7 @@ namespace Rhino.Geometry
     private class PointCloudItemEnumerator : IEnumerator<PointCloudItem>
     {
       #region members
-      private PointCloud m_owner;
+      private readonly PointCloud m_owner;
       int position = -1;
       #endregion
 
@@ -640,7 +637,7 @@ namespace Rhino.Geometry
     private class PointCloudPointEnumerator : IEnumerator<Point3d>
     {
       #region members
-      private PointCloud m_owner;
+      private readonly PointCloud m_owner;
       int position = -1;
       #endregion
 
@@ -706,8 +703,8 @@ namespace Rhino.Geometry
   }
 }
 
-namespace Rhino.Geometry.Collections
-{
+//namespace Rhino.Geometry.Collections
+//{
   /////// <summary>
   /////// Provides access to the Point coordinates in a PointCloud.
   /////// </summary>
@@ -1409,4 +1406,4 @@ namespace Rhino.Geometry.Collections
   //  }
   //  #endregion
   //}
-}
+//}

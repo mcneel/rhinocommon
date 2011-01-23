@@ -1,7 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Geometry;
 using Rhino.DocObjects;
 
 namespace Rhino.Geometry
@@ -9,7 +7,7 @@ namespace Rhino.Geometry
   public class GeometryBase : Runtime.CommonObject
   {
     #region constructors / wrapped pointer manipulation
-    Geometry.GeometryBase m_shallow_parent;
+    GeometryBase m_shallow_parent;
 
     protected GeometryBase() { }
 
@@ -26,7 +24,7 @@ namespace Rhino.Geometry
       if (null != m_shallow_parent)
         return m_shallow_parent.ConstPointer();
 
-      Rhino.DocObjects.ObjRef obj_ref = this.m__parent as Rhino.DocObjects.ObjRef;
+      Rhino.DocObjects.ObjRef obj_ref = m__parent as Rhino.DocObjects.ObjRef;
       if (null != obj_ref)
         return obj_ref.GetGeometryConstPointer(this);
 
@@ -506,7 +504,6 @@ namespace Rhino.Geometry
     const int idxIsDeformable = 0;
     const int idxMakeDeformable = 1;
     internal const int idxIsMorphable = 2;
-    const int idxHasBrepForm = 3;
 
     /// <summary>
     /// True if object can be accurately modified with "squishy" transformations like
@@ -625,7 +622,8 @@ namespace Rhino.Geometry
         {
           string key = Marshal.PtrToStringUni(pKey);
           string value = Marshal.PtrToStringUni(pValue);
-          rc.Add(key, value);
+          if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
+            rc.Add(key, value);
         }
       }
 

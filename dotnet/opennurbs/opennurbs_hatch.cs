@@ -28,7 +28,7 @@ namespace Rhino.Geometry
       IntPtr pCurveArray = curvearray.NonConstPointer();
       Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer hatcharray = new Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer();
       IntPtr pOutput = hatcharray.NonConstPointer();
-      int count = UnsafeNativeMethods.RHC_RhinoCreateHatches(pCurveArray, hatchPatternIndex, rotationRadians, scale, pOutput);
+      UnsafeNativeMethods.RHC_RhinoCreateHatches(pCurveArray, hatchPatternIndex, rotationRadians, scale, pOutput);
       GeometryBase[] g = hatcharray.ToNonConstArray();
       if( g==null )
         return null;
@@ -47,9 +47,9 @@ namespace Rhino.Geometry
     {
       Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer geometry = new Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer();
       IntPtr pParentRhinoObject = IntPtr.Zero;
-      if (this.IsDocumentControlled)
+      if (IsDocumentControlled)
       {
-        Rhino.DocObjects.RhinoObject rhobj = this.ParentRhinoObject();
+        Rhino.DocObjects.RhinoObject rhobj = ParentRhinoObject();
         if (rhobj != null)
           pParentRhinoObject = rhobj.ConstPointer();
       }

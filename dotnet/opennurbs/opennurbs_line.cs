@@ -8,7 +8,7 @@ namespace Rhino.Geometry
   /// Represents a single line segment.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]
-  [Serializable()]
+  [Serializable]
   public struct Line
   {
     #region members
@@ -225,7 +225,7 @@ namespace Rhino.Geometry
       if (null == points)
         return false;
 
-      int count = 0;
+      int count;
       Point3d[] ptArray = Rhino.Collections.Point3dList.GetConstPointArray(points, out count);
       if (count < 2)
         return false;

@@ -7,7 +7,7 @@ namespace Rhino.Geometry
 {
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
   [DebuggerDisplay("({m_x}, {m_y})")]
-  [Serializable()]
+  [Serializable]
   public struct Point2f
   {
     #region members
@@ -99,7 +99,7 @@ namespace Rhino.Geometry
 
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 12)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
-  [Serializable()]
+  [Serializable]
   public struct Point3f
   {
     internal float m_x;
@@ -146,7 +146,7 @@ namespace Rhino.Geometry
 
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
   [DebuggerDisplay("({m_x}, {m_y})")]
-  [Serializable()]
+  [Serializable]
   public struct Vector2f
   {
     internal float m_x;
@@ -180,7 +180,7 @@ namespace Rhino.Geometry
 
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 12)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
-  [Serializable()]
+  [Serializable]
   public struct Vector3f
   {
     #region members

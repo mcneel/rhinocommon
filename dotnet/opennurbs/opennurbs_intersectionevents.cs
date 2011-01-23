@@ -1,7 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Geometry;
 using System.Collections.Generic;
 
 namespace Rhino.Geometry.Intersect
@@ -275,12 +272,12 @@ namespace Rhino.Geometry.Intersect
         throw new ArgumentException("Array rank must be 1, but this array is multi-dimensional.", "array");
 
       if (arrayIndex >= array.Length ||
-          this.Count + arrayIndex > array.Length)
+          Count + arrayIndex > array.Length)
       {
         throw new ArgumentException("arrayIndex");
       }
 
-      for (int i = 0; i < this.Count; i++)
+      for (int i = 0; i < Count; i++)
       {
         array[arrayIndex++] = this[i];
       }
@@ -292,7 +289,7 @@ namespace Rhino.Geometry.Intersect
     /// <returns>The constructed enumerator.</returns>
     public IEnumerator<IntersectionEvent> GetEnumerator()
     {
-      for (int i = 0; i < this.Count; i++)
+      for (int i = 0; i < Count; i++)
       {
         yield return this[i];
       }
@@ -328,7 +325,7 @@ namespace Rhino.Geometry.Intersect
     /// <returns>The index in case the IntersectionEvent was found; -1 otherwise.</returns>
     int IList<IntersectionEvent>.IndexOf(IntersectionEvent item)
     {
-      for (int i = 0; i < this.Count; i++)
+      for (int i = 0; i < Count; i++)
       {
         if (item == this[i])
           return i;
@@ -383,7 +380,7 @@ namespace Rhino.Geometry.Intersect
     /// <returns>True if element is contained; otherwise false.</returns>
     bool ICollection<IntersectionEvent>.Contains(IntersectionEvent item)
     {
-      for (int i = 0; i < this.Count; i++)
+      for (int i = 0; i < Count; i++)
       {
         if (item == this[i])
           return true;

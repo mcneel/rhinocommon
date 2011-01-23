@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Geometry;
 using Rhino.Display;
 using Rhino.Collections;
 
@@ -137,9 +134,9 @@ namespace Rhino.Geometry
       if (degree < 1)
         return null;
 
-      int dimension = 3;
-      double knotDelta = 1.0;
-      int count = 0;
+      const int dimension = 3;
+      const double knotDelta = 1.0;
+      int count;
       int order = degree + 1;
       Point3d[] ptArray = Rhino.Collections.Point3dList.GetConstPointArray(points, out count);
       if (null == ptArray || count < 2)
@@ -596,7 +593,7 @@ namespace Rhino.Geometry.Collections
   /// </summary>
   public sealed class NurbsCurveKnotList : IEnumerable<double>
   {
-    private NurbsCurve m_curve;
+    private readonly NurbsCurve m_curve;
 
     #region constructors
     internal NurbsCurveKnotList(NurbsCurve ownerCurve)
@@ -764,7 +761,7 @@ namespace Rhino.Geometry.Collections
     private class KVEnum : IEnumerator<double>
     {
       #region members
-      private NurbsCurveKnotList m_curve_kv;
+      private readonly NurbsCurveKnotList m_curve_kv;
       int position = -1;
       #endregion
 
@@ -835,7 +832,7 @@ namespace Rhino.Geometry.Collections
   /// </summary>
   public class NurbsCurvePointList : IEnumerable<ControlPoint>
   {
-    private NurbsCurve m_curve;
+    private readonly NurbsCurve m_curve;
 
     #region constructors
     internal NurbsCurvePointList(NurbsCurve ownerCurve)
@@ -1020,7 +1017,7 @@ namespace Rhino.Geometry.Collections
     private class CVEnum : IEnumerator<ControlPoint>
     {
       #region members
-      private NurbsCurvePointList m_curve_cv;
+      private readonly NurbsCurvePointList m_curve_cv;
       int position = -1;
       #endregion
 

@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace Rhino.Geometry
 {
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 32)]
-  [Serializable()]
+  [Serializable]
   public struct Quaternion
   {
     #region statics

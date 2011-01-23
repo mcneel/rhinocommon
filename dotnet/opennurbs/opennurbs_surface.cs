@@ -1,7 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Geometry;
 
 namespace Rhino.Geometry
 {
@@ -47,7 +44,7 @@ namespace Rhino.Geometry
   public class SurfaceCurvature
   {
     #region members
-    private Point2d m_uv;
+    private readonly Point2d m_uv;
     private Point3d m_point;
     private Vector3d m_normal;
     private Vector3d m_dir1;
@@ -114,9 +111,9 @@ namespace Rhino.Geometry
     /// <returns>The specified direction vector.</returns>
     public Vector3d Direction(int direction)
     {
-      if (direction == 0) { return m_dir1; }
-      else { return m_dir2; }
+      return direction == 0 ? m_dir1 : m_dir2;
     }
+
     /// <summary>
     /// Gets the Kappa curvature value.
     /// </summary>
@@ -124,8 +121,7 @@ namespace Rhino.Geometry
     /// <returns>The specified kappa value.</returns>
     public double Kappa(int direction)
     {
-      if (direction == 0) { return m_kappa1; }
-      else { return m_kappa2; }
+      return direction == 0 ? m_kappa1 : m_kappa2;
     }
 
     /// <summary>
@@ -156,14 +152,11 @@ namespace Rhino.Geometry
       {
         return Circle.Unset;
       }
-      else
-      {
-        double r = 1.0 / Kappa(direction);
-        Point3d pc = m_point + m_normal * r;
-        Point3d p0 = pc - Direction(direction) * r;
-        Point3d p1 = pc + Direction(direction) * r;
-        return new Circle(p0, m_point, p1);
-      }
+      double r = 1.0 / Kappa(direction);
+      Point3d pc = m_point + m_normal * r;
+      Point3d p0 = pc - Direction(direction) * r;
+      Point3d p1 = pc + Direction(direction) * r;
+      return new Circle(p0, m_point, p1);
     }
     #endregion
   }
@@ -694,7 +687,7 @@ namespace Rhino.Geometry
       if (numberDerivatives < 0)
         return false;
       IntPtr pConstThis = ConstPointer();
-      int stride = 3;
+      const int stride = 3;
       int count = (numberDerivatives + 1) * (numberDerivatives + 2) / 2;
       int size = stride * count;
       double[] der_array = new double[size];
@@ -792,7 +785,7 @@ namespace Rhino.Geometry
       System.Collections.Generic.List<Point2d> points2d = new System.Collections.Generic.List<Point2d>();
       foreach (Point3d pt in points)
       {
-        double s = 0.0, t = 0.0;
+        double s, t;
         if (!ClosestPoint(pt, out s, out t))
           continue;
         Point3d srf_pt = PointAt(s, t);
@@ -1161,8 +1154,8 @@ namespace Rhino.Geometry
     //  BOOL GetLocalClosestPoint( const ON_3dPoint&, // test_point
 
     //  virtual int GetNurbForm( ON_NurbsSurface& nurbs_surface,
-    const int idxSurfParamFromNurbs = 0;
-    const int idxNurbsParamFromSurf = 1;
+    //const int idxSurfParamFromNurbs = 0;
+    //const int idxNurbsParamFromSurf = 1;
     /* Leaving out until we have a request for this
         public bool SurfaceParameterFromNurbsFormParameter(double nurbsS, double nurbsT, out double surfaceS, out double surfaceT)
         {

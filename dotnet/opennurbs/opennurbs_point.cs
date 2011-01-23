@@ -2,14 +2,11 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-using Rhino;
-using Rhino.Geometry;
-
 namespace Rhino.Geometry
 {
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_t0}, {m_t1})")]
-  [Serializable()]
+  [Serializable]
   public struct Interval
   {
     #region Members
@@ -426,7 +423,7 @@ namespace Rhino.Geometry
 
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_x}, {m_y})")]
-  [Serializable()]
+  [Serializable]
   public struct Point2d
   {
     private double m_x;
@@ -666,7 +663,7 @@ namespace Rhino.Geometry
 
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 24)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
-  [Serializable()]
+  [Serializable]
   public struct Point3d
   {
     #region members
@@ -1064,7 +1061,6 @@ namespace Rhino.Geometry
       if (null == points)
         return null;
 
-      // NOTE:
       // This code duplicates the static function CullDuplicatePoints in tl_brep_intersect.cpp
       Rhino.Collections.Point3dList point_list = new Rhino.Collections.Point3dList(points);
       int count = point_list.Count;
@@ -1120,7 +1116,7 @@ namespace Rhino.Geometry
 
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 32)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z}, [{m_w}])")]
-  [Serializable()]
+  [Serializable]
   public struct Point4d
   {
     internal double m_x;
@@ -1283,7 +1279,7 @@ namespace Rhino.Geometry
 
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_x}, {m_y})")]
-  [Serializable()]
+  [Serializable]
   public struct Vector2d
   {
     private double m_x;
@@ -1341,7 +1337,7 @@ namespace Rhino.Geometry
   // of the rules that FxCop states about IComparable classes
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 24)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
-  [Serializable()]
+  [Serializable]
   public struct Vector3d //: IComparable<Vector3d>
   {
     #region fields
@@ -1908,7 +1904,7 @@ namespace Rhino.Geometry
 
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]
   [DebuggerDisplay("Pt({m_P.X},{m_P.Y},{m_P.Z}) Dir({m_V.X},{m_V.Y},{m_V.Z})")]
-  [Serializable()]
+  [Serializable]
   public struct Ray3d
   {
     Point3d m_P;

@@ -1,7 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Geometry;
 using System.Collections.Generic;
 
 namespace Rhino.Geometry.Intersect
@@ -171,9 +168,8 @@ namespace Rhino.Geometry.Intersect
       if (plane.ZAxis.IsParallelTo(circle.Plane.ZAxis, RhinoMath.ZeroTolerance * Math.PI) != 0)
       {
         if (Math.Abs(plane.DistanceTo(circle.Center)) < RhinoMath.ZeroTolerance)
-        { return PlaneCircleIntersection.Coincident; }
-        else
-        { return PlaneCircleIntersection.Parallel; }
+          return PlaneCircleIntersection.Coincident;
+        return PlaneCircleIntersection.Parallel;
       }
 
       Line L;
@@ -340,8 +336,6 @@ namespace Rhino.Geometry.Intersect
     public static bool LineBox(Line line, Box box, double tolerance, out Interval lineParameters)
     {
       //David: test this!
-      lineParameters = new Interval();
-
       BoundingBox bbox = new BoundingBox(new Point3d(box.X.Min, box.Y.Min, box.Z.Min),
                                          new Point3d(box.X.Max, box.Y.Max, box.Z.Max));
       Transform xform = Transform.ChangeBasis(Plane.WorldXY, box.Plane);
@@ -587,8 +581,6 @@ namespace Rhino.Geometry.Intersect
     /// <returns>True on success, false on failure.</returns>
     public static bool CurveBrep(Curve curve, Brep brep, double tolerance, out Curve[] overlapCurves, out Point3d[] intersectionPoints)
     {
-      bool rc = false;
-
       overlapCurves = null;
       intersectionPoints = null;
 
@@ -601,7 +593,7 @@ namespace Rhino.Geometry.Intersect
       IntPtr curvePtr = curve.ConstPointer();
       IntPtr brepPtr = brep.ConstPointer();
 
-      rc = UnsafeNativeMethods.ON_Intersect_CurveBrep(curvePtr, brepPtr, tolerance, outputCurvesPtr, outputPointsPtr);
+      bool rc = UnsafeNativeMethods.ON_Intersect_CurveBrep(curvePtr, brepPtr, tolerance, outputCurvesPtr, outputPointsPtr);
 
       if (rc)
       {
@@ -625,8 +617,6 @@ namespace Rhino.Geometry.Intersect
     /// <returns>True on success, false on failure.</returns>
     public static bool BrepBrep(Brep brepA, Brep brepB, double tolerance, out Curve[] intersectionCurves, out Point3d[] intersectionPoints)
     {
-      bool rc = false;
-
       intersectionCurves = null;
       intersectionPoints = null;
 
@@ -639,7 +629,7 @@ namespace Rhino.Geometry.Intersect
       IntPtr brepPtrA = brepA.ConstPointer();
       IntPtr brepPtrB = brepB.ConstPointer();
 
-      rc = UnsafeNativeMethods.ON_Intersect_BrepBrep(brepPtrA, brepPtrB, tolerance, outputCurvesPtr, outputPointsPtr);
+      bool rc = UnsafeNativeMethods.ON_Intersect_BrepBrep(brepPtrA, brepPtrB, tolerance, outputCurvesPtr, outputPointsPtr);
 
       if (rc)
       {

@@ -1,7 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Geometry;
 using Rhino.Display;
 
 namespace Rhino.Geometry
@@ -26,9 +23,9 @@ namespace Rhino.Geometry
 
     public PolylineCurve(System.Collections.Generic.IEnumerable<Point3d> points)
     {
-      int count = 0;
+      int count;
       Point3d[] ptArray = Rhino.Collections.Point3dList.GetConstPointArray(points, out count);
-      IntPtr ptr = IntPtr.Zero;
+      IntPtr ptr;
       if (null == ptArray || count < 1)
       {
         ptr = UnsafeNativeMethods.ON_PolylineCurve_New(IntPtr.Zero);

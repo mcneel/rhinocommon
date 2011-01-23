@@ -1,7 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Geometry;
 using Rhino.Display;
 
 namespace Rhino.Geometry

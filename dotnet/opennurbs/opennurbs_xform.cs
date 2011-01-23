@@ -1,7 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Geometry;
 
 namespace Rhino.Geometry
 {
@@ -10,7 +8,7 @@ namespace Rhino.Geometry
   /// parallel to C++ ON_Xform
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 128)]
-  [Serializable()]
+  [Serializable]
   public struct Transform
   {
     #region members
@@ -450,7 +448,6 @@ namespace Rhino.Geometry
     /// <value>The new value at [row, column]</value>
     public double this[int row, int column]
     {
-      // David sez: boy, this was fun to write...
       get
       {
         if (row < 0) { throw new IndexOutOfRangeException("Negative row indices are not allowed when accessing a Transform matrix"); }
@@ -460,47 +457,31 @@ namespace Rhino.Geometry
 
         if (row == 0)
         {
-          if (column == 0)
-          { return m_00; }
-          else if (column == 1)
-          { return m_01; }
-          else if (column == 2)
-          { return m_02; }
-          else if (column == 3)
-          { return m_03; }
+          if (column == 0){ return m_00; }
+          if (column == 1){ return m_01; }
+          if (column == 2){ return m_02; }
+          if (column == 3){ return m_03; }
         }
         else if (row == 1)
         {
-          if (column == 0)
-          { return m_10; }
-          else if (column == 1)
-          { return m_11; }
-          else if (column == 2)
-          { return m_12; }
-          else if (column == 3)
-          { return m_13; }
+          if (column == 0){ return m_10; }
+          if (column == 1){ return m_11; }
+          if (column == 2){ return m_12; }
+          if (column == 3){ return m_13; }
         }
         else if (row == 2)
         {
-          if (column == 0)
-          { return m_20; }
-          else if (column == 1)
-          { return m_21; }
-          else if (column == 2)
-          { return m_22; }
-          else if (column == 3)
-          { return m_23; }
+          if (column == 0){ return m_20; }
+          if (column == 1){ return m_21; }
+          if (column == 2){ return m_22; }
+          if (column == 3){ return m_23; }
         }
         else if (row == 3)
         {
-          if (column == 0)
-          { return m_30; }
-          else if (column == 1)
-          { return m_31; }
-          else if (column == 2)
-          { return m_32; }
-          else if (column == 3)
-          { return m_33; }
+          if (column == 0){ return m_30; }
+          if (column == 1){ return m_31; }
+          if (column == 2){ return m_32; }
+          if (column == 3){ return m_33; }
         }
 
         throw new IndexOutOfRangeException("One of the cross beams has gone out askew on the treadle.");
@@ -674,10 +655,6 @@ namespace Rhino.Geometry
     private double m_tolerance;
     private bool m_bQuickPreview;
     private bool m_bPreserveStructure;
-
-    protected SpaceMorph()
-    {
-    }
 
     #region from ON_Geometry - moved here to keep clutter out of geometry class
     /// <summary>Apply the space morph to geometry</summary>

@@ -1,12 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Threading;
-
-using Rhino.Geometry;
-using Rhino;
 
 namespace Rhino.Geometry
 {
@@ -20,7 +13,6 @@ namespace Rhino.Geometry
     /// Create a new empty polyline.
     /// </summary>
     public Polyline()
-      : base()
     {
     }
     /// <summary>
@@ -123,10 +115,7 @@ namespace Rhino.Geometry
         int rc = UnsafeNativeMethods.ONC_ComparePoint(3, false, First, Last);
         return (rc == 0);
       }
-      else
-      {
-        return (First.DistanceTo(Last) <= tolerance);
-      }
+      return (First.DistanceTo(Last) <= tolerance);
     }
 
     /// <summary>
@@ -492,7 +481,7 @@ namespace Rhino.Geometry
 
       return count0 - m_size;
     }
-    private int Collapse_ShortestEdgeIndex(List<double> L)
+    private static int Collapse_ShortestEdgeIndex(List<double> L)
     {
       if (L.Count < 2) { return L.Count - 1; }
 
@@ -509,7 +498,7 @@ namespace Rhino.Geometry
       }
       return i_min;
     }
-    private void Collapse_CollapseSegment(int segment_index, List<double> L, List<Point3d> P)
+    private static void Collapse_CollapseSegment(int segment_index, List<double> L, List<Point3d> P)
     {
       if (segment_index == 0)
       {
@@ -584,7 +573,7 @@ namespace Rhino.Geometry
 
       return vertex_map.Length - m_size;
     }
-    private void Reduce_RecursiveComponent(Point3d[] P, bool[] vertex_map, double tolerance, int A, int B)
+    private static void Reduce_RecursiveComponent(Point3d[] P, bool[] vertex_map, double tolerance, int A, int B)
     {
       //Abort if there is nothing left to collapse.
       if (B <= (A + 1)) { return; }
@@ -593,13 +582,12 @@ namespace Rhino.Geometry
       Line segment = new Line(P[A], P[B]);
 
       double max_d = 0.0;
-      double loc_d = 0.0;
       int max_i = A;
 
       // Iterate over remaining points in subset and find furthest point.
       for (int i = A + 1; i < B; i++)
       {
-        loc_d = segment.MinimumDistanceTo(P[i]);
+        double loc_d = segment.MinimumDistanceTo(P[i]);
         if (loc_d > max_d)
         {
           max_d = loc_d;
@@ -656,7 +644,7 @@ namespace Rhino.Geometry
 
       return true;
     }
-    private Point3d Smooth(Point3d v0, Point3d v1, Point3d v2, double amount)
+    private static Point3d Smooth(Point3d v0, Point3d v1, Point3d v2, double amount)
     {
       double x = 0.5 * (v0.m_x + v2.m_x);
       double y = 0.5 * (v0.m_y + v2.m_y);

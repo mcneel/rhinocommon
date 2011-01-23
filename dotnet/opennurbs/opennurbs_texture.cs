@@ -5,8 +5,8 @@ namespace Rhino.DocObjects
   public class Texture : Rhino.Runtime.CommonObject
   {
     #region members
-    Rhino.DocObjects.Material m_parent_material;
-    int m_index;
+    readonly Rhino.DocObjects.Material m_parent_material;
+    readonly int m_index;
     #endregion
 
     public Texture()

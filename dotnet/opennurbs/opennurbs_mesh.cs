@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Rhino.Collections;
-using Rhino;
 
 
 namespace Rhino.Geometry
@@ -1279,7 +1278,7 @@ namespace Rhino.Geometry
     /// <returns>number of faces that were modified</returns>
     public int UnifyNormals()
     {
-      int rc = 0;
+      int rc;
       if (IsDocumentControlled)
       {
         IntPtr pConstThis = ConstPointer();
@@ -1489,10 +1488,7 @@ namespace Rhino.Geometry
       {
         return Point3d.Unset;
       }
-      else
-      {
-        return pointOnMesh;
-      }
+      return pointOnMesh;
     }
 
     /// <summary>
@@ -1763,7 +1759,7 @@ namespace Rhino.Geometry.Collections
   /// </summary>
   public class MeshVertexList : IEnumerable<Point3f>
   {
-    private Mesh m_mesh;
+    private readonly Mesh m_mesh;
 
     #region constructors
     internal MeshVertexList(Mesh ownerMesh)
@@ -2176,7 +2172,7 @@ namespace Rhino.Geometry.Collections
     private class MVEnum : IEnumerator<Point3f>
     {
       #region members
-      private MeshVertexList m_owner;
+      private readonly MeshVertexList m_owner;
       int position = -1;
       #endregion
 
@@ -2248,7 +2244,7 @@ namespace Rhino.Geometry.Collections
   /// </summary>
   public class MeshTopologyVertexList : IEnumerable<Point3f>
   {
-    private Mesh m_mesh;
+    private readonly Mesh m_mesh;
 
     #region constructors
     internal MeshTopologyVertexList(Mesh ownerMesh)
@@ -2398,7 +2394,7 @@ namespace Rhino.Geometry.Collections
     private class MTVEnum : IEnumerator<Point3f>
     {
       #region members
-      private MeshTopologyVertexList m_owner;
+      private readonly MeshTopologyVertexList m_owner;
       int position = -1;
       #endregion
 
@@ -2470,7 +2466,7 @@ namespace Rhino.Geometry.Collections
   /// </summary>
   public class MeshVertexNormalList //: IEnumerable<Vector3f> Steve - Hold off on making this enumberable for now
   {
-    private Mesh m_mesh;
+    private readonly Mesh m_mesh;
 
     #region constructors
     internal MeshVertexNormalList(Mesh ownerMesh)
@@ -2783,7 +2779,7 @@ namespace Rhino.Geometry.Collections
   /// </summary>
   public class MeshFaceList //: IEnumerable<MeshFace>
   {
-    private Mesh m_mesh;
+    private readonly Mesh m_mesh;
 
     #region constructors
     internal MeshFaceList(Mesh ownerMesh)
@@ -3102,7 +3098,7 @@ namespace Rhino.Geometry.Collections
   /// </summary>
   public class MeshFaceNormalList //: IEnumerable<Vector3f>
   {
-    private Mesh m_mesh;
+    private readonly Mesh m_mesh;
 
     #region constructors
     internal MeshFaceNormalList(Mesh ownerMesh)
@@ -3339,7 +3335,7 @@ namespace Rhino.Geometry.Collections
   /// </summary>
   public class MeshVertexColorList //: IEnumerable<Color>
   {
-    private Mesh m_mesh;
+    private readonly Mesh m_mesh;
 
     #region constructors
     internal MeshVertexColorList(Mesh ownerMesh)
@@ -3611,7 +3607,7 @@ namespace Rhino.Geometry.Collections
   /// </summary>
   public class MeshTextureCoordinateList // : IEnumerable<Point2f>
   {
-    private Mesh m_mesh;
+    private readonly Mesh m_mesh;
 
     #region constructors
     internal MeshTextureCoordinateList(Mesh ownerMesh)
@@ -3785,7 +3781,7 @@ namespace Rhino.Geometry.Collections
     /// <returns>True on success, false on failure.</returns>
     public bool SetTextureCoordinate(int index, Point3f tc)
     {
-      return SetTextureCoordinate(index, (float)tc.m_x, (float)tc.m_y);
+      return SetTextureCoordinate(index, tc.m_x, tc.m_y);
     }
     /// <summary>
     /// Set all texture coordinates in one go.
@@ -4337,7 +4333,7 @@ namespace Rhino.Geometry
 {
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 16)]
   [DebuggerDisplay("{DebuggerDisplayUtil}")]
-  [Serializable()]
+  [Serializable]
   public struct MeshFace
   {
     #region members
@@ -4397,10 +4393,7 @@ namespace Rhino.Geometry
         {
           return string.Format(System.Globalization.CultureInfo.InvariantCulture, "T({0}, {1}, {2})", m_a, m_b, m_c);
         }
-        else
-        {
-          return string.Format(System.Globalization.CultureInfo.InvariantCulture, "Q({0}, {1}, {2}, {3})", m_a, m_b, m_c, m_d);
-        }
+        return string.Format(System.Globalization.CultureInfo.InvariantCulture, "Q({0}, {1}, {2}, {3})", m_a, m_b, m_c, m_d);
       }
     }
 

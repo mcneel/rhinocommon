@@ -1,11 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
-using Rhino.Geometry;
 
 namespace Rhino.Geometry
 {
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 136)]
-  [Serializable()]
+  [Serializable]
   public struct Sphere
   {
     #region members

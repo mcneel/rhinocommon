@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Threading;
 
@@ -52,7 +51,7 @@ namespace Rhino.Collections
     /// </summary>
     public RhinoList()
     {
-      this.m_items = new T[0];
+      m_items = new T[0];
     }
 
     /// <summary>
@@ -65,7 +64,7 @@ namespace Rhino.Collections
       {
         throw new ArgumentOutOfRangeException("initialCapacity", "RhinoList cannot be constructed with a negative capacity");
       }
-      this.m_items = new T[initialCapacity];
+      m_items = new T[initialCapacity];
     }
 
     /// <summary>
@@ -79,12 +78,12 @@ namespace Rhino.Collections
       if (amount < 0) { throw new ArgumentOutOfRangeException("amount", "RhinoList cannot be constructed with a negative amount"); }
       if (amount == 0) { return; }
 
-      this.m_items = new T[amount];
-      this.m_size = amount;
+      m_items = new T[amount];
+      m_size = amount;
 
       for (int i = 0; i < amount; i++)
       {
-        this.m_items[i] = defaultValue;
+        m_items[i] = defaultValue;
       }
     }
 
@@ -103,20 +102,20 @@ namespace Rhino.Collections
       if (is2 != null)
       {
         int count = is2.Count;
-        this.m_items = new T[count];
+        m_items = new T[count];
 
-        is2.CopyTo(this.m_items, 0);
-        this.m_size = count;
+        is2.CopyTo(m_items, 0);
+        m_size = count;
       }
       else
       {
-        this.m_size = 0;
-        this.m_items = new T[4];
+        m_size = 0;
+        m_items = new T[4];
         using (IEnumerator<T> enumerator = collection.GetEnumerator())
         {
           while (enumerator.MoveNext())
           {
-            this.Add(enumerator.Current);
+            Add(enumerator.Current);
           }
         }
       }
@@ -131,7 +130,7 @@ namespace Rhino.Collections
       if (list == null) { throw new ArgumentNullException("list"); }
 
       //Set capacity to match.
-      this.Capacity = list.Capacity;
+      Capacity = list.Capacity;
 
       if (list.m_size > 0)
       {
@@ -563,7 +562,7 @@ namespace Rhino.Collections
           if (this == is2)
           {
             Array.Copy(this.m_items, 0, this.m_items, index, index);
-            Array.Copy(this.m_items, (int)(index + count), this.m_items, (int)(index * 2), (int)(this.m_size - index));
+            Array.Copy(this.m_items, (index + count), this.m_items, (index * 2), (this.m_size - index));
           }
           else
           {
@@ -1323,7 +1322,7 @@ namespace Rhino.Collections
     private sealed class FunctorComparer<Q> : IComparer<Q>
     {
       //private Comparer<Q> c;
-      private Comparison<Q> m_comparison;
+      private readonly Comparison<Q> m_comparison;
 
       public FunctorComparer(Comparison<Q> comparison)
       {
@@ -1565,9 +1564,9 @@ namespace Rhino.Collections
   public class Point3dList : RhinoList<Point3d>
   {
     public Point3dList()
-      : base()
     {
     }
+
     /// <summary>
     /// Create a new pointlist with a preallocated initial capacity.
     /// </summary>
@@ -1590,7 +1589,6 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="initialPoints">Points to add to the list.</param>
     public Point3dList(params Point3d[] initialPoints)
-      : base()
     {
       if (initialPoints != null)
       {
@@ -1621,7 +1619,6 @@ namespace Rhino.Collections
     /// <returns></returns>
     internal static Point3d[] GetConstPointArray(IEnumerable<Point3d> points, out int count)
     {
-      count = 0;
       RhinoList<Point3d> pointlist = points as RhinoList<Point3d>;
       if (null != pointlist)
       {
@@ -1895,7 +1892,6 @@ namespace Rhino.Collections
   public class CurveList : RhinoList<Curve>
   {
     public CurveList()
-      : base()
     {
     }
     public CurveList(int initialCapacity)

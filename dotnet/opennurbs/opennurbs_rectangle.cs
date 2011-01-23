@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace Rhino.Geometry
 {
   /// <summary>
   /// Represents a 3d oriented rectangle.
   /// </summary>
-  [Serializable()]
+  [Serializable]
   public struct Rectangle3d
   {
     #region fields

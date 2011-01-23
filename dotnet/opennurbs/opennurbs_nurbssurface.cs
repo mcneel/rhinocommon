@@ -1,15 +1,10 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Collections;
 using System.Collections.Generic;
-using Rhino;
-using Rhino.Geometry;
 
-namespace Rhino
-{
-  //public class ON_TensorProduct { } never seen this used
-  //  public class ON_CageMorph { }
-}
+//public class ON_TensorProduct { } never seen this used
+//  public class ON_CageMorph { }
+
 namespace Rhino.Geometry
 {
   public class NurbsSurface : Surface
@@ -68,7 +63,7 @@ namespace Rhino.Geometry
     {
       if (null == points) { throw new ArgumentNullException("points"); }
 
-      int total_count = 0;
+      int total_count;
       Point3d[] ptArray = Rhino.Collections.Point3dList.GetConstPointArray(points, out total_count);
       if (total_count < 4)
       {
@@ -108,7 +103,7 @@ namespace Rhino.Geometry
     {
       if (null == points) { throw new ArgumentNullException("points"); }
 
-      int total_count = 0;
+      int total_count;
       Point3d[] ptArray = Rhino.Collections.Point3dList.GetConstPointArray(points, out total_count);
       if (total_count < 4)
       {
@@ -278,21 +273,21 @@ namespace Rhino.Geometry
 
     // GetBool indices
     const int idxIsRational = 0;
-    const int idxIsClampedStart = 1;
-    const int idxIsClampedEnd = 2;
-    const int idxZeroCVs = 3;
-    const int idxClampStart = 4;
-    const int idxClampEnd = 5;
-    const int idxMakeRational = 6;
-    const int idxMakeNonRational = 7;
-    const int idxHasBezierSpans = 8;
+    //const int idxIsClampedStart = 1;
+    //const int idxIsClampedEnd = 2;
+    //const int idxZeroCVs = 3;
+    //const int idxClampStart = 4;
+    //const int idxClampEnd = 5;
+    //const int idxMakeRational = 6;
+    //const int idxMakeNonRational = 7;
+    //const int idxHasBezierSpans = 8;
 
     // GetInt indices
-    const int idxCVSize = 0;
-    const int idxOrder = 1;
+    //const int idxCVSize = 0;
+    //const int idxOrder = 1;
     internal const int idxCVCount = 2;
     internal const int idxKnotCount = 3;
-    const int idxCVStyle = 4;
+    //const int idxCVStyle = 4;
 
     internal int GetIntDir(int which, int direction)
     {
@@ -313,7 +308,7 @@ namespace Rhino.Geometry.Collections
   /// </summary>
   public sealed class NurbsSurfacePointList
   {
-    private NurbsSurface m_surface;
+    private readonly NurbsSurface m_surface;
 
     #region constructors
     internal NurbsSurfacePointList(NurbsSurface ownerSurface)
@@ -427,8 +422,8 @@ namespace Rhino.Geometry.Collections
   /// </summary>
   public sealed class NurbsSurfaceKnotList : IEnumerable<double>
   {
-    private NurbsSurface m_surface;
-    private int m_direction;
+    private readonly NurbsSurface m_surface;
+    private readonly int m_direction;
 
     #region constructors
     internal NurbsSurfaceKnotList(NurbsSurface ownerSurface, int direction)
@@ -553,7 +548,7 @@ namespace Rhino.Geometry.Collections
     private class KVEnum : IEnumerator<double>
     {
       #region members
-      private NurbsSurfaceKnotList m_surface_kv;
+      private readonly NurbsSurfaceKnotList m_surface_kv;
       int position = -1;
       #endregion
 

@@ -1,4 +1,1 @@
-namespace Rhino
-{
-//  public class ON_TextureMapping { }
-}
+//public class ON_TextureMapping { }

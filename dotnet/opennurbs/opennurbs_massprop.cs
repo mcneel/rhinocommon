@@ -1,7 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Geometry;
 
 namespace Rhino.Geometry
 {
@@ -9,7 +6,7 @@ namespace Rhino.Geometry
   {
     #region members
     private IntPtr m_ptr; // ON_MassProperties*
-    private bool m_bIsConst;
+    private readonly bool m_bIsConst;
     #endregion
 
     #region constructors
@@ -55,13 +52,11 @@ namespace Rhino.Geometry
       if (null == closedPlanarCurve)
         return null;
 
-      double relativeTolerance = 1.0e-6;
-      double absoluteTolerance = 1.0e-6;
+      const double relativeTolerance = 1.0e-6;
+      const double absoluteTolerance = 1.0e-6;
       IntPtr ptr = closedPlanarCurve.ConstPointer();
       IntPtr rc = UnsafeNativeMethods.ON_Curve_AreaMassProperties(ptr, relativeTolerance, absoluteTolerance);
-      if (rc == IntPtr.Zero)
-        return null;
-      return new AreaMassProperties(rc, false);
+      return rc == IntPtr.Zero ? null : new AreaMassProperties(rc, false);
     }
 
     /// <summary>
@@ -73,13 +68,11 @@ namespace Rhino.Geometry
     {
       if (null == hatch)
         return null;
-      double relativeTolerance = 1.0e-6;
-      double absoluteTolerance = 1.0e-6;
+      const double relativeTolerance = 1.0e-6;
+      const double absoluteTolerance = 1.0e-6;
       IntPtr ptr = hatch.ConstPointer();
       IntPtr rc = UnsafeNativeMethods.ON_Hatch_AreaMassProperties(ptr, relativeTolerance, absoluteTolerance);
-      if (rc == IntPtr.Zero)
-        return null;
-      return new AreaMassProperties(rc, false);
+      return rc == IntPtr.Zero ? null : new AreaMassProperties(rc, false);
     }
 
     /// <summary>
@@ -110,12 +103,10 @@ namespace Rhino.Geometry
         return null;
 
       IntPtr pBrep = brep.ConstPointer();
-      double relativeTolerance = 1.0e-6;
-      double absoluteTolerance = 1.0e-6;
+      const double relativeTolerance = 1.0e-6;
+      const double absoluteTolerance = 1.0e-6;
       IntPtr rc = UnsafeNativeMethods.ON_Brep_MassProperties(true, pBrep, relativeTolerance, absoluteTolerance);
-      if (IntPtr.Zero == rc)
-        return null;
-      return new AreaMassProperties(rc, false);
+      return IntPtr.Zero == rc ? null : new AreaMassProperties(rc, false);
     }
 
     /// <summary>
@@ -129,12 +120,10 @@ namespace Rhino.Geometry
         return null;
 
       IntPtr pSurface = surface.ConstPointer();
-      double relativeTolerance = 1.0e-6;
-      double absoluteTolerance = 1.0e-6;
+      const double relativeTolerance = 1.0e-6;
+      const double absoluteTolerance = 1.0e-6;
       IntPtr rc = UnsafeNativeMethods.ON_Surface_MassProperties(true, pSurface, relativeTolerance, absoluteTolerance);
-      if (IntPtr.Zero == rc)
-        return null;
-      return new AreaMassProperties(rc, false);
+      return IntPtr.Zero == rc ? null : new AreaMassProperties(rc, false);
     }
 
     #region properties
@@ -450,7 +439,7 @@ namespace Rhino.Geometry
   {
     #region members
     private IntPtr m_ptr; // ON_MassProperties*
-    private bool m_bIsConst;
+    private readonly bool m_bIsConst;
     #endregion
 
     #region constructors
@@ -515,12 +504,10 @@ namespace Rhino.Geometry
         return null;
 
       IntPtr pBrep = brep.ConstPointer();
-      double relativeTolerance = 1.0e-6;
-      double absoluteTolerance = 1.0e-6;
+      const double relativeTolerance = 1.0e-6;
+      const double absoluteTolerance = 1.0e-6;
       IntPtr rc = UnsafeNativeMethods.ON_Brep_MassProperties(false, pBrep, relativeTolerance, absoluteTolerance);
-      if (IntPtr.Zero == rc)
-        return null;
-      return new VolumeMassProperties(rc, false);
+      return IntPtr.Zero == rc ? null : new VolumeMassProperties(rc, false);
     }
 
     /// <summary>
@@ -534,12 +521,10 @@ namespace Rhino.Geometry
         return null;
 
       IntPtr pSurface = surface.ConstPointer();
-      double relativeTolerance = 1.0e-6;
-      double absoluteTolerance = 1.0e-6;
+      const double relativeTolerance = 1.0e-6;
+      const double absoluteTolerance = 1.0e-6;
       IntPtr rc = UnsafeNativeMethods.ON_Surface_MassProperties(false, pSurface, relativeTolerance, absoluteTolerance);
-      if (IntPtr.Zero == rc)
-        return null;
-      return new VolumeMassProperties(rc, false);
+      return IntPtr.Zero == rc ? null : new VolumeMassProperties(rc, false);
     }
     #region properties
     internal IntPtr ConstPointer()

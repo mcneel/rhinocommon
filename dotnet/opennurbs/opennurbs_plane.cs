@@ -1,7 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Geometry;
 
 namespace Rhino.Geometry
 {
@@ -28,7 +26,7 @@ namespace Rhino.Geometry
   }
 
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 128)]
-  [Serializable()]
+  [Serializable]
   public struct Plane
   {
     // This is a special case struct that does not match it's C++ counterpart (ON_Plane)
@@ -259,7 +257,7 @@ namespace Rhino.Geometry
       plane = new Plane();
       maximumDeviation = 0.0;
 
-      int count = 0;
+      int count;
       Point3d[] ptArray = Rhino.Collections.Point3dList.GetConstPointArray(points, out count);
 
       if (null == ptArray || count < 1) { return PlaneFitResult.Failure; }
@@ -496,15 +494,12 @@ namespace Rhino.Geometry
     {
       double s, t;
 
-      // NOTE: 
       // ClosestParameterTo does not currently validate input so won't return
       // false, therefore this function won't actually return an Unset point.
       // The code should probably be left this way so people check return
       // codes in case a fast way to validate input is added. The same problem
       // exists with the C++ sdk. 
-      if (!ClosestParameter(testPoint, out s, out t))
-        return Point3d.Unset;
-      return PointAt(s, t);
+      return !ClosestParameter(testPoint, out s, out t) ? Point3d.Unset : PointAt(s, t);
     }
 
     /// <summary>
@@ -634,21 +629,16 @@ namespace Rhino.Geometry
     /// <returns>True on success, false on failure.</returns>
     public bool Rotate(double sinAngle, double cosAngle, Vector3d axis, Point3d centerOfRotation)
     {
-      bool rc = false;
       if (centerOfRotation == Origin)
       {
         Transform rot = Rhino.Geometry.Transform.Rotation(sinAngle, cosAngle, axis, Point3d.Origin);
-        XAxis = rot * XAxis;
-        YAxis = rot * YAxis;
-        ZAxis = rot * ZAxis;
-        rc = true;
+        XAxis = rot*XAxis;
+        YAxis = rot*YAxis;
+        ZAxis = rot*ZAxis;
+        return true;
       }
-      else
-      {
-        Transform rot = Rhino.Geometry.Transform.Rotation(sinAngle, cosAngle, axis, centerOfRotation);
-        rc = Transform(rot);
-      }
-      return rc;
+      Transform rot2 = Rhino.Geometry.Transform.Rotation(sinAngle, cosAngle, axis, centerOfRotation);
+      return Transform(rot2);
     }
     #endregion
     #endregion

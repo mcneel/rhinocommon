@@ -1003,7 +1003,9 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Add a command line option
     /// </summary>
-    /// <param name="englishOption"></param>
+    /// <param name="englishOption">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
     /// <returns>
     /// option index value (>0) or 0 if option cannot be added
     /// </returns>
@@ -1020,7 +1022,9 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Add a command line option
     /// </summary>
-    /// <param name="englishOption"></param>
+    /// <param name="englishName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
     /// <param name="englishOptionValue"></param>
     /// <returns>
     /// option index value (>0) or 0 if option cannot be added
@@ -1051,7 +1055,9 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Add a command line option to get numbers and automatically save the value
     /// </summary>
-    /// <param name="englishName">english option description</param>
+    /// <param name="englishName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
     /// <param name="numberValue"></param>
     /// <param name="prompt">
     /// option prompt shown if the user selects this option.  If null or empty, then the
@@ -1070,7 +1076,9 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Add a command line option to get numbers and automatically save the value
     /// </summary>
-    /// <param name="englishName">english option description</param>
+    /// <param name="englishName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
     /// <param name="numberValue"></param>
     /// <returns>
     /// option index value (>0) or 0 if option cannot be added
@@ -1088,7 +1096,9 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Add a command line option to get integers and automatically save the value
     /// </summary>
-    /// <param name="englishName"></param>
+    /// <param name="englishName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
     /// <param name="intValue"></param>
     /// <param name="prompt">
     /// option prompt shown if the user selects this option.  If null or empty, then the
@@ -1107,7 +1117,9 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Add a command line option to get integers and automatically save the value
     /// </summary>
-    /// <param name="englishName"></param>
+    /// <param name="englishName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
     /// <param name="intValue"></param>
     /// <returns>
     /// option index value (>0) or 0 if option cannot be added
@@ -1159,7 +1171,9 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Add a command line option to toggle a setting
     /// </summary>
-    /// <param name="englishName"></param>
+    /// <param name="englishName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
     /// <param name="toggleValue"></param>
     /// <returns>option index value (>0) or 0 if option cannot be added</returns>
     /// <example>
@@ -1178,7 +1192,9 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Add a command line list option
     /// </summary>
-    /// <param name="englishOptionName"></param>
+    /// <param name="englishOptionName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
     /// <param name="listValues"></param>
     /// <param name="listCurrentIndex">zero based index of current option</param>
     /// <returns>option index value (>0) or 0 if option cannot be added.</returns>

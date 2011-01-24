@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Xml;
 using System.Drawing;
@@ -34,8 +33,8 @@ namespace Rhino
     //  }
     //}
 
-    PersistentSettingsManager m_SettingsManager = null;
-    Dictionary<string, string> m_Settings;
+    readonly PersistentSettingsManager m_SettingsManager;
+    readonly Dictionary<string, string> m_Settings;
 
     internal PersistentSettings(PersistentSettingsManager settingsManager)
     {
@@ -360,7 +359,7 @@ namespace Rhino
 
   class PersistentSettingsManager
   {
-    private PlugIns.PlugIn m_plugin;
+    private readonly PlugIns.PlugIn m_plugin;
 
     private PersistentSettings m_PluginSettings; // = null; initialized by runtime
     private Dictionary<string, PersistentSettings> m_CommandSettingsDict; // = null; initialized by runtime
@@ -502,34 +501,38 @@ namespace Rhino
           return false;
 
         XmlNodeList pluginSettings = rootNode.SelectNodes("./plugin/entry");
-
-        foreach (XmlNode entry in pluginSettings)
+        if (pluginSettings != null)
         {
-          if (entry.Attributes["key"] != null)
+          foreach (XmlNode entry in pluginSettings)
           {
-            string key = entry.Attributes["key"].Value;
-            m_PluginSettings[key] = entry.InnerText;
+            if (entry.Attributes!=null && entry.Attributes["key"] != null)
+            {
+              string key = entry.Attributes["key"].Value;
+              m_PluginSettings[key] = entry.InnerText;
+            }
           }
         }
 
         XmlNodeList commandNodes = rootNode.SelectNodes("./command");
 
-        foreach (XmlNode command in commandNodes)
+        if (commandNodes != null)
         {
-          string commandName = command.Attributes["name"].Value;
-          XmlNodeList commandEntries = command.SelectNodes("./entry");
-          PersistentSettings entries = new PersistentSettings(this);
-          foreach (XmlNode entry in commandEntries)
+          foreach (XmlNode command in commandNodes)
           {
-            if (entry.Attributes["key"] != null)
+            string commandName = command.Attributes["name"].Value;
+            XmlNodeList commandEntries = command.SelectNodes("./entry");
+            PersistentSettings entries = new PersistentSettings(this);
+            foreach (XmlNode entry in commandEntries)
             {
-              string key = entry.Attributes["key"].Value;
-              entries[key] = entry.InnerText;
+              if (entry.Attributes["key"] != null)
+              {
+                string key = entry.Attributes["key"].Value;
+                entries[key] = entry.InnerText;
+              }
             }
+            m_CommandSettingsDict[commandName] = entries;
           }
-          m_CommandSettingsDict[commandName] = entries;
         }
-
       }
       catch
       {

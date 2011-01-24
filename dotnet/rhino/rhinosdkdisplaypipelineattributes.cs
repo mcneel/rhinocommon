@@ -7,7 +7,7 @@ namespace Rhino.Display
   public class DisplayPipelineAttributes
   {
     #region pointer tracking
-    object m_parent;
+    readonly object m_parent;
     internal DisplayPipelineAttributes(DisplayModeDescription parent)
     {
       m_parent = parent;
@@ -73,7 +73,7 @@ namespace Rhino.Display
     #region View specific attributes...
     public sealed class ViewDisplayAttributes
     {
-      DisplayPipelineAttributes m_parent;
+      readonly DisplayPipelineAttributes m_parent;
       internal ViewDisplayAttributes(DisplayPipelineAttributes parent)
       {
         m_parent = parent;
@@ -212,7 +212,7 @@ namespace Rhino.Display
     const int idx_bDrawZAxis = 8;
     const int idx_bDrawWorldAxes = 9;
     const int idx_bShowGridOnTop = 10;
-    const int idx_bShowTransGrid = 11;
+    //const int idx_bShowTransGrid = 11;
     const int idx_bBlendGrid = 12;
     const int idx_bDrawTransGridPlane = 13;
     const int idx_bHighlightMeshes = 14;
@@ -368,7 +368,7 @@ namespace Rhino.Display
     #region Meshes specific attributes...
     public sealed class MeshDisplayAttributes
     {
-      DisplayPipelineAttributes m_parent;
+      readonly DisplayPipelineAttributes m_parent;
       internal MeshDisplayAttributes(DisplayPipelineAttributes parent)
       {
         m_parent = parent;

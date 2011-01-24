@@ -1,4 +1,1 @@
-namespace Rhino.Input
-{
-//  public class CommandOption { }
-}
+//public class CommandOption { }

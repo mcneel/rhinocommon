@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Rhino.FileIO
 {
   public class FileWriteOptions : IDisposable
   {
-    bool m_bDoDelete = false;
+    bool m_bDoDelete; // = false; initialized to false by runtime
     IntPtr m_ptr;
 
     public FileWriteOptions()
@@ -32,14 +30,14 @@ namespace Rhino.FileIO
     const int idxPreviewMode = 3;       // Include preview image
     const int idxBitmapsMode = 4;       // Include bitmap table
     const int idxHistoryMode = 5;       // Include history
-    const int idxAsVersion2 = 6;        // Write as version 2
-    const int idxAsVersion3 = 7;        // Write as version 3
+    //const int idxAsVersion2 = 6;        // Write as version 2
+    //const int idxAsVersion3 = 7;        // Write as version 3
     const int idxAsTemplate = 8;        // Write as template
     const int idxBatchMode = 9;         // Suppress dialog boxes
     const int idxGeometryOnly = 10;     // Write geometry only
-    const int idxInstallPlugin = 11;    // Set when the plugin is being installed
+    //const int idxInstallPlugin = 11;    // Set when the plugin is being installed
     const int idxSaveUserData = 12;     // Set when user data should be saved.
-    const int idxAsVersion4 = 13;       // Write as version 4
+    //const int idxAsVersion4 = 13;       // Write as version 4
 
     bool GetBool(int which)
     {
@@ -167,7 +165,7 @@ namespace Rhino.FileIO
 
   public class FileReadOptions : IDisposable
   {
-    bool m_bDoDelete = false;
+    bool m_bDoDelete; // = false; initialized to false by runtime
     IntPtr m_ptr;
 
     public FileReadOptions()
@@ -205,11 +203,11 @@ namespace Rhino.FileIO
     // CRhinoPlugInManager::RegisterPlugIn() requires the plugin to add a filetype
     // but a selective mode plugin doesn't want to add a plugin each time
     // it gets called.  The plugin will add a filetype when InstallPlugin is set.
-    const int idxInstallPlugin = 8;    // Set when the plugin is being installed
+    //const int idxInstallPlugin = 8;    // Set when the plugin is being installed
     // This is only used when BatchMode is true.  If this is true, and in batch
     // mode then instance definitions with a IDEF_UPDATE_TYPE equal to
     // will be updated when the file open is complete otherwise they will not.
-    const int idxScriptUpdateEmbededInstanceDefinitions = 9;
+    //const int idxScriptUpdateEmbededInstanceDefinitions = 9;
 
     bool GetBool(int which)
     {

@@ -82,9 +82,9 @@ namespace Rhino
         return null;
       return Marshal.PtrToStringUni(rc);
     }
-    const int idxName = 0;
+    //const int idxName = 0;
     const int idxPath = 1;
-    const int idxUrl = 2;
+    //const int idxUrl = 2;
     const int idxNotes = 3;
     const int idxTemplateFileUsed = 4;
 
@@ -256,13 +256,13 @@ namespace Rhino
     const int idxIsDocumentReadOnly = 2;
     const int idxIsDocumentLocked = 3;
     const int idxInGet = 4;
-    const int idxInGetPoint = 5;
-    const int idxInGetObject = 6;
-    const int idxInGetString = 7;
-    const int idxInGetNumber = 8;
-    const int idxInGetOption = 9;
-    const int idxInGetColor = 10;
-    const int idxInGetMeshes = 11;
+    //const int idxInGetPoint = 5;
+    //const int idxInGetObject = 6;
+    //const int idxInGetString = 7;
+    //const int idxInGetNumber = 8;
+    //const int idxInGetOption = 9;
+    //const int idxInGetColor = 10;
+    //const int idxInGetMeshes = 11;
     const int idxIsSendingMail = 12;
     const int idxUndoRecordingEnable = 13;
 
@@ -386,27 +386,13 @@ namespace Rhino
     private Rhino.DocObjects.Tables.ViewTable m_view_table;
     public Rhino.DocObjects.Tables.ViewTable Views
     {
-      get
-      {
-        if (null == m_view_table)
-        {
-          m_view_table = new Rhino.DocObjects.Tables.ViewTable(this);
-        }
-        return m_view_table;
-      }
+      get { return m_view_table ?? (m_view_table = new Rhino.DocObjects.Tables.ViewTable(this)); }
     }
 
     private Rhino.DocObjects.Tables.ObjectTable m_object_table;
     public Rhino.DocObjects.Tables.ObjectTable Objects
     {
-      get
-      {
-        if (null == m_object_table)
-        {
-          m_object_table = new Rhino.DocObjects.Tables.ObjectTable(this);
-        }
-        return m_object_table;
-      }
+      get { return m_object_table ?? (m_object_table = new Rhino.DocObjects.Tables.ObjectTable(this)); }
     }
 
     /// <summary>
@@ -428,14 +414,7 @@ namespace Rhino
     /// </summary>
     public Rhino.DocObjects.Tables.BitmapTable Bitmaps
     {
-      get
-      {
-        if (null == m_bitmap_table)
-        {
-          m_bitmap_table = new Rhino.DocObjects.Tables.BitmapTable(this);
-        }
-        return m_bitmap_table;
-      }
+      get { return m_bitmap_table ?? (m_bitmap_table = new Rhino.DocObjects.Tables.BitmapTable(this)); }
     }
 
     //[skipping]
@@ -446,14 +425,7 @@ namespace Rhino
     /// <summary>Materials in the document</summary>
     public Rhino.DocObjects.Tables.MaterialTable Materials
     {
-      get
-      {
-        if (null == m_material_table)
-        {
-          m_material_table = new Rhino.DocObjects.Tables.MaterialTable(this);
-        }
-        return m_material_table;
-      }
+      get { return m_material_table ?? (m_material_table = new Rhino.DocObjects.Tables.MaterialTable(this)); }
     }
 
     private Rhino.DocObjects.Tables.LinetypeTable m_linetype_table;
@@ -462,14 +434,7 @@ namespace Rhino
     /// </summary>
     public Rhino.DocObjects.Tables.LinetypeTable Linetypes
     {
-      get
-      {
-        if (null == m_linetype_table)
-        {
-          m_linetype_table = new Rhino.DocObjects.Tables.LinetypeTable(this);
-        }
-        return m_linetype_table;
-      }
+      get { return m_linetype_table ?? (m_linetype_table = new Rhino.DocObjects.Tables.LinetypeTable(this)); }
     }
 
     private Rhino.DocObjects.Tables.LayerTable m_layer_table;
@@ -478,14 +443,7 @@ namespace Rhino
     /// </summary>
     public Rhino.DocObjects.Tables.LayerTable Layers
     {
-      get
-      {
-        if (null == m_layer_table)
-        {
-          m_layer_table = new Rhino.DocObjects.Tables.LayerTable(this);
-        }
-        return m_layer_table;
-      }
+      get { return m_layer_table ?? (m_layer_table = new Rhino.DocObjects.Tables.LayerTable(this)); }
     }
 
     private Rhino.DocObjects.Tables.GroupTable m_group_table;
@@ -496,78 +454,39 @@ namespace Rhino
     /// </example>
     public Rhino.DocObjects.Tables.GroupTable Groups
     {
-      get
-      {
-        if (null == m_group_table)
-        {
-          m_group_table = new Rhino.DocObjects.Tables.GroupTable(this);
-        }
-        return m_group_table;
-      }
+      get { return m_group_table ?? (m_group_table = new Rhino.DocObjects.Tables.GroupTable(this)); }
     }
 
     private Rhino.DocObjects.Tables.FontTable m_font_table;
     public Rhino.DocObjects.Tables.FontTable Fonts
     {
-      get
-      {
-        if (null == m_font_table)
-        {
-          m_font_table = new Rhino.DocObjects.Tables.FontTable(this);
-        }
-        return m_font_table;
-      }
+      get { return m_font_table ?? (m_font_table = new Rhino.DocObjects.Tables.FontTable(this)); }
     }
 
     private Rhino.DocObjects.Tables.DimStyleTable m_dimstyle_table;
     public Rhino.DocObjects.Tables.DimStyleTable DimStyles
     {
-      get
-      {
-        if (null == m_dimstyle_table)
-        {
-          m_dimstyle_table = new Rhino.DocObjects.Tables.DimStyleTable(this);
-        }
-        return m_dimstyle_table;
-      }
+      get { return m_dimstyle_table ?? (m_dimstyle_table = new Rhino.DocObjects.Tables.DimStyleTable(this)); }
     }
 
     private Rhino.DocObjects.Tables.LightTable m_light_table;
     public Rhino.DocObjects.Tables.LightTable Lights
     {
-      get
-      {
-        if (null == m_light_table)
-        {
-          m_light_table = new Rhino.DocObjects.Tables.LightTable(this);
-        }
-        return m_light_table;
-      }
+      get { return m_light_table ?? (m_light_table = new Rhino.DocObjects.Tables.LightTable(this)); }
     }
 
     private Rhino.DocObjects.Tables.HatchPatternTable m_hatchpattern_table;
     public Rhino.DocObjects.Tables.HatchPatternTable HatchPatterns
     {
-      get
-      {
-        if (null == m_hatchpattern_table)
-        {
-          m_hatchpattern_table = new Rhino.DocObjects.Tables.HatchPatternTable(this);
-        }
-        return m_hatchpattern_table;
-      }
+      get { return m_hatchpattern_table ?? (m_hatchpattern_table = new Rhino.DocObjects.Tables.HatchPatternTable(this)); }
     }
 
     private Rhino.DocObjects.Tables.InstanceDefinitionTable m_instance_definition_table;
     public Rhino.DocObjects.Tables.InstanceDefinitionTable InstanceDefinitions
     {
-      get
-      {
-        if (null == m_instance_definition_table)
-        {
-          m_instance_definition_table = new Rhino.DocObjects.Tables.InstanceDefinitionTable(this);
-        }
-        return m_instance_definition_table;
+      get {
+        return m_instance_definition_table ??
+               (m_instance_definition_table = new Rhino.DocObjects.Tables.InstanceDefinitionTable(this));
       }
     }
 
@@ -577,13 +496,9 @@ namespace Rhino
     private Rhino.DocObjects.Tables.NamedConstructionPlaneTable m_named_cplane_table;
     public Rhino.DocObjects.Tables.NamedConstructionPlaneTable NamedConstructionPlanes
     {
-      get
-      {
-        if (null == m_named_cplane_table)
-        {
-          m_named_cplane_table = new Rhino.DocObjects.Tables.NamedConstructionPlaneTable(this);
-        }
-        return m_named_cplane_table;
+      get {
+        return m_named_cplane_table ??
+               (m_named_cplane_table = new Rhino.DocObjects.Tables.NamedConstructionPlaneTable(this));
       }
     }
 
@@ -596,27 +511,13 @@ namespace Rhino
     /// </example>
     public Rhino.DocObjects.Tables.NamedViewTable NamedViews
     {
-      get
-      {
-        if (null == m_named_view_table)
-        {
-          m_named_view_table = new Rhino.DocObjects.Tables.NamedViewTable(this);
-        }
-        return m_named_view_table;
-      }
+      get { return m_named_view_table ?? (m_named_view_table = new Rhino.DocObjects.Tables.NamedViewTable(this)); }
     }
 
     private Rhino.DocObjects.Tables.StringTable m_strings;
     public Rhino.DocObjects.Tables.StringTable Strings
     {
-      get
-      {
-        if (null == m_strings)
-        {
-          m_strings = new Rhino.DocObjects.Tables.StringTable(this);
-        }
-        return m_strings;
-      }
+      get { return m_strings ?? (m_strings = new Rhino.DocObjects.Tables.StringTable(this)); }
     }
     #endregion
 
@@ -1395,7 +1296,7 @@ namespace Rhino
   /// </summary>
   public class DocumentEventArgs : EventArgs
   {
-    private int m_docId;
+    private readonly int m_docId;
     private RhinoDoc m_doc;
     internal DocumentEventArgs(int docId)
     {
@@ -1404,14 +1305,7 @@ namespace Rhino
 
     public RhinoDoc Document
     {
-      get
-      {
-        if (null == m_doc)
-        {
-          m_doc = RhinoDoc.FromId(m_docId);
-        }
-        return m_doc;
-      }
+      get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_docId)); }
     }
   }
 
@@ -1420,10 +1314,10 @@ namespace Rhino
   /// </summary>
   public class DocumentOpenEventArgs : DocumentEventArgs
   {
-    IntPtr m_filename;
+    readonly IntPtr m_filename;
     string m_cachedFileName;
-    bool m_bMerge;
-    bool m_bReference;
+    readonly bool m_bMerge;
+    readonly bool m_bReference;
     internal DocumentOpenEventArgs(int docId, IntPtr filename, bool merge, bool reference)
       : base(docId)
     {
@@ -1471,9 +1365,9 @@ namespace Rhino
   /// </summary>
   public class DocumentSaveEventArgs : DocumentEventArgs
   {
-    IntPtr m_filename;
+    readonly IntPtr m_filename;
     string m_cachedFileName;
-    bool m_bExportSelected;
+    readonly bool m_bExportSelected;
     internal DocumentSaveEventArgs(int docId, IntPtr filename, bool exportSelected)
       : base(docId)
     {
@@ -1510,7 +1404,7 @@ namespace Rhino
   {
     public class RhinoObjectEventArgs : EventArgs
     {
-      private IntPtr m_pRhinoObject;
+      private readonly IntPtr m_pRhinoObject;
       private RhinoObject m_rhino_object;
       private Guid m_ObjectID = Guid.Empty;
 
@@ -1546,14 +1440,14 @@ namespace Rhino
 
     public class RhinoReplaceObjectEventArgs : EventArgs
     {
-      private IntPtr m_pOldRhinoObject;
+      private readonly IntPtr m_pOldRhinoObject;
       private RhinoObject m_old_rhino_object;
 
-      private IntPtr m_pNewRhinoObject;
+      private readonly IntPtr m_pNewRhinoObject;
       private RhinoObject m_new_rhino_object;
 
       private Guid m_ObjectId = Guid.Empty;
-      private IntPtr m_pDoc;
+      private readonly IntPtr m_pDoc;
 
       internal RhinoReplaceObjectEventArgs(IntPtr pDoc, IntPtr pOldRhinoObject, IntPtr pNewRhinoObject)
       {
@@ -1614,7 +1508,7 @@ namespace Rhino.DocObjects.Tables
 {
   public sealed class ViewTable : IEnumerable<RhinoView>
   {
-    private RhinoDoc m_doc;
+    private readonly RhinoDoc m_doc;
     private ViewTable() { }
     internal ViewTable(RhinoDoc doc)
     {
@@ -1830,7 +1724,7 @@ namespace Rhino.DocObjects.Tables
 
     private class ViewEnumerator : IEnumerator<RhinoView>, System.Collections.IEnumerator
     {
-      private RhinoView[] m_views;
+      private readonly RhinoView[] m_views;
       private int m_index = -1;
 
       public ViewEnumerator(ViewTable table)
@@ -1876,7 +1770,7 @@ namespace Rhino.DocObjects.Tables
 
   public sealed class ObjectTable : IEnumerable<Rhino.DocObjects.RhinoObject>
   {
-    private RhinoDoc m_doc;
+    private readonly RhinoDoc m_doc;
     private ObjectTable() { }
     internal ObjectTable(RhinoDoc doc)
     {
@@ -2168,7 +2062,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>id of new rhino object</returns>
     public Guid AddPointCloud(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes)
     {
-      int count = 0;
+      int count;
       Point3d[] ptArray = Collections.Point3dList.GetConstPointArray(points, out count);
       if (null == ptArray || count < 1)
         return Guid.Empty;
@@ -2319,7 +2213,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>id of new rhino object</returns>
     public Guid AddPolyline(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes)
     {
-      int count = 0;
+      int count;
       Point3d[] ptArray = Collections.Point3dList.GetConstPointArray(points, out count);
       if (null == ptArray || count < 1)
         return Guid.Empty;
@@ -3586,7 +3480,7 @@ namespace Rhino.DocObjects.Tables
 
     private class EnumeratorWrapper : IEnumerable<DocObjects.RhinoObject>
     {
-      IEnumerator<DocObjects.RhinoObject> m_enumerator;
+      readonly IEnumerator<DocObjects.RhinoObject> m_enumerator;
       public EnumeratorWrapper(IEnumerator<DocObjects.RhinoObject> enumerator)
       {
         m_enumerator = enumerator;
@@ -3605,11 +3499,10 @@ namespace Rhino.DocObjects.Tables
 
     public int ObjectCount(Rhino.DocObjects.ObjectEnumeratorSettings filter)
     {
-      int count=0;
       Rhino.DocObjects.ObjectIterator it = new Rhino.DocObjects.ObjectIterator(m_doc, filter);
       IntPtr pIterator = it.NonConstPointer();
       string name_filter = filter.m_name_filter;
-      count = UnsafeNativeMethods.CRhinoObjectIterator_Count(pIterator, name_filter);
+      int count = UnsafeNativeMethods.CRhinoObjectIterator_Count(pIterator, name_filter);
       it.Dispose();
       return count;
     }
@@ -3663,7 +3556,7 @@ namespace Rhino.DocObjects.Tables
 
   public sealed class StringTable
   {
-    private RhinoDoc m_doc;
+    private readonly RhinoDoc m_doc;
     private StringTable() { }
     internal StringTable(RhinoDoc doc)
     {
@@ -3817,7 +3710,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>true or false indicating success or failure</returns>
     public bool Delete(string section, string entry)
     {
-      bool rc = false;
+      bool rc;
       try
       {
         object rs = Runtime.HostUtils.GetRhinoScriptObject();
@@ -4056,10 +3949,7 @@ namespace Rhino.DocObjects
         else
         {
           value = value.Trim();
-          if (value == "*")
-            m_name_filter = null;
-          else
-            m_name_filter = value;
+          m_name_filter = value == "*" ? null : value;
         }
       }
     }
@@ -4113,7 +4003,7 @@ namespace Rhino.DocObjects
     // therefore never const
     IntPtr m_ptr; // CRhinoObjectIterator*
     internal IntPtr NonConstPointer() { return m_ptr; }
-    ObjectEnumeratorSettings m_settings;
+    readonly ObjectEnumeratorSettings m_settings;
 
     public ObjectIterator(RhinoDoc doc, ObjectEnumeratorSettings s)
     {

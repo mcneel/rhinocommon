@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Rhino
 {
@@ -68,8 +67,8 @@ namespace Rhino
         System.Windows.Forms.Button cancel = form.CancelButton as System.Windows.Forms.Button;
         if (accept!=null && cancel!=null)
         {
-          accept.Click += new EventHandler(SemiModalOkClick);
-          cancel.Click += new EventHandler(SemiModalCancelClick);
+          accept.Click += SemiModalOkClick;
+          cancel.Click += SemiModalCancelClick;
           Rhino.Input.Custom.GetString gs = new Rhino.Input.Custom.GetString();
           gs.SetCommandPrompt("Press escape to cancel");
           form.Show(RhinoApp.MainWindow());
@@ -313,7 +312,7 @@ namespace Rhino
       public static System.Windows.Forms.DialogResult ShowEditBox(string title, string message, string defaultText, bool multiline, out string text)
       {
         text = String.Empty;
-        System.Windows.Forms.DialogResult rc = System.Windows.Forms.DialogResult.None;
+        System.Windows.Forms.DialogResult rc;
         if (multiline)
         {
           EditBox dlg = new EditBox(title, message, defaultText);

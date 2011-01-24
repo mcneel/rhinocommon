@@ -1,5 +1,3 @@
-using System;
-
 namespace Rhino.DocObjects
 {
   public class ClippingPlaneObject : RhinoObject

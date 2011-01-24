@@ -1,8 +1,4 @@
-using System;
-using System.Runtime.InteropServices;
 
-namespace Rhino.DocObjects
-{
 //  public class RhinoBitmap { }
   //class RHINO_SDK_CLASS CRhinoBitmap
   //{
@@ -47,7 +43,6 @@ namespace Rhino.DocObjects
   //[moved to function on Bitmap Table]
   //  bool ExportToFile( const wchar_t* path ) const;
   //};
-}
 
 namespace Rhino.DocObjects.Tables
 {
@@ -56,7 +51,7 @@ namespace Rhino.DocObjects.Tables
   /// </summary>
   public sealed class BitmapTable
   {
-    private RhinoDoc m_doc;
+    readonly RhinoDoc m_doc;
     private BitmapTable() { }
     internal BitmapTable(RhinoDoc doc)
     {

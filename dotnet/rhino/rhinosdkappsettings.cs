@@ -53,9 +53,9 @@ namespace Rhino.ApplicationSettings
 #region Colors
     const int idxDefaultLayerColor = 0;
     const int idxSelectedObjectColor = 1;
-    const int idxSelectedReferenceObjectColor = 2;
+    //const int idxSelectedReferenceObjectColor = 2;
     const int idxLockedObjectColor = 3;
-    const int idxLockedReferenceObjectColor = 4;
+    //const int idxLockedReferenceObjectColor = 4;
     const int idxWorldIconXColor = 5;
     const int idxWorldIconYColor = 6;
     const int idxWorldIconZColor = 7;
@@ -643,7 +643,7 @@ namespace Rhino.ApplicationSettings
       get
       {
         int minutes = UnsafeNativeMethods.RhFileSettings_AutosaveInterval(-1);
-        return System.TimeSpan.FromMinutes((double)minutes);
+        return System.TimeSpan.FromMinutes(minutes);
       }
       set
       {
@@ -674,7 +674,7 @@ namespace Rhino.ApplicationSettings
       if (IntPtr.Zero == rc)
         return null;
       string s = Marshal.PtrToStringUni(rc);
-      return s.Split(new char[] { ' ' });
+      return s==null ? null : s.Split(new char[] { ' ' });
     }
 
     ///<summary>Set list of commands that force AutoSave prior to running</summary>

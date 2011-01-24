@@ -1,6 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
-using Rhino;
 using Rhino.Geometry;
 
 
@@ -20,10 +18,10 @@ namespace Rhino.Display
 
   public class RhinoViewport : IDisposable
   {
-    Rhino.DocObjects.DetailViewObject m_parent_detail = null;
-    RhinoView m_parent_view = null;
+    readonly Rhino.DocObjects.DetailViewObject m_parent_detail;
+    RhinoView m_parent_view;
     IntPtr m_ptr;
-    bool m_bDeletePtr = false;
+    bool m_bDeletePtr; // = false; initialized by runtime
     internal RhinoViewport(RhinoView parent_view, IntPtr ptr)
     {
       m_ptr = ptr;

@@ -1,6 +1,4 @@
-using System;
 using Rhino.Geometry;
-using System.Runtime.InteropServices;
 
 #if USING_V5_SDK
 namespace Rhino.DocObjects

@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using Rhino.Geometry;
 using Rhino.DocObjects;
 
@@ -520,7 +519,7 @@ namespace Rhino.Input.Custom
   /// If an object passes the geometry TYPE filter, then the geometry ATTRIBUTE
   /// filter is applied.
   /// </summary>
-  [Flags(), CLSCompliant(false)]
+  [Flags, CLSCompliant(false)]
   public enum GeometryAttributeFilter : uint
   {
     /// <summary>

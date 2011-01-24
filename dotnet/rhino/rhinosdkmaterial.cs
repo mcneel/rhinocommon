@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Rhino.DocObjects
 {
@@ -10,8 +8,8 @@ namespace Rhino.DocObjects
     // Represents both a CRhinoMaterial and an ON_Material. When m_ptr is
     // null, the object uses m_doc and m_id to look up the const
     // CRhinoMaterial in the material table.
-    Guid m_id=Guid.Empty;
-    RhinoDoc m_doc;
+    readonly Guid m_id=Guid.Empty;
+    readonly RhinoDoc m_doc;
     #endregion
 
     #region constructors
@@ -46,7 +44,7 @@ namespace Rhino.DocObjects
     #region properties
     const int idxIsDeleted = 0;
     const int idxIsReference = 1;
-    const int idxIsModified = 2;
+    //const int idxIsModified = 2;
     const int idxIsDefaultMaterial = 3;
 
     /// <summary>
@@ -125,9 +123,7 @@ namespace Rhino.DocObjects
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.ON_Material_GetName(pConstThis, pString);
-          string rc = sh.ToString();
-          if (rc == null) rc = String.Empty;
-          return rc;
+          return sh.ToString();
         }
       }
       set
@@ -366,7 +362,7 @@ namespace Rhino.DocObjects.Tables
 {
   public sealed class MaterialTable
   {
-    private RhinoDoc m_doc;
+    private readonly RhinoDoc m_doc;
     private MaterialTable() { }
     internal MaterialTable(RhinoDoc doc)
     {

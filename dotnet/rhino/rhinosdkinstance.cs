@@ -93,8 +93,8 @@ namespace Rhino.DocObjects
 
   public sealed class InstanceDefinition // don't derive from ON_InstanceDefinition. We want this class to be read only
   {
-    private int m_index;
-    private RhinoDoc m_doc;
+    private readonly int m_index;
+    private readonly RhinoDoc m_doc;
     private InstanceDefinition() { }
     internal InstanceDefinition(int index, RhinoDoc doc)
     {
@@ -313,7 +313,7 @@ namespace Rhino.DocObjects.Tables
 {
   public sealed class InstanceDefinitionTable
   {
-    private RhinoDoc m_doc;
+    private readonly RhinoDoc m_doc;
     private InstanceDefinitionTable() { }
     internal InstanceDefinitionTable(RhinoDoc doc)
     {

@@ -523,7 +523,6 @@ namespace Rhino.Input
 
     static Commands.Result GetGripsHelper(out Rhino.DocObjects.GripObject[] grips, string prompt, bool singleGrip)
     {
-      Commands.Result rc = Rhino.Commands.Result.Nothing;
       grips = null;
       using (Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject())
       {
@@ -537,7 +536,7 @@ namespace Rhino.Input
           go.Get();
         else
           go.GetMultiple(1, 0);
-        rc = go.CommandResult();
+        Commands.Result rc = go.CommandResult();
         if (Rhino.Commands.Result.Success == rc)
         {
           Rhino.DocObjects.ObjRef[] objrefs = go.Objects();
@@ -558,8 +557,8 @@ namespace Rhino.Input
               grips = griplist.ToArray();
           }
         }
+        return rc;
       }
-      return rc;
     }
 
     public static Commands.Result GetGrips(out Rhino.DocObjects.GripObject[] grips, string prompt)
@@ -570,7 +569,7 @@ namespace Rhino.Input
     public static Commands.Result GetGrip(out Rhino.DocObjects.GripObject grip, string prompt)
     {
       grip = null;
-      Rhino.DocObjects.GripObject[] grips = null;
+      Rhino.DocObjects.GripObject[] grips;
       Commands.Result rc = GetGripsHelper(out grips, prompt, true);
       if (grips != null && grips.Length > 0)
         grip = grips[0];
@@ -1028,7 +1027,7 @@ namespace Rhino.Input.Custom
     /// </returns>
     public int AddOption(string englishOption, string englishOptionValue) //, bool hidden)
     {
-      bool hidden = false;
+      const bool hidden = false;
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.CRhinoGet_AddCommandOption(ptr, englishOption, englishOptionValue, hidden);
     }

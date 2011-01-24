@@ -1,6 +1,5 @@
 using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 
 namespace Rhino.Display
 {
@@ -333,13 +332,13 @@ namespace Rhino.Display
     const int idxSpecular = 1;
     const int idxAmbient = 2;
     const int idxEmission = 3;
-    const int idxBackDiffuse = 4;
-    const int idxBackSpecular = 5;
-    const int idxBackAmbient = 6;
-    const int idxBackEmission = 7;
+    //const int idxBackDiffuse = 4;
+    //const int idxBackSpecular = 5;
+    //const int idxBackAmbient = 6;
+    //const int idxBackEmission = 7;
 
-    private static int m_alpha_only = Color.FromArgb(255, 0, 0, 0).ToArgb();
-    private int StripAlpha(int argb)
+    private static readonly int m_alpha_only = Color.FromArgb(255, 0, 0, 0).ToArgb();
+    private static int StripAlpha(int argb)
     {
       return argb | m_alpha_only;
     }

@@ -1,5 +1,3 @@
-namespace Rhino
-{
   /*
   public enum FrameBufferFillMode : uint
   {
@@ -20,4 +18,3 @@ namespace Rhino
   }
   */
 //  public class ChannelAttributes { }
-}

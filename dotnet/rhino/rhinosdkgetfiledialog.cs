@@ -42,10 +42,6 @@ namespace Rhino.UI
     string m_title = "";
     string m_initial_directory = "";
 
-    public FileDialogBase()
-    {
-    }
-
     //public bool InScriptMode
     //{
     //  get { return m_script_mode; }
@@ -101,7 +97,7 @@ namespace Rhino.UI
   /// </summary>
   public class OpenFileDialog
   {
-    FileDialogBase m_base;
+    readonly FileDialogBase m_base;
     //OpenFileDialogType m_type = OpenFileDialogType.Standard;
     
     /// <summary>Create a new open file dialog</summary>
@@ -208,7 +204,7 @@ namespace Rhino.UI
   /// </summary>
   public class SaveFileDialog
   {
-    FileDialogBase m_base;
+    readonly FileDialogBase m_base;
     //OpenFileDialogType m_type = OpenFileDialogType.Standard;
 
     public SaveFileDialog()

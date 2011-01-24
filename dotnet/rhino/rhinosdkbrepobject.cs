@@ -1,6 +1,4 @@
-using System;
 using Rhino.Geometry;
-using System.Runtime.InteropServices;
 
 namespace Rhino.DocObjects
 {

@@ -1,7 +1,5 @@
 using System;
-using System.Runtime.InteropServices;
-using Rhino.Geometry;
-using Rhino.Display;
+using System.Collections.Generic;
 
 namespace Rhino.Display
 {
@@ -12,13 +10,13 @@ namespace Rhino.Display
   /// </summary>
   public class RhinoView
   {
-    private Guid m_mainviewport_id; // id of mainviewport for this view. The view m_ptr is nulled
+    private readonly Guid m_mainviewport_id; // id of mainviewport for this view. The view m_ptr is nulled
                                     // out at the end of a command. This is is used to reassocaite
                                     // the view pointer is if a plug-in developer attempts to hold
                                     // on to a view longer than a command
-    private IntPtr m_ptr; // CRhinoView*
+    private readonly IntPtr m_ptr; // CRhinoView*
 
-    private static System.Collections.Generic.List<RhinoView> m_view_list = new System.Collections.Generic.List<RhinoView>();
+    private static readonly List<RhinoView> m_view_list = new List<RhinoView>();
 
     // Users should never be able to directly make a new instance of a rhino view
     internal static RhinoView FromIntPtr(IntPtr view_pointer)
@@ -28,7 +26,7 @@ namespace Rhino.Display
 
       // look through the cached viewlist first
       int count = m_view_list.Count;
-      RhinoView view = null;
+      RhinoView view;
       for (int i = 0; i < count; i++)
       {
         view = m_view_list[i];
@@ -47,10 +45,7 @@ namespace Rhino.Display
       // view is not in the list, add it
       bool isPageView = false;
       Guid id = UnsafeNativeMethods.CRhinoView_Details(view_pointer, ref isPageView);
-      if (isPageView)
-        view = new RhinoPageView(view_pointer, id);
-      else
-        view = new RhinoView(view_pointer, id);
+      view = isPageView ? new RhinoPageView(view_pointer, id) : new RhinoView(view_pointer, id);
       m_view_list.Add(view);
       return view;
     }
@@ -500,7 +495,7 @@ namespace Rhino.Display
 
   public class ViewEventArgs : EventArgs
   {
-    IntPtr m_pView;
+    readonly IntPtr m_pView;
     internal ViewEventArgs(IntPtr pView)
     {
       m_pView = pView;

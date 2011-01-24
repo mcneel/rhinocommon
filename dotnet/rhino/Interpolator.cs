@@ -18,7 +18,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Create a new, empty Interpolator.
     /// </summary>
-    public Interpolator() : base() { }
+    public Interpolator() { }
     /// <summary>
     /// Create an empty Interpolator with a certain capacity.
     /// </summary>
@@ -87,11 +87,11 @@ namespace Rhino.Geometry
       if (m_size == 0) { throw new IndexOutOfRangeException("The Interpolator must contain at least one sample value"); }
       if (m_size == 1) { return m_items[0]; }
 
-      int idx0, idx1;
+      int idx0;
       double param;
 
       SolveParameter(t, out idx0, out param);
-      idx1 = MapIndex(idx0 + 1);
+      int idx1 = MapIndex(idx0 + 1);
 
       return (m_items[idx0] * (1.0 - param) + m_items[idx1] * param);
     }
@@ -107,11 +107,11 @@ namespace Rhino.Geometry
       if (m_size == 0) { throw new IndexOutOfRangeException("The Interpolator must contain at least one sample value"); }
       if (m_size == 1) { return m_items[0]; }
 
-      int idx0, idx1;
+      int idx0;
       double param;
 
       SolveParameter(t, out idx0, out param);
-      idx1 = MapIndex(idx0 + 1);
+      int idx1 = MapIndex(idx0 + 1);
 
       param = 0.5 * (1.0 - Math.Cos(param * Math.PI));
       return (m_items[idx0] * (1.0 - param) + m_items[idx1] * param);
@@ -128,13 +128,13 @@ namespace Rhino.Geometry
       if (m_size == 0) { throw new IndexOutOfRangeException("The Interpolator must contain at least one sample value"); }
       if (m_size == 1) { return m_items[0]; }
 
-      int idx0, idx1, idx2, idx3;
+      int idx1;
       double param;
 
       SolveParameter(t, out idx1, out param);
-      idx0 = MapIndex(idx1 - 1);
-      idx2 = MapIndex(idx1 + 1);
-      idx3 = MapIndex(idx2 + 1);
+      int idx0 = MapIndex(idx1 - 1);
+      int idx2 = MapIndex(idx1 + 1);
+      int idx3 = MapIndex(idx2 + 1);
 
       double a0 = m_items[idx3] - m_items[idx2] - m_items[idx0] + m_items[idx1];
       double a1 = m_items[idx0] - m_items[idx1] - a0;
@@ -155,13 +155,13 @@ namespace Rhino.Geometry
       if (m_size == 0) { throw new IndexOutOfRangeException("The Interpolator must contain at least one sample value"); }
       if (m_size == 1) { return m_items[0]; }
 
-      int idx0, idx1, idx2, idx3;
+      int idx1;
       double param;
 
       SolveParameter(t, out idx1, out param);
-      idx0 = MapIndex(idx1 - 1);
-      idx2 = MapIndex(idx1 + 1);
-      idx3 = MapIndex(idx2 + 1);
+      int idx0 = MapIndex(idx1 - 1);
+      int idx2 = MapIndex(idx1 + 1);
+      int idx3 = MapIndex(idx2 + 1);
 
       double a0 = -0.5 * m_items[idx0] + 1.5 * m_items[idx1] - 1.5 * m_items[idx2] + 0.5 * m_items[idx3];
       double a1 = m_items[idx0] - 2.5 * m_items[idx1] + 2 * m_items[idx2] - 0.5 * m_items[idx3];
@@ -237,12 +237,8 @@ namespace Rhino.Geometry
         if (index > N) { return index % m_size; }
         return index;
       }
-      else
-      {
-        if (index <= 0) { return 0; }
-        if (index >= N) { return N; }
-        return index;
-      }
+      if (index <= 0) { return 0; }
+      return index >= N ? N : index;
     }
     /// <summary>
     /// Decompose a sampling parameter into an index and a unitized parameter.

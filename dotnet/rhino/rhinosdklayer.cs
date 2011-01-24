@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 
 namespace Rhino.DocObjects
 {
@@ -9,8 +8,8 @@ namespace Rhino.DocObjects
     // Represents both a CRhinoLayer and an ON_Layer. When m_ptr is
     // null, the object uses m_doc and m_id to look up the const
     // CRhinoLayer in the layer table.
-    Rhino.RhinoDoc m_doc;
-    Guid m_id=Guid.Empty;
+    readonly Rhino.RhinoDoc m_doc;
+    readonly Guid m_id=Guid.Empty;
     #endregion
 
     #region constructors
@@ -412,7 +411,7 @@ namespace Rhino.DocObjects.Tables
 {
   public sealed class LayerTable
   {
-    private RhinoDoc m_doc;
+    private readonly RhinoDoc m_doc;
     private LayerTable() { }
     internal LayerTable(RhinoDoc doc)
     {

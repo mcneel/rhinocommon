@@ -5,8 +5,8 @@ namespace Rhino.DocObjects
 {
   public class Font
   {
-    private int m_index;
-    private RhinoDoc m_doc;
+    private readonly int m_index;
+    private readonly RhinoDoc m_doc;
     private Font() { }
     internal Font(int index, RhinoDoc doc)
     {
@@ -53,7 +53,7 @@ namespace Rhino.DocObjects.Tables
   /// </summary>
   public sealed class FontTable
   {
-    private RhinoDoc m_doc;
+    private readonly RhinoDoc m_doc;
     private FontTable() { }
     internal FontTable(RhinoDoc doc)
     {

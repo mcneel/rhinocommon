@@ -55,7 +55,7 @@ namespace Rhino.Commands
   [AttributeUsage(AttributeTargets.Class)]
   public sealed class CommandStyleAttribute : System.Attribute
   {
-    private Style m_style;
+    private readonly Style m_style;
     /// <summary>
     /// 
     /// </summary>
@@ -115,7 +115,7 @@ namespace Rhino.Commands
     }
 
     static int m_serial_number_counter = 1;
-    static Collections.RhinoList<Command> m_all_commands = new Rhino.Collections.RhinoList<Command>();
+    static readonly Collections.RhinoList<Command> m_all_commands = new Rhino.Collections.RhinoList<Command>();
 
     internal int m_runtime_serial_number;
     internal Style m_style_flags;
@@ -410,8 +410,8 @@ namespace Rhino.Commands
 
   public class CommandEventArgs : EventArgs
   {
-    Guid m_command_id;
-    Result m_result;
+    readonly Guid m_command_id;
+    readonly Result m_result;
 
     internal CommandEventArgs(Guid id, int result)
     {
@@ -432,9 +432,9 @@ namespace Rhino.Commands
 
   public class UndoRedoEventArgs : EventArgs
   {
-    int m_event_type;
-    uint m_serial_number;
-    Guid m_command_id;
+    readonly int m_event_type;
+    readonly uint m_serial_number;
+    readonly Guid m_command_id;
     internal UndoRedoEventArgs(int undo_event, uint sn, Guid id)
     {
       m_event_type = undo_event;

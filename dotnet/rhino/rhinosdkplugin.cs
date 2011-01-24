@@ -26,8 +26,8 @@ namespace Rhino.PlugIns
   [AttributeUsage( AttributeTargets.Assembly,AllowMultiple=true)]
   public sealed class PlugInDescriptionAttribute : System.Attribute
   {
-    DescriptionType m_type;
-    string m_value;
+    readonly DescriptionType m_type;
+    readonly string m_value;
     public PlugInDescriptionAttribute(DescriptionType descriptionType, string value)
     {
       m_type = descriptionType;
@@ -64,7 +64,7 @@ namespace Rhino.PlugIns
       HostUtils.DebugString("[PlugIn::Create] Start\n");
       if (!string.IsNullOrEmpty(plugin_name))
         HostUtils.DebugString("  plugin_name = " + plugin_name + "\n");
-      PlugIn rc = null;
+      PlugIn rc;
       Guid plugin_id = Guid.Empty;
       m_bOkToConstruct = true;
       try
@@ -225,7 +225,10 @@ namespace Rhino.PlugIns
         {
           UnsafeNativeMethods.CRhinoPlugIn_SetCallbacks3(m_OnAddPagesToOptions);
         }
-        catch(Exception){}
+        catch(Exception e)
+        {
+          HostUtils.ExceptionReport(e);
+        }
       }
     }
 
@@ -390,8 +393,9 @@ namespace Rhino.PlugIns
               UnsafeNativeMethods.CRhinoPlugIn_AddOptionPage(pPageList, ptr);
           }
         }
-        catch (Exception)
+        catch (Exception e)
         {
+          HostUtils.ExceptionReport(e);
         }
       }
     }
@@ -619,10 +623,6 @@ namespace Rhino.PlugIns
 
   public sealed class FileTypeList
   {
-    public FileTypeList()
-    {
-    }
-
     internal System.Collections.Generic.List<FileType> m_filetypes = new System.Collections.Generic.List<FileType>();
 
     public int AddFileType(string description, string extension)
@@ -1030,7 +1030,7 @@ namespace Rhino.PlugIns
     {
       if (null == m_license_client_assembly)
       {
-        string filename = "ZooClient.dll";
+        const string filename = "ZooClient.dll";
         System.Reflection.Assembly thisAssembly = System.Reflection.Assembly.GetExecutingAssembly();
         if (thisAssembly != null)
         {
@@ -1419,7 +1419,7 @@ namespace Rhino.PlugIns
     /// </summary>
     public bool IsValid()
     {
-      bool rc = false;
+      bool rc;
       try // Try-catch block will catch null values
       {
         rc = !string.IsNullOrEmpty(ProductLicense);

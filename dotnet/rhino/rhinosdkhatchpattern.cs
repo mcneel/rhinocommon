@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Rhino.DocObjects
 {
@@ -17,8 +15,8 @@ namespace Rhino.DocObjects
     // Represents both a CRhinoHatchPattern and an ON_HatchPattern. When m_ptr is
     // null, the object uses m_doc and m_id to look up the const
     // CRhinoHatchPattern in the hatch pattern table.
-    Guid m_id = Guid.Empty;
-    RhinoDoc m_doc;
+    readonly Guid m_id = Guid.Empty;
+    readonly RhinoDoc m_doc;
     #endregion
 
     #region constructors
@@ -197,7 +195,7 @@ namespace Rhino.DocObjects.Tables
   /// </summary>
   public sealed class HatchPatternTable
   {
-    private RhinoDoc m_doc;
+    private readonly RhinoDoc m_doc;
     private HatchPatternTable() { }
     internal HatchPatternTable(RhinoDoc doc)
     {

@@ -10,8 +10,8 @@ namespace Rhino.DocObjects
     // Represents both a CRhinoLinetype and an ON_Linetype. When m_ptr is
     // null, the object uses m_doc and m_id to look up the const
     // CRhinoLinetype in the linetype table.
-    Rhino.RhinoDoc m_doc;
-    Guid m_id=Guid.Empty;
+    readonly Rhino.RhinoDoc m_doc;
+    readonly Guid m_id=Guid.Empty;
     #endregion
 
     #region constructors
@@ -239,7 +239,7 @@ namespace Rhino.DocObjects.Tables
 {
   public sealed class LinetypeTable
   {
-    private RhinoDoc m_doc;
+    private readonly RhinoDoc m_doc;
     private LinetypeTable() { }
     internal LinetypeTable(RhinoDoc doc)
     {

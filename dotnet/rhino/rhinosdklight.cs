@@ -33,7 +33,7 @@ namespace Rhino.DocObjects.Tables
 {
   public class LightTable
   {
-    private RhinoDoc m_doc;
+    private readonly RhinoDoc m_doc;
     private LightTable() { }
     internal LightTable(RhinoDoc doc)
     {

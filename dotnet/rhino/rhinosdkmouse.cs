@@ -1,20 +1,18 @@
 using System;
-using System.Runtime.InteropServices;
-using Rhino.Geometry;
-using Rhino.Display;
+using System.Collections.Generic;
 
 namespace Rhino.UI
 {
   public class MouseCallbackEventArgs : System.ComponentModel.CancelEventArgs
   {
-    private IntPtr m_pRhinoView;
+    private readonly IntPtr m_pRhinoView;
     private Rhino.Display.RhinoView m_view;
-    private System.Windows.Forms.MouseButtons m_button;
-    private System.Drawing.Point m_point;
+    private readonly System.Windows.Forms.MouseButtons m_button;
+    private readonly System.Drawing.Point m_point;
 
     internal MouseCallbackEventArgs(IntPtr pRhinoView, int button, int x, int y)
     {
-      const int btnNone = 0;
+      //const int btnNone = 0;
       const int btnLeft = 1;
       const int btnRight = 2;
       const int btnMiddle = 3;
@@ -35,8 +33,7 @@ namespace Rhino.UI
         case btnX:
           m_button = System.Windows.Forms.MouseButtons.XButton1;
           break;
-        case btnNone:
-        default:
+        default: // or btnNone
           m_button = System.Windows.Forms.MouseButtons.None;
           break;
       }
@@ -45,12 +42,7 @@ namespace Rhino.UI
 
     public Rhino.Display.RhinoView View
     {
-      get
-      {
-        if (null == m_view)
-          m_view = Rhino.Display.RhinoView.FromIntPtr(m_pRhinoView);
-        return m_view;
-      }
+      get { return m_view ?? (m_view = Rhino.Display.RhinoView.FromIntPtr(m_pRhinoView)); }
     }
 
     public System.Windows.Forms.MouseButtons Button
@@ -70,8 +62,6 @@ namespace Rhino.UI
   /// </summary>
   public abstract class MouseCallback
   {
-    public MouseCallback() {}
-
     protected virtual void OnMouseDown(MouseCallbackEventArgs e) { }
 
     protected virtual void OnMouseMove(MouseCallbackEventArgs e) { }
@@ -80,7 +70,7 @@ namespace Rhino.UI
 
     protected virtual void OnMouseDoubleClick(MouseCallbackEventArgs e) { }
 
-    private static System.Collections.Generic.List<MouseCallback> m_enabled_list = new System.Collections.Generic.List<MouseCallback>();
+    private static readonly List<MouseCallback> m_enabled_list = new List<MouseCallback>();
 
     public bool Enabled
     {
@@ -91,7 +81,7 @@ namespace Rhino.UI
       }
       set
       {
-        if (value == true)
+        if (value)
         {
           if (!m_enabled_list.Contains(this))
             m_enabled_list.Add(this);

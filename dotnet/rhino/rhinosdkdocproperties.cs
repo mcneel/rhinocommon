@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 
 namespace Rhino.DocObjects.Tables
 {
@@ -8,7 +7,7 @@ namespace Rhino.DocObjects.Tables
   /// </summary>
   public sealed class NamedConstructionPlaneTable
   {
-    private RhinoDoc m_doc;
+    private readonly RhinoDoc m_doc;
     private NamedConstructionPlaneTable() { }
     internal NamedConstructionPlaneTable(RhinoDoc doc)
     {
@@ -104,7 +103,7 @@ namespace Rhino.DocObjects.Tables
   /// </summary>
   public sealed class NamedViewTable
   {
-    private RhinoDoc m_doc;
+    private readonly RhinoDoc m_doc;
     private NamedViewTable() { }
     internal NamedViewTable(RhinoDoc doc)
     {

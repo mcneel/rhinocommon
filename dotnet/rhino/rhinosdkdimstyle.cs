@@ -7,8 +7,8 @@ namespace Rhino.DocObjects
     // Represents both a CRhinoDimStyle and an ON_DimStyle. When m_ptr
     // is null, the object uses m_doc and m_id to look up the const
     // CRhinoDimStyle in the dimstyle table.
-    Rhino.RhinoDoc m_doc;
-    Guid m_id=Guid.Empty;
+    readonly Rhino.RhinoDoc m_doc;
+    readonly Guid m_id=Guid.Empty;
 
     public DimensionStyle()
     {
@@ -229,10 +229,7 @@ namespace Rhino.DocObjects
           IntPtr pConstThis = ConstPointer();
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.ON_DimStyle_GetString(pConstThis, pString, true);
-          string rc = sh.ToString();
-          if (rc == null)
-            return String.Empty;
-          return rc;
+          return sh.ToString();
         }
       }
       set
@@ -251,10 +248,7 @@ namespace Rhino.DocObjects
           IntPtr pConstThis = ConstPointer();
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.ON_DimStyle_GetString(pConstThis, pString, false);
-          string rc = sh.ToString();
-          if (rc == null)
-            return String.Empty;
-          return rc;
+          return  sh.ToString();
         }
       }
       set
@@ -282,7 +276,7 @@ namespace Rhino.DocObjects.Tables
 {
   public sealed class DimStyleTable
   {
-    private RhinoDoc m_doc;
+    private readonly RhinoDoc m_doc;
     private DimStyleTable() { }
     internal DimStyleTable(RhinoDoc doc)
     {

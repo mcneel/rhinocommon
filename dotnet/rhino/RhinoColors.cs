@@ -925,10 +925,6 @@ namespace Rhino.Display
     /// <param name="b">Blue channel (0~255)</param>
     internal static void XYZ_To_RGB(double x, double y, double z, out byte r, out byte g, out byte b)
     {
-      r = 0;
-      g = 0;
-      b = 0;
-
       x *= (0.01 * 95.047);
       y *= (0.01 * 100.0);
       z *= (0.01 * 108.883);
@@ -951,10 +947,7 @@ namespace Rhino.Display
       {
         return 1.055 * Math.Pow(v, 1.0 / 2.4) - 0.055;
       }
-      else
-      {
-        return 12.92 * v;
-      }
+      return 12.92 * v;
     }
 
     /// <summary>
@@ -968,10 +961,6 @@ namespace Rhino.Display
     /// <param name="z">Z channel (0.0~1.0)</param>
     internal static void RGB_To_XYZ(int r, int g, int b, out double x, out double y, out double z)
     {
-      x = 0.0;
-      y = 0.0;
-      z = 0.0;
-
       double vR = (double)r / 255.0;
       double vG = (double)g / 255.0;
       double vB = (double)b / 255.0;
@@ -998,10 +987,7 @@ namespace Rhino.Display
       {
         return Math.Pow((v + 0.055) / 1.055, 2.4);
       }
-      else
-      {
-        return v / 12.92;
-      }
+      return v / 12.92;
     }
 
     /// <summary>
@@ -1015,10 +1001,6 @@ namespace Rhino.Display
     /// <param name="b">B channel (0.0~1.0)</param>
     internal static void XYZ_To_CIELAB(double x, double y, double z, out double l, out double a, out double b)
     {
-      l = 0.0;
-      a = 0.0;
-      b = 0.0;
-
       x *= 100.0;
       y *= 100.0;
       z *= 100.0;
@@ -1045,10 +1027,7 @@ namespace Rhino.Display
       {
         return Math.Pow(v, 1.0 / 3.0);
       }
-      else
-      {
-        return (v * 7.787) + (16.0 / 116.0);
-      }
+      return (v * 7.787) + (16.0 / 116.0);
     }
 
     /// <summary>
@@ -1062,10 +1041,6 @@ namespace Rhino.Display
     /// <param name="z">Z channel (0.0~1.0)</param>
     internal static void CIELAB_To_XYZ(double l, double a, double b, out double x, out double y, out double z)
     {
-      x = 0.0;
-      y = 0.0;
-      z = 0.0;
-
       l *= 100.0;
       a *= 100.0;
       b *= 100.0;
@@ -1093,10 +1068,7 @@ namespace Rhino.Display
       {
         return pv;
       }
-      else
-      {
-        return (v - (16.0 / 116.0)) / 7.787;
-      }
+      return (v - (16.0 / 116.0)) / 7.787;
     }
 
     /// <summary>
@@ -1110,10 +1082,6 @@ namespace Rhino.Display
     /// <param name="h">Hue channel (0.0~1.0)</param>
     internal static void CIELAB_To_CIELCH(double l, double a, double b, out double lum, out double c, out double h)
     {
-      lum = 0.0;
-      c = 0.0;
-      h = 0.0;
-
       l *= 100.0;
       a *= 100.0;
       b *= 100.0;
@@ -1167,7 +1135,6 @@ namespace Rhino.Display
     {
       h = 0.0;
       s = 0.0;
-      l = 0.0;
 
       double vR = (double)r / 255.0;
       double vG = (double)g / 255.0;
@@ -1221,10 +1188,6 @@ namespace Rhino.Display
     /// <param name="b">Blue channel (0~255)</param>
     internal static void HSL_To_RGB(double h, double s, double l, out byte r, out byte g, out byte b)
     {
-      r = 0;
-      g = 0;
-      b = 0;
-
       if (s == 0.0)
       {
         r = (byte)(l * 255.0);
@@ -1233,7 +1196,6 @@ namespace Rhino.Display
       }
       else
       {
-        double v1;
         double v2;
 
         if (l < 0.5)
@@ -1245,7 +1207,7 @@ namespace Rhino.Display
           v2 = (l + s) - (l * s);
         }
 
-        v1 = 2.0 * l - v2;
+        double v1 = 2.0 * l - v2;
 
         double vR = huergb_map(v1, v2, h + (1.0 / 3.0));
         double vG = huergb_map(v1, v2, h);

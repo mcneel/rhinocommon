@@ -1,6 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
-using Rhino;
 using Rhino.ApplicationSettings;
 
 namespace Rhino.ApplicationSettings
@@ -193,7 +191,7 @@ namespace Rhino
     }
 
     //static bool IsRhinoId( System::Guid id );
-    static object m_lock_object = new object();
+    static readonly object m_lock_object = new object();
     ///<summary>Print formatted text in the command window</summary>
     public static void Write(string message)
     {
@@ -387,7 +385,7 @@ namespace Rhino
 
     class MainWindowWrapper : System.Windows.Forms.IWin32Window
     {
-      IntPtr m_handle;
+      readonly IntPtr m_handle;
       public MainWindowWrapper(IntPtr handle)
       {
         m_handle = handle;
@@ -419,10 +417,7 @@ namespace Rhino
         return m_mainwnd.Handle;
 
       System.Diagnostics.Process process = System.Diagnostics.Process.GetCurrentProcess();
-      if (process == null)
-        return IntPtr.Zero;
-
-      return process.MainWindowHandle;
+      return process == null ? IntPtr.Zero : process.MainWindowHandle;
     }
 
     /// <summary>
@@ -458,7 +453,7 @@ namespace Rhino
       if (IntPtr.Zero == iunknown)
         return null;
 
-      object rc = null;
+      object rc;
       try
       {
         rc = System.Runtime.InteropServices.Marshal.GetObjectForIUnknown(iunknown);
@@ -484,7 +479,7 @@ namespace Rhino
     /// </returns>
     public static object GetPlugInObject(string plugin)
     {
-      Guid plugin_id = Guid.Empty;
+      Guid plugin_id;
       try
       {
         plugin_id = new Guid(plugin);

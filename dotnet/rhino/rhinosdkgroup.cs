@@ -10,7 +10,7 @@ namespace Rhino.DocObjects.Tables
   /// </summary>
   public sealed class GroupTable
   {
-    private RhinoDoc m_doc;
+    private readonly RhinoDoc m_doc;
     private GroupTable() { }
     internal GroupTable(RhinoDoc doc)
     {

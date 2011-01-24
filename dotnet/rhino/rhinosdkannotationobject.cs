@@ -93,7 +93,7 @@ namespace Rhino.Display
 
     string m_text = string.Empty;
     double m_height = 1;
-    string m_fontface = null;
+    string m_fontface; // = null; initialized to null by runtime
     bool m_bold; // = false; initialized to false by runtime
     bool m_italic; // = false; initialized to false by runtime
     #endregion

@@ -1,6 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
-using Rhino;
 using Rhino.Geometry;
 
 namespace Rhino.Display
@@ -70,7 +68,7 @@ namespace Rhino.Display
   public sealed class DisplayPipeline
   {
     #region members
-    private IntPtr m_ptr;
+    private readonly IntPtr m_ptr;
     internal IntPtr NonConstPointer() { return m_ptr; }
     #endregion
 
@@ -150,7 +148,7 @@ namespace Rhino.Display
       }
     }
 
-    private static Runtime.HostUtils.ReportCallback m_report = ConduitReport;
+    private static readonly Runtime.HostUtils.ReportCallback m_report = ConduitReport;
 
     // Callback used by C++ conduit to call into .NET
     internal delegate void ConduitCallback(IntPtr pPipeline, IntPtr pConduit);
@@ -1104,7 +1102,7 @@ namespace Rhino.Display
     /// <param name="thickness">Thickness (in pixels) of the Polyline.</param>
     public void DrawPolyline(System.Collections.Generic.IEnumerable<Point3d> polyline, System.Drawing.Color color, int thickness)
     {
-      int count = 0;
+      int count;
       Point3d[] points = Collections.Point3dList.GetConstPointArray(polyline, out count);
       if (null != points && count > 1)
       {
@@ -1127,7 +1125,7 @@ namespace Rhino.Display
     /// </param>
     public void DrawPolygon(System.Collections.Generic.IEnumerable<Point3d> points, System.Drawing.Color color, bool filled)
     {
-      int count = 0;
+      int count;
       Point3d[] ptArray = Collections.Point3dList.GetConstPointArray(points, out count);
       if (null == ptArray || count < 3)
         return;
@@ -1894,7 +1892,7 @@ public void DrawSubObject(DocObjects.RhinoObject rhinoObject, ON_ComponentIndex 
 
   public class CalculateBoundingBoxEventArgs : DrawEventArgs
   {
-    private IntPtr m_pDisplayConduit;
+    private readonly IntPtr m_pDisplayConduit;
     private BoundingBox m_bbox;
 
     internal CalculateBoundingBoxEventArgs(IntPtr pDisplayPipeline, IntPtr pDisplayConduit)

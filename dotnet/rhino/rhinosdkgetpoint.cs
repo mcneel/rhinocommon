@@ -1,6 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
-using Rhino;
 using Rhino.Geometry;
 using Rhino.Display;
 
@@ -781,7 +779,7 @@ namespace Rhino.Input.Custom
   public class GetPointDrawEventArgs : Display.DrawEventArgs
   {
     //private IntPtr m_pRhinoViewport;
-    private Point3d m_point;
+    private readonly Point3d m_point;
     internal GetPointDrawEventArgs(IntPtr pDisplayPipeline, Point3d point) : base(pDisplayPipeline)
     {
       //m_pRhinoViewport = pRhinoViewport;
@@ -796,11 +794,11 @@ namespace Rhino.Input.Custom
 
   public class GetPointMouseEventArgs : System.EventArgs
   {
-    private IntPtr m_pRhinoViewport;
+    private readonly IntPtr m_pRhinoViewport;
     private RhinoViewport m_viewport;
-    private uint m_flags;
-    private Point3d m_point;
-    private System.Drawing.Point m_windowPoint;
+    private readonly uint m_flags;
+    private readonly Point3d m_point;
+    private readonly System.Drawing.Point m_windowPoint;
 
     internal GetPointMouseEventArgs(IntPtr pRhinoViewport, uint flags, Point3d point, System.Drawing.Point wndPoint)
     {
@@ -812,28 +810,15 @@ namespace Rhino.Input.Custom
 
     public RhinoViewport Viewport
     {
-      get
-      {
-        if (null == m_viewport)
-        {
-          m_viewport = new RhinoViewport(null, m_pRhinoViewport);
-        }
-        return m_viewport;
-      }
+      get { return m_viewport ?? (m_viewport = new RhinoViewport(null, m_pRhinoViewport)); }
     }
     public Point3d Point
     {
-      get
-      {
-        return m_point;
-      }
+      get{ return m_point; }
     }
     public System.Drawing.Point WindowPoint
     {
-      get
-      {
-        return m_windowPoint;
-      }
+      get{ return m_windowPoint; }
     }
 
     // from winuser.h

@@ -172,7 +172,10 @@ namespace Rhino.Runtime
     public override string ToString()
     {
       IntPtr pString = UnsafeNativeMethods.StringHolder_Get(m_ptr);
-      return Marshal.PtrToStringUni(pString);
+      string rc = Marshal.PtrToStringUni(pString);
+      if (rc == null)
+        return String.Empty;
+      return rc;
     }
   }
 

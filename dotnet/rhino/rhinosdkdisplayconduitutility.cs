@@ -1,9 +1,7 @@
 using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using Rhino;
 using Rhino.Geometry;
 
 namespace Rhino.Display
@@ -61,16 +59,17 @@ namespace Rhino.Display
     #endregion
 
     #region fields
-    private bool m_enabled = false;
+
+    private bool m_enabled; // = false; initialized to false by runtime
     private BoundingBox m_clip;
 
-    private Rhino.Collections.RhinoList<CDU_Arc> m_arcs = new Rhino.Collections.RhinoList<CDU_Arc>();
-    private Rhino.Collections.RhinoList<CDU_Text> m_text = new Rhino.Collections.RhinoList<CDU_Text>();
-    private Rhino.Collections.RhinoList<CDU_Line> m_lines = new Rhino.Collections.RhinoList<CDU_Line>();
-    private Rhino.Collections.RhinoList<CDU_Point> m_points = new Rhino.Collections.RhinoList<CDU_Point>();
-    private Rhino.Collections.RhinoList<CDU_Curve> m_curves = new Rhino.Collections.RhinoList<CDU_Curve>();
-    private Rhino.Collections.RhinoList<CDU_Vector> m_vectors = new Rhino.Collections.RhinoList<CDU_Vector>();
-    private Rhino.Collections.RhinoList<CDU_Polygon> m_polygons = new Rhino.Collections.RhinoList<CDU_Polygon>();
+    readonly Rhino.Collections.RhinoList<CDU_Arc> m_arcs = new Rhino.Collections.RhinoList<CDU_Arc>();
+    readonly Rhino.Collections.RhinoList<CDU_Text> m_text = new Rhino.Collections.RhinoList<CDU_Text>();
+    readonly Rhino.Collections.RhinoList<CDU_Line> m_lines = new Rhino.Collections.RhinoList<CDU_Line>();
+    readonly Rhino.Collections.RhinoList<CDU_Point> m_points = new Rhino.Collections.RhinoList<CDU_Point>();
+    readonly Rhino.Collections.RhinoList<CDU_Curve> m_curves = new Rhino.Collections.RhinoList<CDU_Curve>();
+    readonly Rhino.Collections.RhinoList<CDU_Vector> m_vectors = new Rhino.Collections.RhinoList<CDU_Vector>();
+    readonly Rhino.Collections.RhinoList<CDU_Polygon> m_polygons = new Rhino.Collections.RhinoList<CDU_Polygon>();
     #endregion
 
     #region constructors
@@ -102,13 +101,13 @@ namespace Rhino.Display
 
         if (m_enabled)
         {
-          Rhino.Display.DisplayPipeline.CalculateBoundingBox += new EventHandler<CalculateBoundingBoxEventArgs>(DisplayPipeline_CalculateBoundingBox);
-          Rhino.Display.DisplayPipeline.PostDrawObjects += new EventHandler<DrawEventArgs>(DisplayPipeline_PostDrawObjects);
+          Rhino.Display.DisplayPipeline.CalculateBoundingBox += DisplayPipeline_CalculateBoundingBox;
+          Rhino.Display.DisplayPipeline.PostDrawObjects += DisplayPipeline_PostDrawObjects;
         }
         else
         {
-          Rhino.Display.DisplayPipeline.CalculateBoundingBox -= new EventHandler<CalculateBoundingBoxEventArgs>(DisplayPipeline_CalculateBoundingBox);
-          Rhino.Display.DisplayPipeline.PostDrawObjects -= new EventHandler<DrawEventArgs>(DisplayPipeline_PostDrawObjects);
+          Rhino.Display.DisplayPipeline.CalculateBoundingBox -= DisplayPipeline_CalculateBoundingBox;
+          Rhino.Display.DisplayPipeline.PostDrawObjects -= DisplayPipeline_PostDrawObjects;
         }
       }
     }
@@ -589,7 +588,8 @@ namespace Rhino.Display
     #endregion
 
     #region IDisposable Members
-    private bool m_disposed = false;
+
+    bool m_disposed; // = false; initialized to false by runtime
     /// <summary>
     /// Dispose this CustomDisplay instance. You must call this function in order to 
     /// properly shut down the CustomDisplay.

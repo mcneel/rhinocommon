@@ -1,6 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
-
 using Rhino.Geometry;
 
 namespace Rhino.DocObjects
@@ -41,7 +39,7 @@ namespace Rhino.DocObjects
     }
 
 
-    const int idxCRhinoObject = 0;
+    //const int idxCRhinoObject = 0;
     const int idxCRhinoPointObject = 1;
     const int idxCRhinoCurveObject = 2;
     const int idxCRhinoMeshObject = 3;
@@ -72,7 +70,7 @@ namespace Rhino.DocObjects
       int type = UnsafeNativeMethods.CRhinoRhinoObject_GetRhinoObjectType(pRhinoObject);
       if (type < 0)
         return null;
-      RhinoObject rc = null;
+      RhinoObject rc;
       switch (type)
       {
         case idxCRhinoPointObject: //1
@@ -248,11 +246,7 @@ namespace Rhino.DocObjects
         if (null != m_edited_attributes)
           return m_edited_attributes;
 
-        if (null == m_original_attributes)
-        {
-          m_original_attributes = new ObjectAttributes(this);
-        }
-        return m_original_attributes;
+        return m_original_attributes ?? (m_original_attributes = new ObjectAttributes(this));
       }
       set
       {
@@ -282,11 +276,11 @@ namespace Rhino.DocObjects
     const int idxIsDeleted = 1;
     const int idxIsInstanceDefinitionGeometry = 2;
     const int idxIsReference = 3;
-    const int idxIsVisible = 4;
+    //const int idxIsVisible = 4;
     const int idxIsNormal = 5;
     const int idxIsLocked = 6;
     const int idxIsHidden = 7;
-    const int idxIsSolid = 8;
+    //const int idxIsSolid = 8;
     const int idxGripsSelected = 9;
     bool GetBool(int which)
     {
@@ -435,9 +429,9 @@ namespace Rhino.DocObjects
       return null;
     }
 
-    const int idxLayerIndex = 0;
-    const int idxGroupCount = 1;
-    const int idxSpace = 2;
+    //const int idxLayerIndex = 0;
+    //const int idxGroupCount = 1;
+    //const int idxSpace = 2;
     const int idxUnselectAllSubObjects = 3;
     const int idxUnhighightAllSubObjects = 4;
     int GetInt(int which)
@@ -990,14 +984,12 @@ namespace Rhino.DocObjects
     {
       if (pGeometry == IntPtr.Zero)
         return null;
-      object parent = null;
+      object parent;
       if (UnsafeNativeMethods.CRhinoObjRef_IsTopLevelGeometryPointer(m_ptr, pGeometry))
         parent = this.Object();
       else
         parent = new ObjRef(this); // copy in case user decides to call Dispose on this ObjRef
-      if (null == parent)
-        return null;
-      return Rhino.Geometry.GeometryBase.CreateGeometryHelper(pGeometry, parent);
+      return null == parent ? null : Rhino.Geometry.GeometryBase.CreateGeometryHelper(pGeometry, parent);
     }
 
     public Geometry.GeometryBase Geometry()
@@ -1202,7 +1194,7 @@ namespace Rhino.Runtime
   class INTERNAL_RhinoObjectArray : IDisposable
   {
     IntPtr m_ptr; //ON_SimpleArray<CRhinoObject*>*
-    System.Collections.Generic.List<DocObjects.RhinoObject> m_rhino_objects;
+    readonly System.Collections.Generic.List<DocObjects.RhinoObject> m_rhino_objects;
     //public IntPtr ConstPointer() { return m_ptr; }
     public IntPtr NonConstPointer() { return m_ptr; }
 

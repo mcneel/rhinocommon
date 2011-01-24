@@ -1,4 +1,3 @@
-using System;
 using Rhino.Geometry;
 
 namespace Rhino.DocObjects

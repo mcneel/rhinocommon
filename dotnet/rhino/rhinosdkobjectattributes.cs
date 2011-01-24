@@ -266,7 +266,7 @@ namespace Rhino.DocObjects
 
 
     const int idxName = 0;
-    const int idxUrl = 1;
+    //const int idxUrl = 1;
     string GetString(int which)
     {
       IntPtr ptr = ConstPointer();
@@ -503,7 +503,7 @@ namespace Rhino.DocObjects
 
     const int idxAddToGroup = 0;
     const int idxRemoveFromGroup = 1;
-    const int idxRemoveFromTopGroup = 2;
+    //const int idxRemoveFromTopGroup = 2;
     const int idxRemoveFromAllGroups = 3;
 
     /// <summary>
@@ -603,7 +603,8 @@ namespace Rhino.DocObjects
         {
           string key = Marshal.PtrToStringUni(pKey);
           string value = Marshal.PtrToStringUni(pValue);
-          rc.Add(key, value);
+          if(key!=null && value!=null)
+            rc.Add(key, value);
         }
       }
 

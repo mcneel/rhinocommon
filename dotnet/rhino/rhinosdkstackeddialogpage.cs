@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Rhino.UI
 {
   public abstract class StackedDialogPage
   {
-    string m_english_page_title;
+    readonly string m_english_page_title;
 
-    public StackedDialogPage(string englishPageTitle)
+    protected StackedDialogPage(string englishPageTitle)
     {
       m_english_page_title = englishPageTitle;
     }

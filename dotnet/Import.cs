@@ -11,11 +11,13 @@ class Import
 {
 #if BUILDING_MONO
   public const string lib = "__Internal";
+  public const string librdk = "__Internal";
 #else
   // DO NOT add the ".dll, .dynlib, .so, ..." extension.
   // Each platform should be smart enough to figure out how
   // to append an extension to find the dynamic library
   public const string lib = "rhcommon_c";
+  public const string librdk = "rhcommonrdk_c";
 #endif
   private Import() { }
 }

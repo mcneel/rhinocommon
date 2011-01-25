@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoNativeMethods.cs" />
+    <Compile Include="AutoNativeMethodsRdk.cs" />
     <Compile Include="hostutils.cs" />
     <Compile Include="interop.cs" />
     <Compile Include="MonoHost.cs" />

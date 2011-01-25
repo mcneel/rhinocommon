@@ -1022,7 +1022,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Add a command line option
     /// </summary>
-    /// <param name="englishName">
+    /// <param name="englishOption">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
     /// </param>
     /// <param name="englishOptionValue"></param>

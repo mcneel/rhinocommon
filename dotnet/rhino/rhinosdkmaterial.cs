@@ -265,6 +265,21 @@ namespace Rhino.DocObjects
       return null;
     }
 
+#if TODO_USING_RDK
+    Rhino.Render.RenderMaterial RenderMaterial
+    {
+        get
+        {
+            Guid instanceId = UnsafeNativeMethods.Rdk_MaterialFromOnMaterial(ConstPointer());
+            return new Rhino.Render.RenderMaterial(instanceId);
+        }
+        set
+        {
+            UnsafeNativeMethods.Rdk_SetMaterialToOnMaterial(NonConstPointer(), value.Id);
+        }
+    }
+#endif
+
     #region Bitmap
     public Texture GetBitmapTexture()
     {

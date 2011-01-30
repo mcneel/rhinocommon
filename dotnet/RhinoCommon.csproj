@@ -16,7 +16,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;USING_V5_SDK</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;USING_V5_SDK USING_RDK</DefineConstants>
     <DocumentationFile>Debug\RhinoCommon.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <DebugType>full</DebugType>
@@ -157,6 +157,14 @@
     <Compile Include="opennurbs\opennurbs_workspace.cs" />
     <Compile Include="opennurbs\opennurbs_x.cs" />
     <Compile Include="opennurbs\opennurbs_zlib.cs" />
+    <Compile Include="RDK\groundplane.cs" />
+    <Compile Include="RDK\rdk_color.cs" />
+    <Compile Include="RDK\rdk_content.cs" />
+    <Compile Include="RDK\rdk_material.cs" />
+    <Compile Include="RDK\rdk_plugin.cs" />
+    <Compile Include="RDK\rdk_texture.cs" />
+    <Compile Include="RDK\simulatedtexture.cs" />
+    <Compile Include="RDK\sun.cs" />
     <Compile Include="resolver.cs" />
     <Compile Include="rhino\rhinosdkdisplayconduitutility.cs" />
     <Compile Include="rhino\Interpolator.cs" />

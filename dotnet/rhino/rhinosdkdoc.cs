@@ -521,6 +521,16 @@ namespace Rhino
     }
     #endregion
 
+#if USING_RDK
+    private Rhino.Render.GroundPlane m_ground_plane;
+
+    public Rhino.Render.GroundPlane GroundPlane
+    {
+      get { return m_ground_plane ?? (m_ground_plane = new Rhino.Render.GroundPlane(this)); }
+    }
+#endif
+
+
 
     //[skipping]
     //  int LookupObject( const CRhinoLayer&, ON_SimpleArray<CRhinoObject*>& ) const;

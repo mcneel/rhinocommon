@@ -863,19 +863,20 @@ namespace Rhino.ApplicationSettings
   [FlagsAttribute]
   public enum OsnapModes : int
   {
-    None = 0x0,
-    Near = 0x1,
-    Focus = 0x2,
-    Center = 0x4,
-    Knot = 0x8,
-    Quadrant = 0x10,
-    Midpoint = 0x20,
-    Intersection = 0x40,
-    End = 0x80,
-    Perpendicular = 0x100,
-    Tangent = 0x200,
-    Point = 0x400,
-    Vertex = 0x800,
+    None = 0,
+    Near = 2,
+    Focus = 8,
+    Center = 0x20,
+    Vertex = 0x40,
+    Knot = 0x80,
+    Quadrant = 0x200,
+    Midpoint = 0x800,
+    Intersection = 0x2000,
+    End = 0x20000,
+    Perpendicular = 0x80000,
+    Tangent = 0x200000,
+    Point =  0x8000000,
+    //All = 0xFFFFFFFF
   };
 
   public enum PointDisplayMode : int

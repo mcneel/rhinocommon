@@ -46,7 +46,23 @@ namespace Rhino.DocObjects.Tables
       get { return m_doc; }
     }
 
-    /// <summary>Number of lights in the light table</summary>
+#if USING_RDK
+    private Rhino.Render.Sun m_sun;
+
+    public Rhino.Render.Sun Sun
+    {
+        get { return m_sun ?? (m_sun = new Rhino.Render.Sun(m_doc)); }
+    }
+
+    private Rhino.Render.Skylight m_skylight;
+
+    public Rhino.Render.Skylight Skylight
+    {
+      get { return m_skylight ?? (m_skylight = new Rhino.Render.Skylight(m_doc)); }
+    }
+#endif
+
+    /// <summary>Number of lights in the light table.  Does not include Sun or Skylight</summary>
     public int Count
     {
       get

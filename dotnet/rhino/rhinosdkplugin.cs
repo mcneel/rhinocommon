@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Rhino.Runtime;
 
@@ -261,6 +262,17 @@ namespace Rhino.PlugIns
         try
         {
           rc = p.OnLoad(ref error_msg);
+
+#if USING_RDK
+          // after calling the OnLoad function, check to see if we should be creating
+          // an RDK plugin. This is the typical spot where C++ plug-ins perform their
+          // RDK initialization.
+          if (rc == LoadReturnCode.Success)
+          {
+            Rhino.Render.RenderContent.RegisterContent(p.Assembly, p.Id);
+          }
+#endif
+
         }
         catch (Exception ex)
         {
@@ -277,6 +289,7 @@ namespace Rhino.PlugIns
       }
       return (int)rc;
     }
+
     private static void InternalOnShutdown(int plugin_serial_number)
     {
       PlugIn p = LookUpBySerialNumber(plugin_serial_number);
@@ -1430,7 +1443,7 @@ namespace Rhino.PlugIns
         if (rc)
           rc = (0 < LicenseCount);
         if (rc && DateToExpire.HasValue)
-          rc = (0 < DateTime.Compare(DateToExpire.Value, DateTime.Now.ToUniversalTime()));
+          rc = (0 < DateTime.Compare(DateToExpire.Value, DateTime.UtcNow));
       }
       catch
       {

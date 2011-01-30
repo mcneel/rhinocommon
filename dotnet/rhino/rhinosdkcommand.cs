@@ -166,6 +166,10 @@ namespace Rhino.Commands
     }
 
     public abstract string EnglishName{ get; }
+    public virtual string LocalName
+    {
+      get { return EnglishName; }
+    }
 
     public PersistentSettings Settings
     {
@@ -219,9 +223,7 @@ namespace Rhino.Commands
         ids.Add(id);
         i++;
       }
-      if (ids.Count < 1)
-        return null;
-      return ids.ToArray();
+      return ids.Count < 1 ? null : ids.ToArray();
     }
 
     /// <summary>

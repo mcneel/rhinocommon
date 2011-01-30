@@ -273,7 +273,8 @@ namespace Rhino.Runtime
         int sn = new_command.m_runtime_serial_number;
         Guid id = new_command.Id;
         string englishName = new_command.EnglishName;
-        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, sn, commandStyle);
+        string localName = new_command.LocalName;
+        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle);
 
         rc = true;
       }
@@ -303,9 +304,10 @@ namespace Rhino.Runtime
         int sn = cmd.m_runtime_serial_number;
         IntPtr pPlugIn = plugin.NonConstPointer();
         string englishName = cmd.EnglishName;
+        string localName = cmd.LocalName;
         int commandStyle = 2; //scripted
         Guid id = cmd.Id;
-        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, sn, commandStyle);
+        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle);
 
         rc = true;
       }

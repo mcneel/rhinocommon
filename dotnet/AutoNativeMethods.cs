@@ -9,6 +9,7 @@ using Rhino;
 using Rhino.Geometry;
 using Rhino.Geometry.Intersect;
 using Rhino.Collections;
+using Rhino.Display;
 
 // Atuomatically generated function declarations for calling into
 // the support 'C' DLL (rhcommon_c.dll).
@@ -3605,10 +3606,10 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool RhCommand_IsCommand([MarshalAs(UnmanagedType.LPWStr)]string _command_name);
 
-  //bool CRhinoCommand_Create(CRhinoPlugIn* pPlugIn, ON_UUID cmdId, const RHMONO_STRING* _englishName, int serial_number, int commandStyle)
+  //bool CRhinoCommand_Create(CRhinoPlugIn* pPlugIn, ON_UUID cmdId, const RHMONO_STRING* _englishName, const RHMONO_STRING* _localName, int serial_number, int commandStyle)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool CRhinoCommand_Create(IntPtr pPlugIn, Guid cmdId, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, int serial_number, int commandStyle);
+  internal static extern bool CRhinoCommand_Create(IntPtr pPlugIn, Guid cmdId, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, [MarshalAs(UnmanagedType.LPWStr)]string _localName, int serial_number, int commandStyle);
 
   //ON_UUID CRhinoApp_LookupCommandByName( const RHMONO_STRING* _name )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6045,6 +6046,10 @@ internal partial class UnsafeNativeMethods
   //ON_UUID CRhinoPlugInManager_GetPlugInId(const RHMONO_STRING* _name)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoPlugInManager_GetPlugInId([MarshalAs(UnmanagedType.LPWStr)]string _name);
+
+  //CRhinoPlugIn* CRhinoPlugInManager_GetPlugInFromId(ON_UUID id, bool onlyDotNet)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoPlugInManager_GetPlugInFromId(Guid id, [MarshalAs(UnmanagedType.U1)]bool onlyDotNet);
   #endregion
 
 

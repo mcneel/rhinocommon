@@ -89,6 +89,14 @@ namespace Rhino.Geometry
       get { return LightStyle == LightStyle.WorldRectangular; }
     }
 
+    public bool IsSunLight
+    {
+      get 
+      {
+          return UnsafeNativeMethods.Rdk_Sun_IsSunLight(ConstPointer()); 
+      }
+    }
+
     /// <summary>
     /// Determined by LightStyle
     /// </summary>

@@ -37,16 +37,9 @@
       m_btnCancel = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
-      // m_txtbox
-      // 
-      this.m_txtbox.Location = new System.Drawing.Point(13, 29);
-      this.m_txtbox.Multiline = true;
-      this.m_txtbox.Name = "m_txtbox";
-      this.m_txtbox.Size = new System.Drawing.Size(259, 192);
-      this.m_txtbox.TabIndex = 0;
-      // 
       // m_btnOk
       // 
+      m_btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       m_btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
       m_btnOk.Location = new System.Drawing.Point(116, 227);
       m_btnOk.Name = "m_btnOk";
@@ -57,6 +50,7 @@
       // 
       // m_btnCancel
       // 
+      m_btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       m_btnCancel.Location = new System.Drawing.Point(197, 227);
       m_btnCancel.Name = "m_btnCancel";
@@ -64,6 +58,18 @@
       m_btnCancel.TabIndex = 2;
       m_btnCancel.Text = "Cancel";
       m_btnCancel.UseVisualStyleBackColor = true;
+      // 
+      // m_txtbox
+      // 
+      this.m_txtbox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_txtbox.Location = new System.Drawing.Point(13, 29);
+      this.m_txtbox.Multiline = true;
+      this.m_txtbox.Name = "m_txtbox";
+      this.m_txtbox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+      this.m_txtbox.Size = new System.Drawing.Size(259, 192);
+      this.m_txtbox.TabIndex = 0;
       // 
       // m_lblMessage
       // 

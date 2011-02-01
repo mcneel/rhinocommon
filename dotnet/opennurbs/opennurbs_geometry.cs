@@ -4,7 +4,7 @@ using Rhino.DocObjects;
 
 namespace Rhino.Geometry
 {
-  public class GeometryBase : Runtime.CommonObject
+  public abstract class GeometryBase : Runtime.CommonObject
   {
     #region constructors / wrapped pointer manipulation
     GeometryBase m_shallow_parent;
@@ -279,7 +279,7 @@ namespace Rhino.Geometry
           rc = new Light(pGeometry, parent_object, source_objref);
           break;
         default:
-          rc = new GeometryBase(pGeometry, parent, subobject_index);
+          rc = new UnknownGeometry(pGeometry, parent, subobject_index);
           break;
       }
 
@@ -634,5 +634,14 @@ namespace Rhino.Geometry
     }
     #endregion
 
+  }
+
+  // DO NOT make public
+  class UnknownGeometry : GeometryBase
+  {
+    public UnknownGeometry(IntPtr ptr, object parent, int subobject_index)
+      : base(ptr, parent, subobject_index)
+    {
+    }
   }
 }

@@ -160,7 +160,9 @@
     <Compile Include="RDK\groundplane.cs" />
     <Compile Include="RDK\rdk_color.cs" />
     <Compile Include="RDK\rdk_content.cs" />
+    <Compile Include="RDK\rdk_contentfield.cs" />
     <Compile Include="RDK\rdk_material.cs" />
+    <Compile Include="RDK\rdk_simulated_environment.cs" />
     <Compile Include="RDK\rdk_plugin.cs" />
     <Compile Include="RDK\rdk_texture.cs" />
     <Compile Include="RDK\simulatedtexture.cs" />

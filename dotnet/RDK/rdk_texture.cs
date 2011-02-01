@@ -12,6 +12,13 @@ namespace Rhino.Render
     {
     }
 
+      internal RenderTexture(IntPtr pRenderTexture)
+    {
+      // Could be from anywhere
+        m_pRenderContent = pRenderTexture;
+      // serial number stays zero and this is not added to the custom content list
+    }
+
     private void Construct(Guid plugin_id)
     {
       Type t = GetType();
@@ -27,8 +34,14 @@ namespace Rhino.Render
       int category = 0;
       Guid type_id = t.GUID;
       m_pRenderContent = UnsafeNativeMethods.CRhCmnTexture_New(m_runtime_serial_number, image_based, render_engine, plugin_id, type_id, category);
-/*
-      System.Reflection.FieldInfo[] fields = t.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+
+      //for (int i = 0; i < m_fields.Count; i++)
+      //{
+      //    m_fields[i].CreateCppPointer(this);
+      //}
+
+      System.Reflection.FieldInfo[] fields = t.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic); ;//System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+        
       if (fields != null)
       {
         for (int i = 0; i < fields.Length; i++)
@@ -37,17 +50,20 @@ namespace Rhino.Render
           {
             Field f = fields[i].GetValue(this) as Field;
             if (f != null)
-              f.ConstructCppPointer(this);
+              f.CreateCppPointer(this, fields[i].IsPublic);
           }
         }
       }
-*/
     }
 
-    protected System.Drawing.Icon Icon
+    public Rhino.Geometry.Transform LocalMappingTransform
     {
-      get { return null; }
-      set { }
+          get
+          {
+              Rhino.Geometry.Transform xform = new Rhino.Geometry.Transform();
+              UnsafeNativeMethods.Rdk_Texture_LocalMappingTransform(ConstPointer(), ref xform);
+              return xform;
+          }
     }
 
     // will be implemented in RenderContent class
@@ -72,10 +88,22 @@ namespace Rhino.Render
 
     public virtual TextureEvaluator CreateEvaluator()
     {
+        IntPtr pTE = UnsafeNativeMethods.Rdk_RenderTexture_NewTextureEvaluator(ConstPointer());
+        if (pTE != IntPtr.Zero)
+        {
+            TextureEvaluator te = new TextureEvaluator(pTE);
+            return te;
+        }
       return null;
     }
 
     #region callbacks from c++
+
+    public virtual void SimulateTexture(Rhino.Render.SimulatedTexture sim, bool bForDataOnly)
+    {
+        UnsafeNativeMethods.Rdk_CallSimulateTextureBase(NonConstPointer(), sim.ConstPointer(), bForDataOnly);
+    }
+
     internal delegate IntPtr NewTextureCallback(Guid type_id);
     internal static NewTextureCallback m_NewTexture = OnNewTexture;
     static IntPtr OnNewTexture(Guid type_id)
@@ -87,6 +115,7 @@ namespace Rhino.Render
         Type t = RdkPlugIn.GetRenderTextureType(type_id, out plugin_id);
         if( t != null && plugin_id!=Guid.Empty )
         {
+          //RenderContent.m_fields.Clear();
           RenderTexture texture = System.Activator.CreateInstance(t) as RenderTexture;
           texture.Construct(plugin_id);
           rc = texture.NonConstPointer();
@@ -96,7 +125,29 @@ namespace Rhino.Render
       {
         rc = IntPtr.Zero;
       }
+      //RenderContent.m_fields.Clear();
       return rc;
+    }
+
+    internal delegate void GetSimulateTextureCallback(int serial_number, IntPtr p, int bDataOnly);
+    internal static GetSimulateTextureCallback m_SimulateTexture = OnSimulateTexture;
+    static void OnSimulateTexture(int serial_number, IntPtr pSim, int bDataOnly)
+    {
+      try
+      {
+        RenderTexture texture = RenderContent.FromSerialNumber(serial_number) as RenderTexture;
+        if (texture != null)
+        {
+            if (pSim != IntPtr.Zero)
+            {
+                SimulatedTexture sim = new SimulatedTexture(pSim);
+                texture.SimulateTexture(sim, 1==bDataOnly);
+            }
+        }
+      }
+      catch
+      {
+      }
     }
 
     internal delegate IntPtr GetNewTextureEvaluatorCallback(int serial_number);
@@ -122,6 +173,7 @@ namespace Rhino.Render
       }
       return rc;
     }
+
     #endregion
   }
 
@@ -141,7 +193,7 @@ namespace Rhino.Render
       int serial_number = UnsafeNativeMethods.CRhCmnRdkTextureEvaluator_IsRhCmnEvaluator(pTextureEvaluator);
       return serial_number > 0 ? FromSerialNumber(serial_number) : new TextureEvaluator(pTextureEvaluator);
     }
-    private TextureEvaluator(IntPtr pTextureEvaluator)
+    internal TextureEvaluator(IntPtr pTextureEvaluator)
     {
       // Could be a texture evaluator from anywhere
       m_pRhRdkTextureEvaluator = pTextureEvaluator;
@@ -176,6 +228,17 @@ namespace Rhino.Render
         }
       }
       return rc;
+    }
+
+    internal delegate void OnDeleteThisCallback(int serial_number);
+    internal static OnDeleteThisCallback m_OnDeleteThis = OnDeleteThis;
+    static void OnDeleteThis(int serial_number)
+    {
+      TextureEvaluator eval = FromSerialNumber(serial_number);
+      if (eval != null)
+      {
+        eval.m_pRhRdkTextureEvaluator = IntPtr.Zero;
+      }
     }
 
 
@@ -227,6 +290,94 @@ namespace Rhino.Render
       }
     }
     #endregion
+  }
+
+//#define RDK_TEX_2COL_COLOR1             L"color-one"
+//#define RDK_TEX_2COL_COLOR2             L"color-two"
+//#define RDK_TEX_2COL_SWAP_COLORS        L"swap-colors"
+//#define RDK_TEX_2COL_SUPERSAMPLE        L"super-sample"
+//#define RDK_TEX_2COL_TEXTURE_ON1        L"texture-on-one"
+//#define RDK_TEX_2COL_TEXTURE_ON2        L"texture-on-two"
+//#define RDK_TEX_2COL_TEXTURE_AMOUNT1    L"texture-amount-one"
+//#define RDK_TEX_2COL_TEXTURE_AMOUNT2    L"texture-amount-two"
+//#define RDK_TEX_2COL_TILE				L"tile"*/
+
+  public abstract class TwoColorRenderTexture : RenderTexture
+  {
+
+      public override sealed void AddUISections()
+      {
+          UnsafeNativeMethods.Rdk_Texture_AddTwoColorSection(NonConstPointer());
+          AddAdditionalUISections();
+          base.AddUISections();
+      }
+
+      protected abstract void AddAdditionalUISections();
+
+      protected ColorField m_color1 = new ColorField("color-one", "Color 1", Rhino.Display.Color4f.Black);
+      protected ColorField m_color2 = new ColorField("color-two", "Color 2", Rhino.Display.Color4f.White);
+
+      protected BoolField m_texture1_on = new BoolField("texture-on-one", "Texture1 On", true);
+      protected BoolField m_texture2_on = new BoolField("texture-on-two", "Texture2 On", true);
+
+      protected DoubleField m_texture1_amount = new DoubleField("texture-amount-one", "Texture1 Amt", 1.0);
+      protected DoubleField m_texture2_amount = new DoubleField("texture-amount-two", "Texture2 Amt", 1.0);
+
+      protected BoolField m_swap_colors = new BoolField("swap-colors", "Swap Colors", false);
+      protected BoolField m_super_sample = new BoolField("super-sample", "Super sample", false);
+
+      public Rhino.Display.Color4f Color1
+      {
+          get { return m_color1.Value; }
+          set { m_color1.Value = value; }
+      }
+      public Rhino.Display.Color4f Color2
+      {
+          get { return m_color2.Value; }
+          set { m_color2.Value = value; }
+      }
+      public bool Texture1On
+      {
+          get { return m_texture1_on.Value; }
+          set { m_texture1_on.Value = value; }
+      }
+      public bool Texture2On
+      {
+          get { return m_texture2_on.Value; }
+          set { m_texture2_on.Value = value; }
+      }
+      public double Texture1Amount
+      {
+          get { return m_texture1_amount.Value; }
+          set { m_texture1_amount.Value = value; }
+      }
+      public double Texture2Amount
+      {
+          get { return m_texture2_amount.Value; }
+          set { m_texture2_amount.Value = value; }
+      }
+      public bool SwapColors
+      {
+          get { return m_swap_colors.Value; }
+          set { m_swap_colors.Value = value; }
+      }
+      public bool SuperSample
+      {
+          get { return m_super_sample.Value; }
+          set { m_super_sample.Value = value; }
+      }
+  }
+
+  // DO NOT make public
+  class NativeRenderTexture : RenderTexture
+  {
+    public NativeRenderTexture(IntPtr pRenderTexture)
+        : base(pRenderTexture)
+    {
+    }
+
+    public override string Name { get { return "TODO"; } }
+    public override string Description { get { return "TODO"; } }
   }
 }
 

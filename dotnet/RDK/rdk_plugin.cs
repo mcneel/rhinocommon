@@ -12,9 +12,12 @@ namespace Rhino.Render
     {
       // All of the RDK callback functions - gets called every time a new RdkPlugIn is created
       UnsafeNativeMethods.Rdk_SetNewTextureCallback(Rhino.Render.RenderTexture.m_NewTexture);
+      UnsafeNativeMethods.Rdk_SetRenderContentDeleteThisCallback(RenderContent.m_DeleteThis);
       UnsafeNativeMethods.Rdk_SetContentStringCallback(Rhino.Render.RenderTexture.m_GetRenderContentString);
       UnsafeNativeMethods.Rdk_SetNewTextureEvaluatorCallback(Rhino.Render.RenderTexture.m_NewTextureEvaluator);
-      UnsafeNativeMethods.Rdk_SetTextureEvaluatorGetColor(Rhino.Render.TextureEvaluator.m_GetColor);
+      UnsafeNativeMethods.Rdk_SetTextureEvaluatorCallbacks(TextureEvaluator.m_GetColor, TextureEvaluator.m_OnDeleteThis);
+      UnsafeNativeMethods.Rdk_SetSimulateTextureCallback(Rhino.Render.RenderTexture.m_SimulateTexture);
+      UnsafeNativeMethods.Rdk_SetAddUISectionsCallback(Rhino.Render.RenderContent.m_AddUISections);
     }
 
     static List<RdkPlugIn> m_all_rdk_plugins = new List<RdkPlugIn>();
@@ -93,7 +96,7 @@ namespace Rhino.Render
       m_rhino_plugin_id = rhinoPlugInId;
     }
 
-    public void AddRegisteredContentTypes(IEnumerable<Type> types)
+    internal void AddRegisteredContentTypes(IEnumerable<Type> types)
     {
       m_render_content_types.AddRange(types);
     }

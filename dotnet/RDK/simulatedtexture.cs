@@ -7,10 +7,23 @@ namespace Rhino.Render
     public class SimulatedTexture : IDisposable
     {
         private IntPtr m_pSim = IntPtr.Zero;
+        private Rhino.Render.SimulatedEnvironment m_parent_simulated_environment;
+        private bool m_bAutoDelete = true;
 
         public SimulatedTexture()
         {
             m_pSim = UnsafeNativeMethods.Rdk_SimulatedTexture_New();
+        }
+
+        internal SimulatedTexture(Rhino.Render.SimulatedEnvironment env)
+        {
+            m_parent_simulated_environment = env;
+        }
+
+        internal SimulatedTexture(IntPtr p)
+        {
+            m_pSim = p;
+            m_bAutoDelete = false;
         }
 
         ~SimulatedTexture()
@@ -229,14 +242,21 @@ namespace Rhino.Render
         {
             if (IntPtr.Zero != m_pSim)
             {
-                UnsafeNativeMethods.Rdk_SimulatedTexture_Delete(m_pSim);
+                if (m_bAutoDelete)
+                {
+                    UnsafeNativeMethods.Rdk_SimulatedTexture_Delete(m_pSim);
+                }
                 m_pSim = IntPtr.Zero;
             }
         }
 
         public IntPtr ConstPointer()
         {
-            return m_pSim;
+            if (m_pSim != IntPtr.Zero)
+            {
+                return m_pSim;
+            }
+            return UnsafeNativeMethods.Rdk_SimulatedEnvironment_Texture(m_parent_simulated_environment.ConstPointer());
         }
 
 

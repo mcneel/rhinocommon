@@ -168,15 +168,25 @@ internal partial class UnsafeNativeMethods
 #if USING_RDK
   // RDK Functions
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void Rdk_SetTextureEvaluatorGetColor(Rhino.Render.TextureEvaluator.GetColorCallback callback_func);
+  internal static extern void Rdk_SetTextureEvaluatorCallbacks(Rhino.Render.TextureEvaluator.GetColorCallback callback_func,
+    Rhino.Render.TextureEvaluator.OnDeleteThisCallback ondeletethis_callback);
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetNewTextureCallback(Rhino.Render.RenderTexture.NewTextureCallback callback_func);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void Rdk_SetRenderContentDeleteThisCallback(Rhino.Render.RenderContent.RenderContentDeleteThisCallback callback_func);
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetContentStringCallback(Rhino.Render.RenderTexture.GetRenderContentStringCallback callback_func);
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetNewTextureEvaluatorCallback(Rhino.Render.RenderTexture.GetNewTextureEvaluatorCallback callback_func);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void Rdk_SetSimulateTextureCallback(Rhino.Render.RenderTexture.GetSimulateTextureCallback callback_func);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void Rdk_SetAddUISectionsCallback(Rhino.Render.RenderTexture.GetAddUISectionsCallback callback_func);
 #endif
 }

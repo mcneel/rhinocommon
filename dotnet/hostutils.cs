@@ -55,6 +55,11 @@ namespace Rhino.Runtime
   }
 #endif
 
+  public abstract class PythonCompiledCode
+  {
+    public abstract void Execute(PythonScript scope);
+  }
+
   public abstract class PythonScript
   {
     public static PythonScript Create()
@@ -67,12 +72,12 @@ namespace Rhino.Runtime
       return pyscript;
     }
 
-
     protected PythonScript()
     {
       m_output = RhinoApp.Write;
     }
 
+    public abstract PythonCompiledCode Compile(string script);
     public abstract bool ContainsVariable(string name);
     public abstract System.Collections.Generic.IEnumerable<string> GetVariableNames();
     public abstract object GetVariable(string name);

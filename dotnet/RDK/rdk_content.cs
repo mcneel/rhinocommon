@@ -108,9 +108,7 @@ namespace Rhino.Render
         {
           Type t = exported_types[i];
           if (!t.IsAbstract && t.IsSubclassOf(typeof(Rhino.Render.RenderContent)) && t.GetConstructor(new Type[] { }) != null)
-          {
             content_types.Add(t);
-          }
         }
 
         if (content_types.Count == 0)
@@ -119,25 +117,41 @@ namespace Rhino.Render
         // make sure that content types have not already been registered
         for( int i=0; i<content_types.Count; i++ )
         {
-          Type t = content_types[i];
-          if( RdkPlugIn.RenderContentTypeIsRegistered(t) )
+          if (RdkPlugIn.RenderContentTypeIsRegistered(content_types[i]))
             return null; //just bail
         }
-        RdkPlugIn rdk = RdkPlugIn.GetRdkPlugIn(plugin);
-        if (rdk == null)
+
+        RdkPlugIn rdk_plugin = RdkPlugIn.GetRdkPlugIn(plugin);
+        if (rdk_plugin == null)
           return null;
 
-        rdk.AddRegisteredContentTypes(content_types);
+        rdk_plugin.AddRegisteredContentTypes(content_types);
         int count = content_types.Count;
         Guid[] ids = new Guid[count];
         for (int i = 0; i < count; i++)
+        {
           ids[i] = content_types[i].GUID;
-        UnsafeNativeMethods.Rdk_AddTextureFactories(count, ids);
+          if (content_types[i].IsSubclassOf(typeof(RenderTexture)))
+            UnsafeNativeMethods.Rdk_AddTextureFactory(ids[i]);
+        }
         return content_types.ToArray();
       }
       return null;
     }
 
+    static RenderContent FromPointer(IntPtr pRenderContent)
+    {
+      if (pRenderContent == IntPtr.Zero) return null;
+      int serial_number = UnsafeNativeMethods.CRhCmnRenderContent_IsRhCmnDefined(pRenderContent);
+      if (serial_number > 0)
+        return FromSerialNumber(serial_number);
+
+      IntPtr pTexture = UnsafeNativeMethods.Rdk_RenderContent_DynamicCastToTexture(pRenderContent);
+      if (pTexture != IntPtr.Zero)
+        return new NativeRenderTexture(pTexture);
+      // Eventually we should never have to return a NativeRenderContent class
+      return new NativeRenderContent(pRenderContent);
+    }
 
     // you never derive directly from RenderContent
     internal RenderContent()
@@ -154,11 +168,90 @@ namespace Rhino.Render
       // serial number stays zero and this is not added to the custom content list
     }
 
-    internal static RenderContent FromPointer(IntPtr pRenderContent)
+
+    public abstract String Name { get; }
+    public abstract String Description { get; }
+
+    public virtual void AddUISections()
     {
-      if (pRenderContent == IntPtr.Zero) return null;
-      int serial_number = UnsafeNativeMethods.CRhCmnRenderContent_IsRhCmnDefined(pRenderContent);
-      return serial_number > 0 ? FromSerialNumber(serial_number) : new NativeRenderContent(pRenderContent);
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.Rdk_CallAddUISectionsBase(pThis);
+    }
+
+    public bool AddAutomaticUISection(string caption, int id)
+    {
+      return UnsafeNativeMethods.Rdk_CoreContent_AddAutomaticUISection(NonConstPointer(), caption, id);
+    }
+
+    // ?? What does this mean ??
+    public string ChildSlotNameFromParamName(String paramName)
+    {
+      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.Rdk_RenderContent_ChildSlotNameFromParamName(pConstThis, paramName, pString);
+        return sh.ToString();
+      }
+    }
+
+    // ?? What does this mean ??
+    public string ParamNameFromChildSlotName(String childSlotName)
+    {
+      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.Rdk_RenderContent_ParamNameFromChildSlotName(pConstThis, childSlotName, pString);
+        return sh.ToString();
+      }
+    }
+
+    public RenderContent FindChild(String childSlotName)
+    {
+      IntPtr pConstThis = ConstPointer();
+      // ?? Who is in charge of deleting pChild - As it stands pChild will be deleted by the new
+      // ?? NativeRenderContent class if one is created
+      IntPtr pChild = UnsafeNativeMethods.Rdk_RenderContent_FindChild(pConstThis, childSlotName);
+      return RenderContent.FromPointer(pChild);
+    }
+
+    //virtual bool IsContentTypeAcceptableAsChild(const UUID& uuidType, const wchar_t* wszChildSlotName) const;
+    //virtual bool IsFactoryProductAcceptableAsChild(const IRhRdkContentFactory* pFactory, const wchar_t* wszChildSlotName) const;
+
+    #region C++->C# Callbacks
+    internal delegate void GetAddUISectionsCallback(int serial_number);
+    internal static GetAddUISectionsCallback m_AddUISections = OnAddUISections;
+    static void OnAddUISections(int serial_number)
+    {
+      try
+      {
+        RenderTexture texture = RenderContent.FromSerialNumber(serial_number) as RenderTexture;
+        if (texture != null)
+          texture.AddUISections();
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+    }
+
+    internal delegate void RenderContentDeleteThisCallback(int serial_number);
+    internal static RenderContentDeleteThisCallback m_DeleteThis = OnDeleteThis;
+    static void OnDeleteThis(int serial_number)
+    {
+      try
+      {
+        RenderContent content = RenderContent.FromSerialNumber(serial_number);
+        if (content != null)
+        {
+          content.m_pRenderContent = IntPtr.Zero;
+        }
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
     }
 
 
@@ -181,10 +274,7 @@ namespace Rhino.Render
         Rhino.Runtime.HostUtils.ExceptionReport(ex);
       }
     }
-
-    public abstract String Name { get; }
-    public abstract String Description { get; }
-
+    #endregion
 
     #region pointer tracking
     internal IntPtr m_pRenderContent = IntPtr.Zero;
@@ -203,8 +293,10 @@ namespace Rhino.Render
       return null;
     }
 
-    IntPtr ConstPointer()
+    internal IntPtr ConstPointer()
     {
+      // we might want to check for IntPtr.Zero and throw
+      // an ObjectDisposedException
       return m_pRenderContent;
     }
     internal IntPtr NonConstPointer()
@@ -236,7 +328,7 @@ namespace Rhino.Render
     #endregion
   }
 
-
+  
   // DO NOT make public
   class NativeRenderContent : RenderContent
   {
@@ -244,18 +336,9 @@ namespace Rhino.Render
       : base(pRenderContent)
     {
     }
-
-    public override string Name
-    {
-      get { return "TODO"; }
-    }
-
-    public override string Description
-    {
-      get { return "TODO"; }
-    }
+    public override string Name  { get { return "TODO"; } }
+    public override string Description { get { return "TODO"; } }
   }
-
 }
 
 #endif

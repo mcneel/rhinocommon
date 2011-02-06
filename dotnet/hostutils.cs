@@ -575,7 +575,18 @@ namespace Rhino.Runtime
 
     public static void SetInShutDown()
     {
-      UnsafeNativeMethods.RhCmn_SetInShutDown();
+      try
+      {
+        UnsafeNativeMethods.RhCmn_SetInShutDown();
+        // Remove callbacks that should not happen after this point in time
+#if USING_RDK
+        Rhino.Render.RdkPlugIn.SetRdkCallbackFunctions(false);
+#endif
+      }
+      catch
+      {
+        //throw away, we are shutting down
+      }
     }
   }
 }

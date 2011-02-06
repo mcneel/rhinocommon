@@ -59,8 +59,8 @@ namespace examples_cs
       //Test(Examples.AddAnnotationText, doc);
       //Test(Examples.AddTorus, doc);
       //Test(Examples.AddTruncatedCone, doc);
+      //Test(Examples.AdvancedDisplay, doc);
       //Test(Examples.ArcLengthPoint, doc);
-      Test(Examples.AdvancedDisplay, doc);
       //Test(Examples.BlockInsertionPoint, doc);
       //Test(Examples.CommandLineOptions, doc);
       //Test(Examples.DivideByLengthPoints, doc);
@@ -68,6 +68,7 @@ namespace examples_cs
       //Test(Examples.FindObjectsByName, doc);
       //Test(Examples.OrientOnSrf, doc);
       //Test(Examples.SelLayer, doc);
+      Test(Examples.UnrollSurface, doc);
       return Rhino.Commands.Result.Success;
     }
   }

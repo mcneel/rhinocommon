@@ -39,7 +39,7 @@ partial class Examples
     if (material_index < 0)
     {
       // Create a new material based on Rhino's default material
-      material_index = doc.Materials.AddMaterial();
+      material_index = doc.Materials.Add();
       // Assign the new material (index) to the object.
       rhino_object.Attributes.MaterialIndex = material_index;
     }

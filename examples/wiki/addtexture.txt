@@ -39,7 +39,7 @@ public static Rhino.Commands.Result AddTexture(Rhino.RhinoDoc doc)
   if (material_index < 0)
   {
     // Create a new material based on Rhino's default material
-    material_index = doc.Materials.AddMaterial();
+    material_index = doc.Materials.Add();
     // Assign the new material (index) to the object.
     rhino_object.Attributes.MaterialIndex = material_index;
   }
@@ -98,7 +98,7 @@ Public Shared Function AddTexture(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands
   Dim material_index As Integer = rhino_object.Attributes.MaterialIndex
   If material_index < 0 Then
     ' Create a new material based on Rhino's default material
-    material_index = doc.Materials.AddMaterial()
+    material_index = doc.Materials.Add()
     ' Assign the new material (index) to the object.
     rhino_object.Attributes.MaterialIndex = material_index
   End If

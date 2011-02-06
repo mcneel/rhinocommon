@@ -8,16 +8,54 @@ namespace Rhino.Render
   sealed class RdkPlugIn
   {
     #region statics
-    static void SetRdkCallbackFunctions()
+    internal static void SetRdkCallbackFunctions(bool on)
     {
       // All of the RDK callback functions - gets called every time a new RdkPlugIn is created
-      UnsafeNativeMethods.Rdk_SetNewTextureCallback(Rhino.Render.RenderTexture.m_NewTexture);
-      UnsafeNativeMethods.Rdk_SetRenderContentDeleteThisCallback(RenderContent.m_DeleteThis);
-      UnsafeNativeMethods.Rdk_SetContentStringCallback(Rhino.Render.RenderTexture.m_GetRenderContentString);
-      UnsafeNativeMethods.Rdk_SetNewTextureEvaluatorCallback(Rhino.Render.RenderTexture.m_NewTextureEvaluator);
-      UnsafeNativeMethods.Rdk_SetTextureEvaluatorCallbacks(TextureEvaluator.m_GetColor, TextureEvaluator.m_OnDeleteThis);
-      UnsafeNativeMethods.Rdk_SetSimulateTextureCallback(Rhino.Render.RenderTexture.m_SimulateTexture);
-      UnsafeNativeMethods.Rdk_SetAddUISectionsCallback(Rhino.Render.RenderContent.m_AddUISections);
+      if (on)
+      {
+        UnsafeNativeMethods.Rdk_SetNewTextureCallback(Rhino.Render.RenderTexture.m_NewTexture);
+        UnsafeNativeMethods.Rdk_SetNewMaterialCallback(Rhino.Render.RenderMaterial.m_NewMaterial);
+        UnsafeNativeMethods.Rdk_SetNewEnvironmentCallback(Rhino.Render.RenderEnvironment.m_NewEnvironment);
+
+        UnsafeNativeMethods.Rdk_SetRenderContentDeleteThisCallback(RenderContent.m_DeleteThis);
+        UnsafeNativeMethods.Rdk_SetContentStringCallback(Rhino.Render.RenderTexture.m_GetRenderContentString);
+        UnsafeNativeMethods.Rdk_SetNewTextureEvaluatorCallback(Rhino.Render.RenderTexture.m_NewTextureEvaluator);
+        UnsafeNativeMethods.Rdk_SetTextureEvaluatorCallbacks(TextureEvaluator.m_GetColor, TextureEvaluator.m_OnDeleteThis);
+        UnsafeNativeMethods.Rdk_SetSimulateTextureCallback(Rhino.Render.RenderTexture.m_SimulateTexture);
+        UnsafeNativeMethods.Rdk_SetAddUISectionsCallback(Rhino.Render.RenderContent.m_AddUISections);
+        UnsafeNativeMethods.Rdk_SetIsContentTypeAcceptableAsChildCallback(Rhino.Render.RenderContent.m_IsContentTypeAcceptableAsChild);
+        UnsafeNativeMethods.Rdk_SetHarvestDataCallback(Rhino.Render.RenderContent.m_HarvestData);
+
+        //Materials
+        UnsafeNativeMethods.Rdk_SetTextureChildSlotNameCallback(Rhino.Render.RenderMaterial.m_TextureChildSlotName);
+        UnsafeNativeMethods.Rdk_SetSimulateMaterialCallback(Rhino.Render.RenderMaterial.m_SimulateMaterial);
+
+        //Environments
+        UnsafeNativeMethods.Rdk_SetSimulateEnvironmentCallback(Rhino.Render.RenderEnvironment.m_SimulateEnvironment);
+        
+      }
+      else
+      {
+        UnsafeNativeMethods.Rdk_SetNewTextureCallback(null);
+        UnsafeNativeMethods.Rdk_SetNewMaterialCallback(null);
+        UnsafeNativeMethods.Rdk_SetNewEnvironmentCallback(null);
+
+        UnsafeNativeMethods.Rdk_SetRenderContentDeleteThisCallback(null);
+        UnsafeNativeMethods.Rdk_SetContentStringCallback(null);
+        UnsafeNativeMethods.Rdk_SetNewTextureEvaluatorCallback(null);
+        UnsafeNativeMethods.Rdk_SetTextureEvaluatorCallbacks(null, null);
+        UnsafeNativeMethods.Rdk_SetSimulateTextureCallback(null);
+        UnsafeNativeMethods.Rdk_SetAddUISectionsCallback(null);
+        UnsafeNativeMethods.Rdk_SetIsContentTypeAcceptableAsChildCallback(null);
+        UnsafeNativeMethods.Rdk_SetHarvestDataCallback(null);
+
+        //Materials
+        UnsafeNativeMethods.Rdk_SetTextureChildSlotNameCallback(null);
+        UnsafeNativeMethods.Rdk_SetSimulateMaterialCallback(null);
+
+        //Environments
+        UnsafeNativeMethods.Rdk_SetSimulateEnvironmentCallback(null);
+      }
     }
 
     static List<RdkPlugIn> m_all_rdk_plugins = new List<RdkPlugIn>();
@@ -49,7 +87,7 @@ namespace Rhino.Render
         IntPtr pRdkPlugIn = UnsafeNativeMethods.CRhCmnRdkPlugIn_New(pRhinoPlugIn);
         if (pRdkPlugIn != IntPtr.Zero)
         {
-          SetRdkCallbackFunctions();
+          SetRdkCallbackFunctions(true);
           RdkPlugIn rc = new RdkPlugIn(pRdkPlugIn, rhinoPlugInId);
           m_all_rdk_plugins.Add(rc);
           return rc;
@@ -69,7 +107,7 @@ namespace Rhino.Render
       return false;
     }
 
-    public static Type GetRenderTextureType(Guid id, out Guid plugin_id)
+    public static Type GetRenderContentType(Guid id, out Guid plugin_id)
     {
       plugin_id = Guid.Empty;
       for (int i = 0; i < m_all_rdk_plugins.Count; i++)

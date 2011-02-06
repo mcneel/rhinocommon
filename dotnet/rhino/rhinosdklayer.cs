@@ -294,6 +294,33 @@ namespace Rhino.DocObjects
       }
     }
 
+#if USING_RDK
+    public Guid RenderMaterialInstanceId
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.Rdk_RenderContent_LayerMaterialInstanceId(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.Rdk_RenderContent_SetLayerMaterialInstanceId(pThis, value);
+      }
+    }
+    public Rhino.Render.RenderMaterial RenderMaterial
+    {
+      get
+      {
+        return Rhino.Render.RenderContent.FromInstanceId(RenderMaterialInstanceId) as Rhino.Render.RenderMaterial;
+      }
+      set
+      {
+        RenderMaterialInstanceId = value.InstanceId;
+      }
+    }
+#endif
+
     /// <summary>Runtime index used to sort layers in layer dialog</summary>
     public int SortIndex
     {

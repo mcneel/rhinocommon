@@ -59,6 +59,7 @@ Public Class examples_vbCommand
     Test(AddressOf Examples.DetermineObjectLayer, doc)
     Test(AddressOf Examples.OrientOnSrf, doc)
     Test(AddressOf Examples.SelLayer, doc)
+    Test(AddressOf Examples.UnrollSurface, doc)
     GC.Collect()
   End Function
 End Class

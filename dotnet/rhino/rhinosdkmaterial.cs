@@ -25,6 +25,21 @@ namespace Rhino.DocObjects
       m_doc = doc;
       this.m__parent = m_doc;
     }
+
+    // Thish is for temporary wrappers. You should always call
+    // ReleaseNonConstPointer after you are done using this material
+    internal static Material NewTemporaryMaterial(IntPtr pON_Material)
+    {
+      if (IntPtr.Zero == pON_Material)
+        return null;
+      Material rc = new Material(pON_Material);
+      rc.DoNotDestructOnDispose();
+      return rc;
+    }
+    private Material(IntPtr pMaterial)
+    {
+      base.ConstructNonConstObject(pMaterial);
+    }
     #endregion
 
     internal override IntPtr _InternalGetConstPointer()
@@ -458,11 +473,14 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
+    [Obsolete("Use Add - will be removed in a future WIP")]
+    public int AddMaterial() { return Add(); }
+
     /// <summary>
     /// Adds a new material to the table based on the default material
     /// </summary>
     /// <returns></returns>
-    public int AddMaterial()
+    public int Add()
     {
       return UnsafeNativeMethods.CRhinoMaterialTable_GetInt(m_doc.m_docId, idxAddDefaultMaterial);
     }

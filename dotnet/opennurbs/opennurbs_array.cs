@@ -54,6 +54,16 @@ namespace Rhino.Runtime
       }
     }
 
+    public INTERNAL_GeometryArray(System.Collections.Generic.IEnumerable<TextDot> dots)
+    {
+      m_ptr = UnsafeNativeMethods.ON_GeometryArray_New(0);
+
+      foreach (TextDot td in dots)
+      {
+        IntPtr geomPtr = td.ConstPointer();
+        UnsafeNativeMethods.ON_GeometryArray_Append(m_ptr, geomPtr);
+      }
+    }
     //public GeometryBase[] ToArray(bool isConst)
     //{
     //  int count = UnsafeNativeMethods.ON_GeometryArray_Count(m_ptr);

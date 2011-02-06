@@ -1183,7 +1183,37 @@ namespace Rhino.DocObjects
       IntPtr pSurface = UnsafeNativeMethods.CRhinoObjRef_SurfaceParameter(m_ptr, ref u, ref v);
       return ObjRefToGeometryHelper(pSurface) as Surface;
     }
+
+#if USING_RDK
+    public Guid RenderMaterialInstanceId
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.Rdk_RenderContent_ObjectMaterialInstanceId(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.Rdk_RenderContent_SetObjectMaterialInstanceid(pThis, value);
+      }
+    }
+    public Rhino.Render.RenderMaterial RenderMaterial
+    {
+      get
+      {
+        return Rhino.Render.RenderContent.FromInstanceId(RenderMaterialInstanceId) as Rhino.Render.RenderMaterial;
+      }
+      set
+      {
+        RenderMaterialInstanceId = value.InstanceId;
+      }
+    }
+#endif
+
   }
+
+
 
   // skipping CRhinoObjRefArray
 }

@@ -946,6 +946,58 @@ internal partial class UnsafeNativeMethods
   //ON_Brep* ONC_ON_BrepRevSurface( const ON_RevSurface* pConstRevSurface, bool capStart, bool capEnd )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ONC_ON_BrepRevSurface(IntPtr pConstRevSurface, [MarshalAs(UnmanagedType.U1)]bool capStart, [MarshalAs(UnmanagedType.U1)]bool capEnd);
+
+  //CRhinoUnroll* CRhinoUnroll_NewSrf( const ON_Surface* pConstSurface, double absTol, double relTol )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoUnroll_NewSrf(IntPtr pConstSurface, double absTol, double relTol);
+
+  //CRhinoUnroll* CRhinoUnroll_NewBrp( const ON_Brep* pConstBrep, double absTol, double relTol )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoUnroll_NewBrp(IntPtr pConstBrep, double absTol, double relTol);
+
+  //void CRhinoUnroll_Delete( CRhinoUnroll* pUnroll )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoUnroll_Delete(IntPtr pUnroll);
+
+  //int CRhinoUnroll_PrepareFaces( CRhinoUnroll* pUnroll )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoUnroll_PrepareFaces(IntPtr pUnroll);
+
+  //void CRhinoUnroll_PrepareCurves( CRhinoUnroll* pUnroll, ON_SimpleArray<const ON_Curve*>* pConstCurves )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoUnroll_PrepareCurves(IntPtr pUnroll, IntPtr pConstCurves);
+
+  //void CRhinoUnroll_PreparePoints( CRhinoUnroll* pUnroll, int count, /*ARRAY*/const ON_3dPoint* points)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoUnroll_PreparePoints(IntPtr pUnroll, int count, Point3d[] points);
+
+  //void CRhinoUnroll_PrepareDots( CRhinoUnroll* pUnroll, ON_SimpleArray<const ON_TextDot*>* pConstDots )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoUnroll_PrepareDots(IntPtr pUnroll, IntPtr pConstDots);
+
+  //CRhCmnUnrollResults* CRhinoUnroll_CreateFlatBreps( CRhinoUnroll* pUnroll, double explode_dist, int* brepCount, int* curveCount, int* pointCount, int* dotCount)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoUnroll_CreateFlatBreps(IntPtr pUnroll, double explode_dist, ref int brepCount, ref int curveCount, ref int pointCount, ref int dotCount);
+
+  //void CRhinoUnrollResults_Delete(CRhCmnUnrollResults* pResults)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoUnrollResults_Delete(IntPtr pResults);
+
+  //ON_Brep* CRhinoUnrollResults_GetBrep(CRhCmnUnrollResults* pResults, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoUnrollResults_GetBrep(IntPtr pResults, int index);
+
+  //ON_Curve* CRhinoUnrollResults_GetCurve(CRhCmnUnrollResults* pResults, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoUnrollResults_GetCurve(IntPtr pResults, int index);
+
+  //ON_TextDot* CRhinoUnrollResults_GetDot(CRhCmnUnrollResults* pResults, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoUnrollResults_GetDot(IntPtr pResults, int index);
+
+  //void CRhinoUnrollResults_GetPoints( CRhCmnUnrollResults* pResults, int count, /*ARRAY*/ON_3dPoint* points)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoUnrollResults_GetPoints(IntPtr pResults, int count, [In,Out] Point3d[] points);
   #endregion
 
 
@@ -6508,6 +6560,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_viewport.cpp
+  //CRhinoViewport* CRhinoViewport_New(const CRhinoViewport* other)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoViewport_New(IntPtr other);
+
   //void CRhinoViewport_Delete(CRhinoViewport* pViewport)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoViewport_Delete(IntPtr pViewport);
@@ -6682,6 +6738,21 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoViewport_KeyboardRotate(IntPtr pViewport, [MarshalAs(UnmanagedType.U1)]bool leftRight, double angleRadians);
 
+  //bool CRhinoViewport_KeyboardDolly(CRhinoViewport* pViewport, bool leftRight, double amount)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoViewport_KeyboardDolly(IntPtr pViewport, [MarshalAs(UnmanagedType.U1)]bool leftRight, double amount);
+
+  //bool CRhinoViewport_KeyboardDollyInOut(CRhinoViewport* pViewport, double amount)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoViewport_KeyboardDollyInOut(IntPtr pViewport, double amount);
+
+  //bool CRhinoViewport_ClientToScreenPort(const CRhinoViewport* pConstViewport, int* x, int* y)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoViewport_ClientToScreenPort(IntPtr pConstViewport, ref int x, ref int y);
+
   //bool CRhinoViewport_View_GetBool(const CRhinoViewport* pViewport, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -6690,6 +6761,26 @@ internal partial class UnsafeNativeMethods
   //void CRhinoViewport_View_SetBool(CRhinoViewport* pViewport, int which, bool val)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoViewport_View_SetBool(IntPtr pViewport, int which, [MarshalAs(UnmanagedType.U1)]bool val);
+
+  //bool CRhinoViewport_SetToPlanView(CRhinoViewport* pViewport, ON_3DPOINT_STRUCT origin, ON_3DVECTOR_STRUCT xaxis, ON_3DVECTOR_STRUCT yaxis, bool setCplane)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoViewport_SetToPlanView(IntPtr pViewport, Point3d origin, Vector3d xaxis, Vector3d yaxis, [MarshalAs(UnmanagedType.U1)]bool setCplane);
+
+  //bool CRhinoViewport_SetProjection(CRhinoViewport* pViewport, int projection, const RHMONO_STRING* name, bool updateCplane)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoViewport_SetProjection(IntPtr pViewport, int projection, [MarshalAs(UnmanagedType.LPWStr)]string name, [MarshalAs(UnmanagedType.U1)]bool updateCplane);
+
+  //bool CRhinoViewport_NextPrevViewProjection(CRhinoViewport* pViewport, bool next)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoViewport_NextPrevViewProjection(IntPtr pViewport, [MarshalAs(UnmanagedType.U1)]bool next);
+
+  //bool CRhinoViewport_IsPlanView(const CRhinoViewport* pConstViewport)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoViewport_IsPlanView(IntPtr pConstViewport);
 
   //bool CRhinoViewport_VP_Rotate(CRhinoViewport* pViewport, double angleRadians, ON_3DVECTOR_STRUCT rotationAxis, ON_3DPOINT_STRUCT rotationCenter)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6714,6 +6805,19 @@ internal partial class UnsafeNativeMethods
   //int CRhinoViewport_ViewportType(const CRhinoViewport* pConstRhinoViewport)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoViewport_ViewportType(IntPtr pConstRhinoViewport);
+
+  //void CRhinoViewport_SetScreenSize(CRhinoViewport* pRhinoViewport, int width, int height)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoViewport_SetScreenSize(IntPtr pRhinoViewport, int width, int height);
+
+  //void CRhinoViewport_SetClippingPlanes( CRhinoViewport* pRhinoViewport, ON_3DPOINT_STRUCT bbox_min, ON_3DPOINT_STRUCT bbox_max )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoViewport_SetClippingPlanes(IntPtr pRhinoViewport, Point3d bbox_min, Point3d bbox_max);
+
+  //bool CRhinoViewport_MouseAdjust(CRhinoViewport* pRhinoViewport, int which, int x_down, int y_down, int x_now, int y_now)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoViewport_MouseAdjust(IntPtr pRhinoViewport, int which, int x_down, int y_down, int x_now, int y_now);
   #endregion
 
 

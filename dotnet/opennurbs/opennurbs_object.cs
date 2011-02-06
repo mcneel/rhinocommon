@@ -121,6 +121,20 @@ namespace Rhino.Runtime
       get { return (IntPtr.Zero==m_ptr); }
     }
 
+    /// <summary>
+    /// Used for "temporary" wrapping of objects that we don't want .NET to destruct
+    /// on disposal
+    /// </summary>
+    internal void ReleaseNonConstPointer()
+    {
+      m_ptr = IntPtr.Zero;
+    }
+    bool m_bDestructOnDispose = true;
+    internal void DoNotDestructOnDispose()
+    {
+      m_bDestructOnDispose = false;
+    }
+
     internal void ConstructNonConstObject(IntPtr nativePointer)
     {
       m_ptr = nativePointer;
@@ -177,13 +191,16 @@ namespace Rhino.Runtime
 
     protected virtual void Dispose(bool disposing)
     {
-      if (IntPtr.Zero != m_ptr)
+      if (IntPtr.Zero == m_ptr)
+        return;
+
+      if (m_bDestructOnDispose)
       {
         UnsafeNativeMethods.ON_Object_Delete(m_ptr);
-        m_ptr = IntPtr.Zero;
         if (m_unmanaged_memory > 0)
           GC.RemoveMemoryPressure(m_unmanaged_memory);
       }
+      m_ptr = IntPtr.Zero;
     }
     #endregion
   }

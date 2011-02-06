@@ -93,5 +93,13 @@ namespace Rhino.Display
 
       return new Color4f(r, g, b, a);
     }
+
+    public System.Drawing.Color AsSystemColor()
+    {
+      return System.Drawing.Color.FromArgb((int)(m_a * 255.0f),
+                                           (int)(m_r * 255.0f),
+                                           (int)(m_g * 255.0f),
+                                           (int)(m_b * 255.0f));
+    }
   }
 }

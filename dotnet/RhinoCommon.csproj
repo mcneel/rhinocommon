@@ -12,6 +12,8 @@
     <AssemblyName>RhinoCommon</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>RDN_StrongName.snk</AssemblyOriginatorKeyFile>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -161,6 +163,7 @@
     <Compile Include="RDK\rdk_color.cs" />
     <Compile Include="RDK\rdk_content.cs" />
     <Compile Include="RDK\rdk_contentfield.cs" />
+    <Compile Include="RDK\rdk_environment.cs" />
     <Compile Include="RDK\rdk_material.cs" />
     <Compile Include="RDK\rdk_simulated_environment.cs" />
     <Compile Include="RDK\rdk_plugin.cs" />
@@ -266,6 +269,7 @@
     <Compile Include="rhino\rhinosdkpolyedge.cs" />
     <Compile Include="rhino\rhinosdkstackeddialogpage.cs" />
     <Compile Include="rhino\rhinosdkuiprofilecontext.cs" />
+    <Compile Include="rhino\rhinosdkunrollsrf.cs" />
     <Compile Include="rhino\rhinosdkview.cs" />
     <Compile Include="rhino\rhinosdkviewport.cs" />
     <Compile Include="rhino\rhinosdkanalysismodes.cs" />

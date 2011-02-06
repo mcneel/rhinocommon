@@ -35,7 +35,7 @@
     Dim material_index As Integer = rhino_object.Attributes.MaterialIndex
     If material_index < 0 Then
       ' Create a new material based on Rhino's default material
-      material_index = doc.Materials.AddMaterial()
+      material_index = doc.Materials.Add()
       ' Assign the new material (index) to the object.
       rhino_object.Attributes.MaterialIndex = material_index
     End If

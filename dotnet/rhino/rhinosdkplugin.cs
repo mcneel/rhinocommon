@@ -1318,7 +1318,7 @@ namespace Rhino.PlugIns
     #region LicenseData data
 
     string m_product_license;
-    string m_display_license;
+    string m_serial_number;
     string m_license_title;
     int m_license_count;
     DateTime? m_date_to_expire;
@@ -1337,10 +1337,10 @@ namespace Rhino.PlugIns
     /// The "for display only" product license.
     /// This is provided by the plugin that validated the license.
     /// </summary>
-    public string DisplayLicense
+    public string SerialNumber
     {
-      get { return m_display_license; }
-      set { m_display_license = value; }
+      get { return m_serial_number; }
+      set { m_serial_number = value; }
     }
 
     /// <summary>
@@ -1385,7 +1385,7 @@ namespace Rhino.PlugIns
     public LicenseData()
     {
       ProductLicense = string.Empty;
-      DisplayLicense = string.Empty;
+      SerialNumber = string.Empty;
       LicenseTitle = string.Empty;
       LicenseCount = 1;
       DateToExpire = null;
@@ -1394,10 +1394,10 @@ namespace Rhino.PlugIns
     /// <summary>
     /// Public constructor
     /// </summary>
-    public LicenseData(string productLicense, string displayLicense, string licenseTitle)
+    public LicenseData(string productLicense, string serialNumber, string licenseTitle)
     {
       ProductLicense = productLicense;
-      DisplayLicense = displayLicense;
+      SerialNumber = serialNumber;
       LicenseTitle = licenseTitle;
       LicenseCount = 1;
       DateToExpire = null;
@@ -1406,10 +1406,10 @@ namespace Rhino.PlugIns
     /// <summary>
     /// Public constructor
     /// </summary>
-    public LicenseData(string productLicense, string displayLicense, string licenseTitle, int licenseCount)
+    public LicenseData(string productLicense, string serialNumber, string licenseTitle, int licenseCount)
     {
       ProductLicense = productLicense;
-      DisplayLicense = displayLicense;
+      SerialNumber = serialNumber;
       LicenseTitle = licenseTitle;
       LicenseCount = licenseCount;
       DateToExpire = null;
@@ -1418,10 +1418,10 @@ namespace Rhino.PlugIns
     /// <summary>
     /// Public constructor
     /// </summary>
-    public LicenseData(string productLicense, string displayLicense, string licenseTitle, int licenseCount, DateTime? expirationDate)
+    public LicenseData(string productLicense, string serialNumber, string licenseTitle, int licenseCount, DateTime? expirationDate)
     {
       ProductLicense = productLicense;
-      DisplayLicense = displayLicense;
+      SerialNumber = serialNumber;
       LicenseTitle = licenseTitle;
       LicenseCount = licenseCount;
       DateToExpire = expirationDate;
@@ -1437,7 +1437,7 @@ namespace Rhino.PlugIns
       {
         rc = !string.IsNullOrEmpty(ProductLicense);
         if (rc)
-          rc = !string.IsNullOrEmpty(DisplayLicense);
+          rc = !string.IsNullOrEmpty(SerialNumber);
         if (rc)
           rc = !string.IsNullOrEmpty(LicenseTitle);
         if (rc)

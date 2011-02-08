@@ -387,16 +387,18 @@ namespace Rhino
     public PersistentSettings CommandSettings(string name)
     {
       if (m_CommandSettingsDict == null)
+      {
         ReadSettings();
+        if (m_CommandSettingsDict == null)
+          return null;
+      }
 
       if (m_CommandSettingsDict.ContainsKey(name))
         return m_CommandSettingsDict[name];
-      else
-      {
-        // There were no settings available for the command, so create one
-        // for writing
-        m_CommandSettingsDict[name] = new PersistentSettings(this);
-      }
+
+      // There were no settings available for the command, so create one
+      // for writing
+      m_CommandSettingsDict[name] = new PersistentSettings(this);
 
       return m_CommandSettingsDict[name];
     }

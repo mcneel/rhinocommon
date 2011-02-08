@@ -525,7 +525,7 @@ namespace Rhino.Collections
     }
 
     // private helper function for Write. Should ONLY be called by Write function
-    private bool WriteItem(Rhino.FileIO.BinaryArchiveWriter archive, string entry_name, ItemType it, object val)
+    private static bool WriteItem(Rhino.FileIO.BinaryArchiveWriter archive, string entry_name, ItemType it, object val)
     {
       if (archive == null || it == ItemType.itUndefined || string.IsNullOrEmpty(entry_name) || val == null)
         return false;
@@ -796,7 +796,7 @@ namespace Rhino.Collections
       return true;
     }
 
-    System.Collections.Generic.Dictionary<string, DictionaryItem> m_items = new Dictionary<string, DictionaryItem>();
+    readonly System.Collections.Generic.Dictionary<string, DictionaryItem> m_items = new Dictionary<string, DictionaryItem>();
     private class DictionaryItem
     {
       public DictionaryItem(ItemType t, object val)
@@ -804,8 +804,8 @@ namespace Rhino.Collections
         m_type = t;
         m_value = val;
       }
-      public ItemType m_type;
-      public object m_value;
+      public readonly ItemType m_type;
+      public readonly object m_value;
     }
   }
 }

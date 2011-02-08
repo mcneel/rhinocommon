@@ -1,12 +1,12 @@
-﻿using System;
+﻿// 29 Jan 2010 - S. Baer
+// Commented this class out. It doesn't appear to do anything yet, but looks like a work in progress.
+// If you want to continue to work on this class, make it private until it has some functionality
+/*
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Rhino.Collections;
 
-// 29 Jan 2010 - S. Baer
-// Commented this class out. It doesn't appear to do anything yet, but looks like a work in progress.
-// If you want to continue to work on this class, make it private until it has some functionality
-/*
 namespace Rhino.Geometry
 {
   public class MesherUtility

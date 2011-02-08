@@ -9,7 +9,7 @@ namespace Rhino.Runtime
   internal sealed class DependencyAttribute : System.Attribute
   {
     //David made this class internal instead of public on december 10th 2010.
-    string m_value;
+    readonly string m_value;
     public DependencyAttribute(string id)
     {
       m_value = id;
@@ -76,9 +76,7 @@ namespace Rhino.Runtime
       {
         foreach (string plugin_folder in plugin_folders)
         {
-          string[] files;
-
-          files = Directory.GetFiles(plugin_folder, @"*.dll", SearchOption.TopDirectoryOnly); //Why TopDirectoryOnly?
+          string[] files = Directory.GetFiles(plugin_folder, @"*.dll", SearchOption.TopDirectoryOnly); //Why TopDirectoryOnly?
           if (files != null) { potential_files.AddRange(files); }
 
           files = Directory.GetFiles(plugin_folder, @"*.rhp", SearchOption.TopDirectoryOnly); //Why TopDirectoryOnly?
@@ -91,9 +89,7 @@ namespace Rhino.Runtime
       {
         foreach (string custom_folder in m_custom_folders)
         {
-          string[] files;
-
-          files = Directory.GetFiles(custom_folder, @"*.dll", SearchOption.TopDirectoryOnly); //Why TopDirectoryOnly?
+          string[] files = Directory.GetFiles(custom_folder, @"*.dll", SearchOption.TopDirectoryOnly); //Why TopDirectoryOnly?
           if (files != null) { potential_files.AddRange(files); }
 
           files = Directory.GetFiles(custom_folder, @"*.rhp", SearchOption.TopDirectoryOnly); //Why TopDirectoryOnly?
@@ -178,7 +174,7 @@ namespace Rhino.Runtime
 
     private class FuzzyComparer : System.Collections.Generic.IComparer<string>
     {
-      private string m_search;
+      private readonly string m_search;
       internal FuzzyComparer(string search)
       {
         m_search = search;
@@ -203,9 +199,9 @@ namespace Rhino.Runtime
     }
 
     #region Additional Resolver Locations
-    private static SortedList<string, bool> m_loadfailures = new SortedList<string, bool>();
-    private static List<string> m_custom_folders = new List<string>();
-    private static List<string> m_custom_files = new List<string>();
+    static readonly SortedList<string, bool> m_loadfailures = new SortedList<string, bool>();
+    static readonly List<string> m_custom_folders = new List<string>();
+    static readonly List<string> m_custom_files = new List<string>();
 
     /// <summary>
     /// Register a custom folder with the Assembly Resolver. Folders will be 

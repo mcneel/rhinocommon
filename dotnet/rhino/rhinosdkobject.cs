@@ -21,7 +21,7 @@ namespace Rhino.DocObjects
     internal IntPtr ConstPointer()
     {
       IntPtr rc = UnsafeNativeMethods.RHC_LookupObjectBySerialNumber(m_rhinoobject_serial_number);
-      if( IntPtr.Zero == rc )
+      if (IntPtr.Zero == rc)
         throw new Rhino.Runtime.DocumentCollectedException();
 
       return rc;
@@ -156,13 +156,13 @@ namespace Rhino.DocObjects
       IntPtr pObjRefArray = UnsafeNativeMethods.RHC_RhinoGetRenderMeshes(pRhObjectArray, okToCreate, returnAllObjects);
       rhinoobject_array.Dispose();
 
-      if( IntPtr.Zero!=pObjRefArray )
+      if (IntPtr.Zero != pObjRefArray)
       {
         int count = UnsafeNativeMethods.RhinoObjRefArray_Count(pObjRefArray);
-        if( count>0 )
+        if (count > 0)
         {
           rc = new ObjRef[count];
-          for( int i=0; i<count; i++ )
+          for (int i = 0; i < count; i++)
           {
             IntPtr pConstObjRef = UnsafeNativeMethods.RhinoObjRefArray_GetItem(pObjRefArray, i);
             rc[i] = new ObjRef(pConstObjRef);
@@ -190,7 +190,7 @@ namespace Rhino.DocObjects
     /// </summary>
     public bool IsValid
     {
-      get 
+      get
       {
         IntPtr ptr = ConstPointer();
         return UnsafeNativeMethods.ON_Object_IsValid(ptr);
@@ -400,7 +400,7 @@ namespace Rhino.DocObjects
       if (null != m_edited_geometry)
       {
         CommitGeometryChangesFunc func = GetCommitFunc();
-        if( null==func )
+        if (null == func)
           return false;
         IntPtr pConstGeometry = m_edited_geometry.ConstPointer();
         uint serial_number = func(m_rhinoobject_serial_number, pConstGeometry);
@@ -528,7 +528,7 @@ namespace Rhino.DocObjects
       IntPtr ptr = ConstPointer();
       Runtime.INTERNAL_ComponentIndexArray arr = new Runtime.INTERNAL_ComponentIndexArray();
       IntPtr pArray = arr.NonConstPointer();
-      int count = UnsafeNativeMethods.CRhinoObject_GetSelectedSubObjects(ptr, pArray,true);
+      int count = UnsafeNativeMethods.CRhinoObject_GetSelectedSubObjects(ptr, pArray, true);
       ComponentIndex[] rc = null;
       if (count > 0)
       {
@@ -745,7 +745,7 @@ namespace Rhino.DocObjects
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.CRhinoObject_IsSubObjectHighlighted(ptr, componentIndex);
     }
-  
+
     /// <summary>
     /// Get a list of all highlighted sub-objects
     /// </summary>
@@ -876,6 +876,33 @@ namespace Rhino.DocObjects
       arr.Dispose();
       return rc;
     }
+
+#if USING_RDK
+    public Guid RenderMaterialInstanceId
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.Rdk_RenderContent_ObjectMaterialInstanceId(pConstThis);
+      }
+      //set
+      //{
+      //  IntPtr pThis = NonConstPointer();
+      //  UnsafeNativeMethods.Rdk_RenderContent_SetObjectMaterialInstanceid(pThis, value);
+      //}
+    }
+    public Rhino.Render.RenderMaterial RenderMaterial
+    {
+      get
+      {
+        return Rhino.Render.RenderContent.FromInstanceId(RenderMaterialInstanceId) as Rhino.Render.RenderMaterial;
+      }
+      //set
+      //{
+      //  RenderMaterialInstanceId = value.InstanceId;
+      //}
+    }
+#endif
   }
 
   /// <summary>
@@ -942,7 +969,7 @@ namespace Rhino.DocObjects
     /// <summary>Returns the id of the referenced Rhino object.</summary>
     public Guid ObjectId
     {
-      get { return UnsafeNativeMethods.CRhinoObjRef_ObjectUuid(m_ptr);  }
+      get { return UnsafeNativeMethods.CRhinoObjRef_ObjectUuid(m_ptr); }
     }
 
     /// <summary>
@@ -999,7 +1026,7 @@ namespace Rhino.DocObjects
     }
 
     public Geometry.ClippingPlaneSurface ClippingPlaneSurface()
-    {      
+    {
       IntPtr pClippingPlaneSurface = UnsafeNativeMethods.CRhinoObjRef_ClippingPlaneSurface(m_ptr);
       return ObjRefToGeometryHelper(pClippingPlaneSurface) as Rhino.Geometry.ClippingPlaneSurface;
     }
@@ -1183,34 +1210,6 @@ namespace Rhino.DocObjects
       IntPtr pSurface = UnsafeNativeMethods.CRhinoObjRef_SurfaceParameter(m_ptr, ref u, ref v);
       return ObjRefToGeometryHelper(pSurface) as Surface;
     }
-
-#if USING_RDK
-    public Guid RenderMaterialInstanceId
-    {
-      get
-      {
-        IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.Rdk_RenderContent_ObjectMaterialInstanceId(pConstThis);
-      }
-      set
-      {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.Rdk_RenderContent_SetObjectMaterialInstanceid(pThis, value);
-      }
-    }
-    public Rhino.Render.RenderMaterial RenderMaterial
-    {
-      get
-      {
-        return Rhino.Render.RenderContent.FromInstanceId(RenderMaterialInstanceId) as Rhino.Render.RenderMaterial;
-      }
-      set
-      {
-        RenderMaterialInstanceId = value.InstanceId;
-      }
-    }
-#endif
-
   }
 
 

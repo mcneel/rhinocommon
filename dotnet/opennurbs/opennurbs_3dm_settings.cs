@@ -183,7 +183,7 @@ namespace Rhino.DocObjects
   public class ViewInfo : IDisposable // ON_3dmView
   {
     private IntPtr m_ptr; // ON_3dmView*
-    private bool m_bIsConst;
+    private readonly bool m_bIsConst;
 
     internal ViewInfo(IntPtr ptr, bool isConst)
     {
@@ -232,9 +232,7 @@ namespace Rhino.DocObjects
       {
         IntPtr ptr = ConstPointer();
         IntPtr pString = UnsafeNativeMethods.ON_3dmView_NameGet(ptr);
-        if (pString == IntPtr.Zero)
-          return null;
-        return Marshal.PtrToStringUni(pString);
+        return pString == IntPtr.Zero ? String.Empty : Marshal.PtrToStringUni(pString);
       }
       set
       {

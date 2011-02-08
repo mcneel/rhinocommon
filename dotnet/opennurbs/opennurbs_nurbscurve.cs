@@ -145,7 +145,7 @@ namespace Rhino.Geometry
       NurbsCurve nc = new NurbsCurve();
       IntPtr pCurve = nc.NonConstPointer();
 
-      bool rc = true;
+      bool rc;
       if (periodic)
         rc = UnsafeNativeMethods.ON_NurbsCurve_CreatePeriodicUniformNurbs(pCurve, dimension, order, count, ptArray, knotDelta);
       else

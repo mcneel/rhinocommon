@@ -310,7 +310,7 @@ namespace Rhino.Runtime
         IntPtr pPlugIn = plugin.NonConstPointer();
         string englishName = cmd.EnglishName;
         string localName = cmd.LocalName;
-        int commandStyle = 2; //scripted
+        const int commandStyle = 2; //scripted
         Guid id = cmd.Id;
         UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle);
 
@@ -326,17 +326,13 @@ namespace Rhino.Runtime
 
     static int GetNowHelper(int locale_id, IntPtr format, IntPtr pResultString)
     {
-      int rc = 0;
+      int rc;
       try
       {
         string dateformat = Marshal.PtrToStringUni(format);
         System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo(locale_id);
         DateTime now = System.DateTime.Now;
-        string s = null;
-        if (string.IsNullOrEmpty(dateformat))
-          s = now.ToString(ci);
-        else
-          s = now.ToString(dateformat, ci);
+        string s = string.IsNullOrEmpty(dateformat) ? now.ToString(ci) : now.ToString(dateformat, ci);
         UnsafeNativeMethods.ON_wString_Set(pResultString, s);
         rc = 1;
       }
@@ -350,17 +346,13 @@ namespace Rhino.Runtime
 
     static int GetFormattedTimeHelper(int locale_id, int sec, int min, int hour, int day, int month, int year, IntPtr format, IntPtr pResultString)
     {
-      int rc = 0;
+      int rc;
       try
       {
         string dateformat = Marshal.PtrToStringUni(format);
         System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo(locale_id);
         DateTime dt = new DateTime(year, month, day, hour, min, sec);
-        string s = null;
-        if (string.IsNullOrEmpty(dateformat))
-          s = dt.ToString(ci);
-        else
-          s = dt.ToString(dateformat, ci);
+        string s = string.IsNullOrEmpty(dateformat) ? dt.ToString(ci) : dt.ToString(dateformat, ci);
         UnsafeNativeMethods.ON_wString_Set(pResultString, s);
         rc = 1;
       }
@@ -374,7 +366,7 @@ namespace Rhino.Runtime
 
     static int EvaluateExpressionHelper(IntPtr statements, IntPtr expression, int rhinoDocId, IntPtr pResultString)
     {
-      int rc = 0;
+      int rc;
       try
       {
         string expr = Marshal.PtrToStringUni(expression);
@@ -495,21 +487,19 @@ namespace Rhino.Runtime
 
     static void DelegateReport(System.Delegate d, string name)
     {
-      if (d != null)
+      if (d == null) return;
+      IFormatProvider fp = System.Globalization.CultureInfo.InvariantCulture;
+      string title = string.Format(fp, "{0} Event\n", name);
+      UnsafeNativeMethods.CRhinoEventWatcher_LogState(title);
+      Delegate[] list = d.GetInvocationList();
+      if (list != null && list.Length > 0)
       {
-        IFormatProvider fp = System.Globalization.CultureInfo.InvariantCulture;
-        string title = string.Format(fp, "{0} Event\n", name);
-        UnsafeNativeMethods.CRhinoEventWatcher_LogState(title);
-        Delegate[] list = d.GetInvocationList();
-        if (list != null && list.Length > 0)
+        for (int i = 0; i < list.Length; i++)
         {
-          for (int i = 0; i < list.Length; i++)
-          {
-            Delegate subD = list[i];
-            Type t = subD.Target.GetType();
-            string msg = string.Format(fp, "- Plug-In = {0}\n", t.Assembly.GetName().Name);
-            UnsafeNativeMethods.CRhinoEventWatcher_LogState(msg);
-          }
+          Delegate subD = list[i];
+          Type t = subD.Target.GetType();
+          string msg = string.Format(fp, "- Plug-In = {0}\n", t.Assembly.GetName().Name);
+          UnsafeNativeMethods.CRhinoEventWatcher_LogState(msg);
         }
       }
     }
@@ -542,9 +532,7 @@ namespace Rhino.Runtime
     internal static object m_rhinoscript;
     internal static object GetRhinoScriptObject()
     {
-      if (m_rhinoscript == null)
-        m_rhinoscript = Rhino.RhinoApp.GetPlugInObject("RhinoScript");
-      return m_rhinoscript;
+      return m_rhinoscript ?? (m_rhinoscript = Rhino.RhinoApp.GetPlugInObject("RhinoScript"));
     }
 
     /// <summary>

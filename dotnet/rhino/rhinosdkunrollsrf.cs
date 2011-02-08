@@ -6,13 +6,13 @@ namespace Rhino.Geometry
 {
   public class Unroller
   {
-    List<Curve> m_curves = new List<Curve>();
-    List<Point3d> m_points = new List<Point3d>();
-    List<TextDot> m_dots = new List<TextDot>();
-    bool m_bExplodeOutput = false;
+    readonly List<Curve> m_curves = new List<Curve>();
+    readonly List<Point3d> m_points = new List<Point3d>();
+    readonly List<TextDot> m_dots = new List<TextDot>();
+    bool m_bExplodeOutput; // = false initialized by Runtime
     double m_dExplodeSpacing = 2.0;
-    Surface m_surface;
-    Brep m_brep;
+    readonly Surface m_surface;
+    readonly Brep m_brep;
     double m_dAbsoluteTolerance = 0.1;
     double m_dRelativeTolerance = 0.1;
     

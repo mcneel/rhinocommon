@@ -397,10 +397,6 @@ namespace Rhino.Geometry
 
       if (includeInterior) { return m_plane.PointAt(x, y); }
 
-      //Mid point of rectangle.
-      double mx = m_x.Mid;
-      double my = m_y.Mid;
-
       //Offset of test point.
       double dx0 = Math.Abs(x - m_x.Min);
       double dx1 = Math.Abs(x - m_x.Max);

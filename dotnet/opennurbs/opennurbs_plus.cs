@@ -1,4 +1,3 @@
-using System;
 
 namespace Rhino.Geometry.Intersect
 {

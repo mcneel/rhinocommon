@@ -163,11 +163,16 @@
     <Compile Include="RDK\rdk_color.cs" />
     <Compile Include="RDK\rdk_content.cs" />
     <Compile Include="RDK\rdk_contentfield.cs" />
+    <Compile Include="RDK\rdk_content_factories.cs" />
+    <Compile Include="RDK\rdk_content_list.cs" />
     <Compile Include="RDK\rdk_environment.cs" />
+    <Compile Include="RDK\rdk_globals.cs" />
     <Compile Include="RDK\rdk_material.cs" />
+    <Compile Include="RDK\rdk_render_plugin_info.cs" />
     <Compile Include="RDK\rdk_simulated_environment.cs" />
     <Compile Include="RDK\rdk_plugin.cs" />
     <Compile Include="RDK\rdk_texture.cs" />
+    <Compile Include="RDK\rdk_undo.cs" />
     <Compile Include="RDK\simulatedtexture.cs" />
     <Compile Include="RDK\sun.cs" />
     <Compile Include="resolver.cs" />
@@ -268,6 +273,7 @@
     <Compile Include="rhino\rhinosdkget.cs" />
     <Compile Include="rhino\rhinosdkpolyedge.cs" />
     <Compile Include="rhino\rhinosdkstackeddialogpage.cs" />
+    <Compile Include="rhino\rhinosdksweep.cs" />
     <Compile Include="rhino\rhinosdkuiprofilecontext.cs" />
     <Compile Include="rhino\rhinosdkunrollsrf.cs" />
     <Compile Include="rhino\rhinosdkview.cs" />

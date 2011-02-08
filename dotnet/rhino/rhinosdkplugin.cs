@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Rhino.Runtime;
 
@@ -1049,7 +1048,7 @@ namespace Rhino.PlugIns
         {
           string path = thisAssembly.Location;
           path = System.IO.Path.GetDirectoryName(path);
-          path = System.IO.Path.Combine(path, filename);
+          path = string.IsNullOrEmpty(path) ? filename : System.IO.Path.Combine(path, filename);
           if (System.IO.File.Exists(path))
           {
             m_license_client_assembly = System.Reflection.Assembly.LoadFrom(path);
@@ -1306,9 +1305,22 @@ namespace Rhino.PlugIns
   }
 
   /// <summary>
+  /// ValidateProductKeyDelegate result code
+  /// </summary>
+  public enum ValidateResult : int
+  {
+    Success = 1,          // The product key or license is validated successfully.
+    ErrorShowMessage = 0, // There was an error validating the product key or license,
+                          //   the license manager show an error message.
+    ErrorHideMessage = -1 // There was an error validating the product key or license,
+                          //   the validating delegate will show an error message,
+                          //   not the license manager.
+  }
+
+  /// <summary>
   /// Validates a product key or license
   /// </summary>
-  public delegate bool ValidateProductKeyDelegate(string productKey, out LicenseData licenseData);
+  public delegate ValidateResult ValidateProductKeyDelegate(string productKey, out LicenseData licenseData);
 
   /// <summary>
   /// Zoo plugin license data

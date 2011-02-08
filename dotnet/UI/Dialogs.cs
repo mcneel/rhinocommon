@@ -72,7 +72,7 @@ namespace Rhino
           Rhino.Input.Custom.GetString gs = new Rhino.Input.Custom.GetString();
           gs.SetCommandPrompt("Press escape to cancel");
           form.Show(RhinoApp.MainWindow());
-          Rhino.Input.GetResult get_rc = gs.Get();
+          gs.Get();
           rc = System.Windows.Forms.DialogResult.Cancel;
           if (gs.CommandResult() == Rhino.Commands.Result.Success && gs.StringResult() == "ok")
             rc = System.Windows.Forms.DialogResult.OK;

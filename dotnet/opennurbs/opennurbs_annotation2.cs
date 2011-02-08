@@ -47,9 +47,7 @@ namespace Rhino.Geometry
       {
         IntPtr pThis = ConstPointer();
         IntPtr pText = UnsafeNativeMethods.ON_Annotation2_Text(pThis, null, false);
-        if (pText == IntPtr.Zero)
-          return null;
-        return Marshal.PtrToStringUni(pText);
+        return pText == IntPtr.Zero ? String.Empty : Marshal.PtrToStringUni(pText);
       }
       set
       {
@@ -64,9 +62,7 @@ namespace Rhino.Geometry
       {
         IntPtr pThis = ConstPointer();
         IntPtr pText = UnsafeNativeMethods.ON_Annotation2_Text(pThis, null,true);
-        if (pText == IntPtr.Zero)
-          return null;
-        return Marshal.PtrToStringUni(pText);
+        return pText == IntPtr.Zero ? String.Empty : Marshal.PtrToStringUni(pText);
       }
       set
       {
@@ -349,9 +345,7 @@ namespace Rhino.Geometry
       {
         IntPtr ptr = ConstPointer();
         IntPtr rc = UnsafeNativeMethods.ON_TextDot_GetSetText(ptr, false, null);
-        if (rc == IntPtr.Zero)
-          return null;
-        return System.Runtime.InteropServices.Marshal.PtrToStringUni(rc);
+        return rc == IntPtr.Zero ? String.Empty : System.Runtime.InteropServices.Marshal.PtrToStringUni(rc);
       }
       set
       {

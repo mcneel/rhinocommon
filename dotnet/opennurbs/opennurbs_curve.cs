@@ -2861,7 +2861,7 @@ namespace Rhino.Geometry
     /// <returns>NURBS representation of the curve on success, null on failure.</returns>
     public NurbsCurve ToNurbsCurve()
     {
-      double tolerance = 0.0;
+      const double tolerance = 0.0;
       Interval sub_domain = Interval.Unset;
       IntPtr ptr = ConstPointer();
       IntPtr rc = UnsafeNativeMethods.ON_Curve_NurbsCurve(ptr, tolerance, sub_domain, true);
@@ -2874,7 +2874,7 @@ namespace Rhino.Geometry
     /// <returns>NURBS representation of the curve on success, null on failure.</returns>
     public NurbsCurve ToNurbsCurve(Interval subdomain)
     {
-      double tolerance = 0.0;
+      const double tolerance = 0.0;
       IntPtr ptr = ConstPointer();
       IntPtr rc = UnsafeNativeMethods.ON_Curve_NurbsCurve(ptr, tolerance, subdomain, false);
       return GeometryBase.CreateGeometryHelper(rc, null) as NurbsCurve;

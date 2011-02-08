@@ -293,8 +293,8 @@ namespace Rhino.Runtime
       if (IntPtr.Zero != pSource && null != rhType)
       {
         System.Reflection.MethodInfo mi = rhType.GetMethod("WrapNativePointer", new Type[] { typeof(IntPtr), typeof(bool), typeof(bool) });
-        bool isConst = true;
-        bool doDelete = false;
+        const bool isConst = true;
+        const bool doDelete = false;
         rc = mi.Invoke(null, new object[] { pSource, isConst, doDelete });
       }
       return rc;
@@ -353,10 +353,7 @@ namespace Rhino.Runtime
         */
     public static IntPtr PlugInPointer(Rhino.PlugIns.PlugIn plugin)
     {
-      if (null == plugin)
-        return IntPtr.Zero;
-
-      return plugin.NonConstPointer();
+      return null == plugin ? IntPtr.Zero : plugin.NonConstPointer();
     }
   }
 }

@@ -6147,6 +6147,35 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region rh_sweep.cpp
+  //CArgsRhinoSweep1* CArgsRhinoSweep1_New(const ON_Curve* pConstRailCurve,
+  //                                                     const ON_SimpleArray<const ON_Curve*>* pConstSectionCurves,
+  //                                                     /*ARRAY*/const double* tvals,
+  //                                                     ON_3DVECTOR_STRUCT up,
+  //                                                     bool closed,
+  //                                                     double sweep_tol,
+  //                                                     double angle_tol)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CArgsRhinoSweep1_New(IntPtr pConstRailCurve, IntPtr pConstSectionCurves, double[] tvals, Vector3d up, [MarshalAs(UnmanagedType.U1)]bool closed, double sweep_tol, double angle_tol);
+
+  //void CArgsRhinoSweep1_Delete(CArgsRhinoSweep1* pArgsSweep1)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CArgsRhinoSweep1_Delete(IntPtr pArgsSweep1);
+
+  //int RHC_Sweep1(CArgsRhinoSweep1* pArgsSweep1, ON_SimpleArray<ON_Brep*>* pBreps)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_Sweep1(IntPtr pArgsSweep1, IntPtr pBreps);
+
+  //int RHC_Sweep1Refit(CArgsRhinoSweep1* pArgsSweep1, ON_SimpleArray<ON_Brep*>* pBreps, double refit)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_Sweep1Refit(IntPtr pArgsSweep1, IntPtr pBreps, double refit);
+
+  //int RHC_Sweep1Rebuild(CArgsRhinoSweep1* pArgsSweep1, ON_SimpleArray<ON_Brep*>* pBreps, int rebuild)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_Sweep1Rebuild(IntPtr pArgsSweep1, IntPtr pBreps, int rebuild);
+  #endregion
+
+
   #region rh_textout.cpp
   //int CRhinoTextOut_ShowDialog(const RHMONO_STRING* _text, const RHMONO_STRING* _title )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

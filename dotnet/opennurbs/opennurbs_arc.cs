@@ -163,9 +163,7 @@ namespace Rhino.Geometry
       get
       {
         if (!RhinoMath.IsValidDouble(m_radius)) { return false; }
-        if (m_radius <= 0.0) { return false; }
-
-        return UnsafeNativeMethods.ON_Arc_IsValid(ref this);
+        return m_radius > 0.0 && UnsafeNativeMethods.ON_Arc_IsValid(ref this);
       }
     }
 
@@ -356,15 +354,11 @@ namespace Rhino.Geometry
     {
       //David changed this on april 16th 2010. We should provide tight boundingboxes for atomic types.
       if (m_angle.IsSingleton)
-      {
         return new BoundingBox(StartPoint, StartPoint);
-      }
-      else
-      {
-        BoundingBox rc = new BoundingBox();
-        UnsafeNativeMethods.ON_Arc_BoundingBox(ref this, ref rc);
-        return rc;
-      }
+
+      BoundingBox rc = new BoundingBox();
+      UnsafeNativeMethods.ON_Arc_BoundingBox(ref this, ref rc);
+      return rc;
     }
 
     /// <summary>
@@ -409,14 +403,7 @@ namespace Rhino.Geometry
     public double ClosestParameter(Point3d testPoint)
     {
       double t = 0;
-      if (UnsafeNativeMethods.ON_Arc_ClosestPointTo(ref this, testPoint, ref t))
-      {
-        return t;
-      }
-      else
-      {
-        return RhinoMath.UnsetValue;
-      }
+      return UnsafeNativeMethods.ON_Arc_ClosestPointTo(ref this, testPoint, ref t) ? t : RhinoMath.UnsetValue;
     }
 
     /// <summary>
@@ -439,14 +426,7 @@ namespace Rhino.Geometry
     public Point3d ClosestPoint(Point3d testPoint)
     {
       double t = ClosestParameter(testPoint);
-      if (RhinoMath.IsValidDouble(t))
-      {
-        return PointAt(t);
-      }
-      else
-      {
-        return Point3d.Unset;
-      }
+      return RhinoMath.IsValidDouble(t) ? PointAt(t) : Point3d.Unset;
     }
 
 

@@ -91,11 +91,56 @@ namespace Rhino.Render
 
   public abstract class RenderContent : IDisposable
   {
-    #region content related constants
+    #region Kinds
 
-    public const String KindMaterial = "material";
-    public const String KindTexture = "texture";
-    public const String KindEnvironment = "environment";
+    public enum Kinds : int
+    {
+      None = 0,
+      Material = 1,
+      Environment = 2,
+      Texture = 4,
+    }
+
+    internal static Kinds KindFromString(String kind)
+    {
+      Kinds k = Kinds.None;
+      if (kind.Contains("material"))
+        k |= Kinds.Material;
+      if (kind.Contains("environment"))
+        k |= Kinds.Environment;
+      if (kind.Contains("texture"))
+        k |= Kinds.Texture;
+      return k;
+    }
+
+    internal static String KindString(Kinds kinds)
+    {
+      System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+      if ((kinds & Kinds.Material) == Kinds.Material)
+      {
+        sb.Append("material");
+      }
+
+      if ((kinds & Kinds.Environment) == Kinds.Environment)
+      {
+        if (sb.Length != 0)
+        {
+          sb.Append(";");
+        }
+        sb.Append("environment");
+      }
+
+      if ((kinds & Kinds.Texture) == Kinds.Texture)
+      {
+        if (sb.Length != 0)
+        {
+          sb.Append(";");
+        }
+        sb.Append("texture");
+      }
+      return sb.ToString();
+    }
 
     /// <summary>
     /// Internal string ids to be used in the GetString method
@@ -108,6 +153,7 @@ namespace Rhino.Render
       TypeName = 3,
       TypeDescription = 4,
       ChildSlotName = 5,
+      Xml = 6,
 
       //Material specific
       DiffuseChildSlotName = 100,
@@ -304,9 +350,9 @@ namespace Rhino.Render
     /// <summary>
     /// Returns either KindMaterial, KindTexture or KindEnvironment
     /// </summary>
-    public String Kind
+    public Kinds Kind
     {
-      get { return GetString(StringIds.Kind); }
+      get { return KindFromString(GetString(StringIds.Kind)); }
     }
 
     /// <summary>
@@ -369,9 +415,9 @@ namespace Rhino.Render
     /// </summary>
     /// <param name="kind">Either KindMaterial, KindEnvironment or KindTexture</param>
     /// <returns>true if the content is the specified kind, otherwise false</returns>
-    public bool IsKind(String kind)
+    public bool IsKind(Kinds kind)
     {
-      return 1 == UnsafeNativeMethods.Rdk_RenderContent_IsKind(ConstPointer(), kind);
+      return 1 == UnsafeNativeMethods.Rdk_RenderContent_IsKind(ConstPointer(), KindString(kind));
     }
 
     /// <summary>
@@ -406,6 +452,19 @@ namespace Rhino.Render
         return null;
       }
     }
+
+    #region Serialization
+
+    public bool ReadFromXml(String inputXml)
+    {
+      return 1 == UnsafeNativeMethods.Rdk_RenderContent_ReadFromXml(NonConstPointer(), inputXml);
+    }
+    public String GetXml()
+    {
+      return GetString(StringIds.Xml);
+    }
+
+    #endregion
 
     /// <summary>
     /// Override this function to provide UI sections to display in the editor.
@@ -473,6 +532,60 @@ namespace Rhino.Render
         return (HarvestedResult)UnsafeNativeMethods.Rdk_RenderContent_CallHarvestDataBase(ConstPointer(), oldContent.ConstPointer());
       }
     }
+
+    #region Operations
+
+    //TODO
+    /** Delete a child content.
+	\param parentContent is the content whose child is to be deleted. This must be an
+	RDK-owned content that is in the persistent content list (either top-level or child).
+	\param wszChildSlotName is the child-slot name of the child to be deleted.
+	\return \e true if successful, else \e false. */
+//RHRDK_SDK bool RhRdkDeleteChildContent(CRhRdkContent& parentContent, const wchar_t* wszChildSlotName);
+
+    enum ChangeChildContentFlags : int
+    {
+      /// <summary>
+      /// Allow (none) item to be displayed in dialog.
+      /// </summary>
+      AllowNone = 0x0001,
+      /// <summary>
+      /// Automatically open new content in thumbnail editor.
+      /// </summary>
+      AutoEdit = 0x0002,
+
+      /// <summary>
+      /// Mask to use to isolate harvesting flags
+      /// </summary>
+      HarvestMask = 0xF000,
+      /// <summary>
+      /// Use Renderer Support option to decide about harvesting.
+      /// </summary>
+      HarvestUseOpt = 0x0000,
+      /// <summary>
+      /// Always copy similar parameters from old child.
+      /// </summary>
+      HarvestAlways = 0x1000,
+      /// <summary>
+      /// Never copy similar parameters from old child.
+      /// </summary>
+      HarvestNever = 0x2000,
+    };
+    //TODO
+    /** Change a content's child by allowing the user to choose the new content type from a
+      content browser dialog. The child is created if it does not exist, otherwise the old
+      child is deleted and replaced by the new child.
+      \param parentContent is the content whose child is to be manipulated. This must be an
+      RDK-owned content that is in the persistent content list (either top-level or child).
+      \param wszChildSlotName is the child-slot name of the child to be manipulated.
+      \param allowedKinds determines which content kinds are allowed to be chosen from the content browser dialog.
+      \param uFlags is a set of flags for controlling the content browser dialog.
+      \return \e true if successful, \e false if it fails or if the user cancels. */
+
+    //RHRDK_SDK bool RhRdkChangeChildContent(CRhRdkContent& parentContent, const wchar_t* wszChildSlotName,
+    //                                      const CRhRdkContentKindList& allowedKinds,
+    //                                     UINT uFlags = rdkccc_AllowNone | rdkccc_AutoEdit);
+    #endregion
 
     internal enum ParameterTypes : int
     {
@@ -577,6 +690,12 @@ namespace Rhino.Render
     {
       return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetUUIDParameter(ConstPointer(), parameterName, value, (int)changeContext);
     }
+    public bool SetNamedParameter(String parameterName, DateTime value, ChangeContexts changeContext)
+    {
+      DateTime startTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+      TimeSpan span = value - startTime;
+      return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetTimeParameter(ConstPointer(), parameterName, Convert.ToInt64(Math.Abs(span.TotalSeconds)), (int)changeContext);
+    }
     #endregion
 
     public object GetNamedParameter(String parameterName)
@@ -636,8 +755,12 @@ namespace Rhino.Render
             }
           case ParameterTypes.Uuid:
             return UnsafeNativeMethods.Rdk_RenderContent_GetUUIDParameter(ConstPointer(), parameterName);
-          //case ParameterTypes.Time:
-          //  return (object)UnsafeNativeMethods.Rdk_RenderContent_GetTimeParameter(ConstPointer(), parameterName);
+          case ParameterTypes.Time:
+            {
+              System.DateTime dt = new DateTime(1970, 1, 1);
+              dt.AddSeconds(UnsafeNativeMethods.Rdk_RenderContent_GetTimeParameter(ConstPointer(), parameterName));
+              return dt;
+            }
         }
       }
       else
@@ -693,9 +816,40 @@ namespace Rhino.Render
               UnsafeNativeMethods.Rdk_RenderContent_CallGetMatrixParameterBase(ConstPointer(), parameterName, ref matrix);
               return matrix;
             }
+          case ParameterTypes.Uuid:
+            return UnsafeNativeMethods.Rdk_RenderContent_CallGetUUIDParameterBase(ConstPointer(), parameterName);
+          case ParameterTypes.Time:
+            {
+              System.DateTime dt = new DateTime(1970, 1, 1);
+              dt.AddSeconds(UnsafeNativeMethods.Rdk_RenderContent_CallGetTimeParameterBase(ConstPointer(), parameterName));
+              return dt;
+            }
         }
       }
       return null;
+    }
+
+    /// <summary>
+    /// See C++ RDK documentation - this is a passthrough function that gives access to your own
+    /// native shader.  .net clients will more likely simply check the type of their content and call their own
+    /// shader access functions
+    /// If you overide this function, you must ensure that you call "IsCompatible" and return IntPtr.Zero is that returns false.
+    /// </summary>
+    /// <param name="renderEngineId">The render engine requesting the shader</param>
+    /// <param name="privateData">A pointer to the render engine's own context object</param>
+    /// <returns></returns>
+    public virtual IntPtr GetShader(Guid renderEngineId, IntPtr privateData)
+    {
+      if (IsNativeWrapper())
+      {
+        return (IntPtr)UnsafeNativeMethods.Rdk_RenderContent_GetShader(ConstPointer(), renderEngineId, privateData);
+      }
+      return IntPtr.Zero;
+    }
+
+    public bool IsCompatible(Guid renderEngineId)
+    {
+      return 1 == UnsafeNativeMethods.Rdk_RenderContent_IsCompatible(ConstPointer(), renderEngineId);
     }
 
     #region Child content support
@@ -844,9 +998,34 @@ namespace Rhino.Render
         Rhino.Runtime.HostUtils.ExceptionReport(ex);
       }
     }
+
+    internal delegate IntPtr GetShaderCallback(int serialNumber, Guid renderEngineId, IntPtr privateData);
+    internal static GetShaderCallback m_GetShader = OnGetShader;
+    static IntPtr OnGetShader(int serialNumber, Guid renderEngineId, IntPtr privateData)
+    {
+      try
+      {
+        RenderContent content = RenderContent.FromSerialNumber(serialNumber) as RenderContent;
+        if (content != null)
+          return content.GetShader(renderEngineId, privateData);
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+      return IntPtr.Zero;
+    }
+
     #endregion
 
     #region pointer tracking
+
+    private bool m_bAutoDelete;
+    internal bool AutoDelete
+    {
+      get { return m_bAutoDelete; }
+      set { m_bAutoDelete = value; }
+    }
 
     internal static RenderContent FromSerialNumber(int serial_number)
     {
@@ -886,6 +1065,10 @@ namespace Rhino.Render
 
     protected virtual void Dispose(bool disposing)
     {
+      if (m_bAutoDelete)
+      {
+        UnsafeNativeMethods.Rdk_RenderContent_DeleteThis(NonConstPointer());
+      }
       // for now we, don't need to perform any disposal
       //if (IntPtr.Zero != m_pRenderContent)
       //{

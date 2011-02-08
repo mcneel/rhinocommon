@@ -25,6 +25,7 @@ namespace Rhino.Render
         UnsafeNativeMethods.Rdk_SetAddUISectionsCallback(Rhino.Render.RenderContent.m_AddUISections);
         UnsafeNativeMethods.Rdk_SetIsContentTypeAcceptableAsChildCallback(Rhino.Render.RenderContent.m_IsContentTypeAcceptableAsChild);
         UnsafeNativeMethods.Rdk_SetHarvestDataCallback(Rhino.Render.RenderContent.m_HarvestData);
+        UnsafeNativeMethods.Rdk_SetGetShaderCallback(Rhino.Render.RenderContent.m_GetShader);
 
         //Materials
         UnsafeNativeMethods.Rdk_SetTextureChildSlotNameCallback(Rhino.Render.RenderMaterial.m_TextureChildSlotName);
@@ -48,6 +49,7 @@ namespace Rhino.Render
         UnsafeNativeMethods.Rdk_SetAddUISectionsCallback(null);
         UnsafeNativeMethods.Rdk_SetIsContentTypeAcceptableAsChildCallback(null);
         UnsafeNativeMethods.Rdk_SetHarvestDataCallback(null);
+        UnsafeNativeMethods.Rdk_SetGetShaderCallback(null);
 
         //Materials
         UnsafeNativeMethods.Rdk_SetTextureChildSlotNameCallback(null);

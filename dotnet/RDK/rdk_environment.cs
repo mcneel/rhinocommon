@@ -20,6 +20,20 @@ namespace Rhino.Render
       Debug.Assert(isCustom == false);
     }
 
+    public static RenderEnvironment CurrentEnvironment
+    {
+      get
+      {
+        RhinoDoc doc = Rhino.RhinoDoc.ActiveDoc;
+        return FromPointer(UnsafeNativeMethods.Rdk_RenderEnvironment_CurrentEnvironment(doc.m_docId)) as RenderEnvironment;
+      }
+      set
+      {
+        RhinoDoc doc = Rhino.RhinoDoc.ActiveDoc;
+        UnsafeNativeMethods.Rdk_RenderEnvironment_SetCurrentEnvironment(doc.m_docId, value.InstanceId);
+      }
+    }
+
     public virtual void SimulateEnvironment(ref SimulatedEnvironment simualation, bool isForDataOnly)
     {
       if (IsNativeWrapper())

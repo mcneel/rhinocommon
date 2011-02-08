@@ -31,12 +31,24 @@ namespace Rhino.Render
       Dispose(false);
     }
 
+    public static int BitmapSize
+    {
+      get
+      {
+        return UnsafeNativeMethods.Rdk_SimulatedTexture_TextureSize();
+      }
+      set
+      {
+        UnsafeNativeMethods.Rdk_SimulatedTexture_SetTextureSize(value);
+      }
+    }
+
     public Rhino.Geometry.Transform LocalMappingTransform
     {
       get
       {
         Rhino.Geometry.Transform xform = new Rhino.Geometry.Transform();
-        UnsafeNativeMethods.Rdk_SimulatedTexture_LocalMappingTransform(m_pSim, ref xform);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_LocalMappingTransform(ConstPointer(), ref xform);
         return xform;
       }
     }
@@ -48,13 +60,13 @@ namespace Rhino.Render
         using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
-          UnsafeNativeMethods.Rdk_SimulatedTexture_Filename(m_pSim, pString);
+          UnsafeNativeMethods.Rdk_SimulatedTexture_Filename(ConstPointer(), pString);
           return sh.ToString();
         }
       }
       set
       {
-        UnsafeNativeMethods.Rdk_SimulatedTexture_SetFilename(m_pSim, value);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_SetFilename(ConstPointer(), value);
       }
     }
 
@@ -65,7 +77,7 @@ namespace Rhino.Render
         using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
-          UnsafeNativeMethods.Rdk_SimulatedTexture_OriginalFilename(m_pSim, pString);
+          UnsafeNativeMethods.Rdk_SimulatedTexture_OriginalFilename(ConstPointer(), pString);
           return sh.ToString();
         }
       }
@@ -76,12 +88,12 @@ namespace Rhino.Render
       get
       {
         Rhino.Geometry.Vector2d v = new Rhino.Geometry.Vector2d();
-        UnsafeNativeMethods.Rdk_SimulatedTexture_Repeat(m_pSim, ref v);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_Repeat(ConstPointer(), ref v);
         return v;
       }
       set
       {
-        UnsafeNativeMethods.Rdk_SimulatedTexture_SetRepeat(m_pSim, value);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_SetRepeat(ConstPointer(), value);
       }
     }
 
@@ -90,12 +102,12 @@ namespace Rhino.Render
       get
       {
         Rhino.Geometry.Vector2d v = new Rhino.Geometry.Vector2d();
-        UnsafeNativeMethods.Rdk_SimulatedTexture_Offset(m_pSim, ref v);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_Offset(ConstPointer(), ref v);
         return v;
       }
       set
       {
-        UnsafeNativeMethods.Rdk_SimulatedTexture_SetOffset(m_pSim, value);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_SetOffset(ConstPointer(), value);
       }
     }
 
@@ -103,11 +115,11 @@ namespace Rhino.Render
     {
       get
       {
-        return UnsafeNativeMethods.Rdk_SimulatedTexture_Rotation(m_pSim);
+        return UnsafeNativeMethods.Rdk_SimulatedTexture_Rotation(ConstPointer());
       }
       set
       {
-        UnsafeNativeMethods.Rdk_SimulatedTexture_SetRotation(m_pSim, value);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_SetRotation(ConstPointer(), value);
       }
     }
 
@@ -115,11 +127,11 @@ namespace Rhino.Render
     {
       get
       {
-        return UnsafeNativeMethods.Rdk_SimulatedTexture_Repeating(m_pSim);
+        return UnsafeNativeMethods.Rdk_SimulatedTexture_Repeating(ConstPointer());
       }
       set
       {
-        UnsafeNativeMethods.Rdk_SimulatedTexture_SetRepeating(m_pSim, value);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_SetRepeating(ConstPointer(), value);
       }
     }
 
@@ -127,11 +139,11 @@ namespace Rhino.Render
     {
       get
       {
-        return UnsafeNativeMethods.Rdk_SimulatedTexture_MappingChannel(m_pSim);
+        return UnsafeNativeMethods.Rdk_SimulatedTexture_MappingChannel(ConstPointer());
       }
       set
       {
-        UnsafeNativeMethods.Rdk_SimulatedTexture_SetMappingChannel(m_pSim, value);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_SetMappingChannel(ConstPointer(), value);
       }
     }
 
@@ -153,7 +165,7 @@ namespace Rhino.Render
       }
       set
       {
-        UnsafeNativeMethods.Rdk_SimulatedTexture_SetProjectionMode(m_pSim, (int)value);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_SetProjectionMode(ConstPointer(), (int)value);
       }
     }
 
@@ -161,11 +173,11 @@ namespace Rhino.Render
     {
       get
       {
-        return UnsafeNativeMethods.Rdk_SimulatedTexture_HasTransparentColor(m_pSim);
+        return UnsafeNativeMethods.Rdk_SimulatedTexture_HasTransparentColor(ConstPointer());
       }
       set
       {
-        UnsafeNativeMethods.Rdk_SimulatedTexture_SetHasTransparentColor(m_pSim, value);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_SetHasTransparentColor(ConstPointer(), value);
       }
     }
 
@@ -174,12 +186,12 @@ namespace Rhino.Render
       get
       {
         Rhino.Display.Color4f color = new Rhino.Display.Color4f();
-        UnsafeNativeMethods.Rdk_SimulatedTexture_TransparentColor(m_pSim, ref color);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_TransparentColor(ConstPointer(), ref color);
         return color;
       }
       set
       {
-        UnsafeNativeMethods.Rdk_SimulatedTexture_SetTransparentColor(m_pSim, value);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_SetTransparentColor(ConstPointer(), value);
       }
     }
 
@@ -187,11 +199,11 @@ namespace Rhino.Render
     {
       get
       {
-        return UnsafeNativeMethods.Rdk_SimulatedTexture_TransparentColorSensitivity(m_pSim);
+        return UnsafeNativeMethods.Rdk_SimulatedTexture_TransparentColorSensitivity(ConstPointer());
       }
       set
       {
-        UnsafeNativeMethods.Rdk_SimulatedTexture_SetTransparentColorSensitivity(m_pSim, value);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_SetTransparentColorSensitivity(ConstPointer(), value);
       }
     }
 
@@ -199,11 +211,11 @@ namespace Rhino.Render
     {
       get
       {
-        return UnsafeNativeMethods.Rdk_SimulatedTexture_Filtered(m_pSim);
+        return UnsafeNativeMethods.Rdk_SimulatedTexture_Filtered(ConstPointer());
       }
       set
       {
-        UnsafeNativeMethods.Rdk_SimulatedTexture_SetFiltered(m_pSim, value);
+        UnsafeNativeMethods.Rdk_SimulatedTexture_SetFiltered(ConstPointer(), value);
       }
     }
 
@@ -217,12 +229,12 @@ namespace Rhino.Render
 
     public double UnitsToMeters(double units)
     {
-      return UnsafeNativeMethods.Rdk_SimulatedTexture_UnitsToMeters(m_pSim, units);
+      return UnsafeNativeMethods.Rdk_SimulatedTexture_UnitsToMeters(ConstPointer(), units);
     }
 
     public double MetersToUnits(double units)
     {
-      return UnsafeNativeMethods.Rdk_SimulatedTexture_MetersToUnits(m_pSim, units);
+      return UnsafeNativeMethods.Rdk_SimulatedTexture_MetersToUnits(ConstPointer(), units);
     }
 
     public Rhino.DocObjects.Texture Texture()

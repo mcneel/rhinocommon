@@ -309,13 +309,14 @@ namespace Rhino.Geometry
     /// If true, curve endpoints will be compared to curve startpoints. 
     /// If false, all start and endpoints will be compared and copies of input curves may be reversed in output.
     /// </param>
+    /// <returns></returns>
     public static Curve[] JoinCurves(IEnumerable<Curve> inputCurves, double joinTolerance, bool preserveDirection)
     {
       // 1 March 2010 S. Baer
       // JoinCurves calls the unmanaged RhinoMergeCurves function which appears to be a "better"
       // implementation of ON_JoinCurves. We removed the wrapper for ON_JoinCurves for this reason.
       if (null == inputCurves)
-        return null;
+        throw new ArgumentNullException("inputCurves");
 
       SimpleArrayCurvePointer input = new SimpleArrayCurvePointer(inputCurves);
       IntPtr inputPtr = input.ConstPointer();
@@ -325,9 +326,7 @@ namespace Rhino.Geometry
       bool rc = UnsafeNativeMethods.RHC_RhinoMergeCurves(inputPtr,
         outputPtr, joinTolerance, preserveDirection);
 
-      if (!rc)
-        return null;
-      return output.ToNonConstArray();
+      return rc ? output.ToNonConstArray() : new Curve[0];
     }
 
     /// <summary>
@@ -405,7 +404,7 @@ namespace Rhino.Geometry
     public static Curve[] CreateBooleanUnion(IEnumerable<Curve> curves)
     {
       if (null == curves)
-        return null;
+        throw new ArgumentNullException("curves");
 
       SimpleArrayCurvePointer input = new SimpleArrayCurvePointer(curves);
       IntPtr inputPtr = input.ConstPointer();
@@ -413,9 +412,7 @@ namespace Rhino.Geometry
       IntPtr outputPtr = output.NonConstPointer();
 
       int rc = UnsafeNativeMethods.ON_Curve_BooleanOperation(inputPtr, outputPtr, idxBooleanUnion);
-      if (rc < 1)
-        return null;
-      return output.ToNonConstArray();
+      return rc < 1 ? null : output.ToNonConstArray();
     }
     /// <summary>
     /// Calculates the boolean intersection of two closed, planar curves. 
@@ -427,16 +424,14 @@ namespace Rhino.Geometry
     public static Curve[] CreateBooleanIntersection(Curve curveA, Curve curveB)
     {
       if (null == curveA || null == curveB)
-        return null;
+        throw new ArgumentNullException(null == curveA ? "curveA" : "curveB");
 
       SimpleArrayCurvePointer input = new SimpleArrayCurvePointer(new Curve[] { curveA, curveB });
       IntPtr inputPtr = input.ConstPointer();
       SimpleArrayCurvePointer output = new SimpleArrayCurvePointer();
       IntPtr outputPtr = output.NonConstPointer();
       int rc = UnsafeNativeMethods.ON_Curve_BooleanOperation(inputPtr, outputPtr, idxBooleanIntersection);
-      if (rc < 1)
-        return null;
-      return output.ToNonConstArray();
+      return rc < 1 ? null : output.ToNonConstArray();
     }
     /// <summary>
     /// Calculates the boolean difference between two closed, planar curves. 
@@ -448,7 +443,7 @@ namespace Rhino.Geometry
     public static Curve[] CreateBooleanDifference(Curve curveA, Curve curveB)
     {
       if (null == curveA || null == curveB)
-        return null;
+        throw new ArgumentNullException(null == curveA ? "curveA" : "curveB");
       return CreateBooleanDifference(curveA, new Curve[] { curveB });
     }
 
@@ -462,7 +457,7 @@ namespace Rhino.Geometry
     public static Curve[] CreateBooleanDifference(Curve curveA, IEnumerable<Curve> subtractors)
     {
       if (null == curveA || null == subtractors)
-        return null;
+        throw new ArgumentNullException(null == curveA ? "curveA" : "subtractors");
 
       List<Curve> curves = new List<Curve>();
       curves.Add(curveA);
@@ -472,9 +467,7 @@ namespace Rhino.Geometry
       SimpleArrayCurvePointer output = new SimpleArrayCurvePointer();
       IntPtr outputPtr = output.NonConstPointer();
       int rc = UnsafeNativeMethods.ON_Curve_BooleanOperation(inputPtr, outputPtr, idxBooleanDifference);
-      if (rc < 1)
-        return null;
-      return output.ToNonConstArray();
+      return rc < 1 ? null : output.ToNonConstArray();
     }
 
     /// <summary>
@@ -488,7 +481,6 @@ namespace Rhino.Geometry
     {
       IntPtr ptr0 = curveA.ConstPointer();
       IntPtr ptr1 = curveB.ConstPointer();
-
       return UnsafeNativeMethods.ON_Curve_DoCurveDirectionsMatch(ptr0, ptr1);
     }
 
@@ -529,9 +521,7 @@ namespace Rhino.Geometry
 
       Curve[] rc = null;
       if (UnsafeNativeMethods.RHC_RhinoProjectCurveToMesh(pMeshes, pCurvesIn, direction, tolerance, pCurvesOut))
-      {
         rc = curves_out.ToNonConstArray();
-      }
 
       crv_array.Dispose();
       mesh_array.Dispose();
@@ -552,13 +542,11 @@ namespace Rhino.Geometry
       IntPtr brep_ptr = brep.ConstPointer();
       IntPtr curve_ptr = curve.ConstPointer();
 
-      SimpleArrayCurvePointer rc = new SimpleArrayCurvePointer();
-      IntPtr rc_ptr = rc.NonConstPointer();
-
-      if (UnsafeNativeMethods.RHC_RhinoProjectCurveToBrep(brep_ptr, curve_ptr, direction, tolerance, rc_ptr))
-      { return rc.ToNonConstArray(); }
-
-      return null;
+      using (SimpleArrayCurvePointer rc = new SimpleArrayCurvePointer())
+      {
+        IntPtr rc_ptr = rc.NonConstPointer();
+        return UnsafeNativeMethods.RHC_RhinoProjectCurveToBrep(brep_ptr, curve_ptr, direction, tolerance, rc_ptr) ? rc.ToNonConstArray() : new Curve[0];
+      }
     }
     /// <summary>
     /// Project a Curve onto a collection of Breps along a given direction.
@@ -611,7 +599,7 @@ namespace Rhino.Geometry
     /// <param name="tolerance">Tolerance to use for projection.</param>
     /// <param name="curveIndices">Index of which curve in the input list was the source for a curve in the return array.</param>
     /// <param name="brepIndices">Index of which brep was used to generate a curve in the return array.</param>
-    /// <returns>An array of projected curves or null if the projection set is empty.</returns>
+    /// <returns>An array of projected curves. Array is empty if the projection set is empty.</returns>
     public static Curve[] ProjectToBrep(IEnumerable<Curve> curves, IEnumerable<Brep> breps, Vector3d direction, double tolerance, out int[] curveIndices, out int[] brepIndices)
     {
       curveIndices = null;
@@ -645,8 +633,7 @@ namespace Rhino.Geometry
         curveIndices = crv_top.ToArray();
         return rc.ToNonConstArray();
       }
-
-      return null;
+      return new Curve[0];
     }
 
     /// <summary>
@@ -764,9 +751,7 @@ namespace Rhino.Geometry
       IntPtr outputPtr = output.NonConstPointer();
 
       int rc = UnsafeNativeMethods.RHC_RhinoDuplicateCurveSegments(ptr, outputPtr);
-      if (rc < 1)
-        return null;
-      return output.ToNonConstArray();
+      return rc < 1 ? new Curve[0] : output.ToNonConstArray();
     }
 #endif
 
@@ -1643,8 +1628,7 @@ namespace Rhino.Geometry
     public Point3d PointAtLength(double length)
     {
       double t;
-      if (!LengthParameter(length, out t)) { return Point3d.Unset; }
-      return PointAt(t);
+      return !LengthParameter(length, out t) ? Point3d.Unset : PointAt(t);
     }
     /// <summary>
     /// Get a point at a certain normalized length along the curve. The length must be 
@@ -1656,8 +1640,7 @@ namespace Rhino.Geometry
     public Point3d PointAtNormalizedLength(double length)
     {
       double t;
-      if (!NormalizedLengthParameter(length, out t)) { return Point3d.Unset; }
-      return PointAt(t);
+      return !NormalizedLengthParameter(length, out t) ? Point3d.Unset : PointAt(t);
     }
 
     /// <summary>Force the curve to start at a specified point. 
@@ -1791,18 +1774,14 @@ namespace Rhino.Geometry
     /// <exception cref="InvalidOperationException">Thrown when the curve parameters are not increasing.</exception>
     public Plane[] GetPerpendicularFrames(IEnumerable<double> parameters)
     {
-      if (null == parameters)
-        return null;
-
       RhinoList<double> ts = new RhinoList<double>();
       double t0 = double.MinValue;
 
       foreach (double t in parameters)
       {
         if (t <= t0)
-        {
           throw new InvalidOperationException("Curve parameters must be strictly increasing");
-        }
+
         ts.Add(t);
         t0 = t;
       }
@@ -1825,7 +1804,6 @@ namespace Rhino.Geometry
         Array.Copy(frames, rc, rc_count);
         return rc;
       }
-
       return null;
     }
 
@@ -1927,9 +1905,7 @@ namespace Rhino.Geometry
     {
       double length = 0.0;
       IntPtr ptr = ConstPointer();
-      if (UnsafeNativeMethods.ON_Curve_GetLength(ptr, ref length, fractionalTolerance, subdomain, false))
-        return length;
-      return 0;
+      return UnsafeNativeMethods.ON_Curve_GetLength(ptr, ref length, fractionalTolerance, subdomain, false) ? length : 0;
     }
 
     /// <summary>Used to quickly find short curves.</summary>
@@ -2277,9 +2253,7 @@ namespace Rhino.Geometry
       double[] rc = new double[tcount];
       IntPtr curve_ptr = ConstPointer();
       bool success = UnsafeNativeMethods.RHC_RhinoDivideCurve1(curve_ptr, segmentCount, includeEnds, tcount, rc);
-      if (!success)
-        return null;
-      return rc;
+      return success ? rc : null;
     }
     /// <summary>
     /// Divide the curve into a number of equal-length segments.
@@ -2311,15 +2285,10 @@ namespace Rhino.Geometry
       bool success = UnsafeNativeMethods.RHC_RhinoDivideCurve2(curve_ptr, segmentCount, includeEnds, tcount, outputPointsPtr, ref rc[0]);
 
       if (success)
-      {
         points = outputPoints.ToArray();
-      }
 
       outputPoints.Dispose();
-
-      if (!success)
-        return null;
-      return rc;
+      return success ? rc : null;
     }
     /// <summary>
     /// Divide the curve into specific length segments.
@@ -2347,9 +2316,7 @@ namespace Rhino.Geometry
       }
       outputParams.Dispose();
 
-      if (!success)
-        return null;
-      return rc;
+      return success ? rc : null;
     }
 
     /// <summary>

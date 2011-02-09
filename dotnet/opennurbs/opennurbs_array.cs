@@ -183,9 +183,7 @@ namespace Rhino.Runtime
     {
       IntPtr pString = UnsafeNativeMethods.StringHolder_Get(m_ptr);
       string rc = Marshal.PtrToStringUni(pString);
-      if (rc == null)
-        return String.Empty;
-      return rc;
+      return rc ?? String.Empty;
     }
   }
 
@@ -248,7 +246,7 @@ namespace Rhino.Runtime
     {
       int count = Count;
       if (count < 1)
-        return null;
+        return new Geometry.Brep[0]; //MSDN guidelines prefer empty arrays
       IntPtr ptr = ConstPointer();
       Brep[] rc = new Brep[count];
       for (int i = 0; i < count; i++)
@@ -286,7 +284,7 @@ namespace Rhino.Runtime.InteropWrappers
     {
       int count = Count;
       if (count < 1)
-        return null;
+        return new int[0];
       int[] rc = new int[count];
       UnsafeNativeMethods.ON_IntArray_CopyValues(m_ptr, rc);
       return rc;
@@ -342,7 +340,7 @@ namespace Rhino.Runtime.InteropWrappers
     {
       int count = Count;
       if (count < 1)
-        return null;
+        return new double[0];
       double[] rc = new double[count];
       UnsafeNativeMethods.ON_DoubleArray_CopyValues(m_ptr, ref rc[0]);
       return rc;
@@ -472,7 +470,7 @@ namespace Rhino.Runtime.InteropWrappers
     {
       int count = Count;
       if (count < 1)
-        return null;
+        return new Line[0];
       Line[] rc = new Line[count];
       UnsafeNativeMethods.ON_LineArray_CopyValues(m_ptr, ref rc[0]);
       return rc;
@@ -536,6 +534,8 @@ namespace Rhino.Runtime.InteropWrappers
     public Curve[] ToNonConstArray()
     {
       int count = UnsafeNativeMethods.ON_CurveArray_Count(m_ptr);
+      if (count < 1)
+        return new Curve[0];
       Curve[] rc = new Curve[count];
       for (int i = 0; i < count; i++)
       {
@@ -675,7 +675,7 @@ namespace Rhino.Runtime.InteropWrappers
     {
       int count = Count;
       if (count < 1)
-        return null;
+        return new Geometry.Mesh[0];
       IntPtr ptr = ConstPointer();
       Mesh[] rc = new Mesh[count];
       for (int i = 0; i < count; i++)

@@ -365,9 +365,8 @@ namespace Rhino.Geometry.Intersect
     /// <returns>An array of polylines describing the intersection loops or null (Nothing in Visual Basic) if no intersections could be found.</returns>
     public static Polyline[] MeshPlane(Mesh mesh, IEnumerable<Plane> planes)
     {
-      Rhino.Collections.RhinoList<Plane> list = planes as Rhino.Collections.RhinoList<Plane>;
-      if (list == null)
-        list = new Rhino.Collections.RhinoList<Plane>(planes);
+      Rhino.Collections.RhinoList<Plane> list = planes as Rhino.Collections.RhinoList<Plane> ??
+                                                new Rhino.Collections.RhinoList<Plane>(planes);
       if (list.Count < 1)
         return null;
 
@@ -408,9 +407,7 @@ namespace Rhino.Geometry.Intersect
       if (!plane.IsValid) { return null; }
 
       PlaneSurface section = ExtendThroughBox(plane, curve.GetBoundingBox(false), 1.0); //should this be 1.0 or 100.0*tolerance?
-      if (section == null) { return null; }
-
-      return CurveSurface(curve, section, tolerance, 5 * tolerance);
+      return section == null ? null : CurveSurface(curve, section, tolerance, 5 * tolerance);
     }
     /// <summary>
     /// Intersect a Brep with an (infinite) plane.
@@ -431,9 +428,7 @@ namespace Rhino.Geometry.Intersect
       if (!plane.IsValid) { return false; }
 
       PlaneSurface section = ExtendThroughBox(plane, brep.GetBoundingBox(false), 1.0); //should this be 1.0 or 100.0*tolerance?
-      if (section == null) { return false; }
-
-      return BrepBrep(section.ToBrep(), brep, tolerance, out intersectionCurves, out intersectionPoints);
+      return section != null && BrepBrep(section.ToBrep(), brep, tolerance, out intersectionCurves, out intersectionPoints);
     }
 
     /// <summary>
@@ -473,8 +468,8 @@ namespace Rhino.Geometry.Intersect
       Interval s, t;
       if (!plane.ExtendThroughBox(box, out s, out t)) { return null; }
 
-      if (s.IsSingleton) { return null; }
-      if (t.IsSingleton) { return null; }
+      if (s.IsSingleton || t.IsSingleton)
+        return null;
 
       return new PlaneSurface(plane, s, t);
     }

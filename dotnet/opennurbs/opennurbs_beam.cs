@@ -27,9 +27,7 @@ namespace Rhino.Geometry
     public static Extrusion CreateCylinderExtrusion(Cylinder cylinder, bool capBottom, bool capTop)
     {
       IntPtr pExtrusion = UnsafeNativeMethods.ON_Extrusion_CreateCylinder(ref cylinder, capBottom, capTop);
-      if (IntPtr.Zero == pExtrusion)
-        return null;
-      return new Extrusion(pExtrusion, null, null);
+      return IntPtr.Zero == pExtrusion ? null : new Extrusion(pExtrusion, null, null);
     }
 
     /// <summary>
@@ -46,9 +44,7 @@ namespace Rhino.Geometry
     public static Extrusion CreatePipeExtrusion(Cylinder cylinder, double otherRadius, bool capTop, bool capBottom)
     {
       IntPtr pExtrusion = UnsafeNativeMethods.ON_Extrusion_CreatePipe(ref cylinder, otherRadius, capBottom, capTop);
-      if (IntPtr.Zero == pExtrusion)
-        return null;
-      return new Extrusion(pExtrusion, null, null);
+      return IntPtr.Zero == pExtrusion ? null : new Extrusion(pExtrusion, null, null);
     }
     #endregion
 

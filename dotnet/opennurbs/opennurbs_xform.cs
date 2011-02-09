@@ -259,9 +259,7 @@ namespace Rhino.Geometry
     {
       Transform rc = Transform.Identity;
       bool success = UnsafeNativeMethods.ON_Xform_PlaneToPlane(ref rc, ref plane0, ref plane1, false);
-      if (success)
-        return rc;
-      return Transform.Unset;
+      return success ? rc : Transform.Unset;
     }
 
     /// <example>
@@ -296,9 +294,7 @@ namespace Rhino.Geometry
       Transform rc = Transform.Identity;
       bool success = UnsafeNativeMethods.ON_Xform_ChangeBasis2(ref rc,
         initialBasisX, initialBasisY, initialBasisZ, finalBasisX, finalBasisY, finalBasisZ);
-      if (success)
-        return rc;
-      return Transform.Unset;
+      return success ? rc : Transform.Unset;
     }
 
     /// <summary>

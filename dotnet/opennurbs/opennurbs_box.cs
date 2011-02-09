@@ -244,9 +244,7 @@ namespace Rhino.Geometry
       get
       {
         Point3d[] C = GetCorners();
-        if (C == null) { return BoundingBox.Empty; }
-
-        return new BoundingBox(C);
+        return C == null ? BoundingBox.Empty : new BoundingBox(C);
       }
     }
 

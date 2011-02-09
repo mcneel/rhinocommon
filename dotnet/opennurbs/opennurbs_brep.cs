@@ -60,10 +60,7 @@ namespace Rhino.Geometry
 
       IntPtr ptr = geometry.ConstPointer();
       IntPtr pNewBrep = UnsafeNativeMethods.ON_Geometry_BrepForm(ptr);
-      if (IntPtr.Zero == ptr)
-        return null;
-
-      return new Brep(pNewBrep, null, null);
+      return IntPtr.Zero == ptr ? null : new Brep(pNewBrep, null, null);
     }
 
     /// <summary>
@@ -79,9 +76,7 @@ namespace Rhino.Geometry
       IntPtr pConstSurface = surfaceSource.ConstPointer();
 
       IntPtr ptr = UnsafeNativeMethods.RHC_RhinoRetrimSurface(pConstBrepFace, pConstSurface);
-      if (IntPtr.Zero == ptr)
-        return null;
-      return new Brep(ptr, null, null);
+      return IntPtr.Zero == ptr ? null : new Brep(ptr, null, null);
     }
 
     /// <summary>
@@ -97,9 +92,7 @@ namespace Rhino.Geometry
       IntPtr pConstSurface = surfaceSource.ConstPointer();
 
       IntPtr ptr = UnsafeNativeMethods.ON_Brep_CopyTrims(pConstBrepFace, pConstSurface, tolerance);
-      if (IntPtr.Zero == ptr)
-        return null;
-      return new Brep(ptr, null, null);
+      return IntPtr.Zero == ptr ? null : new Brep(ptr, null, null);
     }
 
     /// <summary>
@@ -110,9 +103,7 @@ namespace Rhino.Geometry
     public static Brep CreateFromBox(BoundingBox box)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_Brep_FromBox(box.Min, box.Max);
-      if (IntPtr.Zero == ptr)
-        return null;
-      return new Brep(ptr, null, null);
+      return IntPtr.Zero == ptr ? null : new Brep(ptr, null, null);
     }
     /// <summary>
     /// Create new Brep that matches an aligned box.
@@ -158,9 +149,7 @@ namespace Rhino.Geometry
       if (i < 8) { return null; }
 
       IntPtr ptr = UnsafeNativeMethods.ON_Brep_FromBox2(box_corners);
-      if (IntPtr.Zero == ptr) { return null; }
-
-      return new Brep(ptr, null, null);
+      return IntPtr.Zero == ptr ? null : new Brep(ptr, null, null);
     }
 
     /// <summary>
@@ -178,9 +167,7 @@ namespace Rhino.Geometry
     public static Brep CreateFromCylinder(Cylinder cylinder, bool capBottom, bool capTop)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_Brep_FromCylinder(ref cylinder, capBottom, capTop);
-      if (IntPtr.Zero == ptr)
-        return null;
-      return new Brep(ptr, null, null);
+      return IntPtr.Zero == ptr ? null : new Brep(ptr, null, null);
     }
 
     /// <summary>
@@ -196,9 +183,7 @@ namespace Rhino.Geometry
     public static Brep CreateFromCone(Cone cone, bool capBottom)
     {
       IntPtr ptr = UnsafeNativeMethods.ONC_ON_BrepCone(ref cone, capBottom);
-      if (IntPtr.Zero == ptr)
-        return null;
-      return new Brep(ptr, null, null);
+      return IntPtr.Zero == ptr ? null : new Brep(ptr, null, null);
     }
 
     /// <summary>
@@ -226,9 +211,7 @@ namespace Rhino.Geometry
     {
       IntPtr pSurface = surface.ConstPointer();
       IntPtr ptr = UnsafeNativeMethods.ONC_ON_BrepRevSurface(pSurface, capStart, capEnd);
-      if (IntPtr.Zero == ptr)
-        return null;
-      return new Brep(ptr, null, null);
+      return IntPtr.Zero == ptr ? null : new Brep(ptr, null, null);
     }
 
     /// <summary>
@@ -245,9 +228,7 @@ namespace Rhino.Geometry
     {
       Point3d[] points = new Point3d[] { corner1, corner2, corner3 };
       IntPtr pBrep = UnsafeNativeMethods.RHC_RhinoCreate1FaceBrepFromPoints(3, points, tolerance);
-      if (IntPtr.Zero == pBrep)
-        return null;
-      return new Brep(pBrep, null, null);
+      return IntPtr.Zero == pBrep ? null : new Brep(pBrep, null, null);
     }
     /// <summary>
     /// make a Brep with one face
@@ -264,9 +245,7 @@ namespace Rhino.Geometry
     {
       Point3d[] points = new Point3d[] { corner1, corner2, corner3, corner4 };
       IntPtr pBrep = UnsafeNativeMethods.RHC_RhinoCreate1FaceBrepFromPoints(4, points, tolerance);
-      if (IntPtr.Zero == pBrep)
-        return null;
-      return new Brep(pBrep, null, null);
+      return IntPtr.Zero == pBrep ? null : new Brep(pBrep, null, null);
     }
 
     /// <summary>
@@ -285,9 +264,7 @@ namespace Rhino.Geometry
       {
         if (null == crv)
           continue;
-        NurbsCurve nc = crv as NurbsCurve;
-        if (nc == null)
-          nc = crv.ToNurbsCurve();
+        NurbsCurve nc = crv as NurbsCurve ?? crv.ToNurbsCurve();
         if (nc == null)
           continue;
         nurbs_curves[index] = nc; // this forces GC to not collect while we are using the pointers
@@ -300,9 +277,7 @@ namespace Rhino.Geometry
       if (count < 2 || count > 4)
         return null;
       IntPtr pBrep = UnsafeNativeMethods.RHC_RhinoCreateEdgeSrf(pNurbsCurves[0], pNurbsCurves[1], pNurbsCurves[2], pNurbsCurves[3]);
-      if (IntPtr.Zero == pBrep)
-        return null;
-      return new Brep(pBrep, null, null);
+      return IntPtr.Zero == pBrep ? null : new Brep(pBrep, null, null);
     }
 
     /// <summary>
@@ -343,10 +318,7 @@ namespace Rhino.Geometry
         return null;
       IntPtr pSurface = surface.ConstPointer();
       IntPtr pNewBrep = UnsafeNativeMethods.ON_Brep_FromSurface(pSurface);
-      if (IntPtr.Zero == pNewBrep)
-        return null;
-
-      return new Brep(pNewBrep, null, null);
+      return IntPtr.Zero == pNewBrep ? null : new Brep(pNewBrep, null, null);
     }
 
 #if USING_V5_SDK
@@ -369,9 +341,7 @@ namespace Rhino.Geometry
     {
       IntPtr pConstFace = face.ConstPointer();
       IntPtr pNewBrep = UnsafeNativeMethods.RHC_RhinoOffsetSurface(pConstFace, offsetDistance, offsetTolerance, bothSides, createSolid);
-      if (IntPtr.Zero == pNewBrep)
-        return null;
-      return new Brep(pNewBrep, null, null);
+      return IntPtr.Zero == pNewBrep ? null : new Brep(pNewBrep, null, null);
     }
 
     /// <summary>
@@ -653,9 +623,7 @@ namespace Rhino.Geometry
       {
         IntPtr pCurves = outputcurves.NonConstPointer();
         int count = UnsafeNativeMethods.RHC_MakeRhinoContours2(pConstBrep, contourStart, contourEnd, interval, pCurves);
-        if (0 == count)
-          return null;
-        return outputcurves.ToNonConstArray();
+        return 0 == count ? new Curve[0] : outputcurves.ToNonConstArray();
       }
     }
     public static Curve[] CreateContourCurves(Brep brepToContour, Plane sectionPlane)
@@ -665,9 +633,7 @@ namespace Rhino.Geometry
       {
         IntPtr pCurves = outputcurves.NonConstPointer();
         int count = UnsafeNativeMethods.RHC_MakeRhinoContours3(pConstBrep, ref sectionPlane, pCurves);
-        if (0 == count)
-          return null;
-        return outputcurves.ToNonConstArray();
+        return 0 == count ? new Curve[0] : outputcurves.ToNonConstArray();
       }
     }
     #endregion
@@ -690,23 +656,13 @@ namespace Rhino.Geometry
     Rhino.Geometry.Collections.BrepFaceList m_facelist;
     public Rhino.Geometry.Collections.BrepFaceList Faces
     {
-      get
-      {
-        if (null == m_facelist)
-          m_facelist = new Rhino.Geometry.Collections.BrepFaceList(this);
-        return m_facelist;
-      }
+      get { return m_facelist ?? (m_facelist = new Rhino.Geometry.Collections.BrepFaceList(this)); }
     }
 
     Rhino.Geometry.Collections.BrepEdgeList m_edgelist;
     public Rhino.Geometry.Collections.BrepEdgeList Edges
     {
-      get
-      {
-        if (null == m_edgelist)
-          m_edgelist = new Rhino.Geometry.Collections.BrepEdgeList(this);
-        return m_edgelist;
-      }
+      get { return m_edgelist ?? (m_edgelist = new Rhino.Geometry.Collections.BrepEdgeList(this)); }
     }
 
 
@@ -833,8 +789,6 @@ namespace Rhino.Geometry
       IntPtr outputPointsPtr = outputPoints.NonConstPointer();
 
       UnsafeNativeMethods.ON_Brep_DuplicateVertices(pConstPtr, outputPointsPtr);
-      if (outputPoints.Count == 0) { return null; }
-
       return outputPoints.ToArray();
     }
 
@@ -951,10 +905,7 @@ namespace Rhino.Geometry
     {
       IntPtr pThis = ConstPointer();
       IntPtr pCapped = UnsafeNativeMethods.RHC_CapPlanarHoles(pThis, tolerance);
-      if (IntPtr.Zero == pCapped)
-        return null;
-
-      return new Brep(pCapped, null, null);
+      return IntPtr.Zero == pCapped ? null : new Brep(pCapped, null, null);
     }
 
     /// <summary>
@@ -1163,9 +1114,7 @@ namespace Rhino.Geometry
       Runtime.InteropWrappers.SimpleArrayInt fi = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
 
       int rc = UnsafeNativeMethods.ON_Brep_EdgeFaceIndices(pConstBrep, m_index, fi.m_ptr);
-      if (rc == 0) { return null; }
-
-      return fi.ToArray();
+      return rc == 0 ? new int[0] : fi.ToArray();
     }
     #endregion
 
@@ -1256,9 +1205,7 @@ namespace Rhino.Geometry
       {
         IntPtr pOutPoints = outpoints.NonConstPointer();
         int points_pulled = UnsafeNativeMethods.RHC_RhinoPullPointsToFace(pBrep, m_index, count, inpoints, pOutPoints, tolerance);
-        if (points_pulled < 1)
-          return null;
-        return outpoints.ToArray();
+        return points_pulled < 1 ? new Point3d[0] : outpoints.ToArray();
       }
     }
 #endif
@@ -1290,9 +1237,7 @@ namespace Rhino.Geometry
     {
       IntPtr pConstBrep = m_brep.ConstPointer();
       IntPtr pNewBrep = UnsafeNativeMethods.ON_Brep_DuplicateFace(pConstBrep, m_index, duplicateMeshes);
-      if (IntPtr.Zero == pNewBrep)
-        return null;
-      return new Brep(pNewBrep, null, null);
+      return IntPtr.Zero == pNewBrep ? null : new Brep(pNewBrep, null, null);
     }
     /// <summary>
     /// Get a copy to the untrimmed surface that this face is based on.
@@ -1321,8 +1266,7 @@ namespace Rhino.Geometry
       IntPtr p_curves = new Runtime.InteropWrappers.SimpleArrayCurvePointer(crv_list.m_items).ConstPointer();
       IntPtr rc = UnsafeNativeMethods.ON_Brep_SplitFace(m_brep.ConstPointer(), m_index, p_curves, tolerance);
 
-      if (IntPtr.Zero == rc) { return null; }
-      return new Brep(rc, null, null);
+      return IntPtr.Zero == rc ? null : new Brep(rc, null, null);
     }
 
     /// <summary>
@@ -1337,10 +1281,7 @@ namespace Rhino.Geometry
       int rc = UnsafeNativeMethods.ON_Brep_PointIsOnFace(pConstBrep, m_index, u, v);
       if (1 == rc)
         return PointFaceRelation.Interior;
-      if (2 == rc)
-        return PointFaceRelation.Boundary;
-
-      return PointFaceRelation.Exterior;
+      return 2 == rc ? PointFaceRelation.Boundary : PointFaceRelation.Exterior;
     }
 
     /// <summary>
@@ -1405,9 +1346,7 @@ namespace Rhino.Geometry
       Runtime.InteropWrappers.SimpleArrayInt ei = new Runtime.InteropWrappers.SimpleArrayInt();
 
       int rc = UnsafeNativeMethods.ON_Brep_FaceEdgeIndices(pConstBrep, m_index, ei.m_ptr);
-      if (rc == 0) { return null; }
-
-      return ei.ToArray();
+      return rc == 0 ? new int[0] : ei.ToArray();
     }
     /// <summary>
     /// Gets the indices of all the BrepFaces that surround (are adjacent to) this face.
@@ -1418,9 +1357,7 @@ namespace Rhino.Geometry
       Runtime.InteropWrappers.SimpleArrayInt fi = new Runtime.InteropWrappers.SimpleArrayInt();
 
       int rc = UnsafeNativeMethods.ON_Brep_FaceFaceIndices(pConstBrep, m_index, fi.m_ptr);
-      if (rc == 0) { return null; }
-
-      return fi.ToArray();
+      return rc == 0 ? new int[0] : fi.ToArray();
     }
     #endregion
   }
@@ -1546,7 +1483,7 @@ namespace Rhino.Geometry.Collections
     #endregion
   }
 
-  internal class BrepFaceEnumerator : IEnumerator<BrepFace>
+  class BrepFaceEnumerator : IEnumerator<BrepFace>
   {
     #region members
     readonly BrepFaceList m_list;
@@ -1685,7 +1622,7 @@ namespace Rhino.Geometry.Collections
     #endregion
   }
 
-  internal class BrepEdgeEnumerator : IEnumerator<BrepEdge>
+  class BrepEdgeEnumerator : IEnumerator<BrepEdge>
   {
     #region members
     readonly BrepEdgeList m_list;

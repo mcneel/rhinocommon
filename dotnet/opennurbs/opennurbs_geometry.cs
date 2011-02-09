@@ -89,9 +89,7 @@ namespace Rhino.Geometry
 
     internal GeometryBase(IntPtr ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
     {
-      object parent = parent_object;
-      if (parent == null)
-        parent = obj_ref;
+      object parent = parent_object ?? (object) obj_ref;
       if (null == parent)
         ConstructNonConstObject(ptr);
       else
@@ -396,9 +394,7 @@ namespace Rhino.Geometry
             return bbox;
         }
         IntPtr ptr = ConstPointer();
-        if (UnsafeNativeMethods.ON_Geometry_GetTightBoundingBox(ptr, ref bbox, ref xf, false))
-          return bbox;
-        return BoundingBox.Empty;
+        return UnsafeNativeMethods.ON_Geometry_GetTightBoundingBox(ptr, ref bbox, ref xf, false) ? bbox : BoundingBox.Empty;
       }
       else
       {
@@ -435,9 +431,7 @@ namespace Rhino.Geometry
           return bbox;
       }
       IntPtr ptr = ConstPointer();
-      if (UnsafeNativeMethods.ON_Geometry_GetTightBoundingBox(ptr, ref bbox, ref xform, true))
-        return bbox;
-      return BoundingBox.Empty;
+      return UnsafeNativeMethods.ON_Geometry_GetTightBoundingBox(ptr, ref bbox, ref xform, true) ? bbox : BoundingBox.Empty;
     }
     /// <summary>
     /// Aligned Boundingbox solver. Gets the plane aligned boundingbox.
@@ -588,9 +582,7 @@ namespace Rhino.Geometry
     {
       IntPtr pThis = ConstPointer();
       IntPtr pValue = UnsafeNativeMethods.ON_Object_GetUserString(pThis, key);
-      if (IntPtr.Zero == pValue)
-        return null;
-      return Marshal.PtrToStringUni(pValue);
+      return IntPtr.Zero == pValue ? String.Empty : Marshal.PtrToStringUni(pValue);
     }
 
     public int UserStringCount

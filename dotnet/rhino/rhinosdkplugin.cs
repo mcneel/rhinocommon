@@ -118,7 +118,7 @@ namespace Rhino.PlugIns
         else if (rc is DigitizerPlugIn)
           plugin_class = 3;
 #endif
-        else if (rc is RenderPlugIn)
+        else if (rc is RenderPlugInBase)
           plugin_class = 4;
 
         UnsafeNativeMethods.CRhinoPlugIn_Create(sn, plugin_id, plugin_name, plugin_version, plugin_class);
@@ -754,9 +754,7 @@ namespace Rhino.PlugIns
     protected string MakeReferenceTableName(string nameToPrefix)
     {
       IntPtr rc = UnsafeNativeMethods.CRhinoFileImportPlugIn_MakeReferenceTableName(m_runtime_serial_number, nameToPrefix);
-      if (IntPtr.Zero == rc)
-        return null;
-      return Marshal.PtrToStringUni(rc);
+      return IntPtr.Zero == rc ? String.Empty : Marshal.PtrToStringUni(rc);
     }
   }
 
@@ -855,6 +853,94 @@ namespace Rhino.PlugIns
     protected abstract FileTypeList AddFileTypes(Rhino.FileIO.FileWriteOptions options);
     protected abstract WriteFileResult WriteFile(string filename, int index, RhinoDoc doc, Rhino.FileIO.FileWriteOptions options);
   }
+
+  public abstract class RenderPlugInBase : PlugIn
+  {
+    internal delegate int RenderFunc(int plugin_serial_number, int doc_id, int modes, int render_preview);
+    internal delegate int RenderWindowFunc(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow);
+    private static RenderFunc m_OnRender = InternalOnRender;
+    private static RenderWindowFunc m_OnRenderWindow = InternalOnRenderWindow;
+    private static int InternalOnRender(int plugin_serial_number, int doc_id, int modes, int render_preview)
+    {
+      Rhino.Commands.Result rc = Rhino.Commands.Result.Failure;
+      RenderPlugInBase p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugInBase;
+      if (null == p)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnRenderWindow");
+      }
+      else
+      {
+        try
+        {
+          RhinoDoc doc = RhinoDoc.FromId(doc_id);
+          Rhino.Commands.RunMode rm = Rhino.Commands.RunMode.Interactive;
+          if (modes > 0)
+            rm = Rhino.Commands.RunMode.Scripted;
+          rc = p.Render(doc, rm, render_preview != 0);
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in Render\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+      return (int)rc;
+    }
+
+    private static int InternalOnRenderWindow(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow)
+    {
+      Rhino.Commands.Result rc = Rhino.Commands.Result.Failure;
+      RenderPlugInBase p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugInBase;
+      if (null == p)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnRenderWindow");
+      }
+      else
+      {
+        try
+        {
+          RhinoDoc doc = RhinoDoc.FromId(doc_id);
+          Rhino.Commands.RunMode rm = Rhino.Commands.RunMode.Interactive;
+          if (modes > 0)
+            rm = Rhino.Commands.RunMode.Scripted;
+          Rhino.Display.RhinoView view = Rhino.Display.RhinoView.FromIntPtr(pRhinoView);
+          System.Drawing.Rectangle rect = System.Drawing.Rectangle.FromLTRB(rLeft, rTop, rRight, rBottom);
+          rc = p.RenderWindow(doc, rm, render_preview != 0, view, rect, inWindow != 0);
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in RenderWindow\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+      return (int)rc;
+    }
+
+    protected RenderPlugInBase()
+    {
+      UnsafeNativeMethods.CRhinoRenderPlugIn_SetCallbacks(m_OnRender, m_OnRenderWindow);
+    }
+
+    
+    /// <summary>
+    /// Called by Render and RenderPreview commands if this plug-in is set as the default render engine. 
+    /// </summary>
+    /// <param name="doc"></param>
+    /// <param name="mode"></param>
+    /// <param name="fastPreview">If true, lower quality faster render expected</param>
+    /// <returns></returns>
+    protected abstract Rhino.Commands.Result Render(RhinoDoc doc, Rhino.Commands.RunMode mode, bool fastPreview);
+
+    protected abstract Rhino.Commands.Result RenderWindow(RhinoDoc doc, Rhino.Commands.RunMode modes, bool fastPreview, Rhino.Display.RhinoView view, System.Drawing.Rectangle rect, bool inWindow);
+  }
+
+  public abstract class RenderPlugIn : RenderPlugInBase
+  {
+    // this will be the version that uses a CRhinoRender class
+  }
+
   
 #if !BUILDING_MONO
   public abstract class DigitizerPlugIn : PlugIn
@@ -1022,12 +1108,6 @@ namespace Rhino.PlugIns
     }
   }
 #endif
-  // I think there is an RDK version that we are supposed to use instead
-  /*public*/ abstract class RenderPlugIn : PlugIn
-  {
-    // Render
-  }
-
 
   /// <summary>
   /// License Manager Utilities

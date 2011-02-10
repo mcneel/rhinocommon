@@ -3284,7 +3284,7 @@ namespace Rhino.DocObjects.Tables
       if (null == objref)
         return Guid.Empty;
       IntPtr pObjRef = objref.NonConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_TransformObject(m_doc.m_docId, pObjRef, ref xform, deleteOriginal);
+      return UnsafeNativeMethods.CRhinoDoc_TransformObject(m_doc.m_docId, pObjRef, ref xform, deleteOriginal, false, false);
     }
     /// <summary>
     /// Creates a new object that is the transformation of the existing object
@@ -3337,6 +3337,81 @@ namespace Rhino.DocObjects.Tables
     {
       DocObjects.ObjRef objref = new Rhino.DocObjects.ObjRef(objectId);
       Guid rc = Transform(objref, xform, deleteOriginal);
+      objref.Dispose();
+      return rc;
+    }
+
+    /// <summary>
+    /// Creates a new object that is the transformation of the existing object
+    /// and records history of the transformation if history recording is turned on.
+    /// If history recording is not enabled, this function will act the same as
+    /// Transform(objref, xform, false)
+    /// </summary>
+    /// <param name="objref">
+    /// reference to object to transform
+    /// </param>
+    /// <param name="xform">transformation to apply</param>
+    /// <returns>
+    /// Id of the new object that is the transformation of the existing_object.
+    /// The new object has identical attributes.
+    /// </returns>
+    /// <remarks>
+    /// If the object is locked or on a locked layer, then it cannot be transformed
+    /// </remarks>
+    public Guid TransformWithHistory(DocObjects.ObjRef objref, Transform xform)
+    {
+      if (null == objref)
+        return Guid.Empty;
+      IntPtr pObjRef = objref.NonConstPointer();
+      return UnsafeNativeMethods.CRhinoDoc_TransformObject(m_doc.m_docId, pObjRef, ref xform, false, false, true);
+    }
+    /// <summary>
+    /// Creates a new object that is the transformation of the existing object
+    /// and records history of the transformation if history recording is turned on.
+    /// If history recording is not enabled, this function will act the same as
+    /// Transform(obj, xform, false)
+    /// </summary>
+    /// <param name="obj">
+    /// Rhino object to transform
+    /// </param>
+    /// <param name="xform">transformation to apply</param>
+    /// <returns>
+    /// Id of the new object that is the transformation of the existing_object.
+    /// The new object has identical attributes.
+    /// </returns>
+    /// <remarks>
+    /// If the object is locked or on a locked layer, then it cannot be transformed
+    /// </remarks>
+    public Guid TransformWithHistory(DocObjects.RhinoObject obj, Transform xform)
+    {
+      if (null == obj)
+        return Guid.Empty;
+      DocObjects.ObjRef objref = new Rhino.DocObjects.ObjRef(obj);
+      Guid rc = TransformWithHistory(objref, xform);
+      objref.Dispose();
+      return rc;
+    }
+    /// <summary>
+    /// Creates a new object that is the transformation of the existing object
+    /// and records history of the transformation if history recording is turned on.
+    /// If history recording is not enabled, this function will act the same as
+    /// Transform(objectId, xform, false)
+    /// </summary>
+    /// <param name="objectId">
+    /// Id of rhino object to transform
+    /// </param>
+    /// <param name="xform">transformation to apply</param>
+    /// <returns>
+    /// Id of the new object that is the transformation of the existing_object.
+    /// The new object has identical attributes.
+    /// </returns>
+    /// <remarks>
+    /// If the object is locked or on a locked layer, then it cannot be transformed
+    /// </remarks>
+    public Guid TransformWithHistory(Guid objectId, Transform xform)
+    {
+      DocObjects.ObjRef objref = new Rhino.DocObjects.ObjRef(objectId);
+      Guid rc = TransformWithHistory(objref, xform);
       objref.Dispose();
       return rc;
     }

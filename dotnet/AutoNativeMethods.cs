@@ -3612,6 +3612,15 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool RhSmartTrackSettings_GetSetBool(int which, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.U1)]bool set_value);
+
+  //bool CRhinoHistoryManager_GetBool(int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistoryManager_GetBool(int which);
+
+  //void CRhinoHistoryManager_SetBool(int which, bool val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoHistoryManager_SetBool(int which, [MarshalAs(UnmanagedType.U1)]bool val);
   #endregion
 
 
@@ -4326,9 +4335,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoDoc_ReplaceObject6(int docId, IntPtr pObjRef, IntPtr pMesh);
 
-  //ON_UUID CRhinoDoc_TransformObject(int docId, CRhinoObjRef* pObjRef, const ON_Xform* xform, bool deleteOriginal)
+  //ON_UUID CRhinoDoc_TransformObject(int docId, CRhinoObjRef* pObjRef, const ON_Xform* xform, bool deleteOriginal, bool ignoreModes, bool addTransformHistory)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern Guid CRhinoDoc_TransformObject(int docId, IntPtr pObjRef, ref Transform xform, [MarshalAs(UnmanagedType.U1)]bool deleteOriginal);
+  internal static extern Guid CRhinoDoc_TransformObject(int docId, IntPtr pObjRef, ref Transform xform, [MarshalAs(UnmanagedType.U1)]bool deleteOriginal, [MarshalAs(UnmanagedType.U1)]bool ignoreModes, [MarshalAs(UnmanagedType.U1)]bool addTransformHistory);
 
   //ON_UUID CRhinoDoc_AddInstanceObject(int docId, int instanceDefinitionIndex, ON_Xform* instanceXform, const ON_3dmObjectAttributes* pAttributes)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6038,6 +6047,9 @@ internal partial class UnsafeNativeMethods
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //void CRhinoFileExportPlugIn_SetCallbacks(ADDWRITEFILETYPEPROC addfiletype, WRITEFILEPROC writefile)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRhinoRenderPlugIn_SetCallbacks(RENDERPROC render, RENDERWINDOWPROC renderwindow)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //void CRhinoDigitizerPlugIn_SetCallbacks(ENABLEDIGITIZERPROC enabledigitizer, UNITSYSTEMPROC unitsystem, POINTTOLERANCEPROC pointtolerance)

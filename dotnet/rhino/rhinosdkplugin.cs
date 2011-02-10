@@ -118,7 +118,7 @@ namespace Rhino.PlugIns
         else if (rc is DigitizerPlugIn)
           plugin_class = 3;
 #endif
-        else if (rc is RenderPlugInBase)
+        else if (rc is RenderPlugIn)
           plugin_class = 4;
 
         UnsafeNativeMethods.CRhinoPlugIn_Create(sn, plugin_id, plugin_name, plugin_version, plugin_class);
@@ -854,7 +854,7 @@ namespace Rhino.PlugIns
     protected abstract WriteFileResult WriteFile(string filename, int index, RhinoDoc doc, Rhino.FileIO.FileWriteOptions options);
   }
 
-  public abstract class RenderPlugInBase : PlugIn
+  public abstract class RenderPlugIn : PlugIn
   {
     internal delegate int RenderFunc(int plugin_serial_number, int doc_id, int modes, int render_preview);
     internal delegate int RenderWindowFunc(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow);
@@ -863,7 +863,7 @@ namespace Rhino.PlugIns
     private static int InternalOnRender(int plugin_serial_number, int doc_id, int modes, int render_preview)
     {
       Rhino.Commands.Result rc = Rhino.Commands.Result.Failure;
-      RenderPlugInBase p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugInBase;
+      RenderPlugIn p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugIn;
       if (null == p)
       {
         HostUtils.DebugString("ERROR: Invalid input for OnRenderWindow");
@@ -891,7 +891,7 @@ namespace Rhino.PlugIns
     private static int InternalOnRenderWindow(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow)
     {
       Rhino.Commands.Result rc = Rhino.Commands.Result.Failure;
-      RenderPlugInBase p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugInBase;
+      RenderPlugIn p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugIn;
       if (null == p)
       {
         HostUtils.DebugString("ERROR: Invalid input for OnRenderWindow");
@@ -918,7 +918,7 @@ namespace Rhino.PlugIns
       return (int)rc;
     }
 
-    protected RenderPlugInBase()
+    protected RenderPlugIn()
     {
       UnsafeNativeMethods.CRhinoRenderPlugIn_SetCallbacks(m_OnRender, m_OnRenderWindow);
     }
@@ -934,11 +934,6 @@ namespace Rhino.PlugIns
     protected abstract Rhino.Commands.Result Render(RhinoDoc doc, Rhino.Commands.RunMode mode, bool fastPreview);
 
     protected abstract Rhino.Commands.Result RenderWindow(RhinoDoc doc, Rhino.Commands.RunMode modes, bool fastPreview, Rhino.Display.RhinoView view, System.Drawing.Rectangle rect, bool inWindow);
-  }
-
-  public abstract class RenderPlugIn : RenderPlugInBase
-  {
-    // this will be the version that uses a CRhinoRender class
   }
 
   

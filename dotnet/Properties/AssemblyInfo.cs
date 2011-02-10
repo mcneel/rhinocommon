@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Robert McNeel & Associates")]
 [assembly: AssemblyProduct("Rhino")]
-[assembly: AssemblyCopyright("Copyright ©  2010")]
+[assembly: AssemblyCopyright("Copyright ©  2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 // Brian Gillespie: 9/22/2010
@@ -38,9 +38,11 @@ using System.Runtime.InteropServices;
 // The autobuild used to tweak this number for every build and we stopped doing this
 // with a build number in the mid-12000 range. Starting with build-15000, the Build
 // number is manually set by Steve
-[assembly: AssemblyVersion("5.0.15005.0")]
+// 10 Feb 2011 - updated to 15006 because exposed python classes have changed which
+//               should break python on OSX
+[assembly: AssemblyVersion("5.0.15006.0")]
 
-[assembly: AssemblyFileVersion("5.0.15005.0")]
+[assembly: AssemblyFileVersion("5.0.20693.0")]
 
 [assembly: System.CLSCompliant(true)]
 

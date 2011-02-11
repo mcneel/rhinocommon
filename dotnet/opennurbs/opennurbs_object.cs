@@ -18,8 +18,8 @@ namespace Rhino.Runtime
                               // object that has been created in .NET and is not part of the document
                               // m_ptr must have been created outside of the document and must be deleted in Dispose
 
-    internal object m__parent;  // May be a Rhino.DocObject.RhinoObject
-                                // PolyCurve 
+    internal object m__parent;  // May be a Rhino.DocObject.RhinoObject, Rhino.DocObjects.ObjRef,
+                                // Rhino.Render.RenderMesh, PolyCurve 
     internal int m_subobject_index = -1;
 
     internal Rhino.DocObjects.RhinoObject ParentRhinoObject()

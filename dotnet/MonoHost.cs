@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Rhino.Collections;
 using Rhino.PlugIns;
 
 namespace Rhino.Runtime
@@ -46,6 +47,18 @@ namespace Rhino.Runtime
 
         InitializeExceptionHandling();
         AssemblyResolver.InitializeAssemblyResolving();
+		
+		HostUtils.DebugString("Attempt to initialize MonoMac");
+		Type t = typeof(System.Windows.Forms.Application);
+		if( t != null )
+		{
+		  System.Reflection.MethodInfo mi = t.GetMethod("MonoMacInit",System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+	      if( mi != null )
+		  {
+			HostUtils.DebugString("Got methodinfo for MonoMacInit");
+		    mi.Invoke(null,null);
+		  }
+		}
       }
 
       HostUtils.DebugString("path = " + path);
@@ -77,29 +90,32 @@ namespace Rhino.Runtime
       try
       {
         System.Reflection.AssemblyName[] referenced_assemblies = plugin_assembly.GetReferencedAssemblies();
-        for (int i = 0; i < referenced_assemblies.Length; i++)
+        if (referenced_assemblies != null)
         {
-          if (referenced_assemblies[i].Name.Equals("RhinoCommon", StringComparison.OrdinalIgnoreCase))
+          for (int i = 0; i < referenced_assemblies.Length; i++)
           {
-            Version referenced_version = referenced_assemblies[i].Version;
-            Version this_version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            HostUtils.DebugString("this_version = {0}", this_version);
-            HostUtils.DebugString("referenced_version = {0}", referenced_version);
-            // major and minor MUST match
-            if (referenced_version.Major == this_version.Major && referenced_version.Minor == this_version.Minor)
+            if (referenced_assemblies[i].Name.Equals("RhinoCommon", StringComparison.OrdinalIgnoreCase))
             {
-              // At this point the SDK is changing too rapidly to allow for "safe" updates
-              // build of this_version must be == build of referenced version
-              // revision of this_version must be <= build of referenced version
-              if (this_version.Build == referenced_version.Build)
+              Version referenced_version = referenced_assemblies[i].Version;
+              Version this_version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+              HostUtils.DebugString("this_version = {0}", this_version);
+              HostUtils.DebugString("referenced_version = {0}", referenced_version);
+              // major and minor MUST match
+              if (referenced_version.Major == this_version.Major && referenced_version.Minor == this_version.Minor)
               {
-                if (this_version.Revision <= referenced_version.Revision)
+                // At this point the SDK is changing too rapidly to allow for "safe" updates
+                // build of this_version must be == build of referenced version
+                // revision of this_version must be <= build of referenced version
+                if (this_version.Build == referenced_version.Build)
                 {
-                  passesVersionCheck = true;
+                  if (this_version.Revision <= referenced_version.Revision)
+                  {
+                    passesVersionCheck = true;
+                  }
                 }
               }
+              break;
             }
-            break;
           }
         }
       }
@@ -283,19 +299,15 @@ namespace Rhino.Runtime
       // Calling SetUnhandledExceptionMode can throw an exception if any windows have already been
       // created. I don't know how this could happen unless someone else starts writing a mono embedding
       // system in Rhino, but just to be careful
-
-      /*
-      // System.Windows.Forms does not work well for Mono yet. Skip the winforms exception handler for now
+#if !BUILDING_MONO
       try
       {
         System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode.CatchException);
       }
-      catch(Exception)
-      {
-      }
-      System.Windows.Forms.Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
-      */
+      catch(Exception){}
 
+      System.Windows.Forms.Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+#endif
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
     }
 

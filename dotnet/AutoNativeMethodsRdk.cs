@@ -554,6 +554,93 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region rdk_decals.cpp
+  //int Rdk_Decal_Id(const IRhRdkDecal* pDecal)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Decal_Id(IntPtr pDecal);
+
+  //ON_UUID Rdk_Decal_TextureInstanceId(const IRhRdkDecal* pDecal)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid Rdk_Decal_TextureInstanceId(IntPtr pDecal);
+
+  //int Rdk_Decal_Mapping(const IRhRdkDecal* pDecal)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Decal_Mapping(IntPtr pDecal);
+
+  //int Rdk_Decal_Projection(const IRhRdkDecal* pDecal)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Decal_Projection(IntPtr pDecal);
+
+  //int Rdk_Decal_MapToInside(const IRhRdkDecal* pDecal)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Decal_MapToInside(IntPtr pDecal);
+
+  //double Rdk_Decal_Transparency(const IRhRdkDecal* pDecal)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double Rdk_Decal_Transparency(IntPtr pDecal);
+
+  //void Rdk_Decal_Origin(const IRhRdkDecal* pDecal, ON_3dPoint* pPoint)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Decal_Origin(IntPtr pDecal, ref Point3d pPoint);
+
+  //void Rdk_Decal_VectorUp(const IRhRdkDecal* pDecal, ON_3dVector* pVector)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Decal_VectorUp(IntPtr pDecal, ref Vector3d pVector);
+
+  //void Rdk_Decal_VectorAcross(const IRhRdkDecal* pDecal, ON_3dVector* pVector)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Decal_VectorAcross(IntPtr pDecal, ref Vector3d pVector);
+
+  //double Rdk_Decal_Height(const IRhRdkDecal* pDecal)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double Rdk_Decal_Height(IntPtr pDecal);
+
+  //double Rdk_Decal_Radius(const IRhRdkDecal* pDecal)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double Rdk_Decal_Radius(IntPtr pDecal);
+
+  //double Rdk_Decal_LatStart(const IRhRdkDecal* pDecal)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double Rdk_Decal_LatStart(IntPtr pDecal);
+
+  //double Rdk_Decal_LatEnd(const IRhRdkDecal* pDecal)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double Rdk_Decal_LatEnd(IntPtr pDecal);
+
+  //double Rdk_Decal_LonStart(const IRhRdkDecal* pDecal)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double Rdk_Decal_LonStart(IntPtr pDecal);
+
+  //double Rdk_Decal_LonEnd(const IRhRdkDecal* pDecal)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double Rdk_Decal_LonEnd(IntPtr pDecal);
+
+  //void Rdk_Decal_UVBounds(const IRhRdkDecal* pDecal, double* pMinUOut, double* pMinVOut, double* pMaxUOut, double* pMaxVOut)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Decal_UVBounds(IntPtr pDecal, ref double pMinUOut, ref double pMinVOut, ref double pMaxUOut, ref double pMaxVOut);
+
+  //int Rdk_Decal_Color(const IRhRdkDecal* pDecal, ON_3DPOINT_STRUCT point, ON_3DVECTOR_STRUCT normal, ON_4fPoint* pColInOut, ON_2dPoint* pUvOut)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Decal_Color(IntPtr pDecal, Point3d point, Vector3d normal, ref Color4f pColInOut, ref Point2d pUvOut);
+
+  //CRhRdkDecalIterator* Rdk_Decals_NewDecalIterator(ON_UUID uuidObject)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_Decals_NewDecalIterator(Guid uuidObject);
+
+  //const IRhRdkDecal* Rdk_Decals_Next(CRhRdkDecalIterator* pIt)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_Decals_Next(IntPtr pIt);
+
+  //void Rdk_Decals_ResetIterator(CRhRdkDecalIterator* pIt)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Decals_ResetIterator(IntPtr pIt);
+
+  //void Rdk_Decals_DeleteDecalIterator(CRhRdkDecalIterator* pIt)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Decals_DeleteDecalIterator(IntPtr pIt);
+  #endregion
+
+
   #region rdk_environment.cpp
   //void Rdk_SetSimulateEnvironmentCallback(RDK_SIMULATEENVIRONMENTPROC proc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
@@ -878,6 +965,77 @@ internal partial class UnsafeNativeMethods
   //void Rdk_RenderPlugInInfo_Delete(CRhRdkRenderPlugInIterator* p)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_RenderPlugInInfo_Delete(IntPtr p);
+  #endregion
+
+
+  #region rdk_sdkrender.cpp
+  //IRhRdkSdkRenderMeshIterator* Rdk_RenderMeshIterator_New(ON_UUID plugInId, bool needTriangleMesh)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_RenderMeshIterator_New(Guid plugInId, [MarshalAs(UnmanagedType.U1)]bool needTriangleMesh);
+
+  //int Rdk_RenderMesh_PrimitiveType(const CRhRdkRenderMesh* pMesh)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_RenderMesh_PrimitiveType(IntPtr pMesh);
+
+  //const CRhinoObject* Rdk_RenderMesh_Object(const CRhRdkRenderMesh* pMesh)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_RenderMesh_Object(IntPtr pMesh);
+
+  //const ON_Mesh* Rdk_RenderMesh_Mesh(const CRhRdkRenderMesh* pMesh)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_RenderMesh_Mesh(IntPtr pMesh);
+
+  //int Rdk_RenderMesh_Sphere(const CRhRdkRenderMesh* pMesh, ON_3dPoint* pCenter, double* pRadius)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_RenderMesh_Sphere(IntPtr pMesh, ref Point3d pCenter, ref double pRadius);
+
+  //void Rdk_RenderMesh_XformInstance(const CRhRdkRenderMesh* pMesh, ON_Xform* pXform)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderMesh_XformInstance(IntPtr pMesh, ref Transform pXform);
+
+  //int Rdk_RenderMesh_IsRdkMaterial(const CRhRdkRenderMesh* pMesh)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_RenderMesh_IsRdkMaterial(IntPtr pMesh);
+
+  //const CRhRdkMaterial* Rdk_RenderMesh_RdkMaterial(const CRhRdkRenderMesh* pMesh)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_RenderMesh_RdkMaterial(IntPtr pMesh);
+
+  //const ON_Material* Rdk_RenderMesh_OnMaterial(const CRhRdkRenderMesh* pMesh)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_RenderMesh_OnMaterial(IntPtr pMesh);
+
+  //void Rdk_RenderMesh_BoundingBox(const CRhRdkRenderMesh* pMesh, ON_3dPoint* min, ON_3dPoint* max)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderMesh_BoundingBox(IntPtr pMesh, ref Point3d min, ref Point3d max);
+
+  //void Rdk_RenderMeshIterator_EnsureRenderMeshesCreated(IRhRdkSdkRenderMeshIterator* pIt)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderMeshIterator_EnsureRenderMeshesCreated(IntPtr pIt);
+
+  //void Rdk_RenderMeshIterator_SceneBoundingBox(IRhRdkSdkRenderMeshIterator* pIt, ON_3dPoint* min, ON_3dPoint* max)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderMeshIterator_SceneBoundingBox(IntPtr pIt, ref Point3d min, ref Point3d max);
+
+  //int Rdk_RenderMeshIterator_SupportsAutomaticInstancing(IRhRdkSdkRenderMeshIterator* pIt)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_RenderMeshIterator_SupportsAutomaticInstancing(IntPtr pIt);
+
+  //void Rdk_RenderMeshIterator_Delete(IRhRdkSdkRenderMeshIterator* pIt)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderMeshIterator_Delete(IntPtr pIt);
+
+  //CRhRdkRenderMesh* Rdk_RenderMesh_New()
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_RenderMesh_New();
+
+  //int Rdk_RenderMeshIterator_Next(IRhRdkSdkRenderMeshIterator* pIt, CRhRdkRenderMesh* pMesh)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_RenderMeshIterator_Next(IntPtr pIt, IntPtr pMesh);
+
+  //void Rdk_RenderMeshIterator_Reset(IRhRdkSdkRenderMeshIterator* pIt)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderMeshIterator_Reset(IntPtr pIt);
   #endregion
 
 

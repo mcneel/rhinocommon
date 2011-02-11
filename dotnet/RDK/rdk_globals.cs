@@ -468,7 +468,7 @@ namespace Rhino.Render
     }
 
     //TODO
-    /** \return A reference to RDK's collection of registered content I/O plug-ins. */
+    /* \return A reference to RDK's collection of registered content I/O plug-ins. */
     //RHRDK_SDK const IRhRdkContentIOPlugIns& RhRdkContentIOPlugIns(void);
 
     //TODO
@@ -483,10 +483,10 @@ namespace Rhino.Render
     //TODO
 //RHRDK_SDK ON_BoundingBox RhRdkGetCRMBoundingBox(const IRhRdkCustomRenderMeshes& meshes);
 
-    /** \return A reference to RDK's custom render mesh manager. */
+    /* \return A reference to RDK's custom render mesh manager. */
     //RHRDK_SDK IRhRdkCustomRenderMeshManager& RhRdkCustomRenderMeshManager(void);
 
-    /** Create a new texture from a HBITMAP (which should be a DIBSECTION).
+    /* Create a new texture from a HBITMAP (which should be a DIBSECTION).
 	\param hBitmap is the bitmap to create the texture from.
 	\param bAllowSimulation determines whether simulation of the texture into a temporary bitmap is allowed.
 	\param bShared determines whether ownership is passed to RDK. If bShared is \e false, you must call
@@ -496,7 +496,7 @@ namespace Rhino.Render
     //RHRDK_SDK CRhRdkTexture* RhRdkNewDibTexture(HBITMAP hBitmap, bool bShared=false, bool bAllowSimulation=true);
     //RHRDK_SDK CRhRdkTexture* RhRdkNewDibTexture(CRhinoUiDib* pDib, bool bShared=false, bool bAllowSimulation=true);
 
-    /** Get an interface to an automatic UI. The caller shall delete the interface
+    /* Get an interface to an automatic UI. The caller shall delete the interface
       when it is no longer required.
       \param pParent is the parent window which <b>must not be NULL</b>.
       \param style specifies the visual style of the UI.

@@ -700,7 +700,7 @@ namespace Rhino.Geometry
 
       if (IntPtr.Zero == ptr)
         return null;
-      return new Mesh(ptr, null, null);
+      return new Mesh(ptr, null);
     }
 
     /// <summary>
@@ -722,7 +722,7 @@ namespace Rhino.Geometry
 
       if (IntPtr.Zero == ptr)
         return null;
-      return new Mesh(ptr, null, null);
+      return new Mesh(ptr, null);
     }
 
     /// <summary>
@@ -740,7 +740,7 @@ namespace Rhino.Geometry
       IntPtr pMesh = UnsafeNativeMethods.ON_Mesh_FromPlanarCurve(pCurve);
       if (IntPtr.Zero == pMesh)
         return null;
-      return new Mesh(pMesh, null, null);
+      return new Mesh(pMesh, null);
     }
 
     /// <summary>
@@ -759,7 +759,7 @@ namespace Rhino.Geometry
       IntPtr pMesh = UnsafeNativeMethods.RHC_RhinoMakePlanarMeshes(pCurve, pMeshParameters);
       if (IntPtr.Zero == pMesh)
         return null;
-      return new Mesh(pMesh, null, null);
+      return new Mesh(pMesh, null);
     }
 
     /// <summary>
@@ -976,7 +976,11 @@ namespace Rhino.Geometry
     {
       if (null != m_parent_face)
         return m_parent_face._GetMeshPointer();
-
+#if USING_RDK
+      Rhino.Render.RenderMesh rm = m__parent as Rhino.Render.RenderMesh;
+      if( rm!=null )
+        return rm.GetConst_ON_Mesh_Pointer();
+#endif
       return base._InternalGetConstPointer();
     }
 
@@ -1001,10 +1005,10 @@ namespace Rhino.Geometry
       m_parent_face = parent_face;
     }
 
-    internal Mesh(IntPtr native_pointer, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
-      : base(native_pointer, parent_object, obj_ref)
+    internal Mesh(IntPtr native_pointer, object parent)
+      : base(native_pointer, parent, -1)
     {
-      if (null == parent_object)
+      if (null == parent)
         ApplyMemoryPressure();
     }
 
@@ -1012,7 +1016,7 @@ namespace Rhino.Geometry
     {
       IntPtr ptr = ConstPointer();
       IntPtr pNewMesh = UnsafeNativeMethods.ON_Mesh_New(ptr);
-      return new Mesh(pNewMesh, null, null);
+      return new Mesh(pNewMesh, null);
     }
     /// <summary>
     /// Create an exact duplicate of this Mesh.
@@ -1024,7 +1028,7 @@ namespace Rhino.Geometry
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new Mesh(IntPtr.Zero, null, null);
+      return new Mesh(IntPtr.Zero, null);
     }
     #endregion
 
@@ -1307,7 +1311,7 @@ namespace Rhino.Geometry
       for (int i = 0; i < count; i++)
       {
         IntPtr pMesh = UnsafeNativeMethods.ON_MeshArray_Get(pMeshArray, i);
-        rc[i] = new Mesh(pMesh, null, null);
+        rc[i] = new Mesh(pMesh, null);
       }
       UnsafeNativeMethods.ON_MeshArray_Delete(pMeshArray);
       return rc;
@@ -1329,7 +1333,7 @@ namespace Rhino.Geometry
       for (int i = 0; i < count; i++)
       {
         IntPtr pMesh = UnsafeNativeMethods.ON_MeshArray_Get(pMeshArray, i);
-        rc[i] = new Mesh(pMesh, null, null);
+        rc[i] = new Mesh(pMesh, null);
       }
       UnsafeNativeMethods.ON_MeshArray_Delete(pMeshArray);
       return rc;
@@ -1449,7 +1453,7 @@ namespace Rhino.Geometry
       for (int i = 0; i < count; i++)
       {
         IntPtr pMesh = UnsafeNativeMethods.ON_MeshArray_Get(pMeshArray, i);
-        rc[i] = new Mesh(pMesh, null, null);
+        rc[i] = new Mesh(pMesh, null);
       }
       UnsafeNativeMethods.ON_MeshArray_Delete(pMeshArray);
       return rc;
@@ -1583,7 +1587,7 @@ namespace Rhino.Geometry
       IntPtr pNewMesh = UnsafeNativeMethods.RHC_RhinoOffsetMesh(pConstMesh, distance);
       if (IntPtr.Zero == pNewMesh)
         return null;
-      return new Mesh(pNewMesh, null, null);
+      return new Mesh(pNewMesh, null);
     }
     #endregion
 

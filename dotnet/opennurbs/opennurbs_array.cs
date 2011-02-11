@@ -682,7 +682,7 @@ namespace Rhino.Runtime.InteropWrappers
       {
         IntPtr pMesh = UnsafeNativeMethods.ON_MeshArray_Get(ptr, i);
         if (IntPtr.Zero != pMesh)
-          rc[i] = new Mesh(pMesh, null, null);
+          rc[i] = new Mesh(pMesh, null);
       }
       return rc;
     }

@@ -902,6 +902,14 @@ namespace Rhino.DocObjects
       //  RenderMaterialInstanceId = value.InstanceId;
       //}
     }
+    public Rhino.Render.ObjectDecals Decals
+    {
+      get
+      {
+        Rhino.Render.ObjectDecals decals = new Rhino.Render.ObjectDecals(this);
+        return decals;
+      }
+    }
 #endif
   }
 

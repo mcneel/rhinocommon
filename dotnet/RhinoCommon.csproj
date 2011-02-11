@@ -165,9 +165,11 @@
     <Compile Include="RDK\rdk_contentfield.cs" />
     <Compile Include="RDK\rdk_content_factories.cs" />
     <Compile Include="RDK\rdk_content_list.cs" />
+    <Compile Include="RDK\rdk_decals.cs" />
     <Compile Include="RDK\rdk_environment.cs" />
     <Compile Include="RDK\rdk_globals.cs" />
     <Compile Include="RDK\rdk_material.cs" />
+    <Compile Include="RDK\rdk_rendermesh_iterator.cs" />
     <Compile Include="RDK\rdk_render_plugin_info.cs" />
     <Compile Include="RDK\rdk_simulated_environment.cs" />
     <Compile Include="RDK\rdk_plugin.cs" />

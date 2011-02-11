@@ -181,7 +181,7 @@ namespace Rhino.Geometry
           rc = new LineCurve(pGeometry, parent, subobject_index);
           break;
         case idxON_Mesh: //7
-          rc = new Mesh(pGeometry, parent_object, source_objref);
+          rc = new Mesh(pGeometry, parent);
           break;
         case idxON_Point: //8
           rc = new Point(pGeometry, parent_object, source_objref);

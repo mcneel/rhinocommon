@@ -6382,6 +6382,18 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoGetRenderMeshes(IntPtr pRhinoObjects, [MarshalAs(UnmanagedType.U1)]bool bOkToCreate, [MarshalAs(UnmanagedType.U1)]bool bReturnAllObjects);
 
+  //ON_SimpleArray<ON_Surface*>* RHC_RhinoSimpleRollingBallFillet(const ON_Surface* constSurfaceA, bool bFlipA,
+  //                                                                            const ON_Surface* constSurfaceB, bool bFlipB,
+  //                                                                            double radius, double tol)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoSimpleRollingBallFillet(IntPtr constSurfaceA, [MarshalAs(UnmanagedType.U1)]bool bFlipA, IntPtr constSurfaceB, [MarshalAs(UnmanagedType.U1)]bool bFlipB, double radius, double tol);
+
+  //ON_SimpleArray<ON_Surface*>* RHC_RhinoSimpleRollingBallFillet2(const ON_Surface* constSurfaceA, ON_2DPOINT_STRUCT uvA,
+  //                                                                             const ON_Surface* constSurfaceB, ON_2DPOINT_STRUCT uvB,
+  //                                                                             double radius, double tol)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoSimpleRollingBallFillet2(IntPtr constSurfaceA, Point2d uvA, IntPtr constSurfaceB, Point2d uvB, double radius, double tol);
+
   //ON_Brep* RHC_RhinoOffsetSurface(const ON_BrepFace* pConstFace, double offset_distance, double offset_tolerance, bool both_sides, bool create_solid)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoOffsetSurface(IntPtr pConstFace, double offset_distance, double offset_tolerance, [MarshalAs(UnmanagedType.U1)]bool both_sides, [MarshalAs(UnmanagedType.U1)]bool create_solid);

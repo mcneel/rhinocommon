@@ -249,11 +249,26 @@ namespace Rhino
       /// <returns>True if the color changed. False if the color has not changed or the user pressed cancel</returns>
       public static bool ShowColorDialog(ref System.Drawing.Color color, bool includeButtonColors, string dialogTitle)
       {
-        int argb = color.ToArgb();
-        bool rc = UnsafeNativeMethods.RHC_RhinoColorDialog(ref argb, includeButtonColors, dialogTitle);
-        if (rc)
+        bool rc = false;
+        try
         {
-          color = System.Drawing.Color.FromArgb(argb);
+          int argb = color.ToArgb();
+          rc = UnsafeNativeMethods.RHC_RhinoColorDialog(ref argb, includeButtonColors, dialogTitle);
+          if (rc)
+            color = System.Drawing.Color.FromArgb(argb);
+        }
+        catch (EntryPointNotFoundException)
+        {
+          if (!Rhino.Runtime.HostUtils.RunningInRhino)
+          {
+            System.Windows.Forms.ColorDialog cd = new System.Windows.Forms.ColorDialog();
+            cd.Color = color;
+            if (cd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+              rc = true;
+              color = cd.Color;
+            }
+          }
         }
         return rc;
       }

@@ -124,6 +124,7 @@ namespace Rhino.Runtime
         return !RunningOnOSX;
       }
     }
+
     public static bool RunningOnOSX
     {
       get
@@ -134,10 +135,35 @@ namespace Rhino.Runtime
       }
     }
 
+    public static bool RunningInMono
+    {
+      get
+      {
+        return Type.GetType("Mono.Runtime") != null;
+      }
+    }
+
+    public static bool RunningInRhino
+    {
+      get
+      {
+        bool rc = true;
+        try
+        {
+          int sdkversion = Rhino.RhinoApp.SdkVersion;
+        }
+        catch (Exception)
+        {
+          rc = false;
+        }
+        return rc;
+      }
+    }
+
     static bool m_bSendDebugToRhino; // = false; initialized by runtime
     /// <summary>
     /// Print a debug message to the Rhino Command Line. 
-    /// The messae will only appear if the SendDebugToCommandLine property is set to True.
+    /// The message will only appear if the SendDebugToCommandLine property is set to True.
     /// </summary>
     /// <param name="msg">Message to print.</param>
     public static void DebugString(string msg)

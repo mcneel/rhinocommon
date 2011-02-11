@@ -208,8 +208,19 @@ namespace Rhino
           defaultButtonFlags = MB_DEFBUTTON3;
 
         uint flags = buttonFlags | iconFlags | defaultButtonFlags;
-        int rc = UnsafeNativeMethods.RHC_RhinoMessageBox(message, title, flags);
-        System.Windows.Forms.DialogResult result = DialogResultFromInt(rc);
+        System.Windows.Forms.DialogResult result = System.Windows.Forms.DialogResult.None;
+        try
+        {
+          int rc = UnsafeNativeMethods.RHC_RhinoMessageBox(message, title, flags);
+          result = DialogResultFromInt(rc);
+        }
+        catch (System.EntryPointNotFoundException)
+        {
+          if (!Rhino.Runtime.HostUtils.RunningInRhino)
+          {
+            result = System.Windows.Forms.MessageBox.Show(message, title, buttons, icon, defaultButton);
+          }
+        }
         return result;
       }
 

@@ -499,6 +499,57 @@ namespace Rhino.Runtime.InteropWrappers
   }
 
   /// <summary>
+  /// Wrapper for a C++ ON_SimpleArray of ON_Surface* or const ON_Surface*
+  /// </summary>
+  public class SimpleArraySurfacePointer : IDisposable
+  {
+    IntPtr m_ptr; //ON_SimpleArray<ON_Surface*>*
+    public IntPtr ConstPointer() { return m_ptr; }
+    public IntPtr NonConstPointer() { return m_ptr; }
+
+    public SimpleArraySurfacePointer()
+    {
+      m_ptr = UnsafeNativeMethods.ON_SurfaceArray_New();
+    }
+
+    public Surface[] ToNonConstArray()
+    {
+      int count = UnsafeNativeMethods.ON_SurfaceArray_Count(m_ptr);
+      if (count < 1)
+        return new Surface[0];
+      Surface[] rc = new Surface[count];
+      for (int i = 0; i < count; i++)
+      {
+        IntPtr surface = UnsafeNativeMethods.ON_SurfaceArray_Get(m_ptr, i);
+        if (IntPtr.Zero == surface)
+          continue;
+        rc[i] = GeometryBase.CreateGeometryHelper(surface, null) as Surface;
+      }
+      return rc;
+    }
+
+    ~SimpleArraySurfacePointer()
+    {
+      Dispose(false);
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_ptr)
+      {
+        UnsafeNativeMethods.ON_SurfaceArray_Delete(m_ptr);
+        m_ptr = IntPtr.Zero;
+      }
+    }
+  }
+
+  /// <summary>
   /// Wrapper for a C++ ON_SimpleArray of ON_Curve* or const ON_Curve*
   /// </summary>
   public class SimpleArrayCurvePointer : IDisposable

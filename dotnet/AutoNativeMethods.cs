@@ -674,6 +674,22 @@ internal partial class UnsafeNativeMethods
   //void ON_StringArray_Delete(ON_ClassArray<ON_wString>* pStrings)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_StringArray_Delete(IntPtr pStrings);
+
+  //ON_SimpleArray<ON_Surface*>* ON_SurfaceArray_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_SurfaceArray_New();
+
+  //void ON_SurfaceArray_Delete(ON_SimpleArray<ON_Surface*>* pSurfaceArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_SurfaceArray_Delete(IntPtr pSurfaceArray);
+
+  //int ON_SurfaceArray_Count(const ON_SimpleArray<ON_Surface*>* pSurfaceArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_SurfaceArray_Count(IntPtr pSurfaceArray);
+
+  //ON_Surface* ON_SurfaceArray_Get(ON_SimpleArray<ON_Surface*>* pSurfaceArray, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_SurfaceArray_Get(IntPtr pSurfaceArray, int index);
   #endregion
 
 
@@ -6382,17 +6398,17 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoGetRenderMeshes(IntPtr pRhinoObjects, [MarshalAs(UnmanagedType.U1)]bool bOkToCreate, [MarshalAs(UnmanagedType.U1)]bool bReturnAllObjects);
 
-  //ON_SimpleArray<ON_Surface*>* RHC_RhinoSimpleRollingBallFillet(const ON_Surface* constSurfaceA, bool bFlipA,
-  //                                                                            const ON_Surface* constSurfaceB, bool bFlipB,
-  //                                                                            double radius, double tol)
+  //void RHC_RhinoSimpleRollingBallFillet(const ON_Surface* constSurfaceA, bool bFlipA,
+  //                                                    const ON_Surface* constSurfaceB, bool bFlipB,
+  //                                                    double radius, double tol, ON_SimpleArray<ON_Surface*>* pSurfaces)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RHC_RhinoSimpleRollingBallFillet(IntPtr constSurfaceA, [MarshalAs(UnmanagedType.U1)]bool bFlipA, IntPtr constSurfaceB, [MarshalAs(UnmanagedType.U1)]bool bFlipB, double radius, double tol);
+  internal static extern void RHC_RhinoSimpleRollingBallFillet(IntPtr constSurfaceA, [MarshalAs(UnmanagedType.U1)]bool bFlipA, IntPtr constSurfaceB, [MarshalAs(UnmanagedType.U1)]bool bFlipB, double radius, double tol, IntPtr pSurfaces);
 
-  //ON_SimpleArray<ON_Surface*>* RHC_RhinoSimpleRollingBallFillet2(const ON_Surface* constSurfaceA, ON_2DPOINT_STRUCT uvA,
-  //                                                                             const ON_Surface* constSurfaceB, ON_2DPOINT_STRUCT uvB,
-  //                                                                             double radius, double tol)
+  //void RHC_RhinoSimpleRollingBallFillet2(const ON_Surface* constSurfaceA, ON_2DPOINT_STRUCT uvA,
+  //                                                     const ON_Surface* constSurfaceB, ON_2DPOINT_STRUCT uvB,
+  //                                                     double radius, double tol, ON_SimpleArray<ON_Surface*>* pSurfaces)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RHC_RhinoSimpleRollingBallFillet2(IntPtr constSurfaceA, Point2d uvA, IntPtr constSurfaceB, Point2d uvB, double radius, double tol);
+  internal static extern void RHC_RhinoSimpleRollingBallFillet2(IntPtr constSurfaceA, Point2d uvA, IntPtr constSurfaceB, Point2d uvB, double radius, double tol, IntPtr pSurfaces);
 
   //ON_Brep* RHC_RhinoOffsetSurface(const ON_BrepFace* pConstFace, double offset_distance, double offset_tolerance, bool both_sides, bool create_solid)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

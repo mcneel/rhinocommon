@@ -268,6 +268,11 @@ namespace Rhino.PlugIns
           // RDK initialization.
           if (rc == LoadReturnCode.Success)
           {
+            if (p is RenderPlugIn)
+            {
+              Rhino.Render.RdkPlugIn.GetRdkPlugIn(p.Id);
+            }
+
             Rhino.Render.RenderContent.RegisterContent(p.Assembly, p.Id);
           }
 #endif
@@ -856,12 +861,22 @@ namespace Rhino.PlugIns
 
   public abstract class RenderPlugIn : PlugIn
   {
-    internal delegate int RenderFunc(int plugin_serial_number, int doc_id, int modes, int render_preview);
-    internal delegate int RenderWindowFunc(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow);
+    private static IntPtr m_render_command_context = IntPtr.Zero;
+    internal static IntPtr RenderCommandContextPointer
+    {
+      get
+      {
+        return m_render_command_context;
+      }
+    }
+
+    internal delegate int RenderFunc(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr context);
+    internal delegate int RenderWindowFunc(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow, IntPtr context);
     private static RenderFunc m_OnRender = InternalOnRender;
     private static RenderWindowFunc m_OnRenderWindow = InternalOnRenderWindow;
-    private static int InternalOnRender(int plugin_serial_number, int doc_id, int modes, int render_preview)
+    private static int InternalOnRender(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr context)
     {
+      m_render_command_context = context;
       Rhino.Commands.Result rc = Rhino.Commands.Result.Failure;
       RenderPlugIn p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugIn;
       if (null == p)
@@ -885,11 +900,13 @@ namespace Rhino.PlugIns
           HostUtils.DebugString("Error " + error_msg);
         }
       }
+      m_render_command_context = IntPtr.Zero;
       return (int)rc;
     }
 
-    private static int InternalOnRenderWindow(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow)
+    private static int InternalOnRenderWindow(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow, IntPtr context)
     {
+      m_render_command_context = context;
       Rhino.Commands.Result rc = Rhino.Commands.Result.Failure;
       RenderPlugIn p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugIn;
       if (null == p)
@@ -915,6 +932,7 @@ namespace Rhino.PlugIns
           HostUtils.DebugString("Error " + error_msg);
         }
       }
+      m_render_command_context = IntPtr.Zero;
       return (int)rc;
     }
 

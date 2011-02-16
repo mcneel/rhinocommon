@@ -29,7 +29,7 @@ namespace Rhino
       return UnsafeNativeMethods.RHC_RhinoWriteFile(this.m_docId, path, pOptions);
     }
 
-    internal int m_docId; //-1 means active doc
+    internal int m_docId;
     private RhinoDoc(int id)
     {
       m_docId = id;
@@ -50,7 +50,7 @@ namespace Rhino
 
     internal static RhinoDoc FromId(int docId)
     {
-      if (docId < 0)
+      if (docId == 0)
         return null;
       if (null != m_doc && m_doc.m_docId == docId)
         return m_doc;

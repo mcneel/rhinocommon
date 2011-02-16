@@ -79,7 +79,7 @@ namespace Rhino
     {
       IntPtr rc = UnsafeNativeMethods.CRhinoDoc_GetSetString(m_docId, which, false, null);
       if (IntPtr.Zero == rc)
-        return null;
+        return String.Empty;
       return Marshal.PtrToStringUni(rc);
     }
     //const int idxName = 0;
@@ -553,7 +553,12 @@ namespace Rhino
     /// </summary>
     public bool IsSendingMail
     {
-      get { return GetBool(idxIsSendingMail); }
+      get
+	  {
+        if( Runtime.HostUtils.RunningOnOSX )
+          throw new NotImplementedException();
+        return GetBool(idxIsSendingMail);
+      }
     }
 
     /// <summary>

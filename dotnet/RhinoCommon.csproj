@@ -171,6 +171,8 @@
     <Compile Include="RDK\rdk_material.cs" />
     <Compile Include="RDK\rdk_rendermesh_iterator.cs" />
     <Compile Include="RDK\rdk_render_plugin_info.cs" />
+    <Compile Include="RDK\rdk_render_window.cs" />
+    <Compile Include="RDK\rdk_sdkrender.cs" />
     <Compile Include="RDK\rdk_simulated_environment.cs" />
     <Compile Include="RDK\rdk_plugin.cs" />
     <Compile Include="RDK\rdk_texture.cs" />

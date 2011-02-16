@@ -33,6 +33,9 @@ namespace Rhino.Render
 
         //Environments
         UnsafeNativeMethods.Rdk_SetSimulateEnvironmentCallback(Rhino.Render.RenderEnvironment.m_SimulateEnvironment);
+
+        //SdkRender
+        UnsafeNativeMethods.Rdk_SetSdkRenderCallback(Rhino.Render.RenderPipeline.m_ReturnBoolGeneralCallback);
         
       }
       else
@@ -57,6 +60,9 @@ namespace Rhino.Render
 
         //Environments
         UnsafeNativeMethods.Rdk_SetSimulateEnvironmentCallback(null);
+
+        //SdkRender
+        UnsafeNativeMethods.Rdk_SetSdkRenderCallback(null);
       }
     }
 
@@ -80,6 +86,16 @@ namespace Rhino.Render
           return m_all_rdk_plugins[i];
       }
       IntPtr pRhinoPlugIn = UnsafeNativeMethods.CRhinoPlugInManager_GetPlugInFromId(rhino_plugin_id, true);
+
+      if (IntPtr.Zero == pRhinoPlugIn)
+      {
+        Rhino.PlugIns.PlugIn cmnPlugIn = Rhino.PlugIns.PlugIn.GetLoadedPlugIn(rhino_plugin_id);
+        if (null != cmnPlugIn)
+        {
+          pRhinoPlugIn = cmnPlugIn.NonConstPointer();
+        }
+      }
+
       return GetRdkPlugInHelper(pRhinoPlugIn, rhino_plugin_id);
     }
     static RdkPlugIn GetRdkPlugInHelper(IntPtr pRhinoPlugIn, Guid rhinoPlugInId)

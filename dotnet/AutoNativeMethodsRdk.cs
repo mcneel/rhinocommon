@@ -754,7 +754,7 @@ internal partial class UnsafeNativeMethods
   //void Rdk_SetNewEnvironmentCallback(RDK_NEWENVIRONMENTPROC proc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
-  //CRhCmnRdkPlugIn* CRhCmnRdkPlugIn_New( CRhinoPlugIn* pRhinoPlugIn )
+  //CRhRdkPlugIn* CRhCmnRdkPlugIn_New( CRhinoPlugIn* pRhinoPlugIn )
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhCmnRdkPlugIn_New(IntPtr pRhinoPlugIn);
 
@@ -1036,6 +1036,89 @@ internal partial class UnsafeNativeMethods
   //void Rdk_RenderMeshIterator_Reset(IRhRdkSdkRenderMeshIterator* pIt)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_RenderMeshIterator_Reset(IntPtr pIt);
+
+  //void Rdk_SetSdkRenderCallback(RDK_SDKRENDERPROC proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //CRhRdkSdkRender* Rdk_SdkRender_New(int serial_number, const CRhinoCommandContext* pCommandContext, 
+  //														 CRhinoRenderPlugIn* pPlugIn, 
+  //														 const RHMONO_STRING* _pCaption, 
+  //														 bool bReuseRenderWindow, 
+  //														 bool bClearLastRendering)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_SdkRender_New(int serial_number, IntPtr pCommandContext, IntPtr pPlugIn, [MarshalAs(UnmanagedType.LPWStr)]string _pCaption, [MarshalAs(UnmanagedType.U1)]bool bReuseRenderWindow, [MarshalAs(UnmanagedType.U1)]bool bClearLastRendering);
+
+  //void Rdk_RenderWindow_Initialize(CRhRdkSdkRender* pSdkRender, int channels, int iWidth, int iHeight)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindow_Initialize(IntPtr pSdkRender, int channels, int iWidth, int iHeight);
+
+  //void Rdk_SdkRender_Delete(CRhRdkSdkRender* p)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_SdkRender_Delete(IntPtr p);
+
+  //int Rdk_SdkRender_Render(CRhRdkSdkRender* pSdkRender, int iHeight, int iWidth)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_SdkRender_Render(IntPtr pSdkRender, int iHeight, int iWidth);
+
+  //int Rdk_SdkRender_RenderWindow(CRhRdkSdkRender* pSdkRender, CRhinoView* pView, int iTop, int iLeft, int iBottom, int iRight, bool bInWindow)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_SdkRender_RenderWindow(IntPtr pSdkRender, IntPtr pView, int iTop, int iLeft, int iBottom, int iRight, [MarshalAs(UnmanagedType.U1)]bool bInWindow);
+
+  //void Rdk_SdkRender_RenderSize(int* piWidth, int* piHeight)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_SdkRender_RenderSize(ref int piWidth, ref int piHeight);
+
+  //void Rdk_SdkRender_SetConfirmationSeconds(CRhRdkSdkRender* pSdkRender, int i)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_SdkRender_SetConfirmationSeconds(IntPtr pSdkRender, int i);
+
+  //IRhRdkSdkRenderMeshIterator* Rdk_SdkRender_NewRenderMeshIterator(CRhRdkSdkRender* pSdkRender, bool bForceTriMesh)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_SdkRender_NewRenderMeshIterator(IntPtr pSdkRender, [MarshalAs(UnmanagedType.U1)]bool bForceTriMesh);
+
+  //IRhRdkRenderWindow* Rdk_SdkRender_GetRenderWindow(CRhRdkSdkRender* pSdkRender)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_SdkRender_GetRenderWindow(IntPtr pSdkRender);
+
+  //ON_UUID Rdk_RenderWindow_StandardChannelId(int ch)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid Rdk_RenderWindow_StandardChannelId(int ch);
+
+  //void Rdk_RenderWindow_Size(IRhRdkRenderWindow* pWindow, int* piWidth, int* piHeight)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindow_Size(IntPtr pWindow, ref int piWidth, ref int piHeight);
+
+  //void Rdk_RenderWindow_SetProgress(IRhRdkRenderWindow* pWindow, const RHMONO_STRING* _ps, int iPC)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindow_SetProgress(IntPtr pWindow, [MarshalAs(UnmanagedType.LPWStr)]string _ps, int iPC);
+
+  //IRhRdkRenderWindow::IChannel* Rdk_RenderWindow_OpenChannel(IRhRdkRenderWindow* pWindow, int id)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_RenderWindow_OpenChannel(IntPtr pWindow, int id);
+
+  //int Rdk_RenderWindowChannel_PixelSize(IRhRdkRenderWindow::IChannel* pChannel)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_RenderWindowChannel_PixelSize(IntPtr pChannel);
+
+  //void Rdk_RenderWindowChannel_SetFloatValue(IRhRdkRenderWindow::IChannel* pChannel, int x, int y, float value)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindowChannel_SetFloatValue(IntPtr pChannel, int x, int y, float value);
+
+  //void Rdk_RenderWindowChannel_SetColorValue(IRhRdkRenderWindow::IChannel* pChannel, int x, int y, ON_4FVECTOR_STRUCT value)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindowChannel_SetColorValue(IntPtr pChannel, int x, int y, Color4f value);
+
+  //void Rdk_RenderWindowChannel_Close(IRhRdkRenderWindow::IChannel* pChannel)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindowChannel_Close(IntPtr pChannel);
+
+  //void Rdk_RenderWindow_Invalidate(IRhRdkRenderWindow* pWindow)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindow_Invalidate(IntPtr pWindow);
+
+  //void Rdk_RenderWindow_InvalidateArea(IRhRdkRenderWindow* pWindow, int top, int left, int bottom, int right)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindow_InvalidateArea(IntPtr pWindow, int top, int left, int bottom, int right);
   #endregion
 
 

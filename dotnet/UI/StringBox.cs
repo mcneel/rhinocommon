@@ -19,6 +19,12 @@ namespace Rhino.UI
           lines[i] = lines[i].TrimEnd(new char[] { '\r' });
         m_txtbox.Lines = lines;        
       }
+      if (Runtime.HostUtils.RunningOnOSX)
+      {
+        System.Drawing.Point temp = m_btnOk.Location;
+        m_btnOk.Location = m_btnCancel.Location;
+        m_btnCancel.Location = temp;
+      }
     }
 
     public string GetText()

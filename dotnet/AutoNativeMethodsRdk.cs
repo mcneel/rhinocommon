@@ -754,9 +754,20 @@ internal partial class UnsafeNativeMethods
   //void Rdk_SetNewEnvironmentCallback(RDK_NEWENVIRONMENTPROC proc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
-  //CRhRdkPlugIn* CRhCmnRdkPlugIn_New( CRhinoPlugIn* pRhinoPlugIn )
+  //void CRhinoRenderPlugIn_SetRdkCallbacks(SUPPORTSFEATUREPROC sf, 
+  //													  ABORTRENDERPROC ar, 
+  //													  ALLOWCHOOSECONTENTPROC acc, 
+  //													  CREATEDEFAULTCONTENTPROC cdc,
+  //													  OUTPUTTYPESPROC ot)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //int Rdk_RenderPlugIn_BaseOutputTypeAtIndex(CRhinoRenderPlugIn* pPlugIn, int iIndex, CRhCmnStringHolder* pSH_Ext, CRhCmnStringHolder* pSH_Desc)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr CRhCmnRdkPlugIn_New(IntPtr pRhinoPlugIn);
+  internal static extern int Rdk_RenderPlugIn_BaseOutputTypeAtIndex(IntPtr pPlugIn, int iIndex, IntPtr pSH_Ext, IntPtr pSH_Desc);
+
+  //CRhRdkPlugIn* CRhCmnRdkPlugIn_New( CRhinoPlugIn* pRhinoPlugIn, int serial_number)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhCmnRdkPlugIn_New(IntPtr pRhinoPlugIn, int serial_number);
 
   //void Rdk_AddTextureFactory(ON_UUID content_id)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]

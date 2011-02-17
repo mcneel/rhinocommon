@@ -24,7 +24,11 @@ namespace Rhino.Render
     /// <param name="doc"></param>
     /// <param name="mode"></param>
     /// <param name="plugin"></param>
+    /// <param name="sizeRendering"></param>
     /// <param name="caption">The caption to display in the frame window.</param>
+    /// <param name="channels"></param>
+    /// <param name="reuseRenderWindow"></param>
+    /// <param name="clearLastRendering"></param>
     public RenderPipeline(RhinoDoc doc,
                           Rhino.Commands.RunMode mode,
                           Rhino.PlugIns.PlugIn plugin,
@@ -74,7 +78,6 @@ namespace Rhino.Render
     /// <summary>
     /// Call this function to render the scene normally. The function returns when rendering is complete (or cancelled).
     /// </summary>
-    /// <param name="sizeImage">Size of the image to be rendered. If you want RDK to work out this value call RenderSize().</param>
     /// <returns></returns>
     public RenderReturnCodes Render()
     {
@@ -142,7 +145,6 @@ namespace Rhino.Render
     /// <summary>
     /// A new render mesh iterator. The caller shall delete the iterator. Any meshes created by the iterator persist in memory for the lifetime of the iterator.
     /// </summary>
-    /// <param name="view"></param>
     /// <param name="forceTriMesh"></param>
     /// <returns></returns>
     /// //TODO - ON_Viewport

@@ -76,9 +76,10 @@ namespace Rhino.Render
           return m_all_rdk_plugins[i];
       }
       IntPtr pRhinoPlugIn = plugin.NonConstPointer();
-      return GetRdkPlugInHelper(pRhinoPlugIn, plugin.Id);
+      return GetRdkPlugInHelper(pRhinoPlugIn, plugin.Id, plugin.m_runtime_serial_number);
     }
-    public static RdkPlugIn GetRdkPlugIn(Guid rhino_plugin_id)
+
+    public static RdkPlugIn GetRdkPlugIn(Guid rhino_plugin_id, int serial_number)
     {
       for (int i = 0; i < m_all_rdk_plugins.Count; i++)
       {
@@ -96,13 +97,14 @@ namespace Rhino.Render
         }
       }
 
-      return GetRdkPlugInHelper(pRhinoPlugIn, rhino_plugin_id);
+      return GetRdkPlugInHelper(pRhinoPlugIn, rhino_plugin_id, serial_number);
     }
-    static RdkPlugIn GetRdkPlugInHelper(IntPtr pRhinoPlugIn, Guid rhinoPlugInId)
+
+    static RdkPlugIn GetRdkPlugInHelper(IntPtr pRhinoPlugIn, Guid rhinoPlugInId, int serial_number)
     {
       if (pRhinoPlugIn != IntPtr.Zero)
       {
-        IntPtr pRdkPlugIn = UnsafeNativeMethods.CRhCmnRdkPlugIn_New(pRhinoPlugIn);
+        IntPtr pRdkPlugIn = UnsafeNativeMethods.CRhCmnRdkPlugIn_New(pRhinoPlugIn, serial_number);
         if (pRdkPlugIn != IntPtr.Zero)
         {
           SetRdkCallbackFunctions(true);

@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Rhino.Runtime;
+using System.Collections.Generic;
 
 namespace Rhino.PlugIns
 {
@@ -270,7 +271,7 @@ namespace Rhino.PlugIns
           {
             if (p is RenderPlugIn)
             {
-              Rhino.Render.RdkPlugIn.GetRdkPlugIn(p.Id);
+              Rhino.Render.RdkPlugIn.GetRdkPlugIn(p.Id, plugin_serial_number);
             }
 
             Rhino.Render.RenderContent.RegisterContent(p.Assembly, p.Id);
@@ -870,6 +871,7 @@ namespace Rhino.PlugIns
       }
     }
 
+    #region render and render window virtual function implementation
     internal delegate int RenderFunc(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr context);
     internal delegate int RenderWindowFunc(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow, IntPtr context);
     private static RenderFunc m_OnRender = InternalOnRender;
@@ -935,13 +937,248 @@ namespace Rhino.PlugIns
       m_render_command_context = IntPtr.Zero;
       return (int)rc;
     }
+    #endregion
 
     protected RenderPlugIn()
     {
       UnsafeNativeMethods.CRhinoRenderPlugIn_SetCallbacks(m_OnRender, m_OnRenderWindow);
+
+#if USING_RDK
+      UnsafeNativeMethods.CRhinoRenderPlugIn_SetRdkCallbacks(m_OnSupportsFeature, 
+                                                             m_OnAbortRender, 
+                                                             m_OnAllowChooseContent, 
+                                                             m_OnCreateDefaultContent,
+                                                             m_OnOutputTypes);
+#endif
     }
 
-    
+#if USING_RDK
+    public enum Features : int
+    {
+      Materials = 0,
+      Environments = 1,
+      Textures = 2,
+      PostEffects = 3,
+      Sun = 4,
+      CustomRenderMeshes = 5,
+      Decals = 6,
+      GroundPlane = 7,
+      SkyLight = 8,
+    }
+
+    /// <summary>
+    /// Return true if your renderer supports the specific feature.
+    /// </summary>
+    /// <param name="f"></param>
+    /// <returns></returns>
+    protected virtual bool SupportsFeature(Features f)
+    {
+      return true;
+    }
+
+    /// <summary>
+    /// You must implement this function to abort preview renderings initiated using CreatePreview (if possible)
+    /// </summary>
+    protected virtual void AbortPreviewRender()
+    {
+    }
+
+    protected virtual bool AllowChooseContent(Rhino.Render.RenderContent content)
+    {
+      return true;
+    }
+
+    protected virtual void CreateDefaultContent(RhinoDoc doc)
+    {
+    }
+
+    public class OutputTypeInfo
+    {
+      public OutputTypeInfo(string ext, string type)
+      {
+        _fileExtension = ext;
+        _typeDescription = type;
+      }
+
+      private readonly string _fileExtension;
+      public string fileExtension
+      {
+        get { return _fileExtension; }
+      }
+      private readonly string _typeDescription;
+      public string typeDescription
+      {
+        get { return _typeDescription; }
+      }
+    }
+
+    protected virtual List<OutputTypeInfo> OutputTypes()
+    {
+      //TODO - base class call
+      int iIndex = 0;
+
+      StringHolder shExt = new StringHolder();
+      StringHolder shDesc = new StringHolder();
+
+      List<OutputTypeInfo> list = new List<OutputTypeInfo>();
+
+      while ( 1==UnsafeNativeMethods.Rdk_RenderPlugIn_BaseOutputTypeAtIndex(NonConstPointer(), iIndex++, shExt.NonConstPointer(), shDesc.NonConstPointer()))
+      {
+        list.Add(new OutputTypeInfo(shExt.ToString(), shDesc.ToString()));
+      }
+      return list;
+    }
+
+    #region other virtual function implementation
+    internal delegate int SupportsFeatureCallback(int serial_number, Features f);
+    private static SupportsFeatureCallback m_OnSupportsFeature = OnSupportsFeature;
+    private static int OnSupportsFeature(int serial_number, Features f)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      if (null == p)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnSupportsFeature");
+      }
+      else
+      {
+        try
+        {
+          return p.SupportsFeature(f) ? 1:0;
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnSupportsFeature\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+      return 0;
+    }
+
+    internal delegate void AbortRenderCallback(int serial_number);
+    private static AbortRenderCallback m_OnAbortRender = OnAbortRender;
+    private static void OnAbortRender(int serial_number)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      if (null == p)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnAbortRender");
+      }
+      else
+      {
+        try
+        {
+          p.AbortPreviewRender();
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnAbortRender\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+    }
+
+    internal delegate int AllowChooseContentCallback(int serial_number, IntPtr pConstContent);
+    private static AllowChooseContentCallback m_OnAllowChooseContent = OnAllowChooseContent;
+    private static int OnAllowChooseContent(int serial_number, IntPtr pConstContent)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      Rhino.Render.RenderContent c = Rhino.Render.RenderContent.FromPointer(pConstContent);
+      if (null == p || null == c)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnAllowChooseContent");
+      }
+      else
+      {
+        try
+        {
+          return p.AllowChooseContent(c) ? 1:0;
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnAllowChooseContent\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+      return 0;
+    }
+
+    internal delegate void CreateDefaultContentCallback(int serial_number, int docId);
+    private static CreateDefaultContentCallback m_OnCreateDefaultContent = OnCreateDefaultContent;
+    private static void OnCreateDefaultContent(int serial_number, int docId)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      RhinoDoc doc = RhinoDoc.FromId(docId);
+
+      if (null == p || null == doc)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnCreateDefaultContent");
+      }
+      else
+      {
+        try
+        {
+          p.CreateDefaultContent(doc);
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnCreateDefaultContent\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+    }
+
+    internal delegate void OutputTypesCallback(int serial_number, IntPtr pON_wStringExt, IntPtr pON_wStringDesc);
+    private static OutputTypesCallback m_OnOutputTypes = OnOutputTypes;
+    private static void OnOutputTypes(int serial_number, IntPtr pON_wStringExt, IntPtr pON_wStringDesc)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+
+      if (null == p || (IntPtr.Zero == pON_wStringDesc) || (IntPtr.Zero == pON_wStringExt))
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnOutputTypes");
+      }
+      else
+      {
+        try
+        {
+          List<OutputTypeInfo> types = p.OutputTypes();
+
+          System.Text.StringBuilder sbExt = new System.Text.StringBuilder();
+          System.Text.StringBuilder sbDesc = new System.Text.StringBuilder();
+
+          foreach (OutputTypeInfo type in types)
+          {
+            if (sbExt.Length != 0)
+              sbExt.Append(";");
+
+            sbExt.Append(type.fileExtension);
+
+            if (sbDesc.Length != 0)
+              sbDesc.Append(";");
+
+            sbDesc.Append(type.typeDescription);
+          }
+
+          UnsafeNativeMethods.ON_wString_Set(pON_wStringExt, sbExt.ToString());
+          UnsafeNativeMethods.ON_wString_Set(pON_wStringDesc, sbDesc.ToString());
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnOutputTypes\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+    }
+    #endregion
+
+#endif
+
+
     /// <summary>
     /// Called by Render and RenderPreview commands if this plug-in is set as the default render engine. 
     /// </summary>

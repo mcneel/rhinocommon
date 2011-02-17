@@ -58,6 +58,15 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoRenderPlugIn_SetCallbacks(Rhino.PlugIns.RenderPlugIn.RenderFunc render, Rhino.PlugIns.RenderPlugIn.RenderWindowFunc renderwindow);
 
+#if USING_RDK
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoRenderPlugIn_SetRdkCallbacks(Rhino.PlugIns.RenderPlugIn.SupportsFeatureCallback supportsFeatureCallback, 
+                                                                 Rhino.PlugIns.RenderPlugIn.AbortRenderCallback abortRenderCallback,
+                                                                 Rhino.PlugIns.RenderPlugIn.AllowChooseContentCallback allowChooseContentCallback,
+                                                                 Rhino.PlugIns.RenderPlugIn.CreateDefaultContentCallback createDefaultContentCallback,
+                                                                 Rhino.PlugIns.RenderPlugIn.OutputTypesCallback outputTypesCallback);
+#endif
+
 #if !BUILDING_MONO
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoDigitizerPlugIn_SetCallbacks(Rhino.PlugIns.DigitizerPlugIn.EnableDigitizerFunc enablefunc,

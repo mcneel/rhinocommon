@@ -4421,6 +4421,15 @@ internal partial class UnsafeNativeMethods
   //void CRhinoDoc_FlashObjectList(int doc_id, ON_SimpleArray<const CRhinoObject*>* list, bool useSelectionColor)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDoc_FlashObjectList(int doc_id, IntPtr list, [MarshalAs(UnmanagedType.U1)]bool useSelectionColor);
+
+  //unsigned int CRhinoDoc_BeginUndoRecordEx(int doc_id, const RHMONO_STRING* description)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern uint CRhinoDoc_BeginUndoRecordEx(int doc_id, [MarshalAs(UnmanagedType.LPWStr)]string description);
+
+  //bool CRhinoDoc_EndUndoRecord(int doc_id, unsigned int sn)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoDoc_EndUndoRecord(int doc_id, uint sn);
   #endregion
 
 

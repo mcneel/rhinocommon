@@ -265,6 +265,7 @@ namespace Rhino
     //const int idxInGetMeshes = 11;
     const int idxIsSendingMail = 12;
     const int idxUndoRecordingEnable = 13;
+    const int idxUndoRecordingIsActive = 14;
 
     internal bool GetBool(int which)
     {
@@ -579,76 +580,37 @@ namespace Rhino
       set { UnsafeNativeMethods.CRhinoDoc_GetSetBool(m_docId, idxUndoRecordingEnable, true, value); }
     }
 
-    //  bool UndoRecordingIsActive() const;  // true if actually happening now
+    /// <summary>
+    /// True if undo recording is actually happening now
+    /// </summary>
+    public bool UndoRecordingIsActive
+    {
+      get { return GetBool(idxUndoRecordingIsActive); }
+    }
 
+    /// <summary>
+    /// Used to begin recording undo information when the document
+    /// is changed outside of a command.  An example begin changes
+    /// caused by the modeless layer or object properties dialogs
+    /// when commands are not running.
+    /// </summary>
+    /// <param name="description"></param>
+    /// <returns>
+    /// Serial number of record.  Returns 0 if record is not started
+    /// because undo information is already being recorded or
+    /// undo is disabled.
+    /// </returns>
+    [CLSCompliant(false)]
+    public uint BeginUndoRecord(string description)
+    {
+      return UnsafeNativeMethods.CRhinoDoc_BeginUndoRecordEx(m_docId, description);
+    }
 
-    //  /*
-    //  Description:
-    //    Used to begin recording undo information when a command starts.
-    //  Example:
-
-    //          unsigned int undo_record_sn = BeginUndoRecordEx(...);
-    //          ...
-    //          doc->EndUndoRecord(undo_record_sn);
-
-    //  Returns:
-    //    Serial number of record.  Returns 0 if record is not started
-    //    because undo information is already being recorded or
-    //    undo is disabled.
-    //  */
-    //  unsigned int BeginUndoRecordEx( const CRhinoCommand* );
-
-
-    //  /*
-    //  Description:
-    //    Used to begin recording undo information when the document
-    //    is changed outside of a command.  An example begin changes
-    //    caused by the modeless layer or object properties dialogs
-    //    when commands are not running.
-    //  Example:
-    //          unsigned int undo_record_sn = BeginUndoRecordEx(...);
-    //          ...
-    //          doc->EndUndoRecord(undo_record_sn);
-    //  Returns:
-    //    Serial number of record.  Returns 0 if record is not started
-    //    because undo information is already being recorded or
-    //    undo is disabled.
-    //  */
-    //  unsigned int BeginUndoRecordEx( const wchar_t* sActionDescription );
-
-    //  /*
-    //  Description:
-    //    If you want to your plug-in to do something when the Rhino
-    //    Undo/Redo command runs, the call AddCustomUndoEvent during
-    //    your command.
-
-    //    This function is for expert plug-in developers.  If you
-    //    don't do a good job here, you will really break Rhino.
-    //  Parameters:
-    //    undo_event_handler - [in]
-    //      Pointer to a class allocated with a call to new.
-    //      Never delete this class.
-    //      Never pass a pointer to a stack variable.
-    //  Returns:
-    //    If a non zero number is returned, then this is the runtime
-    //    serial number Rhino has assigned to this undo event.
-    //    If zero is returned, then the user has disabled undo
-    //    and undo_event_handler was deleted.
-    //  */
-    //  unsigned int AddCustomUndoEvent(
-    //    CRhinoUndoEventHandler* undo_event_handler
-    //    );
-
-    //  /* 
-    //  Description:
-    //    End current undo if its serial number satisfies
-    //    undo_record_sn0 <= sn <= undo_record_sn1.
-    //  */
-    //  bool EndUndoRecord(unsigned int undo_record_sn);
-
-    //  // End undo if its serial number satisfies
-    //  // undo_record_sn0 <= sn <= undo_record_sn1.
-    //  bool EndUndoRecord(unsigned int undo_record_sn0,unsigned int undo_record_sn1);
+    [CLSCompliant(false)]
+    public bool EndUndoRecord(uint undoRecordSerialNumber)
+    {
+      return UnsafeNativeMethods.CRhinoDoc_EndUndoRecord(m_docId, undoRecordSerialNumber);
+    }
 
     //  bool Undo( CRhUndoRecord* = NULL );
     //  bool Redo();

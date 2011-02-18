@@ -472,6 +472,9 @@ namespace Rhino.Geometry
     }
     internal bool ExtendThroughPointSet(IEnumerable<Point3d> pts, double additionalLength)
     {
+      Vector3d unit = UnitTangent;
+      if (!unit.IsValid) { return false; }
+
       double t0 = double.MaxValue;
       double t1 = double.MinValue;
 
@@ -482,13 +485,22 @@ namespace Rhino.Geometry
         t1 = Math.Max(t1, t);
       }
 
-      Point3d A = PointAt(t0);
-      Point3d B = PointAt(t1);
+      if (t0 <= t1)
+      {
+        Point3d A = PointAt(t0) - (additionalLength * unit);
+        Point3d B = PointAt(t1) + (additionalLength * unit);
+        m_from = A;
+        m_to = B;
+      }
+      else
+      {
+        Point3d A = PointAt(t0) + (additionalLength * unit);
+        Point3d B = PointAt(t1) - (additionalLength * unit);
+        m_from = A;
+        m_to = B;
+      }
 
-      m_from = A;
-      m_to = B;
-
-      return Extend(additionalLength, additionalLength);
+      return true;
     }
 
     /// <summary>

@@ -6050,10 +6050,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_plugin.cpp
-  //bool CRhinoPlugIn_Create(int sn, ON_UUID plugin_id, const RHMONO_STRING* _plugin_name, const RHMONO_STRING* _plugin_version, int plugin_class)
+  //bool CRhinoPlugIn_Create(int sn, ON_UUID plugin_id, const RHMONO_STRING* _plugin_name, const RHMONO_STRING* _plugin_version, int plugin_class, bool load_at_start)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool CRhinoPlugIn_Create(int sn, Guid plugin_id, [MarshalAs(UnmanagedType.LPWStr)]string _plugin_name, [MarshalAs(UnmanagedType.LPWStr)]string _plugin_version, int plugin_class);
+  internal static extern bool CRhinoPlugIn_Create(int sn, Guid plugin_id, [MarshalAs(UnmanagedType.LPWStr)]string _plugin_name, [MarshalAs(UnmanagedType.LPWStr)]string _plugin_version, int plugin_class, [MarshalAs(UnmanagedType.U1)]bool load_at_start);
 
   //CRhinoPlugIn* CRhinoPlugIn_Pointer(int serial_number)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

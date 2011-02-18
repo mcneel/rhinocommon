@@ -50,7 +50,7 @@ namespace Rhino.PlugIns
     System.Reflection.Assembly m_assembly;
     internal int m_runtime_serial_number; // = 0; runtime initializes this to 0
     internal Rhino.Collections.RhinoList<Commands.Command> m_commands = new Rhino.Collections.RhinoList<Rhino.Commands.Command>();
-    private PersistentSettingsManager m_SettingsManager;
+    PersistentSettingsManager m_SettingsManager;
     Guid m_id;
     string m_name;
     string m_version;
@@ -122,7 +122,8 @@ namespace Rhino.PlugIns
         else if (rc is RenderPlugIn)
           plugin_class = 4;
 
-        UnsafeNativeMethods.CRhinoPlugIn_Create(sn, plugin_id, plugin_name, plugin_version, plugin_class);
+        bool load_at_start = rc.LoadAtStartup;
+        UnsafeNativeMethods.CRhinoPlugIn_Create(sn, plugin_id, plugin_name, plugin_version, plugin_class, load_at_start);
       }
       HostUtils.DebugString("[PlugIn::Create] Finished\n");
       return rc;
@@ -197,6 +198,16 @@ namespace Rhino.PlugIns
     public Commands.Command[] GetCommands()
     {
       return m_commands.ToArray();
+    }
+
+    /// <summary>
+    /// Plug-ins are typically loaded on demand when they are first needed. You can change
+    /// this behavior to load the plug-in at startup by overriding this property and returning
+    /// true (default returns false)
+    /// </summary>
+    public virtual bool LoadAtStartup
+    {
+      get { return false; }
     }
 
     protected PlugIn()

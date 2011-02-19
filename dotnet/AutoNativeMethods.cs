@@ -6288,11 +6288,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoInterpCurve(int degree, int count, Point3d[] _array_pts, Vector3d start_tan, Vector3d end_tan, int knotStyle);
 
-  //bool RHC_RhinoOffsetCurve(const ON_Curve* pCurve, ON_3DVECTOR_STRUCT normal, ON_3DPOINT_STRUCT origin, double distance, ON_SimpleArray<ON_Curve*>* pCurveArray, double tol, double angleTol, int corner_style)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RHC_RhinoOffsetCurve(IntPtr pCurve, Vector3d normal, Point3d origin, double distance, IntPtr pCurveArray, double tol, double angleTol, int corner_style);
-
   //bool RHC_RhinoOffsetCurve2( const ON_Curve* pCurve,
   //                                          double distance,
   //                                          ON_3DPOINT_STRUCT direction_point, 

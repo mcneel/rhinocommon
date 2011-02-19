@@ -3006,15 +3006,17 @@ namespace Rhino.Geometry
     /// <returns>Offset curves on success, null on failure.</returns>
     public Curve[] Offset(Plane plane, double distance, double tolerance, CurveOffsetCornerStyle cornerStyle)
     {
-      IntPtr ptr = ConstPointer();
-      SimpleArrayCurvePointer offsetCurves = new SimpleArrayCurvePointer();
-      IntPtr pCurveArray = offsetCurves.NonConstPointer();
-      bool rc = UnsafeNativeMethods.RHC_RhinoOffsetCurve(ptr, plane.ZAxis, plane.Origin, distance, pCurveArray, tolerance, 0.015, (int)cornerStyle);
-      Curve[] curves = offsetCurves.ToNonConstArray();
-      offsetCurves.Dispose();
-      if (!rc)
-        return null;
-      return curves;
+      Point3d direction_point = new Point3d(plane.XAxis);
+      return Offset(direction_point, plane.Normal, distance, tolerance, cornerStyle);
+      //IntPtr ptr = ConstPointer();
+      //SimpleArrayCurvePointer offsetCurves = new SimpleArrayCurvePointer();
+      //IntPtr pCurveArray = offsetCurves.NonConstPointer();
+      //bool rc = UnsafeNativeMethods.RHC_RhinoOffsetCurve(ptr, plane.ZAxis, plane.Origin, distance, pCurveArray, tolerance, 0.015, (int)cornerStyle);
+      //Curve[] curves = offsetCurves.ToNonConstArray();
+      //offsetCurves.Dispose();
+      //if (!rc)
+      //  return null;
+      //return curves;
     }
     /// <summary>
     /// Offsets a curve. If you have a nice offset, then there will be one entry in 

@@ -158,9 +158,9 @@ namespace Rhino
         int hour = 0;
         int minute = 0;
         UnsafeNativeMethods.CRhinoDoc_GetRevisionDate(m_docId, ref year, ref month, ref day, ref hour, ref minute, false);
-        if (year < 1980 )
+        if (year < 1980)
           return DateTime.MinValue;
-        return new DateTime(year,month, day, hour, minute, 0);
+        return new DateTime(year, month, day, hour, minute, 0);
       }
     }
 
@@ -485,7 +485,8 @@ namespace Rhino
     private Rhino.DocObjects.Tables.InstanceDefinitionTable m_instance_definition_table;
     public Rhino.DocObjects.Tables.InstanceDefinitionTable InstanceDefinitions
     {
-      get {
+      get
+      {
         return m_instance_definition_table ??
                (m_instance_definition_table = new Rhino.DocObjects.Tables.InstanceDefinitionTable(this));
       }
@@ -497,7 +498,8 @@ namespace Rhino
     private Rhino.DocObjects.Tables.NamedConstructionPlaneTable m_named_cplane_table;
     public Rhino.DocObjects.Tables.NamedConstructionPlaneTable NamedConstructionPlanes
     {
-      get {
+      get
+      {
         return m_named_cplane_table ??
                (m_named_cplane_table = new Rhino.DocObjects.Tables.NamedConstructionPlaneTable(this));
       }
@@ -555,8 +557,8 @@ namespace Rhino
     public bool IsSendingMail
     {
       get
-	  {
-        if( Runtime.HostUtils.RunningOnOSX )
+      {
+        if (Runtime.HostUtils.RunningOnOSX)
           throw new NotImplementedException();
         return GetBool(idxIsSendingMail);
       }
@@ -1711,18 +1713,18 @@ namespace Rhino.DocObjects.Tables
 
       public bool MoveNext()
       {
-        if( null==m_views )
+        if (null == m_views)
           return false;
-        if( m_index<m_views.Length )
+        if (m_index < m_views.Length)
           m_index++;
-        return m_index<m_views.Length;
+        return m_index < m_views.Length;
       }
 
       public RhinoView Current
       {
         get
         {
-          if( null==m_views || m_index<0 || m_index>=m_views.Length )
+          if (null == m_views || m_index < 0 || m_index >= m_views.Length)
             return null;
           return m_views[m_index];
         }
@@ -1848,7 +1850,7 @@ namespace Rhino.DocObjects.Tables
     public Rhino.DocObjects.RhinoObject[] FindByLayer(string layerName)
     {
       int index = this.Document.Layers.Find(layerName, true);
-      if( index<0 )
+      if (index < 0)
         return null;
       Layer l = this.Document.Layers[index];
       return FindByLayer(l);
@@ -1871,7 +1873,6 @@ namespace Rhino.DocObjects.Tables
       List<Rhino.DocObjects.RhinoObject> list = new List<RhinoObject>(GetObjectList(typeFilter));
       return list.ToArray();
     }
-
 
     #region Object addition
     /// <summary>
@@ -2654,11 +2655,11 @@ namespace Rhino.DocObjects.Tables
 
     #region Object deletion
     /// <summary>
-    /// Deletes objref.Object().  The deletion can be undone by calling UndeleteObject(). 
+    /// Deletes objref.Object(). The deletion can be undone by calling UndeleteObject(). 
     /// </summary>
     /// <param name="objref">objref.Object() will be deleted</param>
-    /// <param name="quiet">if false, a message box will appear when an object cannot be deleted</param>
-    /// <returns></returns>
+    /// <param name="quiet">If false, a message box will appear when an object cannot be deleted.</param>
+    /// <returns>True on success, false on failure.</returns>
     public bool Delete(DocObjects.ObjRef objref, bool quiet)
     {
       if (null == objref)
@@ -2667,11 +2668,11 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_DeleteObject(m_doc.m_docId, pObjRef, quiet);
     }
     /// <summary>
-    /// Deletes object from document.  The deletion can be undone by calling UndeleteObject(). 
+    /// Deletes object from document. The deletion can be undone by calling UndeleteObject(). 
     /// </summary>
-    /// <param name="obj">the object to delete</param>
-    /// <param name="quiet">if false, a message box will appear when an object cannot be deleted</param>
-    /// <returns></returns>
+    /// <param name="obj">The object to delete.</param>
+    /// <param name="quiet">If false, a message box will appear when an object cannot be deleted.</param>
+    /// <returns>True on success, false on failure.</returns>
     public bool Delete(DocObjects.RhinoObject obj, bool quiet)
     {
       if (null == obj)
@@ -2682,11 +2683,11 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
     /// <summary>
-    /// Deletes object from document.  The deletion can be undone by calling UndeleteObject(). 
+    /// Deletes object from document. The deletion can be undone by calling UndeleteObject(). 
     /// </summary>
     /// <param name="objectId">Id of the object to delete</param>
-    /// <param name="quiet">if false, a message box will appear when an object cannot be deleted</param>
-    /// <returns></returns>
+    /// <param name="quiet">If false, a message box will appear when an object cannot be deleted.</param>
+    /// <returns>True on success, false on failure.</returns>
     public bool Delete(Guid objectId, bool quiet)
     {
       DocObjects.ObjRef objref = new Rhino.DocObjects.ObjRef(objectId);
@@ -2694,10 +2695,272 @@ namespace Rhino.DocObjects.Tables
       objref.Dispose();
       return rc;
     }
+    /// <summary>
+    /// Deletes a collection of objects from the document.
+    /// </summary>
+    /// <param name="objectIds">Ids of all objects to delete.</param>
+    /// <param name="quiet">If false, a message box will appear when an object cannot be deleted.</param>
+    /// <returns>The number of successfully deleted objects.</returns>
+    public int Delete(IEnumerable<Guid> objectIds, bool quiet)
+    {
+      if (objectIds == null) { throw new ArgumentNullException("objectIds"); }
+
+      int count = 0;
+      foreach (Guid id in objectIds)
+      {
+        if (Delete(id, quiet)) { count++; }
+      }
+      return count;
+    }
 
     //[skipping]
     //  bool UndeleteObject( const CRhinoObject* object );
     //  bool PurgeObject( CRhinoObject*& object );
+    #endregion
+
+    #region Object selection
+    /// <summary>
+    /// Select a single object.
+    /// </summary>
+    /// <param name="objref">Object represented by this ObjRef is selected.</param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Select(DocObjects.ObjRef objref)
+    {
+      return Select(objref, true);
+    }
+    /// <summary>
+    /// Select or deselects a single object.
+    /// </summary>
+    /// <param name="objref">Object represented by this ObjRef is selected.</param>
+    /// <param name="select">If true, the object will be selected, if false, it will be deselected.</param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Select(DocObjects.ObjRef objref, bool select)
+    {
+      return Select(objref, select, true);
+    }
+    /// <summary>
+    /// Select or deselects a single object.
+    /// </summary>
+    /// <param name="objref">Object represented by this ObjRef is selected.</param>
+    /// <param name="select">If true, the object will be selected, if false, it will be deselected.</param>
+    /// <param name="syncHighlight">
+    /// If true, then the object is highlighted if it is selected 
+    /// and unhighlighted if is is not selected.
+    /// </param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Select(DocObjects.ObjRef objref, bool select, bool syncHighlight)
+    {
+      return Select(objref, select, syncHighlight, true);
+    }
+    /// <summary>
+    /// Select or deselects a single object.
+    /// </summary>
+    /// <param name="objref">Object represented by this ObjRef is selected.</param>
+    /// <param name="select">If true, the object will be selected, if false, it will be deselected.</param>
+    /// <param name="syncHighlight">
+    /// If true, then the object is highlighted if it is selected 
+    /// and unhighlighted if is is not selected.
+    /// </param>
+    /// <param name="persistentSelect">
+    /// Objects that are persistently selected stay selected when a command terminates.
+    /// </param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Select(DocObjects.ObjRef objref, bool select, bool syncHighlight, bool persistentSelect)
+    {
+      return Select(objref, select, syncHighlight, persistentSelect, false, false, false);
+    }
+    /// <summary>
+    /// Select or deselects a single object.
+    /// </summary>
+    /// <param name="objref">Object represented by this ObjRef is selected.</param>
+    /// <param name="select">If true, the object will be selected, if false, it will be deselected.</param>
+    /// <param name="syncHighlight">
+    /// If true, then the object is highlighted if it is selected 
+    /// and unhighlighted if is is not selected.
+    /// </param>
+    /// <param name="persistentSelect">
+    /// Objects that are persistently selected stay selected when a command terminates.
+    /// </param>
+    /// <param name="ignoreGripsState">
+    /// If true, then objects with grips on can be selected.
+    /// If false, then the value returned by the object's IsSelectableWithGripsOn() function
+    /// decides if the object can be selected when it has grips turned on.
+    /// </param>
+    /// <param name="ignoreLayerLocking">
+    /// If true, then objects on locked layers can be selected. 
+    /// </param>
+    /// <param name="ignoreLayerVisibility">
+    /// If true, then objects on hidden layers can be selectable.
+    /// </param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Select(DocObjects.ObjRef objref, bool select, bool syncHighlight, bool persistentSelect, bool ignoreGripsState, bool ignoreLayerLocking, bool ignoreLayerVisibility)
+    {
+      if (objref == null) { throw new ArgumentNullException("objref"); }
+      return objref.Object().Select(select, syncHighlight, persistentSelect, ignoreGripsState, ignoreLayerLocking, ignoreLayerVisibility) != 0;
+    }
+
+    /// <summary>
+    /// Selects a collection of objects.
+    /// </summary>
+    /// <param name="objRefs">References to objects to select.</param>
+    /// <returns>Number of objects successfully selected.</returns>
+    public int Select(IEnumerable<DocObjects.ObjRef> objRefs)
+    {
+      return Select(objRefs, true);
+    }
+    /// <summary>
+    /// Selects or deselects a collection of objects.
+    /// </summary>
+    /// <param name="objRefs">References to objects to select or deselect.</param>
+    /// <param name="select">
+    /// If true, objects will be selected. 
+    /// If false, objects will be deselected.
+    /// </param>
+    /// <returns>Number of objects successfully selected or deselected.</returns>
+    public int Select(IEnumerable<DocObjects.ObjRef> objRefs, bool select)
+    {
+      if (objRefs == null) { throw new ArgumentNullException("objRefs"); }
+      int count = 0;
+      foreach (DocObjects.ObjRef objref in objRefs)
+      {
+        if (Select(objref, select)) { count++; }
+      }
+      return count;
+    }
+
+    /// <summary>
+    /// Select a single object.
+    /// </summary>
+    /// <param name="objectId">Id of object to select.</param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Select(Guid objectId)
+    {
+      ObjRef objref = new ObjRef(objectId);
+      if (objref == null) { return false; }
+      return Select(objref);
+    }
+    /// <summary>
+    /// Select or deselects a single object.
+    /// </summary>
+    /// <param name="objectId">Id of object to select.</param>
+    /// <param name="select">If true, the object will be selected, if false, it will be deselected.</param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Select(Guid objectId, bool select)
+    {
+      ObjRef objref = new ObjRef(objectId);
+      if (objref == null) { return false; }
+      return Select(objref, select);
+    }
+    /// <summary>
+    /// Select or deselects a single object.
+    /// </summary>
+    /// <param name="objectId">Id of object to select.</param>
+    /// <param name="select">If true, the object will be selected, if false, it will be deselected.</param>
+    /// <param name="syncHighlight">
+    /// If true, then the object is highlighted if it is selected 
+    /// and unhighlighted if is is not selected.
+    /// </param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Select(Guid objectId, bool select, bool syncHighlight)
+    {
+      ObjRef objref = new ObjRef(objectId);
+      if (objref == null) { return false; }
+      return Select(objref, select, syncHighlight);
+    }
+    /// <summary>
+    /// Select or deselects a single object.
+    /// </summary>
+    /// <param name="objectId">Id of object to select.</param>
+    /// <param name="select">If true, the object will be selected, if false, it will be deselected.</param>
+    /// <param name="syncHighlight">
+    /// If true, then the object is highlighted if it is selected 
+    /// and unhighlighted if is is not selected.
+    /// </param>
+    /// <param name="persistentSelect">
+    /// Objects that are persistently selected stay selected when a command terminates.
+    /// </param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Select(Guid objectId, bool select, bool syncHighlight, bool persistentSelect)
+    {
+      ObjRef objref = new ObjRef(objectId);
+      if (objref == null) { return false; }
+      return Select(objref, select, syncHighlight, persistentSelect);
+    }
+    /// <summary>
+    /// Select or deselects a single object.
+    /// </summary>
+    /// <param name="objectId">Id of object to select.</param>
+    /// <param name="select">If true, the object will be selected, if false, it will be deselected.</param>
+    /// <param name="syncHighlight">
+    /// If true, then the object is highlighted if it is selected 
+    /// and unhighlighted if is is not selected.
+    /// </param>
+    /// <param name="persistentSelect">
+    /// Objects that are persistently selected stay selected when a command terminates.
+    /// </param>
+    /// <param name="ignoreGripsState">
+    /// If true, then objects with grips on can be selected.
+    /// If false, then the value returned by the object's IsSelectableWithGripsOn() function
+    /// decides if the object can be selected when it has grips turned on.
+    /// </param>
+    /// <param name="ignoreLayerLocking">
+    /// If true, then objects on locked layers can be selected. 
+    /// </param>
+    /// <param name="ignoreLayerVisibility">
+    /// If true, then objects on hidden layers can be selectable.
+    /// </param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Select(Guid objectId, bool select, bool syncHighlight, bool persistentSelect, bool ignoreGripsState, bool ignoreLayerLocking, bool ignoreLayerVisibility)
+    {
+      ObjRef objref = new ObjRef(objectId);
+      if (objref == null) { return false; }
+      return Select(objref, select, syncHighlight, persistentSelect, ignoreGripsState, ignoreLayerLocking, ignoreLayerVisibility);
+    }
+
+    /// <summary>
+    /// Selects a collection of objects.
+    /// </summary>
+    /// <param name="objectIds">Ids of objects to select.</param>
+    /// <returns>Number of objects successfully selected.</returns>
+    public int Select(IEnumerable<Guid> objectIds)
+    {
+      return Select(objectIds, true);
+    }
+    /// <summary>
+    /// Selects or deselects a collection of objects.
+    /// </summary>
+    /// <param name="objectIds">Ids of objects to select or deselect.</param>
+    /// <param name="select">
+    /// If true, objects will be selected. 
+    /// If false, objects will be deselected.
+    /// </param>
+    /// <returns>Number of objects successfully selected or deselected.</returns>
+    public int Select(IEnumerable<Guid> objectIds, bool select)
+    {
+      if (objectIds == null) { throw new ArgumentNullException("objectsIds"); }
+      int count = 0;
+      foreach (Guid objectId in objectIds)
+      {
+        if (Select(objectId, select)) { count++; }
+      }
+      return count;
+    }
+
+    /// <summary>Unselect objects</summary>
+    /// <param name="ignorePersistentSelections">
+    /// if true, then objects that are persistently selected will not be unselected
+    /// </param>
+    /// <returns>Number of object that were unselected</returns>
+    public int UnselectAll(bool ignorePersistentSelections)
+    {
+      return UnsafeNativeMethods.CRhinoDoc_UnselectAll(m_doc.m_docId, ignorePersistentSelections);
+    }
+    /// <summary>Unselect objects</summary>
+    /// <returns>Number of object that were unselected</returns>
+    public int UnselectAll()
+    {
+      return UnselectAll(false);
+    }
     #endregion
 
     #region Object replacement
@@ -2947,6 +3210,31 @@ namespace Rhino.DocObjects.Tables
     #endregion
 
     #region Find geometry
+    /// <summary>
+    /// Gets the most recently added object that is still in the Document.
+    /// </summary>
+    /// <returns>The most recent (non-deleted) object in the document, or null if no such object exists.</returns>
+    public Rhino.DocObjects.RhinoObject MostRecentObject()
+    {
+      IntPtr ptr = UnsafeNativeMethods.CRhinoDoc_MostRecentObject(m_doc.m_docId);
+      return Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(ptr);
+    }
+    /// <summary>
+    /// Gets all the objects that have been added to the document since a given runtime serial number. 
+    /// </summary>
+    /// <param name="runtimeSerialNumber">Runtime serial number of the last object not to include in the list.</param>
+    /// <returns>An array of objects or null if no objects were added since the given runtime serial number.</returns>
+    [CLSCompliant(false)]
+    public Rhino.DocObjects.RhinoObject[] AllObjectsSince(uint runtimeSerialNumber)
+    {
+      using (Rhino.Runtime.INTERNAL_RhinoObjectArray rhobjs = new Rhino.Runtime.INTERNAL_RhinoObjectArray())
+      {
+        IntPtr pArray = rhobjs.NonConstPointer();
+        UnsafeNativeMethods.CRhinoDoc_AllObjectsSince(m_doc.m_docId, runtimeSerialNumber, pArray);
+        return rhobjs.ToArray();
+      }
+    }
+
     // 27 Jan 2010 S. Baer
     // I think it is useful to have "quick" finders, but I'm not exactly sure if this is the right
     // approach. I couldn't find any code in Grasshopper that calls this function and want to take
@@ -2969,7 +3257,7 @@ namespace Rhino.DocObjects.Tables
     //// TODO: write these functions for all other Object types too.
     #endregion
 
-    #region Object state changes (lock, hide, select, etc.)
+    #region Object state changes (lock, hide, etc.)
     const int idxHideObject = 0;
     const int idxShowObject = 1;
     const int idxLockObject = 2;
@@ -3165,22 +3453,6 @@ namespace Rhino.DocObjects.Tables
       bool rc = UnsafeNativeMethods.CRhinoDoc_SetObjectState(m_doc.m_docId, pObjRef, ignoreLayerMode, idxUnlockObject);
       objref.Dispose();
       return rc;
-    }
-
-    /// <summary>Unselect objects</summary>
-    /// <param name="ignorePersistentSelections">
-    /// if true, then objects that are persistently selected will not be unselected
-    /// </param>
-    /// <returns>Number of object that were unselected</returns>
-    public int UnselectAll(bool ignorePersistentSelections)
-    {
-      return UnsafeNativeMethods.CRhinoDoc_UnselectAll(m_doc.m_docId, ignorePersistentSelections);
-    }
-    /// <summary>Unselect objects</summary>
-    /// <returns>Number of object that were unselected</returns>
-    public int UnselectAll()
-    {
-      return UnselectAll(false);
     }
     #endregion
 
@@ -3720,8 +3992,8 @@ namespace Rhino.DocObjects.Tables
       for (int i = 0; i < count; i++)
       {
         string key = GetKey(i);
-        if( key!=null && key.StartsWith(section) )
-          rc.Add( GetValue(i) );
+        if (key != null && key.StartsWith(section))
+          rc.Add(GetValue(i));
       }
       return rc.ToArray();
     }

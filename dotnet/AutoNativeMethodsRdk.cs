@@ -758,7 +758,8 @@ internal partial class UnsafeNativeMethods
   //													  ABORTRENDERPROC ar, 
   //													  ALLOWCHOOSECONTENTPROC acc, 
   //													  CREATEDEFAULTCONTENTPROC cdc,
-  //													  OUTPUTTYPESPROC ot)
+  //													  OUTPUTTYPESPROC ot,
+  //													  CREATETEXTUREPREVIEWPROC tp)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //int Rdk_RenderPlugIn_BaseOutputTypeAtIndex(CRhinoRenderPlugIn* pPlugIn, int iIndex, CRhCmnStringHolder* pSH_Ext, CRhCmnStringHolder* pSH_Desc)
@@ -768,6 +769,10 @@ internal partial class UnsafeNativeMethods
   //CRhRdkPlugIn* CRhCmnRdkPlugIn_New( CRhinoPlugIn* pRhinoPlugIn, int serial_number)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhCmnRdkPlugIn_New(IntPtr pRhinoPlugIn, int serial_number);
+
+  //void CRhCmnRdkPlugIn_Delete(CRhRdkPlugIn* pRdkPlugIn)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhCmnRdkPlugIn_Delete(IntPtr pRdkPlugIn);
 
   //void Rdk_AddTextureFactory(ON_UUID content_id)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]

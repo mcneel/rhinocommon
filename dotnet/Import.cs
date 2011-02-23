@@ -64,7 +64,8 @@ internal partial class UnsafeNativeMethods
                                                                  Rhino.PlugIns.RenderPlugIn.AbortRenderCallback abortRenderCallback,
                                                                  Rhino.PlugIns.RenderPlugIn.AllowChooseContentCallback allowChooseContentCallback,
                                                                  Rhino.PlugIns.RenderPlugIn.CreateDefaultContentCallback createDefaultContentCallback,
-                                                                 Rhino.PlugIns.RenderPlugIn.OutputTypesCallback outputTypesCallback);
+                                                                 Rhino.PlugIns.RenderPlugIn.OutputTypesCallback outputTypesCallback,
+                                                                 Rhino.PlugIns.RenderPlugIn.CreateTexturePreviewCallback texturePreviewCallback);
 #endif
 
 #if !BUILDING_MONO

@@ -318,6 +318,13 @@ namespace Rhino.PlugIns
           // the last function that the plug-in can use to save settings.
           if (p.m_SettingsManager != null)
             p.m_SettingsManager.WriteSettings();
+
+#if USING_RDK
+          // check to see if we should be uninitializing an RDK plugin
+          Rhino.Render.RdkPlugIn pRdk = Rhino.Render.RdkPlugIn.GetRdkPlugIn(p);
+          if (pRdk != null)
+            pRdk.Dispose();
+#endif
         }
         catch (Exception ex)
         {
@@ -959,7 +966,8 @@ namespace Rhino.PlugIns
                                                              m_OnAbortRender, 
                                                              m_OnAllowChooseContent, 
                                                              m_OnCreateDefaultContent,
-                                                             m_OnOutputTypes);
+                                                             m_OnOutputTypes,
+                                                             m_OnCreateTexturePreview);
 #endif
     }
 
@@ -1038,6 +1046,18 @@ namespace Rhino.PlugIns
         list.Add(new OutputTypeInfo(shExt.ToString(), shDesc.ToString()));
       }
       return list;
+    }
+
+    /// <summary>
+    /// You should implement this method to create the preview bitmap that will appear in the 
+    /// content editor's thumbnail display when previewing textures in 2d (UV) mode.
+    /// </summary>
+    /// <param name="pixels">The pixel dimensions of the bitmap you should return</param>
+    /// <param name="texture">The texture you should render as a 2D image</param>
+    /// <returns>Return null if you want Rhino to generate its own texture preview.</returns>
+    protected virtual System.Drawing.Image CreatePreview(System.Drawing.Size pixels, Rhino.Render.RenderTexture texture)
+    {
+      return null;
     }
 
     #region other virtual function implementation
@@ -1184,6 +1204,42 @@ namespace Rhino.PlugIns
           HostUtils.DebugString("Error " + error_msg);
         }
       }
+    }
+
+
+    internal delegate IntPtr CreateTexturePreviewCallback(int serial_number, int x, int y, IntPtr pTexture);
+    private static CreateTexturePreviewCallback m_OnCreateTexturePreview = OnCreateTexturePreview;
+    private static IntPtr OnCreateTexturePreview(int serial_number, int x, int y, IntPtr pTexture)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      Rhino.Render.RenderTexture texture = IntPtr.Zero == pTexture ? null : Rhino.Render.RenderContent.FromPointer(pTexture) as Rhino.Render.RenderTexture;
+
+      if (null == p || null == texture || x == 0 || y == 0)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnCreateTexturePreview");
+      }
+      else
+      {
+        try
+        {
+          System.Drawing.Image preview = p.CreatePreview(new System.Drawing.Size(x, y), texture);
+
+          System.IO.MemoryStream ms = new System.IO.MemoryStream();
+          preview.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+          
+          IntPtr pBitmap = new System.Drawing.Bitmap(ms).GetHbitmap();
+
+          return pBitmap;
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnCreateTexturePreview\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+
+      return IntPtr.Zero;
     }
     #endregion
 

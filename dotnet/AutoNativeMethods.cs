@@ -4053,6 +4053,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawBrep(IntPtr pPipeline, IntPtr pBrep, int argb, int wireDensity);
 
+  //void CRhinoDisplayPipeline_DrawShadedBrep(CRhinoDisplayPipeline* pPipeline, const ON_Brep* pBrep, const CDisplayPipelineMaterial* pMaterial)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_DrawShadedBrep(IntPtr pPipeline, IntPtr pBrep, IntPtr pMaterial);
+
   //void CRhinoDisplayPipeline_DrawShadedMesh(CRhinoDisplayPipeline* pPipeline, const ON_Mesh* pMesh, const CDisplayPipelineMaterial* pMaterial)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawShadedMesh(IntPtr pPipeline, IntPtr pMesh, IntPtr pMaterial);
@@ -4430,6 +4434,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoDoc_EndUndoRecord(int doc_id, uint sn);
+
+  //const CRhinoObject* CRhinoDoc_MostRecentObject( int doc_id )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoDoc_MostRecentObject(int doc_id);
+
+  //int CRhinoDoc_AllObjectsSince( int doc_id, unsigned int runtimeSerialNumber, ON_SimpleArray<const CRhinoObject*>* pObjectArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoDoc_AllObjectsSince(int doc_id, uint runtimeSerialNumber, IntPtr pObjectArray);
   #endregion
 
 

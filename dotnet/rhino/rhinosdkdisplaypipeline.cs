@@ -845,6 +845,20 @@ namespace Rhino.Display
     }
 
     /// <summary>
+    /// Draw a shaded mesh representation of a brep
+    /// </summary>
+    /// <param name="brep">Brep to draw.</param>
+    /// <param name="material">Material to draw faces with.</param>
+    public void DrawBrepShaded(Brep brep, DisplayMaterial material)
+    {
+      IntPtr pBrep = brep.ConstPointer();
+      IntPtr pMaterial = IntPtr.Zero;
+      if (null != material)
+        pMaterial = material.ConstPointer();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawShadedBrep(m_ptr, pBrep, pMaterial);
+    }
+
+    /// <summary>
     /// Draw all the wireframe curves of a Brep object.
     /// </summary>
     /// <param name="brep">Brep to draw.</param>

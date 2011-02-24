@@ -100,6 +100,28 @@ namespace Rhino.DocObjects
       }
     }
 
+    public string FullPath
+    {
+      get
+      {
+        if (null == m_doc)
+          return Name;
+        int index = LayerIndex;
+        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          if (!UnsafeNativeMethods.CRhinoLayer_GetLayerPathName(m_doc.m_docId, index, pString))
+            return Name;
+          return sh.ToString();
+        }
+      }
+    }
+
+    public override string ToString()
+    {
+      return FullPath;
+    }
+
     /// <summary>
     /// Gets the index of this layer.
     /// </summary>
@@ -546,7 +568,8 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Finds the layer with a given name.
+    /// Finds the layer with a given name. If multiple layers exist that have the same name, the
+    /// first match layer index will be returned.
     /// </summary>
     /// <param name="layerName">name of layer to search for. The search ignores case.</param>
     /// <param name="ignoreDeletedLayers">true means don't search deleted layers.</param>
@@ -563,8 +586,24 @@ namespace Rhino.DocObjects.Tables
     {
       if (string.IsNullOrEmpty(layerName))
         return -1;
-      return UnsafeNativeMethods.CRhinoLayerTable_FindLayer(m_doc.m_docId, layerName, ignoreDeletedLayers);
+      return UnsafeNativeMethods.CRhinoLayerTable_FindLayer(m_doc.m_docId, layerName, ignoreDeletedLayers, -1);
     }
+
+#if USING_V5_SDK
+    public int FindNext(int index, string layerName, bool ignoreDeletedLayers)
+    {
+      if (string.IsNullOrEmpty(layerName))
+        return -1;
+      return UnsafeNativeMethods.CRhinoLayerTable_FindLayer(m_doc.m_docId, layerName, ignoreDeletedLayers, index);
+    }
+
+    public int FindByFullPath(string layerPath, bool ignoreDeletedLayers)
+    {
+      if (string.IsNullOrEmpty(layerPath))
+        return -1;
+      return UnsafeNativeMethods.CRhinoLayerTable_FindExact(m_doc.m_docId, layerPath, ignoreDeletedLayers);
+    }
+#endif
 
     /// <summary>Find a layer with a matching id</summary>
     /// <param name="layerId"></param>

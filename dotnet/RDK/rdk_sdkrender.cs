@@ -146,11 +146,12 @@ namespace Rhino.Render
     /// A new render mesh iterator. The caller shall delete the iterator. Any meshes created by the iterator persist in memory for the lifetime of the iterator.
     /// </summary>
     /// <param name="forceTriMesh"></param>
+    /// <param name="vp">The rendering view camera</param>
     /// <returns></returns>
     /// //TODO - ON_Viewport
-    public RenderMeshIterator NewRenderMeshIterator(bool forceTriMesh)
+    public RenderMeshIterator NewRenderMeshIterator(Rhino.Display.Viewport vp, bool forceTriMesh)
     {
-      IntPtr pIterator = UnsafeNativeMethods.Rdk_SdkRender_NewRenderMeshIterator(ConstPointer(), forceTriMesh);
+      IntPtr pIterator = UnsafeNativeMethods.Rdk_SdkRender_NewRenderMeshIterator(ConstPointer(), vp.ConstPointer(), forceTriMesh);
       if (pIterator != IntPtr.Zero)
       {
         return new RenderMeshIterator(pIterator);

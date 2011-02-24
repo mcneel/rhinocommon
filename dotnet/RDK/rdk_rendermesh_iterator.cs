@@ -186,9 +186,9 @@ namespace Rhino.Render
 
   public class RenderMeshIterator : IDisposable, IEnumerator
   {
-    public RenderMeshIterator(Guid plugInId, bool needTriangleMesh)
+    public RenderMeshIterator(Guid plugInId, Rhino.Display.Viewport vp, bool needTriangleMesh)
     {
-      IntPtr pIt = UnsafeNativeMethods.Rdk_RenderMeshIterator_New(plugInId, needTriangleMesh);
+      IntPtr pIt = UnsafeNativeMethods.Rdk_RenderMeshIterator_New(plugInId, needTriangleMesh, vp.ConstPointer());
       if (pIt != IntPtr.Zero)
       {
         m_pIterator = pIt;

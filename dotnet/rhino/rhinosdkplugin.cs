@@ -967,7 +967,8 @@ namespace Rhino.PlugIns
                                                              m_OnAllowChooseContent, 
                                                              m_OnCreateDefaultContent,
                                                              m_OnOutputTypes,
-                                                             m_OnCreateTexturePreview);
+                                                             m_OnCreateTexturePreview,
+                                                             m_OnCreatePreview);
 #endif
     }
 
@@ -1055,10 +1056,52 @@ namespace Rhino.PlugIns
     /// <param name="pixels">The pixel dimensions of the bitmap you should return</param>
     /// <param name="texture">The texture you should render as a 2D image</param>
     /// <returns>Return null if you want Rhino to generate its own texture preview.</returns>
-    protected virtual System.Drawing.Image CreatePreview(System.Drawing.Size pixels, Rhino.Render.RenderTexture texture)
+    protected virtual System.Drawing.Image CreateTexturePreview(System.Drawing.Size pixels, Rhino.Render.RenderTexture texture)
     {
       return null;
     }
+
+    public enum PreviewQualityLevels : int
+    {
+      None    = 0, // No quality set.
+      Low     = 1, // Low quality rendering for quick preview.
+      Medium  = 2, // Medium quality rendering for intermediate preview.
+      Full    = 3, // Full quality rendering (quality comes from user settings).
+    };
+
+    /// <summary>
+    /// You must implement this method to create the preview bitmap that will appear
+    /// in the content editor's thumbnail display when previewing materials and environments.
+    /// NB. This preview is the "renderer preview" and is called 3 times with varying levels
+    /// of quality. If you don't want to implement this kind of preview, and are satisfied with the
+    /// "QuickPreview" generated from CreateQuickPreview, just return null. If you don't support
+    /// progressive refinement, return NULL from the first two quality levels.
+    /// </summary>
+    /// <param name="pixels"></param>
+    /// <param name="quality"></param>
+    /// <param name="scene"></param>
+    /// <returns></returns>
+    protected virtual System.Drawing.Image CreatePreview(System.Drawing.Size pixels, PreviewQualityLevels quality, Rhino.Render.PreviewScene scene)
+    {
+      return null;
+    }
+
+    /// <summary>
+    /// Optionally implement this method to change the way quick content previews are generated.
+    /// By default, this is handled by the internal RDK OpenGL renderer and is based on the
+    /// simulation of the content. If you want to implement an instant render based on the
+    /// actual content parameters, or if you just think you can do a better job, override this
+		/// Note: The first plug-in to return a non-null value will get to draw the preview, so if you
+    /// decide not to draw based on the contents of the scene server, please return null.
+    /// </summary>
+    /// <param name="pixels"></param>
+    /// <param name="scene"></param>
+    /// <returns></returns>
+    protected virtual System.Drawing.Image CreateQuickPreview(System.Drawing.Size pixels, Rhino.Render.PreviewScene scene)
+    {
+      return null;
+    }
+
 
     #region other virtual function implementation
     internal delegate int SupportsFeatureCallback(int serial_number, Features f);
@@ -1222,18 +1265,70 @@ namespace Rhino.PlugIns
       {
         try
         {
-          System.Drawing.Image preview = p.CreatePreview(new System.Drawing.Size(x, y), texture);
+          System.Drawing.Image preview = p.CreateTexturePreview(new System.Drawing.Size(x, y), texture);
 
-          System.IO.MemoryStream ms = new System.IO.MemoryStream();
-          preview.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-          
-          IntPtr pBitmap = new System.Drawing.Bitmap(ms).GetHbitmap();
+          if (preview != null)
+          {
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            preview.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
 
-          return pBitmap;
+            IntPtr pBitmap = new System.Drawing.Bitmap(ms).GetHbitmap();
+
+            return pBitmap;
+          }
+          return IntPtr.Zero;
         }
         catch (Exception ex)
         {
           string error_msg = "Error occured during plug-in OnCreateTexturePreview\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+
+      return IntPtr.Zero;
+    }
+
+
+    internal delegate IntPtr CreatePreviewCallback(int serial_number, int x, int y, int iQuality, IntPtr pScene);
+    private static CreatePreviewCallback m_OnCreatePreview = OnCreatePreview;
+    private static IntPtr OnCreatePreview(int serial_number, int x, int y, int iQuality, IntPtr pPreviewScene)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      Rhino.Render.PreviewScene scene = IntPtr.Zero == pPreviewScene ? null : new Rhino.Render.PreviewScene(pPreviewScene);
+
+      if (null == p || null == scene || x == 0 || y == 0)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnCreatePreview");
+      }
+      else
+      {
+        try
+        {
+          System.Drawing.Image preview = null;
+          if (-1 == iQuality)
+          {
+            preview = p.CreateQuickPreview(new System.Drawing.Size(x, y), scene);
+          }
+          else
+          {
+            preview = p.CreatePreview(new System.Drawing.Size(x, y), (PreviewQualityLevels)iQuality, scene);
+          }
+
+          if (preview != null)
+          {
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            preview.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+
+            IntPtr pBitmap = new System.Drawing.Bitmap(ms).GetHbitmap();
+
+            return pBitmap;
+          }
+          return IntPtr.Zero;
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnCreatePreview\n Details:\n";
           error_msg += ex.Message;
           HostUtils.DebugString("Error " + error_msg);
         }

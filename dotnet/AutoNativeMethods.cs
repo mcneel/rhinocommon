@@ -6430,6 +6430,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoOffsetSurface(IntPtr pConstFace, double offset_distance, double offset_tolerance, [MarshalAs(UnmanagedType.U1)]bool both_sides, [MarshalAs(UnmanagedType.U1)]bool create_solid);
 
+  //ON_Curve* RHC_RhinoMeanCurve( const ON_Curve* pConstCurveA, const ON_Curve* pConstCurveB, double angle_tolerance )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoMeanCurve(IntPtr pConstCurveA, IntPtr pConstCurveB, double angle_tolerance);
+
   //int RhinoObjRefArray_Count( const ON_ClassArray<CRhinoObjRef>* pObjRefArray )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RhinoObjRefArray_Count(IntPtr pObjRefArray);

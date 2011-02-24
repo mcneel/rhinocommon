@@ -280,6 +280,37 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Creates a mean, or average, curve from two curves
+    /// </summary>
+    /// <param name="curveA"></param>
+    /// <param name="curveB"></param>
+    /// <param name="angleToleranceRadians">
+    /// The angle tolerance, in radians, used to match kinks between curves.
+    /// If you are unsure how to set this parameter, then either use the
+    /// document's angle tolerance RhinoDoc.AngleToleranceRadians,
+    /// or the default value (RhinoMath.UnsetValue)
+    /// </param>
+    /// <returns></returns>
+    public static Curve CreateMeanCurve(Curve curveA, Curve curveB, double angleToleranceRadians)
+    {
+      IntPtr pCurveA = curveA.ConstPointer();
+      IntPtr pCurveB = curveB.ConstPointer();
+      IntPtr pNewCurve = UnsafeNativeMethods.RHC_RhinoMeanCurve(pCurveA, pCurveB, angleToleranceRadians);
+      return GeometryBase.CreateGeometryHelper(pNewCurve, null) as Curve;
+    }
+
+    /// <summary>
+    /// Creates a mean, or average, curve from two curves
+    /// </summary>
+    /// <param name="curveA"></param>
+    /// <param name="curveB"></param>
+    /// <returns></returns>
+    public static Curve CreateMeanCurve(Curve curveA, Curve curveB)
+    {
+      return CreateMeanCurve(curveA, curveB, RhinoMath.UnsetValue);
+    }
+
+    /// <summary>
     /// Join a collection of curve segments together.
     /// </summary>
     /// <param name="inputCurves">Curve segments to join.</param>

@@ -4326,6 +4326,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_Draw3dText4(IntPtr pPipeline, IntPtr pAnnotationText, [MarshalAs(UnmanagedType.LPWStr)]string _fontface, int textARGB, [MarshalAs(UnmanagedType.U1)]bool bold, [MarshalAs(UnmanagedType.U1)]bool italic, Point3d origin);
 
+  //void CRhinoDisplayPipeline_DrawObject(CRhinoDisplayPipeline* pPipeline, const CRhinoObject* pConstRhinoObject)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_DrawObject(IntPtr pPipeline, IntPtr pConstRhinoObject);
+
+  //void CRhinoDisplayPipeline_DrawObject2(CRhinoDisplayPipeline* pPipeline, const CRhinoObject* pConstRhinoObject, const ON_Xform* pConstXform)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_DrawObject2(IntPtr pPipeline, IntPtr pConstRhinoObject, ref Transform pConstXform);
+
   //void CRhinoDisplayPipeline_SetShadingRequired(CRhinoDisplayPipeline* pPipeline, bool enable)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_SetShadingRequired(IntPtr pPipeline, [MarshalAs(UnmanagedType.U1)]bool enable);

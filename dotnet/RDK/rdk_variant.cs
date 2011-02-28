@@ -7,7 +7,90 @@ using Rhino.Geometry;
 
 namespace Rhino.Render
 {
-  public sealed class Variant : IDisposable
+  public sealed class NamedValue
+  {
+    public NamedValue(string name, object value)
+    {
+      m_name = name;
+      m_value = new Rhino.Render.Variant(value);
+    }
+
+    private string m_name = String.Empty;
+    private Variant m_value = new Variant();
+
+    public string Name
+    {
+      get { return m_name; }
+      set { m_name = value; }
+    }
+
+    public object Value
+    {
+      get
+      {
+        return m_value.AsObject();
+      }
+      set
+      {
+        m_value.SetValue(value);
+      }
+    }
+  }
+
+  internal class XMLSectionUtilities
+  {
+    //Push the List<Rhino.Render.NamedValue> values into the IRhRdk_XMLSection
+    public static void SetFromNamedValueList(IntPtr pXmlSection, List<Rhino.Render.NamedValue> list)
+    {
+      if (pXmlSection == IntPtr.Zero)
+        return;
+
+      if (null == list)
+        return;
+
+      foreach (Rhino.Render.NamedValue nv in list)
+      {
+        Rhino.Render.Variant variant = new Rhino.Render.Variant(nv.Value);
+        UnsafeNativeMethods.Rdk_XmlSection_SetParam(pXmlSection, nv.Name, variant.ConstPointer());
+      }
+    }
+          
+    public static List<NamedValue> ConvertToNamedValueList(IntPtr pXmlSection)
+    {
+      if (IntPtr.Zero == pXmlSection)
+        return null;
+
+      List<Rhino.Render.NamedValue> list = new List<NamedValue>();
+
+      IntPtr pIterator = UnsafeNativeMethods.Rdk_XmlSection_GetIterator(pXmlSection);
+
+      //Fill the property list from the XML section
+      if (pIterator != IntPtr.Zero)
+      {
+        while (true)
+        {
+          using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+          {
+            Variant variant = new Variant();
+
+            if (1 == UnsafeNativeMethods.Rdk_XmlSection_NextParam(pXmlSection, pIterator, sh.ConstPointer(), variant.ConstPointer()))
+            {
+              NamedValue nv = new NamedValue(sh.ToString(), variant.AsObject());
+              list.Add(nv);
+            }
+            else
+              break;
+          }
+        }
+
+        UnsafeNativeMethods.Rdk_XmlSection_DeleteIterator(pIterator);
+      }
+
+      return list;
+    }
+  }
+
+  internal sealed class Variant : IDisposable
   {
     public enum VariantTypes : int
     {
@@ -59,9 +142,8 @@ namespace Rhino.Render
     //public Variant(IntPtr v)                  : this()  { SetValue(v); }
     public Variant(Guid v)                    : this()  { SetValue(v); }
     public Variant(Rhino.Geometry.Transform v): this()  { SetValue(v); }
-
-    //TODO
-    //public Variant(DateTime v)                : this()  { SetValue(v); }
+    public Variant(object v) : this() { SetValue(v); }
+    public Variant(DateTime v)                : this()  { SetValue(v); }
     #endregion
 
     /// <summary>
@@ -151,25 +233,87 @@ namespace Rhino.Render
     public void SetValue(Rhino.Geometry.Transform v)
     { UnsafeNativeMethods.Rdk_Variant_SetXformValue(NonConstPointer(), v); }
 
-    //TODO
-    //public void SetValue(DateTime v)
-    //{ UnsafeNativeMethods.Rdk_Variant_SetTimeValue(NonConstPointer(), v); }
+    public void SetValue(DateTime v)
+    {
+      DateTime startTime = new DateTime(1970, 1, 1);
+      UInt32 time_t = Convert.ToUInt32(Math.Abs((DateTime.Now - startTime).TotalSeconds));
+      UnsafeNativeMethods.Rdk_Variant_SetTimeValue(NonConstPointer(), time_t);
+    }
+
+    public void SetValue(object v)
+    {
+      if (v is bool) SetValue((bool)v);
+      else if (v is int) SetValue((int)v);
+      else if (v is float) SetValue((float)v);
+      else if (v is double) SetValue((double)v);
+      else if (v is string) SetValue((string)v);
+      else if (v is System.Drawing.Color) SetValue((System.Drawing.Color)v);
+      else if (v is Rhino.Display.Color4f) SetValue((Rhino.Display.Color4f)v);
+      else if (v is Rhino.Geometry.Vector2d) SetValue((Rhino.Geometry.Vector2d)v);
+      else if (v is Rhino.Geometry.Vector3d) SetValue((Rhino.Geometry.Vector3d)v);
+      else if (v is Rhino.Geometry.Point4d) SetValue((Rhino.Geometry.Point4d)v);
+      else if (v is Guid) SetValue((Guid)v);
+      else if (v is Rhino.Geometry.Transform) SetValue((Rhino.Geometry.Transform)v);
+      else if (v is DateTime) SetValue((DateTime)v);
+      else
+      {
+        throw new InvalidOperationException("Type not supported for Rhino.Rhino.Variant");
+      }
+    }
+
+    
     #endregion
 
     #region value getters
-    public int AsInt()
+    public object AsObject()
+    {
+      VariantTypes vt = this.Type;
+
+      switch (vt)
+      {
+        case VariantTypes.Null:
+          return null;
+        case VariantTypes.Bool:
+          return ToBool();
+        case VariantTypes.Integer:
+          return ToInt();
+        case VariantTypes.Float:
+          return ToFloat();
+        case VariantTypes.Double:
+          return ToDouble();
+        case VariantTypes.Color:
+          return ToColor4f();
+        case VariantTypes.Vector2d:
+          return ToVector2d();
+        case VariantTypes.Vector3d:
+          return ToVector3d();
+        case VariantTypes.Point4d:
+          return ToPoint4d();
+        case VariantTypes.String:
+          return ToString();
+        case VariantTypes.Uuid:
+          return ToGuid();
+        case VariantTypes.Matrix:
+          return ToTransform();
+        case VariantTypes.Time:
+          return ToDateTime();
+      }
+      throw new InvalidOperationException("Type not supported by Rhino.Render.Variant");
+    }
+
+    public int ToInt()
     { return UnsafeNativeMethods.Rdk_Variant_GetIntValue(ConstPointer()); }
 
-    public bool AsBool()
+    public bool ToBool()
     { return 1==UnsafeNativeMethods.Rdk_Variant_GetBoolValue(ConstPointer()); }
 
-    public double AsDouble()
+    public double ToDouble()
     { return UnsafeNativeMethods.Rdk_Variant_GetDoubleValue(ConstPointer()); }
 
-    public float AsFloat()
+    public float ToFloat()
     { return UnsafeNativeMethods.Rdk_Variant_GetFloatValue(ConstPointer()); }
 
-    public string AsString()
+    public override string ToString()
     {
       using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
       {
@@ -178,33 +322,33 @@ namespace Rhino.Render
       }
     }
 
-    public System.Drawing.Color AsSystemColor()
+    public System.Drawing.Color ToSystemColor()
     {
       return System.Drawing.Color.FromArgb(UnsafeNativeMethods.Rdk_Variant_GetOnColorValue(ConstPointer()));
     }
 
-    public Rhino.Display.Color4f AsColor4f()
+    public Rhino.Display.Color4f ToColor4f()
     {
       Rhino.Display.Color4f v = new Rhino.Display.Color4f();
       UnsafeNativeMethods.Rdk_Variant_GetRdkColorValue(ConstPointer(), ref v);
       return v;
     }
 
-    public Rhino.Geometry.Vector2d AsVector2d()
+    public Rhino.Geometry.Vector2d ToVector2d()
     {
       Rhino.Geometry.Vector2d v = new Rhino.Geometry.Vector2d();
       UnsafeNativeMethods.Rdk_Variant_Get2dVectorValue(ConstPointer(), ref v);
       return v;
     }
 
-    public Rhino.Geometry.Vector3d AsVector3d()
+    public Rhino.Geometry.Vector3d ToVector3d()
     {
       Rhino.Geometry.Vector3d v = new Rhino.Geometry.Vector3d();
       UnsafeNativeMethods.Rdk_Variant_Get3dVectorValue(ConstPointer(), ref v);
       return v;
     }
 
-    public Rhino.Geometry.Point4d AsPoint4d()
+    public Rhino.Geometry.Point4d ToPoint4d()
     {
       Rhino.Geometry.Point4d v = new Rhino.Geometry.Point4d();
       UnsafeNativeMethods.Rdk_Variant_Get4dPointValue(ConstPointer(), ref v);
@@ -214,17 +358,17 @@ namespace Rhino.Render
     //public IntPtr AsPointer()
     //{ return UnsafeNativeMethods.Rdk_Variant_GetPointerValue(ConstPointer()); }
 
-    public Guid AsGuid()
+    public Guid ToGuid()
     { return UnsafeNativeMethods.Rdk_Variant_GetUuidValue(ConstPointer()); }
 
-    public Rhino.Geometry.Transform AsTransform()
+    public Rhino.Geometry.Transform ToTransform()
     {
       Rhino.Geometry.Transform v = new Rhino.Geometry.Transform();
       UnsafeNativeMethods.Rdk_Variant_GetXformValue(ConstPointer(), ref v);
       return v;
     }
 
-    public DateTime AsTime()
+    public DateTime ToDateTime()
     {
       System.DateTime dt = new DateTime(1970, 1, 1);
       dt.AddSeconds(UnsafeNativeMethods.Rdk_Variant_GetTimeValue(ConstPointer()));
@@ -282,11 +426,11 @@ namespace Rhino.Render
 
     #region internals
     private IntPtr m_pVariant = IntPtr.Zero;
-    IntPtr ConstPointer()
+    internal IntPtr ConstPointer()
     {
       return m_pVariant;
     }
-    IntPtr NonConstPointer()
+    internal IntPtr NonConstPointer()
     {
       return m_pVariant;
     }

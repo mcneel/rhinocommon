@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using System.Collections;
+using System.Collections.Generic;
 
 #if USING_RDK
 
@@ -10,7 +10,7 @@ namespace Rhino.Render
   /// Base class that provides access to the document lists of RenderContent instances
   /// ie - the Material, Environment and Texture tables.
   /// </summary>
-  public class ContentList : IEnumerator, IDisposable
+  public class ContentList : IEnumerator<RenderContent>, IDisposable
   {
     private RenderContent.Kinds m_kind;
     private RhinoDoc m_doc;
@@ -61,13 +61,14 @@ namespace Rhino.Render
         UnsafeNativeMethods.Rdk_ContentLists_DeleteIterator(m_pIterator);
         m_pIterator = UnsafeNativeMethods.Rdk_ContentLists_NewIterator(ConstPointer());
     }
-    public object Current
+    public RenderContent Current
     {
       get
       {
         return m_content;
       }
     }
+    object System.Collections.IEnumerator.Current { get { return Current; } }
     public bool MoveNext()
     {
       if (m_pIterator == IntPtr.Zero)

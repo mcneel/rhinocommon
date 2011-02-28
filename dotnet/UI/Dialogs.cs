@@ -62,6 +62,7 @@ namespace Rhino
       /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
       public static System.Windows.Forms.DialogResult ShowSemiModal(System.Windows.Forms.Form form)
       {
+        m_sendKeyStrokesCalled = false;
         System.Windows.Forms.DialogResult rc = System.Windows.Forms.DialogResult.None;
         System.Windows.Forms.Button accept = form.AcceptButton as System.Windows.Forms.Button;
         System.Windows.Forms.Button cancel = form.CancelButton as System.Windows.Forms.Button;
@@ -69,27 +70,34 @@ namespace Rhino
         {
           accept.Click += SemiModalOkClick;
           cancel.Click += SemiModalCancelClick;
-          Rhino.Input.Custom.GetString gs = new Rhino.Input.Custom.GetString();
-          gs.SetCommandPrompt("Press escape to cancel");
-          form.Show(RhinoApp.MainWindow());
-          gs.Get();
-          rc = System.Windows.Forms.DialogResult.Cancel;
-          if (gs.CommandResult() == Rhino.Commands.Result.Success && gs.StringResult() == "ok")
-            rc = System.Windows.Forms.DialogResult.OK;
-          form.DialogResult = rc;
-          form.Close();
         }
+        form.FormClosing += SemiModalOkClick;
+        Rhino.Input.Custom.GetString gs = new Rhino.Input.Custom.GetString();
+        gs.SetCommandPrompt("Press escape to cancel");
+        form.Show(RhinoApp.MainWindow());
+        gs.Get();
+        rc = System.Windows.Forms.DialogResult.Cancel;
+        if (gs.CommandResult() == Rhino.Commands.Result.Success && gs.StringResult() == "ok")
+          rc = System.Windows.Forms.DialogResult.OK;
+        form.DialogResult = rc;
+        form.Close();
+
         return rc;
       }
 
+      static bool m_sendKeyStrokesCalled;
       static void SemiModalOkClick(object sender, EventArgs e)
       {
-        RhinoApp.SendKeystrokes("ok", true);
+        if (!m_sendKeyStrokesCalled )
+          RhinoApp.SendKeystrokes("ok", true);
+        m_sendKeyStrokesCalled = true;
       }
 
       static void SemiModalCancelClick(object sender, EventArgs e)
       {
-        RhinoApp.SendKeystrokes("", true);
+        if( !m_sendKeyStrokesCalled )
+          RhinoApp.SendKeystrokes("", true);
+        m_sendKeyStrokesCalled = true;
       }
 
       /// <summary>

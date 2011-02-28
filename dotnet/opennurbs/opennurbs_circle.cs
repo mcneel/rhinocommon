@@ -394,14 +394,6 @@ namespace Rhino.Geometry
     //}
 
     /// <summary>
-    /// This method is Obsolete, use ClosestParameter() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestParameter() instead.")]
-    public bool ClosestParameterTo(Point3d testPoint, out double t)
-    {
-      return ClosestParameter(testPoint, out t);
-    }
-    /// <summary>
     /// Get the parameter on the circle which is closest to a test point.
     /// </summary>
     /// <param name="testPoint">Point to project onto the circle.</param>
@@ -413,14 +405,6 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Circle_ClosestPointTo(ref this, testPoint, ref t);
     }
 
-    /// <summary>
-    /// This method is Obsolete, use ClosestPoint() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoint() instead.")]
-    public Point3d ClosestPointTo(Point3d testPoint)
-    {
-      return ClosestPoint(testPoint);
-    }
     /// <summary>
     /// Get the point on the circle which is closest to a test point.
     /// </summary>

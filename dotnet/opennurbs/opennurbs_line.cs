@@ -264,14 +264,6 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// This method is Obsolete, use ClosestParameter() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestParameter() instead.")]
-    public double ClosestParameterTo(Point3d testPoint)
-    {
-      return ClosestParameter(testPoint);
-    }
-    /// <summary>
     /// Finds the parameter on the infinite line segment that is closest to a test point.
     /// </summary>
     /// <param name="testPoint">Point to project onto the line.</param>
@@ -283,14 +275,6 @@ namespace Rhino.Geometry
       return rc;
     }
 
-    /// <summary>
-    /// This method is Obsolete, use ClosestPoint() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoint() instead.")]
-    public Point3d ClosestPointTo(Point3d testPoint, bool limitToFiniteSegment)
-    {
-      return ClosestPoint(testPoint, limitToFiniteSegment);
-    }
     /// <summary>
     /// Finds the point on the (in)finite line segment that is closest to a test point.
     /// </summary>

@@ -93,7 +93,7 @@ namespace Rhino
     {
       get
       {
-        string path = GetString(idxPath);
+        string path = Path;
         if (!string.IsNullOrEmpty(path))
         {
           path = System.IO.Path.GetFileName(path);
@@ -107,12 +107,7 @@ namespace Rhino
     {
       get
       {
-        string path = GetString(idxPath);
-        if (!string.IsNullOrEmpty(path))
-        {
-          path = System.IO.Path.GetDirectoryName(path);
-        }
-        return path;
+        return GetString(idxPath);
       }
     }
     /*
@@ -703,59 +698,6 @@ namespace Rhino
     //  bool PrevConstructionPlane( ON_Plane& plane );
     //  int ConstructionPlaneCount() const;
 
-
-    /////<summary>Creates a bitmap preview image of model.</summary>
-    /////<param name='imagePath'>
-    /////[in] The name of the bitmap file to create.  The extension of the imagePath controls
-    /////the format of the bitmap file created (bmp, tga, jpg, pcx, png, tif).
-    /////</param>
-    /////<param name='viewportId'>[in] The uuid of the viewport capture. If Guid::Empty, the current active view is used..</param>
-    /////<param name='size'>[in] The width and height of the bitmap in pixels.</param>
-    /////<param name="ignoreHighlights"></param>
-    /////<param name="drawConstructionPlane"></param>
-    /////<returns>true if successful</returns>
-    //[Obsolete("Use RhinoView.CreatePreviewImage - this will be removed in a future WIP")]
-    //public bool CreateWireframePreviewImage(string imagePath,
-    //                                        Guid viewportId,
-    //                                        System.Drawing.Size size,
-    //                                        bool ignoreHighlights,
-    //                                        bool drawConstructionPlane)
-    //{
-    //  int settings = 0;
-    //  if (ignoreHighlights)
-    //    settings |= 0x1;
-    //  if (drawConstructionPlane)
-    //    settings |= 0x2;
-    //  return CreatePreviewImage(imagePath, viewportId, size, settings, true);
-    //}
-    /////<summary>Creates a bitmap preview image of model.</summary>
-    /////<param name='imagePath'>
-    /////[in] The name of the bitmap file to create.  The extension of the imagePath controls
-    /////the format of the bitmap file created (bmp, tga, jpg, pcx, png, tif).
-    /////</param>
-    /////<param name='viewportId'>[in] The uuid of the viewport capture. If Guid::Empty, the current active view is used..</param>
-    /////<param name='size'>[in] The width and height of the bitmap in pixels.</param>
-    ///// <param name="ignoreHighlights"></param>
-    ///// <param name="drawConstructionPlane"></param>
-    ///// <param name="useGhostedShading"></param>
-    /////<returns>true if successful</returns>
-    //[Obsolete("Use RhinoView.CreateShadedPreviewImage - this will be removed in a future WIP")]
-    //public bool CreateShadedPreviewImage(string imagePath,
-    //                                     Guid viewportId,
-    //                                     System.Drawing.Size size,
-    //                                     bool ignoreHighlights,
-    //                                     bool drawConstructionPlane,
-    //                                     bool useGhostedShading)
-    //{
-    //  int settings = 0;
-    //  if (ignoreHighlights)
-    //    settings |= 0x1;
-    //  if (drawConstructionPlane)
-    //    settings |= 0x2;
-    //  if (useGhostedShading)
-    //    settings |= 0x4;
-    //  return CreatePreviewImage(imagePath, viewportId, size, settings, true);
-    //}
 
     internal bool CreatePreviewImage(string imagePath, Guid viewportId, System.Drawing.Size size, int settings, bool wireframe)
     {

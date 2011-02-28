@@ -3,6 +3,10 @@ using System.Runtime.InteropServices;
 using Rhino.Runtime;
 using System.Collections.Generic;
 
+#if USING_RDK
+using Rhino.Render;
+#endif
+
 namespace Rhino.PlugIns
 {
   public enum DescriptionType
@@ -968,7 +972,8 @@ namespace Rhino.PlugIns
                                                              m_OnCreateDefaultContent,
                                                              m_OnOutputTypes,
                                                              m_OnCreateTexturePreview,
-                                                             m_OnCreatePreview);
+                                                             m_OnCreatePreview,
+                                                             m_OnDecalProperties);
 #endif
     }
 
@@ -984,6 +989,7 @@ namespace Rhino.PlugIns
       Decals = 6,
       GroundPlane = 7,
       SkyLight = 8,
+      CustomDecalProperties = 9,
     }
 
     /// <summary>
@@ -1081,7 +1087,7 @@ namespace Rhino.PlugIns
     /// <param name="quality"></param>
     /// <param name="scene"></param>
     /// <returns></returns>
-    protected virtual System.Drawing.Image CreatePreview(System.Drawing.Size pixels, PreviewQualityLevels quality, Rhino.Render.PreviewScene scene)
+    protected virtual System.Drawing.Image CreatePreview(System.Drawing.Size pixels, PreviewQualityLevels quality, PreviewScene scene)
     {
       return null;
     }
@@ -1097,9 +1103,32 @@ namespace Rhino.PlugIns
     /// <param name="pixels"></param>
     /// <param name="scene"></param>
     /// <returns></returns>
-    protected virtual System.Drawing.Image CreateQuickPreview(System.Drawing.Size pixels, Rhino.Render.PreviewScene scene)
+    protected virtual System.Drawing.Image CreateQuickPreview(System.Drawing.Size pixels, PreviewScene scene)
     {
       return null;
+    }
+
+    /// <summary>
+    /// Override this function to handle showing a modal dialog with your plugin's
+    /// custom decal properties.  You will be passed the current properties for the 
+    /// object being edited.  The defaults will be set in InitializeDecalProperties
+    /// </summary>
+    /// <param name="properties">A list of named values that will be stored on the object
+    /// the input values are the current ones, you should modify the values after the dialog
+    /// closes.</param>
+    /// <returns>true if the user pressed "OK", otherwise false</returns>
+    protected virtual bool ShowDecalProperties(ref List<NamedValue> properties)
+    {
+      return false;
+    }
+
+    /// <summary>
+    /// Initialize your custom decal properties here.  The input list will be empty - add your
+    /// default named property values and return.
+    /// </summary>
+    /// <param name="properties"></param>
+    protected virtual void InitializeDecalProperties(ref List<NamedValue> properties)
+    {
     }
 
 
@@ -1158,7 +1187,7 @@ namespace Rhino.PlugIns
     private static int OnAllowChooseContent(int serial_number, IntPtr pConstContent)
     {
       RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
-      Rhino.Render.RenderContent c = Rhino.Render.RenderContent.FromPointer(pConstContent);
+      RenderContent c = RenderContent.FromPointer(pConstContent);
       if (null == p || null == c)
       {
         HostUtils.DebugString("ERROR: Invalid input for OnAllowChooseContent");
@@ -1249,13 +1278,12 @@ namespace Rhino.PlugIns
       }
     }
 
-
     internal delegate IntPtr CreateTexturePreviewCallback(int serial_number, int x, int y, IntPtr pTexture);
     private static CreateTexturePreviewCallback m_OnCreateTexturePreview = OnCreateTexturePreview;
     private static IntPtr OnCreateTexturePreview(int serial_number, int x, int y, IntPtr pTexture)
     {
       RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
-      Rhino.Render.RenderTexture texture = IntPtr.Zero == pTexture ? null : Rhino.Render.RenderContent.FromPointer(pTexture) as Rhino.Render.RenderTexture;
+      RenderTexture texture = IntPtr.Zero == pTexture ? null : RenderContent.FromPointer(pTexture) as RenderTexture;
 
       if (null == p || null == texture || x == 0 || y == 0)
       {
@@ -1295,7 +1323,7 @@ namespace Rhino.PlugIns
     private static IntPtr OnCreatePreview(int serial_number, int x, int y, int iQuality, IntPtr pPreviewScene)
     {
       RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
-      Rhino.Render.PreviewScene scene = IntPtr.Zero == pPreviewScene ? null : new Rhino.Render.PreviewScene(pPreviewScene);
+      PreviewScene scene = IntPtr.Zero == pPreviewScene ? null : new PreviewScene(pPreviewScene);
 
       if (null == p || null == scene || x == 0 || y == 0)
       {
@@ -1335,6 +1363,47 @@ namespace Rhino.PlugIns
       }
 
       return IntPtr.Zero;
+    }
+
+    internal delegate int DecalCallback(int serial_number, IntPtr pXmlSection, int bInitialize);
+    private static DecalCallback m_OnDecalProperties = OnDecalProperties;
+    private static int OnDecalProperties(int serial_number, IntPtr pXmlSection, int bInitialize)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      
+      if (null == p && pXmlSection!=IntPtr.Zero)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnDecalProperties");
+      }
+      else
+      {
+        try
+        {
+          List<NamedValue> propertyList = XMLSectionUtilities.ConvertToNamedValueList(pXmlSection);
+
+          if (1 != bInitialize)
+          {
+            if (!p.ShowDecalProperties(ref propertyList))
+              return 0;
+          }
+          else
+          {
+            p.InitializeDecalProperties(ref propertyList);
+          }
+
+          XMLSectionUtilities.SetFromNamedValueList(pXmlSection, propertyList);
+
+          return 1;          
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnDecalProperties\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+
+      return 0;
     }
     #endregion
 

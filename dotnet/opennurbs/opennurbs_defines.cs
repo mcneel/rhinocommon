@@ -446,9 +446,6 @@ namespace Rhino
       Detail = 0x8000,
       Hatch = 0x10000,
       MorphControl = 0x20000,
-      [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never),
-       Obsolete("Use BrepLoop - this will be removed in a future WIP")]
-      Loop = 0x80000,
       BrepLoop = 0x80000,
       /// <summary>Selection filter value - not a real object type</summary>
       PolysrfFilter = 0x200000,
@@ -462,9 +459,6 @@ namespace Rhino
       Cage = 0x08000000,
       Phantom = 0x10000000,
       ClipPlane = 0x20000000,
-      [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never),
-       Obsolete("Use Extrusion - this will be removed in a future WIP")]
-      Beam = 0x40000000,
       Extrusion = 0x40000000,
       AnyObject = 0xFFFFFFFF
     }

@@ -443,14 +443,6 @@ namespace Rhino.Geometry
 
     #region projections
     /// <summary>
-    /// This method is Obsolete, use ClosestParameter() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestParameter() instead.")]
-    public bool ClosestParameterTo(Point3d testPoint, out double s, out double t)
-    {
-      return ClosestParameter(testPoint, out s, out t);
-    }
-    /// <summary>
     /// Gets the parameters of the point on the plane closest to a test point.
     /// </summary>
     /// <param name="testPoint">Point to get close to.</param>
@@ -474,14 +466,6 @@ namespace Rhino.Geometry
       return true;
     }
 
-    /// <summary>
-    /// This method is Obsolete, use ClosestPoint() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoint() instead.")]
-    public Point3d ClosestPointTo(Point3d testPoint)
-    {
-      return ClosestPoint(testPoint);
-    }
     /// <summary>
     /// Gets the point on the plane closest to a test point.
     /// </summary>

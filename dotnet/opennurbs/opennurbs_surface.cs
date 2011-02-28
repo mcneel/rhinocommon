@@ -629,14 +629,6 @@ namespace Rhino.Geometry
     //  virtual ON_SurfaceTree* CreateSurfaceTree() const;
 
     /// <summary>
-    /// This method is Obsolete, use ClosestPoint() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoint() instead.")]
-    public bool GetClosestPoint(Point3d testPoint, out double u, out double v)
-    {
-      return ClosestPoint(testPoint, out u, out v);
-    }
-    /// <summary>
     /// Input the parameters of the point on the surface that is closest to testPoint
     /// </summary>
     /// <param name="testPoint"></param>

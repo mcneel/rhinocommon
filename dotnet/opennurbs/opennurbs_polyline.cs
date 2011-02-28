@@ -262,14 +262,6 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// This method is Obsolete, use ClosestPoint() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoint() instead.")]
-    public Point3d ClosestPointTo(Point3d testPoint)
-    {
-      return ClosestPoint(testPoint);
-    }
-    /// <summary>
     /// Gets the point on the polyline which is closest to a test-point.
     /// </summary>
     /// <param name="testPoint">Point to approximate.</param>
@@ -281,14 +273,6 @@ namespace Rhino.Geometry
       return PointAt(t);
     }
 
-    /// <summary>
-    /// This method is Obsolete, use ClosestParameter() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestParameter() instead.")]
-    public double ClosestParameterTo(Point3d testPoint)
-    {
-      return ClosestParameter(testPoint);
-    }
     /// <summary>
     /// Gets the parameter along the polyline which is closest to a test-point.
     /// </summary>

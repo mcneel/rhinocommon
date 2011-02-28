@@ -384,14 +384,6 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// This method is Obsolete, use ClosestParameter() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestParameter() instead.")]
-    public double ClosestParameterTo(Point3d testPoint)
-    {
-      return ClosestParameter(testPoint);
-    }
-    /// <summary>
     /// Get parameter on the arc closest to a test point.
     /// </summary>
     /// <param name="testPoint">Point to get close to.</param>
@@ -406,14 +398,6 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Arc_ClosestPointTo(ref this, testPoint, ref t) ? t : RhinoMath.UnsetValue;
     }
 
-    /// <summary>
-    /// This method is Obsolete, use ClosestPoint() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoint() instead.")]
-    public Point3d ClosestPointTo(Point3d testPoint)
-    {
-      return ClosestPoint(testPoint);
-    }
     /// <summary>
     /// Get the point on the arc that is closest to a test point.
     /// </summary>

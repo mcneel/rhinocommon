@@ -474,11 +474,13 @@ namespace Rhino.Runtime
     /// <remarks>Subsequent calls to this method will be ignored.</remarks>
     public static void InitializeRhinoCommon()
     {
-      if (m_rhinocommoninitialized) { return; }
+      if (m_rhinocommoninitialized)
+        return;
+      m_rhinocommoninitialized = true;
 
       AssemblyResolver.InitializeAssemblyResolving();
-
-      m_rhinocommoninitialized = true;
+      UnsafeNativeMethods.RHC_SetPythonEvaluateCallback(m_evaluate_callback);
+      UnsafeNativeMethods.RHC_SetGetNowProc(m_getnow_callback, m_getformattedtime_callback);
     }
 
     public static PlugIn CreatePlugIn(Type pluginType, bool printDebugMessages)
@@ -486,7 +488,7 @@ namespace Rhino.Runtime
       if (null == pluginType || !typeof(PlugIn).IsAssignableFrom(pluginType))
         return null;
 
-      AssemblyResolver.InitializeAssemblyResolving();
+      InitializeRhinoCommon();
 
       // If we turn on debug messages, we always get debug output
       if (printDebugMessages)

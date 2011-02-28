@@ -793,14 +793,6 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// This method is Obsolete, use ClosestPoint() instead.
-    /// </summary>
-    [Obsolete("This method will disappear soon, use ClosestPoint() instead")]
-    public Point3d GetClosestPoint(Point3d testPoint)
-    {
-      return ClosestPoint(testPoint);
-    }
-    /// <summary>
     /// Finds a point on the brep that is closest to testPoint.
     /// </summary>
     /// <param name="testPoint">Base point to project to brep.</param>
@@ -819,16 +811,6 @@ namespace Rhino.Geometry
       return pt_cp;
     }
 
-    /// <summary>
-    /// This method is Obsolete, use ClosestPoint() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoint() instead")]
-    public bool GetClosestPoint(Point3d testPoint,
-      out Point3d closestPoint, out ComponentIndex ci,
-      out double s, out double t, double maximumDistance, out Vector3d normal)
-    {
-      return ClosestPoint(testPoint, out closestPoint, out ci, out s, out t, maximumDistance, out normal);
-    }
     /// <summary>
     /// Finds a point on a brep that is closest to testPoint.
     /// </summary>

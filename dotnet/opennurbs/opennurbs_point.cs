@@ -201,29 +201,6 @@ namespace Rhino.Geometry
       return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1}", m_t0, m_t1);
     }
 
-    ///// <summary>
-    ///// Set both T0 and T1.
-    ///// </summary>
-    ///// <param name="t0">New value for T0.</param>
-    ///// <param name="t1">New value for T1.</param>
-    //[Obsolete("This function will be removed in a future WIP")]
-    //public void Set(double t0, double t1)
-    //{
-    //  m_t0 = t0;
-    //  m_t1 = t1;
-    //}
-
-    ///// <summary>
-    ///// Copy T0 and T1 from another Interval.
-    ///// </summary>
-    ///// <param name="other">Interval to copy.</param>
-    //[Obsolete("This function will be removed in a future WIP")]
-    //public void Set(Interval other)
-    //{
-    //  m_t0 = other.m_t0;
-    //  m_t1 = other.m_t1;
-    //}
-
     /// <summary>
     /// Grow the Interval to include the given number.
     /// </summary>
@@ -371,20 +348,6 @@ namespace Rhino.Geometry
       return (IncludesParameter(interval.m_t0, strict) && IncludesParameter(interval.m_t1, strict));
     }
 
-    /////<returns>(T[0] &lt; t &lt; T[1])</returns>
-    //[Obsolete("This method has been replaced by the IncludesParameter(double t, bool strict) overload")]
-    //public bool StrictlyIncludesParameter(double t)
-    //{
-    //  return (RhinoMath.IsValidDouble(t)
-    //           && ((m_t0 < m_t1 && m_t0 < t && t < m_t1) || (m_t1 < m_t0 && m_t1 < t && t < m_t0))
-    //         );
-    //}
-    /////<returns>(T[0] &lt; t &lt; T[1])</returns>
-    //[Obsolete("This method has been replaced by the IncludesInterval(nterval interval, bool strict) overload")]
-    //public bool StrictlyIncludesInterval(Interval interval)
-    //{
-    //  return (StrictlyIncludesParameter(interval.m_t0) && StrictlyIncludesParameter(interval.m_t1));
-    //}
     #endregion
     #endregion
 

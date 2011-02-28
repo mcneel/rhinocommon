@@ -1407,14 +1407,6 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// This method is Obsolete, use ClosestPoint() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoint() instead.")]
-    public bool GetClosestPoint(Point3d testPoint, out double t)
-    {
-      return ClosestPoint(testPoint, out t);
-    }
-    /// <summary>
     /// Find parameter of the point on a curve that is closest to testPoint.
     /// If the maximumDistance parameter is > 0, then only points whose distance
     /// to the given point is &lt;= maximumDistance will be returned.  Using a 
@@ -1427,14 +1419,7 @@ namespace Rhino.Geometry
     {
       return ClosestPoint(testPoint, out t, -1.0);
     }
-    /// <summary>
-    /// This method is Obsolete, use ClosestPoint() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoint() instead.")]
-    public bool GetClosestPoint(Point3d testPoint, out double t, double maximumDistance)
-    {
-      return ClosestPoint(testPoint, out t, maximumDistance);
-    }
+
     /// <summary>
     /// Find parameter of the point on a curve that is closest to testPoint.
     /// If the maximumDistance parameter is > 0, then only points whose distance
@@ -1454,18 +1439,6 @@ namespace Rhino.Geometry
     }
 
 #if USING_V5_SDK
-    /// <summary>
-    /// This method is Obsolete, use ClosestPoints() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoints() instead.")]
-    public bool GetClosestPoints(IEnumerable<GeometryBase> geometry,
-      out Point3d pointOnCurve,
-      out Point3d pointOnObject,
-      out int whichGeometry,
-      double maximumDistance)
-    {
-      return ClosestPoints(geometry, out pointOnCurve, out pointOnObject, out whichGeometry, maximumDistance);
-    }
     /// <summary>
     /// Finds the object, and the closest point in that object, that is closest to
     /// this curve. Allowable objects to test the curve against include Brep, Surface,
@@ -1495,17 +1468,6 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// This method is Obsolete, use ClosestPoints() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoints() instead.")]
-    public bool GetClosestPoints(IEnumerable<GeometryBase> geometry,
-      out Point3d pointOnCurve,
-      out Point3d pointOnObject,
-      out int whichGeometry)
-    {
-      return ClosestPoints(geometry, out pointOnCurve, out pointOnObject, out whichGeometry);
-    }
-    /// <summary>
     /// Finds the object, and the closest point in that object, that is closest to
     /// this curve. Allowable objects to test the curve against include Brep, Surface,
     /// Curve, and PointCloud objects.
@@ -1523,14 +1485,6 @@ namespace Rhino.Geometry
       return ClosestPoints(geometry, out pointOnCurve, out pointOnObject, out whichGeometry, 0.0);
     }
 
-    /// <summary>
-    /// This method is Obsolete, use ClosestPoints() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoints() instead.")]
-    public bool GetClosestPoints(Curve otherCurve, out Point3d pointOnThisCurve, out Point3d pointOnOtherCurve)
-    {
-      return ClosestPoints(otherCurve, out pointOnThisCurve, out pointOnOtherCurve);
-    }
     /// <summary>
     /// Get closest points between two curves
     /// </summary>
@@ -1735,18 +1689,7 @@ namespace Rhino.Geometry
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.ON_Curve_FrameAt(ptr, t, ref plane);
     }
-    /// <summary>Evaluate the first derivative at a curve parameter.</summary>
-    /// <param name="t">Evaluation parameter.</param>
-    /// <returns>First derivative of the curve at the parameter t.</returns>
-    /// <remarks>No error handling.</remarks>
-    [Obsolete("This method will be removed in a future release, please use the alternative DerivativeAt overloads")]
-    public Vector3d DerivativeAt(double t)
-    {
-      Vector3d rc = new Vector3d();
-      IntPtr ptr = ConstPointer();
-      UnsafeNativeMethods.ON_Curve_GetVector(ptr, idxDerivativeAt, t, ref rc);
-      return rc;
-    }
+
     /// <summary>
     /// Evaluate the derivatives at the specified curve parameter.
     /// </summary>
@@ -3010,26 +2953,6 @@ namespace Rhino.Geometry
     /// the array. If the original curve had kinks or the offset curve had self 
     /// intersections, you will get multiple segments in the offset_curves[] array.
     /// </summary>
-    /// <param name="normal">The normal to the offset plane.</param>
-    /// <param name="origin">A point on offset plane.</param>
-    /// <param name="distance">The positive or negative distance to offset.</param>
-    /// <param name="tolerance">The offset or fitting tolerance.</param>
-    /// <param name="angleTolerance">The angle tolerance (radians).</param>
-    /// <param name="cornerStyle">Corner style for offset kinks.</param>
-    /// <returns>Offset curves on success, null on failure.</returns>
-    [Obsolete("This method is obsolete and will be removed in a future release of RhinoCommon")]
-    public Curve[] Offset(Vector3d normal, Point3d origin, double distance, double tolerance, double angleTolerance, CurveOffsetCornerStyle cornerStyle)
-    {
-      Plane pl = new Plane(origin, normal);
-      Point3d directionPoint = pl.PointAt(1, 0);
-      Curve[] rc = Offset(directionPoint, normal, distance, tolerance, cornerStyle);
-      return rc;
-    }
-    /// <summary>
-    /// Offsets a curve. If you have a nice offset, then there will be one entry in 
-    /// the array. If the original curve had kinks or the offset curve had self 
-    /// intersections, you will get multiple segments in the offset_curves[] array.
-    /// </summary>
     /// <param name="plane">Offset solution plane.</param>
     /// <param name="distance">The positive or negative distance to offset.</param>
     /// <param name="tolerance">The offset or fitting tolerance.</param>
@@ -3178,6 +3101,27 @@ namespace Rhino.Geometry
       Brep b = Brep.CreateFromSurface(surface);
       return OffsetOnSurface(b.Faces[0], curveParameters, offsetDistances, fittingTolerance);
     }
+
+#if USING_V5_SDK
+    /// <summary>
+    /// Finds a curve by offsetting an existing curve normal to a surface.
+    /// The caller is responsible for ensuring that the curve lies on the input surface.
+    /// </summary>
+    /// <param name="surface">Surface from which normals are calculated.</param>
+    /// <param name="height">offset distance (distance from surface to result curve)</param>
+    /// <returns>
+    /// Offset curve at distance height from the surface.  The offset curve is
+    /// interpolated through a small number of points so if the surface is irregular
+    /// or complicated, the result will not be a very accurate offset.
+    /// </returns>
+    public Curve OffsetNormalToSurface(Surface surface, double height)
+    {
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pConstSurface = surface.ConstPointer();
+      IntPtr pOffsetCurve = UnsafeNativeMethods.RHC_RhinoOffsetCurveNormal(pConstThis, pConstSurface, height);
+      return GeometryBase.CreateGeometryHelper(pOffsetCurve, null) as Curve;
+    }
+#endif
     #endregion methods
   }
 }

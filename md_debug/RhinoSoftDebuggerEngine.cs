@@ -34,11 +34,10 @@ namespace MonoDevelop.Debugger.Soft.Rhino
 		}
 	}
 	
-	
-	class RhinoDebuggerStartInfo : MonoDevelop.Debugger.Soft.RemoteDebuggerStartInfo
+	class RhinoDebuggerStartInfo : Mono.Debugging.Soft.SoftDebuggerStartInfo
 	{
-		public RhinoDebuggerStartInfo(string appName)
-			: base(appName, System.Net.IPAddress.Loopback, 10000)
+    public RhinoDebuggerStartInfo(string appName)
+			: base(new Mono.Debugging.Soft.SoftDebuggerListenArgs(appName, System.Net.IPAddress.Loopback, 0))
 		{
 		}
 	}

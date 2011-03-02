@@ -1,9 +1,15 @@
+// To build the add-in for MonoDevelop 2.6+
+// go to the build directory with terminal and run the following
+// /Applications/MonoDevelop.app/Contents/MacOS/mdtool setup pack MonoDevelop.RhinoDebug.dll
+//
+// This will generate a .mpack file that you can distribute to users
+
 using System;
 using System.Diagnostics;
 
 namespace MonoDevelop.Debugger.Soft.Rhino
 {
-	public class RhinoSoftDebuggerSession : MonoDevelop.Debugger.Soft.RemoteSoftDebuggerSession
+	public class RhinoSoftDebuggerSession : Mono.Debugging.Soft.SoftDebuggerSession
 	{
 		Process m_rhino_app;
 		const string DEFAULT_PROFILE="monodevelop-rhino-debug";
@@ -11,24 +17,27 @@ namespace MonoDevelop.Debugger.Soft.Rhino
 		protected override void OnRun (Mono.Debugging.Client.DebuggerStartInfo startInfo)
 		{
 			var dsi = startInfo as RhinoDebuggerStartInfo;
-			StartRhinoProcess(dsi);
-			StartListening(dsi);
+      int assignedDebugPort;
+      StartListening(dsi, out assignedDebugPort);
+			StartRhinoProcess(dsi, assignedDebugPort);
 		}
 		
-		void StartRhinoProcess(RhinoDebuggerStartInfo dsi)
+		void StartRhinoProcess(RhinoDebuggerStartInfo dsi, int assignedDebugPort)
 		{
 			if( m_rhino_app!=null )
 				throw new InvalidOperationException("Rhino already started");
 			
-			string userhome = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-			string dev_path = System.IO.Path.Combine(userhome, "dev/rhino/src4/rhino4/build/Debug/Rhino.app/Contents/MacOS/Rhino");
-			//string user_path = "/Applications/Rhino.app/Contents/MacOS/Rhino";
-			var psi = new ProcessStartInfo(dev_path);
+			//string userhome = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+			//string app_path = System.IO.Path.Combine(userhome, "dev/rhino/src4/rhino4/build/Debug/Rhino.app/Contents/MacOS/Rhino");
+			string app_path = "arch";
+			var psi = new ProcessStartInfo(app_path);
 			psi.UseShellExecute = false;
 			psi.RedirectStandardOutput = true;
 			psi.RedirectStandardError = true;
+      psi.Arguments = "-i386 /Applications/Rhinoceros.app/Contents/MacOS/Rhino";
 			
-			string envvar = string.Format("transport=dt_socket,address={0}:{1}", dsi.Address, dsi.DebugPort);
+      var args = (Mono.Debugging.Soft.SoftDebuggerRemoteArgs) dsi.StartArgs;
+			string envvar = string.Format("transport=dt_socket,address={0}:{1}", args.Address, assignedDebugPort);
 			psi.EnvironmentVariables.Add("RHINO_SOFT_DEBUG", envvar);
 						
 			m_rhino_app = Process.Start(psi);

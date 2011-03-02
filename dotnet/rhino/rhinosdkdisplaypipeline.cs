@@ -108,9 +108,10 @@ namespace Rhino.Display
 
     #region conduit events
     const int idxCalcBoundingBox = 0;
-    const int idxPostDrawObjects = 1;
-    const int idxDrawForeground = 2;
-    const int idxDrawOverlay = 3;
+    const int idxPreDrawObjects = 1;
+    const int idxPostDrawObjects = 2;
+    const int idxDrawForeground = 3;
+    const int idxDrawOverlay = 4;
 
     static void ConduitReport(int which)
     {
@@ -121,6 +122,10 @@ namespace Rhino.Display
         case idxCalcBoundingBox:
           title = "CalcBBox";
           cb = m_calcbbox;
+          break;
+        case idxPreDrawObjects:
+          title = "PreDrawObjects";
+          cb = m_predrawobjects;
           break;
         case idxPostDrawObjects:
           title = "PostDrawObjects";
@@ -153,11 +158,13 @@ namespace Rhino.Display
     // Callback used by C++ conduit to call into .NET
     internal delegate void ConduitCallback(IntPtr pPipeline, IntPtr pConduit);
     private static ConduitCallback m_CalcBoundingBoxCallback;
+    private static ConduitCallback m_PreDrawObjectsCallback;
     private static ConduitCallback m_PostDrawObjectsCallback;
     private static ConduitCallback m_DrawForegroundCallback;
     private static ConduitCallback m_DrawOverlayCallback;
 
     private static EventHandler<CalculateBoundingBoxEventArgs> m_calcbbox;
+    private static EventHandler<DrawEventArgs> m_predrawobjects;
     private static EventHandler<DrawEventArgs> m_postdrawobjects;
     private static EventHandler<DrawEventArgs> m_drawforeground;
     private static EventHandler<DrawEventArgs> m_drawoverlay;
@@ -169,6 +176,20 @@ namespace Rhino.Display
         try
         {
           m_calcbbox(null, new CalculateBoundingBoxEventArgs(pPipeline, pConduit));
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
+    private static void OnPreDrawObjects(IntPtr pPipeline, IntPtr pConduit)
+    {
+      if (m_predrawobjects != null)
+      {
+        try
+        {
+          m_predrawobjects(null, new DrawEventArgs(pPipeline));
         }
         catch (Exception ex)
         {
@@ -241,6 +262,34 @@ namespace Rhino.Display
         {
           UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxCalcBoundingBox, null, m_report);
           m_CalcBoundingBoxCallback = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Called before objects are been drawn. Depth writing and testing are on.
+    /// </summary>
+    public static event EventHandler<DrawEventArgs> PreDrawObjects
+    {
+      add
+      {
+        if (Runtime.HostUtils.ContainsDelegate(m_predrawobjects, value))
+          return;
+
+        if (null == m_predrawobjects)
+        {
+          m_PreDrawObjectsCallback = OnPreDrawObjects;
+          UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxPreDrawObjects, m_PreDrawObjectsCallback, m_report);
+        }
+        m_predrawobjects += value;
+      }
+      remove
+      {
+        m_predrawobjects -= value;
+        if (m_predrawobjects == null)
+        {
+          UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxPreDrawObjects, null, m_report);
+          m_PreDrawObjectsCallback = null;
         }
       }
     }
@@ -842,6 +891,20 @@ namespace Rhino.Display
     {
       IntPtr pMesh = mesh.ConstPointer();
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawMeshFalseColors(m_ptr, pMesh);
+    }
+
+    /// <summary>
+    /// Draw a shaded mesh representation of a brep
+    /// </summary>
+    /// <param name="brep">Brep to draw.</param>
+    /// <param name="material">Material to draw faces with.</param>
+    public void DrawBrepShaded(Brep brep, DisplayMaterial material)
+    {
+      IntPtr pBrep = brep.ConstPointer();
+      IntPtr pMaterial = IntPtr.Zero;
+      if (null != material)
+        pMaterial = material.ConstPointer();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawShadedBrep(m_ptr, pBrep, pMaterial);
     }
 
     /// <summary>
@@ -1635,29 +1698,36 @@ namespace Rhino.Display
 
     */
 
+    public void DrawObject(DocObjects.RhinoObject rhinoObject)
+    {
+      IntPtr pThis = NonConstPointer();
+      IntPtr pRhinoObject = rhinoObject.ConstPointer();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawObject(pThis, pRhinoObject); 
+    }
+
+    public void DrawObject(DocObjects.RhinoObject rhinoObject, Transform xform)
+    {
+      IntPtr pThis = NonConstPointer();
+      IntPtr pRhinoObject = rhinoObject.ConstPointer();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawObject2(pThis, pRhinoObject, ref xform);
+    }
+
     /*
-public void DrawBrepShaded(Geometry.ON_Brep brep)
-{
-}
-public void DrawObject(DocObjects.RhinoObject rhinoObject)
-{
-}
-public void DrawObject(DocObjects.RhinoObject rhinoObject, ON_Xform xform)
-{
-}
-public void DrawObjects(System.Collections.Generic.IEnumerable<DocObjects.RhinoObject> rhinoObjects)
-{
-}
-public void DrawObjects(System.Collections.Generic.IEnumerable<DocObjects.RhinoObject> rhinoObjects, ON_Xform xform)
-{
-}
-public void DrawSubObject(DocObjects.RhinoObject rhinoObject, ON_ComponentIndex componentIndex)
-{
-}
-public void DrawSubObject(DocObjects.RhinoObject rhinoObject, ON_ComponentIndex componentIndex, ON_Xform xform)
-{
-}
-*/
+    public void DrawObjects(System.Collections.Generic.IEnumerable<DocObjects.RhinoObject> rhinoObjects)
+    {
+    }
+
+    public void DrawObjects(System.Collections.Generic.IEnumerable<DocObjects.RhinoObject> rhinoObjects, Transform xform)
+    {
+    }
+
+    public void DrawSubObject(DocObjects.RhinoObject rhinoObject, ON_ComponentIndex componentIndex)
+    {
+    }
+    public void DrawSubObject(DocObjects.RhinoObject rhinoObject, ON_ComponentIndex componentIndex, ON_Xform xform)
+    {
+    }
+    */
     #endregion
 
     #region CRhinoViewport draw functions

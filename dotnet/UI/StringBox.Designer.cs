@@ -28,34 +28,32 @@
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.Button m_btnOk;
-      System.Windows.Forms.Button m_btnCancel;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StringBox));
+      this.m_btnOk = new System.Windows.Forms.Button();
+      this.m_btnCancel = new System.Windows.Forms.Button();
       this.m_txtbox = new System.Windows.Forms.TextBox();
       this.m_lblMessage = new System.Windows.Forms.Label();
-      m_btnOk = new System.Windows.Forms.Button();
-      m_btnCancel = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // m_btnOk
       // 
-      m_btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-      m_btnOk.Location = new System.Drawing.Point(116, 55);
-      m_btnOk.Name = "m_btnOk";
-      m_btnOk.Size = new System.Drawing.Size(75, 23);
-      m_btnOk.TabIndex = 1;
-      m_btnOk.Text = "OK";
-      m_btnOk.UseVisualStyleBackColor = true;
+      this.m_btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+      this.m_btnOk.Location = new System.Drawing.Point(116, 55);
+      this.m_btnOk.Name = "m_btnOk";
+      this.m_btnOk.Size = new System.Drawing.Size(75, 23);
+      this.m_btnOk.TabIndex = 1;
+      this.m_btnOk.Text = "OK";
+      this.m_btnOk.UseVisualStyleBackColor = true;
       // 
       // m_btnCancel
       // 
-      m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      m_btnCancel.Location = new System.Drawing.Point(197, 55);
-      m_btnCancel.Name = "m_btnCancel";
-      m_btnCancel.Size = new System.Drawing.Size(75, 23);
-      m_btnCancel.TabIndex = 2;
-      m_btnCancel.Text = "Cancel";
-      m_btnCancel.UseVisualStyleBackColor = true;
+      this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.m_btnCancel.Location = new System.Drawing.Point(197, 55);
+      this.m_btnCancel.Name = "m_btnCancel";
+      this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
+      this.m_btnCancel.TabIndex = 2;
+      this.m_btnCancel.Text = "Cancel";
+      this.m_btnCancel.UseVisualStyleBackColor = true;
       // 
       // m_txtbox
       // 
@@ -80,8 +78,8 @@
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(284, 88);
       this.Controls.Add(this.m_lblMessage);
-      this.Controls.Add(m_btnCancel);
-      this.Controls.Add(m_btnOk);
+      this.Controls.Add(this.m_btnCancel);
+      this.Controls.Add(this.m_btnOk);
       this.Controls.Add(this.m_txtbox);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MaximizeBox = false;
@@ -97,5 +95,7 @@
 
     private System.Windows.Forms.TextBox m_txtbox;
     private System.Windows.Forms.Label m_lblMessage;
+    private System.Windows.Forms.Button m_btnOk;
+    private System.Windows.Forms.Button m_btnCancel;
   }
 }

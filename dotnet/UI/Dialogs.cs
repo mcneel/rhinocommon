@@ -62,6 +62,7 @@ namespace Rhino
       /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
       public static System.Windows.Forms.DialogResult ShowSemiModal(System.Windows.Forms.Form form)
       {
+        m_sendKeyStrokesCalled = false;
         System.Windows.Forms.DialogResult rc = System.Windows.Forms.DialogResult.None;
         System.Windows.Forms.Button accept = form.AcceptButton as System.Windows.Forms.Button;
         System.Windows.Forms.Button cancel = form.CancelButton as System.Windows.Forms.Button;
@@ -69,27 +70,34 @@ namespace Rhino
         {
           accept.Click += SemiModalOkClick;
           cancel.Click += SemiModalCancelClick;
-          Rhino.Input.Custom.GetString gs = new Rhino.Input.Custom.GetString();
-          gs.SetCommandPrompt("Press escape to cancel");
-          form.Show(RhinoApp.MainWindow());
-          gs.Get();
-          rc = System.Windows.Forms.DialogResult.Cancel;
-          if (gs.CommandResult() == Rhino.Commands.Result.Success && gs.StringResult() == "ok")
-            rc = System.Windows.Forms.DialogResult.OK;
-          form.DialogResult = rc;
-          form.Close();
         }
+        form.FormClosing += SemiModalOkClick;
+        Rhino.Input.Custom.GetString gs = new Rhino.Input.Custom.GetString();
+        gs.SetCommandPrompt("Press escape to cancel");
+        form.Show(RhinoApp.MainWindow());
+        gs.Get();
+        rc = System.Windows.Forms.DialogResult.Cancel;
+        if (gs.CommandResult() == Rhino.Commands.Result.Success && gs.StringResult() == "ok")
+          rc = System.Windows.Forms.DialogResult.OK;
+        form.DialogResult = rc;
+        form.Close();
+
         return rc;
       }
 
+      static bool m_sendKeyStrokesCalled;
       static void SemiModalOkClick(object sender, EventArgs e)
       {
-        RhinoApp.SendKeystrokes("ok", true);
+        if (!m_sendKeyStrokesCalled )
+          RhinoApp.SendKeystrokes("ok", true);
+        m_sendKeyStrokesCalled = true;
       }
 
       static void SemiModalCancelClick(object sender, EventArgs e)
       {
-        RhinoApp.SendKeystrokes("", true);
+        if( !m_sendKeyStrokesCalled )
+          RhinoApp.SendKeystrokes("", true);
+        m_sendKeyStrokesCalled = true;
       }
 
       /// <summary>
@@ -354,6 +362,49 @@ namespace Rhino
             text = dlg.GetText();
         }
         return rc;
+      }
+
+      /// <summary>
+      /// FOR INTERNAL TESTING
+      /// Ignore - this is for internal testing and will be removed
+      /// </summary>
+      /// <returns>
+      /// On Windows (.NET)
+      /// {X=0,Y=0,Width=300,Height=126}
+      ///   {X=0,Y=0,Width=284,Height=88}
+      ///   {X=0,Y=0,Width=284,Height=88}
+      /// {X=10,Y=9,Width=49,Height=13}
+      ///   {X=0,Y=0,Width=49,Height=13}
+      ///   {X=0,Y=0,Width=49,Height=13}
+      /// {X=197,Y=55,Width=75,Height=23}
+      ///   {X=0,Y=0,Width=75,Height=23}
+      ///   {X=0,Y=0,Width=75,Height=23}
+      /// {X=116,Y=55,Width=75,Height=23}
+      ///   {X=0,Y=0,Width=75,Height=23}
+      ///   {X=0,Y=0,Width=75,Height=23}
+      /// {X=13,Y=29,Width=259,Height=20}
+      ///   {X=0,Y=0,Width=255,Height=16}
+      ///   {X=0,Y=0,Width=255,Height=16}
+      /// </returns>
+      [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+      public static System.Drawing.Rectangle[] StringBoxRects()
+      {
+        StringBox dlg = new StringBox("title", "message", "default_text");
+        dlg.Show();
+        dlg.Location = new System.Drawing.Point(0, 0);
+        List<System.Drawing.Rectangle> rc = new List<System.Drawing.Rectangle>();
+        rc.Add(dlg.Bounds);
+        rc.Add(dlg.DisplayRectangle);
+        rc.Add(dlg.ClientRectangle);
+        for (int i = 0; i < dlg.Controls.Count; i++)
+        {
+          System.Windows.Forms.Control ctrl = dlg.Controls[i];
+          rc.Add(ctrl.Bounds);
+          rc.Add(ctrl.DisplayRectangle);
+          rc.Add(ctrl.ClientRectangle);
+        }
+        dlg.Close();
+        return rc.ToArray();
       }
 
       public static System.Windows.Forms.DialogResult ShowNumberBox(string title, string message, ref double number)

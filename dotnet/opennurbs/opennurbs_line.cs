@@ -264,14 +264,6 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// This method is Obsolete, use ClosestParameter() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestParameter() instead.")]
-    public double ClosestParameterTo(Point3d testPoint)
-    {
-      return ClosestParameter(testPoint);
-    }
-    /// <summary>
     /// Finds the parameter on the infinite line segment that is closest to a test point.
     /// </summary>
     /// <param name="testPoint">Point to project onto the line.</param>
@@ -283,14 +275,6 @@ namespace Rhino.Geometry
       return rc;
     }
 
-    /// <summary>
-    /// This method is Obsolete, use ClosestPoint() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoint() instead.")]
-    public Point3d ClosestPointTo(Point3d testPoint, bool limitToFiniteSegment)
-    {
-      return ClosestPoint(testPoint, limitToFiniteSegment);
-    }
     /// <summary>
     /// Finds the point on the (in)finite line segment that is closest to a test point.
     /// </summary>
@@ -472,6 +456,9 @@ namespace Rhino.Geometry
     }
     internal bool ExtendThroughPointSet(IEnumerable<Point3d> pts, double additionalLength)
     {
+      Vector3d unit = UnitTangent;
+      if (!unit.IsValid) { return false; }
+
       double t0 = double.MaxValue;
       double t1 = double.MinValue;
 
@@ -482,13 +469,22 @@ namespace Rhino.Geometry
         t1 = Math.Max(t1, t);
       }
 
-      Point3d A = PointAt(t0);
-      Point3d B = PointAt(t1);
+      if (t0 <= t1)
+      {
+        Point3d A = PointAt(t0) - (additionalLength * unit);
+        Point3d B = PointAt(t1) + (additionalLength * unit);
+        m_from = A;
+        m_to = B;
+      }
+      else
+      {
+        Point3d A = PointAt(t0) + (additionalLength * unit);
+        Point3d B = PointAt(t1) - (additionalLength * unit);
+        m_from = A;
+        m_to = B;
+      }
 
-      m_from = A;
-      m_to = B;
-
-      return Extend(additionalLength, additionalLength);
+      return true;
     }
 
     /// <summary>

@@ -645,188 +645,32 @@ namespace Rhino.Render
       Serialize = 7,
     }
 
-    #region SetNamedParameter overloads
-    public bool SetNamedParameter(String parameterName, bool value, ChangeContexts changeContext)
+    public void SetNamedParameter<T>(String parameterName, T value, ChangeContexts changeContext)
     {
-      return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetBoolParameter(ConstPointer(), parameterName, value, (int)changeContext);
+      if (1 != UnsafeNativeMethods.Rdk_RenderContent_SetVariantParameter(ConstPointer(), parameterName, new Variant(value).ConstPointer(), (int)changeContext))
+      {
+        throw new InvalidOperationException("SetNamedParamter doesn't support this type");
+      }
     }
-    public bool SetNamedParameter(String parameterName, int value, ChangeContexts changeContext)
-    {
-      return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetIntParameter(ConstPointer(), parameterName, value, (int)changeContext);
-    }
-    public bool SetNamedParameter(String parameterName, float value, ChangeContexts changeContext)
-    {
-      return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetFloatParameter(ConstPointer(), parameterName, value, (int)changeContext);
-    }
-    public bool SetNamedParameter(String parameterName, double value, ChangeContexts changeContext)
-    {
-      return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetDoubleParameter(ConstPointer(), parameterName, value, (int)changeContext);
-    }
-    public bool SetNamedParameter(String parameterName, String value, ChangeContexts changeContext)
-    {
-      return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetStringParameter(ConstPointer(), parameterName, value, (int)changeContext);
-    }
-    public bool SetNamedParameter(String parameterName, Rhino.Geometry.Vector2d value, ChangeContexts changeContext)
-    {
-      return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetVector2dParameter(ConstPointer(), parameterName, value, (int)changeContext);
-    }
-    public bool SetNamedParameter(String parameterName, Rhino.Geometry.Vector3d value, ChangeContexts changeContext)
-    {
-      return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetVector3dParameter(ConstPointer(), parameterName, value, (int)changeContext);
-    }
-    public bool SetNamedParameter(String parameterName, Rhino.Geometry.Point4d value, ChangeContexts changeContext)
-    {
-      return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetPoint4dParameter(ConstPointer(), parameterName, value, (int)changeContext);
-    }
-    public bool SetNamedParameter(String parameterName, Rhino.Display.Color4f value, ChangeContexts changeContext)
-    {
-      return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetColorParameter(ConstPointer(), parameterName, value, (int)changeContext);
-    }
-    public bool SetNamedParameter(String parameterName, Rhino.Geometry.Transform value, ChangeContexts changeContext)
-    {
-      return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetMatrixParameter(ConstPointer(), parameterName, value, (int)changeContext);
-    }
-    public bool SetNamedParameter(String parameterName, Guid value, ChangeContexts changeContext)
-    {
-      return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetUUIDParameter(ConstPointer(), parameterName, value, (int)changeContext);
-    }
-    public bool SetNamedParameter(String parameterName, DateTime value, ChangeContexts changeContext)
-    {
-      DateTime startTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-      TimeSpan span = value - startTime;
-      return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetTimeParameter(ConstPointer(), parameterName, Convert.ToInt64(Math.Abs(span.TotalSeconds)), (int)changeContext);
-    }
-    #endregion
 
     public object GetNamedParameter(String parameterName)
     {
+      Rhino.Render.Variant variant = new Variant();
       if (IsNativeWrapper())
       {
-        ParameterTypes type = (ParameterTypes)UnsafeNativeMethods.Rdk_RenderContent_ParameterType(ConstPointer(), parameterName);
-
-        switch (type)
+        if (1==UnsafeNativeMethods.Rdk_RenderContent_GetVariantParameter(ConstPointer(), parameterName, variant.NonConstPointer()))
         {
-          case ParameterTypes.Boolean:
-            return (object)UnsafeNativeMethods.Rdk_RenderContent_GetBooleanParameter(ConstPointer(), parameterName);
-          case ParameterTypes.Integer:
-            return (object)UnsafeNativeMethods.Rdk_RenderContent_GetIntegerParameter(ConstPointer(), parameterName);
-          case ParameterTypes.Float:
-            return (object)UnsafeNativeMethods.Rdk_RenderContent_GetFloatParameter(ConstPointer(), parameterName);
-          case ParameterTypes.Double:
-            return (object)UnsafeNativeMethods.Rdk_RenderContent_GetDoubleParameter(ConstPointer(), parameterName);
-          case ParameterTypes.String:
-            {
-              using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
-              {
-                IntPtr pString = sh.NonConstPointer();
-                UnsafeNativeMethods.Rdk_RenderContent_GetStringParameter(ConstPointer(), parameterName, pString);
-                return sh.ToString();
-              }
-            }
-          case ParameterTypes.Vector2d:
-            {
-              Rhino.Geometry.Vector2d vector = new Rhino.Geometry.Vector2d();
-              UnsafeNativeMethods.Rdk_RenderContent_GetVector2dParameter(ConstPointer(), parameterName, ref vector);
-              return vector;
-            }
-          case ParameterTypes.Vector3d:
-            {
-              Rhino.Geometry.Vector3d vector = new Rhino.Geometry.Vector3d();
-              UnsafeNativeMethods.Rdk_RenderContent_GetVector3dParameter(ConstPointer(), parameterName, ref vector);
-              return vector;
-            }
-          case ParameterTypes.Point4d:
-            {
-              Rhino.Geometry.Point4d vector = new Rhino.Geometry.Point4d();
-              UnsafeNativeMethods.Rdk_RenderContent_GetPoint4dParameter(ConstPointer(), parameterName, ref vector);
-              return vector;
-            }
-          case ParameterTypes.Color:
-            {
-              Rhino.Display.Color4f color = new Rhino.Display.Color4f();
-              UnsafeNativeMethods.Rdk_RenderContent_GetColorParameter(ConstPointer(), parameterName, ref color);
-              return color;
-            }
-          case ParameterTypes.Matrix:
-            {
-              Rhino.Geometry.Transform matrix = new Rhino.Geometry.Transform();
-              UnsafeNativeMethods.Rdk_RenderContent_GetMatrixParameter(ConstPointer(), parameterName, ref matrix);
-              return matrix;
-            }
-          case ParameterTypes.Uuid:
-            return UnsafeNativeMethods.Rdk_RenderContent_GetUUIDParameter(ConstPointer(), parameterName);
-          case ParameterTypes.Time:
-            {
-              System.DateTime dt = new DateTime(1970, 1, 1);
-              dt.AddSeconds(UnsafeNativeMethods.Rdk_RenderContent_GetTimeParameter(ConstPointer(), parameterName));
-              return dt;
-            }
+          return variant;
         }
       }
       else
       {
-        ParameterTypes type = (ParameterTypes)UnsafeNativeMethods.Rdk_RenderContent_CallParameterTypeBase(ConstPointer(), parameterName);
-
-        switch (type)
+        if (1 == UnsafeNativeMethods.Rdk_RenderContent_CallGetVariantParameterBase(ConstPointer(), parameterName, variant.NonConstPointer()))
         {
-          case ParameterTypes.Boolean:
-            return (object)UnsafeNativeMethods.Rdk_RenderContent_CallGetBooleanParameterBase(ConstPointer(), parameterName);
-          case ParameterTypes.Integer:
-            return (object)UnsafeNativeMethods.Rdk_RenderContent_CallGetIntegerParameterBase(ConstPointer(), parameterName);
-          case ParameterTypes.Float:
-            return (object)UnsafeNativeMethods.Rdk_RenderContent_CallGetFloatParameterBase(ConstPointer(), parameterName);
-          case ParameterTypes.Double:
-            return (object)UnsafeNativeMethods.Rdk_RenderContent_CallGetDoubleParameterBase(ConstPointer(), parameterName);
-          case ParameterTypes.String:
-            {
-              using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
-              {
-                IntPtr pString = sh.NonConstPointer();
-                UnsafeNativeMethods.Rdk_RenderContent_CallGetStringParameterBase(ConstPointer(), parameterName, pString);
-                return sh.ToString();
-              }
-            }
-          case ParameterTypes.Vector2d:
-            {
-              Rhino.Geometry.Vector2d vector = new Rhino.Geometry.Vector2d();
-              UnsafeNativeMethods.Rdk_RenderContent_CallGetVector2dParameterBase(ConstPointer(), parameterName, ref vector);
-              return vector;
-            }
-          case ParameterTypes.Vector3d:
-            {
-              Rhino.Geometry.Vector3d vector = new Rhino.Geometry.Vector3d();
-              UnsafeNativeMethods.Rdk_RenderContent_CallGetVector3dParameterBase(ConstPointer(), parameterName, ref vector);
-              return vector;
-            }
-          case ParameterTypes.Point4d:
-            {
-              Rhino.Geometry.Point4d vector = new Rhino.Geometry.Point4d();
-              UnsafeNativeMethods.Rdk_RenderContent_CallGetPoint4dParameterBase(ConstPointer(), parameterName, ref vector);
-              return vector;
-            }
-          case ParameterTypes.Color:
-            {
-              Rhino.Display.Color4f color = new Rhino.Display.Color4f();
-              UnsafeNativeMethods.Rdk_RenderContent_CallGetColorParameterBase(ConstPointer(), parameterName, ref color);
-              return color;
-            }
-          case ParameterTypes.Matrix:
-            {
-              Rhino.Geometry.Transform matrix = new Rhino.Geometry.Transform();
-              UnsafeNativeMethods.Rdk_RenderContent_CallGetMatrixParameterBase(ConstPointer(), parameterName, ref matrix);
-              return matrix;
-            }
-          case ParameterTypes.Uuid:
-            return UnsafeNativeMethods.Rdk_RenderContent_CallGetUUIDParameterBase(ConstPointer(), parameterName);
-          case ParameterTypes.Time:
-            {
-              System.DateTime dt = new DateTime(1970, 1, 1);
-              dt.AddSeconds(UnsafeNativeMethods.Rdk_RenderContent_CallGetTimeParameterBase(ConstPointer(), parameterName));
-              return dt;
-            }
+          return variant;
         }
       }
-      return null;
+      throw new InvalidOperationException("Type not supported");
     }
 
     /// <summary>

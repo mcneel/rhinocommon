@@ -165,157 +165,17 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr Rdk_FindRhCmnContentPointer(int serial_number, ref int search_hint);
 
-  //int Rdk_RenderContent_ParameterType(const CRhRdkContent* pContent, const RHMONO_STRING* _ps)
+  //int Rdk_RenderContent_GetVariantParameter(const CRhRdkContent* pContent, const RHMONO_STRING* _ps, CRhRdkVariant* pV)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_ParameterType(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
+  internal static extern int Rdk_RenderContent_GetVariantParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, IntPtr pV);
 
-  //int Rdk_RenderContent_GetBooleanParameter(const CRhRdkContent* pContent, const RHMONO_STRING* _ps)
+  //int Rdk_RenderContent_CallGetVariantParameterBase(const CRhRdkContent* pContent, const RHMONO_STRING* _ps, CRhRdkVariant* pV)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_GetBooleanParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
+  internal static extern int Rdk_RenderContent_CallGetVariantParameterBase(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, IntPtr pV);
 
-  //int Rdk_RenderContent_GetIntegerParameter(const CRhRdkContent* pContent, const RHMONO_STRING* _ps)
+  //int Rdk_RenderContent_SetVariantParameter(CRhRdkContent* pContent, const RHMONO_STRING* _ps, const CRhRdkVariant* pV, int cc)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_GetIntegerParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
-
-  //float Rdk_RenderContent_GetFloatParameter(const CRhRdkContent* pContent, const RHMONO_STRING* _ps)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern float Rdk_RenderContent_GetFloatParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
-
-  //double Rdk_RenderContent_GetDoubleParameter(const CRhRdkContent* pContent, const RHMONO_STRING* _ps)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern double Rdk_RenderContent_GetDoubleParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
-
-  //void Rdk_RenderContent_GetStringParameter(const CRhRdkContent* pContent, const RHMONO_STRING* _ps, CRhCmnStringHolder* pSH)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_RenderContent_GetStringParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, IntPtr pSH);
-
-  //void Rdk_RenderContent_GetVector2dParameter(const CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_2dVector* pV)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_RenderContent_GetVector2dParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, ref Vector2d pV);
-
-  //void Rdk_RenderContent_GetVector3dParameter(const CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_3dVector* pV)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_RenderContent_GetVector3dParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, ref Vector3d pV);
-
-  //void Rdk_RenderContent_GetPoint4dParameter(const CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_4dPoint* pP)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_RenderContent_GetPoint4dParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, ref Point4d pP);
-
-  //void Rdk_RenderContent_GetColorParameter(const CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_4fPoint* pP)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_RenderContent_GetColorParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, ref Color4f pP);
-
-  //ON_UUID Rdk_RenderContent_GetUUIDParameter(const CRhRdkContent* pContent, const RHMONO_STRING* _ps)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern Guid Rdk_RenderContent_GetUUIDParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
-
-  //void Rdk_RenderContent_GetMatrixParameter(const CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_Xform* pM)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_RenderContent_GetMatrixParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, ref Transform pM);
-
-  //time_t Rdk_RenderContent_GetTimeParameter(const CRhRdkContent* pContent, const RHMONO_STRING* _ps)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern Int64 Rdk_RenderContent_GetTimeParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
-
-  //int Rdk_RenderContent_CallParameterTypeBase(const CRhRdkContent* pContent, const RHMONO_STRING* _ps)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_CallParameterTypeBase(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
-
-  //int Rdk_RenderContent_CallGetBooleanParameterBase(const CRhRdkContent* pContent, const RHMONO_STRING* _ps)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_CallGetBooleanParameterBase(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
-
-  //int Rdk_RenderContent_CallGetIntegerParameterBase(const CRhRdkContent* pContent, const RHMONO_STRING* _ps)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_CallGetIntegerParameterBase(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
-
-  //float Rdk_RenderContent_CallGetFloatParameterBase(const CRhRdkContent* pContent, const RHMONO_STRING* _ps)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern float Rdk_RenderContent_CallGetFloatParameterBase(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
-
-  //double Rdk_RenderContent_CallGetDoubleParameterBase(const CRhRdkContent* pContent, const RHMONO_STRING* _ps)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern double Rdk_RenderContent_CallGetDoubleParameterBase(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
-
-  //void Rdk_RenderContent_CallGetStringParameterBase(const CRhRdkContent* pContent, const RHMONO_STRING* _ps, CRhCmnStringHolder* pSH)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_RenderContent_CallGetStringParameterBase(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, IntPtr pSH);
-
-  //void Rdk_RenderContent_CallGetVector2dParameterBase(const CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_2dVector* pV)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_RenderContent_CallGetVector2dParameterBase(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, ref Vector2d pV);
-
-  //void Rdk_RenderContent_CallGetVector3dParameterBase(const CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_3dVector* pV)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_RenderContent_CallGetVector3dParameterBase(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, ref Vector3d pV);
-
-  //void Rdk_RenderContent_CallGetPoint4dParameterBase(const CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_4dPoint* pP)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_RenderContent_CallGetPoint4dParameterBase(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, ref Point4d pP);
-
-  //void Rdk_RenderContent_CallGetColorParameterBase(const CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_4fPoint* pP)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_RenderContent_CallGetColorParameterBase(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, ref Color4f pP);
-
-  //ON_UUID Rdk_RenderContent_CallGetUUIDParameterBase(const CRhRdkContent* pContent, const RHMONO_STRING* _ps)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern Guid Rdk_RenderContent_CallGetUUIDParameterBase(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
-
-  //void Rdk_RenderContent_CallGetMatrixParameterBase(const CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_Xform* pM)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_RenderContent_CallGetMatrixParameterBase(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, ref Transform pM);
-
-  //time_t Rdk_RenderContent_CallGetTimeParameterBase(const CRhRdkContent* pContent, const RHMONO_STRING* _ps)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern Int64 Rdk_RenderContent_CallGetTimeParameterBase(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
-
-  //int Rdk_RenderContent_SetBoolParameter(CRhRdkContent* pContent, const RHMONO_STRING* _ps, bool v, int cc)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_SetBoolParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, [MarshalAs(UnmanagedType.U1)]bool v, int cc);
-
-  //int Rdk_RenderContent_SetIntParameter(CRhRdkContent* pContent, const RHMONO_STRING* _ps, int v, int cc)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_SetIntParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, int v, int cc);
-
-  //int Rdk_RenderContent_SetFloatParameter(CRhRdkContent* pContent, const RHMONO_STRING* _ps, float v, int cc)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_SetFloatParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, float v, int cc);
-
-  //int Rdk_RenderContent_SetDoubleParameter(CRhRdkContent* pContent, const RHMONO_STRING* _ps, double v, int cc)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_SetDoubleParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, double v, int cc);
-
-  //int Rdk_RenderContent_SetStringParameter(CRhRdkContent* pContent, const RHMONO_STRING* _ps, const RHMONO_STRING* _psValue, int cc)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_SetStringParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, [MarshalAs(UnmanagedType.LPWStr)]string _psValue, int cc);
-
-  //int Rdk_RenderContent_SetVector2dParameter(CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_2DVECTOR_STRUCT _v, int cc)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_SetVector2dParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, Vector2d _v, int cc);
-
-  //int Rdk_RenderContent_SetVector3dParameter(CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_3DVECTOR_STRUCT _v, int cc)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_SetVector3dParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, Vector3d _v, int cc);
-
-  //int Rdk_RenderContent_SetPoint4dParameter(CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_4DPOINT_STRUCT _v, int cc)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_SetPoint4dParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, Point4d _v, int cc);
-
-  //int Rdk_RenderContent_SetColorParameter(CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_4FVECTOR_STRUCT _v, int cc)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_SetColorParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, Color4f _v, int cc);
-
-  //int Rdk_RenderContent_SetMatrixParameter(CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_XFORM_STRUCT _v, int cc)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_SetMatrixParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, Transform _v, int cc);
-
-  //int Rdk_RenderContent_SetUUIDParameter(CRhRdkContent* pContent, const RHMONO_STRING* _ps, ON_UUID v, int cc)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_SetUUIDParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, Guid v, int cc);
-
-  //int Rdk_RenderContent_SetTimeParameter(CRhRdkContent* pContent, const RHMONO_STRING* _ps, time_t v, int cc)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_RenderContent_SetTimeParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, Int64 v, int cc);
+  internal static extern int Rdk_RenderContent_SetVariantParameter(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _ps, IntPtr pV, int cc);
 
   //ON_UUID Rdk_RenderContent_ObjectMaterialInstanceId(const CRhinoObject* pObject)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
@@ -619,6 +479,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_Decal_UVBounds(IntPtr pDecal, ref double pMinUOut, ref double pMinVOut, ref double pMaxUOut, ref double pMaxVOut);
 
+  //const IRhRdk_XMLSection* Rdk_Decal_CustomData(const IRhRdkDecal* pDecal)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_Decal_CustomData(IntPtr pDecal);
+
   //int Rdk_Decal_Color(const IRhRdkDecal* pDecal, ON_3DPOINT_STRUCT point, ON_3DVECTOR_STRUCT normal, ON_4fPoint* pColInOut, ON_2dPoint* pUvOut)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int Rdk_Decal_Color(IntPtr pDecal, Point3d point, Vector3d normal, ref Color4f pColInOut, ref Point2d pUvOut);
@@ -754,9 +618,27 @@ internal partial class UnsafeNativeMethods
   //void Rdk_SetNewEnvironmentCallback(RDK_NEWENVIRONMENTPROC proc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
-  //CRhCmnRdkPlugIn* CRhCmnRdkPlugIn_New( CRhinoPlugIn* pRhinoPlugIn )
+  //void CRhinoRenderPlugIn_SetRdkCallbacks(SUPPORTSFEATUREPROC sf, 
+  //													  ABORTRENDERPROC ar, 
+  //													  ALLOWCHOOSECONTENTPROC acc, 
+  //													  CREATEDEFAULTCONTENTPROC cdc,
+  //													  OUTPUTTYPESPROC ot,
+  //													  CREATETEXTUREPREVIEWPROC tp,
+  //													  CREATEPREVIEWPROC cp,
+  //													  DECALPROC dp)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //int Rdk_RenderPlugIn_BaseOutputTypeAtIndex(CRhinoRenderPlugIn* pPlugIn, int iIndex, CRhCmnStringHolder* pSH_Ext, CRhCmnStringHolder* pSH_Desc)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr CRhCmnRdkPlugIn_New(IntPtr pRhinoPlugIn);
+  internal static extern int Rdk_RenderPlugIn_BaseOutputTypeAtIndex(IntPtr pPlugIn, int iIndex, IntPtr pSH_Ext, IntPtr pSH_Desc);
+
+  //CRhRdkPlugIn* CRhCmnRdkPlugIn_New( CRhinoPlugIn* pRhinoPlugIn, int serial_number)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhCmnRdkPlugIn_New(IntPtr pRhinoPlugIn, int serial_number);
+
+  //void CRhCmnRdkPlugIn_Delete(CRhRdkPlugIn* pRdkPlugIn)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhCmnRdkPlugIn_Delete(IntPtr pRdkPlugIn);
 
   //void Rdk_AddTextureFactory(ON_UUID content_id)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
@@ -968,10 +850,53 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
-  #region rdk_sdkrender.cpp
-  //IRhRdkSdkRenderMeshIterator* Rdk_RenderMeshIterator_New(ON_UUID plugInId, bool needTriangleMesh)
+  #region rdk_sceneserver.cpp
+  //void Rdk_SceneServer_ResetObjectEnum(const IRhRdkPreviewSceneServer* pSS)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr Rdk_RenderMeshIterator_New(Guid plugInId, [MarshalAs(UnmanagedType.U1)]bool needTriangleMesh);
+  internal static extern void Rdk_SceneServer_ResetObjectEnum(IntPtr pSS);
+
+  //void Rdk_SceneServer_ResetLightEnum(const IRhRdkPreviewSceneServer* pSS)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_SceneServer_ResetLightEnum(IntPtr pSS);
+
+  //const IRhRdkPreviewSceneServer::IObject* Rdk_SceneServer_NextObject(IRhRdkPreviewSceneServer* pSS)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_SceneServer_NextObject(IntPtr pSS);
+
+  //const CRhRdkMaterial* Rdk_SceneServer_ObjectDetails(const IRhRdkPreviewSceneServer::IObject* pSSObject, ON_Mesh* pMesh)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_SceneServer_ObjectDetails(IntPtr pSSObject, IntPtr pMesh);
+
+  //const IRhRdkPreviewSceneServer::ILight* Rdk_SceneServer_NextLight(const IRhRdkPreviewSceneServer* pSS)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_SceneServer_NextLight(IntPtr pSS);
+
+  //void Rdk_SceneServer_LightDetails(const IRhRdkPreviewSceneServer::ILight* pSSLight, ON_Light* pOnLight)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_SceneServer_LightDetails(IntPtr pSSLight, IntPtr pOnLight);
+
+  //const CRhRdkEnvironment* Rdk_SceneServer_Environment(const IRhRdkPreviewSceneServer* pSS)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_SceneServer_Environment(IntPtr pSS);
+
+  //ON_UUID Rdk_SceneServer_InstanceId(const IRhRdkPreviewSceneServer* pSS)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid Rdk_SceneServer_InstanceId(IntPtr pSS);
+
+  //int Rdk_SceneServer_Signature(const IRhRdkPreviewSceneServer* pSS)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_SceneServer_Signature(IntPtr pSS);
+
+  //int Rdk_SceneServer_View(const IRhRdkPreviewSceneServer* pSS, ON_Viewport* pView)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_SceneServer_View(IntPtr pSS, IntPtr pView);
+  #endregion
+
+
+  #region rdk_sdkrender.cpp
+  //IRhRdkSdkRenderMeshIterator* Rdk_RenderMeshIterator_New(ON_UUID plugInId, bool needTriangleMesh, const ON_Viewport* pVP)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_RenderMeshIterator_New(Guid plugInId, [MarshalAs(UnmanagedType.U1)]bool needTriangleMesh, IntPtr pVP);
 
   //int Rdk_RenderMesh_PrimitiveType(const CRhRdkRenderMesh* pMesh)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
@@ -1036,6 +961,89 @@ internal partial class UnsafeNativeMethods
   //void Rdk_RenderMeshIterator_Reset(IRhRdkSdkRenderMeshIterator* pIt)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_RenderMeshIterator_Reset(IntPtr pIt);
+
+  //void Rdk_SetSdkRenderCallback(RDK_SDKRENDERPROC proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //CRhRdkSdkRender* Rdk_SdkRender_New(int serial_number, const CRhinoCommandContext* pCommandContext, 
+  //														 CRhinoRenderPlugIn* pPlugIn, 
+  //														 const RHMONO_STRING* _pCaption, 
+  //														 bool bReuseRenderWindow, 
+  //														 bool bClearLastRendering)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_SdkRender_New(int serial_number, IntPtr pCommandContext, IntPtr pPlugIn, [MarshalAs(UnmanagedType.LPWStr)]string _pCaption, [MarshalAs(UnmanagedType.U1)]bool bReuseRenderWindow, [MarshalAs(UnmanagedType.U1)]bool bClearLastRendering);
+
+  //void Rdk_RenderWindow_Initialize(CRhRdkSdkRender* pSdkRender, int channels, int iWidth, int iHeight)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindow_Initialize(IntPtr pSdkRender, int channels, int iWidth, int iHeight);
+
+  //void Rdk_SdkRender_Delete(CRhRdkSdkRender* p)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_SdkRender_Delete(IntPtr p);
+
+  //int Rdk_SdkRender_Render(CRhRdkSdkRender* pSdkRender, int iHeight, int iWidth)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_SdkRender_Render(IntPtr pSdkRender, int iHeight, int iWidth);
+
+  //int Rdk_SdkRender_RenderWindow(CRhRdkSdkRender* pSdkRender, CRhinoView* pView, int iTop, int iLeft, int iBottom, int iRight, bool bInWindow)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_SdkRender_RenderWindow(IntPtr pSdkRender, IntPtr pView, int iTop, int iLeft, int iBottom, int iRight, [MarshalAs(UnmanagedType.U1)]bool bInWindow);
+
+  //void Rdk_SdkRender_RenderSize(int* piWidth, int* piHeight)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_SdkRender_RenderSize(ref int piWidth, ref int piHeight);
+
+  //void Rdk_SdkRender_SetConfirmationSeconds(CRhRdkSdkRender* pSdkRender, int i)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_SdkRender_SetConfirmationSeconds(IntPtr pSdkRender, int i);
+
+  //IRhRdkSdkRenderMeshIterator* Rdk_SdkRender_NewRenderMeshIterator(CRhRdkSdkRender* pSdkRender, const ON_Viewport* pVP, bool bForceTriMesh)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_SdkRender_NewRenderMeshIterator(IntPtr pSdkRender, IntPtr pVP, [MarshalAs(UnmanagedType.U1)]bool bForceTriMesh);
+
+  //IRhRdkRenderWindow* Rdk_SdkRender_GetRenderWindow(CRhRdkSdkRender* pSdkRender)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_SdkRender_GetRenderWindow(IntPtr pSdkRender);
+
+  //ON_UUID Rdk_RenderWindow_StandardChannelId(int ch)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid Rdk_RenderWindow_StandardChannelId(int ch);
+
+  //void Rdk_RenderWindow_Size(IRhRdkRenderWindow* pWindow, int* piWidth, int* piHeight)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindow_Size(IntPtr pWindow, ref int piWidth, ref int piHeight);
+
+  //void Rdk_RenderWindow_SetProgress(IRhRdkRenderWindow* pWindow, const RHMONO_STRING* _ps, int iPC)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindow_SetProgress(IntPtr pWindow, [MarshalAs(UnmanagedType.LPWStr)]string _ps, int iPC);
+
+  //IRhRdkRenderWindow::IChannel* Rdk_RenderWindow_OpenChannel(IRhRdkRenderWindow* pWindow, int id)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_RenderWindow_OpenChannel(IntPtr pWindow, int id);
+
+  //int Rdk_RenderWindowChannel_PixelSize(IRhRdkRenderWindow::IChannel* pChannel)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_RenderWindowChannel_PixelSize(IntPtr pChannel);
+
+  //void Rdk_RenderWindowChannel_SetFloatValue(IRhRdkRenderWindow::IChannel* pChannel, int x, int y, float value)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindowChannel_SetFloatValue(IntPtr pChannel, int x, int y, float value);
+
+  //void Rdk_RenderWindowChannel_SetColorValue(IRhRdkRenderWindow::IChannel* pChannel, int x, int y, ON_4FVECTOR_STRUCT value)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindowChannel_SetColorValue(IntPtr pChannel, int x, int y, Color4f value);
+
+  //void Rdk_RenderWindowChannel_Close(IRhRdkRenderWindow::IChannel* pChannel)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindowChannel_Close(IntPtr pChannel);
+
+  //void Rdk_RenderWindow_Invalidate(IRhRdkRenderWindow* pWindow)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindow_Invalidate(IntPtr pWindow);
+
+  //void Rdk_RenderWindow_InvalidateArea(IRhRdkRenderWindow* pWindow, int top, int left, int bottom, int right)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindow_InvalidateArea(IntPtr pWindow, int top, int left, int bottom, int right);
   #endregion
 
 
@@ -1427,6 +1435,184 @@ internal partial class UnsafeNativeMethods
   //void Rdk_TextureEvaluator_DeleteThis(IRhRdkTextureEvaluator* pTextureEvaluator)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_TextureEvaluator_DeleteThis(IntPtr pTextureEvaluator);
+  #endregion
+
+
+  #region rdk_variant.cpp
+  //CRhRdkVariant* Rdk_Variant_New(const CRhRdkVariant* pV)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_Variant_New(IntPtr pV);
+
+  //int Rdk_Variant_GetUnits(const CRhRdkVariant* pV)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Variant_GetUnits(IntPtr pV);
+
+  //void Rdk_Variant_SetUnits(CRhRdkVariant* pV, int value)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetUnits(IntPtr pV, int value);
+
+  //int Rdk_Variant_IsNull(const CRhRdkVariant* pV)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Variant_IsNull(IntPtr pV);
+
+  //void Rdk_Variant_SetNull(CRhRdkVariant* pV)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetNull(IntPtr pV);
+
+  //int Rdk_Variant_Varies(const CRhRdkVariant* pV)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Variant_Varies(IntPtr pV);
+
+  //void Rdk_Variant_SetVaries(CRhRdkVariant* pV)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetVaries(IntPtr pV);
+
+  //int Rdk_Variant_Type(const CRhRdkVariant* pV)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Variant_Type(IntPtr pV);
+
+  //void Rdk_Variant_SetIntValue(CRhRdkVariant* pV, int v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetIntValue(IntPtr pV, int v);
+
+  //void Rdk_Variant_SetBoolValue(CRhRdkVariant* pV, bool v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetBoolValue(IntPtr pV, [MarshalAs(UnmanagedType.U1)]bool v);
+
+  //void Rdk_Variant_SetDoubleValue(CRhRdkVariant* pV, double v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetDoubleValue(IntPtr pV, double v);
+
+  //void Rdk_Variant_SetFloatValue(CRhRdkVariant* pV, float v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetFloatValue(IntPtr pV, float v);
+
+  //void Rdk_Variant_SetStringValue(CRhRdkVariant* pV, RHMONO_STRING* _ps)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetStringValue(IntPtr pV, [MarshalAs(UnmanagedType.LPWStr)]string _ps);
+
+  //void Rdk_Variant_SetOnColorValue(CRhRdkVariant* pV, int v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetOnColorValue(IntPtr pV, int v);
+
+  //void Rdk_Variant_SetRdkColorValue(CRhRdkVariant* pV, ON_4FVECTOR_STRUCT v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetRdkColorValue(IntPtr pV, Color4f v);
+
+  //void Rdk_Variant_Set2dVectorValue(CRhRdkVariant* pV, ON_2DVECTOR_STRUCT v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_Set2dVectorValue(IntPtr pV, Vector2d v);
+
+  //void Rdk_Variant_Set3dVectorValue(CRhRdkVariant* pV, ON_3DVECTOR_STRUCT v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_Set3dVectorValue(IntPtr pV, Vector3d v);
+
+  //void Rdk_Variant_Set4dPointValue(CRhRdkVariant* pV, ON_4DPOINT_STRUCT v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_Set4dPointValue(IntPtr pV, Point4d v);
+
+  //void Rdk_Variant_SetUuidValue(CRhRdkVariant* pV, ON_UUID v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetUuidValue(IntPtr pV, Guid v);
+
+  //void Rdk_Variant_SetXformValue(CRhRdkVariant* pV, ON_XFORM_STRUCT v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetXformValue(IntPtr pV, Transform v);
+
+  //void Rdk_Variant_SetTimeValue(CRhRdkVariant* pV, time_t v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetTimeValue(IntPtr pV, Int64 v);
+
+  //int Rdk_Variant_GetIntValue(const CRhRdkVariant* pV)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Variant_GetIntValue(IntPtr pV);
+
+  //int Rdk_Variant_GetBoolValue(const CRhRdkVariant* pV)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Variant_GetBoolValue(IntPtr pV);
+
+  //double Rdk_Variant_GetDoubleValue(const CRhRdkVariant* pV)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double Rdk_Variant_GetDoubleValue(IntPtr pV);
+
+  //float Rdk_Variant_GetFloatValue(const CRhRdkVariant* pV)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern float Rdk_Variant_GetFloatValue(IntPtr pV);
+
+  //int Rdk_Variant_GetStringValue(const CRhRdkVariant* pV, CRhCmnStringHolder* pSH)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Variant_GetStringValue(IntPtr pV, IntPtr pSH);
+
+  //int Rdk_Variant_GetOnColorValue(const CRhRdkVariant* pV)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Variant_GetOnColorValue(IntPtr pV);
+
+  //int Rdk_Variant_GetRdkColorValue(const CRhRdkVariant* pV, ON_4fPoint* p)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Variant_GetRdkColorValue(IntPtr pV, ref Color4f p);
+
+  //int Rdk_Variant_Get2dVectorValue(const CRhRdkVariant* pV, ON_2dVector* v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Variant_Get2dVectorValue(IntPtr pV, ref Vector2d v);
+
+  //int Rdk_Variant_Get3dVectorValue(const CRhRdkVariant* pV, ON_3dVector* v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Variant_Get3dVectorValue(IntPtr pV, ref Vector3d v);
+
+  //int Rdk_Variant_Get4dPointValue(const CRhRdkVariant* pV, ON_4dPoint* v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Variant_Get4dPointValue(IntPtr pV, ref Point4d v);
+
+  //ON_UUID Rdk_Variant_GetUuidValue(const CRhRdkVariant* pV)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid Rdk_Variant_GetUuidValue(IntPtr pV);
+
+  //int Rdk_Variant_GetXformValue(const CRhRdkVariant* pV, ON_Xform* v)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_Variant_GetXformValue(IntPtr pV, ref Transform v);
+
+  //time_t Rdk_Variant_GetTimeValue(const CRhRdkVariant* pV)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Int64 Rdk_Variant_GetTimeValue(IntPtr pV);
+
+  //float Rdk_Variant_AsModelFloat(const CRhRdkVariant* pV, int docId)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern float Rdk_Variant_AsModelFloat(IntPtr pV, int docId);
+
+  //double Rdk_Variant_AsModelDouble(const CRhRdkVariant* pV, int docId)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double Rdk_Variant_AsModelDouble(IntPtr pV, int docId);
+
+  //void Rdk_Variant_SetAsModelFloat(CRhRdkVariant* pV, float f, int docId)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetAsModelFloat(IntPtr pV, float f, int docId);
+
+  //void Rdk_Variant_SetAsModelDouble(CRhRdkVariant* pV, double d, int docId)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetAsModelDouble(IntPtr pV, double d, int docId);
+
+  //void Rdk_Variant_Delete(CRhRdkVariant* p)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_Delete(IntPtr p);
+
+  //IRhRdk_XMLSection::Iterator* Rdk_XmlSection_GetIterator(IRhRdk_XMLSection* pSection)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_XmlSection_GetIterator(IntPtr pSection);
+
+  //int Rdk_XmlSection_NextParam(IRhRdk_XMLSection* pSection, 
+  //										   IRhRdk_XMLSection::Iterator* pIterator, 
+  //										   CRhCmnStringHolder* pSH, 
+  //										   CRhRdkVariant* pVariant)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_XmlSection_NextParam(IntPtr pSection, IntPtr pIterator, IntPtr pSH, IntPtr pVariant);
+
+  //int Rdk_XmlSection_SetParam(IRhRdk_XMLSection* pSection, const RHMONO_STRING* _ps, const CRhRdkVariant* pVariant)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_XmlSection_SetParam(IntPtr pSection, [MarshalAs(UnmanagedType.LPWStr)]string _ps, IntPtr pVariant);
+
+  //void Rdk_XmlSection_DeleteIterator(IRhRdk_XMLSection* pXmlSection)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_XmlSection_DeleteIterator(IntPtr pXmlSection);
   #endregion
 
 

@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using System.Collections;
+using System.Collections.Generic;
 
 #if USING_RDK
 
@@ -156,11 +156,18 @@ namespace Rhino.Render
       UnsafeNativeMethods.Rdk_Decal_UVBounds(ConstPointer(), ref minUOut, ref minVOut, ref maxUOut, ref maxVOut);
     }
 
-    //TODO
-    // Get custom data associated with this decal.
-    //    \return A pointer to an interface from which you can retrieve custom data,
-    //	 or NULL if no custom data exists on the decal for the current Rhino renderer. */
-    //virtual const IRhRdk_XMLSection* CustomData(void) const = 0;
+    /// <summary>
+    /// Get custom data associated with this decal - see Rhino.Plugins.RenderPlugIn.ShowDecalProperties
+    /// </summary>
+    /// <returns>The return value can be null if there is no data associated with this decal.</returns>
+    public List<Rhino.Render.NamedValue> CustomData()
+    {
+      IntPtr pXmlSection = UnsafeNativeMethods.Rdk_Decal_CustomData(ConstPointer());
+      if (IntPtr.Zero == pXmlSection)
+        return null;
+
+      return Rhino.Render.XMLSectionUtilities.ConvertToNamedValueList(pXmlSection);
+    }    
 
     /// <summary>
     /// Blend color with the decal color at a given point.
@@ -187,7 +194,7 @@ namespace Rhino.Render
 
 
 
-  public class ObjectDecals : IEnumerator, IDisposable
+  public class ObjectDecals : IEnumerator<Decal>, IDisposable
   {
     private IntPtr m_pDecalIterator;
     internal ObjectDecals(Rhino.DocObjects.RhinoObject obj)
@@ -203,13 +210,9 @@ namespace Rhino.Render
     #region IEnumerator Members
 
     Decal m_current;
-    public object Current
-    {
-      get
-      {
-        return m_current;
-      }
-    }
+    public Decal Current { get { return m_current; } }
+
+    object System.Collections.IEnumerator.Current { get { return Current; } }
 
     public bool MoveNext()
     {

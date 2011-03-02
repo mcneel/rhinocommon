@@ -175,14 +175,6 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// This method is Obsolete, use ClosestPoint() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoint() instead.")]
-    public Point3d ClosestPointTo(Point3d testPoint)
-    {
-      return ClosestPoint(testPoint);
-    }
-    /// <summary>
     /// returns point on sphere that is closest to given point
     /// </summary>
     /// <param name="testPoint"></param>

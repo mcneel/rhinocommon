@@ -164,6 +164,37 @@ namespace Rhino.Geometry
   public class Surface : GeometryBase
   {
     #region statics
+    public static Surface[] CreateRollingBallFillet(Surface surfaceA, Surface surfaceB, double radius, double tolerance)
+    {
+      return CreateRollingBallFillet(surfaceA, false, surfaceB, false, radius, tolerance);
+    }
+
+    public static Surface[] CreateRollingBallFillet(Surface surfaceA, bool flipA, Surface surfaceB, bool flipB, double radius, double tolerance)
+    {
+      IntPtr pConstSurfaceA = surfaceA.ConstPointer();
+      IntPtr pConstSurfaceB = surfaceB.ConstPointer();
+      using (Runtime.InteropWrappers.SimpleArraySurfacePointer srfs = new Rhino.Runtime.InteropWrappers.SimpleArraySurfacePointer())
+      {
+        IntPtr pSurfaces = srfs.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoSimpleRollingBallFillet(pConstSurfaceA, flipA,
+          pConstSurfaceB, flipB, radius, tolerance, pSurfaces);
+        return srfs.ToNonConstArray();
+      }
+    }
+
+    public static Surface[] CreateRollingBallFillet(Surface surfaceA, Point2d uvA, Surface surfaceB, Point2d uvB, double radius, double tolerance)
+    {
+      IntPtr pConstSurfaceA = surfaceA.ConstPointer();
+      IntPtr pConstSurfaceB = surfaceB.ConstPointer();
+      using (Runtime.InteropWrappers.SimpleArraySurfacePointer srfs = new Rhino.Runtime.InteropWrappers.SimpleArraySurfacePointer())
+      {
+        IntPtr pSurfaces = srfs.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoSimpleRollingBallFillet2(pConstSurfaceA, uvA,
+          pConstSurfaceB, uvB, radius, tolerance, pSurfaces);
+        return srfs.ToNonConstArray();
+      }
+    }
+
     /// <summary>
     /// Create a Surface by extruding a Curve along a vector.
     /// </summary>
@@ -597,14 +628,6 @@ namespace Rhino.Geometry
     //  const ON_SurfaceTree* SurfaceTree() const;
     //  virtual ON_SurfaceTree* CreateSurfaceTree() const;
 
-    /// <summary>
-    /// This method is Obsolete, use ClosestPoint() instead.
-    /// </summary>
-    [Obsolete("This method is Obsolete, use ClosestPoint() instead.")]
-    public bool GetClosestPoint(Point3d testPoint, out double u, out double v)
-    {
-      return ClosestPoint(testPoint, out u, out v);
-    }
     /// <summary>
     /// Input the parameters of the point on the surface that is closest to testPoint
     /// </summary>

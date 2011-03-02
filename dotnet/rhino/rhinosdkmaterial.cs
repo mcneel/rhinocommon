@@ -236,26 +236,6 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.ON_Material_Default(pConstThis);
     }
 
-    [Obsolete("Use GetBitmapTexture - will be removed in a future WIP")]
-    public int FindBitmapTexture(string filename)
-    {
-      IntPtr pConstThis = ConstPointer();
-      return UnsafeNativeMethods.ON_Material_FindBitmapTexture(pConstThis, filename);
-    }
-
-    [Obsolete("Use GetBitmapTexture - will be removed in a future WIP")]
-    public int FindBitmapTexture()
-    {
-      return FindBitmapTexture(null);
-    }
-
-    [Obsolete("Use SetBitmapTexture - will be removed in a future WIP")]
-    public void SetTextureFilename(int index, string filename)
-    {
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.ON_Material_SetBitmapTexture(pThis, index, filename);
-    }
-
     const int idxBitmapTexture = 0;
     const int idxBumpTexture = 1;
     const int idxEmapTexture = 2;
@@ -359,31 +339,12 @@ namespace Rhino.DocObjects
     }
     #endregion
 
-    [Obsolete("ModifyTexture will be removed in a future WIP")]
-    public bool ModifyTexture(Guid textureId, Texture texture)
-    {
-      IntPtr pThis = NonConstPointer();
-      IntPtr pConstTexture = texture.ConstPointer();
-      return UnsafeNativeMethods.ON_Material_ModifyTexture(pThis, textureId, pConstTexture);
-    }
-
     public bool CommitChanges()
     {
       if (m_id == Guid.Empty || IsDocumentControlled)
         return false;
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.CRhinoMaterialTable_CommitChanges(m_doc.m_docId, pThis, m_id);
-    }
-
-    [Obsolete("MaterialInfo will be removed in a future WIP")]
-    public MaterialInfo ToMaterialInfo()
-    {
-      IntPtr pMaterial = ConstPointer();
-      if (pMaterial == IntPtr.Zero)
-        return null;
-      MaterialInfo rc = new MaterialInfo(pMaterial);
-      rc.EnsurePrivateCopy();
-      return rc;
     }
   }
 }
@@ -473,9 +434,6 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
-    [Obsolete("Use Add - will be removed in a future WIP")]
-    public int AddMaterial() { return Add(); }
-
     /// <summary>
     /// Adds a new material to the table based on the default material
     /// </summary>
@@ -509,15 +467,6 @@ namespace Rhino.DocObjects.Tables
     public int Find(Guid materialId, bool ignoreDeletedMaterials)
     {
       return UnsafeNativeMethods.CRhinoMaterialTable_FindById(m_doc.m_docId, materialId, ignoreDeletedMaterials);
-    }
-
-    [Obsolete("MaterialInfo is obsolete and will be removed in a future WIP")]
-    public bool Modify(Rhino.DocObjects.MaterialInfo newSettings, int materialIndex, bool quiet)
-    {
-      if (null == newSettings)
-        return false;
-      IntPtr pConstMaterial = newSettings.ConstPointer();
-      return UnsafeNativeMethods.CRhinoMaterialTable_ModifyMaterial(m_doc.m_docId, pConstMaterial, materialIndex, quiet);
     }
 
     /// <summary>Modify material settings</summary>

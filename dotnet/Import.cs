@@ -58,6 +58,18 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoRenderPlugIn_SetCallbacks(Rhino.PlugIns.RenderPlugIn.RenderFunc render, Rhino.PlugIns.RenderPlugIn.RenderWindowFunc renderwindow);
 
+#if USING_RDK
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoRenderPlugIn_SetRdkCallbacks(Rhino.PlugIns.RenderPlugIn.SupportsFeatureCallback supportsFeatureCallback, 
+                                                                 Rhino.PlugIns.RenderPlugIn.AbortRenderCallback abortRenderCallback,
+                                                                 Rhino.PlugIns.RenderPlugIn.AllowChooseContentCallback allowChooseContentCallback,
+                                                                 Rhino.PlugIns.RenderPlugIn.CreateDefaultContentCallback createDefaultContentCallback,
+                                                                 Rhino.PlugIns.RenderPlugIn.OutputTypesCallback outputTypesCallback,
+                                                                 Rhino.PlugIns.RenderPlugIn.CreateTexturePreviewCallback texturePreviewCallback,
+                                                                 Rhino.PlugIns.RenderPlugIn.CreatePreviewCallback previewCallback,
+                                                                 Rhino.PlugIns.RenderPlugIn.DecalCallback decalCallback);
+#endif
+
 #if !BUILDING_MONO
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoDigitizerPlugIn_SetCallbacks(Rhino.PlugIns.DigitizerPlugIn.EnableDigitizerFunc enablefunc,
@@ -212,6 +224,9 @@ internal partial class UnsafeNativeMethods
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetSimulateEnvironmentCallback(Rhino.Render.RenderEnvironment.SimulateEnvironmentCallback callback_func);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void Rdk_SetSdkRenderCallback(Rhino.Render.RenderPipeline.ReturnBoolGeneralCallback callback_func);
 
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]

@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 #if USING_RDK
 namespace Rhino.Render
 {
   // Not public
-  sealed class RdkPlugIn
+  sealed class RdkPlugIn : IDisposable
   {
     #region statics
     internal static void SetRdkCallbackFunctions(bool on)
@@ -33,6 +34,9 @@ namespace Rhino.Render
 
         //Environments
         UnsafeNativeMethods.Rdk_SetSimulateEnvironmentCallback(Rhino.Render.RenderEnvironment.m_SimulateEnvironment);
+
+        //SdkRender
+        UnsafeNativeMethods.Rdk_SetSdkRenderCallback(Rhino.Render.RenderPipeline.m_ReturnBoolGeneralCallback);
         
       }
       else
@@ -57,6 +61,9 @@ namespace Rhino.Render
 
         //Environments
         UnsafeNativeMethods.Rdk_SetSimulateEnvironmentCallback(null);
+
+        //SdkRender
+        UnsafeNativeMethods.Rdk_SetSdkRenderCallback(null);
       }
     }
 
@@ -70,9 +77,10 @@ namespace Rhino.Render
           return m_all_rdk_plugins[i];
       }
       IntPtr pRhinoPlugIn = plugin.NonConstPointer();
-      return GetRdkPlugInHelper(pRhinoPlugIn, plugin.Id);
+      return GetRdkPlugInHelper(pRhinoPlugIn, plugin.Id, plugin.m_runtime_serial_number);
     }
-    public static RdkPlugIn GetRdkPlugIn(Guid rhino_plugin_id)
+
+    public static RdkPlugIn GetRdkPlugIn(Guid rhino_plugin_id, int serial_number)
     {
       for (int i = 0; i < m_all_rdk_plugins.Count; i++)
       {
@@ -80,13 +88,24 @@ namespace Rhino.Render
           return m_all_rdk_plugins[i];
       }
       IntPtr pRhinoPlugIn = UnsafeNativeMethods.CRhinoPlugInManager_GetPlugInFromId(rhino_plugin_id, true);
-      return GetRdkPlugInHelper(pRhinoPlugIn, rhino_plugin_id);
+
+      if (IntPtr.Zero == pRhinoPlugIn)
+      {
+        Rhino.PlugIns.PlugIn cmnPlugIn = Rhino.PlugIns.PlugIn.GetLoadedPlugIn(rhino_plugin_id);
+        if (null != cmnPlugIn)
+        {
+          pRhinoPlugIn = cmnPlugIn.NonConstPointer();
+        }
+      }
+
+      return GetRdkPlugInHelper(pRhinoPlugIn, rhino_plugin_id, serial_number);
     }
-    static RdkPlugIn GetRdkPlugInHelper(IntPtr pRhinoPlugIn, Guid rhinoPlugInId)
+
+    static RdkPlugIn GetRdkPlugInHelper(IntPtr pRhinoPlugIn, Guid rhinoPlugInId, int serial_number)
     {
       if (pRhinoPlugIn != IntPtr.Zero)
       {
-        IntPtr pRdkPlugIn = UnsafeNativeMethods.CRhCmnRdkPlugIn_New(pRhinoPlugIn);
+        IntPtr pRdkPlugIn = UnsafeNativeMethods.CRhCmnRdkPlugIn_New(pRhinoPlugIn, serial_number);
         if (pRdkPlugIn != IntPtr.Zero)
         {
           SetRdkCallbackFunctions(true);
@@ -141,8 +160,55 @@ namespace Rhino.Render
       m_render_content_types.AddRange(types);
     }
 
-    
 
+
+
+    #region IDisposable Members
+
+    ~RdkPlugIn()
+    {
+      Dispose(false);
+    }
+    
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    private bool disposed = false;
+    private void Dispose(bool disposing)
+    {
+      if (!disposed)
+      {
+        //We need to find the reference to this thing in the list, uninitialize the C++
+        //object, delete it and then
+        //remove it to actually make sure thing thing gets garbage collected.
+
+        for (int i = 0; i < m_all_rdk_plugins.Count; i++)
+        {
+          if (m_all_rdk_plugins[i].m_rhino_plugin_id == m_rhino_plugin_id)
+          {
+            Debug.Assert(m_all_rdk_plugins[i] == this);
+            
+            RdkPlugIn p = m_all_rdk_plugins[i];
+            bool bRet = m_all_rdk_plugins.Remove(p);
+
+            Debug.Assert(bRet);
+
+            if (p.m_pRdkPlugIn != IntPtr.Zero)
+            {
+              UnsafeNativeMethods.CRhCmnRdkPlugIn_Delete(p.m_pRdkPlugIn);
+            }
+          }
+        }
+
+        disposed = true;
+      }
+
+    }
+
+    #endregion
   }
 }
 #endif

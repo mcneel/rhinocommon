@@ -169,12 +169,16 @@
     <Compile Include="RDK\rdk_environment.cs" />
     <Compile Include="RDK\rdk_globals.cs" />
     <Compile Include="RDK\rdk_material.cs" />
+    <Compile Include="RDK\rdk_preview_scene.cs" />
     <Compile Include="RDK\rdk_rendermesh_iterator.cs" />
     <Compile Include="RDK\rdk_render_plugin_info.cs" />
+    <Compile Include="RDK\rdk_render_window.cs" />
+    <Compile Include="RDK\rdk_sdkrender.cs" />
     <Compile Include="RDK\rdk_simulated_environment.cs" />
     <Compile Include="RDK\rdk_plugin.cs" />
     <Compile Include="RDK\rdk_texture.cs" />
     <Compile Include="RDK\rdk_undo.cs" />
+    <Compile Include="RDK\rdk_variant.cs" />
     <Compile Include="RDK\simulatedtexture.cs" />
     <Compile Include="RDK\sun.cs" />
     <Compile Include="resolver.cs" />

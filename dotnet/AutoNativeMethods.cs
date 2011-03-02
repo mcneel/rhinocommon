@@ -674,6 +674,22 @@ internal partial class UnsafeNativeMethods
   //void ON_StringArray_Delete(ON_ClassArray<ON_wString>* pStrings)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_StringArray_Delete(IntPtr pStrings);
+
+  //ON_SimpleArray<ON_Surface*>* ON_SurfaceArray_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_SurfaceArray_New();
+
+  //void ON_SurfaceArray_Delete(ON_SimpleArray<ON_Surface*>* pSurfaceArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_SurfaceArray_Delete(IntPtr pSurfaceArray);
+
+  //int ON_SurfaceArray_Count(const ON_SimpleArray<ON_Surface*>* pSurfaceArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_SurfaceArray_Count(IntPtr pSurfaceArray);
+
+  //ON_Surface* ON_SurfaceArray_Get(ON_SimpleArray<ON_Surface*>* pSurfaceArray, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_SurfaceArray_Get(IntPtr pSurfaceArray, int index);
   #endregion
 
 
@@ -3274,6 +3290,409 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region on_viewport.cpp
+  //ON_Viewport* ON_Viewport_New(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_Viewport_New(IntPtr pVP);
+
+  //int ON_Viewport_IsValidCamera(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_IsValidCamera(IntPtr pVP);
+
+  //int ON_Viewport_IsValidFrustum(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_IsValidFrustum(IntPtr pVP);
+
+  //int ON_Viewport_IsValid(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_IsValid(IntPtr pVP);
+
+  //int ON_Viewport_Projection(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_Projection(IntPtr pVP);
+
+  //void ON_Viewport_SetProjection(ON_Viewport* pVP, int value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_SetProjection(IntPtr pVP, int value);
+
+  //int ON_Viewport_ChangeToParallelProjection(ON_Viewport* pVP, bool symmetricFrustum)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_ChangeToParallelProjection(IntPtr pVP, [MarshalAs(UnmanagedType.U1)]bool symmetricFrustum);
+
+  //int ON_Viewport_ChangeToPerspectiveProjection(ON_Viewport* pVP, double targetDistance, bool symmetricFrustum, double lensLength)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_ChangeToPerspectiveProjection(IntPtr pVP, double targetDistance, [MarshalAs(UnmanagedType.U1)]bool symmetricFrustum, double lensLength);
+
+  //int ON_Viewport_ChangeToTwoPointPerspectiveProjection(ON_Viewport* pVP, double targetDistance, ON_3DVECTOR_STRUCT up, double lensLength)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_ChangeToTwoPointPerspectiveProjection(IntPtr pVP, double targetDistance, Vector3d up, double lensLength);
+
+  //void ON_Viewport_CameraLocation(const ON_Viewport* pVP, ON_3dPoint* p)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_CameraLocation(IntPtr pVP, ref Point3d p);
+
+  //void ON_Viewport_CameraDirection(const ON_Viewport* pVP, ON_3dVector* p)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_CameraDirection(IntPtr pVP, ref Vector3d p);
+
+  //int ON_Viewport_SetCameraDirection(ON_Viewport* pVP, ON_3DVECTOR_STRUCT v)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetCameraDirection(IntPtr pVP, Vector3d v);
+
+  //int ON_Viewport_SetCameraLocation(ON_Viewport* pVP, ON_3DPOINT_STRUCT v)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetCameraLocation(IntPtr pVP, Point3d v);
+
+  //void ON_Viewport_CameraUp(const ON_Viewport* pVP, ON_3dVector* p)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_CameraUp(IntPtr pVP, ref Vector3d p);
+
+  //int ON_Viewport_SetCameraUp(ON_Viewport* pVP, ON_3DVECTOR_STRUCT v)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetCameraUp(IntPtr pVP, Vector3d v);
+
+  //int ON_Viewport_CameraLocationLocked(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_CameraLocationLocked(IntPtr pVP);
+
+  //void ON_Viewport_SetCameraLocationLocked(ON_Viewport* pVP, bool b)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_SetCameraLocationLocked(IntPtr pVP, [MarshalAs(UnmanagedType.U1)]bool b);
+
+  //int ON_Viewport_CameraDirectionLocked(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_CameraDirectionLocked(IntPtr pVP);
+
+  //void ON_Viewport_SetCameraDirectionLocked(ON_Viewport* pVP, bool b)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_SetCameraDirectionLocked(IntPtr pVP, [MarshalAs(UnmanagedType.U1)]bool b);
+
+  //int ON_Viewport_CameraUpLocked(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_CameraUpLocked(IntPtr pVP);
+
+  //void ON_Viewport_SetCameraUpLocked(ON_Viewport* pVP, bool b)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_SetCameraUpLocked(IntPtr pVP, [MarshalAs(UnmanagedType.U1)]bool b);
+
+  //int ON_Viewport_IsFrustumLeftRightSymmetric(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_IsFrustumLeftRightSymmetric(IntPtr pVP);
+
+  //void ON_Viewport_SetIsFrustumLeftRightSymmetric(ON_Viewport* pVP, bool b)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_SetIsFrustumLeftRightSymmetric(IntPtr pVP, [MarshalAs(UnmanagedType.U1)]bool b);
+
+  //int ON_Viewport_IsFrustumTopBottomSymmetric(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_IsFrustumTopBottomSymmetric(IntPtr pVP);
+
+  //void ON_Viewport_SetIsFrustumTopBottomSymmetric(ON_Viewport* pVP, bool b)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_SetIsFrustumTopBottomSymmetric(IntPtr pVP, [MarshalAs(UnmanagedType.U1)]bool b);
+
+  //void ON_Viewport_UnlockCamera(ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_UnlockCamera(IntPtr pVP);
+
+  //void ON_Viewport_UnlockFrustumSymmetry(ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_UnlockFrustumSymmetry(IntPtr pVP);
+
+  //int ON_Viewport_GetCameraFrame(const ON_Viewport* pVP, ON_3dPoint* location, ON_3dVector* cameraX, ON_3dVector* cameraY, ON_3dVector* cameraZ)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetCameraFrame(IntPtr pVP, ref Point3d location, ref Vector3d cameraX, ref Vector3d cameraY, ref Vector3d cameraZ);
+
+  //int ON_Viewport_CameraAxis(const ON_Viewport* pVP, int iAxis, ON_3dVector* v)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_CameraAxis(IntPtr pVP, int iAxis, ref Vector3d v);
+
+  //int ON_Viewport_SetFrustum(ON_Viewport* pVP, double left, double right, double bottom, double top, double nearDistance, double farDistance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetFrustum(IntPtr pVP, double left, double right, double bottom, double top, double nearDistance, double farDistance);
+
+  //int ON_Viewport_GetFrustum(const ON_Viewport* pVP, double* left, double* right, double* bottom, double* top, double* nearDistance, double* farDistance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetFrustum(IntPtr pVP, ref double left, ref double right, ref double bottom, ref double top, ref double nearDistance, ref double farDistance);
+
+  //int ON_Viewport_GetFrustrumAspect(const ON_Viewport* pVP, double* dAspect)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetFrustrumAspect(IntPtr pVP, ref double dAspect);
+
+  //int ON_Viewport_SetFrustumAspect(ON_Viewport* pVP, double d)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetFrustumAspect(IntPtr pVP, double d);
+
+  //int ON_Viewport_GetFrustumCenter(const ON_Viewport* pVP, ON_3dPoint* p)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetFrustumCenter(IntPtr pVP, ref Point3d p);
+
+  //double ON_Viewport_FrustumLeft(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Viewport_FrustumLeft(IntPtr pVP);
+
+  //double ON_Viewport_FrustumRight(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Viewport_FrustumRight(IntPtr pVP);
+
+  //double ON_Viewport_FrustumBottom(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Viewport_FrustumBottom(IntPtr pVP);
+
+  //double ON_Viewport_FrustumTop(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Viewport_FrustumTop(IntPtr pVP);
+
+  //double ON_Viewport_FrustumNear(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Viewport_FrustumNear(IntPtr pVP);
+
+  //double ON_Viewport_FrustumFar(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Viewport_FrustumFar(IntPtr pVP);
+
+  //double ON_Viewport_FrustumMinimumDiameter(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Viewport_FrustumMinimumDiameter(IntPtr pVP);
+
+  //double ON_Viewport_FrustumMaximumDiameter(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Viewport_FrustumMaximumDiameter(IntPtr pVP);
+
+  //int ON_Viewport_SetFrustumNearFarBoundingBox(ON_Viewport* pVP, ON_3DPOINT_STRUCT min, ON_3DPOINT_STRUCT max)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetFrustumNearFarBoundingBox(IntPtr pVP, Point3d min, Point3d max);
+
+  //int ON_Viewport_SetFrustumNearFarSphere(ON_Viewport* pVP, ON_3DPOINT_STRUCT center, double radius)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetFrustumNearFarSphere(IntPtr pVP, Point3d center, double radius);
+
+  //int ON_Viewport_SetFrustumNearFar(ON_Viewport* pVP, double nearDistance, double farDistance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetFrustumNearFar(IntPtr pVP, double nearDistance, double farDistance);
+
+  //int ON_Viewport_ChangeToSymmetricFrustum(ON_Viewport* pVP, bool isLeftRightSymmetric, bool isTopBottomSymmetric, double targetDistance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_ChangeToSymmetricFrustum(IntPtr pVP, [MarshalAs(UnmanagedType.U1)]bool isLeftRightSymmetric, [MarshalAs(UnmanagedType.U1)]bool isTopBottomSymmetric, double targetDistance);
+
+  //int ON_Viewport_GetPointDepth(const ON_Viewport* pVP, 
+  //											ON_3DPOINT_STRUCT point, 
+  //											double* nearDistance, 
+  //											double* farDistance, 
+  //											bool growNearFar)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetPointDepth(IntPtr pVP, Point3d point, ref double nearDistance, ref double farDistance, [MarshalAs(UnmanagedType.U1)]bool growNearFar);
+
+  //int ON_Viewport_GetBoundingBoxDepth(const ON_Viewport* pVP, 
+  //												   ON_3DPOINT_STRUCT min, 
+  //												   ON_3DPOINT_STRUCT max, 
+  //												   double* nearDistance, 
+  //												   double* farDistance, 
+  //												   bool growNearFar)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetBoundingBoxDepth(IntPtr pVP, Point3d min, Point3d max, ref double nearDistance, ref double farDistance, [MarshalAs(UnmanagedType.U1)]bool growNearFar);
+
+  //int ON_Viewport_GetSphereDepth(const ON_Viewport* pVP, 
+  //											 ON_3DPOINT_STRUCT center, 
+  //											 double radius, 
+  //											 double* nearDistance,
+  //											 double* farDistance, 
+  //											 bool growNearFar)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetSphereDepth(IntPtr pVP, Point3d center, double radius, ref double nearDistance, ref double farDistance, [MarshalAs(UnmanagedType.U1)]bool growNearFar);
+
+  //int ON_Viewport_SetFrustrumNearFar(ON_Viewport* pVP,
+  //												 double nearDistance, 
+  //												 double farDistance, 
+  //												 double minNearDistance, 
+  //												 double minNearOverFar, 
+  //												 double targetDistance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetFrustrumNearFar(IntPtr pVP, double nearDistance, double farDistance, double minNearDistance, double minNearOverFar, double targetDistance);
+
+  //int ON_Viewport_GetNearPlane(const ON_Viewport* pVP, ON_3dPoint* planeOrigin, ON_3dVector* planeX, ON_3dVector* planeY)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetNearPlane(IntPtr pVP, ref Point3d planeOrigin, ref Vector3d planeX, ref Vector3d planeY);
+
+  //int ON_Viewport_GetFarPlane(const ON_Viewport* pVP, ON_3dPoint* planeOrigin, ON_3dVector* planeX, ON_3dVector* planeY)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetFarPlane(IntPtr pVP, ref Point3d planeOrigin, ref Vector3d planeX, ref Vector3d planeY);
+
+  //int ON_Viewport_GetFrustumLeftPlane(const ON_Viewport* pVP, ON_3dPoint* planeOrigin, ON_3dVector* planeX, ON_3dVector* planeY)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetFrustumLeftPlane(IntPtr pVP, ref Point3d planeOrigin, ref Vector3d planeX, ref Vector3d planeY);
+
+  //int ON_Viewport_GetFrustumRightPlane(const ON_Viewport* pVP, ON_3dPoint* planeOrigin, ON_3dVector* planeX, ON_3dVector* planeY)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetFrustumRightPlane(IntPtr pVP, ref Point3d planeOrigin, ref Vector3d planeX, ref Vector3d planeY);
+
+  //int ON_Viewport_GetFrustumBottomPlane(const ON_Viewport* pVP, ON_3dPoint* planeOrigin, ON_3dVector* planeX, ON_3dVector* planeY)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetFrustumBottomPlane(IntPtr pVP, ref Point3d planeOrigin, ref Vector3d planeX, ref Vector3d planeY);
+
+  //int ON_Viewport_GetFrustumTopPlane(const ON_Viewport* pVP, ON_3dPoint* planeOrigin, ON_3dVector* planeX, ON_3dVector* planeY)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetFrustumTopPlane(IntPtr pVP, ref Point3d planeOrigin, ref Vector3d planeX, ref Vector3d planeY);
+
+  //int ON_Viewport_GetNearRect(const ON_Viewport* pVP, 
+  //										   ON_3dPoint* leftBottom, ON_3dPoint* rightBottom, ON_3dPoint* leftTop, ON_3dPoint* rightTop)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetNearRect(IntPtr pVP, ref Point3d leftBottom, ref Point3d rightBottom, ref Point3d leftTop, ref Point3d rightTop);
+
+  //int ON_Viewport_GetFarRect(const ON_Viewport* pVP, 
+  //										   ON_3dPoint* leftBottom, ON_3dPoint* rightBottom, ON_3dPoint* leftTop, ON_3dPoint* rightTop)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetFarRect(IntPtr pVP, ref Point3d leftBottom, ref Point3d rightBottom, ref Point3d leftTop, ref Point3d rightTop);
+
+  //int ON_Viewport_SetScreenPoint(ON_Viewport* pVP, int left, int right, int bottom, int top, int _near, int _far)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetScreenPoint(IntPtr pVP, int left, int right, int bottom, int top, int _near, int _far);
+
+  //int ON_Viewport_GetScreenPoint(const ON_Viewport* pVP, int* left, int* right, int* bottom, int* top, int* _near, int* _far)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetScreenPoint(IntPtr pVP, ref int left, ref int right, ref int bottom, ref int top, ref int _near, ref int _far);
+
+  //int ON_Viewport_GetScreenPortAspect(const ON_Viewport* pVP, double* dAspect)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetScreenPortAspect(IntPtr pVP, ref double dAspect);
+
+  //int ON_Viewport_GetCameraAngle2(const ON_Viewport* pVP, double* halfDiagonalAngle, double* halfVerticalAngle, double* halfHorizontalAngle)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetCameraAngle2(IntPtr pVP, ref double halfDiagonalAngle, ref double halfVerticalAngle, ref double halfHorizontalAngle);
+
+  //int ON_Viewport_GetCameraAngle(const ON_Viewport* pVP, double* d)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetCameraAngle(IntPtr pVP, ref double d);
+
+  //int ON_Viewport_SetCameraAngle(ON_Viewport* pVP, double d)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetCameraAngle(IntPtr pVP, double d);
+
+  //int ON_Viewport_GetCamera35mmLensLength(const ON_Viewport* pVP, double* d)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetCamera35mmLensLength(IntPtr pVP, ref double d);
+
+  //int ON_Viewport_SetCamera35mmLensLength(ON_Viewport* pVP, double d)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetCamera35mmLensLength(IntPtr pVP, double d);
+
+  //int ON_Viewport_GetXform(const ON_Viewport* pVP, int sourceCoordSystem, int destinationCoordSystem, ON_Xform* matrix)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetXform(IntPtr pVP, int sourceCoordSystem, int destinationCoordSystem, ref Transform matrix);
+
+  //int ON_Viewport_GetFrustumLine(const ON_Viewport* pVP, double screenX, double screenY, ON_Line* line)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetFrustumLine(IntPtr pVP, double screenX, double screenY, ref Line line);
+
+  //int ON_Viewport_GetWorldToScreenScale(const ON_Viewport* pVP, ON_3DPOINT_STRUCT pointInFrustum, double* pixels_per_unit)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetWorldToScreenScale(IntPtr pVP, Point3d pointInFrustum, ref double pixels_per_unit);
+
+  //int ON_Viewport_ExtentsBBox(ON_Viewport* pVP, double halfViewAngle, ON_3DPOINT_STRUCT min, ON_3DPOINT_STRUCT max)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_ExtentsBBox(IntPtr pVP, double halfViewAngle, Point3d min, Point3d max);
+
+  //int ON_Viewport_ExtentsSphere(ON_Viewport* pVP, double halfViewAngle, ON_3DPOINT_STRUCT center, double radius)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_ExtentsSphere(IntPtr pVP, double halfViewAngle, Point3d center, double radius);
+
+  //int ON_Viewport_ZoomToScreenRect(ON_Viewport* pVP, int left, int top, int right, int bottom)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_ZoomToScreenRect(IntPtr pVP, int left, int top, int right, int bottom);
+
+  //int ON_Viewport_DollyCamera(ON_Viewport* pVP, ON_3DVECTOR_STRUCT dollyVector)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_DollyCamera(IntPtr pVP, Vector3d dollyVector);
+
+  //int ON_Viewport_GetDollyCameraVector(const ON_Viewport* pVP, 
+  //													int screenX0, 
+  //													int screenY0, 
+  //													int screenX1, 
+  //													int screenY1, 
+  //													double projectionPlaneDistance, 
+  //													ON_3dVector* v)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetDollyCameraVector(IntPtr pVP, int screenX0, int screenY0, int screenX1, int screenY1, double projectionPlaneDistance, ref Vector3d v);
+
+  //int ON_Viewport_DollyFrustum(ON_Viewport* pVP, double dollyDistance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_DollyFrustum(IntPtr pVP, double dollyDistance);
+
+  //int ON_Viewport_GetViewScale(const ON_Viewport* pVP, double* w, double* h)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_GetViewScale(IntPtr pVP, ref double w, ref double h);
+
+  //int ON_Viewport_SetViewScale(ON_Viewport* pVP, double w, double h)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetViewScale(IntPtr pVP, double w, double h);
+
+  //int ON_Viewport_ClipModXform(const ON_Viewport* pVP, ON_Xform* matrix)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_ClipModXform(IntPtr pVP, ref Transform matrix);
+
+  //int ON_Viewport_ClipModInverseXform(const ON_Viewport* pVP, ON_Xform* matrix)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_ClipModInverseXform(IntPtr pVP, ref Transform matrix);
+
+  //int ON_Viewport_ClipModXformIsIdentity(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_ClipModXformIsIdentity(IntPtr pVP);
+
+  //int ON_Viewport_FrustumCenterPoint(const ON_Viewport* pVP, double targetDistance, ON_3dPoint* point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_FrustumCenterPoint(IntPtr pVP, double targetDistance, ref Point3d point);
+
+  //int ON_Viewport_TargetPoint(const ON_Viewport* pVP, ON_3dPoint* point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_TargetPoint(IntPtr pVP, ref Point3d point);
+
+  //void ON_Viewport_SetTargetPoint(ON_Viewport* pVP, ON_3DPOINT_STRUCT point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_SetTargetPoint(IntPtr pVP, Point3d point);
+
+  //double ON_Viewport_TargetDistance(const ON_Viewport* pVP, bool useFrustumCenterFallback)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Viewport_TargetDistance(IntPtr pVP, [MarshalAs(UnmanagedType.U1)]bool useFrustumCenterFallback);
+
+  //void ON_Viewport_GetPerspectiveClippingPlaneConstraints(ON_3DPOINT_STRUCT cameraLocation, 
+  //																	  int depthBufferBitDepth, double* minNearDist, double* minNearOverFar)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_GetPerspectiveClippingPlaneConstraints(Point3d cameraLocation, int depthBufferBitDepth, ref double minNearDist, ref double minNearOverFar);
+
+  //void ON_Viewport_SetPerspectiveClippingPlaneConstraints(ON_Viewport* pVP, int depthBufferBitDepth)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_SetPerspectiveClippingPlaneConstraints(IntPtr pVP, int depthBufferBitDepth);
+
+  //double ON_Viewport_GetPerspectiveMinNearOverFar(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Viewport_GetPerspectiveMinNearOverFar(IntPtr pVP);
+
+  //int ON_Viewport_SetPerspectiveMinNearOverFar(ON_Viewport* pVP, double d)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetPerspectiveMinNearOverFar(IntPtr pVP, double d);
+
+  //double ON_Viewport_GetPerspectiveMinNearDist(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Viewport_GetPerspectiveMinNearDist(IntPtr pVP);
+
+  //int ON_Viewport_SetPerspectiveMinNearDist(ON_Viewport* pVP, double d)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetPerspectiveMinNearDist(IntPtr pVP, double d);
+
+  //ON_UUID ON_Viewport_GetViewportId(const ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ON_Viewport_GetViewportId(IntPtr pVP);
+
+  //int ON_Viewport_SetViewportId(ON_Viewport* pVP, ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Viewport_SetViewportId(IntPtr pVP, Guid id);
+
+  //void ON_Viewport_Delete(ON_Viewport* pVP)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_Delete(IntPtr pVP);
+  #endregion
+
+
   #region on_xform.cpp
   //void ON_Xform_Scale( ON_Xform* xf, const ON_PLANE_STRUCT* plane, double xFactor, double yFactor, double zFactor )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -3907,6 +4326,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_Draw3dText4(IntPtr pPipeline, IntPtr pAnnotationText, [MarshalAs(UnmanagedType.LPWStr)]string _fontface, int textARGB, [MarshalAs(UnmanagedType.U1)]bool bold, [MarshalAs(UnmanagedType.U1)]bool italic, Point3d origin);
 
+  //void CRhinoDisplayPipeline_DrawObject(CRhinoDisplayPipeline* pPipeline, const CRhinoObject* pConstRhinoObject)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_DrawObject(IntPtr pPipeline, IntPtr pConstRhinoObject);
+
+  //void CRhinoDisplayPipeline_DrawObject2(CRhinoDisplayPipeline* pPipeline, const CRhinoObject* pConstRhinoObject, const ON_Xform* pConstXform)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_DrawObject2(IntPtr pPipeline, IntPtr pConstRhinoObject, ref Transform pConstXform);
+
   //void CRhinoDisplayPipeline_SetShadingRequired(CRhinoDisplayPipeline* pPipeline, bool enable)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_SetShadingRequired(IntPtr pPipeline, [MarshalAs(UnmanagedType.U1)]bool enable);
@@ -4036,6 +4463,10 @@ internal partial class UnsafeNativeMethods
   //void CRhinoDisplayPipeline_DrawBrep(CRhinoDisplayPipeline* pPipeline, const ON_Brep* pBrep, int argb, int wireDensity)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawBrep(IntPtr pPipeline, IntPtr pBrep, int argb, int wireDensity);
+
+  //void CRhinoDisplayPipeline_DrawShadedBrep(CRhinoDisplayPipeline* pPipeline, const ON_Brep* pBrep, const CDisplayPipelineMaterial* pMaterial)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_DrawShadedBrep(IntPtr pPipeline, IntPtr pBrep, IntPtr pMaterial);
 
   //void CRhinoDisplayPipeline_DrawShadedMesh(CRhinoDisplayPipeline* pPipeline, const ON_Mesh* pMesh, const CDisplayPipelineMaterial* pMaterial)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4405,6 +4836,23 @@ internal partial class UnsafeNativeMethods
   //void CRhinoDoc_FlashObjectList(int doc_id, ON_SimpleArray<const CRhinoObject*>* list, bool useSelectionColor)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDoc_FlashObjectList(int doc_id, IntPtr list, [MarshalAs(UnmanagedType.U1)]bool useSelectionColor);
+
+  //unsigned int CRhinoDoc_BeginUndoRecordEx(int doc_id, const RHMONO_STRING* description)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern uint CRhinoDoc_BeginUndoRecordEx(int doc_id, [MarshalAs(UnmanagedType.LPWStr)]string description);
+
+  //bool CRhinoDoc_EndUndoRecord(int doc_id, unsigned int sn)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoDoc_EndUndoRecord(int doc_id, uint sn);
+
+  //const CRhinoObject* CRhinoDoc_MostRecentObject( int doc_id )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoDoc_MostRecentObject(int doc_id);
+
+  //int CRhinoDoc_AllObjectsSince( int doc_id, unsigned int runtimeSerialNumber, ON_SimpleArray<const CRhinoObject*>* pObjectArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoDoc_AllObjectsSince(int doc_id, uint runtimeSerialNumber, IntPtr pObjectArray);
   #endregion
 
 
@@ -5335,6 +5783,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoLayer_SortIndex(int docId, int index);
 
+  //bool CRhinoLayer_GetLayerPathName(int docId, int index, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoLayer_GetLayerPathName(int docId, int index, IntPtr pStringHolder);
+
   //ON_UUID CRhinoLayerTable_GetLayerId(int docId, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoLayerTable_GetLayerId(int docId, int index);
@@ -5361,13 +5814,17 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoLayerTable_SetCurrentLayerIndex(int docId, int layerIndex, [MarshalAs(UnmanagedType.U1)]bool quiet);
 
-  //int CRhinoLayerTable_FindLayer(int docId, const RHMONO_STRING* _layerName, bool ignoreDeletedLayers)
+  //int CRhinoLayerTable_FindLayer(int docId, const RHMONO_STRING* _layerName, bool ignoreDeletedLayers, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int CRhinoLayerTable_FindLayer(int docId, [MarshalAs(UnmanagedType.LPWStr)]string _layerName, [MarshalAs(UnmanagedType.U1)]bool ignoreDeletedLayers);
+  internal static extern int CRhinoLayerTable_FindLayer(int docId, [MarshalAs(UnmanagedType.LPWStr)]string _layerName, [MarshalAs(UnmanagedType.U1)]bool ignoreDeletedLayers, int index);
 
   //int CRhinoLayerTable_FindLayer2(int docId, ON_UUID layerId, bool ignoreDeletedLayers)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoLayerTable_FindLayer2(int docId, Guid layerId, [MarshalAs(UnmanagedType.U1)]bool ignoreDeletedLayers);
+
+  //int CRhinoLayerTable_FindExact(int docId, const RHMONO_STRING* _layerPath, bool ignoreDeletedLayers)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoLayerTable_FindExact(int docId, [MarshalAs(UnmanagedType.LPWStr)]string _layerPath, [MarshalAs(UnmanagedType.U1)]bool ignoreDeletedLayers);
 
   //void CRhinoLayerTable_GetDefaultLayerProperties(ON_Layer* pLayer)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6025,10 +6482,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_plugin.cpp
-  //bool CRhinoPlugIn_Create(int sn, ON_UUID plugin_id, const RHMONO_STRING* _plugin_name, const RHMONO_STRING* _plugin_version, int plugin_class)
+  //bool CRhinoPlugIn_Create(int sn, ON_UUID plugin_id, const RHMONO_STRING* _plugin_name, const RHMONO_STRING* _plugin_version, int plugin_class, bool load_at_start)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool CRhinoPlugIn_Create(int sn, Guid plugin_id, [MarshalAs(UnmanagedType.LPWStr)]string _plugin_name, [MarshalAs(UnmanagedType.LPWStr)]string _plugin_version, int plugin_class);
+  internal static extern bool CRhinoPlugIn_Create(int sn, Guid plugin_id, [MarshalAs(UnmanagedType.LPWStr)]string _plugin_name, [MarshalAs(UnmanagedType.LPWStr)]string _plugin_version, int plugin_class, [MarshalAs(UnmanagedType.U1)]bool load_at_start);
 
   //CRhinoPlugIn* CRhinoPlugIn_Pointer(int serial_number)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6263,11 +6720,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoInterpCurve(int degree, int count, Point3d[] _array_pts, Vector3d start_tan, Vector3d end_tan, int knotStyle);
 
-  //bool RHC_RhinoOffsetCurve(const ON_Curve* pCurve, ON_3DVECTOR_STRUCT normal, ON_3DPOINT_STRUCT origin, double distance, ON_SimpleArray<ON_Curve*>* pCurveArray, double tol, double angleTol, int corner_style)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RHC_RhinoOffsetCurve(IntPtr pCurve, Vector3d normal, Point3d origin, double distance, IntPtr pCurveArray, double tol, double angleTol, int corner_style);
-
   //bool RHC_RhinoOffsetCurve2( const ON_Curve* pCurve,
   //                                          double distance,
   //                                          ON_3DPOINT_STRUCT direction_point, 
@@ -6382,21 +6834,29 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoGetRenderMeshes(IntPtr pRhinoObjects, [MarshalAs(UnmanagedType.U1)]bool bOkToCreate, [MarshalAs(UnmanagedType.U1)]bool bReturnAllObjects);
 
-  //ON_SimpleArray<ON_Surface*>* RHC_RhinoSimpleRollingBallFillet(const ON_Surface* constSurfaceA, bool bFlipA,
-  //                                                                            const ON_Surface* constSurfaceB, bool bFlipB,
-  //                                                                            double radius, double tol)
+  //void RHC_RhinoSimpleRollingBallFillet(const ON_Surface* constSurfaceA, bool bFlipA,
+  //                                                    const ON_Surface* constSurfaceB, bool bFlipB,
+  //                                                    double radius, double tol, ON_SimpleArray<ON_Surface*>* pSurfaces)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RHC_RhinoSimpleRollingBallFillet(IntPtr constSurfaceA, [MarshalAs(UnmanagedType.U1)]bool bFlipA, IntPtr constSurfaceB, [MarshalAs(UnmanagedType.U1)]bool bFlipB, double radius, double tol);
+  internal static extern void RHC_RhinoSimpleRollingBallFillet(IntPtr constSurfaceA, [MarshalAs(UnmanagedType.U1)]bool bFlipA, IntPtr constSurfaceB, [MarshalAs(UnmanagedType.U1)]bool bFlipB, double radius, double tol, IntPtr pSurfaces);
 
-  //ON_SimpleArray<ON_Surface*>* RHC_RhinoSimpleRollingBallFillet2(const ON_Surface* constSurfaceA, ON_2DPOINT_STRUCT uvA,
-  //                                                                             const ON_Surface* constSurfaceB, ON_2DPOINT_STRUCT uvB,
-  //                                                                             double radius, double tol)
+  //void RHC_RhinoSimpleRollingBallFillet2(const ON_Surface* constSurfaceA, ON_2DPOINT_STRUCT uvA,
+  //                                                     const ON_Surface* constSurfaceB, ON_2DPOINT_STRUCT uvB,
+  //                                                     double radius, double tol, ON_SimpleArray<ON_Surface*>* pSurfaces)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RHC_RhinoSimpleRollingBallFillet2(IntPtr constSurfaceA, Point2d uvA, IntPtr constSurfaceB, Point2d uvB, double radius, double tol);
+  internal static extern void RHC_RhinoSimpleRollingBallFillet2(IntPtr constSurfaceA, Point2d uvA, IntPtr constSurfaceB, Point2d uvB, double radius, double tol, IntPtr pSurfaces);
 
   //ON_Brep* RHC_RhinoOffsetSurface(const ON_BrepFace* pConstFace, double offset_distance, double offset_tolerance, bool both_sides, bool create_solid)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoOffsetSurface(IntPtr pConstFace, double offset_distance, double offset_tolerance, [MarshalAs(UnmanagedType.U1)]bool both_sides, [MarshalAs(UnmanagedType.U1)]bool create_solid);
+
+  //ON_Curve* RHC_RhinoMeanCurve( const ON_Curve* pConstCurveA, const ON_Curve* pConstCurveB, double angle_tolerance )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoMeanCurve(IntPtr pConstCurveA, IntPtr pConstCurveB, double angle_tolerance);
+
+  //ON_Curve* RHC_RhinoOffsetCurveNormal( const ON_Curve* pConstCurve, const ON_Surface* pConstSurface, double height )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoOffsetCurveNormal(IntPtr pConstCurve, IntPtr pConstSurface, double height);
 
   //int RhinoObjRefArray_Count( const ON_ClassArray<CRhinoObjRef>* pObjRefArray )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

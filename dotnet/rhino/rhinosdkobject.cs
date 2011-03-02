@@ -599,8 +599,8 @@ namespace Rhino.DocObjects
     /// <summary>Reports if an object can be selected</summary>
     /// <param name="on"></param>
     /// <param name="syncHighlight">
-    /// If true, then the object is hightlighted if it is selected
-    /// and not hightlighted if is is not selected.
+    /// If true, then the object is highlighted if it is selected 
+    /// and unhighlighted if is is not selected.
     /// </param>
     /// <param name="persistentSelect">
     /// Objects that are persistently selected stay selected when a command terminates.
@@ -682,8 +682,8 @@ namespace Rhino.DocObjects
     /// <param name="select"></param>
     /// <param name="syncHighlight">
     /// (default=true)
-    /// If true, then the object is hightlighted if it is selected
-    /// and not hightlighted if is is not selected.
+    /// If true, then the object is highlighted if it is selected 
+    /// and unhighlighted if is is not selected.
     /// </param>
     /// <returns>
     /// 0: object is not selected

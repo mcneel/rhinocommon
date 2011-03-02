@@ -638,11 +638,6 @@ namespace Rhino.Geometry.Intersect
       return rc;
     }
     
-    [Obsolete("Use MeshMeshFast. This will be removed in a future WIP")]
-    public static Line[] MeshMesh(Mesh meshA, Mesh meshB)
-    {
-      return MeshMeshFast(meshA, meshB);
-    }
     /// <summary>
     /// Quickly intersect two meshes. Overlaps and near misses are ignored.
     /// </summary>

@@ -200,7 +200,7 @@ namespace Rhino.Render
     /// <returns></returns>
     public static RenderMaterial NewBasicMaterial(Rhino.DocObjects.Material material)
     {
-      NativeRenderMaterial newMaterial = RenderContent.FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicMaterial(material.ConstPointer())) as NativeRenderMaterial;
+      NativeRenderMaterial newMaterial = RenderContent.FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicMaterial(material == null ? IntPtr.Zero : material.ConstPointer())) as NativeRenderMaterial;
       newMaterial.AutoDelete = true;
       return newMaterial;
     }
@@ -212,7 +212,7 @@ namespace Rhino.Render
     /// <returns></returns>
     public static RenderEnvironment NewBasicEnvironment(SimulatedEnvironment environment)
     {
-      NativeRenderEnvironment newEnvironment = RenderContent.FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicEnvironment(environment.ConstPointer())) as NativeRenderEnvironment;
+      NativeRenderEnvironment newEnvironment = RenderContent.FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicEnvironment(environment == null ? IntPtr.Zero : environment.ConstPointer())) as NativeRenderEnvironment;
       newEnvironment.AutoDelete = true;
       return newEnvironment;
     }
@@ -224,7 +224,7 @@ namespace Rhino.Render
     /// <returns></returns>
     public static RenderTexture NewBitmapTexture(SimulatedTexture texture)
     {
-      NativeRenderTexture newTexture = RenderContent.FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicTexture(texture.ConstPointer())) as NativeRenderTexture;
+      NativeRenderTexture newTexture = RenderContent.FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicTexture(texture == null ? IntPtr.Zero : texture.ConstPointer())) as NativeRenderTexture;
       newTexture.AutoDelete = true;
       return newTexture;
     }

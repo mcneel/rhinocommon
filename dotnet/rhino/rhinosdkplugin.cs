@@ -1,6 +1,11 @@
 using System;
 using System.Runtime.InteropServices;
 using Rhino.Runtime;
+using System.Collections.Generic;
+
+#if USING_RDK
+using Rhino.Render;
+#endif
 
 namespace Rhino.PlugIns
 {
@@ -49,7 +54,7 @@ namespace Rhino.PlugIns
     System.Reflection.Assembly m_assembly;
     internal int m_runtime_serial_number; // = 0; runtime initializes this to 0
     internal Rhino.Collections.RhinoList<Commands.Command> m_commands = new Rhino.Collections.RhinoList<Rhino.Commands.Command>();
-    private PersistentSettingsManager m_SettingsManager;
+    PersistentSettingsManager m_SettingsManager;
     Guid m_id;
     string m_name;
     string m_version;
@@ -121,7 +126,8 @@ namespace Rhino.PlugIns
         else if (rc is RenderPlugIn)
           plugin_class = 4;
 
-        UnsafeNativeMethods.CRhinoPlugIn_Create(sn, plugin_id, plugin_name, plugin_version, plugin_class);
+        bool load_at_start = rc.LoadAtStartup;
+        UnsafeNativeMethods.CRhinoPlugIn_Create(sn, plugin_id, plugin_name, plugin_version, plugin_class, load_at_start);
       }
       HostUtils.DebugString("[PlugIn::Create] Finished\n");
       return rc;
@@ -198,6 +204,16 @@ namespace Rhino.PlugIns
       return m_commands.ToArray();
     }
 
+    /// <summary>
+    /// Plug-ins are typically loaded on demand when they are first needed. You can change
+    /// this behavior to load the plug-in at startup by overriding this property and returning
+    /// true (default returns false)
+    /// </summary>
+    public virtual bool LoadAtStartup
+    {
+      get { return false; }
+    }
+
     protected PlugIn()
     {
       if (!m_bOkToConstruct)
@@ -268,6 +284,11 @@ namespace Rhino.PlugIns
           // RDK initialization.
           if (rc == LoadReturnCode.Success)
           {
+            if (p is RenderPlugIn)
+            {
+              Rhino.Render.RdkPlugIn.GetRdkPlugIn(p.Id, plugin_serial_number);
+            }
+
             Rhino.Render.RenderContent.RegisterContent(p.Assembly, p.Id);
           }
 #endif
@@ -301,6 +322,13 @@ namespace Rhino.PlugIns
           // the last function that the plug-in can use to save settings.
           if (p.m_SettingsManager != null)
             p.m_SettingsManager.WriteSettings();
+
+#if USING_RDK
+          // check to see if we should be uninitializing an RDK plugin
+          Rhino.Render.RdkPlugIn pRdk = Rhino.Render.RdkPlugIn.GetRdkPlugIn(p);
+          if (pRdk != null)
+            pRdk.Dispose();
+#endif
         }
         catch (Exception ex)
         {
@@ -856,12 +884,23 @@ namespace Rhino.PlugIns
 
   public abstract class RenderPlugIn : PlugIn
   {
-    internal delegate int RenderFunc(int plugin_serial_number, int doc_id, int modes, int render_preview);
-    internal delegate int RenderWindowFunc(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow);
+    private static IntPtr m_render_command_context = IntPtr.Zero;
+    internal static IntPtr RenderCommandContextPointer
+    {
+      get
+      {
+        return m_render_command_context;
+      }
+    }
+
+    #region render and render window virtual function implementation
+    internal delegate int RenderFunc(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr context);
+    internal delegate int RenderWindowFunc(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow, IntPtr context);
     private static RenderFunc m_OnRender = InternalOnRender;
     private static RenderWindowFunc m_OnRenderWindow = InternalOnRenderWindow;
-    private static int InternalOnRender(int plugin_serial_number, int doc_id, int modes, int render_preview)
+    private static int InternalOnRender(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr context)
     {
+      m_render_command_context = context;
       Rhino.Commands.Result rc = Rhino.Commands.Result.Failure;
       RenderPlugIn p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugIn;
       if (null == p)
@@ -885,11 +924,13 @@ namespace Rhino.PlugIns
           HostUtils.DebugString("Error " + error_msg);
         }
       }
+      m_render_command_context = IntPtr.Zero;
       return (int)rc;
     }
 
-    private static int InternalOnRenderWindow(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow)
+    private static int InternalOnRenderWindow(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow, IntPtr context)
     {
+      m_render_command_context = context;
       Rhino.Commands.Result rc = Rhino.Commands.Result.Failure;
       RenderPlugIn p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugIn;
       if (null == p)
@@ -915,15 +956,460 @@ namespace Rhino.PlugIns
           HostUtils.DebugString("Error " + error_msg);
         }
       }
+      m_render_command_context = IntPtr.Zero;
       return (int)rc;
     }
+    #endregion
 
     protected RenderPlugIn()
     {
       UnsafeNativeMethods.CRhinoRenderPlugIn_SetCallbacks(m_OnRender, m_OnRenderWindow);
+
+#if USING_RDK
+      UnsafeNativeMethods.CRhinoRenderPlugIn_SetRdkCallbacks(m_OnSupportsFeature, 
+                                                             m_OnAbortRender, 
+                                                             m_OnAllowChooseContent, 
+                                                             m_OnCreateDefaultContent,
+                                                             m_OnOutputTypes,
+                                                             m_OnCreateTexturePreview,
+                                                             m_OnCreatePreview,
+                                                             m_OnDecalProperties);
+#endif
     }
 
-    
+#if USING_RDK
+    public enum Features : int
+    {
+      Materials = 0,
+      Environments = 1,
+      Textures = 2,
+      PostEffects = 3,
+      Sun = 4,
+      CustomRenderMeshes = 5,
+      Decals = 6,
+      GroundPlane = 7,
+      SkyLight = 8,
+      CustomDecalProperties = 9,
+    }
+
+    /// <summary>
+    /// Return true if your renderer supports the specific feature.
+    /// </summary>
+    /// <param name="f"></param>
+    /// <returns></returns>
+    protected virtual bool SupportsFeature(Features f)
+    {
+      return true;
+    }
+
+    /// <summary>
+    /// You must implement this function to abort preview renderings initiated using CreatePreview (if possible)
+    /// </summary>
+    protected virtual void AbortPreviewRender()
+    {
+    }
+
+    protected virtual bool AllowChooseContent(Rhino.Render.RenderContent content)
+    {
+      return true;
+    }
+
+    protected virtual void CreateDefaultContent(RhinoDoc doc)
+    {
+    }
+
+    public class OutputTypeInfo
+    {
+      public OutputTypeInfo(string ext, string type)
+      {
+        _fileExtension = ext;
+        _typeDescription = type;
+      }
+
+      private readonly string _fileExtension;
+      public string fileExtension
+      {
+        get { return _fileExtension; }
+      }
+      private readonly string _typeDescription;
+      public string typeDescription
+      {
+        get { return _typeDescription; }
+      }
+    }
+
+    protected virtual List<OutputTypeInfo> OutputTypes()
+    {
+      //TODO - base class call
+      int iIndex = 0;
+
+      StringHolder shExt = new StringHolder();
+      StringHolder shDesc = new StringHolder();
+
+      List<OutputTypeInfo> list = new List<OutputTypeInfo>();
+
+      while ( 1==UnsafeNativeMethods.Rdk_RenderPlugIn_BaseOutputTypeAtIndex(NonConstPointer(), iIndex++, shExt.NonConstPointer(), shDesc.NonConstPointer()))
+      {
+        list.Add(new OutputTypeInfo(shExt.ToString(), shDesc.ToString()));
+      }
+      return list;
+    }
+
+    /// <summary>
+    /// You should implement this method to create the preview bitmap that will appear in the 
+    /// content editor's thumbnail display when previewing textures in 2d (UV) mode.
+    /// </summary>
+    /// <param name="pixels">The pixel dimensions of the bitmap you should return</param>
+    /// <param name="texture">The texture you should render as a 2D image</param>
+    /// <returns>Return null if you want Rhino to generate its own texture preview.</returns>
+    protected virtual System.Drawing.Image CreateTexturePreview(System.Drawing.Size pixels, Rhino.Render.RenderTexture texture)
+    {
+      return null;
+    }
+
+    public enum PreviewQualityLevels : int
+    {
+      None    = 0, // No quality set.
+      Low     = 1, // Low quality rendering for quick preview.
+      Medium  = 2, // Medium quality rendering for intermediate preview.
+      Full    = 3, // Full quality rendering (quality comes from user settings).
+    };
+
+    /// <summary>
+    /// You must implement this method to create the preview bitmap that will appear
+    /// in the content editor's thumbnail display when previewing materials and environments.
+    /// NB. This preview is the "renderer preview" and is called 3 times with varying levels
+    /// of quality. If you don't want to implement this kind of preview, and are satisfied with the
+    /// "QuickPreview" generated from CreateQuickPreview, just return null. If you don't support
+    /// progressive refinement, return NULL from the first two quality levels.
+    /// </summary>
+    /// <param name="pixels"></param>
+    /// <param name="quality"></param>
+    /// <param name="scene"></param>
+    /// <returns></returns>
+    protected virtual System.Drawing.Image CreatePreview(System.Drawing.Size pixels, PreviewQualityLevels quality, PreviewScene scene)
+    {
+      return null;
+    }
+
+    /// <summary>
+    /// Optionally implement this method to change the way quick content previews are generated.
+    /// By default, this is handled by the internal RDK OpenGL renderer and is based on the
+    /// simulation of the content. If you want to implement an instant render based on the
+    /// actual content parameters, or if you just think you can do a better job, override this
+		/// Note: The first plug-in to return a non-null value will get to draw the preview, so if you
+    /// decide not to draw based on the contents of the scene server, please return null.
+    /// </summary>
+    /// <param name="pixels"></param>
+    /// <param name="scene"></param>
+    /// <returns></returns>
+    protected virtual System.Drawing.Image CreateQuickPreview(System.Drawing.Size pixels, PreviewScene scene)
+    {
+      return null;
+    }
+
+    /// <summary>
+    /// Override this function to handle showing a modal dialog with your plugin's
+    /// custom decal properties.  You will be passed the current properties for the 
+    /// object being edited.  The defaults will be set in InitializeDecalProperties
+    /// </summary>
+    /// <param name="properties">A list of named values that will be stored on the object
+    /// the input values are the current ones, you should modify the values after the dialog
+    /// closes.</param>
+    /// <returns>true if the user pressed "OK", otherwise false</returns>
+    protected virtual bool ShowDecalProperties(ref List<NamedValue> properties)
+    {
+      return false;
+    }
+
+    /// <summary>
+    /// Initialize your custom decal properties here.  The input list will be empty - add your
+    /// default named property values and return.
+    /// </summary>
+    /// <param name="properties"></param>
+    protected virtual void InitializeDecalProperties(ref List<NamedValue> properties)
+    {
+    }
+
+
+    #region other virtual function implementation
+    internal delegate int SupportsFeatureCallback(int serial_number, Features f);
+    private static SupportsFeatureCallback m_OnSupportsFeature = OnSupportsFeature;
+    private static int OnSupportsFeature(int serial_number, Features f)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      if (null == p)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnSupportsFeature");
+      }
+      else
+      {
+        try
+        {
+          return p.SupportsFeature(f) ? 1:0;
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnSupportsFeature\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+      return 0;
+    }
+
+    internal delegate void AbortRenderCallback(int serial_number);
+    private static AbortRenderCallback m_OnAbortRender = OnAbortRender;
+    private static void OnAbortRender(int serial_number)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      if (null == p)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnAbortRender");
+      }
+      else
+      {
+        try
+        {
+          p.AbortPreviewRender();
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnAbortRender\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+    }
+
+    internal delegate int AllowChooseContentCallback(int serial_number, IntPtr pConstContent);
+    private static AllowChooseContentCallback m_OnAllowChooseContent = OnAllowChooseContent;
+    private static int OnAllowChooseContent(int serial_number, IntPtr pConstContent)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      RenderContent c = RenderContent.FromPointer(pConstContent);
+      if (null == p || null == c)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnAllowChooseContent");
+      }
+      else
+      {
+        try
+        {
+          return p.AllowChooseContent(c) ? 1:0;
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnAllowChooseContent\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+      return 0;
+    }
+
+    internal delegate void CreateDefaultContentCallback(int serial_number, int docId);
+    private static CreateDefaultContentCallback m_OnCreateDefaultContent = OnCreateDefaultContent;
+    private static void OnCreateDefaultContent(int serial_number, int docId)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      RhinoDoc doc = RhinoDoc.FromId(docId);
+
+      if (null == p || null == doc)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnCreateDefaultContent");
+      }
+      else
+      {
+        try
+        {
+          p.CreateDefaultContent(doc);
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnCreateDefaultContent\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+    }
+
+    internal delegate void OutputTypesCallback(int serial_number, IntPtr pON_wStringExt, IntPtr pON_wStringDesc);
+    private static OutputTypesCallback m_OnOutputTypes = OnOutputTypes;
+    private static void OnOutputTypes(int serial_number, IntPtr pON_wStringExt, IntPtr pON_wStringDesc)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+
+      if (null == p || (IntPtr.Zero == pON_wStringDesc) || (IntPtr.Zero == pON_wStringExt))
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnOutputTypes");
+      }
+      else
+      {
+        try
+        {
+          List<OutputTypeInfo> types = p.OutputTypes();
+
+          System.Text.StringBuilder sbExt = new System.Text.StringBuilder();
+          System.Text.StringBuilder sbDesc = new System.Text.StringBuilder();
+
+          foreach (OutputTypeInfo type in types)
+          {
+            if (sbExt.Length != 0)
+              sbExt.Append(";");
+
+            sbExt.Append(type.fileExtension);
+
+            if (sbDesc.Length != 0)
+              sbDesc.Append(";");
+
+            sbDesc.Append(type.typeDescription);
+          }
+
+          UnsafeNativeMethods.ON_wString_Set(pON_wStringExt, sbExt.ToString());
+          UnsafeNativeMethods.ON_wString_Set(pON_wStringDesc, sbDesc.ToString());
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnOutputTypes\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+    }
+
+    internal delegate IntPtr CreateTexturePreviewCallback(int serial_number, int x, int y, IntPtr pTexture);
+    private static CreateTexturePreviewCallback m_OnCreateTexturePreview = OnCreateTexturePreview;
+    private static IntPtr OnCreateTexturePreview(int serial_number, int x, int y, IntPtr pTexture)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      RenderTexture texture = IntPtr.Zero == pTexture ? null : RenderContent.FromPointer(pTexture) as RenderTexture;
+
+      if (null == p || null == texture || x == 0 || y == 0)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnCreateTexturePreview");
+      }
+      else
+      {
+        try
+        {
+          System.Drawing.Image preview = p.CreateTexturePreview(new System.Drawing.Size(x, y), texture);
+
+          if (preview != null)
+          {
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            preview.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+
+            IntPtr pBitmap = new System.Drawing.Bitmap(ms).GetHbitmap();
+
+            return pBitmap;
+          }
+          return IntPtr.Zero;
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnCreateTexturePreview\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+
+      return IntPtr.Zero;
+    }
+
+
+    internal delegate IntPtr CreatePreviewCallback(int serial_number, int x, int y, int iQuality, IntPtr pScene);
+    private static CreatePreviewCallback m_OnCreatePreview = OnCreatePreview;
+    private static IntPtr OnCreatePreview(int serial_number, int x, int y, int iQuality, IntPtr pPreviewScene)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      PreviewScene scene = IntPtr.Zero == pPreviewScene ? null : new PreviewScene(pPreviewScene);
+
+      if (null == p || null == scene || x == 0 || y == 0)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnCreatePreview");
+      }
+      else
+      {
+        try
+        {
+          System.Drawing.Image preview = null;
+          if (-1 == iQuality)
+          {
+            preview = p.CreateQuickPreview(new System.Drawing.Size(x, y), scene);
+          }
+          else
+          {
+            preview = p.CreatePreview(new System.Drawing.Size(x, y), (PreviewQualityLevels)iQuality, scene);
+          }
+
+          if (preview != null)
+          {
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            preview.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+
+            IntPtr pBitmap = new System.Drawing.Bitmap(ms).GetHbitmap();
+
+            return pBitmap;
+          }
+          return IntPtr.Zero;
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnCreatePreview\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+
+      return IntPtr.Zero;
+    }
+
+    internal delegate int DecalCallback(int serial_number, IntPtr pXmlSection, int bInitialize);
+    private static DecalCallback m_OnDecalProperties = OnDecalProperties;
+    private static int OnDecalProperties(int serial_number, IntPtr pXmlSection, int bInitialize)
+    {
+      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      
+      if (null == p && pXmlSection!=IntPtr.Zero)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnDecalProperties");
+      }
+      else
+      {
+        try
+        {
+          List<NamedValue> propertyList = XMLSectionUtilities.ConvertToNamedValueList(pXmlSection);
+
+          if (1 != bInitialize)
+          {
+            if (!p.ShowDecalProperties(ref propertyList))
+              return 0;
+          }
+          else
+          {
+            p.InitializeDecalProperties(ref propertyList);
+          }
+
+          XMLSectionUtilities.SetFromNamedValueList(pXmlSection, propertyList);
+
+          return 1;          
+        }
+        catch (Exception ex)
+        {
+          string error_msg = "Error occured during plug-in OnDecalProperties\n Details:\n";
+          error_msg += ex.Message;
+          HostUtils.DebugString("Error " + error_msg);
+        }
+      }
+
+      return 0;
+    }
+    #endregion
+
+#endif
+
+
     /// <summary>
     /// Called by Render and RenderPreview commands if this plug-in is set as the default render engine. 
     /// </summary>

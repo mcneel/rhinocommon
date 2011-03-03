@@ -167,7 +167,7 @@ namespace Rhino.DocObjects
     {
       int refCount = UnsafeNativeMethods.CRhinoInstanceDefintition_GetReferences1(m_doc.m_docId, m_index, wheretoLook);
       if (refCount < 1)
-        return null;
+        return new InstanceObject[0];
       InstanceObject[] rc = new InstanceObject[refCount];
       for (int i = 0; i < refCount; i++)
       {
@@ -602,7 +602,7 @@ namespace Rhino.DocObjects.Tables
       Runtime.InteropWrappers.SimpleArrayInt arr = new Runtime.InteropWrappers.SimpleArrayInt();
       IntPtr ptr = arr.m_ptr;
       int count = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetList(m_doc.m_docId, ptr, ignoreDeleted);
-      DocObjects.InstanceDefinition[] rc = null;
+      DocObjects.InstanceDefinition[] rc = new InstanceDefinition[0];
       if( count>0 )
       {
         int[] indices = arr.ToArray();

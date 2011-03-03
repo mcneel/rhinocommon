@@ -2444,6 +2444,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_MeshTopologyVertex_ConnectedVertices(IntPtr pConstMesh, int topologyVertexIndex, int count, [In,Out] int[] rc);
 
+  //bool ON_MeshTopologyVertex_SortEdges(const ON_Mesh* pConstMesh, int topologyVertexIndex)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_MeshTopologyVertex_SortEdges(IntPtr pConstMesh, int topologyVertexIndex);
+
   //void ON_MeshTopologyVertex_ConnectedFaces(const ON_Mesh* pConstMesh, int topologyVertexIndex, ON_SimpleArray<int>* face_indices)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_MeshTopologyVertex_ConnectedFaces(IntPtr pConstMesh, int topologyVertexIndex, IntPtr face_indices);

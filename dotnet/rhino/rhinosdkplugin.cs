@@ -1640,7 +1640,7 @@ namespace Rhino.PlugIns
       if (null == invoke_rc)
         return false;
 
-      return System.Convert.ToBoolean(invoke_rc);
+      return (bool)invoke_rc;
     }
 
     /// <summary>
@@ -1733,7 +1733,7 @@ namespace Rhino.PlugIns
       if (null == invoke_rc)
         return false;
 
-      return System.Convert.ToBoolean(invoke_rc);
+      return (bool)invoke_rc;
     }
 
     /// <summary>
@@ -1765,7 +1765,7 @@ namespace Rhino.PlugIns
       if (null == invoke_rc)
         return false;
 
-      return System.Convert.ToBoolean(invoke_rc);
+      return (bool)invoke_rc;
     }
 
     /// <summary>
@@ -1797,7 +1797,7 @@ namespace Rhino.PlugIns
       if (null == invoke_rc)
         return false;
 
-      return System.Convert.ToBoolean(invoke_rc);
+      return (bool)invoke_rc;
     }
 
     /// <summary>
@@ -1829,7 +1829,7 @@ namespace Rhino.PlugIns
       if (null == invoke_rc)
         return false;
 
-      return System.Convert.ToBoolean(invoke_rc);
+      return (bool)invoke_rc;
     }
 
     /// <summary>
@@ -1861,7 +1861,55 @@ namespace Rhino.PlugIns
       if (null == invoke_rc)
         return false;
 
-      return System.Convert.ToBoolean(invoke_rc);
+      return (bool)invoke_rc;
+    }
+
+    /// <summary>
+    /// Returns whether or not license checkout is enabled
+    /// </summary>
+    public static bool IsCheckOutEnabled()
+    {
+      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+      if (null == zooAss)
+        return false;
+
+      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+      if (t == null)
+        return false;
+
+      System.Reflection.MethodInfo mi = t.GetMethod("IsCheckOutEnabled");
+      if (mi == null)
+        return false;
+
+      object invoke_rc = mi.Invoke(null, null);
+      if (null == invoke_rc)
+        return false;
+
+      return (bool)invoke_rc;
+    }
+
+    /// <summary>
+    /// Returns the current status of every license for ui purposes
+    /// </summary>
+    public static LicenseStatus[] GetLicenseStatus()
+    {
+      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+      if (null == zooAss)
+        return null;
+
+      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+      if (t == null)
+        return null;
+
+      System.Reflection.MethodInfo mi = t.GetMethod("GetLicenseStatus");
+      if (mi == null)
+        return null;
+
+      LicenseStatus[] invoke_rc = mi.Invoke(null, null) as LicenseStatus[];
+      if (null == invoke_rc)
+        return null;
+
+      return invoke_rc;
     }
   }
 
@@ -2047,6 +2095,91 @@ namespace Rhino.PlugIns
       if (null != data && data.IsValid())
         return true;
       return false;
+    }
+
+    #endregion
+  }
+
+  /// <summary>
+  /// LicenseType enumeration
+  /// </summary>
+  public enum LicenseType
+  {
+    Standalone,       // A standalone license
+    Network,          // A network license that has not been fulfilled by a Zoo
+    NetworkLoanedOut, // A license on temporary loan from a Zoo
+    NetworkCheckedOut // A license on permanent check out from a Zoo
+  }
+
+  /// <summary>
+  /// LicenseStatus
+  /// </summary>
+  public class LicenseStatus
+  {
+    #region LicenseStatus data
+
+    string m_license_title;
+    string m_serial_number;
+    LicenseType m_license_type;
+    DateTime? m_expiration_date;
+
+    /// <summary>
+    /// The title of the license.
+    /// (e.g. "Rhinoceros 5.0 Commercial")
+    /// </summary>
+    public string LicenseTitle
+    {
+      get { return m_license_title; }
+      set { m_license_title = value; }
+    }
+
+    /// <summary>
+    /// The "for display only" product license or serial number.
+    /// </summary>
+    public string SerialNumber
+    {
+      get { return m_serial_number; }
+      set { m_serial_number = value; }
+    }
+
+    /// <summary>
+    /// The license type.
+    /// (e.g. Standalone, Network, etc.)
+    /// </summary>
+    public LicenseType LicenseType
+    {
+      get { return m_license_type; }
+      set { m_license_type = value; }
+    }
+
+    /// <summary>
+    /// The date and time the license will expire.
+    /// This value can be null if:
+    ///   1.) The license type is "Standalone" and the license does not expire.
+    ///   2.) The license type is "Network".
+    ///   3.) The license type is "NetworkCheckedOut" and the checkout does not expire
+    /// Note, date and time is in local time coordinates
+    /// </summary>
+    public DateTime? ExpirationDate
+    {
+      get { return m_expiration_date; }
+      set { m_expiration_date = value; }
+    }
+
+    #endregion
+
+
+    #region LicenseStatus members
+
+    /// <summary>
+    /// Public constructor
+    /// </summary>
+    public LicenseStatus()
+    {
+      m_license_title = string.Empty;
+      m_serial_number = string.Empty;
+      m_license_type = PlugIns.LicenseType.Standalone;
+      m_expiration_date = null;
     }
 
     #endregion

@@ -1916,7 +1916,9 @@ namespace Rhino.Geometry.Collections
         UnsafeNativeMethods.ON_Mesh_SetTopologyVertex(ptr, index, value);
       }
     }
+    #endregion
 
+    #region methods
     /// <summary>
     /// Get the topology vertex index for an existing mesh vertex in the mesh's
     /// VertexList
@@ -1975,6 +1977,54 @@ namespace Rhino.Geometry.Collections
       UnsafeNativeMethods.ON_MeshTopologyVertex_ConnectedVertices(ptr, topologyVertexIndex, count, rc);
       return rc;
     }
+
+    /// <summary>
+    /// Get all topological vertices that are connected to a given vertex
+    /// </summary>
+    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices</param>
+    /// <param name="sorted">if true, thr vertices are returned in a radially sorted order</param>
+    /// <returns>
+    /// Indices of all topological vertices that are connected to this topological vertex.
+    /// null if no vertices are connected to this vertex
+    /// </returns>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    public int[] ConnectedTopologyVertices(int topologyVertexIndex, bool sorted)
+    {
+      if (sorted)
+        SortEdges(topologyVertexIndex);
+      return ConnectedTopologyVertices(topologyVertexIndex);
+    }
+
+    /// <summary>
+    /// Sort the edge list for the mesh topology vertex list so that
+    /// the edges are in radial order when you call ConnectedTopologyVertices.
+    /// A nonmanifold edge is treated as a boundary edge with respect
+    /// to sorting.  If any boundary or nonmanifold edges end at the
+    /// vertex, then the first edge will be a boundary or nonmanifold edge.
+    /// </summary>
+    /// <returns>true on success</returns>
+    /// <seealso cref="ConnectedTopologyVertices(int)"/>
+    public bool SortEdges()
+    {
+      IntPtr pConstMesh = m_mesh.ConstPointer();
+      return UnsafeNativeMethods.ON_MeshTopologyVertex_SortEdges(pConstMesh, -1);
+    }
+
+    /// <summary>
+    /// Sort the edge list for as single mesh topology vertex so that
+    /// the edges are in radial order when you call ConnectedTopologyVertices.
+    /// A nonmanifold edge is treated as a boundary edge with respect
+    /// to sorting.  If any boundary or nonmanifold edges end at the
+    /// vertex, then the first edge will be a boundary or nonmanifold edge.
+    /// </summary>
+    /// <returns>true on success</returns>
+    /// <seealso cref="ConnectedTopologyVertices(int)"/>
+    public bool SortEdges(int topologyVertexIndex)
+    {
+      IntPtr pConstMesh = m_mesh.ConstPointer();
+      return UnsafeNativeMethods.ON_MeshTopologyVertex_SortEdges(pConstMesh, topologyVertexIndex);
+    }
+
 
     /// <summary>
     /// Get all faces that are connected to a given vertex

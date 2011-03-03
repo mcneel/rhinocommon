@@ -73,7 +73,7 @@ namespace Rhino.UI
         key.Append("[[");
         key.Append(context_id.ToString());
         key.Append("]]");
-        if (!st.StringList.TryGetValue(key.ToString(), out loc_str))
+        if (!st.StringList.TryGetValue(key.ToString(), out loc_str) || string.IsNullOrEmpty(loc_str))
           loc_str = english_str;
         else if (iStart > 0 || jEnd > iEnd || bN || bR || bT || bQuot || bBS)
         {
@@ -154,7 +154,7 @@ namespace Rhino.UI
         bool bQuot = english_str.Contains("\"");
         if (bQuot)
           key.Replace("\"", "\\\"");
-        if (!st.StringList.TryGetValue(key.ToString(), out loc_str))
+        if (!st.StringList.TryGetValue(key.ToString(), out loc_str) || string.IsNullOrEmpty(loc_str))
           loc_str = english_str;
         else if (iStart > 0 || jEnd > iEnd || bN || bR || bT || bQuot || bBS)
         {

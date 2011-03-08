@@ -77,10 +77,12 @@ namespace Rhino
     #region docproperties
     string GetString(int which)
     {
-      IntPtr rc = UnsafeNativeMethods.CRhinoDoc_GetSetString(m_docId, which, false, null);
-      if (IntPtr.Zero == rc)
-        return String.Empty;
-      return Marshal.PtrToStringUni(rc);
+      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoDoc_GetSetString(m_docId, which, false, null, pString);
+        return sh.ToString();
+      }
     }
     //const int idxName = 0;
     const int idxPath = 1;
@@ -125,7 +127,7 @@ namespace Rhino
     public string Notes
     {
       get { return GetString(idxNotes); }
-      set { UnsafeNativeMethods.CRhinoDoc_GetSetString(m_docId, idxNotes, true, value); }
+      set{ UnsafeNativeMethods.CRhinoDoc_GetSetString(m_docId, idxNotes, true, value, IntPtr.Zero); }
     }
 
     public DateTime DateCreated

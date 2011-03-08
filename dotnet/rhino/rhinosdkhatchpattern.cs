@@ -42,7 +42,7 @@ namespace Rhino.DocObjects
     /// Read hatch pattern definitions from a file
     /// </summary>
     /// <param name="filename">
-    /// Name of an existing file. If filename is null or emtpty, default hatch pattern filename is used
+    /// Name of an existing file. If filename is null or empty, default hatch pattern filename is used
     /// </param>
     /// <param name="quiet">
     /// If file doesn't exist, and quiet is false, an error meesage box is shown.

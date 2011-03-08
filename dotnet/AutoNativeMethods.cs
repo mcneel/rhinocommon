@@ -4812,9 +4812,9 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_docproperties.cpp
-  //const RHMONO_STRING* CRhinoDoc_GetSetString( int docId, int which, bool set, const RHMONO_STRING* _str )
+  //void CRhinoDoc_GetSetString( int docId, int which, bool set, const RHMONO_STRING* _str, CRhCmnStringHolder* pString )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr CRhinoDoc_GetSetString(int docId, int which, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.LPWStr)]string _str);
+  internal static extern void CRhinoDoc_GetSetString(int docId, int which, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.LPWStr)]string _str, IntPtr pString);
 
   //double CRhinoDocProperties_GetSetDouble( int docId, int which, bool set, double set_val )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4877,6 +4877,10 @@ internal partial class UnsafeNativeMethods
   //int CRhinoDocProperties_AddNamedView(int docId, const RHMONO_STRING* _name, ON_UUID viewportId)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoDocProperties_AddNamedView(int docId, [MarshalAs(UnmanagedType.LPWStr)]string _name, Guid viewportId);
+
+  //int CRhinoDocProperties_AddNamedView2(int docId, const ON_3dmView* pConstView)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoDocProperties_AddNamedView2(int docId, IntPtr pConstView);
 
   //int CRhinoDocProperties_FindNamedView(int docId, const RHMONO_STRING* _name)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

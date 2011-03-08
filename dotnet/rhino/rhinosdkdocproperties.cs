@@ -176,6 +176,12 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDocProperties_AddNamedView(m_doc.m_docId, name, viewportId);
     }
 
+    public int Add(ViewInfo view)
+    {
+      IntPtr pConstView = view.ConstPointer();
+      return UnsafeNativeMethods.CRhinoDocProperties_AddNamedView2(m_doc.m_docId, pConstView);
+    }
+
     /// <summary>Remove named view from the document</summary>
     /// <param name="index">index of the named view in the named view table</param>
     /// <returns>true if successful</returns>

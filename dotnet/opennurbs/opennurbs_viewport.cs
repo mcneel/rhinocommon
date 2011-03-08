@@ -648,7 +648,11 @@ namespace Rhino.DocObjects
       get { return GetPlane(idxTopPlane); }
     }
         
-    /// <summary>Get corners of near clipping plane rectangle.</summary>
+    /// <summary>
+    /// Get corners of near clipping plane rectangle.
+    /// 4 points are returned in the order of bottom left, bottom right,
+    /// top left, top right
+    /// </summary>
     /// <returns>
     /// Four corner points on success.
     /// Empty array if viewport is not valid.
@@ -665,7 +669,11 @@ namespace Rhino.DocObjects
       return new Rhino.Geometry.Point3d[] { leftBottom, rightBottom, leftTop, rightTop };
     }
 
-    /// <summary>Get corners of far clipping plane rectangle.</summary>
+    /// <summary>
+    /// Get corners of far clipping plane rectangle.
+    /// 4 points are returned in the order of bottom left, bottom right,
+    /// top left, top right
+    /// </summary>
     /// <returns>
     /// Four corner points on success.
     /// Empty array if viewport is not valid.

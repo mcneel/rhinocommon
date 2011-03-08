@@ -138,7 +138,7 @@ namespace Rhino.DocObjects.Tables
         IntPtr pViewInfo = UnsafeNativeMethods.CRhinoDocProperties_GetNamedView(m_doc.m_docId, index);
         if (IntPtr.Zero == pViewInfo)
           return null;
-        return new Rhino.DocObjects.ViewInfo(pViewInfo, true);
+        return new Rhino.DocObjects.ViewInfo(m_doc, index);
       }
     }
 
@@ -191,6 +191,23 @@ namespace Rhino.DocObjects.Tables
     {
       int index = Find(name);
       return Delete(index);
+    }
+
+    public bool Restore(int index, Rhino.Display.RhinoView viewport, bool backgroundBitmap)
+    {
+      IntPtr pConstViewport = viewport.NonConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoRestoreNamedView(m_doc.m_docId, index, pConstViewport, backgroundBitmap, 0, 0);
+    }
+
+    public bool RestoreAnimated(int index, Rhino.Display.RhinoView viewport, bool backgroundBitmap)
+    {
+      return RestoreAnimated(index, viewport, backgroundBitmap, 100, 10);
+    }
+
+    public bool RestoreAnimated(int index, Rhino.Display.RhinoView viewport, bool backgroundBitmap, int frames, int frameRate)
+    {
+      IntPtr pConstViewport = viewport.NonConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoRestoreNamedView(m_doc.m_docId, index, pConstViewport, backgroundBitmap, frames, frameRate);
     }
   }
 }

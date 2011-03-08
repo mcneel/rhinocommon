@@ -72,7 +72,7 @@ namespace Rhino.Render
 
         //Just the view left...
 
-        m_view = new Rhino.Display.Viewport();
+        m_view = new Rhino.DocObjects.ViewportInfo();
         UnsafeNativeMethods.Rdk_SceneServer_View(pSceneServer, m_view.NonConstPointer());
       }
 
@@ -148,9 +148,9 @@ namespace Rhino.Render
       }
     }
 
-    private Rhino.Display.Viewport m_view = null;
+    private Rhino.DocObjects.ViewportInfo m_view = null;
 
-    public Rhino.Display.Viewport View
+    public Rhino.DocObjects.ViewportInfo View
     {
       get
       {

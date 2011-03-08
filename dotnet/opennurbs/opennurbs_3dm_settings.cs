@@ -16,16 +16,18 @@ namespace Rhino.DocObjects
       if (IntPtr.Zero == pConstructionPlane)
         return null;
       ConstructionPlane rc = new ConstructionPlane();
-      IntPtr pName = UnsafeNativeMethods.ON_3dmConstructionPlane_Copy(pConstructionPlane,
-                                                                      ref rc.m_plane,
-                                                                      ref rc.m_grid_spacing,
-                                                                      ref rc.m_snap_spacing,
-                                                                      ref rc.m_grid_line_count,
-                                                                      ref rc.m_grid_thick_frequency,
-                                                                      ref rc.m_bDepthBuffered);
-      if (IntPtr.Zero != pName)
+      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
       {
-        rc.m_name = Marshal.PtrToStringUni(pName);
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.ON_3dmConstructionPlane_Copy(pConstructionPlane,
+                                                         ref rc.m_plane,
+                                                         ref rc.m_grid_spacing,
+                                                         ref rc.m_snap_spacing,
+                                                         ref rc.m_grid_line_count,
+                                                         ref rc.m_grid_thick_frequency,
+                                                         ref rc.m_bDepthBuffered,
+                                                         pString);
+        rc.m_name = sh.ToString();
       }
       return rc;
     }
@@ -182,35 +184,44 @@ namespace Rhino.DocObjects
   
   public class ViewInfo : IDisposable // ON_3dmView
   {
+    private object m_parent;
+    private int m_index=-1;
+
     private IntPtr m_ptr; // ON_3dmView*
-    private readonly bool m_bIsConst;
 
-    internal ViewInfo(IntPtr ptr, bool isConst)
+    internal ViewInfo(Rhino.RhinoDoc doc, int index)
     {
-      m_ptr = ptr;
-      m_bIsConst = isConst;
-    }
-
-    //public ViewInfo()
-    //{
-    //  m_ptr = UnsafeNativeMethods.ON_3dmView_New();
-    //  m_bIsConst = false;
-    //}
-
-    ~ViewInfo()
-    {
-      Dispose(false);
+      m_parent = doc;
+      m_index = index;
     }
 
     internal IntPtr ConstPointer()
     {
-      return m_ptr;
+      if (m_ptr != IntPtr.Zero)
+        return m_ptr;
+
+      if (m_index >= 0)
+      {
+        Rhino.RhinoDoc doc = m_parent as Rhino.RhinoDoc;
+        if (doc != null)
+          return UnsafeNativeMethods.CRhinoDocProperties_GetNamedView(doc.m_docId, m_index);
+      }
+      throw new Rhino.Runtime.DocumentCollectedException();
     }
+
     internal IntPtr NonConstPointer()
     {
+      if (m_ptr == IntPtr.Zero)
+      {
+        IntPtr pConstThis = ConstPointer();
+        m_ptr = UnsafeNativeMethods.ON_3dmView_New(pConstThis);
+        m_index = -1;
+        m_parent = null;
+      }
       return m_ptr;
     }
 
+    ~ViewInfo() { Dispose(false); }
     public void Dispose()
     {
       Dispose(true);
@@ -219,11 +230,11 @@ namespace Rhino.DocObjects
 
     protected virtual void Dispose(bool disposing)
     {
-      if (!m_bIsConst && IntPtr.Zero != m_ptr)
+      if (IntPtr.Zero != m_ptr)
       {
         UnsafeNativeMethods.ON_3dmView_Delete(m_ptr);
-        m_ptr = IntPtr.Zero;
       }
+      m_ptr = IntPtr.Zero;
     }
 
     public string Name
@@ -231,14 +242,37 @@ namespace Rhino.DocObjects
       get
       {
         IntPtr ptr = ConstPointer();
-        IntPtr pString = UnsafeNativeMethods.ON_3dmView_NameGet(ptr);
-        return pString == IntPtr.Zero ? String.Empty : Marshal.PtrToStringUni(pString);
+        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_3dmView_NameGet(ptr, pString);
+          return sh.ToString();
+        }
       }
       set
       {
         IntPtr ptr = NonConstPointer();
         UnsafeNativeMethods.ON_3dmView_NameSet(ptr, value);
       }
+    }
+
+    ViewportInfo m_viewport = null;
+    public ViewportInfo Viewport
+    {
+      get
+      {
+        return m_viewport ?? new ViewportInfo(this);
+      }
+    }
+    internal IntPtr ConstViewportPointer()
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_3dmView_ViewportPointer(pConstThis);
+    }
+    internal IntPtr NonConstViewportPointer()
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_3dmView_ViewportPointer(pThis);
     }
   }
 

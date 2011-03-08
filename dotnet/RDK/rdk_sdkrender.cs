@@ -149,7 +149,7 @@ namespace Rhino.Render
     /// <param name="vp">The rendering view camera</param>
     /// <returns></returns>
     /// //TODO - ON_Viewport
-    public RenderMeshIterator NewRenderMeshIterator(Rhino.Display.Viewport vp, bool forceTriMesh)
+    public RenderMeshIterator NewRenderMeshIterator(Rhino.DocObjects.ViewportInfo vp, bool forceTriMesh)
     {
       IntPtr pIterator = UnsafeNativeMethods.Rdk_SdkRender_NewRenderMeshIterator(ConstPointer(), vp.ConstPointer(), forceTriMesh);
       if (pIterator != IntPtr.Zero)

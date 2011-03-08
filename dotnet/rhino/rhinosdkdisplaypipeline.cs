@@ -972,6 +972,27 @@ namespace Rhino.Display
     }
 
     /// <summary>
+    /// Draw a point cloud.
+    /// </summary>
+    /// <param name="cloud">Point cloud to draw, if the cloud has a color array, it will be used, otherwise the points will be black.</param>
+    /// <param name="size">Size of points.</param>
+    public void DrawPointCloud(PointCloud cloud, int size)
+    {
+      DrawPointCloud(cloud, size, System.Drawing.Color.Black);
+    }
+    /// <summary>
+    /// Draw a point cloud.
+    /// </summary>
+    /// <param name="cloud">Point cloud to draw.</param>
+    /// <param name="size">Size of points.</param>
+    /// <param name="color">Color of points in the cloud, if the cloud has a color array this setting is ignored.</param>
+    public void DrawPointCloud(PointCloud cloud, int size, System.Drawing.Color color)
+    {
+      IntPtr pCloud = cloud.ConstPointer();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawPointCloud(m_ptr, pCloud, size, color.ToArgb());
+    }
+
+    /// <summary>
     /// Draw a single arrow object. An arrow consists of a Shaft and an Arrow head at the end of the shaft.
     /// </summary>
     /// <param name="line">Arrow shaft.</param>

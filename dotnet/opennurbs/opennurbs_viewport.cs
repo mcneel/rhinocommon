@@ -1,67 +1,109 @@
 using System;
 
-#if USING_RDK
-
-namespace Rhino.Display
+namespace Rhino.DocObjects
 {
   /// <summary>
-  /// Wraps ON_Viewport
+  /// Represents a viewing frustum
   /// </summary>
-  public sealed class Viewport : IDisposable
+  public sealed class ViewportInfo : IDisposable
   {
-    private IntPtr m_pViewportPointer = IntPtr.Zero;
+    object m_parent = null;
+    IntPtr m_pViewportPointer = IntPtr.Zero;
 
-    public Viewport(IntPtr pViewport)
+    internal IntPtr ConstPointer()
     {
-      m_pViewportPointer = UnsafeNativeMethods.ON_Viewport_New(pViewport);
+      if( m_pViewportPointer!=IntPtr.Zero )
+        return m_pViewportPointer;
+
+      ViewInfo vi = m_parent as ViewInfo;
+      if (vi != null)
+      {
+        return vi.ConstViewportPointer();
+      }
+      throw new Rhino.Runtime.DocumentCollectedException();
     }
 
-    public Viewport()
+    internal IntPtr NonConstPointer()
+    {
+      if (m_pViewportPointer == IntPtr.Zero)
+      {
+        ViewInfo vi = m_parent as ViewInfo;
+        if (vi != null)
+        {
+          return vi.NonConstViewportPointer();
+        }
+        throw new Rhino.Runtime.DocumentCollectedException();
+      }
+      return m_pViewportPointer;
+    }
+
+    public ViewportInfo()
     {
       m_pViewportPointer = UnsafeNativeMethods.ON_Viewport_New(IntPtr.Zero);
+    }
+
+    public ViewportInfo(ViewportInfo other)
+    {
+      IntPtr pOther = other.ConstPointer();
+      m_pViewportPointer = UnsafeNativeMethods.ON_Viewport_New(pOther);
+    }
+
+    /// <summary>
+    /// Copies all of the ViewportInfo data from an existing RhinoViewport
+    /// </summary>
+    /// <param name="rhinoViewport"></param>
+    public ViewportInfo(Rhino.Display.RhinoViewport rhinoViewport)
+    {
+      IntPtr pRhinoViewport = rhinoViewport.ConstPointer();
+      m_pViewportPointer = UnsafeNativeMethods.ON_Viewport_New2(pRhinoViewport);
+    }
+
+    internal ViewportInfo(ViewInfo parent)
+    {
+      m_parent = parent;
+    }
+
+    const int idxIsValidCamera = 0;
+    const int idxIsValidFrustum = 1;
+    const int idxIsValid = 2;
+    const int idxIsPerspectiveProjection = 3;
+    const int idxIsParallelProjection = 4;
+    const int idxIsCameraLocationLocked = 5;
+    const int idxIsCameraDirectionLocked = 6;
+    const int idxIsCameraUpLocked = 7;
+    const int idxIsFrustumLeftRightSymmetric = 8;
+    const int idxIsFrustumTopBottomSymmetric = 9;
+
+    bool GetBool(int which)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_GetBool(pConstThis, which);
     }
     
 
     public bool IsValidCamera
     {
-      get { return 1==UnsafeNativeMethods.ON_Viewport_IsValidCamera(ConstPointer()); }
+      get { return GetBool(idxIsValidCamera); }
     }
 
     public bool IsValidFrustum
     {
-      get { return 1 == UnsafeNativeMethods.ON_Viewport_IsValidFrustum(ConstPointer()); }
+      get { return GetBool(idxIsValidFrustum); }
     }
 
     public bool IsValid
     {
-      get { return 1 == UnsafeNativeMethods.ON_Viewport_IsValid(ConstPointer()); }
-    }
-
-    /// <summary>
-    /// The x/y/z_2pt_perspective_view projections are ordinary perspective projection. Using these values insures the ON_Viewport member
-    /// fuctions properly constrain the camera up and camera direction vectors to preserve the specified perspective vantage.
-    /// </summary>
-    public enum ViewProjections : int
-    { 
-      None          = 0,
-      Parallel      = 1,
-      Perspective   = 2
-    };
-
-    ViewProjections Projection
-    {
-      get { return (ViewProjections)UnsafeNativeMethods.ON_Viewport_Projection(ConstPointer()); }
-      set { UnsafeNativeMethods.ON_Viewport_SetProjection(NonConstPointer(), (int)value); }
+      get { return GetBool(idxIsValid); }
     }
 
     public bool IsPerspectiveProjection
     {
-      get { return Projection == ViewProjections.Perspective; }
+      get { return GetBool(idxIsPerspectiveProjection); }
     }
 
     public bool IsParallelProjection
     {
-      get { return Projection == ViewProjections.Parallel; }
+      get { return GetBool(idxIsParallelProjection); }
     }
 
     public bool IsTwoPointPerspectiveProjection
@@ -75,7 +117,7 @@ namespace Rhino.Display
     /// adjustments to the frustum and camera location so the resulting
     /// views are similar.  The camera direction and target point are
     /// not be changed.
-    /// If the current projection is parallel and bSymmetricFrustum,
+    /// If the current projection is parallel and symmetricFrustum,
     /// FrustumIsLeftRightSymmetric() and FrustumIsTopBottomSymmetric()
     /// are all equal, then no changes are made and true is returned.
     /// </summary>
@@ -83,7 +125,8 @@ namespace Rhino.Display
     /// <returns></returns>
     public bool ChangeToParallelProjection(bool symmetricFrustum)
     {
-      return 1 == UnsafeNativeMethods.ON_Viewport_ChangeToParallelProjection(NonConstPointer(), symmetricFrustum);
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_ChangeToParallelProjection(pThis, symmetricFrustum);
     }
 
     /// <summary>
@@ -91,13 +134,18 @@ namespace Rhino.Display
     /// from parallel to perspective.  It will make common additional
     /// adjustments to the frustum and camera location so the resulting
     /// views are similar.  The camera direction and target point are
-    /// not be changed.
-    /// If the current projection is perspective and bSymmetricFrustum,
-    /// FrustumIsLeftRightSymmetric() and FrustumIsTopBottomSymmetric()
+    /// not changed.
+    /// If the current projection is perspective and symmetricFrustum,
+    /// IsFrustumIsLeftRightSymmetric, and IsFrustumIsTopBottomSymmetric
     /// are all equal, then no changes are made and true is returned.
     /// </summary>
-    /// <param name="targetDistance">If ON_UNSET_VALUE this parameter is ignored.  Otherwise it must be > 0 and indicates which plane in the current view frustum should be perserved.</param>
-    /// <param name="symmetricFrustum">True if you want the resulting frustum to be symmetric.</param>
+    /// <param name="targetDistance">
+    /// If RhinoMath.UnsetValue this parameter is ignored.
+    /// Otherwise it must be > 0 and indicates which plane in the current view frustum should be perserved.
+    /// </param>
+    /// <param name="symmetricFrustum">
+    /// True if you want the resulting frustum to be symmetric.
+    /// </param>
     /// <param name="lensLength">(pass 50.0 when in doubt)
     /// 35 mm lens length to use when changing from parallel
     /// to perspective projections. If the current projection
@@ -106,7 +154,8 @@ namespace Rhino.Display
     /// <returns></returns>
     public bool ChangeToPerspectiveProjection( double targetDistance, bool symmetricFrustum, double lensLength)
     {
-      return 1 == UnsafeNativeMethods.ON_Viewport_ChangeToPerspectiveProjection(NonConstPointer(), targetDistance, symmetricFrustum, lensLength);
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_ChangeToPerspectiveProjection(pThis, targetDistance, symmetricFrustum, lensLength);
     }
 
     /// <summary>
@@ -114,27 +163,33 @@ namespace Rhino.Display
     /// to a two point perspective.  It will make common additional
     /// adjustments to the frustum and camera location and direction
     /// so the resulting views are similar.
-    /// If the current projection is perspective and 
-    /// FrustumIsLeftRightSymmetric() is true and
-    /// FrustumIsTopBottomSymmetric() is false, then no changes are
+    /// If the current projection is perspective and
+    /// IsFrustumIsLeftRightSymmetric is true and
+    /// IsFrustumIsTopBottomSymmetric is false, then no changes are
     /// made and true is returned.
     /// </summary>
-    /// <param name="targetDistance">If ON_UNSET_VALUE this parameter is ignored.  Otherwise
+    /// <param name="targetDistance">
+    /// If RhinoMath.UnsetValue this parameter is ignored.  Otherwise
     /// it must be > 0 and indicates which plane in the current 
-    /// view frustum should be perserved.</param>
-    /// <param name="up">This direction will be the locked up direction.  Pass 
-    /// ON_3dVector::ZeroVector if you want to use the world axis
-    /// direction that is closest to the current up direction.
-    /// Pass CameraY() if you want to preserve the current up direction.</param>
-    /// <param name="lensLength">(pass 50.0 when in doubt)
+    /// view frustum should be perserved.
+    /// </param>
+    /// <param name="up">
+    /// The locked up direction. Pass Vector3d.Zero if you want to use the world
+    /// axis direction that is closest to the current up direction.
+    /// Pass CameraY() if you want to preserve the current up direction.
+    /// </param>
+    /// <param name="lensLength">
+    /// (pass 50.0 when in doubt)
     /// 35 mm lens length to use when changing from parallel
     /// to perspective projections. If the current projection
     /// is perspective or lens_length is &lt;= 0.0,
-    /// then this parameter is ignored.</param>
+    /// then this parameter is ignored.
+    /// </param>
     /// <returns></returns>
     public bool ChangeToTwoPointPerspectiveProjection(double targetDistance, Rhino.Geometry.Vector3d up, double lensLength)
     {
-      return 1 == UnsafeNativeMethods.ON_Viewport_ChangeToTwoPointPerspectiveProjection(NonConstPointer(), targetDistance, up, lensLength);
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_ChangeToTwoPointPerspectiveProjection(pThis, targetDistance, up, lensLength);
     }
 
     public Rhino.Geometry.Point3d CameraLocation
@@ -142,16 +197,16 @@ namespace Rhino.Display
       get
       {
         Rhino.Geometry.Point3d loc = new Rhino.Geometry.Point3d();
-        UnsafeNativeMethods.ON_Viewport_CameraLocation(ConstPointer(), ref loc);
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_Viewport_CameraLocation(pConstThis, ref loc);
         return loc;
       }
-      set
-      {
-        if (1!=UnsafeNativeMethods.ON_Viewport_SetCameraLocation(NonConstPointer(), value))
-        {
-          throw new InvalidOperationException("Cannot get camera location");
-        }
-      }
+    }
+
+    public bool SetCameraLocation(Rhino.Geometry.Point3d location)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_SetCameraLocation(pThis, location);
     }
 
     public Rhino.Geometry.Vector3d CameraDirection
@@ -159,73 +214,93 @@ namespace Rhino.Display
       get
       {
         Rhino.Geometry.Vector3d loc = new Rhino.Geometry.Vector3d();
-        UnsafeNativeMethods.ON_Viewport_CameraDirection(ConstPointer(), ref loc);
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_Viewport_CameraDirection(pConstThis, ref loc);
         return loc;
       }
-      set
-      {
-        if (1!=UnsafeNativeMethods.ON_Viewport_SetCameraDirection(NonConstPointer(), value))
-        {
-          throw new InvalidOperationException("Cannot get camera direction");
-        }
-      }
     }
+
+    public bool SetCameraDirection(Rhino.Geometry.Vector3d direction)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_SetCameraDirection(pThis, direction);
+    }
+
 
     public Rhino.Geometry.Vector3d CameraUp
     {
       get
       {
         Rhino.Geometry.Vector3d loc = new Rhino.Geometry.Vector3d();
-        UnsafeNativeMethods.ON_Viewport_CameraUp(ConstPointer(), ref loc);
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_Viewport_CameraUp(pConstThis, ref loc);
         return loc;
       }
-      set
-      {
-        if (1!=UnsafeNativeMethods.ON_Viewport_SetCameraUp(NonConstPointer(), value))
-        {
-          throw new InvalidOperationException("Cannot get camera up vector");
-        }
-      }
+    }
+
+    public bool SetCameraUp(Rhino.Geometry.Vector3d up)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_SetCameraUp(pThis, up);
+    }
+
+    const int idxCameraLocationLock = 0;
+    const int idxCameraDirectionLock = 1;
+    const int idxCameraUpLock = 2;
+    void SetCameraLock(int which, bool val)
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_Viewport_SetLocked(pThis, which, val);
     }
 
     public bool IsCameraLocationLocked
     {
-      get { return 1==UnsafeNativeMethods.ON_Viewport_CameraLocationLocked(ConstPointer()); }
-      set { UnsafeNativeMethods.ON_Viewport_SetCameraLocationLocked(NonConstPointer(), value); }
+      get { return GetBool(idxIsCameraLocationLocked); }
+      set { SetCameraLock(idxCameraLocationLock, value); }
     }
 
     public bool IsCameraDirectionLocked
     {
-      get { return 1==UnsafeNativeMethods.ON_Viewport_CameraDirectionLocked(ConstPointer()); }
-      set { UnsafeNativeMethods.ON_Viewport_SetCameraDirectionLocked(NonConstPointer(), value); }
+      get { return GetBool(idxIsCameraDirectionLocked); }
+      set { SetCameraLock(idxCameraDirectionLock, value); }
     }
 
     public bool IsCameraUpLocked
     {
-      get { return 1==UnsafeNativeMethods.ON_Viewport_CameraUpLocked(ConstPointer()); }
-      set { UnsafeNativeMethods.ON_Viewport_SetCameraUpLocked(NonConstPointer(), value); }
+      get { return GetBool(idxIsCameraUpLocked); }
+      set { SetCameraLock(idxCameraUpLock, value); }
     }
 
     public bool IsFrustumLeftRightSymmetric
     {
-      get { return 1==UnsafeNativeMethods.ON_Viewport_IsFrustumLeftRightSymmetric(ConstPointer()); }
-      set { UnsafeNativeMethods.ON_Viewport_SetIsFrustumLeftRightSymmetric(NonConstPointer(), value); }
+      get { return GetBool(idxIsFrustumLeftRightSymmetric); }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_Viewport_SetIsFrustumSymmetry(pThis, true, value);
+      }
     }
 
     public bool IsFrustumTopBottomSymmetric
     {
-      get { return 1==UnsafeNativeMethods.ON_Viewport_IsFrustumTopBottomSymmetric(ConstPointer()); }
-      set { UnsafeNativeMethods.ON_Viewport_SetIsFrustumTopBottomSymmetric(NonConstPointer(), value); }
+      get { return GetBool(idxIsFrustumTopBottomSymmetric); }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_Viewport_SetIsFrustumSymmetry(pThis, false, value);
+      }
     }
-
+    
     public void UnlockCamera()
     {
-      UnsafeNativeMethods.ON_Viewport_UnlockCamera(NonConstPointer());
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_Viewport_Unlock(pThis, true);
     }
 
     public void UnlockFrustumSymmetry()
     {
-      UnsafeNativeMethods.ON_Viewport_UnlockFrustumSymmetry(NonConstPointer());
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_Viewport_Unlock(pThis, false);
     }
 
     /// <summary>
@@ -236,9 +311,14 @@ namespace Rhino.Display
     /// <param name="cameraY"></param>
     /// <param name="cameraZ"></param>
     /// <returns>returns true if current camera orientation is valid</returns>
-    public bool GetCameraFrame(ref Rhino.Geometry.Point3d location, ref Rhino.Geometry.Vector3d cameraX, ref Rhino.Geometry.Vector3d cameraY, ref Rhino.Geometry.Vector3d cameraZ)
+    public bool GetCameraFrame(out Rhino.Geometry.Point3d location,  out Rhino.Geometry.Vector3d cameraX, out Rhino.Geometry.Vector3d cameraY, out Rhino.Geometry.Vector3d cameraZ)
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_GetCameraFrame(ConstPointer(), ref location, ref cameraX, ref cameraY, ref cameraZ);
+      location = new Rhino.Geometry.Point3d(0, 0, 0);
+      cameraX = new Rhino.Geometry.Vector3d(0, 0, 0);
+      cameraY = new Rhino.Geometry.Vector3d(0, 0, 0);
+      cameraZ = new Rhino.Geometry.Vector3d(0, 0, 0);
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_GetCameraFrame(pConstThis, ref location, ref cameraX, ref cameraY, ref cameraZ);
     }
 
     /// <summary>
@@ -249,7 +329,8 @@ namespace Rhino.Display
       get 
       {
         Rhino.Geometry.Vector3d v = new Rhino.Geometry.Vector3d();
-        UnsafeNativeMethods.ON_Viewport_CameraAxis(ConstPointer(), 0, ref v);
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_Viewport_CameraAxis(pConstThis, 0, ref v);
         return v;
       }
     }
@@ -262,7 +343,8 @@ namespace Rhino.Display
       get
       {
         Rhino.Geometry.Vector3d v = new Rhino.Geometry.Vector3d();
-        UnsafeNativeMethods.ON_Viewport_CameraAxis(ConstPointer(), 1, ref v);
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_Viewport_CameraAxis(pConstThis, 1, ref v);
         return v;
       }
     }
@@ -275,7 +357,8 @@ namespace Rhino.Display
       get
       {
         Rhino.Geometry.Vector3d v = new Rhino.Geometry.Vector3d();
-        UnsafeNativeMethods.ON_Viewport_CameraAxis(ConstPointer(), 2, ref v);
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_Viewport_CameraAxis(pConstThis, 2, ref v);
         return v;
       }
     }
@@ -298,16 +381,23 @@ namespace Rhino.Display
     /// <returns></returns>
     public bool SetFrustum( double left, double right, double bottom, double top, double nearDistance, double farDistance )
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_SetFrustum(NonConstPointer(), left, right, bottom, top, nearDistance, farDistance);
+      return UnsafeNativeMethods.ON_Viewport_SetFrustum(NonConstPointer(), left, right, bottom, top, nearDistance, farDistance);
     }
 
-    public bool GetFrustum( ref double left, ref double right, ref double bottom, ref double top, ref double nearDistance, ref double farDistance )
+    public bool GetFrustum( out double left, out double right, out double bottom, out double top, out double nearDistance, out double farDistance )
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_GetFrustum(ConstPointer(), ref left, ref right, ref bottom, ref top, ref nearDistance, ref farDistance);
+      left = 0;
+      right = 0;
+      bottom = 0;
+      top = 0;
+      nearDistance = 0;
+      farDistance = 0;
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_GetFrustum(pConstThis, ref left, ref right, ref bottom, ref top, ref nearDistance, ref farDistance);
     }
 
     /// <summary>
-    /// SetFrustumAspect() changes the larger of the frustum's widht/height
+    /// Setting FrustumAspect changes the larger of the frustum's width/height
     /// so that the resulting value of width/height matches the requested
     /// aspect.  The camera angle is not changed.  If you change the shape
     /// of the view port with a call SetScreenPort(), then you generally 
@@ -319,18 +409,15 @@ namespace Rhino.Display
       get
       {
         double dAspect = 0.0;
-        if (1!=UnsafeNativeMethods.ON_Viewport_GetFrustrumAspect(ConstPointer(), ref dAspect))
-        {
-          throw new InvalidOperationException("Cannot get frustrum aspect");
-        }
+        IntPtr pConstThis = ConstPointer();
+        if (!UnsafeNativeMethods.ON_Viewport_GetFrustrumAspect(pConstThis, ref dAspect))
+          dAspect = 0;
         return dAspect;
       }
       set
       {
-        if (1!=UnsafeNativeMethods.ON_Viewport_SetFrustumAspect(NonConstPointer(), value))
-        {
-          throw new InvalidOperationException("Cannot set frustrum aspect");
-        }
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_Viewport_SetFrustumAspect(pThis, value);
       }
     }
 
@@ -339,38 +426,53 @@ namespace Rhino.Display
       get
       {
         Rhino.Geometry.Point3d cen = new Rhino.Geometry.Point3d();
-        if (1!=UnsafeNativeMethods.ON_Viewport_GetFrustumCenter(ConstPointer(), ref cen))
-        {
-          throw new InvalidOperationException("Cannot get frustrum center");
-        }
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_Viewport_GetFrustumCenter(pConstThis, ref cen);
         return cen;
       }
     }
 
-    public double FrustumLeft     { get { return UnsafeNativeMethods.ON_Viewport_FrustumLeft(ConstPointer()); } }
-    public double FrustumRight    { get { return UnsafeNativeMethods.ON_Viewport_FrustumRight(ConstPointer()); } }
-    public double FrustumBottom   { get { return UnsafeNativeMethods.ON_Viewport_FrustumBottom(ConstPointer()); } }
-    public double FrustumTop      { get { return UnsafeNativeMethods.ON_Viewport_FrustumTop(ConstPointer()); } }
-    public double FrustumNear     { get { return UnsafeNativeMethods.ON_Viewport_FrustumNear(ConstPointer()); } }
-    public double FrustumFar      { get { return UnsafeNativeMethods.ON_Viewport_FrustumFar(ConstPointer()); } }
+    const int idxFrustumLeft = 0;
+    const int idxFrustumRight = 1;
+    const int idxFrustumBottom = 2;
+    const int idxFrustumTop = 3;
+    const int idxFrustumNear = 4;
+    const int idxFrustumFar = 5;
+    const int idxFrustumMinimumDiameter = 6;
+    const int idxFrustumMaximumDiameter = 7;
+    double GetDouble(int which)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_GetDouble(pConstThis, which);
+    }
+
+    public double FrustumLeft { get { return GetDouble(idxFrustumLeft); } }
+    public double FrustumRight { get { return GetDouble(idxFrustumRight); } }
+    public double FrustumBottom { get { return GetDouble(idxFrustumBottom); } }
+    public double FrustumTop { get { return GetDouble(idxFrustumTop); } }
+    public double FrustumNear { get { return GetDouble(idxFrustumNear); } }
+    public double FrustumFar { get { return GetDouble(idxFrustumFar); } }
 
     public double FrustumWidth    { get { return FrustumRight - FrustumLeft; } }
     public double FrustumHeight   { get { return FrustumTop - FrustumBottom; } }
 
-    public double FrustumMinimumDiameter { get { return UnsafeNativeMethods.ON_Viewport_FrustumMinimumDiameter(ConstPointer()); } }
-    public double FrustumMaximumDiameter { get { return UnsafeNativeMethods.ON_Viewport_FrustumMaximumDiameter(ConstPointer()); } }
+    public double FrustumMinimumDiameter { get { return GetDouble(idxFrustumMinimumDiameter); } }
+    public double FrustumMaximumDiameter { get { return GetDouble(idxFrustumMaximumDiameter); } }
 
     public bool SetFrustumNearFar(Rhino.Geometry.BoundingBox boundingBox)
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_SetFrustumNearFarBoundingBox(NonConstPointer(), boundingBox.Min, boundingBox.Max);
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_SetFrustumNearFarBoundingBox(pThis, boundingBox.Min, boundingBox.Max);
     }
     public bool SetFrustumNearFar(Rhino.Geometry.Point3d center, double radius)
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_SetFrustumNearFarSphere(NonConstPointer(), center, radius);
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_SetFrustumNearFarSphere(pThis, center, radius);
     }
     public bool SetFrustumNearFar(double nearDistance, double farDistance)
     {
-      return 1 == UnsafeNativeMethods.ON_Viewport_SetFrustumNearFar(NonConstPointer(), nearDistance, farDistance);
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_SetFrustumNearFar(pThis, nearDistance, farDistance);
     }
 
     /// <summary>
@@ -380,64 +482,42 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="isLeftRightSymmetric">If true, the frustum will be adjusted so left = -right.</param>
     /// <param name="isTopBottomSymmetric">If true, the frustum will be adjusted so top = -bottom.</param>
-    /// <param name="targetDistance">If projection is not perspective or target_distance 
-    ///   is ON_UNSET_VALUE, this this parameter is ignored. 
-    ///   If the projection is perspective and target_distance 
-    ///   is not ON_UNSET_VALUE, then it must be > 0.0 and
-    ///   it is used to determine which plane in the old
-    ///   frustum will appear unchanged in the new frustum.</param>
-    /// <returns>Returns true if the returned viewport has a frustum
-    /// with the specified symmetries.</returns>
+    /// <param name="targetDistance">
+    /// If projection is not perspective or target_distance is RhinoMath.UnsetValue,
+    /// then this parameter is ignored. If the projection is perspective and targetDistance
+    /// is not RhinoMath.UnsetValue, then it must be > 0.0 and it is used to determine
+    /// which plane in the old frustum will appear unchanged in the new frustum.
+    /// </param>
+    /// <returns>
+    /// Returns true if the returned viewport has a frustum with the specified symmetries.
+    /// </returns>
     public bool ChangeToSymmetricFrustum(bool isLeftRightSymmetric, bool isTopBottomSymmetric, double targetDistance)
     {
-      return 1 == UnsafeNativeMethods.ON_Viewport_ChangeToSymmetricFrustum(NonConstPointer(), isLeftRightSymmetric, isTopBottomSymmetric, targetDistance);
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_ChangeToSymmetricFrustum(pThis, isLeftRightSymmetric, isTopBottomSymmetric, targetDistance);
     }
 
     /// <summary>
-    /// Get near and far clipping distances of a point.
-    /// This function ignores the current value of the viewport's 
-    /// near and far settings. If the viewport is a perspective
-    /// projection, the it intersects the semi infinite frustum
-    /// volume with the bounding box and returns the near and far
-    /// distances of the intersection.  If the viewport is a parallel
-    /// projection, it instersects the infinte view region with the
-    /// bounding box and returns the near and far distances of the
-    /// projection.
+    /// Get clipping distance of a point. This function ignores the
+    /// current value of the viewport's near and far settings. If
+    /// the viewport is a perspective projection, then it intersects
+    /// the semi infinite frustum volume with the bounding box and
+    /// returns the near and far distances of the intersection.
+    /// If the viewport is a parallel projection, it instersects the
+    /// infinte view region with the bounding box and returns the
+    /// near and far distances of the projection.
     /// </summary>
     /// <param name="point"></param>
-    /// <param name="nearDistance">near distance of the point (can be &lt; 0)</param>
-    /// <param name="farDistance">far distance of the point (can be equal to near_dist)</param>
+    /// <param name="distance">distance of the point (can be &lt; 0)</param>
     /// <returns>True if the bounding box intersects the view frustum and
     /// near_dist/far_dist were set.
     /// False if the bounding box does not intesect the view frustum.</returns>
-    public bool GetPointDepth(Rhino.Geometry.Point3d point, ref double nearDistance, ref double farDistance)
+    public bool GetPointDepth(Rhino.Geometry.Point3d point, out double distance)
     {
-      return GetPointDepth(point, ref nearDistance, ref farDistance, false);
-    }
-
-    /// <summary>
-    /// Get near and far clipping distances of a point.
-    /// This function ignores the current value of the viewport's 
-    /// near and far settings. If the viewport is a perspective
-    /// projection, the it intersects the semi infinite frustum
-    /// volume with the bounding box and returns the near and far
-    /// distances of the intersection.  If the viewport is a parallel
-    /// projection, it instersects the infinte view region with the
-    /// bounding box and returns the near and far distances of the
-    /// projection.
-    /// </summary>
-    /// <param name="point"></param>
-    /// <param name="nearDistance">near distance of the point (can be &lt; 0)</param>
-    /// <param name="farDistance">far distance of the point (can be equal to near_dist)</param>
-    /// <param name="growNearFar">If true and input values of near_dist and far_dist
-    ///  are not ON_UNSET_VALUE, the near_dist and far_dist
-    ///  are enlarged to include bbox.</param>
-    /// <returns>True if the bounding box intersects the view frustum and
-    /// near_dist/far_dist were set.
-    /// False if the bounding box does not intesect the view frustum.</returns>
-    public bool GetPointDepth(Rhino.Geometry.Point3d point, ref double nearDistance, ref double farDistance, bool growNearFar)
-    {
-      return 1 == UnsafeNativeMethods.ON_Viewport_GetPointDepth(ConstPointer(), point, ref nearDistance, ref farDistance, growNearFar);
+      IntPtr pConstThis = ConstPointer();
+      double farDistance = 0;
+      distance = 0;
+      return UnsafeNativeMethods.ON_Viewport_GetPointDepth(pConstThis, point, ref distance, ref farDistance, false);
     }
 
     /// <summary>
@@ -458,34 +538,12 @@ namespace Rhino.Display
     /// near_dist, zero or negative when the camera location is in front of the bounding box.</param>
     /// <returns>True if the bounding box intersects the view frustum and near_dist/far_dist were set. 
     /// False if the bounding box does not intesect the view frustum.</returns>
-    public bool GetBoundingBoxDepth(Rhino.Geometry.BoundingBox bbox, ref double nearDistance, ref double farDistance)
+    public bool GetBoundingBoxDepth(Rhino.Geometry.BoundingBox bbox, out double nearDistance, out double farDistance)
     {
-      return GetBoundingBoxDepth(bbox, ref nearDistance, ref farDistance, false);
-    }
-
-    /// <summary>
-    /// Get near and far clipping distances of a bounding box.
-    /// This function ignores the current value of the viewport's 
-    /// near and far settings. If the viewport is a perspective
-    /// projection, the it intersects the semi infinite frustum
-    /// volume with the bounding box and returns the near and far
-    /// distances of the intersection.  If the viewport is a parallel
-    /// projection, it instersects the infinte view region with the
-    /// bounding box and returns the near and far distances of the
-    /// projection.
-    /// </summary>
-    /// <param name="bbox"></param>
-    /// <param name="nearDistance">Near distance of the box. This value can be zero or 
-    /// negative when the camera location is inside bbox.</param>
-    /// <param name="farDistance">Far distance of the box. This value can be equal to 
-    /// near_dist, zero or negative when the camera location is in front of the bounding box.</param>
-    /// <param name="growNearFar">If true and input values of near_dist and far_dist 
-    /// are not ON_UNSET_VALUE, the near_dist and far_dist are enlarged to include bbox.</param>
-    /// <returns>True if the bounding box intersects the view frustum and near_dist/far_dist were set. 
-    /// False if the bounding box does not intesect the view frustum.</returns>
-    public bool GetBoundingBoxDepth(Rhino.Geometry.BoundingBox bbox, ref double nearDistance, ref double farDistance, bool growNearFar)
-    {
-      return 1 == UnsafeNativeMethods.ON_Viewport_GetBoundingBoxDepth(ConstPointer(), bbox.Min, bbox.Max, ref nearDistance, ref farDistance, growNearFar);
+      IntPtr pConstThis = ConstPointer();
+      nearDistance = 0;
+      farDistance = 0;
+      return UnsafeNativeMethods.ON_Viewport_GetBoundingBoxDepth(pConstThis, bbox.Min, bbox.Max, ref nearDistance, ref farDistance, false);
     }
 
     /// <summary>
@@ -496,24 +554,12 @@ namespace Rhino.Display
     /// <param name="farDistance">Far distance of the sphere (can be equal to near_dist)</param>
     /// <returns>True if the sphere intersects the view frustum and near_dist/far_dist were set.
     /// False if the sphere does not intesect the view frustum.</returns>
-    public bool GetSphereDepth(Rhino.Geometry.Sphere sphere, ref double nearDistance, ref double farDistance)
+    public bool GetSphereDepth(Rhino.Geometry.Sphere sphere, out double nearDistance, out double farDistance)
     {
-      return GetSphereDepth(sphere, ref nearDistance, ref farDistance, false);
-    }
-
-    /// <summary>
-    /// Get near and far clipping distances of a bounding sphere.
-    /// </summary>
-    /// <param name="sphere"></param>
-    /// <param name="nearDistance">Near distance of the sphere (can be &lt; 0)</param>
-    /// <param name="farDistance">Far distance of the sphere (can be equal to near_dist)</param>
-    /// <param name="growNearFar">If true and input values of near_dist and far_dist are not 
-    /// ON_UNSET_VALUE, the near_dist and far_dist are enlarged to include bbox.</param>
-    /// <returns>True if the sphere intersects the view frustum and near_dist/far_dist were set.
-    /// False if the sphere does not intesect the view frustum.</returns>
-    public bool GetSphereDepth(Rhino.Geometry.Sphere sphere, ref double nearDistance, ref double farDistance, bool growNearFar)
-    {
-      return 1 == UnsafeNativeMethods.ON_Viewport_GetSphereDepth(ConstPointer(), sphere.Center, sphere.Radius, ref nearDistance, ref farDistance, growNearFar);
+      IntPtr pConstThis = ConstPointer();
+      nearDistance = 0;
+      farDistance = 0;
+      return UnsafeNativeMethods.ON_Viewport_GetSphereDepth(pConstThis, sphere.Center, sphere.Radius, ref nearDistance, ref farDistance, false);
     }
 
     /// <summary>
@@ -521,8 +567,12 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="nearDistance">(>0) desired near clipping distance</param>
     /// <param name="farDistance">(>near_dist) desired near clipping distance</param>
-    /// <param name="minNearDistance">If min_near_dist &lt;= 0.0, it is ignored. If min_near_dist &gt; 0 and near_dist &lt; min_near_dist, then the frustum's near_dist will be increased to min_near_dist.</param>
-    /// <param name="minNearOverFar">If min_near_over_far &lt;= 0.0, it is ignored.
+    /// <param name="minNearDistance">
+    /// If min_near_dist &lt;= 0.0, it is ignored.
+    /// If min_near_dist &gt; 0 and near_dist &lt; min_near_dist, then the frustum's near_dist will be increased to min_near_dist.
+    /// </param>
+    /// <param name="minNearOverFar">
+    /// If min_near_over_far &lt;= 0.0, it is ignored.
     /// If near_dist &lt; far_dist*min_near_over_far, then
     /// near_dist is increased and/or far_dist is decreased
     /// so that near_dist = far_dist*min_near_over_far.
@@ -530,14 +580,31 @@ namespace Rhino.Display
     /// near_dist is increased and far_dist is decreased so that
     /// projection precision will be good at target_dist.
     /// Otherwise, near_dist is simply set to 
-    /// far_dist*min_near_over_far.</param>
+    /// far_dist*min_near_over_far.
+    /// </param>
     /// <param name="targetDistance">If target_dist &lt;= 0.0, it is ignored.
     /// If target_dist &gt; 0, it is used as described in the
     /// description of the min_near_over_far parameter.</param>
     /// <returns></returns>
     public bool SetFrustumNearFar(double nearDistance, double farDistance, double minNearDistance, double minNearOverFar, double targetDistance)
     {
-      return 1 == UnsafeNativeMethods.ON_Viewport_SetFrustrumNearFar(NonConstPointer(), nearDistance, farDistance, minNearDistance, minNearOverFar, targetDistance);
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_SetFrustrumNearFar(pThis, nearDistance, farDistance, minNearDistance, minNearOverFar, targetDistance);
+    }
+
+    const int idxNearPlane = 0;
+    const int idxFarPlane = 1;
+    const int idxLeftPlane = 2;
+    const int idxRightPlane = 3;
+    const int idxBottomPlane = 4;
+    const int idxTopPlane = 5;
+    Rhino.Geometry.Plane GetPlane(int which)
+    {
+      IntPtr pConstThis = ConstPointer();
+      Rhino.Geometry.Plane plane = new Rhino.Geometry.Plane();
+      if (!UnsafeNativeMethods.ON_Viewport_GetPlane(pConstThis, which, ref plane))
+        plane = Rhino.Geometry.Plane.Unset;
+      return plane;
     }
 
     /// <summary>
@@ -547,151 +614,72 @@ namespace Rhino.Display
     /// camera direction ray and the near clipping plane. The plane's
     /// normal points out of the frustum towards the camera
     /// location.
-    /// Throws InvalidOperationException if not valid.
     /// </summary>
-    public Rhino.Geometry.Plane NearPlane
+    public Rhino.Geometry.Plane FrustumNearPlane
     {
-      get
-      {
-        Rhino.Geometry.Point3d o = new Rhino.Geometry.Point3d();
-        Rhino.Geometry.Vector3d x = new Rhino.Geometry.Vector3d();
-        Rhino.Geometry.Vector3d y = new Rhino.Geometry.Vector3d();
-
-        
-        if (1 != UnsafeNativeMethods.ON_Viewport_GetNearPlane(ConstPointer(), ref o, ref x, ref y))
-        {
-          throw new InvalidOperationException("Cannot get near plane");
-        }
-
-        return new Rhino.Geometry.Plane(o, x, y);
-      }
+      get { return GetPlane(idxNearPlane); }
     }
 
     /// <summary>
     /// Get far clipping plane if camera and frustum
     /// are valid.  The plane's frame is the same as the camera's
-    ///      frame.  The origin is located at the intersection of the
-    ///      camera direction ray and the far clipping plane. The plane's
-    ///      normal points into the frustum towards the camera location.
-    /// Throws InvalidOperationException if not valid.
+    /// frame.  The origin is located at the intersection of the
+    /// camera direction ray and the far clipping plane. The plane's
+    /// normal points into the frustum towards the camera location.
     /// </summary>
-    public Rhino.Geometry.Plane FarPlane
+    public Rhino.Geometry.Plane FrustumFarPlane
     {
-      get
-      {
-        Rhino.Geometry.Point3d o = new Rhino.Geometry.Point3d();
-        Rhino.Geometry.Vector3d x = new Rhino.Geometry.Vector3d();
-        Rhino.Geometry.Vector3d y = new Rhino.Geometry.Vector3d();
-
-
-        if (1 != UnsafeNativeMethods.ON_Viewport_GetFarPlane(ConstPointer(), ref o, ref x, ref y))
-        {
-          throw new InvalidOperationException("Cannot get far plane");
-        }
-
-        return new Rhino.Geometry.Plane(o, x, y);
-      }
+      get { return GetPlane(idxFarPlane); }
     }
-
     public Rhino.Geometry.Plane FrustumLeftPlane
     {
-      get
-      {
-        Rhino.Geometry.Point3d o = new Rhino.Geometry.Point3d();
-        Rhino.Geometry.Vector3d x = new Rhino.Geometry.Vector3d();
-        Rhino.Geometry.Vector3d y = new Rhino.Geometry.Vector3d();
-
-
-        if (1 != UnsafeNativeMethods.ON_Viewport_GetFrustumLeftPlane(ConstPointer(), ref o, ref x, ref y))
-        {
-          throw new InvalidOperationException("Cannot get left plane");
-        }
-
-        return new Rhino.Geometry.Plane(o, x, y);
-      }
+      get { return GetPlane(idxLeftPlane); }
     }
     public Rhino.Geometry.Plane FrustumRightPlane
     {
-      get
-      {
-        Rhino.Geometry.Point3d o = new Rhino.Geometry.Point3d();
-        Rhino.Geometry.Vector3d x = new Rhino.Geometry.Vector3d();
-        Rhino.Geometry.Vector3d y = new Rhino.Geometry.Vector3d();
-
-
-        if (1 != UnsafeNativeMethods.ON_Viewport_GetFrustumRightPlane(ConstPointer(), ref o, ref x, ref y))
-        {
-          throw new InvalidOperationException("Cannot get right plane");
-        }
-
-        return new Rhino.Geometry.Plane(o, x, y);
-      }
+      get { return GetPlane(idxRightPlane); }
     }
     public Rhino.Geometry.Plane FrustumBottomPlane
     {
-      get
-      {
-        Rhino.Geometry.Point3d o = new Rhino.Geometry.Point3d();
-        Rhino.Geometry.Vector3d x = new Rhino.Geometry.Vector3d();
-        Rhino.Geometry.Vector3d y = new Rhino.Geometry.Vector3d();
-
-
-        if (1 != UnsafeNativeMethods.ON_Viewport_GetFrustumBottomPlane(ConstPointer(), ref o, ref x, ref y))
-        {
-          throw new InvalidOperationException("Cannot get bottom plane");
-        }
-
-        return new Rhino.Geometry.Plane(o, x, y);
-      }
+      get { return GetPlane(idxBottomPlane); }
     }
     public Rhino.Geometry.Plane FrustumTopPlane
     {
-      get
-      {
-        Rhino.Geometry.Point3d o = new Rhino.Geometry.Point3d();
-        Rhino.Geometry.Vector3d x = new Rhino.Geometry.Vector3d();
-        Rhino.Geometry.Vector3d y = new Rhino.Geometry.Vector3d();
-
-
-        if (1 != UnsafeNativeMethods.ON_Viewport_GetFrustumTopPlane(ConstPointer(), ref o, ref x, ref y))
-        {
-          throw new InvalidOperationException("Cannot get top plane");
-        }
-
-        return new Rhino.Geometry.Plane(o, x, y);
-      }
+      get { return GetPlane(idxTopPlane); }
     }
         
-    /// <summary>
-    /// Get corners of near clipping plane rectangle.
-    /// </summary>
-    /// <param name="leftBottom"></param>
-    /// <param name="rightBottom"></param>
-    /// <param name="leftTop"></param>
-    /// <param name="rightTop"></param>
-    /// <returns>true if camera and frustum are valid.</returns>
-    public bool GetNearRect(ref Rhino.Geometry.Point3d leftBottom,
-                             ref Rhino.Geometry.Point3d rightBottom,
-                             ref Rhino.Geometry.Point3d leftTop,
-                             ref Rhino.Geometry.Point3d rightTop)
+    /// <summary>Get corners of near clipping plane rectangle.</summary>
+    /// <returns>
+    /// Four corner points on success.
+    /// Empty array if viewport is not valid.
+    /// </returns>
+    public Rhino.Geometry.Point3d[] GetNearPlaneCorners()
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_GetNearRect(ConstPointer(), ref leftBottom, ref rightBottom, ref leftTop, ref rightTop);
+      Rhino.Geometry.Point3d leftBottom = new Rhino.Geometry.Point3d();
+      Rhino.Geometry.Point3d rightBottom = new Rhino.Geometry.Point3d();
+      Rhino.Geometry.Point3d leftTop = new Rhino.Geometry.Point3d();
+      Rhino.Geometry.Point3d rightTop = new Rhino.Geometry.Point3d();
+      IntPtr pConstThis = ConstPointer();
+      if (!UnsafeNativeMethods.ON_Viewport_GetNearFarRect(pConstThis, true, ref leftBottom, ref rightBottom, ref leftTop, ref rightTop))
+        return new Rhino.Geometry.Point3d[0];
+      return new Rhino.Geometry.Point3d[] { leftBottom, rightBottom, leftTop, rightTop };
     }
 
-    /// <summary>
-    /// Get corners of far clipping plane rectangle.
-    /// </summary>
-    /// <param name="leftBottom"></param>
-    /// <param name="rightBottom"></param>
-    /// <param name="leftTop"></param>
-    /// <param name="rightTop"></param>
-    /// <returns>true if camera and frustum are valid.</returns>
-    public bool GetFarRect(ref Rhino.Geometry.Point3d leftBottom,
-                             ref Rhino.Geometry.Point3d rightBottom,
-                             ref Rhino.Geometry.Point3d leftTop,
-                             ref Rhino.Geometry.Point3d rightTop)
+    /// <summary>Get corners of far clipping plane rectangle.</summary>
+    /// <returns>
+    /// Four corner points on success.
+    /// Empty array if viewport is not valid.
+    /// </returns>
+    public Rhino.Geometry.Point3d[] GetFarPlaneCorners()
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_GetFarRect(ConstPointer(), ref leftBottom, ref rightBottom, ref leftTop, ref rightTop);
+      Rhino.Geometry.Point3d leftBottom = new Rhino.Geometry.Point3d();
+      Rhino.Geometry.Point3d rightBottom = new Rhino.Geometry.Point3d();
+      Rhino.Geometry.Point3d leftTop = new Rhino.Geometry.Point3d();
+      Rhino.Geometry.Point3d rightTop = new Rhino.Geometry.Point3d();
+      IntPtr pConstThis = ConstPointer();
+      if (!UnsafeNativeMethods.ON_Viewport_GetNearFarRect(pConstThis, false, ref leftBottom, ref rightBottom, ref leftTop, ref rightTop))
+        return new Rhino.Geometry.Point3d[0];
+      return new Rhino.Geometry.Point3d[] { leftBottom, rightBottom, leftTop, rightTop };
     }
 
     /// <summary>
@@ -721,22 +709,44 @@ namespace Rhino.Display
     /// <returns>true if input is valid.</returns>
     public bool SetScreenPort( int left, int right, int bottom, int top, int near, int far)
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_SetScreenPoint(NonConstPointer(), left, right, bottom, top, near, far);
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_SetScreenPort(pThis, left, right, bottom, top, near, far);
+    }
+
+    public bool SetScreenPort(System.Drawing.Rectangle windowRectangle, int near, int far)
+    {
+      return SetScreenPort(windowRectangle.Left, windowRectangle.Right, windowRectangle.Bottom, windowRectangle.Top, near, far);
+    }
+    public bool SetScreenPort(System.Drawing.Rectangle windowRectangle)
+    {
+      return SetScreenPort(windowRectangle, 0, 0);
     }
 
     /// <summary>
     /// See documentation for SetScreenPort
     /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <param name="bottom"></param>
-    /// <param name="top"></param>
     /// <param name="near"></param>
     /// <param name="far"></param>
-    /// <returns></returns>
-    public bool GetScreenPort(ref int left, ref int right, ref int bottom, ref int top, ref int near, ref int far)
+    /// <returns>empty rectangle on error</returns>
+    public System.Drawing.Rectangle GetScreenPort(out int near, out int far)
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_GetScreenPoint(ConstPointer(), ref left, ref right, ref bottom, ref top, ref near, ref far);
+      int left = 0;
+      int right = 0;
+      int bottom = 0;
+      int top = 0;
+      near = 0;
+      far = 0;
+      IntPtr pConstThis = ConstPointer();
+      if (!UnsafeNativeMethods.ON_Viewport_GetScreenPort(pConstThis, ref left, ref right, ref bottom, ref top, ref near, ref far))
+        return System.Drawing.Rectangle.Empty;
+      return System.Drawing.Rectangle.FromLTRB(left, top, right, bottom);
+    }
+
+    public System.Drawing.Rectangle GetScreenPort()
+    {
+      int near = 0;
+      int far = 0;
+      return GetScreenPort(out near, out far);
     }
 
     public double ScreenPortAspect
@@ -744,10 +754,9 @@ namespace Rhino.Display
       get
       {
         double dAspect = 0.0;
-        if (1 != UnsafeNativeMethods.ON_Viewport_GetScreenPortAspect(ConstPointer(), ref dAspect))
-        {
-          throw new InvalidOperationException("Cannot get screen port aspect");
-        }
+        IntPtr pConstThis = ConstPointer();
+        if (UnsafeNativeMethods.ON_Viewport_GetScreenPortAspect(pConstThis, ref dAspect))
+          dAspect = 0;
         return dAspect;
       }
     }
@@ -755,13 +764,17 @@ namespace Rhino.Display
     /// <summary>
     /// Field of view
     /// </summary>
-    /// <param name="halfDiagonalAngle">1/2 of diagonal subtended angle</param>
-    /// <param name="halfVerticalAngle">1/2 of vertical subtended angle</param>
-    /// <param name="halfHorizontalAngle">1/2 of horizontal subtended angle</param>
+    /// <param name="halfDiagonalAngleRadians">1/2 of diagonal subtended angle</param>
+    /// <param name="halfVerticalAngleRadians">1/2 of vertical subtended angle</param>
+    /// <param name="halfHorizontalAngleRadians">1/2 of horizontal subtended angle</param>
     /// <returns></returns>
-    public bool GetCameraAngle( ref double halfDiagonalAngle, ref double halfVerticalAngle, ref double halfHorizontalAngle)
+    public bool GetCameraAngles( out double halfDiagonalAngleRadians, out double halfVerticalAngleRadians, out double halfHorizontalAngleRadians)
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_GetCameraAngle2(ConstPointer(), ref halfDiagonalAngle, ref halfVerticalAngle, ref halfHorizontalAngle);
+      IntPtr pConstThis = ConstPointer();
+      halfDiagonalAngleRadians = 0;
+      halfHorizontalAngleRadians = 0;
+      halfVerticalAngleRadians = 0;
+      return UnsafeNativeMethods.ON_Viewport_GetCameraAngle2(pConstThis, ref halfDiagonalAngleRadians, ref halfVerticalAngleRadians, ref halfHorizontalAngleRadians);
     }
 
     /// <summary>
@@ -772,15 +785,15 @@ namespace Rhino.Display
       get
       {
         double d = 0.0;
-        if (1!=UnsafeNativeMethods.ON_Viewport_GetCameraAngle(ConstPointer(), ref d))
-        {
-          throw new InvalidOperationException("Cannot get camera angle");
-        }
+        IntPtr pConstThis = ConstPointer();
+        if (!UnsafeNativeMethods.ON_Viewport_GetCameraAngle(pConstThis, ref d))
+          d = 0;
         return d;
       }
       set
       {
-        UnsafeNativeMethods.ON_Viewport_SetCameraAngle(NonConstPointer(), value);
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_Viewport_SetCameraAngle(pThis, value);
       }
     }
 
@@ -796,50 +809,35 @@ namespace Rhino.Display
       get
       {
         double d = 0.0;
-        if (1 != UnsafeNativeMethods.ON_Viewport_GetCamera35mmLensLength(ConstPointer(), ref d))
-        {
-          throw new InvalidOperationException("Cannot get camera lens length");
-        }
+        IntPtr pConstThis = ConstPointer();
+        if (!UnsafeNativeMethods.ON_Viewport_GetCamera35mmLensLength(pConstThis, ref d))
+          d = 0;
         return d;
       }
       set
       {
-        UnsafeNativeMethods.ON_Viewport_SetCamera35mmLensLength(NonConstPointer(), value);
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_Viewport_SetCamera35mmLensLength(pThis, value);
       }
     }
 
     /// <summary>
-    /// Used in GetXform
     /// </summary>
-    public enum CoordinateSystems : int
-    {
-      World  = 0, 
-      Camera = 1, 
-      Clip   = 2, 
-      Screen = 3 
-    };
-
-    /// <summary>
-    /// Throws if the viewport is invalid
-    /// </summary>
-    /// <param name="sourceCoordSystem"></param>
-    /// <param name="destinationCoordSystem"></param>
+    /// <param name="sourceSystem"></param>
+    /// <param name="destinationSystem"></param>
     /// <returns>4x4 transformation matrix (acts on the left)</returns>
-    public Rhino.Geometry.Transform GetXform(CoordinateSystems sourceCoordSystem, CoordinateSystems destinationCoordSystem)
+    public Rhino.Geometry.Transform GetXform(Rhino.DocObjects.CoordinateSystem sourceSystem, Rhino.DocObjects.CoordinateSystem destinationSystem)
     {
       Rhino.Geometry.Transform matrix = new Rhino.Geometry.Transform();
-
-      if (1 != UnsafeNativeMethods.ON_Viewport_GetXform(ConstPointer(), (int)sourceCoordSystem, (int)destinationCoordSystem, ref matrix))
-      {
-        throw new InvalidOperationException("Cannot get viewport xform");
-      }
+      IntPtr pConstThis = ConstPointer();
+      if (!UnsafeNativeMethods.ON_Viewport_GetXform(pConstThis, (int)sourceSystem, (int)destinationSystem, ref matrix))
+        matrix = Rhino.Geometry.Transform.Unset;
       return matrix;
     }
 
     /// <summary>
     /// Get the world coordinate line in the view frustum
     /// that projects to a point on the screen.
-    /// Throws if the viewport is invalid
     /// </summary>
     /// <param name="screenX">(screenx,screeny) = screen location</param>
     /// <param name="screenY">(screenx,screeny) = screen location</param>
@@ -847,12 +845,19 @@ namespace Rhino.Display
     Rhino.Geometry.Line GetFrustumLine( double screenX, double screenY)
     {
       Rhino.Geometry.Line line = new Rhino.Geometry.Line();
-      
-      if (1 != UnsafeNativeMethods.ON_Viewport_GetFrustumLine(ConstPointer(), screenX, screenY, ref line))
-      {
-        throw new InvalidOperationException("Cannot get frustum line");
-      }
+      IntPtr pConstThis = ConstPointer();
+      if (!UnsafeNativeMethods.ON_Viewport_GetFrustumLine(pConstThis, screenX, screenY, ref line))
+        line = Rhino.Geometry.Line.Unset;
       return line;
+    }
+
+    Rhino.Geometry.Line GetFrustumLine(System.Drawing.Point screenPoint)
+    {
+      return GetFrustumLine(screenPoint.X, screenPoint.Y);
+    }
+    Rhino.Geometry.Line GetFrustumLine(System.Drawing.PointF screenPoint)
+    {
+      return GetFrustumLine(screenPoint.X, screenPoint.Y);
     }
 
     /// <summary>
@@ -863,10 +868,9 @@ namespace Rhino.Display
     double GetWorldToScreenScale( Rhino.Geometry.Point3d pointInFrustum)
     {
       double d = 0.0;
-      if (1!=UnsafeNativeMethods.ON_Viewport_GetWorldToScreenScale(ConstPointer(), pointInFrustum, ref d))
-      {
-        throw new InvalidOperationException("Cannot get world to screen scale");
-      }
+      IntPtr pConstThis = ConstPointer();
+      if (!UnsafeNativeMethods.ON_Viewport_GetWorldToScreenScale(pConstThis, pointInFrustum, ref d))
+        d = 0;
       return d;
     }
 
@@ -877,12 +881,13 @@ namespace Rhino.Display
     /// volume is inside of a viewports frustrum.
     /// The view angle is used to determine the position of the camera.
     /// </summary>
-    /// <param name="halfViewAngle"></param>
+    /// <param name="halfViewAngleRadians"></param>
     /// <param name="bbox"></param>
     /// <returns></returns>
-    public bool Extents( double halfViewAngle, Rhino.Geometry.BoundingBox bbox)
+    public bool Extents( double halfViewAngleRadians, Rhino.Geometry.BoundingBox bbox)
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_ExtentsBBox(NonConstPointer(), halfViewAngle, bbox.Min, bbox.Max);
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_ExtentsBBox(pThis, halfViewAngleRadians, bbox.Min, bbox.Max);
     }
 
     /// <summary>
@@ -890,16 +895,17 @@ namespace Rhino.Display
     /// volume is inside of a viewports frustrum.
     /// The view angle is used to determine the position of the camera.
     /// </summary>
-    /// <param name="halfViewAngle"></param>
+    /// <param name="halfViewAngleRadians"></param>
     /// <param name="sphere"></param>
     /// <returns></returns>
-    public bool Extents( double halfViewAngle, Rhino.Geometry.Sphere sphere)
+    public bool Extents( double halfViewAngleRadians, Rhino.Geometry.Sphere sphere)
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_ExtentsSphere(NonConstPointer(), halfViewAngle, sphere.Center, sphere.Radius);
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_ExtentsSphere(pThis, halfViewAngleRadians, sphere.Center, sphere.Radius);
     }
 
     /// <summary>
-    ///  View changing from screen input points.  Handy for
+    /// View changing from screen input points.  Handy for
     /// using a mouse to manipulate a view.
     /// ZoomToScreenRect() may change camera and frustum settings
     /// </summary>
@@ -910,7 +916,13 @@ namespace Rhino.Display
     /// <returns></returns>
     public bool ZoomToScreenRect( int left, int top, int right, int bottom)
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_ZoomToScreenRect(NonConstPointer(), left, top, right, bottom);
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_ZoomToScreenRect(pThis, left, top, right, bottom);
+    }
+
+    public bool ZoomToScreenRect(System.Drawing.Rectangle windowRectangle)
+    {
+      return ZoomToScreenRect(windowRectangle.Left, windowRectangle.Top, windowRectangle.Right, windowRectangle.Bottom);
     }
 
     /// <summary>
@@ -924,7 +936,8 @@ namespace Rhino.Display
     /// <returns></returns>
     public bool DollyCamera(Rhino.Geometry.Vector3d dollyVector)
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_DollyCamera(NonConstPointer(), dollyVector);
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_DollyCamera(pThis, dollyVector);
     }
 
     /// <summary>
@@ -939,11 +952,15 @@ namespace Rhino.Display
     public Rhino.Geometry.Vector3d GetDollyCameraVector( int screenX0, int screenY0, int screenX1, int screenY1, double projectionPlaneDistance)
     {
       Rhino.Geometry.Vector3d v = new Rhino.Geometry.Vector3d();
-      if (1!=UnsafeNativeMethods.ON_Viewport_GetDollyCameraVector(ConstPointer(), screenX0, screenY0, screenX1, screenY1, projectionPlaneDistance, ref v))
-      {
-        throw new InvalidOperationException("Cannot get dolly camera vector");
-      }
+      IntPtr pConstThis = ConstPointer();
+      if (UnsafeNativeMethods.ON_Viewport_GetDollyCameraVector(pConstThis, screenX0, screenY0, screenX1, screenY1, projectionPlaneDistance, ref v))
+        v = Rhino.Geometry.Vector3d.Unset;
       return v;
+    }
+
+    public Rhino.Geometry.Vector3d GetDollyCameraVector(System.Drawing.Point screen0, System.Drawing.Point screen1, double projectionPlaneDistance)
+    {
+      return GetDollyCameraVector(screen0.X, screen0.Y, screen1.X, screen1.Y, projectionPlaneDistance);
     }
 
     /// <summary>
@@ -953,7 +970,8 @@ namespace Rhino.Display
     /// <returns></returns>
     public bool DollyFrustum( double dollyDistance )
     {
-      return 1==UnsafeNativeMethods.ON_Viewport_DollyFrustum(NonConstPointer(), dollyDistance);
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_DollyFrustum(pThis, dollyDistance);
     }
 
     /// <summary>
@@ -968,21 +986,18 @@ namespace Rhino.Display
       {
         double w = 0.0;
         double h = 0.0;
-        if (1!=UnsafeNativeMethods.ON_Viewport_GetViewScale(ConstPointer(), ref w, ref h))
-        {
-          throw new InvalidOperationException("Cannot get view scale");
-        }
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_Viewport_GetViewScale(pConstThis, ref w, ref h);
         return new System.Drawing.SizeF((float)w, (float)h);
       }
       set
       {
-        if (1 != UnsafeNativeMethods.ON_Viewport_SetViewScale(NonConstPointer(), (double)value.Width, (double)value.Height))
-        {
-          throw new InvalidOperationException("Cannot set view scale");
-        }
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_Viewport_SetViewScale(pThis, (double)value.Width, (double)value.Height);
       }
     }
-
+    
+    /* Don't wrap until someone asks for this.
     /// <summary>
     /// Gets the m_clip_mod transformation
     /// </summary>
@@ -1016,6 +1031,7 @@ namespace Rhino.Display
         return 1==UnsafeNativeMethods.ON_Viewport_ClipModXformIsIdentity(ConstPointer());
       }
     }
+    */
 
     /// <summary>
     /// Return a point on the central axis of the view frustum.
@@ -1033,8 +1049,9 @@ namespace Rhino.Display
     /// is not valid, then ON_3dPoint::UnsetPoint is returned</returns>
     public Rhino.Geometry.Point3d FrustumCenterPoint( double targetDistance ) 
     {
-      Rhino.Geometry.Point3d point = new Rhino.Geometry.Point3d();
-      UnsafeNativeMethods.ON_Viewport_FrustumCenterPoint(ConstPointer(), targetDistance, ref point);
+      Rhino.Geometry.Point3d point = Rhino.Geometry.Point3d.Unset;
+      IntPtr pConstThis = ConstPointer();
+      UnsafeNativeMethods.ON_Viewport_FrustumCenterPoint(pConstThis, targetDistance, ref point);
       return point;
     }
 
@@ -1052,12 +1069,14 @@ namespace Rhino.Display
       get
       {
         Rhino.Geometry.Point3d point = new Rhino.Geometry.Point3d();
-        UnsafeNativeMethods.ON_Viewport_TargetPoint(ConstPointer(), ref point);
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_Viewport_TargetPoint(pConstThis, ref point);
         return point;
       }
       set
       {
-        UnsafeNativeMethods.ON_Viewport_SetTargetPoint(NonConstPointer(), value);
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_Viewport_SetTargetPoint(pThis, value);
       }
     }
 
@@ -1077,9 +1096,11 @@ namespace Rhino.Display
     /// when the input of view is not valid.</returns>
     public double TargetDistance( bool useFrustumCenterFallback )
     {
-      return UnsafeNativeMethods.ON_Viewport_TargetDistance(ConstPointer(), useFrustumCenterFallback);
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_Viewport_TargetDistance(pConstThis, useFrustumCenterFallback);
     }
 
+    /*
     /// <summary>
     /// Get suggested values for setting the perspective minimum
     /// near distance and minimum near/far ratio.
@@ -1140,6 +1161,7 @@ namespace Rhino.Display
         UnsafeNativeMethods.ON_Viewport_SetPerspectiveMinNearDist(NonConstPointer(), value);
       }
     }
+    */
 
     /// <summary>
     /// Sets the viewport's id to the value used to 
@@ -1149,31 +1171,26 @@ namespace Rhino.Display
     /// across multiple viewports and those routines that 
     /// manage them.
     /// </summary>
-    public Guid ViewportId
+    public Guid Id
     {
       get
       {
-        return UnsafeNativeMethods.ON_Viewport_GetViewportId(ConstPointer());
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_Viewport_GetViewportId(pConstThis);
       }
-      set
-      {
-        UnsafeNativeMethods.ON_Viewport_SetViewportId(NonConstPointer(), value);
-      }
+      //set
+      //{
+      //  IntPtr pThis = NonConstPointer();
+      //  UnsafeNativeMethods.ON_Viewport_SetViewportId(pThis, value);
+      //}
     }
 
+    /*
     public static double DefaultNearDistance        { get { return 0.005; } }
     public static double DefaultFarDistance         { get { return 1000.0; } } 
     public static double DefaultMinNearDistance     { get { return 0.0001; } }
     public static double DefaultMinNearOverFar      { get { return 0.0001; } } 
-
-    #region internals
-    internal bool InternalValid() { return m_pViewportPointer != IntPtr.Zero; }
-
-    internal IntPtr ConstPointer() { return m_pViewportPointer; }
-    internal IntPtr NonConstPointer() { return m_pViewportPointer; }
-
-    #endregion
-
+    */
 
     #region IDisposable implementation
 
@@ -1183,28 +1200,23 @@ namespace Rhino.Display
       GC.SuppressFinalize(this);
     }
 
-    ~Viewport()
+    ~ViewportInfo()
     {
       Dispose(false);
     }
 
-    private bool disposed = false;
     private void Dispose(bool isDisposing)
     {
-      if (!disposed)
+      if (IntPtr.Zero!=m_pViewportPointer)
       {
         UnsafeNativeMethods.ON_Viewport_Delete(m_pViewportPointer);
-        m_pViewportPointer = IntPtr.Zero;
       }
-      disposed = true;
+      m_pViewportPointer = IntPtr.Zero;
     }
 
     #endregion
   }
 }
-
-#endif
-
 
 
 

@@ -1,8 +1,10 @@
 
 /dotnet/Debug
+/dotnet/Release
 /dotnet/obj
 /dotnet/RhinoCommon.suo
 /dotnet/RhinoCommon.sln
+/dotnet/RhinoCommon.pidb
 /examples/buildwikisamples/bin
 /webhelp.txt
 /MethodGen.exe

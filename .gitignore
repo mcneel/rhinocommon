@@ -1,4 +1,5 @@
-
+/dotnet/UI/*.resources
+/dotnet/RhinoCommonMono.userprefs
 /dotnet/Debug
 /dotnet/Release
 /dotnet/obj

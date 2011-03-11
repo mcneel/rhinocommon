@@ -58,6 +58,11 @@ namespace Rhino.DocObjects
       m_pViewportPointer = UnsafeNativeMethods.ON_Viewport_New2(pRhinoViewport);
     }
 
+    internal ViewportInfo(IntPtr pONViewport)
+    {
+      m_pViewportPointer = UnsafeNativeMethods.ON_Viewport_New(pONViewport);
+    }
+
     internal ViewportInfo(ViewInfo parent)
     {
       m_parent = parent;

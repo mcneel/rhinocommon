@@ -290,6 +290,7 @@ namespace Rhino.PlugIns
             }
 
             Rhino.Render.RenderContent.RegisterContent(p.Assembly, p.Id);
+            Rhino.Render.CustomRenderMesh.Provider.RegisterProviders(p.Assembly, p.Id);
           }
 #endif
 

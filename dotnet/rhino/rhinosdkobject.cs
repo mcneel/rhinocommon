@@ -1051,6 +1051,11 @@ namespace Rhino.DocObjects
       return ObjRefToGeometryHelper(pBrepFace) as BrepFace;
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_booleandifference.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_booleandifference.cs' lang='cs'/>
+    /// <code source='examples\py\ex_booleandifference.py' lang='py'/>
+    /// </example>
     public Geometry.Brep Brep()
     {
       IntPtr pBrep = UnsafeNativeMethods.CRhinoObjRef_Brep(m_ptr);
@@ -1262,6 +1267,21 @@ namespace Rhino.Runtime
       for (int i = 0; i < count; i++)
       {
         IntPtr pRhinoObject = UnsafeNativeMethods.RhinoObjectArray_Get(m_ptr, i);
+        rc[i] = DocObjects.RhinoObject.CreateRhinoObjectHelper(pRhinoObject);
+      }
+      return rc;
+    }
+
+    public static Rhino.DocObjects.RhinoObject[] ToArrayFromPointer(IntPtr pRhinoObjectArray)
+    {
+      if (IntPtr.Zero == pRhinoObjectArray)
+        return new Rhino.DocObjects.RhinoObject[0];
+
+      int count = UnsafeNativeMethods.RhinoObjectArray_Count(pRhinoObjectArray);
+      Rhino.DocObjects.RhinoObject[] rc = new Rhino.DocObjects.RhinoObject[count];
+      for (int i = 0; i < count; i++)
+      {
+        IntPtr pRhinoObject = UnsafeNativeMethods.RhinoObjectArray_Get(pRhinoObjectArray, i);
         rc[i] = DocObjects.RhinoObject.CreateRhinoObjectHelper(pRhinoObject);
       }
       return rc;

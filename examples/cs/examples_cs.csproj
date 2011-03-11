@@ -84,14 +84,18 @@
     <Compile Include="ex_advanceddisplay.cs" />
     <Compile Include="ex_arclengthpoint.cs" />
     <Compile Include="ex_blockinsertionpoint.cs" />
+    <Compile Include="ex_booleandifference.cs" />
+    <Compile Include="ex_circlecenter.cs" />
     <Compile Include="ex_commandlineoptions.cs" />
     <Compile Include="ex_custompython.cs" />
     <Compile Include="ex_dividebylength.cs" />
     <Compile Include="ex_findobjectsbyname.cs" />
+    <Compile Include="ex_insertknot.cs" />
     <Compile Include="ex_objectlayer.cs" />
     <Compile Include="ex_orientonsrf.cs" />
     <Compile Include="ex_sellayer.cs" />
     <Compile Include="ex_unrollsurface.cs" />
+    <Compile Include="ex_unrollsurface2.cs" />
     <Compile Include="OptionsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

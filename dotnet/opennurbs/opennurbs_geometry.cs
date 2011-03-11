@@ -286,9 +286,6 @@ namespace Rhino.Geometry
 
     #endregion
 
-    // [skipping from ON_Object]
-    //  BOOL IsValid( ON_TextLog* text_log = NULL ) const;
-
     /// <summary>
     /// Useful for switch statements that need to differentiate between
     /// basic object types like points, curves, surfaces, and so on.
@@ -303,9 +300,6 @@ namespace Rhino.Geometry
         return (ObjectType)rc;
       }
     }
-
-    //[skipping]
-    // BOOL Rotate( double, double, ON_3dVector, ON_3dPoint);
 
     #region Transforms
     /// <summary>
@@ -470,30 +464,6 @@ namespace Rhino.Geometry
       worldBox = new Box(plane, rc);
       return rc;
     }
-
-
-    ///// <summary>
-    ///// The dimension is typically three. For parameter space trimming curves the
-    ///// dimension is two. In rare cases the dimension can be one or greater than three.
-    ///// </summary>
-    //public int Dimension
-    //{
-    //  get
-    //  {
-    //    IntPtr ptr = ConstPointer();
-    //    return UnsafeNativeMethods.ON_Geometry_Dimension(ptr);
-    //  }
-    //}
-
-
-
-    // [skipping]
-    // BOOL GetBBox
-
-    // [skipping]
-    // void ClearBoundingBox();
-
-
 
     const int idxIsDeformable = 0;
     const int idxMakeDeformable = 1;

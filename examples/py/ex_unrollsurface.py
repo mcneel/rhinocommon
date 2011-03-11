@@ -1,7 +1,6 @@
 import Rhino
 import scriptcontext
 
-
 def UnrollSurface():
     filter = Rhino.DocObjects.ObjectType.Brep | Rhino.DocObjects.ObjectType.Surface
     rc, objref = Rhino.Input.RhinoGet.GetOneObject("Select surface or brep to unroll", False, filter)

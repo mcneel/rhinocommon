@@ -7,6 +7,14 @@ namespace Rhino
   {
     public static class Dialogs
     {
+      // Functions to add
+      //[in rhinosdkutilities.h]
+      //  RhinoLineTypeDialog
+      //  RhinoPrintWidthDialog
+      //  RhinoSelectMultipleLayersDialog
+      //  RhinoYesNoMessageBox
+
+
       /// <summary>
       /// Destroy the splash screen if it is being displayed
       /// </summary>
@@ -281,6 +289,18 @@ namespace Rhino
         return rc;
       }
 
+      /// <summary>
+      /// Display Rhino's single layer selection dialog
+      /// </summary>
+      /// <param name="layerIndex">
+      /// Initial layer for the dialog, and will receive selected
+      /// layer if function returns DialogResult.OK
+      /// </param>
+      /// <param name="dialogTitle"></param>
+      /// <param name="showNewLayerButton"></param>
+      /// <param name="showSetCurrentButton"></param>
+      /// <param name="initialSetCurrentState"></param>
+      /// <returns></returns>
       public static System.Windows.Forms.DialogResult ShowSelectLayerDialog(ref int layerIndex, string dialogTitle, bool showNewLayerButton, bool showSetCurrentButton, ref bool initialSetCurrentState)
       {
         bool rc = UnsafeNativeMethods.RHC_RhinoSelectLayerDialog(dialogTitle, ref layerIndex, showNewLayerButton, showSetCurrentButton, ref initialSetCurrentState);

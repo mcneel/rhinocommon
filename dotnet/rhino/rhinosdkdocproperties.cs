@@ -142,13 +142,19 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
+    [Obsolete("Use FindByName instead - this will be removed in a future WIP")]
+    public int Find(string name)
+    {
+      return FindByName(name);
+    }
+
     /// <summary>Find a named view</summary>
     /// <param name="name">name to search for</param>
     /// <returns>
     /// &gt;=0 index of the found named view
     /// -1 no named view found
     /// </returns>
-    public int Find(string name)
+    public int FindByName(string name)
     {
       return UnsafeNativeMethods.CRhinoDocProperties_FindNamedView(m_doc.m_docId, name);
     }
@@ -195,7 +201,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>true if successful</returns>
     public bool Delete(string name)
     {
-      int index = Find(name);
+      int index = FindByName(name);
       return Delete(index);
     }
 

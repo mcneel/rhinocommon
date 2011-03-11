@@ -207,6 +207,24 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
+    /// Text description of the geometry's contents. DebugDump()
+    /// is intended for debugging and is not suitable for
+    /// creating high quality text descriptions of an object.
+    /// </summary>
+    /// <param name="geometry"></param>
+    /// <returns></returns>
+    public static string DebugDumpToString(Rhino.Geometry.GeometryBase geometry)
+    {
+      IntPtr pConstThis = geometry.ConstPointer();
+      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.ON_Object_Dump(pConstThis, pString);
+        return sh.ToString();
+      }
+    }
+
+    /// <summary>
     /// Parse a plugin and create all the commands defined therein.
     /// </summary>
     /// <param name="plugin">Plugin to harvest for commands.</param>

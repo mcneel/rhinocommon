@@ -226,6 +226,11 @@ namespace Rhino.Input
     /// <remarks>
     /// If you need options or more advanced user interface, then use GetObject class.
     /// </remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_booleandifference.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_booleandifference.cs' lang='cs'/>
+    /// <code source='examples\py\ex_booleandifference.py' lang='py'/>
+    /// </example>
     [CLSCompliant(false)]
     public static Commands.Result GetMultipleObjects(string prompt, bool acceptNothing, Rhino.DocObjects.ObjectType filter, out Rhino.DocObjects.ObjRef[] rhObjects)
     {

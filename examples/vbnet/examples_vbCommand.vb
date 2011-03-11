@@ -54,12 +54,16 @@ Public Class examples_vbCommand
     Test(AddressOf Examples.AdvancedDisplay, doc)
     Test(AddressOf Examples.ArcLengthPoint, doc)
     Test(AddressOf Examples.BlockInsertionPoint, doc)
+    Test(AddressOf Examples.BooleanDifference, doc)
+    Test(AddressOf Examples.CircleCenter, doc)
     Test(AddressOf Examples.CommandLineOptions, doc)
     Test(AddressOf Examples.DivideByLengthPoints, doc)
     Test(AddressOf Examples.DetermineObjectLayer, doc)
+    Test(AddressOf Examples.InsertKnot, doc)
     Test(AddressOf Examples.OrientOnSrf, doc)
     Test(AddressOf Examples.SelLayer, doc)
     Test(AddressOf Examples.UnrollSurface, doc)
+    Test(AddressOf Examples.UnrollSurface2, doc)
     GC.Collect()
   End Function
 End Class

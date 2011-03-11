@@ -414,6 +414,218 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region rdk_customrendermeshmanager.cpp
+  //IRhRdkCustomRenderMeshes* Rdk_CustomMeshes_New(const CRhinoObject* pObject)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_CustomMeshes_New(IntPtr pObject);
+
+  //ON_UUID Rdk_CustomMeshes_ProviderId(const IRhRdkCustomRenderMeshes* pMeshes)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid Rdk_CustomMeshes_ProviderId(IntPtr pMeshes);
+
+  //void Rdk_CustomMeshes_SetProviderId(IRhRdkCustomRenderMeshes* pMeshes, ON_UUID uuid)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_CustomMeshes_SetProviderId(IntPtr pMeshes, Guid uuid);
+
+  //void Rdk_CustomMeshes_AddMesh(IRhRdkCustomRenderMeshes* pMeshes, const ON_Mesh* pMesh, const CRhRdkMaterial* pMaterial)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_CustomMeshes_AddMesh(IntPtr pMeshes, IntPtr pMesh, IntPtr pMaterial);
+
+  //void Rdk_CustomMeshes_AddSphere(IRhRdkCustomRenderMeshes* pMeshes, 
+  //											  ON_3DPOINT_STRUCT center, 
+  //											  ON_3DVECTOR_STRUCT xaxis, 
+  //											  ON_3DVECTOR_STRUCT yaxis, 
+  //											  double radius, 
+  //											  const CRhRdkMaterial* pMaterial)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_CustomMeshes_AddSphere(IntPtr pMeshes, Point3d center, Vector3d xaxis, Vector3d yaxis, double radius, IntPtr pMaterial);
+
+  //void Rdk_CustomMeshes_AddCone(IRhRdkCustomRenderMeshes* pMeshes, ON_3DPOINT_STRUCT coneBasePoint, 
+  //                                            ON_3DVECTOR_STRUCT conePlaneXAxis, 
+  //                                            ON_3DVECTOR_STRUCT conePlaneYAxis, 
+  //                                            double coneHeight, double coneRadius,
+  //                                            ON_3DPOINT_STRUCT truncationOrigin, 
+  //                                            ON_3DVECTOR_STRUCT truncationXAxis, 
+  //                                            ON_3DVECTOR_STRUCT truncationYAxis, 
+  //                                            const CRhRdkMaterial* pMaterial)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_CustomMeshes_AddCone(IntPtr pMeshes, Point3d coneBasePoint, Vector3d conePlaneXAxis, Vector3d conePlaneYAxis, double coneHeight, double coneRadius, Point3d truncationOrigin, Vector3d truncationXAxis, Vector3d truncationYAxis, IntPtr pMaterial);
+
+  //void Rdk_CustomMeshes_AddPlane(IRhRdkCustomRenderMeshes* pMeshes, const ON_PlaneSurface* pPlane, const CRhRdkMaterial* pMaterial)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_CustomMeshes_AddPlane(IntPtr pMeshes, IntPtr pPlane, IntPtr pMaterial);
+
+  //void Rdk_CustomMeshes_AddBox(IRhRdkCustomRenderMeshes* pMeshes, 
+  //                                            ON_3DPOINT_STRUCT boxPlaneOrigin, 
+  //                                            ON_3DVECTOR_STRUCT boxPlaneXAxis, 
+  //                                            ON_3DVECTOR_STRUCT boxPlaneYAxis, 
+  //                                            double boxXMin, double boxXMax, 
+  //                                            double boxYMin, double boxYMax, 
+  //                                            double boxZMin, double boxZMax, 
+  //                                            const CRhRdkMaterial* pMaterial)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_CustomMeshes_AddBox(IntPtr pMeshes, Point3d boxPlaneOrigin, Vector3d boxPlaneXAxis, Vector3d boxPlaneYAxis, double boxXMin, double boxXMax, double boxYMin, double boxYMax, double boxZMin, double boxZMax, IntPtr pMaterial);
+
+  //int Rdk_CustomMeshes_Count(const IRhRdkCustomRenderMeshes* pMeshes)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_CustomMeshes_Count(IntPtr pMeshes);
+
+  //bool Rdk_CustomMeshes_UseObjectsMappingChannels(const IRhRdkCustomRenderMeshes* pMeshes)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_CustomMeshes_UseObjectsMappingChannels(IntPtr pMeshes);
+
+  //void Rdk_CustomMeshes_SetUseObjectsMappingChannels(IRhRdkCustomRenderMeshes* pMeshes, bool b)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_CustomMeshes_SetUseObjectsMappingChannels(IntPtr pMeshes, [MarshalAs(UnmanagedType.U1)]bool b);
+
+  //int Rdk_CustomMeshes_PrimitiveType(const IRhRdkCustomRenderMeshes* pMeshes, int index)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_CustomMeshes_PrimitiveType(IntPtr pMeshes, int index);
+
+  //const ON_Mesh* Rdk_CustomMeshes_Mesh(const IRhRdkCustomRenderMeshes* pMeshes, int index)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_CustomMeshes_Mesh(IntPtr pMeshes, int index);
+
+  //bool Rdk_CustomMeshes_Sphere(const IRhRdkCustomRenderMeshes* pMeshes, int index, ON_3dPoint* origin, ON_3dVector* xaxis, ON_3dVector* yaxis, double* radius)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_CustomMeshes_Sphere(IntPtr pMeshes, int index, ref Point3d origin, ref Vector3d xaxis, ref Vector3d yaxis, ref double radius);
+
+  //bool Rdk_CustomMeshes_Box(const IRhRdkCustomRenderMeshes* pMeshes, 
+  //										int index, ON_3dPoint* origin, ON_3dVector* xaxis, ON_3dVector* yaxis, 
+  //										double* minX, double* maxX, double* minY, double* maxY, double* minZ, double* maxZ)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_CustomMeshes_Box(IntPtr pMeshes, int index, ref Point3d origin, ref Vector3d xaxis, ref Vector3d yaxis, ref double minX, ref double maxX, ref double minY, ref double maxY, ref double minZ, ref double maxZ);
+
+  //bool Rdk_CustomMeshes_Plane(const IRhRdkCustomRenderMeshes* pMeshes, 
+  //									      int index, ON_3dPoint* origin, ON_3dVector* xaxis, ON_3dVector* yaxis, 
+  //										  double* minX, double* maxX, double* minY, double* maxY)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_CustomMeshes_Plane(IntPtr pMeshes, int index, ref Point3d origin, ref Vector3d xaxis, ref Vector3d yaxis, ref double minX, ref double maxX, ref double minY, ref double maxY);
+
+  //bool Rdk_CustomMeshes_Cone(const IRhRdkCustomRenderMeshes* pMeshes, 
+  //                                        int index, ON_3dPoint* origin, ON_3dVector* xaxis, ON_3dVector* yaxis, 
+  //                                        double* height, double* radius,
+  //                                        ON_3dPoint* t_origin, ON_3dVector* t_xaxis, ON_3dVector* t_yaxis)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_CustomMeshes_Cone(IntPtr pMeshes, int index, ref Point3d origin, ref Vector3d xaxis, ref Vector3d yaxis, ref double height, ref double radius, ref Point3d t_origin, ref Vector3d t_xaxis, ref Vector3d t_yaxis);
+
+  //const CRhRdkMaterial* Rdk_CustomMeshes_Material(const IRhRdkCustomRenderMeshes* pMeshes, int index)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_CustomMeshes_Material(IntPtr pMeshes, int index);
+
+  //const CRhinoObject* Rdk_CustomMeshes_Object(const IRhRdkCustomRenderMeshes* pMeshes)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_CustomMeshes_Object(IntPtr pMeshes);
+
+  //bool Rdk_CustomMeshes_GetInstanceTransform(const IRhRdkCustomRenderMeshes* pMeshes, int index, ON_Xform* pXformInstance)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_CustomMeshes_GetInstanceTransform(IntPtr pMeshes, int index, ref Transform pXformInstance);
+
+  //void Rdk_CustomMeshes_SetInstanceTransform(IRhRdkCustomRenderMeshes* pMeshes, int index, ON_XFORM_STRUCT xform)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_CustomMeshes_SetInstanceTransform(IntPtr pMeshes, int index, Transform xform);
+
+  //void Rdk_CustomMeshes_ConvertMeshesToTriangles(IRhRdkCustomRenderMeshes* pMeshes)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_CustomMeshes_ConvertMeshesToTriangles(IntPtr pMeshes);
+
+  //void Rdk_CustomMeshes_Delete(IRhRdkCustomRenderMeshes* pMeshes)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_CustomMeshes_Delete(IntPtr pMeshes);
+
+  //void Rdk_CustomMeshes_Clear(CRhRdkCustomRenderMeshes* pMeshes)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_CustomMeshes_Clear(IntPtr pMeshes);
+
+  //bool Rdk_CustomMeshes_AutoDeleteMeshesOn(const CRhRdkCustomRenderMeshes* pMeshes)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_CustomMeshes_AutoDeleteMeshesOn(IntPtr pMeshes);
+
+  //bool Rdk_CustomMeshes_AutoDeleteMaterialsOn(const CRhRdkCustomRenderMeshes* pMeshes)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_CustomMeshes_AutoDeleteMaterialsOn(IntPtr pMeshes);
+
+  //void Rdk_CRMManager_Changed()
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_CRMManager_Changed();
+
+  //void* Rdk_CRMManager_EVF(RHMONO_STRING* _s, void* p)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_CRMManager_EVF([MarshalAs(UnmanagedType.LPWStr)]string _s, IntPtr p);
+
+  //bool Rdk_CRMManager_WillBuildCustomMeshSole(const ON_Viewport* pVP, const CRhinoObject* pObject, ON_UUID requestingPlugIn, int meshType, ON_UUID soleProviderId)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_CRMManager_WillBuildCustomMeshSole(IntPtr pVP, IntPtr pObject, Guid requestingPlugIn, int meshType, Guid soleProviderId);
+
+  //bool Rdk_CRMManager_WillBuildCustomMesh(const ON_Viewport* pVP, const CRhinoObject* pObject, ON_UUID requestingPlugIn, int meshType)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_CRMManager_WillBuildCustomMesh(IntPtr pVP, IntPtr pObject, Guid requestingPlugIn, int meshType);
+
+  //bool Rdk_CRMManager_BoundingBoxSole(const ON_Viewport* pVP, const CRhinoObject* pObject, 
+  //												  ON_UUID requestingPlugIn, int meshType, ON_UUID soleProviderId, ON_3dPoint* min, ON_3dPoint* max)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_CRMManager_BoundingBoxSole(IntPtr pVP, IntPtr pObject, Guid requestingPlugIn, int meshType, Guid soleProviderId, ref Point3d min, ref Point3d max);
+
+  //bool Rdk_CRMManager_BoundingBox(const ON_Viewport* pVP, const CRhinoObject* pObject, 
+  //												  ON_UUID requestingPlugIn, int meshType, ON_3dPoint* min, ON_3dPoint* max)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_CRMManager_BoundingBox(IntPtr pVP, IntPtr pObject, Guid requestingPlugIn, int meshType, ref Point3d min, ref Point3d max);
+
+  //bool Rdk_CRMManager_BuildCustomMeshesSole(const ON_Viewport* pVP, IRhRdkCustomRenderMeshes* pMeshes, ON_UUID requestingPlugIn, int meshType, ON_UUID soleProviderId)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_CRMManager_BuildCustomMeshesSole(IntPtr pVP, IntPtr pMeshes, Guid requestingPlugIn, int meshType, Guid soleProviderId);
+
+  //bool Rdk_CRMManager_BuildCustomMeshes(const ON_Viewport* pVP, IRhRdkCustomRenderMeshes* pMeshes, ON_UUID requestingPlugIn, int meshType)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_CRMManager_BuildCustomMeshes(IntPtr pVP, IntPtr pMeshes, Guid requestingPlugIn, int meshType);
+
+  //void Rdk_SetCallback_CRMProvider_DeleteThis(RDK_CRMPROVIDERDELETETHISPROC proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void Rdk_SetCallback_CRMProvider_WillBuild(RDK_CRMPROVIDER_WILLBUILD_PROC proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void Rdk_SetCallback_CRMProvider_BBox(RDK_CRMPROVIDER_BBOX_PROC proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void Rdk_SetCallback_CRMProvider_Build(RDK_CRMPROVIDER_BUILD_PROC proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //CRhCmnCRMProvider* CRhCmnCRMProvider_New(int serial_number, ON_UUID providerId, RHMONO_STRING* _name, ON_UUID pluginId)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhCmnCRMProvider_New(int serial_number, Guid providerId, [MarshalAs(UnmanagedType.LPWStr)]string _name, Guid pluginId);
+
+  //void Rdk_RegisterCRMProvider(IRhRdkCustomRenderMeshProvider* p)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RegisterCRMProvider(IntPtr p);
+
+  //bool Rdk_RMPBoundingBoxImpl(int serial_number,
+  //													const ON_Viewport* pVP, 
+  //													const CRhinoObject* pObject, 
+  //													ON_UUID uuidRequestingPlugIn, 
+  //													int type,
+  //													ON_3dPoint* min,
+  //													ON_3dPoint* max)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_RMPBoundingBoxImpl(int serial_number, IntPtr pVP, IntPtr pObject, Guid uuidRequestingPlugIn, int type, ref Point3d min, ref Point3d max);
+  #endregion
+
+
   #region rdk_decals.cpp
   //int Rdk_Decal_Id(const IRhRdkDecal* pDecal)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]

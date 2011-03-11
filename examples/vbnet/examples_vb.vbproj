@@ -101,13 +101,17 @@
     <Compile Include="ex_advanceddisplay.vb" />
     <Compile Include="ex_arclengthpoint.vb" />
     <Compile Include="ex_blockinsertionpoint.vb" />
+    <Compile Include="ex_booleandifference.vb" />
+    <Compile Include="ex_circlecenter.vb" />
     <Compile Include="ex_commandlineoptions.vb" />
     <Compile Include="ex_dividebylength.vb" />
     <Compile Include="ex_findobjectsbyname.vb" />
+    <Compile Include="ex_insertknot.vb" />
     <Compile Include="ex_objectlayer.vb" />
     <Compile Include="ex_orientonsrf.vb" />
     <Compile Include="ex_sellayer.vb" />
     <Compile Include="ex_unrollsurface.vb" />
+    <Compile Include="ex_unrollsurface2.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

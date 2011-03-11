@@ -1187,7 +1187,7 @@ namespace Rhino
     }
     internal static EventHandler<DocObjects.RhinoObjectEventArgs> m_purge_object;
     /// <summary>
-    /// Called if an object is begin purged from a document. The object will cease to exist forever
+    /// Called if an object is being purged from a document. The object will cease to exist forever
     /// </summary>
     public static event EventHandler<DocObjects.RhinoObjectEventArgs> PurgeRhinoObject
     {
@@ -1210,6 +1210,136 @@ namespace Rhino
         }
       }
     }
+
+    internal delegate void RhinoObjectSelectionCallback(int docId, int select, IntPtr pObject, IntPtr pObjects);
+
+    private static RhinoObjectSelectionCallback m_OnSelectRhinoObjectCallback;
+
+    private static void OnSelectObject(int docId, int bSelect, IntPtr pObject, IntPtr pObjects)
+    {
+      if (m_select_objects != null && bSelect==1)
+      {
+        try
+        {
+          DocObjects.RhinoObjectSelectionEventArgs args = new Rhino.DocObjects.RhinoObjectSelectionEventArgs(true, docId, pObject, pObjects);
+          m_select_objects(null, args);
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+      else if (m_deselect_objects != null && bSelect==0)
+      {
+        try
+        {
+          DocObjects.RhinoObjectSelectionEventArgs args = new Rhino.DocObjects.RhinoObjectSelectionEventArgs(false, docId, pObject, pObjects);
+          m_deselect_objects(null, args);
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
+    internal static EventHandler<DocObjects.RhinoObjectSelectionEventArgs> m_select_objects;
+    internal static EventHandler<DocObjects.RhinoObjectSelectionEventArgs> m_deselect_objects;
+
+    /// <summary>
+    /// Called when object(s) are selected
+    /// </summary>
+    public static event EventHandler<DocObjects.RhinoObjectSelectionEventArgs> SelectObjects
+    {
+      add
+      {
+        if (m_select_objects == null)
+        {
+          m_OnSelectRhinoObjectCallback = OnSelectObject;
+          UnsafeNativeMethods.CRhinoEventWatcher_SetSelectObjectCallback(m_OnSelectRhinoObjectCallback, Rhino.Runtime.HostUtils.m_ew_report);
+        }
+        m_select_objects += value;
+      }
+      remove
+      {
+        m_select_objects -= value;
+        if (m_select_objects == null && m_deselect_objects == null)
+        {
+          UnsafeNativeMethods.CRhinoEventWatcher_SetSelectObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+          m_OnSelectRhinoObjectCallback = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Called when object(s) are deselected
+    /// </summary>
+    public static event EventHandler<DocObjects.RhinoObjectSelectionEventArgs> DeselectObjects
+    {
+      add
+      {
+        if (m_deselect_objects == null)
+        {
+          m_OnSelectRhinoObjectCallback = OnSelectObject;
+          UnsafeNativeMethods.CRhinoEventWatcher_SetSelectObjectCallback(m_OnSelectRhinoObjectCallback, Rhino.Runtime.HostUtils.m_ew_report);
+        }
+        m_deselect_objects += value;
+      }
+      remove
+      {
+        m_deselect_objects -= value;
+        if (m_select_objects == null && m_deselect_objects == null)
+        {
+          UnsafeNativeMethods.CRhinoEventWatcher_SetSelectObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+          m_OnSelectRhinoObjectCallback = null;
+        }
+      }
+    }
+
+    internal delegate void RhinoDeselectAllObjectsCallback(int docId, int objectCount);
+    private static RhinoDeselectAllObjectsCallback m_OnDeselectAllRhinoObjectsCallback;
+
+    private static void OnDeselectAllObjects(int docId, int count)
+    {
+      if (m_deselect_allobjects != null)
+      {
+        try
+        {
+          DocObjects.RhinoDeselectAllObjectsEventArgs args = new DocObjects.RhinoDeselectAllObjectsEventArgs(docId, count);
+          m_deselect_allobjects(null, args);
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
+    internal static EventHandler<DocObjects.RhinoDeselectAllObjectsEventArgs> m_deselect_allobjects;
+
+    /// <summary>
+    /// Called when all objects are deselected
+    /// </summary>
+    public static event EventHandler<DocObjects.RhinoDeselectAllObjectsEventArgs> DeselectAllObjects
+    {
+      add
+      {
+        if (m_deselect_allobjects == null)
+        {
+          m_OnDeselectAllRhinoObjectsCallback = OnDeselectAllObjects;
+          UnsafeNativeMethods.CRhinoEventWatcher_SetDeselectAllObjectsCallback(m_OnDeselectAllRhinoObjectsCallback, Rhino.Runtime.HostUtils.m_ew_report);
+        }
+        m_deselect_allobjects += value;
+      }
+      remove
+      {
+        m_deselect_allobjects -= value;
+        if (m_deselect_allobjects == null)
+        {
+          UnsafeNativeMethods.CRhinoEventWatcher_SetDeselectAllObjectsCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+          m_OnDeselectAllRhinoObjectsCallback = null;
+        }
+      }
+    }
+
     #endregion
   }
 
@@ -1361,6 +1491,66 @@ namespace Rhino
       }
     }
 
+    public class RhinoObjectSelectionEventArgs : EventArgs
+    {
+      private readonly bool m_select;
+      private int m_docId;
+      private readonly IntPtr m_pRhinoObject;
+      private readonly IntPtr m_pRhinoObjectList;
+
+      internal RhinoObjectSelectionEventArgs(bool select, int docId, IntPtr pRhinoObject, IntPtr pRhinoObjects)
+      {
+        m_select = select;
+        m_docId = docId;
+        m_pRhinoObject = pRhinoObject;
+        m_pRhinoObjectList = pRhinoObjects;
+      }
+
+      /// <summary>
+      /// Returns true if objects are being selected.
+      /// Returns false if objects are being deseleced.
+      /// </summary>
+      public bool Selected
+      {
+        get { return m_select; }
+      }
+
+      RhinoDoc m_doc = null;
+      public RhinoDoc Document
+      {
+        get
+        {
+          if (m_doc == null)
+            m_doc = RhinoDoc.FromId(m_docId);
+          return m_doc;
+        }
+      }
+
+      List<RhinoObject> m_objects = null;
+      public RhinoObject[] RhinoObjects
+      {
+        get
+        {
+          if (m_objects == null)
+          {
+            m_objects = new List<RhinoObject>();
+            if (m_pRhinoObject != IntPtr.Zero)
+            {
+              RhinoObject rhobj = RhinoObject.CreateRhinoObjectHelper(m_pRhinoObject);
+              if (rhobj != null)
+                m_objects.Add(rhobj);
+            }
+            if (m_pRhinoObjectList != IntPtr.Zero)
+            {
+              RhinoObject[] rhobjs = Rhino.Runtime.INTERNAL_RhinoObjectArray.ToArrayFromPointer(m_pRhinoObjectList);
+              m_objects.AddRange(rhobjs);
+            }
+          }
+          return m_objects.ToArray();
+        }
+      }
+    }
+
     public class RhinoReplaceObjectEventArgs : EventArgs
     {
       private readonly IntPtr m_pOldRhinoObject;
@@ -1420,6 +1610,34 @@ namespace Rhino
         get
         {
           return RhinoDoc.FromIntPtr(m_pDoc);
+        }
+      }
+    }
+
+    public class RhinoDeselectAllObjectsEventArgs : EventArgs
+    {
+      private readonly int m_docId;
+      private readonly int m_object_count;
+
+      internal RhinoDeselectAllObjectsEventArgs(int docId, int count)
+      {
+        m_docId = docId;
+        m_object_count = count;
+      }
+
+      public int ObjectCount
+      {
+        get { return m_object_count; }
+      }
+
+      RhinoDoc m_doc = null;
+      public RhinoDoc Document
+      {
+        get
+        {
+          if (m_doc == null)
+            m_doc = RhinoDoc.FromId(m_docId);
+          return m_doc;
         }
       }
     }
@@ -3066,6 +3284,11 @@ namespace Rhino.DocObjects.Tables
     /// New curve to be added. A duplicate of the curve is added to the Rhino model.
     /// </param>
     /// <returns>true if successful</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_insertknot.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_insertknot.cs' lang='cs'/>
+    /// <code source='examples\py\ex_insertknot.py' lang='py'/>
+    /// </example>
     public bool Replace(DocObjects.ObjRef objref, Geometry.Curve curve)
     {
       if (null == objref || null == curve)

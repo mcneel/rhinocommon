@@ -649,6 +649,11 @@ namespace Rhino.Geometry.Collections
     /// </summary>
     /// <param name="value">Knot value to insert.</param>
     /// <returns>True on success, false on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_insertknot.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_insertknot.cs' lang='cs'/>
+    /// <code source='examples\py\ex_insertknot.py' lang='py'/>
+    /// </example>
     public bool InsertKnot(double value)
     {
       return InsertKnot(value, 1);

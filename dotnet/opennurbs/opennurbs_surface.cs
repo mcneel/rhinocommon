@@ -368,6 +368,25 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Extend an untrimmed surface along one edge
+    /// </summary>
+    /// <param name="edge">
+    /// Edge to extend.  Must be North, South, East, or West
+    /// </param>
+    /// <param name="extensionLength">distance to extend</param>
+    /// <param name="smooth">
+    /// true for smooth (C-infinity) extension. 
+    /// false for a C1- ruled extension
+    /// </param>
+    /// <returns>New extended surface on success</returns>
+    public Surface Extend(IsoStatus edge, double extensionLength, bool smooth)
+    {
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pNewSurface = UnsafeNativeMethods.RHC_RhinoExtendSurface(pConstThis, (int)edge, extensionLength, smooth);
+      return GeometryBase.CreateGeometryHelper(pNewSurface, null) as Surface;
+    }
+
+    /// <summary>
     /// Rebuilds an existing surface to a given degree and point count
     /// </summary>
     /// <param name="uDegree">the output surface u degree</param>

@@ -509,7 +509,7 @@ namespace Rhino.Geometry
       bool intersection)
     {
       if (null == firstSet || null == secondSet)
-        return null;
+        return new Brep[0];
 
       Runtime.INTERNAL_BrepArray inputSet1 = new Runtime.INTERNAL_BrepArray();
       foreach (Brep brep in firstSet)
@@ -565,6 +565,11 @@ namespace Rhino.Geometry
     /// <param name="secondSet">Second set of Breps (the set to subtract).</param>
     /// <param name="tolerance">Tolerance to use for difference operation.</param>
     /// <returns>An array of Brep results or null on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_booleandifference.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_booleandifference.cs' lang='cs'/>
+    /// <code source='examples\py\ex_booleandifference.py' lang='py'/>
+    /// </example>
     public static Brep[] CreateBooleanDifference(System.Collections.Generic.IEnumerable<Brep> firstSet,
       System.Collections.Generic.IEnumerable<Brep> secondSet,
       double tolerance)

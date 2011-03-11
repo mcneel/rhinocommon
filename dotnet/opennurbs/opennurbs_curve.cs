@@ -361,6 +361,25 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Make adjustments to the ends of one or both input curves so that they meet at a point
+    /// </summary>
+    /// <param name="curveA">1st curve to adjust</param>
+    /// <param name="adjustStartCurveA">
+    /// which end of the 1st curve to adjust true==start, false==end
+    /// </param>
+    /// <param name="curveB">2nd curve to adjust</param>
+    /// <param name="adjustStartCurveB">
+    /// which end of the 2nd curve to adjust true==start, false==end
+    /// </param>
+    /// <returns>true on success</returns>
+    public static bool MakeEndsMeet(Curve curveA, bool adjustStartCurveA, Curve curveB, bool adjustStartCurveB)
+    {
+      IntPtr pCurveA = curveA.NonConstPointer();
+      IntPtr pCurveB = curveB.NonConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoMakeCurveEndsMeet(pCurveA, adjustStartCurveA, pCurveB, adjustStartCurveB);
+    }
+
+    /// <summary>
     /// Find points at which to cut a pair of curves so that a fillet of given radius can be inserted.
     /// </summary>
     /// <param name="curve0">First curve to fillet.</param>
@@ -665,6 +684,19 @@ namespace Rhino.Geometry
         return rc.ToNonConstArray();
       }
       return new Curve[0];
+    }
+
+    /// <summary>
+    /// Create a curve by projecting an existing curve to a plane
+    /// </summary>
+    /// <param name="curve"></param>
+    /// <param name="plane"></param>
+    /// <returns>projected curve on success</returns>
+    public static Curve ProjectToPlane(Curve curve, Plane plane)
+    {
+      IntPtr pConstCurve = curve.ConstPointer();
+      IntPtr pNewCurve = UnsafeNativeMethods.RHC_RhinoProjectCurveToPlane(pConstCurve, ref plane);
+      return GeometryBase.CreateGeometryHelper(pNewCurve, null) as Curve;
     }
 
     /// <summary>
@@ -1098,6 +1130,11 @@ namespace Rhino.Geometry
     /// <param name="circle">On success, the Circle will be filled in.</param>
     /// <param name="tolerance">Tolerance to use when checking.</param>
     /// <returns>True if the curve could be converted into a Circle within tolerance.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_circlecenter.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_circlecenter.cs' lang='cs'/>
+    /// <code source='examples\py\ex_circlecenter.py' lang='py'/>
+    /// </example>
     public bool TryGetCircle(out Circle circle, double tolerance)
     {
       circle = new Circle();

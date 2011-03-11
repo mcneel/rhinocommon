@@ -70,6 +70,11 @@ namespace Rhino.Input.Custom
     /// attributes (open, closed, etc.). The default attribute filter
     /// permits selection of all types of geometry.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_circlecenter.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_circlecenter.cs' lang='cs'/>
+    /// <code source='examples\py\ex_circlecenter.py' lang='py'/>
+    /// </example>
     [CLSCompliant(false)]
     public GeometryAttributeFilter GeometryAttributeFilter
     {

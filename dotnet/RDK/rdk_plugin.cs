@@ -37,7 +37,12 @@ namespace Rhino.Render
 
         //SdkRender
         UnsafeNativeMethods.Rdk_SetSdkRenderCallback(Rhino.Render.RenderPipeline.m_ReturnBoolGeneralCallback);
-        
+
+        //CustomRenderMeshes
+        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_DeleteThis(Rhino.Render.CustomRenderMesh.Provider.m_DeleteThis);
+        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_WillBuild(Rhino.Render.CustomRenderMesh.Provider.m_WillBuild);
+        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_BBox(Rhino.Render.CustomRenderMesh.Provider.m_BBox);
+        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_Build(Rhino.Render.CustomRenderMesh.Provider.m_Build); 
       }
       else
       {
@@ -64,6 +69,12 @@ namespace Rhino.Render
 
         //SdkRender
         UnsafeNativeMethods.Rdk_SetSdkRenderCallback(null);
+
+        //CustomRenderMeshes
+        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_DeleteThis(null);
+        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_WillBuild(null);
+        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_BBox(null);
+        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_Build(null); 
       }
     }
 

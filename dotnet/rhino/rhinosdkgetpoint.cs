@@ -502,6 +502,11 @@ namespace Rhino.Input.Custom
     /// the cursor is not on the object.
     /// </param>
     /// <returns>true if constraint could be applied</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_insertknot.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_insertknot.cs' lang='cs'/>
+    /// <code source='examples\py\ex_insertknot.py' lang='py'/>
+    /// </example>
     public bool Constrain(Geometry.Curve curve, bool allowPickingPointOffObject)
     {
       if (null == curve)
@@ -774,6 +779,31 @@ namespace Rhino.Input.Custom
       return rc;
     }
 
+    /// <summary>
+    /// Use to determine is point was on a curve
+    /// </summary>
+    /// <param name="t">
+    /// If the point was on a curve, then the t is the curve
+    /// parameter for the point.  The point returned by Point()
+    /// is the same as curve.PointAt(t).
+    /// </param>
+    /// <returns></returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_insertknot.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_insertknot.cs' lang='cs'/>
+    /// <code source='examples\py\ex_insertknot.py' lang='py'/>
+    /// </example>
+    public Rhino.Geometry.Curve PointOnCurve(out double t)
+    {
+      t = 0;
+      Rhino.DocObjects.ObjRef objref = PointOnObject();
+      if (objref == null)
+        return null;
+      Curve rc = objref.CurveParameter(out t);
+      return rc;
+    }
+
+
   }
 
   public class GetPointDrawEventArgs : Display.DrawEventArgs
@@ -972,17 +1002,6 @@ namespace Rhino.Input.Custom
 //  //
 //  ON_3dPoint Point()  const; // returns 3d point in world coordinates
 
-//  // Description:
-//  //   Use to determine if point was on a curve.
-//  //
-//  // Parameters:
-//  //   t - [out] if the point was on a curve, then the *t is
-//  //        the curve parameter for the point.  The point
-//  //        returned by CRhinoGetPoint::Point() is the same as curve->PointAt(*t).
-//  //
-//  // Returns:
-//  //   pointer to a curve or NULL if the point was not on a curve.
-//  const ON_Curve* PointOnCurve(double* t) const;
 
 //  // Description:
 //  //   Use to determine if point was on an edge curve of a brep.

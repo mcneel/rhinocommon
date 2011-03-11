@@ -61,14 +61,17 @@ namespace examples_cs
       //Test(Examples.AddTruncatedCone, doc);
       //Test(Examples.AdvancedDisplay, doc);
       //Test(Examples.ArcLengthPoint, doc);
+      Test(Examples.BooleanDifference, doc);
       //Test(Examples.BlockInsertionPoint, doc);
       //Test(Examples.CommandLineOptions, doc);
       //Test(Examples.DivideByLengthPoints, doc);
       //Test(Examples.DetermineObjectLayer, doc);
       //Test(Examples.FindObjectsByName, doc);
+      Test(Examples.InsertKnot, doc);
       //Test(Examples.OrientOnSrf, doc);
       //Test(Examples.SelLayer, doc);
-      Test(Examples.UnrollSurface, doc);
+      //Test(Examples.UnrollSurface, doc);
+      //Test(Examples.UnrollSurface2, doc);
       return Rhino.Commands.Result.Success;
     }
   }

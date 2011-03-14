@@ -306,7 +306,7 @@ namespace Rhino.Geometry.Collections
   /// <summary>
   /// Provides access to the control points of a nurbs surface.
   /// </summary>
-  public sealed class NurbsSurfacePointList
+  public sealed class NurbsSurfacePointList : IEnumerable<ControlPoint>
   {
     private readonly NurbsSurface m_surface;
 
@@ -416,6 +416,97 @@ namespace Rhino.Geometry.Collections
       IntPtr ptr = m_surface.NonConstPointer();
       return UnsafeNativeMethods.ON_NurbsSurface_SetCV(ptr, u, v, ref cp.m_vertex);
     }
+
+    #region IEnumerable<Point3d> Members
+    IEnumerator<ControlPoint> IEnumerable<ControlPoint>.GetEnumerator()
+    {
+      return new NurbsSrfEnum(this);
+    }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return new NurbsSrfEnum(this);
+    }
+
+    private class NurbsSrfEnum : IEnumerator<ControlPoint>
+    {
+      #region members
+      readonly NurbsSurfacePointList m_surface_cv;
+      readonly int m_count_u = -1;
+      readonly int m_count_v = -1;
+      bool m_disposed; // = false; <- initialized by runtime
+      int position = -1;
+      #endregion
+
+      #region constructor
+      public NurbsSrfEnum(NurbsSurfacePointList surface_cv)
+      {
+        m_surface_cv = surface_cv;
+        m_count_u = surface_cv.CountU;
+        m_count_v = surface_cv.CountV;
+      }
+      #endregion
+
+      #region enumeration logic
+      int Count
+      {
+        get { return m_count_u*m_count_v; }
+      }
+
+      public bool MoveNext()
+      {
+        position++;
+        return (position < Count);
+      }
+      public void Reset()
+      {
+        position = -1;
+      }
+
+      public ControlPoint Current
+      {
+        get
+        {
+          try
+          {
+            int u = position / m_count_v;
+            int v = position % m_count_v;
+            return m_surface_cv.GetControlPoint(u, v);
+          }
+          catch (IndexOutOfRangeException)
+          {
+            throw new InvalidOperationException();
+          }
+        }
+      }
+      object IEnumerator.Current
+      {
+        get
+        {
+          try
+          {
+            int u = position / m_count_v;
+            int v = position % m_count_v;
+            return m_surface_cv.GetControlPoint(u, v);
+          }
+          catch (IndexOutOfRangeException)
+          {
+            throw new InvalidOperationException();
+          }
+        }
+      }
+      #endregion
+
+      #region IDisposable logic
+      public void Dispose()
+      {
+        if (m_disposed)
+          return;
+        m_disposed = true;
+        GC.SuppressFinalize(this);
+      }
+      #endregion
+    }
+    #endregion
   }
   /// <summary>
   /// Provides access to the knot vector of a nurbs surface.

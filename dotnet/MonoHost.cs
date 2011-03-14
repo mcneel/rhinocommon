@@ -203,9 +203,10 @@ namespace Rhino.Runtime
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         HostUtils.DebugString("Exception occured while trying to find type that is derived from PlugIn");
+        HostUtils.ExceptionReport(ex);
         type_index = -1;
       }
       if (type_index < 0)
@@ -214,7 +215,12 @@ namespace Rhino.Runtime
       HostUtils.DebugString("Found type derived from PlugIn  (" + plugin_type.ToString() + ")");
 
       object[] name = plugin_assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyTitleAttribute), false);
-      string plugin_name = ((System.Reflection.AssemblyTitleAttribute)name[0]).Title;
+      string plugin_name;
+      if( name!=null && name.Length>0 )
+        plugin_name = ((System.Reflection.AssemblyTitleAttribute)name[0]).Title;
+      else
+        plugin_name = plugin_assembly.GetName().Name;
+      
       string plugin_version = plugin_assembly.GetName().Version.ToString();
       HostUtils.DebugString("  name = {0}; version = {1}",plugin_name,plugin_version);
 

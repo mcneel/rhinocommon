@@ -139,9 +139,8 @@ namespace Rhino.Runtime
       }
       if (null == plugin_assembly)
         return (int)MonoLoadResult.error_unable_to_load;
-      HostUtils.DebugString("Assembly loaded for real");
+      HostUtils.DebugString("Assembly loaded for real... GetExportedTypes");
 
-      HostUtils.DebugString("Pre-GetExportedTypes");
       Type[] internal_types = null;
       try
       {
@@ -187,14 +186,6 @@ namespace Rhino.Runtime
         return (int)MonoLoadResult.error_unable_to_load;
 
       HostUtils.DebugString("{0} Exported Types", internal_types.Length);
-      for (int i = 0; i < internal_types.Length; i++)
-      {
-        Type t = internal_types[i];
-        if (t != null)
-        {
-          HostUtils.DebugString("{0} - {1}", i + 1, t);
-        }
-      }
 
       // walk through list of exported types and find a single class
       // that derives from PlugIn
@@ -212,10 +203,9 @@ namespace Rhino.Runtime
           }
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         HostUtils.DebugString("Exception occured while trying to find type that is derived from PlugIn");
-        HostUtils.ExceptionReport(ex);
         type_index = -1;
       }
       if (type_index < 0)
@@ -224,12 +214,7 @@ namespace Rhino.Runtime
       HostUtils.DebugString("Found type derived from PlugIn  (" + plugin_type.ToString() + ")");
 
       object[] name = plugin_assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyTitleAttribute), false);
-      string plugin_name;
-      if( name!=null && name.Length>0 )
-        plugin_name = ((System.Reflection.AssemblyTitleAttribute)name[0]).Title;
-      else
-        plugin_name = plugin_assembly.GetName().Name;
-      
+      string plugin_name = ((System.Reflection.AssemblyTitleAttribute)name[0]).Title;
       string plugin_version = plugin_assembly.GetName().Version.ToString();
       HostUtils.DebugString("  name = {0}; version = {1}",plugin_name,plugin_version);
 
@@ -244,7 +229,6 @@ namespace Rhino.Runtime
         const int idxPhone = 5;
         const int idxUpdateUrl = 6;
         const int idxWebsite = 7;
-        HostUtils.DebugString("{0} description attributes", descriptionAtts.Length);
 
         for (int i = 0; i < descriptionAtts.Length; i++)
         {

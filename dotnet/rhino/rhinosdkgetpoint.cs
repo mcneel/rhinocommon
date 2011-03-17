@@ -65,9 +65,6 @@ namespace Rhino.Input.Custom
       UnsafeNativeMethods.CRhinoGetPoint_ConstrainDistanceFromBasePoint(ptr, distance);
     }
 
-    // [skipping]
-    // BOOL GetPlanarConstraint( 
-
     /// <summary>
     /// Color used by CRhinoGetPoint::DynamicDraw to draw the current point and
     /// the line from the base point to the current point.
@@ -642,23 +639,12 @@ namespace Rhino.Input.Custom
         return;
       try
       {
+        GetPointMouseEventArgs e = new GetPointMouseEventArgs(pRhinoViewport, flags, point, viewWndPoint);
         bool callMove = (move != 0);
         if (callMove)
-        {
-          if (m_active_gp.MouseMove != null)
-          {
-            GetPointMouseEventArgs e = new GetPointMouseEventArgs(pRhinoViewport, flags, point, viewWndPoint);
-            m_active_gp.MouseMove(m_active_gp, e);
-          }
-        }
+          m_active_gp.OnMouseMove(e);
         else
-        {
-          if (m_active_gp.MouseDown != null)
-          {
-            GetPointMouseEventArgs e = new GetPointMouseEventArgs(pRhinoViewport, flags, point, viewWndPoint);
-            m_active_gp.MouseDown(m_active_gp, e);
-          }
-        }
+          m_active_gp.OnMouseDown(e);
       }
       catch (Exception ex)
       {
@@ -670,20 +656,32 @@ namespace Rhino.Input.Custom
       if (null == m_active_gp)
         return;
 
-      if (m_active_gp.DynamicDraw != null)
+      try
       {
-        try
-        {
-          GetPointDrawEventArgs e = new GetPointDrawEventArgs(pDisplayPipeline, point);
-          m_active_gp.DynamicDraw(m_active_gp, e);
-        }
-        catch (Exception ex)
-        {
-          Runtime.HostUtils.ExceptionReport(ex);
-        }
+        GetPointDrawEventArgs e = new GetPointDrawEventArgs(pDisplayPipeline, point);
+        m_active_gp.OnDynamicDraw(e);
+      }
+      catch (Exception ex)
+      {
+        Runtime.HostUtils.ExceptionReport(ex);
       }
     }
 
+    private static void GetPointPostDrawObjectsCallback(IntPtr pPipeline, IntPtr pConduit)
+    {
+      if (null == m_active_gp)
+        return;
+
+      try
+      {
+        Rhino.Display.DrawEventArgs e = new DrawEventArgs(pPipeline);
+        m_active_gp.OnPostDrawObjects(e);
+      }
+      catch (Exception ex)
+      {
+        Runtime.HostUtils.ExceptionReport(ex);
+      }
+    }
     /// <summary>
     /// Called every time the mouse moves. MouseMove is called once per mouse move and is called
     /// BEFORE any calls to OnDynamicDraw. If you are doing anything that takes a long time,
@@ -692,12 +690,28 @@ namespace Rhino.Input.Custom
     /// </summary>
     public event EventHandler<GetPointMouseEventArgs> MouseMove;
 
+    /// <summary>Default calls the MouseMove event</summary>
+    /// <param name="e"></param>
+    protected virtual void OnMouseMove(GetPointMouseEventArgs e)
+    {
+      if (MouseMove != null)
+        MouseMove(this, e);
+    }
+
     /// <summary>
     /// Called during Get2dRectangle, Get2dLine, and GetPoint(..,true) when the mouse down event for
     /// the initial point occurs. This function is not called during ordinary point getting because
     /// the mouse down event terminates an ordinary point get and returns a GetResult.Point result.
     /// </summary>
     public event EventHandler<GetPointMouseEventArgs> MouseDown;
+
+    /// <summary>Default calls the MouseDown event</summary>
+    /// <param name="e"></param>
+    protected virtual void OnMouseDown(GetPointMouseEventArgs e)
+    {
+      if (MouseDown != null)
+        MouseDown(this, e);
+    }
 
     /// <summary>
     /// Event to use if you want to dynamically draw things as the mouse/digitizer moves.
@@ -708,6 +722,58 @@ namespace Rhino.Input.Custom
     /// InterruptMouseMove() to see if you should stop.
     /// </summary>
     public event EventHandler<GetPointDrawEventArgs> DynamicDraw;
+
+    /// <summary>Default calls the DynamicDraw event</summary>
+    /// <param name="e"></param>
+    protected virtual void OnDynamicDraw(GetPointDrawEventArgs e)
+    {
+      if (DynamicDraw != null)
+        DynamicDraw(this, e);
+    }
+
+    /// <summary>
+    /// In the "RARE" case that you need to draw some depth buffered geometry during
+    /// a Get() operation, setting this value to true will force entire frames to be redrawn
+    /// while the user moves the mouse. This allows DisplayPipeline events to be triggered
+    /// as well as OnPostDrawObjects
+    /// NOTE!! Setting this value to true comes with a significant performance penalty because the
+    /// scene needs to be fully regenerated every frame where the standard
+    /// DynamicDraw event draws temporary decorations (geometry) on top of a static scene
+    /// </summary>
+    public bool FullFrameRedrawDuringGet
+    {
+      get
+      {
+        return m_bFullFrameRedraw;
+      }
+      set
+      {
+        m_bFullFrameRedraw = value;
+      }
+    }
+    bool m_bFullFrameRedraw;
+
+    /// <summary>
+    /// Same as the DisplayPipeline.PostDrawObjects, but only works during the 
+    /// operation of the Get() function.
+    /// NOTE: You must set FullFrameRedrawDuringGet to true in order for this
+    /// event to be called
+    /// </summary>
+    public event EventHandler<Rhino.Display.DrawEventArgs> PostDrawObjects;
+
+    /// <summary>
+    /// In the "rare" case that you need to draw some depth buffered geometry during
+    /// a GetPoint operation, override the OnPostDrawObjects function.
+    /// NOTE!! Overriding this function comes with a significant performance penalty because the
+    /// scene needs to be fully regenerated every frame where the standard
+    /// DynamicDraw event draws temporary decorations (geometry) on top of a static scene
+    /// </summary>
+    /// <param name="e"></param>
+    protected virtual void OnPostDrawObjects(Rhino.Display.DrawEventArgs e)
+    {
+      if (PostDrawObjects != null)
+        PostDrawObjects(this, e);
+    }
 
     /// <summary>
     /// After setting up options and so on, call GetPoint::Get to get a 3d point
@@ -723,27 +789,38 @@ namespace Rhino.Input.Custom
       GetPoint old = m_active_gp;
       m_active_gp = this;
 
-      MouseCallback mouseCB = null;
-      DrawCallback drawCB = null;
+      MouseCallback mouseCB = CustomMouseCallback;
+      DrawCallback drawCB = CustomDrawCallback;
+      Rhino.Display.DisplayPipeline.ConduitCallback postDrawCB = null;
+      if (FullFrameRedrawDuringGet)
+      {
+        postDrawCB = GetPointPostDrawObjectsCallback;
+      }
+      else
+      {
+        Type baseType = typeof(GetPoint);
+        try
+        {
+          System.Reflection.MethodInfo mi = this.GetType().GetMethod("OnPostDrawObjects", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+          if (mi.DeclaringType != baseType)
+            postDrawCB = GetPointPostDrawObjectsCallback;
+        }
+        catch (Exception)
+        {
+          //mask
+        }
 
-      // Use events to hook up mouse and drawing callbacks instead of virtual functions.
-      // Only hook up our callbacks if these events exist
-      if (MouseDown != null || MouseMove != null)
-        mouseCB = CustomMouseCallback;
-
-      if (DynamicDraw != null)
-        drawCB = CustomDrawCallback;
-
+      }
       IntPtr ptr = NonConstPointer();
-      uint rc = UnsafeNativeMethods.CRhinoGetPoint_GetPoint(ptr, onMouseUp, mouseCB, drawCB);
+      uint rc = UnsafeNativeMethods.CRhinoGetPoint_GetPoint(ptr, onMouseUp, mouseCB, drawCB, postDrawCB);
 
       m_active_gp = old;
 
       return (GetResult)rc;
-
     }
     /// <summary>
-    /// After setting up options and so on, call GetPoint::Get to get a 3d point
+    /// After setting up options and so on, call GetPoint::Get to get a 3d point. The
+    /// point is retrieved when the mouse goes down.
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addline.vb' lang='vbnet'/>
@@ -755,11 +832,6 @@ namespace Rhino.Input.Custom
     {
       return Get(false);
     }
-
-    //[skipping]
-    //  HCURSOR SetGetPointCursor( HCURSOR getpoint_cursor );
-    //  HCURSOR CurrentCursor() const;
-    //  HCURSOR GetPointCursor() const;
 
     /// <summary>
     /// Call this function to see if the point was on an object. If the point was
@@ -989,19 +1061,6 @@ namespace Rhino.Input.Custom
 //              int pen_style = PS_SOLID,
 //              bool bClampToView = true
 //              );
-
-//  //////////////////////////////////////////////////////////////////
-//  //
-//  // STEP 7: Use result code returned by GetPoint() to determine what
-//  //         function to call to get the input.
-//  //
-//  //         result               function
-//  //           CRhinoGet::option    CRhinoGet::Option()
-//  //           CRhinoGet::number    CRhinoGet::Number()
-//  //           CRhinoGet::point     CRhinoPoint::Point()
-//  //
-//  ON_3dPoint Point()  const; // returns 3d point in world coordinates
-
 
 //  // Description:
 //  //   Use to determine if point was on an edge curve of a brep.

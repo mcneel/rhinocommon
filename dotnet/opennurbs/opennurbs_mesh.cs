@@ -2003,7 +2003,6 @@ namespace Rhino.Geometry.Collections
     /// vertex, then the first edge will be a boundary or nonmanifold edge.
     /// </summary>
     /// <returns>true on success</returns>
-    /// <seealso cref="ConnectedTopologyVertices(int)"/>
     public bool SortEdges()
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
@@ -2018,7 +2017,6 @@ namespace Rhino.Geometry.Collections
     /// vertex, then the first edge will be a boundary or nonmanifold edge.
     /// </summary>
     /// <returns>true on success</returns>
-    /// <seealso cref="ConnectedTopologyVertices(int)"/>
     public bool SortEdges(int topologyVertexIndex)
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();

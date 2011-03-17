@@ -150,7 +150,7 @@ namespace Rhino.Runtime
         bool rc = true;
         try
         {
-          int sdkversion = Rhino.RhinoApp.SdkVersion;
+          return Rhino.RhinoApp.SdkVersion>0;
         }
         catch (Exception)
         {

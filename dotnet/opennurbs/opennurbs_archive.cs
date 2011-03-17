@@ -755,6 +755,7 @@ namespace Rhino.Collections
     public bool SetItem(string key, string val) { return SetItem(key, ItemType.itString, val); }
     public bool SetItem(string key, IEnumerable<bool> val) { return SetItem(key, ItemType.itArrayBool, val); }
     public bool SetItem(string key, IEnumerable<byte> val) { return SetItem(key, ItemType.itArrayByte, val); }
+    [CLSCompliant(false)]
     public bool SetItem(string key, IEnumerable<sbyte> val) { return SetItem(key, ItemType.itArraySByte, val); }
     public bool SetItem(string key, IEnumerable<short> val) { return SetItem(key, ItemType.itArrayShort, val); }
     public bool SetItem(string key, IEnumerable<int> val) { return SetItem(key, ItemType.itArrayInt32, val); }

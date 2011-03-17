@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoCommon", "RhinoCommon.csproj", "{ED38373E-290C-4BDE-ACBA-1601484E582A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "monostart", "monostart\monostart.csproj", "{72BD7A1E-4C9E-4448-BAC2-4A17DAD65951}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,6 +14,16 @@ Global
 		Mono|Any CPU = Mono|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{72BD7A1E-4C9E-4448-BAC2-4A17DAD65951}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72BD7A1E-4C9E-4448-BAC2-4A17DAD65951}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72BD7A1E-4C9E-4448-BAC2-4A17DAD65951}.GH_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72BD7A1E-4C9E-4448-BAC2-4A17DAD65951}.GH_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72BD7A1E-4C9E-4448-BAC2-4A17DAD65951}.GH_Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{72BD7A1E-4C9E-4448-BAC2-4A17DAD65951}.GH_Release|Any CPU.Build.0 = Debug|Any CPU
+		{72BD7A1E-4C9E-4448-BAC2-4A17DAD65951}.Mono|Any CPU.ActiveCfg = Release|Any CPU
+		{72BD7A1E-4C9E-4448-BAC2-4A17DAD65951}.Mono|Any CPU.Build.0 = Release|Any CPU
+		{72BD7A1E-4C9E-4448-BAC2-4A17DAD65951}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72BD7A1E-4C9E-4448-BAC2-4A17DAD65951}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ED38373E-290C-4BDE-ACBA-1601484E582A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ED38373E-290C-4BDE-ACBA-1601484E582A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED38373E-290C-4BDE-ACBA-1601484E582A}.GH_Debug|Any CPU.ActiveCfg = GH_Debug|Any CPU

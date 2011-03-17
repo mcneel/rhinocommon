@@ -53,6 +53,129 @@ namespace Rhino.Render
       return pContent!=IntPtr.Zero ? RenderContent.FromPointer(pContent) : null;
     }
 
+    #region events
+
+    public class ContentListEventArgs : EventArgs
+    {
+      readonly ContentList m_content_list;
+      internal ContentListEventArgs(RenderContent.Kinds kind, RhinoDoc doc) { m_content_list = new Rhino.Render.ContentList(kind, doc); }
+      public ContentList ContentList { get { return m_content_list; } }
+    }
+
+    internal delegate void ContentListClearingCallback(int kind, int docId);
+    internal delegate void ContentListClearedCallback(int kind, int docId);
+    internal delegate void ContentListLoadedCallback(int kind, int docId);
+
+    private static ContentListClearingCallback m_OnContentListClearing;
+    private static void OnContentListClearing(int kind, int docId)
+    {
+      if (m_content_list_clearing_event != null)
+      {
+        try { m_content_list_clearing_event(null, new ContentListEventArgs((RenderContent.Kinds)kind, RhinoDoc.FromId(docId))); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<ContentListEventArgs> m_content_list_clearing_event;
+
+    private static ContentListClearedCallback m_OnContentListCleared;
+    private static void OnContentListCleared(int kind, int docId)
+    {
+      if (m_content_list_cleared_event != null)
+      {
+        try { m_content_list_cleared_event(null, new ContentListEventArgs((RenderContent.Kinds)kind, RhinoDoc.FromId(docId))); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<ContentListEventArgs> m_content_list_cleared_event;
+
+    private static ContentListLoadedCallback m_OnContentListLoaded;
+    private static void OnContentListLoaded(int kind, int docId)
+    {
+      if (m_content_list_loaded_event != null)
+      {
+        try { m_content_list_loaded_event(null, new ContentListEventArgs((RenderContent.Kinds)kind, RhinoDoc.FromId(docId))); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<ContentListEventArgs> m_content_list_loaded_event;
+
+    /// <summary>
+    /// Used to monitor content lists being cleared.
+    /// </summary>
+    public static event EventHandler<ContentListEventArgs> ContentListClearing
+    {
+      add
+      {
+        if (m_content_list_clearing_event == null)
+        {
+          m_OnContentListClearing = OnContentListClearing;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearingEventCallback(m_OnContentListClearing, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_content_list_clearing_event += value;
+      }
+      remove
+      {
+        m_content_list_clearing_event -= value;
+        if (m_content_list_clearing_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearingEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnContentListClearing = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Used to monitor content lists being cleared.
+    /// </summary>
+    public static event EventHandler<ContentListEventArgs> ContentListCleared
+    {
+      add
+      {
+        if (m_content_list_cleared_event == null)
+        {
+          m_OnContentListCleared = OnContentListCleared;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearedEventCallback(m_OnContentListCleared, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_content_list_cleared_event += value;
+      }
+      remove
+      {
+        m_content_list_cleared_event -= value;
+        if (m_content_list_cleared_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnContentListCleared = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Used to monitor content lists being loading.
+    /// </summary>
+    public static event EventHandler<ContentListEventArgs> ContentListLoading
+    {
+      add
+      {
+        if (m_content_list_loaded_event == null)
+        {
+          m_OnContentListLoaded = OnContentListLoaded;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListLoadedEventCallback(m_OnContentListLoaded, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_content_list_loaded_event += value;
+      }
+      remove
+      {
+        m_content_list_loaded_event -= value;
+        if (m_content_list_loaded_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListLoadedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnContentListLoaded = null;
+        }
+      }
+    }
+
+    #endregion
+
     #region IEnumerator implemenation
     private IntPtr m_pIterator = IntPtr.Zero;
     private RenderContent m_content = null;

@@ -4402,9 +4402,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawShadedMesh(IntPtr pPipeline, IntPtr pMesh, IntPtr pMaterial);
 
-  //void CRhinoDisplayPipeline_DrawMeshFalseColors(CRhinoDisplayPipeline* pPipeline, const ON_Mesh* pMesh)
+  //void CRhinoDisplayPipeline_DrawMeshFalseColors(CRhinoDisplayPipeline* pPipeline, const ON_Mesh* pMesh, bool useLights)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhinoDisplayPipeline_DrawMeshFalseColors(IntPtr pPipeline, IntPtr pMesh);
+  internal static extern void CRhinoDisplayPipeline_DrawMeshFalseColors(IntPtr pPipeline, IntPtr pMesh, [MarshalAs(UnmanagedType.U1)]bool useLights);
 
   //void CRhinoDisplayPipeline_DrawPointCloud(CRhinoDisplayPipeline* pPipeline, const ON_PointCloud* pCloud, int size, int argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

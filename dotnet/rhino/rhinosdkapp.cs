@@ -655,5 +655,243 @@ namespace Rhino
       }
     }
     #endregion
+
+#if USING_RDK
+    #region RDK events
+
+    private static RhCmnEmptyCallback m_OnNewRdkDocument;
+    private static void OnNewRdkDocument()
+    {
+      if (m_new_rdk_document != null)
+      {
+        try                     { m_new_rdk_document(null, System.EventArgs.Empty); }
+        catch (Exception ex)    { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler m_new_rdk_document;
+
+    /// <summary>
+    /// Monitors when RDK document information is rebuilt
+    /// </summary>
+    public static event EventHandler RdkNewDocument
+    {
+      add
+      {
+        if (m_new_rdk_document == null)
+        {
+          m_OnNewRdkDocument = OnNewRdkDocument;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetNewRdkDocumentEventCallback(m_OnNewRdkDocument, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_new_rdk_document += value;
+      }
+      remove
+      {
+        m_new_rdk_document -= value;
+        if (m_new_rdk_document == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetNewRdkDocumentEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnNewRdkDocument = null;
+        }
+      }
+    }
+
+
+
+    private static RhCmnEmptyCallback m_OnRdkGlobalSettingsChanged;
+    private static void OnRdkGlobalSettingsChanged()
+    {
+      if (m_rdk_global_settings_changed != null)
+      {
+        try { m_rdk_global_settings_changed(null, System.EventArgs.Empty); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler m_rdk_global_settings_changed;
+
+    /// <summary>
+    /// Monitors when RDK global settings are modified
+    /// </summary>
+    public static event EventHandler RdkGlobalSettingsChanged
+    {
+      add
+      {
+        if (m_rdk_global_settings_changed == null)
+        {
+          m_OnRdkGlobalSettingsChanged = OnRdkGlobalSettingsChanged;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetGlobalSettingsChangedEventCallback(m_OnRdkGlobalSettingsChanged, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_rdk_global_settings_changed += value;
+      }
+      remove
+      {
+        m_rdk_global_settings_changed -= value;
+        if (m_rdk_global_settings_changed == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetGlobalSettingsChangedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnRdkGlobalSettingsChanged = null;
+        }
+      }
+    }
+    
+
+    private static RhCmnEmptyCallback m_OnRdkUpdateAllPreviews;
+    private static void OnRdkUpdateAllPreviews()
+    {
+      if (m_rdk_update_all_previews != null)
+      {
+        try { m_rdk_update_all_previews(null, System.EventArgs.Empty); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler m_rdk_update_all_previews;
+
+    /// <summary>
+    /// Monitors when RDK thumbnails are updated
+    /// </summary>
+    public static event EventHandler RdkUpdateAllPreviews
+    {
+      add
+      {
+        if (m_rdk_update_all_previews == null)
+        {
+          m_OnRdkUpdateAllPreviews = OnRdkUpdateAllPreviews;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetUpdateAllPreviewsEventCallback(m_OnRdkUpdateAllPreviews, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_rdk_update_all_previews += value;
+      }
+      remove
+      {
+        m_rdk_update_all_previews -= value;
+        if (m_rdk_update_all_previews == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetUpdateAllPreviewsEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnRdkUpdateAllPreviews = null;
+        }
+      }
+    }
+    
+
+    private static RhCmnEmptyCallback m_OnCacheImageChanged;
+    private static void OnRdkCacheImageChanged()
+    {
+      if (m_rdk_cache_image_changed != null)
+      {
+        try { m_rdk_cache_image_changed(null, System.EventArgs.Empty); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler m_rdk_cache_image_changed;
+
+    /// <summary>
+    /// Monitors when the RDK thumbnail cache images are changed.
+    /// </summary>
+    public static event EventHandler RdkCacheImageChanged
+    {
+      add
+      {
+        if (m_rdk_cache_image_changed == null)
+        {
+          m_OnCacheImageChanged = OnRdkCacheImageChanged;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetCacheImageChangedEventCallback(m_OnCacheImageChanged, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_rdk_cache_image_changed += value;
+      }
+      remove
+      {
+        m_rdk_cache_image_changed -= value;
+        if (m_rdk_cache_image_changed == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetCacheImageChangedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnCacheImageChanged = null;
+        }
+      }
+    }
+
+    private static RhCmnEmptyCallback m_OnRendererChanged;
+    private static void OnRendererChanged()
+    {
+      if (m_renderer_changed != null)
+      {
+        try { m_renderer_changed(null, System.EventArgs.Empty); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler m_renderer_changed;
+
+    /// <summary>
+    /// Monitors when Rhino's current renderer changes.
+    /// </summary>
+    public static event EventHandler RendererChanged
+    {
+      add
+      {
+        if (m_renderer_changed == null)
+        {
+          m_OnRendererChanged = OnRendererChanged;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetRendererChangedEventCallback(m_OnRendererChanged, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_renderer_changed += value;
+      }
+      remove
+      {
+        m_renderer_changed -= value;
+        if (m_renderer_changed == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetRendererChangedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnRendererChanged = null;
+        }
+      }
+    }
+
+
+
+    internal delegate void ClientPlugInUnloadingCallback(Guid plugIn);
+    private static ClientPlugInUnloadingCallback m_OnClientPlugInUnloading;
+    private static void OnClientPlugInUnloading(Guid plugIn)
+    {
+      if (m_client_plugin_unloading != null)
+      {
+        try { m_renderer_changed(null, System.EventArgs.Empty); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler m_client_plugin_unloading;
+
+    /// <summary>
+    /// Monitors when RDK client plugins are unloaded
+    /// </summary>
+    public static event EventHandler RdkPlugInUnloading
+    {
+      add
+      {
+        if (m_client_plugin_unloading == null)
+        {
+          m_OnClientPlugInUnloading = OnClientPlugInUnloading;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetClientPlugInUnloadingEventCallback(m_OnClientPlugInUnloading, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_renderer_changed += value;
+      }
+      remove
+      {
+        m_client_plugin_unloading -= value;
+        if (m_client_plugin_unloading == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetClientPlugInUnloadingEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnClientPlugInUnloading = null;
+        }
+      }
+    }
+
+
+
+
+
+
+
+
+
+
+    #endregion
+#endif
   }
 }

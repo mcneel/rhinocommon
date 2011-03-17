@@ -743,6 +743,43 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region rdk_eventsink.cpp
+  //void CRdkCmnEventWatcher_LogState( const RHMONO_STRING* _str )
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRdkCmnEventWatcher_LogState([MarshalAs(UnmanagedType.LPWStr)]string _str);
+
+  //void CRdkCmnEventWatcher_SetContentAddedEventCallback(CONTENTEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetContentRenamedEventCallback(CONTENTEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetContentDeletingEventCallback(CONTENTEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetContentReplacingEventCallback(CONTENTEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetContentReplacedEventCallback(CONTENTEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetContentChangedEventCallback(CONTENTCHANGEDEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetContentUpdatePreviewEventCallback(CONTENTEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetContentListClearingEventCallback(CONTENTLISTEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetContentListClearedEventCallback(CONTENTLISTEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetContentListLoadedEventCallback(CONTENTLISTEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+  #endregion
+
+
   #region rdk_groundplane.cpp
   //bool Rdk_GroundPlane_Enabled()
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]

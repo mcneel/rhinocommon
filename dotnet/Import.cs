@@ -175,7 +175,8 @@ internal partial class UnsafeNativeMethods
   internal static extern uint CRhinoGetPoint_GetPoint(IntPtr ptr,
                                                       [MarshalAs(UnmanagedType.U1)]bool onMouseUp,
                                                       Rhino.Input.Custom.GetPoint.MouseCallback mouseCB,
-                                                      Rhino.Input.Custom.GetPoint.DrawCallback drawCB);
+                                                      Rhino.Input.Custom.GetPoint.DrawCallback drawCB,
+                                                      Rhino.Display.DisplayPipeline.ConduitCallback postDrawCB);
 
   //bool ON_Arc_Copy(ON_Arc* pRdnArc, ON_Arc* pRhCmnArc, bool rdn_to_rhc)
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
@@ -249,5 +250,82 @@ internal partial class UnsafeNativeMethods
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetCallback_CRMProvider_Build(Rhino.Render.CustomRenderMesh.Provider.CRMProviderBuildCallback callback_func);
+
+
+  //Events
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetContentAddedEventCallback(Rhino.Render.RenderContent.ContentAddedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetContentRenamedEventCallback(Rhino.Render.RenderContent.ContentRenamedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+  
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetContentDeletingEventCallback(Rhino.Render.RenderContent.ContentDeletingCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetContentReplacingEventCallback(Rhino.Render.RenderContent.ContentReplacingCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetContentReplacedEventCallback(Rhino.Render.RenderContent.ContentReplacedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetContentChangedEventCallback(Rhino.Render.RenderContent.ContentChangedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetContentUpdatePreviewEventCallback(Rhino.Render.RenderContent.ContentUpdatePreviewCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetContentCurrencyChangedEventCallback(Rhino.Render.RenderContent.CurrentContentChangedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetContentListClearingEventCallback(Rhino.Render.ContentList.ContentListClearingCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetContentListClearedEventCallback(Rhino.Render.ContentList.ContentListClearedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetContentListLoadedEventCallback(Rhino.Render.ContentList.ContentListLoadedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetNewRdkDocumentEventCallback(Rhino.RhinoApp.RhCmnEmptyCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetGlobalSettingsChangedEventCallback(Rhino.RhinoApp.RhCmnEmptyCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetUpdateAllPreviewsEventCallback(Rhino.RhinoApp.RhCmnEmptyCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetCacheImageChangedEventCallback(Rhino.RhinoApp.RhCmnEmptyCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetRendererChangedEventCallback(Rhino.RhinoApp.RhCmnEmptyCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetCustomRenderMeshesChangedEventCallback(Rhino.Render.CustomRenderMesh.Manager.CRMManagerEmptyCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetFactoryAddedEventCallback(Rhino.Render.RenderContent.ContentTypeAddedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetFactoryDeletingEventCallback(Rhino.Render.RenderContent.ContentTypeDeletingCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetFactoryDeletedEventCallback(Rhino.Render.RenderContent.ContentTypeDeletedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetClientPlugInUnloadingEventCallback(Rhino.RhinoApp.ClientPlugInUnloadingCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetDocumentSettingsChangedEventCallback(Rhino.RhinoDoc.RdkDocumentSettingsChangedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
 #endif
 }

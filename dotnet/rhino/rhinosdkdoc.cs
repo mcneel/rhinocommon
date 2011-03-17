@@ -1341,6 +1341,93 @@ namespace Rhino
     }
 
     #endregion
+
+#if USING_RDK
+    #region rdk events
+
+    /// <summary>
+    /// Bit flags for RdkDocumentSettingsChangedArgs flags parameter
+    /// </summary>
+	  public enum DocSettingsChangedFlags
+	  {
+		  Rendering         = 0x0001, // Rendering settings changed (see enum 2 below).
+		  SafeFrame         = 0x0002, // Safe frame settings changed.
+		  DocumentSun       = 0x0004, // Document sun settings changed.
+		  PostEffects       = 0x0008, // Post effects settings changed.
+		  GroundPlane       = 0x0010, // Ground plane settings changed.
+		  ContentFilter     = 0x0020, // Content filter (excluded render engines) changed.
+		  CustomRenderMesh  = 0x0040, // Custom render mesh settings changed.
+		  Unspecified       = 0x8000, // Unspecified settings changed. For future use.
+		  All               = 0xFFFF, // All RDK document settings changed.
+	  };
+
+	  /// <summary>
+	  /// Values for RdkDocumentSettingsChangedArgs RenderingInfo parameter when Flags is 'Rendering'
+	  /// </summary>
+	  public enum DocSettingsChangedRenderingInfo
+	  {
+		  SaveSupportFiles    = 1, // Save support files in 3dm file checkbox changed.
+		  Dithering           = 2, // Dithering method changed.
+		  Gamma               = 3, // Gamma value changed.
+		  UseLinearWorkflow   = 4, // Use linear workflow checkbox changed.
+		  ToneMapping         = 5, // Tone mapping method changed.
+		  ToneMapperParams    = 6, // Tone mapper parameter(s) changed.
+	  };
+
+    public class RdkDocumentSettingsChangedArgs : EventArgs
+    {
+      readonly DocSettingsChangedFlags m_flags;
+      readonly DocSettingsChangedRenderingInfo m_context;
+      internal RdkDocumentSettingsChangedArgs(DocSettingsChangedFlags flags, DocSettingsChangedRenderingInfo context) 
+      {
+        m_flags = flags;
+        m_context = context; 
+      }
+      public DocSettingsChangedFlags         Flags { get { return m_flags; } }
+      public DocSettingsChangedRenderingInfo RenderingInfo { get { return m_context; } }
+    }
+
+    internal delegate void RdkDocumentSettingsChangedCallback(int flags, int context);
+
+    private static RdkDocumentSettingsChangedCallback m_OnRdkDocumentSettingsChanged;
+    private static void OnRdkDocumentSettingsChanged(int flags, int context)
+    {
+      if (m_rdk_doc_settings_changed_event != null)
+      {
+        try { m_rdk_doc_settings_changed_event(null, new RdkDocumentSettingsChangedArgs((DocSettingsChangedFlags)flags, (DocSettingsChangedRenderingInfo)context)); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<RdkDocumentSettingsChangedArgs> m_rdk_doc_settings_changed_event;
+
+
+    /// <summary>
+    /// Called when RDK document settings are changed
+    /// </summary>
+    public static event EventHandler<RdkDocumentSettingsChangedArgs> RdkSettingsChanged
+    {
+      add
+      {
+        if (m_rdk_doc_settings_changed_event == null)
+        {
+          m_OnRdkDocumentSettingsChanged = OnRdkDocumentSettingsChanged;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetDocumentSettingsChangedEventCallback(m_OnRdkDocumentSettingsChanged, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_rdk_doc_settings_changed_event += value;
+      }
+      remove
+      {
+        m_rdk_doc_settings_changed_event -= value;
+        if (m_rdk_doc_settings_changed_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetDocumentSettingsChangedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnRdkDocumentSettingsChanged = null;
+        }
+      }
+    }
+
+    #endregion
+#endif
   }
 
   #region event args

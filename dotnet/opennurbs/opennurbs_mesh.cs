@@ -3130,6 +3130,14 @@ namespace Rhino.Geometry.Collections
       IntPtr ptr = m_mesh.NonConstPointer();
       return UnsafeNativeMethods.ON_Mesh_SetColor(ptr, index, color.ToArgb());
     }
+
+    public bool SetColor(MeshFace face, Color color)
+    {
+      return SetColor(face.A, color) &&
+        SetColor(face.B, color) &&
+        SetColor(face.C, color) &&
+        SetColor(face.D, color);
+    }
     #endregion
 
     #region methods

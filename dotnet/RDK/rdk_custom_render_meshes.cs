@@ -112,6 +112,7 @@ namespace Rhino.Render.CustomRenderMesh
       if (pMesh != IntPtr.Zero)
       {
         Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh(pMesh, null);
+        mesh.DoNotDestructOnDispose();
         return mesh;
       }
       return null;
@@ -419,6 +420,49 @@ namespace Rhino.Render.CustomRenderMesh
     {
       return UnsafeNativeMethods.Rdk_CRMManager_BuildCustomMeshes(vp.ConstPointer(), objMeshes.NonConstPointer(), requestingPlugIn, (int)meshType);
     }
+
+    #region events
+
+    internal delegate void CRMManagerEmptyCallback();
+
+    private static CRMManagerEmptyCallback m_OnCustomRenderMeshesChanged;
+    private static void OnCustomRenderMeshesChanged()
+    {
+      if (m_custom_render_meshes_changed != null)
+      {
+        try { m_custom_render_meshes_changed(null, System.EventArgs.Empty); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler m_custom_render_meshes_changed;
+
+    /// <summary>
+    /// Monitors when custom render meshes are changed
+    /// </summary>
+    public static event EventHandler CustomRenderMeshesChanged
+    {
+      add
+      {
+        if (m_custom_render_meshes_changed == null)
+        {
+          m_OnCustomRenderMeshesChanged = OnCustomRenderMeshesChanged;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetCustomRenderMeshesChangedEventCallback(m_OnCustomRenderMeshesChanged, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_custom_render_meshes_changed += value;
+      }
+      remove
+      {
+        m_custom_render_meshes_changed -= value;
+        if (m_custom_render_meshes_changed == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetCustomRenderMeshesChangedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnCustomRenderMeshesChanged = null;
+        }
+      }
+    }
+
+    #endregion
+
   }
 
   public abstract class Provider

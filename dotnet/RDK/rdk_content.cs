@@ -862,6 +862,471 @@ namespace Rhino.Render
 
     #endregion
 
+
+
+    #region events
+
+    public class ContentEventArgs : EventArgs
+    {
+      readonly RenderContent m_content;
+      internal ContentEventArgs(RenderContent content) { m_content = content; }
+      public RenderContent Content { get { return m_content; } }
+    }
+
+    public class ContentChangedEventArgs : ContentEventArgs
+    {
+      internal ContentChangedEventArgs(RenderContent content, RenderContent.ChangeContexts cc)
+        : base(content)
+      { m_cc = cc; }
+
+      readonly RenderContent.ChangeContexts m_cc;
+      public RenderContent.ChangeContexts ChangeContext { get { return m_cc; } }
+    }
+
+    public class ContentTypeEventArgs : EventArgs
+    {
+      readonly Guid m_content_type;
+      internal ContentTypeEventArgs(Guid type) { m_content_type = type; }
+      public Guid Content { get { return m_content_type; } }
+    }
+
+    public class ContentKindEventArgs : EventArgs
+    {
+      readonly Kinds m_kind;
+      internal ContentKindEventArgs(Kinds kind) { m_kind = kind; }
+      public Kinds Content { get { return m_kind; } }
+    }
+
+    public class CurrentContentChangedEventArgs : ContentEventArgs
+    {
+      internal CurrentContentChangedEventArgs(RenderContent content, RenderContent.Kinds kind)
+        : base(content)
+      { m_kind = kind; }
+
+      readonly RenderContent.Kinds m_kind;
+      public RenderContent.Kinds Kind { get { return m_kind; } }
+    }
+
+    internal delegate void ContentAddedCallback(IntPtr pContent);
+    internal delegate void ContentRenamedCallback(IntPtr pContent);
+    internal delegate void ContentDeletingCallback(IntPtr pContent);
+    internal delegate void ContentReplacingCallback(IntPtr pContent);
+    internal delegate void ContentReplacedCallback(IntPtr pContent);
+    internal delegate void ContentChangedCallback(IntPtr pContent, int changeContext);
+    internal delegate void ContentUpdatePreviewCallback(IntPtr pContent);
+
+    internal delegate void ContentTypeAddedCallback(Guid typeId);
+    internal delegate void ContentTypeDeletingCallback(Guid typeId);
+    internal delegate void ContentTypeDeletedCallback(int kind);
+
+    internal delegate void CurrentContentChangedCallback(int kind, IntPtr pContent);
+
+    private static CurrentContentChangedCallback m_OnCurrentContentChanged;
+    private static void OnCurrentContentChanged(int kind, IntPtr pContent)
+    {
+      if (m_current_content_changed_event != null)
+      {
+        try { m_current_content_changed_event(null, new CurrentContentChangedEventArgs(Rhino.Render.RenderContent.FromPointer(pContent), (RenderContent.Kinds)kind)); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<CurrentContentChangedEventArgs> m_current_content_changed_event;
+
+
+    private static ContentTypeAddedCallback m_OnContentTypeAdded;
+    private static void OnContentTypeAdded(Guid type)
+    {
+      if (m_content_type_added_event != null)
+      {
+        try { m_content_type_added_event(null, new ContentTypeEventArgs(type));  }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<ContentTypeEventArgs> m_content_type_added_event;
+
+    private static ContentTypeDeletingCallback m_OnContentTypeDeleting;
+    private static void OnContentTypeDeleting(Guid type)
+    {
+      if (m_content_type_deleting_event != null)
+      {
+        try { m_content_type_deleting_event(null, new ContentTypeEventArgs(type)); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<ContentTypeEventArgs> m_content_type_deleting_event;
+
+    private static ContentTypeDeletedCallback m_OnContentTypeDeleted;
+    private static void OnContentTypeDeleted(int kind)
+    {
+      if (m_content_type_deleted_event != null)
+      {
+        try { m_content_type_deleted_event(null, new ContentKindEventArgs((Kinds)kind)); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<ContentKindEventArgs> m_content_type_deleted_event;
+    
+
+
+    private static ContentAddedCallback m_OnContentAdded;
+    private static void OnContentAdded(IntPtr pContent)
+    {
+      if (m_content_added_event != null)
+      {
+        try                  { m_content_added_event(null, new ContentEventArgs(Rhino.Render.RenderContent.FromPointer(pContent))); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<ContentEventArgs> m_content_added_event;
+
+    private static ContentRenamedCallback m_OnContentRenamed;
+    private static void OnContentRenamed(IntPtr pContent)
+    {
+      if (m_content_renamed_event != null)
+      {
+        try { m_content_renamed_event(null, new ContentEventArgs(Rhino.Render.RenderContent.FromPointer(pContent))); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<ContentEventArgs> m_content_renamed_event;
+
+    private static ContentDeletingCallback m_OnContentDeleting;
+    private static void OnContentDeleting(IntPtr pContent)
+    {
+      if (m_content_deleting_event != null)
+      {
+        try { m_content_deleting_event(null, new ContentEventArgs(Rhino.Render.RenderContent.FromPointer(pContent))); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<ContentEventArgs> m_content_deleting_event;
+
+    private static ContentReplacingCallback m_OnContentReplacing;
+    private static void OnContentReplacing(IntPtr pContent)
+    {
+      if (m_content_replacing_event != null)
+      {
+        try { m_content_replacing_event(null, new ContentEventArgs(Rhino.Render.RenderContent.FromPointer(pContent))); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<ContentEventArgs> m_content_replacing_event;
+
+    private static ContentReplacedCallback m_OnContentReplaced;
+    private static void OnContentReplaced(IntPtr pContent)
+    {
+      if (m_content_replaced_event != null)
+      {
+        try { m_content_replaced_event(null, new ContentEventArgs(Rhino.Render.RenderContent.FromPointer(pContent))); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<ContentEventArgs> m_content_replaced_event;
+
+    private static ContentChangedCallback m_OnContentChanged;
+    private static void OnContentChanged(IntPtr pContent, int cc)
+    {
+      if (m_content_changed_event != null)
+      {
+        try { m_content_changed_event(null, new ContentChangedEventArgs(Rhino.Render.RenderContent.FromPointer(pContent), (RenderContent.ChangeContexts)cc)); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<ContentChangedEventArgs> m_content_changed_event;
+
+    private static ContentUpdatePreviewCallback m_OnContentUpdatePreview;
+    private static void OnContentUpdatePreview(IntPtr pContent)
+    {
+      if (m_content_update_preview_event != null)
+      {
+        try { m_content_update_preview_event(null, new ContentEventArgs(Rhino.Render.RenderContent.FromPointer(pContent))); }
+        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+      }
+    }
+    internal static EventHandler<ContentEventArgs> m_content_update_preview_event;
+    
+    /// <summary>
+    /// Used to monitor render content addition to the document.
+    /// </summary>
+    public static event EventHandler<ContentEventArgs> RenderContentAdded
+    {
+      add
+      {
+        if (m_content_added_event == null)
+        {
+          m_OnContentAdded = OnContentAdded;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentAddedEventCallback(m_OnContentAdded, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_content_added_event += value;
+      }
+      remove
+      {
+        m_content_added_event -= value;
+        if (m_content_added_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentAddedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnContentAdded = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Used to monitor render content renaming in the document.
+    /// </summary>
+    public static event EventHandler<ContentEventArgs> RenderContentRenamed
+    {
+      add
+      {
+        if (m_content_renamed_event == null)
+        {
+          m_OnContentRenamed = OnContentRenamed;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentRenamedEventCallback(m_OnContentRenamed, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_content_renamed_event += value;
+      }
+      remove
+      {
+        m_content_renamed_event -= value;
+        if (m_content_renamed_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentRenamedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnContentRenamed = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Used to monitor render content deletion from the document.
+    /// </summary>
+    public static event EventHandler<ContentEventArgs> RenderContentDeleting
+    {
+      add
+      {
+        if (m_content_deleting_event == null)
+        {
+          m_OnContentDeleting = OnContentDeleting;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentDeletingEventCallback(m_OnContentDeleting, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_content_deleting_event += value;
+      }
+      remove
+      {
+        m_content_deleting_event -= value;
+        if (m_content_deleting_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentDeletingEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnContentDeleting = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Used to monitor render content replacing in the document.
+    /// </summary>
+    public static event EventHandler<ContentEventArgs> RenderContentReplacing
+    {
+      add
+      {
+        if (m_content_replacing_event == null)
+        {
+          m_OnContentReplacing = OnContentReplacing;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentReplacingEventCallback(m_OnContentReplacing, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_content_replacing_event += value;
+      }
+      remove
+      {
+        m_content_replacing_event -= value;
+        if (m_content_replacing_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentReplacingEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnContentReplacing = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Used to monitor render content replacing in the document.
+    /// </summary>
+    public static event EventHandler<ContentEventArgs> RenderContentReplaced
+    {
+      add
+      {
+        if (m_content_replaced_event == null)
+        {
+          m_OnContentReplaced = OnContentReplaced;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentReplacedEventCallback(m_OnContentReplaced, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_content_replaced_event += value;
+      }
+      remove
+      {
+        m_content_replaced_event -= value;
+        if (m_content_replaced_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentReplacedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnContentReplaced = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Used to monitor render content modifications.
+    /// </summary>
+    public static event EventHandler<ContentChangedEventArgs> RenderContentChanged
+    {
+      add
+      {
+        if (m_content_changed_event == null)
+        {
+          m_OnContentChanged = OnContentChanged;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentChangedEventCallback(m_OnContentChanged, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_content_changed_event += value;
+      }
+      remove
+      {
+        m_content_changed_event -= value;
+        if (m_content_changed_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentChangedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnContentChanged = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Used to monitor render content preview updates.
+    /// </summary>
+    public static event EventHandler<ContentEventArgs> RenderContentUpdatePreview
+    {
+      add
+      {
+        if (m_content_update_preview_event == null)
+        {
+          m_OnContentUpdatePreview = OnContentUpdatePreview;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentUpdatePreviewEventCallback(m_OnContentUpdatePreview, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_content_update_preview_event += value;
+      }
+      remove
+      {
+        m_content_update_preview_event -= value;
+        if (m_content_update_preview_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentUpdatePreviewEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnContentUpdatePreview = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Used to monitor render content preview updates.
+    /// </summary>
+    public static event EventHandler<CurrentContentChangedEventArgs> CurrentRenderContentChanged
+    {
+      add
+      {
+        if (m_current_content_changed_event == null)
+        {
+          m_OnCurrentContentChanged = OnCurrentContentChanged;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentCurrencyChangedEventCallback(m_OnCurrentContentChanged, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_current_content_changed_event += value;
+      }
+      remove
+      {
+        m_current_content_changed_event -= value;
+        if (m_current_content_changed_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentCurrencyChangedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnCurrentContentChanged = null;
+        }
+      }
+    }
+
+
+
+    /// <summary>
+    /// Used to monitor render content types being registered
+    /// </summary>
+    public static event EventHandler<ContentTypeEventArgs> RenderContentTypeAdded
+    {
+      add
+      {
+        if (m_content_type_added_event == null)
+        {
+          m_OnContentTypeAdded = OnContentTypeAdded;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetFactoryAddedEventCallback(m_OnContentTypeAdded, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_content_type_added_event += value;
+      }
+      remove
+      {
+        m_content_type_added_event -= value;
+        if (m_content_type_added_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetFactoryAddedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnContentTypeAdded = null;
+        }
+      }
+    }
+
+
+    /// <summary>
+    /// Used to monitor render content types being registered
+    /// </summary>
+    public static event EventHandler<ContentTypeEventArgs> RenderContentTypeDeleting
+    {
+      add
+      {
+        if (m_content_type_deleting_event == null)
+        {
+          m_OnContentTypeDeleting = OnContentTypeDeleting;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetFactoryDeletingEventCallback(m_OnContentTypeDeleting, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_content_type_deleting_event += value;
+      }
+      remove
+      {
+        m_content_type_deleting_event -= value;
+        if (m_content_type_deleting_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetFactoryDeletingEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnContentTypeDeleting = null;
+        }
+      }
+    }
+
+
+    /// <summary>
+    /// Used to monitor render content types being registered
+    /// </summary>
+    public static event EventHandler<ContentKindEventArgs> RenderContentTypeDeleted
+    {
+      add
+      {
+        if (m_content_type_deleted_event == null)
+        {
+          m_OnContentTypeDeleted = OnContentTypeDeleted;
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetFactoryDeletedEventCallback(m_OnContentTypeDeleted, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+        }
+        m_content_type_deleted_event += value;
+      }
+      remove
+      {
+        m_content_type_deleted_event -= value;
+        if (m_content_type_deleted_event == null)
+        {
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetFactoryDeletedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          m_OnContentTypeDeleted = null;
+        }
+      }
+    }
+
+
+    #endregion
+
     #region pointer tracking
 
     private bool m_bAutoDelete;

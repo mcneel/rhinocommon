@@ -575,6 +575,16 @@ namespace Rhino.Runtime
       DelegateReport(RhinoDoc.m_purge_object, "PurgeObject");
     }
 
+#if USING_RDK
+    internal delegate void RdkReportCallback(int c);
+    internal static RdkReportCallback m_rdk_ew_report = RdkEventWatcherReport;
+    internal static void RdkEventWatcherReport(int c)
+    {
+      UnsafeNativeMethods.CRdkCmnEventWatcher_LogState("RhinoRdkCommon delegate based event watcher\n");
+      DelegateReport(Rhino.Render.RenderContent.m_content_added_event, "RenderContentAdded");
+    }
+#endif
+
     internal static object m_rhinoscript;
     internal static object GetRhinoScriptObject()
     {

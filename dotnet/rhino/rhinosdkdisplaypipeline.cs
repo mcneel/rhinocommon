@@ -890,7 +890,7 @@ namespace Rhino.Display
     public void DrawMeshFalseColors(Mesh mesh)
     {
       IntPtr pMesh = mesh.ConstPointer();
-      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawMeshFalseColors(m_ptr, pMesh);
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawMeshFalseColors(m_ptr, pMesh, false);
     }
 
     /// <summary>

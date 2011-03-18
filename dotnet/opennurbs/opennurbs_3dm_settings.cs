@@ -277,7 +277,263 @@ namespace Rhino.DocObjects
   }
 
   //public class ON_3dmRenderSettings { }
-  //public class ON_EarthAnchorPoint { }
+
+  /// <summary>
+  /// Information about the model's position in latitude, longitude,
+  /// and elevation for GIS mapping applications
+  /// </summary>
+  public class EarthAnchorPoint : IDisposable
+  {
+    IntPtr m_ptr = IntPtr.Zero;
+
+    public EarthAnchorPoint()
+    {
+      m_ptr = UnsafeNativeMethods.ON_EarthAnchorPoint_New();
+    }
+
+    internal EarthAnchorPoint(RhinoDoc doc)
+    {
+      m_ptr = UnsafeNativeMethods.CRhinoDocProperties_GetEarthAnchorPoint(doc.m_docId);
+    }
+    internal IntPtr ConstPointer()
+    {
+      return m_ptr;
+    }
+    IntPtr NonConstPointer()
+    {
+      return m_ptr;
+    }
+    
+    ~EarthAnchorPoint() { Dispose(false); }
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_ptr)
+      {
+        UnsafeNativeMethods.ON_EarthAnchorPoint_Delete(m_ptr);
+      }
+      m_ptr = IntPtr.Zero;
+    }
+
+    const int idxEarthBasepointLatitude = 0;
+    const int idxEarthBasepointLongitude = 1;
+    const int idxEarthBasepointElevation = 2;
+    double GetDouble(int which)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_EarthAnchorPoint_GetDouble(pConstThis, which);
+    }
+    void SetDouble(int which, double val)
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_EarthAnchorPoint_SetDouble(pThis, which, val);
+    }
+
+    /// <summary>
+    /// Point on the earth in decimal degrees.
+    /// +90 = north pole, 0 = equator, -90 = south pole
+    /// </summary>
+    public double EarthBasepointLatitude
+    {
+      get { return GetDouble(idxEarthBasepointLatitude); }
+      set { SetDouble(idxEarthBasepointLatitude, value); }
+    }
+
+    /// <summary>
+    /// Point on the earth in decimal degrees.
+    /// 0 = prime meridian (Greenwich meridian)
+    /// </summary>
+    public double EarthBasepointLongitude
+    {
+      get { return GetDouble(idxEarthBasepointLongitude); }
+      set { SetDouble(idxEarthBasepointLongitude, value); }
+    }
+
+    /// <summary>
+    /// Point on the earth in meters
+    /// </summary>
+    public double EarthBasepointElevation
+    {
+      get { return GetDouble(idxEarthBasepointElevation); }
+      set { SetDouble(idxEarthBasepointElevation, value); }
+    }
+
+    /// <summary>
+    /// 0 = ground level, 1 = mean sea level, 2 = center of earth
+    /// </summary>
+    public int EarthBasepointElevationZero
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_EarthAnchorPoint_GetEarthBasepointElevationZero(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_SetEarthBasepointElevationZero(pThis, value);
+      }
+    }
+
+    /// <summary>Corresponding model point in model coordinates</summary>
+    public Point3d ModelBasePoint
+    {
+      get
+      {
+        Point3d rc = new Point3d(0,0,0);
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelBasePoint(pConstThis, false, ref rc);
+        return rc;
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelBasePoint(pThis, true, ref value);
+      }
+    }
+
+    /// <summary>Earth directions in model coordinates</summary>
+    public Vector3d ModelNorth
+    {
+      get
+      {
+        Vector3d rc = new Vector3d(0, 0, 0);
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelDirection(pConstThis, true, false, ref rc);
+        return rc;
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelDirection(pThis, true, true, ref value);
+      }
+    }
+
+    /// <summary>Earth directions in model coordinates</summary>
+    public Vector3d ModelEast
+    {
+      get
+      {
+        Vector3d rc = new Vector3d(0, 0, 0);
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelDirection(pConstThis, false, false, ref rc);
+        return rc;
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelDirection(pThis, false, true, ref value);
+      }
+    }
+
+     // Identification information about this location
+     //ON_UUID    m_id;           // unique id for this anchor point
+
+    /// <summary>
+    /// Indentifying information about this location
+    /// </summary>
+    public string Name
+    {
+      get
+      {
+        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        {
+          IntPtr pConstThis = ConstPointer();
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_EarthAnchorPoint_GetString(pConstThis, true, pString);
+          return sh.ToString();
+        }
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_SetString(pThis, true, value);
+      }
+    }
+
+    /// <summary>
+    /// Indentifying information about this location
+    /// </summary>
+    public string Description
+    {
+      get
+      {
+        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        {
+          IntPtr pConstThis = ConstPointer();
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_EarthAnchorPoint_GetString(pConstThis, false, pString);
+          return sh.ToString();
+        }
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_SetString(pThis, false, value);
+      }
+    }
+    //ON_wString m_url;
+    //ON_wString m_url_tag;      // UI link text for m_url
+
+
+    /// <summary>
+    /// Returns a plane in model coordinates whose xaxis points East,
+    /// yaxis points North and zaxis points up.  The origin
+    /// is set to ModelBasepoint. An Invalid plane is returned
+    /// on error.
+    /// </summary>
+    /// <returns></returns>
+    public Plane GetModelCompass()
+    {
+      Plane rc = Plane.Unset;
+      IntPtr pConstThis = ConstPointer();
+      UnsafeNativeMethods.ON_EarthAnchorPoint_GetModelCompass(pConstThis, ref rc);
+      return rc;
+    }
+
+    /// <summary>
+    /// Get a transformation from model coordinates to earth coordinates.
+    /// This transformation assumes the model is small enough that
+    /// the curvature of the earth can be ignored.
+    /// </summary>
+    /// <param name="modelUnitSystem"></param>
+    /// <returns>
+    /// Transform on success. Inalid Transform on error
+    /// </returns>
+    /// <remarks>
+    /// If M is a point in model coordinates and E = model_to_earth*M,
+    /// then 
+    ///   E.x = latitude in decimal degrees
+    ///   E.y = longitude in decimal degrees
+    ///   E.z = elevation in meters above mean sea level
+    /// Because the earth is not flat, there is a small amount of error
+    /// when using a linear transformation to calculate oblate spherical 
+    /// coordinates.  This error is small.  If the distance from P to M
+    /// is d meters, then the approximation error is
+    /// latitude error  &lt;=
+    /// longitude error &lt;=
+    /// elevation error &lt;= 6379000*((1 + (d/6356000)^2)-1) meters
+    /// 
+    /// In particular, if every point in the model is within 1000 meters of
+    /// the m_model_basepoint, then the maximum approximation errors are
+    /// latitude error  &lt;=
+    /// longitude error &lt;=
+    /// elevation error &lt;= 8 centimeters
+    /// </remarks>
+    public Transform GetModelToEarthTransform(UnitSystem modelUnitSystem)
+    {
+      Transform rc = Transform.Unset;
+      IntPtr pConstThis = ConstPointer();
+      UnsafeNativeMethods.ON_EarthAnchorPoint_GetModelToEarthTransform(pConstThis, (int)modelUnitSystem, ref rc);
+      return rc;
+    }
+  }
+
   //public class ON_3dmIOSettings { }
   //public class ON_3dmSettings { }
 }

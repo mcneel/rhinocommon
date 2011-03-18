@@ -120,6 +120,54 @@ internal partial class UnsafeNativeMethods
   //const ON_Viewport* ON_3dmView_ViewportPointer(const ON_3dmView* pView)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_3dmView_ViewportPointer(IntPtr pView);
+
+  //ON_EarthAnchorPoint* ON_EarthAnchorPoint_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_EarthAnchorPoint_New();
+
+  //void ON_EarthAnchorPoint_Delete(ON_EarthAnchorPoint* pEarthAnchor)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_EarthAnchorPoint_Delete(IntPtr pEarthAnchor);
+
+  //double ON_EarthAnchorPoint_GetDouble(const ON_EarthAnchorPoint* pConstEarthAnchor, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_EarthAnchorPoint_GetDouble(IntPtr pConstEarthAnchor, int which);
+
+  //void ON_EarthAnchorPoint_SetDouble(ON_EarthAnchorPoint* pEarthAnchor, int which, double val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_EarthAnchorPoint_SetDouble(IntPtr pEarthAnchor, int which, double val);
+
+  //int ON_EarthAnchorPoint_GetEarthBasepointElevationZero(const ON_EarthAnchorPoint* pConstEarthAnchor)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_EarthAnchorPoint_GetEarthBasepointElevationZero(IntPtr pConstEarthAnchor);
+
+  //void ON_EarthAnchorPoint_SetEarthBasepointElevationZero(ON_EarthAnchorPoint* pEarthAnchor, int val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_EarthAnchorPoint_SetEarthBasepointElevationZero(IntPtr pEarthAnchor, int val);
+
+  //void ON_EarthAnchorPoint_ModelBasePoint(ON_EarthAnchorPoint* pEarthAnchor, bool set, ON_3dPoint* point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_EarthAnchorPoint_ModelBasePoint(IntPtr pEarthAnchor, [MarshalAs(UnmanagedType.U1)]bool set, ref Point3d point);
+
+  //void ON_EarthAnchorPoint_ModelDirection(ON_EarthAnchorPoint* pEarthAnchor, bool north, bool set, ON_3dVector* vector)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_EarthAnchorPoint_ModelDirection(IntPtr pEarthAnchor, [MarshalAs(UnmanagedType.U1)]bool north, [MarshalAs(UnmanagedType.U1)]bool set, ref Vector3d vector);
+
+  //void ON_EarthAnchorPoint_GetString(const ON_EarthAnchorPoint* pConstEarthAnchor, bool name, CRhCmnStringHolder* pString)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_EarthAnchorPoint_GetString(IntPtr pConstEarthAnchor, [MarshalAs(UnmanagedType.U1)]bool name, IntPtr pString);
+
+  //void ON_EarthAnchorPoint_SetString(ON_EarthAnchorPoint* pEarthAnchor, bool name, const RHMONO_STRING* str)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_EarthAnchorPoint_SetString(IntPtr pEarthAnchor, [MarshalAs(UnmanagedType.U1)]bool name, [MarshalAs(UnmanagedType.LPWStr)]string str);
+
+  //void ON_EarthAnchorPoint_GetModelCompass(const ON_EarthAnchorPoint* pConstEarthAnchor, ON_PLANE_STRUCT* plane)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_EarthAnchorPoint_GetModelCompass(IntPtr pConstEarthAnchor, ref Plane plane);
+
+  //void ON_EarthAnchorPoint_GetModelToEarthTransform(const ON_EarthAnchorPoint* pConstEarthAnchor, int units, ON_Xform* xform)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_EarthAnchorPoint_GetModelToEarthTransform(IntPtr pConstEarthAnchor, int units, ref Transform xform);
   #endregion
 
 
@@ -2927,6 +2975,10 @@ internal partial class UnsafeNativeMethods
   //void ON_PointCloud_GetColors(const ON_PointCloud* pConstPointCloud, int count, /*ARRAY*/int* colors)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_PointCloud_GetColors(IntPtr pConstPointCloud, int count, [In,Out] int[] colors);
+
+  //int ON_PointCloud_GetClosestPoint(const ON_PointCloud* pConstPointCloud, ON_3DPOINT_STRUCT point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_PointCloud_GetClosestPoint(IntPtr pConstPointCloud, Point3d point);
   #endregion
 
 
@@ -4873,6 +4925,14 @@ internal partial class UnsafeNativeMethods
   //ON_MeshParameters* CRhinoDocProperties_RenderMeshSettings(int docId)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoDocProperties_RenderMeshSettings(int docId);
+
+  //ON_EarthAnchorPoint* CRhinoDocProperties_GetEarthAnchorPoint(int docId)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoDocProperties_GetEarthAnchorPoint(int docId);
+
+  //void CRhinoDocProperties_SetEarthAnchorPoint(int docId, const ON_EarthAnchorPoint* pConstEarthAnchor)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDocProperties_SetEarthAnchorPoint(int docId, IntPtr pConstEarthAnchor);
   #endregion
 
 
@@ -5447,7 +5507,7 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoGetPoint_InterruptMouseMose(IntPtr ptr);
 
-  //unsigned int CRhinoGetPoint_GetPoint(CRhinoGetPoint* ptr, bool onMouseUp, GETPOINTMOUSEPROC mouseCB, GETPOINTDRAWPROC drawCB)
+  //unsigned int CRhinoGetPoint_GetPoint(CRhinoGetPoint* ptr, bool onMouseUp, GETPOINTMOUSEPROC mouseCB, GETPOINTDRAWPROC drawCB, GETPOINTCONDUITPROC postDrawCB)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //bool CRhinoGetPoint_PointOnObject(const CRhinoGetPoint* ptr, CRhinoObjRef* pObjRef)

@@ -556,6 +556,17 @@ namespace Rhino.Geometry
       }
       return res;
     }
+
+    /// <summary>
+    /// Returns index of the closest point in the point cloud to a given test point
+    /// </summary>
+    /// <param name="testPoint"></param>
+    /// <returns>Index of point in the point cloud on success. -1 on failure</returns>
+    public int ClosestPoint(Point3d testPoint)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_PointCloud_GetClosestPoint(pConstThis, testPoint);
+    }
     #endregion
 
     #region IEnumerable<PointCloudItem> Members

@@ -380,6 +380,16 @@ namespace Rhino
       get { return GetBool(idxIsDocumentLocked); }
     }
 
+    public Rhino.DocObjects.EarthAnchorPoint EarthAnchorPoint
+    {
+      get { return new Rhino.DocObjects.EarthAnchorPoint(this); }
+      set
+      {
+        IntPtr pConstAnchor = value.ConstPointer();
+        UnsafeNativeMethods.CRhinoDocProperties_SetEarthAnchorPoint(m_docId, pConstAnchor);
+      }
+    }
+
     #region tables
     private Rhino.DocObjects.Tables.ViewTable m_view_table;
     public Rhino.DocObjects.Tables.ViewTable Views

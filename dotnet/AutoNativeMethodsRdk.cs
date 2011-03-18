@@ -769,13 +769,49 @@ internal partial class UnsafeNativeMethods
   //void CRdkCmnEventWatcher_SetContentUpdatePreviewEventCallback(CONTENTEVENTPROC cep, RDKREPORTPROC report)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
-  //void CRdkCmnEventWatcher_SetContentListClearingEventCallback(CONTENTLISTEVENTPROC cep, RDKREPORTPROC report)
+  //void CRdkCmnEventWatcher_SetContentCurrencyChangedEventCallback(CURRENTCONTENTEVENTPROC cep, RDKREPORTPROC report)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
-  //void CRdkCmnEventWatcher_SetContentListClearedEventCallback(CONTENTLISTEVENTPROC cep, RDKREPORTPROC report)
+  //void CRdkCmnEventWatcher_SetContentListClearingEventCallback(TWOINTSEVENTPROC cep, RDKREPORTPROC report)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
-  //void CRdkCmnEventWatcher_SetContentListLoadedEventCallback(CONTENTLISTEVENTPROC cep, RDKREPORTPROC report)
+  //void CRdkCmnEventWatcher_SetContentListClearedEventCallback(TWOINTSEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetContentListLoadedEventCallback(TWOINTSEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetNewRdkDocumentEventCallback(VOIDPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetGlobalSettingsChangedEventCallback(VOIDPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetUpdateAllPreviewsEventCallback(VOIDPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetCacheImageChangedEventCallback(VOIDPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetRendererChangedEventCallback(VOIDPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetCustomRenderMeshesChangedEventCallback(VOIDPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetFactoryAddedEventCallback(UUIDEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetFactoryDeletingEventCallback(UUIDEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetFactoryDeletedEventCallback(TWOINTSEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetClientPlugInUnloadingEventCallback(UUIDEVENTPROC cep, RDKREPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRdkCmnEventWatcher_SetDocumentSettingsChangedEventCallback(TWOINTSEVENTPROC cep, RDKREPORTPROC report)
   // SKIPPING - Contains a function pointer which needs to be written by hand
   #endregion
 

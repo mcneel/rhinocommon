@@ -71,6 +71,7 @@
     <Compile Include="ex_addline.cs" />
     <Compile Include="ex_addlineardimension.cs" />
     <Compile Include="ex_addlineardimension2.cs" />
+    <Compile Include="ex_addmaterial.cs" />
     <Compile Include="ex_addmesh.cs" />
     <Compile Include="ex_addnamedview.cs" />
     <Compile Include="ex_addnurbscircle.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="ex_dividebylength.cs" />
     <Compile Include="ex_findobjectsbyname.cs" />
     <Compile Include="ex_insertknot.cs" />
+    <Compile Include="ex_objectdisplaymode.cs" />
     <Compile Include="ex_objectlayer.cs" />
     <Compile Include="ex_orientonsrf.cs" />
     <Compile Include="ex_sellayer.cs" />

@@ -2,7 +2,7 @@
   Public Shared Function UnrollSurface2(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
     Dim rc As Rhino.Commands.Result = Rhino.Commands.Result.Success
     Dim filter As Rhino.DocObjects.ObjectType = Rhino.DocObjects.ObjectType.Brep Or Rhino.DocObjects.ObjectType.Surface
-    Dim objref As Rhino.DocObjects.ObjRef
+    Dim objref As Rhino.DocObjects.ObjRef = Nothing
     rc = Rhino.Input.RhinoGet.GetOneObject("Select surface or brep to unroll", False, filter, objref)
     If rc <> Rhino.Commands.Result.Success Then
       Return rc

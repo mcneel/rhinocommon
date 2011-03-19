@@ -3,7 +3,7 @@
 Partial Class Examples
   Public Shared Function BooleanDifference(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
     Dim rc As Rhino.Commands.Result
-    Dim objrefs As Rhino.DocObjects.ObjRef()
+    Dim objrefs As Rhino.DocObjects.ObjRef() = Nothing
     rc = Rhino.Input.RhinoGet.GetMultipleObjects("Select first set of polysurfaces", False, Rhino.DocObjects.ObjectType.PolysrfFilter, objrefs)
     If rc <> Rhino.Commands.Result.Success Then
       Return rc

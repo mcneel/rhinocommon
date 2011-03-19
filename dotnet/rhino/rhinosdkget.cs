@@ -1203,6 +1203,11 @@ namespace Rhino.Input.Custom
     /// <param name="listValues"></param>
     /// <param name="listCurrentIndex">zero based index of current option</param>
     /// <returns>option index value (>0) or 0 if option cannot be added.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_objectdisplaymode.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_objectdisplaymode.cs' lang='cs'/>
+    /// <code source='examples\py\ex_objectdisplaymode.py' lang='py'/>
+    /// </example>
     public int AddOptionList(string englishOptionName, System.Collections.Generic.IEnumerable<string> listValues, int listCurrentIndex)
     {
       IntPtr pStrings = UnsafeNativeMethods.ON_StringArray_New();

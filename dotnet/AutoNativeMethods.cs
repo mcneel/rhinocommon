@@ -76,6 +76,20 @@ internal partial class UnsafeNativeMethods
   //void ON_3dmObjectAttributes_GroupOp(ON_3dmObjectAttributes* ptr, int whichOp, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_3dmObjectAttributes_GroupOp(IntPtr ptr, int whichOp, int index);
+
+  //bool ON_3dmObjectAttributes_HasDisplayModeOverride(const ON_3dmObjectAttributes* pConstObjectAttributes, ON_UUID viewportId)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_3dmObjectAttributes_HasDisplayModeOverride(IntPtr pConstObjectAttributes, Guid viewportId);
+
+  //bool ON_3dmObjectAttributes_UseDisplayMode(ON_3dmObjectAttributes* pObjectAttributes, ON_UUID rhinoViewportId, ON_UUID modeId)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_3dmObjectAttributes_UseDisplayMode(IntPtr pObjectAttributes, Guid rhinoViewportId, Guid modeId);
+
+  //void ON_3dmObjectAttributes_ClearDisplayMode(ON_3dmObjectAttributes* pObjectAttributes, ON_UUID rhinoViewportId)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_3dmObjectAttributes_ClearDisplayMode(IntPtr pObjectAttributes, Guid rhinoViewportId);
   #endregion
 
 

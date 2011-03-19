@@ -71,7 +71,7 @@ namespace Rhino.Display
       IntPtr pDisplayAttrsMgrList = UnsafeNativeMethods.DisplayAttrsMgrList_New();
       int count = UnsafeNativeMethods.CRhinoDisplayAttrsMgr_GetDisplayAttrsList(pDisplayAttrsMgrList);
       if (count < 1)
-        return null;
+        return new DisplayModeDescription[0];
       DisplayModeDescription[] rc = new DisplayModeDescription[count];
       for (int i = 0; i < count; i++)
       {

@@ -528,6 +528,9 @@ namespace Rhino.Geometry.Intersect
     {
       IntPtr pCurve = curve.ConstPointer();
       IntPtr pSurface = surface.ConstPointer();
+      if (overlapTolerance > 0.0 && overlapTolerance < tolerance)
+        overlapTolerance = tolerance;
+
       IntPtr pIntersectArray = UnsafeNativeMethods.ON_Intersect_CurveSurface(pCurve, pSurface, tolerance, overlapTolerance);
       if (pIntersectArray == IntPtr.Zero)
         return null;

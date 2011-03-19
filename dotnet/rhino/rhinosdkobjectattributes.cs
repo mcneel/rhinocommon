@@ -179,13 +179,7 @@ namespace Rhino.DocObjects
       set { SetInt(idxPlotWeightSource, (int)value); }
     }
 
-    /// <summary>
-    /// objects can be displayed in one of three ways: wireframe, shaded, or render preview.
-    /// If the display mode is ON::default_display, then the display mode of the viewport
-    /// detrmines how the object is displayed. If the display mode is ON::wireframe_display,
-    /// ON::shaded_display, or ON::renderpreview_display, then the object is forced to
-    /// display in that mode.
-    /// </summary>
+    [Obsolete("Use SetDisplayModeOverride/RemoveDisplayModeOverride")]
     public DisplayMode DisplayMode
     {
       get
@@ -195,6 +189,86 @@ namespace Rhino.DocObjects
       }
       set { SetInt(idxDisplayMode, (int)value); }
     }
+
+    /// <summary>
+    /// Determines if an object has a deisplay mode override for a given viewport
+    /// </summary>
+    /// <param name="viewportId">Id of a Rhino Viewport</param>
+    /// <returns></returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_objectdisplaymode.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_objectdisplaymode.cs' lang='cs'/>
+    /// <code source='examples\py\ex_objectdisplaymode.py' lang='py'/>
+    /// </example>
+    public bool HasDisplayModeOverride(Guid viewportId)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_3dmObjectAttributes_HasDisplayModeOverride(pConstThis, viewportId);
+    }
+
+    /// <summary>
+    /// By default, objects are drawn using the display mode of the viewport that
+    /// the object is being drawn in. Setting a specific display mode, instructs
+    /// Rhino to always use that display mode, regardless of the viewport's mode.
+    /// This version affects the object's display mode for all viewports
+    /// </summary>
+    /// <param name="mode"></param>
+    /// <returns>true on success</returns>
+    public bool SetDisplayModeOverride(Rhino.Display.DisplayModeDescription mode)
+    {
+      return SetDisplayModeOverride(mode, Guid.Empty);
+    }
+    /// <summary>
+    /// By default, objects are drawn using the display mode of the viewport that
+    /// the object is being drawn in. Setting a specific display mode, instructs
+    /// Rhino to always use that display mode, regardless of the viewport's mode.
+    /// This version sets a display mode for a specific viewport
+    /// </summary>
+    /// <param name="mode"></param>
+    /// <param name="rhinoViewportId"></param>
+    /// <returns>true on success</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_objectdisplaymode.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_objectdisplaymode.cs' lang='cs'/>
+    /// <code source='examples\py\ex_objectdisplaymode.py' lang='py'/>
+    /// </example>
+    public bool SetDisplayModeOverride(Rhino.Display.DisplayModeDescription mode, Guid rhinoViewportId)
+    {
+      IntPtr pThis = NonConstPointer();
+      Guid modeId = mode.Id;
+      return UnsafeNativeMethods.ON_3dmObjectAttributes_UseDisplayMode(pThis, rhinoViewportId, modeId);
+    }
+
+    /// <summary>
+    /// By default, objects are drawn using the display mode of the viewport that
+    /// the object is being drawn in. Setting a specific display mode, instructs
+    /// Rhino to always use that display mode, regardless of the viewport's mode.
+    /// This function resets an object to use the viewport's display mode for all
+    /// viewports
+    /// </summary>
+    public void RemoveDisplayModeOverride()
+    {
+      RemoveDisplayModeOverride(Guid.Empty);
+    }
+
+    /// <summary>
+    /// By default, objects are drawn using the display mode of the viewport that
+    /// the object is being drawn in. Setting a specific display mode, instructs
+    /// Rhino to always use that display mode, regardless of the viewport's mode.
+    /// This function resets an object to use the viewport's display mode
+    /// </summary>
+    /// <param name="rhinoViewportId">viewport that display mode overrides should be cleared from</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_objectdisplaymode.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_objectdisplaymode.cs' lang='cs'/>
+    /// <code source='examples\py\ex_objectdisplaymode.py' lang='py'/>
+    /// </example>
+    public void RemoveDisplayModeOverride(Guid rhinoViewportId)
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_3dmObjectAttributes_ClearDisplayMode(pThis, rhinoViewportId);
+    }
+
 /*
     /// <summary>
     /// If "this" has attributes (color, plot weight, ...) with "by parent" sources,

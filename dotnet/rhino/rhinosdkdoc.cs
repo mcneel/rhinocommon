@@ -2657,6 +2657,28 @@ namespace Rhino.DocObjects.Tables
     {
       return AddText(text, plane, height, fontName, bold, italic, null);
     }
+
+    public Guid AddText(string text, Plane plane, double height, string fontName, bool bold, bool italic, TextJustification justification)
+    {
+      return AddText(text, plane, height, fontName, bold, italic, justification, null);
+    }
+
+    public Guid AddText(string text, Plane plane, double height, string fontName, bool bold, bool italic, TextJustification justification, DocObjects.ObjectAttributes attributes)
+    {
+      if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(fontName))
+        return Guid.Empty;
+      IntPtr pAttributes = IntPtr.Zero;
+      if (attributes != null)
+        pAttributes = attributes.ConstPointer();
+      int fontStyle = 0;
+      if (bold)
+        fontStyle |= 1;
+      if (italic)
+        fontStyle |= 2;
+      Guid rc = UnsafeNativeMethods.CRhinoDoc_AddText(m_doc.m_docId, text, ref plane, height, fontName, fontStyle, (int)justification, pAttributes);
+      return rc;
+    }
+
     /// <summary>
     /// Add an annotation text object to the document.
     /// </summary>
@@ -2680,7 +2702,7 @@ namespace Rhino.DocObjects.Tables
         fontStyle |= 1;
       if (italic)
         fontStyle |= 2;
-      Guid rc = UnsafeNativeMethods.CRhinoDoc_AddText(m_doc.m_docId, text, ref plane, height, fontName, fontStyle, pAttributes);
+      Guid rc = UnsafeNativeMethods.CRhinoDoc_AddText(m_doc.m_docId, text, ref plane, height, fontName, fontStyle, -1, pAttributes);
       return rc;
     }
 

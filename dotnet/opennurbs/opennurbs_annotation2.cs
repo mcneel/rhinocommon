@@ -3,6 +3,26 @@ using System.Runtime.InteropServices;
 
 namespace Rhino.Geometry
 {
+  public enum TextJustification : int
+  {
+    None = 0,
+    Left = 1 << 0,
+    Center = 1 << 1,
+    Right = 1 << 2,
+    Bottom = 1 << 16,
+    Middle = 1 << 17,
+    Top = 1 << 18,
+    BottomLeft = Bottom | Left,
+    BottomCenter = Bottom | Center,
+    BottomRight = Bottom | Right,
+    MiddleLeft = Middle | Left,
+    MiddleCenter = Middle | Center,
+    MiddleRight = Middle | Right,
+    TopLeft = Top | Left,
+    TopCenter = Top | Center,
+    TopRight = Top | Right
+  }
+
   public class AnnotationBase : GeometryBase
   {
     internal AnnotationBase(IntPtr native_pointer, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
@@ -109,8 +129,6 @@ namespace Rhino.Geometry
 
 
   }
-
-
 
   public class LinearDimension : AnnotationBase
   {

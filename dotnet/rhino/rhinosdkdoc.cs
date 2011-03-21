@@ -3092,6 +3092,11 @@ namespace Rhino.DocObjects.Tables
     /// </summary>
     /// <param name="objectId">Id of object to select.</param>
     /// <returns>True on success, false on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_dividebylength.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_dividebylength.cs' lang='cs'/>
+    /// <code source='examples\py\ex_dividebylength.py' lang='py'/>
+    /// </example>
     public bool Select(Guid objectId)
     {
       ObjRef objref = new ObjRef(objectId);

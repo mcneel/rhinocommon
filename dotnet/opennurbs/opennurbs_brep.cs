@@ -757,6 +757,19 @@ namespace Rhino.Geometry
       return DuplicateEdgeCurves(false);
     }
 
+    /// <summary>
+    /// Duplicate edges of this Brep.
+    /// </summary>
+    /// <param name="nakedOnly">
+    /// If true, then only the "naked" edges are duplicated.
+    /// If false, then all edges are duplicated.
+    /// </param>
+    /// <returns>Array of edge curves on success</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_dupborder.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_dupborder.cs' lang='cs'/>
+    /// <code source='examples\py\ex_dupborder.py' lang='py'/>
+    /// </example>
     public Curve[] DuplicateEdgeCurves(bool nakedOnly)
     {
       IntPtr pConstPtr = ConstPointer();
@@ -915,6 +928,17 @@ namespace Rhino.Geometry
       IntPtr pThisBrep = NonConstPointer();
       IntPtr pOther = otherBrep.ConstPointer();
       return UnsafeNativeMethods.RHC_RhinoJoinBreps2(pThisBrep, pOther, tolerance, compact);
+    }
+
+    /// <summary>
+    /// Join naked edge pairs within the same brep that overlap within tolerance.
+    /// </summary>
+    /// <param name="tolerance"></param>
+    /// <returns>number of joins made</returns>
+    public int JoinNakedEdges(double tolerance)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoJoinBrepNakedEdges(pThis, tolerance);
     }
 
     /// <summary>
@@ -1272,6 +1296,31 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Get intervals where the iso curve exists on a BrepFace (trimmed surface)
+    /// </summary>
+    /// <param name="direction">Direction of isocurve.
+    /// <para>0 = Isocurve connects all points with a constant U value.</para>
+    /// <para>1 = Isocurve connects all points with a constant V value.</para>
+    /// </param>
+    /// <param name="constantParameter">Surface parameter that remains identical along the isocurves.</param>
+    /// <returns>
+    /// If direction = 0, the parameter space iso interval connects the 2d points
+    /// (intervals[i][0],iso_constant) and (intervals[i][1],iso_constant).
+    /// If direction = 1, the parameter space iso interval connects the 2d points
+    /// (iso_constant,intervals[i][0]) and (iso_constant,intervals[i][1]).
+    /// </returns>
+    public Interval[] TrimAwareIsoIntervals(int direction, double constantParameter)
+    {
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayInterval rc = new Rhino.Runtime.InteropWrappers.SimpleArrayInterval())
+      {
+        IntPtr pConstBrep = m_brep.ConstPointer();
+        IntPtr pIntervals = rc.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoGetBrepFaceIsoIntervals(pConstBrep, m_index, direction, constantParameter, pIntervals);
+        return rc.ToArray();
+      }
+    }
+
+    /// <summary>
     /// Similar to IsoCurve function, except this function pays attention to trims on faces 
     /// and may return multiple curves.
     /// </summary>
@@ -1293,7 +1342,7 @@ namespace Rhino.Geometry
       Runtime.InteropWrappers.SimpleArrayCurvePointer curves = new Runtime.InteropWrappers.SimpleArrayCurvePointer();
       IntPtr pCurves = curves.NonConstPointer();
       int count = UnsafeNativeMethods.RHC_RhinoGetBrepFaceIsoCurves(pConstBrep, m_index, direction, constantParameter, pCurves);
-      Curve[] rc = null;
+      Curve[] rc = new Curve[0];
       if (count > 0)
         rc = curves.ToNonConstArray();
       curves.Dispose();

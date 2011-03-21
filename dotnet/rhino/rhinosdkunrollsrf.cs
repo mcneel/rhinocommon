@@ -13,8 +13,8 @@ namespace Rhino.Geometry
     double m_dExplodeSpacing = 2.0;
     readonly Surface m_surface;
     readonly Brep m_brep;
-    double m_dAbsoluteTolerance = 0.1;
-    double m_dRelativeTolerance = 0.1;
+    double m_dAbsoluteTolerance = 0.01;
+    double m_dRelativeTolerance = 0.01;
     
     public Unroller(Surface surface)
     {

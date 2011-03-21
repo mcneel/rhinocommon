@@ -326,6 +326,11 @@ namespace Rhino.Geometry
     /// <param name="joinTolerance">Joining tolerance, 
     /// i.e. the distance between segment end-points that is allowed.</param>
     /// <returns>An array of curves which contains</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_dividebylength.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_dividebylength.cs' lang='cs'/>
+    /// <code source='examples\py\ex_dividebylength.py' lang='py'/>
+    /// </example>
     public static Curve[] JoinCurves(IEnumerable<Curve> inputCurves, double joinTolerance)
     {
       return JoinCurves(inputCurves, joinTolerance, false);

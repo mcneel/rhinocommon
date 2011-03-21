@@ -266,9 +266,11 @@ namespace Rhino.Runtime.InteropWrappers
   /// <summary>
   /// Wrapper for ON_SimpleArray&lt;int&gt;
   /// </summary>
-  class SimpleArrayInt : IDisposable
+  public class SimpleArrayInt : IDisposable
   {
-    public IntPtr m_ptr; // ON_SimpleArray<int>
+    internal IntPtr m_ptr; // ON_SimpleArray<int>
+    public IntPtr ConstPointer() { return m_ptr; }
+    public IntPtr NonConstPointer() { return m_ptr; }
 
     public SimpleArrayInt()
     {
@@ -306,6 +308,56 @@ namespace Rhino.Runtime.InteropWrappers
       if (IntPtr.Zero != m_ptr)
       {
         UnsafeNativeMethods.ON_IntArray_Delete(m_ptr);
+        m_ptr = IntPtr.Zero;
+      }
+    }
+  }
+
+  /// <summary>
+  /// Wrapper for ON_SimpleArray&lt;ON_Imterval&gt;
+  /// </summary>
+  public class SimpleArrayInterval : IDisposable
+  {
+    IntPtr m_ptr; // ON_SimpleArray<ON_Interval>
+    public IntPtr ConstPointer() { return m_ptr; }
+    public IntPtr NonConstPointer() { return m_ptr; }
+
+    public SimpleArrayInterval()
+    {
+      m_ptr = UnsafeNativeMethods.ON_IntervalArray_New();
+    }
+
+    public int Count
+    {
+      get { return UnsafeNativeMethods.ON_IntervalArray_Count(m_ptr); }
+    }
+
+    public Interval[] ToArray()
+    {
+      int count = Count;
+      if (count < 1)
+        return new Interval[0];
+      Interval[] rc = new Interval[count];
+      UnsafeNativeMethods.ON_IntervalArray_CopyValues(m_ptr, rc);
+      return rc;
+    }
+
+    ~SimpleArrayInterval()
+    {
+      InternalDispose();
+    }
+
+    public void Dispose()
+    {
+      InternalDispose();
+      GC.SuppressFinalize(this);
+    }
+
+    private void InternalDispose()
+    {
+      if (IntPtr.Zero != m_ptr)
+      {
+        UnsafeNativeMethods.ON_IntervalArray_Delete(m_ptr);
         m_ptr = IntPtr.Zero;
       }
     }

@@ -3841,6 +3841,30 @@ internal partial class UnsafeNativeMethods
 
   //void RHC_SetEscapeKeyCallback(ESCAPEKEYPROC esc_proc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRhinoApp_SetStatusBarDistancePane(double distance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoApp_SetStatusBarDistancePane(double distance);
+
+  //void CRhinoApp_SetStatusBarPointPane(ON_3DPOINT_STRUCT point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoApp_SetStatusBarPointPane(Point3d point);
+
+  //void CRhinoApp_SetStatusBarMessagePane( const RHMONO_STRING* msg )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoApp_SetStatusBarMessagePane([MarshalAs(UnmanagedType.LPWStr)]string msg);
+
+  //int CRhinoApp_StatusBarProgressMeterStart( int lower, int upper, const RHMONO_STRING* label, bool embedLabel, bool showPercent)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoApp_StatusBarProgressMeterStart(int lower, int upper, [MarshalAs(UnmanagedType.LPWStr)]string label, [MarshalAs(UnmanagedType.U1)]bool embedLabel, [MarshalAs(UnmanagedType.U1)]bool showPercent);
+
+  //int CRhinoApp_StatusBarProgressMeterPos( int position, bool absolute )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoApp_StatusBarProgressMeterPos(int position, [MarshalAs(UnmanagedType.U1)]bool absolute);
+
+  //void CRhinoApp_StatusBarProgressMeterEnd()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoApp_StatusBarProgressMeterEnd();
   #endregion
 
 
@@ -6923,6 +6947,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_RhinoJoinBrepNakedEdges(IntPtr pBrep, double tolerance);
 
+  //bool RHC_RhinoDollyExtents(CRhinoViewport* pViewport, bool selectedObjects)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoDollyExtents(IntPtr pViewport, [MarshalAs(UnmanagedType.U1)]bool selectedObjects);
+
   //int RHC_RhinoSdkLoft( ON_SimpleArray<const ON_Curve*>* pCurves,
   //                                    ON_3DPOINT_STRUCT start_point,
   //                                    ON_3DPOINT_STRUCT end_point,
@@ -7389,11 +7418,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoViewport_Magnify(IntPtr pViewport, double magnificationFactor, int mode, int fixedScreenPointX, int fixedScreenPointY);
-
-  //bool RHC_RhinoDollyExtents(CRhinoViewport* pViewport, bool selectedObjects)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RHC_RhinoDollyExtents(IntPtr pViewport, [MarshalAs(UnmanagedType.U1)]bool selectedObjects);
 
   //bool RHC_RhZoomExtentsHelper(CRhinoViewport* pViewport, ON_3DPOINT_STRUCT boxmin, ON_3DPOINT_STRUCT boxmax)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

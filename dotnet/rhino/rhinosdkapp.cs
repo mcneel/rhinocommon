@@ -882,16 +882,80 @@ namespace Rhino
       }
     }
 
-
-
-
-
-
-
-
-
-
     #endregion
 #endif
+  }
+}
+
+namespace Rhino.UI
+{
+  public static class StatusBar
+  {
+    public static void SetDistancePane(double distance)
+    {
+      UnsafeNativeMethods.CRhinoApp_SetStatusBarDistancePane(distance);
+    }
+
+    public static void SetPointPane(Rhino.Geometry.Point3d point)
+    {
+      UnsafeNativeMethods.CRhinoApp_SetStatusBarPointPane(point);
+    }
+
+    public static void SetMessagePane(string message)
+    {
+      UnsafeNativeMethods.CRhinoApp_SetStatusBarMessagePane(message);
+    }
+
+    public static void ClearMessagePane()
+    {
+      SetMessagePane(null);
+    }
+
+    /// <summary>
+    /// Starts, or shows, Rhino's status bar progress meter.
+    /// </summary>
+    /// <param name="lowerLimit">The lower limit of the progress meter's range</param>
+    /// <param name="upperLimit">The upper limit of the progress meter's range</param>
+    /// <param name="label">The short description of the progress (e.g. "Calculating", "Meshing", etc)</param>
+    /// <param name="embedLabel">
+    /// If true, then the label will be embeded in the progress meter.
+    /// If false, then the label will appear to the left of the progress meter.
+    /// </param>
+    /// <param name="showPercentComplete">
+    /// If true, then the percent complete will appear in the progress meter
+    /// </param>
+    /// <returns>
+    /// 1 - The progress meter was created successfully.
+    /// 0 - The progress meter was not created.
+    /// -1 - The progress meter was not created because some other process has already created it.
+    /// </returns>
+    public static int ShowProgressMeter(int lowerLimit, int upperLimit, string label, bool embedLabel, bool showPercentComplete)
+    {
+      return UnsafeNativeMethods.CRhinoApp_StatusBarProgressMeterStart(lowerLimit, upperLimit, label, embedLabel, showPercentComplete);
+    }
+
+    /// <summary>
+    /// Sets the current position of Rhino's status bar progress meter
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="absolute">
+    /// If true, then the progress meter is moved to position.
+    /// If false, then the progress meter is moved position from the current position (relative).
+    /// </param>
+    /// <returns>
+    /// The previous position if successful
+    /// </returns>
+    public static int UpdateProgressMeter(int position, bool absolute)
+    {
+      return UnsafeNativeMethods.CRhinoApp_StatusBarProgressMeterPos(position, absolute);
+    }
+
+    /// <summary>
+    /// Ends, or hides, Rhino's status bar progress meter.
+    /// </summary>
+    public static void HideProgressMeter()
+    {
+      UnsafeNativeMethods.CRhinoApp_StatusBarProgressMeterEnd();
+    }
   }
 }

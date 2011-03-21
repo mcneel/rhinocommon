@@ -1234,7 +1234,7 @@ namespace Rhino.Display
     {
       IntPtr ptr = ConstPointer();
       int[] items = new int[6];
-      bool rc = UnsafeNativeMethods.CRhinoViewport_VP_GetScreenPort(ptr, ref items[0]);
+      bool rc = UnsafeNativeMethods.CRhinoViewport_VP_GetScreenPort(ptr, items);
       portLeft = items[0];
       portRight = items[1];
       portBottom = items[2];

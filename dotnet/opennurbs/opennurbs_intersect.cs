@@ -579,8 +579,8 @@ namespace Rhino.Geometry.Intersect
     /// <returns>True on success, false on failure.</returns>
     public static bool CurveBrep(Curve curve, Brep brep, double tolerance, out Curve[] overlapCurves, out Point3d[] intersectionPoints)
     {
-      overlapCurves = null;
-      intersectionPoints = null;
+      overlapCurves = new Curve[0];
+      intersectionPoints = new Point3d[0];
 
       Runtime.InteropWrappers.SimpleArrayPoint3d outputPoints = new Runtime.InteropWrappers.SimpleArrayPoint3d();
       IntPtr outputPointsPtr = outputPoints.NonConstPointer();
@@ -604,6 +604,72 @@ namespace Rhino.Geometry.Intersect
 
       return rc;
     }
+
+    public static bool CurveBrepFace(Curve curve, BrepFace face, double tolerance, out Curve[] overlapCurves, out Point3d[] intersectionPoints)
+    {
+      overlapCurves = new Curve[0];
+      intersectionPoints = new Point3d[0];
+
+      Runtime.InteropWrappers.SimpleArrayPoint3d outputPoints = new Runtime.InteropWrappers.SimpleArrayPoint3d();
+      IntPtr outputPointsPtr = outputPoints.NonConstPointer();
+
+      Runtime.InteropWrappers.SimpleArrayCurvePointer outputCurves = new Runtime.InteropWrappers.SimpleArrayCurvePointer();
+      IntPtr outputCurvesPtr = outputCurves.NonConstPointer();
+
+      IntPtr curvePtr = curve.ConstPointer();
+      IntPtr facePtr = face.ConstPointer();
+
+      bool rc = UnsafeNativeMethods.RHC_RhinoCurveFaceIntersect(curvePtr, facePtr, tolerance, outputCurvesPtr, outputPointsPtr);
+
+      if (rc)
+      {
+        overlapCurves = outputCurves.ToNonConstArray();
+        intersectionPoints = outputPoints.ToArray();
+      }
+
+      outputPoints.Dispose();
+      outputCurves.Dispose();
+
+      return rc;
+    }
+
+    /// <summary>
+    /// Intersect two Surfaces
+    /// </summary>
+    /// <param name="surfaceA">First Surface for intersection</param>
+    /// <param name="surfaceB">Second Surface for intersection</param>
+    /// <param name="tolerance">Intersection tolerance</param>
+    /// <param name="intersectionCurves">The intersection curves will be returned here</param>
+    /// <param name="intersectionPoints">The intersection points will be returned here</param>
+    /// <returns>True on success, false on failure.</returns>
+    public static bool SurfaceSurface(Surface surfaceA, Surface surfaceB, double tolerance, out Curve[] intersectionCurves, out Point3d[] intersectionPoints)
+    {
+      intersectionCurves = new Curve[0];
+      intersectionPoints = new Point3d[0];
+
+      Runtime.InteropWrappers.SimpleArrayPoint3d outputPoints = new Runtime.InteropWrappers.SimpleArrayPoint3d();
+      IntPtr outputPointsPtr = outputPoints.NonConstPointer();
+
+      Runtime.InteropWrappers.SimpleArrayCurvePointer outputCurves = new Runtime.InteropWrappers.SimpleArrayCurvePointer();
+      IntPtr outputCurvesPtr = outputCurves.NonConstPointer();
+
+      IntPtr srfPtrA = surfaceA.ConstPointer();
+      IntPtr srfPtrB = surfaceB.ConstPointer();
+
+      bool rc = UnsafeNativeMethods.RHC_RhinoIntersectSurfaces( srfPtrA, srfPtrB, tolerance, outputCurvesPtr, outputPointsPtr);
+
+      if (rc)
+      {
+        intersectionCurves = outputCurves.ToNonConstArray();
+        intersectionPoints = outputPoints.ToArray();
+      }
+
+      outputPoints.Dispose();
+      outputCurves.Dispose();
+
+      return rc;
+    }
+
     /// <summary>
     /// Intersect two Breps.
     /// </summary>
@@ -615,8 +681,8 @@ namespace Rhino.Geometry.Intersect
     /// <returns>True on success, false on failure.</returns>
     public static bool BrepBrep(Brep brepA, Brep brepB, double tolerance, out Curve[] intersectionCurves, out Point3d[] intersectionPoints)
     {
-      intersectionCurves = null;
-      intersectionPoints = null;
+      intersectionCurves = new Curve[0];
+      intersectionPoints = new Point3d[0];
 
       Runtime.InteropWrappers.SimpleArrayPoint3d outputPoints = new Runtime.InteropWrappers.SimpleArrayPoint3d();
       IntPtr outputPointsPtr = outputPoints.NonConstPointer();

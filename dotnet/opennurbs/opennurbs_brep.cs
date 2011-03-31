@@ -1262,6 +1262,17 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Get the untrimmed surface that this face is based on.
+    /// </summary>
+    /// <returns></returns>
+    public Surface UnderlyingSurface()
+    {
+      IntPtr pConstBrep = m_brep.ConstPointer();
+      IntPtr pSurface = UnsafeNativeMethods.ON_BrepFace_SurfaceOf(pConstBrep, m_index);
+      return GeometryBase.CreateGeometryHelper(pSurface, new SurfaceOfHolder(this)) as Surface;
+    }
+
+    /// <summary>
     /// Split this face using 3D trimming curves.
     /// </summary>
     /// <param name="curves">Curves to split with.</param>
@@ -1396,6 +1407,20 @@ namespace Rhino.Geometry
       return rc == 0 ? new int[0] : fi.ToArray();
     }
     #endregion
+  }
+
+  class SurfaceOfHolder
+  {
+    BrepFace m_face;
+    public SurfaceOfHolder(BrepFace face)
+    {
+      m_face = face;
+    }
+    public IntPtr SurfacePointer()
+    {
+      IntPtr pBrep = m_face.m_brep.ConstPointer();
+      return UnsafeNativeMethods.ON_BrepFace_SurfaceOf(pBrep, m_face.m_index);
+    }
   }
 }
 

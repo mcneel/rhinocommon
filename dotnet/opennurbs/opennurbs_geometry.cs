@@ -202,10 +202,10 @@ namespace Rhino.Geometry
           rc = new RevSurface(pGeometry, parent_object, source_objref);
           break;
         case idxON_PlaneSurface: //14
-          rc = new PlaneSurface(pGeometry, parent_object, source_objref);
+          rc = new PlaneSurface(pGeometry, parent);
           break;
         case idxON_ClippingPlaneSurface: //15
-          rc = new ClippingPlaneSurface(pGeometry, parent_object, source_objref);
+          rc = new ClippingPlaneSurface(pGeometry, parent);
           break;
         case idxON_Annotation2: // 16
           rc = new AnnotationBase(pGeometry, parent_object, source_objref);

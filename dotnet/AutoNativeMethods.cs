@@ -973,6 +973,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Brep_DuplicateFaceSurface(IntPtr pConstBrep, int faceIndex);
 
+  //const ON_Surface* ON_BrepFace_SurfaceOf( const ON_Brep* pConstBrep, int faceIndex )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_BrepFace_SurfaceOf(IntPtr pConstBrep, int faceIndex);
+
   //const ON_Mesh* ON_BrepFace_Mesh( const ON_Brep* pConstBrep, int faceIndex )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_BrepFace_Mesh(IntPtr pConstBrep, int faceIndex);
@@ -7204,6 +7208,11 @@ internal partial class UnsafeNativeMethods
   //void CRhinoViewport_Delete(CRhinoViewport* pViewport)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoViewport_Delete(IntPtr pViewport);
+
+  //bool CRhinoViewport_GetBBox(const CRhinoViewport* pConstViewport, ON_3dPoint* box_min, ON_3dPoint* box_max)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoViewport_GetBBox(IntPtr pConstViewport, ref Point3d box_min, ref Point3d box_max);
 
   //bool CRhinoViewport_GetBool(CRhinoViewport* pViewport, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

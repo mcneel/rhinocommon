@@ -499,6 +499,23 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Updates the bounding box to be the smallest axis aligned
+    /// bounding box that contains the transform of the eight corner
+    /// points of the input bounding box.
+    /// </summary>
+    /// <param name="xform"></param>
+    /// <returns></returns>
+    public bool Transform(Transform xform)
+    {
+      if (!IsValid)
+        return false;
+      Point3d[] points = GetCorners();
+      points = xform.TransformList(points);
+      this = new BoundingBox(points);
+      return true;
+    }
+
+    /// <summary>
     /// Create a Brep representation of this BoundingBox.
     /// </summary>
     /// <returns>A Brep representation of this box or null.</returns>

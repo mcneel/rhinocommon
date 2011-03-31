@@ -4,8 +4,8 @@ namespace Rhino.Geometry
 {
   public class PlaneSurface : Surface
   {
-    internal PlaneSurface(IntPtr ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref) 
-      : base(ptr, parent_object, obj_ref)
+    internal PlaneSurface(IntPtr ptr, object parent) 
+      : base(ptr, parent)
     { }
 
     /// <summary>
@@ -36,7 +36,7 @@ namespace Rhino.Geometry
       IntPtr ptr = UnsafeNativeMethods.RHC_RhinoPlaneThroughBox(ref lineInPlane, vectorInPlane, ref box);
       if (IntPtr.Zero == ptr)
         return null;
-      return new PlaneSurface(ptr, null, null);
+      return new PlaneSurface(ptr, null);
     }
 
     /// <summary>
@@ -50,24 +50,24 @@ namespace Rhino.Geometry
       IntPtr ptr = UnsafeNativeMethods.RHC_RhinoPlaneThroughBox2(ref plane, ref box);
       if (IntPtr.Zero == ptr)
         return null;
-      return new PlaneSurface(ptr, null, null);
+      return new PlaneSurface(ptr, null);
     }
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new PlaneSurface(IntPtr.Zero, null, null);
+      return new PlaneSurface(IntPtr.Zero, null);
     }
   }
 
   public class ClippingPlaneSurface : PlaneSurface
   {
-    internal ClippingPlaneSurface(IntPtr ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
-      : base(ptr, parent_object, obj_ref)
+    internal ClippingPlaneSurface(IntPtr ptr, object parent)
+      : base(ptr, parent)
     { }
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new ClippingPlaneSurface(IntPtr.Zero, null, null);
+      return new ClippingPlaneSurface(IntPtr.Zero, null);
     }
   }
 }

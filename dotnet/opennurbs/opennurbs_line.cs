@@ -169,7 +169,11 @@ namespace Rhino.Geometry
     /// The length of the direction vector equals the length of 
     /// the line segment.
     /// </summary>
-    /// <value>Sets both the direction and the length of the line.</value>
+    /// <example>
+    /// <code source='examples\vbnet\ex_intersectlines.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_intersectlines.cs' lang='cs'/>
+    /// <code source='examples\py\ex_intersectlines.py' lang='py'/>
+    /// </example>
     public Vector3d Direction
     {
       get { return To - From; }
@@ -255,6 +259,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="t">Parameter to evaluate line segment at. Line parameters are normalised parameters.</param>
     /// <returns>The point at the specified parameter.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_intersectlines.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_intersectlines.cs' lang='cs'/>
+    /// <code source='examples\py\ex_intersectlines.py' lang='py'/>
+    /// </example>
     public Point3d PointAt(double t)
     {
       double s = 1.0 - t;

@@ -253,11 +253,28 @@ namespace Rhino.Geometry
         ApplyMemoryPressure();
     }
 
+    internal Surface(IntPtr native_pointer, object parent)
+      : base(native_pointer, parent, -1)
+    {
+      if (parent == null)
+        ApplyMemoryPressure();
+    }
+
     internal override IntPtr _InternalDuplicate(out bool applymempressure)
     {
       applymempressure = true;
       IntPtr pConstPointer = ConstPointer();
       return UnsafeNativeMethods.ON_Surface_DuplicateSurface(pConstPointer);
+    }
+
+    internal override IntPtr _InternalGetConstPointer()
+    {
+      Rhino.Geometry.SurfaceOfHolder holder = m__parent as Rhino.Geometry.SurfaceOfHolder;
+      if (null != holder)
+      {
+        return holder.SurfacePointer();
+      }
+      return base._InternalGetConstPointer();
     }
 
     internal override GeometryBase DuplicateShallowHelper()

@@ -102,6 +102,11 @@ namespace Rhino.Geometry.Intersect
     /// <para>-AoB  +BoB</para>
     /// is numerically singular, where A = (lineA.To - lineA.From) and B = (lineB.To-lineB.From)
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_intersectlines.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_intersectlines.cs' lang='cs'/>
+    /// <code source='examples\py\ex_intersectlines.py' lang='py'/>
+    /// </example>
     public static bool LineLine(Line lineA, Line lineB, out double a, out double b)
     {
       a = 0; b = 0;

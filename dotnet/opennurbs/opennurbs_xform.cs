@@ -580,6 +580,25 @@ namespace Rhino.Geometry
     #endregion
 
     #region methods
+    public BoundingBox TransformBoundingBox(BoundingBox bbox)
+    {
+      BoundingBox rc = bbox;
+      rc.Transform(this);
+      return rc;
+    }
+
+    public Point3d[] TransformList(System.Collections.Generic.IEnumerable<Point3d> points)
+    {
+      System.Collections.Generic.List<Point3d> rc = new System.Collections.Generic.List<Point3d>(points);
+      for (int i = 0; i < rc.Count; i++)
+      {
+        Point3d pt = rc[i];
+        pt.Transform(this);
+        rc[i] = pt;
+      }
+      return rc.ToArray();
+    }
+
     public override bool Equals(object obj)
     {
       return (obj is Transform && this == (Transform)obj);

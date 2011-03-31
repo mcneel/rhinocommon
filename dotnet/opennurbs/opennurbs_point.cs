@@ -1753,6 +1753,11 @@ namespace Rhino.Geometry
     /// <para>0 = vectors are not parallel or at least one of the vectors is zero.</para>
     /// <para>-1 = vectors are anti-parallel.</para>
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_intersectlines.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_intersectlines.cs' lang='cs'/>
+    /// <code source='examples\py\ex_intersectlines.py' lang='py'/>
+    /// </example>
     public int IsParallelTo(Vector3d other)
     {
       return IsParallelTo(other, RhinoMath.DefaultAngleTolerance);

@@ -780,6 +780,16 @@ namespace Rhino.Display
     #region Wrappers for ON_Viewport
 
     // from ON_Geometry
+    public BoundingBox GetFrustumBoundingBox()
+    {
+      Point3d a = new Point3d();
+      Point3d b = new Point3d();
+      IntPtr pConstThis = ConstPointer();
+      if( !UnsafeNativeMethods.CRhinoViewport_GetBBox(pConstThis, ref a, ref b) )
+        return BoundingBox.Unset;
+      return new BoundingBox(a, b);
+    }
+
     /// <summary>
     /// Rotates about the specified axis. A positive rotation angle results
     /// in a counter-clockwise rotation about the axis (right hand rule).
@@ -1242,6 +1252,16 @@ namespace Rhino.Display
       portNear = items[4];
       portFar = items[5];
       return rc;
+    }
+
+    public System.Drawing.Rectangle ScreenPortBounds
+    {
+      get
+      {
+        int l, r, t, b, n, f;
+        GetScreenPort(out l, out r, out b, out t, out n, out f);
+        return System.Drawing.Rectangle.FromLTRB(l, t, r, b);
+      }
     }
 
 

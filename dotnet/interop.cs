@@ -185,24 +185,12 @@ namespace Rhino.Runtime
       return rc;
     }
 
-    static System.Reflection.Assembly m_rhinoDotNet;
     static Type GetRhinoDotNetType(string name)
     {
-      if (null == m_rhinoDotNet)
-      {
-        System.Reflection.Assembly[] all_ass = AppDomain.CurrentDomain.GetAssemblies();
-        for (int i = 0; i < all_ass.Length; i++)
-        {
-          if (all_ass[i].GetName().Name.StartsWith("Rhino_DotNet", StringComparison.OrdinalIgnoreCase))
-          {
-            m_rhinoDotNet = all_ass[i];
-            break;
-          }
-        }
-        if (null == m_rhinoDotNet)
-          return null;
-      }
-      return m_rhinoDotNet.GetType(name);
+      System.Reflection.Assembly rhinoDotNet = HostUtils.GetRhinoDotNetAssembly();
+      if (null == rhinoDotNet)
+        return null;
+      return rhinoDotNet.GetType(name);
     }
 
     public static object ToOnBrep(Rhino.Geometry.Brep source)

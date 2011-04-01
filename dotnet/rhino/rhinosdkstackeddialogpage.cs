@@ -16,16 +16,7 @@ namespace Rhino.UI
       // This is only going to work on Windows. Use functions defined in Rhino.NET through
       // reflection to hook the pages up. This is done so we don't have to bring in all of
       // the WinForms/MFC interop code into RhinoCommon
-      System.Reflection.Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-      System.Reflection.Assembly rhdn = null;
-      for (int i = 0; i < assemblies.Length; i++)
-      {
-        if (assemblies[i].FullName.StartsWith("Rhino_DotNET"))
-        {
-          rhdn = assemblies[i];
-          break;
-        }
-      }
+      System.Reflection.Assembly rhdn = Rhino.Runtime.HostUtils.GetRhinoDotNetAssembly();
       if (rhdn != null)
       {
         Type t = rhdn.GetType("RMA.UI.MRhinoStackedDialogPage");

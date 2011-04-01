@@ -190,6 +190,7 @@ namespace Rhino.Runtime
       get { return m_bSendDebugToRhino; }
       set { m_bSendDebugToRhino = value; }
     }
+
     public static void ExceptionReport(Exception ex)
     {
       if (null == ex)
@@ -616,6 +617,28 @@ namespace Rhino.Runtime
       }
       return false;
     }
+
+    /// <summary>
+    /// Only works on Windows. Returns null on Mac
+    /// </summary>
+    /// <returns></returns>
+    public static System.Reflection.Assembly GetRhinoDotNetAssembly()
+    {
+      if (m_rhdn_assembly == null && RunningOnWindows)
+      {
+        System.Reflection.Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        for (int i = 0; i < assemblies.Length; i++)
+        {
+          if (assemblies[i].FullName.StartsWith("Rhino_DotNet", StringComparison.OrdinalIgnoreCase))
+          {
+            m_rhdn_assembly = assemblies[i];
+            break;
+          }
+        }
+      }
+      return m_rhdn_assembly;
+    }
+    static System.Reflection.Assembly m_rhdn_assembly;
 
     public static void SetInShutDown()
     {

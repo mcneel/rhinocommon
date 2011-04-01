@@ -7232,13 +7232,17 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoViewport_IsVisible(IntPtr ptr, Point3d p0, Point3d p1, [MarshalAs(UnmanagedType.U1)]bool usep1);
 
-  //const RHMONO_STRING* CRhinoViewport_GetSetName(CRhinoViewport* ptr, bool set, const RHMONO_STRING* _str)
+  //void CRhinoViewport_GetSetName(CRhinoViewport* pRhinoViewport, const RHMONO_STRING* _str, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr CRhinoViewport_GetSetName(IntPtr ptr, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.LPWStr)]string _str);
+  internal static extern void CRhinoViewport_GetSetName(IntPtr pRhinoViewport, [MarshalAs(UnmanagedType.LPWStr)]string _str, IntPtr pStringHolder);
 
   //void CRhinoViewport_ConstructionPlane(CRhinoViewport* ptr, ON_PLANE_STRUCT* plane, bool set)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoViewport_ConstructionPlane(IntPtr ptr, ref Plane plane, [MarshalAs(UnmanagedType.U1)]bool set);
+
+  //const ON_3dmConstructionPlane* CRhinoViewport_GetConstructionPlane(const CRhinoViewport* pConstRhinoViewport)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoViewport_GetConstructionPlane(IntPtr pConstRhinoViewport);
 
   //void CRhinoViewport_SetConstructionPlane(CRhinoViewport* pViewport, const ON_3dmConstructionPlane* pCPlane, bool push)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

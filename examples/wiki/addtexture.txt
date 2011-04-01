@@ -152,7 +152,7 @@ def AddTexture():
     material_index = rhino_object.Attributes.MaterialIndex
     if material_index<0:
         # Create a new material based on Rhino's default material
-        material_index = scriptcontext.doc.Materials.AddMaterial()
+        material_index = scriptcontext.doc.Materials.Add()
         # Assign the new material (index) to the object.
         rhino_object.Attributes.MaterialIndex = material_index
 

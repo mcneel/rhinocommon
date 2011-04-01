@@ -210,16 +210,18 @@ namespace Rhino.Display
     {
       get
       {
-        IntPtr ptr = NonConstPointer();
-        IntPtr rc = UnsafeNativeMethods.CRhinoViewport_GetSetName(ptr, false, null);
-        if (rc == IntPtr.Zero)
-          return null;
-        return System.Runtime.InteropServices.Marshal.PtrToStringUni(rc);
+        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        {
+          IntPtr pThis = NonConstPointer();
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.CRhinoViewport_GetSetName(pThis, null, pString);
+          return sh.ToString();
+        }
       }
       set
       {
         IntPtr ptr = NonConstPointer();
-        UnsafeNativeMethods.CRhinoViewport_GetSetName(ptr, true, value);
+        UnsafeNativeMethods.CRhinoViewport_GetSetName(ptr, value, IntPtr.Zero);
       }
     }
 
@@ -340,6 +342,13 @@ namespace Rhino.Display
       Plane plane = new Plane();
       UnsafeNativeMethods.CRhinoViewport_ConstructionPlane(ptr, ref plane, false);
       return plane;
+    }
+
+    public Rhino.DocObjects.ConstructionPlane GetConstructionPlane()
+    {
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pConstuctionPlane = UnsafeNativeMethods.CRhinoViewport_GetConstructionPlane(pConstThis);
+      return Rhino.DocObjects.ConstructionPlane.FromIntPtr(pConstuctionPlane);
     }
 
     public void SetConstructionPlane(Plane plane)

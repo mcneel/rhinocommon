@@ -1637,6 +1637,17 @@ namespace Rhino.Geometry
     {
       return UnsafeNativeMethods.ON_3dVector_IsTiny(this, tolerance);
     }
+
+    /// <summary>
+    /// Uses RhinoMath.ZeroTolerance for IsTiny calculation
+    /// </summary>
+    /// <returns></returns>
+    public bool IsTiny()
+    {
+      return IsTiny(RhinoMath.ZeroTolerance);
+    }
+
+
     /// <summary>
     /// Gets a value indicating whether the X, Y, and Z values are all equal to 0.0.
     /// </summary>

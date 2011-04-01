@@ -106,8 +106,11 @@
     <Compile Include="ex_circlecenter.vb" />
     <Compile Include="ex_commandlineoptions.vb" />
     <Compile Include="ex_dividebylength.vb" />
+    <Compile Include="ex_dupborder.vb" />
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_insertknot.vb" />
+    <Compile Include="ex_intersectlines.vb" />
+    <Compile Include="ex_movecplane.vb" />
     <Compile Include="ex_objectdisplaymode.vb" />
     <Compile Include="ex_objectlayer.vb" />
     <Compile Include="ex_orientonsrf.vb" />

@@ -23,6 +23,9 @@ partial class Examples
     if (unroll == null)
       return Rhino.Commands.Result.Cancel;
 
+    unroll.AbsoluteTolerance = 0.01;
+    unroll.RelativeTolerance = 0.01;
+
     Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject();
     go.SetCommandPrompt("Select points, curves, and dots to unroll with surface");
     go.GeometryFilter = Rhino.DocObjects.ObjectType.Point | Rhino.DocObjects.ObjectType.Curve | Rhino.DocObjects.ObjectType.TextDot;

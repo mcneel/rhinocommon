@@ -90,8 +90,11 @@
     <Compile Include="ex_commandlineoptions.cs" />
     <Compile Include="ex_custompython.cs" />
     <Compile Include="ex_dividebylength.cs" />
+    <Compile Include="ex_dupborder.cs" />
     <Compile Include="ex_findobjectsbyname.cs" />
     <Compile Include="ex_insertknot.cs" />
+    <Compile Include="ex_intersectlines.cs" />
+    <Compile Include="ex_movecplane.cs" />
     <Compile Include="ex_objectdisplaymode.cs" />
     <Compile Include="ex_objectlayer.cs" />
     <Compile Include="ex_orientonsrf.cs" />

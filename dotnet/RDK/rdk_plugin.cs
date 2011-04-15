@@ -9,6 +9,7 @@ namespace Rhino.Render
   sealed class RdkPlugIn : IDisposable
   {
     #region statics
+    static bool m_callbacks_set = false;
     internal static void SetRdkCallbackFunctions(bool on)
     {
       // All of the RDK callback functions - gets called every time a new RdkPlugIn is created
@@ -42,39 +43,44 @@ namespace Rhino.Render
         UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_DeleteThis(Rhino.Render.CustomRenderMesh.Provider.m_DeleteThis);
         UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_WillBuild(Rhino.Render.CustomRenderMesh.Provider.m_WillBuild);
         UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_BBox(Rhino.Render.CustomRenderMesh.Provider.m_BBox);
-        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_Build(Rhino.Render.CustomRenderMesh.Provider.m_Build); 
+        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_Build(Rhino.Render.CustomRenderMesh.Provider.m_Build);
+        m_callbacks_set = true;
       }
       else
       {
-        UnsafeNativeMethods.Rdk_SetNewTextureCallback(null);
-        UnsafeNativeMethods.Rdk_SetNewMaterialCallback(null);
-        UnsafeNativeMethods.Rdk_SetNewEnvironmentCallback(null);
+        if (m_callbacks_set)
+        {
+          UnsafeNativeMethods.Rdk_SetNewTextureCallback(null);
+          UnsafeNativeMethods.Rdk_SetNewMaterialCallback(null);
+          UnsafeNativeMethods.Rdk_SetNewEnvironmentCallback(null);
 
-        UnsafeNativeMethods.Rdk_SetRenderContentDeleteThisCallback(null);
-        UnsafeNativeMethods.Rdk_SetContentStringCallback(null);
-        UnsafeNativeMethods.Rdk_SetNewTextureEvaluatorCallback(null);
-        UnsafeNativeMethods.Rdk_SetTextureEvaluatorCallbacks(null, null);
-        UnsafeNativeMethods.Rdk_SetSimulateTextureCallback(null);
-        UnsafeNativeMethods.Rdk_SetAddUISectionsCallback(null);
-        UnsafeNativeMethods.Rdk_SetIsContentTypeAcceptableAsChildCallback(null);
-        UnsafeNativeMethods.Rdk_SetHarvestDataCallback(null);
-        UnsafeNativeMethods.Rdk_SetGetShaderCallback(null);
+          UnsafeNativeMethods.Rdk_SetRenderContentDeleteThisCallback(null);
+          UnsafeNativeMethods.Rdk_SetContentStringCallback(null);
+          UnsafeNativeMethods.Rdk_SetNewTextureEvaluatorCallback(null);
+          UnsafeNativeMethods.Rdk_SetTextureEvaluatorCallbacks(null, null);
+          UnsafeNativeMethods.Rdk_SetSimulateTextureCallback(null);
+          UnsafeNativeMethods.Rdk_SetAddUISectionsCallback(null);
+          UnsafeNativeMethods.Rdk_SetIsContentTypeAcceptableAsChildCallback(null);
+          UnsafeNativeMethods.Rdk_SetHarvestDataCallback(null);
+          UnsafeNativeMethods.Rdk_SetGetShaderCallback(null);
 
-        //Materials
-        UnsafeNativeMethods.Rdk_SetTextureChildSlotNameCallback(null);
-        UnsafeNativeMethods.Rdk_SetSimulateMaterialCallback(null);
+          //Materials
+          UnsafeNativeMethods.Rdk_SetTextureChildSlotNameCallback(null);
+          UnsafeNativeMethods.Rdk_SetSimulateMaterialCallback(null);
 
-        //Environments
-        UnsafeNativeMethods.Rdk_SetSimulateEnvironmentCallback(null);
+          //Environments
+          UnsafeNativeMethods.Rdk_SetSimulateEnvironmentCallback(null);
 
-        //SdkRender
-        UnsafeNativeMethods.Rdk_SetSdkRenderCallback(null);
+          //SdkRender
+          UnsafeNativeMethods.Rdk_SetSdkRenderCallback(null);
 
-        //CustomRenderMeshes
-        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_DeleteThis(null);
-        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_WillBuild(null);
-        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_BBox(null);
-        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_Build(null); 
+          //CustomRenderMeshes
+          UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_DeleteThis(null);
+          UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_WillBuild(null);
+          UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_BBox(null);
+          UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_Build(null);
+          m_callbacks_set = false;
+        }
       }
     }
 

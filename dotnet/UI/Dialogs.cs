@@ -70,43 +70,27 @@ namespace Rhino
       /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
       public static System.Windows.Forms.DialogResult ShowSemiModal(System.Windows.Forms.Form form)
       {
-        m_sendKeyStrokesCalled = false;
-        System.Windows.Forms.DialogResult rc = System.Windows.Forms.DialogResult.None;
-        System.Windows.Forms.Button accept = form.AcceptButton as System.Windows.Forms.Button;
-        System.Windows.Forms.Button cancel = form.CancelButton as System.Windows.Forms.Button;
-        if (accept!=null && cancel!=null)
+        SemiModalFormMessenger semihelper = new SemiModalFormMessenger(form);
+        return form.ShowDialog(RhinoApp.MainWindow());
+      }
+
+      class SemiModalFormMessenger
+      {
+        System.Windows.Forms.Form m_form;
+        public SemiModalFormMessenger(System.Windows.Forms.Form f)
         {
-          accept.Click += SemiModalOkClick;
-          cancel.Click += SemiModalCancelClick;
+          m_form = f;
+          if( Rhino.Runtime.HostUtils.RunningOnWindows )
+            m_form.Load += new EventHandler(m_form_Load);
         }
-        form.FormClosing += SemiModalOkClick;
-        Rhino.Input.Custom.GetString gs = new Rhino.Input.Custom.GetString();
-        gs.SetCommandPrompt("Press escape to cancel");
-        form.Show(RhinoApp.MainWindow());
-        gs.Get();
-        rc = System.Windows.Forms.DialogResult.Cancel;
-        if (gs.CommandResult() == Rhino.Commands.Result.Success && gs.StringResult() == "ok")
-          rc = System.Windows.Forms.DialogResult.OK;
-        form.DialogResult = rc;
-        form.Close();
 
-        return rc;
+        void m_form_Load(object sender, EventArgs e)
+        {
+          IntPtr hMainWnd = RhinoApp.MainWindowHandle();
+          UnsafeNativeMethods.EnableWindow(hMainWnd, true);
+        }
       }
 
-      static bool m_sendKeyStrokesCalled;
-      static void SemiModalOkClick(object sender, EventArgs e)
-      {
-        if (!m_sendKeyStrokesCalled )
-          RhinoApp.SendKeystrokes("ok", true);
-        m_sendKeyStrokesCalled = true;
-      }
-
-      static void SemiModalCancelClick(object sender, EventArgs e)
-      {
-        if( !m_sendKeyStrokesCalled )
-          RhinoApp.SendKeystrokes("", true);
-        m_sendKeyStrokesCalled = true;
-      }
 
       /// <summary>
       /// Display a text dialog similar to the dialog used for the "What" command

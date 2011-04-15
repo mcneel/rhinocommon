@@ -12,7 +12,7 @@ namespace Rhino.Geometry
       IntPtr pRevSurface = UnsafeNativeMethods.ON_RevSurface_Create(pConstCurve, ref axisOfRevolution, startAngleRadians, endAngleRadians);
       if (IntPtr.Zero == pRevSurface)
         return null;
-      return new RevSurface(pRevSurface, null, null);
+      return new RevSurface(pRevSurface, null);
     }
 
     /// <example>
@@ -52,39 +52,39 @@ namespace Rhino.Geometry
       IntPtr pRevSurface = UnsafeNativeMethods.ON_Cone_RevSurfaceForm(ref cone);
       if (IntPtr.Zero == pRevSurface)
         return null;
-      return new RevSurface(pRevSurface, null, null);
+      return new RevSurface(pRevSurface, null);
     }
     public static RevSurface CreateFromCylinder(Cylinder cylinder)
     {
       IntPtr pRevSurface = UnsafeNativeMethods.ON_Cylinder_RevSurfaceForm(ref cylinder);
       if (IntPtr.Zero == pRevSurface)
         return null;
-      return new RevSurface(pRevSurface, null, null);
+      return new RevSurface(pRevSurface, null);
     }
     public static RevSurface CreateFromSphere(Sphere sphere)
     {
       IntPtr pRevSurface = UnsafeNativeMethods.ON_Sphere_RevSurfaceForm(ref sphere);
       if (IntPtr.Zero == pRevSurface)
         return null;
-      return new RevSurface(pRevSurface, null, null);
+      return new RevSurface(pRevSurface, null);
     }
     public static RevSurface CreateFromTorus(Torus torus)
     {
       IntPtr pRevSurface = UnsafeNativeMethods.ON_Torus_RevSurfaceForm(ref torus);
       if (IntPtr.Zero == pRevSurface)
         return null;
-      return new RevSurface(pRevSurface, null, null);
+      return new RevSurface(pRevSurface, null);
     }
     #endregion
 
     #region constructors
-    internal RevSurface(IntPtr ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
-      : base(ptr, parent_object, obj_ref)
+    internal RevSurface(IntPtr ptr, object parent)
+      : base(ptr, parent)
     { }
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new RevSurface(IntPtr.Zero, null, null);
+      return new RevSurface(IntPtr.Zero, null);
     }
     #endregion
 

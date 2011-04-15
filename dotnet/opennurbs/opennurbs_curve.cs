@@ -248,6 +248,29 @@ namespace Rhino.Geometry
       return GeometryBase.CreateGeometryHelper(ptr, null) as NurbsCurve;
     }
 
+#if !USING_V5_SDK
+    //David: this function is disabled in the public SDK until I can get it to work right.
+    [System.ComponentModel.Browsable(false), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    public static Curve CreateFittedCurve(IEnumerable<Point3d> points, int degree, Vector3d startTangent, Vector3d endTangent, double fittingTolerance)
+    {
+      if (null == points)
+        throw new ArgumentNullException("points");
+
+      int count;
+      Point3d[] ptArray = Point3dList.GetConstPointArray(points, out count);
+      if (count < 2)
+        throw new InvalidOperationException("Insufficient points for a fitted curve");
+
+      if (2 == count && !startTangent.IsValid && !endTangent.IsValid)
+        return new LineCurve(ptArray[0], ptArray[1]);
+
+      if (1 == degree && count > 2 && !startTangent.IsValid && !endTangent.IsValid)
+        return PolylineCurve.FromArray(ptArray);
+      IntPtr ptr = UnsafeNativeMethods.RHC_RhinoFitPoints(degree, count, ptArray, startTangent, endTangent, fittingTolerance);
+      return GeometryBase.CreateGeometryHelper(ptr, null) as NurbsCurve;
+    }
+#endif
+
     /// <summary>
     /// Create a curve from a set of control-point locations.
     /// </summary>
@@ -2526,6 +2549,42 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Splits a curve into pieces using a surface or a polysurface
+    /// </summary>
+    /// <param name="cutter"></param>
+    /// <param name="tolerance"></param>
+    /// <returns></returns>
+    public Curve[] Split(Brep cutter, double tolerance)
+    {
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pConstBrep = cutter.ConstPointer();
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer pieces = new SimpleArrayCurvePointer())
+      {
+        IntPtr pPieces = pieces.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoCurveSplit(pConstThis, pConstBrep, tolerance, pPieces);
+        return pieces.ToNonConstArray();
+      }
+    }
+
+    /// <summary>
+    /// Splits a curve into pieces using a surface or a polysurface
+    /// </summary>
+    /// <param name="cutter"></param>
+    /// <param name="tolerance"></param>
+    /// <returns></returns>
+    public Curve[] Split(Surface cutter, double tolerance)
+    {
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pConstSurface = cutter.ConstPointer();
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer pieces = new SimpleArrayCurvePointer())
+      {
+        IntPtr pPieces = pieces.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoCurveSplit(pConstThis, pConstSurface, tolerance, pPieces);
+        return pieces.ToNonConstArray();
+      }
+    }
+
+    /// <summary>
     /// Where possible, analytically extends curve to include the given domain. 
     /// This will not work on closed curves. The original curve will be identical to the 
     /// restriction of the resulting curve to the original curve domain.
@@ -2990,6 +3049,20 @@ namespace Rhino.Geometry
       return GeometryBase.CreateGeometryHelper(pPolylineCurve, null) as PolylineCurve;
     }
 
+#if USING_V5_SDK
+    public Curve[] PullToBrepFace(BrepFace face, double tolerance)
+    {
+      IntPtr pConstCurve = ConstPointer();
+      IntPtr pConstBrepFace = face.ConstPointer();
+      using (Runtime.InteropWrappers.SimpleArrayCurvePointer curves = new SimpleArrayCurvePointer())
+      {
+        IntPtr pCurves = curves.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoPullCurveToFace(pConstCurve, pConstBrepFace, pCurves, tolerance);
+        return curves.ToNonConstArray();
+      }
+    }
+#endif
+
     /// <summary>
     /// Offsets a curve. If you have a nice offset, then there will be one entry in 
     /// the array. If the original curve had kinks or the offset curve had self 
@@ -3002,8 +3075,35 @@ namespace Rhino.Geometry
     /// <returns>Offset curves on success, null on failure.</returns>
     public Curve[] Offset(Plane plane, double distance, double tolerance, CurveOffsetCornerStyle cornerStyle)
     {
-      Point3d direction_point = new Point3d(plane.XAxis);
+      // Create a bogus dir point
+      Point3d direction_point = plane.Origin + plane.XAxis;
+
+      Random rnd = new Random(1);
+
+      // Try a hundred times to find a smooth place on the curve where the tangent 
+      // is not (anti)parallel to the offset plane z-axis.
+      // This is unbelievably foul, but the most consistent offset result I 
+      // can come up with on short notice.
+      for (int i = 0; i < 100; i++)
+      {
+        double t = Domain.ParameterAt(rnd.NextDouble());
+        if (this.IsContinuous(Continuity.G1_continuous, t))
+        {
+          Point3d p = PointAt(t);
+          Vector3d v = TangentAt(t);
+
+          if (v.IsParallelTo(plane.ZAxis, RhinoMath.ToRadians(0.1)) == 0)
+          {
+            Vector3d perp = Vector3d.CrossProduct(v, plane.ZAxis);
+            perp.Unitize();
+            direction_point = p + 1e-3 * perp;
+            break;
+          }
+        }
+      }
+
       return Offset(direction_point, plane.Normal, distance, tolerance, cornerStyle);
+
       //IntPtr ptr = ConstPointer();
       //SimpleArrayCurvePointer offsetCurves = new SimpleArrayCurvePointer();
       //IntPtr pCurveArray = offsetCurves.NonConstPointer();

@@ -190,16 +190,16 @@ namespace Rhino.Geometry
           rc = new TextDot(pGeometry, parent_object, source_objref);
           break;
         case idxON_Surface: //10
-          rc = new Surface(pGeometry, parent_object, source_objref);
+          rc = new Surface(pGeometry, parent);
           break;
         case idxON_Brep: //11
           rc = new Brep(pGeometry, parent_object, source_objref);
           break;
         case idxON_NurbsSurface: //12
-          rc = new NurbsSurface(pGeometry, parent_object, source_objref);
+          rc = new NurbsSurface(pGeometry, parent);
           break;
         case idxON_RevSurface: //13
-          rc = new RevSurface(pGeometry, parent_object, source_objref);
+          rc = new RevSurface(pGeometry, parent);
           break;
         case idxON_PlaneSurface: //14
           rc = new PlaneSurface(pGeometry, parent);
@@ -217,7 +217,7 @@ namespace Rhino.Geometry
           rc = new TextEntity(pGeometry, parent_object, source_objref);
           break;
         case idxON_SumSurface: //19
-          rc = new SumSurface(pGeometry, parent_object, source_objref);
+          rc = new SumSurface(pGeometry, parent);
           break;
         case idxON_BrepFace: //20
           {

@@ -17,16 +17,16 @@ namespace Rhino.Geometry
       IntPtr pSumSurface = UnsafeNativeMethods.ON_SumSurface_Create(pConstCurveA, pConstCurveB);
       if (IntPtr.Zero == pSumSurface)
         return null;
-      return new SumSurface(pSumSurface, null, null);
+      return new SumSurface(pSumSurface, null);
     }
 
-    internal SumSurface(IntPtr ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
-      : base(ptr, parent_object, obj_ref)
+    internal SumSurface(IntPtr ptr, object parent)
+      : base(ptr, parent)
     { }
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new SumSurface(IntPtr.Zero, null, null);
+      return new SumSurface(IntPtr.Zero, null);
     }
   }
 }

@@ -1202,7 +1202,7 @@ namespace Rhino.Geometry
 
     public static double operator *(Point4d point, Point4d point2)
     {
-      return (point.m_x * point2.m_x) + 
+      return (point.m_x * point2.m_x) +
         (point.m_y * point2.m_y) +
         (point.m_z * point2.m_z) +
         (point.m_w * point2.m_w);
@@ -1501,6 +1501,50 @@ namespace Rhino.Geometry
       if (dot < -1.0) dot = -1.0;
       double radians = Math.Acos(dot);
       return radians;
+    }
+    /// <summary>
+    /// Compute the angle between two vectors in a 2D Plane.
+    /// </summary>
+    /// <param name="a">First vector.</param>
+    /// <param name="b">Second vector.</param>
+    /// <param name="plane">Plane in which to perform the angle measurement.</param>
+    /// <returns>The angle (in radians) between a and b as projected onto the plane or RhinoMath.UnsetValue on failure.</returns>
+    public static double VectorAngle(Vector3d a, Vector3d b, Plane plane)
+    {
+      { // Project vectors onto plane.
+        Point3d pA = plane.Origin + a;
+        Point3d pB = plane.Origin + b;
+
+        pA = plane.ClosestPoint(pA);
+        pB = plane.ClosestPoint(pB);
+
+        a = pA - plane.Origin;
+        b = pB - plane.Origin;
+      }
+
+      // Abort on invalid cases.
+      if (!a.Unitize()) { return RhinoMath.UnsetValue; }
+      if (!b.Unitize()) { return RhinoMath.UnsetValue; }
+
+      double dot = a * b;
+      { // Limit dit product to valid range.
+        if (dot >= 1.0)
+        { dot = 1.0; }
+        else if (dot < -1.0)
+        { dot = -1.0; }
+      }
+
+      double angle = Math.Acos(dot);
+      { // Special case (anti)parallel vectors.
+        if (Math.Abs(angle) < 1e-64) { return 0.0; }
+        if (Math.Abs(angle - Math.PI) < 1e-64) { return Math.PI; }
+      }
+
+      Vector3d cross = Vector3d.CrossProduct(a, b);
+      if (plane.ZAxis.IsParallelTo(cross) == +1)
+      { return angle; }
+      else
+      { return 2.0 * Math.PI - angle; }
     }
 
     public static implicit operator Vector3d(Vector3f vec)

@@ -17,7 +17,7 @@ namespace Rhino.Geometry
       IntPtr ptr = UnsafeNativeMethods.ON_NurbsSurface_New(dimension, isRational, order0, order1, controlPointCount0, controlPointCount1);
       if (IntPtr.Zero == ptr)
         return null;
-      return new NurbsSurface(ptr, null, null);
+      return new NurbsSurface(ptr, null);
     }
 
     public static NurbsSurface CreateFromCone(Cone cone)
@@ -25,28 +25,28 @@ namespace Rhino.Geometry
       IntPtr pNurbsSurface = UnsafeNativeMethods.ON_Cone_GetNurbForm(ref cone);
       if (IntPtr.Zero == pNurbsSurface)
         return null;
-      return new NurbsSurface(pNurbsSurface, null, null);
+      return new NurbsSurface(pNurbsSurface, null);
     }
     public static NurbsSurface CreateFromCylinder(Cylinder cylinder)
     {
       IntPtr pNurbsSurface = UnsafeNativeMethods.ON_Cylinder_GetNurbForm(ref cylinder);
       if (IntPtr.Zero == pNurbsSurface)
         return null;
-      return new NurbsSurface(pNurbsSurface, null, null);
+      return new NurbsSurface(pNurbsSurface, null);
     }
     public static NurbsSurface CreateFromSphere(Sphere sphere)
     {
       IntPtr pNurbsSurface = UnsafeNativeMethods.ON_Sphere_GetNurbsForm(ref sphere);
       if (IntPtr.Zero == pNurbsSurface)
         return null;
-      return new NurbsSurface(pNurbsSurface, null, null);
+      return new NurbsSurface(pNurbsSurface, null);
     }
     public static NurbsSurface CreateFromTorus(Torus torus)
     {
       IntPtr pNurbsSurface = UnsafeNativeMethods.ON_Torus_GetNurbForm(ref torus);
       if (IntPtr.Zero == pNurbsSurface)
         return null;
-      return new NurbsSurface(pNurbsSurface, null, null);
+      return new NurbsSurface(pNurbsSurface, null);
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ namespace Rhino.Geometry
       IntPtr ptr = UnsafeNativeMethods.ON_NurbsSurface_SurfaceFromPoints(ptArray, uCount, vCount, uDegree, vDegree);
 
       if (IntPtr.Zero == ptr) { return null; }
-      return new NurbsSurface(ptr, null, null);
+      return new NurbsSurface(ptr, null);
     }
     /// <summary>
     /// Create a surface from control-points.
@@ -125,7 +125,7 @@ namespace Rhino.Geometry
       IntPtr ptr = UnsafeNativeMethods.ON_NurbsSurface_SurfaceThroughPoints(ptArray, uCount, vCount, uDegree, vDegree, uClosed, vClosed);
       if (IntPtr.Zero == ptr)
         return null;
-      return new NurbsSurface(ptr, null, null);
+      return new NurbsSurface(ptr, null);
     }
 
     /// <summary>
@@ -143,7 +143,7 @@ namespace Rhino.Geometry
 
       if (ptr == IntPtr.Zero)
         return null;
-      return new NurbsSurface(ptr, null, null);
+      return new NurbsSurface(ptr, null);
     }
 
     /// <summary>
@@ -172,7 +172,7 @@ namespace Rhino.Geometry
       IntPtr pSurface = UnsafeNativeMethods.RHC_RhinoCreateSurfaceFromCorners(corner1, corner2, corner3, corner4, tolerance);
       if (IntPtr.Zero == pSurface)
         return null;
-      return new NurbsSurface(pSurface, null, null);
+      return new NurbsSurface(pSurface, null);
     }
     /// <summary>
     /// Make a surface from 3 corner points
@@ -201,19 +201,99 @@ namespace Rhino.Geometry
       IntPtr pNurbsSurface = UnsafeNativeMethods.RHC_RhinoRailRevolve(pConstProfile, pConstRail, ref axis, scaleHeight);
       if (IntPtr.Zero == pNurbsSurface)
         return null;
-      return new NurbsSurface(pNurbsSurface, null, null);
+      return new NurbsSurface(pNurbsSurface, null);
     }
-    #endregion
+
+#if USING_V5_SDK
+    /// <summary>
+    /// Builds a surface from ordered network of curves/edges
+    /// </summary>
+    /// <param name="uCurves"></param>
+    /// <param name="uContinuityStart">
+    /// continuity at first U segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature
+    /// </param>
+    /// <param name="uContinuityEnd">
+    /// continuity at last U segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature
+    /// </param>
+    /// <param name="vCurves"></param>
+    /// <param name="vContinuityStart">
+    /// continuity at first V segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature
+    /// </param>
+    /// <param name="vContinuityEnd">
+    /// continuity at last V segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature
+    /// </param>
+    /// <param name="edgeTolerance">tolerance to use along network surface edge</param>
+    /// <param name="interiorTolerance">tolerance to use for the interior curves</param>
+    /// <param name="angleTolerance">angle tolerance to use</param>
+    /// <param name="error">
+    /// If the NurbsSurface could not be created, the error value describes where
+    /// the failure occured.  0 = success,  1 = curve sorter failed, 2 = network initializing failed,
+    /// 3 = failed to build surface, 4 = network surface is not valid
+    /// </param>
+    /// <returns>A NurbsSurface or null on failure.</returns>
+    public static NurbsSurface CreateNetworkSurface(IEnumerable<Curve> uCurves, int uContinuityStart, int uContinuityEnd,
+                                                    IEnumerable<Curve> vCurves, int vContinuityStart, int vContinuityEnd,
+                                                    double edgeTolerance, double interiorTolerance, double angleTolerance,
+                                                    out int error)
+    {
+      Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer _uCurves = new Runtime.InteropWrappers.SimpleArrayCurvePointer(uCurves);
+      Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer _vCurves = new Runtime.InteropWrappers.SimpleArrayCurvePointer(vCurves);
+      IntPtr pUCurves = _uCurves.NonConstPointer();
+      IntPtr pVCurves = _vCurves.NonConstPointer();
+      error = 0;
+      IntPtr pNS = UnsafeNativeMethods.RHC_RhinoNetworkSurface(pUCurves, uContinuityStart, uContinuityEnd, pVCurves, vContinuityStart, vContinuityEnd, edgeTolerance, interiorTolerance, angleTolerance, ref error);
+      _uCurves.Dispose();
+      _vCurves.Dispose();
+      if (pNS != IntPtr.Zero)
+        return new NurbsSurface(pNS, null);
+      return null;
+    }
+
+    /// <summary>
+    /// Builds a surface from autosorted network of curves/edges.
+    /// </summary>
+    /// <param name="curves">array of curves/edges, sorted automatically into U and V curves</param>
+    /// <param name="continuity">continuity along edges, 0 = loose, 1 = pos, 2 = tan, 3 = curvature</param>
+    /// <param name="edgeTolerance">tolerance to use along network surface edge</param>
+    /// <param name="interiorTolerance">tolerance to use for the interior curves</param>
+    /// <param name="angleTolerance">angle tolerance to use</param>
+    /// <param name="error">
+    /// If the NurbsSurface could not be created, the error value describes where
+    /// the failure occured.  0 = success,  1 = curve sorter failed, 2 = network initializing failed,
+    /// 3 = failed to build surface, 4 = network surface is not valid
+    /// </param>
+    /// <returns>A NurbsSurface or null on failure.</returns>
+    public static NurbsSurface CreateNetworkSurface(IEnumerable<Curve> curves, int continuity,
+                                                    double edgeTolerance, double interiorTolerance, double angleTolerance,
+                                                    out int error)
+    {
+      Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer _curves = new Runtime.InteropWrappers.SimpleArrayCurvePointer(curves);
+      IntPtr pCurves = _curves.NonConstPointer();
+      error = 0;
+      IntPtr pNS = UnsafeNativeMethods.RHC_RhinoNetworkSurface2(pCurves, continuity, edgeTolerance, interiorTolerance, angleTolerance, ref error);
+      _curves.Dispose();
+      if (pNS != IntPtr.Zero)
+        return new NurbsSurface(pNS, null);
+      return null;
+    }
+#endif    
+#endregion
 
     #region constructors
+    public NurbsSurface(NurbsSurface other)
+    {
+      IntPtr pConstOther = other.ConstPointer();
+      IntPtr pThis = UnsafeNativeMethods.ON_NurbsSurface_New2(pConstOther);
+      this.ConstructNonConstObject(pThis);
+    }
 
-    internal NurbsSurface(IntPtr ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
-      : base(ptr, parent_object, obj_ref)
+    internal NurbsSurface(IntPtr ptr, object parent)
+      : base(ptr, parent)
     { }
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new NurbsSurface(IntPtr.Zero, null, null);
+      return new NurbsSurface(IntPtr.Zero, null);
     }
     #endregion
 
@@ -268,6 +348,16 @@ namespace Rhino.Geometry
         return UnsafeNativeMethods.ON_NurbsSurface_GetBool(ptr, idxIsRational);
       }
     }
+    public bool MakeRational()
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_NurbsSurface_GetBool(pThis, idxMakeRational);
+    }
+    public bool MakeNonRational()
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_NurbsSurface_GetBool(pThis, idxMakeNonRational);
+    }
 
     #endregion
 
@@ -278,8 +368,8 @@ namespace Rhino.Geometry
     //const int idxZeroCVs = 3;
     //const int idxClampStart = 4;
     //const int idxClampEnd = 5;
-    //const int idxMakeRational = 6;
-    //const int idxMakeNonRational = 7;
+    const int idxMakeRational = 6;
+    const int idxMakeNonRational = 7;
     //const int idxHasBezierSpans = 8;
 
     // GetInt indices
@@ -294,7 +384,6 @@ namespace Rhino.Geometry
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.ON_NurbsSurface_GetIntDir(ptr, which, direction);
     }
-
   }
   //  public class ON_NurbsCage : ON_Geometry { }
   //  public class ON_MorphControl : ON_Geometry { }

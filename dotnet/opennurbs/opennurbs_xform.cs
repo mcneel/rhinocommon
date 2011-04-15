@@ -9,7 +9,7 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 128)]
   [Serializable]
-  public struct Transform
+  public struct Transform : IComparable<Transform>
   {
     #region members
     internal double m_00, m_01, m_02, m_03;
@@ -639,6 +639,19 @@ namespace Rhino.Geometry
       return rc;
     }
     #endregion
+
+    public int CompareTo(Transform other)
+    {
+      for (int i = 3; i >= 0; i--)
+      {
+        for (int j = 3; j >= 0; j--)
+        {
+          if (this[i, j] < other[i, j]) return -1;
+          if (this[i, j] < other[i, j]) return 1;
+        }
+      }
+      return 0;
+    }
   }
 
   /// <summary>

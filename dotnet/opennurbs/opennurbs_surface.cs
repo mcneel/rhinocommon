@@ -403,6 +403,12 @@ namespace Rhino.Geometry
       return GeometryBase.CreateGeometryHelper(pNewSurface, null) as Surface;
     }
 
+    public IsoStatus ClosestSide(double u, double v)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return (IsoStatus)UnsafeNativeMethods.ON_Surface_ClosestSide(pConstThis, u, v);
+    }
+
     /// <summary>
     /// Rebuilds an existing surface to a given degree and point count
     /// </summary>
@@ -723,6 +729,19 @@ namespace Rhino.Geometry
       return rc;
     }
 
+    /// <summary>Fits a new surface through an existing surface</summary>
+    /// <param name="uDegree">the output surface U degree. Must be bigger than 1</param>
+    /// <param name="vDegree">the output surface V degree. Must be bigger than 1</param>
+    /// <param name="fitTolerance"></param>
+    /// <returns></returns>
+    public Surface Fit(int uDegree, int vDegree, double fitTolerance)
+    {
+      IntPtr pConstThis = ConstPointer();
+      double achievedTol = 0;
+      IntPtr rc = UnsafeNativeMethods.RHC_RhinoFitSurface(pConstThis, uDegree, vDegree, fitTolerance, ref achievedTol);
+      return GeometryBase.CreateGeometryHelper(rc, null) as Surface;
+    }
+
     //[skipping]
     //  BOOL Ev1Der( // returns FALSE if unable to evaluate
     //  BOOL Ev2Der( // returns FALSE if unable to evaluate
@@ -1011,7 +1030,7 @@ namespace Rhino.Geometry
 
       if (rc == IntPtr.Zero)
         return null;
-      return new NurbsSurface(rc, null, null);
+      return new NurbsSurface(rc, null);
     }
 
     /// <summary>

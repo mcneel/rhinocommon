@@ -169,21 +169,65 @@ namespace Rhino.Geometry
     /// <returns></returns>
     public Vector3d NormalAt(double longitudeRadians, double latitudeRadians)
     {
-      return Math.Cos(latitudeRadians) * (Math.Cos(longitudeRadians) * m_plane.XAxis
-        + Math.Sin(longitudeRadians) * m_plane.YAxis)
-        + Math.Sin(latitudeRadians) * m_plane.ZAxis;
+      return Math.Cos(latitudeRadians) * (Math.Cos(longitudeRadians) * m_plane.XAxis +
+             Math.Sin(longitudeRadians) * m_plane.YAxis) +
+             Math.Sin(latitudeRadians) * m_plane.ZAxis;
     }
 
     /// <summary>
-    /// returns point on sphere that is closest to given point
+    /// Returns point on sphere that is closest to given point
     /// </summary>
-    /// <param name="testPoint"></param>
-    /// <returns></returns>
+    /// <param name="testPoint">Point to project onto Sphere.</param>
+    /// <returns>Point on sphere surface closest to testPoint.</returns>
     public Point3d ClosestPoint(Point3d testPoint)
     {
       Vector3d v = testPoint - m_plane.Origin;
       v.Unitize();
       return m_plane.Origin + m_radius * v;
+    }
+    /// <summary>
+    /// Find the angle parameters on this sphere that are closest to a test point.
+    /// </summary>
+    /// <param name="testPoint">Point to project onto the sphere.</param>
+    /// <param name="longitudeRadians">The longitudinal angle (in radians; 0.0 to 2pi) where the sphere approaches testPoint best.</param>
+    /// <param name="latitudeRadians">The latitudinal angle (in radians; -0.5pi to +0.5pi) where the sphere approaches testPoint best.</param>
+    /// <returns>True on success, false on failure. This function will fail if the point it coincident with the sphere center.</returns>
+    public bool ClosestParameter(Point3d testPoint, out double longitudeRadians, out double latitudeRadians)
+    {
+      longitudeRadians = 0.0;
+      latitudeRadians = 0.0;
+
+      if (!testPoint.IsValid) { return false; }
+      if (!this.IsValid) { return false; }
+
+      //Special case origin coincidence.
+      if (testPoint == m_plane.Origin) { return false; }
+
+      double u, v;
+      if (!m_plane.ClosestParameter(testPoint, out u, out v)) { return false; }
+      double dist = m_plane.DistanceTo(testPoint);
+
+      //Special case north and south-pole points.
+      if ((Math.Abs(u) < 1e-64) && (Math.Abs(v) < 1e-64))
+      {
+        if (dist >= 0)
+        { latitudeRadians = 0.5 * Math.PI; }
+        else
+        { latitudeRadians = -0.5 * Math.PI; }
+        return true;
+      }
+
+      //Assign longitude.
+      longitudeRadians = Math.Atan2(v, u);
+      if (longitudeRadians < 0.0)
+      { longitudeRadians = 2.0 * Math.PI + longitudeRadians; }
+
+      //Assign latitude.
+      if (dist > 1e-64)
+      { latitudeRadians = 0.5 * Math.PI - Vector3d.VectorAngle(m_plane.ZAxis, testPoint - m_plane.Origin); }
+      else if (dist < -1e-64)
+      { latitudeRadians = -0.5 * Math.PI + Vector3d.VectorAngle(-m_plane.ZAxis, testPoint - m_plane.Origin); }
+      return true;
     }
     #endregion
 
@@ -282,33 +326,5 @@ namespace Rhino.Geometry
       return RevSurface.CreateFromSphere(this);
     }
     #endregion
-
-    /* Moved to static Create functions on NurbsSurface and RevSurface
-    /// <summary>
-    /// parameterization of NURBS surface does not match sphere's transcendental paramaterization
-    /// </summary>
-    /// <returns></returns>
-    public Geometry.NurbsSurface GetNurbsForm()
-    {
-      IntPtr pSurface = UnsafeNativeMethods.ON_Sphere_GetNurbsForm(ref this);
-      if (IntPtr.Zero == pSurface)
-        return null;
-      return new Geometry.NurbsSurface(pSurface, false, 0);
-    }
-    
-    /// <summary>
-    /// Creates a surface of revolution definition of the sphere
-    /// </summary>
-    /// <returns>
-    /// A surface of revolution or NULL if the sphere is not valid
-    /// </returns>
-    public Geometry.RevSurface RevSurfaceForm()
-    {
-      IntPtr pRevSurface = UnsafeNativeMethods.ON_Sphere_RevSurfaceForm(ref this);
-      if (IntPtr.Zero == pRevSurface)
-        return null;
-      return new RevSurface(pRevSurface, false, 0);
-    }
-    */
   }
 }

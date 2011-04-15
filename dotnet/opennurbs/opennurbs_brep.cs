@@ -620,6 +620,34 @@ namespace Rhino.Geometry
       return rc;
     }
 
+    /// <summary>
+    /// Combines two or more breps into one
+    /// </summary>
+    /// <param name="brepsToMerge"></param>
+    /// <param name="tolerance"></param>
+    /// <returns></returns>
+    public static Brep MergeBreps(System.Collections.Generic.IEnumerable<Brep> brepsToMerge, double tolerance)
+    {
+      if (null == brepsToMerge)
+        return null;
+
+      Runtime.INTERNAL_BrepArray input = new Runtime.INTERNAL_BrepArray();
+      foreach (Brep brep in brepsToMerge)
+      {
+        if (null == brep)
+          continue;
+        input.AddBrep(brep, true);
+      }
+
+      IntPtr pInput = input.NonConstPointer();
+      IntPtr pNewBrep = UnsafeNativeMethods.RHC_RhinoMergeBreps(pInput, tolerance);
+      Brep rc = null;
+      if (pNewBrep!=IntPtr.Zero)
+        rc = new Brep(pNewBrep, null, null);
+      input.Dispose();
+      return rc;
+    }
+
     // making static because there will be IEnumerable<Brep> versions of this function
     public static Curve[] CreateContourCurves(Brep brepToContour, Point3d contourStart, Point3d contourEnd, double interval)
     {
@@ -942,6 +970,17 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Merges adjacent coplanar faces into single faces
+    /// </summary>
+    /// <param name="tolerance">3d tolerance for determining when edges are adjacent</param>
+    /// <returns>True if faces were merged.  False if no faces were merged</returns>
+    public bool MergeCoplanarFaces(double tolerance)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoMergeCoplanarFaces(pThis, tolerance);
+    }
+
+    /// <summary>
     /// Splits a Brep into pieces
     /// </summary>
     /// <param name="splitter"></param>
@@ -978,6 +1017,54 @@ namespace Rhino.Geometry
       return null;
     }
 
+    /// <summary>
+    /// Trim a Brep with an oriented cutter. The parts of the Brep that lie inside
+    /// (opposite the normal) of the cutter are retained while the parts to the
+    /// outside (in the direction of the normal) are discarded.  If the Cutter is
+    /// closed, then a connected component of the Brep that does not intersect the
+    /// cutter is kept if and only if it is contained in the inside of cutter.
+    /// That is the region bounded by cutter opposite from the normal of cutter,
+    /// If cutter is not closed all these components are kept.
+    /// </summary>
+    /// <param name="cutter"></param>
+    /// <param name="intersectionTolerance"></param>
+    /// <returns>This Brep is not modified, the trim results are returned in an array</returns>
+    public Brep[] Trim(Brep cutter, double intersectionTolerance)
+    {
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pConstCutter = cutter.ConstPointer();
+      using (Rhino.Runtime.INTERNAL_BrepArray rc = new Runtime.INTERNAL_BrepArray())
+      {
+        IntPtr pBreps = rc.NonConstPointer();
+        if (UnsafeNativeMethods.RHC_RhinoBrepTrim1(pConstThis, pConstCutter, intersectionTolerance, pBreps) > 0)
+          return rc.ToNonConstArray();
+      }
+      return new Brep[0];
+    }
+
+    /// <summary>
+    /// Trim a Brep with an oriented cutter.  The parts of Brep that lie inside
+    /// (opposite the normal) of the cutter are retained while the parts to the
+    /// outside ( in the direction of the normal ) are discarded. A connected
+    /// component of Brep that does not intersect the cutter is kept if and only
+    /// if it is contained in the inside of Cutter.  That is the region bounded by
+    /// cutter opposite from the normal of cutter, or in the case of a Plane cutter
+    /// the halfspace opposite from the plane normal.
+    /// </summary>
+    /// <param name="cutter"></param>
+    /// <param name="intersectionTolerance"></param>
+    /// <returns>This Brep is not modified, the trim results are returned in an array</returns>
+    public Brep[] Trim(Plane cutter, double intersectionTolerance)
+    {
+      IntPtr pConstThis = ConstPointer();
+      using (Rhino.Runtime.INTERNAL_BrepArray rc = new Runtime.INTERNAL_BrepArray())
+      {
+        IntPtr pBreps = rc.NonConstPointer();
+        if (UnsafeNativeMethods.RHC_RhinoBrepTrim2(pConstThis, ref cutter, intersectionTolerance, pBreps) > 0)
+          return rc.ToNonConstArray();
+      }
+      return new Brep[0];
+    }
     #endregion
 
     #region internal helpers

@@ -290,6 +290,14 @@ namespace Rhino
     //  IntrinsicPointStyle = 4,
     //}
 
+    public enum MeshType : int
+    {
+      Default = 0,
+      Render = 1,
+      Analysis = 2,
+      Preview = 3,
+      Any = 4
+    }
   }
 
   namespace DocObjects

@@ -71,6 +71,7 @@ namespace Rhino.Display
 
     const int idxBounds = 0;
     const int idxClientRectangle = 1;
+    const int idxScreenRectangle = 2;
     /// <summary>
     /// Gets or sets the size and location of the view including its nonclient elements, in pixels, relative to the parent control.
     /// </summary>
@@ -81,7 +82,7 @@ namespace Rhino.Display
         IntPtr ptr = ConstPointer();
         int[] lrtb = new int[4];
         UnsafeNativeMethods.CRhinoView_GetRect(ptr, idxBounds, ref lrtb[0]);
-        return System.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[1], lrtb[2], lrtb[3]);
+        return System.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[2], lrtb[1], lrtb[3]);
       }
       //set { }
     }
@@ -95,14 +96,23 @@ namespace Rhino.Display
         IntPtr ptr = ConstPointer();
         int[] lrtb = new int[4];
         UnsafeNativeMethods.CRhinoView_GetRect(ptr, idxClientRectangle, ref lrtb[0]);
-        int left = lrtb[0];
-        int right = lrtb[1];
-        int top = lrtb[2];
-        int bottom = lrtb[3];
-        return System.Drawing.Rectangle.FromLTRB(left, top, right, bottom);
+        return System.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[2], lrtb[1], lrtb[3]);
       }
     }
 
+    /// <summary>
+    /// Gets the rectangle that represents the client area of the view. 
+    /// </summary>
+    public System.Drawing.Rectangle ScreenRectangle
+    {
+      get
+      {
+        IntPtr ptr = ConstPointer();
+        int[] lrtb = new int[4];
+        UnsafeNativeMethods.CRhinoView_GetRect(ptr, idxScreenRectangle, ref lrtb[0]);
+        return System.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[2], lrtb[1], lrtb[3]);
+      }
+    }
 
     //[skipping]
     //  functionality in CView base class

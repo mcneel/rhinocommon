@@ -648,6 +648,27 @@ namespace Rhino.PlugIns
       return dirs.ToArray();
     }
 
+    /// <summary>
+    /// Get a plug-in name for an installed plug-in given the path to that plug-in
+    /// </summary>
+    /// <param name="pluginPath"></param>
+    /// <returns></returns>
+    public static string NameFromPath(string pluginPath)
+    {
+      using(StringHolder sh = new StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoPlugInManager_NameFromPath(pluginPath, pString);
+        return sh.ToString();
+      }
+    }
+
+    public static Guid IdFromPath(string pluginPath)
+    {
+      return UnsafeNativeMethods.CRhinoPlugInManager_IdFromPath(pluginPath);
+    }
+
+
     public static bool LoadPlugIn(Guid pluginId)
     {
       return UnsafeNativeMethods.CRhinoPlugInManager_LoadPlugIn(pluginId);
@@ -1699,24 +1720,17 @@ namespace Rhino.PlugIns
     /// network node, a loaner license will be requested by the
     /// system's assigned Zoo server.
     /// </summary>
-    /// <param name="productId">
-    /// The Guid of the product whose license you want to verify
-    /// or request from a Zoo server.
-    /// </param>
-    /// <param name="productTitle">
-    /// A localized product title, such as "Rhinoceros 5.0", that can
-    /// be used in license request forms or message boxes, if needed.
-    /// </param>
+    /// <param name="productType"></param>
     /// <param name="validateDelegate">
     /// Since the license client knows nothing about your product license,
-    /// you will need to valiate your product license by supplying a 
+    /// you will need to validate your product license by supplying a 
     /// callback function, or delegate, that can be called for valiation.
     /// </param>
     /// <returns>
     /// True if the license was obtained and validated successful.
     /// False if not successful or on error.
     /// </returns>
-    public static bool GetLicense(Guid productId, string productTitle, ValidateProductKeyDelegate validateDelegate)
+    public static bool GetLicense(int productType, ValidateProductKeyDelegate validateDelegate)
     {
       System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
       if (null == zooAss)
@@ -1730,7 +1744,44 @@ namespace Rhino.PlugIns
       if (mi == null)
         return false;
 
-      object invoke_rc = mi.Invoke(null, new object[] { productId, productTitle, validateDelegate });
+      // Figure out where this validateDelegate is defined.
+      // - If this delegate is defined in a .NET plug-in, use the Assembly location
+      //   to get all of the plug-in descriptive information
+      // - If this delegate is defined in a C++ plug-in, find the plug-in descriptive
+      //   information from the Rhino_DotNet wrapper class which is the delegate's
+      //   target
+      string path = null;
+      string productTitle = null;
+      Guid productId = Guid.Empty;
+
+      System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
+      System.Reflection.Assembly rhDotNet = HostUtils.GetRhinoDotNetAssembly();
+      if (delegate_method.Module.Assembly == rhDotNet)
+      {
+        object wrapper_class = validateDelegate.Target;
+        Type wrapper_type = wrapper_class.GetType();
+        System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
+        System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
+        System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
+        path = get_path_method.Invoke(wrapper_class, null) as string;
+        productTitle = get_title_method.Invoke(wrapper_class, null) as string;
+        productId = (Guid)get_id_method.Invoke(wrapper_class, null);
+      }
+      else
+      {
+        path = delegate_method.Module.Assembly.Location;
+      }
+
+      if (string.IsNullOrEmpty(path))
+        return false;
+
+      if (string.IsNullOrEmpty(productTitle) || productId == Guid.Empty)
+      {
+        productTitle = PlugIn.NameFromPath(path);
+        productId = PlugIn.IdFromPath(path);
+      }
+
+      object invoke_rc = mi.Invoke(null, new object[] { path, productId, productType, productTitle, validateDelegate });
       if (null == invoke_rc)
         return false;
 
@@ -1742,7 +1793,7 @@ namespace Rhino.PlugIns
     /// it was borrowed.
     /// </summary>
     /// <param name="productId">
-    /// The Guid of the product that you want to return.
+    /// The plugin that want to return the license.
     /// </param>
     /// <returns>
     /// True if the license was returned successful.
@@ -1750,6 +1801,18 @@ namespace Rhino.PlugIns
     /// </returns>
     public static bool ReturnLicense(Guid productId)
     {
+      // If the args are changed, go to RhDN_NativeMgr.cpp and make the changes
+      // there too so C++ works...
+      /*
+      System.Reflection.Assembly a = System.Reflection.Assembly.GetCallingAssembly();
+      if (plugIn.Assembly != a)
+        return false;
+      Guid productId = plugIn.Id;
+      */
+
+      // Steve and Dale need to figure out what is needed here 
+      // to support c++ plugins...
+
       System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
       if (null == zooAss)
         return false;
@@ -1933,6 +1996,16 @@ namespace Rhino.PlugIns
   public delegate ValidateResult ValidateProductKeyDelegate(string productKey, out LicenseData licenseData);
 
   /// <summary>
+  /// License build type enumerations
+  /// </summary>
+  public enum LicenseBuildType
+  {
+    Release = 100,      // A release build (e.g. commercical, education, nfr, etc.)
+    Evaluation = 200,   // A evaluation build
+    Beta = 300          // A beta build (e.g. wip)
+  }
+
+  /// <summary>
   /// Zoo plugin license data
   /// </summary>
   public class LicenseData
@@ -1942,6 +2015,7 @@ namespace Rhino.PlugIns
     string m_product_license;
     string m_serial_number;
     string m_license_title;
+    LicenseBuildType m_build_type;
     int m_license_count;
     DateTime? m_date_to_expire;
 
@@ -1977,6 +2051,17 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
+    /// The build of the product that this license work with.
+    /// When your product requests a license from the Zoo, it
+    /// will specify one of these build types.
+    /// </summary>
+    public LicenseBuildType BuildType
+    {
+      get { return m_build_type; }
+      set { m_build_type = value; }
+    }
+
+    /// <summary>
     /// The number of instances supported by this license.
     /// This is provided by the plugin that validated the license.
     /// </summary>
@@ -2009,6 +2094,7 @@ namespace Rhino.PlugIns
       ProductLicense = string.Empty;
       SerialNumber = string.Empty;
       LicenseTitle = string.Empty;
+      BuildType = LicenseBuildType.Release;
       LicenseCount = 1;
       DateToExpire = null;
     }
@@ -2021,6 +2107,7 @@ namespace Rhino.PlugIns
       ProductLicense = productLicense;
       SerialNumber = serialNumber;
       LicenseTitle = licenseTitle;
+      BuildType = LicenseBuildType.Release;
       LicenseCount = 1;
       DateToExpire = null;
     }
@@ -2028,11 +2115,25 @@ namespace Rhino.PlugIns
     /// <summary>
     /// Public constructor
     /// </summary>
-    public LicenseData(string productLicense, string serialNumber, string licenseTitle, int licenseCount)
+    public LicenseData(string productLicense, string serialNumber, string licenseTitle, LicenseBuildType buildType)
     {
       ProductLicense = productLicense;
       SerialNumber = serialNumber;
       LicenseTitle = licenseTitle;
+      BuildType = buildType;
+      LicenseCount = 1;
+      DateToExpire = null;
+    }
+
+    /// <summary>
+    /// Public constructor
+    /// </summary>
+    public LicenseData(string productLicense, string serialNumber, string licenseTitle, LicenseBuildType buildType, int licenseCount)
+    {
+      ProductLicense = productLicense;
+      SerialNumber = serialNumber;
+      LicenseTitle = licenseTitle;
+      BuildType = buildType;
       LicenseCount = licenseCount;
       DateToExpire = null;
     }
@@ -2040,11 +2141,12 @@ namespace Rhino.PlugIns
     /// <summary>
     /// Public constructor
     /// </summary>
-    public LicenseData(string productLicense, string serialNumber, string licenseTitle, int licenseCount, DateTime? expirationDate)
+    public LicenseData(string productLicense, string serialNumber, string licenseTitle, LicenseBuildType buildType, int licenseCount, DateTime? expirationDate)
     {
       ProductLicense = productLicense;
       SerialNumber = serialNumber;
       LicenseTitle = licenseTitle;
+      BuildType = buildType;
       LicenseCount = licenseCount;
       DateToExpire = expirationDate;
     }
@@ -2063,6 +2165,8 @@ namespace Rhino.PlugIns
         if (rc)
           rc = !string.IsNullOrEmpty(LicenseTitle);
         if (rc)
+          rc = Enum.IsDefined(typeof(LicenseBuildType), BuildType);
+        if (rc)
           rc = (0 < LicenseCount);
         if (rc && DateToExpire.HasValue)
           rc = (0 < DateTime.Compare(DateToExpire.Value, DateTime.UtcNow));
@@ -2076,7 +2180,7 @@ namespace Rhino.PlugIns
 
     #endregion
 
-    #region LicenseData static methods
+    #region LicenseData static members
 
     /// <summary>
     /// Indicates whether a LicenseData object is either null or invalid.
@@ -2113,16 +2217,39 @@ namespace Rhino.PlugIns
   }
 
   /// <summary>
-  /// LicenseStatus
+  /// LicenseStatus class
   /// </summary>
   public class LicenseStatus
   {
     #region LicenseStatus data
 
+    Guid m_product_id;
+    LicenseBuildType m_build_type;
     string m_license_title;
     string m_serial_number;
     LicenseType m_license_type;
     DateTime? m_expiration_date;
+
+    /// <summary>
+    /// The id of the product or plugin
+    /// </summary>
+    public Guid ProductId
+    {
+      get { return m_product_id; }
+      set { m_product_id = value; }
+    }
+
+    /// <summary>
+    /// The build type of the product, where:
+    ///   100 = A release build, either commercical, education, nfr, etc.
+    ///   200 = A evaluation build
+    ///   300 = A beta build, such as a wip
+    /// </summary>
+    public LicenseBuildType BuildType
+    {
+      get { return m_build_type; }
+      set { m_build_type = value; }
+    }
 
     /// <summary>
     /// The title of the license.
@@ -2169,14 +2296,15 @@ namespace Rhino.PlugIns
 
     #endregion
 
-
-    #region LicenseStatus members
+    #region LicenseStatus construction
 
     /// <summary>
     /// Public constructor
     /// </summary>
     public LicenseStatus()
     {
+      m_product_id = Guid.Empty;
+      m_build_type = 0;
       m_license_title = string.Empty;
       m_serial_number = string.Empty;
       m_license_type = PlugIns.LicenseType.Standalone;

@@ -36,6 +36,11 @@ namespace Rhino
     }
 
     private static RhinoDoc m_doc;
+    /// <summary>
+    /// WARNING!! Do not use the ActiveDoc if you don't have to. Under Mac Rhino the ActiveDoc
+    /// can change while a command is running. Use the doc that is passed to you in your RunCommand
+    /// function or continue to use the same doc after the first call to ActiveDoc.
+    /// </summary>
     public static RhinoDoc ActiveDoc
     {
       get
@@ -580,8 +585,15 @@ namespace Rhino
       get { return GetString(idxTemplateFileUsed); }
     }
 
-    //  void ClearUndoRecords(bool=false);
-    //  void ClearRedoRecords();
+    public void ClearUndoRecords(bool purgeDeletedObjects)
+    {
+      UnsafeNativeMethods.CRhinoDoc_ClearUndoRecords(m_docId, purgeDeletedObjects);
+    }
+
+    public void ClearRedoRecords()
+    {
+      UnsafeNativeMethods.CRhinoDoc_ClearRedoRecords(m_docId);
+    }
 
     public bool UndoRecordingEnabled
     {

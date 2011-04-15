@@ -28,6 +28,10 @@ class Import
 [System.Security.SuppressUnmanagedCodeSecurity]
 internal partial class UnsafeNativeMethods
 {
+  [DllImport("user32.dll")]
+  [return: MarshalAs(UnmanagedType.Bool)]
+  internal static extern bool EnableWindow(IntPtr hWnd, bool bEnable);
+
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void RHC_SetPythonEvaluateCallback(Rhino.Runtime.HostUtils.EvaluateExpressionCallback callback);
 
@@ -186,6 +190,16 @@ internal partial class UnsafeNativeMethods
   //void CRhinoMouseCallback_Enable(bool on, RHMOUSECALLBACK_FUNC mouse_cb)
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoMouseCallback_Enable([MarshalAs(UnmanagedType.U1)]bool on, Rhino.UI.MouseCallback.MouseCallbackFromCPP callback_func);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoApp_RegisterGripsEnabler(Guid key, Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoGripsEnablerCallback turnon_func);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoObjectGrips_SetCallbacks(Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoObjectGripsResetCallback reset_func,
+    Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoObjectGripsResetCallback resetmesh_func,
+    Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoObjectGripsUpdateMeshCallback updatemesh_func,
+    Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoObjectGripsNewGeometryCallback newgeom_func,
+    Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoObjectGripsDrawCallback draw_dunc);
 
 #if USING_RDK
   // RDK Functions

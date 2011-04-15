@@ -506,8 +506,6 @@ namespace Rhino.Input.Custom
     /// </example>
     public bool Constrain(Geometry.Curve curve, bool allowPickingPointOffObject)
     {
-      if (null == curve)
-        return false;
       IntPtr ptr = NonConstPointer();
       IntPtr pCurve = curve.ConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain7(ptr, pCurve, allowPickingPointOffObject);
@@ -528,8 +526,6 @@ namespace Rhino.Input.Custom
     /// </example>
     public bool Constrain(Geometry.Surface surface, bool allowPickingPointOffObject)
     {
-      if (null == surface)
-        return false;
       IntPtr ptr = NonConstPointer();
       IntPtr pSurface = surface.ConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain8(ptr, pSurface, allowPickingPointOffObject);
@@ -552,15 +548,27 @@ namespace Rhino.Input.Custom
     /// <returns>true if constraint could be applied</returns>
     public bool Constrain(Geometry.Brep brep, int wireDensity, int faceIndex, bool allowPickingPointOffObject)
     {
-      if (null == brep)
-        return false;
       IntPtr ptr = NonConstPointer();
       IntPtr pBrep = brep.ConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain9(ptr, pBrep, wireDensity, faceIndex, allowPickingPointOffObject);
     }
 
-    //[skipping]
-    //  BOOL Constrain( const ON_BrepFace&, int wire_density = -1, bool bAllowPickingPointOffObject = false );
+    /// <summary>constrain the picked point to lie on a mesh</summary>
+    /// <param name="mesh"></param>
+    /// <param name="allowPickingPointOffObject">
+    /// defines whether the point pick is allowed to happen off object. When false,
+    /// a "no no" cursor is shown when the cursor is not on the object. When true,
+    /// a normal point picking cursor is used and the marker is visible also when
+    /// the cursor is not on the object.
+    /// </param>
+    /// <returns>true if constraint could be applied</returns>
+    public bool Constrain(Geometry.Mesh mesh, bool allowPickingPointOffObject)
+    {
+      IntPtr ptr = NonConstPointer();
+      IntPtr pMesh = mesh.ConstPointer();
+      return UnsafeNativeMethods.CRhinoGetPoint_ConstrainToMesh(ptr, pMesh, allowPickingPointOffObject);
+    }
+
 
     /// <summary>
     /// If enabled, the picked point is constrained to be on the active construction plane.

@@ -62,8 +62,7 @@ namespace Rhino.DocObjects
   // I think CRhinoGripObjectEx can probably be merged with GripObject
   public class GripObject : RhinoObject
   {
-    // grip objects should not be able to be constructed by plug-in
-    //private GripObject() { }
+    internal GripObject() {}
 
     internal GripObject(uint serialNumber)
       : base(serialNumber)
@@ -189,4 +188,57 @@ namespace Rhino.DocObjects
       }
     }
   }
+
 }
+
+namespace Rhino.DocObjects.Custom
+{
+  public class CustomGripObject : GripObject, IDisposable
+  {
+    public CustomGripObject()
+    {
+      m_pRhinoObject = UnsafeNativeMethods.CRhCmnGripObject_New();
+    }
+
+    ~CustomGripObject(){ Dispose(false); }
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if ( IntPtr.Zero != m_pRhinoObject )
+      {
+        // This delete is safe in that it makes sure the object is NOT
+        // under control of the Rhino Document
+        UnsafeNativeMethods.CRhinoObject_Delete(m_pRhinoObject);
+      }
+      m_pRhinoObject = IntPtr.Zero;
+    }
+
+    public new int Index
+    {
+      get{ return base.Index; }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.CRhinoGripObject_SetIndex(pThis, value);
+      }
+    }
+
+    public new Point3d OriginalLocation
+    {
+      get{ return base.OriginalLocation; }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.CRhinoGripObject_SetGripLocation(pThis, value);
+      }
+    }
+
+
+  }
+}
+

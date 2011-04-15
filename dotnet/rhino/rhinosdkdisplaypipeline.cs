@@ -739,6 +739,17 @@ namespace Rhino.Display
     #endregion
 
     #region methods
+
+    /// <summary>
+    /// True if backfaces of surface and mesh control polygons are culled. This value
+    /// is determined by the CullControlPolygon command
+    /// </summary>
+    /// <returns></returns>
+    public static bool CullControlPolygon()
+    {
+      return UnsafeNativeMethods.RHC_RhinoCullControlPolygon();
+    }
+
     /// <summary>
     /// Test a given 3d world coordinate point for visibility inside the view 
     /// frustum under the current viewport and model transformation settings.
@@ -1959,6 +1970,7 @@ namespace Rhino.Display
     {
       m_dp = new DisplayPipeline(pDisplayPipeline);
     }
+    internal DrawEventArgs() { }
 
     public RhinoViewport Viewport
     {

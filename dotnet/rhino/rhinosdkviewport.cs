@@ -225,12 +225,6 @@ namespace Rhino.Display
       }
     }
 
-    //[skipping]
-    //  bool SetWallpaperImage( const ON_3dmWallpaperImage& wallpaper );
-    //  bool IsWallpaperImage();
-    //  bool SetTraceImage( const ON_3dmViewTraceImage& traceimage );
-    //  bool IsTraceImage();
-
     /// <summary>
     /// Viewport target point
     /// </summary>
@@ -1376,8 +1370,45 @@ namespace Rhino.Display
 
 
 
+    public string WallpaperFilename
+    {
+      get
+      {
+        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          IntPtr pConstThis = ConstPointer();
+          UnsafeNativeMethods.CRhinoViewport_GetWallpaperFilename(pConstThis, pString);
+          return sh.ToString();
+        }
+      }
+    }
+    public bool WallpaperGrayscale
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.CRhinoViewport_GetWallpaperBool(pConstThis, true);
+      }
+    }
+    public bool WallpaperVisible
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.CRhinoViewport_GetWallpaperBool(pConstThis, false);
+      }
+    }
 
-
+    public bool SetWallpaper(string imageFilename, bool grayscale)
+    {
+      return SetWallpaper(imageFilename, grayscale, true);
+    }
+    public bool SetWallpaper(string imageFilename, bool grayscale, bool visible)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoViewport_SetWallpaper(pThis, imageFilename, grayscale, visible);
+    }
 
 
     /// <summary>

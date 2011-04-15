@@ -342,6 +342,15 @@ namespace Rhino.Display
       set { m_y = Clip(value); }
     }
     /// <summary>
+    /// Gets or sets the Key channel value. 
+    /// Key channels are limited to the 0~1 range.
+    /// </summary>
+    public double K
+    {
+      get { return m_k; }
+      set { m_k = Clip(value); }
+    }
+    /// <summary>
     /// Gets or sets the Alpha channel value. 
     /// Alpha channels are limited to the 0~1 range.
     /// </summary>

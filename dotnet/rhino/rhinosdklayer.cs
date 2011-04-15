@@ -628,6 +628,11 @@ namespace Rhino.DocObjects.Tables
     /// >=0 index of new layer
     /// -1  layer not added because a layer with that name already exists.
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addchildlayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addchildlayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addchildlayer.py' lang='py'/>
+    /// </example>
     public int Add(Rhino.DocObjects.Layer layer)
     {
       if (null == layer)
@@ -717,6 +722,26 @@ namespace Rhino.DocObjects.Tables
         return false;
       IntPtr pLayer = newSettings.ConstPointer();
       return UnsafeNativeMethods.CRhinoLayerTable_ModifyLayer(m_doc.m_docId, pLayer, layerIndex, quiet);
+    }
+
+    /// <summary>
+    /// Make a layer and all of it's parent layers visible
+    /// </summary>
+    /// <param name="layerId"></param>
+    /// <returns></returns>
+    public bool ForceLayerVisible(Guid layerId)
+    {
+      return UnsafeNativeMethods.CRhinoLayerTable_ForceVisible(m_doc.m_docId, layerId);
+    }
+
+    /// <summary>
+    /// Make a layer and all of it's parent layers visible
+    /// </summary>
+    /// <param name="layerIndex"></param>
+    /// <returns></returns>
+    public bool ForceLayerVisible(int layerIndex)
+    {
+      return ForceLayerVisible(this[layerIndex].Id);
     }
 
     /// <summary>

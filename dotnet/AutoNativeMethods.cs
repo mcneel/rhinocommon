@@ -745,6 +745,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_StringArray_Delete(IntPtr pStrings);
 
+  //void ON_StringArray_Get(const ON_ClassArray<ON_wString>* pStrings, int index, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_StringArray_Get(IntPtr pStrings, int index, IntPtr pStringHolder);
+
   //ON_SimpleArray<ON_Surface*>* ON_SurfaceArray_New()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_SurfaceArray_New();
@@ -776,6 +780,22 @@ internal partial class UnsafeNativeMethods
   //void ON_IntervalArray_CopyValues(const ON_SimpleArray<ON_Interval>* pSrcIntervalArray, /*ARRAY*/ON_Interval* dest)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_IntervalArray_CopyValues(IntPtr pSrcIntervalArray, [In,Out] Interval[] dest);
+
+  //ON_SimpleArray<ON_BezierCurve*>* ON_SimpleArray_BezierCurveNew()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_SimpleArray_BezierCurveNew();
+
+  //void ON_SimpleArray_BezierCurveDelete(ON_SimpleArray<ON_BezierCurve>* pBezArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_SimpleArray_BezierCurveDelete(IntPtr pBezArray);
+
+  //ON_BezierCurve* ON_SimpleArray_BezierCurvePtr(ON_SimpleArray<ON_BezierCurve*>* pBezArray, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_SimpleArray_BezierCurvePtr(IntPtr pBezArray, int index);
+
+  //void ON_BezierCurve_Delete(ON_BezierCurve* pBez)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_BezierCurve_Delete(IntPtr pBez);
   #endregion
 
 
@@ -961,10 +981,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Brep_DuplicateFace(IntPtr pConstBrep, int faceIndex, [MarshalAs(UnmanagedType.U1)]bool duplicateMeshes);
 
-  //ON_Brep* ON_Brep_SplitFace( const ON_Brep* pConstBrep, int faceIndex, ON_SimpleArray<const ON_Curve*>* curves, double tolerance )
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_Brep_SplitFace(IntPtr pConstBrep, int faceIndex, IntPtr curves, double tolerance);
-
   //int ON_Brep_PointIsOnFace( const ON_Brep* pConstBrep, int faceIndex, double u, double v )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Brep_PointIsOnFace(IntPtr pConstBrep, int faceIndex, double u, double v);
@@ -1028,10 +1044,6 @@ internal partial class UnsafeNativeMethods
   //int ON_Brep_FaceFaceIndices( const ON_Brep* pConstBrep, int face_index, ON_SimpleArray<int>* fi )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Brep_FaceFaceIndices(IntPtr pConstBrep, int face_index, IntPtr fi);
-
-  //ON_Brep* RHC_RhinoRetrimSurface( const ON_BrepFace* pConstBrepFace, const ON_Surface* pConstSurface)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RHC_RhinoRetrimSurface(IntPtr pConstBrepFace, IntPtr pConstSurface);
 
   //ON_Brep* ON_Brep_CopyTrims( const ON_BrepFace* pConstBrepFace, const ON_Surface* pConstSurface, double tolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -1289,10 +1301,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Hatch_AreaMassProperties(IntPtr pConstHatch, double rel_tol, double abs_tol);
 
-  //int RHC_RhinoDivideCurveEquidistant(const ON_Curve* pConstCurve, double distance, ON_3dPointArray* outPoints)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RHC_RhinoDivideCurveEquidistant(IntPtr pConstCurve, double distance, IntPtr outPoints);
-
   //bool ON_Curve_IsClosable( const ON_Curve* curvePtr, double tolerance, double min_abs_size, double min_rel_size )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -1340,22 +1348,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoPullCurveToMesh(IntPtr pCurve, IntPtr pMesh, double tolerance);
 
-  //int RHC_RhinoDuplicateCurveSegments(const ON_Curve* pCurve, ON_SimpleArray<ON_Curve*>* outputSegments)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RHC_RhinoDuplicateCurveSegments(IntPtr pCurve, IntPtr outputSegments);
-
-  //ON_NurbsCurve* RHC_RhinoFitCurve(const ON_Curve* pCurve, int degree, double fitTol, double angleTol)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RHC_RhinoFitCurve(IntPtr pCurve, int degree, double fitTol, double angleTol);
-
   //ON_Curve* RHC_RhinoFairCurve(const ON_Curve* pCurve, double distanceTolerance,
   //      double angleTolerance, int clampStart, int clampEnd, int iterations)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoFairCurve(IntPtr pCurve, double distanceTolerance, double angleTolerance, int clampStart, int clampEnd, int iterations);
-
-  //ON_NurbsCurve* RHC_RhinoRebuildCurve( const ON_Curve* pCurve, int pCount, int degree, bool keepTangents)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RHC_RhinoRebuildCurve(IntPtr pCurve, int pCount, int degree, [MarshalAs(UnmanagedType.U1)]bool keepTangents);
 
   //int RHC_RhinoOffsetCurveOnSrf( const ON_Curve* pConstCurve, const ON_Brep* pConstBrep, int faceId,
   //                                             double distance, double tol,
@@ -1374,10 +1370,6 @@ internal partial class UnsafeNativeMethods
   //                                             ON_SimpleArray<ON_Curve*>* pCurves )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_RhinoOffsetCurveOnSrf3(IntPtr pConstCurve, IntPtr pConstBrep, int faceId, int count, double[] parameters, double[] dists, double tol, IntPtr pCurves);
-
-  //int RHC_RhinoGet1RailFrames(const ON_Curve* pConstCurve, int count, /*ARRAY*/const double* parameters, /*ARRAY*/ON_PLANE_STRUCT* frames)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RHC_RhinoGet1RailFrames(IntPtr pConstCurve, int count, double[] parameters, [In,Out] Plane[] frames);
   #endregion
 
 
@@ -2577,6 +2569,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_NurbsSurface_New(int dimension, [MarshalAs(UnmanagedType.U1)]bool isRational, int order0, int order1, int cvCount0, int cvCount1);
 
+  //ON_NurbsSurface* ON_NurbsSurface_New2(const ON_NurbsSurface* pConstNurbsSurface)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_NurbsSurface_New2(IntPtr pConstNurbsSurface);
+
   //bool ON_NurbsSurface_GetBool(ON_NurbsSurface* pSurface, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -3291,6 +3287,10 @@ internal partial class UnsafeNativeMethods
   //ON_Surface* ON_Surface_MakePeriodic( const ON_Surface* pConstSurface, int direction )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Surface_MakePeriodic(IntPtr pConstSurface, int direction);
+
+  //int ON_Surface_ClosestSide( const ON_Surface* pConstSurface, double u, double v )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Surface_ClosestSide(IntPtr pConstSurface, double u, double v);
   #endregion
 
 
@@ -4068,6 +4068,10 @@ internal partial class UnsafeNativeMethods
   //void CRhinoApp_DisplayCommandHelp( ON_UUID command_id )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoApp_DisplayCommandHelp(Guid command_id);
+
+  //int CRhinoCommandManager_GetCommandNames(ON_ClassArray<ON_wString>* names, bool english, bool loaded)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoCommandManager_GetCommandNames(IntPtr names, [MarshalAs(UnmanagedType.U1)]bool english, [MarshalAs(UnmanagedType.U1)]bool loaded);
   #endregion
 
 
@@ -4823,6 +4827,14 @@ internal partial class UnsafeNativeMethods
   //int CRhinoDoc_AllObjectsSince( int doc_id, unsigned int runtimeSerialNumber, ON_SimpleArray<const CRhinoObject*>* pObjectArray)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoDoc_AllObjectsSince(int doc_id, uint runtimeSerialNumber, IntPtr pObjectArray);
+
+  //void CRhinoDoc_ClearUndoRecords(int doc_id, bool purgeDeletedObjects)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDoc_ClearUndoRecords(int doc_id, [MarshalAs(UnmanagedType.U1)]bool purgeDeletedObjects);
+
+  //void CRhinoDoc_ClearRedoRecords(int doc_id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDoc_ClearRedoRecords(int doc_id);
   #endregion
 
 
@@ -5472,6 +5484,11 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoGetPoint_Constrain9(IntPtr ptr, IntPtr pBrep, int wireDensity, int faceIndex, [MarshalAs(UnmanagedType.U1)]bool allowPickingPointOffObject);
 
+  //bool CRhinoGetPoint_ConstrainToMesh(CRhinoGetPoint* pRhinoGetPoint, const ON_Mesh* pConstMesh, bool allowPickingPointOffObject)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoGetPoint_ConstrainToMesh(IntPtr pRhinoGetPoint, IntPtr pConstMesh, [MarshalAs(UnmanagedType.U1)]bool allowPickingPointOffObject);
+
   //bool CRhinoGetPoint_ConstrainToConstructionPlane(CRhinoGetPoint* ptr, bool throughBasePoint)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -5559,6 +5576,58 @@ internal partial class UnsafeNativeMethods
   //CRhinoObject* RHC_RhinoUpdateGripOwner( CRhinoObject* pObject, bool deleteOriginal )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoUpdateGripOwner(IntPtr pObject, [MarshalAs(UnmanagedType.U1)]bool deleteOriginal);
+
+  //CRhinoDisplayPipeline* CRhinoDrawGripsSettings_DisplayPipelinePtr( CRhinoDrawGripsSettings* pDrawGripsSettings )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoDrawGripsSettings_DisplayPipelinePtr(IntPtr pDrawGripsSettings);
+
+  //bool CRhinoDrawGripSettings_GetBool(const CRhinoDrawGripsSettings* pConstDrawGripsSettings, bool static_stuff )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoDrawGripSettings_GetBool(IntPtr pConstDrawGripsSettings, [MarshalAs(UnmanagedType.U1)]bool static_stuff);
+
+  //int CRhinoDrawGripSettings_GetInt(const CRhinoDrawGripsSettings* pConstDrawGripsSettings, int which )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoDrawGripSettings_GetInt(IntPtr pConstDrawGripsSettings, int which);
+
+  //bool CRhinoApp_RegisterGripsEnabler(ON_UUID id, CRHINOGRIPSENABLER_TURNONPROC turnonfunc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //CRhCmnObjectGrips* CRhCmnObjectGrips_New(int serial_number, ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhCmnObjectGrips_New(int serial_number, Guid id);
+
+  //void CRhCmnObjectGrips_Delete(CRhCmnObjectGrips* pGrips)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhCmnObjectGrips_Delete(IntPtr pGrips);
+
+  //void CRhinoObjectGrips_SetCallbacks( CRHINOOBJECTGRIPS_RESETPROC onreset,
+  //                                                   CRHINOOBJECTGRIPS_RESETPROC onresetmeshes,
+  //                                                   CRHINOOBJECTGRIPS_UPDATEMESHPROC onupdatemesh,
+  //                                                   CRHINOOBJECTGRIPS_NEWGEOMETRYPROC onnewgeom,
+  //                                                   CRHINOOBJECTGRIPS_DRAWPROC ondraw)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRhCmnObjectGrips_ResetBase(CRhCmnObjectGrips* pGrips, bool reset)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhCmnObjectGrips_ResetBase(IntPtr pGrips, [MarshalAs(UnmanagedType.U1)]bool reset);
+
+  //void CRhinoObjectGrips_AddGrip(CRhinoObjectGrips* pObjectGrips, CRhinoGripObject* pGrip)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoObjectGrips_AddGrip(IntPtr pObjectGrips, IntPtr pGrip);
+
+  //void CRhinoObjectGrips_DrawBase(CRhCmnObjectGrips* pGrips, CRhinoDrawGripsSettings* pDGS)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoObjectGrips_DrawBase(IntPtr pGrips, IntPtr pDGS);
+
+  //bool CRhinoObjectGrips_GetBool(const CRhinoObjectGrips* pConstRhinoObjectGrips, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoObjectGrips_GetBool(IntPtr pConstRhinoObjectGrips, int which);
+
+  //void CRhinoObjectGrips_SetBool(CRhinoObjectGrips* pRhinoObjectGrips, int which, bool val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoObjectGrips_SetBool(IntPtr pRhinoObjectGrips, int which, [MarshalAs(UnmanagedType.U1)]bool val);
   #endregion
 
 
@@ -5826,6 +5895,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoLayerTable_GetUnusedLayerName(int docId, [MarshalAs(UnmanagedType.U1)]bool ignoreDeleted, IntPtr pString);
 
+  //bool CRhinoLayerTable_ForceVisible(int docId, ON_UUID layerId)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoLayerTable_ForceVisible(int docId, Guid layerId);
+
   //bool CRhinoLayerTable_ModifyLayer(int docId, const ON_Layer* pLayer, int layerIndex, bool quiet)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -6068,6 +6142,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_object.cpp
+  //void CRhinoObject_Delete(CRhinoObject* pRhinoObject)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoObject_Delete(IntPtr pRhinoObject);
+
   //int CRhinoRhinoObject_GetRhinoObjectType(const CRhinoObject* pRhinoObject)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoRhinoObject_GetRhinoObjectType(IntPtr pRhinoObject);
@@ -6178,6 +6256,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoObject_EnableGrips(IntPtr ptr, [MarshalAs(UnmanagedType.U1)]bool on);
 
+  //bool CRhinoObject_EnableCustomGrips(const CRhinoObject* pConstRhinoObject, CRhinoObjectGrips* pRhinoObjectGrips)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoObject_EnableCustomGrips(IntPtr pConstRhinoObject, IntPtr pRhinoObjectGrips);
+
   //ON_SimpleArray<CRhinoGripObject*>* ON_GripList_New()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_GripList_New();
@@ -6254,6 +6337,10 @@ internal partial class UnsafeNativeMethods
   //const ON_Surface* CRhinoObjRef_Surface( CRhinoObjRef* ptr )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoObjRef_Surface(IntPtr ptr);
+
+  //const ON_BrepEdge* CRhinoObjRef_Edge( CRhinoObjRef* pRhinoObjRef )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoObjRef_Edge(IntPtr pRhinoObjRef);
 
   //const ON_TextDot* CRhinoObjRef_TextDot( CRhinoObjRef* ptr )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6398,6 +6485,10 @@ internal partial class UnsafeNativeMethods
   //void CRhinoObject_ShortDescription(const CRhinoObject* pConstRhinoObject, CRhCmnStringHolder* pString, bool plural)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoObject_ShortDescription(IntPtr pConstRhinoObject, IntPtr pString, [MarshalAs(UnmanagedType.U1)]bool plural);
+
+  //CRhCmnGripObject* CRhCmnGripObject_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhCmnGripObject_New();
   #endregion
 
 
@@ -6547,6 +6638,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoPlugInManager_GetID(int index);
 
+  //void CRhinoPlugInManager_NameFromPath(const RHMONO_STRING* path, CRhCmnStringHolder* pNameString)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoPlugInManager_NameFromPath([MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr pNameString);
+
+  //ON_UUID CRhinoPlugInManager_IdFromPath(const RHMONO_STRING* path)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoPlugInManager_IdFromPath([MarshalAs(UnmanagedType.LPWStr)]string path);
+
   //bool CRhinoPlugInManager_LoadPlugIn(ON_UUID plugin_uuid)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -6566,6 +6665,10 @@ internal partial class UnsafeNativeMethods
   //void CRhinoGripObject_GripLocation( const CRhinoGripObject* ptr, ON_3dPoint* location, bool current )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoGripObject_GripLocation(IntPtr ptr, ref Point3d location, [MarshalAs(UnmanagedType.U1)]bool current);
+
+  //void CRhinoGripObject_SetGripLocation( CRhinoGripObject* pRhinoGripObject, ON_3DPOINT_STRUCT location )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoGripObject_SetGripLocation(IntPtr pRhinoGripObject, Point3d location);
 
   //bool CRhinoGripObject_Moved( const CRhinoGripObject* ptr )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6588,13 +6691,17 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern double CRhinoGripObject_GetSetWeight(IntPtr ptr, [MarshalAs(UnmanagedType.U1)]bool set, double setval);
 
-  //ON_UUID CRhinoGripObject_GetOwnerId( const CRhinoGripObject* ptr )
+  //ON_UUID CRhinoGripObject_GetOwnerId( const CRhinoGripObject* pConstRhinoGripObject )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern Guid CRhinoGripObject_GetOwnerId(IntPtr ptr);
+  internal static extern Guid CRhinoGripObject_GetOwnerId(IntPtr pConstRhinoGripObject);
 
-  //int CRhinoGripObject_Index(const CRhinoGripObject* ptr)
+  //int CRhinoGripObject_Index(const CRhinoGripObject* pConstRhinoGripObject)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int CRhinoGripObject_Index(IntPtr ptr);
+  internal static extern int CRhinoGripObject_Index(IntPtr pConstRhinoGripObject);
+
+  //void CRhinoGripObject_SetIndex(CRhinoGripObject* pRhinoGripObject, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoGripObject_SetIndex(IntPtr pRhinoGripObject, int index);
   #endregion
 
 
@@ -6650,20 +6757,6 @@ internal partial class UnsafeNativeMethods
   //void ON_wString_Set(ON_wString* pString, const RHMONO_STRING* _text)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_wString_Set(IntPtr pString, [MarshalAs(UnmanagedType.LPWStr)]string _text);
-
-  //bool RHC_RhinoIsPointInBrep( const ON_Brep* pBrep, ON_3DPOINT_STRUCT point, double tolerance, bool strictlyIn )
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RHC_RhinoIsPointInBrep(IntPtr pBrep, Point3d point, double tolerance, [MarshalAs(UnmanagedType.U1)]bool strictlyIn);
-
-  //bool RHC_RhinoProjectCurveToMesh(ON_SimpleArray<const ON_Mesh*>* meshes,
-  //                                               ON_SimpleArray<const ON_Curve*>* curves,
-  //                                               ON_3DVECTOR_STRUCT dir, 
-  //                                               double tolerance,
-  //                                               ON_SimpleArray<ON_Curve*>* outputCurves)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RHC_RhinoProjectCurveToMesh(IntPtr meshes, IntPtr curves, Vector3d dir, double tolerance, IntPtr outputCurves);
 
   //int RHC_RhinoUnifyMeshNormals(ON_Mesh* pMesh, bool countOnly)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6771,6 +6864,10 @@ internal partial class UnsafeNativeMethods
   //ON_NurbsCurve* RHC_RhinoInterpCurve(int degree, int count, /*ARRAY*/const ON_3dPoint* _array_pts, ON_3DVECTOR_STRUCT start_tan, ON_3DVECTOR_STRUCT end_tan, int knotStyle)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoInterpCurve(int degree, int count, Point3d[] _array_pts, Vector3d start_tan, Vector3d end_tan, int knotStyle);
+
+  //ON_Curve* RHC_RhinoFitPoints(int degree, int count, /*ARRAY*/const ON_3dPoint* _array_pts, ON_3DVECTOR_STRUCT start_tan, ON_3DVECTOR_STRUCT end_tan, double tolerance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoFitPoints(int degree, int count, Point3d[] _array_pts, Vector3d start_tan, Vector3d end_tan, double tolerance);
 
   //ON_NurbsCurve* ON_Surface_InterpCrvOnSrf(const ON_Surface* pConstSurface, int count, /*ARRAY*/const ON_2dPoint* pts, int isClosed, double tol, int closedSrfHandling)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6960,7 +7057,7 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool RHC_RhinoDivideCurve3(IntPtr curvePtr, double segLength, [MarshalAs(UnmanagedType.U1)]bool include_ends, IntPtr tvals);
 
-  //bool RHC_RhinoOffsetCurve2( const ON_Curve* pCurve,
+  //bool RHC_RhinoOffsetCurve2( const ON_Curve* pConstCurve,
   //                                          double distance,
   //                                          ON_3DPOINT_STRUCT direction_point, 
   //                                          ON_3DVECTOR_STRUCT normal,
@@ -6969,19 +7066,25 @@ internal partial class UnsafeNativeMethods
   //                                          ON_SimpleArray<ON_Curve*>* pCurveArray)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RHC_RhinoOffsetCurve2(IntPtr pCurve, double distance, Point3d direction_point, Vector3d normal, int corner_style, double tolerance, IntPtr pCurveArray);
+  internal static extern bool RHC_RhinoOffsetCurve2(IntPtr pConstCurve, double distance, Point3d direction_point, Vector3d normal, int corner_style, double tolerance, IntPtr pCurveArray);
 
-  //int RHC_RhinoSdkLoft( ON_SimpleArray<const ON_Curve*>* pCurves,
-  //                                    ON_3DPOINT_STRUCT start_point,
-  //                                    ON_3DPOINT_STRUCT end_point,
-  //                                    int loft_type,
-  //                                    int simplify_method,
-  //                                    int rebuild_point_count,
-  //                                    double refit_tolerance,
-  //                                    bool bClosed,
-  //                                    ON_SimpleArray<ON_Brep*>* pBreps )
+  //bool RHC_RhinoIsPointInBrep( const ON_Brep* pBrep, ON_3DPOINT_STRUCT point, double tolerance, bool strictlyIn )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RHC_RhinoSdkLoft(IntPtr pCurves, Point3d start_point, Point3d end_point, int loft_type, int simplify_method, int rebuild_point_count, double refit_tolerance, [MarshalAs(UnmanagedType.U1)]bool bClosed, IntPtr pBreps);
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoIsPointInBrep(IntPtr pBrep, Point3d point, double tolerance, [MarshalAs(UnmanagedType.U1)]bool strictlyIn);
+
+  //bool RHC_RhinoGetOverlapDistance( const ON_Curve* pConstCurve1,
+  //                                                const ON_Curve* pConstCurve2,
+  //                                                double tolerance,
+  //                                                double* max_a,
+  //                                                double* max_b,
+  //                                                double* max_d,
+  //                                                double* min_a,
+  //                                                double* min_b,
+  //                                                double* min_d )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoGetOverlapDistance(IntPtr pConstCurve1, IntPtr pConstCurve2, double tolerance, ref double max_a, ref double max_b, ref double max_d, ref double min_a, ref double min_b, ref double min_d);
 
   //ON_Brep* RHC_CapPlanarHoles(const ON_Brep* pBrep, double tolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6991,18 +7094,108 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_RhinoBrepSplit(IntPtr pConstBrep, IntPtr pConstSplitterBrep, IntPtr pBrepArray, double tolerance, [MarshalAs(UnmanagedType.U1)]ref bool toleranceWasRaised);
 
+  //int RHC_RhinoBrepTrim1(const ON_Brep* pConstBrep, const ON_Brep* pConstBrepCutter, double tolerance, ON_SimpleArray<ON_Brep*>* breps)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoBrepTrim1(IntPtr pConstBrep, IntPtr pConstBrepCutter, double tolerance, IntPtr breps);
+
+  //int RHC_RhinoBrepTrim2(const ON_Brep* pConstBrep, const ON_PLANE_STRUCT* plane, double tolerance, ON_SimpleArray<ON_Brep*>* breps)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoBrepTrim2(IntPtr pConstBrep, ref Plane plane, double tolerance, IntPtr breps);
+
+  //bool RHC_RhPlanarRegion2Breps(const ON_Brep* pConstBrep0, const ON_Brep* pConstBrep1, const ON_PLANE_STRUCT* plane, double tolerance, ON_SimpleArray<ON_Brep*>* breps, int mode)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhPlanarRegion2Breps(IntPtr pConstBrep0, IntPtr pConstBrep1, ref Plane plane, double tolerance, IntPtr breps, int mode);
+
+  //bool RHC_RhinoCullControlPolygon()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoCullControlPolygon();
+
+  //bool RHC_RhinoMergeCoplanarFaces( ON_Brep* pBrep, double tolerance )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoMergeCoplanarFaces(IntPtr pBrep, double tolerance);
+
+  //int RHC_RhinoMakeCubicBeziers(const ON_Curve* pConstCurve, ON_SimpleArray<ON_BezierCurve*>* pBezArray, double disTol, double kinkTol)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoMakeCubicBeziers(IntPtr pConstCurve, IntPtr pBezArray, double disTol, double kinkTol);
+
+  //ON_Brep* RHC_RhinoMergeBreps( ON_SimpleArray<const ON_Brep*>* pBreps, double tol )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoMergeBreps(IntPtr pBreps, double tol);
+
+  //ON_NurbsCurve* RHC_RhinoFitCurve(const ON_Curve* pCurve, int degree, double fitTol, double angleTol)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoFitCurve(IntPtr pCurve, int degree, double fitTol, double angleTol);
+
+  //ON_Surface* RHC_RhinoFitSurface(const ON_Surface* pConstSurface, int uDegree, int vDegree, double fitTol, double* achievedTol)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoFitSurface(IntPtr pConstSurface, int uDegree, int vDegree, double fitTol, ref double achievedTol);
+
+  //ON_NurbsCurve* RHC_RhinoRebuildCurve( const ON_Curve* pCurve, int pCount, int degree, bool keepTangents)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoRebuildCurve(IntPtr pCurve, int pCount, int degree, [MarshalAs(UnmanagedType.U1)]bool keepTangents);
+
   //ON_NurbsSurface* RHC_RhinoRebuildSurface( const ON_Surface* pConstSurface, int udegree, int vdegree, int upointcount, int vpointcount )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoRebuildSurface(IntPtr pConstSurface, int udegree, int vdegree, int upointcount, int vpointcount);
 
-  //bool RHC_RhinoProjectPointsToMeshes( ON_SimpleArray<const ON_Mesh*>* pConstMeshes, ON_3DVECTOR_STRUCT projection_dir, double tolerance, int point_count, /*ARRAY*/ON_3dPoint* points, ON_3dPointArray* pOutputPoints)
+  //ON_Brep* RHC_RhinoRetrimSurface( const ON_BrepFace* pConstBrepFace, const ON_Surface* pConstSurface)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoRetrimSurface(IntPtr pConstBrepFace, IntPtr pConstSurface);
+
+  //ON_Brep* ON_Brep_SplitFace( const ON_Brep* pConstBrep, int faceIndex, ON_SimpleArray<const ON_Curve*>* curves, double tolerance )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_Brep_SplitFace(IntPtr pConstBrep, int faceIndex, IntPtr curves, double tolerance);
+
+  //int RHC_RhinoGet1RailFrames(const ON_Curve* pConstCurve, int count, /*ARRAY*/const double* parameters, /*ARRAY*/ON_PLANE_STRUCT* frames)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoGet1RailFrames(IntPtr pConstCurve, int count, double[] parameters, [In,Out] Plane[] frames);
+
+  //int RHC_RhinoDivideCurveEquidistant(const ON_Curve* pConstCurve, double distance, ON_3dPointArray* outPoints)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoDivideCurveEquidistant(IntPtr pConstCurve, double distance, IntPtr outPoints);
+
+  //bool RHC_RhinoProjectCurveToMesh(ON_SimpleArray<const ON_Mesh*>* meshes,
+  //                                               ON_SimpleArray<const ON_Curve*>* curves,
+  //                                               ON_3DVECTOR_STRUCT dir, 
+  //                                               double tolerance,
+  //                                               ON_SimpleArray<ON_Curve*>* outputCurves)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RHC_RhinoProjectPointsToMeshes(IntPtr pConstMeshes, Vector3d projection_dir, double tolerance, int point_count, [In,Out] Point3d[] points, IntPtr pOutputPoints);
+  internal static extern bool RHC_RhinoProjectCurveToMesh(IntPtr meshes, IntPtr curves, Vector3d dir, double tolerance, IntPtr outputCurves);
 
-  //ON_ClassArray<CRhinoObjRef>* RHC_RhinoGetRenderMeshes( const ON_SimpleArray<const CRhinoObject*>* pRhinoObjects, bool bOkToCreate, bool bReturnAllObjects )
+  //int RHC_RhinoCreateSolid( const ON_SimpleArray<const ON_Brep*>* pConstBrepArray, ON_SimpleArray<ON_Brep*>* pBrepArray, double tolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RHC_RhinoGetRenderMeshes(IntPtr pRhinoObjects, [MarshalAs(UnmanagedType.U1)]bool bOkToCreate, [MarshalAs(UnmanagedType.U1)]bool bReturnAllObjects);
+  internal static extern int RHC_RhinoCreateSolid(IntPtr pConstBrepArray, IntPtr pBrepArray, double tolerance);
+
+  //bool RHC_RhinoCurveSplit( const ON_Curve* pConstCurve, const ON_Geometry* pConstGeometry, double tolerance, ON_SimpleArray<ON_Curve*>* pieces )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoCurveSplit(IntPtr pConstCurve, IntPtr pConstGeometry, double tolerance, IntPtr pieces);
+
+  //bool RHC_RhinoGetClosestPoint( const ON_Curve* pConstCurve,
+  //                                             const ON_SimpleArray<const ON_Geometry*>* pGeometryArray,
+  //                                             double maximum_distance,
+  //                                             ON_3dPoint* curve_point,
+  //                                             ON_3dPoint* object_point,
+  //                                             int* which_object)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoGetClosestPoint(IntPtr pConstCurve, IntPtr pGeometryArray, double maximum_distance, ref Point3d curve_point, ref Point3d object_point, ref int which_object);
+
+  //int RHC_RhinoPullPointsToFace( const ON_Brep* pConstBrep, int face_index, int count, /*ARRAY*/const ON_3dPoint* inpoints, ON_SimpleArray<ON_3dPoint>* outpoints, double tolerance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoPullPointsToFace(IntPtr pConstBrep, int face_index, int count, Point3d[] inpoints, IntPtr outpoints, double tolerance);
+
+  //int RHC_RhinoPullCurveToFace( const ON_Curve* pConstCurve, const ON_BrepFace* pConstBrepFace, ON_SimpleArray<ON_Curve*>* curves, double tolerance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoPullCurveToFace(IntPtr pConstCurve, IntPtr pConstBrepFace, IntPtr curves, double tolerance);
+
+  //int RHC_RhinoDuplicateCurveSegments(const ON_Curve* pCurve, ON_SimpleArray<ON_Curve*>* outputSegments)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoDuplicateCurveSegments(IntPtr pCurve, IntPtr outputSegments);
 
   //void RHC_RhinoSimpleRollingBallFillet(const ON_Surface* constSurfaceA, bool bFlipA,
   //                                                    const ON_Surface* constSurfaceB, bool bFlipB,
@@ -7027,6 +7220,42 @@ internal partial class UnsafeNativeMethods
   //ON_Curve* RHC_RhinoOffsetCurveNormal( const ON_Curve* pConstCurve, const ON_Surface* pConstSurface, double height )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoOffsetCurveNormal(IntPtr pConstCurve, IntPtr pConstSurface, double height);
+
+  //void RHC_RhinoKillSplash()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void RHC_RhinoKillSplash();
+
+  //ON_NurbsSurface* RHC_RhinoNetworkSurface(const ON_SimpleArray<const ON_Curve*>* ucurves, int ucontinuity0, int ucontinuity1, 
+  //                                          const ON_SimpleArray<const ON_Curve*>* vcurves, int vcontinuity0, int vcontinuity1,
+  //                                          double edgeTol, double interiorTol, double angleTol, int* error)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoNetworkSurface(IntPtr ucurves, int ucontinuity0, int ucontinuity1, IntPtr vcurves, int vcontinuity0, int vcontinuity1, double edgeTol, double interiorTol, double angleTol, ref int error);
+
+  //ON_NurbsSurface* RHC_RhinoNetworkSurface2(const ON_SimpleArray<const ON_Curve*>* curves, int continuity,
+  //                                                        double edgeTol, double interiorTol, double angleTol, int* error)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoNetworkSurface2(IntPtr curves, int continuity, double edgeTol, double interiorTol, double angleTol, ref int error);
+
+  //int RHC_RhinoSdkLoft( ON_SimpleArray<const ON_Curve*>* pCurves,
+  //                                    ON_3DPOINT_STRUCT start_point,
+  //                                    ON_3DPOINT_STRUCT end_point,
+  //                                    int loft_type,
+  //                                    int simplify_method,
+  //                                    int rebuild_point_count,
+  //                                    double refit_tolerance,
+  //                                    bool bClosed,
+  //                                    ON_SimpleArray<ON_Brep*>* pBreps )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoSdkLoft(IntPtr pCurves, Point3d start_point, Point3d end_point, int loft_type, int simplify_method, int rebuild_point_count, double refit_tolerance, [MarshalAs(UnmanagedType.U1)]bool bClosed, IntPtr pBreps);
+
+  //bool RHC_RhinoProjectPointsToMeshes( ON_SimpleArray<const ON_Mesh*>* pConstMeshes, ON_3DVECTOR_STRUCT projection_dir, double tolerance, int point_count, /*ARRAY*/ON_3dPoint* points, ON_3dPointArray* pOutputPoints)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoProjectPointsToMeshes(IntPtr pConstMeshes, Vector3d projection_dir, double tolerance, int point_count, [In,Out] Point3d[] points, IntPtr pOutputPoints);
+
+  //ON_ClassArray<CRhinoObjRef>* RHC_RhinoGetRenderMeshes( const ON_SimpleArray<const CRhinoObject*>* pRhinoObjects, bool bOkToCreate, bool bReturnAllObjects )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoGetRenderMeshes(IntPtr pRhinoObjects, [MarshalAs(UnmanagedType.U1)]bool bOkToCreate, [MarshalAs(UnmanagedType.U1)]bool bReturnAllObjects);
 
   //int RhinoObjRefArray_Count( const ON_ClassArray<CRhinoObjRef>* pObjRefArray )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -7104,41 +7333,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoFileMenu_Open([MarshalAs(UnmanagedType.LPWStr)]string _path);
-
-  //bool RHC_RhinoGetClosestPoint( const ON_Curve* pConstCurve,
-  //                                             const ON_SimpleArray<const ON_Geometry*>* pGeometryArray,
-  //                                             double maximum_distance,
-  //                                             ON_3dPoint* curve_point,
-  //                                             ON_3dPoint* object_point,
-  //                                             int* which_object)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RHC_RhinoGetClosestPoint(IntPtr pConstCurve, IntPtr pGeometryArray, double maximum_distance, ref Point3d curve_point, ref Point3d object_point, ref int which_object);
-
-  //bool RHC_RhinoGetOverlapDistance( const ON_Curve* pConstCurve1,
-  //                                                const ON_Curve* pConstCurve2,
-  //                                                double tolerance,
-  //                                                double* max_a,
-  //                                                double* max_b,
-  //                                                double* max_d,
-  //                                                double* min_a,
-  //                                                double* min_b,
-  //                                                double* min_d )
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RHC_RhinoGetOverlapDistance(IntPtr pConstCurve1, IntPtr pConstCurve2, double tolerance, ref double max_a, ref double max_b, ref double max_d, ref double min_a, ref double min_b, ref double min_d);
-
-  //int RHC_RhinoCreateSolid( const ON_SimpleArray<const ON_Brep*>* pConstBrepArray, ON_SimpleArray<ON_Brep*>* pBrepArray, double tolerance)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RHC_RhinoCreateSolid(IntPtr pConstBrepArray, IntPtr pBrepArray, double tolerance);
-
-  //int RHC_RhinoPullPointsToFace( const ON_Brep* pConstBrep, int face_index, int count, /*ARRAY*/const ON_3dPoint* inpoints, ON_SimpleArray<ON_3dPoint>* outpoints, double tolerance)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RHC_RhinoPullPointsToFace(IntPtr pConstBrep, int face_index, int count, Point3d[] inpoints, IntPtr outpoints, double tolerance);
-
-  //void RHC_RhinoKillSplash()
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void RHC_RhinoKillSplash();
 
   //bool RHC_RhinoRestoreNamedView(int docId, int namedViewIndex, CRhinoViewport* pRhinoViewport, bool backgroundBitmap, int frames, int frame_rate)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -7463,6 +7657,20 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoViewport_MouseAdjust(IntPtr pRhinoViewport, int which, int x_down, int y_down, int x_now, int y_now);
+
+  //void CRhinoViewport_GetWallpaperFilename(const CRhinoViewport* pConstRhinoViewport, CRhCmnStringHolder* pString)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoViewport_GetWallpaperFilename(IntPtr pConstRhinoViewport, IntPtr pString);
+
+  //bool CRhinoViewport_GetWallpaperBool(const CRhinoViewport* pConstRhinoViewport, bool grayscale)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoViewport_GetWallpaperBool(IntPtr pConstRhinoViewport, [MarshalAs(UnmanagedType.U1)]bool grayscale);
+
+  //bool CRhinoViewport_SetWallpaper(CRhinoViewport* pRhinoViewport, const RHMONO_STRING* filename, bool grayscale, bool visible)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoViewport_SetWallpaper(IntPtr pRhinoViewport, [MarshalAs(UnmanagedType.LPWStr)]string filename, [MarshalAs(UnmanagedType.U1)]bool grayscale, [MarshalAs(UnmanagedType.U1)]bool visible);
   #endregion
 
 

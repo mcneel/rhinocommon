@@ -16,10 +16,17 @@ namespace Rhino.DocObjects
     internal ObjectAttributes m_original_attributes;
     internal ObjectAttributes m_edited_attributes;
 
+    // well.. that is not exactly true. As we start adding support for custom Rhino objects
+    // we need a way to create RhinoObject from a plug-in
+    internal IntPtr m_pRhinoObject = IntPtr.Zero; // this is ONLY set when the object is a custom rhinocommon object
+
     internal delegate uint CommitGeometryChangesFunc(uint sn, IntPtr pConstGeometry);
 
     internal IntPtr ConstPointer()
     {
+      if (m_pRhinoObject != IntPtr.Zero)
+        return m_pRhinoObject;
+
       IntPtr rc = UnsafeNativeMethods.RHC_LookupObjectBySerialNumber(m_rhinoobject_serial_number);
       if (IntPtr.Zero == rc)
         throw new Rhino.Runtime.DocumentCollectedException();
@@ -32,7 +39,23 @@ namespace Rhino.DocObjects
       return ConstPointer();
     }
 
-    //protected RhinoObject() { }
+    /// <summary>
+    /// !!!DO NOT CALL THIS FUNCTION UNLESS YOU ARE WORKING WITH CUSTOM RHINO OBJECTS!!!
+    /// </summary>
+    /// <returns></returns>
+    internal IntPtr NonConstPointer()
+    {
+      if( IntPtr.Zero==m_pRhinoObject )
+        throw new Rhino.Runtime.DocumentCollectedException();
+      return m_pRhinoObject;
+    }
+
+    // this protected constructor should only be used by "custom" subclasses
+    internal RhinoObject()
+    {
+      m_rhinoobject_serial_number = 0;
+    }
+
     internal RhinoObject(uint sn)
     {
       m_rhinoobject_serial_number = sn;
@@ -782,12 +805,7 @@ namespace Rhino.DocObjects
       return GetInt(idxUnhighightAllSubObjects);
     }
 
-    //[skipping]
-    //HighlightRequiresRedraw, IsMarked, Mark
-
-    /// <summary>
-    /// State of object's default editing grips
-    /// </summary>
+    /// <summary>State of object's default editing grips</summary>
     public bool GripsOn
     {
       get
@@ -817,8 +835,27 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <summary>Turns on/off the object's editing grips</summary>
+    /// <param name="customGrips"></param>
+    /// <returns>
+    /// True if the call succeeded.  If you attempt to add custom grips to an
+    /// object that does not support custom grips, then false is returned.
+    /// </returns>
+    [Obsolete("CustomObjectGrips are under development and should not be used in a shipping plug-in")]
+    public bool EnableCustomGrips(Rhino.DocObjects.Custom.CustomObjectGrips customGrips)
+    {
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pGrips = customGrips==null?IntPtr.Zero:customGrips.NonConstPointer();
+      bool rc = UnsafeNativeMethods.CRhinoObject_EnableCustomGrips(pConstThis, pGrips);
+      if (rc && customGrips != null)
+      {
+        customGrips.OnAttachedToRhinoObject(this);
+      }
+      return rc;
+    }
+
     /// <summary>
-    /// Returns grips for this object IF grips are enabled. If grips are not
+    /// Returns grips for this object If grips are enabled. If grips are not
     /// enabled, returns null.
     /// </summary>
     /// <returns></returns>
@@ -1045,6 +1082,21 @@ namespace Rhino.DocObjects
       return ObjRefToGeometryHelper(pCurve) as Rhino.Geometry.Curve;
     }
 
+    /// <summary>
+    /// If the referenced geometry is an edge, this returns the edge.
+    /// </summary>
+    /// <returns></returns>
+    public Geometry.BrepEdge Edge()
+    {
+      IntPtr pBrepEdge = UnsafeNativeMethods.CRhinoObjRef_Edge(m_ptr);
+      return ObjRefToGeometryHelper(pBrepEdge) as BrepEdge;
+    }
+
+    /// <summary>
+    /// If the referenced geometry is a brep face, a brep with one face, or
+    /// a surface, this returns the brep face.
+    /// </summary>
+    /// <returns></returns>
     public Geometry.BrepFace Face()
     {
       IntPtr pBrepFace = UnsafeNativeMethods.CRhinoObjRef_Face(m_ptr);

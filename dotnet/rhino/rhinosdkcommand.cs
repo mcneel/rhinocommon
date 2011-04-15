@@ -269,6 +269,36 @@ namespace Rhino.Commands
       return Marshal.PtrToStringUni(pName);
     }
 
+    /// <summary>
+    /// Get list of command names in Rhino. This list does not include Test, Alpha, or System commands
+    /// </summary>
+    /// <param name="english">
+    ///  if true, retrieve the english name for every command.
+    ///  if false, retrieve the local name for every command
+    /// </param>
+    /// <param name="loaded">
+    /// if true, only get names of currently loaded commands.
+    /// if false, get names of all registered (may not be currently loaded) commands
+    /// </param>
+    /// <returns></returns>
+    public static string[] GetCommandNames(bool english, bool loaded)
+    {
+      IntPtr pStrings = UnsafeNativeMethods.ON_StringArray_New();
+      int count = UnsafeNativeMethods.CRhinoCommandManager_GetCommandNames(pStrings, english, loaded);
+      string[] rc = new string[count];
+      using( Rhino.Runtime.StringHolder sh = new Runtime.StringHolder() )
+      {
+        IntPtr pString = sh.NonConstPointer();
+        for( int i=0; i<count; i++ )
+        {
+          UnsafeNativeMethods.ON_StringArray_Get(pStrings, i, pString);
+          rc[i] = sh.ToString();
+        }
+      }
+      UnsafeNativeMethods.ON_StringArray_Delete(pStrings);
+      return rc;
+    }
+
     public static void DisplayHelp(Guid commandId)
     {
       UnsafeNativeMethods.CRhinoApp_DisplayCommandHelp(commandId);
@@ -421,11 +451,40 @@ namespace Rhino.Commands
       m_result = (Result)result;
     }
 
+    /// <summary>
+    /// Gets the ID of the command that raised this event.
+    /// </summary>
     public Guid CommandId
     {
       get { return m_command_id; }
     }
 
+    /// <summary>
+    /// Gets the English name of the command that raised this event.
+    /// </summary>
+    public string CommandEnglishName
+    {
+      get
+      {
+        return Command.LookupCommandName(m_command_id, true);
+      }
+    }
+
+    /// <summary>
+    /// Gets the name of the command that raised this event in the local language.
+    /// </summary>
+    public string CommandLocalName
+    {
+      get
+      {
+        return Command.LookupCommandName(m_command_id, false);
+      }
+    }
+
+    /// <summary>
+    /// Gets the result of the command that raised this event. 
+    /// This value is only meaningful during EndCommand events.
+    /// </summary>
     public Result CommandResult
     {
       get { return m_result; }

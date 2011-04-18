@@ -117,6 +117,32 @@ namespace Rhino.Runtime
 
   public static class HostUtils
   {
+    /// <summary>
+    /// DO NOT USE UNLESS YOU ABSOLUTELY KNOW WHAT YOU ARE DOING!!!
+    /// Expert user function which should not be needed in most cases. This
+    /// function is similar to a const_cast in C++ to allow an object to be
+    /// made temporarily modifiable without causing RhinoCommon to convert
+    /// the class from const to non-const by creating a duplicate.
+    /// 
+    /// You must call this function with a true parameter, make your
+    /// modifications, and then restore the const flag by calling this function
+    /// again with a false parameter. If you have any questions, please
+    /// contact McNeel developer support before using!
+    /// </summary>
+    /// <param name="geometry"></param>
+    /// <param name="makeNonConst"></param>
+    public static void InPlaceConstCast(Rhino.Geometry.GeometryBase geometry, bool makeNonConst)
+    {
+      if (makeNonConst)
+      {
+        geometry.ApplyConstCast();
+      }
+      else
+      {
+        geometry.RemoveConstCast();
+      }
+    }
+
     public static bool RunningOnWindows
     {
       get

@@ -156,7 +156,7 @@ namespace Rhino.DocObjects
     /// The weight of a NURBS control point grip or RhinoMath.UnsetValue
     /// if the grip is not a NURBS control point grip
     /// </summary>
-    public double Weight
+    public virtual double Weight
     {
       get
       {
@@ -195,9 +195,34 @@ namespace Rhino.DocObjects.Custom
 {
   public class CustomGripObject : GripObject, IDisposable
   {
+    #region statics
+    // this will probably end up in RhinoObject
+    static System.Collections.Generic.List<CustomGripObject> m_all_custom_grips = new System.Collections.Generic.List<CustomGripObject>();
+    static CustomGripObject m_prev_found;
+    static RhinoObject GetCustomObject(uint serial_number)
+    {
+      if (m_prev_found != null && m_prev_found.m_rhinoobject_serial_number == serial_number)
+        return m_prev_found;
+
+      for (int i = 0; i < m_all_custom_grips.Count; i++)
+      {
+        if (m_all_custom_grips[i].m_rhinoobject_serial_number == serial_number)
+        {
+          m_prev_found = m_all_custom_grips[i];
+          return m_prev_found;
+        }
+      }
+      return null;
+    }
+    #endregion
+
     public CustomGripObject()
     {
       m_pRhinoObject = UnsafeNativeMethods.CRhCmnGripObject_New();
+      m_rhinoobject_serial_number = UnsafeNativeMethods.CRhinoObject_RuntimeSN(m_pRhinoObject);
+      m_all_custom_grips.Add(this);
+
+      UnsafeNativeMethods.CRhCmnGripObject_SetCallbacks(m_Destructor, m_GetWeight, m_SetWeight);
     }
 
     ~CustomGripObject(){ Dispose(false); }
@@ -209,6 +234,7 @@ namespace Rhino.DocObjects.Custom
 
     protected virtual void Dispose(bool disposing)
     {
+      m_all_custom_grips.Remove(this);
       if ( IntPtr.Zero != m_pRhinoObject )
       {
         // This delete is safe in that it makes sure the object is NOT
@@ -236,6 +262,55 @@ namespace Rhino.DocObjects.Custom
         IntPtr pThis = NonConstPointer();
         UnsafeNativeMethods.CRhinoGripObject_SetGripLocation(pThis, value);
       }
+    }
+
+    // define a weight override so we don't end up in a circular call
+    public override double Weight
+    {
+      get { return RhinoMath.UnsetValue; }
+      set { //do nothing
+      }
+    }
+
+    public virtual void NewLocation()
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.CRhCmnGripObject_NewLocationBase(pThis);
+    }
+
+
+    internal delegate void CRhinoObjectDestructorCallback(uint serial_number);
+    internal delegate double CRhinoGripObjectWeightCallback(uint serial_number);
+    internal delegate void CRhinoGripObjectSetWeightCallback(uint serial_number, double weight);
+
+    private static CRhinoObjectDestructorCallback m_Destructor = CRhinoObject_Destructor;
+    private static CRhinoGripObjectWeightCallback m_GetWeight = CRhinoGripObject_GetWeight;
+    private static CRhinoGripObjectSetWeightCallback m_SetWeight = CRhinoGripObject_SetWeight;
+
+    private static void CRhinoObject_Destructor(uint serial_number)
+    {
+      CustomGripObject grip = GetCustomObject(serial_number) as CustomGripObject;
+      if (grip != null)
+      {
+        grip.m_pRhinoObject = IntPtr.Zero;
+        GC.SuppressFinalize(grip);
+      }
+    }
+
+    private static double CRhinoGripObject_GetWeight(uint serial_number)
+    {
+      CustomGripObject grip = GetCustomObject(serial_number) as CustomGripObject;
+      if (grip != null)
+      {
+        return grip.Weight;
+      }
+      return RhinoMath.UnsetValue;
+    }
+    private static void CRhinoGripObject_SetWeight(uint serial_number, double weight)
+    {
+      CustomGripObject grip = GetCustomObject(serial_number) as CustomGripObject;
+      if (grip != null)
+        grip.Weight = weight;
     }
 
 

@@ -1258,5 +1258,14 @@ namespace Rhino.Geometry
         return UnsafeNativeMethods.ON_Surface_GetBool(ptr, 0, idxIsSolid);
       }
     }
+
+    internal virtual void Draw(Display.DisplayPipeline pipeline, System.Drawing.Color color, int density)
+    {
+      IntPtr pDisplayPipeline = pipeline.NonConstPointer();
+      IntPtr ptr = ConstPointer();
+      int argb = color.ToArgb();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawSurface(pDisplayPipeline, ptr, argb, density);
+    }
+
   }
 }

@@ -611,8 +611,10 @@ namespace Rhino.Geometry
 
     internal override IntPtr _InternalGetConstPointer()
     {
-      if (null != m_parent_face)
-        return m_parent_face._GetMeshPointer();
+      MeshHolder mh = m__parent as MeshHolder;
+      if (mh != null)
+        return mh.MeshPointer();
+
 #if USING_RDK
       Rhino.Render.RenderMesh rm = m__parent as Rhino.Render.RenderMesh;
       if( rm!=null )
@@ -621,25 +623,16 @@ namespace Rhino.Geometry
       return base._InternalGetConstPointer();
     }
 
-    BrepFace m_parent_face;
     internal override object _GetConstObjectParent()
     {
       if (!IsDocumentControlled)
         return null;
-      if (null != m_parent_face)
-        return m_parent_face;
       return base._GetConstObjectParent();
     }
 
     protected override void OnSwitchToNonConst()
     {
-      m_parent_face = null;
       base.OnSwitchToNonConst();
-    }
-
-    internal Mesh(BrepFace parent_face)
-    {
-      m_parent_face = parent_face;
     }
 
     internal Mesh(IntPtr native_pointer, object parent)
@@ -649,6 +642,30 @@ namespace Rhino.Geometry
         ApplyMemoryPressure();
     }
 
+    public void CopyFrom(Mesh other)
+    {
+      IntPtr pConstOther = other.ConstPointer();
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_Mesh_CopyFrom(pConstOther, pThis);
+    }
+
+    /// <summary>
+    /// If the mesh has SurfaceParameters, the surface is evaluated at
+    /// these parameters and the mesh geometry is updated
+    /// </summary>
+    /// <param name="surface"></param>
+    /// <returns></returns>
+    public bool EvaluateMeshGeometry(Surface surface)
+    {
+      // don't switch to non-const if we don't have to
+      IntPtr pConstThis = ConstPointer();
+      if (!UnsafeNativeMethods.ON_Mesh_HasSurfaceParameters(pConstThis))
+        return false;
+      IntPtr pThis = NonConstPointer();
+      IntPtr pConstSurface = surface.ConstPointer();
+      return UnsafeNativeMethods.ON_Mesh_EvaluateMeshGeometry(pThis, pConstSurface);
+    }
+    
     public override GeometryBase Duplicate()
     {
       IntPtr ptr = ConstPointer();
@@ -2357,6 +2374,15 @@ namespace Rhino.Geometry.Collections
     {
       IntPtr ptr = m_mesh.NonConstPointer();
       return UnsafeNativeMethods.ON_Mesh_NonConstBoolOp(ptr, Mesh.idxUnitizeVertexNormals);
+    }
+
+    /// <summary>
+    /// Reverse direction of all vertex normals
+    /// Same as Mesh.Flip(true, false, false)
+    /// </summary>
+    public void Flip()
+    {
+      m_mesh.Flip(true, false, false);
     }
     #endregion
     /*

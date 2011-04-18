@@ -841,7 +841,6 @@ namespace Rhino.DocObjects
     /// True if the call succeeded.  If you attempt to add custom grips to an
     /// object that does not support custom grips, then false is returned.
     /// </returns>
-    [Obsolete("CustomObjectGrips are under development and should not be used in a shipping plug-in")]
     public bool EnableCustomGrips(Rhino.DocObjects.Custom.CustomObjectGrips customGrips)
     {
       IntPtr pConstThis = ConstPointer();

@@ -361,6 +361,14 @@ namespace Rhino.Geometry
 
     #endregion
 
+    public void CopyFrom(NurbsSurface other)
+    {
+      IntPtr pConstOther = other.ConstPointer();
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_NurbsSurface_CopyFrom(pConstOther, pThis);
+    }
+
+
     // GetBool indices
     const int idxIsRational = 0;
     //const int idxIsClampedStart = 1;
@@ -374,7 +382,7 @@ namespace Rhino.Geometry
 
     // GetInt indices
     //const int idxCVSize = 0;
-    //const int idxOrder = 1;
+    const int idxOrder = 1;
     internal const int idxCVCount = 2;
     internal const int idxKnotCount = 3;
     //const int idxCVStyle = 4;
@@ -383,6 +391,23 @@ namespace Rhino.Geometry
     {
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.ON_NurbsSurface_GetIntDir(ptr, which, direction);
+    }
+
+    internal override void Draw(Display.DisplayPipeline pipeline, System.Drawing.Color color, int density)
+    {
+      IntPtr pDisplayPipeline = pipeline.NonConstPointer();
+      IntPtr ptr = ConstPointer();
+      int argb = color.ToArgb();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawNurbsSurface(pDisplayPipeline, ptr, argb, density);
+    }
+
+    public int OrderU
+    {
+      get { return GetIntDir(idxOrder, 0); }
+    }
+    public int OrderV
+    {
+      get { return GetIntDir(idxOrder, 1); }
     }
   }
   //  public class ON_NurbsCage : ON_Geometry { }
@@ -433,6 +458,7 @@ namespace Rhino.Geometry.Collections
         return m_surface.GetIntDir(NurbsSurface.idxCVCount, 1);
       }
     }
+
     #endregion
 
     /// <summary>

@@ -26,9 +26,11 @@ namespace Rhino.Runtime
     {
       return m__parent as Rhino.DocObjects.RhinoObject;
     }
-    internal void SetParentRhinoObject(Rhino.DocObjects.RhinoObject parent)
+
+    internal void SetParent(object parent)
     {
       m__parent = parent;
+      m_ptr = IntPtr.Zero;
     }
 
     internal IntPtr ConstPointer()
@@ -177,6 +179,15 @@ namespace Rhino.Runtime
       }
     }
 
+    public bool HasUserData
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_Object_FirstUserData(pConstThis) != IntPtr.Zero;
+      }
+    }
+
     #region IDisposable implementation
     ~CommonObject()
     {
@@ -191,7 +202,7 @@ namespace Rhino.Runtime
 
     protected virtual void Dispose(bool disposing)
     {
-      if (IntPtr.Zero == m_ptr)
+      if (IntPtr.Zero == m_ptr || m__parent is ConstCastHolder)
         return;
 
       if (m_bDestructOnDispose)
@@ -203,5 +214,35 @@ namespace Rhino.Runtime
       m_ptr = IntPtr.Zero;
     }
     #endregion
+
+    internal void ApplyConstCast()
+    {
+      if (m_ptr == IntPtr.Zero && m__parent!=null)
+      {
+        IntPtr pConstThis = ConstPointer();
+        ConstCastHolder ch = new ConstCastHolder(this, m__parent);
+        m__parent = ch;
+        m_ptr = pConstThis;
+      }
+    }
+    internal void RemoveConstCast()
+    {
+      ConstCastHolder ch = m__parent as ConstCastHolder;
+      if (m_ptr != IntPtr.Zero && ch!=null)
+      {
+        m__parent = ch.m_oldparent;
+        m_ptr = IntPtr.Zero;
+      }
+    }
+  }
+
+  class ConstCastHolder
+  {
+    public object m_oldparent;
+    public ConstCastHolder(CommonObject obj, object old_parent)
+    {
+      m_oldparent = old_parent;
+    }
+
   }
 }

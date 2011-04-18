@@ -29,6 +29,69 @@ namespace Rhino.Geometry
       m_plane = equatorialPlane;
       m_radius = radius;
     }
+
+    /// <summary>
+    /// Gets a Sphere with invalid members.
+    /// </summary>
+    public static Sphere Unset
+    {
+      get { return new Sphere(Point3d.Unset, RhinoMath.UnsetValue); }
+    }
+
+    /// <summary>
+    /// Try and fit a sphere to a collection of points.
+    /// </summary>
+    /// <param name="points">Points to fit. The collection must contain at least two points.</param>
+    /// <returns>The Sphere that best approximates the points or Sphere.Unset on failure.</returns>
+    public static Sphere FitSphereToPoints(System.Collections.Generic.IEnumerable<Point3d> points)
+    {
+      if (points == null) { throw new ArgumentNullException("points"); }
+      Rhino.Collections.Point3dList pts = new Rhino.Collections.Point3dList(points);
+
+      if (pts.Count < 2) { return Sphere.Unset; }
+
+      Plane plane;
+      if (Plane.FitPlaneToPoints(points, out plane) == PlaneFitResult.Failure)
+      { return Sphere.Unset; }
+
+      Point3d meanP = new Point3d(0, 0, 0);
+      for (int i = 0; i < pts.Count; i++)
+      { meanP += pts[i]; }
+      meanP /= pts.Count;
+
+      Point3d center = meanP;
+      double radius = -1;
+
+      for (int k = 0; k < 2048; k++)
+      {
+        double meanL = 0.0;
+        Vector3d meanD = new Vector3d(0, 0, 0);
+        Point3d current = center;
+
+        for (int i = 0; i < pts.Count; i++)
+        {
+          Vector3d diff = pts[i] - center;
+          double length = diff.Length;
+
+          if (length > RhinoMath.SqrtEpsilon)
+          {
+            meanL += length;
+            meanD -= (diff / length);
+          }
+        }
+
+        meanL /= pts.Count;
+        meanD /= pts.Count;
+
+        center = meanP + (meanD * meanL);
+        radius = meanL;
+
+        if (center.DistanceTo(current) < RhinoMath.SqrtEpsilon) { break; }
+      }
+
+      plane.Origin = center;
+      return new Sphere(plane, radius);
+    }
     #endregion
 
     #region properties

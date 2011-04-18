@@ -1946,6 +1946,18 @@ namespace Rhino.Display
       IntPtr pCurve = curve.ConstPointer();
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawCurvatureGraph(m_ptr, pCurve, argb, hairScale, hairDensity, sampleDensity);
     }
+
+    /// <summary>
+    /// Draw wireframe display for a single surface
+    /// </summary>
+    /// <param name="surface">Surface to draw.</param>
+    /// <param name="wireColor">Color to draw with.</param>
+    /// <param name="wireDensity">Thickness (in pixels) or wires to draw</param>
+    public void DrawSurface(Geometry.Surface surface, System.Drawing.Color wireColor, int wireDensity)
+    {
+      surface.Draw(this, wireColor, wireDensity);
+    }
+
     #endregion
 
     /*

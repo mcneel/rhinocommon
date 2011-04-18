@@ -355,8 +355,6 @@ namespace Rhino.Geometry
     /// <returns>Number of points (and segments) removed.</returns>
     public int DeleteShortSegments(double tolerance)
     {
-      //David: this code is untested
-
       int count = m_size;
       if (count < 3) { return 0; }
 

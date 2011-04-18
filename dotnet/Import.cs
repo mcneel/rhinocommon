@@ -199,7 +199,16 @@ internal partial class UnsafeNativeMethods
     Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoObjectGripsResetCallback resetmesh_func,
     Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoObjectGripsUpdateMeshCallback updatemesh_func,
     Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoObjectGripsNewGeometryCallback newgeom_func,
-    Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoObjectGripsDrawCallback draw_dunc);
+    Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoObjectGripsDrawCallback draw_dunc,
+    Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoObjectGripsNeighborGripCallback neighborgrip_func,
+    Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoObjectGripsNurbsSurfaceGripCallback nurbssurfacegrip_func,
+    Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoObjectGripsNurbsSurfaceCallback nurbssurface_func);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhCmnGripObject_SetCallbacks(Rhino.DocObjects.Custom.CustomGripObject.CRhinoObjectDestructorCallback destructor_func,
+    Rhino.DocObjects.Custom.CustomGripObject.CRhinoGripObjectWeightCallback getweight_func,
+    Rhino.DocObjects.Custom.CustomGripObject.CRhinoGripObjectSetWeightCallback setweight_func);
+
 
 #if USING_RDK
   // RDK Functions

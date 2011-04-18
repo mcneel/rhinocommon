@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Rhino.Geometry
 {
@@ -1065,6 +1066,53 @@ namespace Rhino.Geometry
       }
       return new Brep[0];
     }
+
+    /// <summary>
+    /// Add a 3D surface used by BrepFace
+    /// </summary>
+    /// <param name="surface">A copy of the surface is added to this brep</param>
+    /// <returns>
+    /// Index that should be used to reference the geometry.
+    /// -1 is returned if the input is not acceptable.
+    /// </returns>
+    public int AddSurface(Surface surface)
+    {
+      IntPtr pConstSurface = surface.ConstPointer();
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Brep_AddSurface(pThis, pConstSurface);
+    }
+
+    /// <summary>
+    /// No support is available for this function. Expert user function used
+    /// by MakeValidForV2 to convert trim curves from one surface to its NURBS
+    /// form.  After calling this function, you need to change the face's
+    /// surface to nurbsSurface.
+    /// </summary>
+    /// <param name="face">
+    /// face whose underlying surface has a parameterization that is different
+    /// from its NURBS form.
+    /// </param>
+    /// <param name="nurbsSurface">NURBS form of the face's underlying surface</param>
+    /// <remarks>
+    /// Don't call this function unless you know exactly what you are doing.
+    /// </remarks>
+    public void RebuildTrimsForV2(BrepFace face, NurbsSurface nurbsSurface)
+    {
+      IntPtr pThis = NonConstPointer();
+      IntPtr pFace = face.NonConstPointer();
+      IntPtr pConstSurface = nurbsSurface.ConstPointer();
+      UnsafeNativeMethods.ON_Brep_RebuildTrimsForV2(pThis, pFace, pConstSurface);
+    }
+
+    /// <summary>
+    /// delete any unreferenced objects from arrays, reindexes as needed, and
+    /// shrinks arrays to minimum required size.
+    /// </summary>
+    public void Compact()
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_Brep_Compact(pThis);
+    }
     #endregion
 
     #region internal helpers
@@ -1166,9 +1214,41 @@ namespace Rhino.Geometry
     #endregion
 
     #region properties
+    
+//    ON_U m_edge_user;
+//    int m_edge_index;    
+//    ON_BrepTrim* Trim( int eti ) const;
+//    ON_BrepVertex* Vertex(int evi) const;
+//    int EdgeCurveIndexOf() const;
+//    const ON_Curve* EdgeCurveOf() const;
+//    bool ChangeEdgeCurve( int c3i );
+//    void UnsetPlineEdgeParameters();
+//    int m_c3i;
+//    int m_vi[2];
+//    ON_SimpleArray<int> m_ti;
+
     /// <summary>
-    /// Number of trim-curves that use this edge.
+    /// accuracy of edge curve (>=0.0 or RhinoMath.UnsetValue)
+    /// A value of UnsetValue indicates that the tolerance should be computed.
+    ///
+    /// The maximum distance from the edge's 3d curve to any surface of a face
+    /// that has this edge as a portion of its boundary must be &lt;= this tolerance.
     /// </summary>
+    public double Tolerance
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_BrepEdge_GetTolerance(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_BrepEdge_SetTolerance(pThis, value);
+      }
+    }
+
+    /// <summary>Number of trim-curves that use this edge.</summary>
     public int TrimCount
     {
       get
@@ -1203,6 +1283,32 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>Brep this edge belongs to</summary>
+    public Brep Brep
+    {
+      get { return m_brep; }
+    }
+
+    #endregion
+
+    #region methods
+    /// <summary>
+    /// For a manifold, non-boundary edge, decides whether or not the two surfaces
+    /// on either side meet smoothly.
+    /// </summary>
+    /// <param name="angleToleranceRadians">
+    /// used to decide if surface normals on either side are parallel.
+    /// </param>
+    /// <returns>
+    /// true if edge is manifold, has exactly 2 trims, and surface normals on either
+    /// side agree to within angle_tolerance.
+    /// </returns>
+    public bool IsSmoothManifoldEdge([Optional, DefaultParameterValue(RhinoMath.DefaultAngleTolerance)]double angleToleranceRadians)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_BrepEdge_IsSmoothManifoldEdge(pConstThis, angleToleranceRadians);
+    }
+
     /// <summary>
     /// Gets the indices of all the BrepFaces that use this edge.
     /// </summary>
@@ -1214,9 +1320,7 @@ namespace Rhino.Geometry
       int rc = UnsafeNativeMethods.ON_Brep_EdgeFaceIndices(pConstBrep, m_index, fi.m_ptr);
       return rc == 0 ? new int[0] : fi.ToArray();
     }
-    #endregion
 
-    #region methods
     internal override IntPtr _InternalGetConstPointer()
     {
       if (null != m_brep)
@@ -1447,28 +1551,34 @@ namespace Rhino.Geometry
       return rc;
     }
 
-    /// <summary>
-    /// Get the shading mesh that is associated with this Face.
-    /// </summary>
+    /// <summary>Same as GetMesh(MeshType.Render)</summary>
+    /// <returns></returns>
+    [Obsolete("Use GetMesh(MeshType.Render) instead. This function may be removed in a future WIP")]
     public Mesh GetMesh()
     {
-      if (null != m_render_mesh && m_render_mesh._GetConstObjectParent() == this)
-        return m_render_mesh;
-
-      m_render_mesh = null;
-      IntPtr pMesh = _GetMeshPointer();
-      if (IntPtr.Zero == pMesh)
-        return null;
-
-      m_render_mesh = new Mesh(this);
-      return m_render_mesh;
+      return GetMesh(MeshType.Render);
     }
-    Mesh m_render_mesh;
-    internal IntPtr _GetMeshPointer()
+
+    public Mesh GetMesh(MeshType meshType)
     {
       IntPtr pConstBrep = m_brep.ConstPointer();
-      IntPtr pConstMesh = UnsafeNativeMethods.ON_BrepFace_Mesh(pConstBrep, m_index);
-      return pConstMesh;
+      IntPtr pConstMesh = UnsafeNativeMethods.ON_BrepFace_Mesh(pConstBrep, m_index, (int)meshType);
+      if (IntPtr.Zero == pConstMesh)
+        return null;
+      return GeometryBase.CreateGeometryHelper(pConstMesh, new MeshHolder(this, meshType)) as Mesh;
+    }
+
+    public bool SetMesh(MeshType meshType, Mesh mesh)
+    {
+      IntPtr pThis = NonConstPointer();
+
+      //make sure the mesh isn't parented to any other object
+      mesh.EnsurePrivateCopy();
+      IntPtr pMesh = mesh.NonConstPointer();
+      bool rc = UnsafeNativeMethods.ON_BrepFace_SetMesh(pThis, pMesh, (int)meshType);
+      MeshHolder mh = new MeshHolder(this, meshType);
+      mesh.SetParent(mh);
+      return rc;
     }
 
     /// <summary>
@@ -1493,7 +1603,83 @@ namespace Rhino.Geometry
       int rc = UnsafeNativeMethods.ON_Brep_FaceFaceIndices(pConstBrep, m_index, fi.m_ptr);
       return rc == 0 ? new int[0] : fi.ToArray();
     }
+
+    /*
+    Parameters;
+      si - [in] brep surface index of new surface
+    Returns:
+      True if successful.
+    Example:
+
+              ON_Surface* pSurface = ...;
+              int si = brep.AddSurface(pSurface);
+              face.ChangeSurface(si);
+
+    Remarks:
+      If the face had a surface and new surface has a different
+      shape, then you probably want to call something like
+      ON_Brep::RebuildEdges() to move the 3d edge curves so they
+      will lie on the new surface. This doesn't delete the old 
+      surface; call ON_Brep::CullUnusedSurfaces() or ON_Brep::Compact
+      to remove unused surfaces.
+    See Also:
+      ON_Brep::RebuildEdges
+      ON_Brep::CullUnusedSurfaces
+    */
+    /// <summary>
+    /// Expert user tool that replaces the 3d surface geometry use by the face.
+    /// </summary>
+    /// <param name="surfaceIndex">brep surface index of new surface</param>
+    /// <returns>True if successful</returns>
+    /// <remarks>
+    /// If the face had a surface and new surface has a different shape, then
+    /// you probably want to call something like RebuildEdges() to move
+    /// the 3d edge curves so they will lie on the new surface. This doesn't
+    /// delete the old surface; call Brep.CullUnusedSurfaces() or Brep.Compact()
+    /// to remove unused surfaces.
+    /// </remarks>
+    public bool ChangeSurface(int surfaceIndex)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      return UnsafeNativeMethods.ON_BrepFace_ChangeSurface(pBrep, m_index, surfaceIndex);
+    }
+
+    /// <summary>
+    /// Rebuild the edges used by a face so they lie on the surface.
+    /// </summary>
+    /// <param name="tolerance">tolerance for fitting 3d edge curves</param>
+    /// <param name="rebuildSharedEdges">
+    /// if false and and edge is used by this face and a neighbor, then the edge
+    /// will be skipped.
+    /// </param>
+    /// <param name="rebuildVertices">
+    /// if true, vertex locations are updated to lie on the surface
+    /// </param>
+    /// <returns>True on success</returns>
+    public bool RebuildEdges(double tolerance, bool rebuildSharedEdges, bool rebuildVertices)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      return UnsafeNativeMethods.ON_Brep_RebuildEdges(pBrep, m_index, tolerance, rebuildSharedEdges, rebuildVertices);
+    }
     #endregion
+  }
+
+
+  class MeshHolder
+  {
+    BrepFace m_face;
+    MeshType m_meshtype;
+
+    public MeshHolder(BrepFace face, MeshType meshType)
+    {
+      m_face = face;
+      m_meshtype = meshType;
+    }
+    public IntPtr MeshPointer()
+    {
+      IntPtr pConstBrep = m_face.m_brep.ConstPointer();
+      return UnsafeNativeMethods.ON_BrepFace_Mesh(pConstBrep, m_face.m_index, (int)m_meshtype);
+    }
   }
 
   class SurfaceOfHolder

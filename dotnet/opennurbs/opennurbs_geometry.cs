@@ -1,15 +1,21 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using Rhino.DocObjects;
 
 namespace Rhino.Geometry
 {
-  public abstract class GeometryBase : Runtime.CommonObject
+  [Serializable]
+  public abstract class GeometryBase : Runtime.CommonObject, ISerializable
   {
     #region constructors / wrapped pointer manipulation
     GeometryBase m_shallow_parent;
 
     protected GeometryBase() { }
+    protected GeometryBase(SerializationInfo info, StreamingContext context)
+      :base(info, context)
+    {
+    }
 
     internal override IntPtr _InternalDuplicate(out bool applymempressure)
     {

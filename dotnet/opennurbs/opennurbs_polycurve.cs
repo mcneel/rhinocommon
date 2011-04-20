@@ -1,11 +1,12 @@
 using System;
 using Rhino.Display;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
-  public class PolyCurve : Curve
+  [Serializable]
+  public class PolyCurve : Curve, ISerializable
   {
-
     #region constructors
     internal PolyCurve(IntPtr ptr, object parent, int subobject_index)
       :base(ptr, parent, subobject_index)
@@ -18,6 +19,12 @@ namespace Rhino.Geometry
         pOther = other.ConstPointer();
       IntPtr ptr = UnsafeNativeMethods.ON_PolyCurve_New(pOther);
       ConstructNonConstObject(ptr);
+    }
+
+    // serialization constructor
+    protected PolyCurve(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
 
     internal override GeometryBase DuplicateShallowHelper()

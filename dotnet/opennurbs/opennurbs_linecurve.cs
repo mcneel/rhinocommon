@@ -1,9 +1,11 @@
 using System;
 using Rhino.Display;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
-  public class LineCurve : Curve
+  [Serializable]
+  public class LineCurve : Curve, ISerializable
   {
     public LineCurve()
     {
@@ -45,6 +47,12 @@ namespace Rhino.Geometry
     }
     internal LineCurve(IntPtr ptr, object parent, int subobject_index)
       : base(ptr, parent, subobject_index)
+    {
+    }
+
+    // serialization constructor
+    protected LineCurve(SerializationInfo info, StreamingContext context)
+      : base (info, context)
     {
     }
 

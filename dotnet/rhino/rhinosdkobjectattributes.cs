@@ -1,9 +1,11 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace Rhino.DocObjects
 {
-  public class ObjectAttributes : Runtime.CommonObject
+  [Serializable]
+  public class ObjectAttributes : Runtime.CommonObject, ISerializable
   {
     internal override IntPtr _InternalDuplicate(out bool applymempressure)
     {
@@ -35,6 +37,12 @@ namespace Rhino.DocObjects
     {
       IntPtr ptr = UnsafeNativeMethods.CRhinoObjectAttributes_New(IntPtr.Zero);
       ConstructNonConstObject(ptr);
+    }
+
+    // serialization constructor
+    protected ObjectAttributes(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
 
     /// <summary>

@@ -1,7 +1,9 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Rhino.DocObjects
 {
+  [Serializable]
   public class Layer : Rhino.Runtime.CommonObject
   {
     #region members
@@ -25,6 +27,12 @@ namespace Rhino.DocObjects
       m_id = UnsafeNativeMethods.CRhinoLayerTable_GetLayerId(doc.m_docId, index);
       m_doc = doc;
       this.m__parent = m_doc;
+    }
+
+    // serialization constructor
+    protected Layer(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
 
     /// <summary>

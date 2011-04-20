@@ -1,5 +1,6 @@
 using System;
 using Rhino.Display;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
@@ -13,7 +14,8 @@ namespace Rhino.Geometry
   /// A valid ArcCurve has Radius()>0 and  0&lt;AngleRadians()&lt;=2*PI
   /// and a strictly increasing Domain(). 
   /// </summary>
-  public class ArcCurve : Curve
+  [Serializable]
+  public class ArcCurve : Curve, ISerializable
   {
     #region constructors
     internal ArcCurve(IntPtr ptr, object parent, int subobject_index)
@@ -53,6 +55,12 @@ namespace Rhino.Geometry
     {
       IntPtr ptr = UnsafeNativeMethods.ON_ArcCurve_New5(ref circle, t0, t1);
       ConstructNonConstObject(ptr);
+    }
+
+    // serialization constructor
+    protected ArcCurve(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
 
     internal override GeometryBase DuplicateShallowHelper()

@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Rhino.Display;
 using Rhino.Collections;
 
 namespace Rhino.Geometry
 {
-  public class NurbsCurve : Curve
+  [Serializable]
+  public class NurbsCurve : Curve, ISerializable
   {
     #region statics
     /// <summary>
@@ -175,6 +177,11 @@ namespace Rhino.Geometry
     {
       IntPtr ptr = UnsafeNativeMethods.ON_NurbsCurve_New(IntPtr.Zero);
       ConstructNonConstObject(ptr);
+    }
+
+    protected NurbsCurve( SerializationInfo info, StreamingContext context)
+      :base(info, context)
+    {
     }
 
     //[skipping]
@@ -473,6 +480,7 @@ namespace Rhino.Geometry
   /// <summary>
   /// Represents a geometry control-point.
   /// </summary>
+  [Serializable]
   public struct ControlPoint
   {
     #region members

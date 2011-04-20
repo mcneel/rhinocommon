@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
@@ -161,7 +162,8 @@ namespace Rhino.Geometry
     #endregion
   }
 
-  public class Surface : GeometryBase
+  [Serializable]
+  public class Surface : GeometryBase, ISerializable
   {
     #region statics
     public static Surface[] CreateRollingBallFillet(Surface surfaceA, Surface surfaceB, double radius, double tolerance)
@@ -280,6 +282,12 @@ namespace Rhino.Geometry
     internal override GeometryBase DuplicateShallowHelper()
     {
       return new Surface(IntPtr.Zero, null, null);
+    }
+
+    // serialization constructor
+    protected Surface(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
     #endregion
 

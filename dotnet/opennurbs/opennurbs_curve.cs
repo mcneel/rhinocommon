@@ -2,6 +2,7 @@ using System;
 using Rhino.Collections;
 using System.Collections.Generic;
 using Rhino.Runtime.InteropWrappers;
+using System.Runtime.Serialization;
 // don't wrap ON_MeshCurveParameters. It is only needed for the ON_Curve::MeshCurveFunction
 
 namespace Rhino.Geometry
@@ -180,7 +181,8 @@ namespace Rhino.Geometry
     Above = +1
   }
 
-  public class Curve : GeometryBase
+  [Serializable]
+  public class Curve : GeometryBase, ISerializable
   {
     #region statics
 
@@ -863,6 +865,11 @@ namespace Rhino.Geometry
       base.Dispose(disposing);
     }
     #endregion
+
+    protected Curve( SerializationInfo info, StreamingContext context)
+      :base(info, context)
+    {
+    }
 
     #region internal methods
     const int idxIgnoreNone = 0;

@@ -605,6 +605,22 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_BinaryArchive_EndWriteDictionaryEntry(IntPtr pArchive);
+
+  //ON_Object* ON_ReadBufferArchive(int archive_3dm_version, int archive_on_version, int length, /*ARRAY*/const unsigned char* buffer)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_ReadBufferArchive(int archive_3dm_version, int archive_on_version, int length, byte[] buffer);
+
+  //ON_BinaryArchive* ON_WriteBufferArchive_NewWriter(const ON_Object* pConstObject, unsigned int* length)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_WriteBufferArchive_NewWriter(IntPtr pConstObject, ref uint length);
+
+  //void ON_WriteBufferArchive_Delete(ON_BinaryArchive* pBinaryArchive)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_WriteBufferArchive_Delete(IntPtr pBinaryArchive);
+
+  //unsigned char* ON_WriteBufferArchive_Buffer(const ON_BinaryArchive* pBinaryArchive)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_WriteBufferArchive_Buffer(IntPtr pBinaryArchive);
   #endregion
 
 
@@ -1417,6 +1433,10 @@ internal partial class UnsafeNativeMethods
   //double ONC_UnitScale(int from, int to)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern double ONC_UnitScale(int from, int to);
+
+  //int ON_Version()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Version();
   #endregion
 
 
@@ -5722,7 +5742,11 @@ internal partial class UnsafeNativeMethods
   //                                                   CRHINOOBJECTGRIPS_RESETPROC onresetmeshes,
   //                                                   CRHINOOBJECTGRIPS_UPDATEMESHPROC onupdatemesh,
   //                                                   CRHINOOBJECTGRIPS_NEWGEOMETRYPROC onnewgeom,
-  //                                                   CRHINOOBJECTGRIPS_DRAWPROC ondraw)
+  //                                                   CRHINOOBJECTGRIPS_DRAWPROC ondraw,
+  //                                                   CRHINOOBJECTGRIPS_NEIGHBORGRIPPROC neighborgrip,
+  //                                                   CRHINOOBJECTGRIPS_NURBSSURFACEGRIPPROC nurbssurfacegrip,
+  //                                                   CRHINOOBJECTGRIPS_NURBSSURFACEPROC nurbssurface
+  //                                                 )
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //void CRhCmnObjectGrips_ResetBase(CRhCmnObjectGrips* pGrips, bool reset)

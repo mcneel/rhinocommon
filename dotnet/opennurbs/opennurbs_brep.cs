@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
@@ -38,6 +39,7 @@ namespace Rhino.Geometry
   /// <summary>
   /// Boundary Representation. A surface or polysurface along with trim curve information.
   /// </summary>
+  [Serializable]
   public class Brep : GeometryBase
   {
     #region statics
@@ -678,6 +680,12 @@ namespace Rhino.Geometry
     {
       if (null == parent_object && null == obj_ref)
         ApplyMemoryPressure();
+    }
+
+    // serialization constructor
+    protected Brep(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
     #endregion
 

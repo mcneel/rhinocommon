@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Rhino.DocObjects
 {
@@ -9,6 +10,7 @@ namespace Rhino.DocObjects
     Gradient = 2
   }
 
+  [Serializable]
   public class HatchPattern : Rhino.Runtime.CommonObject
   {
     #region members
@@ -35,6 +37,12 @@ namespace Rhino.DocObjects
     internal HatchPattern(IntPtr pHatchPattern)
     {
       base.ConstructNonConstObject(pHatchPattern);
+    }
+
+    // serialization constructor
+    protected HatchPattern(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
     #endregion
 

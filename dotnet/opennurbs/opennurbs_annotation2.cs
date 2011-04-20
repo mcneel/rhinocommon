@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
@@ -23,12 +24,20 @@ namespace Rhino.Geometry
     TopRight = Top | Right
   }
 
-  public class AnnotationBase : GeometryBase
+  [Serializable]
+  public class AnnotationBase : GeometryBase, ISerializable
   {
     internal AnnotationBase(IntPtr native_pointer, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
       : base(native_pointer, parent_object, obj_ref)
     { }
     protected AnnotationBase() { }
+
+    // serialization constructor
+    protected AnnotationBase(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
+
     #region internal helper functions
     internal Point2d GetPoint(int which)
     {
@@ -130,7 +139,8 @@ namespace Rhino.Geometry
 
   }
 
-  public class LinearDimension : AnnotationBase
+  [Serializable]
+  public class LinearDimension : AnnotationBase, ISerializable
   {
     public LinearDimension()
     {
@@ -149,6 +159,12 @@ namespace Rhino.Geometry
       ConstructNonConstObject(ptr);
       Plane = dimensionPlane;
       SetLocations(extensionLine1End, extensionLine2End, pointOnDimensionLine);
+    }
+
+    // serialization constructor
+    protected LinearDimension(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
 
     public static LinearDimension FromPoints(Point3d extensionLine1End, Point3d extensionLine2End, Point3d pointOnDimensionLine)
@@ -258,11 +274,18 @@ namespace Rhino.Geometry
     }
   }
 
-  public class RadialDimension : AnnotationBase
+  [Serializable]
+  public class RadialDimension : AnnotationBase, ISerializable
   {
     internal RadialDimension(IntPtr native_pointer, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
       : base(native_pointer, parent_object, obj_ref)
     { }
+
+    // serialization constructor
+    protected RadialDimension(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
 
     public bool IsDiameterDimension
     {
@@ -274,25 +297,45 @@ namespace Rhino.Geometry
     }
   }
 
-  public class AngularDimension : AnnotationBase
+  [Serializable]
+  public class AngularDimension : AnnotationBase, ISerializable
   {
     internal AngularDimension(IntPtr native_pointer, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
       : base(native_pointer, parent_object, obj_ref)
     { }
+    // serialization constructor
+    protected AngularDimension(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
   }
 
-  public class OrdinateDimension : AnnotationBase
+  [Serializable]
+  public class OrdinateDimension : AnnotationBase, ISerializable
   {
     internal OrdinateDimension(IntPtr native_pointer, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
       : base(native_pointer, parent_object, obj_ref)
     { }
+
+    // serialization constructor
+    protected OrdinateDimension(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
   }
 
-  public class TextEntity : AnnotationBase
+  [Serializable]
+  public class TextEntity : AnnotationBase, ISerializable
   {
     internal TextEntity(IntPtr native_pointer, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
       : base(native_pointer, parent_object, obj_ref)
     { }
+
+    // serialization constructor
+    protected TextEntity(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
 
     internal override GeometryBase DuplicateShallowHelper()
     {
@@ -317,18 +360,32 @@ namespace Rhino.Geometry
     }
   }
 
-  public class Leader : AnnotationBase
+  [Serializable]
+  public class Leader : AnnotationBase, ISerializable
   {
     internal Leader(IntPtr native_pointer, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
       : base(native_pointer, parent_object, obj_ref)
     { }
+
+    // serialization constructor
+    protected Leader(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
   }
 
-  public class TextDot : GeometryBase
+  [Serializable]
+  public class TextDot : GeometryBase, ISerializable
   {
     internal TextDot(IntPtr native_pointer, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
       :base(native_pointer, parent_object, obj_ref)
     { }
+
+    // serialization constructor
+    protected TextDot(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
 
     internal override GeometryBase DuplicateShallowHelper()
     {

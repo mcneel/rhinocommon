@@ -1,5 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+
+//don't make serializable yet.
 
 namespace Rhino.Geometry
 {
@@ -58,13 +61,14 @@ namespace Rhino.Geometry
         UnsafeNativeMethods.ON_InstanceDefinition_SetString(ptr, idxDescription, value);
       }
     }
-
   }
+
   public class InstanceReferenceGeometry : GeometryBase
   {
     internal InstanceReferenceGeometry(IntPtr native_ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
       : base(native_ptr, parent_object, obj_ref)
     { }
+
 
     internal override GeometryBase DuplicateShallowHelper()
     {

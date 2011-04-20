@@ -1,8 +1,10 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
-  public class Point : GeometryBase
+  [Serializable]
+  public class Point : GeometryBase, ISerializable
   {
     internal Point(IntPtr native_pointer, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
       : base(native_pointer, parent_object, obj_ref)
@@ -12,6 +14,12 @@ namespace Rhino.Geometry
     {
       IntPtr ptr = UnsafeNativeMethods.ON_Point_New(location);
       ConstructNonConstObject(ptr);
+    }
+
+    // serialization constructor
+    protected Point(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
 
     public Point3d Location

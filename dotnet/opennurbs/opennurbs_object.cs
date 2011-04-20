@@ -1,4 +1,6 @@
 using System;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace Rhino.Runtime
 {
@@ -10,11 +12,12 @@ namespace Rhino.Runtime
   /// <summary>
   /// Base class for .NET classes that wrap C++ unmanaged Rhino classes
   /// </summary>
-  public abstract class CommonObject : IDisposable
+  [Serializable]
+  public abstract class CommonObject : IDisposable, ISerializable
   {
     long m_unmanaged_memory;  // amount of "memory" pressure reported to the .NET runtime
 
-    IntPtr m_ptr=IntPtr.Zero; // C++ pointer. This is only set when the wrapped pointer is of an
+    IntPtr m_ptr = IntPtr.Zero; // C++ pointer. This is only set when the wrapped pointer is of an
                               // object that has been created in .NET and is not part of the document
                               // m_ptr must have been created outside of the document and must be deleted in Dispose
 
@@ -234,6 +237,47 @@ namespace Rhino.Runtime
         m_ptr = IntPtr.Zero;
       }
     }
+
+    protected CommonObject() { }
+
+    #region serialization support
+    const string ARCHIVE_3DM_VERSION = "archive3dm";
+    const string ARCHIVE_OPENNURBS_VERSION = "opennurbs";
+
+    protected CommonObject( SerializationInfo info, StreamingContext context)
+    {
+      int version = info.GetInt32("version");
+      int archive_3dm_version = info.GetInt32(ARCHIVE_3DM_VERSION);
+      int archive_opennurbs_version = info.GetInt32(ARCHIVE_OPENNURBS_VERSION);
+      byte[] stream = info.GetValue("data", typeof(byte[])) as byte[];
+      m_ptr = UnsafeNativeMethods.ON_ReadBufferArchive(archive_3dm_version, archive_opennurbs_version, stream.Length, stream);
+     }
+
+    [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.SerializationFormatter)]
+    public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      IntPtr pConstThis = ConstPointer();
+
+      uint length = 0;
+      IntPtr pWriteBuffer = UnsafeNativeMethods.ON_WriteBufferArchive_NewWriter(pConstThis, ref length);
+
+      if (length < int.MaxValue)
+      {
+        int sz = (int)length;
+        IntPtr pByteArray = UnsafeNativeMethods.ON_WriteBufferArchive_Buffer(pWriteBuffer);
+        byte[] bytearray = new byte[sz];
+        System.Runtime.InteropServices.Marshal.Copy(pByteArray, bytearray, 0, sz);
+
+        info.AddValue("version", 10000);
+        int rhino_version = RhinoApp.ExeVersion;
+        info.AddValue(ARCHIVE_3DM_VERSION, rhino_version);
+        int archive_opennurbs_version = UnsafeNativeMethods.ON_Version();
+        info.AddValue(ARCHIVE_OPENNURBS_VERSION, archive_opennurbs_version);
+        info.AddValue("data", bytearray);
+      }
+      UnsafeNativeMethods.ON_WriteBufferArchive_Delete(pWriteBuffer);
+    }
+    #endregion
   }
 
   class ConstCastHolder

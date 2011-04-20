@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
@@ -161,7 +162,8 @@ namespace Rhino.Geometry
   /// <summary>
   /// Represents a collection of coordinates with optional normal vectors and colors.
   /// </summary>
-  public class PointCloud : GeometryBase, IEnumerable<PointCloudItem>
+  [Serializable]
+  public class PointCloud : GeometryBase, IEnumerable<PointCloudItem>, ISerializable
   {
     #region constructors
     internal PointCloud(IntPtr native_pointer, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
@@ -207,6 +209,12 @@ namespace Rhino.Geometry
     internal override GeometryBase DuplicateShallowHelper()
     {
       return new PointCloud(IntPtr.Zero, null, null);
+    }
+
+    // serialization constructor
+    protected PointCloud(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
     #endregion
 

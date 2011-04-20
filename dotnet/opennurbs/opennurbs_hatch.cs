@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
@@ -11,11 +12,18 @@ namespace Rhino.Geometry
   /// Fill definitions are in the HatchPattern or class derived from HatchPattern
   /// Hatch has an index to get the pattern definition from the pattern table
   /// </summary>
-  public class Hatch : GeometryBase
+  [Serializable]
+  public class Hatch : GeometryBase, ISerializable
   {
     internal Hatch(IntPtr native_ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
       : base(native_ptr, parent_object, obj_ref)
     { }
+
+    // serialization constructor
+    protected Hatch(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
 
     internal override GeometryBase DuplicateShallowHelper()
     {

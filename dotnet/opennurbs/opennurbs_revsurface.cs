@@ -1,8 +1,10 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
-  public class RevSurface : Surface
+  [Serializable]
+  public class RevSurface : Surface, ISerializable
   {
     #region static create functions
 
@@ -81,6 +83,12 @@ namespace Rhino.Geometry
     internal RevSurface(IntPtr ptr, object parent)
       : base(ptr, parent)
     { }
+
+    // serialization constructor
+    protected RevSurface(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
 
     internal override GeometryBase DuplicateShallowHelper()
     {

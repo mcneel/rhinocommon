@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading;
+using System.Runtime.Serialization;
 
 using Rhino.Geometry;
 
@@ -1561,6 +1562,7 @@ namespace Rhino.Collections
     }
   }
 
+  [Serializable]
   public class Point3dList : RhinoList<Point3d>
   {
     public Point3dList()
@@ -1653,6 +1655,10 @@ namespace Rhino.Collections
     }
 
     #region Properties
+    /// <summary>
+    /// Even though this is a property, it is not a "fast" calculation. Every point is
+    /// evaluated in order to get the bounding box of the list
+    /// </summary>
     public BoundingBox BoundingBox
     {
       get

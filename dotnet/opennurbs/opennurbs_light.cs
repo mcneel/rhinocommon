@@ -1,9 +1,10 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
-
-  public class Light : GeometryBase
+  [Serializable]
+  public class Light : GeometryBase, ISerializable
   {
     internal Light(IntPtr native_ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
       : base(native_ptr, parent_object, obj_ref)
@@ -18,6 +19,12 @@ namespace Rhino.Geometry
     {
       IntPtr pLight = UnsafeNativeMethods.ON_Light_New();
       ConstructNonConstObject(pLight);
+    }
+
+    // serialization constructor
+    protected Light(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
 
     /// <summary>

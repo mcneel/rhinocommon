@@ -1,8 +1,10 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Rhino.DocObjects
 {
-  public class DimensionStyle : Rhino.Runtime.CommonObject
+  [Serializable]
+  public class DimensionStyle : Rhino.Runtime.CommonObject, ISerializable
   {
     // Represents both a CRhinoDimStyle and an ON_DimStyle. When m_ptr
     // is null, the object uses m_doc and m_id to look up the const
@@ -23,6 +25,13 @@ namespace Rhino.DocObjects
       m_doc = doc;
       this.m__parent = m_doc;
     }
+
+    // serialization constructor
+    protected DimensionStyle(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
+
 
     public bool CommitChanges()
     {

@@ -4,9 +4,7 @@ using System;
 //public class ON_PolynomialSurface { }
 namespace Rhino.Geometry
 {
-  /// <summary>
-  /// Note that bezier curve is NOT derived from Curve.
-  /// </summary>
+  /// <summary>Note that bezier curve is NOT derived from Curve</summary>
   public class BezierCurve : IDisposable
   {
     IntPtr m_ptr; // This class is never const

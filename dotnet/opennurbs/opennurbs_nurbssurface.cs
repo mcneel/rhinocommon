@@ -1,13 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 //public class ON_TensorProduct { } never seen this used
 //  public class ON_CageMorph { }
 
 namespace Rhino.Geometry
 {
-  public class NurbsSurface : Surface
+  [Serializable]
+  public class NurbsSurface : Surface, ISerializable
   {
     #region static create functions
     public static NurbsSurface Create(int dimension, bool isRational, int order0, int order1, int controlPointCount0, int controlPointCount1)
@@ -290,6 +292,12 @@ namespace Rhino.Geometry
     internal NurbsSurface(IntPtr ptr, object parent)
       : base(ptr, parent)
     { }
+
+    // serialization constructor
+    protected NurbsSurface(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
 
     internal override GeometryBase DuplicateShallowHelper()
     {

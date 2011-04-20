@@ -1,8 +1,10 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Rhino.DocObjects
 {
-  public class Material : Rhino.Runtime.CommonObject
+  [Serializable]
+  public class Material : Rhino.Runtime.CommonObject, ISerializable
   {
     #region members
     // Represents both a CRhinoMaterial and an ON_Material. When m_ptr is
@@ -39,6 +41,12 @@ namespace Rhino.DocObjects
     private Material(IntPtr pMaterial)
     {
       base.ConstructNonConstObject(pMaterial);
+    }
+
+    // serialization constructor
+    protected Material(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
     #endregion
 

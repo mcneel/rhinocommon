@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace Rhino.DocObjects
 {
-  public class Linetype : Rhino.Runtime.CommonObject
+  [Serializable]
+  public class Linetype : Rhino.Runtime.CommonObject, ISerializable
   {
     #region members
     // Represents both a CRhinoLinetype and an ON_Linetype. When m_ptr is
@@ -27,6 +29,12 @@ namespace Rhino.DocObjects
       m_id = UnsafeNativeMethods.CRhinoLinetypeTable_GetLinetypeId(doc.m_docId, index);
       m_doc = doc;
       this.m__parent = m_doc;
+    }
+
+    // serialization constructor
+    protected Linetype(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
     #endregion
 

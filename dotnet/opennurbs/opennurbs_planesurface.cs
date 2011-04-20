@@ -1,8 +1,10 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
-  public class PlaneSurface : Surface
+  [Serializable]
+  public class PlaneSurface : Surface, ISerializable
   {
     internal PlaneSurface(IntPtr ptr, object parent) 
       : base(ptr, parent)
@@ -22,6 +24,12 @@ namespace Rhino.Geometry
     {
       IntPtr ptr = UnsafeNativeMethods.ON_PlaneSurface_New(ref plane, xExtents, yExtents);
       ConstructNonConstObject(ptr);
+    }
+
+    // serialization constructor
+    protected PlaneSurface(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
 
     /// <summary>
@@ -59,11 +67,18 @@ namespace Rhino.Geometry
     }
   }
 
-  public class ClippingPlaneSurface : PlaneSurface
+  [Serializable]
+  public class ClippingPlaneSurface : PlaneSurface, ISerializable
   {
     internal ClippingPlaneSurface(IntPtr ptr, object parent)
       : base(ptr, parent)
     { }
+
+    // serialization constructor
+    protected ClippingPlaneSurface(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
 
     internal override GeometryBase DuplicateShallowHelper()
     {

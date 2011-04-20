@@ -1,9 +1,11 @@
 using System;
 using Rhino.Display;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
-  public class PolylineCurve : Curve
+  [Serializable]
+  public class PolylineCurve : Curve, ISerializable
   {
     #region constructors
     public PolylineCurve()
@@ -42,6 +44,11 @@ namespace Rhino.Geometry
     {
     }
 
+    // serialization constructor
+    protected PolylineCurve(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
     #endregion
 
     internal static PolylineCurve FromArray(Point3d[] points)

@@ -38,8 +38,6 @@ namespace Rhino.Runtime
     private static ResolveEventHandler m_assembly_resolve;
     private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
     {
-      HostUtils.DebugString("CurrentDomain_AssemblyResolve called for " + args.Name + "\n");
-
       // Handle the RhinoCommon case.
       if (args.Name.StartsWith("RhinoCommon", StringComparison.OrdinalIgnoreCase) &&
          !args.Name.StartsWith("RhinoCommon.resources", StringComparison.OrdinalIgnoreCase))
@@ -53,6 +51,11 @@ namespace Rhino.Runtime
         searchname = searchname.Substring(0, index);
       }
 
+      //do not attempt to handle resource searching
+      if (searchname.EndsWith(".resources", StringComparison.OrdinalIgnoreCase))
+        return null;
+
+      HostUtils.DebugString("CurrentDomain_AssemblyResolve called for " + args.Name + "\n");
       // See if the assembly is already loaded.
       Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
       for (int i = 0; i < assemblies.Length; i++)

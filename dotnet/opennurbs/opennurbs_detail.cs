@@ -1,12 +1,20 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
-  public class DetailView : GeometryBase
+  [Serializable]
+  public class DetailView : GeometryBase, ISerializable
   {
     internal DetailView(IntPtr native_ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
       : base(native_ptr, parent_object, obj_ref)
     { }
+
+    // serialization constructor
+    protected DetailView(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
 
     internal override GeometryBase DuplicateShallowHelper()
     {

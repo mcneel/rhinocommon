@@ -1,9 +1,11 @@
 using System;
+using System.Runtime.Serialization;
 
 #if USING_V5_SDK
 namespace Rhino.Geometry
 {
-  public class Extrusion : Surface
+  [Serializable]
+  public class Extrusion : Surface, ISerializable
   {
     #region internals
     internal Extrusion(IntPtr native_ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
@@ -16,6 +18,11 @@ namespace Rhino.Geometry
     }
     #endregion
 
+    // serialization constructor
+    protected Extrusion(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
     #region statics
     /// <summary>
     /// Get an extrusion form of a cylinder

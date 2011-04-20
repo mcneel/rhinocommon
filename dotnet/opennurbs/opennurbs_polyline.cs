@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
-  /// <summary>
-  /// An ordered set of points connected by linear segments
-  /// </summary>
+  /// <summary>An ordered set of points connected by linear segments</summary>
+  [Serializable]
   public class Polyline : Rhino.Collections.Point3dList
   {
     #region constructors

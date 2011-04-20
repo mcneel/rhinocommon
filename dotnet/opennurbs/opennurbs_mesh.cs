@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Rhino.Collections;
-
+using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
@@ -363,7 +363,8 @@ namespace Rhino.Geometry
 
   }
 
-  public class Mesh : GeometryBase
+  [Serializable]
+  public class Mesh : GeometryBase, ISerializable
   {
     #region static mesh creation
     /// <summary>
@@ -607,6 +608,12 @@ namespace Rhino.Geometry
       IntPtr ptr = UnsafeNativeMethods.ON_Mesh_New(IntPtr.Zero);
       ConstructNonConstObject(ptr);
       ApplyMemoryPressure();
+    }
+
+    // serialization constructor
+    protected Mesh(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
 
     internal override IntPtr _InternalGetConstPointer()

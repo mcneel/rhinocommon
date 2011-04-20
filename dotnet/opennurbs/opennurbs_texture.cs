@@ -1,7 +1,9 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Rhino.DocObjects
 {
+  [Serializable]
   public class Texture : Rhino.Runtime.CommonObject
   {
     #region members
@@ -48,6 +50,12 @@ namespace Rhino.DocObjects
       }
 #endif
       return IntPtr.Zero;
+    }
+
+    // serialization constructor
+    protected Texture(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
     }
 
     internal override IntPtr _InternalDuplicate(out bool applymempressure)

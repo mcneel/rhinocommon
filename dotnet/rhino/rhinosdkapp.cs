@@ -103,6 +103,23 @@ namespace Rhino
       }
     }
 
+    /// <summary>
+    /// McNeel version control revision identifier at the time this version
+    /// of Rhino was built
+    /// </summary>
+    public static string VersionControlRevision
+    {
+      get
+      {
+        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_Revision(pString);
+          return sh.ToString();
+        }
+      }
+    }
+
     const int idxSerialNumber = 0;
     const int idxApplicationName = 1;
     const int idxCommandPrompt = 2;

@@ -103,6 +103,19 @@ namespace Rhino.Runtime
       // Collect all potential files in the custom file list.
       if (m_custom_files != null) { potential_files.AddRange(m_custom_files); }
 
+      // Remove the already loaded assemblies from the "potential" list. We've
+      // already tested these.
+      for (int i = 0; i < assemblies.Length; i++)
+      {
+        if (assemblies[i].GlobalAssemblyCache)
+          continue;
+        try
+        {
+          string path = assemblies[i].Location;
+          potential_files.Remove(path);
+        } catch{}
+      }
+
       // Sort all potential files based on fuzzy name matches.
       FuzzyComparer fuzzy = new FuzzyComparer(searchname);
       potential_files.Sort(fuzzy);

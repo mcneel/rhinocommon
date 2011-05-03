@@ -82,6 +82,7 @@ namespace Rhino.Runtime
     public abstract System.Collections.Generic.IEnumerable<string> GetVariableNames();
     public abstract object GetVariable(string name);
     public abstract void SetVariable(string name, object value);
+    public virtual void SetIntellisenseVariable(string name, object value) { }
     public abstract void RemoveVariable(string name);
 
     public abstract object EvaluateExpression(string statements, string expression);
@@ -95,12 +96,12 @@ namespace Rhino.Runtime
     /// Set Output if you want to redirect the output from python to a different function
     /// while this script executes.
     /// </summary>
-    public ScriptOutput Output
+    public Action<string> Output
     {
       get { return m_output; }
       set { m_output = value; }
     }
-    ScriptOutput m_output;
+    Action<string> m_output;
 
     /// <summary>
     /// object set to variable held in scriptcontext.doc
@@ -111,9 +112,9 @@ namespace Rhino.Runtime
       set { m_scriptcontext_doc = value; }
     }
     object m_scriptcontext_doc = null;
-  }
 
-  public delegate void ScriptOutput(string s);
+    public abstract System.Windows.Forms.Control CreateTextEditorControl(string script, Action<string> helpcallback);
+  }
 
   public static class HostUtils
   {

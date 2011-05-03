@@ -196,7 +196,6 @@ namespace Rhino.DocObjects.Custom
 
   public delegate void TurnOnGripsEventHandler(Rhino.DocObjects.RhinoObject rhObj);
 
-  [Obsolete("CustomObjectGrips are under development and should not be used in a shipping plug-in")]
   public abstract class CustomObjectGrips : IDisposable
   {
     #region statics

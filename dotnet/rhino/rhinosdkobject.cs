@@ -1029,6 +1029,23 @@ namespace Rhino.DocObjects
       get { return UnsafeNativeMethods.CRhinoObjRef_RuntimeSN(m_ptr); }
     }
 
+    /// <summary>
+    /// Get the component index of the referenced (sub) geometry.
+    /// Some objects have subobjects that are valid pieces of geometry. For
+    /// example, breps have edges and faces that are valid curves and surfaces.
+    /// Each subobject has a component index that is &gt; 0. The parent
+    /// geometry has a component index = -1.
+    /// </summary>
+    public Geometry.ComponentIndex GeometryComponentIndex
+    {
+      get
+      {
+        ComponentIndex ci = new ComponentIndex();
+        UnsafeNativeMethods.CRhinoObjRef_GeometryComponentIndex(m_ptr, ref ci);
+        return ci;
+      }
+    }
+
     internal const int idxON_Geometry = 0;
     internal const int idxON_Curve = 1;
     internal const int idxON_NurbsCurve = 2;

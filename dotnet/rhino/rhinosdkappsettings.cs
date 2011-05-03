@@ -499,6 +499,32 @@ namespace Rhino.ApplicationSettings
 
   public static class FileSettings
   {
+    /// <summary>
+    /// Returns list of recently opened files. Note that this function does not
+    /// check to make sure that these files still exist.
+    /// </summary>
+    /// <returns></returns>
+    public static string[] RecentlyOpenedFiles()
+    {
+      IntPtr pStrings = UnsafeNativeMethods.ON_StringArray_New();
+      int count = UnsafeNativeMethods.CRhinoApp_RecentlyOpenedFiles(pStrings);
+      string[] rc = new string[count];
+      if (count > 0)
+      {
+        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        {
+          IntPtr pStringHolder = sh.NonConstPointer();
+          for (int i = 0; i < count; i++)
+          {
+            UnsafeNativeMethods.ON_StringArray_Get(pStrings, i, pStringHolder);
+            rc[i] = sh.ToString();
+          }
+        }
+      }
+      UnsafeNativeMethods.ON_StringArray_Delete(pStrings);
+      return rc;
+    }
+
     ///<summary>
     ///Adds a new imagePath to Rhino&apos;s search imagePath list.
     ///See "Options Files settings" in the Rhino help file for more details.
@@ -589,19 +615,35 @@ namespace Rhino.ApplicationSettings
       }
     }
 
+    const int idxTemplateFolder = 0;
+    const int idxTemplateFile = 1;
+    const int idxAutoSaveFile = 2;
+    static void SetFileString(string value, int which)
+    {
+      UnsafeNativeMethods.CRhinoAppFileSettings_SetFile(value, which);
+    }
+    static string GetFileString(int which)
+    {
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoAppFileSettings_GetFile(which, pString);
+        return sh.ToString();
+      }
+    }
+
     ///<summary>Returns or sets the location of Rhino's template files.</summary>
     public static string TemplateFolder
     {
       get
       {
-        IntPtr rc = UnsafeNativeMethods.RhFileSettings_FileGetSet(null, 0);
-        if (IntPtr.Zero == rc)
-          return null;
-        return Marshal.PtrToStringUni(rc);
+        return GetFileString(idxTemplateFolder);
       }
       set
       {
-        UnsafeNativeMethods.RhFileSettings_FileGetSet(value, 0);
+        if (!string.IsNullOrEmpty(value) && !System.IO.Directory.Exists(value))
+          return; //throw exception or just allow invalid strings??
+        SetFileString(value, idxTemplateFolder);
       }
     }
 
@@ -610,14 +652,13 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        IntPtr rc = UnsafeNativeMethods.RhFileSettings_FileGetSet(null, 1);
-        if (IntPtr.Zero == rc)
-          return null;
-        return Marshal.PtrToStringUni(rc);
+        return GetFileString(idxTemplateFile);
       }
       set
       {
-        UnsafeNativeMethods.RhFileSettings_FileGetSet(value, 1);
+        if (!string.IsNullOrEmpty(value) && !System.IO.File.Exists(value))
+          return; //throw exception or just allow invalid strings??
+        SetFileString(value, idxTemplateFile);
       }
     }
 
@@ -626,14 +667,13 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        IntPtr rc = UnsafeNativeMethods.RhFileSettings_FileGetSet(null, 2);
-        if (IntPtr.Zero == rc)
-          return null;
-        return Marshal.PtrToStringUni(rc);
+        return GetFileString(idxAutoSaveFile);
       }
       set
       {
-        UnsafeNativeMethods.RhFileSettings_FileGetSet(value, 2);
+        if (!string.IsNullOrEmpty(value) && !System.IO.File.Exists(value))
+          return; //throw exception or just allow invalid strings??
+        SetFileString(value, idxAutoSaveFile);
       }
     }
 
@@ -739,7 +779,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>Returns directory where the main Rhino executable is located</summary>
-    public static System.IO.DirectoryInfo ExecutableFolder
+    public static string ExecutableFolder
     {
       get
       {
@@ -747,10 +787,7 @@ namespace Rhino.ApplicationSettings
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.CRhinoApp_GetString(RhinoApp.idxExecutableFolder, pString);
-          string rc = sh.ToString();
-          if (!System.IO.Directory.Exists(rc))
-            return null;
-          return new System.IO.DirectoryInfo(rc);
+          return sh.ToString();
         }
       }
     }

@@ -253,7 +253,7 @@ namespace Rhino.Runtime
       {
         IntPtr pBrep = UnsafeNativeMethods.ON_BrepArray_Get(ptr, i);
         if (IntPtr.Zero != pBrep)
-          rc[i] = new Brep(pBrep, null, null);
+          rc[i] = new Brep(pBrep, null);
       }
       return rc;
     }

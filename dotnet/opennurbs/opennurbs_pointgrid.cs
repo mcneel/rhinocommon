@@ -22,8 +22,8 @@ namespace Rhino.Geometry
     }
 
 
-    internal Point3dGrid(IntPtr ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref) 
-      : base(ptr, parent_object, obj_ref)
+    internal Point3dGrid(IntPtr ptr, object parent) 
+      : base(ptr, parent, -1)
     { }
         // serialization constructor
 

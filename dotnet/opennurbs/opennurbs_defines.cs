@@ -548,7 +548,7 @@ namespace Rhino.Geometry
     private readonly uint m_type;
     private readonly int m_index;
 
-    private ComponentIndex(ComponentIndexType type, int index)
+    internal ComponentIndex(ComponentIndexType type, int index)
     {
       m_type = (uint)type;
       m_index = index;

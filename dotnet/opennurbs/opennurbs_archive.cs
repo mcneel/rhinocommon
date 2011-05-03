@@ -1915,4 +1915,28 @@ namespace Rhino.FileIO
 
     #endregion
   }
+
+  public class SerializationOptions
+  {
+    int m_rhinoversion;
+    bool m_writeuserdata;
+
+    public SerializationOptions()
+    {
+      m_rhinoversion = RhinoApp.ExeVersion;
+      m_writeuserdata = true;
+    }
+
+    public int RhinoVersion
+    {
+      get { return m_rhinoversion; }
+      set { m_rhinoversion = value; }
+    }
+
+    public bool WriteUserData
+    {
+      get { return m_writeuserdata; }
+      set { m_writeuserdata = value; }
+    }
+  }
 }

@@ -6,8 +6,8 @@ namespace Rhino.Geometry
   [Serializable]
   public class DetailView : GeometryBase, ISerializable
   {
-    internal DetailView(IntPtr native_ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
-      : base(native_ptr, parent_object, obj_ref)
+    internal DetailView(IntPtr native_ptr, object parent)
+      : base(native_ptr, parent, -1)
     { }
 
     // serialization constructor
@@ -18,7 +18,7 @@ namespace Rhino.Geometry
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new DetailView(IntPtr.Zero, null, null);
+      return new DetailView(IntPtr.Zero, null);
     }
 
     const int idxIsParallelProjection = 0;

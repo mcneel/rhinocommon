@@ -15,8 +15,8 @@ namespace Rhino.Geometry
   [Serializable]
   public class Hatch : GeometryBase, ISerializable
   {
-    internal Hatch(IntPtr native_ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
-      : base(native_ptr, parent_object, obj_ref)
+    internal Hatch(IntPtr native_ptr, object parent)
+      : base(native_ptr, parent, -1)
     { }
 
     // serialization constructor
@@ -27,7 +27,7 @@ namespace Rhino.Geometry
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new Hatch(IntPtr.Zero, null, null);
+      return new Hatch(IntPtr.Zero, null);
     }
 
     public static Hatch[] Create(IEnumerable<Curve> curves, int hatchPatternIndex, double rotationRadians, double scale)

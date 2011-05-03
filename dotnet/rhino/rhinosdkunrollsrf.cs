@@ -191,7 +191,7 @@ namespace Rhino.Geometry
             for (int i = 0; i < brepCount; i++)
             {
               IntPtr pBrep = UnsafeNativeMethods.CRhinoUnrollResults_GetBrep(pResults, i);
-              if (pBrep != IntPtr.Zero) rc[i] = new Brep(pBrep, null, null);
+              if (pBrep != IntPtr.Zero) rc[i] = new Brep(pBrep, null);
             }
           }
           if (curveCount > 0)
@@ -200,7 +200,7 @@ namespace Rhino.Geometry
             for (int i = 0; i < curveCount; i++)
             {
               IntPtr pCurve = UnsafeNativeMethods.CRhinoUnrollResults_GetCurve(pResults, i);
-              if (pCurve != IntPtr.Zero) unrolledCurves[i] = new Curve(pCurve, null, null);
+              if (pCurve != IntPtr.Zero) unrolledCurves[i] = new Curve(pCurve, null);
             }
           }
           if (pointCount > 0)
@@ -214,7 +214,7 @@ namespace Rhino.Geometry
             for (int i = 0; i < dotCount; i++)
             {
               IntPtr pDot = UnsafeNativeMethods.CRhinoUnrollResults_GetDot(pResults, i);
-              if (pDot != IntPtr.Zero) unrolledDots[i] = new TextDot(pDot, null, null);
+              if (pDot != IntPtr.Zero) unrolledDots[i] = new TextDot(pDot, null);
             }
           }
 

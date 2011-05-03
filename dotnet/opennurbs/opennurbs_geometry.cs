@@ -34,8 +34,16 @@ namespace Rhino.Geometry
       if (null != obj_ref)
         return obj_ref.GetGeometryConstPointer(this);
 
-      uint serial_number = 0;
       Rhino.DocObjects.RhinoObject parent_object = ParentRhinoObject();
+
+      if (parent_object == null)
+      {
+        Rhino.FileIO.File3dmObject fileobject = m__parent as Rhino.FileIO.File3dmObject;
+        if (null != fileobject)
+          return fileobject.GetGeometryConstPointer();
+      }
+
+      uint serial_number = 0;
       if (null != parent_object)
         serial_number = parent_object.m_rhinoobject_serial_number;
       ComponentIndex ci = new ComponentIndex();
@@ -93,14 +101,6 @@ namespace Rhino.Geometry
     }
 
 
-    internal GeometryBase(IntPtr ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
-    {
-      object parent = parent_object ?? (object) obj_ref;
-      if (null == parent)
-        ConstructNonConstObject(ptr);
-      else
-        ConstructConstObject(parent, -1);
-    }
     internal GeometryBase(IntPtr ptr, object parent, int subobject_index)
     {
       if (subobject_index >= 0 && parent == null)
@@ -148,6 +148,7 @@ namespace Rhino.Geometry
     const int idxON_Leader = 30;
     const int idxON_OrdinateDimension2 = 31;
     const int idxON_Light = 32;
+    const int idxON_PointGrid = 33;
     #endregion
 
     internal static GeometryBase CreateGeometryHelper(IntPtr pGeometry, object parent)
@@ -164,8 +165,7 @@ namespace Rhino.Geometry
       if (type < 0)
         return null;
       GeometryBase rc = null;
-      RhinoObject parent_object = parent as RhinoObject;
-      ObjRef source_objref = parent as ObjRef;
+
       switch (type)
       {
         case idxON_Curve: //1
@@ -190,16 +190,16 @@ namespace Rhino.Geometry
           rc = new Mesh(pGeometry, parent);
           break;
         case idxON_Point: //8
-          rc = new Point(pGeometry, parent_object, source_objref);
+          rc = new Point(pGeometry, parent);
           break;
         case idxON_TextDot: //9
-          rc = new TextDot(pGeometry, parent_object, source_objref);
+          rc = new TextDot(pGeometry, parent);
           break;
         case idxON_Surface: //10
           rc = new Surface(pGeometry, parent);
           break;
         case idxON_Brep: //11
-          rc = new Brep(pGeometry, parent_object, source_objref);
+          rc = new Brep(pGeometry, parent);
           break;
         case idxON_NurbsSurface: //12
           rc = new NurbsSurface(pGeometry, parent);
@@ -214,13 +214,13 @@ namespace Rhino.Geometry
           rc = new ClippingPlaneSurface(pGeometry, parent);
           break;
         case idxON_Annotation2: // 16
-          rc = new AnnotationBase(pGeometry, parent_object, source_objref);
+          rc = new AnnotationBase(pGeometry, parent);
           break;
         case idxON_Hatch: // 17
-          rc = new Hatch(pGeometry, parent_object, source_objref);
+          rc = new Hatch(pGeometry, parent);
           break;
         case idxON_TextEntity2: //18
-          rc = new TextEntity(pGeometry, parent_object, source_objref);
+          rc = new TextEntity(pGeometry, parent);
           break;
         case idxON_SumSurface: //19
           rc = new SumSurface(pGeometry, parent);
@@ -231,7 +231,7 @@ namespace Rhino.Geometry
             IntPtr pBrep = UnsafeNativeMethods.ON_BrepSubItem_Brep(pGeometry, ref faceindex);
             if (pBrep != IntPtr.Zero && faceindex >= 0)
             {
-              Brep b = new Brep(pBrep, parent_object, source_objref);
+              Brep b = new Brep(pBrep, parent);
               rc = b.Faces[faceindex];
             }
           }
@@ -242,45 +242,48 @@ namespace Rhino.Geometry
             IntPtr pBrep = UnsafeNativeMethods.ON_BrepSubItem_Brep(pGeometry, ref edgeindex);
             if (pBrep != IntPtr.Zero && edgeindex >= 0)
             {
-              Brep b = new Brep(pBrep, parent_object, source_objref);
+              Brep b = new Brep(pBrep, parent);
               rc = b.Edges[edgeindex];
             }
           }
           break;
         case idxON_InstanceDefinition: // 22
-          rc = new InstanceDefinitionGeometry(pGeometry, parent_object, source_objref);
+          rc = new InstanceDefinitionGeometry(pGeometry, parent);
           break;
         case idxON_InstanceReference: // 23
-          rc = new InstanceReferenceGeometry(pGeometry, parent_object, source_objref);
+          rc = new InstanceReferenceGeometry(pGeometry, parent);
           break;
 #if USING_V5_SDK
         case idxON_Extrusion: //24
-          rc = new Extrusion(pGeometry, parent_object, source_objref);
+          rc = new Extrusion(pGeometry, parent);
           break;
 #endif
         case idxON_LinearDimension2: //25
-          rc = new LinearDimension(pGeometry, parent_object, source_objref);
+          rc = new LinearDimension(pGeometry, parent);
           break;
         case idxON_PointCloud: // 26
-          rc = new PointCloud(pGeometry, parent_object, source_objref);
+          rc = new PointCloud(pGeometry, parent);
           break;
         case idxON_DetailView: // 27
-          rc = new DetailView(pGeometry, parent_object, source_objref);
+          rc = new DetailView(pGeometry, parent);
           break;
         case idxON_AngularDimension2: // 28
-          rc = new AngularDimension(pGeometry, parent_object, source_objref);
+          rc = new AngularDimension(pGeometry, parent);
           break;
         case idxON_RadialDimension2: // 29
-          rc = new RadialDimension(pGeometry, parent_object, source_objref);
+          rc = new RadialDimension(pGeometry, parent);
           break;
         case idxON_Leader: // 30
-          rc = new Leader(pGeometry, parent_object, source_objref);
+          rc = new Leader(pGeometry, parent);
           break;
         case idxON_OrdinateDimension2: // 31
-          rc = new OrdinateDimension(pGeometry, parent_object, source_objref);
+          rc = new OrdinateDimension(pGeometry, parent);
           break;
         case idxON_Light: //32
-          rc = new Light(pGeometry, parent_object, source_objref);
+          rc = new Light(pGeometry, parent);
+          break;
+        case idxON_PointGrid: //33
+          rc = new Point3dGrid(pGeometry, parent);
           break;
         default:
           rc = new UnknownGeometry(pGeometry, parent, subobject_index);

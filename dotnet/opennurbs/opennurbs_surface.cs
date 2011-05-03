@@ -248,13 +248,6 @@ namespace Rhino.Geometry
       // the base class always handles set up of pointers
     }
 
-    internal Surface(IntPtr native_pointer, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef objref)
-      : base(native_pointer, parent_object, objref)
-    {
-      if (parent_object == null && objref == null)
-        ApplyMemoryPressure();
-    }
-
     internal Surface(IntPtr native_pointer, object parent)
       : base(native_pointer, parent, -1)
     {
@@ -281,7 +274,7 @@ namespace Rhino.Geometry
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new Surface(IntPtr.Zero, null, null);
+      return new Surface(IntPtr.Zero, null);
     }
 
     // serialization constructor
@@ -975,7 +968,7 @@ namespace Rhino.Geometry
       IntPtr pBrep = UnsafeNativeMethods.ON_Surface_BrepForm(ptr);
       if (IntPtr.Zero == pBrep)
         return null;
-      return new Brep(pBrep, null, null);
+      return new Brep(pBrep, null);
     }
 
     /// <summary>

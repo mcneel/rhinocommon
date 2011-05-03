@@ -6,8 +6,8 @@ namespace Rhino.Geometry
   [Serializable]
   public class Point : GeometryBase, ISerializable
   {
-    internal Point(IntPtr native_pointer, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
-      : base(native_pointer, parent_object, obj_ref)
+    internal Point(IntPtr native_pointer, object parent)
+      : base(native_pointer, parent, -1)
     { }
 
     public Point(Point3d location)
@@ -40,7 +40,7 @@ namespace Rhino.Geometry
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new Point(IntPtr.Zero, null, null);
+      return new Point(IntPtr.Zero, null);
     }
   }
 }

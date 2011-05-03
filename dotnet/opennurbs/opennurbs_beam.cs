@@ -8,13 +8,13 @@ namespace Rhino.Geometry
   public class Extrusion : Surface, ISerializable
   {
     #region internals
-    internal Extrusion(IntPtr native_ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
-      : base(native_ptr, parent_object, obj_ref)
+    internal Extrusion(IntPtr native_ptr, object parent)
+      : base(native_ptr, parent)
     { }
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new Extrusion(IntPtr.Zero, null, null);
+      return new Extrusion(IntPtr.Zero, null);
     }
     #endregion
 
@@ -34,7 +34,7 @@ namespace Rhino.Geometry
     public static Extrusion CreateCylinderExtrusion(Cylinder cylinder, bool capBottom, bool capTop)
     {
       IntPtr pExtrusion = UnsafeNativeMethods.ON_Extrusion_CreateCylinder(ref cylinder, capBottom, capTop);
-      return IntPtr.Zero == pExtrusion ? null : new Extrusion(pExtrusion, null, null);
+      return IntPtr.Zero == pExtrusion ? null : new Extrusion(pExtrusion, null);
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ namespace Rhino.Geometry
     public static Extrusion CreatePipeExtrusion(Cylinder cylinder, double otherRadius, bool capTop, bool capBottom)
     {
       IntPtr pExtrusion = UnsafeNativeMethods.ON_Extrusion_CreatePipe(ref cylinder, otherRadius, capBottom, capTop);
-      return IntPtr.Zero == pExtrusion ? null : new Extrusion(pExtrusion, null, null);
+      return IntPtr.Zero == pExtrusion ? null : new Extrusion(pExtrusion, null);
     }
     #endregion
 

@@ -9,13 +9,13 @@ namespace Rhino.Geometry
   public class InstanceDefinitionGeometry : GeometryBase
   {
     #region internals
-    internal InstanceDefinitionGeometry(IntPtr native_ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
-      : base(native_ptr, parent_object, obj_ref)
+    internal InstanceDefinitionGeometry(IntPtr native_ptr, object parent)
+      : base(native_ptr, parent, -1)
     { }
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new InstanceDefinitionGeometry(IntPtr.Zero, null, null);
+      return new InstanceDefinitionGeometry(IntPtr.Zero, null);
     }
     #endregion
 
@@ -65,14 +65,14 @@ namespace Rhino.Geometry
 
   public class InstanceReferenceGeometry : GeometryBase
   {
-    internal InstanceReferenceGeometry(IntPtr native_ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
-      : base(native_ptr, parent_object, obj_ref)
+    internal InstanceReferenceGeometry(IntPtr native_ptr, object parent)
+      : base(native_ptr, parent, -1)
     { }
 
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new InstanceReferenceGeometry(IntPtr.Zero, null, null);
+      return new InstanceReferenceGeometry(IntPtr.Zero, null);
     }
   }
 }

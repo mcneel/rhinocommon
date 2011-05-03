@@ -166,10 +166,10 @@ namespace Rhino.Geometry
   public class PointCloud : GeometryBase, IEnumerable<PointCloudItem>, ISerializable
   {
     #region constructors
-    internal PointCloud(IntPtr native_pointer, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
-      : base(native_pointer, parent_object, obj_ref)
+    internal PointCloud(IntPtr native_pointer, object parent)
+      : base(native_pointer, parent, -1)
     {
-      if (null == parent_object && null == obj_ref)
+      if (null == parent)
         ApplyMemoryPressure();
     }
 
@@ -208,7 +208,7 @@ namespace Rhino.Geometry
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new PointCloud(IntPtr.Zero, null, null);
+      return new PointCloud(IntPtr.Zero, null);
     }
 
     // serialization constructor

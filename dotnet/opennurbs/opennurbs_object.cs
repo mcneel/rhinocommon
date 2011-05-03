@@ -256,10 +256,15 @@ namespace Rhino.Runtime
     [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.SerializationFormatter)]
     public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
     {
+      Rhino.FileIO.SerializationOptions options = context.Context as Rhino.FileIO.SerializationOptions;
       IntPtr pConstThis = ConstPointer();
 
       uint length = 0;
-      IntPtr pWriteBuffer = UnsafeNativeMethods.ON_WriteBufferArchive_NewWriter(pConstThis, ref length);
+      bool writeuserdata = true;
+      if (options != null)
+        writeuserdata = options.WriteUserData;
+      int rhino_version = (options != null) ? options.RhinoVersion : RhinoApp.ExeVersion;
+      IntPtr pWriteBuffer = UnsafeNativeMethods.ON_WriteBufferArchive_NewWriter(pConstThis, rhino_version, writeuserdata, ref length);
 
       if (length < int.MaxValue)
       {
@@ -269,7 +274,6 @@ namespace Rhino.Runtime
         System.Runtime.InteropServices.Marshal.Copy(pByteArray, bytearray, 0, sz);
 
         info.AddValue("version", 10000);
-        int rhino_version = RhinoApp.ExeVersion;
         info.AddValue(ARCHIVE_3DM_VERSION, rhino_version);
         int archive_opennurbs_version = UnsafeNativeMethods.ON_Version();
         info.AddValue(ARCHIVE_OPENNURBS_VERSION, archive_opennurbs_version);

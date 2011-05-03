@@ -772,8 +772,8 @@ namespace Rhino.Geometry
     #region constructors
     protected Curve() { }
 
-    internal Curve(IntPtr ptr, Rhino.DocObjects.RhinoObject parent_object, Rhino.DocObjects.ObjRef obj_ref)
-      : base(ptr, parent_object, obj_ref)
+    internal Curve(IntPtr ptr, object parent)
+      : this(ptr, parent, -1)
     {
     }
     internal Curve(IntPtr ptr, object parent, int subobject_index)
@@ -826,7 +826,7 @@ namespace Rhino.Geometry
 
     internal override GeometryBase DuplicateShallowHelper()
     {
-      return new Curve(IntPtr.Zero, null, null);
+      return new Curve(IntPtr.Zero, null);
     }
 
 #if USING_V5_SDK

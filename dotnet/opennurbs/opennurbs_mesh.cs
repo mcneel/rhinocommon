@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Settings used for creating a Mesh representation of a Brep
+  /// Settings used for creating a Mesh representation of a Brep or Surface
   /// </summary>
   public class MeshingParameters : IDisposable
   {
@@ -475,14 +475,6 @@ namespace Rhino.Geometry
       }
     }
 
-
-    //public static Mesh CreateFromSurface(Surface surface)
-    //{
-    //}
-    //public static Mesh CreateFromBrepFace(BrepFace face)
-    //{
-    //}
-
     /// <summary>
     /// Compute the Solid Union of a set of Meshes.
     /// </summary>
@@ -598,6 +590,7 @@ namespace Rhino.Geometry
     #endregion
 
     #region constructors
+    /// <summary>Create a new empty mesh</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addmesh.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addmesh.cs' lang='cs'/>
@@ -622,7 +615,7 @@ namespace Rhino.Geometry
       if (mh != null)
         return mh.MeshPointer();
 
-#if USING_RDK
+#if RDK_UNCHECKED
       Rhino.Render.RenderMesh rm = m__parent as Rhino.Render.RenderMesh;
       if( rm!=null )
         return rm.GetConst_ON_Mesh_Pointer();
@@ -656,32 +649,14 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Mesh_CopyFrom(pConstOther, pThis);
     }
 
-    /// <summary>
-    /// If the mesh has SurfaceParameters, the surface is evaluated at
-    /// these parameters and the mesh geometry is updated
-    /// </summary>
-    /// <param name="surface"></param>
-    /// <returns></returns>
-    public bool EvaluateMeshGeometry(Surface surface)
-    {
-      // don't switch to non-const if we don't have to
-      IntPtr pConstThis = ConstPointer();
-      if (!UnsafeNativeMethods.ON_Mesh_HasSurfaceParameters(pConstThis))
-        return false;
-      IntPtr pThis = NonConstPointer();
-      IntPtr pConstSurface = surface.ConstPointer();
-      return UnsafeNativeMethods.ON_Mesh_EvaluateMeshGeometry(pThis, pConstSurface);
-    }
-    
     public override GeometryBase Duplicate()
     {
       IntPtr ptr = ConstPointer();
       IntPtr pNewMesh = UnsafeNativeMethods.ON_Mesh_New(ptr);
       return new Mesh(pNewMesh, null);
     }
-    /// <summary>
-    /// Create an exact duplicate of this Mesh.
-    /// </summary>
+
+    /// <summary>Create an exact duplicate of this Mesh</summary>
     public Mesh DuplicateMesh()
     {
       return Duplicate() as Mesh;
@@ -704,6 +679,7 @@ namespace Rhino.Geometry
     internal const int idxTransposeTextureCoordinates = 7;
     internal const int idxTransposeSurfaceParameters = 8;
 
+    // UnsafeNativeMethods.ON_Mesh_GetInt
     internal const int idxVertexCount = 0;
     internal const int idxFaceCount = 1;
     internal const int idxQuadCount = 2;
@@ -715,6 +691,8 @@ namespace Rhino.Geometry
     internal const int idxColorCount = 8;
     internal const int idxTextureCoordinateCount = 9;
     internal const int idxMeshTopologyVertexCount = 10;
+    const int idxSolidOrientation = 11;
+    internal const int idxMeshTopologyEdgeCount = 12;
 
     internal const int idxHasVertexNormals = 0;
     internal const int idxHasFaceNormals = 1;
@@ -724,6 +702,7 @@ namespace Rhino.Geometry
     internal const int idxHasVertexColors = 5;
     const int idxIsClosed = 6;
 
+    // UnsafeNativeMethods.ON_Mesh_ClearList
     internal const int idxClearVertices = 0;
     internal const int idxClearFaces = 1;
     internal const int idxClearNormals = 2;
@@ -738,6 +717,17 @@ namespace Rhino.Geometry
     internal const int idxShowAll = 3;
     internal const int idxEnsureHiddenList = 4;
     internal const int idxCleanHiddenList = 5;
+
+    // IndexOpBool
+    internal const int idxCollapseEdge = 0;
+    internal const int idxIsSwappableEdge = 1;
+    internal const int idxSwapEdge = 2;
+
+    // TopItemIsHidden
+    internal const int idxTopVertexIsHidden = 0;
+    internal const int idxTopEdgeIsHidden = 1;
+    internal const int idxTopFaceIsHidden = 2;
+
     #endregion
 
     #region properties
@@ -817,9 +807,16 @@ namespace Rhino.Geometry
     {
       get
       {
-        if (null == m_topology_vertices)
-          m_topology_vertices = new Rhino.Geometry.Collections.MeshTopologyVertexList(this);
-        return m_topology_vertices;
+        return m_topology_vertices ?? (m_topology_vertices = new Collections.MeshTopologyVertexList(this));
+      }
+    }
+
+    private Rhino.Geometry.Collections.MeshTopologyEdgeList m_topology_edges;
+    public Rhino.Geometry.Collections.MeshTopologyEdgeList TopologyEdges
+    {
+      get
+      {
+        return m_topology_edges ?? (m_topology_edges = new Collections.MeshTopologyEdgeList(this));
       }
     }
 
@@ -920,6 +917,23 @@ namespace Rhino.Geometry
 
     #region methods
     /// <summary>
+    /// If the mesh has SurfaceParameters, the surface is evaluated at
+    /// these parameters and the mesh geometry is updated
+    /// </summary>
+    /// <param name="surface"></param>
+    /// <returns></returns>
+    public bool EvaluateMeshGeometry(Surface surface)
+    {
+      // don't switch to non-const if we don't have to
+      IntPtr pConstThis = ConstPointer();
+      if (!UnsafeNativeMethods.ON_Mesh_HasSurfaceParameters(pConstThis))
+        return false;
+      IntPtr pThis = NonConstPointer();
+      IntPtr pConstSurface = surface.ConstPointer();
+      return UnsafeNativeMethods.ON_Mesh_EvaluateMeshGeometry(pThis, pConstSurface);
+    }
+
+    /// <summary>
     /// Removes any unreferenced objects from arrays, reindexes as needed 
     /// and shrinks arrays to minimum required size.
     /// </summary>
@@ -946,7 +960,88 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Attempts to fix inconsistencies in the directions of meshfaces for a mesh
+    /// Determine orientation of a "solid" mesh
+    /// </summary>
+    /// <returns>
+    /// +1 = mesh is solid with outward facing normals.
+    /// -1 = mesh is solid with inward facing normals.
+    /// 0 = mesh is not solid
+    /// </returns>
+    public int SolidOrientation()
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_Mesh_GetInt(pConstThis, idxSolidOrientation);
+    }
+
+    /// <summary>
+    /// Determine if a point is inside a solid mesh
+    /// </summary>
+    /// <param name="point">3d point to test</param>
+    /// <param name="tolerance">
+    /// (&gt;=0) 3d distance tolerance used for ray-mesh intersection
+    /// and determining strict inclusion.
+    /// </param>
+    /// <param name="strictlyIn">
+    /// If strictlyIn is true, then point must be inside mesh by at least
+    /// tolerance in order for this function to return true.
+    /// If strictlyIn is false, then this function will return true if
+    /// point is inside or the distance from point to a mesh face is &lt;= tolerance.
+    /// </param>
+    /// <returns>
+    /// true if point is inside the solid mesh, false if not
+    /// </returns>
+    /// <remarks>
+    /// The caller is responsible for making certing the mesh is solid before
+    /// calling this function. If the mesh is not solid, the behavior is unpredictable.
+    /// </remarks>
+    public bool IsPointInside(Point3d point, double tolerance, bool strictlyIn)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_Mesh_IsPointInside(pConstThis, point, tolerance, strictlyIn);
+    }
+
+    // need to implement
+    //int GetMeshEdges( ON_SimpleArray<ON_2dex>& edges ) const;
+    //int* GetVertexLocationIds(int first_vid, int* Vid, int* Vindex) const;
+    //int GetMeshFaceSideList( const int* Vid, struct ON_MeshFaceSide*& sides) const;
+    //int GetMeshEdgeList(ON_SimpleArray<ON_2dex>& edge_list, int edge_type_partition[5] ) const;
+    //int GetMeshEdgeList(ON_SimpleArray<ON_2dex>& edge_list, ON_SimpleArray<int>& ci_meshtop_edge_map, int edge_type_partition[5]) const;
+    //int GetMeshEdgeList(ON_SimpleArray<ON_2dex>& edge_list, ON_SimpleArray<int>& ci_meshtop_edge_map, ON_SimpleArray<int>& ci_meshtop_vertex_map, int edge_type_partition[5]) const;
+
+
+    /// <summary>
+    /// Make sure that faces sharing an edge and having a difference of normal greater
+    /// than or equal to angleToleranceRadians have unique vertexes along that edge,
+    /// adding vertices if necessary.
+    /// </summary>
+    /// <param name="angleToleranceRadians">Angle at which to make unique vertices</param>
+    /// <param name="modifyNormals">
+    /// Determines whether new vertex normals will have the same vertex normal as the original (false)
+    /// or vertex normals made from the corrsponding face normals (true)
+    /// </param>
+    public void Unweld(double angleToleranceRadians, bool modifyNormals)
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.RHC_RhinoUnWeldMesh(pThis, angleToleranceRadians, modifyNormals);
+    }
+
+    /// <summary>
+    /// Make sure that faces sharing an edge and having a difference of normal greater
+    /// than or equal to angleToleranceRadians share vertexes along that edge, vertex normals
+    /// are averaged.
+    /// </summary>
+    /// <param name="angleToleranceRadians">Angle at which to weld vertices</param>
+    public void Weld(double angleToleranceRadians)
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.RHC_RhinoWeldMesh(pThis, angleToleranceRadians);
+    }
+
+    /// <summary>
+    /// Attempts to fix inconsistencies in the directions of meshfaces for a mesh. This function
+    /// does not modify the vertex normals, but rather rearranges the mesh face winding and face
+    /// normals to make them all consistent. You may want to call Mesh.Normals.ConputeNormals()
+    /// to recompute vertex normals after calling this functions.
     /// </summary>
     /// <returns>number of faces that were modified</returns>
     public int UnifyNormals()
@@ -1246,19 +1341,43 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Make a new mesh with vertices offset a distance in the opposite direction of the existing vertex normals.
+    /// Same as Mesh.Offset(distance, false)
     /// </summary>
     /// <param name="distance"></param>
     /// <returns>new mesh on success, null on failure</returns>
     public Mesh Offset(double distance)
     {
+      return Offset(distance, false);
+    }
+
+    /// <summary>
+    /// Make a new mesh with vertices offset a distance in the opposite direction of the existing vertex normals.
+    /// Optionally, based on the value of solidify, adds the input mesh and a ribbon of faces along any naked edges.
+    /// If solidify is false it acts exactly as the Offset(distance) function.
+    /// </summary>
+    /// <param name="distance"></param>
+    /// <param name="solidify"></param>
+    /// <returns></returns>
+    public Mesh Offset(double distance, bool solidify)
+    {
       IntPtr pConstMesh = ConstPointer();
-      IntPtr pNewMesh = UnsafeNativeMethods.RHC_RhinoOffsetMesh(pConstMesh, distance);
+      IntPtr pNewMesh = UnsafeNativeMethods.RHC_RhinoMeshOffset(pConstMesh, distance, solidify);
       if (IntPtr.Zero == pNewMesh)
         return null;
       return new Mesh(pNewMesh, null);
     }
     #endregion
 
+    internal bool IndexOpBool(int which, int index)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Mesh_IndexOpBool(pThis, which, index);
+    }
+    internal bool TopItemIsHidden(int which, int index)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_MeshTopology_TopItemIsHidden(pConstThis, which, index);
+    }
 
     ///// <summary>
     ///// Gets a value indicating whether or not the mesh has nurbs surface parameters.
@@ -1284,23 +1403,6 @@ namespace Rhino.Geometry
     //  }
     //}
 
-    // [skipping]
-    //  ON_MeshVertexRef VertexRef(ON_ComponentIndex ci) const;
-    //  ON_MeshVertexRef VertexRef(int mesh_V_index) const;
-    //  ON_MeshEdgeRef EdgeRef(ON_ComponentIndex ci) const;
-    //  ON_MeshEdgeRef EdgeRef(int tope_index) const;
-    //  ON_MeshFaceRef FaceRef(ON_ComponentIndex ci) const;
-    //  ON_MeshFaceRef FaceRef(int mesh_F_index) const;
-    //  ON_Geometry* MeshComponent( 
-    //  bool GetCurvatureStats( 
-    //  void InvalidateVertexBoundingBox(); // Call if defining geometry is changed by 
-    //  void InvalidateVertexNormalBoundingBox(); // Call if defining geometry is changed by 
-    //  void InvalidateTextureCoordinateBoundingBox(); // Call if defining geometry is changed by 
-    //  void InvalidateCurvatureStats(); // Call if defining geometry is changed by 
-    //  void InvalidateBoundingBoxes(); // Invalidates all cached bounding box information.
-    //  void SetMeshParameters( const ON_MeshParameters& );
-    //  const ON_MeshParameters* MeshParameters() const;
-    //  void DeleteMeshParameters();
 
     #region topological methods
     /// <summary>
@@ -1375,19 +1477,6 @@ namespace Rhino.Geometry
     //  int GetMeshEdges( 
 
     //[skipping]
-    // other versions of get closest point that returns other parts of ON_MESH_POINT
-    //  bool GetClosestPoint( const ON_3dPoint& P, ON_MESH_POINT* Q, double maximumDistance = 0.0 ) const;
-
-    // [skipping]
-    //  int IntersectMesh( const ON_Mesh& meshB, ON_ClassArray< ON_SimpleArray< ON_MMX_POINT > >& x, double intersection_tolerance = 0.0, double overlap_tolerance = 0.0 ) const;
-
-    // [skipping]
-    //  const class ON_MeshTree* MeshTree() const;
-    //  void DestroyTree( bool bDeleteTree = true );
-    //[skipping]
-    // bool VolumeMassProperties(
-    // bool CollapseEdge( int topei );
-    // bool IsSwappableEdge( int topei );
     // bool SwapEdge( int topei );
     //  void DestroyHiddenVertexArray();
     //  const bool* HiddenVertexArray() const;
@@ -2012,6 +2101,28 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
+    /// Returns TopologyVertexIndices for a given mesh face index
+    /// </summary>
+    /// <param name="faceIndex"></param>
+    /// <returns></returns>
+    public int[] IndicesFromFace(int faceIndex)
+    {
+      int[] rc = null;
+      int a = 0, b = 0, c = 0, d = 0;
+      IntPtr pConstMesh = m_mesh.ConstPointer();
+      if (UnsafeNativeMethods.ON_MeshTopology_GetTopFaceVertices(pConstMesh, faceIndex, ref a, ref b, ref c, ref d))
+      {
+        if (c == d)
+          rc = new int[] { a, b, c };
+        else
+          rc = new int[] { a, b, c, d };
+      }
+      else
+        rc = new int[0];
+      return rc;
+    }
+
+    /// <summary>
     /// Get all topological vertices that are connected to a given vertex
     /// </summary>
     /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices</param>
@@ -2071,6 +2182,7 @@ namespace Rhino.Geometry.Collections
     /// to sorting.  If any boundary or nonmanifold edges end at the
     /// vertex, then the first edge will be a boundary or nonmanifold edge.
     /// </summary>
+    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices></param>
     /// <returns>true on success</returns>
     public bool SortEdges(int topologyVertexIndex)
     {
@@ -2078,6 +2190,16 @@ namespace Rhino.Geometry.Collections
       return UnsafeNativeMethods.ON_MeshTopologyVertex_SortEdges(pConstMesh, topologyVertexIndex);
     }
 
+    /// <summary>
+    /// Returns true if the topological vertex is hidden. The mesh topology
+    /// vertex is hidden if and only if all the ON_Mesh vertices it represents is hidden.
+    /// </summary>
+    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices</param>
+    /// <returns>True if mesh topology vertex is hidden.</returns>
+    public bool IsHidden(int topologyVertexIndex)
+    {
+      return m_mesh.TopItemIsHidden(Mesh.idxTopVertexIsHidden, topologyVertexIndex);
+    }
 
     /// <summary>
     /// Get all faces that are connected to a given vertex
@@ -2178,6 +2300,128 @@ namespace Rhino.Geometry.Collections
       #endregion
     }
     #endregion
+
+  }
+
+  public class MeshTopologyEdgeList
+  {
+    private readonly Mesh m_mesh;
+
+    #region constructors
+    internal MeshTopologyEdgeList(Mesh ownerMesh)
+    {
+      m_mesh = ownerMesh;
+    }
+    #endregion
+
+    #region properties
+    public int Count
+    {
+      get
+      {
+        IntPtr ptr = m_mesh.ConstPointer();
+        return UnsafeNativeMethods.ON_Mesh_GetInt(ptr, Mesh.idxMeshTopologyEdgeCount);
+      }
+    }
+    #endregion
+
+    /// <summary>
+    /// Get the two topology vertices for a given topology edge
+    /// </summary>
+    /// <param name="topologyEdgeIndex"></param>
+    /// <param name="topologyVertex1"></param>
+    /// <param name="topologyVertex2"></param>
+    /// <returns></returns>
+    public bool GetTopologyVertices(int topologyEdgeIndex, out int topologyVertex1, out int topologyVertex2)
+    {
+      topologyVertex1 = -1;
+      topologyVertex2 = -1;
+      IntPtr pConstMesh = m_mesh.ConstPointer();
+      return UnsafeNativeMethods.ON_MeshTopologyEdge_TopVi(pConstMesh, topologyEdgeIndex, ref topologyVertex1, ref topologyVertex2);
+    }
+
+    /// <summary>
+    /// Get indices of faces connected to this edge
+    /// </summary>
+    /// <param name="topologyEdgeIndex"></param>
+    /// <returns></returns>
+    public int[] GetConnectedFaces(int topologyEdgeIndex)
+    {
+      IntPtr pConstMesh = m_mesh.ConstPointer();
+      int count = UnsafeNativeMethods.ON_MeshTopologyEdge_TopfCount(pConstMesh, topologyEdgeIndex);
+      if (count <= 0)
+        return new int[0];
+      int[] rc = new int[count];
+      UnsafeNativeMethods.ON_MeshTopologyEdge_TopfList(pConstMesh, topologyEdgeIndex, count, rc);
+      return rc;
+    }
+
+    /// <summary>
+    /// returns index of edge that connects topological vertices. 
+    /// returns -1 if no edge is found.
+    /// </summary>
+    /// <param name="topologyVertex1"></param>
+    /// <param name="topologyVertex2"></param>
+    /// <returns></returns>
+    public int GetEdgeIndex(int topologyVertex1, int topologyVertex2)
+    {
+      IntPtr pConstMesh = m_mesh.ConstPointer();
+      return UnsafeNativeMethods.ON_MeshTopology_TopEdge(pConstMesh, topologyVertex1, topologyVertex2);
+    }
+
+    /// <summary>Get the 3d line along an edge</summary>
+    /// <param name="topologyEdgeIndex"></param>
+    /// <returns>
+    /// Line along edge.  If input is not valid, an Invalid Line is returned
+    /// </returns>
+    public Line EdgeLine(int topologyEdgeIndex)
+    {
+      Line rc = new Line();
+      IntPtr pConstMesh = m_mesh.ConstPointer();
+      UnsafeNativeMethods.ON_MeshTopology_TopEdgeLine(pConstMesh, topologyEdgeIndex, ref rc);
+      return rc;
+    }
+
+    /// <summary>
+    /// Replace a mesh edge with a vertex at its center and update adjacent faces as needed.
+    /// </summary>
+    /// <param name="topologyEdgeIndex"></param>
+    /// <returns>true if successful</returns>
+    public bool CollapseEdge(int topologyEdgeIndex)
+    {
+      return m_mesh.IndexOpBool(Mesh.idxCollapseEdge, topologyEdgeIndex);
+    }
+
+    /// <summary>
+    /// Tests a mesh edge to see if it is valid as input to SwapMeshEdge.
+    /// </summary>
+    /// <param name="topologyEdgeIndex"></param>
+    /// <returns>true if edge can be swapped</returns>
+    public bool IsSwappableEdge(int topologyEdgeIndex)
+    {
+      return m_mesh.IndexOpBool(Mesh.idxIsSwappableEdge, topologyEdgeIndex);
+    }
+
+    /// <summary>
+    /// If the edge is shared by two triangular face, then the edge is swapped.
+    /// </summary>
+    /// <param name="topologyEdgeIndex"></param>
+    /// <returns>true if successful</returns>
+    public bool SwapEdge(int topologyEdgeIndex)
+    {
+      return m_mesh.IndexOpBool(Mesh.idxSwapEdge, topologyEdgeIndex);
+    }
+
+    /// <summary>
+    /// Returns true if the topological edge is hidden. The mesh topology
+    /// edge is hidden only if either of its mesh topology vertices is hidden.
+    /// </summary>
+    /// <param name="topologyEdgeIndex">index of a topology edge in Mesh.TopologyEdges</param>
+    /// <returns>True if mesh topology edge is hidden.</returns>
+    public bool IsHidden(int topologyEdgeIndex)
+    {
+      return m_mesh.TopItemIsHidden(Mesh.idxTopEdgeIsHidden, topologyEdgeIndex);
+    }
 
   }
 
@@ -2739,6 +2983,17 @@ namespace Rhino.Geometry.Collections
     {
       IntPtr ptr = m_mesh.NonConstPointer();
       return UnsafeNativeMethods.ON_Mesh_CullOp(ptr, true);
+    }
+
+    /// <summary>
+    /// A face is hidden if, and only if, at least one of its vertices is hidden.
+    /// </summary>
+    /// <param name="faceIndex"></param>
+    /// <returns></returns>
+    public bool IsHidden(int faceIndex)
+    {
+      IntPtr pConstMesh = m_mesh.ConstPointer();
+      return UnsafeNativeMethods.ON_Mesh_FaceIsHidden(pConstMesh, faceIndex);
     }
     #endregion
 

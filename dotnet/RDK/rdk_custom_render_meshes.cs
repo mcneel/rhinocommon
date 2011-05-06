@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 
-#if USING_RDK
+#if RDK_UNCHECKED
 
 using Rhino.Render;
 

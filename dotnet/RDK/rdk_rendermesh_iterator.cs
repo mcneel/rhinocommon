@@ -3,7 +3,7 @@ using System.Collections;
 using System.Diagnostics;
 using Rhino.Geometry;
 
-#if USING_RDK
+#if RDK_UNCHECKED
 
 namespace Rhino.Render
 {

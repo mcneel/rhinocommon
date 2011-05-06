@@ -46,12 +46,21 @@ namespace Rhino.DocObjects.Tables
       get { return m_doc; }
     }
 
-#if USING_RDK
+#if RDK_UNCHECKED
     private Rhino.Render.Sun m_sun;
-
+    /// <summary></summary>
+    /// <exception cref="Rhino.Runtime.RdkNotLoadedException"></exception>
     public Rhino.Render.Sun Sun
     {
-        get { return m_sun ?? (m_sun = new Rhino.Render.Sun(m_doc)); }
+      get
+      {
+        if (null == m_sun)
+        {
+          Rhino.Runtime.HostUtils.CheckForRdk(true, true);
+          m_sun = new Rhino.Render.Sun(m_doc);
+        }
+        return m_sun;
+      }
     }
 
     private Rhino.Render.Skylight m_skylight;

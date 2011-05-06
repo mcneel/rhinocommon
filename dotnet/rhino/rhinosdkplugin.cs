@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using Rhino.Runtime;
 using System.Collections.Generic;
 
-#if USING_RDK
+#if RDK_UNCHECKED
 using Rhino.Render;
 #endif
 
@@ -119,10 +119,8 @@ namespace Rhino.PlugIns
           plugin_class = 1;
         else if (rc is FileExportPlugIn)
           plugin_class = 2;
-#if !BUILDING_MONO
         else if (rc is DigitizerPlugIn)
           plugin_class = 3;
-#endif
         else if (rc is RenderPlugIn)
           plugin_class = 4;
 
@@ -278,7 +276,7 @@ namespace Rhino.PlugIns
         {
           rc = p.OnLoad(ref error_msg);
 
-#if USING_RDK
+#if RDK_UNCHECKED
           // after calling the OnLoad function, check to see if we should be creating
           // an RDK plugin. This is the typical spot where C++ plug-ins perform their
           // RDK initialization.
@@ -324,7 +322,7 @@ namespace Rhino.PlugIns
           if (p.m_SettingsManager != null)
             p.m_SettingsManager.WriteSettings();
 
-#if USING_RDK
+#if RDK_UNCHECKED
           // check to see if we should be uninitializing an RDK plugin
           Rhino.Render.RdkPlugIn pRdk = Rhino.Render.RdkPlugIn.GetRdkPlugIn(p);
           if (pRdk != null)
@@ -987,7 +985,7 @@ namespace Rhino.PlugIns
     {
       UnsafeNativeMethods.CRhinoRenderPlugIn_SetCallbacks(m_OnRender, m_OnRenderWindow);
 
-#if USING_RDK
+#if RDK_UNCHECKED
       UnsafeNativeMethods.CRhinoRenderPlugIn_SetRdkCallbacks(m_OnSupportsFeature, 
                                                              m_OnAbortRender, 
                                                              m_OnAllowChooseContent, 
@@ -999,7 +997,7 @@ namespace Rhino.PlugIns
 #endif
     }
 
-#if USING_RDK
+#if RDK_UNCHECKED
     public enum Features : int
     {
       Materials = 0,
@@ -1445,7 +1443,6 @@ namespace Rhino.PlugIns
   }
 
   
-#if !BUILDING_MONO
   public abstract class DigitizerPlugIn : PlugIn
   {
     protected DigitizerPlugIn()
@@ -1610,7 +1607,6 @@ namespace Rhino.PlugIns
       return flags;
     }
   }
-#endif
 
   /// <summary>
   /// License Manager Utilities
@@ -2229,6 +2225,8 @@ namespace Rhino.PlugIns
     string m_serial_number;
     LicenseType m_license_type;
     DateTime? m_expiration_date;
+    string m_registered_owner;
+    string m_registered_organization;
 
     /// <summary>
     /// The id of the product or plugin
@@ -2294,6 +2292,26 @@ namespace Rhino.PlugIns
       set { m_expiration_date = value; }
     }
 
+    /// <summary>
+    /// The registered owner of the product.
+    /// (e.g. "Dale Fugier")
+    /// </summary>
+    public string RegisteredOwner
+    {
+      get { return m_registered_owner; }
+      set { m_registered_owner = value; }
+    }
+
+    /// <summary>
+    /// The registered organization of the product
+    /// (e.g. "Robert McNeel and Associates")
+    /// </summary>
+    public string RegisteredOrganization
+    {
+      get { return m_registered_organization; }
+      set { m_registered_organization = value; }
+    }
+
     #endregion
 
     #region LicenseStatus construction
@@ -2309,6 +2327,8 @@ namespace Rhino.PlugIns
       m_serial_number = string.Empty;
       m_license_type = PlugIns.LicenseType.Standalone;
       m_expiration_date = null;
+      m_registered_owner = string.Empty;
+      m_registered_organization = string.Empty;
     }
 
     #endregion

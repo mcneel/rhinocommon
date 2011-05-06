@@ -1,7 +1,7 @@
 using System;
 
 
-#if USING_RDK
+#if RDK_UNCHECKED
 namespace Rhino.Render
 {
   public abstract class Field : IDisposable

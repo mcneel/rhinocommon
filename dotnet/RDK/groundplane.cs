@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-#if USING_RDK
+#if RDK_CHECKED
 namespace Rhino.Render
 {
   /// <summary>
@@ -9,11 +9,20 @@ namespace Rhino.Render
   /// </summary>
   public class GroundPlane
   {
+    // Functions/Properties in this class do not need to check for Rdk since the only
+    // way to access the Rdk is throuh the GroundPlane property on the RhinoDoc. That
+    // propertt does the check before returning this class
     private Rhino.RhinoDoc m_doc;
 
     internal GroundPlane(Rhino.RhinoDoc doc)
     {
       m_doc = doc;
+    }
+
+    /// <summary>Document this groundplane is associated with</summary>
+    public Rhino.RhinoDoc Document
+    {
+      get { return m_doc; }
     }
 
     /// <summary>

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-#if USING_RDK
+#if RDK_UNCHECKED
 namespace Rhino.Render
 {
   public class Sun : IDisposable
@@ -9,8 +9,11 @@ namespace Rhino.Render
     private IntPtr m_pSun = IntPtr.Zero;
     private Rhino.RhinoDoc m_doc;
 
+    /// <summary></summary>
+    /// <exception cref="Rhino.Runtime.RdkNotLoadedException"></exception>
     public Sun()
     {
+      Rhino.Runtime.HostUtils.CheckForRdk(true, true);
       m_pSun = UnsafeNativeMethods.Rdk_SunNew();
     }
 

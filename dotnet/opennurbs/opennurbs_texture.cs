@@ -8,7 +8,7 @@ namespace Rhino.DocObjects
   {
     #region members
     readonly Rhino.DocObjects.Material m_parent_material;
-#if USING_RDK
+#if RDK_UNCHECKED
     readonly Rhino.Render.SimulatedTexture m_parent_simulated_texture;
 #endif
     readonly int m_index = 0;
@@ -27,7 +27,7 @@ namespace Rhino.DocObjects
       this.m__parent = parent;
     }
 
-#if USING_RDK
+#if RDK_UNCHECKED
     internal Texture(Rhino.Render.SimulatedTexture parent)
     {
       m_parent_simulated_texture = parent;
@@ -42,7 +42,7 @@ namespace Rhino.DocObjects
         IntPtr pRhinoMaterial = m_parent_material.ConstPointer();
         return UnsafeNativeMethods.ON_Material_GetTexturePointer(pRhinoMaterial, m_index);
       }
-#if USING_RDK
+#if RDK_UNCHECKED
       if (m_parent_simulated_texture != null)
       {
           IntPtr pSimulatedTexture = m_parent_simulated_texture.ConstPointer();

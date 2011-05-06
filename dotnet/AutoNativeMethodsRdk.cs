@@ -894,6 +894,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region rdk_plugin.cpp
+  //int Rdk_LoadTest()
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_LoadTest();
+
   //void Rdk_SetNewTextureCallback(RDK_NEWTEXTUREPROC proc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 

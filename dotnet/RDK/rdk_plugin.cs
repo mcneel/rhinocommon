@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-#if USING_RDK
+#if RDK_UNCHECKED
 namespace Rhino.Render
 {
   // Not public

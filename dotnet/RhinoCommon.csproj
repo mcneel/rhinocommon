@@ -18,7 +18,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;USING_V5_SDK USING_RDK</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;USING_V5_SDK RDK_UNCHECKED RDK_CHECKED</DefineConstants>
     <DocumentationFile>Debug\RhinoCommon.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <DebugType>full</DebugType>
@@ -27,7 +27,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>Release\</OutputPath>
-    <DefineConstants>TRACE;USING_V5_SDK</DefineConstants>
+    <DefineConstants>TRACE;USING_V5_SDK RDK_CHECKED</DefineConstants>
     <DocumentationFile>Release\RhinoCommon.XML</DocumentationFile>
     <Optimize>true</Optimize>
     <NoWarn>1591</NoWarn>
@@ -57,7 +57,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Mono|AnyCPU' ">
     <OutputPath>bin\Mono\</OutputPath>
-    <DefineConstants>TRACE;BUILDING_MONO</DefineConstants>
+    <DefineConstants>TRACE;MONO_BUILD USING_V5_SDK</DefineConstants>
     <DocumentationFile>bin\Mono\RhinoCommon.XML</DocumentationFile>
     <Optimize>true</Optimize>
     <NoWarn>1591</NoWarn>

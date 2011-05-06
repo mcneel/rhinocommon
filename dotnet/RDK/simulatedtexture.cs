@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-#if USING_RDK
+#if RDK_UNCHECKED
 namespace Rhino.Render
 {
   public class SimulatedTexture : IDisposable

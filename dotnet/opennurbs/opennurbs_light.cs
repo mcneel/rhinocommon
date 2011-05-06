@@ -100,7 +100,9 @@ namespace Rhino.Geometry
     {
       get 
       {
-          return UnsafeNativeMethods.Rdk_Sun_IsSunLight(ConstPointer()); 
+        Rhino.Runtime.HostUtils.CheckForRdk(true, true);
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.Rdk_Sun_IsSunLight(pConstThis); 
       }
     }
 

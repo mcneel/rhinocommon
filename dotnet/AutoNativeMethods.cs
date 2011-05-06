@@ -1457,10 +1457,6 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Curve_IsContinuous(IntPtr curvePtr, int continuityType, double t);
 
-  //ON_PolylineCurve* RHC_RhinoPullCurveToMesh(const ON_Curve* pCurve, const ON_Mesh* pMesh, double tolerance)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RHC_RhinoPullCurveToMesh(IntPtr pCurve, IntPtr pMesh, double tolerance);
-
   //ON_Curve* RHC_RhinoFairCurve(const ON_Curve* pCurve, double distanceTolerance,
   //      double angleTolerance, int clampStart, int clampEnd, int iterations)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -2430,21 +2426,20 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Mesh_NakedEdgePoints(IntPtr pMesh, [In,Out] int[] naked_status, int count);
 
-  //ON_Mesh* RHC_RhinoOffsetMesh(const ON_Mesh* pConstInputMesh, double distance)
+  //bool ON_Mesh_IsPointInside(const ON_Mesh* pConstMesh, ON_3DPOINT_STRUCT point, double tolerance, bool strictlyin)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RHC_RhinoOffsetMesh(IntPtr pConstInputMesh, double distance);
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Mesh_IsPointInside(IntPtr pConstMesh, Point3d point, double tolerance, [MarshalAs(UnmanagedType.U1)]bool strictlyin);
 
-  //int RHC_RhinoSplitDisjointMesh(const ON_Mesh* pConstMesh, ON_SimpleArray<ON_Mesh*>* pMeshArray)
+  //bool ON_Mesh_IndexOpBool(ON_Mesh* pMesh, int which, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RHC_RhinoSplitDisjointMesh(IntPtr pConstMesh, IntPtr pMeshArray);
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Mesh_IndexOpBool(IntPtr pMesh, int which, int index);
 
-  //int RHC_RhinoMeshBooleanSplit(const ON_Mesh* pConstMesh, ON_SimpleArray<ON_Mesh*>* pMeshArray, const ON_PLANE_STRUCT* plane)
+  //bool ON_Mesh_FaceIsHidden(const ON_Mesh* pConstMesh, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RHC_RhinoMeshBooleanSplit(IntPtr pConstMesh, IntPtr pMeshArray, ref Plane plane);
-
-  //int RHC_RhinoExplodeMesh(const ON_Mesh* pConstMesh, ON_SimpleArray<ON_Mesh*>* pMeshArray)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RHC_RhinoExplodeMesh(IntPtr pConstMesh, IntPtr pMeshArray);
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Mesh_FaceIsHidden(IntPtr pConstMesh, int index);
 
   //void ON_Mesh_ClearList( ON_Mesh* pMesh, int which )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -2475,23 +2470,36 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Mesh_GetConnectedVertices(IntPtr pMesh, IntPtr vertex_indices, int vertex_index);
 
-  //bool RHC_RhinoMeshBooleanUnion( const ON_SimpleArray<const ON_Mesh*>* pConstInputMeshes,
-  //                                              double intersect_tol,
-  //                                              double overlap_tol,
-  //                                              ON_SimpleArray<ON_Mesh*>* output )
+  //bool ON_MeshTopologyEdge_TopVi(const ON_Mesh* pConstMesh, int edgeindex, int* v0, int* v1)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RHC_RhinoMeshBooleanUnion(IntPtr pConstInputMeshes, double intersect_tol, double overlap_tol, IntPtr output);
+  internal static extern bool ON_MeshTopologyEdge_TopVi(IntPtr pConstMesh, int edgeindex, ref int v0, ref int v1);
 
-  //bool RHC_RhinoMeshBooleanIntDiff( const ON_SimpleArray<const ON_Mesh*>* pConstInputSet1,
-  //                                                const ON_SimpleArray<const ON_Mesh*>* pConstInputSet2,
-  //                                                double intersect_tol,
-  //                                                double overlap_tol,
-  //                                                ON_SimpleArray<ON_Mesh*>* output,
-  //                                                int which )
+  //int ON_MeshTopologyEdge_TopfCount(const ON_Mesh* pConstMesh, int edgeindex)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_MeshTopologyEdge_TopfCount(IntPtr pConstMesh, int edgeindex);
+
+  //void ON_MeshTopologyEdge_TopfList(const ON_Mesh* pConstMesh, int edgeindex, int count, /*ARRAY*/int* faces)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_MeshTopologyEdge_TopfList(IntPtr pConstMesh, int edgeindex, int count, [In,Out] int[] faces);
+
+  //void ON_MeshTopology_TopEdgeLine(const ON_Mesh* pConstMesh, int edgeIndex, ON_Line* line)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_MeshTopology_TopEdgeLine(IntPtr pConstMesh, int edgeIndex, ref Line line);
+
+  //int ON_MeshTopology_TopEdge(const ON_Mesh* pConstMesh, int vert1, int vert2)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_MeshTopology_TopEdge(IntPtr pConstMesh, int vert1, int vert2);
+
+  //bool ON_MeshTopology_GetTopFaceVertices(const ON_Mesh* pConstMesh, int index, int* a, int* b, int* c, int* d)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RHC_RhinoMeshBooleanIntDiff(IntPtr pConstInputSet1, IntPtr pConstInputSet2, double intersect_tol, double overlap_tol, IntPtr output, int which);
+  internal static extern bool ON_MeshTopology_GetTopFaceVertices(IntPtr pConstMesh, int index, ref int a, ref int b, ref int c, ref int d);
+
+  //bool ON_MeshTopology_TopItemIsHidden(const ON_Mesh* pConstMesh, int which, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_MeshTopology_TopItemIsHidden(IntPtr pConstMesh, int which, int index);
 
   //ON_SimpleArray<ON_PolylineCurve*>* TL_GetMeshOutline(const ON_Mesh* pConstMesh, const ON_PLANE_STRUCT* plane, int* polylines_created)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6360,6 +6368,56 @@ internal partial class UnsafeNativeMethods
   //int RHC_RhinoGetPointOnMesh(ON_UUID id, const RHMONO_STRING* _prompt, bool acceptNothing, ON_3dPoint* point)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_RhinoGetPointOnMesh(Guid id, [MarshalAs(UnmanagedType.LPWStr)]string _prompt, [MarshalAs(UnmanagedType.U1)]bool acceptNothing, ref Point3d point);
+
+  //int RHC_RhinoUnifyMeshNormals(ON_Mesh* pMesh, bool countOnly)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoUnifyMeshNormals(IntPtr pMesh, [MarshalAs(UnmanagedType.U1)]bool countOnly);
+
+  //ON_PolylineCurve* RHC_RhinoPullCurveToMesh(const ON_Curve* pCurve, const ON_Mesh* pMesh, double tolerance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoPullCurveToMesh(IntPtr pCurve, IntPtr pMesh, double tolerance);
+
+  //ON_Mesh* RHC_RhinoMeshOffset(const ON_Mesh* pConstInputMesh, double distance, bool solidify)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoMeshOffset(IntPtr pConstInputMesh, double distance, [MarshalAs(UnmanagedType.U1)]bool solidify);
+
+  //int RHC_RhinoSplitDisjointMesh(const ON_Mesh* pConstMesh, ON_SimpleArray<ON_Mesh*>* pMeshArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoSplitDisjointMesh(IntPtr pConstMesh, IntPtr pMeshArray);
+
+  //bool RHC_RhinoMeshBooleanUnion( const ON_SimpleArray<const ON_Mesh*>* pConstInputMeshes,
+  //                                              double intersect_tol,
+  //                                              double overlap_tol,
+  //                                              ON_SimpleArray<ON_Mesh*>* output )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoMeshBooleanUnion(IntPtr pConstInputMeshes, double intersect_tol, double overlap_tol, IntPtr output);
+
+  //bool RHC_RhinoMeshBooleanIntDiff( const ON_SimpleArray<const ON_Mesh*>* pConstInputSet1,
+  //                                                const ON_SimpleArray<const ON_Mesh*>* pConstInputSet2,
+  //                                                double intersect_tol,
+  //                                                double overlap_tol,
+  //                                                ON_SimpleArray<ON_Mesh*>* output,
+  //                                                int which )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoMeshBooleanIntDiff(IntPtr pConstInputSet1, IntPtr pConstInputSet2, double intersect_tol, double overlap_tol, IntPtr output, int which);
+
+  //int RHC_RhinoMeshBooleanSplit(const ON_Mesh* pConstMesh, ON_SimpleArray<ON_Mesh*>* pMeshArray, const ON_PLANE_STRUCT* plane)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoMeshBooleanSplit(IntPtr pConstMesh, IntPtr pMeshArray, ref Plane plane);
+
+  //int RHC_RhinoExplodeMesh(const ON_Mesh* pConstMesh, ON_SimpleArray<ON_Mesh*>* pMeshArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoExplodeMesh(IntPtr pConstMesh, IntPtr pMeshArray);
+
+  //void RHC_RhinoUnWeldMesh(ON_Mesh* pMesh, double angle_tol, bool modifyNormals)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void RHC_RhinoUnWeldMesh(IntPtr pMesh, double angle_tol, [MarshalAs(UnmanagedType.U1)]bool modifyNormals);
+
+  //void RHC_RhinoWeldMesh(ON_Mesh* pMesh, double angle_tol)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void RHC_RhinoWeldMesh(IntPtr pMesh, double angle_tol);
   #endregion
 
 
@@ -6996,10 +7054,6 @@ internal partial class UnsafeNativeMethods
   //void ON_wString_Set(ON_wString* pString, const RHMONO_STRING* _text)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_wString_Set(IntPtr pString, [MarshalAs(UnmanagedType.LPWStr)]string _text);
-
-  //int RHC_RhinoUnifyMeshNormals(ON_Mesh* pMesh, bool countOnly)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RHC_RhinoUnifyMeshNormals(IntPtr pMesh, [MarshalAs(UnmanagedType.U1)]bool countOnly);
 
   //int RHC_RhinoMessageBox( const RHMONO_STRING* _text, const RHMONO_STRING* _title, unsigned int flags )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

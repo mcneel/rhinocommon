@@ -4,7 +4,6 @@ using Rhino.PlugIns;
 
 namespace Rhino.Runtime
 {
-#if !BUILDING_MONO
   /// <summary>
   /// Skin DLLs must contain a single class that derives from the Skin class.
   /// </summary>
@@ -53,7 +52,6 @@ namespace Rhino.Runtime
     protected virtual void ShowSplash() { }
     protected virtual void HideSplash() { }
   }
-#endif
 
   public abstract class PythonCompiledCode
   {
@@ -144,14 +142,17 @@ namespace Rhino.Runtime
       }
     }
 
+    /// <summary>
+    /// Test if this process is currently executing on the Windows platform
+    /// </summary>
     public static bool RunningOnWindows
     {
-      get
-      {
-        return !RunningOnOSX;
-      }
+      get { return !RunningOnOSX; }
     }
 
+    /// <summary>
+    /// Test if this process is currently executing on the Mac OSX platform
+    /// </summary>
     public static bool RunningOnOSX
     {
       get
@@ -162,14 +163,17 @@ namespace Rhino.Runtime
       }
     }
 
+    /// <summary>
+    /// Test if this process is currently executing under the Mono runtime
+    /// </summary>
     public static bool RunningInMono
     {
-      get
-      {
-        return Type.GetType("Mono.Runtime") != null;
-      }
+      get { return Type.GetType("Mono.Runtime") != null; }
     }
 
+    /// <summary>
+    /// Test if RhinoCommon is currently executing inside of the Rhino.exe process
+    /// </summary>
     public static bool RunningInRhino
     {
       get
@@ -185,6 +189,38 @@ namespace Rhino.Runtime
         }
         return rc;
       }
+    }
+
+    // 0== unknown
+    // 1== loaded
+    //-1== not loaded
+    static int m_rdk_loadtest = 0;
+    public static bool CheckForRdk(bool throwOnFalse, bool usePreviousResult)
+    {
+      const int UNKNOWN = 0;
+      const int LOADED = 1;
+      const int NOT_LOADED = -1;
+
+      if (UNKNOWN == m_rdk_loadtest || !usePreviousResult)
+      {
+        try
+        {
+          UnsafeNativeMethods.Rdk_LoadTest();
+          m_rdk_loadtest = LOADED;
+        }
+        catch (Exception)
+        {
+          m_rdk_loadtest = NOT_LOADED;
+        }
+      }
+
+      if (LOADED == m_rdk_loadtest)
+        return true;
+
+      if (throwOnFalse)
+        throw new RdkNotLoadedException();
+
+      return false;
     }
 
     static bool m_bSendDebugToRhino; // = false; initialized by runtime
@@ -603,7 +639,7 @@ namespace Rhino.Runtime
       DelegateReport(RhinoDoc.m_purge_object, "PurgeObject");
     }
 
-#if USING_RDK
+#if RDK_UNCHECKED
     internal delegate void RdkReportCallback(int c);
     internal static RdkReportCallback m_rdk_ew_report = RdkEventWatcherReport;
     internal static void RdkEventWatcherReport(int c)
@@ -673,7 +709,7 @@ namespace Rhino.Runtime
       {
         UnsafeNativeMethods.RhCmn_SetInShutDown();
         // Remove callbacks that should not happen after this point in time
-#if USING_RDK
+#if RDK_UNCHECKED
         Rhino.Render.RdkPlugIn.SetRdkCallbackFunctions(false);
 #endif
       }
@@ -682,5 +718,10 @@ namespace Rhino.Runtime
         //throw away, we are shutting down
       }
     }
+  }
+
+  [Serializable]
+  public class RdkNotLoadedException : Exception
+  {
   }
 }

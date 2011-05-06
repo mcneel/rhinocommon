@@ -324,7 +324,7 @@ namespace Rhino.DocObjects
       }
     }
 
-#if USING_RDK
+#if RDK_UNCHECKED
     public Guid RenderMaterialInstanceId
     {
       get

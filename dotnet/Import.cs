@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 class Import
 {
-#if BUILDING_MONO
+#if MONO_BUILD
   public const string lib = "__Internal";
   public const string librdk = "__Internal";
 #else
@@ -62,7 +62,7 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoRenderPlugIn_SetCallbacks(Rhino.PlugIns.RenderPlugIn.RenderFunc render, Rhino.PlugIns.RenderPlugIn.RenderWindowFunc renderwindow);
 
-#if USING_RDK
+#if RDK_UNCHECKED
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoRenderPlugIn_SetRdkCallbacks(Rhino.PlugIns.RenderPlugIn.SupportsFeatureCallback supportsFeatureCallback, 
                                                                  Rhino.PlugIns.RenderPlugIn.AbortRenderCallback abortRenderCallback,
@@ -73,8 +73,6 @@ internal partial class UnsafeNativeMethods
                                                                  Rhino.PlugIns.RenderPlugIn.CreatePreviewCallback previewCallback,
                                                                  Rhino.PlugIns.RenderPlugIn.DecalCallback decalCallback);
 #endif
-
-#if !BUILDING_MONO
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoDigitizerPlugIn_SetCallbacks(Rhino.PlugIns.DigitizerPlugIn.EnableDigitizerFunc enablefunc,
     Rhino.PlugIns.DigitizerPlugIn.UnitSystemFunc unitsystemfunc,
@@ -82,7 +80,6 @@ internal partial class UnsafeNativeMethods
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern IntPtr CRhinoSkin_New(Rhino.Runtime.Skin.ShowSplashCallback cb);
-#endif
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoCommand_SetRunCommandCallback(Rhino.Commands.Command.RunCommandCallback cb);
@@ -209,9 +206,8 @@ internal partial class UnsafeNativeMethods
     Rhino.DocObjects.Custom.CustomGripObject.CRhinoGripObjectWeightCallback getweight_func,
     Rhino.DocObjects.Custom.CustomGripObject.CRhinoGripObjectSetWeightCallback setweight_func);
 
-
-#if USING_RDK
-  // RDK Functions
+#if RDK_UNCHECKED
+  #region RDK Functions
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetTextureEvaluatorCallbacks(Rhino.Render.TextureEvaluator.GetColorCallback callback_func,
     Rhino.Render.TextureEvaluator.OnDeleteThisCallback ondeletethis_callback);
@@ -350,5 +346,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRdkCmnEventWatcher_SetDocumentSettingsChangedEventCallback(Rhino.RhinoDoc.RdkDocumentSettingsChangedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
 
+  #endregion
 #endif
 }

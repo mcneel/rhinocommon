@@ -536,12 +536,21 @@ namespace Rhino
     }
     #endregion
 
-#if USING_RDK
+#if RDK_CHECKED
     private Rhino.Render.GroundPlane m_ground_plane;
-
+    /// <summary></summary>
+    /// <exception cref="Rhino.Runtime.RdkNotLoadedException"></exception>
     public Rhino.Render.GroundPlane GroundPlane
     {
-      get { return m_ground_plane ?? (m_ground_plane = new Rhino.Render.GroundPlane(this)); }
+      get
+      {
+        if (m_ground_plane == null)
+        {
+          Rhino.Runtime.HostUtils.CheckForRdk(true, true);
+          m_ground_plane = new Rhino.Render.GroundPlane(this);
+        }
+        return m_ground_plane;
+      }
     }
 #endif
 
@@ -1364,7 +1373,7 @@ namespace Rhino
 
     #endregion
 
-#if USING_RDK
+#if RDK_UNCHECKED
     #region rdk events
 
     /// <summary>

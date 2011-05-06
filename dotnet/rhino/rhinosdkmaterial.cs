@@ -268,7 +268,7 @@ namespace Rhino.DocObjects
       return null;
     }
 
-#if TODO_USING_RDK
+#if TODO_RDK_UNCHECKED
     Rhino.Render.RenderMaterial RenderMaterial
     {
         get

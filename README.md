@@ -25,16 +25,20 @@ Steps:
 * Get the source code by downloading everything as a zip or using git
 
 I'm going to need to come up with better instructions on compiling and using the dll, but in a nutshell you should be able to debug into the RhinoCommon source code by:
-1. rename the shipping RhinoCommon.dll to something like RhinoCommon.dll.original
-2. place the RhinoCommon.dll and pdb that gets compiled by this project in the Rhino5 system directory
+
+* rename the shipping RhinoCommon.dll to something like RhinoCommon.dll.original
+* place the RhinoCommon.dll and pdb that gets compiled by this project in the Rhino5 system directory
 
 
 
 Authors
 -------
-Steve Baer - https://github.com/sbaer steve@mcneel.com
+Really the entire McNeel programming staff (http://www.mcneel.com)
 
-David Rutten - https://github.com/DavidRutten
+Specific people to contact about this project:
+
+* Steve Baer - https://github.com/sbaer steve@mcneel.com
+* David Rutten - https://github.com/DavidRutten
 
 Legal Stuff
 -----------

@@ -375,7 +375,17 @@ namespace Rhino.Geometry
       IntPtr pThis = NonConstPointer();
       UnsafeNativeMethods.ON_NurbsSurface_CopyFrom(pConstOther, pThis);
     }
-
+    /*
+    public double[] GetGrevilleAbcissae(int direction)
+    {
+      int count = direction==0?Points.CountU:Points.CountV;
+      double[] rc = new double[count];
+      IntPtr pConstThis = ConstPointer();
+      if (!UnsafeNativeMethods.ON_NurbsSurface_GetGrevilleAbcissae(pConstThis, direction, count, rc))
+        return new double[0];
+      return rc;
+    }
+     */
 
     // GetBool indices
     const int idxIsRational = 0;

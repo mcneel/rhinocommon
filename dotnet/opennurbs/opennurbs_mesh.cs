@@ -2332,12 +2332,12 @@ namespace Rhino.Geometry.Collections
     /// <param name="topologyVertex1"></param>
     /// <param name="topologyVertex2"></param>
     /// <returns></returns>
-    public bool GetTopologyVertices(int topologyEdgeIndex, out int topologyVertex1, out int topologyVertex2)
+    public IndexPair GetTopologyVertices(int topologyEdgeIndex)
     {
-      topologyVertex1 = -1;
-      topologyVertex2 = -1;
+      int i = -1, j = -1;
       IntPtr pConstMesh = m_mesh.ConstPointer();
-      return UnsafeNativeMethods.ON_MeshTopologyEdge_TopVi(pConstMesh, topologyEdgeIndex, ref topologyVertex1, ref topologyVertex2);
+      UnsafeNativeMethods.ON_MeshTopologyEdge_TopVi(pConstMesh, topologyEdgeIndex, ref i, ref j);
+      return new IndexPair(i, j);
     }
 
     /// <summary>

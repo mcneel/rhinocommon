@@ -1,3 +1,0 @@
-I'm going to need to come up with better instructions on compiling and using the dll, but in a nutshell you should be able to debug into the RhinoCommon source code by:
-1. rename the shipping RhinoCommon.dll to something like RhinoCommon.dll.original
-2. place the RhinoCommon.dll and pdb that gets compiled by this project in the Rhino5 system directory

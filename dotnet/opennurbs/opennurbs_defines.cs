@@ -3,18 +3,31 @@ using System.Runtime.InteropServices;
 
 namespace Rhino
 {
-  /*
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
   [System.Diagnostics.DebuggerDisplay("{m_i}, {m_j}")]
   [Serializable]
-  public struct IntPair
+  public struct IndexPair
   {
     int m_i, m_j;
+
+    public IndexPair(int i, int j)
+    {
+      m_i = i;
+      m_j = j;
+    }
     
-    public int I { get { return m_i; } set { m_i = value; } }
-    public int J { get { return m_j; } set { m_j = value; } }
+    public int I
+    {
+      get { return m_i; }
+      set { m_i = value; }
+    }
+    public int J
+    {
+      get { return m_j; }
+      set { m_j = value; }
+    }
   }
-  */
+
 
   public static class RhinoMath
   {

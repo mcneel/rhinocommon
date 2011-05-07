@@ -11,7 +11,9 @@ namespace Rhino.Geometry
     #region constructors / wrapped pointer manipulation
     GeometryBase m_shallow_parent;
 
-    protected GeometryBase() { }
+    // make internal so outside DLLs can't directly subclass GeometryBase
+    internal GeometryBase() { }
+
     protected GeometryBase(SerializationInfo info, StreamingContext context)
       :base(info, context)
     {

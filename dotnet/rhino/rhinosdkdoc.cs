@@ -3361,6 +3361,18 @@ namespace Rhino.DocObjects.Tables
       return true;
     }
 
+    /// <summary>Replace one object with new point object</summary>
+    /// <param name="objectId">Id of object to be replaced</param>
+    /// <param name="point">new point to be added.  The point is copied</param>
+    /// <returns>true if successful</returns>
+    public bool Replace(Guid objectId, Point3d point)
+    {
+      using (ObjRef objref = new ObjRef(objectId))
+      {
+        return Replace(objref, point);
+      }
+    }
+
     /// <summary>Replace one object with new textdot object</summary>
     /// <param name="objref">
     /// Reference to old object to be replaced. The object objref.Object() will be deleted.
@@ -3377,6 +3389,18 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
+    /// <summary>Replace one object with new textdot object</summary>
+    /// <param name="objectId">Id of object to be replaced</param>
+    /// <param name="dot">new textdot to be added.  The textdot is copied</param>
+    /// <returns>true if successful</returns>
+    public bool Replace(Guid objectId, Geometry.TextDot dot)
+    {
+      using (ObjRef objref = new ObjRef(objectId))
+      {
+        return Replace(objref, dot);
+      }
+    }
+
     /// <summary>Replace one object with new line curve object</summary>
     /// <param name="objref">
     /// Reference to old object to be replaced. The object objref.Object() will be deleted.
@@ -3386,6 +3410,18 @@ namespace Rhino.DocObjects.Tables
     public bool Replace(DocObjects.ObjRef objref, Geometry.Line line)
     {
       return Replace(objref, new LineCurve(line));
+    }
+
+    /// <summary>Replace one object with new line curve object</summary>
+    /// <param name="objectId">Id of object to be replaced</param>
+    /// <param name="line">new line to be added.  The line is copied</param>
+    /// <returns>true if successful</returns>
+    public bool Replace(Guid objectId, Geometry.Line line)
+    {
+      using (ObjRef objref = new ObjRef(objectId))
+      {
+        return Replace(objref, line);
+      }
     }
 
     /// <summary>Replace one object with new curve object</summary>
@@ -3400,6 +3436,18 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>Replace one object with new curve object</summary>
+    /// <param name="objectId">Id of object to be replaced</param>
+    /// <param name="circle">new circle to be added.  The circle is copied</param>
+    /// <returns>true if successful</returns>
+    public bool Replace(Guid objectId, Geometry.Circle circle)
+    {
+      using (ObjRef objref = new ObjRef(objectId))
+      {
+        return Replace(objref, circle);
+      }
+    }
+
+    /// <summary>Replace one object with new curve object</summary>
     /// <param name="objref">
     /// Reference to old object to be replaced. The object objref.Object() will be deleted.
     /// </param>
@@ -3411,6 +3459,18 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>Replace one object with new curve object</summary>
+    /// <param name="objectId">Id of object to be replaced</param>
+    /// <param name="arc">new arc to be added.  The arc is copied</param>
+    /// <returns>true if successful</returns>
+    public bool Replace(Guid objectId, Geometry.Arc arc)
+    {
+      using (ObjRef objref = new ObjRef(objectId))
+      {
+        return Replace(objref, arc);
+      }
+    }
+
+    /// <summary>Replace one object with new curve object</summary>
     /// <param name="objref">
     /// Reference to old object to be replaced. The object objref.Object() will be deleted.
     /// </param>
@@ -3419,6 +3479,18 @@ namespace Rhino.DocObjects.Tables
     public bool Replace(DocObjects.ObjRef objref, Geometry.Polyline polyline)
     {
       return Replace(objref, new PolylineCurve(polyline));
+    }
+
+    /// <summary>Replace one object with new curve object</summary>
+    /// <param name="objectId">Id of object to be replaced</param>
+    /// <param name="polyline">new polyline to be added.  The polyline is copied</param>
+    /// <returns>true if successful</returns>
+    public bool Replace(Guid objectId, Geometry.Polyline polyline)
+    {
+      using (ObjRef objref = new ObjRef(objectId))
+      {
+        return Replace(objref, polyline);
+      }
     }
 
     /// <summary>
@@ -3444,6 +3516,20 @@ namespace Rhino.DocObjects.Tables
       return (IntPtr.Zero != pCurveObject);
     }
 
+    /// <summary>Replace one object with new curve object</summary>
+    /// <param name="objectId">Id of object to be replaced</param>
+    /// <param name="curve">
+    /// New curve to be added. A duplicate of the curve is added to the Rhino model.
+    /// </param>
+    /// <returns>true if successful</returns>
+    public bool Replace(Guid objectId, Geometry.Curve curve)
+    {
+      using (ObjRef objref = new ObjRef(objectId))
+      {
+        return Replace(objref, curve);
+      }
+    }
+
     /// <summary>
     /// Replace one object with new surface object
     /// </summary>
@@ -3461,6 +3547,21 @@ namespace Rhino.DocObjects.Tables
       IntPtr pSurface = surface.ConstPointer();
       IntPtr pSurfaceObject = UnsafeNativeMethods.CRhinoDoc_ReplaceObject4(m_doc.m_docId, pObjRef, pSurface);
       return (IntPtr.Zero != pSurfaceObject);
+    }
+
+    /// <summary>Replace one object with new surface object</summary>
+    /// <param name="objectId">Id of object to be replaced</param>
+    /// <param name="surface">
+    /// new surface to be added
+    /// A duplicate of the surface is added to the Rhino model
+    /// </param>
+    /// <returns>true if successful</returns>
+    public bool Replace(Guid objectId, Geometry.Surface surface)
+    {
+      using (ObjRef objref = new ObjRef(objectId))
+      {
+        return Replace(objref, surface);
+      }
     }
 
     /// <summary>
@@ -3482,6 +3583,21 @@ namespace Rhino.DocObjects.Tables
       return (IntPtr.Zero != pBrepObject);
     }
 
+    /// <summary>Replace one object with new brep object</summary>
+    /// <param name="objectId">Id of object to be replaced</param>
+    /// <param name="brep">
+    /// new surface to be added
+    /// A duplicate of the brep is added to the Rhino model
+    /// </param>
+    /// <returns>true if successful</returns>
+    public bool Replace(Guid objectId, Geometry.Brep brep)
+    {
+      using (ObjRef objref = new ObjRef(objectId))
+      {
+        return Replace(objref, brep);
+      }
+    }
+
     /// <summary>
     /// Replace one object with new mesh object
     /// </summary>
@@ -3501,6 +3617,21 @@ namespace Rhino.DocObjects.Tables
       return (IntPtr.Zero != pMeshObject);
     }
 
+    /// <summary>Replace one object with new mesh object</summary>
+    /// <param name="objectId">Id of object to be replaced</param>
+    /// <param name="mesh">
+    /// new mesh to be added
+    /// A duplicate of the mesh is added to the Rhino model
+    /// </param>
+    /// <returns>true if successful</returns>
+    public bool Replace(Guid objectId, Geometry.Mesh mesh)
+    {
+      using (ObjRef objref = new ObjRef(objectId))
+      {
+        return Replace(objref, mesh);
+      }
+    }
+
     /// <summary>
     /// Replace one object with new text object
     /// </summary>
@@ -3518,6 +3649,23 @@ namespace Rhino.DocObjects.Tables
       IntPtr pText = text.ConstPointer();
       bool rc = UnsafeNativeMethods.CRhinoDoc_ReplaceTextEntity(m_doc.m_docId, pObjRef, pText);
       return rc;
+    }
+
+    /// <summary>
+    /// Replace one object with new text object
+    /// </summary>
+    /// <param name="objectId">Id of object to be replaced</param>
+    /// <param name="text">
+    /// new text to be added
+    /// A duplicate of the text is added to the Rhino model
+    /// </param>
+    /// <returns>true if successful</returns>
+    public bool Replace(Guid objectId, Geometry.TextEntity text)
+    {
+      using (ObjRef objref = new ObjRef(objectId))
+      {
+        return Replace(objref, text);
+      }
     }
     #endregion
 

@@ -21,7 +21,7 @@
       <DocumentationSource sourceFile="dotnet\Debug\RhinoCommon.xml" xmlns="" />
     </DocumentationSources>
     <HelpFileFormat>HtmlHelp1, Website</HelpFileFormat>
-    <CopyrightText>RhinoCommon Build 22 March 2011 - Robert McNeel &amp;amp%3b Associates</CopyrightText>
+    <CopyrightText>RhinoCommon Build 6 May 2011 - Robert McNeel &amp;amp%3b Associates</CopyrightText>
     <FeedbackEMailAddress>steve%40mcneel.com</FeedbackEMailAddress>
     <HelpTitle>RhinoCommon SDK</HelpTitle>
     <ProjectLinkType>Local</ProjectLinkType>

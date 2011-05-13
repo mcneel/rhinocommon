@@ -15,17 +15,27 @@ namespace Rhino.Runtime
 
     internal void OnShowSplash(int mode)
     {
+      const int HIDESPLASH = 0;
+      const int SHOWSPLASH = 1;
+      const int MAINFRAMECREATED = 1000;
+      const int LICENSECHECKED = 2000;
       try
       {
         if (m_theSingleSkin != null)
         {
           switch (mode)
           {
-            case 0:
+            case HIDESPLASH:
               m_theSingleSkin.HideSplash();
               break;
-            case 1:
+            case SHOWSPLASH:
               m_theSingleSkin.ShowSplash();
+              break;
+            case MAINFRAMECREATED:
+              m_theSingleSkin.OnMainFrameWindowCreated();
+              break;
+            case LICENSECHECKED:
+              m_theSingleSkin.OnLicenseCheckCompleted();
               break;
           }
         }
@@ -51,6 +61,9 @@ namespace Rhino.Runtime
     }
     protected virtual void ShowSplash() { }
     protected virtual void HideSplash() { }
+
+    protected virtual void OnMainFrameWindowCreated() { }
+    protected virtual void OnLicenseCheckCompleted() { }
   }
 
   public abstract class PythonCompiledCode

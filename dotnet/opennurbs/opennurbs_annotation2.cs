@@ -419,13 +419,17 @@ namespace Rhino.Geometry
       get
       {
         IntPtr ptr = ConstPointer();
-        IntPtr rc = UnsafeNativeMethods.ON_TextDot_GetSetText(ptr, false, null);
-        return rc == IntPtr.Zero ? String.Empty : System.Runtime.InteropServices.Marshal.PtrToStringUni(rc);
+        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_TextDot_GetSetText(ptr, false, null, pString);
+          return sh.ToString();
+        }
       }
       set
       {
         IntPtr ptr = NonConstPointer();
-        UnsafeNativeMethods.ON_TextDot_GetSetText(ptr, true, value);
+        UnsafeNativeMethods.ON_TextDot_GetSetText(ptr, true, value, IntPtr.Zero);
       }
     }
 

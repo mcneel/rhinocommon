@@ -1011,7 +1011,7 @@ namespace Rhino.Geometry
       IntPtr pCurve = ConstPointer();
       IntPtr outputPointsPointer = outputPts.NonConstPointer();
 
-      UnsafeNativeMethods.ON_Curve_IsPolyline2(pCurve, outputPointsPointer, ref pointCount);
+      UnsafeNativeMethods.ON_Curve_IsPolyline2(pCurve, outputPointsPointer, ref pointCount, IntPtr.Zero);
       if (pointCount > 0)
       {
         polyline = Polyline.PolyLineFromNativeArray(outputPts);
@@ -1043,17 +1043,16 @@ namespace Rhino.Geometry
       int pointCount = 0;
       IntPtr pCurve = ConstPointer();
       IntPtr outputPointsPointer = outputPts.NonConstPointer();
-      IntPtr pParameters = UnsafeNativeMethods.ON_Curve_IsPolyline2(pCurve, outputPointsPointer, ref pointCount);
+      Rhino.Runtime.InteropWrappers.SimpleArrayDouble tparams = new SimpleArrayDouble();
+      IntPtr ptparams = tparams.NonConstPointer();
+      UnsafeNativeMethods.ON_Curve_IsPolyline2(pCurve, outputPointsPointer, ref pointCount, ptparams);
       if (pointCount > 0)
       {
         polyline = Polyline.PolyLineFromNativeArray(outputPts);
-        if (pParameters != IntPtr.Zero)
-        {
-          parameters = new double[pointCount];
-          System.Runtime.InteropServices.Marshal.Copy(pParameters, parameters, 0, pointCount);
-        }
+        parameters = tparams.ToArray();
       }
 
+      tparams.Dispose();
       outputPts.Dispose();
       return (pointCount != 0);
     }

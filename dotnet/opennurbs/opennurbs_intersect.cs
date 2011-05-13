@@ -408,7 +408,6 @@ namespace Rhino.Geometry.Intersect
     public static CurveIntersections CurvePlane(Curve curve, Plane plane, double tolerance)
     {
       //David sez: replace this logic with the dedicated Geometry/Plane intersector methods in Rhino5.
-      if (curve == null) { throw new ArgumentNullException("curve"); }
       if (!plane.IsValid) { return null; }
 
       PlaneSurface section = ExtendThroughBox(plane, curve.GetBoundingBox(false), 1.0); //should this be 1.0 or 100.0*tolerance?
@@ -429,7 +428,6 @@ namespace Rhino.Geometry.Intersect
       intersectionCurves = null;
 
       //David sez: replace this logic with the dedicated Geometry/Plane intersector methods in Rhino5.
-      if (brep == null) { throw new ArgumentNullException("brep"); }
       if (!plane.IsValid) { return false; }
 
       PlaneSurface section = ExtendThroughBox(plane, brep.GetBoundingBox(false), 1.0); //should this be 1.0 or 100.0*tolerance?

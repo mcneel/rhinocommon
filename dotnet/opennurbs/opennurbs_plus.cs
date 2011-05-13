@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 
 namespace Rhino.Geometry.Intersect
 {
@@ -40,4 +42,27 @@ namespace Rhino.Geometry.Intersect
   //public class ON_CMX_EVENT { }
   //public class ON_MeshTreeNode { }
   //public class ON_MeshTree { }
+
+  /*
+  //also add ON_RTree
+
+  public class MeshClash
+  {
+    Mesh m_mesh_a;
+    Mesh m_mesh_b;
+    Point3d m_P;
+    double m_radius;
+
+    public Mesh MeshA { get { return m_mesh_a; } }
+    public Mesh MeshB { get { return m_mesh_b; } }
+    public Point3d ClashPoint { get { return m_P; } }
+
+
+    public static MeshClash[] Search(IEnumerable<Mesh> setA, IEnumerable<Mesh> setB, double distance, int maxEventCount)
+    {
+      //call ON_MeshClashSearch
+      return null;
+    }
+  }
+   */
 }

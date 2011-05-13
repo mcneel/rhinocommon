@@ -252,10 +252,10 @@ namespace Rhino
         bool rc = false;
         try
         {
-          int argb = color.ToArgb();
-          rc = UnsafeNativeMethods.RHC_RhinoColorDialog(ref argb, includeButtonColors, dialogTitle);
+          int abgr = System.Drawing.ColorTranslator.ToWin32(color);
+          rc = UnsafeNativeMethods.RHC_RhinoColorDialog(ref abgr, includeButtonColors, dialogTitle);
           if (rc)
-            color = System.Drawing.Color.FromArgb(argb);
+            color = System.Drawing.ColorTranslator.FromWin32(abgr);
         }
         catch (EntryPointNotFoundException)
         {

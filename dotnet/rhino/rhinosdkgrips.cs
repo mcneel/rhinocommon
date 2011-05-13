@@ -109,8 +109,8 @@ namespace Rhino.DocObjects.Custom
     const int idxSelectedGripColor = 2;
     System.Drawing.Color GetColor(int which)
     {
-      int argb = UnsafeNativeMethods.CRhinoDrawGripSettings_GetColor(m_pGripsDrawSettings, which);
-      return System.Drawing.Color.FromArgb(argb);
+      int abgr = UnsafeNativeMethods.CRhinoDrawGripSettings_GetColor(m_pGripsDrawSettings, which);
+      return System.Drawing.ColorTranslator.FromWin32(abgr);
     }
 
     public System.Drawing.Color GripColor

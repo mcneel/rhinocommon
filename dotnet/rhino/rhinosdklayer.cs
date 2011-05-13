@@ -197,8 +197,8 @@ namespace Rhino.DocObjects
       get
       {
         IntPtr pConstLayer = ConstPointer();
-        int argb = UnsafeNativeMethods.ON_Layer_GetColor(pConstLayer, true);
-        return System.Drawing.Color.FromArgb(argb);
+        int abgr = UnsafeNativeMethods.ON_Layer_GetColor(pConstLayer, true);
+        return System.Drawing.ColorTranslator.FromWin32(abgr);
       }
       set
       {
@@ -216,8 +216,8 @@ namespace Rhino.DocObjects
       get
       {
         IntPtr pConstLayer = ConstPointer();
-        int argb = UnsafeNativeMethods.ON_Layer_GetColor(pConstLayer, false);
-        return System.Drawing.Color.FromArgb(argb);
+        int abgr = UnsafeNativeMethods.ON_Layer_GetColor(pConstLayer, false);
+        return System.Drawing.ColorTranslator.FromWin32(abgr);
       }
       set
       {

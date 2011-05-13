@@ -73,8 +73,8 @@ namespace Rhino.ApplicationSettings
 
     static Color GetColor(int which)
     {
-      int argb = UnsafeNativeMethods.RhAppearanceSettings_GetSetColor(which, false, 0);
-      return Color.FromArgb(argb);
+      int abgr = UnsafeNativeMethods.RhAppearanceSettings_GetSetColor(which, false, 0);
+      return ColorTranslator.FromWin32(abgr);
     }
     static void SetColor(int which, Color c)
     {
@@ -94,8 +94,8 @@ namespace Rhino.ApplicationSettings
     [System.ComponentModel.Browsable(false)]
     public static Color GetPaintColor(PaintColor c)
     {
-      int argb = UnsafeNativeMethods.RhColors_GetColor((int)c);
-      return Color.FromArgb(argb);
+      int abgr = UnsafeNativeMethods.RhColors_GetColor((int)c);
+      return ColorTranslator.FromWin32(abgr);
     }
 
     [System.ComponentModel.Browsable(false)]
@@ -462,8 +462,8 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        int argb = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0);
-        return Color.FromArgb(argb);
+        int abgr = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0);
+        return ColorTranslator.FromWin32(abgr);
       }
       set
       {
@@ -852,8 +852,8 @@ namespace Rhino.ApplicationSettings
 
     static Color GetColor(int which)
     {
-      int argb = UnsafeNativeMethods.RhGridSettings_GetSetColor(which, false, 0);
-      return Color.FromArgb(argb);
+      int abgr = UnsafeNativeMethods.RhGridSettings_GetSetColor(which, false, 0);
+      return ColorTranslator.FromWin32(abgr);
     }
     static void SetColor(int which, Color c)
     {
@@ -1269,8 +1269,8 @@ namespace Rhino.ApplicationSettings
 
     static Color GetColor(int which)
     {
-      int argb = UnsafeNativeMethods.RhSmartTrackSettings_GetSetColor(which, false, 0);
-      return Color.FromArgb(argb);
+      int abgr = UnsafeNativeMethods.RhSmartTrackSettings_GetSetColor(which, false, 0);
+      return ColorTranslator.FromWin32(abgr);
     }
     static void SetColor(int which, Color c)
     {

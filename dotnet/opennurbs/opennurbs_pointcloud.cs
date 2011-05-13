@@ -119,10 +119,10 @@ namespace Rhino.Geometry
     {
       get
       {
-        int rc = 0;
+        int abgr = 0;
         IntPtr ptr = m_parent.ConstPointer();
-        UnsafeNativeMethods.ON_PointCloud_GetColor(ptr, m_index, ref rc);
-        return Color.FromArgb(rc);
+        UnsafeNativeMethods.ON_PointCloud_GetColor(ptr, m_index, ref abgr);
+        return ColorTranslator.FromWin32(abgr);
       }
       set
       {
@@ -559,9 +559,8 @@ namespace Rhino.Geometry
 
       Color[] res = new Color[count];
       for (int i = 0; i < count; i++)
-      {
-        res[i] = Color.FromArgb(rc[i]);
-      }
+        res[i] = ColorTranslator.FromWin32(rc[i]);
+
       return res;
     }
 

@@ -352,18 +352,17 @@ namespace Rhino.DocObjects
     string GetString(int which)
     {
       IntPtr ptr = ConstPointer();
-      IntPtr rc = UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetString(ptr, which, false, null);
-      // 24 April 2010 S. Baer
-      // I think returning the empty string is going to be better
-      // in more cases than returning null
-      if (IntPtr.Zero == rc)
-        return String.Empty;
-      return Marshal.PtrToStringUni(rc);
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetString(ptr, which, false, null, pString);
+        return sh.ToString();
+      }
     }
     void SetString(int which, string str)
     {
       IntPtr ptr = NonConstPointer();
-      UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetString(ptr, which, true, str);
+      UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetString(ptr, which, true, str, IntPtr.Zero);
     }
 
     /// <summary>
@@ -444,8 +443,8 @@ namespace Rhino.DocObjects
     System.Drawing.Color GetColor(int which)
     {
       IntPtr ptr = ConstPointer();
-      int argb = UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetColor(ptr, which, false, 0);
-      return System.Drawing.Color.FromArgb(argb);
+      int abgr = UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetColor(ptr, which, false, 0);
+      return System.Drawing.ColorTranslator.FromWin32(abgr);
     }
     void SetColor(int which, System.Drawing.Color c)
     {
@@ -478,8 +477,8 @@ namespace Rhino.DocObjects
     public System.Drawing.Color DrawColor(RhinoDoc document, Guid viewportId)
     {
       IntPtr pConstThis = ConstPointer();
-      int argb = UnsafeNativeMethods.CRhinoObjectAttributes_DrawColor(pConstThis, document.m_docId, viewportId);
-      return System.Drawing.Color.FromArgb(argb);
+      int abgr = UnsafeNativeMethods.CRhinoObjectAttributes_DrawColor(pConstThis, document.m_docId, viewportId);
+      return System.Drawing.ColorTranslator.FromWin32(abgr);
     }
 
     /// <summary>

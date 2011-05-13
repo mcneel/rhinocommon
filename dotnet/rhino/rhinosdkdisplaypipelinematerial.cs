@@ -160,8 +160,8 @@ namespace Rhino.Display
     private Color GetColor(int which)
     {
       IntPtr ptr = ConstPointer();
-      int argb = UnsafeNativeMethods.CDisplayPipelineMaterial_GetColor(ptr, which);
-      return Color.FromArgb(StripAlpha(argb));
+      int abgr = UnsafeNativeMethods.CDisplayPipelineMaterial_GetColor(ptr, which);
+      return ColorTranslator.FromWin32(StripAlpha(abgr));
     }
     private void SetColor(int which, Color c)
     {

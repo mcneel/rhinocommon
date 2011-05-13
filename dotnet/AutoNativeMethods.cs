@@ -53,9 +53,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid ON_3dmObjectAttributes_m_uuid(IntPtr ptr);
 
-  //const RHMONO_STRING* ON_3dmObjectAttributes_GetSetString(ON_3dmObjectAttributes* ptr, int which, bool set, const RHMONO_STRING* _str)
+  //void ON_3dmObjectAttributes_GetSetString(ON_3dmObjectAttributes* ptr, int which, bool set, const RHMONO_STRING* _str, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_3dmObjectAttributes_GetSetString(IntPtr ptr, int which, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.LPWStr)]string _str);
+  internal static extern void ON_3dmObjectAttributes_GetSetString(IntPtr ptr, int which, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.LPWStr)]string _str, IntPtr pStringHolder);
 
   //int ON_3dmObjectAttributes_GetSetColor(ON_3dmObjectAttributes* ptr, int which, bool set, int set_value)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -244,9 +244,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_TextDot_GetSetPoint(IntPtr ptr, [MarshalAs(UnmanagedType.U1)]bool set, ref Point3d pt);
 
-  //const RHMONO_STRING* ON_TextDot_GetSetText(ON_TextDot* ptr, bool set, const RHMONO_STRING* _text)
+  //void ON_TextDot_GetSetText(ON_TextDot* ptr, bool set, const RHMONO_STRING* _text, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_TextDot_GetSetText(IntPtr ptr, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.LPWStr)]string _text);
+  internal static extern void ON_TextDot_GetSetText(IntPtr ptr, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.LPWStr)]string _text, IntPtr pStringHolder);
   #endregion
 
 
@@ -515,10 +515,10 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_BinaryArchive_WriteString(IntPtr pArchive, [MarshalAs(UnmanagedType.LPWStr)]string str);
 
-  //bool ON_BinaryArchive_ReadColor(ON_BinaryArchive* pArchive, int* argb)
+  //bool ON_BinaryArchive_ReadColor(ON_BinaryArchive* pArchive, int* abgr)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_BinaryArchive_ReadColor(IntPtr pArchive, ref int argb);
+  internal static extern bool ON_BinaryArchive_ReadColor(IntPtr pArchive, ref int abgr);
 
   //bool ON_BinaryArchive_WriteColor(ON_BinaryArchive* pArchive, int argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -1297,9 +1297,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Curve_IsPolyline1(IntPtr pCurve, IntPtr points);
 
-  //double* ON_Curve_IsPolyline2( const ON_Curve* pCurve, ON_3dPointArray* points, int* pointCount )
+  //void ON_Curve_IsPolyline2( const ON_Curve* pCurve, ON_3dPointArray* points, int* pointCount, ON_SimpleArray<double>* t )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_Curve_IsPolyline2(IntPtr pCurve, IntPtr points, ref int pointCount);
+  internal static extern void ON_Curve_IsPolyline2(IntPtr pCurve, IntPtr points, ref int pointCount, IntPtr t);
 
   //bool ON_Curve_IsArc( const ON_Curve* pCurve, int ignore, ON_PLANE_STRUCT* plane, ON_Arc* arc, double tolerance )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -1692,9 +1692,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_InstanceDefinition_New(IntPtr pOther);
 
-  //const RHMONO_STRING* ON_InstanceDefinition_GetString(const ON_InstanceDefinition* pConstInstanceDefinition, int which)
+  //void ON_InstanceDefinition_GetString(const ON_InstanceDefinition* pConstInstanceDefinition, int which, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_InstanceDefinition_GetString(IntPtr pConstInstanceDefinition, int which);
+  internal static extern void ON_InstanceDefinition_GetString(IntPtr pConstInstanceDefinition, int which, IntPtr pStringHolder);
 
   //void ON_InstanceDefinition_SetString( ON_InstanceDefinition* pInstanceDefinition, int which, const RHMONO_STRING* _str)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -2388,10 +2388,10 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Mesh_GetNormal(IntPtr pConstMesh, int index, ref Vector3f vector, [MarshalAs(UnmanagedType.U1)]bool faceNormal);
 
-  //bool ON_Mesh_GetColor(const ON_Mesh* pConstMesh, int index, int* argb)
+  //bool ON_Mesh_GetColor(const ON_Mesh* pConstMesh, int index, int* abgr)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Mesh_GetColor(IntPtr pConstMesh, int index, ref int argb);
+  internal static extern bool ON_Mesh_GetColor(IntPtr pConstMesh, int index, ref int abgr);
 
   //bool ON_Mesh_GetFace(const ON_Mesh* pConstMesh, int face_index, ON_MeshFace* face)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -2483,9 +2483,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_MeshTopologyEdge_TopfList(IntPtr pConstMesh, int edgeindex, int count, [In,Out] int[] faces);
 
-  //void ON_MeshTopology_TopEdgeLine(const ON_Mesh* pConstMesh, int edgeIndex, ON_Line* line)
+  //void ON_MeshTopology_TopEdgeLine(const ON_Mesh* pConstMesh, int edge_index, ON_Line* line)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void ON_MeshTopology_TopEdgeLine(IntPtr pConstMesh, int edgeIndex, ref Line line);
+  internal static extern void ON_MeshTopology_TopEdgeLine(IntPtr pConstMesh, int edge_index, ref Line line);
 
   //int ON_MeshTopology_TopEdge(const ON_Mesh* pConstMesh, int vert1, int vert2)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -3016,10 +3016,10 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_PointCloud_SetNormal(IntPtr pPointCloud, int index, Vector3d normal);
 
-  //bool ON_PointCloud_GetColor(const ON_PointCloud* pConstPointCloud, int index, int* argb)
+  //bool ON_PointCloud_GetColor(const ON_PointCloud* pConstPointCloud, int index, int* abgr)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_PointCloud_GetColor(IntPtr pConstPointCloud, int index, ref int argb);
+  internal static extern bool ON_PointCloud_GetColor(IntPtr pConstPointCloud, int index, ref int abgr);
 
   //bool ON_PointCloud_SetColor( ON_PointCloud* pPointCloud, int index, int argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5245,9 +5245,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern uint RhinoSdkGet_RhinoGetPoint([MarshalAs(UnmanagedType.LPWStr)]string _prompt, [MarshalAs(UnmanagedType.U1)]bool acceptnothing, ref Point3d pt);
 
-  //unsigned int RhinoSdkGet_RhinoGetColor( const RHMONO_STRING* _prompt, bool acceptnothing, int* argb, bool setDefault )
+  //unsigned int RhinoSdkGet_RhinoGetColor( const RHMONO_STRING* _prompt, bool acceptnothing, int* abgr, bool setDefault )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern uint RhinoSdkGet_RhinoGetColor([MarshalAs(UnmanagedType.LPWStr)]string _prompt, [MarshalAs(UnmanagedType.U1)]bool acceptnothing, ref int argb, [MarshalAs(UnmanagedType.U1)]bool setDefault);
+  internal static extern uint RhinoSdkGet_RhinoGetColor([MarshalAs(UnmanagedType.LPWStr)]string _prompt, [MarshalAs(UnmanagedType.U1)]bool acceptnothing, ref int abgr, [MarshalAs(UnmanagedType.U1)]bool setDefault);
 
   //const RHMONO_STRING* RhinoSdkGet_RhinoGetString( const RHMONO_STRING* _prompt, bool acceptnothing, const RHMONO_STRING* _defaultstr, unsigned int* rc )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5604,9 +5604,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoGetPoint_ConstrainDistanceFromBasePoint(IntPtr ptr, double distance);
 
-  //void CRhinoGetPoint_DynamicDrawColor(CRhinoGetPoint* ptr, int* argb, bool set)
+  //int CRhinoGetPoint_DynamicDrawColor(CRhinoGetPoint* ptr, int* argb, bool set)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhinoGetPoint_DynamicDrawColor(IntPtr ptr, ref int argb, [MarshalAs(UnmanagedType.U1)]bool set);
+  internal static extern int CRhinoGetPoint_DynamicDrawColor(IntPtr ptr, ref int argb, [MarshalAs(UnmanagedType.U1)]bool set);
 
   //void CRhinoGetPoint_DrawLineFromPoint(CRhinoGetPoint* ptr, ON_3DPOINT_STRUCT pt, bool showDistance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -7063,10 +7063,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void RHC_DisplayOleAlerts([MarshalAs(UnmanagedType.U1)]bool bDisplay);
 
-  //bool RHC_RhinoColorDialog( int* argb, bool includeButtonColors, const RHMONO_STRING* _title )
+  //bool RHC_RhinoColorDialog( int* abgr, bool includeButtonColors, const RHMONO_STRING* _title )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RHC_RhinoColorDialog(ref int argb, [MarshalAs(UnmanagedType.U1)]bool includeButtonColors, [MarshalAs(UnmanagedType.LPWStr)]string _title);
+  internal static extern bool RHC_RhinoColorDialog(ref int abgr, [MarshalAs(UnmanagedType.U1)]bool includeButtonColors, [MarshalAs(UnmanagedType.LPWStr)]string _title);
 
   //bool RHC_RhinoSelectLayerDialog( const RHMONO_STRING* _title, int* layerIndex, bool showNewLayerButton, bool showSetCurrentButton, bool* initialSetCurrentState )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

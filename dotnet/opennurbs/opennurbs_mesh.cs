@@ -2325,12 +2325,8 @@ namespace Rhino.Geometry.Collections
     }
     #endregion
 
-    /// <summary>
-    /// Get the two topology vertices for a given topology edge
-    /// </summary>
+    /// <summary>Get the two topology vertices for a given topology edge</summary>
     /// <param name="topologyEdgeIndex"></param>
-    /// <param name="topologyVertex1"></param>
-    /// <param name="topologyVertex2"></param>
     /// <returns></returns>
     public IndexPair GetTopologyVertices(int topologyEdgeIndex)
     {
@@ -3360,14 +3356,12 @@ namespace Rhino.Geometry.Collections
     {
       get
       {
-        if (index < 0 || index >= Count)
-          throw new IndexOutOfRangeException();
-
-        int argb = 0;
+        int abgr = 0;
         IntPtr ptr = m_mesh.ConstPointer();
-        UnsafeNativeMethods.ON_Mesh_GetColor(ptr, index, ref argb);
-
-        return Color.FromArgb(argb);
+        // get color will return false when the index is out of range
+        if (!UnsafeNativeMethods.ON_Mesh_GetColor(ptr, index, ref abgr))
+          throw new IndexOutOfRangeException();
+        return ColorTranslator.FromWin32(abgr);
       }
       set
       {

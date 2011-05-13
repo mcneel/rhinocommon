@@ -248,8 +248,8 @@ namespace Rhino.Display
     Color GetColor(int which)
     {
       IntPtr pConstThis = ConstPointer();
-      int argb = UnsafeNativeMethods.CDisplayPipelineAttributes_GetSetColor(pConstThis, which, false, 0);
-      return Color.FromArgb(argb);
+      int abgr = UnsafeNativeMethods.CDisplayPipelineAttributes_GetSetColor(pConstThis, which, false, 0);
+      return ColorTranslator.FromWin32(abgr);
     }
     void SetColor(int which, Color c)
     {

@@ -1637,11 +1637,11 @@ namespace Rhino.FileIO
 
     public System.Drawing.Color ReadColor()
     {
-      int argb = 0;
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadColor(m_ptr, ref argb);
+      int abgr = 0;
+      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadColor(m_ptr, ref abgr);
       if( m_bReadErrorOccured )
         throw new BinaryArchiveException("ReadColor failed");
-      return System.Drawing.Color.FromArgb(argb);
+      return System.Drawing.ColorTranslator.FromWin32(abgr);
     }
 
     public System.Drawing.Point ReadPoint()

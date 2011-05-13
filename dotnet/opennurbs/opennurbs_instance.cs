@@ -33,10 +33,12 @@ namespace Rhino.Geometry
       get
       {
         IntPtr ptr = ConstPointer();
-        IntPtr pName = UnsafeNativeMethods.ON_InstanceDefinition_GetString(ptr, idxName);
-        if (IntPtr.Zero == pName)
-          return String.Empty;
-        return Marshal.PtrToStringUni(pName);
+        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_InstanceDefinition_GetString(ptr, idxName, pString);
+          return sh.ToString();
+        }
       }
       set
       {
@@ -50,10 +52,12 @@ namespace Rhino.Geometry
       get
       {
         IntPtr ptr = ConstPointer();
-        IntPtr pName = UnsafeNativeMethods.ON_InstanceDefinition_GetString(ptr, idxDescription);
-        if (IntPtr.Zero == pName)
-          return String.Empty;
-        return Marshal.PtrToStringUni(pName);
+        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_InstanceDefinition_GetString(ptr, idxDescription, pString);
+          return sh.ToString();
+        }
       }
       set
       {

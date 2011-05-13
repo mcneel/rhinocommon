@@ -171,9 +171,9 @@ namespace Rhino.Input
     /// </remarks>
     public static Commands.Result GetColor(string prompt, bool acceptNothing, ref System.Drawing.Color color)
     {
-      int argb = color.ToArgb();
-      uint rc = UnsafeNativeMethods.RhinoSdkGet_RhinoGetColor(prompt, acceptNothing, ref argb, true);
-      color = System.Drawing.Color.FromArgb(argb);
+      int abgr = System.Drawing.ColorTranslator.ToWin32(color);
+      uint rc = UnsafeNativeMethods.RhinoSdkGet_RhinoGetColor(prompt, acceptNothing, ref abgr, true);
+      color = System.Drawing.ColorTranslator.FromWin32(abgr);
       return (Rhino.Commands.Result)rc;
     }
 
@@ -1471,8 +1471,8 @@ namespace Rhino.Input.Custom
     public System.Drawing.Color Color()
     {
       IntPtr ptr = ConstPointer();
-      uint argb = UnsafeNativeMethods.CRhinoGet_Color(ptr);
-      return System.Drawing.Color.FromArgb((int)argb);
+      uint abgr = UnsafeNativeMethods.CRhinoGet_Color(ptr);
+      return System.Drawing.ColorTranslator.FromWin32((int)abgr);
     }
 
     /// <summary>

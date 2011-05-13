@@ -2904,6 +2904,25 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region on_plus.cpp
+  //ON_SimpleArray<ON_ClashEvent>* ON_SimpleArray_ClashEvent_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_SimpleArray_ClashEvent_New();
+
+  //void ON_SimpleArray_ClashEvent_Delete(ON_SimpleArray<ON_ClashEvent>* pArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_SimpleArray_ClashEvent_Delete(IntPtr pArray);
+
+  //void ON_SimpleArray_ClashEvent_GetEvent(ON_SimpleArray<ON_ClashEvent>* pArray, int index, int* index0, int* index1, ON_3dPoint* point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_SimpleArray_ClashEvent_GetEvent(IntPtr pArray, int index, ref int index0, ref int index1, ref Point3d point);
+
+  //int ONC_MeshClashSearch(const ON_SimpleArray<const ON_Mesh*>* pMeshesA, const ON_SimpleArray<const ON_Mesh*>* pMeshesB, double distance, int maxEvents, bool multithread, ON_SimpleArray<ON_ClashEvent>* pClashArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ONC_MeshClashSearch(IntPtr pMeshesA, IntPtr pMeshesB, double distance, int maxEvents, [MarshalAs(UnmanagedType.U1)]bool multithread, IntPtr pClashArray);
+  #endregion
+
+
   #region on_point.cpp
   //void ON_Interval_Intersection( ON_Interval* ptr, ON_INTERVAL_STRUCT a, ON_INTERVAL_STRUCT b )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

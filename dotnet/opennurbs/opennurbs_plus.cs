@@ -1,5 +1,137 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+
+namespace Rhino.Geometry
+{
+  [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 88)]
+  struct MeshPointDataStruct
+  {
+    public double m_et;
+
+    //ON_COMPONENT_INDEX m_ci;
+    public uint m_ci_type;
+    public int m_ci_index;
+
+    public int m_edge_index;
+    public int m_face_index;
+    public char m_Triangle;
+    public double m_t0;
+    public double m_t1;
+    public double m_t2;
+    public double m_t3;
+
+    //ON_3dPoint m_P;
+    public double m_Px;
+    public double m_Py;
+    public double m_Pz;
+  }
+
+  public class MeshPoint
+  {
+    Mesh m_parent;
+    MeshPointDataStruct m_data;
+    internal MeshPoint(Mesh parent, MeshPointDataStruct ds)
+    {
+      m_parent = parent;
+      m_data = ds;
+    }
+
+    public Mesh Mesh
+    {
+      get { return m_parent; }
+    }
+
+    /// <summary>
+    /// Edge parameter when 
+    /// </summary>
+    public double EdgeParameter
+    {
+      get { return m_data.m_et; }
+    }
+
+    public ComponentIndex ComponentIndex
+    {
+      get
+      {
+        return new ComponentIndex((ComponentIndexType)m_data.m_ci_type, m_data.m_ci_index);
+      }
+    }
+
+    /// <summary>
+    /// When set, EdgeIndex is an index of an edge in the mesh's edge list
+    /// </summary>
+    public int EdgeIndex
+    {
+      get { return m_data.m_edge_index; }
+    }
+
+    /// <summary>
+    /// FaceIndex is an index of a face in mesh.Faces.
+    /// When ComponentIndex refers to a vertex, any face that uses the vertex
+    /// may appear as FaceIndex.  When ComponenctIndex refers to an Edge or
+    /// EdgeIndex is set, then any face that uses that edge may appear as FaceIndex.
+    /// </summary>
+    public int FaceIndex
+    {
+      get { return m_data.m_face_index; }
+    }
+
+    //bool IsValid( ON_TextLog* text_log ) const;
+
+    /// <summary>
+    /// Gets the mesh face indices of the triangle where the
+    /// intersection is on the face takes into consideration
+    /// the way the quad was split during the intersection
+    /// </summary>
+    public bool GetTriangle(out int a, out int b, out int c)
+    {
+      IntPtr pConstMesh = m_parent.ConstPointer();
+      a = -1;
+      b = -1;
+      c = -1;
+      return UnsafeNativeMethods.ON_MESHPOINT_GetTriangle(pConstMesh, ref m_data, ref a, ref b, ref b);
+    }
+
+    /// <summary>
+    /// Face triangle where the intersection takes place;
+    /// 0 is unset
+    /// A is 0,1,2
+    /// B is 0,2,3
+    /// C is 0,1,3
+    /// D is 1,2,3
+    /// </summary>
+    public char Triangle
+    {
+      get { return m_data.m_Triangle; }
+    }
+
+
+    /// <summary>
+    /// Barycentric quad coordinates for the point on the mesh
+    /// face mesh.Faces[FaceIndex].  If the face is a triangle
+    /// disregard T[3] (it should be set to 0.0). If the face is
+    /// a quad and is split between vertexes 0 and 2, then T[3]
+    /// will be 0.0 when point is on the triangle defined by vi[0],
+    /// vi[1], vi[2] and T[1] will be 0.0 when point is on the
+    /// triangle defined by vi[0], vi[2], vi[3]. If the face is a
+    /// quad and is split between vertexes 1 and 3, then T[2] will
+    /// be -1 when point is on the triangle defined by vi[0],
+    /// vi[1], vi[3] and m_t[0] will be -1 when point is on the
+    /// triangle defined by vi[1], vi[2], vi[3].
+    /// </summary>
+    public double[] T
+    {
+      get { return m_t ?? (m_t = new double[] { m_data.m_t0, m_data.m_t1, m_data.m_t2, m_data.m_t3 }); }
+    }
+    double[] m_t;
+
+    public Point3d Point
+    {
+      get { return new Point3d(m_data.m_Px, m_data.m_Py, m_data.m_Pz); }
+    }
+  }
+}
 
 namespace Rhino.Geometry.Intersect
 {
@@ -35,7 +167,6 @@ namespace Rhino.Geometry.Intersect
   //public class ON_SurfaceTreeNode { }
   //public class ON_SurfaceTree { }
   //public class ON_RayShooter { }
-  //public class ON_MESH_POINT { }
   //public class ON_MMX_POINT { }
   //public class ON_MMX_Polyline { }
   //public class ON_CURVE_POINT { }
@@ -43,26 +174,116 @@ namespace Rhino.Geometry.Intersect
   //public class ON_MeshTreeNode { }
   //public class ON_MeshTree { }
 
-  /*
   //also add ON_RTree
 
+#if USING_V5_SDK // only available in V5
   public class MeshClash
   {
-    Mesh m_mesh_a;
-    Mesh m_mesh_b;
-    Point3d m_P;
-    double m_radius;
+    Mesh m_mesh_a = null;
+    Mesh m_mesh_b = null;
+    Point3d m_P = Point3d.Unset;
+    double m_radius=0;
+
+    private MeshClash() { }
 
     public Mesh MeshA { get { return m_mesh_a; } }
+
     public Mesh MeshB { get { return m_mesh_b; } }
+
+    /// <summary>
+    /// If valid, then the sphere centered at ClashPoint of ClashRadius
+    /// distance interesects the clashing meshes.
+    /// </summary>
     public Point3d ClashPoint { get { return m_P; } }
 
+    public double ClashRadius { get { return m_radius; } }
 
+
+    /// <summary>
+    /// Search for locations where the distance from a mesh in one set of meshes
+    /// is less than distance to a mesh in a second set of meshes.
+    /// </summary>
+    /// <param name="setA"></param>
+    /// <param name="setB"></param>
+    /// <param name="distance"></param>
+    /// <param name="maxEventCount"></param>
+    /// <returns></returns>
     public static MeshClash[] Search(IEnumerable<Mesh> setA, IEnumerable<Mesh> setB, double distance, int maxEventCount)
     {
-      //call ON_MeshClashSearch
-      return null;
+      IList<Mesh> _setA = setA as IList<Mesh>;
+      if( _setA==null )
+        _setA = new List<Mesh>(setA);
+
+      IList<Mesh> _setB = setB as IList<Mesh>;
+      if( _setB==null )
+        _setB = new List<Mesh>(setB);
+
+
+      Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer meshes_a = new Runtime.InteropWrappers.SimpleArrayMeshPointer();
+      foreach (Mesh m in setA)
+        meshes_a.Add(m, true);
+      Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer meshes_b = new Runtime.InteropWrappers.SimpleArrayMeshPointer();
+      foreach (Mesh m in setB)
+        meshes_b.Add(m, true);
+
+      IntPtr pClashEventList = UnsafeNativeMethods.ON_SimpleArray_ClashEvent_New();
+      IntPtr pMeshesA = meshes_a.ConstPointer();
+      IntPtr pMeshesB = meshes_b.ConstPointer();
+      int count = UnsafeNativeMethods.ONC_MeshClashSearch(pMeshesA, pMeshesB, distance, maxEventCount, true, pClashEventList);
+
+      MeshClash[] rc = new MeshClash[count];
+      Point3d pt = new Point3d();
+      int indexA = 0;
+      int indexB = 0;
+      double radius = distance / 2.0;
+      for (int i = 0; i < count; i++)
+      {
+        MeshClash mc = new MeshClash();
+        UnsafeNativeMethods.ON_SimpleArray_ClashEvent_GetEvent(pClashEventList, i, ref indexA, ref indexB, ref pt);
+        if (indexA >= 0 && indexB >= 0)
+        {
+          mc.m_mesh_a = _setA[indexA];
+          mc.m_mesh_b = _setB[indexB];
+          mc.m_P = pt;
+          mc.m_radius = radius;
+        }
+        rc[i] = mc;
+      }
+
+      meshes_a.Dispose();
+      meshes_b.Dispose();
+
+      UnsafeNativeMethods.ON_SimpleArray_ClashEvent_Delete(pClashEventList);
+      return rc;
+    }
+
+    /// <summary>
+    /// Search for locations where the distance from a mesh is less
+    /// than distance to a mesh in a set of meshes.
+    /// </summary>
+    /// <param name="meshA"></param>
+    /// <param name="setB"></param>
+    /// <param name="distance"></param>
+    /// <param name="maxEventCount"></param>
+    /// <returns></returns>
+    public static MeshClash[] Search(Mesh meshA, IEnumerable<Mesh> setB, double distance, int maxEventCount)
+    {
+      return Search(new Mesh[] { meshA }, setB, distance, maxEventCount);
+    }
+
+    /// <summary>
+    /// Search for locations where the distance from a mesh is less than distance
+    /// to another mesh.
+    /// </summary>
+    /// <param name="meshA"></param>
+    /// <param name="meshB"></param>
+    /// <param name="distance"></param>
+    /// <param name="maxEventCount"></param>
+    /// <returns></returns>
+    public static MeshClash[] Search(Mesh meshA, Mesh meshB, double distance, int maxEventCount)
+    {
+      return Search(new Mesh[] { meshA }, new Mesh[] { meshB }, distance, maxEventCount);
     }
   }
-   */
+#endif
 }

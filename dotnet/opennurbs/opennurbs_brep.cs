@@ -309,6 +309,33 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Create a set of planar Breps as outlines by the loops.
+    /// </summary>
+    /// <param name="inputLoops">Curve loops that delineate the planar boundaries.</param>
+    /// <returns>An array of Planar Breps.</returns>
+    public static Brep[] CreatePlanarBreps(IEnumerable<Curve> inputLoops)
+    {
+      if (null == inputLoops)
+        return null;
+      Rhino.Collections.CurveList crvs = new Rhino.Collections.CurveList(inputLoops);
+      return CreatePlanarBreps(crvs);
+    }
+
+    /// <summary>
+    /// Create a set of planar Breps as outlines by the loops
+    /// </summary>
+    /// <param name="inputLoop"></param>
+    /// <returns>An array of Planar Breps</returns>
+    public static Brep[] CreatePlanarBreps(Curve inputLoop)
+    {
+      if (null == inputLoop)
+        return null;
+      Rhino.Collections.CurveList crvs = new Rhino.Collections.CurveList();
+      crvs.Add(inputLoop);
+      return CreatePlanarBreps(crvs);
+    }
+
+    /// <summary>
     /// Create a Brep from a surface.  The resulting Brep has an outer boundary made
     /// from four trims. The trims are ordered so that they run along the south, east,
     /// north, and then west side of the surface's parameter space.

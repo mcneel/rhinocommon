@@ -433,6 +433,11 @@ namespace Rhino
       if (null != m_mainwnd)
         return m_mainwnd.Handle;
 
+      if (Rhino.Runtime.HostUtils.RunningOnWindows)
+      {
+        return UnsafeNativeMethods.CRhinoApp_GetMainFrameHWND();
+      }
+
       System.Diagnostics.Process process = System.Diagnostics.Process.GetCurrentProcess();
       return process == null ? IntPtr.Zero : process.MainWindowHandle;
     }

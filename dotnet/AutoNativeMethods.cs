@@ -3914,6 +3914,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_app.cpp
+  //HWND CRhinoApp_GetMainFrameHWND()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoApp_GetMainFrameHWND();
+
   //int CRhinoApp_GetInt(int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoApp_GetInt(int which);

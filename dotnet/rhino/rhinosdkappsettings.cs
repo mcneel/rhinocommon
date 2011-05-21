@@ -31,8 +31,147 @@ namespace Rhino.ApplicationSettings
   //  Hidden    // = CRhinoAppAppearanceSettings::command_prompt_hidden
   //}
 
+  /// <summary>Snapshot of AppearanceSettings</summary>
+  public class AppearanceSettingsState
+  {
+    internal AppearanceSettingsState(){}
+
+    public string DefaultFontFaceName { get; set; }
+
+    public Color DefaultLayerColor{ get; set; }
+
+    ///<summary>
+    ///The color used to draw selected objects.
+    ///The default is yellow, but this can be customized by the user.
+    ///</summary>
+    public Color SelectedObjectColor { get; set; }
+
+    //public static Color SelectedReferenceObjectColor
+    //{
+    //  get { return GetColor(idxSelectedReferenceObjectColor); }
+    //  set { SetColor(idxSelectedReferenceObjectColor, value); }
+    //}
+
+    ///<summary>color used to draw locked objects.</summary>
+    public Color LockedObjectColor{ get; set; }
+
+    //public static Color LockedRefereceObjectColor
+    //{
+    //  get { return GetColor(idxLockedReferenceObjectColor); }
+    //  set { SetColor(idxLockedReferenceObjectColor, value); }
+    //}
+
+    public Color WorldCoordIconXAxisColor{ get; set; }
+    public Color WorldCoordIconYAxisColor{ get; set; }
+    public Color WorldCoordIconZAxisColor{ get; set; }
+
+    public Color TrackingColor{ get; set; }
+    public Color FeedbackColor{ get; set; }
+    public Color DefaultObjectColor{ get; set; }
+    public Color ViewportBackgroundColor{ get; set; }
+    public Color FrameBackgroundColor{ get; set; }
+    public Color CommandPromptTextColor{ get; set; }
+    public Color CommandPromptHypertextColor{ get; set; }
+    public Color CommandPromptBackgroundColor{ get; set; }
+    public Color CrosshairColor{ get; set; }
+
+    ///<summary>
+    ///CRhinoPageView paper background. A rectangle is drawn into the background
+    ///of page views to represent the printed area. The alpha portion of the color
+    ///is used to draw the paper blended into the background
+    ///</summary>
+    public Color PageviewPaperColor{ get; set; }
+
+    ///<summary>
+    ///color used by the layer manager dialog as the background color for the current layer.
+    ///</summary>
+    public Color CurrentLayerBackgroundColor{ get; set; }
+
+
+    public bool EchoPromptsToHistoryWindow{ get; set; }
+    public bool EchoCommandsToHistoryWindow{ get; set; }
+    public bool ShowFullPathInTitleBar{ get; set; }
+    public bool ShowCrosshairs{ get; set; }
+  }
+  
   public static class AppearanceSettings
   {
+    static AppearanceSettingsState CreateState(bool current)
+    {
+      IntPtr pAppearanceSettings = UnsafeNativeMethods.CRhinoAppAppearanceSettings_New(current);
+      AppearanceSettingsState rc = new AppearanceSettingsState();
+      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoAppearanceSettings_DefaultFontFaceNameGet(pString, pAppearanceSettings);
+        rc.DefaultFontFaceName = sh.ToString();
+      }
+      rc.DefaultLayerColor = GetColor(idxDefaultLayerColor, pAppearanceSettings);
+      rc.SelectedObjectColor = GetColor(idxSelectedObjectColor, pAppearanceSettings);
+      rc.LockedObjectColor = GetColor(idxLockedObjectColor, pAppearanceSettings);
+      rc.WorldCoordIconXAxisColor = GetColor(idxWorldIconXColor, pAppearanceSettings);
+      rc.WorldCoordIconYAxisColor = GetColor(idxWorldIconYColor, pAppearanceSettings);
+      rc.WorldCoordIconZAxisColor = GetColor(idxWorldIconZColor, pAppearanceSettings);
+      rc.TrackingColor = GetColor(idxTrackingColor, pAppearanceSettings);
+      rc.FeedbackColor = GetColor(idxFeedbackColor, pAppearanceSettings);
+      rc.DefaultObjectColor = GetColor(idxDefaultObjectColor, pAppearanceSettings);
+      rc.ViewportBackgroundColor = GetColor(idxViewportBackgroundColor, pAppearanceSettings);
+      rc.FrameBackgroundColor = GetColor(idxFrameBackgroundColor, pAppearanceSettings);
+      rc.CommandPromptTextColor = GetColor(idxCommandPromptTextColor, pAppearanceSettings);
+      rc.CommandPromptHypertextColor = GetColor(idxCommandPromptHypertextColor, pAppearanceSettings);
+      rc.CommandPromptBackgroundColor = GetColor(idxCommandPromptBackgroundColor, pAppearanceSettings);
+      rc.CrosshairColor = GetColor(idxCrosshairColor, pAppearanceSettings);
+      rc.PageviewPaperColor = GetColor(idxPageviewPaperColor, pAppearanceSettings);
+      rc.CurrentLayerBackgroundColor = GetColor(idxCurrentLayerBackgroundColor, pAppearanceSettings);
+      rc.EchoPromptsToHistoryWindow = UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxEchoPromptsToHistoryWindow, pAppearanceSettings);
+      rc.EchoCommandsToHistoryWindow = UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxEchoCommandsToHistoryWindow, pAppearanceSettings);
+      rc.ShowFullPathInTitleBar = UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxFullPathInTitleBar, pAppearanceSettings);
+      rc.ShowCrosshairs = UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxCrosshairsVisible, pAppearanceSettings);
+      UnsafeNativeMethods.CRhinoAppAppearanceSettings_Delete(pAppearanceSettings);
+      return rc;
+    }
+
+    public static AppearanceSettingsState GetDefaultState()
+    {
+      return CreateState(false);
+    }
+
+    public static AppearanceSettingsState GetCurrentState()
+    {
+      return CreateState(true);
+    }
+
+    public static void RestoreDefaults()
+    {
+      UnsafeNativeMethods.CRhinoAppAppearanceSettings_RestoreDefaults();
+    }
+
+    public static void UpdateFromState(AppearanceSettingsState state)
+    {
+      DefaultFontFaceName = state.DefaultFontFaceName;
+      DefaultLayerColor = state.DefaultLayerColor;
+      SelectedObjectColor = state.SelectedObjectColor;
+      LockedObjectColor = state.LockedObjectColor;
+      WorldCoordIconXAxisColor = state.WorldCoordIconXAxisColor;
+      WorldCoordIconYAxisColor = state.WorldCoordIconYAxisColor;
+      WorldCoordIconZAxisColor = state.WorldCoordIconZAxisColor;
+      TrackingColor = state.TrackingColor;
+      FeedbackColor = state.FeedbackColor;
+      DefaultObjectColor = state.DefaultObjectColor;
+      ViewportBackgroundColor = state.ViewportBackgroundColor;
+      FrameBackgroundColor = state.FrameBackgroundColor;
+      CommandPromptBackgroundColor = state.CommandPromptBackgroundColor;
+      CommandPromptHypertextColor = state.CommandPromptHypertextColor;
+      CommandPromptTextColor = state.CommandPromptTextColor;
+      CrosshairColor = state.CrosshairColor;
+      PageviewPaperColor = state.PageviewPaperColor;
+      CurrentLayerBackgroundColor = state.CurrentLayerBackgroundColor;
+      EchoCommandsToHistoryWindow = state.EchoCommandsToHistoryWindow;
+      EchoPromptsToHistoryWindow = state.EchoPromptsToHistoryWindow;
+      ShowFullPathInTitleBar = state.ShowFullPathInTitleBar;
+      ShowCrosshairs = state.ShowCrosshairs;
+    }
+
     public static string DefaultFontFaceName
     {
       get
@@ -40,7 +179,7 @@ namespace Rhino.ApplicationSettings
         using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
-          UnsafeNativeMethods.CRhinoAppearanceSettings_DefaultFontFaceNameGet(pString);
+          UnsafeNativeMethods.CRhinoAppearanceSettings_DefaultFontFaceNameGet(pString, IntPtr.Zero);
           return sh.ToString();
         }
       }
@@ -71,18 +210,23 @@ namespace Rhino.ApplicationSettings
     const int idxPageviewPaperColor = 17;
     const int idxCurrentLayerBackgroundColor = 18;
 
+    static Color GetColor(int which, IntPtr pAppearanceSettings)
+    {
+      int abgr = UnsafeNativeMethods.RhAppearanceSettings_GetSetColor(which, false, 0, pAppearanceSettings);
+      return ColorTranslator.FromWin32(abgr);
+    }
+
     static Color GetColor(int which)
     {
-      int abgr = UnsafeNativeMethods.RhAppearanceSettings_GetSetColor(which, false, 0);
-      return ColorTranslator.FromWin32(abgr);
+      return GetColor(which, IntPtr.Zero);
     }
     static void SetColor(int which, Color c)
     {
       int argb = c.ToArgb();
-      UnsafeNativeMethods.RhAppearanceSettings_GetSetColor(which, true, argb);
+      UnsafeNativeMethods.RhAppearanceSettings_GetSetColor(which, true, argb, IntPtr.Zero);
     }
 #if USING_V5_SDK
-    [System.ComponentModel.Browsable(false)]
+    [System.ComponentModel.Browsable(false), Obsolete("Call UsePaintColors instead")]
     public static bool UsingNewSchoolColors
     {
       get
@@ -283,22 +427,22 @@ namespace Rhino.ApplicationSettings
 
     public static bool EchoPromptsToHistoryWindow
     {
-      get { return UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxEchoPromptsToHistoryWindow); }
+      get { return UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxEchoPromptsToHistoryWindow, IntPtr.Zero); }
       set { UnsafeNativeMethods.CRhinoAppAppearanceSettings_SetBool(idxEchoPromptsToHistoryWindow, value); }
     }
     public static bool EchoCommandsToHistoryWindow
     {
-      get { return UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxEchoCommandsToHistoryWindow); }
+      get { return UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxEchoCommandsToHistoryWindow, IntPtr.Zero); }
       set { UnsafeNativeMethods.CRhinoAppAppearanceSettings_SetBool(idxEchoCommandsToHistoryWindow, value); }
     }
     public static bool ShowFullPathInTitleBar
     {
-      get { return UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxFullPathInTitleBar); }
+      get { return UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxFullPathInTitleBar, IntPtr.Zero); }
       set { UnsafeNativeMethods.CRhinoAppAppearanceSettings_SetBool(idxFullPathInTitleBar, value); }
     }
     public static bool ShowCrosshairs
     {
-      get { return UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxCrosshairsVisible); }
+      get { return UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxCrosshairsVisible, IntPtr.Zero); }
       set { UnsafeNativeMethods.CRhinoAppAppearanceSettings_SetBool(idxCrosshairsVisible, value); }
     }
     /*
@@ -454,21 +598,64 @@ namespace Rhino.ApplicationSettings
     }
   }
 
+  /// <summary>
+  /// Snapshot of EdgeAnalysisSettings
+  /// </summary>
+  public class EdgeAnalysisSettingsState
+  {
+    internal EdgeAnalysisSettingsState() { }
+    public Color ShowEdgeColor { get; set; }
+    public int ShowEdges { get; set; }
+  }
   
   public static class EdgeAnalysisSettings
   {
+    static EdgeAnalysisSettingsState CreateState(bool current)
+    {
+      IntPtr pSettings = UnsafeNativeMethods.CRhinoEdgeAnalysisSettings_New(current);
+      EdgeAnalysisSettingsState rc = new EdgeAnalysisSettingsState();
+
+      int abgr = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0, pSettings);
+      rc.ShowEdgeColor = ColorTranslator.FromWin32(abgr);
+      rc.ShowEdges = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(false, 0, pSettings);
+      UnsafeNativeMethods.CRhinoEdgeAnalysisSettings_Delete(pSettings);
+      return rc;
+    }
+
+    public static EdgeAnalysisSettingsState GetDefaultState()
+    {
+      return CreateState(false);
+    }
+
+    public static EdgeAnalysisSettingsState GetCurrentState()
+    {
+      return CreateState(true);
+    }
+
+    public static void RestoreDefaults()
+    {
+      UpdateFromState(GetDefaultState());
+    }
+
+    public static void UpdateFromState(EdgeAnalysisSettingsState state)
+    {
+      ShowEdgeColor = state.ShowEdgeColor;
+      ShowEdges = state.ShowEdges;
+    }
+
+
     ///<summary>color used to enhance display edges in commands like ShowEdges and ShowNakedEdges.</summary>
     public static Color ShowEdgeColor
     {
       get
       {
-        int abgr = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0);
+        int abgr = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0, IntPtr.Zero);
         return ColorTranslator.FromWin32(abgr);
       }
       set
       {
         int argb = value.ToArgb();
-        UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(true, argb);
+        UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(true, argb, IntPtr.Zero);
       }
     }
 
@@ -477,11 +664,11 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        return UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(false, 0);
+        return UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(false, 0, IntPtr.Zero);
       }
       set
       {
-        UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(true, value);
+        UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(true, value, IntPtr.Zero);
       }
     }
   }

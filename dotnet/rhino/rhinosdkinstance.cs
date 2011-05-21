@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Rhino.Geometry;
 
@@ -334,7 +335,7 @@ namespace Rhino.DocObjects.Tables
         return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_InstanceDefinitionCount(m_doc.m_docId);
       }
     }
-  
+
     /// <summary>Finds the instance definition with a given name</summary>
     /// <param name="instanceDefinitionName">name of instance definition to search for (ignores case)</param>
     /// <param name="ignoreDeletedInstanceDefinitions">true means don't search deleted instance definitions</param>
@@ -363,67 +364,49 @@ namespace Rhino.DocObjects.Tables
       return new Rhino.DocObjects.InstanceDefinition(index, m_doc);
     }
 
-  //Description:
-  //  Add an instance definition to the instance definition table.
-  //Parameters:
-  //  idef - [in] the UUID in idef is used to find the objects
-  //  bReference - [in] true if this is from a reference file
-  //  bQuiet - [in] true if errors should be silent
-  //Returns:
-  //   -1   failure
-  //  >=0   index of instance definition in the instance definition table.
-  //*/
-  //int AddInstanceDefinition( 
-  //        const ON_InstanceDefinition& idef, 
-  //        bool bReference = false,
-  //        bool bQuiet = false
-  //        );
+    /// <summary>
+    /// Add an instance definition to the instance definition table.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="description"></param>
+    /// <param name="basePoint"></param>
+    /// <param name="geometry"></param>
+    /// <param name="attributes"></param>
+    /// <returns>
+    /// &gt;=0  index of instance definition in the instance definition table. -1 on failure
+    /// </returns>
+    public int Add(string name, string description, Point3d basePoint, IEnumerable<GeometryBase> geometry, IEnumerable<DocObjects.ObjectAttributes> attributes)
+    {
+      Rhino.Runtime.INTERNAL_GeometryArray g = new Runtime.INTERNAL_GeometryArray(geometry);
+      IntPtr pAttributes = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_New();
+      if (attributes != null)
+      {
+        foreach (ObjectAttributes att in attributes)
+        {
+          IntPtr pAtt = att.ConstPointer();
+          UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Add(pAttributes, pAtt);
+        }
+      }
+      IntPtr pGeometry = g.ConstPointer();
+      int rc = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_Add(m_doc.m_docId, name, description, basePoint, pGeometry, pAttributes);
 
-  //Description:
-  //  Add an instance definition to the instance definition table.
-  //Parameters:
-  //  idef - [in] the UUID in idef is ignored.
-  //  object - [in] will be moved to instance geometry list
-  //  bReference - [in] true if this is from a reference file
-  //  bQuiet - [in] true if errors should be silent
-  //Returns:
-  //   -1   failure
-  //  >=0   index of instance definition in the instance definition table.
-  //*/
-  //int AddInstanceDefinition( 
-  //        const ON_InstanceDefinition& idef, 
-  //        const CRhinoObject* object,
-  //        bool bReference = false,
-  //        bool bQuiet = false
-  //        );
+      UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Delete(pAttributes);
+      g.Dispose();
+      return rc;
+    }
 
-  //Description:
-  //  Add an instance definition to the instance definition table.
-  //Parameters:
-  //  idef - [in] The UUID in idef is ignored.
-  //  objects - [in] will be moved to instance geometry list
-  //  bReference - [in] true if this is from a reference file
-  //  bQuiet - [in] true if errors should be silent
-  //Returns:
-  //   -1   failure
-  //  >=0   index of instance definition in the instance definition table.
-  //*/
-  //int AddInstanceDefinition( 
-  //        const ON_InstanceDefinition& idef, 
-  //        const ON_SimpleArray<const CRhinoObject*>& objects,
-  //        bool bReference = false,
-  //        bool bQuiet = false
-  //        );
+    public int Add(string name, string description, Point3d basePoint, IEnumerable<GeometryBase> geometry, DocObjects.ObjectAttributes attributes)
+    {
+      List<ObjectAttributes> attr_list = new List<ObjectAttributes>();
+      foreach (GeometryBase g in geometry)
+        attr_list.Add(attributes);
+      return Add(name, description, basePoint, geometry, attr_list);
+    }
 
-  //CRhinoInstanceObject* CreateInstanceObject( 
-  //  int instance_definition_index,
-  //  ON_Xform instance_xform,
-  //  const ON_3dmObjectAttributes* instance_attributes = NULL,
-  //  CRhinoHistory* pHistory = NULL,
-  //  bool bReference = false,
-  //  bool bInstanceDefinitionObject = false,
-  //  bool bAddToDoc = true
-  //  );
+    public int Add(string name, string description, Point3d basePoint, GeometryBase geometry, DocObjects.ObjectAttributes attributes)
+    {
+      return Add(name, description, basePoint, new GeometryBase[] { geometry }, new ObjectAttributes[] { attributes });
+    }
 
     /// <summary>
     /// Modify instance definition name and description.
@@ -440,9 +423,78 @@ namespace Rhino.DocObjects.Tables
     /// </returns>
     public bool Modify(DocObjects.InstanceDefinition idef, string newName, string newDescription, bool quiet)
     {
-      if (null == idef)
-        return false;
-      return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_ModifyInstanceDefinition(m_doc.m_docId, idef.Index, newName, newDescription, quiet);
+      return Modify(idef.Index, newName, newDescription, quiet);
+    }
+
+    /// <summary>
+    /// Modify instance definition name and description.
+    /// Does not change instance defintion uuid or geometry.
+    /// </summary>
+    /// <param name="idefIndex"></param>
+    /// <param name="newName"></param>
+    /// <param name="newDescription"></param>
+    /// <param name="quiet">
+    /// if true, information message boxes pop up when illegal changes are attempted.
+    /// </param>
+    /// <returns>
+    /// true if successful
+    /// </returns>
+    public bool Modify(int idefIndex, string newName, string newDescription, bool quiet)
+    {
+      return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_ModifyInstanceDefinition(m_doc.m_docId, idefIndex, newName, newDescription, quiet);
+    }
+
+    /// <summary>
+    /// If the instance definition has been modified and the modifcation
+    /// can be undone, then UndoModifyInstanceDefinition() will restore
+    /// the instance definition to its previous state.
+    /// </summary>
+    /// <param name="idefIndex"></param>
+    /// <returns></returns>
+    public bool UndoModify(int idefIndex)
+    {
+      return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_UndoModify(m_doc.m_docId, idefIndex);
+    }
+
+    /// <summary>
+    /// Modify instance definition geometry and replace all references
+    /// to the current definition with references to the new definition.
+    /// </summary>
+    /// <param name="idefIndex"></param>
+    /// <param name="newGeometry"></param>
+    /// <param name="newAttributes"></param>
+    /// <returns></returns>
+    public bool ModifyGeometry(int idefIndex, IEnumerable<GeometryBase> newGeometry, IEnumerable<ObjectAttributes> newAttributes)
+    {
+      Rhino.Runtime.INTERNAL_GeometryArray g = new Runtime.INTERNAL_GeometryArray(newGeometry);
+      IntPtr pAttributes = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_New();
+      if (newAttributes != null)
+      {
+        foreach (ObjectAttributes att in newAttributes)
+        {
+          IntPtr pAtt = att.ConstPointer();
+          UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Add(pAttributes, pAtt);
+        }
+      }
+      IntPtr pGeometry = g.ConstPointer();
+      bool rc = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_ModifyGeometry(m_doc.m_docId, idefIndex, pGeometry, pAttributes);
+
+      UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Delete(pAttributes);
+      g.Dispose();
+      return rc;
+    }
+
+    public bool ModifyGeometry(int idefIndex, IEnumerable<GeometryBase> newGeometry, ObjectAttributes newAttributes)
+    {
+      List<ObjectAttributes> attr = new List<ObjectAttributes>();
+      foreach (GeometryBase g in newGeometry)
+        attr.Add(newAttributes);
+      return ModifyGeometry(idefIndex, newGeometry, attr);
+    }
+
+    public bool ModifyGeometry(int idefIndex, GeometryBase newGeometry, ObjectAttributes newAttributes)
+    {
+      return ModifyGeometry(idefIndex, new GeometryBase[] { newGeometry }, new ObjectAttributes[] { newAttributes });
     }
 
     /// <summary>
@@ -463,40 +515,6 @@ namespace Rhino.DocObjects.Tables
         return false;
       return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_MakeSourcePathRelative(m_doc.m_docId, idef.Index, relative, quiet);
     }
-
-
-  //Description:
-  //  If the instance definition has been modified and the modifcation
-  //  can be undone, then UndoModifyInstanceDefinition() will restore
-  //  the instance definition to its previous state.
-  //Returns:
-  //  TRUE if this layer had been modified and the modifications were
-  //  undone.
-  //bool UndoModifyInstanceDefinition(
-  //   int idef_index,
-  //   unsigned int ur_sn = 0
-  //   );
-
-  //Description:
-  //  Modify instance definition geometry and replace all references
-  //  to the current definition with references to the new definition.
-  //Parameters:
-  //  idef_index - [in] zero based index of the instance definition
-  //       to change.
-  //  new_objects - [in] new geometry for the instance definition.
-  //  bQuiet - [in] if TRUE, information message boxes pop up
-  //      when illegal changes are attempted.
-  //Returns:
-  //  index of the new definition or -1 if it fails
-  //See Also:
-  //  CRhinoInstanceDefinitionTable::ModifyInstanceDefinitionGeometry
-  //*/
-  //bool ModifyInstanceDefinitionGeometry( 
-  //   int idef_index,
-  //   const ON_SimpleArray<const CRhinoObject*>& new_objects,
-  //   bool bQuiet = false
-  //   );
-
 
     /// <summary>
     /// Deletes instance definition

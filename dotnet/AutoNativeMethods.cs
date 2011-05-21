@@ -869,6 +869,18 @@ internal partial class UnsafeNativeMethods
   //void ON_BezierCurve_Delete(ON_BezierCurve* pBez)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_BezierCurve_Delete(IntPtr pBez);
+
+  //ON_SimpleArray<const ON_3dmObjectAttributes*>* ON_SimpleArray_3dmObjectAttributes_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_SimpleArray_3dmObjectAttributes_New();
+
+  //void ON_SimpleArray_3dmObjectAttributes_Delete( ON_SimpleArray<const ON_3dmObjectAttributes*>* pArray )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_SimpleArray_3dmObjectAttributes_Delete(IntPtr pArray);
+
+  //void ON_SimpleArray_3dmObjectAttributes_Add( ON_SimpleArray<const ON_3dmObjectAttributes*>* pArray, const ON_3dmObjectAttributes* pAttributes )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_SimpleArray_3dmObjectAttributes_Add(IntPtr pArray, IntPtr pAttributes);
   #endregion
 
 
@@ -4018,13 +4030,25 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_appsettings.cpp
+  //CRhinoAppAppearanceSettings* CRhinoAppAppearanceSettings_New(bool current)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoAppAppearanceSettings_New([MarshalAs(UnmanagedType.U1)]bool current);
+
+  //void CRhinoAppAppearanceSettings_Delete(CRhinoAppAppearanceSettings* pAppearanceSettings)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppAppearanceSettings_Delete(IntPtr pAppearanceSettings);
+
+  //void CRhinoAppAppearanceSettings_RestoreDefaults()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppAppearanceSettings_RestoreDefaults();
+
   //void CRhinoAppearanceSettings_DefaultFontFaceNameSet(const RHMONO_STRING* _name)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoAppearanceSettings_DefaultFontFaceNameSet([MarshalAs(UnmanagedType.LPWStr)]string _name);
 
-  //void CRhinoAppearanceSettings_DefaultFontFaceNameGet(CRhCmnStringHolder* pString)
+  //void CRhinoAppearanceSettings_DefaultFontFaceNameGet(CRhCmnStringHolder* pString, const CRhinoAppAppearanceSettings* pConstAppearanceSettings)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhinoAppearanceSettings_DefaultFontFaceNameGet(IntPtr pString);
+  internal static extern void CRhinoAppearanceSettings_DefaultFontFaceNameGet(IntPtr pString, IntPtr pConstAppearanceSettings);
 
   //int RhCommandAliasList_Count()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4129,18 +4153,18 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RhFileSettings_ClipboardOnExit([MarshalAs(UnmanagedType.U1)]bool set, int set_value);
 
-  //int RhAppearanceSettings_GetSetColor(int which, bool set, int set_value)
+  //int RhAppearanceSettings_GetSetColor(int which, bool set, int set_value, CRhinoAppAppearanceSettings* pAppearanceSettings)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RhAppearanceSettings_GetSetColor(int which, [MarshalAs(UnmanagedType.U1)]bool set, int set_value);
+  internal static extern int RhAppearanceSettings_GetSetColor(int which, [MarshalAs(UnmanagedType.U1)]bool set, int set_value, IntPtr pAppearanceSettings);
 
   //unsigned int RhAppearanceSettings_GetSetUINT(int which, bool set, unsigned int set_value)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern uint RhAppearanceSettings_GetSetUINT(int which, [MarshalAs(UnmanagedType.U1)]bool set, uint set_value);
 
-  //bool CRhinoAppAppearanceSettings_GetBool(int which)
+  //bool CRhinoAppAppearanceSettings_GetBool(int which, const CRhinoAppAppearanceSettings* pConstAppearanceSettings)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool CRhinoAppAppearanceSettings_GetBool(int which);
+  internal static extern bool CRhinoAppAppearanceSettings_GetBool(int which, IntPtr pConstAppearanceSettings);
 
   //void CRhinoAppAppearanceSettings_SetBool(int which, bool val)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4150,13 +4174,21 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RhGridSettings_GetSetColor(int which, [MarshalAs(UnmanagedType.U1)]bool set, int set_value);
 
-  //int RhEdgeAnalysisSettings_ShowEdgeColor(bool set, int set_value)
+  //CRhinoEdgeAnalysisSettings* CRhinoEdgeAnalysisSettings_New(bool current)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RhEdgeAnalysisSettings_ShowEdgeColor([MarshalAs(UnmanagedType.U1)]bool set, int set_value);
+  internal static extern IntPtr CRhinoEdgeAnalysisSettings_New([MarshalAs(UnmanagedType.U1)]bool current);
 
-  //int RhEdgeAnalysisSettings_ShowEdges(bool set, int set_value)
+  //void CRhinoEdgeAnalysisSettings_Delete(CRhinoEdgeAnalysisSettings* pSettings)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RhEdgeAnalysisSettings_ShowEdges([MarshalAs(UnmanagedType.U1)]bool set, int set_value);
+  internal static extern void CRhinoEdgeAnalysisSettings_Delete(IntPtr pSettings);
+
+  //int RhEdgeAnalysisSettings_ShowEdgeColor(bool set, int set_value, const CRhinoEdgeAnalysisSettings* pEdgeSettings)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RhEdgeAnalysisSettings_ShowEdgeColor([MarshalAs(UnmanagedType.U1)]bool set, int set_value, IntPtr pEdgeSettings);
+
+  //int RhEdgeAnalysisSettings_ShowEdges(bool set, int set_value, const CRhinoEdgeAnalysisSettings* pEdgeSettings)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RhEdgeAnalysisSettings_ShowEdges([MarshalAs(UnmanagedType.U1)]bool set, int set_value, IntPtr pEdgeSettings);
 
   //bool RhModelAidSettings_GetSetBool(int which, bool set, bool set_value)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6081,6 +6113,21 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoInstanceDefinitionTable_DeleteInstanceDefinition(int docId, int idefIndex, [MarshalAs(UnmanagedType.U1)]bool deleteReferences, [MarshalAs(UnmanagedType.U1)]bool quiet);
+
+  //int CRhinoInstanceDefinitionTable_Add(int docId, const RHMONO_STRING* name, const RHMONO_STRING* description, ON_3DPOINT_STRUCT base_point,
+  //                                                    ON_SimpleArray<const ON_Geometry*>* geometry, ON_SimpleArray<const ON_3dmObjectAttributes*>* attributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoInstanceDefinitionTable_Add(int docId, [MarshalAs(UnmanagedType.LPWStr)]string name, [MarshalAs(UnmanagedType.LPWStr)]string description, Point3d base_point, IntPtr geometry, IntPtr attributes);
+
+  //bool CRhinoInstanceDefinitionTable_UndoModify(int docId, int idefIndex)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoInstanceDefinitionTable_UndoModify(int docId, int idefIndex);
+
+  //bool CRhinoInstanceDefinitionTable_ModifyGeometry(int docId, int idefIndex, ON_SimpleArray<const ON_Geometry*>* geometry, ON_SimpleArray<const ON_3dmObjectAttributes*>* attributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoInstanceDefinitionTable_ModifyGeometry(int docId, int idefIndex, IntPtr geometry, IntPtr attributes);
   #endregion
 
 

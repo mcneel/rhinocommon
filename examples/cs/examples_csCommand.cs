@@ -118,7 +118,8 @@ namespace examples_cs
       //Test(Examples.BooleanDifference, doc);
       //Test(Examples.BlockInsertionPoint, doc);
       //Test(Examples.CommandLineOptions, doc);
-      Test(Examples.ConstrainedCopy, doc);
+      //Test(Examples.ConstrainedCopy, doc);
+      Test(Examples.CreateBlock, doc);
       //Test(Examples.DivideByLengthPoints, doc);
       //Test(Examples.DetermineObjectLayer, doc);
       //Test(Examples.DupBorder, doc);

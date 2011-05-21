@@ -106,6 +106,7 @@
     <Compile Include="ex_booleandifference.vb" />
     <Compile Include="ex_circlecenter.vb" />
     <Compile Include="ex_commandlineoptions.vb" />
+    <Compile Include="ex_createblock.vb" />
     <Compile Include="ex_dividebylength.vb" />
     <Compile Include="ex_dupborder.vb" />
     <Compile Include="ex_findobjectsbyname.vb" />

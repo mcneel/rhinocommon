@@ -339,7 +339,12 @@ namespace Rhino.DocObjects.Tables
     /// <summary>Finds the instance definition with a given name</summary>
     /// <param name="instanceDefinitionName">name of instance definition to search for (ignores case)</param>
     /// <param name="ignoreDeletedInstanceDefinitions">true means don't search deleted instance definitions</param>
-    /// <returns></returns>
+    /// <returns>InstanceDefinition on success or null if no instance definition could be found</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createblock.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createblock.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createblock.py' lang='py'/>
+    /// </example>
     public DocObjects.InstanceDefinition Find(string instanceDefinitionName, bool ignoreDeletedInstanceDefinitions)
     {
       int index = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_FindInstanceDefinition(m_doc.m_docId,
@@ -375,6 +380,11 @@ namespace Rhino.DocObjects.Tables
     /// <returns>
     /// &gt;=0  index of instance definition in the instance definition table. -1 on failure
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createblock.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createblock.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createblock.py' lang='py'/>
+    /// </example>
     public int Add(string name, string description, Point3d basePoint, IEnumerable<GeometryBase> geometry, IEnumerable<DocObjects.ObjectAttributes> attributes)
     {
       Rhino.Runtime.INTERNAL_GeometryArray g = new Runtime.INTERNAL_GeometryArray(geometry);
@@ -395,6 +405,17 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
+    /// <summary>
+    /// Add an instance definition to the instance definition table.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="description"></param>
+    /// <param name="basePoint"></param>
+    /// <param name="geometry"></param>
+    /// <param name="attributes"></param>
+    /// <returns>
+    /// &gt;=0  index of instance definition in the instance definition table. -1 on failure
+    /// </returns>
     public int Add(string name, string description, Point3d basePoint, IEnumerable<GeometryBase> geometry, DocObjects.ObjectAttributes attributes)
     {
       List<ObjectAttributes> attr_list = new List<ObjectAttributes>();
@@ -403,6 +424,17 @@ namespace Rhino.DocObjects.Tables
       return Add(name, description, basePoint, geometry, attr_list);
     }
 
+    /// <summary>
+    /// Add an instance definition to the instance definition table.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="description"></param>
+    /// <param name="basePoint"></param>
+    /// <param name="geometry"></param>
+    /// <param name="attributes"></param>
+    /// <returns>
+    /// &gt;=0  index of instance definition in the instance definition table. -1 on failure
+    /// </returns>
     public int Add(string name, string description, Point3d basePoint, GeometryBase geometry, DocObjects.ObjectAttributes attributes)
     {
       return Add(name, description, basePoint, new GeometryBase[] { geometry }, new ObjectAttributes[] { attributes });
@@ -593,9 +625,6 @@ namespace Rhino.DocObjects.Tables
   //        bool bUpdateNestedLinks
   //        );
 
-  //[skipping]
-  //void Sort( int (*compare)(const CRhinoInstanceDefinition*,const CRhinoInstanceDefinition*,void*),
-
   //Description:
   //  Gets an array of pointers to layers that is sorted by
   //  the values of CRhinoInstanceDefinition::m_sort_index.
@@ -644,13 +673,5 @@ namespace Rhino.DocObjects.Tables
   //Parameters:
   //  result - [out] this is the wString which receives new name
   //void GetUnusedInstanceDefinitionName( ON_wString& result) const;
-
-  //// OBSOLETE - USE ModifyInstanceDefinition
-  //bool SetURL( int index, const wchar_t* url );
-  //bool SetName( int index, const wchar_t* name );
-  //bool SetDescription( int index, const wchar_t* description );
-
-  //[skipping]
-  //void SetRemapIndex( int idef_index, int remap_index );
   }
 }

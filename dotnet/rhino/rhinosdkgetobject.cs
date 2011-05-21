@@ -305,6 +305,11 @@ namespace Rhino.Input.Custom
     /// By default, reference objects can be selected. If you do not want to be
     /// able to select reference objects, then call EnableReferenceObjectSelect=false
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createblock.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createblock.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createblock.py' lang='py'/>
+    /// </example>
     public bool ReferenceObjectSelect
     {
       get { return GetBool(idxReferenceObjectSelect); }

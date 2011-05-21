@@ -92,6 +92,7 @@
     <Compile Include="ex_booleandifference.cs" />
     <Compile Include="ex_circlecenter.cs" />
     <Compile Include="ex_commandlineoptions.cs" />
+    <Compile Include="ex_createblock.cs" />
     <Compile Include="ex_custompython.cs" />
     <Compile Include="ex_dividebylength.cs" />
     <Compile Include="ex_dupborder.cs" />

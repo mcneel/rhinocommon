@@ -59,6 +59,7 @@ Public Class examples_vbCommand
     Test(AddressOf Examples.CircleCenter, doc)
     Test(AddressOf Examples.ConstrainedCopy, doc)
     Test(AddressOf Examples.CommandLineOptions, doc)
+    Test(AddressOf Examples.CreateBlock, doc)
     Test(AddressOf Examples.DivideByLengthPoints, doc)
     Test(AddressOf Examples.DetermineObjectLayer, doc)
     Test(AddressOf Examples.DupBorder, doc)

@@ -443,6 +443,11 @@ namespace Rhino.Input.Custom
     /// <summary>constrain the picked point to lie on a line</summary>
     /// <param name="line"></param>
     /// <returns>true if constraint could be applied</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_constrainedcopy.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_constrainedcopy.cs' lang='cs'/>
+    /// <code source='examples\py\ex_constrainedcopy.py' lang='py'/>
+    /// </example>
     public bool Constrain(Line line)
     {
       return Constrain(line.From, line.To);

@@ -1239,8 +1239,14 @@ namespace Rhino.DocObjects
     /// SelectionPoint() returns the point where the selection
     /// occured, otherwise it returns Point3d.Unset.
     /// </summary>
-    /// <returns>The point where the selection occured or Point3d.Unset
-    /// on failure.</returns>
+    /// <returns>
+    /// The point where the selection occured or Point3d.Unset on failure.
+    /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_constrainedcopy.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_constrainedcopy.cs' lang='cs'/>
+    /// <code source='examples\py\ex_constrainedcopy.py' lang='py'/>
+    /// </example>
     public Point3d SelectionPoint()
     {
       Point3d pt = Point3d.Unset;

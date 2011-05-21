@@ -83,6 +83,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="motion">Translation (motion) vector.</param>
     /// <returns>A transform matrix which moves geometry along the motion vector.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_constrainedcopy.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_constrainedcopy.cs' lang='cs'/>
+    /// <code source='examples\py\ex_constrainedcopy.py' lang='py'/>
+    /// </example>
     public static Transform Translation(Vector3d motion)
     {
       return Translation(motion.m_x, motion.m_y, motion.m_z);

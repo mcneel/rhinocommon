@@ -1279,6 +1279,11 @@ namespace Rhino.Geometry
     /// <returns>
     /// True if there is a plane such that the maximum distance from the curve to the plane is &lt;= RhinoMath.ZeroTolerance.
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_constrainedcopy.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_constrainedcopy.cs' lang='cs'/>
+    /// <code source='examples\py\ex_constrainedcopy.py' lang='py'/>
+    /// </example>
     public bool TryGetPlane(out Plane plane)
     {
       return TryGetPlane(out plane, RhinoMath.ZeroTolerance);

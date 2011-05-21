@@ -23,7 +23,7 @@ partial class Examples
     if (unroll == null)
       return Rhino.Commands.Result.Cancel;
 
-    Rhino.Geometry.Mesh mesh = brep.Faces[0].GetMesh();
+    Rhino.Geometry.Mesh mesh = brep.Faces[0].GetMesh(Rhino.Geometry.MeshType.Render);
     if (mesh == null)
       return Rhino.Commands.Result.Cancel;
 

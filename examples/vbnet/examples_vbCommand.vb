@@ -57,6 +57,7 @@ Public Class examples_vbCommand
     Test(AddressOf Examples.BlockInsertionPoint, doc)
     Test(AddressOf Examples.BooleanDifference, doc)
     Test(AddressOf Examples.CircleCenter, doc)
+    Test(AddressOf Examples.ConstrainedCopy, doc)
     Test(AddressOf Examples.CommandLineOptions, doc)
     Test(AddressOf Examples.DivideByLengthPoints, doc)
     Test(AddressOf Examples.DetermineObjectLayer, doc)

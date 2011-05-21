@@ -21,7 +21,7 @@
       Return Rhino.Commands.Result.Cancel
     End If
 
-    Dim mesh As Rhino.Geometry.Mesh = brep.Faces(0).GetMesh()
+    Dim mesh As Rhino.Geometry.Mesh = brep.Faces(0).GetMesh(Rhino.Geometry.MeshType.Render)
     If mesh Is Nothing Then
       Return Rhino.Commands.Result.Cancel
     End If

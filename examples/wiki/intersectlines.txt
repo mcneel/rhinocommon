@@ -60,8 +60,8 @@ Public Shared Function IntersectLines(ByVal doc As Rhino.RhinoDoc) As Rhino.Comm
     Return Rhino.Commands.Result.Failure
   End If
 
-  Dim crv0 As LineCurve = TryCast(go.[Object](0).Geometry(), LineCurve)
-  Dim crv1 As LineCurve = TryCast(go.[Object](1).Geometry(), LineCurve)
+  Dim crv0 As LineCurve = TryCast(go.Object(0).Geometry(), LineCurve)
+  Dim crv1 As LineCurve = TryCast(go.Object(1).Geometry(), LineCurve)
   If crv0 Is Nothing OrElse crv1 Is Nothing Then
     Return Rhino.Commands.Result.Failure
   End If

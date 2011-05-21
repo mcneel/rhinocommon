@@ -35,6 +35,58 @@ namespace examples_cs
       RhinoApp.WriteLine("[TEST DONE] - result = " + rc.ToString());
     }
 
+    static void RadialContour(bool parallel, Brep brep)
+    {
+      const int COUNT = 360;
+
+      /*
+    slices = range(COUNT)
+    def parallel_contour(i):
+        try:
+            rad = math.radians(i)
+            plane = Rhino.Geometry.Plane.WorldXY
+            axis = Rhino.Geometry.Vector3d(0,1,0)
+            plane.Rotate(rad, axis, Rhino.Geometry.Point3d.Origin)
+            tol = scriptcontext.doc.ModelAbsoluteTolerance
+            rc, crvs, pts = Rhino.Geometry.Intersect.Intersection.BrepPlane(brep, plane, tol)
+            if rc: slices[i] = crvs
+        except:
+            pass
+
+    if parallel:
+        tasks.Parallel.ForEach(range(COUNT), parallel_contour)
+    else:
+        #parallel_contour(COUNT-1)
+        for i in range(COUNT): parallel_contour(i)
+    if slices:
+        for slice in slices:
+            for s in slice: scriptcontext.doc.Objects.AddCurve(s)
+       */
+    }
+
+    Rhino.Commands.Result TestMt(RhinoDoc doc)
+    {
+      Rhino.DocObjects.ObjRef objref;
+      var rc = Rhino.Input.RhinoGet.GetOneObject("Select brep", true, Rhino.DocObjects.ObjectType.Brep, out objref);
+      if( rc!=Rhino.Commands.Result.Success)
+        return rc;
+      var brep = objref.Brep();
+      if( brep==null )
+        return Rhino.Commands.Result.Cancel;
+      brep.EnsurePrivateCopy(); // make our copy local so we absolutely know the doc won't be mesing with it
+
+      var start = DateTime.Now;
+      RadialContour(false, brep);
+      var span = DateTime.Now - start;
+      RhinoApp.WriteLine(" serial = {0}", span.Milliseconds);
+      start = DateTime.Now;
+      RadialContour(true, brep);
+      span = DateTime.Now - start;
+      RhinoApp.WriteLine(" parallel = {0}", span.Milliseconds);
+      doc.Views.Redraw();
+      return Rhino.Commands.Result.Success;
+    }
+
 
     protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
     {
@@ -66,164 +118,93 @@ namespace examples_cs
       //Test(Examples.BooleanDifference, doc);
       //Test(Examples.BlockInsertionPoint, doc);
       //Test(Examples.CommandLineOptions, doc);
+      Test(Examples.ConstrainedCopy, doc);
       //Test(Examples.DivideByLengthPoints, doc);
       //Test(Examples.DetermineObjectLayer, doc);
       //Test(Examples.DupBorder, doc);
       //Test(Examples.FindObjectsByName, doc);
       //Test(Examples.InsertKnot, doc);
       //Test(Examples.IntersectLines, doc);
-      Test(Examples.MoveCPlane, doc);
+      //Test(Examples.MoveCPlane, doc);
       //Test(Examples.ObjectDisplayMode, doc);
       //Test(Examples.OrientOnSrf, doc);
       //Test(Examples.SelLayer, doc);
+   //   Test(Examples.Sweep1, doc);
       //Test(Examples.UnrollSurface, doc);
       //Test(Examples.UnrollSurface2, doc);
-      return Rhino.Commands.Result.Success;
-    }
-  }
-}
+
+/*
+      Sphere s = new Sphere(new Point3d(1,2,3), 12);
+      var mesh = Mesh.CreateFromSphere(s, 20, 20);
+      mesh.SetUserString("serializeIO", "yep it works!");
+      
+      //read/write binary
+
+      var options = new Rhino.FileIO.SerializationOptions();
+      options.RhinoVersion = 4;
+      var context = new System.Runtime.Serialization.StreamingContext(System.Runtime.Serialization.StreamingContextStates.All, options);
+      var bin_serializer = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter(null, context);
+      var bin_stream = new System.IO.FileStream("C:\\TestBinary.bin", System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None);
+      bin_serializer.Serialize(bin_stream, mesh);
+      bin_stream.Close();
+      bin_stream = new System.IO.FileStream("C:\\TestBinary.bin", System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+      var a = bin_serializer.Deserialize(bin_stream) as Mesh;
+      bin_stream.Close();
+      var attr = new Rhino.DocObjects.ObjectAttributes();
+      attr.ColorSource = Rhino.DocObjects.ObjectColorSource.ColorFromObject;
+      attr.ObjectColor = System.Drawing.Color.Red;
+      doc.Objects.AddMesh(a, attr);
+
+      //data contract
+      var stream = new System.IO.FileStream("C:\\TestDataContract.xml", System.IO.FileMode.Create);
+      var dc_serializer = new System.Runtime.Serialization.DataContractSerializer(mesh.GetType());
+      dc_serializer.WriteObject(stream, mesh);
+      stream.Close();
+      stream = new System.IO.FileStream("C:\\TestDataContract.xml", System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+      var b = dc_serializer.ReadObject(stream) as Mesh;
+      stream.Close();
+      attr.ObjectColor = System.Drawing.Color.Green;
+      doc.Objects.AddMesh(b, attr);
+
+      //net contract
+      stream = new System.IO.FileStream("C:\\TestNetDataContract.xml", System.IO.FileMode.Create);
+      var ndc_serializer = new System.Runtime.Serialization.NetDataContractSerializer(context);
+      ndc_serializer.WriteObject(stream, mesh);
+      stream.Close();
+      stream = new System.IO.FileStream("C:\\TestNetDataContract.xml", System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+      var c = ndc_serializer.ReadObject(stream) as Mesh;
+      stream.Close();
+      attr.ObjectColor = System.Drawing.Color.Pink;
+      doc.Objects.AddMesh(c, attr);
 
 
-namespace RhinoGold.Commands._01_UI
-{
-  [System.Runtime.InteropServices.Guid("ec197a46-e9ba-42b4-a9d2-167189ffda00")]
-  public class ShowTripod : Rhino.Commands.Command
-  {
-    static ShowTripod m_thecommand;
-
-    public ShowTripod()
-    {
-      // Rhino only creates one instance of each command class defined in a plug-in, so it is
-      // safe to hold on to a static reference.
-      m_thecommand = this;
-    }
-
-
-    ///<summary>The one and only instance of this command</summary>
-    public static ShowTripod TheCommand
-    {
-      get { return m_thecommand; }
-    }
-
-    ///<returns>The command name as it appears on the Rhino command line</returns>
-    public override string EnglishName
-    {
-      get { return "ShowTripod"; }
-    }
-
-    Rhino.Display.DisplayMaterial m_goldmaterial;
-    Mesh m_MeshToDraw;
-    bool m_conduits_on = false;
-    BoundingBox m_mesh_bounds;
-    Point3d m_Origin;
-    double m_Scale;
-
-    protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
-    {
-      // might as well not create objects until we need them
-      if (m_MeshToDraw == null)
-      {
-        m_goldmaterial = new Rhino.Display.DisplayMaterial();
-        m_goldmaterial.Diffuse = System.Drawing.Color.FromArgb(255, 155, 0);
-        //m_goldmaterial.Transparency = 0.9;
-        m_goldmaterial.Shine = 0.1;
-        m_goldmaterial.Emission = System.Drawing.Color.FromArgb(50, 25, 0);
-
-        Torus torus = new Torus(Plane.WorldXY, 10, 3);
-        NurbsSurface nurb = torus.ToNurbsSurface();
-        Mesh[] myMesh = Mesh.CreateFromBrep(nurb.ToBrep());
-        m_MeshToDraw = myMesh[0];
-        m_mesh_bounds = m_MeshToDraw.GetBoundingBox(true);
-      }
-      m_conduits_on = !m_conduits_on;
-      if (m_conduits_on)
-      {
-        RhinoApp.WriteLine("Turning tripod display on");
-        Rhino.Display.DisplayPipeline.CalculateBoundingBox += ConduitCalculateBoundingBox;
-        Rhino.Display.DisplayPipeline.PostDrawObjects += ConduitDraw;
-      }
-      else
-      {
-        RhinoApp.WriteLine("Turning tripod display off");
-        Rhino.Display.DisplayPipeline.CalculateBoundingBox -= ConduitCalculateBoundingBox;
-        Rhino.Display.DisplayPipeline.PostDrawObjects -= ConduitDraw;
-      }
+      //soap
+      stream = new System.IO.FileStream("C:\\TestSoapFormatter.xml", System.IO.FileMode.Create);
+      var soap_serializer = new System.Runtime.Serialization.Formatters.Soap.SoapFormatter(null, context);
+      soap_serializer.Serialize(stream, mesh);
+      stream.Close();
+      stream = new System.IO.FileStream("C:\\TestSoapFormatter.xml", System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+      var d = soap_serializer.Deserialize(stream) as Mesh;
+      stream.Close();
+      attr.ObjectColor = System.Drawing.Color.Blue;
+      doc.Objects.AddMesh(d, attr);
       doc.Views.Redraw();
+
+      /*
+      //xml
+      stream = new System.IO.FileStream("C:\\SteveTestXml.xml", System.IO.FileMode.Create);
+      var xml_serializer = new System.Xml.Serialization.XmlSerializer(typeof(Rhino.Geometry.NurbsCurve));
+      xml_serializer.Serialize(stream, c);
+      stream.Close();
+      stream = new System.IO.FileStream("C:\\SteveTestXml.xml", System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+      var d = soap_serializer.Deserialize(stream);
+      stream.Close();
+      */
+
+      
       return Rhino.Commands.Result.Success;
-    }
-
-
-    private void ComputeScene(Rhino.Display.DrawEventArgs e)
-    {
-      //Retrieve clipping planes
-      Plane nPlane;
-      e.Display.Viewport.GetFrustumNearPlane(out nPlane);
-      Plane fPlane;
-      e.Display.Viewport.GetFrustumNearPlane(out fPlane);
-
-      //Calculate projection plane
-      Plane projection = fPlane;
-      projection.Origin = (nPlane.Origin + fPlane.Origin) * 0.5;
-
-      //Retrieve inverse drawing XForm
-      Transform s2wXform = e.Display.Viewport.GetTransform(Rhino.DocObjects.CoordinateSystem.Screen, Rhino.DocObjects.CoordinateSystem.World);
-
-      //Retrieve Viewport size, in pixels
-      int W = e.Viewport.ScreenPortBounds.Width;
-
-      // Create custom axis system origin, in screen coordinates
-      Point3d pt = new Point3d(W + 60, 60, 0.0);
-      //Project the origin back into world space
-      pt.Transform(s2wXform);
-
-      //Create a ray from the camera, through the custom axis origin
-      Line Origin_Ray;
-      if (e.Display.Viewport.IsPerspectiveProjection)//(dp.GetRhinoVP.VP.Projection = IOn.view_projection.perspective_view) Then
-      {
-        //Perform camera based intersection
-        Origin_Ray = new Line(e.Display.Viewport.CameraLocation, pt);
-      }
-      else
-      {
-        //Perform parallel intersection
-        Origin_Ray = new Line(pt, pt + e.Display.Viewport.CameraDirection);
-      }
-
-      //Intersect it with the projection plane
-      double p = 0;
-      Rhino.Geometry.Intersect.Intersection.LinePlane(Origin_Ray, projection, out p);
-
-      //Set the origin, in world coordinates
-      this.m_Origin = Origin_Ray.PointAt(p);
-
-      //Calculate the screen scale at the origin
-      double pix_per_unit;
-      e.Display.Viewport.GetWorldToScreenScale(this.m_Origin, out pix_per_unit);
-
-      //Calculate the scale of the axis system (in units per pixel)
-      this.m_Scale = 1 / pix_per_unit;
-    }
-
-    void ConduitCalculateBoundingBox(object sender, Rhino.Display.CalculateBoundingBoxEventArgs e)
-    {
-      ComputeScene(e);
-      Transform xform = Transform.Scale(Point3d.Origin, m_Scale * 2);
-      xform *= Transform.Translation(m_Origin.X, m_Origin.Y, m_Origin.Z);
-      BoundingBox bbox = xform.TransformBoundingBox(m_mesh_bounds);
-      bbox.Inflate(20);
-      e.IncludeBoundingBox(bbox);
-    }
-
-    void ConduitDraw(object sender, Rhino.Display.DrawEventArgs e)
-    {
-      ComputeScene(e);
-
-      Transform xform = Transform.Scale(Point3d.Origin, m_Scale);
-      xform *= Transform.Translation(new Vector3d(m_Origin));
-      e.Display.PushModelTransform(xform);
-      e.Display.DrawMeshShaded(m_MeshToDraw, m_goldmaterial);
-      e.Display.PopModelTransform();
     }
   }
 }
+
 

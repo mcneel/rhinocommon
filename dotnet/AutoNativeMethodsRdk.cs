@@ -1543,33 +1543,25 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern double Rdk_Sun_Azimuth(IntPtr pConstISun);
 
-  //void Rdk_Sun_SetAzimuth(IRhRdkSun* pISun, double d)
+  //void Rdk_Sun_SetAzimuthAltitude(IRhRdkSun* pISun, double azimuth, double altitude)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_Sun_SetAzimuth(IntPtr pISun, double d);
+  internal static extern void Rdk_Sun_SetAzimuthAltitude(IntPtr pISun, double azimuth, double altitude);
 
   //double Rdk_Sun_Altitude(const IRhRdkSun* pConstISun)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern double Rdk_Sun_Altitude(IntPtr pConstISun);
 
-  //void Rdk_Sun_SetAltitude(IRhRdkSun* pISun, double d)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_Sun_SetAltitude(IntPtr pISun, double d);
-
   //double Rdk_Sun_Latitude(const IRhRdkSun* pConstISun)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern double Rdk_Sun_Latitude(IntPtr pConstISun);
 
-  //void Rdk_Sun_SetLatitude(IRhRdkSun* pISun, double d)
+  //void Rdk_Sun_SetLatitudeLongitude(IRhRdkSun* pISun, double latitude, double longitude)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_Sun_SetLatitude(IntPtr pISun, double d);
+  internal static extern void Rdk_Sun_SetLatitudeLongitude(IntPtr pISun, double latitude, double longitude);
 
   //double Rdk_Sun_Longitude(const IRhRdkSun* pConstISun)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern double Rdk_Sun_Longitude(IntPtr pConstISun);
-
-  //void Rdk_Sun_SetLongitude(IRhRdkSun* pISun, double d)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_Sun_SetLongitude(IntPtr pISun, double d);
 
   //double Rdk_Sun_TimeZone(const IRhRdkSun* pConstISun)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
@@ -1602,21 +1594,16 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_Sun_LocalDateTime(IntPtr pConstISun, ref int piYearOut, ref int piMonthOut, ref int piDayOut, ref int piHoursOut, ref int piMinutesOut, ref int piSecondsOut);
 
-  //void Rdk_Sun_SetLocalDateTime(IRhRdkSun* pISun, 
+  //void Rdk_Sun_SetDateTime(IRhRdkSun* pISun, bool local,
   //											int iYear, int iMonth, int iDay, int iHours, int iMinutes, int iSeconds)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_Sun_SetLocalDateTime(IntPtr pISun, int iYear, int iMonth, int iDay, int iHours, int iMinutes, int iSeconds);
+  internal static extern void Rdk_Sun_SetDateTime(IntPtr pISun, [MarshalAs(UnmanagedType.U1)]bool local, int iYear, int iMonth, int iDay, int iHours, int iMinutes, int iSeconds);
 
   //void Rdk_Sun_UTCDateTime(const IRhRdkSun* pConstISun, 
   //										 int* piYearOut, int* piMonthOut, int* piDayOut, 
   //										 int* piHoursOut, int* piMinutesOut, int* piSecondsOut)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_Sun_UTCDateTime(IntPtr pConstISun, ref int piYearOut, ref int piMonthOut, ref int piDayOut, ref int piHoursOut, ref int piMinutesOut, ref int piSecondsOut);
-
-  //void Rdk_Sun_SetUTCDateTime(IRhRdkSun* pISun, 
-  //											int iYear, int iMonth, int iDay, int iHours, int iMinutes, int iSeconds)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_Sun_SetUTCDateTime(IntPtr pISun, int iYear, int iMonth, int iDay, int iHours, int iMinutes, int iSeconds);
 
   //void Rdk_Sun_Light(const IRhRdkSun* pConstISun, ON_Light* pLight)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]

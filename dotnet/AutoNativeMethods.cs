@@ -1283,6 +1283,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Curve_DuplicateCurve(IntPtr pCurve);
 
+  //bool ON_Curve_ChangeDimension(ON_Curve* pCurve, int desired_dimension)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Curve_ChangeDimension(IntPtr pCurve, int desired_dimension);
+
   //bool ON_Curve_ChangeClosedCurveSeam(ON_Curve* pCurve, double t)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -2616,6 +2621,11 @@ internal partial class UnsafeNativeMethods
   //void ON_MeshTopologyVertex_ConnectedFaces(const ON_Mesh* pConstMesh, int topologyVertexIndex, ON_SimpleArray<int>* face_indices)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_MeshTopologyVertex_ConnectedFaces(IntPtr pConstMesh, int topologyVertexIndex, IntPtr face_indices);
+
+  //bool ON_MeshTopologyFace_Edges(const ON_Mesh* pConstMesh, int faceIndex, int* a, int* b, int* c, int* d)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_MeshTopologyFace_Edges(IntPtr pConstMesh, int faceIndex, ref int a, ref int b, ref int c, ref int d);
   #endregion
 
 
@@ -2800,6 +2810,36 @@ internal partial class UnsafeNativeMethods
   //ON_NurbsSurface* RHC_RhinoRailRevolve( const ON_Curve* pConstProfileCurve, const ON_Curve* pConstRailCurve, const ON_Line* axis, bool scale)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoRailRevolve(IntPtr pConstProfileCurve, IntPtr pConstRailCurve, ref Line axis, [MarshalAs(UnmanagedType.U1)]bool scale);
+
+  //ON_MorphControl* ON_MorphControl_New( const ON_MorphControl* pConstOther )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_MorphControl_New(IntPtr pConstOther);
+
+  //void ON_MorphControl_SetCurves( ON_MorphControl* pMorphControl, const ON_NurbsCurve* pConstNurbsCurve0, const ON_NurbsCurve* pConstNurbsCurve1 )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_MorphControl_SetCurves(IntPtr pMorphControl, IntPtr pConstNurbsCurve0, IntPtr pConstNurbsCurve1);
+
+  //double ON_MorphControl_GetSporhTolerance(const ON_MorphControl* pConstMorphControl)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_MorphControl_GetSporhTolerance(IntPtr pConstMorphControl);
+
+  //void ON_MorphControl_SetSporhTolerance(ON_MorphControl* pMorphControl, double tolerance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_MorphControl_SetSporhTolerance(IntPtr pMorphControl, double tolerance);
+
+  //bool ON_MorphControl_GetBool(const ON_MorphControl* pConstMorphControl, bool quickpreview)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_MorphControl_GetBool(IntPtr pConstMorphControl, [MarshalAs(UnmanagedType.U1)]bool quickpreview);
+
+  //void ON_MorphControl_SetBool(ON_MorphControl* pMorphControl, bool val, bool quickpreview)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_MorphControl_SetBool(IntPtr pMorphControl, [MarshalAs(UnmanagedType.U1)]bool val, [MarshalAs(UnmanagedType.U1)]bool quickpreview);
+
+  //bool ON_MorphControl_MorphGeometry(const ON_MorphControl* pConstMorphControl, ON_Geometry* pGeometry)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_MorphControl_MorphGeometry(IntPtr pConstMorphControl, IntPtr pGeometry);
   #endregion
 
 
@@ -4190,18 +4230,26 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RhEdgeAnalysisSettings_ShowEdges([MarshalAs(UnmanagedType.U1)]bool set, int set_value, IntPtr pEdgeSettings);
 
-  //bool RhModelAidSettings_GetSetBool(int which, bool set, bool set_value)
+  //CRhinoAppModelAidSettings* CRhinoAppModelAidSettings_New(bool current)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoAppModelAidSettings_New([MarshalAs(UnmanagedType.U1)]bool current);
+
+  //void CRhinoAppModelAidSettings_Delete(CRhinoAppModelAidSettings* pSettings)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppModelAidSettings_Delete(IntPtr pSettings);
+
+  //bool RhModelAidSettings_GetSetBool(int which, bool set, bool set_value, const CRhinoAppModelAidSettings* pSettings)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RhModelAidSettings_GetSetBool(int which, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.U1)]bool set_value);
+  internal static extern bool RhModelAidSettings_GetSetBool(int which, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.U1)]bool set_value, IntPtr pSettings);
 
-  //double RhModelAidSettings_GetSetDouble(int which, bool set, double set_value)
+  //double RhModelAidSettings_GetSetDouble(int which, bool set, double set_value, const CRhinoAppModelAidSettings* pSettings)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern double RhModelAidSettings_GetSetDouble(int which, [MarshalAs(UnmanagedType.U1)]bool set, double set_value);
+  internal static extern double RhModelAidSettings_GetSetDouble(int which, [MarshalAs(UnmanagedType.U1)]bool set, double set_value, IntPtr pSettings);
 
-  //int RhModelAidSettings_GetSetInt(int which, bool set, int set_value)
+  //int RhModelAidSettings_GetSetInt(int which, bool set, int set_value, const CRhinoAppModelAidSettings* pSettings)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RhModelAidSettings_GetSetInt(int which, [MarshalAs(UnmanagedType.U1)]bool set, int set_value);
+  internal static extern int RhModelAidSettings_GetSetInt(int which, [MarshalAs(UnmanagedType.U1)]bool set, int set_value, IntPtr pSettings);
 
   //bool RhViewSettings_GetSetBool(int which, bool set, bool set_value)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5962,6 +6010,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoGroupTable_ChangeGroupName(int docId, int groupIndex, [MarshalAs(UnmanagedType.LPWStr)]string _newName);
+
+  //void CRhinoGroupTable_GroupMembers(int docId, int groupIndex, ON_SimpleArray<CRhinoObject*>* pRhinoObjects)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoGroupTable_GroupMembers(int docId, int groupIndex, IntPtr pRhinoObjects);
   #endregion
 
 
@@ -7316,6 +7368,13 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Intersect_BrepBrep(IntPtr brepPtrA, IntPtr brepPtrB, double tolerance, IntPtr outCurves, IntPtr outPoints);
+
+  //bool ON_Intersect_BrepSurface(const ON_Brep* pConstBrep, const ON_Surface* pConstSurface,
+  //                                            double tolerance, ON_SimpleArray<ON_Curve*>* outCurves,
+  //                                            ON_3dPointArray* outPoints)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Intersect_BrepSurface(IntPtr pConstBrep, IntPtr pConstSurface, double tolerance, IntPtr outCurves, IntPtr outPoints);
 
   //bool ON_Intersect_CurveBrep(const ON_Curve* curvePtr, const ON_Brep* brepPtr,
   //                                          double tolerance, ON_SimpleArray<ON_Curve*>* outCurves,

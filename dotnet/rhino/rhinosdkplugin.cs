@@ -2225,6 +2225,7 @@ namespace Rhino.PlugIns
     string m_serial_number;
     LicenseType m_license_type;
     DateTime? m_expiration_date;
+    DateTime? m_checkout_expiration_date;
     string m_registered_owner;
     string m_registered_organization;
 
@@ -2293,6 +2294,18 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
+    /// The date and time the checked out license will expire.
+    /// Note, this is only set if m_license_type = LicenceType.Standalone
+    /// and if "limited license checkout" was enabled on the Zoo server.
+    /// Note, date and time is in local time coordinates
+    /// </summary>
+    public DateTime? CheckOutExpirationDate
+    {
+      get { return m_checkout_expiration_date; }
+      set { m_checkout_expiration_date = value; }
+    }
+
+    /// <summary>
     /// The registered owner of the product.
     /// (e.g. "Dale Fugier")
     /// </summary>
@@ -2327,6 +2340,7 @@ namespace Rhino.PlugIns
       m_serial_number = string.Empty;
       m_license_type = PlugIns.LicenseType.Standalone;
       m_expiration_date = null;
+      m_checkout_expiration_date = null;
       m_registered_owner = string.Empty;
       m_registered_organization = string.Empty;
     }

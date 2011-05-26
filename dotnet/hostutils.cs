@@ -124,6 +124,13 @@ namespace Rhino.Runtime
     }
     object m_scriptcontext_doc = null;
 
+    public int ContextId
+    {
+      get { return m_context_id; }
+      set { m_context_id = value; }
+    }
+    int m_context_id = 1;
+
     public abstract System.Windows.Forms.Control CreateTextEditorControl(string script, Action<string> helpcallback);
   }
 

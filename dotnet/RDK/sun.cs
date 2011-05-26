@@ -1,55 +1,48 @@
 using System;
 using System.Runtime.InteropServices;
 
-#if RDK_UNCHECKED
 namespace Rhino.Render
 {
-  public class Sun : IDisposable
+#if RDK_CHECKED
+  /// <summary>
+  /// 
+  /// </summary>
+  public class Sun
   {
-    private IntPtr m_pSun = IntPtr.Zero;
-    private Rhino.RhinoDoc m_doc;
+    Rhino.RhinoDoc m_doc;
 
-    /// <summary></summary>
-    /// <exception cref="Rhino.Runtime.RdkNotLoadedException"></exception>
-    public Sun()
-    {
-      Rhino.Runtime.HostUtils.CheckForRdk(true, true);
-      m_pSun = UnsafeNativeMethods.Rdk_SunNew();
-    }
+    // Only access to this class is through the Sun property on the document's light table.
+    // That property calls CheckForRdk so we don't need to "recheck" for functions/properties
+    // in this class.
+    internal Sun(Rhino.RhinoDoc doc) { m_doc = doc; }
 
-    internal Sun(Rhino.RhinoDoc doc)
-    {
-      m_doc = doc;
-    }
-
+    /// <summary>Turn to sun on/off in this document</summary>
     public bool Enabled
     {
-      get { return UnsafeNativeMethods.Rdk_Sun_Enabled(ConstPointer()); }
+      get
+      {
+        IntPtr pConstSun = ConstPointer();
+        return UnsafeNativeMethods.Rdk_Sun_Enabled(ConstPointer()); }
       set { UnsafeNativeMethods.Rdk_Sun_SetEnabled(NonConstPointer(), value); }
     }
 
-    public bool EnableAllowed
-    {
-      get { return UnsafeNativeMethods.Rdk_Sun_EnableAllowed(ConstPointer()); }
-      set { UnsafeNativeMethods.Rdk_Sun_SetEnableAllowed(NonConstPointer(), value); }
-    }
-
-    public bool ManualControlAllowed
-    {
-      get { return UnsafeNativeMethods.Rdk_Sun_ManualControlAllowed(ConstPointer()); }
-      set { UnsafeNativeMethods.Rdk_Sun_SetManualControlAllowed(NonConstPointer(), value); }
-    }
-
-    public bool ManualControlOn
-    {
-      get { return UnsafeNativeMethods.Rdk_Sun_ManualControlOn(ConstPointer()); }
-      set { UnsafeNativeMethods.Rdk_Sun_SetManualControlOn(NonConstPointer(), value); }
-    }
-
+    /// <summary>
+    /// Angle in degrees on world X-Y plane that should be considered north in the model. Angle is
+    /// measured starting at X-Axis and travels counterclockwise. Y-Axis would be a north angle of 90
+    /// degrees
+    /// </summary>
     public double North
     {
-      get { return UnsafeNativeMethods.Rdk_Sun_North(ConstPointer()); }
-      set { UnsafeNativeMethods.Rdk_Sun_SetNorth(NonConstPointer(), value); }
+      get
+      {
+        IntPtr pConstSun = ConstPointer();
+        return UnsafeNativeMethods.Rdk_Sun_North(pConstSun);
+      }
+      set
+      {
+        IntPtr pSun = NonConstPointer();
+        UnsafeNativeMethods.Rdk_Sun_SetNorth(pSun, value);
+      }
     }
 
     public Rhino.Geometry.Vector3d Vector
@@ -60,154 +53,111 @@ namespace Rhino.Render
         UnsafeNativeMethods.Rdk_Sun_Vector(ConstPointer(), ref v);
         return v;
       }
-      set { UnsafeNativeMethods.Rdk_Sun_SetVector(NonConstPointer(), value); }
+      //set { UnsafeNativeMethods.Rdk_Sun_SetVector(NonConstPointer(), value); }
+    }
+
+    /// <summary>
+    /// Set position of the sun based on azimuth and altitude values
+    /// </summary>
+    /// <param name="azimuthDegrees"></param>
+    /// <param name="altitudeDegrees"></param>
+    public void SetPosition(double azimuthDegrees, double altitudeDegrees)
+    {
+      IntPtr pSun = NonConstPointer();
+      UnsafeNativeMethods.Rdk_Sun_SetAzimuthAltitude(pSun, azimuthDegrees, altitudeDegrees);
+    }
+
+    /// <summary>
+    /// Set position of the sun based on physical location and time
+    /// </summary>
+    /// <param name="when"></param>
+    /// <param name="whenKind"></param>
+    /// <param name="latitudeDegrees"></param>
+    /// <param name="longitudeDegrees"></param>
+    public void SetPosition(DateTime when, DateTimeKind whenKind, double latitudeDegrees, double longitudeDegrees)
+    {
+      IntPtr pSun = NonConstPointer();
+      UnsafeNativeMethods.Rdk_Sun_SetLatitudeLongitude(pSun, latitudeDegrees, longitudeDegrees);
+      bool local = true;
+      if (whenKind == DateTimeKind.Utc)
+        local = false;
+      UnsafeNativeMethods.Rdk_Sun_SetDateTime(pSun, local, when.Year, when.Month, when.Day, when.Hour, when.Minute, when.Second);
     }
 
     public double Azimuth
     {
-      get { return UnsafeNativeMethods.Rdk_Sun_Azimuth(ConstPointer()); }
-      set { UnsafeNativeMethods.Rdk_Sun_SetAzimuth(NonConstPointer(), value); }
+      get
+      {
+        IntPtr pConstSun = ConstPointer();
+        return UnsafeNativeMethods.Rdk_Sun_Azimuth(pConstSun);
+      }
     }
 
     public double Altitude
     {
-      get { return UnsafeNativeMethods.Rdk_Sun_Altitude(ConstPointer()); }
-      set { UnsafeNativeMethods.Rdk_Sun_SetAltitude(NonConstPointer(), value); }
+      get
+      {
+        IntPtr pConstSun = ConstPointer();
+        return UnsafeNativeMethods.Rdk_Sun_Altitude(pConstSun);
+      }
     }
 
     public double Latitude
     {
-      get { return UnsafeNativeMethods.Rdk_Sun_Latitude(ConstPointer()); }
-      set { UnsafeNativeMethods.Rdk_Sun_SetLatitude(NonConstPointer(), value); }
+      get
+      {
+        IntPtr pConstSun = ConstPointer();
+        return UnsafeNativeMethods.Rdk_Sun_Latitude(pConstSun);
+      }
     }
 
     public double Longitude
     {
-      get { return UnsafeNativeMethods.Rdk_Sun_Longitude(ConstPointer()); }
-      set { UnsafeNativeMethods.Rdk_Sun_SetLongitude(NonConstPointer(), value); }
-    }
-
-    public double TimeZone
-    {
-      get { return UnsafeNativeMethods.Rdk_Sun_TimeZone(ConstPointer()); }
-      set { UnsafeNativeMethods.Rdk_Sun_SetTimeZone(NonConstPointer(), value); }
-    }
-
-    public bool DaylightSavingOn
-    {
-      get { return UnsafeNativeMethods.Rdk_Sun_DaylightSavingOn(ConstPointer()); }
-      set { UnsafeNativeMethods.Rdk_Sun_SetDaylightSavingOn(NonConstPointer(), value); }
-    }
-
-    public int DaylightSavingMinutes
-    {
-      get { return UnsafeNativeMethods.Rdk_Sun_DaylightSavingMinutes(ConstPointer()); }
-      set { UnsafeNativeMethods.Rdk_Sun_SetDaylightSavingMinutes(NonConstPointer(), value); }
-    }
-
-    public DateTime LocalDateTime
-    {
       get
       {
-        int month = 0, year = 0, day = 0, hours = 0, minutes = 0, seconds = 0;
-
-        UnsafeNativeMethods.Rdk_Sun_LocalDateTime(ConstPointer(), ref year, ref month, ref day, ref hours, ref minutes, ref seconds);
-
-        DateTime dt = new DateTime(year, month, day, hours, minutes, seconds);
-
-        return dt;
-      }
-      set
-      {
-        UnsafeNativeMethods.Rdk_Sun_SetLocalDateTime(NonConstPointer(), value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second);
+        IntPtr pConstSun = ConstPointer();
+        return UnsafeNativeMethods.Rdk_Sun_Longitude(pConstSun);
       }
     }
 
-    public DateTime UTCDateTime
+    public DateTime GetDateTime(DateTimeKind kind)
     {
-      get
-      {
-        int month = 0, year = 0, day = 0, hours = 0, minutes = 0, seconds = 0;
+      if( kind==DateTimeKind.Unspecified )
+        throw new ArgumentException("kind must be specified");
+      IntPtr pConstSun = ConstPointer();
 
-        UnsafeNativeMethods.Rdk_Sun_UTCDateTime(ConstPointer(), ref year, ref month, ref day, ref hours, ref minutes, ref seconds);
-
-        DateTime dt = new DateTime(year, month, day, hours, minutes, seconds);
-
-        return dt;
-      }
-      set
-      {
-        UnsafeNativeMethods.Rdk_Sun_SetUTCDateTime(NonConstPointer(), value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second);
-      }
+      int month = 0, year = 0, day = 0, hours = 0, minutes = 0, seconds = 0;
+      if( kind== DateTimeKind.Local )
+        UnsafeNativeMethods.Rdk_Sun_LocalDateTime(pConstSun, ref year, ref month, ref day, ref hours, ref minutes, ref seconds);
+      else
+        UnsafeNativeMethods.Rdk_Sun_UTCDateTime(pConstSun, ref year, ref month, ref day, ref hours, ref minutes, ref seconds);
+      
+      return new DateTime(year, month, day, hours, minutes, seconds);
     }
-
-    public Rhino.Geometry.Light Light()
-    {
-      Rhino.Geometry.Light light = new Rhino.Geometry.Light();
-
-      IntPtr plight = light.NonConstPointer();
-
-      UnsafeNativeMethods.Rdk_Sun_Light(ConstPointer(), plight);
-
-      return light;
-    }
-
-    [CLSCompliant(false)]
-    public uint CRC()
-    {
-      return UnsafeNativeMethods.Rdk_Sun_CRC(ConstPointer());
-    }
-
+    
+    /// <summary>Show the tabbed sun dialog</summary>
     public void ShowDialog()
     {
-      UnsafeNativeMethods.Rdk_Sun_ShowDialog(NonConstPointer());
+      IntPtr pSun = NonConstPointer();
+      UnsafeNativeMethods.Rdk_Sun_ShowDialog(pSun);
     }
 
-    ~Sun()
+    internal IntPtr ConstPointer()
     {
-      Dispose(false);
-    }
-
-    IntPtr ConstPointer()
-    {
-      if (m_pSun != IntPtr.Zero)
-      {
-        return UnsafeNativeMethods.Rdk_SunInterface(m_pSun);
-      }
-
       return UnsafeNativeMethods.Rdk_DocSunInterface(m_doc.m_docId);
     }
-
-
 
     IntPtr NonConstPointer()
     {
-      if (m_pSun != IntPtr.Zero)
-      {
-        return UnsafeNativeMethods.Rdk_SunInterface(m_pSun);
-      }
-
       return UnsafeNativeMethods.Rdk_DocSunInterface(m_doc.m_docId);
     }
-
-
-
-    public void Dispose()
-    {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-      if (IntPtr.Zero != m_pSun)
-      {
-        UnsafeNativeMethods.Rdk_SunDelete(m_pSun);
-        m_pSun = IntPtr.Zero;
-      }
-    }
   }
+#endif
 
+
+
+
+#if RDK_UNCHECKED
   public class Skylight
   {
     private Rhino.RhinoDoc m_doc;
@@ -252,5 +202,6 @@ namespace Rhino.Render
       return UnsafeNativeMethods.Rdk_DocSun(m_doc.m_docId);
     }
   }
-}
 #endif
+
+}

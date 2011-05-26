@@ -408,10 +408,15 @@ namespace Rhino.Geometry.Intersect
     public static CurveIntersections CurvePlane(Curve curve, Plane plane, double tolerance)
     {
       //David sez: replace this logic with the dedicated Geometry/Plane intersector methods in Rhino5.
-      if (!plane.IsValid) { return null; }
+      if (!plane.IsValid)
+        return null;
 
       PlaneSurface section = ExtendThroughBox(plane, curve.GetBoundingBox(false), 1.0); //should this be 1.0 or 100.0*tolerance?
-      return section == null ? null : CurveSurface(curve, section, tolerance, 5 * tolerance);
+      if (section == null)
+        return null;
+      CurveIntersections rc = CurveSurface(curve, section, tolerance, 5 * tolerance);
+      section.Dispose();
+      return rc;
     }
     /// <summary>
     /// Intersect a Brep with an (infinite) plane.
@@ -428,10 +433,17 @@ namespace Rhino.Geometry.Intersect
       intersectionCurves = null;
 
       //David sez: replace this logic with the dedicated Geometry/Plane intersector methods in Rhino5.
-      if (!plane.IsValid) { return false; }
+      if (!plane.IsValid)
+        return false;
 
       PlaneSurface section = ExtendThroughBox(plane, brep.GetBoundingBox(false), 1.0); //should this be 1.0 or 100.0*tolerance?
-      return section != null && BrepBrep(section.ToBrep(), brep, tolerance, out intersectionCurves, out intersectionPoints);
+      bool rc = false;
+      if (section != null)
+      {
+        rc = BrepSurface(brep, section, tolerance, out intersectionCurves, out intersectionPoints);
+        section.Dispose();
+      }
+      return rc;
     }
 
     /// <summary>
@@ -697,6 +709,43 @@ namespace Rhino.Geometry.Intersect
       IntPtr brepPtrB = brepB.ConstPointer();
 
       bool rc = UnsafeNativeMethods.ON_Intersect_BrepBrep(brepPtrA, brepPtrB, tolerance, outputCurvesPtr, outputPointsPtr);
+
+      if (rc)
+      {
+        intersectionCurves = outputCurves.ToNonConstArray();
+        intersectionPoints = outputPoints.ToArray();
+      }
+
+      outputPoints.Dispose();
+      outputCurves.Dispose();
+
+      return rc;
+    }
+
+    /// <summary>
+    /// Intersect a Brep and a Surface
+    /// </summary>
+    /// <param name="brep"></param>
+    /// <param name="surface"></param>
+    /// <param name="tolerance"></param>
+    /// <param name="intersectionCurves"></param>
+    /// <param name="intersectionPoints"></param>
+    /// <returns></returns>
+    public static bool BrepSurface(Brep brep, Surface surface, double tolerance, out Curve[] intersectionCurves, out Point3d[] intersectionPoints)
+    {
+      intersectionCurves = new Curve[0];
+      intersectionPoints = new Point3d[0];
+
+      Runtime.InteropWrappers.SimpleArrayPoint3d outputPoints = new Runtime.InteropWrappers.SimpleArrayPoint3d();
+      IntPtr outputPointsPtr = outputPoints.NonConstPointer();
+
+      Runtime.InteropWrappers.SimpleArrayCurvePointer outputCurves = new Runtime.InteropWrappers.SimpleArrayCurvePointer();
+      IntPtr outputCurvesPtr = outputCurves.NonConstPointer();
+
+      IntPtr brepPtr = brep.ConstPointer();
+      IntPtr surfacePtr = surface.ConstPointer();
+
+      bool rc = UnsafeNativeMethods.ON_Intersect_BrepSurface(brepPtr, surfacePtr, tolerance, outputCurvesPtr, outputPointsPtr);
 
       if (rc)
       {

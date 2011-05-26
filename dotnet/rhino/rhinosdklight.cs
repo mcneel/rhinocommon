@@ -46,7 +46,7 @@ namespace Rhino.DocObjects.Tables
       get { return m_doc; }
     }
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
     private Rhino.Render.Sun m_sun;
     /// <summary></summary>
     /// <exception cref="Rhino.Runtime.RdkNotLoadedException"></exception>
@@ -62,9 +62,10 @@ namespace Rhino.DocObjects.Tables
         return m_sun;
       }
     }
+#endif
 
+#if RDK_UNCHECKED
     private Rhino.Render.Skylight m_skylight;
-
     public Rhino.Render.Skylight Skylight
     {
       get { return m_skylight ?? (m_skylight = new Rhino.Render.Skylight(m_doc)); }

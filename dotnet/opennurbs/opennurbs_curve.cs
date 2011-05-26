@@ -925,9 +925,25 @@ namespace Rhino.Geometry
         return UnsafeNativeMethods.ON_Curve_Dimension(ptr);
       }
     }
-    // skipping ChangeDimension for now. seems slightly unusual for plug-in developers
-    // to use non 3 dimensional curves
-    //public bool ChangeDimension(int desired_dimension)
+
+    /// <summary>
+    /// Change the dimension of a curve
+    /// </summary>
+    /// <param name="desiredDimension"></param>
+    /// <returns>
+    /// true if the curve's dimension was already desiredDimension
+    /// or if the curve's dimension was successfully changed to desiredDimension.
+    /// </returns>
+    public bool ChangeDimension(int desiredDimension)
+    {
+      // check dimension first so we don't need to switch to a non-const object
+      // if possible
+      if (Dimension == desiredDimension)
+        return true;
+
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Curve_ChangeDimension(pThis, desiredDimension);
+    }
 
     /// <summary>
     /// Gets the number of non-empty smooth (c-infinity) spans in the curve.

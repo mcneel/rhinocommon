@@ -151,6 +151,7 @@ namespace Rhino.Geometry
     const int idxON_OrdinateDimension2 = 31;
     const int idxON_Light = 32;
     const int idxON_PointGrid = 33;
+    const int idxON_MorphControl = 34;
     #endregion
 
     internal static GeometryBase CreateGeometryHelper(IntPtr pGeometry, object parent)
@@ -286,6 +287,9 @@ namespace Rhino.Geometry
           break;
         case idxON_PointGrid: //33
           rc = new Point3dGrid(pGeometry, parent);
+          break;
+        case idxON_MorphControl: //34
+          rc = new MorphControl(pGeometry, parent);
           break;
         default:
           rc = new UnknownGeometry(pGeometry, parent, subobject_index);

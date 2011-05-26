@@ -430,6 +430,125 @@ namespace Rhino.Geometry
   }
   //  public class ON_NurbsCage : ON_Geometry { }
   //  public class ON_MorphControl : ON_Geometry { }
+
+  [Serializable]
+  public class MorphControl : GeometryBase, ISerializable
+  {
+    #region constructors
+    //public MorphControl()
+    //{
+    //  IntPtr pThis = UnsafeNativeMethods.ON_MorphControl_New(IntPtr.Zero);
+    //  this.ConstructNonConstObject(pThis);
+    //}
+
+    //public MorphControl(MorphControl other)
+    //{
+    //  IntPtr pConstOther = other.ConstPointer();
+    //  IntPtr pThis = UnsafeNativeMethods.ON_MorphControl_New(pConstOther);
+    //  this.ConstructNonConstObject(pThis);
+    //}
+
+    /// <summary>
+    /// Create a MorphControl that allows for morphing between two curves
+    /// </summary>
+    /// <param name="originCurve"></param>
+    /// <param name="targetCurve"></param>
+    public MorphControl(NurbsCurve originCurve, NurbsCurve targetCurve)
+    {
+      IntPtr pCurve0 = originCurve.ConstPointer();
+      IntPtr pCurve1 = targetCurve.ConstPointer();
+
+      IntPtr pThis = UnsafeNativeMethods.ON_MorphControl_New(IntPtr.Zero);
+      this.ConstructNonConstObject(pThis);
+      UnsafeNativeMethods.ON_MorphControl_SetCurves(pThis, pCurve0, pCurve1);
+    }
+
+
+    internal MorphControl(IntPtr ptr, object parent)
+      : base(ptr, parent, -1)
+    { }
+
+    // serialization constructor
+    protected MorphControl(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
+    #endregion
+
+    /// <summary>
+    /// The 3d fitting tolerance used when morphing surfaces and breps.
+    /// The default is 0.0 and any value &lt;= 0.0 is ignored by morphing functions.
+    /// The value returned by Tolerance does not affect the way meshes and points are morphed.
+    /// </summary>
+    public double SpaceMorphTolerance
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_MorphControl_GetSporhTolerance(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_MorphControl_SetSporhTolerance(pThis, value);
+      }
+    }
+
+    /// <summary>
+    /// True if the morph should be done as quickly as possible because the
+    /// result is being used for some type of dynamic preview.  If QuickPreview
+    /// is true, the tolerance may be ignored. The QuickPreview value does not
+    /// affect the way meshes and points are morphed. The default is false.
+    /// </summary>
+    public bool QuickPreview
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_MorphControl_GetBool(pConstThis, true);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_MorphControl_SetBool(pThis, value, true);
+      }
+    }
+
+    /// <summary>
+    /// True if the morph should be done in a way that preserves the structure
+    /// of the geometry.  In particular, for NURBS objects, true  eans that
+    /// only the control points are moved.  The PreserveStructure value does not
+    /// affect the way meshes and points are morphed. The default is false.
+    /// </summary>
+    public bool PreserveStructure
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_MorphControl_GetBool(pConstThis, false);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_MorphControl_SetBool(pThis, value, false);
+      }
+    }
+
+    /// <summary>Apply the space morph to geometry</summary>
+    /// <param name="geometry"></param>
+    /// <returns>true on success, false on failure</returns>
+    public bool Morph(GeometryBase geometry)
+    {
+      // dont' copy a const geometry if we don't have to
+      if (null == geometry || !SpaceMorph.IsMorphable(geometry))
+        return false;
+
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pGeometry = geometry.NonConstPointer();
+      return UnsafeNativeMethods.ON_MorphControl_MorphGeometry(pConstThis, pGeometry);
+    }
+
+  }
 }
 
 

@@ -412,16 +412,12 @@ namespace Rhino.DocObjects.Tables
     /// <param name="description"></param>
     /// <param name="basePoint"></param>
     /// <param name="geometry"></param>
-    /// <param name="attributes"></param>
     /// <returns>
     /// &gt;=0  index of instance definition in the instance definition table. -1 on failure
     /// </returns>
-    public int Add(string name, string description, Point3d basePoint, IEnumerable<GeometryBase> geometry, DocObjects.ObjectAttributes attributes)
+    public int Add(string name, string description, Point3d basePoint, IEnumerable<GeometryBase> geometry)
     {
-      List<ObjectAttributes> attr_list = new List<ObjectAttributes>();
-      foreach (GeometryBase g in geometry)
-        attr_list.Add(attributes);
-      return Add(name, description, basePoint, geometry, attr_list);
+      return Add(name, description, basePoint, geometry, null);
     }
 
     /// <summary>
@@ -516,12 +512,9 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
-    public bool ModifyGeometry(int idefIndex, IEnumerable<GeometryBase> newGeometry, ObjectAttributes newAttributes)
+    public bool ModifyGeometry(int idefIndex, IEnumerable<GeometryBase> newGeometry)
     {
-      List<ObjectAttributes> attr = new List<ObjectAttributes>();
-      foreach (GeometryBase g in newGeometry)
-        attr.Add(newAttributes);
-      return ModifyGeometry(idefIndex, newGeometry, attr);
+      return ModifyGeometry(idefIndex, newGeometry, null);
     }
 
     public bool ModifyGeometry(int idefIndex, GeometryBase newGeometry, ObjectAttributes newAttributes)

@@ -1111,10 +1111,154 @@ namespace Rhino.ApplicationSettings
     CplanePoint     // = CRhinoAppModelAidSettings::cplane_point
   };
 
+  /// <summary>
+  /// Snapshot of ModelAidSettings
+  /// </summary>
+  public class ModelAidSettingsState
+  {
+    internal ModelAidSettingsState() { }
+
+    ///<summary>Enables or disables Rhino's grid snap modeling aid.</summary>
+    public bool GridSnap{ get; set; }
+
+    ///<summary>Enables or disables Rhino&apos;s ortho modeling aid.</summary>
+    public bool Ortho{ get; set; }
+
+    public bool Planar{ get; set; }
+
+    public bool ProjectSnapToCPlane{ get; set; }
+
+    public bool UseHorizontalDialog{ get; set; }
+
+    public bool ExtendTrimLines{ get; set; }
+
+    public bool ExtendToApparentIntersection{ get; set; }
+
+    ///<summary>true mean Alt+arrow is used for nudging.</summary>
+    public bool AltPlusArrow{ get; set; }
+
+    public bool DisplayControlPolygon{ get; set; }
+
+    public bool HighlightControlPolygon{ get; set; }
+
+    ///<summary>Enables or disables Rhino&apos;s object snap modeling aid.</summary>
+    public bool Osnap{ get; set; }
+
+    public bool SnapToLocked{ get; set; }
+
+    public bool UniversalConstructionPlaneMode{ get; set; }
+
+
+    public double OrthoAngle{ get; set; }
+
+    ///<summary>Enables or disables Rhino&apos;s object snap projection.</summary>
+    public double NudgeKeyStep{ get; set; }
+
+    public double CtrlNudgeKeyStep{ get; set; }
+
+    public double ShiftNudgeKeyStep{ get; set; }
+
+    ///<summary>Enables or disables Rhino's planar modeling aid.</summary>
+    public int OsnapPickboxRadius{ get; set; }
+
+    ///<summary>0 = world, 1 = cplane, 2 = view, 3 = uvn, -1 = not set</summary>
+    public int NudgeMode{ get; set; }
+
+    public int ControlPolygonDisplayDensity{ get; set; }
+
+    public CursorMode OsnapCursorMode{ get; set; }
+
+    ///<summary>
+    ///Returns or sets Rhino's current object snap mode.
+    ///The mode is a bitwise value based on the OsnapModes enumeration.
+    ///</summary>
+    public OsnapModes OsnapModes{ get; set; }
+
+    ///<summary>radius of mouse pick box in pixels</summary>
+    public int MousePickboxRadius{ get; set; }
+
+    public PointDisplayMode PointDisplay{ get; set; }
+  }
+
   public static class ModelAidSettings
   {
-    static bool GetBool(int which) { return UnsafeNativeMethods.RhModelAidSettings_GetSetBool(which, false, false); }
-    static void SetBool(int which, bool b) { UnsafeNativeMethods.RhModelAidSettings_GetSetBool(which, true, b); }
+    static ModelAidSettingsState CreateState(bool current)
+    {
+      IntPtr pSettings = UnsafeNativeMethods.CRhinoAppModelAidSettings_New(current);
+      ModelAidSettingsState rc = new ModelAidSettingsState();
+      rc.GridSnap = GetBool(idxGridSnap, pSettings);
+      rc.Ortho = GetBool(idxOrtho, pSettings);
+      rc.Planar = GetBool(idxPlanar, pSettings);
+      rc.ProjectSnapToCPlane = GetBool(idxProjectSnapToCPlane, pSettings);
+      rc.UseHorizontalDialog = GetBool(idxUseHorizontalDialog, pSettings);
+      rc.ExtendTrimLines = GetBool(idxExtendTrimLines, pSettings);
+      rc.ExtendToApparentIntersection = GetBool(idxExtendToApparentIntersection, pSettings);
+      rc.AltPlusArrow = GetBool(idxAltPlusArrow, pSettings);
+      rc.DisplayControlPolygon = GetBool(idxDisplayControlPolygon, pSettings);
+      rc.HighlightControlPolygon = GetBool(idxHighlightControlPolygon, pSettings);
+      rc.Osnap = !GetBool(idxOsnap, pSettings);
+      rc.SnapToLocked = GetBool(idxSnapToLocked, pSettings);
+      rc.UniversalConstructionPlaneMode = GetBool(idxUniversalConstructionPlaneMode, pSettings);
+      rc.OrthoAngle = GetDouble(idxOrthoAngle, pSettings);
+      rc.NudgeKeyStep = GetDouble(idxNudgeKeyStep, pSettings);
+      rc.CtrlNudgeKeyStep = GetDouble(idxCtrlNudgeKeyStep, pSettings);
+      rc.ShiftNudgeKeyStep = GetDouble(idxShiftNudgeKeyStep, pSettings);
+      rc.OsnapPickboxRadius = GetInt(idxOsnapPickboxRadius, pSettings);
+      rc.NudgeMode = GetInt(idxNudgeMode, pSettings);
+      rc.ControlPolygonDisplayDensity = GetInt(idxControlPolygonDisplayDensity, pSettings);
+      rc.OsnapCursorMode = (CursorMode)GetInt(idxOSnapCursorMode, pSettings);
+      rc.OsnapModes = (OsnapModes)GetInt(idxOSnapModes, pSettings);
+      rc.MousePickboxRadius = GetInt(idxMousePickboxRadius, pSettings);
+      rc.PointDisplay = (PointDisplayMode)GetInt(idxPointDisplay, pSettings);
+
+      UnsafeNativeMethods.CRhinoAppModelAidSettings_Delete(pSettings);
+      return rc;
+    }
+
+    public static ModelAidSettingsState GetCurrentState()
+    {
+      return CreateState(true);
+    }
+
+    public static ModelAidSettingsState GetDefaultState()
+    {
+      return CreateState(false);
+    }
+
+    public static void UpdateFromState(ModelAidSettingsState state)
+    {
+      GridSnap = state.GridSnap;
+      Ortho = state.Ortho;
+      Planar = state.Planar;
+      ProjectSnapToCPlane = state.ProjectSnapToCPlane;
+      UseHorizontalDialog = state.UseHorizontalDialog;
+      ExtendTrimLines = state.ExtendTrimLines;
+      ExtendToApparentIntersection = state.ExtendToApparentIntersection;
+      AltPlusArrow = state.AltPlusArrow;
+      DisplayControlPolygon = state.DisplayControlPolygon;
+      HighlightControlPolygon = state.HighlightControlPolygon;
+      Osnap = state.Osnap;
+      SnapToLocked = state.SnapToLocked;
+      UniversalConstructionPlaneMode = state.UniversalConstructionPlaneMode;
+      OrthoAngle = state.OrthoAngle;
+      NudgeKeyStep = state.NudgeKeyStep;
+      CtrlNudgeKeyStep = state.CtrlNudgeKeyStep;
+      ShiftNudgeKeyStep = state.ShiftNudgeKeyStep;
+      OsnapPickboxRadius = state.OsnapPickboxRadius;
+      NudgeMode = state.NudgeMode;
+      ControlPolygonDisplayDensity = state.ControlPolygonDisplayDensity;
+      OsnapCursorMode = state.OsnapCursorMode;
+      OsnapModes = state.OsnapModes;
+      MousePickboxRadius = state.MousePickboxRadius;
+      PointDisplay = state.PointDisplay;
+    }
+
+    static bool GetBool(int which, IntPtr pSettings)
+    {
+      return UnsafeNativeMethods.RhModelAidSettings_GetSetBool(which, false, false, pSettings);
+    }
+    static bool GetBool(int which) { return GetBool(which, IntPtr.Zero); }
+    static void SetBool(int which, bool b) { UnsafeNativeMethods.RhModelAidSettings_GetSetBool(which, true, b, IntPtr.Zero); }
     const int idxGridSnap = 0;
     const int idxOrtho = 1;
     const int idxPlanar = 2;
@@ -1209,9 +1353,9 @@ namespace Rhino.ApplicationSettings
       set { SetBool(idxUniversalConstructionPlaneMode, value); }
     }
 
-
-    static double GetDouble(int which) { return UnsafeNativeMethods.RhModelAidSettings_GetSetDouble(which, false, 0); }
-    static void SetDouble(int which, double d) { UnsafeNativeMethods.RhModelAidSettings_GetSetDouble(which, true, d); }
+    static double GetDouble(int which, IntPtr pSettings) { return UnsafeNativeMethods.RhModelAidSettings_GetSetDouble(which, false, 0, pSettings); }
+    static double GetDouble(int which) { return GetDouble(which, IntPtr.Zero); }
+    static void SetDouble(int which, double d) { UnsafeNativeMethods.RhModelAidSettings_GetSetDouble(which, true, d, IntPtr.Zero); }
     const int idxOrthoAngle = 0;
     const int idxNudgeKeyStep = 1;
     const int idxCtrlNudgeKeyStep = 2;
@@ -1239,8 +1383,9 @@ namespace Rhino.ApplicationSettings
       set { SetDouble(idxShiftNudgeKeyStep, value); }
     }
 
-    static int GetInt(int which) { return UnsafeNativeMethods.RhModelAidSettings_GetSetInt(which, false, 0); }
-    static void SetInt(int which, int i) { UnsafeNativeMethods.RhModelAidSettings_GetSetInt(which, true, i); }
+    static int GetInt(int which, IntPtr pSettings) { return UnsafeNativeMethods.RhModelAidSettings_GetSetInt(which, false, 0, pSettings); }
+    static int GetInt(int which) { return GetInt(which, IntPtr.Zero); }
+    static void SetInt(int which, int i) { UnsafeNativeMethods.RhModelAidSettings_GetSetInt(which, true, i, IntPtr.Zero); }
     const int idxOsnapPickboxRadius = 0;
     const int idxNudgeMode = 1;
     const int idxControlPolygonDisplayDensity = 2;

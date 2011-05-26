@@ -233,5 +233,20 @@ namespace Rhino.DocObjects.Tables
     {
       return UnsafeNativeMethods.CRhinoGroupTable_GroupOp(m_doc.m_docId, groupIndex, idxGroupObjectCount);
     }
+
+    /// <summary>
+    /// Get an array of all of the objects in a group
+    /// </summary>
+    /// <param name="groupIndex"></param>
+    /// <returns></returns>
+    public RhinoObject[] GroupMembers(int groupIndex)
+    {
+      using (Rhino.Runtime.INTERNAL_RhinoObjectArray rhobjs = new Runtime.INTERNAL_RhinoObjectArray())
+      {
+        IntPtr pRhinoObjects = rhobjs.NonConstPointer();
+        UnsafeNativeMethods.CRhinoGroupTable_GroupMembers(m_doc.m_docId, groupIndex, pRhinoObjects);
+        return rhobjs.ToArray();
+      }
+    }
   }
 }

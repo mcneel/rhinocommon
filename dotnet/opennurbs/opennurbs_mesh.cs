@@ -2353,6 +2353,29 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
+    /// Get indices of edges that surround a given face
+    /// </summary>
+    /// <param name="faceIndex"></param>
+    /// <returns></returns>
+    public int[] GetEdgesForFace(int faceIndex)
+    {
+      IntPtr pConstMesh = m_mesh.ConstPointer();
+      int a = 0, b = 0, c = 0, d = 0;
+      UnsafeNativeMethods.ON_MeshTopologyFace_Edges(pConstMesh, faceIndex, ref a, ref b, ref c, ref d);
+
+      if (a < 0 || b<0 || c<0 || d<0)
+      {
+        if (faceIndex < 0 || faceIndex >= m_mesh.Faces.Count)
+          throw new IndexOutOfRangeException();
+        return new int[0];
+      }
+
+      if (c == d)
+        return new int[] { a, b, c };
+      return new int[] { a, b, c, d };
+    }
+
+    /// <summary>
     /// returns index of edge that connects topological vertices. 
     /// returns -1 if no edge is found.
     /// </summary>
@@ -2918,6 +2941,37 @@ namespace Rhino.Geometry.Collections
       Point3d rc = new Point3d();
       if (!UnsafeNativeMethods.ON_Mesh_GetFaceCenter(pConstThis, faceIndex, ref rc))
         throw new IndexOutOfRangeException();
+      return rc;
+    }
+
+    /// <summary>
+    /// Get all faces that share a topological edge with a given face
+    /// </summary>
+    /// <param name="faceIndex"></param>
+    /// <returns></returns>
+    public int[] AdjacentFaces(int faceIndex)
+    {
+      int[] edges = m_mesh.TopologyEdges.GetEdgesForFace(faceIndex);
+      if (null == edges || edges.Length < 1)
+        return new int[0];
+
+      Dictionary<int, int> face_ids = new Dictionary<int, int>();
+      for (int i = 0; i < edges.Length; i++)
+      {
+        int edgeIndex = edges[i];
+        int[] faces = m_mesh.TopologyEdges.GetConnectedFaces(edgeIndex);
+        if (faces == null)
+          continue;
+        for (int j = 0; j < faces.Length; j++)
+        {
+          int face_id = faces[j];
+          if (face_id != faceIndex)
+            face_ids[face_id] = face_id;
+        }
+      }
+
+      int[] rc = new int[face_ids.Count];
+      face_ids.Keys.CopyTo(rc,0);
       return rc;
     }
     #endregion

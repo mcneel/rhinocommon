@@ -216,7 +216,7 @@ namespace Rhino.DocObjects
       get
       {
         IntPtr ptr = ConstPointer();
-        return UnsafeNativeMethods.ON_Object_IsValid(ptr);
+        return UnsafeNativeMethods.ON_Object_IsValid(ptr, IntPtr.Zero);
       }
     }
 

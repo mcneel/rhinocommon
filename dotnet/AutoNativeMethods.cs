@@ -1233,6 +1233,14 @@ internal partial class UnsafeNativeMethods
   //void CRhinoUnrollResults_GetPoints( CRhCmnUnrollResults* pResults, int count, /*ARRAY*/ON_3dPoint* points)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoUnrollResults_GetPoints(IntPtr pResults, int count, [In,Out] Point3d[] points);
+
+  //ON_Brep* CRhinoFitPatch_Fit1(ON_SimpleArray<const ON_Geometry*>* pGeometryArray, const ON_Surface* pConstSurface, double tolerance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoFitPatch_Fit1(IntPtr pGeometryArray, IntPtr pConstSurface, double tolerance);
+
+  //ON_Brep* CRhinoFitPatch_Fit2(ON_SimpleArray<const ON_Geometry*>* pGeometryArray, int uSpans, int vSpans, double tolerance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoFitPatch_Fit2(IntPtr pGeometryArray, int uSpans, int vSpans, double tolerance);
   #endregion
 
 
@@ -2864,10 +2872,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern uint ON_Object_ObjectType(IntPtr pObject);
 
-  //bool ON_Object_IsValid(const ON_Object* pObject)
+  //bool ON_Object_IsValid(const ON_Object* pConstObject, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Object_IsValid(IntPtr pObject);
+  internal static extern bool ON_Object_IsValid(IntPtr pConstObject, IntPtr pStringHolder);
 
   //unsigned int ON_Object_SizeOf(const ON_Object* pObject)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

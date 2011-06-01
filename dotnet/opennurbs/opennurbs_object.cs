@@ -158,8 +158,27 @@ namespace Rhino.Runtime
     {
       get
       {
-        IntPtr ptr = ConstPointer();
-        return UnsafeNativeMethods.ON_Object_IsValid(ptr);
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_Object_IsValid(pConstThis, IntPtr.Zero);
+      }
+    }
+
+    /// <summary>
+    /// Tests an object to see if it is valid. Also provides a report on errors if this
+    /// object happens to not be valid.
+    /// </summary>
+    /// <param name="log"></param>
+    /// <returns></returns>
+    public bool IsValidWithLog(out string log)
+    {
+      log = String.Empty;
+      IntPtr pConstThis = ConstPointer();
+      using (StringHolder sh = new StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        bool rc = UnsafeNativeMethods.ON_Object_IsValid(pConstThis, pString);
+        log = sh.ToString();
+        return rc;
       }
     }
 

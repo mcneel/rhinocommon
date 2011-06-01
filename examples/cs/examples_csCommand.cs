@@ -1,6 +1,7 @@
 using System;
 using Rhino;
 using Rhino.Geometry;
+using System.Collections.Generic;
 
 namespace examples_cs
 {
@@ -35,9 +36,36 @@ namespace examples_cs
       RhinoApp.WriteLine("[TEST DONE] - result = " + rc.ToString());
     }
 
+    static Brep m_brep;
+    static double m_tol;
+    static void RadialContourHelper(int i)
+    {
+      double radians = RhinoMath.ToRadians(i);
+      var plane = Rhino.Geometry.Plane.WorldXY;
+      var axis = Rhino.Geometry.Vector3d.YAxis;
+      plane.Rotate(radians, axis, Rhino.Geometry.Point3d.Origin);
+      Curve[] curves;
+      Point3d[] points;
+      Rhino.Geometry.Intersect.Intersection.BrepPlane(m_brep, plane, m_tol, out curves, out points);
+    }
+
     static void RadialContour(bool parallel, Brep brep)
     {
       const int COUNT = 360;
+      m_brep = brep;
+      m_tol = RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
+      if (parallel)
+      {
+        System.Threading.Tasks.Parallel.For(0, COUNT, RadialContourHelper);
+      }
+      else
+      {
+        for (int i = 0; i < COUNT; i++)
+        {
+          RadialContourHelper(i);
+        }
+      }
+      m_brep = null;
 
       /*
     slices = range(COUNT)
@@ -87,9 +115,9 @@ namespace examples_cs
       return Rhino.Commands.Result.Success;
     }
 
-
     protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
     {
+      //return TestMt(doc);
       examples_csPlugIn.ThePlugIn.IncrementRunCommandCount();
       //Test(Examples.ActiveViewport, doc);
       //Test(Examples.AddBrepBox, doc);
@@ -119,18 +147,20 @@ namespace examples_cs
       //Test(Examples.BlockInsertionPoint, doc);
       //Test(Examples.CommandLineOptions, doc);
       //Test(Examples.ConstrainedCopy, doc);
-      Test(Examples.CreateBlock, doc);
+      //Test(Examples.CreateBlock, doc);
       //Test(Examples.DivideByLengthPoints, doc);
       //Test(Examples.DetermineObjectLayer, doc);
       //Test(Examples.DupBorder, doc);
       //Test(Examples.FindObjectsByName, doc);
       //Test(Examples.InsertKnot, doc);
       //Test(Examples.IntersectLines, doc);
+      Test(Examples.IsocurveDensity, doc);
       //Test(Examples.MoveCPlane, doc);
+      //Test(Examples.ObjectDecoration, doc);
       //Test(Examples.ObjectDisplayMode, doc);
       //Test(Examples.OrientOnSrf, doc);
       //Test(Examples.SelLayer, doc);
-   //   Test(Examples.Sweep1, doc);
+      //Test(Examples.Sweep1, doc);
       //Test(Examples.UnrollSurface, doc);
       //Test(Examples.UnrollSurface2, doc);
 

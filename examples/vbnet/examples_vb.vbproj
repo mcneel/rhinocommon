@@ -113,11 +113,14 @@
     <Compile Include="ex_constrainedcopy.vb" />
     <Compile Include="ex_insertknot.vb" />
     <Compile Include="ex_intersectlines.vb" />
+    <Compile Include="ex_isocurvedensity.vb" />
     <Compile Include="ex_movecplane.vb" />
+    <Compile Include="ex_objectdecoration.vb" />
     <Compile Include="ex_objectdisplaymode.vb" />
     <Compile Include="ex_objectlayer.vb" />
     <Compile Include="ex_orientonsrf.vb" />
     <Compile Include="ex_sellayer.vb" />
+    <Compile Include="ex_sweep1.vb" />
     <Compile Include="ex_unrollsurface.vb" />
     <Compile Include="ex_unrollsurface2.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

@@ -100,7 +100,9 @@
     <Compile Include="ex_constrainedcopy.cs" />
     <Compile Include="ex_insertknot.cs" />
     <Compile Include="ex_intersectlines.cs" />
+    <Compile Include="ex_isocurvedensity.cs" />
     <Compile Include="ex_movecplane.cs" />
+    <Compile Include="ex_objectdecoration.cs" />
     <Compile Include="ex_objectdisplaymode.cs" />
     <Compile Include="ex_objectlayer.cs" />
     <Compile Include="ex_orientonsrf.cs" />

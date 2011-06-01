@@ -398,6 +398,64 @@ namespace Rhino.Geometry
       outbreps.Dispose();
       return rc;
     }
+
+    /// <summary>
+    /// Simple version of fit that uses a specified starting surface
+    /// </summary>
+    /// <param name="geometry">
+    /// Combination of Curves, BrepTrims, Points, PointClouds or Meshes.
+    /// Curves and trims are sampled to get points. Trims are sampled for
+    /// points and normals
+    /// </param>
+    /// <param name="startingSurface"></param>
+    /// <param name="tolerance">
+    /// Tolerance used by input analysis functions for loop finding, trimming, etc
+    /// </param>
+    /// <returns>
+    /// Brep fit through input on success. null on error
+    /// </returns>
+    public static Brep CreatePatch(IEnumerable<GeometryBase> geometry, Surface startingSurface, double tolerance)
+    {
+      using (Rhino.Runtime.INTERNAL_GeometryArray _g = new Runtime.INTERNAL_GeometryArray(geometry))
+      {
+        IntPtr pGeometry = _g.NonConstPointer();
+        IntPtr pSurface = startingSurface.ConstPointer();
+        IntPtr pBrep = UnsafeNativeMethods.CRhinoFitPatch_Fit1(pGeometry, pSurface, tolerance);
+        if (IntPtr.Zero == pBrep)
+          return null;
+        return new Brep(pBrep, null);
+      }
+    }
+
+    /// <summary>
+    /// Simple version of fit that uses a plane with u x v spans.  Makes a plane by fitting to
+    /// the points from the input geometry to use as the starting surface. The surface has the
+    /// specified u and v span count.
+    /// </summary>
+    /// <param name="geometry">
+    /// Combination of Curves, BrepTrims, Points, PointClouds or Meshes.
+    /// Curves and trims are sampled to get points. Trims are sampled for
+    /// points and normals
+    /// </param>
+    /// <param name="uSpans"></param>
+    /// <param name="vSpans"></param>
+    /// <param name="tolerance">
+    /// Tolerance used by input analysis functions for loop finding, trimming, etc
+    /// </param>
+    /// <returns>
+    /// Brep fit through input on success. null on error
+    /// </returns>
+    public static Brep CreatePatch(IEnumerable<GeometryBase> geometry, int uSpans, int vSpans, double tolerance)
+    {
+      using (Rhino.Runtime.INTERNAL_GeometryArray _g = new Runtime.INTERNAL_GeometryArray(geometry))
+      {
+        IntPtr pGeometry = _g.NonConstPointer();
+        IntPtr pBrep = UnsafeNativeMethods.CRhinoFitPatch_Fit2(pGeometry, uSpans, vSpans, tolerance);
+        if (IntPtr.Zero == pBrep)
+          return null;
+        return new Brep(pBrep, null);
+      }
+    }
 #endif
 
     /// <summary>

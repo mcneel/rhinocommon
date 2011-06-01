@@ -517,6 +517,11 @@ namespace Rhino.DocObjects
     /// 1        boundary and knot wires and, if there are no interior knots, a single interior wire.
     /// N>=2     boundary and knot wires and (N+1) interior wires
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_isocurvedensity.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_isocurvedensity.cs' lang='cs'/>
+    /// <code source='examples\py\ex_isocurvedensity.py' lang='py'/>
+    /// </example>
     public int WireDensity
     {
       get { return GetInt(idxWireDensity); }

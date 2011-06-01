@@ -120,6 +120,21 @@ namespace Rhino.Geometry
       m_from = start;
       m_to = start + dir * length;
     }
+
+    /// <summary>
+    /// Create a new line segment between two points.
+    /// </summary>
+    /// <param name="x0"></param>
+    /// <param name="y0"></param>
+    /// <param name="z0"></param>
+    /// <param name="x1"></param>
+    /// <param name="y1"></param>
+    /// <param name="z1"></param>
+    public Line(double x0, double y0, double z0, double x1, double y1, double z1)
+    {
+      m_from = new Point3d(x0, y0, z0);
+      m_to = new Point3d(x1, y1, z1);
+    }
     #endregion
 
     #region constants

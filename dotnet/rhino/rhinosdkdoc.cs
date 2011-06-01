@@ -413,6 +413,11 @@ namespace Rhino
     /// The attributes will be linked to the currently active layer 
     /// and they will inherit the Document WireDensity setting.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_objectdecoration.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_objectdecoration.cs' lang='cs'/>
+    /// <code source='examples\py\ex_objectdecoration.py' lang='py'/>
+    /// </example>
     public DocObjects.ObjectAttributes CreateDefaultAttributes()
     {
       DocObjects.ObjectAttributes rc = new Rhino.DocObjects.ObjectAttributes();

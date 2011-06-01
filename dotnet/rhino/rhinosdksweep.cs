@@ -13,6 +13,11 @@ namespace Rhino.Geometry
     double m_sweep_tol = -1;
     double m_angle_tol = -1;
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_sweep1.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_sweep1.cs' lang='cs'/>
+    /// <code source='examples\py\ex_sweep1.py' lang='py'/>
+    /// </example>
     public SweepOneRail()
     {
     }
@@ -109,15 +114,34 @@ namespace Rhino.Geometry
       return PerformSweep(rail, new Curve[] { crossSection }, new double[] { crossSectionParameter });
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_sweep1.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_sweep1.cs' lang='cs'/>
+    /// <code source='examples\py\ex_sweep1.py' lang='py'/>
+    /// </example>
     public Brep[] PerformSweep(Curve rail, IEnumerable<Curve> crossSections)
     {
       List<double> rail_params = new List<double>();
+      Interval domain = rail.Domain;
       foreach (Curve c in crossSections)
       {
         Point3d point_at_start = c.PointAtStart;
         double t;
         rail.ClosestPoint(point_at_start, out t);
+        if (t == domain.Max)
+          t = domain.Max - RhinoMath.SqrtEpsilon;
         rail_params.Add(t);
+      }
+
+      if (rail_params.Count == 1 && Math.Abs(rail_params[0]-rail.Domain.Max)<=RhinoMath.SqrtEpsilon )
+      {
+        // 27 May 2011 - S. Baer
+        // I had to dig through source for quite a while to figure out what is going on, but
+        // if there is only one cross section and we are NOT using start/end points, then a
+        // rail_param at rail.Domain.Max is appended which completely messes things up when the
+        // only shape curve is already at the max domain of the rail.
+        rail.Reverse();
+        rail_params[0] = rail.Domain.Min;
       }
       return PerformSweep(rail, crossSections, rail_params);
     }
@@ -173,6 +197,17 @@ namespace Rhino.Geometry
 
     public Brep[] PerformSweep(Curve rail, IEnumerable<Curve> crossSections, IEnumerable<double> crossSectionParameters)
     {
+      List<Curve> sections = new List<Curve>(crossSections);
+      List<double> parameters = new List<double>(crossSectionParameters);
+      if (sections.Count > 1 && sections.Count == parameters.Count)
+      {
+        Curve[] crvs = sections.ToArray();
+        double[] par = parameters.ToArray();
+        Array.Sort(par, crvs);
+        crossSections = crvs;
+        crossSectionParameters = par;
+      }
+
       ArgsSweep1 sweep = ArgsSweep1.Construct(rail, crossSections, crossSectionParameters, m_roadlike_up, m_bClosed, m_sweep_tol, m_angle_tol);
       Runtime.INTERNAL_BrepArray breps = new Rhino.Runtime.INTERNAL_BrepArray();
       IntPtr pArgsSweep1 = sweep.NonConstPointer();

@@ -610,7 +610,15 @@ namespace Rhino.Geometry
       return rc;
     }
     #endregion
-
+/*
+    public Rhino.Collections.ArchivableDictionary GetUserDictionary(bool createIfMissing)
+    {
+    }
+    public bool HasUserDictionary
+    {
+      get { }
+    }
+*/
   }
 
   // DO NOT make public

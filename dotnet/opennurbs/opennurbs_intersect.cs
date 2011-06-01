@@ -407,16 +407,23 @@ namespace Rhino.Geometry.Intersect
     /// <returns>A list of intersection events or null if no intersections were recorded.</returns>
     public static CurveIntersections CurvePlane(Curve curve, Plane plane, double tolerance)
     {
-      //David sez: replace this logic with the dedicated Geometry/Plane intersector methods in Rhino5.
       if (!plane.IsValid)
         return null;
 
+#if USING_V5_SDK
+      // Use dedicated plane intersector in Rhino5
+      IntPtr pConstCurve = curve.ConstPointer();
+      plane.GetPlaneEquation();
+      IntPtr pIntersectArray = UnsafeNativeMethods.ON_Curve_IntersectPlane(pConstCurve, ref plane, tolerance);
+      return CurveIntersections.Create(pIntersectArray);
+#else
       PlaneSurface section = ExtendThroughBox(plane, curve.GetBoundingBox(false), 1.0); //should this be 1.0 or 100.0*tolerance?
       if (section == null)
         return null;
       CurveIntersections rc = CurveSurface(curve, section, tolerance, 5 * tolerance);
       section.Dispose();
       return rc;
+#endif
     }
     /// <summary>
     /// Intersect a Brep with an (infinite) plane.
@@ -502,12 +509,7 @@ namespace Rhino.Geometry.Intersect
     {
       IntPtr pCurve = curve.ConstPointer();
       IntPtr pIntersectArray = UnsafeNativeMethods.ON_Intersect_CurveSelf(pCurve, tolerance);
-      if (pIntersectArray == IntPtr.Zero)
-        return null;
-
-      int count = UnsafeNativeMethods.ON_Intersect_IntersectArrayCount(pIntersectArray);
-
-      return new CurveIntersections(pIntersectArray, count);
+      return CurveIntersections.Create(pIntersectArray);
     }
     /// <summary>
     /// Find the intersections between two curves. 
@@ -523,12 +525,7 @@ namespace Rhino.Geometry.Intersect
       IntPtr pCurveA = curveA.ConstPointer();
       IntPtr pCurveB = curveB.ConstPointer();
       IntPtr pIntersectArray = UnsafeNativeMethods.ON_Intersect_CurveCurve(pCurveA, pCurveB, tolerance, overlapTolerance);
-      if (pIntersectArray == IntPtr.Zero)
-        return null;
-
-      int count = UnsafeNativeMethods.ON_Intersect_IntersectArrayCount(pIntersectArray);
-
-      return new CurveIntersections(pIntersectArray, count);
+      return CurveIntersections.Create(pIntersectArray);
     }
     /// <summary>
     /// Intersect a curve and a surface.
@@ -547,12 +544,7 @@ namespace Rhino.Geometry.Intersect
         overlapTolerance = tolerance;
 
       IntPtr pIntersectArray = UnsafeNativeMethods.ON_Intersect_CurveSurface(pCurve, pSurface, tolerance, overlapTolerance);
-      if (pIntersectArray == IntPtr.Zero)
-        return null;
-
-      int count = UnsafeNativeMethods.ON_Intersect_IntersectArrayCount(pIntersectArray);
-
-      return new CurveIntersections(pIntersectArray, count);
+      return CurveIntersections.Create(pIntersectArray);
     }
     /// <summary>
     /// Intersect a (sub)curve and a surface.
@@ -574,12 +566,7 @@ namespace Rhino.Geometry.Intersect
       IntPtr pCurve = curve.ConstPointer();
       IntPtr pSurface = surface.ConstPointer();
       IntPtr pIntersectArray = UnsafeNativeMethods.ON_Intersect_CurveSurface2(pCurve, pSurface, t0, t1, tolerance, overlapTolerance);
-      if (pIntersectArray == IntPtr.Zero)
-        return null;
-
-      int count = UnsafeNativeMethods.ON_Intersect_IntersectArrayCount(pIntersectArray);
-
-      return new CurveIntersections(pIntersectArray, count);
+      return CurveIntersections.Create(pIntersectArray);
     }
     /// <summary>
     /// Intersect a curve with a Brep. This function returns the 3D points of intersection

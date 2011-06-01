@@ -3,7 +3,7 @@ Imports System.Collections.Generic
 
 Partial Class Examples
   Public Shared Function Sweep1(doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-    Dim rail_ref As Rhino.DocObjects.ObjRef
+    Dim rail_ref As Rhino.DocObjects.ObjRef = Nothing
     Dim rc = RhinoGet.GetOneObject("Select rail curve", False, Rhino.DocObjects.ObjectType.Curve, rail_ref)
     If rc <> Rhino.Commands.Result.Success Then
       Return rc

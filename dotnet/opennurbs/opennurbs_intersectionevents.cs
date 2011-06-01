@@ -171,10 +171,18 @@ namespace Rhino.Geometry.Intersect
     #endregion
 
     #region constructor
+    internal static CurveIntersections Create(IntPtr pIntersectionArray)
+    {
+      if (IntPtr.Zero == pIntersectionArray)
+        return null;
+      int count = UnsafeNativeMethods.ON_Intersect_IntersectArrayCount(pIntersectionArray);
+      return new CurveIntersections(pIntersectionArray, count);
+    }
+
     /// <summary>
     /// Constructor.
     /// </summary>
-    internal CurveIntersections(IntPtr ptr, int count)
+    CurveIntersections(IntPtr ptr, int count)
     {
       m_ptr = ptr;
       m_count = count;

@@ -1504,6 +1504,10 @@ internal partial class UnsafeNativeMethods
   //                                             ON_SimpleArray<ON_Curve*>* pCurves )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_RhinoOffsetCurveOnSrf3(IntPtr pConstCurve, IntPtr pConstBrep, int faceId, int count, double[] parameters, double[] dists, double tol, IntPtr pCurves);
+
+  //ON_SimpleArray<ON_X_EVENT>* ON_Curve_IntersectPlane(const ON_Curve* pConstCurve, ON_PLANE_STRUCT* plane, double tolerance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_Curve_IntersectPlane(IntPtr pConstCurve, ref Plane plane, double tolerance);
   #endregion
 
 

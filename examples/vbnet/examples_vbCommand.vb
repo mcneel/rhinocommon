@@ -65,6 +65,7 @@ Public Class examples_vbCommand
     Test(AddressOf Examples.DupBorder, doc)
     Test(AddressOf Examples.InsertKnot, doc)
     Test(AddressOf Examples.IntersectLines, doc)
+    Test(AddressOf Examples.InstanceDefinitionObjects, doc)
     Test(AddressOf Examples.IsocurveDensity, doc)
     Test(AddressOf Examples.MoveCPlane, doc)
     Test(AddressOf Examples.ObjectDisplayMode, doc)

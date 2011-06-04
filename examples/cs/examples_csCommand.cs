@@ -154,7 +154,8 @@ namespace examples_cs
       //Test(Examples.FindObjectsByName, doc);
       //Test(Examples.InsertKnot, doc);
       //Test(Examples.IntersectLines, doc);
-      Test(Examples.IsocurveDensity, doc);
+      Test(Examples.InstanceDefinitionObjects, doc);
+      //Test(Examples.IsocurveDensity, doc);
       //Test(Examples.MoveCPlane, doc);
       //Test(Examples.ObjectDecoration, doc);
       //Test(Examples.ObjectDisplayMode, doc);

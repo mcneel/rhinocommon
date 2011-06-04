@@ -112,6 +112,7 @@
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_constrainedcopy.vb" />
     <Compile Include="ex_insertknot.vb" />
+    <Compile Include="ex_instancedefinitionobjects.vb" />
     <Compile Include="ex_intersectlines.vb" />
     <Compile Include="ex_isocurvedensity.vb" />
     <Compile Include="ex_movecplane.vb" />

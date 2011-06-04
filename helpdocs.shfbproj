@@ -21,7 +21,7 @@
       <DocumentationSource sourceFile="dotnet\Debug\RhinoCommon.xml" xmlns="" />
     </DocumentationSources>
     <HelpFileFormat>HtmlHelp1, Website</HelpFileFormat>
-    <CopyrightText>RhinoCommon Build 6 May 2011 - Robert McNeel &amp;amp%3b Associates</CopyrightText>
+    <CopyrightText>Report wishes and bugs: https://github.com/mcneel/rhinocommon/issues</CopyrightText>
     <FeedbackEMailAddress>steve%40mcneel.com</FeedbackEMailAddress>
     <HelpTitle>RhinoCommon SDK</HelpTitle>
     <ProjectLinkType>Local</ProjectLinkType>
@@ -45,6 +45,8 @@
     </ComponentConfigurations>
     <NamingMethod>MemberName</NamingMethod>
     <PresentationStyle>vs2005</PresentationStyle>
+    <FooterText>Last updated 3 June 2011 - Robert McNeel and Associates</FooterText>
+    <CopyrightHref>https://github.com/mcneel/rhinocommon/issues</CopyrightHref>
   </PropertyGroup>
   <!-- There are no properties for these two groups but they need to appear in
        order for Visual Studio to perform the build. -->

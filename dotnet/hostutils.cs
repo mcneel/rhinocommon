@@ -9,16 +9,20 @@ namespace Rhino.Runtime
   /// </summary>
   public abstract class Skin
   {
-    internal delegate void ShowSplashCallback(int mode);
+    internal delegate void ShowSplashCallback(int mode, [MarshalAs(UnmanagedType.LPWStr)] string description);
     private static ShowSplashCallback m_ShowSplash;
     private static Skin m_theSingleSkin;
 
-    internal void OnShowSplash(int mode)
+    internal void OnShowSplash(int mode, string description)
     {
       const int HIDESPLASH = 0;
       const int SHOWSPLASH = 1;
       const int MAINFRAMECREATED = 1000;
       const int LICENSECHECKED = 2000;
+      const int BUILTIN_COMMANDS_REGISTERED = 3000;
+      const int BEGIN_LOAD_PLUGIN = 4000;
+      const int END_LOAD_PLUGIN = 5000;
+      const int BEGIN_LOAD_PLUGINS_BASE = 100000;
       try
       {
         if (m_theSingleSkin != null)
@@ -37,6 +41,20 @@ namespace Rhino.Runtime
             case LICENSECHECKED:
               m_theSingleSkin.OnLicenseCheckCompleted();
               break;
+            case BUILTIN_COMMANDS_REGISTERED:
+              m_theSingleSkin.OnBuiltInCommandsRegistered();
+              break;
+            case BEGIN_LOAD_PLUGIN:
+              m_theSingleSkin.OnBeginLoadPlugIn(description);
+              break;
+            case END_LOAD_PLUGIN:
+              m_theSingleSkin.OnEndLoadPlugIn();
+              break;
+          }
+          if (mode >= BEGIN_LOAD_PLUGINS_BASE)
+          {
+            int count = (mode - BEGIN_LOAD_PLUGINS_BASE);
+            m_theSingleSkin.OnBeginLoadAtStartPlugIns(count);
           }
         }
       }
@@ -64,6 +82,10 @@ namespace Rhino.Runtime
 
     protected virtual void OnMainFrameWindowCreated() { }
     protected virtual void OnLicenseCheckCompleted() { }
+    protected virtual void OnBuiltInCommandsRegistered() { }
+    protected virtual void OnBeginLoadAtStartPlugIns(int expectedCount) { }
+    protected virtual void OnBeginLoadPlugIn(string description) { }
+    protected virtual void OnEndLoadPlugIn() { }
   }
 
   public abstract class PythonCompiledCode

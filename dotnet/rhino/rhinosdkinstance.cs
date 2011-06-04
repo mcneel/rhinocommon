@@ -74,9 +74,12 @@ namespace Rhino.DocObjects
       }
     }
 
-    /// <summary>
-    /// instance definition that this object uses
-    /// </summary>
+    /// <summary>instance definition that this object uses</summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_instancedefinitionobjects.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_instancedefinitionobjects.cs' lang='cs'/>
+    /// <code source='examples\py\ex_instancedefinitionobjects.py' lang='py'/>
+    /// </example>
     public InstanceDefinition InstanceDefinition
     {
       get
@@ -142,6 +145,11 @@ namespace Rhino.DocObjects
     /// Get a list of the objects that belong to this instance definition.
     /// </summary>
     /// <returns></returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_instancedefinitionobjects.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_instancedefinitionobjects.cs' lang='cs'/>
+    /// <code source='examples\py\ex_instancedefinitionobjects.py' lang='py'/>
+    /// </example>
     public DocObjects.RhinoObject[] GetObjects()
     {
       int count = ObjectCount;

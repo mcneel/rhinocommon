@@ -709,11 +709,15 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Combines two or more breps into one
+    /// Combines two or more breps into one. A merge is like a boolean union that keeps the inside pieces. This
+    /// function creates non-manifold Breps which in general are unusual in Rhino. You may want to consider using
+    /// JoinBreps or CreateBooleanUnion functions instead
     /// </summary>
-    /// <param name="brepsToMerge"></param>
-    /// <param name="tolerance"></param>
-    /// <returns></returns>
+    /// <param name="brepsToMerge">must contain more than one Brep</param>
+    /// <param name="tolerance">the tolerance to use when merging</param>
+    /// <returns>Single merged Brep on success. Null on error</returns>
+    /// <seealso cref="JoinBreps"/>
+    /// <seealso cref="CreateBooleanUnion"/>
     public static Brep MergeBreps(System.Collections.Generic.IEnumerable<Brep> brepsToMerge, double tolerance)
     {
       if (null == brepsToMerge)

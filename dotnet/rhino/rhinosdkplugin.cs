@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using Rhino.Runtime;
 using System.Collections.Generic;
+using System.Drawing;
 
 #if RDK_UNCHECKED
 using Rhino.Render;
@@ -2005,7 +2006,6 @@ namespace Rhino.PlugIns
   /// Zoo plugin license data
   /// </summary>
   public class LicenseData
-
   {
     #region LicenseData data
 
@@ -2015,7 +2015,14 @@ namespace Rhino.PlugIns
     LicenseBuildType m_build_type;
     int m_license_count;
     DateTime? m_date_to_expire;
-    IntPtr m_product_icon;
+    Icon m_product_icon;
+
+    public void Dispose()
+    {
+      if (null != m_product_icon)
+        m_product_icon.Dispose();
+      m_product_icon = null;
+    }
 
     /// <summary>
     /// The actual product license. 
@@ -2083,11 +2090,19 @@ namespace Rhino.PlugIns
     /// <summary>
     /// The product's icon. This will displayed in the "license"
     /// page in the Options dialog. Note, this can be null.
+    /// Note, LicenseData creates it's own copy of the icon.
     /// </summary>
-    public IntPtr ProductIcon
+    public Icon ProductIcon
     {
       get { return m_product_icon; }
-      set { m_product_icon = value; }
+      set
+      {
+        if (null != m_product_icon)
+          m_product_icon.Dispose();
+        m_product_icon = null;
+        if (null != value)
+          m_product_icon = (Icon)value.Clone();
+      }
     }
 
     #endregion
@@ -2105,7 +2120,7 @@ namespace Rhino.PlugIns
       BuildType = LicenseBuildType.Release;
       LicenseCount = 1;
       DateToExpire = null;
-      ProductIcon = IntPtr.Zero;
+      ProductIcon = null;
     }
 
     /// <summary>
@@ -2119,7 +2134,7 @@ namespace Rhino.PlugIns
       BuildType = LicenseBuildType.Release;
       LicenseCount = 1;
       DateToExpire = null;
-      ProductIcon = IntPtr.Zero;
+      ProductIcon = null;
     }
 
     /// <summary>
@@ -2133,7 +2148,7 @@ namespace Rhino.PlugIns
       BuildType = buildType;
       LicenseCount = 1;
       DateToExpire = null;
-      ProductIcon = IntPtr.Zero;
+      ProductIcon = null;
     }
 
     /// <summary>
@@ -2147,7 +2162,7 @@ namespace Rhino.PlugIns
       BuildType = buildType;
       LicenseCount = licenseCount;
       DateToExpire = null;
-      ProductIcon = IntPtr.Zero;
+      ProductIcon = null;
     }
 
     /// <summary>
@@ -2161,13 +2176,13 @@ namespace Rhino.PlugIns
       BuildType = buildType;
       LicenseCount = licenseCount;
       DateToExpire = expirationDate;
-      ProductIcon = IntPtr.Zero;
+      ProductIcon = null;
     }
 
     /// <summary>
     /// Public constructor
     /// </summary>
-    public LicenseData(string productLicense, string serialNumber, string licenseTitle, LicenseBuildType buildType, int licenseCount, DateTime? expirationDate, IntPtr productIcon)
+    public LicenseData(string productLicense, string serialNumber, string licenseTitle, LicenseBuildType buildType, int licenseCount, DateTime? expirationDate, Icon productIcon)
     {
       ProductLicense = productLicense;
       SerialNumber = serialNumber;
@@ -2261,7 +2276,7 @@ namespace Rhino.PlugIns
     DateTime? m_checkout_expiration_date;
     string m_registered_owner;
     string m_registered_organization;
-    IntPtr m_product_icon;
+    Icon m_product_icon;
 
     /// <summary>
     /// The id of the product or plugin
@@ -2362,7 +2377,7 @@ namespace Rhino.PlugIns
     /// <summary>
     /// The product's icon. Note, this can be null.
     /// </summary>
-    public IntPtr ProductIcon
+    public Icon ProductIcon
     {
       get { return m_product_icon; }
       set { m_product_icon = value; }
@@ -2386,7 +2401,7 @@ namespace Rhino.PlugIns
       m_checkout_expiration_date = null;
       m_registered_owner = string.Empty;
       m_registered_organization = string.Empty;
-      m_product_icon = IntPtr.Zero;
+      m_product_icon = null;
     }
 
     #endregion

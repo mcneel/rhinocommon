@@ -1092,6 +1092,11 @@ namespace Rhino.DocObjects
       return ObjRefToGeometryHelper(pClippingPlaneSurface) as Rhino.Geometry.ClippingPlaneSurface;
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_intersectcurves.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_intersectcurves.cs' lang='cs'/>
+    /// <code source='examples\py\ex_intersectcurves.py' lang='py'/>
+    /// </example>
     public Geometry.Curve Curve()
     {
       IntPtr pCurve = UnsafeNativeMethods.CRhinoObjRef_Curve(m_ptr);

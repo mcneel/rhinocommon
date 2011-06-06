@@ -958,6 +958,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="other">Other point for distance measurement.</param>
     /// <returns>The distance between this point and other.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_intersectcurves.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_intersectcurves.cs' lang='cs'/>
+    /// <code source='examples\py\ex_intersectcurves.py' lang='py'/>
+    /// </example>
     public double DistanceTo(Point3d other)
     {
       double d;

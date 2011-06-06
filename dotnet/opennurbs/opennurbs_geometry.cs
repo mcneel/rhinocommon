@@ -387,8 +387,15 @@ namespace Rhino.Geometry
     /// difference between the estimate and the accurate boundingbox. Estimated boundingboxes 
     /// can be computed much (much) faster than accurate (or "tight") bounding boxes. 
     /// Estimated bounding boxes are always similar to or larger than accurate bounding boxes.</param>
-    /// <returns>The boundingbox of the geometry in world coordinates or BoundingBox.Empty 
-    /// if not bounding box could be found.</returns>
+    /// <returns>
+    /// The boundingbox of the geometry in world coordinates or BoundingBox.Empty 
+    /// if not bounding box could be found.
+    /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_curveboundingbox.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_curveboundingbox.cs' lang='cs'/>
+    /// <code source='examples\py\ex_curveboundingbox.py' lang='py'/>
+    /// </example>
     public BoundingBox GetBoundingBox(bool accurate)
     {
       Rhino.DocObjects.RhinoObject parent_object = ParentRhinoObject();
@@ -447,6 +454,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="plane">Orientation plane for BoundingBox.</param>
     /// <returns>A BoundingBox in plane coordinates.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_curveboundingbox.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_curveboundingbox.cs' lang='cs'/>
+    /// <code source='examples\py\ex_curveboundingbox.py' lang='py'/>
+    /// </example>
     public BoundingBox GetBoundingBox(Plane plane)
     {
       if (!plane.IsValid) { return BoundingBox.Unset; }

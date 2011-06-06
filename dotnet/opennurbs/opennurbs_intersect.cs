@@ -520,6 +520,11 @@ namespace Rhino.Geometry.Intersect
     /// an intersection is assumed.</param>
     /// <param name="overlapTolerance"></param>
     /// <returns>A list of intersection events.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_intersectcurves.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_intersectcurves.cs' lang='cs'/>
+    /// <code source='examples\py\ex_intersectcurves.py' lang='py'/>
+    /// </example>
     public static CurveIntersections CurveCurve(Curve curveA, Curve curveB, double tolerance, double overlapTolerance)
     {
       IntPtr pCurveA = curveA.ConstPointer();

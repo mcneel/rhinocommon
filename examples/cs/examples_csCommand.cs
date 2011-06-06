@@ -148,13 +148,15 @@ namespace examples_cs
       //Test(Examples.CommandLineOptions, doc);
       //Test(Examples.ConstrainedCopy, doc);
       //Test(Examples.CreateBlock, doc);
+      //Test(Examples.CurveBoundingBox, doc);
       //Test(Examples.DivideByLengthPoints, doc);
       //Test(Examples.DetermineObjectLayer, doc);
       //Test(Examples.DupBorder, doc);
       //Test(Examples.FindObjectsByName, doc);
+      Test(Examples.IntersectCurves, doc);
       //Test(Examples.InsertKnot, doc);
       //Test(Examples.IntersectLines, doc);
-      Test(Examples.InstanceDefinitionObjects, doc);
+      //Test(Examples.InstanceDefinitionObjects, doc);
       //Test(Examples.IsocurveDensity, doc);
       //Test(Examples.MoveCPlane, doc);
       //Test(Examples.ObjectDecoration, doc);

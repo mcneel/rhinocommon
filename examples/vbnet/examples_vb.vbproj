@@ -107,12 +107,14 @@
     <Compile Include="ex_circlecenter.vb" />
     <Compile Include="ex_commandlineoptions.vb" />
     <Compile Include="ex_createblock.vb" />
+    <Compile Include="ex_curveboundingbox.vb" />
     <Compile Include="ex_dividebylength.vb" />
     <Compile Include="ex_dupborder.vb" />
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_constrainedcopy.vb" />
     <Compile Include="ex_insertknot.vb" />
     <Compile Include="ex_instancedefinitionobjects.vb" />
+    <Compile Include="ex_intersectcurves.vb" />
     <Compile Include="ex_intersectlines.vb" />
     <Compile Include="ex_isocurvedensity.vb" />
     <Compile Include="ex_movecplane.vb" />

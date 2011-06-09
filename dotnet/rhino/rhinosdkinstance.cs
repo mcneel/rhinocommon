@@ -197,25 +197,28 @@ namespace Rhino.DocObjects
     /// <returns></returns>
     public InstanceDefinition[] GetContainers()
     {
-      Runtime.InteropWrappers.SimpleArrayInt arr = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
-      IntPtr ptr = arr.m_ptr;
-      int count = UnsafeNativeMethods.CRhinoInstanceDefinition_GetContainers(m_doc.m_docId, m_index, ptr);
-      InstanceDefinition[] rc = null;
-      if( count>0 )
+      using (Runtime.InteropWrappers.SimpleArrayInt arr = new Rhino.Runtime.InteropWrappers.SimpleArrayInt())
       {
-        int[] indices = arr.ToArray();
-        if (indices != null)
+        IntPtr ptr = arr.m_ptr;
+        int count = UnsafeNativeMethods.CRhinoInstanceDefinition_GetContainers(m_doc.m_docId, m_index, ptr);
+        InstanceDefinition[] rc = null;
+        if (count > 0)
         {
-          count = indices.Length;
-          rc = new InstanceDefinition[count];
-          for (int i = 0; i < count; i++)
+          int[] indices = arr.ToArray();
+          if (indices != null)
           {
-            rc[i] = new InstanceDefinition(indices[i], m_doc);
+            count = indices.Length;
+            rc = new InstanceDefinition[count];
+            for (int i = 0; i < count; i++)
+            {
+              rc[i] = new InstanceDefinition(indices[i], m_doc);
+            }
           }
         }
+        else
+          rc = new InstanceDefinition[0];
+        return rc;
       }
-      arr.Dispose();
-      return rc;
     }
 
     /// <summary>
@@ -340,7 +343,18 @@ namespace Rhino.DocObjects.Tables
     {
       get
       {
-        return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_InstanceDefinitionCount(m_doc.m_docId);
+        return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_InstanceDefinitionCount(m_doc.m_docId, true);
+      }
+    }
+
+    /// <summary>
+    /// Number of items in the instance definitions table, excluding deleted definitions
+    /// </summary>
+    public int ActiveCount
+    {
+      get
+      {
+        return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_InstanceDefinitionCount(m_doc.m_docId, false);
       }
     }
 

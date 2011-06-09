@@ -4,6 +4,9 @@ using Rhino.Geometry;
 
 namespace Rhino.Display
 {
+  /// <summary>
+  /// Different parallel and perspective projections that are "standard" in Rhino
+  /// </summary>
   public enum DefinedViewportProjection : int
   {
     None = 0,
@@ -17,6 +20,11 @@ namespace Rhino.Display
     TwoPointPerspective = 8
   }
 
+  /// <summary>
+  /// Displays geometry with a given projection. In standard modeling views there
+  /// is a one to one relationship between RhinoView and RhinoViewports. In a page
+  /// layout, there may be multiple RhinoViewports for a single layout.
+  /// </summary>
   public class RhinoViewport : IDisposable
   {
     readonly Rhino.DocObjects.DetailViewObject m_parent_detail;
@@ -325,6 +333,10 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoViewport_SetCameraTarget(pThis, dirAsPoint, updateTargetLocation, idxSetCameraDirection);
     }
 
+    /// <summary>
+    /// Simple plane information for this viewport's construction plane. If you want
+    /// detailed construction lpane information, use GetConstructionPlane
+    /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addbackgroundbitmap.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addbackgroundbitmap.cs' lang='cs'/>

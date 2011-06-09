@@ -6193,9 +6193,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoInstanceDefinition_UpdateType(int docId, int idef_index);
 
-  //int CRhinoInstanceDefinitionTable_InstanceDefinitionCount( int docId )
+  //int CRhinoInstanceDefinitionTable_InstanceDefinitionCount( int docId, bool all )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int CRhinoInstanceDefinitionTable_InstanceDefinitionCount(int docId);
+  internal static extern int CRhinoInstanceDefinitionTable_InstanceDefinitionCount(int docId, [MarshalAs(UnmanagedType.U1)]bool all);
 
   //int CRhinoInstanceDefinitionTable_FindInstanceDefinition( int docId, const RHMONO_STRING* _instanceDefinitionName, bool ignoreDeletedInstanceDefinitions)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

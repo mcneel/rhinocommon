@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace Rhino.DocObjects
 {
@@ -466,7 +467,62 @@ namespace Rhino.DocObjects
 
 namespace Rhino.DocObjects.Tables
 {
-  public sealed class LayerTable
+  interface IDocObjectTable<T>
+  {
+    int Count { get; }
+    T this[int index] { get; }
+  }
+
+  class TableEnumerator<TABLE, TABLE_TYPE> : IEnumerator<TABLE_TYPE> where TABLE : IDocObjectTable<TABLE_TYPE>
+  {
+    readonly TABLE m_table;
+    int m_position = -1;
+    int m_count;
+    public TableEnumerator(TABLE table)
+    {
+      m_table = table;
+      m_count = table.Count;
+    }
+
+    public TABLE_TYPE Current
+    {
+      get
+      {
+        if (m_position < 0 || m_position >= m_count)
+          throw new InvalidOperationException();
+        return m_table[m_position];
+      }
+    }
+
+    void IDisposable.Dispose() { }
+
+    object System.Collections.IEnumerator.Current
+    {
+      get
+      {
+        if (m_position < 0 || m_position >= m_count)
+          throw new InvalidOperationException();
+        return m_table[m_position];
+      }
+    }
+
+    public bool MoveNext()
+    {
+      m_position++;
+      return (m_position < m_count);
+    }
+
+    public void Reset()
+    {
+      m_position = -1;
+    }
+
+  }
+}
+
+namespace Rhino.DocObjects.Tables
+{
+  public sealed class LayerTable : IEnumerable<Layer>, IDocObjectTable<Layer>
   {
     private readonly RhinoDoc m_doc;
     private LayerTable() { }
@@ -824,6 +880,22 @@ namespace Rhino.DocObjects.Tables
         return sh.ToString();
       }
     }
+    #endregion
+
+    #region enumerator
+
+    // for IEnumerable<Layer>
+    public IEnumerator<Layer> GetEnumerator()
+    {
+      return new TableEnumerator<LayerTable, Layer>(this);
+    }
+
+    // for IEnumerable
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new TableEnumerator<LayerTable,Layer>(this);
+    }
+
     #endregion
   }
 }

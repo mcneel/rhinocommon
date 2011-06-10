@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace Rhino.DocObjects
 {
@@ -201,7 +202,7 @@ namespace Rhino.DocObjects.Tables
   /// <summary>
   /// All of the hatch pattern definitions contained in a rhino document
   /// </summary>
-  public sealed class HatchPatternTable
+  public sealed class HatchPatternTable : IEnumerable<HatchPattern>, IDocObjectTable<HatchPattern>
   {
     private readonly RhinoDoc m_doc;
     private HatchPatternTable() { }
@@ -293,5 +294,20 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoHatchPatternTable_AddPattern(m_doc.m_docId, pPattern, false);
     }
 
+    #region enumerator
+
+    // for IEnumerable<Layer>
+    public IEnumerator<HatchPattern> GetEnumerator()
+    {
+      return new TableEnumerator<HatchPatternTable, HatchPattern>(this);
+    }
+
+    // for IEnumerable
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new TableEnumerator<HatchPatternTable, HatchPattern>(this);
+    }
+
+    #endregion
   }
 }

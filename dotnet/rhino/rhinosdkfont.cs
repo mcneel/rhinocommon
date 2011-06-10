@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace Rhino.DocObjects
 {
@@ -51,7 +52,7 @@ namespace Rhino.DocObjects.Tables
   /// <summary>
   /// Font tables store the list of fonts in a Rhino document.
   /// </summary>
-  public sealed class FontTable
+  public sealed class FontTable : IEnumerable<Font>, IDocObjectTable<Font>
   {
     private readonly RhinoDoc m_doc;
     private FontTable() { }
@@ -89,5 +90,22 @@ namespace Rhino.DocObjects.Tables
     {
       return UnsafeNativeMethods.CRhinoFontTable_FindOrCreate(m_doc.m_docId, face, bold, italic);
     }
+
+    #region enumerator
+
+    // for IEnumerable<Layer>
+    public IEnumerator<Font> GetEnumerator()
+    {
+      return new TableEnumerator<FontTable, Font>(this);
+    }
+
+    // for IEnumerable
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new TableEnumerator<FontTable, Font>(this);
+    }
+
+    #endregion
+
   }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace Rhino.DocObjects
 {
@@ -283,7 +284,7 @@ namespace Rhino.DocObjects
 
 namespace Rhino.DocObjects.Tables
 {
-  public sealed class DimStyleTable
+  public sealed class DimStyleTable : IEnumerable<DimensionStyle>, IDocObjectTable<DimensionStyle>
   {
     private readonly RhinoDoc m_doc;
     private DimStyleTable() { }
@@ -387,5 +388,22 @@ namespace Rhino.DocObjects.Tables
     {
       return UnsafeNativeMethods.CRhinoDimStyleTable_DeleteDimStyle(m_doc.m_docId, index, quiet);
     }
+
+    #region enumerator
+
+    // for IEnumerable<Layer>
+    public IEnumerator<DimensionStyle> GetEnumerator()
+    {
+      return new TableEnumerator<DimStyleTable, DimensionStyle>(this);
+    }
+
+    // for IEnumerable
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new TableEnumerator<DimStyleTable, DimensionStyle>(this);
+    }
+
+    #endregion
+
   }
 }

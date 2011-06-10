@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Rhino.Geometry;
+
 
 namespace Rhino.DocObjects
 {
@@ -31,7 +33,7 @@ namespace Rhino.DocObjects
 
 namespace Rhino.DocObjects.Tables
 {
-  public class LightTable
+  public class LightTable : IEnumerable<LightObject>, IDocObjectTable<LightObject>
   {
     private readonly RhinoDoc m_doc;
     private LightTable() { }
@@ -135,5 +137,22 @@ namespace Rhino.DocObjects.Tables
       }
       return rc;
     }
+
+    #region enumerator
+
+    // for IEnumerable<Layer>
+    public IEnumerator<LightObject> GetEnumerator()
+    {
+      return new TableEnumerator<LightTable, LightObject>(this);
+    }
+
+    // for IEnumerable
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new TableEnumerator<LightTable, LightObject>(this);
+    }
+
+    #endregion
+
   }
 }

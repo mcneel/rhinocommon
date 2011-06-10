@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 
 namespace Rhino.DocObjects.Tables
 {
   /// <summary>
   /// All named construction planes in a rhino document
   /// </summary>
-  public sealed class NamedConstructionPlaneTable
+  public sealed class NamedConstructionPlaneTable : IEnumerable<ConstructionPlane>, IDocObjectTable<ConstructionPlane>
   {
     private readonly RhinoDoc m_doc;
     private NamedConstructionPlaneTable() { }
@@ -96,12 +97,23 @@ namespace Rhino.DocObjects.Tables
       int index = Find(name);
       return Delete(index);
     }
+
+    #region enumerator
+    public IEnumerator<ConstructionPlane> GetEnumerator()
+    {
+      return new TableEnumerator<NamedConstructionPlaneTable, ConstructionPlane>(this);
+    }
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new TableEnumerator<NamedConstructionPlaneTable, ConstructionPlane>(this);
+    }
+    #endregion
   }
 
   /// <summary>
   /// All named views in a rhino document
   /// </summary>
-  public sealed class NamedViewTable
+  public sealed class NamedViewTable : IEnumerable<ViewInfo>, IDocObjectTable<ViewInfo>
   {
     private readonly RhinoDoc m_doc;
     private NamedViewTable() { }
@@ -221,5 +233,17 @@ namespace Rhino.DocObjects.Tables
       IntPtr pConstViewport = viewport.NonConstPointer();
       return UnsafeNativeMethods.RHC_RhinoRestoreNamedView(m_doc.m_docId, index, pConstViewport, backgroundBitmap, frames, frameRate);
     }
+
+    #region enumerator
+    public IEnumerator<ViewInfo> GetEnumerator()
+    {
+      return new TableEnumerator<NamedViewTable, ViewInfo>(this);
+    }
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new TableEnumerator<NamedViewTable, ViewInfo>(this);
+    }
+    #endregion
+
   }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace Rhino.DocObjects
 {
@@ -359,7 +360,7 @@ namespace Rhino.DocObjects
 
 namespace Rhino.DocObjects.Tables
 {
-  public sealed class MaterialTable
+  public sealed class MaterialTable : IEnumerable<Material>, IDocObjectTable<Material>
   {
     private readonly RhinoDoc m_doc;
     private MaterialTable() { }
@@ -497,5 +498,16 @@ namespace Rhino.DocObjects.Tables
     {
       return UnsafeNativeMethods.CRhinoMaterialTable_ResetMaterial(m_doc.m_docId, materialIndex);
     }
+
+    #region enumerator
+    public IEnumerator<Material> GetEnumerator()
+    {
+      return new TableEnumerator<MaterialTable, Material>(this);
+    }
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new TableEnumerator<MaterialTable, Material>(this);
+    }
+    #endregion
   }
 }

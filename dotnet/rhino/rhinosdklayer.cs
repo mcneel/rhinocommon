@@ -13,6 +13,7 @@ namespace Rhino.DocObjects
     // CRhinoLayer in the layer table.
     readonly Rhino.RhinoDoc m_doc;
     readonly Guid m_id=Guid.Empty;
+    readonly Rhino.FileIO.File3dm m_onx_model;
     #endregion
 
     #region constructors
@@ -28,6 +29,13 @@ namespace Rhino.DocObjects
       m_id = UnsafeNativeMethods.CRhinoLayerTable_GetLayerId(doc.m_docId, index);
       m_doc = doc;
       this.m__parent = m_doc;
+    }
+
+    internal Layer(Guid id, Rhino.FileIO.File3dm onxModel)
+    {
+      m_id = id;
+      m_onx_model = onxModel;
+      this.m__parent = onxModel;
     }
 
     // serialization constructor
@@ -69,6 +77,11 @@ namespace Rhino.DocObjects
     {
       if (m_doc != null)
         return UnsafeNativeMethods.CRhinoLayerTable_GetLayerPointer2(m_doc.m_docId, m_id);
+      if (m_onx_model != null)
+      {
+        IntPtr pModel = m_onx_model.NonConstPointer();
+        return UnsafeNativeMethods.ONX_Model_GetLayerPointer(pModel, m_id);
+      }
       return IntPtr.Zero;
     }
     
@@ -78,7 +91,6 @@ namespace Rhino.DocObjects
       IntPtr pConstPointer = ConstPointer();
       return UnsafeNativeMethods.ON_Object_Duplicate(pConstPointer);
     }
-
 
     const int idxIsVisible = 0;
     const int idxIsLocked = 1;

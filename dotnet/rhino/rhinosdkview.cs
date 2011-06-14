@@ -101,7 +101,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Gets the rectangle that represents the client area of the view. 
+    /// Gets the rectangle that represents the client area of the view in screen coordinates.
     /// </summary>
     public System.Drawing.Rectangle ScreenRectangle
     {
@@ -112,6 +112,19 @@ namespace Rhino.Display
         UnsafeNativeMethods.CRhinoView_GetRect(ptr, idxScreenRectangle, ref lrtb[0]);
         return System.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[2], lrtb[1], lrtb[3]);
       }
+    }
+
+    /// <summary>
+    /// Convert a point in screen coordinates to client coordinates for this view
+    /// </summary>
+    /// <param name="screenPoint"></param>
+    /// <returns></returns>
+    public System.Drawing.Point ScreenToClient(System.Drawing.Point screenPoint)
+    {
+      System.Drawing.Rectangle screen = ScreenRectangle;
+      int x = screenPoint.X - screen.Left;
+      int y = screenPoint.Y - screen.Top;
+      return new System.Drawing.Point(x,y);
     }
 
     //[skipping]

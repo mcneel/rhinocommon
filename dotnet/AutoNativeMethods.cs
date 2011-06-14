@@ -675,9 +675,34 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ONX_Model_ModelObjectGeometry(IntPtr pConstModel, int index);
 
+  //bool ONX_Model_ObjectTable_LayerIndexTest(const ONX_Model* pConstModel, int objectIndex, int layerIndex)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ONX_Model_ObjectTable_LayerIndexTest(IntPtr pConstModel, int objectIndex, int layerIndex);
+
   //void ONX_Model_BoundingBox(const ONX_Model* pConstModel, ON_BoundingBox* pBBox)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_BoundingBox(IntPtr pConstModel, ref BoundingBox pBBox);
+
+  //ON_Layer* ONX_Model_GetLayerPointer(ONX_Model* pModel, ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_GetLayerPointer(IntPtr pModel, Guid id);
+
+  //void ONX_Model_LayerTable_Insert(ONX_Model* pModel, const ON_Layer* pConstLayer, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_LayerTable_Insert(IntPtr pModel, IntPtr pConstLayer, int index);
+
+  //void ONX_Model_LayerTable_RemoveAt(ONX_Model* pModel, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_LayerTable_RemoveAt(IntPtr pModel, int index);
+
+  //ON_UUID ONX_Model_LayerTable_Id(const ONX_Model* pConstModel, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_LayerTable_Id(IntPtr pConstModel, int index);
+
+  //void ONX_Model_LayerTable_Clear(ONX_Model* pModel)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_LayerTable_Clear(IntPtr pModel);
   #endregion
 
 

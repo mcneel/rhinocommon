@@ -8,6 +8,7 @@ namespace Rhino.FileIO
   {
     IntPtr m_ptr = IntPtr.Zero; //ONX_Model*
     File3dmObjectTable m_object_table;
+    File3dmLayerTable m_layer_table;
 
     internal IntPtr ConstPointer()
     {
@@ -36,7 +37,6 @@ namespace Rhino.FileIO
         return null;
       return new File3dm(pONX_Model);
     }
-
 
 
     /// <summary>Read only the notes from an existing 3dm file</summary>
@@ -190,12 +190,20 @@ namespace Rhino.FileIO
     //public File3dmProperties GetProperties();
     //public void SetProperties(File3dnProperties);
 
-
-
-
+    [Obsolete("Use Objects instead. This will be removed from a future WIP")]
     public File3dmObjectTable ObjectTable
     {
       get { return m_object_table ?? (m_object_table = new File3dmObjectTable(this)); }
+    }
+
+    public File3dmObjectTable Objects
+    {
+      get { return m_object_table ?? (m_object_table = new File3dmObjectTable(this)); }
+    }
+
+    public IList<Rhino.DocObjects.Layer> Layers
+    {
+      get { return m_layer_table ?? (m_layer_table = new File3dmLayerTable(this)); }
     }
 
     #region diagnostic dumps
@@ -205,7 +213,7 @@ namespace Rhino.FileIO
     const int idxTextureMappingTable = 3;
     const int idxMaterialTable = 4;
     const int idxLinetypeTable = 5;
-    const int idxLayerTable = 6;
+    internal const int idxLayerTable = 6;
     const int idxLightTable = 7;
     const int idxGroupTable = 8;
     const int idxFontTable = 9;
@@ -392,7 +400,7 @@ namespace Rhino.FileIO
     }
   }
 
-  public class File3dmObjectTable : IEnumerable<File3dmObject>
+  public class File3dmObjectTable : IEnumerable<File3dmObject>, Rhino.DocObjects.Tables.IDocObjectTable<File3dmObject>
   {
     File3dm m_parent;
     internal File3dmObjectTable(File3dm parent)
@@ -451,6 +459,25 @@ namespace Rhino.FileIO
 
     #region methods
 
+    public File3dmObject[] FindByLayer(string layerName)
+    {
+      File3dmLayerTable layers = m_parent.Layers as File3dmLayerTable;
+      int layer_index = layers.Find(layerName);
+      if (layer_index < 0)
+        return new File3dmObject[0];
+
+      List<File3dmObject> rc = new List<File3dmObject>();
+      int cnt = Count;
+      IntPtr pConstModel = m_parent.ConstPointer();
+      for (int i = 0; i < cnt; i++)
+      {
+        if( UnsafeNativeMethods.ONX_Model_ObjectTable_LayerIndexTest(pConstModel, i, layer_index) )
+          rc.Add( this[i] );
+      }
+      return rc.ToArray();
+    }
+
+
     /// <summary>BoundingBox of every object in this table</summary>
     /// <returns></returns>
     public Rhino.Geometry.BoundingBox GetBoundingBox()
@@ -463,82 +490,136 @@ namespace Rhino.FileIO
     #endregion
 
     #region IEnumerable Implementation
-    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
     public IEnumerator<File3dmObject> GetEnumerator()
     {
-      return new File3dmObjectEnumerator(this);
+      return new Rhino.DocObjects.Tables.TableEnumerator<File3dmObjectTable, File3dmObject>(this);
+    }
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new Rhino.DocObjects.Tables.TableEnumerator<File3dmObjectTable, File3dmObject>(this);
     }
     #endregion
   }
 
-
-  class File3dmObjectEnumerator : IEnumerator<File3dmObject>
+  class File3dmLayerTable : IList<Rhino.DocObjects.Layer>, Rhino.DocObjects.Tables.IDocObjectTable<Rhino.DocObjects.Layer>
   {
-    #region members
-    readonly File3dmObjectTable m_list;
-    int position = -1;
-    #endregion
-
-    #region constructor
-    public File3dmObjectEnumerator(File3dmObjectTable table)
+    File3dm m_parent;
+    internal File3dmLayerTable(File3dm parent)
     {
-      m_list = table;
-    }
-    #endregion
-
-    #region enumeration logic
-    public bool MoveNext()
-    {
-      position++;
-      return (position < m_list.Count);
-    }
-    public void Reset()
-    {
-      position = -1;
+      m_parent = parent;
     }
 
-    public File3dmObject Current
+    public int Find(string name)
+    {
+      int cnt = Count;
+      for (int i = 0; i < cnt; i++)
+      {
+        if (this[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+          return i;
+      }
+      return -1;
+    }
+
+    public int IndexOf(DocObjects.Layer item)
+    {
+      File3dm file = item.m__parent as File3dm;
+      if (file == m_parent)
+        return item.LayerIndex;
+      return -1;
+    }
+
+    public void Insert(int index, DocObjects.Layer item)
+    {
+      if (index < 0 || index > Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      IntPtr pConstLayer = item.ConstPointer();
+      UnsafeNativeMethods.ONX_Model_LayerTable_Insert(pParent, pConstLayer, index);
+    }
+
+    public void RemoveAt(int index)
+    {
+      if (index < 0 || index >= Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_LayerTable_RemoveAt(pParent, index);
+    }
+
+    public DocObjects.Layer this[int index]
     {
       get
       {
-        try
-        {
-          return m_list[position];
-        }
-        catch (IndexOutOfRangeException)
-        {
-          throw new InvalidOperationException();
-        }
+        IntPtr pConstParent = m_parent.ConstPointer();
+        Guid id = UnsafeNativeMethods.ONX_Model_LayerTable_Id(pConstParent, index);
+        if (id==Guid.Empty )
+          throw new IndexOutOfRangeException();
+        return new DocObjects.Layer(id, m_parent);
+      }
+      set
+      {
+        Insert(index, value);
       }
     }
-    object System.Collections.IEnumerator.Current
+
+    public void Add(DocObjects.Layer item)
+    {
+      int index = Count;
+      Insert(index, item);
+    }
+
+    public void Clear()
+    {
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_LayerTable_Clear(pParent);
+    }
+
+    public bool Contains(DocObjects.Layer item)
+    {
+      return IndexOf(item) != -1;
+    }
+
+    public void CopyTo(DocObjects.Layer[] array, int arrayIndex)
+    {
+      int available = array.Length - arrayIndex;
+      int cnt = Count;
+      if (available < cnt)
+        throw new ArgumentException("The number of elements in the source ICollection<T> is greater than the available space from arrayIndex to the end of the destination array.");
+      for (int i = 0; i < cnt; i++)
+      {
+        array[arrayIndex++] = this[i];
+      }
+    }
+
+    public int Count
     {
       get
       {
-        try
-        {
-          return m_list[position];
-        }
-        catch (IndexOutOfRangeException)
-        {
-          throw new InvalidOperationException();
-        }
+        IntPtr pConstParent = m_parent.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxLayerTable);
       }
     }
-    #endregion
 
-    #region IDisposable logic
-    private bool m_disposed; // = false; <- set by framework
-    public void Dispose()
+    public bool IsReadOnly
     {
-      if (m_disposed) { return; }
-      m_disposed = true;
-
-      GC.SuppressFinalize(this);
+      get { return false; }
     }
-    #endregion
+
+    public bool Remove(DocObjects.Layer item)
+    {
+      int index = IndexOf(item);
+      if (index >= 0)
+        RemoveAt(index);
+      return (index >= 0);
+    }
+
+    public IEnumerator<DocObjects.Layer> GetEnumerator()
+    {
+      return new Rhino.DocObjects.Tables.TableEnumerator<File3dmLayerTable, Rhino.DocObjects.Layer>(this);
+    }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new Rhino.DocObjects.Tables.TableEnumerator<File3dmLayerTable, Rhino.DocObjects.Layer>(this);
+    }
   }
 }

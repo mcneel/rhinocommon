@@ -69,6 +69,13 @@ namespace Rhino.Runtime
           IntPtr pThis = UnsafeNativeMethods.ON_PolyCurve_SegmentCurve(pPolyCurve, m_subobject_index);
           return pThis;
         }
+
+        Rhino.FileIO.File3dm file = m__parent as Rhino.FileIO.File3dm;
+        if (file != null && this is Rhino.DocObjects.Layer)
+        {
+          Rhino.DocObjects.Layer layer = this as Rhino.DocObjects.Layer;
+          return layer._InternalGetConstPointer();
+        }
       }
       NonConstOperation(); // allows cached data to clean up
       return m_ptr;

@@ -13,3 +13,12 @@
 /examples/buildwikisamples/bin
 /webhelp.txt
 /MethodGen.exe
+
+/c/Debug
+/c/English.lproj
+/c/curvedisplay.cpp
+/c/curvedisplay.h
+/c/gh_private_sdk.h
+/c/Info.plist
+/c/rhcommon_c.xcodeproj
+/c/x64

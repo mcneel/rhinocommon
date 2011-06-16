@@ -3,9 +3,9 @@ using System.Windows.Forms;
 
 namespace Rhino.UI
 {
-  partial class ComboListBox : Form
+  partial class ComboListBoxForm : Form
   {
-    public ComboListBox(string title, string message, System.Collections.IList items)
+    public ComboListBoxForm(string title, string message, System.Collections.IList items)
     {
       InitializeComponent();
 

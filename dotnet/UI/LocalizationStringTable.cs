@@ -5,18 +5,24 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 
-// RMA_DONT_LOCALIZE
-
 namespace Rhino.UI
 {
   class LocalizationStringTable
   {
+    // NOTE: we may want to use System.Collections.Specialized.StringDictionary instead
+    Dictionary<string, string> m_command_list = new Dictionary<string,string>();
+    Dictionary<string, string> m_string_list = new Dictionary<string, string>();
+    Dictionary<string, string> m_dialog_list = new Dictionary<string, string>();
+
     public LocalizationStringTable()
     {
-      this.m_command_list = new Dictionary<string, string>();
-      this.m_dialog_list = new Dictionary<string, string>();
-      this.m_string_list = new Dictionary<string, string>();
     }
+
+    public Dictionary<string, string> StringList
+    {
+      get { return this.m_string_list; }
+    }
+
     /// <summary>
     /// Look for XML file decorating the name with both the Locale ID as a number and a System.Globalization.CultureInfo.Name
     /// </summary>
@@ -24,7 +30,7 @@ namespace Rhino.UI
     /// <param name="filename"></param>
     /// <param name="language_id"></param>
     /// <returns></returns>
-    private string XmlFileExists(string dir, string filename, uint language_id)
+    private string XmlFileExists(string dir, string filename, int language_id)
     {
       string[] sSeps = { "_", "-", " ", "" };
       string xmlPath = null;
@@ -43,6 +49,7 @@ namespace Rhino.UI
       }
       return null;
     }
+
     /// <summary>
     /// Strip trailing "[[some number]]" from end of string
     /// </summary>
@@ -55,17 +62,9 @@ namespace Rhino.UI
         return s;
       return s.Substring(0, i);
     }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="language_id"></param>
-    /// <returns></returns>
-    public bool LoadFromFile(Assembly a, uint language_id)
-    {
-      if (null == a)
-        return false;
 
+    public bool LoadFromFile(Assembly a, int language_id)
+    {
       //Attempt to load the XML file. First place to look is in the same directory as the assembly
       string dir = System.IO.Path.GetDirectoryName(a.Location);
       string xmlPath = null;
@@ -218,19 +217,20 @@ namespace Rhino.UI
       }
       catch(Exception exception)
       {
-        System.Diagnostics.Debug.WriteLine(exception.Message + "\n" + exception.StackTrace);
+        Rhino.Runtime.HostUtils.ExceptionReport(exception);
         rc = false;
       }
 
       return rc;
     }
+
     /// <summary>
     /// Recursive helper function for LocalizeUtils.LocalizeForm.
     /// </summary>
     /// <param name="form_name"></param>
     /// <param name="form_class_name"></param>
-    /// <param name="ctr"></param>
-    public void LocalizeControlTree(string form_name, string form_class_name, Control ctrl)
+    /// <param name="ctrl"></param>
+    internal void LocalizeControlTree(string form_name, string form_class_name, Control ctrl)
     {
       if (form_name == null || ctrl == null)
         return;
@@ -263,7 +263,7 @@ namespace Rhino.UI
 
       if( null != (ctrl as ToolStrip))
         this.LocalizeToolStripCollection(form_name, form_class_name, (ctrl as ToolStrip).Items);
-      else if (null != (ctrl as ListBox))
+      else if (null != (ctrl as ListBoxForm))
         this.LocalizeListBoxItems(form_name, form_class_name, ctrl as ListBox);
       else if (null != (ctrl as ListView))
         this.LocalizeListView(form_name, form_class_name, ctrl as ListView);
@@ -276,13 +276,14 @@ namespace Rhino.UI
           this.LocalizeControlTree(form_name, form_class_name, ctrl.Controls[i]);
       }
     }
+
     /// <summary>
     /// Recursive helper function for LocalizeUtils.LocalizeForm.
     /// </summary>
     /// <param name="form_name"></param>
     /// <param name="form_class_name"></param>
     /// <param name="collection"></param>
-    public void LocalizeToolStripCollection(string form_name, string form_class_name, ToolStripItemCollection collection)
+    internal void LocalizeToolStripCollection(string form_name, string form_class_name, ToolStripItemCollection collection)
     {
       if (null == form_name || null == collection)
         return;
@@ -320,13 +321,14 @@ namespace Rhino.UI
           LocalizeToolStripCollection( form_name, form_class_name, (tsi as ToolStripDropDownItem).DropDownItems);
       }
     }
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="form_name"></param>
     /// <param name="form_class_name"></param>
     /// <param name="lb"></param>
-    public void LocalizeListBoxItems(string form_name, string form_class_name, ListBox lb)
+    void LocalizeListBoxItems(string form_name, string form_class_name, ListBox lb)
     {
       if (null == form_name || null == lb || string.IsNullOrEmpty(lb.Name))
         return;
@@ -357,13 +359,14 @@ namespace Rhino.UI
         }
       }
     }
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="form_name"></param>
     /// <param name="form_class_name"></param>
     /// <param name="lv"></param>
-    public void LocalizeListView(string form_name, string form_class_name, ListView lv)
+    void LocalizeListView(string form_name, string form_class_name, ListView lv)
     {
       if (null == form_name || null == lv || string.IsNullOrEmpty(lv.Name))
         return;
@@ -419,13 +422,14 @@ namespace Rhino.UI
         }
       }
     }
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="form_name"></param>
     /// <param name="form_class_name"></param>
     /// <param name="cb"></param>
-    public void LocalizeComboBoxItems(string form_name, string form_class_name, ComboBox cb)
+    void LocalizeComboBoxItems(string form_name, string form_class_name, ComboBox cb)
     {
       if (null == form_name || null == cb || string.IsNullOrEmpty(cb.Name))
         return;
@@ -460,21 +464,5 @@ namespace Rhino.UI
         }
       }
     }
-    public Dictionary<string, string> StringList { get { return this.m_string_list; } }
-    #region Member variables
-    // NOTE: we may want to use System.Collections.Specialized.StringDictionary instead
-    /// <summary>
-    /// 
-    /// </summary>
-    protected Dictionary<string, string> m_command_list;
-    /// <summary>
-    /// 
-    /// </summary>
-    protected Dictionary<string, string> m_string_list;
-    /// <summary>
-    /// 
-    /// </summary>
-    protected Dictionary<string, string> m_dialog_list;
-    #endregion Member variables
   }
 }

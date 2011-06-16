@@ -1,6 +1,6 @@
 ﻿namespace Rhino.UI
 {
-  partial class ListBox
+  partial class ListBoxForm
   {
     /// <summary>
     /// Required designer variable.
@@ -30,7 +30,7 @@
     {
       System.Windows.Forms.Button m_btnCancel;
       System.Windows.Forms.Button m_btnOk;
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ListBox));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ListBoxForm));
       this.m_lblMessage = new System.Windows.Forms.Label();
       this.m_list = new System.Windows.Forms.ListBox();
       this.m_checkedListBox = new System.Windows.Forms.CheckedListBox();

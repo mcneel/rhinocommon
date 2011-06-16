@@ -4,9 +4,9 @@ using System.Windows.Forms;
 
 namespace Rhino.UI
 {
-  partial class ListBox : Form
+  partial class ListBoxForm : Form
   {
-    public ListBox(string title, string message, System.Collections.IList items)
+    public ListBoxForm(string title, string message, System.Collections.IList items)
     {
       InitializeComponent();
       m_checkedListBox.Visible = false;
@@ -24,7 +24,7 @@ namespace Rhino.UI
       }
     }
 
-    public ListBox(string title, string message, System.Collections.IList items, IList<bool> itemState)
+    public ListBoxForm(string title, string message, System.Collections.IList items, IList<bool> itemState)
     {
       InitializeComponent();
       m_list.Visible = false;

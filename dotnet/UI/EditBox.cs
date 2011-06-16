@@ -2,9 +2,9 @@
 
 namespace Rhino.UI
 {
-  partial class EditBox : Form
+  partial class EditBoxForm : Form
   {
-    public EditBox(string title, string message, string default_text)
+    public EditBoxForm(string title, string message, string default_text)
     {
       InitializeComponent();
 

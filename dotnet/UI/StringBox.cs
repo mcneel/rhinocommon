@@ -2,9 +2,9 @@
 
 namespace Rhino.UI
 {
-  partial class StringBox : Form
+  partial class StringBoxForm : Form
   {
-    public StringBox(string title, string message, string default_text)
+    public StringBoxForm(string title, string message, string default_text)
     {
       InitializeComponent();
 

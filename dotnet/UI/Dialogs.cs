@@ -1,12 +1,92 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Rhino
 {
   namespace UI
   {
+    public class GetColorEventArgs : EventArgs
+    {
+      readonly System.Drawing.Color m_input_color;
+      System.Drawing.Color m_selected_color = System.Drawing.Color.Empty;
+      readonly bool m_include_button_colors;
+      readonly string m_title;
+      internal GetColorEventArgs(System.Drawing.Color inputColor, bool includeButtonColors, string title)
+      {
+        m_input_color = inputColor;
+        m_include_button_colors = includeButtonColors;
+        m_title = title;
+      }
+
+      public System.Drawing.Color InputColor
+      {
+        get { return m_input_color; }
+      }
+
+      public System.Drawing.Color SelectedColor
+      {
+        get { return m_selected_color; }
+        set { m_selected_color = value; }
+      }
+
+      public bool IncludeButtonColors
+      {
+        get { return m_include_button_colors; }
+      }
+
+      public string Title
+      {
+        get { return m_title; }
+      }
+    }
+
+
+    //public delegate System.Windows.Forms.DialogResult ShowColorDialogEventHandler(ref System.Drawing.Color color, bool includeButtonColors, string title, System.Windows.Forms.IWin32Window parent);
+
     public static class Dialogs
     {
+      public static void SetCustomColorDialog( EventHandler<GetColorEventArgs> handler)
+      {
+        m_ShowCustomColorDialog = handler;
+        if (handler == null)
+          UnsafeNativeMethods.RHC_SetReplaceColorDialogCallback(null);
+        else
+          UnsafeNativeMethods.RHC_SetReplaceColorDialogCallback(m_callback);
+      }
+
+      private static EventHandler<GetColorEventArgs> m_ShowCustomColorDialog;
+      private static ColorDialogCallback m_callback = OnCustomColorDialog;
+      internal delegate int ColorDialogCallback(ref int argn, int colorButtons, [MarshalAs(UnmanagedType.LPWStr)]string title, IntPtr hParent);
+
+      private static int OnCustomColorDialog(ref int argb, int colorButtons, string title, IntPtr hParent)
+      {
+        int rc = 0;
+        if (m_ShowCustomColorDialog != null)
+        {
+          try
+          {
+            var color = System.Drawing.Color.FromArgb(argb);
+            System.Windows.Forms.IWin32Window parent = null;
+            GetColorEventArgs e = new GetColorEventArgs(color, colorButtons==1?true:false, title);
+
+            if( hParent != IntPtr.Zero )
+              parent = new WindowWrapper(hParent);
+            m_ShowCustomColorDialog(parent, e);
+            if( e.SelectedColor != System.Drawing.Color.Empty )
+            {
+              argb = e.SelectedColor.ToArgb();
+              rc = 1;
+            }
+          }
+          catch (Exception ex)
+          {
+            Runtime.HostUtils.ExceptionReport(ex);
+          }
+        }
+        return rc;
+      }
+
       // Functions to add
       //[in rhinosdkutilities.h]
       //  RhinoLineTypeDialog
@@ -308,7 +388,7 @@ namespace Rhino
         object rc = null;
         if (items != null && items.Count > 0)
         {
-          ComboListBox dlg = new ComboListBox(title, message, items);
+          ComboListBoxForm dlg = new ComboListBoxForm(title, message, items);
           if (dlg.ShowDialog(RhinoApp.MainWindow()) == System.Windows.Forms.DialogResult.OK)
             rc = dlg.SelectedItem();
         }
@@ -320,7 +400,7 @@ namespace Rhino
         object rc = null;
         if (items != null && items.Count > 0)
         {
-          ListBox dlg = new ListBox(title, message, items);
+          ListBoxForm dlg = new ListBoxForm(title, message, items);
           if (dlg.ShowDialog(RhinoApp.MainWindow()) == System.Windows.Forms.DialogResult.OK)
             rc = dlg.SelectedItem();
         }
@@ -340,7 +420,7 @@ namespace Rhino
         bool[] rc = null;
         if (items != null && items.Count > 0 && checkState != null && checkState.Count == items.Count)
         {
-          ListBox dlg = new ListBox(title, message, items, checkState);
+          ListBoxForm dlg = new ListBoxForm(title, message, items, checkState);
           if (dlg.ShowDialog(RhinoApp.MainWindow()) == System.Windows.Forms.DialogResult.OK)
             rc = dlg.GetCheckedItemStates();
         }
@@ -353,14 +433,14 @@ namespace Rhino
         System.Windows.Forms.DialogResult rc;
         if (multiline)
         {
-          EditBox dlg = new EditBox(title, message, defaultText);
+          EditBoxForm dlg = new EditBoxForm(title, message, defaultText);
           rc = dlg.ShowDialog(RhinoApp.MainWindow());
           if (rc == System.Windows.Forms.DialogResult.OK)
             text = dlg.GetText();
         }
         else
         {
-          StringBox dlg = new StringBox(title, message, defaultText);
+          StringBoxForm dlg = new StringBoxForm(title, message, defaultText);
           rc = dlg.ShowDialog(RhinoApp.MainWindow());
           if (rc == System.Windows.Forms.DialogResult.OK)
             text = dlg.GetText();
@@ -393,7 +473,7 @@ namespace Rhino
       [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
       public static System.Drawing.Rectangle[] StringBoxRects()
       {
-        StringBox dlg = new StringBox("title", "message", "default_text");
+        StringBoxForm dlg = new StringBoxForm("title", "message", "default_text");
         dlg.Show();
         dlg.Location = new System.Drawing.Point(0, 0);
         List<System.Drawing.Rectangle> rc = new List<System.Drawing.Rectangle>();
@@ -416,7 +496,7 @@ namespace Rhino
         string defaultText = String.Empty;
         if( number != RhinoMath.UnsetValue )
           defaultText = number.ToString();
-        StringBox dlg = new StringBox(title, message, defaultText);
+        StringBoxForm dlg = new StringBoxForm(title, message, defaultText);
         dlg.OnlyNumbers = true;
         System.Windows.Forms.DialogResult rc = dlg.ShowDialog(RhinoApp.MainWindow());
         if (rc == System.Windows.Forms.DialogResult.OK)

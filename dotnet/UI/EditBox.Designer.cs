@@ -1,6 +1,6 @@
 ﻿namespace Rhino.UI
 {
-  partial class EditBox
+  partial class EditBoxForm
   {
     /// <summary>
     /// Required designer variable.
@@ -30,7 +30,7 @@
     {
       System.Windows.Forms.Button m_btnOk;
       System.Windows.Forms.Button m_btnCancel;
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditBox));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditBoxForm));
       this.m_txtbox = new System.Windows.Forms.TextBox();
       this.m_lblMessage = new System.Windows.Forms.Label();
       m_btnOk = new System.Windows.Forms.Button();

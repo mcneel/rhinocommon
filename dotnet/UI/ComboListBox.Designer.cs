@@ -1,6 +1,6 @@
 ﻿namespace Rhino.UI
 {
-  partial class ComboListBox
+  partial class ComboListBoxForm
   {
     /// <summary>
     /// Required designer variable.
@@ -30,7 +30,7 @@
     {
       System.Windows.Forms.Button m_btnOk;
       System.Windows.Forms.Button m_btnCancel;
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ComboListBox));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ComboListBoxForm));
       this.m_lblMessage = new System.Windows.Forms.Label();
       this.m_comboBox = new System.Windows.Forms.ComboBox();
       m_btnOk = new System.Windows.Forms.Button();

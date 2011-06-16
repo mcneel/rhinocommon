@@ -1,6 +1,6 @@
 ﻿namespace Rhino.UI
 {
-  partial class StringBox
+  partial class StringBoxForm
   {
     /// <summary>
     /// Required designer variable.
@@ -28,7 +28,7 @@
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StringBox));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StringBoxForm));
       this.m_btnOk = new System.Windows.Forms.Button();
       this.m_btnCancel = new System.Windows.Forms.Button();
       this.m_txtbox = new System.Windows.Forms.TextBox();

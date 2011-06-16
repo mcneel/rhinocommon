@@ -10,6 +10,60 @@ using Rhino.Geometry;
 
 namespace Rhino.Collections
 {
+  interface IRhinoTable<T>
+  {
+    int Count { get; }
+    T this[int index] { get; }
+  }
+
+  class TableEnumerator<TABLE, TABLE_TYPE> : IEnumerator<TABLE_TYPE> where TABLE : IRhinoTable<TABLE_TYPE>
+  {
+    readonly TABLE m_table;
+    int m_position = -1;
+    int m_count;
+    public TableEnumerator(TABLE table)
+    {
+      m_table = table;
+      m_count = table.Count;
+    }
+
+    public TABLE_TYPE Current
+    {
+      get
+      {
+        if (m_position < 0 || m_position >= m_count)
+          throw new InvalidOperationException();
+        return m_table[m_position];
+      }
+    }
+
+    void IDisposable.Dispose() { }
+
+    object System.Collections.IEnumerator.Current
+    {
+      get
+      {
+        if (m_position < 0 || m_position >= m_count)
+          throw new InvalidOperationException();
+        return m_table[m_position];
+      }
+    }
+
+    public bool MoveNext()
+    {
+      m_position++;
+      return (m_position < m_count);
+    }
+
+    public void Reset()
+    {
+      m_position = -1;
+    }
+
+  }
+
+  
+  
   /// <summary>
   /// Represents a list of generic data. This class is similar to System.Collections.Generic.List(T) 
   /// but exposes a few more methods.

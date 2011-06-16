@@ -33,6 +33,19 @@ namespace Rhino.ApplicationSettings
 
 namespace Rhino
 {
+  class WindowWrapper : System.Windows.Forms.IWin32Window
+  {
+    readonly IntPtr m_handle;
+    public WindowWrapper(IntPtr handle)
+    {
+      m_handle = handle;
+    }
+    public IntPtr Handle
+    {
+      get { return m_handle; }
+    }
+  }
+
   ///<summary>.NET RhinoApp is parallel to C++ CRhinoApp</summary>
   public static class RhinoApp
   {
@@ -400,19 +413,7 @@ namespace Rhino
       UnsafeNativeMethods.CRhinoApp_Wait(0);
     }
 
-    class MainWindowWrapper : System.Windows.Forms.IWin32Window
-    {
-      readonly IntPtr m_handle;
-      public MainWindowWrapper(IntPtr handle)
-      {
-        m_handle = handle;
-      }
-      public IntPtr Handle
-      {
-        get { return m_handle; }
-      }
-    }
-    static MainWindowWrapper m_mainwnd;
+    static WindowWrapper m_mainwnd;
 
     public static System.Windows.Forms.IWin32Window MainWindow()
     {
@@ -420,7 +421,7 @@ namespace Rhino
       {
         IntPtr pWnd = MainWindowHandle();
         if (IntPtr.Zero != pWnd)
-          m_mainwnd = new MainWindowWrapper(pWnd);
+          m_mainwnd = new WindowWrapper(pWnd);
       }
       return m_mainwnd;
     }

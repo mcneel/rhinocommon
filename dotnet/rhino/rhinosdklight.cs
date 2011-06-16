@@ -33,7 +33,7 @@ namespace Rhino.DocObjects
 
 namespace Rhino.DocObjects.Tables
 {
-  public class LightTable : IEnumerable<LightObject>, IDocObjectTable<LightObject>
+  public class LightTable : IEnumerable<LightObject>, Rhino.Collections.IRhinoTable<LightObject>
   {
     private readonly RhinoDoc m_doc;
     private LightTable() { }
@@ -143,13 +143,13 @@ namespace Rhino.DocObjects.Tables
     // for IEnumerable<Layer>
     public IEnumerator<LightObject> GetEnumerator()
     {
-      return new TableEnumerator<LightTable, LightObject>(this);
+      return new Rhino.Collections.TableEnumerator<LightTable, LightObject>(this);
     }
 
     // for IEnumerable
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new TableEnumerator<LightTable, LightObject>(this);
+      return new Rhino.Collections.TableEnumerator<LightTable, LightObject>(this);
     }
 
     #endregion

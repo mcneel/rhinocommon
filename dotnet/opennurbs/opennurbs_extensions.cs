@@ -400,7 +400,7 @@ namespace Rhino.FileIO
     }
   }
 
-  public class File3dmObjectTable : IEnumerable<File3dmObject>, Rhino.DocObjects.Tables.IDocObjectTable<File3dmObject>
+  public class File3dmObjectTable : IEnumerable<File3dmObject>, Rhino.Collections.IRhinoTable<File3dmObject>
   {
     File3dm m_parent;
     internal File3dmObjectTable(File3dm parent)
@@ -492,16 +492,16 @@ namespace Rhino.FileIO
     #region IEnumerable Implementation
     public IEnumerator<File3dmObject> GetEnumerator()
     {
-      return new Rhino.DocObjects.Tables.TableEnumerator<File3dmObjectTable, File3dmObject>(this);
+      return new Rhino.Collections.TableEnumerator<File3dmObjectTable, File3dmObject>(this);
     }
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new Rhino.DocObjects.Tables.TableEnumerator<File3dmObjectTable, File3dmObject>(this);
+      return new Rhino.Collections.TableEnumerator<File3dmObjectTable, File3dmObject>(this);
     }
     #endregion
   }
 
-  class File3dmLayerTable : IList<Rhino.DocObjects.Layer>, Rhino.DocObjects.Tables.IDocObjectTable<Rhino.DocObjects.Layer>
+  class File3dmLayerTable : IList<Rhino.DocObjects.Layer>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.Layer>
   {
     File3dm m_parent;
     internal File3dmLayerTable(File3dm parent)
@@ -614,12 +614,12 @@ namespace Rhino.FileIO
 
     public IEnumerator<DocObjects.Layer> GetEnumerator()
     {
-      return new Rhino.DocObjects.Tables.TableEnumerator<File3dmLayerTable, Rhino.DocObjects.Layer>(this);
+      return new Rhino.Collections.TableEnumerator<File3dmLayerTable, Rhino.DocObjects.Layer>(this);
     }
 
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new Rhino.DocObjects.Tables.TableEnumerator<File3dmLayerTable, Rhino.DocObjects.Layer>(this);
+      return new Rhino.Collections.TableEnumerator<File3dmLayerTable, Rhino.DocObjects.Layer>(this);
     }
   }
 }

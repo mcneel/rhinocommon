@@ -599,7 +599,7 @@ namespace Rhino.Geometry.Collections
   /// <summary>
   /// Provides access to the knot vector of a nurbs curve.
   /// </summary>
-  public sealed class NurbsCurveKnotList : IEnumerable<double>
+  public sealed class NurbsCurveKnotList : IEnumerable<double>, Rhino.Collections.IRhinoTable<double>
   {
     private readonly NurbsCurve m_curve;
 
@@ -764,78 +764,11 @@ namespace Rhino.Geometry.Collections
     #region IEnumerable<double> Members
     IEnumerator<double> IEnumerable<double>.GetEnumerator()
     {
-      return new KVEnum(this);
+      return new Rhino.Collections.TableEnumerator<NurbsCurveKnotList, double>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new KVEnum(this);
-    }
-
-    private class KVEnum : IEnumerator<double>
-    {
-      #region members
-      private readonly NurbsCurveKnotList m_curve_kv;
-      int position = -1;
-      #endregion
-
-      #region constructor
-      public KVEnum(NurbsCurveKnotList curve_cv)
-      {
-        m_curve_kv = curve_cv;
-      }
-      #endregion
-
-      #region enumeration logic
-      public bool MoveNext()
-      {
-        position++;
-        return (position < m_curve_kv.Count);
-      }
-      public void Reset()
-      {
-        position = -1;
-      }
-
-      public double Current
-      {
-        get
-        {
-          try
-          {
-            return m_curve_kv[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      object IEnumerator.Current
-      {
-        get
-        {
-          try
-          {
-            return m_curve_kv[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      #endregion
-
-      #region IDisposable logic
-      private bool m_disposed; // = false; <- set by framework
-      public void Dispose()
-      {
-        if (m_disposed) { return; }
-        m_disposed = true;
-
-        GC.SuppressFinalize(this);
-      }
-      #endregion
+      return new Rhino.Collections.TableEnumerator<NurbsCurveKnotList, double>(this);
     }
     #endregion
   }
@@ -843,7 +776,7 @@ namespace Rhino.Geometry.Collections
   /// <summary>
   /// Provides access to the control points of a nurbs curve.
   /// </summary>
-  public class NurbsCurvePointList : IEnumerable<ControlPoint>
+  public class NurbsCurvePointList : IEnumerable<ControlPoint>, Rhino.Collections.IRhinoTable<ControlPoint>
   {
     private readonly NurbsCurve m_curve;
 
@@ -1017,80 +950,14 @@ namespace Rhino.Geometry.Collections
     }
     #endregion
 
-    #region IEnumerable<Point3d> Members
+    #region IEnumerable<ControlPoint> Members
     IEnumerator<ControlPoint> IEnumerable<ControlPoint>.GetEnumerator()
     {
-      return new CVEnum(this);
+      return new Rhino.Collections.TableEnumerator<NurbsCurvePointList, ControlPoint>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new CVEnum(this);
-    }
-
-    private class CVEnum : IEnumerator<ControlPoint>
-    {
-      #region members
-      private readonly NurbsCurvePointList m_curve_cv;
-      int position = -1;
-      #endregion
-
-      #region constructor
-      public CVEnum(NurbsCurvePointList curve_cv)
-      {
-        m_curve_cv = curve_cv;
-      }
-      #endregion
-
-      #region enumeration logic
-      public bool MoveNext()
-      {
-        position++;
-        return (position < m_curve_cv.Count);
-      }
-      public void Reset()
-      {
-        position = -1;
-      }
-
-      public ControlPoint Current
-      {
-        get
-        {
-          try
-          {
-            return m_curve_cv[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      object IEnumerator.Current
-      {
-        get
-        {
-          try
-          {
-            return m_curve_cv[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      #endregion
-
-      #region IDisposable logic
-      private bool m_disposed; // = false; <- initialized by runtime
-      public void Dispose()
-      {
-        if (m_disposed) { return; }
-        m_disposed = true;
-        GC.SuppressFinalize(this);
-      }
-      #endregion
+      return new Rhino.Collections.TableEnumerator<NurbsCurvePointList, ControlPoint>(this);
     }
     #endregion
   }

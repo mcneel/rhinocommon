@@ -1978,56 +1978,16 @@ namespace Rhino.DocObjects.Tables
 
     public IEnumerator<RhinoView> GetEnumerator()
     {
-      return new ViewEnumerator(this);
+      RhinoView[] views = GetViewList(true, true);
+      List<RhinoView> _views = new List<RhinoView>(views);
+      return _views.GetEnumerator();
     }
 
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new ViewEnumerator(this);
-    }
-
-    private class ViewEnumerator : IEnumerator<RhinoView>, System.Collections.IEnumerator
-    {
-      private readonly RhinoView[] m_views;
-      private int m_index = -1;
-
-      public ViewEnumerator(ViewTable table)
-      {
-        m_views = table.GetViewList(true, true);
-      }
-
-      public bool MoveNext()
-      {
-        if (null == m_views)
-          return false;
-        if (m_index < m_views.Length)
-          m_index++;
-        return m_index < m_views.Length;
-      }
-
-      public RhinoView Current
-      {
-        get
-        {
-          if (null == m_views || m_index < 0 || m_index >= m_views.Length)
-            return null;
-          return m_views[m_index];
-        }
-      }
-      object System.Collections.IEnumerator.Current
-      {
-        get
-        {
-          return this.Current;
-        }
-      }
-      public void Reset()
-      {
-        m_index = -1;
-      }
-      public void Dispose()
-      {
-      }
+      RhinoView[] views = GetViewList(true, true);
+      List<RhinoView> _views = new List<RhinoView>(views);
+      return _views.GetEnumerator();
     }
     #endregion
   }

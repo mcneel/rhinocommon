@@ -763,7 +763,7 @@ namespace Rhino.Geometry.Collections
   /// <summary>
   /// Provides access to the knot vector of a nurbs surface.
   /// </summary>
-  public sealed class NurbsSurfaceKnotList : IEnumerable<double>
+  public sealed class NurbsSurfaceKnotList : IEnumerable<double>, Rhino.Collections.IRhinoTable<double>
   {
     private readonly NurbsSurface m_surface;
     private readonly int m_direction;
@@ -881,78 +881,11 @@ namespace Rhino.Geometry.Collections
     #region IEnumerable<double> Members
     IEnumerator<double> IEnumerable<double>.GetEnumerator()
     {
-      return new KVEnum(this);
+      return new Rhino.Collections.TableEnumerator<NurbsSurfaceKnotList, double>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new KVEnum(this);
-    }
-
-    private class KVEnum : IEnumerator<double>
-    {
-      #region members
-      private readonly NurbsSurfaceKnotList m_surface_kv;
-      int position = -1;
-      #endregion
-
-      #region constructor
-      public KVEnum(NurbsSurfaceKnotList surface_cv)
-      {
-        m_surface_kv = surface_cv;
-      }
-      #endregion
-
-      #region enumeration logic
-      public bool MoveNext()
-      {
-        position++;
-        return (position < m_surface_kv.Count);
-      }
-      public void Reset()
-      {
-        position = -1;
-      }
-
-      public double Current
-      {
-        get
-        {
-          try
-          {
-            return m_surface_kv[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      object IEnumerator.Current
-      {
-        get
-        {
-          try
-          {
-            return m_surface_kv[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      #endregion
-
-      #region IDisposable logic
-      private bool m_disposed; // = false; <- set by framework
-      public void Dispose()
-      {
-        if (m_disposed) { return; }
-        m_disposed = true;
-
-        GC.SuppressFinalize(this);
-      }
-      #endregion
+      return new Rhino.Collections.TableEnumerator<NurbsSurfaceKnotList, double>(this);
     }
     #endregion
   }

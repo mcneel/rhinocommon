@@ -360,7 +360,7 @@ namespace Rhino.DocObjects
 
 namespace Rhino.DocObjects.Tables
 {
-  public sealed class MaterialTable : IEnumerable<Material>, IDocObjectTable<Material>
+  public sealed class MaterialTable : IEnumerable<Material>, Rhino.Collections.IRhinoTable<Material>
   {
     private readonly RhinoDoc m_doc;
     private MaterialTable() { }
@@ -502,11 +502,11 @@ namespace Rhino.DocObjects.Tables
     #region enumerator
     public IEnumerator<Material> GetEnumerator()
     {
-      return new TableEnumerator<MaterialTable, Material>(this);
+      return new Rhino.Collections.TableEnumerator<MaterialTable, Material>(this);
     }
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new TableEnumerator<MaterialTable, Material>(this);
+      return new Rhino.Collections.TableEnumerator<MaterialTable, Material>(this);
     }
     #endregion
   }

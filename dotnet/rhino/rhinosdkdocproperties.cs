@@ -6,7 +6,7 @@ namespace Rhino.DocObjects.Tables
   /// <summary>
   /// All named construction planes in a rhino document
   /// </summary>
-  public sealed class NamedConstructionPlaneTable : IEnumerable<ConstructionPlane>, IDocObjectTable<ConstructionPlane>
+  public sealed class NamedConstructionPlaneTable : IEnumerable<ConstructionPlane>, Rhino.Collections.IRhinoTable<ConstructionPlane>
   {
     private readonly RhinoDoc m_doc;
     private NamedConstructionPlaneTable() { }
@@ -101,11 +101,11 @@ namespace Rhino.DocObjects.Tables
     #region enumerator
     public IEnumerator<ConstructionPlane> GetEnumerator()
     {
-      return new TableEnumerator<NamedConstructionPlaneTable, ConstructionPlane>(this);
+      return new Rhino.Collections.TableEnumerator<NamedConstructionPlaneTable, ConstructionPlane>(this);
     }
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new TableEnumerator<NamedConstructionPlaneTable, ConstructionPlane>(this);
+      return new Rhino.Collections.TableEnumerator<NamedConstructionPlaneTable, ConstructionPlane>(this);
     }
     #endregion
   }
@@ -113,7 +113,7 @@ namespace Rhino.DocObjects.Tables
   /// <summary>
   /// All named views in a rhino document
   /// </summary>
-  public sealed class NamedViewTable : IEnumerable<ViewInfo>, IDocObjectTable<ViewInfo>
+  public sealed class NamedViewTable : IEnumerable<ViewInfo>, Rhino.Collections.IRhinoTable<ViewInfo>
   {
     private readonly RhinoDoc m_doc;
     private NamedViewTable() { }
@@ -237,11 +237,11 @@ namespace Rhino.DocObjects.Tables
     #region enumerator
     public IEnumerator<ViewInfo> GetEnumerator()
     {
-      return new TableEnumerator<NamedViewTable, ViewInfo>(this);
+      return new Rhino.Collections.TableEnumerator<NamedViewTable, ViewInfo>(this);
     }
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new TableEnumerator<NamedViewTable, ViewInfo>(this);
+      return new Rhino.Collections.TableEnumerator<NamedViewTable, ViewInfo>(this);
     }
     #endregion
 

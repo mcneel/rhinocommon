@@ -1510,6 +1510,28 @@ namespace Rhino.Geometry
     //  ON_SimpleArray<bool> m_H; // OPTIONAL vertex visibility.
     //  int m_hidden_count;       // number of vertices that are hidden
     //  const ON_Object* m_parent; // runtime parent geometry (use ...::Cast() to get it)
+
+    public static Curve[] CreateContourCurves(Mesh meshToContour, Point3d contourStart, Point3d contourEnd, double interval)
+    {
+      IntPtr pConstMesh = meshToContour.ConstPointer();
+      using (Runtime.InteropWrappers.SimpleArrayCurvePointer outputcurves = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer())
+      {
+        IntPtr pCurves = outputcurves.NonConstPointer();
+        int count = UnsafeNativeMethods.RHC_MakeRhinoContours2(pConstMesh, contourStart, contourEnd, interval, pCurves);
+        return 0 == count ? new Curve[0] : outputcurves.ToNonConstArray();
+      }
+    }
+    public static Curve[] CreateContourCurves(Mesh meshToContour, Plane sectionPlane)
+    {
+      IntPtr pConstMesh = meshToContour.ConstPointer();
+      using (Runtime.InteropWrappers.SimpleArrayCurvePointer outputcurves = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer())
+      {
+        IntPtr pCurves = outputcurves.NonConstPointer();
+        int count = UnsafeNativeMethods.RHC_MakeRhinoContours3(pConstMesh, ref sectionPlane, pCurves);
+        return 0 == count ? new Curve[0] : outputcurves.ToNonConstArray();
+      }
+    }
+
   }
 }
 
@@ -1518,7 +1540,7 @@ namespace Rhino.Geometry.Collections
   /// <summary>
   /// Provides access to the Vertices and Vertex related functionality of a Mesh.
   /// </summary>
-  public class MeshVertexList : IEnumerable<Point3f>
+  public class MeshVertexList : IEnumerable<Point3f>, Rhino.Collections.IRhinoTable<Point3f>
   {
     private readonly Mesh m_mesh;
 
@@ -1923,77 +1945,11 @@ namespace Rhino.Geometry.Collections
     #region IEnumerable implementation
     IEnumerator<Point3f> IEnumerable<Point3f>.GetEnumerator()
     {
-      return new MVEnum(this);
+      return new Rhino.Collections.TableEnumerator<MeshVertexList, Point3f>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new MVEnum(this);
-    }
-
-    private class MVEnum : IEnumerator<Point3f>
-    {
-      #region members
-      private readonly MeshVertexList m_owner;
-      int position = -1;
-      #endregion
-
-      #region constructor
-      public MVEnum(MeshVertexList mesh_vertices)
-      {
-        m_owner = mesh_vertices;
-      }
-      #endregion
-
-      #region enumeration logic
-      public bool MoveNext()
-      {
-        position++;
-        return (position < m_owner.Count);
-      }
-      public void Reset()
-      {
-        position = -1;
-      }
-
-      public Point3f Current
-      {
-        get
-        {
-          try
-          {
-            return m_owner[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      object IEnumerator.Current
-      {
-        get
-        {
-          try
-          {
-            return m_owner[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      #endregion
-
-      #region IDisposable logic
-      private bool m_disposed; // = false; <- initialized by runtime
-      public void Dispose()
-      {
-        if (m_disposed) { return; }
-        m_disposed = true;
-        GC.SuppressFinalize(this);
-      }
-      #endregion
+      return new Rhino.Collections.TableEnumerator<MeshVertexList, Point3f>(this);
     }
     #endregion
   }
@@ -2003,7 +1959,7 @@ namespace Rhino.Geometry.Collections
   /// sets of vertices in the MeshVertexList that can topologically be considered the
   /// same vertex
   /// </summary>
-  public class MeshTopologyVertexList : IEnumerable<Point3f>
+  public class MeshTopologyVertexList : IEnumerable<Point3f>, Rhino.Collections.IRhinoTable<Point3f>
   {
     private readonly Mesh m_mesh;
 
@@ -2226,78 +2182,11 @@ namespace Rhino.Geometry.Collections
     #region IEnumerable implementation
     IEnumerator<Point3f> IEnumerable<Point3f>.GetEnumerator()
     {
-      return new MTVEnum(this);
+      return new Rhino.Collections.TableEnumerator<MeshTopologyVertexList, Point3f>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new MTVEnum(this);
-    }
-
-    private class MTVEnum : IEnumerator<Point3f>
-    {
-      #region members
-      private readonly MeshTopologyVertexList m_owner;
-      int position = -1;
-      #endregion
-
-      #region constructor
-      public MTVEnum(MeshTopologyVertexList mesh_vertices)
-      {
-        m_owner = mesh_vertices;
-      }
-      #endregion
-
-      #region enumeration logic
-      public bool MoveNext()
-      {
-        position++;
-        return (position < m_owner.Count);
-      }
-      public void Reset()
-      {
-        position = -1;
-      }
-
-      public Point3f Current
-      {
-        get
-        {
-          try
-          {
-            return m_owner[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      object IEnumerator.Current
-      {
-        get
-        {
-          try
-          {
-            return m_owner[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      #endregion
-
-      #region IDisposable logic
-      private bool m_disposed; // = false; <- initialized by runtime
-      public void Dispose()
-      {
-        if (m_disposed)
-          return;
-        m_disposed = true;
-        GC.SuppressFinalize(this);
-      }
-      #endregion
+      return new Rhino.Collections.TableEnumerator<MeshTopologyVertexList, Point3f>(this);
     }
     #endregion
 
@@ -2447,7 +2336,7 @@ namespace Rhino.Geometry.Collections
   /// <summary>
   /// Provides access to the Vertex Normals of a Mesh.
   /// </summary>
-  public class MeshVertexNormalList //: IEnumerable<Vector3f> Steve - Hold off on making this enumberable for now
+  public class MeshVertexNormalList : IEnumerable<Vector3f>, Rhino.Collections.IRhinoTable<Vector3f>
   {
     private readonly Mesh m_mesh;
 
@@ -2686,90 +2575,23 @@ namespace Rhino.Geometry.Collections
       m_mesh.Flip(true, false, false);
     }
     #endregion
-    /*
+
     #region IEnumerable implementation
     IEnumerator<Vector3f> IEnumerable<Vector3f>.GetEnumerator()
     {
-      return new MNEnum(this);
+      return new Rhino.Collections.TableEnumerator<MeshVertexNormalList, Vector3f>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new MNEnum(this);
-    }
-
-    private class MNEnum : IEnumerator<Vector3f>
-    {
-      #region members
-      private MeshNormals m_owner;
-      int position = -1;
-      #endregion
-
-      #region constructor
-      public MNEnum(MeshNormals mesh_vertexnormals)
-      {
-        m_owner = mesh_vertexnormals;
-      }
-      #endregion
-
-      #region enumeration logic
-      public bool MoveNext()
-      {
-        position++;
-        return (position < m_owner.Count);
-      }
-      public void Reset()
-      {
-        position = -1;
-      }
-
-      public Vector3f Current
-      {
-        get
-        {
-          try
-          {
-            return m_owner[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      object IEnumerator.Current
-      {
-        get
-        {
-          try
-          {
-            return m_owner[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      #endregion
-
-      #region IDisposable logic
-      private bool m_disposed; // = false; <- initialized by runtime
-      public void Dispose()
-      {
-        if (m_disposed) { return; }
-        m_disposed = true;
-        GC.SuppressFinalize(this);
-      }
-      #endregion
+      return new Rhino.Collections.TableEnumerator<MeshVertexNormalList, Vector3f>(this);
     }
     #endregion
-    */
   }
 
   /// <summary>
   /// Provides access to the Faces and Face related functionality of a Mesh.
   /// </summary>
-  public class MeshFaceList //: IEnumerable<MeshFace>
+  public class MeshFaceList : IEnumerable<MeshFace>, Rhino.Collections.IRhinoTable<MeshFace>
   {
     private readonly Mesh m_mesh;
 
@@ -2894,6 +2716,14 @@ namespace Rhino.Geometry.Collections
       return UnsafeNativeMethods.ON_Mesh_AddFace(ptr, vertex1, vertex2, vertex3, vertex4);
     }
 
+    public void Insert(int index, MeshFace face)
+    {
+      IntPtr pMesh = m_mesh.NonConstPointer();
+      bool rc = UnsafeNativeMethods.ON_Mesh_InsertFace(pMesh, index, face.A, face.B, face.C, face.D);
+      if( !rc && (index<0 || index>=Count ) )
+        throw new ArgumentOutOfRangeException();
+    }
+
     public bool SetFace(int index, MeshFace face)
     {
       return SetFace(index, face.m_a, face.m_b, face.m_c, face.m_d);
@@ -2922,6 +2752,23 @@ namespace Rhino.Geometry.Collections
         return rc;
 
       return MeshFace.Unset;
+    }
+
+
+    /// <summary>
+    /// Returns the mesh face at the given index. 
+    /// </summary>
+    /// <param name="index">Index of face to get. Must be larger than or equal to zero and 
+    /// smaller than the Face Count of the mesh.</param>
+    public MeshFace this[int index]
+    {
+      get
+      {
+        MeshFace face = GetFace(index);
+        if( face.A == int.MinValue && (index < 0 || index >= Count) )
+          throw new IndexOutOfRangeException();
+        return face;
+      }
     }
 
     public bool GetFaceVertices(int faceIndex, out Point3f a, out Point3f b, out Point3f c, out Point3f d)
@@ -2994,6 +2841,15 @@ namespace Rhino.Geometry.Collections
       return UnsafeNativeMethods.ON_Mesh_DeleteFace(ptr, _faceIndexes.Count, f);
     }
 
+    public void RemoveAt(int index)
+    {
+      IntPtr pMesh = m_mesh.NonConstPointer();
+      int[] indices = { index };
+      int count = UnsafeNativeMethods.ON_Mesh_DeleteFace(pMesh, 1, indices);
+      if (count != 1 && (index < 0 || index >= Count))
+        throw new ArgumentOutOfRangeException();
+    }
+
     /// <summary>Splits all quads along the short diagonal.</summary>
     /// <returns>True on success, false on failure.</returns>
     public bool ConvertQuadsToTriangles()
@@ -3047,90 +2903,22 @@ namespace Rhino.Geometry.Collections
     }
     #endregion
 
-    /*
-  #region IEnumerable implementation
-  IEnumerator<MeshFace> IEnumerable<MeshFace>.GetEnumerator()
-  {
-    return new MFEnum(this);
-  }
-  IEnumerator IEnumerable.GetEnumerator()
-  {
-    return new MFEnum(this);
-  }
-
-  private class MFEnum : IEnumerator<MeshFace>
-  {
-    #region members
-    private MeshFaces m_owner;
-    int position = -1;
-    #endregion
-
-    #region constructor
-    public MFEnum(MeshFaces mesh_faces)
+    #region IEnumerable implementation
+    IEnumerator<MeshFace> IEnumerable<MeshFace>.GetEnumerator()
     {
-      m_owner = mesh_faces;
+      return new Rhino.Collections.TableEnumerator<MeshFaceList, MeshFace>(this);
+    }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<MeshFaceList, MeshFace>(this);
     }
     #endregion
-
-    #region enumeration logic
-    public bool MoveNext()
-    {
-      position++;
-      return (position < m_owner.Count);
-    }
-    public void Reset()
-    {
-      position = -1;
-    }
-
-    public MeshFace Current
-    {
-      get
-      {
-        try
-        {
-          return m_owner[position];
-        }
-        catch (IndexOutOfRangeException)
-        {
-          throw new InvalidOperationException();
-        }
-      }
-    }
-    object IEnumerator.Current
-    {
-      get
-      {
-        try
-        {
-          return m_owner[position];
-        }
-        catch (IndexOutOfRangeException)
-        {
-          throw new InvalidOperationException();
-        }
-      }
-    }
-    #endregion
-
-    #region IDisposable logic
-    private bool m_disposed; // = false; <- initialized by runtime
-    public void Dispose()
-    {
-      if (m_disposed) { return; }
-      m_disposed = true;
-      GC.SuppressFinalize(this);
-    }
-    #endregion
-  }
-  #endregion
-  */
   }
 
   /// <summary>
   /// Provides access to the Face normals of a Mesh.
   /// </summary>
-  public class MeshFaceNormalList //: IEnumerable<Vector3f>
+  public class MeshFaceNormalList : IEnumerable<Vector3f>, Rhino.Collections.IRhinoTable<Vector3f>
   {
     private readonly Mesh m_mesh;
 
@@ -3284,90 +3072,24 @@ namespace Rhino.Geometry.Collections
       return UnsafeNativeMethods.ON_Mesh_NonConstBoolOp(ptr, Mesh.idxComputeFaceNormals);
     }
     #endregion
-    /*
+
+
     #region IEnumerable implementation
     IEnumerator<Vector3f> IEnumerable<Vector3f>.GetEnumerator()
     {
-      return new MFEnum(this);
+      return new Rhino.Collections.TableEnumerator<MeshFaceNormalList, Vector3f>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new MFEnum(this);
-    }
-
-    private class MFEnum : IEnumerator<Vector3f>
-    {
-      #region members
-      private MeshFaceNormals m_owner;
-      int position = -1;
-      #endregion
-
-      #region constructor
-      public MFEnum(MeshFaceNormals mesh_facenormals)
-      {
-        m_owner = mesh_facenormals;
-      }
-      #endregion
-
-      #region enumeration logic
-      public bool MoveNext()
-      {
-        position++;
-        return (position < m_owner.Count);
-      }
-      public void Reset()
-      {
-        position = -1;
-      }
-
-      public Vector3f Current
-      {
-        get
-        {
-          try
-          {
-            return m_owner[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      object IEnumerator.Current
-      {
-        get
-        {
-          try
-          {
-            return m_owner[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      #endregion
-
-      #region IDisposable logic
-      private bool m_disposed; // = false; <- initialized by runtime
-      public void Dispose()
-      {
-        if (m_disposed) { return; }
-        m_disposed = true;
-        GC.SuppressFinalize(this);
-      }
-      #endregion
+      return new Rhino.Collections.TableEnumerator<MeshFaceNormalList, Vector3f>(this);
     }
     #endregion
-    */
   }
 
   /// <summary>
   /// Provides access to the vertex colors of a mesh object.
   /// </summary>
-  public class MeshVertexColorList //: IEnumerable<Color>
+  public class MeshVertexColorList : IEnumerable<Color>, Rhino.Collections.IRhinoTable<Color>
   {
     private readonly Mesh m_mesh;
 
@@ -3562,90 +3284,22 @@ namespace Rhino.Geometry.Collections
     }
     #endregion
 
-    /*
     #region IEnumerable implementation
     IEnumerator<Color> IEnumerable<Color>.GetEnumerator()
     {
-      return new MCEnum(this);
+      return new Rhino.Collections.TableEnumerator<MeshVertexColorList, Color>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new MCEnum(this);
-    }
-
-    private class MCEnum : IEnumerator<Color>
-    {
-      #region members
-      private MeshColors m_owner;
-      int position = -1;
-      #endregion
-
-      #region constructor
-      public MCEnum(MeshColors mesh_colors)
-      {
-        m_owner = mesh_colors;
-      }
-      #endregion
-
-      #region enumeration logic
-      public bool MoveNext()
-      {
-        position++;
-        return (position < m_owner.Count);
-      }
-      public void Reset()
-      {
-        position = -1;
-      }
-
-      public Color Current
-      {
-        get
-        {
-          try
-          {
-            return m_owner[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      object IEnumerator.Current
-      {
-        get
-        {
-          try
-          {
-            return m_owner[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      #endregion
-
-      #region IDisposable logic
-      private bool m_disposed; // = false; <- initialized by runtime
-      public void Dispose()
-      {
-        if (m_disposed) { return; }
-        m_disposed = true;
-        GC.SuppressFinalize(this);
-      }
-      #endregion
-    }
+      return new Rhino.Collections.TableEnumerator<MeshVertexColorList, Color>(this);
+   }
     #endregion
-    */
   }
 
   /// <summary>
   /// Provides access to the Vertex Texture coordinates of a Mesh.
   /// </summary>
-  public class MeshTextureCoordinateList // : IEnumerable<Point2f>
+  public class MeshTextureCoordinateList : IEnumerable<Point2f>, Rhino.Collections.IRhinoTable<Point2f>
   {
     private readonly Mesh m_mesh;
 
@@ -3877,86 +3531,19 @@ namespace Rhino.Geometry.Collections
     }
     #endregion
 
-    /*
     #region IEnumerable implementation
     IEnumerator<Point2f> IEnumerable<Point2f>.GetEnumerator()
     {
-      return new MTCEnum(this);
+      return new Rhino.Collections.TableEnumerator<MeshTextureCoordinateList, Point2f>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new MTCEnum(this);
-    }
-
-    private class MTCEnum : IEnumerator<Point2f>
-    {
-      #region members
-      private MeshTextureCoords m_owner;
-      int position = -1;
-      #endregion
-
-      #region constructor
-      public MTCEnum(MeshTextureCoords mesh_texturecoordinates)
-      {
-        m_owner = mesh_texturecoordinates;
-      }
-      #endregion
-
-      #region enumeration logic
-      public bool MoveNext()
-      {
-        position++;
-        return (position < m_owner.Count);
-      }
-      public void Reset()
-      {
-        position = -1;
-      }
-
-      public Point2f Current
-      {
-        get
-        {
-          try
-          {
-            return m_owner[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      object IEnumerator.Current
-      {
-        get
-        {
-          try
-          {
-            return m_owner[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      #endregion
-
-      #region IDisposable logic
-      private bool m_disposed; // = false; <- initialized by runtime
-      public void Dispose()
-      {
-        if (m_disposed) { return; }
-        m_disposed = true;
-        GC.SuppressFinalize(this);
-      }
-      #endregion
+      return new Rhino.Collections.TableEnumerator<MeshTextureCoordinateList, Point2f>(this);
     }
     #endregion
-    */
   }
 }
+
 //class ON_CLASS ON_MeshVertexRef : public ON_Geometry
 //{
 //  ON_OBJECT_DECLARE(ON_MeshVertexRef);

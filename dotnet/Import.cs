@@ -90,6 +90,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoDisplayConduit_SetCallback(int which, Rhino.Display.DisplayPipeline.ConduitCallback cb, Rhino.Runtime.HostUtils.ReportCallback reportcb);
 
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void RHC_SetReplaceColorDialogCallback(Rhino.UI.Dialogs.ColorDialogCallback cb);
+
   //In RhinoApp
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void RHC_SetEscapeKeyCallback(Rhino.RhinoApp.RhCmnEmptyCallback cb);

@@ -292,6 +292,9 @@
     <Compile Include="UI\ComboListBox.Designer.cs">
       <DependentUpon>ComboListBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\LocalizationStringTable.cs" />
+    <Compile Include="UI\Localization.cs" />
+    <Compile Include="UI\LocalizationUtils.cs" />
     <Compile Include="UI\StringBox.cs">
       <SubType>Form</SubType>
     </Compile>

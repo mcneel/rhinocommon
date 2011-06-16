@@ -284,7 +284,7 @@ namespace Rhino.DocObjects
 
 namespace Rhino.DocObjects.Tables
 {
-  public sealed class DimStyleTable : IEnumerable<DimensionStyle>, IDocObjectTable<DimensionStyle>
+  public sealed class DimStyleTable : IEnumerable<DimensionStyle>, Rhino.Collections.IRhinoTable<DimensionStyle>
   {
     private readonly RhinoDoc m_doc;
     private DimStyleTable() { }
@@ -394,13 +394,13 @@ namespace Rhino.DocObjects.Tables
     // for IEnumerable<Layer>
     public IEnumerator<DimensionStyle> GetEnumerator()
     {
-      return new TableEnumerator<DimStyleTable, DimensionStyle>(this);
+      return new Rhino.Collections.TableEnumerator<DimStyleTable, DimensionStyle>(this);
     }
 
     // for IEnumerable
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new TableEnumerator<DimStyleTable, DimensionStyle>(this);
+      return new Rhino.Collections.TableEnumerator<DimStyleTable, DimensionStyle>(this);
     }
 
     #endregion

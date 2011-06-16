@@ -245,7 +245,7 @@ namespace Rhino.DocObjects
 
 namespace Rhino.DocObjects.Tables
 {
-  public sealed class LinetypeTable : IEnumerable<Linetype>, IDocObjectTable<Linetype>
+  public sealed class LinetypeTable : IEnumerable<Linetype>, Rhino.Collections.IRhinoTable<Linetype>
   {
     private readonly RhinoDoc m_doc;
     private LinetypeTable() { }
@@ -575,11 +575,11 @@ namespace Rhino.DocObjects.Tables
     #region enumerator
     public IEnumerator<Linetype> GetEnumerator()
     {
-      return new TableEnumerator<LinetypeTable, Linetype>(this);
+      return new Rhino.Collections.TableEnumerator<LinetypeTable, Linetype>(this);
     }
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new TableEnumerator<LinetypeTable, Linetype>(this);
+      return new Rhino.Collections.TableEnumerator<LinetypeTable, Linetype>(this);
     }
     #endregion
   }

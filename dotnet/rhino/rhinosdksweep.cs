@@ -4,7 +4,8 @@ using System.Collections.Generic;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Utility class for generating breps by sweeping cross section curves over a rail curve
+  /// Utility class for generating breps by sweeping cross section curves over
+  /// a single rail curve
   /// </summary>
   public class SweepOneRail
   {
@@ -297,4 +298,11 @@ namespace Rhino.Geometry
     #endregion
   }
 
+  /// <summary>
+  /// Utility class for generating breps by sweeping cross section curves over
+  /// two rail curves
+  /// </summary>
+  class SweepTwoRail
+  {
+  }
 }

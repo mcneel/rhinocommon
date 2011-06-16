@@ -202,7 +202,7 @@ namespace Rhino.DocObjects.Tables
   /// <summary>
   /// All of the hatch pattern definitions contained in a rhino document
   /// </summary>
-  public sealed class HatchPatternTable : IEnumerable<HatchPattern>, IDocObjectTable<HatchPattern>
+  public sealed class HatchPatternTable : IEnumerable<HatchPattern>, Rhino.Collections.IRhinoTable<HatchPattern>
   {
     private readonly RhinoDoc m_doc;
     private HatchPatternTable() { }
@@ -299,13 +299,13 @@ namespace Rhino.DocObjects.Tables
     // for IEnumerable<Layer>
     public IEnumerator<HatchPattern> GetEnumerator()
     {
-      return new TableEnumerator<HatchPatternTable, HatchPattern>(this);
+      return new Rhino.Collections.TableEnumerator<HatchPatternTable, HatchPattern>(this);
     }
 
     // for IEnumerable
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new TableEnumerator<HatchPatternTable, HatchPattern>(this);
+      return new Rhino.Collections.TableEnumerator<HatchPatternTable, HatchPattern>(this);
     }
 
     #endregion

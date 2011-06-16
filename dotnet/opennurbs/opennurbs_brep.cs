@@ -1805,7 +1805,7 @@ namespace Rhino.Geometry.Collections
   /// <summary>
   /// Provides access to all the Faces in a Brep object.
   /// </summary>
-  public class BrepFaceList : IEnumerable<BrepFace>
+  public class BrepFaceList : IEnumerable<BrepFace>, Rhino.Collections.IRhinoTable<BrepFace>
   {
     internal Brep m_brep;
 
@@ -1911,78 +1911,11 @@ namespace Rhino.Geometry.Collections
     #region IEnumerable Implementation
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return GetEnumerator();
+      return new Rhino.Collections.TableEnumerator<BrepFaceList, BrepFace>(this);
     }
     public IEnumerator<BrepFace> GetEnumerator()
     {
-      return new BrepFaceEnumerator(this);
-    }
-    #endregion
-  }
-
-  class BrepFaceEnumerator : IEnumerator<BrepFace>
-  {
-    #region members
-    readonly BrepFaceList m_list;
-    int position = -1;
-    #endregion
-
-    #region constructor
-    public BrepFaceEnumerator(BrepFaceList faceList)
-    {
-      m_list = faceList;
-    }
-    #endregion
-
-    #region enumeration logic
-    public bool MoveNext()
-    {
-      position++;
-      return (position < m_list.Count);
-    }
-    public void Reset()
-    {
-      position = -1;
-    }
-
-    public BrepFace Current
-    {
-      get
-      {
-        try
-        {
-          return m_list[position];
-        }
-        catch (IndexOutOfRangeException)
-        {
-          throw new InvalidOperationException();
-        }
-      }
-    }
-    object System.Collections.IEnumerator.Current
-    {
-      get
-      {
-        try
-        {
-          return m_list[position];
-        }
-        catch (IndexOutOfRangeException)
-        {
-          throw new InvalidOperationException();
-        }
-      }
-    }
-    #endregion
-
-    #region IDisposable logic
-    private bool m_disposed; // = false; <- set by framework
-    public void Dispose()
-    {
-      if (m_disposed) { return; }
-      m_disposed = true;
-
-      GC.SuppressFinalize(this);
+      return new Rhino.Collections.TableEnumerator<BrepFaceList, BrepFace>(this);
     }
     #endregion
   }
@@ -1990,7 +1923,7 @@ namespace Rhino.Geometry.Collections
   /// <summary>
   /// Provides access to all the Edges in a Brep object.
   /// </summary>
-  public class BrepEdgeList : IEnumerable<BrepEdge>
+  public class BrepEdgeList : IEnumerable<BrepEdge>, Rhino.Collections.IRhinoTable<BrepEdge>
   {
     readonly Brep m_brep;
 
@@ -2050,78 +1983,11 @@ namespace Rhino.Geometry.Collections
     #region IEnumerable Implementation
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return GetEnumerator();
+      return new Rhino.Collections.TableEnumerator<BrepEdgeList, BrepEdge>(this);
     }
     public IEnumerator<BrepEdge> GetEnumerator()
     {
-      return new BrepEdgeEnumerator(this);
-    }
-    #endregion
-  }
-
-  class BrepEdgeEnumerator : IEnumerator<BrepEdge>
-  {
-    #region members
-    readonly BrepEdgeList m_list;
-    int position = -1;
-    #endregion
-
-    #region constructor
-    public BrepEdgeEnumerator(BrepEdgeList edgeList)
-    {
-      m_list = edgeList;
-    }
-    #endregion
-
-    #region enumeration logic
-    public bool MoveNext()
-    {
-      position++;
-      return (position < m_list.Count);
-    }
-    public void Reset()
-    {
-      position = -1;
-    }
-
-    public BrepEdge Current
-    {
-      get
-      {
-        try
-        {
-          return m_list[position];
-        }
-        catch (IndexOutOfRangeException)
-        {
-          throw new InvalidOperationException();
-        }
-      }
-    }
-    object System.Collections.IEnumerator.Current
-    {
-      get
-      {
-        try
-        {
-          return m_list[position];
-        }
-        catch (IndexOutOfRangeException)
-        {
-          throw new InvalidOperationException();
-        }
-      }
-    }
-    #endregion
-
-    #region IDisposable logic
-    private bool m_disposed; // = false; <- set by framework
-    public void Dispose()
-    {
-      if (m_disposed) { return; }
-      m_disposed = true;
-
-      GC.SuppressFinalize(this);
+      return new Rhino.Collections.TableEnumerator<BrepEdgeList, BrepEdge>(this);
     }
     #endregion
   }

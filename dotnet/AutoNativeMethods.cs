@@ -2327,6 +2327,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Mesh_AddFace(IntPtr pMesh, int vertex1, int vertex2, int vertex3, int vertex4);
 
+  //bool ON_Mesh_InsertFace(ON_Mesh* pMesh, int index, int vertex1, int vertex2, int vertex3, int vertex4)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Mesh_InsertFace(IntPtr pMesh, int index, int vertex1, int vertex2, int vertex3, int vertex4);
+
   //bool ON_Mesh_SetNormal(ON_Mesh* pMesh, int index, ON_3FVECTOR_STRUCT vector, bool faceNormal)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -7345,19 +7350,19 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool RHC_MakeRhinoContours1(IntPtr pConstCurve, Point3d start_point, Point3d end_point, double interval, IntPtr output_points);
 
-  //int RHC_MakeRhinoContours2(const ON_Brep* pConstBrep,
+  //int RHC_MakeRhinoContours2(const ON_Geometry* pConstGeometry,
   //                                          ON_3DPOINT_STRUCT start_point,
   //                                          ON_3DPOINT_STRUCT end_point,
   //                                          double interval,
   //                                          ON_SimpleArray<ON_Curve*>* output_curves)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RHC_MakeRhinoContours2(IntPtr pConstBrep, Point3d start_point, Point3d end_point, double interval, IntPtr output_curves);
+  internal static extern int RHC_MakeRhinoContours2(IntPtr pConstGeometry, Point3d start_point, Point3d end_point, double interval, IntPtr output_curves);
 
-  //int RHC_MakeRhinoContours3(const ON_Brep* pConstBrep,
+  //int RHC_MakeRhinoContours3(const ON_Geometry* pConstGeometry,
   //                                          ON_PLANE_STRUCT* plane,
   //                                          ON_SimpleArray<ON_Curve*>* output_curves)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RHC_MakeRhinoContours3(IntPtr pConstBrep, ref Plane plane, IntPtr output_curves);
+  internal static extern int RHC_MakeRhinoContours3(IntPtr pConstGeometry, ref Plane plane, IntPtr output_curves);
 
   //ON_NurbsCurve* RHC_RhinoInterpCurve(int degree, int count, /*ARRAY*/const ON_3dPoint* _array_pts, ON_3DVECTOR_STRUCT start_tan, ON_3DVECTOR_STRUCT end_tan, int knotStyle)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -7594,6 +7599,9 @@ internal partial class UnsafeNativeMethods
   //ON_Brep* RHC_CapPlanarHoles(const ON_Brep* pBrep, double tolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_CapPlanarHoles(IntPtr pBrep, double tolerance);
+
+  //void RHC_SetReplaceColorDialogCallback( SHOWCUSTOMCOLORDLGPROC proc )
+  // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //int RHC_RhinoBrepSplit(const ON_Brep* pConstBrep, const ON_Brep* pConstSplitterBrep, ON_SimpleArray<ON_Brep*>* pBrepArray, double tolerance, bool* toleranceWasRaised)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

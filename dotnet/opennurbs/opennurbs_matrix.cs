@@ -2,6 +2,7 @@ using System;
 
 namespace Rhino.Geometry
 {
+  #if USING_V5_SDK
   /// <summary>
   /// Arbitrarily sized matrix of values. If you are working with a
   /// 4x4 matrix, then you may want to use the Transform class instead.
@@ -297,4 +298,5 @@ namespace Rhino.Geometry
       get { return GetBool(idxIsColumnOrthoNormal); }
     }
   }
+#endif
 }

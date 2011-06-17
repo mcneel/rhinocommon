@@ -1,9 +1,6 @@
 RhinoCommon SDK for Rhino
 =========================
-
-
-Installation / Configuration
-----------------------------
+![Rhino](https://lh6.googleusercontent.com/-pQtuyrwmcmg/TYtWECHGYNI/AAAAAAAAA7Y/rphjSmq1cuo/s200/Rhino_logo_wire.jpg)
 
 
 Get Involved (contributing)
@@ -29,6 +26,8 @@ I'm going to need to come up with better instructions on compiling and using the
 * rename the shipping RhinoCommon.dll to something like RhinoCommon.dll.original
 * place the RhinoCommon.dll and pdb that gets compiled by this project in the Rhino5 system directory
 
+Installation / Configuration
+----------------------------
 
 
 Authors
@@ -55,5 +54,3 @@ WARRANTIES OF FITNESS FOR ANY PARTICULAR PURPOSE AND OF MERCHANTABILITY ARE HERE
 DISCLAIMED.
 
 Rhinoceros is a registered trademark of Robert McNeel & Associates.
-
-![Rhino](https://lh6.googleusercontent.com/-pQtuyrwmcmg/TYtWECHGYNI/AAAAAAAAA7Y/rphjSmq1cuo/s200/Rhino_logo_wire.jpg)

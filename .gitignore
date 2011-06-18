@@ -137,3 +137,9 @@
 /c/version.plist
 /c/Release
 /c/ipch
+/c/rh_brepobject.cpp
+/c/rh_fair.cpp
+/c/rh_offsetcrvonsrf.cpp
+/c/rhcommon_opennurbs.sdf
+/c/rhcommon_opennurbs.suo
+/c/rhcommon_opennurbs.vcxproj.user

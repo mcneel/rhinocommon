@@ -44,37 +44,6 @@ RH_C_FUNCTION void ON_HatchPattern_SetFillType(ON_HatchPattern* pHatchPattern, i
   }
 }
 
-#if !defined(OPENNURBS_BUILD)
-RH_C_FUNCTION void ON_Hatch_Explode(const ON_Hatch* pConstHatch,
-                                    const CRhinoObject* pConstParentRhinoObject,
-                                    ON_SimpleArray<ON_Geometry*>* pOutputGeometry)
-{
-  if( pConstHatch && pOutputGeometry )
-  {
-    ON_SimpleArray<CRhinoObject*> subobjects;
-    CRhinoHatch hatchobject;
-    if( NULL==pConstParentRhinoObject )
-    {
-      hatchobject.SetHatch(*pConstHatch);
-      pConstParentRhinoObject = &hatchobject;
-    }
-
-    pConstParentRhinoObject->GetSubObjects(subobjects);
-    for( int i=0; i<subobjects.Count(); i++ )
-    {
-      CRhinoObject* pRhinoObject = subobjects[i];
-      if( pRhinoObject )
-      {
-        const ON_Geometry* pGeometry = pRhinoObject->Geometry();
-        if( pGeometry )
-          pOutputGeometry->Append( pGeometry->Duplicate() );
-        delete pRhinoObject;
-      }
-    }
-  }
-}
-#endif
-
 RH_C_FUNCTION int ON_Hatch_PatternIndex(const ON_Hatch* pConstHatch)
 {
   int rc = -1;
@@ -118,3 +87,92 @@ RH_C_FUNCTION void ON_Hatch_SetScale(ON_Hatch* pHatch, double rotation)
   if( pHatch )
     pHatch->SetPatternScale(rotation);
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////
+// Meshing and mass property calculations are not available in stand alone opennurbs
+
+#if !defined(OPENNURBS_BUILD)
+RH_C_FUNCTION ON_MassProperties* ON_Hatch_AreaMassProperties(const ON_Hatch* pConstHatch, double rel_tol, double abs_tol)
+{
+  ON_MassProperties* rc = NULL;
+  if( pConstHatch )
+  {
+    ON_BoundingBox bbox = pConstHatch->BoundingBox();
+    ON_3dPoint basepoint = bbox.Center();
+    basepoint = pConstHatch->Plane().ClosestPointTo(basepoint);
+
+    ON_ClassArray<ON_MassProperties> list;
+
+    for( int i=0; i<pConstHatch->LoopCount(); i++ )
+    {
+      const ON_HatchLoop* pLoop = pConstHatch->Loop(i);
+      if( NULL==pLoop )
+        continue;
+      ON_Curve* pCurve = pConstHatch->LoopCurve3d(i);
+      if( NULL==pCurve )
+        continue;
+      
+      ON_MassProperties mp;
+      if( pCurve->AreaMassProperties(basepoint, pConstHatch->Plane().Normal(), mp, true, true, true, true, rel_tol, abs_tol) )
+      {
+        mp.m_mass = fabs(mp.m_mass);
+        if( pLoop->Type() == ON_HatchLoop::ltInner )
+          mp.m_mass = -mp.m_mass;
+
+        list.Append(mp);
+      }
+      delete pCurve;
+    }
+
+    if( list.Count()==1 )
+    {
+      rc = new ON_MassProperties();
+      *rc = list[0];
+    }
+    else if( list.Count()>1 )
+    {
+      int count = list.Count();
+      const ON_MassProperties* pieces = list.Array();
+      rc = new ON_MassProperties();
+      if( !rc->Sum(count, pieces) )
+      {
+        delete rc;
+        rc = NULL;
+      }
+    }
+  }
+  return rc;
+}
+#endif
+
+#if !defined(OPENNURBS_BUILD)
+RH_C_FUNCTION void ON_Hatch_Explode(const ON_Hatch* pConstHatch,
+                                    const CRhinoObject* pConstParentRhinoObject,
+                                    ON_SimpleArray<ON_Geometry*>* pOutputGeometry)
+{
+  if( pConstHatch && pOutputGeometry )
+  {
+    ON_SimpleArray<CRhinoObject*> subobjects;
+    CRhinoHatch hatchobject;
+    if( NULL==pConstParentRhinoObject )
+    {
+      hatchobject.SetHatch(*pConstHatch);
+      pConstParentRhinoObject = &hatchobject;
+    }
+
+    pConstParentRhinoObject->GetSubObjects(subobjects);
+    for( int i=0; i<subobjects.Count(); i++ )
+    {
+      CRhinoObject* pRhinoObject = subobjects[i];
+      if( pRhinoObject )
+      {
+        const ON_Geometry* pGeometry = pRhinoObject->Geometry();
+        if( pGeometry )
+          pOutputGeometry->Append( pGeometry->Duplicate() );
+        delete pRhinoObject;
+      }
+    }
+  }
+}
+#endif

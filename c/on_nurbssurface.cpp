@@ -284,6 +284,7 @@ RH_C_FUNCTION ON_NurbsSurface* RHC_RhinoRailRevolve( const ON_Curve* pConstProfi
   {
     rc = RhinoRailRevolve(pConstProfileCurve, pConstRailCurve, *axis, scale, NULL);
   }
+
   return rc;
 }
 #endif

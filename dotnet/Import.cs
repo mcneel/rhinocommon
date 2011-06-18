@@ -12,6 +12,9 @@ class Import
 #if MONO_BUILD
   public const string lib = "__Internal";
   public const string librdk = "__Internal";
+#elif USING_OPENNURBS
+  public const string lib = "rhcommon_opennurbs";
+  public const string librdk = "rhcommon_opennurbs";
 #else
   // DO NOT add the ".dll, .dynlib, .so, ..." extension.
   // Each platform should be smart enough to figure out how

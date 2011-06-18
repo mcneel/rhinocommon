@@ -1,6 +1,5 @@
 #include "StdAfx.h"
 
-// I think that sooner or later, these functions should be moved into core opennurbs.dll
 RH_C_FUNCTION bool ON_Curve_Domain( ON_Curve* pCurve, bool set, ON_Interval* ival )
 {
   bool rc = false;
@@ -59,27 +58,35 @@ RH_C_FUNCTION int ON_Curve_Dimension(const ON_Curve* pConstCurve)
   return rc;
 }
 
-RH_C_FUNCTION int ON_Curve_Degree(const ON_Curve* pCurve)
+RH_C_FUNCTION int ON_Curve_Degree(const ON_Curve* pConstCurve)
 {
   int rc = 0;
-  if( pCurve )
-    rc = pCurve->Degree();
+  if( pConstCurve )
+    rc = pConstCurve->Degree();
   return rc;
 }
 
-RH_C_FUNCTION bool ON_Curve_IsLinear(const ON_Curve* pCurve, double tolerance)
+RH_C_FUNCTION int ON_Curve_HasNurbForm(const ON_Curve* pConstCurve)
+{
+  int rc = 0;
+  if( pConstCurve )
+    rc = pConstCurve->HasNurbForm();
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Curve_IsLinear(const ON_Curve* pConstCurve, double tolerance)
 {
   bool rc = false;
-  if( pCurve )
-    rc = pCurve->IsLinear(tolerance)?true:false;
+  if( pConstCurve )
+    rc = pConstCurve->IsLinear(tolerance)?true:false;
   return rc;
 }
 
-RH_C_FUNCTION int ON_Curve_IsPolyline1( const ON_Curve* pCurve, ON_3dPointArray* points )
+RH_C_FUNCTION int ON_Curve_IsPolyline1( const ON_Curve* pConstCurve, ON_3dPointArray* points )
 {
   int pointCount = 0;
-  if( pCurve )
-    pointCount = pCurve->IsPolyline(points);
+  if( pConstCurve )
+    pointCount = pConstCurve->IsPolyline(points);
   return pointCount;
 }
 
@@ -383,14 +390,6 @@ RH_C_FUNCTION bool ON_Curve_Split( const ON_Curve* pCurve, double t, ON_Curve** 
   return rc;
 }
 
-RH_C_FUNCTION int ON_Curve_HasNurbForm(const ON_Curve* pCurve)
-{
-  int rc = 0;
-  if( pCurve )
-    rc = pCurve->HasNurbForm();
-  return rc;
-}
-
 RH_C_FUNCTION ON_NurbsCurve* ON_Curve_NurbsCurve(const ON_Curve* pCurve, double tolerance, ON_INTERVAL_STRUCT sub_domain, bool ignoreSubDomain)
 {
   ON_NurbsCurve* rc = NULL;
@@ -416,6 +415,72 @@ RH_C_FUNCTION bool ON_Curve_GetNurbParameter(const ON_Curve* pCurve, double t_in
   }
   return rc;
 }
+
+RH_C_FUNCTION bool ON_Curve_IsClosable( const ON_Curve* curvePtr, double tolerance, double min_abs_size, double min_rel_size )
+{
+  bool rc = false;
+  if( curvePtr )
+  {
+    rc = curvePtr->IsClosable(tolerance, min_abs_size, min_rel_size);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Curve_ClosedCurveOrientation( const ON_Curve* curvePtr, ON_Xform* xform)
+{
+  int rc = 0;
+  if( curvePtr )
+  {
+    rc = ::ON_ClosedCurveOrientation(*curvePtr, xform);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Curve_GetNextDiscontinuity(const ON_Curve* curvePtr, int continuityType, double t0, double t1, double* t)
+{
+  bool rc = false;
+  if( curvePtr )
+  {
+    ON::continuity c = ON::Continuity(continuityType);
+    rc = curvePtr->GetNextDiscontinuity(c, t0, t1, t);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Curve_IsContinuous(const ON_Curve* curvePtr, int continuityType, double t)
+{
+  bool rc = false;
+  if( curvePtr )
+  {
+    ON::continuity c = ON::Continuity(continuityType);
+    rc = curvePtr->IsContinuous(c, t);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION ON_SimpleArray<ON_X_EVENT>* ON_Curve_IntersectPlane(const ON_Curve* pConstCurve, ON_PLANE_STRUCT* plane, double tolerance)
+{
+  ON_SimpleArray<ON_X_EVENT>* rc = NULL;
+  if(pConstCurve && plane)
+  {
+#if defined(RHINO_V5SR) // only available in V5
+    rc = new ON_SimpleArray<ON_X_EVENT>();
+    ON_Plane _plane = ::FromPlaneStruct(*plane);
+    if( pConstCurve->IntersectPlane( _plane.plane_equation, *rc, tolerance, tolerance) < 1 )
+    {
+      // no intersections found. No need to create a list of intersections
+      delete rc;
+      rc = NULL;
+    }
+#endif
+  }
+ 
+  return rc;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+// Meshing and mass property calculations are not available in stand alone opennurbs
 
 #if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION ON_MassProperties* ON_Curve_AreaMassProperties(const ON_Curve* pCurve, double rel_tol, double abs_tol)
@@ -445,377 +510,4 @@ RH_C_FUNCTION ON_MassProperties* ON_Curve_AreaMassProperties(const ON_Curve* pCu
   return rc;
 }
 
-RH_C_FUNCTION ON_MassProperties* ON_Hatch_AreaMassProperties(const ON_Hatch* pConstHatch, double rel_tol, double abs_tol)
-{
-  ON_MassProperties* rc = NULL;
-  if( pConstHatch )
-  {
-    ON_BoundingBox bbox = pConstHatch->BoundingBox();
-    ON_3dPoint basepoint = bbox.Center();
-    basepoint = pConstHatch->Plane().ClosestPointTo(basepoint);
-
-    ON_ClassArray<ON_MassProperties> list;
-
-    for( int i=0; i<pConstHatch->LoopCount(); i++ )
-    {
-      const ON_HatchLoop* pLoop = pConstHatch->Loop(i);
-      if( NULL==pLoop )
-        continue;
-      ON_Curve* pCurve = pConstHatch->LoopCurve3d(i);
-      if( NULL==pCurve )
-        continue;
-      
-      ON_MassProperties mp;
-      if( pCurve->AreaMassProperties(basepoint, pConstHatch->Plane().Normal(), mp, true, true, true, true, rel_tol, abs_tol) )
-      {
-        mp.m_mass = fabs(mp.m_mass);
-        if( pLoop->Type() == ON_HatchLoop::ltInner )
-          mp.m_mass = -mp.m_mass;
-
-        list.Append(mp);
-      }
-      delete pCurve;
-    }
-
-    if( list.Count()==1 )
-    {
-      rc = new ON_MassProperties();
-      *rc = list[0];
-    }
-    else if( list.Count()>1 )
-    {
-      int count = list.Count();
-      const ON_MassProperties* pieces = list.Array();
-      rc = new ON_MassProperties();
-      if( !rc->Sum(count, pieces) )
-      {
-        delete rc;
-        rc = NULL;
-      }
-    }
-  }
-  return rc;
-}
 #endif
-
-RH_C_FUNCTION bool ON_Curve_IsClosable( const ON_Curve* curvePtr, double tolerance, double min_abs_size, double min_rel_size )
-{
-  bool rc = false;
-  if( curvePtr )
-  {
-    rc = curvePtr->IsClosable(tolerance, min_abs_size, min_rel_size);
-  }
-  return rc;
-}
-
-RH_C_FUNCTION int ON_Curve_ClosedCurveOrientation( const ON_Curve* curvePtr, ON_Xform* xform)
-{
-  int rc = 0;
-  if( curvePtr )
-  {
-    rc = ::ON_ClosedCurveOrientation(*curvePtr, xform);
-  }
-  return rc;
-}
-
-#if !defined(OPENNURBS_BUILD)
-static int RhCmnCurveBooleanDifference(const ON_SimpleArray<const ON_Curve*>& inputCurves, ON_SimpleArray<ON_Curve*>& outputCurves)
-{
-  int rc = 0;
-  int inputCount = inputCurves.Count();
-  if( inputCount<2 )
-    return 0;
-  // make sure all curves exist and are closed
-  for( int i=0; i<inputCount; i++ )
-  {
-    const ON_Curve* crv = inputCurves[i];
-    if( NULL==crv || !crv->IsClosed() )
-      return 0;
-  }
-
-  //figure out a tolerance to use
-  CRhinoDoc* pDoc = RhinoApp().ActiveDoc();
-  double tolerance = ON_SQRT_EPSILON;
-  if( pDoc && pDoc->AbsoluteTolerance()>tolerance )
-    tolerance = pDoc->AbsoluteTolerance();
-
-  const ON_Curve* curveA = inputCurves[0];
-  ON_Plane common_plane;
-  if( !curveA->IsPlanar(&common_plane, tolerance) )
-    return 0;
-
-  for( int i=1; i<inputCount; i++ )
-  {
-    const ON_Curve* crv = inputCurves[i];
-    if( !crv->IsInPlane(common_plane, tolerance) )
-      return 0;
-  }
-
-  // Make the planar regions to boolean
-  ON_Brep brepA;
-  if( NULL == ::ON_BrepTrimmedPlane(common_plane, *curveA, &brepA) )
-    return 0;
-  ON_BoundingBox bboxA = curveA->BoundingBox();
-
-  ON_SimpleArray<ON_Brep*> subtract_breps;
-  for( int i=1; i<inputCount; i++ )
-  {
-    const ON_Curve* crv = inputCurves[i];
-    ON_BoundingBox bbox = crv->BoundingBox();
-    if( bbox.Intersection(bboxA) )
-    {
-      ON_Brep* pBrep = ::ON_BrepTrimmedPlane(common_plane, *crv);
-      if( pBrep )
-        subtract_breps.Append(pBrep);
-    }
-  }
-
-  if( subtract_breps.Count() == 0 )
-  {
-    outputCurves.Append(curveA->DuplicateCurve());
-    rc = 1;
-  }
-  else
-  {
-    ON_SimpleArray<const ON_Brep*> InBreps0;
-    InBreps0.Append(&brepA);
-    ON_SimpleArray<const ON_Brep*> InBreps1(subtract_breps.Count());
-    for( int i=0; i<subtract_breps.Count(); i++ )
-      InBreps1.Append(subtract_breps[i]);
-    ON_SimpleArray<ON_Brep*> OutBreps;
-    bool result = false;
-    ON_SimpleArray<int> indices;
-    ::RhinoBooleanDifference(InBreps0, InBreps1, tolerance, &result, OutBreps, indices);
-
-    // delete all of the subtract_breps
-    for( int i=0; i<subtract_breps.Count(); i++ )
-    {
-      ON_Brep* pBrep = subtract_breps[i];
-      if(pBrep)
-        delete pBrep;
-      subtract_breps[i] = NULL;
-    }
-
-    if( OutBreps.Count()>0 )
-    {
-      for( int i=0; i<OutBreps.Count(); i++ )
-      {
-        ON_Brep* pBrep = OutBreps[i];
-        if( pBrep && pBrep->m_F.Count()==1 )
-        {
-          const ON_BrepFace& face = pBrep->m_F[0];
-          for( int j=0; j<face.LoopCount(); j++ )
-          {
-            const ON_BrepLoop* pLoop = face.Loop(j);
-            if( NULL==pLoop )
-              continue;
-            ON_Curve* pCurve = pBrep->Loop3dCurve(*pLoop);
-            if( pCurve )
-              outputCurves.Append(pCurve);
-          }
-        }
-        if( pBrep )
-          delete pBrep;
-        OutBreps[i] = NULL;
-      }
-    }
-  }
-  rc = outputCurves.Count();
-  return rc;
-}
-
-RH_C_FUNCTION int ON_Curve_BooleanOperation( const ON_SimpleArray<const ON_Curve*>* inputCurves, ON_SimpleArray<ON_Curve*>* outputCurves, int which)
-{
-  const int idxBooleanUnion = 0;
-  const int idxBooleanIntersection = 1;
-  const int idxBooleanDifference = 2;
-
-  int rc = 0;
-  if( inputCurves && outputCurves )
-  {
-    if( idxBooleanUnion == which )
-    {
-      rc = ::RhinoCurveBooleanUnion(*inputCurves, *outputCurves);
-    }
-    else if( idxBooleanIntersection == which )
-    {
-      if( inputCurves->Count() == 2 )
-      {
-        const ON_Curve* curveA = (*inputCurves)[0];
-        const ON_Curve* curveB = (*inputCurves)[1];
-        rc = ::RhinoCurveBooleanIntersection(curveA, curveB, *outputCurves);
-      }
-    }
-    else if( idxBooleanDifference == which )
-    {
-      if( inputCurves->Count() == 2 )
-      {
-        const ON_Curve* curveA = (*inputCurves)[0];
-        const ON_Curve* curveB = (*inputCurves)[1];
-        rc = ::RhinoCurveBooleanDifference(curveA, curveB, *outputCurves);
-      }
-      else
-      {
-        rc = RhCmnCurveBooleanDifference(*inputCurves, *outputCurves);
-      }
-    }
-  }
-  return rc;
-}
-#endif
-
-/////////////////////////////////////////////////////////////////////////////
-// ON_SimpleArray<ON_Curve*> 
-
-RH_C_FUNCTION ON_SimpleArray<ON_Curve*>* ON_CurveArray_New(int initial_capacity)
-{
-  return new ON_SimpleArray<ON_Curve*>(initial_capacity);
-}
-
-RH_C_FUNCTION void ON_CurveArray_Append(ON_SimpleArray<ON_Curve*>* arrayPtr, ON_Curve* curvePtr)
-{
-  if( arrayPtr && curvePtr )
-  {
-    arrayPtr->Append( curvePtr );
-  }
-}
-
-RH_C_FUNCTION int ON_CurveArray_Count(const ON_SimpleArray<ON_Curve*>* arrayPtr)
-{
-  int rc = 0;
-  if( arrayPtr )
-    rc = arrayPtr->Count();
-  return rc;
-}
-
-RH_C_FUNCTION ON_Curve* ON_CurveArray_Get(ON_SimpleArray<ON_Curve*>* arrayPtr, int index)
-{
-  ON_Curve* rc = NULL;
-  
-  if( arrayPtr && index>=0 )
-  {
-    if( index<arrayPtr->Count() )
-      rc = (*arrayPtr)[index];
-  }
-  return rc;
-}
-
-RH_C_FUNCTION void ON_CurveArray_Delete(ON_SimpleArray<ON_Curve*>* arrayPtr)
-{
-  if( arrayPtr )
-    delete arrayPtr;
-}
-
-RH_C_FUNCTION bool ON_Curve_GetNextDiscontinuity(const ON_Curve* curvePtr, int continuityType, double t0, double t1, double* t)
-{
-  bool rc = false;
-  if( curvePtr )
-  {
-    ON::continuity c = ON::Continuity(continuityType);
-    rc = curvePtr->GetNextDiscontinuity(c, t0, t1, t);
-  }
-  return rc;
-}
-
-RH_C_FUNCTION bool ON_Curve_IsContinuous(const ON_Curve* curvePtr, int continuityType, double t)
-{
-  bool rc = false;
-  if( curvePtr )
-  {
-    ON::continuity c = ON::Continuity(continuityType);
-    rc = curvePtr->IsContinuous(c, t);
-  }
-  return rc;
-}
-
-#if !defined(OPENNURBS_BUILD)
-RH_C_FUNCTION ON_Curve* RHC_RhinoFairCurve(const ON_Curve* pCurve, double distanceTolerance,
-      double angleTolerance, int clampStart, int clampEnd, int iterations)
-{
-
-  ON_Curve* fair = NULL;
-  
-  if(pCurve)
-  {
-    CArgsRhinoFair args;
-    args.SetTolerance(distanceTolerance);
-    args.SetAngleTolerance(angleTolerance);
-    args.SetIterationCount(iterations);
-    args.SetClampStart(clampStart);
-    args.SetClampEnd(clampEnd);
-    args.SetInputCurve(pCurve);
-
-    fair = RhinoFairCurve(args);
-  }
-
-  return fair;
-}
-
-
-//// rhinoSdkOffsetCrvOnSrf.h
-
-RH_C_FUNCTION int RHC_RhinoOffsetCurveOnSrf( const ON_Curve* pConstCurve, const ON_Brep* pConstBrep, int faceId,
-                                             double distance, double tol,
-                                             ON_SimpleArray<ON_Curve*>* pCurves )
-{
-  int rc = 0;
-  if( pConstCurve && pConstBrep && pCurves )
-  {
-    RhinoOffsetCurveOnSrf( pConstCurve, pConstBrep, faceId, distance, tol, *pCurves );
-    rc = pCurves->Count();
-  }
-  return rc;
-}
-
-RH_C_FUNCTION int RHC_RhinoOffsetCurveOnSrf2( const ON_Curve* pConstCurve, const ON_Brep* pConstBrep, int faceId,
-                                             ON_2DPOINT_STRUCT through_pt, double tol,
-                                             ON_SimpleArray<ON_Curve*>* pCurves )
-{
-  int rc = 0;
-  if( pConstCurve && pConstBrep && pCurves )
-  {
-    ON_2dPoint _through(through_pt.val[0], through_pt.val[1]);
-    RhinoOffsetCurveOnSrf( pConstCurve, pConstBrep, faceId, _through, tol, *pCurves );
-    rc = pCurves->Count();
-  }
-  return rc;
-}
-
-RH_C_FUNCTION int RHC_RhinoOffsetCurveOnSrf3( const ON_Curve* pConstCurve, const ON_Brep* pConstBrep, int faceId,
-                                             int count, /*ARRAY*/const double* parameters, /*ARRAY*/const double* dists, double tol,
-                                             ON_SimpleArray<ON_Curve*>* pCurves )
-{
-  int rc = 0;
-  if( pConstCurve && pConstBrep && pCurves && count>0 && parameters && dists )
-  {
-    ON_SimpleArray<double> _p(count);
-    _p.Append(count, parameters);
-    ON_SimpleArray<double> _d(count);
-    _d.Append(count, dists);
-    RhinoOffsetCurveOnSrf( pConstCurve, pConstBrep, faceId, _p, _d, tol, *pCurves );
-    rc = pCurves->Count();
-  }
-  return rc;
-}
-#endif
-
-RH_C_FUNCTION ON_SimpleArray<ON_X_EVENT>* ON_Curve_IntersectPlane(const ON_Curve* pConstCurve, ON_PLANE_STRUCT* plane, double tolerance)
-{
-  ON_SimpleArray<ON_X_EVENT>* rc = NULL;
-  if(pConstCurve && plane)
-  {
-#if defined(RHINO_V5SR) // only available in V5
-    rc = new ON_SimpleArray<ON_X_EVENT>();
-    ON_Plane _plane = ::FromPlaneStruct(*plane);
-    if( pConstCurve->IntersectPlane( _plane.plane_equation, *rc, tolerance, tolerance) < 1 )
-    {
-      // no intersections found. No need to create a list of intersections
-      delete rc;
-      rc = NULL;
-    }
-#endif
-  }
- 
-  return rc;
-}
-

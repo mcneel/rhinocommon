@@ -39,6 +39,7 @@ RH_C_FUNCTION bool ON_Geometry_Scale( ON_Geometry* ptr, double scale)
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 // Add a curve to the partial boundingbox result.
 static void ON_Brep_GetTightCurveBoundingBox_Helper( const ON_Curve& crv, ON_BoundingBox& bbox, const ON_Xform* xform, const ON_Xform* xform_inverse )
 {
@@ -65,7 +66,6 @@ static void ON_Brep_GetTightCurveBoundingBox_Helper( const ON_Curve& crv, ON_Bou
     bbox.Union(tempbox);
 }
 
-#if !defined(OPENNURBS_BUILD)
 // Add the isocurves of a BrepFace to the partial boundingbox result.
 static void ON_Brep_GetTightIsoCurveBoundingBox_Helper( const TL_Brep& tlbrep, const ON_BrepFace& face, ON_BoundingBox& bbox, const ON_Xform* xform, int dir )
 {
@@ -164,7 +164,6 @@ static void ON_Brep_GetTightIsoCurveBoundingBox_Helper( const TL_Brep& tlbrep, c
     }
   }
 }
-
 // Add a face to the partial boundingbox result.
 static void ON_Brep_GetTightFaceBoundingBox_Helper( const ON_BrepFace& face, ON_BoundingBox& bbox, const ON_Xform* xform, const ON_Xform* xform_inverse )
 {
@@ -192,7 +191,6 @@ static void ON_Brep_GetTightFaceBoundingBox_Helper( const ON_BrepFace& face, ON_
     ON_Brep_GetTightIsoCurveBoundingBox_Helper( *tlbrep, face, bbox, xform, 1);
   }
 }
-
 static bool ON_Brep_GetTightBoundingBox_Helper( const ON_Brep& brep, ON_BoundingBox& bbox, ON_Xform* xform )
 {
   ON_Xform xform_inverse;
@@ -232,6 +230,7 @@ static bool ON_Brep_GetTightBoundingBox_Helper( const ON_Brep& brep, ON_Bounding
 
   return bbox.IsValid();
 }
+#endif
 
 RH_C_FUNCTION bool ON_Geometry_GetTightBoundingBox(const ON_Geometry* ptr, ON_BoundingBox* bbox, ON_Xform* xform, bool useXform)
 {
@@ -243,16 +242,17 @@ RH_C_FUNCTION bool ON_Geometry_GetTightBoundingBox(const ON_Geometry* ptr, ON_Bo
 
     // OpenNURBS doesn't have a tight bounding box function for ON_Breps and we
     // want to make this work in V4
+#if !defined(OPENNURBS_BUILD)
     const ON_Brep* pBrep = ON_Brep::Cast(ptr);
     if( pBrep )
       rc = ON_Brep_GetTightBoundingBox_Helper(*pBrep, *bbox, xform);
+#endif
     // check rc in case the above function fails
     if( !rc )
       rc = ptr->GetTightBoundingBox(*bbox, false, xform);
   }
   return rc;
 }
-#endif
 
 RH_C_FUNCTION bool ON_Geometry_Transform( ON_Geometry* ptr, ON_Xform* xf)
 {

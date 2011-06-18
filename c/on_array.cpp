@@ -398,3 +398,46 @@ RH_C_FUNCTION void ON_SimpleArray_3dmObjectAttributes_Add( ON_SimpleArray<const 
   if( pArray && pAttributes )
     pArray->Append(pAttributes);
 }
+
+/////////////////////////////////////////////////////////////////////////////
+// ON_SimpleArray<ON_Curve*> 
+
+RH_C_FUNCTION ON_SimpleArray<ON_Curve*>* ON_CurveArray_New(int initial_capacity)
+{
+  return new ON_SimpleArray<ON_Curve*>(initial_capacity);
+}
+
+RH_C_FUNCTION void ON_CurveArray_Append(ON_SimpleArray<ON_Curve*>* arrayPtr, ON_Curve* curvePtr)
+{
+  if( arrayPtr && curvePtr )
+  {
+    arrayPtr->Append( curvePtr );
+  }
+}
+
+RH_C_FUNCTION int ON_CurveArray_Count(const ON_SimpleArray<ON_Curve*>* arrayPtr)
+{
+  int rc = 0;
+  if( arrayPtr )
+    rc = arrayPtr->Count();
+  return rc;
+}
+
+RH_C_FUNCTION ON_Curve* ON_CurveArray_Get(ON_SimpleArray<ON_Curve*>* arrayPtr, int index)
+{
+  ON_Curve* rc = NULL;
+  
+  if( arrayPtr && index>=0 )
+  {
+    if( index<arrayPtr->Count() )
+      rc = (*arrayPtr)[index];
+  }
+  return rc;
+}
+
+RH_C_FUNCTION void ON_CurveArray_Delete(ON_SimpleArray<ON_Curve*>* arrayPtr)
+{
+  if( arrayPtr )
+    delete arrayPtr;
+}
+

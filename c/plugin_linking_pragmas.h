@@ -9,12 +9,14 @@
 #if defined(NDEBUG)
 
 // release x64 libs
-#pragma comment(lib, "./zlib/x64/Release/zlib.lib")
+#pragma comment(lib, "../../opennurbs/zlib/x64/Release/zlib.lib")
+#pragma comment(lib, "./x64/Release/opennurbs_staticlib.lib")
 
 #else // _DEBUG
 
 // debug  x64 libs
-#pragma comment(lib, "./zlib/x64/Debug/zlib.lib")
+#pragma comment(lib, "../../opennurbs/zlib/x64/Debug/zlib.lib")
+#pragma comment(lib, "./x64/Debug/opennurbs_staticlib.lib")
 
 #endif // if NDEBUG else _DEBUG
 
@@ -25,7 +27,8 @@
 #if defined(NDEBUG)
 
 // release 32 bit WIndows libs
-#pragma comment(lib, "./zlib/Release/zlib.lib")
+#pragma comment(lib, "../../opennurbs/zlib/Release/zlib.lib")
+#pragma comment(lib, "./Release/opennurbs_staticlib.lib")
 
 #else // _DEBUG
 

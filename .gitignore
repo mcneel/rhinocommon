@@ -135,3 +135,5 @@
 /c/stdafx.cpp
 /c/stdafx.h
 /c/version.plist
+/c/Release
+/c/ipch

@@ -44,6 +44,7 @@ RH_C_FUNCTION void ON_HatchPattern_SetFillType(ON_HatchPattern* pHatchPattern, i
   }
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION void ON_Hatch_Explode(const ON_Hatch* pConstHatch,
                                     const CRhinoObject* pConstParentRhinoObject,
                                     ON_SimpleArray<ON_Geometry*>* pOutputGeometry)
@@ -72,6 +73,7 @@ RH_C_FUNCTION void ON_Hatch_Explode(const ON_Hatch* pConstHatch,
     }
   }
 }
+#endif
 
 RH_C_FUNCTION int ON_Hatch_PatternIndex(const ON_Hatch* pConstHatch)
 {

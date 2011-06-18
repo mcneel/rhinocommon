@@ -417,6 +417,7 @@ RH_C_FUNCTION bool ON_Curve_GetNurbParameter(const ON_Curve* pCurve, double t_in
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION ON_MassProperties* ON_Curve_AreaMassProperties(const ON_Curve* pCurve, double rel_tol, double abs_tol)
 {
   ON_MassProperties* rc = NULL;
@@ -495,6 +496,7 @@ RH_C_FUNCTION ON_MassProperties* ON_Hatch_AreaMassProperties(const ON_Hatch* pCo
   }
   return rc;
 }
+#endif
 
 RH_C_FUNCTION bool ON_Curve_IsClosable( const ON_Curve* curvePtr, double tolerance, double min_abs_size, double min_rel_size )
 {
@@ -516,6 +518,7 @@ RH_C_FUNCTION int ON_Curve_ClosedCurveOrientation( const ON_Curve* curvePtr, ON_
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 static int RhCmnCurveBooleanDifference(const ON_SimpleArray<const ON_Curve*>& inputCurves, ON_SimpleArray<ON_Curve*>& outputCurves)
 {
   int rc = 0;
@@ -621,7 +624,6 @@ static int RhCmnCurveBooleanDifference(const ON_SimpleArray<const ON_Curve*>& in
   return rc;
 }
 
-
 RH_C_FUNCTION int ON_Curve_BooleanOperation( const ON_SimpleArray<const ON_Curve*>* inputCurves, ON_SimpleArray<ON_Curve*>* outputCurves, int which)
 {
   const int idxBooleanUnion = 0;
@@ -660,7 +662,7 @@ RH_C_FUNCTION int ON_Curve_BooleanOperation( const ON_SimpleArray<const ON_Curve
   }
   return rc;
 }
-
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // ON_SimpleArray<ON_Curve*> 
@@ -726,6 +728,7 @@ RH_C_FUNCTION bool ON_Curve_IsContinuous(const ON_Curve* curvePtr, int continuit
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION ON_Curve* RHC_RhinoFairCurve(const ON_Curve* pCurve, double distanceTolerance,
       double angleTolerance, int clampStart, int clampEnd, int iterations)
 {
@@ -794,6 +797,7 @@ RH_C_FUNCTION int RHC_RhinoOffsetCurveOnSrf3( const ON_Curve* pConstCurve, const
   }
   return rc;
 }
+#endif
 
 RH_C_FUNCTION ON_SimpleArray<ON_X_EVENT>* ON_Curve_IntersectPlane(const ON_Curve* pConstCurve, ON_PLANE_STRUCT* plane, double tolerance)
 {

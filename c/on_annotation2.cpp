@@ -32,7 +32,7 @@ RH_C_FUNCTION const wchar_t* ON_Annotation2_Text(ON_Annotation2* pAnnotation2, c
     if( _str )
     {
       INPUTSTRINGCOERCE(str, _str);
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
       if( formula )
         pAnnotation2->SetTextFormula(str);
       else
@@ -42,7 +42,7 @@ RH_C_FUNCTION const wchar_t* ON_Annotation2_Text(ON_Annotation2* pAnnotation2, c
 #endif
     }
 
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
     if( formula )
       rc = pAnnotation2->TextFormula();
     else

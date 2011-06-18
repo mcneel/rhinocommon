@@ -35,6 +35,7 @@ RH_C_FUNCTION void ON_PolylineCurve_GetSetPoint(ON_PolylineCurve* pCurve, int in
   }
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION void ON_PolylineCurve_Draw(const ON_PolylineCurve* pCrv, CRhinoDisplayPipeline* pDisplayPipeline, int argb, int thickness)
 {
   if( pCrv && pDisplayPipeline )
@@ -43,3 +44,4 @@ RH_C_FUNCTION void ON_PolylineCurve_Draw(const ON_PolylineCurve* pCrv, CRhinoDis
     pDisplayPipeline->DrawPolyline(pCrv->m_pline, abgr, thickness);
   }
 }
+#endif

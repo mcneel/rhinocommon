@@ -127,6 +127,7 @@ RH_C_FUNCTION bool ON_4dPoint_Normalize( ON_4dPoint* a )
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION bool TLC_SortPointList( /*ARRAY*/ON_3dPoint* points, int* count, double mindist )
 {
   bool rc = false;
@@ -141,3 +142,4 @@ RH_C_FUNCTION bool TLC_SortPointList( /*ARRAY*/ON_3dPoint* points, int* count, d
   }
   return rc;
 }
+#endif

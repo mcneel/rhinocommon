@@ -9,12 +9,14 @@ RH_C_FUNCTION ON_Viewport* ON_Viewport_New(const ON_Viewport* pVP)
 	return new ON_Viewport();
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION ON_Viewport* ON_Viewport_New2(const CRhinoViewport* pRhinoViewport)
 {
   if( pRhinoViewport )
     return new ON_Viewport(pRhinoViewport->VP());
   return new ON_Viewport();
 }
+#endif
 
 RH_C_FUNCTION bool ON_Viewport_GetBool(const ON_Viewport* pConstViewport, int which)
 {

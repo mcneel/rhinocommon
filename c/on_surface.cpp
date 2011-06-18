@@ -322,6 +322,7 @@ RH_C_FUNCTION int ON_Surface_HasNurbsForm(const ON_Surface* pConstSurface)
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION ON_MassProperties* ON_Surface_MassProperties(bool bArea, const ON_Surface* pConstSurface, double relativeTolerance, double absoluteTolerance)
 {
   ON_MassProperties* rc = NULL;
@@ -341,6 +342,7 @@ RH_C_FUNCTION ON_MassProperties* ON_Surface_MassProperties(bool bArea, const ON_
   }
   return rc;
 }
+#endif
 
 RH_C_FUNCTION bool ON_Surface_EvPoint( const ON_Surface* pConstSurface, double s, double t, ON_3dPoint* point )
 {
@@ -470,6 +472,7 @@ RH_C_FUNCTION bool ON_Surface_Evaluate(const ON_Surface* pConstSurface, double u
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION ON_Surface* RHC_RhinoExtrudeCurveStraight( const ON_Curve* pConstCurve, ON_3DVECTOR_STRUCT direction )
 {
   ON_Surface* rc = NULL;
@@ -493,6 +496,7 @@ RH_C_FUNCTION ON_Surface* RHC_RhinoExtrudeCurveToPoint( const ON_Curve* pConstCu
   }
   return rc;
 }
+#endif
 
 // move to on_revsurface.cpp once we have one
 RH_C_FUNCTION ON_RevSurface* ON_RevSurface_Create(const ON_Curve* pConstProfile, const ON_Line* axis, double startAngle, double endAngle )
@@ -534,6 +538,7 @@ RH_C_FUNCTION ON_SumSurface* ON_SumSurface_Create(const ON_Curve* pConstCurveA, 
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 static int RemoveSrfMultiKnots( TL_NURBSRF& srf, int dir )
 { 
   double t0, t1;
@@ -587,6 +592,7 @@ RH_C_FUNCTION ON_Surface* ON_Surface_MakePeriodic( const ON_Surface* pConstSurfa
   }
   return rc;
 }
+#endif
 
 RH_C_FUNCTION int ON_Surface_ClosestSide( const ON_Surface* pConstSurface, double u, double v )
 {

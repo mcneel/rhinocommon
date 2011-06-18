@@ -24,11 +24,13 @@
 #define RH_EXPORT __attribute__ ((visibility ("default")))
 #endif
 
+#if !defined(OPENNURBS_BUILD)
 // Always call this function instead of ActiveDoc so
 // we have a single place to fix up code to work on Mac multi-doc build
 RH_CPP_FUNCTION CRhinoDoc* RhDocFromId( int id );
 RH_CPP_FUNCTION int RhIdFromDoc( CRhinoDoc* pDoc );
 RH_CPP_FUNCTION bool RhInShutDown();
+#endif
 
 struct ON_2DPOINT_STRUCT{ double val[2]; };
 struct ON_2DVECTOR_STRUCT{ double val[2]; };
@@ -117,7 +119,11 @@ public:
 #endif
 
 
+#if defined(OPENNURBS_BUILD)
+class CRhCmnStringHolder
+#else
 class RH_EXPORT CRhCmnStringHolder
+#endif
 {
 public:
   CRhCmnStringHolder();

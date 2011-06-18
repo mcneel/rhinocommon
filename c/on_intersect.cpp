@@ -196,6 +196,7 @@ RH_C_FUNCTION int ON_Intersect_SphereSphere(ON_Sphere* sphereA, ON_Sphere* spher
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION ON_SimpleArray<ON_Polyline*>* ON_Intersect_MeshPlanes1(const ON_Mesh* meshPtr, int plane_count, /*ARRAY*/const ON_PLANE_STRUCT* planes, int* polyline_count)
 {
   if( NULL==meshPtr || plane_count<1 || NULL==planes || NULL==polyline_count )
@@ -219,6 +220,7 @@ RH_C_FUNCTION ON_SimpleArray<ON_Polyline*>* ON_Intersect_MeshPlanes1(const ON_Me
   }
   return polylines;
 }
+#endif
 
 // return number of points in a certain polyline
 RH_C_FUNCTION int ON_Intersect_MeshPlanes2(ON_SimpleArray<ON_Polyline*>* pPolylines, int i)
@@ -259,6 +261,7 @@ RH_C_FUNCTION void ON_Intersect_MeshPlanes4(ON_SimpleArray<ON_Polyline*>* pPolyl
   delete pPolylines;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION double ON_Intersect_MeshRay1(const ON_Mesh* pMesh, ON_3dRay* ray, ON_SimpleArray<int>* face_indices)
 {
   double rc = -1.0;
@@ -361,6 +364,7 @@ RH_C_FUNCTION void ON_Intersect_MeshPolyline_Fill(ON_SimpleArray<ON_CMX_EVENT>* 
   if( pCMX )
     delete pCMX;
 }
+#endif
 
 RH_C_FUNCTION ON_SimpleArray<ON_X_EVENT>* ON_Intersect_CurveSelf(const ON_Curve* pCurve, double tolerance)
 {
@@ -469,6 +473,7 @@ RH_C_FUNCTION bool ON_Intersect_CurveIntersectData(const ON_SimpleArray<ON_X_EVE
   return false;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION int ON_RayShooter_OneSurface(ON_3DPOINT_STRUCT _point, ON_3DVECTOR_STRUCT _direction, const ON_Surface* pConstSurface, ON_SimpleArray<ON_3dPoint>* pPoints, int maxReflections)
 {
   int rc = 0;
@@ -630,3 +635,5 @@ RH_C_FUNCTION ON_SimpleArray<ON_Polyline*>* ON_Intersect_MeshMesh1(const ON_Mesh
   }
   return rc;
 }
+
+#endif

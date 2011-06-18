@@ -31,6 +31,7 @@ RH_C_FUNCTION bool ON_Mesh_EvaluateMeshGeometry(ON_Mesh* pMesh, const ON_Surface
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 static bool RhCmnMakePlanarMeshes( ON_SimpleArray<const ON_Curve*>& curves, ON_SimpleArray<ON_Mesh*>& meshes, const ON_MeshParameters& mp )
 {
   CRhinoDoc* doc = RhinoApp().ActiveDoc();
@@ -96,6 +97,7 @@ RH_C_FUNCTION ON_Mesh* ON_Mesh_FromPlanarCurve(const ON_Curve* pCurve)
   }
   return rc;
 }
+#endif
 
 RH_C_FUNCTION bool ON_Mesh_SetVertex(ON_Mesh* pMesh, int vertexIndex, float x, float y, float z)
 {
@@ -400,10 +402,12 @@ RH_C_FUNCTION int ON_Mesh_GetInt( const ON_Mesh* pConstMesh, int which )
       rc = pConstMesh->HiddenVertexCount();
       break;
     case idxDisjointMeshCount:
+#if !defined(OPENNURBS_BUILD)
       {
         ON_SimpleArray<ON_Mesh*> meshes;
         rc = RhinoSplitDisjointMesh( pConstMesh, meshes, true );
       }
+#endif
       break;
     case idxFaceNormalCount:
       rc = pConstMesh->m_FN.Count();
@@ -608,6 +612,7 @@ RH_C_FUNCTION bool ON_Mesh_IsManifold(const ON_Mesh* ptr, bool topotest, bool* i
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION int ON_Mesh_GetClosestPoint(const ON_Mesh* ptr, ON_3DPOINT_STRUCT p, ON_3dPoint* q, double max_dist)
 {
   int rc = -1;
@@ -772,6 +777,7 @@ RH_C_FUNCTION ON_MassProperties* ON_Mesh_MassProperties(bool bArea, const ON_Mes
   }
   return rc;
 }
+#endif
 
 RH_C_FUNCTION int ON_Mesh_DeleteFace(ON_Mesh* pMesh, int count, /*ARRAY*/const int* indices)
 {
@@ -903,6 +909,7 @@ RH_C_FUNCTION bool ON_Mesh_GetTextureCoordinate(const ON_Mesh* pConstMesh, int i
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION ON_Mesh* ON_Mesh_CreateMeshPlane(const ON_PLANE_STRUCT* plane, ON_INTERVAL_STRUCT x_int, ON_INTERVAL_STRUCT y_int, int x_cnt, int y_cnt)
 {
   ON_Mesh* rc = NULL;
@@ -928,7 +935,7 @@ RH_C_FUNCTION ON_Mesh* ON_Mesh_CreateMeshSphere(const ON_PLANE_STRUCT* plane, do
   }
   return rc;
 }
-
+#endif
 
 // !!!!IMPORTANT!!!!
 // Use an array of ints instead of bools. Bools have to be marshaled in different ways through
@@ -1353,7 +1360,7 @@ RH_C_FUNCTION bool ON_MeshTopology_TopItemIsHidden(const ON_Mesh* pConstMesh, in
 
 
 ////////////////////////////////////////////
-
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION ON_SimpleArray<ON_PolylineCurve*>* TL_GetMeshOutline(const ON_Mesh* pConstMesh, const ON_PLANE_STRUCT* plane, int* polylines_created)
 {
   ON_SimpleArray<ON_PolylineCurve*>* rc = NULL;
@@ -1467,6 +1474,7 @@ RH_C_FUNCTION ON_SimpleArray<ON_PolylineCurve*>* ON_Mesh_GetNakedEdges(const ON_
   }
   return rc;
 }
+#endif
 
 // return number of points in a certain polyline curve
 RH_C_FUNCTION int ON_SimpleArray_PolylineCurve_GetCount(ON_SimpleArray<ON_PolylineCurve*>* pPolylineCurves, int i)

@@ -89,6 +89,7 @@ RH_C_FUNCTION ON_Brep* ON_Brep_FromCylinder(ON_Cylinder* cylinder, bool capBotto
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION ON_MassProperties* ON_Brep_MassProperties(bool bArea, const ON_Brep* pBrep, double relativeTolerance, double absoluteTolerance)
 {
   ON_MassProperties* rc = NULL;
@@ -108,6 +109,7 @@ RH_C_FUNCTION ON_MassProperties* ON_Brep_MassProperties(bool bArea, const ON_Bre
   }
   return rc;
 }
+#endif
 
 RH_C_FUNCTION void ON_Brep_DuplicateEdgeCurves(const ON_Brep* pBrep, ON_SimpleArray<ON_Curve*>* pOutCurves, bool nakedOnly)
 {
@@ -136,6 +138,7 @@ RH_C_FUNCTION void ON_Brep_DuplicateEdgeCurves(const ON_Brep* pBrep, ON_SimpleAr
   }
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION void ON_Brep_GetWireframe( const ON_Brep* pBrep, int density, ON_SimpleArray<ON_Curve*>* pWireframe )
 {
   if (pBrep && pWireframe)
@@ -153,6 +156,7 @@ RH_C_FUNCTION void ON_Brep_GetWireframe( const ON_Brep* pBrep, int density, ON_S
     obj.GetWireframeCurves(*pWireframe);
   }
 }
+#endif
 
 RH_C_FUNCTION void ON_Brep_DuplicateVertices( const ON_Brep* pBrep, ON_3dPointArray* outPoints)
 {
@@ -339,6 +343,7 @@ RH_C_FUNCTION ON_Brep* ON_Brep_DuplicateFace( const ON_Brep* pConstBrep, int fac
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION int ON_Brep_PointIsOnFace( const ON_Brep* pConstBrep, int faceIndex, double u, double v )
 {
   int rc = 0;
@@ -353,6 +358,7 @@ RH_C_FUNCTION int ON_Brep_PointIsOnFace( const ON_Brep* pConstBrep, int faceInde
   }
   return rc;
 }
+#endif
 
 RH_C_FUNCTION ON_Surface* ON_Brep_DuplicateFaceSurface( const ON_Brep* pConstBrep, int faceIndex )
 {
@@ -427,6 +433,7 @@ RH_C_FUNCTION const ON_Brep* ON_BrepSubItem_Brep( const ON_Geometry* pConstGeome
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION int ON_Brep_CreateMesh( const ON_Brep* pConstBrep, ON_SimpleArray<ON_Mesh*>* meshes )
 {
   int rc = 0;
@@ -445,6 +452,7 @@ RH_C_FUNCTION int ON_Brep_CreateMesh( const ON_Brep* pConstBrep, ON_SimpleArray<
   }
   return rc;
 }
+
 RH_C_FUNCTION int ON_Brep_CreateMesh2( const ON_Brep* pConstBrep, ON_SimpleArray<ON_Mesh*>* meshes, 
                                       bool bSimplePlanes, 
                                       bool bRefine, 
@@ -537,6 +545,7 @@ ON_Brep* ON_Brep_ExtrudeCurve( const ON_Curve* pConstCurve, ON_3DVECTOR_STRUCT d
   }
   return rc;
 }
+#endif
 
 RH_C_FUNCTION int ON_Brep_EdgeTrimCount( const ON_Brep* pConstBrep, int edge_index )
 {
@@ -641,7 +650,7 @@ RH_C_FUNCTION int ON_Brep_FaceFaceIndices( const ON_Brep* pConstBrep, int face_i
   return rc;
 }
 
-
+#if !defined(OPENNURBS_BUILD)
 ON_Brep* ON_Brep_ExtrudeCurveToPoint( const ON_Curve* pConstCurve, ON_3DPOINT_STRUCT tip )
 {
   ON_Brep* rc = NULL;
@@ -664,6 +673,7 @@ ON_Brep* ON_Brep_ExtrudeCurveToPoint( const ON_Curve* pConstCurve, ON_3DPOINT_ST
   }
   return rc;
 }
+#endif
 
 RH_C_FUNCTION ON_Brep* ON_Brep_CopyTrims( const ON_BrepFace* pConstBrepFace, const ON_Surface* pConstSurface, double tolerance)
 {

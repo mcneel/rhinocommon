@@ -275,6 +275,7 @@ RH_C_FUNCTION ON_NurbsSurface* ON_NurbsSurface_CreateRuledSurface( const ON_Curv
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION ON_NurbsSurface* RHC_RhinoRailRevolve( const ON_Curve* pConstProfileCurve, const ON_Curve* pConstRailCurve, const ON_Line* axis, bool scale)
 {
   ON_NurbsSurface* rc = NULL;
@@ -283,9 +284,9 @@ RH_C_FUNCTION ON_NurbsSurface* RHC_RhinoRailRevolve( const ON_Curve* pConstProfi
   {
     rc = RhinoRailRevolve(pConstProfileCurve, pConstRailCurve, *axis, scale, NULL);
   }
-
   return rc;
 }
+#endif
 
 RH_C_FUNCTION ON_MorphControl* ON_MorphControl_New( const ON_MorphControl* pConstOther )
 {

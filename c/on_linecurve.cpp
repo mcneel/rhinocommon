@@ -40,6 +40,7 @@ RH_C_FUNCTION void ON_LineCurve_GetSetLine(ON_LineCurve* pCurve, bool set, ON_Li
   }
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION void ON_LineCurve_Draw(const ON_LineCurve* pCrv, CRhinoDisplayPipeline* pDisplayPipeline, int argb, int thickness)
 {
   if( pCrv && pDisplayPipeline )
@@ -48,3 +49,4 @@ RH_C_FUNCTION void ON_LineCurve_Draw(const ON_LineCurve* pCrv, CRhinoDisplayPipe
     pDisplayPipeline->DrawLine( pCrv->m_line.from, pCrv->m_line.to, abgr, thickness );
   }
 }
+#endif

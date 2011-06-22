@@ -75,8 +75,6 @@
 /c/rhcommon_c.vcxproj.filters
 /c/rhcommon_c.vcxproj.user
 /c/rhcommon_c_Prefix.pch
-/c/stdafx.cpp
-/c/stdafx.h
 /c/version.plist
 /c/opennurbs_memory_new.cpp
 /c/rh_annotationobject.cpp
@@ -132,8 +130,6 @@
 /c/rhcommon_c.vcxproj.filters
 /c/rhcommon_c.vcxproj.user
 /c/rhcommon_c_Prefix.pch
-/c/stdafx.cpp
-/c/stdafx.h
 /c/version.plist
 /c/Release
 /c/ipch
@@ -143,3 +139,7 @@
 /c/rhcommon_opennurbs.sdf
 /c/rhcommon_opennurbs.suo
 /c/rhcommon_opennurbs.vcxproj.user
+/c/rh_extrude.cpp
+/c/rh_getrevolve.cpp
+/c/rh_meshobject.cpp
+/c/tl_functions.cpp

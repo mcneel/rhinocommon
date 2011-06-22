@@ -710,7 +710,7 @@ RH_C_FUNCTION bool ON_Mesh_NakedEdgePoints( const ON_Mesh* pMesh, /*ARRAY*/int* 
 RH_C_FUNCTION bool ON_Mesh_IsPointInside(const ON_Mesh* pConstMesh, ON_3DPOINT_STRUCT point, double tolerance, bool strictlyin)
 {
   bool rc = false;
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
+#if defined(RHINO_V5SR) // only available in V5
   if( pConstMesh )
   {
     ON_3dPoint _point(point.val);

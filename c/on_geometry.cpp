@@ -65,6 +65,7 @@ static void ON_Brep_GetTightCurveBoundingBox_Helper( const ON_Curve& crv, ON_Bou
     bbox.Union(tempbox);
 }
 
+#if !defined(OPENNURBS_BUILD)
 // Add the isocurves of a BrepFace to the partial boundingbox result.
 static void ON_Brep_GetTightIsoCurveBoundingBox_Helper( const TL_Brep& tlbrep, const ON_BrepFace& face, ON_BoundingBox& bbox, const ON_Xform* xform, int dir )
 {
@@ -229,6 +230,8 @@ static bool ON_Brep_GetTightBoundingBox_Helper( const ON_Brep& brep, ON_Bounding
 
   return bbox.IsValid();
 }
+#endif
+
 RH_C_FUNCTION bool ON_Geometry_GetTightBoundingBox(const ON_Geometry* ptr, ON_BoundingBox* bbox, ON_Xform* xform, bool useXform)
 {
   bool rc = false;
@@ -237,11 +240,13 @@ RH_C_FUNCTION bool ON_Geometry_GetTightBoundingBox(const ON_Geometry* ptr, ON_Bo
     if(!useXform || (xform && xform->IsIdentity()))
       xform = NULL;
 
+#if !defined(OPENNURBS_BUILD)
     // OpenNURBS doesn't have a tight bounding box function for ON_Breps and we
     // want to make this work in V4
     const ON_Brep* pBrep = ON_Brep::Cast(ptr);
     if( pBrep )
       rc = ON_Brep_GetTightBoundingBox_Helper(*pBrep, *bbox, xform);
+#endif
     // check rc in case the above function fails
     if( !rc )
       rc = ptr->GetTightBoundingBox(*bbox, false, xform);

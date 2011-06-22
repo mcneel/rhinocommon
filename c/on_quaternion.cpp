@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
+#if defined(RHINO_V5SR) // only available in V5
 
 RH_C_FUNCTION double ON_Quaternion_Length( const ON_Quaternion* q)
 {
@@ -27,7 +27,6 @@ RH_C_FUNCTION void ON_Quaternion_SetRotation( ON_Quaternion* q, const ON_PLANE_S
     q->SetRotation(temp0, temp1);
   }
 }
-
 RH_C_FUNCTION bool ON_Quaternion_GetRotation( const ON_Quaternion* q, ON_PLANE_STRUCT* plane)
 {
   bool rc = false;

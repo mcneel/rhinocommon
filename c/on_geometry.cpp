@@ -39,7 +39,6 @@ RH_C_FUNCTION bool ON_Geometry_Scale( ON_Geometry* ptr, double scale)
   return rc;
 }
 
-#if !defined(OPENNURBS_BUILD)
 // Add a curve to the partial boundingbox result.
 static void ON_Brep_GetTightCurveBoundingBox_Helper( const ON_Curve& crv, ON_BoundingBox& bbox, const ON_Xform* xform, const ON_Xform* xform_inverse )
 {
@@ -230,8 +229,6 @@ static bool ON_Brep_GetTightBoundingBox_Helper( const ON_Brep& brep, ON_Bounding
 
   return bbox.IsValid();
 }
-#endif
-
 RH_C_FUNCTION bool ON_Geometry_GetTightBoundingBox(const ON_Geometry* ptr, ON_BoundingBox* bbox, ON_Xform* xform, bool useXform)
 {
   bool rc = false;
@@ -242,11 +239,9 @@ RH_C_FUNCTION bool ON_Geometry_GetTightBoundingBox(const ON_Geometry* ptr, ON_Bo
 
     // OpenNURBS doesn't have a tight bounding box function for ON_Breps and we
     // want to make this work in V4
-#if !defined(OPENNURBS_BUILD)
     const ON_Brep* pBrep = ON_Brep::Cast(ptr);
     if( pBrep )
       rc = ON_Brep_GetTightBoundingBox_Helper(*pBrep, *bbox, xform);
-#endif
     // check rc in case the above function fails
     if( !rc )
       rc = ptr->GetTightBoundingBox(*bbox, false, xform);
@@ -410,7 +405,7 @@ RH_C_FUNCTION int ON_Geometry_GetGeometryType( const ON_Object* pOnObject)
       if( pCastTest )
         return idxON_BrepFace; //20
 
-#if defined(RHINO_V5SR) // only available in Rhino 5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in Rhino 5
       pCastTest = ON_Extrusion::Cast(pGeometry);
       if( pCastTest )
         return idxON_Extrusion; //24

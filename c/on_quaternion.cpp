@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
 
 RH_C_FUNCTION double ON_Quaternion_Length( const ON_Quaternion* q)
 {

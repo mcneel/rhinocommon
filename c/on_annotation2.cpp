@@ -26,7 +26,6 @@ RH_C_FUNCTION void ON_Annotation2_SetPoint(ON_Annotation2* pAnnotation, int whic
 RH_C_FUNCTION const wchar_t* ON_Annotation2_Text(ON_Annotation2* pAnnotation2, const RHMONO_STRING* _str, bool formula)
 {
   const wchar_t* rc = NULL;
-#if defined(_WIN32)
   if( pAnnotation2 )
   {
     if( _str )
@@ -51,7 +50,6 @@ RH_C_FUNCTION const wchar_t* ON_Annotation2_Text(ON_Annotation2* pAnnotation2, c
     rc = pAnnotation2->UserText();
 #endif
   }
-#endif
   return rc;
 }
 

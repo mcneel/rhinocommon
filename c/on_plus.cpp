@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 
+// Not available in stand alone OpenNURBS
 
 #if defined(RHINO_V5SR) // only available in V5
 

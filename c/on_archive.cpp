@@ -506,7 +506,7 @@ RH_C_FUNCTION ON_Object* ON_ReadBufferArchive(int archive_3dm_version, int archi
   return rc;
 }
 
-#if defined(RHINO_V5SR)
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)
 typedef ON_Write3dmBufferArchive CRhCmnWrite3dmBufferArchive;
 #else
 // Ughh... What a pain!!!!

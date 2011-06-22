@@ -46,7 +46,7 @@ RH_C_FUNCTION bool ON_Intersect_PlanePlanePlane(const ON_PLANE_STRUCT* planeA, c
   return rc;
 }
 
-#if !defined(RHINO_V5SR) // fixed in V5
+#if !defined(RHINO_V5SR) && !defined(OPENNURBS_BUILD)// fixed in V5
 // Copied from opennurbs_intersect.cpp but with a bug fix.
 // We can remove it once the bug is fixed in OpenNurbs and once 
 // Grasshopper has dropped Rhino4 support.
@@ -130,7 +130,7 @@ RH_C_FUNCTION int ON_Intersect_PlaneSphere(const ON_PLANE_STRUCT* plane, ON_Sphe
     sphere->plane.UpdateEquation();
     ON_Plane temp = FromPlaneStruct(*plane);
     ON_Circle circle = FromCircleStruct(*intersectionCircle);
-#if defined(RHINO_V5SR) // fixed in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// fixed in V5
     rc = ON_Intersect(temp, *sphere, circle);
 #else
     rc = PS_Intersect(temp, *sphere, circle); //Go back to ::ON_Intersect(temp, *sphere, circle); once Grasshopper drops Rhino4 support.
@@ -150,6 +150,7 @@ RH_C_FUNCTION int ON_Intersect_LineSphere(ON_Line* line, ON_Sphere* sphere, ON_3
   }
   return rc;
 }
+
 RH_C_FUNCTION int ON_Intersect_LineCircle(const ON_Line* pLine, const ON_CIRCLE_STRUCT* pCircle, double* t1, ON_3dPoint* point1, double* t2, ON_3dPoint* point2)
 {
   int rc = 0;
@@ -196,32 +197,6 @@ RH_C_FUNCTION int ON_Intersect_SphereSphere(ON_Sphere* sphereA, ON_Sphere* spher
   return rc;
 }
 
-#if !defined(OPENNURBS_BUILD)
-RH_C_FUNCTION ON_SimpleArray<ON_Polyline*>* ON_Intersect_MeshPlanes1(const ON_Mesh* meshPtr, int plane_count, /*ARRAY*/const ON_PLANE_STRUCT* planes, int* polyline_count)
-{
-  if( NULL==meshPtr || plane_count<1 || NULL==planes || NULL==polyline_count )
-    return NULL;
-
-  ON_SimpleArray<ON_Polyline*>* polylines = new ON_SimpleArray<ON_Polyline*>();
-
-  TL_MeshXPlane mxp(*meshPtr, meshPtr->Topology());
-  for( int i=0; i<plane_count; i++ )
-  {
-    ON_3dPoint point = planes[i].origin;
-    ON_3dVector normal = planes[i].zaxis;
-    // I looked through TL and the Intersect function just keeps appending to the input polyline list
-    mxp.Intersect(point, normal, *polylines);
-  }
-  *polyline_count = polylines->Count();
-  if( *polyline_count < 1 )
-  {
-    delete polylines;
-    return NULL;
-  }
-  return polylines;
-}
-#endif
-
 // return number of points in a certain polyline
 RH_C_FUNCTION int ON_Intersect_MeshPlanes2(ON_SimpleArray<ON_Polyline*>* pPolylines, int i)
 {
@@ -260,111 +235,6 @@ RH_C_FUNCTION void ON_Intersect_MeshPlanes4(ON_SimpleArray<ON_Polyline*>* pPolyl
   }
   delete pPolylines;
 }
-
-#if !defined(OPENNURBS_BUILD)
-RH_C_FUNCTION double ON_Intersect_MeshRay1(const ON_Mesh* pMesh, ON_3dRay* ray, ON_SimpleArray<int>* face_indices)
-{
-  double rc = -1.0;
-  // it is ok if face_indices is null
-  if( pMesh && ray )
-  {
-    const ON_MeshTree* mt = pMesh->MeshTree();
-    ON_3dVector rayVec = ray->m_V;
-    if( mt && rayVec.Unitize() )
-    {
-      double rayRange = mt->m_bbox.MaximumDistanceTo(ray->m_P);
-      ON_Line line(ray->m_P, ray->m_P + rayRange * rayVec );
-      ON_SimpleArray<ON_CMX_EVENT> hits;
-      mt->IntersectLine( line, hits );
-      int hitCount = hits.Count();
-      if( hitCount > 0 )
-      {
-        ON_SimpleArray<double> tvals;
-        ON_SimpleArray<int> indices;
-        // tMin should be between 0 and 1 for the line
-        double tMin = 100.0;
-        for( int i=0; i<hitCount; i++ )
-        {
-          const ON_CMX_EVENT& e = hits[i];
-          if( e.m_C[0].m_t <= tMin )
-          {
-            tMin = e.m_C[0].m_t;
-            if( face_indices )
-            {
-              tvals.Append(tMin);
-              indices.Append(e.m_M[0].m_face_index);
-            }
-          }
-          if( e.m_type == ON_CMX_EVENT::cmx_overlap && e.m_C[1].m_t <= tMin )
-          {
-            tMin = e.m_C[1].m_t;
-            if( face_indices )
-            {
-              tvals.Append(tMin);
-              indices.Append( e.m_M[1].m_face_index);
-            }
-          }
-        }
-        if( tMin >=0 && tMin <= 1.0 )
-        {
-          if( face_indices )
-          {
-            for( int i=0; i<tvals.Count(); i++ )
-            {
-              if( tvals[i]==tMin )
-                face_indices->Append(indices[i]);
-            }
-          }
-
-          double lineLength = line.Length();
-          double rayLength = ray->m_V.Length();
-          if( rayLength > ON_SQRT_EPSILON )
-          {
-            rc = tMin * lineLength / rayLength;
-          }
-        }
-      }
-    }
-  }
-  return rc;
-}
-
-RH_C_FUNCTION ON_SimpleArray<ON_CMX_EVENT>* ON_Intersect_MeshPolyline1(const ON_Mesh* pMesh, const ON_PolylineCurve* pCurve, int* count)
-{
-  ON_SimpleArray<ON_CMX_EVENT>* rc = NULL;
-  if( pMesh && pCurve && count )
-  {
-    *count = 0;
-    const ON_MeshTree* mesh_tree = pMesh->MeshTree();
-    if( mesh_tree )
-    {
-      rc = new ON_SimpleArray<ON_CMX_EVENT>();
-      int pline_count = pCurve->m_pline.Count();
-      const ON_3dPoint* points = pCurve->m_pline.Array();
-      if( mesh_tree->IntersectPolyline(pline_count, points, *rc) )
-      {
-        *count = rc->Count();
-      }
-    }
-  }
-  return rc;
-}
-
-RH_C_FUNCTION void ON_Intersect_MeshPolyline_Fill(ON_SimpleArray<ON_CMX_EVENT>* pCMX, int count, /*ARRAY*/ON_3dPoint* points, /*ARRAY*/int* faceIds)
-{
-  if( pCMX && points && faceIds && pCMX->Count()==count )
-  {
-    for( int i=0; i<count; i++ )
-    {
-      points[i] = (*pCMX)[i].m_M[0].m_P;
-      faceIds[i] = (*pCMX)[i].m_M[0].m_face_index;
-    }
-  }
-
-  if( pCMX )
-    delete pCMX;
-}
-#endif
 
 RH_C_FUNCTION ON_SimpleArray<ON_X_EVENT>* ON_Intersect_CurveSelf(const ON_Curve* pCurve, double tolerance)
 {
@@ -409,6 +279,7 @@ RH_C_FUNCTION ON_SimpleArray<ON_X_EVENT>* ON_Intersect_CurveSurface(const ON_Cur
  
   return rc;
 }
+
 RH_C_FUNCTION ON_SimpleArray<ON_X_EVENT>* ON_Intersect_CurveSurface2(const ON_Curve* pCurve,
                                                                      const ON_Surface* pSurface,
                                                                      double domain0, 
@@ -473,6 +344,8 @@ RH_C_FUNCTION bool ON_Intersect_CurveIntersectData(const ON_SimpleArray<ON_X_EVE
   return false;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// ray shooter and mesh/mesh intersect not supported in stand alone OpenNURBS
 #if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION int ON_RayShooter_OneSurface(ON_3DPOINT_STRUCT _point, ON_3DVECTOR_STRUCT _direction, const ON_Surface* pConstSurface, ON_SimpleArray<ON_3dPoint>* pPoints, int maxReflections)
 {
@@ -636,4 +509,106 @@ RH_C_FUNCTION ON_SimpleArray<ON_Polyline*>* ON_Intersect_MeshMesh1(const ON_Mesh
   return rc;
 }
 
+RH_C_FUNCTION double ON_Intersect_MeshRay1(const ON_Mesh* pMesh, ON_3dRay* ray, ON_SimpleArray<int>* face_indices)
+{
+  double rc = -1.0;
+  // it is ok if face_indices is null
+  if( pMesh && ray )
+  {
+    const ON_MeshTree* mt = pMesh->MeshTree();
+    ON_3dVector rayVec = ray->m_V;
+    if( mt && rayVec.Unitize() )
+    {
+      double rayRange = mt->m_bbox.MaximumDistanceTo(ray->m_P);
+      ON_Line line(ray->m_P, ray->m_P + rayRange * rayVec );
+      ON_SimpleArray<ON_CMX_EVENT> hits;
+      mt->IntersectLine( line, hits );
+      int hitCount = hits.Count();
+      if( hitCount > 0 )
+      {
+        ON_SimpleArray<double> tvals;
+        ON_SimpleArray<int> indices;
+        // tMin should be between 0 and 1 for the line
+        double tMin = 100.0;
+        for( int i=0; i<hitCount; i++ )
+        {
+          const ON_CMX_EVENT& e = hits[i];
+          if( e.m_C[0].m_t <= tMin )
+          {
+            tMin = e.m_C[0].m_t;
+            if( face_indices )
+            {
+              tvals.Append(tMin);
+              indices.Append(e.m_M[0].m_face_index);
+            }
+          }
+          if( e.m_type == ON_CMX_EVENT::cmx_overlap && e.m_C[1].m_t <= tMin )
+          {
+            tMin = e.m_C[1].m_t;
+            if( face_indices )
+            {
+              tvals.Append(tMin);
+              indices.Append( e.m_M[1].m_face_index);
+            }
+          }
+        }
+        if( tMin >=0 && tMin <= 1.0 )
+        {
+          if( face_indices )
+          {
+            for( int i=0; i<tvals.Count(); i++ )
+            {
+              if( tvals[i]==tMin )
+                face_indices->Append(indices[i]);
+            }
+          }
+
+          double lineLength = line.Length();
+          double rayLength = ray->m_V.Length();
+          if( rayLength > ON_SQRT_EPSILON )
+          {
+            rc = tMin * lineLength / rayLength;
+          }
+        }
+      }
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION ON_SimpleArray<ON_CMX_EVENT>* ON_Intersect_MeshPolyline1(const ON_Mesh* pMesh, const ON_PolylineCurve* pCurve, int* count)
+{
+  ON_SimpleArray<ON_CMX_EVENT>* rc = NULL;
+  if( pMesh && pCurve && count )
+  {
+    *count = 0;
+    const ON_MeshTree* mesh_tree = pMesh->MeshTree();
+    if( mesh_tree )
+    {
+      rc = new ON_SimpleArray<ON_CMX_EVENT>();
+      int pline_count = pCurve->m_pline.Count();
+      const ON_3dPoint* points = pCurve->m_pline.Array();
+      if( mesh_tree->IntersectPolyline(pline_count, points, *rc) )
+      {
+        *count = rc->Count();
+      }
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION void ON_Intersect_MeshPolyline_Fill(ON_SimpleArray<ON_CMX_EVENT>* pCMX, int count, /*ARRAY*/ON_3dPoint* points, /*ARRAY*/int* faceIds)
+{
+  if( pCMX && points && faceIds && pCMX->Count()==count )
+  {
+    for( int i=0; i<count; i++ )
+    {
+      points[i] = (*pCMX)[i].m_M[0].m_P;
+      faceIds[i] = (*pCMX)[i].m_M[0].m_face_index;
+    }
+  }
+
+  if( pCMX )
+    delete pCMX;
+}
 #endif

@@ -126,20 +126,3 @@ RH_C_FUNCTION bool ON_4dPoint_Normalize( ON_4dPoint* a )
     rc = a->Normalize();
   return rc;
 }
-
-#if !defined(OPENNURBS_BUILD)
-RH_C_FUNCTION bool TLC_SortPointList( /*ARRAY*/ON_3dPoint* points, int* count, double mindist )
-{
-  bool rc = false;
-  if( points && count && *count>0 )
-  {
-    CHack3dPointArray _points(*count, points);
-    rc = TL_SortPointList( _points, mindist )? true:false;
-    if( rc )
-    {
-      *count = _points.Count();
-    }
-  }
-  return rc;
-}
-#endif

@@ -31,74 +31,6 @@ RH_C_FUNCTION bool ON_Mesh_EvaluateMeshGeometry(ON_Mesh* pMesh, const ON_Surface
   return rc;
 }
 
-#if !defined(OPENNURBS_BUILD)
-static bool RhCmnMakePlanarMeshes( ON_SimpleArray<const ON_Curve*>& curves, ON_SimpleArray<ON_Mesh*>& meshes, const ON_MeshParameters& mp )
-{
-  CRhinoDoc* doc = RhinoApp().ActiveDoc();
-  if( 0 == doc )
-    return false;
-
-  ON_SimpleArray<int> used;
-  ON_SimpleArray<ON_Brep*> breps;
-  if( FALSE == RhinoMakePlanarBreps(curves, breps, &used) || 0 == breps.Count() )
-    return false;
-
-  int count = breps.Count();
-  for( int i=0; i<count; i++ )
-  {
-    ON_Brep* pBrep = breps[i];
-    if( pBrep )
-    {
-      pBrep->CreateMesh( mp, meshes );
-      delete pBrep;
-      breps[i] = NULL;
-    }
-  }
-  return true;
-}
-
-RH_C_FUNCTION ON_Mesh* RHC_RhinoMakePlanarMeshes(const ON_Curve* pCurve, const ON_MeshParameters* pConstMeshParameters)
-{
-  ON_Mesh* rc = NULL;
-  if( pCurve && pConstMeshParameters )
-  {
-    ON_SimpleArray<const ON_Curve*> curves;
-    curves.Append(pCurve);
-    ON_SimpleArray<ON_Mesh*> meshes;
-    bool success = RhCmnMakePlanarMeshes( curves, meshes, *pConstMeshParameters );
-    int meshcount = meshes.Count();
-    if( meshcount > 0 )
-    {
-      rc = meshes[0];
-      // I don't know how we could have more than one mesh, but just in case
-      for( int i=1; i<meshcount; i++ )
-      {
-        ON_Mesh* pM = meshes[i];
-        if( pM )
-          delete pM;
-      }
-    }
-  }
-  return rc;
-}
-
-RH_C_FUNCTION ON_Mesh* ON_Mesh_FromPlanarCurve(const ON_Curve* pCurve)
-{
-  ON_Mesh* rc = NULL;
-  CRhinoDoc* doc = RhinoApp().ActiveDoc();
-  if( pCurve && doc )
-  {
-#if defined(_WIN32) && defined(RHINO_V5SR) // only available in V5
-    ON_MeshParameters mp = doc->Properties().RenderMeshParameters();
-#else // Grasshopper V4 build
-    ON_MeshParameters mp = doc->Properties().RenderMeshSettings();
-#endif
-    rc = RHC_RhinoMakePlanarMeshes(pCurve, &mp);
-  }
-  return rc;
-}
-#endif
-
 RH_C_FUNCTION bool ON_Mesh_SetVertex(ON_Mesh* pMesh, int vertexIndex, float x, float y, float z)
 {
   bool rc = false;
@@ -429,7 +361,7 @@ RH_C_FUNCTION int ON_Mesh_GetInt( const ON_Mesh* pConstMesh, int which )
       }
     case idxSolidOrientation:
       {
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
         rc = pConstMesh->SolidOrientation();
 #endif
       }
@@ -612,173 +544,6 @@ RH_C_FUNCTION bool ON_Mesh_IsManifold(const ON_Mesh* ptr, bool topotest, bool* i
   return rc;
 }
 
-#if !defined(OPENNURBS_BUILD)
-RH_C_FUNCTION int ON_Mesh_GetClosestPoint(const ON_Mesh* ptr, ON_3DPOINT_STRUCT p, ON_3dPoint* q, double max_dist)
-{
-  int rc = -1;
-  if( ptr && q )
-  {
-    const ON_3dPoint* _p = (const ON_3dPoint*)&p;
-    ON_MESH_POINT mp;
-    if( ptr->GetClosestPoint(*_p, &mp, max_dist) )
-    {
-      rc = mp.m_face_index;
-      *q = mp.m_P;
-    }
-  }
-  return rc;
-}
-
-RH_C_FUNCTION int ON_Mesh_GetClosestPoint2(const ON_Mesh* pMesh, ON_3DPOINT_STRUCT testPoint, ON_3dPoint* closestPt, ON_3dVector* closestNormal, double max_dist)
-{
-  int rc = -1;
-  if( pMesh && closestPt && closestNormal )
-  {
-    const ON_3dPoint* _testPoint = (const ON_3dPoint*)&testPoint;
-    ON_MESH_POINT mp;
-    if( pMesh->GetClosestPoint(*_testPoint, &mp, max_dist) )
-    {
-      if( mp.m_face_index>=0 && mp.m_face_index<pMesh->m_F.Count() )
-      {
-        *closestPt = mp.m_P;
-        if( pMesh->m_N.Count()>0 )
-        {
-          const ON_MeshFace& face = pMesh->m_F[mp.m_face_index];
-          ON_3dVector n0 = pMesh->m_N[face.vi[0]];
-          ON_3dVector n1 = pMesh->m_N[face.vi[1]];
-          ON_3dVector n2 = pMesh->m_N[face.vi[2]];
-          ON_3dVector n3 = pMesh->m_N[face.vi[3]];
-          *closestNormal = (n0 * mp.m_t[0]) +
-                           (n1 * mp.m_t[1]) +
-                           (n2 * mp.m_t[2]) +
-                           (n3 * mp.m_t[3]);
-          closestNormal->Unitize();
-        }
-        else if( pMesh->m_FN.Count()>0 )
-        {
-          *closestNormal = pMesh->m_FN[mp.m_face_index];
-        }
-        else
-        {
-          ON_3dPoint pA, pB, pC;
-          if( mp.GetTriangle(pA, pB, pC ) )
-          {
-            *closestNormal = ON_TriangleNormal(pA, pB, pC);
-          }
-        }
-        rc = mp.m_face_index;
-      }
-    }
-  }
-  return rc;
-}
-
-struct ON_MESHPOINT_STRUCT
-{
-    double m_et; 
-    
-    //ON_COMPONENT_INDEX m_ci;
-    unsigned int m_ci_type;
-    int m_ci_index;
-
-    int m_edge_index;
-    int m_face_index;
-    char m_Triangle;
-    double m_t0;
-    double m_t1;
-    double m_t2;
-    double m_t3;
-
-    //ON_3dPoint m_P;
-    double m_Px;
-    double m_Py;
-    double m_Pz;
-};
-
-RH_C_FUNCTION bool ON_Mesh_GetClosestPoint3(const ON_Mesh* pConstMesh, ON_3DPOINT_STRUCT p, ON_MESHPOINT_STRUCT* meshpoint, double max_dist)
-{
-  bool rc = false;
-  if( pConstMesh && meshpoint )
-  {
-    const ON_3dPoint* _p = (const ON_3dPoint*)&p;
-    ON_MESH_POINT mp;
-    rc = pConstMesh->GetClosestPoint(*_p, &mp, max_dist);
-    if(rc)
-    {
-      meshpoint->m_et = mp.m_et;
-      meshpoint->m_ci_type = mp.m_ci.m_type;
-      meshpoint->m_ci_index = mp.m_ci.m_index;
-      meshpoint->m_edge_index = mp.m_edge_index;
-      meshpoint->m_face_index = mp.m_face_index;
-      meshpoint->m_Triangle = mp.m_Triangle;
-      meshpoint->m_t0 = mp.m_t[0];
-      meshpoint->m_t1 = mp.m_t[1];
-      meshpoint->m_t2 = mp.m_t[2];
-      meshpoint->m_t3 = mp.m_t[3];
-      meshpoint->m_Px = mp.m_P.x;
-      meshpoint->m_Py = mp.m_P.y;
-      meshpoint->m_Pz = mp.m_P.z;
-    }
-  }
-  return rc;
-}
-
-RH_C_FUNCTION bool ON_MESHPOINT_GetTriangle(const ON_Mesh* pConstMesh, const ON_MESHPOINT_STRUCT* meshpoint, int* a, int* b, int* c)
-{
-  bool rc = false;
-  if( pConstMesh && meshpoint && a && b && c )
-  {
-    ON_MESH_POINT mp;
-    mp.m_et = meshpoint->m_et;
-    mp.m_ci.m_type = ON_COMPONENT_INDEX::Type(meshpoint->m_ci_type);
-    mp.m_ci.m_index = meshpoint->m_ci_index;
-    mp.m_edge_index = meshpoint->m_edge_index;
-    mp.m_face_index = meshpoint->m_face_index;
-    mp.m_mesh = pConstMesh;
-    mp.m_mnode = NULL;
-    mp.m_P.Set( meshpoint->m_Px, meshpoint->m_Py, meshpoint->m_Pz );
-    mp.m_t[0] = meshpoint->m_t0;
-    mp.m_t[1] = meshpoint->m_t1;
-    mp.m_t[2] = meshpoint->m_t2;
-    mp.m_t[3] = meshpoint->m_t3;
-    mp.m_Triangle = meshpoint->m_Triangle;
-    rc = mp.GetTriangle(*a, *b, *c);
-  }
-  return rc;
-}
-
-RH_C_FUNCTION int ON_Mesh_IntersectMesh(const ON_Mesh* ptr, const ON_Mesh* meshB, ON_SimpleArray<ON_Line>* lineArray)
-{
-  int rc = 0;
-  if( ptr && meshB && lineArray )
-  {
-    rc = ptr->IntersectMesh(*meshB, *lineArray);
-  }
-  return rc;
-}
-
-RH_C_FUNCTION ON_MassProperties* ON_Mesh_MassProperties(bool bArea, const ON_Mesh* pMesh)
-{
-  ON_MassProperties* rc = NULL;
-  if( pMesh )
-  {
-    rc = new ON_MassProperties();
-    bool success = false;
-    if( bArea )
-      success = pMesh->AreaMassProperties( *rc, true, true, false, false );
-    else
-      success = pMesh->VolumeMassProperties( *rc, true, true, false, false, ON_UNSET_POINT );
-
-    if( !success )
-    {
-      delete rc;
-      rc = NULL;
-    }
-  }
-  return rc;
-}
-#endif
-
 RH_C_FUNCTION int ON_Mesh_DeleteFace(ON_Mesh* pMesh, int count, /*ARRAY*/const int* indices)
 {
   int rc = 0;
@@ -909,37 +674,8 @@ RH_C_FUNCTION bool ON_Mesh_GetTextureCoordinate(const ON_Mesh* pConstMesh, int i
   return rc;
 }
 
-#if !defined(OPENNURBS_BUILD)
-RH_C_FUNCTION ON_Mesh* ON_Mesh_CreateMeshPlane(const ON_PLANE_STRUCT* plane, ON_INTERVAL_STRUCT x_int, ON_INTERVAL_STRUCT y_int, int x_cnt, int y_cnt)
-{
-  ON_Mesh* rc = NULL;
-  if( plane )
-  {
-    const ON_Interval* x_interval = (const ON_Interval*)&x_int;
-    const ON_Interval* y_interval = (const ON_Interval*)&y_int;
-    ON_Plane temp = FromPlaneStruct(*plane);
-    rc = RhinoMeshPlane(temp, *x_interval, *y_interval, x_cnt, y_cnt);
-  }
-  return rc;
-}
-RH_C_FUNCTION ON_Mesh* ON_Mesh_CreateMeshSphere(const ON_PLANE_STRUCT* plane, double radius, int x_cnt, int y_cnt)
-{
-  ON_Mesh* rc = NULL;
-  if( plane )
-  {
-    ON_Plane temp = FromPlaneStruct(*plane);
-    ON_Sphere sphere(temp.origin, radius);
-    sphere.plane = temp;
-
-    rc = RhinoMeshSphere(sphere, y_cnt, x_cnt);
-  }
-  return rc;
-}
-#endif
-
-// !!!!IMPORTANT!!!!
-// Use an array of ints instead of bools. Bools have to be marshaled in different ways through
-// .NET which can cause all sorts of problems.
+// !!!!IMPORTANT!!!! Use an array of ints instead of bools. Bools have to be marshaled
+// in different ways through .NET which can cause all sorts of problems.
 RH_C_FUNCTION bool ON_Mesh_NakedEdgePoints( const ON_Mesh* pMesh, /*ARRAY*/int* naked_status, int count )
 {
   bool rc = false;
@@ -974,7 +710,7 @@ RH_C_FUNCTION bool ON_Mesh_NakedEdgePoints( const ON_Mesh* pMesh, /*ARRAY*/int* 
 RH_C_FUNCTION bool ON_Mesh_IsPointInside(const ON_Mesh* pConstMesh, ON_3DPOINT_STRUCT point, double tolerance, bool strictlyin)
 {
   bool rc = false;
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
   if( pConstMesh )
   {
     ON_3dPoint _point(point.val);
@@ -1356,167 +1092,6 @@ RH_C_FUNCTION bool ON_MeshTopology_TopItemIsHidden(const ON_Mesh* pConstMesh, in
     }
   }
   return rc;
-}
-
-
-////////////////////////////////////////////
-#if !defined(OPENNURBS_BUILD)
-RH_C_FUNCTION ON_SimpleArray<ON_PolylineCurve*>* TL_GetMeshOutline(const ON_Mesh* pConstMesh, const ON_PLANE_STRUCT* plane, int* polylines_created)
-{
-  ON_SimpleArray<ON_PolylineCurve*>* rc = NULL;
-  if( pConstMesh && plane && polylines_created )
-  {
-    *polylines_created = 0;
-    ON_ClassArray<ON_SimpleArray<ON_PolylineCurve*> > regions;
-    ON_SimpleArray<ON_Mesh*> meshes;
-    ON_Mesh* pMesh = const_cast<ON_Mesh*>(pConstMesh);
-    meshes.Append(pMesh);
-    ON_Plane viewplane = FromPlaneStruct(*plane);
-    GetMeshOutline( meshes, true, viewplane, regions, ON_SQRT_EPSILON );
-
-    for( int i=0; i<regions.Count(); i++ )
-    {
-      ON_SimpleArray<ON_PolylineCurve*>& curves = regions[i];
-      for( int j=0; j<curves.Count(); j++ )
-      {
-        ON_PolylineCurve* pCurve = curves[j];
-        if( NULL == pCurve )
-          continue;
-        if( rc==NULL )
-          rc = new ON_SimpleArray<ON_PolylineCurve*>();
-        rc->Append(pCurve);
-      }
-    }
-    if( rc )
-      *polylines_created = rc->Count();
-  }
-  return rc;
-}
-
-RH_C_FUNCTION ON_SimpleArray<ON_PolylineCurve*>* TL_GetMeshOutline2(const ON_Mesh* pConstMesh, const CRhinoViewport* pConstRhinoViewport, int* polylines_created)
-{
-  ON_SimpleArray<ON_PolylineCurve*>* rc = NULL;
-  if( pConstMesh && pConstRhinoViewport && polylines_created )
-  {
-    ON_Plane cplane = pConstRhinoViewport->ConstructionPlane().m_plane;
-    ON_Viewport viewport = pConstRhinoViewport->VP();
-
-    *polylines_created = 0;
-    ON_ClassArray<ON_SimpleArray<ON_PolylineCurve*> > regions;
-    ON_SimpleArray<const ON_Mesh*> meshes;
-    meshes.Append(pConstMesh);
-    GetMeshOutline( meshes, viewport, regions, ON_SQRT_EPSILON, cplane );
-
-    for( int i=0; i<regions.Count(); i++ )
-    {
-      ON_SimpleArray<ON_PolylineCurve*>& curves = regions[i];
-      for( int j=0; j<curves.Count(); j++ )
-      {
-        ON_PolylineCurve* pCurve = curves[j];
-        if( NULL == pCurve )
-          continue;
-        if( rc==NULL )
-          rc = new ON_SimpleArray<ON_PolylineCurve*>();
-        rc->Append(pCurve);
-      }
-    }
-    if( rc )
-      *polylines_created = rc->Count();
-  }
-  return rc;
-}
-
-RH_C_FUNCTION ON_SimpleArray<ON_PolylineCurve*>* ON_Mesh_GetNakedEdges(const ON_Mesh* pConstMesh, int* polylines_created)
-{
-  ON_SimpleArray<ON_PolylineCurve*>* rc = NULL;
-  if( pConstMesh && polylines_created && !pConstMesh->IsClosed() )
-  {
-    *polylines_created = 0;
-    const ON_MeshTopology& mesh_top = pConstMesh->Topology();
-    ON_SimpleArray<const ON_Curve*> curve_array( mesh_top.m_tope.Count() );
-    for( int i=0; i<mesh_top.m_tope.Count(); i++ )
-    {
-      const ON_MeshTopologyEdge& mesh_edge = mesh_top.m_tope[i];
-      if( mesh_edge.m_topf_count == 1 )
-      {
-        ON_3fPoint p0 = mesh_top.TopVertexPoint( mesh_edge.m_topvi[0] );
-        ON_3fPoint p1 = mesh_top.TopVertexPoint( mesh_edge.m_topvi[1] );
-        ON_LineCurve* line = new ON_LineCurve( ON_3dPoint(p0), ON_3dPoint(p1) );
-        curve_array.Append( line );
-      }
-    }
-
-    ON_SimpleArray<ON_Curve*> output_array;
-    RhinoMergeCurves(curve_array, output_array);
-    //delete temporary line curves
-    for( int i=0; i<curve_array.Count(); i++ )
-    {
-      ON_Curve* pCurve = const_cast<ON_Curve*>(curve_array[i]);
-      if( pCurve )
-        delete pCurve;
-    }
-
-    ON_Polyline pline;
-    for( int i=0; i<output_array.Count(); i++ )
-    {
-      pline.SetCount(0);
-      if( output_array[i]->IsPolyline(&pline) )
-      {
-        ON_PolylineCurve* pline_crv = new ON_PolylineCurve( pline );
-        if( NULL==rc )
-          rc = new ON_SimpleArray<ON_PolylineCurve*>();
-        rc->Append(pline_crv);
-      }
-    }
-
-    if( rc )
-      *polylines_created = rc->Count();
-  }
-  return rc;
-}
-#endif
-
-// return number of points in a certain polyline curve
-RH_C_FUNCTION int ON_SimpleArray_PolylineCurve_GetCount(ON_SimpleArray<ON_PolylineCurve*>* pPolylineCurves, int i)
-{
-  int rc = 0;
-  if( pPolylineCurves && i>=0 && i<pPolylineCurves->Count() )
-  {
-    ON_PolylineCurve* polyline = (*pPolylineCurves)[i];
-    if( polyline )
-      rc = polyline->PointCount();
-  }
-  return rc;
-}
-
-RH_C_FUNCTION void ON_SimpleArray_PolylineCurve_GetPoints(ON_SimpleArray<ON_PolylineCurve*>* pPolylineCurves, int i, int point_count, /*ARRAY*/ON_3dPoint* points)
-{
-  if( NULL==pPolylineCurves || i<0 || i>=pPolylineCurves->Count() || point_count<0 || NULL==points || NULL==*points)
-    return;
-  ON_PolylineCurve* polyline = (*pPolylineCurves)[i];
-  if( NULL==polyline || polyline->PointCount()!=point_count )
-    return;
-
- 
-  const ON_3dPoint* source = polyline->m_pline.Array();
-  ::memcpy(points, source, sizeof(ON_3dPoint) * point_count);
-}
-
-RH_C_FUNCTION void ON_SimpleArray_PolylineCurve_Delete(ON_SimpleArray<ON_PolylineCurve*>* pPolylineCurves, bool delete_individual_curves)
-{
-  if( pPolylineCurves )
-  {
-    if( delete_individual_curves )
-    {
-      for( int i=0; i<pPolylineCurves->Count(); i++ )
-      {
-        ON_PolylineCurve* pCurve = (*pPolylineCurves)[i];
-        if( pCurve )
-          delete pCurve;
-      }
-    }
-    delete pPolylineCurves;
-  }
 }
 
 RH_C_FUNCTION ON_MeshParameters* ON_MeshParameters_New()
@@ -1938,3 +1513,174 @@ RH_C_FUNCTION bool ON_MeshTopologyFace_Edges(const ON_Mesh* pConstMesh, int face
   }
   return rc;
 }
+
+/////////////////////////////////////////////////////////////////////////////
+// ClosestPoint, Intersection, and mass property calculations are not
+// provided in stand alone OpenNURBS
+
+#if !defined(OPENNURBS_BUILD)
+RH_C_FUNCTION int ON_Mesh_GetClosestPoint(const ON_Mesh* ptr, ON_3DPOINT_STRUCT p, ON_3dPoint* q, double max_dist)
+{
+  int rc = -1;
+  if( ptr && q )
+  {
+    const ON_3dPoint* _p = (const ON_3dPoint*)&p;
+    ON_MESH_POINT mp;
+    if( ptr->GetClosestPoint(*_p, &mp, max_dist) )
+    {
+      rc = mp.m_face_index;
+      *q = mp.m_P;
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Mesh_GetClosestPoint2(const ON_Mesh* pMesh, ON_3DPOINT_STRUCT testPoint, ON_3dPoint* closestPt, ON_3dVector* closestNormal, double max_dist)
+{
+  int rc = -1;
+  if( pMesh && closestPt && closestNormal )
+  {
+    const ON_3dPoint* _testPoint = (const ON_3dPoint*)&testPoint;
+    ON_MESH_POINT mp;
+    if( pMesh->GetClosestPoint(*_testPoint, &mp, max_dist) )
+    {
+      if( mp.m_face_index>=0 && mp.m_face_index<pMesh->m_F.Count() )
+      {
+        *closestPt = mp.m_P;
+        if( pMesh->m_N.Count()>0 )
+        {
+          const ON_MeshFace& face = pMesh->m_F[mp.m_face_index];
+          ON_3dVector n0 = pMesh->m_N[face.vi[0]];
+          ON_3dVector n1 = pMesh->m_N[face.vi[1]];
+          ON_3dVector n2 = pMesh->m_N[face.vi[2]];
+          ON_3dVector n3 = pMesh->m_N[face.vi[3]];
+          *closestNormal = (n0 * mp.m_t[0]) +
+                           (n1 * mp.m_t[1]) +
+                           (n2 * mp.m_t[2]) +
+                           (n3 * mp.m_t[3]);
+          closestNormal->Unitize();
+        }
+        else if( pMesh->m_FN.Count()>0 )
+        {
+          *closestNormal = pMesh->m_FN[mp.m_face_index];
+        }
+        else
+        {
+          ON_3dPoint pA, pB, pC;
+          if( mp.GetTriangle(pA, pB, pC ) )
+          {
+            *closestNormal = ON_TriangleNormal(pA, pB, pC);
+          }
+        }
+        rc = mp.m_face_index;
+      }
+    }
+  }
+  return rc;
+}
+
+struct ON_MESHPOINT_STRUCT
+{
+    double m_et; 
+    
+    //ON_COMPONENT_INDEX m_ci;
+    unsigned int m_ci_type;
+    int m_ci_index;
+
+    int m_edge_index;
+    int m_face_index;
+    char m_Triangle;
+    double m_t0;
+    double m_t1;
+    double m_t2;
+    double m_t3;
+
+    //ON_3dPoint m_P;
+    double m_Px;
+    double m_Py;
+    double m_Pz;
+};
+
+RH_C_FUNCTION bool ON_Mesh_GetClosestPoint3(const ON_Mesh* pConstMesh, ON_3DPOINT_STRUCT p, ON_MESHPOINT_STRUCT* meshpoint, double max_dist)
+{
+  bool rc = false;
+  if( pConstMesh && meshpoint )
+  {
+    const ON_3dPoint* _p = (const ON_3dPoint*)&p;
+    ON_MESH_POINT mp;
+    rc = pConstMesh->GetClosestPoint(*_p, &mp, max_dist);
+    if(rc)
+    {
+      meshpoint->m_et = mp.m_et;
+      meshpoint->m_ci_type = mp.m_ci.m_type;
+      meshpoint->m_ci_index = mp.m_ci.m_index;
+      meshpoint->m_edge_index = mp.m_edge_index;
+      meshpoint->m_face_index = mp.m_face_index;
+      meshpoint->m_Triangle = mp.m_Triangle;
+      meshpoint->m_t0 = mp.m_t[0];
+      meshpoint->m_t1 = mp.m_t[1];
+      meshpoint->m_t2 = mp.m_t[2];
+      meshpoint->m_t3 = mp.m_t[3];
+      meshpoint->m_Px = mp.m_P.x;
+      meshpoint->m_Py = mp.m_P.y;
+      meshpoint->m_Pz = mp.m_P.z;
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_MESHPOINT_GetTriangle(const ON_Mesh* pConstMesh, const ON_MESHPOINT_STRUCT* meshpoint, int* a, int* b, int* c)
+{
+  bool rc = false;
+  if( pConstMesh && meshpoint && a && b && c )
+  {
+    ON_MESH_POINT mp;
+    mp.m_et = meshpoint->m_et;
+    mp.m_ci.m_type = ON_COMPONENT_INDEX::Type(meshpoint->m_ci_type);
+    mp.m_ci.m_index = meshpoint->m_ci_index;
+    mp.m_edge_index = meshpoint->m_edge_index;
+    mp.m_face_index = meshpoint->m_face_index;
+    mp.m_mesh = pConstMesh;
+    mp.m_mnode = NULL;
+    mp.m_P.Set( meshpoint->m_Px, meshpoint->m_Py, meshpoint->m_Pz );
+    mp.m_t[0] = meshpoint->m_t0;
+    mp.m_t[1] = meshpoint->m_t1;
+    mp.m_t[2] = meshpoint->m_t2;
+    mp.m_t[3] = meshpoint->m_t3;
+    mp.m_Triangle = meshpoint->m_Triangle;
+    rc = mp.GetTriangle(*a, *b, *c);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Mesh_IntersectMesh(const ON_Mesh* ptr, const ON_Mesh* meshB, ON_SimpleArray<ON_Line>* lineArray)
+{
+  int rc = 0;
+  if( ptr && meshB && lineArray )
+  {
+    rc = ptr->IntersectMesh(*meshB, *lineArray);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION ON_MassProperties* ON_Mesh_MassProperties(bool bArea, const ON_Mesh* pMesh)
+{
+  ON_MassProperties* rc = NULL;
+  if( pMesh )
+  {
+    rc = new ON_MassProperties();
+    bool success = false;
+    if( bArea )
+      success = pMesh->AreaMassProperties( *rc, true, true, false, false );
+    else
+      success = pMesh->VolumeMassProperties( *rc, true, true, false, false, ON_UNSET_POINT );
+
+    if( !success )
+    {
+      delete rc;
+      rc = NULL;
+    }
+  }
+  return rc;
+}
+#endif

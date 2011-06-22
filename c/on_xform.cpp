@@ -162,24 +162,23 @@ RH_C_FUNCTION bool ON_SpaceMorph_MorphGeometry(ON_Geometry* pGeometry, double to
 
 
 ////////////////////////////////////////////////////
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION bool ON_Matrix_Transpose(int rows, int cols, /*ARRAY*/double* values)
 {
   bool rc = false;
-#if defined(RHINO_V5SR) // only available in V5
   if(values)
   {
     ON_Matrix m;
     if( m.Create(rows, cols, &values, false) )
       rc = m.Transpose();
   }
-#endif
   return rc;
 }
 
 RH_C_FUNCTION bool ON_Matrix_Swap(int rows, int cols, /*ARRAY*/double* values, bool swaprows, int a, int b)
 {
   bool rc = false;
-#if defined(RHINO_V5SR) // only available in V5
   if( values )
   {
     ON_Matrix m;
@@ -191,21 +190,18 @@ RH_C_FUNCTION bool ON_Matrix_Swap(int rows, int cols, /*ARRAY*/double* values, b
         rc = m.SwapCols(a,b);
     }
   }
-#endif
   return rc;
 }
 
 RH_C_FUNCTION bool ON_Matrix_Invert(int rows, int cols, /*ARRAY*/double* values, double zeroTolerance)
 {
   bool rc = false;
-#if defined(RHINO_V5SR) // only available in V5
   if(values)
   {
     ON_Matrix m;
     if( m.Create(rows, cols, &values, false) )
       rc = m.Invert(zeroTolerance);
   }
-#endif
   return rc;
 }
 
@@ -213,76 +209,65 @@ RH_C_FUNCTION void ON_Matrix_Multiply(int arows, int acols, /*ARRAY*/double* ava
 {
   if( avalues && bvalues && rcvalues )
   {
-#if defined(RHINO_V5SR) // only available in V5
     ON_Matrix a,b,rc;
     if( a.Create(arows, acols, &avalues, false) && b.Create(brows, bcols, &bvalues, false) && rc.Create(arows, bcols, &rcvalues, false) )
     {
       rc.Multiply(a,b);
     }
-#endif
   }
 }
 
 RH_C_FUNCTION int ON_Matrix_RowReduce(int rows, int cols, /*ARRAY*/double* values, double zero_tol, double* determinant, double* pivot)
 {
   int rc = 0;
-#if defined(RHINO_V5SR) // only available in V5
   if( values && determinant && pivot )
   {
     ON_Matrix m;
     if( m.Create(rows, cols, &values, false) )
       rc = m.RowReduce(zero_tol, *determinant, *pivot);
   }
-#endif
   return rc;
 }
 
 RH_C_FUNCTION int ON_Matrix_RowReduce2(int rows, int columns, /*ARRAY*/double* values, double zero_tol, /*ARRAY*/double* b, double* pivot)
 {
   int rc = 0;
-#if defined(RHINO_V5SR) // only available in V5
   if( values && b )
   {
     ON_Matrix m;
     if( m.Create(rows, columns, &values, false) )
       rc = m.RowReduce(zero_tol, b, pivot);
   }
-#endif
   return rc;
 }
 
 RH_C_FUNCTION int ON_Matrix_RowReduce3(int rows, int columns, /*ARRAY*/double* values, double zero_tol, /*ARRAY*/ON_3dPoint* b, double* pivot)
 {
   int rc = 0;
-#if defined(RHINO_V5SR) // only available in V5
   if( values && b )
   {
     ON_Matrix m;
     if( m.Create(rows, columns, &values, false) )
       rc = m.RowReduce(zero_tol, b, pivot);
   }
-#endif
   return rc;
 }
 
 RH_C_FUNCTION bool ON_Matrix_BackSolve(int rows, int columns, /*ARRAY*/double* values, double zero_tol, int bSize, /*ARRAY*/const double* b, /*ARRAY*/double* x)
 {
   bool rc = false;
-#if defined(RHINO_V5SR) // only available in V5
   if( values && b && x )
   {
     ON_Matrix m;
     if( m.Create(rows, columns, &values, false) )
       rc = m.BackSolve(zero_tol, bSize, b, x);
   }
-#endif
   return rc;
 }
 
 RH_C_FUNCTION bool ON_Matrix_BackSolve2(int rows, int columns, /*ARRAY*/const double* values, double zero_tol, int bSize, /*ARRAY*/const ON_3dPoint* b, /*ARRAY*/ON_3dPoint* x)
 {
   bool rc = false;
-#if defined(RHINO_V5SR) // only available in V5
   if( values && b && x )
   {
     double* _values = const_cast<double*>(values);
@@ -290,7 +275,6 @@ RH_C_FUNCTION bool ON_Matrix_BackSolve2(int rows, int columns, /*ARRAY*/const do
     if( m.Create(rows, columns, &_values, false) )
       rc = m.BackSolve(zero_tol, bSize, b, x);
   }
-#endif
   return rc;
 }
 
@@ -302,7 +286,6 @@ RH_C_FUNCTION bool ON_Matrix_GetBool(int rows, int columns, /*ARRAY*/const doubl
   const int idxIsColumnOrthoNormal = 3;
   bool rc = false;
 
-#if defined(RHINO_V5SR) // only available in V5
   if( values )
   {
     double* _values = const_cast<double*>(values);
@@ -328,6 +311,7 @@ RH_C_FUNCTION bool ON_Matrix_GetBool(int rows, int columns, /*ARRAY*/const doubl
       }
     }
   }
-#endif
   return rc;
 }
+
+#endif

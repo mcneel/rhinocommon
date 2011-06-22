@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 
-// I think that sooner or later, these functions should be moved into core opennurbs.dll
+
 RH_C_FUNCTION ON_NurbsCurve* ON_NurbsCurve_New( ON_NurbsCurve* pOther )
 {
   if( pOther )

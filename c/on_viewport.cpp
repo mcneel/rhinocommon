@@ -9,15 +9,6 @@ RH_C_FUNCTION ON_Viewport* ON_Viewport_New(const ON_Viewport* pVP)
 	return new ON_Viewport();
 }
 
-#if !defined(OPENNURBS_BUILD)
-RH_C_FUNCTION ON_Viewport* ON_Viewport_New2(const CRhinoViewport* pRhinoViewport)
-{
-  if( pRhinoViewport )
-    return new ON_Viewport(pRhinoViewport->VP());
-  return new ON_Viewport();
-}
-#endif
-
 RH_C_FUNCTION bool ON_Viewport_GetBool(const ON_Viewport* pConstViewport, int which)
 {
   const int idxIsValidCamera = 0;
@@ -44,7 +35,7 @@ RH_C_FUNCTION bool ON_Viewport_GetBool(const ON_Viewport* pConstViewport, int wh
     case idxIsValid:
       rc = pConstViewport->IsValid()?true:false;
       break;
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
     case idxIsPerspectiveProjection:
       rc = pConstViewport->IsPerspectiveProjection();
       break;
@@ -77,7 +68,7 @@ RH_C_FUNCTION bool ON_Viewport_GetBool(const ON_Viewport* pConstViewport, int wh
 
 RH_C_FUNCTION bool ON_Viewport_ChangeToParallelProjection(ON_Viewport* pVP, bool symmetricFrustum)
 {
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
 	return pVP ? pVP->ChangeToParallelProjection(symmetricFrustum) : false;
 #else
   return false;
@@ -86,7 +77,7 @@ RH_C_FUNCTION bool ON_Viewport_ChangeToParallelProjection(ON_Viewport* pVP, bool
 
 RH_C_FUNCTION bool ON_Viewport_ChangeToPerspectiveProjection(ON_Viewport* pVP, double targetDistance, bool symmetricFrustum, double lensLength)
 {
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
 	return pVP ? pVP->ChangeToPerspectiveProjection(targetDistance, symmetricFrustum, lensLength) : false;
 #else
   return false;
@@ -95,7 +86,7 @@ RH_C_FUNCTION bool ON_Viewport_ChangeToPerspectiveProjection(ON_Viewport* pVP, d
 
 RH_C_FUNCTION bool ON_Viewport_ChangeToTwoPointPerspectiveProjection(ON_Viewport* pVP, double targetDistance, ON_3DVECTOR_STRUCT up, double lensLength)
 {
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
 	return pVP ? pVP->ChangeToTwoPointPerspectiveProjection(targetDistance, ON_3dVector(up.val), lensLength) : false;
 #else
   return false;
@@ -137,7 +128,7 @@ RH_C_FUNCTION void ON_Viewport_SetLocked(ON_Viewport* pViewport, int which, bool
   const int idxCameraLocationLock = 0;
   const int idxCameraDirectionLock = 1;
   const int idxCameraUpLock = 2;
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
   if( pViewport )
   {
     if( idxCameraLocationLock == which )
@@ -155,7 +146,7 @@ RH_C_FUNCTION void ON_Viewport_SetIsFrustumSymmetry(ON_Viewport* pViewport, bool
 {
   if( pViewport )
   {
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
     if( leftright )
       pViewport->SetFrustumLeftRightSymmetry(b);
     else
@@ -168,7 +159,7 @@ RH_C_FUNCTION void ON_Viewport_Unlock(ON_Viewport* pViewport, bool camera)
 {
   if( pViewport )
   {
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
     if( camera )
       pViewport->UnlockCamera();
     else
@@ -205,7 +196,6 @@ RH_C_FUNCTION void ON_Viewport_CameraAxis(const ON_Viewport* pConstViewport, int
 		}
 	}
 }
-
 
 RH_C_FUNCTION bool ON_Viewport_SetFrustum(ON_Viewport* pViewport, double left, double right, double bottom, double top, double nearDistance, double farDistance)
 {
@@ -283,7 +273,7 @@ RH_C_FUNCTION double ON_Viewport_GetDouble(const ON_Viewport* pConstViewport, in
     case idxFrustumFar:
       rc = pConstViewport->FrustumFar();
       break;
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
     case idxFrustumMinimumDiameter:
       rc = pConstViewport->FrustumMinimumDiameter();
       break;
@@ -323,7 +313,7 @@ RH_C_FUNCTION bool ON_Viewport_ChangeToSymmetricFrustum(ON_Viewport* pVP, bool i
 {
 	if (pVP)
 	{
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
 		return pVP->ChangeToSymmetricFrustum(isLeftRightSymmetric, isTopBottomSymmetric, targetDistance);
 #endif
 	}
@@ -490,7 +480,7 @@ RH_C_FUNCTION bool ON_Viewport_SetCamera35mmLensLength(ON_Viewport* pVP, double 
 {
 	if (pVP)
 	{
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
 		return pVP->SetCamera35mmLensLength(d);
 #endif
 	}
@@ -602,7 +592,7 @@ RH_C_FUNCTION void ON_Viewport_FrustumCenterPoint(const ON_Viewport* pConstViewp
 {
 	if (pConstViewport && point)
 	{
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
 		*point = pConstViewport->FrustumCenterPoint(targetDistance);
 #endif
 	}
@@ -624,7 +614,7 @@ RH_C_FUNCTION double ON_Viewport_TargetDistance(const ON_Viewport* pConstViewpor
 {
 	if (pConstViewport)
 	{
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
 		return pConstViewport->TargetDistance(useFrustumCenterFallback);
 #endif
 	}
@@ -636,7 +626,7 @@ RH_C_FUNCTION void ON_Viewport_GetPerspectiveClippingPlaneConstraints(ON_3DPOINT
 {
 	if (minNearDist && minNearOverFar)
 	{
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
 		ON_Viewport::GetPerspectiveClippingPlaneConstraints(cameraLocation.val, (unsigned int)depthBufferBitDepth, minNearDist, minNearOverFar);
 #endif
 	}
@@ -646,7 +636,7 @@ RH_C_FUNCTION void ON_Viewport_SetPerspectiveClippingPlaneConstraints(ON_Viewpor
 {
 	if (pVP)
 	{
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
 		pVP->SetPerspectiveClippingPlaneConstraints((unsigned int)depthBufferBitDepth);
 #endif
 	}
@@ -712,4 +702,13 @@ RH_C_FUNCTION void ON_Viewport_Delete(ON_Viewport* pVP)
 {
 	delete pVP;
 }
+
+#if !defined(OPENNURBS_BUILD)
+RH_C_FUNCTION ON_Viewport* ON_Viewport_New2(const CRhinoViewport* pRhinoViewport)
+{
+  if( pRhinoViewport )
+    return new ON_Viewport(pRhinoViewport->VP());
+  return new ON_Viewport();
+}
+#endif
 

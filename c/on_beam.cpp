@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 
-#if defined(RHINO_V5SR) // only available in Rhino 5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in Rhino 5
 
 RH_C_FUNCTION ON_Extrusion* ON_Extrusion_New(const ON_Extrusion* pOther)
 {

@@ -181,7 +181,7 @@ RH_C_FUNCTION bool ON_Surface_GetBool(const ON_Surface* pConstSurface, int direc
       rc = pConstSurface->IsSingular(direction)?true:false;
     else if( idxIsSolid == which )
     {
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
       rc = pConstSurface->IsSolid();
 #else
       // Using code from V5 IsSolid that does not include testing for extrusions
@@ -322,28 +322,6 @@ RH_C_FUNCTION int ON_Surface_HasNurbsForm(const ON_Surface* pConstSurface)
   return rc;
 }
 
-#if !defined(OPENNURBS_BUILD)
-RH_C_FUNCTION ON_MassProperties* ON_Surface_MassProperties(bool bArea, const ON_Surface* pConstSurface, double relativeTolerance, double absoluteTolerance)
-{
-  ON_MassProperties* rc = NULL;
-  if( pConstSurface )
-  {
-    rc = new ON_MassProperties();
-    bool success = false;
-    if( bArea )
-      success = pConstSurface->AreaMassProperties(*rc, true, true, true, true, relativeTolerance, absoluteTolerance);
-    else
-      success = pConstSurface->VolumeMassProperties(*rc, true, true, true, true, ON_UNSET_POINT, relativeTolerance, absoluteTolerance);
-    if( !success )
-    {
-      delete rc;
-      rc = NULL;
-    }
-  }
-  return rc;
-}
-#endif
-
 RH_C_FUNCTION bool ON_Surface_EvPoint( const ON_Surface* pConstSurface, double s, double t, ON_3dPoint* point )
 {
   bool rc = false;
@@ -472,32 +450,6 @@ RH_C_FUNCTION bool ON_Surface_Evaluate(const ON_Surface* pConstSurface, double u
   return rc;
 }
 
-#if !defined(OPENNURBS_BUILD)
-RH_C_FUNCTION ON_Surface* RHC_RhinoExtrudeCurveStraight( const ON_Curve* pConstCurve, ON_3DVECTOR_STRUCT direction )
-{
-  ON_Surface* rc = NULL;
-  
-  if( pConstCurve )
-  {
-    const ON_3dVector* _dir = (const ON_3dVector*)&direction;
-    rc = RhinoExtrudeCurveStraight(pConstCurve, *_dir);
-  }
-  return rc;
-}
-
-RH_C_FUNCTION ON_Surface* RHC_RhinoExtrudeCurveToPoint( const ON_Curve* pConstCurve, ON_3DPOINT_STRUCT tip )
-{
-  ON_Surface* rc = NULL;
-  
-  if( pConstCurve )
-  {
-    const ON_3dPoint* _tip = (const ON_3dPoint*)&tip;
-    rc = RhinoExtrudeCurveToPoint(pConstCurve, *_tip);
-  }
-  return rc;
-}
-#endif
-
 // move to on_revsurface.cpp once we have one
 RH_C_FUNCTION ON_RevSurface* ON_RevSurface_Create(const ON_Curve* pConstProfile, const ON_Line* axis, double startAngle, double endAngle )
 {
@@ -538,62 +490,6 @@ RH_C_FUNCTION ON_SumSurface* ON_SumSurface_Create(const ON_Curve* pConstCurveA, 
   return rc;
 }
 
-#if !defined(OPENNURBS_BUILD)
-static int RemoveSrfMultiKnots( TL_NURBSRF& srf, int dir )
-{ 
-  double t0, t1;
-  int i, j, cnt = 0;
-  int kcnt = TL_KnotCount( srf.order[dir], srf.cv_count[dir] );
-
-  TL_GetNurbSrfDomain( &srf, dir, &t0, &t1 );
-
-  for( i = kcnt - srf.order[dir]; i >= srf.order[dir]; i-- )
-  {
-    // count multiplicity
-    for( j = 1; j < srf.order[dir] - 1; j++ )
-    { 
-      if( fabs(srf.knot[dir][i] - srf.knot[dir][i - j]) > ON_ZERO_TOLERANCE )
-        break;
-    }
-    
-    if( j == 1 ) // not multiple
-      continue;
-
-    //if( j < srf.order[dir] - 1 )  // not fully multiple
-    {
-      TL_RemoveNurbSrfKnots( &srf, dir, TL_IsNurbSrfClosed( &srf, dir), i - j + 1, i, 0.0 );
-      cnt += ( j - 1 );
-    }
-
-    i = i - j + 1;
-  }   
-  return cnt;
-}
-
-RH_C_FUNCTION ON_Surface* ON_Surface_MakePeriodic( const ON_Surface* pConstSurface, int direction )
-{
-  ON_Surface* rc = NULL;
-  // skip degree 1 surfaces
-  if( pConstSurface && pConstSurface->Degree(direction)>=2 && direction>=0 && direction<=1 )
-  {
-    TL_NurbsSurface* pSrf = new TL_NurbsSurface();
-    if( pConstSurface->GetNurbForm(*pSrf) && pSrf->MakePeriodic(direction) )
-    {
-      TL_NURBSRF tlsrf;
-      pSrf->MorphTo( tlsrf );
-      RemoveSrfMultiKnots( tlsrf, direction );
-      pSrf->MorphFrom( tlsrf );
-      rc = pSrf;
-    }
-    else
-    {
-      delete pSrf;
-    }
-  }
-  return rc;
-}
-#endif
-
 RH_C_FUNCTION int ON_Surface_ClosestSide( const ON_Surface* pConstSurface, double u, double v )
 {
   ON_Surface::ISO edge_index = ON_Surface::not_iso;
@@ -630,3 +526,28 @@ RH_C_FUNCTION int ON_Surface_ClosestSide( const ON_Surface* pConstSurface, doubl
   }
   return (int)edge_index;
 }
+
+////////////////////////////////////////////////////////////////////////////////////
+// Meshing and mass property calculations are not available in stand alone opennurbs
+
+#if !defined(OPENNURBS_BUILD)
+RH_C_FUNCTION ON_MassProperties* ON_Surface_MassProperties(bool bArea, const ON_Surface* pConstSurface, double relativeTolerance, double absoluteTolerance)
+{
+  ON_MassProperties* rc = NULL;
+  if( pConstSurface )
+  {
+    rc = new ON_MassProperties();
+    bool success = false;
+    if( bArea )
+      success = pConstSurface->AreaMassProperties(*rc, true, true, true, true, relativeTolerance, absoluteTolerance);
+    else
+      success = pConstSurface->VolumeMassProperties(*rc, true, true, true, true, ON_UNSET_POINT, relativeTolerance, absoluteTolerance);
+    if( !success )
+    {
+      delete rc;
+      rc = NULL;
+    }
+  }
+  return rc;
+}
+#endif

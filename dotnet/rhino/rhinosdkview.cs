@@ -69,6 +69,18 @@ namespace Rhino.Display
     // use functions/propertities of System.Windows.Forms.Control
     // to wrap CView base class functions
 
+    /// <summary>
+    /// Gets the window handle that this view is bound to
+    /// </summary>
+    public IntPtr Handle
+    {
+      get
+      {
+        IntPtr pConstView = ConstPointer();
+        return UnsafeNativeMethods.CRhinoView_HWND(pConstView);
+      }
+    }
+
     const int idxBounds = 0;
     const int idxClientRectangle = 1;
     const int idxScreenRectangle = 2;

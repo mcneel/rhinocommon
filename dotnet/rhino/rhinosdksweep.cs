@@ -302,7 +302,16 @@ namespace Rhino.Geometry
   /// Utility class for generating breps by sweeping cross section curves over
   /// two rail curves
   /// </summary>
-  class SweepTwoRail
+  public class SweepTwoRail
   {
+    public SweepTwoRail()
+    { }
+
+
+    public Brep[] PerformSweep(Curve rail1, Curve rail2, IEnumerable<Curve> crossSections)
+    {
+      return null;
+    }
+
   }
 }

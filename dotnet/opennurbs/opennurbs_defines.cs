@@ -153,7 +153,7 @@ namespace Rhino
     Mils = 7,
     /// <summary>0.0254 meters</summary>
     Inches = 8,
-    /// <summary>0.3408 meters (12 inches)</summary>
+    /// <summary>0.3048 meters (12 inches)</summary>
     Feet = 9,
     /// <summary>0.9144 meters (36 inches)</summary>
     Yards = 19,

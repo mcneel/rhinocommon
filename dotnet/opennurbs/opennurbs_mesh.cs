@@ -605,7 +605,7 @@ namespace Rhino.Geometry
 
     // serialization constructor
     protected Mesh(SerializationInfo info, StreamingContext context)
-      : base (info, context)
+      : base(info, context)
     {
     }
 
@@ -1102,6 +1102,66 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_MeshArray_Delete(pMeshArray);
       return rc;
     }
+    /// <summary>
+    /// Split a mesh with another mesh
+    /// </summary>
+    /// <param name="mesh">Mesh to split with.</param>
+    /// <returns>An array of mesh segments representing the split result.</returns>
+    public Mesh[] Split(Mesh mesh)
+    {
+      Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer pMeshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer();
+      pMeshes.Add(this, true);
+
+      Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer pSplitters = new Runtime.InteropWrappers.SimpleArrayMeshPointer();
+      pSplitters.Add(mesh, true);
+
+      IntPtr pResult = UnsafeNativeMethods.ON_MeshArray_New();
+
+      int count = UnsafeNativeMethods.RHC_RhinoMeshBooleanSplit2(pMeshes.ConstPointer(), pSplitters.ConstPointer(), pResult);
+      Mesh[] rc = null;
+      if (count > 0)
+        rc = new Mesh[count];
+      for (int i = 0; i < count; i++)
+      {
+        IntPtr pMesh = UnsafeNativeMethods.ON_MeshArray_Get(pResult, i);
+        rc[i] = new Mesh(pMesh, null);
+      }
+      UnsafeNativeMethods.ON_MeshArray_Delete(pResult);
+      return rc;
+    }
+    /// <summary>
+    /// Split a mesh with a collection of meshes.
+    /// </summary>
+    /// <param name="meshes">Meshes to split with.</param>
+    /// <returns>An array of mesh segments representing the split result.</returns>
+    public Mesh[] Split(IEnumerable<Mesh> meshes)
+    {
+      Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer pMeshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer();
+      pMeshes.Add(this, true);
+
+      Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer pSplitters = new Runtime.InteropWrappers.SimpleArrayMeshPointer();
+      foreach (Mesh mesh in meshes)
+      {
+        if (mesh != null)
+        {
+          pSplitters.Add(mesh, true);
+        }
+      }
+
+      IntPtr pResult = UnsafeNativeMethods.ON_MeshArray_New();
+
+      int count = UnsafeNativeMethods.RHC_RhinoMeshBooleanSplit2(pMeshes.ConstPointer(), pSplitters.ConstPointer(), pResult);
+      Mesh[] rc = null;
+      if (count > 0)
+        rc = new Mesh[count];
+      for (int i = 0; i < count; i++)
+      {
+        IntPtr pMesh = UnsafeNativeMethods.ON_MeshArray_Get(pResult, i);
+        rc[i] = new Mesh(pMesh, null);
+      }
+      UnsafeNativeMethods.ON_MeshArray_Delete(pResult);
+      return rc;
+    }
 
     /// <summary>
     /// Create outlines of a mesh projected against a plane
@@ -1207,7 +1267,7 @@ namespace Rhino.Geometry
     /// nothing happened and the ouput is essentially a copy of the input.
     /// </returns>
     public Mesh[] ExplodeAtUnweldedEdges()
-    {     
+    {
       IntPtr pConstThis = ConstPointer();
       IntPtr pMeshArray = UnsafeNativeMethods.ON_MeshArray_New();
       int count = UnsafeNativeMethods.RHC_RhinoExplodeMesh(pConstThis, pMeshArray);
@@ -2252,7 +2312,7 @@ namespace Rhino.Geometry.Collections
       int a = 0, b = 0, c = 0, d = 0;
       UnsafeNativeMethods.ON_MeshTopologyFace_Edges(pConstMesh, faceIndex, ref a, ref b, ref c, ref d);
 
-      if (a < 0 || b<0 || c<0 || d<0)
+      if (a < 0 || b < 0 || c < 0 || d < 0)
       {
         if (faceIndex < 0 || faceIndex >= m_mesh.Faces.Count)
           throw new IndexOutOfRangeException();
@@ -2720,7 +2780,7 @@ namespace Rhino.Geometry.Collections
     {
       IntPtr pMesh = m_mesh.NonConstPointer();
       bool rc = UnsafeNativeMethods.ON_Mesh_InsertFace(pMesh, index, face.A, face.B, face.C, face.D);
-      if( !rc && (index<0 || index>=Count ) )
+      if (!rc && (index < 0 || index >= Count))
         throw new ArgumentOutOfRangeException();
     }
 
@@ -2765,7 +2825,7 @@ namespace Rhino.Geometry.Collections
       get
       {
         MeshFace face = GetFace(index);
-        if( face.A == int.MinValue && (index < 0 || index >= Count) )
+        if (face.A == int.MinValue && (index < 0 || index >= Count))
           throw new IndexOutOfRangeException();
         return face;
       }
@@ -2818,7 +2878,7 @@ namespace Rhino.Geometry.Collections
       }
 
       int[] rc = new int[face_ids.Count];
-      face_ids.Keys.CopyTo(rc,0);
+      face_ids.Keys.CopyTo(rc, 0);
       return rc;
     }
     #endregion
@@ -3292,7 +3352,7 @@ namespace Rhino.Geometry.Collections
     IEnumerator IEnumerable.GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<MeshVertexColorList, Color>(this);
-   }
+    }
     #endregion
   }
 

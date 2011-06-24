@@ -442,7 +442,14 @@ namespace Rhino.PlugIns
     #endregion
 
     #region default virtual function implementations
-    protected virtual LoadReturnCode OnLoad(ref string message)
+    /// <summary>
+    /// </summary>
+    /// <param name="errorMessage">
+    /// If a load error is returned and this string is set. This string is the 
+    /// error message that will be reported back to the user
+    /// </param>
+    /// <returns></returns>
+    protected virtual LoadReturnCode OnLoad(ref string errorMessage)
     {
       return LoadReturnCode.Success;
     }

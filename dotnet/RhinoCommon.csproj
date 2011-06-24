@@ -80,9 +80,9 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'OpenNURBS|AnyCPU'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'OpenNURBS_Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\OpenNURBS\</OutputPath>
+    <OutputPath>bin\OpenNURBS_Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;USING_V5_SDK USING_OPENNURBS</DefineConstants>
     <DocumentationFile>Debug\RhinoCommon.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
@@ -91,6 +91,19 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'OpenNURBS_Release|AnyCPU'">
+    <OutputPath>bin\OpenNURBS_Release\</OutputPath>
+    <DefineConstants>TRACE;USING_V5_SDK USING_OPENNURBS</DefineConstants>
+    <DocumentationFile>Release\RhinoCommon.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>1591</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

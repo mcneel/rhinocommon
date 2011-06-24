@@ -49,9 +49,6 @@ namespace Rhino.Geometry
     /// <returns>The AreaMassProperties for the given curve or null on failure.</returns>
     public static AreaMassProperties Compute(Curve closedPlanarCurve)
     {
-      if (null == closedPlanarCurve)
-        return null;
-
       const double relativeTolerance = 1.0e-6;
       const double absoluteTolerance = 1.0e-6;
       IntPtr ptr = closedPlanarCurve.ConstPointer();
@@ -66,8 +63,6 @@ namespace Rhino.Geometry
     /// <returns>The AreaMassProperties for the given hatch or null on failure.</returns>
     public static AreaMassProperties Compute(Hatch hatch)
     {
-      if (null == hatch)
-        return null;
       const double relativeTolerance = 1.0e-6;
       const double absoluteTolerance = 1.0e-6;
       IntPtr ptr = hatch.ConstPointer();
@@ -82,9 +77,6 @@ namespace Rhino.Geometry
     /// <returns>The AreaMassProperties for the given Mesh or null on failure.</returns>
     public static AreaMassProperties Compute(Mesh mesh)
     {
-      if (null == mesh)
-        return null;
-
       IntPtr pMesh = mesh.ConstPointer();
       IntPtr rc = UnsafeNativeMethods.ON_Mesh_MassProperties(true, pMesh);
       if (IntPtr.Zero == rc)
@@ -99,9 +91,6 @@ namespace Rhino.Geometry
     /// <returns>The AreaMassProperties for the given Brep or null on failure.</returns>
     public static AreaMassProperties Compute(Brep brep)
     {
-      if (null == brep)
-        return null;
-
       IntPtr pBrep = brep.ConstPointer();
       const double relativeTolerance = 1.0e-6;
       const double absoluteTolerance = 1.0e-6;
@@ -116,9 +105,6 @@ namespace Rhino.Geometry
     /// <returns>The AreaMassProperties for the given Surface or null on failure.</returns>
     public static AreaMassProperties Compute(Surface surface)
     {
-      if (null == surface)
-        return null;
-
       IntPtr pSurface = surface.ConstPointer();
       const double relativeTolerance = 1.0e-6;
       const double absoluteTolerance = 1.0e-6;
@@ -483,9 +469,6 @@ namespace Rhino.Geometry
     /// <returns>The VolumeMassProperties for the given Mesh or null on failure.</returns>
     public static VolumeMassProperties Compute(Mesh mesh)
     {
-      if (null == mesh)
-        return null;
-
       IntPtr pMesh = mesh.ConstPointer();
       IntPtr rc = UnsafeNativeMethods.ON_Mesh_MassProperties(false, pMesh);
       if (IntPtr.Zero == rc)
@@ -500,9 +483,6 @@ namespace Rhino.Geometry
     /// <returns>The VolumeMassProperties for the given Brep or null on failure.</returns>
     public static VolumeMassProperties Compute(Brep brep)
     {
-      if (null == brep)
-        return null;
-
       IntPtr pBrep = brep.ConstPointer();
       const double relativeTolerance = 1.0e-6;
       const double absoluteTolerance = 1.0e-6;
@@ -517,9 +497,6 @@ namespace Rhino.Geometry
     /// <returns>The VolumeMassProperties for the given Surface or null on failure.</returns>
     public static VolumeMassProperties Compute(Surface surface)
     {
-      if (null == surface)
-        return null;
-
       IntPtr pSurface = surface.ConstPointer();
       const double relativeTolerance = 1.0e-6;
       const double absoluteTolerance = 1.0e-6;

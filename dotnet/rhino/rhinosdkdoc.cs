@@ -132,7 +132,7 @@ namespace Rhino
     public string Notes
     {
       get { return GetString(idxNotes); }
-      set{ UnsafeNativeMethods.CRhinoDoc_GetSetString(m_docId, idxNotes, true, value, IntPtr.Zero); }
+      set { UnsafeNativeMethods.CRhinoDoc_GetSetString(m_docId, idxNotes, true, value, IntPtr.Zero); }
     }
 
     public DateTime DateCreated
@@ -1253,7 +1253,7 @@ namespace Rhino
 
     private static void OnSelectObject(int docId, int bSelect, IntPtr pObject, IntPtr pObjects)
     {
-      if (m_select_objects != null && bSelect==1)
+      if (m_select_objects != null && bSelect == 1)
       {
         try
         {
@@ -1265,7 +1265,7 @@ namespace Rhino
           Runtime.HostUtils.ExceptionReport(ex);
         }
       }
-      else if (m_deselect_objects != null && bSelect==0)
+      else if (m_deselect_objects != null && bSelect == 0)
       {
         try
         {
@@ -2117,6 +2117,80 @@ namespace Rhino.DocObjects.Tables
     {
       List<Rhino.DocObjects.RhinoObject> list = new List<RhinoObject>(GetObjectList(typeFilter));
       return list.ToArray();
+    }
+
+    /// <summary>
+    /// Find all objects whose UserString matches the search patterns.
+    /// </summary>
+    /// <param name="key">Search pattern for UserString keys (supported wildcards are: ? = any single character, * = any sequence of characters).</param>
+    /// <param name="value">Search pattern for UserString values (supported wildcards are: ? = any single character, * = any sequence of characters).</param>
+    /// <param name="caseSensitive">If True, string comparison will be case sensitive.</param>
+    /// <returns>An array of all objects whose UserString matches with the search patterns or null when no such objects could be found.</returns>
+    public Rhino.DocObjects.RhinoObject[] FindByUserString(string key, string value, bool caseSensitive)
+    {
+      return FindByUserString(key, value, caseSensitive, true, true, ObjectType.AnyObject);
+    }
+    /// <summary>
+    /// Find all objects whose UserString matches the search patterns.
+    /// </summary>
+    /// <param name="key">Search pattern for UserString keys (supported wildcards are: ? = any single character, * = any sequence of characters).</param>
+    /// <param name="value">Search pattern for UserString values (supported wildcards are: ? = any single character, * = any sequence of characters).</param>
+    /// <param name="caseSensitive">If True, string comparison will be case sensitive.</param>
+    /// <param name="searchGeometry">If True, UserStrings attached to the geometry of an object will be searched.</param>
+    /// <param name="searchAttributes">If True, UserStrings attached to the attributes of an object will be searched.</param>
+    /// <param name="filter">Object type filter.</param>
+    /// <returns>An array of all objects whose UserString matches with the search patterns or null when no such objects could be found.</returns>
+    [CLSCompliant(false)]
+    public Rhino.DocObjects.RhinoObject[] FindByUserString(string key, string value, bool caseSensitive, bool searchGeometry, bool searchAttributes, Rhino.DocObjects.ObjectType filter)
+    {
+      Rhino.DocObjects.ObjectEnumeratorSettings oes = new ObjectEnumeratorSettings();
+      oes.ActiveObjects = true;
+      oes.HiddenObjects = true;
+      oes.LockedObjects = true;
+      oes.NormalObjects = true;
+      oes.IncludeLights = true;
+      oes.ReferenceObjects = true;
+
+      oes.IdefObjects = false;
+      oes.IncludeGrips = false;
+      oes.DeletedObjects = false;
+      oes.IncludePhantoms = false;
+      oes.SelectedObjectsFilter = false;
+
+      oes.ObjectTypeFilter = filter;
+      
+      return FindByUserString(key, value, caseSensitive, searchGeometry, searchAttributes, oes);
+    }
+    /// <summary>
+    /// Find all objects whose UserString matches the search patterns.
+    /// </summary>
+    /// <param name="key">Search pattern for UserString keys (supported wildcards are: ? = any single character, * = any sequence of characters).</param>
+    /// <param name="value">Search pattern for UserString values (supported wildcards are: ? = any single character, * = any sequence of characters).</param>
+    /// <param name="caseSensitive">If True, string comparison will be case sensitive.</param>
+    /// <param name="searchGeometry">If True, UserStrings attached to the geometry of an object will be searched.</param>
+    /// <param name="searchAttributes">If True, UserStrings attached to the attributes of an object will be searched.</param>
+    /// <param name="filter">Filter used to restrict the number of objects searched.</param>
+    /// <returns>An array of all objects whose UserString matches with the search patterns or null when no such objects could be found.</returns>
+    public Rhino.DocObjects.RhinoObject[] FindByUserString(string key, string value, bool caseSensitive, bool searchGeometry, bool searchAttributes, Rhino.DocObjects.ObjectEnumeratorSettings filter)
+    {
+      Rhino.Runtime.INTERNAL_RhinoObjectArray rhobjs = new Rhino.Runtime.INTERNAL_RhinoObjectArray();
+      IntPtr pArray = rhobjs.NonConstPointer();
+
+      DocObjects.ObjectIterator it = new ObjectIterator(m_doc, filter);
+      IntPtr pIterator = it.NonConstPointer();
+
+      int rc = UnsafeNativeMethods.CRhinoDoc_LookupObjectsByUserText(key, value, caseSensitive, searchGeometry, searchAttributes, pIterator, pArray);
+      if (rc == 0)
+      {
+        rhobjs.Dispose();
+        return null;
+      }
+      else
+      {
+        Rhino.DocObjects.RhinoObject[] objs = rhobjs.ToArray();
+        rhobjs.Dispose();
+        return objs;
+      }
     }
 
     #region Object addition

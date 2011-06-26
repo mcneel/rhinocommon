@@ -7832,6 +7832,10 @@ internal partial class UnsafeNativeMethods
   //ON_SimpleArray<ON_PolylineCurve*>* ON_Mesh_GetNakedEdges(const ON_Mesh* pConstMesh, int* polylines_created)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Mesh_GetNakedEdges(IntPtr pConstMesh, ref int polylines_created);
+
+  //int RHC_ShowContextMenu(const ON_SimpleArray<ON_wString>* items, int screenX, int screenY, int modeCount, /*ARRAY*/const int* modes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_ShowContextMenu(IntPtr items, int screenX, int screenY, int modeCount, int[] modes);
   #endregion
 
 
@@ -7889,6 +7893,10 @@ internal partial class UnsafeNativeMethods
   //void RHC_PushPickButtonShow(CWndList* pList)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void RHC_PushPickButtonShow(IntPtr pList);
+
+  //CRhinoView* CRhinoView_Create(int doc_id, int left, int top, int right, int bottom, bool floating)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoView_Create(int doc_id, int left, int top, int right, int bottom, [MarshalAs(UnmanagedType.U1)]bool floating);
   #endregion
 
 

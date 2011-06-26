@@ -153,6 +153,15 @@ namespace Rhino.Geometry
     {
       get { return 0.5 * (m_max + m_min); }
     }
+
+    /// <summary>
+    /// Gets the diagonal vector of this BoundingBox. 
+    /// The diagonal connects the Min and Max points. 
+    /// </summary>
+    public Vector3d Diagonal
+    {
+      get { return m_max - m_min; }
+    }
     #endregion
 
     #region methods

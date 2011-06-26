@@ -1939,6 +1939,27 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
+    /// Create a new RhinoView
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="projection"></param>
+    /// <param name="position"></param>
+    /// <param name="floating"></param>
+    /// <returns></returns>
+    public Rhino.Display.RhinoView Add(string title, DefinedViewportProjection projection, System.Drawing.Rectangle position, bool floating)
+    {
+      IntPtr pView = UnsafeNativeMethods.CRhinoView_Create(m_doc.m_docId, position.Left, position.Top, position.Right, position.Bottom, floating);
+      Rhino.Display.RhinoView rc = RhinoView.FromIntPtr(pView);
+      if (rc != null)
+      {
+        rc.MainViewport.SetCameraLocations(Point3d.Origin, rc.MainViewport.CameraLocation);
+        rc.MainViewport.SetProjection(projection, title, true);
+        rc.MainViewport.ZoomExtents();
+      }
+      return rc;
+    }
+
+    /// <summary>
     /// Create a new page view with a given title
     /// </summary>
     /// <param name="title">

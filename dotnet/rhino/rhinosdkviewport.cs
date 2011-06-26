@@ -160,10 +160,6 @@ namespace Rhino.Display
       }
     }
 
-    //[skipping]
-    //bool InterruptDrawing();
-    //bool  GetZBuffer(CRhinoZBuffer&) const;
-
     /// <summary>
     /// returns true if some portion world coordinate bounding box is
     /// potentially visible in the viewing frustum.
@@ -477,13 +473,6 @@ namespace Rhino.Display
       }
     }
 
-    //[skipping]
-    //  bool IsXUp() const;
-    //  bool IsYUp() const;
-    //  bool IsZUp() const;
-    //  bool GetElevatorHeight( const ON_Line& world_line, const ON_3dPoint& elevator_basepoint, 
-    //    const ON_3dVector& elevator_axis, BOOL bGridSnap, double grid_snap_spacing, double* elevator_height ) const;
-
     public bool SetToPlanView(Point3d planeOrigin, Vector3d planeXaxis, Vector3d planeYaxis, bool setConstructionPlane)
     {
       IntPtr pThis = NonConstPointer();
@@ -780,17 +769,6 @@ namespace Rhino.Display
       point = new System.Drawing.Point(x,y);
       return rc;
     }
-
-    //[skip - see viewport type property
-    // bool IsPageMainViewport();
-
-    //[skipping]
-    // void CopyFrom(const CRhinoViewport& src, bool copy_id = false);
-    //  bool IsThickDisplayActive( double* thickness_scale = NULL ) const;
-    //  mutable CRhinoDisplayPipeline*    m_dp;
-    //  bool m_bSpecialView;
-    //  ON_3dmView    m_v; // viewport settings
-
 
     #region Wrappers for ON_Viewport
 
@@ -1364,7 +1342,27 @@ namespace Rhino.Display
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.CRhinoViewport_VP_GetWorldToScreenScale(ptr, pointInFrustum, ref pixelsPerUnit);
     }
-    
+
+    /// <summary>
+    /// Convert a point from world coordinates in the viewport to a 2d screen
+    /// point in the local coordinates of the viewport (X/Y of point is relative
+    /// to top left corner of viewport on screen)
+    /// </summary>
+    /// <param name="worldPoint"></param>
+    /// <returns></returns>
+    public Point2d WorldToScreenPort(Point3d worldPoint)
+    {
+      Transform xform = GetTransform(DocObjects.CoordinateSystem.World, DocObjects.CoordinateSystem.Screen);
+      Point3d screen_point = xform * worldPoint;
+      return new Point2d(screen_point.X, screen_point.Y);
+    }
+
+    public Point2d ScreenPortToParentView(Point2d screenPortPoint)
+    {
+      var bounds = ScreenPortBounds;
+      return new Point2d(screenPortPoint.X - bounds.Left, screenPortPoint.Y - bounds.Top);
+    }
+
     #endregion
 
 

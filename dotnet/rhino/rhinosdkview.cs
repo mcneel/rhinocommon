@@ -139,6 +139,22 @@ namespace Rhino.Display
       return new System.Drawing.Point(x,y);
     }
 
+    public System.Drawing.Point ClientToScreen(System.Drawing.Point clientPoint)
+    {
+      System.Drawing.Rectangle screen = ScreenRectangle;
+      int x = clientPoint.X + screen.Left;
+      int y = clientPoint.Y + screen.Top;
+      return new System.Drawing.Point(x, y);
+    }
+
+    public Rhino.Geometry.Point2d ClientToScreen(Rhino.Geometry.Point2d clientPoint)
+    {
+      System.Drawing.Rectangle screen = ScreenRectangle;
+      double x = clientPoint.X + screen.Left;
+      double y = clientPoint.Y + screen.Top;
+      return new Rhino.Geometry.Point2d(x, y);
+    }
+
     //[skipping]
     //  functionality in CView base class
     //  UUID PlugInID() const;

@@ -1,4 +1,6 @@
 using System;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace Rhino.Display
 {
@@ -6,7 +8,8 @@ namespace Rhino.Display
   /// Description of a how Rhino will display in a viewport. These are the modes
   /// that are listed under "Advanced display" in the options dialog
   /// </summary>
-  public class DisplayModeDescription : IDisposable
+  [Serializable]
+  public class DisplayModeDescription : IDisposable, ISerializable
   {
     #region pointer tracking
     // A local copy of a DisplayAttrsMgrListDesc is made every time
@@ -17,6 +20,37 @@ namespace Rhino.Display
     {
       m_ptr = ptr;
     }
+
+    private DisplayModeDescription(SerializationInfo info, StreamingContext context)
+    {
+      m_ptr = UnsafeNativeMethods.DisplayAttrsMgrListDesc_New();
+      InMenu = info.GetBoolean("InMenu");
+      SupportsShadeCommand = info.GetBoolean("SupportsShadeCommand");
+      SupportsShading = info.GetBoolean("SupportsShading");
+      AllowObjectAssignment = info.GetBoolean("AllowObjectAssignment");
+      ShadedPipelineRequired = info.GetBoolean("ShadedPipelineRequired");
+      WireframePipelineRequired = info.GetBoolean("WireframePipelineRequired");
+      PipelineLocked = info.GetBoolean("PipelineLocked");
+
+      Rhino.Display.DisplayPipelineAttributes attrs = info.GetValue("DisplayAttributes", typeof(Rhino.Display.DisplayPipelineAttributes)) as Rhino.Display.DisplayPipelineAttributes;
+      Rhino.Display.DisplayPipelineAttributes current = DisplayAttributes;
+      current.CopyContents(attrs);
+    }
+
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("InMenu", InMenu);
+      info.AddValue("SupportsShadeCommand", SupportsShadeCommand);
+      info.AddValue("SupportsShading", SupportsShading);
+      info.AddValue("AllowObjectAssignment", AllowObjectAssignment);
+      info.AddValue("ShadedPipelineRequired", ShadedPipelineRequired);
+      info.AddValue("WireframePipelineRequired", WireframePipelineRequired);
+      info.AddValue("PipelineLocked", PipelineLocked);
+
+      info.AddValue("DisplayAttributes", DisplayAttributes);
+    }
+
 
     ~DisplayModeDescription()
     {
@@ -125,19 +159,59 @@ namespace Rhino.Display
 
     
     #region properties
+    const int idxSupportsShadeCmd = 0;
+    const int idxSupportsShading = 1;
+    const int idxAddToMenu = 2;
+    const int idxAllowObjectAssignment = 3;
+    const int idxShadedPipelineRequired = 4;
+    const int idxWireframePipelineRequired = 5;
+    const int idxPipelineLocked = 6;
+
+    bool GetBool(int which)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.DisplayAttrsMgrListDesc_GetBool(pConstThis, which);
+    }
+    void SetBool(int which, bool b)
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.DisplayAttrsMgrListDesc_SetBool(pThis, which, b);
+    }
     
     public bool InMenu
     {
-      get
-      {
-        IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.DisplayAttrsMgrListDesc_InMenu(pConstThis);
-      }
-      set
-      {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.DisplayAttrsMgrListDesc_SetInMenu(pThis, value);
-      }
+      get { return GetBool(idxAddToMenu); }
+      set { SetBool(idxAddToMenu, value); }
+    }
+    public bool SupportsShadeCommand
+    {
+      get { return GetBool(idxSupportsShadeCmd); }
+      set { SetBool(idxSupportsShadeCmd, value); }
+    }
+    public bool SupportsShading
+    {
+      get { return GetBool(idxSupportsShading); }
+      set { SetBool(idxSupportsShading, value); }
+    }
+    public bool AllowObjectAssignment
+    {
+      get { return GetBool(idxAllowObjectAssignment); }
+      set { SetBool(idxAllowObjectAssignment, value); }
+    }
+    public bool ShadedPipelineRequired
+    {
+      get { return GetBool(idxShadedPipelineRequired); }
+      set { SetBool(idxShadedPipelineRequired, value); }
+    }
+    public bool WireframePipelineRequired
+    {
+      get { return GetBool(idxWireframePipelineRequired); }
+      set { SetBool(idxWireframePipelineRequired, value); }
+    }
+    public bool PipelineLocked
+    {
+      get { return GetBool(idxPipelineLocked); }
+      set { SetBool(idxPipelineLocked, value); }
     }
     
     DisplayPipelineAttributes m_display_attrs;

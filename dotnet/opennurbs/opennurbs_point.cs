@@ -1,13 +1,15 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace Rhino.Geometry
 {
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_t0}, {m_t1})")]
   [Serializable]
-  public struct Interval
+  public struct Interval : ISerializable
   {
     #region Members
     private double m_t0;
@@ -25,6 +27,20 @@ namespace Rhino.Geometry
       m_t0 = other.m_t0;
       m_t1 = other.m_t1;
     }
+
+    private Interval(SerializationInfo info, StreamingContext context)
+    {
+      m_t0 = info.GetDouble("T0");
+      m_t1 = info.GetDouble("T1");
+    }
+
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("T0", m_t0);
+      info.AddValue("T1", m_t1);
+    }
+
     #endregion
 
     #region Operators
@@ -35,6 +51,23 @@ namespace Rhino.Geometry
     public static bool operator !=(Interval a, Interval b)
     {
       return a.CompareTo(b) == 0 ? false : true;
+    }
+
+    public static Interval operator +(Interval interval, double number)
+    {
+      return new Interval(interval.m_t0 + number, interval.m_t1 + number);
+    }
+    public static Interval operator +(double number, Interval interval)
+    {
+      return new Interval(interval.m_t0 + number, interval.m_t1 + number);
+    }
+    public static Interval operator -(Interval interval, double number)
+    {
+      return new Interval(interval.m_t0 - number, interval.m_t1 - number);
+    }
+    public static Interval operator -(double number, Interval interval)
+    {
+      return new Interval(number - interval.m_t0, number - interval.m_t1);
     }
 
     public override int GetHashCode()
@@ -387,7 +420,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_x}, {m_y})")]
   [Serializable]
-  public struct Point2d
+  public struct Point2d : ISerializable
   {
     private double m_x;
     private double m_y;
@@ -418,6 +451,19 @@ namespace Rhino.Geometry
     {
       m_x = point.m_x;
       m_y = point.m_y;
+    }
+
+    private Point2d(SerializationInfo info, StreamingContext context)
+    {
+      m_x = info.GetDouble("X");
+      m_y = info.GetDouble("Y");
+    }
+
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("X", m_x);
+      info.AddValue("Y", m_y);
     }
     #endregion
 
@@ -627,7 +673,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 24)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
   [Serializable]
-  public struct Point3d
+  public struct Point3d : ISerializable
   {
     #region members
     internal double m_x;
@@ -686,6 +732,22 @@ namespace Rhino.Geometry
     {
       get { return new Point3d(RhinoMath.UnsetValue, RhinoMath.UnsetValue, RhinoMath.UnsetValue); }
     }
+
+    private Point3d(SerializationInfo info, StreamingContext context)
+    {
+      m_x = info.GetDouble("X");
+      m_y = info.GetDouble("Y");
+      m_z = info.GetDouble("Z");
+    }
+
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("X", m_x);
+      info.AddValue("Y", m_y);
+      info.AddValue("Z", m_z);
+    }
+
     #endregion
 
     #region operators
@@ -1085,7 +1147,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 32)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z}, [{m_w}])")]
   [Serializable]
-  public struct Point4d
+  public struct Point4d : ISerializable
   {
     internal double m_x;
     internal double m_y;
@@ -1106,6 +1168,23 @@ namespace Rhino.Geometry
       m_y = point.m_y;
       m_z = point.m_z;
       m_w = 1.0;
+    }
+
+    private Point4d(SerializationInfo info, StreamingContext context)
+    {
+      m_x = info.GetDouble("X");
+      m_y = info.GetDouble("Y");
+      m_z = info.GetDouble("Z");
+      m_w = info.GetDouble("W");
+    }
+
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("X", m_x);
+      info.AddValue("Y", m_y);
+      info.AddValue("Z", m_z);
+      info.AddValue("W", m_w);
     }
 
     public double X { get { return m_x; } set { m_x = value; } }
@@ -1248,7 +1327,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_x}, {m_y})")]
   [Serializable]
-  public struct Vector2d
+  public struct Vector2d : ISerializable
   {
     private double m_x;
     private double m_y;
@@ -1257,6 +1336,19 @@ namespace Rhino.Geometry
     {
       m_x = x;
       m_y = y;
+    }
+
+    private Vector2d(SerializationInfo info, StreamingContext context)
+    {
+      m_x = info.GetDouble("X");
+      m_y = info.GetDouble("Y");
+    }
+
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("X", m_x);
+      info.AddValue("Y", m_y);
     }
 
     public double X { get { return m_x; } set { m_x = value; } }
@@ -1306,7 +1398,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 24)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
   [Serializable]
-  public struct Vector3d //: IComparable<Vector3d>
+  public struct Vector3d : ISerializable
   {
     #region fields
     internal double m_x;
@@ -1360,6 +1452,22 @@ namespace Rhino.Geometry
     {
       get { return new Vector3d(RhinoMath.UnsetValue, RhinoMath.UnsetValue, RhinoMath.UnsetValue); }
     }
+
+    private Vector3d(SerializationInfo info, StreamingContext context)
+    {
+      m_x = info.GetDouble("X");
+      m_y = info.GetDouble("Y");
+      m_z = info.GetDouble("Z");
+    }
+
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("X", m_x);
+      info.AddValue("Y", m_y);
+      info.AddValue("Z", m_z);
+    }
+
     #endregion
 
     #region operators
@@ -1933,7 +2041,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]
   [DebuggerDisplay("Pt({m_P.X},{m_P.Y},{m_P.Z}) Dir({m_V.X},{m_V.Y},{m_V.Z})")]
   [Serializable]
-  public struct Ray3d
+  public struct Ray3d : ISerializable
   {
     Point3d m_P;
     Vector3d m_V;
@@ -1941,6 +2049,19 @@ namespace Rhino.Geometry
     {
       m_P = position;
       m_V = direction;
+    }
+
+    private Ray3d(SerializationInfo info, StreamingContext context)
+    {
+      m_P = (Point3d)info.GetValue("Position", typeof(Point3d));
+      m_V = (Vector3d)info.GetValue("Direction", typeof(Vector3d));
+    }
+
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("Position", m_P);
+      info.AddValue("Direction", m_V);
     }
 
     public Point3d Position

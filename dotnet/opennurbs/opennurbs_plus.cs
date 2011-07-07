@@ -29,8 +29,8 @@ namespace Rhino.Geometry
 
   public class MeshPoint
   {
-    Mesh m_parent;
-    MeshPointDataStruct m_data;
+    internal Mesh m_parent;
+    internal MeshPointDataStruct m_data;
     internal MeshPoint(Mesh parent, MeshPointDataStruct ds)
     {
       m_parent = parent;

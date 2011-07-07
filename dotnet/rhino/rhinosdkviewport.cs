@@ -188,10 +188,24 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="width"></param>
     /// <param name="height"></param>
+    [Obsolete("Replaced by Size property to be consistent with .NET - will be removed in future WIP")]
     public void SetScreenSize(int width, int height)
     {
       IntPtr pThis = NonConstPointer();
       UnsafeNativeMethods.CRhinoViewport_SetScreenSize(pThis, width, height);
+    }
+
+    /// <summary>
+    /// Gets or sets the height and width of the viewport (in pixels)
+    /// </summary>
+    public System.Drawing.Size Size
+    {
+      get { return Bounds.Size; }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.CRhinoViewport_SetScreenSize(pThis, value.Width, value.Height);
+      }
     }
 
     /// <summary>
@@ -760,6 +774,7 @@ namespace Rhino.Display
     /// <returns>
     /// true if the point is inside of the RhinoViewport's screen port rectangle
     /// </returns>
+    [Obsolete("use ClientToScreen instead - this will be removed in a future WIP")]
     public bool ClientToScreenPort(ref System.Drawing.Point point)
     {
       IntPtr pConstThis = ConstPointer();
@@ -1247,7 +1262,22 @@ namespace Rhino.Display
       return rc;
     }
 
+    [Obsolete("Replaced by Bounds to be consistent with .NET - will be removed in a future WIP")]
     public System.Drawing.Rectangle ScreenPortBounds
+    {
+      get
+      {
+        int l, r, t, b, n, f;
+        GetScreenPort(out l, out r, out b, out t, out n, out f);
+        return System.Drawing.Rectangle.FromLTRB(l, t, r, b);
+      }
+    }
+
+
+    /// <summary>
+    /// Gets the size and location of the viewport, in pixels, relative to the parent view
+    /// </summary>
+    public System.Drawing.Rectangle Bounds
     {
       get
       {
@@ -1350,19 +1380,57 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="worldPoint"></param>
     /// <returns></returns>
-    public Point2d WorldToScreenPort(Point3d worldPoint)
+    public Point2d WorldToClient(Point3d worldPoint)
     {
       Transform xform = GetTransform(DocObjects.CoordinateSystem.World, DocObjects.CoordinateSystem.Screen);
       Point3d screen_point = xform * worldPoint;
       return new Point2d(screen_point.X, screen_point.Y);
     }
 
-    public Point2d ScreenPortToParentView(Point2d screenPortPoint)
+    public System.Drawing.Point ClientToScreen(Point2d clientPoint)
     {
-      var bounds = ScreenPortBounds;
-      return new Point2d(screenPortPoint.X - bounds.Left, screenPortPoint.Y - bounds.Top);
+      System.Drawing.Point _point = new System.Drawing.Point();
+      _point.X = (int)clientPoint.X;
+      _point.Y = (int)clientPoint.Y;
+      return ClientToScreen(_point);
     }
 
+    public System.Drawing.Point ClientToScreen(System.Drawing.Point clientPoint)
+    {
+      var bounds = Bounds;
+      System.Drawing.Point rc = new System.Drawing.Point();
+      rc.X = clientPoint.X - bounds.Left;
+      rc.Y = clientPoint.Y - bounds.Top;
+      var parent = this.ParentView;
+      if (parent != null)
+        rc = parent.ClientToScreen(rc);
+      return rc;
+    }
+
+    public System.Drawing.Point ScreenToClient(System.Drawing.Point screenPoint)
+    {
+      System.Drawing.Point rc = screenPoint;
+      var parent = this.ParentView;
+      if (parent != null)
+        rc = parent.ScreenToClient(rc);
+      var bounds = Bounds;
+      rc.X = rc.X + bounds.Left;
+      rc.Y = rc.Y + bounds.Top;
+      return rc;
+    }
+
+    public Line ClientToWorld(System.Drawing.Point clientPoint)
+    {
+      Point2d pt = new Point2d(clientPoint.X, clientPoint.Y);
+      return ClientToWorld(pt);
+    }
+    public Line ClientToWorld(Point2d clientPoint)
+    {
+      Line rc;
+      if( GetFrustumLine(clientPoint.X, clientPoint.Y, out rc) )
+        return rc;
+      return Line.Unset;
+    }
     #endregion
 
 

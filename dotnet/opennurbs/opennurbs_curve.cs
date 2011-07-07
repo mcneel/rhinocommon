@@ -2565,7 +2565,7 @@ namespace Rhino.Geometry
       {
         double start = parameters[i];
         double end = parameters[i + 1];
-        if ((start - end) > RhinoMath.ZeroTolerance)
+        if ((end - start) > RhinoMath.ZeroTolerance)
         {
           Curve trimcurve = Trim(start, end);
           if (trimcurve != null)

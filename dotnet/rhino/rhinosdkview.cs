@@ -397,6 +397,7 @@ namespace Rhino.Display
     /// 
     /// Returns true If this view is in a free floating frame window.
     /// </summary>
+    [Obsolete("Use Floating property - this will be removed in a future WIP")]
     public bool IsFloatingRhinoView
     {
       get{ return GetBool(idxIsFloatingRhinoView); }
@@ -414,12 +415,30 @@ namespace Rhino.Display
     /// the view will be embeded in the main frame
     /// </param>
     /// <returns>true on success</returns>
+    [Obsolete("Use Floating property - this will be removed in a future WIP")]
     public bool FloatRhinoView(bool floating)
     {
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.CRhinoView_FloatRhinoView(ptr, floating);
     }
 
+    /// <summary>
+    /// Floating state of RhinoView.
+    /// if true, then the view will be in a floating frame window. Otherwise
+    /// the view will be embeded in the main frame
+    /// </summary>
+    public bool Floating
+    {
+      get
+      {
+        return GetBool(idxIsFloatingRhinoView);
+      }
+      set
+      {
+        IntPtr ptr = NonConstPointer();
+        UnsafeNativeMethods.CRhinoView_FloatRhinoView(ptr, value);
+      }
+    }
 
     // THESE ARE IN CRhinoDoc, but should probably be in CRhinoView
     //  void EnableCameraIcon( CRhinoView* view );

@@ -760,6 +760,244 @@ namespace Rhino.Runtime
         //throw away, we are shutting down
       }
     }
+
+    internal static void WriteIntoSerializationInfo(IntPtr pRhCmnProfileContext, System.Runtime.Serialization.SerializationInfo info, string prefixStrip)
+    {
+      const int _string = 1;
+      const int _multistring = 2;
+      const int _uuid = 3;
+      const int _color = 4;
+      const int _int = 5;
+      const int _double = 6;
+      const int _rect = 7;
+      const int _point = 8;
+      const int _3dpoint = 9;
+      const int _xform = 10;
+      const int _3dvector = 11;
+      const int _meshparams = 12;
+      const int _buffer = 13;
+      const int _bool = 14;
+      int count = UnsafeNativeMethods.CRhCmnProfileContext_Count(pRhCmnProfileContext);
+      using (StringHolder sectionholder = new StringHolder())
+      using (StringHolder entryholder = new StringHolder())
+      {
+        IntPtr pStringSection = sectionholder.NonConstPointer();
+        IntPtr pStringEntry = entryholder.NonConstPointer();
+        for (int i = 0; i < count; i++)
+        {
+          int pctype = 0;
+          UnsafeNativeMethods.CRhCmnProfileContext_Item(pRhCmnProfileContext, i, pStringSection, pStringEntry, ref pctype);
+          string section = sectionholder.ToString();
+          string entry = entryholder.ToString();
+          if (string.IsNullOrEmpty(entry))
+            continue;
+          string name = string.IsNullOrEmpty(section) ? entry : section + "\\" + entry;
+          if (name.StartsWith(prefixStrip + "\\"))
+            name = name.Substring(prefixStrip.Length + 1);
+          name = name.Replace("\\", "::");
+
+          switch (pctype)
+          {
+            case _string:
+              {
+                UnsafeNativeMethods.CRhinoProfileContext_LoadString(pRhCmnProfileContext, section, entry, pStringEntry);
+                string val = entryholder.ToString();
+                info.AddValue(name, val);
+              }
+              break;
+            case _multistring:
+              {
+                IntPtr pStrings = UnsafeNativeMethods.ON_StringArray_New();
+                int array_count = UnsafeNativeMethods.CRhinoProfileContext_LoadStrings(pRhCmnProfileContext, section, entry, pStrings);
+                string[] s = new string[array_count];
+                for( int j=0; j<array_count; j++ )
+                {
+                  UnsafeNativeMethods.ON_StringArray_Get(pStrings, j, pStringEntry);
+                  s[j] = entryholder.ToString();
+                }
+                info.AddValue(name, s);
+              }
+              break;
+            case _uuid:
+              {
+                Guid id = Guid.Empty;
+                UnsafeNativeMethods.CRhinoProfileContext_LoadGuid(pRhCmnProfileContext, section, entry, ref id);
+                info.AddValue(name, id);
+              }
+              break;
+            case _color:
+              {
+                int abgr = 0;
+                UnsafeNativeMethods.CRhinoProfileContext_LoadColor(pRhCmnProfileContext, section, entry, ref abgr);
+                System.Drawing.Color c = System.Drawing.ColorTranslator.FromWin32(abgr);
+                //string s = System.Drawing.ColorTranslator.ToHtml(c);
+                info.AddValue(name, c);
+              }
+              break;
+            case _int:
+              {
+                int ival = 0;
+                UnsafeNativeMethods.CRhinoProfileContext_LoadInt(pRhCmnProfileContext, section, entry, ref ival);
+                info.AddValue(name, ival);
+              }
+              break;
+            case _double:
+              {
+                double dval = 0;
+                UnsafeNativeMethods.CRhinoProfileContext_LoadDouble(pRhCmnProfileContext, section, entry, ref dval);
+                info.AddValue(name, dval);
+              }
+              break;
+            case _rect:
+              {
+                int left = 0, top = 0, right = 0, bottom = 0;
+                UnsafeNativeMethods.CRhinoProfileContext_LoadRect(pRhCmnProfileContext, section, entry, ref left, ref top, ref right, ref bottom);
+                System.Drawing.Rectangle r = System.Drawing.Rectangle.FromLTRB(left, top, right, bottom);
+                info.AddValue(name, r);
+              }
+              break;
+            case _point:
+              {
+                int x = 0, y = 0;
+                UnsafeNativeMethods.CRhinoProfileContext_LoadPoint(pRhCmnProfileContext, section, entry, ref x, ref y);
+                System.Drawing.Point pt = new System.Drawing.Point(x, y);
+                info.AddValue(name, pt);
+              }
+              break;
+            case _3dpoint:
+              {
+                Rhino.Geometry.Point3d pt = new Geometry.Point3d();
+                UnsafeNativeMethods.CRhinoProfileContext_LoadPoint3d(pRhCmnProfileContext, section, entry, ref pt);
+                info.AddValue(name, pt);
+              }
+              break;
+            case _xform:
+              {
+                Rhino.Geometry.Transform xf = new Geometry.Transform();
+                UnsafeNativeMethods.CRhinoProfileContext_LoadXform(pRhCmnProfileContext, section, entry, ref xf);
+                info.AddValue(name, xf);
+              }
+              break;
+            case _3dvector:
+              {
+                Rhino.Geometry.Vector3d vec = new Geometry.Vector3d();
+                UnsafeNativeMethods.CRhinoProfileContext_LoadVector3d(pRhCmnProfileContext, section, entry, ref vec);
+                info.AddValue(name, vec);
+              }
+              break;
+            case _meshparams:
+              {
+                Rhino.Geometry.MeshingParameters mp = new Geometry.MeshingParameters();
+                UnsafeNativeMethods.CRhinoProfileContext_LoadMeshParameters(pRhCmnProfileContext, section, entry, mp.NonConstPointer());
+                info.AddValue(name, mp);
+                mp.Dispose();
+              }
+              break;
+            case _buffer:
+              {
+                //not supported yet
+                //int buffer_length = UnsafeNativeMethods.CRhinoProfileContext_BufferLength(pRhCmnProfileContext, section, entry);
+                //byte[] buffer = new byte[buffer_length];
+                //UnsafeNativeMethods.CRhinoProfileContext_LoadBuffer(pRhCmnProfileContext, section, entry, buffer_length, buffer);
+                //info.AddValue(name, buffer);
+              }
+              break;
+            case _bool:
+              {
+                bool b = false;
+                UnsafeNativeMethods.CRhinoProfileContext_LoadBool(pRhCmnProfileContext, section, entry, ref b);
+                info.AddValue(name, b);
+              }
+              break;
+          }
+        }
+      }
+    }
+
+    internal static IntPtr ReadIntoProfileContext(System.Runtime.Serialization.SerializationInfo info, string sectionBase)
+    {
+      IntPtr pProfileContext = UnsafeNativeMethods.CRhCmnProfileContext_New();
+      var e = info.GetEnumerator();
+      while (e.MoveNext())
+      {
+        string entry = e.Name.Replace("::", "\\");
+        string section = sectionBase;
+        int split_index = entry.LastIndexOf("\\");
+        if (split_index > -1)
+        {
+          section = sectionBase + "\\" + entry.Substring(0, split_index);
+          entry = entry.Substring(split_index + 1);
+        }
+
+        
+        Type t = e.ObjectType;
+        if( typeof(string) == t )
+          UnsafeNativeMethods.CRhinoProfileContext_SaveProfileString(pProfileContext, section, entry, e.Value as string);
+        else if( typeof(Guid) == t )
+          UnsafeNativeMethods.CRhinoProfileContext_SaveProfileUuid(pProfileContext, section, entry, (Guid)e.Value);
+        else if( typeof(System.Drawing.Color) == t )
+        {
+          System.Drawing.Color c = (System.Drawing.Color)e.Value;
+          int argb = c.ToArgb();
+          UnsafeNativeMethods.CRhinoProfileContext_SaveProfileColor(pProfileContext, section, entry, argb);
+        }
+        else if( typeof(int) == t )
+          UnsafeNativeMethods.CRhinoProfileContext_SaveProfileInt(pProfileContext, section, entry, (int)e.Value);
+        else if( typeof(double) == t )
+          UnsafeNativeMethods.CRhinoProfileContext_SaveProfileDouble(pProfileContext, section, entry, (double)e.Value);
+        else if( typeof(System.Drawing.Rectangle) == t )
+        {
+          System.Drawing.Rectangle r = (System.Drawing.Rectangle)e.Value;
+          UnsafeNativeMethods.CRhinoProfileContext_SaveProfileRect(pProfileContext, section, entry, r.Left, r.Top, r.Right, r.Bottom);
+        }
+        else if( typeof(System.Drawing.Point) == t )
+        {
+          System.Drawing.Point pt = (System.Drawing.Point)e.Value;
+          UnsafeNativeMethods.CRhinoProfileContext_SaveProfilePoint(pProfileContext, section, entry, pt.X, pt.Y);
+        }
+        else if( typeof(Rhino.Geometry.Point3d) == t )
+        {
+          Rhino.Geometry.Point3d pt = (Rhino.Geometry.Point3d)e.Value;
+          UnsafeNativeMethods.CRhinoProfileContext_SaveProfilePoint3d(pProfileContext, section, entry, pt);
+        }
+        else if( typeof(Rhino.Geometry.Transform) == t )
+        {
+          Rhino.Geometry.Transform xf = (Rhino.Geometry.Transform)e.Value;
+          UnsafeNativeMethods.CRhinoProfileContext_SaveProfileXform(pProfileContext, section, entry, ref xf);
+        }
+        else if( typeof(Rhino.Geometry.Vector3d) == t )
+        {
+          Rhino.Geometry.Vector3d v = (Rhino.Geometry.Vector3d)e.Value;
+          UnsafeNativeMethods.CRhinoProfileContext_SaveProfileVector3d(pProfileContext, section, entry, v);
+        }
+        else if( typeof(Rhino.Geometry.MeshingParameters) == t )
+        {
+          Rhino.Geometry.MeshingParameters mp = e.Value as Rhino.Geometry.MeshingParameters;
+          IntPtr pMp = mp.ConstPointer();
+          UnsafeNativeMethods.CRhinoProfileContext_SaveProfileMeshingParameters(pProfileContext, section, entry, pMp);
+        }
+        else if( typeof(byte[]) == t )
+        {
+          byte[] b = e.Value as byte[];
+          UnsafeNativeMethods.CRhinoProfileContext_SaveProfileBuffer(pProfileContext, section, entry, b.Length, b);
+        }
+        else if (typeof(bool) == t)
+          UnsafeNativeMethods.CRhinoProfileContext_SaveProfileBool(pProfileContext, section, entry, (bool)e.Value);
+        else
+        {
+          //try
+          //{
+            string s = info.GetString(e.Name);
+            UnsafeNativeMethods.CRhinoProfileContext_SaveProfileString(pProfileContext, section, entry, s);
+          //}
+          //catch (Exception ex)
+          //{
+          //  throw;
+          //}
+        }
+      }
+      return pProfileContext;
+    }
   }
 
   [Serializable]

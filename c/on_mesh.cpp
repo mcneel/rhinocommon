@@ -1629,6 +1629,94 @@ RH_C_FUNCTION bool ON_Mesh_GetClosestPoint3(const ON_Mesh* pConstMesh, ON_3DPOIN
   return rc;
 }
 
+RH_C_FUNCTION bool ON_Mesh_MeshPointAt(const ON_Mesh* pConstMesh, int faceIndex, double t0, double t1, double t2, double t3, ON_3dPoint* p)
+{
+  bool rc = false;
+  if( pConstMesh )
+  {
+    // test to see if face exists
+    if( faceIndex >= 0 && faceIndex < pConstMesh->m_F.Count() )
+    {
+      /// Barycentric quad coordinates for the point on the mesh
+      /// face mesh.Faces[FaceIndex].  
+      
+      /// If the face is a triangle
+      /// disregard T[3] (it should be set to 0.0). 
+      
+      /// If the face is
+      /// a quad and is split between vertexes 0 and 2, then T[3]
+      /// will be 0.0 when point is on the triangle defined by vi[0],
+      /// vi[1], vi[2] 
+
+      /// T[1] will be 0.0 when point is on the
+      /// triangle defined by vi[0], vi[2], vi[3]. 
+
+      /// If the face is a
+      /// quad and is split between vertexes 1 and 3, then T[2] will
+      /// be -1 when point is on the triangle defined by vi[0],
+      /// vi[1], vi[3] 
+
+      /// and m_t[0] will be -1 when point is on the
+      /// triangle defined by vi[1], vi[2], vi[3].
+
+      ON_MeshFace face = pConstMesh->m_F[faceIndex];
+
+      // Collect data for barycentric evaluation.
+      ON_3dPoint p0, p1, p2;
+
+      if( face.IsTriangle() )
+      {
+        p0 = pConstMesh->m_V[face.vi[0]];
+        p1 = pConstMesh->m_V[face.vi[1]];
+        p2 = pConstMesh->m_V[face.vi[2]];
+      }
+      else
+      {
+        if( t3 == 0 )
+        { // point is on subtriangle {0,1,2}
+          p0 = pConstMesh->m_V[face.vi[0]];
+          p1 = pConstMesh->m_V[face.vi[1]];
+          p2 = pConstMesh->m_V[face.vi[2]];
+        }
+        else if( t1 == 0 )
+        { // point is on subtriangle {0,2,3}
+          p0 = pConstMesh->m_V[face.vi[0]];
+          p1 = pConstMesh->m_V[face.vi[2]];
+          p2 = pConstMesh->m_V[face.vi[3]];
+          t0 = t0;
+          t1 = t2;
+          t2 = t3;
+        }
+        else if( t2 == -1 )
+        { // point is on subtriangle {0,1,3}
+          p0 = pConstMesh->m_V[face.vi[0]];
+          p1 = pConstMesh->m_V[face.vi[1]];
+          p2 = pConstMesh->m_V[face.vi[3]];
+          t0 = t0;
+          t1 = t1;
+          t2 = t3;
+        }
+        else
+        { // point must be on remaining subtriangle {1,2,3}
+          p0 = pConstMesh->m_V[face.vi[1]];
+          p1 = pConstMesh->m_V[face.vi[2]];
+          p2 = pConstMesh->m_V[face.vi[3]];
+          t0 = t1;
+          t1 = t2;
+          t2 = t3;
+        }
+      }
+
+      p->x = t0 * p0.x + t1 * p1.x + t2 * p2.x;
+      p->y = t0 * p0.y + t1 * p1.y + t2 * p2.y;
+      p->z = t0 * p0.z + t1 * p1.z + t2 * p2.z;
+
+      rc = true;
+    }
+  }
+  return rc;
+}
+
 RH_C_FUNCTION bool ON_MESHPOINT_GetTriangle(const ON_Mesh* pConstMesh, const ON_MESHPOINT_STRUCT* meshpoint, int* a, int* b, int* c)
 {
   bool rc = false;

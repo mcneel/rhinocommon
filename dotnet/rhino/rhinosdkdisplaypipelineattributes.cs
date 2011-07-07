@@ -1,13 +1,17 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 using System.Drawing;
 
 namespace Rhino.Display
 {
-  public class DisplayPipelineAttributes
+  [Serializable]
+  public class DisplayPipelineAttributes : IDisposable, ISerializable
   {
     #region pointer tracking
     readonly object m_parent;
+    IntPtr m_pAttrs = IntPtr.Zero;
     internal DisplayPipelineAttributes(DisplayModeDescription parent)
     {
       m_parent = parent;
@@ -15,6 +19,9 @@ namespace Rhino.Display
 
     IntPtr ConstPointer()
     {
+      if (m_pAttrs != IntPtr.Zero)
+        return m_pAttrs;
+
       DisplayModeDescription parent = m_parent as DisplayModeDescription;
       if (parent != null)
         return parent.DisplayAttributeConstPointer();
@@ -23,12 +30,64 @@ namespace Rhino.Display
 
     IntPtr NonConstPointer()
     {
+      if (m_pAttrs != IntPtr.Zero)
+        return m_pAttrs;
+
       DisplayModeDescription parent = m_parent as DisplayModeDescription;
       if (parent != null)
         return parent.DisplayAttributeNonConstPointer();
       return IntPtr.Zero;
     }
+
+    internal void CopyContents(DisplayPipelineAttributes other)
+    {
+      IntPtr pThis = NonConstPointer();
+      IntPtr pOther = other.ConstPointer();
+      UnsafeNativeMethods.CDisplayPipelineAttributes_CopyContents(pThis, pOther);
+    }
     #endregion
+ 
+    protected DisplayPipelineAttributes(SerializationInfo info, StreamingContext context)
+    {
+      m_parent = null;
+      m_pAttrs = UnsafeNativeMethods.CDisplayPipelineAttributes_New();
+      IntPtr pRhinoProfileContext = Rhino.Runtime.HostUtils.ReadIntoProfileContext(info, "DisplayPipelineAttributes");
+      UnsafeNativeMethods.CDisplayPipelineAttributes_LoadProfile(m_pAttrs, pRhinoProfileContext, "DisplayPipelineAttributes");
+      UnsafeNativeMethods.CRhinoProfileContext_Delete(pRhinoProfileContext);
+    }
+
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      IntPtr pConstThis = ConstPointer();
+      
+
+      IntPtr pProfileContext = UnsafeNativeMethods.CRhCmnProfileContext_New();
+      UnsafeNativeMethods.CDisplayPipelineAttributes_SaveProfile(pConstThis, pProfileContext, "DisplayPipelineAttributes");
+      Rhino.Runtime.HostUtils.WriteIntoSerializationInfo(pProfileContext, info, "DisplayPipelineAttributes");
+      UnsafeNativeMethods.CRhinoProfileContext_Delete(pProfileContext);
+    }
+
+    ~DisplayPipelineAttributes()
+    {
+      Dispose(false);
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (m_pAttrs!=IntPtr.Zero)
+      {
+        UnsafeNativeMethods.CDisplayPipelineAttributes_Delete(m_pAttrs);
+      }
+      m_pAttrs = IntPtr.Zero;
+    }
+
 
     #region General display overrides...
     public bool XrayAllObjects

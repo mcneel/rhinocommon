@@ -187,17 +187,6 @@ namespace Rhino.DocObjects
       set { SetInt(idxPlotWeightSource, (int)value); }
     }
 
-    [Obsolete("Use SetDisplayModeOverride/RemoveDisplayModeOverride")]
-    public DisplayMode DisplayMode
-    {
-      get
-      {
-        int rc = GetInt(idxDisplayMode);
-        return (DisplayMode)rc;
-      }
-      set { SetInt(idxDisplayMode, (int)value); }
-    }
-
     /// <summary>
     /// Determines if an object has a deisplay mode override for a given viewport
     /// </summary>

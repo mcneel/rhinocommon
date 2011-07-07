@@ -1383,6 +1383,37 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Evaluate a mesh at a set of barycentric coordinates.
+    /// </summary>
+    /// <param name="meshPoint">MeshPoint instance contiaining a valid Face Index and Barycentric coordinates.</param>
+    /// <returns>A Point on the mesh or Point3d.Unset if the faceIndex is not valid or if the barycentric coordinates could not be evaluated.</returns>
+    public Point3d PointAt(MeshPoint meshPoint)
+    {
+      if (meshPoint == null) { throw new ArgumentNullException("meshPoint"); }
+      return PointAt(meshPoint.FaceIndex, meshPoint.T[0], meshPoint.T[1], meshPoint.T[2], meshPoint.T[3]);
+    }
+
+    /// <summary>
+    /// Evaluate a mesh at a set of barycentric coordinates. Barycentric coordinates must 
+    /// be assigned in accordance with the rules as defined by MeshPoint.T
+    /// </summary>
+    /// <param name="faceIndex">Index of triangle or quad to evaluate</param>
+    /// <param name="t0">First barycentric coordinate.</param>
+    /// <param name="t1">Second barycentric coordinate</param>
+    /// <param name="t2">Third barycentric coordinate.</param>
+    /// <param name="t3">Fourth barycentric coordinate. If the face is a triangle, this coordinate will be ignored.</param>
+    /// <returns>A Point on the mesh or Point3d.Unset if the faceIndex is not valid or if the barycentric coordinates could not be evaluated.</returns>
+    public Point3d PointAt(int faceIndex, double t0, double t1, double t2, double t3)
+    {
+      IntPtr pConstThis = ConstPointer();
+      Point3d pt = Point3d.Unset;
+
+      if (UnsafeNativeMethods.ON_Mesh_MeshPointAt(pConstThis, faceIndex, t0, t1, t2, t3, ref pt))
+        return pt;
+      return Point3d.Unset;
+    }
+
+    /// <summary>
     /// Pull a collection of points to a mesh.
     /// </summary>
     /// <param name="points"></param>

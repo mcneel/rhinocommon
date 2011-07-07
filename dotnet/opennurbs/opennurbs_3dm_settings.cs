@@ -70,11 +70,11 @@ namespace Rhino.DocObjects
       m_bDepthBuffered = true;
       m_bShowGrid = true;
       m_bShowAxes = true;
-      m_thin_line_color = ApplicationSettings.GridSettings.ThinLineColor;
-      m_thick_line_color = ApplicationSettings.GridSettings.ThickLineColor;
-      m_grid_x_color = ApplicationSettings.GridSettings.XAxisLineColor;
-      m_grid_y_color = ApplicationSettings.GridSettings.YAxisLineColor;
-      m_grid_z_color = ApplicationSettings.GridSettings.ZAxisLineColor;
+      m_thin_line_color = ApplicationSettings.AppearanceSettings.GridThinLineColor;
+      m_thick_line_color = ApplicationSettings.AppearanceSettings.GridThickLineColor;
+      m_grid_x_color = ApplicationSettings.AppearanceSettings.GridXAxisLineColor;
+      m_grid_y_color = ApplicationSettings.AppearanceSettings.GridYAxisLineColor;
+      m_grid_z_color = ApplicationSettings.AppearanceSettings.GridZAxisLineColor;
     }
 
     public Plane Plane

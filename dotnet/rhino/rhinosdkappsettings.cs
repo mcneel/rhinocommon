@@ -92,6 +92,14 @@ namespace Rhino.ApplicationSettings
     public bool EchoCommandsToHistoryWindow{ get; set; }
     public bool ShowFullPathInTitleBar{ get; set; }
     public bool ShowCrosshairs{ get; set; }
+
+    // merged grid color settings with appearance settings
+    public Color GridThinLineColor { get; set; }
+    public Color GridThickLineColor { get; set; }
+
+    public Color GridXAxisLineColor { get; set; }
+    public Color GridYAxisLineColor { get; set; }
+    public Color GridZAxisLineColor { get; set; }
   }
   
   public static class AppearanceSettings
@@ -128,6 +136,17 @@ namespace Rhino.ApplicationSettings
       rc.ShowFullPathInTitleBar = UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxFullPathInTitleBar, pAppearanceSettings);
       rc.ShowCrosshairs = UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxCrosshairsVisible, pAppearanceSettings);
       UnsafeNativeMethods.CRhinoAppAppearanceSettings_Delete(pAppearanceSettings);
+
+      // also add grid settings
+      IntPtr pGridSettings = UnsafeNativeMethods.CRhinoAppGridSettings_New(current);
+
+      rc.GridThickLineColor = GetGridColor(idxThickLineColor, pGridSettings);
+      rc.GridThinLineColor = GetGridColor(idxThinLineColor, pGridSettings);
+      rc.GridXAxisLineColor = GetGridColor(idxXAxisColor, pGridSettings);
+      rc.GridYAxisLineColor = GetGridColor(idxYAxisColor, pGridSettings);
+      rc.GridZAxisLineColor = GetGridColor(idxZAxisColor, pGridSettings);
+      UnsafeNativeMethods.CRhinoAppGridSettings_Delete(pGridSettings);
+
       return rc;
     }
 
@@ -143,7 +162,7 @@ namespace Rhino.ApplicationSettings
 
     public static void RestoreDefaults()
     {
-      UnsafeNativeMethods.CRhinoAppAppearanceSettings_RestoreDefaults();
+      UpdateFromState(GetDefaultState());
     }
 
     public static void UpdateFromState(AppearanceSettingsState state)
@@ -170,6 +189,12 @@ namespace Rhino.ApplicationSettings
       EchoPromptsToHistoryWindow = state.EchoPromptsToHistoryWindow;
       ShowFullPathInTitleBar = state.ShowFullPathInTitleBar;
       ShowCrosshairs = state.ShowCrosshairs;
+
+      GridThickLineColor = state.GridThickLineColor;
+      GridThinLineColor = state.GridThinLineColor;
+      GridXAxisLineColor = state.GridXAxisLineColor;
+      GridYAxisLineColor = state.GridYAxisLineColor;
+      GridZAxisLineColor = state.GridZAxisLineColor;
     }
 
     public static string DefaultFontFaceName
@@ -388,6 +413,52 @@ namespace Rhino.ApplicationSettings
       get { return GetColor(idxCurrentLayerBackgroundColor); }
       set { SetColor(idxCurrentLayerBackgroundColor, value); }
     }
+
+    const int idxThinLineColor = 0;
+    const int idxThickLineColor = 1;
+    const int idxXAxisColor = 2;
+    const int idxYAxisColor = 3;
+    const int idxZAxisColor = 4;
+    static Color GetGridColor(int which, IntPtr pSettings)
+    {
+      int abgr = UnsafeNativeMethods.CRhinoAppGridSettings_GetSetColor(which, false, 0, pSettings);
+      return ColorTranslator.FromWin32(abgr);
+    }
+    static void SetGridColor(int which, Color c, IntPtr pSettings)
+    {
+      int argb = c.ToArgb();
+      UnsafeNativeMethods.CRhinoAppGridSettings_GetSetColor(which, true, argb, pSettings);
+    }
+
+
+    // merged grid color settings with appearance settings
+    public static Color GridThinLineColor
+    {
+      get { return GetGridColor(idxThinLineColor, IntPtr.Zero); }
+      set { SetGridColor(idxThinLineColor, value, IntPtr.Zero); }
+    }
+
+    public static Color GridThickLineColor
+    {
+      get { return GetGridColor(idxThickLineColor, IntPtr.Zero); }
+      set { SetGridColor(idxThickLineColor, value, IntPtr.Zero); }
+    }
+
+    public static Color GridXAxisLineColor
+    {
+      get { return GetGridColor(idxXAxisColor, IntPtr.Zero); }
+      set { SetGridColor(idxXAxisColor, value, IntPtr.Zero); }
+    }
+    public static Color GridYAxisLineColor
+    {
+      get { return GetGridColor(idxYAxisColor, IntPtr.Zero); }
+      set { SetGridColor(idxYAxisColor, value, IntPtr.Zero); }
+    }
+    public static Color GridZAxisLineColor
+    {
+      get { return GetGridColor(idxZAxisColor, IntPtr.Zero); }
+      set { SetGridColor(idxZAxisColor, value, IntPtr.Zero); }
+    }
 #endregion
 
     /*
@@ -486,26 +557,29 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        return UnsafeNativeMethods.RhCommandAliasList_Count();
+        return UnsafeNativeMethods.CRhinoAppAliasList_Count(IntPtr.Zero);
       }
     }
 
     ///<summary>Returns a list of command alias names.</summary>
     public static string[] GetNames()
     {
-      int count = UnsafeNativeMethods.RhCommandAliasList_Count();
+      int count = UnsafeNativeMethods.CRhinoAppAliasList_Count(IntPtr.Zero);
       string[] rc = new string[count];
-      for (int i = 0; i < count; i++)
+      using(Runtime.StringHolder sh = new Runtime.StringHolder())
       {
-        IntPtr ptr = UnsafeNativeMethods.RhCommandAliasList_Item(i);
-        if (ptr != IntPtr.Zero)
-          rc[i] = Marshal.PtrToStringUni(ptr);
+        IntPtr pString = sh.NonConstPointer();
+        for (int i = 0; i < count; i++)
+        {
+          if (UnsafeNativeMethods.CRhinoAppAliasList_Item(i, pString, IntPtr.Zero))
+            rc[i] = sh.ToString();
+        }
       }
       return rc;
     }
 
     ///<summary>Remove all aliases from the list</summary>
-    public static void DestroyList()
+    public static void Clear()
     {
       UnsafeNativeMethods.RhCommandAliasList_DestroyList();
     }
@@ -514,10 +588,12 @@ namespace Rhino.ApplicationSettings
     ///<param name='alias'>[in] The name of the command alias.</param>
     public static string GetMacro(string alias)
     {
-      IntPtr rc = UnsafeNativeMethods.RhCommandAliasList_GetMacro(alias);
-      if (rc == IntPtr.Zero)
-        return null;
-      return Marshal.PtrToStringUni(rc);
+      using (Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pMacro = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoAppAliasList_GetMacro(alias, pMacro, IntPtr.Zero);
+        return sh.ToString();
+      }
     }
 
     ///<summary>Modifies the macro of a command alias.</summary>
@@ -553,12 +629,83 @@ namespace Rhino.ApplicationSettings
     {
       return UnsafeNativeMethods.RhCommandAliasList_IsAlias(alias);
     }
+
+    /// <summary>
+    /// Get Name/Macro combinations as a dictionary
+    /// </summary>
+    /// <returns></returns>
+    public static System.Collections.Generic.Dictionary<string,string> ToDictionary()
+    {
+      var rc = new System.Collections.Generic.Dictionary<string,string>();
+      string[] names = GetNames();
+      for (int i = 0; i < names.Length; i++)
+      {
+        string macro = GetMacro(names[i]);
+        if (!string.IsNullOrEmpty(names[i]))
+          rc[names[i]] = macro;
+      }
+      return rc;
+    }
+
+    /// <summary>
+    /// Returns true if the current alias list is the same as the default alias list
+    /// </summary>
+    /// <returns></returns>
+    public static bool IsDefault()
+    {
+      var current = ToDictionary();
+      var defaults = GetDefaults();
+      if (current.Count != defaults.Count)
+        return false;
+
+      foreach (string key in current.Keys)
+      {
+        if (!defaults.ContainsKey(key))
+          return false;
+        string currentMacro = current[key];
+        string defaultMacro = defaults[key];
+        if (!currentMacro.Equals(defaultMacro, StringComparison.InvariantCultureIgnoreCase))
+          return false;
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// Get the default set of Name/Macro combinations
+    /// </summary>
+    /// <returns></returns>
+    public static System.Collections.Generic.Dictionary<string, string> GetDefaults()
+    {
+      var rc = new System.Collections.Generic.Dictionary<string,string>();
+      IntPtr pCommandAliasList = UnsafeNativeMethods.CRhinoAppAliasList_New();
+      int count = UnsafeNativeMethods.CRhinoAppAliasList_Count(pCommandAliasList);
+      using(Runtime.StringHolder shName = new Runtime.StringHolder())
+      using (Runtime.StringHolder shMacro = new Runtime.StringHolder())
+      {
+        IntPtr pName = shName.NonConstPointer();
+        IntPtr pMacro = shMacro.NonConstPointer();
+        for (int i = 0; i < count; i++)
+        {
+          if (UnsafeNativeMethods.CRhinoAppAliasList_Item(i, pName, pCommandAliasList))
+          {
+            string name = shName.ToString();
+            if (UnsafeNativeMethods.CRhinoAppAliasList_GetMacro(name, pMacro, pCommandAliasList))
+            {
+              string macro = shMacro.ToString();
+              rc[name] = macro;
+            }
+          }
+        }
+      }
+      UnsafeNativeMethods.CRhinoAppAliasList_Delete(pCommandAliasList);
+      return rc;
+    }
   }
   
   public static class NeverRepeatList
   {
     ///<summary>
-    ///Only use the m_dont_repeat_list if somebody modifies it via CRhinoAppSettings::SetDontRepeatCommands()
+    ///Only use the list if somebody modifies it via CRhinoAppSettings::SetDontRepeatCommands()
     ///
     ///A return value of true means CRhinoCommand don&apos;t repeat flags will be ignored and the m_dont_repeat_list
     ///will be used instead.  False means the individual CRhinoCommands will determine if they are repeatable.
@@ -585,7 +732,7 @@ namespace Rhino.ApplicationSettings
       return UnsafeNativeMethods.RhDontRepeatList_SetList(sb.ToString());
     }
 
-    ///<summary>Convert m_dont_repeat_list to space delimited string</summary>
+    ///<summary>Convert list to space delimited string</summary>
     public static string CommandNames
     {
       get
@@ -1023,57 +1170,40 @@ namespace Rhino.ApplicationSettings
     }
   }
 
-  
-  /// <summary>construction plane grid line properties</summary>
+  [Obsolete("Grid color settings moved to AppearanceSettings - will be removed in a future WIP")]
   public static class GridSettings
   {
     //int          m_thick_line_width; // 1 or 2
     //int          m_axis_line_width;  // 1 or 2
     //unsigned int m_line_stipple_pattern; 
     //bool         m_show_zaxis;
-    const int idxThinLineColor = 0;
-    const int idxThickLineColor = 1;
-    const int idxXAxisColor = 2;
-    const int idxYAxisColor = 3;
-    const int idxZAxisColor = 4;
-
-    static Color GetColor(int which)
-    {
-      int abgr = UnsafeNativeMethods.RhGridSettings_GetSetColor(which, false, 0);
-      return ColorTranslator.FromWin32(abgr);
-    }
-    static void SetColor(int which, Color c)
-    {
-      int argb = c.ToArgb();
-      UnsafeNativeMethods.RhGridSettings_GetSetColor(which, true, argb);
-    }
 
     public static Color ThinLineColor
     {
-      get { return GetColor(idxThinLineColor); }
-      set { SetColor(idxThinLineColor, value); }
+      get { return AppearanceSettings.GridThinLineColor; }
+      set { AppearanceSettings.GridThinLineColor = value; }
     }
 
     public static Color ThickLineColor
     {
-      get { return GetColor(idxThickLineColor); }
-      set { SetColor(idxThickLineColor, value); }
+      get { return AppearanceSettings.GridThickLineColor; }
+      set { AppearanceSettings.GridThickLineColor = value; }
     }
 
     public static Color XAxisLineColor
     {
-      get { return GetColor(idxXAxisColor); }
-      set { SetColor(idxXAxisColor, value); }
+      get { return AppearanceSettings.GridXAxisLineColor; }
+      set { AppearanceSettings.GridXAxisLineColor = value; }
     }
     public static Color YAxisLineColor
     {
-      get { return GetColor(idxYAxisColor); }
-      set { SetColor(idxYAxisColor, value); }
+      get { return AppearanceSettings.GridYAxisLineColor; }
+      set { AppearanceSettings.GridYAxisLineColor = value; }
     }
     public static Color ZAxisLineColor
     {
-      get { return GetColor(idxZAxisColor); }
-      set { SetColor(idxZAxisColor, value); }
+      get { return AppearanceSettings.GridZAxisLineColor; }
+      set { AppearanceSettings.GridZAxisLineColor = value; }
     }
   }
 
@@ -1463,8 +1593,92 @@ namespace Rhino.ApplicationSettings
     }
   }
 
+  /// <summary>
+  /// Snapshot of ViewSettings
+  /// </summary>
+  public class ViewSettingsState
+  {
+    internal ViewSettingsState() { }
+
+    public double PanScreenFraction { get; set; }
+
+    public bool PanReverseKeyboardAction { get; set; }
+
+    public bool AlwaysPanParallelViews { get; set; }
+
+    public double ZoomScale { get; set; }
+
+    public int RotateCircleIncrement { get; set; }
+
+    public bool RotateReverseKeyboard { get; set; }
+
+    /// <summary>
+    /// false means around world axes
+    /// </summary>
+    public bool RotateToView { get; set; }
+
+    public bool DefinedViewSetCPlane { get; set; }
+
+    public bool DefinedViewSetProjection { get; set; }
+
+    public bool SingleClickMaximize{ get; set; }
+
+    public bool LinkedViewports { get; set; }
+  }
+
   public static class ViewSettings
   {
+    static ViewSettingsState CreateState(bool current)
+    {
+      IntPtr pViewSettings = UnsafeNativeMethods.CRhinoAppViewSettings_New(current);
+      ViewSettingsState rc = new ViewSettingsState();
+      rc.AlwaysPanParallelViews = GetBool(idxAlwaysPanParallelViews, pViewSettings);
+      rc.DefinedViewSetCPlane = GetBool(idxDefinedViewSetCPlane, pViewSettings);
+      rc.DefinedViewSetProjection = GetBool(idxDefinedViewSetProjection, pViewSettings);
+      rc.LinkedViewports = GetBool(idxLinkedViewports, pViewSettings);
+      rc.PanReverseKeyboardAction = GetBool(idxPanReverseKeyboardAction, pViewSettings);
+      rc.PanScreenFraction = GetDouble(idxPanScreenFraction, pViewSettings);
+      rc.RotateCircleIncrement = UnsafeNativeMethods.CRhinoAppViewSettings_GetSetInt(idxRotateCircleIncrement, false, 0, pViewSettings);
+      rc.RotateReverseKeyboard = GetBool(idxRotateReverseKeyboard, pViewSettings);
+      rc.RotateToView = GetBool(idxRotateToView, pViewSettings);
+      rc.SingleClickMaximize = GetBool(idxSingleClickMaximize, pViewSettings);
+      rc.ZoomScale = GetDouble(idxZoomScale, pViewSettings);
+      
+      UnsafeNativeMethods.CRhinoAppViewSettings_Delete(pViewSettings);
+      return rc;
+    }
+
+    public static ViewSettingsState GetDefaultState()
+    {
+      return CreateState(false);
+    }
+
+    public static ViewSettingsState GetCurrentState()
+    {
+      return CreateState(true);
+    }
+
+    public static void RestoreDefaults()
+    {
+      UpdateFromState(GetDefaultState());
+    }
+
+    public static void UpdateFromState(ViewSettingsState state)
+    {
+      AlwaysPanParallelViews = state.AlwaysPanParallelViews;
+      DefinedViewSetCPlane = state.DefinedViewSetCPlane;
+      DefinedViewSetProjection = state.DefinedViewSetProjection;
+      LinkedViewports = state.LinkedViewports;
+      PanReverseKeyboardAction = state.PanReverseKeyboardAction;
+      PanScreenFraction = state.PanScreenFraction;
+      RotateCircleIncrement = state.RotateCircleIncrement;
+      RotateReverseKeyboard = state.RotateReverseKeyboard;
+      RotateToView = state.RotateToView;
+      SingleClickMaximize = state.SingleClickMaximize;
+      ZoomScale = state.ZoomScale;
+    }
+
+
     //double items
     const int idxPanScreenFraction = 0;
     const int idxZoomScale = 1;
@@ -1482,12 +1696,28 @@ namespace Rhino.ApplicationSettings
     // int items
     const int idxRotateCircleIncrement = 0;
 
-    static double GetDouble(int which) { return UnsafeNativeMethods.RhViewSettings_GetSetDouble(which, false, 0); }
-    static void SetDouble(int which, double d) { UnsafeNativeMethods.RhViewSettings_GetSetDouble(which, true, d); }
-    static bool GetBool(int which) { return UnsafeNativeMethods.RhViewSettings_GetSetBool(which, false, false); }
-    static void SetBool(int which, bool b) { UnsafeNativeMethods.RhViewSettings_GetSetBool(which, true, b); }
+    static double GetDouble(int which, IntPtr pViewSettings)
+    {
+      return UnsafeNativeMethods.CRhinoAppViewSettings_GetSetDouble(which, false, 0, pViewSettings);
+    }
+    static void SetDouble(int which, double d, IntPtr pViewSettings)
+    {
+      UnsafeNativeMethods.CRhinoAppViewSettings_GetSetDouble(which, true, d, pViewSettings);
+    }
+    static bool GetBool(int which, IntPtr pViewSettings)
+    {
+      return UnsafeNativeMethods.CRhinoAppViewSettings_GetSetBool(which, false, false, pViewSettings);
+    }
+    static void SetBool(int which, bool b, IntPtr pViewSettings)
+    {
+      UnsafeNativeMethods.CRhinoAppViewSettings_GetSetBool(which, true, b, pViewSettings);
+    }
+    static bool GetBool(int which) { return GetBool(which, IntPtr.Zero); }
+    static void SetBool(int which, bool b) { SetBool(which, b, IntPtr.Zero); }
+    static double GetDouble(int which) { return GetDouble(which, IntPtr.Zero); }
+    static void SetDouble(int which, double d) { SetDouble(which, d, IntPtr.Zero); }
     
-
+    
     public static double PanScreenFraction
     {
       get { return GetDouble(idxPanScreenFraction); }
@@ -1516,11 +1746,11 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        return UnsafeNativeMethods.RhViewSettings_GetSetInt(idxRotateCircleIncrement, false, 0);
+        return UnsafeNativeMethods.CRhinoAppViewSettings_GetSetInt(idxRotateCircleIncrement, false, 0, IntPtr.Zero);
       }
       set
       {
-        UnsafeNativeMethods.RhViewSettings_GetSetInt(idxRotateCircleIncrement, true, value);
+        UnsafeNativeMethods.CRhinoAppViewSettings_GetSetInt(idxRotateCircleIncrement, true, value, IntPtr.Zero);
       }
     }
 
@@ -1564,15 +1794,77 @@ namespace Rhino.ApplicationSettings
     }
   }
 
+  /// <summary>
+  /// Snapshot of SmartTrackSettings
+  /// </summary>
+  public class SmartTrackSettingsState
+  {
+    internal SmartTrackSettingsState() { }
+
+    public bool UseSmartTrack { get; set; }
+    public bool UseDottedLines { get; set; }
+    public bool SmartOrtho { get; set; }
+    public bool SmartTangents { get; set; }
+
+    public int ActivationDelayMilliseconds { get; set; }
+    public static int MaxSmartPoints { get; set; }
+
+    public Color LineColor { get; set; }
+    public Color TanPerpLineColor { get; set; }
+    public Color PointColor { get; set; }
+    public Color ActivePointColor { get; set; }
+  }
+
   public static class SmartTrackSettings
   {
+    static SmartTrackSettingsState CreateState(bool current)
+    {
+      IntPtr pSettings = UnsafeNativeMethods.CRhinoAppSmartTrackSettings_New(current);
+      SmartTrackSettingsState rc = new SmartTrackSettingsState();
+      rc.ActivationDelayMilliseconds = UnsafeNativeMethods.CRhinoAppSmartTrackSettings_GetInt(true, pSettings);
+      rc.ActivePointColor = GetColor(idxActivePointColor, pSettings);
+      rc.LineColor = GetColor(idxLineColor, pSettings);
+      rc.PointColor = GetColor(idxPointColor, pSettings);
+      rc.SmartOrtho = GetBool(idxSmartOrtho, pSettings);
+      rc.SmartTangents = GetBool(idxSmartTangents, pSettings);
+      rc.TanPerpLineColor = GetColor(idxTanPerpLineColor, pSettings);
+      rc.UseDottedLines = GetBool(idxDottedLines, pSettings);
+      rc.UseSmartTrack = GetBool(idxUseSmartTrack, pSettings);
+
+      UnsafeNativeMethods.CRhinoAppSmartTrackSettings_Delete(pSettings);
+      return rc;
+    }
+
+    public static SmartTrackSettingsState GetCurrentState()
+    {
+      return CreateState(true);
+    }
+
+    public static SmartTrackSettingsState GetDefaultState()
+    {
+      return CreateState(false);
+    }
+
+    public static void UpdateFromState(SmartTrackSettingsState state)
+    {
+      ActivationDelayMilliseconds = state.ActivationDelayMilliseconds;
+      ActivePointColor = state.ActivePointColor;
+      LineColor = state.LineColor;
+      PointColor = state.PointColor;
+      SmartOrtho = state.SmartOrtho;
+      SmartTangents = state.SmartTangents;
+      TanPerpLineColor = state.TanPerpLineColor;
+      UseDottedLines = state.UseDottedLines;
+      UseSmartTrack = state.UseSmartTrack;
+    }
+
     const int idxUseSmartTrack = 0;
+    const int idxDottedLines = 1;
+    const int idxSmartOrtho = 2;
+    const int idxSmartTangents = 3;
     // skipping the following until we can come up with good
     // descriptions of what each does
-    //BOOL m_bDottedLines;
-    //BOOL m_bSmartOrtho;
     //BOOL m_bMarkerSmartPoint;
-    //BOOL m_bSmartTangents;
     //BOOL m_bSmartSuppress;
     //BOOL m_bStrongOrtho;
     //BOOL m_bSemiPermanentPoints;
@@ -1580,8 +1872,16 @@ namespace Rhino.ApplicationSettings
     //BOOL m_bParallels;
     //BOOL m_bSmartBasePoint;
 
-    static bool GetBool(int which) { return UnsafeNativeMethods.RhSmartTrackSettings_GetSetBool(which, false, false); }
-    static void SetBool(int which, bool b) { UnsafeNativeMethods.RhSmartTrackSettings_GetSetBool(which, true, b); }
+    static bool GetBool(int which, IntPtr pSmartTrackSettings)
+    {
+      return UnsafeNativeMethods.CRhinoAppSmartTrackSettings_GetSetBool(which, false, false, pSmartTrackSettings);
+    }
+    static bool GetBool(int which) { return GetBool(which, IntPtr.Zero); }
+    static void SetBool(int which, bool b, IntPtr pSmartTrackSettings)
+    {
+      UnsafeNativeMethods.CRhinoAppSmartTrackSettings_GetSetBool(which, true, b, pSmartTrackSettings);
+    }
+    static void SetBool(int which, bool b) { SetBool(which, b, IntPtr.Zero); }
 
     public static bool UseSmartTrack
     {
@@ -1589,26 +1889,54 @@ namespace Rhino.ApplicationSettings
       set { SetBool(idxUseSmartTrack, value); }
     }
 
-    // skipping the following until we can come up with good
-    // descriptions of what each does
-    //int m_smartpoint_wait_ms;
-    //int m_max_smart_points;
+    public static bool UseDottedLines
+    {
+      get { return GetBool(idxDottedLines); }
+      set { SetBool(idxDottedLines, value); }
+    }
+
+    public static bool SmartOrtho
+    {
+      get { return GetBool(idxSmartOrtho); }
+      set { SetBool(idxSmartOrtho, value); }
+    }
+
+    public static bool SmartTangents
+    {
+      get { return GetBool(idxSmartTangents); }
+      set { SetBool(idxSmartTangents, value); }
+    }
+
+    public static int ActivationDelayMilliseconds
+    {
+      get { return UnsafeNativeMethods.CRhinoAppSmartTrackSettings_GetInt(true, IntPtr.Zero); }
+      set { UnsafeNativeMethods.CRhinoAppSmartTrackSettings_SetInt(true, value, IntPtr.Zero); }
+    }
+
+    public static int MaxSmartPoints
+    {
+      get { return UnsafeNativeMethods.CRhinoAppSmartTrackSettings_GetInt(false, IntPtr.Zero); }
+      set { UnsafeNativeMethods.CRhinoAppSmartTrackSettings_SetInt(false, value, IntPtr.Zero); }
+    }
 
     const int idxLineColor = 0;
     const int idxTanPerpLineColor = 1;
     const int idxPointColor = 2;
     const int idxActivePointColor = 3;
 
-    static Color GetColor(int which)
+    static Color GetColor(int which, IntPtr pSmartTrackSettings)
     {
-      int abgr = UnsafeNativeMethods.RhSmartTrackSettings_GetSetColor(which, false, 0);
+      int abgr = UnsafeNativeMethods.CRhinoAppSmartTrackSettings_GetSetColor(which, false, 0, pSmartTrackSettings);
       return ColorTranslator.FromWin32(abgr);
     }
-    static void SetColor(int which, Color c)
+    static Color GetColor(int which) { return GetColor(which, IntPtr.Zero); }
+
+    static void SetColor(int which, Color c, IntPtr pSmartTrackSettings)
     {
       int argb = c.ToArgb();
-      UnsafeNativeMethods.RhSmartTrackSettings_GetSetColor(which, true, argb);
+      UnsafeNativeMethods.CRhinoAppSmartTrackSettings_GetSetColor(which, true, argb, pSmartTrackSettings);
     }
+    static void SetColor(int which, Color c) { SetColor(which, c, IntPtr.Zero); }
 
     public static Color LineColor
     {

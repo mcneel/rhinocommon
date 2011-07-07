@@ -313,14 +313,12 @@ namespace Rhino.Geometry
     /// <param name="origin">New origin for plane.</param>
     public void RecenterPlane(Point3d origin)
     {
-      Point3d p0 = Corner(0);
-      Point3d p1 = Corner(1);
+      double s, t;
+      m_plane.ClosestParameter(origin, out s, out t);
 
       m_plane.Origin = origin;
-
-      Rectangle3d rec = new Rectangle3d(m_plane, p0, p1);
-      m_x = rec.m_x;
-      m_y = rec.m_y;
+      m_x -= s;
+      m_y -= t;
     }
 
     /// <summary>

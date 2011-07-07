@@ -1654,14 +1654,6 @@ namespace Rhino.Geometry
       return rc;
     }
 
-    /// <summary>Same as GetMesh(MeshType.Render)</summary>
-    /// <returns></returns>
-    [Obsolete("Use GetMesh(MeshType.Render) instead. This function may be removed in a future WIP")]
-    public Mesh GetMesh()
-    {
-      return GetMesh(MeshType.Render);
-    }
-
     public Mesh GetMesh(MeshType meshType)
     {
       IntPtr pConstBrep = m_brep.ConstPointer();

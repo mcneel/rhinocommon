@@ -523,10 +523,44 @@ namespace Rhino.Commands
     public bool IsPurgeRecord { get { return 86 == m_event_type; } }
   }
   //public class SelCommand : Command { }
-  //public class ScriptCommand : Command { }
-  //public class TestCommand : Command { }
-  //public class TransformCommand : Command { }
   //public class RhinoHistory { }
 
-  // put CRhinoCommandManager functions into Command wrapper
+
+  public abstract class TransformCommand : Command
+  {
+    protected Result SelectObjects( string prompt, Rhino.Collections.TransformObjectList list )
+    {
+      IntPtr pList = list.NonConstPointer();
+      int rc = UnsafeNativeMethods.CRhinoTransformCommand_SelectObjects(Id, prompt, pList);
+      return (Result)rc;
+    }
+    
+    protected void TransformObjects( Rhino.Collections.TransformObjectList list, Rhino.Geometry.Transform xform, bool copy, bool autoHistory)
+    {
+      IntPtr pList = list.NonConstPointer();
+      UnsafeNativeMethods.CRhinoTransformCommand_TransformObjects(Id, pList, ref xform, copy, autoHistory);
+    }
+
+    protected void DuplicateObjects( Rhino.Collections.TransformObjectList list )
+    {
+      IntPtr pList = list.NonConstPointer();
+      UnsafeNativeMethods.CRhinoTransformCommand_DuplicateObjects(Id, pList);
+    }
+
+    /// <summary>
+    /// Sets dynamic grip locations back to starting grip locations. This makes things
+    /// like the Copy command work when grips are "copied".
+    /// </summary>
+    /// <param name="list"></param>
+    protected void ResetGrips( Rhino.Collections.TransformObjectList list )
+    {
+      IntPtr pList = list.NonConstPointer();
+      UnsafeNativeMethods.CRhinoTransformCommand_ResetGrips(Id, pList);
+    }
+
+
+
+    //CRhinoView* View() { return m_view; }
+    //bool ObjectsWerePreSelected() { return m_objects_were_preselected; }
+  }
 }

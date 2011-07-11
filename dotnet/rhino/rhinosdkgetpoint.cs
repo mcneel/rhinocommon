@@ -18,6 +18,11 @@ namespace Rhino.Input.Custom
       Construct(ptr);
     }
 
+    internal GetPoint(bool subclass)
+    {
+      //subclass is only there to differentiate the constructor for GetTransform
+    }
+
     /// <summary>
     /// Set base point used by ortho snap, from snap, planar snap, etc.
     /// </summary>
@@ -643,9 +648,10 @@ namespace Rhino.Input.Custom
       return UnsafeNativeMethods.CRhinoGetPoint_InterruptMouseMose(ptr);
     }
 
-    private static GetPoint m_active_gp; // = null; [runtime default]
+    internal static GetPoint m_active_gp; // = null; [runtime default]
     internal delegate void MouseCallback( IntPtr pRhinoViewport, uint flags, Point3d point, System.Drawing.Point viewWndPoint, int mousemove);
     internal delegate void DrawCallback(IntPtr pDisplayPipeline, Point3d point);
+
     private static void CustomMouseCallback(IntPtr pRhinoViewport, uint flags, Point3d point, System.Drawing.Point viewWndPoint, int move)
     {
       if (null == m_active_gp)
@@ -824,8 +830,15 @@ namespace Rhino.Input.Custom
         }
 
       }
+      uint rc = 0;
       IntPtr ptr = NonConstPointer();
-      uint rc = UnsafeNativeMethods.CRhinoGetPoint_GetPoint(ptr, onMouseUp, mouseCB, drawCB, postDrawCB);
+      if (this is GetTransform)
+      {
+        GetTransform.CalculateXformCallack calcXformCB = GetTransform.CustomCalcXform;
+        rc = UnsafeNativeMethods.CRhinoGetXform_GetXform(ptr, mouseCB, drawCB, postDrawCB, calcXformCB);
+      }
+      else
+        rc = UnsafeNativeMethods.CRhinoGetPoint_GetPoint(ptr, onMouseUp, mouseCB, drawCB, postDrawCB);
 
       m_active_gp = old;
 

@@ -429,7 +429,10 @@ namespace Rhino.Runtime
         Guid id = new_command.Id;
         string englishName = new_command.EnglishName;
         string localName = new_command.LocalName;
-        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle);
+
+        bool isTransformCommand = command_type.IsSubclassOf(typeof(Commands.TransformCommand));
+
+        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle, isTransformCommand);
 
         rc = true;
       }
@@ -462,7 +465,7 @@ namespace Rhino.Runtime
         string localName = cmd.LocalName;
         const int commandStyle = 2; //scripted
         Guid id = cmd.Id;
-        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle);
+        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle, false);
 
         rc = true;
       }

@@ -269,6 +269,7 @@
     <Compile Include="rhino\rhinosdkfileutilities.cs" />
     <Compile Include="rhino\rhinosdkfont.cs" />
     <Compile Include="rhino\rhinosdkgetplane.cs" />
+    <Compile Include="rhino\rhinosdkgetxform.cs" />
     <Compile Include="rhino\rhinosdkgrips.cs" />
     <Compile Include="rhino\rhinosdkgroup.cs" />
     <Compile Include="rhino\rhinosdkgroupobject.cs" />

@@ -144,3 +144,6 @@
 /c/rh_meshobject.cpp
 /c/tl_functions.cpp
 /Help
+/c/rh_getxform.cpp
+/c/rh_uiprofilecontext.cpp
+/dotnet/RhinoCommon.csproj.user

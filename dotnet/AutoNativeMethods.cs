@@ -4338,10 +4338,10 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool RhCommand_IsCommand([MarshalAs(UnmanagedType.LPWStr)]string _command_name);
 
-  //bool CRhinoCommand_Create(CRhinoPlugIn* pPlugIn, ON_UUID cmdId, const RHMONO_STRING* _englishName, const RHMONO_STRING* _localName, int serial_number, int commandStyle)
+  //bool CRhinoCommand_Create(CRhinoPlugIn* pPlugIn, ON_UUID cmdId, const RHMONO_STRING* _englishName, const RHMONO_STRING* _localName, int serial_number, int commandStyle, bool transformCommand)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool CRhinoCommand_Create(IntPtr pPlugIn, Guid cmdId, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, [MarshalAs(UnmanagedType.LPWStr)]string _localName, int serial_number, int commandStyle);
+  internal static extern bool CRhinoCommand_Create(IntPtr pPlugIn, Guid cmdId, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, [MarshalAs(UnmanagedType.LPWStr)]string _localName, int serial_number, int commandStyle, [MarshalAs(UnmanagedType.U1)]bool transformCommand);
 
   //ON_UUID CRhinoApp_LookupCommandByName( const RHMONO_STRING* _name )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4358,6 +4358,22 @@ internal partial class UnsafeNativeMethods
   //int CRhinoCommandManager_GetCommandNames(ON_ClassArray<ON_wString>* names, bool english, bool loaded)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoCommandManager_GetCommandNames(IntPtr names, [MarshalAs(UnmanagedType.U1)]bool english, [MarshalAs(UnmanagedType.U1)]bool loaded);
+
+  //int CRhinoTransformCommand_SelectObjects( ON_UUID command_id, const RHMONO_STRING* prompt, CRhinoXformObjectList* pXformObjectList)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoTransformCommand_SelectObjects(Guid command_id, [MarshalAs(UnmanagedType.LPWStr)]string prompt, IntPtr pXformObjectList);
+
+  //void CRhinoTransformCommand_TransformObjects( ON_UUID command_id, CRhinoXformObjectList* pXformObjectList, ON_Xform* xform, bool copy, bool autoHistory)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoTransformCommand_TransformObjects(Guid command_id, IntPtr pXformObjectList, ref Transform xform, [MarshalAs(UnmanagedType.U1)]bool copy, [MarshalAs(UnmanagedType.U1)]bool autoHistory);
+
+  //void CRhinoTransformCommand_DuplicateObjects( ON_UUID command_id, CRhinoXformObjectList* pXformObjectList)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoTransformCommand_DuplicateObjects(Guid command_id, IntPtr pXformObjectList);
+
+  //void CRhinoTransformCommand_ResetGrips( ON_UUID command_id, CRhinoXformObjectList* pXformObjectList)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoTransformCommand_ResetGrips(Guid command_id, IntPtr pXformObjectList);
   #endregion
 
 
@@ -5855,13 +5871,22 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoGetPoint_InterruptMouseMose(IntPtr ptr);
 
-  //unsigned int CRhinoGetPoint_GetPoint(CRhinoGetPoint* ptr, bool onMouseUp, GETPOINTMOUSEPROC mouseCB, GETPOINTDRAWPROC drawCB, GETPOINTCONDUITPROC postDrawCB)
-  // SKIPPING - Contains a function pointer which needs to be written by hand
-
   //bool CRhinoGetPoint_PointOnObject(const CRhinoGetPoint* ptr, CRhinoObjRef* pObjRef)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoGetPoint_PointOnObject(IntPtr ptr, IntPtr pObjRef);
+
+  //unsigned int CRhinoGetPoint_GetPoint(CRhinoGetPoint* ptr, bool onMouseUp, GETPOINTMOUSEPROC mouseCB, GETPOINTDRAWPROC drawCB, GETPOINTCONDUITPROC postDrawCB)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //unsigned int CRhinoGetXform_GetXform(CRhinoGetXform* pGetXform, 
+  //                           GETPOINTMOUSEPROC mouseCB, GETPOINTDRAWPROC drawCB,
+  //                           GETPOINTCONDUITPROC postDrawCB, GETXFORMCALCXFORMPROC calcXformCB)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //CRhinoGetXform* CRhinoGetXform_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoGetXform_New();
   #endregion
 
 
@@ -5923,6 +5948,21 @@ internal partial class UnsafeNativeMethods
   //CRhinoView* RHC_RhinoGetView(const RHMONO_STRING* _command_prompt, unsigned int* command_rc)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoGetView([MarshalAs(UnmanagedType.LPWStr)]string _command_prompt, ref uint command_rc);
+  #endregion
+
+
+  #region rh_getxform.cpp
+  //CRhinoXformObjectList* CRhinoXformObjectList_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoXformObjectList_New();
+
+  //void CRhinoXformObjectList_Delete(CRhinoXformObjectList* pList)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoXformObjectList_Delete(IntPtr pList);
+
+  //void CRhinoGetXform_AppendObjects( CRhinoGetXform* pGetXform, const CRhinoXformObjectList* pConstXformObjectList )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoGetXform_AppendObjects(IntPtr pGetXform, IntPtr pConstXformObjectList);
   #endregion
 
 

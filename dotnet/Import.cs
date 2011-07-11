@@ -185,6 +185,12 @@ internal partial class UnsafeNativeMethods
                                                       Rhino.Input.Custom.GetPoint.DrawCallback drawCB,
                                                       Rhino.Display.DisplayPipeline.ConduitCallback postDrawCB);
 
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern uint CRhinoGetXform_GetXform(IntPtr ptr, Rhino.Input.Custom.GetPoint.MouseCallback mouseCB,
+                                                      Rhino.Input.Custom.GetPoint.DrawCallback drawCB,
+                                                      Rhino.Display.DisplayPipeline.ConduitCallback postDrawCB,
+                                                      Rhino.Input.Custom.GetTransform.CalculateXformCallack calcXformCB);
+
   //bool ON_Arc_Copy(ON_Arc* pRdnArc, ON_Arc* pRhCmnArc, bool rdn_to_rhc)
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.U1)]

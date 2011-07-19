@@ -1041,6 +1041,44 @@ namespace Rhino.Input.Custom
       return UnsafeNativeMethods.CRhinoGet_AddCommandOption(ptr, englishOption, englishOptionValue, hidden);
     }
 
+    /// <summary>
+    /// Add a command line option
+    /// </summary>
+    /// <param name="optionName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
+    /// <returns>
+    /// option index value (>0) or 0 if option cannot be added
+    /// </returns>
+    public int AddOption(Rhino.UI.LocalizeStringPair optionName)
+    {
+      return AddOption(optionName, null);
+    }
+
+    /// <summary>
+    /// Add a command line option
+    /// </summary>
+    /// <param name="optionName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
+    /// <param name="optionValue"></param>
+    /// <returns>
+    /// option index value (>0) or 0 if option cannot be added
+    /// </returns>
+    public int AddOption(Rhino.UI.LocalizeStringPair optionName, Rhino.UI.LocalizeStringPair optionValue)
+    {
+      string val_english = null;
+      string val_local = null;
+      if (optionValue != null)
+      {
+        val_english = optionValue.English;
+        val_local = optionValue.Local;
+      }
+      const bool hidden = false;
+      IntPtr ptr = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoGet_AddCommandOptionLoc(ptr, optionName.English, optionName.Local, val_english, val_local, hidden);
+    }
+
     // 9 Feb 2010 S. Baer
     // Commenting out until we find a need for this version of the function
     ///// <summary>

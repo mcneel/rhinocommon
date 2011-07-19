@@ -18,11 +18,12 @@ namespace Rhino.UI
 
     public static string LocalizeString(Assembly assembly, int languageId, string english, int contextId)
     {
-      string loc_str = english;
       // If Rhino set the CurrentUICulture correctly, we could use System.Threading.Thread.CurrentUICulture
       // and not have any dependencies on Rhino. This would allow for use of this DLL in any RMA product
       LocalizationStringTable st = GetStringTable(assembly, languageId);
-
+      // No string table with the requested languaeId so just return the English string
+      if (null == st)
+        return english;
       // 16 September 2010 John Morse
       // Need to massage the English string to compensate for string extractor limitations
       //
@@ -65,6 +66,7 @@ namespace Rhino.UI
         key.Append(contextId.ToString());
         key.Append("]]");
       }
+      string loc_str = english;
       if (!st.StringList.TryGetValue(key.ToString(), out loc_str) || string.IsNullOrEmpty(loc_str))
         loc_str = english;
       else if (iStart > 0 || jEnd > iEnd || bN || bR || bT || bQuot || bBS)
@@ -152,14 +154,18 @@ namespace Rhino.UI
       LocalizationStringTable st = null;
       if (m_string_tables.TryGetValue(key, out st))
         return st;
-
       // If we get here, the key does not exist in the dictionary.
       // Add a new string table
       st = new LocalizationStringTable();
-      if (st.LoadFromFile(a, m_language_id))
-        m_string_tables.Add(key, st);
-      else
+      if (!st.LoadFromFile(a, m_language_id))
+      {
+        // If string table fails to load then set it to null so that
+        // the next call which looks for this string table will return
+        // the null string table instead of searching the disk or assemblies
+        // embedded resources for the file
         st = null;
+      }
+      m_string_tables.Add(key, st);
       return st;
     }
   }

@@ -53,7 +53,7 @@ namespace Rhino
       }
     }
 
-    internal static RhinoDoc FromId(int docId)
+    public static RhinoDoc FromId(int docId)
     {
       if (docId == 0)
         return null;

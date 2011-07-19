@@ -650,7 +650,7 @@ namespace Rhino.Input.Custom
 
     internal static GetPoint m_active_gp; // = null; [runtime default]
     internal delegate void MouseCallback( IntPtr pRhinoViewport, uint flags, Point3d point, System.Drawing.Point viewWndPoint, int mousemove);
-    internal delegate void DrawCallback(IntPtr pDisplayPipeline, Point3d point);
+    internal delegate int DrawCallback(IntPtr pDisplayPipeline, Point3d point);
 
     private static void CustomMouseCallback(IntPtr pRhinoViewport, uint flags, Point3d point, System.Drawing.Point viewWndPoint, int move)
     {
@@ -670,20 +670,25 @@ namespace Rhino.Input.Custom
         Runtime.HostUtils.ExceptionReport(ex);
       }
     }
-    private static void CustomDrawCallback(IntPtr pDisplayPipeline, Point3d point)
+    bool m_baseOnDynamicDrawCalled;
+    private static int CustomDrawCallback(IntPtr pDisplayPipeline, Point3d point)
     {
       if (null == m_active_gp)
-        return;
-
+        return 0;
+      m_active_gp.m_baseOnDynamicDrawCalled = false;
+      int rc = 0;
       try
       {
         GetPointDrawEventArgs e = new GetPointDrawEventArgs(pDisplayPipeline, point);
         m_active_gp.OnDynamicDraw(e);
+        rc = m_active_gp.m_baseOnDynamicDrawCalled ? 1 : 0;
+        m_active_gp.m_baseOnDynamicDrawCalled = false;
       }
       catch (Exception ex)
       {
         Runtime.HostUtils.ExceptionReport(ex);
       }
+      return rc;
     }
 
     private static void GetPointPostDrawObjectsCallback(IntPtr pPipeline, IntPtr pConduit)
@@ -748,6 +753,7 @@ namespace Rhino.Input.Custom
     {
       if (DynamicDraw != null)
         DynamicDraw(this, e);
+      m_baseOnDynamicDrawCalled = true;
     }
 
     /// <summary>
@@ -810,6 +816,7 @@ namespace Rhino.Input.Custom
 
       MouseCallback mouseCB = CustomMouseCallback;
       DrawCallback drawCB = CustomDrawCallback;
+      GetTransform.CalculateXformCallack calcXformCB = GetTransform.CustomCalcXform;
       Rhino.Display.DisplayPipeline.ConduitCallback postDrawCB = null;
       if (FullFrameRedrawDuringGet)
       {
@@ -832,14 +839,48 @@ namespace Rhino.Input.Custom
       }
       uint rc = 0;
       IntPtr ptr = NonConstPointer();
-      if (this is GetTransform)
+      rc = UnsafeNativeMethods.CRhinoGetPoint_GetPoint(ptr, onMouseUp, mouseCB, drawCB, postDrawCB, calcXformCB);
+
+      m_active_gp = old;
+
+      return (GetResult)rc;
+    }
+
+    internal GetResult GetXformHelper()
+    {
+      // This function should only ever be called by GetTransform
+      if( !(this is GetTransform) )
+        throw new ApplicationException("GetXformHelper called from the wrong place");
+
+      GetPoint old = m_active_gp;
+      m_active_gp = this;
+
+      MouseCallback mouseCB = CustomMouseCallback;
+      DrawCallback drawCB = CustomDrawCallback;
+      Rhino.Display.DisplayPipeline.ConduitCallback postDrawCB = null;
+      if (FullFrameRedrawDuringGet)
       {
-        GetTransform.CalculateXformCallack calcXformCB = GetTransform.CustomCalcXform;
-        rc = UnsafeNativeMethods.CRhinoGetXform_GetXform(ptr, mouseCB, drawCB, postDrawCB, calcXformCB);
+        postDrawCB = GetPointPostDrawObjectsCallback;
       }
       else
-        rc = UnsafeNativeMethods.CRhinoGetPoint_GetPoint(ptr, onMouseUp, mouseCB, drawCB, postDrawCB);
+      {
+        Type baseType = typeof(GetPoint);
+        try
+        {
+          System.Reflection.MethodInfo mi = this.GetType().GetMethod("OnPostDrawObjects", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+          if (mi.DeclaringType != baseType)
+            postDrawCB = GetPointPostDrawObjectsCallback;
+        }
+        catch (Exception)
+        {
+          //mask
+        }
 
+      }
+      uint rc = 0;
+      IntPtr ptr = NonConstPointer();
+      GetTransform.CalculateXformCallack calcXformCB = GetTransform.CustomCalcXform;
+      rc = UnsafeNativeMethods.CRhinoGetXform_GetXform(ptr, mouseCB, drawCB, postDrawCB, calcXformCB);
       m_active_gp = old;
 
       return (GetResult)rc;

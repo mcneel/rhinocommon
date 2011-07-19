@@ -758,8 +758,55 @@ namespace Rhino.Display
     //  void GetDisplayXform( ON_Xform& display_xform ) const;
     //  void SetMarkedObjectXform( int mark_value, const ON_Xform& marked_object_xform );
     //  void GetMarkedObjectXform( int* mark_value, ON_Xform& marked_object_xform  ) const;
-    //  bool GetPickXform( int mouseX, int mouseY, ON_Xform& ) const;
-    //  bool GetPickXform( const RECT&, ON_Xform& ) const;
+
+    /// <summary>
+    /// Takes a rectangle in screen coordinates and returns a transformation
+    /// that maps the 3d frustum defined by the rectangle to a -1/+1 clipping
+    /// coordinate box. This takes a single point and inflates it by
+    /// Rhino.ApplicationSettings.ModelAidSettings.MousePickBoxRadius to define
+    /// the screen rectangle
+    /// </summary>
+    /// <param name="clientX"></param>
+    /// <param name="clientY"></param>
+    /// <returns></returns>
+    public Transform GetPickTransform(int clientX, int clientY)
+    {
+      IntPtr pConstThis = ConstPointer();
+      Transform rc = Transform.Unset;
+      UnsafeNativeMethods.CRhinoViewport_GetPickXform(pConstThis, clientX, clientY, ref rc);
+      return rc;
+    }
+
+    /// <summary>
+    /// Takes a rectangle in screen coordinates and returns a transformation
+    /// that maps the 3d frustum defined by the rectangle to a -1/+1 clipping
+    /// coordinate box. This takes a single point and inflates it by
+    /// Rhino.ApplicationSettings.ModelAidSettings.MousePickBoxRadius to define
+    /// the screen rectangle
+    /// </summary>
+    /// <param name="clientPoint"></param>
+    /// <returns></returns>
+    public Transform GetPickTransform(System.Drawing.Point clientPoint)
+    {
+      return GetPickTransform(clientPoint.X, clientPoint.Y);
+    }
+     
+
+    /// <summary>
+    /// Takes a rectangle in screen coordinates and returns a transformation
+    /// that maps the 3d frustum defined by the rectangle to a -1/+1 clipping
+    /// coordinate box.
+    /// </summary>
+    /// <param name="clientRectangle"></param>
+    /// <returns></returns>
+    public Transform GetPickTransform(System.Drawing.Rectangle clientRectangle)
+    {
+      IntPtr pConstThis = ConstPointer();
+      Transform rc = Transform.Unset;
+      UnsafeNativeMethods.CRhinoViewport_GetPickXform2(pConstThis, clientRectangle.Left, clientRectangle.Top, clientRectangle.Right, clientRectangle.Bottom, ref rc);
+      return rc;
+    }
+
     //  CRhinoDisplayPipeline* DisplayPipeline(void) const;
 
     /// <summary>

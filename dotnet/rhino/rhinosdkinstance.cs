@@ -317,6 +317,21 @@ namespace Rhino.DocObjects
     {
       get { return GetString(idxSourceArchive); }
     }
+
+    public System.Drawing.Bitmap CreatePreviewBitmap(Rhino.Display.DefinedViewportProjection definedViewportProjection, System.Drawing.Size bitmapSize)
+    {
+      System.Drawing.Bitmap rc = null;
+      IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoInstanceDefinition_GetPreviewBitmap(m_doc.m_docId, m_index, (int)definedViewportProjection, 0, bitmapSize.Width, bitmapSize.Height);
+      if (IntPtr.Zero == pRhinoDib)
+        return rc;
+      IntPtr hBmp = UnsafeNativeMethods.CRhinoDib_Bitmap(pRhinoDib);
+      if (IntPtr.Zero != hBmp)
+      {
+        rc = System.Drawing.Image.FromHbitmap(hBmp);
+      }
+      UnsafeNativeMethods.CRhinoDib_Delete(pRhinoDib);
+      return rc;
+    }
   }
 }
 

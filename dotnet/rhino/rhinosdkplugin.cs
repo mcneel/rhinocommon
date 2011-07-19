@@ -94,6 +94,8 @@ namespace Rhino.PlugIns
       {
         HostUtils.DebugString("  Exception thrown while creating Managed plug-in\n");
         HostUtils.DebugString("  Message = " + ex.Message + "\n");
+        if (null != ex.InnerException)
+          HostUtils.DebugString("    Inner exception message = " + ex.InnerException.Message + "\n");
         rc = null;
       }
 
@@ -535,6 +537,8 @@ namespace Rhino.PlugIns
           string path = null;
           if (HostUtils.RunningOnWindows)
           {
+            if (string.IsNullOrEmpty(Name) || Id == Guid.Empty)
+              throw new Exception("PlugIn.SettingsDirectory can not be called before the Name and Id properties have been initialized.");
             System.Globalization.CultureInfo ci = System.Globalization.CultureInfo.InvariantCulture;
             string pluginName = string.Format(ci, "{0} ({1})", Name, Id.ToString().ToLower(ci));
             // remove invalid characters from string

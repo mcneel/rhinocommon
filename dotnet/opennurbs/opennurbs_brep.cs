@@ -645,6 +645,26 @@ namespace Rhino.Geometry
     {
       return BooleanIntDiffHelper(firstSet, secondSet, tolerance, true);
     }
+    /// <summary>
+    /// Compute the Solid Intersection of two Breps.
+    /// </summary>
+    /// <param name="firstBrep">First Brep for boolean intersection.</param>
+    /// <param name="secondBrep">Second Brep for boolean intersection.</param>
+    /// <param name="tolerance">Tolerance to use for intersection operation.</param>
+    /// <returns>An array of Brep results or null on failure.</returns>
+    public static Brep[] CreateBooleanIntersection(Brep firstBrep, Brep secondBrep, double tolerance)
+    {
+      if (firstBrep == null) { throw new ArgumentNullException("firstBrep"); }
+      if (secondBrep == null) { throw new ArgumentNullException("secondBrep"); }
+
+      Brep[] firstSet = new Brep[1];
+      Brep[] secondSet = new Brep[1];
+
+      firstSet[0] = firstBrep;
+      secondSet[0] = secondBrep;
+
+      return BooleanIntDiffHelper(firstSet, secondSet, tolerance, true);
+    }
 
     /// <summary>
     /// Compute the Solid Difference of two sets of Breps.
@@ -662,6 +682,26 @@ namespace Rhino.Geometry
       System.Collections.Generic.IEnumerable<Brep> secondSet,
       double tolerance)
     {
+      return BooleanIntDiffHelper(firstSet, secondSet, tolerance, false);
+    }
+    /// <summary>
+    /// Compute the Solid Difference of two Breps.
+    /// </summary>
+    /// <param name="firstBrep">First Brep for boolean difference.</param>
+    /// <param name="secondBrep">Second Brep for boolean difference.</param>
+    /// <param name="tolerance">Tolerance to use for difference operation.</param>
+    /// <returns>An array of Brep results or null on failure.</returns>
+    public static Brep[] CreateBooleanDifference(Brep firstBrep, Brep secondBrep, double tolerance)
+    {
+      if (firstBrep == null) { throw new ArgumentNullException("firstBrep"); }
+      if (secondBrep == null) { throw new ArgumentNullException("secondBrep"); }
+
+      Brep[] firstSet = new Brep[1];
+      Brep[] secondSet = new Brep[1];
+
+      firstSet[0] = firstBrep;
+      secondSet[0] = secondBrep;
+
       return BooleanIntDiffHelper(firstSet, secondSet, tolerance, false);
     }
 
@@ -1897,6 +1937,14 @@ namespace Rhino.Geometry.Collections
     {
       IntPtr pBrep = m_brep.NonConstPointer();
       return UnsafeNativeMethods.ON_Brep_SplitKinkyFaces(pBrep, kinkTolerance, compact);
+    }
+
+
+    public void RemoveAt(int faceIndex)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      UnsafeNativeMethods.ON_Brep_DeleteFace(pBrep, faceIndex);
+      m_faces = null;
     }
     #endregion
 

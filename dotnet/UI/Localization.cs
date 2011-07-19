@@ -19,8 +19,21 @@ namespace Rhino.UI
     /// through the source code of a project and looks for LOC.STR. The function is then replaced with a
     /// call to Localization.LocalizeString using a unique context ID.
     ///</summary>
-    ///<param name='english'>[in] The english string to localize</param>
+    ///<param name='english'>[in] The English string to localize</param>
     public static string STR(string english)
+    {
+      return english;
+    }
+
+    ///<summary>
+    /// Command names that need to be localized should call this function. The COMMANDNAME function doesn't actually
+    /// do anything but return the original string. The LocalizationProcessor application walks
+    /// through the source code of a project and looks for LOC.COMMANDNAME and builds a record for each command
+    /// name for the translators that can be used by developers in a commands overridden Rhino.Commands.Command.LocalName
+    /// which should call Rhino.UI.Localization.LocalizeCommandName(EnglishName)
+    ///</summary>
+    ///<param name='english'>[in] The English string to localize</param>
+    public static string COMMANDNAME(string english)
     {
       return english;
     }
@@ -34,6 +47,32 @@ namespace Rhino.UI
     public static string STR(string english, object arg0)
     {
       return string.Format(english, arg0);
+    }
+
+    /// <summary>
+    /// Command option name strings that need to be localized should call this function. The CON function
+    /// doesn't actually do anything but return the original string. The LocalizationProcessor application walks
+    /// through the source code of a project and looks for LOC.CON. The function is then replaced with a
+    /// call to Localization.LocalizeCommandOptionName using a unique context ID.
+    ///</summary>
+    ///<param name='english'>[in] The English string to localize</param>
+    /// <returns>Returns localized string pair with both the English and local names set to the English value</returns>
+    public static LocalizeStringPair CON(string english)
+    {
+      return new LocalizeStringPair(english, english);
+    }
+
+    /// <summary>
+    /// Command option name strings that need to be localized should call this function. The COV function
+    /// doesn't actually do anything but return the original string. The LocalizationProcessor application walks
+    /// through the source code of a project and looks for LOC.COV. The function is then replaced with a
+    /// call to Localization.LocalizeCommandOptionValue using a unique context ID.
+    ///</summary>
+    ///<param name='engilsh'>[in] The English string to localize</param>
+    /// <returns>Returns localized string pair with both the English and local names set to the English value</returns>
+    public static LocalizeStringPair COV(string engilsh)
+    {
+      return new LocalizeStringPair(engilsh, engilsh);
     }
   }
 
@@ -88,47 +127,21 @@ namespace Rhino.UI
       return LocalizationUtils.LocalizeString(a, CurrentLanguageID, englishCommandName);
     }
 
-/*
-    ///<summary>
-    /// Command option names that need to be localized should call this function. The RMACON function doesn't actually
-    /// do anything but return the original string. The RmaDotNetLocalizationProcessor application walks
-    /// through the source code of a project and looks for RHCON. The function is then replaced with a
-    /// call to RmaLocalizeCON using a unique context ID.
-    ///</summary>
-    ///<param name='english_str'>[in] The string to localize</param>
-    public static MRhinoCommandOptionName RMACON(string english_str)
+
+    public static LocalizeStringPair LocalizeCommandOptionName(string english, int contextId)
     {
-      return new MRhinoCommandOptionName(english_str, null);
+      Assembly a = Assembly.GetCallingAssembly();
+      string local = LocalizeStringInAssembly(english, contextId, a);
+      return new LocalizeStringPair(english, local);
     }
 
-    public static MRhinoCommandOptionName RMALocalizeCON(string english_str, int context_id)
+    public static LocalizeStringPair LocalizeCommandOptionValue(string english, int contextId)
     {
-      string s = Localize.RMALocalizeString(english_str, context_id);
-      if (string.IsNullOrEmpty(s))
-        s = english_str;
-      return new MRhinoCommandOptionName(english_str, s);
+      Assembly a = Assembly.GetCallingAssembly();
+      string local = LocalizeStringInAssembly(english, contextId, a);
+      return new LocalizeStringPair(english, local);
     }
 
-    ///<summary>
-    /// Command option values that need to be localized should call this function. The RMACOV function doesn't actually
-    /// do anything but return the original string. The RmaDotNetLocalizationProcessor application walks
-    /// through the source code of a project and looks for RHCON. The function is then replaced with a
-    /// call to RmaLocalizeCOV using a unique context ID.
-    ///</summary>
-    ///<param name='english_str'>[in] The string to localize</param>
-    public static MRhinoCommandOptionValue RMACOV(string english_str)
-    {
-      return new MRhinoCommandOptionValue(english_str, null);
-    }
-
-    public static MRhinoCommandOptionValue RMALocalizeCOV(string english_str, int context_id)
-    {
-      string s = Localize.RMALocalizeString(english_str, context_id);
-      if (string.IsNullOrEmpty(s))
-        s = english_str;
-      return new MRhinoCommandOptionValue(english_str, s);
-    }
-    */
     ///<summary>
     /// A form or user control should call this in its constructor if it wants to be localized
     /// the typical constructor for a localize form would look like:
@@ -164,7 +177,8 @@ namespace Rhino.UI
     ///</summary>
     public static void LocalizeToolStripItemCollection(Control parent, ToolStripItemCollection collection)
     {
-      LocalizeToolStripItemCollection(parent, collection, Assembly.GetCallingAssembly());
+      Assembly a = Assembly.GetCallingAssembly();
+      LocalizeToolStripItemCollection(parent, collection, a);
     }
 
     public static void LocalizeToolStripItemCollection(Control parent, ToolStripItemCollection collection, Assembly assembly)
@@ -185,5 +199,20 @@ namespace Rhino.UI
         return m_language_id;
       }
     }
+  }
+
+  /// <summary>
+  /// Pair of strings used for localization
+  /// </summary>
+  public sealed class LocalizeStringPair
+  {
+    public LocalizeStringPair(string english, string local)
+    {
+      m_english = english;
+      m_local = local;
+    }
+    string m_english, m_local;
+    public string English { get { return m_english; } }
+    public string Local { get { return m_local; } }
   }
 }

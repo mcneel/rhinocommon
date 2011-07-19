@@ -13,10 +13,33 @@ namespace Rhino.Collections
       m_ptr = UnsafeNativeMethods.CRhinoXformObjectList_New();
     }
 
+    internal TransformObjectList(Rhino.Input.Custom.GetTransform parent)
+    {
+      m_ptr = IntPtr.Zero;
+      m_parent = parent;
+    }
+
     #region IDisposable/Pointer handling
+    Rhino.Input.Custom.GetTransform m_parent;
     IntPtr m_ptr;
-    internal IntPtr ConstPointer() { return m_ptr; }
-    internal IntPtr NonConstPointer() { return m_ptr; }
+    internal IntPtr ConstPointer()
+    {
+      if (m_parent != null)
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        return UnsafeNativeMethods.CRhinoXformObjectList_PtrFromGetXform(pConstParent);
+      }
+      return m_ptr;
+    }
+    internal IntPtr NonConstPointer()
+    {
+      if (m_parent != null)
+      {
+        IntPtr pParent = m_parent.NonConstPointer();
+        return UnsafeNativeMethods.CRhinoXformObjectList_PtrFromGetXform(pParent);
+      }
+      return m_ptr;
+    }
 
     ~TransformObjectList()
     {
@@ -38,6 +61,42 @@ namespace Rhino.Collections
       m_ptr = IntPtr.Zero;
     }
     #endregion
+
+    /// <summary>
+    /// Get BoundingBox of all of the objects that this list contains
+    /// </summary>
+    /// <param name="regularObjects"></param>
+    /// <param name="grips"></param>
+    /// <returns>
+    /// Unset BoundingBox if this list is empty
+    /// </returns>
+    public BoundingBox GetBoundingBox(bool regularObjects, bool grips)
+    {
+      BoundingBox rc = BoundingBox.Unset;
+      IntPtr pConstThis = ConstPointer();
+      UnsafeNativeMethods.CRhinoXformObjectList_BoundingBox(pConstThis, regularObjects, grips, ref rc);
+      return rc;
+    }
+
+    public bool DisplayFeedbackEnabled
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.CRhinoXformObjectList_DisplayFeedbackEnabled(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.CRhinoXformObjectList_SetDisplayFeedback(pThis, value);
+      }
+    }
+
+    public bool UpdateDisplayFeedbackTransform(Transform xform)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoXformObjectList_UpdateDisplayFeedbackTransform(pThis, ref xform);
+    }
   }
 }
 
@@ -99,24 +158,53 @@ namespace Rhino.Input.Custom
     // I think this can be handled in the Get() function in the base class
     //virtual CRhinoGet::result GetXform( CRhinoHistory* pHistory = NULL );
 
+    //////////////////////////////////////////////////////////////////
+    // Overridden members
+    //void SetBasePoint( ON_3dPoint base_point, BOOL bShowDistanceInStatusBar = false );
+    //void OnMouseMove( CRhinoViewport& vp, UINT nFlags, const ON_3dPoint& pt, const CPoint* p );
+    //void DynamicDraw( HDC, CRhinoViewport& vp, const ON_3dPoint& pt );
+
+    public bool HaveTransform
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.CRhinoGetXform_HaveTransform(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.CRhinoGetXform_SetHaveTransform(pThis, value);
+      }
+    }
+    public Transform Transform
+    {
+      get
+      {
+        Transform rc = Transform.Unset;
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.CRhinoGetXform_Transform(pConstThis, ref rc);
+        return rc;
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.CRhinoGetXform_SetTransform(pThis, ref value);
+      }
+    }
     /*
-  //////////////////////////////////////////////////////////////////
-  //
-  // Overridden members
-  //
-  void SetBasePoint( ON_3dPoint base_point, BOOL bShowDistanceInStatusBar = false );
-  void OnMouseMove( CRhinoViewport& vp, UINT nFlags, const ON_3dPoint& pt, const CPoint* p );
-  void DynamicDraw( HDC, CRhinoViewport& vp, const ON_3dPoint& pt );
-
-  BOOL m_bHaveXform;
   bool m_bMouseDrag; // true if transformation is from a mouse drag
-  bool m_bReserved1;
-  bool m_bReserved2;
-  bool m_bReserved3;
-  ON_Xform m_xform;
   ON_3dPoint m_basepoint;
-  const CRhinoXformObjectList& ObjectList() const; // returns m_list.
-
+    */
+    Rhino.Collections.TransformObjectList m_object_list;
+    public Rhino.Collections.TransformObjectList ObjectList
+    {
+      get
+      {
+        return m_object_list ?? (m_object_list = new Collections.TransformObjectList(this));
+      }
+    }
+    /*
   //////////////////////////////////////////////////////////////////
   //
   // Tools to support custom grip moving relative to the frame returned
@@ -137,6 +225,18 @@ namespace Rhino.Input.Custom
   bool HasGripFrameTransform() const;
   bool GetGripFrameTransform( double* x_scale, double* y_scale, double* z_scale ) const;
      */
-  
-  }
+
+
+
+
+    /// <summary>
+    /// After setting up options and so on, call GetPoint::GetXform to get the Transformation.
+    /// </summary>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public GetResult GetXform()
+    {
+      return GetXformHelper();
+    }
+  } 
 }

@@ -62,8 +62,80 @@ namespace Rhino.UI
         return s;
       return s.Substring(0, i);
     }
-
-    public bool LoadFromFile(Assembly a, int language_id)
+    /// <summary>
+    /// Takes an embedded resource name and checks to see if it contains ".Localization." in the name and starts
+    /// or ends with the locale ID or locale culture string
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="language_id"></param>
+    /// <param name="culture_name"></param>
+    /// <returns></returns>
+    private bool ResourceNameContainsLocaleID(string s, int language_id, string culture_name)
+    {
+      if (string.IsNullOrEmpty(s))
+        return false;
+      // Convert string to upper case so our checks can be case insensitive
+      string sUpper = s.ToUpper();
+      string key = ".LOCALIZATION.";
+      if (sUpper.Contains(key))
+      { // Contains the localization key
+        string _s = sUpper.Substring(sUpper.IndexOf(key) + key.Length);
+        string s_language_id = language_id.ToString();
+        // Check to see if it starts or ends with language ID or ends with langage id + ".xml"
+        if (_s.StartsWith(s_language_id) || _s.EndsWith(s_language_id) || _s.EndsWith(s_language_id + ".XML"))
+          return true;
+        // Check to see if it starts or ends with culture string or ends with culture string + ".xml"
+        if (_s.StartsWith(culture_name) || _s.EndsWith(culture_name) || _s.EndsWith(culture_name + ".XML"))
+          return true;
+      }
+      return false;
+    }
+    /// <summary>
+    /// Looks in the specified assembly for an embedded resource that contains ".Localization." in the name and starts
+    /// or ends with the locale ID or locale culture string
+    /// </summary>
+    /// <param name="assembly"></param>
+    /// <param name="language_id"></param>
+    /// <returns></returns>
+    private XmlTextReader LoadFromAssemblyEmbeddedResource(Assembly assembly, int language_id)
+    {
+      if (null != assembly)
+      {
+        // Extract resource embedded in the specified assembly names
+        string[] names = assembly.GetManifestResourceNames();
+        if (null != names)
+        {
+          // Convert locale ID to culture prefix, ie: 1034 = "es-es"
+          System.Globalization.CultureInfo culture_info = new System.Globalization.CultureInfo(language_id);
+          string culture_name = culture_info.Name.ToUpper();
+          string xml_file = null;
+          // Scan named resource list for the first item that appears to match our search
+          for (int i = 0; null == xml_file && i < names.Length; i++)
+            if (ResourceNameContainsLocaleID(names[i], language_id, culture_name))
+              xml_file = names[i];
+          if (!string.IsNullOrEmpty(xml_file))
+          {
+            // Resource found so extract into a stream
+            System.IO.Stream resource_stream = assembly.GetManifestResourceStream(xml_file);
+            if (null != resource_stream)
+            {
+              System.IO.StreamReader stream = new System.IO.StreamReader(resource_stream);
+              if (null != stream)
+                return new XmlTextReader(stream);
+            }
+          }
+        }
+      }
+      return null;
+    }
+    /// <summary>
+    /// Look in the assembly folder or sub folders for a XML file that starts with the locale ID or locale ID
+    /// converted to culture string (something like "es-es") and if it is found attach a XmlTextReader to it
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="language_id"></param>
+    /// <returns></returns>
+    private XmlTextReader TextReaderFromFile(Assembly a, int language_id)
     {
       //Attempt to load the XML file. First place to look is in the same directory as the assembly
       string dir = System.IO.Path.GetDirectoryName(a.Location);
@@ -114,13 +186,27 @@ namespace Rhino.UI
           if (found)
             break;
           else if (x > 0 && !found)
-            return false;
+            return null;
         }
       }
+      return new XmlTextReader(xmlPath);
+    }
+    /// <summary>
+    /// Look for a XML file with the current language ID and if one is not found then look in the specified assembly
+    /// for an embedded resource with the name "*.Localization.[locale]*.xml", if one is found then parse the XML
+    /// and extract the strings from it.
+    /// </summary>
+    /// <param name="a">Check this assembly folder and its embedded resources for the specified locale XML file</param>
+    /// <param name="language_id">Locale ID to check for</param>
+    /// <returns></returns>
+    public bool LoadFromFile(Assembly a, int language_id)
+    {
       bool rc = true;
       try
       {
-        XmlTextReader reader = new XmlTextReader(xmlPath);
+        XmlTextReader reader = TextReaderFromFile(a, language_id);
+        if (null == reader)
+          reader = LoadFromAssemblyEmbeddedResource(a, language_id);
         XmlDocument doc = new XmlDocument();
         doc.Load(reader);
         reader.Close();

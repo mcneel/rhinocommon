@@ -289,6 +289,7 @@
     <Compile Include="rhino\rhinosdkobjecthistory.cs" />
     <Compile Include="rhino\rhinosdkoptionsdialogpage.cs" />
     <Compile Include="rhino\rhinosdkpagelayoutview.cs" />
+    <Compile Include="rhino\rhinosdkpick.cs" />
     <Compile Include="rhino\rhinosdkplugin.cs" />
     <Compile Include="rhino\rhinosdkpointobject.cs" />
     <Compile Include="rhino\rhinosdkobject.cs" />

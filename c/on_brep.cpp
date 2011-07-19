@@ -548,6 +548,18 @@ RH_C_FUNCTION ON_Brep* ONC_ON_BrepRevSurface( const ON_RevSurface* pConstRevSurf
   return rc;
 }
 
+RH_C_FUNCTION void ON_Brep_DeleteFace( ON_Brep* pBrep, int faceIndex )
+{
+  if( pBrep )
+  {
+    ON_BrepFace* pFace = pBrep->Face(faceIndex);
+    if( pFace )
+    {
+      pBrep->DeleteFace(*pFace, TRUE);
+      pBrep->Compact();
+    }
+  }
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Meshing and mass property calculations are not available in stand alone opennurbs

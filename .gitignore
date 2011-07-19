@@ -147,3 +147,5 @@
 /c/rh_getxform.cpp
 /c/rh_uiprofilecontext.cpp
 /dotnet/RhinoCommon.csproj.user
+/c/rh_gumball.cpp
+/c/rh_pick.cpp

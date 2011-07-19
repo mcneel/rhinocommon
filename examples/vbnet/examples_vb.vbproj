@@ -112,6 +112,7 @@
     <Compile Include="ex_dupborder.vb" />
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_constrainedcopy.vb" />
+    <Compile Include="ex_gumball.vb" />
     <Compile Include="ex_insertknot.vb" />
     <Compile Include="ex_instancedefinitionobjects.vb" />
     <Compile Include="ex_intersectcurves.vb" />
@@ -126,6 +127,7 @@
     <Compile Include="ex_sweep1.vb" />
     <Compile Include="ex_unrollsurface.vb" />
     <Compile Include="ex_unrollsurface2.vb" />
+    <Compile Include="ex_zoomtoobject.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

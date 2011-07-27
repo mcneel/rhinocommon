@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Rhino.Geometry;
 
 namespace Rhino.FileIO
 {
@@ -32,12 +33,36 @@ namespace Rhino.FileIO
     {
       if (!File.Exists(path))
         throw new FileNotFoundException();
-      IntPtr pONX_Model = UnsafeNativeMethods.ONX_Model_ReadFile(path);
+      IntPtr pONX_Model = UnsafeNativeMethods.ONX_Model_ReadFile(path, IntPtr.Zero);
       if (pONX_Model == IntPtr.Zero)
         return null;
       return new File3dm(pONX_Model);
     }
 
+    /// <summary>
+    /// Read a 3dm file from a specified location and log any archive
+    /// reading errors.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="errorLog">any archive reading errors are logged here</param>
+    /// <returns>new File3dm on success, null on error</returns>
+    /// <exception cref="FileNotFoundException"></exception>
+    public static File3dm ReadWithLog(string path, out string errorLog)
+    {
+      errorLog = string.Empty;
+      if (!File.Exists(path))
+        throw new FileNotFoundException();
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        IntPtr pONX_Model = UnsafeNativeMethods.ONX_Model_ReadFile(path, pString);
+        errorLog = sh.ToString();
+        if (pONX_Model == IntPtr.Zero)
+          return null;
+        return new File3dm(pONX_Model);
+      }
+    }
+    
 
     /// <summary>Read only the notes from an existing 3dm file</summary>
     /// <param name="path"></param>
@@ -56,6 +81,63 @@ namespace Rhino.FileIO
       }
     }
     #endregion
+
+    /// <summary>
+    /// Writes contents of this model to an openNURBS archive. I STRONGLY
+    /// suggested that you call Polish() before calling Write so that your
+    /// file has all the "fluff" that makes it complete.  If the model is
+    /// not valid, then Write will refuse to write it.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="version">
+    /// Version of the openNURBS archive to write.  Must be 2, 3, 4, or 5.
+    /// Rhino 2.x can read version 2 files.
+    /// Rhino 3.x can read version 2 and 3 files.
+    /// Rhino 4.x can read version 2, 3 and 4 files.
+    /// Rhino 5.x can read version 2, 3, 4, and 5 files.
+    /// Use version 5 when possible.
+    /// </param>
+    /// <returns>
+    /// True if archive is written with no error.
+    /// False if errors occur.
+    /// </returns>
+    public bool Write(string path, int version)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ONX_Model_WriteFile(pThis, path, version, IntPtr.Zero);
+    }
+
+    /// <summary>
+    /// Writes contents of this model to an openNURBS archive. I STRONGLY
+    /// suggested that you call Polish() before calling Write so that your
+    /// file has all the "fluff" that makes it complete.  If the model is
+    /// not valid, then Write will refuse to write it.
+    /// </summary>
+    /// <param name="path">
+    /// Version of the openNURBS archive to write.  Must be 2, 3, 4, or 5.
+    /// Rhino 2.x can read version 2 files.
+    /// Rhino 3.x can read version 2 and 3 files.
+    /// Rhino 4.x can read version 2, 3 and 4 files.
+    /// Rhino 5.x can read version 2, 3, 4, and 5 files.
+    /// Use version 5 when possible.
+    /// </param>
+    /// <param name="version"></param>
+    /// <param name="errorLog"></param>
+    /// <returns>
+    /// True if archive is written with no error.
+    /// False if errors occur.
+    /// </returns>
+    public bool WriteWithLog(string path, int version, out string errorLog)
+    {
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pConstThis = ConstPointer();
+        IntPtr pString = sh.NonConstPointer();
+        bool rc = UnsafeNativeMethods.ONX_Model_WriteFile(pConstThis, path, version, pString);
+        errorLog = sh.ToString();
+        return rc;
+      }
+    }
 
     /// <summary>
     /// Check a model to make sure it is valid.
@@ -187,8 +269,88 @@ namespace Rhino.FileIO
         UnsafeNativeMethods.ONX_Model_SetNotes(pThis, n.Notes, n.IsVisible, n.IsHtml, n.WindowRectangle.Left, n.WindowRectangle.Top, n.WindowRectangle.Right, n.WindowRectangle.Bottom);
       }
     }
-    //public File3dmProperties GetProperties();
-    //public void SetProperties(File3dnProperties);
+
+    const int idxApplicationName = 0;
+    const int idxApplicationUrl = 1;
+    const int idxApplicationDetails = 2;
+    const int idxCreatedBy = 3;
+    const int idxLastCreatedBy = 4;
+
+    string GetString(int which)
+    {
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pConstThis = ConstPointer();
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.ONX_Model_GetString(pConstThis, which, pString);
+        return sh.ToString();
+      }
+    }
+    void SetString(int which, string val)
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_SetString(pThis, which, val);
+    }
+
+    /// <summary>
+    /// Name of the application that wrote this file
+    /// </summary>
+    public string ApplicationName
+    {
+      get { return GetString(idxApplicationName); }
+      set { SetString(idxApplicationName, value); }
+    }
+    public string ApplicationUrl
+    {
+      get { return GetString(idxApplicationUrl); }
+      set { SetString(idxApplicationUrl, value); }
+    }
+    public string ApplicationDetails
+    {
+      get { return GetString(idxApplicationDetails); }
+      set { SetString(idxApplicationDetails, value); }
+    }
+
+    public string CreatedBy
+    {
+      get { return GetString(idxCreatedBy); }
+    }
+    public string LastEditedBy
+    {
+      get { return GetString(idxLastCreatedBy); }
+    }
+
+    //public DateTime Created { get; }
+    //public DateTime LastEdited { get; }
+
+    public int Revision
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_GetRevision(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ONX_Model_SetRevision(pThis, value);
+      }
+    }
+
+    //public System.Drawing.Bitmap PreviewImage { get; set; }
+
+    File3dmSettings m_settings = null;
+    /// <summary>
+    /// Settings include tolerance, and unit system, and defaults used
+    /// for creating views and objects.
+    /// </summary>
+    public File3dmSettings Settings
+    {
+      get
+      {
+        return m_settings ?? (m_settings = new File3dmSettings(this));
+      }
+    }
 
     [Obsolete("Use Objects instead. This will be removed from a future WIP")]
     public File3dmObjectTable ObjectTable
@@ -342,7 +504,10 @@ namespace Rhino.FileIO
     #endregion
 
     #region constructor-dispose logic
-    private File3dm() { } //for now... we will need to make public when we have write support in this class
+    public File3dm()
+    {
+      m_ptr = UnsafeNativeMethods.ONX_Model_New();
+    }
     private File3dm(IntPtr pONX_Model)
     {
       m_ptr = pONX_Model;
@@ -375,6 +540,7 @@ namespace Rhino.FileIO
     int m_index;
     File3dm m_parent;
     Rhino.Geometry.GeometryBase m_geometry;
+    Rhino.DocObjects.ObjectAttributes m_attributes;
 
     internal File3dmObject(int index, File3dm parent)
     {
@@ -388,6 +554,12 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ModelObjectGeometry(pModel, m_index);
     }
 
+    internal IntPtr GetAttributesConstPointer()
+    {
+      IntPtr pModel = m_parent.ConstPointer();
+      return UnsafeNativeMethods.ONX_Model_ModelObjectAttributes(pModel, m_index);
+    }
+
     public Rhino.Geometry.GeometryBase Geometry
     {
       get
@@ -396,6 +568,17 @@ namespace Rhino.FileIO
         if( m_geometry==null || m_geometry.ConstPointer()!=pGeometry )
           m_geometry = Rhino.Geometry.GeometryBase.CreateGeometryHelper(pGeometry, this);
         return m_geometry;
+      }
+    }
+
+    public Rhino.DocObjects.ObjectAttributes Attributes
+    {
+      get
+      {
+        IntPtr pAttributes = GetAttributesConstPointer();
+        if (m_attributes == null || m_attributes.ConstPointer() != pAttributes)
+          m_attributes = new DocObjects.ObjectAttributes(this);
+        return m_attributes;
       }
     }
   }
@@ -497,6 +680,680 @@ namespace Rhino.FileIO
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<File3dmObjectTable, File3dmObject>(this);
+    }
+    #endregion
+
+    #region Object addition
+    /// <summary>
+    /// Add a point object to the table.
+    /// </summary>
+    /// <param name="x">X component of point coordinate.</param>
+    /// <param name="y">Y component of point coordinate.</param>
+    /// <param name="z">Z component of point coordinate.</param>
+    /// <returns>id of new object.</returns>
+    public Guid AddPoint(double x, double y, double z)
+    {
+      return AddPoint(new Point3d(x, y, z));
+    }
+    /// <summary>Add a point object to the table.</summary>
+    /// <param name="point">location of point</param>
+    /// <returns>id of new object</returns>
+    public Guid AddPoint(Point3d point)
+    {
+      return AddPoint(point, null);
+    }
+
+    /// <summary>Add a point object to the document</summary>
+    /// <param name="point">location of point</param>
+    /// <param name="attributes">attributes to apply to point</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddPoint(Point3d point, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pConstAttributes = (attributes==null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      m_objects = null; // clear local object list
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddPoint(pThis, point, pConstAttributes);
+    }
+
+    /// <summary>Add a point object to the document.</summary>
+    /// <param name="point">location of point</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddPoint(Point3f point)
+    {
+      Point3d p3d = new Point3d(point);
+      return AddPoint(p3d);
+    }
+    /// <summary>Add a point object to the document</summary>
+    /// <param name="point">location of point</param>
+    /// <param name="attributes">attributes to apply to point</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddPoint(Point3f point, DocObjects.ObjectAttributes attributes)
+    {
+      Point3d p3d = new Point3d(point);
+      return AddPoint(p3d, attributes);
+    }
+
+    /// <summary>
+    /// Add multiple points to the document.
+    /// </summary>
+    /// <param name="points">Points to add.</param>
+    /// <returns>List of object ids.</returns>
+    public Guid[] AddPoints(IEnumerable<Point3d> points)
+    {
+      if (points == null) { throw new ArgumentNullException("points"); }
+
+      List<Guid> ids = new List<Guid>();
+      foreach (Point3d pt in points)
+      {
+        ids.Add(AddPoint(pt));
+      }
+
+      return ids.ToArray();
+    }
+    /// <summary>
+    /// Add multiple points to the document.
+    /// </summary>
+    /// <param name="points">Points to add.</param>
+    /// <param name="attributes">Attributes to apply to point objects.</param>
+    /// <returns>List of object ids.</returns>
+    public Guid[] AddPoints(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes)
+    {
+      if (points == null) { throw new ArgumentNullException("points"); }
+
+      List<Guid> ids = new List<Guid>();
+      foreach (Point3d pt in points)
+      {
+        ids.Add(AddPoint(pt, attributes));
+      }
+
+      return ids.ToArray();
+    }
+
+    /// <summary>
+    /// Add multiple points to the document.
+    /// </summary>
+    /// <param name="points">Points to add.</param>
+    /// <returns>List of object ids.</returns>
+    public Guid[] AddPoints(IEnumerable<Point3f> points)
+    {
+      if (points == null) { throw new ArgumentNullException("points"); }
+
+      List<Guid> ids = new List<Guid>();
+      foreach (Point3f pt in points)
+      {
+        ids.Add(AddPoint(pt));
+      }
+
+      return ids.ToArray();
+    }
+    /// <summary>
+    /// Add multiple points to the document.
+    /// </summary>
+    /// <param name="points">Points to add.</param>
+    /// <param name="attributes">Attributes to apply to point objects.</param>
+    /// <returns>List of object ids.</returns>
+    public Guid[] AddPoints(IEnumerable<Point3f> points, DocObjects.ObjectAttributes attributes)
+    {
+      if (points == null) { throw new ArgumentNullException("points"); }
+
+      List<Guid> ids = new List<Guid>();
+      foreach (Point3f pt in points)
+      {
+        ids.Add(AddPoint(pt, attributes));
+      }
+
+      return ids.ToArray();
+    }
+
+    /// <summary>Add a point cloud object to the document</summary>
+    /// <param name="cloud">PointCloud to add.</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddPointCloud(PointCloud cloud)
+    {
+      return AddPointCloud(cloud, null);
+    }
+    /// <summary>Add a point cloud object to the document</summary>
+    /// <param name="cloud">PointCloud to add.</param>
+    /// <param name="attributes">attributes to apply to point cloud</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddPointCloud(PointCloud cloud, DocObjects.ObjectAttributes attributes)
+    {
+      if (cloud == null) { throw new ArgumentNullException("cloud"); }
+
+      IntPtr pCloud = cloud.ConstPointer();
+
+      IntPtr pThis = m_parent.NonConstPointer();
+
+      IntPtr pAttrs = IntPtr.Zero;
+      if (null != attributes)
+        pAttrs = attributes.ConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddPointCloud2(pThis, pCloud, pAttrs);
+    }
+    /// <summary>Add a point cloud object to the document</summary>
+    /// <param name="points"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddPointCloud(IEnumerable<Point3d> points)
+    {
+      return AddPointCloud(points, null);
+    }
+    /// <summary>Add a point cloud object to the document</summary>
+    /// <param name="points"></param>
+    /// <param name="attributes">attributes to apply to point cloud</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddPointCloud(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes)
+    {
+      int count;
+      Point3d[] ptArray = Collections.Point3dList.GetConstPointArray(points, out count);
+      if (null == ptArray || count < 1)
+        return Guid.Empty;
+
+      IntPtr pThis = m_parent.NonConstPointer();
+
+      IntPtr pAttrs = IntPtr.Zero;
+      if (null != attributes)
+        pAttrs = attributes.ConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddPointCloud(pThis, count, ptArray, pAttrs);
+    }
+
+    /// <summary>
+    /// Add a clipping plane object to Rhino
+    /// </summary>
+    /// <param name="plane"></param>
+    /// <param name="uMagnitude"></param>
+    /// <param name="vMagnitude"></param>
+    /// <param name="clippedViewportId">viewport id that the new clipping plane will clip</param>
+    /// <returns>id of new rhino object</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addclippingplane.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addclippingplane.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addclippingplane.py' lang='py'/>
+    /// </example>
+    public Guid AddClippingPlane(Plane plane, double uMagnitude, double vMagnitude, Guid clippedViewportId)
+    {
+      return AddClippingPlane(plane, uMagnitude, vMagnitude, new Guid[] { clippedViewportId });
+    }
+    /// <summary>
+    /// Add a clipping plane object to Rhino
+    /// </summary>
+    /// <param name="plane"></param>
+    /// <param name="uMagnitude"></param>
+    /// <param name="vMagnitude"></param>
+    /// <param name="clippedViewportIds">list of viewport ids that the new clipping plane will clip</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddClippingPlane(Plane plane, double uMagnitude, double vMagnitude, IEnumerable<Guid> clippedViewportIds)
+    {
+      return AddClippingPlane(plane, uMagnitude, vMagnitude, clippedViewportIds, null);
+    }
+    /// <summary>
+    /// Add a clipping plane object to Rhino
+    /// </summary>
+    /// <param name="plane"></param>
+    /// <param name="uMagnitude"></param>
+    /// <param name="vMagnitude"></param>
+    /// <param name="clippedViewportIds">list of viewport ids that the new clipping plane will clip</param>
+    /// <param name="attributes"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddClippingPlane(Plane plane, double uMagnitude, double vMagnitude, IEnumerable<Guid> clippedViewportIds, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pAttrs = (null == attributes) ? IntPtr.Zero : attributes.ConstPointer();
+      List<Guid> ids = new List<Guid>();
+      foreach (Guid item in clippedViewportIds)
+        ids.Add(item);
+      Guid[] clippedIds = ids.ToArray();
+      int count = clippedIds.Length;
+      if (count < 1)
+        return Guid.Empty;
+      IntPtr pThis = m_parent.NonConstPointer();
+      m_objects = null;
+      Guid rc = UnsafeNativeMethods.ONX_Model_ObjectTable_AddClippingPlane(pThis, ref plane, uMagnitude, vMagnitude, count, clippedIds, pAttrs);
+      return rc;
+    }
+
+    public Guid AddLinearDimension(LinearDimension dimension)
+    {
+      return AddLinearDimension(dimension, null);
+    }
+
+    public Guid AddLinearDimension(LinearDimension dimension, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pConstDimension = dimension.ConstPointer();
+      IntPtr pAttributes = (attributes==null)?IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddLinearDimension(pThis, pConstDimension, pAttributes);
+    }
+
+    /// <summary>Add a line object to Rhino</summary>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddLine(Point3d from, Point3d to)
+    {
+      return AddLine(from, to, null);
+    }
+    /// <summary>Add a line object to Rhino</summary>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
+    /// <param name="attributes">attributes to apply to line</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddLine(Point3d from, Point3d to, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pAttr = (null == attributes) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddLine(pThis, from, to, pAttr);
+    }
+    /// <summary>Add a line object to Rhino</summary>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddLine(Line line)
+    {
+      return AddLine(line.From, line.To);
+    }
+    /// <summary>Add a line object to Rhino</summary>
+    /// <param name="line"></param>
+    /// <param name="attributes">attributes to apply to line</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddLine(Line line, DocObjects.ObjectAttributes attributes)
+    {
+      return AddLine(line.From, line.To, attributes);
+    }
+
+    /// <summary>Add a polyline object to Rhino</summary>
+    /// <param name="points"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddPolyline(IEnumerable<Point3d> points)
+    {
+      return AddPolyline(points, null);
+    }
+    /// <summary>Add a polyline object to Rhino</summary>
+    /// <param name="points"></param>
+    /// <param name="attributes">attributes to apply to line</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddPolyline(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes)
+    {
+      int count;
+      Point3d[] ptArray = Collections.Point3dList.GetConstPointArray(points, out count);
+      if (null == ptArray || count < 1)
+        return Guid.Empty;
+
+      IntPtr pAttrs = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddPolyLine(pThis, count, ptArray, pAttrs);
+    }
+
+    /// <summary>Add a curve object to the document representing an arc</summary>
+    /// <param name="arc"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddArc(Arc arc)
+    {
+      return AddArc(arc, null);
+    }
+    /// <summary>Add a curve object to the document representing an arc</summary>
+    /// <param name="arc"></param>
+    /// <param name="attributes">attributes to apply to arc</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddArc(Arc arc, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddArc(pThis, ref arc, pAttr);
+    }
+
+    /// <summary>Add a curve object to the document representing a circle</summary>
+    /// <param name="circle"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddCircle(Circle circle)
+    {
+      return AddCircle(circle, null);
+    }
+    /// <summary>Add a curve object to the document representing a circle</summary>
+    /// <param name="circle"></param>
+    /// <param name="attributes">attributes to apply to circle</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddCircle(Circle circle, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddCircle(pThis, ref circle, pAttr);
+    }
+
+    /// <summary>Add a curve object to the document representing an ellipse</summary>
+    /// <param name="ellipse"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddEllipse(Ellipse ellipse)
+    {
+      return AddEllipse(ellipse, null);
+    }
+    /// <summary>Add a curve object to the document representing an ellipse</summary>
+    /// <param name="ellipse"></param>
+    /// <param name="attributes">attributes to apply to ellipse</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddEllipse(Ellipse ellipse, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddEllipse(pThis, ref ellipse, pAttr);
+    }
+
+    public Guid AddSphere(Sphere sphere)
+    {
+      return AddSphere(sphere, null);
+    }
+    public Guid AddSphere(Sphere sphere, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddSphere(pThis, ref sphere, pAttr);
+    }
+
+    /// <summary>Add a curve object to Rhino</summary>
+    /// <param name="curve"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddCurve(Geometry.Curve curve)
+    {
+      return AddCurve(curve, null);
+    }
+    /// <summary>Add a curve object to Rhino</summary>
+    /// <param name="curve">A duplicate of this curve is added to Rhino</param>
+    /// <param name="attributes">attributes to apply to curve</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddCurve(Geometry.Curve curve, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      IntPtr curvePtr = curve.ConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddCurve(pThis, curvePtr, pAttr);
+    }
+
+    /// <summary>Add a text dot object to Rhino</summary>
+    /// <param name="text"></param>
+    /// <param name="location"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddTextDot(string text, Point3d location)
+    {
+      Geometry.TextDot dot = new Rhino.Geometry.TextDot(text, location);
+      Guid rc = AddTextDot(dot);
+      dot.Dispose();
+      return rc;
+    }
+    /// <summary>Add a text dot object to Rhino</summary>
+    /// <param name="text"></param>
+    /// <param name="location"></param>
+    /// <param name="attributes"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddTextDot(string text, Point3d location, DocObjects.ObjectAttributes attributes)
+    {
+      Geometry.TextDot dot = new Rhino.Geometry.TextDot(text, location);
+      Guid rc = AddTextDot(dot, attributes);
+      dot.Dispose();
+      return rc;
+    }
+    /// <summary>Add a text dot object to Rhino</summary>
+    /// <param name="dot"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddTextDot(Geometry.TextDot dot)
+    {
+      return AddTextDot(dot, null);
+    }
+    /// <summary>Add a text dot object to Rhino</summary>
+    /// <param name="dot"></param>
+    /// <param name="attributes"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddTextDot(Geometry.TextDot dot, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      IntPtr pDot = dot.ConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddTextDot(pThis, pDot, pAttr);
+    }
+
+    /// <summary>
+    /// Add an annotation text object to the document.
+    /// </summary>
+    /// <param name="text3d">The text object to add.</param>
+    /// <returns>The Guid of the newly added object or Guid.Empty on failure.</returns>
+    public Guid AddText(Rhino.Display.Text3d text3d)
+    {
+      return AddText(text3d.Text, text3d.TextPlane, text3d.Height, text3d.FontFace, text3d.Bold, text3d.Italic);
+    }
+    /// <summary>
+    /// Add an annotation text object to the document.
+    /// </summary>
+    /// <param name="text3d">The text object to add.</param>
+    /// <param name="attributes">Object Attributes.</param>
+    /// <returns>The Guid of the newly added object or Guid.Empty on failure.</returns>
+    public Guid AddText(Rhino.Display.Text3d text3d, DocObjects.ObjectAttributes attributes)
+    {
+      return AddText(text3d.Text, text3d.TextPlane, text3d.Height, text3d.FontFace, text3d.Bold, text3d.Italic, attributes);
+    }
+    /// <summary>
+    /// Add an annotation text object to the document.
+    /// </summary>
+    /// <param name="text">Text string.</param>
+    /// <param name="plane">Plane of text.</param>
+    /// <param name="height">Height of text.</param>
+    /// <param name="fontName">Name of FontFace.</param>
+    /// <param name="bold">Bold flag.</param>
+    /// <param name="italic">Italic flag.</param>
+    /// <returns>The Guid of the newly added object or Guid.Empty on failure.</returns>
+    public Guid AddText(string text, Plane plane, double height, string fontName, bool bold, bool italic)
+    {
+      return AddText(text, plane, height, fontName, bold, italic, null);
+    }
+
+    public Guid AddText(string text, Plane plane, double height, string fontName, bool bold, bool italic, TextJustification justification)
+    {
+      return AddText(text, plane, height, fontName, bold, italic, justification, null);
+    }
+
+    public Guid AddText(string text, Plane plane, double height, string fontName, bool bold, bool italic, TextJustification justification, DocObjects.ObjectAttributes attributes)
+    {
+      if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(fontName))
+        return Guid.Empty;
+      IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      int fontStyle = 0;
+      if (bold)
+        fontStyle |= 1;
+      if (italic)
+        fontStyle |= 2;
+      m_objects = null;
+      Guid rc = UnsafeNativeMethods.ONX_Model_ObjectTable_AddText(pThis, text, ref plane, height, fontName, fontStyle, (int)justification, pAttr);
+      return rc;
+    }
+
+    /// <summary>
+    /// Add an annotation text object to the document.
+    /// </summary>
+    /// <param name="text">Text string.</param>
+    /// <param name="plane">Plane of text.</param>
+    /// <param name="height">Height of text.</param>
+    /// <param name="fontName">Name of FontFace.</param>
+    /// <param name="bold">Bold flag.</param>
+    /// <param name="italic">Italic flag.</param>
+    /// <param name="attributes">Object Attributes.</param>
+    /// <returns>The Guid of the newly added object or Guid.Empty on failure.</returns>
+    public Guid AddText(string text, Plane plane, double height, string fontName, bool bold, bool italic, DocObjects.ObjectAttributes attributes)
+    {
+      return AddText(text, plane, height, fontName, bold, italic, TextJustification.None, attributes);
+    }
+
+    /// <summary>Add a surface object to Rhino</summary>
+    /// <param name="surface">A duplicate of this surface is added to Rhino</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddSurface(Geometry.Surface surface)
+    {
+      return AddSurface(surface, null);
+    }
+    /// <summary>Add a surface object to Rhino</summary>
+    /// <param name="surface">A duplicate of this surface is added to Rhino</param>
+    /// <param name="attributes"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddSurface(Geometry.Surface surface, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      IntPtr pSurface = surface.ConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddSurface(pThis, pSurface, pAttr);
+    }
+
+#if USING_V5_SDK
+    /// <summary>Add an extrusion object to Rhino</summary>
+    /// <param name="extrusion">A duplicate of this extrusion is added to Rhino</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddExtrusion(Geometry.Extrusion extrusion)
+    {
+      return AddExtrusion(extrusion, null);
+    }
+    /// <summary>Add an extrusion object to Rhino</summary>
+    /// <param name="extrusion">A duplicate of this extrusion is added to Rhino</param>
+    /// <param name="attributes"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddExtrusion(Geometry.Extrusion extrusion, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      IntPtr pConstExtrusion = extrusion.ConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddExtrusion(pThis, pConstExtrusion, pAttr);
+    }
+#endif
+
+    /// <summary>Add a mesh object to Rhino</summary>
+    /// <param name="mesh">A duplicate of this mesh is added to Rhino</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddMesh(Geometry.Mesh mesh)
+    {
+      return AddMesh(mesh, null);
+    }
+    /// <summary>Add a mesh object to Rhino</summary>
+    /// <param name="mesh">A duplicate of this mesh is added to Rhino</param>
+    /// <param name="attributes"></param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddMesh(Geometry.Mesh mesh, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      IntPtr pConstMesh = mesh.ConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddMesh(pThis, pConstMesh, pAttr);
+    }
+
+    /// <summary>Add a brep object to Rhino</summary>
+    /// <param name="brep">A duplicate of this brep is added to Rhino</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddBrep(Geometry.Brep brep)
+    {
+      return AddBrep(brep, null);
+    }
+    /// <summary>Add a brep object to Rhino</summary>
+    /// <param name="brep">A duplicate of this brep is added to Rhino</param>
+    /// <param name="attributes">attributes to apply to brep</param>
+    /// <returns>id of new rhino object</returns>
+    public Guid AddBrep(Geometry.Brep brep, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      IntPtr pConstBrep = brep.ConstPointer();
+      m_objects = null;
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddBrep(pThis, pConstBrep, pAttr);
+    }
+
+    /*
+     * //not yet
+    public Guid AddInstanceObject(int instanceDefinitionIndex, Transform instanceXform)
+    {
+      return AddInstanceObject(instanceDefinitionIndex, instanceXform, null);
+    }
+
+    public Guid AddInstanceObject(int instanceDefinitionIndex, Transform instanceXform, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      IntPtr pConstBrep = brep.ConstPointer();
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddInstanceObject(m_doc.m_docId, instanceDefinitionIndex, ref instanceXform, pAttributes);
+    }
+    */
+
+    public Guid AddLeader(Plane plane, IEnumerable<Point2d> points)
+    {
+      return AddLeader(null, plane, points);
+    }
+    public Guid AddLeader(Plane plane, IEnumerable<Point2d> points, DocObjects.ObjectAttributes attributes)
+    {
+      return AddLeader(null, plane, points, attributes);
+    }
+
+    public Guid AddLeader(string text, Plane plane, IEnumerable<Point2d> points, DocObjects.ObjectAttributes attributes)
+    {
+      string s = null;
+      if (!string.IsNullOrEmpty(text))
+        s = text;
+      Rhino.Collections.RhinoList<Point2d> pts = new Rhino.Collections.RhinoList<Point2d>();
+      foreach (Point2d pt in points)
+        pts.Add(pt);
+      int count = pts.Count;
+      if (count < 1)
+        return Guid.Empty;
+
+      IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddLeader(pThis, s, ref plane, count, pts.m_items, pAttr);
+    }
+
+    public Guid AddLeader(string text, Plane plane, IEnumerable<Point2d> points)
+    {
+      return AddLeader(text, plane, points, null);
+    }
+
+    public Guid AddLeader(string text, IEnumerable<Point3d> points)
+    {
+      Plane plane;
+      //double max_deviation;
+      PlaneFitResult rc = Plane.FitPlaneToPoints(points, out plane);//, out max_deviation);
+      if (rc != PlaneFitResult.Success)
+        return Guid.Empty;
+
+      Rhino.Collections.RhinoList<Point2d> points2d = new Rhino.Collections.RhinoList<Point2d>();
+      foreach (Point3d point3d in points)
+      {
+        double s, t;
+        if (plane.ClosestParameter(point3d, out s, out t))
+        {
+          Point2d newpoint = new Point2d(s, t);
+          if (points2d.Count > 0 && points2d.Last.DistanceTo(newpoint) < Rhino.RhinoMath.SqrtEpsilon)
+            continue;
+          points2d.Add(new Point2d(s, t));
+        }
+      }
+      return AddLeader(text, plane, points2d);
+    }
+    public Guid AddLeader(IEnumerable<Point3d> points)
+    {
+      return AddLeader(null, points);
+    }
+
+    public Guid AddHatch(Hatch hatch)
+    {
+      return AddHatch(hatch, null);
+    }
+    public Guid AddHatch(Hatch hatch, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pConstHatch = hatch.ConstPointer();
+      IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pThis = m_parent.NonConstPointer();
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_AddHatch(pThis, pConstHatch, pAttr);
     }
     #endregion
   }

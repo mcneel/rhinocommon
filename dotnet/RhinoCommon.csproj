@@ -169,6 +169,7 @@
     <Compile Include="opennurbs\opennurbs_rectangle.cs" />
     <Compile Include="opennurbs\opennurbs_rendering.cs" />
     <Compile Include="opennurbs\opennurbs_revsurface.cs" />
+    <Compile Include="opennurbs\opennurbs_rtree.cs" />
     <Compile Include="opennurbs\opennurbs_string.cs" />
     <Compile Include="opennurbs\opennurbs_sumsurface.cs" />
     <Compile Include="opennurbs\opennurbs_surface.cs" />

@@ -88,6 +88,9 @@ internal partial class UnsafeNativeMethods
   internal static extern void CRhinoCommand_SetRunCommandCallback(Rhino.Commands.Command.RunCommandCallback cb);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoCommand_SetSelCommandCallback(Rhino.Commands.SelCommand.SelFilterCallback cb);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern bool ON_SpaceMorph_MorphGeometry(IntPtr pConstGeometry, double tolerance, [MarshalAs(UnmanagedType.U1)]bool quickpreview, [MarshalAs(UnmanagedType.U1)]bool preserveStructure, SpaceMorph.MorphPointCallback callback);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
@@ -191,6 +194,14 @@ internal partial class UnsafeNativeMethods
                                                       Rhino.Input.Custom.GetPoint.DrawCallback drawCB,
                                                       Rhino.Display.DisplayPipeline.ConduitCallback postDrawCB,
                                                       Rhino.Input.Custom.GetTransform.CalculateXformCallack calcXformCB);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_RTree_Search(IntPtr pConstRtree, Point3d pt0, Point3d pt1, int serial_number, RTree.SearchCallback searchCB);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_RTree_Search2(IntPtr pConstRtreeA, IntPtr pConstRtreeB, double tolerance, int serial_number, RTree.SearchCallback searchCB);
 
   //bool ON_Arc_Copy(ON_Arc* pRdnArc, ON_Arc* pRhCmnArc, bool rdn_to_rhc)
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]

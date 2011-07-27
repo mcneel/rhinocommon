@@ -537,3 +537,154 @@ namespace Rhino.DocObjects
   //public class ON_3dmIOSettings { }
   //public class ON_3dmSettings { }
 }
+
+namespace Rhino.FileIO
+{
+  public class File3dmSettings
+  {
+    File3dm m_parent;
+    internal File3dmSettings(File3dm parent)
+    {
+      m_parent = parent;
+    }
+
+    IntPtr ConstPointer()
+    {
+      IntPtr pConstParent = m_parent.ConstPointer();
+      return UnsafeNativeMethods.ONX_Model_3dmSettingsPointer(pConstParent);
+    }
+    IntPtr NonConstPointer()
+    {
+      IntPtr pParent = m_parent.NonConstPointer();
+      return UnsafeNativeMethods.ONX_Model_3dmSettingsPointer(pParent);
+    }
+
+    public string ModelUrl
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_3dmSettings_GetModelUrl(pConstThis, pString);
+          return sh.ToString();
+        }
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_3dmSettings_SetModelUrl(pThis, value);
+      }
+    }
+
+    /// <summary>
+    /// Model basepoint is used when the file is read as an instance definition
+    /// and is the point that is mapped to the origin in the instance definition.
+    /// </summary>
+    public Point3d ModelBasepoint
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        Point3d rc = new Point3d();
+        UnsafeNativeMethods.ON_3dmSettings_GetModelBasepoint(pConstThis, ref rc);
+        return rc;
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_3dmSettings_SetModelBasepoint(pThis, value);
+      }
+    }
+
+    /*
+    Rhino.DocObjects.EarthAnchorPoint m_earth_anchor;
+    /// <summary>
+    /// If set, this is the model's location on the earth.  This information is
+    /// used when the model is used with GIS information.
+    /// </summary>
+    Rhino.DocObjects.EarthAnchorPoint EarthAnchorPoint
+    {
+      get
+      {
+        return m_earth_anchor ?? (m_earth_anchor = new DocObjects.EarthAnchorPoint(this));
+      }
+      set
+      {
+        if (m_earth_anchor == null)
+          m_earth_anchor = new DocObjects.EarthAnchorPoint(this);
+        m_earth_anchor.CopyFrom(value);
+      }
+    }
+    */
+
+    /*
+  // Model space tolerances and unit system
+  ON_3dmUnitsAndTolerances m_ModelUnitsAndTolerances;
+
+  // Page space (printing/paper) tolerances and unit system
+  ON_3dmUnitsAndTolerances m_PageUnitsAndTolerances;
+
+  // settings used for automatically created rendering meshes
+  ON_MeshParameters m_RenderMeshSettings;
+
+  // saved custom settings
+  ON_MeshParameters m_CustomRenderMeshSettings;
+
+  // settings used for automatically created analysis meshes
+  ON_MeshParameters m_AnalysisMeshSettings;
+
+  // settings used when annotation objects are created
+  ON_3dmAnnotationSettings m_AnnotationSettings;
+
+  ON_ClassArray<ON_3dmConstructionPlane> m_named_cplanes;
+  ON_ClassArray<ON_3dmView>              m_named_views;
+  ON_ClassArray<ON_3dmView>              m_views; // current viewports
+  ON_UUID m_active_view_id; // id of "active" viewport              
+
+  // These fields determine what layer, material, color, line style, and
+  // wire density are used for new objects.
+  int m_current_layer_index;
+
+  int m_current_material_index;
+  ON::object_material_source m_current_material_source;
+  
+  ON_Color m_current_color;
+  ON::object_color_source m_current_color_source;
+
+  ON_Color m_current_plot_color;
+  ON::plot_color_source m_current_plot_color_source;
+
+  int m_current_linetype_index;
+  ON::object_linetype_source m_current_linetype_source;
+
+  int m_current_font_index;
+
+  int m_current_dimstyle_index;
+ 
+  // Surface wireframe density
+  //
+  //   @untitled table
+  //   0       boundary + "knot" wires 
+  //   1       boundary + "knot" wires + 1 interior wire if no interior "knots"
+  //   N>=2    boundry + "knot" wires + (N-1) interior wires
+  int m_current_wire_density;
+
+  ON_3dmRenderSettings m_RenderSettings;
+
+  // default settings for construction plane grids
+  ON_3dmConstructionPlaneGridDefaults m_GridDefaults;
+
+  // World scale factor to apply to non-solid linetypes
+  // for model display.  For plotting, the linetype settings
+  // are used without scaling.
+  double m_linetype_display_scale;
+
+  // Plugins that were loaded when the file was saved.
+  ON_ClassArray<ON_PlugInRef> m_plugin_list;
+
+  ON_3dmIOSettings m_IO_settings;
+     */
+  }
+}

@@ -790,6 +790,11 @@ RH_C_FUNCTION unsigned char* ON_WriteBufferArchive_Buffer(const CRhCmnWrite3dmBu
 /////////////////////////////////
 // move to on_extensions.cpp
 
+RH_C_FUNCTION ONX_Model* ONX_Model_New()
+{
+  return new ONX_Model();
+}
+
 RH_C_FUNCTION void ONX_Model_ReadNotes(const RHMONO_STRING* path, CRhCmnStringHolder* pString)
 {
   if( path && pString )
@@ -817,18 +822,39 @@ RH_C_FUNCTION void ONX_Model_ReadNotes(const RHMONO_STRING* path, CRhCmnStringHo
   }
 }
 
-RH_C_FUNCTION ONX_Model* ONX_Model_ReadFile(const RHMONO_STRING* path)
+RH_C_FUNCTION ONX_Model* ONX_Model_ReadFile(const RHMONO_STRING* path, CRhCmnStringHolder* pStringHolder)
 {
   ONX_Model* rc = NULL;
   if( path )
   {
     INPUTSTRINGCOERCE(_path, path);
     rc = new ONX_Model();
-    if( !rc->Read(_path) )
+    ON_wString s;
+    ON_TextLog log(s);
+    ON_TextLog* pLog = pStringHolder ? &log : NULL;
+    if( !rc->Read(_path, pLog) )
     {
       delete rc;
       rc = NULL;
     }
+    if( pStringHolder )
+      pStringHolder->Set(s);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ONX_Model_WriteFile(ONX_Model* pModel, const RHMONO_STRING* path, int version, CRhCmnStringHolder* pStringHolder)
+{
+  bool rc = false;
+  if( pModel )
+  {
+    INPUTSTRINGCOERCE(_path, path);
+    ON_wString s;
+    ON_TextLog log(s);
+    ON_TextLog* pLog = pStringHolder ? &log : NULL;
+    rc = pModel->Write(_path, version, NULL, pLog);
+    if( pStringHolder )
+      pStringHolder->Set(s);
   }
   return rc;
 }
@@ -1079,6 +1105,16 @@ RH_C_FUNCTION const ON_Geometry* ONX_Model_ModelObjectGeometry(const ONX_Model* 
   return rc;
 }
 
+RH_C_FUNCTION const ON_3dmObjectAttributes* ONX_Model_ModelObjectAttributes(const ONX_Model* pConstModel, int index)
+{
+  const ON_3dmObjectAttributes* rc = NULL;
+  if( pConstModel && index>=0 && index<pConstModel->m_object_table.Count() )
+  {
+    rc = &(pConstModel->m_object_table[index].m_attributes);
+  }
+  return rc;
+}
+
 RH_C_FUNCTION bool ONX_Model_ObjectTable_LayerIndexTest(const ONX_Model* pConstModel, int objectIndex, int layerIndex)
 {
   bool rc = false;
@@ -1089,6 +1125,465 @@ RH_C_FUNCTION bool ONX_Model_ObjectTable_LayerIndexTest(const ONX_Model* pConstM
   }
   return rc;
 }
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddPoint(ONX_Model* pModel, ON_3DPOINT_STRUCT point, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  if( pModel )
+  {
+    ONX_Model_Object mo;
+    if( pConstAttributes )
+      mo.m_attributes = *pConstAttributes;
+    mo.m_object = new ON_Point(point.val[0], point.val[1], point.val[2]);
+    ::ON_CreateUuid(mo.m_attributes.m_uuid);
+    pModel->m_object_table.Append(mo);
+    return mo.m_attributes.m_uuid;
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddPointCloud(ONX_Model* pModel, int count, /*ARRAY*/const ON_3dPoint* points, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  if( pModel && count>0 && points )
+  {
+    ONX_Model_Object mo;
+    if( pConstAttributes )
+      mo.m_attributes = *pConstAttributes;
+    ON_PointCloud* pCloud = new ON_PointCloud();
+    pCloud->m_P.Append(count, points);
+    mo.m_object = pCloud;
+    ::ON_CreateUuid(mo.m_attributes.m_uuid);
+    pModel->m_object_table.Append(mo);
+    return mo.m_attributes.m_uuid;
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddPointCloud2(ONX_Model* pModel, const ON_PointCloud* pConstPointCloud, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  if( pModel && pConstPointCloud )
+  {
+    ONX_Model_Object mo;
+    if( pConstAttributes )
+      mo.m_attributes = *pConstAttributes;
+    mo.m_object = new ON_PointCloud(*pConstPointCloud);
+    ::ON_CreateUuid(mo.m_attributes.m_uuid);
+    pModel->m_object_table.Append(mo);
+    return mo.m_attributes.m_uuid;
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddClippingPlane(ONX_Model* pModel, const ON_PLANE_STRUCT* plane, double du, double dv, int count, /*ARRAY*/const ON_UUID* clippedViewportIds, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  if( pModel && plane && du>0.0 && dv>0.0 && count>0 && clippedViewportIds )
+  {
+    ON_Plane temp = FromPlaneStruct(*plane);
+    if( temp.IsValid() )
+    {
+      ON_Interval domain0( 0.0, du );
+      ON_Interval domain1( 0.0, dv );
+
+      ON_PlaneSurface srf( temp );
+      srf.SetExtents( 0, domain0, true );
+      srf.SetExtents( 1, domain1, true );
+      srf.SetDomain( 0, domain0.Min(), domain0.Max() );
+      srf.SetDomain( 1, domain1.Min(), domain1.Max() );
+      if( srf.IsValid() )
+      {
+        ON_ClippingPlaneSurface* cps = new ON_ClippingPlaneSurface(srf);
+        for( int i=0; i<count; i++ )
+          cps->m_clipping_plane.m_viewport_ids.AddUuid(clippedViewportIds[i]);
+
+        ONX_Model_Object mo;
+        if( pConstAttributes )
+          mo.m_attributes = *pConstAttributes;
+        mo.m_object = cps;
+        ::ON_CreateUuid(mo.m_attributes.m_uuid);
+        pModel->m_object_table.Append(mo);
+        return mo.m_attributes.m_uuid;
+      }
+    }
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddLinearDimension( ONX_Model* pModel, const ON_LinearDimension2* pConstDimension, const ON_3dmObjectAttributes* pConstAttributes )
+{
+  if( pModel && pConstDimension )
+  {
+    ONX_Model_Object mo;
+    if( pConstAttributes )
+      mo.m_attributes = *pConstAttributes;
+    mo.m_object = new ON_LinearDimension2(*pConstDimension);
+    ::ON_CreateUuid(mo.m_attributes.m_uuid);
+    pModel->m_object_table.Append(mo);
+    return mo.m_attributes.m_uuid;
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddLine( ONX_Model* pModel, ON_3DPOINT_STRUCT pt0, ON_3DPOINT_STRUCT pt1, const ON_3dmObjectAttributes* pConstAttributes )
+{
+  if( pModel )
+  {
+    ONX_Model_Object mo;
+    if( pConstAttributes )
+      mo.m_attributes = *pConstAttributes;
+    ON_3dPoint _pt0(pt0.val);
+    ON_3dPoint _pt1(pt1.val);
+    mo.m_object = new ON_LineCurve(_pt0, _pt1);
+    ::ON_CreateUuid(mo.m_attributes.m_uuid);
+    pModel->m_object_table.Append(mo);
+    return mo.m_attributes.m_uuid;
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddPolyline( ONX_Model* pModel, int count, /*ARRAY*/const ON_3dPoint* points, const ON_3dmObjectAttributes* pConstAttributes )
+{
+  if( pModel && count>0 && points )
+  {
+    ONX_Model_Object mo;
+    if( pConstAttributes )
+      mo.m_attributes = *pConstAttributes;
+    ON_PolylineCurve* pC = new ON_PolylineCurve();
+    pC->m_pline.Append(count, points);
+    mo.m_object = pC;
+    ::ON_CreateUuid(mo.m_attributes.m_uuid);
+    pModel->m_object_table.Append(mo);
+    return mo.m_attributes.m_uuid;
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddArc(ONX_Model* pModel, ON_Arc* pArc, const ON_3dmObjectAttributes* pConstAttributes )
+{
+  if( pModel && pArc )
+  {
+    pArc->plane.UpdateEquation();
+    ONX_Model_Object mo;
+    if( pConstAttributes )
+      mo.m_attributes = *pConstAttributes;
+    ON_ArcCurve* pC = new ON_ArcCurve(*pArc);
+    mo.m_object = pC;
+    ::ON_CreateUuid(mo.m_attributes.m_uuid);
+    pModel->m_object_table.Append(mo);
+    return mo.m_attributes.m_uuid;
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddCircle(ONX_Model* pModel, const ON_CIRCLE_STRUCT* pCircle, const ON_3dmObjectAttributes* pConstAttributes )
+{
+  if( pModel && pCircle )
+  {
+    ON_Circle circle = FromCircleStruct(*pCircle);
+    ONX_Model_Object mo;
+    if( pConstAttributes )
+      mo.m_attributes = *pConstAttributes;
+    ON_ArcCurve* pC = new ON_ArcCurve(circle);
+    mo.m_object = pC;
+    ::ON_CreateUuid(mo.m_attributes.m_uuid);
+    pModel->m_object_table.Append(mo);
+    return mo.m_attributes.m_uuid;
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddEllipse(ONX_Model* pModel, ON_Ellipse* pEllipse, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  if( pModel && pEllipse )
+  {
+    pEllipse->plane.UpdateEquation();
+    ON_NurbsCurve* nc = new ON_NurbsCurve();
+    if(2 == pEllipse->GetNurbForm(*nc) )
+    {
+      ONX_Model_Object mo;
+      if( pConstAttributes )
+        mo.m_attributes = *pConstAttributes;
+      mo.m_object = nc;
+      ::ON_CreateUuid(mo.m_attributes.m_uuid);
+      pModel->m_object_table.Append(mo);
+      return mo.m_attributes.m_uuid;
+    }
+    // didn't work. delete the NurbsCurve
+    delete nc;
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddSphere(ONX_Model* pModel, ON_Sphere* sphere, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  if( pModel && sphere )
+  {
+    // make sure the plane equation is in-sync for this sphere
+    sphere->plane.UpdateEquation();
+    ON_RevSurface* pRevSurface = sphere->RevSurfaceForm();
+    if( pRevSurface )
+    {
+      ONX_Model_Object mo;
+      if( pConstAttributes )
+        mo.m_attributes = *pConstAttributes;
+      mo.m_object = pRevSurface;
+      ::ON_CreateUuid(mo.m_attributes.m_uuid);
+      pModel->m_object_table.Append(mo);
+      return mo.m_attributes.m_uuid;
+    }
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddCurve(ONX_Model* pModel, const ON_Curve* pConstCurve, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  if( pModel && pConstCurve )
+  {
+    ON_Curve* pCurve = pConstCurve->DuplicateCurve();
+    if( pCurve )
+    {
+      ONX_Model_Object mo;
+      if( pConstAttributes )
+        mo.m_attributes = *pConstAttributes;
+      mo.m_object = pCurve;
+      ::ON_CreateUuid(mo.m_attributes.m_uuid);
+      pModel->m_object_table.Append(mo);
+      return mo.m_attributes.m_uuid;
+    }
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddTextDot(ONX_Model* pModel, const ON_TextDot* pConstDot, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  if( pModel && pConstDot )
+  {
+    ON_TextDot* pDot = pConstDot->Duplicate();
+    if( pDot )
+    {
+      ONX_Model_Object mo;
+      if( pConstAttributes )
+        mo.m_attributes = *pConstAttributes;
+      mo.m_object = pDot;
+      ::ON_CreateUuid(mo.m_attributes.m_uuid);
+      pModel->m_object_table.Append(mo);
+      return mo.m_attributes.m_uuid;
+    }
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddText(ONX_Model* pModel, const RHMONO_STRING* _text, const ON_PLANE_STRUCT* plane, double height, const RHMONO_STRING* _fontName, int fontStyle, int justification, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  INPUTSTRINGCOERCE(text, _text);
+  INPUTSTRINGCOERCE(fontName, _fontName);
+  if( pModel && plane && text && text[0]!=0 )
+  {
+    ON_Plane temp = FromPlaneStruct(*plane);
+    if( temp.IsValid() )
+    {
+      if( height <= 0.0 )
+        height = 1.0;
+      bool bBold = (0!=(fontStyle&1));
+      bool bItalic = (0!=(fontStyle&2));
+
+      ON_wString font_str( fontName );
+      font_str.TrimLeftAndRight();
+      if( font_str.IsEmpty() )
+        font_str = L"Arial";
+
+      int font_index = -1;
+      for( int i=0; i<pModel->m_font_table.Count(); i++ )
+      {
+        const ON_Font& fnt = pModel->m_font_table[i];
+        if( fnt.IsItalic()==bItalic && fnt.IsBold()==bBold && font_str.Compare(fnt.m_facename)==0 )
+        {
+          font_index = i;
+          break;
+        }
+      }
+      if( -1==font_index )
+      {
+        // create a new font and add it to the font table
+        ON_Font fnt;
+        fnt.SetBold(bBold);
+        fnt.SetIsItalic(bItalic);
+        fnt.SetFontFaceName(font_str);
+        ON_wString fontname(font_str);
+        if(bBold)
+          fontname += L" Bold";
+        if(bItalic)
+          fontname += L" Italic";
+        fnt.SetFontName(fontname);
+        fnt.SetFontIndex( pModel->m_font_table.Count() );
+        pModel->m_font_table.Append(fnt);
+        font_index = fnt.FontIndex();
+      }
+      
+
+      ON_TextEntity2* text_entity = new ON_TextEntity2();
+      text_entity->SetHeight( height );
+#if defined(RHINO_V5SR) // only available in V5
+      text_entity->SetTextValue( text );
+      text_entity->SetTextFormula( 0 );
+#else
+      text_entity->SetUserText(text);
+#endif
+      text_entity->SetPlane( temp );
+      text_entity->SetFontIndex( font_index );
+      if( justification>0 )
+        text_entity->SetJustification((unsigned int)justification);
+
+      ONX_Model_Object mo;
+      if( pConstAttributes )
+        mo.m_attributes = *pConstAttributes;
+      mo.m_object = text_entity;
+      ::ON_CreateUuid(mo.m_attributes.m_uuid);
+      pModel->m_object_table.Append(mo);
+      return mo.m_attributes.m_uuid;
+    }
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddSurface(ONX_Model* pModel, const ON_Surface* pConstSurface, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  if( pModel && pConstSurface )
+  {
+    ON_Surface* pSurface = pConstSurface->Duplicate();
+    if( pSurface )
+    {
+      ONX_Model_Object mo;
+      if( pConstAttributes )
+        mo.m_attributes = *pConstAttributes;
+      mo.m_object = pSurface;
+      ::ON_CreateUuid(mo.m_attributes.m_uuid);
+      pModel->m_object_table.Append(mo);
+      return mo.m_attributes.m_uuid;
+    }
+  }
+  return ::ON_nil_uuid;
+}
+
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddExtrusion(ONX_Model* pModel, const ON_Extrusion* pConstExtrusion, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  if( pModel && pConstExtrusion )
+  {
+    ON_Surface* pExtrusion = pConstExtrusion->Duplicate();
+    if( pExtrusion )
+    {
+      ONX_Model_Object mo;
+      if( pConstAttributes )
+        mo.m_attributes = *pConstAttributes;
+      mo.m_object = pExtrusion;
+      ::ON_CreateUuid(mo.m_attributes.m_uuid);
+      pModel->m_object_table.Append(mo);
+      return mo.m_attributes.m_uuid;
+    }
+  }
+  return ::ON_nil_uuid;
+}
+#endif
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddMesh(ONX_Model* pModel, const ON_Mesh* pConstMesh, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  if( pModel && pConstMesh )
+  {
+    ON_Mesh* pMesh = pConstMesh->Duplicate();
+    if( pMesh )
+    {
+      ONX_Model_Object mo;
+      if( pConstAttributes )
+        mo.m_attributes = *pConstAttributes;
+      mo.m_object = pMesh;
+      ::ON_CreateUuid(mo.m_attributes.m_uuid);
+      pModel->m_object_table.Append(mo);
+      return mo.m_attributes.m_uuid;
+    }
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddBrep(ONX_Model* pModel, const ON_Brep* pConstBrep, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  if( pModel && pConstBrep )
+  {
+    ON_Brep* pBrep = pConstBrep->Duplicate();
+    if( pBrep )
+    {
+      ONX_Model_Object mo;
+      if( pConstAttributes )
+        mo.m_attributes = *pConstAttributes;
+      mo.m_object = pBrep;
+      ::ON_CreateUuid(mo.m_attributes.m_uuid);
+      pModel->m_object_table.Append(mo);
+      return mo.m_attributes.m_uuid;
+    }
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddLeader(ONX_Model* pModel, const RHMONO_STRING* _text, const ON_PLANE_STRUCT* plane, int count, /*ARRAY*/const ON_2dPoint* points2d, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  INPUTSTRINGCOERCE(text, _text);
+  if( pModel && plane && count>1 && points2d )
+  {
+    ON_Leader2* leader = new ON_Leader2();
+
+    ON_Plane temp = FromPlaneStruct(*plane);
+    leader->SetPlane(temp);
+    for( int i=0; i<count; i++ )
+      leader->m_points.Append(points2d[i]);
+
+    leader->SetTextValue(_text);
+
+    ONX_Model_Object mo;
+    if( pConstAttributes )
+      mo.m_attributes = *pConstAttributes;
+    mo.m_object = leader;
+    ::ON_CreateUuid(mo.m_attributes.m_uuid);
+    pModel->m_object_table.Append(mo);
+    return mo.m_attributes.m_uuid;
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddHatch(ONX_Model* pModel, const ON_Hatch* pConstHatch, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  if( pModel && pConstHatch )
+  {
+    ON_Hatch* pHatch = pConstHatch->Duplicate();
+    if( pHatch )
+    {
+      ONX_Model_Object mo;
+      if( pConstAttributes )
+        mo.m_attributes = *pConstAttributes;
+      mo.m_object = pHatch;
+      ::ON_CreateUuid(mo.m_attributes.m_uuid);
+      pModel->m_object_table.Append(mo);
+      return mo.m_attributes.m_uuid;
+    }
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddPolyLine(ONX_Model* pModel, int count, /*ARRAY*/const ON_3dPoint* points, const ON_3dmObjectAttributes* pConstAttributes)
+{
+  if( pModel && points && count>1)
+  {
+    CHack3dPointArray pl(count, (ON_3dPoint*)points);
+
+    ON_PolylineCurve* pCurve = new ON_PolylineCurve(pl);
+    ONX_Model_Object mo;
+    if( pConstAttributes )
+      mo.m_attributes = *pConstAttributes;
+    mo.m_object = pCurve;
+    ::ON_CreateUuid(mo.m_attributes.m_uuid);
+    pModel->m_object_table.Append(mo);
+    return mo.m_attributes.m_uuid;
+  }
+  return ::ON_nil_uuid;
+}
+
 
 RH_C_FUNCTION void ONX_Model_BoundingBox(const ONX_Model* pConstModel, ON_BoundingBox* pBBox)
 {
@@ -1151,4 +1646,89 @@ RH_C_FUNCTION void ONX_Model_LayerTable_Clear(ONX_Model* pModel)
 {
   if( pModel )
     pModel->m_layer_table.Empty();
+}
+
+RH_C_FUNCTION void ONX_Model_GetString( const ONX_Model* pConstModel, int which, CRhCmnStringHolder* pString )
+{
+  const int idxApplicationName = 0;
+  const int idxApplicationUrl = 1;
+  const int idxApplicationDetails = 2;
+  const int idxCreatedBy = 3;
+  const int idxLastCreatedBy = 4;
+
+  if( pConstModel && pString )
+  {
+    switch(which)
+    {
+    case idxApplicationName:
+      pString->Set( pConstModel->m_properties.m_Application.m_application_name );
+      break;
+    case idxApplicationUrl:
+      pString->Set( pConstModel->m_properties.m_Application.m_application_URL );
+      break;
+    case idxApplicationDetails:
+      pString->Set( pConstModel->m_properties.m_Application.m_application_details );
+      break;
+    case idxCreatedBy:
+      pString->Set( pConstModel->m_properties.m_RevisionHistory.m_sCreatedBy );
+      break;
+    case idxLastCreatedBy:
+      pString->Set( pConstModel->m_properties.m_RevisionHistory.m_sLastEditedBy );
+      break;
+    }
+  }
+}
+
+RH_C_FUNCTION void ONX_Model_SetString( ONX_Model* pModel, int which, const RHMONO_STRING* str )
+{
+  const int idxApplicationName = 0;
+  const int idxApplicationUrl = 1;
+  const int idxApplicationDetails = 2;
+  const int idxCreatedBy = 3;
+  const int idxLastCreatedBy = 4;
+  INPUTSTRINGCOERCE(_str, str);
+
+  if( pModel )
+  {
+    switch(which)
+    {
+    case idxApplicationName:
+      pModel->m_properties.m_Application.m_application_name = _str;
+      break;
+    case idxApplicationUrl:
+      pModel->m_properties.m_Application.m_application_URL = _str;
+      break;
+    case idxApplicationDetails:
+      pModel->m_properties.m_Application.m_application_details = _str;
+      break;
+    case idxCreatedBy:
+      pModel->m_properties.m_RevisionHistory.m_sCreatedBy = _str;
+      break;
+    case idxLastCreatedBy:
+      pModel->m_properties.m_RevisionHistory.m_sLastEditedBy = _str;
+      break;
+    }
+  }
+}
+
+RH_C_FUNCTION int ONX_Model_GetRevision(const ONX_Model* pConstModel)
+{
+  int rc = 0;
+  if( pConstModel )
+    rc = pConstModel->m_properties.m_RevisionHistory.m_revision_count;
+  return rc;
+}
+
+RH_C_FUNCTION void ONX_Model_SetRevision(ONX_Model* pModel, int rev)
+{
+  if( pModel )
+    pModel->m_properties.m_RevisionHistory.m_revision_count = rev;
+}
+
+RH_C_FUNCTION ON_3dmSettings* ONX_Model_3dmSettingsPointer(ONX_Model* pModel)
+{
+  ON_3dmSettings* rc = NULL;
+  if( pModel )
+    rc = &(pModel->m_settings);
+  return rc;
 }

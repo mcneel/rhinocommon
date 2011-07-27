@@ -222,3 +222,33 @@ RH_C_FUNCTION void ON_EarthAnchorPoint_GetModelToEarthTransform(const ON_EarthAn
     pConstEarthAnchor->GetModelToEarthXform(us, *xform);
   }
 }
+
+RH_C_FUNCTION void ON_3dmSettings_GetModelUrl(const ON_3dmSettings* pConstSettings, CRhCmnStringHolder* pString)
+{
+  if( pConstSettings && pString )
+    pString->Set(pConstSettings->m_model_URL);
+}
+
+RH_C_FUNCTION void ON_3dmSettings_SetModelUrl(ON_3dmSettings* pSettings, const RHMONO_STRING* str)
+{
+  if( pSettings )
+  {
+    INPUTSTRINGCOERCE(_str, str);
+    pSettings->m_model_URL = _str;
+  }
+}
+
+RH_C_FUNCTION void ON_3dmSettings_GetModelBasepoint(const ON_3dmSettings* pConstSettings, ON_3dPoint* point)
+{
+  if( pConstSettings && point )
+    *point = pConstSettings->m_model_basepoint;
+}
+
+RH_C_FUNCTION void ON_3dmSettings_SetModelBasepoint(ON_3dmSettings* pSettings, ON_3DPOINT_STRUCT point )
+{
+  if( pSettings )
+  {
+    ON_3dPoint pt(point.val);
+    pSettings->m_model_basepoint = pt;
+  }
+}

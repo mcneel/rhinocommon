@@ -182,6 +182,22 @@ internal partial class UnsafeNativeMethods
   //void ON_EarthAnchorPoint_GetModelToEarthTransform(const ON_EarthAnchorPoint* pConstEarthAnchor, int units, ON_Xform* xform)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_EarthAnchorPoint_GetModelToEarthTransform(IntPtr pConstEarthAnchor, int units, ref Transform xform);
+
+  //void ON_3dmSettings_GetModelUrl(const ON_3dmSettings* pConstSettings, CRhCmnStringHolder* pString)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_3dmSettings_GetModelUrl(IntPtr pConstSettings, IntPtr pString);
+
+  //void ON_3dmSettings_SetModelUrl(ON_3dmSettings* pSettings, const RHMONO_STRING* str)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_3dmSettings_SetModelUrl(IntPtr pSettings, [MarshalAs(UnmanagedType.LPWStr)]string str);
+
+  //void ON_3dmSettings_GetModelBasepoint(const ON_3dmSettings* pConstSettings, ON_3dPoint* point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_3dmSettings_GetModelBasepoint(IntPtr pConstSettings, ref Point3d point);
+
+  //void ON_3dmSettings_SetModelBasepoint(ON_3dmSettings* pSettings, ON_3DPOINT_STRUCT point )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_3dmSettings_SetModelBasepoint(IntPtr pSettings, Point3d point);
   #endregion
 
 
@@ -622,13 +638,22 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_WriteBufferArchive_Buffer(IntPtr pBinaryArchive);
 
+  //ONX_Model* ONX_Model_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_New();
+
   //void ONX_Model_ReadNotes(const RHMONO_STRING* path, CRhCmnStringHolder* pString)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_ReadNotes([MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr pString);
 
-  //ONX_Model* ONX_Model_ReadFile(const RHMONO_STRING* path)
+  //ONX_Model* ONX_Model_ReadFile(const RHMONO_STRING* path, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ONX_Model_ReadFile([MarshalAs(UnmanagedType.LPWStr)]string path);
+  internal static extern IntPtr ONX_Model_ReadFile([MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr pStringHolder);
+
+  //bool ONX_Model_WriteFile(ONX_Model* pModel, const RHMONO_STRING* path, int version, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ONX_Model_WriteFile(IntPtr pModel, [MarshalAs(UnmanagedType.LPWStr)]string path, int version, IntPtr pStringHolder);
 
   //void ONX_Model_Delete(ONX_Model* pModel)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -675,10 +700,98 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ONX_Model_ModelObjectGeometry(IntPtr pConstModel, int index);
 
+  //const ON_3dmObjectAttributes* ONX_Model_ModelObjectAttributes(const ONX_Model* pConstModel, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_ModelObjectAttributes(IntPtr pConstModel, int index);
+
   //bool ONX_Model_ObjectTable_LayerIndexTest(const ONX_Model* pConstModel, int objectIndex, int layerIndex)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ONX_Model_ObjectTable_LayerIndexTest(IntPtr pConstModel, int objectIndex, int layerIndex);
+
+  //ON_UUID ONX_Model_ObjectTable_AddPoint(ONX_Model* pModel, ON_3DPOINT_STRUCT point, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddPoint(IntPtr pModel, Point3d point, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddPointCloud(ONX_Model* pModel, int count, /*ARRAY*/const ON_3dPoint* points, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddPointCloud(IntPtr pModel, int count, Point3d[] points, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddPointCloud2(ONX_Model* pModel, const ON_PointCloud* pConstPointCloud, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddPointCloud2(IntPtr pModel, IntPtr pConstPointCloud, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddClippingPlane(ONX_Model* pModel, const ON_PLANE_STRUCT* plane, double du, double dv, int count, /*ARRAY*/const ON_UUID* clippedViewportIds, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddClippingPlane(IntPtr pModel, ref Plane plane, double du, double dv, int count, Guid[] clippedViewportIds, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddLinearDimension( ONX_Model* pModel, const ON_LinearDimension2* pConstDimension, const ON_3dmObjectAttributes* pConstAttributes )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddLinearDimension(IntPtr pModel, IntPtr pConstDimension, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddLine( ONX_Model* pModel, ON_3DPOINT_STRUCT pt0, ON_3DPOINT_STRUCT pt1, const ON_3dmObjectAttributes* pConstAttributes )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddLine(IntPtr pModel, Point3d pt0, Point3d pt1, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddPolyline( ONX_Model* pModel, int count, /*ARRAY*/const ON_3dPoint* points, const ON_3dmObjectAttributes* pConstAttributes )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddPolyline(IntPtr pModel, int count, Point3d[] points, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddArc(ONX_Model* pModel, ON_Arc* pArc, const ON_3dmObjectAttributes* pConstAttributes )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddArc(IntPtr pModel, ref Arc pArc, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddCircle(ONX_Model* pModel, const ON_CIRCLE_STRUCT* pCircle, const ON_3dmObjectAttributes* pConstAttributes )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddCircle(IntPtr pModel, ref Circle pCircle, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddEllipse(ONX_Model* pModel, ON_Ellipse* pEllipse, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddEllipse(IntPtr pModel, ref Ellipse pEllipse, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddSphere(ONX_Model* pModel, ON_Sphere* sphere, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddSphere(IntPtr pModel, ref Sphere sphere, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddCurve(ONX_Model* pModel, const ON_Curve* pConstCurve, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddCurve(IntPtr pModel, IntPtr pConstCurve, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddTextDot(ONX_Model* pModel, const ON_TextDot* pConstDot, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddTextDot(IntPtr pModel, IntPtr pConstDot, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddText(ONX_Model* pModel, const RHMONO_STRING* _text, const ON_PLANE_STRUCT* plane, double height, const RHMONO_STRING* _fontName, int fontStyle, int justification, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddText(IntPtr pModel, [MarshalAs(UnmanagedType.LPWStr)]string _text, ref Plane plane, double height, [MarshalAs(UnmanagedType.LPWStr)]string _fontName, int fontStyle, int justification, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddSurface(ONX_Model* pModel, const ON_Surface* pConstSurface, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddSurface(IntPtr pModel, IntPtr pConstSurface, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddExtrusion(ONX_Model* pModel, const ON_Extrusion* pConstExtrusion, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddExtrusion(IntPtr pModel, IntPtr pConstExtrusion, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddMesh(ONX_Model* pModel, const ON_Mesh* pConstMesh, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddMesh(IntPtr pModel, IntPtr pConstMesh, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddBrep(ONX_Model* pModel, const ON_Brep* pConstBrep, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddBrep(IntPtr pModel, IntPtr pConstBrep, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddLeader(ONX_Model* pModel, const RHMONO_STRING* _text, const ON_PLANE_STRUCT* plane, int count, /*ARRAY*/const ON_2dPoint* points2d, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddLeader(IntPtr pModel, [MarshalAs(UnmanagedType.LPWStr)]string _text, ref Plane plane, int count, Point2d[] points2d, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddHatch(ONX_Model* pModel, const ON_Hatch* pConstHatch, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddHatch(IntPtr pModel, IntPtr pConstHatch, IntPtr pConstAttributes);
+
+  //ON_UUID ONX_Model_ObjectTable_AddPolyLine(ONX_Model* pModel, int count, /*ARRAY*/const ON_3dPoint* points, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ObjectTable_AddPolyLine(IntPtr pModel, int count, Point3d[] points, IntPtr pConstAttributes);
 
   //void ONX_Model_BoundingBox(const ONX_Model* pConstModel, ON_BoundingBox* pBBox)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -703,6 +816,26 @@ internal partial class UnsafeNativeMethods
   //void ONX_Model_LayerTable_Clear(ONX_Model* pModel)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_LayerTable_Clear(IntPtr pModel);
+
+  //void ONX_Model_GetString( const ONX_Model* pConstModel, int which, CRhCmnStringHolder* pString )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_GetString(IntPtr pConstModel, int which, IntPtr pString);
+
+  //void ONX_Model_SetString( ONX_Model* pModel, int which, const RHMONO_STRING* str )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_SetString(IntPtr pModel, int which, [MarshalAs(UnmanagedType.LPWStr)]string str);
+
+  //int ONX_Model_GetRevision(const ONX_Model* pConstModel)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ONX_Model_GetRevision(IntPtr pConstModel);
+
+  //void ONX_Model_SetRevision(ONX_Model* pModel, int rev)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_SetRevision(IntPtr pModel, int rev);
+
+  //ON_3dmSettings* ONX_Model_3dmSettingsPointer(ONX_Model* pModel)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_3dmSettingsPointer(IntPtr pModel);
   #endregion
 
 
@@ -3217,6 +3350,45 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region on_rtree.cpp
+  //ON_RTree* ON_RTree_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_RTree_New();
+
+  //void ON_RTree_Delete(ON_RTree* pTree)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_RTree_Delete(IntPtr pTree);
+
+  //bool ON_RTree_CreateMeshFaceTree(ON_RTree* pTree, const ON_Mesh* pConstMesh)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_RTree_CreateMeshFaceTree(IntPtr pTree, IntPtr pConstMesh);
+
+  //bool ON_RTree_Search(const ON_RTree* pConstTree, ON_3DPOINT_STRUCT pt0, ON_3DPOINT_STRUCT pt1, int serial_number, RTREESEARCHPROC searchCB)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //bool ON_RTree_Search2(const ON_RTree* pConstTreeA, const ON_RTree* pConstTreeB, double tolerance, int serial_number, RTREESEARCHPROC searchCB)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //bool ON_RTree_InsertRemove(ON_RTree* pTree, bool insert, ON_3DPOINT_STRUCT pt0, ON_3DPOINT_STRUCT pt1, void* elementId)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_RTree_InsertRemove(IntPtr pTree, [MarshalAs(UnmanagedType.U1)]bool insert, Point3d pt0, Point3d pt1, IntPtr elementId);
+
+  //void ON_RTree_RemoveAll(ON_RTree* pTree)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_RTree_RemoveAll(IntPtr pTree);
+
+  //unsigned int ON_RTree_SizeOf(const ON_RTree* pConstTree)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern uint ON_RTree_SizeOf(IntPtr pConstTree);
+
+  //int ON_RTree_ElementCount(ON_RTree* pTree)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_RTree_ElementCount(IntPtr pTree);
+  #endregion
+
+
   #region on_sphere.cpp
   //ON_NurbsSurface* ON_Sphere_GetNurbsForm(ON_Sphere* sphere)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4328,6 +4500,9 @@ internal partial class UnsafeNativeMethods
   //void CRhinoCommand_SetRunCommandCallback(RUNCOMMANDPROC run_func)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
+  //void CRhinoCommand_SetSelCommandCallback(SELCOMMANDPROC sel_func)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
   //bool CRhinoCommand_IsValidCommandName( const RHMONO_STRING* _name)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -4342,10 +4517,20 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool RhCommand_IsCommand([MarshalAs(UnmanagedType.LPWStr)]string _command_name);
 
-  //bool CRhinoCommand_Create(CRhinoPlugIn* pPlugIn, ON_UUID cmdId, const RHMONO_STRING* _englishName, const RHMONO_STRING* _localName, int serial_number, int commandStyle, bool transformCommand)
+  //bool CRhinoSelCommand_GetBool( ON_UUID command_id, int which )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool CRhinoCommand_Create(IntPtr pPlugIn, Guid cmdId, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, [MarshalAs(UnmanagedType.LPWStr)]string _localName, int serial_number, int commandStyle, [MarshalAs(UnmanagedType.U1)]bool transformCommand);
+  internal static extern bool CRhinoSelCommand_GetBool(Guid command_id, int which);
+
+  //void CRhinoSelCommand_SetBool( ON_UUID command_id, int which, bool val )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoSelCommand_SetBool(Guid command_id, int which, [MarshalAs(UnmanagedType.U1)]bool val);
+
+  //bool CRhinoCommand_Create(CRhinoPlugIn* pPlugIn, ON_UUID cmdId, const RHMONO_STRING* _englishName, const RHMONO_STRING* _localName,
+  //                                 int serial_number, int commandStyle, int commandtype)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoCommand_Create(IntPtr pPlugIn, Guid cmdId, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, [MarshalAs(UnmanagedType.LPWStr)]string _localName, int serial_number, int commandStyle, int commandtype);
 
   //ON_UUID CRhinoApp_LookupCommandByName( const RHMONO_STRING* _name )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6773,6 +6958,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoMaterialTable_ModifyMaterial(int docId, IntPtr pConstMaterial, int materialIndex, [MarshalAs(UnmanagedType.U1)]bool quiet);
+
+  //bool CRhinoMaterialTable_DeleteMaterial(int docId, int materialIndex)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoMaterialTable_DeleteMaterial(int docId, int materialIndex);
 
   //int CRhinoMaterialTable_FindByName(int docId, const RHMONO_STRING* _name, bool ignoreDeleted)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

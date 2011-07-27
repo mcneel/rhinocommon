@@ -499,6 +499,20 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoMaterialTable_ResetMaterial(m_doc.m_docId, materialIndex);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="materialIndex"></param>
+    /// <returns>
+    /// true if successful. false if material_index is out of range or the
+    /// material cannot be deleted because it is the current material or because
+    /// it material contains active geometry.
+    /// </returns>
+    public bool DeleteAt(int materialIndex)
+    {
+      return UnsafeNativeMethods.CRhinoMaterialTable_DeleteMaterial(m_doc.m_docId, materialIndex);
+    }
+
     #region enumerator
     public IEnumerator<Material> GetEnumerator()
     {

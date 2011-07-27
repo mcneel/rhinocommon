@@ -290,12 +290,14 @@ namespace Rhino
     public static void SetCommandPrompt(string prompt, string promptDefault)
     {
       UnsafeNativeMethods.CRhinoApp_SetCommandPrompt(prompt, promptDefault);
+      RhinoApp.Wait();
     }
     ///<summary>Set Rhino command prompt</summary>
     ///<param name="prompt"></param>
     public static void SetCommandPrompt(string prompt)
     {
       UnsafeNativeMethods.CRhinoApp_SetCommandPrompt(prompt, null);
+      RhinoApp.Wait();
     }
 
     ///<summary>Rhino command prompt.</summary>

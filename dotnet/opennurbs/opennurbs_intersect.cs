@@ -773,6 +773,13 @@ namespace Rhino.Geometry.Intersect
       return intersectionLines;
     }
 
+    /// <summary>
+    /// Intersect two meshes. Overlaps and near misses are handled.
+    /// </summary>
+    /// <param name="meshA">First mesh for intersection.</param>
+    /// <param name="meshB">Second mesh for intersection.</param>
+    /// <param name="tolerance">Intersection tolerance.</param>
+    /// <returns>An array of intersection polylines.</returns>
     public static Polyline[] MeshMeshAccurate(Mesh meshA, Mesh meshB, double tolerance)
     {
       IntPtr pMeshA = meshA.ConstPointer();

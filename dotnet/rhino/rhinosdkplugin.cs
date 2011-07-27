@@ -527,43 +527,60 @@ namespace Rhino.PlugIns
     }
     #endregion
 
-    string m_settings_dir;
+
+    string m_all_users_settings_dir;
+    public string AllUsersSettingsDirectory
+    {
+      get
+      {
+        if (string.IsNullOrEmpty(m_all_users_settings_dir))
+          m_all_users_settings_dir = SettingsDirectoryHelper(false);
+        return m_all_users_settings_dir;
+      }
+    }
+
+    string m_local_user_settings_dir;
     public string SettingsDirectory
     {
       get
       {
-        if (null == m_settings_dir)
-        {
-          string path = null;
-          if (HostUtils.RunningOnWindows)
-          {
-            if (string.IsNullOrEmpty(Name) || Id == Guid.Empty)
-              throw new Exception("PlugIn.SettingsDirectory can not be called before the Name and Id properties have been initialized.");
-            System.Globalization.CultureInfo ci = System.Globalization.CultureInfo.InvariantCulture;
-            string pluginName = string.Format(ci, "{0} ({1})", Name, Id.ToString().ToLower(ci));
-            // remove invalid characters from string
-            char[] invalid_chars = System.IO.Path.GetInvalidFileNameChars();
-            int index = pluginName.IndexOfAny(invalid_chars);
-            while (index >= 0)
-            {
-              pluginName = pluginName.Remove(index, 1);
-              index = pluginName.IndexOfAny(invalid_chars);
-            }
-            string commonDir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
-            char sep = System.IO.Path.DirectorySeparatorChar;
-            commonDir = System.IO.Path.Combine(commonDir, "McNeel" + sep + "Rhinoceros" + sep + "5.0" + sep + "Plug-ins");
-            path = System.IO.Path.Combine(commonDir, pluginName);
-          }
-          else if(HostUtils.RunningOnOSX)
-          {
-            // put the settings directory next to the rhp
-            path = System.IO.Path.GetDirectoryName(this.Assembly.Location);
-          }
-          if( path!=null)
-            m_settings_dir = System.IO.Path.Combine(path, "settings");
-        }
-        return m_settings_dir;
+        if (string.IsNullOrEmpty(m_local_user_settings_dir))
+          m_local_user_settings_dir = SettingsDirectoryHelper(true);
+        return m_local_user_settings_dir;
       }
+    }
+
+    private string SettingsDirectoryHelper(bool bLocalUser)
+    {
+      string result = null;
+      string path = null;
+      if (HostUtils.RunningOnWindows)
+      {
+        if (string.IsNullOrEmpty(Name) || Id == Guid.Empty)
+          throw new Exception("PlugIn.SettingsDirectory can not be called before the Name and Id properties have been initialized.");
+        System.Globalization.CultureInfo ci = System.Globalization.CultureInfo.InvariantCulture;
+        string pluginName = string.Format(ci, "{0} ({1})", Name, Id.ToString().ToLower(ci));
+        // remove invalid characters from string
+        char[] invalid_chars = System.IO.Path.GetInvalidFileNameChars();
+        int index = pluginName.IndexOfAny(invalid_chars);
+        while (index >= 0)
+        {
+          pluginName = pluginName.Remove(index, 1);
+          index = pluginName.IndexOfAny(invalid_chars);
+        }
+        string commonDir = System.Environment.GetFolderPath(bLocalUser ? System.Environment.SpecialFolder.ApplicationData : System.Environment.SpecialFolder.CommonApplicationData);
+        char sep = System.IO.Path.DirectorySeparatorChar;
+        commonDir = System.IO.Path.Combine(commonDir, "McNeel" + sep + "Rhinoceros" + sep + "5.0" + sep + "Plug-ins");
+        path = System.IO.Path.Combine(commonDir, pluginName);
+      }
+      else if(HostUtils.RunningOnOSX)
+      {
+        // put the settings directory next to the rhp
+        path = System.IO.Path.GetDirectoryName(this.Assembly.Location);
+      }
+      if( path!=null)
+        result = System.IO.Path.Combine(path, "settings");
+      return result;
     }
 
 
@@ -572,21 +589,25 @@ namespace Rhino.PlugIns
       get 
       {
         if (m_SettingsManager == null)
-        {
           m_SettingsManager = new PersistentSettingsManager(this);
-        }
-
         return m_SettingsManager.PluginSettings;
+      }
+    }
+
+    public PersistentSettings AllUsersSettings
+    {
+      get
+      {
+        if (m_SettingsManager == null)
+          m_SettingsManager = new PersistentSettingsManager(this);
+        return m_SettingsManager.AllUsersPluginSettings;
       }
     }
 
     public PersistentSettings CommandSettings(string name)
     {
       if (m_SettingsManager == null)
-      {
         m_SettingsManager = new PersistentSettingsManager(this);
-      }
-
       return m_SettingsManager.CommandSettings(name);
     }
 

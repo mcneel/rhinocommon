@@ -121,7 +121,7 @@ namespace Rhino.Commands
     internal Style m_style_flags;
     internal Rhino.PlugIns.PlugIn m_plugin;
 
-    static Command LookUpBySerialNumber(int sn)
+    internal static Command LookUpBySerialNumber(int sn)
     {
       for (int i = 0; i < m_all_commands.Count; i++)
       {
@@ -522,10 +522,75 @@ namespace Rhino.Commands
     public bool IsEndRedo { get { return 6 == m_event_type; } }
     public bool IsPurgeRecord { get { return 86 == m_event_type; } }
   }
-  //public class SelCommand : Command { }
-  //public class RhinoHistory { }
 
+  /// <summary>
+  /// For adding nestable selection commands that work like the native Rhino
+  /// SelCrv command, derive your command from SelCommand and override the
+  /// virtual SelFilter function.
+  /// </summary>
+  public abstract class SelCommand : Command
+  {
+    // only allow instantiation through subclassing
+    protected SelCommand()
+    {
+      // set RunCommand and callback if it hasn't already been set
+      if (null == m_SelFilter)
+      {
+        m_SelFilter = OnSelFilter;
+        UnsafeNativeMethods.CRhinoCommand_SetSelCommandCallback(m_SelFilter);
+      }
+    }
 
+    protected override Result RunCommand(RhinoDoc doc, RunMode mode) { return Result.Success; }
+
+    /// <summary>
+    /// Override this virtual function and return true if object should be selected.
+    /// </summary>
+    /// <param name="rhObj"></param>
+    /// <returns></returns>
+    protected abstract bool SelFilter(Rhino.DocObjects.RhinoObject rhObj);
+    static int OnSelFilter(int command_serial_number, IntPtr pRhinoObject)
+    {
+      int rc = 0;
+      try
+      {
+        SelCommand cmd = Command.LookUpBySerialNumber(command_serial_number) as SelCommand;
+        rc = cmd.SelFilter(Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(pRhinoObject)) ? 1:0;
+      }
+      catch (Exception ex)
+      {
+        Runtime.HostUtils.DebugString("Exception caught during SelFilter");
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+      return rc;
+    }
+
+    const int idxTestLights = 0;
+    const int idxTestGrips = 1;
+    const int idxBeQuite = 2;
+
+    public bool TestLights
+    {
+      get { return UnsafeNativeMethods.CRhinoSelCommand_GetBool(Id, idxTestLights); }
+      set { UnsafeNativeMethods.CRhinoSelCommand_SetBool(Id, idxTestLights, value); }
+    }
+    public bool TestGrips
+    {
+      get { return UnsafeNativeMethods.CRhinoSelCommand_GetBool(Id, idxTestGrips); }
+      set { UnsafeNativeMethods.CRhinoSelCommand_SetBool(Id, idxTestGrips, value); }
+    }
+    public bool BeQuiet
+    {
+      get { return UnsafeNativeMethods.CRhinoSelCommand_GetBool(Id, idxBeQuite); }
+      set { UnsafeNativeMethods.CRhinoSelCommand_SetBool(Id, idxBeQuite, value); }
+    }
+
+    internal delegate int SelFilterCallback(int command_id, IntPtr pRhinoObject);
+    private static SelFilterCallback m_SelFilter;
+
+  }
+
+#if USING_V5_SDK
   public abstract class TransformCommand : Command
   {
     protected Result SelectObjects( string prompt, Rhino.Collections.TransformObjectList list )
@@ -563,4 +628,6 @@ namespace Rhino.Commands
     //CRhinoView* View() { return m_view; }
     //bool ObjectsWerePreSelected() { return m_objects_were_preselected; }
   }
+#endif
+  //public class RhinoHistory { }
 }

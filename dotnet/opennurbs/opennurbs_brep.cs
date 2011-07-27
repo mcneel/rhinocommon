@@ -774,7 +774,7 @@ namespace Rhino.Geometry
       IntPtr pInput = input.NonConstPointer();
       IntPtr pNewBrep = UnsafeNativeMethods.RHC_RhinoMergeBreps(pInput, tolerance);
       Brep rc = null;
-      if (pNewBrep!=IntPtr.Zero)
+      if (pNewBrep != IntPtr.Zero)
         rc = new Brep(pNewBrep, null);
       input.Dispose();
       return rc;
@@ -813,7 +813,7 @@ namespace Rhino.Geometry
 
     // serialization constructor
     protected Brep(SerializationInfo info, StreamingContext context)
-      : base (info, context)
+      : base(info, context)
     {
     }
     #endregion
@@ -1351,21 +1351,21 @@ namespace Rhino.Geometry
     #endregion
 
     #region properties
-    
-//    ON_U m_edge_user;
-//    int m_edge_index;    
-//    ON_BrepTrim* Trim( int eti ) const;
-//    ON_BrepVertex* Vertex(int evi) const;
-//    int EdgeCurveIndexOf() const;
-//    const ON_Curve* EdgeCurveOf() const;
-//    bool ChangeEdgeCurve( int c3i );
-//    void UnsetPlineEdgeParameters();
-//    int m_c3i;
-//    int m_vi[2];
-//    ON_SimpleArray<int> m_ti;
+
+    //    ON_U m_edge_user;
+    //    int m_edge_index;    
+    //    ON_BrepTrim* Trim( int eti ) const;
+    //    ON_BrepVertex* Vertex(int evi) const;
+    //    int EdgeCurveIndexOf() const;
+    //    const ON_Curve* EdgeCurveOf() const;
+    //    bool ChangeEdgeCurve( int c3i );
+    //    void UnsetPlineEdgeParameters();
+    //    int m_c3i;
+    //    int m_vi[2];
+    //    ON_SimpleArray<int> m_ti;
 
     /// <summary>
-    /// accuracy of edge curve (>=0.0 or RhinoMath.UnsetValue)
+    /// Gets or sets the accuracy of the edge curve (>=0.0 or RhinoMath.UnsetValue)
     /// A value of UnsetValue indicates that the tolerance should be computed.
     ///
     /// The maximum distance from the edge's 3d curve to any surface of a face
@@ -1385,7 +1385,9 @@ namespace Rhino.Geometry
       }
     }
 
-    /// <summary>Number of trim-curves that use this edge.</summary>
+    /// <summary>
+    /// Gets the number of trim-curves that use this edge.
+    /// </summary>
     public int TrimCount
     {
       get
@@ -1420,12 +1422,21 @@ namespace Rhino.Geometry
       }
     }
 
-    /// <summary>Brep this edge belongs to</summary>
+    /// <summary>
+    /// Gets the Brep that owns this edge.
+    /// </summary>
     public Brep Brep
     {
       get { return m_brep; }
     }
 
+    /// <summary>
+    /// Gets the index of this edge in the Brep.Edges collection.
+    /// </summary>
+    public int EdgeIndex
+    {
+      get { return m_index; }
+    }
     #endregion
 
     #region methods
@@ -1536,9 +1547,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Pulls one or more points to a brep face
     /// </summary>
-    /// <param name="points"></param>
-    /// <param name="tolerance"></param>
-    /// <returns></returns>
+    /// <param name="points">Points to pull.</param>
+    /// <param name="tolerance">Tolerance for pulling operation. Only points that are closer than tolerance will be pulled to the face.</param>
+    /// <returns>An array of pulled points.</returns>
     public Point3d[] PullPointsToFace(IEnumerable<Point3d> points, double tolerance)
     {
       int count;
@@ -1552,6 +1563,41 @@ namespace Rhino.Geometry
         int points_pulled = UnsafeNativeMethods.RHC_RhinoPullPointsToFace(pBrep, m_index, count, inpoints, pOutPoints, tolerance);
         return points_pulled < 1 ? new Point3d[0] : outpoints.ToArray();
       }
+    }
+#else
+    /// <summary>
+    /// Pulls one or more points to a brep face. This method has been backported in 
+    /// Rhino4 and is not guaranteed to work in the same way as it works within Rhino5.
+    /// </summary>
+    /// <param name="points">Points to pull.</param>
+    /// <param name="tolerance">Tolerance for pulling operation. Only points that are closer than tolerance will be pulled to the face.</param>
+    /// <returns>An array of pulled points.</returns>
+    public Point3d[] PullPointsToFace(IEnumerable<Point3d> points, double tolerance)
+    {
+      if (points == null) { throw new ArgumentNullException("points"); }
+
+      List<Point3d> pulledPoints = new List<Point3d>();
+      foreach (Point3d point in points)
+      {
+        double u, v;
+        if (!ClosestPoint(point, out u, out v))
+          continue;
+
+        if (this.IsPointOnFace(u, v) == PointFaceRelation.Exterior)
+          continue;
+
+        Point3d pp = PointAt(u, v);
+        Vector3d nn = NormalAt(u, v);
+
+        double localTolerance = tolerance * point.DistanceTo(pp);
+        if (localTolerance < RhinoMath.SqrtEpsilon) { localTolerance = RhinoMath.SqrtEpsilon; }
+
+        if (point.DistanceTo(pp + nn * ((point - pp) * nn)) > localTolerance)
+          continue;
+
+        pulledPoints.Add(pp);
+      }
+      return pulledPoints.ToArray();
     }
 #endif
 

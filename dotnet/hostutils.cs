@@ -430,9 +430,15 @@ namespace Rhino.Runtime
         string englishName = new_command.EnglishName;
         string localName = new_command.LocalName;
 
-        bool isTransformCommand = command_type.IsSubclassOf(typeof(Commands.TransformCommand));
+        int ct = 0;
+#if USING_V5_SDK
+        if (command_type.IsSubclassOf(typeof(Commands.TransformCommand)))
+          ct = 1;
+#endif
+        if (command_type.IsSubclassOf(typeof(Commands.SelCommand)))
+          ct = 2;
 
-        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle, isTransformCommand);
+        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle, ct);
 
         rc = true;
       }
@@ -465,7 +471,7 @@ namespace Rhino.Runtime
         string localName = cmd.LocalName;
         const int commandStyle = 2; //scripted
         Guid id = cmd.Id;
-        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle, false);
+        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle, 0);
 
         rc = true;
       }

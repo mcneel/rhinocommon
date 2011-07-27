@@ -385,6 +385,14 @@ namespace Rhino
       get { return GetBool(idxIsDocumentLocked); }
     }
 
+    /// <summary>
+    /// Gets the Document Id.
+    /// </summary>
+    public int DocumentId
+    {
+      get { return m_docId; }
+    }
+
     public Rhino.DocObjects.EarthAnchorPoint EarthAnchorPoint
     {
       get { return new Rhino.DocObjects.EarthAnchorPoint(this); }
@@ -1479,9 +1487,26 @@ namespace Rhino
       m_docId = docId;
     }
 
+    /// <summary>
+    /// Gets the document Id of the document for this event.
+    /// </summary>
+    public int DocumentId
+    {
+      get { return m_docId;}
+    }
+
+    /// <summary>
+    /// Gets the document for this event. This field might be null.
+    /// </summary>
     public RhinoDoc Document
     {
-      get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_docId)); }
+      get
+      {
+        if (m_doc == null)
+          m_doc = RhinoDoc.FromId(m_docId);
+
+        return m_doc;
+      }
     }
   }
 
@@ -2179,7 +2204,7 @@ namespace Rhino.DocObjects.Tables
       oes.SelectedObjectsFilter = false;
 
       oes.ObjectTypeFilter = filter;
-      
+
       return FindByUserString(key, value, caseSensitive, searchGeometry, searchAttributes, oes);
     }
     /// <summary>

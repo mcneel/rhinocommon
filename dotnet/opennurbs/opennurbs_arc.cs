@@ -149,6 +149,7 @@ namespace Rhino.Geometry
 
       this = new Arc(pointA, pointA + vectorBS, pointB);
     }
+
     #endregion
 
     #region properties

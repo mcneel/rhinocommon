@@ -17,7 +17,14 @@ namespace Rhino.DocObjects
     internal override IntPtr _InternalGetConstPointer()
     {
       uint serial_number = 0;
-      Rhino.DocObjects.RhinoObject parent_object = ParentRhinoObject();
+      
+      Rhino.DocObjects.RhinoObject parent_object = m__parent as Rhino.DocObjects.RhinoObject;
+      if (null == parent_object)
+      {
+        Rhino.FileIO.File3dmObject parent_model_object = m__parent as Rhino.FileIO.File3dmObject;
+        if (parent_model_object != null)
+          return parent_model_object.GetAttributesConstPointer();
+      }
       if (null != parent_object)
         serial_number = parent_object.m_rhinoobject_serial_number;
       return UnsafeNativeMethods.CRhinoObject_Attributes(serial_number);
@@ -31,6 +38,11 @@ namespace Rhino.DocObjects
     internal ObjectAttributes(RhinoObject parentObject)
     {
       ConstructConstObject(parentObject, -1);
+    }
+
+    internal ObjectAttributes(Rhino.FileIO.File3dmObject parent)
+    {
+      ConstructConstObject(parent, -1);
     }
 
     public ObjectAttributes()

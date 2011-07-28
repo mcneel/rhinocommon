@@ -13,6 +13,7 @@ namespace Rhino.Geometry
     bool m_bClosed = true;
     double m_sweep_tol = -1;
     double m_angle_tol = -1;
+    int m_miter_type = 1;
 
     /// <example>
     /// <code source='examples\vbnet\ex_sweep1.vb' lang='vbnet'/>
@@ -95,6 +96,15 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// 0: don't miter,  1: intersect surfaces and trim sweeps,  2: rotate shapes at kinks and don't trim
+    /// </summary>
+    public int MiterType
+    {
+      get { return m_miter_type; }
+      set { m_miter_type = value; }
+    }
+
+    /// <summary>
     /// If the input rail is closed, ClosedSweep determines if the swept breps will also
     /// be closed.
     /// </summary>
@@ -151,7 +161,7 @@ namespace Rhino.Geometry
     {
       IntPtr m_ptr; //CArgsRhinoSweep1*
       public static ArgsSweep1 Construct(Curve rail, IEnumerable<Curve> crossSections, IEnumerable<double> crossSectionParameters,
-        Vector3d roadlike_up, bool closed, double sweep_tol, double angle_tol)
+        Vector3d roadlike_up, bool closed, double sweep_tol, double angle_tol, int miter_type)
       {
         ArgsSweep1 rc = new ArgsSweep1();
         List<Curve> xsec = new List<Curve>(crossSections);
@@ -165,7 +175,7 @@ namespace Rhino.Geometry
         Runtime.InteropWrappers.SimpleArrayCurvePointer sections = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer(crossSections);
         IntPtr pSections = sections.ConstPointer();
         double[] tvals = xsec_t.ToArray();
-        rc.m_ptr = UnsafeNativeMethods.CArgsRhinoSweep1_New(pConstRail, pSections, tvals, roadlike_up, closed, sweep_tol, angle_tol);
+        rc.m_ptr = UnsafeNativeMethods.CArgsRhinoSweep1_New(pConstRail, pSections, tvals, roadlike_up, closed, sweep_tol, angle_tol, miter_type);
         sections.Dispose();
         return rc;
       }
@@ -209,7 +219,7 @@ namespace Rhino.Geometry
         crossSectionParameters = par;
       }
 
-      ArgsSweep1 sweep = ArgsSweep1.Construct(rail, crossSections, crossSectionParameters, m_roadlike_up, m_bClosed, m_sweep_tol, m_angle_tol);
+      ArgsSweep1 sweep = ArgsSweep1.Construct(rail, crossSections, crossSectionParameters, m_roadlike_up, m_bClosed, m_sweep_tol, m_angle_tol, m_miter_type);
       Runtime.INTERNAL_BrepArray breps = new Rhino.Runtime.INTERNAL_BrepArray();
       IntPtr pArgsSweep1 = sweep.NonConstPointer();
       IntPtr pBreps = breps.NonConstPointer();
@@ -247,7 +257,7 @@ namespace Rhino.Geometry
 
     public Brep[] PerformSweepRefit(Curve rail, IEnumerable<Curve> crossSections, IEnumerable<double> crossSectionParameters, double refitTolerance)
     {
-      ArgsSweep1 sweep = ArgsSweep1.Construct(rail, crossSections, crossSectionParameters, m_roadlike_up, m_bClosed, m_sweep_tol, m_angle_tol);
+      ArgsSweep1 sweep = ArgsSweep1.Construct(rail, crossSections, crossSectionParameters, m_roadlike_up, m_bClosed, m_sweep_tol, m_angle_tol, m_miter_type);
       Runtime.INTERNAL_BrepArray breps = new Rhino.Runtime.INTERNAL_BrepArray();
       IntPtr pArgsSweep1 = sweep.NonConstPointer();
       IntPtr pBreps = breps.NonConstPointer();
@@ -285,7 +295,7 @@ namespace Rhino.Geometry
 
     public Brep[] PerformSweepRebuild(Curve rail, IEnumerable<Curve> crossSections, IEnumerable<double> crossSectionParameters, int rebuildCount)
     {
-      ArgsSweep1 sweep = ArgsSweep1.Construct(rail, crossSections, crossSectionParameters, m_roadlike_up, m_bClosed, m_sweep_tol, m_angle_tol);
+      ArgsSweep1 sweep = ArgsSweep1.Construct(rail, crossSections, crossSectionParameters, m_roadlike_up, m_bClosed, m_sweep_tol, m_angle_tol, m_miter_type);
       Runtime.INTERNAL_BrepArray breps = new Rhino.Runtime.INTERNAL_BrepArray();
       IntPtr pArgsSweep1 = sweep.NonConstPointer();
       IntPtr pBreps = breps.NonConstPointer();
@@ -302,7 +312,7 @@ namespace Rhino.Geometry
   /// Utility class for generating breps by sweeping cross section curves over
   /// two rail curves
   /// </summary>
-  public class SweepTwoRail
+  /*public*/ class SweepTwoRail
   {
     public SweepTwoRail()
     { }

@@ -5710,9 +5710,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoGet_AddCommandOptionLoc(IntPtr pRhinoGet, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, [MarshalAs(UnmanagedType.LPWStr)]string _localName, [MarshalAs(UnmanagedType.LPWStr)]string _englishVal, [MarshalAs(UnmanagedType.LPWStr)]string _localVal, [MarshalAs(UnmanagedType.U1)]bool hiddenOption);
 
-  //int CRhinoGet_AddCommandOptionList(CRhinoGet* pRhinoGet, const RHMONO_STRING* english_name, ON_ClassArray<ON_wString>* pStrings, int listIndex)
+  //int CRhinoGet_AddCommandOptionListLoc(CRhinoGet* pRhinoGet, const RHMONO_STRING* english_name, const RHMONO_STRING* local_name,
+  //    ON_ClassArray<ON_wString>* pEnglishStrings, ON_ClassArray<ON_wString>* pLocalStrings, int listIndex)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int CRhinoGet_AddCommandOptionList(IntPtr pRhinoGet, [MarshalAs(UnmanagedType.LPWStr)]string english_name, IntPtr pStrings, int listIndex);
+  internal static extern int CRhinoGet_AddCommandOptionListLoc(IntPtr pRhinoGet, [MarshalAs(UnmanagedType.LPWStr)]string english_name, [MarshalAs(UnmanagedType.LPWStr)]string local_name, IntPtr pEnglishStrings, IntPtr pLocalStrings, int listIndex);
 
   //CRhCommonOptionHolder* CRhCommonOptionHolder_New(double dVal)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5755,13 +5756,13 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhCommonOptionHolder_SetBool(IntPtr pHolder, [MarshalAs(UnmanagedType.U1)]bool val);
 
-  //int CRhinoGet_AddCommandOption3( CRhinoGet* pRhinoGet, const RHMONO_STRING* _englishName, CRhCommonOptionHolder* pHolder, double lowerLimit, double upperLimit, const RHMONO_STRING* _prompt)
+  //int CRhinoGet_AddCommandOption3Loc( CRhinoGet* pRhinoGet, const RHMONO_STRING* _englishName, const RHMONO_STRING* _localName, CRhCommonOptionHolder* pHolder, double lowerLimit, double upperLimit, const RHMONO_STRING* _prompt)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int CRhinoGet_AddCommandOption3(IntPtr pRhinoGet, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, IntPtr pHolder, double lowerLimit, double upperLimit, [MarshalAs(UnmanagedType.LPWStr)]string _prompt);
+  internal static extern int CRhinoGet_AddCommandOption3Loc(IntPtr pRhinoGet, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, [MarshalAs(UnmanagedType.LPWStr)]string _localName, IntPtr pHolder, double lowerLimit, double upperLimit, [MarshalAs(UnmanagedType.LPWStr)]string _prompt);
 
-  //int CRhinoGet_AddCommandOption4( CRhinoGet* pRhinoGet, const RHMONO_STRING* _englishName, CRhCommonOptionHolder* pHolder, double lowerLimit, double upperLimit, const RHMONO_STRING* _prompt)
+  //int CRhinoGet_AddCommandOption4Loc( CRhinoGet* pRhinoGet, const RHMONO_STRING* _englishName, const RHMONO_STRING* _localName, CRhCommonOptionHolder* pHolder, double lowerLimit, double upperLimit, const RHMONO_STRING* _prompt)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int CRhinoGet_AddCommandOption4(IntPtr pRhinoGet, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, IntPtr pHolder, double lowerLimit, double upperLimit, [MarshalAs(UnmanagedType.LPWStr)]string _prompt);
+  internal static extern int CRhinoGet_AddCommandOption4Loc(IntPtr pRhinoGet, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, [MarshalAs(UnmanagedType.LPWStr)]string _localName, IntPtr pHolder, double lowerLimit, double upperLimit, [MarshalAs(UnmanagedType.LPWStr)]string _prompt);
 
   //void CRhinoGet_ClearCommandOptions( CRhinoGet* pRhinoGet)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5779,12 +5780,12 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoCommandOption_EnglishName(IntPtr pOption);
 
-  //int CRhinoGet_AddCommandOptionToggle(CRhinoGet* pRhinoGet, CRhCommonOptionHolder* pHolder,
-  //                                                   const RHMONO_STRING* _englishName, 
+  //int CRhinoGet_AddCommandOptionToggleLoc(CRhinoGet* pRhinoGet, CRhCommonOptionHolder* pHolder,
+  //                                                   const RHMONO_STRING* _englishName, const RHMONO_STRING* _localName,
   //                                                   const RHMONO_STRING* _offValue, 
   //                                                   const RHMONO_STRING* _onValue)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int CRhinoGet_AddCommandOptionToggle(IntPtr pRhinoGet, IntPtr pHolder, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, [MarshalAs(UnmanagedType.LPWStr)]string _offValue, [MarshalAs(UnmanagedType.LPWStr)]string _onValue);
+  internal static extern int CRhinoGet_AddCommandOptionToggleLoc(IntPtr pRhinoGet, IntPtr pHolder, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, [MarshalAs(UnmanagedType.LPWStr)]string _localName, [MarshalAs(UnmanagedType.LPWStr)]string _offValue, [MarshalAs(UnmanagedType.LPWStr)]string _onValue);
 
   //unsigned int RHC_RhinoGetSpiralHelix( ON_NurbsCurve* curve, bool spiral )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -7714,9 +7715,10 @@ internal partial class UnsafeNativeMethods
   //                                                     ON_3DVECTOR_STRUCT up,
   //                                                     bool closed,
   //                                                     double sweep_tol,
-  //                                                     double angle_tol)
+  //                                                     double angle_tol,
+  //                                                     int miter_type)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr CArgsRhinoSweep1_New(IntPtr pConstRailCurve, IntPtr pConstSectionCurves, double[] tvals, Vector3d up, [MarshalAs(UnmanagedType.U1)]bool closed, double sweep_tol, double angle_tol);
+  internal static extern IntPtr CArgsRhinoSweep1_New(IntPtr pConstRailCurve, IntPtr pConstSectionCurves, double[] tvals, Vector3d up, [MarshalAs(UnmanagedType.U1)]bool closed, double sweep_tol, double angle_tol, int miter_type);
 
   //void CArgsRhinoSweep1_Delete(CArgsRhinoSweep1* pArgsSweep1)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

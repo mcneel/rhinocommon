@@ -312,6 +312,46 @@ namespace Rhino.Runtime
       DebugString(msg);
     }
 
+    static System.Windows.Forms.Form m_invoke_window = null;
+    static void CreateInvokeWindow()
+    {
+      // 27 July 2011 - S. Baer
+      // David: uncomment the following and test to see if this works for you. My tests appeared to work,
+      //        but they really weren't thorough enough.
+      /*
+      if (m_invoke_window != null)
+        return;
+
+      m_invoke_window = new System.Windows.Forms.Form();
+      m_invoke_window.Text = "RhinoCommon_Invoke";
+      m_invoke_window.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+      m_invoke_window.ShowInTaskbar = false;
+      m_invoke_window.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+      m_invoke_window.Location = new System.Drawing.Point(-1000, -1000);
+      m_invoke_window.Size = new System.Drawing.Size(1, 1);
+      m_invoke_window.Visible = false;
+      m_invoke_window.Enabled = false;
+      m_invoke_window.Show();
+      m_invoke_window.Hide();
+      */
+    }
+
+    public static object InvokeOnMainUiThread(Delegate method)
+    {
+      if (m_invoke_window != null && RunningOnWindows && m_invoke_window.InvokeRequired)
+        return m_invoke_window.Invoke(method);
+
+      return method.DynamicInvoke(null);
+    }
+
+    public static object InvokeOnMainUiThread(Delegate method, params object[] args)
+    {
+      if (m_invoke_window != null && RunningOnWindows && m_invoke_window.InvokeRequired)
+        return m_invoke_window.Invoke(method, args);
+
+      return method.DynamicInvoke(args);
+    }
+
     /// <summary>
     /// Text description of the geometry's contents. DebugDump()
     /// is intended for debugging and is not suitable for
@@ -612,8 +652,9 @@ namespace Rhino.Runtime
       m_rhinocommoninitialized = true;
 
       AssemblyResolver.InitializeAssemblyResolving();
-      UnsafeNativeMethods.RHC_SetPythonEvaluateCallback(m_evaluate_callback);
       UnsafeNativeMethods.RHC_SetGetNowProc(m_getnow_callback, m_getformattedtime_callback);
+      UnsafeNativeMethods.RHC_SetPythonEvaluateCallback(m_evaluate_callback);
+      CreateInvokeWindow();
     }
 
     public static PlugIn CreatePlugIn(Type pluginType, bool printDebugMessages)

@@ -1111,9 +1111,28 @@ namespace Rhino.Input.Custom
     /// </returns>
     public int AddOptionDouble(string englishName, ref Rhino.Input.Custom.OptionDouble numberValue, string prompt)
     {
+      return AddOptionDouble(new Rhino.UI.LocalizeStringPair(englishName, englishName), ref numberValue, prompt);
+    }
+
+    /// <summary>
+    /// Add a command line option to get numbers and automatically save the value
+    /// </summary>
+    /// <param name="optionName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
+    /// <param name="numberValue"></param>
+    /// <param name="prompt">
+    /// option prompt shown if the user selects this option.  If null or empty, then the
+    /// option name is used as the get number prompt.
+    /// </param>
+    /// <returns>
+    /// option index value (>0) or 0 if option cannot be added
+    /// </returns>
+    public int AddOptionDouble(Rhino.UI.LocalizeStringPair optionName, ref Rhino.Input.Custom.OptionDouble numberValue, string prompt)
+    {
       IntPtr ptr = NonConstPointer();
       IntPtr pHolder = numberValue.OptionHolderPointer;
-      int rc = UnsafeNativeMethods.CRhinoGet_AddCommandOption3(ptr, englishName, pHolder, numberValue.m_lowerLimit, numberValue.m_upperLimit, prompt);
+      int rc = UnsafeNativeMethods.CRhinoGet_AddCommandOption3Loc(ptr, optionName.English, optionName.Local, pHolder, numberValue.m_lowerLimit, numberValue.m_upperLimit, prompt);
       return rc;
     }
     /// <summary>
@@ -1137,6 +1156,26 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
+    /// Add a command line option to get numbers and automatically save the value
+    /// </summary>
+    /// <param name="optionName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
+    /// <param name="numberValue"></param>
+    /// <returns>
+    /// option index value (>0) or 0 if option cannot be added
+    /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
+    /// <code source='examples\py\ex_commandlineoptions.py' lang='py'/>
+    /// </example>
+    public int AddOptionDouble(Rhino.UI.LocalizeStringPair optionName, ref Rhino.Input.Custom.OptionDouble numberValue)
+    {
+      return AddOptionDouble(optionName, ref numberValue, null);
+    }
+
+    /// <summary>
     /// Add a command line option to get integers and automatically save the value
     /// </summary>
     /// <param name="englishName">
@@ -1152,11 +1191,31 @@ namespace Rhino.Input.Custom
     /// </returns>
     public int AddOptionInteger(string englishName, ref Rhino.Input.Custom.OptionInteger intValue, string prompt)
     {
+      return AddOptionInteger(new Rhino.UI.LocalizeStringPair(englishName, englishName), ref intValue, prompt);
+    }
+
+    /// <summary>
+    /// Add a command line option to get integers and automatically save the value
+    /// </summary>
+    /// <param name="optionName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
+    /// <param name="intValue"></param>
+    /// <param name="prompt">
+    /// option prompt shown if the user selects this option.  If null or empty, then the
+    /// option name is used as the get number prompt.
+    /// </param>
+    /// <returns>
+    /// option index value (>0) or 0 if option cannot be added
+    /// </returns>
+    public int AddOptionInteger(Rhino.UI.LocalizeStringPair optionName, ref Rhino.Input.Custom.OptionInteger intValue, string prompt)
+    {
       IntPtr ptr = NonConstPointer();
       IntPtr pOption = intValue.OptionHolderPointer;
-      int rc = UnsafeNativeMethods.CRhinoGet_AddCommandOption4(ptr, englishName, pOption, intValue.m_lowerLimit, intValue.m_upperLimit, prompt);
+      int rc = UnsafeNativeMethods.CRhinoGet_AddCommandOption4Loc(ptr, optionName.English, optionName.Local, pOption, intValue.m_lowerLimit, intValue.m_upperLimit, prompt);
       return rc;
     }
+
     /// <summary>
     /// Add a command line option to get integers and automatically save the value
     /// </summary>
@@ -1177,6 +1236,25 @@ namespace Rhino.Input.Custom
       return AddOptionInteger(englishName, ref intValue, null);
     }
 
+    /// <summary>
+    /// Add a command line option to get integers and automatically save the value
+    /// </summary>
+    /// <param name="optionName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
+    /// <param name="intValue"></param>
+    /// <returns>
+    /// option index value (>0) or 0 if option cannot be added
+    /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
+    /// <code source='examples\py\ex_commandlineoptions.py' lang='py'/>
+    /// </example>
+    public int AddOptionInteger(Rhino.UI.LocalizeStringPair optionName, ref Rhino.Input.Custom.OptionInteger intValue)
+    {
+      return AddOptionInteger(optionName, ref intValue, null);
+    }
     //Description:
     //  Add a command line option to get colors and automatically
     //  save the value.
@@ -1226,9 +1304,27 @@ namespace Rhino.Input.Custom
     /// </example>
     public int AddOptionToggle(string englishName, ref Rhino.Input.Custom.OptionToggle toggleValue)
     {
+      return AddOptionToggle(new UI.LocalizeStringPair(englishName, englishName), ref toggleValue);
+    }
+
+    /// <summary>
+    /// Add a command line option to toggle a setting
+    /// </summary>
+    /// <param name="optionName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
+    /// <param name="toggleValue"></param>
+    /// <returns>option index value (>0) or 0 if option cannot be added</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
+    /// <code source='examples\py\ex_commandlineoptions.py' lang='py'/>
+    /// </example>
+    public int AddOptionToggle(Rhino.UI.LocalizeStringPair optionName, ref Rhino.Input.Custom.OptionToggle toggleValue)
+    {
       IntPtr ptr = NonConstPointer();
       IntPtr pToggle = toggleValue.OptionHolderPointer;
-      int rc = UnsafeNativeMethods.CRhinoGet_AddCommandOptionToggle(ptr, pToggle, englishName, toggleValue.m_offValue, toggleValue.m_onValue);
+      int rc = UnsafeNativeMethods.CRhinoGet_AddCommandOptionToggleLoc(ptr, pToggle, optionName.English, optionName.Local, toggleValue.m_offValue, toggleValue.m_onValue);
       return rc;
     }
 
@@ -1253,8 +1349,39 @@ namespace Rhino.Input.Custom
         UnsafeNativeMethods.ON_StringArray_Append(pStrings, s);
 
       IntPtr pThis = NonConstPointer();
-      int rc = UnsafeNativeMethods.CRhinoGet_AddCommandOptionList(pThis, englishOptionName, pStrings, listCurrentIndex);
+      int rc = UnsafeNativeMethods.CRhinoGet_AddCommandOptionListLoc(pThis, englishOptionName, englishOptionName, pStrings, pStrings, listCurrentIndex);
       UnsafeNativeMethods.ON_StringArray_Delete(pStrings);
+      return rc;
+    }
+
+    /// <summary>
+    /// Add a command line list option
+    /// </summary>
+    /// <param name="optionName">
+    /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
+    /// </param>
+    /// <param name="listValues"></param>
+    /// <param name="listCurrentIndex">zero based index of current option</param>
+    /// <returns>option index value (>0) or 0 if option cannot be added.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_objectdisplaymode.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_objectdisplaymode.cs' lang='cs'/>
+    /// <code source='examples\py\ex_objectdisplaymode.py' lang='py'/>
+    /// </example>
+    public int AddOptionList(Rhino.UI.LocalizeStringPair optionName, System.Collections.Generic.IEnumerable<Rhino.UI.LocalizeStringPair> listValues, int listCurrentIndex)
+    {
+      IntPtr pStringsEnglish = UnsafeNativeMethods.ON_StringArray_New();
+      IntPtr pStringsLocal = UnsafeNativeMethods.ON_StringArray_New();
+      foreach (Rhino.UI.LocalizeStringPair s in listValues)
+      {
+        UnsafeNativeMethods.ON_StringArray_Append(pStringsEnglish, s.English);
+        UnsafeNativeMethods.ON_StringArray_Append(pStringsLocal, s.Local);
+      }
+
+      IntPtr pThis = NonConstPointer();
+      int rc = UnsafeNativeMethods.CRhinoGet_AddCommandOptionListLoc(pThis, optionName.English, optionName.Local, pStringsEnglish, pStringsLocal, listCurrentIndex);
+      UnsafeNativeMethods.ON_StringArray_Delete(pStringsEnglish);
+      UnsafeNativeMethods.ON_StringArray_Delete(pStringsLocal);
       return rc;
     }
 

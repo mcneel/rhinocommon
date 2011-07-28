@@ -1534,7 +1534,11 @@ RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddLeader(ONX_Model* pModel, const R
     for( int i=0; i<count; i++ )
       leader->m_points.Append(points2d[i]);
 
+#if defined(RHINO_V5SR) // only available in V5
     leader->SetTextValue(_text);
+#else
+    leader->SetUserText(_text);
+#endif
 
     ONX_Model_Object mo;
     if( pConstAttributes )

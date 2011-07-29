@@ -556,6 +556,19 @@ namespace Rhino.Geometry
       return (a.m_x != b.m_x || a.m_y != b.m_y) ? true : false;
     }
 
+    public static bool operator <(Point2d a, Point2d b)
+    {
+      if( (a.X < b.X) || (a.X==b.X && a.Y<b.Y) )
+        return true;
+      return false;
+    }
+    public static bool operator >(Point2d a, Point2d b)
+    {
+      if ((a.X > b.X) || (a.X == b.X && a.Y > b.Y))
+        return true;
+      return false;
+    }
+
     #endregion
 
     public override bool Equals(object obj)
@@ -858,6 +871,34 @@ namespace Rhino.Geometry
     {
       return new Point3d(pt);
     }
+
+    public static bool operator <(Point3d a, Point3d b)
+    {
+      if (a.X < b.X)
+        return true;
+      if (a.X==b.X)
+      {
+        if (a.Y < b.Y)
+          return true;
+        if (a.Y == b.Y && a.Z < b.Z)
+          return true;
+      }
+      return false;
+    }
+    public static bool operator >(Point3d a, Point3d b)
+    {
+      if (a.X > b.X)
+        return true;
+      if (a.X == b.X)
+      {
+        if (a.Y > b.Y)
+          return true;
+        if (a.Y == b.Y && a.Z > b.Z)
+          return true;
+      }
+      return false;
+    }
+
     #endregion
 
     #region properties
@@ -1369,6 +1410,18 @@ namespace Rhino.Geometry
       return (a.m_x != b.m_x || a.m_y != b.m_y) ? true : false;
     }
 
+    public static bool operator <(Vector2d a, Vector2d b)
+    {
+      if ((a.X < b.X) || (a.X == b.X && a.Y < b.Y))
+        return true;
+      return false;
+    }
+    public static bool operator >(Vector2d a, Vector2d b)
+    {
+      if ((a.X > b.X) || (a.X == b.X && a.Y > b.Y))
+        return true;
+      return false;
+    }
     #endregion
 
     public override bool Equals(object obj)
@@ -1664,6 +1717,34 @@ namespace Rhino.Geometry
     {
       return new Vector3d(vec);
     }
+
+    public static bool operator <(Vector3d a, Vector3d b)
+    {
+      if (a.X < b.X)
+        return true;
+      if (a.X == b.X)
+      {
+        if (a.Y < b.Y)
+          return true;
+        if (a.Y == b.Y && a.Z < b.Z)
+          return true;
+      }
+      return false;
+    }
+    public static bool operator >(Vector3d a, Vector3d b)
+    {
+      if (a.X > b.X)
+        return true;
+      if (a.X == b.X)
+      {
+        if (a.Y > b.Y)
+          return true;
+        if (a.Y == b.Y && a.Z > b.Z)
+          return true;
+      }
+      return false;
+    }
+
     #endregion
 
     #region properties

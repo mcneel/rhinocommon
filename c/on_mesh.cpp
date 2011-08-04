@@ -1514,6 +1514,27 @@ RH_C_FUNCTION bool ON_MeshTopologyFace_Edges(const ON_Mesh* pConstMesh, int face
   return rc;
 }
 
+RH_C_FUNCTION bool ON_MeshTopologyFace_Edges2(const ON_Mesh* pConstMesh, int faceIndex, int* a, int* b, int* c, int* d, /*ARRAY*/bool* orientationSame)
+{
+  bool rc = false;
+  if( pConstMesh && faceIndex>=0 && a && b && c && d && orientationSame)
+  {
+    const ON_MeshTopology& top = pConstMesh->Topology();
+    if( faceIndex < top.m_topf.Count() )
+    {
+      const ON_MeshTopologyFace& face = top.m_topf[faceIndex];
+      *a = face.m_topei[0];
+      *b = face.m_topei[1];
+      *c = face.m_topei[2];
+      *d = face.m_topei[3];
+      for( int i=0; i<4; i++ )
+        orientationSame[i] = (face.m_reve[i]==0);
+      rc = true;
+    }
+  }
+  return rc;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // ClosestPoint, Intersection, and mass property calculations are not
 // provided in stand alone OpenNURBS

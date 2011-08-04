@@ -2645,6 +2645,11 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_MeshTopologyFace_Edges(IntPtr pConstMesh, int faceIndex, ref int a, ref int b, ref int c, ref int d);
 
+  //bool ON_MeshTopologyFace_Edges2(const ON_Mesh* pConstMesh, int faceIndex, int* a, int* b, int* c, int* d, /*ARRAY*/bool* orientationSame)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_MeshTopologyFace_Edges2(IntPtr pConstMesh, int faceIndex, ref int a, ref int b, ref int c, ref int d, [MarshalAs(UnmanagedType.U1), In, Out] bool[] orientationSame);
+
   //int ON_Mesh_GetClosestPoint(const ON_Mesh* ptr, ON_3DPOINT_STRUCT p, ON_3dPoint* q, double max_dist)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Mesh_GetClosestPoint(IntPtr ptr, Point3d p, ref Point3d q, double max_dist);

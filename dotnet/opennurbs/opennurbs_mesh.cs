@@ -2361,6 +2361,37 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
+    /// Get indices of edges that surround a given face
+    /// </summary>
+    /// <param name="faceIndex"></param>
+    /// <param name="sameOrientation">
+    /// Same length as returned edge index array. For each edge, the sameOrientation value
+    /// tells you if the edge orientation matches the face orientation (true), or is
+    /// reversed (false)
+    /// </param>
+    /// <returns></returns>
+    public int[] GetEdgesForFace(int faceIndex, out bool[] sameOrientation)
+    {
+      sameOrientation = new bool[0];
+      IntPtr pConstMesh = m_mesh.ConstPointer();
+      int a = 0, b = 0, c = 0, d = 0;
+      sameOrientation = new bool[4];
+      if( !UnsafeNativeMethods.ON_MeshTopologyFace_Edges2(pConstMesh, faceIndex, ref a, ref b, ref c, ref d, sameOrientation) )
+      {
+        if (faceIndex < 0 || faceIndex >= m_mesh.Faces.Count)
+          throw new IndexOutOfRangeException();
+        return new int[0];
+      }
+
+      if( c==d)
+      {
+        sameOrientation = new bool[] { sameOrientation[0], sameOrientation[1], sameOrientation[2]};
+        return new int[] { a, b, c };
+      }
+      return new int[] { a, b, c, d };
+    }
+
+    /// <summary>
     /// returns index of edge that connects topological vertices. 
     /// returns -1 if no edge is found.
     /// </summary>

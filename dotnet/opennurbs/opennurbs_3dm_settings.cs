@@ -622,13 +622,124 @@ namespace Rhino.FileIO
     }
     */
 
+    double GetDouble(int which)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_3dmSettings_GetDouble(pConstThis, which);
+    }
+    void SetDouble(int which, double val)
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_3dmSettings_SetDouble(pThis, which, val);
+    }
+
+    const int idxModelAbsTol = 0;
+    const int idxModelAngleTol = 1;
+    const int idxModelRelTol = 2;
+    const int idxPageAbsTol = 3;
+    const int idxPageAngleTol = 4;
+    const int idxPageRelTol = 5;
+
+    /// <summary>Model space absolute tolerance.</summary>
+    public double ModelAbsoluteTolerance
+    {
+      get { return GetDouble(idxModelAbsTol); }
+      set { SetDouble(idxModelAbsTol, value); }
+    }
+    /// <summary>Model space angle tolerance.</summary>
+    public double ModelAngleToleranceRadians
+    {
+      get { return GetDouble(idxModelAngleTol); }
+      set { SetDouble(idxModelAngleTol, value); }
+    }
+    /// <summary>Model space angle tolerance.</summary>
+    public double ModelAngleToleranceDegrees
+    {
+      get
+      {
+        double rc = ModelAngleToleranceRadians;
+        rc = RhinoMath.ToDegrees(rc);
+        return rc;
+      }
+      set
+      {
+        double radians = RhinoMath.ToRadians(value);
+        ModelAngleToleranceRadians = radians;
+      }
+    }
+    /// <summary>Model space relative tolerance.</summary>
+    public double ModelRelativeTolerance
+    {
+      get { return GetDouble(idxModelRelTol); }
+      set { SetDouble(idxModelRelTol, value); }
+    }
+    /// <summary>Page space absolute tolerance.</summary>
+    public double PageAbsoluteTolerance
+    {
+      get { return GetDouble(idxPageAbsTol); }
+      set { SetDouble(idxPageRelTol, value); }
+    }
+    /// <summary>Page space angle tolerance.</summary>
+    public double PageAngleToleranceRadians
+    {
+      get { return GetDouble(idxPageAngleTol); }
+      set { SetDouble(idxPageAngleTol, value); }
+    }
+    /// <summary>Page space angle tolerance.</summary>
+    public double PageAngleToleranceDegrees
+    {
+      get
+      {
+        double rc = PageAngleToleranceRadians;
+        rc = RhinoMath.ToDegrees(rc);
+        return rc;
+      }
+      set
+      {
+        double radians = RhinoMath.ToRadians(value);
+        PageAngleToleranceRadians = radians;
+      }
+    }
+    /// <summary>Page space relative tolerance.</summary>
+    public double PageRelativeTolerance
+    {
+      get { return GetDouble(idxPageRelTol); }
+      set { SetDouble(idxPageRelTol, value); }
+    }
+
+    public Rhino.UnitSystem ModelUnitSystem
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        int rc = UnsafeNativeMethods.ON_3dmSettings_GetSetUnitSystem(pConstThis, true, false, 0);
+        return (Rhino.UnitSystem)rc;
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        int set_val = (int)value;
+        UnsafeNativeMethods.ON_3dmSettings_GetSetUnitSystem(pThis, true, true, set_val);
+      }
+    }
+
+    public Rhino.UnitSystem PageUnitSystem
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        int rc = UnsafeNativeMethods.ON_3dmSettings_GetSetUnitSystem(pConstThis, false, false, 0);
+        return (Rhino.UnitSystem)rc;
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        int set_val = (int)value;
+        UnsafeNativeMethods.ON_3dmSettings_GetSetUnitSystem(pThis, false, true, set_val);
+      }
+    }
+
     /*
-  // Model space tolerances and unit system
-  ON_3dmUnitsAndTolerances m_ModelUnitsAndTolerances;
-
-  // Page space (printing/paper) tolerances and unit system
-  ON_3dmUnitsAndTolerances m_PageUnitsAndTolerances;
-
   // settings used for automatically created rendering meshes
   ON_MeshParameters m_RenderMeshSettings;
 

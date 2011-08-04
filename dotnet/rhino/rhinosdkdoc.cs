@@ -175,10 +175,7 @@ namespace Rhino
     {
       UnsafeNativeMethods.CRhinoDocProperties_GetSetDouble(m_docId, which, true, val);
     }
-    //void SetDouble(int which, double val)
-    //{
-    //  CRhinoDocProperties_GetSetDouble(m_doc.m_docId, which, true, val);
-    //}
+
     const int idxModelAbsTol = 0;
     const int idxModelAngleTol = 1;
     const int idxModelRelTol = 2;

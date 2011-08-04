@@ -252,3 +252,97 @@ RH_C_FUNCTION void ON_3dmSettings_SetModelBasepoint(ON_3dmSettings* pSettings, O
     pSettings->m_model_basepoint = pt;
   }
 }
+
+RH_C_FUNCTION double ON_3dmSettings_GetDouble(const ON_3dmSettings* pConstSettings, int which)
+{
+  const int idxModelAbsTol = 0;
+  const int idxModelAngleTol = 1;
+  const int idxModelRelTol = 2;
+  const int idxPageAbsTol = 3;
+  const int idxPageAngleTol = 4;
+  const int idxPageRelTol = 5;
+  double rc = 0;
+  if( pConstSettings )
+  {
+    switch( which )
+    {
+    case idxModelAbsTol:
+      rc = pConstSettings->m_ModelUnitsAndTolerances.m_absolute_tolerance;
+      break;
+    case idxModelAngleTol:
+      rc = pConstSettings->m_ModelUnitsAndTolerances.m_angle_tolerance;
+      break;
+    case idxModelRelTol:
+      rc = pConstSettings->m_ModelUnitsAndTolerances.m_relative_tolerance;
+      break;
+    case idxPageAbsTol:
+      rc = pConstSettings->m_PageUnitsAndTolerances.m_absolute_tolerance;
+      break;
+    case idxPageAngleTol:
+      rc = pConstSettings->m_PageUnitsAndTolerances.m_angle_tolerance;
+      break;
+    case idxPageRelTol:
+      rc = pConstSettings->m_PageUnitsAndTolerances.m_relative_tolerance;
+      break;
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION void ON_3dmSettings_SetDouble(ON_3dmSettings* pSettings, int which, double val)
+{
+  const int idxModelAbsTol = 0;
+  const int idxModelAngleTol = 1;
+  const int idxModelRelTol = 2;
+  const int idxPageAbsTol = 3;
+  const int idxPageAngleTol = 4;
+  const int idxPageRelTol = 5;
+
+  if( pSettings )
+  {
+    switch( which )
+    {
+    case idxModelAbsTol:
+      pSettings->m_ModelUnitsAndTolerances.m_absolute_tolerance = val;
+      break;
+    case idxModelAngleTol:
+      pSettings->m_ModelUnitsAndTolerances.m_angle_tolerance = val;
+      break;
+    case idxModelRelTol:
+      pSettings->m_ModelUnitsAndTolerances.m_relative_tolerance = val;
+      break;
+    case idxPageAbsTol:
+      pSettings->m_PageUnitsAndTolerances.m_absolute_tolerance = val;
+      break;
+    case idxPageAngleTol:
+      pSettings->m_PageUnitsAndTolerances.m_angle_tolerance = val;
+      break;
+    case idxPageRelTol:
+      pSettings->m_PageUnitsAndTolerances.m_relative_tolerance = val;
+      break;
+    }
+  }
+}
+
+RH_C_FUNCTION int ON_3dmSettings_GetSetUnitSystem(ON_3dmSettings* pSettings, bool model, bool set, int set_val)
+{
+  int rc = set_val;
+  if( pSettings )
+  {
+    if( set )
+    {
+      if( model )
+        pSettings->m_ModelUnitsAndTolerances.m_unit_system = ON::UnitSystem(set_val);
+      else
+        pSettings->m_PageUnitsAndTolerances.m_unit_system = ON::UnitSystem(set_val);
+    }
+    else
+    {
+      if( model )
+        rc = (int)pSettings->m_ModelUnitsAndTolerances.m_unit_system.m_unit_system;
+      else
+        rc = (int)pSettings->m_PageUnitsAndTolerances.m_unit_system.m_unit_system;
+    }
+  }
+  return rc;
+}

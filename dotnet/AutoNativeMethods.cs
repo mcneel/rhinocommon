@@ -198,6 +198,18 @@ internal partial class UnsafeNativeMethods
   //void ON_3dmSettings_SetModelBasepoint(ON_3dmSettings* pSettings, ON_3DPOINT_STRUCT point )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_3dmSettings_SetModelBasepoint(IntPtr pSettings, Point3d point);
+
+  //double ON_3dmSettings_GetDouble(const ON_3dmSettings* pConstSettings, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_3dmSettings_GetDouble(IntPtr pConstSettings, int which);
+
+  //void ON_3dmSettings_SetDouble(ON_3dmSettings* pSettings, int which, double val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_3dmSettings_SetDouble(IntPtr pSettings, int which, double val);
+
+  //int ON_3dmSettings_GetSetUnitSystem(ON_3dmSettings* pSettings, bool model, bool set, int set_val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_3dmSettings_GetSetUnitSystem(IntPtr pSettings, [MarshalAs(UnmanagedType.U1)]bool model, [MarshalAs(UnmanagedType.U1)]bool set, int set_val);
   #endregion
 
 

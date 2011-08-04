@@ -148,7 +148,7 @@ RH_C_FUNCTION int ON_NurbsCurve_GetInt( const ON_NurbsCurve* pCurve, int which )
 //  return rc;
 //}
 
-RH_C_FUNCTION double ON_NurbsCurve_SuperflousKnot(const ON_NurbsCurve* pConstNurbsCurve, int end)
+RH_C_FUNCTION double ON_NurbsCurve_SuperfluousKnot(const ON_NurbsCurve* pConstNurbsCurve, int end)
 {
   double rc = 0;
   if( pConstNurbsCurve )

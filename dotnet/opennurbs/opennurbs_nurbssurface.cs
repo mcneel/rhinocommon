@@ -811,7 +811,7 @@ namespace Rhino.Geometry.Collections
       }
     }
 
-    public double SuperflousKnot(bool start)
+    public double SuperfluousKnot(bool start)
     {
       IntPtr pConstSurf = m_surface.ConstPointer();
       return UnsafeNativeMethods.ON_NurbsSurface_SuperfluousKnot(pConstSurf, m_direction, start ? 0 : 1);

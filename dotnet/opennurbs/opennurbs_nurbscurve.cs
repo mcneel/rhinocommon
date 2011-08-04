@@ -759,10 +759,10 @@ namespace Rhino.Geometry.Collections
       return rc;
     }
 
-    public double SuperflousKnot(bool start)
+    public double SuperfluousKnot(bool start)
     {
       IntPtr pConstCurve = m_curve.ConstPointer();
-      return UnsafeNativeMethods.ON_NurbsCurve_SuperflousKnot(pConstCurve, start ? 0 : 1);
+      return UnsafeNativeMethods.ON_NurbsCurve_SuperfluousKnot(pConstCurve, start ? 0 : 1);
     }
     #endregion
 

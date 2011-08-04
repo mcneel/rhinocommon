@@ -2375,8 +2375,8 @@ namespace Rhino.Geometry.Collections
       sameOrientation = new bool[0];
       IntPtr pConstMesh = m_mesh.ConstPointer();
       int a = 0, b = 0, c = 0, d = 0;
-      sameOrientation = new bool[4];
-      if( !UnsafeNativeMethods.ON_MeshTopologyFace_Edges2(pConstMesh, faceIndex, ref a, ref b, ref c, ref d, sameOrientation) )
+      int[] orientation = new int[4];
+      if (!UnsafeNativeMethods.ON_MeshTopologyFace_Edges2(pConstMesh, faceIndex, ref a, ref b, ref c, ref d, orientation))
       {
         if (faceIndex < 0 || faceIndex >= m_mesh.Faces.Count)
           throw new IndexOutOfRangeException();
@@ -2385,9 +2385,10 @@ namespace Rhino.Geometry.Collections
 
       if( c==d)
       {
-        sameOrientation = new bool[] { sameOrientation[0], sameOrientation[1], sameOrientation[2]};
+        sameOrientation = new bool[] { orientation[0]==1, orientation[1]==1, orientation[2]==1 };
         return new int[] { a, b, c };
       }
+      sameOrientation = new bool[] { orientation[0] == 1, orientation[1] == 1, orientation[2] == 1, orientation[3]==1 };
       return new int[] { a, b, c, d };
     }
 

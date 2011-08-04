@@ -1514,7 +1514,7 @@ RH_C_FUNCTION bool ON_MeshTopologyFace_Edges(const ON_Mesh* pConstMesh, int face
   return rc;
 }
 
-RH_C_FUNCTION bool ON_MeshTopologyFace_Edges2(const ON_Mesh* pConstMesh, int faceIndex, int* a, int* b, int* c, int* d, /*ARRAY*/bool* orientationSame)
+RH_C_FUNCTION bool ON_MeshTopologyFace_Edges2(const ON_Mesh* pConstMesh, int faceIndex, int* a, int* b, int* c, int* d, /*ARRAY*/int* orientationSame)
 {
   bool rc = false;
   if( pConstMesh && faceIndex>=0 && a && b && c && d && orientationSame)
@@ -1528,7 +1528,7 @@ RH_C_FUNCTION bool ON_MeshTopologyFace_Edges2(const ON_Mesh* pConstMesh, int fac
       *c = face.m_topei[2];
       *d = face.m_topei[3];
       for( int i=0; i<4; i++ )
-        orientationSame[i] = (face.m_reve[i]==0);
+        orientationSame[i] = (face.m_reve[i]==0)?1:0;
       rc = true;
     }
   }

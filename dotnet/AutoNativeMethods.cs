@@ -2801,6 +2801,15 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_NurbsSurface_CopyFrom(IntPtr pConstSourceNurbsSurface, IntPtr pDestNurbsSurface);
 
+  //bool ON_NurbsSurface_GetBoolDir(ON_NurbsSurface* pSurface, int which, int dir)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_NurbsSurface_GetBoolDir(IntPtr pSurface, int which, int dir);
+
+  //double ON_NurbsSurface_SuperfluousKnot(const ON_NurbsSurface* pConstNurbsSurface, int dir, int end)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_NurbsSurface_SuperfluousKnot(IntPtr pConstNurbsSurface, int dir, int end);
+
   //bool ON_NurbsSurface_GetBool(ON_NurbsSurface* pSurface, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -7558,10 +7567,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_plugin.cpp
-  //bool CRhinoPlugIn_Create(int sn, ON_UUID plugin_id, const RHMONO_STRING* _plugin_name, const RHMONO_STRING* _plugin_version, int plugin_class, bool load_at_start)
+  //bool CRhinoPlugIn_Create(int sn, ON_UUID plugin_id, const RHMONO_STRING* _plugin_name, const RHMONO_STRING* _plugin_version, int plugin_class, int loadtime)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool CRhinoPlugIn_Create(int sn, Guid plugin_id, [MarshalAs(UnmanagedType.LPWStr)]string _plugin_name, [MarshalAs(UnmanagedType.LPWStr)]string _plugin_version, int plugin_class, [MarshalAs(UnmanagedType.U1)]bool load_at_start);
+  internal static extern bool CRhinoPlugIn_Create(int sn, Guid plugin_id, [MarshalAs(UnmanagedType.LPWStr)]string _plugin_name, [MarshalAs(UnmanagedType.LPWStr)]string _plugin_version, int plugin_class, int loadtime);
 
   //CRhinoPlugIn* CRhinoPlugIn_Pointer(int serial_number)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

@@ -49,6 +49,19 @@ namespace Rhino.PlugIns
     }
   }
 
+  public enum PlugInLoadTime : int
+  {
+    /// <summary>never load plug-in</summary>
+    Disabled = 0,
+    /// <summary>Load when Rhino starts</summary>
+    AtStartup = 1,
+    /// <summary>(default) Load the first time a plug-in command used</summary>
+    WhenNeeded = 2,
+    /// <summary>Load the first time a plug-in command used NOT when restoring docking control bars</summary>
+    WhenNeededIgnoreDockingBars = 6,
+    /// <summary>When a plug-in command is used or the options dialog is shown</summary>
+    WhenNeededOrOptionsDialog = 10
+  }
 
   public class PlugIn
   {
@@ -126,9 +139,16 @@ namespace Rhino.PlugIns
           plugin_class = 3;
         else if (rc is RenderPlugIn)
           plugin_class = 4;
-
+        // 2 Aug 2011 S. Baer
+        // Stop using this function after a few builds
+#pragma warning disable 0618
         bool load_at_start = rc.LoadAtStartup;
-        UnsafeNativeMethods.CRhinoPlugIn_Create(sn, plugin_id, plugin_name, plugin_version, plugin_class, load_at_start);
+#pragma warning restore 0618
+        PlugInLoadTime lt = rc.LoadTime;
+        if (load_at_start)
+          lt = PlugInLoadTime.AtStartup;
+
+        UnsafeNativeMethods.CRhinoPlugIn_Create(sn, plugin_id, plugin_name, plugin_version, plugin_class, (int)lt);
       }
       HostUtils.DebugString("[PlugIn::Create] Finished\n");
       return rc;
@@ -205,14 +225,20 @@ namespace Rhino.PlugIns
       return m_commands.ToArray();
     }
 
-    /// <summary>
-    /// Plug-ins are typically loaded on demand when they are first needed. You can change
-    /// this behavior to load the plug-in at startup by overriding this property and returning
-    /// true (default returns false)
-    /// </summary>
+    [Obsolete("Use LoadTime virtual property instead")]
     public virtual bool LoadAtStartup
     {
-      get { return false; }
+      get { return LoadTime==PlugInLoadTime.AtStartup; }
+    }
+
+    /// <summary>
+    /// Plug-ins are typically loaded on demand when they are first needed. You can change
+    /// this behavior to load the plug-in at during different stages in time by overriding
+    /// this property
+    /// </summary>
+    public virtual PlugInLoadTime LoadTime
+    {
+      get { return PlugInLoadTime.WhenNeeded; }
     }
 
     protected PlugIn()
@@ -421,6 +447,7 @@ namespace Rhino.PlugIns
     }
     private static void InternalAddPagesToOptions(int plugin_serial_number, IntPtr pPageList)
     {
+#if !USING_OPENNURBS
       PlugIn p = LookUpBySerialNumber(plugin_serial_number);
       if (p != null)
       {
@@ -440,6 +467,7 @@ namespace Rhino.PlugIns
           HostUtils.ExceptionReport(e);
         }
       }
+#endif
     }
     #endregion
 
@@ -517,6 +545,7 @@ namespace Rhino.PlugIns
     {
     }
 
+#if !USING_OPENNURBS
     /// <summary>
     /// Override this function if you want to extend the options dialog. This function is
     /// called whenever the user brings up the Options dialog.
@@ -525,11 +554,12 @@ namespace Rhino.PlugIns
     protected virtual void OptionsDialogPages( System.Collections.Generic.List<Rhino.UI.OptionsDialogPage> pages )
     {
     }
+#endif
     #endregion
 
 
     string m_all_users_settings_dir;
-    public string AllUsersSettingsDirectory
+    public string SettingsDirectoryAllUsers
     {
       get
       {
@@ -594,21 +624,28 @@ namespace Rhino.PlugIns
       }
     }
 
-    public PersistentSettings AllUsersSettings
-    {
-      get
-      {
-        if (m_SettingsManager == null)
-          m_SettingsManager = new PersistentSettingsManager(this);
-        return m_SettingsManager.AllUsersPluginSettings;
-      }
-    }
+    //public PersistentSettings SettingsAllUsers
+    //{
+    //  get
+    //  {
+    //    if (m_SettingsManager == null)
+    //      m_SettingsManager = new PersistentSettingsManager(this);
+    //    return m_SettingsManager.PluginSettingsAllUsers;
+    //  }
+    //}
 
     public PersistentSettings CommandSettings(string name)
     {
       if (m_SettingsManager == null)
         m_SettingsManager = new PersistentSettingsManager(this);
       return m_SettingsManager.CommandSettings(name);
+    }
+
+    public PersistentSettings CommandSettingsAllUsers(string name)
+    {
+      if (m_SettingsManager == null)
+        m_SettingsManager = new PersistentSettingsManager(this);
+      return m_SettingsManager.CommandSettingsAllUsers(name);
     }
 
     #region plugin manager items

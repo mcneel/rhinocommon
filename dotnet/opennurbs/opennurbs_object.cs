@@ -161,6 +161,7 @@ namespace Rhino.Runtime
       // we in-place copy
     }
 
+    /// <summary>Tests an object to see if it is valid</summary>
     public virtual bool IsValid
     {
       get

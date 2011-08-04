@@ -393,6 +393,7 @@ namespace Rhino
       get { return m_docId; }
     }
 
+#if !USING_OPENNURBS
     public Rhino.DocObjects.EarthAnchorPoint EarthAnchorPoint
     {
       get { return new Rhino.DocObjects.EarthAnchorPoint(this); }
@@ -402,6 +403,7 @@ namespace Rhino
         UnsafeNativeMethods.CRhinoDocProperties_SetEarthAnchorPoint(m_docId, pConstAnchor);
       }
     }
+#endif
 
     #region tables
     private Rhino.DocObjects.Tables.ViewTable m_view_table;

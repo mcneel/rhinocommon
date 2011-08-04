@@ -199,13 +199,14 @@ namespace Rhino.DocObjects
     {
       if (m_ptr != IntPtr.Zero)
         return m_ptr;
-
+#if !USING_OPENNURBS
       if (m_index >= 0)
       {
         Rhino.RhinoDoc doc = m_parent as Rhino.RhinoDoc;
         if (doc != null)
           return UnsafeNativeMethods.CRhinoDocProperties_GetNamedView(doc.m_docId, m_index);
       }
+#endif
       throw new Rhino.Runtime.DocumentCollectedException();
     }
 
@@ -291,10 +292,12 @@ namespace Rhino.DocObjects
       m_ptr = UnsafeNativeMethods.ON_EarthAnchorPoint_New();
     }
 
+#if !USING_OPENNURBS
     internal EarthAnchorPoint(RhinoDoc doc)
     {
       m_ptr = UnsafeNativeMethods.CRhinoDocProperties_GetEarthAnchorPoint(doc.m_docId);
     }
+#endif
     internal IntPtr ConstPointer()
     {
       return m_ptr;

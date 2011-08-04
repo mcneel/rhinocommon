@@ -389,11 +389,11 @@ namespace Rhino.Geometry
 
     // GetBool indices
     const int idxIsRational = 0;
-    //const int idxIsClampedStart = 1;
-    //const int idxIsClampedEnd = 2;
+    internal const int idxIsClampedStart = 1;
+    internal const int idxIsClampedEnd = 2;
     //const int idxZeroCVs = 3;
-    //const int idxClampStart = 4;
-    //const int idxClampEnd = 5;
+    internal const int idxClampStart = 4;
+    internal const int idxClampEnd = 5;
     const int idxMakeRational = 6;
     const int idxMakeNonRational = 7;
     //const int idxHasBezierSpans = 8;
@@ -785,6 +785,31 @@ namespace Rhino.Geometry.Collections
       {
         return m_surface.GetIntDir(NurbsSurface.idxKnotCount, m_direction);
       }
+    }
+
+    /// <summary>Determine if knot vector is clamped</summary>
+    public bool ClampedAtStart
+    {
+      get
+      {
+        IntPtr pConstSurf = m_surface.ConstPointer();
+        return UnsafeNativeMethods.ON_NurbsSurface_GetBoolDir(pConstSurf, NurbsSurface.idxIsClampedStart, m_direction);
+      }
+    }
+    /// <summary>Determine if knot vector is clamped</summary>
+    public bool ClampedAtEnd
+    {
+      get
+      {
+        IntPtr pConstSurf = m_surface.ConstPointer();
+        return UnsafeNativeMethods.ON_NurbsSurface_GetBoolDir(pConstSurf, NurbsSurface.idxIsClampedEnd, m_direction);
+      }
+    }
+
+    public double SuperflousKnot(bool start)
+    {
+      IntPtr pConstSurf = m_surface.ConstPointer();
+      return UnsafeNativeMethods.ON_NurbsSurface_SuperfluousKnot(pConstSurf, m_direction, start ? 0 : 1);
     }
 
     /// <summary>

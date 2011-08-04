@@ -17,8 +17,17 @@ namespace Rhino
   /// <summary>
   /// PersistentSettings contains a dictionary of these items
   /// </summary>
-  class SettingValue
+  class SettingValue : ISerializable
   {
+    protected SettingValue(SerializationInfo info, StreamingContext context)
+    {
+    }
+
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      //info.AddValue("X", m_x);
+    }
     /// <summary>
     /// Constructor
     /// </summary>
@@ -429,12 +438,8 @@ namespace Rhino
   [Serializable]
   public class PersistentSettings : ISerializable
   {
-    readonly PersistentSettingsManager m_SettingsManager;
     readonly Dictionary<string, SettingValue> m_Settings;
     readonly Dictionary<string, EventHandler<PersistentSettingsEventArgs>> m_SettingsValidators;
-    readonly bool m_LocalSettings = true;
-
-    internal bool IsLocalSettings { get { return m_LocalSettings; } }
 
     protected PersistentSettings(SerializationInfo info, StreamingContext context)
     {
@@ -446,10 +451,8 @@ namespace Rhino
       //info.AddValue("X", m_x);
     }
 
-    internal PersistentSettings(PersistentSettingsManager settingsManager, bool localSettings)
+    public PersistentSettings()
     {
-      m_SettingsManager = settingsManager;
-      m_LocalSettings = localSettings;
       m_Settings = new Dictionary<string, SettingValue>();
       m_SettingsValidators = new Dictionary<string, EventHandler<PersistentSettingsEventArgs>>();
     }
@@ -1164,23 +1167,29 @@ namespace Rhino
   /// <summary>
   /// 
   /// </summary>
-  class PersistentSettingsManager
+  class PlugInSettings
   {
     private readonly PlugIns.PlugIn m_plugin; // Initialized by constructor
-    private PersistentSettings m_LocalUserPluginSettings; // = null; initialized by runtime
-    private PersistentSettings m_AllUsersPluginSettings; // = null; initialized by runtime
+    private readonly bool LocalSettings; // Initialized by constructor
+    private PersistentSettings m_PluginSettings; // = null; initialized by runtime
     private Dictionary<string, PersistentSettings> m_CommandSettingsDict; // = null; initialized by runtime
     /// <summary>
     /// Main settings element id attribute value, used to query valid settings section in settings XML file
     /// </summary>
     private const string CURRENT_XML_FORMAT_VERSION = "1.0";
+    private string SettingsFileFolder { get { return LocalSettings ? m_plugin.SettingsDirectory : m_plugin.SettingsDirectoryAllUsers; } }
+    private string SettingsFileName { get { return System.IO.Path.Combine(SettingsFileFolder, "settings.xml");
+      }
+    }
     /// <summary>
     /// PersistentSettingsManager constructor
     /// </summary>
     /// <param name="plugin">Requires a valid PlugIn object to attach to</param>
-    public PersistentSettingsManager(Rhino.PlugIns.PlugIn plugin)
+    /// <param name="localSettings">Identifies this settings instance as AllUsers or Local</param>
+    public PlugInSettings(Rhino.PlugIns.PlugIn plugin, bool localSettings)
     {
       m_plugin = plugin;
+      LocalSettings = localSettings;
     }
     /// <summary>
     /// Get the Plug-in settings associated with this plug-in, if this is the first time called then
@@ -1191,25 +1200,9 @@ namespace Rhino
     {
       get 
       {
-        if (m_LocalUserPluginSettings == null)
-          ReadSettings(true);
-
-        return m_LocalUserPluginSettings; 
-      }
-    }
-    /// <summary>
-    /// Get the Plug-in settings associated with this plug-in, if this is the first time called then
-    /// the plug-in settings member variable will get initialized and if a settings file exists it
-    /// will get loaded
-    /// </summary>
-    public PersistentSettings AllUsersPluginSettings
-    {
-      get
-      {
-        if (m_AllUsersPluginSettings == null)
-          ReadSettings(false);
-
-        return m_AllUsersPluginSettings;
+        if (m_PluginSettings == null)
+          ReadSettings();
+        return m_PluginSettings; 
       }
     }
     /// <summary>
@@ -1224,18 +1217,15 @@ namespace Rhino
     {
       if (m_CommandSettingsDict == null)
       {
-        ReadSettings(true);
+        ReadSettings();
         if (m_CommandSettingsDict == null)
           return null;
       }
-
       if (m_CommandSettingsDict.ContainsKey(name))
         return m_CommandSettingsDict[name];
-
       // There were no settings available for the command, so create one
       // for writing
-      m_CommandSettingsDict[name] = new PersistentSettings(this, true);
-
+      m_CommandSettingsDict[name] = new PersistentSettings();
       return m_CommandSettingsDict[name];
     }
     /// <summary>
@@ -1246,21 +1236,17 @@ namespace Rhino
     /// True if settings are successfully read. False if there was no existing
     /// settings file to read, or if a read lock could not be acquired.
     /// </returns>
-    public bool ReadSettings(bool localSettings)
+    public bool ReadSettings()
     {
-      if (localSettings && m_LocalUserPluginSettings == null)
-        m_LocalUserPluginSettings = new PersistentSettings(this, true);
-      else if (!localSettings && m_AllUsersPluginSettings == null)
-        m_AllUsersPluginSettings = new PersistentSettings(this, false);
+      if (m_PluginSettings == null)
+        m_PluginSettings = new PersistentSettings();
 
-      PersistentSettings plugInSettings = localSettings ? m_LocalUserPluginSettings : m_AllUsersPluginSettings;
-
-      if (localSettings && m_CommandSettingsDict == null)
+      if (m_CommandSettingsDict == null)
         m_CommandSettingsDict = new Dictionary<string, PersistentSettings>();
 
-      string path = System.IO.Path.Combine(localSettings ? m_plugin.SettingsDirectory : m_plugin.AllUsersSettingsDirectory, "settings.xml");
+      string settingsFileName = SettingsFileName;
 
-      if (File.Exists(path) == false)
+      if (File.Exists(settingsFileName) == false)
         return false;
 
       FileStream fs = null;
@@ -1276,7 +1262,7 @@ namespace Rhino
           try
           {
             bKeepTrying = false;
-            fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+            fs = new FileStream(settingsFileName, FileMode.Open, FileAccess.Read);
           }
           catch (IOException ioe)
           {
@@ -1316,10 +1302,10 @@ namespace Rhino
           return false;
 
         // Parse main <plug-in> entry, if it exists, for plug-in settings
-        plugInSettings.ParseXmlNodes(rootNode.SelectSingleNode("./plugin"));
+        m_PluginSettings.ParseXmlNodes(rootNode.SelectSingleNode("./plugin"));
 
         // Look for <command> nodes which will have a command name property that identifies the plug-in command settings
-        XmlNodeList commandNodes = localSettings ? rootNode.SelectNodes("./command") : null;
+        XmlNodeList commandNodes = rootNode.SelectNodes("./command");
         if (commandNodes != null)
         {
           foreach (XmlNode commandNode in commandNodes)
@@ -1327,7 +1313,7 @@ namespace Rhino
             XmlNode attr = commandNode.Attributes.GetNamedItem("name");
             if (null != attr && !string.IsNullOrEmpty(attr.Value))
             {
-              PersistentSettings entries = new PersistentSettings(this, true);
+              PersistentSettings entries = new PersistentSettings();
               entries.ParseXmlNodes(commandNode);
               m_CommandSettingsDict[attr.Value] = entries;
             }
@@ -1382,25 +1368,13 @@ namespace Rhino
     /// <returns>Returns true if either the plug-ins or commands dictionaries contains a modified item otherwise false</returns>
     public bool ContainsModifiedValues()
     {
-      if (null != m_LocalUserPluginSettings && m_LocalUserPluginSettings.ContainsModifiedValues())
-        return true; // Plug-in settings contains a modified value
-      if (null != m_AllUsersPluginSettings && m_AllUsersPluginSettings.ContainsModifiedValues())
+      if (null != m_PluginSettings && m_PluginSettings.ContainsModifiedValues())
         return true; // Plug-in settings contains a modified value
       if (null != this.m_CommandSettingsDict)
         foreach (var item in this.m_CommandSettingsDict)
           if (item.Value.ContainsModifiedValues())
             return true; // This command's settings have been modified
       return false;
-    }
-    /// <summary>
-    /// If they exist and contain modified values write global settings firs then local settings
-    /// </summary>
-    /// <returns>Returns true if local settings were successfully written</returns>
-    public bool WriteSettings()
-    {
-      try { WriteSettings(false); }
-      catch { } // Fail quietly when writing global settings
-      return WriteSettings(true);
     }
     /// <summary>
     /// Flushes the current settings to the user's roaming directory. 
@@ -1411,13 +1385,12 @@ namespace Rhino
     /// <returns>
     /// True if settings where flushed to disk, otherwise false. 
     /// </returns>
-    private bool WriteSettings(bool localSettings)
+    internal bool WriteSettings()
     {
-      string settingsDir = localSettings ? m_plugin.SettingsDirectory : m_plugin.AllUsersSettingsDirectory;
-      string settingsFileName = System.IO.Path.Combine(settingsDir, "settings.xml");
+      string settingsFileName = SettingsFileName;
       string backupFileName = settingsFileName + "_bak";
 
-      if ((localSettings && !this.ContainsModifiedValues()) || (!localSettings && null != m_AllUsersPluginSettings && !m_AllUsersPluginSettings.ContainsModifiedValues()))
+      if (!this.ContainsModifiedValues())
       {
         // If there are no settings, the settings dictionary is empty or the settings dictionary only contains default values
         // and the settings file exists
@@ -1429,7 +1402,7 @@ namespace Rhino
             File.Delete(settingsFileName);
             // Move up the settings path and delete the folder and its parent as long as they don't contain
             // files or sub folders
-            string folder = settingsDir;
+            string folder = Path.GetDirectoryName(settingsFileName);
             for (int i = 0; i < 2 && DeleteDirectory(folder); i++)
               folder = Path.GetDirectoryName(folder);
           }
@@ -1439,7 +1412,7 @@ namespace Rhino
       }
       
       // Write settings to a temporary file in the output folder
-      string tempFileName = this.WriteTempFile(settingsDir, localSettings ? m_LocalUserPluginSettings : m_AllUsersPluginSettings, localSettings);
+      string tempFileName = this.WriteTempFile(SettingsFileFolder);
       // If the temporary file was successfully created then tempFileName will be the full path to
       // the file name otherwise it will be null
       if (string.IsNullOrEmpty(tempFileName) || !File.Exists(tempFileName))
@@ -1490,10 +1463,8 @@ namespace Rhino
     /// from the default value.
     /// </summary>
     /// <param name="outputFolder"></param>
-    /// <param name="plugInSettings"></param>
-    /// <param name="writeCommandSettingsDict"></param>
     /// <returns></returns>
-    private string WriteTempFile(string outputFolder, PersistentSettings plugInSettings, bool writeCommandSettingsDict)
+    private string WriteTempFile(string outputFolder)
     {
       string fileName = null;
       try
@@ -1519,11 +1490,11 @@ namespace Rhino
 
           // If plug-in settings pointer is initialized write plug-in section
           // Note:  Will only write if one or more items has a non default value
-          if (null != plugInSettings)
-            plugInSettings.WriteXmlElement(xmlWriter, "plugin", "", "");
+          if (null != m_PluginSettings)
+            m_PluginSettings.WriteXmlElement(xmlWriter, "plugin", "", "");
 
           // Update the command settings
-          if (writeCommandSettingsDict && null != m_CommandSettingsDict)
+          if (null != m_CommandSettingsDict)
             foreach (var item in m_CommandSettingsDict)
               item.Value.WriteXmlElement(xmlWriter, "command", "name", item.Key);
               
@@ -1539,6 +1510,78 @@ namespace Rhino
         System.Diagnostics.Debug.WriteLine(ex.Message + "\n" + ex.StackTrace);
       }
       return fileName;
+    }
+  }
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  /// <summary>
+  /// 
+  /// </summary>
+  class PersistentSettingsManager
+  {
+    private readonly PlugInSettings m_SettingsLocal;
+    private readonly PlugInSettings m_SettingsAllUsers;
+    /// <summary>
+    /// PersistentSettingsManager constructor
+    /// </summary>
+    /// <param name="plugin">Requires a valid PlugIn object to attach to</param>
+    public PersistentSettingsManager(Rhino.PlugIns.PlugIn plugin)
+    {
+      m_SettingsLocal = new PlugInSettings(plugin, true);
+      m_SettingsAllUsers = new PlugInSettings(plugin, false);
+    }
+    /// <summary>
+    /// Get the Plug-in settings associated with this plug-in, if this is the first time called then
+    /// the plug-in settings member variable will get initialized and if a settings file exists it
+    /// will get loaded
+    /// </summary>
+    public PersistentSettings PluginSettings { get { return m_SettingsLocal.PluginSettings; } }
+    /// <summary>
+    /// Get the Plug-in settings associated with this plug-in, if this is the first time called then
+    /// the plug-in settings member variable will get initialized and if a settings file exists it
+    /// will get loaded
+    /// </summary>
+    public PersistentSettings PluginSettingsAllUsers { get { return m_SettingsAllUsers.PluginSettings; } }
+    /// <summary>
+    /// Get the PersistentSettings associated with the specified command.  If the settings file
+    /// has not been previously loaded and exists then it will get read.  If the command name is
+    /// not in the command settings dictionary then a new entry will get created and its settings
+    /// will be returned
+    /// </summary>
+    /// <param name="name">Command name key to search for and/or add</param>
+    /// <returns>Returns PersistentSettings object associated with command name on success or null on error</returns>
+    public PersistentSettings CommandSettings(string name)
+    {
+      return m_SettingsLocal.CommandSettings(name);
+    }
+    /// <summary>
+    /// Get the PersistentSettings associated with the specified command.  If the settings file
+    /// has not been previously loaded and exists then it will get read.  If the command name is
+    /// not in the command settings dictionary then a new entry will get created and its settings
+    /// will be returned
+    /// </summary>
+    /// <param name="name">Command name key to search for and/or add</param>
+    /// <returns>Returns PersistentSettings object associated with command name on success or null on error</returns>
+    public PersistentSettings CommandSettingsAllUsers(string name)
+    {
+      return m_SettingsAllUsers.CommandSettings(name);
+    }
+    /// <summary>
+    /// Check the plug-in and command settings dictionaries for values other than default value
+    /// </summary>
+    /// <returns>Returns true if either the plug-ins or commands dictionaries contains a modified item otherwise false</returns>
+    public bool ContainsModifiedValues()
+    {
+      return (m_SettingsLocal.ContainsModifiedValues() || m_SettingsAllUsers.ContainsModifiedValues());
+    }
+    /// <summary>
+    /// If they exist and contain modified values write global settings firs then local settings
+    /// </summary>
+    /// <returns>Returns true if local settings were successfully written</returns>
+    public bool WriteSettings()
+    {
+      try { m_SettingsAllUsers.WriteSettings(); }
+      catch { } // Fail quietly when writing global settings
+      return m_SettingsLocal.WriteSettings();
     }
   }
 }

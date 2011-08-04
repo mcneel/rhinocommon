@@ -1,8 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 
+#if !USING_OPENNURBS
 // NOTE: Much of this is a combination of rhinoSdkGetFileDialog.h and RhinoSdkUiFileDialog.h
-
 namespace Rhino.UI
 {
   //public enum OpenFileDialogType : int
@@ -282,3 +282,4 @@ namespace Rhino.UI
     }
   }
 }
+#endif

@@ -15,6 +15,27 @@ namespace Rhino.Geometry
       m_ptr = ptr;
     }
 
+    ~BezierCurve()
+    {
+      Dispose(false);
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_ptr)
+      {
+        UnsafeNativeMethods.ON_BezierCurve_Delete(m_ptr);
+        m_ptr = IntPtr.Zero;
+      }
+    }
+
+#region Rhino SDK functions
+#if !USING_OPENNURBS
     /// <summary>
     /// Make an array of cubic, non-rational beziers that fit a curve to a tolerance
     /// </summary>
@@ -43,25 +64,8 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_SimpleArray_BezierCurveDelete(pBezArray);
       return rc;
     }
-
-    ~BezierCurve()
-    {
-      Dispose(false);
-    }
-
-    public void Dispose()
-    {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-    }
-    protected virtual void Dispose(bool disposing)
-    {
-      if (IntPtr.Zero != m_ptr)
-      {
-        UnsafeNativeMethods.ON_BezierCurve_Delete(m_ptr);
-        m_ptr = IntPtr.Zero;
-      }
-    }
+#endif
+#endregion
   }
 }
 

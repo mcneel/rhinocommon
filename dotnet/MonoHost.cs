@@ -317,7 +317,11 @@ namespace Rhino.Runtime
         msg += "\n\nSENDER = ";
         msg += sender.ToString();
       }
+#if USING_OPENNURBS
+      Console.Error.Write(msg);
+#else
       Rhino.UI.Dialogs.ShowMessageBox(msg, "Unhandled CurrentDomain Exception in .NET plug-in");
+#endif
     }
 
     static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
@@ -330,7 +334,11 @@ namespace Rhino.Runtime
         msg += "\n\nSENDER = ";
         msg += sender.ToString();
       }
+#if USING_OPENNURBS
+      Console.Error.Write(msg);
+#else
       Rhino.UI.Dialogs.ShowMessageBox(msg, "Unhandled Thread Exception in .NET plug-in");
+#endif
     }
   }
 }

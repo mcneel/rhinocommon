@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
+// none of the UI namespace needs to be in the stand-alone opennurbs library
+#if !USING_OPENNURBS
+
 namespace Rhino
 {
   namespace UI
@@ -605,3 +608,5 @@ namespace Rhino
     }
   }
 }
+
+#endif

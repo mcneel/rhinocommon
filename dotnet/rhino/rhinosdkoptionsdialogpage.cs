@@ -1,3 +1,6 @@
+using System;
+
+#if !USING_OPENNURBS
 namespace Rhino.UI
 {
   public abstract class OptionsDialogPage : StackedDialogPage
@@ -16,3 +19,4 @@ namespace Rhino.UI
     }
   }
 }
+#endif

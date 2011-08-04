@@ -1104,21 +1104,6 @@ namespace Rhino.Geometry
     #endregion
 
     /// <summary>
-    /// Test if a set of points are coplanar within a certain tolerance
-    /// </summary>
-    /// <param name="points"></param>
-    /// <param name="tolerance">A good default is RhinoMath.ZeroTolerance</param>
-    /// <returns></returns>
-    public static bool ArePointsCoplanar(System.Collections.Generic.IEnumerable<Point3d> points, double tolerance)
-    {
-      int count;
-      Point3d[] arrPoints = Rhino.Collections.Point3dList.GetConstPointArray(points, out count);
-      if (count < 1 || null == arrPoints)
-        throw new ArgumentException("points must contain at least 1 point");
-      return UnsafeNativeMethods.RHC_RhinoArePointsCoplanar(count, arrPoints, tolerance);
-    }
-
-    /// <summary>
     /// Finds duplicates in the supplied list of points and returns a
     /// new array of points without duplicates.
     /// </summary>
@@ -1159,6 +1144,23 @@ namespace Rhino.Geometry
       return non_dups.ToArray();
     }
 
+#region Rhino SDK functions
+#if !USING_OPENNURBS
+    /// <summary>
+    /// Test if a set of points are coplanar within a certain tolerance
+    /// </summary>
+    /// <param name="points"></param>
+    /// <param name="tolerance">A good default is RhinoMath.ZeroTolerance</param>
+    /// <returns></returns>
+    public static bool ArePointsCoplanar(System.Collections.Generic.IEnumerable<Point3d> points, double tolerance)
+    {
+      int count;
+      Point3d[] arrPoints = Rhino.Collections.Point3dList.GetConstPointArray(points, out count);
+      if (count < 1 || null == arrPoints)
+        throw new ArgumentException("points must contain at least 1 point");
+      return UnsafeNativeMethods.RHC_RhinoArePointsCoplanar(count, arrPoints, tolerance);
+    }
+
     /// <summary>
     /// Sort a list of points so they will be connected in a "reasonable polyline" order. Also remove
     /// points from the list that are closer together than a minimum distance
@@ -1183,6 +1185,8 @@ namespace Rhino.Geometry
       }
       return arrPoints;
     }
+#endif
+#endregion
   }
 
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 32)]

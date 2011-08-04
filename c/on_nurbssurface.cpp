@@ -18,34 +18,41 @@ RH_C_FUNCTION void ON_NurbsSurface_CopyFrom(const ON_NurbsSurface* pConstSourceN
     *pDestNurbsSurface = *pConstSourceNurbsSurface;
 }
 
-//RH_C_FUNCTION bool ON_NurbsSurface_GetBoolDir(ON_NurbsSurface* pSurface, int which, int dir)
-//{
-//  const int idxIsClampedStart = 1;
-//  const int idxIsClampedEnd = 2;
-//  const int idxClampStart = 4;
-//  const int idxClampEnd = 5;
-//  bool rc = false;
-//  if( pSurface )
-//  {
-//    switch(which)
-//    {
-//    case idxIsClampedStart:
-//      rc = pSurface->IsClamped(dir, 0);
-//      break;
-//    case idxIsClampedEnd:
-//      rc = pSurface->IsClamped(dir, 1);
-//      break;
-//    case idxClampStart:
-//      rc = pSurface->ClampEnd(dir, 0);
-//      break;
-//    case idxClampEnd:
-//      rc = pSurface->ClampEnd(dir, 1);
-//      break;
-//    }
-//  }
-//  return rc;
-//}
+RH_C_FUNCTION bool ON_NurbsSurface_GetBoolDir(ON_NurbsSurface* pSurface, int which, int dir)
+{
+  const int idxIsClampedStart = 1;
+  const int idxIsClampedEnd = 2;
+  const int idxClampStart = 4;
+  const int idxClampEnd = 5;
+  bool rc = false;
+  if( pSurface )
+  {
+    switch(which)
+    {
+    case idxIsClampedStart:
+      rc = pSurface->IsClamped(dir, 0);
+      break;
+    case idxIsClampedEnd:
+      rc = pSurface->IsClamped(dir, 1);
+      break;
+    case idxClampStart:
+      rc = pSurface->ClampEnd(dir, 0);
+      break;
+    case idxClampEnd:
+      rc = pSurface->ClampEnd(dir, 1);
+      break;
+    }
+  }
+  return rc;
+}
 
+RH_C_FUNCTION double ON_NurbsSurface_SuperfluousKnot(const ON_NurbsSurface* pConstNurbsSurface, int dir, int end)
+{
+  double rc = 0;
+  if( pConstNurbsSurface )
+    rc = pConstNurbsSurface->SuperfluousKnot(dir, end);
+  return rc;
+}
 
 RH_C_FUNCTION bool ON_NurbsSurface_GetBool(ON_NurbsSurface* pSurface, int which)
 {

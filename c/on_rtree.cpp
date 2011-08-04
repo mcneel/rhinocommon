@@ -60,7 +60,7 @@ RH_C_FUNCTION bool ON_RTree_Search2(const ON_RTree* pConstTreeA, const ON_RTree*
   bool rc = false;
   if( pConstTreeA && pConstTreeB && searchCB )
   {
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
     g_theRTreeSearcher = searchCB;
     ON_RTree::Search(*pConstTreeA, *pConstTreeB, tolerance, RhCmnTreeSearch2, (void*)serial_number);
 #endif

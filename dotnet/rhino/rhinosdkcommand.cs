@@ -176,6 +176,11 @@ namespace Rhino.Commands
       get { return m_plugin.CommandSettings( this.EnglishName ); }
     }
 
+    //public PersistentSettings SettingsAllUsers
+    //{
+    //  get { return m_plugin.CommandSettingsAllUsers(this.EnglishName); }
+    //}
+
 #endregion
 
     protected abstract Result RunCommand(RhinoDoc doc, RunMode mode);

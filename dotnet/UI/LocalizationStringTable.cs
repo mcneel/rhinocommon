@@ -271,7 +271,12 @@ namespace Rhino.UI
                 dialog_text_value = dialog_text_value.Substring(last_index + 2);
               // Only add to dictionary if the dialog text item has been translated
               if (!string.IsNullOrEmpty(dialog_text_value) && 0 != string.Compare(english_text_value, dialog_text_value) && !m_dialog_list.ContainsKey(dialog_text_value))
-                m_dialog_list.Add(dialog_name, dialog_text_value);
+              {
+                if (m_dialog_list.ContainsKey(dialog_name))
+                  System.Diagnostics.Debug.WriteLine("Dialog key exists in localization dictionary:: " + dialog_name);
+                else
+                  m_dialog_list.Add(dialog_name, dialog_text_value);
+              }
             }
             
             XmlNodeList control_list = dialog_node.SelectNodes("CONTROL");

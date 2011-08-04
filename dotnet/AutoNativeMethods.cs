@@ -2716,6 +2716,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_NurbsCurve_GetInt(IntPtr pCurve, int which);
 
+  //double ON_NurbsCurve_SuperflousKnot(const ON_NurbsCurve* pConstNurbsCurve, int end)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_NurbsCurve_SuperflousKnot(IntPtr pConstNurbsCurve, int end);
+
   //bool ON_NurbsCurve_SetCV2(ON_NurbsCurve* pCurve, int cvIndex, ON_4dPoint* point)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]

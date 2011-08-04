@@ -759,8 +759,11 @@ namespace Rhino.Geometry.Collections
       return rc;
     }
 
-    //[skipping]
-    //  double SuperfluousKnot( int // 0 = start, 1 = end ) const;
+    public double SuperflousKnot(bool start)
+    {
+      IntPtr pConstCurve = m_curve.ConstPointer();
+      return UnsafeNativeMethods.ON_NurbsCurve_SuperflousKnot(pConstCurve, start ? 0 : 1);
+    }
     #endregion
 
     #region IEnumerable<double> Members

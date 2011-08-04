@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Rhino.Geometry;
 
-
+#if RHINO_SDK
 namespace Rhino.DocObjects
 {
   public class LightObject : RhinoObject
@@ -138,7 +138,7 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
-    #region enumerator
+#region enumerator
 
     // for IEnumerable<Layer>
     public IEnumerator<LightObject> GetEnumerator()
@@ -156,3 +156,4 @@ namespace Rhino.DocObjects.Tables
 
   }
 }
+#endif

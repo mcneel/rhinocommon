@@ -474,9 +474,12 @@ namespace Rhino.DocObjects
       childIndices.Dispose();
       return rc;
     }
+    #endregion
   }
 }
 
+
+#if RHINO_SDK
 namespace Rhino.DocObjects.Tables
 {
   public sealed class LayerTable : IEnumerable<Layer>, Rhino.Collections.IRhinoTable<Layer>
@@ -837,10 +840,8 @@ namespace Rhino.DocObjects.Tables
         return sh.ToString();
       }
     }
-    #endregion
 
     #region enumerator
-
     // for IEnumerable<Layer>
     public IEnumerator<Layer> GetEnumerator()
     {
@@ -852,7 +853,7 @@ namespace Rhino.DocObjects.Tables
     {
       return new Rhino.Collections.TableEnumerator<LayerTable, Layer>(this);
     }
-
     #endregion
   }
 }
+#endif

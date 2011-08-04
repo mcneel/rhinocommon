@@ -358,6 +358,7 @@ namespace Rhino.DocObjects
   }
 }
 
+#if RHINO_SDK
 namespace Rhino.DocObjects.Tables
 {
   public sealed class MaterialTable : IEnumerable<Material>, Rhino.Collections.IRhinoTable<Material>
@@ -525,3 +526,4 @@ namespace Rhino.DocObjects.Tables
     #endregion
   }
 }
+#endif

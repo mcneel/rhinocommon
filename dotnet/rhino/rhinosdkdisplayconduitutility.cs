@@ -1,9 +1,9 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-
 using Rhino.Geometry;
 
+#if RHINO_SDK
 namespace Rhino.Display
 {
   /// <summary>
@@ -608,3 +608,4 @@ namespace Rhino.Display
     #endregion
   }
 }
+#endif

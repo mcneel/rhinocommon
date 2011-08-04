@@ -2,6 +2,7 @@ using System;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
+#if RHINO_SDK
 namespace Rhino.Display
 {
   /// <summary>
@@ -250,3 +251,4 @@ namespace Rhino.Display
     
   }
 }
+#endif

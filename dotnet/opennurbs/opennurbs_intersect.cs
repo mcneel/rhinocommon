@@ -351,6 +351,34 @@ namespace Rhino.Geometry.Intersect
     #endregion
 
     #region sections
+    /// <summary>
+    /// Intersect a curve with an (infinite) plane.
+    /// </summary>
+    /// <param name="curve">Curve to intersect.</param>
+    /// <param name="plane">Plane to intersect with.</param>
+    /// <param name="tolerance">Tolerance to use during intersection.</param>
+    /// <returns>A list of intersection events or null if no intersections were recorded.</returns>
+    public static CurveIntersections CurvePlane(Curve curve, Plane plane, double tolerance)
+    {
+      if (!plane.IsValid)
+        return null;
+
+#if USING_V5_SDK
+      // Use dedicated plane intersector in Rhino5
+      IntPtr pConstCurve = curve.ConstPointer();
+      plane.GetPlaneEquation();
+      IntPtr pIntersectArray = UnsafeNativeMethods.ON_Curve_IntersectPlane(pConstCurve, ref plane, tolerance);
+      return CurveIntersections.Create(pIntersectArray);
+#else
+      PlaneSurface section = ExtendThroughBox(plane, curve.GetBoundingBox(false), 1.0); //should this be 1.0 or 100.0*tolerance?
+      if (section == null)
+        return null;
+      CurveIntersections rc = CurveSurface(curve, section, tolerance, 5 * tolerance);
+      section.Dispose();
+      return rc;
+#endif
+    }
+
 #if RHINO_SDK
     /// <summary>
     /// Intersect a mesh with an (infinite) plane.
@@ -399,37 +427,7 @@ namespace Rhino.Geometry.Intersect
 
       return rc;
     }
-#endif
 
-    /// <summary>
-    /// Intersect a curve with an (infinite) plane.
-    /// </summary>
-    /// <param name="curve">Curve to intersect.</param>
-    /// <param name="plane">Plane to intersect with.</param>
-    /// <param name="tolerance">Tolerance to use during intersection.</param>
-    /// <returns>A list of intersection events or null if no intersections were recorded.</returns>
-    public static CurveIntersections CurvePlane(Curve curve, Plane plane, double tolerance)
-    {
-      if (!plane.IsValid)
-        return null;
-
-#if USING_V5_SDK
-      // Use dedicated plane intersector in Rhino5
-      IntPtr pConstCurve = curve.ConstPointer();
-      plane.GetPlaneEquation();
-      IntPtr pIntersectArray = UnsafeNativeMethods.ON_Curve_IntersectPlane(pConstCurve, ref plane, tolerance);
-      return CurveIntersections.Create(pIntersectArray);
-#else
-      PlaneSurface section = ExtendThroughBox(plane, curve.GetBoundingBox(false), 1.0); //should this be 1.0 or 100.0*tolerance?
-      if (section == null)
-        return null;
-      CurveIntersections rc = CurveSurface(curve, section, tolerance, 5 * tolerance);
-      section.Dispose();
-      return rc;
-#endif
-    }
-
-#if RHINO_SDK
     /// <summary>
     /// Intersect a Brep with an (infinite) plane.
     /// </summary>

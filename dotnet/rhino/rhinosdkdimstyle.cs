@@ -282,6 +282,7 @@ namespace Rhino.DocObjects
   }
 }
 
+#if RHINO_SDK
 namespace Rhino.DocObjects.Tables
 {
   public sealed class DimStyleTable : IEnumerable<DimensionStyle>, Rhino.Collections.IRhinoTable<DimensionStyle>
@@ -407,3 +408,4 @@ namespace Rhino.DocObjects.Tables
 
   }
 }
+#endif

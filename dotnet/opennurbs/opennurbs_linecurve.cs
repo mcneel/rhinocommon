@@ -61,6 +61,7 @@ namespace Rhino.Geometry
       return new LineCurve(IntPtr.Zero, null, -1);
     }
 
+#if RHINO_SDK
     internal override void Draw(DisplayPipeline pipeline, System.Drawing.Color color, int thickness)
     {
       IntPtr ptr = ConstPointer();
@@ -68,6 +69,7 @@ namespace Rhino.Geometry
       int argb = color.ToArgb();
       UnsafeNativeMethods.ON_LineCurve_Draw(ptr, pDisplayPipeline, argb, thickness);
     }
+#endif
 
     /// <summary>
     /// Gets or sets the Line data inside this curve.

@@ -1,6 +1,7 @@
 using System;
 using Rhino.Geometry;
 
+#if RHINO_SDK
 namespace Rhino.Display
 {
   public enum CullFaceMode : int
@@ -739,7 +740,6 @@ namespace Rhino.Display
     #endregion
 
     #region methods
-
     /// <summary>
     /// True if backfaces of surface and mesh control polygons are culled. This value
     /// is determined by the CullControlPolygon command
@@ -1706,6 +1706,7 @@ namespace Rhino.Display
       IntPtr pAnnotationText = text.NonConstPointer();
       UnsafeNativeMethods.CRhinoDisplayPipeline_Draw3dText4(pThis, pAnnotationText, text.FontFace, color.ToArgb(), text.Bold, text.Italic, textPlaneOrigin);
     }
+
     /*
 
     /// <summary>
@@ -2037,3 +2038,4 @@ namespace Rhino.Display
     }
   }
 }
+#endif

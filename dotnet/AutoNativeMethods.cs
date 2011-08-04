@@ -1586,6 +1586,10 @@ internal partial class UnsafeNativeMethods
   //void ON_Revision(CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Revision(IntPtr pStringHolder);
+
+  //void ON_wString_Set(ON_wString* pString, const RHMONO_STRING* _text)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_wString_Set(IntPtr pString, [MarshalAs(UnmanagedType.LPWStr)]string _text);
   #endregion
 
 
@@ -7908,10 +7912,6 @@ internal partial class UnsafeNativeMethods
 
   //void RHC_SetGetNowProc(GETNOWPROC proc, GETFORMATEDTIMEPROC gftproc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
-
-  //void ON_wString_Set(ON_wString* pString, const RHMONO_STRING* _text)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void ON_wString_Set(IntPtr pString, [MarshalAs(UnmanagedType.LPWStr)]string _text);
 
   //int RHC_RhinoMessageBox( const RHMONO_STRING* _text, const RHMONO_STRING* _title, unsigned int flags )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

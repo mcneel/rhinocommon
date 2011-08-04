@@ -83,6 +83,7 @@ namespace Rhino.DocObjects
 
     internal static RhinoObject CreateRhinoObjectHelper(IntPtr pRhinoObject)
     {
+#if RHINO_SDK
       if (IntPtr.Zero == pRhinoObject)
         return null;
 
@@ -154,6 +155,9 @@ namespace Rhino.DocObjects
           break;
       }
       return rc;
+#else
+      return null;
+#endif
     }
     #endregion
 
@@ -410,6 +414,7 @@ namespace Rhino.DocObjects
       return null;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Moves changes made to this RhinoObject into the RhinoDoc
     /// </summary>
@@ -446,7 +451,7 @@ namespace Rhino.DocObjects
 
       return rc;
     }
-
+#endif
     internal virtual CommitGeometryChangesFunc GetCommitFunc()
     {
       return null;
@@ -835,6 +840,7 @@ namespace Rhino.DocObjects
       }
     }
 
+#if RHINO_SDK
     /// <summary>Turns on/off the object's editing grips</summary>
     /// <param name="customGrips"></param>
     /// <returns>
@@ -883,6 +889,7 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.ON_GripList_Delete(pGripList);
       return rc;
     }
+#endif
 
     /// <summary>
     /// Localized short description os an object

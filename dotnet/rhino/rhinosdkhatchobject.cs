@@ -1,5 +1,6 @@
 using Rhino.Geometry;
 
+#if RHINO_SDK
 namespace Rhino.DocObjects
 {
   public class HatchObject : RhinoObject
@@ -18,3 +19,4 @@ namespace Rhino.DocObjects
     }
   }
 }
+#endif

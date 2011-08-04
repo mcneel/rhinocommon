@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
+#if RHINO_SDK
 namespace Rhino.DocObjects
 {
   public /*abstract*/ class AnnotationObjectBase : RhinoObject
@@ -284,3 +285,4 @@ namespace Rhino.Display
     #endregion
   }
 }
+#endif

@@ -1,3 +1,6 @@
+using System;
+
+#if RHINO_SDK
 namespace Rhino.DocObjects
 {
   public class ClippingPlaneObject : RhinoObject
@@ -12,3 +15,4 @@ namespace Rhino.DocObjects
     }
   }
 }
+#endif

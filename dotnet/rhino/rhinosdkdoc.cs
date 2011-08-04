@@ -407,6 +407,7 @@ namespace Rhino
 #endif
 
     #region tables
+#if RHINO_SDK
     private Rhino.DocObjects.Tables.ViewTable m_view_table;
     public Rhino.DocObjects.Tables.ViewTable Views
     {
@@ -445,7 +446,6 @@ namespace Rhino
     {
       get { return m_bitmap_table ?? (m_bitmap_table = new Rhino.DocObjects.Tables.BitmapTable(this)); }
     }
-
     //[skipping]
     //  CRhinoTextureMappingTable m_texture_mapping_table;
 
@@ -519,7 +519,6 @@ namespace Rhino
                (m_instance_definition_table = new Rhino.DocObjects.Tables.InstanceDefinitionTable(this));
       }
     }
-
     //[skipping]
     //  CRhinoHistoryRecordTable m_history_record_table;
 
@@ -550,6 +549,7 @@ namespace Rhino
     {
       get { return m_strings ?? (m_strings = new Rhino.DocObjects.Tables.StringTable(this)); }
     }
+#endif
     #endregion
 
 #if RDK_CHECKED
@@ -1796,6 +1796,7 @@ namespace Rhino
   #endregion
 }
 
+#if RHINO_SDK
 namespace Rhino.DocObjects.Tables
 {
   public sealed class ViewTable : IEnumerable<RhinoView>
@@ -2022,7 +2023,6 @@ namespace Rhino.DocObjects.Tables
         return new RhinoPageView(pPageView, id);
       return null;
     }
-
     #region IEnumerable<RhinoView> Members
 
     public IEnumerator<RhinoView> GetEnumerator()
@@ -2129,6 +2129,7 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Find all RhinoObjects that are in a given layer.
     /// </summary>
@@ -2149,6 +2150,7 @@ namespace Rhino.DocObjects.Tables
       Layer l = this.Document.Layers[index];
       return FindByLayer(l);
     }
+#endif
 
     /// <summary>
     /// Same as GetObjectList but converts the result to an array
@@ -4921,3 +4923,4 @@ namespace Rhino.DocObjects
     }
   }
 }
+#endif

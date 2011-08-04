@@ -1,6 +1,7 @@
 using System;
 using Rhino.Geometry;
 
+#if RHINO_SDK
 namespace Rhino.DocObjects
 {
   public class PointObject : RhinoObject
@@ -317,3 +318,4 @@ namespace Rhino.DocObjects.Custom
   }
 }
 
+#endif

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+#if RHINO_SDK
 namespace Rhino.DocObjects.Tables
 {
   /// <summary>
@@ -247,3 +248,5 @@ namespace Rhino.DocObjects.Tables
 
   }
 }
+
+#endif

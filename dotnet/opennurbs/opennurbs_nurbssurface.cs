@@ -51,6 +51,24 @@ namespace Rhino.Geometry
       return new NurbsSurface(pNurbsSurface, null);
     }
 
+    /// <summary>
+    /// Create a Ruled surface between two curves. Curves must share the same knot-vector.
+    /// </summary>
+    /// <param name="curveA">First curve.</param>
+    /// <param name="curveB">Second curve.</param>
+    /// <returns>A ruled surface on success or null on failure.</returns>
+    public static NurbsSurface CreateRuledSurface(Curve curveA, Curve curveB)
+    {
+      if (curveA == null) { throw new ArgumentNullException("curveA"); }
+      if (curveB == null) { throw new ArgumentNullException("curveB"); }
+
+      IntPtr ptr = UnsafeNativeMethods.ON_NurbsSurface_CreateRuledSurface(curveA.ConstPointer(), curveB.ConstPointer());
+
+      if (ptr == IntPtr.Zero)
+        return null;
+      return new NurbsSurface(ptr, null);
+    }
+
 #if RHINO_SDK
     /// <summary>
     /// Create a surface from control-points.
@@ -131,27 +149,7 @@ namespace Rhino.Geometry
         return null;
       return new NurbsSurface(ptr, null);
     }
-#endif
 
-    /// <summary>
-    /// Create a Ruled surface between two curves. Curves must share the same knot-vector.
-    /// </summary>
-    /// <param name="curveA">First curve.</param>
-    /// <param name="curveB">Second curve.</param>
-    /// <returns>A ruled surface on success or null on failure.</returns>
-    public static NurbsSurface CreateRuledSurface(Curve curveA, Curve curveB)
-    {
-      if (curveA == null) { throw new ArgumentNullException("curveA"); }
-      if (curveB == null) { throw new ArgumentNullException("curveB"); }
-
-      IntPtr ptr = UnsafeNativeMethods.ON_NurbsSurface_CreateRuledSurface(curveA.ConstPointer(), curveB.ConstPointer());
-
-      if (ptr == IntPtr.Zero)
-        return null;
-      return new NurbsSurface(ptr, null);
-    }
-
-#if RHINO_SDK
     /// <summary>
     /// Make a surface from 4 corner points
     /// </summary>
@@ -416,6 +414,7 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_NurbsSurface_GetIntDir(ptr, which, direction);
     }
 
+#if RHINO_SDK
     internal override void Draw(Display.DisplayPipeline pipeline, System.Drawing.Color color, int density)
     {
       IntPtr pDisplayPipeline = pipeline.NonConstPointer();
@@ -423,6 +422,7 @@ namespace Rhino.Geometry
       int argb = color.ToArgb();
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawNurbsSurface(pDisplayPipeline, ptr, argb, density);
     }
+#endif
 
     public int OrderU
     {

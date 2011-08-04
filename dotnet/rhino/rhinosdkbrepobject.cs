@@ -1,5 +1,6 @@
 using Rhino.Geometry;
 
+#if RHINO_SDK
 namespace Rhino.DocObjects
 {
   public class BrepObject : RhinoObject
@@ -54,3 +55,5 @@ namespace Rhino.DocObjects
     }
   }
 }
+
+#endif

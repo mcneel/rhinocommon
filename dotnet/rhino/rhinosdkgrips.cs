@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 //public struct GripDirections { }
-//public struct GripStatus { }
 
+#if RHINO_SDK
 namespace Rhino.DocObjects.Custom
 {
   public class GripStatus
@@ -637,3 +637,4 @@ namespace Rhino.DocObjects.Custom
     }
   }
 }
+#endif

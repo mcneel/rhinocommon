@@ -893,6 +893,7 @@ namespace Rhino.Geometry
     }
 
     internal IntPtr m_pCurveDisplay = IntPtr.Zero;
+#if RHINO_SDK
     internal virtual void Draw(Display.DisplayPipeline pipeline, System.Drawing.Color color, int thickness)
     {
       IntPtr pDisplayPipeline = pipeline.NonConstPointer();
@@ -900,7 +901,7 @@ namespace Rhino.Geometry
       int argb = color.ToArgb();
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawCurve(pDisplayPipeline, ptr, argb, thickness);
     }
-
+#endif
     #endregion
 
     #region properties
@@ -2858,7 +2859,7 @@ namespace Rhino.Geometry
       IntPtr rc = UnsafeNativeMethods.RHC_RhinoSimplifyCurveEnd(pConstPtr, side, _options, distanceTolerance, angleToleranceRadians);
       return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
     }
-#endif
+
     /// <summary>
     /// Fairs a curve object. Fair works best on degree 3 (cubic) curves. Attempts to 
     /// remove large curvature variations while limiting the geometry changes to be no 
@@ -2881,7 +2882,6 @@ namespace Rhino.Geometry
       return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
     }
 
-#if RHINO_SDK
     /// <summary>
     /// Fits a new curve through an existing curve.
     /// </summary>
@@ -3092,23 +3092,7 @@ namespace Rhino.Geometry
       IntPtr pPolylineCurve = UnsafeNativeMethods.RHC_RhinoPullCurveToMesh(pConstCurve, pConstMesh, tolerance);
       return GeometryBase.CreateGeometryHelper(pPolylineCurve, null) as PolylineCurve;
     }
-#endif
 
-#if USING_V5_SDK && RHINO_SDK
-    public Curve[] PullToBrepFace(BrepFace face, double tolerance)
-    {
-      IntPtr pConstCurve = ConstPointer();
-      IntPtr pConstBrepFace = face.ConstPointer();
-      using (Runtime.InteropWrappers.SimpleArrayCurvePointer curves = new SimpleArrayCurvePointer())
-      {
-        IntPtr pCurves = curves.NonConstPointer();
-        UnsafeNativeMethods.RHC_RhinoPullCurveToFace(pConstCurve, pConstBrepFace, pCurves, tolerance);
-        return curves.ToNonConstArray();
-      }
-    }
-#endif
-
-#if RHINO_SDK
     /// <summary>
     /// Offsets a curve. If you have a nice offset, then there will be one entry in 
     /// the array. If the original curve had kinks or the offset curve had self 
@@ -3293,6 +3277,18 @@ namespace Rhino.Geometry
     }
 
 #if USING_V5_SDK && RHINO_SDK
+    public Curve[] PullToBrepFace(BrepFace face, double tolerance)
+    {
+      IntPtr pConstCurve = ConstPointer();
+      IntPtr pConstBrepFace = face.ConstPointer();
+      using (Runtime.InteropWrappers.SimpleArrayCurvePointer curves = new SimpleArrayCurvePointer())
+      {
+        IntPtr pCurves = curves.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoPullCurveToFace(pConstCurve, pConstBrepFace, pCurves, tolerance);
+        return curves.ToNonConstArray();
+      }
+    }
+
     /// <summary>
     /// Finds a curve by offsetting an existing curve normal to a surface.
     /// The caller is responsible for ensuring that the curve lies on the input surface.

@@ -215,6 +215,7 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.ON_3dmObjectAttributes_HasDisplayModeOverride(pConstThis, viewportId);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// By default, objects are drawn using the display mode of the viewport that
     /// the object is being drawn in. Setting a specific display mode, instructs
@@ -247,6 +248,7 @@ namespace Rhino.DocObjects
       Guid modeId = mode.Id;
       return UnsafeNativeMethods.ON_3dmObjectAttributes_UseDisplayMode(pThis, rhinoViewportId, modeId);
     }
+#endif
 
     /// <summary>
     /// By default, objects are drawn using the display mode of the viewport that

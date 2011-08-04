@@ -1,5 +1,6 @@
 using System;
 
+#if RHINO_SDK
 namespace Rhino.Display
 {
   public abstract class DisplayConduit
@@ -107,3 +108,4 @@ namespace Rhino.Display
     }
   }
 }
+#endif

@@ -1,6 +1,6 @@
 using Rhino.Geometry;
 
-#if USING_V5_SDK
+#if USING_V5_SDK && RHINO_SDK
 namespace Rhino.DocObjects
 {
   public class ExtrusionObject : RhinoObject

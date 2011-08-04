@@ -332,6 +332,7 @@ namespace Rhino.Geometry
       return m_pCurveDisplay;
     }
 
+#if RHINO_SDK
     internal override void Draw(DisplayPipeline pipeline, System.Drawing.Color color, int thickness)
     {
       IntPtr pDisplayPipeline = pipeline.NonConstPointer();
@@ -339,6 +340,7 @@ namespace Rhino.Geometry
       IntPtr pCurveDisplay = CurveDisplay();
       UnsafeNativeMethods.CurveDisplay_Draw(pCurveDisplay, pDisplayPipeline, argb, thickness);
     }
+#endif
 
     //[skipping]
     //  ON_Curve* operator[](int) const;

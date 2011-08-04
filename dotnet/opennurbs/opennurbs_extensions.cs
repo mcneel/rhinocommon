@@ -1116,6 +1116,7 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddTextDot(pThis, pDot, pAttr);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Add an annotation text object to the document.
     /// </summary>
@@ -1135,6 +1136,8 @@ namespace Rhino.FileIO
     {
       return AddText(text3d.Text, text3d.TextPlane, text3d.Height, text3d.FontFace, text3d.Bold, text3d.Italic, attributes);
     }
+#endif
+
     /// <summary>
     /// Add an annotation text object to the document.
     /// </summary>

@@ -983,6 +983,15 @@ namespace Rhino.Geometry
       return outputPoints.ToArray();
     }
 
+    /// <summary>
+    /// Reverses entire brep orientation of all faces.
+    /// </summary>
+    public void Flip()
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_Brep_Flip(pThis);
+    }
+
 #if RHINO_SDK
     /// <summary>
     /// Finds a point on the brep that is closest to testPoint.
@@ -1060,18 +1069,7 @@ namespace Rhino.Geometry
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.RHC_RhinoIsPointInBrep(ptr, point, tolerance, strictlyIn);
     }
-#endif
 
-    /// <summary>
-    /// Reverses entire brep orientation of all faces.
-    /// </summary>
-    public void Flip()
-    {
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.ON_Brep_Flip(pThis);
-    }
-
-#if RHINO_SDK
     /// <summary>
     /// Return a new Brep that is equivalent to this Brep with all planar holes capped.
     /// </summary>
@@ -1164,9 +1162,7 @@ namespace Rhino.Geometry
       }
       return null;
     }
-#endif
 
-#if RHINO_SDK
     /// <summary>
     /// Trim a Brep with an oriented cutter. The parts of the Brep that lie inside
     /// (opposite the normal) of the cutter are retained while the parts to the

@@ -243,6 +243,7 @@ namespace Rhino.DocObjects
   }
 }
 
+#if RHINO_SDK
 namespace Rhino.DocObjects.Tables
 {
   public sealed class LinetypeTable : IEnumerable<Linetype>, Rhino.Collections.IRhinoTable<Linetype>
@@ -584,3 +585,4 @@ namespace Rhino.DocObjects.Tables
     #endregion
   }
 }
+#endif

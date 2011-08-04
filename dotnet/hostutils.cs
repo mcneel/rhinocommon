@@ -761,7 +761,6 @@ namespace Rhino.Runtime
     {
       return m_rhinoscript ?? (m_rhinoscript = Rhino.RhinoApp.GetPlugInObject("RhinoScript"));
     }
-#endif
 
     /// <summary>
     /// This function makes no sense on Mono
@@ -771,6 +770,7 @@ namespace Rhino.Runtime
     {
       UnsafeNativeMethods.RHC_DisplayOleAlerts(display);
     }
+#endif
 
     internal static bool ContainsDelegate(MulticastDelegate source, Delegate d)
     {

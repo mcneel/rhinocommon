@@ -26,7 +26,7 @@ namespace Rhino.Display
 
       // look through the cached viewlist first
       int count = m_view_list.Count;
-      RhinoView view;
+      RhinoView view = null;
       for (int i = 0; i < count; i++)
       {
         view = m_view_list[i];
@@ -45,7 +45,9 @@ namespace Rhino.Display
       // view is not in the list, add it
       bool isPageView = false;
       Guid id = UnsafeNativeMethods.CRhinoView_Details(view_pointer, ref isPageView);
+#if RHINO_SDK
       view = isPageView ? new RhinoPageView(view_pointer, id) : new RhinoView(view_pointer, id);
+#endif
       m_view_list.Add(view);
       return view;
     }

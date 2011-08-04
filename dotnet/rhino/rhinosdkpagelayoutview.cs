@@ -1,5 +1,6 @@
 using System;
 
+#if RHINO_SDK
 namespace Rhino.Display
 {
   public class RhinoPageView : RhinoView
@@ -198,3 +199,4 @@ namespace Rhino.Display
 
   }
 }
+#endif

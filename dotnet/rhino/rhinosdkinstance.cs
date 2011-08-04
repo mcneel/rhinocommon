@@ -39,6 +39,7 @@ namespace Rhino.DocObjects
     Linked = 3
   }
 
+#if RHINO_SDK
   public class InstanceObject : RhinoObject
   {
     internal InstanceObject(uint serialNumber)
@@ -704,4 +705,5 @@ namespace Rhino.DocObjects.Tables
   //  result - [out] this is the wString which receives new name
   //void GetUnusedInstanceDefinitionName( ON_wString& result) const;
   }
+#endif
 }

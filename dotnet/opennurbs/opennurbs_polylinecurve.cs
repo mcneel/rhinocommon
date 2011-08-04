@@ -63,6 +63,7 @@ namespace Rhino.Geometry
       return new PolylineCurve(IntPtr.Zero, null, -1);
     }
 
+#if RHINO_SDK
     internal override void Draw(DisplayPipeline pipeline, System.Drawing.Color color, int thickness)
     {
       IntPtr ptr = ConstPointer();
@@ -70,6 +71,7 @@ namespace Rhino.Geometry
       int argb = color.ToArgb();
       UnsafeNativeMethods.ON_PolylineCurve_Draw(ptr, pDisplayPipeline, argb, thickness);
     }
+#endif
 
     /// <summary>
     /// number of points in polyline

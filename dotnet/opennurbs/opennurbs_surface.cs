@@ -197,7 +197,7 @@ namespace Rhino.Geometry
         return srfs.ToNonConstArray();
       }
     }
-#endif
+
     /// <summary>
     /// Create a Surface by extruding a Curve along a vector.
     /// </summary>
@@ -234,7 +234,6 @@ namespace Rhino.Geometry
       return rc;
     }
 
-#if RHINO_SDK
     public static Surface CreatePeriodicSurface(Surface baseSurface, int direction)
     {
       IntPtr pConstSurface = baseSurface.ConstPointer();
@@ -388,6 +387,12 @@ namespace Rhino.Geometry
       return null;
     }
 
+    public IsoStatus ClosestSide(double u, double v)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return (IsoStatus)UnsafeNativeMethods.ON_Surface_ClosestSide(pConstThis, u, v);
+    }
+
 #if RHINO_SDK
     /// <summary>
     /// Extend an untrimmed surface along one edge
@@ -407,15 +412,7 @@ namespace Rhino.Geometry
       IntPtr pNewSurface = UnsafeNativeMethods.RHC_RhinoExtendSurface(pConstThis, (int)edge, extensionLength, smooth);
       return GeometryBase.CreateGeometryHelper(pNewSurface, null) as Surface;
     }
-#endif
 
-    public IsoStatus ClosestSide(double u, double v)
-    {
-      IntPtr pConstThis = ConstPointer();
-      return (IsoStatus)UnsafeNativeMethods.ON_Surface_ClosestSide(pConstThis, u, v);
-    }
-
-#if RHINO_SDK
     /// <summary>
     /// Rebuilds an existing surface to a given degree and point count
     /// </summary>
@@ -1265,6 +1262,7 @@ namespace Rhino.Geometry
       }
     }
 
+#if RHINO_SDK
     internal virtual void Draw(Display.DisplayPipeline pipeline, System.Drawing.Color color, int density)
     {
       IntPtr pDisplayPipeline = pipeline.NonConstPointer();
@@ -1272,6 +1270,6 @@ namespace Rhino.Geometry
       int argb = color.ToArgb();
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawSurface(pDisplayPipeline, ptr, argb, density);
     }
-
+#endif
   }
 }

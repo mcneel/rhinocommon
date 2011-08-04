@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
+#if RHINO_SDK
 //[skipping] CRhinoGroup
 
 namespace Rhino.DocObjects.Tables
@@ -250,3 +251,4 @@ namespace Rhino.DocObjects.Tables
     }
   }
 }
+#endif

@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
+#if RHINO_SDK
 namespace Rhino.DocObjects
 {
   public class Font
@@ -109,3 +110,4 @@ namespace Rhino.DocObjects.Tables
 
   }
 }
+#endif

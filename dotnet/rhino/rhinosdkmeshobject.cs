@@ -1,5 +1,6 @@
 using Rhino.Geometry;
 
+#if RHINO_SDK
 namespace Rhino.DocObjects
 {
   public class MeshObject : RhinoObject 
@@ -30,3 +31,4 @@ namespace Rhino.DocObjects
 
   // skipping CRhinoMeshDensity, CRhinoObjectMesh, CRhinoMeshObjectsUI, CRhinoMeshStlUI
 }
+#endif

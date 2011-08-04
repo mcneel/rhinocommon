@@ -1259,7 +1259,6 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_SimpleArray_PolylineCurve_Delete(pPolys, true);
       return rc;
     }
-#endif
 
     /// <summary>
     /// Explode the mesh into submeshes where a submesh is a collection of faces that are contained
@@ -1286,6 +1285,7 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_MeshArray_Delete(pMeshArray);
       return rc;
     }
+#endif
 
     /// <summary>
     /// Appends a copy of another mesh to this one and updates indices of appended mesh parts.

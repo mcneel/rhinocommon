@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 
+#if RHINO_SDK
 namespace Rhino.Display
 {
   public class DisplayMaterial : IDisposable
@@ -186,3 +187,4 @@ namespace Rhino.Display
     #endregion
   }
 }
+#endif

@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Drawing;
 
+#if RHINO_SDK
 namespace Rhino.Display
 {
   [Serializable]
@@ -637,3 +638,4 @@ public:
     }
   }
 }
+#endif

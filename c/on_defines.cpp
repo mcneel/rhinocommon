@@ -22,3 +22,12 @@ RH_C_FUNCTION void ON_Revision(CRhCmnStringHolder* pStringHolder)
   }
 #endif
 }
+
+RH_C_FUNCTION void ON_wString_Set(ON_wString* pString, const RHMONO_STRING* _text)
+{
+  if( pString )
+  {
+    INPUTSTRINGCOERCE(text, _text);
+    (*pString) = text;
+  }
+}

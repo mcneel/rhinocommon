@@ -1,5 +1,6 @@
 using System;
 
+#if RHINO_SDK
 namespace Rhino.DocObjects
 {
   public class DetailViewObject : RhinoObject 
@@ -67,3 +68,4 @@ namespace Rhino.DocObjects
     }
   }
 }
+#endif

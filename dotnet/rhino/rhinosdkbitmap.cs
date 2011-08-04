@@ -1,4 +1,6 @@
 
+#if RHINO_SDK
+
 //  public class RhinoBitmap { }
   //class RHINO_SDK_CLASS CRhinoBitmap
   //{
@@ -215,3 +217,4 @@ namespace Rhino.DocObjects.Tables
     //  void SetRemapIndex( int, // bitmap_index
   }
 }
+#endif

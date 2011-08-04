@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
+#if RHINO_SDK
 namespace Rhino.Commands
 {
   [Flags]
@@ -636,3 +637,4 @@ namespace Rhino.Commands
 #endif
   //public class RhinoHistory { }
 }
+#endif

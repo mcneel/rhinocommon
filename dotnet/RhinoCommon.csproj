@@ -18,7 +18,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;USING_V5_SDK RDK_UNCHECKED RDK_CHECKED</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;USING_V5_SDK RHINO_SDK RDK_UNCHECKED RDK_CHECKED</DefineConstants>
     <DocumentationFile>Debug\RhinoCommon.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <DebugType>full</DebugType>
@@ -27,7 +27,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>Release\</OutputPath>
-    <DefineConstants>TRACE;USING_V5_SDK RDK_CHECKED</DefineConstants>
+    <DefineConstants>TRACE;USING_V5_SDK RHINO_SDK RDK_CHECKED</DefineConstants>
     <DocumentationFile>Release\RhinoCommon.XML</DocumentationFile>
     <Optimize>true</Optimize>
     <NoWarn>1591</NoWarn>
@@ -38,7 +38,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'GH_Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>GH_Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;RHINO_SDK</DefineConstants>
     <DocumentationFile>GH_Debug\RhinoCommon.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <DebugType>full</DebugType>
@@ -47,7 +47,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'GH_Release|AnyCPU' ">
     <OutputPath>GH_Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;RHINO_SDK</DefineConstants>
     <DocumentationFile>GH_Release\RhinoCommon.XML</DocumentationFile>
     <Optimize>true</Optimize>
     <NoWarn>1591</NoWarn>
@@ -57,7 +57,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Mono|AnyCPU' ">
     <OutputPath>bin\Mono\</OutputPath>
-    <DefineConstants>TRACE;MONO_BUILD USING_V5_SDK</DefineConstants>
+    <DefineConstants>TRACE;MONO_BUILD USING_V5_SDK RHINO_SDK</DefineConstants>
     <DocumentationFile>bin\Mono\RhinoCommon.XML</DocumentationFile>
     <Optimize>true</Optimize>
     <NoWarn>1591</NoWarn>
@@ -68,7 +68,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'OpenNURBS_Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\OpenNURBS_Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;USING_V5_SDK USING_OPENNURBS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;USING_V5_SDK OPENNURBS_SDK</DefineConstants>
     <DocumentationFile>Debug\RhinoCommon.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <DebugType>full</DebugType>
@@ -79,7 +79,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'OpenNURBS_Release|AnyCPU'">
     <OutputPath>bin\OpenNURBS_Release\</OutputPath>
-    <DefineConstants>TRACE;USING_V5_SDK USING_OPENNURBS</DefineConstants>
+    <DefineConstants>TRACE;USING_V5_SDK OPENNURBS_SDK</DefineConstants>
     <DocumentationFile>Release\RhinoCommon.XML</DocumentationFile>
     <Optimize>true</Optimize>
     <NoWarn>1591</NoWarn>

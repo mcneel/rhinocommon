@@ -1,6 +1,6 @@
 using System;
 
-#if !USING_OPENNURBS
+#if RHINO_SDK
 namespace Rhino.UI
 {
   public abstract class OptionsDialogPage : StackedDialogPage

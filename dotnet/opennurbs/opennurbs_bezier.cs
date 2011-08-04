@@ -35,7 +35,7 @@ namespace Rhino.Geometry
     }
 
 #region Rhino SDK functions
-#if !USING_OPENNURBS
+#if RHINO_SDK
     /// <summary>
     /// Make an array of cubic, non-rational beziers that fit a curve to a tolerance
     /// </summary>

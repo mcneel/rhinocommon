@@ -2,6 +2,7 @@ using System;
 using Rhino.Geometry;
 using Rhino.Display;
 
+#if RHINO_SDK
 namespace Rhino.Input.Custom
 {
   public class GetPoint : GetBaseClass
@@ -1249,3 +1250,5 @@ namespace Rhino.Input.Custom
 //  ON_3dPointArray m_construction_points;
 //  ON_3dPointArray m_point_osnap_points; 
 //  ON_3dPointArray m_int_osnap_points; 
+
+#endif

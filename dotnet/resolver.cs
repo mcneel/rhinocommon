@@ -74,7 +74,10 @@ namespace Rhino.Runtime
       List<string> potential_files = new List<string>();
 
       // Collect all potential files in the plug-in directories.
-      string[] plugin_folders = Rhino.PlugIns.PlugIn.GetInstalledPlugInFolders();
+      string[] plugin_folders = null;
+#if RHINO_SDK
+      plugin_folders = Rhino.PlugIns.PlugIn.GetInstalledPlugInFolders();
+#endif
       if (plugin_folders != null)
       {
         foreach (string plugin_folder in plugin_folders)
@@ -162,7 +165,9 @@ namespace Rhino.Runtime
               if (dependency != null)
               {
                 System.Guid id = new Guid(dependency.Value);
+#if RHINO_SDK
                 returnAssembly = Rhino.PlugIns.PlugIn.LoadPlugIn(id); //what, why?
+#endif
               }
             }
           }

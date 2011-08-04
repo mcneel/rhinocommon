@@ -166,6 +166,7 @@ namespace Rhino.Geometry
   public class Surface : GeometryBase, ISerializable
   {
     #region statics
+#if RHINO_SDK
     public static Surface[] CreateRollingBallFillet(Surface surfaceA, Surface surfaceB, double radius, double tolerance)
     {
       return CreateRollingBallFillet(surfaceA, false, surfaceB, false, radius, tolerance);
@@ -196,7 +197,7 @@ namespace Rhino.Geometry
         return srfs.ToNonConstArray();
       }
     }
-
+#endif
     /// <summary>
     /// Create a Surface by extruding a Curve along a vector.
     /// </summary>
@@ -233,12 +234,14 @@ namespace Rhino.Geometry
       return rc;
     }
 
+#if RHINO_SDK
     public static Surface CreatePeriodicSurface(Surface baseSurface, int direction)
     {
       IntPtr pConstSurface = baseSurface.ConstPointer();
-      IntPtr pNewSurf = UnsafeNativeMethods.ON_Surface_MakePeriodic(pConstSurface, direction);
+      IntPtr pNewSurf = UnsafeNativeMethods.TL_Surface_MakePeriodic(pConstSurface, direction);
       return GeometryBase.CreateGeometryHelper(pNewSurf, null) as Surface;
     }
+#endif
 
     #endregion
 
@@ -385,6 +388,7 @@ namespace Rhino.Geometry
       return null;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Extend an untrimmed surface along one edge
     /// </summary>
@@ -403,6 +407,7 @@ namespace Rhino.Geometry
       IntPtr pNewSurface = UnsafeNativeMethods.RHC_RhinoExtendSurface(pConstThis, (int)edge, extensionLength, smooth);
       return GeometryBase.CreateGeometryHelper(pNewSurface, null) as Surface;
     }
+#endif
 
     public IsoStatus ClosestSide(double u, double v)
     {
@@ -410,6 +415,7 @@ namespace Rhino.Geometry
       return (IsoStatus)UnsafeNativeMethods.ON_Surface_ClosestSide(pConstThis, u, v);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Rebuilds an existing surface to a given degree and point count
     /// </summary>
@@ -430,6 +436,7 @@ namespace Rhino.Geometry
       IntPtr pNewSurface = UnsafeNativeMethods.RHC_RhinoRebuildSurface(pConstThis, uDegree, vDegree, uPointCount, vPointCount);
       return GeometryBase.CreateGeometryHelper(pNewSurface, null) as NurbsSurface;
     }
+#endif
 
     /// <summary>
     /// Reverse parameterization Domain changes from [a,b] to [-b,-a]
@@ -730,6 +737,7 @@ namespace Rhino.Geometry
       return rc;
     }
 
+#if RHINO_SDK
     /// <summary>Fits a new surface through an existing surface</summary>
     /// <param name="uDegree">the output surface U degree. Must be bigger than 1</param>
     /// <param name="vDegree">the output surface V degree. Must be bigger than 1</param>
@@ -742,13 +750,7 @@ namespace Rhino.Geometry
       IntPtr rc = UnsafeNativeMethods.RHC_RhinoFitSurface(pConstThis, uDegree, vDegree, fitTolerance, ref achievedTol);
       return GeometryBase.CreateGeometryHelper(rc, null) as Surface;
     }
-
-    //[skipping]
-    //  BOOL Ev1Der( // returns FALSE if unable to evaluate
-    //  BOOL Ev2Der( // returns FALSE if unable to evaluate
-    //  BOOL EvNormal( // returns FALSE if unable to evaluate
-    //  BOOL EvNormal( // returns FALSE if unable to evaluate
-    //  BOOL EvNormal( // returns FALSE if unable to evaluate
+#endif
 
     /// <summary>
     /// Mathematical surface evaluator.
@@ -811,6 +813,8 @@ namespace Rhino.Geometry
       IntPtr pCurve = UnsafeNativeMethods.ON_Surface_IsoCurve(ptr, direction, constantParameter);
       return GeometryBase.CreateGeometryHelper(pCurve, null) as Curve;
     }
+
+#if RHINO_SDK
     public NurbsCurve InterpolatedCurveOnSurfaceUV(System.Collections.Generic.IEnumerable<Point2d> points, double tolerance)
     {
       NurbsCurve rc = null;
@@ -892,6 +896,7 @@ namespace Rhino.Geometry
       IntPtr pNewCurve = UnsafeNativeMethods.RHC_RhinoShortPath(pConstSurface, start, end, tolerance);
       return GeometryBase.CreateGeometryHelper(pNewCurve, null) as Curve;
     }
+#endif
 
     /// <summary>
     /// Compute a 3d curve that is the composite of a 2d curve and the surface map.

@@ -321,30 +321,6 @@ namespace examples_cs
         }
       }
       m_brep = null;
-
-      /*
-    slices = range(COUNT)
-    def parallel_contour(i):
-        try:
-            rad = math.radians(i)
-            plane = Rhino.Geometry.Plane.WorldXY
-            axis = Rhino.Geometry.Vector3d(0,1,0)
-            plane.Rotate(rad, axis, Rhino.Geometry.Point3d.Origin)
-            tol = scriptcontext.doc.ModelAbsoluteTolerance
-            rc, crvs, pts = Rhino.Geometry.Intersect.Intersection.BrepPlane(brep, plane, tol)
-            if rc: slices[i] = crvs
-        except:
-            pass
-
-    if parallel:
-        tasks.Parallel.ForEach(range(COUNT), parallel_contour)
-    else:
-        #parallel_contour(COUNT-1)
-        for i in range(COUNT): parallel_contour(i)
-    if slices:
-        for slice in slices:
-            for s in slice: scriptcontext.doc.Objects.AddCurve(s)
-       */
     }
 
     Rhino.Commands.Result TestMt(RhinoDoc doc)
@@ -423,10 +399,8 @@ namespace examples_cs
       //Test(Examples.UnrollSurface2, doc);
       //Test(Examples.ZoomToObject, doc);
 
-/*
-      Sphere s = new Sphere(new Point3d(1,2,3), 12);
-      var mesh = Mesh.CreateFromSphere(s, 20, 20);
-      mesh.SetUserString("serializeIO", "yep it works!");
+
+      var arc = new Arc(Plane.WorldXY, new Point3d(1, 2, 3), 10, RhinoMath.ToRadians(40));
       
       //read/write binary
 
@@ -435,50 +409,50 @@ namespace examples_cs
       var context = new System.Runtime.Serialization.StreamingContext(System.Runtime.Serialization.StreamingContextStates.All, options);
       var bin_serializer = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter(null, context);
       var bin_stream = new System.IO.FileStream("C:\\TestBinary.bin", System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None);
-      bin_serializer.Serialize(bin_stream, mesh);
+      bin_serializer.Serialize(bin_stream, arc);
       bin_stream.Close();
       bin_stream = new System.IO.FileStream("C:\\TestBinary.bin", System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
-      var a = bin_serializer.Deserialize(bin_stream) as Mesh;
+      var a = (Arc)bin_serializer.Deserialize(bin_stream);
       bin_stream.Close();
       var attr = new Rhino.DocObjects.ObjectAttributes();
       attr.ColorSource = Rhino.DocObjects.ObjectColorSource.ColorFromObject;
       attr.ObjectColor = System.Drawing.Color.Red;
-      doc.Objects.AddMesh(a, attr);
-
+      //doc.Objects.AddMesh(a, attr);
+      
       //data contract
       var stream = new System.IO.FileStream("C:\\TestDataContract.xml", System.IO.FileMode.Create);
-      var dc_serializer = new System.Runtime.Serialization.DataContractSerializer(mesh.GetType());
-      dc_serializer.WriteObject(stream, mesh);
+      var dc_serializer = new System.Runtime.Serialization.DataContractSerializer(arc.GetType());
+      dc_serializer.WriteObject(stream, arc);
       stream.Close();
       stream = new System.IO.FileStream("C:\\TestDataContract.xml", System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
-      var b = dc_serializer.ReadObject(stream) as Mesh;
+      var b = (Arc)dc_serializer.ReadObject(stream);
       stream.Close();
       attr.ObjectColor = System.Drawing.Color.Green;
-      doc.Objects.AddMesh(b, attr);
-
+      //doc.Objects.AddMesh(b, attr);
+      
       //net contract
       stream = new System.IO.FileStream("C:\\TestNetDataContract.xml", System.IO.FileMode.Create);
       var ndc_serializer = new System.Runtime.Serialization.NetDataContractSerializer(context);
-      ndc_serializer.WriteObject(stream, mesh);
+      ndc_serializer.WriteObject(stream, arc);
       stream.Close();
       stream = new System.IO.FileStream("C:\\TestNetDataContract.xml", System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
-      var c = ndc_serializer.ReadObject(stream) as Mesh;
+      var c = (Arc)ndc_serializer.ReadObject(stream);
       stream.Close();
       attr.ObjectColor = System.Drawing.Color.Pink;
-      doc.Objects.AddMesh(c, attr);
+      //doc.Objects.AddMesh(c, attr);
 
 
       //soap
       stream = new System.IO.FileStream("C:\\TestSoapFormatter.xml", System.IO.FileMode.Create);
       var soap_serializer = new System.Runtime.Serialization.Formatters.Soap.SoapFormatter(null, context);
-      soap_serializer.Serialize(stream, mesh);
+      soap_serializer.Serialize(stream, arc);
       stream.Close();
       stream = new System.IO.FileStream("C:\\TestSoapFormatter.xml", System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
-      var d = soap_serializer.Deserialize(stream) as Mesh;
+      var d = (Arc)soap_serializer.Deserialize(stream);
       stream.Close();
       attr.ObjectColor = System.Drawing.Color.Blue;
-      doc.Objects.AddMesh(d, attr);
-      doc.Views.Redraw();
+      //doc.Objects.AddMesh(d, attr);
+      //doc.Views.Redraw();
 
       /*
       //xml

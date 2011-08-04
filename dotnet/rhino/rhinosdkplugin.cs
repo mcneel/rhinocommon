@@ -8,6 +8,7 @@ using System.Drawing;
 using Rhino.Render;
 #endif
 
+#if RHINO_SDK
 namespace Rhino.PlugIns
 {
   public enum DescriptionType
@@ -447,7 +448,7 @@ namespace Rhino.PlugIns
     }
     private static void InternalAddPagesToOptions(int plugin_serial_number, IntPtr pPageList)
     {
-#if !USING_OPENNURBS
+#if RHINO_SDK
       PlugIn p = LookUpBySerialNumber(plugin_serial_number);
       if (p != null)
       {
@@ -545,7 +546,7 @@ namespace Rhino.PlugIns
     {
     }
 
-#if !USING_OPENNURBS
+#if RHINO_SDK
     /// <summary>
     /// Override this function if you want to extend the options dialog. This function is
     /// called whenever the user brings up the Options dialog.
@@ -2477,4 +2478,4 @@ namespace Rhino.PlugIns
   }
 
 }
-
+#endif

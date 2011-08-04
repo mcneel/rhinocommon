@@ -1,6 +1,7 @@
 using System;
 using Rhino.Geometry;
 
+#if RHINO_SDK
 namespace Rhino.Collections
 {
   /// <summary>
@@ -240,3 +241,4 @@ namespace Rhino.Input.Custom
     }
   } 
 }
+#endif

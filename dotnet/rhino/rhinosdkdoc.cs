@@ -12,6 +12,7 @@ namespace Rhino
   /// </summary>
   public sealed class RhinoDoc
   {
+#if RHINO_SDK
     #region statics
     public static bool OpenFile(string path)
     {
@@ -28,7 +29,7 @@ namespace Rhino
       IntPtr pOptions = options.ConstPointer();
       return UnsafeNativeMethods.RHC_RhinoWriteFile(this.m_docId, path, pOptions);
     }
-
+#endif
     internal int m_docId;
     private RhinoDoc(int id)
     {
@@ -393,7 +394,7 @@ namespace Rhino
       get { return m_docId; }
     }
 
-#if !USING_OPENNURBS
+#if RHINO_SDK
     public Rhino.DocObjects.EarthAnchorPoint EarthAnchorPoint
     {
       get { return new Rhino.DocObjects.EarthAnchorPoint(this); }
@@ -2242,6 +2243,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     #region Object addition
+#if RHINO_SDK
     /// <summary>
     /// Add a point object to the document.
     /// </summary>
@@ -3040,6 +3042,7 @@ namespace Rhino.DocObjects.Tables
         pAttributes = attributes.ConstPointer();
       return UnsafeNativeMethods.CRhinoDoc_AddHatch(m_doc.m_docId, pConstHatch, pAttributes);
     }
+#endif
     #endregion
 
     #region Object deletion
@@ -4573,6 +4576,7 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Removes user data strings from the document
     /// </summary>
@@ -4594,6 +4598,7 @@ namespace Rhino.DocObjects.Tables
       }
       return rc;
     }
+#endif
   }
 }
 

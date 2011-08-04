@@ -38,6 +38,7 @@ namespace Rhino.Geometry
       get { return new Sphere(Point3d.Unset, RhinoMath.UnsetValue); }
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Try and fit a sphere to a collection of points.
     /// </summary>
@@ -92,6 +93,7 @@ namespace Rhino.Geometry
       plane.Origin = center;
       return new Sphere(plane, radius);
     }
+#endif
     #endregion
 
     #region properties

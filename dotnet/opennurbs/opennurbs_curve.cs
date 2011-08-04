@@ -185,7 +185,7 @@ namespace Rhino.Geometry
   public class Curve : GeometryBase, ISerializable
   {
     #region statics
-
+#if RHINO_SDK
     /// <summary>
     /// Interpolates a sequence of points. Used by InterpCurve Command
     /// This routine works best when degree=3.
@@ -249,6 +249,7 @@ namespace Rhino.Geometry
       IntPtr ptr = UnsafeNativeMethods.RHC_RhinoInterpCurve(degree, count, ptArray, startTangent, endTangent, (int)knots);
       return GeometryBase.CreateGeometryHelper(ptr, null) as NurbsCurve;
     }
+#endif
 
 #if !USING_V5_SDK
     //David: this function is disabled in the public SDK until I can get it to work right.
@@ -304,6 +305,7 @@ namespace Rhino.Geometry
       return CreateControlPointCurve(points, 3);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Creates a mean, or average, curve from two curves
     /// </summary>
@@ -443,6 +445,7 @@ namespace Rhino.Geometry
       bool rc = UnsafeNativeMethods.RHC_GetFilletPoints(pCurve0, pCurve1, radius, t0Base, t1Base, ref t0, ref t1, ref filletPlane);
       return rc;
     }
+
     /// <summary>
     /// Compute the fillet arc for a curve filleting operation.
     /// </summary>
@@ -628,6 +631,7 @@ namespace Rhino.Geometry
         return UnsafeNativeMethods.RHC_RhinoProjectCurveToBrep(brep_ptr, curve_ptr, direction, tolerance, rc_ptr) ? rc.ToNonConstArray() : new Curve[0];
       }
     }
+
     /// <summary>
     /// Project a Curve onto a collection of Breps along a given direction.
     /// </summary>
@@ -670,6 +674,7 @@ namespace Rhino.Geometry
       int[] b_top;
       return ProjectToBrep(curves, breps, direction, tolerance, out c_top, out b_top);
     }
+
     /// <summary>
     /// Project a collection of Curves onto a collection of Breps along a given direction.
     /// </summary>
@@ -767,6 +772,7 @@ namespace Rhino.Geometry
       IntPtr pConstCurveB = curveB.ConstPointer();
       return UnsafeNativeMethods.RHC_RhinoPlanarClosedCurveContainmentTest(pConstCurveA, pConstCurveB, ref testPlane, tolerance);
     }
+#endif
     #endregion statics
 
     #region constructors
@@ -829,7 +835,7 @@ namespace Rhino.Geometry
       return new Curve(IntPtr.Zero, null);
     }
 
-#if USING_V5_SDK
+#if USING_V5_SDK && RHINO_SDK
     /// <summary>
     /// Polylines will be exploded into line segments. ExplodeCurves will
     /// return the curves in topological order.
@@ -1419,6 +1425,7 @@ namespace Rhino.Geometry
       return rc;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// If IsClosed, just return True. Otherwise, decide if curve can be closed as 
     /// follows: Linear curves polylinear curves with 2 segments, Nurbs with 3 or less 
@@ -1437,7 +1444,7 @@ namespace Rhino.Geometry
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.RHC_RhinoMakeCurveClosed(ptr, tolerance);
     }
-
+#endif
 
     /// <summary>
     /// Determine the orientation (counterclockwise or clockwise) of a closed planar curve in a given plane.
@@ -1530,7 +1537,7 @@ namespace Rhino.Geometry
       return rc;
     }
 
-#if USING_V5_SDK
+#if USING_V5_SDK && RHINO_SDK
     /// <summary>
     /// Finds the object, and the closest point in that object, that is closest to
     /// this curve. Allowable objects to test the curve against include Brep, Surface,
@@ -1592,6 +1599,7 @@ namespace Rhino.Geometry
     }
 #endif
 
+#if RHINO_SDK
     /// <summary>
     /// Compute the relationship between a point and a closed curve region. 
     /// This curve must be closed or the return value will be Unset.
@@ -1638,6 +1646,7 @@ namespace Rhino.Geometry
       }
       return PointContainment.Unset;
     }
+#endif
 
     #region evaluators
     // [skipping]
@@ -1831,6 +1840,7 @@ namespace Rhino.Geometry
       return rc;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Get a collection of perpendicular frames along the curve. Perpendicular frames 
     /// are also known as 'Zero-twisting frames' and they minimize rotation from one frame to the next.
@@ -1872,6 +1882,7 @@ namespace Rhino.Geometry
       }
       return null;
     }
+#endif
 
     /// <summary>
     /// Test continuity at a curve parameter value.
@@ -2296,6 +2307,7 @@ namespace Rhino.Geometry
       return null;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Divide the curve into a number of equal-length segments.
     /// </summary>
@@ -2452,6 +2464,7 @@ namespace Rhino.Geometry
       }
       return rc;
     }
+#endif
 
     //David: Do we really need these two functions? Me thinks they are a bit too geeky.
     /// <summary>
@@ -2575,6 +2588,7 @@ namespace Rhino.Geometry
       return rc.Count == 0 ? null : rc.ToArray();
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Splits a curve into pieces using a surface or a polysurface
     /// </summary>
@@ -2844,7 +2858,7 @@ namespace Rhino.Geometry
       IntPtr rc = UnsafeNativeMethods.RHC_RhinoSimplifyCurveEnd(pConstPtr, side, _options, distanceTolerance, angleToleranceRadians);
       return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
     }
-
+#endif
     /// <summary>
     /// Fairs a curve object. Fair works best on degree 3 (cubic) curves. Attempts to 
     /// remove large curvature variations while limiting the geometry changes to be no 
@@ -2867,6 +2881,7 @@ namespace Rhino.Geometry
       return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Fits a new curve through an existing curve.
     /// </summary>
@@ -2903,6 +2918,7 @@ namespace Rhino.Geometry
       IntPtr rc = UnsafeNativeMethods.RHC_RhinoRebuildCurve(ptr, pointCount, degree, preserveTangents);
       return GeometryBase.CreateGeometryHelper(rc, null) as NurbsCurve;
     }
+#endif
     #endregion
 
     //David: we should use an Enum here. This function should also be a Property I think.
@@ -2949,6 +2965,7 @@ namespace Rhino.Geometry
       return GeometryBase.CreateGeometryHelper(rc, null) as NurbsCurve;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Get a polyline approximation of a curve.
     /// </summary>
@@ -3075,8 +3092,9 @@ namespace Rhino.Geometry
       IntPtr pPolylineCurve = UnsafeNativeMethods.RHC_RhinoPullCurveToMesh(pConstCurve, pConstMesh, tolerance);
       return GeometryBase.CreateGeometryHelper(pPolylineCurve, null) as PolylineCurve;
     }
+#endif
 
-#if USING_V5_SDK
+#if USING_V5_SDK && RHINO_SDK
     public Curve[] PullToBrepFace(BrepFace face, double tolerance)
     {
       IntPtr pConstCurve = ConstPointer();
@@ -3090,6 +3108,7 @@ namespace Rhino.Geometry
     }
 #endif
 
+#if RHINO_SDK
     /// <summary>
     /// Offsets a curve. If you have a nice offset, then there will be one entry in 
     /// the array. If the original curve had kinks or the offset curve had self 
@@ -3141,6 +3160,7 @@ namespace Rhino.Geometry
       //  return null;
       //return curves;
     }
+
     /// <summary>
     /// Offsets a curve. If you have a nice offset, then there will be one entry in 
     /// the array. If the original curve had kinks or the offset curve had self 
@@ -3164,6 +3184,7 @@ namespace Rhino.Geometry
         return null;
       return curves;
     }
+#endif
 
     /// <summary>
     /// Offset a curve on a surface. This curve must lie on the surface.
@@ -3271,7 +3292,7 @@ namespace Rhino.Geometry
       return OffsetOnSurface(b.Faces[0], curveParameters, offsetDistances, fittingTolerance);
     }
 
-#if USING_V5_SDK
+#if USING_V5_SDK && RHINO_SDK
     /// <summary>
     /// Finds a curve by offsetting an existing curve normal to a surface.
     /// The caller is responsible for ensuring that the curve lies on the input surface.

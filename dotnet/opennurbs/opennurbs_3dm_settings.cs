@@ -199,7 +199,7 @@ namespace Rhino.DocObjects
     {
       if (m_ptr != IntPtr.Zero)
         return m_ptr;
-#if !USING_OPENNURBS
+#if RHINO_SDK
       if (m_index >= 0)
       {
         Rhino.RhinoDoc doc = m_parent as Rhino.RhinoDoc;
@@ -292,7 +292,7 @@ namespace Rhino.DocObjects
       m_ptr = UnsafeNativeMethods.ON_EarthAnchorPoint_New();
     }
 
-#if !USING_OPENNURBS
+#if RHINO_SDK
     internal EarthAnchorPoint(RhinoDoc doc)
     {
       m_ptr = UnsafeNativeMethods.CRhinoDocProperties_GetEarthAnchorPoint(doc.m_docId);

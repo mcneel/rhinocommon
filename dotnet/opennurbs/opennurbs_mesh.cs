@@ -417,6 +417,7 @@ namespace Rhino.Geometry
       return new Mesh(ptr, null);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Attempt to create a mesh from a closed planar curve
     /// </summary>
@@ -435,6 +436,7 @@ namespace Rhino.Geometry
         return null;
       return new Mesh(pMesh, null);
     }
+#endif
 
     /// <summary>
     /// Create a mesh from a Brep.
@@ -1163,6 +1165,7 @@ namespace Rhino.Geometry
       return rc;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Create outlines of a mesh projected against a plane
     /// </summary>
@@ -1256,6 +1259,7 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_SimpleArray_PolylineCurve_Delete(pPolys, true);
       return rc;
     }
+#endif
 
     /// <summary>
     /// Explode the mesh into submeshes where a submesh is a collection of faces that are contained
@@ -1602,6 +1606,7 @@ namespace Rhino.Geometry
     //  int m_hidden_count;       // number of vertices that are hidden
     //  const ON_Object* m_parent; // runtime parent geometry (use ...::Cast() to get it)
 
+#if RHINO_SDK
     public static Curve[] CreateContourCurves(Mesh meshToContour, Point3d contourStart, Point3d contourEnd, double interval)
     {
       IntPtr pConstMesh = meshToContour.ConstPointer();
@@ -1622,7 +1627,7 @@ namespace Rhino.Geometry
         return 0 == count ? new Curve[0] : outputcurves.ToNonConstArray();
       }
     }
-
+#endif
   }
 }
 

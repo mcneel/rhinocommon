@@ -1,9 +1,13 @@
 using System;
 using System.Runtime.InteropServices;
+
+#if RHINO_SDK
 using Rhino.PlugIns;
+#endif
 
 namespace Rhino.Runtime
 {
+#if RHINO_SDK
   /// <summary>
   /// Skin DLLs must contain a single class that derives from the Skin class.
   /// </summary>
@@ -87,6 +91,7 @@ namespace Rhino.Runtime
     protected virtual void OnBeginLoadPlugIn(string description) { }
     protected virtual void OnEndLoadPlugIn() { }
   }
+#endif
 
   public abstract class PythonCompiledCode
   {
@@ -95,6 +100,7 @@ namespace Rhino.Runtime
 
   public abstract class PythonScript
   {
+#if RHINO_SDK
     public static PythonScript Create()
     {
       Guid ip_id = new Guid("814d908a-e25c-493d-97e9-ee3861957f49");
@@ -104,6 +110,7 @@ namespace Rhino.Runtime
       PythonScript pyscript = obj as PythonScript;
       return pyscript;
     }
+#endif
 
     protected PythonScript()
     {
@@ -370,6 +377,7 @@ namespace Rhino.Runtime
       }
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Parse a plugin and create all the commands defined therein.
     /// </summary>
@@ -522,7 +530,7 @@ namespace Rhino.Runtime
 
       return rc;
     }
-
+#endif
     static int GetNowHelper(int locale_id, IntPtr format, IntPtr pResultString)
     {
       int rc;
@@ -565,7 +573,8 @@ namespace Rhino.Runtime
 
     static int EvaluateExpressionHelper(IntPtr statements, IntPtr expression, int rhinoDocId, IntPtr pResultString)
     {
-      int rc;
+      int rc = 0;
+#if RHINO_SDK
       try
       {
         string expr = Marshal.PtrToStringUni(expression);
@@ -620,6 +629,7 @@ namespace Rhino.Runtime
         UnsafeNativeMethods.ON_wString_Set(pResultString, ex.Message);
         rc = 0;
       }
+#endif
       return rc;
     }
     internal delegate int EvaluateExpressionCallback(IntPtr statements, IntPtr expression, int rhinoDocId, IntPtr resultString);
@@ -657,6 +667,7 @@ namespace Rhino.Runtime
       CreateInvokeWindow();
     }
 
+#if RHINO_SDK
     public static PlugIn CreatePlugIn(Type pluginType, bool printDebugMessages)
     {
       if (null == pluginType || !typeof(PlugIn).IsAssignableFrom(pluginType))
@@ -686,6 +697,7 @@ namespace Rhino.Runtime
       PlugIn.m_plugins.Add(plugin);
       return plugin;
     }
+#endif
 
     static void DelegateReport(System.Delegate d, string name)
     {
@@ -710,6 +722,7 @@ namespace Rhino.Runtime
     internal static ReportCallback m_ew_report = EventWatcherReport;
     internal static void EventWatcherReport(int c)
     {
+#if RHINO_SDK
       UnsafeNativeMethods.CRhinoEventWatcher_LogState("RhinoCommon delegate based event watcher\n");
       DelegateReport(RhinoApp.m_init_app, "InitApp");
       DelegateReport(RhinoApp.m_close_app, "CloseApp");
@@ -729,6 +742,7 @@ namespace Rhino.Runtime
       DelegateReport(RhinoDoc.m_replace_object, "ReplaceObject");
       DelegateReport(RhinoDoc.m_undelete_object, "UndeleteObject");
       DelegateReport(RhinoDoc.m_purge_object, "PurgeObject");
+#endif
     }
 
 #if RDK_UNCHECKED
@@ -741,11 +755,13 @@ namespace Rhino.Runtime
     }
 #endif
 
+#if RHINO_SDK
     internal static object m_rhinoscript;
     internal static object GetRhinoScriptObject()
     {
       return m_rhinoscript ?? (m_rhinoscript = Rhino.RhinoApp.GetPlugInObject("RhinoScript"));
     }
+#endif
 
     /// <summary>
     /// This function makes no sense on Mono

@@ -1163,10 +1163,8 @@ namespace Rhino
       }
     }
   }
-  //////////////////////////////////////////////////////////////////////////////////////////////
-  /// <summary>
-  /// 
-  /// </summary>
+
+#if RHINO_SDK
   class PlugInSettings
   {
     private readonly PlugIns.PlugIn m_plugin; // Initialized by constructor
@@ -1584,4 +1582,5 @@ namespace Rhino
       return m_SettingsLocal.WriteSettings();
     }
   }
+#endif
 }

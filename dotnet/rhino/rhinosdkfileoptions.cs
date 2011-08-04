@@ -1,5 +1,6 @@
 using System;
 
+#if RHINO_SDK
 namespace Rhino.FileIO
 {
   public class FileWriteOptions : IDisposable
@@ -286,3 +287,4 @@ namespace Rhino.FileIO
     #endregion
   }
 }
+#endif

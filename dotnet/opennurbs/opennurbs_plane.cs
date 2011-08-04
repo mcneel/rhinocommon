@@ -237,6 +237,7 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Plane_CreateFromEquation(ref this, a, b, c, d);
     }
 
+#if RHINO_SDK
     /// <summary>Fit a plane through a collection of points.</summary>
     /// <param name="points">Points to fit to.</param>
     /// <param name="plane">Resulting plane</param>
@@ -268,6 +269,7 @@ namespace Rhino.Geometry
 
       return PlaneFitResult.Inconclusive;
     }
+#endif
     #endregion
 
     #region operators

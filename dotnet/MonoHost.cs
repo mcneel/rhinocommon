@@ -1,6 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
+
+#if RHINO_SDK
 using Rhino.PlugIns;
+#endif
 
 namespace Rhino.Runtime
 {
@@ -27,6 +30,7 @@ namespace Rhino.Runtime
   /// </summary>
   class MonoHost
   {
+#if RHINO_SDK
     static bool m_bUsingMono; // = false; initialized by runtime
     public static bool UsingMono
     {
@@ -284,7 +288,7 @@ namespace Rhino.Runtime
 
       return (int)MonoLoadResult.success;
     }
-
+#endif
 
     static void InitializeExceptionHandling()
     {
@@ -317,10 +321,10 @@ namespace Rhino.Runtime
         msg += "\n\nSENDER = ";
         msg += sender.ToString();
       }
-#if USING_OPENNURBS
-      Console.Error.Write(msg);
-#else
+#if RHINO_SDK
       Rhino.UI.Dialogs.ShowMessageBox(msg, "Unhandled CurrentDomain Exception in .NET plug-in");
+#else
+      Console.Error.Write(msg);
 #endif
     }
 
@@ -334,10 +338,10 @@ namespace Rhino.Runtime
         msg += "\n\nSENDER = ";
         msg += sender.ToString();
       }
-#if USING_OPENNURBS
-      Console.Error.Write(msg);
-#else
+#if RHINO_SDK
       Rhino.UI.Dialogs.ShowMessageBox(msg, "Unhandled Thread Exception in .NET plug-in");
+#else
+      Console.Error.Write(msg);
 #endif
     }
   }

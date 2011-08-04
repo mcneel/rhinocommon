@@ -1,5 +1,6 @@
 using System;
 
+#if RHINO_SDK
 namespace Rhino.Input.Custom
 {
   public class GetString : GetBaseClass
@@ -191,3 +192,4 @@ namespace Rhino.Input.Custom
 
   // skipping CRhinoGetColor - somewhat unusual
 }
+#endif

@@ -232,6 +232,7 @@ namespace Rhino.Geometry
     #endregion
 
     #region static methods
+#if RHINO_SDK
     /// <summary>
     /// Attempt to fit a line through a set of points.
     /// </summary>
@@ -251,6 +252,7 @@ namespace Rhino.Geometry
       bool rc = UnsafeNativeMethods.RHC_FitLineToPoints(count, ptArray, ref fitLine);
       return rc;
     }
+#endif
     #endregion
 
     #region methods

@@ -1317,6 +1317,7 @@ namespace Rhino.FileIO
       return AddLeader(text, plane, points, null);
     }
 
+#if RHINO_SDK
     public Guid AddLeader(string text, IEnumerable<Point3d> points)
     {
       Plane plane;
@@ -1339,10 +1340,12 @@ namespace Rhino.FileIO
       }
       return AddLeader(text, plane, points2d);
     }
+
     public Guid AddLeader(IEnumerable<Point3d> points)
     {
       return AddLeader(null, points);
     }
+#endif
 
     public Guid AddHatch(Hatch hatch)
     {

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-#if !USING_OPENNURBS
+#if RHINO_SDK
 // NOTE: Much of this is a combination of rhinoSdkGetFileDialog.h and RhinoSdkUiFileDialog.h
 namespace Rhino.UI
 {

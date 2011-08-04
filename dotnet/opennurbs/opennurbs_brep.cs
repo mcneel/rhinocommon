@@ -66,6 +66,7 @@ namespace Rhino.Geometry
       return IntPtr.Zero == ptr ? null : new Brep(pNewBrep, null);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Create a Brep using the trimming information of a brep face and a surface. 
     /// Surface must be roughly the same shape and in the same location as the trimming brep face.
@@ -81,6 +82,7 @@ namespace Rhino.Geometry
       IntPtr ptr = UnsafeNativeMethods.RHC_RhinoRetrimSurface(pConstBrepFace, pConstSurface);
       return IntPtr.Zero == ptr ? null : new Brep(ptr, null);
     }
+#endif
 
     /// <summary>
     /// Copy all trims from a Brep face onto a surface.
@@ -217,6 +219,7 @@ namespace Rhino.Geometry
       return IntPtr.Zero == ptr ? null : new Brep(ptr, null);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// make a Brep with one face
     /// </summary>
@@ -233,6 +236,7 @@ namespace Rhino.Geometry
       IntPtr pBrep = UnsafeNativeMethods.RHC_RhinoCreate1FaceBrepFromPoints(3, points, tolerance);
       return IntPtr.Zero == pBrep ? null : new Brep(pBrep, null);
     }
+
     /// <summary>
     /// make a Brep with one face
     /// </summary>
@@ -307,6 +311,7 @@ namespace Rhino.Geometry
       breps.Dispose();
       return rc;
     }
+#endif
 
     /// <summary>
     /// Create a set of planar Breps as outlines by the loops.
@@ -351,7 +356,7 @@ namespace Rhino.Geometry
       return IntPtr.Zero == pNewBrep ? null : new Brep(pNewBrep, null);
     }
 
-#if USING_V5_SDK
+#if USING_V5_SDK && RHINO_SDK
     /// <summary>
     /// Offsets a face including trim information to create a new brep
     /// </summary>
@@ -458,6 +463,7 @@ namespace Rhino.Geometry
     }
 #endif
 
+#if RHINO_SDK
     /// <summary>
     /// Creates one or more Breps by lofting through a set of curves.
     /// </summary>
@@ -801,6 +807,7 @@ namespace Rhino.Geometry
         return 0 == count ? new Curve[0] : outputcurves.ToNonConstArray();
       }
     }
+#endif
     #endregion
 
     #region constructors
@@ -976,6 +983,7 @@ namespace Rhino.Geometry
       return outputPoints.ToArray();
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Finds a point on the brep that is closest to testPoint.
     /// </summary>
@@ -1052,6 +1060,7 @@ namespace Rhino.Geometry
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.RHC_RhinoIsPointInBrep(ptr, point, tolerance, strictlyIn);
     }
+#endif
 
     /// <summary>
     /// Reverses entire brep orientation of all faces.
@@ -1062,6 +1071,7 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Brep_Flip(pThis);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Return a new Brep that is equivalent to this Brep with all planar holes capped.
     /// </summary>
@@ -1154,7 +1164,9 @@ namespace Rhino.Geometry
       }
       return null;
     }
+#endif
 
+#if RHINO_SDK
     /// <summary>
     /// Trim a Brep with an oriented cutter. The parts of the Brep that lie inside
     /// (opposite the normal) of the cutter are retained while the parts to the
@@ -1203,6 +1215,7 @@ namespace Rhino.Geometry
       }
       return new Brep[0];
     }
+#endif
 
     /// <summary>
     /// Add a 3D surface used by BrepFace
@@ -1543,6 +1556,7 @@ namespace Rhino.Geometry
       return IntPtr.Zero;
     }
 
+#if RHINO_SDK
 #if USING_V5_SDK // only available in V5
     /// <summary>
     /// Pulls one or more points to a brep face
@@ -1600,6 +1614,7 @@ namespace Rhino.Geometry
       return pulledPoints.ToArray();
     }
 #endif
+#endif
 
     /// <summary>
     /// Set the surface domain of this Face.
@@ -1652,6 +1667,7 @@ namespace Rhino.Geometry
       return GeometryBase.CreateGeometryHelper(pSurface, new SurfaceOfHolder(this)) as Surface;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Split this face using 3D trimming curves.
     /// </summary>
@@ -1680,7 +1696,7 @@ namespace Rhino.Geometry
     public PointFaceRelation IsPointOnFace(double u, double v)
     {
       IntPtr pConstBrep = m_brep.ConstPointer();
-      int rc = UnsafeNativeMethods.ON_Brep_PointIsOnFace(pConstBrep, m_index, u, v);
+      int rc = UnsafeNativeMethods.TL_Brep_PointIsOnFace(pConstBrep, m_index, u, v);
       if (1 == rc)
         return PointFaceRelation.Interior;
       return 2 == rc ? PointFaceRelation.Boundary : PointFaceRelation.Exterior;
@@ -1739,6 +1755,7 @@ namespace Rhino.Geometry
       curves.Dispose();
       return rc;
     }
+#endif
 
     public Mesh GetMesh(MeshType meshType)
     {

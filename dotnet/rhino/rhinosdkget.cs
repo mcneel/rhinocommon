@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using Rhino.Geometry;
 using Rhino.Display;
 
+#if RHINO_SDK
 namespace Rhino.Input
 {
   /// <summary>
@@ -2095,3 +2096,4 @@ namespace Rhino.Input.Custom
     }
   }
 }
+#endif

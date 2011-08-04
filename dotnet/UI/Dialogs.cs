@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 // none of the UI namespace needs to be in the stand-alone opennurbs library
-#if !USING_OPENNURBS
+#if RHINO_SDK
 
 namespace Rhino
 {

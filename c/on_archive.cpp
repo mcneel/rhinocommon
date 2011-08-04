@@ -1421,7 +1421,7 @@ RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddText(ONX_Model* pModel, const RHM
 
       ON_TextEntity2* text_entity = new ON_TextEntity2();
       text_entity->SetHeight( height );
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
       text_entity->SetTextValue( text );
       text_entity->SetTextFormula( 0 );
 #else
@@ -1534,7 +1534,7 @@ RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddLeader(ONX_Model* pModel, const R
     for( int i=0; i<count; i++ )
       leader->m_points.Append(points2d[i]);
 
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
     leader->SetTextValue(_text);
 #else
     leader->SetUserText(_text);

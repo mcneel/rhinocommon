@@ -167,6 +167,7 @@ namespace Rhino.Geometry
     {
     }
 
+#if RHINO_SDK
     public static LinearDimension FromPoints(Point3d extensionLine1End, Point3d extensionLine2End, Point3d pointOnDimensionLine)
     {
       Point3d[] points = new Point3d[] { extensionLine1End, extensionLine2End, pointOnDimensionLine };
@@ -185,6 +186,7 @@ namespace Rhino.Geometry
       Point2d linePt = new Point2d(s, t);
       return new LinearDimension(dimPlane, ext1, ext2, linePt);
     }
+#endif
 
     internal LinearDimension(IntPtr native_pointer, object parent)
       : base(native_pointer, parent)

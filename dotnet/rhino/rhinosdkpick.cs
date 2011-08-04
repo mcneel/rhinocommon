@@ -1,5 +1,6 @@
 using System;
 
+#if RHINO_SDK
 namespace Rhino.Input.Custom
 {
   public enum PickStyle : int
@@ -112,3 +113,4 @@ namespace Rhino.Input.Custom
     }
   }
 }
+#endif

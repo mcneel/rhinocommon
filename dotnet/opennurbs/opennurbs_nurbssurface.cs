@@ -51,6 +51,7 @@ namespace Rhino.Geometry
       return new NurbsSurface(pNurbsSurface, null);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Create a surface from control-points.
     /// </summary>
@@ -89,6 +90,7 @@ namespace Rhino.Geometry
       if (IntPtr.Zero == ptr) { return null; }
       return new NurbsSurface(ptr, null);
     }
+
     /// <summary>
     /// Create a surface from control-points.
     /// </summary>
@@ -129,6 +131,7 @@ namespace Rhino.Geometry
         return null;
       return new NurbsSurface(ptr, null);
     }
+#endif
 
     /// <summary>
     /// Create a Ruled surface between two curves. Curves must share the same knot-vector.
@@ -148,6 +151,7 @@ namespace Rhino.Geometry
       return new NurbsSurface(ptr, null);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Make a surface from 4 corner points
     /// </summary>
@@ -187,6 +191,7 @@ namespace Rhino.Geometry
     {
       return CreateFromCorners(corner1, corner2, corner3, corner3, 0.0);
     }
+#endif
 
     /// <summary>
     /// Creates a railed Surface-of-Revolution.
@@ -206,7 +211,7 @@ namespace Rhino.Geometry
       return new NurbsSurface(pNurbsSurface, null);
     }
 
-#if USING_V5_SDK
+#if USING_V5_SDK && RHINO_SDK
     /// <summary>
     /// Builds a surface from ordered network of curves/edges
     /// </summary>

@@ -351,6 +351,7 @@ namespace Rhino.Geometry.Intersect
     #endregion
 
     #region sections
+#if RHINO_SDK
     /// <summary>
     /// Intersect a mesh with an (infinite) plane.
     /// </summary>
@@ -377,7 +378,7 @@ namespace Rhino.Geometry.Intersect
 
       IntPtr pMesh = mesh.ConstPointer();
       int polylines_created = 0;
-      IntPtr pPolys = UnsafeNativeMethods.ON_Intersect_MeshPlanes1(pMesh, list.Count, list.m_items, ref polylines_created);
+      IntPtr pPolys = UnsafeNativeMethods.TL_Intersect_MeshPlanes1(pMesh, list.Count, list.m_items, ref polylines_created);
       if (polylines_created < 1 || IntPtr.Zero == pPolys)
         return null;
 
@@ -398,6 +399,8 @@ namespace Rhino.Geometry.Intersect
 
       return rc;
     }
+#endif
+
     /// <summary>
     /// Intersect a curve with an (infinite) plane.
     /// </summary>
@@ -425,6 +428,8 @@ namespace Rhino.Geometry.Intersect
       return rc;
 #endif
     }
+
+#if RHINO_SDK
     /// <summary>
     /// Intersect a Brep with an (infinite) plane.
     /// </summary>
@@ -452,6 +457,7 @@ namespace Rhino.Geometry.Intersect
       }
       return rc;
     }
+#endif
 
     /// <summary>
     /// Utility function for creating a PlaneSurface through a Box.
@@ -573,6 +579,8 @@ namespace Rhino.Geometry.Intersect
       IntPtr pIntersectArray = UnsafeNativeMethods.ON_Intersect_CurveSurface2(pCurve, pSurface, t0, t1, tolerance, overlapTolerance);
       return CurveIntersections.Create(pIntersectArray);
     }
+
+#if RHINO_SDK
     /// <summary>
     /// Intersect a curve with a Brep. This function returns the 3D points of intersection
     /// and 3D overlap curves. If an error occurs while processing overlap curves, this function 
@@ -750,6 +758,7 @@ namespace Rhino.Geometry.Intersect
 
       return rc;
     }
+#endif
     
     /// <summary>
     /// Quickly intersect two meshes. Overlaps and near misses are ignored.
@@ -912,6 +921,7 @@ namespace Rhino.Geometry.Intersect
     //}
     #endregion
 
+#if RHINO_SDK
     /// <summary>
     /// Projects points onto meshes
     /// </summary>
@@ -983,6 +993,7 @@ namespace Rhino.Geometry.Intersect
       }
       return rc;
     }
+#endif
   }
 
   /// <summary>

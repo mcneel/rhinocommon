@@ -339,9 +339,11 @@ namespace Rhino.Runtime
           return null;
         }
         */
+#if RHINO_SDK
     public static IntPtr PlugInPointer(Rhino.PlugIns.PlugIn plugin)
     {
       return null == plugin ? IntPtr.Zero : plugin.NonConstPointer();
     }
+#endif
   }
 }

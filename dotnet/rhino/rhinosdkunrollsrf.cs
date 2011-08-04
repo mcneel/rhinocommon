@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-#if USING_V5_SDK
+#if USING_V5_SDK && RHINO_SDK
 namespace Rhino.Geometry
 {
   public class Unroller

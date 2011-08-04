@@ -8937,9 +8937,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_RhinoSdkLoft(IntPtr pCurves, Point3d start_point, Point3d end_point, int loft_type, int simplify_method, int rebuild_point_count, double refit_tolerance, [MarshalAs(UnmanagedType.U1)]bool bClosed, IntPtr pBreps);
 
-  //ON_Surface* ON_Surface_MakePeriodic( const ON_Surface* pConstSurface, int direction )
+  //ON_Surface* TL_Surface_MakePeriodic( const ON_Surface* pConstSurface, int direction )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_Surface_MakePeriodic(IntPtr pConstSurface, int direction);
+  internal static extern IntPtr TL_Surface_MakePeriodic(IntPtr pConstSurface, int direction);
 
   //ON_SimpleArray<ON_PolylineCurve*>* TL_GetMeshOutline(const ON_Mesh* pConstMesh, const ON_PLANE_STRUCT* plane, int* polylines_created)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -8949,13 +8949,13 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr TL_GetMeshOutline2(IntPtr pConstMesh, IntPtr pConstRhinoViewport, ref int polylines_created);
 
-  //ON_SimpleArray<ON_Polyline*>* ON_Intersect_MeshPlanes1(const ON_Mesh* meshPtr, int plane_count, /*ARRAY*/const ON_PLANE_STRUCT* planes, int* polyline_count)
+  //ON_SimpleArray<ON_Polyline*>* TL_Intersect_MeshPlanes1(const ON_Mesh* meshPtr, int plane_count, /*ARRAY*/const ON_PLANE_STRUCT* planes, int* polyline_count)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_Intersect_MeshPlanes1(IntPtr meshPtr, int plane_count, Plane[] planes, ref int polyline_count);
+  internal static extern IntPtr TL_Intersect_MeshPlanes1(IntPtr meshPtr, int plane_count, Plane[] planes, ref int polyline_count);
 
-  //int ON_Brep_PointIsOnFace( const ON_Brep* pConstBrep, int faceIndex, double u, double v )
+  //int TL_Brep_PointIsOnFace( const ON_Brep* pConstBrep, int faceIndex, double u, double v )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int ON_Brep_PointIsOnFace(IntPtr pConstBrep, int faceIndex, double u, double v);
+  internal static extern int TL_Brep_PointIsOnFace(IntPtr pConstBrep, int faceIndex, double u, double v);
   #endregion
 
 

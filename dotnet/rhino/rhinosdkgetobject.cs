@@ -2,6 +2,7 @@ using System;
 using Rhino.Geometry;
 using Rhino.DocObjects;
 
+#if RHINO_SDK
 namespace Rhino.Input.Custom
 {
   /// <summary>
@@ -711,3 +712,4 @@ namespace Rhino.Input.Custom
 
   // skipping CRhinoMeshRef, CRhinoGetMeshes
 }
+#endif

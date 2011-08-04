@@ -1145,7 +1145,7 @@ namespace Rhino.Geometry
     }
 
 #region Rhino SDK functions
-#if !USING_OPENNURBS
+#if RHINO_SDK
     /// <summary>
     /// Test if a set of points are coplanar within a certain tolerance
     /// </summary>

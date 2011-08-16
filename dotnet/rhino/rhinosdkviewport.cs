@@ -531,6 +531,22 @@ namespace Rhino.Display
     }
 
     /// <summary>
+    /// Sets the viewport camera projection
+    /// </summary>
+    /// <param name="projection"></param>
+    /// <param name="updateTargetLocation">
+    /// if true, the target location is changed so that the vector from the camera location to the target
+    /// is parallel to the camera direction vector.  If false, the target location is not changed.
+    /// </param>
+    /// <returns>true on success</returns>
+    public bool SetViewProjection(Rhino.DocObjects.ViewportInfo projection, bool updateTargetLocation)
+    {
+      IntPtr pThis = NonConstPointer();
+      IntPtr pConstViewport = projection.ConstPointer();
+      return UnsafeNativeMethods.CRhinoViewport_SetVP(pThis, pConstViewport, updateTargetLocation);
+    }
+
+    /// <summary>
     /// Sets the view projection and target to the settings at the top of
     /// the view stack and removes those settings from the view stack.
     /// </summary>

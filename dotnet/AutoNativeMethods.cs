@@ -8911,6 +8911,11 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoViewport_GetWallpaperBool(IntPtr pConstRhinoViewport, [MarshalAs(UnmanagedType.U1)]bool grayscale);
 
+  //bool CRhinoViewport_SetVP(CRhinoViewport* pRhinoViewport, const ON_Viewport* pConstOnViewport, bool update_target)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoViewport_SetVP(IntPtr pRhinoViewport, IntPtr pConstOnViewport, [MarshalAs(UnmanagedType.U1)]bool update_target);
+
   //bool CRhinoViewport_SetWallpaper(CRhinoViewport* pRhinoViewport, const RHMONO_STRING* filename, bool grayscale, bool visible)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]

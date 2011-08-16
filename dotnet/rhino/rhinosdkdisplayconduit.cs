@@ -24,23 +24,29 @@ namespace Rhino.Display
           Type base_type = typeof(DisplayConduit);
           Type t = this.GetType();
 
-          System.Reflection.MethodInfo mi = t.GetMethod("CalculateBoundingBox");
+          // 15 Aug 2011 S. Baer
+          // https://github.com/mcneel/rhinocommon/issues/29
+          // The virtual functions are protected, so we need to call the overload
+          // of GetMethod that takes some binding flags
+          var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+
+          System.Reflection.MethodInfo mi = t.GetMethod("CalculateBoundingBox", flags);
           if( mi.DeclaringType != base_type )
             DisplayPipeline.CalculateBoundingBox += _CalculateBoundingBox;
 
-          mi = t.GetMethod("DrawForeground");
+          mi = t.GetMethod("DrawForeground", flags);
           if (mi.DeclaringType != base_type)
             DisplayPipeline.DrawForeground += _DrawForeground;
 
-          mi = t.GetMethod("DrawOverlay");
+          mi = t.GetMethod("DrawOverlay", flags);
           if (mi.DeclaringType != base_type)
             DisplayPipeline.DrawOverlay += _DrawOverlay;
 
-          mi = t.GetMethod("PostDrawObjects");
+          mi = t.GetMethod("PostDrawObjects", flags);
           if (mi.DeclaringType != base_type)
             DisplayPipeline.PostDrawObjects += _PostDrawObjects;
 
-          mi = t.GetMethod("PreDrawObjects");
+          mi = t.GetMethod("PreDrawObjects", flags);
           if (mi.DeclaringType != base_type)
             DisplayPipeline.PreDrawObjects += _PreDrawObjects;
         }

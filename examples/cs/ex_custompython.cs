@@ -6,25 +6,7 @@ namespace examples_cs
   [System.Runtime.InteropServices.Guid("d31dc306-358e-4e26-a453-620e0f2f9116")]
   public class ex_custompython : Rhino.Commands.Command
   {
-    static ex_custompython m_thecommand;
-    public ex_custompython()
-    {
-      // Rhino only creates one instance of each command class defined in a plug-in, so it is
-      // safe to hold on to a static reference.
-      m_thecommand = this;
-    }
-
-    ///<summary>The one and only instance of this command</summary>
-    public static ex_custompython TheCommand
-    {
-      get { return m_thecommand; }
-    }
-
-    ///<returns>The command name as it appears on the Rhino command line</returns>
-    public override string EnglishName
-    {
-      get { return "examples_custompython"; }
-    }
+    public override string EnglishName { get { return "examples_custompython"; } }
 
     protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
     {

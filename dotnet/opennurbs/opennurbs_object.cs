@@ -270,28 +270,31 @@ namespace Rhino.Runtime
     #region serialization support
     const string ARCHIVE_3DM_VERSION = "archive3dm";
     const string ARCHIVE_OPENNURBS_VERSION = "opennurbs";
-
-    protected CommonObject( SerializationInfo info, StreamingContext context)
+    internal static IntPtr SerializeReadON_Object(SerializationInfo info, StreamingContext context)
     {
       int version = info.GetInt32("version");
       int archive_3dm_version = info.GetInt32(ARCHIVE_3DM_VERSION);
       int archive_opennurbs_version = info.GetInt32(ARCHIVE_OPENNURBS_VERSION);
       byte[] stream = info.GetValue("data", typeof(byte[])) as byte[];
-      m_ptr = UnsafeNativeMethods.ON_ReadBufferArchive(archive_3dm_version, archive_opennurbs_version, stream.Length, stream);
-     }
+      IntPtr rc = UnsafeNativeMethods.ON_ReadBufferArchive(archive_3dm_version, archive_opennurbs_version, stream.Length, stream);
+      return rc;
+    }
 
-    [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.SerializationFormatter)]
-    public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+    protected CommonObject( SerializationInfo info, StreamingContext context)
+    {
+      m_ptr = SerializeReadON_Object(info, context);
+    }
+
+    internal static void SerializeWriteON_Object(IntPtr pConstOnObject, SerializationInfo info, StreamingContext context)
     {
       Rhino.FileIO.SerializationOptions options = context.Context as Rhino.FileIO.SerializationOptions;
-      IntPtr pConstThis = ConstPointer();
 
       uint length = 0;
       bool writeuserdata = true;
       if (options != null)
         writeuserdata = options.WriteUserData;
       int rhino_version = (options != null) ? options.RhinoVersion : RhinoApp.ExeVersion;
-      IntPtr pWriteBuffer = UnsafeNativeMethods.ON_WriteBufferArchive_NewWriter(pConstThis, rhino_version, writeuserdata, ref length);
+      IntPtr pWriteBuffer = UnsafeNativeMethods.ON_WriteBufferArchive_NewWriter(pConstOnObject, rhino_version, writeuserdata, ref length);
 
       if (length < int.MaxValue)
       {
@@ -307,6 +310,13 @@ namespace Rhino.Runtime
         info.AddValue("data", bytearray);
       }
       UnsafeNativeMethods.ON_WriteBufferArchive_Delete(pWriteBuffer);
+    }
+
+    [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.SerializationFormatter)]
+    public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      IntPtr pConstThis = ConstPointer();
+      SerializeWriteON_Object(pConstThis, info, context);
     }
     #endregion
   }

@@ -396,7 +396,7 @@ namespace Rhino.Runtime
       Type command_type = typeof(Commands.Command);
       for (int i = 0; i < exported_types.Length; i++)
       {
-        if (command_type.IsAssignableFrom(exported_types[i]))
+        if (command_type.IsAssignableFrom(exported_types[i]) && !exported_types[i].IsAbstract)
         {
           if (CreateCommandsHelper(plugin, plugin.NonConstPointer(), exported_types[i]))
             rc++;
@@ -537,6 +537,8 @@ namespace Rhino.Runtime
       try
       {
         string dateformat = Marshal.PtrToStringUni(format);
+        // surround apostrophe with quotes in order to keep the formatter happy
+        dateformat = dateformat.Replace("'", "\"'\"");
         System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo(locale_id);
         DateTime now = System.DateTime.Now;
         string s = string.IsNullOrEmpty(dateformat) ? now.ToString(ci) : now.ToString(dateformat, ci);

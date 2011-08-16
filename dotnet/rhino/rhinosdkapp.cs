@@ -227,6 +227,8 @@ namespace Rhino
     {
       lock (m_lock_object)
       {
+        // don't allow '%' characters to be misinterpreted as format codes
+        message = message.Replace("%", "%%");
         UnsafeNativeMethods.CRhinoApp_Print(message);
       }
     }

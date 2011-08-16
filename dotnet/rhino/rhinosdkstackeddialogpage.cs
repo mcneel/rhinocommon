@@ -74,5 +74,8 @@ namespace Rhino.UI
   
     ///<summary>Called when stacked dialog Defaults button is pressed (see ShowDefaultsButton).</summary>
     public virtual void OnDefaults() { }
+
+
+    public virtual void OnHelp() { }
   }
 }

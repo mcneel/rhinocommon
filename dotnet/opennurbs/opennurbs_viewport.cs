@@ -1,11 +1,14 @@
 using System;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace Rhino.DocObjects
 {
   /// <summary>
   /// Represents a viewing frustum
   /// </summary>
-  public sealed class ViewportInfo : IDisposable
+  [Serializable]
+  public sealed class ViewportInfo : IDisposable, ISerializable
   {
     object m_parent = null;
     IntPtr m_pViewportPointer = IntPtr.Zero;
@@ -67,6 +70,19 @@ namespace Rhino.DocObjects
     {
       m_parent = parent;
     }
+
+    private ViewportInfo(SerializationInfo info, StreamingContext context)
+    {
+      m_pViewportPointer = Rhino.Runtime.CommonObject.SerializeReadON_Object(info, context);
+     }
+
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    public void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      IntPtr pConstThis = ConstPointer();
+      Rhino.Runtime.CommonObject.SerializeWriteON_Object(pConstThis, info, context);
+    }
+
 
     const int idxIsValidCamera = 0;
     const int idxIsValidFrustum = 1;

@@ -37,7 +37,7 @@ RH_C_FUNCTION bool ON_Mesh_SetVertex(ON_Mesh* pMesh, int vertexIndex, float x, f
   if( pMesh )
   {
     rc = pMesh->SetVertex(vertexIndex, ON_3fPoint(x,y,z));
-    pMesh->InvalidateVertexBoundingBox();
+    pMesh->DestroyRuntimeCache();
   }
   return rc;
 }
@@ -48,6 +48,7 @@ RH_C_FUNCTION bool ON_Mesh_SetFace(ON_Mesh* pMesh, int faceIndex, int vertex1, i
   if( pMesh )
   {
     rc = pMesh->SetQuad(faceIndex, vertex1, vertex2, vertex3, vertex4);
+    pMesh->DestroyRuntimeCache();
   }
   return rc;
 }
@@ -71,6 +72,7 @@ RH_C_FUNCTION int ON_Mesh_AddFace(ON_Mesh* pMesh, int vertex1, int vertex2, int 
     int faceIndex = pMesh->m_F.Count();
     if( pMesh->SetQuad(faceIndex, vertex1, vertex2, vertex3, vertex4) )
       rc = faceIndex;
+    pMesh->DestroyRuntimeCache();
   }
   return rc;
 }
@@ -87,6 +89,7 @@ RH_C_FUNCTION bool ON_Mesh_InsertFace(ON_Mesh* pMesh, int index, int vertex1, in
     face.vi[3] = vertex4;
     pMesh->m_F.Insert(index, face);
     rc = true;
+    pMesh->DestroyRuntimeCache();
   }
   return rc;
 }

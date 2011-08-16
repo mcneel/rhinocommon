@@ -205,8 +205,10 @@ namespace Rhino.UI
       try
       {
         XmlTextReader reader = TextReaderFromFile(a, language_id);
-        if (null == reader)
+        if (null == reader) // If external XML localization file not found look for one embedded in the requesting assembly
           reader = LoadFromAssemblyEmbeddedResource(a, language_id);
+        if (null == reader)
+          return false; // External or embedded XML file not found
         XmlDocument doc = new XmlDocument();
         doc.Load(reader);
         reader.Close();

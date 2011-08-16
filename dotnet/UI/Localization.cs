@@ -195,7 +195,14 @@ namespace Rhino.UI
         // support swapping localizations on the fly. Use a cached language id after the
         // initial language id has been read
         if (m_language_id == -1)
-          m_language_id = Rhino.ApplicationSettings.AppearanceSettings.LanguageIdentifier;
+        {
+          // This code is commonly called while working in theVisual Studio designer
+          // and we want to try and not throw exceptions in order to show the winform
+          if (Rhino.Runtime.HostUtils.RunningInRhino)
+            m_language_id = Rhino.ApplicationSettings.AppearanceSettings.LanguageIdentifier;
+          else
+            m_language_id = 1033;
+        }
         return m_language_id;
       }
     }

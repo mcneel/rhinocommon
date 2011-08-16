@@ -625,28 +625,11 @@ namespace Rhino.PlugIns
       }
     }
 
-    //public PersistentSettings SettingsAllUsers
-    //{
-    //  get
-    //  {
-    //    if (m_SettingsManager == null)
-    //      m_SettingsManager = new PersistentSettingsManager(this);
-    //    return m_SettingsManager.PluginSettingsAllUsers;
-    //  }
-    //}
-
     public PersistentSettings CommandSettings(string name)
     {
       if (m_SettingsManager == null)
         m_SettingsManager = new PersistentSettingsManager(this);
       return m_SettingsManager.CommandSettings(name);
-    }
-
-    public PersistentSettings CommandSettingsAllUsers(string name)
-    {
-      if (m_SettingsManager == null)
-        m_SettingsManager = new PersistentSettingsManager(this);
-      return m_SettingsManager.CommandSettingsAllUsers(name);
     }
 
     #region plugin manager items

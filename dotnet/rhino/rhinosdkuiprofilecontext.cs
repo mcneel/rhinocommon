@@ -19,14 +19,15 @@ namespace Rhino
   /// </summary>
   class SettingValue : ISerializable
   {
+    /// <summary>
+    /// ISerializable constructor
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="context"></param>
     protected SettingValue(SerializationInfo info, StreamingContext context)
     {
-    }
-
-    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-      //info.AddValue("X", m_x);
+      m_value = info.GetString("value");
+      m_default_value = info.GetString("default_value");
     }
     /// <summary>
     /// Constructor
@@ -35,8 +36,60 @@ namespace Rhino
     /// <param name="default_value">Default value string</param>
     public SettingValue(string value, string default_value)
     {
-      this.m_value = value;
-      this.m_default_value = default_value;
+      if (!string.IsNullOrEmpty(value))
+        this.m_value = value;
+      if (!string.IsNullOrEmpty(default_value))
+        this.m_default_value = default_value;
+    }
+    /// <summary>
+    /// ISerializable required method
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="context"></param>
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("value", m_value);
+      info.AddValue("default_value", m_default_value);
+    }
+    /// <summary>
+    /// Copy values from another SettingsValue object, if the destination contains more than one item
+    /// assume it is a string list and append values from the source object that are not currently in
+    /// the array
+    /// </summary>
+    /// <param name="source"></param>
+    public void CopyFrom(SettingValue source)
+    {
+      if (null != source)
+      {
+        m_value = source.m_value;
+        m_default_value = source.m_default_value;
+      }
+    }
+    /// <summary>
+    /// Check to see if two SettingsValue have the same data, do not compare default values
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    public bool ValuesAreEqual(SettingValue other)
+    {
+      return ValuesAreEqual(other, false);
+    }
+    /// <summary>
+    /// Check to see if two SettingsValues have the same data and optionally compare default data
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="compareDefaults"></param>
+    /// <returns></returns>
+    public bool ValuesAreEqual(SettingValue other, bool compareDefaults)
+    {
+      if (null == other)
+        return false;
+      if (0 != string.Compare(m_value, other.m_value, StringComparison.Ordinal))
+        return false;
+      if (compareDefaults && 0 != string.Compare(m_default_value, other.m_default_value, StringComparison.Ordinal))
+        return false;
+      return true;
     }
     /// <summary>
     /// Set either the current or default value string
@@ -57,24 +110,16 @@ namespace Rhino
     /// <returns>If bDefault is true then the default value string is returned otherwise the current value string is returned</returns>
     public string GetValue(bool bDefault)
     {
-      if (bDefault || string.IsNullOrEmpty(m_value))
-        return m_default_value;
-      return m_value;
+      return (bDefault ? m_default_value : m_value);
     }
     /// <summary>
     /// Compare current and default values and return true if they are identical, compare is case sensitive
     /// </summary>
-    public bool ValueSameAsDefault
-    {
-      get { return (0 == string.Compare(m_value, m_default_value, false)); }
-    }
+    public bool ValueSameAsDefault { get { return (0 == string.Compare(m_value, m_default_value, StringComparison.Ordinal)); } }
     /// <summary>
     /// Compare current and default values and return true if they differ, compare is case sensitive
     /// </summary>
-    public bool ValueDifferentThanDefault
-    {
-      get { return (!ValueSameAsDefault); }
-    }
+    public bool ValueDifferentThanDefault { get { return (!ValueSameAsDefault); } }
 
     public bool TryGetBool(bool bDefault, out bool value)
     {
@@ -115,6 +160,34 @@ namespace Rhino
     public bool TryGetString(bool bDefault, out string value)
     {
       value = GetValue(bDefault);
+      return true;
+    }
+    /// <summary>
+    /// I was going to use Path.PathSeparator, ';' which works when specifying a path but is a valid file name character so
+    /// it does not work in a file name list, the '|' character is in both the Path.GetInvalidFileNameChars() and 
+    /// Path.GetInvalidPathChars() list of characters so I went ahead and used it for now
+    /// </summary>
+    public static readonly char StringListSeparator = '|';
+    /// <summary>
+    /// 
+    /// </summary>
+    public static char[] StringListSeparatorAsArray { get { return new char[] { StringListSeparator }; } }
+
+    public static readonly string StringListRootKey = "%root%";
+
+    public bool TryGetStringList(bool bDefault, string rootString, out string[] value)
+    {
+      value = null;
+      string s = this.GetValue(bDefault);
+      if (!string.IsNullOrEmpty(s))
+      {
+        string listSeporator = new string(StringListSeparatorAsArray);
+        s = s.Replace(StringListSeparator + StringListRootKey + StringListSeparator, string.IsNullOrEmpty(rootString) ? listSeporator : listSeporator + rootString + listSeporator);
+        s = s.Replace(StringListSeparator + StringListRootKey, string.IsNullOrEmpty(rootString) ? string.Empty : listSeporator + rootString);
+        s = s.Replace(StringListRootKey + StringListSeparator, string.IsNullOrEmpty(rootString) ? string.Empty : rootString + listSeporator);
+        s = s.Replace(StringListRootKey, string.IsNullOrEmpty(rootString) ? string.Empty : rootString);
+        value = s.Split(StringListSeparatorAsArray);
+      }
       return true;
     }
 
@@ -186,7 +259,7 @@ namespace Rhino
       return false;
     }
 
-    public bool TryGetRect(bool bDefault, out System.Drawing.Rectangle value)
+    public bool TryGetRectangle(bool bDefault, out System.Drawing.Rectangle value)
     {
       value = Rectangle.Empty;
 
@@ -209,8 +282,18 @@ namespace Rhino
       return false;
     }
 
-    public void SetBool(bool bDefault, bool value)
+    public void SetBool(bool bDefault, bool value, EventHandler<PersistentSettingsEventArgs> validator)
     {
+      if (validator != null)
+      {
+        bool old_value = false;
+        TryGetBool(bDefault, out old_value);
+        PersistentSettingsEventArgs<bool> a = new PersistentSettingsEventArgs<bool>(old_value, value);
+        validator(this, a);
+        if (a.Cancel)
+          return;
+        value = a.NewValue;
+      }
       SetValue(bDefault, value.ToString(CultureInfo.InvariantCulture.NumberFormat));
     }
 
@@ -304,6 +387,31 @@ namespace Rhino
       SetValue(bDefault, value);
     }
 
+    public void SetStringList(bool bDefault, string[] value, EventHandler<PersistentSettingsEventArgs> validator)
+    {
+      if (validator != null)
+      {
+        string[] old_value;
+        TryGetStringList(bDefault, string.Empty, out old_value);
+        PersistentSettingsEventArgs<string[]> a = new PersistentSettingsEventArgs<string[]>(old_value, value);
+        validator(this, a);
+        if (a.Cancel)
+          return;
+        value = a.NewValue;
+      }
+      string newValue = string.Empty;
+      if (null != value)
+      {
+        foreach (var s in value)
+        {
+          if (!string.IsNullOrEmpty(newValue))
+            newValue += SettingValue.StringListSeparator;
+          newValue += s;
+        }
+      }
+      SetValue(bDefault, newValue);
+    }
+
     public void SetDate(bool bDefault, DateTime value, EventHandler<PersistentSettingsEventArgs> validator)
     {
       if (validator != null)
@@ -356,12 +464,12 @@ namespace Rhino
                                        value.m_z.ToString(CultureInfo.InvariantCulture.NumberFormat)));
     }
 
-    public void SetRect(bool bDefault, Rectangle value, EventHandler<PersistentSettingsEventArgs> validator)
+    public void SetRectangle(bool bDefault, Rectangle value, EventHandler<PersistentSettingsEventArgs> validator)
     {
       if (validator != null)
       {
         Rectangle old_value;
-        TryGetRect(bDefault, out old_value);
+        TryGetRectangle(bDefault, out old_value);
         PersistentSettingsEventArgs<Rectangle> a = new PersistentSettingsEventArgs<Rectangle>(old_value, value);
         validator(this, a);
         if (a.Cancel)
@@ -448,13 +556,29 @@ namespace Rhino
     [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
     void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
     {
-      //info.AddValue("X", m_x);
+      this.m_Settings.GetObjectData(info, context);
     }
 
-    public PersistentSettings()
+    private readonly PersistentSettings AllUserSettings;
+    public PersistentSettings(PersistentSettings allUserSettings)
     {
+      AllUserSettings = allUserSettings;
       m_Settings = new Dictionary<string, SettingValue>();
       m_SettingsValidators = new Dictionary<string, EventHandler<PersistentSettingsEventArgs>>();
+    }
+
+    internal void CopyFrom(PersistentSettings source)
+    {
+      if (null != source)
+      {
+        foreach (var item in source.m_Settings)
+        {
+          if (this.m_Settings.ContainsKey(item.Key))
+            this.m_Settings[item.Key].CopyFrom(item.Value);
+          else
+            this.m_Settings.Add(item.Key, new SettingValue(item.Value.GetValue(false), item.Value.GetValue(true)));
+        }
+      }
     }
 
     public void RegisterSettingsValidator(string key, EventHandler<PersistentSettingsEventArgs> validator)
@@ -469,12 +593,18 @@ namespace Rhino
       return validator;
     }
 
-    public bool ContainsModifiedValues()
+    public bool ContainsModifiedValues(PersistentSettings allUserSettings)
     {
       if (null != m_Settings && m_Settings.Count > 0)
+      {
         foreach (var v in m_Settings)
+        {
           if (v.Value.ValueDifferentThanDefault)
             return true;
+          if (null != allUserSettings && allUserSettings.m_Settings.ContainsKey(v.Key) && 0 != string.Compare(v.Value.GetValue(false), allUserSettings.m_Settings[v.Key].GetValue(false), StringComparison.Ordinal))
+            return true;
+        }
+      }
       return false;
     }
 
@@ -533,11 +663,12 @@ namespace Rhino
       bool rc;
       if (TryGetBool(key, out rc))
       {
-        m_Settings[key].SetBool(true, defaultValue);
+        m_Settings[key].SetBool(true, defaultValue, GetValidator(key));
         return rc;
       }
-      this.SetBool(key, defaultValue);
-      return defaultValue;
+      this.SetDefault(key, defaultValue);
+      m_Settings[key].SetBool(false, defaultValue, GetValidator(key));
+      return GetBool(key);
     }
 
     public bool TryGetByte(string key, out byte value)
@@ -566,8 +697,9 @@ namespace Rhino
         m_Settings[key].SetByte(true, defaultValue, GetValidator(key));
         return rc;
       }
-      this.SetByte(key, defaultValue);
-      return defaultValue;
+      this.SetDefault(key, defaultValue);
+      m_Settings[key].SetByte(false, defaultValue, GetValidator(key));
+      return GetByte(key);
     }
 
     public bool TryGetInteger(string key, out int value)
@@ -596,8 +728,9 @@ namespace Rhino
         m_Settings[key].SetInteger(true, defaultValue, GetValidator(key));
         return rc;
       }
-      SetInteger(key, defaultValue);
-      return defaultValue;
+      SetDefault(key, defaultValue);
+      m_Settings[key].SetInteger(false, defaultValue, GetValidator(key));
+      return GetInteger(key);
     }
 
     [CLSCompliant(false)]
@@ -629,8 +762,9 @@ namespace Rhino
         m_Settings[key].SetUnsignedInteger(true, defaultValue, GetValidator(key));
         return rc;
       }
-      SetUnsignedInteger(key, defaultValue);
-      return defaultValue;
+      SetDefault(key, defaultValue);
+      m_Settings[key].SetUnsignedInteger(false, defaultValue, GetValidator(key));
+      return GetUnsignedInteger(key);
     }
 
     public bool TryGetDouble(string key, out double value)
@@ -659,8 +793,9 @@ namespace Rhino
         m_Settings[key].SetDouble(true, defaultValue, GetValidator(key));
         return rc;
       }
-      this.SetDouble(key, defaultValue);
-      return defaultValue;
+      SetDefault(key, defaultValue);
+      m_Settings[key].SetDouble(false, defaultValue, GetValidator(key));
+      return GetDouble(key);
     }
 
     public bool TryGetChar(string key, out char value)
@@ -689,8 +824,9 @@ namespace Rhino
         m_Settings[key].SetChar(true, defaultValue, GetValidator(key));
         return rc;
       }
-      this.SetChar(key, defaultValue);
-      return defaultValue;
+      SetDefault(key, defaultValue);
+      m_Settings[key].SetChar(false, defaultValue, GetValidator(key));
+      return GetChar(key);
     }
 
     public bool TryGetString(string key, out string value)
@@ -719,8 +855,45 @@ namespace Rhino
         m_Settings[key].SetString(true, defaultValue, GetValidator(key));
         return rc;
       }
-      this.SetString(key, defaultValue);
-      return defaultValue;
+      SetDefault(key, defaultValue);
+      m_Settings[key].SetString(false, defaultValue, GetValidator(key));
+      return GetString(key);
+    }
+
+    public bool TryGetStringList(string key, out string[] value)
+    {
+      value = null;
+      if (m_Settings.ContainsKey(key))
+      {
+        string rootString = string.Empty;
+        if (null != this.AllUserSettings && this.AllUserSettings.m_Settings.ContainsKey(key))
+          rootString = this.AllUserSettings.m_Settings[key].GetValue(false);
+        return m_Settings[key].TryGetStringList(false, rootString, out value);
+      }
+      return false;
+    }
+
+    public string[] GetStringList(string key)
+    {
+      if (!m_Settings.ContainsKey(key))
+        throw new KeyNotFoundException(key);
+      string[] rc;
+      if (TryGetStringList(key, out rc))
+        return rc;
+      throw new Exception("key '" + key + "' value type is not a string list");
+    }
+
+    public string[] GetStringList(string key, string[] defaultValue)
+    {
+      string[] rc;
+      if (TryGetStringList(key, out rc))
+      {
+        m_Settings[key].SetStringList(true, defaultValue, GetValidator(key));
+        return rc;
+      }
+      SetDefault(key, defaultValue);
+      m_Settings[key].SetStringList(false, defaultValue, GetValidator(key));
+      return GetStringList(key);
     }
 
     public bool TryGetDate(string key, out DateTime value)
@@ -749,8 +922,9 @@ namespace Rhino
         m_Settings[key].SetDate(true, defaultValue, GetValidator(key));
         return rc;
       }
-      this.SetDate(key, defaultValue);
-      return defaultValue;
+      SetDefault(key, defaultValue);
+      m_Settings[key].SetDate(false, defaultValue, GetValidator(key));
+      return GetDate(key);
     }
 
     public bool TryGetColor(string key, out Color value)
@@ -779,8 +953,9 @@ namespace Rhino
         m_Settings[key].SetColor(true, defaultValue, GetValidator(key));
         return rc;
       }
-      this.SetColor(key, defaultValue);
-      return defaultValue;
+      SetDefault(key, defaultValue);
+      m_Settings[key].SetColor(false, defaultValue, GetValidator(key));
+      return GetColor(key);
     }
 
     public bool TryGetPoint3d(string key, out Point3d value)
@@ -809,8 +984,9 @@ namespace Rhino
         m_Settings[key].SetPoint3d(true, defaultValue, GetValidator(key));
         return rc;
       }
-      this.SetPoint3d(key, defaultValue);
-      return defaultValue;
+      SetDefault(key, defaultValue);
+      m_Settings[key].SetPoint3d(false, defaultValue, GetValidator(key));
+      return GetPoint3d(key);
     }
 
     public bool TryGetSize(string key, out Size value)
@@ -839,16 +1015,15 @@ namespace Rhino
         m_Settings[key].SetSize(true, defaultValue, GetValidator(key));
         return rc;
       }
-      this.SetSize(key, defaultValue);
-      return defaultValue;
+      SetDefault(key, defaultValue);
+      m_Settings[key].SetSize(false, defaultValue, GetValidator(key));
+      return GetSize(key);
     }
 
+    [Obsolete("Use TryGetRectangle - this will be removed in a future WIP")]
     public bool TryGetRect(string key, out System.Drawing.Rectangle value)
     {
-      value = Rectangle.Empty;
-      if (m_Settings.ContainsKey(key))
-        return m_Settings[key].TryGetRect(false, out value);
-      return false;
+      return TryGetRectangle(key, out value);
     }
 
     [Obsolete("Use GetRectangle - this will be removed in a future WIP")]
@@ -863,12 +1038,20 @@ namespace Rhino
       return GetRectangle(key, defaultValue);
     }
 
+    public bool TryGetRectangle(string key, out System.Drawing.Rectangle value)
+    {
+      value = Rectangle.Empty;
+      if (m_Settings.ContainsKey(key))
+        return m_Settings[key].TryGetRectangle(false, out value);
+      return false;
+    }
+
     public Rectangle GetRectangle(string key)
     {
       if (!m_Settings.ContainsKey(key))
         throw new KeyNotFoundException(key);
       Rectangle rc;
-      if (TryGetRect(key, out rc))
+      if (TryGetRectangle(key, out rc))
         return rc;
       throw new Exception("key '" + key + "' value type is not a Rectangle");
     }
@@ -876,13 +1059,14 @@ namespace Rhino
     public Rectangle GetRectangle(string key, Rectangle defaultValue)
     {
       Rectangle rc;
-      if (TryGetRect(key, out rc))
+      if (TryGetRectangle(key, out rc))
       {
-        m_Settings[key].SetRect(true, defaultValue, GetValidator(key));
+        m_Settings[key].SetRectangle(true, defaultValue, GetValidator(key));
         return rc;
       }
-      this.SetRect(key, defaultValue);
-      return defaultValue;
+      SetDefault(key, defaultValue);
+      m_Settings[key].SetRectangle(false, defaultValue, GetValidator(key));
+      return GetRectangle(key);
     }
 
     public bool TryGetDefault(string key, out bool value)
@@ -933,6 +1117,19 @@ namespace Rhino
       return false;
     }
 
+    public bool TryGetDefault(string key, out string[] value)
+    {
+      if (m_Settings.ContainsKey(key))
+      {
+        string rootString = string.Empty;
+        if (null != this.AllUserSettings && this.AllUserSettings.m_Settings.ContainsKey(key))
+          rootString = this.AllUserSettings.m_Settings[key].GetValue(true);
+        return m_Settings[key].TryGetStringList(true, rootString, out value);
+      }
+      value = null;
+      return false;
+    }
+
     public bool TryGetDefault(string key, out DateTime value)
     {
       if (m_Settings.ContainsKey(key))
@@ -968,14 +1165,14 @@ namespace Rhino
     public bool TryGetDefault(string key, out System.Drawing.Rectangle value)
     {
       if (m_Settings.ContainsKey(key))
-        return m_Settings[key].TryGetRect(true, out value);
+        return m_Settings[key].TryGetRectangle(true, out value);
       value = Rectangle.Empty;
       return false;
     }
 
     public void SetBool(string key, bool value)
     {
-      GetValue(key).SetBool(false, value);
+      GetValue(key).SetBool(false, value, GetValidator(key));
     }
 
     public void SetByte(string key, byte value)
@@ -1008,6 +1205,21 @@ namespace Rhino
     {
       GetValue(key).SetString(false, value, GetValidator(key));
     }
+    /// <summary>
+    /// Adding this string to a string list when calling SetStringList will cause the ProgramData setting to
+    /// get inserted at that location in the list
+    /// </summary>
+    public static string StringListRootKey { get { return SettingValue.StringListRootKey; } }
+    /// <summary>
+    /// Including a item with the value of StringListRootKey will cause the ProgramData value to get inserted at
+    /// that location in the list when calling GetStringList
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    public void SetStringList(string key, string[] value)
+    {
+      GetValue(key).SetStringList(false, value, GetValidator(key));
+    }
 
     public void DeleteItem(string key)
     {
@@ -1030,9 +1242,15 @@ namespace Rhino
       GetValue(key).SetPoint3d(false, value, GetValidator(key));
     }
 
+    [Obsolete("Use SetRectangle - this will be removed in a future WIP")]
     public void SetRect(string key, System.Drawing.Rectangle value)
     {
-      GetValue(key).SetRect(false, value, GetValidator(key));
+      SetRectangle(key, value);
+    }
+
+    public void SetRectangle(string key, System.Drawing.Rectangle value)
+    {
+      GetValue(key).SetRectangle(false, value, GetValidator(key));
     }
 
     public void SetSize(string key, Size value)
@@ -1042,7 +1260,7 @@ namespace Rhino
 
     public void SetDefault(string key, bool value)
     {
-      GetValue(key).SetBool(true, value);
+      GetValue(key).SetBool(true, value, GetValidator(key));
     }
 
     public void SetDefault(string key, byte value)
@@ -1070,6 +1288,11 @@ namespace Rhino
       GetValue(key).SetString(true, value, GetValidator(key));
     }
 
+    public void SetDefault(string key, string[] value)
+    {
+      GetValue(key).SetStringList(true, value, GetValidator(key));
+    }
+
     public void SetDefault(string key, DateTime value)
     {
       GetValue(key).SetDate(true, value, GetValidator(key));
@@ -1082,7 +1305,7 @@ namespace Rhino
 
     public void SetDefault(string key, System.Drawing.Rectangle value)
     {
-      GetValue(key).SetRect(true, value, GetValidator(key));
+      GetValue(key).SetRectangle(true, value, GetValidator(key));
     }
 
     public void SetDefault(string key, Size value)
@@ -1090,11 +1313,10 @@ namespace Rhino
       GetValue(key).SetSize(true, value, GetValidator(key));
     }
 
-    //public void Write()
-    //{
-    //  m_SettingsManager.WriteSettings();
-    //}
-
+    public void SetDefault(string key, Point3d value)
+    {
+      GetValue(key).SetPoint3d(true, value, GetValidator(key));
+    }
     /// <summary>
     /// If the settings dictionary contains one or more values, which are not equal to the default value, then Write the contents
     /// of this settings dictionary to the specified XmlWriter contained within elementName
@@ -1103,37 +1325,46 @@ namespace Rhino
     /// <param name="elementName">Element which will contain key value pairs</param>
     /// <param name="attributeName">Optional element attribute</param>
     /// <param name="attributeValue">Optional element attribute value</param>
-    internal void WriteXmlElement(XmlWriter xmlWriter, string elementName, string attributeName, string attributeValue)
+    /// <param name="allUserSettings">All users settings to compare with</param>
+    internal void WriteXmlElement(XmlWriter xmlWriter, string elementName, string attributeName, string attributeValue, PersistentSettings allUserSettings)
     {
-      if (null != m_Settings && ContainsModifiedValues())
+      if (null != m_Settings && ContainsModifiedValues(allUserSettings))
       {
         xmlWriter.WriteStartElement(elementName);
         if (!string.IsNullOrEmpty(attributeName) && !string.IsNullOrEmpty(attributeValue))
           xmlWriter.WriteAttributeString(attributeName, attributeValue);
+        // The following is used when you want to write the default and all user values as item attributes
+        // to the settings output file, useful when trying to determine why a value was written
+        bool bWriteDefautlValue = false;
         foreach (var item in this.m_Settings)
         {
-          if (item.Value.ValueDifferentThanDefault)
+          string allUserValue = null;
+          if (null != allUserSettings && allUserSettings.m_Settings.ContainsKey(item.Key))
+            allUserValue = allUserSettings.m_Settings[item.Key].GetValue(false);
+          string value = item.Value.GetValue(false);
+          bool valueDifferentThanAllUser = (null != allUserValue && 0 != string.Compare(value, allUserValue, StringComparison.Ordinal));
+          if (valueDifferentThanAllUser || item.Value.ValueDifferentThanDefault)
           {
             // Write current value
             xmlWriter.WriteStartElement("entry");
             xmlWriter.WriteAttributeString("key", item.Key);
-            xmlWriter.WriteString(item.Value.GetValue(false));
+            if (bWriteDefautlValue)
+            {
+              string defaultValue = item.Value.GetValue(true);
+              xmlWriter.WriteAttributeString("DefaultValue", null == defaultValue ? "" : defaultValue);
+              if (null != allUserValue)
+                xmlWriter.WriteAttributeString("AllUsersValue", allUserValue);
+            }
+            if (!string.IsNullOrEmpty(value))
+              xmlWriter.WriteString(value);
             xmlWriter.WriteEndElement();
-            // If default value is not an empty string then write it out
-            //if (!string.IsNullOrEmpty(item.Value.GetValue(true)))
-            //{
-            //  xmlWriter.WriteStartElement("entry_default");
-            //  xmlWriter.WriteAttributeString("key", item.Key);
-            //  xmlWriter.WriteString(item.Value.GetValue(true));
-            //  xmlWriter.WriteEndElement();
-            //}
           }
         }
         xmlWriter.WriteEndElement();
       }
     }
     /// <summary>
-    /// Parse XmlNode for settings "entry" and "entry_default" elements, add entry elements to the dictionary
+    /// Parse XmlNode for settings "entry" elements, add entry elements to the dictionary
     /// first and if then check the defaults list and make sure the entry is in the list before setting the 
     /// default value
     /// </summary>
@@ -1142,25 +1373,41 @@ namespace Rhino
     {
       if (null != m_Settings && null != nodeRoot)
       {
-        string[] selectNodeStrings = { "./entry", "./entry_default" };
-        bool setDefaults = false;
-        foreach (string select in selectNodeStrings)
+        // Set this to true if you want to read the "DefaultValue" attribute from the node
+        bool bSetDefault = false;
+        XmlNodeList nodeList = nodeRoot.SelectNodes("./entry");
+        foreach (XmlNode entry in nodeList)
         {
-          XmlNodeList nodeList = nodeRoot.SelectNodes(select);
-          foreach (XmlNode entry in nodeList)
+          XmlNode attr = null == entry.Attributes ? null : entry.Attributes["key"];
+          if (attr != null && !string.IsNullOrEmpty(attr.Value))
           {
-            XmlNode attr = null == entry.Attributes ? null : entry.Attributes["key"];
-            if (attr != null && !string.IsNullOrEmpty(attr.Value))
+            SetString(attr.Value, entry.InnerText);
+            if (bSetDefault)
             {
-              if (setDefaults)
-                SetDefault(attr.Value, entry.InnerText);
-              else
-                SetString(attr.Value, entry.InnerText);
+              XmlNode attrDefault = null == entry.Attributes ? null : entry.Attributes["DefaultValue"];
+              if (null != attrDefault && !string.IsNullOrEmpty(attrDefault.Value))
+                SetDefault(attr.Value, attrDefault.Value);
             }
           }
-          setDefaults = true;
         }
       }
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="node"></param>
+    /// <returns></returns>
+    private string[] XmlNodeToStringArray(XmlNode node)
+    {
+      if (null == node)
+        return null;
+      XmlNodeList nodeList = node.SelectNodes("item");
+      if (null == nodeList || nodeList.Count < 1)
+        return (string.IsNullOrEmpty(node.InnerText) ? null : new string[] { node.InnerText });
+      string[] result = new string[nodeList.Count];
+      for (int i = 0, cnt = nodeList.Count; i < cnt; i++)
+        result[i] = nodeList[i].InnerText;
+      return result;
     }
   }
 
@@ -1168,26 +1415,47 @@ namespace Rhino
   class PlugInSettings
   {
     private readonly PlugIns.PlugIn m_plugin; // Initialized by constructor
-    private readonly bool LocalSettings; // Initialized by constructor
+    private readonly PlugInSettings AllUserSettings;
     private PersistentSettings m_PluginSettings; // = null; initialized by runtime
     private Dictionary<string, PersistentSettings> m_CommandSettingsDict; // = null; initialized by runtime
+    private PersistentSettings AllUserPlugInSettings { get { return (null == this.AllUserSettings ? null : this.AllUserSettings.m_PluginSettings); } }
+    private PersistentSettings AllUserCommandSettings(string commandName)
+    {
+      if (null != this.AllUserSettings && !string.IsNullOrEmpty(commandName) && null != this.AllUserSettings.m_CommandSettingsDict && this.AllUserSettings.m_CommandSettingsDict.ContainsKey(commandName))
+        return this.AllUserSettings.m_CommandSettingsDict[commandName];
+      return null;
+    }
     /// <summary>
     /// Main settings element id attribute value, used to query valid settings section in settings XML file
     /// </summary>
     private const string CURRENT_XML_FORMAT_VERSION = "1.0";
-    private string SettingsFileFolder { get { return LocalSettings ? m_plugin.SettingsDirectory : m_plugin.SettingsDirectoryAllUsers; } }
-    private string SettingsFileName { get { return System.IO.Path.Combine(SettingsFileFolder, "settings.xml");
-      }
+    /// <summary>
+    /// Compute folder to read or write settings files
+    /// </summary>
+    /// <param name="localSettings"></param>
+    /// <returns></returns>
+    private string SettingsFileFolder(bool localSettings)
+    {
+      return (localSettings ? m_plugin.SettingsDirectory : m_plugin.SettingsDirectoryAllUsers);
+    }
+    /// <summary>
+    /// Compute full path to settings file to read or write
+    /// </summary>
+    /// <param name="localSettings"></param>
+    /// <returns></returns>
+    private string SettingsFileName(bool localSettings)
+    {
+      return Path.Combine(SettingsFileFolder(localSettings), "settings.xml");
     }
     /// <summary>
     /// PersistentSettingsManager constructor
     /// </summary>
     /// <param name="plugin">Requires a valid PlugIn object to attach to</param>
-    /// <param name="localSettings">Identifies this settings instance as AllUsers or Local</param>
-    public PlugInSettings(Rhino.PlugIns.PlugIn plugin, bool localSettings)
+    /// <param name="allUserSettings">All user setting to compare for changes</param>
+    public PlugInSettings(Rhino.PlugIns.PlugIn plugin, PlugInSettings allUserSettings)
     {
       m_plugin = plugin;
-      LocalSettings = localSettings;
+      AllUserSettings = allUserSettings;
     }
     /// <summary>
     /// Get the Plug-in settings associated with this plug-in, if this is the first time called then
@@ -1223,8 +1491,26 @@ namespace Rhino
         return m_CommandSettingsDict[name];
       // There were no settings available for the command, so create one
       // for writing
-      m_CommandSettingsDict[name] = new PersistentSettings();
+      m_CommandSettingsDict[name] = new PersistentSettings(this.AllUserCommandSettings(name));
       return m_CommandSettingsDict[name];
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public bool ReadSettings()
+    {
+      bool result = false;
+      // If reading the local settings
+      if (null != this.AllUserSettings)
+      {
+        // First read All User settings
+        result = this.AllUserSettings.ReadSettingsHelper(false);
+        // Now read the local settings
+        if (this.ReadSettingsHelper(true))
+          result = true;
+      }
+      return result;
     }
     /// <summary>
     /// Reads existing settings for a plug-in and its associated commands.
@@ -1234,15 +1520,41 @@ namespace Rhino
     /// True if settings are successfully read. False if there was no existing
     /// settings file to read, or if a read lock could not be acquired.
     /// </returns>
-    public bool ReadSettings()
+    public bool ReadSettingsHelper(bool localSettings)
     {
       if (m_PluginSettings == null)
-        m_PluginSettings = new PersistentSettings();
+      {
+        m_PluginSettings = new PersistentSettings(this.AllUserPlugInSettings);
+        // If AllUserSettings is not null then we are reading local settings, when
+        // reading local settings first get values previously read from the All Users
+        // location and add them to the local dictionary so the settings will propagate
+        // to the current user.
+        if (localSettings && null != this.AllUserSettings)
+          this.m_PluginSettings.CopyFrom(this.AllUserPlugInSettings);
+      }
 
       if (m_CommandSettingsDict == null)
+      {
         m_CommandSettingsDict = new Dictionary<string, PersistentSettings>();
+        // If AllUserSettings is not null then we are reading local settings, when
+        // reading local settings first get values previously read from the All Users
+        // location and add them to the local dictionary so the settings will propagate
+        // to the current user.
+        if (null != this.AllUserSettings && null != this.AllUserSettings.m_CommandSettingsDict)
+        {
+          foreach (var item in this.AllUserSettings.m_CommandSettingsDict)
+          {
+            // Make a new settings dictionary to associate with this command
+            PersistentSettings settings = new PersistentSettings(item.Value);
+            // Copy settings from global command dictionary to local dictionary
+            settings.CopyFrom(item.Value);
+            // Add the settings to the local dictionary
+            this.m_CommandSettingsDict.Add(item.Key, settings);
+          }
+        }
+      }
 
-      string settingsFileName = SettingsFileName;
+      string settingsFileName = SettingsFileName(localSettings);
 
       if (File.Exists(settingsFileName) == false)
         return false;
@@ -1311,9 +1623,12 @@ namespace Rhino
             XmlNode attr = commandNode.Attributes.GetNamedItem("name");
             if (null != attr && !string.IsNullOrEmpty(attr.Value))
             {
-              PersistentSettings entries = new PersistentSettings();
+              PersistentSettings entries = new PersistentSettings(this.AllUserCommandSettings(attr.Value));
               entries.ParseXmlNodes(commandNode);
-              m_CommandSettingsDict[attr.Value] = entries;
+              if (null != this.AllUserSettings && m_CommandSettingsDict.ContainsKey(attr.Value))
+                m_CommandSettingsDict[attr.Value].CopyFrom(entries);
+              else
+                m_CommandSettingsDict[attr.Value] = entries;
             }
           }
         }
@@ -1366,13 +1681,59 @@ namespace Rhino
     /// <returns>Returns true if either the plug-ins or commands dictionaries contains a modified item otherwise false</returns>
     public bool ContainsModifiedValues()
     {
-      if (null != m_PluginSettings && m_PluginSettings.ContainsModifiedValues())
+      if (null != m_PluginSettings && m_PluginSettings.ContainsModifiedValues(this.AllUserPlugInSettings))
         return true; // Plug-in settings contains a modified value
       if (null != this.m_CommandSettingsDict)
         foreach (var item in this.m_CommandSettingsDict)
-          if (item.Value.ContainsModifiedValues())
+          if (item.Value.ContainsModifiedValues(this.AllUserCommandSettings(item.Key)))
             return true; // This command's settings have been modified
       return false;
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    internal bool WriteSettings()
+    {
+      // The following, commented out code, would attempt to write to the All Users (global) file first, if that succeeded then the
+      // current user file would get hosed and the All Users file would be the only remaining file. Steve, Brian and John decided
+      // that settings would get read from the All Users area and those values would get replaced by the ones in Current User and
+      // when closing values that were different than the default value or that did not match the ones in All Users would get written
+      // to the Current User section and that we would provide a tool for migrating settings to the All User area.
+      //bool result = this.WriteSettingsHelper(false);
+      //if (result)
+      //  this.DeleteSettingsFile(true); // All User file written successfully so delete the current user file if it exists
+      //else
+      //  result = this.WriteSettingsHelper(true);
+      //return result;
+
+      // Simply write the settings to current user, if the code above is run then comment this out, see comment at top of this
+      // function for more information.
+      return this.WriteSettingsHelper(true);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="localSettings"></param>
+    private void DeleteSettingsFile(bool localSettings)
+    {
+      string settingsFileName = SettingsFileName(localSettings);
+      // If there are no settings, the settings dictionary is empty or the settings dictionary only contains default values
+      // and the settings file exists
+      if (File.Exists(settingsFileName))
+      {
+        try
+        {
+          // Delete the settings file
+          File.Delete(settingsFileName);
+          // Move up the settings path and delete the folder and its parent as long as they don't contain
+          // files or sub folders
+          string folder = Path.GetDirectoryName(settingsFileName);
+          for (int i = 0; i < 2 && DeleteDirectory(folder); i++)
+            folder = Path.GetDirectoryName(folder);
+        }
+        catch { }
+      }
     }
     /// <summary>
     /// Flushes the current settings to the user's roaming directory. 
@@ -1383,34 +1744,19 @@ namespace Rhino
     /// <returns>
     /// True if settings where flushed to disk, otherwise false. 
     /// </returns>
-    internal bool WriteSettings()
+    internal bool WriteSettingsHelper(bool localSettings)
     {
-      string settingsFileName = SettingsFileName;
-      string backupFileName = settingsFileName + "_bak";
-
       if (!this.ContainsModifiedValues())
       {
-        // If there are no settings, the settings dictionary is empty or the settings dictionary only contains default values
-        // and the settings file exists
-        if (File.Exists(settingsFileName))
-        {
-          try
-          {
-            // Delete the settings file
-            File.Delete(settingsFileName);
-            // Move up the settings path and delete the folder and its parent as long as they don't contain
-            // files or sub folders
-            string folder = Path.GetDirectoryName(settingsFileName);
-            for (int i = 0; i < 2 && DeleteDirectory(folder); i++)
-              folder = Path.GetDirectoryName(folder);
-          }
-          catch { }
-        }
-        return false;
+        this.DeleteSettingsFile(localSettings);
+        return true;
       }
-      
+
+      string settingsFileName = SettingsFileName(localSettings);
+      string backupFileName = settingsFileName + "_bak";
+
       // Write settings to a temporary file in the output folder
-      string tempFileName = this.WriteTempFile(SettingsFileFolder);
+      string tempFileName = this.WriteTempFile(this.SettingsFileFolder(localSettings));
       // If the temporary file was successfully created then tempFileName will be the full path to
       // the file name otherwise it will be null
       if (string.IsNullOrEmpty(tempFileName) || !File.Exists(tempFileName))
@@ -1482,19 +1828,19 @@ namespace Rhino
           XmlWriter xmlWriter = XmlWriter.Create(writeStream, xmlSettings);
           xmlWriter.WriteStartDocument();
 
-          xmlWriter.WriteComment("RhinoCommon generated file, do not modify");
+          xmlWriter.WriteComment("RhinoCommon generated, (" + (this.AllUserSettings == null ? "ProgramData" : "AppData") + "), file, do not modify");
           xmlWriter.WriteStartElement("settings");
           xmlWriter.WriteAttributeString("id", CURRENT_XML_FORMAT_VERSION);
 
           // If plug-in settings pointer is initialized write plug-in section
           // Note:  Will only write if one or more items has a non default value
           if (null != m_PluginSettings)
-            m_PluginSettings.WriteXmlElement(xmlWriter, "plugin", "", "");
+            m_PluginSettings.WriteXmlElement(xmlWriter, "plugin", "", "", this.AllUserPlugInSettings);
 
           // Update the command settings
           if (null != m_CommandSettingsDict)
             foreach (var item in m_CommandSettingsDict)
-              item.Value.WriteXmlElement(xmlWriter, "command", "name", item.Key);
+              item.Value.WriteXmlElement(xmlWriter, "command", "name", item.Key, this.AllUserCommandSettings(item.Key));
               
           xmlWriter.WriteEndElement();
           xmlWriter.WriteEndDocument();
@@ -1516,29 +1862,21 @@ namespace Rhino
   /// </summary>
   class PersistentSettingsManager
   {
-    private readonly PlugInSettings m_SettingsLocal;
-    private readonly PlugInSettings m_SettingsAllUsers;
+    private readonly PlugInSettings SettingsLocal;
     /// <summary>
     /// PersistentSettingsManager constructor
     /// </summary>
     /// <param name="plugin">Requires a valid PlugIn object to attach to</param>
     public PersistentSettingsManager(Rhino.PlugIns.PlugIn plugin)
     {
-      m_SettingsLocal = new PlugInSettings(plugin, true);
-      m_SettingsAllUsers = new PlugInSettings(plugin, false);
+      SettingsLocal = new PlugInSettings(plugin, new PlugInSettings(plugin, null));
     }
     /// <summary>
     /// Get the Plug-in settings associated with this plug-in, if this is the first time called then
     /// the plug-in settings member variable will get initialized and if a settings file exists it
     /// will get loaded
     /// </summary>
-    public PersistentSettings PluginSettings { get { return m_SettingsLocal.PluginSettings; } }
-    /// <summary>
-    /// Get the Plug-in settings associated with this plug-in, if this is the first time called then
-    /// the plug-in settings member variable will get initialized and if a settings file exists it
-    /// will get loaded
-    /// </summary>
-    public PersistentSettings PluginSettingsAllUsers { get { return m_SettingsAllUsers.PluginSettings; } }
+    public PersistentSettings PluginSettings { get { return SettingsLocal.PluginSettings; } }
     /// <summary>
     /// Get the PersistentSettings associated with the specified command.  If the settings file
     /// has not been previously loaded and exists then it will get read.  If the command name is
@@ -1549,19 +1887,7 @@ namespace Rhino
     /// <returns>Returns PersistentSettings object associated with command name on success or null on error</returns>
     public PersistentSettings CommandSettings(string name)
     {
-      return m_SettingsLocal.CommandSettings(name);
-    }
-    /// <summary>
-    /// Get the PersistentSettings associated with the specified command.  If the settings file
-    /// has not been previously loaded and exists then it will get read.  If the command name is
-    /// not in the command settings dictionary then a new entry will get created and its settings
-    /// will be returned
-    /// </summary>
-    /// <param name="name">Command name key to search for and/or add</param>
-    /// <returns>Returns PersistentSettings object associated with command name on success or null on error</returns>
-    public PersistentSettings CommandSettingsAllUsers(string name)
-    {
-      return m_SettingsAllUsers.CommandSettings(name);
+      return SettingsLocal.CommandSettings(name);
     }
     /// <summary>
     /// Check the plug-in and command settings dictionaries for values other than default value
@@ -1569,7 +1895,7 @@ namespace Rhino
     /// <returns>Returns true if either the plug-ins or commands dictionaries contains a modified item otherwise false</returns>
     public bool ContainsModifiedValues()
     {
-      return (m_SettingsLocal.ContainsModifiedValues() || m_SettingsAllUsers.ContainsModifiedValues());
+      return SettingsLocal.ContainsModifiedValues();
     }
     /// <summary>
     /// If they exist and contain modified values write global settings firs then local settings
@@ -1577,9 +1903,7 @@ namespace Rhino
     /// <returns>Returns true if local settings were successfully written</returns>
     public bool WriteSettings()
     {
-      try { m_SettingsAllUsers.WriteSettings(); }
-      catch { } // Fail quietly when writing global settings
-      return m_SettingsLocal.WriteSettings();
+      return SettingsLocal.WriteSettings();
     }
   }
 #endif

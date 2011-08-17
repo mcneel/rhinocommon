@@ -18,12 +18,13 @@ namespace Rhino.Geometry
     {
       Rhino.Runtime.HostUtils.CheckForRdk(true, true);
       IntPtr pSun = UnsafeNativeMethods.Rdk_SunNew();
-      UnsafeNativeMethods.Rdk_Sun_SetNorth(pSun, northAngleDegrees);
-      UnsafeNativeMethods.Rdk_Sun_SetAzimuthAltitude(pSun, azimuthDegrees, altitudeDegrees);
+      IntPtr pSunInterface = UnsafeNativeMethods.Rdk_SunInterface(pSun);
+      UnsafeNativeMethods.Rdk_Sun_SetNorth(pSunInterface, northAngleDegrees);
+      UnsafeNativeMethods.Rdk_Sun_SetAzimuthAltitude(pSunInterface, azimuthDegrees, altitudeDegrees);
 
       Light rc = new Light();
       IntPtr pLight = rc.NonConstPointer();
-      UnsafeNativeMethods.Rdk_Sun_Light(pSun, pLight);
+      UnsafeNativeMethods.Rdk_Sun_Light(pSunInterface, pLight);
       UnsafeNativeMethods.Rdk_SunDelete(pSun);
       return rc;
     }
@@ -46,14 +47,15 @@ namespace Rhino.Geometry
         throw new ArgumentException("whenKind must be specified");
 
       IntPtr pSun = UnsafeNativeMethods.Rdk_SunNew();
-      UnsafeNativeMethods.Rdk_Sun_SetNorth(pSun, northAngleDegrees);
-      UnsafeNativeMethods.Rdk_Sun_SetLatitudeLongitude(pSun, latitudeDegrees, longitudeDegrees);
+      IntPtr pSunInterface = UnsafeNativeMethods.Rdk_SunInterface(pSun);
+      UnsafeNativeMethods.Rdk_Sun_SetNorth(pSunInterface, northAngleDegrees);
+      UnsafeNativeMethods.Rdk_Sun_SetLatitudeLongitude(pSunInterface, latitudeDegrees, longitudeDegrees);
 
       bool local = whenKind== DateTimeKind.Local;
-      UnsafeNativeMethods.Rdk_Sun_SetDateTime(pSun, local, when.Year, when.Month, when.Day, when.Hour, when.Minute, when.Second);
+      UnsafeNativeMethods.Rdk_Sun_SetDateTime(pSunInterface, local, when.Year, when.Month, when.Day, when.Hour, when.Minute, when.Second);
       Light rc = new Light();
       IntPtr pLight = rc.NonConstPointer();
-      UnsafeNativeMethods.Rdk_Sun_Light(pSun, pLight);
+      UnsafeNativeMethods.Rdk_Sun_Light(pSunInterface, pLight);
       UnsafeNativeMethods.Rdk_SunDelete(pSun);
       return rc;
     }

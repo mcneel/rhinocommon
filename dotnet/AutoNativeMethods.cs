@@ -7689,6 +7689,10 @@ internal partial class UnsafeNativeMethods
   //CRhinoPlugIn* CRhinoPlugInManager_GetPlugInFromId(ON_UUID id, bool onlyDotNet)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoPlugInManager_GetPlugInFromId(Guid id, [MarshalAs(UnmanagedType.U1)]bool onlyDotNet);
+
+  //int CRhinoPluginManager_GetCommandNames(ON_UUID id, ON_ClassArray<ON_wString>* pStrings)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoPluginManager_GetCommandNames(Guid id, IntPtr pStrings);
   #endregion
 
 

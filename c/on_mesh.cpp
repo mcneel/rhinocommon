@@ -527,6 +527,8 @@ RH_C_FUNCTION bool ON_Mesh_CombineIdenticalVertices(ON_Mesh* ptr, bool ignore_no
   if( ptr )
   {
     rc = ptr->CombineIdenticalVertices(ignore_normals, ignore_tcs);
+    if( rc && ptr->VertexCount() != ptr->m_S.Count() )
+      ptr->m_S.SetCount(0);
   }
   return rc;
 }

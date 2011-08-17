@@ -720,10 +720,32 @@ namespace Rhino.PlugIns
       return UnsafeNativeMethods.CRhinoPlugInManager_IdFromPath(pluginPath);
     }
 
-
     public static bool LoadPlugIn(Guid pluginId)
     {
       return UnsafeNativeMethods.CRhinoPlugInManager_LoadPlugIn(pluginId);
+    }
+
+    /// <summary>
+    /// Get names of all "non-test" commands for a given plug-in
+    /// </summary>
+    /// <param name="pluginId"></param>
+    /// <returns></returns>
+    public static string[] GetEnglishCommandNames(Guid pluginId)
+    {
+      IntPtr pStrings = UnsafeNativeMethods.ON_StringArray_New();
+      int count = UnsafeNativeMethods.CRhinoPluginManager_GetCommandNames(pluginId, pStrings);
+      string[] rc = new string[count];
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        for (int i = 0; i < count; i++)
+        {
+          UnsafeNativeMethods.ON_StringArray_Get(pStrings, i, pString);
+          rc[i] = sh.ToString();
+        }
+      }
+      UnsafeNativeMethods.ON_StringArray_Delete(pStrings);
+      return rc;
     }
     #endregion
   }

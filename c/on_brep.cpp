@@ -586,6 +586,92 @@ RH_C_FUNCTION ON_MassProperties* ON_Brep_MassProperties(bool bArea, const ON_Bre
   return rc;
 }
 
+RH_C_FUNCTION ON_MassProperties* ON_GeometryMassProperties(bool bArea, ON_SimpleArray<const ON_Geometry*>* pGeometry, double relativeTolerance, double absoluteTolerance)
+{
+  ON_MassProperties* rc = NULL;
+  if( pGeometry && pGeometry->Count() > 0 )
+  {
+    // Compute base-point of all geometry boundingboxes
+    ON_3dPoint basePoint(0,0,0);
+    if( !bArea )
+    {
+      for( int i = 0; i < pGeometry->Count(); i++ )
+      {
+        const ON_Geometry* geo = pGeometry->Array()[i];
+        ON_BoundingBox box = geo->BoundingBox();
+        basePoint += box.Center();
+      }
+      basePoint /= pGeometry->Count();
+    }
+
+    // Aggregate all mass properties
+    rc = new ON_MassProperties();
+    for( int i = 0; i < pGeometry->Count(); i++ )
+    {
+      const ON_Geometry* geo = pGeometry->Array()[i];
+
+      bool success = false;
+      ON_MassProperties mp;
+
+      ON::object_type type = pGeometry->Array()[i]->ObjectType();
+
+      const ON_Brep* pBrep;
+      const ON_Surface* pSurface;
+      const ON_Mesh* pMesh;
+      const ON_Curve* pCurve;
+
+      switch (type)
+      {
+      case ON::brep_object:
+        pBrep = ON_Brep::Cast(geo);
+        if( bArea )
+          success = pBrep->AreaMassProperties(mp, true, true, true, true, relativeTolerance, absoluteTolerance);
+        else
+          success = pBrep->VolumeMassProperties(mp, true, true, true, true, basePoint, relativeTolerance, absoluteTolerance);
+        break;
+
+      case ON::surface_object:
+        pSurface = ON_Surface::Cast(geo);
+        if( bArea )
+          success = pSurface->AreaMassProperties(mp, true, true, true, true, relativeTolerance, absoluteTolerance);
+        else
+          success = pSurface->VolumeMassProperties(mp, true, true, true, true, basePoint, relativeTolerance, absoluteTolerance);
+        break;
+
+      case ON::mesh_object:
+        pMesh = ON_Mesh::Cast(geo);
+        if( bArea )
+          success = pMesh->AreaMassProperties(mp, true, true, true, true);
+        else
+          success = pMesh->VolumeMassProperties(mp, true, true, true, true, basePoint);
+        break;
+
+      case ON::curve_object:
+        if (bArea)
+        {
+          pCurve = ON_Curve::Cast(geo);
+          ON_Plane plane;
+          if( pCurve->IsPlanar(&plane, absoluteTolerance) && pCurve->IsClosed() )
+          {
+            success = pCurve->AreaMassProperties(basePoint, plane.Normal(), mp, true, true, true, true, relativeTolerance, absoluteTolerance);
+            if (success )
+            {
+              mp.m_mass = fabs(mp.m_mass);
+            }
+          }
+        }
+        break;
+      }
+
+      if( success )
+      {
+        rc->Sum(1, &mp, true);
+      }
+    }
+  }
+  return rc;
+}
+
 RH_C_FUNCTION int ON_Brep_CreateMesh( const ON_Brep* pConstBrep, ON_SimpleArray<ON_Mesh*>* meshes )
 {
   int rc = 0;

@@ -174,11 +174,19 @@ namespace Rhino.DocObjects
     {
       get { return 255.0; }
     }
+
+    /// <summary>
+    /// Gets or sets the shine factor of the material
+    /// </summary>
     public double Shine
     {
       get { return GetDouble(idxShine); }
       set { SetDouble(idxShine, value); }
     }
+
+    /// <summary>
+    /// Gets or sets the transparency of the material (0.0 = opaque to 1.0 = transparent)
+    /// </summary>
     public double Transparency
     {
       get { return GetDouble(idxTransparency); }
@@ -245,10 +253,10 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.ON_Material_Default(pConstThis);
     }
 
-    const int idxBitmapTexture = 0;
-    const int idxBumpTexture = 1;
-    const int idxEmapTexture = 2;
-    const int idxTransparencyTexture = 3;
+    internal const int idxBitmapTexture = 0;
+    internal const int idxBumpTexture = 1;
+    internal const int idxEmapTexture = 2;
+    internal const int idxTransparencyTexture = 3;
     bool AddTexture(string filename, int which)
     {
       IntPtr pThis = NonConstPointer();

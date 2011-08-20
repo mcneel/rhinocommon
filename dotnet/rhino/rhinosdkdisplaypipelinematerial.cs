@@ -28,6 +28,13 @@ namespace Rhino.Display
       IntPtr ptr = other.ConstPointer();
       m_ptr = UnsafeNativeMethods.CDisplayPipelineMaterial_New(ptr);
     }
+
+    public DisplayMaterial(DocObjects.Material material)
+    {
+      IntPtr pConstMaterial = material.ConstPointer();
+      m_ptr = UnsafeNativeMethods.CDisplayPipelineMaterial_New4(pConstMaterial);
+    }
+
     /// <summary>
     /// Create a default material with a specific diffuse color.
     /// </summary>
@@ -96,6 +103,17 @@ namespace Rhino.Display
       get { return GetColor(idxDiffuse); }
       set { SetColor(idxDiffuse, value); }
     }
+
+    /// <summary>
+    /// Gets or sets the Diffuse color of the back side of the Material. 
+    /// The alpha component of the color will be ignored.
+    /// </summary>
+    public Color BackDiffuse
+    {
+      get { return GetColor(idxBackDiffuse); }
+      set { SetColor(idxBackDiffuse, value); }
+    }
+
     /// <summary>
     /// Gets or sets the Specular color of the Material. 
     /// The alpha component of the color will be ignored.
@@ -105,6 +123,17 @@ namespace Rhino.Display
       get { return GetColor(idxSpecular); }
       set { SetColor(idxSpecular, value); }
     }
+
+    /// <summary>
+    /// Gets or sets the Specular color of the back side of the Material. 
+    /// The alpha component of the color will be ignored.
+    /// </summary>
+    public Color BackSpecular
+    {
+      get { return GetColor(idxBackSpecular); }
+      set { SetColor(idxBackSpecular, value); }
+    }
+
     /// <summary>
     /// Gets or sets the Ambient color of the Material. 
     /// The alpha component of the color will be ignored.
@@ -115,6 +144,16 @@ namespace Rhino.Display
       set { SetColor(idxAmbient, value); }
     }
     /// <summary>
+    /// Gets or sets the Ambient color of the back side of the Material. 
+    /// The alpha component of the color will be ignored.
+    /// </summary>
+    public Color BackAmbient
+    {
+      get { return GetColor(idxBackAmbient); }
+      set { SetColor(idxBackAmbient, value); }
+    }
+
+    /// <summary>
     /// Gets or sets the Emissive color of the Material. 
     /// The alpha component of the color will be ignored.
     /// </summary>
@@ -123,9 +162,18 @@ namespace Rhino.Display
       get { return GetColor(idxEmission); }
       set { SetColor(idxEmission, value); }
     }
+    /// <summary>
+    /// Gets or sets the Emissive color of the back side of the Material. 
+    /// The alpha component of the color will be ignored.
+    /// </summary>
+    public Color BackEmission
+    {
+      get { return GetColor(idxBackEmission); }
+      set { SetColor(idxBackEmission, value); }
+    }
 
     /// <summary>
-    /// Gets or sets the shine factor of the material {0.0 to 1.0}
+    /// Gets or sets the shine factor of the material (0.0 to 1.0)
     /// </summary>
     public double Shine
     {
@@ -133,12 +181,46 @@ namespace Rhino.Display
       set { SetDouble(idxShine, value); }
     }
     /// <summary>
-    /// Gets or sets the transparency of the material {0.0 = opaque to 1.0 = transparent}
+    /// Gets or sets the shine factor of the back side of the material (0.0 to 1.0)
+    /// </summary>
+    public double BackShine
+    {
+      get { return GetDouble(idxBackShine); }
+      set { SetDouble(idxBackShine, value); }
+    }
+
+    /// <summary>
+    /// Gets or sets the transparency of the material (0.0 = opaque to 1.0 = transparent)
     /// </summary>
     public double Transparency
     {
       get { return GetDouble(idxTransparency); }
       set { SetDouble(idxTransparency, value); }
+    }
+
+    /// <summary>
+    /// Gets or sets the transparency of the back side material (0.0 = opaque to 1.0 = transparent)
+    /// </summary>
+    public double BackTransparency
+    {
+      get { return GetDouble(idxBackTransparency); }
+      set { SetDouble(idxBackTransparency, value); }
+    }
+
+    const int idxIsTwoSided = 0;
+
+    public bool IsTwoSided
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.CDisplayPipelineMaterial_GetBool(pConstThis, idxIsTwoSided);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.CDisplayPipelineMaterial_SetBool(pThis, idxIsTwoSided, value);
+      }
     }
     #endregion
 
@@ -147,10 +229,10 @@ namespace Rhino.Display
     const int idxSpecular = 1;
     const int idxAmbient = 2;
     const int idxEmission = 3;
-    //const int idxBackDiffuse = 4;
-    //const int idxBackSpecular = 5;
-    //const int idxBackAmbient = 6;
-    //const int idxBackEmission = 7;
+    const int idxBackDiffuse = 4;
+    const int idxBackSpecular = 5;
+    const int idxBackAmbient = 6;
+    const int idxBackEmission = 7;
 
     private static readonly int m_alpha_only = Color.FromArgb(255, 0, 0, 0).ToArgb();
     private static int StripAlpha(int argb)
@@ -173,6 +255,8 @@ namespace Rhino.Display
 
     const int idxShine = 0;
     const int idxTransparency = 1;
+    const int idxBackShine = 2;
+    const int idxBackTransparency = 3;
 
     private double GetDouble(int which)
     {
@@ -183,6 +267,101 @@ namespace Rhino.Display
     {
       IntPtr ptr = NonConstPointer();
       UnsafeNativeMethods.CDisplayPipelineMaterial_GetSetDouble(ptr, which, true, value);
+    }
+
+    IntPtr NonConstMaterialPointer(bool front)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CDisplayPipelineMaterial_MaterialPointer(pThis, front);
+    }
+    IntPtr ConstMaterialPointer(bool front)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.CDisplayPipelineMaterial_MaterialPointer(pConstThis, front);
+    }
+
+    bool AddTexture(string filename, int which, bool front)
+    {
+      IntPtr pMaterial = NonConstMaterialPointer(front);
+      return UnsafeNativeMethods.ON_Material_AddTexture(pMaterial, filename, which);
+    }
+    bool SetTexture(Rhino.DocObjects.Texture texture, int which, bool front)
+    {
+      IntPtr pMaterial = NonConstMaterialPointer(front);
+      IntPtr pTexture = texture.ConstPointer();
+      return UnsafeNativeMethods.ON_Material_SetTexture(pMaterial, pTexture, which);
+    }
+    Rhino.DocObjects.Texture GetTexture(int which, bool front)
+    {
+      IntPtr pConstMaterial = ConstMaterialPointer(front);
+      int index = UnsafeNativeMethods.ON_Material_GetTexture(pConstMaterial, which);
+      if (index >= 0)
+        return new Rhino.DocObjects.Texture(index, this, front);
+      return null;
+    }
+    #endregion
+
+    #region Bitmap
+    public Rhino.DocObjects.Texture GetBitmapTexture(bool front)
+    {
+      return GetTexture(Rhino.DocObjects.Material.idxBitmapTexture, front);
+    }
+    public bool SetBitmapTexture(string filename, bool front)
+    {
+      return AddTexture(filename, Rhino.DocObjects.Material.idxBitmapTexture, front);
+    }
+    public bool SetBitmapTexture(Rhino.DocObjects.Texture texture, bool front)
+    {
+      return SetTexture(texture, Rhino.DocObjects.Material.idxBitmapTexture, front);
+    }
+    #endregion
+
+    #region Bump
+    /// <summary>
+    /// may be null if no bump texture has been added to this material
+    /// </summary>
+    /// <returns></returns>
+    public Rhino.DocObjects.Texture GetBumpTexture(bool front)
+    {
+      return GetTexture(Rhino.DocObjects.Material.idxBumpTexture, front);
+    }
+    public bool SetBumpTexture(string filename, bool front)
+    {
+      return AddTexture(filename, Rhino.DocObjects.Material.idxBumpTexture, front);
+    }
+    public bool SetBumpTexture(Rhino.DocObjects.Texture texture, bool front)
+    {
+      return SetTexture(texture, Rhino.DocObjects.Material.idxBumpTexture, front);
+    }
+    #endregion
+
+    #region Environment
+    public Rhino.DocObjects.Texture GetEnvironmentTexture(bool front)
+    {
+      return GetTexture(Rhino.DocObjects.Material.idxEmapTexture, front);
+    }
+    public bool SetEnvironmentTexture(string filename, bool front)
+    {
+      return AddTexture(filename, Rhino.DocObjects.Material.idxEmapTexture, front);
+    }
+    public bool SetEnvironmentTexture(Rhino.DocObjects.Texture texture, bool front)
+    {
+      return SetTexture(texture, Rhino.DocObjects.Material.idxEmapTexture, front);
+    }
+    #endregion
+
+    #region Transparency
+    public Rhino.DocObjects.Texture GetTransparencyTexture(bool front)
+    {
+      return GetTexture(Rhino.DocObjects.Material.idxTransparencyTexture, front);
+    }
+    public bool SetTransparencyTexture(string filename, bool front)
+    {
+      return AddTexture(filename, Rhino.DocObjects.Material.idxTransparencyTexture, front);
+    }
+    public bool SetTransparencyTexture(Rhino.DocObjects.Texture texture, bool front)
+    {
+      return SetTexture(texture, Rhino.DocObjects.Material.idxTransparencyTexture, front);
     }
     #endregion
   }

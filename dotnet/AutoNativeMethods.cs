@@ -1340,6 +1340,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Brep_MassProperties([MarshalAs(UnmanagedType.U1)]bool bArea, IntPtr pBrep, double relativeTolerance, double absoluteTolerance);
 
+  //ON_MassProperties* ON_GeometryMassProperties(bool bArea, ON_SimpleArray<const ON_Geometry*>* pGeometry, double relativeTolerance, double absoluteTolerance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_GeometryMassProperties([MarshalAs(UnmanagedType.U1)]bool bArea, IntPtr pGeometry, double relativeTolerance, double absoluteTolerance);
+
   //int ON_Brep_CreateMesh( const ON_Brep* pConstBrep, ON_SimpleArray<ON_Mesh*>* meshes )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Brep_CreateMesh(IntPtr pConstBrep, IntPtr meshes);
@@ -5070,9 +5074,17 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CDisplayPipelineMaterial_New3(int argbDiffuse, int argbSpec, int argbAmbient, int argbEmission, double shine, double transparency);
 
+  //CDisplayPipelineMaterial* CDisplayPipelineMaterial_New4(const ON_Material* pConstMaterial)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CDisplayPipelineMaterial_New4(IntPtr pConstMaterial);
+
   //void CDisplayPipelineMaterial_Delete(CDisplayPipelineMaterial* pDisplayPipelineMaterial)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CDisplayPipelineMaterial_Delete(IntPtr pDisplayPipelineMaterial);
+
+  //CDisplayAttributeMaterial* CDisplayPipelineMaterial_MaterialPointer(CDisplayPipelineMaterial* pDisplayPipelineMaterial, bool front)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CDisplayPipelineMaterial_MaterialPointer(IntPtr pDisplayPipelineMaterial, [MarshalAs(UnmanagedType.U1)]bool front);
 
   //int CDisplayPipelineMaterial_GetColor(const CDisplayPipelineMaterial* pMaterial, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5081,6 +5093,15 @@ internal partial class UnsafeNativeMethods
   //void CDisplayPipelineMaterial_SetColor(CDisplayPipelineMaterial* pMaterial, int which, int argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CDisplayPipelineMaterial_SetColor(IntPtr pMaterial, int which, int argb);
+
+  //bool CDisplayPipelineMaterial_GetBool(const CDisplayPipelineMaterial* pConstMaterial, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CDisplayPipelineMaterial_GetBool(IntPtr pConstMaterial, int which);
+
+  //void CDisplayPipelineMaterial_SetBool(CDisplayPipelineMaterial* pMaterial, int which, bool val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CDisplayPipelineMaterial_SetBool(IntPtr pMaterial, int which, [MarshalAs(UnmanagedType.U1)]bool val);
 
   //double CDisplayPipelineMaterial_GetSetDouble(CDisplayPipelineMaterial* pMaterial, int which, bool set, double set_value)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

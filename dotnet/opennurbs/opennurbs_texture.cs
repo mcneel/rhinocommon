@@ -6,13 +6,8 @@ namespace Rhino.DocObjects
   [Serializable]
   public class Texture : Rhino.Runtime.CommonObject
   {
-    #region members
-    readonly Rhino.DocObjects.Material m_parent_material;
-#if RDK_UNCHECKED
-    readonly Rhino.Render.SimulatedTexture m_parent_simulated_texture;
-#endif
     readonly int m_index = 0;
-    #endregion
+    readonly bool m_front = true;
 
     public Texture()
     {
@@ -22,31 +17,46 @@ namespace Rhino.DocObjects
 
     internal Texture(int index, Rhino.DocObjects.Material parent)
     {
-      m_parent_material = parent;
       m_index = index;
       this.m__parent = parent;
+    }
+
+    internal Texture(int index, Rhino.Display.DisplayMaterial parent, bool front)
+    {
+      m_index = index;
+      m__parent = parent;
+      m_front = front;
     }
 
 #if RDK_UNCHECKED
     internal Texture(Rhino.Render.SimulatedTexture parent)
     {
-      m_parent_simulated_texture = parent;
       this.m__parent = parent;
     }
 #endif
 
     internal override IntPtr _InternalGetConstPointer()
     {
-      if (m_parent_material != null)
+      DocObjects.Material parent_material = m__parent as DocObjects.Material;
+      if (parent_material != null)
       {
-        IntPtr pRhinoMaterial = m_parent_material.ConstPointer();
+        IntPtr pRhinoMaterial = parent_material.ConstPointer();
         return UnsafeNativeMethods.ON_Material_GetTexturePointer(pRhinoMaterial, m_index);
       }
-#if RDK_UNCHECKED
-      if (m_parent_simulated_texture != null)
+
+      Display.DisplayMaterial parent_display_material = m__parent as Display.DisplayMaterial;
+      if (parent_display_material != null)
       {
-          IntPtr pSimulatedTexture = m_parent_simulated_texture.ConstPointer();
-          return UnsafeNativeMethods.Rdk_SimulatedTexture_OnTexturePointer(pSimulatedTexture);
+        IntPtr pDisplayPipelineMaterial = parent_display_material.ConstPointer();
+        IntPtr pMaterial = UnsafeNativeMethods.CDisplayPipelineMaterial_MaterialPointer(pDisplayPipelineMaterial, m_front);
+        return UnsafeNativeMethods.ON_Material_GetTexturePointer(pMaterial, m_index);
+      }
+#if RDK_UNCHECKED
+      Rhino.Render.SimulatedTexture parent_simulated_texture = m__parent as Rhino.Render.SimulatedTexture;
+      if (parent_simulated_texture != null)
+      {
+        IntPtr pSimulatedTexture = parent_simulated_texture.ConstPointer();
+        return UnsafeNativeMethods.Rdk_SimulatedTexture_OnTexturePointer(pSimulatedTexture);
       }
 #endif
       return IntPtr.Zero;

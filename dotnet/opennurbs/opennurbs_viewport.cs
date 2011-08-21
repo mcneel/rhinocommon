@@ -51,6 +51,7 @@ namespace Rhino.DocObjects
       m_pViewportPointer = UnsafeNativeMethods.ON_Viewport_New(pOther);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Copies all of the ViewportInfo data from an existing RhinoViewport
     /// </summary>
@@ -60,6 +61,7 @@ namespace Rhino.DocObjects
       IntPtr pRhinoViewport = rhinoViewport.ConstPointer();
       m_pViewportPointer = UnsafeNativeMethods.ON_Viewport_New2(pRhinoViewport);
     }
+#endif
 
     internal ViewportInfo(IntPtr pONViewport)
     {

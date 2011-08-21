@@ -12,7 +12,9 @@ namespace Rhino.DocObjects
     // null, the object uses m_doc and m_id to look up the const
     // CRhinoMaterial in the material table.
     readonly Guid m_id=Guid.Empty;
+#if RHINO_SDK
     readonly RhinoDoc m_doc;
+#endif
     #endregion
 
     #region constructors
@@ -22,12 +24,14 @@ namespace Rhino.DocObjects
       IntPtr pMaterial = UnsafeNativeMethods.ON_Material_New(IntPtr.Zero);
       base.ConstructNonConstObject(pMaterial);
     }
+#if RHINO_SDK
     internal Material(int index, RhinoDoc doc)
     {
       m_id = UnsafeNativeMethods.CRhinoMaterialTable_GetMaterialId(doc.m_docId, index);
       m_doc = doc;
       this.m__parent = m_doc;
     }
+#endif
 
     // Thish is for temporary wrappers. You should always call
     // ReleaseNonConstPointer after you are done using this material
@@ -53,8 +57,10 @@ namespace Rhino.DocObjects
 
     internal override IntPtr _InternalGetConstPointer()
     {
+#if RHINO_SDK
       if (m_doc != null)
         return UnsafeNativeMethods.CRhinoMaterialTable_GetMaterialPointer(m_doc.m_docId, m_id);
+#endif
       return IntPtr.Zero;
     }
 
@@ -358,10 +364,14 @@ namespace Rhino.DocObjects
 
     public bool CommitChanges()
     {
+#if RHINO_SDK
       if (m_id == Guid.Empty || IsDocumentControlled)
         return false;
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.CRhinoMaterialTable_CommitChanges(m_doc.m_docId, pThis, m_id);
+#else
+      return true;
+#endif
     }
   }
 }

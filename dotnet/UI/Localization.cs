@@ -196,12 +196,16 @@ namespace Rhino.UI
         // initial language id has been read
         if (m_language_id == -1)
         {
+#if RHINO_SDK
           // This code is commonly called while working in theVisual Studio designer
           // and we want to try and not throw exceptions in order to show the winform
           if (Rhino.Runtime.HostUtils.RunningInRhino)
             m_language_id = Rhino.ApplicationSettings.AppearanceSettings.LanguageIdentifier;
           else
             m_language_id = 1033;
+#else
+          m_language_id = 1033;
+#endif
         }
         return m_language_id;
       }

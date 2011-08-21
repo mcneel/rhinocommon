@@ -70,11 +70,13 @@ namespace Rhino.DocObjects
       m_bDepthBuffered = true;
       m_bShowGrid = true;
       m_bShowAxes = true;
+#if RHINO_SDK
       m_thin_line_color = ApplicationSettings.AppearanceSettings.GridThinLineColor;
       m_thick_line_color = ApplicationSettings.AppearanceSettings.GridThickLineColor;
       m_grid_x_color = ApplicationSettings.AppearanceSettings.GridXAxisLineColor;
       m_grid_y_color = ApplicationSettings.AppearanceSettings.GridYAxisLineColor;
       m_grid_z_color = ApplicationSettings.AppearanceSettings.GridZAxisLineColor;
+#endif
     }
 
     public Plane Plane
@@ -184,16 +186,17 @@ namespace Rhino.DocObjects
   
   public class ViewInfo : IDisposable // ON_3dmView
   {
-    private object m_parent;
-    private int m_index=-1;
-
     private IntPtr m_ptr; // ON_3dmView*
 
+#if RHINO_SDK
+    private object m_parent;
+    private int m_index=-1;
     internal ViewInfo(Rhino.RhinoDoc doc, int index)
     {
       m_parent = doc;
       m_index = index;
     }
+#endif
 
     internal IntPtr ConstPointer()
     {
@@ -216,8 +219,10 @@ namespace Rhino.DocObjects
       {
         IntPtr pConstThis = ConstPointer();
         m_ptr = UnsafeNativeMethods.ON_3dmView_New(pConstThis);
+#if RHINO_SDK
         m_index = -1;
         m_parent = null;
+#endif
       }
       return m_ptr;
     }

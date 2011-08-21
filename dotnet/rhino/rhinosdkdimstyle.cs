@@ -10,7 +10,9 @@ namespace Rhino.DocObjects
     // Represents both a CRhinoDimStyle and an ON_DimStyle. When m_ptr
     // is null, the object uses m_doc and m_id to look up the const
     // CRhinoDimStyle in the dimstyle table.
+#if RHINO_SDK
     readonly Rhino.RhinoDoc m_doc;
+#endif
     readonly Guid m_id=Guid.Empty;
 
     public DimensionStyle()
@@ -20,12 +22,14 @@ namespace Rhino.DocObjects
       base.ConstructNonConstObject(pOnDimStyle);
     }
 
+#if RHINO_SDK
     internal DimensionStyle(int index, Rhino.RhinoDoc doc)
     {
       m_id = UnsafeNativeMethods.CRhinoDimStyleTable_GetGuid(doc.m_docId, index);
       m_doc = doc;
       this.m__parent = m_doc;
     }
+#endif
 
     // serialization constructor
     protected DimensionStyle(SerializationInfo info, StreamingContext context)
@@ -36,16 +40,22 @@ namespace Rhino.DocObjects
 
     public bool CommitChanges()
     {
+#if RHINO_SDK
       if (m_id == Guid.Empty || IsDocumentControlled)
         return false;
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.CRhinoDimStyleTable_CommitChanges(m_doc.m_docId, pThis, m_id);
+#else
+      return true;
+#endif
     }
 
     internal override IntPtr _InternalGetConstPointer()
     {
+#if RHINO_SDK
       if (m_doc != null)
         return UnsafeNativeMethods.CRhinoDimStyleTable_GetDimStylePointer(m_doc.m_docId, m_id);
+#endif
       return IntPtr.Zero;
     }
 
@@ -272,10 +282,14 @@ namespace Rhino.DocObjects
     {
       get
       {
+#if RHINO_SDK
         if (m_doc == null || m_id == Guid.Empty)
           return false;
         int index = this.Index;
         return UnsafeNativeMethods.CRhinoDimStyle_IsReference(m_doc.m_docId, index);
+#else
+        return false;
+#endif
       }
     }
 

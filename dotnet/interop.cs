@@ -28,6 +28,7 @@ namespace Rhino.Runtime
       return rc;
     }
 
+#if RHINO_SDK
     public static IntPtr RhinoObjectConstPointer(Rhino.DocObjects.RhinoObject rhinoObject)
     {
       IntPtr rc = IntPtr.Zero;
@@ -35,7 +36,7 @@ namespace Rhino.Runtime
         rc = rhinoObject.ConstPointer();
       return rc;
     }
-
+#endif
 
     /// <summary>
     /// Create a RhinoCommon Geometry class from a given ON_Geomety*. The ON_Geometry*
@@ -268,6 +269,7 @@ namespace Rhino.Runtime
       return rc;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Convert a Rhino.Display.Viewport to an RMA.Rhino.IRhinoViewport
     /// </summary>
@@ -287,6 +289,7 @@ namespace Rhino.Runtime
       }
       return rc;
     }
+#endif
     /*
         public static Rhino.Geometry.Curve TryCopyFromOnCurve(object source)
         {

@@ -31,6 +31,7 @@ namespace Rhino.ApplicationSettings
   }
 }
 
+#if RHINO_SDK
 namespace Rhino
 {
   class WindowWrapper : System.Windows.Forms.IWin32Window
@@ -447,7 +448,6 @@ namespace Rhino
       return process == null ? IntPtr.Zero : process.MainWindowHandle;
     }
 
-#if RHINO_SDK
     /// <summary>
     /// Get the object that is returned by PlugIn.GetPlugInObject for a given
     /// plug-in. This function attempts to find and load a plug-in with a given Id.
@@ -522,7 +522,6 @@ namespace Rhino
 
       return GetPlugInObject(plugin_id);
     }
-#endif
 
     #region events
     // Callback that doesn't pass any parameters or return values
@@ -988,3 +987,4 @@ namespace Rhino.UI
     }
   }
 }
+#endif

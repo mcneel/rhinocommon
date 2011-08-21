@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+#if RHINO_SDK
+
 namespace Rhino.Display
 {
   /// <summary>
@@ -45,9 +47,7 @@ namespace Rhino.Display
       // view is not in the list, add it
       bool isPageView = false;
       Guid id = UnsafeNativeMethods.CRhinoView_Details(view_pointer, ref isPageView);
-#if RHINO_SDK
       view = isPageView ? new RhinoPageView(view_pointer, id) : new RhinoView(view_pointer, id);
-#endif
       m_view_list.Add(view);
       return view;
     }
@@ -585,3 +585,5 @@ namespace Rhino.Display
     }
   }
 }
+
+#endif

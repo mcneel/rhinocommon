@@ -7,7 +7,6 @@ namespace Rhino.DocObjects
   public class Texture : Rhino.Runtime.CommonObject
   {
     readonly int m_index = 0;
-    readonly bool m_front = true;
 
     public Texture()
     {
@@ -21,12 +20,15 @@ namespace Rhino.DocObjects
       this.m__parent = parent;
     }
 
+#if RHINO_SDK
+    readonly bool m_front = true;
     internal Texture(int index, Rhino.Display.DisplayMaterial parent, bool front)
     {
       m_index = index;
       m__parent = parent;
       m_front = front;
     }
+#endif
 
 #if RDK_UNCHECKED
     internal Texture(Rhino.Render.SimulatedTexture parent)
@@ -44,6 +46,7 @@ namespace Rhino.DocObjects
         return UnsafeNativeMethods.ON_Material_GetTexturePointer(pRhinoMaterial, m_index);
       }
 
+#if RHINO_SDK
       Display.DisplayMaterial parent_display_material = m__parent as Display.DisplayMaterial;
       if (parent_display_material != null)
       {
@@ -51,6 +54,7 @@ namespace Rhino.DocObjects
         IntPtr pMaterial = UnsafeNativeMethods.CDisplayPipelineMaterial_MaterialPointer(pDisplayPipelineMaterial, m_front);
         return UnsafeNativeMethods.ON_Material_GetTexturePointer(pMaterial, m_index);
       }
+#endif
 #if RDK_UNCHECKED
       Rhino.Render.SimulatedTexture parent_simulated_texture = m__parent as Rhino.Render.SimulatedTexture;
       if (parent_simulated_texture != null)

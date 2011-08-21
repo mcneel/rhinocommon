@@ -20,6 +20,7 @@ namespace Rhino.Display
     TwoPointPerspective = 8
   }
 
+#if RHINO_SDK
   /// <summary>
   /// Displays geometry with a given projection. In standard modeling views there
   /// is a one to one relationship between RhinoView and RhinoViewports. In a page
@@ -39,13 +40,11 @@ namespace Rhino.Display
       m_parent_view = parent_view;
     }
 
-#if RHINO_SDK
     readonly Rhino.DocObjects.DetailViewObject m_parent_detail;
     internal RhinoViewport(Rhino.DocObjects.DetailViewObject detail)
     {
       m_parent_detail = detail;
     }
-#endif
 
     public RhinoViewport()
     {
@@ -92,26 +91,22 @@ namespace Rhino.Display
 
     internal IntPtr NonConstPointer()
     {
-#if RHINO_SDK
       if (IntPtr.Zero == m_ptr && m_parent_detail != null)
       {
         IntPtr pDetail = m_parent_detail.ConstPointer();
         m_ptr = UnsafeNativeMethods.CRhinoDetailViewObject_DuplicateViewport(pDetail);
         m_bDeletePtr = true;
       }
-#endif
       return m_ptr;
     }
 
     internal IntPtr ConstPointer()
     {
-#if RHINO_SDK
       if (IntPtr.Zero == m_ptr && m_parent_detail != null)
       {
         IntPtr pDetail = m_parent_detail.ConstPointer();
         return UnsafeNativeMethods.CRhinoDetailViewObject_GetViewport(pDetail);
       }
-#endif
       return m_ptr;
     }
 
@@ -1598,7 +1593,7 @@ namespace Rhino.Display
       }
     }
   }
-
+#endif
 
   public enum ViewportType : int
   {

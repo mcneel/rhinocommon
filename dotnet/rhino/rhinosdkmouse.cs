@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+#if RHINO_SDK
+
 namespace Rhino.UI
 {
   public class MouseCallbackEventArgs : System.ComponentModel.CancelEventArgs
@@ -146,3 +148,5 @@ namespace Rhino.UI
     }
   }
 }
+
+#endif

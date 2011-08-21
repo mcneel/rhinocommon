@@ -55,12 +55,15 @@ namespace Rhino.Geometry
     {
       Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer geometry = new Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer();
       IntPtr pParentRhinoObject = IntPtr.Zero;
+
+#if RHINO_SDK
       if (IsDocumentControlled)
       {
         Rhino.DocObjects.RhinoObject rhobj = ParentRhinoObject();
         if (rhobj != null)
           pParentRhinoObject = rhobj.ConstPointer();
       }
+#endif
       IntPtr pGeometryArray = geometry.NonConstPointer();
       IntPtr pConstThis = ConstPointer();
 

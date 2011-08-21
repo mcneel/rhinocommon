@@ -11,7 +11,9 @@ namespace Rhino.DocObjects
     // Represents both a CRhinoLayer and an ON_Layer. When m_ptr is
     // null, the object uses m_doc and m_id to look up the const
     // CRhinoLayer in the layer table.
+#if RHINO_SDK
     readonly Rhino.RhinoDoc m_doc;
+#endif
     readonly Guid m_id=Guid.Empty;
     readonly Rhino.FileIO.File3dm m_onx_model;
     #endregion
@@ -24,12 +26,14 @@ namespace Rhino.DocObjects
       base.ConstructNonConstObject(pLayer);
     }
 
+#if RHINO_SDK
     internal Layer(int index, Rhino.RhinoDoc doc)
     {
       m_id = UnsafeNativeMethods.CRhinoLayerTable_GetLayerId(doc.m_docId, index);
       m_doc = doc;
       this.m__parent = m_doc;
     }
+#endif
 
     internal Layer(Guid id, Rhino.FileIO.File3dm onxModel)
     {
@@ -67,16 +71,22 @@ namespace Rhino.DocObjects
 
     public bool CommitChanges()
     {
+#if RHINO_SDK
       if (m_id == Guid.Empty || IsDocumentControlled)
         return false;
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.CRhinoLayerTable_CommitChanges(m_doc.m_docId, pThis, m_id);
+#else
+      return true;
+#endif
     }
 
     internal override IntPtr _InternalGetConstPointer()
     {
+#if RHINO_SDK
       if (m_doc != null)
         return UnsafeNativeMethods.CRhinoLayerTable_GetLayerPointer2(m_doc.m_docId, m_id);
+#endif
       if (m_onx_model != null)
       {
         IntPtr pModel = m_onx_model.NonConstPointer();
@@ -125,6 +135,7 @@ namespace Rhino.DocObjects
     {
       get
       {
+#if RHINO_SDK
         if (null == m_doc)
           return Name;
         int index = LayerIndex;
@@ -135,6 +146,9 @@ namespace Rhino.DocObjects
             return Name;
           return sh.ToString();
         }
+#else
+        return Name;
+#endif
       }
     }
 
@@ -315,10 +329,14 @@ namespace Rhino.DocObjects
     {
       get
       {
+#if RHINO_SDK
         if (null == m_doc)
           return false;
         int index = LayerIndex;
         return UnsafeNativeMethods.CRhinoLayer_IsDeleted(m_doc.m_docId, index);
+#else
+        return false;
+#endif
       }
     }
 
@@ -330,10 +348,14 @@ namespace Rhino.DocObjects
     {
       get
       {
+#if RHINO_SDK
         if (null == m_doc)
           return false;
         int index = LayerIndex;
         return UnsafeNativeMethods.CRhinoLayer_IsReference(m_doc.m_docId, index);
+#else
+        return false;
+#endif
       }
     }
 
@@ -369,10 +391,14 @@ namespace Rhino.DocObjects
     {
       get
       {
+#if RHINO_SDK
         if (null == m_doc)
           return -1;
         int index = LayerIndex;
         return UnsafeNativeMethods.CRhinoLayer_SortIndex(m_doc.m_docId, index);
+#else
+        return -1;
+#endif
       }
     }
 
@@ -429,6 +455,8 @@ namespace Rhino.DocObjects
     }
 
     #region methods
+#if RHINO_SDK
+
     public bool IsChildOf(int layerIndex)
     {
       int index = LayerIndex;
@@ -474,6 +502,7 @@ namespace Rhino.DocObjects
       childIndices.Dispose();
       return rc;
     }
+#endif
     #endregion
   }
 }

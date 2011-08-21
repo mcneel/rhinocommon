@@ -91,7 +91,6 @@ namespace Rhino.Runtime
     protected virtual void OnBeginLoadPlugIn(string description) { }
     protected virtual void OnEndLoadPlugIn() { }
   }
-#endif
 
   public abstract class PythonCompiledCode
   {
@@ -100,7 +99,6 @@ namespace Rhino.Runtime
 
   public abstract class PythonScript
   {
-#if RHINO_SDK
     public static PythonScript Create()
     {
       Guid ip_id = new Guid("814d908a-e25c-493d-97e9-ee3861957f49");
@@ -110,7 +108,6 @@ namespace Rhino.Runtime
       PythonScript pyscript = obj as PythonScript;
       return pyscript;
     }
-#endif
 
     protected PythonScript()
     {
@@ -162,6 +159,7 @@ namespace Rhino.Runtime
 
     public abstract System.Windows.Forms.Control CreateTextEditorControl(string script, Action<string> helpcallback);
   }
+#endif
 
   public static class HostUtils
   {
@@ -227,7 +225,8 @@ namespace Rhino.Runtime
     {
       get
       {
-        bool rc = true;
+        bool rc = false;
+#if RHINO_SDK
         try
         {
           return Rhino.RhinoApp.SdkVersion>0;
@@ -236,6 +235,7 @@ namespace Rhino.Runtime
         {
           rc = false;
         }
+#endif
         return rc;
       }
     }

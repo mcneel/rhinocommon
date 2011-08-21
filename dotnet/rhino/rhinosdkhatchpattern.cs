@@ -19,7 +19,9 @@ namespace Rhino.DocObjects
     // null, the object uses m_doc and m_id to look up the const
     // CRhinoHatchPattern in the hatch pattern table.
     readonly Guid m_id = Guid.Empty;
+#if RHINO_SDK
     readonly RhinoDoc m_doc;
+#endif
     #endregion
 
     #region constructors
@@ -29,12 +31,14 @@ namespace Rhino.DocObjects
       IntPtr pHP = UnsafeNativeMethods.ON_HatchPattern_New();
       base.ConstructNonConstObject(pHP);
     }
+#if RHINO_SDK
     internal HatchPattern(int index, RhinoDoc doc)
     {
       m_id = UnsafeNativeMethods.CRhinoHatchPatternTable_GetHatchPatternId(doc.m_docId, index);
       m_doc = doc;
       this.m__parent = m_doc;
     }
+#endif
     internal HatchPattern(IntPtr pHatchPattern)
     {
       base.ConstructNonConstObject(pHatchPattern);
@@ -76,8 +80,10 @@ namespace Rhino.DocObjects
 
     internal override IntPtr _InternalGetConstPointer()
     {
+#if RHINO_SDK
       if (m_doc != null)
         return UnsafeNativeMethods.CRhinoHatchPatternTable_GetHatchPatternPointer(m_doc.m_docId, m_id);
+#endif
       return IntPtr.Zero;
     }
 

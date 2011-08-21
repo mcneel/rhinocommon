@@ -18,6 +18,7 @@ namespace Rhino.DocObjects
     {
       uint serial_number = 0;
       
+#if RHINO_SDK
       Rhino.DocObjects.RhinoObject parent_object = m__parent as Rhino.DocObjects.RhinoObject;
       if (null == parent_object)
       {
@@ -28,6 +29,12 @@ namespace Rhino.DocObjects
       if (null != parent_object)
         serial_number = parent_object.m_rhinoobject_serial_number;
       return UnsafeNativeMethods.CRhinoObject_Attributes(serial_number);
+#else
+      Rhino.FileIO.File3dmObject parent_model_object = m__parent as Rhino.FileIO.File3dmObject;
+      if (parent_model_object != null)
+        return parent_model_object.GetAttributesConstPointer();
+      return UnsafeNativeMethods.CRhinoObject_Attributes(serial_number);
+#endif
     }
 
     internal ObjectAttributes(IntPtr pNonConstAttributes)
@@ -35,10 +42,12 @@ namespace Rhino.DocObjects
       ConstructNonConstObject(pNonConstAttributes);
     }
 
+#if RHINO_SDK
     internal ObjectAttributes(RhinoObject parentObject)
     {
       ConstructConstObject(parentObject, -1);
     }
+#endif
 
     internal ObjectAttributes(Rhino.FileIO.File3dmObject parent)
     {
@@ -473,6 +482,7 @@ namespace Rhino.DocObjects
       set { SetColor(idxPlotColor, value); }
     }
 
+#if RHINO_SDK
     public System.Drawing.Color DrawColor(RhinoDoc document)
     {
       return DrawColor(document, Guid.Empty);
@@ -483,6 +493,7 @@ namespace Rhino.DocObjects
       int abgr = UnsafeNativeMethods.CRhinoObjectAttributes_DrawColor(pConstThis, document.m_docId, viewportId);
       return System.Drawing.ColorTranslator.FromWin32(abgr);
     }
+#endif
 
     /// <summary>
     /// Plot weight in millimeters.

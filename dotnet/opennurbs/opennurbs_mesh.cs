@@ -51,6 +51,7 @@ namespace Rhino.Geometry
     }
 
     #region constants
+#if RHINO_SDK
     /// <summary>
     /// Gets the MeshingParameters that are currently set for a document.
     /// These are the same settings that are shown in the DocumentProperties
@@ -65,6 +66,7 @@ namespace Rhino.Geometry
         return null;
       return new MeshingParameters(pMeshParameters);
     }
+#endif
 
     /// <summary>Gets minimal meshing parameters</summary>
     public static MeshingParameters Minimal

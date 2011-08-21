@@ -1,3 +1,4 @@
+#if RHINO_SDK
 namespace Rhino.ApplicationSettings
 {
   public static class HistorySettings
@@ -45,3 +46,4 @@ namespace Rhino.ApplicationSettings
 // skip
 //public class HistoryManager { }
 //public class RecordHistoryCommandOptionHelper { }
+#endif

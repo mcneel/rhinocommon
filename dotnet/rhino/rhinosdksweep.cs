@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+#if RHINO_SDK
 namespace Rhino.Geometry
 {
   /// <summary>
@@ -325,3 +326,4 @@ namespace Rhino.Geometry
 
   }
 }
+#endif

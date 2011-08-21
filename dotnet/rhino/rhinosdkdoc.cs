@@ -5,6 +5,7 @@ using Rhino.Display;
 using Rhino.Collections;
 using System.Collections.Generic;
 
+#if RHINO_SDK
 namespace Rhino
 {
   /// <summary>
@@ -12,8 +13,7 @@ namespace Rhino
   /// </summary>
   public sealed class RhinoDoc
   {
-#if RHINO_SDK
-    #region statics
+#region statics
     public static bool OpenFile(string path)
     {
       return UnsafeNativeMethods.CRhinoFileMenu_Open(path);
@@ -23,13 +23,13 @@ namespace Rhino
       IntPtr pOptions = options.ConstPointer();
       return UnsafeNativeMethods.RHC_RhinoReadFile(path, pOptions);
     }
-    #endregion
+#endregion
     public bool WriteFile(string path, Rhino.FileIO.FileWriteOptions options)
     {
       IntPtr pOptions = options.ConstPointer();
       return UnsafeNativeMethods.RHC_RhinoWriteFile(this.m_docId, path, pOptions);
     }
-#endif
+ 
     internal int m_docId;
     private RhinoDoc(int id)
     {
@@ -80,7 +80,7 @@ namespace Rhino
     //bool Read3DM( ON_BinaryArchive& archive, class CRhinoRead3dmOptions& read_opts );
     //void Destroy();
 
-    #region docproperties
+#region docproperties
     string GetString(int which)
     {
       using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
@@ -391,7 +391,6 @@ namespace Rhino
       get { return m_docId; }
     }
 
-#if RHINO_SDK
     public Rhino.DocObjects.EarthAnchorPoint EarthAnchorPoint
     {
       get { return new Rhino.DocObjects.EarthAnchorPoint(this); }
@@ -401,10 +400,8 @@ namespace Rhino
         UnsafeNativeMethods.CRhinoDocProperties_SetEarthAnchorPoint(m_docId, pConstAnchor);
       }
     }
-#endif
 
-    #region tables
-#if RHINO_SDK
+#region tables
     private Rhino.DocObjects.Tables.ViewTable m_view_table;
     public Rhino.DocObjects.Tables.ViewTable Views
     {
@@ -546,7 +543,6 @@ namespace Rhino
     {
       get { return m_strings ?? (m_strings = new Rhino.DocObjects.Tables.StringTable(this)); }
     }
-#endif
     #endregion
 
 #if RDK_CHECKED
@@ -574,7 +570,7 @@ namespace Rhino
     //  int LookupObject( const CRhinoLinetype&, ON_SimpleArray<CRhinoObject*>& ) const;
     //  int LookupObject( const CRhinoMaterial&, ON_SimpleArray<CRhinoObject*>& ) const;
 
-    #region Getter context utility methods
+#region Getter context utility methods
     /// <summary>
     /// Returns true if currently in a GetPoint.Get(), GetObject.GetObjects(), or GetString.Get()
     /// </summary>
@@ -779,7 +775,7 @@ namespace Rhino
     }
 
 
-    #region events
+#region events
 
     internal delegate void DocumentCallback(int docId);
     private static DocumentCallback m_OnCloseDocumentCallback;
@@ -1387,7 +1383,7 @@ namespace Rhino
     #endregion
 
 #if RDK_UNCHECKED
-    #region rdk events
+#region rdk events
 
     /// <summary>
     /// Bit flags for RdkDocumentSettingsChangedArgs flags parameter
@@ -1470,11 +1466,11 @@ namespace Rhino
       }
     }
 
-    #endregion
+#endregion
 #endif
   }
 
-  #region event args
+
   /// <summary>
   /// Provides document information for RhinoDoc events
   /// </summary>
@@ -1706,7 +1702,6 @@ namespace Rhino
 
       private readonly IntPtr m_pNewRhinoObject;
       private RhinoObject m_new_rhino_object;
-
       private Guid m_ObjectId = Guid.Empty;
       private readonly IntPtr m_pDoc;
 
@@ -1790,10 +1785,9 @@ namespace Rhino
       }
     }
   }
-  #endregion
 }
 
-#if RHINO_SDK
+
 namespace Rhino.DocObjects.Tables
 {
   public sealed class ViewTable : IEnumerable<RhinoView>
@@ -2020,7 +2014,7 @@ namespace Rhino.DocObjects.Tables
         return new RhinoPageView(pPageView, id);
       return null;
     }
-    #region IEnumerable<RhinoView> Members
+#region IEnumerable<RhinoView> Members
 
     public IEnumerator<RhinoView> GetEnumerator()
     {
@@ -2126,7 +2120,6 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
-#if RHINO_SDK
     /// <summary>
     /// Find all RhinoObjects that are in a given layer.
     /// </summary>
@@ -2147,7 +2140,6 @@ namespace Rhino.DocObjects.Tables
       Layer l = this.Document.Layers[index];
       return FindByLayer(l);
     }
-#endif
 
     /// <summary>
     /// Same as GetObjectList but converts the result to an array
@@ -2241,8 +2233,7 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
-    #region Object addition
-#if RHINO_SDK
+#region Object addition
     /// <summary>
     /// Add a point object to the document.
     /// </summary>
@@ -3041,10 +3032,9 @@ namespace Rhino.DocObjects.Tables
         pAttributes = attributes.ConstPointer();
       return UnsafeNativeMethods.CRhinoDoc_AddHatch(m_doc.m_docId, pConstHatch, pAttributes);
     }
-#endif
     #endregion
 
-    #region Object deletion
+#region Object deletion
     /// <summary>
     /// Deletes objref.Object(). The deletion can be undone by calling UndeleteObject(). 
     /// </summary>
@@ -3109,7 +3099,7 @@ namespace Rhino.DocObjects.Tables
     //  bool PurgeObject( CRhinoObject*& object );
     #endregion
 
-    #region Object selection
+#region Object selection
     /// <summary>
     /// Select a single object.
     /// </summary>
@@ -3359,7 +3349,7 @@ namespace Rhino.DocObjects.Tables
     }
     #endregion
 
-    #region Object replacement
+#region Object replacement
     /// <summary>
     /// Modifies an object's attributes.  Cannot be used to change object id
     /// </summary>
@@ -3758,7 +3748,7 @@ namespace Rhino.DocObjects.Tables
     }
     #endregion
 
-    #region Find geometry
+#region Find geometry
     /// <summary>
     /// Gets the most recently added object that is still in the Document.
     /// </summary>
@@ -3806,7 +3796,7 @@ namespace Rhino.DocObjects.Tables
     //// TODO: write these functions for all other Object types too.
     #endregion
 
-    #region Object state changes (lock, hide, etc.)
+#region Object state changes (lock, hide, etc.)
     const int idxHideObject = 0;
     const int idxShowObject = 1;
     const int idxLockObject = 2;
@@ -4005,7 +3995,7 @@ namespace Rhino.DocObjects.Tables
     }
     #endregion
 
-    #region Object transforms
+#region Object transforms
     /// <summary>
     /// Gets the boundingbox for all objects (normal, locked and hidden) in this
     /// document that exist in "model" space. This bounding box does not include
@@ -4343,7 +4333,7 @@ namespace Rhino.DocObjects.Tables
     //  void SetRedrawDisplayHint( unsigned int display_hint, ON::display_mode dm = ON::default_display ) const;
     #endregion
 
-    #region Object enumerator
+#region Object enumerator
 
     private IEnumerator<DocObjects.RhinoObject> GetEnumerator(Rhino.DocObjects.ObjectEnumeratorSettings settings)
     {
@@ -4575,7 +4565,6 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
-#if RHINO_SDK
     /// <summary>
     /// Removes user data strings from the document
     /// </summary>
@@ -4597,13 +4586,12 @@ namespace Rhino.DocObjects.Tables
       }
       return rc;
     }
-#endif
   }
 }
 
 namespace Rhino.DocObjects
 {
-  #region private helper enums
+#region private helper enums
   [FlagsAttribute]
   enum object_state : int
   {
@@ -4655,7 +4643,7 @@ namespace Rhino.DocObjects
     {
     }
 
-    #region object state
+#region object state
     public bool NormalObjects
     {
       get
@@ -4728,7 +4716,7 @@ namespace Rhino.DocObjects
     }
     #endregion
 
-    #region object category
+#region object category
     public bool ActiveObjects
     {
       get
@@ -4833,7 +4821,7 @@ namespace Rhino.DocObjects
   // ObjectIterator is not public. We only want to give the user an enumerator
   class ObjectIterator : IDisposable, IEnumerator<RhinoObject>
   {
-    #region IEnumerator Members
+#region IEnumerator Members
     Rhino.DocObjects.RhinoObject m_current;
 
     object System.Collections.IEnumerator.Current
@@ -4865,7 +4853,7 @@ namespace Rhino.DocObjects
 
     #endregion
 
-    #region IEnumerator<RhinoObject> Members
+#region IEnumerator<RhinoObject> Members
 
     public RhinoObject Current
     {

@@ -3,12 +3,14 @@ using Rhino.Geometry;
 
 namespace Rhino.DocObjects
 {
+
+#if RHINO_SDK
   /// <summary>
   /// RhinoObjects should only ever be creatable by the RhinoDoc
   /// </summary>
   public class RhinoObject //: Runtime.CommonObject - We don't want to allow for any private copies of RhinoObjects
   {
-    #region internals
+  #region internals
     // All RhinoObject pointer validation is performed against the runtime serial number
     internal uint m_rhinoobject_serial_number;
     internal GeometryBase m_original_geometry;
@@ -83,7 +85,6 @@ namespace Rhino.DocObjects
 
     internal static RhinoObject CreateRhinoObjectHelper(IntPtr pRhinoObject)
     {
-#if RHINO_SDK
       if (IntPtr.Zero == pRhinoObject)
         return null;
 
@@ -155,13 +156,10 @@ namespace Rhino.DocObjects
           break;
       }
       return rc;
-#else
-      return null;
-#endif
     }
     #endregion
 
-    #region statics
+  #region statics
     /// <summary>
     /// Get the runtime serial number that will be assigned to
     /// the next Rhino Object that is created.
@@ -201,7 +199,7 @@ namespace Rhino.DocObjects
     }
     #endregion
 
-    #region properties
+  #region properties
     [CLSCompliant(false)]
     public ObjectType ObjectType
     {
@@ -414,7 +412,6 @@ namespace Rhino.DocObjects
       return null;
     }
 
-#if RHINO_SDK
     /// <summary>
     /// Moves changes made to this RhinoObject into the RhinoDoc
     /// </summary>
@@ -451,7 +448,7 @@ namespace Rhino.DocObjects
 
       return rc;
     }
-#endif
+
     internal virtual CommitGeometryChangesFunc GetCommitFunc()
     {
       return null;
@@ -840,7 +837,6 @@ namespace Rhino.DocObjects
       }
     }
 
-#if RHINO_SDK
     /// <summary>Turns on/off the object's editing grips</summary>
     /// <param name="customGrips"></param>
     /// <returns>
@@ -889,7 +885,6 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.ON_GripList_Delete(pGripList);
       return rc;
     }
-#endif
 
     /// <summary>
     /// Localized short description os an object
@@ -955,7 +950,7 @@ namespace Rhino.DocObjects
     }
 #endif
   }
-
+#endif
   /// <summary>
   /// Enumerates different kinds of selection methods.
   /// </summary>
@@ -986,6 +981,7 @@ namespace Rhino.DocObjects
 
   // skipping CRhinoPhantomObject, CRhinoProxyObject
 
+#if RHINO_SDK
   // all ObjRef's are created in .NET
   public class ObjRef : IDisposable
   {
@@ -1310,11 +1306,13 @@ namespace Rhino.DocObjects
       return ObjRefToGeometryHelper(pSurface) as Surface;
     }
   }
-
+#endif
 
 
   // skipping CRhinoObjRefArray
 }
+
+#if RHINO_SDK
 
 namespace Rhino.Runtime
 {
@@ -1394,3 +1392,5 @@ namespace Rhino.Runtime
     }
   }
 }
+
+#endif

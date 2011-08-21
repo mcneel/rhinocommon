@@ -25,10 +25,12 @@ namespace Rhino.Runtime
                                 // Rhino.Render.RenderMesh, PolyCurve 
     internal int m_subobject_index = -1;
 
+#if RHINO_SDK
     internal Rhino.DocObjects.RhinoObject ParentRhinoObject()
     {
       return m__parent as Rhino.DocObjects.RhinoObject;
     }
+#endif
 
     internal void SetParent(object parent)
     {
@@ -94,6 +96,7 @@ namespace Rhino.Runtime
         if (applymempressure)
           ApplyMemoryPressure();
 
+#if RHINO_SDK
         Rhino.DocObjects.RhinoObject parent_object = m__parent as Rhino.DocObjects.RhinoObject;
         if (null != parent_object)
         {
@@ -108,6 +111,7 @@ namespace Rhino.Runtime
             parent_object.m_edited_attributes = this as DocObjects.ObjectAttributes;
           }
         }
+#endif
         OnSwitchToNonConst();
       }
     }
@@ -293,7 +297,11 @@ namespace Rhino.Runtime
       bool writeuserdata = true;
       if (options != null)
         writeuserdata = options.WriteUserData;
+#if RHINO_SDK
       int rhino_version = (options != null) ? options.RhinoVersion : RhinoApp.ExeVersion;
+#else
+      int rhino_version = (options != null) ? options.RhinoVersion : 5;
+#endif
       IntPtr pWriteBuffer = UnsafeNativeMethods.ON_WriteBufferArchive_NewWriter(pConstOnObject, rhino_version, writeuserdata, ref length);
 
       if (length < int.MaxValue)

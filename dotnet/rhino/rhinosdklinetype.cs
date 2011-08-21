@@ -12,7 +12,9 @@ namespace Rhino.DocObjects
     // Represents both a CRhinoLinetype and an ON_Linetype. When m_ptr is
     // null, the object uses m_doc and m_id to look up the const
     // CRhinoLinetype in the linetype table.
+#if RHINO_SDK
     readonly Rhino.RhinoDoc m_doc;
+#endif
     readonly Guid m_id=Guid.Empty;
     #endregion
 
@@ -24,12 +26,14 @@ namespace Rhino.DocObjects
       base.ConstructNonConstObject(pLinetype);
     }
 
+#if RHINO_SDK
     internal Linetype(int index, Rhino.RhinoDoc doc)
     {
       m_id = UnsafeNativeMethods.CRhinoLinetypeTable_GetLinetypeId(doc.m_docId, index);
       m_doc = doc;
       this.m__parent = m_doc;
     }
+#endif
 
     // serialization constructor
     protected Linetype(SerializationInfo info, StreamingContext context)
@@ -40,16 +44,22 @@ namespace Rhino.DocObjects
 
     public bool CommitChanges()
     {
+#if RHINO_SDK
       if (m_id == Guid.Empty || IsDocumentControlled)
         return false;
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.CRhinoLinetypeTable_CommitChanges(m_doc.m_docId, pThis, m_id);
+#else
+      return true;
+#endif
     }
 
     internal override IntPtr _InternalGetConstPointer()
     {
+#if RHINO_SDK
       if (m_doc != null)
         return UnsafeNativeMethods.CRhinoLinetypeTable_GetLinetypePointer2(m_doc.m_docId, m_id);
+#endif
       return IntPtr.Zero;
     }
 
@@ -129,10 +139,14 @@ namespace Rhino.DocObjects
     {
       get
       {
+#if RHINO_SDK
         if (null == m_doc)
           return false;
         int index = LinetypeIndex;
         return UnsafeNativeMethods.CRhinoLinetype_IsDeleted(m_doc.m_docId, index);
+#else
+        return false;
+#endif
       }
     }
 
@@ -144,10 +158,14 @@ namespace Rhino.DocObjects
     {
       get
       {
+#if RHINO_SDK
         if (null == m_doc)
           return false;
         int index = LinetypeIndex;
         return UnsafeNativeMethods.CRhinoLinetype_IsReference(m_doc.m_docId, index);
+#else
+        return false;
+#endif
       }
     }
 
@@ -159,10 +177,14 @@ namespace Rhino.DocObjects
     {
       get
       {
+#if RHINO_SDK
         if (null == m_doc)
           return false;
         int index = LinetypeIndex;
         return UnsafeNativeMethods.CRhinoLinetype_IsModified(m_doc.m_docId, index);
+#else
+        return false;
+#endif
       }
     }
 

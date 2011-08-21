@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Drawing;
 
+#if RHINO_SDK
 namespace Rhino.ApplicationSettings
 {
   [System.ComponentModel.Browsable(false)]
@@ -1960,3 +1961,4 @@ namespace Rhino.ApplicationSettings
     }
   }
 }
+#endif

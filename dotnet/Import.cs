@@ -99,7 +99,6 @@ internal partial class UnsafeNativeMethods
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void RHC_SetReplaceColorDialogCallback(Rhino.UI.Dialogs.ColorDialogCallback cb);
-#endif
 
   //In RhinoApp
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
@@ -114,7 +113,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoEventWatcher_SetAppSettingsChangeCallback(Rhino.RhinoApp.RhCmnEmptyCallback cb, Rhino.Runtime.HostUtils.ReportCallback report_cb);
 
-#if RHINO_SDK
   //In Command
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoEventWatcher_SetBeginCommandCallback(Rhino.Commands.Command.CommandCallback cb, Rhino.Runtime.HostUtils.ReportCallback report_cb);
@@ -124,7 +122,6 @@ internal partial class UnsafeNativeMethods
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoEventWatcher_SetUndoEventCallback(Rhino.Commands.Command.UndoCallback cb, Rhino.Runtime.HostUtils.ReportCallback report_cb);
-#endif
 
   //In RhinoDoc
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
@@ -168,7 +165,7 @@ internal partial class UnsafeNativeMethods
   
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoEventWatcher_SetDeselectAllObjectsCallback(Rhino.RhinoDoc.RhinoDeselectAllObjectsCallback cb, Rhino.Runtime.HostUtils.ReportCallback report_cb);
-  
+
   //In RhinoView
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoEventWatcher_SetCreateViewCallback(Rhino.Display.RhinoView.ViewCallback cb, Rhino.Runtime.HostUtils.ReportCallback report_cb);
@@ -182,7 +179,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoEventWatcher_SetRenameViewCallback(Rhino.Display.RhinoView.ViewCallback cb, Rhino.Runtime.HostUtils.ReportCallback report_cb);
 
-#if RHINO_SDK
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern uint CRhinoGetObject_GetObjects(IntPtr ptr, int min, int max, Rhino.Input.Custom.GetObject.GeometryFilterCallback cb);
 
@@ -214,11 +210,11 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Arc_Copy(IntPtr pRdnArc, ref Arc pRhCmnArc, [MarshalAs(UnmanagedType.U1)]bool rdn_to_rhc);
 
+#if RHINO_SDK
   //void CRhinoMouseCallback_Enable(bool on, RHMOUSECALLBACK_FUNC mouse_cb)
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoMouseCallback_Enable([MarshalAs(UnmanagedType.U1)]bool on, Rhino.UI.MouseCallback.MouseCallbackFromCPP callback_func);
 
-#if RHINO_SDK
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoApp_RegisterGripsEnabler(Guid key, Rhino.DocObjects.Custom.CustomObjectGrips.CRhinoGripsEnablerCallback turnon_func);
 

@@ -32,12 +32,12 @@ namespace Rhino.Geometry
       if (null != m_shallow_parent)
         return m_shallow_parent.ConstPointer();
 
+#if RHINO_SDK
       Rhino.DocObjects.ObjRef obj_ref = m__parent as Rhino.DocObjects.ObjRef;
       if (null != obj_ref)
         return obj_ref.GetGeometryConstPointer(this);
 
       Rhino.DocObjects.RhinoObject parent_object = ParentRhinoObject();
-
       if (parent_object == null)
       {
         Rhino.FileIO.File3dmObject fileobject = m__parent as Rhino.FileIO.File3dmObject;
@@ -50,6 +50,12 @@ namespace Rhino.Geometry
         serial_number = parent_object.m_rhinoobject_serial_number;
       ComponentIndex ci = new ComponentIndex();
       return UnsafeNativeMethods.CRhinoObject_Geometry(serial_number, ci);
+#else
+      Rhino.FileIO.File3dmObject fileobject = m__parent as Rhino.FileIO.File3dmObject;
+      if (null != fileobject)
+        return fileobject.GetGeometryConstPointer();
+      return IntPtr.Zero;
+#endif
     }
 
     internal override object _GetConstObjectParent()
@@ -398,29 +404,35 @@ namespace Rhino.Geometry
     /// </example>
     public BoundingBox GetBoundingBox(bool accurate)
     {
+#if RHINO_SDK
       Rhino.DocObjects.RhinoObject parent_object = ParentRhinoObject();
+#endif
       if (accurate)
       {
         BoundingBox bbox = new BoundingBox();
         Transform xf = new Transform();
+#if RHINO_SDK
         if (null != parent_object)
         {
           IntPtr pParentObject = parent_object.ConstPointer();
           if (UnsafeNativeMethods.CRhinoObject_GetTightBoundingBox(pParentObject, ref bbox, ref xf, false))
             return bbox;
         }
+#endif
         IntPtr ptr = ConstPointer();
         return UnsafeNativeMethods.ON_Geometry_GetTightBoundingBox(ptr, ref bbox, ref xf, false) ? bbox : BoundingBox.Empty;
       }
       else
       {
         BoundingBox rc = new BoundingBox();
+#if RHINO_SDK
         if (null != parent_object)
         {
           IntPtr pParentObject = parent_object.ConstPointer();
           if (UnsafeNativeMethods.CRhinoObject_BoundingBox(pParentObject, ref rc))
             return rc;
         }
+#endif
         IntPtr ptr = ConstPointer();
         UnsafeNativeMethods.ON_Geometry_BoundingBox(ptr, ref rc);
         return rc;
@@ -437,6 +449,7 @@ namespace Rhino.Geometry
     {
       BoundingBox bbox = BoundingBox.Empty;
 
+#if RHINO_SDK
       // In cases like breps and curves, the CRhinoBrepObject and CRhinoCurveObject
       // can compute a better tight bounding box
       Rhino.DocObjects.RhinoObject parent_object = ParentRhinoObject();
@@ -446,6 +459,7 @@ namespace Rhino.Geometry
         if (UnsafeNativeMethods.CRhinoObject_GetTightBoundingBox(pParent, ref bbox, ref xform, true))
           return bbox;
       }
+#endif
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.ON_Geometry_GetTightBoundingBox(ptr, ref bbox, ref xform, true) ? bbox : BoundingBox.Empty;
     }

@@ -1923,7 +1923,11 @@ namespace Rhino.FileIO
 
     public SerializationOptions()
     {
+#if RHINO_SDK
       m_rhinoversion = RhinoApp.ExeVersion;
+#else
+      m_rhinoversion = 5;
+#endif
       m_writeuserdata = true;
     }
 

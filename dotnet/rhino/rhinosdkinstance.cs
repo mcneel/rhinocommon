@@ -339,7 +339,7 @@ namespace Rhino.DocObjects
 
 namespace Rhino.DocObjects.Tables
 {
-  public sealed class InstanceDefinitionTable
+  public sealed class InstanceDefinitionTable : IEnumerable<InstanceDefinition>, Rhino.Collections.IRhinoTable<InstanceDefinition>
   {
     private readonly RhinoDoc m_doc;
     private InstanceDefinitionTable() { }
@@ -374,6 +374,23 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
+    /// <summary>
+    /// Conceptually, the InstanceDefinition table is an array of Instance definions.
+    /// The operator[] can be used to get individual instance definition. An instance
+    /// definition is either active or deleted and this state is reported by IsDeleted
+    /// </summary>
+    /// <param name="index">zero based array index</param>
+    /// <returns>
+    /// </returns>
+    public DocObjects.InstanceDefinition this[int index]
+    {
+      get
+      {
+        if (index < 0 || index >= Count)
+          throw new IndexOutOfRangeException();
+        return new InstanceDefinition(index, m_doc);
+      }
+    }
     /// <summary>Finds the instance definition with a given name</summary>
     /// <param name="instanceDefinitionName">name of instance definition to search for (ignores case)</param>
     /// <param name="ignoreDeletedInstanceDefinitions">true means don't search deleted instance definitions</param>
@@ -704,6 +721,20 @@ namespace Rhino.DocObjects.Tables
   //Parameters:
   //  result - [out] this is the wString which receives new name
   //void GetUnusedInstanceDefinitionName( ON_wString& result) const;
+
+    #region enumerator
+    // for IEnumerable<Layer>
+    public IEnumerator<InstanceDefinition> GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<InstanceDefinitionTable, InstanceDefinition>(this);
+    }
+
+    // for IEnumerable
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<InstanceDefinitionTable, InstanceDefinition>(this);
+    }
+    #endregion
   }
 #endif
 }

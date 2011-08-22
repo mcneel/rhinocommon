@@ -171,7 +171,10 @@ namespace Rhino.Geometry
     public static LinearDimension FromPoints(Point3d extensionLine1End, Point3d extensionLine2End, Point3d pointOnDimensionLine)
     {
       Point3d[] points = new Point3d[] { extensionLine1End, extensionLine2End, pointOnDimensionLine };
-      Plane dimPlane = new Plane(extensionLine1End, extensionLine2End, pointOnDimensionLine);
+      // Plane dimPlane = new Plane(extensionLine1End, extensionLine2End, pointOnDimensionLine);
+      Plane dimPlane;
+      if (Plane.FitPlaneToPoints(points, out dimPlane) != PlaneFitResult.Success)
+        return null;
       double s, t;
       if (!dimPlane.ClosestParameter(extensionLine1End, out s, out t))
         return null;

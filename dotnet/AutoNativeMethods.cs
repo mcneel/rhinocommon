@@ -1197,6 +1197,16 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Brep_New(IntPtr pOther);
 
+  //bool ON_Brep_IsDuplicate(const ON_Brep* pConstBrep1, const ON_Brep* pConstBrep2, double tolerance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Brep_IsDuplicate(IntPtr pConstBrep1, IntPtr pConstBrep2, double tolerance);
+
+  //bool ON_Brep_IsValidTest(const ON_Brep* pConstBrep, int which_test, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Brep_IsValidTest(IntPtr pConstBrep, int which_test, IntPtr pStringHolder);
+
   //ON_Brep* ON_Brep_FromBox( ON_3DPOINT_STRUCT boxmin, ON_3DPOINT_STRUCT boxmax)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Brep_FromBox(Point3d boxmin, Point3d boxmax);
@@ -1225,6 +1235,20 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Brep_SplitKinkyFaces(IntPtr pBrep, double tolerance, [MarshalAs(UnmanagedType.U1)]bool compact);
+
+  //bool ON_Brep_SplitKinkyFace(ON_Brep* pBrep, int face_index, double kink_tol)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Brep_SplitKinkyFace(IntPtr pBrep, int face_index, double kink_tol);
+
+  //bool ON_Brep_SplitKinkyEdge(ON_Brep* pBrep, int edge_index, double kink_tol)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Brep_SplitKinkyEdge(IntPtr pBrep, int edge_index, double kink_tol);
+
+  //int ON_Brep_SplitEdgeAtParameters(ON_Brep* pBrep, int edge_index, int count, /*ARRAY*/const double* parameters)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_SplitEdgeAtParameters(IntPtr pBrep, int edge_index, int count, double[] parameters);
 
   //bool ON_Brep_ShrinkFaces( ON_Brep* pBrep )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -1335,6 +1359,69 @@ internal partial class UnsafeNativeMethods
   //void ON_Brep_DeleteFace( ON_Brep* pBrep, int faceIndex )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Brep_DeleteFace(IntPtr pBrep, int faceIndex);
+
+  //bool ON_Brep_FlipReversedSurfaces(ON_Brep* pBrep)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Brep_FlipReversedSurfaces(IntPtr pBrep);
+
+  //bool ON_Brep_SplitClosedFaces(ON_Brep* pBrep, int min_degree)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Brep_SplitClosedFaces(IntPtr pBrep, int min_degree);
+
+  //bool ON_Brep_SplitBipolarFaces(ON_Brep* pBrep)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Brep_SplitBipolarFaces(IntPtr pBrep);
+
+  //ON_Brep* ON_Brep_SubBrep(const ON_Brep* pConstBrep, int count, /*ARRAY*/int* face_indices)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_Brep_SubBrep(IntPtr pConstBrep, int count, [In,Out] int[] face_indices);
+
+  //ON_Brep* ON_Brep_ExtractFace(ON_Brep* pBrep, int face_index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_Brep_ExtractFace(IntPtr pBrep, int face_index);
+
+  //bool ON_Brep_StandardizeFaceSurface(ON_Brep* pBrep, int face_index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Brep_StandardizeFaceSurface(IntPtr pBrep, int face_index);
+
+  //void ON_Brep_StandardizeFaceSurfaces(ON_Brep* pBrep)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Brep_StandardizeFaceSurfaces(IntPtr pBrep);
+
+  //void ON_Brep_Standardize(ON_Brep* pBrep)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Brep_Standardize(IntPtr pBrep);
+
+  //bool ON_Brep_CullUnused(ON_Brep* pBrep, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Brep_CullUnused(IntPtr pBrep, int which);
+
+  //int ON_Brep_RegionTopologyCount(const ON_Brep* pConstBrep, bool region)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_RegionTopologyCount(IntPtr pConstBrep, [MarshalAs(UnmanagedType.U1)]bool region);
+
+  //bool ON_BrepRegion_IsFinite(const ON_Brep* pConstBrep, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BrepRegion_IsFinite(IntPtr pConstBrep, int index);
+
+  //void ON_BrepRegion_BoundingBox(const ON_Brep* pConstBrep, int index, ON_BoundingBox* bbox)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_BrepRegion_BoundingBox(IntPtr pConstBrep, int index, ref BoundingBox bbox);
+
+  //ON_Brep* ON_BrepRegion_RegionBoundaryBrep(const ON_Brep* pConstBrep, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_BrepRegion_RegionBoundaryBrep(IntPtr pConstBrep, int index);
+
+  //bool ON_BrepRegion_IsPointInside(const ON_Brep* pConstBrep, int index, ON_3DPOINT_STRUCT point, double tolerance, bool strictly_inside)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BrepRegion_IsPointInside(IntPtr pConstBrep, int index, Point3d point, double tolerance, [MarshalAs(UnmanagedType.U1)]bool strictly_inside);
 
   //ON_MassProperties* ON_Brep_MassProperties(bool bArea, const ON_Brep* pBrep, double relativeTolerance, double absoluteTolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4462,9 +4549,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RhColors_GetColor(int which);
 
-  //void RhColors_SetColor(int which, int argb)
+  //void RhColors_SetColor(int which, int argb, bool forceUiUpdate)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void RhColors_SetColor(int which, int argb);
+  internal static extern void RhColors_SetColor(int which, int argb, [MarshalAs(UnmanagedType.U1)]bool forceUiUpdate);
 
   //CRhinoAppSmartTrackSettings* CRhinoAppSmartTrackSettings_New(bool current)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

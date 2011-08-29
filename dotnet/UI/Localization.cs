@@ -124,9 +124,13 @@ namespace Rhino.UI
     public static string LocalizeCommandName(string englishCommandName)
     {
       Assembly a = Assembly.GetCallingAssembly();
-      return LocalizationUtils.LocalizeString(a, CurrentLanguageID, englishCommandName);
+      return LocalizationUtils.LocalizeCommandName(a, CurrentLanguageID, englishCommandName);
     }
 
+    public static string LocalizeCommandNameInAssembly(string english, Assembly assembly)
+    {
+      return LocalizationUtils.LocalizeCommandName(assembly, CurrentLanguageID, english);
+    }
 
     public static LocalizeStringPair LocalizeCommandOptionName(string english, int contextId)
     {

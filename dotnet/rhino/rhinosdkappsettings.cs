@@ -5,18 +5,24 @@ using System.Drawing;
 #if RHINO_SDK
 namespace Rhino.ApplicationSettings
 {
-  [System.ComponentModel.Browsable(false)]
   public enum PaintColor : int
   {
+    /// <summary>Gradient start for active toolbar tab and non-client area of Rhino</summary>
     NormalStart = 0,
+    /// <summary>Gradient end for active toolbar tab and non-client area of Rhino</summary>
     NormalEnd = 1,
+    /// <summary>Edge color used for grippers, toolbar border, resize bars, status bar pane borders</summary>
     NormalBorder = 2,
+    /// <summary>Gradient start for inactive toolbar tab</summary>
     HotStart = 3,
+    /// <summary>Gradient end for inactive toolbar tab</summary>
     HotEnd = 4,
+    /// <summary>Inactive toolbar tab border</summary>
     HotBorder = 5,
     PressedStart = 6,
     PressedEnd = 7,
     PressedBorder = 8,
+    /// <summary>Toolbar tab text and status bar text</summary>
     TextEnabled = 9,
     TextDisabled = 10,
     MouseOverControlStart = 11,
@@ -261,21 +267,23 @@ namespace Rhino.ApplicationSettings
       }
     }
 
-    [System.ComponentModel.Browsable(false)]
-    public static Color GetPaintColor(PaintColor c)
+    public static Color GetPaintColor(PaintColor whichColor)
     {
-      int abgr = UnsafeNativeMethods.RhColors_GetColor((int)c);
+      int abgr = UnsafeNativeMethods.RhColors_GetColor((int)whichColor);
       return ColorTranslator.FromWin32(abgr);
     }
 
-    [System.ComponentModel.Browsable(false)]
     public static void SetPaintColor(PaintColor whichColor, Color c)
     {
-      int argb = c.ToArgb();
-      UnsafeNativeMethods.RhColors_SetColor((int)whichColor, argb);
+      SetPaintColor(whichColor, c, false);
     }
 
-    [System.ComponentModel.Browsable(false)]
+    public static void SetPaintColor(PaintColor whichColor, Color c, bool forceUiUpdate)
+    {
+      int argb = c.ToArgb();
+      UnsafeNativeMethods.RhColors_SetColor((int)whichColor, argb, forceUiUpdate);
+    }
+
     public static bool UsePaintColors
     {
       get

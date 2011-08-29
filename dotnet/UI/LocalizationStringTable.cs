@@ -23,6 +23,11 @@ namespace Rhino.UI
       get { return this.m_string_list; }
     }
 
+    public Dictionary<string, string> CommandList
+    {
+      get { return this.m_command_list; }
+    }
+
     /// <summary>
     /// Look for XML file decorating the name with both the Locale ID as a number and a System.Globalization.CultureInfo.Name
     /// </summary>

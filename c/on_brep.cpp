@@ -36,6 +36,47 @@ RH_C_FUNCTION ON_Brep* ON_Brep_New(const ON_Brep* pOther)
   return ON_Brep::New();
 }
 
+RH_C_FUNCTION bool ON_Brep_IsDuplicate(const ON_Brep* pConstBrep1, const ON_Brep* pConstBrep2, double tolerance)
+{
+  bool rc = false;
+  if( pConstBrep1 && pConstBrep2 )
+    rc = pConstBrep1->IsDuplicate(*pConstBrep2, tolerance);
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Brep_IsValidTest(const ON_Brep* pConstBrep, int which_test, CRhCmnStringHolder* pStringHolder)
+{
+  const int idxIsValidTopology = 0;
+  const int idxIsValidGeometry = 1;
+  const int idxIsValidTolerancesAndFlags = 2;
+  bool rc = false;
+  if( pConstBrep )
+  {
+    ON_wString str;
+    ON_TextLog log(str);
+    ON_TextLog* _log = pStringHolder ? &log : NULL;
+
+    switch(which_test)
+    {
+    case idxIsValidTopology:
+      rc = pConstBrep->IsValidTopology(_log);
+      break;
+    case idxIsValidGeometry:
+      rc = pConstBrep->IsValidGeometry(_log);
+      break;
+    case idxIsValidTolerancesAndFlags:
+      rc = pConstBrep->IsValidTolerancesAndFlags(_log);
+      break;
+    default:
+      break;
+    }
+
+    if( pStringHolder )
+      pStringHolder->Set(str);
+  }
+  return rc;
+}
+
 RH_C_FUNCTION ON_Brep* ON_Brep_FromBox( ON_3DPOINT_STRUCT boxmin, ON_3DPOINT_STRUCT boxmax)
 {
   ON_Brep* rc = NULL;
@@ -154,6 +195,30 @@ RH_C_FUNCTION bool ON_Brep_SplitKinkyFaces(ON_Brep* pBrep, double tolerance, boo
     }
   }
   
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Brep_SplitKinkyFace(ON_Brep* pBrep, int face_index, double kink_tol)
+{
+  bool rc = false;
+  if( pBrep )
+    rc = pBrep->SplitKinkyFace(face_index, kink_tol);
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Brep_SplitKinkyEdge(ON_Brep* pBrep, int edge_index, double kink_tol)
+{
+  bool rc = false;
+  if( pBrep )
+    rc = pBrep->SplitKinkyEdge(edge_index, kink_tol);
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_SplitEdgeAtParameters(ON_Brep* pBrep, int edge_index, int count, /*ARRAY*/const double* parameters)
+{
+  int rc = 0;
+  if( pBrep && count>0 && parameters )
+    rc = pBrep->SplitEdgeAtParameters(edge_index, count, parameters);
   return rc;
 }
 
@@ -561,6 +626,191 @@ RH_C_FUNCTION void ON_Brep_DeleteFace( ON_Brep* pBrep, int faceIndex )
   }
 }
 
+RH_C_FUNCTION bool ON_Brep_FlipReversedSurfaces(ON_Brep* pBrep)
+{
+  bool rc = false;
+  if( pBrep )
+    rc = pBrep->FlipReversedSurfaces();
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Brep_SplitClosedFaces(ON_Brep* pBrep, int min_degree)
+{
+  bool rc = false;
+  if( pBrep )
+    rc = pBrep->SplitClosedFaces(min_degree);
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Brep_SplitBipolarFaces(ON_Brep* pBrep)
+{
+  bool rc = false;
+  if( pBrep )
+    rc = pBrep->SplitBipolarFaces();
+  return rc;
+}
+
+RH_C_FUNCTION ON_Brep* ON_Brep_SubBrep(const ON_Brep* pConstBrep, int count, /*ARRAY*/int* face_indices)
+{
+  ON_Brep* rc = NULL;
+  if( pConstBrep && count>0 && face_indices)
+    rc = pConstBrep->SubBrep(count, face_indices);
+  return rc;
+}
+
+RH_C_FUNCTION ON_Brep* ON_Brep_ExtractFace(ON_Brep* pBrep, int face_index)
+{
+  ON_Brep* rc = NULL;
+  if( pBrep )
+    rc = pBrep->ExtractFace(face_index);
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Brep_StandardizeFaceSurface(ON_Brep* pBrep, int face_index)
+{
+  bool rc = false;
+  if( pBrep )
+    rc = pBrep->StandardizeFaceSurface(face_index);
+  return rc;
+}
+
+RH_C_FUNCTION void ON_Brep_StandardizeFaceSurfaces(ON_Brep* pBrep)
+{
+  if( pBrep )
+    pBrep->StandardizeFaceSurfaces();
+}
+
+RH_C_FUNCTION void ON_Brep_Standardize(ON_Brep* pBrep)
+{
+  if( pBrep )
+    pBrep->Standardize();
+}
+
+RH_C_FUNCTION bool ON_Brep_CullUnused(ON_Brep* pBrep, int which)
+{
+  const int idxCullUnusedFaces = 0;
+  const int idxCullUnusedLoops = 1;
+  const int idxCullUnusedTrims = 2;
+  const int idxCullUnusedEdges = 3;
+  const int idxCullUnusedVertices = 4;
+  const int idxCullUnused3dCurves = 5;
+  const int idxCullUnused2dCurves = 6;
+  const int idxCullUnusedSurfaces = 7;
+  bool rc = false;
+  if( pBrep )
+  {
+    switch(which)
+    {
+    case idxCullUnusedFaces:
+      rc = pBrep->CullUnusedFaces();
+      break;
+    case idxCullUnusedLoops:
+      rc = pBrep->CullUnusedLoops();
+      break;
+    case idxCullUnusedTrims:
+      rc = pBrep->CullUnusedTrims();
+      break;
+    case idxCullUnusedEdges:
+      rc = pBrep->CullUnusedEdges();
+      break;
+    case idxCullUnusedVertices:
+      rc = pBrep->CullUnusedVertices();
+      break;
+    case idxCullUnused3dCurves:
+      rc = pBrep->CullUnused3dCurves();
+      break;
+    case idxCullUnused2dCurves:
+      rc = pBrep->CullUnused2dCurves();
+      break;
+    case idxCullUnusedSurfaces:
+      rc = pBrep->CullUnusedSurfaces();
+      break;
+    default:
+      break;
+    }
+  }
+  return rc;
+}
+
+// Declared but not implemented in opennurbs
+//RH_C_FUNCTION int ON_Brep_MergeFaces(ON_Brep* pBrep, int face0, int face1)
+//{
+//  int rc = -1;
+//  if( pBrep )
+//    rc = pBrep->MergeFaces(face0, face1);
+//  return rc;
+//}
+//
+//RH_C_FUNCTION bool ON_Brep_MergeFaces2(ON_Brep* pBrep)
+//{
+//  bool rc = false;
+//  if( pBrep )
+//    rc = pBrep->MergeFaces();
+//  return rc;
+//}
+
+
+RH_C_FUNCTION int ON_Brep_RegionTopologyCount(const ON_Brep* pConstBrep, bool region)
+{
+  int rc = 0;
+  if( pConstBrep )
+  {
+    if( region )
+      rc = pConstBrep->RegionTopology().m_R.Count();
+    else
+      rc = pConstBrep->RegionTopology().m_FS.Count();
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_BrepRegion_IsFinite(const ON_Brep* pConstBrep, int index)
+{
+  bool rc = false;
+  if( pConstBrep )
+  {
+    const ON_BrepRegionTopology& top = pConstBrep->RegionTopology();
+    if( index>=0 && index<top.m_R.Count() )
+      rc = top.m_R[index].IsFinite();
+  }
+  return rc;
+}
+
+RH_C_FUNCTION void ON_BrepRegion_BoundingBox(const ON_Brep* pConstBrep, int index, ON_BoundingBox* bbox)
+{
+  if( pConstBrep && bbox )
+  {
+    const ON_BrepRegionTopology& top = pConstBrep->RegionTopology();
+    if( index>=0 && index<top.m_R.Count() )
+      *bbox = top.m_R[index].BoundingBox();
+  }
+}
+
+RH_C_FUNCTION ON_Brep* ON_BrepRegion_RegionBoundaryBrep(const ON_Brep* pConstBrep, int index)
+{
+  ON_Brep* rc = NULL;
+  if( pConstBrep )
+  {
+    const ON_BrepRegionTopology& top = pConstBrep->RegionTopology();
+    if( index>=0 && index<top.m_R.Count() )
+      rc = top.m_R[index].RegionBoundaryBrep();
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_BrepRegion_IsPointInside(const ON_Brep* pConstBrep, int index, ON_3DPOINT_STRUCT point, double tolerance, bool strictly_inside)
+{
+  bool rc = false;
+  if( pConstBrep )
+  {
+    const ON_BrepRegionTopology& top = pConstBrep->RegionTopology();
+    if( index>=0 && index<top.m_R.Count() )
+    {
+      ON_3dPoint _point(point.val);
+      rc = top.m_R[index].IsPointInside(_point, tolerance, strictly_inside);
+    }
+  }
+  return rc;
+}
 ////////////////////////////////////////////////////////////////////////////////////
 // Meshing and mass property calculations are not available in stand alone opennurbs
 

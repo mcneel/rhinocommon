@@ -16,6 +16,20 @@ namespace Rhino.UI
       return m_assembly_translations.GetStringTable(assembly);
     }
 
+    public static string LocalizeCommandName(Assembly assembly, int languageId, string english)
+    {
+      // If Rhino set the CurrentUICulture correctly, we could use System.Threading.Thread.CurrentUICulture
+      // and not have any dependencies on Rhino. This would allow for use of this DLL in any RMA product
+      LocalizationStringTable st = GetStringTable(assembly, languageId);
+      // No string table with the requested languaeId so just return the English string
+      if (null == st)
+        return english;
+      string loc_str = english;
+      if (!st.CommandList.TryGetValue(english.ToString(), out loc_str) || string.IsNullOrEmpty(loc_str))
+        loc_str = english;
+      return loc_str;
+    }
+
     public static string LocalizeString(Assembly assembly, int languageId, string english, int contextId)
     {
       // If Rhino set the CurrentUICulture correctly, we could use System.Threading.Thread.CurrentUICulture

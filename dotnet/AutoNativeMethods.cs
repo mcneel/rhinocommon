@@ -1423,6 +1423,18 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_BrepRegion_IsPointInside(IntPtr pConstBrep, int index, Point3d point, double tolerance, [MarshalAs(UnmanagedType.U1)]bool strictly_inside);
 
+  //int ON_BrepRegion_FaceSideCount(const ON_Brep* pConstBrep, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_BrepRegion_FaceSideCount(IntPtr pConstBrep, int index);
+
+  //int ON_BrepFaceSide_SurfaceNormalDirection(const ON_Brep* pConstBrep, int region_index, int face_index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_BrepFaceSide_SurfaceNormalDirection(IntPtr pConstBrep, int region_index, int face_index);
+
+  //int ON_BrepFaceSide_Face(const ON_Brep* pConstBrep, int region_index, int face_index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_BrepFaceSide_Face(IntPtr pConstBrep, int region_index, int face_index);
+
   //ON_MassProperties* ON_Brep_MassProperties(bool bArea, const ON_Brep* pBrep, double relativeTolerance, double absoluteTolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Brep_MassProperties([MarshalAs(UnmanagedType.U1)]bool bArea, IntPtr pBrep, double relativeTolerance, double absoluteTolerance);

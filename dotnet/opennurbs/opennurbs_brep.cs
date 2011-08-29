@@ -899,6 +899,7 @@ namespace Rhino.Geometry
       }
     }
 
+    /*
     BrepRegionTopology m_brep_region_topology;
     /// <summary>Rarely used region topology information</summary>
     public BrepRegionTopology RegionTopology
@@ -908,6 +909,17 @@ namespace Rhino.Geometry
         return m_brep_region_topology ?? (m_brep_region_topology = new BrepRegionTopology(this));
       }
     }
+    */
+    public BrepRegion[] GetRegions()
+    {
+      IntPtr pConstThis = ConstPointer();
+      int count = UnsafeNativeMethods.ON_Brep_RegionTopologyCount(pConstThis, true);
+      BrepRegion[] rc = new BrepRegion[count];
+      for (int i = 0; i < count; i++)
+        rc[i] = new BrepRegion(this, i);
+      return rc;
+    }
+
     #endregion
 
     #region methods
@@ -2058,7 +2070,8 @@ namespace Rhino.Geometry
     #endregion
   }
 
-  public class BrepRegionTopology
+  /*
+  class BrepRegionTopology
   {
     readonly Brep m_brep;
     internal BrepRegionTopology(Brep parent)
@@ -2095,6 +2108,7 @@ namespace Rhino.Geometry
       return new BrepRegion(m_brep, index);
     }
   }
+  */
 
   public class BrepRegion
   {
@@ -2150,6 +2164,65 @@ namespace Rhino.Geometry
       IntPtr pConstBrep = m_brep.ConstPointer();
       IntPtr pBrep = UnsafeNativeMethods.ON_BrepRegion_RegionBoundaryBrep(pConstBrep, m_index);
       return GeometryBase.CreateGeometryHelper(pBrep, null) as Brep;
+    }
+
+    public BrepRegionFaceSide[] GetFaceSides()
+    {
+      IntPtr pConstBrep = m_brep.ConstPointer();
+      int count = UnsafeNativeMethods.ON_BrepRegion_FaceSideCount(pConstBrep, m_index);
+      BrepRegionFaceSide[] rc = new BrepRegionFaceSide[count];
+      for (int i = 0; i < count; i++)
+        rc[i] = new BrepRegionFaceSide(this, i);
+      return rc;
+    }
+  }
+
+  public class BrepRegionFaceSide
+  {
+    readonly BrepRegion m_parent;
+    readonly int m_index;
+
+    internal BrepRegionFaceSide(BrepRegion parent, int index)
+    {
+      m_parent = parent;
+      m_index = index;
+    }
+
+    public Brep Brep
+    {
+      get { return m_parent.Brep; }
+    }
+
+    public BrepRegion Region
+    {
+      get { return m_parent; }
+    }
+
+    /// <summary>
+    /// True if BrepFace's surface normal points into region
+    /// </summary>
+    public bool SurfaceNormalPointsIntoRegion
+    {
+      get
+      {
+        IntPtr pConstBrep = m_parent.Brep.ConstPointer();
+        int region_index = m_parent.Index;
+        return UnsafeNativeMethods.ON_BrepFaceSide_SurfaceNormalDirection(pConstBrep, region_index, m_index)==1;
+      }
+    }
+
+    /// <summary>Face this side belongs to</summary>
+    public BrepFace Face
+    {
+      get
+      {
+        IntPtr pConstBrep = m_parent.Brep.ConstPointer();
+        int region_index = m_parent.Index;
+        int face_index = UnsafeNativeMethods.ON_BrepFaceSide_Face(pConstBrep, region_index, m_index);
+        if (face_index < 0)
+          return null;
+        return new BrepFace(face_index, Brep);
+      }
     }
   }
 

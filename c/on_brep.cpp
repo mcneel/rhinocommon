@@ -811,6 +811,50 @@ RH_C_FUNCTION bool ON_BrepRegion_IsPointInside(const ON_Brep* pConstBrep, int in
   }
   return rc;
 }
+
+RH_C_FUNCTION int ON_BrepRegion_FaceSideCount(const ON_Brep* pConstBrep, int index)
+{
+  int rc = 0;
+  if( pConstBrep )
+  {
+    const ON_BrepRegionTopology& top = pConstBrep->RegionTopology();
+    if( index>=0 && index<top.m_R.Count() )
+      rc = top.m_R[index].m_fsi.Count();
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_BrepFaceSide_SurfaceNormalDirection(const ON_Brep* pConstBrep, int region_index, int face_index)
+{
+  int rc = 1;
+  if( pConstBrep )
+  {
+    const ON_BrepRegionTopology& top = pConstBrep->RegionTopology();
+    if( region_index>=0 && region_index<top.m_R.Count() )
+    {
+      ON_BrepFaceSide* face_side = top.m_R[region_index].FaceSide(face_index);
+      if( face_side )
+        rc = face_side->SurfaceNormalDirection();
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_BrepFaceSide_Face(const ON_Brep* pConstBrep, int region_index, int face_index)
+{
+  int rc = -1;
+  if( pConstBrep )
+  {
+    const ON_BrepRegionTopology& top = pConstBrep->RegionTopology();
+    if( region_index>=0 && region_index<top.m_R.Count() )
+    {
+      ON_BrepFaceSide* face_side = top.m_R[region_index].FaceSide(face_index);
+      if( face_side )
+        rc = face_side->m_fi;
+    }
+  }
+  return rc;
+}
 ////////////////////////////////////////////////////////////////////////////////////
 // Meshing and mass property calculations are not available in stand alone opennurbs
 

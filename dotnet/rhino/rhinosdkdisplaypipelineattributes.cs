@@ -18,7 +18,7 @@ namespace Rhino.Display
       m_parent = parent;
     }
 
-    IntPtr ConstPointer()
+    internal IntPtr ConstPointer()
     {
       if (m_pAttrs != IntPtr.Zero)
         return m_pAttrs;

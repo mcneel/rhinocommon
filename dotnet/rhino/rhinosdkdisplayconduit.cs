@@ -28,7 +28,7 @@ namespace Rhino.Display
           // https://github.com/mcneel/rhinocommon/issues/29
           // The virtual functions are protected, so we need to call the overload
           // of GetMethod that takes some binding flags
-          var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+          var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public;
 
           System.Reflection.MethodInfo mi = t.GetMethod("CalculateBoundingBox", flags);
           if( mi.DeclaringType != base_type )

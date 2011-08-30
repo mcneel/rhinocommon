@@ -5470,6 +5470,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoObjectIterator_Initialize(IntPtr pIterator, [MarshalAs(UnmanagedType.U1)]bool includeLights, [MarshalAs(UnmanagedType.U1)]bool includeGrips, [MarshalAs(UnmanagedType.U1)]bool includePhantoms, [MarshalAs(UnmanagedType.U1)]bool selectedObjects, [MarshalAs(UnmanagedType.U1)]bool checkSubObjects, [MarshalAs(UnmanagedType.U1)]bool visibleFilter, uint objectfilter, int layerIndexFilter);
 
+  //CRhinoDib* CRhinoDib_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoDib_New();
+
   //HBITMAP CRhinoDib_Bitmap(const CRhinoDib* pDib)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoDib_Bitmap(IntPtr pDib);
@@ -7087,6 +7091,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoMaterial_InUse(IntPtr pConstRhinoMaterial);
 
+  //int CRhinoMaterialTable_Add( int docId, const ON_Material* pConstMaterial, bool reference )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoMaterialTable_Add(int docId, IntPtr pConstMaterial, [MarshalAs(UnmanagedType.U1)]bool reference);
+
   //ON_UUID CRhinoMaterialTable_GetMaterialId( int docId, int index )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoMaterialTable_GetMaterialId(int docId, int index);
@@ -8702,6 +8710,16 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_view.cpp
+  //bool CRhinoView_CaptureToBitmap(const CRhinoView* pConstView, CRhinoDib* pRhinoDib, int width, int height, CDisplayPipelineAttributes* pDisplayAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoView_CaptureToBitmap(IntPtr pConstView, IntPtr pRhinoDib, int width, int height, IntPtr pDisplayAttributes);
+
+  //bool CRhinoView_CaptureToBitmap2(const CRhinoView* pConstView, CRhinoDib* pRhinoDib, int width, int height, bool grid, bool axes, bool cplaneaxes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoView_CaptureToBitmap2(IntPtr pConstView, IntPtr pRhinoDib, int width, int height, [MarshalAs(UnmanagedType.U1)]bool grid, [MarshalAs(UnmanagedType.U1)]bool axes, [MarshalAs(UnmanagedType.U1)]bool cplaneaxes);
+
   //ON_UUID CRhinoView_Details(const CRhinoView* ptr, bool* bIsPageView)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoView_Details(IntPtr ptr, [MarshalAs(UnmanagedType.U1)]ref bool bIsPageView);

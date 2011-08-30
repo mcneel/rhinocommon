@@ -17,6 +17,17 @@ namespace Rhino.Runtime
     private static ShowSplashCallback m_ShowSplash;
     private static Skin m_theSingleSkin;
 
+    /// <summary>
+    /// Any time Rhino is running there is at most one skin being used (and
+    /// possibly no skin).  If a RhinoCommon based Skin class is being used, use
+    /// ActiveSkin to get at the instance of this Skin class. May return null
+    /// if no Skin is being used.
+    /// </summary>
+    public static Skin ActiveSkin
+    {
+      get { return m_theSingleSkin; }
+    }
+
     internal void OnShowSplash(int mode, string description)
     {
       const int HIDESPLASH = 0;

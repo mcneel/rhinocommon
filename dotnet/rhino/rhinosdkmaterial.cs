@@ -472,6 +472,31 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
+    /// Adds a new material to the table based on a given material
+    /// </summary>
+    /// <param name="material"></param>
+    /// <returns></returns>
+    public int Add(Material material)
+    {
+      return Add(material, false);
+    }
+
+    /// <summary>
+    /// Adds a new material to the table based on a given material
+    /// </summary>
+    /// <param name="material"></param>
+    /// <param name="reference">
+    /// true if this material is supposed to be a reference material.
+    /// Reference materials are not saved in the file.
+    /// </param>
+    /// <returns></returns>
+    public int Add(Material material, bool reference)
+    {
+      IntPtr pConstMaterial = material.ConstPointer();
+      return UnsafeNativeMethods.CRhinoMaterialTable_Add(m_doc.m_docId, pConstMaterial, reference);
+    }
+
+    /// <summary>
     /// Finds a meterial with a given name
     /// </summary>
     /// <param name="materialName">Name of the material to search for. The search ignores case.</param>

@@ -253,6 +253,128 @@ namespace Rhino.Display
       return doc.CreatePreviewImage(imagePath, id, size, settings, true);
     }
 
+    /// <summary>
+    /// Capture View contents to a bitmap.
+    /// </summary>
+    /// <returns></returns>
+    public System.Drawing.Bitmap CaptureToBitmap()
+    {
+      return CaptureToBitmap(ClientRectangle.Size);
+    }
+
+    /// <summary>
+    /// Capture View contents to a bitmap.
+    /// </summary>
+    /// <param name="size">Size of Bitmap to capture to</param>
+    /// <returns></returns>
+    public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size)
+    {
+      IntPtr pConstView = this.ConstPointer();
+      IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoDib_New();
+      System.Drawing.Bitmap rc = null;
+      if (UnsafeNativeMethods.CRhinoView_CaptureToBitmap(pConstView, pRhinoDib, size.Width, size.Height, IntPtr.Zero))
+      {
+        IntPtr hBmp = UnsafeNativeMethods.CRhinoDib_Bitmap(pRhinoDib);
+        if (IntPtr.Zero != hBmp)
+          rc = System.Drawing.Image.FromHbitmap(hBmp);
+      }
+      UnsafeNativeMethods.CRhinoDib_Delete(pRhinoDib);
+      return rc;
+    }
+
+    /// <summary>
+    /// Capture View contents to a bitmap allowing for visibility of grid and axes
+    /// </summary>
+    /// <param name="size"></param>
+    /// <param name="grid"></param>
+    /// <param name="worldAxes"></param>
+    /// <param name="cplaneAxes"></param>
+    /// <returns></returns>
+    public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size, bool grid, bool worldAxes, bool cplaneAxes)
+    {
+      IntPtr pConstView = this.ConstPointer();
+      IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoDib_New();
+      System.Drawing.Bitmap rc = null;
+      if (UnsafeNativeMethods.CRhinoView_CaptureToBitmap2(pConstView, pRhinoDib, size.Width, size.Height, grid, worldAxes, cplaneAxes))
+      {
+        IntPtr hBmp = UnsafeNativeMethods.CRhinoDib_Bitmap(pRhinoDib);
+        if (IntPtr.Zero != hBmp)
+          rc = System.Drawing.Image.FromHbitmap(hBmp);
+      }
+      UnsafeNativeMethods.CRhinoDib_Delete(pRhinoDib);
+      return rc;
+    }
+
+    /// <summary>
+    /// Capture View contents to a bitmap allowing for visibility of grid and axes
+    /// </summary>
+    /// <param name="grid"></param>
+    /// <param name="worldAxes"></param>
+    /// <param name="cplaneAxes"></param>
+    /// <returns></returns>
+    public System.Drawing.Bitmap CaptureToBitmap(bool grid, bool worldAxes, bool cplaneAxes)
+    {
+      return CaptureToBitmap(this.ClientRectangle.Size, grid, worldAxes, cplaneAxes);
+    }
+
+    /// <summary>
+    /// Capture View contents to a bitmap using a display mode description to define
+    /// how drawing is performed
+    /// </summary>
+    /// <param name="size"></param>
+    /// <param name="mode"></param>
+    /// <returns></returns>
+    public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size, Rhino.Display.DisplayModeDescription mode)
+    {
+      Rhino.Display.DisplayPipelineAttributes attr = new DisplayPipelineAttributes(mode);
+      return CaptureToBitmap(size, attr);
+    }
+
+    /// <summary>
+    /// Capture View contents to a bitmap using a display mode description to define
+    /// how drawing is performed
+    /// </summary>
+    /// <param name="mode"></param>
+    /// <returns></returns>
+    public System.Drawing.Bitmap CaptureToBitmap(Rhino.Display.DisplayModeDescription mode)
+    {
+      return CaptureToBitmap(ClientRectangle.Size, mode);
+    }
+
+    /// <summary>
+    /// Capture View contents to a bitmap using display attributes to define how
+    /// drawing is performed
+    /// </summary>
+    /// <param name="size"></param>
+    /// <param name="attributes"></param>
+    /// <returns></returns>
+    public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size, Rhino.Display.DisplayPipelineAttributes attributes)
+    {
+      IntPtr pConstView = this.ConstPointer();
+      IntPtr pAttributes = attributes.ConstPointer();
+      IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoDib_New();
+      System.Drawing.Bitmap rc = null;
+      if (UnsafeNativeMethods.CRhinoView_CaptureToBitmap(pConstView, pRhinoDib, size.Width, size.Height, pAttributes))
+      {
+        IntPtr hBmp = UnsafeNativeMethods.CRhinoDib_Bitmap(pRhinoDib);
+        if (IntPtr.Zero != hBmp)
+          rc = System.Drawing.Image.FromHbitmap(hBmp);
+      }
+      UnsafeNativeMethods.CRhinoDib_Delete(pRhinoDib);
+      return rc;
+    }
+
+    /// <summary>
+    /// Capture View contents to a bitmap using display attributes to define how
+    /// drawing is performed
+    /// </summary>
+    /// <param name="attributes"></param>
+    /// <returns></returns>
+    public System.Drawing.Bitmap CaptureToBitmap(Rhino.Display.DisplayPipelineAttributes attributes)
+    {
+      return CaptureToBitmap(ClientRectangle.Size, attributes);
+    }
+
     public RhinoDoc Document
     {
       get

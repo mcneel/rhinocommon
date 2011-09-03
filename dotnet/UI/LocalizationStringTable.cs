@@ -328,7 +328,8 @@ namespace Rhino.UI
     /// <param name="form_name"></param>
     /// <param name="form_class_name"></param>
     /// <param name="ctrl"></param>
-    internal void LocalizeControlTree(string form_name, string form_class_name, Control ctrl)
+    /// <param name="tooltip"></param>
+    internal void LocalizeControlTree(string form_name, string form_class_name, Control ctrl, ToolTip[] tooltips)
     {
       if (form_name == null || ctrl == null)
         return;
@@ -356,7 +357,7 @@ namespace Rhino.UI
           ctrl_class_name = ctrl_type.Name;
         if (string.IsNullOrEmpty(ctrl_class_name))
           ctrl_class_name = form_class_name;
-        this.LocalizeControlTree(form_name, ctrl_class_name, context_menu);
+        this.LocalizeControlTree(form_name, ctrl_class_name, context_menu, tooltips);
       }
 
       if( null != (ctrl as ToolStrip))
@@ -371,7 +372,34 @@ namespace Rhino.UI
       {
         int count = ctrl.Controls.Count;
         for (int i = 0; i < count; i++)
-          this.LocalizeControlTree(form_name, form_class_name, ctrl.Controls[i]);
+        {
+          Control c = ctrl.Controls[i];
+          if (null != tooltips)
+          {
+            for (int j = 0; j < tooltips.Length; j++)
+            {
+              ToolTip tooltip = tooltips[j];
+              // If there is a tool top associated with the Form or UserControl being localized then
+              // check to see if any of the child controls are associated with the ToolTip Component
+              if (!string.IsNullOrEmpty(tooltip.GetToolTip(c)))
+              {
+                // This child control has a tooltip so attempt to find the controls ToolTipText entry
+                // in the string table and localize it if found
+                string key = form_name + "::" + c.Name + "::ToolTipText";
+                string value = null;
+                if (this.m_dialog_list.TryGetValue(key, out value))
+                  tooltip.SetToolTip(c, value);
+                else if (!string.IsNullOrEmpty(form_class_name))
+                {
+                  key = form_class_name + "::" + c.Name + "::ToolTipText";
+                  if (this.m_dialog_list.TryGetValue(key, out value))
+                    tooltip.SetToolTip(c, value);
+                }
+              }
+            }
+          }
+          this.LocalizeControlTree(form_name, form_class_name, ctrl.Controls[i], tooltips);
+        }
       }
     }
 

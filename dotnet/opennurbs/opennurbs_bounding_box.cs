@@ -449,6 +449,59 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Get one of the eight corners of the box
+    /// </summary>
+    /// <param name="minX"></param>
+    /// <param name="minY"></param>
+    /// <param name="minZ"></param>
+    /// <returns></returns>
+    public Point3d Corner(bool minX, bool minY, bool minZ)
+    {
+      double x = minX ? m_min.X : m_max.X;
+      double y = minY ? m_min.Y : m_max.Y;
+      double z = minZ ? m_min.Z : m_max.Z;
+      return new Point3d(x, y, z);
+    }
+
+    /// <summary>
+    /// Test a bounding box to see if it is degenerate (flat) in one or more directions.
+    /// </summary>
+    /// <param name="tolerance">
+    /// Distances &lt;= tolerance will be considered to be zero.  If tolerance
+    /// is negative (default), then a scale invarient tolerance is used.
+    /// </param>
+    /// <returns>
+    /// 0 = box is not degenerate
+    /// 1 = box is a rectangle (degenerate in one direction).
+    /// 2 = box is a line (degenerate in two directions).
+    /// 3 = box is a point (degenerate in three directions)
+    /// 4 = box is not valid
+    /// </returns>
+    public int IsDegenerate(double tolerance)
+    {
+      Vector3d diag = Diagonal;
+      if (tolerance < 0.0)
+      {
+        // compute scale invarient tolerance
+        tolerance = diag.MaximumCoordinate * RhinoMath.SqrtEpsilon;
+      }
+      int rc = 0;
+      if (diag.X < 0.0)
+        return 4;
+      if (diag.X <= tolerance)
+        rc++;
+      if (diag.Y < 0.0)
+        return 4;
+      if (diag.Y <= tolerance)
+        rc++;
+      if (diag.Z < 0.0)
+        return 4;
+      if (diag.Z <= tolerance)
+        rc++;
+      return rc;
+    }
+
+    /// <summary>
     /// Gets an array of the 8 corner points of this box.
     /// </summary>
     /// <returns>An array of 8 corners.</returns>

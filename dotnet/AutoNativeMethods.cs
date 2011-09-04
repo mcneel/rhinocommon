@@ -5392,6 +5392,16 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoDoc_DeleteObject(int docId, IntPtr pObjRef, [MarshalAs(UnmanagedType.U1)]bool quiet);
 
+  //bool CRhinoDoc_PurgeObject( int docId, unsigned int objectSerialNumber )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoDoc_PurgeObject(int docId, uint objectSerialNumber);
+
+  //bool CRhinoDoc_UndeleteObject( int docId, unsigned int objectSerialNumber )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoDoc_UndeleteObject(int docId, uint objectSerialNumber);
+
   //bool CRhinoDoc_ModifyObjectAttributes(int docId, const CRhinoObjRef* pObjRef, const CRhinoObjectAttributes* pAttrs, bool quiet)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -8710,10 +8720,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_view.cpp
-  //bool CRhinoView_CaptureToBitmap(const CRhinoView* pConstView, CRhinoDib* pRhinoDib, int width, int height, CDisplayPipelineAttributes* pDisplayAttributes)
+  //bool CRhinoView_CaptureToBitmap(const CRhinoView* pConstView, CRhinoDib* pRhinoDib, int width, int height, const CDisplayPipelineAttributes* pConstDisplayAttributes)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool CRhinoView_CaptureToBitmap(IntPtr pConstView, IntPtr pRhinoDib, int width, int height, IntPtr pDisplayAttributes);
+  internal static extern bool CRhinoView_CaptureToBitmap(IntPtr pConstView, IntPtr pRhinoDib, int width, int height, IntPtr pConstDisplayAttributes);
 
   //bool CRhinoView_CaptureToBitmap2(const CRhinoView* pConstView, CRhinoDib* pRhinoDib, int width, int height, bool grid, bool axes, bool cplaneaxes)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

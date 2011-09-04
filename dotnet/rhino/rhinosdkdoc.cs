@@ -3094,9 +3094,37 @@ namespace Rhino.DocObjects.Tables
       return count;
     }
 
-    //[skipping]
-    //  bool UndeleteObject( const CRhinoObject* object );
-    //  bool PurgeObject( CRhinoObject*& object );
+    /// <summary>
+    /// Removes object from document and deletes the pointer. Typically you will
+    /// want to call Delete instead in order to keep the object on the undo list
+    /// </summary>
+    /// <param name="runtimeSerialNumber"></param>
+    /// <returns></returns>
+    public bool Purge(uint runtimeSerialNumber)
+    {
+      return UnsafeNativeMethods.CRhinoDoc_PurgeObject(m_doc.m_docId, runtimeSerialNumber);
+    }
+
+    /// <summary>
+    /// Removes object from document and deletes the pointer. Typically you will
+    /// want to call Delete instead in order to keep the object on the undo list
+    /// </summary>
+    /// <param name="rhinoObject"></param>
+    /// <returns></returns>
+    public bool Purge(Rhino.DocObjects.RhinoObject rhinoObject)
+    {
+      return Purge(rhinoObject.RuntimeSerialNumber);
+    }
+
+    public bool Undelete(uint runtimeSerialNumber)
+    {
+      return UnsafeNativeMethods.CRhinoDoc_UndeleteObject(m_doc.m_docId, runtimeSerialNumber);
+    }
+
+    public bool Undelete(Rhino.DocObjects.RhinoObject rhinoObject)
+    {
+      return Undelete(rhinoObject.RuntimeSerialNumber);
+    }
     #endregion
 
 #region Object selection

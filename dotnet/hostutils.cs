@@ -476,7 +476,7 @@ namespace Rhino.Runtime
           plugin.m_commands.Add(new_command);
 
         int commandStyle = 0;
-        object[] styleattr = command_type.GetCustomAttributes(typeof(Commands.CommandStyleAttribute), false);
+        object[] styleattr = command_type.GetCustomAttributes(typeof(Commands.CommandStyleAttribute), true);
         if (styleattr != null && styleattr.Length > 0)
         {
           Commands.CommandStyleAttribute a = (Commands.CommandStyleAttribute)styleattr[0];

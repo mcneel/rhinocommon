@@ -1021,7 +1021,7 @@ RH_C_FUNCTION int ON_MeshTopologyEdge_TopfCount(const ON_Mesh* pConstMesh, int e
   return rc;
 }
 
-RH_C_FUNCTION void ON_MeshTopologyEdge_TopfList(const ON_Mesh* pConstMesh, int edgeindex, int count, /*ARRAY*/int* faces)
+RH_C_FUNCTION void ON_MeshTopologyEdge_TopfList2(const ON_Mesh* pConstMesh, int edgeindex, int count, /*ARRAY*/int* faces, /*ARRAY*/bool* directionsMatch)
 {
   if( pConstMesh && edgeindex>=0 && faces )
   {
@@ -1030,9 +1030,29 @@ RH_C_FUNCTION void ON_MeshTopologyEdge_TopfList(const ON_Mesh* pConstMesh, int e
     {
       const ON_MeshTopologyEdge& edge = top.m_tope[edgeindex];
       if( count==edge.m_topf_count )
+      {
         memcpy(faces, edge.m_topfi, count*sizeof(int));
+        if( directionsMatch )
+        {
+          for( int i=0; i<count; i++ )
+          {
+            const ON_MeshTopologyFace& face = top.m_topf[faces[i]];
+            directionsMatch[i] = false;
+            for( int j=0; j<4; j++)
+            {
+              if( face.m_topei[j]==edgeindex )
+                directionsMatch[i] = (face.m_reve[j]==0);
+            }
+          }
+        }
+      }
     }
   }
+}
+
+RH_C_FUNCTION void ON_MeshTopologyEdge_TopfList(const ON_Mesh* pConstMesh, int edgeindex, int count, /*ARRAY*/int* faces)
+{
+  return ON_MeshTopologyEdge_TopfList2(pConstMesh, edgeindex , count , faces, NULL);
 }
 
 RH_C_FUNCTION void ON_MeshTopology_TopEdgeLine(const ON_Mesh* pConstMesh, int edge_index, ON_Line* line)

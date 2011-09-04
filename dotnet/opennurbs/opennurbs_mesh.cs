@@ -2340,6 +2340,27 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
+    /// Get indices of faces connected to this edge
+    /// </summary>
+    /// <param name="topologyEdgeIndex"></param>
+    /// <param name="faceOrientationMatchesEdgeDirection"></param>
+    /// <returns></returns>
+    public int[] GetConnectedFaces(int topologyEdgeIndex, out bool[] faceOrientationMatchesEdgeDirection)
+    {
+      IntPtr pConstMesh = m_mesh.ConstPointer();
+      int count = UnsafeNativeMethods.ON_MeshTopologyEdge_TopfCount(pConstMesh, topologyEdgeIndex);
+      if (count <= 0)
+      {
+        faceOrientationMatchesEdgeDirection = new bool[0];
+        return new int[0];
+      }
+      int[] rc = new int[count];
+      faceOrientationMatchesEdgeDirection = new bool[count];
+      UnsafeNativeMethods.ON_MeshTopologyEdge_TopfList2(pConstMesh, topologyEdgeIndex, count, rc, faceOrientationMatchesEdgeDirection);
+      return rc;
+    }
+
+    /// <summary>
     /// Get indices of edges that surround a given face
     /// </summary>
     /// <param name="faceIndex"></param>

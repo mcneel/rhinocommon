@@ -3100,6 +3100,7 @@ namespace Rhino.DocObjects.Tables
     /// </summary>
     /// <param name="runtimeSerialNumber"></param>
     /// <returns></returns>
+    [CLSCompliant(false)]
     public bool Purge(uint runtimeSerialNumber)
     {
       return UnsafeNativeMethods.CRhinoDoc_PurgeObject(m_doc.m_docId, runtimeSerialNumber);
@@ -3116,6 +3117,7 @@ namespace Rhino.DocObjects.Tables
       return Purge(rhinoObject.RuntimeSerialNumber);
     }
 
+    [CLSCompliant(false)]
     public bool Undelete(uint runtimeSerialNumber)
     {
       return UnsafeNativeMethods.CRhinoDoc_UndeleteObject(m_doc.m_docId, runtimeSerialNumber);

@@ -328,7 +328,7 @@ namespace Rhino.UI
     /// <param name="form_name"></param>
     /// <param name="form_class_name"></param>
     /// <param name="ctrl"></param>
-    /// <param name="tooltip"></param>
+    /// <param name="tooltips"></param>
     internal void LocalizeControlTree(string form_name, string form_class_name, Control ctrl, ToolTip[] tooltips)
     {
       if (form_name == null || ctrl == null)

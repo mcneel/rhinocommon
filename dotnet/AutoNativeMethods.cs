@@ -2653,6 +2653,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_MeshTopologyEdge_TopfCount(IntPtr pConstMesh, int edgeindex);
 
+  //void ON_MeshTopologyEdge_TopfList2(const ON_Mesh* pConstMesh, int edgeindex, int count, /*ARRAY*/int* faces, /*ARRAY*/bool* directionsMatch)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_MeshTopologyEdge_TopfList2(IntPtr pConstMesh, int edgeindex, int count, [In,Out] int[] faces, [MarshalAs(UnmanagedType.U1), In, Out] bool[] directionsMatch);
+
   //void ON_MeshTopologyEdge_TopfList(const ON_Mesh* pConstMesh, int edgeindex, int count, /*ARRAY*/int* faces)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_MeshTopologyEdge_TopfList(IntPtr pConstMesh, int edgeindex, int count, [In,Out] int[] faces);

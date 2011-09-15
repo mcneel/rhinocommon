@@ -159,7 +159,7 @@ namespace Rhino.UI
     ///</summary>
     public static void LocalizeForm(Control form)
     {
-      Assembly a = Assembly.GetCallingAssembly();
+      Assembly a = null == form ? null : form.GetType().Assembly;
       LocalizeForm(form, a);
     }
 
@@ -181,7 +181,7 @@ namespace Rhino.UI
     ///</summary>
     public static void LocalizeToolStripItemCollection(Control parent, ToolStripItemCollection collection)
     {
-      Assembly a = Assembly.GetCallingAssembly();
+      Assembly a = null == collection ? null : collection.GetType().Assembly;
       LocalizeToolStripItemCollection(parent, collection, a);
     }
 

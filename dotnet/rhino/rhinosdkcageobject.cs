@@ -1,3 +1,19 @@
 //public class WireframeObject : RhinoObject { }
 //public class CageObject : WireframeObject { }
-//public class MorphControl : WireframeObject { }
+using Rhino.Geometry;
+
+#if RHINO_SDK
+namespace Rhino.DocObjects
+{
+  public class MorphControlObject : RhinoObject
+  {
+    internal MorphControlObject(uint serialNumber)
+      : base(serialNumber) { }
+
+    //internal override CommitGeometryChangesFunc GetCommitFunc()
+    //{
+    //  return UnsafeNativeMethods.CRhinoMorphControlObject_InternalCommitChanges;
+    //}
+  }
+}
+#endif

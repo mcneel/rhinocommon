@@ -2456,12 +2456,14 @@ namespace Rhino.Geometry.Collections
       return UnsafeNativeMethods.ON_Brep_StandardizeFaceSurface(pBrep, faceIndex);
     }
 
+ #if USING_V5_SDK
     /// <summary>Standardize all faces in the brep</summary>
     public void StandardizeFaceSurfaces()
     {
       IntPtr pBrep = m_brep.NonConstPointer();
       UnsafeNativeMethods.ON_Brep_StandardizeFaceSurfaces(pBrep);
     }
+#endif
 
     /*
     /// <summary>

@@ -217,8 +217,10 @@ RH_C_FUNCTION bool ON_Brep_SplitKinkyEdge(ON_Brep* pBrep, int edge_index, double
 RH_C_FUNCTION int ON_Brep_SplitEdgeAtParameters(ON_Brep* pBrep, int edge_index, int count, /*ARRAY*/const double* parameters)
 {
   int rc = 0;
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pBrep && count>0 && parameters )
     rc = pBrep->SplitEdgeAtParameters(edge_index, count, parameters);
+#endif
   return rc;
 }
 
@@ -676,8 +678,10 @@ RH_C_FUNCTION bool ON_Brep_StandardizeFaceSurface(ON_Brep* pBrep, int face_index
 
 RH_C_FUNCTION void ON_Brep_StandardizeFaceSurfaces(ON_Brep* pBrep)
 {
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pBrep )
     pBrep->StandardizeFaceSurfaces();
+#endif
 }
 
 RH_C_FUNCTION void ON_Brep_Standardize(ON_Brep* pBrep)

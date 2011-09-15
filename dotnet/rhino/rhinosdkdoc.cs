@@ -1380,6 +1380,99 @@ namespace Rhino
       }
     }
 
+
+    internal delegate void RhinoModifyObjectAttributesCallback(int docId, IntPtr pRhinoObject, IntPtr pConstRhinoObjectAttributes);
+    private static RhinoModifyObjectAttributesCallback m_OnModifyObjectAttributesCallback;
+
+    private static void OnModifyObjectAttributes(int docId, IntPtr pRhinoObject, IntPtr pConstRhinoObjectAttributes)
+    {
+      if (m_modify_object_attributes != null)
+      {
+        try
+        {
+          DocObjects.RhinoModifyObjectAttributesEventArgs args = new DocObjects.RhinoModifyObjectAttributesEventArgs(docId, pRhinoObject, pConstRhinoObjectAttributes);
+          m_modify_object_attributes(null, args);
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
+    internal static EventHandler<DocObjects.RhinoModifyObjectAttributesEventArgs> m_modify_object_attributes;
+
+    /// <summary>
+    /// Called when all objects are deselected
+    /// </summary>
+    public static event EventHandler<DocObjects.RhinoModifyObjectAttributesEventArgs> ModifyObjectAttributes
+    {
+      add
+      {
+        if (m_modify_object_attributes == null)
+        {
+          m_OnModifyObjectAttributesCallback = OnModifyObjectAttributes;
+          UnsafeNativeMethods.CRhinoEventWatcher_SetModifyObjectAttributesCallback(m_OnModifyObjectAttributesCallback, Rhino.Runtime.HostUtils.m_ew_report);
+        }
+        m_modify_object_attributes += value;
+      }
+      remove
+      {
+        m_modify_object_attributes -= value;
+        if (m_modify_object_attributes == null)
+        {
+          UnsafeNativeMethods.CRhinoEventWatcher_SetModifyObjectAttributesCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+          m_OnModifyObjectAttributesCallback = null;
+        }
+      }
+    }
+
+
+    internal delegate void RhinoTableCallback(int docId, int event_type, int index, IntPtr pConstOldSettings);
+    private static RhinoTableCallback m_OnGroupTableEventCallback;
+
+    private static void OnGroupTableEvent(int docId, int event_type, int index, IntPtr pConstOldSettings)
+    {
+      if (m_group_table_event != null)
+      {
+        try
+        {
+          DocObjects.Tables.GroupTableEventArgs args = new DocObjects.Tables.GroupTableEventArgs(docId, event_type);
+          m_group_table_event(null, args);
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
+    internal static EventHandler<DocObjects.Tables.GroupTableEventArgs> m_group_table_event;
+
+    /// <summary>
+    /// Called when any modification happens to a document's group table
+    /// </summary>
+    public static event EventHandler<Rhino.DocObjects.Tables.GroupTableEventArgs> GroupTableEvent
+    {
+      add
+      {
+        if (m_group_table_event == null)
+        {
+          m_OnGroupTableEventCallback = OnGroupTableEvent;
+          UnsafeNativeMethods.CRhinoEventWatcher_SetGroupTableEventCallback(m_OnGroupTableEventCallback, Rhino.Runtime.HostUtils.m_ew_report);
+        }
+        m_group_table_event += value;
+      }
+      remove
+      {
+        m_group_table_event -= value;
+        if (m_group_table_event == null)
+        {
+          UnsafeNativeMethods.CRhinoEventWatcher_SetGroupTableEventCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+          m_OnGroupTableEventCallback = null;
+        }
+      }
+    }
+
+//    public static event EventHandler<EventArgs> LayerTableEvent;
     #endregion
 
 #if RDK_UNCHECKED
@@ -1781,6 +1874,61 @@ namespace Rhino
           if (m_doc == null)
             m_doc = RhinoDoc.FromId(m_docId);
           return m_doc;
+        }
+      }
+    }
+
+
+    public class RhinoModifyObjectAttributesEventArgs : EventArgs
+    {
+      private readonly int m_docId;
+      private readonly IntPtr m_pRhinoObject;
+      private readonly IntPtr m_pOldObjectAttributes;
+
+      internal RhinoModifyObjectAttributesEventArgs(int docId, IntPtr pRhinoObject, IntPtr pOldObjectAttributes)
+      {
+        m_docId = docId;
+        m_pRhinoObject = pRhinoObject;
+        m_pOldObjectAttributes = pOldObjectAttributes;
+      }
+
+      RhinoDoc m_doc = null;
+      public RhinoDoc Document
+      {
+        get
+        {
+          return m_doc ?? (m_doc = RhinoDoc.FromId(m_docId));
+        }
+      }
+
+      RhinoObject m_object = null;
+      public RhinoObject RhinoObject
+      {
+        get
+        {
+          return m_object ?? (m_object = RhinoObject.CreateRhinoObjectHelper(m_pRhinoObject));
+        }
+      }
+
+      ObjectAttributes m_old_attributes;
+      public ObjectAttributes OldAttributes
+      {
+        get
+        {
+          if( m_old_attributes==null )
+          {
+            m_old_attributes = new ObjectAttributes(m_pOldObjectAttributes);
+            m_old_attributes.DoNotDestructOnDispose();
+          }
+          return m_old_attributes;
+        }
+      }
+
+      public ObjectAttributes NewAttributes
+      {
+        get
+        {
+          return RhinoObject.Attributes;
         }
       }
     }
@@ -3032,6 +3180,22 @@ namespace Rhino.DocObjects.Tables
         pAttributes = attributes.ConstPointer();
       return UnsafeNativeMethods.CRhinoDoc_AddHatch(m_doc.m_docId, pConstHatch, pAttributes);
     }
+
+    public Guid AddMorphControl(MorphControl morphControl)
+    {
+      return AddMorphControl(morphControl, null);
+    }
+
+    public Guid AddMorphControl(MorphControl morphControl, ObjectAttributes attributes)
+    {
+      IntPtr pConstMorph = morphControl.ConstPointer();
+      IntPtr pAttributes = IntPtr.Zero;
+      if (attributes != null)
+        pAttributes = attributes.ConstPointer();
+      return UnsafeNativeMethods.CRhinoDoc_AddMorphControl(m_doc.m_docId, pConstMorph, pAttributes);
+    }
+
+    //public Guid AddMorphControl(MorphControl morphControl, IEnumerable<RhinoObject> captives)
     #endregion
 
 #region Object deletion

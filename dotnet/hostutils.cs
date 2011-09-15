@@ -21,7 +21,7 @@ namespace Rhino.Runtime
     /// Any time Rhino is running there is at most one skin being used (and
     /// possibly no skin).  If a RhinoCommon based Skin class is being used, use
     /// ActiveSkin to get at the instance of this Skin class. May return null
-    /// if no Skin is being used.
+    /// if no Skin is being used or if the skin is not a RhinoCommon based skin.
     /// </summary>
     public static Skin ActiveSkin
     {
@@ -89,7 +89,15 @@ namespace Rhino.Runtime
       {
         m_ShowSplash = OnShowSplash;
       }
-      m_pSkin = UnsafeNativeMethods.CRhinoSkin_New(m_ShowSplash);
+
+      System.Drawing.Bitmap icon = MainRhinoIcon;
+      string name = ApplicationName;
+
+      IntPtr hicon = IntPtr.Zero;
+      if (icon != null)
+        hicon = icon.GetHicon();
+
+      m_pSkin = UnsafeNativeMethods.CRhinoSkin_New(m_ShowSplash, name, hicon);
       m_theSingleSkin = this;
     }
     protected virtual void ShowSplash() { }
@@ -101,6 +109,18 @@ namespace Rhino.Runtime
     protected virtual void OnBeginLoadAtStartPlugIns(int expectedCount) { }
     protected virtual void OnBeginLoadPlugIn(string description) { }
     protected virtual void OnEndLoadPlugIn() { }
+
+    /// <summary>If you want to provide a custom icon for your skin</summary>
+    protected virtual System.Drawing.Bitmap MainRhinoIcon
+    {
+      get { return null; }
+    }
+
+    /// <summary>If you want to provide a custom name for your skin</summary>
+    protected virtual string ApplicationName
+    {
+      get { return string.Empty; }
+    }
   }
 
   public abstract class PythonCompiledCode
@@ -600,10 +620,15 @@ namespace Rhino.Runtime
           RhinoDoc doc = RhinoDoc.FromId(rhinoDocId);
           if (eval_result is double || eval_result is float)
           {
-            int display_precision = doc.DistanceDisplayPrecision;
-            string format = "{0:0.";
-            format = format.PadRight(display_precision + format.Length, '0') + "}";
-            s = string.Format(format, eval_result);
+            if (doc != null)
+            {
+              int display_precision = doc.DistanceDisplayPrecision;
+              string format = "{0:0.";
+              format = format.PadRight(display_precision + format.Length, '0') + "}";
+              s = string.Format(format, eval_result);
+            }
+            else
+              s = eval_result.ToString();
           }
           else if (eval_result is string)
           {
@@ -612,15 +637,19 @@ namespace Rhino.Runtime
           System.Collections.IEnumerable enumerable = eval_result as System.Collections.IEnumerable;
           if (string.IsNullOrEmpty(s) && enumerable != null)
           {
-            int display_precision = doc.DistanceDisplayPrecision;
-            string format = "{0:0.";
-            format = format.PadRight(display_precision + format.Length, '0') + "}";
+            string format = null;
+            if (doc != null)
+            {
+              int display_precision = doc.DistanceDisplayPrecision;
+              format = "{0:0.";
+              format = format.PadRight(display_precision + format.Length, '0') + "}";
+            }
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             foreach (object obj in enumerable)
             {
               if (sb.Length > 0)
                 sb.Append(", ");
-              if (obj is double || obj is float)
+              if ( (obj is double || obj is float) && !string.IsNullOrEmpty(format) )
               {
                 sb.AppendFormat(format, obj);
               }

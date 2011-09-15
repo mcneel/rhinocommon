@@ -86,7 +86,7 @@ internal partial class UnsafeNativeMethods
     Rhino.PlugIns.DigitizerPlugIn.PointToleranceFunc pointtolfunc);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern IntPtr CRhinoSkin_New(Rhino.Runtime.Skin.ShowSplashCallback cb);
+  internal static extern IntPtr CRhinoSkin_New(Rhino.Runtime.Skin.ShowSplashCallback cb, [MarshalAs(UnmanagedType.LPWStr)]string name, IntPtr hicon);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoCommand_SetRunCommandCallback(Rhino.Commands.Command.RunCommandCallback cb);
@@ -165,6 +165,12 @@ internal partial class UnsafeNativeMethods
   
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoEventWatcher_SetDeselectAllObjectsCallback(Rhino.RhinoDoc.RhinoDeselectAllObjectsCallback cb, Rhino.Runtime.HostUtils.ReportCallback report_cb);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoEventWatcher_SetModifyObjectAttributesCallback(Rhino.RhinoDoc.RhinoModifyObjectAttributesCallback cb, Rhino.Runtime.HostUtils.ReportCallback report_cb);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoEventWatcher_SetGroupTableEventCallback(Rhino.RhinoDoc.RhinoTableCallback cb, Rhino.Runtime.HostUtils.ReportCallback report);
 
   //In RhinoView
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]

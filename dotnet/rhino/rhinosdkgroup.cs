@@ -6,6 +6,39 @@ using System.Runtime.InteropServices;
 
 namespace Rhino.DocObjects.Tables
 {
+  public enum GroupTableEventType : int
+  {
+    Added = 0,
+    Deleted = 1,
+    Undeleted = 2,
+    Modified = 3,
+    Sorted = 4
+  }
+
+  public class GroupTableEventArgs : EventArgs
+  {
+    readonly int m_docId;
+    readonly GroupTableEventType m_event_type;
+
+    internal GroupTableEventArgs(int docId, int event_type)
+    {
+      m_docId = docId;
+      m_event_type = (GroupTableEventType)event_type;
+    }
+
+    RhinoDoc m_doc = null;
+    public RhinoDoc Document
+    {
+      get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_docId)); }
+    }
+
+    public GroupTableEventType EventType
+    {
+      get{ return m_event_type; }
+    }
+
+  }
+
   /// <summary>
   /// Group tables store the list of groups in a Rhino document.
   /// </summary>

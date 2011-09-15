@@ -5344,6 +5344,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoDoc_AddHatch(int docId, IntPtr pConstHatch, IntPtr attrs);
 
+  //ON_UUID CRhinoDoc_AddMorphControl(int docId, const ON_MorphControl* pConstMorphControl, const ON_3dmObjectAttributes* attrs)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoDoc_AddMorphControl(int docId, IntPtr pConstMorphControl, IntPtr attrs);
+
   //CRhinoView* CRhinoDoc_ActiveView(int docId)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoDoc_ActiveView(int docId);
@@ -5707,7 +5711,13 @@ internal partial class UnsafeNativeMethods
   //void CRhinoEventWatcher_SetDeselectAllObjectsCallback(DESELECTALLEVENTPROC cb, REPORTPROC report)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
+  //void CRhinoEventWatcher_SetModifyObjectAttributesCallback(MODIFYOBJECTATTRIBUTESPROC cb, REPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
   //void CRhinoEventWatcher_SetUndoEventCallback(UNDOEVENTPROC cb, REPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRhinoEventWatcher_SetGroupTableEventCallback(GROUPTABLEEVENTPROC cb, REPORTPROC report)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //ON_UUID CRhinoEventWatcher_LastCommandId()
@@ -7883,7 +7893,7 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_skindll.cpp
-  //CRhinoSkinDLL* CRhinoSkin_New( SPLASHPROC cb )
+  //CRhinoSkinDLL* CRhinoSkin_New( SPLASHPROC cb, const RHMONO_STRING* name, HICON icon )
   // SKIPPING - Contains a function pointer which needs to be written by hand
   #endregion
 

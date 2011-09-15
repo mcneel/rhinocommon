@@ -82,6 +82,7 @@ namespace Rhino.DocObjects
     const int idxCRhinoLinearDimension = 15;
     const int idxCRhinoAnnotationObject = 16;
     const int idxCRhinoLight = 17;
+    const int idxCRhinoMorphControl = 18;
 
     internal static RhinoObject CreateRhinoObjectHelper(IntPtr pRhinoObject)
     {
@@ -150,6 +151,9 @@ namespace Rhino.DocObjects
           break;
         case idxCRhinoLight: //17
           rc = new LightObject(sn);
+          break;
+        case idxCRhinoMorphControl: //18
+          rc = new MorphControlObject(sn);
           break;
         default:
           rc = new RhinoObject(sn);

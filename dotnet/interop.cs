@@ -8,7 +8,8 @@ namespace Rhino.Runtime
   public static class Interop
   {
     /// <summary>
-    /// Return the underlying const ON_Geometry* for a RhinoCommon class
+    /// Return the underlying const ON_Geometry* for a RhinoCommon class. You should only
+    /// be interested in using this function if you are writing C++ code.
     /// </summary>
     /// <param name="geometry"></param>
     /// <returns></returns>
@@ -20,6 +21,12 @@ namespace Rhino.Runtime
       return rc;
     }
 
+    /// <summary>
+    /// Return the underlying non-const ON_Geometry* for a RhinoCommon class. You should
+    /// only be interested in using this function if you are writing C++ code.
+    /// </summary>
+    /// <param name="geometry"></param>
+    /// <returns></returns>
     public static IntPtr NativeGeometryNonConstPointer(Geometry.GeometryBase geometry)
     {
       IntPtr rc = IntPtr.Zero;
@@ -29,6 +36,12 @@ namespace Rhino.Runtime
     }
 
 #if RHINO_SDK
+    /// <summary>
+    /// Return the underlying const CRhinoObject* for a RhinoCommon class. You should only
+    /// be interested in using this function if you are writing C++ code.
+    /// </summary>
+    /// <param name="rhinoObject"></param>
+    /// <returns></returns>
     public static IntPtr RhinoObjectConstPointer(Rhino.DocObjects.RhinoObject rhinoObject)
     {
       IntPtr rc = IntPtr.Zero;
@@ -169,6 +182,15 @@ namespace Rhino.Runtime
       return rc;
     }
 
+    /// <summary>
+    /// Copy a Rhino_DotNet Curve to a RhinoCommon Curve class.
+    /// </summary>
+    /// <param name="source">
+    /// RMA.OpenNURBS.IOnCurve or RMA.OpenNURBS.OnCurve
+    /// </param>
+    /// <returns>
+    /// RhinoCommon Curve on success. This will be an independent copy
+    /// </returns>
     public static Rhino.Geometry.Curve FromOnCurve(object source)
     {
       Rhino.Geometry.GeometryBase g = CopyHelper(source, "RMA.OpenNURBS.OnCurve");
@@ -194,6 +216,11 @@ namespace Rhino.Runtime
       return rhinoDotNet.GetType(name);
     }
 
+    /// <summary>
+    /// Create a Rhino_DotNet OnBrep that is a copy of a given Brep
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
     public static object ToOnBrep(Rhino.Geometry.Brep source)
     {
       object rc = null;
@@ -208,6 +235,11 @@ namespace Rhino.Runtime
       return rc;
     }
 
+    /// <summary>
+    /// Create a Rhino_DotNet OnSurface that is a copy of a given Curve
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
     public static object ToOnSurface(Rhino.Geometry.Surface source)
     {
       object rc = null;
@@ -222,6 +254,11 @@ namespace Rhino.Runtime
       return rc;
     }
 
+    /// <summary>
+    /// Create a Rhino_DotNet OnMesh that is a copy of a given Mesh
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
     public static object ToOnMesh(Rhino.Geometry.Mesh source)
     {
       object rc = null;
@@ -236,6 +273,11 @@ namespace Rhino.Runtime
       return rc;
     }
 
+    /// <summary>
+    /// Create a Rhino_DotNet OnCurve that is a copy of a given Curve
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
     public static object ToOnCurve(Rhino.Geometry.Curve source)
     {
       object rc = null;
@@ -250,6 +292,11 @@ namespace Rhino.Runtime
       return rc;
     }
 
+    /// <summary>
+    /// Create a Rhino_DotNet OnXform from a given RhinoCommon Transform
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
     public static object ToOnXform(Rhino.Geometry.Transform source)
     {
       object rc = null;
@@ -343,6 +390,11 @@ namespace Rhino.Runtime
         }
         */
 #if RHINO_SDK
+    /// <summary>
+    /// Get C++ plug-in pointer for a given RhinoCommon plug-in
+    /// </summary>
+    /// <param name="plugin"></param>
+    /// <returns></returns>
     public static IntPtr PlugInPointer(Rhino.PlugIns.PlugIn plugin)
     {
       return null == plugin ? IntPtr.Zero : plugin.NonConstPointer();

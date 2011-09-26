@@ -6,9 +6,7 @@ namespace Rhino.Display
   public abstract class DisplayConduit
   {
     bool m_bEnabled = false;
-    protected DisplayConduit()
-    {
-    }
+    protected DisplayConduit() {}
 
     public bool Enabled
     {
@@ -73,26 +71,20 @@ namespace Rhino.Display
     /// geometry that you plan to draw in the "Draw" virtual functions
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void CalculateBoundingBox(CalculateBoundingBoxEventArgs e)
-    {
-    }
+    protected virtual void CalculateBoundingBox(CalculateBoundingBoxEventArgs e) {}
 
     /// <summary>
     /// Called before objects are been drawn. Depth writing and testing are on.
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void PreDrawObjects(DrawEventArgs e)
-    {
-    }
+    protected virtual void PreDrawObjects(DrawEventArgs e) {}
 
     /// <summary>
     /// Called after all non-highlighted objects have been drawn. Depth writing and testing are
     /// still turned on. If you want to draw without depth writing/testing, see DrawForeground
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void PostDrawObjects(DrawEventArgs e)
-    {
-    }
+    protected virtual void PostDrawObjects(DrawEventArgs e) {}
 
     /// <summary>
     /// Called after all non-highlighted objects have been drawn and PostDrawObjects has been called.
@@ -100,18 +92,14 @@ namespace Rhino.Display
     /// see PostDrawObjects
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void DrawForeground(DrawEventArgs e)
-    {
-    }
+    protected virtual void DrawForeground(DrawEventArgs e) {}
 
     /// <summary>
     /// If Rhino is in a feedback mode, the draw overlay call allows for temporary geometry to be drawn on top of
     /// everything in the scene. This is similar to the dynamic draw routine that occurs with custom get point.
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void DrawOverlay(DrawEventArgs e)
-    {
-    }
+    protected virtual void DrawOverlay(DrawEventArgs e) {}
   }
 }
 #endif

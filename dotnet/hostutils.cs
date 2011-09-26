@@ -250,7 +250,11 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Test if RhinoCommon is currently executing inside of the Rhino.exe process
+    /// Test if RhinoCommon is currently executing inside of the Rhino.exe process.
+    /// There are other cases where RhinoCommon could be running; specifically inside
+    /// of Visual Studio when something like a windows form is being worked on in the
+    /// resource editor or running stand-alone when compiled to be used as a version
+    /// of OpenNURBS
     /// </summary>
     public static bool RunningInRhino
     {
@@ -704,6 +708,16 @@ namespace Rhino.Runtime
       m_rhinocommoninitialized = true;
 
       AssemblyResolver.InitializeAssemblyResolving();
+      {
+        Type t = typeof(Rhino.DocObjects.Custom.UserDictionary);
+        UnsafeNativeMethods.ON_UserData_RegisterCustomUserData(t.FullName, t.GUID);
+        Rhino.DocObjects.Custom.UserData.RegisterType(t);
+
+        t = typeof(Rhino.DocObjects.Custom.SharedUserDictionary);
+        UnsafeNativeMethods.ON_UserData_RegisterCustomUserData(t.FullName, t.GUID);
+        Rhino.DocObjects.Custom.UserData.RegisterType(t);
+      }
+
       UnsafeNativeMethods.RHC_SetGetNowProc(m_getnow_callback, m_getformattedtime_callback);
       UnsafeNativeMethods.RHC_SetPythonEvaluateCallback(m_evaluate_callback);
       CreateInvokeWindow();

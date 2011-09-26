@@ -3080,6 +3080,15 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Object_CopyUserData(IntPtr pConstSourceObject, IntPtr pDestinationObject);
 
+  //int ON_Object_UserDataCount(const ON_Object* pObject)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Object_UserDataCount(IntPtr pObject);
+
+  //bool ON_Object_AttachUserData(ON_Object* pOnObject, ON_UserData* pUserData, bool detachIfNeeded)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Object_AttachUserData(IntPtr pOnObject, IntPtr pUserData, [MarshalAs(UnmanagedType.U1)]bool detachIfNeeded);
+
   //const RHMONO_STRING* ON_UserStringList_KeyValue(const ON_ClassArray<ON_UserString>* pList, int i, bool key)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_UserStringList_KeyValue(IntPtr pList, int i, [MarshalAs(UnmanagedType.U1)]bool key);
@@ -3751,6 +3760,30 @@ internal partial class UnsafeNativeMethods
 
 
   #region on_userdata.cpp
+  //void ON_UserData_RegisterCustomUserData( const RHMONO_STRING* managed_type_name, ON_UUID managed_type_id )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_UserData_RegisterCustomUserData([MarshalAs(UnmanagedType.LPWStr)]string managed_type_name, Guid managed_type_id);
+
+  //CRhCmnUserData* CRhCmnUserData_New( int serial_number, ON_UUID managed_type_id, ON_UUID plugin_id, const RHMONO_STRING* description)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhCmnUserData_New(int serial_number, Guid managed_type_id, Guid plugin_id, [MarshalAs(UnmanagedType.LPWStr)]string description);
+
+  //void CRhCmnUserData_Delete(CRhCmnUserData* pUserData, int serial_number)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhCmnUserData_Delete(IntPtr pUserData, int serial_number);
+
+  //int CRhCmnUserData_Find(const ON_Object* pConstOnObject, ON_UUID managed_type_id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhCmnUserData_Find(IntPtr pConstOnObject, Guid managed_type_id);
+
+  //void CRhCmnUserData_SetCallbacks(USERDATATRANSFORMPROC xform_proc,
+  //                                               USERDATAARCHIVEPROC archive_proc,
+  //                                               USERDATAIOPROC io_proc,
+  //                                               USERDATADUPLICATEPROC duplicate_proc,
+  //                                               USERDATACREATEPROC create_proc,
+  //                                               USERDATADELETEPROC delete_proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
   //bool ON_UserDataHolder_MoveUserDataFrom( ON_UUID id, const ON_Object* pConstObject)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -5213,6 +5246,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_doc.cpp
+  //CRhinoDoc* CRhinoDoc_GetFromId(int doc_id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoDoc_GetFromId(int doc_id);
+
   //int CRhinoDoc_GetId(CRhinoDoc* pDoc)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoDoc_GetId(IntPtr pDoc);

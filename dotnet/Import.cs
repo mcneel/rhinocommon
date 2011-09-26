@@ -382,4 +382,12 @@ internal partial class UnsafeNativeMethods
 
   #endregion
 #endif
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhCmnUserData_SetCallbacks(Rhino.DocObjects.Custom.UserData.TransformUserDataCallback xform_func,
+    Rhino.DocObjects.Custom.UserData.ArchiveUserDataCallback archive_func,
+    Rhino.DocObjects.Custom.UserData.ReadWriteUserDataCallback readwrite_func,
+    Rhino.DocObjects.Custom.UserData.DuplicateUserDataCallback duplicate_func,
+    Rhino.DocObjects.Custom.UserData.CreateUserDataCallback create_func,
+    Rhino.DocObjects.Custom.UserData.DeleteUserDataCallback delete_func);
 }

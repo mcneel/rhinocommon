@@ -150,6 +150,20 @@ namespace Rhino.PlugIns
           lt = PlugInLoadTime.AtStartup;
 
         UnsafeNativeMethods.CRhinoPlugIn_Create(sn, plugin_id, plugin_name, plugin_version, plugin_class, (int)lt);
+
+        // Once the plugin has been created, look through the plug-in for UserData derived classes
+        Type userdata_type = typeof(Rhino.DocObjects.Custom.UserData);
+        var internal_types = plugin_type.Assembly.GetExportedTypes();
+        for( int i=0; i<internal_types.Length; i++ )
+        {
+          if( internal_types[i].IsSubclassOf(userdata_type) && !internal_types[i].IsAbstract )
+          {
+            string name = internal_types[i].FullName;
+            Guid id = internal_types[i].GUID;
+            UnsafeNativeMethods.ON_UserData_RegisterCustomUserData(name, id);
+            Rhino.DocObjects.Custom.UserData.RegisterType(internal_types[i]);
+          }
+        }
       }
       HostUtils.DebugString("[PlugIn::Create] Finished\n");
       return rc;

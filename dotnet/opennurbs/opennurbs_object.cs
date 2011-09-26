@@ -213,15 +213,6 @@ namespace Rhino.Runtime
       }
     }
 
-    public bool HasUserData
-    {
-      get
-      {
-        IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.ON_Object_FirstUserData(pConstThis) != IntPtr.Zero;
-      }
-    }
-
     #region IDisposable implementation
     ~CommonObject()
     {
@@ -270,6 +261,50 @@ namespace Rhino.Runtime
     }
 
     protected CommonObject() { }
+
+    /// <summary>
+    /// True if this class has any custom information attached to it through UserData
+    /// </summary>
+    public bool HasUserData
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_Object_FirstUserData(pConstThis) != IntPtr.Zero;
+      }
+    }
+
+    Rhino.DocObjects.Custom.UserDataList m_userdatalist;
+    /// <summary>
+    /// List of custom information that is attached to this class
+    /// </summary>
+    public Rhino.DocObjects.Custom.UserDataList UserData
+    {
+      get
+      {
+        return m_userdatalist ?? (m_userdatalist = new DocObjects.Custom.UserDataList(this));
+      }
+    }
+
+    /// <summary>
+    /// Dictionary of custom information attached to this class. The dictionary is actaully user
+    /// data provided as an easy to use sharable set of information.
+    /// </summary>
+    public Rhino.Collections.ArchivableDictionary UserDictionary
+    {
+      get
+      {
+        Rhino.DocObjects.Custom.UserDictionary ud = null;
+        ud = UserData.Find(typeof(Rhino.DocObjects.Custom.SharedUserDictionary)) as Rhino.DocObjects.Custom.SharedUserDictionary;
+        if (ud == null)
+        {
+          ud = new DocObjects.Custom.SharedUserDictionary();
+          if (!UserData.Add(ud))
+            return null;
+        }
+        return ud.Dictionary;
+      }
+    }
 
     #region serialization support
     const string ARCHIVE_3DM_VERSION = "archive3dm";
@@ -336,6 +371,5 @@ namespace Rhino.Runtime
     {
       m_oldparent = old_parent;
     }
-
   }
 }

@@ -8,6 +8,18 @@ namespace Rhino.Runtime
   public static class Interop
   {
     /// <summary>
+    /// Geth the C++ CRhinoDoc* for a given RhinoCommon RhinoDoc class
+    /// </summary>
+    /// <param name="doc"></param>
+    /// <returns></returns>
+    public static IntPtr NativeRhinoDocPointer(RhinoDoc doc)
+    {
+      if (doc == null)
+        return IntPtr.Zero;
+      return UnsafeNativeMethods.CRhinoDoc_GetFromId(doc.m_docId);
+    }
+
+    /// <summary>
     /// Return the underlying const ON_Geometry* for a RhinoCommon class. You should only
     /// be interested in using this function if you are writing C++ code.
     /// </summary>

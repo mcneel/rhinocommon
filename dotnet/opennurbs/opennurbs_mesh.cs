@@ -2038,6 +2038,95 @@ namespace Rhino.Geometry.Collections
       }
       return rc;
     }
+
+    /// <summary>
+    /// Remove the vertex at the given index and all faces that reference that index.
+    /// </summary>
+    /// <param name="index">Index of vertex to remove.</param>
+    /// <param name="shrinkFaces">If true, quads that reference the deleted vertex will be converted to triangles.</param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Remove(int index, bool shrinkFaces)
+    {
+      return Remove(new int[] { index }, shrinkFaces);
+    }
+    /// <summary>
+    /// Remove the vertices at the given indices and all faces that reference those vertices.
+    /// </summary>
+    /// <param name="indices">Vertex indices to remove.</param>
+    /// <param name="shrinkFaces">If true, quads that reference the deleted vertex will be converted to triangles.</param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool Remove(IEnumerable<int> indices, bool shrinkFaces)
+    {
+      if (indices == null) { throw new ArgumentNullException("indices"); }
+      List<int> idx = new List<int>(indices);
+      if (idx.Count == 0) { return true; }
+
+      int max = Count;
+      foreach (int index in idx)
+      {
+        if (index < 0) { throw new IndexOutOfRangeException("Vertex index must be larger than or equal to zero"); }
+        if (index >= max) { throw new IndexOutOfRangeException("Vertex index must be smaller than the size of the collection"); }
+      }
+
+      MeshFaceList faces = m_mesh.Faces;
+      List<int> faceidx = new List<int>();
+
+      for (int i = 0; i < faces.Count; i++)
+      {
+        MeshFace face = faces[i];
+        int k = -1;
+        int N = 0;
+
+        if (idx.Contains(face.A)) { k = 0; N++; }
+        if (idx.Contains(face.B)) { k = 1; N++; }
+        if (N >= 2) { faceidx.Add(i); continue; }
+        if (idx.Contains(face.C)) { k = 2; N++; }
+        if (N >= 2) { faceidx.Add(i); continue; }
+        if (face.IsQuad && idx.Contains(face.D)) { k = 3; N++; }
+        if (N >= 2) { faceidx.Add(i); continue; }
+
+        // Do not change face.
+        if (N == 0) { continue; }
+
+        // Always remove triangles.
+        if (face.IsTriangle) { faceidx.Add(i); continue; }
+
+        // Remove quads when shrinking is not allowed.
+        if (face.IsQuad && !shrinkFaces) { faceidx.Add(i); continue; }
+
+        // Convert quad to triangle.
+        switch (k)
+        {
+          case 0:
+            face.A = face.B;
+            face.B = face.C;
+            face.C = face.D;
+            break;
+
+          case 1:
+            face.B = face.C;
+            face.C = face.D;
+            break;
+
+          case 2:
+            face.C = face.D;
+            break;
+
+          case 3:
+            face.D = face.C;
+            break;
+        }
+        faces.SetFace(i, face);
+      }
+
+      if (faceidx.Count > 0)
+      {
+        faces.DeleteFaces(faceidx);
+      }
+
+      CullUnused();
+      return true;
+    }
     #endregion
 
     #region IEnumerable implementation
@@ -2406,12 +2495,12 @@ namespace Rhino.Geometry.Collections
         return new int[0];
       }
 
-      if( c==d)
+      if (c == d)
       {
-        sameOrientation = new bool[] { orientation[0]==1, orientation[1]==1, orientation[2]==1 };
+        sameOrientation = new bool[] { orientation[0] == 1, orientation[1] == 1, orientation[2] == 1 };
         return new int[] { a, b, c };
       }
-      sameOrientation = new bool[] { orientation[0] == 1, orientation[1] == 1, orientation[2] == 1, orientation[3]==1 };
+      sameOrientation = new bool[] { orientation[0] == 1, orientation[1] == 1, orientation[2] == 1, orientation[3] == 1 };
       return new int[] { a, b, c, d };
     }
 

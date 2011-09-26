@@ -1,12 +1,9 @@
-// 07 July 2009 (S. Baer) - Wrapper for opennurbs_3dm.h complete
-// TODO: Still need to add comments for all of the typecodes
-
-// Don't expose TypeCodes until we have enough OpenNURBS wrapped to make them useful
 /*
-namespace Rhino.IO
+namespace Rhino.FileIo
 {
   ///<summary>
   ///Typecode format 4 bytes long
+  ///<code>
   ///x xxxxxxxxxxxxxxx,x xxx xxxx xxxx x x xx
   ///| |               | |               | |  |
   ///|        |        |                 |
@@ -34,8 +31,9 @@ namespace Rhino.IO
   ///| 
   ///+-- format: 0 - data size in header  - data block follows    TCODE_SHORT
   ///            1 - data in header - no data block follows
+  ///</code>
   ///</summary>
-  public static class ON_TypeCodes
+  public static class TypeCodes
   {
     ///<summary>
     /// (0x00000001)
@@ -60,7 +58,7 @@ namespace Rhino.IO
     /// Simply skip these chunks and continue.
     /// </summary>
     public const uint TCODE_ENDOFFILE_GOO = 0x00007FFE;
-    /// <summary>0x00010000</summary>
+
     public const uint TCODE_LEGACY_GEOMETRY   = 0x00010000;
     /// <summary>0x00020000</summary>
     public const uint TCODE_OPENNURBS_OBJECT = 0x00020000;
@@ -90,19 +88,18 @@ namespace Rhino.IO
     public const uint TCODE_ANONYMOUS_CHUNK = (TCODE_USER | TCODE_CRC | 0x0000);
 
   
-// The openNURBS toolkit allows users to write all openNURBS classed that are
-// derived from ON_Object using using TCODE_OPENNURBS_CLASS chunks.
-// In the .3dm file these TCODE_OPENNURBS_CLASS chunks are always have the
-// following format.
-
-    public const uint TCODE_MATERIAL_TABLE = (TCODE_TABLE | 0x0010); // rendering materials
-    public const uint TCODE_LAYER_TABLE      =(TCODE_TABLE | 0x0011); // layers
-    public const uint TCODE_LIGHT_TABLE      =(TCODE_TABLE | 0x0012); // rendering lights
-    public const uint TCODE_OBJECT_TABLE     =(TCODE_TABLE | 0x0013); // geometry and annotation
-    public const uint TCODE_PROPERTIES_TABLE =(TCODE_TABLE | 0x0014); // model properties:
-                                                      //   revision history
-                                                      //   notes
-                                                      //   preview image
+    /// <summary>rendering materials</summary>
+    public const uint TCODE_MATERIAL_TABLE = (TCODE_TABLE | 0x0010);
+    /// <summary>layers</summary>
+    public const uint TCODE_LAYER_TABLE      =(TCODE_TABLE | 0x0011);
+    /// <summary>rendering lights</summary>
+    public const uint TCODE_LIGHT_TABLE      =(TCODE_TABLE | 0x0012);
+    /// <summary>geometry and annotation</summary>
+    public const uint TCODE_OBJECT_TABLE     =(TCODE_TABLE | 0x0013);
+    /// <summary>
+    /// Model Properties: revision history, notes, preview image
+    /// </summary>
+    public const uint TCODE_PROPERTIES_TABLE =(TCODE_TABLE | 0x0014);
                                                       
     public const uint TCODE_SETTINGS_TABLE   =(TCODE_TABLE | 0x0015); // file properties including,
                                                       // units, tolerancess, 

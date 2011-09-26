@@ -147,6 +147,39 @@ RH_C_FUNCTION void ON_Object_CopyUserData(const ON_Object* pConstSourceObject, O
   }
 }
 
+RH_C_FUNCTION int ON_Object_UserDataCount(const ON_Object* pObject)
+{
+  int rc = 0;
+  if( pObject )
+  {
+    ON_UserData* pUD = pObject->FirstUserData();
+    while( pUD )
+    {
+      rc++;
+      pUD = pUD->Next();
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Object_AttachUserData(ON_Object* pOnObject, ON_UserData* pUserData, bool detachIfNeeded)
+{
+  bool rc = false;
+  if( pOnObject && pUserData )
+  {
+    if( detachIfNeeded )
+    {
+      ON_Object* pOwner = pUserData->Owner();
+      if( pOwner==pOnObject )
+        return true; //already attached to this object
+      if( pOwner )
+        pOwner->DetachUserData(pUserData);
+    }
+    rc = pOnObject->AttachUserData(pUserData)?true:false;
+  }
+  return rc;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////
 
 static CRhCmnStringHolder theKeyValueHolder;

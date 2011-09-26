@@ -16,7 +16,7 @@ namespace Rhino.Collections
   ///    |- ENDCHUNK (TCODE_ANONYMOUS_CHUNK)
   /// ENDCHUNK (TCODE_ANONYMOUS_CHUNK)
   ///</summary>
-  public class ArchivableDictionary
+  public class ArchivableDictionary : ICloneable
   {
     private enum ItemType : int
     {
@@ -87,6 +87,8 @@ namespace Rhino.Collections
 
     int m_version;
     string m_name;
+    readonly System.Collections.Generic.Dictionary<string, DictionaryItem> m_items = new Dictionary<string, DictionaryItem>();
+
 
     public int Version
     {
@@ -211,224 +213,224 @@ namespace Rhino.Collections
         case ItemType.itBool: //1
           {
             bool val = archive.ReadBool();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itByte: //2
           {
             byte val = archive.ReadByte();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
 
         case ItemType.itSByte: //3
           {
             sbyte val = archive.ReadSByte();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itShort: //4
           {
             short val = archive.ReadShort();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itUShort: //5
           {
             ushort val = archive.ReadUShort();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itInt32: //6
           {
             int val = archive.ReadInt();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itUInt32: //7
           {
             uint val = archive.ReadUInt();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itInt64: //8
           {
             Int64 val=archive.ReadInt64();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itSingle: //9
           {
             float val = archive.ReadSingle();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itDouble: //10
           {
             double val = archive.ReadDouble();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itGuid: //11
           {
             Guid val = archive.ReadGuid();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itString: //12
           {
             string val = archive.ReadString();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itArrayBool: //13
           {
             bool[] arr = archive.ReadBoolArray();
-            rc = SetItem(key, arr);
+            rc = Set(key, arr);
           }
           break;
         case ItemType.itArrayByte: //14
           {
             byte[] arr = archive.ReadByteArray();
-            rc = SetItem(key, arr);
+            rc = Set(key, arr);
           }
           break;
         case ItemType.itArraySByte: //15
           {
             sbyte[] arr = archive.ReadSByteArray();
-            rc = SetItem(key, arr);
+            rc = Set(key, arr);
           }
           break;
         case ItemType.itArrayShort: //16
           {
             short[] arr = archive.ReadShortArray();
-            rc = SetItem(key, arr);
+            rc = Set(key, arr);
           }
           break;
         case ItemType.itArrayInt32: //17
           {
             int[] arr = archive.ReadIntArray();
-            rc = SetItem(key, arr);
+            rc = Set(key, arr);
           }
           break;
         case ItemType.itArraySingle: //18
           {
             float[] arr = archive.ReadSingleArray();
-            rc = SetItem(key, arr);
+            rc = Set(key, arr);
           }
           break;
         case ItemType.itArrayDouble: //19
           {
             double[] arr = archive.ReadDoubleArray();
-            rc = SetItem(key, arr);
+            rc = Set(key, arr);
           }
           break;
         case ItemType.itArrayGuid: //20
           {
             Guid[] arr = archive.ReadGuidArray();
-            rc = SetItem(key, arr);
+            rc = Set(key, arr);
           }
           break;
         case ItemType.itArrayString: //21
           {
             string[] arr = archive.ReadStringArray();
-            rc = SetItem(key, arr);
+            rc = Set(key, arr);
           }
           break;
         case ItemType.itColor: //22
           {
             System.Drawing.Color val = archive.ReadColor();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itPoint: //23
           {
             System.Drawing.Point val = archive.ReadPoint();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itPointF: //24
           {
             System.Drawing.PointF val = archive.ReadPointF();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itRectangle: //25
           {
             System.Drawing.Rectangle val = archive.ReadRectangle();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itRectangleF: //26
           {
             System.Drawing.RectangleF val = archive.ReadRectangleF();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itSize: //27
           {
             System.Drawing.Size val = archive.ReadSize();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itSizeF: //28
           {
             System.Drawing.SizeF val = archive.ReadSizeF();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itFont: //29
           {
             System.Drawing.Font val = archive.ReadFont();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itInterval: //30
           {
             Rhino.Geometry.Interval val = archive.ReadInterval();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itPoint2d: //31
           {
             Rhino.Geometry.Point2d val = archive.ReadPoint2d();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itPoint3d: //32
           {
             Rhino.Geometry.Point3d val = archive.ReadPoint3d();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itPoint4d: //33
           {
             Rhino.Geometry.Point4d val = archive.ReadPoint4d();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itVector2d: //34
           {
             Rhino.Geometry.Vector2d val = archive.ReadVector2d();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itVector3d: //35
           {
             Rhino.Geometry.Vector3d val = archive.ReadVector3d();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itBoundingBox: //36
           {
             Rhino.Geometry.BoundingBox val = archive.ReadBoundingBox();
-              rc = SetItem(key, val);
+              rc = Set(key, val);
           }
           break;
         case ItemType.itRay3d: //37
           {
             Rhino.Geometry.Ray3d val = archive.ReadRay3d();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itPlaneEquation: //38
@@ -440,38 +442,38 @@ namespace Rhino.Collections
         case ItemType.itXform: //39
           {
             Rhino.Geometry.Transform val = archive.ReadTransform();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itPlane: //40
           {
             Rhino.Geometry.Plane val = archive.ReadPlane();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itLine: //41
           {
             Rhino.Geometry.Line val = archive.ReadLine();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itPoint3f: //42
           {
             Rhino.Geometry.Point3f val = archive.ReadPoint3f();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itVector3f: //43
           {
             Rhino.Geometry.Vector3f val = archive.ReadVector3f();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
         case ItemType.itOnBinaryArchiveDictionary: //44
           {
             ArchivableDictionary dict = Read(archive);
             if( dict != null )
-              rc = SetItem(key, dict);
+              rc = Set(key, dict);
           }
           break;
         case ItemType.itOnObject: //45
@@ -481,7 +483,7 @@ namespace Rhino.Collections
             Rhino.Geometry.GeometryBase geom = Rhino.Geometry.GeometryBase.CreateGeometryHelper(pObject, null);
             if( geom!=null )
             {
-              rc = SetItem(key, geom);
+              rc = Set(key, geom);
             }
             else
             {
@@ -493,7 +495,7 @@ namespace Rhino.Collections
         case ItemType.itOnMeshParameters: //46
           {
             Rhino.Geometry.MeshingParameters val = archive.ReadMeshingParameters();
-            rc = SetItem(key, val);
+            rc = Set(key, val);
           }
           break;
       }
@@ -738,56 +740,56 @@ namespace Rhino.Collections
       return false;
     }
 
-    public bool SetItem(string key, bool val) { return SetItem(key, ItemType.itBool, val); }
-    public bool SetItem(string key, byte val) { return SetItem(key, ItemType.itByte, val); }
+    public bool Set(string key, bool val) { return SetItem(key, ItemType.itBool, val); }
+    public bool Set(string key, byte val) { return SetItem(key, ItemType.itByte, val); }
     [CLSCompliant(false)]
-    public bool SetItem(string key, sbyte val) { return SetItem(key, ItemType.itSByte, val); }
-    public bool SetItem(string key, short val) { return SetItem(key, ItemType.itShort, val); }
+    public bool Set(string key, sbyte val) { return SetItem(key, ItemType.itSByte, val); }
+    public bool Set(string key, short val) { return SetItem(key, ItemType.itShort, val); }
     [CLSCompliant(false)]
-    public bool SetItem(string key, ushort val) { return SetItem(key, ItemType.itUShort, val); }
-    public bool SetItem(string key, int val) { return SetItem(key, ItemType.itInt32, val); }
+    public bool Set(string key, ushort val) { return SetItem(key, ItemType.itUShort, val); }
+    public bool Set(string key, int val) { return SetItem(key, ItemType.itInt32, val); }
     [CLSCompliant(false)]
-    public bool SetItem(string key, uint val) { return SetItem(key, ItemType.itUInt32, val); }
-    public bool SetItem(string key, Int64 val) { return SetItem(key, ItemType.itInt64, val); }
-    public bool SetItem(string key, float val) { return SetItem(key, ItemType.itSingle, val); }
-    public bool SetItem(string key, double val) { return SetItem(key, ItemType.itDouble, val); }
-    public bool SetItem(string key, Guid val) { return SetItem(key, ItemType.itGuid, val); }
-    public bool SetItem(string key, string val) { return SetItem(key, ItemType.itString, val); }
-    public bool SetItem(string key, IEnumerable<bool> val) { return SetItem(key, ItemType.itArrayBool, val); }
-    public bool SetItem(string key, IEnumerable<byte> val) { return SetItem(key, ItemType.itArrayByte, val); }
+    public bool Set(string key, uint val) { return SetItem(key, ItemType.itUInt32, val); }
+    public bool Set(string key, Int64 val) { return SetItem(key, ItemType.itInt64, val); }
+    public bool Set(string key, float val) { return SetItem(key, ItemType.itSingle, val); }
+    public bool Set(string key, double val) { return SetItem(key, ItemType.itDouble, val); }
+    public bool Set(string key, Guid val) { return SetItem(key, ItemType.itGuid, val); }
+    public bool Set(string key, string val) { return SetItem(key, ItemType.itString, val); }
+    public bool Set(string key, IEnumerable<bool> val) { return SetItem(key, ItemType.itArrayBool, val); }
+    public bool Set(string key, IEnumerable<byte> val) { return SetItem(key, ItemType.itArrayByte, val); }
     [CLSCompliant(false)]
-    public bool SetItem(string key, IEnumerable<sbyte> val) { return SetItem(key, ItemType.itArraySByte, val); }
-    public bool SetItem(string key, IEnumerable<short> val) { return SetItem(key, ItemType.itArrayShort, val); }
-    public bool SetItem(string key, IEnumerable<int> val) { return SetItem(key, ItemType.itArrayInt32, val); }
-    public bool SetItem(string key, IEnumerable<float> val) { return SetItem(key, ItemType.itArraySingle, val); }
-    public bool SetItem(string key, IEnumerable<double> val) { return SetItem(key, ItemType.itArrayDouble, val); }
-    public bool SetItem(string key, IEnumerable<Guid> val) { return SetItem(key, ItemType.itArrayGuid, val); }
-    public bool SetItem(string key, IEnumerable<string> val) { return SetItem(key, ItemType.itArrayString, val); }
-    public bool SetItem(string key, System.Drawing.Color val) { return SetItem(key, ItemType.itColor, val); }
-    public bool SetItem(string key, System.Drawing.Point val) { return SetItem(key, ItemType.itPoint, val); }
-    public bool SetItem(string key, System.Drawing.PointF val) { return SetItem(key, ItemType.itPointF, val); }
-    public bool SetItem(string key, System.Drawing.Rectangle val) { return SetItem(key, ItemType.itRectangle, val); }
-    public bool SetItem(string key, System.Drawing.RectangleF val) { return SetItem(key, ItemType.itRectangleF, val); }
-    public bool SetItem(string key, System.Drawing.Size val) { return SetItem(key, ItemType.itSize, val); }
-    public bool SetItem(string key, System.Drawing.SizeF val) { return SetItem(key, ItemType.itSizeF, val); }
-    public bool SetItem(string key, System.Drawing.Font val) { return SetItem(key, ItemType.itFont, val); }
-    public bool SetItem(string key, Rhino.Geometry.Interval val) { return SetItem(key, ItemType.itInterval, val); }
-    public bool SetItem(string key, Rhino.Geometry.Point2d val) { return SetItem(key, ItemType.itPoint2d, val); }
-    public bool SetItem(string key, Rhino.Geometry.Point3d val) { return SetItem(key, ItemType.itPoint3d, val); }
-    public bool SetItem(string key, Rhino.Geometry.Point4d val) { return SetItem(key, ItemType.itPoint4d, val); }
-    public bool SetItem(string key, Rhino.Geometry.Vector2d val) { return SetItem(key, ItemType.itVector2d, val); }
-    public bool SetItem(string key, Rhino.Geometry.Vector3d val) { return SetItem(key, ItemType.itVector3d, val); }
-    public bool SetItem(string key, Rhino.Geometry.BoundingBox val) { return SetItem(key, ItemType.itBoundingBox, val); }
-    public bool SetItem(string key, Rhino.Geometry.Ray3d val) { return SetItem(key, ItemType.itRay3d, val); }
+    public bool Set(string key, IEnumerable<sbyte> val) { return SetItem(key, ItemType.itArraySByte, val); }
+    public bool Set(string key, IEnumerable<short> val) { return SetItem(key, ItemType.itArrayShort, val); }
+    public bool Set(string key, IEnumerable<int> val) { return SetItem(key, ItemType.itArrayInt32, val); }
+    public bool Set(string key, IEnumerable<float> val) { return SetItem(key, ItemType.itArraySingle, val); }
+    public bool Set(string key, IEnumerable<double> val) { return SetItem(key, ItemType.itArrayDouble, val); }
+    public bool Set(string key, IEnumerable<Guid> val) { return SetItem(key, ItemType.itArrayGuid, val); }
+    public bool Set(string key, IEnumerable<string> val) { return SetItem(key, ItemType.itArrayString, val); }
+    public bool Set(string key, System.Drawing.Color val) { return SetItem(key, ItemType.itColor, val); }
+    public bool Set(string key, System.Drawing.Point val) { return SetItem(key, ItemType.itPoint, val); }
+    public bool Set(string key, System.Drawing.PointF val) { return SetItem(key, ItemType.itPointF, val); }
+    public bool Set(string key, System.Drawing.Rectangle val) { return SetItem(key, ItemType.itRectangle, val); }
+    public bool Set(string key, System.Drawing.RectangleF val) { return SetItem(key, ItemType.itRectangleF, val); }
+    public bool Set(string key, System.Drawing.Size val) { return SetItem(key, ItemType.itSize, val); }
+    public bool Set(string key, System.Drawing.SizeF val) { return SetItem(key, ItemType.itSizeF, val); }
+    public bool Set(string key, System.Drawing.Font val) { return SetItem(key, ItemType.itFont, val); }
+    public bool Set(string key, Rhino.Geometry.Interval val) { return SetItem(key, ItemType.itInterval, val); }
+    public bool Set(string key, Rhino.Geometry.Point2d val) { return SetItem(key, ItemType.itPoint2d, val); }
+    public bool Set(string key, Rhino.Geometry.Point3d val) { return SetItem(key, ItemType.itPoint3d, val); }
+    public bool Set(string key, Rhino.Geometry.Point4d val) { return SetItem(key, ItemType.itPoint4d, val); }
+    public bool Set(string key, Rhino.Geometry.Vector2d val) { return SetItem(key, ItemType.itVector2d, val); }
+    public bool Set(string key, Rhino.Geometry.Vector3d val) { return SetItem(key, ItemType.itVector3d, val); }
+    public bool Set(string key, Rhino.Geometry.BoundingBox val) { return SetItem(key, ItemType.itBoundingBox, val); }
+    public bool Set(string key, Rhino.Geometry.Ray3d val) { return SetItem(key, ItemType.itRay3d, val); }
     bool SetPlaneEquation(string key, double[] eq) { return SetItem(key, ItemType.itPlaneEquation, eq); }
-    public bool SetItem(string key, Rhino.Geometry.Transform val) { return SetItem(key, ItemType.itXform, val); }
-    public bool SetItem(string key, Rhino.Geometry.Plane val) { return SetItem(key, ItemType.itPlane, val); }
-    public bool SetItem(string key, Rhino.Geometry.Line val) { return SetItem(key, ItemType.itLine, val); }
-    public bool SetItem(string key, Rhino.Geometry.Point3f val) { return SetItem(key, ItemType.itPoint3f, val); }
-    public bool SetItem(string key, Rhino.Geometry.Vector3f val) { return SetItem(key, ItemType.itVector3f, val); }
-    public bool SetItem(string key, ArchivableDictionary val) { return SetItem(key, ItemType.itOnBinaryArchiveDictionary, val); }
-    public bool SetItem(string key, Rhino.Geometry.MeshingParameters val) { return SetItem(key, ItemType.itOnMeshParameters, val); }
-    public bool SetItem(string key, Rhino.Geometry.GeometryBase val) { return SetItem(key, ItemType.itOnGeometry, val); }
+    public bool Set(string key, Rhino.Geometry.Transform val) { return SetItem(key, ItemType.itXform, val); }
+    public bool Set(string key, Rhino.Geometry.Plane val) { return SetItem(key, ItemType.itPlane, val); }
+    public bool Set(string key, Rhino.Geometry.Line val) { return SetItem(key, ItemType.itLine, val); }
+    public bool Set(string key, Rhino.Geometry.Point3f val) { return SetItem(key, ItemType.itPoint3f, val); }
+    public bool Set(string key, Rhino.Geometry.Vector3f val) { return SetItem(key, ItemType.itVector3f, val); }
+    public bool Set(string key, ArchivableDictionary val) { return SetItem(key, ItemType.itOnBinaryArchiveDictionary, val); }
+    public bool Set(string key, Rhino.Geometry.MeshingParameters val) { return SetItem(key, ItemType.itOnMeshParameters, val); }
+    public bool Set(string key, Rhino.Geometry.GeometryBase val) { return SetItem(key, ItemType.itOnGeometry, val); }
 
     bool SetItem(string key, ItemType it, object val)
     {
@@ -797,7 +799,6 @@ namespace Rhino.Collections
       return true;
     }
 
-    readonly System.Collections.Generic.Dictionary<string, DictionaryItem> m_items = new Dictionary<string, DictionaryItem>();
     private class DictionaryItem
     {
       public DictionaryItem(ItemType t, object val)
@@ -807,6 +808,27 @@ namespace Rhino.Collections
       }
       public readonly ItemType m_type;
       public readonly object m_value;
+
+      public DictionaryItem CreateCopy()
+      {
+        object val = m_value;
+        ICloneable clonable = m_value as ICloneable;
+        if (clonable != null)
+        {
+          val = clonable.Clone();
+        }
+        return new DictionaryItem(m_type, val);
+      }
+    }
+
+    public object Clone()
+    {
+      ArchivableDictionary clone = new ArchivableDictionary(m_version, m_name);
+      foreach( System.Collections.Generic.KeyValuePair<string, DictionaryItem> item in m_items )
+      {
+        clone.m_items.Add(item.Key, item.Value.CreateCopy());
+      }
+      return clone;
     }
   }
 }

@@ -1,0 +1,129 @@
+using System;
+using Rhino;
+
+namespace examples_cs
+{
+  // You must define a Guid attribute for your user data derived class
+  // in order to support serialization. Every custom user data class
+  // needs a custom Guid
+  [System.Runtime.InteropServices.Guid("DAAA9791-01DB-4F5F-B89B-4AE46767C783")]
+  public class Stone : Rhino.DocObjects.Custom.UserData
+  {
+    public int Weight{ get; set; }
+    public double SizeX {get; set;}
+    public double SizeY {get; set;}
+
+
+    // Your UserData class must have a public parameterless constructor
+    public Stone(){}
+
+    public Stone(int weight, double sizeX, double sizeY)
+    {
+      Weight = weight;
+      SizeX = sizeX;
+      SizeY = sizeY;
+    }
+
+    public override string Description
+    {
+      get { return "StoneUserData"; }
+    }
+
+    public override string ToString()
+    {
+      return String.Format("weight={0}, Size={1},{2}", Weight, SizeX, SizeY);
+    }
+
+    protected override void OnDuplicate(Rhino.DocObjects.Custom.UserData source)
+    {
+      Stone src = source as Stone;
+      if (src != null)
+      {
+        Weight = src.Weight;
+        SizeX = src.SizeX;
+        SizeY = src.SizeY;
+      }
+    }
+
+    // return true if you have information to save
+    public override bool ShouldWrite
+    {
+      get
+      {
+        bool write = false;
+        if (Weight > 0 && SizeX > 0 && SizeY > 0)
+          write = true;
+        return write;
+      }
+    }
+
+    protected override bool Read(Rhino.FileIO.BinaryArchiveReader archive)
+    {
+      Rhino.Collections.ArchivableDictionary dict = archive.ReadDictionary();
+      if (dict.ContainsKey("Weight") && dict.ContainsKey("SizeX") && dict.ContainsKey("SizeY"))
+      {
+        Weight = (int)dict["Weight"];
+        SizeX = (double)dict["SizeX"];
+        SizeY = (double)dict["SizeY"];
+      }
+      return true;
+    }
+    protected override bool Write(Rhino.FileIO.BinaryArchiveWriter archive)
+    {
+      // you can impplement File IO however you want... but the dictionary class makes
+      // issues like versioning in the 3dm file a bit easier.  If you didn't want to use
+      // the dictionary for writing, your code would look something like.
+      //
+      //  archive.Write3dmChunkVersion(1, 0);
+      //  archive.WriteInt(Weight);
+      //  archive.WriteDouble(SizeX);
+      //  archive.WriteDouble(SizeY);
+      Rhino.Collections.ArchivableDictionary dict = new Rhino.Collections.ArchivableDictionary(1, "Stone");
+      dict.Set("Weight", Weight);
+      dict.Set("SizeX", SizeX);
+      dict.Set("SizeY", SizeY);
+      archive.WriteDictionary(dict);
+      return true;
+    }
+  }
+
+
+  [System.Runtime.InteropServices.Guid("ca9a110e-3969-49ec-9d59-a7c2ee0b85bd")]
+  public class ex_userdataCommand : Rhino.Commands.Command
+  {
+    public override string EnglishName
+    {
+      get { return "cs_userdataCommand"; }
+    }
+
+    protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+    {
+      Rhino.DocObjects.ObjRef objref;
+      var rc = Rhino.Input.RhinoGet.GetOneObject("Select Object", false, Rhino.DocObjects.ObjectType.AnyObject, out objref);
+      if (rc != Rhino.Commands.Result.Success)
+        return rc;
+
+      // See if user data of my custom type is attached to the geomtry
+      var ud = objref.Geometry().UserData.Find(typeof(Stone)) as Stone;
+      if (ud == null)
+      {
+        // No user data found; create one and add it
+        int weight = 0;
+        rc = Rhino.Input.RhinoGet.GetInteger("Stone Weight", false, ref weight);
+        if (rc != Rhino.Commands.Result.Success)
+          return rc;
+
+        var bbox = objref.Geometry().GetBoundingBox(true);
+        ud = new Stone(weight, bbox.Max.X - bbox.Min.X, bbox.Max.Y - bbox.Min.Y);
+
+        objref.Geometry().UserData.Add(ud);
+      }
+      else
+      {
+        RhinoApp.WriteLine("Stone UserData = " + ud.ToString());
+      }
+      return Rhino.Commands.Result.Success;
+    }
+  }
+}
+

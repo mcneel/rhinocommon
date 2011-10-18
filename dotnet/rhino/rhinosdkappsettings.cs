@@ -556,6 +556,33 @@ namespace Rhino.ApplicationSettings
         UnsafeNativeMethods.RhAppearanceSettings_GetSetUINT(1, true, (uint)value); 
       }
     }
+
+    /// <summary>
+    /// Location where the Main Rhino window attempts to show when the application is first
+    /// started.
+    /// </summary>
+    /// <param name="bounds"></param>
+    /// <param name="state"></param>
+    /// <returns>false if the information could not be retrieved</returns>
+    public static bool InitialMainWindowState(out System.Drawing.Rectangle bounds, out System.Windows.Forms.FormWindowState state)
+    {
+      bounds = Rectangle.Empty;
+      state = System.Windows.Forms.FormWindowState.Normal;
+
+      int left=0, top=0, right=0, bottom=0, flags=0;
+      bool rc = UnsafeNativeMethods.CRhinoDockBarManager_InitialMainFramePosition(ref left, ref top, ref right, ref bottom, ref flags);
+      if (rc)
+      {
+        bounds = Rectangle.FromLTRB(left, top, right, bottom);
+        const int SW_SHOWMAXIMIZED = 3;
+        const int SW_SHOWMINIMIZED = 2;
+        if ((flags & SW_SHOWMAXIMIZED) == SW_SHOWMAXIMIZED)
+          state = System.Windows.Forms.FormWindowState.Maximized;
+        if ((flags & SW_SHOWMINIMIZED) == SW_SHOWMINIMIZED)
+          state = System.Windows.Forms.FormWindowState.Minimized;
+      }
+      return rc;
+    }
   }
 
   

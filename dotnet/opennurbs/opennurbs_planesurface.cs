@@ -84,5 +84,38 @@ namespace Rhino.Geometry
     {
       return new ClippingPlaneSurface(IntPtr.Zero, null);
     }
+
+    public Plane Plane
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        Plane p = new Plane();
+        UnsafeNativeMethods.ON_ClippingPlaneSurface_GetPlane(pConstThis, ref p);
+        return p;
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_ClippingPlaneSurface_SetPlane(pThis, ref value);
+      }
+    }
+
+    /// <summary>
+    /// Returns Ids of viewports that this clipping plane is supposed to clip
+    /// </summary>
+    /// <returns></returns>
+    public Guid[] ViewportIds()
+    {
+      IntPtr pConstThis = ConstPointer();
+      int count = UnsafeNativeMethods.ON_ClippingPlaneSurface_ViewportIdCount(pConstThis);
+      Guid[] rc = new Guid[count];
+      for (int i = 0; i < count; i++)
+      {
+        rc[i] = UnsafeNativeMethods.ON_ClippingPlaneSurface_ViewportId(pConstThis, i);
+      }
+      return rc;
+    }
+   
   }
 }

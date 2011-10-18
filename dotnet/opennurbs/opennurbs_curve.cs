@@ -140,7 +140,7 @@ namespace Rhino.Geometry
     /// </summary>
     RebuildLines = 2,
     /// <summary>
-    /// Replace partially circualr segments with ArcCurves.
+    /// Replace partially circular segments with ArcCurves.
     /// </summary>
     RebuildArcs = 4,
     /// <summary>
@@ -483,7 +483,7 @@ namespace Rhino.Geometry
     /// Note, curves must be co-planar.
     /// </summary>
     /// <param name="curves">The co-planar curves to union.</param>
-    /// <returns>Result curves on success, null if no union could be calculated.</returns>
+    /// <returns>Result curves on success, empty array if no union could be calculated.</returns>
     public static Curve[] CreateBooleanUnion(IEnumerable<Curve> curves)
     {
       if (null == curves)
@@ -495,7 +495,7 @@ namespace Rhino.Geometry
       IntPtr outputPtr = output.NonConstPointer();
 
       int rc = UnsafeNativeMethods.ON_Curve_BooleanOperation(inputPtr, outputPtr, idxBooleanUnion);
-      return rc < 1 ? null : output.ToNonConstArray();
+      return rc < 1 ? new Curve[0] : output.ToNonConstArray();
     }
     /// <summary>
     /// Calculates the boolean intersection of two closed, planar curves. 
@@ -503,7 +503,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="curveA">The first closed, planar curve.</param>
     /// <param name="curveB">The second closed, planar curve.</param>
-    /// <returns>Result curves on success, null if no intersection could be calculated.</returns>
+    /// <returns>Result curves on success, empty array if no intersection could be calculated.</returns>
     public static Curve[] CreateBooleanIntersection(Curve curveA, Curve curveB)
     {
       if (null == curveA || null == curveB)
@@ -514,7 +514,7 @@ namespace Rhino.Geometry
       SimpleArrayCurvePointer output = new SimpleArrayCurvePointer();
       IntPtr outputPtr = output.NonConstPointer();
       int rc = UnsafeNativeMethods.ON_Curve_BooleanOperation(inputPtr, outputPtr, idxBooleanIntersection);
-      return rc < 1 ? null : output.ToNonConstArray();
+      return rc < 1 ? new Curve[0] : output.ToNonConstArray();
     }
     /// <summary>
     /// Calculates the boolean difference between two closed, planar curves. 
@@ -522,7 +522,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="curveA">The first closed, planar curve.</param>
     /// <param name="curveB">The second closed, planar curve.</param>
-    /// <returns>Result curves on success, null if no difference could be calculated.</returns>
+    /// <returns>Result curves on success, empty array if no difference could be calculated.</returns>
     public static Curve[] CreateBooleanDifference(Curve curveA, Curve curveB)
     {
       if (null == curveA || null == curveB)
@@ -536,7 +536,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="curveA">The first closed, planar curve.</param>
     /// <param name="subtractors">curves to subtract from the first closed curve</param>
-    /// <returns>Result curves on success, null if no difference could be calculated.</returns>
+    /// <returns>Result curves on success, empty array if no difference could be calculated.</returns>
     public static Curve[] CreateBooleanDifference(Curve curveA, IEnumerable<Curve> subtractors)
     {
       if (null == curveA || null == subtractors)
@@ -550,7 +550,7 @@ namespace Rhino.Geometry
       SimpleArrayCurvePointer output = new SimpleArrayCurvePointer();
       IntPtr outputPtr = output.NonConstPointer();
       int rc = UnsafeNativeMethods.ON_Curve_BooleanOperation(inputPtr, outputPtr, idxBooleanDifference);
-      return rc < 1 ? null : output.ToNonConstArray();
+      return rc < 1 ? new Curve[0] : output.ToNonConstArray();
     }
 
     /// <summary>
@@ -602,7 +602,7 @@ namespace Rhino.Geometry
       SimpleArrayCurvePointer curves_out = new SimpleArrayCurvePointer();
       IntPtr pCurvesOut = curves_out.NonConstPointer();
 
-      Curve[] rc = null;
+      Curve[] rc = new Curve[0];
       if (UnsafeNativeMethods.RHC_RhinoProjectCurveToMesh(pMeshes, pCurvesIn, direction, tolerance, pCurvesOut))
         rc = curves_out.ToNonConstArray();
 
@@ -619,7 +619,7 @@ namespace Rhino.Geometry
     /// <param name="brep">Brep to project onto.</param>
     /// <param name="direction">Direction of projection.</param>
     /// <param name="tolerance">Tolerance to use for projection.</param>
-    /// <returns>An array of projected curves or null if the projection set is empty.</returns>
+    /// <returns>An array of projected curves or empty array if the projection set is empty.</returns>
     public static Curve[] ProjectToBrep(Curve curve, Brep brep, Vector3d direction, double tolerance)
     {
       IntPtr brep_ptr = brep.ConstPointer();
@@ -639,7 +639,7 @@ namespace Rhino.Geometry
     /// <param name="breps">Breps to project onto.</param>
     /// <param name="direction">Direction of projection.</param>
     /// <param name="tolerance">Tolerance to use for projection.</param>
-    /// <returns>An array of projected curves or null if the projection set is empty.</returns>
+    /// <returns>An array of projected curves or empty array if the projection set is empty.</returns>
     public static Curve[] ProjectToBrep(Curve curve, IEnumerable<Brep> breps, Vector3d direction, double tolerance)
     {
       int[] brep_ids;
@@ -667,7 +667,7 @@ namespace Rhino.Geometry
     /// <param name="breps">Breps to project onto.</param>
     /// <param name="direction">Direction of projection.</param>
     /// <param name="tolerance">Tolerance to use for projection.</param>
-    /// <returns>An array of projected curves or null if the projection set is empty.</returns>
+    /// <returns>An array of projected curves or empty array if the projection set is empty.</returns>
     public static Curve[] ProjectToBrep(IEnumerable<Curve> curves, IEnumerable<Brep> breps, Vector3d direction, double tolerance)
     {
       int[] c_top;
@@ -1789,7 +1789,7 @@ namespace Rhino.Geometry
     {
       plane = Plane.WorldXY;
       IntPtr ptr = ConstPointer();
-      return UnsafeNativeMethods.ON_Curve_FrameAt(ptr, t, ref plane);
+      return UnsafeNativeMethods.ON_Curve_FrameAt(ptr, t, ref plane, false);
     }
 
     /// <summary>
@@ -1842,6 +1842,21 @@ namespace Rhino.Geometry
     }
 
 #if RHINO_SDK
+    /// <summary>
+    /// Return a 3d frame at a parameter. This is slightly different than FrameAt in
+    /// that the frame is computed in a way so there is minimal rotation from one
+    /// frame to the next.
+    /// </summary>
+    /// <param name="t">Evaluation parameter.</param>
+    /// <param name="plane">The frame is returned here.</param>
+    /// <returns>True on success, false on failure.</returns>
+    public bool PerpendicularFrameAt(double t, out Plane plane)
+    {
+      plane = Plane.WorldXY;
+      IntPtr ptr = ConstPointer();
+      return UnsafeNativeMethods.ON_Curve_FrameAt(ptr, t, ref plane, true);
+    }
+
     /// <summary>
     /// Get a collection of perpendicular frames along the curve. Perpendicular frames 
     /// are also known as 'Zero-twisting frames' and they minimize rotation from one frame to the next.
@@ -2740,6 +2755,45 @@ namespace Rhino.Geometry
         extendStyle = idxExtendTypeSmooth;
 
       IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve2(pConstPtr, extendStyle, _side, endPoint);
+      return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
+    }
+
+    /// <summary>
+    /// Extend a curve on a surface.
+    /// </summary>
+    /// <param name="side">The end of the curve to extend.</param>
+    /// <param name="surface">Surface that contains the curve.</param>
+    /// <returns>New extended curve result on success, null on failure.</returns>
+    public Curve ExtendOnSurface(CurveEnd side, Surface surface)
+    {
+      if (surface == null) { throw new ArgumentNullException("surface"); }
+      Brep brep = surface.ToBrep();
+      if (brep == null) { return null; }
+
+      return ExtendOnSurface(side, brep.Faces[0]);
+    }
+    /// <summary>
+    /// Extend a curve on a surface.
+    /// </summary>
+    /// <param name="side">The end of the curve to extend.</param>
+    /// <param name="face">BrepFace that contains the curve.</param>
+    /// <returns>New extended curve result on success, null on failure.</returns>
+    public Curve ExtendOnSurface(CurveEnd side, BrepFace face)
+    {
+      if (face == null) { throw new ArgumentNullException("face"); }
+
+      if (CurveEnd.None == side)
+        return null;
+      int _side = 0;
+      if (CurveEnd.End == side)
+        _side = 1;
+      else if (CurveEnd.Both == side)
+        _side = 2;
+
+      IntPtr pConstCurve = ConstPointer();
+      IntPtr pConstFace = face.ConstPointer();
+
+      IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCrvOnSrf(pConstCurve, pConstFace, _side);
       return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
     }
 

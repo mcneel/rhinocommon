@@ -386,6 +386,18 @@ namespace Rhino.Geometry
     #endregion
 
     /// <summary>
+    /// Compute an estimate of the number of bytes that this object is using in memory.
+    /// </summary>
+    /// <returns></returns>
+    /// 
+    [CLSCompliant(false)]
+    public uint MemoryEstimate()
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_Object_SizeOf(pConstThis);
+    }
+
+    /// <summary>
     /// Boundingbox solver. Gets the world axis aligned boundingbox for the geometry.
     /// </summary>
     /// <param name="accurate">If True, a physically accurate boundingbox will be computed. 

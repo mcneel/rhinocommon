@@ -1607,10 +1607,10 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Curve_Evaluate(IntPtr pCurve, int derivatives, int side, double t, IntPtr outVectors);
 
-  //bool ON_Curve_FrameAt( const ON_Curve* pCurve, double t, ON_PLANE_STRUCT* plane)
+  //bool ON_Curve_FrameAt( const ON_Curve* pConstCurve, double t, ON_PLANE_STRUCT* plane, bool zero_twisting)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Curve_FrameAt(IntPtr pCurve, double t, ref Plane plane);
+  internal static extern bool ON_Curve_FrameAt(IntPtr pConstCurve, double t, ref Plane plane, [MarshalAs(UnmanagedType.U1)]bool zero_twisting);
 
   //bool ON_Curve_GetClosestPoint( const ON_Curve* pCurve, ON_3DPOINT_STRUCT test_point, double* t, double maximum_distance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -3144,6 +3144,22 @@ internal partial class UnsafeNativeMethods
   //ON_PlaneSurface* ON_PlaneSurface_New(const ON_PLANE_STRUCT* plane, ON_INTERVAL_STRUCT xExtents, ON_INTERVAL_STRUCT yExtents)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_PlaneSurface_New(ref Plane plane, Interval xExtents, Interval yExtents);
+
+  //void ON_ClippingPlaneSurface_GetPlane(const ON_ClippingPlaneSurface* pConstClippingPlaneSurface, ON_PLANE_STRUCT* plane)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_ClippingPlaneSurface_GetPlane(IntPtr pConstClippingPlaneSurface, ref Plane plane);
+
+  //void ON_ClippingPlaneSurface_SetPlane(ON_ClippingPlaneSurface* pClippingPlaneSurface, const ON_PLANE_STRUCT* plane)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_ClippingPlaneSurface_SetPlane(IntPtr pClippingPlaneSurface, ref Plane plane);
+
+  //int ON_ClippingPlaneSurface_ViewportIdCount(const ON_ClippingPlaneSurface* pConstClippingPlaneSurface)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_ClippingPlaneSurface_ViewportIdCount(IntPtr pConstClippingPlaneSurface);
+
+  //ON_UUID ON_ClippingPlaneSurface_ViewportId(const ON_ClippingPlaneSurface* pConstClippingPlaneSurface, int i)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ON_ClippingPlaneSurface_ViewportId(IntPtr pConstClippingPlaneSurface, int i);
   #endregion
 
 
@@ -4635,6 +4651,11 @@ internal partial class UnsafeNativeMethods
   //void CRhinoHistoryManager_SetBool(int which, bool val)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoHistoryManager_SetBool(int which, [MarshalAs(UnmanagedType.U1)]bool val);
+
+  //bool CRhinoDockBarManager_InitialMainFramePosition(int* left, int* top, int* right, int* bottom, int* showFlags)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoDockBarManager_InitialMainFramePosition(ref int left, ref int top, ref int right, ref int bottom, ref int showFlags);
   #endregion
 
 
@@ -4671,7 +4692,7 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_command.cpp
-  //void CRhinoCommand_SetRunCommandCallback(RUNCOMMANDPROC run_func)
+  //void CRhinoCommand_SetRunCommandCallbacks(RUNCOMMANDPROC run_func, DOHELPPROC dohelp_func, CONTEXTHELPPROC contexthelp_func)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //void CRhinoCommand_SetSelCommandCallback(SELCOMMANDPROC sel_func)
@@ -7854,6 +7875,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoPlugInManager_GetName(int index);
 
+  //bool CRhinoPlugInManager_PassesFilter(int index, int typeFilter, bool loaded, bool unloaded)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPlugInManager_PassesFilter(int index, int typeFilter, [MarshalAs(UnmanagedType.U1)]bool loaded, [MarshalAs(UnmanagedType.U1)]bool unloaded);
+
   //ON_UUID CRhinoPlugInManager_GetID(int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoPlugInManager_GetID(int index);
@@ -8262,6 +8288,10 @@ internal partial class UnsafeNativeMethods
   //ON_Curve* RHC_RhinoExtendCurve2(const ON_Curve* pConstCurve, int type, int side, ON_3DPOINT_STRUCT endPoint)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoExtendCurve2(IntPtr pConstCurve, int type, int side, Point3d endPoint);
+
+  //ON_Curve* RHC_RhinoExtendCrvOnSrf(const ON_Curve* pConstCurve, const ON_BrepFace* pConstFace, int side)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoExtendCrvOnSrf(IntPtr pConstCurve, IntPtr pConstFace, int side);
 
   //ON_Curve* RHC_RhinoSimplifyCurve(const ON_Curve* pConstCurve, int flags, double dist_tol, double angle_tol)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -9131,6 +9161,14 @@ internal partial class UnsafeNativeMethods
   //void CRhinoViewport_GetPickXform2(const CRhinoViewport* pConstRhinoViewport, int left, int top, int right, int bottom, ON_Xform* xform)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoViewport_GetPickXform2(IntPtr pConstRhinoViewport, int left, int top, int right, int bottom, ref Transform xform);
+
+  //ON_UUID CRhinoViewport_DisplayModeId(const CRhinoViewport* pConstRhinoViewport)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoViewport_DisplayModeId(IntPtr pConstRhinoViewport);
+
+  //void CRhinoViewport_SetDisplayMode(CRhinoViewport* pRhinoViewport, ON_UUID displaymode_id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoViewport_SetDisplayMode(IntPtr pRhinoViewport, Guid displaymode_id);
   #endregion
 
 

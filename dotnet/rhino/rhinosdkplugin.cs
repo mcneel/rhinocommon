@@ -64,6 +64,20 @@ namespace Rhino.PlugIns
     WhenNeededOrOptionsDialog = 10
   }
 
+  [Flags]
+  public enum PlugInType : int
+  {
+    None=0,
+    Render = 1,
+    FileImport = 2,
+    FileExport = 4,
+    Digitizer = 8,
+    Utility = 16,
+    DisplayPipeline = 32,
+    DisplayEngine = 64,
+    Any = Render | FileImport | FileExport | Digitizer | Utility | DisplayPipeline | DisplayEngine
+  }
+
   public class PlugIn
   {
     System.Reflection.Assembly m_assembly;
@@ -678,6 +692,20 @@ namespace Rhino.PlugIns
 
     public static string[] GetInstalledPlugInNames()
     {
+      return GetInstalledPlugInNames(PlugInType.Any, true, true);
+    }
+
+    /// <summary>
+    /// Get a list of installed plug-in names.  The list can be restricted by some filters
+    /// </summary>
+    /// <param name="typeFilter">
+    /// 
+    /// </param>
+    /// <param name="loaded"></param>
+    /// <param name="unloaded"></param>
+    /// <returns></returns>
+    public static string[] GetInstalledPlugInNames(PlugInType typeFilter, bool loaded, bool unloaded)
+    {
       int count = InstalledPlugInCount;
       System.Collections.Generic.List<string> names = new System.Collections.Generic.List<string>(32);
       for (int i = 0; i < count; i++)
@@ -685,13 +713,18 @@ namespace Rhino.PlugIns
         IntPtr name = UnsafeNativeMethods.CRhinoPlugInManager_GetName(i);
         if (name != IntPtr.Zero)
         {
-          string sName = Marshal.PtrToStringUni(name);
-          if (string.IsNullOrEmpty(sName))
-            names.Add(sName);
+          if (UnsafeNativeMethods.CRhinoPlugInManager_PassesFilter(i, (int)typeFilter, loaded, unloaded))
+          {
+            string sName = Marshal.PtrToStringUni(name);
+            if (string.IsNullOrEmpty(sName))
+              names.Add(sName);
+
+          }
         }
       }
       return names.ToArray();
     }
+
     public static string[] GetInstalledPlugInFolders()
     {
       int count = InstalledPlugInCount;

@@ -89,7 +89,7 @@ internal partial class UnsafeNativeMethods
   internal static extern IntPtr CRhinoSkin_New(Rhino.Runtime.Skin.ShowSplashCallback cb, [MarshalAs(UnmanagedType.LPWStr)]string name, IntPtr hicon);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void CRhinoCommand_SetRunCommandCallback(Rhino.Commands.Command.RunCommandCallback cb);
+  internal static extern void CRhinoCommand_SetRunCommandCallbacks(Rhino.Commands.Command.RunCommandCallback cb, Rhino.Commands.Command.DoHelpCallback dohelp_cb, Rhino.Commands.Command.ContextHelpCallback contexthelp_cb);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoCommand_SetSelCommandCallback(Rhino.Commands.SelCommand.SelFilterCallback cb);

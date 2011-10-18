@@ -458,6 +458,19 @@ namespace Rhino.DocObjects
       return null;
     }
 
+    /// <summary>
+    /// Compute an estimate of the number of bytes that this object is using in memory.
+    /// Note that this is a runtime memory estimate and does not directly compare to the
+    /// amount of space take up by the object when saved to a file.
+    /// </summary>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public uint MemoryEstimate()
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_Object_SizeOf(pConstThis);
+    }
+
     //const int idxLayerIndex = 0;
     //const int idxGroupCount = 1;
     //const int idxSpace = 2;

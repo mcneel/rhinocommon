@@ -13,6 +13,16 @@ namespace Rhino.DocObjects
     {
       return UnsafeNativeMethods.CRhinoClippingPlaneObject_InternalCommitChanges;
     }
+
+    public Rhino.Geometry.ClippingPlaneSurface ClippingPlaneGeometry
+    {
+      get
+      {
+        Rhino.Geometry.ClippingPlaneSurface rc = this.Geometry as Rhino.Geometry.ClippingPlaneSurface;
+        return rc;
+      }
+    }
+
   }
 }
 #endif

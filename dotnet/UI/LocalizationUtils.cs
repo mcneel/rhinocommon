@@ -129,56 +129,95 @@ namespace Rhino.UI
         st.LocalizeControlTree(form_name, form_class_name, form, GetToolTip(form));
       }
     }
-
     /// <summary>
-    /// Iterate a controls list of data members for filed's of type System.ComponentModel.IContainer and if found
-    /// then iterate the containers control components and return the ToolTip components found
+    /// 
     /// </summary>
     /// <param name="c"></param>
-    /// <returns></returns>
-    static public ToolTip[] GetToolTip(Control c)
+    /// <param name="components"></param>
+    static public void GetContainersPropertiesFromControl(Control c, out List<System.ComponentModel.IContainer> components)
     {
-      List<ToolTip> result = new List<ToolTip>();
-      if (null != c)
+      components = null;
+      Type t = null == c ? null : c.GetType();
+      Type typeIContainer = typeof(System.ComponentModel.IContainer);
+      if (null != t && null != typeIContainer)
       {
-        Type t = c.GetType();
-        Type typeIContainer = typeof(System.ComponentModel.IContainer);
-        if (null != t && null != typeIContainer)
+        // Get a list of all of the public, private and protected members in the control "c"
+        MemberInfo[] members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        if (null != members)
         {
-          // Get a list of all of the public, private and protected members in the control "c"
-          MemberInfo[] members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-          if (null != members)
+          // Iterate the member list and exit when the first IContainer is found
+          components = new List<System.ComponentModel.IContainer>();
+          for (int i = 0; i < members.Length; i++)
           {
-            // Iterate the member list and exit when the first IContainer is found
-            List<System.ComponentModel.IContainer> components = new List<System.ComponentModel.IContainer>();
-            for (int i = 0; i < members.Length; i++)
+            if (0 != (members[i].MemberType & MemberTypes.Field))
             {
-              if (0 != (members[i].MemberType & MemberTypes.Field))
+              FieldInfo fi = members[i] as FieldInfo;
+              if (null != fi && typeIContainer.IsAssignableFrom(fi.FieldType))
               {
-                FieldInfo fi = members[i] as FieldInfo;
-                if (null != fi && typeIContainer.IsAssignableFrom(fi.FieldType))
-                {
-                  System.ComponentModel.IContainer test = fi.GetValue(c) as System.ComponentModel.IContainer;
-                  if (null != test)
-                    components.Add(test);
-                }
-              }
-            }
-            // Iterate the IContainer and stop when a ToolTip component is found
-            for (int x = 0; x < components.Count; x++)
-            {
-              System.ComponentModel.IContainer container = components[x];
-              for (int i = 0, cnt = container.Components.Count; i < cnt; i++)
-              {
-                ToolTip tooltip = container.Components[i] as ToolTip;
-                if (null != tooltip)
-                  result.Add(tooltip);
+                System.ComponentModel.IContainer test = fi.GetValue(c) as System.ComponentModel.IContainer;
+                if (null != test)
+                  components.Add(test);
               }
             }
           }
         }
       }
-      return (result.Count > 0 ? result.ToArray() : null);
+    }
+    /// <summary>
+    /// Check to see if there are any System.Window.Control items in any components lists associated with the control like System.Windows.Forms.ContextMenuStrip
+    /// which need to be localized
+    /// </summary>
+    /// <param name="control"></param>
+    /// <returns></returns>
+    static public Control[] GetComponentControls(Control control)
+    {
+      List<Control> result = null;
+      List<System.ComponentModel.IContainer> components;
+      GetContainersPropertiesFromControl(control, out components);
+      if (null != components)
+      {
+        result = new List<Control>();
+        // Iterate the IContainer and stop when a ToolTip component is found
+        for (int x = 0; x < components.Count; x++)
+        {
+          System.ComponentModel.IContainer container = components[x];
+          for (int i = 0, cnt = container.Components.Count; i < cnt; i++)
+          {
+            Control _control = container.Components[i] as Control;
+            if (null != _control)
+              result.Add(_control);
+          }
+        }
+      }
+      return (null != result && result.Count > 0 ? result.ToArray() : null);
+    }
+    /// <summary>
+    /// Iterate a controls list of data members for filed's of type System.ComponentModel.IContainer and if found
+    /// then iterate the containers control components and return the ToolTip components found
+    /// </summary>
+    /// <param name="control"></param>
+    /// <returns></returns>
+    static public ToolTip[] GetToolTip(Control control)
+    {
+      List<ToolTip> result = null;
+      List<System.ComponentModel.IContainer> components;
+      GetContainersPropertiesFromControl(control, out components);
+      if (null != components)
+      {
+        result = new List<ToolTip>();
+        // Iterate the IContainer and stop when a ToolTip component is found
+        for (int x = 0; x < components.Count; x++)
+        {
+          System.ComponentModel.IContainer container = components[x];
+          for (int i = 0, cnt = container.Components.Count; i < cnt; i++)
+          {
+            ToolTip tooltip = container.Components[i] as ToolTip;
+            if (null != tooltip)
+              result.Add(tooltip);
+          }
+        }
+      }
+      return (null != result && result.Count > 0 ? result.ToArray() : null);
     }
 
     public static void LocalizeToolStripItemCollection(Assembly a, int language_id, Control parent, ToolStripItemCollection collection)

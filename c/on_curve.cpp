@@ -273,13 +273,20 @@ RH_C_FUNCTION bool ON_Curve_Evaluate( const ON_Curve* pCurve, int derivatives, i
   return rc;
 }
 
-RH_C_FUNCTION bool ON_Curve_FrameAt( const ON_Curve* pCurve, double t, ON_PLANE_STRUCT* plane)
+RH_C_FUNCTION bool ON_Curve_FrameAt( const ON_Curve* pConstCurve, double t, ON_PLANE_STRUCT* plane, bool zero_twisting)
 {
   bool rc = false;
-  if( pCurve && plane )
+  if( pConstCurve && plane )
   {
     ON_Plane temp;
-    rc = pCurve->FrameAt(t, temp)?true:false;
+#if defined(RHINO_V5SR) // only available in V5
+    if( zero_twisting )
+      rc = RhinoGetPerpendicularCurvePlane(pConstCurve, t, temp);
+    else
+      rc = pConstCurve->FrameAt(t, temp)?true:false;
+#else
+    rc = pConstCurve->FrameAt(t, temp)?true:false;
+#endif
     CopyToPlaneStruct(*plane, temp);
   }
   return rc;

@@ -11,6 +11,36 @@
 
 // Rhino SDK Preamble
 #if defined(GRASSHOPPER_V4)
+////////////////////////////////////////////////////////////////////////////
+// BEGIN VOODOO CODE
+// Serious voodoo code that Dale Fugier recommend be added to force the V4
+// Grasshopper build of rhcommon_c to use the exact same CRT/MFC library
+// versions that Rhino4 SR9 is using
+#ifndef __midl
+#define _SXS_ASSEMBLY_VERSION "8.0.50727.762"
+#define _CRT_ASSEMBLY_VERSION _SXS_ASSEMBLY_VERSION
+#define _MFC_ASSEMBLY_VERSION _SXS_ASSEMBLY_VERSION
+#define _ATL_ASSEMBLY_VERSION _SXS_ASSEMBLY_VERSION
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+__declspec(selectany) int _forceCRTManifest;
+__declspec(selectany) int _forceMFCManifest;
+__declspec(selectany) int _forceAtlDllManifest;
+__declspec(selectany) int _forceCRTManifestRTM;
+__declspec(selectany) int _forceMFCManifestRTM;
+__declspec(selectany) int _forceAtlDllManifestRTM;
+#ifdef __cplusplus
+}
+#endif
+#endif
+// END VOODOO CODE
+////////////////////////////////////////////////////////////////////////////
+
+
+
+
 #include "../../../rhinosdk/rhino4/sdk/inc/rhinoSdkStdafxPreamble.h"
 #elif defined(OPENNURBS_BUILD)
 #include "../../opennurbs/opennurbs.h"

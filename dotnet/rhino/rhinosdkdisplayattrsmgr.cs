@@ -134,6 +134,20 @@ namespace Rhino.Display
       return null;
     }
 
+    public static DisplayModeDescription FindByName(string englishName)
+    {
+      DisplayModeDescription[] modes = GetDisplayModes();
+      if (modes != null)
+      {
+        for (int i = 0; i < modes.Length; i++)
+        {
+          if( string.Compare( modes[i].EnglishName, englishName, true )== 0 )
+            return modes[i];
+        }
+      }
+      return null;
+    }
+
     public static Guid AddDisplayMode(DisplayModeDescription displayMode)
     {
       IntPtr pDisplayMode = displayMode.NonConstPointer();

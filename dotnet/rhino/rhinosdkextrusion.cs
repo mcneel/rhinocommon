@@ -16,7 +16,7 @@ namespace Rhino.DocObjects
         return rc;
       }
     }
-    public Extrusion DuplicateBrepGeometry()
+    public Extrusion DuplicateExtrusionGeometry()
     {
       Extrusion rc = this.DuplicateGeometry() as Extrusion;
       return rc;

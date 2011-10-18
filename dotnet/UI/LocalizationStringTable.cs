@@ -348,8 +348,9 @@ namespace Rhino.UI
         }
       }
 
-      Control context_menu = ctrl.ContextMenuStrip;
-      if (null != context_menu)
+      // Localize child controls stored in this controls component list such as ContextMenuStrip items.
+      Control[] componentControls = LocalizationUtils.GetComponentControls(ctrl);
+      if (null != componentControls)
       {
         string ctrl_class_name = string.Empty;
         Type ctrl_type = ctrl.GetType();
@@ -357,7 +358,8 @@ namespace Rhino.UI
           ctrl_class_name = ctrl_type.Name;
         if (string.IsNullOrEmpty(ctrl_class_name))
           ctrl_class_name = form_class_name;
-        this.LocalizeControlTree(form_name, ctrl_class_name, context_menu, tooltips);
+        for (int i = 0; i < componentControls.Length; i++)
+          this.LocalizeControlTree(form_name, ctrl_class_name, componentControls[i], tooltips);
       }
 
       if( null != (ctrl as ToolStrip))
@@ -383,17 +385,27 @@ namespace Rhino.UI
               // check to see if any of the child controls are associated with the ToolTip Component
               if (!string.IsNullOrEmpty(tooltip.GetToolTip(c)))
               {
-                // This child control has a tooltip so attempt to find the controls ToolTipText entry
-                // in the string table and localize it if found
-                string key = form_name + "::" + c.Name + "::ToolTipText";
-                string value = null;
-                if (this.m_dialog_list.TryGetValue(key, out value))
-                  tooltip.SetToolTip(c, value);
-                else if (!string.IsNullOrEmpty(form_class_name))
+                string[] toolTipText = { "::ToolTipText", "::ToolTip" };
+                for (int k = 0; k < toolTipText.Length; k++)
                 {
-                  key = form_class_name + "::" + c.Name + "::ToolTipText";
+                  // This child control has a tooltip so attempt to find the controls ToolTipText entry
+                  // in the string table and localize it if found
+                  string key = form_name + "::" + c.Name + toolTipText[k];
+                  string value = null;
                   if (this.m_dialog_list.TryGetValue(key, out value))
+                  {
                     tooltip.SetToolTip(c, value);
+                    break;
+                  }
+                  else if (!string.IsNullOrEmpty(form_class_name))
+                  {
+                    key = form_class_name + "::" + c.Name + toolTipText[k];
+                    if (this.m_dialog_list.TryGetValue(key, out value))
+                    {
+                      tooltip.SetToolTip(c, value);
+                      break;
+                    }
+                  }
                 }
               }
             }
@@ -432,15 +444,25 @@ namespace Rhino.UI
         }
         if (!string.IsNullOrEmpty(tsi.ToolTipText))
         {
-          string key = form_name + "::" + tsi.Name + "::ToolTipText";
-          string value = null;
-          if (this.m_dialog_list.TryGetValue(key, out value))
-            tsi.ToolTipText = value;
-          else if (!string.IsNullOrEmpty(form_class_name))
+          string[] toolTipText = { "::ToolTipText", "::ToolTip" };
+          for (int k = 0; k < toolTipText.Length; k++)
           {
-            key = form_class_name + "::" + tsi.Name + "::ToolTipText";
+            string key = form_name + "::" + tsi.Name + toolTipText[k];
+            string value = null;
             if (this.m_dialog_list.TryGetValue(key, out value))
+            {
               tsi.ToolTipText = value;
+              break;
+            }
+            else if (!string.IsNullOrEmpty(form_class_name))
+            {
+              key = form_class_name + "::" + tsi.Name + toolTipText[k];
+              if (this.m_dialog_list.TryGetValue(key, out value))
+              {
+                tsi.ToolTipText = value;
+                break;
+              }
+            }
           }
         }
         if (null != (tsi as ToolStripDropDownItem))
@@ -539,7 +561,15 @@ namespace Rhino.UI
                   {
                     key= form_name + "::" + form_class_name + "::" + control_field_name + "::Text";
                     if (this.m_dialog_list.TryGetValue(key, out value))
+                    {
                       header.Text = value;
+                    }
+                    else
+                    {
+                      key = form_class_name + "::" + control_field_name + "::Text";
+                      if (this.m_dialog_list.TryGetValue(key, out value))
+                        header.Text = value;
+                    }
                   }
                 }
               }

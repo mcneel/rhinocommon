@@ -2368,17 +2368,43 @@ namespace Rhino.DocObjects.Tables
       IntPtr pIterator = it.NonConstPointer();
 
       int rc = UnsafeNativeMethods.CRhinoDoc_LookupObjectsByUserText(key, value, caseSensitive, searchGeometry, searchAttributes, pIterator, pArray);
-      if (rc == 0)
+
+      Rhino.DocObjects.RhinoObject[] objs = rhobjs.ToArray();
+      rhobjs.Dispose();
+      return objs;
+    }
+
+    /// <summary>
+    /// Find all of the clipping plane objects that actively clip a viewport
+    /// </summary>
+    /// <param name="viewport"></param>
+    /// <returns></returns>
+    public Rhino.DocObjects.ClippingPlaneObject[] FindClippingPlanesForViewport(Rhino.Display.RhinoViewport viewport)
+    {
+      Guid id = viewport.Id;
+
+      Rhino.DocObjects.RhinoObject[] clipping_planes = FindByObjectType(ObjectType.ClipPlane);
+      if (clipping_planes.Length == 0)
+        return new Rhino.DocObjects.ClippingPlaneObject[0];
+
+      List<Rhino.DocObjects.ClippingPlaneObject> rc = new List<ClippingPlaneObject>();
+      for (int i = 0; i < clipping_planes.Length; i++)
       {
-        rhobjs.Dispose();
-        return null;
+        Rhino.DocObjects.ClippingPlaneObject cp = clipping_planes[i] as Rhino.DocObjects.ClippingPlaneObject;
+        if (cp != null)
+        {
+          Guid[] ids = cp.ClippingPlaneGeometry.ViewportIds();
+          for (int j = 0; j < ids.Length; j++)
+          {
+            if (ids[j] == id)
+            {
+              rc.Add(cp);
+              break;
+            }
+          }
+        }
       }
-      else
-      {
-        Rhino.DocObjects.RhinoObject[] objs = rhobjs.ToArray();
-        rhobjs.Dispose();
-        return objs;
-      }
+      return rc.ToArray();
     }
 
 #region Object addition

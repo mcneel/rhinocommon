@@ -145,7 +145,9 @@ namespace Rhino.Commands
       if (null == m_RunCommand)
       {
         m_RunCommand = OnRunCommand;
-        UnsafeNativeMethods.CRhinoCommand_SetRunCommandCallback(m_RunCommand);
+        m_DoHelp = OnDoHelp;
+        m_ContextHelp = OnCommandContextHelpUrl;
+        UnsafeNativeMethods.CRhinoCommand_SetRunCommandCallbacks(m_RunCommand, m_DoHelp, m_ContextHelp);
       }
     }
 
@@ -203,6 +205,45 @@ namespace Rhino.Commands
       return (int)rc;
     }
 
+    protected virtual void OnHelp() { }
+    protected string CommandContextHelpUrl{ get { return string.Empty; } }
+    static void OnDoHelp(int command_serial_number)
+    {
+      try
+      {
+        Command cmd = LookUpBySerialNumber(command_serial_number);
+        if (cmd != null)
+          cmd.OnHelp();
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+    }
+    static int OnCommandContextHelpUrl(int command_serial_number, IntPtr pON_wString)
+    {
+      int rc = 0;
+      try
+      {
+        Command cmd = LookUpBySerialNumber(command_serial_number);
+        if (cmd != null && IntPtr.Zero != pON_wString)
+        {
+          string url = cmd.CommandContextHelpUrl;
+          if (!string.IsNullOrEmpty(url))
+          {
+            rc = 1;
+            UnsafeNativeMethods.ON_wString_Set(pON_wString, url);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+        rc = 0;
+      }
+      return rc;
+    }
+    
     /// <summary>
     /// Determines if Rhino is currently running a command. Because Rhino allow for transparent commands
     /// (commands that can be run from inside of other commands), this method returns the total ids of
@@ -308,6 +349,10 @@ namespace Rhino.Commands
     #region events
     internal delegate int RunCommandCallback(int command_serial_number, int doc_id, int mode);
     private static RunCommandCallback m_RunCommand;
+    internal delegate void DoHelpCallback(int command_serial_number);
+    private static DoHelpCallback m_DoHelp;
+    internal delegate int ContextHelpCallback(int command_serial_number, IntPtr pON_wString);
+    private static ContextHelpCallback m_ContextHelp;
 
     internal delegate void CommandCallback(Guid command_id, int rc);
     private static CommandCallback m_OnBeginCommand;

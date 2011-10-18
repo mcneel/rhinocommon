@@ -1592,6 +1592,22 @@ namespace Rhino.Display
         return (ViewportType)rc;
       }
     }
+
+    public Rhino.Display.DisplayModeDescription DisplayMode
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        Guid id = UnsafeNativeMethods.CRhinoViewport_DisplayModeId(pConstThis);
+        return Rhino.Display.DisplayModeDescription.GetDisplayMode(id);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        Guid id = value.Id;
+        UnsafeNativeMethods.CRhinoViewport_SetDisplayMode(pThis, id);
+      }
+    }
   }
 #endif
 

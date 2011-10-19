@@ -26,7 +26,7 @@ Imports Rhino.PlugIns
 <Assembly: AssemblyDescription("examples_vb")> 
 <Assembly: AssemblyCompany("Robert McNeel & Associates")> 
 <Assembly: AssemblyProduct("examples_vb")> 
-<Assembly: AssemblyCopyright("Copyright ©  2010")> 
+<Assembly: AssemblyCopyright("Copyright ©  2011")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>

@@ -109,6 +109,7 @@
     <Compile Include="ex_createblock.vb" />
     <Compile Include="ex_curveboundingbox.vb" />
     <Compile Include="ex_dividebylength.vb" />
+    <Compile Include="ex_drawoverlay.vb" />
     <Compile Include="ex_dupborder.vb" />
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_constrainedcopy.vb" />

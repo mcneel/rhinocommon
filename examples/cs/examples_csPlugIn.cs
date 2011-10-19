@@ -45,7 +45,7 @@ namespace examples_cs
         count = (int)value;
       }
       count++;
-      m_dict.SetItem("RunCommand Count", count);
+      m_dict.Set("RunCommand Count", count);
     }
 
     protected override void OptionsDialogPages(System.Collections.Generic.List<Rhino.UI.OptionsDialogPage> pages)

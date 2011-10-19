@@ -282,8 +282,6 @@ namespace Rhino.DocObjects
     }
   }
 
-  //public class ON_3dmRenderSettings { }
-
   /// <summary>
   /// Information about the model's position in latitude, longitude,
   /// and elevation for GIS mapping applications
@@ -544,6 +542,235 @@ namespace Rhino.DocObjects
 
   //public class ON_3dmIOSettings { }
   //public class ON_3dmSettings { }
+}
+
+namespace Rhino.Render
+{
+  public class RenderSettings : IDisposable
+  {
+    Rhino.RhinoDoc m_doc;
+    IntPtr m_ptr = IntPtr.Zero;
+
+    public RenderSettings()
+    {
+      m_ptr = UnsafeNativeMethods.ON_3dmRenderSettings_New(IntPtr.Zero);
+    }
+
+#if RHINO_SDK
+    internal RenderSettings(RhinoDoc doc)
+    {
+      m_doc = doc;
+    }
+#endif
+    internal IntPtr ConstPointer()
+    {
+      if( m_ptr!=IntPtr.Zero )
+        return m_ptr;
+      return UnsafeNativeMethods.ON_3dmRenderSettings_ConstPointer(m_doc.m_docId);
+    }
+    IntPtr NonConstPointer()
+    {
+      if (m_ptr == IntPtr.Zero)
+      {
+        IntPtr ptr = ConstPointer();
+        m_ptr = UnsafeNativeMethods.ON_3dmRenderSettings_New(ptr);
+      }
+      return m_ptr;
+    }
+    
+    ~RenderSettings() { Dispose(false); }
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_ptr)
+        UnsafeNativeMethods.ON_3dmRenderSettings_Delete(m_ptr);
+      m_ptr = IntPtr.Zero;
+    }
+
+    const int idxAmbientLight = 0;
+    const int idxBackgroundColorTop = 1;
+    const int idxBackgroundColorBottom = 2;
+    System.Drawing.Color GetColor(int which)
+    {
+      IntPtr pConstThis = ConstPointer();
+      int abgr = UnsafeNativeMethods.ON_3dmRenderSettings_GetColor(pConstThis, which);
+      return System.Drawing.ColorTranslator.FromWin32(abgr);
+    }
+    void SetColor(int which, System.Drawing.Color c)
+    {
+      IntPtr pThis = NonConstPointer();
+      int argb = c.ToArgb();
+      UnsafeNativeMethods.ON_3dmRenderSettings_SetColor(pThis, which, argb);
+    }
+
+
+    public System.Drawing.Color AmbientLight
+    {
+      get { return GetColor(idxAmbientLight); }
+      set { SetColor(idxAmbientLight, value); }
+    }
+
+    /// <summary>
+    /// Also the background color if a solid background color is set
+    /// </summary>
+    public System.Drawing.Color BackgroundColorTop
+    {
+      get { return GetColor(idxBackgroundColorTop); }
+      set { SetColor(idxBackgroundColorTop, value); }
+    }
+    public System.Drawing.Color BackgroundColorBottom
+    {
+      get { return GetColor(idxBackgroundColorBottom); }
+      set { SetColor(idxBackgroundColorBottom, value); }
+    }
+
+    bool GetBool(int which)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_3dmRenderSettings_GetBool(pConstThis, which);
+    }
+    void SetBool(int which, bool b)
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_3dmRenderSettings_SetBool(pThis, which, b);
+    }
+
+    const int idxUseHiddenLights = 0;
+    const int idxDepthCue = 1;
+    const int idxFlatShade = 2;
+    const int idxRenderBackFaces = 3;
+    const int idxRenderPoints = 4;
+    const int idxRenderCurves = 5;
+    const int idxRenderIsoparams = 6;
+    const int idxRenderMeshEdges = 7;
+    const int idxRenderAnnotation = 8;
+
+    /// <summary>Use lights on layers that are off</summary>
+    public bool UseHiddenLights
+    {
+      get { return GetBool(idxUseHiddenLights); }
+      set { SetBool(idxUseHiddenLights, value); }
+    }
+    public bool DepthCue
+    {
+      get { return GetBool(idxDepthCue); }
+      set { SetBool(idxDepthCue, value); }
+    }
+    public bool FlatShade
+    {
+      get { return GetBool(idxFlatShade); }
+      set { SetBool(idxFlatShade, value); }
+    }
+    public bool RenderBackfaces
+    {
+      get { return GetBool(idxRenderBackFaces); }
+      set { SetBool(idxRenderBackFaces, value); }
+    }
+    public bool RenderPoints
+    {
+      get { return GetBool(idxRenderPoints); }
+      set { SetBool(idxRenderPoints, value); }
+    }
+    public bool RenderCurves
+    {
+      get { return GetBool(idxRenderCurves); }
+      set { SetBool(idxRenderCurves, value); }
+    }
+    public bool RenderIsoparams
+    {
+      get { return GetBool(idxRenderIsoparams); }
+      set { SetBool(idxRenderIsoparams, value); }
+    }
+    public bool RenderMeshEdges
+    {
+      get { return GetBool(idxRenderMeshEdges); }
+      set { SetBool(idxRenderMeshEdges, value); }
+    }
+    public bool RenderAnnotations
+    {
+      get { return GetBool(idxRenderAnnotation); }
+      set { SetBool(idxRenderAnnotation, value); }
+    }
+
+    int GetInt(int which)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.ON_3dmRenderSettings_GetInt(pConstThis, which);
+    }
+    void SetInt(int which, int i)
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_3dmRenderSettings_SetInt(pThis, which, i);
+    }
+
+    const int idxBackgroundStyle = 0;
+    const int idxAntialiasStyle = 1;
+    const int idxShadowmapStyle = 2;
+    const int idxShadowmapWidth = 3;
+    const int idxShadowmapHeight = 4;
+    const int idxImageWidth = 5;
+    const int idxImageHeight = 6;
+
+    /// <summary>
+    /// 0=none, 1=normal, 2=best
+    /// </summary>
+    public int AntialiasLevel
+    {
+      get { return GetInt(idxAntialiasStyle); }
+      set { SetInt(idxAntialiasStyle, value); }
+    }
+
+    public System.Drawing.Size ImageSize
+    {
+      get
+      {
+        int width = GetInt(idxImageWidth);
+        int height = GetInt(idxImageHeight);
+        return new System.Drawing.Size(width, height);
+      }
+      set
+      {
+        SetInt(idxImageWidth, value.Width);
+        SetInt(idxImageHeight, value.Height);
+      }
+    }
+
+    /// <summary>
+    /// 0=none, 1=normal, 2=best
+    /// </summary>
+    public int ShadowmapLevel
+    {
+      get { return GetInt(idxShadowmapStyle); }
+      set { SetInt(idxShadowmapStyle, value); }
+    }
+
+    //int m_background_style; // 0 = solid color, 1 = "wallpaper" image, 2 = Gradient, 3 = Environment
+    //ON_wString m_background_bitmap_filename;
+    //int m_shadowmap_width;
+    //int m_shadowmap_height;
+    //double m_shadowmap_offset;
+    
+  // Flags that are used to determine which render settings a render
+  // plugin uses, and which ones the display pipeline should use.
+  // Note: Render plugins set these, and they don't need to persist
+  //       in the document...Also, when set, they turn OFF their
+  //       corresponding setting in the Display Attributes Manager's
+  //       UI pages for "Rendered" mode.
+  //bool    m_bUsesAmbientAttr;
+  //bool    m_bUsesBackgroundAttr;
+  //bool    m_bUsesBackfaceAttr;
+  //bool    m_bUsesPointsAttr;
+  //bool    m_bUsesCurvesAttr;
+  //bool    m_bUsesIsoparmsAttr;
+  //bool    m_bUsesMeshEdgesAttr;
+  //bool    m_bUsesAnnotationAttr;
+  //bool    m_bUsesHiddenLightsAttr;
+  }
 }
 
 namespace Rhino.FileIO

@@ -210,6 +210,43 @@ internal partial class UnsafeNativeMethods
   //int ON_3dmSettings_GetSetUnitSystem(ON_3dmSettings* pSettings, bool model, bool set, int set_val)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_3dmSettings_GetSetUnitSystem(IntPtr pSettings, [MarshalAs(UnmanagedType.U1)]bool model, [MarshalAs(UnmanagedType.U1)]bool set, int set_val);
+
+  //ON_3dmRenderSettings* ON_3dmRenderSettings_New(const ON_3dmRenderSettings* other)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_3dmRenderSettings_New(IntPtr other);
+
+  //const ON_3dmRenderSettings* ON_3dmRenderSettings_ConstPointer(int docId)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_3dmRenderSettings_ConstPointer(int docId);
+
+  //void ON_3dmRenderSettings_Delete(ON_3dmRenderSettings* pRenderSettings)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_3dmRenderSettings_Delete(IntPtr pRenderSettings);
+
+  //int ON_3dmRenderSettings_GetColor(const ON_3dmRenderSettings* pConstRenderSettings, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_3dmRenderSettings_GetColor(IntPtr pConstRenderSettings, int which);
+
+  //void ON_3dmRenderSettings_SetColor(ON_3dmRenderSettings* pRenderSettings, int which, int argb)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_3dmRenderSettings_SetColor(IntPtr pRenderSettings, int which, int argb);
+
+  //bool ON_3dmRenderSettings_GetBool(const ON_3dmRenderSettings* pConstRenderSettings, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_3dmRenderSettings_GetBool(IntPtr pConstRenderSettings, int which);
+
+  //void ON_3dmRenderSettings_SetBool(ON_3dmRenderSettings* pRenderSettings, int which, bool b)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_3dmRenderSettings_SetBool(IntPtr pRenderSettings, int which, [MarshalAs(UnmanagedType.U1)]bool b);
+
+  //int ON_3dmRenderSettings_GetInt(const ON_3dmRenderSettings* pConstRenderSettings, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_3dmRenderSettings_GetInt(IntPtr pConstRenderSettings, int which);
+
+  //void ON_3dmRenderSettings_SetInt(ON_3dmRenderSettings* pRenderSettings, int which, int i)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_3dmRenderSettings_SetInt(IntPtr pRenderSettings, int which, int i);
   #endregion
 
 
@@ -5574,6 +5611,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDoc_SetDocTextString(int docId, [MarshalAs(UnmanagedType.LPWStr)]string key, [MarshalAs(UnmanagedType.LPWStr)]string value);
 
+  //void CRhinoDoc_DeleteDocTextString(int docId, const RHMONO_STRING* key)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDoc_DeleteDocTextString(int docId, [MarshalAs(UnmanagedType.LPWStr)]string key);
+
   //void CRhinoDoc_FlashObjectList(int doc_id, ON_SimpleArray<const CRhinoObject*>* list, bool useSelectionColor)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDoc_FlashObjectList(int doc_id, IntPtr list, [MarshalAs(UnmanagedType.U1)]bool useSelectionColor);
@@ -5696,6 +5737,10 @@ internal partial class UnsafeNativeMethods
   //void CRhinoDocProperties_SetEarthAnchorPoint(int docId, const ON_EarthAnchorPoint* pConstEarthAnchor)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDocProperties_SetEarthAnchorPoint(int docId, IntPtr pConstEarthAnchor);
+
+  //void CRhinoDocProperties_SetRenderSettings(int docId, const ON_3dmRenderSettings* pConstRenderSettings)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDocProperties_SetRenderSettings(int docId, IntPtr pConstRenderSettings);
   #endregion
 
 

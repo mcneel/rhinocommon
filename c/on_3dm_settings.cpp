@@ -346,3 +346,255 @@ RH_C_FUNCTION int ON_3dmSettings_GetSetUnitSystem(ON_3dmSettings* pSettings, boo
   }
   return rc;
 }
+
+RH_C_FUNCTION ON_3dmRenderSettings* ON_3dmRenderSettings_New(const ON_3dmRenderSettings* other)
+{
+  if( other )
+    return new ON_3dmRenderSettings(*other);
+  return new ON_3dmRenderSettings();
+}
+
+RH_C_FUNCTION const ON_3dmRenderSettings* ON_3dmRenderSettings_ConstPointer(int docId)
+{
+  const ON_3dmRenderSettings* rc = NULL;
+  CRhinoDoc* pDoc = RhDocFromId(docId);
+  if( pDoc )
+    rc = &(pDoc->Properties().RenderSettings());
+  return rc;
+}
+
+RH_C_FUNCTION void ON_3dmRenderSettings_Delete(ON_3dmRenderSettings* pRenderSettings)
+{
+  if( pRenderSettings )
+    delete pRenderSettings;
+}
+
+RH_C_FUNCTION int ON_3dmRenderSettings_GetColor(const ON_3dmRenderSettings* pConstRenderSettings, int which)
+{
+  const int idxAmbientLight = 0;
+  const int idxBackgroundColorTop = 1;
+  const int idxBackgroundColorBottom = 2;
+  int rc = 0;
+  if( pConstRenderSettings )
+  {
+    unsigned int abgr=0;
+    switch(which)
+    {
+    case idxAmbientLight:
+      abgr = (unsigned int)(pConstRenderSettings->m_ambient_light);
+      break;
+    case idxBackgroundColorTop:
+      abgr = (unsigned int)(pConstRenderSettings->m_background_color);
+      break;
+    case idxBackgroundColorBottom:
+      abgr = (unsigned int)(pConstRenderSettings->m_background_bottom_color);
+      break;
+    }
+    rc = (int)abgr;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION void ON_3dmRenderSettings_SetColor(ON_3dmRenderSettings* pRenderSettings, int which, int argb)
+{
+  const int idxAmbientLight = 0;
+  const int idxBackgroundColorTop = 1;
+  const int idxBackgroundColorBottom = 2;
+  if( pRenderSettings )
+  {
+    unsigned int abgr = ARGB_to_ABGR(argb);
+    switch(which)
+    {
+    case idxAmbientLight:
+      pRenderSettings->m_ambient_light = abgr;
+      break;
+    case idxBackgroundColorTop:
+      pRenderSettings->m_background_color = abgr;
+      break;
+    case idxBackgroundColorBottom:
+      pRenderSettings->m_background_bottom_color = abgr;
+      break;
+    }
+  }
+}
+
+RH_C_FUNCTION bool ON_3dmRenderSettings_GetBool(const ON_3dmRenderSettings* pConstRenderSettings, int which)
+{
+  const int idxUseHiddenLights = 0;
+  const int idxDepthCue = 1;
+  const int idxFlatShade = 2;
+  const int idxRenderBackFaces = 3;
+  const int idxRenderPoints = 4;
+  const int idxRenderCurves = 5;
+  const int idxRenderIsoparams = 6;
+  const int idxRenderMeshEdges = 7;
+  const int idxRenderAnnotation = 8;
+  bool rc = false;
+  if( pConstRenderSettings )
+  {
+    switch(which)
+    {
+    case idxUseHiddenLights:
+      rc = pConstRenderSettings->m_bUseHiddenLights?true:false;
+      break;
+    case idxDepthCue:
+      rc = pConstRenderSettings->m_bDepthCue?true:false;
+      break;
+    case idxFlatShade:
+      rc = pConstRenderSettings->m_bFlatShade?true:false;
+      break;
+    case idxRenderBackFaces:
+      rc = pConstRenderSettings->m_bRenderBackfaces?true:false;
+      break;
+    case idxRenderPoints:
+      rc = pConstRenderSettings->m_bRenderPoints?true:false;
+      break;
+    case idxRenderCurves:
+      rc = pConstRenderSettings->m_bRenderCurves?true:false;
+      break;
+    case idxRenderIsoparams:
+      rc= pConstRenderSettings->m_bRenderIsoparams?true:false;
+      break;
+    case idxRenderMeshEdges:
+      rc = pConstRenderSettings->m_bRenderMeshEdges?true:false;
+      break;
+    case idxRenderAnnotation:
+      rc = pConstRenderSettings->m_bRenderAnnotation?true:false;
+      break;
+    default:
+      break;
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION void ON_3dmRenderSettings_SetBool(ON_3dmRenderSettings* pRenderSettings, int which, bool b)
+{
+  const int idxUseHiddenLights = 0;
+  const int idxDepthCue = 1;
+  const int idxFlatShade = 2;
+  const int idxRenderBackFaces = 3;
+  const int idxRenderPoints = 4;
+  const int idxRenderCurves = 5;
+  const int idxRenderIsoparams = 6;
+  const int idxRenderMeshEdges = 7;
+  const int idxRenderAnnotation = 8;
+  if( pRenderSettings )
+  {
+    switch(which)
+    {
+    case idxUseHiddenLights:
+      pRenderSettings->m_bUseHiddenLights = b;
+      break;
+    case idxDepthCue:
+      pRenderSettings->m_bDepthCue = b;
+      break;
+    case idxFlatShade:
+      pRenderSettings->m_bFlatShade = b;
+      break;
+    case idxRenderBackFaces:
+      pRenderSettings->m_bRenderBackfaces = b;
+      break;
+    case idxRenderPoints:
+      pRenderSettings->m_bRenderPoints = b;
+      break;
+    case idxRenderCurves:
+      pRenderSettings->m_bRenderCurves = b;
+      break;
+    case idxRenderIsoparams:
+      pRenderSettings->m_bRenderIsoparams = b;
+      break;
+    case idxRenderMeshEdges:
+      pRenderSettings->m_bRenderMeshEdges = b;
+      break;
+    case idxRenderAnnotation:
+      pRenderSettings->m_bRenderAnnotation = b;
+      break;
+    default:
+      break;
+    }
+  }
+}
+
+RH_C_FUNCTION int ON_3dmRenderSettings_GetInt(const ON_3dmRenderSettings* pConstRenderSettings, int which)
+{
+  const int idxBackgroundStyle = 0;
+  const int idxAntialiasStyle = 1;
+  const int idxShadowmapStyle = 2;
+  const int idxShadowmapWidth = 3;
+  const int idxShadowmapHeight = 4;
+  const int idxImageWidth = 5;
+  const int idxImageHeight = 6;
+  int rc = 0;
+  if( pConstRenderSettings )
+  {
+    switch(which)
+    {
+    case idxBackgroundStyle:
+      rc = pConstRenderSettings->m_background_style;
+      break;
+    case idxAntialiasStyle:
+      rc = pConstRenderSettings->m_antialias_style;
+      break;
+    case idxShadowmapStyle:
+      rc = pConstRenderSettings->m_shadowmap_style;
+      break;
+    case idxShadowmapWidth:
+      rc = pConstRenderSettings->m_shadowmap_width;
+      break;
+    case idxShadowmapHeight:
+      rc = pConstRenderSettings->m_shadowmap_height;
+      break;
+    case idxImageWidth:
+      rc = pConstRenderSettings->m_image_width;
+      break;
+    case idxImageHeight:
+      rc = pConstRenderSettings->m_image_height;
+      break;
+    default:
+      break;
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION void ON_3dmRenderSettings_SetInt(ON_3dmRenderSettings* pRenderSettings, int which, int i)
+{
+  const int idxBackgroundStyle = 0;
+  const int idxAntialiasStyle = 1;
+  const int idxShadowmapStyle = 2;
+  const int idxShadowmapWidth = 3;
+  const int idxShadowmapHeight = 4;
+  const int idxImageWidth = 5;
+  const int idxImageHeight = 6;
+  int rc = 0;
+  if( pRenderSettings )
+  {
+    switch(which)
+    {
+    case idxBackgroundStyle:
+      pRenderSettings->m_background_style = i;
+      break;
+    case idxAntialiasStyle:
+      pRenderSettings->m_antialias_style = i;
+      break;
+    case idxShadowmapStyle:
+      pRenderSettings->m_shadowmap_style = i;
+      break;
+    case idxShadowmapWidth:
+      pRenderSettings->m_shadowmap_width = i;
+      break;
+    case idxShadowmapHeight:
+      pRenderSettings->m_shadowmap_height = i;
+      break;
+    case idxImageWidth:
+      pRenderSettings->m_image_width = i;
+      break;
+    case idxImageHeight:
+      pRenderSettings->m_image_height = i;
+      break;
+    default:
+      break;
+    }
+  }
+}

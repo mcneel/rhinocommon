@@ -716,7 +716,7 @@ namespace Rhino.PlugIns
           if (UnsafeNativeMethods.CRhinoPlugInManager_PassesFilter(i, (int)typeFilter, loaded, unloaded))
           {
             string sName = Marshal.PtrToStringUni(name);
-            if (string.IsNullOrEmpty(sName))
+            if (!string.IsNullOrEmpty(sName))
               names.Add(sName);
 
           }

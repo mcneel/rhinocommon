@@ -171,7 +171,7 @@ namespace Rhino.Commands
     public abstract string EnglishName{ get; }
     public virtual string LocalName
     {
-      get { return EnglishName; }
+      get { return Rhino.UI.Localization.LocalizeCommandName(EnglishName, this); }
     }
 
     public PersistentSettings Settings

@@ -401,6 +401,16 @@ namespace Rhino
       }
     }
 
+    public Rhino.Render.RenderSettings RenderSettings
+    {
+      get { return new Rhino.Render.RenderSettings(this); }
+      set
+      {
+        IntPtr pConstRenderSettings = value.ConstPointer();
+        UnsafeNativeMethods.CRhinoDocProperties_SetRenderSettings(m_docId, pConstRenderSettings);
+      }
+    }
+
 #region tables
     private Rhino.DocObjects.Tables.ViewTable m_view_table;
     public Rhino.DocObjects.Tables.ViewTable Views
@@ -4743,8 +4753,6 @@ namespace Rhino.DocObjects.Tables
     /// <returns></returns>
     public string[] GetEntryNames(string section)
     {
-      if (String.IsNullOrEmpty(section))
-        return null;
       section += "\\";
       int count = Count;
       List<string> rc = new List<string>();
@@ -4752,14 +4760,16 @@ namespace Rhino.DocObjects.Tables
       {
         string key = GetKey(i);
         if (key != null && key.StartsWith(section))
-          rc.Add(GetValue(i));
+        {
+          rc.Add(key.Substring(section.Length));
+        }
       }
       return rc.ToArray();
     }
 
 
     /// <summary>
-    /// Adds or sets a user data string to the document. This string is the same string set when using RhinoScript or IronPython
+    /// Adds or sets a user data string to the document.
     /// </summary>
     /// <param name="section"></param>
     /// <param name="entry"></param>
@@ -4769,10 +4779,9 @@ namespace Rhino.DocObjects.Tables
     /// </returns>
     public string SetString(string section, string entry, string value)
     {
-      if (string.IsNullOrEmpty(section) || string.IsNullOrEmpty(entry))
-        return null;
-
-      string key = section + "\\" + entry;
+      string key = section;
+      if( !string.IsNullOrEmpty(entry) )
+        key = section + "\\" + entry;
       string rc = GetValue(key);
       UnsafeNativeMethods.CRhinoDoc_SetDocTextString(m_doc.m_docId, key, value);
       return rc;
@@ -4790,21 +4799,29 @@ namespace Rhino.DocObjects.Tables
     /// </summary>
     /// <param name="section">name of section to delete. If null, all sections will be deleted</param>
     /// <param name="entry">name of entry to delete. If null, all entries will be deleted for a given section</param>
-    /// <returns>true or false indicating success or failure</returns>
-    public bool Delete(string section, string entry)
+    public void Delete(string section, string entry)
     {
-      bool rc;
-      try
+      if (null == section)
       {
-        object rs = Runtime.HostUtils.GetRhinoScriptObject();
-        object invoke_result = rs.GetType().InvokeMember("DeleteDocumentData", System.Reflection.BindingFlags.InvokeMethod, null, rs, new object[] { section, entry });
-        rc = (bool)invoke_result;
+        UnsafeNativeMethods.CRhinoDoc_DeleteDocTextString(m_doc.m_docId, null);
+        return;
       }
-      catch (Exception)
+
+      if (null == entry)
       {
-        rc = false;
+        string[] entries = GetEntryNames(section);
+        for (int i = 0; i < entries.Length; i++)
+        {
+          string key = section + "\\" + entries[i];
+          UnsafeNativeMethods.CRhinoDoc_DeleteDocTextString(m_doc.m_docId, key);
+        }
+        UnsafeNativeMethods.CRhinoDoc_DeleteDocTextString(m_doc.m_docId, section);
       }
-      return rc;
+      else
+      {
+        string key = section + "\\" + entry;
+        UnsafeNativeMethods.CRhinoDoc_DeleteDocTextString(m_doc.m_docId, key);
+      }
     }
   }
 }

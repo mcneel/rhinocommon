@@ -4,6 +4,8 @@ using System.Text;
 using System.Reflection;
 using System.Windows.Forms;
 
+// RMA_DONT_LOCALIZE (Tells the build process string parser to ignore this file)
+
 namespace Rhino.UI
 {
   static class LocalizationUtils

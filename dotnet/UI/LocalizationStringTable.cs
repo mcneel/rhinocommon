@@ -5,12 +5,14 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 
+// RMA_DONT_LOCALIZE (Tells the build process string parser to ignore this file)
+
 namespace Rhino.UI
 {
   class LocalizationStringTable
   {
     // NOTE: we may want to use System.Collections.Specialized.StringDictionary instead
-    Dictionary<string, string> m_command_list = new Dictionary<string,string>();
+    Dictionary<string, string> m_command_list = new Dictionary<string, string>();
     Dictionary<string, string> m_string_list = new Dictionary<string, string>();
     Dictionary<string, string> m_dialog_list = new Dictionary<string, string>();
 
@@ -364,7 +366,7 @@ namespace Rhino.UI
 
       if( null != (ctrl as ToolStrip))
         this.LocalizeToolStripCollection(form_name, form_class_name, (ctrl as ToolStrip).Items);
-      else if (null != (ctrl as ListBoxForm))
+      else if (null != (ctrl as ListBox))
         this.LocalizeListBoxItems(form_name, form_class_name, ctrl as ListBox);
       else if (null != (ctrl as ListView))
         this.LocalizeListView(form_name, form_class_name, ctrl as ListView);
@@ -585,7 +587,7 @@ namespace Rhino.UI
     /// <param name="form_name"></param>
     /// <param name="form_class_name"></param>
     /// <param name="cb"></param>
-    void LocalizeComboBoxItems(string form_name, string form_class_name, ComboBox cb)
+    public void LocalizeComboBoxItems(string form_name, string form_class_name, ComboBox cb)
     {
       if (null == form_name || null == cb || string.IsNullOrEmpty(cb.Name))
         return;

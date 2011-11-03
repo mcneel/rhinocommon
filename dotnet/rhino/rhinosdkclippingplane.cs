@@ -3,6 +3,9 @@ using System;
 #if RHINO_SDK
 namespace Rhino.DocObjects
 {
+  /// <summary>
+  /// The Rhino cliping plane object, as accessible in the Rhino document
+  /// </summary>
   public class ClippingPlaneObject : RhinoObject
   {
     internal ClippingPlaneObject(uint serialNumber)

@@ -2,6 +2,9 @@ using System;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Provides strongly-typed access to Brep faces
+  /// </summary>
   public class SurfaceProxy : Surface
   {
     protected SurfaceProxy()

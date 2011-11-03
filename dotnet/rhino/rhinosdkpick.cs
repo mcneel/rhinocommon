@@ -3,6 +3,9 @@ using System;
 #if RHINO_SDK
 namespace Rhino.Input.Custom
 {
+  /// <summary>
+  /// Provides picking values that describe common CAD picking behavior
+  /// </summary>
   public enum PickStyle : int
   {
     None = 0,
@@ -11,7 +14,9 @@ namespace Rhino.Input.Custom
     CrossingPick = 3
   }
 
-
+  /// <summary>
+  /// Privides storage for picking operations
+  /// </summary>
   public class PickContext : IDisposable
   {
     public PickContext()

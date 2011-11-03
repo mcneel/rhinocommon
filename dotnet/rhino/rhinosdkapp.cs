@@ -3,6 +3,9 @@ using Rhino.ApplicationSettings;
 
 namespace Rhino.ApplicationSettings
 {
+  /// <summary>
+  /// Provides valid values for license node types
+  /// </summary>
   public enum LicenseNode : int
   {
     Standalone = 0,
@@ -16,6 +19,9 @@ namespace Rhino.ApplicationSettings
     NetworkCheckedOut = 2
   }
 
+  /// <summary>
+  /// Provides valid values for the Rhino license installation group
+  /// </summary>
   public enum Installation : int
   {
     Undefined = 0,   // = CRhinoApp::installation_undefined,

@@ -6,6 +6,10 @@ using System.Security.Permissions;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents an interval in one-dimensional space,
+  /// that is defined as two extrema or bounds.
+  /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_t0}, {m_t1})")]
   [Serializable]
@@ -17,11 +21,21 @@ namespace Rhino.Geometry
     #endregion
 
     #region Constructors
+    /// <summary>
+    /// Constructs a new instance of the Rhino.Geometry.Interval class.
+    /// </summary>
+    /// <param name="t0">The first value</param>
+    /// <param name="t1">The second value</param>
     public Interval(double t0, double t1)
     {
       m_t0 = t0;
       m_t1 = t1;
     }
+
+    /// <summary>
+    /// Constructs a new instance copying the other instance values.
+    /// </summary>
+    /// <param name="other">The Rhino.Geometry.Interval to use as a base</param>
     public Interval(Interval other)
     {
       m_t0 = other.m_t0;
@@ -44,48 +58,104 @@ namespace Rhino.Geometry
     #endregion
 
     #region Operators
+    /// <summary>
+    /// Determines whether the two Intervals have equal values.
+    /// </summary>
+    /// <param name="a">The first interval</param>
+    /// <param name="b">The second interval</param>
+    /// <returns>True if the components of the two intervals are exactly equal; otherwise False</returns>
     public static bool operator ==(Interval a, Interval b)
     {
-      return a.CompareTo(b) == 0 ? true : false;
-    }
-    public static bool operator !=(Interval a, Interval b)
-    {
-      return a.CompareTo(b) == 0 ? false : true;
+      return a.CompareTo(b) == 0;
     }
 
+    /// <summary>
+    /// Determines whether the two Intervals have different values.
+    /// </summary>
+    /// <param name="a">The first interval</param>
+    /// <param name="b">The second interval</param>
+    /// <returns>True if the two intervals are different in any value; False if they are equal</returns>
+    public static bool operator !=(Interval a, Interval b)
+    {
+      return a.CompareTo(b) != 0;
+    }
+
+    /// <summary>
+    /// Shifts a <see cref="Interval" /> by a specific amount (addition).
+    /// </summary>
+    /// <param name="interval">The interval to be used as a base</param>
+    /// <param name="number">The shifting value</param>
+    /// <returns>A new interval where T0 and T1 are summed with number</returns>
     public static Interval operator +(Interval interval, double number)
     {
       return new Interval(interval.m_t0 + number, interval.m_t1 + number);
     }
+
+    /// <summary>
+    /// Shifts an interval by a specific amount (addition).
+    /// </summary>
+    /// <param name="number">The shifting value</param>
+    /// <param name="interval">The interval to be used as a base</param>
+    /// <returns>A new interval where T0 and T1 are summed with number</returns>
     public static Interval operator +(double number, Interval interval)
     {
       return new Interval(interval.m_t0 + number, interval.m_t1 + number);
     }
+
+    /// <summary>
+    /// Shifts an interval by a specific amount (subtraction).
+    /// </summary>
+    /// <param name="interval">The base interval (minuend)</param>
+    /// <param name="number">The shifting value to be subtracted (subtrahend)</param>
+    /// <returns>A new interval with [T0-number, T1-number]</returns>
     public static Interval operator -(Interval interval, double number)
     {
       return new Interval(interval.m_t0 - number, interval.m_t1 - number);
     }
+
+    /// <summary>
+    /// Shifts an interval by a specific amount (subtraction).
+    /// </summary>
+    /// <param name="number">The shifting value to subtract from (minuend)</param>
+    /// <param name="interval">The interval to be subtracted from (subtrahend)</param>
+    /// <returns>A new interval with [number-T0, number-T1]</returns>
     public static Interval operator -(double number, Interval interval)
     {
       return new Interval(number - interval.m_t0, number - interval.m_t1);
     }
 
+    /// <summary>
+    /// Computes the Hash code for this <see cref="Interval" /> object.
+    /// </summary>
+    /// <returns>A hash value that might be equal for two different <see cref="Interval" /> values</returns>
     public override int GetHashCode()
     {
       // MSDN docs recommend XOR'ing the internal values to get a hash code
       return m_t0.GetHashCode() ^ m_t1.GetHashCode();
     }
+
+    /// <summary>
+    /// Determines whether the specified <see cref="Interval" /> is equal to the current <see cref="Interval" />,
+    /// comparing by value.
+    /// </summary>
+    /// <param name="obj">The other object to compare with</param>
+    /// <returns>True if obj is an <see cref="Interval" /> and has the same bounds; false otherwise</returns>
     public override bool Equals(object obj)
     {
       return (obj is Interval && this == (Interval)obj);
     }
 
+    /// <summary>
+    /// Compares this <see cref="Interval" /> with another interval.
+    /// The lower bound has priority.
+    /// </summary>
+    /// <param name="other">The other <see cref="Interval" /> to compare with</param>
     ///<returns>
-    /// 0  this is identical to other
-    ///-1  this[0] &lt; other[0]
-    ///+1  this[0] &gt; other[0]
-    ///-1  this[0] == other[0] and this[1] &lt; other[1]
-    ///+1  this[0] == other[0] and this[1] &gt; other[1]
+    /// 0: if this is identical to other
+    ///-1: if this[0] &lt; other[0]
+    ///+1: if this[0] &gt; other[0]
+    ///-1: if this[0] == other[0] and this[1] &lt; other[1]
+    ///+1: if this[0] == other[0] and this[1] &gt; other[1]
     ///</returns>
     public int CompareTo(Interval other)
     {
@@ -212,7 +282,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Returns true if T0 &lt; T1
+    /// Returns true if T0 &lt; T1.
     /// </summary>
     public bool IsIncreasing
     {
@@ -220,7 +290,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary> 
-    /// Returns true if T[0] &gt; T[1]
+    /// Returns true if T[0] &gt; T[1].
     /// </summary>
     public bool IsDecreasing
     {
@@ -229,13 +299,18 @@ namespace Rhino.Geometry
     #endregion
 
     #region Methods
+    /// <summary>
+    /// Returns a string representation of this <see cref="Interval" />.
+    /// </summary>
+    /// <returns>A string with T0,T1</returns>
     public override string ToString()
     {
-      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1}", m_t0, m_t1);
+      var culture = System.Globalization.CultureInfo.InvariantCulture;
+      return String.Format("{0},{1}", m_t0.ToString(culture), m_t1.ToString(culture));
     }
 
     /// <summary>
-    /// Grow the Interval to include the given number.
+    /// Grows the <see cref="Interval" /> to include the given number.
     /// </summary>
     /// <param name="value">Number to include in this interval.</param>
     public void Grow(double value)
@@ -248,7 +323,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Ensures this interval is either singleton or increasing.
+    /// Ensures this <see cref="Interval" /> is either singleton or increasing.
     /// </summary>
     public void MakeIncreasing()
     {
@@ -269,7 +344,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Swaps T0 and T1.
+    /// Exchanges T0 and T1.
     /// </summary>
     public void Swap()
     {
@@ -279,7 +354,7 @@ namespace Rhino.Geometry
     }
 
     #region Evaluation
-    ///<summary>Convert normalized parameter to interval value, or pair of values.</summary>
+    ///<summary>Converts normalized parameter to interval value, or pair of values.</summary>
     ///<returns>Interval parameter min*(1.0-normalizedParameter) + max*normalizedParameter</returns>
     ///<seealso>NormalizedParameterAt</seealso>
     public double ParameterAt(double normalizedParameter)
@@ -287,7 +362,7 @@ namespace Rhino.Geometry
       return (RhinoMath.IsValidDouble(normalizedParameter) ? ((1.0 - normalizedParameter) * m_t0 + normalizedParameter * m_t1) : RhinoMath.UnsetValue);
     }
 
-    ///<summary>Convert normalized parameter to interval value, or pair of values.</summary>
+    ///<summary>Converts normalized parameter to interval value, or pair of values.</summary>
     ///<returns>Interval parameter min*(1.0-normalizedParameter) + max*normalized_paramete</returns>
     ///<seealso>NormalizedParameterAt</seealso>
     public Interval ParameterIntervalAt(Interval normalizedInterval)
@@ -297,7 +372,7 @@ namespace Rhino.Geometry
       return new Interval(t0, t1);
     }
 
-    ///<summary>Convert interval value, or pair of values, to normalized parameter.</summary>
+    ///<summary>Converts interval value, or pair of values, to normalized parameter.</summary>
     ///<returns>Normalized parameter x so that min*(1.0-x) + max*x = intervalParameter.</returns>
     ///<seealso>ParameterAt</seealso>
     public double NormalizedParameterAt(double intervalParameter)
@@ -319,7 +394,7 @@ namespace Rhino.Geometry
       return x;
     }
 
-    ///<summary>Convert interval value, or pair of values, to normalized parameter.</summary>
+    ///<summary>Converts interval value, or pair of values, to normalized parameter.</summary>
     ///<returns>Normalized parameter x so that min*(1.0-x) + max*x = intervalParameter.</returns>
     ///<seealso>ParameterAt</seealso>
     public Interval NormalizedIntervalAt(Interval intervalParameter)
@@ -330,7 +405,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Test a parameter for Interval inclusion.
+    /// Tests a parameter for Interval inclusion.
     /// </summary>
     /// <param name="t">Parameter to test.</param>
     /// <returns>True if t is contained within or is coincident with the limits of this Interval.</returns>
@@ -339,7 +414,7 @@ namespace Rhino.Geometry
       return IncludesParameter(t, false);
     }
     /// <summary>
-    /// Test a parameter for Interval inclusion.
+    /// Tests a parameter for Interval inclusion.
     /// </summary>
     /// <param name="t">Parameter to test.</param>
     /// <param name="strict">If true, the parameter must be fully on the inside of the Interval.</param>
@@ -362,7 +437,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Test another interval for Interval inclusion.
+    /// Tests another interval for Interval inclusion.
     /// </summary>
     /// <param name="interval">Interval to test</param>
     /// <returns>True if the other interval is contained within or is coincident with the limits of this Interval.</returns>
@@ -371,7 +446,7 @@ namespace Rhino.Geometry
       return IncludesInterval(interval, false);
     }
     /// <summary>
-    /// Test another interval for Interval inclusion.
+    /// Tests another interval for Interval inclusion.
     /// </summary>
     /// <param name="interval">Interval to test.</param>
     /// <param name="strict">If true, the other interval must be fully on the inside of the Interval.</param>
@@ -385,14 +460,17 @@ namespace Rhino.Geometry
     #endregion
 
     #region Static methods
-    ///<summary>
-    ///If the intersection is not empty, then 
-    ///intersection = [max(a.Min(),b.Min()), min(a.Max(),b.Max())]
-    ///
-    ///The interval [ON.UnsetValue,ON.UnsetValue] is considered to be
-    ///the empty set interval.  The result of any intersection involving an
-    ///empty set interval or disjoint intervals is the empty set interval.
-    ///</summary>
+
+    /// <summary>
+    /// Returns a new Interval that is the Intersection of the two input Intervals
+    /// </summary>
+    /// <param name="a">The first input interval</param>
+    /// <param name="b">The second input interval</param>
+    /// <returns>If the intersection is not empty, then 
+    /// intersection = [max(a.Min(),b.Min()), min(a.Max(),b.Max())]
+    /// The interval [ON.UnsetValue,ON.UnsetValue] is considered to be
+    /// the empty set interval.  The result of any intersection involving an
+    /// empty set interval or disjoint intervals is the empty set interval.</returns>
     public static Interval FromIntersection(Interval a, Interval b)
     {
       Interval rc = new Interval();
@@ -400,14 +478,17 @@ namespace Rhino.Geometry
       return rc;
     }
 
-    ///<summary>
-    ///The union of an empty set and an increasing interval is the increasing
-    ///interval.  The union of two empty sets is empty. The union of an empty
-    ///set an a non-empty interval is the non-empty interval.
-    ///The union of two non-empty intervals is
-    ///union = [min(a.Min(),b.Min()), max(a.Max(),b.Max()),]
-    ///Union() returns true if the union is not empty.
-    ///</summary>
+
+    /// <summary>
+    /// Returns a new Interval which contains both inputs.
+    /// </summary>
+    /// <param name="a">The first input interval</param>
+    /// <param name="b">The second input interval</param>
+    /// <returns>The union of an empty set and an increasing interval is the increasing interval.
+    /// The union of two empty sets is empty.
+    /// The union of an empty set an a non-empty interval is the non-empty interval.
+    /// The union of two non-empty intervals is [min(a.Min(),b.Min()), max(a.Max(),b.Max())]
+    /// </returns>
     public static Interval FromUnion(Interval a, Interval b)
     {
       Interval rc = new Interval();
@@ -417,6 +498,10 @@ namespace Rhino.Geometry
     #endregion
   }
 
+  /// <summary>
+  /// Represents the two coordinates of a point in two-dimensional space,
+  /// using double precision floating point numbers.
+  /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_x}, {m_y})")]
   [Serializable]
@@ -425,7 +510,14 @@ namespace Rhino.Geometry
     private double m_x;
     private double m_y;
 
+    /// <summary>
+    /// Gets or sets the X (first) coordinate of the point
+    /// </summary>
     public double X { get { return m_x; } set { m_x = value; } }
+
+    /// <summary>
+    /// Gets or sets the Y (second) coordinate of the point
+    /// </summary>
     public double Y { get { return m_y; } set { m_y = value; } }
 
     #region constructors
@@ -547,10 +639,23 @@ namespace Rhino.Geometry
       return new Vector2d(point1.X - point2.X, point1.Y - point2.Y);
     }
 
+    /// <summary>
+    /// Determines whether two Point2d have equal values.
+    /// </summary>
+    /// <param name="a">The first point</param>
+    /// <param name="b">The second point</param>
+    /// <returns>True if the coordinates of the two points are exactly equal; otherwise False</returns>
     public static bool operator ==(Point2d a, Point2d b)
     {
       return (a.m_x == b.m_x && a.m_y == b.m_y) ? true : false;
     }
+
+    /// <summary>
+    /// Determines whether two Point2d have different values.
+    /// </summary>
+    /// <param name="a">The first point</param>
+    /// <param name="b">The second point</param>
+    /// <returns>True if the two points differ in any coordinate; False otherwise</returns>
     public static bool operator !=(Point2d a, Point2d b)
     {
       return (a.m_x != b.m_x || a.m_y != b.m_y) ? true : false;
@@ -571,6 +676,11 @@ namespace Rhino.Geometry
 
     #endregion
 
+    /// <summary>
+    /// Determines whether the specified System.Object is a Point2d and has the same values as the present point.
+    /// </summary>
+    /// <param name="obj">The specified object</param>
+    /// <returns>True if obj is a Point2d and has the same coordinates as this; otherwise False</returns>
     public override bool Equals(object obj)
     {
       return (obj is Point2d && this == (Point2d)obj);
@@ -583,7 +693,9 @@ namespace Rhino.Geometry
 
     public override string ToString()
     {
-      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1}", X, Y);
+      return String.Format("{0},{1}",
+        X.ToString(System.Globalization.CultureInfo.InvariantCulture),
+        Y.ToString(System.Globalization.CultureInfo.InvariantCulture));
     }
 
     public double this[int index]
@@ -683,6 +795,10 @@ namespace Rhino.Geometry
     }
   }
 
+  /// <summary>
+  /// Represents the three coordinates of a point in three-dimensional space,
+  /// using double precision floating point numbers.
+  /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 24)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
   [Serializable]
@@ -844,10 +960,23 @@ namespace Rhino.Geometry
       return new Vector3d(point.m_x - point2.m_x, point.m_y - point2.m_y, point.m_z - point2.m_z);
     }
 
+    /// <summary>
+    /// Determines whether two Point3d have equal values.
+    /// </summary>
+    /// <param name="a">The first point</param>
+    /// <param name="b">The second point</param>
+    /// <returns>True if the coordinates of the two points are exactly equal; otherwise False</returns>
     public static bool operator ==(Point3d a, Point3d b)
     {
       return (a.m_x == b.m_x && a.m_y == b.m_y && a.m_z == b.m_z);
     }
+
+    /// <summary>
+    /// Determines whether two Point3d have different values.
+    /// </summary>
+    /// <param name="a">The first point</param>
+    /// <param name="b">The second point</param>
+    /// <returns>True if the two points differ in any coordinate; False otherwise</returns>
     public static bool operator !=(Point3d a, Point3d b)
     {
       return (a.m_x != b.m_x || a.m_y != b.m_y || a.m_z != b.m_z);
@@ -903,15 +1032,15 @@ namespace Rhino.Geometry
 
     #region properties
     /// <summary>
-    /// Gets or sets the X coordinate of this point.
+    /// Gets or sets the X (first) coordinate of this point.
     /// </summary>
     public double X { get { return m_x; } set { m_x = value; } }
     /// <summary>
-    /// Gets or sets the Y coordinate of this point.
+    /// Gets or sets the Y (second) coordinate of this point.
     /// </summary>
     public double Y { get { return m_y; } set { m_y = value; } }
     /// <summary>
-    /// Gets or sets the Z coordinate of this point.
+    /// Gets or sets the Z (third) coordinate of this point.
     /// </summary>
     public double Z { get { return m_z; } set { m_z = value; } }
     /// <summary>
@@ -1025,6 +1154,11 @@ namespace Rhino.Geometry
     #endregion
 
     #region methods
+    /// <summary>
+    /// Determines whether the specified System.Object is a Point3d and has the same values as the present point.
+    /// </summary>
+    /// <param name="obj">The specified object</param>
+    /// <returns>True if obj is a Point3d and has the same coordinates as this; otherwise False</returns>
     public override bool Equals(object obj)
     {
       return (obj is Point3d && this == (Point3d)obj);
@@ -1053,7 +1187,8 @@ namespace Rhino.Geometry
 
     public override string ToString()
     {
-      return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1},{2}", m_x, m_y, m_z);
+      var culture = System.Globalization.CultureInfo.InvariantCulture;
+      return String.Format("{0},{1},{2}", m_x.ToString(culture), m_y.ToString(culture), m_z.ToString(culture));
     }
 
     /// <summary>
@@ -1189,6 +1324,10 @@ namespace Rhino.Geometry
 #endregion
   }
 
+  /// <summary>
+  /// Represents the four coordinates of a point in four-dimensional space.
+  /// The W (fourth) dimension is often considered the weight of the point in 3d.
+  /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 32)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z}, [{m_w}])")]
   [Serializable]
@@ -1232,9 +1371,24 @@ namespace Rhino.Geometry
       info.AddValue("W", m_w);
     }
 
+    /// <summary>
+    /// Gets or sets the X (first) coordinate of this point.
+    /// </summary>
     public double X { get { return m_x; } set { m_x = value; } }
+
+    /// <summary>
+    /// Gets or sets the Y (second) coordinate of this point.
+    /// </summary>
     public double Y { get { return m_y; } set { m_y = value; } }
+
+    /// <summary>
+    /// Gets or sets the Z (third) coordinate of this point.
+    /// </summary>
     public double Z { get { return m_z; } set { m_z = value; } }
+
+    /// <summary>
+    /// Gets or sets the W (fourth) coordinate of this point.
+    /// </summary>
     public double W { get { return m_w; } set { m_w = value; } }
 
 
@@ -1337,16 +1491,34 @@ namespace Rhino.Geometry
         (point.m_w * point2.m_w);
     }
 
+    /// <summary>
+    /// Determines whether two Point4d have equal values.
+    /// </summary>
+    /// <param name="a">The first point</param>
+    /// <param name="b">The second point</param>
+    /// <returns>True if the coordinates of the two points are exactly equal; otherwise False</returns>
     public static bool operator ==(Point4d a, Point4d b)
     {
       return UnsafeNativeMethods.ON_4dPoint_Equality(a, b);
     }
+
+    /// <summary>
+    /// Determines whether two Point4d have different values.
+    /// </summary>
+    /// <param name="a">The first point</param>
+    /// <param name="b">The second point</param>
+    /// <returns>True if the two points differ in any coordinate; False otherwise</returns>
     public static bool operator !=(Point4d a, Point4d b)
     {
       return !(a == b);
     }
     #endregion
 
+    /// <summary>
+    /// Determines whether the specified System.Object is Point4d and has the same coordinates as the present point.
+    /// </summary>
+    /// <param name="obj">The specified object</param>
+    /// <returns>True if obj is Point4d and has the same coordinates as this; otherwise False</returns>
     public override bool Equals(object obj)
     {
       return (obj is Point4d && this == (Point4d)obj);
@@ -1369,6 +1541,10 @@ namespace Rhino.Geometry
 
   }
 
+  /// <summary>
+  /// Represents the two components of a vector in two-dimensional space,
+  /// using double precision floating point numbers.
+  /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_x}, {m_y})")]
   [Serializable]
@@ -1396,7 +1572,14 @@ namespace Rhino.Geometry
       info.AddValue("Y", m_y);
     }
 
+    /// <summary>
+    /// Gets or sets the X (first) component of this vector.
+    /// </summary>
     public double X { get { return m_x; } set { m_x = value; } }
+
+    /// <summary>
+    /// Gets or sets the Y (second) component of this vector.
+    /// </summary>
     public double Y { get { return m_y; } set { m_y = value; } }
 
     public double Length
@@ -1428,6 +1611,11 @@ namespace Rhino.Geometry
     }
     #endregion
 
+    /// <summary>
+    /// Determines whether the specified System.Object is a Vector2d and has the same values as the present vector.
+    /// </summary>
+    /// <param name="obj">The specified object</param>
+    /// <returns>True if obj is a Vector2d and has the same coordinates as this; otherwise False</returns>
     public override bool Equals(object obj)
     {
       return (obj is Vector2d && this == (Vector2d)obj);
@@ -1450,6 +1638,10 @@ namespace Rhino.Geometry
 
   }
 
+  /// <summary>
+  /// Represents the three components of a vector in three-dimensional space,
+  /// using double precision floating point numbers.
+  /// </summary>
   // holding off on making this IComparable until I understand all
   // of the rules that FxCop states about IComparable classes
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 24)]
@@ -1753,19 +1945,20 @@ namespace Rhino.Geometry
 
     #region properties
     /// <summary>
-    /// Gets or sets the X component of the vector.
+    /// Gets or sets the X (first) component of the vector.
     /// </summary>
     public double X { get { return m_x; } set { m_x = value; } }
     /// <summary>
-    /// Gets or sets the Y component of the vector.
+    /// Gets or sets the Y (second) component of the vector.
     /// </summary>
     public double Y { get { return m_y; } set { m_y = value; } }
     /// <summary>
-    /// Gets or sets the Z component of the vector.
+    /// Gets or sets the Z (third) component of the vector.
     /// </summary>
     public double Z { get { return m_z; } set { m_z = value; } }
+
     /// <summary>
-    /// Gets or sets the component at the given index.
+    /// Gets or sets a vector component at the given index.
     /// </summary>
     /// <param name="index">Index of vector component. Valid values are: 
     /// <para>0 = X-component</para>
@@ -1903,6 +2096,11 @@ namespace Rhino.Geometry
     #endregion
 
     #region methods
+    /// <summary>
+    /// Determines whether the specified System.Object is a Vector3d and has the same values as the present vector.
+    /// </summary>
+    /// <param name="obj">The specified object</param>
+    /// <returns>True if obj is a Vector3d and has the same coordinates as this; otherwise False</returns>
     public override bool Equals(object obj)
     {
       return (obj is Vector3d && this == (Vector3d)obj);
@@ -2123,13 +2321,22 @@ namespace Rhino.Geometry
     #endregion
   }
 
+  /// <summary>
+  /// Represents an immutable ray with position and direction.
+  /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]
   [DebuggerDisplay("Pt({m_P.X},{m_P.Y},{m_P.Z}) Dir({m_V.X},{m_V.Y},{m_V.Z})")]
   [Serializable]
   public struct Ray3d : ISerializable
   {
-    Point3d m_P;
-    Vector3d m_V;
+    readonly Point3d m_P;
+    readonly Vector3d m_V;
+
+    /// <summary>
+    /// Constructs a new Ray3d instance.
+    /// </summary>
+    /// <param name="position">The position</param>
+    /// <param name="direction">The direction</param>
     public Ray3d(Point3d position, Vector3d direction)
     {
       m_P = position;
@@ -2149,15 +2356,26 @@ namespace Rhino.Geometry
       info.AddValue("Direction", m_V);
     }
 
+    /// <summary>
+    /// Gets the starting position of this ray.
+    /// </summary>
     public Point3d Position
     {
       get { return m_P; }
     }
+    /// <summary>
+    /// Gets the direction of this vector.
+    /// </summary>
     public Vector3d Direction
     {
       get { return m_V; }
     }
 
+    /// <summary>
+    /// Evaluates a point along the ray.
+    /// </summary>
+    /// <param name="t">The t parameter</param>
+    /// <returns>A point at (Direction*t + Position)</returns>
     public Point3d PointAt(double t)
     {
       if (!m_P.IsValid || !m_V.IsValid)
@@ -2169,6 +2387,13 @@ namespace Rhino.Geometry
     }
 
     #region operators
+
+    /// <summary>
+    /// Determines whether the two Ray3d have equal values.
+    /// </summary>
+    /// <param name="a">The first interval</param>
+    /// <param name="b">The second interval</param>
+    /// <returns>True if the components of the two intervals are exactly equal; otherwise False</returns>
     public static bool operator ==(Ray3d a, Ray3d b)
     {
       return (a.m_P == b.m_P && a.m_V == b.m_V) ? true : false;
@@ -2179,6 +2404,11 @@ namespace Rhino.Geometry
     }
     #endregion
 
+    /// <summary>
+    /// Determines whether the specified System.Object is a Ray3d and has the same values as the present ray.
+    /// </summary>
+    /// <param name="obj">The specified object</param>
+    /// <returns>True if obj is a Ray3d and has the same position and direction as this; otherwise False</returns>
     public override bool Equals(object obj)
     {
       return (obj is Ray3d && this == (Ray3d)obj);

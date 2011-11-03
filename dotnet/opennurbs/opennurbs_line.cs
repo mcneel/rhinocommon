@@ -258,7 +258,7 @@ namespace Rhino.Geometry
     #region methods
     public override string ToString()
     {
-      return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1}", From, To);
+      return string.Format("{0},{1}", From.ToString(), To.ToString());
     }
 
     /// <summary>

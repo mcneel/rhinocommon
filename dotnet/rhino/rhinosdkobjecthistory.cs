@@ -1,6 +1,9 @@
 #if RHINO_SDK
 namespace Rhino.ApplicationSettings
 {
+  /// <summary>
+  /// Provides static (Shared in Vb.Net) methods to modify Rhino History settings
+  /// </summary>
   public static class HistorySettings
   {
     const int idxRecordingEnabled = 0;

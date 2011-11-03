@@ -2,6 +2,9 @@ using System;
 
 namespace Rhino.UI
 {
+  /// <summary>
+  /// Provides a base class to inherit from for the addition of stacked dialog pages
+  /// </summary>
   public abstract class StackedDialogPage
   {
     readonly string m_english_page_title;

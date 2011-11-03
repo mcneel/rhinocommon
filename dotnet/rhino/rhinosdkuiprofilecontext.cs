@@ -259,6 +259,14 @@ namespace Rhino
       return false;
     }
 
+    public bool TryGetPoint(bool bDefault, out System.Drawing.Point value)
+    {
+      Size sz;
+      bool rc = TryGetSize(bDefault, out sz);
+      value = new System.Drawing.Point(sz.Width, sz.Height);
+      return rc;
+    }
+
     public bool TryGetRectangle(bool bDefault, out System.Drawing.Rectangle value)
     {
       value = Rectangle.Empty;
@@ -499,6 +507,24 @@ namespace Rhino
                                        value.Width.ToString(CultureInfo.InvariantCulture.NumberFormat),
                                        value.Height.ToString(CultureInfo.InvariantCulture.NumberFormat)));
     }
+
+    public void SetPoint(bool bDefault, System.Drawing.Point value, EventHandler<PersistentSettingsEventArgs> validator)
+    {
+      if (validator != null)
+      {
+        System.Drawing.Point old_value;
+        TryGetPoint(bDefault, out old_value);
+        PersistentSettingsEventArgs<System.Drawing.Point> a = new PersistentSettingsEventArgs<System.Drawing.Point>(old_value, value);
+        validator(this, a);
+        if (a.Cancel)
+          return;
+        value = a.NewValue;
+      }
+      SetValue(bDefault, string.Format(CultureInfo.InvariantCulture, "{0},{1}",
+                                       value.X.ToString(CultureInfo.InvariantCulture.NumberFormat),
+                                       value.Y.ToString(CultureInfo.InvariantCulture.NumberFormat)));
+    }
+
     private string m_value;
     private string m_default_value;
   }
@@ -539,7 +565,8 @@ namespace Rhino
     private T m_current_value;
     private T m_new_value;
   }
-  //////////////////////////////////////////////////////////////////////////////////////////////
+
+
   /// <summary>
   /// A dictionary of SettingValue items
   /// </summary>
@@ -958,6 +985,37 @@ namespace Rhino
       return GetColor(key);
     }
 
+    public bool TryGetPoint(string key, out System.Drawing.Point value)
+    {
+      value = System.Drawing.Point.Empty;
+      if (m_Settings.ContainsKey(key))
+        return m_Settings[key].TryGetPoint(false, out value);
+      return false;
+    }
+
+    public System.Drawing.Point GetPoint(string key)
+    {
+      if (!m_Settings.ContainsKey(key))
+        throw new KeyNotFoundException(key);
+      System.Drawing.Point rc;
+      if (TryGetPoint(key, out rc))
+        return rc;
+      throw new Exception("key '" + key + "' value type is not a Point");
+    }
+
+    public System.Drawing.Point GetPoint(string key, System.Drawing.Point defaultValue)
+    {
+      System.Drawing.Point rc;
+      if (TryGetPoint(key, out rc))
+      {
+        m_Settings[key].SetPoint(true, defaultValue, GetValidator(key));
+        return rc;
+      }
+      SetDefault(key, defaultValue);
+      m_Settings[key].SetPoint(false, defaultValue, GetValidator(key));
+      return GetPoint(key);
+    }
+
     public bool TryGetPoint3d(string key, out Point3d value)
     {
       value = Point3d.Unset;
@@ -1018,24 +1076,6 @@ namespace Rhino
       SetDefault(key, defaultValue);
       m_Settings[key].SetSize(false, defaultValue, GetValidator(key));
       return GetSize(key);
-    }
-
-    [Obsolete("Use TryGetRectangle - this will be removed in a future WIP")]
-    public bool TryGetRect(string key, out System.Drawing.Rectangle value)
-    {
-      return TryGetRectangle(key, out value);
-    }
-
-    [Obsolete("Use GetRectangle - this will be removed in a future WIP")]
-    public Rectangle GetRect(string key)
-    {
-      return GetRectangle(key);
-    }
-
-    [Obsolete("Use GetRectangle - this will be removed in a future WIP")]
-    public Rectangle GetRect(string key, Rectangle defaultValue)
-    {
-      return GetRectangle(key, defaultValue);
     }
 
     public bool TryGetRectangle(string key, out System.Drawing.Rectangle value)
@@ -1258,6 +1298,11 @@ namespace Rhino
       GetValue(key).SetSize(false, value, GetValidator(key));
     }
 
+    public void SetPoint(string key, System.Drawing.Point value)
+    {
+      GetValue(key).SetPoint(false, value, GetValidator(key));
+    }
+
     public void SetDefault(string key, bool value)
     {
       GetValue(key).SetBool(true, value, GetValidator(key));
@@ -1311,6 +1356,11 @@ namespace Rhino
     public void SetDefault(string key, Size value)
     {
       GetValue(key).SetSize(true, value, GetValidator(key));
+    }
+
+    public void SetDefault(string key, System.Drawing.Point value)
+    {
+      GetValue(key).SetPoint(true, value, GetValidator(key));
     }
 
     public void SetDefault(string key, Point3d value)

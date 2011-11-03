@@ -396,6 +396,9 @@ namespace Rhino.UI
                   string value = null;
                   if (this.m_dialog_list.TryGetValue(key, out value))
                   {
+                    // This will clear the tool-tip prior to setting the new string, not doing this causes strange
+                    // things to happen in certain Asian language systems
+                    tooltip.SetToolTip(c, string.Empty);
                     tooltip.SetToolTip(c, value);
                     break;
                   }
@@ -404,6 +407,9 @@ namespace Rhino.UI
                     key = form_class_name + "::" + c.Name + toolTipText[k];
                     if (this.m_dialog_list.TryGetValue(key, out value))
                     {
+                      // This will clear the tool-tip prior to setting the new string, not doing this causes strange
+                      // things to happen in certain Asian language systems
+                      tooltip.SetToolTip(c, string.Empty);
                       tooltip.SetToolTip(c, value);
                       break;
                     }

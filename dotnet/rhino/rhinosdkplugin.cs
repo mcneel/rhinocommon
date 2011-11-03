@@ -382,7 +382,7 @@ namespace Rhino.PlugIns
 
 #if RDK_UNCHECKED
           // check to see if we should be uninitializing an RDK plugin
-          Rhino.Render.RdkPlugIn pRdk = Rhino.Render.RdkPlugIn.GetRdkPlugIn(p);
+          Rhino.Render.RdkPlugIn pRdk = Rhino.Render.RdkPlugIn.GetRdkPlugInDuringShutdown(p);
           if (pRdk != null)
             pRdk.Dispose();
 #endif
@@ -586,6 +586,54 @@ namespace Rhino.PlugIns
 #endif
     #endregion
 
+    #region licensing functions
+
+    /// <summary>
+    /// Verifies that there is a valid product license for your plug-in, using
+    /// the Rhino licensing system. If the plug-in is installed as a standalone
+    /// node, the locally installed license will be validated. If the plug-in
+    /// is installed as a network node, a loaner license will be requested by
+    /// the system's assigned Zoo server. If the Zoo server finds and returns 
+    /// a license, then this license will be validated. If no license is found,
+    /// then the user will be prompted to provide a license key, which will be
+    /// validated.
+    /// </summary>
+    /// <param name="productBuildType">
+    /// The product build type required by your plug-in.
+    /// </param>
+    /// <param name="validateDelegate">
+    /// Since the Rhino licensing system knows nothing about your product license,
+    /// you will need to validate the product license provided by the Rhino 
+    /// licensing system. This is done by supplying a callback function, or delegate,
+    /// that can be called to perform the validation.
+    /// </param>
+    /// <returns>
+    /// True if a valid license was found. False otherwise.
+    /// </returns>
+    public bool GetLicense(LicenseBuildType productBuildType, ValidateProductKeyDelegate validateDelegate)
+    {
+      string productPath = this.Assembly.Location;
+      Guid productId = this.Id;
+      string productTitle = this.Name;
+      bool rc = LicenseUtils.GetLicense(productPath, productId, (int)productBuildType, productTitle, validateDelegate);
+      return rc;
+    }
+
+    /// <summary>
+    /// Returns, or releases, a product license that was obtained from the Rhino
+    /// licensing system. Note, most plug-ins do not need to call this as the
+    /// Rhino licensing system will return all licenses when Rhino shuts down. 
+    /// </summary>
+    public bool ReturnLicense()
+    {
+      string productPath = this.Assembly.Location;
+      Guid productId = this.Id;
+      string productTitle = this.Name;
+      bool rc = LicenseUtils.ReturnLicense(productPath, productId, productTitle);
+      return rc;
+    }
+
+    #endregion
 
     string m_all_users_settings_dir;
     public string SettingsDirectoryAllUsers
@@ -754,17 +802,48 @@ namespace Rhino.PlugIns
     /// <returns></returns>
     public static string NameFromPath(string pluginPath)
     {
-      using(StringHolder sh = new StringHolder())
+      string rc = null;
+      using (StringHolder sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoPlugInManager_NameFromPath(pluginPath, pString);
-        return sh.ToString();
+        rc = sh.ToString();
       }
+      if (string.IsNullOrEmpty(rc))
+      {
+        // 2-Nov-2011 Dale Fugier
+        // Look in our local collection of plug-ins. We may be in "OnLoad"
+        // and the plug-in hasn't officially been registered with Rhino.
+        for (int i = 0; i < m_plugins.Count; i++)
+        {
+          if (string.Compare(m_plugins[i].Assembly.Location, pluginPath, true) == 0)
+          {
+            rc = m_plugins[i].Name;
+            break;
+          }
+        }
+      }
+      return rc;
     }
 
     public static Guid IdFromPath(string pluginPath)
     {
-      return UnsafeNativeMethods.CRhinoPlugInManager_IdFromPath(pluginPath);
+      Guid rc = UnsafeNativeMethods.CRhinoPlugInManager_IdFromPath(pluginPath);
+      if (rc.Equals(Guid.Empty))
+      {
+        // 2-Nov-2011 Dale Fugier
+        // Look in our local collection of plug-ins. We may be in "OnLoad"
+        // and the plug-in hasn't officially been registered with Rhino.
+        for (int i = 0; i < m_plugins.Count; i++)
+        {
+          if (string.Compare(m_plugins[i].Assembly.Location, pluginPath, true) == 0)
+          {
+            rc = m_plugins[i].Id;
+            break;
+          }
+        }
+      }
+      return rc;
     }
 
     public static bool LoadPlugIn(Guid pluginId)
@@ -1736,10 +1815,11 @@ namespace Rhino.PlugIns
   /// </summary>
   public static class LicenseUtils
   {
-    // The entire functionality of this class is implemented through making calls to well defined class names/functions
-    // in a different DLL through reflection
-
     private static System.Reflection.Assembly m_license_client_assembly;
+
+    /// <summary>
+    /// Returns the license client assembly
+    /// </summary>
     private static System.Reflection.Assembly GetLicenseClientAssembly()
     {
       if (null == m_license_client_assembly)
@@ -1785,30 +1865,6 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Sets the license manager's language id.
-    /// </summary>
-    public static bool SetLanguage(int languageid)
-    {
-      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-      if (null == zooAss)
-        return false;
-
-      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-      if (t == null)
-        return false;
-
-      System.Reflection.MethodInfo mi = t.GetMethod("SetLanguage");
-      if (mi == null)
-        return false;
-
-      object invoke_rc = mi.Invoke(null, new object[] { languageid });
-      if (null == invoke_rc)
-        return false;
-
-      return System.Convert.ToBoolean(invoke_rc);
-    }
-
-    /// <summary>
     /// Tests connectivity with the Zoo.
     /// </summary>
     public static string Echo(string message)
@@ -1833,24 +1889,18 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Verifies that the valid product license is available for use.
-    /// If the product is installed as a standalone node, the local
-    /// license will be validated. If the product is installed as a
-    /// network node, a loaner license will be requested by the
-    /// system's assigned Zoo server.
+    /// This (internal) version of Rhino.PlugIns.LicenseUtils.GetLicense
+    /// is used by Rhino.PlugIns.PlugIn objects.
     /// </summary>
-    /// <param name="productType"></param>
-    /// <param name="validateDelegate">
-    /// Since the license client knows nothing about your product license,
-    /// you will need to validate your product license by supplying a 
-    /// callback function, or delegate, that can be called for valiation.
-    /// </param>
-    /// <returns>
-    /// True if the license was obtained and validated successful.
-    /// False if not successful or on error.
-    /// </returns>
-    public static bool GetLicense(int productType, ValidateProductKeyDelegate validateDelegate)
+    internal static bool GetLicense(string productPath, Guid productId, int productBuildType, string productTitle, ValidateProductKeyDelegate validateDelegate)
     {
+      if (null == validateDelegate           ||
+          string.IsNullOrEmpty(productPath)  || 
+          string.IsNullOrEmpty(productTitle) || 
+          productId.Equals(Guid.Empty)
+        )
+        return false;
+
       System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
       if (null == zooAss)
         return false;
@@ -1863,44 +1913,7 @@ namespace Rhino.PlugIns
       if (mi == null)
         return false;
 
-      // Figure out where this validateDelegate is defined.
-      // - If this delegate is defined in a .NET plug-in, use the Assembly location
-      //   to get all of the plug-in descriptive information
-      // - If this delegate is defined in a C++ plug-in, find the plug-in descriptive
-      //   information from the Rhino_DotNet wrapper class which is the delegate's
-      //   target
-      string path = null;
-      string productTitle = null;
-      Guid productId = Guid.Empty;
-
-      System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
-      System.Reflection.Assembly rhDotNet = HostUtils.GetRhinoDotNetAssembly();
-      if (delegate_method.Module.Assembly == rhDotNet)
-      {
-        object wrapper_class = validateDelegate.Target;
-        Type wrapper_type = wrapper_class.GetType();
-        System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
-        System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
-        System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
-        path = get_path_method.Invoke(wrapper_class, null) as string;
-        productTitle = get_title_method.Invoke(wrapper_class, null) as string;
-        productId = (Guid)get_id_method.Invoke(wrapper_class, null);
-      }
-      else
-      {
-        path = delegate_method.Module.Assembly.Location;
-      }
-
-      if (string.IsNullOrEmpty(path))
-        return false;
-
-      if (string.IsNullOrEmpty(productTitle) || productId == Guid.Empty)
-      {
-        productTitle = PlugIn.NameFromPath(path);
-        productId = PlugIn.IdFromPath(path);
-      }
-
-      object invoke_rc = mi.Invoke(null, new object[] { path, productId, productType, productTitle, validateDelegate });
+      object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productBuildType, productTitle, validateDelegate });
       if (null == invoke_rc)
         return false;
 
@@ -1908,30 +1921,137 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Returns a loaned out license to the Zoo server from which
-    /// it was borrowed.
+    /// This version of Rhino.PlugIns.LicenseUtils.GetLicense
+    /// is used by Rhino C++ plug-ins.
     /// </summary>
-    /// <param name="productId">
-    /// The plugin that want to return the license.
-    /// </param>
-    /// <returns>
-    /// True if the license was returned successful.
-    /// False if not successful or on error.
-    /// </returns>
+    public static bool GetLicense(int productType, ValidateProductKeyDelegate validateDelegate)
+    {
+      if (null == validateDelegate)
+        return false;
+
+      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+      if (null == zooAss)
+        return false;
+
+      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+      if (t == null)
+        return false;
+
+      System.Reflection.MethodInfo mi = t.GetMethod("GetLicense");
+      if (mi == null)
+        return false;
+
+      // If this delegate is defined in a C++ plug-in, find the plug-in's descriptive
+      // information from the Rhino_DotNet wrapper class which is the delegate's target.
+
+      System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
+      System.Reflection.Assembly rhDotNet = HostUtils.GetRhinoDotNetAssembly();
+      if (delegate_method.Module.Assembly != rhDotNet)
+        return false;
+
+      object wrapper_class = validateDelegate.Target;
+      if (null == wrapper_class)
+        return false;
+
+      Type wrapper_type = wrapper_class.GetType();
+      System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
+      System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
+      System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
+      string productPath = get_path_method.Invoke(wrapper_class, null) as string;
+      string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
+      Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
+
+      object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productType, productTitle, validateDelegate });
+      if (null == invoke_rc)
+        return false;
+
+      return (bool)invoke_rc;
+    }
+
+    /// <summary>
+    /// This (internal) version of Rhino.PlugIns.LicenseUtils.ReturnLicense is used
+    /// is used by Rhino.PlugIns.PlugIn objects.
+    /// </summary>
+    internal static bool ReturnLicense(string productPath, Guid productId, string productTitle)
+    {
+      if (string.IsNullOrEmpty(productPath)  ||
+          string.IsNullOrEmpty(productTitle) ||
+          productId.Equals(Guid.Empty)
+        )
+        return false;
+
+      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+      if (null == zooAss)
+        return false;
+
+      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+      if (t == null)
+        return false;
+
+      System.Reflection.MethodInfo mi = t.GetMethod("ReturnLicense");
+      if (mi == null)
+        return false;
+
+      object invoke_rc = mi.Invoke(null, new object[] { productId });
+      if (null == invoke_rc)
+        return false;
+
+      return (bool)invoke_rc;
+    }
+
+    /// <summary>
+    /// This (internal) version of Rhino.PlugIns.LicenseUtils.ReturnLicense is used
+    /// is used by Rhino C++ plug-ins.
+    /// </summary>
+    public static bool ReturnLicense(ValidateProductKeyDelegate validateDelegate)
+    {
+      if (null == validateDelegate)
+        return false;
+
+      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+      if (null == zooAss)
+        return false;
+
+      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+      if (t == null)
+        return false;
+
+      System.Reflection.MethodInfo mi = t.GetMethod("ReturnLicense");
+      if (mi == null)
+        return false;
+
+      // If this delegate is defined in a C++ plug-in, find the plug-in's descriptive
+      // information from the Rhino_DotNet wrapper class which is the delegate's target.
+
+      System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
+      System.Reflection.Assembly rhDotNet = HostUtils.GetRhinoDotNetAssembly();
+      if (delegate_method.Module.Assembly != rhDotNet)
+        return false;
+
+      object wrapper_class = validateDelegate.Target;
+      if (null == wrapper_class)
+        return false;
+
+      Type wrapper_type = wrapper_class.GetType();
+      System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
+      System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
+      System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
+      string productPath = get_path_method.Invoke(wrapper_class, null) as string;
+      string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
+      Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
+
+      object invoke_rc = mi.Invoke(null, new object[] { productId });
+      if (null == invoke_rc)
+        return false;
+
+      return (bool)invoke_rc;
+    }
+
+    /// <summary>
+    /// OBSOLETE - REMOVE WHEN POSSIBLE
+    /// </summary>
     public static bool ReturnLicense(Guid productId)
     {
-      // If the args are changed, go to RhDN_NativeMgr.cpp and make the changes
-      // there too so C++ works...
-      /*
-      System.Reflection.Assembly a = System.Reflection.Assembly.GetCallingAssembly();
-      if (plugIn.Assembly != a)
-        return false;
-      Guid productId = plugIn.Id;
-      */
-
-      // Steve and Dale need to figure out what is needed here 
-      // to support c++ plugins...
-
       System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
       if (null == zooAss)
         return false;

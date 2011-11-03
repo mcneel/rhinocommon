@@ -94,6 +94,41 @@ namespace Rhino.DocObjects
         return new InstanceDefinition(idef_index, doc);
       }
     }
+
+    /// <summary>
+    /// Explodes the instance reference into pieces
+    /// </summary>
+    /// <param name="explodeNestedInstances">
+    /// If true, then nested instance  references are recursively exploded into
+    /// until actual geometry is found. If false, an InstanceObject is added to
+    /// piece_list when this InstanceObject has nested references
+    /// </param>
+    /// <param name="pieces"></param>
+    /// <param name="pieceAttributes"></param>
+    /// <param name="pieceTransforms"></param>
+    public void Explode(bool explodeNestedInstances, out RhinoObject[] pieces, out ObjectAttributes[] pieceAttributes, out Transform[] pieceTransforms)
+    {
+      pieces = new RhinoObject[0];
+      pieceAttributes = new ObjectAttributes[0];
+      pieceTransforms = new Transform[0];
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pPieceList = UnsafeNativeMethods.CRhinoInstanceObject_Explode(pConstThis, explodeNestedInstances);
+      int count = UnsafeNativeMethods.CRhinoInstanceObjectPieceArray_Count(pPieceList);
+      pieces = new RhinoObject[count];
+      pieceAttributes = new ObjectAttributes[count];
+      pieceTransforms = new Transform[count];
+      for (int i = 0; i < count; i++)
+      {
+        Transform xform = new Transform();
+        ObjectAttributes attrs = new ObjectAttributes();
+        IntPtr pAttrs = attrs.NonConstPointer();
+        IntPtr pRhinoObject = UnsafeNativeMethods.CRhinoInstanceObjectPieceArray_Item(pPieceList, i, pAttrs, ref xform);
+        pieces[i] = RhinoObject.CreateRhinoObjectHelper(pRhinoObject);
+        pieceAttributes[i] = attrs;
+        pieceTransforms[i] = xform;
+      }
+      UnsafeNativeMethods.CRhinoInstanceObjectPieceArray_Delete(pPieceList);
+    }
   }
 
   public sealed class InstanceDefinition // don't derive from ON_InstanceDefinition. We want this class to be read only

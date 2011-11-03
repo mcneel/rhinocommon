@@ -55,7 +55,7 @@
 
 #else
 
-#include "../../../rhino_plugin_linking_pragmas4.h"
+#include "../../../rhino_core_plugin_linking_pragmas4.h"
 
 #endif // GRASSHOPPER_V4 else V5 BUILD
 

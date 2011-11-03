@@ -108,7 +108,15 @@ namespace Rhino.ApplicationSettings
     public Color GridYAxisLineColor { get; set; }
     public Color GridZAxisLineColor { get; set; }
   }
-  
+
+  public enum CommandPromptPosition : int
+  {
+    Top = 0,
+    Bottom = 1,
+    Floating = 2,
+    Hidden = 3
+  }
+
   public static class AppearanceSettings
   {
     static AppearanceSettingsState CreateState(bool current)
@@ -493,17 +501,29 @@ namespace Rhino.ApplicationSettings
     public static property int CommandPromptFontHeight{ int get(); void set(int); }
     public static property int CommandPromptHeightInLines{ int get(); void set(int); }
     
-    public static property PromptPosition CommandPromptPosition{ PromptPosition get(); void set(PromptPosition); }
-
     public static property bool StatusBarVisible{ bool get(); void set(bool); }
     public static property bool OsnapDialogVisible{ bool get(); void set(bool); }
     */
+
+    const int idxCommandPromptPosition = 0;
+
+    public static CommandPromptPosition CommandPromptPosition
+    {
+      get
+      {
+        return (CommandPromptPosition)UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetInt(idxCommandPromptPosition, IntPtr.Zero);
+      }
+      set
+      {
+        UnsafeNativeMethods.CRhinoAppAppearanceSettings_SetInt(idxCommandPromptPosition, (int)value);
+      }
+    }
 
     const int idxEchoPromptsToHistoryWindow = 0;
     const int idxEchoCommandsToHistoryWindow = 1;
     const int idxFullPathInTitleBar = 2;
     const int idxCrosshairsVisible = 3;
-
+    const int idxMenuVisible = 4;
 
     public static bool EchoPromptsToHistoryWindow
     {
@@ -528,9 +548,12 @@ namespace Rhino.ApplicationSettings
     /*
     public static property bool ViewportTitleVisible{ bool get(); void set(bool); }
     public static property bool MainWindowTitleVisible{ bool get(); void set(bool); }
-    public static property bool MenuVisible{ bool get(); void set(bool); }
     */
-
+    public static bool MenuVisible
+    {
+      get { return UnsafeNativeMethods.CRhinoAppAppearanceSettings_GetBool(idxMenuVisible, IntPtr.Zero); }
+      set { UnsafeNativeMethods.CRhinoAppAppearanceSettings_SetBool(idxMenuVisible, value); }
+    }
 
     public static int LanguageIdentifier
     {

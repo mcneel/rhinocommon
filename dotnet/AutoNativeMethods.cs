@@ -4290,6 +4290,25 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region rh_analysismodes.cpp
+  //const CRhinoVisualAnalysisMode* CRhinoVisualAnalysisMode_Mode(ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoVisualAnalysisMode_Mode(Guid id);
+
+  //void CRhinoVisualAnalysisMode_GetAnalysisModeName(const CRhinoVisualAnalysisMode* pConstAnalysisMode, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoVisualAnalysisMode_GetAnalysisModeName(IntPtr pConstAnalysisMode, IntPtr pStringHolder);
+
+  //int CRhinoVisualAnalysisMode_Style(const CRhinoVisualAnalysisMode* pConstAnalysisMode)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoVisualAnalysisMode_Style(IntPtr pConstAnalysisMode);
+
+  //void CRhinoVisualAnalysisMode_EnableUserInterface(const CRhinoVisualAnalysisMode* pConstAnalysisMode, bool on)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoVisualAnalysisMode_EnableUserInterface(IntPtr pConstAnalysisMode, [MarshalAs(UnmanagedType.U1)]bool on);
+  #endregion
+
+
   #region rh_annotationobject.cpp
   //CRhinoAnnotationText* CRhinoAnnotationText_New()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4563,6 +4582,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoAppAppearanceSettings_GetBool(int which, IntPtr pConstAppearanceSettings);
+
+  //int CRhinoAppAppearanceSettings_GetInt(int which, const CRhinoAppAppearanceSettings* pConstAppearanceSettings)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoAppAppearanceSettings_GetInt(int which, IntPtr pConstAppearanceSettings);
+
+  //void CRhinoAppAppearanceSettings_SetInt(int which, int val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppAppearanceSettings_SetInt(int which, int val);
 
   //void CRhinoAppAppearanceSettings_SetBool(int which, bool val)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6854,6 +6881,22 @@ internal partial class UnsafeNativeMethods
   //int CRhinoInstanceObject_InstanceDefinition( const CRhinoInstanceObject* ptr, int* docId)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoInstanceObject_InstanceDefinition(IntPtr ptr, ref int docId);
+
+  //ON_ClassArray<CRhinoInstanceObjectPiece>* CRhinoInstanceObject_Explode(const CRhinoInstanceObject* pConstInstanceObject, bool explodeNested)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoInstanceObject_Explode(IntPtr pConstInstanceObject, [MarshalAs(UnmanagedType.U1)]bool explodeNested);
+
+  //int CRhinoInstanceObjectPieceArray_Count(const ON_ClassArray<CRhinoInstanceObjectPiece>* pConstPieceArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoInstanceObjectPieceArray_Count(IntPtr pConstPieceArray);
+
+  //const CRhinoObject* CRhinoInstanceObjectPieceArray_Item(const ON_ClassArray<CRhinoInstanceObjectPiece>* pConstPieceArray, int i, CRhinoObjectAttributes* pAttributes, ON_Xform* pTransform)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoInstanceObjectPieceArray_Item(IntPtr pConstPieceArray, int i, IntPtr pAttributes, ref Transform pTransform);
+
+  //void CRhinoInstanceObjectPieceArray_Delete(ON_ClassArray<CRhinoInstanceObjectPiece>* pPieceArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoInstanceObjectPieceArray_Delete(IntPtr pPieceArray);
 
   //CRhinoDib* CRhinoInstanceDefinition_GetPreviewBitmap(int docId, int idef_index, int definedViewportProjection, int displayMode, int width, int height)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

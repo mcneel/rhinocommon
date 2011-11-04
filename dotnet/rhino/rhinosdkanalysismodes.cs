@@ -3,15 +3,8 @@ using Rhino.Runtime;
 
 namespace Rhino.Display
 {
-  public abstract class VisualAnalysisMode
+  public static class VisualAnalysisModeIds
   {
-    public enum AnalysisStyle : int
-    {
-      Wireframe = 1,
-      Texture = 2,
-      FalseColor = 4
-    }
-    #region ids
     /// <summary>
     /// This ID is used to check for any shaded analysis mode:
     /// false color (like draft angle) or texture based (like zebra and emap).
@@ -112,7 +105,16 @@ namespace Rhino.Display
     {
       get { return new Guid("B28E5435-D299-4933-A95D-3783C496FC66"); }
     }
-    #endregion
+  }
+
+  public abstract class VisualAnalysisMode
+  {
+    public enum AnalysisStyle : int
+    {
+      Wireframe = 1,
+      Texture = 2,
+      FalseColor = 4
+    }
 
     static System.Collections.Generic.List<VisualAnalysisMode> m_registered_modes;
 
@@ -173,7 +175,105 @@ namespace Rhino.Display
       }
     }
 
+    /// <summary>
+    /// Turn the analysis mode's user interface on and off.  For Rhino's built
+    /// in modes this opens or closes the modeless dialog that controls the
+    /// analysis mode's display settings.
+    /// </summary>
+    /// <param name="on"></param>
     public virtual void EnableUserInterface(bool on) {}
+
+    /// <summary>
+    /// Return true if this visual analysis mode can be used on a given Rhino object
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public virtual bool ObjectSupportsAnalysisMode(Rhino.DocObjects.RhinoObject obj)
+    {
+      IntPtr pConstPointer = ConstPointer();
+      IntPtr pConstRhinoObject = obj.ConstPointer();
+      return UnsafeNativeMethods.CRhinoVisualAnalysisMode_ObjectSupportsAnalysisMode(pConstPointer, pConstRhinoObject);
+    }
+
+    /// <summary>
+    /// True if this visual analysis mode should show isocuves on shaded surface
+    /// objects.  Often a mode's user interface will provide a way to change this
+    /// setting.
+    /// </summary>
+    public virtual bool ShowIsoCurves
+    {
+      get { return false; }
+    }
+
+    /// <summary>
+    /// If an analysis mode needs to modify display attributes, this is the place
+    /// to do it.  In particular, Style==Texture, then this function must be
+    /// overridden.
+    /// </summary>
+    /// <remarks>
+    /// Shaded analysis modes that use texture mapping, like zebra and emap,
+    /// override this function set the tex, diffuse_color, and EnableLighting
+    /// parameter.
+    /// </remarks>
+    /// <param name="obj"></param>
+    /// <param name="attributes"></param>
+    protected virtual void SetUpDisplayAttributes(Rhino.DocObjects.RhinoObject obj, DisplayPipelineAttributes attributes) { }
+
+    /// <summary>
+    /// If Style==FalseColor, then this virtual function must be overridden.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="meshes"></param>
+    protected virtual void UpdateVertexColors(Rhino.DocObjects.RhinoObject obj, Rhino.Geometry.Mesh[] meshes) { }
+
+    /// <summary>
+    /// If Style==Wireframe, then the default decomposes the curve object into
+    /// nurbs curve segments and calls the virtual DrawNurbsCurve for each segment
+    /// </summary>
+    /// <param name="curve"></param>
+    /// <param name="pipeline"></param>
+    protected virtual void DrawCurveObject( Rhino.DocObjects.CurveObject curve, DisplayPipeline pipeline )
+    {
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pConstCurve = curve.ConstPointer();
+      IntPtr pPipeline = pipeline.NonConstPointer();
+      UnsafeNativeMethods.CRhinoVisualAnalysisMode_DrawCurveObject(pConstThis, pConstCurve, pPipeline);
+    }
+
+    protected virtual void DrawMeshObject( Rhino.DocObjects.MeshObject mesh, DisplayPipeline pipeline )
+    {
+    }
+
+    protected virtual void DrawBrepObject( Rhino.DocObjects.BrepObject brep, DisplayPipeline pipeline )
+    {
+    }
+
+    protected virtual void DrawPointObject( Rhino.DocObjects.PointObject point, DisplayPipeline pipeline )
+    {
+    }
+
+    protected virtual void DrawPointCloudObject( Rhino.DocObjects.PointCloudObject pointCloud, DisplayPipeline pipeline )
+    {
+    }
+
+    /// <summary>
+    /// The default does nothing. This is a good function to override for
+    /// analysis modes like curvature hair display.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="curve"></param>
+    /// <param name="pipeline"></param>
+    protected virtual void DrawNurbsCurve( Rhino.DocObjects.RhinoObject obj, Rhino.Geometry.NurbsCurve curve, DisplayPipeline pipeline)
+    {
+    }
+
+    protected virtual void DrawNurbsSurface( Rhino.DocObjects.RhinoObject obj, Rhino.Geometry.NurbsSurface surface, DisplayPipeline pipeline)
+    {
+    }
+
+    protected virtual void DrawMesh( Rhino.DocObjects.RhinoObject obj, Rhino.Geometry.Mesh mesh, DisplayPipeline pipeline )
+    {
+    }
   }
 
   class NativeVisualAnalysisMode : VisualAnalysisMode
@@ -210,6 +310,14 @@ namespace Rhino.Display
       IntPtr pConstThis = ConstPointer();
       UnsafeNativeMethods.CRhinoVisualAnalysisMode_EnableUserInterface(pConstThis, on);
     }
+
+    public override bool ShowIsoCurves
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.CRhinoVisualAnalysisMode_ShowIsoCurves(pConstThis);
+      }
+    }
   }
 }
-//  public class ObjectVisualAnalysisMode { }

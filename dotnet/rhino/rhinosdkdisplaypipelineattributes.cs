@@ -29,7 +29,7 @@ namespace Rhino.Display
       return IntPtr.Zero;
     }
 
-    IntPtr NonConstPointer()
+    internal IntPtr NonConstPointer()
     {
       if (m_pAttrs != IntPtr.Zero)
         return m_pAttrs;

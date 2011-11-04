@@ -904,6 +904,61 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
+    /// Used to turn analysis modes on and off
+    /// </summary>
+    /// <param name="mode"></param>
+    /// <param name="enable"></param>
+    /// <returns>true if this object supports the analysis mode</returns>
+    public bool EnableVisualAnalysisMode(Rhino.Display.VisualAnalysisMode mode, bool enable)
+    {
+      IntPtr pConstThis = ConstPointer();
+      Guid id = mode.Id;
+      return UnsafeNativeMethods.CRhinoObject_EnableVisualAnalysisMode(pConstThis, id, enable);
+    }
+
+    /// <summary>
+    /// Reports if any visual analysis mode is currently active for an object
+    /// </summary>
+    /// <returns></returns>
+    public bool InVisualAnalysisMode()
+    {
+      return InVisualAnalysisMode(null);
+    }
+
+    /// <summary>
+    /// Reports if a visual analysis mode is currently active for an object
+    /// </summary>
+    /// <param name="mode">
+    /// The mode to check for. Pass null if you want to see if any mode is active
+    /// </param>
+    /// <returns></returns>
+    public bool InVisualAnalysisMode(Rhino.Display.VisualAnalysisMode mode)
+    {
+      IntPtr pConstThis = ConstPointer();
+      Guid id = Guid.Empty;
+      if (mode != null)
+        id = mode.Id;
+      return UnsafeNativeMethods.CRhinoObject_InVisualAnalysisMode(pConstThis, id);
+    }
+
+    /// <summary>
+    /// Get list of currently enabled analysis modes for this object
+    /// </summary>
+    /// <returns></returns>
+    public Rhino.Display.VisualAnalysisMode[] GetActiveVisualAnalysisModes()
+    {
+      IntPtr pConstThis = ConstPointer();
+      int count = UnsafeNativeMethods.CRhinoObject_AnalysisModeList_Count(pConstThis);
+      Rhino.Display.VisualAnalysisMode[] rc = new Display.VisualAnalysisMode[count];
+      for (int i = 0; i < count; i++)
+      {
+        Guid id = UnsafeNativeMethods.CRhinoObject_AnalysisModeListId(pConstThis, i);
+        rc[i] = Rhino.Display.VisualAnalysisMode.Find(id);
+      }
+      return rc;
+    }
+
+    /// <summary>
     /// Localized short description os an object
     /// </summary>
     /// <param name="plural"></param>

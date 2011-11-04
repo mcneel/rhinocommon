@@ -4306,6 +4306,22 @@ internal partial class UnsafeNativeMethods
   //void CRhinoVisualAnalysisMode_EnableUserInterface(const CRhinoVisualAnalysisMode* pConstAnalysisMode, bool on)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoVisualAnalysisMode_EnableUserInterface(IntPtr pConstAnalysisMode, [MarshalAs(UnmanagedType.U1)]bool on);
+
+  //bool CRhinoVisualAnalysisMode_ObjectSupportsAnalysisMode(const CRhinoVisualAnalysisMode* pConstAnalysisMode, const CRhinoObject* pConstRhinoObject)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoVisualAnalysisMode_ObjectSupportsAnalysisMode(IntPtr pConstAnalysisMode, IntPtr pConstRhinoObject);
+
+  //bool CRhinoVisualAnalysisMode_ShowIsoCurves(const CRhinoVisualAnalysisMode* pConstAnalysisMode)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoVisualAnalysisMode_ShowIsoCurves(IntPtr pConstAnalysisMode);
+
+  //void CRhinoVisualAnalysisMode_DrawCurveObject(const CRhinoVisualAnalysisMode* pConstAnalysisMode,
+  //                                                            const CRhinoCurveObject* pConstCurveObject,
+  //                                                            CRhinoDisplayPipeline* pDisplayPipeline)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoVisualAnalysisMode_DrawCurveObject(IntPtr pConstAnalysisMode, IntPtr pConstCurveObject, IntPtr pDisplayPipeline);
   #endregion
 
 
@@ -7739,6 +7755,24 @@ internal partial class UnsafeNativeMethods
   //unsigned int CRhinoObject_NextRuntimeObjectSerialNumber()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern uint CRhinoObject_NextRuntimeObjectSerialNumber();
+
+  //bool CRhinoObject_EnableVisualAnalysisMode(const CRhinoObject* pConstRhinoObject, ON_UUID id, bool enable)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoObject_EnableVisualAnalysisMode(IntPtr pConstRhinoObject, Guid id, [MarshalAs(UnmanagedType.U1)]bool enable);
+
+  //bool CRhinoObject_InVisualAnalysisMode(const CRhinoObject* pConstRhinoObject, ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoObject_InVisualAnalysisMode(IntPtr pConstRhinoObject, Guid id);
+
+  //int CRhinoObject_AnalysisModeList_Count(const CRhinoObject* pConstRhinoObject)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoObject_AnalysisModeList_Count(IntPtr pConstRhinoObject);
+
+  //ON_UUID CRhinoObject_AnalysisModeListId(const CRhinoObject* pConstRhinoObject, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoObject_AnalysisModeListId(IntPtr pConstRhinoObject, int index);
 
   //void CRhinoObject_ShortDescription(const CRhinoObject* pConstRhinoObject, CRhCmnStringHolder* pString, bool plural)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

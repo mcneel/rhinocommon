@@ -3,110 +3,6 @@ using Rhino.Runtime;
 
 namespace Rhino.Display
 {
-  public static class VisualAnalysisModeIds
-  {
-    /// <summary>
-    /// This ID is used to check for any shaded analysis mode:
-    /// false color (like draft angle) or texture based (like zebra and emap).
-    /// Pass this Id to ObjectInAnalysisMode() to answer queries about what
-    /// types of analysis modes are active.
-    /// </summary>
-    public static Guid RhinoShadedAnalysisModeId
-    {
-      get { return new Guid("2E5FE617-7D66-4ea0-8572-A1C3F8F06B84"); }
-    }
-
-    /// <summary>
-    /// This ID is used to check for any false color analysis mode
-    /// like draft angle or curvature.
-    /// Pass this Id to ObjectInAnalysisMode() to answer queries about what
-    /// types of analysis modes are active.
-    /// </summary>
-    public static Guid RhinoFalseColorAnalysisModeId
-    {
-      get { return new Guid("5B3A0840-7899-4e22-987D-4921282558C0"); }
-    }
-
-    /// <summary>
-    /// This ID is used to check for any texture based analysis mode
-    /// like zebra or emap.
-    /// Pass this Id to ObjectInAnalysisMode() to answer queries about what
-    /// types of analysis modes are active.
-    /// </summary>
-    public static Guid RhinoTexturedAnalysisModeId
-    {
-      get { return new Guid("DF0D8626-3BEA-4471-B8D9-1E85A7967985"); }
-    }
-
-    /// <summary>
-    /// This ID is used to check for any wireframe based analysis mode
-    /// Pass this Id to ObjectInAnalysisMode() to answer queries about what
-    /// types of analysis modes are active.
-    /// </summary>
-    public static Guid RhinoWireFrameAnalysisModeId
-    {
-      get { return new Guid("43BB9491-51E9-493a-B838-89536DD00960"); }
-    }
-
-
-
-    /////////////////////////////////////////////////////////////////
-    //
-    // These ids are passed to CRhinoObject::InAnalysisMode() to
-    // to determine if an object is in a specfic core analysis mode.
-    // Rhino has 6 core in visual analysis modes. Other analysis modes 
-    // can be added by plug-ins.  Use the generic queries described above
-    // if you need to know if an object is in a shaded mode, etc.
-
-    // In edge anlysis mode brep and mesh edges are shown in 
-    // a selected color.
-    public static Guid RhinoEdgeAnalysisModeId
-    {
-      get { return new Guid("197B765D-CDA3-4411-8A0A-AD8E0891A918"); }
-    }
-
-    // In curvature graph analysis mode, curvature hair is shown on
-    // curves and surfaces.
-    public static Guid RhinoCurvatureGraphAnalysisModeId
-    {
-      get { return new Guid("DF59A9CF-E517-4846-9232-D9AE56A9D13D"); }
-    }
-
-    // In zebra stripe analysis mode, zebra stripes are shown 
-    // on surfaces and meshes.
-    public static Guid RhinoZebraStripeAnalysisModeId
-    {
-      get { return new Guid("0CCA817C-95D0-4b79-B5D7-CEB5A2975CE0"); }
-    }
-
-    // In emap analysis mode, an environment map is shown 
-    // on surfaces and meshes.
-    public static Guid RhinoEmapAnalysisModeId
-    {
-      get { return new Guid("DAEF834E-E978-4f7b-9026-A432C678C189"); }
-    }
-
-    // In curvature color analysis mode, surface curvature 
-    // is shown using false color mapping.
-    public static Guid RhinoCurvatureColorAnalyisModeId
-    {
-      get { return new Guid("639E9144-1C1A-4bba-8248-D330F50D7B69"); }
-    }
-
-    // In draft angle analysis mode, draft angle is 
-    // displayed using false colors.
-    public static Guid RhinoDraftAngleAnalysisModeId
-    {
-      get { return new Guid("F08463F4-22E2-4cf1-B810-F01925446D71"); }
-    }
-
-
-    public static Guid RhinoThicknessAnalysisModeId
-    {
-      get { return new Guid("B28E5435-D299-4933-A95D-3783C496FC66"); }
-    }
-  }
-
   public abstract class VisualAnalysisMode
   {
     public enum AnalysisStyle : int
@@ -117,6 +13,72 @@ namespace Rhino.Display
     }
 
     static System.Collections.Generic.List<VisualAnalysisMode> m_registered_modes;
+
+    #region ids
+    /// <summary>
+    /// Id for Rhino's built-in edge analysis mode. Brep and mesh edges are
+    /// shown in a selected color
+    /// </summary>
+    public static Guid RhinoEdgeAnalysisModeId
+    {
+      get { return new Guid("197B765D-CDA3-4411-8A0A-AD8E0891A918"); }
+    }
+
+    /// <summary>
+    /// Id for Rhino's built-in curvature graphs analysis mode.  Curvature hair
+    /// is shown on curves and surfaces.
+    /// </summary>
+    public static Guid RhinoCurvatureGraphAnalysisModeId
+    {
+      get { return new Guid("DF59A9CF-E517-4846-9232-D9AE56A9D13D"); }
+    }
+
+    /// <summary>
+    /// Id for Rhino's built-in zebra stripe analysis mode. Zebra stripes are
+    /// shown on surfaces and meshes
+    /// </summary>
+    public static Guid RhinoZebraStripeAnalysisModeId
+    {
+      get { return new Guid("0CCA817C-95D0-4b79-B5D7-CEB5A2975CE0"); }
+    }
+
+    /// <summary>
+    /// Id for Rhino's built-in emap analysis mode.  An environment map is
+    /// shown on sufaces and meshes
+    /// </summary>
+    public static Guid RhinoEmapAnalysisModeId
+    {
+      get { return new Guid("DAEF834E-E978-4f7b-9026-A432C678C189"); }
+    }
+
+    /// <summary>
+    /// Id for Rhino's built-in curvature color analysis mode.  Surface curvature
+    /// is shown using false color mapping.
+    /// </summary>
+    public static Guid RhinoCurvatureColorAnalyisModeId
+    {
+      get { return new Guid("639E9144-1C1A-4bba-8248-D330F50D7B69"); }
+    }
+
+    /// <summary>
+    /// Id for Rhino's built-in draft angle analysis mode.  Draft angle is 
+    /// displayed using false colors.
+    /// </summary>
+    public static Guid RhinoDraftAngleAnalysisModeId
+    {
+      get { return new Guid("F08463F4-22E2-4cf1-B810-F01925446D71"); }
+    }
+
+    /// <summary>
+    /// Id for Rhino's built-in thickness analysis mode.
+    /// </summary>
+    public static Guid RhinoThicknessAnalysisModeId
+    {
+      get { return new Guid("B28E5435-D299-4933-A95D-3783C496FC66"); }
+    }
+
+    #endregion
+
 
     /// <summary>
     /// Find a VisualAnalysis mode by id

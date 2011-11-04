@@ -1,3 +1,4 @@
+#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 
@@ -739,6 +740,38 @@ namespace Rhino.Collections
       value = null;
       return false;
     }
+
+    // WORK IN PROGRESS...
+    /*
+    public bool TryGetValue(string key, out bool value, bool defaultIfMissing)
+    {
+      return TryGetHelper<bool>(key, out value, defaultIfMissing);
+    }
+    public bool TryGetValue(string key, out byte value, byte defaultIfMissing)
+    {
+      return TryGetHelper<byte>(key, out value, defaultIfMissing);
+    }
+    [CLSCompliant(false)]
+    public bool TryGetValue(string key, out sbyte value, sbyte defaultIfMissing)
+    {
+      return TryGetHelper<sbyte>(key, out value, defaultIfMissing);
+    }
+
+    bool TryGetHelper<T>(string key, out T value, T defaultIfMissing)
+    {
+      DictionaryItem di;
+      if (m_items.TryGetValue(key, out di))
+      {
+        if (di.m_value is T)
+        {
+          value = (T)di.m_value;
+          return true;
+        }
+      }
+      value = defaultIfMissing;
+      return false;
+    }
+    */
 
     public bool Set(string key, bool val) { return SetItem(key, ItemType.itBool, val); }
     public bool Set(string key, byte val) { return SetItem(key, ItemType.itByte, val); }

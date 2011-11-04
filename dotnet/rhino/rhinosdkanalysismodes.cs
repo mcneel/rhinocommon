@@ -1,3 +1,4 @@
+#pragma warning disable 1591
 using System;
 using Rhino.Runtime;
 
@@ -79,6 +80,34 @@ namespace Rhino.Display
 
     #endregion
 
+    /// <summary>
+    /// Register a custom visual analysis mode for use in Rhino.  It is OK to call
+    /// register multiple times for a single custom analysis mode type, since subsequent
+    /// register calls will notice that the type has already been registered.
+    /// </summary>
+    /// <param name="customAnalysisModeType">
+    /// Must be a type that is a subclass of VisualAnalysisMode
+    /// </param>
+    /// <returns>
+    /// Instance of registered analysis mode on success
+    /// </returns>
+    public static VisualAnalysisMode Register(Type customAnalysisModeType)
+    {
+      if( !customAnalysisModeType.IsSubclassOf(typeof(VisualAnalysisMode)) )
+        throw new ArgumentException("customAnalysisModeType must be a subclass of VisualAnalysisMode");
+
+      // make sure this class has not already been registered
+      var rc = Find(customAnalysisModeType);
+      if( rc == null )
+      {
+        if (m_registered_modes == null)
+          m_registered_modes = new System.Collections.Generic.List<VisualAnalysisMode>();
+        rc = System.Activator.CreateInstance(customAnalysisModeType) as VisualAnalysisMode;
+        if (rc != null)
+          m_registered_modes.Add(rc);
+      }
+      return rc;
+    }
 
     /// <summary>
     /// Find a VisualAnalysis mode by id

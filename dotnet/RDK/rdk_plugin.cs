@@ -1,3 +1,4 @@
+#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -96,6 +97,17 @@ namespace Rhino.Render
       IntPtr pRhinoPlugIn = plugin.NonConstPointer();
       return GetRdkPlugInHelper(pRhinoPlugIn, plugin.Id, plugin.m_runtime_serial_number);
     }
+
+    internal static RdkPlugIn GetRdkPlugInDuringShutdown(Rhino.PlugIns.PlugIn plugin)
+    {
+      for (int i = 0; i < m_all_rdk_plugins.Count; i++)
+      {
+        if (m_all_rdk_plugins[i].m_rhino_plugin_id == plugin.Id)
+          return m_all_rdk_plugins[i];
+      }
+      return null;
+    }
+
 
     public static RdkPlugIn GetRdkPlugIn(Guid rhino_plugin_id, int serial_number)
     {

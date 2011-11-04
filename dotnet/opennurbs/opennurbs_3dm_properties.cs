@@ -1,15 +1,12 @@
-// skip for now, these are typically only used for OpenNURBS File I/O
-
-//namespace Rhino.IO
-//{
-//  public class ON_3dmRevisionHistory { }
-//  public class ON_3dmApplication { }
-//  public class ON_3dmProperties { }
-//}
+#pragma warning disable 1591
+using System;
 
 namespace Rhino.FileIO
 {
-//  public class File3dmRevisionHistory { }
+  // skip for now, these are typically only used for OpenNURBS File I/O
+  //  public class File3dmRevisionHistory { }
+  //  public class File3dmApplication { }
+  //  public class File3dmProperties { }
 
   /// <summary>
   /// Notes information stored in a 3dm file
@@ -21,7 +18,4 @@ namespace Rhino.FileIO
     public bool IsHtml { get; set; }
     public System.Drawing.Rectangle WindowRectangle { get; set; }
   }
-
-//  public class File3dmApplication { }
-//  public class File3dmProperties { }
 }

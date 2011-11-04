@@ -1,3 +1,4 @@
+#pragma warning disable 1591
 using Rhino.Geometry;
 
 #if USING_V5_SDK && RHINO_SDK

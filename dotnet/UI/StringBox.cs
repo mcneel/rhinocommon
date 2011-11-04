@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿#pragma warning disable 1591
+using System.Windows.Forms;
 
 namespace Rhino.UI
 {

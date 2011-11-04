@@ -20,7 +20,8 @@
     <OutputPath>Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;USING_V5_SDK RHINO_SDK RDK_UNCHECKED RDK_CHECKED</DefineConstants>
     <DocumentationFile>Debug\RhinoCommon.XML</DocumentationFile>
-    <NoWarn>1591</NoWarn>
+    <NoWarn>
+    </NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -40,7 +41,8 @@
     <OutputPath>GH_Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;RHINO_SDK</DefineConstants>
     <DocumentationFile>GH_Debug\RhinoCommon.XML</DocumentationFile>
-    <NoWarn>1591</NoWarn>
+    <NoWarn>
+    </NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -50,7 +52,8 @@
     <DefineConstants>TRACE;RHINO_SDK</DefineConstants>
     <DocumentationFile>GH_Release\RhinoCommon.XML</DocumentationFile>
     <Optimize>true</Optimize>
-    <NoWarn>1591</NoWarn>
+    <NoWarn>
+    </NoWarn>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -60,7 +63,8 @@
     <DefineConstants>TRACE;MONO_BUILD USING_V5_SDK RHINO_SDK</DefineConstants>
     <DocumentationFile>bin\Mono\RhinoCommon.XML</DocumentationFile>
     <Optimize>true</Optimize>
-    <NoWarn>1591</NoWarn>
+    <NoWarn>
+    </NoWarn>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -70,7 +74,8 @@
     <OutputPath>bin\OpenNURBS_Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;USING_V5_SDK OPENNURBS_SDK</DefineConstants>
     <DocumentationFile>Debug\RhinoCommon.XML</DocumentationFile>
-    <NoWarn>1591</NoWarn>
+    <NoWarn>
+    </NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -82,7 +87,8 @@
     <DefineConstants>TRACE;USING_V5_SDK OPENNURBS_SDK</DefineConstants>
     <DocumentationFile>Release\RhinoCommon.XML</DocumentationFile>
     <Optimize>true</Optimize>
-    <NoWarn>1591</NoWarn>
+    <NoWarn>
+    </NoWarn>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>

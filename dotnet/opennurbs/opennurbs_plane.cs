@@ -569,7 +569,7 @@ namespace Rhino.Geometry
     public bool Rotate(double sinAngle, double cosAngle, Vector3d axis)
     {
       bool rc = true;
-      if (Vector3d.ValueCompare(axis, ZAxis))
+      if (axis == ZAxis)
       {
         Vector3d x = cosAngle * XAxis + sinAngle * YAxis;
         Vector3d y = cosAngle * YAxis - sinAngle * XAxis;

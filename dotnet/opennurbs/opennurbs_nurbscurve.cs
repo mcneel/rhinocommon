@@ -481,7 +481,7 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
-  /// Represents a geometry control-point.
+  /// Represents control-point geometry with three-dimensional position and weight.
   /// </summary>
   [Serializable]
   public struct ControlPoint
@@ -492,7 +492,7 @@ namespace Rhino.Geometry
 
     #region constructors
     /// <summary>
-    /// Create a new unweighted Control Point.
+    /// Creates a new unweighted control point.
     /// </summary>
     /// <param name="x">X coordinate of Control Point.</param>
     /// <param name="y">Y coordinate of Control Point.</param>
@@ -502,7 +502,7 @@ namespace Rhino.Geometry
       m_vertex = new Point4d(x, y, z, 1.0);
     }
     /// <summary>
-    /// Create a new weighted Control Point.
+    /// Creates a new weighted control point.
     /// </summary>
     /// <param name="x">X coordinate of Control Point.</param>
     /// <param name="y">Y coordinate of Control Point.</param>
@@ -514,7 +514,7 @@ namespace Rhino.Geometry
       m_vertex = new Point4d(x, y, z, weight);
     }
     /// <summary>
-    /// Create a new unweighted Control Point.
+    /// Creates a new unweighted control point.
     /// </summary>
     /// <param name="pt">Coordinate of Control Point.</param>
     public ControlPoint(Point3d pt)
@@ -522,7 +522,7 @@ namespace Rhino.Geometry
       m_vertex = new Point4d(pt.X, pt.Y, pt.Z, 1.0);
     }
     /// <summary>
-    /// Create a new weighted Control Point.
+    /// Creates a new weighted control point.
     /// </summary>
     /// <param name="pt">Coordinate of Control Point.</param>
     /// <param name="weight">Weight factor of Control Point. 
@@ -532,7 +532,7 @@ namespace Rhino.Geometry
       m_vertex = new Point4d(pt.X, pt.Y, pt.Z, weight);
     }
     /// <summary>
-    /// Create a new weighted Control Point.
+    /// Creates a new weighted control point.
     /// </summary>
     /// <param name="pt">Control point values.</param>
     public ControlPoint(Point4d pt)

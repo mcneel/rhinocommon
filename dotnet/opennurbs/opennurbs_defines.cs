@@ -74,22 +74,28 @@ namespace Rhino
     }
 
     /// <summary>
-    /// Tests a double value for validity. Since Rhino does not use Double.NaN by convention, 
-    /// this test is more accurate that Double.IsNaN().
+    /// Determines whether a <see cref="double"/> value is valid within the RhinoCommon context.
+    /// <para>Rhino does not use Double.NaN by convention, so this test evaluates to true if:</para>
+    /// <para>x is not equal to RhinoMath.UnsetValue</para>
+    /// <para>System.Double.IsNaN(x) evaluates to false</para>
+    /// <para>System.Double.IsInfinity(x) evaluates to false</para>
     /// </summary>
-    /// <param name="x">Number to test for validity.</param>
-    /// <returns>True if the number if valid, False if the number is NaN, Infinity or Unset.</returns>
+    /// <param name="x"><see cref="double"/> number to test for validity</param>
+    /// <returns>True if the number if valid, False if the number is NaN, Infinity or Unset</returns>
     public static bool IsValidDouble(double x)
     {
       return (x != UnsetValue) && (!double.IsInfinity(x)) && (!double.IsNaN(x));
     }
 
     /// <summary>
-    /// Tests a single (float) value for validity. Since Rhino does not use Single.NaN by convention, 
-    /// this test is more accurate that Single.IsNaN().
+    /// Determines whether a <see cref="float"/> value is valid within the RhinoCommon context.
+    /// <para>Rhino does not use Single.NaN by convention, so this test evaluates to true if:</para>
+    /// <para>x is not equal to RhinoMath.UnsetValue,</para>
+    /// <para>System.Single.IsNaN(x) evaluates to false</para>
+    /// <para>System.Single.IsInfinity(x) evaluates to false</para>
     /// </summary>
-    /// <param name="x">Number to test for validity.</param>
-    /// <returns>True if the number if valid, False if the number is NaN, Infinity or Unset.</returns>
+    /// <param name="x"><see cref="float"/> number to test for validity</param>
+    /// <returns>True if the number if valid, False if the number is NaN, Infinity or Unset</returns>
     public static bool IsValidSingle(float x)
     {
       return (x != UnsetSingle) && (!float.IsInfinity(x)) && (!float.IsNaN(x));

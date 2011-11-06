@@ -2,6 +2,7 @@
 using System;
 using Rhino.Runtime;
 
+#if RHINO_SDK
 namespace Rhino.Display
 {
   public abstract class VisualAnalysisMode
@@ -13,14 +14,184 @@ namespace Rhino.Display
       FalseColor = 4
     }
 
-    internal delegate int ANALYSISMODEENABLEUIPROC(Guid am_id, int enable);
+    #region callbacks
+    internal delegate void ANALYSISMODEENABLEUIPROC(Guid am_id, int enable);
     internal delegate int ANALYSISMODEOBJECTSUPPORTSPROC(Guid am_id, IntPtr pConstRhinoObject);
     internal delegate int ANALYSISMODESHOWISOCURVESPROC(Guid am_id);
-    internal delegate void ANALYSISMODESETDISPLAYATTRIBUTESPROC(Guid am_id, IntPtr pConstRhinoObject, CDisplayPipelineAttributes* display_attrs);
-    internal delegate void ANALYSISMODEUPDATEVERTEXCOLORSPROC(Guid am_id, IntPtr pConstRhinoObject, ON_SimpleArray<const ON_Mesh*>* meshes, int mesh_count);
-    internal delegate void ANALYSISMODEDRAWRHINOOBJECTPROC(Guid am_id, IntPtr pConstRhinoObject, CRhinoDisplayPipeline* dp);
-    internal delegate void ANALYSISMODEDRAWGEOMETRYPROC(Guid am_id, IntPtr pConstRhinoObject, const ON_Geometry* geometry, CRhinoDisplayPipeline* dp);
+    internal delegate void ANALYSISMODESETDISPLAYATTRIBUTESPROC(Guid am_id, IntPtr pConstRhinoObject, IntPtr pDisplayPipelineAttributes);
+    internal delegate void ANALYSISMODEUPDATEVERTEXCOLORSPROC(Guid am_id, IntPtr pConstRhinoObject, IntPtr pSimpleArryConstMeshes, int meshCount);
+    internal delegate void ANALYSISMODEDRAWRHINOOBJECTPROC(Guid am_id, IntPtr pConstRhinoObject, IntPtr pRhinoDisplayPipeline);
+    internal delegate void ANALYSISMODEDRAWGEOMETRYPROC(Guid am_id, IntPtr pConstRhinoObject, IntPtr pConstGeometry, IntPtr pRhinoDisplayPipeline);
 
+    static void OnEnableUiProc(Guid am_id, int enable)
+    {
+      VisualAnalysisMode mode = FindLocal(am_id);
+      if (mode != null)
+      {
+        try
+        {
+          mode.EnableUserInterface(enable == 1);
+        }
+        catch (Exception) { }
+      }
+    }
+    static ANALYSISMODEENABLEUIPROC m_ANALYSISMODEENABLEUIPROC = OnEnableUiProc;
+    
+    static int OnObjectSupportsProc(Guid am_id, IntPtr pConstRhinoObject)
+    {
+      VisualAnalysisMode mode = FindLocal(am_id);
+      if (mode != null)
+      {
+        var rhobj = Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(pConstRhinoObject);
+        try
+        {
+          bool rc = mode.ObjectSupportsAnalysisMode(rhobj);
+          return rc ? 1 : 0;
+        }
+        catch (Exception) { }
+      }
+      return 0;
+    }
+    static ANALYSISMODEOBJECTSUPPORTSPROC m_ANALYSISMODEOBJECTSUPPORTSPROC = OnObjectSupportsProc;
+
+    static int OnShowIsoCurvesProc(Guid am_id)
+    {
+      VisualAnalysisMode mode = FindLocal(am_id);
+      if (mode != null)
+      {
+        try
+        {
+          return mode.ShowIsoCurves ? 1 : 0;
+        }
+        catch (Exception) { }
+      }
+      return 0;
+    }
+    static ANALYSISMODESHOWISOCURVESPROC m_ANALYSISMODESHOWISOCURVESPROC = OnShowIsoCurvesProc;
+
+    static void OnSetDisplayAttributesProc(Guid am_id, IntPtr pConstRhinoObject, IntPtr pDisplayPipelineAttributes)
+    {
+      VisualAnalysisMode mode = FindLocal(am_id);
+      if (mode != null)
+      {
+        var rhobj = Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(pConstRhinoObject);
+        DisplayPipelineAttributes attr = new DisplayPipelineAttributes(pDisplayPipelineAttributes);
+        try
+        {
+          mode.SetUpDisplayAttributes(rhobj, attr);
+          attr.m_pAttrs = IntPtr.Zero;
+        }
+        catch (Exception) { }
+      }
+    }
+    static ANALYSISMODESETDISPLAYATTRIBUTESPROC m_ANALYSISMODESETDISPLAYATTRIBUTESPROC = OnSetDisplayAttributesProc;
+
+    static void OnUpdateVertexColorsProc(Guid am_id, IntPtr pConstRhinoObject, IntPtr pSimpleArrayConstMeshes, int meshCount)
+    {
+      VisualAnalysisMode mode = FindLocal(am_id);
+      if (mode != null)
+      {
+        var rhobj = Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(pConstRhinoObject);
+        Rhino.Geometry.Mesh[] meshes = new Geometry.Mesh[meshCount];
+        for( int i=0; i<meshCount; i++ )
+        {
+          IntPtr pMesh = UnsafeNativeMethods.ON_MeshArray_Get(pSimpleArrayConstMeshes, i);
+          if (IntPtr.Zero != pMesh)
+          {
+            meshes[i] = new Geometry.Mesh(pMesh, null);
+            meshes[i].DoNotDestructOnDispose();
+          }
+        }
+        try
+        {
+          mode.UpdateVertexColors(rhobj, meshes);
+        }
+        catch (Exception) { }
+      }
+    }
+    static ANALYSISMODEUPDATEVERTEXCOLORSPROC m_ANALYSISMODEUPDATEVERTEXCOLORSPROC = OnUpdateVertexColorsProc;
+
+    static void OnDrawRhinoObjectProc(Guid am_id, IntPtr pConstRhinoObject, IntPtr pRhinoDisplayPipeline)
+    {
+      VisualAnalysisMode mode = FindLocal(am_id);
+      if (mode != null)
+      {
+        var rhobj = Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(pConstRhinoObject);
+        DisplayPipeline dp = new DisplayPipeline(pRhinoDisplayPipeline);
+        try
+        {
+          Rhino.DocObjects.BrepObject brep = rhobj as Rhino.DocObjects.BrepObject;
+          if (brep != null)
+          {
+            mode.DrawBrepObject(brep, dp);
+            return;
+          }
+          Rhino.DocObjects.CurveObject curve = rhobj as Rhino.DocObjects.CurveObject;
+          if (curve != null)
+          {
+            mode.DrawCurveObject(curve, dp);
+            return;
+          }
+          Rhino.DocObjects.MeshObject mesh = rhobj as Rhino.DocObjects.MeshObject;
+          if (mesh != null)
+          {
+            mode.DrawMeshObject(mesh, dp);
+            return;
+          }
+          Rhino.DocObjects.PointCloudObject pointcloud = rhobj as Rhino.DocObjects.PointCloudObject;
+          if (pointcloud != null)
+          {
+            mode.DrawPointCloudObject(pointcloud, dp);
+            return;
+          }
+          Rhino.DocObjects.PointObject pointobj = rhobj as Rhino.DocObjects.PointObject;
+          if (pointobj != null)
+          {
+            mode.DrawPointObject(pointobj, dp);
+            return;
+          }
+        }
+        catch (Exception) { }
+      }
+    }
+    static ANALYSISMODEDRAWRHINOOBJECTPROC m_ANALYSISMODEDRAWRHINOOBJECTPROC = OnDrawRhinoObjectProc;
+
+    static void OnDrawGeometryProc(Guid am_id, IntPtr pConstRhinoObject, IntPtr pConstGeometry, IntPtr pRhinoDisplayPipeline)
+    {
+      VisualAnalysisMode mode = FindLocal(am_id);
+      if (mode != null)
+      {
+        var rhobj = Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(pConstRhinoObject);
+        var geom = Rhino.Geometry.GeometryBase.CreateGeometryHelper(pConstGeometry, null);
+        if (geom != null)
+          geom.DoNotDestructOnDispose();
+        DisplayPipeline dp = new DisplayPipeline(pRhinoDisplayPipeline);
+        Rhino.Geometry.Mesh mesh = geom as Rhino.Geometry.Mesh;
+        try
+        {
+          if (mesh != null)
+          {
+            mode.DrawMesh(rhobj, mesh, dp);
+            return;
+          }
+          Rhino.Geometry.NurbsCurve nurbscurve = geom as Rhino.Geometry.NurbsCurve;
+          if (nurbscurve != null)
+          {
+            mode.DrawNurbsCurve(rhobj, nurbscurve, dp);
+            return;
+          }
+          Rhino.Geometry.NurbsSurface nurbssurf = geom as Rhino.Geometry.NurbsSurface;
+          if (nurbssurf != null)
+          {
+            mode.DrawNurbsSurface(rhobj, nurbssurf, dp);
+            return;
+          }
+        }
+        catch (Exception) { }
+      }
+    }
+    static ANALYSISMODEDRAWGEOMETRYPROC m_ANALYSISMODEDRAWGEOMETRYPROC = OnDrawGeometryProc;
+    #endregion
 
     static System.Collections.Generic.List<VisualAnalysisMode> m_registered_modes;
 
@@ -115,19 +286,22 @@ namespace Rhino.Display
         if (rc != null)
         {
           UnsafeNativeMethods.CRhinoVisualAnalysisMode_Register(rc.Id, rc.Name, (int)rc.Style);
-          
+
+          UnsafeNativeMethods.CRhinoVisualAnalysisMode_SetCallbacks(m_ANALYSISMODEENABLEUIPROC,
+            m_ANALYSISMODEOBJECTSUPPORTSPROC,
+            m_ANALYSISMODESHOWISOCURVESPROC,
+            m_ANALYSISMODESETDISPLAYATTRIBUTESPROC,
+            m_ANALYSISMODEUPDATEVERTEXCOLORSPROC,
+            m_ANALYSISMODEDRAWRHINOOBJECTPROC,
+            m_ANALYSISMODEDRAWGEOMETRYPROC);
+
           m_registered_modes.Add(rc);
         }
       }
       return rc;
     }
 
-    /// <summary>
-    /// Find a VisualAnalysis mode by id
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public static VisualAnalysisMode Find(Guid id)
+    static VisualAnalysisMode FindLocal(Guid id)
     {
       if (m_registered_modes != null)
       {
@@ -137,6 +311,18 @@ namespace Rhino.Display
             return m_registered_modes[i];
         }
       }
+      return null;
+    }
+    /// <summary>
+    /// Find a VisualAnalysis mode by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public static VisualAnalysisMode Find(Guid id)
+    {
+      VisualAnalysisMode rc = FindLocal(id);
+      if (rc != null)
+        return rc;
 
       IntPtr pMode = UnsafeNativeMethods.CRhinoVisualAnalysisMode_Mode(id);
       if (pMode != IntPtr.Zero)
@@ -328,3 +514,4 @@ namespace Rhino.Display
     }
   }
 }
+#endif

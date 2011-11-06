@@ -22,8 +22,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Initializes a new two-dimensional point from two components.
     /// </summary>
-    /// <param name="x">X component of vector</param>
-    /// <param name="y">Y component of vector</param>
+    /// <param name="x">X component of vector.</param>
+    /// <param name="y">Y component of vector.</param>
     public Point2f(float x, float y)
     {
       m_x = x;
@@ -34,8 +34,8 @@ namespace Rhino.Geometry
     /// Initializes a new two-dimensional point from two double-precision floating point numbers as coordinates.
     /// <para>Coordinates will be internally converted to floating point numbers. This might cause precision loss.</para>
     /// </summary>
-    /// <param name="x">X component of vector</param>
-    /// <param name="y">Y component of vector</param>
+    /// <param name="x">X component of vector.</param>
+    /// <param name="y">Y component of vector.</param>
     public Point2f(double x, double y)
     {
       m_x = (float)x;
@@ -81,8 +81,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether the specified System.Object is a <see cref="Point2f"/> and has the same values as the present point.
     /// </summary>
-    /// <param name="obj">The specified object</param>
-    /// <returns>true if obj is Point2f and has the same coordinates as this; otherwise false</returns>
+    /// <param name="obj">The specified object.</param>
+    /// <returns>true if obj is Point2f and has the same coordinates as this; otherwise false.</returns>
     public override bool Equals(object obj)
     {
       return (obj is Point2f && this == (Point2f)obj);
@@ -91,8 +91,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether the specified <see cref="Point2f"/> has the same values as the present point.
     /// </summary>
-    /// <param name="point">The specified point</param>
-    /// <returns>true if point has the same coordinates as this; otherwise false</returns>
+    /// <param name="point">The specified point.</param>
+    /// <returns>true if point has the same coordinates as this; otherwise false.</returns>
     public bool Equals(Point2f point)
     {
       return this == point;
@@ -101,7 +101,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Computes a hash number that represents the current point.
     /// </summary>
-    /// <returns>A hash code that is not unique for each point</returns>
+    /// <returns>A hash code that is not unique for each point.</returns>
     public override int GetHashCode()
     {
       // MSDN docs recommend XOR'ing the internal values to get a hash code
@@ -111,7 +111,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Constructs the string representation for the current point.
     /// </summary>
-    /// <returns>The point representation in the form X,Y</returns>
+    /// <returns>The point representation in the form X,Y.</returns>
     public override string ToString()
     {
       var culture = System.Globalization.CultureInfo.InvariantCulture;
@@ -121,9 +121,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether two <see cref="Point2f"/> have equal values.
     /// </summary>
-    /// <param name="a">The first point</param>
-    /// <param name="b">The second point</param>
-    /// <returns>true if the coordinates of the two points are exactly equal; otherwise false</returns>
+    /// <param name="a">The first point.</param>
+    /// <param name="b">The second point.</param>
+    /// <returns>true if the coordinates of the two points are exactly equal; otherwise false.</returns>
     public static bool operator ==(Point2f a, Point2f b)
     {
       return (a.m_x == b.m_x && a.m_y == b.m_y);
@@ -132,9 +132,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether two <see cref="Point2f"/> have different values.
     /// </summary>
-    /// <param name="a">The first point</param>
-    /// <param name="b">The second point</param>
-    /// <returns>true if the two points differ in any coordinate; false otherwise</returns>
+    /// <param name="a">The first point.</param>
+    /// <param name="b">The second point.</param>
+    /// <returns>true if the two points differ in any coordinate; false otherwise.</returns>
     public static bool operator !=(Point2f a, Point2f b)
     {
       return (a.m_x != b.m_x || a.m_y != b.m_y);
@@ -158,9 +158,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Initializes a new two-dimensional vector from two components.
     /// </summary>
-    /// <param name="x">X component of vector</param>
-    /// <param name="y">Y component of vector</param>
-    /// <param name="z">Z component of vector</param>
+    /// <param name="x">X component of vector.</param>
+    /// <param name="y">Y component of vector.</param>
+    /// <param name="z">Z component of vector.</param>
     public Point3f(float x, float y, float z)
     {
       m_x = x;
@@ -186,8 +186,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether the specified System.Object is a Point3f and has the same values as the present point.
     /// </summary>
-    /// <param name="obj">The specified object</param>
-    /// <returns>true if obj is Point3f and has the same coordinates as this; otherwise False</returns>
+    /// <param name="obj">The specified object.</param>
+    /// <returns>true if obj is Point3f and has the same coordinates as this; otherwise False.</returns>
     public override bool Equals(object obj)
     {
       return (obj is Point3f && this == (Point3f)obj);
@@ -196,8 +196,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether the specified Point3f has the same values as the present point.
     /// </summary>
-    /// <param name="point">The specified point</param>
-    /// <returns>true if point has the same coordinates as this; otherwise false</returns>
+    /// <param name="point">The specified point.</param>
+    /// <returns>true if point has the same coordinates as this; otherwise false.</returns>
     public bool Equals(Point3f point)
     {
       return this == point;
@@ -206,7 +206,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Computes a hash code for the present point.
     /// </summary>
-    /// <returns>A non-unique integer that represents this point</returns>
+    /// <returns>A non-unique integer that represents this point.</returns>
     public override int GetHashCode()
     {
       // MSDN docs recommend XOR'ing the internal values to get a hash code
@@ -216,7 +216,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Constructs the string representation for the current point.
     /// </summary>
-    /// <returns>The point representation in the form X,Y,Z</returns>
+    /// <returns>The point representation in the form X,Y,Z.</returns>
     public override string ToString()
     {
       return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0},{1},{2}", m_x, m_y, m_z);
@@ -225,9 +225,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether two points have equal values.
     /// </summary>
-    /// <param name="a">The first point</param>
-    /// <param name="b">The second point</param>
-    /// <returns>true if the coordinates of the two points are exactly equal; otherwise false</returns>
+    /// <param name="a">The first point.</param>
+    /// <param name="b">The second point.</param>
+    /// <returns>true if the coordinates of the two points are exactly equal; otherwise false.</returns>
     public static bool operator ==(Point3f a, Point3f b)
     {
       return (a.m_x == b.m_x && a.m_y == b.m_y && a.m_z == b.m_z);
@@ -236,9 +236,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether two points have different values.
     /// </summary>
-    /// <param name="a">The first point</param>
-    /// <param name="b">The second point</param>
-    /// <returns>true if the two points differ in any coordinate; false otherwise</returns>
+    /// <param name="a">The first point.</param>
+    /// <param name="b">The second point.</param>
+    /// <returns>true if the two points differ in any coordinate; false otherwise.</returns>
     public static bool operator !=(Point3f a, Point3f b)
     {
       return (a.m_x != b.m_x || a.m_y != b.m_y || a.m_z != b.m_z);
@@ -271,8 +271,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether the specified System.Object is a Vector2f and has the same values as the present vector.
     /// </summary>
-    /// <param name="obj">The specified object</param>
-    /// <returns>true if obj is Vector2f and has the same coordinates as this; otherwise false</returns>
+    /// <param name="obj">The specified object.</param>
+    /// <returns>true if obj is Vector2f and has the same coordinates as this; otherwise false.</returns>
     public override bool Equals(object obj)
     {
       return (obj is Vector2f && this == (Vector2f)obj);
@@ -281,8 +281,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether the specified vector has the same values as the present vector.
     /// </summary>
-    /// <param name="vector">The specified vector</param>
-    /// <returns>true if obj is Vector2f and has the same coordinates as this; otherwise false</returns>
+    /// <param name="vector">The specified vector.</param>
+    /// <returns>true if obj is Vector2f and has the same coordinates as this; otherwise false.</returns>
     public bool Equals(Vector2f vector)
     {
       return this == vector;
@@ -291,7 +291,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Computes a hash number that represents the current vector.
     /// </summary>
-    /// <returns>A hash code that is not unique for each vector</returns>
+    /// <returns>A hash code that is not unique for each vector.</returns>
     public override int GetHashCode()
     {
       // MSDN docs recommend XOR'ing the internal values to get a hash code
@@ -301,7 +301,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Constructs the string representation of the current vector.
     /// </summary>
-    /// <returns>The vector representation in the form X,Y,Z</returns>
+    /// <returns>The vector representation in the form X,Y,Z.</returns>
     public override string ToString()
     {
       var culture = System.Globalization.CultureInfo.InvariantCulture;
@@ -311,9 +311,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether two vectors have equal values.
     /// </summary>
-    /// <param name="a">The first vector</param>
-    /// <param name="b">The second vector</param>
-    /// <returns>true if the components of the two vectors are exactly equal; otherwise false</returns>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>true if the components of the two vectors are exactly equal; otherwise false.</returns>
     public static bool operator ==(Vector2f a, Vector2f b)
     {
       return (a.m_x == b.m_x && a.m_y == b.m_y);
@@ -322,9 +322,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether two vectors have different values.
     /// </summary>
-    /// <param name="a">The first vector</param>
-    /// <param name="b">The second vector</param>
-    /// <returns>true if the two vectors differ in any component; false otherwise</returns>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>true if the two vectors differ in any component; false otherwise.</returns>
     public static bool operator !=(Vector2f a, Vector2f b)
     {
       return (a.m_x != b.m_x || a.m_y != b.m_y);
@@ -380,8 +380,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether the specified System.Object is a Vector3f and has the same values as the present vector.
     /// </summary>
-    /// <param name="obj">The specified object</param>
-    /// <returns>true if obj is Vector3f and has the same components as this; otherwise false</returns>
+    /// <param name="obj">The specified object.</param>
+    /// <returns>true if obj is Vector3f and has the same components as this; otherwise false.</returns>
     public override bool Equals(object obj)
     {
       return (obj is Vector3f && this == (Vector3f)obj);
@@ -390,8 +390,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether the specified vector has the same values as the present vector.
     /// </summary>
-    /// <param name="vector">The specified vector</param>
-    /// <returns>true if vector has the same components as this; otherwise false</returns>
+    /// <param name="vector">The specified vector.</param>
+    /// <returns>true if vector has the same components as this; otherwise false.</returns>
     public bool Equals(Vector3f vector)
     {
       return this == vector;
@@ -400,7 +400,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Computes a hash number that represents the current vector.
     /// </summary>
-    /// <returns>A hash code that is not unique for each vector</returns>
+    /// <returns>A hash code that is not unique for each vector.</returns>
     public override int GetHashCode()
     {
       // MSDN docs recommend XOR'ing the internal values to get a hash code
@@ -410,7 +410,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Constructs the string representation of the current vector.
     /// </summary>
-    /// <returns>The vector representation in the form X,Y,Z</returns>
+    /// <returns>The vector representation in the form X,Y,Z.</returns>
     public override string ToString()
     {
       var culture = System.Globalization.CultureInfo.InvariantCulture;
@@ -421,9 +421,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether two vectors have equal values.
     /// </summary>
-    /// <param name="a">The first vector</param>
-    /// <param name="b">The second vector</param>
-    /// <returns>true if the components of the two vectors are exactly equal; otherwise false</returns>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>true if the components of the two vectors are exactly equal; otherwise false.</returns>
     public static bool operator ==(Vector3f a, Vector3f b)
     {
       return (a.m_x == b.m_x && a.m_y == b.m_y && a.m_z == b.m_z);
@@ -432,9 +432,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether two vectors have different values.
     /// </summary>
-    /// <param name="a">The first vector</param>
-    /// <param name="b">The second vector</param>
-    /// <returns>true if the two vectors differ in any component; false otherwise</returns>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>true if the two vectors differ in any component; false otherwise.</returns>
     public static bool operator !=(Vector3f a, Vector3f b)
     {
       return (a.m_x != b.m_x || a.m_y != b.m_y || a.m_z != b.m_z);

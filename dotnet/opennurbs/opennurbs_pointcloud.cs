@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Drawing;
 using System.Collections;
@@ -174,12 +173,21 @@ namespace Rhino.Geometry
         ApplyMemoryPressure();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointCloud"/> class
+    /// that is empty.
+    /// </summary>
     public PointCloud()
     {
       IntPtr ptr = UnsafeNativeMethods.ON_PointCloud_New();
       ConstructNonConstObject(ptr);
       ApplyMemoryPressure();
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointCloud"/> class,
+    /// copying (Merge) the content of another pointcloud.
+    /// </summary>
     public PointCloud(PointCloud other)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_PointCloud_New();
@@ -190,6 +198,12 @@ namespace Rhino.Geometry
 
       ApplyMemoryPressure();
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointCloud"/> class,
+    /// copying the content from a set of points.
+    /// </summary>
+    /// <param name="points">A list or an array of Point3d, or any object that implements <see cref="IEnumerable{Point3d}"/>.</param>
     public PointCloud(IEnumerable<Point3d> points)
     {
       int count;
@@ -213,6 +227,11 @@ namespace Rhino.Geometry
     }
 
     // serialization constructor
+    /// <summary>
+    /// Binds with the Rhino default serializer to support object persistence.
+    /// </summary>
+    /// <param name="info">Some storage.</param>
+    /// <param name="context">The source and destination of the stream.</param>
     protected PointCloud(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
@@ -362,14 +381,13 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Merge this PointCloud with another pointcloud.
+    /// Copies the point values of another pointcloud into this one.
     /// </summary>
     /// <param name="other">PointCloud to merge with this one.</param>
     public void Merge(PointCloud other)
     {
       IntPtr ptr_other = other.ConstPointer();
       IntPtr ptr = NonConstPointer();
-
       UnsafeNativeMethods.ON_PointCloud_MergeCloud(ptr, ptr_other);
     }
 
@@ -568,7 +586,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Returns index of the closest point in the point cloud to a given test point
     /// </summary>
-    /// <param name="testPoint"></param>
+    /// <param name="testPoint">.</param>
     /// <returns>Index of point in the point cloud on success. -1 on failure</returns>
     public int ClosestPoint(Point3d testPoint)
     {
@@ -578,6 +596,11 @@ namespace Rhino.Geometry
     #endregion
 
     #region IEnumerable<PointCloudItem> Members
+
+    /// <summary>
+    /// Gets an enumerator that allows to modify each pointcloud point.
+    /// </summary>
+    /// <returns>A instance of <see cref="IEnumerator{PointCloudItem}"/>.</returns>
     public IEnumerator<PointCloudItem> GetEnumerator()
     {
       return new PointCloudItemEnumerator(this);

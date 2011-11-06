@@ -149,6 +149,11 @@ namespace Rhino
     {
       return UnsafeNativeMethods.ON_CRC32_Compute(currentRemainder, buffer.Length, buffer);
     }
+
+    /// <example>
+    /// <code source='examples\vbnet\ex_analysismode.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_analysismode.cs' lang='cs'/>
+    /// </example>
     [CLSCompliant(false)]
     public static uint CRC32(uint currentRemainder, double value)
     {

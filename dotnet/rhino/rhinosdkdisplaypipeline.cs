@@ -114,6 +114,7 @@ namespace Rhino.Display
     const int idxPostDrawObjects = 2;
     const int idxDrawForeground = 3;
     const int idxDrawOverlay = 4;
+    const int idxCalcBoundingBoxZoomExtents = 5;
 
     static void ConduitReport(int which)
     {
@@ -160,12 +161,14 @@ namespace Rhino.Display
     // Callback used by C++ conduit to call into .NET
     internal delegate void ConduitCallback(IntPtr pPipeline, IntPtr pConduit);
     private static ConduitCallback m_CalcBoundingBoxCallback;
+    private static ConduitCallback m_CalcBoundingBoxZoomExtentsCallback;
     private static ConduitCallback m_PreDrawObjectsCallback;
     private static ConduitCallback m_PostDrawObjectsCallback;
     private static ConduitCallback m_DrawForegroundCallback;
     private static ConduitCallback m_DrawOverlayCallback;
 
     private static EventHandler<CalculateBoundingBoxEventArgs> m_calcbbox;
+    private static EventHandler<CalculateBoundingBoxEventArgs> m_calcbbox_zoomextents;
     private static EventHandler<DrawEventArgs> m_predrawobjects;
     private static EventHandler<DrawEventArgs> m_postdrawobjects;
     private static EventHandler<DrawEventArgs> m_drawforeground;
@@ -185,6 +188,21 @@ namespace Rhino.Display
         }
       }
     }
+    private static void OnCalcBoundingBoxZoomExtents(IntPtr pPipeline, IntPtr pConduit)
+    {
+      if (m_calcbbox_zoomextents != null)
+      {
+        try
+        {
+          m_calcbbox_zoomextents(null, new CalculateBoundingBoxEventArgs(pPipeline, pConduit));
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
+
     private static void OnPreDrawObjects(IntPtr pPipeline, IntPtr pConduit)
     {
       if (m_predrawobjects != null)
@@ -264,6 +282,35 @@ namespace Rhino.Display
         {
           UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxCalcBoundingBox, null, m_report);
           m_CalcBoundingBoxCallback = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Calculate a bounding to include in the Zoom Extents command
+    /// </summary>
+    public static event EventHandler<CalculateBoundingBoxEventArgs> CalculateBoundingBoxZoomExtents
+    {
+      add
+      {
+        if (Runtime.HostUtils.ContainsDelegate(m_calcbbox_zoomextents, value))
+          return;
+
+        if (null == m_calcbbox_zoomextents)
+        {
+          m_CalcBoundingBoxZoomExtentsCallback = OnCalcBoundingBoxZoomExtents;
+          UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxCalcBoundingBoxZoomExtents, m_CalcBoundingBoxZoomExtentsCallback, m_report);
+        }
+
+        m_calcbbox_zoomextents += value;
+      }
+      remove
+      {
+        m_calcbbox_zoomextents -= value;
+        if (m_calcbbox_zoomextents == null)
+        {
+          UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxCalcBoundingBoxZoomExtents, null, m_report);
+          m_CalcBoundingBoxZoomExtentsCallback = null;
         }
       }
     }

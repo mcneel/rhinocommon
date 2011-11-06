@@ -47,6 +47,15 @@ internal partial class UnsafeNativeMethods
 
 #if RHINO_SDK
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoVisualAnalysisMode_SetCallbacks(Rhino.Display.VisualAnalysisMode.ANALYSISMODEENABLEUIPROC enableui_proc,
+    Rhino.Display.VisualAnalysisMode.ANALYSISMODEOBJECTSUPPORTSPROC objectSupportProc,
+    Rhino.Display.VisualAnalysisMode.ANALYSISMODESHOWISOCURVESPROC showIsoCurvesProc,
+    Rhino.Display.VisualAnalysisMode.ANALYSISMODESETDISPLAYATTRIBUTESPROC displayAttributesProc,
+    Rhino.Display.VisualAnalysisMode.ANALYSISMODEUPDATEVERTEXCOLORSPROC updateVertexColorsProc,
+    Rhino.Display.VisualAnalysisMode.ANALYSISMODEDRAWRHINOOBJECTPROC drawRhinoObjectProc,
+    Rhino.Display.VisualAnalysisMode.ANALYSISMODEDRAWGEOMETRYPROC drawGeometryProc);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoPlugIn_SetCallbacks(Rhino.PlugIns.PlugIn.OnLoadDelegate onloadCallback,
     Rhino.PlugIns.PlugIn.OnShutdownDelegate shutdownCallback,
     Rhino.PlugIns.PlugIn.OnGetPlugInObjectDelegate getpluginobjectCallback);

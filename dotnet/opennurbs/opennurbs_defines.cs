@@ -126,6 +126,39 @@ namespace Rhino
         value = min;
       return value;
     }
+
+    public static double Clamp(double value, double bound1, double bound2)
+    {
+      double min = bound1;
+      double max = bound2;
+
+      if (bound1 > bound2)
+      {
+        min = bound2;
+        max = bound1;
+      }
+      if (value > max)
+        value = max;
+      if (value < min)
+        value = min;
+      return value;
+    }
+
+    [CLSCompliant(false)]
+    public static uint CRC32(uint currentRemainder, byte[] buffer)
+    {
+      return UnsafeNativeMethods.ON_CRC32_Compute(currentRemainder, buffer.Length, buffer);
+    }
+    [CLSCompliant(false)]
+    public static uint CRC32(uint currentRemainder, double value)
+    {
+      return CRC32(currentRemainder, BitConverter.GetBytes(value));
+    }
+    [CLSCompliant(false)]
+    public static uint CRC32(uint currentRemainder, int value)
+    {
+      return CRC32(currentRemainder, BitConverter.GetBytes(value));
+    }
   }
 
   public enum UnitSystem : int

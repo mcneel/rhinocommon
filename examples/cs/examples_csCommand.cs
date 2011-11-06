@@ -2,6 +2,7 @@ using System;
 using Rhino;
 using Rhino.Geometry;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace examples_cs
 {
@@ -270,9 +271,28 @@ namespace examples_cs
       RhinoApp.WriteLine("[TEST DONE] - result = " + rc.ToString());
     }
 
+    [DllImport("user32.dll")]
+    static extern uint GetSysColor(int nIndex);
+
+    [DllImport("user32.dll")]
+    static extern bool SetSysColors(int cElements, int[] lpaElements,  uint[] lpaRgbValues);
+    
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+
+    [DllImport("user32.dll")]
+    static extern bool InvalidateRect(IntPtr hWnd, IntPtr lpRect, bool bErase);
 
     protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
     {
+      Rhino.ApplicationSettings.AppearanceSettings.SetPaintColor(Rhino.ApplicationSettings.PaintColor.NormalStart, System.Drawing.Color.AliceBlue);
+      Rhino.ApplicationSettings.AppearanceSettings.SetPaintColor(Rhino.ApplicationSettings.PaintColor.NormalEnd, System.Drawing.Color.AliceBlue);
+      Rhino.ApplicationSettings.AppearanceSettings.SetPaintColor(Rhino.ApplicationSettings.PaintColor.NormalBorder, System.Drawing.Color.LightBlue);
+      Rhino.ApplicationSettings.AppearanceSettings.SetPaintColor(Rhino.ApplicationSettings.PaintColor.HotStart, System.Drawing.Color.LightBlue);
+      Rhino.ApplicationSettings.AppearanceSettings.SetPaintColor(Rhino.ApplicationSettings.PaintColor.HotEnd, System.Drawing.Color.LightBlue, true);
+            
+      return Rhino.Commands.Result.Success;
+
       examples_csPlugIn.ThePlugIn.IncrementRunCommandCount();
       Test(Examples.ActiveViewport, doc);
       Test(Examples.AddBrepBox, doc);

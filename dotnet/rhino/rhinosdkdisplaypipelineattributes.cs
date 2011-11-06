@@ -13,7 +13,13 @@ namespace Rhino.Display
   {
     #region pointer tracking
     readonly object m_parent;
-    IntPtr m_pAttrs = IntPtr.Zero;
+    internal IntPtr m_pAttrs = IntPtr.Zero;
+
+    internal DisplayPipelineAttributes(IntPtr pAttrs)
+    {
+      m_pAttrs = pAttrs;
+    }
+
     internal DisplayPipelineAttributes(DisplayModeDescription parent)
     {
       m_parent = parent;
@@ -62,8 +68,6 @@ namespace Rhino.Display
     public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
     {
       IntPtr pConstThis = ConstPointer();
-      
-
       IntPtr pProfileContext = UnsafeNativeMethods.CRhCmnProfileContext_New();
       UnsafeNativeMethods.CDisplayPipelineAttributes_SaveProfile(pConstThis, pProfileContext, "DisplayPipelineAttributes");
       Rhino.Runtime.HostUtils.WriteIntoSerializationInfo(pProfileContext, info, "DisplayPipelineAttributes");

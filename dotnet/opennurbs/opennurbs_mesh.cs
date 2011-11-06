@@ -8,6 +8,18 @@ using System.Diagnostics;
 using Rhino.Collections;
 using System.Runtime.Serialization;
 
+namespace Rhino.Render
+{
+  public class MappingTag
+  {
+    public Guid Id { get; set; }
+    public TextureMappingType MappingType { get; set; }
+    [CLSCompliant(false)]
+    public uint MappingCRC { get; set; }
+    public Rhino.Geometry.Transform MeshTransform { get; set; }
+  }
+}
+
 namespace Rhino.Geometry
 {
   /// <summary>
@@ -1604,7 +1616,6 @@ namespace Rhino.Geometry
     //  bool HasPackedTextureRegion() const;
     //  ON_SimpleArray<ON_SurfaceCurvature> m_K;  // OPTIONAL surface curvatures
     //  ON_MappingTag m_Ctag; // OPTIONAL tag for values in m_C[]
-    //  ON_SimpleArray<ON_Color> m_C
     //  ON_SimpleArray<bool> m_H; // OPTIONAL vertex visibility.
     //  int m_hidden_count;       // number of vertices that are hidden
     //  const ON_Object* m_parent; // runtime parent geometry (use ...::Cast() to get it)
@@ -3387,6 +3398,31 @@ namespace Rhino.Geometry.Collections
 
         IntPtr ptr = m_mesh.NonConstPointer();
         UnsafeNativeMethods.ON_Mesh_SetColor(ptr, index, value.ToArgb());
+      }
+    }
+
+    public Rhino.Render.MappingTag Tag
+    {
+      get
+      {
+        IntPtr pConstThis = m_mesh.ConstPointer();
+        Guid id = Guid.Empty;
+        int mapping_type = 0;
+        uint crc = 0;
+        Transform xf = new Transform();
+        UnsafeNativeMethods.ON_Mesh_GetMappingTag(pConstThis, 0, ref id, ref mapping_type, ref crc, ref xf);
+        Rhino.Render.MappingTag mt = new Render.MappingTag();
+        mt.Id = id;
+        mt.MappingCRC = crc;
+        mt.MappingType = (Render.TextureMappingType)mapping_type;
+        mt.MeshTransform = xf;
+        return mt;
+      }
+      set
+      {
+        IntPtr pThis = m_mesh.NonConstPointer();
+        Transform xf = value.MeshTransform;
+        UnsafeNativeMethods.ON_Mesh_SetMappingTag(pThis, 0, value.Id, (int)value.MappingType, value.MappingCRC, ref xf);
       }
     }
     #endregion

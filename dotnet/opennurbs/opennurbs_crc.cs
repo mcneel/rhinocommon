@@ -1,1 +1,1 @@
-// skip for now
+// Implemented in RhinoMath. See opennurbs_defines.cs

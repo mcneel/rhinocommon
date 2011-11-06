@@ -102,6 +102,11 @@ namespace Rhino.Geometry
     /// <param name="dy">Distance to translate (move) geometry along the world Y axis.</param>
     /// <param name="dz">Distance to translate (move) geometry along the world Z axis.</param>
     /// <returns>A transform matrix which moves geometry with the specified distances.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_transformbrep.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_transformbrep.cs' lang='cs'/>
+    /// <code source='examples\py\ex_transformbrep.py' lang='py'/>
+    /// </example>
     public static Transform Translation(double dx, double dy, double dz)
     {
       Transform xf = Identity;

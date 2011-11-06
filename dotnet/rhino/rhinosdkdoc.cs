@@ -322,6 +322,11 @@ namespace Rhino
       UnsafeNativeMethods.CRhinoDocProperties_AdjustUnitSystem(m_docId, true, (int)newUnitSystem, scale);
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addlayout.py' lang='py'/>
+    /// </example>
     public Rhino.UnitSystem PageUnitSystem
     {
       get
@@ -2033,11 +2038,11 @@ namespace Rhino.DocObjects.Tables
     public Rhino.Display.RhinoView[] GetViewList(bool includeStandardViews, bool includePageViews)
     {
       if (!includeStandardViews && !includePageViews)
-        return null;
+        return new RhinoView[0];
 
       int count = UnsafeNativeMethods.CRhinoDoc_ViewListBuild(m_doc.m_docId, includeStandardViews, includePageViews);
       if (count < 1)
-        return null;
+        return new RhinoView[0];
       List<RhinoView> views = new List<RhinoView>(count);
       for (int i = 0; i < count; i++)
       {
@@ -2055,11 +2060,16 @@ namespace Rhino.DocObjects.Tables
       return GetViewList(true, false);
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addlayout.py' lang='py'/>
+    /// </example>
     public Rhino.Display.RhinoPageView[] GetPageViews()
     {
       RhinoView[] views = GetViewList(false, true);
       if (null == views || views.Length < 1)
-        return null;
+        return new RhinoPageView[0];
       RhinoPageView[] pages = new RhinoPageView[views.Length];
       for (int i = 0; i < views.Length; i++)
       {
@@ -2165,6 +2175,11 @@ namespace Rhino.DocObjects.Tables
     /// <param name="pageWidth"></param>
     /// <param name="pageHeight"></param>
     /// <returns>newly created page view on success. Null on error</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addlayout.py' lang='py'/>
+    /// </example>
     public Rhino.Display.RhinoPageView AddPageView(string title, double pageWidth, double pageHeight)
     {
       IntPtr pPageView = UnsafeNativeMethods.CRhinoPageView_CreateView(title, pageWidth, pageHeight);

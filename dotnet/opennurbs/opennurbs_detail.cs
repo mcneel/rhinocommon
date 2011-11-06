@@ -58,6 +58,11 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addlayout.py' lang='py'/>
+    /// </example>
     public bool IsProjectionLocked
     {
       get
@@ -97,6 +102,11 @@ namespace Rhino.Geometry
     /// true on success
     /// false if the viewport's projection is perspective or the input values do not make sense
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addlayout.py' lang='py'/>
+    /// </example>
     public bool SetScale(double modelLength, Rhino.UnitSystem modelUnits, double pageLength, Rhino.UnitSystem pageUnits)
     {
       // SetScale only works on parallel projections

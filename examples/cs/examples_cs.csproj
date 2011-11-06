@@ -61,7 +61,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="analysismodeCommand.cs" />
+    <Compile Include="ex_addlayout.cs" />
+    <Compile Include="ex_analysismode.cs" />
     <Compile Include="examples_csPlugIn.cs" />
     <Compile Include="examples_csCommand.cs" />
     <Compile Include="ex_activeviewport.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="ex_sellayer.cs" />
     <Compile Include="ex_sweep1.cs" />
     <Compile Include="ex_sweep2.cs" />
+    <Compile Include="ex_transformbrep.cs" />
     <Compile Include="ex_unrollsurface.cs" />
     <Compile Include="ex_unrollsurface2.cs" />
     <Compile Include="ex_userdataCommand.cs" />

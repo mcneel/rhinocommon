@@ -423,6 +423,11 @@ namespace Rhino.DocObjects
     /// <returns>
     /// true if changes were made
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addlayout.py' lang='py'/>
+    /// </example>
     public bool CommitChanges()
     {
       bool rc = false;

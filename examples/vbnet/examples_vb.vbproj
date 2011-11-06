@@ -75,6 +75,8 @@
     <Import Include="System.Diagnostics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ex_addlayout.vb" />
+    <Compile Include="ex_analysismode.vb" />
     <Compile Include="examples_vbPlugIn.vb" />
     <Compile Include="examples_vbCommand.vb" />
     <Compile Include="ex_activeviewport.vb" />
@@ -126,6 +128,7 @@
     <Compile Include="ex_orientonsrf.vb" />
     <Compile Include="ex_sellayer.vb" />
     <Compile Include="ex_sweep1.vb" />
+    <Compile Include="ex_transformbrep.vb" />
     <Compile Include="ex_unrollsurface.vb" />
     <Compile Include="ex_unrollsurface2.vb" />
     <Compile Include="ex_zoomtoobject.vb" />

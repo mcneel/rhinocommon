@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -10,7 +9,7 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]
   [Serializable]
-  public struct Line
+  public struct Line : IEquatable<Line>
   {
     #region members
     internal Point3d m_from;
@@ -257,6 +256,39 @@ namespace Rhino.Geometry
     #endregion
 
     #region methods
+    /// <summary>
+    /// Determines whether an object is a line that has the same value as this line.
+    /// </summary>
+    /// <param name="obj">An object</param>
+    /// <returns>true if obj is a Line and has the same coordinates as this; otherwise false</returns>
+    public override bool Equals(object obj)
+    {
+      return obj is Line && this == (Line)obj;
+    }
+
+    /// <summary>
+    /// Determines whether a line has the same value as this line.
+    /// </summary>
+    /// <param name="other">A line</param>
+    /// <returns>true if other has the same coordinates as this; otherwise false</returns>
+    public bool Equals(Line other)
+    {
+      return this == other;
+    }
+
+    /// <summary>
+    /// Computes a hash number that represents this line.
+    /// </summary>
+    /// <returns>A number that is not unique to the value of this line</returns>
+    public override int GetHashCode()
+    {
+      return From.GetHashCode() ^ To.GetHashCode();
+    }
+
+    /// <summary>
+    /// Contructs the string representation of this line, in the form From,To.
+    /// </summary>
+    /// <returns></returns>
     public override string ToString()
     {
       return string.Format("{0},{1}", From.ToString(), To.ToString());
@@ -526,5 +558,27 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Line_InPlane(ref this, ref plane);
     }
     #endregion
+
+    /// <summary>
+    /// Determines whether two lines have the same value.
+    /// </summary>
+    /// <param name="a">A line</param>
+    /// <param name="b">Another line</param>
+    /// <returns>true if a has the same coordinates as b; otherwise false</returns>
+    public static bool operator ==(Line a, Line b)
+    {
+      return a.From == b.From && a.To == b.To;
+    }
+
+    /// <summary>
+    /// Determines whether two lines have different values.
+    /// </summary>
+    /// <param name="a">A line</param>
+    /// <param name="b">Another line</param>
+    /// <returns>true if a has any coordinate that distinguishes it from b; otherwise false</returns>
+    public static bool operator !=(Line a, Line b)
+    {
+      return a.From != b.From || a.To != b.To;
+    }
   }
 }

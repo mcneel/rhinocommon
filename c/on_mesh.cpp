@@ -152,6 +152,7 @@ RH_C_FUNCTION bool ON_Mesh_SetColor(ON_Mesh* pMesh, int index, int argb)
     {
       pMesh->m_C.Append(color);
     }
+    memset(&(pMesh->m_Ctag),0,sizeof(pMesh->m_Ctag));
   }
   return rc;
 }
@@ -198,6 +199,35 @@ RH_C_FUNCTION bool ON_Mesh_SetTextureCoordinates(ON_Mesh* ptr, int count, /*ARRA
   return rc;
 }
 
+RH_C_FUNCTION void ON_Mesh_GetMappingTag(const ON_Mesh* pConstMesh, int which_tag, ON_UUID* id, int* mapping_type, unsigned int* crc, ON_Xform* xf)
+{
+  if( pConstMesh && id && mapping_type && crc && xf )
+  {
+    if( 0==which_tag )
+    {
+      *id = pConstMesh->m_Ctag.m_mapping_id;
+      *mapping_type = (int)pConstMesh->m_Ctag.m_mapping_type;
+      *crc = pConstMesh->m_Ctag.m_mapping_crc;
+      *xf = pConstMesh->m_Ctag.m_mesh_xform;
+    }
+  }
+}
+
+RH_C_FUNCTION void ON_Mesh_SetMappingTag(ON_Mesh* pMesh, int which_tag, ON_UUID id, int mapping_type, unsigned int crc, const ON_Xform* xf)
+{
+  if( pMesh && xf )
+  {
+    if( 0==which_tag )
+    {
+      pMesh->m_Ctag.m_mapping_id = id;
+      pMesh->m_Ctag.m_mapping_type = (ON_TextureMapping::TYPE)mapping_type;
+      pMesh->m_Ctag.m_mapping_crc = crc;
+      pMesh->m_Ctag.m_mesh_xform = *xf;
+    }
+  }
+}
+
+
 RH_C_FUNCTION bool ON_Mesh_SetVertexColors(ON_Mesh* pMesh, int count, /*ARRAY*/const int* argb, bool append)
 {
   bool rc = false;
@@ -215,6 +245,7 @@ RH_C_FUNCTION bool ON_Mesh_SetVertexColors(ON_Mesh* pMesh, int count, /*ARRAY*/c
     ON_Color* dest = pMesh->m_C.Array() + startIndex;
     ::memcpy(dest, list, count*sizeof(unsigned int));
     pMesh->m_C.SetCount(startIndex+count);
+    memset(&(pMesh->m_Ctag),0,sizeof(pMesh->m_Ctag));
     rc = true;
   }
   return rc;

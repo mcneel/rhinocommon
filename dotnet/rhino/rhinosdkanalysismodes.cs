@@ -13,6 +13,15 @@ namespace Rhino.Display
       FalseColor = 4
     }
 
+    internal delegate int ANALYSISMODEENABLEUIPROC(Guid am_id, int enable);
+    internal delegate int ANALYSISMODEOBJECTSUPPORTSPROC(Guid am_id, IntPtr pConstRhinoObject);
+    internal delegate int ANALYSISMODESHOWISOCURVESPROC(Guid am_id);
+    internal delegate void ANALYSISMODESETDISPLAYATTRIBUTESPROC(Guid am_id, IntPtr pConstRhinoObject, CDisplayPipelineAttributes* display_attrs);
+    internal delegate void ANALYSISMODEUPDATEVERTEXCOLORSPROC(Guid am_id, IntPtr pConstRhinoObject, ON_SimpleArray<const ON_Mesh*>* meshes, int mesh_count);
+    internal delegate void ANALYSISMODEDRAWRHINOOBJECTPROC(Guid am_id, IntPtr pConstRhinoObject, CRhinoDisplayPipeline* dp);
+    internal delegate void ANALYSISMODEDRAWGEOMETRYPROC(Guid am_id, IntPtr pConstRhinoObject, const ON_Geometry* geometry, CRhinoDisplayPipeline* dp);
+
+
     static System.Collections.Generic.List<VisualAnalysisMode> m_registered_modes;
 
     #region ids
@@ -104,7 +113,11 @@ namespace Rhino.Display
           m_registered_modes = new System.Collections.Generic.List<VisualAnalysisMode>();
         rc = System.Activator.CreateInstance(customAnalysisModeType) as VisualAnalysisMode;
         if (rc != null)
+        {
+          UnsafeNativeMethods.CRhinoVisualAnalysisMode_Register(rc.Id, rc.Name, (int)rc.Style);
+          
           m_registered_modes.Add(rc);
+        }
       }
       return rc;
     }
@@ -212,6 +225,9 @@ namespace Rhino.Display
 
     /// <summary>
     /// If Style==FalseColor, then this virtual function must be overridden.
+    /// Rhino calls this function when it is time for to set the false colors
+    /// on the analysis mesh vertices.  For breps, there is one mesh per face.
+    /// For mesh objects there is a single mesh.
     /// </summary>
     /// <param name="obj"></param>
     /// <param name="meshes"></param>

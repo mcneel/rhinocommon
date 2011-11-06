@@ -1742,6 +1742,10 @@ internal partial class UnsafeNativeMethods
   //void ON_wString_Set(ON_wString* pString, const RHMONO_STRING* _text)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_wString_Set(IntPtr pString, [MarshalAs(UnmanagedType.LPWStr)]string _text);
+
+  //unsigned int ON_CRC32_Compute(unsigned int current_remainder, int count, /*ARRAY*/ const char* bytes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern uint ON_CRC32_Compute(uint current_remainder, int count, byte[] bytes);
   #endregion
 
 
@@ -2537,6 +2541,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Mesh_SetTextureCoordinates(IntPtr ptr, int count, ref Point2f tcs, [MarshalAs(UnmanagedType.U1)]bool append);
+
+  //void ON_Mesh_GetMappingTag(const ON_Mesh* pConstMesh, int which_tag, ON_UUID* id, int* mapping_type, unsigned int* crc, ON_Xform* xf)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Mesh_GetMappingTag(IntPtr pConstMesh, int which_tag, ref Guid id, ref int mapping_type, ref uint crc, ref Transform xf);
+
+  //void ON_Mesh_SetMappingTag(ON_Mesh* pMesh, int which_tag, ON_UUID id, int mapping_type, unsigned int crc, const ON_Xform* xf)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Mesh_SetMappingTag(IntPtr pMesh, int which_tag, Guid id, int mapping_type, uint crc, ref Transform xf);
 
   //bool ON_Mesh_SetVertexColors(ON_Mesh* pMesh, int count, /*ARRAY*/const int* argb, bool append)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4291,6 +4303,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_analysismodes.cpp
+  //void CRhinoVisualAnalysisMode_Register(ON_UUID id, const RHMONO_STRING* name, int style)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoVisualAnalysisMode_Register(Guid id, [MarshalAs(UnmanagedType.LPWStr)]string name, int style);
+
   //const CRhinoVisualAnalysisMode* CRhinoVisualAnalysisMode_Mode(ON_UUID id)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoVisualAnalysisMode_Mode(Guid id);

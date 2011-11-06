@@ -33,6 +33,10 @@ namespace Rhino.Display
           if( mi.DeclaringType != base_type )
             DisplayPipeline.CalculateBoundingBox += _CalculateBoundingBox;
 
+          mi = t.GetMethod("CalculateBoundingBoxZoomExtents", flags);
+          if (mi.DeclaringType != base_type)
+            DisplayPipeline.CalculateBoundingBoxZoomExtents += _CalculateBoundingBoxZoomExtents;
+
           mi = t.GetMethod("DrawForeground", flags);
           if (mi.DeclaringType != base_type)
             DisplayPipeline.DrawForeground += _DrawForeground;
@@ -52,6 +56,7 @@ namespace Rhino.Display
         else
         {
           DisplayPipeline.CalculateBoundingBox -= _CalculateBoundingBox;
+          DisplayPipeline.CalculateBoundingBoxZoomExtents -= _CalculateBoundingBoxZoomExtents;
           DisplayPipeline.DrawForeground -= _DrawForeground;
           DisplayPipeline.DrawOverlay -= _DrawOverlay;
           DisplayPipeline.PostDrawObjects -= _PostDrawObjects;
@@ -61,11 +66,11 @@ namespace Rhino.Display
     }
 
     private void _CalculateBoundingBox(object sender, CalculateBoundingBoxEventArgs e) { CalculateBoundingBox(e); }
+    private void _CalculateBoundingBoxZoomExtents(object sender, CalculateBoundingBoxEventArgs e) { CalculateBoundingBoxZoomExtents(e); }
     private void _DrawForeground(object sender, DrawEventArgs e) { DrawForeground(e); }
     private void _DrawOverlay(object sender, DrawEventArgs e)  { DrawOverlay(e); }
     private void _PostDrawObjects(object sender, DrawEventArgs e) { PostDrawObjects(e); }
     private void _PreDrawObjects(object sender, DrawEventArgs e) { PreDrawObjects(e); }
-
 
     /// <summary>
     /// Use this function to increase the bounding box of scene so it includes the
@@ -73,6 +78,16 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="e"></param>
     protected virtual void CalculateBoundingBox(CalculateBoundingBoxEventArgs e) {}
+
+    /// <summary>
+    /// If you want to participate in the Zoom Extents command with your display conduit,
+    /// then you will need to override ZoomExtentsBoundingBox.  Typically you could just
+    /// call your CalculateBoundingBox override, but you may also want to spend a little
+    /// more time here and compute a tighter bounding box for your conduit geometry if
+    /// that is needed
+    /// </summary>
+    /// <param name="e"></param>
+    protected virtual void CalculateBoundingBoxZoomExtents(CalculateBoundingBoxEventArgs e) {}
 
     /// <summary>
     /// Called before objects are been drawn. Depth writing and testing are on.

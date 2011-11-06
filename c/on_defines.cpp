@@ -31,3 +31,9 @@ RH_C_FUNCTION void ON_wString_Set(ON_wString* pString, const RHMONO_STRING* _tex
     (*pString) = text;
   }
 }
+
+
+RH_C_FUNCTION unsigned int ON_CRC32_Compute(unsigned int current_remainder, int count, /*ARRAY*/ const char* bytes)
+{
+  return ON_CRC32(current_remainder, count, bytes);
+}

@@ -6,7 +6,7 @@ using System.Security.Permissions;
 namespace Rhino.DocObjects
 {
   /// <summary>
-  /// Represents a viewing frustum
+  /// Represents a viewing frustum.
   /// </summary>
   [Serializable]
   public sealed class ViewportInfo : IDisposable, ISerializable

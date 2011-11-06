@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 
 namespace Rhino.FileIO
@@ -9,13 +8,28 @@ namespace Rhino.FileIO
   //  public class File3dmProperties { }
 
   /// <summary>
-  /// Notes information stored in a 3dm file
+  /// Represents the notes information stored in a 3dm file.
   /// </summary>
   public class File3dmNotes
   {
+    /// <summary>
+    /// Gets or sets the text content of the notes.
+    /// </summary>
     public string Notes { get; set; }
+
+    /// <summary>
+    /// Gets or sets the notes visibility. If the notes are visible, true; false otherwise.
+    /// </summary>
     public bool IsVisible { get; set; }
+
+    /// <summary>
+    /// Gets or sets the text format. If the format is HTML, true; false otherwise.
+    /// </summary>
     public bool IsHtml { get; set; }
+
+    /// <summary>
+    /// Gets or sets the position of the Notes when they were saved.
+    /// </summary>
     public System.Drawing.Rectangle WindowRectangle { get; set; }
   }
 }

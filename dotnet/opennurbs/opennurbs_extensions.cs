@@ -6,6 +6,11 @@ using Rhino.Geometry;
 
 namespace Rhino.FileIO
 {
+  /// <summary>
+  /// Represents a 3dm file, which is stored using the OpenNURBS file standard.
+  /// <para>The 3dm format is the main Rhinoceros storage format.</para>
+  /// <para>Visit http://www.opennurbs.com/ for more details.</para>
+  /// </summary>
   public class File3dm : IDisposable
   {
     IntPtr m_ptr = IntPtr.Zero; //ONX_Model*
@@ -266,7 +271,7 @@ namespace Rhino.FileIO
       set
       {
         IntPtr pThis = NonConstPointer();
-        File3dmNotes n = (value!=null)? value : new File3dmNotes();
+        File3dmNotes n = value ?? new File3dmNotes();
         UnsafeNativeMethods.ONX_Model_SetNotes(pThis, n.Notes, n.IsVisible, n.IsHtml, n.WindowRectangle.Left, n.WindowRectangle.Top, n.WindowRectangle.Right, n.WindowRectangle.Bottom);
       }
     }

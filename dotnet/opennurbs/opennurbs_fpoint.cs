@@ -11,7 +11,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
   [DebuggerDisplay("({m_x}, {m_y})")]
   [Serializable]
-  public struct Point2f : IEquatable<Point2f>
+  public struct Point2f : IEquatable<Point2f>, IComparable<Point2f>, IComparable
   {
     #region members
     internal float m_x;
@@ -99,6 +99,41 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Compares this <see cref="Point2f" /> with another <see cref="Point2f" />.
+    /// <para>Coordinates evaluation priority is first X, then Y.</para>
+    /// </summary>
+    /// <param name="other">The other <see cref="Point2f" /> to use in comparison.</param>
+    /// <returns>
+    /// <para> 0: if this is identical to other</para>
+    /// <para>-1: if this.X &lt; other.X</para>
+    /// <para>-1: if this.X == other.X and this.Y &lt; other.Y</para>
+    /// <para>+1: otherwise.</para>
+    /// </returns>
+    public int CompareTo(Point2f other)
+    {
+      // dictionary order
+      if (m_x < other.m_x)
+        return -1;
+      if (m_x > other.m_x)
+        return 1;
+
+      if (m_y < other.m_y)
+        return -1;
+      if (m_y > other.m_y)
+        return 1;
+
+      return 0;
+    }
+
+    int IComparable.CompareTo(object obj)
+    {
+      if (obj is Point2f)
+        return CompareTo((Point2f)obj);
+      else
+        throw new ArgumentException("Input must be of type Point2f", "obj");
+    }
+
+    /// <summary>
     /// Computes a hash number that represents the current point.
     /// </summary>
     /// <returns>A hash code that is not unique for each point.</returns>
@@ -139,6 +174,58 @@ namespace Rhino.Geometry
     {
       return (a.m_x != b.m_x || a.m_y != b.m_y);
     }
+
+    /// <summary>
+    /// Determines whether the first specified <see cref="Point2f"/> comes before
+    /// (has inferior sorting value than) the second point.
+    /// <para>Coordinates evaluation priority is first X, then Y.</para>
+    /// </summary>
+    /// <param name="a">First point.</param>
+    /// <param name="b">Second point.</param>
+    /// <returns>true if a.X is smaller than b.X, or a.X == b.X and a.Y is smaller than b.Y; otherwise, false.</returns>
+    public static bool operator <(Point2f a, Point2f b)
+    {
+      return (a.X < b.X) || (a.X == b.X && a.Y < b.Y);
+    }
+
+    /// <summary>
+    /// Determines whether the first specified <see cref="Point2f"/> comes before
+    /// (has inferior sorting value than) the second point, or it is equal to it.
+    /// <para>Coordinates evaluation priority is first X, then Y.</para>
+    /// </summary>
+    /// <param name="a">First point.</param>
+    /// <param name="b">Second point.</param>
+    /// <returns>true if a.X is smaller than b.X, or a.X == b.X and a.Y &lt;= b.Y; otherwise, false.</returns>
+    public static bool operator <=(Point2f a, Point2f b)
+    {
+      return (a.X < b.X) || (a.X == b.X && a.Y <= b.Y);
+    }
+
+    /// <summary>
+    /// Determines whether the first specified <see cref="Point2f"/> comes after
+    /// (has superior sorting value than) the second point.
+    /// <para>Coordinates evaluation priority is first X, then Y.</para>
+    /// </summary>
+    /// <param name="a">First point.</param>
+    /// <param name="b">Second point.</param>
+    /// <returns>true if a.X is larger than b.X, or a.X == b.X and a.Y is larger than b.Y; otherwise, false.</returns>
+    public static bool operator >(Point2f a, Point2f b)
+    {
+      return (a.X > b.X) || (a.X == b.X && a.Y > b.Y);
+    }
+
+    /// <summary>
+    /// Determines whether the first specified <see cref="Point2f"/> comes after
+    /// (has superior sorting value than) the second point, or it is equal to it.
+    /// <para>Coordinates evaluation priority is first X, then Y.</para>
+    /// </summary>
+    /// <param name="a">First point.</param>
+    /// <param name="b">Second point.</param>
+    /// <returns>true if a.X is larger than b.X, or a.X == b.X and a.Y &gt;= b.Y; otherwise, false.</returns>
+    public static bool operator >=(Point2f a, Point2f b)
+    {
+      return (a.X > b.X) || (a.X == b.X && a.Y >= b.Y);
+    }
   }
 
   /// <summary>
@@ -149,7 +236,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 12)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
   [Serializable]
-  public struct Point3f : IEquatable<Point3f>
+  public struct Point3f : IEquatable<Point3f>, IComparable<Point3f>, IComparable
   {
     internal float m_x;
     internal float m_y;
@@ -204,6 +291,46 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Compares this <see cref="Point3f" /> with another <see cref="Point3f" />.
+    /// <para>Component evaluation priority is first X, then Y, then Z.</para>
+    /// </summary>
+    /// <param name="other">The other <see cref="Point3d" /> to use in comparison.</param>
+    /// <returns>
+    /// <para> 0: if this is identical to other</para>
+    /// <para>-1: if this.X &lt; other.X</para>
+    /// <para>-1: if this.X == other.X and this.Y &lt; other.Y</para>
+    /// <para>-1: if this.X == other.X and this.Y == other.Y and this.Z &lt; other.Z</para>
+    /// <para>+1: otherwise.</para>
+    /// </returns>
+    public int CompareTo(Point3f other)
+    {
+      if (m_x < other.m_x)
+        return -1;
+      if (m_x > other.m_x)
+        return 1;
+
+      if (m_y < other.m_y)
+        return -1;
+      if (m_y > other.m_y)
+        return 1;
+
+      if (m_z < other.m_z)
+        return -1;
+      if (m_z > other.m_z)
+        return 1;
+
+      return 0;
+    }
+
+    int IComparable.CompareTo(object obj)
+    {
+      if (obj is Point3f)
+        return CompareTo((Point3f)obj);
+      else
+        throw new ArgumentException("Input must be of type Point3f", "obj");
+    }
+
+    /// <summary>
     /// Computes a hash code for the present point.
     /// </summary>
     /// <returns>A non-unique integer that represents this point.</returns>
@@ -243,6 +370,68 @@ namespace Rhino.Geometry
     {
       return (a.m_x != b.m_x || a.m_y != b.m_y || a.m_z != b.m_z);
     }
+
+    /// <summary>
+    /// Determines whether the first specified point comes before (has inferior sorting value than) the second point.
+    /// <para>Coordinates evaluation priority is first X, then Y, then Z.</para>
+    /// </summary>
+    /// <param name="a">The first point.</param>
+    /// <param name="b">The second point.</param>
+    /// <returns>true if a.X is smaller than b.X,
+    /// or a.X == b.X and a.Y is smaller than b.Y,
+    /// or a.X == b.X and a.Y == b.Y and a.Z is smaller than b.Z;
+    /// otherwise, false.</returns>
+    public static bool operator <(Point3f a, Point3f b)
+    {
+      return a.CompareTo(b) < 0;
+    }
+
+    /// <summary>
+    /// Determines whether the first specified point comes before
+    /// (has inferior sorting value than) the second point, or it is equal to it.
+    /// <para>Coordinates evaluation priority is first X, then Y, then Z.</para>
+    /// </summary>
+    /// <param name="a">The first point.</param>
+    /// <param name="b">The second point.</param>
+    /// <returns>true if a.X is smaller than b.X,
+    /// or a.X == b.X and a.Y is smaller than b.Y,
+    /// or a.X == b.X and a.Y == b.Y and a.Z &lt;= b.Z;
+    /// otherwise, false.</returns>
+    public static bool operator <=(Point3f a, Point3f b)
+    {
+      return a.CompareTo(b) <= 0;
+    }
+
+    /// <summary>
+    /// Determines whether the first specified point comes after (has superior sorting value than) the second point.
+    /// <para>Coordinates evaluation priority is first X, then Y, then Z.</para>
+    /// </summary>
+    /// <param name="a">The first point.</param>
+    /// <param name="b">The second point.</param>
+    /// <returns>true if a.X is larger than b.X,
+    /// or a.X == b.X and a.Y is larger than b.Y,
+    /// or a.X == b.X and a.Y == b.Y and a.Z is larger than b.Z;
+    /// otherwise, false.</returns>
+    public static bool operator >(Point3f a, Point3f b)
+    {
+      return a.CompareTo(b) > 0;
+    }
+
+    /// <summary>
+    /// Determines whether the first specified point comes after
+    /// (has superior sorting value than) the second point, or it is equal to it.
+    /// <para>Coordinates evaluation priority is first X, then Y, then Z.</para>
+    /// </summary>
+    /// <param name="a">The first point.</param>
+    /// <param name="b">The second point.</param>
+    /// <returns>true if a.X is larger than b.X,
+    /// or a.X == b.X and a.Y is larger than b.Y,
+    /// or a.X == b.X and a.Y == b.Y and a.Z &gt;= b.Z;
+    /// otherwise, false.</returns>
+    public static bool operator >=(Point3f a, Point3f b)
+    {
+      return a.CompareTo(b) >= 0;
+    }
   }
 
   //skipping ON_4fPoint. I don't think I've ever seen this used in Rhino.
@@ -253,7 +442,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
   [DebuggerDisplay("({m_x}, {m_y})")]
   [Serializable]
-  public struct Vector2f : IEquatable<Vector2f>
+  public struct Vector2f : IEquatable<Vector2f>, IComparable<Vector2f>, IComparable
   {
     internal float m_x;
     internal float m_y;
@@ -286,6 +475,40 @@ namespace Rhino.Geometry
     public bool Equals(Vector2f vector)
     {
       return this == vector;
+    }
+
+    /// <summary>
+    /// Compares this <see cref="Vector2f" /> with another <see cref="Vector2f" />.
+    /// <para>Components evaluation priority is first X, then Y.</para>
+    /// </summary>
+    /// <param name="other">The other <see cref="Vector2f" /> to use in comparison.</param>
+    /// <returns>
+    /// <para> 0: if this is identical to other</para>
+    /// <para>-1: if this.X &lt; other.X</para>
+    /// <para>-1: if this.X == other.X and this.Y &lt; other.Y</para>
+    /// <para>+1: otherwise.</para>
+    /// </returns>
+    public int CompareTo(Vector2f other)
+    {
+      if (m_x < other.m_x)
+        return -1;
+      if (m_x > other.m_x)
+        return 1;
+
+      if (m_y < other.m_y)
+        return -1;
+      if (m_y > other.m_y)
+        return 1;
+
+      return 0;
+    }
+
+    int IComparable.CompareTo(object obj)
+    {
+      if (obj is Vector2f)
+        return CompareTo((Vector2f)obj);
+      else
+        throw new ArgumentException("Input must be of type Vector2f", "obj");
     }
 
     /// <summary>
@@ -329,6 +552,57 @@ namespace Rhino.Geometry
     {
       return (a.m_x != b.m_x || a.m_y != b.m_y);
     }
+
+    /// <summary>
+    /// Determines whether the first specified vector comes before
+    /// (has inferior sorting value than) the second vector.
+    /// <para>Components have decreasing evaluation priority: first X, then Y.</para>
+    /// </summary>
+    /// <param name="a">First vector.</param>
+    /// <param name="b">Second vector.</param>
+    /// <returns>true if a.X is smaller than b.X, or a.X == b.X and a.Y is smaller than b.Y; otherwise, false.</returns>
+    public static bool operator <(Vector2f a, Vector2f b)
+    {
+      return (a.X < b.X) || (a.X == b.X && a.Y < b.Y);
+    }
+
+    /// <summary>
+    /// Determines whether the first specified vector comes before
+    /// (has inferior sorting value than) the second vector, or it is equal to it.
+    /// <para>Components have decreasing evaluation priority: first X, then Y.</para>
+    /// </summary>
+    /// <param name="a">First vector.</param>
+    /// <param name="b">Second vector.</param>
+    /// <returns>true if a.X is smaller than b.X, or a.X == b.X and a.Y &lt;= b.Y; otherwise, false.</returns>
+    public static bool operator <=(Vector2f a, Vector2f b)
+    {
+      return (a.X < b.X) || (a.X == b.X && a.Y <= b.Y);
+    }
+
+    /// <summary>
+    /// Determines whether the first specified vector comes after (has superior sorting value than) the second vector.
+    /// <para>Components have decreasing evaluation priority: first X, then Y.</para>
+    /// </summary>
+    /// <param name="a">First vector.</param>
+    /// <param name="b">Second vector.</param>
+    /// <returns>true if a.X is larger than b.X, or a.X == b.X and a.Y is larger than b.Y; otherwise, false.</returns>
+    public static bool operator >(Vector2f a, Vector2f b)
+    {
+      return (a.X > b.X) || (a.X == b.X && a.Y > b.Y);
+    }
+
+    /// <summary>
+    /// Determines whether the first specified vector comes after
+    /// (has superior sorting value than) the second vector, or it is equal to it.
+    /// <para>Components have decreasing evaluation priority: first X, then Y.</para>
+    /// </summary>
+    /// <param name="a">First vector.</param>
+    /// <param name="b">Second vector.</param>
+    /// <returns>true if a.X is larger than b.X, or a.X == b.X and a.Y &gt;= b.Y; otherwise, false.</returns>
+    public static bool operator >=(Vector2f a, Vector2f b)
+    {
+      return (a.X > b.X) || (a.X == b.X && a.Y >= b.Y);
+    }
   }
 
   /// <summary>
@@ -337,7 +611,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 12)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
   [Serializable]
-  public struct Vector3f : IEquatable<Vector3f>
+  public struct Vector3f : IEquatable<Vector3f>, IComparable<Vector3f>, IComparable
   {
     #region members
     internal float m_x;
@@ -398,6 +672,46 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Compares this <see cref="Vector3f" /> with another <see cref="Vector3f" />.
+    /// <para>Component evaluation priority is first X, then Y, then Z.</para>
+    /// </summary>
+    /// <param name="other">The other <see cref="Vector3f" /> to use in comparison.</param>
+    /// <returns>
+    /// <para> 0: if this is identical to other</para>
+    /// <para>-1: if this.X &lt; other.X</para>
+    /// <para>-1: if this.X == other.X and this.Y &lt; other.Y</para>
+    /// <para>-1: if this.X == other.X and this.Y == other.Y and this.Z &lt; other.Z</para>
+    /// <para>+1: otherwise.</para>
+    /// </returns>
+    public int CompareTo(Vector3f other)
+    {
+      if (m_x < other.m_x)
+        return -1;
+      if (m_x > other.m_x)
+        return 1;
+
+      if (m_y < other.m_y)
+        return -1;
+      if (m_y > other.m_y)
+        return 1;
+
+      if (m_z < other.m_z)
+        return -1;
+      if (m_z > other.m_z)
+        return 1;
+
+      return 0;
+    }
+
+    int IComparable.CompareTo(object obj)
+    {
+      if (obj is Vector3f)
+        return CompareTo((Vector3f)obj);
+      else
+        throw new ArgumentException("Input must be of type Vector3f", "obj");
+    }
+
+    /// <summary>
     /// Computes a hash number that represents the current vector.
     /// </summary>
     /// <returns>A hash code that is not unique for each vector.</returns>
@@ -438,6 +752,70 @@ namespace Rhino.Geometry
     public static bool operator !=(Vector3f a, Vector3f b)
     {
       return (a.m_x != b.m_x || a.m_y != b.m_y || a.m_z != b.m_z);
+    }
+
+    /// <summary>
+    /// Determines whether the first specified vector comes before
+    /// (has inferior sorting value than) the second vector.
+    /// <para>Components evaluation priority is first X, then Y, then Z.</para>
+    /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>true if a.X is smaller than b.X,
+    /// or a.X == b.X and a.Y is smaller than b.Y,
+    /// or a.X == b.X and a.Y == b.Y and a.Z is smaller than b.Z;
+    /// otherwise, false.</returns>
+    public static bool operator <(Vector3f a, Vector3f b)
+    {
+      return a.CompareTo(b) < 0;
+    }
+
+    /// <summary>
+    /// Determines whether the first specified vector comes before
+    /// (has inferior sorting value than) the second vector, or it is equal to it.
+    /// <para>Components evaluation priority is first X, then Y, then Z.</para>
+    /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>true if a.X is smaller than b.X,
+    /// or a.X == b.X and a.Y is smaller than b.Y,
+    /// or a.X == b.X and a.Y == b.Y and a.Z &lt;= b.Z;
+    /// otherwise, false.</returns>
+    public static bool operator <=(Vector3f a, Vector3f b)
+    {
+      return a.CompareTo(b) <= 0;
+    }
+
+    /// <summary>
+    /// Determines whether the first specified vector comes after (has superior sorting value than)
+    /// the second vector.
+    /// <para>Components evaluation priority is first X, then Y, then Z.</para>
+    /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>true if a.X is larger than b.X,
+    /// or a.X == b.X and a.Y is larger than b.Y,
+    /// or a.X == b.X and a.Y == b.Y and a.Z is larger than b.Z;
+    /// otherwise, false.</returns>
+    public static bool operator >(Vector3f a, Vector3f b)
+    {
+      return a.CompareTo(b) > 0;
+    }
+
+    /// <summary>
+    /// Determines whether the first specified vector comes after (has superior sorting value than)
+    /// the second vector, or it is equal to it.
+    /// <para>Components evaluation priority is first X, then Y, then Z.</para>
+    /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>true if a.X is larger than b.X,
+    /// or a.X == b.X and a.Y is larger than b.Y,
+    /// or a.X == b.X and a.Y == b.Y and a.Z &gt;= b.Z;
+    /// otherwise, false.</returns>
+    public static bool operator >=(Vector3f a, Vector3f b)
+    {
+      return a.CompareTo(b) >= 0;
     }
   }
 }

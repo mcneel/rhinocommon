@@ -10,6 +10,12 @@ namespace Rhino.DocObjects
   //public class ON_3dmUnitsAndTolerances{}
   //public class ON_3dmAnnotationSettings { }
   //public class ON_3dmConstructionPlaneGridDefaults { }
+
+  /// <summary>
+  /// Represents a contruction plane inside the document.
+  /// <para>Use <see cref="Rhino.DocObjects.Tables.NamedConstructionPlaneTable"/>
+  /// methods and indexers to add and access a <see cref="ConstructionPlane"/>.</para>
+  /// </summary>
   public class ConstructionPlane
   {
     internal static ConstructionPlane FromIntPtr(IntPtr pConstructionPlane)
@@ -62,6 +68,10 @@ namespace Rhino.DocObjects
     System.Drawing.Color m_grid_z_color;
 
     #region ON_3dmConstructionPlane
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="ConstructionPlane"/>.
+    /// </summary>
     public ConstructionPlane()
     {
       m_plane = Plane.WorldXY;
@@ -80,20 +90,27 @@ namespace Rhino.DocObjects
 #endif
     }
 
+    /// <summary>
+    /// Gets or sets the geometric plane to use for construction.
+    /// </summary>
     public Plane Plane
     {
       get { return m_plane; }
       set { m_plane = value; }
     }
 
-    /// <summary>distance between grid lines</summary>
+    /// <summary>
+    /// Gets or sets the distance between grid lines.
+    /// </summary>
     public double GridSpacing
     {
       get { return m_grid_spacing; }
       set { m_grid_spacing = value; }
     }
 
-    /// <summary>number of grid lines in each direction</summary>
+    /// <summary>
+    /// Gets or sets the total amount of grid lines in each direction.
+    /// </summary>
     public int GridLineCount
     {
       get { return m_grid_line_count; }
@@ -101,9 +118,12 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// 0: none, 
-    /// 1: all lines are thick, 
-    /// 2: every other is thick, ...
+    /// Gets or sets the recurrence of a wider line on the grid.
+    /// <para>0: No lines are thick, all are drawn thin.</para>
+    /// <para>1: All lines are thick.</para>
+    /// <para>2: Every other line is thick.</para>
+    /// <para>3: One line in three lines is thick (and two are thin).</para>
+    /// <para>4: ...</para>
     /// </summary>
     public int ThickLineFrequency
     {
@@ -112,8 +132,9 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// false=grid is always drawn behind 3d geometry
-    /// true=grid is drawn at its depth as a 3d plane and grid lines obscure things behind the grid.
+    /// Gets or sets whether the grid is drawn on top of geometry.
+    /// <para>false=grid is always drawn behind 3d geometry</para>
+    /// <para>true=grid is drawn at its depth as a 3d plane and grid lines obscure things behind the grid.</para>
     /// </summary>
     public bool DepthBuffered
     {
@@ -121,6 +142,9 @@ namespace Rhino.DocObjects
       set { m_bDepthBuffered = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the name of the grid.
+    /// </summary>
     public string Name
     {
       get
@@ -142,37 +166,63 @@ namespace Rhino.DocObjects
       return rc;
     }
 
+    /// <summary>
+    /// Gets or sets whether the grid itself should be visible. 
+    /// </summary>
     public bool ShowGrid
     {
       get { return m_bShowGrid; }
       set { m_bShowGrid = value; }
     }
+
+    /// <summary>
+    /// Gets or sets whether the axes of the grid shuld be visible.
+    /// </summary>
     public bool ShowAxes
     {
       get { return m_bShowAxes; }
       set { m_bShowAxes = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the color of the thinner, less prominent line.
+    /// </summary>
     public System.Drawing.Color ThinLineColor
     {
       get { return m_thin_line_color; }
       set { m_thin_line_color = value; }
     }
+
+    /// <summary>
+    /// Gets or sets the color of the thicker, wider line.
+    /// </summary>
     public System.Drawing.Color ThickLineColor
     {
       get { return m_thick_line_color; }
       set { m_thick_line_color = value; }
     }
+
+    /// <summary>
+    /// Gets or sets the color of the grid X-axis mark.
+    /// </summary>
     public System.Drawing.Color GridXColor
     {
       get { return m_grid_x_color; }
       set { m_grid_x_color = value; }
     }
+
+    /// <summary>
+    /// Gets or sets the color of the grid Y-axis mark.
+    /// </summary>
     public System.Drawing.Color GridYColor
     {
       get { return m_grid_y_color; }
       set { m_grid_y_color = value; }
     }
+
+    /// <summary>
+    /// Gets or sets the color of the grid Z-axis mark.
+    /// </summary>
     public System.Drawing.Color GridZColor
     {
       get { return m_grid_z_color; }
@@ -180,11 +230,16 @@ namespace Rhino.DocObjects
     }
     #endregion
   }
+
   //public class ON_3dmViewPosition { }
   //public class ON_3dmViewTraceImage { }
   //public class ON_3dmWallpaperImage { }
   //public class ON_3dmPageSettings { }
   
+  /// <summary>
+  /// Represents the name and orientation of a NamedView.
+  /// <para>Namedviews can be thought of as cameras.</para>
+  /// </summary>
   public class ViewInfo : IDisposable // ON_3dmView
   {
     private IntPtr m_ptr; // ON_3dmView*
@@ -228,13 +283,28 @@ namespace Rhino.DocObjects
       return m_ptr;
     }
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~ViewInfo() { Dispose(false); }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)
@@ -244,6 +314,9 @@ namespace Rhino.DocObjects
       m_ptr = IntPtr.Zero;
     }
 
+    /// <summary>
+    /// Gets or sets the name of the NamedView.
+    /// </summary>
     public string Name
     {
       get
@@ -264,6 +337,10 @@ namespace Rhino.DocObjects
     }
 
     ViewportInfo m_viewport = null;
+
+    /// <summary>
+    /// Gets the viewport, or viewing frustum, associated with this view.
+    /// </summary>
     public ViewportInfo Viewport
     {
       get
@@ -284,13 +361,16 @@ namespace Rhino.DocObjects
   }
 
   /// <summary>
-  /// Information about the model's position in latitude, longitude,
-  /// and elevation for GIS mapping applications
+  /// Contains information about the model's position in latitude, longitude,
+  /// and elevation for GIS mapping applications.
   /// </summary>
   public class EarthAnchorPoint : IDisposable
   {
     IntPtr m_ptr = IntPtr.Zero;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EarthAnchorPoint"/> class.
+    /// </summary>
     public EarthAnchorPoint()
     {
       m_ptr = UnsafeNativeMethods.ON_EarthAnchorPoint_New();
@@ -310,14 +390,29 @@ namespace Rhino.DocObjects
     {
       return m_ptr;
     }
-    
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~EarthAnchorPoint() { Dispose(false); }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)
@@ -342,7 +437,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Point on the earth in decimal degrees.
+    /// Gets or sets a point latitude on earth, in decimal degrees.
     /// +90 = north pole, 0 = equator, -90 = south pole
     /// </summary>
     public double EarthBasepointLatitude
@@ -352,8 +447,9 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Point on the earth in decimal degrees.
-    /// 0 = prime meridian (Greenwich meridian)
+    /// Gets or sets the point longitude on earth, in decimal degrees.
+    /// <para>0 = prime meridian (Greenwich meridian)</para>
+    /// <para>Values increase towards West</para>
     /// </summary>
     public double EarthBasepointLongitude
     {
@@ -362,7 +458,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Point on the earth in meters
+    /// Gets or sets the point elevation on earth, in meters.
     /// </summary>
     public double EarthBasepointElevation
     {
@@ -371,23 +467,23 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// 0 = ground level, 1 = mean sea level, 2 = center of earth
+    /// Gets or sets a value indicating the zero level convention relating to a location on Earth.
     /// </summary>
-    public int EarthBasepointElevationZero
+    public BasepointZero EarthBasepointElevationZero
     {
       get
       {
         IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.ON_EarthAnchorPoint_GetEarthBasepointElevationZero(pConstThis);
+        return (BasepointZero)UnsafeNativeMethods.ON_EarthAnchorPoint_GetEarthBasepointElevationZero(pConstThis);
       }
       set
       {
         IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_EarthAnchorPoint_SetEarthBasepointElevationZero(pThis, value);
+        UnsafeNativeMethods.ON_EarthAnchorPoint_SetEarthBasepointElevationZero(pThis, (int)value);
       }
     }
 
-    /// <summary>Corresponding model point in model coordinates</summary>
+    /// <summary>Corresponding model point in model coordinates.</summary>
     public Point3d ModelBasePoint
     {
       get
@@ -404,7 +500,7 @@ namespace Rhino.DocObjects
       }
     }
 
-    /// <summary>Earth directions in model coordinates</summary>
+    /// <summary>Earth directions in model coordinates.</summary>
     public Vector3d ModelNorth
     {
       get
@@ -421,7 +517,7 @@ namespace Rhino.DocObjects
       }
     }
 
-    /// <summary>Earth directions in model coordinates</summary>
+    /// <summary>Earth directions in model coordinates.</summary>
     public Vector3d ModelEast
     {
       get
@@ -442,7 +538,7 @@ namespace Rhino.DocObjects
      //ON_UUID    m_id;           // unique id for this anchor point
 
     /// <summary>
-    /// Indentifying information about this location
+    /// Gets or sets the short form of the identifying information about this location.
     /// </summary>
     public string Name
     {
@@ -464,7 +560,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Indentifying information about this location
+    /// Gets or sets the long form of the identifying information about this location.
     /// </summary>
     public string Description
     {
@@ -504,11 +600,11 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Get a transformation from model coordinates to earth coordinates.
+    /// Gets a transformation from model coordinates to earth coordinates.
     /// This transformation assumes the model is small enough that
     /// the curvature of the earth can be ignored.
     /// </summary>
-    /// <param name="modelUnitSystem"></param>
+    /// <param name="modelUnitSystem">The model unit system.</param>
     /// <returns>
     /// Transform on success. Inalid Transform on error
     /// </returns>
@@ -541,17 +637,45 @@ namespace Rhino.DocObjects
     }
   }
 
+  /// <summary>
+  /// Specifies enumerated constants used to indicate the zero level convention relating to a location on Earth.
+  /// <para>This is used in conjunction with the <see cref="EarthAnchorPoint"/> class.</para>
+  /// </summary>
+  public enum BasepointZero
+  {
+    /// <summary>
+    /// The ground level is the convention for 0.
+    /// </summary>
+    GroundLevel = 0,
+
+    /// <summary>
+    /// The mean sea level is the convention for 0.
+    /// </summary>
+    MeanSeaLevel = 1,
+
+    /// <summary>
+    /// The center of the planet is the convention for 0.
+    /// </summary>
+    CenterOfEarth = 2,
+  }
+
   //public class ON_3dmIOSettings { }
   //public class ON_3dmSettings { }
 }
 
 namespace Rhino.Render
 {
+  /// <summary>
+  /// Contains settings used in rendering.
+  /// </summary>
   public class RenderSettings : IDisposable
   {
     Rhino.RhinoDoc m_doc;
     IntPtr m_ptr = IntPtr.Zero;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RenderSettings"/> class.
+    /// </summary>
     public RenderSettings()
     {
       m_ptr = UnsafeNativeMethods.ON_3dmRenderSettings_New(IntPtr.Zero);
@@ -578,14 +702,29 @@ namespace Rhino.Render
       }
       return m_ptr;
     }
-    
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~RenderSettings() { Dispose(false); }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)
@@ -609,7 +748,9 @@ namespace Rhino.Render
       UnsafeNativeMethods.ON_3dmRenderSettings_SetColor(pThis, which, argb);
     }
 
-
+    /// <summary>
+    /// Gets or sets the ambient light color used in rendering.
+    /// </summary>
     public System.Drawing.Color AmbientLight
     {
       get { return GetColor(idxAmbientLight); }
@@ -617,13 +758,18 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Also the background color if a solid background color is set
+    /// Gets or sets the background top color used in rendering.
+    /// <para>Sets also the background color if a solid background color is set.</para>
     /// </summary>
     public System.Drawing.Color BackgroundColorTop
     {
       get { return GetColor(idxBackgroundColorTop); }
       set { SetColor(idxBackgroundColorTop, value); }
     }
+
+    /// <summary>
+    /// Gets or sets the background bottom color used in rendering.
+    /// </summary>
     public System.Drawing.Color BackgroundColorBottom
     {
       get { return GetColor(idxBackgroundColorBottom); }
@@ -651,12 +797,15 @@ namespace Rhino.Render
     const int idxRenderMeshEdges = 7;
     const int idxRenderAnnotation = 8;
 
-    /// <summary>Use lights on layers that are off</summary>
+    /// <summary>
+    /// Gets or sets a value indicating whether to render using lights that are on layers that are off.
+    /// </summary>
     public bool UseHiddenLights
     {
       get { return GetBool(idxUseHiddenLights); }
       set { SetBool(idxUseHiddenLights, value); }
     }
+
     public bool DepthCue
     {
       get { return GetBool(idxDepthCue); }
@@ -776,6 +925,9 @@ namespace Rhino.Render
 
 namespace Rhino.FileIO
 {
+  /// <summary>
+  /// Contains settings used within the whole 3dm file.
+  /// </summary>
   public class File3dmSettings
   {
     File3dm m_parent;
@@ -795,6 +947,9 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_3dmSettingsPointer(pParent);
     }
 
+    /// <summary>
+    /// Gets or sets a Uniform Resource Locator (URL) direction for the model.
+    /// </summary>
     public string ModelUrl
     {
       get
@@ -815,8 +970,8 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Model basepoint is used when the file is read as an instance definition
-    /// and is the point that is mapped to the origin in the instance definition.
+    /// Gets or sets the model basepoint that is used when the file is read as an instance definition.
+    /// <para>This point is mapped to the origin in the instance definition.</para>
     /// </summary>
     public Point3d ModelBasepoint
     {
@@ -873,19 +1028,19 @@ namespace Rhino.FileIO
     const int idxPageAngleTol = 4;
     const int idxPageRelTol = 5;
 
-    /// <summary>Model space absolute tolerance.</summary>
+    /// <summary>Gets or sets the model space absolute tolerance.</summary>
     public double ModelAbsoluteTolerance
     {
       get { return GetDouble(idxModelAbsTol); }
       set { SetDouble(idxModelAbsTol, value); }
     }
-    /// <summary>Model space angle tolerance.</summary>
+    /// <summary>Gets or sets the model space angle tolerance.</summary>
     public double ModelAngleToleranceRadians
     {
       get { return GetDouble(idxModelAngleTol); }
       set { SetDouble(idxModelAngleTol, value); }
     }
-    /// <summary>Model space angle tolerance.</summary>
+    /// <summary>Gets or sets the model space angle tolerance.</summary>
     public double ModelAngleToleranceDegrees
     {
       get
@@ -900,25 +1055,25 @@ namespace Rhino.FileIO
         ModelAngleToleranceRadians = radians;
       }
     }
-    /// <summary>Model space relative tolerance.</summary>
+    /// <summary>Gets or sets the model space relative tolerance.</summary>
     public double ModelRelativeTolerance
     {
       get { return GetDouble(idxModelRelTol); }
       set { SetDouble(idxModelRelTol, value); }
     }
-    /// <summary>Page space absolute tolerance.</summary>
+    /// <summary>Gets or sets the page space absolute tolerance.</summary>
     public double PageAbsoluteTolerance
     {
       get { return GetDouble(idxPageAbsTol); }
       set { SetDouble(idxPageRelTol, value); }
     }
-    /// <summary>Page space angle tolerance.</summary>
+    /// <summary>Gets or sets the page space angle tolerance.</summary>
     public double PageAngleToleranceRadians
     {
       get { return GetDouble(idxPageAngleTol); }
       set { SetDouble(idxPageAngleTol, value); }
     }
-    /// <summary>Page space angle tolerance.</summary>
+    /// <summary>Gets or sets the page space angle tolerance.</summary>
     public double PageAngleToleranceDegrees
     {
       get
@@ -933,13 +1088,16 @@ namespace Rhino.FileIO
         PageAngleToleranceRadians = radians;
       }
     }
-    /// <summary>Page space relative tolerance.</summary>
+    /// <summary>Gets or sets the page space relative tolerance.</summary>
     public double PageRelativeTolerance
     {
       get { return GetDouble(idxPageRelTol); }
       set { SetDouble(idxPageRelTol, value); }
     }
 
+    /// <summary>
+    /// Gets or sets the model unit system, using <see cref="Rhino.UnitSystem"/> enumeration.
+    /// </summary>
     public Rhino.UnitSystem ModelUnitSystem
     {
       get
@@ -956,6 +1114,9 @@ namespace Rhino.FileIO
       }
     }
 
+    /// <summary>
+    /// Gets or sets the page unit system, using <see cref="Rhino.UnitSystem"/> enumeration.
+    /// </summary>
     public Rhino.UnitSystem PageUnitSystem
     {
       get

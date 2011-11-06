@@ -6,7 +6,8 @@ using System.Collections.Generic;
 namespace Rhino.DocObjects.Tables
 {
   /// <summary>
-  /// All named construction planes in a rhino document
+  /// Contains all named construction planes in a rhino document.
+  /// <para>This class cannot be inherited.</para>
   /// </summary>
   public sealed class NamedConstructionPlaneTable : IEnumerable<ConstructionPlane>, Rhino.Collections.IRhinoTable<ConstructionPlane>
   {
@@ -17,7 +18,7 @@ namespace Rhino.DocObjects.Tables
       m_doc = doc;
     }
 
-    /// <summary>Document that owns this table</summary>
+    /// <summary>Gets the document that owns this table.</summary>
     public RhinoDoc Document
     {
       get { return m_doc; }

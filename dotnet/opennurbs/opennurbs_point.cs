@@ -13,7 +13,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_t0}, {m_t1})")]
   [Serializable]
-  public struct Interval : ISerializable
+  public struct Interval : ISerializable, IEquatable<Interval>
   {
     #region Members
     private double m_t0;
@@ -135,7 +135,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determines whether the specified <see cref="Interval" /> is equal to the current <see cref="Interval" />,
+    /// Determines whether the specified <see cref="object" /> is equal to the current <see cref="Interval" />,
     /// comparing by value.
     /// </summary>
     /// <param name="obj">The other object to compare with</param>
@@ -143,6 +143,17 @@ namespace Rhino.Geometry
     public override bool Equals(object obj)
     {
       return (obj is Interval && this == (Interval)obj);
+    }
+
+    /// <summary>
+    /// Determines whether the specified <see cref="Interval" /> is equal to the current <see cref="Interval" />,
+    /// comparing by value.
+    /// </summary>
+    /// <param name="other">The other interval to compare with</param>
+    /// <returns>true if obj is an <see cref="Interval" /> and has the same bounds; false otherwise</returns>
+    public bool Equals(Interval other)
+    {
+      return this == other;
     }
 
     /// <summary>
@@ -505,7 +516,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_x}, {m_y})")]
   [Serializable]
-  public struct Point2d : ISerializable
+  public struct Point2d : ISerializable, IEquatable<Point2d>
   {
     private double m_x;
     private double m_y;
@@ -770,7 +781,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determines whether two Point2d have equal values.
+    /// Determines whether two <see cref="Point2d"/> have equal values.
     /// </summary>
     /// <param name="a">The first point</param>
     /// <param name="b">The second point</param>
@@ -781,7 +792,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determines whether two Point2d have different values.
+    /// Determines whether two <see cref="Point2d"/> have different values.
     /// </summary>
     /// <param name="a">The first point</param>
     /// <param name="b">The second point</param>
@@ -806,7 +817,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determines whether the first specified point comes after (has superior sorting value than) the second point.
+    /// Determines whether the first specified <see cref="Point2d"/> comes after (has superior sorting value than) the second point.
     /// <para>Coordinates evaluation priority is first X, then Y.</para>
     /// </summary>
     /// <param name="a">First point</param>
@@ -832,7 +843,17 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Computes a hash code for the current point.
+    /// Determines whether the specified Point2d has the same values as the present point.
+    /// </summary>
+    /// <param name="point">The specified point</param>
+    /// <returns>true if point has the same coordinates as this; otherwise false</returns>
+    public bool Equals(Point2d point)
+    {
+      return this == point;
+    }
+
+    /// <summary>
+    /// Computes a hash number that represents the current point.
     /// </summary>
     /// <returns>A hash code that is not unique for each point</returns>
     public override int GetHashCode()
@@ -847,9 +868,8 @@ namespace Rhino.Geometry
     /// <returns>The point representation in the form X,Y</returns>
     public override string ToString()
     {
-      return String.Format("{0},{1}",
-        X.ToString(System.Globalization.CultureInfo.InvariantCulture),
-        Y.ToString(System.Globalization.CultureInfo.InvariantCulture));
+      var culture = System.Globalization.CultureInfo.InvariantCulture;
+      return String.Format("{0},{1}", X.ToString(culture), Y.ToString(culture));
     }
 
     /// <summary>
@@ -979,7 +999,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 24)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
   [Serializable]
-  public struct Point3d : ISerializable
+  public struct Point3d : ISerializable, IEquatable<Point3d>
   {
     #region members
     internal double m_x;
@@ -1539,13 +1559,23 @@ namespace Rhino.Geometry
 
     #region methods
     /// <summary>
-    /// Determines whether the specified System.Object is a Point3d and has the same values as the present point.
+    /// Determines whether the specified <see cref="object"/> is a <see cref="Point3d"/> and has the same values as the present point.
     /// </summary>
     /// <param name="obj">The specified object</param>
     /// <returns>true if obj is a Point3d and has the same coordinates as this; otherwise false</returns>
     public override bool Equals(object obj)
     {
       return (obj is Point3d && this == (Point3d)obj);
+    }
+
+    /// <summary>
+    /// Determines whether the specified <see cref="Point3d"/> has the same values as the present point.
+    /// </summary>
+    /// <param name="point">The specified point</param>
+    /// <returns>true if point has the same coordinates as this; otherwise false</returns>
+    public bool Equals(Point3d point)
+    {
+      return this == point;
     }
 
     /// <summary>
@@ -1588,7 +1618,7 @@ namespace Rhino.Geometry
     /// Computes the distance between two points.
     /// </summary>
     /// <param name="other">Other point for distance measurement</param>
-    /// <returns>The length of the line between this and the other point, or 0 if any of the points is not valid</returns>
+    /// <returns>The length of the line between this and the other point; or 0 if any of the points is not valid</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_intersectcurves.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_intersectcurves.cs' lang='cs'/>
@@ -1612,8 +1642,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Transforms the present point in place. The transformation matrix acts on the left of the point
-    /// i.e., result = transformation*point
+    /// Transforms the present point in place. The transformation matrix acts on the left of the point. i.e.,
+    /// <para>result = transformation*point</para>
     /// </summary>
     /// <param name="xform">Transformation to apply</param>
     public void Transform(Transform xform)
@@ -1723,7 +1753,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 32)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z}, [{m_w}])")]
   [Serializable]
-  public struct Point4d : ISerializable
+  public struct Point4d : ISerializable, IEquatable<Point4d>
   {
     internal double m_x;
     internal double m_y;
@@ -1947,7 +1977,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="a">The first point</param>
     /// <param name="b">The second point</param>
-    /// <returns>true if the coordinates of the two points are exactly equal; otherwise false</returns>
+    /// <returns>true if the coordinates of the two points are equal; otherwise false</returns>
     public static bool operator ==(Point4d a, Point4d b)
     {
       return UnsafeNativeMethods.ON_4dPoint_Equality(a, b);
@@ -1973,6 +2003,16 @@ namespace Rhino.Geometry
     public override bool Equals(object obj)
     {
       return (obj is Point4d && this == (Point4d)obj);
+    }
+
+    /// <summary>
+    /// Determines whether the specified point has same value as the present point.
+    /// </summary>
+    /// <param name="point">The specified point</param>
+    /// <returns>true if point has the same value as this; otherwise false</returns>
+    public bool Equals(Point4d point)
+    {
+      return this == point;
     }
 
     /// <summary>
@@ -2006,7 +2046,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_x}, {m_y})")]
   [Serializable]
-  public struct Vector2d : ISerializable
+  public struct Vector2d : ISerializable, IEquatable<Vector2d>
   {
     private double m_x;
     private double m_y;
@@ -2118,6 +2158,16 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Determines whether the specified vector has the same value as the present vector.
+    /// </summary>
+    /// <param name="vector">The specified vector</param>
+    /// <returns>true if vector has the same components as this; otherwise false</returns>
+    public bool Equals(Vector2d vector)
+    {
+      return this == vector;
+    }
+
+    /// <summary>
     /// Provides a hashing value for the present vector.
     /// </summary>
     /// <returns>A non-unique number based on vector components</returns>
@@ -2162,7 +2212,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 24)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
   [Serializable]
-  public struct Vector3d : ISerializable
+  public struct Vector3d : ISerializable, IEquatable<Vector3d>
   {
     #region fields
     internal double m_x;
@@ -2780,6 +2830,16 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Determines whether the specified vector has the same value as the present vector.
+    /// </summary>
+    /// <param name="vector">The specified vector</param>
+    /// <returns>true if vector has the same coordinates as this; otherwise false</returns>
+    public bool Equals(Vector3d vector)
+    {
+      return this == vector;
+    }
+
+    /// <summary>
     /// Compares this <see cref="Vector3d" /> with another <see cref="Vector3d" />.
     /// <para>Component evaluation priority is first X, then Y, then Z.</para>
     /// </summary>
@@ -3019,7 +3079,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]
   [DebuggerDisplay("Pt({m_P.X},{m_P.Y},{m_P.Z}) Dir({m_V.X},{m_V.Y},{m_V.Z})")]
   [Serializable]
-  public struct Ray3d : ISerializable
+  public struct Ray3d : ISerializable, IEquatable<Ray3d>
   {
     readonly Point3d m_P;
     readonly Vector3d m_V;
@@ -3112,6 +3172,16 @@ namespace Rhino.Geometry
     public override bool Equals(object obj)
     {
       return (obj is Ray3d && this == (Ray3d)obj);
+    }
+
+    /// <summary>
+    /// Determines whether the specified Ray3d has the same value as the present ray.
+    /// </summary>
+    /// <param name="ray">The specified ray</param>
+    /// <returns>true if ray has the same position and direction as this; otherwise false</returns>
+    public bool Equals(Ray3d ray)
+    {
+      return this == ray;
     }
 
     /// <summary>

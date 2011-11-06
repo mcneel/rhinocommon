@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="analysismodeCommand.cs" />
     <Compile Include="examples_csPlugIn.cs" />
     <Compile Include="examples_csCommand.cs" />
     <Compile Include="ex_activeviewport.cs" />

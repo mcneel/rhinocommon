@@ -17,7 +17,7 @@ namespace Rhino.Collections
   ///    |- ENDCHUNK (TCODE_ANONYMOUS_CHUNK)
   /// ENDCHUNK (TCODE_ANONYMOUS_CHUNK)
   ///</summary>
-  public class ArchivableDictionary : ICloneable
+  public class ArchivableDictionary : ICloneable//, IDictionary<string, object>
   {
     private enum ItemType : int
     {
@@ -90,13 +90,18 @@ namespace Rhino.Collections
     string m_name;
     readonly System.Collections.Generic.Dictionary<string, DictionaryItem> m_items = new Dictionary<string, DictionaryItem>();
 
-
+    /// <summary>
+    /// Gets or sets the version of this <see cref="ArchivableDictionary"/>
+    /// </summary>
     public int Version
     {
       get { return m_version; }
       set { m_version = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the name string of this <see cref="ArchivableDictionary"/>
+    /// </summary>
     public string Name
     {
       get { return m_name; }
@@ -113,14 +118,14 @@ namespace Rhino.Collections
       }
     }
 
-    /// <summary>Create an instance of a dictionary for writing to a 3dm archive</summary>
+    /// <summary>Initializes an instance of a dictionary for writing to a 3dm archive</summary>
     public ArchivableDictionary()
     {
       m_version = 0;
       m_name = String.Empty;
     }
 
-    /// <summary>Create an instance of a dictionary for writing to a 3dm archive</summary>
+    /// <summary>Initializes an instance of a dictionary for writing to a 3dm archive</summary>
     /// <param name="version">
     /// Custom version used to help the plug-in developer determine which version of
     /// a dictionary is being written. One good way to write version information is to
@@ -132,7 +137,7 @@ namespace Rhino.Collections
       m_name = String.Empty;
     }
 
-    ///<summary>Create an instance of a dictionary for writing to a 3dm archive</summary>
+    ///<summary>Initializes an instance of a dictionary for writing to a 3dm archive</summary>
     ///<param name="version">
     /// custom version used to help the plug-in developer determine which version of
     /// a dictionary is being written. One good way to write version information is to
@@ -685,7 +690,7 @@ namespace Rhino.Collections
       return rc;    
     }
 
-    /// <summary>Entry names</summary>
+    /// <summary>Gets all entry names or keys.</summary>
     public string[] Keys
     {
       get
@@ -696,10 +701,27 @@ namespace Rhino.Collections
       }
     }
 
+    /// <summary>
+    /// Determines whether the dictionary contains the specified key.
+    /// </summary>
+    /// <param name="key">The key to locate.</param>
+    /// <returns>true if the dictionary contains an element with the specified key; otherwise, false.</returns>
+    /// <exception cref="System.ArgumentNullException">key is null.</exception>
     public bool ContainsKey(string key)
     {
       return m_items.ContainsKey(key);
     }
+
+    /// <summary>
+    /// Gets the value associated with the specified key.
+    /// </summary>
+    /// <param name="key">The key of the value to get or set.</param>
+    /// <returns>
+    /// The value associated with the specified key. If the specified key is not
+    /// found, a get operation throws a <see cref="System.Collections.Generic.KeyNotFoundException"/>.
+    /// </returns>
+    /// <exception cref="System.ArgumentNullException">If the key is null.</exception>
+    /// <exception cref="System.Collections.Generic.KeyNotFoundException">If the key is not found.</exception>
     public object this[string key]
     {
       get
@@ -711,16 +733,30 @@ namespace Rhino.Collections
       }
     }
 
+    /// <summary>
+    /// Removes all keys and values from the dictionary.
+    /// </summary>
     public void Clear()
     {
       m_items.Clear();
     }
 
+    /// <summary>
+    /// Removes the value with the specified key from the dictionary.
+    /// </summary>
+    /// <param name="key">The key of the element to remove.</param>
+    /// <exception cref="System.ArgumentNullException">Key is null.</exception>
+    // <returns>true if the element is successfully found and removed; otherwise, false.
+    // This method returns false if key is not found.
+    // </returns>
     public void Remove(string key)
     {
-      m_items.Remove(key);
+      /*return*/ m_items.Remove(key);
     }
 
+    /// <summary>
+    /// Gets the number of key/value pairs contained in the dictionary.
+    /// </summary>
     public int Count
     {
       get
@@ -729,6 +765,15 @@ namespace Rhino.Collections
       }
     }
 
+    /// <summary>
+    /// Gets the value associated with the specified key.
+    /// </summary>
+    /// <param name="key">The key of the value to get.</param>
+    /// <param name="value">When this method returns and if the key is found,
+    /// contains the value associated with the specified key;
+    /// otherwise, null. This parameter is passed uninitialized.</param>
+    /// <returns>true if the dictionary contains an element with the specified key; otherwise, false.</returns>
+    /// <exception cref="System.ArgumentNullException">Key is null.</exception>
     public bool TryGetValue(string key, out object value)
     {
       DictionaryItem di;
@@ -854,15 +899,22 @@ namespace Rhino.Collections
       }
     }
 
-    public object Clone()
+    public ArchivableDictionary Clone()
     {
       ArchivableDictionary clone = new ArchivableDictionary(m_version, m_name);
-      foreach( System.Collections.Generic.KeyValuePair<string, DictionaryItem> item in m_items )
+      foreach (System.Collections.Generic.KeyValuePair<string, DictionaryItem> item in m_items)
       {
         clone.m_items.Add(item.Key, item.Value.CreateCopy());
       }
       return clone;
     }
+
+    object ICloneable.Clone()
+    {
+      return Clone();
+    }
+
+    
   }
 }
 

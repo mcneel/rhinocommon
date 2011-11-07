@@ -102,12 +102,12 @@ namespace Rhino.Geometry
     { }
 
     /// <summary>
-    /// Protected constructor used in serialization.
+    /// Protected constructor for internal use.
     /// </summary>
     protected AnnotationBase() { }
 
     /// <summary>
-    /// Protected serialization constructor for internal use.
+    /// Protected constructor used in serialization.
     /// </summary>
     protected AnnotationBase(SerializationInfo info, StreamingContext context)
       : base (info, context)
@@ -509,6 +509,10 @@ namespace Rhino.Geometry
     }
 
 #if RHINO_SDK
+    /// <summary>
+    /// Explodes this text entity into an array of curves.
+    /// </summary>
+    /// <returns>An array of curves that forms the outline or content of this text entity.</returns>
     public Curve[] Explode()
     {
       IntPtr pConstThis = ConstPointer();

@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using Rhino.Display;
 using System.Runtime.Serialization;
@@ -6,15 +5,17 @@ using System.Runtime.Serialization;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// ArcCurve is used to represent arcs and circles.
-  /// ArcCurve.IsCircle returns true if the curve is a complete circle.
-  /// Details:
-  /// an ArcCurve is a subcurve of a circle, with a constant speed
-  /// parameterization. The parameterization is	an affine linear
-  /// reparameterzation of the underlying arc	m_arc onto the domain m_t.
-  /// A valid ArcCurve has Radius()>0 and  0&lt;AngleRadians()&lt;=2*PI
-  /// and a strictly increasing Domain(). 
+  /// Represent arcs and circles.
+  /// <para>ArcCurve.IsCircle returns true if the curve is a complete circle.</para>
   /// </summary>
+  /// <remarks>
+  /// <para>Details:</para>
+  /// <para>an ArcCurve is a subcurve of a circle, with a constant speed
+  /// parameterization. The parameterization is	an affine linear
+  /// reparameterzation of the underlying arc	m_arc onto the domain m_t.</para>
+  /// <para>A valid ArcCurve has Radius()>0 and  0&lt;AngleRadians()&lt;=2*PI
+  /// and a strictly increasing Domain.</para>
+  /// </remarks>
   [Serializable]
   public class ArcCurve : Curve, ISerializable
   {
@@ -24,11 +25,21 @@ namespace Rhino.Geometry
     {
     }
 
+    /// <summary>
+    /// Initializes a new <see cref="ArcCurve"/> instance.
+    /// <para>Radius is set to 1, position to Origin and Domain to full span (circle).</para>
+    /// </summary>
     public ArcCurve()
     {
       IntPtr ptr = UnsafeNativeMethods.ON_ArcCurve_New(IntPtr.Zero);
       ConstructNonConstObject(ptr);
     }
+
+    /// <summary>
+    /// Initializes a new <see cref="ArcCurve"/> instance,
+    /// copying values from another <see cref="ArcCurve"/>.
+    /// </summary>
+    /// <param name="other">Another ArcCurve.</param>
     public ArcCurve(ArcCurve other)
     {
       IntPtr pOther = IntPtr.Zero;
@@ -37,28 +48,63 @@ namespace Rhino.Geometry
       IntPtr ptr = UnsafeNativeMethods.ON_ArcCurve_New(pOther);
       ConstructNonConstObject(ptr);
     }
+
+    /// <summary>
+    /// Initializes a new <see cref="ArcCurve"/> instance,
+    /// copying values from another <see cref="Arc"/>.
+    /// </summary>
+    /// <param name="arc">Another Arc.</param>
     public ArcCurve(Arc arc)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_ArcCurve_New2(ref arc);
       ConstructNonConstObject(ptr);
     }
+
+    /// <summary>
+    /// Initializes a new <see cref="ArcCurve"/> instance,
+    /// copying values from another <see cref="Arc"/> and specifying the 
+    /// needed parametrization of the arc.
+    /// <para>Arc will not be cut again at these parameterizations.</para>
+    /// </summary>
+    /// <param name="arc">An original arc.</param>
+    /// <param name="t0">A new Domain.T0 value.</param>
+    /// <param name="t1">A new Domain.T1 value.</param>
     public ArcCurve(Arc arc, double t0, double t1)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_ArcCurve_New3(ref arc, t0, t1);
       ConstructNonConstObject(ptr);
     }
+
+    /// <summary>
+    /// Initializes a new <see cref="ArcCurve"/> instance,
+    /// copying the shape of a <see cref="Circle"/>.
+    /// <para>Parameterization will be [0;circle.Circumference]</para>
+    /// </summary>
+    /// <param name="circle">The original circle.</param>
     public ArcCurve(Circle circle)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_ArcCurve_New4(ref circle);
       ConstructNonConstObject(ptr);
     }
+
+    /// <summary>
+    /// Initializes a new <see cref="ArcCurve"/> instance,
+    /// copying values from a <see cref="Circle"/> and specifying the 
+    /// needed parametrization of the arc.
+    /// <para>Circle will not be newly cut at these parameterizations.</para>
+    /// </summary>
+    /// <param name="circle">A circle</param>
+    /// <param name="t0">A new Domain.T0 value.</param>
+    /// <param name="t1">A new Domain.T1 value.</param>
     public ArcCurve(Circle circle, double t0, double t1)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_ArcCurve_New5(ref circle, t0, t1);
       ConstructNonConstObject(ptr);
     }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected constructor used in serialization.
+    /// </summary>
     protected ArcCurve(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
@@ -77,7 +123,7 @@ namespace Rhino.Geometry
     const int idxAngleDegrees = 2;
 
     /// <summary>
-    /// Gets or sets the Arc that is contained within this ArcCurve.
+    /// Gets the arc that is contained within this ArcCurve.
     /// </summary>
     public Arc Arc
     {

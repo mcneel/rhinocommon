@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents a subcurve of three-dimensional circle.
+  /// Represents a subcurve of a three-dimensional circle.
   /// 
   /// <para>The curve is parameterized by an angle expressed in radians. For an IsValid arc
   /// the total subtended angle AngleRadians() = Domain()(1) - Domain()(0) must satisfy

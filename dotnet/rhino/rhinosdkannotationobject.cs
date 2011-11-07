@@ -5,11 +5,18 @@ using System.Runtime.InteropServices;
 #if RHINO_SDK
 namespace Rhino.DocObjects
 {
+  /// <summary>
+  /// Provides a base class for <see cref="Rhino.Geometry.AnnotationBase"/>-derived
+  /// objects that are placed in a document.
+  /// </summary>
   public /*abstract*/ class AnnotationObjectBase : RhinoObject
   {
     internal AnnotationObjectBase(uint serialNumber)
       : base(serialNumber) { }
 
+    /// <summary>
+    /// Gets the text that is displayed to users.
+    /// </summary>
     public string DisplayText
     {
       get
@@ -28,12 +35,21 @@ namespace Rhino.DocObjects
   //public class AnnotationObject : RhinoObject { }
   //public class AnnotationLeader : AnnotationObject { }
 
+
   // Wrapper for CRhinoLinearDimension
+  /// <summary>
+  /// Represents a <see cref="Rhino.Geometry.LinearDimension"/>
+  /// that is placed in a document.
+  /// </summary>
   public class LinearDimensionObject : AnnotationObjectBase
   {
     internal LinearDimensionObject(uint serialNumber)
       : base(serialNumber) { }
 
+    /// <summary>
+    /// Gets the <see cref="DocObjects.DimensionStyle"/>
+    /// associated with this LinearDimensionObject.
+    /// </summary>
     public DocObjects.DimensionStyle DimensionStyle
     {
       get

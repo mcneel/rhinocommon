@@ -228,7 +228,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets the document that owns this object
+    /// Gets the document that owns this object.
     /// </summary>
     public RhinoDoc Document
     {
@@ -489,12 +489,16 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Every object has a UUID (universally unique identifier). The default value is Guid.Empty.
+    /// Every object has a Guid (globally unique identifier, also known as UUID, or universally
+    /// unique identifier). The default value is Guid.Empty.
+    /// <para>
     /// When an object is added to a model, the value is checked.  If the value is Guid.Empty, a
-    /// new UUID is created. If the value is not NULL but it is already used by another object
-    /// in the model, a new UUID is created. If the value is not Guid.Empty and it is not used by
+    /// new Guid is created. If the value is not null but it is already used by another object
+    /// in the model, a new Guid is created. If the value is not Guid.Empty and it is not used by
     /// another object in the model, then that value persists. When an object is updated, by
     /// a move for example, the value of ObjectId persists.
+    /// </para>
+    /// <para>This value is the same as the one returned by this.Attributes.ObjectId.</para>
     /// </summary>
     public Guid Id
     {

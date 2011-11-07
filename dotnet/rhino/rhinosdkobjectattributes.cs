@@ -210,7 +210,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Determines if an object has a deisplay mode override for a given viewport
+    /// Determines if an object has a display mode override for a given viewport.
     /// </summary>
     /// <param name="viewportId">Id of a Rhino Viewport</param>
     /// <returns></returns>
@@ -230,7 +230,7 @@ namespace Rhino.DocObjects
     /// By default, objects are drawn using the display mode of the viewport that
     /// the object is being drawn in. Setting a specific display mode, instructs
     /// Rhino to always use that display mode, regardless of the viewport's mode.
-    /// This version affects the object's display mode for all viewports
+    /// This version affects the object's display mode for all viewports.
     /// </summary>
     /// <param name="mode"></param>
     /// <returns>true on success</returns>
@@ -342,12 +342,16 @@ namespace Rhino.DocObjects
     }
 */
     /// <summary>
-    /// Every object has a UUID (universally unique identifier). The default value is Guid.Empty.
-    /// When an object is added to a model, the value is checked.  If the value is NULL, a
-    /// new UUID is created. If the value is not NULL but it is already used by another object
-    /// in the model, a new UUID is created. If the value is not NULL and it is not used by
+    /// Every object has a Guid (globally unique identifier, also known as UUID, or universally
+    /// unique identifier). The default value is Guid.Empty.
+    /// <para>
+    /// When an object is added to a model, the value is checked.  If the value is Guid.Empty, a
+    /// new Guid is created. If the value is not null but it is already used by another object
+    /// in the model, a new Guid is created. If the value is not Guid.Empty and it is not used by
     /// another object in the model, then that value persists. When an object is updated, by
     /// a move for example, the value of ObjectId persists.
+    /// </para>
+    /// <para>This value is the same as the one returned by object.Id.</para>
     /// </summary>
     public Guid ObjectId
     {
@@ -379,8 +383,9 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// objects have optional text names.  More than one object in
-    /// a model can have the same name and some objects may have no name.
+    /// Gets or sets an object optional text name.
+    /// <para>More than one object in a model can have the same name and
+    /// some objects may have no name.</para>
     /// </summary>
     public string Name
     {
@@ -403,10 +408,11 @@ namespace Rhino.DocObjects
     */
 
     /// <summary>
-    /// Layer definitions in an OpenNURBS model are stored in a layer table.
+    /// Gets or sets an associated layer index.
+    /// <para>Layer definitions in an OpenNURBS model are stored in a layer table.
     /// The layer table is conceptually an array of ON_Layer classes.  Every
     /// OpenNURBS object in a model is on some layer.  The object's layer
-    /// is specified by zero based indicies into the ON_Layer array.
+    /// is specified by zero based indicies into the ON_Layer array.</para>
     /// </summary>
     public int LayerIndex
     {

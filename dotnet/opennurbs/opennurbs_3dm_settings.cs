@@ -870,7 +870,8 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether to instruct the rendering engine to show annotations.
+    /// Gets or sets a value indicating whether to instruct the rendering engine to show annotations,
+    /// such as linear dimensions or angular dimensions.
     /// </summary>
     public bool RenderAnnotations
     {

@@ -306,7 +306,7 @@ namespace Rhino.Geometry
 
     #region Methods
     /// <summary>
-    /// Computes the Hash code for this <see cref="Interval" /> object.
+    /// Computes the hash code for this <see cref="Interval" /> object.
     /// </summary>
     /// <returns>A hash value that might be equal for two different <see cref="Interval" /> values.</returns>
     public override int GetHashCode()

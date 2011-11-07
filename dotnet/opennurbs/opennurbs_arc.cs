@@ -1,25 +1,24 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// An Arc is a subcurve of 3d circle. 
+  /// Represents a subcurve of three-dimensional circle.
   /// 
-  /// The curve is parameterized by an angle expressed in radians. For an IsValid arc
+  /// <para>The curve is parameterized by an angle expressed in radians. For an IsValid arc
   /// the total subtended angle AngleRadians() = Domain()(1) - Domain()(0) must satisfy
-  /// 0 &lt; AngleRadians() &lt; 2*Pi
+  /// 0 &lt; AngleRadians() &lt; 2*Pi</para>
   /// 
-  /// The parameterization of the Arc is inherited from the Circle it is derived from.
+  /// <para>The parameterization of the Arc is inherited from the Circle it is derived from.
   /// In particular
-  ///   t -> center + cos(t)*radius*xaxis + sin(t)*radius*yaxis
+  ///   <code>t -> center + cos(t)*radius*xaxis + sin(t)*radius*yaxis</code>
   /// where xaxis and yaxis, (part of Circle.Plane) form an othonormal frame of the plane
-  /// containing the circle.
+  /// containing the circle.</para>
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 152)]
   [Serializable]
-  public struct Arc
+  public struct Arc : IEquatable<Arc>
   {
     #region members
     internal Plane m_plane;
@@ -29,7 +28,7 @@ namespace Rhino.Geometry
 
     #region constants
     /// <summary>
-    /// Create an invalid arc.
+    /// Initializes a new instance of an invalid arc.
     /// </summary>
     static internal Arc Invalid
     {
@@ -50,7 +49,7 @@ namespace Rhino.Geometry
 
     #region constructors
     /// <summary>
-    /// Create a new arc from a base circle and an angle.
+    /// Initializes a new instance of an arc from a base circle and an angle.
     /// </summary>
     /// <param name="circle">Circle to base arc upon.</param>
     /// <param name="angleRadians">Sweep angle of arc (in radians)</param>
@@ -61,7 +60,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new arc from a base circle and an interval of angles.
+    /// Initializes a new instance of an arc from a base circle and an interval of angles.
     /// </summary>
     /// <param name="circle">Circle to base arc upon.</param>
     /// <param name="angleIntervalRadians">
@@ -74,7 +73,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new arc from a base plane, a radius value and an angle.
+    /// Initializes a new arc from a base plane, a radius value and an angle.
     /// </summary>
     /// <param name="plane">The plane of the arc (arc center will be located at plane origin)</param>
     /// <param name="radius">Radius of arc.</param>
@@ -86,7 +85,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new horizontal arc at the given center point, with a custom radius and angle.
+    /// Initializes a new horizontal arc at the given center point, with a custom radius and angle.
     /// </summary>
     /// <param name="center">Center point of arc.</param>
     /// <param name="radius">Radius of arc.</param>
@@ -98,7 +97,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new aligned arc at the given center point, with a custom radius and angle.
+    /// Initializes a new aligned arc at the given center point, with a custom radius and angle.
     /// </summary>
     /// <param name="plane">Alignment plane for arc. The arc will be parallel to this plane.</param>
     /// <param name="center">Center point for arc.</param>
@@ -111,7 +110,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new arc through three points. If the points are coincident 
+    /// Initializes a new arc through three points. If the points are coincident 
     /// or colinear, this will result in an Invalid arc.
     /// </summary>
     /// <param name="startPoint">Start point of arc.</param>
@@ -124,7 +123,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new arc from end points and a tangent vector. 
+    /// Initializes a new arc from end points and a tangent vector. 
     /// If the tangent is parallel with the endpoints this will result in an Invalid arc.
     /// </summary>
     /// <param name="pointA">Start point of arc.</param>
@@ -348,8 +347,60 @@ namespace Rhino.Geometry
     #endregion
 
     #region methods
+
     /// <summary>
-    /// Compute the 3D axis aligned bounding box for this arc.
+    /// Determines whether another object is an arc and has the same value as this arc.
+    /// </summary>
+    /// <param name="obj">An object.</param>
+    /// <returns>true if obj is an arc and is exactly equal to this arc; otherwise false.</returns>
+    public override bool Equals(object obj)
+    {
+      return obj is Arc && Equals((Arc)obj);
+    }
+
+    /// <summary>
+    /// Determines whether another arc has the same value as this arc.
+    /// </summary>
+    /// <param name="other">An arc.</param>
+    /// <returns>true if obj is exactly equal to this arc; otherwise false.</returns>
+    public bool Equals(Arc other)
+    {
+      return m_radius == other.m_radius && m_angle == other.m_angle && m_plane == other.m_plane;
+    }
+
+    /// <summary>
+    /// Computes a hash code for the present arc.
+    /// </summary>
+    /// <returns>A non-unique integer that represents this arc.</returns>
+    public override int GetHashCode()
+    {
+      return m_radius.GetHashCode() ^ m_angle.GetHashCode() ^ m_plane.GetHashCode();
+    }
+
+    /// <summary>
+    /// Determines whether two arcs have equal values.
+    /// </summary>
+    /// <param name="a">The first arc.</param>
+    /// <param name="b">The second arc.</param>
+    /// <returns>true if all values of the two arcs are exactly equal; otherwise false.</returns>
+    public static bool operator ==(Arc a, Arc b)
+    {
+      return a.Equals(b);
+    }
+
+    /// <summary>
+    /// Determines whether two arcs have different values.
+    /// </summary>
+    /// <param name="a">The first arc.</param>
+    /// <param name="b">The second arc.</param>
+    /// <returns>true if any value of the two arcs differ; otherwise false.</returns>
+    public static bool operator !=(Arc a, Arc b)
+    {
+      return a.m_radius != b.m_radius || a.m_angle != b.m_angle || a.m_plane != b.m_plane;
+    }
+
+    /// <summary>
+    /// Computes the 3D axis aligned bounding box for this arc.
     /// </summary>
     /// <returns>Bounding box of arc.</returns>
     public BoundingBox BoundingBox()
@@ -386,7 +437,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get parameter on the arc closest to a test point.
+    /// Gets parameter on the arc closest to a test point.
     /// </summary>
     /// <param name="testPoint">Point to get close to.</param>
     /// <returns>Parameter (in radians) of the point on the arc that
@@ -401,7 +452,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get the point on the arc that is closest to a test point.
+    /// Computes the point on an arc that is closest to a test point.
     /// </summary>
     /// <param name="testPoint">Point to get close to.</param>
     /// <returns>
@@ -417,7 +468,7 @@ namespace Rhino.Geometry
 
 
     /// <summary>
-    /// Reverse the orientation of the arc. Changes the domain from [a,b]
+    /// Reverses the orientation of the arc. Changes the domain from [a,b]
     /// to [-b,-a].
     /// </summary>
     public void Reverse()
@@ -428,7 +479,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Transform the arc using a Transformation matrix.
+    /// Transforms the arc using a Transformation matrix.
     /// </summary>
     /// <param name="xform">Transformations to apply. 
     /// Note that arcs cannot handle non-euclidian transformations.</param>
@@ -439,7 +490,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a nurbs curve representation of this arc. 
+    /// Initializes a nurbs curve representation of this arc. 
     /// This amounts to the same as calling NurbsCurve.CreateFromArc().
     /// </summary>
     /// <returns>A nurbs curve representation of this arc or null if no such representation could be made.</returns>

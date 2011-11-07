@@ -1,39 +1,114 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Specifies enumerated constants used to indicate the internal alignment and justification of text.
+  /// </summary>
   public enum TextJustification : int
   {
+    /// <summary>
+    /// The default justification.
+    /// </summary>
     None = 0,
+
+    /// <summary>
+    /// Left justification.
+    /// </summary>
     Left = 1 << 0,
+
+    /// <summary>
+    /// Center justification.
+    /// </summary>
     Center = 1 << 1,
+
+    /// <summary>
+    /// Right justification.
+    /// </summary>
     Right = 1 << 2,
+
+    /// <summary>
+    /// Bottom inner alignment.
+    /// </summary>
     Bottom = 1 << 16,
+
+    /// <summary>
+    /// Middle inner alignment.
+    /// </summary>
     Middle = 1 << 17,
+
+    /// <summary>
+    /// Top inner alignment.
+    /// </summary>
     Top = 1 << 18,
+
+    /// <summary>
+    /// Combination of left justification and bottom alignment.
+    /// </summary>
     BottomLeft = Bottom | Left,
+
+    /// <summary>
+    /// Combination of center justification and bottom alignment.
+    /// </summary>
     BottomCenter = Bottom | Center,
+
+    /// <summary>
+    /// Combination of right justification and bottom alignment.
+    /// </summary>
     BottomRight = Bottom | Right,
+
+    /// <summary>
+    /// Combination of left justification and middle alignment.
+    /// </summary>
     MiddleLeft = Middle | Left,
+
+    /// <summary>
+    /// Combination of center justification and middle alignment.
+    /// </summary>
     MiddleCenter = Middle | Center,
+
+    /// <summary>
+    /// Combination of right justification and middle alignment.
+    /// </summary>
     MiddleRight = Middle | Right,
+
+    /// <summary>
+    /// Combination of left justification and top alignment.
+    /// </summary>
     TopLeft = Top | Left,
+
+    /// <summary>
+    /// Combination of center justification and top alignment.
+    /// </summary>
     TopCenter = Top | Center,
+
+    /// <summary>
+    /// Combination of right justification and top alignment.
+    /// </summary>
     TopRight = Top | Right
   }
 
+  /// <summary>
+  /// Provides a common base class to all annotation geometry.
+  /// <para>This class refers to the geometric element that is independent from the document.</para>
+  /// </summary>
   [Serializable]
   public class AnnotationBase : GeometryBase, ISerializable
   {
     internal AnnotationBase(IntPtr native_pointer, object parent)
       : base(native_pointer, parent, -1)
     { }
+
+    /// <summary>
+    /// Protected constructor used in serialization.
+    /// </summary>
     protected AnnotationBase() { }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected serialization constructor for internal use.
+    /// </summary>
     protected AnnotationBase(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
@@ -56,11 +131,11 @@ namespace Rhino.Geometry
     #endregion
 
     /// <summary>
-    /// Return depends on geometry type.
-    /// LinearDimension = Distance between arrow tips,
-    /// RadialDimension = radius or diamater depending on type
-    /// AngularDimension = angle in degrees
-    /// Leader or Text = UnsetValue
+    /// Gets the numeric value, depending on geometry type.
+    /// <para>LinearDimension: distance between arrow tips</para>
+    /// <para>RadialDimension: radius or diamater depending on type</para>
+    /// <para>AngularDimension: angle in degrees</para>
+    /// <para>Leader or Text: UnsetValue</para>
     /// </summary>
     public double NumericValue
     {
@@ -71,6 +146,9 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets or sets the text for this annotation.
+    /// </summary>
     public string Text
     {
       get
@@ -86,6 +164,9 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets or sets a formula for this annotation.
+    /// </summary>
     public string TextFormula
     {
       get
@@ -102,7 +183,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Text height in model units
+    /// Gets or sets the text height in model units.
     /// </summary>
     public double TextHeight
     {
@@ -119,7 +200,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Plane containing the annotation
+    /// Gets or sets the plane containing the annotation.
     /// </summary>
     public Plane Plane
     {
@@ -140,9 +221,16 @@ namespace Rhino.Geometry
 
   }
 
+  /// <summary>
+  /// Represents a linear dimension.
+  /// <para>This entity refers to the geometric element that is independent from the document.</para>
+  /// </summary>
   [Serializable]
   public class LinearDimension : AnnotationBase, ISerializable
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinearDimension"/> class.
+    /// </summary>
     public LinearDimension()
     {
       IntPtr ptr = UnsafeNativeMethods.ON_LinearDimension2_New();
@@ -162,13 +250,18 @@ namespace Rhino.Geometry
       SetLocations(extensionLine1End, extensionLine2End, pointOnDimensionLine);
     }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected constructor used in serialization.
+    /// </summary>
     protected LinearDimension(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
     }
 
 #if RHINO_SDK
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinearDimension"/> class, based on three points.
+    /// </summary>
     public static LinearDimension FromPoints(Point3d extensionLine1End, Point3d extensionLine2End, Point3d pointOnDimensionLine)
     {
       Point3d[] points = new Point3d[] { extensionLine1End, extensionLine2End, pointOnDimensionLine };
@@ -199,6 +292,9 @@ namespace Rhino.Geometry
       return new LinearDimension(IntPtr.Zero, null);
     }
 
+    /// <summary>
+    /// Gets the distance between arrow tips.
+    /// </summary>
     public double DistanceBetweenArrowTips
     {
       get{ return NumericValue; }
@@ -227,42 +323,63 @@ namespace Rhino.Geometry
     const int arrow1_pt_index = 3; // arrowhead tip on second extension line
     const int userpositionedtext_pt_index = 4;
 
+    /// <summary>
+    /// Gets the end of the first extension line.
+    /// </summary>
     public Point2d ExtensionLine1End
     {
       get { return GetPoint(ext0_pt_index); }
       //set { SetPoint(ext0_pt_index, value); }
     }
 
+    /// <summary>
+    /// Gets the end of the second extension line.
+    /// </summary>
     public Point2d ExtensionLine2End
     {
       get { return GetPoint(ext1_pt_index); }
       //set { SetPoint(ext1_pt_index, value); }
     }
 
+    /// <summary>
+    /// Gets the arrow head end of the first extension line.
+    /// </summary>
     public Point2d Arrowhead1End
     {
       get { return GetPoint(arrow0_pt_index); }
       //set { SetPoint(arrow0_pt_index, value); }
     }
 
+    /// <summary>
+    /// Gets the arrow head end of the second extension line.
+    /// </summary>
     public Point2d Arrowhead2End
     {
       get { return GetPoint(arrow1_pt_index); }
       //set { SetPoint(arrow1_pt_index, value); }
     }
 
+    /// <summary>
+    /// Gets the position of text on the plane.
+    /// </summary>
     public Point2d TextPosition
     {
       get { return GetPoint(userpositionedtext_pt_index); }
       //set { SetPoint(userpositionedtext_pt_index, value); }
     }
 
+    /// <summary>
+    /// Sets the three locations of the point, unsing two-dimensional points that refer to the plane of the annotation.
+    /// </summary>
     public void SetLocations(Point2d extensionLine1End, Point2d extensionLine2End, Point2d pointOnDimensionLine)
     {
       IntPtr pThis = NonConstPointer();
       UnsafeNativeMethods.ON_LinearDimension2_SetLocations(pThis, extensionLine1End, extensionLine2End, pointOnDimensionLine);
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether this annotation is aligned.
+    /// </summary>
     public bool Aligned
     {
       get
@@ -278,6 +395,10 @@ namespace Rhino.Geometry
     }
   }
 
+  /// <summary>
+  /// Represents a dimension of a circular entity that can be measured with radius or diameter.
+  /// <para>This entity refers to the geometric element that is independent from the document.</para>
+  /// </summary>
   [Serializable]
   public class RadialDimension : AnnotationBase, ISerializable
   {
@@ -285,12 +406,17 @@ namespace Rhino.Geometry
       : base(native_pointer, parent)
     { }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected constructor used in serialization.
+    /// </summary>
     protected RadialDimension(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the value refers to the diameter, rather than the radius.
+    /// </summary>
     public bool IsDiameterDimension
     {
       get
@@ -301,19 +427,30 @@ namespace Rhino.Geometry
     }
   }
 
+  /// <summary>
+  /// Represents a dimension of an entity that can be measured with an angle.
+  /// <para>This entity refers to the geometric element that is independent from the document.</para>
+  /// </summary>
   [Serializable]
   public class AngularDimension : AnnotationBase, ISerializable
   {
     internal AngularDimension(IntPtr native_pointer, object parent)
       : base(native_pointer, parent)
     { }
-    // serialization constructor
+
+    /// <summary>
+    /// Protected constructor used in serialization.
+    /// </summary>
     protected AngularDimension(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
     }
   }
 
+  /// <summary>
+  /// Represents the geometry of a dimension that displays a coordinate of a point.
+  /// <para>This class refers to the geometric element that is independent from the document.</para>
+  /// </summary>
   [Serializable]
   public class OrdinateDimension : AnnotationBase, ISerializable
   {
@@ -321,13 +458,19 @@ namespace Rhino.Geometry
       : base(native_pointer, parent)
     { }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected constructor used in serialization.
+    /// </summary>
     protected OrdinateDimension(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
     }
   }
 
+  /// <summary>
+  /// Represents text geometry.
+  /// <para>This class refers to the geometric element that is independent from the document.</para>
+  /// </summary>
   [Serializable]
   public class TextEntity : AnnotationBase, ISerializable
   {
@@ -335,7 +478,9 @@ namespace Rhino.Geometry
       : base(native_pointer, parent)
     { }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected constructor used in serialization.
+    /// </summary>
     protected TextEntity(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
@@ -347,7 +492,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Index of font in document font table used by the text
+    /// Gets or sets the index of font in document font table used by the text.
     /// </summary>
     public int FontIndex
     {
@@ -364,6 +509,10 @@ namespace Rhino.Geometry
     }
   }
 
+  /// <summary>
+  /// Represents a leader, or an annotation entity with text that resembles an arrow pointing to something.
+  /// <para>This class refers to the geometric element that is independent from the document.</para>
+  /// </summary>
   [Serializable]
   public class Leader : AnnotationBase, ISerializable
   {
@@ -371,13 +520,19 @@ namespace Rhino.Geometry
       : base(native_pointer, parent)
     { }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected constructor used in serialization.
+    /// </summary>
     protected Leader(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
     }
   }
 
+  /// <summary>
+  /// Represents a text dot, or an annotation entity with text that always faces the camera and always has the same size.
+  /// <para>This class refers to the geometric element that is independent from the document.</para>
+  /// </summary>
   [Serializable]
   public class TextDot : GeometryBase, ISerializable
   {
@@ -385,7 +540,9 @@ namespace Rhino.Geometry
       :base(native_pointer, parent, -1)
     { }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected constructor used in serialization.
+    /// </summary>
     protected TextDot(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
@@ -396,12 +553,20 @@ namespace Rhino.Geometry
       return new TextDot(IntPtr.Zero, null);
     }
 
+    /// <summary>
+    /// Initializes a new textdot based on the text and the location.
+    /// </summary>
+    /// <param name="text">Text</param>
+    /// <param name="location">A position</param>
     public TextDot(string text, Point3d location)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_TextDot_New(text, location);
       ConstructNonConstObject(ptr);
     }
-
+    
+    /// <summary>
+    /// Gets or sets the position of the textdot.
+    /// </summary>
     public Point3d Point
     {
       get
@@ -418,6 +583,9 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets or sets the text of the textdot.
+    /// </summary>
     public string Text
     {
       get

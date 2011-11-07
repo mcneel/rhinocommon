@@ -5261,6 +5261,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawArrows(IntPtr pPipeline, int line_count, Line[] lines, int argb);
 
+  //void CRhinoDisplayPipeline_DrawArrows2(CRhinoDisplayPipeline* pPipeline, int line_count, /*ARRAY*/const ON_Line* lines, int argb, double screenSize, double relativeSize)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_DrawArrows2(IntPtr pPipeline, int line_count, Line[] lines, int argb, double screenSize, double relativeSize);
+
   //void CRhinoDisplayPipeline_DrawSurface(CRhinoDisplayPipeline* pPipeline, const ON_Surface* pConstSurface, int argb, int density)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawSurface(IntPtr pPipeline, IntPtr pConstSurface, int argb, int density);

@@ -362,6 +362,17 @@ namespace Rhino.Geometry
         UnsafeNativeMethods.ON_Annotation2_Index(pThis, true, value);
       }
     }
+
+#if RHINO_SDK
+    public Curve[] Explode()
+    {
+      IntPtr pConstThis = ConstPointer();
+      Runtime.InteropWrappers.SimpleArrayCurvePointer curves = new Runtime.InteropWrappers.SimpleArrayCurvePointer();
+      IntPtr pCurves = curves.NonConstPointer();
+      UnsafeNativeMethods.ON_TextEntity_Explode(pConstThis, pCurves);
+      return curves.ToNonConstArray();
+    }
+#endif
   }
 
   [Serializable]

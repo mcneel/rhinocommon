@@ -312,6 +312,10 @@ internal partial class UnsafeNativeMethods
   //void ON_TextDot_GetSetText(ON_TextDot* ptr, bool set, const RHMONO_STRING* _text, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_TextDot_GetSetText(IntPtr ptr, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.LPWStr)]string _text, IntPtr pStringHolder);
+
+  //int ON_TextEntity_Explode(const ON_TextEntity2* pConstTextEntity2, ON_SimpleArray<ON_Curve*>* pCurveArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_TextEntity_Explode(IntPtr pConstTextEntity2, IntPtr pCurveArray);
   #endregion
 
 
@@ -4306,6 +4310,15 @@ internal partial class UnsafeNativeMethods
   //void CRhinoVisualAnalysisMode_Register(ON_UUID id, const RHMONO_STRING* name, int style)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoVisualAnalysisMode_Register(Guid id, [MarshalAs(UnmanagedType.LPWStr)]string name, int style);
+
+  //void CRhinoVisualAnalysisMode_SetCallbacks(ANALYSISMODEENABLEUIPROC enableui_proc,
+  //  ANALYSISMODEOBJECTSUPPORTSPROC object_supports_proc,
+  //  ANALYSISMODESHOWISOCURVESPROC show_isocurves_proc,
+  //  ANALYSISMODESETDISPLAYATTRIBUTESPROC set_display_attributes_proc,
+  //  ANALYSISMODEUPDATEVERTEXCOLORSPROC update_vertexcolors_proc,
+  //  ANALYSISMODEDRAWRHINOOBJECTPROC draw_rhinoobject_proc,
+  //  ANALYSISMODEDRAWGEOMETRYPROC draw_geometry_proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //const CRhinoVisualAnalysisMode* CRhinoVisualAnalysisMode_Mode(ON_UUID id)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

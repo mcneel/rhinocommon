@@ -186,3 +186,24 @@ RH_C_FUNCTION void ON_TextDot_GetSetText(ON_TextDot* ptr, bool set, const RHMONO
     }
   }
 }
+
+
+#if !defined(OPENNURBS_BUILD) // only available in Rhino
+RH_C_FUNCTION int ON_TextEntity_Explode(const ON_TextEntity2* pConstTextEntity2, ON_SimpleArray<ON_Curve*>* pCurveArray)
+{
+  int rc = 0;
+  if( pConstTextEntity2 && pCurveArray )
+  {
+    CRhinoAnnotationText annotation;
+    annotation.SetAnnotation(*pConstTextEntity2);
+    const CRhinoText* pText = annotation.Text();
+    if( pText )
+    {
+      const_cast<CRhinoText*>(pText)->Regen();
+      annotation.Explode(*pCurveArray);
+      rc = pCurveArray->Count();
+    }
+  }
+  return rc;
+}
+#endif

@@ -357,10 +357,14 @@ namespace Rhino.DocObjects
     {
       get
       {
-        IntPtr ptr = ConstPointer();
-        return UnsafeNativeMethods.ON_3dmObjectAttributes_m_uuid(ptr); 
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_3dmObjectAttributes_m_uuid(pConstThis); 
       }
-      // I don't think I've ever seen a "set" case so leave out
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_3dmObjectAttributes_set_m_uuid(pThis, value);
+      }
     }
 
 

@@ -49,9 +49,13 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_3dmObjectAttributes_GetSetBool(IntPtr ptr, int which, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.U1)]bool set_value);
 
-  //ON_UUID ON_3dmObjectAttributes_m_uuid(const ON_3dmObjectAttributes* ptr)
+  //ON_UUID ON_3dmObjectAttributes_m_uuid(const ON_3dmObjectAttributes* pConstObjectAttributes)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern Guid ON_3dmObjectAttributes_m_uuid(IntPtr ptr);
+  internal static extern Guid ON_3dmObjectAttributes_m_uuid(IntPtr pConstObjectAttributes);
+
+  //void ON_3dmObjectAttributes_set_m_uuid(ON_3dmObjectAttributes* pAttributes, ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_3dmObjectAttributes_set_m_uuid(IntPtr pAttributes, Guid id);
 
   //void ON_3dmObjectAttributes_GetSetString(ON_3dmObjectAttributes* ptr, int which, bool set, const RHMONO_STRING* _str, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

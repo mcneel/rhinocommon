@@ -51,6 +51,11 @@ namespace Rhino.Geometry
       return hatches.ToArray();
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_hatchcurve.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_hatchcurve.cs' lang='cs'/>
+    /// <code source='examples\py\ex_hatchcurve.py' lang='py'/>
+    /// </example>
     public static Hatch[] Create(Curve curve, int hatchPatternIndex, double rotationRadians, double scale)
     {
       return Create(new Curve[] { curve }, hatchPatternIndex, rotationRadians, scale);

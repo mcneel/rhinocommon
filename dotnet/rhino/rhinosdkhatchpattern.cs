@@ -144,6 +144,11 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_hatchcurve.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_hatchcurve.cs' lang='cs'/>
+    /// <code source='examples\py\ex_hatchcurve.py' lang='py'/>
+    /// </example>
     public string Name
     {
       get
@@ -258,6 +263,11 @@ namespace Rhino.DocObjects.Tables
     /// specified, new objects are assigned to the current hatch pattern.
     /// The current hatch pattern is never locked, hidden, or deleted.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_hatchcurve.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_hatchcurve.cs' lang='cs'/>
+    /// <code source='examples\py\ex_hatchcurve.py' lang='py'/>
+    /// </example>
     public int CurrentHatchPatternIndex
     {
       get
@@ -276,6 +286,11 @@ namespace Rhino.DocObjects.Tables
     /// <param name="name"></param>
     /// <param name="ignoreDeleted">true means don't search deleted hatch patterns</param>
     /// <returns>index of the hatch pattern with the given name. -1 if no hatch pattern found</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_hatchcurve.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_hatchcurve.cs' lang='cs'/>
+    /// <code source='examples\py\ex_hatchcurve.py' lang='py'/>
+    /// </example>
     public int Find(string name, bool ignoreDeleted)
     {
       return UnsafeNativeMethods.CRhinoHatchPatternTable_Find(m_doc.m_docId, name, ignoreDeleted);

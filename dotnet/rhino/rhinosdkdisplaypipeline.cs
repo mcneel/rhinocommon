@@ -1062,6 +1062,19 @@ namespace Rhino.Display
       DrawArrows(lines, color);
     }
     /// <summary>
+    /// Draw a single arrow object. 
+    /// An arrow consists of a Shaft and an Arrow head at the end of the shaft.
+    /// </summary>
+    /// <param name="line">Arrow shaft.</param>
+    /// <param name="color">Color of arrow.</param>
+    /// <param name="screenSize">If screenSize != 0.0 then the size (in screen pixels) of the arrow head will be equal to screenSize.</param>
+    /// <param name="relativeSize">If relativeSize != 0.0 and screensize == 0.0 the size of the arrow head will be proportional to the arrow shaft length.</param>
+    public void DrawArrow(Line line, System.Drawing.Color color, double screenSize, double relativeSize)
+    {
+      Line[] lines = new Line[] { line };
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawArrows2(m_ptr, 1, lines, color.ToArgb(), screenSize, relativeSize);
+    }
+    /// <summary>
     /// Draw a collection of arrow objects. An arrow consists of a Shaft and an Arrow head at the end of the shaft.
     /// </summary>
     /// <param name="lines">Arrow shafts.</param>

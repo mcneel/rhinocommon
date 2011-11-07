@@ -92,7 +92,9 @@ namespace Rhino
       get { return UnsafeNativeMethods.CRhinoApp_GetInt(idxSdkServiceRelease); }
     }
 
-    ///<summary>Major version of Rhino executable 4, 5, ...</summary>
+    ///<summary>
+    ///Major version of Rhino executable 4, 5, ...
+    ///</summary>
     public static int ExeVersion
     {
       get { return UnsafeNativeMethods.CRhinoApp_GetInt(idxExeVersion); }

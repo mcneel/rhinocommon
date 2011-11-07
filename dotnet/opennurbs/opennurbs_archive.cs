@@ -17,7 +17,7 @@ namespace Rhino.Collections
   ///    |- ENDCHUNK (TCODE_ANONYMOUS_CHUNK)
   /// ENDCHUNK (TCODE_ANONYMOUS_CHUNK)
   ///</summary>
-  public class ArchivableDictionary : ICloneable//, IDictionary<string, object>
+  public class ArchivableDictionary : ICloneable, IDictionary<string, object>
   {
     private enum ItemType : int
     {
@@ -91,7 +91,7 @@ namespace Rhino.Collections
     readonly System.Collections.Generic.Dictionary<string, DictionaryItem> m_items = new Dictionary<string, DictionaryItem>();
 
     /// <summary>
-    /// Gets or sets the version of this <see cref="ArchivableDictionary"/>
+    /// Gets or sets the version of this <see cref="ArchivableDictionary"/>.
     /// </summary>
     public int Version
     {
@@ -100,7 +100,7 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Gets or sets the name string of this <see cref="ArchivableDictionary"/>
+    /// Gets or sets the name string of this <see cref="ArchivableDictionary"/>.
     /// </summary>
     public string Name
     {
@@ -746,12 +746,12 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="key">The key of the element to remove.</param>
     /// <exception cref="System.ArgumentNullException">Key is null.</exception>
-    // <returns>true if the element is successfully found and removed; otherwise, false.
-    // This method returns false if key is not found.
-    // </returns>
-    public void Remove(string key)
+    /// <returns>true if the element is successfully found and removed; otherwise, false.
+    /// This method returns false if key is not found.
+    /// </returns>
+    public bool Remove(string key)
     {
-      /*return*/ m_items.Remove(key);
+      return m_items.Remove(key);
     }
 
     /// <summary>
@@ -899,6 +899,10 @@ namespace Rhino.Collections
       }
     }
 
+    /// <summary>
+    /// Constructs a deep copy of this object.
+    /// </summary>
+    /// <returns>The copy of this object.</returns>
     public ArchivableDictionary Clone()
     {
       ArchivableDictionary clone = new ArchivableDictionary(m_version, m_name);
@@ -914,7 +918,97 @@ namespace Rhino.Collections
       return Clone();
     }
 
-    
+    /// <summary>
+    /// This is not supported and always throws <see cref="NotSupportedException"/> at the moment.
+    /// </summary>
+    /// <param name="key">Unused.</param>
+    /// <param name="value">Unused.</param>
+    void IDictionary<string, object>.Add(string key, object value)
+    {
+      throw new NotSupportedException("You must use the SetXXX() methods to set the content of this archive.");
+    }
+
+    ICollection<string> IDictionary<string, object>.Keys
+    {
+      get { return Array.AsReadOnly(Keys); }
+    }
+
+    /// <summary>
+    /// This is not implemented and always throws <see cref="NotImplementedException"/> at the moment.
+    /// </summary>
+    /// <param name="key">Unused.</param>
+    /// <param name="value">Unused.</param>
+    ICollection<object> IDictionary<string, object>.Values
+    {
+      get { throw new NotImplementedException(); }
+    }
+
+    object IDictionary<string, object>.this[string key]
+    {
+      get
+      {
+        return this[key];
+      }
+      set
+      {
+        throw new NotSupportedException("You must use the SetXXX() methods to set the content of this archive.");
+      }
+    }
+
+    void IDictionary<string, object>.Add(KeyValuePair<string, object> item)
+    {
+      throw new NotSupportedException("You must use the SetXXX() methods to set the content of this archive.");
+    }
+
+    bool IDictionary<string, object>.Contains(KeyValuePair<string, object> item)
+    {
+      return m_items.ContainsKey(item.Key);
+    }
+
+    void IDictionary<string, object>.CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
+      if (arrayIndex < 0 || arrayIndex > array.Length)
+      {
+        throw new ArgumentOutOfRangeException("arrayIndex");
+      }
+      if (array.Length - arrayIndex < this.Count)
+      {
+        throw new ArgumentException("This dictionary does not fit into the array.");
+      }
+      foreach(var content in this)
+      {
+        array[arrayIndex++] = content;
+      }
+    }
+
+    bool IDictionary<string, object>.IsReadOnly
+    {
+      get { return true; /* because we do not support the Add() methods, we return true here */ }
+    }
+
+    bool IDictionary<string, object>.Remove(KeyValuePair<string, object> item)
+    {
+      return Remove(item.Key);
+    }
+
+    public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+    {
+      foreach (var element in m_items)
+      {
+        DictionaryItem item = element.Value;
+        if(item != null)
+          yield return new KeyValuePair<string, object>(element.Key, item.m_value);
+      }
+    }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
   }
 }
 

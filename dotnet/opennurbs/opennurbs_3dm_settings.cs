@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using Rhino.Geometry;
 using System.Runtime.InteropServices;
@@ -806,41 +805,73 @@ namespace Rhino.Render
       set { SetBool(idxUseHiddenLights, value); }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to render using depth cues.
+    /// <para>These are clues to help the perception of position and orientation of objects in the image.</para>
+    /// </summary>
     public bool DepthCue
     {
       get { return GetBool(idxDepthCue); }
       set { SetBool(idxDepthCue, value); }
     }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to render using flat shading.
+    /// </summary>
     public bool FlatShade
     {
       get { return GetBool(idxFlatShade); }
       set { SetBool(idxFlatShade, value); }
     }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to render back faces.
+    /// </summary>
     public bool RenderBackfaces
     {
       get { return GetBool(idxRenderBackFaces); }
       set { SetBool(idxRenderBackFaces, value); }
     }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to instruct the rendering engine to show points.
+    /// </summary>
     public bool RenderPoints
     {
       get { return GetBool(idxRenderPoints); }
       set { SetBool(idxRenderPoints, value); }
     }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to instruct the rendering engine to show curves.
+    /// </summary>
     public bool RenderCurves
     {
       get { return GetBool(idxRenderCurves); }
       set { SetBool(idxRenderCurves, value); }
     }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to instruct the rendering engine to show isocurves.
+    /// </summary>
     public bool RenderIsoparams
     {
       get { return GetBool(idxRenderIsoparams); }
       set { SetBool(idxRenderIsoparams, value); }
     }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to instruct the rendering engine to show mesh edges.
+    /// </summary>
     public bool RenderMeshEdges
     {
       get { return GetBool(idxRenderMeshEdges); }
       set { SetBool(idxRenderMeshEdges, value); }
     }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to instruct the rendering engine to show annotations.
+    /// </summary>
     public bool RenderAnnotations
     {
       get { return GetBool(idxRenderAnnotation); }
@@ -875,6 +906,9 @@ namespace Rhino.Render
       set { SetInt(idxAntialiasStyle, value); }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating the size of the rendering result.
+    /// </summary>
     public System.Drawing.Size ImageSize
     {
       get

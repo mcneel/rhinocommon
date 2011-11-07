@@ -113,9 +113,11 @@
     <Compile Include="ex_dividebylength.vb" />
     <Compile Include="ex_drawoverlay.vb" />
     <Compile Include="ex_dupborder.vb" />
+    <Compile Include="ex_edittext.vb" />
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_constrainedcopy.vb" />
     <Compile Include="ex_gumball.vb" />
+    <Compile Include="ex_hatchcurve.vb" />
     <Compile Include="ex_insertknot.vb" />
     <Compile Include="ex_instancedefinitionobjects.vb" />
     <Compile Include="ex_intersectcurves.vb" />

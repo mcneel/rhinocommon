@@ -516,6 +516,11 @@ namespace Rhino
     }
 
     private Rhino.DocObjects.Tables.HatchPatternTable m_hatchpattern_table;
+    /// <example>
+    /// <code source='examples\vbnet\ex_hatchcurve.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_hatchcurve.cs' lang='cs'/>
+    /// <code source='examples\py\ex_hatchcurve.py' lang='py'/>
+    /// </example>
     public Rhino.DocObjects.Tables.HatchPatternTable HatchPatterns
     {
       get { return m_hatchpattern_table ?? (m_hatchpattern_table = new Rhino.DocObjects.Tables.HatchPatternTable(this)); }
@@ -3221,6 +3226,11 @@ namespace Rhino.DocObjects.Tables
       return AddLeader(null, points);
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_hatchcurve.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_hatchcurve.cs' lang='cs'/>
+    /// <code source='examples\py\ex_hatchcurve.py' lang='py'/>
+    /// </example>
     public Guid AddHatch(Hatch hatch)
     {
       return AddHatch(hatch, null);

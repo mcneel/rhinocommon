@@ -100,9 +100,11 @@
     <Compile Include="ex_dividebylength.cs" />
     <Compile Include="ex_drawoverlay.cs" />
     <Compile Include="ex_dupborder.cs" />
+    <Compile Include="ex_edittext.cs" />
     <Compile Include="ex_findobjectsbyname.cs" />
     <Compile Include="ex_constrainedcopy.cs" />
     <Compile Include="ex_gumball.cs" />
+    <Compile Include="ex_hatchcurve.cs" />
     <Compile Include="ex_insertknot.cs" />
     <Compile Include="ex_instancedefinitionobjects.cs" />
     <Compile Include="ex_intersectcurves.cs" />
@@ -117,6 +119,7 @@
     <Compile Include="ex_sweep1.cs" />
     <Compile Include="ex_sweep2.cs" />
     <Compile Include="ex_transformbrep.cs" />
+    <Compile Include="ex_tweakcolors.cs" />
     <Compile Include="ex_unrollsurface.cs" />
     <Compile Include="ex_unrollsurface2.cs" />
     <Compile Include="ex_userdataCommand.cs" />

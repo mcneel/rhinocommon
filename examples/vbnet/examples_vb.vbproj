@@ -117,6 +117,7 @@
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_constrainedcopy.vb" />
     <Compile Include="ex_gumball.vb" />
+    <Compile Include="ex_hatchcurve.vb" />
     <Compile Include="ex_insertknot.vb" />
     <Compile Include="ex_instancedefinitionobjects.vb" />
     <Compile Include="ex_intersectcurves.vb" />

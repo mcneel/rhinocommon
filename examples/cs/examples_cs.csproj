@@ -104,6 +104,7 @@
     <Compile Include="ex_findobjectsbyname.cs" />
     <Compile Include="ex_constrainedcopy.cs" />
     <Compile Include="ex_gumball.cs" />
+    <Compile Include="ex_hatchcurve.cs" />
     <Compile Include="ex_insertknot.cs" />
     <Compile Include="ex_instancedefinitionobjects.cs" />
     <Compile Include="ex_intersectcurves.cs" />

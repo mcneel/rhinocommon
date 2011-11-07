@@ -149,6 +149,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets or sets the text for this annotation.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_edittext.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_edittext.cs' lang='cs'/>
+    /// <code source='examples\py\ex_edittext.py' lang='py'/>
+    /// </example>
     public string Text
     {
       get

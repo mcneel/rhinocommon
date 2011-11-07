@@ -40,7 +40,7 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.RHC_RhinoCreateHatches(pCurveArray, hatchPatternIndex, rotationRadians, scale, pOutput);
       GeometryBase[] g = hatcharray.ToNonConstArray();
       if( g==null )
-        return null;
+        return new Hatch[0];
       List<Hatch> hatches = new List<Hatch>();
       for (int i = 0; i < g.Length; i++)
       {
@@ -49,6 +49,11 @@ namespace Rhino.Geometry
           hatches.Add(hatch);
       }
       return hatches.ToArray();
+    }
+
+    public static Hatch[] Create(Curve curve, int hatchPatternIndex, double rotationRadians, double scale)
+    {
+      return Create(new Curve[] { curve }, hatchPatternIndex, rotationRadians, scale);
     }
 
 

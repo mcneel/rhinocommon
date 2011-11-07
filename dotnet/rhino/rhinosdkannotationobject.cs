@@ -92,6 +92,16 @@ namespace Rhino.DocObjects
     {
       return UnsafeNativeMethods.CRhinoAnnotationText_InternalCommitChanges;
     }
+
+    public Rhino.Geometry.TextEntity TextGeometry
+    {
+      get
+      {
+        Rhino.Geometry.TextEntity rc = this.Geometry as Rhino.Geometry.TextEntity;
+        return rc;
+      }
+    }
+
   }
 }
 

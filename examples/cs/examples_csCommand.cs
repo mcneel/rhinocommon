@@ -285,17 +285,8 @@ namespace examples_cs
 
     protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
     {
-      Test(Examples.AddLayout, doc);
+      Test(Examples.EditText, doc);
       return Rhino.Commands.Result.Success;
-
-      Rhino.ApplicationSettings.AppearanceSettings.SetPaintColor(Rhino.ApplicationSettings.PaintColor.NormalStart, System.Drawing.Color.AliceBlue);
-      Rhino.ApplicationSettings.AppearanceSettings.SetPaintColor(Rhino.ApplicationSettings.PaintColor.NormalEnd, System.Drawing.Color.AliceBlue);
-      Rhino.ApplicationSettings.AppearanceSettings.SetPaintColor(Rhino.ApplicationSettings.PaintColor.NormalBorder, System.Drawing.Color.LightBlue);
-      Rhino.ApplicationSettings.AppearanceSettings.SetPaintColor(Rhino.ApplicationSettings.PaintColor.HotStart, System.Drawing.Color.LightBlue);
-      Rhino.ApplicationSettings.AppearanceSettings.SetPaintColor(Rhino.ApplicationSettings.PaintColor.HotEnd, System.Drawing.Color.LightBlue, true);
-            
-      return Rhino.Commands.Result.Success;
-
       examples_csPlugIn.ThePlugIn.IncrementRunCommandCount();
       Test(Examples.ActiveViewport, doc);
       Test(Examples.AddBrepBox, doc);
@@ -306,6 +297,7 @@ namespace examples_cs
       Test(Examples.AddBackgroundBitmap, doc);
       Test(Examples.AddClippingPlane, doc);
       Test(Examples.AddLayer, doc);
+      Test(Examples.AddLayout, doc);
       Test(Examples.AddLine, doc);
       Test(Examples.AddLinearDimension, doc);
       Test(Examples.AddLinearDimension2, doc);

@@ -936,8 +936,6 @@ namespace Rhino.Collections
     /// <summary>
     /// This is not implemented and always throws <see cref="NotImplementedException"/> at the moment.
     /// </summary>
-    /// <param name="key">Unused.</param>
-    /// <param name="value">Unused.</param>
     ICollection<object> IDictionary<string, object>.Values
     {
       get { throw new NotImplementedException(); }
@@ -955,17 +953,17 @@ namespace Rhino.Collections
       }
     }
 
-    void IDictionary<string, object>.Add(KeyValuePair<string, object> item)
+    void ICollection<KeyValuePair<string, object>>.Add(KeyValuePair<string, object> item)
     {
       throw new NotSupportedException("You must use the SetXXX() methods to set the content of this archive.");
     }
 
-    bool IDictionary<string, object>.Contains(KeyValuePair<string, object> item)
+    bool ICollection<KeyValuePair<string, object>>.Contains(KeyValuePair<string, object> item)
     {
       return m_items.ContainsKey(item.Key);
     }
 
-    void IDictionary<string, object>.CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
+    void ICollection<KeyValuePair<string, object>>.CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
     {
       if (array == null)
       {
@@ -985,12 +983,12 @@ namespace Rhino.Collections
       }
     }
 
-    bool IDictionary<string, object>.IsReadOnly
+    bool ICollection<KeyValuePair<string, object>>.IsReadOnly
     {
       get { return true; /* because we do not support the Add() methods, we return true here */ }
     }
 
-    bool IDictionary<string, object>.Remove(KeyValuePair<string, object> item)
+    bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item)
     {
       return Remove(item.Key);
     }

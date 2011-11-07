@@ -11,9 +11,9 @@ namespace Rhino.Geometry
   /// 0 &lt; AngleRadians() &lt; 2*Pi</para>
   /// 
   /// <para>The parameterization of the Arc is inherited from the Circle it is derived from.
-  /// In particular
-  ///   <code>t -> center + cos(t)*radius*xaxis + sin(t)*radius*yaxis</code>
-  /// where xaxis and yaxis, (part of Circle.Plane) form an othonormal frame of the plane
+  /// In particular</para>
+  /// <para>t -> center + cos(t)*radius*xaxis + sin(t)*radius*yaxis</para>
+  /// <para>where xaxis and yaxis, (part of Circle.Plane) form an othonormal frame of the plane
   /// containing the circle.</para>
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 152)]

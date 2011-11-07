@@ -701,6 +701,21 @@ namespace Rhino.Collections
       }
     }
 
+    /// <summary>Gets all values in this dictionary</summary>
+    public object[] Values
+    {
+      get
+      {
+        object[] rc = new object[m_items.Count];
+        int i = 0;
+        foreach (var v in m_items.Values)
+        {
+          rc[i++] = v.m_value;
+        }
+        return rc;
+      }
+    }
+
     /// <summary>
     /// Determines whether the dictionary contains the specified key.
     /// </summary>
@@ -933,12 +948,9 @@ namespace Rhino.Collections
       get { return Array.AsReadOnly(Keys); }
     }
 
-    /// <summary>
-    /// This is not implemented and always throws <see cref="NotImplementedException"/> at the moment.
-    /// </summary>
     ICollection<object> IDictionary<string, object>.Values
     {
-      get { throw new NotImplementedException(); }
+      get { return Values; }
     }
 
     object IDictionary<string, object>.this[string key]
@@ -990,7 +1002,7 @@ namespace Rhino.Collections
 
     bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item)
     {
-      return Remove(item.Key);
+      return m_items.Remove(item.Key);
     }
 
     public IEnumerator<KeyValuePair<string, object>> GetEnumerator()

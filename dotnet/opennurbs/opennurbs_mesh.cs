@@ -3401,6 +3401,10 @@ namespace Rhino.Geometry.Collections
       }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_analysismode.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_analysismode.cs' lang='cs'/>
+    /// </example>
     public Rhino.Render.MappingTag Tag
     {
       get
@@ -3544,6 +3548,10 @@ namespace Rhino.Geometry.Collections
     /// </summary>
     /// <param name="colors">Colors to set.</param>
     /// <returns>True on success, False on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_analysismode.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_analysismode.cs' lang='cs'/>
+    /// </example>
     public bool SetColors(Color[] colors)
     {
       return SetColorsHelper(colors, false);

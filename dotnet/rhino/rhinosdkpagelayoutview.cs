@@ -30,6 +30,11 @@ namespace Rhino.Display
       }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addlayout.py' lang='py'/>
+    /// </example>
     public void SetPageAsActive()
     {
       if (!PageIsActive)
@@ -43,6 +48,11 @@ namespace Rhino.Display
       }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addlayout.py' lang='py'/>
+    /// </example>
     public bool SetActiveDetail(Guid detailId)
     {
       bool rc = false;
@@ -120,7 +130,12 @@ namespace Rhino.Display
     /// <param name="corner1">corners of the detail view in world coordinates</param>
     /// <param name="initialProjection"></param>
     /// <returns>newly created detail view on success. null on error</returns>
-    public Rhino.DocObjects.DetailViewObject AddDetailView( string title,
+    /// <example>
+    /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addlayout.py' lang='py'/>
+    /// </example>
+    public Rhino.DocObjects.DetailViewObject AddDetailView(string title,
       Rhino.Geometry.Point2d corner0,
       Rhino.Geometry.Point2d corner1,
       DefinedViewportProjection initialProjection)

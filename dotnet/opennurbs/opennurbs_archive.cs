@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 
@@ -1325,6 +1324,10 @@ namespace Rhino.FileIO
   /// </summary>
   public class BinaryArchiveException : System.IO.IOException
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BinaryArchiveException"/> class.
+    /// </summary>
+    /// <param name="message">The inner message to show to users.</param>
     public BinaryArchiveException(string message)
       : base(message)
     { }
@@ -1333,6 +1336,9 @@ namespace Rhino.FileIO
   //public class ON_3dmGoo { }
   //public class ON_BinaryFile { }
 
+  /// <summary>
+  /// Represents an entity that is able to write data to an archive.
+  /// </summary>
   public class BinaryArchiveWriter
   {
     IntPtr m_ptr; // ON_BinaryArchive*
@@ -1347,6 +1353,10 @@ namespace Rhino.FileIO
     }
 
     bool m_bWriteErrorOccured = false;
+
+    /// <summary>
+    /// Gets or sets whether an error occurred.
+    /// </summary>
     public bool WriteErrorOccured
     {
       get { return m_bWriteErrorOccured; }
@@ -1395,6 +1405,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("Write3dmChunkVersion failed");
     }
 
+    /// <summary>
+    /// Delivers the complete content of a dictionary to the archive.
+    /// </summary>
+    /// <param name="dictionary">A dictionary to archive.</param>
     public void WriteDictionary(Rhino.Collections.ArchivableDictionary dictionary)
     {
       m_bWriteErrorOccured = m_bWriteErrorOccured || !dictionary.Write(this);
@@ -1402,12 +1416,20 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteDictionary failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="bool"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteBool(bool value)
     {
       if (!UnsafeNativeMethods.ON_BinaryArchive_WriteBool(m_ptr, value))
         throw new BinaryArchiveException("WriteBool failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="byte"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteByte(byte value)
     {
       m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteByte(m_ptr, value);
@@ -1415,12 +1437,20 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteByte failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="sbyte"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     [CLSCompliant(false)]
     public void WriteSByte(sbyte value)
     {
       WriteByte((byte)value);
     }
 
+    /// <summary>
+    /// Writes a <see cref="short"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteShort(short value)
     {
       m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteShort(m_ptr, value);
@@ -1428,12 +1458,20 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteShort failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="ushort"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     [CLSCompliant(false)]
     public void WriteUShort(ushort value)
     {
       WriteShort((short)value);
     }
 
+    /// <summary>
+    /// Writes a <see cref="int"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteInt(int value)
     {
       m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt(m_ptr, value);
@@ -1441,12 +1479,20 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteInt failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="uint"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     [CLSCompliant(false)]
     public void WriteUInt(uint value)
     {
       WriteInt((int)value);
     }
 
+    /// <summary>
+    /// Writes a <see cref="Int64"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteInt64(Int64 value)
     {
       m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt64(m_ptr, value);
@@ -1454,6 +1500,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteInt64 failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="float"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteSingle(float value)
     {
       m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle(m_ptr, value);
@@ -1461,6 +1511,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteSingle failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="double"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteDouble(double value)
     {
       m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble(m_ptr, value);
@@ -1468,6 +1522,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteDouble failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="Guid"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteGuid(Guid value)
     {
       m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteGuid(m_ptr, ref value);
@@ -1475,6 +1533,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteGuid failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="string"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteString(string value)
     {
       m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteString(m_ptr, value);
@@ -1482,6 +1544,11 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteString failed");
     }
 
+    /// <summary>
+    /// Writes a list, an array, or any enumerable of <see cref="bool"/> to the archive.
+    /// <para>The return will always be an array.</para>
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteBoolArray(IEnumerable<bool> value)
     {
       List<bool> l = new List<bool>(value);
@@ -1495,6 +1562,11 @@ namespace Rhino.FileIO
       }
     }
 
+    /// <summary>
+    /// Writes a list, an array, or any enumerable of <see cref="byte"/> to the archive.
+    /// <para>The return will always be an array.</para>
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteByteArray(IEnumerable<byte> value)
     {
       List<byte> l = new List<byte>(value);
@@ -1508,6 +1580,11 @@ namespace Rhino.FileIO
       }
     }
 
+    /// <summary>
+    /// Writes a list, an array, or any enumerable of <see cref="sbyte"/> to the archive.
+    /// <para>The return will always be an array.</para>
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     [CLSCompliant(false)]
     public void WriteSByteArray(IEnumerable<sbyte> value)
     {
@@ -1518,6 +1595,11 @@ namespace Rhino.FileIO
       WriteByteArray(l);
     }
 
+    /// <summary>
+    /// Writes a list, an array, or any enumerable of <see cref="short"/> to the archive.
+    /// <para>The return will always be an array.</para>
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteShortArray(IEnumerable<short> value)
     {
       List<short> l = new List<short>(value);
@@ -1531,6 +1613,11 @@ namespace Rhino.FileIO
       }
     }
 
+    /// <summary>
+    /// Writes a list, an array, or any enumerable of <see cref="int"/> to the archive.
+    /// <para>The return will always be an array.</para>
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteIntArray(IEnumerable<int> value)
     {
       List<int> l = new List<int>(value);
@@ -1544,6 +1631,11 @@ namespace Rhino.FileIO
       }
     }
 
+    /// <summary>
+    /// Writes a list, an array, or any enumerable of <see cref="float"/> to the archive.
+    /// <para>The return will always be an array.</para>
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteSingleArray(IEnumerable<float> value)
     {
       List<float> l = new List<float>(value);
@@ -1557,6 +1649,11 @@ namespace Rhino.FileIO
       }
     }
 
+    /// <summary>
+    /// Writes a list, an array, or any enumerable of <see cref="double"/> to the archive.
+    /// <para>The return will always be an array.</para>
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteDoubleArray(IEnumerable<double> value)
     {
       List<double> l = new List<double>(value);
@@ -1570,6 +1667,11 @@ namespace Rhino.FileIO
       }
     }
 
+    /// <summary>
+    /// Writes a list, an array, or any enumerable of <see cref="Guid"/> to the archive.
+    /// <para>The return will always be an array.</para>
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteGuidArray(IEnumerable<Guid> value)
     {
       int count = 0;
@@ -1580,6 +1682,11 @@ namespace Rhino.FileIO
         WriteGuid(g);
     }
 
+    /// <summary>
+    /// Writes a list, an array, or any enumerable of <see cref="string"/> to the archive.
+    /// <para>The return will always be an array.</para>
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteStringArray(IEnumerable<string> value)
     {
       int count = 0;
@@ -1594,6 +1701,10 @@ namespace Rhino.FileIO
       }
     }
 
+    /// <summary>
+    /// Writes a <see cref="System.Drawing.Color"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteColor(System.Drawing.Color value)
     {
       int argb = value.ToArgb();
@@ -1602,6 +1713,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteColor failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="System.Drawing.Point"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WritePoint(System.Drawing.Point value)
     {
       int[] xy = new int[] { value.X, value.Y };
@@ -1610,6 +1725,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WritePoint failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="System.Drawing.PointF"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WritePointF(System.Drawing.PointF value)
     {
       float[] xy = new float[] { value.X, value.Y };
@@ -1618,6 +1737,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WritePointF failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="System.Drawing.Rectangle"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteRectangle(System.Drawing.Rectangle value)
     {
       int[] xywh = new int[] { value.X, value.Y, value.Width, value.Height };
@@ -1626,6 +1749,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteRectangle failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="System.Drawing.RectangleF"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteRectangleF(System.Drawing.RectangleF value)
     {
       float[] f = new float[] { value.X, value.Y, value.Width, value.Height };
@@ -1634,6 +1761,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteRectangleF failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="System.Drawing.Size"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteSize(System.Drawing.Size value)
     {
       int[] xy = new int[] { value.Width, value.Height };
@@ -1642,6 +1773,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteSize failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="System.Drawing.SizeF"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteSizeF(System.Drawing.SizeF value)
     {
       float[] xy = new float[] { value.Width, value.Height };
@@ -1650,6 +1785,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteSizeF failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="System.Drawing.Font"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteFont(System.Drawing.Font value)
     {
       string family_name = value.FontFamily.Name;
@@ -1666,6 +1805,10 @@ namespace Rhino.FileIO
       WriteBool(gdiVerticalFont);
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.Interval"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteInterval(Rhino.Geometry.Interval value)
     {
       double[] d = new double[] { value.T0, value.T1 };
@@ -1674,6 +1817,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteInterval failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.Point2d"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WritePoint2d(Rhino.Geometry.Point2d value)
     {
       double[] d = new double[] { value.X, value.Y };
@@ -1682,6 +1829,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WritePoint2d failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.Point3d"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WritePoint3d(Rhino.Geometry.Point3d value)
     {
       double[] d = new double[] { value.X, value.Y, value.Z };
@@ -1690,6 +1841,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WritePoint3d failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.Point4d"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WritePoint4d(Rhino.Geometry.Point4d value)
     {
       double[] d = new double[] { value.X, value.Y, value.Z, value.W };
@@ -1698,6 +1853,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WritePoint4d failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.Vector2d"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteVector2d(Rhino.Geometry.Vector2d value)
     {
       double[] d = new double[] { value.X, value.Y };
@@ -1706,6 +1865,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteVector2d failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.Vector3d"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteVector3d(Rhino.Geometry.Vector3d value)
     {
       double[] d = new double[] { value.X, value.Y, value.Z };
@@ -1714,12 +1877,20 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteVector3d failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.BoundingBox"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteBoundingBox(Rhino.Geometry.BoundingBox value)
     {
       WritePoint3d(value.Min);
       WritePoint3d(value.Max);
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.Ray3d"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteRay3d(Rhino.Geometry.Ray3d value)
     {
       WritePoint3d(value.Position);
@@ -1735,6 +1906,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WritePlaneEquation failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.Transform"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteTransform(Rhino.Geometry.Transform value)
     {
       m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteTransform(m_ptr, ref value);
@@ -1742,6 +1917,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteTransform failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.Plane"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WritePlane(Rhino.Geometry.Plane value)
     {
       m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WritePlane(m_ptr, ref value);
@@ -1749,12 +1928,20 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WritePlane failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.Line"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteLine(Rhino.Geometry.Line value)
     {
       WritePoint3d(value.From);
       WritePoint3d(value.To);
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.Point3f"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WritePoint3f(Rhino.Geometry.Point3f value)
     {
       float[] f = new float[] { value.X, value.Y, value.Z };
@@ -1763,6 +1950,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WritePoint3f failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.Vector3f"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteVector3f(Rhino.Geometry.Vector3f value)
     {
       float[] f = new float[] { value.X, value.Y, value.Z };
@@ -1771,6 +1962,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteVector3f failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.MeshingParameters"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteMeshingParameters(Rhino.Geometry.MeshingParameters value)
     {
       IntPtr pMeshParameters = value.ConstPointer();
@@ -1779,6 +1974,10 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteMeshParameters failed");
     }
 
+    /// <summary>
+    /// Writes a <see cref="Rhino.Geometry.GeometryBase"/> value to the archive.
+    /// </summary>
+    /// <param name="value">A value to write.</param>
     public void WriteGeometry(Rhino.Geometry.GeometryBase value)
     {
       IntPtr pGeometry = value.ConstPointer();
@@ -1806,6 +2005,10 @@ namespace Rhino.FileIO
     }
   }
 
+  /// <summary>
+  /// Represents an entity that is capable of reading a binary archive and
+  /// instantiating stringly-typed objects.
+  /// </summary>
   public class BinaryArchiveReader
   {
     IntPtr m_ptr; // ON_BinaryArchive*
@@ -1819,6 +2022,10 @@ namespace Rhino.FileIO
     }
 
     bool m_bReadErrorOccured = false;
+
+    /// <summary>
+    /// Gets or sets whether en error occurred during reading.
+    /// </summary>
     public bool ReadErrorOccured
     {
       get { return m_bReadErrorOccured; }
@@ -1874,6 +2081,10 @@ namespace Rhino.FileIO
       return m_ptr;
     }
 
+    /// <summary>
+    /// Reads a complete <see cref="Rhino.Collections.ArchivableDictionary"/> from the archive.
+    /// </summary>
+    /// <returns>The newly instantiated object.</returns>
     public Rhino.Collections.ArchivableDictionary ReadDictionary()
     {
       Rhino.Collections.ArchivableDictionary rc = null;
@@ -1888,6 +2099,10 @@ namespace Rhino.FileIO
       return rc;      
     }
 
+    /// <summary>
+    /// Reads a <see cref="bool"/> from the archive.
+    /// </summary>
+    /// <returns>The value that was read.</returns>
     public bool ReadBool()
     {
       bool rc = false;
@@ -1897,6 +2112,10 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads a <see cref="byte"/> from the archive.
+    /// </summary>
+    /// <returns>The value that was read.</returns>
     public byte ReadByte()
     {
       byte rc = 0;
@@ -1906,12 +2125,20 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads a <see cref="sbyte"/> from the archive.
+    /// </summary>
+    /// <returns>The value that was read.</returns>
     [CLSCompliant(false)]
     public sbyte ReadSByte()
     {
       return (sbyte)ReadByte();
     }
 
+    /// <summary>
+    /// Reads a <see cref="short"/> from the archive.
+    /// </summary>
+    /// <returns>The value that was read.</returns>
     public short ReadShort()
     {
       short rc = 0;
@@ -1921,12 +2148,20 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads a <see cref="ushort"/> from the archive.
+    /// </summary>
+    /// <returns>The value that was read.</returns>
     [CLSCompliant(false)]
     public ushort ReadUShort()
     {
       return (ushort)ReadShort();
     }
 
+    /// <summary>
+    /// Reads a <see cref="int"/> from the archive.
+    /// </summary>
+    /// <returns>The value that was read.</returns>
     public int ReadInt()
     {
       int rc = 0;
@@ -1936,21 +2171,33 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads a <see cref="uint"/> from the archive.
+    /// </summary>
+    /// <returns>The value that was read.</returns>
     [CLSCompliant(false)]
     public uint ReadUInt()
     {
       return (uint)ReadInt();
     }
 
+    /// <summary>
+    /// Reads a <see cref="long"/> from the archive.
+    /// </summary>
+    /// <returns>The value that was read.</returns>
     public Int64 ReadInt64()
     {
-      Int64 rc = 0;
+      Int64 rc = 0; 
       m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt64(m_ptr, ref rc);
       if( m_bReadErrorOccured )
         throw new BinaryArchiveException("ReadInt64 failed");
       return rc;
     }
 
+    /// <summary>
+    /// Reads a <see cref="float"/> from the archive.
+    /// </summary>
+    /// <returns>The value that was read.</returns>
     public float ReadSingle()
     {
       float rc = 0;
@@ -1960,6 +2207,10 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads a <see cref="double"/> from the archive.
+    /// </summary>
+    /// <returns>The value that was read.</returns>
     public double ReadDouble()
     {
       double rc = 0;
@@ -1969,6 +2220,10 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads a <see cref="Guid"/> from the archive.
+    /// </summary>
+    /// <returns>The value that was read.</returns>
     public Guid ReadGuid()
     {
       Guid rc = Guid.Empty;
@@ -1978,6 +2233,10 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads a <see cref="string"/> from the archive.
+    /// </summary>
+    /// <returns>The value that was read.</returns>
     public string ReadString()
     {
       Rhino.Runtime.StringHolder str = new Rhino.Runtime.StringHolder();
@@ -1989,6 +2248,11 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads an array of <see cref="bool"/> from the archive.
+    /// <para>An array is returned even if the input was another enumerable type.</para>
+    /// </summary>
+    /// <returns>The array that was read.</returns>
     public bool[] ReadBoolArray()
     {
       bool[] rc = null;
@@ -2006,6 +2270,11 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads an array of <see cref="byte"/> from the archive.
+    /// <para>An array is returned even if the input was another enumerable type.</para>
+    /// </summary>
+    /// <returns>The array that was read.</returns>
     public byte[] ReadByteArray()
     {
       byte[] rc = null;
@@ -2023,6 +2292,11 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads an array of <see cref="sbyte"/> from the archive.
+    /// <para>An array is returned even if the input was another enumerable type.</para>
+    /// </summary>
+    /// <returns>The array that was read.</returns>
     [CLSCompliant(false)]
     public sbyte[] ReadSByteArray()
     {
@@ -2038,6 +2312,11 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads an array of <see cref="short"/> from the archive.
+    /// <para>An array is returned even if the input was another enumerable type.</para>
+    /// </summary>
+    /// <returns>The array that was read.</returns>
     public short[] ReadShortArray()
     {
       short[] rc = null;
@@ -2055,6 +2334,11 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads an array of <see cref="int"/> from the archive.
+    /// <para>An array is returned even if the input was another enumerable type.</para>
+    /// </summary>
+    /// <returns>The array that was read.</returns>
     public int[] ReadIntArray()
     {
       int[] rc = null;
@@ -2072,6 +2356,11 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads an array of <see cref="float"/> from the archive.
+    /// <para>An array is returned even if the input was another enumerable type.</para>
+    /// </summary>
+    /// <returns>The array that was read.</returns>
     public float[] ReadSingleArray()
     {
       float[] rc = null;
@@ -2089,6 +2378,11 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads an array of <see cref="double"/> from the archive.
+    /// <para>An array is returned even if the input was another enumerable type.</para>
+    /// </summary>
+    /// <returns>The array that was read.</returns>
     public double[] ReadDoubleArray()
     {
       double[] rc = null;
@@ -2106,6 +2400,11 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads an array of <see cref="Guid"/> from the archive.
+    /// <para>An array is returned even if the input was another enumerable type.</para>
+    /// </summary>
+    /// <returns>The array that was read.</returns>
     public Guid[] ReadGuidArray()
     {
       Guid[] rc = null;
@@ -2119,6 +2418,11 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads an array of <see cref="string"/> from the archive.
+    /// <para>An array is returned even if the input was another enumerable type.</para>
+    /// </summary>
+    /// <returns>The array that was read.</returns>
     public string[] ReadStringArray()
     {
       string[] rc = null;
@@ -2141,6 +2445,10 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads a <see cref="System.Drawing.Color"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public System.Drawing.Color ReadColor()
     {
       int abgr = 0;
@@ -2150,6 +2458,10 @@ namespace Rhino.FileIO
       return System.Drawing.ColorTranslator.FromWin32(abgr);
     }
 
+    /// <summary>
+    /// Reads a <see cref="System.Drawing.Point"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public System.Drawing.Point ReadPoint()
     {
       int[] xy = new int[2];
@@ -2159,6 +2471,10 @@ namespace Rhino.FileIO
       return new System.Drawing.Point(xy[0], xy[1]);
     }
 
+    /// <summary>
+    /// Reads a <see cref="System.Drawing.PointF"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public System.Drawing.PointF ReadPointF()
     {
       float[] xy = new float[2];
@@ -2168,6 +2484,10 @@ namespace Rhino.FileIO
       return new System.Drawing.PointF(xy[0], xy[1]);
     }
 
+    /// <summary>
+    /// Reads a <see cref="System.Drawing.Rectangle"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public System.Drawing.Rectangle ReadRectangle()
     {
       int[] xywh = new int[4];
@@ -2177,6 +2497,10 @@ namespace Rhino.FileIO
       return new System.Drawing.Rectangle(xywh[0], xywh[1], xywh[2], xywh[3]);
     }
 
+    /// <summary>
+    /// Reads a <see cref="System.Drawing.RectangleF"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public System.Drawing.RectangleF ReadRectangleF()
     {
       float[] f = new float[4];
@@ -2186,6 +2510,10 @@ namespace Rhino.FileIO
       return new System.Drawing.RectangleF(f[0], f[1], f[2], f[3]);
     }
 
+    /// <summary>
+    /// Reads a <see cref="System.Drawing.Size"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public System.Drawing.Size ReadSize()
     {
       int[] xy = new int[2];
@@ -2195,6 +2523,10 @@ namespace Rhino.FileIO
       return new System.Drawing.Size(xy[0], xy[1]);
     }
 
+    /// <summary>
+    /// Reads a <see cref="System.Drawing.SizeF"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public System.Drawing.SizeF ReadSizeF()
     {
       float[] xy = new float[2];
@@ -2204,6 +2536,10 @@ namespace Rhino.FileIO
       return new System.Drawing.SizeF(xy[0], xy[1]);
     }
 
+    /// <summary>
+    /// Reads a <see cref="System.Drawing.Font"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public System.Drawing.Font ReadFont()
     {
       System.Drawing.Font rc;
@@ -2230,6 +2566,10 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.Interval"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public Rhino.Geometry.Interval ReadInterval()
     {
       double[] d = new double[2];
@@ -2239,6 +2579,10 @@ namespace Rhino.FileIO
       return new Rhino.Geometry.Interval(d[0], d[1]);
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.Point2d"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public Rhino.Geometry.Point2d ReadPoint2d()
     {
       double[] d = new double[2];
@@ -2248,6 +2592,10 @@ namespace Rhino.FileIO
       return new Rhino.Geometry.Point2d(d[0], d[1]);
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.Point3d"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public  Rhino.Geometry.Point3d ReadPoint3d()
     {
       double[] d = new double[3];
@@ -2257,6 +2605,10 @@ namespace Rhino.FileIO
       return new Rhino.Geometry.Point3d(d[0], d[1], d[2]);
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.Point4d"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public Rhino.Geometry.Point4d ReadPoint4d()
     {
       double[] d = new double[4];
@@ -2266,6 +2618,10 @@ namespace Rhino.FileIO
       return new Rhino.Geometry.Point4d(d[0], d[1], d[2], d[3]);
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.Vector2d"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public Rhino.Geometry.Vector2d ReadVector2d()
     {
       double[] d = new double[2];
@@ -2275,6 +2631,10 @@ namespace Rhino.FileIO
       return new Rhino.Geometry.Vector2d(d[0], d[1]);
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.Vector3d"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public Rhino.Geometry.Vector3d ReadVector3d()
     {
       double[] d = new double[3];
@@ -2284,6 +2644,10 @@ namespace Rhino.FileIO
       return new Rhino.Geometry.Vector3d(d[0], d[1], d[2]);
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.BoundingBox"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public Rhino.Geometry.BoundingBox ReadBoundingBox()
     {
       Rhino.Geometry.Point3d p0 = ReadPoint3d();
@@ -2291,12 +2655,17 @@ namespace Rhino.FileIO
       return new Rhino.Geometry.BoundingBox(p0, p1);
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.Ray3d"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public Rhino.Geometry.Ray3d ReadRay3d()
     {
       Rhino.Geometry.Point3d p = ReadPoint3d();
       Rhino.Geometry.Vector3d v = ReadVector3d();
       return new Rhino.Geometry.Ray3d(p, v);
     }
+
 
     internal double[] ReadPlaneEquation()
     {
@@ -2307,6 +2676,10 @@ namespace Rhino.FileIO
       return d;
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.Transform"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public Rhino.Geometry.Transform ReadTransform()
     {
       Rhino.Geometry.Transform rc = new Rhino.Geometry.Transform();
@@ -2316,6 +2689,10 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.Plane"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public Rhino.Geometry.Plane ReadPlane()
     {
       Rhino.Geometry.Plane rc = new Rhino.Geometry.Plane();
@@ -2325,6 +2702,10 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.Line"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public Rhino.Geometry.Line ReadLine()
     {
       Rhino.Geometry.Point3d p0 = ReadPoint3d();
@@ -2332,6 +2713,10 @@ namespace Rhino.FileIO
       return new Rhino.Geometry.Line(p0, p1);
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.Point3f"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public Rhino.Geometry.Point3f ReadPoint3f()
     {
       float[] f = new float[3];
@@ -2341,6 +2726,10 @@ namespace Rhino.FileIO
       return new Rhino.Geometry.Point3f(f[0], f[1], f[2]);
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.Vector3f"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public Rhino.Geometry.Vector3f ReadVector3f()
     {
       float[] f = new float[3];
@@ -2350,6 +2739,10 @@ namespace Rhino.FileIO
       return new Rhino.Geometry.Vector3f(f[0], f[1], f[2]);
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.MeshingParameters"/> from the archive.
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public Rhino.Geometry.MeshingParameters ReadMeshingParameters()
     {
       IntPtr pMeshParameters = IntPtr.Zero;
@@ -2361,6 +2754,11 @@ namespace Rhino.FileIO
       return new Rhino.Geometry.MeshingParameters(pMeshParameters);
     }
 
+    /// <summary>
+    /// Reads a <see cref="Rhino.Geometry.GeometryBase"/>-derived object from the archive.
+    /// <para>The <see cref="Rhino.Geometry.GeometryBase"/> class is abstract.</para>
+    /// </summary>
+    /// <returns>The element that was read.</returns>
     public Rhino.Geometry.GeometryBase ReadGeometry()
     {
       IntPtr pGeometry = IntPtr.Zero;
@@ -2422,11 +2820,18 @@ namespace Rhino.FileIO
     #endregion
   }
 
+  /// <summary>
+  /// Contains options for serializing -or storing- data,
+  /// such as Rhino version and user data.
+  /// </summary>
   public class SerializationOptions
   {
     int m_rhinoversion;
     bool m_writeuserdata;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SerializationOptions"/> class.
+    /// </summary>
     public SerializationOptions()
     {
 #if RHINO_SDK
@@ -2437,12 +2842,18 @@ namespace Rhino.FileIO
       m_writeuserdata = true;
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating the Rhino version.
+    /// </summary>
     public int RhinoVersion
     {
       get { return m_rhinoversion; }
       set { m_rhinoversion = value; }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to write user data.
+    /// </summary>
     public bool WriteUserData
     {
       get { return m_writeuserdata; }

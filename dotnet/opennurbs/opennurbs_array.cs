@@ -2,10 +2,6 @@ using System;
 using System.Runtime.InteropServices;
 using Rhino.Geometry;
 
-// NOTE!!!!!!!!!!!!!
-// None of the classes in this file should be public
-// These classes are used internally to help move dynamic array data around
-
 namespace Rhino.Runtime
 {
   class INTERNAL_GeometryArray : IDisposable

@@ -165,11 +165,17 @@ RH_C_FUNCTION bool ON_3dmObjectAttributes_GetSetBool( ON_3dmObjectAttributes* pt
 //  return rc;
 //}
 
-RH_C_FUNCTION ON_UUID ON_3dmObjectAttributes_m_uuid(const ON_3dmObjectAttributes* ptr)
+RH_C_FUNCTION ON_UUID ON_3dmObjectAttributes_m_uuid(const ON_3dmObjectAttributes* pConstObjectAttributes)
 {
-  if( NULL == ptr )
+  if( NULL == pConstObjectAttributes )
     return ::ON_nil_uuid;
-  return ptr->m_uuid;
+  return pConstObjectAttributes->m_uuid;
+}
+
+RH_C_FUNCTION void ON_3dmObjectAttributes_set_m_uuid(ON_3dmObjectAttributes* pAttributes, ON_UUID id)
+{
+  if( pAttributes )
+    pAttributes->m_uuid = id;
 }
 
 RH_C_FUNCTION void ON_3dmObjectAttributes_GetSetString(ON_3dmObjectAttributes* ptr, int which, bool set, const RHMONO_STRING* _str, CRhCmnStringHolder* pStringHolder)

@@ -6,7 +6,8 @@ using System.Runtime.InteropServices;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents the two coordinates of a point in two-dimensional space, using single precision floating point numbers.
+  /// Represents the two coordinates of a point in two-dimensional space,
+  /// using <see cref="Single"/>-precision floating point numbers.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
   [DebuggerDisplay("({m_x}, {m_y})")]
@@ -229,7 +230,8 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
-  /// Represents the three coordinates of a point in three-dimensional space, using single-precision floating point numbers.
+  /// Represents the three coordinates of a point in three-dimensional space,
+  /// using <see cref="Single"/>-precision floating point numbers.
   /// </summary>
   // holding off on making this IComparable until I understand all
   // of the rules that FxCop states about IComparable classes
@@ -437,7 +439,8 @@ namespace Rhino.Geometry
   //skipping ON_4fPoint. I don't think I've ever seen this used in Rhino.
 
   /// <summary>
-  /// Represents the two components of a vector in two-dimensional space, using single precision floating point numbers.
+  /// Represents the two components of a vector in two-dimensional space,
+  /// using <see cref="Single"/>-precision floating point numbers.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
   [DebuggerDisplay("({m_x}, {m_y})")]
@@ -606,7 +609,8 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
-  /// Represents the three components of a vector in three-dimensional space, using single precision floating point numbers.
+  /// Represents the three components of a vector in three-dimensional space,
+  /// using <see cref="Single"/>-precision floating point numbers.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 12)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]

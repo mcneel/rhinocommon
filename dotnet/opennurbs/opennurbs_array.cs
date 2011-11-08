@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 using Rhino.Geometry;
@@ -271,19 +270,39 @@ namespace Rhino.Runtime.InteropWrappers
   public class SimpleArrayInt : IDisposable
   {
     internal IntPtr m_ptr; // ON_SimpleArray<int>
+
+    /// <summary>
+    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <returns>The const pointer.</returns>
     public IntPtr ConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Gets the non-const pointer (for modification) of this array.
+    /// </summary>
+    /// <returns>The non-const pointer.</returns>
     public IntPtr NonConstPointer() { return m_ptr; }
 
+    /// <summary>
+    /// Initializes a new <see cref="SimpleArrayInt"/> class.
+    /// </summary>
     public SimpleArrayInt()
     {
       m_ptr = UnsafeNativeMethods.ON_IntArray_New();
     }
 
+    /// <summary>
+    /// Gets the amount of elements in this array.
+    /// </summary>
     public int Count
     {
       get { return UnsafeNativeMethods.ON_IntArray_Count(m_ptr); }
     }
 
+    /// <summary>
+    /// Returns the managed counterpart of the unmanaged array.
+    /// </summary>
+    /// <returns>The managed array.</returns>
     public int[] ToArray()
     {
       int count = Count;
@@ -294,11 +313,17 @@ namespace Rhino.Runtime.InteropWrappers
       return rc;
     }
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~SimpleArrayInt()
     {
       InternalDispose();
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       InternalDispose();
@@ -322,19 +347,39 @@ namespace Rhino.Runtime.InteropWrappers
   public class SimpleArrayInterval : IDisposable
   {
     IntPtr m_ptr; // ON_SimpleArray<ON_Interval>
+
+    /// <summary>
+    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <returns>The const pointer.</returns>
     public IntPtr ConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Gets the non-const pointer (for modification) of this array.
+    /// </summary>
+    /// <returns>The non-const pointer.</returns>
     public IntPtr NonConstPointer() { return m_ptr; }
 
+    /// <summary>
+    /// Initializes a new <see cref="SimpleArrayInterval"/> class.
+    /// </summary>
     public SimpleArrayInterval()
     {
       m_ptr = UnsafeNativeMethods.ON_IntervalArray_New();
     }
 
+    /// <summary>
+    /// Gets the amount of elements in this array.
+    /// </summary>
     public int Count
     {
       get { return UnsafeNativeMethods.ON_IntervalArray_Count(m_ptr); }
     }
 
+    /// <summary>
+    /// Returns the managed counterpart of the unmanaged array.
+    /// </summary>
+    /// <returns>The managed array.</returns>
     public Interval[] ToArray()
     {
       int count = Count;
@@ -345,11 +390,17 @@ namespace Rhino.Runtime.InteropWrappers
       return rc;
     }
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~SimpleArrayInterval()
     {
       InternalDispose();
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       InternalDispose();
@@ -373,25 +424,48 @@ namespace Rhino.Runtime.InteropWrappers
   public class SimpleArrayDouble : IDisposable
   {
     private IntPtr m_ptr; // ON_SimpleArray<double>
+
+    /// <summary>
+    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <returns>The const pointer.</returns>
     public IntPtr ConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Gets the non-const pointer (for modification) of this array.
+    /// </summary>
+    /// <returns>The non-const pointer.</returns>
     public IntPtr NonConstPointer() { return m_ptr; }
 
+    /// <summary>
+    /// Initializes a new <see cref="SimpleArrayDouble"/> instance.
+    /// </summary>
     public SimpleArrayDouble()
     {
       m_ptr = UnsafeNativeMethods.ON_DoubleArray_New();
     }
 
+    /// <summary>
+    /// Initializes a new <see cref="SimpleArrayDouble"/> instance, with items.
+    /// </summary>
     public SimpleArrayDouble(System.Collections.Generic.IEnumerable<double> items)
     {
       Rhino.Collections.RhinoList<double> list = new Rhino.Collections.RhinoList<double>(items);
       UnsafeNativeMethods.ON_DoubleArray_Append(m_ptr, list.Count, list.m_items);
     }
 
+    /// <summary>
+    /// Gets the amount of elements in this array.
+    /// </summary>
     public int Count
     {
       get { return UnsafeNativeMethods.ON_DoubleArray_Count(m_ptr); }
     }
 
+    /// <summary>
+    /// Returns the managed counterpart of the unmanaged array.
+    /// </summary>
+    /// <returns>The managed array.</returns>
     public double[] ToArray()
     {
       int count = Count;
@@ -402,11 +476,17 @@ namespace Rhino.Runtime.InteropWrappers
       return rc;
     }
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~SimpleArrayDouble()
     {
       InternalDispose();
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       InternalDispose();
@@ -431,11 +511,21 @@ namespace Rhino.Runtime.InteropWrappers
   public class SimpleArrayPoint3d : IDisposable
   {
     private IntPtr m_ptr;
+
+    /// <summary>
+    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <returns>The const pointer.</returns>
     public IntPtr ConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Gets the non-const pointer (for modification) of this array.
+    /// </summary>
+    /// <returns>The non-const pointer.</returns>
     public IntPtr NonConstPointer() { return m_ptr; }
 
     /// <summary>
-    /// Create with an initial capacity of 0
+    /// Initializes a new empty <see cref="SimpleArrayPoint3d"/> instance.
     /// </summary>
     public SimpleArrayPoint3d()
     {
@@ -449,7 +539,7 @@ namespace Rhino.Runtime.InteropWrappers
     //}
 
     /// <summary>
-    /// The number of actual points in this class
+    /// Gets the amount of points in this array.
     /// </summary>
     public int Count
     {
@@ -462,9 +552,9 @@ namespace Rhino.Runtime.InteropWrappers
     }
 
     /// <summary>
-    /// Copies the contents to an array of ON_3dPoints
+    /// Copies the unmanaged array to a managed counterpart.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The managed array.</returns>
     public Point3d[] ToArray()
     {
       int count = Count;
@@ -476,18 +566,31 @@ namespace Rhino.Runtime.InteropWrappers
       return rc;
     }
 
-
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~SimpleArrayPoint3d()
     {
       Dispose(false);
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)
@@ -505,25 +608,45 @@ namespace Rhino.Runtime.InteropWrappers
   public class SimpleArrayLine : IDisposable
   {
     IntPtr m_ptr; // ON_SimpleArray<ON_Line>
+
+    /// <summary>
+    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <returns>The const pointer.</returns>
     public IntPtr ConstPointer()
     {
       return m_ptr;
     }
+
+    /// <summary>
+    /// Gets the non-const pointer (for modification) of this array.
+    /// </summary>
+    /// <returns>The non-const pointer.</returns>
     public IntPtr NonConstPointer()
     {
       return m_ptr;
     }
 
+    /// <summary>
+    /// Initializes a new <see cref="SimpleArrayLine"/> instance.
+    /// </summary>
     public SimpleArrayLine()
     {
       m_ptr = UnsafeNativeMethods.ON_LineArray_New();
     }
 
+    /// <summary>
+    /// Gets the amount of lines in this array.
+    /// </summary>
     public int Count
     {
       get { return UnsafeNativeMethods.ON_LineArray_Count(m_ptr); }
     }
 
+    /// <summary>
+    /// Copies the unmanaged array to a managed counterpart.
+    /// </summary>
+    /// <returns>The managed array.</returns>
     public Line[] ToArray()
     {
       int count = Count;
@@ -534,12 +657,17 @@ namespace Rhino.Runtime.InteropWrappers
       return rc;
     }
 
-
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~SimpleArrayLine()
     {
       InternalDispose();
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       InternalDispose();
@@ -563,14 +691,32 @@ namespace Rhino.Runtime.InteropWrappers
   public class SimpleArraySurfacePointer : IDisposable
   {
     IntPtr m_ptr; //ON_SimpleArray<ON_Surface*>*
+
+    /// <summary>
+    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <returns>The const pointer.</returns>
     public IntPtr ConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Gets the non-const pointer (for modification) of this array.
+    /// </summary>
+    /// <returns>The non-const pointer.</returns>
     public IntPtr NonConstPointer() { return m_ptr; }
 
+    /// <summary>
+    /// Initializes a new <see cref="SimpleArraySurfacePointer"/> instance.
+    /// </summary>
     public SimpleArraySurfacePointer()
     {
       m_ptr = UnsafeNativeMethods.ON_SurfaceArray_New();
     }
 
+    /// <summary>
+    /// Copies the unmanaged array to a managed counterpart.
+    /// Elements are made non-const.
+    /// </summary>
+    /// <returns>The managed array.</returns>
     public Surface[] ToNonConstArray()
     {
       int count = UnsafeNativeMethods.ON_SurfaceArray_Count(m_ptr);
@@ -587,17 +733,31 @@ namespace Rhino.Runtime.InteropWrappers
       return rc;
     }
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~SimpleArraySurfacePointer()
     {
       Dispose(false);
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)
@@ -615,13 +775,31 @@ namespace Rhino.Runtime.InteropWrappers
   public class SimpleArrayCurvePointer : IDisposable
   {
     IntPtr m_ptr; //ON_SimpleArray<ON_Curve*>*
+
+    /// <summary>
+    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <returns>The const pointer.</returns>
     public IntPtr ConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Gets the non-const pointer (for modification) of this array.
+    /// </summary>
+    /// <returns>The non-const pointer.</returns>
     public IntPtr NonConstPointer() { return m_ptr; }
 
+    /// <summary>
+    /// Initializes a new <see cref="SimpleArrayCurvePointer"/> instance.
+    /// </summary>
     public SimpleArrayCurvePointer()
     {
       m_ptr = UnsafeNativeMethods.ON_CurveArray_New(0);
     }
+
+    /// <summary>
+    /// Initializes a new <see cref="SimpleArrayCurvePointer"/> instance, from a set of input curves.
+    /// </summary>
+    /// <param name="curves">A list, an array or any collection of curves that implements the enumerable interface.</param>
     public SimpleArrayCurvePointer(System.Collections.Generic.IEnumerable<Curve> curves)
     {
       int initial_capacity = 0;
@@ -642,6 +820,10 @@ namespace Rhino.Runtime.InteropWrappers
       }
     }
 
+    /// <summary>
+    /// Copies the unmanaged array to a managed counterpart.
+    /// </summary>
+    /// <returns>The managed array.</returns>
     public Curve[] ToNonConstArray()
     {
       int count = UnsafeNativeMethods.ON_CurveArray_Count(m_ptr);
@@ -658,17 +840,31 @@ namespace Rhino.Runtime.InteropWrappers
       return rc;
     }
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~SimpleArrayCurvePointer()
     {
       Dispose(false);
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)
@@ -686,14 +882,31 @@ namespace Rhino.Runtime.InteropWrappers
   public class SimpleArrayGeometryPointer : IDisposable
   {
     IntPtr m_ptr; //ON_SimpleArray<ON_Geometry*>*
+
+    /// <summary>
+    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <returns>The const pointer.</returns>
     public IntPtr ConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Gets the non-const pointer (for modification) of this array.
+    /// </summary>
+    /// <returns>The non-const pointer.</returns>
     public IntPtr NonConstPointer() { return m_ptr; }
 
+    /// <summary>
+    /// Initializes a new <see cref="SimpleArrayGeometryPointer"/> instance.
+    /// </summary>
     public SimpleArrayGeometryPointer()
     {
       m_ptr = UnsafeNativeMethods.ON_GeometryArray_New(0);
     }
 
+    /// <summary>
+    /// Copies the unmanaged array to a managed counterpart.
+    /// </summary>
+    /// <returns>The managed array.</returns>
     public GeometryBase[] ToNonConstArray()
     {
       int count = UnsafeNativeMethods.ON_GeometryArray_Count(m_ptr);
@@ -706,17 +919,31 @@ namespace Rhino.Runtime.InteropWrappers
       return rc;
     }
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~SimpleArrayGeometryPointer()
     {
       Dispose(false);
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)
@@ -734,34 +961,30 @@ namespace Rhino.Runtime.InteropWrappers
   public class SimpleArrayMeshPointer : IDisposable
   {
     IntPtr m_ptr; // ON_SimpleArray<ON_Mesh*>*
+
+    /// <summary>
+    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <returns>The const pointer.</returns>
     public IntPtr ConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Gets the non-const pointer (for modification) of this array.
+    /// </summary>
+    /// <returns>The non-const pointer.</returns>
     public IntPtr NonConstPointer() { return m_ptr; }
 
+    /// <summary>
+    /// Initializes a new <see cref="SimpleArrayMeshPointer"/> instance.
+    /// </summary>
     public SimpleArrayMeshPointer()
     {
       m_ptr = UnsafeNativeMethods.ON_MeshArray_New();
     }
 
-    ~SimpleArrayMeshPointer()
-    {
-      Dispose(false);
-    }
-
-    public void Dispose()
-    {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-      if (IntPtr.Zero != m_ptr)
-      {
-        UnsafeNativeMethods.ON_MeshArray_Delete(m_ptr);
-        m_ptr = IntPtr.Zero;
-      }
-    }
-
+    /// <summary>
+    /// Gets the amount of meshes in this array.
+    /// </summary>
     public int Count
     {
       get
@@ -772,6 +995,11 @@ namespace Rhino.Runtime.InteropWrappers
       }
     }
 
+    /// <summary>
+    /// Adds a mesh to 
+    /// </summary>
+    /// <param name="mesh"></param>
+    /// <param name="asConst"></param>
     public void Add(Geometry.Mesh mesh, bool asConst)
     {
       if (null != mesh)
@@ -783,7 +1011,45 @@ namespace Rhino.Runtime.InteropWrappers
         UnsafeNativeMethods.ON_MeshArray_Append(ptr, pMesh);
       }
     }
+    
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~SimpleArrayMeshPointer()
+    {
+      Dispose(false);
+    }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_ptr)
+      {
+        UnsafeNativeMethods.ON_MeshArray_Delete(m_ptr);
+        m_ptr = IntPtr.Zero;
+      }
+    }
+
+    /// <summary>
+    /// Copies the unmanaged array to a managed counterpart.
+    /// </summary>
+    /// <returns>The managed array.</returns>
     public Geometry.Mesh[] ToNonConstArray()
     {
       int count = Count;

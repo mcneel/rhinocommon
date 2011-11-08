@@ -5,18 +5,22 @@ using System.Collections.Generic;
 namespace Rhino.Collections
 {
   ///<summary>
-  /// Dictionary Structure
-  /// BEGINCHUNK (TCODE_ANONYMOUS_CHUNK)
-  /// |- version (int)
-  /// |- entry count (int)
-  ///    for entry count entries
-  ///    |- BEGINCHUNK (TCODE_ANONYMOUS_CHUNK)
-  ///    |- type (OnBinaryArchiveDictionary::ItemType)
-  ///    |- key (string)
-  ///    |- entry contents
-  ///    |- ENDCHUNK (TCODE_ANONYMOUS_CHUNK)
-  /// ENDCHUNK (TCODE_ANONYMOUS_CHUNK)
+  /// <para>Represents a dictionary structure that can be serialized (saved).</para>
+  /// <para>See the remarks section for layout.</para>
   ///</summary>
+  ///<remarks>
+  /// <para>This is the layout of this object:</para>
+  /// <para> </para>
+  /// <para>BEGINCHUNK (TCODE_ANONYMOUS_CHUNK)</para>
+  /// <para>|- version (int)</para>
+  /// <para>|- entry count (int)</para>
+  /// <para>   for entry count entries</para>
+  /// <para>   |- BEGINCHUNK (TCODE_ANONYMOUS_CHUNK)</para>
+  /// <para>   |- key (string)</para>
+  /// <para>   |- entry contents</para>
+  /// <para>   |- ENDCHUNK (TCODE_ANONYMOUS_CHUNK)</para>
+  /// <para>ENDCHUNK (TCODE_ANONYMOUS_CHUNK)</para>
+  /// </remarks>
   public class ArchivableDictionary : ICloneable, IDictionary<string, object>
   {
     private enum ItemType : int
@@ -833,55 +837,338 @@ namespace Rhino.Collections
     }
     */
 
+    /// <summary>
+    /// Sets a <see cref="bool"/>.
+    /// </summary>
+    /// <param name="key">The text key.</param>
+    /// <param name="val">A <see cref="bool"/>.</param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, bool val) { return SetItem(key, ItemType.itBool, val); }
+
+    /// <summary>
+    /// Sets a <see cref="byte"/>.
+    /// </summary>
+    /// <param name="key">The text key.</param>
+    /// <param name="val">A <see cref="byte"/>.</param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, byte val) { return SetItem(key, ItemType.itByte, val); }
+
+    /// <summary>
+    /// Sets a <see cref="sbyte"/>.
+    /// </summary>
+    /// <param name="key">The text key.</param>
+    /// <param name="val">A <see cref="sbyte"/>.</param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     [CLSCompliant(false)]
     public bool Set(string key, sbyte val) { return SetItem(key, ItemType.itSByte, val); }
+
+    /// <summary>
+    /// Sets a <see cref="short"/>.
+    /// </summary>
+    /// <param name="key">The text key.</param>
+    /// <param name="val">A <see cref="short"/>.</param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, short val) { return SetItem(key, ItemType.itShort, val); }
+
+    /// <summary>
+    /// Sets a <see cref="ushort"/>.
+    /// </summary>
+    /// <param name="key">The text key.</param>
+    /// <param name="val">A <see cref="ushort"/>.</param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     [CLSCompliant(false)]
     public bool Set(string key, ushort val) { return SetItem(key, ItemType.itUShort, val); }
+
+    /// <summary>
+    /// Sets a <see cref="int"/>.
+    /// </summary>
+    /// <param name="key">The text key.</param>
+    /// <param name="val">A <see cref="int"/>.</param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, int val) { return SetItem(key, ItemType.itInt32, val); }
+
+    /// <summary>
+    /// Sets a <see cref="uint"/>.
+    /// </summary>
+    /// <param name="key">The text key.</param>
+    /// <param name="val">A <see cref="uint"/>.</param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     [CLSCompliant(false)]
     public bool Set(string key, uint val) { return SetItem(key, ItemType.itUInt32, val); }
+
+    /// <summary>
+    /// Sets a <see cref="uint"/>.
+    /// </summary>
+    /// <param name="key">The text key.</param>
+    /// <param name="val">A <see cref="uint"/>.</param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, Int64 val) { return SetItem(key, ItemType.itInt64, val); }
+
+    /// <summary>
+    /// Sets a <see cref="float"/>.
+    /// </summary>
+    /// <param name="key">The text key.</param>
+    /// <param name="val">A <see cref="float"/>.</param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, float val) { return SetItem(key, ItemType.itSingle, val); }
+
+    /// <summary>
+    /// Sets a <see cref="double"/>.
+    /// </summary>
+    /// <param name="key">The text key.</param>
+    /// <param name="val">A <see cref="double"/>.</param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, double val) { return SetItem(key, ItemType.itDouble, val); }
+
+    /// <summary>
+    /// Sets a <see cref="Guid"/>.
+    /// </summary>
+    /// <param name="key">The text key.</param>
+    /// <param name="val">A <see cref="Guid"/>.</param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, Guid val) { return SetItem(key, ItemType.itGuid, val); }
+
+    /// <summary>
+    /// Sets a <see cref="string"/>.
+    /// </summary>
+    /// <param name="key">The text key.</param>
+    /// <param name="val">A <see cref="string"/>.</param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, string val) { return SetItem(key, ItemType.itString, val); }
+
+    /// <summary>
+    /// Sets a list, an array or any enumareble of <see cref="bool"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, IEnumerable<bool> val) { return SetItem(key, ItemType.itArrayBool, val); }
+
+    /// <summary>
+    /// Sets a list, an array or any enumareble of <see cref="byte"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, IEnumerable<byte> val) { return SetItem(key, ItemType.itArrayByte, val); }
+
+    /// <summary>
+    /// Sets a list, an array or any enumareble of <see cref="sbyte"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     [CLSCompliant(false)]
     public bool Set(string key, IEnumerable<sbyte> val) { return SetItem(key, ItemType.itArraySByte, val); }
+
+    /// <summary>
+    /// Sets a list, an array or any enumareble of <see cref="short"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, IEnumerable<short> val) { return SetItem(key, ItemType.itArrayShort, val); }
+
+    /// <summary>
+    /// Sets a list, an array or any enumareble of <see cref="int"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, IEnumerable<int> val) { return SetItem(key, ItemType.itArrayInt32, val); }
+
+    /// <summary>
+    /// Sets a list, an array or any enumareble of <see cref="float"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, IEnumerable<float> val) { return SetItem(key, ItemType.itArraySingle, val); }
+
+    /// <summary>
+    /// Sets a list, an array or any enumareble of <see cref="double"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, IEnumerable<double> val) { return SetItem(key, ItemType.itArrayDouble, val); }
+
+    /// <summary>
+    /// Sets a list, an array or any enumareble of <see cref="Guid"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, IEnumerable<Guid> val) { return SetItem(key, ItemType.itArrayGuid, val); }
+
+    /// <summary>
+    /// Sets a list, an array or any enumareble of <see cref="string"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, IEnumerable<string> val) { return SetItem(key, ItemType.itArrayString, val); }
+
+    /// <summary>
+    /// Sets a <see cref="System.Drawing.Color"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, System.Drawing.Color val) { return SetItem(key, ItemType.itColor, val); }
+
+    /// <summary>
+    /// Sets a <see cref="System.Drawing.Point"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, System.Drawing.Point val) { return SetItem(key, ItemType.itPoint, val); }
+
+    /// <summary>
+    /// Sets a <see cref="System.Drawing.PointF"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, System.Drawing.PointF val) { return SetItem(key, ItemType.itPointF, val); }
+
+    /// <summary>
+    /// Sets a <see cref="System.Drawing.Rectangle"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, System.Drawing.Rectangle val) { return SetItem(key, ItemType.itRectangle, val); }
+
+    /// <summary>
+    /// Sets a <see cref="System.Drawing.RectangleF"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, System.Drawing.RectangleF val) { return SetItem(key, ItemType.itRectangleF, val); }
+
+    /// <summary>
+    /// Sets a <see cref="System.Drawing.Size"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, System.Drawing.Size val) { return SetItem(key, ItemType.itSize, val); }
+
+    /// <summary>
+    /// Sets a <see cref="System.Drawing.SizeF"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, System.Drawing.SizeF val) { return SetItem(key, ItemType.itSizeF, val); }
+
+    /// <summary>
+    /// Sets a <see cref="System.Drawing.Font"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, System.Drawing.Font val) { return SetItem(key, ItemType.itFont, val); }
+
+    /// <summary>
+    /// Sets an <see cref="Rhino.Geometry.Interval"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.Interval val) { return SetItem(key, ItemType.itInterval, val); }
+
+    /// <summary>
+    /// Sets a <see cref="Rhino.Geometry.Point2d"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.Point2d val) { return SetItem(key, ItemType.itPoint2d, val); }
+
+    /// <summary>
+    /// Sets a <see cref="Rhino.Geometry.Point3d"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.Point3d val) { return SetItem(key, ItemType.itPoint3d, val); }
+
+    /// <summary>
+    /// Sets a <see cref="Rhino.Geometry.Point4d"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.Point4d val) { return SetItem(key, ItemType.itPoint4d, val); }
+
+    /// <summary>
+    /// Sets a <see cref="Rhino.Geometry.Vector2d"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.Vector2d val) { return SetItem(key, ItemType.itVector2d, val); }
+
+    /// <summary>
+    /// Sets a <see cref="Rhino.Geometry.Vector3d"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.Vector3d val) { return SetItem(key, ItemType.itVector3d, val); }
+
+    /// <summary>
+    /// Sets a <see cref="Rhino.Geometry.BoundingBox"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.BoundingBox val) { return SetItem(key, ItemType.itBoundingBox, val); }
+
+    /// <summary>
+    /// Sets a <see cref="Rhino.Geometry.Ray3d"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.Ray3d val) { return SetItem(key, ItemType.itRay3d, val); }
+
     bool SetPlaneEquation(string key, double[] eq) { return SetItem(key, ItemType.itPlaneEquation, eq); }
+
+    /// <summary>
+    /// Sets a <see cref="Rhino.Geometry.Transform"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.Transform val) { return SetItem(key, ItemType.itXform, val); }
+
+    /// <summary>
+    /// Sets a <see cref="Rhino.Geometry.Plane"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.Plane val) { return SetItem(key, ItemType.itPlane, val); }
+
+    /// <summary>
+    /// Sets a <see cref="Rhino.Geometry.Line"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.Line val) { return SetItem(key, ItemType.itLine, val); }
+
+    /// <summary>
+    /// Sets a <see cref="Rhino.Geometry.Point3f"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.Point3f val) { return SetItem(key, ItemType.itPoint3f, val); }
+
+    /// <summary>
+    /// Sets a <see cref="Rhino.Geometry.Vector3f"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.Vector3f val) { return SetItem(key, ItemType.itVector3f, val); }
+
+    /// <summary>
+    /// Sets another <see cref="ArchivableDictionary"/> as entry.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, ArchivableDictionary val) { return SetItem(key, ItemType.itOnBinaryArchiveDictionary, val); }
+
+    /// <summary>
+    /// Sets a <see cref="Rhino.Geometry.MeshingParameters"/>.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.MeshingParameters val) { return SetItem(key, ItemType.itOnMeshParameters, val); }
+
+    /// <summary>
+    /// Sets any class deriving from the <see cref="Rhino.Geometry.GeometryBase"/> base class.
+    /// </summary>
+    /// <param name="key">A text key.</param>
+    /// <param name="val">A value for that key.</param>
     public bool Set(string key, Rhino.Geometry.GeometryBase val) { return SetItem(key, ItemType.itOnGeometry, val); }
 
     bool SetItem(string key, ItemType it, object val)
@@ -1005,6 +1292,10 @@ namespace Rhino.Collections
       return m_items.Remove(item.Key);
     }
 
+    /// <summary>
+    /// Gets the enumerator of this dictionary.
+    /// </summary>
+    /// <returns>A <see cref="IEnumerator{T}"/>, where T is an instance of <see cref="KeyValuePair{T0,T1}"/>, with T0 set as string, and T1 as Syste.Object.</returns>
     public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
     {
       foreach (var element in m_items)
@@ -1015,6 +1306,10 @@ namespace Rhino.Collections
       }
     }
 
+    /// <summary>
+    /// Gets the enumerator of this dictionary.
+    /// </summary>
+    /// <returns>A <see cref="IEnumerator{T}"/>, where T is an instance of <see cref="KeyValuePair{T0,T1}"/>, with T0 set as string, and T1 as Syste.Object.</returns>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return GetEnumerator();

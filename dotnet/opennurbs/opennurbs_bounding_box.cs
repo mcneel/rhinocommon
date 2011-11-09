@@ -1,11 +1,11 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents a world aligned boundingbox defined by the two extreme corner points.
+  /// Represents a boundingbox defined by the two extreme corner points.
+  /// <para>This box is aligned to the world X, Y and Z axes.</para>
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]
   [Serializable]
@@ -108,9 +108,13 @@ namespace Rhino.Geometry
 
     #endregion
 
+    /// <summary>
+    /// Constructs the string representation of this aligned boundingbox.
+    /// </summary>
+    /// <returns></returns>
     public override string ToString()
     {
-      return string.Format("{0} - {1}", m_min, m_max);
+      return string.Format("{0} - {1}", m_min.ToString(), m_max.ToString());
     }
 
     #region properties
@@ -167,11 +171,12 @@ namespace Rhino.Geometry
 
     #region methods
     /// <summary>
-    /// Evaluate the box with normalized parameters.
+    /// Evaluates the boundingbox with normalized parameters.
+    /// <para>This means that the boundingbox has ideally size 1x1x1.</para>
     /// </summary>
-    /// <param name="tx">Normalized parameter along the x-direction.</param>
-    /// <param name="ty">Normalized parameter along the y-direction.</param>
-    /// <param name="tz">Normalized parameter along the z-direction.</param>
+    /// <param name="tx">Normalized (between 0 and 1 is inside the box) parameter along the X direction.</param>
+    /// <param name="ty">Normalized (between 0 and 1 is inside the box) parameter along the Y direction.</param>
+    /// <param name="tz">Normalized (between 0 and 1 is inside the box) parameter along the Z direction.</param>
     /// <returns>The point at the {tx, ty, tz} parameters.</returns>
     public Point3d PointAt(double tx, double ty, double tz)
     {
@@ -187,7 +192,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Find the closest point on or in the Box.
+    /// Finds the closest point on or in the boundingbox.
     /// </summary>
     /// <param name="point">Sample point.</param>
     /// <returns>The point on or in the box that is closest to the sample point.</returns>
@@ -195,8 +200,9 @@ namespace Rhino.Geometry
     {
       return ClosestPoint(point, true);
     }
+
     /// <summary>
-    /// Find the closest point on or in the Box.
+    /// Finds the closest point on or in the boundingbox.
     /// </summary>
     /// <param name="point">Sample point.</param>
     /// <param name="includeInterior">If False, the point is projected onto the boundary faces only, 
@@ -274,7 +280,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Find the furthest point on the Box.
+    /// Finds the furthest point on the Box.
     /// </summary>
     /// <param name="point">Sample point.</param>
     /// <returns>The point on the box that is furthest from the sample point.</returns>
@@ -311,9 +317,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Inflate the box with equal amounts in all directions. 
+    /// Inflates the box with equal amounts in all directions. 
     /// Inflating with negative amounts may result in decreasing boxes. 
-    /// InValid boxes can not be inflated.
+    /// <para>Invalid boxes can not be inflated.</para>
     /// </summary>
     /// <param name="amount">Amount (in model units) to inflate this box in all directions.</param>
     public void Inflate(double amount)
@@ -324,7 +330,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Inflate the box with custom amounts in all directions. 
     /// Inflating with negative amounts may result in decreasing boxes. 
-    /// InValid boxes can not be inflated.
+    /// <para>InValid boxes can not be inflated.</para>
     /// </summary>
     /// <param name="xAmount">Amount (in model units) to inflate this box in the x direction.</param>
     /// <param name="yAmount">Amount (in model units) to inflate this box in the y direction.</param>
@@ -343,21 +349,24 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Test a point for BoundingBox inclusion. This is the same as calling Contains(point, false)
+    /// Tests a point for boundingbox inclusion. This is the same as calling Contains(point, false)
     /// </summary>
     /// <param name="point">Point to test.</param>
-    /// <returns>True if the point is on the inside of or coincident with this BoundingBox.</returns>
+    /// <returns>true if the point is on the inside of or coincident with this boundingbox; otherwise false.</returns>
     public bool Contains(Point3d point)
     {
       return Contains(point, false);
     }
     /// <summary>
-    /// Test a point for BoundingBox inclusion.
+    /// Tests a point for BoundingBox inclusion.
     /// </summary>
     /// <param name="point">Point to test.</param>
     /// <param name="strict">If true, the point needs to be fully on the inside of the BoundingBox. 
     /// I.e. coincident points will be considered 'outside'.</param>
-    /// <returns>True if the point is (strictly) on the inside of this BoundingBox.</returns>
+    /// <returns>
+    /// <para>If 'strict' is affirmative, true if the point is inside this boundingbox; false if it is on the surface or outside.</para>
+    /// <para>If 'strict' is negative, true if the point is on the surface or on the inside of the boundingbox; otherwise false.</para>
+    /// </returns>
     public bool Contains(Point3d point, bool strict)
     {
       if (!point.IsValid) { return false; }
@@ -383,20 +392,24 @@ namespace Rhino.Geometry
 
       return true;
     }
+
     /// <summary>
-    /// Test a box for BoundingBox inclusion. This is the same as calling Contains(box,false)
+    /// Determines whether this boundingbox contains another boundingbox.
+    /// <para>This is the same as calling Contains(box,false).</para>
     /// </summary>
     /// <param name="box">Box to test.</param>
-    /// <returns>True if the box is on the inside of or coincident with this BoundingBox.</returns>
+    /// <returns>true if the box is on the inside of this boundingbox, or is coincident with the surface of it.</returns>
     public bool Contains(BoundingBox box)
     {
       return Contains(box, false);
     }
+
     /// <summary>
-    /// Test a box for BoundingBox inclusion.
+    /// Determines whether this boundingbox contains another boundingbox.
+    /// <para>The user can choose how to treat boundingboxes with coincidents surfaces.</para>
     /// </summary>
     /// <param name="box">Box to test.</param>
-    /// <param name="strict">If true, the box needs to be fully on the inside of the BoundingBox. 
+    /// <param name="strict">If true, the box needs to be fully on the inside of the boundingbox. 
     /// I.e. coincident boxes will be considered 'outside'.</param>
     /// <returns>True if the box is (strictly) on the inside of this BoundingBox.</returns>
     public bool Contains(BoundingBox box, bool strict)
@@ -426,7 +439,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Ensure the box is defined in an increasing fashion along x, y and z axes.
+    /// Ensures that the box is defined in an increasing fashion along X, Y and Z axes.
     /// If the Min or Max points are unset, this function will not change the box.
     /// </summary>
     /// <returns>True if the box was made valid, False if the box could not be made valid.</returns>
@@ -450,12 +463,12 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get one of the eight corners of the box
+    /// Gets one of the eight corners of the box
     /// </summary>
-    /// <param name="minX"></param>
-    /// <param name="minY"></param>
-    /// <param name="minZ"></param>
-    /// <returns></returns>
+    /// <param name="minX">true for the minimum on the X axis; false for the maximum.</param>
+    /// <param name="minY">true for the minimum on the Y axis; false for the maximum.</param>
+    /// <param name="minZ">true for the minimum on the Z axis; false for the maximum.</param>
+    /// <returns>The requested point.</returns>
     public Point3d Corner(bool minX, bool minY, bool minZ)
     {
       double x = minX ? m_min.X : m_max.X;
@@ -465,7 +478,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Test a bounding box to see if it is degenerate (flat) in one or more directions.
+    /// Determines whether a bounding box is degenerate (flat) in one or more directions.
     /// </summary>
     /// <param name="tolerance">
     /// Distances &lt;= tolerance will be considered to be zero.  If tolerance
@@ -503,9 +516,21 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets an array of the 8 corner points of this box.
+    /// Gets an array filled with the 8 corner points of this box.
+    /// <para>See remarks for the return order.</para>
     /// </summary>
     /// <returns>An array of 8 corners.</returns>
+    /// <remarks>
+    /// <para>[0] Min.X, Min.Y, Min.Z</para>
+    /// <para>[1] Max.X, Min.Y, Min.Z</para>
+    /// <para>[2] Max.X, Max.Y, Min.Z</para>
+    /// <para>[3] Min.X, Max.Y, Min.Z</para>
+    ///
+    /// <para>[4] Min.X, Min.Y, Max.Z</para>
+    /// <para>[5] Max.X, Min.Y, Max.Z</para>
+    /// <para>[6] Max.X, Max.Y, Max.Z</para>
+    /// <para>[7] Min.X, Max.Y, Max.Z</para>
+    /// </remarks>
     public Point3d[] GetCorners()
     {
       if (!IsValid)
@@ -530,7 +555,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets an array of the 12 edges of this box
     /// </summary>
-    /// <returns></returns>
+    /// <returns>If the boundingbox IsValid, the 12 edges; otherwise, null.</returns>
     public Line[] GetEdges()
     {
       if (!IsValid)
@@ -562,12 +587,12 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Updates the bounding box to be the smallest axis aligned
-    /// bounding box that contains the transform of the eight corner
-    /// points of the input bounding box.
+    /// Updates this boundingbox to be the smallest axis aligned
+    /// boundingbox that contains the transformed result of its 8 original corner
+    /// points.
     /// </summary>
-    /// <param name="xform"></param>
-    /// <returns></returns>
+    /// <param name="xform">A transform.</param>
+    /// <returns>true if this operation is sucessfull; otherwise false.</returns>
     public bool Transform(Transform xform)
     {
       if (!IsValid)
@@ -579,9 +604,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a Brep representation of this BoundingBox.
+    /// Constructs a <see cref="Brep"/> representation of this boundingbox.
     /// </summary>
-    /// <returns>A Brep representation of this box or null.</returns>
+    /// <returns>If this operation is sucessfull, a Brep representation of this box; otherwise null.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addbrepbox.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addbrepbox.cs' lang='cs'/>

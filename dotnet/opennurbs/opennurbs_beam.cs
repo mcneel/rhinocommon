@@ -5,8 +5,8 @@ using System.Runtime.Serialization;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents an extrusion, or an object such as a beam or profiled element,
-  /// that can be represented by a profile curve and two miter planes at the extremes.
+  /// Represents an extrusion, or objects such as beams or linearly extruded elements,
+  /// that can be represented by profile curves and two miter planes at the extremes.
   /// </summary>
   [Serializable]
   public class Extrusion : Surface, ISerializable

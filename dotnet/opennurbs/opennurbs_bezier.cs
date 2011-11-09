@@ -1,11 +1,13 @@
-#pragma warning disable 1591
 using System;
 
 //public class ON_PolynomialCurve { }
 //public class ON_PolynomialSurface { }
 namespace Rhino.Geometry
 {
-  /// <summary>Note that bezier curve is NOT derived from Curve</summary>
+  /// <summary>
+  /// Represents a Bezier curve.
+  /// <para>Note: the bezier curve is not derived from <see cref="Curve"/>.</para>
+  /// </summary>
   public class BezierCurve : IDisposable
   {
     IntPtr m_ptr; // This class is never const
@@ -16,16 +18,32 @@ namespace Rhino.Geometry
       m_ptr = ptr;
     }
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~BezierCurve()
     {
       Dispose(false);
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
+
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)
@@ -38,16 +56,16 @@ namespace Rhino.Geometry
 #region Rhino SDK functions
 #if RHINO_SDK
     /// <summary>
-    /// Make an array of cubic, non-rational beziers that fit a curve to a tolerance
+    /// Constructs an array of cubic, non-rational beziers that fit a curve to a tolerance.
     /// </summary>
-    /// <param name="sourceCurve"></param>
+    /// <param name="sourceCurve">A curve to approximate.</param>
     /// <param name="distanceTolerance">
-    /// max fitting error.  Will use RhinoMath.SqrtEpsilon as a minimum.
+    /// The max fitting error. Use RhinoMath.SqrtEpsilon as a minimum.
     /// </param>
     /// <param name="kinkTolerance">
     /// If the input curve has a g1-discontinuity with angle radian measure
     /// greater than kinkTolerance at some point P, the list of beziers will
-    /// also have a kink at P
+    /// also have a kink at P.
     /// </param>
     /// <returns></returns>
     public static BezierCurve[] CreateCubicBeziers(Curve sourceCurve, double distanceTolerance, double kinkTolerance)

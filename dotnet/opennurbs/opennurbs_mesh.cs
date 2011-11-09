@@ -4344,6 +4344,27 @@ namespace Rhino.Geometry
       set { m_d = value; }
     }
 
+    public int this[int index]
+    {
+      get
+      {
+        if( index==0 ) return m_a;
+        if( index==1 ) return m_b;
+        if( index==2 ) return m_c;
+        if( index==3 ) return m_d;
+        throw new IndexOutOfRangeException();
+      }
+      set
+      {
+        if( index==0 ) m_a = value;
+        else if( index==1 ) m_b = value;
+        else if( index==2 ) m_c = value;
+        else if( index==3 ) m_d = value;
+        else
+          throw new IndexOutOfRangeException();
+      }
+    }
+
     /// <summary>
     /// Gets a value indicating whether or not this mesh face 
     /// is considered to be valid. Note that even valid mesh faces 

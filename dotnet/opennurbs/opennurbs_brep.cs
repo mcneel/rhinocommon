@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Enumerates all possible Loft types.
+  /// Specifies enumerated constants for all supported loft types.
   /// </summary>
   public enum LoftType : int
   {
@@ -54,7 +54,7 @@ namespace Rhino.Geometry
     {
       if (null == geometry)
         return null;
-
+      
       Brep brep = geometry as Brep;
       // special case for Breps in an attempt to not be creating copies willy-nilly
       if (brep != null && brep.IsDocumentControlled)

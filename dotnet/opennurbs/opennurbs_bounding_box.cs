@@ -172,7 +172,7 @@ namespace Rhino.Geometry
     #region methods
     /// <summary>
     /// Evaluates the boundingbox with normalized parameters.
-    /// <para>This means that the boundingbox has ideally size 1x1x1.</para>
+    /// <para>The box has idealized side length of 1x1x1.</para>
     /// </summary>
     /// <param name="tx">Normalized (between 0 and 1 is inside the box) parameter along the X direction.</param>
     /// <param name="ty">Normalized (between 0 and 1 is inside the box) parameter along the Y direction.</param>

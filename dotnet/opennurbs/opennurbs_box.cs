@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -6,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents an orthogonal, oriented box that is not tied to the World Axis directions.
+  /// Represents an orthogonal, oriented box that is not tied to the world Y,X,Z-axis directions.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 176)]
   [Serializable]
@@ -22,9 +21,9 @@ namespace Rhino.Geometry
 
     #region Constructors
     /// <summary>
-    /// Create a new Box that mimics a BoundingBox struct. 
-    /// The orientation plane of the Box will be coincident with the 
-    /// World XY plane.
+    /// Initializes a new Box that mimics a BoundingBox struct. 
+    /// <para>The orientation plane of the Box is coincident with the 
+    /// World XY plane.</para>
     /// </summary>
     /// <param name="bbox">BoundingBox to mimic.</param>
     public Box(BoundingBox bbox)
@@ -36,7 +35,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new box from a base Plane and three Intervals.
+    /// Initializes a new box from a base Plane and three Intervals.
     /// </summary>
     /// <param name="basePlane">Orientation plane of the box.</param>
     /// <param name="xSize">Dimensions along the base plane X-Axis.</param>
@@ -51,7 +50,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create an aligned Boundingbox for a set of points.
+    /// Initializes the smallest box that contains a set of points.
     /// </summary>
     /// <param name="basePlane">Orientation of the box.</param>
     /// <param name="points">Points to include, Invalid points will be ignored.</param>
@@ -103,7 +102,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create an aligned boundingbox for a generic piece of geometry.
+    /// Initializes a box that contains a generic piece of geometry.
+    /// This box will be aligned with an arbitrary plane.
     /// </summary>
     /// <param name="basePlane">Base plane for aligned bounding box.</param>
     /// <param name="geometry">Geometry to box.</param>
@@ -128,7 +128,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a world aligned box from a base plane and a boundingbox.
+    /// Initializes a world aligned box from a base plane and a boundingbox.
     /// </summary>
     /// <param name="basePlane">Base plane of bounging box.</param>
     /// <param name="boundingbox">Bounding Box in plane coordinates.</param>
@@ -288,11 +288,12 @@ namespace Rhino.Geometry
 
     #region Methods
     /// <summary>
-    /// Evaluate the Box volume at the given unitized parameters.
+    /// Evaluates the box volume at the given unitized parameters.
+    /// <para>The box has idealized side length of 1x1x1.</para>
     /// </summary>
-    /// <param name="x">Unitized parameter along Box X direction.</param>
-    /// <param name="y">Unitized parameter along Box Y direction.</param>
-    /// <param name="z">Unitized parameter along Box Z direction.</param>
+    /// <param name="x">Unitized parameter (between 0 and 1 is inside the box) along box X direction.</param>
+    /// <param name="y">Unitized parameter (between 0 and 1 is inside the box) along box Y direction.</param>
+    /// <param name="z">Unitized parameter (between 0 and 1 is inside the box) along box Z direction.</param>
     /// <returns>The point at (x,y,z).</returns>
     public Point3d PointAt(double x, double y, double z)
     {
@@ -306,7 +307,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Find the closest point on or in the Box. The box should be Valid for this to work.
+    /// Finds the closest point on or in the Box. The box should be Valid for this to work.
     /// </summary>
     /// <param name="point">Sample point.</param>
     /// <returns>The point on or in the box that is closest to the sample point.</returns>
@@ -333,8 +334,9 @@ namespace Rhino.Geometry
 
       return m_plane.PointAt(x, y, z);
     }
+
     /// <summary>
-    /// Find the furthest point on the Box. The Box should be Valid for this to work properly.
+    /// Finds the furthest point on the Box. The Box should be Valid for this to work properly.
     /// </summary>
     /// <param name="point">Sample point.</param>
     /// <returns>The point on the box that is furthest from the sample point.</returns>
@@ -359,19 +361,20 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Inflate the box with equal amounts in all directions. 
+    /// Inflates the box by a given offset in each direction.
     /// Inflating with negative amounts may result in decreasing boxes. 
-    /// InValid boxes can not be inflated.
+    /// InValid boxes cannot be inflated.
     /// </summary>
     /// <param name="amount">Amount (in model units) to inflate this box in all directions.</param>
     public void Inflate(double amount)
     {
       Inflate(amount, amount, amount);
     }
+
     /// <summary>
-    /// Inflate the box with custom amounts in all directions. 
-    /// Inflating with negative amounts may result in decreasing boxes. 
-    /// InValid boxes can not be inflated.
+    /// Inflates the box by a given offset in each direction.
+    /// Inflating with negative amounts may result in decreasing boxes.
+    /// InValid boxes cannot be inflated.
     /// </summary>
     /// <param name="xAmount">Amount (in model units) to inflate this box in the x direction.</param>
     /// <param name="yAmount">Amount (in model units) to inflate this box in the y direction.</param>
@@ -393,7 +396,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Test a point for Box inclusion. This is the same as calling Contains(point,false)
+    /// Determines whether a point is included in this box. This is the same as calling Contains(point,false)
     /// </summary>
     /// <param name="point">Point to test.</param>
     /// <returns>True if the point is on the inside of or coincident with this Box.</returns>
@@ -401,8 +404,9 @@ namespace Rhino.Geometry
     {
       return Contains(point, false);
     }
+
     /// <summary>
-    /// Test a point for Box inclusion.
+    /// Determines whether a point is included in this box. 
     /// </summary>
     /// <param name="point">Point to test.</param>
     /// <param name="strict">If true, the point needs to be fully on the inside of the Box. 
@@ -457,6 +461,7 @@ namespace Rhino.Geometry
     {
       return Contains(box, false);
     }
+
     /// <summary>
     /// Test a box for Box inclusion.
     /// </summary>
@@ -477,8 +482,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a union between this Box and the given point. 
-    /// This essentially grows the Box until it contains the point.
+    /// Constructs a union between this Box and the given point. 
+    /// This grows the box in directions so it contains the point.
     /// </summary>
     /// <param name="point">Point to include.</param>
     public void Union(Point3d point)
@@ -542,7 +547,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Transform this Box using a Transformation matrix. If the Transform does not preserve 
+    /// Transforms this Box using a Transformation matrix. If the Transform does not preserve 
     /// Similarity, the dimensions of the resulting box cannot be trusted.
     /// </summary>
     /// <param name="xform">Transformation matrix to apply to this Box.</param>
@@ -590,7 +595,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Reposition the origin of the Base plane for this box without affecting 
+    /// Repositions the origin of the Base plane for this box without affecting 
     /// the physical dimensions.
     /// </summary>
     /// <param name="origin">The new base plane origin.</param>
@@ -613,7 +618,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a Brep representation of this Box.
+    /// Constructs a Brep representation of this Box.
     /// </summary>
     /// <returns>A Brep representation of this box or null.</returns>
     public Brep ToBrep()

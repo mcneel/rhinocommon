@@ -1465,7 +1465,7 @@ namespace Rhino
 #if RHINO_SDK
   class PlugInSettings
   {
-    private readonly PlugIns.PlugIn m_plugin; // Initialized by constructor
+    private readonly System.Reflection.Assembly m_assembly; // plugin or skin assembly
     private readonly PlugInSettings AllUserSettings;
     private PersistentSettings m_PluginSettings; // = null; initialized by runtime
     private Dictionary<string, PersistentSettings> m_CommandSettingsDict; // = null; initialized by runtime
@@ -1487,7 +1487,7 @@ namespace Rhino
     /// <returns></returns>
     private string SettingsFileFolder(bool localSettings)
     {
-      return (localSettings ? m_plugin.SettingsDirectory : m_plugin.SettingsDirectoryAllUsers);
+      return Rhino.PlugIns.PlugIn.SettingsDirectoryHelper(localSettings, this.m_assembly);
     }
     /// <summary>
     /// Compute full path to settings file to read or write
@@ -1498,14 +1498,13 @@ namespace Rhino
     {
       return Path.Combine(SettingsFileFolder(localSettings), "settings.xml");
     }
-    /// <summary>
-    /// PersistentSettingsManager constructor
-    /// </summary>
-    /// <param name="plugin">Requires a valid PlugIn object to attach to</param>
+
+    /// <summary>PersistentSettingsManager constructor</summary>
+    /// <param name="pluginAssembly">Requires a valid PlugIn object to attach to</param>
     /// <param name="allUserSettings">All user setting to compare for changes</param>
-    public PlugInSettings(Rhino.PlugIns.PlugIn plugin, PlugInSettings allUserSettings)
+    internal PlugInSettings(System.Reflection.Assembly pluginAssembly, PlugInSettings allUserSettings)
     {
-      m_plugin = plugin;
+      m_assembly = pluginAssembly;
       AllUserSettings = allUserSettings;
     }
     /// <summary>
@@ -1907,21 +1906,58 @@ namespace Rhino
       return fileName;
     }
   }
-  //////////////////////////////////////////////////////////////////////////////////////////////
-  /// <summary>
-  /// 
-  /// </summary>
+
   class PersistentSettingsManager
   {
+    static List<PersistentSettingsManager> m_all_managers = new List<PersistentSettingsManager>();
+    readonly System.Reflection.Assembly m_assembly;
+    internal Rhino.PlugIns.PlugIn m_plugin;
+
     private readonly PlugInSettings SettingsLocal;
     /// <summary>
     /// PersistentSettingsManager constructor
     /// </summary>
     /// <param name="plugin">Requires a valid PlugIn object to attach to</param>
-    public PersistentSettingsManager(Rhino.PlugIns.PlugIn plugin)
+    PersistentSettingsManager(Rhino.PlugIns.PlugIn plugin)
     {
-      SettingsLocal = new PlugInSettings(plugin, new PlugInSettings(plugin, null));
+      m_assembly = plugin.Assembly;
+      SettingsLocal = new PlugInSettings(m_assembly, new PlugInSettings(m_assembly, null));
     }
+
+    PersistentSettingsManager(Rhino.Runtime.Skin skin)
+    {
+      m_assembly = skin.GetType().Assembly;
+      SettingsLocal = new PlugInSettings(m_assembly, new PlugInSettings(m_assembly, null));
+    }
+
+    public static PersistentSettingsManager Create(Rhino.PlugIns.PlugIn plugin)
+    {
+      for (int i = 0; i < m_all_managers.Count; i++)
+      {
+        if (m_all_managers[i].m_assembly == plugin.Assembly)
+        {
+          m_all_managers[i].m_plugin = plugin;
+          return m_all_managers[i];
+        }
+      }
+      var ps = new PersistentSettingsManager(plugin);
+      ps.m_plugin = plugin;
+      m_all_managers.Add(ps);
+      return ps;
+    }
+    public static PersistentSettingsManager Create(Rhino.Runtime.Skin skin)
+    {
+      System.Reflection.Assembly assembly = skin.GetType().Assembly;
+      for (int i = 0; i < m_all_managers.Count; i++)
+      {
+        if (m_all_managers[i].m_assembly == assembly)
+          return m_all_managers[i];
+      }
+      var ps = new PersistentSettingsManager(skin);
+      m_all_managers.Add(ps);
+      return ps;
+    }
+
     /// <summary>
     /// Get the Plug-in settings associated with this plug-in, if this is the first time called then
     /// the plug-in settings member variable will get initialized and if a settings file exists it
@@ -1949,7 +1985,7 @@ namespace Rhino
       return SettingsLocal.ContainsModifiedValues();
     }
     /// <summary>
-    /// If they exist and contain modified values write global settings firs then local settings
+    /// If they exist and contain modified values write global settings first then local settings
     /// </summary>
     /// <returns>Returns true if local settings were successfully written</returns>
     public bool WriteSettings()

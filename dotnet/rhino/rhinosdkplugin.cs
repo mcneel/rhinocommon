@@ -83,7 +83,7 @@ namespace Rhino.PlugIns
   {
     System.Reflection.Assembly m_assembly;
     internal int m_runtime_serial_number; // = 0; runtime initializes this to 0
-    internal Rhino.Collections.RhinoList<Commands.Command> m_commands = new Rhino.Collections.RhinoList<Rhino.Commands.Command>();
+    internal List<Rhino.Commands.Command> m_commands = new List<Commands.Command>();
     PersistentSettingsManager m_SettingsManager;
     Guid m_id;
     string m_name;
@@ -290,18 +290,7 @@ namespace Rhino.PlugIns
         m_OnAddPagesToOptions = InternalAddPagesToOptions;
         UnsafeNativeMethods.CRhinoPlugIn_SetCallbacks(m_OnLoad, m_OnShutDown, m_OnGetPlugInObject);
         UnsafeNativeMethods.CRhinoPlugIn_SetCallbacks2(m_OnCallWriteDocument, m_OnWriteDocument, m_OnReadDocument);
-
-        // 12 Dec 2010 S. Baer
-        // use empty try/catch for a little while to allow github compiles to catch
-        // up with the current WIP
-        try
-        {
-          UnsafeNativeMethods.CRhinoPlugIn_SetCallbacks3(m_OnAddPagesToOptions);
-        }
-        catch(Exception e)
-        {
-          HostUtils.ExceptionReport(e);
-        }
+        UnsafeNativeMethods.CRhinoPlugIn_SetCallbacks3(m_OnAddPagesToOptions);
       }
     }
 
@@ -380,6 +369,12 @@ namespace Rhino.PlugIns
           // the last function that the plug-in can use to save settings.
           if (p.m_SettingsManager != null)
             p.m_SettingsManager.WriteSettings();
+
+          // See if there is a Skin that has settings and is not associated with
+          // a plug-in. If there is one, write the settings and mark that we have
+          // done this once
+          Rhino.Runtime.Skin.WriteSettings();
+          
 
 #if RDK_UNCHECKED
           // check to see if we should be uninitializing an RDK plugin
@@ -691,13 +686,59 @@ namespace Rhino.PlugIns
       return result;
     }
 
+    static string PlugInNameFromAssembly(System.Reflection.Assembly assembly)
+    {
+      object[] name = assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyTitleAttribute), false);
+      string plugin_name;
+      if (name != null && name.Length > 0)
+        plugin_name = ((System.Reflection.AssemblyTitleAttribute)name[0]).Title;
+      else
+        plugin_name = assembly.GetName().Name;
+      return plugin_name;
+    }
+
+    internal static string SettingsDirectoryHelper(bool bLocalUser, System.Reflection.Assembly assembly)
+    {
+      string result = null;
+      string path = null;
+      if (HostUtils.RunningOnWindows)
+      {
+        string name = PlugInNameFromAssembly(assembly);
+        object[] idAttr = assembly.GetCustomAttributes(typeof(GuidAttribute), false);
+        GuidAttribute idattr = (GuidAttribute)(idAttr[0]);
+        Guid id = new Guid(idattr.Value);
+
+        System.Globalization.CultureInfo ci = System.Globalization.CultureInfo.InvariantCulture;
+        string pluginName = string.Format(ci, "{0} ({1})", name, id.ToString().ToLower(ci));
+        // remove invalid characters from string
+        char[] invalid_chars = System.IO.Path.GetInvalidFileNameChars();
+        int index = pluginName.IndexOfAny(invalid_chars);
+        while (index >= 0)
+        {
+          pluginName = pluginName.Remove(index, 1);
+          index = pluginName.IndexOfAny(invalid_chars);
+        }
+        string commonDir = System.Environment.GetFolderPath(bLocalUser ? System.Environment.SpecialFolder.ApplicationData : System.Environment.SpecialFolder.CommonApplicationData);
+        char sep = System.IO.Path.DirectorySeparatorChar;
+        commonDir = System.IO.Path.Combine(commonDir, "McNeel" + sep + "Rhinoceros" + sep + "5.0" + sep + "Plug-ins");
+        path = System.IO.Path.Combine(commonDir, pluginName);
+      }
+      else if (HostUtils.RunningOnOSX)
+      {
+        // put the settings directory next to the rhp
+        path = System.IO.Path.GetDirectoryName(assembly.Location);
+      }
+      if (path != null)
+        result = System.IO.Path.Combine(path, "settings");
+      return result;
+    }
 
     public PersistentSettings Settings
     {
       get 
       {
         if (m_SettingsManager == null)
-          m_SettingsManager = new PersistentSettingsManager(this);
+          m_SettingsManager = PersistentSettingsManager.Create(this);
         return m_SettingsManager.PluginSettings;
       }
     }
@@ -705,7 +746,7 @@ namespace Rhino.PlugIns
     public PersistentSettings CommandSettings(string name)
     {
       if (m_SettingsManager == null)
-        m_SettingsManager = new PersistentSettingsManager(this);
+        m_SettingsManager = PersistentSettingsManager.Create(this);
       return m_SettingsManager.CommandSettings(name);
     }
 

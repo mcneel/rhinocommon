@@ -893,6 +893,21 @@ namespace Rhino.ApplicationSettings
 
   public static class FileSettings
   {
+    const int idxGetRhinoRoamingProfileDataFolder = 0;
+    const int idxGetRhinoApplicationDataFolder = 1;
+    public static string GetDataFolder(bool currentUser)
+    {
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pStringHolder = sh.NonConstPointer();
+        if (currentUser)
+          UnsafeNativeMethods.CRhinoFileUtilities_GetDataFolder(pStringHolder, idxGetRhinoRoamingProfileDataFolder);
+        else
+          UnsafeNativeMethods.CRhinoFileUtilities_GetDataFolder(pStringHolder, idxGetRhinoApplicationDataFolder);
+        return sh.ToString();
+      }
+    }
+
     /// <summary>
     /// Returns list of recently opened files. Note that this function does not
     /// check to make sure that these files still exist.

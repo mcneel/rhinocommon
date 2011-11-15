@@ -122,6 +122,31 @@ namespace Rhino.Runtime
     {
       get { return string.Empty; }
     }
+
+    PersistentSettingsManager m_SettingsManager;
+    public PersistentSettings Settings
+    {
+      get
+      {
+        if (m_SettingsManager == null)
+          m_SettingsManager = PersistentSettingsManager.Create(this);
+        return m_SettingsManager.PluginSettings;
+      }
+    }
+
+    static bool m_settings_written;
+    internal static void WriteSettings()
+    {
+      if (!m_settings_written)
+      {
+        if (m_theSingleSkin != null && m_theSingleSkin.m_SettingsManager != null)
+        {
+          if (m_theSingleSkin.m_SettingsManager.m_plugin == null)
+            m_theSingleSkin.m_SettingsManager.WriteSettings();
+        }
+      }
+      m_settings_written = true;
+    }
   }
 
   public abstract class PythonCompiledCode

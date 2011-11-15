@@ -5936,6 +5936,13 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region rh_fileutilities.cpp
+  //void CRhinoFileUtilities_GetDataFolder(CRhCmnStringHolder* pStringHolder, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoFileUtilities_GetDataFolder(IntPtr pStringHolder, int which);
+  #endregion
+
+
   #region rh_font.cpp
   //const RHMONO_STRING* CRhinoFont_FaceName( int docId, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

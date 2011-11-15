@@ -807,7 +807,14 @@ namespace Rhino
     {
       if (m_close_document != null)
       {
-        m_close_document(null, new DocumentEventArgs(docId));
+        try
+        {
+          m_close_document(null, new DocumentEventArgs(docId));
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
       }
     }
     private static void OnNewDocument(int docId)

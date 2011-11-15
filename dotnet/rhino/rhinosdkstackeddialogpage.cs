@@ -38,6 +38,9 @@ namespace Rhino.UI
     /// </summary> 
     public abstract System.Windows.Forms.Control PageControl { get;}
 
+    public virtual void OnCreateParent(IntPtr hwndParent) { }
+    public virtual void OnSizeParent(int width, int height) { }
+
     public string EnglishPageTitle
     {
       get { return m_english_page_title; }

@@ -361,12 +361,34 @@ namespace Rhino
     //  IntrinsicPointStyle = 4,
     //}
 
+    /// <summary>
+    /// Defines enumerated values for various mesh types.
+    /// </summary>
     public enum MeshType : int
     {
+      /// <summary>
+      /// The default mesh.
+      /// </summary>
       Default = 0,
+
+      /// <summary>
+      /// The render mesh.
+      /// </summary>
       Render = 1,
+
+      /// <summary>
+      /// The analysis mesh.
+      /// </summary>
       Analysis = 2,
+
+      /// <summary>
+      /// The preview mesh.
+      /// </summary>
       Preview = 3,
+
+      /// <summary>
+      /// Any mesh that is available.
+      /// </summary>
       Any = 4
     }
   }

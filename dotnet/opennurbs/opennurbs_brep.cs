@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -12,7 +11,7 @@ namespace Rhino.Geometry
   public enum LoftType : int
   {
     /// <summary>
-    /// Uses chord-length parameterization in the loft direction
+    /// Uses chord-length parameterization in the loft direction.
     /// </summary>
     Normal = 0,
     /// <summary>
@@ -34,6 +33,10 @@ namespace Rhino.Geometry
     /// Creates a separate developable surface or polysurface from each pair of curves.
     /// </summary>
     Developable = 4,
+
+    /// <summary>
+    /// Creates a uniform loft. The object knot vectors will be uniform.
+    /// </summary>
     Uniform = 5
   }
 
@@ -786,7 +789,14 @@ namespace Rhino.Geometry
       return rc;
     }
 
-    // making static because there will be IEnumerable<Brep> versions of this function
+    /// <summary>
+    /// Constructs the contour curves for a brep at a specified interval.
+    /// </summary>
+    /// <param name="brepToContour">A brep or polysurface.</param>
+    /// <param name="contourStart">A point to start.</param>
+    /// <param name="contourEnd">A point to use as the end.</param>
+    /// <param name="interval">The interaxial offset in world units.</param>
+    /// <returns>An array with intersected curves. This array can be empty.</returns>
     public static Curve[] CreateContourCurves(Brep brepToContour, Point3d contourStart, Point3d contourEnd, double interval)
     {
       IntPtr pConstBrep = brepToContour.ConstPointer();
@@ -797,6 +807,13 @@ namespace Rhino.Geometry
         return 0 == count ? new Curve[0] : outputcurves.ToNonConstArray();
       }
     }
+
+    /// <summary>
+    /// Constructs the contour curves for a brep, using a slicing plane.
+    /// </summary>
+    /// <param name="brepToContour">A brep or polysurface.</param>
+    /// <param name="sectionPlane">A plane.</param>
+    /// <returns>An array with intersected curves. This array can be empty.</returns>
     public static Curve[] CreateContourCurves(Brep brepToContour, Plane sectionPlane)
     {
       IntPtr pConstBrep = brepToContour.ConstPointer();
@@ -818,7 +835,9 @@ namespace Rhino.Geometry
         ApplyMemoryPressure();
     }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected constructor used in serialization.
+    /// </summary>
     protected Brep(SerializationInfo info, StreamingContext context)
       : base(info, context)
     {
@@ -832,12 +851,18 @@ namespace Rhino.Geometry
     internal const int idxEdgeCount = 3;
 
     Rhino.Geometry.Collections.BrepFaceList m_facelist;
+    /// <summary>
+    /// Gets the brep faces list accessor.
+    /// </summary>
     public Rhino.Geometry.Collections.BrepFaceList Faces
     {
       get { return m_facelist ?? (m_facelist = new Rhino.Geometry.Collections.BrepFaceList(this)); }
     }
 
     Rhino.Geometry.Collections.BrepEdgeList m_edgelist;
+    /// <summary>
+    /// Gets the brep edges list accessor.
+    /// </summary>
     public Rhino.Geometry.Collections.BrepEdgeList Edges
     {
       get { return m_edgelist ?? (m_edgelist = new Rhino.Geometry.Collections.BrepEdgeList(this)); }
@@ -845,7 +870,7 @@ namespace Rhino.Geometry
 
 
     /// <summary>
-    /// Test Brep to see if it is a solid. (A "solid" is a closed oriented manifold.)
+    /// Determines whether this brep is a solid, or a closed oriented manifold.
     /// </summary>
     public bool IsSolid
     {
@@ -858,7 +883,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets the Solid orientation state of this Brep.
+    /// Gets the solid orientation state of this Brep.
     /// </summary>
     public BrepSolidOrientation SolidOrientation
     {
@@ -871,7 +896,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets a value indicating whether or not the Brep is Manifold. 
+    /// Gets a value indicating whether or not the Brep is manifold. 
     /// Non-Manifold breps have at least one edge that is shared among three or more faces.
     /// </summary>
     public bool IsManifold
@@ -887,7 +912,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Returns true if the Brep has a single face and that face is geometrically the same
     /// as the underlying surface.  I.e., the face has trivial trimming. In this case, the
-    /// surface is m_S[0]. The flag Brep.Faces[0].OrientationIsReversed records the
+    /// surface is the first face surface. The flag Brep.Faces[0].OrientationIsReversed records the
     /// correspondence between the surface's natural parametric orientation and the
     /// orientation of the Brep.
     /// </summary>
@@ -911,6 +936,11 @@ namespace Rhino.Geometry
       }
     }
     */
+
+    /// <summary>
+    /// Gets an array containing all regions in this brep.
+    /// </summary>
+    /// <returns></returns>
     public BrepRegion[] GetRegions()
     {
       IntPtr pConstThis = ConstPointer();
@@ -1966,6 +1996,11 @@ namespace Rhino.Geometry
     }
 #endif
 
+    /// <summary>
+    /// Obtains a reference to a specified type of mesh for this brep face.
+    /// </summary>
+    /// <param name="meshType">The mesh type.</param>
+    /// <returns>A mesh.</returns>
     public Mesh GetMesh(MeshType meshType)
     {
       IntPtr pConstBrep = m_brep.ConstPointer();
@@ -1975,6 +2010,12 @@ namespace Rhino.Geometry
       return GeometryBase.CreateGeometryHelper(pConstMesh, new MeshHolder(this, meshType)) as Mesh;
     }
 
+    /// <summary>
+    /// Sets a reference to a specified type of mesh for this brep face.
+    /// </summary>
+    /// <param name="meshType">The mesh type.</param>
+    /// <param name="mesh">The new mesh.</param>
+    /// <returns>true if the operation succeeded; otherwise false.</returns>
     public bool SetMesh(MeshType meshType, Mesh mesh)
     {
       IntPtr pThis = NonConstPointer();
@@ -2111,6 +2152,9 @@ namespace Rhino.Geometry
   }
   */
 
+  /// <summary>
+  /// Represents a brep topological region that has sides.
+  /// </summary>
   public class BrepRegion
   {
     readonly Brep m_brep;
@@ -2121,18 +2165,21 @@ namespace Rhino.Geometry
       m_index = index;
     }
 
-    /// <summary>Brep this region belongs to</summary>
+    /// <summary>Gets a reference to the Brep this region belongs to.</summary>
     public Brep Brep
     {
       get { return m_brep; }
     }
 
-    /// <summary>Index of region in RegionTopology array</summary>
+    /// <summary>Gets the index of region in the RegionTopology array.</summary>
     public int Index
     {
       get { return m_index; }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this region is finite.
+    /// </summary>
     public bool IsFinite
     {
       get
@@ -2142,7 +2189,7 @@ namespace Rhino.Geometry
       }
     }
 
-    /// <summary>Region bounding box</summary>
+    /// <summary>Gets the region bounding box.</summary>
     public BoundingBox BoundingBox
     {
       get
@@ -2155,8 +2202,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get the boundary of a region as a brep object.  If the region is finite,
-    /// the boundary will be a closed  manifold brep.  The boundary may have more than one
+    /// Gets the boundary of a region as a brep object. If the region is finite,
+    /// the boundary will be a closed  manifold brep. The boundary may have more than one
     /// connected component.
     /// </summary>
     /// <returns></returns>
@@ -2167,6 +2214,10 @@ namespace Rhino.Geometry
       return GeometryBase.CreateGeometryHelper(pBrep, null) as Brep;
     }
 
+    /// <summary>
+    /// Gets an array of <see cref="BrepRegionFaceSide"/> entities delimiting this region.
+    /// </summary>
+    /// <returns></returns>
     public BrepRegionFaceSide[] GetFaceSides()
     {
       IntPtr pConstBrep = m_brep.ConstPointer();
@@ -2178,6 +2229,9 @@ namespace Rhino.Geometry
     }
   }
 
+  /// <summary>
+  /// Represents a side of a <see cref="BrepRegion"/> entity.
+  /// </summary>
   public class BrepRegionFaceSide
   {
     readonly BrepRegion m_parent;
@@ -2189,18 +2243,24 @@ namespace Rhino.Geometry
       m_index = index;
     }
 
+    /// <summary>
+    /// The brep this side belongs to.
+    /// </summary>
     public Brep Brep
     {
       get { return m_parent.Brep; }
     }
 
+    /// <summary>
+    /// The region this side belongs to.
+    /// </summary>
     public BrepRegion Region
     {
       get { return m_parent; }
     }
 
     /// <summary>
-    /// True if BrepFace's surface normal points into region
+    /// Gets true if BrepFace's surface normal points into region; false otherwise.
     /// </summary>
     public bool SurfaceNormalPointsIntoRegion
     {
@@ -2212,7 +2272,7 @@ namespace Rhino.Geometry
       }
     }
 
-    /// <summary>Face this side belongs to</summary>
+    /// <summary>Gets the face this side belongs to.</summary>
     public BrepFace Face
     {
       get
@@ -2409,12 +2469,12 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Flip orientation of faces
+    /// Flips the orientation of faces.
     /// </summary>
     /// <param name="onlyReversedFaces">
     /// If true, clears all BrepFace.OrientationIsReversed flags by calling BrepFace.Transpose()
     /// on each face with a true OrientationIsReversed setting.
-    /// If false, all of the faces are flipped regardless of their orientation
+    /// If false, all of the faces are flipped regardless of their orientation.
     /// </param>
     public void Flip(bool onlyReversedFaces)
     {
@@ -2425,6 +2485,10 @@ namespace Rhino.Geometry.Collections
         UnsafeNativeMethods.ON_Brep_Flip(pBrep);
     }
 
+    /// <summary>
+    /// Deletes a face at a specified index.
+    /// </summary>
+    /// <param name="faceIndex">The index of the mesh face.</param>
     public void RemoveAt(int faceIndex)
     {
       IntPtr pBrep = m_brep.NonConstPointer();
@@ -2433,7 +2497,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Extract a face from a Brep
+    /// Extracts a face from a Brep.
     /// </summary>
     /// <param name="faceIndex"></param>
     /// <returns></returns>
@@ -2494,10 +2558,20 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     #region IEnumerable Implementation
+
+    /// <summary>
+    /// Gets the same enumerator as <see cref="GetEnumerator"/>.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<BrepFaceList, BrepFace>(this);
+      return GetEnumerator();
     }
+
+    /// <summary>
+    /// Gets an enumerators that yields <see cref="BrepFace"/> objects.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
     public IEnumerator<BrepFace> GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<BrepFaceList, BrepFace>(this);
@@ -2600,10 +2674,20 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     #region IEnumerable Implementation
+
+    /// <summary>
+    /// Gets the same enumerator as <see cref="GetEnumerator"/>.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<BrepEdgeList, BrepEdge>(this);
+      return GetEnumerator();
     }
+
+    /// <summary>
+    /// Gets an enumerator that visits all edges.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
     public IEnumerator<BrepEdge> GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<BrepEdgeList, BrepEdge>(this);

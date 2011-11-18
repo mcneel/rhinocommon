@@ -1,19 +1,19 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 
 namespace Rhino.Geometry
 {
-  ///<summary>
-  ///ON_Circle is a circle in 3d. The cirle is represented by a radius and an
-  ///orthonormal frame	of the plane containing the circle, with origin at the center.
+  /// <summary>
+  /// Represents is a circle in 3d.
+  /// <para>The values used are a radius and an orthonormal frame	of the plane containing the circle,
+  /// with origin at the center.</para>
   ///
-  ///An Is_Valid() circle has positive radius and an Is_ Valid() plane defining the frame.
+  /// <para>An IsValid circle has positive radius and an IsValid plane defining the frame.</para>
   ///
-  ///The circle is parameterized by radians from 0 to 2 Pi given by
-  ///   t -> center + cos(t)*radius*xaxis + sin(t)*radius*yaxis	
-  ///where center, xaxis and yaxis define the orthonormal frame of the circle's plane.
-  ///</summary>
+  /// <para>The circle is parameterized by radians from 0 to 2 Pi given by</para>
+  /// <para>t -> center + cos(t)*radius*xaxis + sin(t)*radius*yaxis</para>
+  /// <para>where center, xaxis and yaxis define the orthonormal frame of the circle's plane.</para>
+  /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 136)]
   [Serializable]
   public struct Circle
@@ -38,13 +38,13 @@ namespace Rhino.Geometry
 
     #region constructors
     /// <summary>
-    /// Create a circle with center (0,0,0) in the world XY plane
+    /// Initializes a circle with center (0,0,0) in the world XY plane
     /// </summary>
     /// <param name="radius">Radius of circle, should be a positive number.</param>
     public Circle(double radius) : this(Plane.WorldXY, radius) { }
 
     /// <summary>
-    /// Creates a circle in the plane with a given radius.
+    /// Initializes a circle on a plane with a given radius.
     /// </summary>
     /// <param name="plane">Plane of circle. Plane origin defines the center of the circle.</param>
     /// <param name="radius">Radius of circle (should be a positive value).</param>
@@ -60,7 +60,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Creates a circle parallel to the world XY plane with given center and radius.
+    /// Initializes a circle parallel to the world XY plane with given center and radius.
     /// </summary>
     /// <param name="center">Center of circle.</param>
     /// <param name="radius">Radius of circle (should be a positive value).</param>
@@ -77,7 +77,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a circle from an arc.
+    /// Initializes a circle from an arc.
     /// </summary>
     /// <param name="arc">Arc that defines the plane and radius.</param>
     public Circle(Arc arc)
@@ -87,7 +87,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a circle through three 3d points. The start/end of the circle is at point1.
+    /// Initializes a circle through three 3d points. The start/end of the circle is at point1.
     /// </summary>
     public Circle(Point3d point1, Point3d point2, Point3d point3)
       : this()
@@ -96,7 +96,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a circle parallel to a given plane with given center and radius.
+    /// Initializes a circle parallel to a given plane with given center and radius.
     /// </summary>
     /// <param name="plane">Plane for circle.</param>
     /// <param name="center">Center point override.</param>
@@ -109,7 +109,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a circle from two 3d points and a tangent at the first point.
+    /// Initializes a circle from two 3d points and a tangent at the first point.
     /// The start/end of the circle is at point "startPoint".
     /// </summary>
     /// <param name="startPoint">Start point of circle.</param>
@@ -425,7 +425,7 @@ namespace Rhino.Geometry
 
     #region transformation methods
     /// <summary>
-    /// Transform this circle using an xform matrix. 
+    /// Transforms this circle using an xform matrix. 
     /// </summary>
     /// <param name="xform">Transformation to apply.</param>
     /// <returns>True on success, false on failure.</returns>
@@ -439,48 +439,55 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Rotate the circle.
+    /// Rotates the circle around an axis that starts at the base plane origin.
     /// </summary>
-    /// <param name="sinAngle">Dude, I've never understood how these sin/cos rotations work. 
-    /// Someone else please write these comments.</param>
-    /// <param name="cosAngle">see sinAngle.</param>
-    /// <param name="axis">Rotation axis.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <param name="sinAngle">The value returned by Math.Sin(angle) to compose the rotation.</param>
+    /// <param name="cosAngle">The value returned by Math.Cos(angle) to compose the rotation.</param>
+    /// <param name="axis">A rotation axis.</param>
+    /// <returns>true on success, false on failure.</returns>
     public bool Rotate(double sinAngle, double cosAngle, Vector3d axis)
     {
       return m_plane.Rotate(sinAngle, cosAngle, axis);
     }
 
+    /// <summary>
+    /// Rotates the circle around an axis that starts at the provided point.
+    /// </summary>
+    /// <param name="sinAngle">The value returned by Math.Sin(angle) to compose the rotation.</param>
+    /// <param name="cosAngle">The value returned by Math.Cos(angle) to compose the rotation.</param>
+    /// <param name="axis">A rotation direction.</param>
+    /// <param name="point">A rotation base point.</param>
+    /// <returns>true on success, false on failure.</returns>
     public bool Rotate(double sinAngle, double cosAngle, Vector3d axis, Point3d point)
     {
       return m_plane.Rotate(sinAngle, cosAngle, axis, point);
     }
 
     /// <summary>
-    /// Rotate the circle through a given angle.
+    /// Rotates the circle through a given angle.
     /// </summary>
     /// <param name="angle">Angle (in radians) of the rotation.</param>
     /// <param name="axis">Rotation axis.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Rotate(double angle, Vector3d axis)
     {
       return m_plane.Rotate(angle, axis);
     }
 
     /// <summary>
-    /// Rotate the circle through a given angle.
+    /// Rotates the circle through a given angle.
     /// </summary>
     /// <param name="angle">Angle (in radians) of the rotation.</param>
     /// <param name="axis">Rotation axis.</param>
     /// <param name="point">Rotation anchor point.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Rotate(double angle, Vector3d axis, Point3d point)
     {
       return m_plane.Rotate(angle, axis, point);
     }
 
     /// <summary>
-    /// Translate (move) the circle.
+    /// Moves the circle.
     /// </summary>
     /// <param name="delta">Translation vector.</param>
     /// <returns>True on success, false on failure.</returns>

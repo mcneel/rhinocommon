@@ -660,7 +660,7 @@ namespace Rhino.Input.Custom
         return;
       try
       {
-        GetPointMouseEventArgs e = new GetPointMouseEventArgs(pRhinoViewport, flags, point, viewWndPoint);
+        GetPointMouseEventArgs e = new GetPointMouseEventArgs(m_active_gp, pRhinoViewport, flags, point, viewWndPoint);
         bool callMove = (move != 0);
         if (callMove)
           m_active_gp.OnMouseMove(e);
@@ -681,7 +681,7 @@ namespace Rhino.Input.Custom
       int rc = 0;
       try
       {
-        GetPointDrawEventArgs e = new GetPointDrawEventArgs(pDisplayPipeline, point);
+        GetPointDrawEventArgs e = new GetPointDrawEventArgs(m_active_gp, pDisplayPipeline, point);
         m_active_gp.OnDynamicDraw(e);
         rc = m_active_gp.m_baseOnDynamicDrawCalled ? 1 : 0;
         m_active_gp.m_baseOnDynamicDrawCalled = false;
@@ -723,6 +723,8 @@ namespace Rhino.Input.Custom
       if (MouseMove != null)
         MouseMove(this, e);
     }
+
+    public object Tag { get; set; }
 
     /// <summary>
     /// Called during Get2dRectangle, Get2dLine, and GetPoint(..,true) when the mouse down event for
@@ -951,16 +953,20 @@ namespace Rhino.Input.Custom
   {
     //private IntPtr m_pRhinoViewport;
     private readonly Point3d m_point;
-    internal GetPointDrawEventArgs(IntPtr pDisplayPipeline, Point3d point) : base(pDisplayPipeline)
+    private readonly GetPoint m_source;
+    internal GetPointDrawEventArgs(GetPoint source, IntPtr pDisplayPipeline, Point3d point) : base(pDisplayPipeline)
     {
       //m_pRhinoViewport = pRhinoViewport;
       m_point = point;
+      m_source = source;
     }
 
     public Point3d CurrentPoint
     {
       get { return m_point; }
     }
+
+    public GetPoint Source { get { return m_source; } }
   }
 
   public class GetPointMouseEventArgs : System.EventArgs
@@ -970,14 +976,18 @@ namespace Rhino.Input.Custom
     private readonly uint m_flags;
     private readonly Point3d m_point;
     private readonly System.Drawing.Point m_windowPoint;
+    private readonly GetPoint m_source;
 
-    internal GetPointMouseEventArgs(IntPtr pRhinoViewport, uint flags, Point3d point, System.Drawing.Point wndPoint)
+    internal GetPointMouseEventArgs(GetPoint source, IntPtr pRhinoViewport, uint flags, Point3d point, System.Drawing.Point wndPoint)
     {
       m_pRhinoViewport = pRhinoViewport;
       m_flags = flags;
       m_point = point;
       m_windowPoint = wndPoint;
+      m_source = source;
     }
+
+    public GetPoint Source { get { return m_source; } }
 
     public RhinoViewport Viewport
     {

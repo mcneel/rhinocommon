@@ -106,6 +106,7 @@ RH_C_FUNCTION void ON_3dPointArray_CopyValues( const ON_3dPointArray* pArray, /*
   }
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 
 RH_C_FUNCTION ON_SimpleArray<int>* ON_IntArray_New()
 {
@@ -134,6 +135,40 @@ RH_C_FUNCTION int ON_IntArray_Count(const ON_SimpleArray<int>* ptr)
 }
 
 RH_C_FUNCTION void ON_IntArray_Delete(ON_SimpleArray<int>* p)
+{
+  if( p )
+    delete p;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+RH_C_FUNCTION ON_SimpleArray<ON_UUID>* ON_UUIDArray_New()
+{
+  return new ON_SimpleArray<ON_UUID>();
+}
+
+RH_C_FUNCTION void ON_UUIDArray_CopyValues(const ON_SimpleArray<ON_UUID>* ptr, /*ARRAY*/ON_UUID* vals)
+{
+  if( ptr && vals )
+  {
+    int count = ptr->Count();
+    if( count > 0 )
+    {
+      const ON_UUID* source = ptr->Array();
+      ::memcpy(vals, source, count * sizeof(ON_UUID));
+    }
+  }
+}
+
+RH_C_FUNCTION int ON_UUIDArray_Count(const ON_SimpleArray<ON_UUID>* ptr)
+{
+  int rc = 0;
+  if( ptr )
+    rc = ptr->Count();
+  return rc;
+}
+
+RH_C_FUNCTION void ON_UUIDArray_Delete(ON_SimpleArray<ON_UUID>* p)
 {
   if( p )
     delete p;

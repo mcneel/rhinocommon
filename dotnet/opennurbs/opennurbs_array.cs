@@ -337,6 +337,83 @@ namespace Rhino.Runtime.InteropWrappers
   }
 
   /// <summary>
+  /// Wrapper for ON_SimpleArray&lt;ON_UUID&gt;. If you are not writing C++ code
+  /// then this class is not for you
+  /// </summary>
+  public class SimpleArrayGuid : IDisposable
+  {
+    internal IntPtr m_ptr; // ON_SimpleArray<ON_UUID>
+
+    /// <summary>
+    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <returns>The const pointer.</returns>
+    public IntPtr ConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Gets the non-const pointer (for modification) of this array.
+    /// </summary>
+    /// <returns>The non-const pointer.</returns>
+    public IntPtr NonConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Initializes a new <see cref="SimpleArrayGuid"/> class.
+    /// </summary>
+    public SimpleArrayGuid()
+    {
+      m_ptr = UnsafeNativeMethods.ON_UUIDArray_New();
+    }
+
+    /// <summary>
+    /// Gets the amount of elements in this array.
+    /// </summary>
+    public int Count
+    {
+      get { return UnsafeNativeMethods.ON_UUIDArray_Count(m_ptr); }
+    }
+
+    /// <summary>
+    /// Returns the managed counterpart of the unmanaged array.
+    /// </summary>
+    /// <returns>The managed array.</returns>
+    public Guid[] ToArray()
+    {
+      int count = Count;
+      if (count < 1)
+        return new Guid[0];
+      Guid[] rc = new Guid[count];
+      UnsafeNativeMethods.ON_UUIDArray_CopyValues(m_ptr, rc);
+      return rc;
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~SimpleArrayGuid()
+    {
+      InternalDispose();
+    }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      InternalDispose();
+      GC.SuppressFinalize(this);
+    }
+
+    private void InternalDispose()
+    {
+      if (IntPtr.Zero != m_ptr)
+      {
+        UnsafeNativeMethods.ON_UUIDArray_Delete(m_ptr);
+        m_ptr = IntPtr.Zero;
+      }
+    }
+  }
+
+  /// <summary>
   /// Wrapper for ON_SimpleArray&lt;ON_Imterval&gt;. If you are not writing C++ code
   /// then this class is not for you.
   /// </summary>

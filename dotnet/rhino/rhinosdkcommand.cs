@@ -355,16 +355,18 @@ namespace Rhino.Commands
     internal delegate int ContextHelpCallback(int command_serial_number, IntPtr pON_wString);
     private static ContextHelpCallback m_ContextHelp;
 
-    internal delegate void CommandCallback(Guid command_id, int rc);
+    internal delegate void CommandCallback(IntPtr pCommand, int rc);
     private static CommandCallback m_OnBeginCommand;
     private static CommandCallback m_OnEndCommand;
-    private static void OnBeginCommand(Guid command_id, int rc)
+    private static void OnBeginCommand(IntPtr pCommand, int rc)
     {
       if (m_begin_command != null)
       {
         try
         {
-          m_begin_command(null, new CommandEventArgs(command_id, rc));
+          CommandEventArgs e = new CommandEventArgs(pCommand, rc);
+          m_begin_command(null, e);
+          e.m_pCommand = IntPtr.Zero;
         }
         catch (Exception ex)
         {
@@ -372,13 +374,15 @@ namespace Rhino.Commands
         }
       }
     }
-    private static void OnEndCommand(Guid command_id, int rc)
+    private static void OnEndCommand(IntPtr pCommand, int rc)
     {
       if (m_end_command != null)
       {
         try
         {
-          m_end_command(null, new CommandEventArgs(command_id, rc));
+          CommandEventArgs e = new CommandEventArgs(pCommand, rc);
+          m_end_command(null, e);
+          e.m_pCommand = IntPtr.Zero;
         }
         catch (Exception ex)
         {
@@ -489,12 +493,12 @@ namespace Rhino.Commands
 
   public class CommandEventArgs : EventArgs
   {
-    readonly Guid m_command_id;
+    internal IntPtr m_pCommand;
     readonly Result m_result;
 
-    internal CommandEventArgs(Guid id, int result)
+    internal CommandEventArgs(IntPtr pCommand, int result)
     {
-      m_command_id = id;
+      m_pCommand = pCommand;
       m_result = (Result)result;
     }
 
@@ -503,9 +507,11 @@ namespace Rhino.Commands
     /// </summary>
     public Guid CommandId
     {
-      get { return m_command_id; }
+      get { return UnsafeNativeMethods.CRhinoCommand_Id(m_pCommand); }
     }
 
+    string m_english_name;
+    string m_local_name;
     /// <summary>
     /// Gets the English name of the command that raised this event.
     /// </summary>
@@ -513,7 +519,15 @@ namespace Rhino.Commands
     {
       get
       {
-        return Command.LookupCommandName(m_command_id, true);
+        if (m_english_name == null)
+        {
+          IntPtr pName = UnsafeNativeMethods.CRhinoCommand_Name(m_pCommand, true);
+          if (IntPtr.Zero == pName)
+            m_english_name = string.Empty;
+          else
+            m_english_name = Marshal.PtrToStringUni(pName);
+        }
+        return m_english_name;
       }
     }
 
@@ -524,7 +538,36 @@ namespace Rhino.Commands
     {
       get
       {
-        return Command.LookupCommandName(m_command_id, false);
+        if (m_local_name == null)
+        {
+          IntPtr pName = UnsafeNativeMethods.CRhinoCommand_Name(m_pCommand, false);
+          if (IntPtr.Zero == pName)
+            m_local_name = string.Empty;
+          else
+            m_local_name = Marshal.PtrToStringUni(pName);
+        }
+        return m_local_name;
+      }
+    }
+
+    string m_plugin_name;
+    /// <summary>
+    /// Gets the name of the plug-in that this command belongs to.  If the command is internal
+    /// to Rhino, then this propert is an empty string
+    /// </summary>
+    public string CommandPluginName
+    {
+      get
+      {
+        if (m_plugin_name == null)
+        {
+          IntPtr pName = UnsafeNativeMethods.CRhinoCommand_PlugInName(m_pCommand);
+          if (IntPtr.Zero == pName)
+            m_plugin_name = string.Empty;
+          else
+            m_plugin_name = Marshal.PtrToStringUni(pName);
+        }
+        return m_plugin_name;
       }
     }
 

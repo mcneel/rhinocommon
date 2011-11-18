@@ -451,7 +451,6 @@ namespace Rhino.Geometry
         return null;
       return new Mesh(pMesh, null);
     }
-#endif
 
     /// <summary>
     /// Create a mesh from a Brep.
@@ -604,6 +603,7 @@ namespace Rhino.Geometry
     {
       return MeshBooleanHelper(meshesToSplit, meshSplitters, idxSplit);
     }
+#endif
     #endregion
 
     #region constructors
@@ -1025,7 +1025,7 @@ namespace Rhino.Geometry
     //int GetMeshEdgeList(ON_SimpleArray<ON_2dex>& edge_list, ON_SimpleArray<int>& ci_meshtop_edge_map, int edge_type_partition[5]) const;
     //int GetMeshEdgeList(ON_SimpleArray<ON_2dex>& edge_list, ON_SimpleArray<int>& ci_meshtop_edge_map, ON_SimpleArray<int>& ci_meshtop_vertex_map, int edge_type_partition[5]) const;
 
-
+#if USING_V5_SDK
     /// <summary>
     /// Make sure that faces sharing an edge and having a difference of normal greater
     /// than or equal to angleToleranceRadians have unique vertexes along that edge,
@@ -1053,6 +1053,7 @@ namespace Rhino.Geometry
       IntPtr pThis = NonConstPointer();
       UnsafeNativeMethods.RHC_RhinoWeldMesh(pThis, angleToleranceRadians);
     }
+#endif
 
     /// <summary>
     /// Attempts to fix inconsistencies in the directions of meshfaces for a mesh. This function

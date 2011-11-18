@@ -961,6 +961,22 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_IntArray_Delete(IntPtr p);
 
+  //ON_SimpleArray<ON_UUID>* ON_UUIDArray_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_UUIDArray_New();
+
+  //void ON_UUIDArray_CopyValues(const ON_SimpleArray<ON_UUID>* ptr, /*ARRAY*/ON_UUID* vals)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_UUIDArray_CopyValues(IntPtr ptr, [In,Out] Guid[] vals);
+
+  //int ON_UUIDArray_Count(const ON_SimpleArray<ON_UUID>* ptr)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_UUIDArray_Count(IntPtr ptr);
+
+  //void ON_UUIDArray_Delete(ON_SimpleArray<ON_UUID>* p)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_UUIDArray_Delete(IntPtr p);
+
   //ON_SimpleArray<double>* ON_DoubleArray_New()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_DoubleArray_New();
@@ -4262,51 +4278,87 @@ internal partial class UnsafeNativeMethods
   //bool ON_SpaceMorph_MorphGeometry(ON_Geometry* pGeometry, double tolerance, bool quickpreview, bool preserveStructure, MORPHPOINTPROC callback)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
-  //bool ON_Matrix_Transpose(int rows, int cols, /*ARRAY*/double* values)
+  //ON_Matrix* ON_Matrix_New(int rows, int cols)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_Matrix_New(int rows, int cols);
+
+  //ON_Matrix* ON_Matrix_New2(const ON_Xform* pXform)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_Matrix_New2(ref Transform pXform);
+
+  //void ON_Matrix_Delete(ON_Matrix* pMatrix)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Matrix_Delete(IntPtr pMatrix);
+
+  //double ON_Matrix_GetValue(const ON_Matrix* pConstMatrix, int row, int column)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Matrix_GetValue(IntPtr pConstMatrix, int row, int column);
+
+  //void ON_Matrix_SetValue(ON_Matrix* pMatrix, int row, int column, double val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Matrix_SetValue(IntPtr pMatrix, int row, int column, double val);
+
+  //void ON_Matrix_Zero(ON_Matrix* pMatrix)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Matrix_Zero(IntPtr pMatrix);
+
+  //void ON_Matrix_SetDiagonal(ON_Matrix* pMatrix, double value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Matrix_SetDiagonal(IntPtr pMatrix, double value);
+
+  //bool ON_Matrix_Transpose(ON_Matrix* pMatrix)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Matrix_Transpose(int rows, int cols, [In,Out] double[] values);
+  internal static extern bool ON_Matrix_Transpose(IntPtr pMatrix);
 
-  //bool ON_Matrix_Swap(int rows, int cols, /*ARRAY*/double* values, bool swaprows, int a, int b)
+  //bool ON_Matrix_Swap(ON_Matrix* pMatrix, bool swaprows, int a, int b)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Matrix_Swap(int rows, int cols, [In,Out] double[] values, [MarshalAs(UnmanagedType.U1)]bool swaprows, int a, int b);
+  internal static extern bool ON_Matrix_Swap(IntPtr pMatrix, [MarshalAs(UnmanagedType.U1)]bool swaprows, int a, int b);
 
-  //bool ON_Matrix_Invert(int rows, int cols, /*ARRAY*/double* values, double zeroTolerance)
+  //bool ON_Matrix_Invert(ON_Matrix* pMatrix, double zeroTolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Matrix_Invert(int rows, int cols, [In,Out] double[] values, double zeroTolerance);
+  internal static extern bool ON_Matrix_Invert(IntPtr pMatrix, double zeroTolerance);
 
-  //void ON_Matrix_Multiply(int arows, int acols, /*ARRAY*/double* avalues, int brows, int bcols, /*ARRAY*/double* bvalues, /*ARRAY*/double* rcvalues)
+  //void ON_Matrix_Multiply(ON_Matrix* pMatrixRC, const ON_Matrix* pConstMatrixA, const ON_Matrix* pConstMatrixB)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void ON_Matrix_Multiply(int arows, int acols, [In,Out] double[] avalues, int brows, int bcols, [In,Out] double[] bvalues, [In,Out] double[] rcvalues);
+  internal static extern void ON_Matrix_Multiply(IntPtr pMatrixRC, IntPtr pConstMatrixA, IntPtr pConstMatrixB);
 
-  //int ON_Matrix_RowReduce(int rows, int cols, /*ARRAY*/double* values, double zero_tol, double* determinant, double* pivot)
+  //void ON_Matrix_Add(ON_Matrix* pMatrixRC, const ON_Matrix* pConstMatrixA, const ON_Matrix* pConstMatrixB)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int ON_Matrix_RowReduce(int rows, int cols, [In,Out] double[] values, double zero_tol, ref double determinant, ref double pivot);
+  internal static extern void ON_Matrix_Add(IntPtr pMatrixRC, IntPtr pConstMatrixA, IntPtr pConstMatrixB);
 
-  //int ON_Matrix_RowReduce2(int rows, int columns, /*ARRAY*/double* values, double zero_tol, /*ARRAY*/double* b, double* pivot)
+  //void ON_Matrix_Scale(ON_Matrix* pMatrix, double scale)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int ON_Matrix_RowReduce2(int rows, int columns, [In,Out] double[] values, double zero_tol, [In,Out] double[] b, ref double pivot);
+  internal static extern void ON_Matrix_Scale(IntPtr pMatrix, double scale);
 
-  //int ON_Matrix_RowReduce3(int rows, int columns, /*ARRAY*/double* values, double zero_tol, /*ARRAY*/ON_3dPoint* b, double* pivot)
+  //int ON_Matrix_RowReduce(ON_Matrix* pMatrix, double zero_tol, double* determinant, double* pivot)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int ON_Matrix_RowReduce3(int rows, int columns, [In,Out] double[] values, double zero_tol, [In,Out] Point3d[] b, ref double pivot);
+  internal static extern int ON_Matrix_RowReduce(IntPtr pMatrix, double zero_tol, ref double determinant, ref double pivot);
 
-  //bool ON_Matrix_BackSolve(int rows, int columns, /*ARRAY*/double* values, double zero_tol, int bSize, /*ARRAY*/const double* b, /*ARRAY*/double* x)
+  //int ON_Matrix_RowReduce2(ON_Matrix* pMatrix, double zero_tol, /*ARRAY*/double* b, double* pivot)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Matrix_BackSolve(int rows, int columns, [In,Out] double[] values, double zero_tol, int bSize, double[] b, [In,Out] double[] x);
+  internal static extern int ON_Matrix_RowReduce2(IntPtr pMatrix, double zero_tol, [In,Out] double[] b, ref double pivot);
 
-  //bool ON_Matrix_BackSolve2(int rows, int columns, /*ARRAY*/const double* values, double zero_tol, int bSize, /*ARRAY*/const ON_3dPoint* b, /*ARRAY*/ON_3dPoint* x)
+  //int ON_Matrix_RowReduce3(ON_Matrix* pMatrix, double zero_tol, /*ARRAY*/ON_3dPoint* b, double* pivot)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Matrix_BackSolve2(int rows, int columns, double[] values, double zero_tol, int bSize, Point3d[] b, [In,Out] Point3d[] x);
+  internal static extern int ON_Matrix_RowReduce3(IntPtr pMatrix, double zero_tol, [In,Out] Point3d[] b, ref double pivot);
 
-  //bool ON_Matrix_GetBool(int rows, int columns, /*ARRAY*/const double* values, int which)
+  //bool ON_Matrix_BackSolve(ON_Matrix* pMatrix, double zero_tol, int bSize, /*ARRAY*/const double* b, /*ARRAY*/double* x)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Matrix_GetBool(int rows, int columns, double[] values, int which);
+  internal static extern bool ON_Matrix_BackSolve(IntPtr pMatrix, double zero_tol, int bSize, double[] b, [In,Out] double[] x);
+
+  //bool ON_Matrix_BackSolve2(ON_Matrix* pMatrix, double zero_tol, int bSize, /*ARRAY*/const ON_3dPoint* b, /*ARRAY*/ON_3dPoint* x)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Matrix_BackSolve2(IntPtr pMatrix, double zero_tol, int bSize, Point3d[] b, [In,Out] Point3d[] x);
+
+  //bool ON_Matrix_GetBool(const ON_Matrix* pConstMatrix, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Matrix_GetBool(IntPtr pConstMatrix, int which);
   #endregion
 
 
@@ -4871,6 +4923,18 @@ internal partial class UnsafeNativeMethods
   //void CRhinoTransformCommand_ResetGrips( ON_UUID command_id, CRhinoXformObjectList* pXformObjectList)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoTransformCommand_ResetGrips(Guid command_id, IntPtr pXformObjectList);
+
+  //ON_UUID CRhinoCommand_Id(const CRhinoCommand* pConstCommand)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoCommand_Id(IntPtr pConstCommand);
+
+  //const wchar_t* CRhinoCommand_Name(const CRhinoCommand* pConstCommand, bool english)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoCommand_Name(IntPtr pConstCommand, [MarshalAs(UnmanagedType.U1)]bool english);
+
+  //const wchar_t* CRhinoCommand_PlugInName(const CRhinoCommand* pConstCommand)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoCommand_PlugInName(IntPtr pConstCommand);
   #endregion
 
 
@@ -5522,6 +5586,10 @@ internal partial class UnsafeNativeMethods
   //ON_UUID CRhinoDoc_AddMorphControl(int docId, const ON_MorphControl* pConstMorphControl, const ON_3dmObjectAttributes* attrs)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoDoc_AddMorphControl(int docId, IntPtr pConstMorphControl, IntPtr attrs);
+
+  //void CRhinoDoc_AddExplodedInstancePieces(int docId, const CRhinoInstanceObject* pConstInstanceObject, ON_SimpleArray<ON_UUID>* pGuids)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDoc_AddExplodedInstancePieces(int docId, IntPtr pConstInstanceObject, IntPtr pGuids);
 
   //CRhinoView* CRhinoDoc_ActiveView(int docId)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

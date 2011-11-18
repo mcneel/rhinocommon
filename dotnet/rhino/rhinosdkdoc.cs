@@ -3160,6 +3160,16 @@ namespace Rhino.DocObjects.Tables
       return Guid.Empty;
     }
     */
+    public Guid[] AddExplodedInstancePieces(InstanceObject instance)
+    {
+      IntPtr pRhinoObject = instance.ConstPointer();
+      using (var ids = new Rhino.Runtime.InteropWrappers.SimpleArrayGuid())
+      {
+        IntPtr pGuids = ids.NonConstPointer();
+        UnsafeNativeMethods.CRhinoDoc_AddExplodedInstancePieces(m_doc.m_docId, pRhinoObject, pGuids);
+        return ids.ToArray();
+      }
+    }
 
     public Guid AddInstanceObject(int instanceDefinitionIndex, Transform instanceXform)
     {

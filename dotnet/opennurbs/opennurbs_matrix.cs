@@ -8,9 +8,9 @@ namespace Rhino.Geometry
   /// Arbitrarily sized matrix of values. If you are working with a
   /// 4x4 matrix, then you may want to use the Transform class instead.
   /// </summary>
-  public class Matrix
+  public class Matrix : IDisposable
   {
-    double[] m_values;
+    IntPtr m_ptr; //ON_Matrix*
     int m_rows;
     int m_columns;
 
@@ -22,22 +22,38 @@ namespace Rhino.Geometry
         throw new ArgumentOutOfRangeException("columnCount", "must be >= 0");
       m_rows = rowCount;
       m_columns = columnCount;
-      m_values = new double[m_rows * m_columns];
+      m_ptr = UnsafeNativeMethods.ON_Matrix_New(rowCount, columnCount);
     }
 
     public Matrix(Transform xform)
     {
       m_rows = 4;
       m_columns = 4;
-      m_values = new double[16];
-      for (int row = 0; row < 4; row++)
-      {
-        for (int column = 0; column < 4; column++)
-        {
-          this[row, column] = xform[row, column];
-        }
-      }
+      m_ptr = UnsafeNativeMethods.ON_Matrix_New2(ref xform);
     }
+
+    #region IDisposable implementation
+    ~Matrix()
+    {
+      Dispose(false);
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (m_ptr!=IntPtr.Zero)
+      {
+        UnsafeNativeMethods.ON_Matrix_Delete(m_ptr);
+      }
+      m_ptr = IntPtr.Zero;
+    }
+    #endregion
+
 
     /// <summary>
     /// Gets or sets the matrix value at the given row and column indixes.
@@ -55,8 +71,7 @@ namespace Rhino.Geometry
         if (column < 0 || column>=m_columns)
           throw new IndexOutOfRangeException("column index out of range");
 
-        int index = row * m_columns + column;
-        return m_values[index];
+        return UnsafeNativeMethods.ON_Matrix_GetValue(m_ptr, row, column);
       }
       set
       {
@@ -64,15 +79,13 @@ namespace Rhino.Geometry
           throw new IndexOutOfRangeException("row index out of range");
         if (column < 0 || column >= m_columns)
           throw new IndexOutOfRangeException("column index out of range");
-
-        int index = row * m_columns + column;
-        m_values[index] = value;
+        UnsafeNativeMethods.ON_Matrix_SetValue(m_ptr, row, column, value);
       }
     }
 
     public bool IsValid
     {
-      get { return m_columns > 0 && m_rows > 0; }
+      get { return (m_ptr != IntPtr.Zero && m_columns > 0 && m_rows > 0); }
     }
 
     public bool IsSquare
@@ -86,7 +99,7 @@ namespace Rhino.Geometry
 
     public void Zero()
     {
-      m_values = new double[m_rows * m_columns];
+      UnsafeNativeMethods.ON_Matrix_Zero(m_ptr);
     }
 
     /// <summary>
@@ -95,32 +108,27 @@ namespace Rhino.Geometry
     /// <param name="d"></param>
     public void SetDiagonal(double d)
     {
-      int n = m_rows < m_columns ? m_rows : m_columns;
-      Zero();
-      for (int i = 0; i < n; i++)
-      {
-        this[i,i] = d;
-      }
+      UnsafeNativeMethods.ON_Matrix_SetDiagonal(m_ptr, d);
     }
 
     public bool Transpose()
     {
-      return UnsafeNativeMethods.ON_Matrix_Transpose(m_rows, m_columns, m_values);
+      return UnsafeNativeMethods.ON_Matrix_Transpose(m_ptr);
     }
 
     public bool SwapRows(int rowA, int rowB)
     {
-      return UnsafeNativeMethods.ON_Matrix_Swap(m_rows, m_columns, m_values, true, rowA, rowB);
+      return UnsafeNativeMethods.ON_Matrix_Swap(m_ptr, true, rowA, rowB);
     }
 
     public bool SwapColumns(int columnA, int columnB)
     {
-      return UnsafeNativeMethods.ON_Matrix_Swap(m_rows, m_columns, m_values, false, columnA, columnB);
+      return UnsafeNativeMethods.ON_Matrix_Swap(m_ptr, false, columnA, columnB);
     }
 
     public bool Invert(double zeroTolerance)
     {
-      return UnsafeNativeMethods.ON_Matrix_Invert(m_rows, m_columns, m_values, zeroTolerance);
+      return UnsafeNativeMethods.ON_Matrix_Invert(m_ptr, zeroTolerance);
     }
 
     /// <summary>
@@ -140,7 +148,7 @@ namespace Rhino.Geometry
         throw new ArgumentException("either a of b are Invalid");
 
       Matrix rc = new Matrix(a.RowCount, b.ColumnCount);
-      UnsafeNativeMethods.ON_Matrix_Multiply(a.m_rows, a.m_columns, a.m_values, b.m_rows, b.m_columns, b.m_values, rc.m_values);
+      UnsafeNativeMethods.ON_Matrix_Multiply(rc.m_ptr, a.m_ptr, b.m_ptr);
       return rc;
     }
 
@@ -161,15 +169,13 @@ namespace Rhino.Geometry
         throw new ArgumentException("either a of b are Invalid");
 
       Matrix rc = new Matrix(a.RowCount, a.ColumnCount);
-      for( int i=0; i<a.m_values.Length; i++ )
-        rc.m_values[i] = a.m_values[i]+b.m_values[i];
+      UnsafeNativeMethods.ON_Matrix_Add(rc.m_ptr, a.m_ptr, b.m_ptr);
       return rc;
     }
 
     public void Scale(double s)
     {
-      for (int i = 0; i < m_values.Length; i++)
-        m_values[i] *= s;
+      UnsafeNativeMethods.ON_Matrix_Scale(m_ptr, s);
     }
 
     /// <summary>Row reduce a matrix to calculate rank and determinant</summary>
@@ -188,7 +194,7 @@ namespace Rhino.Geometry
     {
       determinant = 0;
       pivot = 0;
-      return UnsafeNativeMethods.ON_Matrix_RowReduce(m_rows, m_columns, m_values, zeroTolerance, ref determinant, ref pivot);
+      return UnsafeNativeMethods.ON_Matrix_RowReduce(m_ptr, zeroTolerance, ref determinant, ref pivot);
     }
 
     /// <summary>
@@ -212,7 +218,7 @@ namespace Rhino.Geometry
       if (b.Length != RowCount)
         throw new ArgumentOutOfRangeException("b.Length!=RowCount");
       pivot = 0;
-      return UnsafeNativeMethods.ON_Matrix_RowReduce2(m_rows, m_columns, m_values, zeroTolerance, b, ref pivot);
+      return UnsafeNativeMethods.ON_Matrix_RowReduce2(m_ptr, zeroTolerance, b, ref pivot);
     }
 
     /// <summary>
@@ -236,7 +242,7 @@ namespace Rhino.Geometry
       if (b.Length != RowCount)
         throw new ArgumentOutOfRangeException("b.Length!=RowCount");
       pivot = 0;
-      return UnsafeNativeMethods.ON_Matrix_RowReduce3(m_rows, m_columns, m_values, zeroTolerance, b, ref pivot);
+      return UnsafeNativeMethods.ON_Matrix_RowReduce3(m_ptr, zeroTolerance, b, ref pivot);
     }
 
     /// <summary>
@@ -251,7 +257,7 @@ namespace Rhino.Geometry
     public double[] BackSolve(double zeroTolerance, double[] b)
     {
       double[] x = new double[ColumnCount];
-      if (UnsafeNativeMethods.ON_Matrix_BackSolve(m_rows, m_columns, m_values, zeroTolerance, b.Length, b, x))
+      if (UnsafeNativeMethods.ON_Matrix_BackSolve(m_ptr, zeroTolerance, b.Length, b, x))
         return x;
       return null;
     }
@@ -268,7 +274,7 @@ namespace Rhino.Geometry
     public Point3d[] BackSolvePoints(double zeroTolerance, Point3d[] b)
     {
       Point3d[] x = new Point3d[ColumnCount];
-      if (UnsafeNativeMethods.ON_Matrix_BackSolve2(m_rows, m_columns, m_values, zeroTolerance, b.Length, b, x))
+      if (UnsafeNativeMethods.ON_Matrix_BackSolve2(m_ptr, zeroTolerance, b.Length, b, x))
         return x;
       return null;
     }
@@ -279,7 +285,7 @@ namespace Rhino.Geometry
     const int idxIsColumnOrthoNormal = 3;
     bool GetBool(int which)
     {
-      return UnsafeNativeMethods.ON_Matrix_GetBool(m_rows, m_columns, m_values, which);
+      return UnsafeNativeMethods.ON_Matrix_GetBool(m_ptr, which);
     }
 
     public bool IsRowOrthoganal

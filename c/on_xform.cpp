@@ -164,121 +164,140 @@ RH_C_FUNCTION bool ON_SpaceMorph_MorphGeometry(ON_Geometry* pGeometry, double to
 ////////////////////////////////////////////////////
 #if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)
 
-RH_C_FUNCTION bool ON_Matrix_Transpose(int rows, int cols, /*ARRAY*/double* values)
+RH_C_FUNCTION ON_Matrix* ON_Matrix_New(int rows, int cols)
+{
+  return new ON_Matrix(rows, cols);
+}
+
+RH_C_FUNCTION ON_Matrix* ON_Matrix_New2(const ON_Xform* pXform)
+{
+  if( pXform )
+    return new ON_Matrix(*pXform);
+  return NULL;
+}
+
+RH_C_FUNCTION void ON_Matrix_Delete(ON_Matrix* pMatrix)
+{
+  if( pMatrix )
+    delete pMatrix;
+}
+
+RH_C_FUNCTION double ON_Matrix_GetValue(const ON_Matrix* pConstMatrix, int row, int column)
+{
+  if( pConstMatrix )
+    return (*pConstMatrix)[row][column];
+  return 0;
+}
+
+RH_C_FUNCTION void ON_Matrix_SetValue(ON_Matrix* pMatrix, int row, int column, double val)
+{
+  if( pMatrix )
+    (*pMatrix)[row][column] = val;
+}
+
+RH_C_FUNCTION void ON_Matrix_Zero(ON_Matrix* pMatrix)
+{
+  if( pMatrix )
+    pMatrix->Zero();
+}
+
+RH_C_FUNCTION void ON_Matrix_SetDiagonal(ON_Matrix* pMatrix, double value)
+{
+  if( pMatrix )
+    pMatrix->SetDiagonal(value);
+}
+
+RH_C_FUNCTION bool ON_Matrix_Transpose(ON_Matrix* pMatrix)
+{
+  if(pMatrix)
+    return pMatrix->Transpose();
+  return false;
+}
+
+RH_C_FUNCTION bool ON_Matrix_Swap(ON_Matrix* pMatrix, bool swaprows, int a, int b)
 {
   bool rc = false;
-  if(values)
+  if( pMatrix )
   {
-    ON_Matrix m;
-    if( m.Create(rows, cols, &values, false) )
-      rc = m.Transpose();
+    if( swaprows )
+      rc = pMatrix->SwapRows(a,b);
+    else
+      rc = pMatrix->SwapCols(a,b);
   }
   return rc;
 }
 
-RH_C_FUNCTION bool ON_Matrix_Swap(int rows, int cols, /*ARRAY*/double* values, bool swaprows, int a, int b)
+RH_C_FUNCTION bool ON_Matrix_Invert(ON_Matrix* pMatrix, double zeroTolerance)
 {
   bool rc = false;
-  if( values )
-  {
-    ON_Matrix m;
-    if( m.Create(rows, cols, &values, false) )
-    {
-      if( swaprows )
-        rc = m.SwapRows(a,b);
-      else
-        rc = m.SwapCols(a,b);
-    }
-  }
+  if(pMatrix)
+    rc = pMatrix->Invert(zeroTolerance);
   return rc;
 }
 
-RH_C_FUNCTION bool ON_Matrix_Invert(int rows, int cols, /*ARRAY*/double* values, double zeroTolerance)
+RH_C_FUNCTION void ON_Matrix_Multiply(ON_Matrix* pMatrixRC, const ON_Matrix* pConstMatrixA, const ON_Matrix* pConstMatrixB)
 {
-  bool rc = false;
-  if(values)
+  if( pMatrixRC && pConstMatrixA && pConstMatrixB )
   {
-    ON_Matrix m;
-    if( m.Create(rows, cols, &values, false) )
-      rc = m.Invert(zeroTolerance);
-  }
-  return rc;
-}
-
-RH_C_FUNCTION void ON_Matrix_Multiply(int arows, int acols, /*ARRAY*/double* avalues, int brows, int bcols, /*ARRAY*/double* bvalues, /*ARRAY*/double* rcvalues)
-{
-  if( avalues && bvalues && rcvalues )
-  {
-    ON_Matrix a,b,rc;
-    if( a.Create(arows, acols, &avalues, false) && b.Create(brows, bcols, &bvalues, false) && rc.Create(arows, bcols, &rcvalues, false) )
-    {
-      rc.Multiply(a,b);
-    }
+    pMatrixRC->Multiply(*pConstMatrixA, *pConstMatrixB);
   }
 }
 
-RH_C_FUNCTION int ON_Matrix_RowReduce(int rows, int cols, /*ARRAY*/double* values, double zero_tol, double* determinant, double* pivot)
+RH_C_FUNCTION void ON_Matrix_Add(ON_Matrix* pMatrixRC, const ON_Matrix* pConstMatrixA, const ON_Matrix* pConstMatrixB)
+{
+  if( pMatrixRC && pConstMatrixA && pConstMatrixB )
+  {
+    pMatrixRC->Add(*pConstMatrixA, *pConstMatrixB);
+  }
+}
+
+RH_C_FUNCTION void ON_Matrix_Scale(ON_Matrix* pMatrix, double scale)
+{
+  if( pMatrix )
+    pMatrix->Scale(scale);
+}
+
+RH_C_FUNCTION int ON_Matrix_RowReduce(ON_Matrix* pMatrix, double zero_tol, double* determinant, double* pivot)
 {
   int rc = 0;
-  if( values && determinant && pivot )
-  {
-    ON_Matrix m;
-    if( m.Create(rows, cols, &values, false) )
-      rc = m.RowReduce(zero_tol, *determinant, *pivot);
-  }
+  if( pMatrix && determinant && pivot )
+    rc = pMatrix->RowReduce(zero_tol, *determinant, *pivot);
   return rc;
 }
 
-RH_C_FUNCTION int ON_Matrix_RowReduce2(int rows, int columns, /*ARRAY*/double* values, double zero_tol, /*ARRAY*/double* b, double* pivot)
+RH_C_FUNCTION int ON_Matrix_RowReduce2(ON_Matrix* pMatrix, double zero_tol, /*ARRAY*/double* b, double* pivot)
 {
   int rc = 0;
-  if( values && b )
-  {
-    ON_Matrix m;
-    if( m.Create(rows, columns, &values, false) )
-      rc = m.RowReduce(zero_tol, b, pivot);
-  }
+  if( pMatrix && b )
+    rc = pMatrix->RowReduce(zero_tol, b, pivot);
   return rc;
 }
 
-RH_C_FUNCTION int ON_Matrix_RowReduce3(int rows, int columns, /*ARRAY*/double* values, double zero_tol, /*ARRAY*/ON_3dPoint* b, double* pivot)
+RH_C_FUNCTION int ON_Matrix_RowReduce3(ON_Matrix* pMatrix, double zero_tol, /*ARRAY*/ON_3dPoint* b, double* pivot)
 {
   int rc = 0;
-  if( values && b )
-  {
-    ON_Matrix m;
-    if( m.Create(rows, columns, &values, false) )
-      rc = m.RowReduce(zero_tol, b, pivot);
-  }
+  if( pMatrix && b )
+    rc = pMatrix->RowReduce(zero_tol, b, pivot);
   return rc;
 }
 
-RH_C_FUNCTION bool ON_Matrix_BackSolve(int rows, int columns, /*ARRAY*/double* values, double zero_tol, int bSize, /*ARRAY*/const double* b, /*ARRAY*/double* x)
+RH_C_FUNCTION bool ON_Matrix_BackSolve(ON_Matrix* pMatrix, double zero_tol, int bSize, /*ARRAY*/const double* b, /*ARRAY*/double* x)
 {
   bool rc = false;
-  if( values && b && x )
-  {
-    ON_Matrix m;
-    if( m.Create(rows, columns, &values, false) )
-      rc = m.BackSolve(zero_tol, bSize, b, x);
-  }
+  if( pMatrix && b && x )
+    rc = pMatrix->BackSolve(zero_tol, bSize, b, x);
   return rc;
 }
 
-RH_C_FUNCTION bool ON_Matrix_BackSolve2(int rows, int columns, /*ARRAY*/const double* values, double zero_tol, int bSize, /*ARRAY*/const ON_3dPoint* b, /*ARRAY*/ON_3dPoint* x)
+RH_C_FUNCTION bool ON_Matrix_BackSolve2(ON_Matrix* pMatrix, double zero_tol, int bSize, /*ARRAY*/const ON_3dPoint* b, /*ARRAY*/ON_3dPoint* x)
 {
   bool rc = false;
-  if( values && b && x )
-  {
-    double* _values = const_cast<double*>(values);
-    ON_Matrix m;
-    if( m.Create(rows, columns, &_values, false) )
-      rc = m.BackSolve(zero_tol, bSize, b, x);
-  }
+  if( pMatrix && b && x )
+    rc = pMatrix->BackSolve(zero_tol, bSize, b, x);
   return rc;
 }
 
-RH_C_FUNCTION bool ON_Matrix_GetBool(int rows, int columns, /*ARRAY*/const double* values, int which)
+RH_C_FUNCTION bool ON_Matrix_GetBool(const ON_Matrix* pConstMatrix, int which)
 {
   const int idxIsRowOrthoganal = 0;
   const int idxIsRowOrthoNormal = 1;
@@ -286,29 +305,24 @@ RH_C_FUNCTION bool ON_Matrix_GetBool(int rows, int columns, /*ARRAY*/const doubl
   const int idxIsColumnOrthoNormal = 3;
   bool rc = false;
 
-  if( values )
+  if( pConstMatrix )
   {
-    double* _values = const_cast<double*>(values);
-    ON_Matrix m;
-    if( m.Create(rows, columns, &_values, false) )
+    switch (which)
     {
-      switch (which)
-      {
-      case idxIsRowOrthoganal:
-        rc = m.IsRowOrthoganal();
-        break;
-      case idxIsRowOrthoNormal:
-        rc = m.IsRowOrthoNormal();
-        break;
-      case idxIsColumnOrthoganal:
-        rc = m.IsColOrthoganal();
-        break;
-      case idxIsColumnOrthoNormal:
-        rc = m.IsColOrthoNormal();
-        break;
-      default:
-        break;
-      }
+    case idxIsRowOrthoganal:
+      rc = pConstMatrix->IsRowOrthoganal();
+      break;
+    case idxIsRowOrthoNormal:
+      rc = pConstMatrix->IsRowOrthoNormal();
+      break;
+    case idxIsColumnOrthoganal:
+      rc = pConstMatrix->IsColOrthoganal();
+      break;
+    case idxIsColumnOrthoNormal:
+      rc = pConstMatrix->IsColOrthoNormal();
+      break;
+    default:
+      break;
     }
   }
   return rc;

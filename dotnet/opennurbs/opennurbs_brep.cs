@@ -1321,7 +1321,7 @@ namespace Rhino.Geometry
         if (count > 0)
           return breps.ToNonConstArray();
       }
-      return null;
+      return new Brep[0];
     }
 
     /// <summary>

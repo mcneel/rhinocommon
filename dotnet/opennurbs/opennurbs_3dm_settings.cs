@@ -108,6 +108,16 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
+    /// when "grid snap" is enabled, the distance between snap points.
+    /// Typically this is the same distance as grid spacing.
+    /// </summary>
+    public double SnapSpacing
+    {
+      get { return m_snap_spacing; }
+      set { m_snap_spacing = value; }
+    }
+
+    /// <summary>
     /// Gets or sets the total amount of grid lines in each direction.
     /// </summary>
     public int GridLineCount

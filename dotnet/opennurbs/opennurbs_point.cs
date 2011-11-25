@@ -821,7 +821,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="point1">A point (minuend).</param>
     /// <param name="point2">A point (subtrahend).</param>
-    /// <returns>A new point that is point1 coordinatewise subtracted by point2.</returns>
+    /// <returns>A new vector that is point1 coordinatewise subtracted by point2.</returns>
     public static Vector2d operator -(Point2d point1, Point2d point2)
     {
       return new Vector2d(point1.X - point2.X, point1.Y - point2.Y);
@@ -833,7 +833,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="point1">A point (minuend).</param>
     /// <param name="point2">A point (subtrahend).</param>
-    /// <returns>A new point that is point1 coordinatewise subtracted by point2.</returns>
+    /// <returns>A new vector that is point1 coordinatewise subtracted by point2.</returns>
     public static Vector2d Subtract(Point2d point1, Point2d point2)
     {
       return new Vector2d(point1.X - point2.X, point1.Y - point2.Y);
@@ -1414,7 +1414,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="point1">A point.</param>
     /// <param name="point2">Another point.</param>
-    /// <returns>A new point that is the difference of point minus vector.</returns>
+    /// <returns>A new vector that is the difference of point minus vector.</returns>
     public static Vector3d operator -(Point3d point1, Point3d point2)
     {
       return new Vector3d(point1.m_x - point2.m_x, point1.m_y - point2.m_y, point1.m_z - point2.m_z);
@@ -1426,7 +1426,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="point1">A point.</param>
     /// <param name="point2">Another point.</param>
-    /// <returns>A new point that is the difference of point minus vector.</returns>
+    /// <returns>A new vector that is the difference of point minus vector.</returns>
     public static Vector3d Subtract(Point3d point1, Point3d point2)
     {
       return new Vector3d(point1.m_x - point2.m_x, point1.m_y - point2.m_y, point1.m_z - point2.m_z);
@@ -1912,7 +1912,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="points">A list, an array or any enumerable of <see cref="Point3d"/>.</param>
     /// <param name="minimumDistance">Minimum allowed distance among a pair of points. If points are closer than this, only one of them will be kept.</param>
-    /// <returns>The new list of sorted and culled points.</returns>
+    /// <returns>The new array of sorted and culled points.</returns>
     public static Point3d[] SortAndCullPointList(System.Collections.Generic.IEnumerable<Point3d> points, double minimumDistance)
     {
       int count;

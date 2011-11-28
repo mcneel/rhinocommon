@@ -122,6 +122,32 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
+  /// Defines enumerated values for closed curve/closed curve relationships.
+  /// </summary>
+  public enum RegionContainment : int
+  {
+    /// <summary>
+    /// There is no common area between the two regions.
+    /// </summary>
+    Disjoint = 0,
+
+    /// <summary>
+    /// The two curves intersect. There is therefore no full containment relationship either way.
+    /// </summary>
+    MutualIntersection = 1,
+
+    /// <summary>
+    /// Region bounded by curveA (first curve) is inside of curveB (second curve).
+    /// </summary>
+    AInsideB = 2,
+
+    /// <summary>
+    /// Region bounded by curveB (second curve) is inside of curveA (first curve).
+    /// </summary>
+    BInsideA = 3,
+  }
+
+  /// <summary>
   /// Defines enumerated values for styles to use during curve extension.
   /// </summary>
   public enum CurveExtensionStyle : int
@@ -855,9 +881,28 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determines whether two coplanar simple closed curves are disjoint or intersect,
-    /// or if the regions have a containment relationship, discovers
+    /// Determines whether two coplanar simple closed curves are disjoint or intersect;
+    /// otherwise, if the regions have a containment relationship, discovers
     /// which curve encloses the other.
+    /// </summary>
+    /// <param name="curveA">A first curve.</param>
+    /// <param name="curveB">A second curve.</param>
+    /// <param name="testPlane">A plane.</param>
+    /// <param name="tolerance">A tolerance value.</param>
+    /// <returns>
+    /// A value indicating the relationship between the first and the second curve.
+    /// </returns>
+    public static RegionContainment PlanarClosedCurveRelationship(Curve curveA, Curve curveB, Plane testPlane, double tolerance)
+    {
+      IntPtr pConstCurveA = curveA.ConstPointer();
+      IntPtr pConstCurveB = curveB.ConstPointer();
+      return (RegionContainment)UnsafeNativeMethods.RHC_RhinoPlanarClosedCurveContainmentTest(pConstCurveA, pConstCurveB, ref testPlane, tolerance);
+    }
+
+    /// <summary>
+    /// Determines whether two coplanar simple closed curves are disjoint or intersect;
+    /// otherwise, if the regions have a containment relationship, discovers
+    /// which curve encloses the other. This method is obsolete and will be removed in future versions of the SDK.
     /// </summary>
     /// <param name="curveA">A curve.</param>
     /// <param name="curveB">Another curve.</param>
@@ -870,6 +915,7 @@ namespace Rhino.Geometry
     /// <para>2: region bounded by curveA is inside of curveB.</para>
     /// <para>3: region bounded by curveB is inside of curveA.</para>
     /// </returns>
+    [Obsolete("Calls should be replaced by the PlanarClosedCurveRelationship method. This non-typesafe method is obsolete and will be removed in future versions of the SDK.")]
     public static int PlanarClosedCurveContainmentTest(Curve curveA, Curve curveB, Plane testPlane, double tolerance)
     {
       IntPtr pConstCurveA = curveA.ConstPointer();

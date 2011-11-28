@@ -14,6 +14,19 @@ namespace Rhino.Geometry
     internal double m_height;
     internal double m_radius;
 
+    #region constants
+    /// <summary>
+    /// Gets an invalid Cone.
+    /// </summary>
+    public static Cone Unset
+    {
+      get
+      {
+        return new Cone(Plane.Unset, RhinoMath.UnsetValue, RhinoMath.UnsetValue);
+      }
+    }
+    #endregion
+
     #region constructors
     /// <summary>
     /// Initializes a new cone with a specified base plane, height and radius.
@@ -64,6 +77,8 @@ namespace Rhino.Geometry
     {
       get
       {
+        if (!RhinoMath.IsValidDouble(m_height)) { return false; }
+        if (!RhinoMath.IsValidDouble(m_radius)) { return false; }
         return m_baseplane.IsValid && m_height != 0 && m_radius != 0;
       }
     }

@@ -93,6 +93,12 @@ namespace Rhino.Commands
     ExitRhino = 0x0FFFFFFF
   }
 
+  public class MostRecentCommandDescription
+  {
+    public string DisplayString { get; set; }
+    public string Macro { get; set; }
+  }
+
   public abstract class Command
   {
     public static bool IsValidCommandName(string name)
@@ -115,6 +121,31 @@ namespace Rhino.Commands
         return (Result)rc;
       }
     }
+
+    public static MostRecentCommandDescription[] GetMostRecentCommands()
+    {
+      IntPtr pDisplayStrings = UnsafeNativeMethods.ON_StringArray_New();
+      IntPtr pMacros = UnsafeNativeMethods.ON_StringArray_New();
+      int count = UnsafeNativeMethods.CRhinoApp_GetMRUCommands(pDisplayStrings, pMacros);
+      MostRecentCommandDescription[] rc = new MostRecentCommandDescription[count];
+      using(var sh = new Rhino.Runtime.StringHolder() )
+      {
+        IntPtr pString = sh.NonConstPointer();
+        for (int i = 0; i < count; i++)
+        {
+          var mru = new MostRecentCommandDescription();
+          UnsafeNativeMethods.ON_StringArray_Get(pDisplayStrings, i, pString);
+          mru.DisplayString = sh.ToString();
+          UnsafeNativeMethods.ON_StringArray_Get(pMacros, i, pString);
+          mru.Macro = sh.ToString();
+          rc[i] = mru;
+        }
+      }
+      UnsafeNativeMethods.ON_StringArray_Delete(pDisplayStrings);
+      UnsafeNativeMethods.ON_StringArray_Delete(pMacros);
+      return rc;
+    }
+
 
     static int m_serial_number_counter = 1;
     static readonly Collections.RhinoList<Command> m_all_commands = new Rhino.Collections.RhinoList<Command>();

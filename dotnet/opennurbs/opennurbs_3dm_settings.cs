@@ -944,7 +944,15 @@ namespace Rhino.Render
       set { SetInt(idxShadowmapStyle, value); }
     }
 
-    //int m_background_style; // 0 = solid color, 1 = "wallpaper" image, 2 = Gradient, 3 = Environment
+    /// <summary>
+    /// How the viewport's backgroun should be filled
+    /// </summary>
+    public Rhino.Display.BackgroundStyle BackgroundStyle
+    {
+      get { return (Rhino.Display.BackgroundStyle)GetInt(idxBackgroundStyle); }
+      set { SetInt(idxBackgroundStyle, (int)value); }
+    }
+
     //ON_wString m_background_bitmap_filename;
     //int m_shadowmap_width;
     //int m_shadowmap_height;
@@ -966,6 +974,25 @@ namespace Rhino.Render
   //bool    m_bUsesAnnotationAttr;
   //bool    m_bUsesHiddenLightsAttr;
   }
+}
+
+namespace Rhino.Display
+{
+  /// <summary>
+  /// How a viewport's background should be filled
+  /// </summary>
+  public enum BackgroundStyle : int
+  {
+    /// <summary>Single solid color fill</summary>
+    SolidColor = 0,
+    /// <summary>Simple image background wallpaper</summary>
+    WallpaperImage = 1,
+    /// <summary>Two color top/bottom color gradient</summary>
+    Gradient = 2,
+    /// <summary></summary>
+    Environment = 3
+  }
+
 }
 
 namespace Rhino.FileIO

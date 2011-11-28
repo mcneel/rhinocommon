@@ -12,6 +12,19 @@ namespace Rhino.Geometry
     internal double m_majorRadius;
     internal double m_minorRadius;
 
+    #region constants
+    /// <summary>
+    /// Gets an invalid Torus.
+    /// </summary>
+    public static Torus Unset
+    {
+      get
+      {
+        return new Torus(Plane.Unset, RhinoMath.UnsetValue, RhinoMath.UnsetValue);
+      }
+    }
+    #endregion
+
     #region constructors
     /// <summary>
     /// Create a new Torus from base pane and two radii.
@@ -33,6 +46,21 @@ namespace Rhino.Geometry
     #endregion
 
     #region properties
+    /// <summary>
+    /// Gets a value indicating whether this torus is valid.
+    /// </summary>
+    public bool IsValid
+    {
+      get
+      {
+        if (!RhinoMath.IsValidDouble(m_majorRadius)) { return false; }
+        if (!RhinoMath.IsValidDouble(m_minorRadius)) { return false; }
+        if (m_majorRadius == 0.0) { return false; }
+        if (m_minorRadius == 0.0) { return false; }
+        return m_majorCirclePlane.IsValid;
+      }
+    }
+
     /// <summary>
     /// Gets or sets the plane for the torus large circle.
     /// </summary>

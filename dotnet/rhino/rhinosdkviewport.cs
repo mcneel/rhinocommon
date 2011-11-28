@@ -345,6 +345,16 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoViewport_SetCameraTarget(pThis, dirAsPoint, updateTargetLocation, idxSetCameraDirection);
     }
 
+    public BoundingBox GetCameraExtents(System.Collections.Generic.IEnumerable<Point3d> points)
+    {
+      Rhino.Collections.Point3dList _points = new Collections.Point3dList(points);
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pConstViewport = UnsafeNativeMethods.CRhinoViewport_VP(pConstThis);
+      BoundingBox bbox = new BoundingBox();
+      UnsafeNativeMethods.ON_Viewport_GetCameraExtents(pConstViewport, _points.Count, _points.m_items, ref bbox);
+      return bbox;
+    }
+
     /// <summary>
     /// Simple plane information for this viewport's construction plane. If you want
     /// detailed construction lpane information, use GetConstructionPlane

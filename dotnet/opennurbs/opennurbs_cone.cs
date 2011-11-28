@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents the center coordinates, radius and height values in a right circular cone.
+  /// Represents the center plane, radius and height values in a right circular cone.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 144)]
   [Serializable]

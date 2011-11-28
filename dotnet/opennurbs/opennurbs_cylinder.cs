@@ -1,11 +1,11 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// A right circular cylinder
+  /// Represents the values of a plane, a radius and two heights -on top and beneath-
+  /// that define a right circular cylinder.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 152)]
   [Serializable]
@@ -63,6 +63,11 @@ namespace Rhino.Geometry
     #endregion
 
     #region properties
+
+    /// <summary>
+    /// Gets a boolean value indicating whether this cylinder is valid.
+    /// <para>A valid cylinder is represented by a valid circle and two valid heights.</para>
+    /// </summary>
     public bool IsValid
     {
       get
@@ -76,7 +81,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// True if the cylinder is finite (height[0] != height[1])
+    /// True if the cylinder is finite (Height0 != Height1)
     /// False if the cylinder is infinite.
     /// </summary>
     public bool IsFinite
@@ -187,7 +192,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a Nurbs surface representation of this Cylinder. 
+    /// Create a Nurbs surface representation of this cylinder. 
     /// This is synonymous with calling NurbsSurface.CreateFromCylinder().
     /// </summary>
     /// <returns>A Nurbs surface representation of the cylinder or null.</returns>

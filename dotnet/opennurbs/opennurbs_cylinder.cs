@@ -17,6 +17,19 @@ namespace Rhino.Geometry
     double m_height2;
     #endregion
 
+    #region constants
+    /// <summary>
+    /// Gets an invalid Cylinder.
+    /// </summary>
+    public static Cylinder Unset
+    {
+      get
+      {
+        return new Cylinder(Circle.Unset, RhinoMath.UnsetValue);
+      }
+    }
+    #endregion
+
     #region constructors
     // If m_height1 == m_height2, the cylinder is infinite,
     // Otherwise, m_height1 < m_height2 and the center of

@@ -3957,6 +3957,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Viewport_CameraAxis(IntPtr pConstViewport, int iAxis, ref Vector3d v);
 
+  //bool ON_Viewport_GetCameraExtents(const ON_Viewport* pConstViewport, int count, /*ARRAY*/const ON_3dPoint* points, ON_BoundingBox* bbox)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Viewport_GetCameraExtents(IntPtr pConstViewport, int count, Point3d[] points, ref BoundingBox bbox);
+
   //bool ON_Viewport_SetFrustum(ON_Viewport* pViewport, double left, double right, double bottom, double top, double nearDistance, double farDistance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -4534,6 +4539,10 @@ internal partial class UnsafeNativeMethods
   //int CRhinoApp_RecentlyOpenedFiles(ON_ClassArray<ON_wString>* pStrings)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoApp_RecentlyOpenedFiles(IntPtr pStrings);
+
+  //int CRhinoApp_GetMRUCommands(ON_ClassArray<ON_wString>* display_strings, ON_ClassArray<ON_wString>* macros)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoApp_GetMRUCommands(IntPtr display_strings, IntPtr macros);
   #endregion
 
 
@@ -4613,9 +4622,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RhDontRepeatList_SetList([MarshalAs(UnmanagedType.LPWStr)]string _list);
 
-  //const RHMONO_STRING* RhDontRepeatList_GetList()
+  //void CRhinoAppDontRepeatCommandSettings_GetDontRepeatList(CRhCmnStringHolder* pString)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RhDontRepeatList_GetList();
+  internal static extern void CRhinoAppDontRepeatCommandSettings_GetDontRepeatList(IntPtr pString);
 
   //int RhDirectoryManager_AddSearchPath(const RHMONO_STRING* _folder, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4642,6 +4651,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RhDirectoryManager_WorkingFolder([MarshalAs(UnmanagedType.LPWStr)]string _folder);
 
+  //CRhinoAppFileSettings* CRhinoAppFileSettings_New(bool current)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoAppFileSettings_New([MarshalAs(UnmanagedType.U1)]bool current);
+
+  //void CRhinoAppFileSettings_Delete(CRhinoAppFileSettings* pSettings)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppFileSettings_Delete(IntPtr pSettings);
+
   //void CRhinoAppFileSettings_SetFile(const RHMONO_STRING* _str, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoAppFileSettings_SetFile([MarshalAs(UnmanagedType.LPWStr)]string _str, int which);
@@ -4650,14 +4667,22 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoAppFileSettings_GetFile(int which, IntPtr pString);
 
-  //int RhFileSettings_AutosaveInterval(int minutes)
+  //int CRhinoAppFileSettings_AutosaveInterval(CRhinoAppFileSettings* pFileSettings, int minutes)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RhFileSettings_AutosaveInterval(int minutes);
+  internal static extern int CRhinoAppFileSettings_AutosaveInterval(IntPtr pFileSettings, int minutes);
 
-  //bool RhFileSettings_BoolProperty( int which, bool set, bool enable)
+  //bool CRhinoAppFileSettings_GetBool( const CRhinoAppFileSettings* pConstFileSettings, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RhFileSettings_BoolProperty(int which, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.U1)]bool enable);
+  internal static extern bool CRhinoAppFileSettings_GetBool(IntPtr pConstFileSettings, int which);
+
+  //void CRhinoAppFileSettings_SetBool( CRhinoAppFileSettings* pFileSettings, int which, bool val )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppFileSettings_SetBool(IntPtr pFileSettings, int which, [MarshalAs(UnmanagedType.U1)]bool val);
+
+  //int CRhinoAppFileSettings_GetClipboardOnExit(const CRhinoAppFileSettings* pConstFileSettings)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoAppFileSettings_GetClipboardOnExit(IntPtr pConstFileSettings);
 
   //const RHMONO_STRING* RhFileSettings_AutosaveBeforeCommands()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -9113,6 +9138,10 @@ internal partial class UnsafeNativeMethods
   //void CRhinoViewport_Delete(CRhinoViewport* pViewport)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoViewport_Delete(IntPtr pViewport);
+
+  //const ON_Viewport* CRhinoViewport_VP(const CRhinoViewport* pConstRhinoViewport)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoViewport_VP(IntPtr pConstRhinoViewport);
 
   //bool CRhinoViewport_GetBBox(const CRhinoViewport* pConstViewport, ON_3dPoint* box_min, ON_3dPoint* box_max)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

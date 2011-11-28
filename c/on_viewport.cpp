@@ -197,6 +197,16 @@ RH_C_FUNCTION void ON_Viewport_CameraAxis(const ON_Viewport* pConstViewport, int
 	}
 }
 
+RH_C_FUNCTION bool ON_Viewport_GetCameraExtents(const ON_Viewport* pConstViewport, int count, /*ARRAY*/const ON_3dPoint* points, ON_BoundingBox* bbox)
+{
+  bool rc = false;
+  if( pConstViewport && count && points && bbox )
+  {
+    rc = pConstViewport->GetCameraExtents(count, 3, &(points->x), *bbox);
+  }
+  return rc;
+}
+
 RH_C_FUNCTION bool ON_Viewport_SetFrustum(ON_Viewport* pViewport, double left, double right, double bottom, double top, double nearDistance, double farDistance)
 {
   bool rc = false;

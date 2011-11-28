@@ -761,138 +761,73 @@ namespace Rhino.ApplicationSettings
       return rc;
     }
   }
-  
-  public static class NeverRepeatList
+
+  public class FileSettingsState
   {
+    internal FileSettingsState() { }
+
+    ///<summary>how often the document will be saved when Rhino&apos;s automatic file saving mechanism is enabled</summary>
+    public System.TimeSpan AutoSaveInterval { get; set; }
+
+    ///<summary>Enables or disables Rhino&apos;s automatic file saving mechanism.</summary>
+    public bool AutoSaveEnabled { get; set; }
+
+    ///<summary>save render and display meshes in autosave file</summary>
+    public bool AutoSaveMeshes { get; set; }
+    
+    ///<summary>true for users who consider view changes a document change</summary>
+    public bool SaveViewChanges { get; set; }
+
+    ///<summary>Ensure that only one person at a time can have a file open for saving</summary>
+    public bool FileLockingEnabled { get; set; }
+
+    ///<summary>Display information dialog which identifies computer file is open on</summary>
+    public bool FileLockingOpenWarning { get; set; }
+
     ///<summary>
-    ///Only use the list if somebody modifies it via CRhinoAppSettings::SetDontRepeatCommands()
-    ///
-    ///A return value of true means CRhinoCommand don&apos;t repeat flags will be ignored and the m_dont_repeat_list
-    ///will be used instead.  False means the individual CRhinoCommands will determine if they are repeatable.
+    ///Copy both objects to the clipboard in both the current and previous Rhino clipboard formats.  This
+    ///means you will double the size of what is saved in the clipboard but will be able to copy from
+    ///the current to the previous version using the clipboard.
     ///</summary>
-    public static bool UseNeverRepeatList()
-    {
-      return UnsafeNativeMethods.RhDontRepeatList_UseList();
-    }
+    public bool ClipboardCopyToPreviousRhinoVersion { get; set; }
 
-    ///<summary>put command name tokens in m_dont_repeat_list.</summary>
-    ///<returns>Number of items added to m_dont_repeat_list.</returns>
-    public static int SetList(string[] commandNames)
-    {
-      if (commandNames == null || commandNames.Length < 1)
-        return UnsafeNativeMethods.RhDontRepeatList_SetList(null);
+    public ClipboardState ClipboardOnExit { get; set; }
 
-      System.Text.StringBuilder sb = new System.Text.StringBuilder();
-      for (int i = 0; i < commandNames.Length; i++)
-      {
-        if (i > 0)
-          sb.Append(' ');
-        sb.Append(commandNames[i]);
-      }
-      return UnsafeNativeMethods.RhDontRepeatList_SetList(sb.ToString());
-    }
-
-    ///<summary>Convert list to space delimited string</summary>
-    public static string CommandNames
-    {
-      get
-      {
-        IntPtr rc = UnsafeNativeMethods.RhDontRepeatList_GetList();
-        if (rc == IntPtr.Zero)
-          return null;
-        return Marshal.PtrToStringUni(rc);
-      }
-    }
-  }
-
-  /// <summary>
-  /// Snapshot of EdgeAnalysisSettings
-  /// </summary>
-  public class EdgeAnalysisSettingsState
-  {
-    internal EdgeAnalysisSettingsState() { }
-    public Color ShowEdgeColor { get; set; }
-    public int ShowEdges { get; set; }
-  }
-  
-  public static class EdgeAnalysisSettings
-  {
-    static EdgeAnalysisSettingsState CreateState(bool current)
-    {
-      IntPtr pSettings = UnsafeNativeMethods.CRhinoEdgeAnalysisSettings_New(current);
-      EdgeAnalysisSettingsState rc = new EdgeAnalysisSettingsState();
-
-      int abgr = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0, pSettings);
-      rc.ShowEdgeColor = ColorTranslator.FromWin32(abgr);
-      rc.ShowEdges = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(false, 0, pSettings);
-      UnsafeNativeMethods.CRhinoEdgeAnalysisSettings_Delete(pSettings);
-      return rc;
-    }
-
-    public static EdgeAnalysisSettingsState GetDefaultState()
-    {
-      return CreateState(false);
-    }
-
-    public static EdgeAnalysisSettingsState GetCurrentState()
-    {
-      return CreateState(true);
-    }
-
-    public static void RestoreDefaults()
-    {
-      UpdateFromState(GetDefaultState());
-    }
-
-    public static void UpdateFromState(EdgeAnalysisSettingsState state)
-    {
-      ShowEdgeColor = state.ShowEdgeColor;
-      ShowEdges = state.ShowEdges;
-    }
-
-
-    ///<summary>color used to enhance display edges in commands like ShowEdges and ShowNakedEdges.</summary>
-    public static Color ShowEdgeColor
-    {
-      get
-      {
-        int abgr = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0, IntPtr.Zero);
-        return ColorTranslator.FromWin32(abgr);
-      }
-      set
-      {
-        int argb = value.ToArgb();
-        UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(true, argb, IntPtr.Zero);
-      }
-    }
-
-    ///<summary>0 = all, 1 = naked, 2 = non-manifold</summary>
-    public static int ShowEdges
-    {
-      get
-      {
-        return UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(false, 0, IntPtr.Zero);
-      }
-      set
-      {
-        UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(true, value, IntPtr.Zero);
-      }
-    }
-  }
-
-
-  public enum ClipboardState : int
-  {
-    ///<summary>Always keep clipboard data, regardless of size and never prompt the user</summary>
-    KeepData = 0, //CRhinoAppFileSettings::keep_clipboard_data=0
-    ///<summary>Always delete clipboard data, regardless of size and never prompt the user</summary>
-    DeleteData,  // = CRhinoAppFileSettings::delete_clipboard_data,
-    ///<summary>Prompt user when clipboard memory is large</summary>
-    PromptWhenBig //= CRhinoAppFileSettings::prompt_user_when_clipboard_big
+    public bool CreateBackupFiles { get; set; }
   }
 
   public static class FileSettings
   {
+    static FileSettingsState CreateState(bool current)
+    {
+      IntPtr pFileSettings = UnsafeNativeMethods.CRhinoAppFileSettings_New(current);
+      FileSettingsState rc = new FileSettingsState();
+      int minutes = UnsafeNativeMethods.CRhinoAppFileSettings_AutosaveInterval(pFileSettings, -1);
+      rc.AutoSaveInterval = System.TimeSpan.FromMinutes(minutes);
+      rc.AutoSaveEnabled = UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(pFileSettings, idxAutoSaveEnabled);
+      rc.AutoSaveMeshes = UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(pFileSettings, idxAutoSaveMeshes);
+      rc.SaveViewChanges = UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(pFileSettings, idxSaveViewChanges);
+      rc.FileLockingEnabled = UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(pFileSettings, idxFileLockingEnabled);
+      rc.FileLockingOpenWarning = UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(pFileSettings, idxFileLockingOpenWarning);
+      rc.ClipboardCopyToPreviousRhinoVersion = UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(pFileSettings, idxClipboardCopyToPreviousRhinoVersion);
+      rc.ClipboardOnExit = (ClipboardState)UnsafeNativeMethods.CRhinoAppFileSettings_GetClipboardOnExit(pFileSettings);
+      rc.CreateBackupFiles = UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(pFileSettings, idxCreateBackupFiles);
+      UnsafeNativeMethods.CRhinoAppFileSettings_Delete(pFileSettings);
+
+      return rc;
+    }
+
+    public static FileSettingsState GetDefaultState()
+    {
+      return CreateState(false);
+    }
+
+    public static FileSettingsState GetCurrentState()
+    {
+      return CreateState(true);
+    }
+
+    
     const int idxGetRhinoRoamingProfileDataFolder = 0;
     const int idxGetRhinoApplicationDataFolder = 1;
     public static string GetDataFolder(bool currentUser)
@@ -1086,34 +1021,43 @@ namespace Rhino.ApplicationSettings
       }
     }
 
+
     ///<summary>how often the document will be saved when Rhino&apos;s automatic file saving mechanism is enabled</summary>
     public static System.TimeSpan AutoSaveInterval
     {
       get
       {
-        int minutes = UnsafeNativeMethods.RhFileSettings_AutosaveInterval(-1);
+        int minutes = UnsafeNativeMethods.CRhinoAppFileSettings_AutosaveInterval(IntPtr.Zero,-1);
         return System.TimeSpan.FromMinutes(minutes);
       }
       set
       {
         double minutes = value.TotalMinutes;
         if (minutes > -10.0 && minutes < int.MaxValue)
-          UnsafeNativeMethods.RhFileSettings_AutosaveInterval((int)minutes);
+          UnsafeNativeMethods.CRhinoAppFileSettings_AutosaveInterval(IntPtr.Zero, (int)minutes);
       }
     }
+
+    const int idxAutoSaveEnabled = 0;
+    const int idxAutoSaveMeshes = 1;
+    const int idxSaveViewChanges = 2;
+    const int idxFileLockingEnabled = 3;
+    const int idxFileLockingOpenWarning = 4;
+    const int idxClipboardCopyToPreviousRhinoVersion = 5;
+    const int idxCreateBackupFiles = 6;
 
     ///<summary>Enables or disables Rhino&apos;s automatic file saving mechanism.</summary>
     public static bool AutoSaveEnabled
     {
-      get { return UnsafeNativeMethods.RhFileSettings_BoolProperty(0, false, false); }
-      set { UnsafeNativeMethods.RhFileSettings_BoolProperty(0, true, value); }
+      get { return UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(IntPtr.Zero, idxAutoSaveEnabled); }
+      set { UnsafeNativeMethods.CRhinoAppFileSettings_SetBool(IntPtr.Zero, idxAutoSaveEnabled, value); }
     }
 
     ///<summary>save render and display meshes in autosave file</summary>
     public static bool AutoSaveMeshes
     {
-      get { return UnsafeNativeMethods.RhFileSettings_BoolProperty(1, false, false); }
-      set { UnsafeNativeMethods.RhFileSettings_BoolProperty(1, true, value); }
+      get { return UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(IntPtr.Zero, idxAutoSaveMeshes); }
+      set { UnsafeNativeMethods.CRhinoAppFileSettings_SetBool(IntPtr.Zero, idxAutoSaveMeshes, value); }
     }
 
     ///<summary>Input list of commands that force AutoSave prior to running</summary>
@@ -1123,7 +1067,7 @@ namespace Rhino.ApplicationSettings
       if (IntPtr.Zero == rc)
         return null;
       string s = Marshal.PtrToStringUni(rc);
-      return s==null ? null : s.Split(new char[] { ' ' });
+      return s == null ? null : s.Split(new char[] { ' ' });
     }
 
     ///<summary>Set list of commands that force AutoSave prior to running</summary>
@@ -1145,24 +1089,29 @@ namespace Rhino.ApplicationSettings
     ///<summary>true for users who consider view changes a document change</summary>
     public static bool SaveViewChanges
     {
-      get { return UnsafeNativeMethods.RhFileSettings_BoolProperty(2, false, false); }
-      set { UnsafeNativeMethods.RhFileSettings_BoolProperty(2, true, value); }
+      get { return UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(IntPtr.Zero, idxSaveViewChanges); }
+      set { UnsafeNativeMethods.CRhinoAppFileSettings_SetBool(IntPtr.Zero, idxSaveViewChanges, value); }
     }
 
     ///<summary>Ensure that only one person at a time can have a file open for saving</summary>
     public static bool FileLockingEnabled
     {
-      get { return UnsafeNativeMethods.RhFileSettings_BoolProperty(3, false, false); }
-      set { UnsafeNativeMethods.RhFileSettings_BoolProperty(3, true, value); }
+      get { return UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(IntPtr.Zero, idxFileLockingEnabled); }
+      set { UnsafeNativeMethods.CRhinoAppFileSettings_SetBool(IntPtr.Zero, idxFileLockingEnabled, value); }
     }
 
     ///<summary>Display information dialog which identifies computer file is open on</summary>
     public static bool FileLockingOpenWarning
     {
-      get { return UnsafeNativeMethods.RhFileSettings_BoolProperty(4, false, false); }
-      set { UnsafeNativeMethods.RhFileSettings_BoolProperty(4, true, value); }
+      get { return UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(IntPtr.Zero, idxFileLockingOpenWarning); }
+      set { UnsafeNativeMethods.CRhinoAppFileSettings_SetBool(IntPtr.Zero, idxFileLockingOpenWarning, value); }
     }
 
+    public static bool CreateBackupFiles
+    {
+      get { return UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(IntPtr.Zero, idxCreateBackupFiles); }
+      set { UnsafeNativeMethods.CRhinoAppFileSettings_SetBool(IntPtr.Zero, idxCreateBackupFiles, value); }
+    }
     ///<summary>
     ///Copy both objects to the clipboard in both the current and previous Rhino clipboard formats.  This
     ///means you will double the size of what is saved in the clipboard but will be able to copy from
@@ -1170,15 +1119,15 @@ namespace Rhino.ApplicationSettings
     ///</summary>
     public static bool ClipboardCopyToPreviousRhinoVersion
     {
-      get { return UnsafeNativeMethods.RhFileSettings_BoolProperty(5, false, false); }
-      set { UnsafeNativeMethods.RhFileSettings_BoolProperty(5, true, value); }
+      get { return UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(IntPtr.Zero, idxClipboardCopyToPreviousRhinoVersion); }
+      set { UnsafeNativeMethods.CRhinoAppFileSettings_SetBool(IntPtr.Zero, idxClipboardCopyToPreviousRhinoVersion, value); }
     }
 
     public static ClipboardState ClipboardOnExit
     {
       get
       {
-        int rc = UnsafeNativeMethods.RhFileSettings_ClipboardOnExit(false, 0);
+        int rc = UnsafeNativeMethods.CRhinoAppFileSettings_GetClipboardOnExit(IntPtr.Zero);
         return (ClipboardState)rc;
       }
       set
@@ -1245,41 +1194,142 @@ namespace Rhino.ApplicationSettings
     }
   }
 
-  [Obsolete("Grid color settings moved to AppearanceSettings - will be removed in a future WIP")]
-  public static class GridSettings
+  
+  public static class NeverRepeatList
   {
-    //int          m_thick_line_width; // 1 or 2
-    //int          m_axis_line_width;  // 1 or 2
-    //unsigned int m_line_stipple_pattern; 
-    //bool         m_show_zaxis;
-
-    public static Color ThinLineColor
+    ///<summary>
+    ///Only use the list if somebody modifies it via CRhinoAppSettings::SetDontRepeatCommands()
+    ///
+    ///A return value of true means CRhinoCommand don&apos;t repeat flags will be ignored and the m_dont_repeat_list
+    ///will be used instead.  False means the individual CRhinoCommands will determine if they are repeatable.
+    ///</summary>
+    public static bool UseNeverRepeatList
     {
-      get { return AppearanceSettings.GridThinLineColor; }
-      set { AppearanceSettings.GridThinLineColor = value; }
+      get
+      {
+        return UnsafeNativeMethods.RhDontRepeatList_UseList();
+      }
     }
 
-    public static Color ThickLineColor
+    ///<summary>put command name tokens in m_dont_repeat_list.</summary>
+    ///<returns>Number of items added to m_dont_repeat_list.</returns>
+    public static int SetList(string[] commandNames)
     {
-      get { return AppearanceSettings.GridThickLineColor; }
-      set { AppearanceSettings.GridThickLineColor = value; }
+      if (commandNames == null || commandNames.Length < 1)
+        return UnsafeNativeMethods.RhDontRepeatList_SetList(null);
+
+      System.Text.StringBuilder sb = new System.Text.StringBuilder();
+      for (int i = 0; i < commandNames.Length; i++)
+      {
+        if (i > 0)
+          sb.Append(' ');
+        sb.Append(commandNames[i]);
+      }
+      return UnsafeNativeMethods.RhDontRepeatList_SetList(sb.ToString());
     }
 
-    public static Color XAxisLineColor
+    ///<summary>The list of commands to not repeat</summary>
+    public static string[] CommandNames()
     {
-      get { return AppearanceSettings.GridXAxisLineColor; }
-      set { AppearanceSettings.GridXAxisLineColor = value; }
+      using(Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoAppDontRepeatCommandSettings_GetDontRepeatList(pString);
+        string s = sh.ToString();
+        string[] rc =  s.Split(new char[] { ' ', '\n' });
+        for (int i = 0; i < rc.Length; i++)
+        {
+          rc[i] = rc[i].Trim();
+        }
+        return rc;
+      }
     }
-    public static Color YAxisLineColor
+  }
+
+  /// <summary>
+  /// Snapshot of EdgeAnalysisSettings
+  /// </summary>
+  public class EdgeAnalysisSettingsState
+  {
+    internal EdgeAnalysisSettingsState() { }
+    public Color ShowEdgeColor { get; set; }
+    public int ShowEdges { get; set; }
+  }
+  
+  public static class EdgeAnalysisSettings
+  {
+    static EdgeAnalysisSettingsState CreateState(bool current)
     {
-      get { return AppearanceSettings.GridYAxisLineColor; }
-      set { AppearanceSettings.GridYAxisLineColor = value; }
+      IntPtr pSettings = UnsafeNativeMethods.CRhinoEdgeAnalysisSettings_New(current);
+      EdgeAnalysisSettingsState rc = new EdgeAnalysisSettingsState();
+
+      int abgr = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0, pSettings);
+      rc.ShowEdgeColor = ColorTranslator.FromWin32(abgr);
+      rc.ShowEdges = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(false, 0, pSettings);
+      UnsafeNativeMethods.CRhinoEdgeAnalysisSettings_Delete(pSettings);
+      return rc;
     }
-    public static Color ZAxisLineColor
+
+    public static EdgeAnalysisSettingsState GetDefaultState()
     {
-      get { return AppearanceSettings.GridZAxisLineColor; }
-      set { AppearanceSettings.GridZAxisLineColor = value; }
+      return CreateState(false);
     }
+
+    public static EdgeAnalysisSettingsState GetCurrentState()
+    {
+      return CreateState(true);
+    }
+
+    public static void RestoreDefaults()
+    {
+      UpdateFromState(GetDefaultState());
+    }
+
+    public static void UpdateFromState(EdgeAnalysisSettingsState state)
+    {
+      ShowEdgeColor = state.ShowEdgeColor;
+      ShowEdges = state.ShowEdges;
+    }
+
+
+    ///<summary>color used to enhance display edges in commands like ShowEdges and ShowNakedEdges.</summary>
+    public static Color ShowEdgeColor
+    {
+      get
+      {
+        int abgr = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0, IntPtr.Zero);
+        return ColorTranslator.FromWin32(abgr);
+      }
+      set
+      {
+        int argb = value.ToArgb();
+        UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(true, argb, IntPtr.Zero);
+      }
+    }
+
+    ///<summary>0 = all, 1 = naked, 2 = non-manifold</summary>
+    public static int ShowEdges
+    {
+      get
+      {
+        return UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(false, 0, IntPtr.Zero);
+      }
+      set
+      {
+        UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(true, value, IntPtr.Zero);
+      }
+    }
+  }
+
+
+  public enum ClipboardState : int
+  {
+    ///<summary>Always keep clipboard data, regardless of size and never prompt the user</summary>
+    KeepData = 0, //CRhinoAppFileSettings::keep_clipboard_data=0
+    ///<summary>Always delete clipboard data, regardless of size and never prompt the user</summary>
+    DeleteData,  // = CRhinoAppFileSettings::delete_clipboard_data,
+    ///<summary>Prompt user when clipboard memory is large</summary>
+    PromptWhenBig //= CRhinoAppFileSettings::prompt_user_when_clipboard_big
   }
 
   public enum CursorMode : int

@@ -1,4 +1,4 @@
-#pragma warning disable 1591
+//#pragma warning disable 1591
 using System;
 using Rhino.Collections;
 using System.Collections.Generic;
@@ -9,19 +9,38 @@ using System.Runtime.Serialization;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Lists all possible corner styles for curve offsets.
+  /// Defines enumerated values for all implemented corner styles in curve offsets.
   /// </summary>
   public enum CurveOffsetCornerStyle : int
   {
+    /// <summary>
+    /// The dafault value.
+    /// </summary>
     None = 0,
+
+    /// <summary>
+    /// Offsets and extends curves with a straight line until they intersect.
+    /// </summary>
     Sharp = 1,
+
+    /// <summary>
+    /// Offsets and fillets curves with an arc of radius equal to the offset distance.
+    /// </summary>
     Round = 2,
+
+    /// <summary>
+    /// Offsets and connects curves with a smooth (G1 continuity) curve.
+    /// </summary>
     Smooth = 3,
+
+    /// <summary>
+    /// Offsets and connects curves with a straight line between their endpoints.
+    /// </summary>
     Chamfer = 4
   }
 
   /// <summary>
-  /// Lists all possible knot spacing styles for Interpolated curves.
+  /// Defines enumerated values for knot spacing styles in interpolated curves.
   /// </summary>
   public enum CurveKnotStyle : int
   {
@@ -57,7 +76,7 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
-  /// Lists all possible closed curve orientations.
+  /// Defines enumerated values for closed curve orientations.
   /// </summary>
   public enum CurveOrientation : int
   {
@@ -78,7 +97,7 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
-  /// Enumerates all possible closed curve/point spatial relationships.
+  /// Defines enumerated values for closed curve/point spatial relationships.
   /// </summary>
   public enum PointContainment : int
   {
@@ -104,7 +123,7 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
-  /// Enumerates all possible styles to use during curve Extension.
+  /// Defines enumerated values for styles to use during curve extension.
   /// </summary>
   public enum CurveExtensionStyle : int
   {
@@ -121,7 +140,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Curve ends will be propagated smoothly according to curvature.
     /// </summary>
-    Smooth = 2
+    Smooth = 2,
   }
 
   /// <summary>
@@ -130,58 +149,101 @@ namespace Rhino.Geometry
   [FlagsAttribute]
   public enum CurveSimplifyOptions : int
   {
+    /// <summary>
+    /// No option is specified.
+    /// </summary>
     None = 0,
+
     /// <summary>
     /// Split NurbsCurves at fully multiple knots. 
     /// Effectively turning single nurbs segments with kinks into multiple segments.
     /// </summary>
     SplitAtFullyMultipleKnots = 1,
+
     /// <summary>
     /// Replace linear segments with LineCurves.
     /// </summary>
     RebuildLines = 2,
+
     /// <summary>
     /// Replace partially circular segments with ArcCurves.
     /// </summary>
     RebuildArcs = 4,
+
     /// <summary>
     /// Replace rational nurbscurves with constant weights 
     /// with an equivalent non-rational NurbsCurve.
     /// </summary>
     RebuildRationals = 8,
+
     /// <summary>
     /// Adjust Curves at G1-joins.
     /// </summary>
     AdjustG1 = 16,
+
     /// <summary>
     /// Merge adjacent co-linear lines or co-circular arcs 
     /// or combine consecutive line segments into a polyline.
     /// </summary>
     Merge = 32,
+
     /// <summary>
     /// Implies all of the simplification functions will be used.
     /// </summary>
     All = SplitAtFullyMultipleKnots | RebuildLines | RebuildArcs | RebuildRationals | AdjustG1 | Merge
   }
 
+  /// <summary>
+  /// Defines the extremes of a curve through a flagged enumeration. 
+  /// </summary>
   [FlagsAttribute]
   public enum CurveEnd : int
   {
+    /// <summary>
+    /// Not the start nor the end.
+    /// </summary>
     None = 0,
+
+    /// <summary>
+    /// The frontal part of the curve.
+    /// </summary>
     Start = 1,
+
+    /// <summary>
+    /// The tail part of the curve.
+    /// </summary>
     End = 2,
-    Both = 3
-  };
+
+    /// <summary>
+    /// Both the start and the end of the curve.
+    /// </summary>
+    Both = 3,
+  }
+
   /// <summary>
-  /// Enumerates the possible options for curve evaluation side.
+  /// Defines enumerated values for the options that defines a curve evaluation side when evaluating kinks.
   /// </summary>
   public enum CurveEvaluationSide : int
   {
+    /// <summary>
+    /// The default evaluation side.
+    /// </summary>
     Default = 0,
+
+    /// <summary>
+    /// The below evaluation side.
+    /// </summary>
     Below = -1,
+
+    /// <summary>
+    /// The above evaluation side.
+    /// </summary>
     Above = +1
   }
 
+  /// <summary>
+  /// Represents a base class that is common to most RhinoCommon curve types.
+  /// </summary>
   [Serializable]
   public class Curve : GeometryBase, ISerializable
   {
@@ -555,7 +617,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Compare two curves to see if they travel more or less in the same direction.
+    /// Determines whether two curves travel more or less in the same direction.
     /// </summary>
     /// <param name="curveA">First curve to test.</param>
     /// <param name="curveB">Second curve to test.</param>
@@ -568,17 +630,43 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Curve_DoCurveDirectionsMatch(ptr0, ptr1);
     }
 
+    /// <summary>
+    /// Projects a curve to a mesh using a direction and tolerance.
+    /// </summary>
+    /// <param name="curve">A curve.</param>
+    /// <param name="mesh">A mesh.</param>
+    /// <param name="direction">A direction vector.</param>
+    /// <param name="tolerance">A tolerance value.</param>
+    /// <returns>A curve array.</returns>
     public static Curve[] ProjectToMesh(Curve curve, Mesh mesh, Vector3d direction, double tolerance)
     {
       Curve[] curves = new Curve[] { curve };
       Mesh[] meshes = new Mesh[] { mesh };
       return ProjectToMesh(curves, meshes, direction, tolerance);
     }
+
+    /// <summary>
+    /// Projects a curve to a set of meshes using a direction and tolerance.
+    /// </summary>
+    /// <param name="curve">A curve.</param>
+    /// <param name="meshes">A list, an array or any enumerable of meshes.</param>
+    /// <param name="direction">A direction vector.</param>
+    /// <param name="tolerance">A tolerance value.</param>
+    /// <returns>A curve array.</returns>
     public static Curve[] ProjectToMesh(Curve curve, IEnumerable<Mesh> meshes, Vector3d direction, double tolerance)
     {
       Curve[] curves = new Curve[] { curve };
       return ProjectToMesh(curves, meshes, direction, tolerance);
     }
+
+    /// <summary>
+    /// Projects a curve to a set of meshes using a direction and tolerance.
+    /// </summary>
+    /// <param name="curves">A list, an array or any enumerable of curves.</param>
+    /// <param name="meshes">A list, an array or any enumerable of meshes.</param>
+    /// <param name="direction">A direction vector.</param>
+    /// <param name="tolerance">A tolerance value.</param>
+    /// <returns>A curve array.</returns>
     public static Curve[] ProjectToMesh(IEnumerable<Curve> curves, IEnumerable<Mesh> meshes, Vector3d direction, double tolerance)
     {
       foreach (Curve crv in curves)
@@ -614,7 +702,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Project a Curve onto a Brep along a given direction.
+    /// Projects a Curve onto a Brep along a given direction.
     /// </summary>
     /// <param name="curve">Curve to project.</param>
     /// <param name="brep">Brep to project onto.</param>
@@ -634,7 +722,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Project a Curve onto a collection of Breps along a given direction.
+    /// Projects a Curve onto a collection of Breps along a given direction.
     /// </summary>
     /// <param name="curve">Curve to project.</param>
     /// <param name="breps">Breps to project onto.</param>
@@ -647,7 +735,7 @@ namespace Rhino.Geometry
       return ProjectToBrep(curve, breps, direction, tolerance, out brep_ids);
     }
     /// <summary>
-    /// Project a Curve onto a collection of Breps along a given direction.
+    /// Projects a Curve onto a collection of Breps along a given direction.
     /// </summary>
     /// <param name="curve">Curve to project.</param>
     /// <param name="breps">Breps to project onto.</param>
@@ -662,7 +750,7 @@ namespace Rhino.Geometry
       return ProjectToBrep(crvs, breps, direction, tolerance, out curveIndices, out brepIndices);
     }
     /// <summary>
-    /// Project a collection of Curves onto a collection of Breps along a given direction.
+    /// Projects a collection of Curves onto a collection of Breps along a given direction.
     /// </summary>
     /// <param name="curves">Curves to project.</param>
     /// <param name="breps">Breps to project onto.</param>
@@ -677,7 +765,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Project a collection of Curves onto a collection of Breps along a given direction.
+    /// Projects a collection of Curves onto a collection of Breps along a given direction.
     /// </summary>
     /// <param name="curves">Curves to project.</param>
     /// <param name="breps">Breps to project onto.</param>
@@ -723,11 +811,11 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a curve by projecting an existing curve to a plane
+    /// Constructs a curve by projecting an existing curve to a plane.
     /// </summary>
-    /// <param name="curve"></param>
-    /// <param name="plane"></param>
-    /// <returns>projected curve on success</returns>
+    /// <param name="curve">A curve.</param>
+    /// <param name="plane">A plane.</param>
+    /// <returns>The projected curve on success; null on failure.</returns>
     public static Curve ProjectToPlane(Curve curve, Plane plane)
     {
       IntPtr pConstCurve = curve.ConstPointer();
@@ -736,18 +824,18 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// 
+    /// Computes the distance between two arbitrary curves.
     /// </summary>
-    /// <param name="curveA"></param>
-    /// <param name="curveB"></param>
-    /// <param name="tolerance"></param>
-    /// <param name="maxDistance"></param>
-    /// <param name="maxDistanceParameterA"></param>
-    /// <param name="maxDistanceParameterB"></param>
-    /// <param name="minDistance"></param>
-    /// <param name="minDistanceParameterA"></param>
-    /// <param name="minDistanceParameterB"></param>
-    /// <returns></returns>
+    /// <param name="curveA">A curve.</param>
+    /// <param name="curveB">Another curve.</param>
+    /// <param name="tolerance">A tolerance value.</param>
+    /// <param name="maxDistance">The maximum distance value. This is an out reference argument.</param>
+    /// <param name="maxDistanceParameterA">The maximum distance parameter on curve A. This is an out reference argument.</param>
+    /// <param name="maxDistanceParameterB">The maximum distance parameter on curve B. This is an out reference argument.</param>
+    /// <param name="minDistance">The minimum distance value. This is an out reference argument.</param>
+    /// <param name="minDistanceParameterA">The minimum distance parameter on curve A. This is an out reference argument.</param>
+    /// <param name="minDistanceParameterB">The minimum distance parameter on curve B. This is an out reference argument.</param>
+    /// <returns>true if the operation succeeded; otherwise false.</returns>
     public static bool GetDistancesBetweenCurves(Curve curveA, Curve curveB, double tolerance,
       out double maxDistance, out double maxDistanceParameterA, out double maxDistanceParameterB,
       out double minDistance, out double minDistanceParameterA, out double minDistanceParameterB)
@@ -767,6 +855,7 @@ namespace Rhino.Geometry
       return rc;
     }
 
+
     public static int PlanarClosedCurveContainmentTest(Curve curveA, Curve curveB, Plane testPlane, double tolerance)
     {
       IntPtr pConstCurveA = curveA.ConstPointer();
@@ -777,6 +866,10 @@ namespace Rhino.Geometry
     #endregion statics
 
     #region constructors
+
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
     protected Curve() { }
 
     internal Curve(IntPtr ptr, object parent)
@@ -862,6 +955,14 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Curve_DuplicateCurve(pConstPointer);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected override void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_pCurveDisplay)
@@ -873,7 +974,12 @@ namespace Rhino.Geometry
     }
     #endregion
 
-    protected Curve( SerializationInfo info, StreamingContext context)
+    /// <summary>
+    /// Protected serialization constructor for internal use.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
+    protected Curve(SerializationInfo info, StreamingContext context)
       :base(info, context)
     {
     }
@@ -883,6 +989,10 @@ namespace Rhino.Geometry
     const int idxIgnorePlane = 1;
     const int idxIgnorePlaneArcOrEllipse = 2;
 
+    /// <summary>
+    /// For derived classes implementers.
+    /// <para>Defines the necessary implementation to free the instance from being const.</para>
+    /// </summary>
     protected override void NonConstOperation()
     {
       if (IntPtr.Zero != m_pCurveDisplay)
@@ -925,6 +1035,12 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets the dimension of the object.
+    /// <para>The dimension is typically three. For parameter space trimming
+    /// curves the dimension is two. In rare cases the dimension can
+    /// be one or greater than three.</para>
+    /// </summary>
     public int Dimension
     {
       get
@@ -935,12 +1051,13 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Change the dimension of a curve
+    /// Changes the dimension of a curve.
     /// </summary>
-    /// <param name="desiredDimension"></param>
+    /// <param name="desiredDimension">The desired dimension.</param>
     /// <returns>
     /// true if the curve's dimension was already desiredDimension
-    /// or if the curve's dimension was successfully changed to desiredDimension.
+    /// or if the curve's dimension was successfully changed to desiredDimension;
+    /// otherwise false.
     /// </returns>
     public bool ChangeDimension(int desiredDimension)
     {
@@ -1354,7 +1471,7 @@ namespace Rhino.Geometry
     /// <param name="t">
     /// Curve parameter of new start/end point. The returned curves domain will start at t.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ChangeClosedCurveSeam(double t)
     {
       IntPtr ptr = NonConstPointer();
@@ -3149,7 +3266,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Offsets a curve. If you have a nice offset, then there will be one entry in 
+    /// Offsets this curve. If you have a nice offset, then there will be one entry in 
     /// the array. If the original curve had kinks or the offset curve had self 
     /// intersections, you will get multiple segments in the offset_curves[] array.
     /// </summary>
@@ -3201,7 +3318,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Offsets a curve. If you have a nice offset, then there will be one entry in 
+    /// Offsets this curve. If you have a nice offset, then there will be one entry in 
     /// the array. If the original curve had kinks or the offset curve had self 
     /// intersections, you will get multiple segments in the offset_curves[] array.
     /// </summary>
@@ -3226,14 +3343,18 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>
-    /// Offset a curve on a surface. This curve must lie on the surface.
+    /// Offset this curve on a brep face surface. This curve must lie on the surface.
     /// </summary>
-    /// <param name="face"></param>
-    /// <param name="distance">distance to offset (+)left, (-)right</param>
-    /// <param name="fittingTolerance"></param>
-    /// <returns></returns>
+    /// <param name="face">The brep face on which to offset.</param>
+    /// <param name="distance">A distance to offset (+)left, (-)right.</param>
+    /// <param name="fittingTolerance">A fitting tolerance.</param>
+    /// <returns>Offset curves on success, or null on failure.</returns>
+    /// <exception cref="ArgumentNullException">If face is null.</exception>
     public Curve[] OffsetOnSurface(BrepFace face, double distance, double fittingTolerance)
     {
+      if (face == null)
+        throw new ArgumentNullException("face");
+
       int fid = face.m_index;
       IntPtr pConstBrep = face.m_brep.ConstPointer();
       SimpleArrayCurvePointer offsetCurves = new SimpleArrayCurvePointer();
@@ -3247,14 +3368,19 @@ namespace Rhino.Geometry
       return curves;
     }
     /// <summary>
-    /// Offset a curve on a surface. This curve must lie on the surface.
+    /// Offset a curve on a brep face surface. This curve must lie on the surface.
+    /// <para>This overload allows to specify a surface point at which the offset will pass.</para>
     /// </summary>
-    /// <param name="face"></param>
-    /// <param name="throughPoint">2d point on the brep face to offset through</param>
-    /// <param name="fittingTolerance"></param>
-    /// <returns></returns>
+    /// <param name="face">The brep face on which to offset.</param>
+    /// <param name="throughPoint">2d point on the brep face to offset through.</param>
+    /// <param name="fittingTolerance">A fitting tolerance.</param>
+    /// <returns>Offset curves on success, or null on failure.</returns>
+    /// <exception cref="ArgumentNullException">If face is null.</exception>
     public Curve[] OffsetOnSurface(BrepFace face, Point2d throughPoint, double fittingTolerance)
     {
+      if (face == null)
+        throw new ArgumentNullException("face");
+
       int fid = face.m_index;
       IntPtr pConstBrep = face.m_brep.ConstPointer();
       SimpleArrayCurvePointer offsetCurves = new SimpleArrayCurvePointer();
@@ -3268,15 +3394,21 @@ namespace Rhino.Geometry
       return curves;
     }
     /// <summary>
-    /// Offset a curve on a surface. This curve must lie on the surface.
+    /// Offset a curve on a brep face surface. This curve must lie on the surface.
+    /// <para>This overload allows to specify different offsets for different curve parameters.</para>
     /// </summary>
-    /// <param name="face"></param>
-    /// <param name="curveParameters">curve parameters corresponding to the offset distances</param>
-    /// <param name="offsetDistances">distances to offset (+)left, (-)right</param>
-    /// <param name="fittingTolerance"></param>
-    /// <returns></returns>
+    /// <param name="face">The brep face on which to offset.</param>
+    /// <param name="curveParameters">Curve parameters corresponding to the offset distances.</param>
+    /// <param name="offsetDistances">distances to offset (+)left, (-)right.</param>
+    /// <param name="fittingTolerance">A fitting tolerance.</param>
+    /// <returns>Offset curves on success, or null on failure.</returns>
+    /// <exception cref="ArgumentNullException">If face, curveParameters or offsetDistances are null.</exception>
     public Curve[] OffsetOnSurface(BrepFace face, double[] curveParameters, double[] offsetDistances, double fittingTolerance)
     {
+      if (face == null) throw new ArgumentNullException("face");
+      if (curveParameters == null) throw new ArgumentNullException("curveParameters");
+      if (offsetDistances == null) throw new ArgumentNullException("offsetDistances");
+
       int array_count = curveParameters.Length;
       if (offsetDistances.Length != array_count)
         throw new ArgumentException("curveParameters and offsetDistances must be the same length");
@@ -3296,44 +3428,69 @@ namespace Rhino.Geometry
     /// <summary>
     /// Offset a curve on a surface. This curve must lie on the surface.
     /// </summary>
-    /// <param name="surface"></param>
-    /// <param name="distance">distance to offset (+)left, (-)right</param>
-    /// <param name="fittingTolerance"></param>
-    /// <returns></returns>
+    /// <param name="surface">A surface on which to offset.</param>
+    /// <param name="distance">A distance to offset (+)left, (-)right.</param>
+    /// <param name="fittingTolerance">A fitting tolerance.</param>
+    /// <returns>Offset curves on success, or null on failure.</returns>
+    /// <exception cref="ArgumentNullException">If surface is null.</exception>
     public Curve[] OffsetOnSurface(Surface surface, double distance, double fittingTolerance)
     {
+      if (surface == null)
+        throw new ArgumentNullException("surface");
+
       Brep b = Brep.CreateFromSurface(surface);
       return OffsetOnSurface(b.Faces[0], distance, fittingTolerance);
     }
     /// <summary>
     /// Offset a curve on a surface. This curve must lie on the surface.
+    /// <para>This overload allows to specify a surface point at which the offset will pass.</para>
     /// </summary>
-    /// <param name="surface"></param>
-    /// <param name="throughPoint">2d point on the brep face to offset through</param>
-    /// <param name="fittingTolerance"></param>
-    /// <returns></returns>
+    /// <param name="surface">A surface on which to offset.</param>
+    /// <param name="throughPoint">2d point on the brep face to offset through.</param>
+    /// <param name="fittingTolerance">A fitting tolerance.</param>
+    /// <returns>Offset curves on success, or null on failure.</returns>
+    /// <exception cref="ArgumentNullException">If surface is null.</exception>
     public Curve[] OffsetOnSurface(Surface surface, Point2d throughPoint, double fittingTolerance)
     {
+      if (surface == null)
+        throw new ArgumentNullException("surface");
+
       Brep b = Brep.CreateFromSurface(surface);
       return OffsetOnSurface(b.Faces[0], throughPoint, fittingTolerance);
     }
     /// <summary>
-    /// Offset a curve on a surface. This curve must lie on the surface.
+    /// Offset this curve on a surface. This curve must lie on the surface.
+    /// <para>This overload allows to specify different offsets for different curve parameters.</para>
     /// </summary>
-    /// <param name="surface"></param>
-    /// <param name="curveParameters">curve parameters corresponding to the offset distances</param>
-    /// <param name="offsetDistances">distances to offset (+)left, (-)right</param>
-    /// <param name="fittingTolerance"></param>
-    /// <returns></returns>
+    /// <param name="surface">A surface on which to offset.</param>
+    /// <param name="curveParameters">Curve parameters corresponding to the offset distances.</param>
+    /// <param name="offsetDistances">Distances to offset (+)left, (-)right.</param>
+    /// <param name="fittingTolerance">A fitting tolerance.</param>
+    /// <returns>Offset curves on success, or null on failure.</returns>
+    /// <exception cref="ArgumentNullException">If surface, curveParameters or offsetDistances are null.</exception>
     public Curve[] OffsetOnSurface(Surface surface, double[] curveParameters, double[] offsetDistances, double fittingTolerance)
     {
+      if (surface == null)
+        throw new ArgumentNullException("surface");
+
       Brep b = Brep.CreateFromSurface(surface);
       return OffsetOnSurface(b.Faces[0], curveParameters, offsetDistances, fittingTolerance);
     }
 
 #if USING_V5_SDK && RHINO_SDK
+
+    /// <summary>
+    /// Pulls this curve to a brep face and returns the result of that operation.
+    /// </summary>
+    /// <param name="face">A brep face.</param>
+    /// <param name="tolerance">A tolerance value.</param>
+    /// <returns>An array containing the resulting curves after pulling. This array could be empty.</returns>
+    /// <exception cref="ArgumentNullException">If face is null.</exception>
     public Curve[] PullToBrepFace(BrepFace face, double tolerance)
     {
+      if (face == null)
+        throw new ArgumentNullException("face");
+
       IntPtr pConstCurve = ConstPointer();
       IntPtr pConstBrepFace = face.ConstPointer();
       using (Runtime.InteropWrappers.SimpleArrayCurvePointer curves = new SimpleArrayCurvePointer())

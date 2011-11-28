@@ -1,9 +1,11 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents the center coordinates, radius and height values in a right circular cone.
+  /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 144)]
   [Serializable]
   public struct Cone
@@ -14,7 +16,7 @@ namespace Rhino.Geometry
 
     #region constructors
     /// <summary>
-    /// Create a new Cone with a specified baseplane, height and radius.
+    /// Initializes a new cone with a specified base plane, height and radius.
     /// </summary>
     /// <param name="plane">Base plane of cone.</param>
     /// <param name="height">Height of cone.</param>
@@ -29,7 +31,7 @@ namespace Rhino.Geometry
 
     #region properties
     /// <summary>
-    /// Gets or sets the base plane of the Cone.
+    /// Gets or sets the base plane of the cone.
     /// </summary>
     public Plane Plane
     {
@@ -38,7 +40,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets or sets the height of the cone.
+    /// Gets or sets the height of the circular right cone.
     /// </summary>
     public double Height
     {
@@ -47,7 +49,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets or sets the Radius of the cone.
+    /// Gets or sets the radius of the cone.
     /// </summary>
     public double Radius
     {
@@ -56,7 +58,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// True is plane is valid, height is not zero and radius is not zero
+    /// True if plane is valid, height is not zero and radius is not zero
     /// </summary>
     public bool IsValid
     {
@@ -97,18 +99,18 @@ namespace Rhino.Geometry
 
     #region methods
     /// <summary>
-    /// The angle (in radians) between the axis and the 
+    /// Computes the angle (in radians) between the axis and the 
     /// side of the cone.
     /// The angle and the height have the same sign.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Math.Atan(Radius / Height) if the height is not 0; 0 if the radius is 0; Math.PI otherwise.</returns>
     public double AngleInRadians()
     {
       return m_height == 0.0 ? (m_radius != 0.0 ? Math.PI : 0.0) : Math.Atan(m_radius / m_height);
     }
     
     /// <summary>
-    /// The angle (in degrees) between the axis and the 
+    /// Computes the angle (in degrees) between the axis and the 
     /// side of the cone.
     /// The angle and the height have the same sign.
     /// </summary>
@@ -119,7 +121,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a Nurbs surface representation of this Cone. 
+    /// Creates a Nurbs surface representation of this Cone. 
     /// This is synonymous with calling NurbsSurface.CreateFromCone().
     /// </summary>
     /// <returns>A Nurbs surface representation of the cone or null.</returns>
@@ -129,7 +131,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a RevSurface representation of this Cone. 
+    /// Creates a RevSurface representation of this Cone. 
     /// This is synonymous with calling RevSurface.CreateFromCone().
     /// </summary>
     /// <returns>A RevSurface representation of the cone or null.</returns>
@@ -139,14 +141,14 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get a Brep representation of the cone with a single
+    /// Gets a Brep representation of the cone with a single
     /// face for the cone, an edge along the cone seam, 
     /// and vertices at the base and apex ends of this seam edge.
     /// The optional cap is a single face with one circular edge 
     /// starting and ending at the base vertex.
     /// </summary>
-    /// <param name="capBottom"></param>
-    /// <returns></returns>
+    /// <param name="capBottom">true if the bottom should be filled with a surface. false otherwise.</param>
+    /// <returns>A brep (polysurface) representation of this cone values.</returns>
     public Brep ToBrep(bool capBottom)
     {
       return Brep.CreateFromCone(this, capBottom);

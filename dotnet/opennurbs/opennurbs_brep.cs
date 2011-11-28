@@ -87,7 +87,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create new Brep that matches a bounding box
+    /// Creates new Brep that matches a bounding box
     /// </summary>
     /// <param name="box"></param>
     /// <returns></returns>
@@ -97,7 +97,7 @@ namespace Rhino.Geometry
       return IntPtr.Zero == ptr ? null : new Brep(ptr, null);
     }
     /// <summary>
-    /// Create new Brep that matches an aligned box.
+    /// Creates new Brep that matches an aligned box.
     /// </summary>
     /// <param name="box">Box to match.</param>
     /// <returns>A Brep with 6 faces that is similar to the Box.</returns>
@@ -106,7 +106,7 @@ namespace Rhino.Geometry
       return CreateFromBox(box.GetCorners());
     }
     /// <summary>
-    /// Create new Brep from 8 corner points
+    /// Creates new Brep from 8 corner points
     /// </summary>
     /// <param name="corners">
     /// 8 points defining the box corners arranged as the vN lables indicate.
@@ -144,7 +144,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get a Brep definition of a cylinder
+    /// Constructs a Brep definition of a cylinder
     /// </summary>
     /// <param name="cylinder">cylinder.IsFinite() must be true</param>
     /// <param name="capBottom">if true end at cylinder.m_height[0] should be capped</param>
@@ -162,7 +162,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get a Brep representation of the cone with a single
+    /// Constructs a Brep representation of the cone with a single
     /// face for the cone, an edge along the cone seam, 
     /// and vertices at the base and apex ends of this seam edge.
     /// The optional cap is a single face with one circular edge 
@@ -178,7 +178,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get an Brep form of a surface of revolution.
+    /// Constructs a brep form of a surface of revolution.
     /// </summary>
     /// <param name="surface">
     /// </param>
@@ -206,7 +206,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a set of planar Breps as outlines by the loops.
+    /// Creates a set of planar Breps as outlines by the loops.
     /// </summary>
     /// <param name="inputLoops">Curve loops that delineate the planar boundaries.</param>
     /// <returns>An array of Planar Breps.</returns>
@@ -219,7 +219,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a set of planar Breps as outlines by the loops
+    /// Creates a set of planar Breps as outlines by the loops
     /// </summary>
     /// <param name="inputLoop"></param>
     /// <returns>An array of Planar Breps</returns>
@@ -233,7 +233,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a Brep from a surface.  The resulting Brep has an outer boundary made
+    /// Creates a Brep from a surface.  The resulting Brep has an outer boundary made
     /// from four trims. The trims are ordered so that they run along the south, east,
     /// north, and then west side of the surface's parameter space.
     /// </summary>

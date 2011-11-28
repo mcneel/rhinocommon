@@ -1,4 +1,3 @@
-//#pragma warning disable 1591
 using System;
 using Rhino.Collections;
 using System.Collections.Generic;
@@ -370,7 +369,7 @@ namespace Rhino.Geometry
 
 #if RHINO_SDK
     /// <summary>
-    /// Creates a mean, or average, curve from two curves
+    /// Creates a mean, or average, curve from two curves.
     /// </summary>
     /// <param name="curveA"></param>
     /// <param name="curveB"></param>
@@ -390,7 +389,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Creates a mean, or average, curve from two curves
+    /// Creates a mean, or average, curve from two curves.
     /// </summary>
     /// <param name="curveA"></param>
     /// <param name="curveB"></param>
@@ -401,7 +400,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Join a collection of curve segments together.
+    /// Joins a collection of curve segments together.
     /// </summary>
     /// <param name="inputCurves">Curve segments to join.</param>
     /// <returns>An array of curves which contains</returns>
@@ -410,7 +409,7 @@ namespace Rhino.Geometry
       return JoinCurves(inputCurves, 0.0, false);
     }
     /// <summary>
-    /// Join a collection of curve segments together.
+    /// Joins a collection of curve segments together.
     /// </summary>
     /// <param name="inputCurves">Curve segments to join.</param>
     /// <param name="joinTolerance">Joining tolerance, 
@@ -426,7 +425,7 @@ namespace Rhino.Geometry
       return JoinCurves(inputCurves, joinTolerance, false);
     }
     /// <summary>
-    /// Join a collection of curve segments together.
+    /// Joins a collection of curve segments together.
     /// </summary>
     /// <param name="inputCurves">Curve segments to join.</param>
     /// <param name="joinTolerance">Joining tolerance, 
@@ -456,7 +455,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Make adjustments to the ends of one or both input curves so that they meet at a point
+    /// Makes adjustments to the ends of one or both input curves so that they meet at a point.
     /// </summary>
     /// <param name="curveA">1st curve to adjust</param>
     /// <param name="adjustStartCurveA">
@@ -475,7 +474,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Find points at which to cut a pair of curves so that a fillet of given radius can be inserted.
+    /// Finds points at which to cut a pair of curves so that a fillet of given radius can be inserted.
     /// </summary>
     /// <param name="curve0">First curve to fillet.</param>
     /// <param name="curve1">Second curve to fillet.</param>
@@ -510,7 +509,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Compute the fillet arc for a curve filleting operation.
+    /// Computes the fillet arc for a curve filleting operation.
     /// </summary>
     /// <param name="curve0">First curve to fillet.</param>
     /// <param name="curve1">Second curve to fillet.</param>

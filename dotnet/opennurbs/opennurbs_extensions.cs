@@ -382,7 +382,7 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Do not use. Use Objects instaed.
+    /// Do not use. Use Objects instead.
     /// </summary>
     [Obsolete("Use Objects instead. This will be removed from a future WIP")]
     [System.ComponentModel.Browsable(false), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
@@ -620,7 +620,7 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Gets the geometry that is liked with this document object.
+    /// Gets the geometry that is linked with this document object.
     /// </summary>
     public Rhino.Geometry.GeometryBase Geometry
     {

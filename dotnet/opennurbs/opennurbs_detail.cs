@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents a view of the model in a program, that can use parallel projection or perspective.
+  /// Represents a view of the model placed on a page layout.
   /// </summary>
   [Serializable]
   public class DetailView : GeometryBase, ISerializable

@@ -99,9 +99,13 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Constructs an object of the same type as this,
-    /// that remebers the relationship to its parent.
-    /// This object is marked in the new object as the shallow object parent.
+    /// Constructs a light copy of this object.  By light, the same underlying data is
+    /// used until something is done to attempt to change the underlying data. For example,
+    /// you could have a shallow copy of a very heavy mesh object and the same underlying
+    /// data will be used when doing things like inspecting the number of faces on the mesh.
+    /// If you modify the location of one of the mesh vertices, the shallow copy will create
+    /// a full duplicate of the underlying mesh data and the shallow copy will become a
+    /// deep copy.
     /// </summary>
     /// <returns>An object of the same type as this object.
     /// <para>This behavior is overridden by implementing classes.</para></returns>

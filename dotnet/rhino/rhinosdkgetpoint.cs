@@ -196,9 +196,9 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Permit use of the tab key to define a line constraint.
+    /// Permits the use of the tab key to define a line constraint.
     /// </summary>
-    /// <param name="permit">if true, then the built-in tab key mode is available.</param>
+    /// <param name="permit">If true, then the built-in tab key mode is available.</param>
     /// <remarks>By default, use of the tab key is supported.</remarks>
     public void PermitTabMode( bool permit )
     {
@@ -206,14 +206,14 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Permit use of the control key to define a line constraint.
+    /// Permits the use of the control key to define a line constraint.
     /// </summary>
     /// <param name="permitMode">
     /// 0: no elevator modes are permitted
     /// 1: fixed plane elevator mode (like the Line command)
     /// 2: cplane elevator mode (like object dragging)
     /// </param>
-    public void PermitElevatorMode( int permitMode )
+    public void PermitElevatorMode(int permitMode)
     {
       IntPtr ptr = NonConstPointer();
       UnsafeNativeMethods.CRhinoGetPoint_PermitElevatorMode(ptr, permitMode);
@@ -233,7 +233,7 @@ namespace Rhino.Input.Custom
     //  void ProhibitObjectSnap( const CRhinoObject* object );
 
     /// <summary>
-    /// Add a point to the list of osnap points
+    /// Adds a point to the list of osnap points.
     /// </summary>
     /// <param name="point"></param>
     /// <returns>Total number of snap points</returns>
@@ -249,7 +249,7 @@ namespace Rhino.Input.Custom
       return UnsafeNativeMethods.CRhinoGetPoint_AddSnapPoints(ptr, 1, pts, true);
     }
     /// <summary>
-    /// Add points to the list of osnap points
+    /// Add points to the list of osnap points.
     /// </summary>
     /// <param name="points"></param>
     /// <returns>Total number of snap points</returns>
@@ -269,7 +269,7 @@ namespace Rhino.Input.Custom
 
 
     /// <summary>
-    /// Add a point to the list of construction points
+    /// Adds a point to the list of construction points.
     /// </summary>
     /// <param name="point"></param>
     /// <returns>Total number of construction points</returns>

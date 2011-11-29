@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -30,15 +29,15 @@ namespace Rhino.FileIO
 
     #region statics
     /// <summary>
-    /// Read a 3dm file from a specified location
+    /// Reads a 3dm file from a specified location.
     /// </summary>
-    /// <param name="path"></param>
-    /// <returns>new File3dm on success, null on error</returns>
-    /// <exception cref="FileNotFoundException"></exception>
+    /// <param name="path">The file to read.</param>
+    /// <returns>new File3dm on success, null on error.</returns>
+    /// <exception cref="FileNotFoundException">If path does not exist, is null or cannot be accessed because of permissions.</exception>
     public static File3dm Read(string path)
     {
       if (!File.Exists(path))
-        throw new FileNotFoundException();
+        throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
       IntPtr pONX_Model = UnsafeNativeMethods.ONX_Model_ReadFile(path, IntPtr.Zero);
       if (pONX_Model == IntPtr.Zero)
         return null;
@@ -49,15 +48,15 @@ namespace Rhino.FileIO
     /// Read a 3dm file from a specified location and log any archive
     /// reading errors.
     /// </summary>
-    /// <param name="path"></param>
-    /// <param name="errorLog">any archive reading errors are logged here</param>
-    /// <returns>new File3dm on success, null on error</returns>
-    /// <exception cref="FileNotFoundException"></exception>
+    /// <param name="path">The file to read.</param>
+    /// <param name="errorLog">Any archive reading errors are logged here.</param>
+    /// <returns>New File3dm on success, null on error.</returns>
+    /// <exception cref="FileNotFoundException">If path does not exist, is null or cannot be accessed because of permissions.</exception>
     public static File3dm ReadWithLog(string path, out string errorLog)
     {
       errorLog = string.Empty;
       if (!File.Exists(path))
-        throw new FileNotFoundException();
+        throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
       using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
@@ -70,14 +69,14 @@ namespace Rhino.FileIO
     }
     
 
-    /// <summary>Read only the notes from an existing 3dm file</summary>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    /// <exception cref="FileNotFoundException"></exception>
+    /// <summary>Reads only the notes from an existing 3dm file.</summary>
+    /// <param name="path">The file from which to read the notes.</param>
+    /// <returns>The 3dm file notes.</returns>
+    /// <exception cref="FileNotFoundException">If path does not exist, is null or cannot be accessed because of permissions.</exception>
     public static string ReadNotes(string path)
     {
       if (!File.Exists(path))
-        throw new FileNotFoundException();
+        throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
 
       using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
       {
@@ -94,7 +93,7 @@ namespace Rhino.FileIO
     /// file has all the "fluff" that makes it complete.  If the model is
     /// not valid, then Write will refuse to write it.
     /// </summary>
-    /// <param name="path"></param>
+    /// <param name="path">The file name to use for writing.</param>
     /// <param name="version">
     /// Version of the openNURBS archive to write.  Must be 2, 3, 4, or 5.
     /// Rhino 2.x can read version 2 files.
@@ -127,8 +126,8 @@ namespace Rhino.FileIO
     /// Rhino 5.x can read version 2, 3, 4, and 5 files.
     /// Use version 5 when possible.
     /// </param>
-    /// <param name="version"></param>
-    /// <param name="errorLog"></param>
+    /// <param name="version">A version number.</param>
+    /// <param name="errorLog">. This argument will be filled by out reference.</param>
     /// <returns>
     /// True if archive is written with no error.
     /// False if errors occur.
@@ -146,7 +145,7 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Check a model to make sure it is valid.
+    /// Checks a model to make sure it is valid.
     /// </summary>
     /// <param name="errors">
     /// if errors are found, a description of the problem is put in this variable.
@@ -229,6 +228,9 @@ namespace Rhino.FileIO
     //int m_3dm_file_version;
     //int m_3dm_opennurbs_version;
 
+    /// <summary>
+    /// Gets or sets the start section comments, which are the comments with which the 3dm file begins.
+    /// </summary>
     public string StartSectionComments
     {
       get
@@ -248,6 +250,9 @@ namespace Rhino.FileIO
       }
     }
 
+    /// <summary>
+    /// Gets or sets the model notes.
+    /// </summary>
     public File3dmNotes Notes
     {
       get
@@ -299,28 +304,43 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Name of the application that wrote this file
+    /// Gets or sets the name of the application that wrote this file.
     /// </summary>
     public string ApplicationName
     {
       get { return GetString(idxApplicationName); }
       set { SetString(idxApplicationName, value); }
     }
+
+    /// <summary>
+    /// Gets or sets a URL for the application that wrote this file.
+    /// </summary>
     public string ApplicationUrl
     {
       get { return GetString(idxApplicationUrl); }
       set { SetString(idxApplicationUrl, value); }
     }
+
+    /// <summary>
+    /// Gets or sets details for the application that wrote this file.
+    /// </summary>
     public string ApplicationDetails
     {
       get { return GetString(idxApplicationDetails); }
       set { SetString(idxApplicationDetails, value); }
     }
 
+    /// <summary>
+    /// Gets a string that names the user who created the file.
+    /// </summary>
     public string CreatedBy
     {
       get { return GetString(idxCreatedBy); }
     }
+
+    /// <summary>
+    /// Gets a string that names the user who last edited the file.
+    /// </summary>
     public string LastEditedBy
     {
       get { return GetString(idxLastCreatedBy); }
@@ -329,6 +349,9 @@ namespace Rhino.FileIO
     //public DateTime Created { get; }
     //public DateTime LastEdited { get; }
 
+    /// <summary>
+    /// Gets or sets the revision number.
+    /// </summary>
     public int Revision
     {
       get
@@ -358,17 +381,29 @@ namespace Rhino.FileIO
       }
     }
 
+    /// <summary>
+    /// Do not use. Use Objects instaed.
+    /// </summary>
     [Obsolete("Use Objects instead. This will be removed from a future WIP")]
+    [System.ComponentModel.Browsable(false), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public File3dmObjectTable ObjectTable
     {
       get { return m_object_table ?? (m_object_table = new File3dmObjectTable(this)); }
     }
 
+    /// <summary>
+    /// Gets access to the <see cref="File3dmObjectTable"/> class associated with this file,
+    /// which contains all objects.
+    /// </summary>
     public File3dmObjectTable Objects
     {
       get { return m_object_table ?? (m_object_table = new File3dmObjectTable(this)); }
     }
 
+    /// <summary>
+    /// Gets access to the <see cref="File3dmLayerTable"/> class associated with this file,
+    /// which contains all layers.
+    /// </summary>
     public IList<Rhino.DocObjects.Layer> Layers
     {
       get { return m_layer_table ?? (m_layer_table = new File3dmLayerTable(this)); }
@@ -402,15 +437,15 @@ namespace Rhino.FileIO
       }
     }
 
-    /// <summary>Text dump of entire model</summary>
-    /// <returns></returns>
+    /// <summary>Prepares a text dump of the entire model.</summary>
+    /// <returns>The text dump.</returns>
     public string Dump()
     {
       return Dump(idxDumpAll);
     }
 
-    /// <summary>text dump of model properties and settings</summary>
-    /// <returns></returns>
+    /// <summary>Prepares a text dump of model properties and settings.</summary>
+    /// <returns>The text dump.</returns>
     public string DumpSummary()
     {
       return Dump(idxDumpSummary);
@@ -510,6 +545,9 @@ namespace Rhino.FileIO
     #endregion
 
     #region constructor-dispose logic
+    /// <summary>
+    /// Initializes a new instance of a 3dm file.
+    /// </summary>
     public File3dm()
     {
       m_ptr = UnsafeNativeMethods.ONX_Model_New();
@@ -519,13 +557,28 @@ namespace Rhino.FileIO
       m_ptr = pONX_Model;
     }
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~File3dm() { Dispose(false); }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)
@@ -566,6 +619,9 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ModelObjectAttributes(pModel, m_index);
     }
 
+    /// <summary>
+    /// Gets the geometry that is liked with this document object.
+    /// </summary>
     public Rhino.Geometry.GeometryBase Geometry
     {
       get
@@ -577,6 +633,9 @@ namespace Rhino.FileIO
       }
     }
 
+    /// <summary>
+    /// Gets the attributes that are linked with this document object.
+    /// </summary>
     public Rhino.DocObjects.ObjectAttributes Attributes
     {
       get
@@ -589,6 +648,10 @@ namespace Rhino.FileIO
     }
   }
 
+  /// <summary>
+  /// Represents a simple object table for a file that is open externally.
+  /// <para>This class mimics <see cref="Rhino.DocObjects.Tables.ObjectTable"/> while providing external eccess to the file.</para>
+  /// </summary>
   public class File3dmObjectTable : IEnumerable<File3dmObject>, Rhino.Collections.IRhinoTable<File3dmObject>
   {
     File3dm m_parent;
@@ -597,8 +660,8 @@ namespace Rhino.FileIO
       m_parent = parent;
     }
 
-    /// <summary>text dump of object table</summary>
-    /// <returns></returns>
+    /// <summary>Prepares a text dump of object table.</summary>
+    /// <returns>A string containing the dump.</returns>
     public string Dump()
     {
       return m_parent.Dump(File3dm.idxObjectTable);
@@ -648,10 +711,17 @@ namespace Rhino.FileIO
 
     #region methods
 
-    public File3dmObject[] FindByLayer(string layerName)
+    /// <summary>
+    /// Finds all File3dmObject that are in a given layer.
+    /// </summary>
+    /// <param name="layer">Layer to search.</param>
+    /// <returns>
+    /// Array of objects that belong to the specified group or null if no objects could be found.
+    /// </returns>
+    public File3dmObject[] FindByLayer(string layer)
     {
       File3dmLayerTable layers = m_parent.Layers as File3dmLayerTable;
-      int layer_index = layers.Find(layerName);
+      int layer_index = layers.Find(layer);
       if (layer_index < 0)
         return new File3dmObject[0];
 
@@ -667,8 +737,8 @@ namespace Rhino.FileIO
     }
 
 
-    /// <summary>BoundingBox of every object in this table</summary>
-    /// <returns></returns>
+    /// <summary>Gets the bounding box containing every object in this table.</summary>
+    /// <returns>The computed bounding box.</returns>
     public Rhino.Geometry.BoundingBox GetBoundingBox()
     {
       Rhino.Geometry.BoundingBox bbox = new Geometry.BoundingBox();
@@ -679,6 +749,10 @@ namespace Rhino.FileIO
     #endregion
 
     #region IEnumerable Implementation
+    /// <summary>
+    /// Gets the enumerator that visits any <see cref="File3dmObject"/> in this table.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
     public IEnumerator<File3dmObject> GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<File3dmObjectTable, File3dmObject>(this);
@@ -691,7 +765,7 @@ namespace Rhino.FileIO
 
     #region Object addition
     /// <summary>
-    /// Add a point object to the table.
+    /// Adds a point object to the table.
     /// </summary>
     /// <param name="x">X component of point coordinate.</param>
     /// <param name="y">Y component of point coordinate.</param>
@@ -701,18 +775,18 @@ namespace Rhino.FileIO
     {
       return AddPoint(new Point3d(x, y, z));
     }
-    /// <summary>Add a point object to the table.</summary>
-    /// <param name="point">location of point</param>
-    /// <returns>id of new object</returns>
+    /// <summary>Adds a point object to the table.</summary>
+    /// <param name="point">A location for point.</param>
+    /// <returns>Id of new object.</returns>
     public Guid AddPoint(Point3d point)
     {
       return AddPoint(point, null);
     }
 
-    /// <summary>Add a point object to the document</summary>
-    /// <param name="point">location of point</param>
-    /// <param name="attributes">attributes to apply to point</param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a point object to the document.</summary>
+    /// <param name="point">A location for point.</param>
+    /// <param name="attributes">attributes to apply to point.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddPoint(Point3d point, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pConstAttributes = (attributes==null) ? IntPtr.Zero : attributes.ConstPointer();
@@ -721,18 +795,18 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddPoint(pThis, point, pConstAttributes);
     }
 
-    /// <summary>Add a point object to the document.</summary>
-    /// <param name="point">location of point</param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a point object to the document.</summary>
+    /// <param name="point">location of point.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddPoint(Point3f point)
     {
       Point3d p3d = new Point3d(point);
       return AddPoint(p3d);
     }
-    /// <summary>Add a point object to the document</summary>
-    /// <param name="point">location of point</param>
-    /// <param name="attributes">attributes to apply to point</param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a point object to the document.</summary>
+    /// <param name="point">location of point.</param>
+    /// <param name="attributes">attributes to apply to point.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddPoint(Point3f point, DocObjects.ObjectAttributes attributes)
     {
       Point3d p3d = new Point3d(point);
@@ -740,7 +814,7 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Add multiple points to the document.
+    /// Adds multiple points to the document.
     /// </summary>
     /// <param name="points">Points to add.</param>
     /// <returns>List of object ids.</returns>
@@ -757,11 +831,11 @@ namespace Rhino.FileIO
       return ids.ToArray();
     }
     /// <summary>
-    /// Add multiple points to the document.
+    /// Adds multiple points to the document.
     /// </summary>
     /// <param name="points">Points to add.</param>
     /// <param name="attributes">Attributes to apply to point objects.</param>
-    /// <returns>List of object ids.</returns>
+    /// <returns>An array of object unique identifiers.</returns>
     public Guid[] AddPoints(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes)
     {
       if (points == null) { throw new ArgumentNullException("points"); }
@@ -776,10 +850,10 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Add multiple points to the document.
+    /// Adds multiple points to the document.
     /// </summary>
     /// <param name="points">Points to add.</param>
-    /// <returns>List of object ids.</returns>
+    /// <returns>An array of object unique identifiers.</returns>
     public Guid[] AddPoints(IEnumerable<Point3f> points)
     {
       if (points == null) { throw new ArgumentNullException("points"); }
@@ -793,11 +867,11 @@ namespace Rhino.FileIO
       return ids.ToArray();
     }
     /// <summary>
-    /// Add multiple points to the document.
+    /// Adds multiple points to the document.
     /// </summary>
     /// <param name="points">Points to add.</param>
     /// <param name="attributes">Attributes to apply to point objects.</param>
-    /// <returns>List of object ids.</returns>
+    /// <returns>An array of object unique identifiers.</returns>
     public Guid[] AddPoints(IEnumerable<Point3f> points, DocObjects.ObjectAttributes attributes)
     {
       if (points == null) { throw new ArgumentNullException("points"); }
@@ -811,17 +885,17 @@ namespace Rhino.FileIO
       return ids.ToArray();
     }
 
-    /// <summary>Add a point cloud object to the document</summary>
+    /// <summary>Adds a point cloud object to the document.</summary>
     /// <param name="cloud">PointCloud to add.</param>
-    /// <returns>id of new rhino object</returns>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddPointCloud(PointCloud cloud)
     {
       return AddPointCloud(cloud, null);
     }
-    /// <summary>Add a point cloud object to the document</summary>
+    /// <summary>Adds a point cloud object to the document.</summary>
     /// <param name="cloud">PointCloud to add.</param>
     /// <param name="attributes">attributes to apply to point cloud</param>
-    /// <returns>id of new rhino object</returns>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddPointCloud(PointCloud cloud, DocObjects.ObjectAttributes attributes)
     {
       if (cloud == null) { throw new ArgumentNullException("cloud"); }
@@ -836,17 +910,17 @@ namespace Rhino.FileIO
       m_objects = null;
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddPointCloud2(pThis, pCloud, pAttrs);
     }
-    /// <summary>Add a point cloud object to the document</summary>
-    /// <param name="points"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a point cloud object to the document</summary>
+    /// <param name="points">A list, an array or any enumerable set of <see cref="Point3d"/>.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddPointCloud(IEnumerable<Point3d> points)
     {
       return AddPointCloud(points, null);
     }
-    /// <summary>Add a point cloud object to the document</summary>
-    /// <param name="points"></param>
-    /// <param name="attributes">attributes to apply to point cloud</param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a point cloud object to the document.</summary>
+    /// <param name="points">A list, an array or any enumerable set of <see cref="Point3d"/>.</param>
+    /// <param name="attributes">Attributes to apply to point cloud.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddPointCloud(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes)
     {
       int count;
@@ -864,13 +938,13 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Add a clipping plane object to Rhino
+    /// Adds a clipping plane object to Rhino.
     /// </summary>
-    /// <param name="plane"></param>
-    /// <param name="uMagnitude"></param>
-    /// <param name="vMagnitude"></param>
-    /// <param name="clippedViewportId">viewport id that the new clipping plane will clip</param>
-    /// <returns>id of new rhino object</returns>
+    /// <param name="plane">A plane.</param>
+    /// <param name="uMagnitude">The size in U direction.</param>
+    /// <param name="vMagnitude">The size in V direction.</param>
+    /// <param name="clippedViewportId">The viewport id that the new clipping plane will clip.</param>
+    /// <returns>A unique identifier for the object.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addclippingplane.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addclippingplane.cs' lang='cs'/>
@@ -881,26 +955,26 @@ namespace Rhino.FileIO
       return AddClippingPlane(plane, uMagnitude, vMagnitude, new Guid[] { clippedViewportId });
     }
     /// <summary>
-    /// Add a clipping plane object to Rhino
+    /// Adds a clipping plane object to Rhino.
     /// </summary>
-    /// <param name="plane"></param>
-    /// <param name="uMagnitude"></param>
-    /// <param name="vMagnitude"></param>
-    /// <param name="clippedViewportIds">list of viewport ids that the new clipping plane will clip</param>
-    /// <returns>id of new rhino object</returns>
+    /// <param name="plane">A plane.</param>
+    /// <param name="uMagnitude">The size in U direction.</param>
+    /// <param name="vMagnitude">The size in V direction.</param>
+    /// <param name="clippedViewportIds">A list, an array or any enumerable of viewport ids that the new clipping plane will clip</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddClippingPlane(Plane plane, double uMagnitude, double vMagnitude, IEnumerable<Guid> clippedViewportIds)
     {
       return AddClippingPlane(plane, uMagnitude, vMagnitude, clippedViewportIds, null);
     }
     /// <summary>
-    /// Add a clipping plane object to Rhino
+    /// Adds a clipping plane object to Rhino
     /// </summary>
-    /// <param name="plane"></param>
-    /// <param name="uMagnitude"></param>
-    /// <param name="vMagnitude"></param>
+    /// <param name="plane">A plane.</param>
+    /// <param name="uMagnitude">The size in U direction.</param>
+    /// <param name="vMagnitude">The size in V direction.</param>
     /// <param name="clippedViewportIds">list of viewport ids that the new clipping plane will clip</param>
-    /// <param name="attributes"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <param name="attributes">Attributes to apply to point cloud.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddClippingPlane(Plane plane, double uMagnitude, double vMagnitude, IEnumerable<Guid> clippedViewportIds, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pAttrs = (null == attributes) ? IntPtr.Zero : attributes.ConstPointer();
@@ -917,11 +991,22 @@ namespace Rhino.FileIO
       return rc;
     }
 
+    /// <summary>
+    /// Adds a linear dimension to the 3dm file object table.
+    /// </summary>
+    /// <param name="dimension">A dimension.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddLinearDimension(LinearDimension dimension)
     {
       return AddLinearDimension(dimension, null);
     }
 
+    /// <summary>
+    /// Adds a linear dimension to the 3dm file object table.
+    /// </summary>
+    /// <param name="dimension">A dimension.</param>
+    /// <param name="attributes">Attributes to apply to dimension.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddLinearDimension(LinearDimension dimension, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pConstDimension = dimension.ConstPointer();
@@ -931,19 +1016,19 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddLinearDimension(pThis, pConstDimension, pAttributes);
     }
 
-    /// <summary>Add a line object to Rhino</summary>
-    /// <param name="from"></param>
-    /// <param name="to"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a line object to Rhino</summary>
+    /// <param name="from">A line start point.</param>
+    /// <param name="to">A line end point.</param>
+    /// <returns>A unique identifier of new rhino object.</returns>
     public Guid AddLine(Point3d from, Point3d to)
     {
       return AddLine(from, to, null);
     }
-    /// <summary>Add a line object to Rhino</summary>
-    /// <param name="from"></param>
-    /// <param name="to"></param>
-    /// <param name="attributes">attributes to apply to line</param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a line object to Rhino.</summary>
+    /// <param name="from">The start point of the line.</param>
+    /// <param name="to">The end point of the line.</param>
+    /// <param name="attributes">Attributes to apply to line.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddLine(Point3d from, Point3d to, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pAttr = (null == attributes) ? IntPtr.Zero : attributes.ConstPointer();
@@ -951,32 +1036,32 @@ namespace Rhino.FileIO
       m_objects = null;
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddLine(pThis, from, to, pAttr);
     }
-    /// <summary>Add a line object to Rhino</summary>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a line object to Rhino</summary>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddLine(Line line)
     {
       return AddLine(line.From, line.To);
     }
-    /// <summary>Add a line object to Rhino</summary>
-    /// <param name="line"></param>
-    /// <param name="attributes">attributes to apply to line</param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a line object to Rhino.</summary>
+    /// <param name="line">A line.</param>
+    /// <param name="attributes">Attributes to apply to line.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddLine(Line line, DocObjects.ObjectAttributes attributes)
     {
       return AddLine(line.From, line.To, attributes);
     }
 
-    /// <summary>Add a polyline object to Rhino</summary>
-    /// <param name="points"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a polyline object to Rhino.</summary>
+    /// <param name="points">A list, an array or any enumerable set of <see cref="Point3d"/>.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddPolyline(IEnumerable<Point3d> points)
     {
       return AddPolyline(points, null);
     }
-    /// <summary>Add a polyline object to Rhino</summary>
-    /// <param name="points"></param>
-    /// <param name="attributes">attributes to apply to line</param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a polyline object to Rhino.</summary>
+    /// <param name="points">A list, an array or any enumerable set of <see cref="Point3d"/>.</param>
+    /// <param name="attributes">Attributes to apply to line.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddPolyline(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes)
     {
       int count;
@@ -990,17 +1075,17 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddPolyLine(pThis, count, ptArray, pAttrs);
     }
 
-    /// <summary>Add a curve object to the document representing an arc</summary>
-    /// <param name="arc"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a curve object to the document representing an arc.</summary>
+    /// <param name="arc">An arc.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddArc(Arc arc)
     {
       return AddArc(arc, null);
     }
-    /// <summary>Add a curve object to the document representing an arc</summary>
-    /// <param name="arc"></param>
+    /// <summary>Adds a curve object to the document representing an arc.</summary>
+    /// <param name="arc">An arc to add.</param>
     /// <param name="attributes">attributes to apply to arc</param>
-    /// <returns>id of new rhino object</returns>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddArc(Arc arc, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
@@ -1009,17 +1094,17 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddArc(pThis, ref arc, pAttr);
     }
 
-    /// <summary>Add a curve object to the document representing a circle</summary>
-    /// <param name="circle"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a curve object to the document representing a circle.</summary>
+    /// <param name="circle">A circle to add.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddCircle(Circle circle)
     {
       return AddCircle(circle, null);
     }
-    /// <summary>Add a curve object to the document representing a circle</summary>
-    /// <param name="circle"></param>
+    /// <summary>Adds a curve object to the document representing a circle.</summary>
+    /// <param name="circle">A circle to add.</param>
     /// <param name="attributes">attributes to apply to circle</param>
-    /// <returns>id of new rhino object</returns>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddCircle(Circle circle, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
@@ -1028,17 +1113,17 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddCircle(pThis, ref circle, pAttr);
     }
 
-    /// <summary>Add a curve object to the document representing an ellipse</summary>
-    /// <param name="ellipse"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a curve object to the document representing an ellipse.</summary>
+    /// <param name="ellipse">An ellipse to add.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddEllipse(Ellipse ellipse)
     {
       return AddEllipse(ellipse, null);
     }
-    /// <summary>Add a curve object to the document representing an ellipse</summary>
-    /// <param name="ellipse"></param>
+    /// <summary>Adds a curve object to the document representing an ellipse.</summary>
+    /// <param name="ellipse">An ellipse to add.</param>
     /// <param name="attributes">attributes to apply to ellipse</param>
-    /// <returns>id of new rhino object</returns>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddEllipse(Ellipse ellipse, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
@@ -1046,11 +1131,21 @@ namespace Rhino.FileIO
       m_objects = null;
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddEllipse(pThis, ref ellipse, pAttr);
     }
-
+    /// <summary>
+    /// Adds a surface object to the document representing a sphere.
+    /// </summary>
+    /// <param name="sphere">A sphere to add.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddSphere(Sphere sphere)
     {
       return AddSphere(sphere, null);
     }
+    /// <summary>
+    /// Adds a surface object to the document representing a sphere.
+    /// </summary>
+    /// <param name="sphere">A sphere to add.</param>
+    /// <param name="attributes">Attributes to link with the sphere.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddSphere(Sphere sphere, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
@@ -1059,17 +1154,17 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddSphere(pThis, ref sphere, pAttr);
     }
 
-    /// <summary>Add a curve object to Rhino</summary>
-    /// <param name="curve"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a curve object to the table.</summary>
+    /// <param name="curve">A curve to add.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddCurve(Geometry.Curve curve)
     {
       return AddCurve(curve, null);
     }
-    /// <summary>Add a curve object to Rhino</summary>
+    /// <summary>Adds a curve object to the table.</summary>
     /// <param name="curve">A duplicate of this curve is added to Rhino</param>
-    /// <param name="attributes">attributes to apply to curve</param>
-    /// <returns>id of new rhino object</returns>
+    /// <param name="attributes">Attributes to apply to curve.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddCurve(Geometry.Curve curve, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
@@ -1079,10 +1174,10 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddCurve(pThis, curvePtr, pAttr);
     }
 
-    /// <summary>Add a text dot object to Rhino</summary>
-    /// <param name="text"></param>
-    /// <param name="location"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a text dot object to the table.</summary>
+    /// <param name="text">The text.</param>
+    /// <param name="location">The location.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddTextDot(string text, Point3d location)
     {
       Geometry.TextDot dot = new Rhino.Geometry.TextDot(text, location);
@@ -1090,11 +1185,11 @@ namespace Rhino.FileIO
       dot.Dispose();
       return rc;
     }
-    /// <summary>Add a text dot object to Rhino</summary>
-    /// <param name="text"></param>
-    /// <param name="location"></param>
-    /// <param name="attributes"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a text dot object to the table.</summary>
+    /// <param name="text">The text.</param>
+    /// <param name="location">The location.</param>
+    /// <param name="attributes">Attributes to link with curve.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddTextDot(string text, Point3d location, DocObjects.ObjectAttributes attributes)
     {
       Geometry.TextDot dot = new Rhino.Geometry.TextDot(text, location);
@@ -1102,17 +1197,17 @@ namespace Rhino.FileIO
       dot.Dispose();
       return rc;
     }
-    /// <summary>Add a text dot object to Rhino</summary>
-    /// <param name="dot"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a text dot object to Rhino</summary>
+    /// <param name="dot">The text dot.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddTextDot(Geometry.TextDot dot)
     {
       return AddTextDot(dot, null);
     }
-    /// <summary>Add a text dot object to Rhino</summary>
-    /// <param name="dot"></param>
-    /// <param name="attributes"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a text dot object to Rhino</summary>
+    /// <param name="dot">The text dot.</param>
+    /// <param name="attributes">Attributes to link with curve.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddTextDot(Geometry.TextDot dot, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
@@ -1124,7 +1219,7 @@ namespace Rhino.FileIO
 
 #if RHINO_SDK
     /// <summary>
-    /// Add an annotation text object to the document.
+    /// Adds an annotation text object to the document.
     /// </summary>
     /// <param name="text3d">The text object to add.</param>
     /// <returns>The Guid of the newly added object or Guid.Empty on failure.</returns>
@@ -1133,10 +1228,10 @@ namespace Rhino.FileIO
       return AddText(text3d.Text, text3d.TextPlane, text3d.Height, text3d.FontFace, text3d.Bold, text3d.Italic);
     }
     /// <summary>
-    /// Add an annotation text object to the document.
+    /// Adds an annotation text object to the document.
     /// </summary>
     /// <param name="text3d">The text object to add.</param>
-    /// <param name="attributes">Object Attributes.</param>
+    /// <param name="attributes">Attributes to link to the object.</param>
     /// <returns>The Guid of the newly added object or Guid.Empty on failure.</returns>
     public Guid AddText(Rhino.Display.Text3d text3d, DocObjects.ObjectAttributes attributes)
     {
@@ -1145,7 +1240,7 @@ namespace Rhino.FileIO
 #endif
 
     /// <summary>
-    /// Add an annotation text object to the document.
+    /// Adds an annotation text object to the document.
     /// </summary>
     /// <param name="text">Text string.</param>
     /// <param name="plane">Plane of text.</param>
@@ -1158,12 +1253,35 @@ namespace Rhino.FileIO
     {
       return AddText(text, plane, height, fontName, bold, italic, null);
     }
-
+    
+    /// <summary>
+    /// Adds an annotation text object to the document.
+    /// </summary>
+    /// <param name="text">Text string.</param>
+    /// <param name="plane">Plane of text.</param>
+    /// <param name="height">Height of text.</param>
+    /// <param name="fontName">Name of FontFace.</param>
+    /// <param name="bold">Bold flag.</param>
+    /// <param name="italic">Italic flag.</param>
+    /// <param name="justification">The justification of the text.</param>
+    /// <returns>The Guid of the newly added object or Guid.Empty on failure.</returns>
     public Guid AddText(string text, Plane plane, double height, string fontName, bool bold, bool italic, TextJustification justification)
     {
       return AddText(text, plane, height, fontName, bold, italic, justification, null);
     }
 
+    /// <summary>
+    /// Adds an annotation text object to the document.
+    /// </summary>
+    /// <param name="text">Text string.</param>
+    /// <param name="plane">Plane of text.</param>
+    /// <param name="height">Height of text.</param>
+    /// <param name="fontName">Name of FontFace.</param>
+    /// <param name="bold">Bold flag.</param>
+    /// <param name="italic">Italic flag.</param>
+    /// <param name="justification">The justification of the text.</param>
+    /// <param name="attributes">Attributes to link to the object.</param>
+    /// <returns>The Guid of the newly added object or Guid.Empty on failure.</returns>
     public Guid AddText(string text, Plane plane, double height, string fontName, bool bold, bool italic, TextJustification justification, DocObjects.ObjectAttributes attributes)
     {
       if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(fontName))
@@ -1181,7 +1299,7 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Add an annotation text object to the document.
+    /// Adds an annotation text object to the document.
     /// </summary>
     /// <param name="text">Text string.</param>
     /// <param name="plane">Plane of text.</param>
@@ -1196,17 +1314,17 @@ namespace Rhino.FileIO
       return AddText(text, plane, height, fontName, bold, italic, TextJustification.None, attributes);
     }
 
-    /// <summary>Add a surface object to Rhino</summary>
+    /// <summary>Adds a surface object to Rhino</summary>
     /// <param name="surface">A duplicate of this surface is added to Rhino</param>
-    /// <returns>id of new rhino object</returns>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddSurface(Geometry.Surface surface)
     {
       return AddSurface(surface, null);
     }
-    /// <summary>Add a surface object to Rhino</summary>
+    /// <summary>Adds a surface object to Rhino</summary>
     /// <param name="surface">A duplicate of this surface is added to Rhino</param>
-    /// <param name="attributes"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <param name="attributes">Attributes to link to the object.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddSurface(Geometry.Surface surface, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
@@ -1217,17 +1335,17 @@ namespace Rhino.FileIO
     }
 
 #if USING_V5_SDK
-    /// <summary>Add an extrusion object to Rhino</summary>
+    /// <summary>Adds an extrusion object to Rhino</summary>
     /// <param name="extrusion">A duplicate of this extrusion is added to Rhino</param>
-    /// <returns>id of new rhino object</returns>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddExtrusion(Geometry.Extrusion extrusion)
     {
       return AddExtrusion(extrusion, null);
     }
-    /// <summary>Add an extrusion object to Rhino</summary>
+    /// <summary>Adds an extrusion object to Rhino</summary>
     /// <param name="extrusion">A duplicate of this extrusion is added to Rhino</param>
-    /// <param name="attributes"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <param name="attributes">Attributes to link to the object.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddExtrusion(Geometry.Extrusion extrusion, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
@@ -1238,17 +1356,17 @@ namespace Rhino.FileIO
     }
 #endif
 
-    /// <summary>Add a mesh object to Rhino</summary>
+    /// <summary>Adds a mesh object to Rhino</summary>
     /// <param name="mesh">A duplicate of this mesh is added to Rhino</param>
-    /// <returns>id of new rhino object</returns>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddMesh(Geometry.Mesh mesh)
     {
       return AddMesh(mesh, null);
     }
-    /// <summary>Add a mesh object to Rhino</summary>
+    /// <summary>Adds a mesh object to Rhino</summary>
     /// <param name="mesh">A duplicate of this mesh is added to Rhino</param>
-    /// <param name="attributes"></param>
-    /// <returns>id of new rhino object</returns>
+    /// <param name="attributes">Attributes to link to the object.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddMesh(Geometry.Mesh mesh, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
@@ -1258,17 +1376,17 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddMesh(pThis, pConstMesh, pAttr);
     }
 
-    /// <summary>Add a brep object to Rhino</summary>
+    /// <summary>Adds a brep object to Rhino</summary>
     /// <param name="brep">A duplicate of this brep is added to Rhino</param>
-    /// <returns>id of new rhino object</returns>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddBrep(Geometry.Brep brep)
     {
       return AddBrep(brep, null);
     }
-    /// <summary>Add a brep object to Rhino</summary>
-    /// <param name="brep">A duplicate of this brep is added to Rhino</param>
-    /// <param name="attributes">attributes to apply to brep</param>
-    /// <returns>id of new rhino object</returns>
+    /// <summary>Adds a brep object to Rhino.</summary>
+    /// <param name="brep">A duplicate of this brep is added to Rhino.</param>
+    /// <param name="attributes">Attributes to apply to brep.</param>
+    /// <returns>A unique identifier for the object.</returns>
     public Guid AddBrep(Geometry.Brep brep, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pAttr = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
@@ -1294,15 +1412,37 @@ namespace Rhino.FileIO
     }
     */
 
+    /// <summary>
+    /// Adds an annotation leader to the document.
+    /// </summary>
+    /// <param name="plane">A plane.</param>
+    /// <param name="points">A list, an array or any enumerable set of 2d points.</param>
+    /// <returns>A unique identifier for the object; or <see cref="Guid.Empty"/> on failure.</returns>
     public Guid AddLeader(Plane plane, IEnumerable<Point2d> points)
     {
       return AddLeader(null, plane, points);
     }
+
+    /// <summary>
+    /// Adds an annotation leader to the document.
+    /// </summary>
+    /// <param name="plane">A plane.</param>
+    /// <param name="points">A list, an array or any enumerable set of 2d points.</param>
+    /// <param name="attributes">Attributes to apply to brep.</param>
+    /// <returns>A unique identifier for the object; or <see cref="Guid.Empty"/> on failure.</returns>
     public Guid AddLeader(Plane plane, IEnumerable<Point2d> points, DocObjects.ObjectAttributes attributes)
     {
       return AddLeader(null, plane, points, attributes);
     }
 
+    /// <summary>
+    /// Adds an annotation leader to the document.
+    /// </summary>
+    /// <param name="text">The text.</param>
+    /// <param name="plane">A plane.</param>
+    /// <param name="points">A list, an array or any enumerable set of 2d points.</param>
+    /// <param name="attributes">Attributes to apply to brep.</param>
+    /// <returns>A unique identifier for the object; or <see cref="Guid.Empty"/> on failure.</returns>
     public Guid AddLeader(string text, Plane plane, IEnumerable<Point2d> points, DocObjects.ObjectAttributes attributes)
     {
       string s = null;
@@ -1321,12 +1461,26 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddLeader(pThis, s, ref plane, count, pts.m_items, pAttr);
     }
 
+    /// <summary>
+    /// Adds an annotation leader to the document.
+    /// </summary>
+    /// <param name="text">The text.</param>
+    /// <param name="plane">A plane.</param>
+    /// <param name="points">A list, an array or any enumerable set of 2d points.</param>
+    /// <returns>A unique identifier for the object; or <see cref="Guid.Empty"/> on failure.</returns>
     public Guid AddLeader(string text, Plane plane, IEnumerable<Point2d> points)
     {
       return AddLeader(text, plane, points, null);
     }
 
 #if RHINO_SDK
+
+    /// <summary>
+    /// Adds an annotation leader to the document. This overload is only provided in the Rhino SDK.
+    /// </summary>
+    /// <param name="text">The text.</param>
+    /// <param name="points">A list, an array or any enumerable set of 2d points.</param>
+    /// <returns>A unique identifier for the object; or <see cref="Guid.Empty"/> on failure.</returns>
     public Guid AddLeader(string text, IEnumerable<Point3d> points)
     {
       Plane plane;
@@ -1350,16 +1504,33 @@ namespace Rhino.FileIO
       return AddLeader(text, plane, points2d);
     }
 
+    /// <summary>
+    /// Adds an annotation leader to the document. This overload is only provided in the Rhino SDK.
+    /// </summary>
+    /// <param name="points">A list, an array or any enumerable set of 2d points.</param>
+    /// <returns>A unique identifier for the object; or <see cref="Guid.Empty"/> on failure.</returns>
     public Guid AddLeader(IEnumerable<Point3d> points)
     {
       return AddLeader(null, points);
     }
 #endif
 
+    /// <summary>
+    /// Adds a hatch to the document.
+    /// </summary>
+    /// <param name="hatch">A hatch.</param>
+    /// <returns>A unique identifier for the hatch, or <see cref="Guid.Empty"/> on failure.</returns>
     public Guid AddHatch(Hatch hatch)
     {
       return AddHatch(hatch, null);
     }
+
+    /// <summary>
+    /// Adds a hatch to the document.
+    /// </summary>
+    /// <param name="hatch">A hatch.</param>
+    /// <param name="attributes">Attributes to apply to brep.</param>
+    /// <returns>A unique identifier for the hatch, or <see cref="Guid.Empty"/> on failure.</returns>
     public Guid AddHatch(Hatch hatch, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pConstHatch = hatch.ConstPointer();

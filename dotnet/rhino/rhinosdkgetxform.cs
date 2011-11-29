@@ -133,7 +133,7 @@ namespace Rhino.Input.Custom
 
 
     /// <summary>
-    /// Add any objects you want transformed and grips you want transformed.
+    /// Adds any objects you want transformed and grips you want transformed.
     /// Make sure no duplicates are in the list and that no grip ownwers are
     /// passed in as objects.
     /// </summary>

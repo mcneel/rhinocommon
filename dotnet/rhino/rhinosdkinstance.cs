@@ -461,7 +461,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Add an instance definition to the instance definition table.
+    /// Adds an instance definition to the instance definition table.
     /// </summary>
     /// <param name="name"></param>
     /// <param name="description"></param>
@@ -497,7 +497,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Add an instance definition to the instance definition table.
+    /// Adds an instance definition to the instance definition table.
     /// </summary>
     /// <param name="name"></param>
     /// <param name="description"></param>
@@ -512,7 +512,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Add an instance definition to the instance definition table.
+    /// Adds an instance definition to the instance definition table.
     /// </summary>
     /// <param name="name"></param>
     /// <param name="description"></param>

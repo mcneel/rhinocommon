@@ -1375,7 +1375,7 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>
-    /// Add a 3D surface used by BrepFace
+    /// Adds a 3D surface used by BrepFace.
     /// </summary>
     /// <param name="surface">A copy of the surface is added to this brep</param>
     /// <returns>

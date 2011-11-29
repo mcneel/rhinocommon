@@ -165,7 +165,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Add a new, black point to the display list.
+    /// Adds a new, black point to the display list.
     /// </summary>
     /// <param name="point">Point to add.</param>
     public void AddPoint(Point3d point)
@@ -174,7 +174,7 @@ namespace Rhino.Display
       AddPoint(point, Color.Black, PointStyle.Simple, 5);
     }
     /// <summary>
-    /// Add a new coloured point to the display list.
+    /// Adds a new colored point to the display list.
     /// </summary>
     /// <param name="point">Point to add.</param>
     /// <param name="color">Color of point.</param>
@@ -184,7 +184,7 @@ namespace Rhino.Display
       AddPoint(point, color, PointStyle.Simple, 5);
     }
     /// <summary>
-    /// Add a new stylized point to the display list.
+    /// Adds a new stylized point to the display list.
     /// </summary>
     /// <param name="point">Point to add.</param>
     /// <param name="color">Color of point.</param>
@@ -205,7 +205,7 @@ namespace Rhino.Display
       m_clip.Union(point);
     }
     /// <summary>
-    /// Add a collection of black points to the display list.
+    /// Adds a collection of black points to the display list.
     /// </summary>
     /// <param name="points">Points to add.</param>
     public void AddPoints(IEnumerable<Point3d> points)
@@ -214,7 +214,7 @@ namespace Rhino.Display
       AddPoints(points, Color.Black, PointStyle.Simple, 5);
     }
     /// <summary>
-    /// Add a collection of coloured points to the display list.
+    /// Adds a collection of colored points to the display list.
     /// </summary>
     /// <param name="points">Points to add.</param>
     /// <param name="color">Color of points.</param>
@@ -224,7 +224,7 @@ namespace Rhino.Display
       AddPoints(points, color, PointStyle.Simple, 5);
     }
     /// <summary>
-    /// Add a collection of stylized points to the display list.
+    /// Adds a collection of stylized points to the display list.
     /// </summary>
     /// <param name="points">Points to add.</param>
     /// <param name="color">Color of points.</param>
@@ -240,7 +240,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Add a new, black line to the display list.
+    /// Adds a new, black line to the display list.
     /// </summary>
     /// <param name="line">Line to add</param>
     public void AddLine(Line line)
@@ -249,7 +249,7 @@ namespace Rhino.Display
       AddLine(line, Color.Black, 1);
     }
     /// <summary>
-    /// Add a new, colored line to the display list.
+    /// Adds a new, colored line to the display list.
     /// </summary>
     /// <param name="line">Line to add.</param>
     /// <param name="color">Color of line.</param>
@@ -259,7 +259,7 @@ namespace Rhino.Display
       AddLine(line, color, 1);
     }
     /// <summary>
-    /// Add a new, colored line to the display list.
+    /// Adds a new, colored line to the display list.
     /// </summary>
     /// <param name="line">Line to add.</param>
     /// <param name="color">Color of line.</param>
@@ -279,7 +279,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Add a new, black vector to the display list.
+    /// Adds a new, black vector to the display list.
     /// </summary>
     /// <param name="anchor">Anchor point of vector.</param>
     /// <param name="span">Direction and magnitude of vector.</param>
@@ -289,7 +289,7 @@ namespace Rhino.Display
       AddVector(anchor, span, Color.Black, false);
     }
     /// <summary>
-    /// Add a new, colored vector to the display list.
+    /// Adds a new, colored vector to the display list.
     /// </summary>
     /// <param name="anchor">Anchor point of vector.</param>
     /// <param name="span">Direction and magnitude of vector.</param>
@@ -300,7 +300,7 @@ namespace Rhino.Display
       AddVector(anchor, span, color, false);
     }
     /// <summary>
-    /// Add a new, colored vector to the display list.
+    /// Adds a new, colored vector to the display list.
     /// </summary>
     /// <param name="anchor">Anchor point of vector.</param>
     /// <param name="span">Direction and magnitude of vector.</param>
@@ -322,7 +322,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Add a new, black arc to the display list.
+    /// Adds a new, black arc to the display list.
     /// </summary>
     /// <param name="arc">Arc to add</param>
     public void AddArc(Arc arc)
@@ -331,7 +331,7 @@ namespace Rhino.Display
       AddArc(arc, Color.Black, 1);
     }
     /// <summary>
-    /// Add a new, colored arc to the display list.
+    /// Adds a new, colored arc to the display list.
     /// </summary>
     /// <param name="arc">Arc to add.</param>
     /// <param name="color">Color of arc.</param>
@@ -341,7 +341,7 @@ namespace Rhino.Display
       AddArc(arc, color, 1);
     }
     /// <summary>
-    /// Add a new, colored arc to the display list.
+    /// Adds a new, colored arc to the display list.
     /// </summary>
     /// <param name="arc">Arc to add.</param>
     /// <param name="color">Color of arc.</param>
@@ -361,7 +361,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Add a new, black circle to the display list.
+    /// Adds a new, black circle to the display list.
     /// </summary>
     /// <param name="circle">Circle to add</param>
     public void AddCircle(Circle circle)
@@ -370,7 +370,7 @@ namespace Rhino.Display
       AddCircle(circle, Color.Black, 1);
     }
     /// <summary>
-    /// Add a new, colored arc to the display list.
+    /// Adds a new, colored arc to the display list.
     /// </summary>
     /// <param name="circle">Circle to add.</param>
     /// <param name="color">Color of circle.</param>
@@ -380,7 +380,7 @@ namespace Rhino.Display
       AddCircle(circle, color, 1);
     }
     /// <summary>
-    /// Add a new, colored circle to the display list.
+    /// Adds a new, colored circle to the display list.
     /// </summary>
     /// <param name="circle">Circle to add.</param>
     /// <param name="color">Color of circle.</param>
@@ -394,7 +394,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Add a new, black curve to the display list. 
+    /// Adds a new, black curve to the display list. 
     /// The curve will be duplicated so changes to the 
     /// original will not affect the display.
     /// </summary>
@@ -405,7 +405,7 @@ namespace Rhino.Display
       AddCurve(curve, Color.Black, 1);
     }
     /// <summary>
-    /// Add a new, colored curve to the display list.
+    /// Adds a new, colored curve to the display list.
     /// The curve will be duplicated so changes to the 
     /// original will not affect the display.
     /// </summary>
@@ -417,7 +417,7 @@ namespace Rhino.Display
       AddCurve(curve, color, 1);
     }
     /// <summary>
-    /// Add a new, colored curve to the display list.
+    /// Adds a new, colored curve to the display list.
     /// The curve will be duplicated so changes to the 
     /// original will not affect the display.
     /// </summary>
@@ -440,7 +440,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Add a polygon to the drawing list. Polygons are not like Hatches, when you supply a concave 
+    /// Adds a polygon to the drawing list. Polygons are not like Hatches, when you supply a concave 
     /// polygon, the shading probably won't work.
     /// </summary>
     /// <param name="polygon">Points that define the corners of the polygon.</param>
@@ -466,7 +466,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Add a new, black 3D text object to the display list.
+    /// Adds a new, black 3D text object to the display list.
     /// </summary>
     /// <param name="text">Text to add.</param>
     /// <param name="plane">Plane for text orientation.</param>
@@ -477,7 +477,7 @@ namespace Rhino.Display
       AddText(text, plane, size, Color.Black);
     }
     /// <summary>
-    /// Add a new, colored 3D text object to the display list.
+    /// Adds a new, colored 3D text object to the display list.
     /// </summary>
     /// <param name="text">Text to add.</param>
     /// <param name="plane">Plane for text orientation.</param>

@@ -83,7 +83,7 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoGroupTable_FindGroup(m_doc.m_docId, groupName, ignoreDeletedGroups);
     }
 
-    /// <summary>Add a new empty group to the group table</summary>
+    /// <summary>Adds a new empty group to the group table</summary>
     /// <param name="groupName">name of new group</param>
     /// <returns>
     /// &gt;=0 index of new group. 
@@ -97,7 +97,7 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoGroupTable_Add(m_doc.m_docId, groupName, 0, null);
     }
 
-    /// <summary>Add a new empty group to the group table</summary>
+    /// <summary>Adds a new empty group to the group table</summary>
     /// <returns>
     /// &gt;=0 index of new group. 
     /// -1 group not added because a group with that name already exists.
@@ -111,7 +111,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Add a new group to the group table with a set of objects
+    /// Adds a new group to the group table with a set of objects
     /// </summary>
     /// <param name="groupName">name of new group</param>
     /// <param name="objectIds"></param>
@@ -137,7 +137,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Add a new group to the group table with a set of objects
+    /// Adds a new group to the group table with a set of objects
     /// </summary>
     /// <param name="objectIds"></param>
     /// <returns>
@@ -158,7 +158,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Add an object to an existing group
+    /// Adds an object to an existing group
     /// </summary>
     /// <param name="groupIndex"></param>
     /// <param name="objectId"></param>

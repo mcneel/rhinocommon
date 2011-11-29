@@ -1008,7 +1008,7 @@ namespace Rhino.Input.Custom
 
     #region commandlineoptions
     /// <summary>
-    /// Add a command line option
+    /// Adds a command line option
     /// </summary>
     /// <param name="englishOption">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1027,7 +1027,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Add a command line option
+    /// Adds a command line option
     /// </summary>
     /// <param name="englishOption">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1044,7 +1044,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Add a command line option
+    /// Adds a command line option
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1058,7 +1058,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Add a command line option
+    /// Adds a command line option
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1098,7 +1098,7 @@ namespace Rhino.Input.Custom
     //}
 
     /// <summary>
-    /// Add a command line option to get numbers and automatically save the value
+    /// Adds a command line option to get numbers and automatically save the value
     /// </summary>
     /// <param name="englishName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1117,7 +1117,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Add a command line option to get numbers and automatically save the value
+    /// Adds a command line option to get numbers and automatically save the value
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1138,7 +1138,7 @@ namespace Rhino.Input.Custom
       return rc;
     }
     /// <summary>
-    /// Add a command line option to get numbers and automatically save the value
+    /// Adds a command line option to get numbers and automatically save the value
     /// </summary>
     /// <param name="englishName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1158,7 +1158,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Add a command line option to get numbers and automatically save the value
+    /// Adds a command line option to get numbers and automatically save the value
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1178,7 +1178,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Add a command line option to get integers and automatically save the value
+    /// Adds a command line option to get integers and automatically save the value
     /// </summary>
     /// <param name="englishName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1197,7 +1197,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Add a command line option to get integers and automatically save the value
+    /// Adds a command line option to get integers and automatically save the value
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1219,7 +1219,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Add a command line option to get integers and automatically save the value
+    /// Adds a command line option to get integers and automatically save the value
     /// </summary>
     /// <param name="englishName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1239,7 +1239,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Add a command line option to get integers and automatically save the value
+    /// Adds a command line option to get integers and automatically save the value
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1292,7 +1292,7 @@ namespace Rhino.Input.Custom
     //      );
 
     /// <summary>
-    /// Add a command line option to toggle a setting
+    /// Adds a command line option to toggle a setting
     /// </summary>
     /// <param name="englishName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1310,7 +1310,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Add a command line option to toggle a setting
+    /// Adds a command line option to toggle a setting
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1331,7 +1331,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Add a command line list option
+    /// Adds a command line list option
     /// </summary>
     /// <param name="englishOptionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1357,7 +1357,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Add a command line list option
+    /// Adds a command line list option
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)

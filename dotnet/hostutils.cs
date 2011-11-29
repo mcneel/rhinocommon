@@ -560,7 +560,7 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Add a new dynamic command to Rhino.
+    /// Adds a new dynamic command to Rhino.
     /// </summary>
     /// <param name="plugin">Plugin that owns the command.</param>
     /// <param name="cmd">Command to add.</param>

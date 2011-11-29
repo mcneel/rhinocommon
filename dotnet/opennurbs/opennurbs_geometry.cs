@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -6,6 +5,9 @@ using Rhino.DocObjects;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Provides a common base for most geometric classes. This class is abstract.
+  /// </summary>
   [Serializable]
   public abstract class GeometryBase : Runtime.CommonObject, ISerializable
   {
@@ -15,6 +17,11 @@ namespace Rhino.Geometry
     // make internal so outside DLLs can't directly subclass GeometryBase
     internal GeometryBase() { }
 
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
     protected GeometryBase(SerializationInfo info, StreamingContext context)
       :base(info, context)
     {
@@ -68,7 +75,9 @@ namespace Rhino.Geometry
       return base._GetConstObjectParent();
     }
 
-
+    /// <summary>
+    /// Is called when a non-const operation occurs.
+    /// </summary>
     protected override void OnSwitchToNonConst()
     {
       m_shallow_parent = null;
@@ -89,7 +98,13 @@ namespace Rhino.Geometry
       }
     }
 
-
+    /// <summary>
+    /// Constructs an object of the same type as this,
+    /// that remebers the relationship to its parent.
+    /// This object is marked in the new object as the shallow object parent.
+    /// </summary>
+    /// <returns>An object of the same type as this object.
+    /// <para>This behavior is overridden by implementing classes.</para></returns>
     public GeometryBase DuplicateShallow()
     {
       GeometryBase rc = DuplicateShallowHelper();
@@ -102,6 +117,10 @@ namespace Rhino.Geometry
       return null;
     }
 
+    /// <summary>
+    /// Constructs a deep copy of this object.
+    /// </summary>
+    /// <returns>An object of the same type as this, with the same properties and behavior.</returns>
     public virtual GeometryBase Duplicate()
     {
       IntPtr ptr = ConstPointer();
@@ -609,6 +628,9 @@ namespace Rhino.Geometry
       return IntPtr.Zero == pValue ? String.Empty : Marshal.PtrToStringUni(pValue);
     }
 
+    /// <summary>
+    /// Gets the amount of user strings.
+    /// </summary>
     public int UserStringCount
     {
       get

@@ -911,10 +911,12 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Returns true if the Brep has a single face and that face is geometrically the same
-    /// as the underlying surface.  I.e., the face has trivial trimming. In this case, the
-    /// surface is the first face surface. The flag Brep.Faces[0].OrientationIsReversed records the
-    /// correspondence between the surface's natural parametric orientation and the
-    /// orientation of the Brep.
+    /// as the underlying surface.  I.e., the face has trivial trimming.
+    /// <para>In this case, the surface is the first face surface. The flag
+    /// Brep.Faces[0].OrientationIsReversed records the correspondence between the surface's
+    /// natural parametric orientation and the orientation of the Brep.</para>
+    /// <para>“trivial trimming” here means that there is only one loop curve in the brep
+    /// and that loop curve is the same as the underlying surface boundary.</para>
     /// </summary>
     public bool IsSurface
     {

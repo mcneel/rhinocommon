@@ -172,12 +172,12 @@ namespace Rhino.Geometry
       this = other;
     }
 
-    ///<summary>
-    ///Construct a plane from a point and a normal vector.
-    ///</summary>
-    ///<param name="origin">Origin point of the plane.</param>
-    ///<param name="normal">Non-zero normal to the plane.</param>
-    ///<seealso>CreateFromNormal</seealso>
+    /// <summary>
+    /// Construct a plane from a point and a normal vector.
+    /// </summary>
+    /// <param name="origin">Origin point of the plane.</param>
+    /// <param name="normal">Non-zero normal to the plane.</param>
+    /// <seealso>CreateFromNormal</seealso>
     /// <example>
     /// <code source='examples\vbnet\ex_addcylinder.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addcylinder.cs' lang='cs'/>
@@ -189,34 +189,34 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Plane_CreateFromNormal(ref this, origin, normal);
     }
 
-    ///<summary>
-    ///Construct a plane from a point and two vectors in the plane.
-    ///</summary>
-    ///<param name='origin'>Origin point of the plane.</param>
-    ///<param name='xDirection'>
-    ///Non-zero vector in the plane that determines the x-axis direction.
-    ///</param>
-    ///<param name='yDirection'>
-    ///Non-zero vector not parallel to x_dir that is used to determine the
-    ///yaxis direction. y_dir does not need to be perpendicular to x_dir.
-    ///</param>
+    /// <summary>
+    /// Construct a plane from a point and two vectors in the plane.
+    /// </summary>
+    /// <param name='origin'>Origin point of the plane.</param>
+    /// <param name='xDirection'>
+    /// Non-zero vector in the plane that determines the x-axis direction.
+    /// </param>
+    /// <param name='yDirection'>
+    /// Non-zero vector not parallel to x_dir that is used to determine the
+    /// yaxis direction. y_dir does not need to be perpendicular to x_dir.
+    /// </param>
     public Plane(Point3d origin, Vector3d xDirection, Vector3d yDirection)
       : this()
     {
       UnsafeNativeMethods.ON_Plane_CreateFromFrame(ref this, origin, xDirection, yDirection);
     }
 
-    ///<summary>
-    ///Construct a plane from three non-colinear points.
-    ///</summary>
-    ///<param name='origin'>Origin point of the plane.</param>
-    ///<param name='xPoint'>
-    ///Second point in the plane. The x-axis will be parallel to x_point-origin.
-    ///</param>
-    ///<param name='yPoint'>
-    ///Third point on the plane that is not colinear with the first two points.
-    ///yaxis*(y_point-origin) will be &gt; 0.
-    ///</param>
+    /// <summary>
+    /// Initializes a plane from three non-colinear points.
+    /// </summary>
+    /// <param name='origin'>Origin point of the plane.</param>
+    /// <param name='xPoint'>
+    /// Second point in the plane. The x-axis will be parallel to x_point-origin.
+    /// </param>
+    /// <param name='yPoint'>
+    /// Third point on the plane that is not colinear with the first two points.
+    /// yaxis*(y_point-origin) will be &gt; 0.
+    /// </param>
     /// <example>
     /// <code source='examples\vbnet\ex_addclippingplane.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addclippingplane.cs' lang='cs'/>
@@ -228,10 +228,10 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Plane_CreateFromPoints(ref this, origin, xPoint, yPoint);
     }
 
-    ///<summary>
+    /// <summary>
     /// Construct a plane from an equation
     /// ax+by+cz=d
-    ///</summary>
+    /// </summary>
     public Plane(double a, double b, double c, double d)
       : this()
     {

@@ -1,9 +1,11 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents a view of the model in a program, that can use parallel projection or perspective.
+  /// </summary>
   [Serializable]
   public class DetailView : GeometryBase, ISerializable
   {
@@ -11,7 +13,11 @@ namespace Rhino.Geometry
       : base(native_ptr, parent, -1)
     { }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected serialization constructor for internal use.
+    /// </summary>
+    /// <param name="info">Data to be serialized.</param>
+    /// <param name="context">Serialization stream.</param>
     protected DetailView(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
@@ -25,6 +31,10 @@ namespace Rhino.Geometry
     const int idxIsParallelProjection = 0;
     const int idxIsPerspectiveProjection = 1;
     const int idxIsProjectionLocked = 2;
+
+    /// <summary>
+    /// Gets or sets whether the view is parallel.
+    /// </summary>
     public bool IsParallelProjection
     {
       get
@@ -41,6 +51,10 @@ namespace Rhino.Geometry
         }
       }
     }
+
+    /// <summary>
+    /// Gets or sets whether the view is perspective.
+    /// </summary>
     public bool IsPerspectiveProjection
     {
       get
@@ -58,6 +72,9 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets or sets whether the view projection is locked.
+    /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
@@ -80,6 +97,9 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets the page units/model units quotient.
+    /// </summary>
     public double PageToModelRatio
     {
       get
@@ -92,15 +112,14 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Set the detail viewport's projection so geometry is displayed at a certain scale
+    /// Sets the detail viewport's projection so geometry is displayed at a certain scale
     /// </summary>
-    /// <param name="modelLength">reference model length</param>
-    /// <param name="modelUnits">units for model length</param>
-    /// <param name="pageLength">length on page that the modelLength should equal</param>
-    /// <param name="pageUnits">units for page length</param>
+    /// <param name="modelLength">Reference model length.</param>
+    /// <param name="modelUnits">Units for model length.</param>
+    /// <param name="pageLength">Length on page that the modelLength should equal.</param>
+    /// <param name="pageUnits">Units for page length.</param>
     /// <returns>
-    /// true on success
-    /// false if the viewport's projection is perspective or the input values do not make sense
+    /// true on success. false if the DetailView projection is perspective or input values are incongruous.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>

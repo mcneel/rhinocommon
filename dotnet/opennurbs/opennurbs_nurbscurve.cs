@@ -69,11 +69,11 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get a rational degree 2 NURBS curve representation
-    /// of the ellipse. Note that the parameterization of NURBS curve
-    /// does not match ellsipses transcendental paramaterization.  
+    /// Get a rational degree 2 NURBS curve representation of the ellipse.
+    /// <para>Note that the parameterization of the NURBS curve does not match
+    /// with the transcendental paramaterization of the ellipsis.</para>
     /// </summary>
-    /// <returns>Curve on success, null on failure</returns>
+    /// <returns>A nurbs curve representation of this ellipse or null if no such representation could be made.</returns>
     public static NurbsCurve CreateFromEllipse(Ellipse ellipse)
     {
       NurbsCurve nc = CreateFromCircle(new Circle(ellipse.Plane, 1.0));

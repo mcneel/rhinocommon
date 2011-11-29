@@ -4,6 +4,9 @@ using System.Runtime.InteropServices;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents the values of a plane and two radii in an ellipse.
+  /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 144)]
   [Serializable]
   public struct Ellipse
@@ -16,7 +19,7 @@ namespace Rhino.Geometry
 
     #region constructors
     /// <summary>
-    /// Create a new Ellipse from base plane and both principal radii.
+    /// Initializes a new ellipse from base plane and both principal radii.
     /// </summary>
     /// <param name="plane">Base plane of ellipse.</param>
     /// <param name="radius1">Ellipse radius along base plane X direction.</param>
@@ -29,15 +32,16 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new Ellipse from three points.
+    /// Initializes a new ellipse from a center point and the two semiaxes intersections.
     /// </summary>
-    /// <param name="center"></param>
-    /// <param name="second"></param>
-    /// <param name="third"></param>
+    /// <param name="center">A center for the ellipse. The avarage of the foci.</param>
+    /// <param name="second">The intersection of the ellipse X axis with the ellipse itself.</param>
+    /// <param name="third">A point that determines the radius along the Y semiaxis.
+    /// <para>If the point is at right angle with the (center-second),
+    /// it will be the intersection of the ellipse Y axis with the ellipse itself.</para></param>
     public Ellipse(Point3d center, Point3d second, Point3d third)
     {
-      //David: This constructor needs better comments. What do point 2 and 3 do?
-      m_plane = new Plane( center, second, third );
+      m_plane = new Plane(center, second, third);
       m_radius1 = center.DistanceTo(second);
       m_radius2 = center.DistanceTo(third);
     }
@@ -45,7 +49,7 @@ namespace Rhino.Geometry
 
     #region properties
     /// <summary>
-    /// Gets or sets the Base pane of the Ellipse.
+    /// Gets or sets the base plane of the ellipse.
     /// </summary>
     public Plane Plane 
     { 
@@ -54,7 +58,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets or sets the Radius of the ellipse along the Base plane X direction.
+    /// Gets or sets the radius of the ellipse along the base plane X semiaxis.
     /// </summary>
     public double Radius1 
     {
@@ -63,7 +67,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets or sets the Radius of the ellipse along the Base plane Y direction.
+    /// Gets or sets the radius of the ellipse along the base plane Y semiaxis.
     /// </summary>
     public double Radius2 
     {
@@ -74,8 +78,8 @@ namespace Rhino.Geometry
 
     #region methods
     /// <summary>
-    /// Create a nurbs curve representation of this ellipse. 
-    /// This amounts to the same as calling NurbsCurve.CreateFromEllipse().
+    /// Constructs a nurbs curve representation of this ellipse. 
+    /// <para>This is equivalent to calling NurbsCurve.CreateFromEllipse().</para>
     /// </summary>
     /// <returns>A nurbs curve representation of this ellipse or null if no such representation could be made.</returns>
     public NurbsCurve ToNurbsCurve()

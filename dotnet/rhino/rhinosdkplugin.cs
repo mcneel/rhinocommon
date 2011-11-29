@@ -1241,8 +1241,8 @@ namespace Rhino.PlugIns
 #endif
     }
 
-#if RDK_UNCHECKED
-    public enum Features : int
+#if RDK_CHECKED
+    public enum RenderFeature : int
     {
       Materials = 0,
       Environments = 1,
@@ -1256,16 +1256,32 @@ namespace Rhino.PlugIns
       CustomDecalProperties = 9,
     }
 
+    public enum PreviewQuality : int
+    {
+      /// <summary>No quality set</summary>
+      None = 0,
+      /// <summary>Low quality rendering for quick preview</summary>
+      Low = 1,
+      /// <summary>Medium quality rendering for intermediate preview</summary>
+      Medium = 2,
+      /// <summary>Full quality rendering (quality comes from user settings)</summary>
+      Full = 3,
+    };
+
+
+
     /// <summary>
     /// Return true if your renderer supports the specific feature.
     /// </summary>
-    /// <param name="f"></param>
+    /// <param name="feature"></param>
     /// <returns></returns>
-    protected virtual bool SupportsFeature(Features f)
+    protected virtual bool SupportsFeature(RenderFeature feature)
     {
       return true;
     }
+#endif
 
+#if RDK_UNCHECKED
     /// <summary>
     /// You must implement this function to abort preview renderings initiated using CreatePreview (if possible)
     /// </summary>
@@ -1320,7 +1336,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// You should implement this method to create the preview bitmap that will appear in the 
+    /// Implement this method to create the preview bitmap that will appear in the 
     /// content editor's thumbnail display when previewing textures in 2d (UV) mode.
     /// </summary>
     /// <param name="pixels">The pixel dimensions of the bitmap you should return</param>
@@ -1330,14 +1346,6 @@ namespace Rhino.PlugIns
     {
       return null;
     }
-
-    public enum PreviewQualityLevels : int
-    {
-      None    = 0, // No quality set.
-      Low     = 1, // Low quality rendering for quick preview.
-      Medium  = 2, // Medium quality rendering for intermediate preview.
-      Full    = 3, // Full quality rendering (quality comes from user settings).
-    };
 
     /// <summary>
     /// You must implement this method to create the preview bitmap that will appear
@@ -1351,7 +1359,7 @@ namespace Rhino.PlugIns
     /// <param name="quality"></param>
     /// <param name="scene"></param>
     /// <returns></returns>
-    protected virtual System.Drawing.Image CreatePreview(System.Drawing.Size pixels, PreviewQualityLevels quality, PreviewScene scene)
+    protected virtual System.Drawing.Image CreatePreview(System.Drawing.Size pixels, PreviewQuality quality, PreviewScene scene)
     {
       return null;
     }
@@ -1397,9 +1405,9 @@ namespace Rhino.PlugIns
 
 
     #region other virtual function implementation
-    internal delegate int SupportsFeatureCallback(int serial_number, Features f);
+    internal delegate int SupportsFeatureCallback(int serial_number, RenderFeature f);
     private static SupportsFeatureCallback m_OnSupportsFeature = OnSupportsFeature;
-    private static int OnSupportsFeature(int serial_number, Features f)
+    private static int OnSupportsFeature(int serial_number, RenderFeature f)
     {
       RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
       if (null == p)
@@ -1604,7 +1612,7 @@ namespace Rhino.PlugIns
           }
           else
           {
-            preview = p.CreatePreview(new System.Drawing.Size(x, y), (PreviewQualityLevels)iQuality, scene);
+            preview = p.CreatePreview(new System.Drawing.Size(x, y), (PreviewQuality)iQuality, scene);
           }
 
           if (preview != null)

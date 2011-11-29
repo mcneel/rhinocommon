@@ -3603,6 +3603,11 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_RTree_CreateMeshFaceTree(IntPtr pTree, IntPtr pConstMesh);
 
+  //bool ON_RTree_CreatePointCloudTree(ON_RTree* pTree, const ON_PointCloud* pConstCloud)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_RTree_CreatePointCloudTree(IntPtr pTree, IntPtr pConstCloud);
+
   //bool ON_RTree_Search(const ON_RTree* pConstTree, ON_3DPOINT_STRUCT pt0, ON_3DPOINT_STRUCT pt1, int serial_number, RTREESEARCHPROC searchCB)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
@@ -4732,6 +4737,31 @@ internal partial class UnsafeNativeMethods
   //int CRhinoAppGridSettings_GetSetColor(int which, bool set, int set_value, CRhinoAppGridSettings* pGridSettings)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoAppGridSettings_GetSetColor(int which, [MarshalAs(UnmanagedType.U1)]bool set, int set_value, IntPtr pGridSettings);
+
+  //CRhinoAppGeneralSettings* CRhinoAppGeneralSettings_New(bool current)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoAppGeneralSettings_New([MarshalAs(UnmanagedType.U1)]bool current);
+
+  //void CRhinoAppGeneralSettings_Delete(CRhinoAppGeneralSettings* pGeneralSettings)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppGeneralSettings_Delete(IntPtr pGeneralSettings);
+
+  //int CRhinoAppGeneralSettings_GetInt(const CRhinoAppGeneralSettings* pConstGeneralSettings, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoAppGeneralSettings_GetInt(IntPtr pConstGeneralSettings, int which);
+
+  //void CRhinoAppGeneralSettings_SetInt(CRhinoAppGeneralSettings* pGeneralSettings, int which, int val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppGeneralSettings_SetInt(IntPtr pGeneralSettings, int which, int val);
+
+  //bool CRhinoAppGeneralSettings_GetBool(const CRhinoAppGeneralSettings* pConstGeneralSettings, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoAppGeneralSettings_GetBool(IntPtr pConstGeneralSettings, int which);
+
+  //void CRhinoAppGeneralSettings_SetBool(CRhinoAppGeneralSettings* pGeneralSettings, int which, bool val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppGeneralSettings_SetBool(IntPtr pGeneralSettings, int which, [MarshalAs(UnmanagedType.U1)]bool val);
 
   //CRhinoEdgeAnalysisSettings* CRhinoEdgeAnalysisSettings_New(bool current)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

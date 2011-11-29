@@ -19,6 +19,24 @@ RH_C_FUNCTION bool ON_RTree_CreateMeshFaceTree(ON_RTree* pTree, const ON_Mesh* p
   return rc;
 }
 
+RH_C_FUNCTION bool ON_RTree_CreatePointCloudTree(ON_RTree* pTree, const ON_PointCloud* pConstCloud)
+{
+  bool rc = false;
+  if( pTree && pConstCloud )
+  {
+    rc = true;
+    int count = pConstCloud->m_P.Count();
+    ON_3dPoint pt;
+    for( int i=0; i<count; i++ )
+    {
+      pt = pConstCloud->m_P[i];
+      rc = rc && pTree->Insert(&(pt.x), &(pt.x), i);
+    }
+  }
+  return rc;
+}
+
+
 typedef int (CALLBACK* RTREESEARCHPROC)(int serial_number, void* idA, void* idB);
 static RTREESEARCHPROC g_theRTreeSearcher = NULL;
 

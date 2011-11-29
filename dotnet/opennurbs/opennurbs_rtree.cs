@@ -34,6 +34,12 @@ namespace Rhino.Geometry
     /// </summary>
     public int IdB { get { return m_element_b.ToInt32(); } }
     public IntPtr IdBPtr { get { return m_element_b; } }
+
+    /// <summary>
+    /// Arbitrary tag that can be attached to this event args.  This tag will
+    /// "stick" through a single Search
+    /// </summary>
+    public object Tag { get; set; }
   }
 
   /// <summary>
@@ -74,6 +80,23 @@ namespace Rhino.Geometry
       rc.m_memory_pressure = size;
       GC.AddMemoryPressure(rc.m_memory_pressure);
       return rc;
+    }
+
+    public static RTree CreatePointCloudTree(PointCloud cloud)
+    {
+      RTree rc = new RTree();
+      IntPtr pRtree = rc.NonConstPointer();
+      IntPtr pConstCloud = cloud.ConstPointer();
+      if (!UnsafeNativeMethods.ON_RTree_CreatePointCloudTree(pRtree, pConstCloud))
+      {
+        rc.Dispose();
+        rc = null;
+      }
+      uint size = UnsafeNativeMethods.ON_RTree_SizeOf(pRtree);
+      rc.m_memory_pressure = size;
+      GC.AddMemoryPressure(rc.m_memory_pressure);
+      return rc;
+
     }
 
     /// <summary>Insert an element into the tree</summary>
@@ -208,6 +231,7 @@ namespace Rhino.Geometry
       public RTree Sender { get; set; }
       public int SerialNumber { get; set; }
       public EventHandler<RTreeEventArgs> Callback { get; set; }
+      public object Tag { get; set; }
     }
     static List<Callbackholder> m_callbacks;
 
@@ -228,9 +252,11 @@ namespace Rhino.Geometry
       if (cbh != null)
       {
         RTreeEventArgs e = new RTreeEventArgs(idA, idB);
+        e.Tag = cbh.Tag;
         cbh.Callback(cbh.Sender, e);
         if (e.Cancel)
           rc = 0;
+        cbh.Tag = e.Tag;
       }
       return rc;
     }
@@ -244,6 +270,11 @@ namespace Rhino.Geometry
     /// </returns>
     public bool Search(BoundingBox box, EventHandler<RTreeEventArgs> callback)
     {
+      return Search(box, callback, null);
+    }
+
+    public bool Search(BoundingBox box, EventHandler<RTreeEventArgs> callback, object tag)
+    {
       IntPtr pConstTree = ConstPointer();
       if (m_callbacks == null)
         m_callbacks = new List<Callbackholder>();
@@ -251,6 +282,7 @@ namespace Rhino.Geometry
       cbh.SerialNumber = m_next_serial_number++;
       cbh.Callback = callback;
       cbh.Sender = this;
+      cbh.Tag = tag;
       m_callbacks.Add(cbh);
       SearchCallback searcher = CustomSearchCallback;
       bool rc = UnsafeNativeMethods.ON_RTree_Search(pConstTree, box.Min, box.Max, cbh.SerialNumber, searcher);

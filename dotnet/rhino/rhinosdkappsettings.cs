@@ -609,7 +609,6 @@ namespace Rhino.ApplicationSettings
     }
   }
 
-  
   public static class CommandAliasList
   {
     ///<summary>Returns the number of command alias in Rhino.</summary>
@@ -1246,9 +1245,244 @@ namespace Rhino.ApplicationSettings
     }
   }
 
-  /// <summary>
-  /// Snapshot of EdgeAnalysisSettings
-  /// </summary>
+  public enum MouseSelectMode : int
+  {
+    Crossing = 0,
+    Window = 1,
+    Combo = 2
+  }
+
+  public enum MiddleMouseMode : int
+  {
+    PopupMenu = 0,
+    PopupToolbar = 1,
+    RunMacro = 2
+  }
+
+  public class GeneralSettingsState
+  {
+    internal GeneralSettingsState() { }
+
+    public MouseSelectMode MouseSelectMode { get; set; }
+    public int MaximumPopupMenuLines { get; set; }
+
+    /// <summary>
+    /// Undo records will be purged if there are more than MinimumUndoSteps and
+    /// they use more than MaximumUndoMemoryMb
+    /// </summary>
+    public int MinimumUndoSteps { get; set; }
+
+    /// <summary>
+    /// Undo records will be purged if there are more than MinimumUndoSteps and
+    /// they use more than MaximumUndoMemoryMb
+    /// </summary>
+    public int MaximumUndoMemoryMb { get; set; }
+
+    public int NewObjectIsoparmCount { get; set; }
+
+    public MiddleMouseMode MiddleMouseMode { get; set; }
+
+    /// <summary>
+    /// True if right mouse down + delay will pop up context menu on a mouse up if no move happens
+    /// </summary>
+    public bool EnableContextMenu { get; set; }
+
+    /// <summary>
+    /// Time to wait before permitting context menu display
+    /// </summary>
+    public System.TimeSpan ContextMenuDelay { get; set; }
+
+    /// <summary>
+    /// Command help dialog auto-update feature
+    /// </summary>
+    public bool AutoUpdateCommandHelp { get; set; }
+  }
+
+  public static class GeneralSettings
+  {
+    static GeneralSettingsState CreateState(bool current)
+    {
+      IntPtr pGeneralSettings = UnsafeNativeMethods.CRhinoAppGeneralSettings_New(current);
+      GeneralSettingsState rc = new GeneralSettingsState();
+
+      rc.MouseSelectMode = (MouseSelectMode)UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(pGeneralSettings, idxMouseSelectMode);
+      rc.MaximumPopupMenuLines = UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(pGeneralSettings, idxMaxPopupMenuLines);
+      rc.MinimumUndoSteps = UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(pGeneralSettings, idxMinUndoSteps);
+      rc.MaximumUndoMemoryMb = UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(pGeneralSettings, idxMaxUndoMemoryMb);
+      rc.NewObjectIsoparmCount = UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(pGeneralSettings, idxNewObjectIsoparmCount);
+      rc.MiddleMouseMode = (MiddleMouseMode)UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(pGeneralSettings, idxMiddleMouseMode);
+      rc.EnableContextMenu = UnsafeNativeMethods.CRhinoAppGeneralSettings_GetBool(pGeneralSettings, idxEnableContextMenu);
+      int ms = UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(pGeneralSettings, idxContextMenuDelay);
+      rc.ContextMenuDelay = TimeSpan.FromMilliseconds(ms);
+      rc.AutoUpdateCommandHelp = UnsafeNativeMethods.CRhinoAppGeneralSettings_GetBool(pGeneralSettings, idxAutoUpdateCommandContext);
+
+      UnsafeNativeMethods.CRhinoAppGeneralSettings_Delete(pGeneralSettings);
+      return rc;
+    }
+
+    public static GeneralSettingsState GetDefaultState()
+    {
+      return CreateState(false);
+    }
+
+    public static GeneralSettingsState GetCurrentState()
+    {
+      return CreateState(true);
+    }
+
+
+    const int idxMouseSelectMode = 0;
+    const int idxMaxPopupMenuLines = 1;
+    const int idxMinUndoSteps = 2;
+    const int idxMaxUndoMemoryMb = 3;
+    const int idxNewObjectIsoparmCount = 4;
+    const int idxMiddleMouseMode = 5;
+    const int idxContextMenuDelay = 6;
+
+    public static MouseSelectMode MouseSelectMode
+    {
+      get { return (MouseSelectMode)UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(IntPtr.Zero, idxMouseSelectMode); }
+      set { UnsafeNativeMethods.CRhinoAppGeneralSettings_SetInt(IntPtr.Zero, idxMouseSelectMode, (int)value); }
+    }
+
+    public static int MaximumPopupMenuLines
+    {
+      get { return UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(IntPtr.Zero, idxMaxPopupMenuLines); }
+      set { UnsafeNativeMethods.CRhinoAppGeneralSettings_SetInt(IntPtr.Zero, idxMaxPopupMenuLines, value); }
+    }
+
+    //// Popup menu
+    //ON_ClassArray<ON_wString> m_popup_favorites;
+    //// Commands
+    //ON_wString m_startup_commands;
+
+    /// <summary>
+    /// Undo records will be purged if there are more than MinimumUndoSteps and
+    /// they use more than MaximumUndoMemoryMb
+    /// </summary>
+    public static int MinimumUndoSteps
+    {
+      get { return UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(IntPtr.Zero, idxMinUndoSteps); }
+      set { UnsafeNativeMethods.CRhinoAppGeneralSettings_SetInt(IntPtr.Zero, idxMinUndoSteps, value); }
+    }
+
+    /// <summary>
+    /// Undo records will be purged if there are more than MinimumUndoSteps and
+    /// they use more than MaximumUndoMemoryMb
+    /// </summary>
+    public static int MaximumUndoMemoryMb
+    {
+      get { return UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(IntPtr.Zero, idxMaxUndoMemoryMb); }
+      set { UnsafeNativeMethods.CRhinoAppGeneralSettings_SetInt(IntPtr.Zero, idxMaxUndoMemoryMb, value); }
+    }
+
+    public static int NewObjectIsoparmCount
+    {
+      get { return UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(IntPtr.Zero, idxNewObjectIsoparmCount); }
+      set { UnsafeNativeMethods.CRhinoAppGeneralSettings_SetInt(IntPtr.Zero, idxNewObjectIsoparmCount, value); }
+    }
+
+    // This may belong somewhere else
+    //BOOL m_show_surface_isoparms;
+
+    public static MiddleMouseMode MiddleMouseMode
+    {
+      get { return (MiddleMouseMode)UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(IntPtr.Zero, idxMiddleMouseMode); }
+      set { UnsafeNativeMethods.CRhinoAppGeneralSettings_SetInt(IntPtr.Zero, idxMiddleMouseMode, (int)value); }
+    }
+
+    ////Description:
+    ////  Call this method to get the tool bar that will be displayed if
+    ////  popup_toolbar == m_middle_mouse_mode
+    ////Returns:
+    ////  Returns pointer to tool bar to pop-up if found otherwise NULL
+    //const class CRhinoUiToolBar* MiddleMouseToolBar() const;
+    //ON_wString        m_middle_mouse_toolbar_name;
+    //ON_wString        m_middle_mouse_macro;
+
+    const int idxEnableContextMenu = 0;
+    const int idxAutoUpdateCommandContext = 1;
+
+    /// <summary>
+    /// True if right mouse down + delay will pop up context menu on a mouse up if no move happens
+    /// </summary>
+    public static bool EnableContextMenu
+    {
+      get { return UnsafeNativeMethods.CRhinoAppGeneralSettings_GetBool(IntPtr.Zero, idxEnableContextMenu); }
+      set { UnsafeNativeMethods.CRhinoAppGeneralSettings_SetBool(IntPtr.Zero, idxEnableContextMenu, value); }
+    }
+
+    /// <summary>
+    /// Time to wait before permitting context menu display
+    /// </summary>
+    public static System.TimeSpan ContextMenuDelay
+    {
+      get
+      {
+        int ms = UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(IntPtr.Zero, idxContextMenuDelay);
+        return System.TimeSpan.FromMilliseconds(ms);
+      }
+      set
+      {
+        int ms = (int)value.TotalMilliseconds;
+        UnsafeNativeMethods.CRhinoAppGeneralSettings_SetInt(IntPtr.Zero, idxContextMenuDelay, ms);
+      }
+    }
+
+    /// <summary>
+    /// Command help dialog auto-update feature
+    /// </summary>
+    public static bool AutoUpdateCommandHelp
+    {
+      get { return UnsafeNativeMethods.CRhinoAppGeneralSettings_GetBool(IntPtr.Zero, idxAutoUpdateCommandContext); }
+      set { UnsafeNativeMethods.CRhinoAppGeneralSettings_SetBool(IntPtr.Zero, idxAutoUpdateCommandContext, value); }
+    }
+    /*
+    // Material persistence
+
+    // If true, the "Save" command will save every material
+    // including the ones that are not used by any object
+    // or layer.
+    bool m_bSaveUnreferencedMaterials;
+
+    // If true, objects that are copied from other objects
+    // will get the same material index.  Otherwise the new
+    // object gets an identical material with a unique 
+    // material index.
+    bool m_bShareMaterials;
+
+    // If m_bSplitCreasedSurfaces is true, then 
+    // surfaces are automatically split into
+    // polysurfaces with smooth faces when they are added
+    // to the CRhinoDoc.  Never perminantly change the
+    // value of this setting.  It was a mistake to
+    // put this setting in the public SDK.
+    //
+    // To temporarily set m_bSplitCreasedSurfaces to false,
+    // create a CRhinoKeepKinkySurfaces on the stack
+    // like this:
+    // {  
+    //   CRhinoKeepKinkySurfaces keep_kinky_surfaces;
+    //   ... code that adds kinky surfaces to CRhinoDoc ...
+    // }
+    bool m_bSplitCreasedSurfaces;
+
+    // If true, then parent layers control the visible
+    // and locked modes of sublayers. Otherwise, layers
+    // operate independently.
+    bool m_bEnableParentLayerControl;
+
+    // If true, objects with texture mappings that are
+    // copied from other objects will get the same 
+    // texture mapping.  Otherwise the new object gets
+    // a duplicate of the original texture mapping so
+    // that the object's mappings can be independently
+    // modified.  The default is false.
+    bool m_bShareTextureMappings;
+    */
+  }
+
+  /// <summary>Snapshot of EdgeAnalysisSettings</summary>
   public class EdgeAnalysisSettingsState
   {
     internal EdgeAnalysisSettingsState() { }

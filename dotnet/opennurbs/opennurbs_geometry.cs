@@ -182,6 +182,7 @@ namespace Rhino.Geometry
     const int idxON_Light = 32;
     const int idxON_PointGrid = 33;
     const int idxON_MorphControl = 34;
+    const int idxON_BrepLoop = 35;
     #endregion
 
     internal static GeometryBase CreateGeometryHelper(IntPtr pGeometry, object parent)
@@ -320,6 +321,17 @@ namespace Rhino.Geometry
           break;
         case idxON_MorphControl: //34
           rc = new MorphControl(pGeometry, parent);
+          break;
+        case idxON_BrepLoop: //35
+          {
+            int loopindex = -1;
+            IntPtr pBrep = UnsafeNativeMethods.ON_BrepSubItem_Brep(pGeometry, ref loopindex);
+            if (pBrep != IntPtr.Zero && loopindex >= 0)
+            {
+              Brep b = new Brep(pBrep, parent);
+              rc = b.Loops[loopindex];
+            }
+          }
           break;
         default:
           rc = new UnknownGeometry(pGeometry, parent, subobject_index);

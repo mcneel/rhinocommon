@@ -849,15 +849,7 @@ namespace Rhino.Geometry
     internal const int idxFaceCount = 1;
     const int idxIsManifold = 2;
     internal const int idxEdgeCount = 3;
-
-    Rhino.Geometry.Collections.BrepFaceList m_facelist;
-    /// <summary>
-    /// Gets the brep faces list accessor.
-    /// </summary>
-    public Rhino.Geometry.Collections.BrepFaceList Faces
-    {
-      get { return m_facelist ?? (m_facelist = new Rhino.Geometry.Collections.BrepFaceList(this)); }
-    }
+    internal const int idxLoopCount = 4;
 
     Rhino.Geometry.Collections.BrepEdgeList m_edgelist;
     /// <summary>
@@ -868,6 +860,23 @@ namespace Rhino.Geometry
       get { return m_edgelist ?? (m_edgelist = new Rhino.Geometry.Collections.BrepEdgeList(this)); }
     }
 
+    Rhino.Geometry.Collections.BrepLoopList m_looplist;
+    /// <summary>
+    /// Gets the brep loop list accessor
+    /// </summary>
+    public Rhino.Geometry.Collections.BrepLoopList Loops
+    {
+      get { return m_looplist ?? (m_looplist = new Rhino.Geometry.Collections.BrepLoopList(this)); }
+    }
+
+    Rhino.Geometry.Collections.BrepFaceList m_facelist;
+    /// <summary>
+    /// Gets the brep faces list accessor.
+    /// </summary>
+    public Rhino.Geometry.Collections.BrepFaceList Faces
+    {
+      get { return m_facelist ?? (m_facelist = new Rhino.Geometry.Collections.BrepFaceList(this)); }
+    }
 
     /// <summary>
     /// Determines whether this brep is a solid, or a closed oriented manifold.
@@ -1731,6 +1740,118 @@ namespace Rhino.Geometry
         return UnsafeNativeMethods.ON_Brep_BrepEdgePointer(pConstBrep, m_index);
       }
       return IntPtr.Zero;
+    }
+    #endregion
+  }
+
+  /// <summary>
+  /// Each brep loop has a defined type
+  /// </summary>
+  public enum BrepLoopType : int
+  {
+    /// <summary>
+    /// Unknown loop type
+    /// </summary>
+    Unknown = 0,
+    /// <summary>
+    /// 2d loop curves form a simple closed curve with a counterclockwise orientation
+    /// </summary>
+    Outer = 1,
+    /// <summary>
+    /// 2d loop curves form a simple closed curve with a clockwise orientation
+    /// </summary>
+    Inner = 2,
+    /// <summary>
+    /// Always closed - used internally during splitting operations
+    /// </summary>
+    Slit = 3,
+    /// <summary>
+    /// "loop" is a curveonsrf made from a single (open or closed) trim that
+    /// has type TrimType.CurveOnSurface
+    /// </summary>
+    CurveOnSurface = 4,
+    /// <summary>
+    /// "loop" is a PointOnSurface made from a single trim that has
+    /// type TrimType.PointOnSurface
+    /// </summary>
+    PointOnSurface = 5
+  }
+
+  /// <summary>
+  /// Represent a single loop in a Brep object. A loop is composed
+  /// of a list of trim curves
+  /// </summary>
+  public class BrepLoop : GeometryBase
+  {
+    #region fields
+    internal int m_index;
+    internal Brep m_brep;
+    internal BrepLoop(int index, Brep owner)
+    {
+      ConstructConstObject(owner, index);
+      m_index = index;
+      m_brep = owner;
+    }
+    #endregion
+
+    public IntPtr GetConstPtr()
+    {
+      return ConstPointer();
+    }
+    public IntPtr GetNonConstPtr()
+    {
+      return NonConstPointer();
+    }
+
+    internal override IntPtr _InternalGetConstPointer()
+    {
+      IntPtr pConstBrep = m_brep.ConstPointer();
+      return UnsafeNativeMethods.ON_BrepLoop_GetPointer(pConstBrep, m_index);
+    }
+
+
+    #region properties
+    /// <summary>
+    /// Gets the Brep that owns this loop.
+    /// </summary>
+    public Brep Brep
+    {
+      get { return m_brep; }
+    }
+
+    /// <summary>
+    /// Gets the index of this loop in the Brep.Loops collection.
+    /// </summary>
+    public int LoopIndex
+    {
+      get { return m_index; }
+    }
+
+    /// <summary>
+    /// BrepFace this loop belongs to
+    /// </summary>
+    public BrepFace Face
+    {
+      get
+      {
+        IntPtr pConstBrep = m_brep.ConstPointer();
+        int face_index = UnsafeNativeMethods.ON_BrepLoop_FaceIndex(pConstBrep, m_index);
+        if (face_index < 0)
+          return null;
+        return m_brep.Faces[face_index];
+      }
+    }
+
+    /// <summary>
+    /// type of loop
+    /// </summary>
+    public BrepLoopType LoopType
+    {
+      get
+      {
+        IntPtr pConstBrep = m_brep.ConstPointer();
+        return (BrepLoopType)UnsafeNativeMethods.ON_BrepLoop_Type(pConstBrep, m_index);
+      }
     }
     #endregion
   }
@@ -2693,6 +2814,88 @@ namespace Rhino.Geometry.Collections
     public IEnumerator<BrepEdge> GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<BrepEdgeList, BrepEdge>(this);
+    }
+    #endregion
+  }
+
+  /// <summary>
+  /// Provides access to all the Loops in a Brep object.
+  /// </summary>
+  public class BrepLoopList : IEnumerable<BrepLoop>, Rhino.Collections.IRhinoTable<BrepLoop>
+  {
+    readonly Brep m_brep;
+
+    #region constructors
+    internal BrepLoopList(Brep ownerBrep)
+    {
+      m_brep = ownerBrep;
+    }
+    #endregion
+
+    #region properties
+    /// <summary>
+    /// Gets the number of brep loops.
+    /// </summary>
+    public int Count
+    {
+      get
+      {
+        IntPtr pConstBrep = m_brep.ConstPointer();
+        return UnsafeNativeMethods.ON_Brep_GetInt(pConstBrep, Brep.idxLoopCount);
+      }
+    }
+
+    /// <summary>
+    /// Gets the BrepLoop at the given index. 
+    /// The index must be valid or an IndexOutOfRangeException will be thrown.
+    /// </summary>
+    /// <param name="index">Index of BrepLoop to access.</param>
+    /// <exception cref="IndexOutOfRangeException">Thrown when the index is invalid.</exception>
+    /// <returns>The BrepLoop at [index].</returns>
+    public BrepLoop this[int index]
+    {
+      get
+      {
+        int count = Count;
+        if (index < 0 || index >= count)
+        {
+          throw new IndexOutOfRangeException();
+        }
+        if (m_loops == null)
+          m_loops = new List<BrepLoop>(count);
+        int existing_list_count = m_loops.Count;
+        for (int i = existing_list_count; i < count; i++)
+        {
+          m_loops.Add(new BrepLoop(i, m_brep));
+        }
+
+        return m_loops[index];
+      }
+    }
+    List<BrepLoop> m_loops; // = null; initialized to null by runtime
+    #endregion
+
+    #region methods
+    #endregion
+
+    #region IEnumerable Implementation
+
+    /// <summary>
+    /// Gets the same enumerator as <see cref="GetEnumerator"/>.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    /// <summary>
+    /// Gets an enumerator that visits all edges.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    public IEnumerator<BrepLoop> GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<BrepLoopList, BrepLoop>(this);
     }
     #endregion
   }

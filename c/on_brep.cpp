@@ -25,6 +25,32 @@ RH_C_FUNCTION bool ON_BrepEdge_IsSmoothManifoldEdge(const ON_BrepEdge* pConstBre
   return rc;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// ON_BrepLoop
+
+RH_C_FUNCTION int ON_BrepLoop_FaceIndex(const ON_Brep* pConstBrep, int loop_index)
+{
+  int rc = -1;
+  if( pConstBrep && loop_index>=0 && loop_index<pConstBrep->m_L.Count() )
+    rc = pConstBrep->m_L[loop_index].m_fi;
+  return rc;
+}
+
+RH_C_FUNCTION int ON_BrepLoop_Type(const ON_Brep* pConstBrep, int loop_index)
+{
+  int rc = 0;
+  if( pConstBrep && loop_index>=0 && loop_index<pConstBrep->m_L.Count() )
+    rc = (int)(pConstBrep->m_L[loop_index].m_type);
+  return rc;
+}
+
+RH_C_FUNCTION ON_BrepLoop* ON_BrepLoop_GetPointer(const ON_Brep* pConstBrep, int loop_index)
+{
+  ON_BrepLoop* rc = NULL;
+  if( pConstBrep )
+    rc = pConstBrep->Loop(loop_index);
+  return rc;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // ON_Brep
@@ -243,24 +269,29 @@ RH_C_FUNCTION int ON_Brep_GetInt(const ON_Brep* pConstBrep, int which)
   const int idxFaceCount = 1;
   const int idxIsManifold = 2;
   const int idxEdgeCount = 3;
+  const int idxLoopCount = 4;
   int rc = 0;
   if( pConstBrep )
   {
-    if( idxSolidOrientation==which )
+    switch(which)
     {
+    case idxSolidOrientation:
       rc = pConstBrep->SolidOrientation();
-    }
-    else if( idxFaceCount==which )
-    {
+      break;
+    case idxFaceCount:
       rc = pConstBrep->m_F.Count();
-    }
-    else if( idxIsManifold==which )
-    {
+      break;
+    case idxIsManifold:
       rc = pConstBrep->IsManifold()?1:0;
-    }
-    else if( idxEdgeCount==which )
-    {
+      break;
+    case idxEdgeCount:
       rc = pConstBrep->m_E.Count();
+      break;
+    case idxLoopCount:
+      rc = pConstBrep->m_L.Count();
+      break;
+    default:
+      break;
     }
   }
   return rc;

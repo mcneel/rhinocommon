@@ -336,6 +336,7 @@ const int idxON_OrdinateDimension2 = 31;
 const int idxON_Light = 32;
 const int idxON_PointGrid = 33;
 const int idxON_MorphControl = 34;
+const int idxON_BrepLoop = 35;
 
 RH_C_FUNCTION int ON_Geometry_GetGeometryType( const ON_Object* pOnObject)
 {
@@ -478,6 +479,10 @@ RH_C_FUNCTION int ON_Geometry_GetGeometryType( const ON_Object* pOnObject)
     pCastTest = ON_MorphControl::Cast(pGeometry);
     if( pCastTest )
       return idxON_MorphControl; //34
+
+    pCastTest = ON_BrepLoop::Cast(pGeometry);
+    if( pCastTest )
+      return idxON_BrepLoop; //35
   }
   return rc;
 }

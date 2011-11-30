@@ -1254,6 +1254,18 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_BrepEdge_IsSmoothManifoldEdge(IntPtr pConstBrepEdge, double angle_tol);
 
+  //int ON_BrepLoop_FaceIndex(const ON_Brep* pConstBrep, int loop_index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_BrepLoop_FaceIndex(IntPtr pConstBrep, int loop_index);
+
+  //int ON_BrepLoop_Type(const ON_Brep* pConstBrep, int loop_index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_BrepLoop_Type(IntPtr pConstBrep, int loop_index);
+
+  //ON_BrepLoop* ON_BrepLoop_GetPointer(const ON_Brep* pConstBrep, int loop_index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_BrepLoop_GetPointer(IntPtr pConstBrep, int loop_index);
+
   //ON_Brep* ON_Brep_New(const ON_Brep* pOther)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Brep_New(IntPtr pOther);
@@ -2687,6 +2699,16 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Mesh_FaceIsHidden(IntPtr pConstMesh, int index);
+
+  //bool ON_Mesh_FaceHasNakedEdges(const ON_Mesh* pConstMesh, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Mesh_FaceHasNakedEdges(IntPtr pConstMesh, int index);
+
+  //bool ON_Mesh_FaceTopologicalVertices(const ON_Mesh* pConstMesh, int index, /*ARRAY*/int* verts)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Mesh_FaceTopologicalVertices(IntPtr pConstMesh, int index, [In,Out] int[] verts);
 
   //void ON_Mesh_ClearList( ON_Mesh* pMesh, int which )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6024,6 +6046,9 @@ internal partial class UnsafeNativeMethods
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //void CRhinoEventWatcher_SetGroupTableEventCallback(GROUPTABLEEVENTPROC cb, REPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRhinoEventWatcher_SetLayerTableEventCallback(LAYERTABLEEVENTPROC cb, REPORTPROC report)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //ON_UUID CRhinoEventWatcher_LastCommandId()

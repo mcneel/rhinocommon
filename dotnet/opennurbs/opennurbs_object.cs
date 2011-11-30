@@ -79,6 +79,13 @@ namespace Rhino.Runtime
           Rhino.DocObjects.Layer layer = this as Rhino.DocObjects.Layer;
           return layer._InternalGetConstPointer();
         }
+
+        if (this is Rhino.Geometry.BrepLoop)
+        {
+          Rhino.Geometry.BrepLoop loop = this as Rhino.Geometry.BrepLoop;
+          IntPtr pBrep = loop.Brep.NonConstPointer();
+          return UnsafeNativeMethods.ON_BrepLoop_GetPointer(pBrep, loop.LoopIndex);
+        }
       }
       NonConstOperation(); // allows cached data to clean up
       return m_ptr;

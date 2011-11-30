@@ -37,7 +37,6 @@ namespace Rhino.DocObjects.Tables
     {
       get{ return m_event_type; }
     }
-
   }
 
   /// <summary>

@@ -790,6 +790,40 @@ RH_C_FUNCTION bool ON_Mesh_FaceIsHidden(const ON_Mesh* pConstMesh, int index)
   return rc;
 }
 
+RH_C_FUNCTION bool ON_Mesh_FaceHasNakedEdges(const ON_Mesh* pConstMesh, int index)
+{
+  bool rc = false;
+  if( pConstMesh )
+  {
+    const ON_MeshTopology& topology = pConstMesh->Topology();
+    const ON_MeshTopologyFace* face_top = topology.m_topf.At(index);
+    if( face_top )
+    {
+      for( int i=0; i<4; i++ )
+      {
+        int edge = face_top->m_topei[i];
+        if( topology.m_tope[edge].m_topf_count == 1 )
+        {
+          rc = true;
+          break;
+        }
+      }
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Mesh_FaceTopologicalVertices(const ON_Mesh* pConstMesh, int index, /*ARRAY*/int* verts)
+{
+  bool rc = false;
+  if( pConstMesh && verts )
+  {
+    const ON_MeshTopology& topology = pConstMesh->Topology();
+    rc = topology.GetTopFaceVertices(index, verts);
+  }
+  return rc;
+}
+
 RH_C_FUNCTION void ON_Mesh_ClearList( ON_Mesh* pMesh, int which )
 {
   const int idxClearVertices = 0;

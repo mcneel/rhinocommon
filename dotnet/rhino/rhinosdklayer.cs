@@ -512,6 +512,49 @@ namespace Rhino.DocObjects
 #if RHINO_SDK
 namespace Rhino.DocObjects.Tables
 {
+  public enum LayerTableEventType : int
+  {
+    Added = 0,
+    Deleted = 1,
+    Undeleted = 2,
+    Modified = 3,
+    /// <summary>LayerTable.Sort() potentially changed sort order</summary>
+    Sorted = 4,
+    /// <summary>Current layer change</summary>
+    Current = 5
+  }
+
+  public class LayerTableEventArgs : EventArgs
+  {
+    readonly int m_docId;
+    readonly LayerTableEventType m_event_type;
+    readonly int m_layer_index;
+
+    internal LayerTableEventArgs(int docId, int event_type, int index)
+    {
+      m_docId = docId;
+      m_event_type = (LayerTableEventType)event_type;
+      m_layer_index = index;
+    }
+
+    RhinoDoc m_doc = null;
+    public RhinoDoc Document
+    {
+      get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_docId)); }
+    }
+
+    public LayerTableEventType EventType
+    {
+      get { return m_event_type; }
+    }
+
+    public int LayerIndex
+    {
+      get { return m_layer_index; }
+    }
+  }
+
+
   public sealed class LayerTable : IEnumerable<Layer>, Rhino.Collections.IRhinoTable<Layer>
   {
     private readonly RhinoDoc m_doc;

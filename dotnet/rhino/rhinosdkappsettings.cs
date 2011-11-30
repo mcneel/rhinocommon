@@ -761,6 +761,79 @@ namespace Rhino.ApplicationSettings
     }
   }
 
+  /// <summary>Snapshot of EdgeAnalysisSettings</summary>
+  public class EdgeAnalysisSettingsState
+  {
+    internal EdgeAnalysisSettingsState() { }
+    public Color ShowEdgeColor { get; set; }
+    public int ShowEdges { get; set; }
+  }
+
+  public static class EdgeAnalysisSettings
+  {
+    static EdgeAnalysisSettingsState CreateState(bool current)
+    {
+      IntPtr pSettings = UnsafeNativeMethods.CRhinoEdgeAnalysisSettings_New(current);
+      EdgeAnalysisSettingsState rc = new EdgeAnalysisSettingsState();
+
+      int abgr = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0, pSettings);
+      rc.ShowEdgeColor = ColorTranslator.FromWin32(abgr);
+      rc.ShowEdges = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(false, 0, pSettings);
+      UnsafeNativeMethods.CRhinoEdgeAnalysisSettings_Delete(pSettings);
+      return rc;
+    }
+
+    public static EdgeAnalysisSettingsState GetDefaultState()
+    {
+      return CreateState(false);
+    }
+
+    public static EdgeAnalysisSettingsState GetCurrentState()
+    {
+      return CreateState(true);
+    }
+
+    public static void RestoreDefaults()
+    {
+      UpdateFromState(GetDefaultState());
+    }
+
+    public static void UpdateFromState(EdgeAnalysisSettingsState state)
+    {
+      ShowEdgeColor = state.ShowEdgeColor;
+      ShowEdges = state.ShowEdges;
+    }
+
+
+    ///<summary>color used to enhance display edges in commands like ShowEdges and ShowNakedEdges.</summary>
+    public static Color ShowEdgeColor
+    {
+      get
+      {
+        int abgr = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0, IntPtr.Zero);
+        return ColorTranslator.FromWin32(abgr);
+      }
+      set
+      {
+        int argb = value.ToArgb();
+        UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(true, argb, IntPtr.Zero);
+      }
+    }
+
+    ///<summary>0 = all, 1 = naked, 2 = non-manifold</summary>
+    public static int ShowEdges
+    {
+      get
+      {
+        return UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(false, 0, IntPtr.Zero);
+      }
+      set
+      {
+        UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(true, value, IntPtr.Zero);
+      }
+    }
+  }
+
   public class FileSettingsState
   {
     internal FileSettingsState() { }
@@ -1480,79 +1553,6 @@ namespace Rhino.ApplicationSettings
     // modified.  The default is false.
     bool m_bShareTextureMappings;
     */
-  }
-
-  /// <summary>Snapshot of EdgeAnalysisSettings</summary>
-  public class EdgeAnalysisSettingsState
-  {
-    internal EdgeAnalysisSettingsState() { }
-    public Color ShowEdgeColor { get; set; }
-    public int ShowEdges { get; set; }
-  }
-  
-  public static class EdgeAnalysisSettings
-  {
-    static EdgeAnalysisSettingsState CreateState(bool current)
-    {
-      IntPtr pSettings = UnsafeNativeMethods.CRhinoEdgeAnalysisSettings_New(current);
-      EdgeAnalysisSettingsState rc = new EdgeAnalysisSettingsState();
-
-      int abgr = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0, pSettings);
-      rc.ShowEdgeColor = ColorTranslator.FromWin32(abgr);
-      rc.ShowEdges = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(false, 0, pSettings);
-      UnsafeNativeMethods.CRhinoEdgeAnalysisSettings_Delete(pSettings);
-      return rc;
-    }
-
-    public static EdgeAnalysisSettingsState GetDefaultState()
-    {
-      return CreateState(false);
-    }
-
-    public static EdgeAnalysisSettingsState GetCurrentState()
-    {
-      return CreateState(true);
-    }
-
-    public static void RestoreDefaults()
-    {
-      UpdateFromState(GetDefaultState());
-    }
-
-    public static void UpdateFromState(EdgeAnalysisSettingsState state)
-    {
-      ShowEdgeColor = state.ShowEdgeColor;
-      ShowEdges = state.ShowEdges;
-    }
-
-
-    ///<summary>color used to enhance display edges in commands like ShowEdges and ShowNakedEdges.</summary>
-    public static Color ShowEdgeColor
-    {
-      get
-      {
-        int abgr = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0, IntPtr.Zero);
-        return ColorTranslator.FromWin32(abgr);
-      }
-      set
-      {
-        int argb = value.ToArgb();
-        UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(true, argb, IntPtr.Zero);
-      }
-    }
-
-    ///<summary>0 = all, 1 = naked, 2 = non-manifold</summary>
-    public static int ShowEdges
-    {
-      get
-      {
-        return UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(false, 0, IntPtr.Zero);
-      }
-      set
-      {
-        UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(true, value, IntPtr.Zero);
-      }
-    }
   }
 
 

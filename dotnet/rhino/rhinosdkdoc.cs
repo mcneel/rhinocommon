@@ -1457,8 +1457,51 @@ namespace Rhino
 
 
     internal delegate void RhinoTableCallback(int docId, int event_type, int index, IntPtr pConstOldSettings);
-    private static RhinoTableCallback m_OnGroupTableEventCallback;
+    private static RhinoTableCallback m_OnLayerTableEventCallback;
+    private static void OnLayerTableEvent(int docId, int event_type, int index, IntPtr pConstOldSettings)
+    {
+      if (m_layer_table_event != null)
+      {
+        try
+        {
+          DocObjects.Tables.LayerTableEventArgs args = new DocObjects.Tables.LayerTableEventArgs(docId, event_type, index);
+          m_layer_table_event(null, args);
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
+    internal static EventHandler<DocObjects.Tables.LayerTableEventArgs> m_layer_table_event;
 
+    /// <summary>
+    /// Called when any modification happens to a document's layer table
+    /// </summary>
+    public static event EventHandler<Rhino.DocObjects.Tables.LayerTableEventArgs> LayerTableEvent
+    {
+      add
+      {
+        if (m_layer_table_event == null)
+        {
+          m_OnLayerTableEventCallback = OnLayerTableEvent;
+          UnsafeNativeMethods.CRhinoEventWatcher_SetLayerTableEventCallback(m_OnLayerTableEventCallback, Rhino.Runtime.HostUtils.m_ew_report);
+        }
+        m_layer_table_event += value;
+      }
+      remove
+      {
+        m_layer_table_event -= value;
+        if (m_layer_table_event == null)
+        {
+          UnsafeNativeMethods.CRhinoEventWatcher_SetLayerTableEventCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+          m_OnLayerTableEventCallback = null;
+        }
+      }
+    }
+
+
+    private static RhinoTableCallback m_OnGroupTableEventCallback;
     private static void OnGroupTableEvent(int docId, int event_type, int index, IntPtr pConstOldSettings)
     {
       if (m_group_table_event != null)
@@ -1501,7 +1544,6 @@ namespace Rhino
       }
     }
 
-//    public static event EventHandler<EventArgs> LayerTableEvent;
     #endregion
 
 #if RDK_UNCHECKED

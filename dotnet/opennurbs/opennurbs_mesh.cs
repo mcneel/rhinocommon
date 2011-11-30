@@ -3154,6 +3154,27 @@ namespace Rhino.Geometry.Collections
       IntPtr pConstMesh = m_mesh.ConstPointer();
       return UnsafeNativeMethods.ON_Mesh_FaceIsHidden(pConstMesh, faceIndex);
     }
+
+    /// <summary>
+    /// Returns true if at least one of the Face's edges are not topologically
+    /// connected to any other faces
+    /// </summary>
+    /// <param name="faceIndex"></param>
+    /// <returns></returns>
+    public bool HasNakedEdges(int faceIndex)
+    {
+      IntPtr pConstMesh = m_mesh.ConstPointer();
+      return UnsafeNativeMethods.ON_Mesh_FaceHasNakedEdges(pConstMesh, faceIndex);
+    }
+
+    public int[] GetTopologicalVertices(int faceIndex)
+    {
+      IntPtr pConstMesh = m_mesh.ConstPointer();
+      int[] v = new int[4];
+      if (!UnsafeNativeMethods.ON_Mesh_FaceTopologicalVertices(pConstMesh, faceIndex, v))
+        return new int[0];
+      return v;
+    }
     #endregion
 
     #region IEnumerable implementation

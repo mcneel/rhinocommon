@@ -5,7 +5,7 @@ using Rhino.Runtime;
 using System.Collections.Generic;
 using System.Drawing;
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
 using Rhino.Render;
 #endif
 
@@ -1267,7 +1267,6 @@ namespace Rhino.PlugIns
       /// <summary>Full quality rendering (quality comes from user settings)</summary>
       Full = 3,
     };
-
 
 
     /// <summary>

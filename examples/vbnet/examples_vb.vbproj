@@ -104,6 +104,7 @@
     <Compile Include="ex_addtruncatedcone.vb" />
     <Compile Include="ex_advanceddisplay.vb" />
     <Compile Include="ex_arclengthpoint.vb" />
+    <Compile Include="ex_arraybydistance.vb" />
     <Compile Include="ex_blockinsertionpoint.vb" />
     <Compile Include="ex_booleandifference.vb" />
     <Compile Include="ex_circlecenter.vb" />

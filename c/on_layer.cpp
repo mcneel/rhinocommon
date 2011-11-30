@@ -53,6 +53,14 @@ RH_C_FUNCTION void ON_Layer_SetColor(ON_Layer* pLayer, int argb, bool regularCol
   }
 }
 
+RH_C_FUNCTION int ON_Layer_GetIndex(const ON_Layer* pLayer)
+{
+  int rc = -1;
+  if( pLayer )
+    rc = pLayer->LayerIndex();
+  return rc;
+}
+
 RH_C_FUNCTION int ON_Layer_GetInt(const ON_Layer* pLayer, int which)
 {
   const int idxLinetypeIndex = 0;

@@ -59,6 +59,7 @@ namespace examples_cs
       this.Controls.Add(this.checkBox1);
       this.Name = "OptionsControl";
       this.Size = new System.Drawing.Size(344, 385);
+      this.Load += new System.EventHandler(this.OptionsControl_Load);
       this.ResumeLayout(false);
       this.PerformLayout();
 

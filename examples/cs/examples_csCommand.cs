@@ -341,6 +341,12 @@ namespace examples_cs
       
       return Rhino.Commands.Result.Success;
     }
+
+
+    void Command_EndCommand(object sender, Rhino.Commands.CommandEventArgs e)
+    {
+      string s = e.CommandPluginName;
+    }
   }
 }
 

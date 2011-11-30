@@ -36,6 +36,25 @@ namespace Rhino.DocObjects
     }
 #endif
 
+    class LayerHolder
+    {
+      IntPtr m_pConstLayer;
+      public LayerHolder(IntPtr pConstLayer)
+      {
+        m_pConstLayer = pConstLayer;
+      }
+      public IntPtr ConstPointer()
+      {
+        return m_pConstLayer;
+      }
+    }
+
+    internal Layer(IntPtr pConstLayer)
+    {
+      LayerHolder holder = new LayerHolder(pConstLayer);
+      base.ConstructConstObject(holder, -1);
+    }
+
     internal Layer(Guid id, Rhino.FileIO.File3dm onxModel)
     {
       m_id = id;
@@ -92,6 +111,12 @@ namespace Rhino.DocObjects
       {
         IntPtr pModel = m_onx_model.NonConstPointer();
         return UnsafeNativeMethods.ONX_Model_GetLayerPointer(pModel, m_id);
+      }
+
+      if (m__parent is LayerHolder)
+      {
+        LayerHolder holder = m__parent as LayerHolder;
+        return holder.ConstPointer();
       }
       return IntPtr.Zero;
     }
@@ -529,12 +554,14 @@ namespace Rhino.DocObjects.Tables
     readonly int m_docId;
     readonly LayerTableEventType m_event_type;
     readonly int m_layer_index;
+    IntPtr m_pOldLayer;
 
-    internal LayerTableEventArgs(int docId, int event_type, int index)
+    internal LayerTableEventArgs(int docId, int event_type, int index, IntPtr pConstOldLayer)
     {
       m_docId = docId;
       m_event_type = (LayerTableEventType)event_type;
       m_layer_index = index;
+      m_pOldLayer = pConstOldLayer;
     }
 
     RhinoDoc m_doc = null;
@@ -551,6 +578,32 @@ namespace Rhino.DocObjects.Tables
     public int LayerIndex
     {
       get { return m_layer_index; }
+    }
+
+    Layer m_new_layer;
+    public Layer NewState
+    {
+      get
+      {
+        if (m_new_layer == null)
+        {
+          m_new_layer = new Layer(LayerIndex, Document);
+        }
+        return m_new_layer;
+      }
+    }
+
+    Layer m_old_layer;
+    public Layer OldState
+    {
+      get
+      {
+        if (m_old_layer == null && m_pOldLayer!=IntPtr.Zero)
+        {
+          m_old_layer = new Layer(m_pOldLayer);
+        }
+        return m_old_layer;
+      }
     }
   }
 

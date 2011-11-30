@@ -1794,15 +1794,6 @@ namespace Rhino.Geometry
     }
     #endregion
 
-    public IntPtr GetConstPtr()
-    {
-      return ConstPointer();
-    }
-    public IntPtr GetNonConstPtr()
-    {
-      return NonConstPointer();
-    }
-
     internal override IntPtr _InternalGetConstPointer()
     {
       IntPtr pConstBrep = m_brep.ConstPointer();

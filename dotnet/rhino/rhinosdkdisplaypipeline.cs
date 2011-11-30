@@ -1799,6 +1799,16 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawObject(pThis, pRhinoObject); 
     }
 
+    /// <summary>
+    /// Draw a RhinoObject with an applied transformation
+    /// </summary>
+    /// <param name="rhinoObject"></param>
+    /// <param name="xform"></param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_arraybydistance.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_arraybydistance.cs' lang='cs'/>
+    /// <code source='examples\py\ex_arraybydistance.py' lang='py'/>
+    /// </example>
     public void DrawObject(DocObjects.RhinoObject rhinoObject, Transform xform)
     {
       IntPtr pThis = NonConstPointer();

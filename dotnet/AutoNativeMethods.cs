@@ -2151,6 +2151,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Layer_SetColor(IntPtr pLayer, int argb, [MarshalAs(UnmanagedType.U1)]bool regularColor);
 
+  //int ON_Layer_GetIndex(const ON_Layer* pLayer)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Layer_GetIndex(IntPtr pLayer);
+
   //int ON_Layer_GetInt(const ON_Layer* pLayer, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Layer_GetInt(IntPtr pLayer, int which);

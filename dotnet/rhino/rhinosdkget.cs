@@ -277,6 +277,41 @@ namespace Rhino.Input
       return (Rhino.Commands.Result)rc;
     }
 
+    /// <summary>Easy to use bool getter</summary>
+    /// <param name="prompt">command prompt</param>
+    /// <param name="acceptNothing">if true, the user can press enter</param>
+    /// <param name="offPrompt"></param>
+    /// <param name="onPrompt"></param>
+    /// <param name="boolValue">default bool value set to this and returned here</param>
+    /// <returns></returns>
+    public static Commands.Result GetBool(string prompt, bool acceptNothing, string offPrompt, string onPrompt, ref bool boolValue)
+    {
+      Commands.Result result = Commands.Result.Failure;
+      using (Rhino.Input.Custom.GetOption get = new Rhino.Input.Custom.GetOption())
+      {
+        get.SetCommandPrompt(prompt);
+        get.AcceptNothing(acceptNothing);
+        if (acceptNothing)
+          get.SetDefaultString(boolValue ? onPrompt : offPrompt);
+        int onValue = get.AddOption(onPrompt);
+        int offValue = get.AddOption(offPrompt);
+        get.Get();
+        result = get.CommandResult();
+        if (result == Commands.Result.Success && get.Result() == GetResult.Option)
+        {
+          Rhino.Input.Custom.CommandLineOption option = get.Option();
+          if (null != option)
+          {
+            if (option.Index == onValue)
+              boolValue = true;
+            else if (option.Index == offValue)
+              boolValue = false;
+          }
+        }
+      }
+      return result;
+    }
+
 
     /// <summary>
     /// Easy to use number getter.
@@ -1388,6 +1423,11 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>Clear all command options</summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_arraybydistance.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_arraybydistance.cs' lang='cs'/>
+    /// <code source='examples\py\ex_arraybydistance.py' lang='py'/>
+    /// </example>
     public void ClearCommandOptions()
     {
       IntPtr ptr = NonConstPointer();

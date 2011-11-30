@@ -442,6 +442,11 @@ namespace Rhino.Input.Custom
     /// <param name="from"></param>
     /// <param name="to"></param>
     /// <returns>true if constraint could be applied</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_arraybydistance.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_arraybydistance.cs' lang='cs'/>
+    /// <code source='examples\py\ex_arraybydistance.py' lang='py'/>
+    /// </example>
     public bool Constrain(Point3d from, Point3d to)
     {
       IntPtr ptr = NonConstPointer();
@@ -632,6 +637,11 @@ namespace Rhino.Input.Custom
     /// Remove any explicit constraints added by calls to GetPoint::Constraint() and enable
     /// the built-in constraint options.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_arraybydistance.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_arraybydistance.cs' lang='cs'/>
+    /// <code source='examples\py\ex_arraybydistance.py' lang='py'/>
+    /// </example>
     public void ClearConstraints()
     {
       IntPtr ptr = NonConstPointer();
@@ -724,6 +734,16 @@ namespace Rhino.Input.Custom
         MouseMove(this, e);
     }
 
+    /// <summary>
+    /// Arbitrary object that can be attached to this GetPoint instance.  Useful for passing some
+    /// information that you may need in a DynamicDraw event since you can get at this Tag from
+    /// the GetPointDrawEventArgs
+    /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_arraybydistance.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_arraybydistance.cs' lang='cs'/>
+    /// <code source='examples\py\ex_arraybydistance.py' lang='py'/>
+    /// </example>
     public object Tag { get; set; }
 
     /// <summary>
@@ -966,6 +986,14 @@ namespace Rhino.Input.Custom
       get { return m_point; }
     }
 
+    /// <summary>
+    /// GetPoint class that this draw event originated from
+    /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_arraybydistance.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_arraybydistance.cs' lang='cs'/>
+    /// <code source='examples\py\ex_arraybydistance.py' lang='py'/>
+    /// </example>
     public GetPoint Source { get { return m_source; } }
   }
 

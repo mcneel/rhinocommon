@@ -48,6 +48,11 @@ namespace examples_cs
       m_dict.Set("RunCommand Count", count);
     }
 
+    public override Rhino.PlugIns.PlugInLoadTime LoadTime
+    {
+      get { return Rhino.PlugIns.PlugInLoadTime.WhenNeededOrOptionsDialog; }
+    }
+
     protected override void OptionsDialogPages(System.Collections.Generic.List<Rhino.UI.OptionsDialogPage> pages)
     {
       pages.Add(new CustomOptionPage());

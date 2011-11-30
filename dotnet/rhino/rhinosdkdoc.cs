@@ -1464,7 +1464,7 @@ namespace Rhino
       {
         try
         {
-          DocObjects.Tables.LayerTableEventArgs args = new DocObjects.Tables.LayerTableEventArgs(docId, event_type, index);
+          DocObjects.Tables.LayerTableEventArgs args = new DocObjects.Tables.LayerTableEventArgs(docId, event_type, index, pConstOldSettings);
           m_layer_table_event(null, args);
         }
         catch (Exception ex)

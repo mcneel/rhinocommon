@@ -822,6 +822,32 @@ RH_C_FUNCTION void ONX_Model_ReadNotes(const RHMONO_STRING* path, CRhCmnStringHo
   }
 }
 
+RH_C_FUNCTION void ONX_Model_ReadApplicationDetails(const RHMONO_STRING* path, CRhCmnStringHolder* pApplicationName, CRhCmnStringHolder* pApplicationUrl, CRhCmnStringHolder* pApplicationDetails)
+{
+  if( path && pApplicationName && pApplicationUrl && pApplicationDetails )
+  {
+    INPUTSTRINGCOERCE(_path, path);
+
+    FILE* fp = ON::OpenFile( _path, L"rb" );
+    if( fp )
+    {
+      ON_BinaryFile file( ON::read3dm, fp);
+      int version = 0;
+      ON_String comments;
+      BOOL rc = file.Read3dmStartSection( &version, comments );
+      if(rc)
+      {
+        ON_3dmProperties prop;
+        file.Read3dmProperties(prop);
+        pApplicationName->Set(prop.m_Application.m_application_name);
+        pApplicationUrl->Set(prop.m_Application.m_application_URL);
+        pApplicationDetails->Set(prop.m_Application.m_application_details);
+      }
+      ON::CloseFile(fp);
+    }
+  }
+}
+
 RH_C_FUNCTION ONX_Model* ONX_Model_ReadFile(const RHMONO_STRING* path, CRhCmnStringHolder* pStringHolder)
 {
   ONX_Model* rc = NULL;

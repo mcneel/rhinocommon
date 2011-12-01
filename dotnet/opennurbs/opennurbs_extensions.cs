@@ -85,6 +85,31 @@ namespace Rhino.FileIO
         return sh.ToString();
       }
     }
+
+    /// <summary>
+    /// Reads only the application information from an existing 3dm file
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="applicationUrl"></param>
+    /// <param name="applicationDetails"></param>
+    public static void ReadApplicationData(string path, out string applicationName, out string applicationUrl, out string applicationDetails)
+    {
+      if (!File.Exists(path))
+        throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
+      using (Rhino.Runtime.StringHolder shName = new Runtime.StringHolder())
+      using (Rhino.Runtime.StringHolder shUrl = new Runtime.StringHolder())
+      using (Rhino.Runtime.StringHolder shDetails = new Runtime.StringHolder())
+      {
+        IntPtr pName = shName.NonConstPointer();
+        IntPtr pUrl = shUrl.NonConstPointer();
+        IntPtr pDetails = shUrl.NonConstPointer();
+        UnsafeNativeMethods.ONX_Model_ReadApplicationDetails(path, pName, pUrl, pDetails);
+        applicationName = shName.ToString();
+        applicationUrl = shUrl.ToString();
+        applicationDetails = shDetails.ToString();
+      }
+    }
     #endregion
 
     /// <summary>

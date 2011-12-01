@@ -703,6 +703,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_ReadNotes([MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr pString);
 
+  //void ONX_Model_ReadApplicationDetails(const RHMONO_STRING* path, CRhCmnStringHolder* pApplicationName, CRhCmnStringHolder* pApplicationUrl, CRhCmnStringHolder* pApplicationDetails)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_ReadApplicationDetails([MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr pApplicationName, IntPtr pApplicationUrl, IntPtr pApplicationDetails);
+
   //ONX_Model* ONX_Model_ReadFile(const RHMONO_STRING* path, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ONX_Model_ReadFile([MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr pStringHolder);

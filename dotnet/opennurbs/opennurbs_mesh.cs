@@ -3035,6 +3035,19 @@ namespace Rhino.Geometry.Collections
       return rc;
     }
 
+    public BoundingBox GetFaceBoundingBox(int faceIndex)
+    {
+      Point3f a, b, c, d;
+      if (!GetFaceVertices(faceIndex, out a, out b, out c, out d))
+        return BoundingBox.Empty;
+      BoundingBox rc = BoundingBox.Empty;
+      rc.Union(a);
+      rc.Union(b);
+      rc.Union(c);
+      rc.Union(d);
+      return rc;
+    }
+
     public Point3d GetFaceCenter(int faceIndex)
     {
       IntPtr pConstThis = m_mesh.ConstPointer();

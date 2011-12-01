@@ -1910,6 +1910,9 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Every face has a single outer loop
+    /// </summary>
     public BrepLoop OuterLoop
     {
       get

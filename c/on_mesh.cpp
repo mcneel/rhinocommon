@@ -615,6 +615,7 @@ RH_C_FUNCTION int ON_Mesh_DeleteFace(ON_Mesh* pMesh, int count, /*ARRAY*/const i
     // SDK is forcing the user to pass an array of faces to delete instead of a
     // single face.
     pMesh->Compact();
+    pMesh->DestroyTopology();
   }
   return rc;
 }

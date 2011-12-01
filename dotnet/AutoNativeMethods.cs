@@ -1266,6 +1266,18 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_BrepLoop_GetPointer(IntPtr pConstBrep, int loop_index);
 
+  //int ON_BrepFace_LoopCount(const ON_BrepFace* pConstBrepFace)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_BrepFace_LoopCount(IntPtr pConstBrepFace);
+
+  //int ON_BrepFace_LoopIndex(const ON_BrepFace* pConstBrepFace, int index_in_face)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_BrepFace_LoopIndex(IntPtr pConstBrepFace, int index_in_face);
+
+  //int ON_BrepFace_OuterLoopIndex(const ON_BrepFace* pConstBrepFace)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_BrepFace_OuterLoopIndex(IntPtr pConstBrepFace);
+
   //ON_Brep* ON_Brep_New(const ON_Brep* pOther)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Brep_New(IntPtr pOther);
@@ -5405,6 +5417,10 @@ internal partial class UnsafeNativeMethods
   //HBITMAP CRhinoDisplayPipeline_DrawToBitmap(CRhinoViewport* pViewport, int width, int height)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoDisplayPipeline_DrawToBitmap(IntPtr pViewport, int width, int height);
+
+  //void CRhinoDisplayPipeline_DrawDirectionArrow(CRhinoDisplayPipeline* pPipeline, ON_3DPOINT_STRUCT location, ON_3DVECTOR_STRUCT direction, int argb)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_DrawDirectionArrow(IntPtr pPipeline, Point3d location, Vector3d direction, int argb);
 
   //void CRhinoDisplayPipeline_DrawArrows(CRhinoDisplayPipeline* pPipeline, int line_count, /*ARRAY*/const ON_Line* lines, int argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

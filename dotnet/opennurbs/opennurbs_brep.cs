@@ -1896,6 +1896,31 @@ namespace Rhino.Geometry
     {
       get { return m_index; }
     }
+
+
+    Rhino.Geometry.Collections.BrepLoopList m_loop_list;
+    /// <summary>
+    /// Loops in this face
+    /// </summary>
+    public Rhino.Geometry.Collections.BrepLoopList Loops
+    {
+      get
+      {
+        return m_loop_list ?? (m_loop_list = new Rhino.Geometry.Collections.BrepLoopList(this));
+      }
+    }
+
+    public BrepLoop OuterLoop
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        int index = UnsafeNativeMethods.ON_BrepFace_OuterLoopIndex(pConstThis);
+        if (index < 0)
+          return null;
+        return Loops[index];
+      }
+    }
     #endregion
 
     #region methods
@@ -2815,11 +2840,18 @@ namespace Rhino.Geometry.Collections
   public class BrepLoopList : IEnumerable<BrepLoop>, Rhino.Collections.IRhinoTable<BrepLoop>
   {
     readonly Brep m_brep;
+    readonly BrepFace m_brepface;
 
     #region constructors
     internal BrepLoopList(Brep ownerBrep)
     {
       m_brep = ownerBrep;
+      m_brepface = null;
+    }
+    internal BrepLoopList(BrepFace ownerFace)
+    {
+      m_brep = ownerFace.m_brep;
+      m_brepface = ownerFace;
     }
     #endregion
 
@@ -2831,6 +2863,11 @@ namespace Rhino.Geometry.Collections
     {
       get
       {
+        if (m_brepface != null)
+        {
+          IntPtr pConstFace = m_brepface.ConstPointer();
+          return UnsafeNativeMethods.ON_BrepFace_LoopCount(pConstFace);
+        }
         IntPtr pConstBrep = m_brep.ConstPointer();
         return UnsafeNativeMethods.ON_Brep_GetInt(pConstBrep, Brep.idxLoopCount);
       }
@@ -2855,9 +2892,17 @@ namespace Rhino.Geometry.Collections
         if (m_loops == null)
           m_loops = new List<BrepLoop>(count);
         int existing_list_count = m_loops.Count;
+
+        IntPtr pConstFace = IntPtr.Zero;
+        if (m_brepface != null)
+          pConstFace = m_brepface.ConstPointer();
+
         for (int i = existing_list_count; i < count; i++)
         {
-          m_loops.Add(new BrepLoop(i, m_brep));
+          int loop_index = i;
+          if (pConstFace != IntPtr.Zero)
+            loop_index = UnsafeNativeMethods.ON_BrepFace_LoopIndex(pConstFace, i);
+          m_loops.Add(new BrepLoop(loop_index, m_brep));
         }
 
         return m_loops[index];

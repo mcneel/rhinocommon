@@ -53,6 +53,36 @@ RH_C_FUNCTION ON_BrepLoop* ON_BrepLoop_GetPointer(const ON_Brep* pConstBrep, int
 }
 
 //////////////////////////////////////////////////////////////////////////
+// ON_BrepFace
+
+RH_C_FUNCTION int ON_BrepFace_LoopCount(const ON_BrepFace* pConstBrepFace)
+{
+  int rc = 0;
+  if( pConstBrepFace )
+    rc = pConstBrepFace->LoopCount();
+  return rc;
+}
+
+RH_C_FUNCTION int ON_BrepFace_LoopIndex(const ON_BrepFace* pConstBrepFace, int index_in_face)
+{
+  int rc = -1;
+  if( pConstBrepFace && index_in_face>=0 && index_in_face<pConstBrepFace->LoopCount() )
+    rc = pConstBrepFace->m_li[index_in_face];
+  return rc;
+}
+
+RH_C_FUNCTION int ON_BrepFace_OuterLoopIndex(const ON_BrepFace* pConstBrepFace)
+{
+  int rc = -1;
+  if( pConstBrepFace )
+  {
+    ON_BrepLoop* pLoop = pConstBrepFace->OuterLoop();
+    if( pLoop )
+      rc = pLoop->m_loop_index;
+  }
+  return rc;
+}
+//////////////////////////////////////////////////////////////////////////
 // ON_Brep
 
 RH_C_FUNCTION ON_Brep* ON_Brep_New(const ON_Brep* pOther)

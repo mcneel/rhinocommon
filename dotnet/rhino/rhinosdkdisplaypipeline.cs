@@ -1051,6 +1051,11 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawPointCloud(m_ptr, pCloud, size, color.ToArgb());
     }
 
+    public void DrawDirectionArrow(Point3d location, Vector3d direction, System.Drawing.Color color)
+    {
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawDirectionArrow(m_ptr, location, direction, color.ToArgb());
+    }
+
     /// <summary>
     /// Draw a single arrow object. An arrow consists of a Shaft and an Arrow head at the end of the shaft.
     /// </summary>

@@ -10,9 +10,12 @@ namespace Rhino.DocObjects
   //public class ON_3dmAnnotationSettings { }
   //public class ON_3dmConstructionPlaneGridDefaults { }
 
+  // Can't add a cref to an XML comment here since the NamedConstructionPlaneTable
+  // is not included in the OpenNURBS flavor build of RhinoCommon
+
   /// <summary>
   /// Represents a contruction plane inside the document.
-  /// <para>Use <see cref="Rhino.DocObjects.Tables.NamedConstructionPlaneTable"/>
+  /// <para>Use Rhino.DocObjects.Tables.NamedConstructionPlaneTable
   /// methods and indexers to add and access a <see cref="ConstructionPlane"/>.</para>
   /// </summary>
   public class ConstructionPlane
@@ -679,7 +682,9 @@ namespace Rhino.Render
   /// </summary>
   public class RenderSettings : IDisposable
   {
+#if RHINO_SDK
     Rhino.RhinoDoc m_doc;
+#endif
     IntPtr m_ptr = IntPtr.Zero;
 
     /// <summary>
@@ -700,7 +705,11 @@ namespace Rhino.Render
     {
       if( m_ptr!=IntPtr.Zero )
         return m_ptr;
+#if RHINO_SDK
       return UnsafeNativeMethods.ON_3dmRenderSettings_ConstPointer(m_doc.m_docId);
+#else
+      return IntPtr.Zero;
+#endif
     }
     IntPtr NonConstPointer()
     {

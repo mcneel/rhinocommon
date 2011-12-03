@@ -673,9 +673,12 @@ namespace Rhino.FileIO
     }
   }
 
+  // Can't add a cref to an XML comment here since the ObjectTable is not included in the
+  // OpenNURBS flavor build of RhinoCommon
+
   /// <summary>
   /// Represents a simple object table for a file that is open externally.
-  /// <para>This class mimics <see cref="Rhino.DocObjects.Tables.ObjectTable"/> while providing external eccess to the file.</para>
+  /// <para>This class mimics Rhino.DocObjects.Tables.ObjectTable while providing external eccess to the file.</para>
   /// </summary>
   public class File3dmObjectTable : IEnumerable<File3dmObject>, Rhino.Collections.IRhinoTable<File3dmObject>
   {

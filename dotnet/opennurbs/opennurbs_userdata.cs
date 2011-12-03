@@ -42,6 +42,7 @@ namespace Rhino.DocObjects.Custom
 
     internal virtual IntPtr NonConstPointer(bool createIfMissing)
     {
+#if RHINO_SDK
       if (createIfMissing && IntPtr.Zero == m_pNativePointer)
       {
         m_serial_number = m_next_serial_number++;
@@ -61,6 +62,7 @@ namespace Rhino.DocObjects.Custom
           m_pNativePointer = UnsafeNativeMethods.CRhCmnUserData_New(m_serial_number, managed_type_id, plugin_id, description);
         }
       }
+#endif
       return m_pNativePointer;
     }
 

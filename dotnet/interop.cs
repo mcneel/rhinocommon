@@ -8,6 +8,7 @@ namespace Rhino.Runtime
   /// </summary>
   public static class Interop
   {
+#if RHINO_SDK
     /// <summary>
     /// Geth the C++ CRhinoDoc* for a given RhinoCommon RhinoDoc class
     /// </summary>
@@ -19,6 +20,7 @@ namespace Rhino.Runtime
         return IntPtr.Zero;
       return UnsafeNativeMethods.CRhinoDoc_GetFromId(doc.m_docId);
     }
+#endif
 
     /// <summary>
     /// Return the underlying const ON_Geometry* for a RhinoCommon class. You should only

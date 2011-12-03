@@ -32,4 +32,27 @@ namespace Rhino.FileIO
     /// </summary>
     public System.Drawing.Rectangle WindowRectangle { get; set; }
   }
+
+  /*
+  class File3dmProperties : IDisposable
+  {
+    IntPtr m_p3dmProperties;
+
+    // revision history
+    ON_wString m_sCreatedBy;
+    ON_wString m_sLastEditedBy;
+    struct tm  m_create_time;
+    struct tm  m_last_edit_time;
+    int        m_revision_count;
+
+    public File3dmNotes Notes { get; set; }
+
+    ON_WindowsBitmap       m_PreviewImage;     // preview image of model
+
+    // application
+    ON_wString m_application_name;    // short name like "Rhino 2.0"
+    ON_wString m_application_URL;     // URL
+    ON_wString m_application_details; // whatever you want
+  }
+  */
 }

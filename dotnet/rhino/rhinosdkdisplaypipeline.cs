@@ -2037,11 +2037,29 @@ namespace Rhino.Display
 
     #endregion
 
+    public void DrawSprite(DisplayBitmap bitmap, Point3d worldLocation, float size)
+    {
+      DrawSprite(bitmap, worldLocation, size, System.Drawing.Color.White);
+    }
+
+    public void DrawSprite(DisplayBitmap bitmap, Point3d worldLocation, float size, System.Drawing.Color blendColor)
+    {
+      IntPtr pBitmap = bitmap.NonConstPointer();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBitmap(m_ptr, pBitmap, worldLocation, size, blendColor.ToArgb());
+    }
+
+    public void DrawSprite(DisplayBitmap bitmap, Point2d screenLocation, float size)
+    {
+      DrawSprite(bitmap, screenLocation, size, System.Drawing.Color.White);
+    }
+    public void DrawSprite(DisplayBitmap bitmap, Point2d screenLocation, float size, System.Drawing.Color blendColor)
+    {
+      IntPtr pBitmap = bitmap.NonConstPointer();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBitmap2(m_ptr, pBitmap, screenLocation, size, blendColor.ToArgb());
+    }
     /*
     //public void Draw2dRectangle( System.Drawing.Rectangle rectangle, HPEN pen, bool=true);
     //public void Draw2dLine(const CPoint&, const CPoint&, HPEN, bool=true);
-    //public void DrawBitmap(const CRhinoUiDib&, int  nX, int  nY, COLORREF=ON_UNSET_COLOR);
-    // public void DrawSprite(const CRhinoUiDib&, int  nX, int  nY, int  nCell, int  nCount);
   
     public void FillSolidRect( System.Drawing.Rectangle screenRectangle, System.Drawing.Color color, int transparency)
     {

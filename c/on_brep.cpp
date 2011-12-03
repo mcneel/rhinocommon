@@ -814,6 +814,8 @@ RH_C_FUNCTION bool ON_Brep_CullUnused(ON_Brep* pBrep, int which)
 //  return rc;
 //}
 
+// Region topology information is not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
 
 RH_C_FUNCTION int ON_Brep_RegionTopologyCount(const ON_Brep* pConstBrep, bool region)
 {
@@ -920,6 +922,9 @@ RH_C_FUNCTION int ON_BrepFaceSide_Face(const ON_Brep* pConstBrep, int region_ind
   }
   return rc;
 }
+
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////////
 // Meshing and mass property calculations are not available in stand alone opennurbs
 

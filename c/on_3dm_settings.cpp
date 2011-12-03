@@ -357,9 +357,11 @@ RH_C_FUNCTION ON_3dmRenderSettings* ON_3dmRenderSettings_New(const ON_3dmRenderS
 RH_C_FUNCTION const ON_3dmRenderSettings* ON_3dmRenderSettings_ConstPointer(int docId)
 {
   const ON_3dmRenderSettings* rc = NULL;
+#if !defined(OPENNURBS_BUILD)
   CRhinoDoc* pDoc = RhDocFromId(docId);
   if( pDoc )
     rc = &(pDoc->Properties().RenderSettings());
+#endif
   return rc;
 }
 

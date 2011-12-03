@@ -150,3 +150,5 @@
 /c/rh_gumball.cpp
 /c/rh_pick.cpp
 /c/rh_analysismodes.cpp
+/c/rh_fileutilities.cpp
+/c/glext.h

@@ -60,3 +60,6 @@
 #endif // GRASSHOPPER_V4 else V5 BUILD
 
 #endif
+
+#pragma comment(lib, "OPENGL32.LIB")
+#pragma comment(lib, "GLU32.LIB")

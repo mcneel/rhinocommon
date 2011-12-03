@@ -5441,6 +5441,26 @@ internal partial class UnsafeNativeMethods
   //void CRhinoDisplayPipeline_DrawNurbsSurface(CRhinoDisplayPipeline* pPipeline, const ON_NurbsSurface* pConstNurbsSurface, int argb, int density)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawNurbsSurface(IntPtr pPipeline, IntPtr pConstNurbsSurface, int argb, int density);
+
+  //CRhCmnDisplayBitmap* CRhCmnDisplayBitmap_New(HBITMAP hBmp)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhCmnDisplayBitmap_New(IntPtr hBmp);
+
+  //CRhCmnDisplayBitmap* CRhCmnDisplayBitmap_New2( const RHMONO_STRING* path )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhCmnDisplayBitmap_New2([MarshalAs(UnmanagedType.LPWStr)]string path);
+
+  //void CRhCmnDisplayBitmap_Delete(CRhCmnDisplayBitmap* pBmp)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhCmnDisplayBitmap_Delete(IntPtr pBmp);
+
+  //void CRhinoDisplayPipeline_DrawBitmap(CRhinoDisplayPipeline* pPipeline, CRhCmnDisplayBitmap* pBmp, ON_3DPOINT_STRUCT location, float size, int argb)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_DrawBitmap(IntPtr pPipeline, IntPtr pBmp, Point3d location, float size, int argb);
+
+  //void CRhinoDisplayPipeline_DrawBitmap2(CRhinoDisplayPipeline* pPipeline, CRhCmnDisplayBitmap* pBmp, ON_2DPOINT_STRUCT location, float size, int argb)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_DrawBitmap2(IntPtr pPipeline, IntPtr pBmp, Point2d location, float size, int argb);
   #endregion
 
 

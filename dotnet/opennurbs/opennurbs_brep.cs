@@ -948,6 +948,7 @@ namespace Rhino.Geometry
     }
     */
 
+#if RHINO_SDK
     /// <summary>
     /// Gets an array containing all regions in this brep.
     /// </summary>
@@ -961,6 +962,7 @@ namespace Rhino.Geometry
         rc[i] = new BrepRegion(this, i);
       return rc;
     }
+#endif
 
     #endregion
 
@@ -2294,6 +2296,7 @@ namespace Rhino.Geometry
   }
   */
 
+#if RHINO_SDK
   /// <summary>
   /// Represents a brep topological region that has sides.
   /// </summary>
@@ -2428,6 +2431,7 @@ namespace Rhino.Geometry
       }
     }
   }
+#endif
 
   class MeshHolder
   {

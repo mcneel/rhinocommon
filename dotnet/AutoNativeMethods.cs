@@ -5454,6 +5454,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhCmnDisplayBitmap_Delete(IntPtr pBmp);
 
+  //void CRhCmnDisplayBitmap_SetBlendFunction(CRhCmnDisplayBitmap* pDisplayBitmap, int source, int destination)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhCmnDisplayBitmap_SetBlendFunction(IntPtr pDisplayBitmap, int source, int destination);
+
+  //void CRhCmnDisplayBitmap_GetBlendFunction(const CRhCmnDisplayBitmap* pConstDisplayBitmap, int* source, int* destination)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhCmnDisplayBitmap_GetBlendFunction(IntPtr pConstDisplayBitmap, ref int source, ref int destination);
+
   //void CRhinoDisplayPipeline_DrawBitmap(CRhinoDisplayPipeline* pPipeline, CRhCmnDisplayBitmap* pBmp, ON_3DPOINT_STRUCT location, float size, int argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawBitmap(IntPtr pPipeline, IntPtr pBmp, Point3d location, float size, int argb);
@@ -5461,6 +5469,17 @@ internal partial class UnsafeNativeMethods
   //void CRhinoDisplayPipeline_DrawBitmap2(CRhinoDisplayPipeline* pPipeline, CRhCmnDisplayBitmap* pBmp, ON_2DPOINT_STRUCT location, float size, int argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawBitmap2(IntPtr pPipeline, IntPtr pBmp, Point2d location, float size, int argb);
+
+  //void CRhinoDisplayPipeline_GetCameraDirection(const CRhinoDisplayPipeline* pConstPipeline, ON_3dVector* vec)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_GetCameraDirection(IntPtr pConstPipeline, ref Vector3d vec);
+
+  //void CRhinoDisplayPipeline_DrawBitmaps(CRhinoDisplayPipeline* pPipeline, CRhCmnDisplayBitmap* pBmp,
+  //                                                     int point_count, /*ARRAY*/const ON_3dPoint* points,
+  //                                                     int color_count, /*ARRAY*/const int* colors_argb,
+  //                                                     /*ARRAY*/const int* indices, float size, ON_3DVECTOR_STRUCT translation)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_DrawBitmaps(IntPtr pPipeline, IntPtr pBmp, int point_count, Point3d[] points, int color_count, int[] colors_argb, int[] indices, float size, Vector3d translation);
   #endregion
 
 

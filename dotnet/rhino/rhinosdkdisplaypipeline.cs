@@ -2057,6 +2057,21 @@ namespace Rhino.Display
       IntPtr pBitmap = bitmap.NonConstPointer();
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBitmap2(m_ptr, pBitmap, screenLocation, size, blendColor.ToArgb());
     }
+
+    public void DrawSprites(DisplayBitmap bitmap, DisplayBitmapDrawList items, float size)
+    {
+      DrawSprites(bitmap, items, size, Vector3d.Zero);
+    }
+
+    public void DrawSprites(DisplayBitmap bitmap, DisplayBitmapDrawList items, float size, Vector3d translation)
+    {
+      Vector3d camera_direction = new Vector3d();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_GetCameraDirection(m_ptr, ref camera_direction);
+      int[] indices = items.Sort(camera_direction);
+      IntPtr pBitmap = bitmap.NonConstPointer();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBitmaps(m_ptr, pBitmap, items.m_points.Length, items.m_points, items.m_colors_argb.Length, items.m_colors_argb, indices, size, translation);
+    }
+
     /*
     //public void Draw2dRectangle( System.Drawing.Rectangle rectangle, HPEN pen, bool=true);
     //public void Draw2dLine(const CPoint&, const CPoint&, HPEN, bool=true);
@@ -2065,8 +2080,6 @@ namespace Rhino.Display
     {
     }
     */
-
-    //[does not appear to be implemented] public bool SupportsMultiTexturing
   }
 
   public class DrawEventArgs : System.EventArgs

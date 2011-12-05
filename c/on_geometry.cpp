@@ -282,7 +282,10 @@ RH_C_FUNCTION bool ON_Geometry_GetBool(ON_Geometry* pGeometry, int which)
       rc = pGeometry->MakeDeformable();
       break;
     case idxIsMorphable:
+// not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
       rc = pGeometry->IsMorphable();
+#endif
       break;
     case idxHasBrepForm:
       rc = pGeometry->HasBrepForm()?true:false;

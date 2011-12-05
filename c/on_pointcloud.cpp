@@ -538,6 +538,9 @@ RH_C_FUNCTION void ON_PointCloud_GetColors(const ON_PointCloud* pConstPointCloud
   }
 }
 
+// not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION int ON_PointCloud_GetClosestPoint(const ON_PointCloud* pConstPointCloud, ON_3DPOINT_STRUCT point)
 {
   int rc = -1;
@@ -549,3 +552,5 @@ RH_C_FUNCTION int ON_PointCloud_GetClosestPoint(const ON_PointCloud* pConstPoint
   }
   return rc;
 }
+
+#endif

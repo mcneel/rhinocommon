@@ -292,6 +292,9 @@ RH_C_FUNCTION bool ON_Curve_FrameAt( const ON_Curve* pConstCurve, double t, ON_P
   return rc;
 }
 
+// not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION bool ON_Curve_GetClosestPoint( const ON_Curve* pCurve, ON_3DPOINT_STRUCT test_point, double* t, double maximum_distance)
 {
   bool rc = false;
@@ -362,6 +365,8 @@ RH_C_FUNCTION bool ON_Curve_GetNormalizedArcLengthPoints( const ON_Curve* pCurve
   }
   return rc;
 }
+
+#endif
 
 RH_C_FUNCTION ON_Curve* ON_Curve_TrimExtend( const ON_Curve* pCurve, double t0, double t1, bool trimming)
 {

@@ -149,6 +149,9 @@ private:
   MORPHPOINTPROC m_callback;
 };
 
+// not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION bool ON_SpaceMorph_MorphGeometry(ON_Geometry* pGeometry, double tolerance, bool quickpreview, bool preserveStructure, MORPHPOINTPROC callback)
 {
   bool rc = false;
@@ -160,6 +163,7 @@ RH_C_FUNCTION bool ON_SpaceMorph_MorphGeometry(ON_Geometry* pGeometry, double to
   return rc;
 }
 
+#endif
 
 ////////////////////////////////////////////////////
 #if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)

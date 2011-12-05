@@ -2,44 +2,52 @@
 
 #if defined(OPENNURBS_BUILD)
 
-#if defined(WIN64) && defined(_M_X64)
+#if !defined(ON_MSC_SOLUTION_DIR)
+// ON_MSC_SOLUTION_DIR must have a trailing slash
+#define ON_MSC_SOLUTION_DIR "./"
+#endif
 
-// 64 bit Windows zlib linking instructions
+#if !defined(ON_MSC_LIB_DIR)
 
-#if defined(NDEBUG)
+#if defined(WIN64)
 
-// release x64 libs
-#pragma comment(lib, "../../opennurbs/zlib/x64/Release/zlib.lib")
-#pragma comment(lib, "./x64/Release/opennurbs_staticlib.lib")
-
-#else // _DEBUG
-
-// debug  x64 libs
-#pragma comment(lib, "../../opennurbs/zlib/x64/Debug/zlib.lib")
-#pragma comment(lib, "./x64/Debug/opennurbs_staticlib.lib")
-
-#endif // if NDEBUG else _DEBUG
-
-#elif defined(WIN32) && defined(_M_IX86)
-
-// 32 bit Windows zlib linking instructions
+// x64 (64 bit) static libraries
 
 #if defined(NDEBUG)
 
-// release 32 bit WIndows libs
-#pragma comment(lib, "../../opennurbs/zlib/Release/zlib.lib")
-#pragma comment(lib, "./Release/opennurbs_staticlib.lib")
+// Release x64 (64 bit) libs
+#define ON_MSC_LIB_DIR "x64/Release/"
 
 #else // _DEBUG
 
-// debug 32 bit WIndows libs
-#pragma comment(lib, "../../opennurbs/zlib/Debug/zlib.lib")
-#pragma comment(lib, "./Debug/opennurbs_staticlib.lib")
+// Debug x64 (64 bit) libs
+#define ON_MSC_LIB_DIR "x64/Debug/"
 
-#endif // if NDEBUG else _DEBUG
+#endif // NDEBUG else _DEBUG
 
-#endif // if WIN64 else WIN32
+#else // WIN32
 
+// x86 (32 bit) static libraries
+
+#if defined(NDEBUG)
+
+// Release x86 (32 bit) libs
+#define ON_MSC_LIB_DIR "Release/"
+
+#else // _DEBUG
+
+// Debug x86 (32 bit) libs
+#define ON_MSC_LIB_DIR "Debug/"
+
+#endif // NDEBUG else _DEBUG
+
+#endif // WIN64 else WIN32
+
+#endif //  !defined(ON_MSC_LIB_DIR)
+
+#pragma message( " --- statically linking opennurbs." )
+#pragma comment(lib, "\"" ON_MSC_SOLUTION_DIR ON_MSC_LIB_DIR "zlib.lib" "\"")
+#pragma comment(lib, "\"" ON_MSC_SOLUTION_DIR ON_MSC_LIB_DIR "opennurbs_staticlib.lib" "\"")
 
 #else
 
@@ -59,7 +67,8 @@
 
 #endif // GRASSHOPPER_V4 else V5 BUILD
 
-#endif
-
 #pragma comment(lib, "OPENGL32.LIB")
 #pragma comment(lib, "GLU32.LIB")
+
+#endif
+

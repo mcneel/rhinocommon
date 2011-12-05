@@ -332,6 +332,9 @@ RH_C_FUNCTION void ON_MorphControl_SetBool(ON_MorphControl* pMorphControl, bool 
   }
 }
 
+// not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION bool ON_MorphControl_MorphGeometry(const ON_MorphControl* pConstMorphControl, ON_Geometry* pGeometry)
 {
   bool rc = false;
@@ -346,3 +349,4 @@ RH_C_FUNCTION bool ON_MorphControl_MorphGeometry(const ON_MorphControl* pConstMo
   return rc;
 }
 
+#endif

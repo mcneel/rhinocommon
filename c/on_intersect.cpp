@@ -236,6 +236,10 @@ RH_C_FUNCTION void ON_Intersect_MeshPlanes4(ON_SimpleArray<ON_Polyline*>* pPolyl
   delete pPolylines;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// ray shooter and mesh/mesh intersect not supported in stand alone OpenNURBS
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION ON_SimpleArray<ON_X_EVENT>* ON_Intersect_CurveSelf(const ON_Curve* pCurve, double tolerance)
 {
   ON_SimpleArray<ON_X_EVENT>* rc = NULL;
@@ -344,9 +348,6 @@ RH_C_FUNCTION bool ON_Intersect_CurveIntersectData(const ON_SimpleArray<ON_X_EVE
   return false;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// ray shooter and mesh/mesh intersect not supported in stand alone OpenNURBS
-#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION int ON_RayShooter_OneSurface(ON_3DPOINT_STRUCT _point, ON_3DVECTOR_STRUCT _direction, const ON_Surface* pConstSurface, ON_SimpleArray<ON_3dPoint>* pPoints, int maxReflections)
 {
   int rc = 0;

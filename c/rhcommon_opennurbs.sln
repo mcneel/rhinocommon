@@ -2,8 +2,15 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rhcommon_opennurbs", "rhcommon_opennurbs.vcxproj", "{A23BFC5B-4F2C-4440-B663-39DC3A094DE2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AA514D07-9579-4CF7-AD53-FCECC27D29AA} = {AA514D07-9579-4CF7-AD53-FCECC27D29AA}
+		{4D11F62B-AA30-4657-987D-33C1F21EF2ED} = {4D11F62B-AA30-4657-987D-33C1F21EF2ED}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "opennurbs_staticlib", "..\..\opennurbs\opennurbs_staticlib.vcxproj", "{AA514D07-9579-4CF7-AD53-FCECC27D29AA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4D11F62B-AA30-4657-987D-33C1F21EF2ED} = {4D11F62B-AA30-4657-987D-33C1F21EF2ED}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "..\..\opennurbs\zlib\zlib.vcxproj", "{4D11F62B-AA30-4657-987D-33C1F21EF2ED}"
 EndProject

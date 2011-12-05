@@ -33,6 +33,9 @@ RH_C_FUNCTION bool ON_Surface_SetDomain(ON_Surface* pSurface, int direction, ON_
   return rc;
 }
 
+// not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION bool ON_Surface_GetSurfaceSize( const ON_Surface* pConstSurface, double* width, double* height)
 {
   bool rc = false;
@@ -42,6 +45,8 @@ RH_C_FUNCTION bool ON_Surface_GetSurfaceSize( const ON_Surface* pConstSurface, d
   }
   return rc;
 }
+
+#endif
 
 RH_C_FUNCTION int ON_Surface_SpanCount(const ON_Surface* pConstSurface, int direction)
 {
@@ -288,6 +293,9 @@ RH_C_FUNCTION ON_Curve* ON_Surface_IsoCurve(const ON_Surface* pConstSurface, int
   return rc;
 }
 
+// not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION ON_Curve* ON_Surface_Pushup(const ON_Surface* pConstSurface, const ON_Curve* pCurve2d, double tolerance, ON_INTERVAL_STRUCT curve2dSubdomain)
 {
   ON_Curve* rc = NULL;
@@ -313,6 +321,8 @@ RH_C_FUNCTION ON_Curve* ON_Surface_Pullback(const ON_Surface* pConstSurface, con
   }
   return rc;
 }
+
+#endif
 
 RH_C_FUNCTION int ON_Surface_HasNurbsForm(const ON_Surface* pConstSurface)
 {
@@ -365,6 +375,9 @@ RH_C_FUNCTION bool ON_Surface_EvCurvature( const ON_Surface* pConstSurface,
   return rc;
 }
 
+// not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION bool ON_Surface_GetClosestPoint( const ON_Surface* pConstSurface, ON_3DPOINT_STRUCT test_point, double* s, double* t )
 {
   bool rc = false;
@@ -375,6 +388,8 @@ RH_C_FUNCTION bool ON_Surface_GetClosestPoint( const ON_Surface* pConstSurface, 
   }
   return rc;
 }
+
+#endif
 
 RH_C_FUNCTION ON_NurbsSurface* ON_Surface_GetNurbForm(ON_Surface* pSurface, double tolerance, int* accuracy)
 {
@@ -394,6 +409,9 @@ RH_C_FUNCTION ON_NurbsSurface* ON_Surface_GetNurbForm(ON_Surface* pSurface, doub
   return pNurbForm;
 }
 
+// not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION ON_Surface* ON_Surface_Offset( const ON_Surface* pConstSurface, double offset, double tolerance)
 {
   ON_Surface* rc = NULL;
@@ -403,6 +421,8 @@ RH_C_FUNCTION ON_Surface* ON_Surface_Offset( const ON_Surface* pConstSurface, do
   }
   return rc;
 }
+
+#endif
 
 RH_C_FUNCTION ON_Surface* ON_Surface_Reverse( const ON_Surface* pConstSurface, int direction )
 {
@@ -490,6 +510,9 @@ RH_C_FUNCTION ON_SumSurface* ON_SumSurface_Create(const ON_Curve* pConstCurveA, 
   return rc;
 }
 
+// not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION int ON_Surface_ClosestSide( const ON_Surface* pConstSurface, double u, double v )
 {
   ON_Surface::ISO edge_index = ON_Surface::not_iso;
@@ -526,6 +549,8 @@ RH_C_FUNCTION int ON_Surface_ClosestSide( const ON_Surface* pConstSurface, doubl
   }
   return (int)edge_index;
 }
+
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Meshing and mass property calculations are not available in stand alone opennurbs

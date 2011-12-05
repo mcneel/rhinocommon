@@ -17,6 +17,9 @@ RH_C_FUNCTION void ON_BrepEdge_SetTolerance(ON_BrepEdge* pBrepEdge, double tol)
     pBrepEdge->m_tolerance = tol;
 }
 
+// IsSmoothManifoldEdge is not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION bool ON_BrepEdge_IsSmoothManifoldEdge(const ON_BrepEdge* pConstBrepEdge, double angle_tol)
 {
   bool rc = false;
@@ -24,6 +27,8 @@ RH_C_FUNCTION bool ON_BrepEdge_IsSmoothManifoldEdge(const ON_BrepEdge* pConstBre
     rc = pConstBrepEdge->IsSmoothManifoldEdge(angle_tol);
   return rc;
 }
+
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 // ON_BrepLoop
@@ -235,6 +240,9 @@ RH_C_FUNCTION void ON_Brep_Flip(ON_Brep* pBrep)
     pBrep->Flip();
 }
 
+// SplitKinkyFaces is not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION bool ON_Brep_SplitKinkyFaces(ON_Brep* pBrep, double tolerance, bool compact)
 {
   bool rc = false;
@@ -279,6 +287,8 @@ RH_C_FUNCTION int ON_Brep_SplitEdgeAtParameters(ON_Brep* pBrep, int edge_index, 
 #endif
   return rc;
 }
+
+#endif
 
 RH_C_FUNCTION bool ON_Brep_ShrinkFaces( ON_Brep* pBrep )
 {
@@ -350,6 +360,9 @@ RH_C_FUNCTION const ON_BrepFace* ON_Brep_BrepFacePointer( const ON_Brep* pConstB
   return rc;
 }
 
+// not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION void ON_Brep_RebuildTrimsForV2(ON_Brep* pBrep, ON_BrepFace* pBrepFace, const ON_NurbsSurface* pConstNurbsSurface)
 {
   if( pBrep && pBrepFace && pConstNurbsSurface )
@@ -367,6 +380,8 @@ RH_C_FUNCTION bool ON_Brep_RebuildEdges(ON_Brep* pBrep, int face_index, double t
   return rc;
 }
 
+#endif
+
 RH_C_FUNCTION void ON_Brep_Compact(ON_Brep* pBrep)
 {
   if( pBrep )
@@ -381,6 +396,9 @@ RH_C_FUNCTION bool ON_BrepFace_IsReversed( const ON_BrepFace* pConstFace )
   return rc;
 }
 
+// not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION bool ON_BrepFace_ChangeSurface( ON_Brep* pBrep, int face_index, int surface_index )
 {
   bool rc = false;
@@ -390,6 +408,8 @@ RH_C_FUNCTION bool ON_BrepFace_ChangeSurface( ON_Brep* pBrep, int face_index, in
   }
   return rc;
 }
+
+#endif
 
 RH_C_FUNCTION const ON_BrepEdge* ON_Brep_BrepEdgePointer( const ON_Brep* pConstBrep, int edgeIndex )
 {
@@ -611,6 +631,9 @@ RH_C_FUNCTION int ON_Brep_FaceFaceIndices( const ON_Brep* pConstBrep, int face_i
   return rc;
 }
 
+// not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION ON_Brep* ON_Brep_CopyTrims( const ON_BrepFace* pConstBrepFace, const ON_Surface* pConstSurface, double tolerance)
 {
   ON_Brep* rc = NULL;
@@ -636,6 +659,8 @@ RH_C_FUNCTION ON_Brep* ON_Brep_CopyTrims( const ON_BrepFace* pConstBrepFace, con
 
   return rc;
 }
+
+#endif
 
 RH_C_FUNCTION int ON_Brep_AddSurface( ON_Brep* pBrep, const ON_Surface* pConstSurface )
 {
@@ -697,6 +722,9 @@ RH_C_FUNCTION bool ON_Brep_FlipReversedSurfaces(ON_Brep* pBrep)
   return rc;
 }
 
+// not currently available in stand alone OpenNURBS build
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION bool ON_Brep_SplitClosedFaces(ON_Brep* pBrep, int min_degree)
 {
   bool rc = false;
@@ -712,6 +740,8 @@ RH_C_FUNCTION bool ON_Brep_SplitBipolarFaces(ON_Brep* pBrep)
     rc = pBrep->SplitBipolarFaces();
   return rc;
 }
+
+#endif
 
 RH_C_FUNCTION ON_Brep* ON_Brep_SubBrep(const ON_Brep* pConstBrep, int count, /*ARRAY*/int* face_indices)
 {

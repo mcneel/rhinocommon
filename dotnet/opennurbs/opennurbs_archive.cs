@@ -486,6 +486,7 @@ namespace Rhino.Collections
           }
           break;
         case ItemType.itOnObject: //45
+        case ItemType.itOnGeometry: //47
           {
             int read_rc = 0;
             IntPtr pObject = UnsafeNativeMethods.ON_BinaryArchive_ReadObject(archive.NonConstPointer(), ref read_rc);

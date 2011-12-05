@@ -562,27 +562,31 @@ RH_C_FUNCTION int ON_Brep_EdgeFaceIndices( const ON_Brep* pConstBrep, int edge_i
 RH_C_FUNCTION int ON_Brep_FaceEdgeIndices( const ON_Brep* pConstBrep, int face_index, ON_SimpleArray<int>* ei )
 {
   int rc = 0;
-  if( pConstBrep && ei )
+  if( pConstBrep && ei  )
   {
-    if( face_index >= pConstBrep->m_F.Count() ) { return 0; }
-
     const ON_BrepFace* pFace = pConstBrep->Face(face_index);
-    
-    int loopCount = pFace->LoopCount();
-    for( int i = 0; i < loopCount; i++)
+    if( pFace )
     {
-      const ON_BrepLoop* pLoop = pFace->Loop(i);
-      int trimCount = pLoop->TrimCount();
-
-      for( int j = 0; j < trimCount; j++)
+      int loopCount = pFace->LoopCount();
+      for( int i = 0; i < loopCount; i++)
       {
-        const ON_BrepTrim* pTrim = pLoop->Trim(j);
-        const ON_BrepEdge* pEdge = pTrim->Edge();
+        const ON_BrepLoop* pLoop = pFace->Loop(i);
+        if( NULL==pLoop )
+          continue;
 
-        ei->Append(pEdge->m_edge_index);
+        int trimCount = pLoop->TrimCount();
+        for( int j = 0; j < trimCount; j++)
+        {
+          const ON_BrepTrim* pTrim = pLoop->Trim(j);
+          if( NULL==pTrim )
+            continue;
+          const ON_BrepEdge* pEdge = pTrim->Edge();
+          if( pEdge )
+            ei->Append(pEdge->m_edge_index);
+        }
       }
+      rc = ei->Count();
     }
-    rc = ei->Count();
   }
   return rc;
 }

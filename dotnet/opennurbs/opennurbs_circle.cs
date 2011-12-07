@@ -18,6 +18,34 @@ namespace Rhino.Geometry
   [Serializable]
   public struct Circle
   {
+    #region "Static creation methods"
+    /// <summary>
+    /// Try to fit a circle to three curves using tangent relationships.
+    /// </summary>
+    /// <param name="c1">First curve to touch.</param>
+    /// <param name="c2">Second curve to touch.</param>
+    /// <param name="c3">Third curve to touch.</param>
+    /// <param name="t1">Parameter on first curve close to desired solution.</param>
+    /// <param name="t2">Parameter on second curve closet to desired solution.</param>
+    /// <param name="t3">Parameter on third curve close to desired solution.</param>
+    /// <returns>Valid circle on success, Circle.Unset on failure.</returns>
+    public static Circle TryFitCircleTTT(Curve c1, Curve c2, Curve c3, double t1, double t2, double t3)
+    {
+      if (c1 == null) { throw new ArgumentNullException("c1"); }
+      if (c2 == null) { throw new ArgumentNullException("c2"); }
+      if (c3 == null) { throw new ArgumentNullException("c3"); }
+      if (!RhinoMath.IsValidDouble(t1)) { throw new ArgumentNullException("t1"); }
+      if (!RhinoMath.IsValidDouble(t2)) { throw new ArgumentNullException("t2"); }
+      if (!RhinoMath.IsValidDouble(t3)) { throw new ArgumentNullException("t3"); }
+
+      Circle rc = Circle.Unset;
+      if (!UnsafeNativeMethods.ON_Circle_TryFitTTT(c1.ConstPointer(), c2.ConstPointer(), c3.ConstPointer(), t1, t2, t3, ref rc))
+        rc = Circle.Unset;
+
+      return rc;
+    }
+    #endregion
+
     #region members
     internal Plane m_plane;
     internal double m_radius;

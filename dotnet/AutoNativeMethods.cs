@@ -1596,6 +1596,13 @@ internal partial class UnsafeNativeMethods
   //int ON_Circle_GetNurbForm(const ON_CIRCLE_STRUCT* pCircle, ON_NurbsCurve* nurbs_curve)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Circle_GetNurbForm(ref Circle pCircle, IntPtr nurbs_curve);
+
+  //bool ON_Circle_TryFitTTT(const ON_Curve* c1, const ON_Curve* c2, const ON_Curve* c3, 
+  //                                       double seed1, double seed2, double seed3, 
+  //                                       ON_CIRCLE_STRUCT* circleFit)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Circle_TryFitTTT(IntPtr c1, IntPtr c2, IntPtr c3, double seed1, double seed2, double seed3, ref Circle circleFit);
   #endregion
 
 

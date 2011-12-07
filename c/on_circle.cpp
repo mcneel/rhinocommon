@@ -103,3 +103,99 @@ RH_C_FUNCTION int ON_Circle_GetNurbForm(const ON_CIRCLE_STRUCT* pCircle, ON_Nurb
   }
   return rc;
 }
+
+RH_C_FUNCTION bool ON_Circle_TryFitTTT(const ON_Curve* c1, const ON_Curve* c2, const ON_Curve* c3, 
+                                       double seed1, double seed2, double seed3, 
+                                       ON_CIRCLE_STRUCT* circleFit)
+{
+  if( !c1 || !c2 || !c3 ) { return false; }
+  if( !circleFit ) { return false; }
+
+  //copied this (with modifications from CRhGetCircleTTT::CalculateCircleTanTanTan
+  double d1=0.0, d2=0.0, d3=0.0;
+  double t1 = seed1;
+  double t2 = seed2;
+  double t3 = seed3;
+
+  double tol = RhinoCurveTangencyTolerance();
+  bool found = false;
+
+  // initialize points and tangents
+  ON_3dPoint pt1 = c1->PointAt(t1);
+  ON_3dPoint pt2 = c2->PointAt(t2);
+  ON_3dPoint pt3 = c3->PointAt(t3);
+  ON_3dVector tan1 = c1->TangentAt(t1);
+  ON_3dVector tan2 = c2->TangentAt(t2);
+  ON_3dVector tan3 = c3->TangentAt(t3);
+
+  ON_Circle circle;
+  for ( int i=0; i<20; i++)
+  {
+    // make a guess
+    if ( !circle.Create(pt1, pt2, pt3))
+      break;
+
+    // check how good the fit is
+    { //Check against first curve
+      double t;
+      circle.ClosestPointTo(pt1, &t);
+      ON_3dVector tan = circle.TangentAt(t);
+      ON_3dVector n = circle.Center()-pt1;
+      n.Unitize();
+      d1 = fabs( ON_DotProduct( tan1, n));
+    }
+
+    { //Check against second curve
+      double t;
+      circle.ClosestPointTo( pt2, &t);
+      ON_3dVector tan = circle.TangentAt( t);
+      ON_3dVector n = circle.Center()-pt2;
+      n.Unitize();
+      d2 = fabs( ON_DotProduct( tan2, n));
+    }
+
+    { //Check against third curve
+      double t;
+      circle.ClosestPointTo( pt3, &t);
+      ON_3dVector tan = circle.TangentAt( t);
+      ON_3dVector n = circle.Center()-pt3;
+      n.Unitize();
+      d3 = fabs( ON_DotProduct( tan3, n));
+    }
+
+    // If the fit is close enough, abort.
+    if ( d1 < tol && d2 < tol && d3 < tol)
+    {
+      found = true;
+      break;
+    }
+
+    // improve the guess by dropping the circle center perpendicular to the input curves close to the pick points
+    ON_3dPoint center = circle.Center();
+
+    {
+      if ( !TL_GetLocalPerpPoint(*c1, center, seed1, &t1))
+        break;
+      c1->EvTangent( t1, pt1, tan1);
+    }
+
+    {
+      if ( !TL_GetLocalPerpPoint( *c2, center, seed2, &t2))
+        break;
+      c2->EvTangent( t2, pt2, tan2);
+    }
+
+    {
+      if ( !TL_GetLocalPerpPoint( *c3, center, seed3, &t3))
+        break;
+      c3->EvTangent( t3, pt3, tan3);
+    }
+  }
+
+  if (found)
+  {
+    CopyToCircleStruct(*circleFit, circle);
+    return true;
+  }
+  return false;
+}

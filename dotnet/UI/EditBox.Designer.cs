@@ -28,25 +28,24 @@
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.Button m_btnOk;
       System.Windows.Forms.Button m_btnCancel;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditBoxForm));
+      this.m_btnOk = new System.Windows.Forms.Button();
       this.m_txtbox = new System.Windows.Forms.TextBox();
       this.m_lblMessage = new System.Windows.Forms.Label();
-      m_btnOk = new System.Windows.Forms.Button();
       m_btnCancel = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // m_btnOk
       // 
-      m_btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      m_btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-      m_btnOk.Location = new System.Drawing.Point(116, 227);
-      m_btnOk.Name = "m_btnOk";
-      m_btnOk.Size = new System.Drawing.Size(75, 23);
-      m_btnOk.TabIndex = 1;
-      m_btnOk.Text = "OK";
-      m_btnOk.UseVisualStyleBackColor = true;
+      this.m_btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+      this.m_btnOk.Location = new System.Drawing.Point(116, 227);
+      this.m_btnOk.Name = "m_btnOk";
+      this.m_btnOk.Size = new System.Drawing.Size(75, 23);
+      this.m_btnOk.TabIndex = 1;
+      this.m_btnOk.Text = "OK";
+      this.m_btnOk.UseVisualStyleBackColor = true;
       // 
       // m_btnCancel
       // 
@@ -61,9 +60,9 @@
       // 
       // m_txtbox
       // 
-      this.m_txtbox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_txtbox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.m_txtbox.Location = new System.Drawing.Point(13, 29);
       this.m_txtbox.Multiline = true;
       this.m_txtbox.Name = "m_txtbox";
@@ -80,19 +79,21 @@
       this.m_lblMessage.TabIndex = 3;
       this.m_lblMessage.Text = "Enter some text";
       // 
-      // EditBox
+      // EditBoxForm
       // 
+      this.AcceptButton = this.m_btnOk;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.CancelButton = m_btnCancel;
       this.ClientSize = new System.Drawing.Size(284, 262);
       this.Controls.Add(this.m_lblMessage);
       this.Controls.Add(m_btnCancel);
-      this.Controls.Add(m_btnOk);
+      this.Controls.Add(this.m_btnOk);
       this.Controls.Add(this.m_txtbox);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MaximizeBox = false;
       this.MinimizeBox = false;
-      this.Name = "EditBox";
+      this.Name = "EditBoxForm";
       this.Text = "EditBox";
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -103,5 +104,6 @@
 
     private System.Windows.Forms.TextBox m_txtbox;
     private System.Windows.Forms.Label m_lblMessage;
+    private System.Windows.Forms.Button m_btnOk;
   }
 }

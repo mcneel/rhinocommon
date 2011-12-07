@@ -37,6 +37,7 @@
       // 
       // m_btnOk
       // 
+      this.m_btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.m_btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
       this.m_btnOk.Location = new System.Drawing.Point(116, 55);
       this.m_btnOk.Name = "m_btnOk";
@@ -47,6 +48,7 @@
       // 
       // m_btnCancel
       // 
+      this.m_btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.m_btnCancel.Location = new System.Drawing.Point(197, 55);
       this.m_btnCancel.Name = "m_btnCancel";
@@ -57,6 +59,8 @@
       // 
       // m_txtbox
       // 
+      this.m_txtbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.m_txtbox.Location = new System.Drawing.Point(13, 29);
       this.m_txtbox.Name = "m_txtbox";
       this.m_txtbox.Size = new System.Drawing.Size(259, 20);
@@ -72,10 +76,12 @@
       this.m_lblMessage.TabIndex = 3;
       this.m_lblMessage.Text = "Enter some text";
       // 
-      // StringBox
+      // StringBoxForm
       // 
+      this.AcceptButton = this.m_btnOk;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.CancelButton = this.m_btnCancel;
       this.ClientSize = new System.Drawing.Size(284, 88);
       this.Controls.Add(this.m_lblMessage);
       this.Controls.Add(this.m_btnCancel);
@@ -84,7 +90,7 @@
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MaximizeBox = false;
       this.MinimizeBox = false;
-      this.Name = "StringBox";
+      this.Name = "StringBoxForm";
       this.Text = "StringBox";
       this.ResumeLayout(false);
       this.PerformLayout();

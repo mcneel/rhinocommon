@@ -283,8 +283,8 @@ namespace Rhino.Runtime
       PlugIn.m_plugins.Add(plugin);
 
       // create all commands in the plug-in
-      int command_count = HostUtils.CreateCommands(plugin);
-      HostUtils.DebugString("Created {0} commands", command_count);
+      HostUtils.CreateCommands(plugin);
+      HostUtils.DebugString("Created {0} commands", plugin.GetCommands().Length);
       HostUtils.DebugString("[MonoHost::LoadPlugIn] - DONE");
 
       return (int)MonoLoadResult.success;

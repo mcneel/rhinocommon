@@ -513,6 +513,91 @@ namespace Rhino.PlugIns
     {
     }
 
+    bool m_create_commands_called = false;
+    internal void InternalCreateCommands()
+    {
+      CreateCommands();
+      m_create_commands_called = true;
+    }
+
+    /// <summary>
+    /// Called right after plug-in is created and is responsible for creating
+    /// all of the commands in a given plug-in.  The base class implementation
+    /// creates an instance of every publicly exported command class in your
+    /// plug-in's assembly.
+    /// </summary>
+    protected virtual void CreateCommands()
+    {
+      if (m_create_commands_called)
+        return;
+      m_create_commands_called = true;
+
+      Type[] exported_types = this.Assembly.GetExportedTypes();
+      if (null == exported_types)
+        return;
+
+      Type command_type = typeof(Commands.Command);
+      for (int i = 0; i < exported_types.Length; i++)
+      {
+        if (command_type.IsAssignableFrom(exported_types[i]) && !exported_types[i].IsAbstract)
+        {
+          CreateCommandsHelper(this, this.NonConstPointer(), exported_types[i], null);
+        }
+      }
+    }
+
+    protected bool RegisterCommand(Rhino.Commands.Command command)
+    {
+      return CreateCommandsHelper(this, this.NonConstPointer(), command.GetType(), command);
+    }
+
+    internal static bool CreateCommandsHelper(PlugIn plugin, IntPtr pPlugIn, Type command_type, Commands.Command new_command)
+    {
+      bool rc = false;
+      try
+      {
+        if( new_command==null )
+          new_command = (Commands.Command)System.Activator.CreateInstance(command_type);
+        new_command.m_plugin = plugin;
+
+        if (null != plugin)
+          plugin.m_commands.Add(new_command);
+
+        int commandStyle = 0;
+        object[] styleattr = command_type.GetCustomAttributes(typeof(Commands.CommandStyleAttribute), true);
+        if (styleattr != null && styleattr.Length > 0)
+        {
+          Commands.CommandStyleAttribute a = (Commands.CommandStyleAttribute)styleattr[0];
+          new_command.m_style_flags = a.Styles;
+          commandStyle = (int)new_command.m_style_flags;
+        }
+
+        int sn = new_command.m_runtime_serial_number;
+        Guid id = new_command.Id;
+        string englishName = new_command.EnglishName;
+        string localName = new_command.LocalName;
+
+        int ct = 0;
+#if USING_V5_SDK
+        if (command_type.IsSubclassOf(typeof(Commands.TransformCommand)))
+          ct = 1;
+#endif
+        if (command_type.IsSubclassOf(typeof(Commands.SelCommand)))
+          ct = 2;
+
+        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle, ct);
+
+        rc = true;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return rc;
+    }
+
+
     public virtual object GetPlugInObject()
     {
       return null;

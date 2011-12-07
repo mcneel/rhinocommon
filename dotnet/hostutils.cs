@@ -443,44 +443,10 @@ namespace Rhino.Runtime
     /// Parse a plugin and create all the commands defined therein.
     /// </summary>
     /// <param name="plugin">Plugin to harvest for commands.</param>
-    /// <returns>The number of newly created commands.</returns>
-    public static int CreateCommands(PlugIn plugin)
+    public static void CreateCommands(PlugIn plugin)
     {
-      int rc = 0;
-      if (null == plugin)
-        return rc;
-
-      Type[] exported_types = plugin.Assembly.GetExportedTypes();
-      if (null == exported_types)
-        return rc;
-
-      Type command_type = typeof(Commands.Command);
-      for (int i = 0; i < exported_types.Length; i++)
-      {
-        if (command_type.IsAssignableFrom(exported_types[i]) && !exported_types[i].IsAbstract)
-        {
-          if (CreateCommandsHelper(plugin, plugin.NonConstPointer(), exported_types[i]))
-            rc++;
-        }
-      }
-
-      // 26 Feb 2010 S. Baer
-      // Moved Dynamic Command functionality into RhinoCommon from Rhino.NET in order to
-      // make this work on both Windows and Mac
-      try
-      {
-        // See if the plug-in has a function with the "magic" name of BuildDynamicCommands
-        System.Reflection.MethodInfo mi = plugin.GetType().GetMethod("BuildDynamicCommands");
-        if (null != mi)
-        {
-          mi.Invoke(plugin, null);
-        }
-      }
-      catch (Exception)
-      {
-      }
-
-      return rc;
+      if (plugin!=null)
+        plugin.InternalCreateCommands();
     }
     /// <summary>
     /// Parse a plugin and create all the commands defined therein.
@@ -506,54 +472,9 @@ namespace Rhino.Runtime
           continue;
         if (command_type.IsAssignableFrom(exported_types[i]))
         {
-          if (CreateCommandsHelper(null, pPlugIn, exported_types[i]))
+          if( Rhino.PlugIns.PlugIn.CreateCommandsHelper(null, pPlugIn, exported_types[i], null))
             rc++;
         }
-      }
-
-      return rc;
-    }
-
-    static bool CreateCommandsHelper(PlugIn plugin, IntPtr pPlugIn, Type command_type)
-    {
-      bool rc = false;
-      try
-      {
-        Commands.Command new_command = (Commands.Command)System.Activator.CreateInstance(command_type);
-        new_command.m_plugin = plugin;
-
-        if (null != plugin)
-          plugin.m_commands.Add(new_command);
-
-        int commandStyle = 0;
-        object[] styleattr = command_type.GetCustomAttributes(typeof(Commands.CommandStyleAttribute), true);
-        if (styleattr != null && styleattr.Length > 0)
-        {
-          Commands.CommandStyleAttribute a = (Commands.CommandStyleAttribute)styleattr[0];
-          new_command.m_style_flags = a.Styles;
-          commandStyle = (int)new_command.m_style_flags;
-        }
-
-        int sn = new_command.m_runtime_serial_number;
-        Guid id = new_command.Id;
-        string englishName = new_command.EnglishName;
-        string localName = new_command.LocalName;
-
-        int ct = 0;
-#if USING_V5_SDK
-        if (command_type.IsSubclassOf(typeof(Commands.TransformCommand)))
-          ct = 1;
-#endif
-        if (command_type.IsSubclassOf(typeof(Commands.SelCommand)))
-          ct = 2;
-
-        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle, ct);
-
-        rc = true;
-      }
-      catch (Exception ex)
-      {
-        ExceptionReport(ex);
       }
 
       return rc;

@@ -2318,5 +2318,195 @@ namespace Rhino.ApplicationSettings
       set { SetColor(idxActivePointColor, value); }
     }
   }
+
+  /// <summary>
+  /// Snapshot of CursorTooltipSettings
+  /// </summary>
+  public class CursorTooltipSettingsState
+  {
+    public bool TooltipsEnabled { get; set; }
+    public System.Drawing.Point Offset { get; set; }
+    public System.Drawing.Color BackgroundColor { get; set; }
+    public System.Drawing.Color TextColor { get; set; }
+
+    public bool OsnapPane { get; set; }
+    public bool DistancePane { get; set; }
+    public bool PointPane { get; set; }
+    public bool RelativePointPane { get; set; }
+    public bool CommandPromptPane { get; set; }
+    public bool AutoSuppress { get; set; }
+  }
+
+  /// <summary>
+  /// Cursor tooltips place information at the cursor location.
+  /// Note: Turning on cursor tooltips turns off object snap cursors
+  /// </summary>
+  public static class CursorTooltipSettings
+  {
+    static CursorTooltipSettingsState CreateState(bool current)
+    {
+      IntPtr pSettings = UnsafeNativeMethods.CRhinoAppCursorToolTipSettings_New(current);
+      CursorTooltipSettingsState rc = new CursorTooltipSettingsState();
+      rc.TooltipsEnabled = GetInt(idx_EnableCursorToolTips, pSettings)!=0;
+      int x = GetInt(idx_xoffset, pSettings);
+      int y = GetInt(idx_yoffset, pSettings);
+      rc.Offset = new Point(x, y);
+      int abgr = GetInt(idx_background_color, pSettings);
+      rc.BackgroundColor = ColorTranslator.FromWin32(abgr);
+      abgr = GetInt(idx_text_color, pSettings);
+      rc.TextColor = ColorTranslator.FromWin32(abgr);
+      rc.OsnapPane = GetInt(idx_bOsnapPane, pSettings) != 0;
+      rc.DistancePane = GetInt(idx_bDistancePane, pSettings) != 0;
+      rc.PointPane = GetInt(idx_bPointPane, pSettings) != 0;
+      rc.RelativePointPane = GetInt(idx_bRelativePointPane, pSettings) != 0;
+      rc.CommandPromptPane = GetInt(idx_bCommandPromptPane, pSettings) != 0;
+      rc.AutoSuppress = GetInt(idx_bAutoSuppress, pSettings) != 0;
+      UnsafeNativeMethods.CRhinoAppCursorToolTipSettings_Delete(pSettings);
+      return rc;
+    }
+
+    public static CursorTooltipSettingsState GetCurrentState()
+    {
+      return CreateState(true);
+    }
+
+    public static CursorTooltipSettingsState GetDefaultState()
+    {
+      return CreateState(false);
+    }
+
+    /// <summary>
+    /// Turn on/off cursor tooltips
+    /// </summary>
+    public static bool TooltipsEnabled
+    {
+      get { return GetInt(idx_EnableCursorToolTips, IntPtr.Zero) != 0; }
+      set { SetInt(idx_EnableCursorToolTips, value ? 1 : 0, IntPtr.Zero); }
+    }
+
+    /// <summary>
+    /// The x and y distances in pixels from the cursor location to the tooltip
+    /// </summary>
+    public static System.Drawing.Point Offset
+    {
+      get
+      {
+        int x = GetInt(idx_xoffset, IntPtr.Zero);
+        int y = GetInt(idx_yoffset, IntPtr.Zero);
+        return new Point(x, y);
+      }
+      set
+      {
+        SetInt(idx_xoffset, value.X, IntPtr.Zero);
+        SetInt(idx_yoffset, value.Y, IntPtr.Zero);
+      }
+    }
+
+    /// <summary>Tooltip background color</summary>
+    public static System.Drawing.Color BackgroundColor
+    {
+      get
+      {
+        int abgr = GetInt(idx_background_color, IntPtr.Zero);
+        return ColorTranslator.FromWin32(abgr);
+      }
+      set
+      {
+        int argb = value.ToArgb();
+        SetInt(idx_background_color, argb, IntPtr.Zero);
+      }
+    }
+
+    /// <summary>Tooltip text color</summary>
+    public static System.Drawing.Color TextColor
+    {
+      get
+      {
+        int abgr = GetInt(idx_text_color, IntPtr.Zero);
+        return ColorTranslator.FromWin32(abgr);
+      }
+      set
+      {
+        int argb = value.ToArgb();
+        SetInt(idx_text_color, argb, IntPtr.Zero);
+      }
+    }
+
+    /// <summary>
+    /// Displays the current object snap selection
+    /// </summary>
+    public static bool OsnapPane
+    {
+      get { return GetInt(idx_bOsnapPane, IntPtr.Zero) != 0; }
+      set { SetInt(idx_bOsnapPane, value ? 1 : 0, IntPtr.Zero); }
+    }
+
+    /// <summary>
+    /// Displays the distance from the last picked point.
+    /// </summary>
+    public static bool DistancePane
+    {
+      get { return GetInt(idx_bDistancePane, IntPtr.Zero) != 0; }
+      set { SetInt(idx_bDistancePane, value ? 1 : 0, IntPtr.Zero); }
+    }
+
+    /// <summary>
+    /// Displays the current construction plane coordinates
+    /// </summary>
+    public static bool PointPane
+    {
+      get { return GetInt(idx_bPointPane, IntPtr.Zero) != 0; }
+      set { SetInt(idx_bPointPane, value ? 1 : 0, IntPtr.Zero); }
+    }
+
+    /// <summary>
+    /// Displays the relative construction plane coordinates and angle from the last picked point
+    /// </summary>
+    public static bool RelativePointPane
+    {
+      get { return GetInt(idx_bRelativePointPane, IntPtr.Zero) != 0; }
+      set { SetInt(idx_bRelativePointPane, value ? 1 : 0, IntPtr.Zero); }
+    }
+
+    /// <summary>
+    /// Displays the current command prompt
+    /// </summary>
+    public static bool CommandPromptPane
+    {
+      get { return GetInt(idx_bCommandPromptPane, IntPtr.Zero) != 0; }
+      set { SetInt(idx_bCommandPromptPane, value ? 1 : 0, IntPtr.Zero); }
+    }
+
+    /// <summary>
+    /// Attempts to display only the most useful tooltip
+    /// </summary>
+    public static bool AutoSuppress
+    {
+      get { return GetInt(idx_bAutoSuppress, IntPtr.Zero) != 0; }
+      set { SetInt(idx_bAutoSuppress, value ? 1 : 0, IntPtr.Zero); }
+    }
+
+    const int idx_EnableCursorToolTips = 0;
+    const int idx_xoffset = 1;
+    const int idx_yoffset = 2;
+    const int idx_background_color = 3;
+    const int idx_text_color = 4;
+    const int idx_bOsnapPane = 5;
+    const int idx_bDistancePane = 6;
+    const int idx_bPointPane = 7;
+    const int idx_bRelativePointPane = 8;
+    const int idx_bCommandPromptPane = 9;
+    const int idx_bAutoSuppress = 10;
+
+    static int GetInt(int which, IntPtr pCursorTooltipSettings)
+    {
+      return UnsafeNativeMethods.CRhinoAppCursorToolTipSettings_GetInt(pCursorTooltipSettings, which);
+    }
+    static void SetInt(int which, int value, IntPtr pCursorTooltipSettings)
+    {
+      UnsafeNativeMethods.CRhinoAppCursorToolTipSettings_SetInt(pCursorTooltipSettings, which, value);
+    }
+
+  }
 }
 #endif

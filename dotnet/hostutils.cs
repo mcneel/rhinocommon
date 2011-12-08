@@ -366,6 +366,11 @@ namespace Rhino.Runtime
 
     public static void ExceptionReport(Exception ex)
     {
+      ExceptionReport(null, ex);
+    }
+
+    public static void ExceptionReport(string source, Exception ex)
+    {
       if (null == ex)
         return;
       string msg = ex.ToString();
@@ -377,6 +382,8 @@ namespace Rhino.Runtime
         //if (!string.IsNullOrEmpty(name))
         msg = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}\nMissing Type = {1}", msg, name);
       }
+      if (!string.IsNullOrEmpty(source))
+        DebugString(source);
       DebugString(msg);
     }
 

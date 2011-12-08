@@ -4597,6 +4597,10 @@ internal partial class UnsafeNativeMethods
   //int CRhinoApp_GetMRUCommands(ON_ClassArray<ON_wString>* display_strings, ON_ClassArray<ON_wString>* macros)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoApp_GetMRUCommands(IntPtr display_strings, IntPtr macros);
+
+  //void CRhinoApp_SetCursorTooltip( const RHMONO_STRING* tooltip )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoApp_SetCursorTooltip([MarshalAs(UnmanagedType.LPWStr)]string tooltip);
   #endregion
 
 
@@ -4925,6 +4929,22 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoDockBarManager_InitialMainFramePosition(ref int left, ref int top, ref int right, ref int bottom, ref int showFlags);
+
+  //CRhinoAppCursorToolTipSettings* CRhinoAppCursorToolTipSettings_New(bool current)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoAppCursorToolTipSettings_New([MarshalAs(UnmanagedType.U1)]bool current);
+
+  //void CRhinoAppCursorToolTipSettings_Delete(CRhinoAppCursorToolTipSettings* pCursorToolTipSettings)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppCursorToolTipSettings_Delete(IntPtr pCursorToolTipSettings);
+
+  //int CRhinoAppCursorToolTipSettings_GetInt(const CRhinoAppCursorToolTipSettings* pConstSettings, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoAppCursorToolTipSettings_GetInt(IntPtr pConstSettings, int which);
+
+  //void CRhinoAppCursorToolTipSettings_SetInt(CRhinoAppCursorToolTipSettings* pSettings, int which, int value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppCursorToolTipSettings_SetInt(IntPtr pSettings, int which, int value);
   #endregion
 
 
@@ -4961,7 +4981,7 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_command.cpp
-  //void CRhinoCommand_SetRunCommandCallbacks(RUNCOMMANDPROC run_func, DOHELPPROC dohelp_func, CONTEXTHELPPROC contexthelp_func)
+  //void CRhinoCommand_SetRunCommandCallbacks(RUNCOMMANDPROC run_func, DOHELPPROC dohelp_func, CONTEXTHELPPROC contexthelp_func, REPLAYHISTORYPROC replayhistory_func)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //void CRhinoCommand_SetSelCommandCallback(SELCOMMANDPROC sel_func)
@@ -5039,6 +5059,134 @@ internal partial class UnsafeNativeMethods
   //const wchar_t* CRhinoCommand_PlugInName(const CRhinoCommand* pConstCommand)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoCommand_PlugInName(IntPtr pConstCommand);
+
+  //CRhinoHistory* CRhinoHistory_New(ON_UUID command_id, int version)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoHistory_New(Guid command_id, int version);
+
+  //void CRhinoHistory_Delete(CRhinoHistory* pHistory)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoHistory_Delete(IntPtr pHistory);
+
+  //bool CRhinoHistory_SetBool(CRhinoHistory* pHistory, int id, bool value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetBool(IntPtr pHistory, int id, [MarshalAs(UnmanagedType.U1)]bool value);
+
+  //bool CRhinoHistory_SetInt(CRhinoHistory* pHistory, int id, int value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetInt(IntPtr pHistory, int id, int value);
+
+  //bool CRhinoHistory_SetDouble(CRhinoHistory* pHistory, int id, double value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetDouble(IntPtr pHistory, int id, double value);
+
+  //bool CRhinoHistory_SetPoint3d(CRhinoHistory* pHistory, int id, ON_3DPOINT_STRUCT value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetPoint3d(IntPtr pHistory, int id, Point3d value);
+
+  //bool CRhinoHistory_SetVector3d(CRhinoHistory* pHistory, int id, ON_3DVECTOR_STRUCT value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetVector3d(IntPtr pHistory, int id, Vector3d value);
+
+  //bool CRhinoHistory_SetXform(CRhinoHistory* pHistory, int id, const ON_Xform* value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetXform(IntPtr pHistory, int id, ref Transform value);
+
+  //bool CRhinoHistory_SetColor(CRhinoHistory* pHistory, int id, int argb)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetColor(IntPtr pHistory, int id, int argb);
+
+  //bool CRhinoHistory_SetObjRef(CRhinoHistory* pHistory, int id, const CRhinoObjRef* pConstObjRef)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetObjRef(IntPtr pHistory, int id, IntPtr pConstObjRef);
+
+  //bool CRhinoHistory_SetPoint3dOnObject(CRhinoHistory* pHistory, int id, const CRhinoObjRef* pConstObjRef, ON_3DPOINT_STRUCT point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetPoint3dOnObject(IntPtr pHistory, int id, IntPtr pConstObjRef, Point3d point);
+
+  //bool CRhinoHistory_SetUuid(CRhinoHistory* pHistory, int id, ON_UUID value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetUuid(IntPtr pHistory, int id, Guid value);
+
+  //bool CRhinoHistory_SetString(CRhinoHistory* pHistory, int id, const RHMONO_STRING* value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetString(IntPtr pHistory, int id, [MarshalAs(UnmanagedType.LPWStr)]string value);
+
+  //bool CRhinoHistory_SetCurve(CRhinoHistory* pHistory, int id, const ON_Curve* pConstCurve)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetCurve(IntPtr pHistory, int id, IntPtr pConstCurve);
+
+  //bool CRhinoHistory_SetSurface(CRhinoHistory* pHistory, int id, const ON_Surface* pConstSurface)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetSurface(IntPtr pHistory, int id, IntPtr pConstSurface);
+
+  //bool CRhinoHistory_SetBrep(CRhinoHistory* pHistory, int id, const ON_Brep* pConstBrep)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetBrep(IntPtr pHistory, int id, IntPtr pConstBrep);
+
+  //bool CRhinoHistory_SetMesh(CRhinoHistory* pHistory, int id, const ON_Mesh* pConstMesh)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetMesh(IntPtr pHistory, int id, IntPtr pConstMesh);
+
+  //bool CRhinoHistory_SetBools(CRhinoHistory* pHistory, int id, int count, /*ARRAY*/ const bool* value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetBools(IntPtr pHistory, int id, int count, [MarshalAs(UnmanagedType.U1)] bool[] value);
+
+  //bool CRhinoHistory_SetInts(CRhinoHistory* pHistory, int id, int count, /*ARRAY*/ const int* value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetInts(IntPtr pHistory, int id, int count, int[] value);
+
+  //bool CRhinoHistory_SetDoubles(CRhinoHistory* pHistory, int id, int count, /*ARRAY*/ const double* value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetDoubles(IntPtr pHistory, int id, int count, double[] value);
+
+  //bool CRhinoHistory_SetPoints(CRhinoHistory* pHistory, int id, int count, /*ARRAY*/ const ON_3dPoint* value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetPoints(IntPtr pHistory, int id, int count, Point3d[] value);
+
+  //bool CRhinoHistory_SetVectors(CRhinoHistory* pHistory, int id, int count, /*ARRAY*/ const ON_3dVector* value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetVectors(IntPtr pHistory, int id, int count, Vector3d[] value);
+
+  //bool CRhinoHistory_SetColors(CRhinoHistory* pHistory, int id, int count, /*ARRAY*/ const int* argb)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetColors(IntPtr pHistory, int id, int count, int[] argb);
+
+  //bool CRhinoHistory_SetObjRefs(CRhinoHistory* pHistory, int id, ON_ClassArray<CRhinoObjRef>* pObjRefs)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetObjRefs(IntPtr pHistory, int id, IntPtr pObjRefs);
+
+  //bool CRhinoHistory_SetUuids(CRhinoHistory* pHistory, int id, int count, /*ARRAY*/ const ON_UUID* uuids)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetUuids(IntPtr pHistory, int id, int count, Guid[] uuids);
+
+  //bool CRhinoHistory_SetStrings(CRhinoHistory* pHistory, int id, ON_ClassArray<ON_wString>* strings)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoHistory_SetStrings(IntPtr pHistory, int id, IntPtr strings);
   #endregion
 
 

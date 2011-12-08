@@ -371,7 +371,6 @@ namespace Rhino.Geometry.Intersect
 #if USING_V5_SDK
       // Use dedicated plane intersector in Rhino5
       IntPtr pConstCurve = curve.ConstPointer();
-      plane.GetPlaneEquation();
       IntPtr pIntersectArray = UnsafeNativeMethods.ON_Curve_IntersectPlane(pConstCurve, ref plane, tolerance);
       return CurveIntersections.Create(pIntersectArray);
 #else

@@ -926,6 +926,19 @@ namespace Rhino
 
 namespace Rhino.UI
 {
+  public static class MouseCursor
+  {
+    /// <summary>
+    /// Sets a cursor tooltip string shown next to the mouse cursor.
+    /// Overrides all cursor tooltip panes.
+    /// </summary>
+    /// <param name="tooltip"></param>
+    public static void SetToolTip(string tooltip)
+    {
+      UnsafeNativeMethods.CRhinoApp_SetCursorTooltip(tooltip);
+    }
+  }
+
   public static class StatusBar
   {
     public static void SetDistancePane(double distance)

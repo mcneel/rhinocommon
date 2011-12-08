@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 
@@ -198,11 +197,23 @@ namespace Rhino.Geometry.Intersect
       Dispose(false);
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)
@@ -384,6 +395,7 @@ namespace Rhino.Geometry.Intersect
 
     /// <summary>
     /// Allows to establish whether this collection contains and IntersectionEvent.
+    /// <para>This method is O(n), where n is the Count of elements in this collection.</para>
     /// </summary>
     /// <param name="item">Object to be found.</param>
     /// <returns>True if element is contained; otherwise false.</returns>
@@ -419,8 +431,9 @@ namespace Rhino.Geometry.Intersect
 
     /// <summary>
     /// Returns a non-generic enumerator that is capable of yielding all IntersectionEvents in the collection.
+    /// This returns the same enumerator as the generic counterpart.
     /// </summary>
-    /// <returns>The constructed non-generic enumerator.</returns>
+    /// <returns>The constructed enumerator.</returns>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return GetEnumerator();

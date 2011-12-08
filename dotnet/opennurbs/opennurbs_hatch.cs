@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -20,7 +19,11 @@ namespace Rhino.Geometry
       : base(native_ptr, parent, -1)
     { }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
     protected Hatch(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
@@ -31,8 +34,19 @@ namespace Rhino.Geometry
       return new Hatch(IntPtr.Zero, null);
     }
 
+    /// <summary>
+    /// Creates an array of <see cref="Hatch">hatches</see> from a set of curves.
+    /// </summary>
+    /// <param name="curves">An array, a list or any enumarable set of <see cref="Curve"/>.</param>
+    /// <param name="hatchPatternIndex">The index of the hatch pattern in the document hatch pattern table.</param>
+    /// <param name="rotationRadians">The relative rotation of the pattern.</param>
+    /// <param name="scale">A scaling factor.</param>
+    /// <returns>An array of hatches. The array might be empty on error.</returns>
+    /// <exception cref="ArgumentNullException">If curves is null.</exception>
     public static Hatch[] Create(IEnumerable<Curve> curves, int hatchPatternIndex, double rotationRadians, double scale)
     {
+      if (curves == null) throw new ArgumentNullException("curves");
+
       Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer curvearray = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer(curves);
       IntPtr pCurveArray = curvearray.NonConstPointer();
       Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer hatcharray = new Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer();
@@ -56,12 +70,23 @@ namespace Rhino.Geometry
     /// <code source='examples\cs\ex_hatchcurve.cs' lang='cs'/>
     /// <code source='examples\py\ex_hatchcurve.py' lang='py'/>
     /// </example>
+    /// <summary>
+    /// Creates an array of <see cref="Hatch">hatches</see> from one curve.
+    /// </summary>
+    /// <param name="curve">A <see cref="Curve"/>.</param>
+    /// <param name="hatchPatternIndex">The index of the hatch pattern in the document hatch pattern table.</param>
+    /// <param name="rotationRadians">The relative rotation of the pattern.</param>
+    /// <param name="scale">A scaling factor.</param>
+    /// <returns>An array of hatches. The array might be empty on error.</returns>
     public static Hatch[] Create(Curve curve, int hatchPatternIndex, double rotationRadians, double scale)
     {
       return Create(new Curve[] { curve }, hatchPatternIndex, rotationRadians, scale);
     }
 
-
+    /// <summary>
+    /// Decomposes the hatch pattern into an array of geometry.
+    /// </summary>
+    /// <returns>An array of geometry that formed the appearance of the original elements.</returns>
     public GeometryBase[] Explode()
     {
       Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer geometry = new Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer();
@@ -84,6 +109,9 @@ namespace Rhino.Geometry
       return rc;
     }
 
+    /// <summary>
+    /// Gets or sets the index of the pattern in the document hatch pattern table.
+    /// </summary>
     public int PatternIndex
     {
       get
@@ -98,6 +126,9 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets or sets the relative rotation of the pattern.
+    /// </summary>
     public double PatternRotation
     {
       get
@@ -112,6 +143,9 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets or sets the scaling factor of the pattern.
+    /// </summary>
     public double PatternScale
     {
       get

@@ -1,11 +1,10 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents the values of a plane and two radii in an ellipse.
+  /// Represents the values of a plane and the two semiaxes radii in an ellipse.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 144)]
   [Serializable]

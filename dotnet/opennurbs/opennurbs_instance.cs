@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -7,6 +6,9 @@ using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents the geometry in a block definition.
+  /// </summary>
   public class InstanceDefinitionGeometry : GeometryBase
   {
     #region internals
@@ -20,6 +22,9 @@ namespace Rhino.Geometry
     }
     #endregion
 
+    /// <summary>
+    /// Initializes a new block definition.
+    /// </summary>
     public InstanceDefinitionGeometry()
     {
       IntPtr ptr = UnsafeNativeMethods.ON_InstanceDefinition_New(IntPtr.Zero);
@@ -29,6 +34,9 @@ namespace Rhino.Geometry
     const int idxName = 0;
     const int idxDescription = 1;
 
+    /// <summary>
+    /// Gets or sets the name of the definition.
+    /// </summary>
     public string Name
     {
       get
@@ -48,6 +56,9 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets or sets the description of the definition.
+    /// </summary>
     public string Description
     {
       get
@@ -68,6 +79,9 @@ namespace Rhino.Geometry
     }
   }
 
+  /// <summary>
+  /// Represents a reference to the geometry in a block definition.
+  /// </summary>
   public class InstanceReferenceGeometry : GeometryBase
   {
     internal InstanceReferenceGeometry(IntPtr native_ptr, object parent)

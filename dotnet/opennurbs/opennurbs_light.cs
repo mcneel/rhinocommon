@@ -11,13 +11,15 @@ namespace Rhino.Geometry
     /// <summary>
     /// Constructs a light that represents the Sun.
     /// </summary>
-    /// <param name="northAngleDegrees">The angle of North in degrees.</param>
-    /// <param name="azimuthDegrees">The Azimut angle value in degrees.</param>
-    /// <param name="altitudeDegrees">The Altitude angle in degrees.</param>
+    /// <param name="northAngleDegrees">The angle of North in degrees. North is the angle between positive World Y axis and model North, as measured on World XY plane.</param>
+    /// <param name="azimuthDegrees">The Azimut angle value in degrees. Azimuth is the compass angle from North.</param>
+    /// <param name="altitudeDegrees">The Altitude angle in degrees. Altitude is the angle above the ground plane.</param>
     /// <returns>A new sun light.</returns>
+    /// <exception cref="Rhino.Runtime.RdkNotLoadedException">If the RDK is not loaded.</exception>
     public static Light CreateSunLight(double northAngleDegrees, double azimuthDegrees, double altitudeDegrees)
     {
       Rhino.Runtime.HostUtils.CheckForRdk(true, true);
+
       IntPtr pSun = UnsafeNativeMethods.Rdk_SunNew();
       IntPtr pSunInterface = UnsafeNativeMethods.Rdk_SunInterface(pSun);
       UnsafeNativeMethods.Rdk_Sun_SetNorth(pSunInterface, northAngleDegrees);
@@ -31,16 +33,14 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Constructs a light which simulates the Sun based on a given time and location on Earth.
+    /// This method is deprecated. Do not use it.
     /// </summary>
-    /// <param name="northAngleDegrees">The angle of North in degrees.</param>
-    /// <param name="when">The time.</param>
-    /// <param name="whenKind"></param>
-    /// <param name="latitudeDegrees"></param>
-    /// <param name="longitudeDegrees"></param>
-    /// <returns></returns>
-    /// <exception cref="Rhino.Runtime.RdkNotLoadedException"></exception>
-    /// <exception cref="System.ArgumentException">if whenKind is set to Unspecified</exception>
+    /// <param name="northAngleDegrees">This argument is specified in a deprecated method. Do not use it.</param>
+    /// <param name="when">This argument is specified in a deprecated method. Do not use it.</param>
+    /// <param name="whenKind">This argument is specified in a deprecated method. Do not use it.</param>
+    /// <param name="latitudeDegrees">This argument is specified in a deprecated method. Do not use it.</param>
+    /// <param name="longitudeDegrees">This argument is specified in a deprecated method. Do not use it.</param>
+    /// <returns>This return value is specified by a deprecated method. Do not use it.</returns>
     [Obsolete("Removed in favor of version that does not require a DateTimeKind since this is embedded in a DateTime. Will be removed in a future beta.")]
     public static Light CreateSunLight(double northAngleDegrees, DateTime when, DateTimeKind whenKind, double latitudeDegrees, double longitudeDegrees)
     {
@@ -63,16 +63,15 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a light which simulates the sun based on a given time and location on earth
-    /// Initializes a light which simulates the Sun.
+    /// Constructs a light which simulates the Sun based on a given time and location on Earth.
     /// </summary>
-    /// <param name="northAngleDegrees"></param>
-    /// <param name="when"></param>
-    /// <param name="latitudeDegrees"></param>
-    /// <param name="longitudeDegrees"></param>
-    /// <returns></returns>
-    /// <exception cref="Rhino.Runtime.RdkNotLoadedException"></exception>
-    /// <exception cref="System.ArgumentException">if whenKind is set to Unspecified</exception>
+    /// <param name="northAngleDegrees">The angle of North in degrees. North is the angle between positive World Y axis and model North, as measured on World XY plane.</param>
+    /// <param name="when">The time of the measurement. The Kind property of DateTime specifies whether this is in local or universal time.
+    /// <para>Local and Undefined <see cref="DateTimeKind">daytime kinds</see> in this argument are considered local.</para></param>
+    /// <param name="latitudeDegrees">The latitude, in degrees, of the location on Earth.</param>
+    /// <param name="longitudeDegrees">The longitude, in degrees, of the location on Earth.</param>
+    /// <returns>A newly constructed light object.</returns>
+    /// <exception cref="Rhino.Runtime.RdkNotLoadedException">If the RDK is not loaded.</exception>
     public static Light CreateSunLight(double northAngleDegrees, DateTime when, double latitudeDegrees, double longitudeDegrees)
     {
       Rhino.Runtime.HostUtils.CheckForRdk(true, true);
@@ -92,8 +91,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a light which simlulates the sun
-    /// </summary>
+    /// Constructs a light which simulates a <see cref="Rhino.Render.Sun"/>.
     /// </summary>
     /// <param name="sun">A Sun object from the Rhino.Render namespace.</param>
     /// <returns>A light.</returns>

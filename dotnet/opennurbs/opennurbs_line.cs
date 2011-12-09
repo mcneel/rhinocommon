@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents a single line segment.
+  /// Represents the value of start and end points in a single line segment.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]
   [Serializable]

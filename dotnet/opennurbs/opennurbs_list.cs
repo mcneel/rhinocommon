@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -103,7 +102,7 @@ namespace Rhino.Collections
 
     #region Constructors
     /// <summary>
-    /// Create a new, empty list.
+    /// Initializes a new, empty list.
     /// </summary>
     public RhinoList()
     {
@@ -111,7 +110,7 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Create an empty list with a certain capacity.
+    /// Initializes an empty list with a certain capacity.
     /// </summary>
     /// <param name="initialCapacity">Number of items this list can store without resizing.</param>
     public RhinoList(int initialCapacity)
@@ -124,7 +123,7 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Create a new List with a specified amount of values.
+    /// Initializes a new list with a specified amount of values.
     /// </summary>
     /// <param name="amount">Number of values to add to this list. Must be equal to or larger than zero.</param>
     /// <param name="defaultValue">Value to add, for reference types, 
@@ -144,7 +143,7 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Create a list that is a shallow duplicate of a collection. 
+    /// Initializes this list as a shallow duplicate of another list, array or any other enumerable set of T.
     /// </summary>
     /// <param name="collection">Collection of items to duplicate.</param>
     public RhinoList(IEnumerable<T> collection)
@@ -178,7 +177,7 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Copy constructor. Create a shallow duplicate of another list.
+    /// Initializes an new list by shallow duplicating another list.
     /// </summary>
     /// <param name="list">List to mimic.</param>
     public RhinoList(RhinoList<T> list)
@@ -195,10 +194,9 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Create a shallow copy of the items in this list.
+    /// Constructs an array that contains all items in this list.
     /// </summary>
-    /// <returns>An array containing all the items in this list. 
-    /// Trailing items are not included.</returns>
+    /// <returns>An array containing all items in this list.</returns>
     public T[] ToArray()
     {
       T[] destinationArray = new T[this.m_size];
@@ -1419,10 +1417,21 @@ namespace Rhino.Collections
     #endregion
 
     #region Duplication and Conversion
+    /// <summary>
+    /// Constructs a read-only wrapper of this class.
+    /// </summary>
+    /// <returns>A wrapper.</returns>
     public ReadOnlyCollection<T> AsReadOnly()
     {
       return new ReadOnlyCollection<T>(this);
     }
+
+    /// <summary>
+    /// Aggregates all results of a conversion function over this table into a new list.
+    /// </summary>
+    /// <typeparam name="TOutput">The type returned by the function.</typeparam>
+    /// <param name="converter">A conversion function that can transform from T to TOutput.</param>
+    /// <returns>The new list.</returns>
     public RhinoList<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter)
     {
       if (converter == null) { throw new ArgumentNullException("converter"); }
@@ -1503,6 +1512,10 @@ namespace Rhino.Collections
     #endregion
 
     #region Enumeration
+    /// <summary>
+    /// Constructs an enumerator that is capable of iterating over all items in this list.
+    /// </summary>
+    /// <returns>The new enumerator.</returns>
     public IEnumerator GetEnumerator()
     {
       return new Enumerator((RhinoList<T>)this);
@@ -1591,7 +1604,7 @@ namespace Rhino.Collections
   }
 
   /// <summary>
-  /// Utility class for displaying ON_List contents in the VS debugger.
+  /// Utility class for displaying <see cref="RhinoList{T}" /> contents in the VS debugger.
   /// </summary>
   internal class ListDebuggerDisplayProxy<T>
   {
@@ -1617,15 +1630,21 @@ namespace Rhino.Collections
     }
   }
 
+  /// <summary>
+  /// Represents a list of <see cref="Point3d"/>.
+  /// </summary>
   [Serializable]
   public class Point3dList : RhinoList<Point3d>
   {
+    /// <summary>
+    /// Initializes a new empty list with default capacity.
+    /// </summary>
     public Point3dList()
     {
     }
 
     /// <summary>
-    /// Create a new pointlist with a preallocated initial capacity.
+    /// Initializes a new point list with a preallocated initial capacity.
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addnurbscurve.vb' lang='vbnet'/>
@@ -1636,6 +1655,11 @@ namespace Rhino.Collections
       : base(initialCapacity)
     {
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="collection"></param>
     public Point3dList(IEnumerable<Point3d> collection)
       : base(collection)
     {
@@ -1669,7 +1693,7 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Anything calling this function should not be modifying the contents of the array
+    /// Anything calling this function should not be modifying the contents of the array.
     /// </summary>
     /// <param name="points"></param>
     /// <param name="count"></param>
@@ -1742,7 +1766,7 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Find the index of the point that is closest to a test point in this list
+    /// Finds the index of the point that is closest to a test point in this list
     /// </summary>
     /// <param name="testPoint">point to compare against</param>
     /// <returns>index of closest point in the list on success. -1 on error</returns>
@@ -1756,6 +1780,9 @@ namespace Rhino.Collections
     internal YAccess m_y_access;
     internal ZAccess m_z_access;
 
+    /// <summary>
+    /// Returns an indexer with all X coordinates in this list.
+    /// </summary>
     public XAccess X
     {
       get
@@ -1765,6 +1792,10 @@ namespace Rhino.Collections
         return m_x_access;
       }
     }
+
+    /// <summary>
+    /// Returns an indexer with all Y coordinates in this list.
+    /// </summary>
     public YAccess Y
     {
       get
@@ -1774,6 +1805,10 @@ namespace Rhino.Collections
         return m_y_access;
       }
     }
+
+    /// <summary>
+    /// Returns an indexer with all Z coordinates in this list.
+    /// </summary>
     public ZAccess Z
     {
       get
@@ -1898,7 +1933,7 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Find the index of the point in a list of points that is closest to a test point.
+    /// Finds the index of the point in a list of points that is closest to a test point.
     /// </summary>
     /// <param name="list">A list of points.</param>
     /// <param name="testPoint">Point to compare against.</param>
@@ -1932,7 +1967,7 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Find the point in a list of points that is closest to a test point.
+    /// Finds the point in a list of points that is closest to a test point.
     /// </summary>
     /// <param name="list">A list of points.</param>
     /// <param name="testPoint">Point to compare against.</param>
@@ -1950,73 +1985,140 @@ namespace Rhino.Collections
     #endregion
   }
 
+  /// <summary>
+  /// Represents a list of curves.
+  /// </summary>
   public class CurveList : RhinoList<Curve>
   {
+    /// <summary>
+    /// Initializes a new empty list of curves.
+    /// </summary>
     public CurveList()
     {
     }
+
+    /// <summary>
+    /// Initializes a new empty list of curves with a predefined capacity.
+    /// <para>This is the amount of items the list will accept before resizing.</para>
+    /// </summary>
     public CurveList(int initialCapacity)
       : base(initialCapacity)
     {
     }
+
+    /// <summary>
+    /// Initializes a new list that is filled with all items of the input enumerable.
+    /// <para>Input items are not explicitly duplicated (this is a shallow copy).</para>
+    /// </summary>
+    /// <param name="collection">A list, an array or any enumerable set of <see cref="Curve"/>.</param>
     public CurveList(IEnumerable<Curve> collection)
       : base(collection)
     {
     }
 
     #region Addition Overloads
+    /// <summary>
+    /// Adds a line to this list.
+    /// </summary>
+    /// <param name="line">A line value that will be the model of the new internal curve.</param>
     public void Add(Line line)
     {
       base.Add(new LineCurve(line));
     }
+
+    /// <summary>
+    /// Adds a circle to this list.
+    /// </summary>
+    /// <param name="circle">A circle value that will be the model of the new internal curve.</param>
     public void Add(Circle circle)
     {
       base.Add(new ArcCurve(circle));
     }
+
+    /// <summary>
+    /// Adds an arc to this list.
+    /// </summary>
+    /// <param name="arc">An arc value that will be the model of the new internal curve.</param>
     public void Add(Arc arc)
     {
       base.Add(new ArcCurve(arc));
     }
 
-    //TODO!
-    //public void Add(ON_3dPointList polyline)
-    //{
-    //  ...
-    //}
+    /// <summary>
+    /// Adds a polyline to this list.
+    /// </summary>
+    /// <param name="polyline">A polyline value that will be copied in a new polyline.
+    /// <para>This argument can be null, an array, a list or any enumerable set of <see cref="Point3d"/>.</para></param>
+    public void Add(IEnumerable<Point3d> polyline)
+    {
+      if (polyline == null) base.Add(null);
+      base.Add(new PolylineCurve(polyline));
+    }
 
-    //TODO!
-    //public void Add(ON_Ellipse ellipse)
-    //{
-    //  ...
-    //}
+    /// <summary>
+    /// Adds an ellipse to this list.
+    /// </summary>
+    /// <param name="ellipse">An ellipse that will be the model of the new internal curve.</param>
+    public void Add(Ellipse ellipse)
+    {
+      base.Add(NurbsCurve.CreateFromEllipse(ellipse));
+    }
 
     #endregion
 
     #region Insertion overloads
+    /// <summary>
+    /// Inserts a line at a given index of this list.
+    /// </summary>
+    /// <param name="index">A 0-based position in the list.</param>
+    /// <param name="line">The line value from which to construct the new curve.</param>
     public void Insert(int index, Line line)
     {
       base.Insert(index, new LineCurve(line));
     }
+
+    /// <summary>
+    /// Inserts a line at a given index of this list.
+    /// </summary>
+    /// <param name="index">A 0-based position in the list.</param>
+    /// <param name="circle">The circle value from which to construct the new curve.</param>
     public void Insert(int index, Circle circle)
     {
       base.Insert(index, new ArcCurve(circle));
     }
+
+    /// <summary>
+    /// Inserts an arc at a given index of this list.
+    /// </summary>
+    /// <param name="index">A 0-based position in the list.</param>
+    /// <param name="arc">The arc value from which to construct the new curve.</param>
     public void Insert(int index, Arc arc)
     {
       base.Insert(index, new ArcCurve(arc));
     }
 
-    //TODO!
-    //public void Insert(int index, ON_3dPointList polyline)
-    //{
-    //  ...
-    //}
+    /// <summary>
+    /// Inserts a polyline at a given index of this list.
+    /// </summary>
+    /// <param name="index">A 0-based position in the list.</param>
+    /// <param name="polyline">The polyline enumerable from which to construct a copy curve.
+    /// <para>This argument can be null, an array, a list or any enumerable set of
+    /// <see cref="Point3d"/>.</para></param>
+    public void Insert(int index, IEnumerable<Point3d> polyline)
+    {
+      if (polyline == null) base.Add(null);
+      base.Add(new PolylineCurve(polyline));
+    }
 
-    //TODO!
-    //public void Insert(int index, ON_Ellipse ellipse)
-    //{
-    //  ...
-    //}
+    /// <summary>
+    /// Inserts an ellipse at a given index of this list.
+    /// </summary>
+    /// <param name="index">A 0-based position in the list.</param>
+    /// <param name="ellipse">The ellipse value from which to construct the new curve.</param>
+    public void Insert(int index, Ellipse ellipse)
+    {
+      base.Add(NurbsCurve.CreateFromEllipse(ellipse));
+    }
     #endregion
 
     #region Geometry utilities

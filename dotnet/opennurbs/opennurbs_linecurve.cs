@@ -1,18 +1,28 @@
-#pragma warning disable 1591
 using System;
 using Rhino.Display;
 using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents a linear curve.
+  /// </summary>
   [Serializable]
   public class LineCurve : Curve, ISerializable
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineCurve"/> class.
+    /// </summary>
     public LineCurve()
     {
       IntPtr ptr = UnsafeNativeMethods.ON_LineCurve_New(IntPtr.Zero);
       ConstructNonConstObject(ptr);
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineCurve"/> class, by
+    /// copying values from another linear curve.
+    /// </summary>
     public LineCurve(LineCurve other)
     {
       IntPtr pOther = IntPtr.Zero;
@@ -21,6 +31,12 @@ namespace Rhino.Geometry
       IntPtr ptr = UnsafeNativeMethods.ON_LineCurve_New(pOther);
       ConstructNonConstObject(ptr);
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineCurve"/> class, by
+    /// setting start and end point from two <see cref="Point2d">2D points</see>.</summary>
+    /// <param name="from">A start point.</param>
+    /// <param name="to">An end point.</param>
     public LineCurve(Point2d from, Point2d to)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_LineCurve_New2(from,to);
@@ -31,16 +47,35 @@ namespace Rhino.Geometry
     /// <code source='examples\cs\ex_addtruncatedcone.cs' lang='cs'/>
     /// <code source='examples\py\ex_addtruncatedcone.py' lang='py'/>
     /// </example>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineCurve"/> class, by
+    /// setting start and end point from two <see cref="Point3d">3D points</see>.</summary>
+    /// <param name="from">A start point.</param>
+    /// <param name="to">An end point.</param>
     public LineCurve(Point3d from, Point3d to)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_LineCurve_New3(from,to);
       ConstructNonConstObject(ptr);
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineCurve"/> class, by
+    /// retrieving its value from a <see cref="Line">line</see>.
+    /// </summary>
+    /// <param name="line">A line to use as model.</param>
     public LineCurve(Line line)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_LineCurve_New3(line.From, line.To);
       ConstructNonConstObject(ptr);
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineCurve"/> class, by
+    /// retrieving its value from a <see cref="Line">line</see> and setting the domain.
+    /// </summary>
+    /// <param name="line">A line to use as model.</param>
+    /// <param name="t0">The new domain start.</param>
+    /// <param name="t1">The new domain end.</param>
     public LineCurve(Line line, double t0, double t1)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_LineCurve_New4(line.From, line.To, t0, t1);
@@ -77,7 +112,7 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>
-    /// Gets or sets the Line data inside this curve.
+    /// Gets or sets the Line value inside this curve.
     /// </summary>
     public Line Line
     {

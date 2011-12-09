@@ -1079,5 +1079,6 @@ namespace Rhino.Runtime
   [Serializable]
   public class RdkNotLoadedException : Exception
   {
+    public RdkNotLoadedException() : base("The Rhino Rdk is not loaded.") { }
   }
 }

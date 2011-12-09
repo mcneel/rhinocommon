@@ -100,11 +100,9 @@ namespace Rhino.Geometry
     /// </summary>
     public static BoundingBox Unset
     {
-      get
-      {
-        return new BoundingBox(Point3d.Unset, Point3d.Unset);
-      }
+      get { return m_unset; }
     }
+    static BoundingBox m_unset = new BoundingBox(Point3d.Unset, Point3d.Unset);
 
     #endregion
 

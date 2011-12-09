@@ -109,6 +109,7 @@
     <Compile Include="hostutils.cs" />
     <Compile Include="interop.cs" />
     <Compile Include="MonoHost.cs" />
+    <Compile Include="NameSpaceDoc.cs" />
     <Compile Include="opennurbs\ON_MesherUtility.cs" />
     <Compile Include="opennurbs\opennurbs_3dm_attributes.cs" />
     <Compile Include="opennurbs\opennurbs_3dm_settings.cs" />

@@ -2072,6 +2072,29 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBitmaps(m_ptr, pBitmap, items.m_points.Length, items.m_points, items.m_colors_argb.Length, items.m_colors_argb, indices, size, translation);
     }
 
+    public void DrawParticles(Rhino.Geometry.ParticleSystem particles)
+    {
+      particles.UpdateDrawCache();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawParticles1(m_ptr, IntPtr.Zero, particles.m_points.Length, particles.m_points, particles.m_sizes, particles.m_colors_argb);
+    }
+
+    public void DrawParticles(Rhino.Geometry.ParticleSystem particles, DisplayBitmap bitmap)
+    {
+      particles.UpdateDrawCache();
+      IntPtr pBitmap = bitmap.NonConstPointer();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawParticles1(m_ptr, pBitmap, particles.m_points.Length, particles.m_points, particles.m_sizes, particles.m_colors_argb);
+    }
+
+    public void DrawParticles(Rhino.Geometry.ParticleSystem particles, DisplayBitmap[] bitmaps)
+    {
+      particles.UpdateDrawCache();
+      uint[] ids = new uint[bitmaps.Length];
+      for (int i = 0; i < bitmaps.Length; i++)
+        ids[i] = UnsafeNativeMethods.CRhCmnDisplayBitmap_TextureId(m_ptr, bitmaps[i].NonConstPointer());
+
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawParticles2(m_ptr, ids.Length, ids, particles.m_points.Length, particles.m_points, particles.m_sizes, particles.m_colors_argb, particles.m_display_bitmap_ids);
+    }
+
     /*
     //public void Draw2dRectangle( System.Drawing.Rectangle rectangle, HPEN pen, bool=true);
     //public void Draw2dLine(const CPoint&, const CPoint&, HPEN, bool=true);

@@ -109,6 +109,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Protected constructor used in serialization.
     /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
     protected AnnotationBase(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {

@@ -4,17 +4,20 @@ using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents the geometry of a light.
+  /// </summary>
   [Serializable]
   public class Light : GeometryBase, ISerializable
   {
 #if RDK_CHECKED
     /// <summary>
-    /// Create a light which simulates the sun
+    /// Constructs a light that represents the Sun.
     /// </summary>
-    /// <param name="northAngleDegrees"></param>
-    /// <param name="azimuthDegrees"></param>
-    /// <param name="altitudeDegrees"></param>
-    /// <returns></returns>
+    /// <param name="northAngleDegrees">The angle of North in degrees.</param>
+    /// <param name="azimuthDegrees">The Azimut angle value in degrees.</param>
+    /// <param name="altitudeDegrees">The Altitude angle in degrees.</param>
+    /// <returns>A new sun light.</returns>
     public static Light CreateSunLight(double northAngleDegrees, double azimuthDegrees, double altitudeDegrees)
     {
       Rhino.Runtime.HostUtils.CheckForRdk(true, true);
@@ -31,10 +34,10 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a light which simulates the sun based on a given time and location on earth
+    /// Constructs a light which simulates the Sun based on a given time and location on Earth.
     /// </summary>
-    /// <param name="northAngleDegrees"></param>
-    /// <param name="when"></param>
+    /// <param name="northAngleDegrees">The angle of North in degrees.</param>
+    /// <param name="when">The time.</param>
     /// <param name="whenKind"></param>
     /// <param name="latitudeDegrees"></param>
     /// <param name="longitudeDegrees"></param>
@@ -62,10 +65,10 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a light which simlulates the sun
+    /// Initializes a light which simulates the Sun.
     /// </summary>
-    /// <param name="sun"></param>
-    /// <returns></returns>
+    /// <param name="sun">A Sun object from the Rhino.Render namespace.</param>
+    /// <returns>A light.</returns>
     public static Light CreateSunLight(Rhino.Render.Sun sun)
     {
       Rhino.Runtime.HostUtils.CheckForRdk(true, true);
@@ -88,20 +91,27 @@ namespace Rhino.Geometry
       return new Light(IntPtr.Zero, null);
     }
 
+    /// <summary>
+    /// Initializes a new light.
+    /// </summary>
     public Light()
     {
       IntPtr pLight = UnsafeNativeMethods.ON_Light_New();
       ConstructNonConstObject(pLight);
     }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected constructor used in serialization.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
     protected Light(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
     }
 
     /// <summary>
-    /// Turn light on or off
+    /// Gets or sets a value that defines if the light is turned on (true) or off (false).
     /// </summary>
     public bool IsEnabled
     {
@@ -130,12 +140,19 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Light_SetInt(pThis, which, val);
     }
 
+    /// <summary>
+    /// Gets or sets a light style on this camera.
+    /// </summary>
     public LightStyle LightStyle
     {
       get { return (LightStyle)GetInt(idxLightStyle); }
       set { SetInt(idxLightStyle, (int)value); }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the light style
+    /// is <see cref="LightStyle"/> CameraPoint or WorldPoint.
+    /// </summary>
     public bool IsPointLight
     {
       get
@@ -144,6 +161,11 @@ namespace Rhino.Geometry
         return ls == LightStyle.CameraPoint || ls == LightStyle.WorldPoint;
       }
     }
+
+    /// <summary>
+    /// Gets a value indicating whether the light style
+    /// is <see cref="LightStyle"/> CameraDirectional or WorldDirectional.
+    /// </summary>
     public bool IsDirectionalLight
     {
       get
@@ -152,6 +174,11 @@ namespace Rhino.Geometry
         return ls == LightStyle.CameraDirectional || ls == LightStyle.WorldDirectional;
       }
     }
+
+    /// <summary>
+    /// Gets a value indicating whether the light style
+    /// is <see cref="LightStyle"/> CameraSpot or WorldSpot.
+    /// </summary>
     public bool IsSpotLight
     {
       get
@@ -160,15 +187,28 @@ namespace Rhino.Geometry
         return ls == LightStyle.CameraSpot || ls == LightStyle.WorldSpot;
       }
     }
+
+    /// <summary>
+    /// Gets a value indicating whether the light style
+    /// is <see cref="LightStyle"/> WorldLinear.
+    /// </summary>
     public bool IsLinearLight
     {
       get { return LightStyle == LightStyle.WorldLinear; }
     }
+
+    /// <summary>
+    /// Gets a value indicating whether the light style
+    /// is <see cref="LightStyle"/> WorldRectangular.
+    /// </summary>
     public bool IsRectangularLight
     {
       get { return LightStyle == LightStyle.WorldRectangular; }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this object is a Sun light.
+    /// </summary>
     public bool IsSunLight
     {
       get 
@@ -180,13 +220,17 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determined by LightStyle
+    /// Gets a value, determined by LightStyle, that explains whether
+    /// the camera diretions are relative to World or Camera spaces.
     /// </summary>
     public DocObjects.CoordinateSystem CoordinateSystem
     {
       get { return (DocObjects.CoordinateSystem)GetInt(idxCoordinateSystem);}
     }
 
+    /// <summary>
+    /// Gets or sets the light or 3D position or location.
+    /// </summary>
     public Point3d Location
     {
       get
@@ -220,12 +264,18 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Light_SetVector(pThis, v, which);
     }
 
+    /// <summary>
+    /// Gets or sets the vector direction of the camera.
+    /// </summary>
     public Vector3d Direction
     {
       get{ return GetVector(idxDirection); }
       set { SetVector(idxDirection, value); }
     }
 
+    /// <summary>
+    /// Gets a perpendicular vector to the camera direction.
+    /// </summary>
     public Vector3d PerpendicularDirection
     {
       get { return GetVector(idxPerpendicularDirection); }

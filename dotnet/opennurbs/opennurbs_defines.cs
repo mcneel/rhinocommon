@@ -861,7 +861,7 @@ namespace Rhino
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Defines enumerated values to represent light styles or types.
+  /// Defines enumerated values to represent light styles or types, such as directional or spotlight.
   /// </summary>
   public enum LightStyle : int
   {

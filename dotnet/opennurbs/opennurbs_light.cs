@@ -4,9 +4,6 @@ using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
-  /// <summary>
-  /// Represents the geometry of a light.
-  /// </summary>
   [Serializable]
   public class Light : GeometryBase, ISerializable
   {
@@ -44,6 +41,7 @@ namespace Rhino.Geometry
     /// <returns></returns>
     /// <exception cref="Rhino.Runtime.RdkNotLoadedException"></exception>
     /// <exception cref="System.ArgumentException">if whenKind is set to Unspecified</exception>
+    [Obsolete("Removed in favor of version that does not require a DateTimeKind since this is embedded in a DateTime. Will be removed in a future beta.")]
     public static Light CreateSunLight(double northAngleDegrees, DateTime when, DateTimeKind whenKind, double latitudeDegrees, double longitudeDegrees)
     {
       Rhino.Runtime.HostUtils.CheckForRdk(true, true);
@@ -65,7 +63,37 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Create a light which simulates the sun based on a given time and location on earth
     /// Initializes a light which simulates the Sun.
+    /// </summary>
+    /// <param name="northAngleDegrees"></param>
+    /// <param name="when"></param>
+    /// <param name="latitudeDegrees"></param>
+    /// <param name="longitudeDegrees"></param>
+    /// <returns></returns>
+    /// <exception cref="Rhino.Runtime.RdkNotLoadedException"></exception>
+    /// <exception cref="System.ArgumentException">if whenKind is set to Unspecified</exception>
+    public static Light CreateSunLight(double northAngleDegrees, DateTime when, double latitudeDegrees, double longitudeDegrees)
+    {
+      Rhino.Runtime.HostUtils.CheckForRdk(true, true);
+
+      IntPtr pSun = UnsafeNativeMethods.Rdk_SunNew();
+      IntPtr pSunInterface = UnsafeNativeMethods.Rdk_SunInterface(pSun);
+      UnsafeNativeMethods.Rdk_Sun_SetNorth(pSunInterface, northAngleDegrees);
+      UnsafeNativeMethods.Rdk_Sun_SetLatitudeLongitude(pSunInterface, latitudeDegrees, longitudeDegrees);
+
+      bool local = (when.Kind == DateTimeKind.Local || when.Kind == DateTimeKind.Unspecified);
+      UnsafeNativeMethods.Rdk_Sun_SetDateTime(pSunInterface, local, when.Year, when.Month, when.Day, when.Hour, when.Minute, when.Second);
+      Light rc = new Light();
+      IntPtr pLight = rc.NonConstPointer();
+      UnsafeNativeMethods.Rdk_Sun_Light(pSunInterface, pLight);
+      UnsafeNativeMethods.Rdk_SunDelete(pSun);
+      return rc;
+    }
+
+    /// <summary>
+    /// Create a light which simlulates the sun
+    /// </summary>
     /// </summary>
     /// <param name="sun">A Sun object from the Rhino.Render namespace.</param>
     /// <returns>A light.</returns>

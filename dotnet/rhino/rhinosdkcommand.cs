@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 #if RHINO_SDK
 namespace Rhino.Commands
@@ -179,7 +180,8 @@ namespace Rhino.Commands
         m_RunCommand = OnRunCommand;
         m_DoHelp = OnDoHelp;
         m_ContextHelp = OnCommandContextHelpUrl;
-        UnsafeNativeMethods.CRhinoCommand_SetRunCommandCallbacks(m_RunCommand, m_DoHelp, m_ContextHelp);
+        m_ReplayHistory = OnReplayHistory;
+        UnsafeNativeMethods.CRhinoCommand_SetRunCommandCallbacks(m_RunCommand, m_DoHelp, m_ContextHelp, m_ReplayHistory);
       }
     }
 
@@ -385,6 +387,8 @@ namespace Rhino.Commands
     private static DoHelpCallback m_DoHelp;
     internal delegate int ContextHelpCallback(int command_serial_number, IntPtr pON_wString);
     private static ContextHelpCallback m_ContextHelp;
+    internal delegate int ReplayHistoryCallback(int command_serial_number, IntPtr pConstRhinoHistoryRecord, IntPtr pObjectPairArray);
+    private static ReplayHistoryCallback m_ReplayHistory;
 
     internal delegate void CommandCallback(IntPtr pCommand, int rc);
     private static CommandCallback m_OnBeginCommand;
@@ -520,6 +524,29 @@ namespace Rhino.Commands
     }
 
     #endregion
+
+
+    protected virtual bool ReplayHistory(Rhino.DocObjects.ReplayHistoryData replayData)
+    {
+      return false;
+    }
+    private static int OnReplayHistory(int command_serial_number, IntPtr pConstRhinoHistoryRecord, IntPtr pObjectPairArray)
+    {
+      int rc = 0;
+      try
+      {
+        Command cmd = LookUpBySerialNumber(command_serial_number);
+        using (var replayData = new DocObjects.ReplayHistoryData(pConstRhinoHistoryRecord, pObjectPairArray))
+        {
+          rc = cmd.ReplayHistory(replayData) ? 1 : 0;
+        }
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport("Command.ReplayHistory", ex);
+      }
+      return rc;
+    }
   }
 
   public class CommandEventArgs : EventArgs
@@ -750,6 +777,246 @@ namespace Rhino.Commands
     //bool ObjectsWerePreSelected() { return m_objects_were_preselected; }
   }
 #endif
-  //public class RhinoHistory { }
+}
+
+
+namespace Rhino.DocObjects
+{
+  // this is the same as CRhinoHistory
+  public class HistoryRecord : IDisposable
+  {
+    private IntPtr m_pRhinoHistory; // CRhinoHistory*
+
+    public HistoryRecord(Commands.Command command, int version)
+    {
+      m_pRhinoHistory = UnsafeNativeMethods.CRhinoHistory_New(command.Id, version);
+    }
+
+    IntPtr NonConstPointer()
+    {
+      return m_pRhinoHistory;
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~HistoryRecord() { Dispose(false); }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_pRhinoHistory)
+      {
+        UnsafeNativeMethods.CRhinoHistory_Delete(m_pRhinoHistory);
+      }
+      m_pRhinoHistory = IntPtr.Zero;
+    }
+    
+    public bool SetBool( int id, bool value )
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetBool(pThis, id, value);
+    }
+    public bool SetInt(int id, int value)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetInt(pThis, id, value);
+    }
+    public bool SetDouble(int id, double value)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetDouble(pThis, id, value);
+    }
+    public bool SetPoint3d(int id, Rhino.Geometry.Point3d value)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetPoint3d(pThis, id, value);
+    }
+    public bool SetVector3d(int id, Rhino.Geometry.Vector3d value)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetVector3d(pThis, id, value);
+    }
+    public bool SetTransorm(int id, Rhino.Geometry.Transform value)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetXform(pThis, id, ref value);
+    }
+    public bool SetColor(int id, System.Drawing.Color value)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetColor(pThis, id, value.ToArgb());
+    }
+    public bool SetObjRef(int id, ObjRef value)
+    {
+      IntPtr pThis = NonConstPointer();
+      IntPtr pConstObjRef = value.ConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetObjRef(pThis, id, pConstObjRef);
+    }
+    public bool SetPoint3dOnObject(int id, ObjRef objref, Rhino.Geometry.Point3d value)
+    {
+      IntPtr pThis = NonConstPointer();
+      IntPtr pConstObjRef = objref.ConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetPoint3dOnObject(pThis, id, pConstObjRef, value);
+    }
+    public bool SetGuid(int id, Guid value)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetUuid(pThis, id, value);
+    }
+    public bool SetString(int id, string value)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetString(pThis, id, value);
+    }
+    // ON_Geometry* is non-const. I think we can't delete it from under the history record.
+    // Don't wrap until we really need it
+    //public bool SetGeometry( int id, Geometry.GeometryBase value){ return false; }
+
+    public bool SetCurve(int id, Geometry.Curve value)
+    {
+      IntPtr pThis = NonConstPointer();
+      IntPtr pConstCurve = value.ConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetCurve(pThis, id, pConstCurve);
+    }
+    public bool SetSurface(int id, Geometry.Surface value)
+    {
+      IntPtr pThis = NonConstPointer();
+      IntPtr pConstSurface = value.ConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetSurface(pThis, id, pConstSurface);
+    }
+    public bool SetBrep(int id, Geometry.Brep value)
+    {
+      IntPtr pThis = NonConstPointer();
+      IntPtr pConstBrep = value.ConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetBrep(pThis, id, pConstBrep);
+    }
+    public bool SetMesh(int id, Geometry.Mesh value)
+    {
+      IntPtr pThis = NonConstPointer();
+      IntPtr pConstMesh = value.ConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetMesh(pThis, id, pConstMesh);
+    }
+
+    // PolyEdge not wrapped yet
+    //bool SetPolyEdgeValue( CRhinoDoc& doc, int value_id, const class CRhinoPolyEdge& polyedge );
+
+    public bool SetBools(int id, IEnumerable<bool> values)
+    {
+      List<bool> v = new List<bool>(values);
+      var _v = v.ToArray();
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetBools(pThis, id, _v.Length, _v);
+    }
+    public bool SetInts(int id, IEnumerable<int> values)
+    {
+      List<int> v = new List<int>(values);
+      var _v = v.ToArray();
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetInts(pThis, id, _v.Length, _v);
+    }
+    public bool SetDoubles(int id, IEnumerable<double> values)
+    {
+      List<double> v = new List<double>(values);
+      var _v = v.ToArray();
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetDoubles(pThis, id, _v.Length, _v);
+    }
+    public bool SetPoint3ds(int id, IEnumerable<Rhino.Geometry.Point3d> values)
+    {
+      List<Geometry.Point3d> v = new List<Geometry.Point3d>(values);
+      var _v = v.ToArray();
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetPoints(pThis, id, _v.Length, _v);
+    }
+    public bool SetVector3ds(int id, IEnumerable<Rhino.Geometry.Vector3d> values)
+    {
+      List<Geometry.Vector3d> v = new List<Geometry.Vector3d>(values);
+      var _v = v.ToArray();
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetVectors(pThis, id, _v.Length, _v);
+    }
+    //public bool SetTransorms(int id, IEnumerable<Rhino.Geometry.Transform> values)
+    //{
+    //  List<Geometry.Transform> v = new List<Geometry.Transform>(values);
+    //  var _v = v.ToArray();
+    //  IntPtr pThis = NonConstPointer();
+    //  return UnsafeNativeMethods.CRhinoHistory_SetXforms(pThis, id, _v.Length, _v);
+    //}
+
+    public bool SetColors(int id, IEnumerable<System.Drawing.Color> values)
+    {
+      List<int> argb = new List<int>();
+      foreach (System.Drawing.Color c in values)
+        argb.Add(c.ToArgb());
+      var _v = argb.ToArray();
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetColors(pThis, id, _v.Length, _v);
+    }
+
+    // need ON_ClassArray<CRhinoObjRef>* wrapper
+    //public bool SetObjRefs(int id, IEnumerable<ObjRef> values);
+
+    public bool SetGuids(int id, IEnumerable<Guid> values)
+    {
+      List<Guid> v = new List<Guid>(values);
+      var _v = v.ToArray();
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoHistory_SetUuids(pThis, id, _v.Length, _v);
+    }
+
+    public bool SetStrings(int id, IEnumerable<string> values)
+    {
+      IntPtr pStrings = UnsafeNativeMethods.ON_StringArray_New();
+      foreach (string v in values)
+        UnsafeNativeMethods.ON_StringArray_Append(pStrings, v);
+      IntPtr pThis = NonConstPointer();
+      bool rc = UnsafeNativeMethods.CRhinoHistory_SetStrings(pThis, id, pStrings);
+      UnsafeNativeMethods.ON_StringArray_Delete(pStrings);
+      return rc;
+    }
+    // ON_Geometry* is non-const. I think we can't delete it from under the history record.
+    // Don't wrap until we really need it
+    //bool SetGeometryValues( int value_id, const ON_SimpleArray<ON_Geometry*> a);
+
+    // PolyEdge not wrapped yet
+    //bool SetPolyEdgeValues( CRhinoDoc& doc, int value_id, int count, const class CRhinoPolyEdge* const* polyedges );
+  }
+
+  // TODO: Implement ReplayHistoryData in order to support history on commands
+  // this is the same as CRhinoHistoryRecord
+  public class ReplayHistoryData : IDisposable
+  {
+    IntPtr m_pConstRhinoHistoryRecord;
+    IntPtr m_pObjectPairArray;
+    // this should only be constructed in the ReplayHistory callback
+    internal ReplayHistoryData(IntPtr pConstRhinoHistoryRecord, IntPtr pObjectPairArray)
+    {
+      m_pConstRhinoHistoryRecord = pConstRhinoHistoryRecord;
+      m_pObjectPairArray = pObjectPairArray;
+    }
+
+    public void Dispose()
+    {
+      m_pConstRhinoHistoryRecord = IntPtr.Zero;
+      m_pObjectPairArray = IntPtr.Zero;
+    }
+  }
 }
 #endif

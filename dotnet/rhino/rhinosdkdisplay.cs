@@ -379,7 +379,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Remove all Particles from this system
     /// </summary>
-    public void Clear()
+    public virtual void Clear()
     {
       for (int i = 0; i < m_particles.Count; i++)
       {

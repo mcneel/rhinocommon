@@ -1516,17 +1516,13 @@ namespace Rhino.Collections
     /// Constructs an enumerator that is capable of iterating over all items in this list.
     /// </summary>
     /// <returns>The new enumerator.</returns>
-    public IEnumerator GetEnumerator()
+    public IEnumerator<T> GetEnumerator()
     {
-      return new Enumerator((RhinoList<T>)this);
-    }
-    IEnumerator<T> IEnumerable<T>.GetEnumerator()
-    {
-      return new Enumerator((RhinoList<T>)this);
+      return new Enumerator(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new Enumerator((RhinoList<T>)this);
+      return GetEnumerator();
     }
 
     private class Enumerator : IEnumerator<T>, IDisposable, IEnumerator

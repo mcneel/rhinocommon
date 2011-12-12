@@ -510,6 +510,41 @@ RH_C_FUNCTION ON_SimpleArray<ON_Polyline*>* ON_Intersect_MeshMesh1(const ON_Mesh
   return rc;
 }
 
+// 9-Dec-2011 Dale Fugier
+static bool ON_ExtendLineThroughBox( const ON_Line& line_in, const ON_BoundingBox& bbox, ON_Line& line_out )
+{
+  if( line_in.Length() < ON_SQRT_EPSILON )
+    return false;
+
+  ON_3dPointArray points;
+  bbox.GetCorners( points );
+
+  ON_3dVector v = line_in.Direction();
+  v.Unitize();
+
+  ON_Plane plane( line_in.from, v );
+
+  double mindist, maxdist;
+  mindist = maxdist = plane.DistanceTo( points[0] );
+
+  int i;
+  for( i = 1; i < 8; i++ )
+  {
+    double dist =  plane.DistanceTo( points[i] );
+    if( dist < mindist)
+      mindist = dist;
+
+    if( dist > maxdist )
+      maxdist = dist;
+  }
+
+  // +- 1.0 makes the line a little bigger than the box
+  line_out.from = line_in.from + v * ( mindist - 1.0 );
+  line_out.to = line_in.from + v * ( maxdist + 1.0 );
+
+  return true;
+}
+
 RH_C_FUNCTION double ON_Intersect_MeshRay1(const ON_Mesh* pMesh, ON_3dRay* ray, ON_SimpleArray<int>* face_indices)
 {
   double rc = -1.0;
@@ -520,8 +555,13 @@ RH_C_FUNCTION double ON_Intersect_MeshRay1(const ON_Mesh* pMesh, ON_3dRay* ray, 
     ON_3dVector rayVec = ray->m_V;
     if( mt && rayVec.Unitize() )
     {
-      double rayRange = mt->m_bbox.MaximumDistanceTo(ray->m_P);
-      ON_Line line(ray->m_P, ray->m_P + rayRange * rayVec );
+      // 9-Dec-2011 Dale Fugier
+      //double rayRange = mt->m_bbox.MaximumDistanceTo(ray->m_P);
+      //ON_Line line(ray->m_P, ray->m_P + rayRange * rayVec );
+      ON_Line line_in(ray->m_P, ray->m_P + rayVec );
+      ON_Line line;
+      ON_ExtendLineThroughBox( line_in, pMesh->BoundingBox(), line );
+
       ON_SimpleArray<ON_CMX_EVENT> hits;
       mt->IntersectLine( line, hits );
       int hitCount = hits.Count();

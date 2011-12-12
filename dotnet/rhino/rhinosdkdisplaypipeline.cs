@@ -2037,15 +2037,27 @@ namespace Rhino.Display
 
     #endregion
 
+    [Obsolete("Use overload that takes a sizeInWorldSpace parameter.  This will be removed soon")]
     public void DrawSprite(DisplayBitmap bitmap, Point3d worldLocation, float size)
     {
-      DrawSprite(bitmap, worldLocation, size, System.Drawing.Color.White);
+      DrawSprite(bitmap, worldLocation, size, System.Drawing.Color.White, false);
     }
 
+    public void DrawSprite(DisplayBitmap bitmap, Point3d worldLocation, float size, bool sizeInWorldSpace)
+    {
+      DrawSprite(bitmap, worldLocation, size, System.Drawing.Color.White, sizeInWorldSpace);
+    }
+
+    [Obsolete("Use overload that takes a sizeInWorldSpace parameter.  This will be removed soon")]
     public void DrawSprite(DisplayBitmap bitmap, Point3d worldLocation, float size, System.Drawing.Color blendColor)
     {
+      DrawSprite(bitmap, worldLocation, size, blendColor, false);
+    }
+
+    public void DrawSprite(DisplayBitmap bitmap, Point3d worldLocation, float size, System.Drawing.Color blendColor, bool sizeInWorldSpace)
+    {
       IntPtr pBitmap = bitmap.NonConstPointer();
-      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBitmap(m_ptr, pBitmap, worldLocation, size, blendColor.ToArgb());
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBitmap(m_ptr, pBitmap, worldLocation, size, blendColor.ToArgb(), sizeInWorldSpace);
     }
 
     public void DrawSprite(DisplayBitmap bitmap, Point2d screenLocation, float size)
@@ -2058,31 +2070,31 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBitmap2(m_ptr, pBitmap, screenLocation, size, blendColor.ToArgb());
     }
 
-    public void DrawSprites(DisplayBitmap bitmap, DisplayBitmapDrawList items, float size)
+    public void DrawSprites(DisplayBitmap bitmap, DisplayBitmapDrawList items, float size, bool sizeInWorldSpace)
     {
-      DrawSprites(bitmap, items, size, Vector3d.Zero);
+      DrawSprites(bitmap, items, size, Vector3d.Zero, sizeInWorldSpace);
     }
 
-    public void DrawSprites(DisplayBitmap bitmap, DisplayBitmapDrawList items, float size, Vector3d translation)
+    public void DrawSprites(DisplayBitmap bitmap, DisplayBitmapDrawList items, float size, Vector3d translation, bool sizeInWorldSpace)
     {
       Vector3d camera_direction = new Vector3d();
       UnsafeNativeMethods.CRhinoDisplayPipeline_GetCameraDirection(m_ptr, ref camera_direction);
       int[] indices = items.Sort(camera_direction);
       IntPtr pBitmap = bitmap.NonConstPointer();
-      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBitmaps(m_ptr, pBitmap, items.m_points.Length, items.m_points, items.m_colors_argb.Length, items.m_colors_argb, indices, size, translation);
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBitmaps(m_ptr, pBitmap, items.m_points.Length, items.m_points, items.m_colors_argb.Length, items.m_colors_argb, indices, size, translation, sizeInWorldSpace);
     }
 
     public void DrawParticles(Rhino.Geometry.ParticleSystem particles)
     {
       particles.UpdateDrawCache();
-      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawParticles1(m_ptr, IntPtr.Zero, particles.m_points.Length, particles.m_points, particles.m_sizes, particles.m_colors_argb);
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawParticles1(m_ptr, IntPtr.Zero, particles.m_points.Length, particles.m_points, particles.m_sizes, particles.m_colors_argb, particles.DisplaySizesInWorldUnits);
     }
 
     public void DrawParticles(Rhino.Geometry.ParticleSystem particles, DisplayBitmap bitmap)
     {
       particles.UpdateDrawCache();
       IntPtr pBitmap = bitmap.NonConstPointer();
-      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawParticles1(m_ptr, pBitmap, particles.m_points.Length, particles.m_points, particles.m_sizes, particles.m_colors_argb);
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawParticles1(m_ptr, pBitmap, particles.m_points.Length, particles.m_points, particles.m_sizes, particles.m_colors_argb, particles.DisplaySizesInWorldUnits);
     }
 
     public void DrawParticles(Rhino.Geometry.ParticleSystem particles, DisplayBitmap[] bitmaps)
@@ -2092,7 +2104,7 @@ namespace Rhino.Display
       for (int i = 0; i < bitmaps.Length; i++)
         ids[i] = UnsafeNativeMethods.CRhCmnDisplayBitmap_TextureId(m_ptr, bitmaps[i].NonConstPointer());
 
-      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawParticles2(m_ptr, ids.Length, ids, particles.m_points.Length, particles.m_points, particles.m_sizes, particles.m_colors_argb, particles.m_display_bitmap_ids);
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawParticles2(m_ptr, ids.Length, ids, particles.m_points.Length, particles.m_points, particles.m_sizes, particles.m_colors_argb, particles.m_display_bitmap_ids, particles.DisplaySizesInWorldUnits);
     }
 
     /*

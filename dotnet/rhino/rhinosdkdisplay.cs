@@ -293,6 +293,7 @@ namespace Rhino.Geometry
     }
 
     public bool DrawRequiresDepthSorting { get; set; }
+    public bool DisplaySizesInWorldUnits { get; set; }
 
 
     public BoundingBox BoundingBox

@@ -183,6 +183,19 @@ namespace Rhino.UI
     /// </example>
     public System.Windows.Forms.DialogResult ShowDialog()
     {
+      if (Rhino.Runtime.HostUtils.RunningOnWindows)
+      {
+        System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
+        dlg.DefaultExt = DefaultExt;
+        dlg.FileName = FileName;
+        dlg.Filter = Filter;
+        dlg.InitialDirectory = InitialDirectory;
+        dlg.Title = Title;
+        var dlg_rc = dlg.ShowDialog(Rhino.RhinoApp.MainWindow());
+        FileName = dlg.FileName;
+        return dlg_rc;
+      }
+
       string _defExt = DefaultExt;
       string _filename = FileName;
       string _filter = Filter;

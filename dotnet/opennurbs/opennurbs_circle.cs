@@ -20,6 +20,28 @@ namespace Rhino.Geometry
   {
     #region "Static creation methods"
     /// <summary>
+    /// Try to fit a circle to two curves using tangent relationships.
+    /// </summary>
+    /// <param name="c1">First curve to touch.</param>
+    /// <param name="c2">Second curve to touch.</param>
+    /// <param name="t1">Parameter on first curve close to desired solution.</param>
+    /// <param name="t2">Parameter on second curve closet to desired solution.</param>
+    /// <returns>Valid circle on success, Circle.Unset on failure.</returns>
+    public static Circle TryFitCircleTT(Curve c1, Curve c2, double t1, double t2)
+    {
+      if (c1 == null) { throw new ArgumentNullException("c1"); }
+      if (c2 == null) { throw new ArgumentNullException("c2"); }
+      if (!RhinoMath.IsValidDouble(t1)) { throw new ArgumentNullException("t1"); }
+      if (!RhinoMath.IsValidDouble(t2)) { throw new ArgumentNullException("t2"); }
+
+      Circle rc = Circle.Unset;
+      if (!UnsafeNativeMethods.ON_Circle_TryFitTT(c1.ConstPointer(), c2.ConstPointer(), t1, t2, ref rc))
+        rc = Circle.Unset;
+
+      return rc;
+    }
+
+    /// <summary>
     /// Try to fit a circle to three curves using tangent relationships.
     /// </summary>
     /// <param name="c1">First curve to touch.</param>

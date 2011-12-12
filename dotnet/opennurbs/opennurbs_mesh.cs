@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,12 +9,31 @@ using System.Runtime.Serialization;
 
 namespace Rhino.Render
 {
+  /// <summary>
+  /// Holds texture mapping information.
+  /// </summary>
   public class MappingTag
   {
+    /// <summary>
+    ///  Gets or sets a map globally unique identifier.
+    /// </summary>
     public Guid Id { get; set; }
+
+    /// <summary>
+    ///  Gets or sets a texture mapping type: linear, cylinder, etc...
+    /// </summary>
     public TextureMappingType MappingType { get; set; }
+
+    /// <summary>
+    /// Gets or sets the cyclic redundancy check on the mapping.
+    /// See also <see cref="RhinoMath.CRC32(uint,byte[])" />.
+    /// </summary>
     [CLSCompliant(false)]
     public uint MappingCRC { get; set; }
+
+    /// <summary>
+    ///  Gets or sets a 4x4 matrix tranform.
+    /// </summary>
     public Rhino.Geometry.Transform MeshTransform { get; set; }
   }
 }
@@ -23,7 +41,7 @@ namespace Rhino.Render
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Settings used for creating a Mesh representation of a Brep or Surface
+  /// Represents settings used for creating a Mesh representation of a Brep or Surface.
   /// </summary>
   public class MeshingParameters : IDisposable
   {
@@ -32,7 +50,7 @@ namespace Rhino.Geometry
     internal IntPtr NonConstPointer() { return m_ptr; }
 
     /// <summary>
-    /// Initial values are same as "Default"
+    /// Initial values are same as "Default".
     /// </summary>
     public MeshingParameters()
     {
@@ -44,16 +62,31 @@ namespace Rhino.Geometry
       m_ptr = pMeshingParameters;
     }
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~MeshingParameters()
     {
       Dispose(false);
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)
@@ -70,10 +103,13 @@ namespace Rhino.Geometry
     /// These are the same settings that are shown in the DocumentProperties
     /// Mesh settings user interface.
     /// </summary>
-    /// <param name="doc"></param>
-    /// <returns></returns>
+    /// <param name="doc">A Rhino document to query.</param>
+    /// <returns>Meshing parameters of the document.</returns>
+    /// <exception cref="ArgumentNullException">If doc is null.</exception>
     public static MeshingParameters DocumentCurrentSetting(RhinoDoc doc)
     {
+      if (doc == null) throw new ArgumentNullException("doc");
+
       IntPtr pMeshParameters = UnsafeNativeMethods.CRhinoDocProperties_RenderMeshSettings(doc.m_docId);
       if (IntPtr.Zero == pMeshParameters)
         return null;
@@ -81,7 +117,7 @@ namespace Rhino.Geometry
     }
 #endif
 
-    /// <summary>Gets minimal meshing parameters</summary>
+    /// <summary>Gets minimal meshing parameters.</summary>
     public static MeshingParameters Minimal
     {
       get
@@ -114,7 +150,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets default meshing parameters
+    /// Gets default meshing parameters.
     /// </summary>
     public static MeshingParameters Default
     {
@@ -150,7 +186,7 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Gets meshing parameters for coarse meshing. 
-    /// This corresponds with the "Jagged and Faster" default in Rhino.
+    /// <para>This corresponds with the "Jagged and Faster" default in Rhino.</para>
     /// </summary>
     public static MeshingParameters Coarse
     {
@@ -173,7 +209,7 @@ namespace Rhino.Geometry
     }
     /// <summary>
     /// Gets meshing parameters for smooth meshing. 
-    /// This corresponds with the "Smooth and Slower" default in Rhino.
+    /// <para>This corresponds with the "Smooth and Slower" default in Rhino.</para>
     /// </summary>
     public static MeshingParameters Smooth
     {
@@ -378,6 +414,10 @@ namespace Rhino.Geometry
 
   }
 
+  /// <summary>
+  /// Represents a geometry type that is defined by vertices and faces.
+  /// <para>This is often called a face-vertex mesh.</para>
+  /// </summary>
   [Serializable]
   public class Mesh : GeometryBase, ISerializable
   {

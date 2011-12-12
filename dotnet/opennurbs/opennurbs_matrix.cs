@@ -1,11 +1,12 @@
-#pragma warning disable 1591
+//#pragma warning disable 1591
 using System;
 
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Arbitrarily sized matrix of values. If you are working with a
-  /// 4x4 matrix, then you may want to use the Transform class instead.
+  /// Represents an arbitrarily sized matrix of <see cref="double">double</see>-precision
+  /// floating point numbers. If you are working with a 4x4 matrix, then you may want
+  /// to use the Transform class instead.
   /// </summary>
   public class Matrix : IDisposable
   {
@@ -13,6 +14,13 @@ namespace Rhino.Geometry
     int m_rows;
     int m_columns;
 
+    /// <summary>
+    /// Initializes a new instance of the matrix.
+    /// </summary>
+    /// <param name="rowCount">A positive integer, or 0, for the number of rows.</param>
+    /// <param name="columnCount">A positive integer, or 0, for the number of columns.</param>
+    /// <exception cref="ArgumentOutOfRangeException">If either rowCount, or columnCount
+    /// or both are negative.</exception>
     public Matrix(int rowCount, int columnCount)
     {
       if (rowCount < 0 )
@@ -24,6 +32,10 @@ namespace Rhino.Geometry
       m_ptr = UnsafeNativeMethods.ON_Matrix_New(rowCount, columnCount);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the matrix based on a 4x4 matrix <see cref="Transform"/>.
+    /// </summary>
+    /// <param name="xform">A 4x4 matrix to copy from.</param>
     public Matrix(Transform xform)
     {
       m_rows = 4;
@@ -32,17 +44,31 @@ namespace Rhino.Geometry
     }
 
     #region IDisposable implementation
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~Matrix()
     {
       Dispose(false);
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (m_ptr!=IntPtr.Zero)
@@ -82,20 +108,36 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this matrix is valid.
+    /// </summary>
     public bool IsValid
     {
       get { return (m_ptr != IntPtr.Zero && m_columns > 0 && m_rows > 0); }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this matrix has the same number of rows
+    /// and columns. 0x0 matrices are not considered square.
+    /// </summary>
     public bool IsSquare
     {
       get { return (m_rows > 0 && m_columns == m_rows); }
     }
 
+    /// <summary>
+    /// Gets the amount of rows.
+    /// </summary>
     public int RowCount { get { return m_rows; } }
 
+    /// <summary>
+    /// Gets the amount of columns.
+    /// </summary>
     public int ColumnCount { get { return m_columns; } }
 
+    /// <summary>
+    /// Sets all values inside the matrix to zero.
+    /// </summary>
     public void Zero()
     {
       UnsafeNativeMethods.ON_Matrix_Zero(m_ptr);
@@ -110,34 +152,65 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Matrix_SetDiagonal(m_ptr, d);
     }
 
+    /// <summary>
+    /// Modifies this matrix to be its transpose.
+    /// <para>This is like swapping rows with columns.</para>
+    /// <para>http://en.wikipedia.org/wiki/Transpose</para>
+    /// </summary>
+    /// <returns>true if operation succeeded; otherwise false.</returns>
     public bool Transpose()
     {
-      return UnsafeNativeMethods.ON_Matrix_Transpose(m_ptr);
+      bool toReturn = UnsafeNativeMethods.ON_Matrix_Transpose(m_ptr);
+      if (toReturn)
+      {
+        int tmp = this.m_rows;
+        this.m_rows = this.m_columns;
+        this.m_columns = tmp;
+      }
+      return toReturn;
     }
 
+    /// <summary>
+    /// Exchanges two rows.
+    /// </summary>
+    /// <param name="rowA">A first row.</param>
+    /// <param name="rowB">Another row.</param>
+    /// <returns>true if operation succeeded; otherwise false.</returns>
     public bool SwapRows(int rowA, int rowB)
     {
       return UnsafeNativeMethods.ON_Matrix_Swap(m_ptr, true, rowA, rowB);
     }
 
+    /// <summary>
+    /// Exchanges two columns.
+    /// </summary>
+    /// <param name="columnA">A first column.</param>
+    /// <param name="columnB">Another column.</param>
+    /// <returns>true if operation succeeded; otherwise false.</returns>
     public bool SwapColumns(int columnA, int columnB)
     {
       return UnsafeNativeMethods.ON_Matrix_Swap(m_ptr, false, columnA, columnB);
     }
 
+    /// <summary>
+    /// Modifies this matrix to become its own inverse.
+    /// <para>Matrix might be non-invertible (singular) and the return value will be false.</para>
+    /// </summary>
+    /// <param name="zeroTolerance">The admitted tolerance for 0.</param>
+    /// <returns>true if operation succeeded; otherwise false.</returns>
     public bool Invert(double zeroTolerance)
     {
       return UnsafeNativeMethods.ON_Matrix_Invert(m_ptr, zeroTolerance);
     }
 
     /// <summary>
-    /// 
+    /// Multiplies two matrices and returns a new product matrix.
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns></returns>
+    /// <param name="a">A first matrix to use in calculation.</param>
+    /// <param name="b">Another matrix to use in calculation.</param>
+    /// <returns>The product matrix.</returns>
     /// <exception cref="ArgumentException">
-    /// When a.ColumnCount != b.RowCount
+    /// When a.ColumnCount != b.RowCount.
     /// </exception>
     public static Matrix operator *(Matrix a, Matrix b)
     {
@@ -152,13 +225,13 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// 
+    /// Adds two matrices and returns a new sum matrix.
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns></returns>
+    /// <param name="a">A first matrix to use in calculation.</param>
+    /// <param name="b">Another matrix to use in calculation.</param>
+    /// <returns>The sum matrix.</returns>
     /// <exception cref="ArgumentException">
-    /// When the two matrics are not the same size
+    /// When the two matrics are not the same size.
     /// </exception>
     public static Matrix operator +(Matrix a, Matrix b)
     {
@@ -172,19 +245,23 @@ namespace Rhino.Geometry
       return rc;
     }
 
+    /// <summary>
+    /// Modifies the current matrix by multiplying its values by a number.
+    /// </summary>
+    /// <param name="s">A scale factor.</param>
     public void Scale(double s)
     {
       UnsafeNativeMethods.ON_Matrix_Scale(m_ptr, s);
     }
 
-    /// <summary>Row reduce a matrix to calculate rank and determinant</summary>
+    /// <summary>Row reduces a matrix to calculate rank and determinant.</summary>
     /// <param name="zeroTolerance">
     /// (&gt;=0.0) zero tolerance for pivot test.  If a the absolute value of
     /// a pivot is &lt;= zeroTolerance, then the pivot is assumed to be zero.
     /// </param>
-    /// <param name="determinant">value of determinant is returned here</param>
-    /// <param name="pivot">value of the smallest pivot is returned here</param>
-    /// <returns>Rank of the matrix</returns>
+    /// <param name="determinant">value of determinant is returned here.</param>
+    /// <param name="pivot">value of the smallest pivot is returned here.</param>
+    /// <returns>Rank of the matrix.</returns>
     /// <remarks>
     /// The matrix itself is row reduced so that the result is an upper
     /// triangular matrix with 1's on the diagonal.
@@ -197,7 +274,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Row reduce a matrix as the first step in solving M*X=b where
+    /// Row reduces a matrix as the first step in solving M*X=b where
     /// b is a column of values.
     /// </summary>
     /// <param name="zeroTolerance">
@@ -206,8 +283,8 @@ namespace Rhino.Geometry
     /// </param>
     /// <param name="b">an array of RowCount values that is row reduced with the matrix
     /// </param>
-    /// <param name="pivot">the value of the smallest pivot is returned here</param>
-    /// <returns>Rank of the matrix</returns>
+    /// <param name="pivot">the value of the smallest pivot is returned here.</param>
+    /// <returns>Rank of the matrix.</returns>
     /// <remarks>
     /// The matrix itself is row reduced so that the result is an upper
     /// triangular matrix with 1's on the diagonal.
@@ -221,7 +298,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Row reduce a matrix as the first step in solving M*X=b where
+    /// Row reduces a matrix as the first step in solving M*X=b where
     /// b is a column of 3d points.
     /// </summary>
     /// <param name="zeroTolerance">
@@ -245,7 +322,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Solve M*x=b where M is upper triangular with a unit diagonal and
+    /// Solves M*x=b where M is upper triangular with a unit diagonal and
     /// b is a column of values.
     /// </summary>
     /// <param name="zeroTolerance"></param>
@@ -262,7 +339,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Solve M*x=b where M is upper triangular with a unit diagonal and
+    /// Solves M*x=b where M is upper triangular with a unit diagonal and
     /// b is a column of 3d points.
     /// </summary>
     /// <param name="zeroTolerance"></param>
@@ -287,18 +364,33 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Matrix_GetBool(m_ptr, which);
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the matrix is row orthogonal.
+    /// </summary>
     public bool IsRowOrthoganal
     {
       get { return GetBool(idxIsRowOrthoganal); }
     }
+
+    /// <summary>
+    /// Gets a value indicating whether the matrix is column orthogonal.
+    /// </summary>
     public bool IsColumnOrthoganal
     {
       get { return GetBool(idxIsColumnOrthoganal); }
     }
+
+    /// <summary>
+    /// Gets a value indicating whether the matrix is row orthonormal.
+    /// </summary>
     public bool IsRowOrthoNormal
     {
       get { return GetBool(idxIsRowOrthoNormal); }
     }
+
+    /// <summary>
+    /// Gets a value indicating whether the matrix is column orthonormal.
+    /// </summary>
     public bool IsColumnOrthoNormal
     {
       get { return GetBool(idxIsColumnOrthoNormal); }

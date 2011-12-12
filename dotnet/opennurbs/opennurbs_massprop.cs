@@ -1,9 +1,13 @@
-#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Contains static initialization methods and allows access to the computed
+  /// metrics of area, area centroids and area moments calculations in closed
+  /// planar curves, meshes, surfaces, hatches and boundary representations.
+  /// </summary>
   public class AreaMassProperties : IDisposable
   {
     #region members
@@ -24,16 +28,31 @@ namespace Rhino.Geometry
     //  m_bIsConst = false;
     //}
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~AreaMassProperties()
     {
       Dispose(false);
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (!m_bIsConst && IntPtr.Zero != m_ptr)
@@ -45,7 +64,7 @@ namespace Rhino.Geometry
     #endregion
 
     /// <summary>
-    /// Compute an AreaMassProperties for a single closed planar curve.
+    /// Computes an AreaMassProperties for a closed planar curve.
     /// </summary>
     /// <param name="closedPlanarCurve">Curve to measure.</param>
     /// <returns>The AreaMassProperties for the given curve or null on failure.</returns>
@@ -63,7 +82,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Compute an AreaMassProperties for a hatch
+    /// Computes an AreaMassProperties for a hatch.
     /// </summary>
     /// <param name="hatch">Hatch to measure</param>
     /// <returns>The AreaMassProperties for the given hatch or null on failure.</returns>
@@ -81,7 +100,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Compute an AreaMassProperties for a single mesh.
+    /// Computes an AreaMassProperties for a mesh.
     /// </summary>
     /// <param name="mesh">Mesh to measure.</param>
     /// <returns>The AreaMassProperties for the given Mesh or null on failure.</returns>
@@ -99,7 +118,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Compute an AreaMassProperties for a single Brep.
+    /// Computes an AreaMassProperties for a brep.
     /// </summary>
     /// <param name="brep">Brep to measure.</param>
     /// <returns>The AreaMassProperties for the given Brep or null on failure.</returns>
@@ -117,7 +136,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Compute an AreaMassProperties for a single Surface.
+    /// Computes an AreaMassProperties for a surface.
     /// </summary>
     /// <param name="surface">Surface to measure.</param>
     /// <returns>The AreaMassProperties for the given Surface or null on failure.</returns>
@@ -136,7 +155,7 @@ namespace Rhino.Geometry
 
 #if PLEASE_CHECK_STEVE 
     /// <summary>
-    /// Compute the Area properties for a collection of Breps.
+    /// Computes the Area properties for a collection of Breps.
     /// </summary>
     /// <param name="breps">Breps to include in the area computation.</param>
     /// <returns>The Area properties for the entire collection or null on failure.</returns>
@@ -152,7 +171,7 @@ namespace Rhino.Geometry
       return Compute(ptr);
     }
     /// <summary>
-    /// Compute the Area properties for a collection of Meshes.
+    /// Computes the Area properties for a collection of Meshes.
     /// </summary>
     /// <param name="meshes">Meshes to include in the area computation.</param>
     /// <returns>The Area properties for the entire collection or null on failure.</returns>
@@ -168,7 +187,7 @@ namespace Rhino.Geometry
       return Compute(ptr);
     }
     /// <summary>
-    /// Compute the Area properties for a collection of geometric objects. 
+    /// Computes the Area properties for a collection of geometric objects. 
     /// At present only Breps, Surfaces, Meshes and Planar Closed Curves are supported.
     /// </summary>
     /// <param name="geometry">Objects to include in the area computation.</param>
@@ -493,6 +512,11 @@ namespace Rhino.Geometry
     #endregion
   }
 
+  /// <summary>
+  /// Contains static initialization methods and allows access to the computed
+  /// metrics of volume, volume centroids and volume moments calculations in 
+  /// solid meshes, surfaces and boundary representations.
+  /// </summary>
   public class VolumeMassProperties : IDisposable
   {
     #region members
@@ -513,17 +537,30 @@ namespace Rhino.Geometry
     //  m_bIsConst = false;
     //}
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~VolumeMassProperties()
     {
       Dispose(false);
     }
-
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (!m_bIsConst && IntPtr.Zero != m_ptr)

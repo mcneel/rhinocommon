@@ -1,4 +1,3 @@
-//#pragma warning disable 1591
 using System;
 
 namespace Rhino.Geometry
@@ -85,8 +84,8 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="row">Index of row to access</param>
     /// <param name="column">Index of column to access</param>
-    /// <returns>The value at [row, column]</returns>
-    /// <value>The new value at [row, column]</value>
+    /// <returns>The value at [row, column].</returns>
+    /// <value>The new value at [row, column].</value>
     public double this[int row, int column]
     {
       get
@@ -305,10 +304,10 @@ namespace Rhino.Geometry
     /// (&gt;=0.0) zero tolerance for pivot test. If the absolute value of a pivot
     /// is &lt;= zero_tolerance, then the pivot is assumed to be zero.
     /// </param>
-    /// <param name="b">an array of RowCount 3d points that is row reduced with the matrix
+    /// <param name="b">An array of RowCount 3d points that is row reduced with the matrix.
     /// </param>
-    /// <param name="pivot">the value of the smallest pivot is returned here</param>
-    /// <returns>Rank of the matrix</returns>
+    /// <param name="pivot">The value of the smallest pivot is returned here</param>
+    /// <returns>Rank of the matrix.</returns>
     /// <remarks>
     /// The matrix itself is row reduced so that the result is an upper
     /// triangular matrix with 1's on the diagonal.
@@ -325,8 +324,10 @@ namespace Rhino.Geometry
     /// Solves M*x=b where M is upper triangular with a unit diagonal and
     /// b is a column of values.
     /// </summary>
-    /// <param name="zeroTolerance"></param>
-    /// <param name="b"></param>
+    /// <param name="zeroTolerance">(&gt;=0.0) used to test for "zero" values in b
+    /// in underdetermined systems of equations.</param>
+    /// <param name="b">The values in B[RowCount],...,B[B.Length-1] are tested to
+    /// make sure they are within "zeroTolerance".</param>
     /// <returns>
     /// Array of length ColumnCount on success. null on error
     /// </returns>
@@ -342,8 +343,10 @@ namespace Rhino.Geometry
     /// Solves M*x=b where M is upper triangular with a unit diagonal and
     /// b is a column of 3d points.
     /// </summary>
-    /// <param name="zeroTolerance"></param>
-    /// <param name="b"></param>
+    /// <param name="zeroTolerance">(&gt;=0.0) used to test for "zero" values in b
+    /// in underdetermined systems of equations.</param>
+    /// <param name="b">The values in B[RowCount],...,B[B.Length-1] are tested to
+    /// make sure they are "zero".</param>
     /// <returns>
     /// Array of length ColumnCount on success. null on error
     /// </returns>

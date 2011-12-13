@@ -1603,6 +1603,13 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Circle_TryFitTTT(IntPtr c1, IntPtr c2, IntPtr c3, double seed1, double seed2, double seed3, ref Circle circleFit);
+
+  //bool ON_Circle_TryFitTT(const ON_Curve* c1, const ON_Curve* c2, 
+  //                                      double seed1, double seed2,
+  //                                      ON_CIRCLE_STRUCT* circleFit)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Circle_TryFitTT(IntPtr c1, IntPtr c2, double seed1, double seed2, ref Circle circleFit);
   #endregion
 
 
@@ -5621,9 +5628,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern uint CRhCmnDisplayBitmap_TextureId(IntPtr pPipeline, IntPtr pBmp);
 
-  //void CRhinoDisplayPipeline_DrawBitmap(CRhinoDisplayPipeline* pPipeline, CRhCmnDisplayBitmap* pBmp, ON_3DPOINT_STRUCT location, float size, int argb)
+  //void CRhinoDisplayPipeline_DrawBitmap(CRhinoDisplayPipeline* pPipeline, CRhCmnDisplayBitmap* pBmp, ON_3DPOINT_STRUCT location, float size, int argb, bool worldSize)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhinoDisplayPipeline_DrawBitmap(IntPtr pPipeline, IntPtr pBmp, Point3d location, float size, int argb);
+  internal static extern void CRhinoDisplayPipeline_DrawBitmap(IntPtr pPipeline, IntPtr pBmp, Point3d location, float size, int argb, [MarshalAs(UnmanagedType.U1)]bool worldSize);
 
   //void CRhinoDisplayPipeline_DrawBitmap2(CRhinoDisplayPipeline* pPipeline, CRhCmnDisplayBitmap* pBmp, ON_2DPOINT_STRUCT location, float size, int argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5636,25 +5643,27 @@ internal partial class UnsafeNativeMethods
   //void CRhinoDisplayPipeline_DrawBitmaps(CRhinoDisplayPipeline* pPipeline, CRhCmnDisplayBitmap* pBmp,
   //                                                     int point_count, /*ARRAY*/const ON_3dPoint* points,
   //                                                     int color_count, /*ARRAY*/const int* colors_argb,
-  //                                                     /*ARRAY*/const int* indices, float size, ON_3DVECTOR_STRUCT translation)
+  //                                                     /*ARRAY*/const int* indices, float size, ON_3DVECTOR_STRUCT translation, bool worldSize)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhinoDisplayPipeline_DrawBitmaps(IntPtr pPipeline, IntPtr pBmp, int point_count, Point3d[] points, int color_count, int[] colors_argb, int[] indices, float size, Vector3d translation);
+  internal static extern void CRhinoDisplayPipeline_DrawBitmaps(IntPtr pPipeline, IntPtr pBmp, int point_count, Point3d[] points, int color_count, int[] colors_argb, int[] indices, float size, Vector3d translation, [MarshalAs(UnmanagedType.U1)]bool worldSize);
 
   //void CRhinoDisplayPipeline_DrawParticles1(CRhinoDisplayPipeline* pDisplayPipeline, CRhCmnDisplayBitmap* pBmp, int count,
   //                                                        /*ARRAY*/const ON_3dPoint* points,
   //                                                        /*ARRAY*/const float* sizes,
-  //                                                        /*ARRAY*/const int* colors_argb)
+  //                                                        /*ARRAY*/const int* colors_argb,
+  //                                                        bool sizesInWorldUnits)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhinoDisplayPipeline_DrawParticles1(IntPtr pDisplayPipeline, IntPtr pBmp, int count, Point3d[] points, float[] sizes, int[] colors_argb);
+  internal static extern void CRhinoDisplayPipeline_DrawParticles1(IntPtr pDisplayPipeline, IntPtr pBmp, int count, Point3d[] points, float[] sizes, int[] colors_argb, [MarshalAs(UnmanagedType.U1)]bool sizesInWorldUnits);
 
   //void CRhinoDisplayPipeline_DrawParticles2(CRhinoDisplayPipeline* pDisplayPipeline, int texture_id_count, /*ARRAY*/const unsigned int* texture_ids,
   //                                                        int count,
   //                                                        /*ARRAY*/const ON_3dPoint* points,
   //                                                        /*ARRAY*/const float* sizes,
   //                                                        /*ARRAY*/const int* colors_argb,
-  //                                                        /*ARRAY*/const int* point_texture_ids)
+  //                                                        /*ARRAY*/const int* point_texture_ids,
+  //                                                        bool sizesInWorldUnits)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhinoDisplayPipeline_DrawParticles2(IntPtr pDisplayPipeline, int texture_id_count, uint[] texture_ids, int count, Point3d[] points, float[] sizes, int[] colors_argb, int[] point_texture_ids);
+  internal static extern void CRhinoDisplayPipeline_DrawParticles2(IntPtr pDisplayPipeline, int texture_id_count, uint[] texture_ids, int count, Point3d[] points, float[] sizes, int[] colors_argb, int[] point_texture_ids, [MarshalAs(UnmanagedType.U1)]bool sizesInWorldUnits);
   #endregion
 
 

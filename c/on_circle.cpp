@@ -111,7 +111,7 @@ RH_C_FUNCTION bool ON_Circle_TryFitTTT(const ON_Curve* c1, const ON_Curve* c2, c
   if( !c1 || !c2 || !c3 ) { return false; }
   if( !circleFit ) { return false; }
 
-  //copied this (with modifications from CRhGetCircleTTT::CalculateCircleTanTanTan
+  //copied this (with modifications) from CRhGetCircleTTT::CalculateCircleTanTanTan
   double d1=0.0, d2=0.0, d3=0.0;
   double t1 = seed1;
   double t2 = seed2;
@@ -199,3 +199,55 @@ RH_C_FUNCTION bool ON_Circle_TryFitTTT(const ON_Curve* c1, const ON_Curve* c2, c
   }
   return false;
 }
+
+RH_C_FUNCTION bool ON_Circle_TryFitTT(const ON_Curve* c1, const ON_Curve* c2, 
+                                      double seed1, double seed2,
+                                      ON_CIRCLE_STRUCT* circleFit)
+{
+    if( !c1 || !c2 ) { return false; }
+  if( !circleFit ) { return false; }
+
+  //copied this (with modifications) from CRhGetCircleTTT::CalculateCircleTanTan
+  double d1=0.0, d2=0.0;
+  double t1 = seed1;
+  double t2 = seed2;
+
+  double tol = RhinoCurveTangencyTolerance();
+  bool found = false;
+
+  // initialize points and tangents
+  ON_3dPoint pt1 = c1->PointAt(t1);
+  ON_3dPoint pt2 = c2->PointAt(t2);
+  ON_3dVector tan1 = c1->TangentAt(t1);
+  ON_3dVector tan2 = c2->TangentAt(t2);
+
+  ON_Circle circle;
+
+  for ( int i=0; i<20; i++)
+  {
+    // make a guess
+    if ( !circle.Create(pt2, tan2, pt1))
+      break;
+
+    // check how good the fit is
+    ON_3dVector n = circle.Center() - pt1;
+    if ( n.Unitize())
+    {
+      ON_3dVector tan1 = c1->TangentAt( t1);
+      double d = fabs( ON_DotProduct( n, tan1));
+
+      if ( d < tol)
+      {
+        CopyToCircleStruct(*circleFit, circle);
+        return true;
+      }
+    }
+
+    // get perp to first curve from the second point
+    if ( !TL_GetLocalPerpPoint( *c1, circle.Center(), t1, &t1))
+      break;
+    pt1 = c1->PointAt( t1);
+
+  }
+  return false;
+ }

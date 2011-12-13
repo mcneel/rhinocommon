@@ -230,7 +230,7 @@ namespace Rhino.Geometry
     /// <param name="b">Another matrix to use in calculation.</param>
     /// <returns>The sum matrix.</returns>
     /// <exception cref="ArgumentException">
-    /// When the two matrics are not the same size.
+    /// When the two matrices are not the same size.
     /// </exception>
     public static Matrix operator +(Matrix a, Matrix b)
     {
@@ -358,9 +358,9 @@ namespace Rhino.Geometry
       return null;
     }
 
-    const int idxIsRowOrthoganal = 0;
+    const int idxIsRowOrthogonal = 0;
     const int idxIsRowOrthoNormal = 1;
-    const int idxIsColumnOrthoganal = 2;
+    const int idxIsColumnOrthogonal = 2;
     const int idxIsColumnOrthoNormal = 3;
     bool GetBool(int which)
     {
@@ -370,17 +370,17 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets a value indicating whether the matrix is row orthogonal.
     /// </summary>
-    public bool IsRowOrthoganal
+    public bool IsRowOrthogonal
     {
-      get { return GetBool(idxIsRowOrthoganal); }
+      get { return GetBool(idxIsRowOrthogonal); }
     }
 
     /// <summary>
     /// Gets a value indicating whether the matrix is column orthogonal.
     /// </summary>
-    public bool IsColumnOrthoganal
+    public bool IsColumnOrthogonal
     {
-      get { return GetBool(idxIsColumnOrthoganal); }
+      get { return GetBool(idxIsColumnOrthogonal); }
     }
 
     /// <summary>

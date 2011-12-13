@@ -415,7 +415,6 @@ namespace Rhino.Geometry
       set { SetDouble(idxRefineAngle, value); }
     }
     #endregion
-
   }
 
   /// <summary>
@@ -1994,7 +1993,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Hide the vertex at the given index.
+    /// Hides the vertex at the given index.
     /// </summary>
     /// <param name="vertexIndex">Index of vertex to hide.</param>
     public void Hide(int vertexIndex)
@@ -2008,7 +2007,7 @@ namespace Rhino.Geometry.Collections
       UnsafeNativeMethods.ON_Mesh_HiddenVertexOp(ptr, vertexIndex, Mesh.idxHideVertex);
     }
     /// <summary>
-    /// Show the vertex at the given index.
+    /// Shows the vertex at the given index.
     /// </summary>
     /// <param name="vertexIndex">Index of vertex to show.</param>
     public void Show(int vertexIndex)
@@ -2022,7 +2021,7 @@ namespace Rhino.Geometry.Collections
       UnsafeNativeMethods.ON_Mesh_HiddenVertexOp(ptr, vertexIndex, Mesh.idxShowVertex);
     }
     /// <summary>
-    /// Hide all vertices in the mesh.
+    /// Hides all vertices in the mesh.
     /// </summary>
     public void HideAll()
     {
@@ -2031,7 +2030,7 @@ namespace Rhino.Geometry.Collections
       UnsafeNativeMethods.ON_Mesh_HiddenVertexOp(ptr, 0, Mesh.idxHideAll);
     }
     /// <summary>
-    /// Show all vertices in the mesh.
+    /// Shows all vertices in the mesh.
     /// </summary>
     public void ShowAll()
     {
@@ -2042,7 +2041,7 @@ namespace Rhino.Geometry.Collections
 
     #region methods
     /// <summary>
-    /// Cull (remove) all vertices that are currently not used by the Face list.
+    /// Removes all vertices that are currently not used by the Face list.
     /// </summary>
     /// <returns>The number of unused vertices that were removed.</returns>
     public int CullUnused()
@@ -2052,7 +2051,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Merge identical vertices.
+    /// Merges identical vertices.
     /// </summary>
     /// <param name="ignoreNormals">
     /// If true, vertex normals will not be taken into consideration when comparing vertices.
@@ -2071,7 +2070,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Get a list of all of the faces that share a given vertex
+    /// Gets a list of all of the faces that share a given vertex
     /// </summary>
     /// <param name="vertexIndex"></param>
     /// <returns>list of indices of faces on success, null on failure</returns>
@@ -2088,7 +2087,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Get a list of other vertices which a "topologically" identical
+    /// Gets a list of other vertices which a "topologically" identical
     /// to this vertex
     /// </summary>
     /// <param name="vertexIndex"></param>
@@ -2164,7 +2163,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Remove the vertex at the given index and all faces that reference that index.
+    /// Removes the vertex at the given index and all faces that reference that index.
     /// </summary>
     /// <param name="index">Index of vertex to remove.</param>
     /// <param name="shrinkFaces">If true, quads that reference the deleted vertex will be converted to triangles.</param>
@@ -2174,7 +2173,7 @@ namespace Rhino.Geometry.Collections
       return Remove(new int[] { index }, shrinkFaces);
     }
     /// <summary>
-    /// Remove the vertices at the given indices and all faces that reference those vertices.
+    /// Removes the vertices at the given indices and all faces that reference those vertices.
     /// </summary>
     /// <param name="indices">Vertex indices to remove.</param>
     /// <param name="shrinkFaces">If true, quads that reference the deleted vertex will be converted to triangles.</param>
@@ -2254,13 +2253,17 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     #region IEnumerable implementation
-    IEnumerator<Point3f> IEnumerable<Point3f>.GetEnumerator()
+    /// <summary>
+    /// Gets an enumerator that yields all mesh vertices (points) in this collection.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    public IEnumerator<Point3f> GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<MeshVertexList, Point3f>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<MeshVertexList, Point3f>(this);
+      return GetEnumerator();
     }
     #endregion
   }
@@ -2491,13 +2494,17 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     #region IEnumerable implementation
-    IEnumerator<Point3f> IEnumerable<Point3f>.GetEnumerator()
+    /// <summary>
+    /// Gets an enumerator that yields all topology vertices in this collection.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    public IEnumerator<Point3f> GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<MeshTopologyVertexList, Point3f>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<MeshTopologyVertexList, Point3f>(this);
+      return GetEnumerator();
     }
     #endregion
 
@@ -2774,7 +2781,7 @@ namespace Rhino.Geometry.Collections
 
     #region access
     /// <summary>
-    /// Clear the Vertex Normal list on the mesh.
+    /// Clears the vertex normal collection on the mesh.
     /// </summary>
     public void Clear()
     {
@@ -2791,7 +2798,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Adds a new vertex normal to the end of the list.
+    /// Adds a new vertex normal at the end of the list.
     /// </summary>
     /// <param name="x">X component of new vertex normal.</param>
     /// <param name="y">Y component of new vertex normal.</param>
@@ -2802,7 +2809,7 @@ namespace Rhino.Geometry.Collections
       return Add(new Vector3f(x, y, z));
     }
     /// <summary>
-    /// Adds a new vertex normal to the end of the list.
+    /// Adds a new vertex normal at the end of the list.
     /// </summary>
     /// <param name="x">X component of new vertex normal.</param>
     /// <param name="y">Y component of new vertex normal.</param>
@@ -2813,7 +2820,7 @@ namespace Rhino.Geometry.Collections
       return Add(new Vector3f((float)x, (float)y, (float)z));
     }
     /// <summary>
-    /// Adds a new vertex normal to the end of the list.
+    /// Adds a new vertex normal at the end of the list.
     /// </summary>
     /// <param name="normal">new vertex normal.</param>
     /// <returns>The index of the newly added vertex normal.</returns>
@@ -2824,7 +2831,7 @@ namespace Rhino.Geometry.Collections
       return N;
     }
     /// <summary>
-    /// Adds a new vertex normal to the end of the list.
+    /// Adds a new vertex normal at the end of the list.
     /// </summary>
     /// <param name="normal">new vertex normal.</param>
     /// <returns>The index of the newly added vertex normal.</returns>
@@ -2833,7 +2840,7 @@ namespace Rhino.Geometry.Collections
       return Add(new Vector3f((float)normal.X, (float)normal.Y, (float)normal.Z));
     }
     /// <summary>
-    /// Append a collection of normal vectors.
+    /// Appends a collection of normal vectors.
     /// </summary>
     /// <param name="normals">Normals to append.</param>
     /// <returns>True on success, false on failure.</returns>
@@ -2900,7 +2907,7 @@ namespace Rhino.Geometry.Collections
       return SetNormal(index, new Vector3f((float)normal.m_x, (float)normal.m_y, (float)normal.m_z));
     }
     /// <summary>
-    /// Set all normal vectors in one go. This method destroys the current normal array if it exists.
+    /// Sets all normal vectors in one go. This method destroys the current normal array if it exists.
     /// </summary>
     /// <param name="normals">Normals for the entire mesh.</param>
     /// <returns>True on success, false on failure.</returns>
@@ -2927,7 +2934,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Unitize all vertex normals.
+    /// Unitizes all vertex normals.
     /// </summary>
     /// <returns>True on success, false on failure.</returns>
     public bool UnitizeNormals()
@@ -2937,8 +2944,8 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Reverse direction of all vertex normals
-    /// Same as Mesh.Flip(true, false, false)
+    /// Reverses direction of all vertex normals
+    /// <para>This is the same as Mesh.Flip(true, false, false)</para>
     /// </summary>
     public void Flip()
     {
@@ -2947,19 +2954,23 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     #region IEnumerable implementation
-    IEnumerator<Vector3f> IEnumerable<Vector3f>.GetEnumerator()
+    /// <summary>
+    /// Gets an enumerator that yields all normals (vectors) in this collection.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    public IEnumerator<Vector3f> GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<MeshVertexNormalList, Vector3f>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<MeshVertexNormalList, Vector3f>(this);
+      return GetEnumerator();
     }
     #endregion
   }
 
   /// <summary>
-  /// Provides access to the Faces and Face related functionality of a Mesh.
+  /// Provides access to the faces and Face related functionality of a Mesh.
   /// </summary>
   public class MeshFaceList : IEnumerable<MeshFace>, Rhino.Collections.IRhinoTable<MeshFace>
   {
@@ -3030,7 +3041,7 @@ namespace Rhino.Geometry.Collections
     #region methods
     #region face access
     /// <summary>
-    /// Clear the Face list on the mesh.
+    /// Clears the Face list on the mesh.
     /// </summary>
     public void Clear()
     {
@@ -3039,7 +3050,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Append a new mesh face to the end of the mesh face list.
+    /// Appends a new mesh face to the end of the mesh face list.
     /// </summary>
     /// <param name="face">Face to add.</param>
     /// <returns>The index of the newly added face.</returns>
@@ -3057,7 +3068,7 @@ namespace Rhino.Geometry.Collections
     //  return AddFace(face.m_a, face.m_b, face.m_c, face.m_d);
     //}
     /// <summary>
-    /// Append a new triangular face to the end of the mesh face list.
+    /// Appends a new triangular face to the end of the mesh face list.
     /// </summary>
     /// <param name="vertex1">Index of first face corner.</param>
     /// <param name="vertex2">Index of second face corner.</param>
@@ -3068,7 +3079,7 @@ namespace Rhino.Geometry.Collections
       return AddFace(vertex1, vertex2, vertex3, vertex3);
     }
     /// <summary>
-    /// Append a new quadragular face to the end of the mesh face list.
+    /// Appends a new quadragular face to the end of the mesh face list.
     /// </summary>
     /// <param name="vertex1">Index of first face corner.</param>
     /// <param name="vertex2">Index of second face corner.</param>
@@ -3319,10 +3330,12 @@ namespace Rhino.Geometry.Collections
       return UnsafeNativeMethods.ON_Mesh_ConvertTrianglesToQuads(ptr, angleToleranceRadians, minimumDiagonalLengthRatio);
     }
 
-    //David: I'm still unclear about what degenerate faces actually are, however I suspect renaming this function to 
-    //CullInvalidFaces might make more sense.
     /// <summary>
-    /// Cull (delete) all degenerate faces from the mesh.
+    /// Attempts to removes degenerate faces from the mesh.
+    /// <para>Degenerate faces are faces that contains such a combination of indices,
+    /// that their final shape collapsed in a line or point.</para>
+    /// <para>Before returning, this method also attempts to repair faces by juggling
+    /// vertex indices.</para>
     /// </summary>
     /// <returns>The number of degenerate faces that were removed.</returns>
     public int CullDegenerateFaces()
@@ -3332,10 +3345,11 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// A face is hidden if, and only if, at least one of its vertices is hidden.
+    /// Gets a value indicating whether a face is hidden.
+    /// <para>A face is hidden if, and only if, at least one of its vertices is hidden.</para>
     /// </summary>
-    /// <param name="faceIndex"></param>
-    /// <returns></returns>
+    /// <param name="faceIndex">A face index.</param>
+    /// <returns>true if hidden, false if fully visible.</returns>
     public bool IsHidden(int faceIndex)
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
@@ -3343,11 +3357,11 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Returns true if at least one of the Face's edges are not topologically
-    /// connected to any other faces
+    /// Returns true if at least one of the face edges are not topologically
+    /// connected to any other faces.
     /// </summary>
-    /// <param name="faceIndex"></param>
-    /// <returns></returns>
+    /// <param name="faceIndex">A face index.</param>
+    /// <returns>true if that face makes the mesh open, otherwise false.</returns>
     public bool HasNakedEdges(int faceIndex)
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
@@ -3370,13 +3384,17 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     #region IEnumerable implementation
-    IEnumerator<MeshFace> IEnumerable<MeshFace>.GetEnumerator()
+    /// <summary>
+    /// Gets an enumerator that yields all faces in this collection.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    public IEnumerator<MeshFace> GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<MeshFaceList, MeshFace>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<MeshFaceList, MeshFace>(this);
+      return GetEnumerator();
     }
     #endregion
   }
@@ -3449,7 +3467,7 @@ namespace Rhino.Geometry.Collections
     #region methods
     #region face access
     /// <summary>
-    /// Clear the Face Normal list on the mesh.
+    /// Clears the Face Normal list on the mesh.
     /// </summary>
     public void Clear()
     {
@@ -3458,7 +3476,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Append a face normal to the list of mesh face normals.
+    /// Appends a face normal to the list of mesh face normals.
     /// </summary>
     /// <param name="x">X component of face normal.</param>
     /// <param name="y">Y component of face normal.</param>
@@ -3469,7 +3487,7 @@ namespace Rhino.Geometry.Collections
       return AddFaceNormal(new Vector3f(x, y, z));
     }
     /// <summary>
-    /// Append a face normal to the list of mesh face normals.
+    /// Appends a face normal to the list of mesh face normals.
     /// </summary>
     /// <param name="x">X component of face normal.</param>
     /// <param name="y">Y component of face normal.</param>
@@ -3480,7 +3498,7 @@ namespace Rhino.Geometry.Collections
       return AddFaceNormal(new Vector3f((float)x, (float)y, (float)z));
     }
     /// <summary>
-    /// Append a face normal to the list of mesh face normals.
+    /// Appends a face normal to the list of mesh face normals.
     /// </summary>
     /// <param name="normal">New face normal.</param>
     /// <returns>The index of the newly added face normal.</returns>
@@ -3489,7 +3507,7 @@ namespace Rhino.Geometry.Collections
       return AddFaceNormal(new Vector3f((float)normal.m_x, (float)normal.m_y, (float)normal.m_z));
     }
     /// <summary>
-    /// Append a face normal to the list of mesh face normals.
+    /// Appends a face normal to the list of mesh face normals.
     /// </summary>
     /// <param name="normal">New face normal.</param>
     /// <returns>The index of the newly added face normal.</returns>
@@ -3550,7 +3568,7 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     /// <summary>
-    /// Unitize all the existing face normals.
+    /// Unitizes all the existing face normals.
     /// </summary>
     /// <returns>True on success, false on failure.</returns>
     public bool UnitizeFaceNormals()
@@ -3560,7 +3578,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Compute all the face normals for this mesh based on the physical shape of the mesh.
+    /// Computes all the face normals for this mesh based on the physical shape of the mesh.
     /// </summary>
     /// <returns>True on success, false on failure.</returns>
     public bool ComputeFaceNormals()
@@ -3572,13 +3590,17 @@ namespace Rhino.Geometry.Collections
 
 
     #region IEnumerable implementation
-    IEnumerator<Vector3f> IEnumerable<Vector3f>.GetEnumerator()
+    /// <summary>
+    /// Gets an enumerator that yields all normals in this collection.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    public IEnumerator<Vector3f> GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<MeshFaceNormalList, Vector3f>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<MeshFaceNormalList, Vector3f>(this);
+      return GetEnumerator();
     }
     #endregion
   }
@@ -3678,7 +3700,7 @@ namespace Rhino.Geometry.Collections
 
     #region access
     /// <summary>
-    /// Clear the Vertex Color list on the mesh.
+    /// Clears the Vertex Color list on the mesh.
     /// </summary>
     public void Clear()
     {
@@ -3778,7 +3800,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Create a valid vertex color list consisting of a single color.
+    /// Creates a valid vertex color list consisting of a single color.
     /// </summary>
     /// <param name="baseColor">Color to apply to every vertex.</param>
     /// <returns>True on success, false on failure.</returns>
@@ -3794,7 +3816,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Set all the vertex colors in one go. For the Mesh to be valid, the number 
+    /// Sets all the vertex colors in one go. For the Mesh to be valid, the number 
     /// of colors must match the number of vertices.
     /// </summary>
     /// <param name="colors">Colors to set.</param>
@@ -3809,7 +3831,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Append a collection of colors to the Vertex Color list. 
+    /// Appends a collection of colors to the Vertex Color list. 
     /// For the Mesh to be valid, the number of colors must match the number of vertices.
     /// </summary>
     /// <param name="colors">Colors to append.</param>
@@ -3821,13 +3843,17 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     #region IEnumerable implementation
-    IEnumerator<Color> IEnumerable<Color>.GetEnumerator()
+    /// <summary>
+    /// Gets an enumerator that yields all colors in this collection.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    public IEnumerator<Color> GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<MeshVertexColorList, Color>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<MeshVertexColorList, Color>(this);
+      return GetEnumerator();
     }
     #endregion
   }
@@ -3900,7 +3926,7 @@ namespace Rhino.Geometry.Collections
 
     #region access
     /// <summary>
-    /// Clear the Texture Coordinate list on the mesh.
+    /// Clears the Texture Coordinate list on the mesh.
     /// </summary>
     public void Clear()
     {
@@ -3949,7 +3975,7 @@ namespace Rhino.Geometry.Collections
       return Add((float)tc.m_x, (float)tc.m_y);
     }
     /// <summary>
-    /// Append an array of texture coordinates.
+    /// Appends an array of texture coordinates.
     /// </summary>
     /// <param name="textureCoordinates">Texture coordinates to append.</param>
     /// <returns>True on success, false on failure.</returns>
@@ -4014,7 +4040,7 @@ namespace Rhino.Geometry.Collections
       return SetTextureCoordinate(index, tc.m_x, tc.m_y);
     }
     /// <summary>
-    /// Set all texture coordinates in one go.
+    /// Sets all texture coordinates in one go.
     /// </summary>
     /// <param name="textureCoordinates">Texture coordinates to assign to the mesh.</param>
     /// <returns>True on success, false on failure.</returns>
@@ -4034,7 +4060,7 @@ namespace Rhino.Geometry.Collections
 
     #region methods
     /// <summary>
-    /// Scale the texture coordinates so the texture domains are [0,1] 
+    /// Scales the texture coordinates so the texture domains are [0,1] 
     /// and eliminate any texture rotations.
     /// </summary>
     /// <returns>True on success, false on failure.</returns>
@@ -4044,7 +4070,9 @@ namespace Rhino.Geometry.Collections
       return UnsafeNativeMethods.ON_Mesh_NonConstBoolOp(ptr, Mesh.idxNormalizeTextureCoordinates);
     }
     /// <summary>
-    /// David: What does this do?
+    /// Transposes texture coordinates.
+    /// <para>The region of the bitmap the texture uses does not change.
+    /// All texture coordinates rows (Us) become columns (Vs), and vice versa.</para>
     /// </summary>
     /// <returns>True on success, false on failure.</returns>
     public bool TransposeTextureCoordinates()
@@ -4053,7 +4081,9 @@ namespace Rhino.Geometry.Collections
       return UnsafeNativeMethods.ON_Mesh_NonConstBoolOp(ptr, Mesh.idxTransposeTextureCoordinates);
     }
     /// <summary>
-    /// Reverse one coordinate direction of the texture coordinates, within texture domain m_tex_domain
+    /// Reverses one coordinate direction of the texture coordinates.
+    /// <para>The region of the bitmap the texture uses does not change.
+    /// Either Us or Vs direction is flipped.</para>
     /// </summary>
     /// <param name="direction">
     /// 0 = first texture coordinate is reversed
@@ -4068,13 +4098,17 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     #region IEnumerable implementation
-    IEnumerator<Point2f> IEnumerable<Point2f>.GetEnumerator()
+    /// <summary>
+    /// Gets an enumerator that yields all texture coordinates in this collection.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    public IEnumerator<Point2f> GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<MeshTextureCoordinateList, Point2f>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<MeshTextureCoordinateList, Point2f>(this);
+      return GetEnumerator();
     }
     #endregion
   }

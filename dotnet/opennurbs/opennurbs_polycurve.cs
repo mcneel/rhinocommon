@@ -22,7 +22,11 @@ namespace Rhino.Geometry
       ConstructNonConstObject(ptr);
     }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
     protected PolyCurve(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {

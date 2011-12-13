@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,12 +7,15 @@ using Rhino.Collections;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents a Non Uniform Rational B-Splines (NURBS) curve.
+  /// </summary>
   [Serializable]
   public class NurbsCurve : Curve, ISerializable
   {
     #region statics
     /// <summary>
-    /// Get a non-rational, degree 1 Nurbs curve representation of the line.
+    /// Gets a non-rational, degree 1 Nurbs curve representation of the line.
     /// </summary>
     /// <returns>Curve on success, null on failure.</returns>
     public static NurbsCurve CreateFromLine(Line line)
@@ -30,7 +32,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get a rational degree 2 NURBS curve representation
+    /// Gets a rational degree 2 NURBS curve representation
     /// of the arc. Note that the parameterization of NURBS curve
     /// does not match arc's transcendental paramaterization.
     /// </summary>
@@ -48,7 +50,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get a rational degree 2 NURBS curve representation
+    /// Gets a rational degree 2 NURBS curve representation
     /// of the circle. Note that the parameterization of NURBS curve
     /// does not match circle's transcendental paramaterization.  
     /// Use GetRadianFromNurbFormParameter() and
@@ -69,7 +71,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get a rational degree 2 NURBS curve representation of the ellipse.
+    /// Gets a rational degree 2 NURBS curve representation of the ellipse.
     /// <para>Note that the parameterization of the NURBS curve does not match
     /// with the transcendental paramaterization of the ellipsis.</para>
     /// </summary>
@@ -100,7 +102,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Test two curves for similarity.
+    /// Determines if two curves are similar.
     /// </summary>
     /// <param name="curveA">First curve used in comparison.</param>
     /// <param name="curveB">Second curve used in comparison.</param>
@@ -118,7 +120,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a 3D NURBS curve from a list of control points
+    /// Constructs a 3D NURBS curve from a list of control points.
     /// </summary>
     /// <param name="periodic">If true, create a periodic uniform curve. If false, create a clamped uniform curve</param>
     /// <param name="degree">(>=1) degree=order-1</param>
@@ -164,8 +166,10 @@ namespace Rhino.Geometry
     #endregion
 
     #region constructors
-    // The only public constructor right now is the copy constructor
-    // There are several static creation routines that return null if the input is bogus
+    /// <summary>
+    /// Initializes a NURBS curve by copying its values from another NURBS curve.
+    /// </summary>
+    /// <param name="other">The other curve. This value can be null.</param>
     public NurbsCurve(NurbsCurve other)
     {
       IntPtr pOther = IntPtr.Zero;
@@ -180,7 +184,12 @@ namespace Rhino.Geometry
       ConstructNonConstObject(ptr);
     }
 
-    protected NurbsCurve( SerializationInfo info, StreamingContext context)
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
+    protected NurbsCurve(SerializationInfo info, StreamingContext context)
       :base(info, context)
     {
     }
@@ -649,6 +658,11 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     #region knot utility methods
+    /// <summary>
+    /// If you want to keep a copy of this class around by holding onto it in a variable after a command
+    /// completes, call EnsurePrivateCopy to make sure that this class is not tied to the document. You can
+    /// call this function as many times as you want.
+    /// </summary>
     public void EnsurePrivateCopy()
     {
       m_curve.EnsurePrivateCopy();
@@ -760,6 +774,13 @@ namespace Rhino.Geometry.Collections
       return rc;
     }
 
+    /// <summary>
+    /// Computes the knots that are superfluous because they are not used in NURBs evaluation.
+    /// These make it appear so that the first and last curve spans are different from interior spans.
+    /// <para>http://wiki.mcneel.com/developer/onsuperfluousknot</para>
+    /// </summary>
+    /// <param name="start">trueif the query targets the first knot. Otherwise, the last knot.</param>
+    /// <returns>A component.</returns>
     public double SuperfluousKnot(bool start)
     {
       IntPtr pConstCurve = m_curve.ConstPointer();
@@ -793,6 +814,11 @@ namespace Rhino.Geometry.Collections
     }
     #endregion
 
+    /// <summary>
+    /// If you want to keep a copy of this class around by holding onto it in a variable after a command
+    /// completes, call EnsurePrivateCopy to make sure that this class is not tied to the document. You can
+    /// call this function as many times as you want.
+    /// </summary>
     public void EnsurePrivateCopy()
     {
       m_curve.EnsurePrivateCopy();

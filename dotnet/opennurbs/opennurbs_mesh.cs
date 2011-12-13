@@ -41,7 +41,7 @@ namespace Rhino.Render
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents settings used for creating a Mesh representation of a Brep or Surface.
+  /// Represents settings used for creating a mesh representation of a brep or surface.
   /// </summary>
   public class MeshingParameters : IDisposable
   {
@@ -50,7 +50,8 @@ namespace Rhino.Geometry
     internal IntPtr NonConstPointer() { return m_ptr; }
 
     /// <summary>
-    /// Initial values are same as "Default".
+    /// Initializes a new instance with default values.
+    /// <para>Initial values are same as <see cref="Default"/>.</para>
     /// </summary>
     public MeshingParameters()
     {
@@ -496,7 +497,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Constructs a mesh from a Brep.
+    /// Constructs a mesh from a brep.
     /// </summary>
     /// <param name="brep">Brep to approximate.</param>
     /// <returns>An array of meshes.</returns>
@@ -514,7 +515,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Constructs a mesh from a Brep.
+    /// Constructs a mesh from a brep.
     /// </summary>
     /// <param name="brep">Brep to approximate.</param>
     /// <param name="meshingParameters">Parameters to use during meshing.</param>
@@ -535,7 +536,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Constructs the Solid Union of a set of Meshes.
+    /// Computes the solid union of a set of meshes.
     /// </summary>
     /// <param name="meshes">Meshes to union.</param>
     /// <returns>An array of Mesh results or null on failure.</returns>
@@ -643,7 +644,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Computes the split of two sets of meshes.
+    /// Splits a set of meshes with another set.
     /// </summary>
     /// <param name="meshesToSplit">A list, an array, or any enumerable set of meshes to be split.</param>
     /// <param name="meshSplitters">A list, an array, or any enumerable set of meshes that cut.</param>
@@ -656,7 +657,7 @@ namespace Rhino.Geometry
     #endregion
 
     #region constructors
-    /// <summary>Create a new empty mesh</summary>
+    /// <summary>Initializes a new empty mesh.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addmesh.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addmesh.cs' lang='cs'/>
@@ -716,7 +717,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Sets this mesh from another mesh.
+    /// Copies mesh values into this mesh from another mesh.
     /// </summary>
     /// <param name="other">The other mesh to copy from.</param>
     /// <exception cref="ArgumentNullException">If other is null.</exception>
@@ -730,7 +731,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Returns a copy of this mesh.
+    /// Constructs a copy of this mesh.
     /// This is the same as <see cref="DuplicateMesh"/>.
     /// </summary>
     /// <returns>A mesh.</returns>
@@ -741,7 +742,7 @@ namespace Rhino.Geometry
       return new Mesh(pNewMesh, null);
     }
 
-    /// <summary>Creates a copy of this mesh.
+    /// <summary>Constructs a copy of this mesh.
     /// This is the same as <see cref="Duplicate"/>.
     /// </summary>
     public Mesh DuplicateMesh()
@@ -831,10 +832,10 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// A mesh is considered to be closed when every mesh "edge" has 
-    /// two or more faces.
+    /// Gets a value indicating whether a mesh is considered to be closed (solid).
+    /// A mesh is considered solid when every mesh edge borders two or more faces.
     /// </summary>
-    /// <returns>True if the mesh is closed, false if it is not.</returns>
+    /// <returns>true if the mesh is closed, false if it is not.</returns>
     public bool IsClosed
     {
       get
@@ -846,7 +847,7 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Gets a value indicating whether or not the mesh is manifold. 
-    /// A manifold mesh does not have any "edges" that are part of three or more faces.
+    /// A manifold mesh does not have any edge that borders more than two faces.
     /// </summary>
     /// <param name="topologicalTest">
     /// If true, the query treats coincident vertices as the same.
@@ -871,7 +872,7 @@ namespace Rhino.Geometry
     #region fake list access
     private Rhino.Geometry.Collections.MeshVertexList m_vertices;
     /// <summary>
-    /// Gets access to the Vertices of this mesh.
+    /// Gets access to the vertices set of this mesh.
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addmesh.vb' lang='vbnet'/>
@@ -893,7 +894,8 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Gets the <see cref="Rhino.Geometry.Collections.MeshTopologyVertexList"/> object associated with this mesh.
-    /// <para>This object stores vertex links.</para>
+    /// <para>This object stores vertex connectivity and the indices of vertices
+    /// that were unified while computing the edge topology.</para>
     /// </summary>
     public Rhino.Geometry.Collections.MeshTopologyVertexList TopologyVertices
     {
@@ -907,7 +909,7 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Gets the <see cref="Rhino.Geometry.Collections.MeshTopologyEdgeList"/> object associated with this mesh.
-    /// <para>This object stores edge links.</para>
+    /// <para>This object stores edge connectivity.</para>
     /// </summary>
     public Rhino.Geometry.Collections.MeshTopologyEdgeList TopologyEdges
     {
@@ -919,7 +921,7 @@ namespace Rhino.Geometry
 
     private Rhino.Geometry.Collections.MeshVertexNormalList m_normals;
     /// <summary>
-    /// Gets access to the vertex normal vectors of this mesh.
+    /// Gets access to the vertex normal collection in this mesh.
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addmesh.vb' lang='vbnet'/>
@@ -939,7 +941,7 @@ namespace Rhino.Geometry
 
     private Rhino.Geometry.Collections.MeshFaceList m_faces;
     /// <summary>
-    /// Gets access to the Faces of this mesh.
+    /// Gets access to the faces collection in this mesh.
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addmesh.vb' lang='vbnet'/>
@@ -959,7 +961,7 @@ namespace Rhino.Geometry
 
     private Rhino.Geometry.Collections.MeshFaceNormalList m_facenormals;
     /// <summary>
-    /// Gets access to the face normals of this mesh.
+    /// Gets access to the face normal collection in this mesh.
     /// </summary>
     public Rhino.Geometry.Collections.MeshFaceNormalList FaceNormals
     {
@@ -974,7 +976,7 @@ namespace Rhino.Geometry
 
     private Rhino.Geometry.Collections.MeshVertexColorList m_vertexcolors;
     /// <summary>
-    /// Gets access to the (optional) vertex colors of this mesh
+    /// Gets access to the (optional) vertex color collection in this mesh.
     /// </summary>
     public Rhino.Geometry.Collections.MeshVertexColorList VertexColors
     {
@@ -988,7 +990,7 @@ namespace Rhino.Geometry
 
     private Rhino.Geometry.Collections.MeshTextureCoordinateList m_texcoords;
     /// <summary>
-    /// Gets access to the vertex texture coordinates of this mesh.
+    /// Gets access to the vertex texture coordinate collection in this mesh.
     /// </summary>
     public Rhino.Geometry.Collections.MeshTextureCoordinateList TextureCoordinates
     {
@@ -1002,7 +1004,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Remove all texture coordinate information on the mesh.
+    /// Remove all texture coordinate information from this mesh.
     /// </summary>
     public void ClearTextureData()
     {

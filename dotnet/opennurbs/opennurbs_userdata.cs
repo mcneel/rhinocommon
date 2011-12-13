@@ -13,6 +13,9 @@ namespace Rhino.DocObjects.Custom
     int m_serial_number=-1;
     IntPtr m_pNativePointer = IntPtr.Zero;
 
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
     protected UserData() { }
 
     #region IDisposable implementation

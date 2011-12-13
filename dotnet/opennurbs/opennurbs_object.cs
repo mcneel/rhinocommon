@@ -327,6 +327,11 @@ namespace Rhino.Runtime
       return rc;
     }
 
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
     protected CommonObject( SerializationInfo info, StreamingContext context)
     {
       m_ptr = SerializeReadON_Object(info, context);

@@ -67,7 +67,11 @@ namespace Rhino.DocObjects
       return IntPtr.Zero;
     }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
     protected Texture(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {

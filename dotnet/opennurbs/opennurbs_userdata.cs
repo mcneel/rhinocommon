@@ -412,7 +412,7 @@ namespace Rhino.DocObjects.Custom
     {
       UserDictionary dict = source as UserDictionary;
       if (dict != null)
-        m_dictionary = dict.m_dictionary;
+        m_dictionary = dict.m_dictionary.Clone();
     }
 
     public override bool ShouldWrite

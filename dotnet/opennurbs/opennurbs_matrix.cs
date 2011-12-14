@@ -159,14 +159,14 @@ namespace Rhino.Geometry
     /// <returns>true if operation succeeded; otherwise false.</returns>
     public bool Transpose()
     {
-      bool toReturn = UnsafeNativeMethods.ON_Matrix_Transpose(m_ptr);
-      if (toReturn)
+      bool rc = UnsafeNativeMethods.ON_Matrix_Transpose(m_ptr);
+      if (rc)
       {
         int tmp = this.m_rows;
         this.m_rows = this.m_columns;
         this.m_columns = tmp;
       }
-      return toReturn;
+      return rc;
     }
 
     /// <summary>
@@ -199,7 +199,14 @@ namespace Rhino.Geometry
     /// <returns>true if operation succeeded; otherwise false.</returns>
     public bool Invert(double zeroTolerance)
     {
-      return UnsafeNativeMethods.ON_Matrix_Invert(m_ptr, zeroTolerance);
+      bool rc = UnsafeNativeMethods.ON_Matrix_Invert(m_ptr, zeroTolerance);
+      if (rc)
+      {
+        int tmp = this.m_rows;
+        this.m_rows = this.m_columns;
+        this.m_columns = tmp;
+      }
+      return rc;
     }
 
     /// <summary>

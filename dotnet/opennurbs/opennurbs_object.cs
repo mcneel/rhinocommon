@@ -295,7 +295,7 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Dictionary of custom information attached to this class. The dictionary is actaully user
+    /// Dictionary of custom information attached to this class. The dictionary is actually user
     /// data provided as an easy to use sharable set of information.
     /// </summary>
     public Rhino.Collections.ArchivableDictionary UserDictionary

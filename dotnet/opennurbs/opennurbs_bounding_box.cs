@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents a boundingbox defined by the two extreme corner points.
+  /// Represents a bounding box defined by the two extreme corner points.
   /// <para>This box is aligned to the world X, Y and Z axes.</para>
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]

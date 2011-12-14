@@ -6,7 +6,8 @@ namespace Rhino.Geometry
 {
   // look at System.Windows.Media.Media3d.Matrix3D structure to help in laying this structure out
   /// <summary>
-  /// parallel to C++ ON_Xform
+  /// Represents the values in a 4x4 transform matrix.
+  /// <para>This is parallel to C++ ON_Xform.</para>
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 128)]
   [Serializable]

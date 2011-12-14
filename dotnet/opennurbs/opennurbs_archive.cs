@@ -841,7 +841,9 @@ namespace Rhino.Collections
     /// Sets a <see cref="bool"/>.
     /// </summary>
     /// <param name="key">The text key.</param>
-    /// <param name="val">A <see cref="bool"/>.</param>
+    /// <param name="val">A <see cref="bool"/> value.
+    /// <para>Because <see cref="bool"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para>
+    /// </param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, bool val) { return SetItem(key, ItemType.itBool, val); }
 
@@ -849,7 +851,8 @@ namespace Rhino.Collections
     /// Sets a <see cref="byte"/>.
     /// </summary>
     /// <param name="key">The text key.</param>
-    /// <param name="val">A <see cref="byte"/>.</param>
+    /// <param name="val">A <see cref="byte"/>.
+    /// <para>Because <see cref="byte"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, byte val) { return SetItem(key, ItemType.itByte, val); }
 
@@ -857,7 +860,8 @@ namespace Rhino.Collections
     /// Sets a <see cref="sbyte"/>.
     /// </summary>
     /// <param name="key">The text key.</param>
-    /// <param name="val">A <see cref="sbyte"/>.</param>
+    /// <param name="val">A <see cref="sbyte"/>.
+    /// <para>Because <see cref="sbyte"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     [CLSCompliant(false)]
     public bool Set(string key, sbyte val) { return SetItem(key, ItemType.itSByte, val); }
@@ -866,7 +870,8 @@ namespace Rhino.Collections
     /// Sets a <see cref="short"/>.
     /// </summary>
     /// <param name="key">The text key.</param>
-    /// <param name="val">A <see cref="short"/>.</param>
+    /// <param name="val">A <see cref="short"/>.
+    /// <para>Because <see cref="short"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, short val) { return SetItem(key, ItemType.itShort, val); }
 
@@ -874,7 +879,8 @@ namespace Rhino.Collections
     /// Sets a <see cref="ushort"/>.
     /// </summary>
     /// <param name="key">The text key.</param>
-    /// <param name="val">A <see cref="ushort"/>.</param>
+    /// <param name="val">A <see cref="ushort"/>.
+    /// <para>Because <see cref="ushort"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     [CLSCompliant(false)]
     public bool Set(string key, ushort val) { return SetItem(key, ItemType.itUShort, val); }
@@ -883,7 +889,8 @@ namespace Rhino.Collections
     /// Sets a <see cref="int"/>.
     /// </summary>
     /// <param name="key">The text key.</param>
-    /// <param name="val">A <see cref="int"/>.</param>
+    /// <param name="val">A <see cref="int"/>.
+    /// <para>Because <see cref="int"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, int val) { return SetItem(key, ItemType.itInt32, val); }
 
@@ -891,16 +898,18 @@ namespace Rhino.Collections
     /// Sets a <see cref="uint"/>.
     /// </summary>
     /// <param name="key">The text key.</param>
-    /// <param name="val">A <see cref="uint"/>.</param>
+    /// <param name="val">A <see cref="uint"/>.
+    /// <para>Because <see cref="uint"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     [CLSCompliant(false)]
     public bool Set(string key, uint val) { return SetItem(key, ItemType.itUInt32, val); }
 
     /// <summary>
-    /// Sets a <see cref="uint"/>.
+    /// Sets a <see cref="long"/>.
     /// </summary>
     /// <param name="key">The text key.</param>
-    /// <param name="val">A <see cref="uint"/>.</param>
+    /// <param name="val">A <see cref="long"/>.
+    /// <para>Because <see cref="long"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, Int64 val) { return SetItem(key, ItemType.itInt64, val); }
 
@@ -908,7 +917,8 @@ namespace Rhino.Collections
     /// Sets a <see cref="float"/>.
     /// </summary>
     /// <param name="key">The text key.</param>
-    /// <param name="val">A <see cref="float"/>.</param>
+    /// <param name="val">A <see cref="float"/>.
+    /// <para>Because <see cref="float"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, float val) { return SetItem(key, ItemType.itSingle, val); }
 
@@ -916,7 +926,8 @@ namespace Rhino.Collections
     /// Sets a <see cref="double"/>.
     /// </summary>
     /// <param name="key">The text key.</param>
-    /// <param name="val">A <see cref="double"/>.</param>
+    /// <param name="val">A <see cref="double"/>.
+    /// <para>Because <see cref="double"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, double val) { return SetItem(key, ItemType.itDouble, val); }
 
@@ -924,7 +935,8 @@ namespace Rhino.Collections
     /// Sets a <see cref="Guid"/>.
     /// </summary>
     /// <param name="key">The text key.</param>
-    /// <param name="val">A <see cref="Guid"/>.</param>
+    /// <param name="val">A <see cref="Guid"/>.
+    /// <para>Because <see cref="Guid"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, Guid val) { return SetItem(key, ItemType.itGuid, val); }
 
@@ -932,185 +944,211 @@ namespace Rhino.Collections
     /// Sets a <see cref="string"/>.
     /// </summary>
     /// <param name="key">The text key.</param>
-    /// <param name="val">A <see cref="string"/>.</param>
+    /// <param name="val">A <see cref="string"/>.
+    /// <para>Because <see cref="string"/> is immutable, it is not possible to modify the object while it is in this dictionary.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, string val) { return SetItem(key, ItemType.itString, val); }
 
     /// <summary>
-    /// Sets a list, an array or any enumareble of <see cref="bool"/>.
+    /// Sets a list, an array or any enumerable of <see cref="bool"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, IEnumerable<bool> val) { return SetItem(key, ItemType.itArrayBool, val); }
 
     /// <summary>
-    /// Sets a list, an array or any enumareble of <see cref="byte"/>.
+    /// Sets a list, an array or any enumerable of <see cref="byte"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key
+    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para>.</param>
     public bool Set(string key, IEnumerable<byte> val) { return SetItem(key, ItemType.itArrayByte, val); }
 
     /// <summary>
-    /// Sets a list, an array or any enumareble of <see cref="sbyte"/>.
+    /// Sets a list, an array or any enumerable of <see cref="sbyte"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
     [CLSCompliant(false)]
     public bool Set(string key, IEnumerable<sbyte> val) { return SetItem(key, ItemType.itArraySByte, val); }
 
     /// <summary>
-    /// Sets a list, an array or any enumareble of <see cref="short"/>.
+    /// Sets a list, an array or any enumerable of <see cref="short"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
     public bool Set(string key, IEnumerable<short> val) { return SetItem(key, ItemType.itArrayShort, val); }
 
     /// <summary>
-    /// Sets a list, an array or any enumareble of <see cref="int"/>.
+    /// Sets a list, an array or any enumerable of <see cref="int"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
     public bool Set(string key, IEnumerable<int> val) { return SetItem(key, ItemType.itArrayInt32, val); }
 
     /// <summary>
-    /// Sets a list, an array or any enumareble of <see cref="float"/>.
+    /// Sets a list, an array or any enumerable of <see cref="float"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
     public bool Set(string key, IEnumerable<float> val) { return SetItem(key, ItemType.itArraySingle, val); }
 
     /// <summary>
-    /// Sets a list, an array or any enumareble of <see cref="double"/>.
+    /// Sets a list, an array or any enumerable of <see cref="double"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
     public bool Set(string key, IEnumerable<double> val) { return SetItem(key, ItemType.itArrayDouble, val); }
 
     /// <summary>
-    /// Sets a list, an array or any enumareble of <see cref="Guid"/>.
+    /// Sets a list, an array or any enumerable of <see cref="Guid"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
     public bool Set(string key, IEnumerable<Guid> val) { return SetItem(key, ItemType.itArrayGuid, val); }
 
     /// <summary>
-    /// Sets a list, an array or any enumareble of <see cref="string"/>.
+    /// Sets a list, an array or any enumerable of <see cref="string"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
     public bool Set(string key, IEnumerable<string> val) { return SetItem(key, ItemType.itArrayString, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.Color"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="System.Drawing.Color"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, System.Drawing.Color val) { return SetItem(key, ItemType.itColor, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.Point"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="System.Drawing.Point"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, System.Drawing.Point val) { return SetItem(key, ItemType.itPoint, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.PointF"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="System.Drawing.PointF"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, System.Drawing.PointF val) { return SetItem(key, ItemType.itPointF, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.Rectangle"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="System.Drawing.Rectangle"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, System.Drawing.Rectangle val) { return SetItem(key, ItemType.itRectangle, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.RectangleF"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="System.Drawing.RectangleF"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, System.Drawing.RectangleF val) { return SetItem(key, ItemType.itRectangleF, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.Size"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="System.Drawing.Size"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, System.Drawing.Size val) { return SetItem(key, ItemType.itSize, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.SizeF"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="System.Drawing.SizeF"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, System.Drawing.SizeF val) { return SetItem(key, ItemType.itSizeF, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.Font"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="System.Drawing.Font"/> is immutable, it is not possible to modify the object while it is in this dictionary.</para></param>
     public bool Set(string key, System.Drawing.Font val) { return SetItem(key, ItemType.itFont, val); }
 
     /// <summary>
     /// Sets an <see cref="Rhino.Geometry.Interval"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="Rhino.Geometry.Interval"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, Rhino.Geometry.Interval val) { return SetItem(key, ItemType.itInterval, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Point2d"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A point for that key.
+    /// <para>Because <see cref="Rhino.Geometry.Point2d"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, Rhino.Geometry.Point2d val) { return SetItem(key, ItemType.itPoint2d, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Point3d"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A point for that key.
+    /// <para>Because <see cref="Rhino.Geometry.Point3d"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, Rhino.Geometry.Point3d val) { return SetItem(key, ItemType.itPoint3d, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Point4d"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="Rhino.Geometry.Point4d"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, Rhino.Geometry.Point4d val) { return SetItem(key, ItemType.itPoint4d, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Vector2d"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="Rhino.Geometry.Vector2d"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, Rhino.Geometry.Vector2d val) { return SetItem(key, ItemType.itVector2d, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Vector3d"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="Rhino.Geometry.Vector3d"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, Rhino.Geometry.Vector3d val) { return SetItem(key, ItemType.itVector3d, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.BoundingBox"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="Rhino.Geometry.BoundingBox"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, Rhino.Geometry.BoundingBox val) { return SetItem(key, ItemType.itBoundingBox, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Ray3d"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="Rhino.Geometry.Ray3d"/> has value semantics and is immutable, no changes to this object are possible.</para></param>
     public bool Set(string key, Rhino.Geometry.Ray3d val) { return SetItem(key, ItemType.itRay3d, val); }
 
     bool SetPlaneEquation(string key, double[] eq) { return SetItem(key, ItemType.itPlaneEquation, eq); }
@@ -1119,56 +1157,67 @@ namespace Rhino.Collections
     /// Sets a <see cref="Rhino.Geometry.Transform"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A transform for that key.
+    /// <para>Because <see cref="Rhino.Geometry.Transform"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, Rhino.Geometry.Transform val) { return SetItem(key, ItemType.itXform, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Plane"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A plane for that key.
+    /// <para>Because <see cref="Rhino.Geometry.Plane"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, Rhino.Geometry.Plane val) { return SetItem(key, ItemType.itPlane, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Line"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="Rhino.Geometry.Line"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, Rhino.Geometry.Line val) { return SetItem(key, ItemType.itLine, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Point3f"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="Rhino.Geometry.Point3f"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, Rhino.Geometry.Point3f val) { return SetItem(key, ItemType.itPoint3f, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Vector3f"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A value for that key.
+    /// <para>Because <see cref="Rhino.Geometry.Vector3f"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, Rhino.Geometry.Vector3f val) { return SetItem(key, ItemType.itVector3f, val); }
 
     /// <summary>
     /// Sets another <see cref="ArchivableDictionary"/> as entry.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">An object for that key.
+    /// <para>Because this class is a reference type and is mutable, changes to this object <b>will propagate</b> to the object inside the dictionary.</para>
+    /// <para>It is up to the user to clone this entry.</para></param>
     public bool Set(string key, ArchivableDictionary val) { return SetItem(key, ItemType.itOnBinaryArchiveDictionary, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.MeshingParameters"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">An object for that key.
+    /// <para>Because this class is a reference type and is mutable, changes to this object <b>will propagate</b> to the object inside the dictionary.</para>
+    /// <para>It is up to the user to clone this entry.</para></param>
     public bool Set(string key, Rhino.Geometry.MeshingParameters val) { return SetItem(key, ItemType.itOnMeshParameters, val); }
 
     /// <summary>
     /// Sets any class deriving from the <see cref="Rhino.Geometry.GeometryBase"/> base class.
     /// </summary>
     /// <param name="key">A text key.</param>
-    /// <param name="val">A value for that key.</param>
+    /// <param name="val">A geometry object for that key.
+    /// <para>Because this class is a reference type and is mutable, changes to this object <b>will propagate</b> to the object inside the dictionary.</para>
+    /// <para>It is up to the user to clone this entry. You can use <see cref="Rhino.Geometry.GeometryBase.Duplicate"/> for this.</para></param>
     public bool Set(string key, Rhino.Geometry.GeometryBase val) { return SetItem(key, ItemType.itOnGeometry, val); }
 
     bool SetItem(string key, ItemType it, object val)

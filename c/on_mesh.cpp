@@ -304,27 +304,36 @@ RH_C_FUNCTION void ON_Mesh_SetInt( ON_Mesh* pMesh, int which, int value )
   const int idxTextureCoordinateCount = 9;
   if( pMesh )
   {
+    // Call Reserve first in order to make sure the capacities
+    // are big enough for the new count value
     switch(which)
     {
     case idxVertexCount:
+      pMesh->m_V.Reserve(value);
       pMesh->m_V.SetCount(value);
       break;
     case idxFaceCount:
+      pMesh->m_F.Reserve(value);
       pMesh->m_F.SetCount(value);
       break;
     case idxHiddenVertexCount:
+      pMesh->m_H.Reserve(value);
       pMesh->m_H.SetCount(value);
       break;
     case idxFaceNormalCount:
+      pMesh->m_FN.Reserve(value);
       pMesh->m_FN.SetCount(value);
       break;
     case idxNormalCount:
+      pMesh->m_N.Reserve(value);
       pMesh->m_N.SetCount(value);
       break;
     case idxColorCount:
+      pMesh->m_C.Reserve(value);
       pMesh->m_C.SetCount(value);
       break;
     case idxTextureCoordinateCount:
+      pMesh->m_T.Reserve(value);
       pMesh->m_T.SetCount(value);
       break;
     }

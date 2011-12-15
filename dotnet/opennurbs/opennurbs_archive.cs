@@ -4,8 +4,9 @@ using System.Collections.Generic;
 namespace Rhino.Collections
 {
   ///<summary>
-  /// <para>Represents a dictionary structure that can be serialized (saved).</para>
-  /// <para>See the remarks section for layout.</para>
+  /// <para>Represents a dictionary class that can be attached to objects and
+  /// can be serialized (saved) at necessity.</para>
+  /// <para>See remarks for layout.</para>
   ///</summary>
   ///<remarks>
   /// <para>This is the layout of this object:</para>
@@ -160,7 +161,7 @@ namespace Rhino.Collections
         m_name = name;
     }
 
-    ///<summary>Read a dictionary from an archive.</summary>
+    ///<summary>Reads a dictionary from an archive.</summary>
     ///<param name='archive'>
     ///The archive to read from. The archive position should be at the beginning of
     ///the dictionary
@@ -513,9 +514,9 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Write this dictionary to an archive
+    /// Writes this dictionary to an archive
     /// </summary>
-    /// <param name="archive">The archive to write to</param>
+    /// <param name="archive">The archive to write to.</param>
     /// <returns>true on success</returns>
     internal bool Write(Rhino.FileIO.BinaryArchiveWriter archive)
     {
@@ -954,7 +955,8 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
+    /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
+    /// <para>It is up to the user to clone this entry when appropriate.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, IEnumerable<bool> val) { return SetItem(key, ItemType.itArrayBool, val); }
 
@@ -963,7 +965,9 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key
-    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para>.</param>
+    /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
+    /// <para>It is up to the user to clone this entry when appropriate.</para></param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, IEnumerable<byte> val) { return SetItem(key, ItemType.itArrayByte, val); }
 
     /// <summary>
@@ -971,7 +975,9 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
+    /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
+    /// <para>It is up to the user to clone this entry when appropriate.</para></param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     [CLSCompliant(false)]
     public bool Set(string key, IEnumerable<sbyte> val) { return SetItem(key, ItemType.itArraySByte, val); }
 
@@ -980,7 +986,9 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
+    /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
+    /// <para>It is up to the user to clone this entry when appropriate.</para></param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, IEnumerable<short> val) { return SetItem(key, ItemType.itArrayShort, val); }
 
     /// <summary>
@@ -988,7 +996,9 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
+    /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
+    /// <para>It is up to the user to clone this entry when appropriate.</para></param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, IEnumerable<int> val) { return SetItem(key, ItemType.itArrayInt32, val); }
 
     /// <summary>
@@ -996,7 +1006,9 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
+    /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
+    /// <para>It is up to the user to clone this entry when appropriate.</para></param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, IEnumerable<float> val) { return SetItem(key, ItemType.itArraySingle, val); }
 
     /// <summary>
@@ -1004,7 +1016,9 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
+    /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
+    /// <para>It is up to the user to clone this entry when appropriate.</para></param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, IEnumerable<double> val) { return SetItem(key, ItemType.itArrayDouble, val); }
 
     /// <summary>
@@ -1012,7 +1026,9 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
+    /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
+    /// <para>It is up to the user to clone this entry when appropriate.</para></param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, IEnumerable<Guid> val) { return SetItem(key, ItemType.itArrayGuid, val); }
 
     /// <summary>
@@ -1020,7 +1036,9 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because this interface is a reference type, changes to the assigning object <b>will modify</b> this entry inside the dictionary.</para></param>
+    /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
+    /// <para>It is up to the user to clone this entry when appropriate.</para></param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, IEnumerable<string> val) { return SetItem(key, ItemType.itArrayString, val); }
 
     /// <summary>
@@ -1028,7 +1046,9 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because <see cref="System.Drawing.Color"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
+    /// <para>Because <see cref="System.Drawing.Color"/> has value semantics, changes to the
+    /// assigning value will leave this entry unchanged.</para></param>
+    /// <returns>true if set operation succeeded, otherwise false.</returns>
     public bool Set(string key, System.Drawing.Color val) { return SetItem(key, ItemType.itColor, val); }
 
     /// <summary>
@@ -1194,12 +1214,12 @@ namespace Rhino.Collections
     public bool Set(string key, Rhino.Geometry.Vector3f val) { return SetItem(key, ItemType.itVector3f, val); }
 
     /// <summary>
-    /// Sets another <see cref="ArchivableDictionary"/> as entry.
+    /// Sets another <see cref="ArchivableDictionary"/> as entry in this dictionary.
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">An object for that key.
     /// <para>Because this class is a reference type and is mutable, changes to this object <b>will propagate</b> to the object inside the dictionary.</para>
-    /// <para>It is up to the user to clone this entry.</para></param>
+    /// <para>It is up to the user to clone this entry when appropriate.</para></param>
     public bool Set(string key, ArchivableDictionary val) { return SetItem(key, ItemType.itOnBinaryArchiveDictionary, val); }
 
     /// <summary>
@@ -1208,7 +1228,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">An object for that key.
     /// <para>Because this class is a reference type and is mutable, changes to this object <b>will propagate</b> to the object inside the dictionary.</para>
-    /// <para>It is up to the user to clone this entry.</para></param>
+    /// <para>It is up to the user to clone this entry when appropriate.</para></param>
     public bool Set(string key, Rhino.Geometry.MeshingParameters val) { return SetItem(key, ItemType.itOnMeshParameters, val); }
 
     /// <summary>
@@ -1217,7 +1237,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A geometry object for that key.
     /// <para>Because this class is a reference type and is mutable, changes to this object <b>will propagate</b> to the object inside the dictionary.</para>
-    /// <para>It is up to the user to clone this entry. You can use <see cref="Rhino.Geometry.GeometryBase.Duplicate"/> for this.</para></param>
+    /// <para>It is up to the user to clone this entry when appropriate. You can use <see cref="Rhino.Geometry.GeometryBase.Duplicate"/> for this.</para></param>
     public bool Set(string key, Rhino.Geometry.GeometryBase val) { return SetItem(key, ItemType.itOnGeometry, val); }
 
     bool SetItem(string key, ItemType it, object val)

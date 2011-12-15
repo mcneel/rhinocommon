@@ -1,10 +1,13 @@
-#pragma warning disable 1591
 using System;
 using Rhino.Display;
 using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents a curve that is the result of joining several (possibly different)
+  /// types of curves.
+  /// </summary>
   [Serializable]
   public class PolyCurve : Curve, ISerializable
   {
@@ -37,7 +40,7 @@ namespace Rhino.Geometry
       return new PolyCurve(IntPtr.Zero, null, -1);
     }
     /// <summary>
-    /// Create a new, empty PolyCurve.
+    /// Initializes a new, empty polycurve.
     /// </summary>
     public PolyCurve()
     {
@@ -46,7 +49,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Duplicate this Polycurve.
+    /// Duplicates this polycurve.
+    /// <para>When not overridden in a derived class, this calls <see cref="DuplicatePolyCurve"/>.</para>
     /// </summary>
     /// <returns>An exact duplicate of this curve.</returns>
     public override GeometryBase Duplicate()
@@ -54,7 +58,8 @@ namespace Rhino.Geometry
       return DuplicatePolyCurve();
     }
     /// <summary>
-    /// Duplicate this Polycurve.
+    /// Duplicates this polycurve.
+    /// <para>This is the same as <see cref="Duplicate"/>.</para>
     /// </summary>
     /// <returns>An exact duplicate of this curve.</returns>
     public PolyCurve DuplicatePolyCurve()
@@ -157,7 +162,7 @@ namespace Rhino.Geometry
     /// locus and parameterization.
     /// </summary>
     /// <returns>
-    /// True if any nested PolyCurve was found and absorbed, false if no PolyCurve segments could be found.
+    /// true if any nested PolyCurve was found and absorbed, false if no PolyCurve segments could be found.
     /// </returns>
     /// <seealso cref="IsNested"/>
     public bool RemoveNesting()
@@ -170,8 +175,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Explode this PolyCurve into a list of Curve segments. This will <i>not</i> explode nested PolyCurves. 
-    /// Place a call to RemoveNesting() first if you want all individual segments.
+    /// Explodes this PolyCurve into a list of Curve segments. This will <b>not explode</b> nested polycurves. 
+    /// Call <see cref="RemoveNesting"/> first if you need all individual segments.
     /// </summary>
     /// <returns>An array of polycurve segments.</returns>
     public Curve[] Explode()
@@ -212,8 +217,8 @@ namespace Rhino.Geometry
     //  BOOL AppendAndMatch(ON_Curve*);  //Append and match start of curve to end of polycurve
 
     /// <summary>
-    /// Append and match the start of the line to the end of polycurve. 
-    /// This function will fail if the PolyCurve is closed.
+    /// Appends and matches the start of the line to the end of polycurve. 
+    /// This function will fail if the polycurve is closed.
     /// </summary>
     /// <param name="line">Line segment to append.</param>
     /// <returns>True on success, false on failure.</returns>
@@ -223,8 +228,8 @@ namespace Rhino.Geometry
       return Append(new LineCurve(line));
     }
     /// <summary>
-    /// Append and match the start of the arc to the end of polycurve. 
-    /// This function will fail if the PolyCurve is closed or if SegmentCount > 0 and the arc is closed.
+    /// Appends and matches the start of the arc to the end of polycurve. 
+    /// This function will fail if the polycurve is closed or if SegmentCount > 0 and the arc is closed.
     /// </summary>
     /// <param name="arc">Arc segment to append.</param>
     /// <returns>True on success, false on failure.</returns>
@@ -235,7 +240,7 @@ namespace Rhino.Geometry
       return rc;
     }
     /// <summary>
-    /// Append and match the start of the curve to the end of polycurve. 
+    /// Appends and matches the start of the curve to the end of polycurve. 
     /// This function will fail if the PolyCurve is closed or if SegmentCount > 0 and the new segment is closed.
     /// </summary>
     /// <param name="curve">Segment to append.</param>
@@ -295,7 +300,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Find the segment used for evaluation at polycurve_parameter.
+    /// Finds the segment used for evaluation at polycurve_parameter.
     /// </summary>
     /// <param name="polycurveParameter">Parameter on polycurve for segment lookup.</param>
     /// <returns>
@@ -309,7 +314,7 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_PolyCurve_SegmentIndex(ptr, polycurveParameter);
     }
 
-    /// <summary>Find the segments that overlap the Polycurve sub domain.</summary>
+    /// <summary>Finds the segments that overlap the Polycurve sub domain.</summary>
     /// <param name="subdomain">Domain on this PolyCurve.</param>
     /// <param name="segmentIndex0">
     /// Index of first segment that overlaps the subdomain.

@@ -1,9 +1,13 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents a geometric point.
+  /// <para>This is fundamentally a class that derives from
+  /// <see cref="GeometryBase"/> and contains a single <see cref="Point3d"/> location.</para>
+  /// </summary>
   [Serializable]
   public class Point : GeometryBase, ISerializable
   {
@@ -11,6 +15,10 @@ namespace Rhino.Geometry
       : base(native_pointer, parent, -1)
     { }
 
+    /// <summary>
+    /// Initializes a new point instance with a location.
+    /// </summary>
+    /// <param name="location">A position in 3D space.</param>
     public Point(Point3d location)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_Point_New(location);
@@ -27,6 +35,9 @@ namespace Rhino.Geometry
     {
     }
 
+    /// <summary>
+    /// Gets or sets the location (position) of this point.
+    /// </summary>
     public Point3d Location
     {
       get

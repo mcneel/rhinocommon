@@ -5,19 +5,22 @@ using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
-  /// <summary>An ordered set of points connected by linear segments</summary>
+  /// <summary>
+  /// Represents an ordered set of points connected by linear segments.
+  /// <para>Polylines are closed if start and end points coincide.</para>
+  /// </summary>
   [Serializable]
   public class Polyline : Rhino.Collections.Point3dList
   {
     #region constructors
     /// <summary>
-    /// Create a new empty polyline.
+    /// Initializes a new empty polyline.
     /// </summary>
     public Polyline()
     {
     }
     /// <summary>
-    /// Create a new empty polyline with an initial capacity.
+    /// Initializes a new empty polyline with an initial capacity.
     /// </summary>
     /// <param name="initialCapacity">Number of vertices this polyline can contain without resizing.</param>
     public Polyline(int initialCapacity)
@@ -25,7 +28,7 @@ namespace Rhino.Geometry
     {
     }
     /// <summary>
-    /// Create a new polyline from a collection of points.
+    /// Initializes a new polyline from a collection of points.
     /// </summary>
     /// <param name="collection">Points to copy into the local vertex array.</param>
     public Polyline(IEnumerable<Point3d> collection)
@@ -52,9 +55,9 @@ namespace Rhino.Geometry
 
     #region Properties
     /// <summary>
-    /// Gets a value that indicates whether or not this polyline is valid. 
-    /// Valid polylines have at least one segment, no Invalid points and no zero length segments. 
-    /// Closed Polylines with only two segments are also not considered valid.
+    /// Gets a value that indicates whether this polyline is valid. 
+    /// <para>Valid polylines have at least one segment, no Invalid points and no zero length segments.</para>
+    /// <para>Closed polylines with only two segments are also not considered valid.</para>
     /// </summary>
     public bool IsValid
     {
@@ -87,9 +90,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets whether or not this polyline is closed. 
-    /// The polyline is considered to be closed if the start-point is 
-    /// identical to the end-point.
+    /// Gets a value that indicates whether this polyline is closed. 
+    /// <para>The polyline is considered to be closed if its start is 
+    /// identical to its endpoint.</para>
     /// </summary>
     /// <seealso cref="IsClosedWithinTolerance"/>
     public bool IsClosed
@@ -102,11 +105,11 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Test to see whether or not the polyline is closed to within tolerance.
+    /// Determines whether the polyline is closed, provided a tolerance value.
     /// </summary>
     /// <param name="tolerance">If the distance between the start and end point of the polyline 
     /// is less than tolerance, the polyline is considered to be closed.</param>
-    /// <returns>True if the polyline is closed to within tolerance, false if not.</returns>
+    /// <returns>true if the polyline is closed to within tolerance, false otherwise.</returns>
     public bool IsClosedWithinTolerance(double tolerance)
     {
       if (m_size <= 2) { return false; }
@@ -219,7 +222,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a polyline out of a parameter subdomain.
+    /// Constructs a polyline out of a parameter subdomain in this curve.
     /// </summary>
     /// <param name="domain">The subdomain of the polyline. 
     /// The integer part of the domain parameters indicate the index of the segment.</param>
@@ -319,7 +322,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get an array of line segments that make up the entire polyline.
+    /// Constructs an array of line segments that make up the entire polyline.
     /// </summary>
     /// <returns>An array of line segments or null if the polyline contains fewer than 2 points.</returns>
     public Line[] GetSegments()
@@ -337,7 +340,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a nurbs curve representation of this polyline.
+    /// Constructs a nurbs curve representation of this polyline.
     /// </summary>
     /// <returns>A Nurbs curve shaped like this polyline or null on failure.</returns>
     public NurbsCurve ToNurbsCurve()
@@ -349,8 +352,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Remove all points that are closer than tolerance to the previous point. 
-    /// Start and end points are left intact.
+    /// Removes all points that are closer than tolerance to the previous point. 
+    /// <para>Start and end points are left intact.</para>
     /// </summary>
     /// <param name="tolerance">Vertices closer together than tolerance will be removed.</param>
     /// <returns>Number of points (and segments) removed.</returns>
@@ -424,7 +427,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Collapse all segments until none are shorter than tolerance. 
+    /// Collapses all segments until none are shorter than tolerance. 
     /// This function is significantly slower than DeleteShortSegments, 
     /// since it recursively operates on the shortest segment. 
     /// When a segment is collapsed the end-points are placed in the center of the segment.
@@ -515,7 +518,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a reduction of this polyline by recursively removing the least significant segments. 
+    /// Constructs a reduction of this polyline by recursively removing the least significant segments. 
     /// </summary>
     /// <param name="tolerance">Tolerance for reduction. Whenever a vertex of the polyline is more 
     /// significant than tolerance, it will be included in the reduction.</param>
@@ -588,7 +591,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Smooth the polyline segments by averaging adjacent vertices. 
+    /// Smoothens the polyline segments by averaging adjacent vertices. 
     /// Smoothing requires a polyline with exclusively valid vertices.
     /// </summary>
     /// <param name="amount">Amount to smooth. Zero equals no smoothing, one equals complete smoothing.</param>
@@ -641,11 +644,11 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Break this polyline into sections at sharp kinks. 
+    /// Breaks this polyline into sections at sharp kinks. 
     /// Closed polylines will also be broken at the first and last vertex.
     /// </summary>
     /// <param name="angle">Angle (in radians) between adjacent segments for a break to occur.</param>
-    /// <returns>An array of polyline segments or null on error.</returns>
+    /// <returns>An array of polyline segments, or null on error.</returns>
     public Polyline[] BreakAtAngles(double angle)
     {
       int count = Count;

@@ -1,30 +1,53 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents the four coefficient values in a quaternion.
+  /// <para>The first value <i>a</i> is the real part,
+  /// while the rest multipies <i>i</i>, <i>j</i> and <i>k</i>, that are imaginary.</para>
+  /// <para>quaternion = a + bi + cj + dk</para>
+  /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 32)]
   [Serializable]
-  public struct Quaternion
+  public struct Quaternion : IEquatable<Quaternion>
   {
     #region statics
+    /// <summary>
+    /// Returns the dafault quaternion, where all coefficients are 0.
+    /// </summary>
     public static Quaternion Zero
     {
       get { return new Quaternion(); }
     }
+    /// <summary>
+    /// Returns the (1,0,0,0) quaternion.
+    /// </summary>
     public static Quaternion Identity
     {
       get { return new Quaternion(1.0, 0.0, 0.0, 0.0); }
     }
+
+    /// <summary>
+    /// Returns the (0,1,0,0) quaternion.
+    /// </summary>
     public static Quaternion I
     {
       get { return new Quaternion(0.0, 1.0, 0.0, 0.0); }
     }
+
+    /// <summary>
+    /// Returns the (0,0,1,0) quaternion.
+    /// </summary>
     public static Quaternion J
     {
       get { return new Quaternion(0.0, 0.0, 1.0, 0.0); }
     }
+
+    /// <summary>
+    /// Returns the (0,0,0,1) quaternion.
+    /// </summary>
     public static Quaternion K
     {
       get { return new Quaternion(0.0, 0.0, 0.0, 1.0); }
@@ -37,6 +60,13 @@ namespace Rhino.Geometry
     double m_c;
     double m_d;
 
+    /// <summary>
+    /// Initializes a new quaternion with the provided coefficients.
+    /// </summary>
+    /// <param name="a">A number. This is the real part.</param>
+    /// <param name="b">Another number. This is the first coefficient of the imaginary part.</param>
+    /// <param name="c">Another number. This is the second coefficient of the imaginary part.</param>
+    /// <param name="d">Another number. This is the third coefficient of the imaginary part.</param>
     public Quaternion(double a, double b, double c, double d)
     {
       m_a = a;
@@ -45,47 +75,97 @@ namespace Rhino.Geometry
       m_d = d;
     }
 
+    /// <summary>
+    /// Determines whether two quaternions have the same value.
+    /// </summary>
+    /// <param name="a">A quaternion.</param>
+    /// <param name="b">Another quaternion.</param>
+    /// <returns>true if the quaternions have exactly equal coefficients; otherwise false.</returns>
     public static bool operator ==(Quaternion a, Quaternion b)
     {
-      return (a.m_a == b.m_a && a.m_b == b.m_b && a.m_c == b.m_c && a.m_d == b.m_d);
+      return a.Equals(b);
     }
+
+    /// <summary>
+    /// Determines whether two quaternions have different values.
+    /// </summary>
+    /// <param name="a">A quaternion.</param>
+    /// <param name="b">Another quaternion.</param>
+    /// <returns>true if the quaternions differ in any coefficient; otherwise false.</returns>
     public static bool operator !=(Quaternion a, Quaternion b)
     {
       return (a.m_a != b.m_a || a.m_b != b.m_b || a.m_c != b.m_c || a.m_d != b.m_d);
     }
 
+    /// <summary>
+    /// Determines whether this quaternion has the same value of another quaternion.
+    /// </summary>
+    /// <param name="other">Another quaternion to compare.</param>
+    /// <returns>true if the quaternions have exactly equal coefficients; otherwise false.</returns>
+    public bool Equals(Quaternion other)
+    {
+      return (m_a == other.m_a && m_b == other.m_b && m_c == other.m_c && m_d == other.m_d);
+    }
+
+    /// <summary>
+    /// Determines whether an object is a quaternion and has the same value of this quaternion.
+    /// </summary>
+    /// <param name="obj">Another object to compare.</param>
+    /// <returns>true if obj is a quaternion and has exactly equal coefficients; otherwise false.</returns>
     public override bool Equals(object obj)
     {
       return (obj is Quaternion && this == (Quaternion)obj);
     }
 
+    /// <summary>
+    /// Gets a non-unique but repeatable hashing code for this quaternion.
+    /// </summary>
+    /// <returns>A signed number.</returns>
     public override int GetHashCode()
     {
       // MSDN docs recommend XOR'ing the internal values to get a hash code
       return m_a.GetHashCode() ^ m_b.GetHashCode() ^ m_c.GetHashCode() ^ m_d.GetHashCode();
     }
 
-
+    /// <summary>
+    /// Gets or sets the real part of the quaternion.
+    /// </summary>
     public double A
     {
       get { return m_a; }
       set { m_a = value; }
     }
+
+    /// <summary>
+    /// Gets or sets the first imaginary coefficient of the quaternion.
+    /// </summary>
     public double B
     {
       get { return m_b; }
       set { m_b = value; }
     }
+
+    /// <summary>
+    /// Gets or sets the second imaginary coefficient of the quaternion.
+    /// </summary>
     public double C
     {
       get { return m_c; }
       set { m_c = value; }
     }
+
+    /// <summary>
+    /// Gets or sets the third imaginary coefficient of the quaternion.
+    /// </summary>
     public double D
     {
       get { return m_d; }
       set { m_d = value; }
     }
+
+    /// <summary>
+    /// Sets all coefficients of the quaternion.
+    /// </summary>
     public void Set(double a, double b, double c, double d)
     {
       m_a = a;
@@ -94,50 +174,108 @@ namespace Rhino.Geometry
       m_d = d;
     }
 
+    /// <summary>
+    /// Multiplies (scales) all quaternion coefficients by a factor and returns a new quaternion with the result.
+    /// </summary>
+    /// <param name="q">A quaternion.</param>
+    /// <param name="x">A number.</param>
+    /// <returns>A new quaternion.</returns>
     public static Quaternion operator*(Quaternion q, int x)
     {
       return new Quaternion(q.m_a*x,q.m_b*x,q.m_c*x,q.m_d*x);
     }
+
+    /// <summary>
+    /// Multiplies (scales) all quaternion coefficients by a factor and returns a new quaternion with the result.
+    /// </summary>
+    /// <param name="q">A quaternion.</param>
+    /// <param name="x">A number.</param>
+    /// <returns>A new quaternion.</returns>
     public static Quaternion operator*(Quaternion q, float x)
     {
       return new Quaternion(q.m_a*x,q.m_b*x,q.m_c*x,q.m_d*x);
     }
+
+    /// <summary>
+    /// Multiplies (scales) all quaternion coefficients by a factor and returns a new quaternion with the result.
+    /// </summary>
+    /// <param name="q">A quaternion.</param>
+    /// <param name="x">A number.</param>
+    /// <returns>A new quaternion.</returns>
     public static Quaternion operator*(Quaternion q, double x)
     {
       return new Quaternion(q.m_a*x,q.m_b*x,q.m_c*x,q.m_d*x);
     }
 
+    /// <summary>
+    /// Divides all quaternion coefficients by a factor and returns a new quaternion with the result.
+    /// </summary>
+    /// <param name="q">A quaternion.</param>
+    /// <param name="y">A number.</param>
+    /// <returns>A new quaternion.</returns>
     public static Quaternion operator/(Quaternion q, int y)
     {
-      double x = (0!=y) ? 1.0/((double)y) : 0.0;
-      return new Quaternion(q.m_a*x,q.m_b*x,q.m_c*x,q.m_d*x);
-    }
-    public static Quaternion operator/(Quaternion q, float y)
-    {
-      double x = (0.0f!=y) ? 1.0/((double)y) : 0.0;
-      return new Quaternion(q.m_a*x,q.m_b*x,q.m_c*x,q.m_d*x);
-    }
-    public static Quaternion operator/(Quaternion q, double y)
-    {
-      double x = (0.0f!=y) ? 1.0/((double)y) : 0.0;
+      double x = (0!=y) ? 1d/y : 0.0;
       return new Quaternion(q.m_a*x,q.m_b*x,q.m_c*x,q.m_d*x);
     }
 
+    /// <summary>
+    /// Divides all quaternion coefficients by a factor and returns a new quaternion with the result.
+    /// </summary>
+    /// <param name="q">A quaternion.</param>
+    /// <param name="y">A number.</param>
+    /// <returns>A new quaternion.</returns>
+    public static Quaternion operator/(Quaternion q, float y)
+    {
+      double x = (0f!=y) ? 1d/y : 0.0;
+      return new Quaternion(q.m_a*x,q.m_b*x,q.m_c*x,q.m_d*x);
+    }
+
+    /// <summary>
+    /// Divides all quaternion coefficients by a factor and returns a new quaternion with the result.
+    /// </summary>
+    /// <param name="q">A quaternion.</param>
+    /// <param name="y">A number.</param>
+    /// <returns>A new quaternion.</returns>
+    public static Quaternion operator/(Quaternion q, double y)
+    {
+      double x = (0d!=y) ? 1d/y : 0.0;
+      return new Quaternion(q.m_a*x,q.m_b*x,q.m_c*x,q.m_d*x);
+    }
+
+    /// <summary>
+    /// Adds two quaternions.
+    /// <para>This sums each quaternion coefficient with its correspondant and returns
+    /// a new result quaternion.</para>
+    /// </summary>
+    /// <param name="a">A quaternion.</param>
+    /// <param name="b">Another quaternion.</param>
+    /// <returns>A new quaternion.</returns>
     public static Quaternion operator+(Quaternion a, Quaternion b)
     {
       return new Quaternion(a.m_a+b.m_a, a.m_b+b.m_b, a.m_c+b.m_c, a.m_d+b.m_d);
     }
+
+    /// <summary>
+    /// Subtracts a quaternion from another one.
+    /// <para>This computes the difference of each quaternion coefficient with its
+    /// correspondant and returns a new result quaternion.</para>
+    /// </summary>
+    /// <param name="a">A quaternion.</param>
+    /// <param name="b">Another quaternion.</param>
+    /// <returns>A new quaternion.</returns>
     public static Quaternion operator-(Quaternion a, Quaternion b)
     {
       return new Quaternion(a.m_a-b.m_a, a.m_b-b.m_b, a.m_c-b.m_c, a.m_d-b.m_d);
     }
 
     /// <summary>
-    /// quaternion multiplication is not commutative
+    /// Multiplies a quaternion with another one.
+    /// <para>Quaternion multiplication (Hamilton product) is not commutative.</para>
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns></returns>
+    /// <param name="a">The first term.</param>
+    /// <param name="b">The second term.</param>
+    /// <returns>A new quaternion.</returns>
     public static Quaternion operator*(Quaternion a, Quaternion b)
     {
       return new Quaternion(a.m_a*b.m_a - a.m_b*b.m_b - a.m_c*b.m_c - a.m_d*b.m_d,
@@ -147,7 +285,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// returns true if a, b, c, and d are valid finite IEEE doubles.
+    /// Determines if the four coefficients are valid numbers within RhinoCommon.
+    /// <para>See <see cref="RhinoMath.IsValidDouble(double)"/>.</para>
     /// </summary>
     public bool IsValid
     {
@@ -161,7 +300,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Returns the conjugate of the quaternion = (a,-b,-c,-d)
+    /// Gets a new quaternion that is the conjugate of this quaternion.
+    /// <para>This is (a,-b,-c,-d)</para>
     /// </summary>
     public Quaternion Conjugate
     {
@@ -172,18 +312,19 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Sets the quaternion to a/L2, -b/L2, -c/L2, -d/L2, where
-    /// L2 = length squared = (a*a + b*b + c*c + d*d).  This is
-    /// the multiplicative inverse, i.e.,
-    /// (a,b,c,d)*(a/L2, -b/L2, -c/L2, -d/L2) = (1,0,0,0).
+    /// Modifies this quaternion to become
+    /// <para>a/L2, -b/L2, -c/L2, -d/L2, where</para>
+    /// <para>L2 = length squared = (a*a + b*b + c*c + d*d).</para>
+    /// <para>This is the multiplicative inverse, i.e.,
+    /// (a,b,c,d)*(a/L2, -b/L2, -c/L2, -d/L2) = (1,0,0,0).</para>
     /// </summary>
     /// <returns>
-    /// True if successful.  False if the quaternion is zero and cannot be inverted.
+    /// true if successful. false if the quaternion is zero and cannot be inverted.
     /// </returns>
     public bool Invert()
     {
       double x = m_a * m_a + m_b * m_b + m_c * m_c + m_d * m_d;
-      if (x <= double.MinValue)
+      if (x <= double.Epsilon) //double.MinValue is an extremely big negative number. Epsilon is basically 0.
         return false;
       x = 1.0 / x;
       m_a *= x;
@@ -195,26 +336,28 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Sets the quaternion to a/L2, -b/L2, -c/L2, -d/L2, where
-    /// L2 = length squared = (a*a + b*b + c*c + d*d). This is
-    /// the multiplicative inverse, i.e.,
+    /// Computes a new inverted quaternion, with
+    /// <para>(a/L2, -b/L2, -c/L2, -d/L2),</para>
+    /// <para>where L2 = length squared = (a*a + b*b + c*c + d*d).</para>
+    /// This is the multiplicative inverse, i.e.,
     /// (a,b,c,d)*(a/L2, -b/L2, -c/L2, -d/L2) = (1,0,0,0).
-    /// If "this" is the zero quaternion, then the zero quaternion is returned.
+    /// If this is the zero quaternion, then the zero quaternion is returned.
     /// </summary>
     public Quaternion Inverse
     {
       get
       {
         double x = m_a * m_a + m_b * m_b + m_c * m_c + m_d * m_d;
-        x = (x > double.MinValue) ? 1.0 / x : 0.0;
+        x = (x > double.Epsilon) ? 1.0 / x : 0.0; //double.MinValue is an extremely big negative number. Epsilon is basically 0.
         return new Quaternion(m_a * x, -m_b * x, -m_c * x, -m_d * x);
       }
     }
 
 #if USING_V5_SDK
     /// <summary>
-    /// Returns the length or norm of the quaternion sqrt(a*a + b*b + c*c + d*d).
+    /// Returns the length or norm of the quaternion.
     /// </summary>
+    /// <value>Math.Sqrt(a*a + b*b + c*c + d*d)</value>
     public double Length
     {
       get
@@ -225,7 +368,7 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>
-    /// Returns a*a + b*b + c*c + d*d
+    /// Computes a*a + b*b + c*c + d*d
     /// </summary>
     public double LengthSquared
     {
@@ -237,10 +380,10 @@ namespace Rhino.Geometry
 
 #if USING_V5_SDK
     /// <summary>
-    /// The distance or norm of the difference between the two quaternions. = ("this" - q).Length.
+    /// Computes the distance or norm of the difference between this and another quaternion.
     /// </summary>
-    /// <param name="q"></param>
-    /// <returns></returns>
+    /// <param name="q">Another quaternion.</param>
+    /// <returns>(this - q).Length</returns>
     public double DistanceTo(Quaternion q)
     {
       Quaternion pq = new Quaternion(q.m_a-m_a, q.m_b-m_b, q.m_c-m_c, q.m_d-m_d);
@@ -248,12 +391,11 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Returns the distance or norm of the difference between the two quaternions.
-    /// = (p - q).Length().
+    /// Returns the distance or norm of the difference between two quaternions.
     /// </summary>
-    /// <param name="p"></param>
-    /// <param name="q"></param>
-    /// <returns></returns>
+    /// <param name="p">A quaternion.</param>
+    /// <param name="q">Another quaternion.</param>
+    /// <returns>(p - q).Length()</returns>
     public static double Distance(Quaternion p, Quaternion q)
     {
       Quaternion pq = new Quaternion(q.m_a-p.m_a,q.m_b-p.m_b,q.m_c-p.m_c,q.m_d-p.m_d);
@@ -267,7 +409,7 @@ namespace Rhino.Geometry
     /// -b  a -d  c
     /// -c  d  a -b
     /// -d -c  b  a
-    /// which has the same arithmetic properties in as the quaternion. 
+    /// which has the same arithmetic properties as the quaternion. 
     /// </summary>
     /// <returns></returns>
     /// <remarks>
@@ -324,7 +466,7 @@ namespace Rhino.Geometry
     /// <param name="angle">in radians</param>
     /// <param name="axisOfRotation"></param>
     /// <returns></returns>
-    public static Quaternion Rotation( double angle, Vector3d axisOfRotation )
+    public static Quaternion Rotation(double angle, Vector3d axisOfRotation)
     {
       double s = axisOfRotation.Length;
       s = (s > 0.0) ? Math.Sin(0.5*angle)/s : 0.0;
@@ -340,7 +482,7 @@ namespace Rhino.Geometry
     /// <param name="plane0"></param>
     /// <param name="plane1"></param>
     /// <remarks>the plane origins are ignored</remarks>
-    public void SetRotation( Plane plane0, Plane plane1 )
+    public void SetRotation(Plane plane0, Plane plane1)
     {
       UnsafeNativeMethods.ON_Quaternion_SetRotation(ref this, ref plane0, ref plane1);
     }
@@ -354,7 +496,7 @@ namespace Rhino.Geometry
     /// <param name="plane1"></param>
     /// <returns></returns>
     /// <remarks>the plane origins are ignored</remarks>
-    public static Quaternion Rotation( Plane plane0, Plane plane1 )
+    public static Quaternion Rotation(Plane plane0, Plane plane1)
     {
       Quaternion q = new Quaternion();
       q.SetRotation(plane0, plane1);
@@ -418,7 +560,8 @@ namespace Rhino.Geometry
     }
 #endif
     /// <summary>
-    /// The "vector" or "imaginary" part of the quaternion = (b,c,d)
+    /// The imaginary part of the quaternion
+    /// <para>(B,C,D)</para>
     /// </summary>
     public Vector3d Vector
     {
@@ -426,7 +569,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// The "real" or "scalar" part of the quaternion = a.
+    /// The real (scalar) part of the quaternion
+    /// <para>This is <see cref="A"/>.</para>
     /// </summary>
     public double Scalar
     {
@@ -472,14 +616,14 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// The vector cross product of p and q = (0,x,y,z) where
-    /// (x,y,z) = ON_CrossProduct(p.Vector(),q.Vector())
-    /// This is NOT the same as the quaternion product p*q.
+    /// Computes the vector cross product of p and q = (0,x,y,z),
+    /// <para>where (x,y,z) = <see cref="Vector3d.CrossProduct(Vector3d,Vector3d)">CrossProduct</see>(p.<see cref="Vector">Vector</see>,q.<see cref="Vector">Vector</see>).</para>
+    /// <para>This <b>is not the same</b> as the quaternion product p*q.</para>
     /// </summary>
-    /// <param name="p"></param>
-    /// <param name="q"></param>
-    /// <returns></returns>
-    public static Quaternion CrossProduct( Quaternion p, Quaternion q )
+    /// <param name="p">A quaternion.</param>
+    /// <param name="q">Another quaternion.</param>
+    /// <returns>A new quaternion.</returns>
+    public static Quaternion CrossProduct(Quaternion p, Quaternion q)
     {
       return new Quaternion(0.0, p.m_c * q.m_d - p.m_d * q.m_c, p.m_d * q.m_b - p.m_b * q.m_d, p.m_b * q.m_c - p.m_c * q.m_d);
     }

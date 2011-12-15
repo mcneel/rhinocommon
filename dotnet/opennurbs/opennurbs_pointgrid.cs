@@ -1,21 +1,28 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents a grid of 3D points
+  /// Represents a rectangular grid of 3D points.
   /// </summary>
   [Serializable]
   public class Point3dGrid : GeometryBase, ISerializable
   {
+    /// <summary>
+    /// Initializes a rectangular grid of points, with no points in it.
+    /// </summary>
     public Point3dGrid()
     {
       IntPtr ptr = UnsafeNativeMethods.ON_PointGrid_New(0,0);
       ConstructNonConstObject(ptr);
     }
 
+    /// <summary>
+    /// Initializes a rectangular grid of points with a given number of columns and rows.
+    /// </summary>
+    /// <param name="rows">An amount of rows.</param>
+    /// <param name="columns">An amount of columns.</param>
     public Point3dGrid(int rows, int columns)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_PointGrid_New(rows, columns);
@@ -26,8 +33,12 @@ namespace Rhino.Geometry
     internal Point3dGrid(IntPtr ptr, object parent) 
       : base(ptr, parent, -1)
     { }
-        // serialization constructor
 
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
     protected Point3dGrid(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {

@@ -1,20 +1,32 @@
-#pragma warning disable 1591
 using System;
 using Rhino.Display;
 using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents the geometry of a set of linked line segments.
+  /// <para>This is fundamentally a class that derives from <see cref="Curve"/>
+  /// and internally contains a <see cref="Polyline"/>.</para>
+  /// </summary>
   [Serializable]
   public class PolylineCurve : Curve, ISerializable
   {
     #region constructors
+
+    /// <summary>
+    /// Initializes a new empty polyline curve.
+    /// </summary>
     public PolylineCurve()
     {
       IntPtr ptr = UnsafeNativeMethods.ON_PolylineCurve_New(IntPtr.Zero);
       ConstructNonConstObject(ptr);
     }
 
+    /// <summary>
+    /// Initializes a new polyline curve by copying its content from another polyline curve.
+    /// </summary>
+    /// <param name="other">Another polyline curve.</param>
     public PolylineCurve(PolylineCurve other)
     {
       IntPtr pOther= IntPtr.Zero;
@@ -24,6 +36,11 @@ namespace Rhino.Geometry
       ConstructNonConstObject(ptr);
     }
 
+    /// <summary>
+    /// Initializes a new polyline curve by copying its content from another set of points.
+    /// </summary>
+    /// <param name="points">A list, an array or any enumerable set of points to copy from.
+    /// This includes a <see cref="Polyline"/> object.</param>
     public PolylineCurve(System.Collections.Generic.IEnumerable<Point3d> points)
     {
       int count;
@@ -89,7 +106,12 @@ namespace Rhino.Geometry
         return UnsafeNativeMethods.ON_PolylineCurve_PointCount(ptr);
       }
     }
-	
+
+    /// <summary>
+    /// Gets a point at a specified index in the polyline curve.
+    /// </summary>
+    /// <param name="index">An index.</param>
+    /// <returns>A point.</returns>
     public Point3d Point(int index)
     {
       IntPtr ptr = ConstPointer();
@@ -98,6 +120,11 @@ namespace Rhino.Geometry
       return pt;
     }
 
+    /// <summary>
+    /// Sets a point at a specified index in the polyline curve.
+    /// </summary>
+    /// <param name="index">An index.</param>
+    /// <param name="point">A point location to set.</param>
     public void SetPoint(int index, Point3d point)
     {
       IntPtr ptr = NonConstPointer();

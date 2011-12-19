@@ -698,6 +698,30 @@ namespace Rhino.Geometry
 
       return segments.ToArray();
     }
+
+    /// <summary>
+    /// Compute the center point of the polyline as the weighted average of all segments.
+    /// </summary>
+    /// <returns>The weighted average of all segments.</returns>
+    public Point3d CenterPoint()
+    {
+      if (Count == 0) { return Point3d.Unset; }
+      if (Count == 1) { return this[0]; }
+
+      Point3d center = Point3d.Origin;
+      double weight = 0.0;
+
+      for (int i = 0; i < (Count - 1); i++)
+      {
+        Point3d A = this[i];
+        Point3d B = this[i + 1];
+        double d = A.DistanceTo(B);
+        center += d * 0.5 * (A + B);
+        weight += d;
+      }
+      center /= weight;
+      return center;
+    }
     #endregion
   }
 }

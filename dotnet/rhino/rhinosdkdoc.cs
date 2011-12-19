@@ -2243,6 +2243,14 @@ namespace Rhino.DocObjects.Tables
         return new RhinoPageView(pPageView, id);
       return null;
     }
+
+    public bool ModelSpaceIsActive
+    {
+      get
+      {
+        return !(ActiveView is RhinoPageView);
+      }
+    }
 #region IEnumerable<RhinoView> Members
 
     public IEnumerator<RhinoView> GetEnumerator()

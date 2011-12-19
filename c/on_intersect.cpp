@@ -510,39 +510,15 @@ RH_C_FUNCTION ON_SimpleArray<ON_Polyline*>* ON_Intersect_MeshMesh1(const ON_Mesh
   return rc;
 }
 
-// 9-Dec-2011 Dale Fugier
-static bool ON_ExtendLineThroughBox( const ON_Line& line_in, const ON_BoundingBox& bbox, ON_Line& line_out )
+// ON_BoundingBox::MaximumDistance has a copy/paste bug in it in V4. Using local
+// version of this function with the fix so things continue to work under V4 grasshopper
+static double RhCmnMaxDistance_Helper(const ON_BoundingBox& bbox, const ON_3dPoint& P)
 {
-  if( line_in.Length() < ON_SQRT_EPSILON )
-    return false;
-
-  ON_3dPointArray points;
-  bbox.GetCorners( points );
-
-  ON_3dVector v = line_in.Direction();
-  v.Unitize();
-
-  ON_Plane plane( line_in.from, v );
-
-  double mindist, maxdist;
-  mindist = maxdist = plane.DistanceTo( points[0] );
-
-  int i;
-  for( i = 1; i < 8; i++ )
-  {
-    double dist =  plane.DistanceTo( points[i] );
-    if( dist < mindist)
-      mindist = dist;
-
-    if( dist > maxdist )
-      maxdist = dist;
-  }
-
-  // +- 1.0 makes the line a little bigger than the box
-  line_out.from = line_in.from + v * ( mindist - 1.0 );
-  line_out.to = line_in.from + v * ( maxdist + 1.0 );
-
-  return true;
+  ON_3dVector V;
+  V.x = ( (P.x < 0.5*(bbox.m_min.x+bbox.m_max.x)) ? bbox.m_max.x : bbox.m_min.x) - P.x;
+  V.y = ( (P.y < 0.5*(bbox.m_min.y+bbox.m_max.y)) ? bbox.m_max.y : bbox.m_min.y) - P.y;
+  V.z = ( (P.z < 0.5*(bbox.m_min.z+bbox.m_max.z)) ? bbox.m_max.z : bbox.m_min.z) - P.z;
+  return V.Length();
 }
 
 RH_C_FUNCTION double ON_Intersect_MeshRay1(const ON_Mesh* pMesh, ON_3dRay* ray, ON_SimpleArray<int>* face_indices)
@@ -555,12 +531,10 @@ RH_C_FUNCTION double ON_Intersect_MeshRay1(const ON_Mesh* pMesh, ON_3dRay* ray, 
     ON_3dVector rayVec = ray->m_V;
     if( mt && rayVec.Unitize() )
     {
-      // 9-Dec-2011 Dale Fugier
-      //double rayRange = mt->m_bbox.MaximumDistanceTo(ray->m_P);
-      //ON_Line line(ray->m_P, ray->m_P + rayRange * rayVec );
-      ON_Line line_in(ray->m_P, ray->m_P + rayVec );
-      ON_Line line;
-      ON_ExtendLineThroughBox( line_in, pMesh->BoundingBox(), line );
+      // increase the range by a factor of 2 so we are confident the
+      // line passes entirely through the mesh
+      double rayRange = RhCmnMaxDistance_Helper( mt->m_bbox, ray->m_P ) * 2.0;
+      ON_Line line(ray->m_P, ray->m_P + rayRange * rayVec );
 
       ON_SimpleArray<ON_CMX_EVENT> hits;
       mt->IntersectLine( line, hits );

@@ -128,10 +128,10 @@ namespace Rhino
       return (x != UnsetSingle) && (!float.IsInfinity(x)) && (!float.IsNaN(x));
     }
 
-    /// <summary>Scale factor for changing unit "standard" systems</summary>
-    /// <param name="from"></param>
-    /// <param name="to"></param>
-    /// <returns></returns>
+    /// <summary>Computes the scale factor for changing the measurements unit systems.</summary>
+    /// <param name="from">The system to convert from.</param>
+    /// <param name="to">The system to convert measurements into.</param>
+    /// <returns>A scale multiplier.</returns>
     public static double UnitScale(UnitSystem from, UnitSystem to)
     {
       return UnsafeNativeMethods.ONC_UnitScale((int)from, (int)to);

@@ -87,12 +87,12 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Reads only the application information from an existing 3dm file
+    /// Reads only the application information from an existing 3dm file.
     /// </summary>
-    /// <param name="path"></param>
-    /// <param name="applicationName"></param>
-    /// <param name="applicationUrl"></param>
-    /// <param name="applicationDetails"></param>
+    /// <param name="path">A location on disk or network.</param>
+    /// <param name="applicationName">The application name. This out parameter is assigned during this call.</param>
+    /// <param name="applicationUrl">The application URL. This out parameter is assigned during this call.</param>
+    /// <param name="applicationDetails">The application details. This out parameter is assigned during this call.</param>
     public static void ReadApplicationData(string path, out string applicationName, out string applicationUrl, out string applicationDetails)
     {
       if (!File.Exists(path))

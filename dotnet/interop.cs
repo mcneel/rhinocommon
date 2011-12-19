@@ -10,10 +10,10 @@ namespace Rhino.Runtime
   {
 #if RHINO_SDK
     /// <summary>
-    /// Geth the C++ CRhinoDoc* for a given RhinoCommon RhinoDoc class
+    /// Geth the C++ CRhinoDoc* for a given RhinoCommon RhinoDoc class.
     /// </summary>
-    /// <param name="doc"></param>
-    /// <returns></returns>
+    /// <param name="doc">A document.</param>
+    /// <returns>A pointer value.</returns>
     public static IntPtr NativeRhinoDocPointer(RhinoDoc doc)
     {
       if (doc == null)

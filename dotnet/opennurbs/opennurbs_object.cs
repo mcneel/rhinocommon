@@ -271,7 +271,7 @@ namespace Rhino.Runtime
     protected CommonObject() { }
 
     /// <summary>
-    /// True if this class has any custom information attached to it through UserData
+    /// Gets true if this class has any custom information attached to it through UserData.
     /// </summary>
     public bool HasUserData
     {

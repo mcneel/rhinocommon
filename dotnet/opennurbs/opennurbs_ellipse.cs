@@ -37,7 +37,8 @@ namespace Rhino.Geometry
     /// <param name="second">The intersection of the ellipse X axis with the ellipse itself.</param>
     /// <param name="third">A point that determines the radius along the Y semiaxis.
     /// <para>If the point is at right angle with the (center-second),
-    /// it will be the intersection of the ellipse Y axis with the ellipse itself.</para></param>
+    /// it will be the intersection of the ellipse Y axis with the ellipse itself.</para>
+    /// </param>
     public Ellipse(Point3d center, Point3d second, Point3d third)
     {
       m_plane = new Plane(center, second, third);

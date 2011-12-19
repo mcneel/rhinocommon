@@ -268,6 +268,8 @@ namespace Rhino.Geometry
 
   /// <summary>
   /// Represents a base class that is common to most RhinoCommon curve types.
+  /// <para>A curve represents an entity that can be all visited by providing
+  /// a single parameter, usually called t.</para>
   /// </summary>
   [Serializable]
   public class Curve : GeometryBase, ISerializable

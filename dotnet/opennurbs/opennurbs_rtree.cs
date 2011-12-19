@@ -1,10 +1,13 @@
-#pragma warning disable 1591
+//#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 
-
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents event data that is passed when when an item that meets certain 
+  /// criteria is found and the passed RTree event is raised.
+  /// </summary>
   public class RTreeEventArgs : EventArgs
   {
     IntPtr m_element_a;
@@ -20,9 +23,20 @@ namespace Rhino.Geometry
       m_element_b = b;
     }
 
+    /// <summary>
+    /// Gets the identifier of the found item.
+    /// </summary>
+    /// <exception cref="System.OverflowException">If, on 64-bit platforms, the value of this instance is too large or too small to be represented as a 32-bit signed integer.</exception>
     public int Id { get { return m_element_a.ToInt32(); } }
+
+    /// <summary>
+    /// Gets the identifier pointer of the found item.
+    /// </summary>
     public IntPtr IdPtr { get { return m_element_a; } }
 
+    /// <summary>
+    /// Gets or sets a value that determines if the search should be conducted farther.
+    /// </summary>
     public bool Cancel
     {
       get { return m_bCancel; }
@@ -30,20 +44,25 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// If search is using two r-trees, IdB is element b in the search
+    /// If search is using two r-trees, IdB is element b in the search.
     /// </summary>
     public int IdB { get { return m_element_b.ToInt32(); } }
+
+    /// <summary>
+    /// If search is using two r-trees, IdB is the element b pointer in the search.
+    /// </summary>
     public IntPtr IdBPtr { get { return m_element_b; } }
 
     /// <summary>
-    /// Arbitrary tag that can be attached to this event args.  This tag will
-    /// "stick" through a single Search
+    /// Gets or sets an arbitrary object that can be attached to this event args.
+    /// This object will "stick" through a single search and can represent user-defined state.
     /// </summary>
     public object Tag { get; set; }
   }
 
   /// <summary>
-  /// Spatial search structure based on implementations of the R-Tree algorithm by Toni Gutman
+  /// Represents a spatial search structure based on implementations of the
+  /// R-tree algorithm by Toni Gutman.
   /// </summary>
   /// <remarks>
   /// The opennurbs rtree code is a modifed version of the free and unrestricted
@@ -55,17 +74,20 @@ namespace Rhino.Geometry
     long m_memory_pressure = 0;
     int m_count = -1;
 
+    /// <summary>
+    /// Initializes a new, empty instance of the tree.
+    /// </summary>
     public RTree()
     {
       m_ptr = UnsafeNativeMethods.ON_RTree_New();
     }
 
     /// <summary>
-    /// Create an R-tree with an element for each face in the mesh.
+    /// Creates a new tree with an element for each face in the mesh.
     /// The element id is set to the index of the face.
     /// </summary>
-    /// <param name="mesh"></param>
-    /// <returns></returns>
+    /// <param name="mesh">A mesh.</param>
+    /// <returns>A new tree, or null on error.</returns>
     public static RTree CreateMeshFaceTree(Mesh mesh)
     {
       RTree rc = new RTree();
@@ -82,6 +104,11 @@ namespace Rhino.Geometry
       return rc;
     }
 
+    /// <summary>
+    /// Creates a new tree with an element for each pointcloud point.
+    /// </summary>
+    /// <param name="cloud">A pointcloud.</param>
+    /// <returns>A new tree, or null on error.</returns>
     public static RTree CreatePointCloudTree(PointCloud cloud)
     {
       RTree rc = new RTree();
@@ -99,37 +126,37 @@ namespace Rhino.Geometry
 
     }
 
-    /// <summary>Insert an element into the tree</summary>
-    /// <param name="point"></param>
-    /// <param name="elementId"></param>
-    /// <returns>True if element was successfully inserted</returns>
+    /// <summary>Inserts an element into the tree.</summary>
+    /// <param name="point">A point.</param>
+    /// <param name="elementId">A number.</param>
+    /// <returns>true if element was successfully inserted.</returns>
     public bool Insert(Point3d point, int elementId)
     {
       return Insert(new BoundingBox(point, point), elementId);
     }
 
-    /// <summary>Insert an element into the tree</summary>
-    /// <param name="point"></param>
-    /// <param name="elementId"></param>
-    /// <returns>True if element was successfully inserted</returns>
+    /// <summary>Inserts an element into the tree.</summary>
+    /// <param name="point">A point.</param>
+    /// <param name="elementId">A pointer.</param>
+    /// <returns>true if element was successfully inserted.</returns>
     public bool Insert(Point3d point, IntPtr elementId)
     {
       return Insert(new BoundingBox(point, point), elementId);
     }
 
-    /// <summary>Insert an element into the tree</summary>
-    /// <param name="box"></param>
-    /// <param name="elementId"></param>
-    /// <returns>True if element was successfully inserted</returns>
+    /// <summary>Inserts an element into the tree.</summary>
+    /// <param name="box">A bounding box.</param>
+    /// <param name="elementId">A number.</param>
+    /// <returns>true if element was successfully inserted.</returns>
     public bool Insert(BoundingBox box, int elementId)
     {
       return Insert(box, new IntPtr(elementId));
     }
 
-    /// <summary>Insert an element into the tree</summary>
-    /// <param name="box"></param>
-    /// <param name="elementId"></param>
-    /// <returns>True if element was successfully inserted</returns>
+    /// <summary>Insert an element into the tree.</summary>
+    /// <param name="box">A bounding box.</param>
+    /// <param name="elementId">A pointer.</param>
+    /// <returns>true if element was successfully inserted.</returns>
     public bool Insert(BoundingBox box, IntPtr elementId)
     {
       m_count = -1; 
@@ -137,55 +164,55 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_RTree_InsertRemove(pThis, true, box.Min, box.Max, elementId);
     }
 
-    /// <summary>Insert an element into the tree</summary>
-    /// <param name="point"></param>
-    /// <param name="elementId"></param>
-    /// <returns>True if element was successfully inserted</returns>
+    /// <summary>Inserts an element into the tree.</summary>
+    /// <param name="point">A point.</param>
+    /// <param name="elementId">A number.</param>
+    /// <returns>true if element was successfully inserted.</returns>
     public bool Insert(Point2d point, int elementId)
     {
       return Insert(new Point3d(point.X, point.Y, 0), elementId);
     }
 
-    /// <summary>Insert an element into the tree</summary>
-    /// <param name="point"></param>
-    /// <param name="elementId"></param>
-    /// <returns>True if element was successfully inserted</returns>
+    /// <summary>Inserts an element into the tree.</summary>
+    /// <param name="point">A point.</param>
+    /// <param name="elementId">A pointer.</param>
+    /// <returns>true if element was successfully inserted.</returns>
     public bool Insert(Point2d point, IntPtr elementId)
     {
       return Insert(new Point3d(point.X, point.Y, 0), elementId);
     }
 
-    /// <summary>Remove an element from the tree</summary>
-    /// <param name="point"></param>
-    /// <param name="elementId"></param>
-    /// <returns>True if element was successfully removed</returns>
+    /// <summary>Removes an element from the tree.</summary>
+    /// <param name="point">A point.</param>
+    /// <param name="elementId">A number.</param>
+    /// <returns>true if element was successfully removed.</returns>
     public bool Remove(Point3d point, int elementId)
     {
       return Remove(new BoundingBox(point, point), elementId);
     }
 
-    /// <summary>Remove an element from the tree</summary>
-    /// <param name="point"></param>
-    /// <param name="elementId"></param>
-    /// <returns>True if element was successfully removed</returns>
+    /// <summary>Removes an element from the tree.</summary>
+    /// <param name="point">A point.</param>
+    /// <param name="elementId">A pointer.</param>
+    /// <returns>true if element was successfully removed.</returns>
     public bool Remove(Point3d point, IntPtr elementId)
     {
       return Remove(new BoundingBox(point, point), elementId);
     }
 
-    /// <summary>Remove an element from the tree</summary>
-    /// <param name="box"></param>
-    /// <param name="elementId"></param>
-    /// <returns>True if element was successfully removed</returns>
+    /// <summary>Removes an element from the tree.</summary>
+    /// <param name="box">A bounding box.</param>
+    /// <param name="elementId">A number.</param>
+    /// <returns>true if element was successfully removed.</returns>
     public bool Remove(BoundingBox box, int elementId)
     {
       return Remove(box, new IntPtr(elementId));
     }
 
-    /// <summary>Remove an element from the tree</summary>
-    /// <param name="box"></param>
-    /// <param name="elementId"></param>
-    /// <returns>True if element was successfully removed</returns>
+    /// <summary>Removes an element from the tree.</summary>
+    /// <param name="box">A bounding box.</param>
+    /// <param name="elementId">A pointer.</param>
+    /// <returns>true if element was successfully removed.</returns>
     public bool Remove(BoundingBox box, IntPtr elementId)
     {
       m_count = -1; 
@@ -193,17 +220,17 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_RTree_InsertRemove(pThis, false, box.Min, box.Max, elementId);
     }
 
-    /// <summary>Remove an element from the tree</summary>
-    /// <param name="point"></param>
-    /// <param name="elementId"></param>
-    /// <returns>True if element was successfully removed</returns>
+    /// <summary>Removes an element from the tree</summary>
+    /// <param name="point">A point.</param>
+    /// <param name="elementId">A number.</param>
+    /// <returns>true if element was successfully removed</returns>
     public bool Remove(Point2d point, int elementId)
     {
       return Remove(new Point3d(point.X, point.Y, 0), elementId);
     }
 
     /// <summary>
-    /// Removes all elements
+    /// Removes all elements.
     /// </summary>
     public void Clear()
     {
@@ -212,6 +239,9 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_RTree_RemoveAll(pThis);
     }
 
+    /// <summary>
+    /// Gets the number of items in this tree.
+    /// </summary>
     public int Count
     {
       get
@@ -262,17 +292,29 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Searches for items in a bounding box.
+    /// <para>The bounding box can be singular and contain exactly one single point.</para>
     /// </summary>
-    /// <param name="box"></param>
-    /// <param name="callback"></param>
+    /// <param name="box">A bounding box.</param>
+    /// <param name="callback">An event handler to be raised when items are found.</param>
     /// <returns>
-    /// True if entire tree was searched.  It is possible no results were found.
+    /// true if entire tree was searched. It is possible no results were found.
     /// </returns>
     public bool Search(BoundingBox box, EventHandler<RTreeEventArgs> callback)
     {
       return Search(box, callback, null);
     }
 
+    /// <summary>
+    /// Searches for items in a bounding box.
+    /// <para>The bounding box can be singular and contain exactly one single point.</para>
+    /// </summary>
+    /// <param name="box">A bounding box.</param>
+    /// <param name="callback">An event handler to be raised when items are found.</param>
+    /// <param name="tag">State to be passed inside the <see cref="RTreeEventArgs"/> Tag property.</param>
+    /// <returns>
+    /// true if entire tree was searched. It is possible no results were found.
+    /// </returns>
     public bool Search(BoundingBox box, EventHandler<RTreeEventArgs> callback, object tag)
     {
       IntPtr pConstTree = ConstPointer();
@@ -298,15 +340,15 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Search two R-trees for all pairs elements whose bounding boxes overlap.
+    /// Searches two R-trees for all pairs elements whose bounding boxes overlap.
     /// </summary>
-    /// <param name="treeA"></param>
-    /// <param name="treeB"></param>
+    /// <param name="treeA">A first tree.</param>
+    /// <param name="treeB">A second tree.</param>
     /// <param name="tolerance">
     /// If the distance between a pair of bounding boxes is less than tolerance,
     /// then callback is called.
     /// </param>
-    /// <param name="callback"></param>
+    /// <param name="callback">A callback event handler.</param>
     /// <returns>
     /// True if entire tree was searched.  It is possible no results were found.
     /// </returns>
@@ -337,16 +379,32 @@ namespace Rhino.Geometry
     #region pointer / disposable handlers
     IntPtr ConstPointer() { return m_ptr; }
     IntPtr NonConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~RTree()
     {
       Dispose(false);
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)

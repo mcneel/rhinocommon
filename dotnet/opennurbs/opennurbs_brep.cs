@@ -1850,7 +1850,8 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
-  /// A Brep face is composed of one surface and trimming curves
+  /// Provides strongly-typed access to brep faces.
+  /// <para>A Brep face is composed of one surface and trimming curves.</para>
   /// </summary>
   public class BrepFace : SurfaceProxy
   {

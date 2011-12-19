@@ -1,18 +1,20 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents a sum surface, or an extrusion of a curve along a curved path.
+  /// </summary>
   [Serializable]
   public class SumSurface : Surface, ISerializable
   {
     /// <summary>
-    /// Create a SumSurface by extruding a curve (CurveA) along a path (CurveB)
+    /// Constructs a new sum surface by extruding a curve A along a path B.
     /// </summary>
-    /// <param name="curveA"></param>
-    /// <param name="curveB"></param>
-    /// <returns>SumSurface on success, null on failure</returns>
+    /// <param name="curveA">The curve used as extrusion profile.</param>
+    /// <param name="curveB">The curve used as path.</param>
+    /// <returns>A new sum surface on success; null on failure.</returns>
     public static SumSurface Create(Curve curveA, Curve curveB)
     {
       IntPtr pConstCurveA = curveA.ConstPointer();

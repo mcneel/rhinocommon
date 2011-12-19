@@ -1745,7 +1745,7 @@ namespace Rhino.Geometry
 namespace Rhino.Geometry.Collections
 {
   /// <summary>
-  /// Provides access to the Vertices and Vertex related functionality of a Mesh.
+  /// Provides access to the vertices and vertex-related functionality of a mesh.
   /// </summary>
   public class MeshVertexList : IEnumerable<Point3f>, Rhino.Collections.IRhinoTable<Point3f>
   {

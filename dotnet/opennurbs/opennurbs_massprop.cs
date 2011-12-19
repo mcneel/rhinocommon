@@ -5,8 +5,8 @@ namespace Rhino.Geometry
 {
   /// <summary>
   /// Contains static initialization methods and allows access to the computed
-  /// metrics of area, area centroids and area moments calculations in closed
-  /// planar curves, meshes, surfaces, hatches and boundary representations.
+  /// metrics of area, area centroid and area moments in closed
+  /// planar curves, in meshes, in surfaces, in hatches and in boundary representations.
   /// </summary>
   public class AreaMassProperties : IDisposable
   {
@@ -514,8 +514,8 @@ namespace Rhino.Geometry
 
   /// <summary>
   /// Contains static initialization methods and allows access to the computed
-  /// metrics of volume, volume centroids and volume moments calculations in 
-  /// solid meshes, surfaces and boundary representations.
+  /// metrics of volume, volume centroid and volume moments in 
+  /// in solid meshes, in solid surfaces and in solid (closed) boundary representations.
   /// </summary>
   public class VolumeMassProperties : IDisposable
   {

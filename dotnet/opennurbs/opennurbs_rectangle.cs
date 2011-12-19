@@ -1,11 +1,11 @@
-#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents a 3d oriented rectangle.
+  /// Represents the values of a plane and two intervals
+  /// that form an oriented rectangle in three dimensions.
   /// </summary>
   [Serializable]
   public struct Rectangle3d
@@ -18,7 +18,7 @@ namespace Rhino.Geometry
 
     #region static methods
     /// <summary>
-    /// Try and create a Rectangle from a Polyline. In order for a polyline to qualify 
+    /// Attempts to create a rectangle from a polyline. In order for the polyline to qualify 
     /// as a rectangle, it must have 4 or 5 corner points (i.e. it need not be closed).
     /// </summary>
     /// <param name="polyline">Polyline to parse.</param>
@@ -30,8 +30,9 @@ namespace Rhino.Geometry
       return CreateFromPolyline(polyline, out dev, out angdev);
     }
     /// <summary>
-    /// Try and create a Rectangle from a Polyline. In order for a polyline to qualify 
+    /// Attempts to create a Rectangle from a Polyline. In order for a polyline to qualify 
     /// as a rectangle, it must have 4 or 5 corner points (i.e. it need not be closed).
+    /// <para>This overload also returns deviations.</para>
     /// </summary>
     /// <param name="polyline">Polyline to parse.</param>
     /// <param name="deviation">On success, the deviation will contain the largest deviation between the polyline and the rectangle.</param>
@@ -103,7 +104,7 @@ namespace Rhino.Geometry
 
     #region constructors
     /// <summary>
-    /// Create a new rectangle from width and height.
+    /// Initializes a new rectangle from width and height.
     /// </summary>
     /// <param name="plane">Base plane for Rectangle.</param>
     /// <param name="width">Width (as measured along the base plane x-axis) of rectangle.</param>
@@ -116,7 +117,7 @@ namespace Rhino.Geometry
       MakeIncreasing();
     }
     /// <summary>
-    /// Create a new rectangle from dimensions.
+    /// Initializes a new rectangle from dimensions.
     /// </summary>
     /// <param name="plane">Base plane for Rectangle.</param>
     /// <param name="width">Dimension of rectangle along the base plane x-axis.</param>
@@ -128,7 +129,7 @@ namespace Rhino.Geometry
       m_y = height;
     }
     /// <summary>
-    /// Create a new rectangle from a base plane and two corner points.
+    /// Initializes a new rectangle from a base plane and two corner points.
     /// </summary>
     /// <param name="plane">Base plane for Rectangle.</param>
     /// <param name="cornerA">First corner of Rectangle (will be projected onto plane).</param>
@@ -264,7 +265,7 @@ namespace Rhino.Geometry
 
     #region methods
     /// <summary>
-    /// Ensure the X and Y dimensions are increasing or singleton intervals.
+    /// Ensures the X and Y dimensions are increasing or singleton intervals.
     /// </summary>
     public void MakeIncreasing()
     {
@@ -272,7 +273,7 @@ namespace Rhino.Geometry
       m_y.MakeIncreasing();
     }
     /// <summary>
-    /// Get the corner at the given index.
+    /// Gets the corner at the given index.
     /// </summary>
     /// <param name="index">
     /// Index of corner, valid values are:
@@ -295,7 +296,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Recenter the base plane on one of the corners.
+    /// Recenters the base plane on one of the corners.
     /// </summary>
     /// <param name="index">
     /// Index of corner, valid values are:
@@ -309,7 +310,7 @@ namespace Rhino.Geometry
       RecenterPlane(Corner(index));
     }
     /// <summary>
-    /// Recenter the base plane on a new origin.
+    /// Recenters the base plane on a new origin.
     /// </summary>
     /// <param name="origin">New origin for plane.</param>
     public void RecenterPlane(Point3d origin)
@@ -323,7 +324,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get a point in Rectangle space.
+    /// Gets a point in Rectangle space.
     /// </summary>
     /// <param name="x">Normalized parameter along Rectangle width.</param>
     /// <param name="y">Normalized parameter along Rectangle height.</param>
@@ -333,7 +334,7 @@ namespace Rhino.Geometry
       return m_plane.PointAt(m_x.ParameterAt(x), m_y.ParameterAt(y));
     }
     /// <summary>
-    /// Get a point along the rectangle boundary.
+    /// Gets a point along the rectangle boundary.
     /// </summary>
     /// <param name="t">Parameter along rectangle boundary. Valid values range from 0.0 to 4.0, 
     /// where each integer domain represents a single boundary edge.</param>
@@ -366,7 +367,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get the point on the rectangle that is closest to a test-point.
+    /// Gets the point on the rectangle that is closest to a test-point.
     /// </summary>
     /// <param name="point">Point to project.</param>
     /// <returns>The point on or in the rectangle closest to the test point or Point3d.Unset on failure.</returns>
@@ -375,7 +376,7 @@ namespace Rhino.Geometry
       return ClosestPoint(point, true);
     }
     /// <summary>
-    /// Get the point on the rectangle that is closest to a test-point.
+    /// Gets the point on the rectangle that is closest to a test-point.
     /// </summary>
     /// <param name="point">Point to project.</param>
     /// <param name="includeInterior">If False, the point is projected onto the boundary edge only, 
@@ -423,7 +424,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Test a point for inclusion.
+    /// Determines if a point is included in this rectangle.
     /// </summary>
     /// <param name="pt">Point to test. The point will be projected onto the Rectangle plane before inclusion is determined.</param>
     /// <returns>Point Rectangle relationship.</returns>
@@ -434,7 +435,7 @@ namespace Rhino.Geometry
       return Contains(s, t);
     }
     /// <summary>
-    /// Test two plane parameters for inclusion.
+    /// Determines if two plane parameters are included in this rectangle.
     /// </summary>
     /// <param name="x">Parameter along base plane X direction.</param>
     /// <param name="y">Parameter along base plane Y direction.</param>
@@ -451,7 +452,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Transform this rectangle. Note that rectangles cannot be skewed or tapered.
+    /// Transforms this rectangle. Note that rectangles cannot be skewed or tapered.
     /// </summary>
     /// <param name="xform">Transformation to apply.</param>
     public bool Transform(Transform xform)
@@ -479,7 +480,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a polyline from this rectangle.
+    /// Constructs a polyline from this rectangle.
     /// </summary>
     /// <returns>A polyline with the same shape as this rectangle.</returns>
     public Polyline ToPolyline()
@@ -493,7 +494,7 @@ namespace Rhino.Geometry
       return rc;
     }
     /// <summary>
-    /// Create a nurbs curve representation of this rectangle.
+    /// Constructs a nurbs curve representation of this rectangle.
     /// </summary>
     /// <returns>A nurbs curve with the same shape as this rectangle.</returns>
     public NurbsCurve ToNurbsCurve()

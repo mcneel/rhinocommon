@@ -221,19 +221,19 @@ namespace Rhino.Runtime
   public static class HostUtils
   {
     /// <summary>
-    /// DO NOT USE UNLESS YOU ABSOLUTELY KNOW WHAT YOU ARE DOING!!!
-    /// Expert user function which should not be needed in most cases. This
-    /// function is similar to a const_cast in C++ to allow an object to be
-    /// made temporarily modifiable without causing RhinoCommon to convert
-    /// the class from const to non-const by creating a duplicate.
+    /// DO NOT USE UNLESS YOU ARE CERTAIN ABOUT THE IMPLICATIONS.
+    /// <para>This is an expert user function which should not be needed in most
+    /// cases. This function is similar to a const_cast in C++ to allow an object
+    /// to be made temporarily modifiable without causing RhinoCommon to convert
+    /// the class from const to non-const by creating a duplicate.</para>
     /// 
-    /// You must call this function with a true parameter, make your
+    /// <para>You must call this function with a true parameter, make your
     /// modifications, and then restore the const flag by calling this function
     /// again with a false parameter. If you have any questions, please
-    /// contact McNeel developer support before using!
+    /// contact McNeel developer support before using!</para>
     /// </summary>
-    /// <param name="geometry"></param>
-    /// <param name="makeNonConst"></param>
+    /// <param name="geometry">Some geometry.</param>
+    /// <param name="makeNonConst">A boolean value.</param>
     public static void InPlaceConstCast(Rhino.Geometry.GeometryBase geometry, bool makeNonConst)
     {
       if (makeNonConst)
@@ -428,12 +428,12 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Text description of the geometry's contents. DebugDump()
-    /// is intended for debugging and is not suitable for
-    /// creating high quality text descriptions of an object.
+    /// Gets the debug dumpts. This is a text description of the geometric contents.
+    /// DebugDump() is intended for debugging and is not suitable for creating high
+    /// quality text descriptions of an object.
     /// </summary>
-    /// <param name="geometry"></param>
-    /// <returns></returns>
+    /// <param name="geometry">Some geometry.</param>
+    /// <returns>A debug dump text.</returns>
     public static string DebugDumpToString(Rhino.Geometry.GeometryBase geometry)
     {
       IntPtr pConstThis = geometry.ConstPointer();
@@ -447,7 +447,7 @@ namespace Rhino.Runtime
 
 #if RHINO_SDK
     /// <summary>
-    /// Parse a plugin and create all the commands defined therein.
+    /// Parses a plugin and create all the commands defined therein.
     /// </summary>
     /// <param name="plugin">Plugin to harvest for commands.</param>
     public static void CreateCommands(PlugIn plugin)
@@ -456,7 +456,7 @@ namespace Rhino.Runtime
         plugin.InternalCreateCommands();
     }
     /// <summary>
-    /// Parse a plugin and create all the commands defined therein.
+    /// Parses a plugin and create all the commands defined therein.
     /// </summary>
     /// <param name="pPlugIn">Plugin to harvest for commands.</param>
     /// <param name="pluginAssembly">Assembly associated with the plugin.</param>
@@ -773,9 +773,10 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// This function makes no sense on Mono
+    /// Defines if Ole alerts ("Server busy") alerts should be visualized.
+    /// <para>This function makes no sense on Mono.</para>
     /// </summary>
-    /// <param name="display"></param>
+    /// <param name="display">Whether alerts should be visible.</param>
     public static void DisplayOleAlerts(bool display)
     {
       UnsafeNativeMethods.RHC_DisplayOleAlerts(display);
@@ -800,9 +801,9 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Only works on Windows. Returns null on Mac
+    /// Only works on Windows. Returns null on Mac.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An assembly.</returns>
     public static System.Reflection.Assembly GetRhinoDotNetAssembly()
     {
       if (m_rhdn_assembly == null && RunningOnWindows)

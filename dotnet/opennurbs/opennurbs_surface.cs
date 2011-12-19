@@ -1,12 +1,12 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// flags for isoparametric curves
-  /// Note: odd values are all "x" = constant and even values > 0 are all "y" = constant
+  /// Defines enumerated values for isoparametric curve direction on a surface, such as X or Y,
+  /// and curve sides, such as North or West boundary.
+  /// <para>Note: odd values are all x-constant; even values > 0 are all y-constant.</para>
   /// </summary>
   public enum IsoStatus : int
   {
@@ -41,7 +41,7 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
-  /// Maintains all information for a Surface Curvature evaluation.
+  /// Maintains computed information for surface curvature evaluation.
   /// </summary>
   public class SurfaceCurvature
   {
@@ -144,7 +144,7 @@ namespace Rhino.Geometry
 
     #region methods
     /// <summary>
-    /// Compute the osculating circle along the given direction.
+    /// Computes the osculating circle along the given direction.
     /// </summary>
     /// <param name="direction">Direction index, valid values are 0 and 1.</param>
     /// <returns>The osculating circle in the given direction or Circle.Unset on failure.</returns>
@@ -163,18 +163,46 @@ namespace Rhino.Geometry
     #endregion
   }
 
+  /// <summary>
+  /// Represents a base class that is common to most RhinoCommon surface types.
+  /// <para>A surface represents an entity that can be all visited by providing
+  /// two independent parameters, usually called (u, v), or sometimes (s, t).</para>
+  /// </summary>
   [Serializable]
   public class Surface : GeometryBase, ISerializable
   {
     #region statics
 #if RHINO_SDK
+    /// <summary>
+    /// Constructs a rolling ball fillet between two surfaces.
+    /// </summary>
+    /// <param name="surfaceA">A first surface.</param>
+    /// <param name="surfaceB">A second surface.</param>
+    /// <param name="radius">A radius value.</param>
+    /// <param name="tolerance">A tolerance value.</param>
+    /// <returns>A new array of rolling ball fillet surfaces; this array can be empty.</returns>
+    /// <exception cref="ArgumentNullException">If surfaceA or surfaceB are null.</exception>
     public static Surface[] CreateRollingBallFillet(Surface surfaceA, Surface surfaceB, double radius, double tolerance)
     {
       return CreateRollingBallFillet(surfaceA, false, surfaceB, false, radius, tolerance);
     }
 
+    /// <summary>
+    /// Constructs a rolling ball fillet between two surfaces.
+    /// </summary>
+    /// <param name="surfaceA">A first surface.</param>
+    /// <param name="flipA">A value that indicates whether A should be used in flipped mode.</param>
+    /// <param name="surfaceB">A second surface.</param>
+    /// <param name="flipB">A value that indicates whether B should be used in flipped mode.</param>
+    /// <param name="radius">A radius value.</param>
+    /// <param name="tolerance">A tolerance value.</param>
+    /// <returns>A new array of rolling ball fillet surfaces; this array can be empty.</returns>
+    /// <exception cref="ArgumentNullException">If surfaceA or surfaceB are null.</exception>
     public static Surface[] CreateRollingBallFillet(Surface surfaceA, bool flipA, Surface surfaceB, bool flipB, double radius, double tolerance)
     {
+      if (surfaceA == null) throw new ArgumentNullException("surfaceA");
+      if (surfaceB == null) throw new ArgumentNullException("surfaceB");
+
       IntPtr pConstSurfaceA = surfaceA.ConstPointer();
       IntPtr pConstSurfaceB = surfaceB.ConstPointer();
       using (Runtime.InteropWrappers.SimpleArraySurfacePointer srfs = new Rhino.Runtime.InteropWrappers.SimpleArraySurfacePointer())
@@ -186,8 +214,22 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Constructs a rolling ball fillet between two surfaces.
+    /// </summary>
+    /// <param name="surfaceA">A first surface.</param>
+    /// <param name="uvA"></param>
+    /// <param name="surfaceB">A second surface.</param>
+    /// <param name="uvB"></param>
+    /// <param name="radius">A radius value.</param>
+    /// <param name="tolerance">A tolerance value.</param>
+    /// <returns>A new array of rolling ball fillet surfaces; this array can be empty.</returns>
+    /// <exception cref="ArgumentNullException">If surfaceA or surfaceB are null.</exception>
     public static Surface[] CreateRollingBallFillet(Surface surfaceA, Point2d uvA, Surface surfaceB, Point2d uvB, double radius, double tolerance)
     {
+      if (surfaceA == null) throw new ArgumentNullException("surfaceA");
+      if (surfaceB == null) throw new ArgumentNullException("surfaceB");
+
       IntPtr pConstSurfaceA = surfaceA.ConstPointer();
       IntPtr pConstSurfaceB = surfaceB.ConstPointer();
       using (Runtime.InteropWrappers.SimpleArraySurfacePointer srfs = new Rhino.Runtime.InteropWrappers.SimpleArraySurfacePointer())
@@ -200,11 +242,11 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a Surface by extruding a Curve along a vector.
+    /// Constructs a surface by extruding a curve along a vector.
     /// </summary>
     /// <param name="profile">Profile curve to extrude.</param>
     /// <param name="direction">Direction and length of extrusion.</param>
-    /// <returns>A Surface on success or null on failure.</returns>
+    /// <returns>A surface on success or null on failure.</returns>
     public static Surface CreateExtrusion(Curve profile, Vector3d direction)
     {
       IntPtr pConstCurve = profile.ConstPointer();
@@ -218,7 +260,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a Surface by extruding a Curve to a point.
+    /// Constructs a surface by extruding a curve to a point.
     /// </summary>
     /// <param name="profile">Profile curve to extrude.</param>
     /// <param name="apexPoint">Apex point of extrusion.</param>
@@ -235,6 +277,12 @@ namespace Rhino.Geometry
       return rc;
     }
 
+    /// <summary>
+    /// Constructs a periodic surface from a base surface and a direction.
+    /// </summary>
+    /// <param name="baseSurface">A base surface.</param>
+    /// <param name="direction">0 is first parameter, 1 is second parameter.</param>
+    /// <returns>A new surface; or null on error.</returns>
     public static Surface CreatePeriodicSurface(Surface baseSurface, int direction)
     {
       IntPtr pConstSurface = baseSurface.ConstPointer();
@@ -246,6 +294,10 @@ namespace Rhino.Geometry
     #endregion
 
     #region constructors
+
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
     protected Surface()
     {
       // the base class always handles set up of pointers
@@ -280,7 +332,11 @@ namespace Rhino.Geometry
       return new Surface(IntPtr.Zero, null);
     }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
     protected Surface(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
@@ -291,9 +347,9 @@ namespace Rhino.Geometry
     //[skipping]
     //virtual ON_Mesh* CreateMesh( const ON_MeshParameters& mp, ON_Mesh* mesh = NULL ) const;
 
-    /// <summary></summary>
-    /// <param name="direction">0 gets first parameter, 1 gets second parameter</param>
-    /// <returns></returns>
+    /// <summary>Gets the domain in a direction.</summary>
+    /// <param name="direction">0 gets first parameter, 1 gets second parameter.</param>
+    /// <returns>An interval value.</returns>
     public Interval Domain(int direction)
     {
       if (direction != 0)
@@ -303,13 +359,15 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Surface_Domain(ptr, direction, ref domain);
       return domain;
     }
+
     /// <summary>
+    /// Sets the domain in a direction.
     /// </summary>
     /// <param name="direction">
-    /// 0 sets first parameter's domain, 1 gets second parameter's domain
+    /// 0 sets first parameter's domain, 1 sets second parameter's domain.
     /// </param>
-    /// <param name="domain"></param>
-    /// <returns></returns>
+    /// <param name="domain">A new domain to be assigned.</param>
+    /// <returns>true if setting succeeded, otherwise false.</returns>
     public virtual bool SetDomain(int direction, Interval domain)
     {
       IntPtr ptr = NonConstPointer();
@@ -317,13 +375,13 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// returns maximum algebraic degree of any span
-    /// ( or a good estimate if curve spans are not algebraic )
+    /// Returns the maximum algebraic degree of any span
+    /// (or a good estimate if curve spans are not algebraic).
     /// </summary>
     /// <param name="direction">
-    /// 0 gets first parameter's domain, 1 gets second parameter's domain
+    /// 0 gets first parameter's domain, 1 gets second parameter's domain.
     /// </param>
-    /// <returns></returns>
+    /// <returns>The maximum degree.</returns>
     public int Degree(int direction)
     {
       IntPtr ptr = ConstPointer();
@@ -356,24 +414,25 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// get number of smooth nonempty spans in the parameter direction
+    /// Gets number of smooth nonempty spans in the parameter direction.
     /// </summary>
     /// <param name="direction">
-    /// 0 gets first parameter's domain, 1 gets second parameter's domain
+    /// 0 gets first parameter's domain, 1 gets second parameter's domain.
     /// </param>
-    /// <returns></returns>
+    /// <returns>The span count.</returns>
     public int SpanCount(int direction)
     {
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.ON_Surface_SpanCount(ptr, direction);
     }
+
     /// <summary>
-    /// get array of span "knots"
+    /// Gets array of span "knots".
     /// </summary>
     /// <param name="direction">
-    /// 0 gets first parameter's domain, 1 gets second parameter's domain
+    /// 0 gets first parameter's domain, 1 gets second parameter's domain.
     /// </param>
-    /// <returns></returns>
+    /// <returns>An array with span vectors; or null on error.</returns>
     public double[] GetSpanVector(int direction)
     {
       int count = SpanCount(direction) + 1;
@@ -388,6 +447,12 @@ namespace Rhino.Geometry
       return null;
     }
 
+    /// <summary>
+    /// Gets the side that is closest, in terms of 3D-distance, to a U and V parameter.
+    /// </summary>
+    /// <param name="u">A u parameter.</param>
+    /// <param name="v">A v parameter.</param>
+    /// <returns>A side.</returns>
     public IsoStatus ClosestSide(double u, double v)
     {
       IntPtr pConstThis = ConstPointer();
@@ -396,7 +461,7 @@ namespace Rhino.Geometry
 
 #if RHINO_SDK
     /// <summary>
-    /// Extend an untrimmed surface along one edge
+    /// Extends an untrimmed surface along one edge
     /// </summary>
     /// <param name="edge">
     /// Edge to extend.  Must be North, South, East, or West
@@ -437,7 +502,7 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>
-    /// Reverse parameterization Domain changes from [a,b] to [-b,-a]
+    /// Reverses parameterization Domain changes from [a,b] to [-b,-a]
     /// </summary>
     /// <param name="direction">
     /// 0 for first parameter's domain, 1 for second parameter's domain
@@ -451,7 +516,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Transpose surface parameterization (swap "s" and "t")
+    /// Transposes surface parameterization (swap U and V)
     /// </summary>
     /// <returns>New transposed surface on success, null on failure.</returns>
     public Surface Transpose()
@@ -462,7 +527,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Evaluate a point at a given parameter.
+    /// Evaluates a point at a given parameter.
     /// </summary>
     /// <param name="u">evaluation parameters</param>
     /// <param name="v">evaluation parameters</param>
@@ -476,11 +541,12 @@ namespace Rhino.Geometry
       return rc;
     }
     /// <summary>
-    /// Simple evaluation interface - no error handling.
+    /// Computes the surface normal at a point.
+    /// <para>This is the simple evaluation call - it does not support error handling.</para>
     /// </summary>
-    /// <param name="u"></param>
-    /// <param name="v"></param>
-    /// <returns></returns>
+    /// <param name="u">A U parameter.</param>
+    /// <param name="v">A V parameter.</param>
+    /// <returns>The normal.</returns>
     public Vector3d NormalAt(double u, double v)
     {
       Vector3d rc = new Vector3d();
@@ -489,12 +555,13 @@ namespace Rhino.Geometry
       return rc;
     }
     /// <summary>
-    /// simple evaluation interface - no error handling
+    /// Computes the orient plane on a surface given a U and V parameter.
+    /// <para>This is the simple evaluation call with no error handling.</para>
     /// </summary>
-    /// <param name="u"></param>
-    /// <param name="v"></param>
-    /// <param name="frame"></param>
-    /// <returns></returns>
+    /// <param name="u">A first parameter.</param>
+    /// <param name="v">A second parameter.</param>
+    /// <param name="frame">A frame plane that will be computed during this call.</param>
+    /// <returns>true if this operation succeeded; otherwise false.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_orientonsrf.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_orientonsrf.cs' lang='cs'/>
@@ -507,7 +574,7 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Surface_FrameAt(ptr, u, v, ref frame);
     }
     /// <summary>
-    /// Compute the curvature at the given UV coordinate.
+    /// Computes the curvature at the given UV coordinate.
     /// </summary>
     /// <param name="u">U parameter for evaluation.</param>
     /// <param name="v">V parameter for evaluation.</param>
@@ -522,7 +589,7 @@ namespace Rhino.Geometry
     //  virtual BOOL GetParameterTolerance( // returns tminus < tplus: parameters tminus <= s <= tplus
 
     /// <summary>
-    /// Test a 2d curve to see if it is iso parameteric in the surface's parameter space.
+    /// Determines if a 2D curve is iso-parameteric in the parameter space of this surface.
     /// </summary>
     /// <param name="curve">Curve to test.</param>
     /// <param name="curveDomain">Sub domain of the curve.</param>
@@ -537,7 +604,7 @@ namespace Rhino.Geometry
       return (IsoStatus)rc;
     }
     /// <summary>
-    /// Test a 2d curve to see if it is iso parameteric in the surface's parameter space.
+    /// Determines if a 2d curve is iso-parameteric in the parameter space of this surface.
     /// </summary>
     /// <param name="curve">Curve to test.</param>
     /// <returns>IsoStatus flag describing the iso-parametric relationship between the surface and the curve.</returns>
@@ -546,7 +613,7 @@ namespace Rhino.Geometry
       return IsIsoparametric(curve, Interval.Unset);
     }
     /// <summary>
-    /// Test a 2d bounding box to see if it is iso-parameteric in the surface's parameter space.
+    /// Determines if a 2d bounding box is iso-parameteric in the parameter space of this surface.
     /// </summary>
     /// <param name="bbox">Bounding box to test.</param>
     /// <returns>IsoStatus flag describing the iso-parametric relationship between the surface and the bounding box.</returns>
@@ -558,20 +625,20 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// true if surface is closed in direction
+    /// Gets a value indicating if the surface is closed in a direction.
     /// </summary>
-    /// <param name="direction">0 = "s", 1 = "t"</param>
-    /// <returns></returns>
+    /// <param name="direction">0 = U, 1 = V</param>
+    /// <returns>The indicating boolean value.</returns>
     public bool IsClosed(int direction)
     {
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.ON_Surface_GetBool(ptr, direction, idxIsClosed);
     }
     /// <summary>
-    /// true if surface is periodic in direction (default is false)
+    /// Gets a value indicating if thr surface is periodic in a direction (default is false).
     /// </summary>
-    /// <param name="direction">0 = "s", 1 = "t"</param>
-    /// <returns></returns>
+    /// <param name="direction">0 = U, 1 = V</param>
+    /// <returns>The indicating boolean value.</returns>
     public bool IsPeriodic(int direction)
     {
       IntPtr ptr = ConstPointer();
@@ -813,6 +880,12 @@ namespace Rhino.Geometry
     }
 
 #if RHINO_SDK
+    /// <summary>
+    /// Constructs an interpolated curve on a surface, using 2D surface points.
+    /// </summary>
+    /// <param name="points">A list, an array or any enumerable set of 2D points.</param>
+    /// <param name="tolerance">A tolerance value.</param>
+    /// <returns>A new nurbs curve, or null on error.</returns>
     public NurbsCurve InterpolatedCurveOnSurfaceUV(System.Collections.Generic.IEnumerable<Point2d> points, double tolerance)
     {
       NurbsCurve rc = null;
@@ -857,6 +930,13 @@ namespace Rhino.Geometry
       }
       return rc;
     }
+
+    /// <summary>
+    /// Constructs an interpolated curve on a surface, using 3D points.
+    /// </summary>
+    /// <param name="points">A list, an array or any enumerable set of points.</param>
+    /// <param name="tolerance">A tolerance value.</param>
+    /// <returns>A new nurbs curve, or null on error.</returns>
     public NurbsCurve InterpolatedCurveOnSurface(System.Collections.Generic.IEnumerable<Point3d> points, double tolerance)
     {
       if (null == points)
@@ -882,7 +962,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a geodesic between 2 points, used by ShortPath command in Rhino
+    /// Constructs a geodesic between 2 points, used by ShortPath command in Rhino
     /// </summary>
     /// <param name="start">start point of curve in parameter space. Points must be distinct in the domain of thie surface</param>
     /// <param name="end">end point of curve in parameter space. Points must be distinct in the domain of thie surface</param>
@@ -897,7 +977,7 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>
-    /// Compute a 3d curve that is the composite of a 2d curve and the surface map.
+    /// Computes a 3d curve that is the composite of a 2d curve and the surface map.
     /// </summary>
     /// <param name="curve2d">a 2d curve whose image is in the surface's domain</param>
     /// <param name="tolerance">
@@ -915,7 +995,7 @@ namespace Rhino.Geometry
       return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
     }
     /// <summary>
-    /// Compute a 3d curve that is the composite of a 2d curve and the surface map.
+    /// Computes a 3d curve that is the composite of a 2d curve and the surface map.
     /// </summary>
     /// <param name="curve2d">a 2d curve whose image is in the surface's domain</param>
     /// <param name="tolerance">
@@ -927,7 +1007,7 @@ namespace Rhino.Geometry
       return Pushup(curve2d, tolerance, Interval.Unset);
     }
     /// <summary>
-    /// Pull a 3d curve back to the surface's parameter space.
+    /// Pulls a 3d curve back to the surface's parameter space.
     /// </summary>
     /// <param name="curve3d"></param>
     /// <param name="tolerance">
@@ -940,7 +1020,7 @@ namespace Rhino.Geometry
       return Pullback(curve3d, tolerance, Interval.Unset);
     }
     /// <summary>
-    /// Pull a 3d curve back to the surface's parameter space.
+    /// Pulls a 3d curve back to the surface's parameter space.
     /// </summary>
     /// <param name="curve3d"></param>
     /// <param name="tolerance">
@@ -1254,6 +1334,10 @@ namespace Rhino.Geometry
           return UnsafeNativeMethods.ON_Surface_GetParameter(ptr, surfaceS, surfaceT, ref nurbsS, ref nurbsT, idxNurbsParamFromSurf);
         }
     */
+
+    /// <summary>
+    /// Gets a values indicating whether a surface is solid.
+    /// </summary>
     public virtual bool IsSolid
     {
       get

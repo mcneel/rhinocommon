@@ -213,6 +213,7 @@ namespace Rhino.Geometry
     /// <param name="q">A quaternion.</param>
     /// <param name="y">A number.</param>
     /// <returns>A new quaternion.</returns>
+    [Obsolete("This overload is obsolete because it is redundant. Please only use the overload that accepts doubles. You can cast to a double from your call site to use the correct version.")]
     public static Quaternion operator/(Quaternion q, int y)
     {
       double x = (0!=y) ? 1d/y : 0.0;
@@ -225,6 +226,7 @@ namespace Rhino.Geometry
     /// <param name="q">A quaternion.</param>
     /// <param name="y">A number.</param>
     /// <returns>A new quaternion.</returns>
+    [Obsolete("This overload is obsolete because it is redundant. Please only use the overload that accepts doubles. You can cast to a double from your call site to use the correct version.")]
     public static Quaternion operator/(Quaternion q, float y)
     {
       double x = (0f!=y) ? 1d/y : 0.0;
@@ -313,8 +315,8 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Modifies this quaternion to become
-    /// <para>a/L2, -b/L2, -c/L2, -d/L2, where</para>
-    /// <para>L2 = length squared = (a*a + b*b + c*c + d*d).</para>
+    /// <para>(a/L2, -b/L2, -c/L2, -d/L2),</para>
+    /// <para>where L2 = length squared = (a*a + b*b + c*c + d*d).</para>
     /// <para>This is the multiplicative inverse, i.e.,
     /// (a,b,c,d)*(a/L2, -b/L2, -c/L2, -d/L2) = (1,0,0,0).</para>
     /// </summary>
@@ -336,7 +338,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Computes a new inverted quaternion, with
+    /// Computes a new inverted quaternion,
     /// <para>(a/L2, -b/L2, -c/L2, -d/L2),</para>
     /// <para>where L2 = length squared = (a*a + b*b + c*c + d*d).</para>
     /// This is the multiplicative inverse, i.e.,
@@ -368,7 +370,7 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>
-    /// Computes a*a + b*b + c*c + d*d
+    /// Gets the result of (a^2 + b^2 + c^2 + d^2).
     /// </summary>
     public double LengthSquared
     {
@@ -535,17 +537,17 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Rotate a 3d vector.  This operation is also called conjugation,
+    /// Rotates a 3d vector. This operation is also called conjugation,
     /// because the result is the same as
-    /// (q.Conjugate()*(0,x,y,x)*q/q.LengthSquared()).Vector()
+    /// (q.Conjugate()*(0,x,y,x)*q/q.LengthSquared).Vector
     /// </summary>
     /// <param name="v"></param>
     /// <returns>
     /// R*v, where R is the rotation defined by the unit quaternion.
     /// This is mathematically the same as the values
-    /// (Inverse(q)*(0,x,y,z)*q).Vector()
+    /// (Inverse(q)*(0,x,y,z)*q).Vector
     /// and
-    /// (q.Conjugate()*(0,x,y,x)*q/q.LengthSquared()).Vector()
+    /// (q.Conjugate()*(0,x,y,x)*q/q.LengthSquared).Vector
     /// </returns>
     /// <remarks>
     /// If you need to rotate more than a dozen or so vectors,

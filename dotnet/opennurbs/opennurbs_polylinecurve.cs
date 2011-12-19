@@ -96,7 +96,7 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>
-    /// number of points in polyline
+    /// Gets the number of points in this polyline.
     /// </summary>
     public int PointCount
     {

@@ -2037,21 +2037,9 @@ namespace Rhino.Display
 
     #endregion
 
-    [Obsolete("Use overload that takes a sizeInWorldSpace parameter.  This will be removed soon")]
-    public void DrawSprite(DisplayBitmap bitmap, Point3d worldLocation, float size)
-    {
-      DrawSprite(bitmap, worldLocation, size, System.Drawing.Color.White, false);
-    }
-
     public void DrawSprite(DisplayBitmap bitmap, Point3d worldLocation, float size, bool sizeInWorldSpace)
     {
       DrawSprite(bitmap, worldLocation, size, System.Drawing.Color.White, sizeInWorldSpace);
-    }
-
-    [Obsolete("Use overload that takes a sizeInWorldSpace parameter.  This will be removed soon")]
-    public void DrawSprite(DisplayBitmap bitmap, Point3d worldLocation, float size, System.Drawing.Color blendColor)
-    {
-      DrawSprite(bitmap, worldLocation, size, blendColor, false);
     }
 
     public void DrawSprite(DisplayBitmap bitmap, Point3d worldLocation, float size, System.Drawing.Color blendColor, bool sizeInWorldSpace)

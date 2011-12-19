@@ -78,6 +78,20 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
+    /// <summary>
+    /// At all times, there is a "current" font.  Unless otherwise specified,
+    /// new dimension objects are assigned to the current font. The current
+    /// font is never deleted.
+    /// Returns: Zero based font index of the current font.
+    /// </summary>
+    public int CurrentIndex
+    {
+      get
+      {
+        return UnsafeNativeMethods.CRhinoFontTable_CurrentFontIndex(m_doc.m_docId);
+      }
+    }
+
     public Rhino.DocObjects.Font this[int index]
     {
       get

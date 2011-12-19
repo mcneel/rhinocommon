@@ -115,6 +115,12 @@ namespace Rhino.Display
       SortAngleTolerance = RhinoMath.ToRadians(5);
     }
 
+    Rhino.Geometry.BoundingBox m_bbox = Rhino.Geometry.BoundingBox.Unset;
+    public Rhino.Geometry.BoundingBox BoundingBox
+    {
+      get{ return m_bbox; }
+    }
+
     /// <summary>
     /// Maximum number of cached sort order index lists stored on this class.
     /// Default is 10, but depending on the number of points in this list you
@@ -163,12 +169,19 @@ namespace Rhino.Display
     public int[] Sort(Rhino.Geometry.Vector3d cameraDirection)
     {
       DirectedOrder d = null;
-      foreach (DirectedOrder order in m_order)
+
+      var node = m_order.First;
+      while(node!=null )
       {
-        // allow for 5 degrees of slop in the parallel comparison
-        if (order.Direction.IsParallelTo(cameraDirection, SortAngleTolerance) == 1)
-          return order.Indices;
-        d = order;
+        if( node.Value.Direction.IsParallelTo(cameraDirection, SortAngleTolerance) == 1 )
+        {
+          // move node to head to keep at top of MRU cache
+          m_order.Remove(node);
+          m_order.AddFirst(node);
+          return node.Value.Indices;
+        }
+        d = node.Value;
+        node = node.Next;
       }
 
       if (d == null || m_order.Count < MaximumCachedSortLists)
@@ -195,6 +208,7 @@ namespace Rhino.Display
       List<Rhino.Geometry.Point3d> _points = new List<Geometry.Point3d>(points);
       m_points = _points.ToArray();
       m_colors_argb = new int[] { blendColor.ToArgb() };
+      m_bbox = new Geometry.BoundingBox(m_points);
     }
 
     public void SetPoints(IEnumerable<Rhino.Geometry.Point3d> points, IEnumerable<System.Drawing.Color> colors)
@@ -209,6 +223,7 @@ namespace Rhino.Display
       m_colors_argb = new int[_colors.Count];
       for (int i = 0; i < _colors.Count; i++)
         m_colors_argb[i] = _colors[i].ToArgb();
+      m_bbox = new Geometry.BoundingBox(m_points);
     }
   }
 }

@@ -4608,6 +4608,10 @@ internal partial class UnsafeNativeMethods
   //void CRhinoApp_SetCursorTooltip( const RHMONO_STRING* tooltip )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoApp_SetCursorTooltip([MarshalAs(UnmanagedType.LPWStr)]string tooltip);
+
+  //void CRhinoApp_UnitSystemName( int unit_system, bool capitalize, bool singular, bool abbreviate, CRhCmnStringHolder* pString )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoApp_UnitSystemName(int unit_system, [MarshalAs(UnmanagedType.U1)]bool capitalize, [MarshalAs(UnmanagedType.U1)]bool singular, [MarshalAs(UnmanagedType.U1)]bool abbreviate, IntPtr pString);
   #endregion
 
 
@@ -5647,23 +5651,23 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawBitmaps(IntPtr pPipeline, IntPtr pBmp, int point_count, Point3d[] points, int color_count, int[] colors_argb, int[] indices, float size, Vector3d translation, [MarshalAs(UnmanagedType.U1)]bool worldSize);
 
-  //void CRhinoDisplayPipeline_DrawParticles1(CRhinoDisplayPipeline* pDisplayPipeline, CRhCmnDisplayBitmap* pBmp, int count,
+  //void CRhinoDisplayPipeline_DrawParticles1(CRhinoDisplayPipeline* pPipeline, CRhCmnDisplayBitmap* pBmp, int point_count,
   //                                                        /*ARRAY*/const ON_3dPoint* points,
   //                                                        /*ARRAY*/const float* sizes,
   //                                                        /*ARRAY*/const int* colors_argb,
-  //                                                        bool sizesInWorldUnits)
+  //                                                        bool worldSize)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhinoDisplayPipeline_DrawParticles1(IntPtr pDisplayPipeline, IntPtr pBmp, int count, Point3d[] points, float[] sizes, int[] colors_argb, [MarshalAs(UnmanagedType.U1)]bool sizesInWorldUnits);
+  internal static extern void CRhinoDisplayPipeline_DrawParticles1(IntPtr pPipeline, IntPtr pBmp, int point_count, Point3d[] points, float[] sizes, int[] colors_argb, [MarshalAs(UnmanagedType.U1)]bool worldSize);
 
-  //void CRhinoDisplayPipeline_DrawParticles2(CRhinoDisplayPipeline* pDisplayPipeline, int texture_id_count, /*ARRAY*/const unsigned int* texture_ids,
-  //                                                        int count,
+  //void CRhinoDisplayPipeline_DrawParticles2(CRhinoDisplayPipeline* pPipeline, int texture_id_count, /*ARRAY*/const unsigned int* texture_ids,
+  //                                                        int point_count,
   //                                                        /*ARRAY*/const ON_3dPoint* points,
   //                                                        /*ARRAY*/const float* sizes,
   //                                                        /*ARRAY*/const int* colors_argb,
   //                                                        /*ARRAY*/const int* point_texture_ids,
-  //                                                        bool sizesInWorldUnits)
+  //                                                        bool worldSize)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhinoDisplayPipeline_DrawParticles2(IntPtr pDisplayPipeline, int texture_id_count, uint[] texture_ids, int count, Point3d[] points, float[] sizes, int[] colors_argb, int[] point_texture_ids, [MarshalAs(UnmanagedType.U1)]bool sizesInWorldUnits);
+  internal static extern void CRhinoDisplayPipeline_DrawParticles2(IntPtr pPipeline, int texture_id_count, uint[] texture_ids, int point_count, Point3d[] points, float[] sizes, int[] colors_argb, int[] point_texture_ids, [MarshalAs(UnmanagedType.U1)]bool worldSize);
   #endregion
 
 
@@ -6355,6 +6359,10 @@ internal partial class UnsafeNativeMethods
   //int CRhinoFontTable_FindOrCreate(int docId, const RHMONO_STRING* _facename, bool bold, bool italic)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoFontTable_FindOrCreate(int docId, [MarshalAs(UnmanagedType.LPWStr)]string _facename, [MarshalAs(UnmanagedType.U1)]bool bold, [MarshalAs(UnmanagedType.U1)]bool italic);
+
+  //int CRhinoFontTable_CurrentFontIndex(int docId)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoFontTable_CurrentFontIndex(int docId);
   #endregion
 
 
@@ -8736,9 +8744,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoCreate1FaceBrepFromPoints(int count, Point3d[] points, double tolerance);
 
-  //ON_NurbsSurface* RHC_RhinoCreateSurfaceFromCorners(ON_3DPOINT_STRUCT c1, ON_3DPOINT_STRUCT c2, ON_3DPOINT_STRUCT c3, ON_3DPOINT_STRUCT c4, double tolerance)
+  //ON_NurbsSurface* RHC_RhinoCreateSurfaceFromCorners(ON_3DPOINT_STRUCT a, ON_3DPOINT_STRUCT b, ON_3DPOINT_STRUCT c, ON_3DPOINT_STRUCT d, double tolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RHC_RhinoCreateSurfaceFromCorners(Point3d c1, Point3d c2, Point3d c3, Point3d c4, double tolerance);
+  internal static extern IntPtr RHC_RhinoCreateSurfaceFromCorners(Point3d a, Point3d b, Point3d c, Point3d d, double tolerance);
 
   //ON_Brep* RHC_RhinoCreateEdgeSrf(const ON_NurbsCurve* pNC1,const ON_NurbsCurve* pNC2, const ON_NurbsCurve* pNC3, const ON_NurbsCurve* pNC4)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

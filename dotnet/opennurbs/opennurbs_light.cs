@@ -382,7 +382,7 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// attenuation settings (ignored for "directional" and "ambient" lights)
-    /// attenuation = 1/(a0 + d*a1 + d^2*a2) where d = distance to light
+    /// attenuation = 1/(a0 + d*a1 + d^2*a2) where d = distance to light.
     /// </summary>
     /// <param name="a0"></param>
     /// <param name="a1"></param>
@@ -394,10 +394,10 @@ namespace Rhino.Geometry
     }
     /// <summary>
     /// attenuation settings (ignored for "directional" and "ambient" lights)
-    /// attenuation = 1/(a0 + d*a1 + d^2*a2) where d = distance to light
+    /// attenuation = 1/(a0 + d*a1 + d^2*a2) where d = distance to light.
     /// </summary>
     /// <param name="d"></param>
-    /// <returns>0 if a0 + d*a1 + d^2*a2 &lt;= 0</returns>
+    /// <returns>0 if a0 + d*a1 + d^2*a2 &lt;= 0.</returns>
     public double GetAttenuation(double d)
     {
       IntPtr pConstThis = ConstPointer();

@@ -53,15 +53,15 @@ namespace Rhino.PlugIns
 
   public enum PlugInLoadTime : int
   {
-    /// <summary>never load plug-in</summary>
+    /// <summary>never load plug-in.</summary>
     Disabled = 0,
-    /// <summary>Load when Rhino starts</summary>
+    /// <summary>Load when Rhino starts.</summary>
     AtStartup = 1,
-    /// <summary>(default) Load the first time a plug-in command used</summary>
+    /// <summary>(default) Load the first time a plug-in command used.</summary>
     WhenNeeded = 2,
-    /// <summary>Load the first time a plug-in command used NOT when restoring docking control bars</summary>
+    /// <summary>Load the first time a plug-in command used NOT when restoring docking control bars.</summary>
     WhenNeededIgnoreDockingBars = 6,
-    /// <summary>When a plug-in command is used or the options dialog is shown</summary>
+    /// <summary>When a plug-in command is used or the options dialog is shown.</summary>
     WhenNeededOrOptionsDialog = 10
   }
 
@@ -184,7 +184,7 @@ namespace Rhino.PlugIns
       return rc;
     }
     /// <summary>
-    /// Only searches through list of RhinoCommon plug-ins
+    /// Only searches through list of RhinoCommon plug-ins.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -221,7 +221,7 @@ namespace Rhino.PlugIns
 
     #endregion
     /// <summary>
-    /// Find the plug-in instance that was loaded from a given assembly
+    /// Finds the plug-in instance that was loaded from a given assembly.
     /// </summary>
     /// <param name="pluginAssembly"></param>
     /// <returns></returns>
@@ -240,7 +240,7 @@ namespace Rhino.PlugIns
 
 
 
-    /// <summary>Source assembly for this plug-in</summary>
+    /// <summary>Source assembly for this plug-in.</summary>
     public System.Reflection.Assembly Assembly { get { return m_assembly; } }
 
     public Guid Id { get { return m_id; } }
@@ -249,7 +249,7 @@ namespace Rhino.PlugIns
 
     public String Version { get { return m_version; } }
 
-    /// <summary>All of the commands associated with this plug-in</summary>
+    /// <summary>All of the commands associated with this plug-in.</summary>
     public Commands.Command[] GetCommands()
     {
       return m_commands.ToArray();
@@ -264,7 +264,7 @@ namespace Rhino.PlugIns
     /// <summary>
     /// Plug-ins are typically loaded on demand when they are first needed. You can change
     /// this behavior to load the plug-in at during different stages in time by overriding
-    /// this property
+    /// this property.
     /// </summary>
     public virtual PlugInLoadTime LoadTime
     {
@@ -501,7 +501,7 @@ namespace Rhino.PlugIns
     /// </summary>
     /// <param name="errorMessage">
     /// If a load error is returned and this string is set. This string is the 
-    /// error message that will be reported back to the user
+    /// error message that will be reported back to the user.
     /// </param>
     /// <returns></returns>
     protected virtual LoadReturnCode OnLoad(ref string errorMessage)
@@ -523,7 +523,7 @@ namespace Rhino.PlugIns
     /// <summary>
     /// Called right after plug-in is created and is responsible for creating
     /// all of the commands in a given plug-in.  The base class implementation
-    /// creates an instance of every publicly exported command class in your
+    /// Constructs an instance of every publicly exported command class in your
     /// plug-in's assembly.
     /// </summary>
     protected virtual void CreateCommands()
@@ -611,7 +611,7 @@ namespace Rhino.PlugIns
     /// </summary>
     /// <param name="options"></param>
     /// <returns>
-    /// True if the plug-in wants to save document user data in the
+    /// true if the plug-in wants to save document user data in the
     /// version 5 .3dm file.  The default returns false.
     /// </returns>
     protected virtual bool ShouldCallWriteDocument(Rhino.FileIO.FileWriteOptions options)
@@ -650,7 +650,7 @@ namespace Rhino.PlugIns
     /// If any BinaryArchive.Read*() functions throws an exception then
     /// archive.ReadErrorOccurve will be true and you should immediately return.
     /// </param>
-    /// <param name="options">Describes what is being written</param>
+    /// <param name="options">Describes what is being written.</param>
     protected virtual void ReadDocument(Rhino.RhinoDoc doc, Rhino.FileIO.BinaryArchiveReader archive, Rhino.FileIO.FileReadOptions options)
     {
     }
@@ -660,7 +660,7 @@ namespace Rhino.PlugIns
     /// Override this function if you want to extend the options dialog. This function is
     /// called whenever the user brings up the Options dialog.
     /// </summary>
-    /// <param name="pages">list of pages to add your custom options dialog page(s) to</param>
+    /// <param name="pages">list of pages to add your custom options dialog page(s) to.</param>
     protected virtual void OptionsDialogPages( System.Collections.Generic.List<Rhino.UI.OptionsDialogPage> pages )
     {
     }
@@ -689,7 +689,7 @@ namespace Rhino.PlugIns
     /// that can be called to perform the validation.
     /// </param>
     /// <returns>
-    /// True if a valid license was found. False otherwise.
+    /// true if a valid license was found. false otherwise.
     /// </returns>
     public bool GetLicense(LicenseBuildType productBuildType, ValidateProductKeyDelegate validateDelegate)
     {
@@ -871,7 +871,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Gets a list of installed plug-in names.  The list can be restricted by some filters
+    /// Gets a list of installed plug-in names.  The list can be restricted by some filters.
     /// </summary>
     /// <param name="typeFilter">
     /// 
@@ -923,7 +923,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Gets a plug-in name for an installed plug-in given the path to that plug-in
+    /// Gets a plug-in name for an installed plug-in given the path to that plug-in.
     /// </summary>
     /// <param name="pluginPath"></param>
     /// <returns></returns>
@@ -979,7 +979,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Gets names of all "non-test" commands for a given plug-in
+    /// Gets names of all "non-test" commands for a given plug-in.
     /// </summary>
     /// <param name="pluginId"></param>
     /// <returns></returns>
@@ -1343,11 +1343,11 @@ namespace Rhino.PlugIns
 
     public enum PreviewQuality : int
     {
-      /// <summary>No quality set</summary>
+      /// <summary>No quality set.</summary>
       None = 0,
-      /// <summary>Low quality rendering for quick preview</summary>
+      /// <summary>Low quality rendering for quick preview.</summary>
       Low = 1,
-      /// <summary>Medium quality rendering for intermediate preview</summary>
+      /// <summary>Medium quality rendering for intermediate preview.</summary>
       Medium = 2,
       /// <summary>Full quality rendering (quality comes from user settings)</summary>
       Full = 3,
@@ -1423,8 +1423,8 @@ namespace Rhino.PlugIns
     /// Implement this method to create the preview bitmap that will appear in the 
     /// content editor's thumbnail display when previewing textures in 2d (UV) mode.
     /// </summary>
-    /// <param name="pixels">The pixel dimensions of the bitmap you should return</param>
-    /// <param name="texture">The texture you should render as a 2D image</param>
+    /// <param name="pixels">The pixel dimensions of the bitmap you should return.</param>
+    /// <param name="texture">The texture you should render as a 2D image.</param>
     /// <returns>Return null if you want Rhino to generate its own texture preview.</returns>
     protected virtual System.Drawing.Image CreateTexturePreview(System.Drawing.Size pixels, Rhino.Render.RenderTexture texture)
     {
@@ -1467,12 +1467,12 @@ namespace Rhino.PlugIns
     /// <summary>
     /// Override this function to handle showing a modal dialog with your plugin's
     /// custom decal properties.  You will be passed the current properties for the 
-    /// object being edited.  The defaults will be set in InitializeDecalProperties
+    /// object being edited.  The defaults will be set in InitializeDecalProperties.
     /// </summary>
     /// <param name="properties">A list of named values that will be stored on the object
     /// the input values are the current ones, you should modify the values after the dialog
     /// closes.</param>
-    /// <returns>true if the user pressed "OK", otherwise false</returns>
+    /// <returns>true if the user pressed "OK", otherwise false.</returns>
     protected virtual bool ShowDecalProperties(ref List<NamedValue> properties)
     {
       return false;
@@ -1771,7 +1771,7 @@ namespace Rhino.PlugIns
     /// </summary>
     /// <param name="doc"></param>
     /// <param name="mode"></param>
-    /// <param name="fastPreview">If true, lower quality faster render expected</param>
+    /// <param name="fastPreview">If true, lower quality faster render expected.</param>
     /// <returns></returns>
     protected abstract Rhino.Commands.Result Render(RhinoDoc doc, Rhino.Commands.RunMode mode, bool fastPreview);
 
@@ -1907,8 +1907,8 @@ namespace Rhino.PlugIns
     /// supports send a point every 15 milliseconds or so. This function should be
     /// called when users press or release any digitizer button.
     /// </summary>
-    /// <param name="point">3d point in digitizer coordinates</param>
-    /// <param name="mousebuttons">corresponding digitizer button is down</param>
+    /// <param name="point">3d point in digitizer coordinates.</param>
+    /// <param name="mousebuttons">corresponding digitizer button is down.</param>
     /// <param name="shiftKey"></param>
     /// <param name="controlKey"></param>
     public void SendPoint(Rhino.Geometry.Point3d point, System.Windows.Forms.MouseButtons mousebuttons, bool shiftKey, bool controlKey)
@@ -1945,14 +1945,14 @@ namespace Rhino.PlugIns
   }
 
   /// <summary>
-  /// License Manager Utilities
+  /// License Manager Utilities.
   /// </summary>
   public static class LicenseUtils
   {
     private static System.Reflection.Assembly m_license_client_assembly;
 
     /// <summary>
-    /// Returns the license client assembly
+    /// Returns the license client assembly.
     /// </summary>
     private static System.Reflection.Assembly GetLicenseClientAssembly()
     {
@@ -1975,7 +1975,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Initializes the license manager
+    /// Initializes the license manager.
     /// </summary>
     public static bool Initialize()
     {
@@ -2182,7 +2182,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// OBSOLETE - REMOVE WHEN POSSIBLE
+    /// OBSOLETE - REMOVE WHEN POSSIBLE.
     /// </summary>
     public static bool ReturnLicense(Guid productId)
     {
@@ -2213,8 +2213,8 @@ namespace Rhino.PlugIns
     /// The Guid of the product that you want to check out.
     /// </param>
     /// <returns>
-    /// True if the license was checked out successful.
-    /// False if not successful or on error.
+    /// true if the license was checked out successful.
+    /// false if not successful or on error.
     /// </returns>
     public static bool CheckOutLicense(Guid productId)
     {
@@ -2245,8 +2245,8 @@ namespace Rhino.PlugIns
     /// The Guid of the product that you want to check in.
     /// </param>
     /// <returns>
-    /// True if the license was checked in successful.
-    /// False if not successful or on error.
+    /// true if the license was checked in successful.
+    /// false if not successful or on error.
     /// </returns>
     public static bool CheckInLicense(Guid productId)
     {
@@ -2277,8 +2277,8 @@ namespace Rhino.PlugIns
     /// The Guid of the product that you want to check in.
     /// </param>
     /// <returns>
-    /// True if the license was successfully converted.
-    /// False if not successful or on error.
+    /// true if the license was successfully converted.
+    /// false if not successful or on error.
     /// </returns>
     public static bool ConvertLicense(Guid productId)
     {
@@ -2302,7 +2302,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Returns whether or not license checkout is enabled
+    /// Returns whether or not license checkout is enabled.
     /// </summary>
     public static bool IsCheckOutEnabled()
     {
@@ -2326,7 +2326,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Returns the current status of every license for ui purposes
+    /// Returns the current status of every license for ui purposes.
     /// </summary>
     public static LicenseStatus[] GetLicenseStatus()
     {
@@ -2351,7 +2351,7 @@ namespace Rhino.PlugIns
   }
 
   /// <summary>
-  /// ValidateProductKeyDelegate result code
+  /// ValidateProductKeyDelegate result code.
   /// </summary>
   public enum ValidateResult : int
   {
@@ -2364,12 +2364,12 @@ namespace Rhino.PlugIns
   }
 
   /// <summary>
-  /// Validates a product key or license
+  /// Validates a product key or license.
   /// </summary>
   public delegate ValidateResult ValidateProductKeyDelegate(string productKey, out LicenseData licenseData);
 
   /// <summary>
-  /// License build type enumerations
+  /// License build type enumerations.
   /// </summary>
   public enum LicenseBuildType
   {
@@ -2379,7 +2379,7 @@ namespace Rhino.PlugIns
   }
 
   /// <summary>
-  /// Zoo plugin license data
+  /// Zoo plugin license data.
   /// </summary>
   public class LicenseData
   {
@@ -2486,7 +2486,7 @@ namespace Rhino.PlugIns
     #region LicenseData construction
 
     /// <summary>
-    /// Public constructor
+    /// Public constructor.
     /// </summary>
     public LicenseData()
     {
@@ -2500,7 +2500,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Public constructor
+    /// Public constructor.
     /// </summary>
     public LicenseData(string productLicense, string serialNumber, string licenseTitle)
     {
@@ -2514,7 +2514,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Public constructor
+    /// Public constructor.
     /// </summary>
     public LicenseData(string productLicense, string serialNumber, string licenseTitle, LicenseBuildType buildType)
     {
@@ -2528,7 +2528,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Public constructor
+    /// Public constructor.
     /// </summary>
     public LicenseData(string productLicense, string serialNumber, string licenseTitle, LicenseBuildType buildType, int licenseCount)
     {
@@ -2542,7 +2542,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Public constructor
+    /// Public constructor.
     /// </summary>
     public LicenseData(string productLicense, string serialNumber, string licenseTitle, LicenseBuildType buildType, int licenseCount, DateTime? expirationDate)
     {
@@ -2556,7 +2556,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Public constructor
+    /// Public constructor.
     /// </summary>
     public LicenseData(string productLicense, string serialNumber, string licenseTitle, LicenseBuildType buildType, int licenseCount, DateTime? expirationDate, Icon productIcon)
     {
@@ -2571,7 +2571,7 @@ namespace Rhino.PlugIns
 
 
     /// <summary>
-    /// Public validator
+    /// Public validator.
     /// </summary>
     public bool IsValid()
     {
@@ -2626,7 +2626,7 @@ namespace Rhino.PlugIns
   }
 
   /// <summary>
-  /// LicenseType enumeration
+  /// LicenseType enumeration.
   /// </summary>
   public enum LicenseType
   {
@@ -2637,7 +2637,7 @@ namespace Rhino.PlugIns
   }
 
   /// <summary>
-  /// LicenseStatus class
+  /// LicenseStatus class.
   /// </summary>
   public class LicenseStatus
   {
@@ -2655,7 +2655,7 @@ namespace Rhino.PlugIns
     Icon m_product_icon;
 
     /// <summary>
-    /// The id of the product or plugin
+    /// The id of the product or plugin.
     /// </summary>
     public Guid ProductId
     {
@@ -2667,7 +2667,7 @@ namespace Rhino.PlugIns
     /// The build type of the product, where:
     ///   100 = A release build, either commercical, education, nfr, etc.
     ///   200 = A evaluation build
-    ///   300 = A beta build, such as a wip
+    ///   300 = A beta build, such as a wip.
     /// </summary>
     public LicenseBuildType BuildType
     {
@@ -2710,7 +2710,7 @@ namespace Rhino.PlugIns
     ///   1.) The license type is "Standalone" and the license does not expire.
     ///   2.) The license type is "Network".
     ///   3.) The license type is "NetworkCheckedOut" and the checkout does not expire
-    /// Note, date and time is in local time coordinates
+    /// Note, date and time is in local time coordinates.
     /// </summary>
     public DateTime? ExpirationDate
     {
@@ -2722,7 +2722,7 @@ namespace Rhino.PlugIns
     /// The date and time the checked out license will expire.
     /// Note, this is only set if m_license_type = LicenceType.Standalone
     /// and if "limited license checkout" was enabled on the Zoo server.
-    /// Note, date and time is in local time coordinates
+    /// Note, date and time is in local time coordinates.
     /// </summary>
     public DateTime? CheckOutExpirationDate
     {
@@ -2764,7 +2764,7 @@ namespace Rhino.PlugIns
     #region LicenseStatus construction
 
     /// <summary>
-    /// Public constructor
+    /// Public constructor.
     /// </summary>
     public LicenseStatus()
     {

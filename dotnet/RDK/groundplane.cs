@@ -20,7 +20,7 @@ namespace Rhino.Render
       m_doc = doc;
     }
 
-    /// <summary>Document this groundplane is associated with</summary>
+    /// <summary>Document this groundplane is associated with.</summary>
     public Rhino.RhinoDoc Document
     {
       get { return m_doc; }
@@ -36,7 +36,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Height above world XY plane in model units
+    /// Height above world XY plane in model units.
     /// </summary>
     public double Altitude
     {
@@ -45,7 +45,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Id of material in material table for this ground plane
+    /// Id of material in material table for this ground plane.
     /// </summary>
     public Guid MaterialInstanceId
     {
@@ -54,7 +54,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Texture mapping offset in world units
+    /// Texture mapping offset in world units.
     /// </summary>
     public Rhino.Geometry.Vector2d TextureOffset
     {
@@ -68,7 +68,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Texture mapping single UV span size in world units
+    /// Texture mapping single UV span size in world units.
     /// </summary>
     public Rhino.Geometry.Vector2d TextureSize
     {
@@ -82,7 +82,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Texture mapping rotation around world origin + offset in degrees
+    /// Texture mapping rotation around world origin + offset in degrees.
     /// </summary>
     public double TextureRotation
     {

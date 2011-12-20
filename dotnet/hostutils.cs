@@ -111,13 +111,13 @@ namespace Rhino.Runtime
     protected virtual void OnBeginLoadPlugIn(string description) { }
     protected virtual void OnEndLoadPlugIn() { }
 
-    /// <summary>If you want to provide a custom icon for your skin</summary>
+    /// <summary>If you want to provide a custom icon for your skin.</summary>
     protected virtual System.Drawing.Bitmap MainRhinoIcon
     {
       get { return null; }
     }
 
-    /// <summary>If you want to provide a custom name for your skin</summary>
+    /// <summary>If you want to provide a custom name for your skin.</summary>
     protected virtual string ApplicationName
     {
       get { return string.Empty; }
@@ -199,7 +199,7 @@ namespace Rhino.Runtime
     Action<string> m_output;
 
     /// <summary>
-    /// object set to variable held in scriptcontext.doc
+    /// object set to variable held in scriptcontext.doc.
     /// </summary>
     public object ScriptContextDoc
     {
@@ -248,7 +248,7 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Test if this process is currently executing on the Windows platform
+    /// Tests if this process is currently executing on the Windows platform.
     /// </summary>
     public static bool RunningOnWindows
     {
@@ -256,7 +256,7 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Test if this process is currently executing on the Mac OSX platform
+    /// Tests if this process is currently executing on the Mac OSX platform.
     /// </summary>
     public static bool RunningOnOSX
     {
@@ -269,7 +269,7 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Test if this process is currently executing under the Mono runtime
+    /// Tests if this process is currently executing under the Mono runtime.
     /// </summary>
     public static bool RunningInMono
     {
@@ -277,11 +277,11 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Test if RhinoCommon is currently executing inside of the Rhino.exe process.
+    /// Tests if RhinoCommon is currently executing inside of the Rhino.exe process.
     /// There are other cases where RhinoCommon could be running; specifically inside
     /// of Visual Studio when something like a windows form is being worked on in the
     /// resource editor or running stand-alone when compiled to be used as a version
-    /// of OpenNURBS
+    /// of OpenNURBS.
     /// </summary>
     public static bool RunningInRhino
     {
@@ -336,8 +336,8 @@ namespace Rhino.Runtime
 
     static bool m_bSendDebugToRhino; // = false; initialized by runtime
     /// <summary>
-    /// Print a debug message to the Rhino Command Line. 
-    /// The message will only appear if the SendDebugToCommandLine property is set to True.
+    /// Prints a debug message to the Rhino Command Line. 
+    /// The message will only appear if the SendDebugToCommandLine property is set to true.
     /// </summary>
     /// <param name="msg">Message to print.</param>
     public static void DebugString(string msg)
@@ -346,8 +346,8 @@ namespace Rhino.Runtime
         UnsafeNativeMethods.RHC_DebugPrint(msg);
     }
     /// <summary>
-    /// Print a debug message to the Rhino Command Line. 
-    /// The messae will only appear if the SendDebugToCommandLine property is set to True.
+    /// Prints a debug message to the Rhino Command Line. 
+    /// The message will only appear if the SendDebugToCommandLine property is set to true.
     /// </summary>
     /// <param name="format">Message to format and print.</param>
     /// <param name="args">An Object array containing zero or more objects to format.</param>
@@ -493,7 +493,7 @@ namespace Rhino.Runtime
     /// </summary>
     /// <param name="plugin">Plugin that owns the command.</param>
     /// <param name="cmd">Command to add.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public static bool RegisterDynamicCommand(PlugIn plugin, Commands.Command cmd)
     {
       // every command must have a RhinoId and Name attribute

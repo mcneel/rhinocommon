@@ -11,7 +11,7 @@ using System.Collections.Generic;
 namespace Rhino
 {
   /// <summary>
-  /// Represents an active model
+  /// Represents an active model.
   /// </summary>
   public sealed class RhinoDoc
   {
@@ -131,7 +131,7 @@ namespace Rhino
           set { CRhinoDoc_GetSetString(m_doc.m_docId, idxUrl, true, value); }
         }
     */
-    ///<summary>Returns or sets the document&apos;s notes</summary>
+    ///<summary>Returns or sets the document&apos;s notes.</summary>
     public string Notes
     {
       get { return GetString(idxNotes); }
@@ -372,8 +372,8 @@ namespace Rhino
 
     /// <summary>
     /// Current read-only mode for this document.
-    /// True if the document is can be viewed but NOT saved.
-    /// False if document can be viewed and saved
+    /// true if the document is can be viewed but NOT saved.
+    /// false if document can be viewed and saved.
     /// </summary>
     public bool IsReadOnly
     {
@@ -462,7 +462,7 @@ namespace Rhino
 
     private Rhino.DocObjects.Tables.MaterialTable m_material_table;
 
-    /// <summary>Materials in the document</summary>
+    /// <summary>Materials in the document.</summary>
     public Rhino.DocObjects.Tables.MaterialTable Materials
     {
       get { return m_material_table ?? (m_material_table = new Rhino.DocObjects.Tables.MaterialTable(this)); }
@@ -470,7 +470,7 @@ namespace Rhino
 
     private Rhino.DocObjects.Tables.LinetypeTable m_linetype_table;
     /// <summary>
-    /// Linetypes in the document
+    /// Linetypes in the document.
     /// </summary>
     public Rhino.DocObjects.Tables.LinetypeTable Linetypes
     {
@@ -479,7 +479,7 @@ namespace Rhino
 
     private Rhino.DocObjects.Tables.LayerTable m_layer_table;
     /// <summary>
-    /// Layers in the document
+    /// Layers in the document.
     /// </summary>
     public Rhino.DocObjects.Tables.LayerTable Layers
     {
@@ -604,7 +604,7 @@ namespace Rhino
     #endregion
 
     /// <summary>
-    /// True if Rhino is in the process of sending this document as an email attachment
+    /// true if Rhino is in the process of sending this document as an email attachment.
     /// </summary>
     public bool IsSendingMail
     {
@@ -642,7 +642,7 @@ namespace Rhino
     }
 
     /// <summary>
-    /// True if undo recording is actually happening now
+    /// true if undo recording is actually happening now.
     /// </summary>
     public bool UndoRecordingIsActive
     {
@@ -776,7 +776,7 @@ namespace Rhino
     ///The model (3DM) from which to extract the preview image.
     ///If null, the currently loaded model is used.
     ///</param>
-    ///<returns>true on success</returns>
+    ///<returns>true on success.</returns>
     static public System.Drawing.Bitmap ExtractPreviewImage(string path)
     {
       if (string.IsNullOrEmpty(path))
@@ -1092,7 +1092,7 @@ namespace Rhino
     }
 
     internal static EventHandler<DocObjects.RhinoObjectEventArgs> m_add_object;
-    /// <summary>Called if a new object is added to the document</summary>
+    /// <summary>Called if a new object is added to the document.</summary>
     public static event EventHandler<DocObjects.RhinoObjectEventArgs> AddRhinoObject
     {
       add
@@ -1217,7 +1217,7 @@ namespace Rhino
       }
     }
     internal static EventHandler<DocObjects.RhinoObjectEventArgs> m_undelete_object;
-    /// <summary>Called if an object is un-deleted</summary>
+    /// <summary>Called if an object is un-deleted.</summary>
     public static event EventHandler<DocObjects.RhinoObjectEventArgs> UndeleteRhinoObject
     {
       add
@@ -1256,7 +1256,7 @@ namespace Rhino
     }
     internal static EventHandler<DocObjects.RhinoObjectEventArgs> m_purge_object;
     /// <summary>
-    /// Called if an object is being purged from a document. The object will cease to exist forever
+    /// Called if an object is being purged from a document. The object will cease to exist forever.
     /// </summary>
     public static event EventHandler<DocObjects.RhinoObjectEventArgs> PurgeRhinoObject
     {
@@ -1315,7 +1315,7 @@ namespace Rhino
     internal static EventHandler<DocObjects.RhinoObjectSelectionEventArgs> m_deselect_objects;
 
     /// <summary>
-    /// Called when object(s) are selected
+    /// Called when object(s) are selected.
     /// </summary>
     public static event EventHandler<DocObjects.RhinoObjectSelectionEventArgs> SelectObjects
     {
@@ -1340,7 +1340,7 @@ namespace Rhino
     }
 
     /// <summary>
-    /// Called when object(s) are deselected
+    /// Called when object(s) are deselected.
     /// </summary>
     public static event EventHandler<DocObjects.RhinoObjectSelectionEventArgs> DeselectObjects
     {
@@ -1385,7 +1385,7 @@ namespace Rhino
     internal static EventHandler<DocObjects.RhinoDeselectAllObjectsEventArgs> m_deselect_allobjects;
 
     /// <summary>
-    /// Called when all objects are deselected
+    /// Called when all objects are deselected.
     /// </summary>
     public static event EventHandler<DocObjects.RhinoDeselectAllObjectsEventArgs> DeselectAllObjects
     {
@@ -1431,7 +1431,7 @@ namespace Rhino
     internal static EventHandler<DocObjects.RhinoModifyObjectAttributesEventArgs> m_modify_object_attributes;
 
     /// <summary>
-    /// Called when all objects are deselected
+    /// Called when all objects are deselected.
     /// </summary>
     public static event EventHandler<DocObjects.RhinoModifyObjectAttributesEventArgs> ModifyObjectAttributes
     {
@@ -1476,7 +1476,7 @@ namespace Rhino
     internal static EventHandler<DocObjects.Tables.LayerTableEventArgs> m_layer_table_event;
 
     /// <summary>
-    /// Called when any modification happens to a document's layer table
+    /// Called when any modification happens to a document's layer table.
     /// </summary>
     public static event EventHandler<Rhino.DocObjects.Tables.LayerTableEventArgs> LayerTableEvent
     {
@@ -1520,7 +1520,7 @@ namespace Rhino
     internal static EventHandler<DocObjects.Tables.GroupTableEventArgs> m_group_table_event;
 
     /// <summary>
-    /// Called when any modification happens to a document's group table
+    /// Called when any modification happens to a document's group table.
     /// </summary>
     public static event EventHandler<Rhino.DocObjects.Tables.GroupTableEventArgs> GroupTableEvent
     {
@@ -1550,7 +1550,7 @@ namespace Rhino
 #region rdk events
 
     /// <summary>
-    /// Bit flags for RdkDocumentSettingsChangedArgs flags parameter
+    /// Bit flags for RdkDocumentSettingsChangedArgs flags parameter.
     /// </summary>
 	  public enum DocSettingsChangedFlags
 	  {
@@ -1606,7 +1606,7 @@ namespace Rhino
 
 
     /// <summary>
-    /// Called when RDK document settings are changed
+    /// Called when RDK document settings are changed.
     /// </summary>
     public static event EventHandler<RdkDocumentSettingsChangedArgs> RdkSettingsChanged
     {
@@ -1636,7 +1636,7 @@ namespace Rhino
 
 
   /// <summary>
-  /// Provides document information for RhinoDoc events
+  /// Provides document information for RhinoDoc events.
   /// </summary>
   public class DocumentEventArgs : EventArgs
   {
@@ -1671,7 +1671,7 @@ namespace Rhino
   }
 
   /// <summary>
-  /// Provides document information for RhinoDoc events
+  /// Provides document information for RhinoDoc events.
   /// </summary>
   public class DocumentOpenEventArgs : DocumentEventArgs
   {
@@ -1688,7 +1688,7 @@ namespace Rhino
     }
 
     /// <summary>
-    /// Name of file being opened
+    /// Name of file being opened.
     /// </summary>
     public string FileName
     {
@@ -1704,8 +1704,8 @@ namespace Rhino
     }
 
     /// <summary>
-    /// True if file is being merged into the current document. This
-    /// occurs during the "Import" command
+    /// true if file is being merged into the current document. This
+    /// occurs during the "Import" command.
     /// </summary>
     public bool Merge
     {
@@ -1713,7 +1713,7 @@ namespace Rhino
     }
 
     /// <summary>
-    /// True is file is openend as a reference file
+    /// true is file is openend as a reference file.
     /// </summary>
     public bool Reference
     {
@@ -1722,7 +1722,7 @@ namespace Rhino
   }
 
   /// <summary>
-  /// Provides document information for RhinoDoc events
+  /// Provides document information for RhinoDoc events.
   /// </summary>
   public class DocumentSaveEventArgs : DocumentEventArgs
   {
@@ -1737,7 +1737,7 @@ namespace Rhino
     }
 
     /// <summary>
-    /// Name of file being written
+    /// Name of file being written.
     /// </summary>
     public string FileName
     {
@@ -1753,7 +1753,7 @@ namespace Rhino
     }
 
     /// <summary>
-    /// True if only selected objects are being written to a file
+    /// true if only selected objects are being written to a file.
     /// </summary>
     public bool ExportSelected
     {
@@ -2018,14 +2018,14 @@ namespace Rhino.DocObjects.Tables
       m_doc = doc;
     }
 
-    /// <summary>Document that owns this object table</summary>
+    /// <summary>Document that owns this object table.</summary>
     public RhinoDoc Document
     {
       get { return m_doc; }
     }
 
     /// <summary>
-    /// Gets or Sets the active view
+    /// Gets or Sets the active view.
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addbackgroundbitmap.vb' lang='vbnet'/>
@@ -2050,12 +2050,12 @@ namespace Rhino.DocObjects.Tables
 
     /// <summary>
     /// Cause objects selection state to change momentarily so the object
-    /// appears to flash on the screen
+    /// appears to flash on the screen.
     /// </summary>
     /// <param name="list"></param>
     /// <param name="useSelectionColor">
     /// If true, flash between object color and selection color. If false,
-    /// flash between visible and invisible
+    /// flash between visible and invisible.
     /// </param>
     public void FlashObjects(IEnumerable<RhinoObject> list, bool useSelectionColor)
     {
@@ -2064,7 +2064,7 @@ namespace Rhino.DocObjects.Tables
       UnsafeNativeMethods.CRhinoDoc_FlashObjectList(m_doc.m_docId, pArray, useSelectionColor);
     }
 
-    ///<summary>Redraws all views</summary>
+    ///<summary>Redraws all views.</summary>
     ///<remarks>
     /// If you change something in the active document -- like adding
     /// objects, deleting objects, modifying layer or object display 
@@ -2085,7 +2085,7 @@ namespace Rhino.DocObjects.Tables
       UnsafeNativeMethods.CRhinoDoc_Redraw(m_doc.m_docId);
     }
 
-    /// <summary>Gets an array of all the views</summary>
+    /// <summary>Gets an array of all the views.</summary>
     /// <param name="includeStandardViews"></param>
     /// <param name="includePageViews"></param>
     /// <returns></returns>
@@ -2133,10 +2133,10 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Find a view in this document with a given main viewport Id
+    /// Finds a view in this document with a given main viewport Id.
     /// </summary>
     /// <param name="mainViewportId"></param>
-    /// <returns>View on success. null if no view could be found in this document</returns>
+    /// <returns>View on success. null if no view could be found in this document.</returns>
     public Rhino.Display.RhinoView Find(Guid mainViewportId)
     {
       IntPtr pView = UnsafeNativeMethods.CRhinoDoc_FindView(m_doc.m_docId, mainViewportId);
@@ -2144,10 +2144,10 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Find a view in this document with a main viewport that has a given name. Note that there
+    /// Finds a view in this document with a main viewport that has a given name. Note that there
     /// may be multiple views in this document that have the same name. This function only returns
     /// the first view found. If you want to find all the views with a given name, use the GetViewList
-    /// function and iterate through the views
+    /// function and iterate through the views.
     /// </summary>
     /// <param name="mainViewportName"></param>
     /// <param name="compareCase"></param>
@@ -2183,7 +2183,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Create a new RhinoView
+    /// Constructs a new RhinoView.
     /// </summary>
     /// <param name="title"></param>
     /// <param name="projection"></param>
@@ -2204,12 +2204,12 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Create a new page view with a given title
+    /// Constructs a new page view with a given title.
     /// </summary>
     /// <param name="title">
-    /// If null or empty, a name will be generated as "Page #" where # is the largest page number
+    /// If null or empty, a name will be generated as "Page #" where # is the largest page number.
     /// </param>
-    /// <returns>newly created page view on success. Null on error</returns>
+    /// <returns>newly created page view on success. Null on error.</returns>
     public Rhino.Display.RhinoPageView AddPageView(string title)
     {
       IntPtr pPageView = UnsafeNativeMethods.CRhinoPageView_CreateView(title, 0, 0);
@@ -2221,14 +2221,14 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Create a new page view with a given title and size
+    /// Constructs a new page view with a given title and size.
     /// </summary>
     /// <param name="title">
-    /// If null or empty, a name will be generated as "Page #" where # is the largest page number
+    /// If null or empty, a name will be generated as "Page #" where # is the largest page number.
     /// </param>
     /// <param name="pageWidth"></param>
     /// <param name="pageHeight"></param>
-    /// <returns>newly created page view on success. Null on error</returns>
+    /// <returns>newly created page view on success. Null on error.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
@@ -2290,7 +2290,7 @@ namespace Rhino.DocObjects.Tables
     /// Uses the object guid to find a rhino object. Deleted objects cannot be found by id.
     /// The guid is the value that is stored on RhinoObject.Id
     /// In a single document, no two active objects have the same guid. If an object is
-    /// replaced with a new object, then the guid  persists. For example, if the Move command
+    /// replaced with a new object, then the guid  persists. For example, if the _Move command
     /// moves an object, then the moved object inherits it's guid from the starting object.
     /// If the Copy command copies an object, then the copy gets a new guid. This guid persists
     /// through file saving/openning operations. This function will not find grip objects.
@@ -2397,24 +2397,24 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Find all objects whose UserString matches the search patterns.
+    /// Finds all objects whose UserString matches the search patterns.
     /// </summary>
     /// <param name="key">Search pattern for UserString keys (supported wildcards are: ? = any single character, * = any sequence of characters).</param>
     /// <param name="value">Search pattern for UserString values (supported wildcards are: ? = any single character, * = any sequence of characters).</param>
-    /// <param name="caseSensitive">If True, string comparison will be case sensitive.</param>
+    /// <param name="caseSensitive">If true, string comparison will be case sensitive.</param>
     /// <returns>An array of all objects whose UserString matches with the search patterns or null when no such objects could be found.</returns>
     public Rhino.DocObjects.RhinoObject[] FindByUserString(string key, string value, bool caseSensitive)
     {
       return FindByUserString(key, value, caseSensitive, true, true, ObjectType.AnyObject);
     }
     /// <summary>
-    /// Find all objects whose UserString matches the search patterns.
+    /// Finds all objects whose UserString matches the search patterns.
     /// </summary>
     /// <param name="key">Search pattern for UserString keys (supported wildcards are: ? = any single character, * = any sequence of characters).</param>
     /// <param name="value">Search pattern for UserString values (supported wildcards are: ? = any single character, * = any sequence of characters).</param>
-    /// <param name="caseSensitive">If True, string comparison will be case sensitive.</param>
-    /// <param name="searchGeometry">If True, UserStrings attached to the geometry of an object will be searched.</param>
-    /// <param name="searchAttributes">If True, UserStrings attached to the attributes of an object will be searched.</param>
+    /// <param name="caseSensitive">If true, string comparison will be case sensitive.</param>
+    /// <param name="searchGeometry">If true, UserStrings attached to the geometry of an object will be searched.</param>
+    /// <param name="searchAttributes">If true, UserStrings attached to the attributes of an object will be searched.</param>
     /// <param name="filter">Object type filter.</param>
     /// <returns>An array of all objects whose UserString matches with the search patterns or null when no such objects could be found.</returns>
     [CLSCompliant(false)]
@@ -2439,13 +2439,13 @@ namespace Rhino.DocObjects.Tables
       return FindByUserString(key, value, caseSensitive, searchGeometry, searchAttributes, oes);
     }
     /// <summary>
-    /// Find all objects whose UserString matches the search patterns.
+    /// Finds all objects whose UserString matches the search patterns.
     /// </summary>
     /// <param name="key">Search pattern for UserString keys (supported wildcards are: ? = any single character, * = any sequence of characters).</param>
     /// <param name="value">Search pattern for UserString values (supported wildcards are: ? = any single character, * = any sequence of characters).</param>
-    /// <param name="caseSensitive">If True, string comparison will be case sensitive.</param>
-    /// <param name="searchGeometry">If True, UserStrings attached to the geometry of an object will be searched.</param>
-    /// <param name="searchAttributes">If True, UserStrings attached to the attributes of an object will be searched.</param>
+    /// <param name="caseSensitive">If true, string comparison will be case sensitive.</param>
+    /// <param name="searchGeometry">If true, UserStrings attached to the geometry of an object will be searched.</param>
+    /// <param name="searchAttributes">If true, UserStrings attached to the attributes of an object will be searched.</param>
     /// <param name="filter">Filter used to restrict the number of objects searched.</param>
     /// <returns>An array of all objects whose UserString matches with the search patterns or null when no such objects could be found.</returns>
     public Rhino.DocObjects.RhinoObject[] FindByUserString(string key, string value, bool caseSensitive, bool searchGeometry, bool searchAttributes, Rhino.DocObjects.ObjectEnumeratorSettings filter)
@@ -2464,7 +2464,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Find all of the clipping plane objects that actively clip a viewport
+    /// Finds all of the clipping plane objects that actively clip a viewport.
     /// </summary>
     /// <param name="viewport"></param>
     /// <returns></returns>
@@ -2509,7 +2509,7 @@ namespace Rhino.DocObjects.Tables
       return AddPoint(new Point3d(x, y, z));
     }
     /// <summary>Adds a point object to the document.</summary>
-    /// <param name="point">location of point</param>
+    /// <param name="point">location of point.</param>
     /// <returns>A unique identifier for the object.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_dividebylength.vb' lang='vbnet'/>
@@ -2520,9 +2520,9 @@ namespace Rhino.DocObjects.Tables
     {
       return UnsafeNativeMethods.CRhinoDoc_AddPoint(m_doc.m_docId, point, IntPtr.Zero);
     }
-    /// <summary>Adds a point object to the document</summary>
-    /// <param name="point">location of point</param>
-    /// <param name="attributes">attributes to apply to point</param>
+    /// <summary>Adds a point object to the document.</summary>
+    /// <param name="point">location of point.</param>
+    /// <param name="attributes">attributes to apply to point.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPoint(Point3d point, DocObjects.ObjectAttributes attributes)
     {
@@ -2531,7 +2531,7 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_AddPoint(m_doc.m_docId, point, attributes.ConstPointer());
     }
     /// <summary>Adds a point object to the document.</summary>
-    /// <param name="point">location of point</param>
+    /// <param name="point">location of point.</param>
     /// <returns>A unique identifier for the object.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_dividebylength.vb' lang='vbnet'/>
@@ -2543,9 +2543,9 @@ namespace Rhino.DocObjects.Tables
       Point3d p3d = new Point3d(point);
       return AddPoint(p3d);
     }
-    /// <summary>Adds a point object to the document</summary>
-    /// <param name="point">location of point</param>
-    /// <param name="attributes">attributes to apply to point</param>
+    /// <summary>Adds a point object to the document.</summary>
+    /// <param name="point">location of point.</param>
+    /// <param name="attributes">attributes to apply to point.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPoint(Point3f point, DocObjects.ObjectAttributes attributes)
     {
@@ -2626,16 +2626,16 @@ namespace Rhino.DocObjects.Tables
       return ids;
     }
 
-    /// <summary>Adds a point cloud object to the document</summary>
+    /// <summary>Adds a point cloud object to the document.</summary>
     /// <param name="cloud">PointCloud to add.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPointCloud(PointCloud cloud)
     {
       return AddPointCloud(cloud, null);
     }
-    /// <summary>Adds a point cloud object to the document</summary>
+    /// <summary>Adds a point cloud object to the document.</summary>
     /// <param name="cloud">PointCloud to add.</param>
-    /// <param name="attributes">attributes to apply to point cloud</param>
+    /// <param name="attributes">attributes to apply to point cloud.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPointCloud(PointCloud cloud, DocObjects.ObjectAttributes attributes)
     {
@@ -2649,16 +2649,16 @@ namespace Rhino.DocObjects.Tables
 
       return UnsafeNativeMethods.CRhinoDoc_AddPointCloud2(m_doc.m_docId, pCloud, pAttrs);
     }
-    /// <summary>Adds a point cloud object to the document</summary>
+    /// <summary>Adds a point cloud object to the document.</summary>
     /// <param name="points"></param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPointCloud(IEnumerable<Point3d> points)
     {
       return AddPointCloud(points, null);
     }
-    /// <summary>Adds a point cloud object to the document</summary>
+    /// <summary>Adds a point cloud object to the document.</summary>
     /// <param name="points"></param>
-    /// <param name="attributes">attributes to apply to point cloud</param>
+    /// <param name="attributes">attributes to apply to point cloud.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPointCloud(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes)
     {
@@ -2676,12 +2676,12 @@ namespace Rhino.DocObjects.Tables
 
 
     /// <summary>
-    /// Adds a clipping plane object to Rhino
+    /// Adds a clipping plane object to Rhino.
     /// </summary>
     /// <param name="plane"></param>
     /// <param name="uMagnitude"></param>
     /// <param name="vMagnitude"></param>
-    /// <param name="clippedViewportId">viewport id that the new clipping plane will clip</param>
+    /// <param name="clippedViewportId">viewport id that the new clipping plane will clip.</param>
     /// <returns>A unique identifier for the object.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addclippingplane.vb' lang='vbnet'/>
@@ -2693,12 +2693,12 @@ namespace Rhino.DocObjects.Tables
       return AddClippingPlane(plane, uMagnitude, vMagnitude, new Guid[] { clippedViewportId });
     }
     /// <summary>
-    /// Adds a clipping plane object to Rhino
+    /// Adds a clipping plane object to Rhino.
     /// </summary>
     /// <param name="plane"></param>
     /// <param name="uMagnitude"></param>
     /// <param name="vMagnitude"></param>
-    /// <param name="clippedViewportIds">list of viewport ids that the new clipping plane will clip</param>
+    /// <param name="clippedViewportIds">list of viewport ids that the new clipping plane will clip.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddClippingPlane(Plane plane, double uMagnitude, double vMagnitude, IEnumerable<Guid> clippedViewportIds)
     {
@@ -2715,12 +2715,12 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
     /// <summary>
-    /// Adds a clipping plane object to Rhino
+    /// Adds a clipping plane object to Rhino.
     /// </summary>
     /// <param name="plane"></param>
     /// <param name="uMagnitude"></param>
     /// <param name="vMagnitude"></param>
-    /// <param name="clippedViewportIds">list of viewport ids that the new clipping plane will clip</param>
+    /// <param name="clippedViewportIds">list of viewport ids that the new clipping plane will clip.</param>
     /// <param name="attributes"></param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddClippingPlane(Plane plane, double uMagnitude, double vMagnitude, IEnumerable<Guid> clippedViewportIds, DocObjects.ObjectAttributes attributes)
@@ -2760,7 +2760,7 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_AddLinearDimension(m_doc.m_docId, pConstDimension, pAttributes);
     }
 
-    /// <summary>Adds a line object to Rhino</summary>
+    /// <summary>Adds a line object to Rhino.</summary>
     /// <param name="from"></param>
     /// <param name="to"></param>
     /// <returns>A unique identifier for the object.</returns>
@@ -2773,10 +2773,10 @@ namespace Rhino.DocObjects.Tables
     {
       return UnsafeNativeMethods.CRhinoDoc_AddLine(m_doc.m_docId, from, to, IntPtr.Zero);
     }
-    /// <summary>Adds a line object to Rhino</summary>
+    /// <summary>Adds a line object to Rhino.</summary>
     /// <param name="from"></param>
     /// <param name="to"></param>
-    /// <param name="attributes">attributes to apply to line</param>
+    /// <param name="attributes">attributes to apply to line.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddLine(Point3d from, Point3d to, DocObjects.ObjectAttributes attributes)
     {
@@ -2784,15 +2784,15 @@ namespace Rhino.DocObjects.Tables
         return AddLine(from, to);
       return UnsafeNativeMethods.CRhinoDoc_AddLine(m_doc.m_docId, from, to, attributes.ConstPointer());
     }
-    /// <summary>Adds a line object to Rhino</summary>
+    /// <summary>Adds a line object to Rhino.</summary>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddLine(Line line)
     {
       return AddLine(line.From, line.To);
     }
-    /// <summary>Adds a line object to Rhino</summary>
+    /// <summary>Adds a line object to Rhino.</summary>
     /// <param name="line"></param>
-    /// <param name="attributes">attributes to apply to line</param>
+    /// <param name="attributes">attributes to apply to line.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddLine(Line line, DocObjects.ObjectAttributes attributes)
     {
@@ -2800,16 +2800,16 @@ namespace Rhino.DocObjects.Tables
     }
 
 
-    /// <summary>Adds a polyline object to Rhino</summary>
+    /// <summary>Adds a polyline object to Rhino.</summary>
     /// <param name="points"></param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPolyline(IEnumerable<Point3d> points)
     {
       return AddPolyline(points, null);
     }
-    /// <summary>Adds a polyline object to Rhino</summary>
+    /// <summary>Adds a polyline object to Rhino.</summary>
     /// <param name="points"></param>
-    /// <param name="attributes">attributes to apply to line</param>
+    /// <param name="attributes">attributes to apply to line.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPolyline(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes)
     {
@@ -2826,16 +2826,16 @@ namespace Rhino.DocObjects.Tables
     }
 
 
-    /// <summary>Adds a curve object to the document representing an arc</summary>
+    /// <summary>Adds a curve object to the document representing an arc.</summary>
     /// <param name="arc"></param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddArc(Arc arc)
     {
       return UnsafeNativeMethods.CRhinoDoc_AddArc(m_doc.m_docId, ref arc, IntPtr.Zero);
     }
-    /// <summary>Adds a curve object to the document representing an arc</summary>
+    /// <summary>Adds a curve object to the document representing an arc.</summary>
     /// <param name="arc"></param>
-    /// <param name="attributes">attributes to apply to arc</param>
+    /// <param name="attributes">attributes to apply to arc.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddArc(Arc arc, DocObjects.ObjectAttributes attributes)
     {
@@ -2845,7 +2845,7 @@ namespace Rhino.DocObjects.Tables
     }
 
 
-    /// <summary>Adds a curve object to the document representing a circle</summary>
+    /// <summary>Adds a curve object to the document representing a circle.</summary>
     /// <param name="circle"></param>
     /// <returns>A unique identifier for the object.</returns>
     /// <example>
@@ -2857,9 +2857,9 @@ namespace Rhino.DocObjects.Tables
     {
       return UnsafeNativeMethods.CRhinoDoc_AddCircle(m_doc.m_docId, ref circle, IntPtr.Zero);
     }
-    /// <summary>Adds a curve object to the document representing a circle</summary>
+    /// <summary>Adds a curve object to the document representing a circle.</summary>
     /// <param name="circle"></param>
-    /// <param name="attributes">attributes to apply to circle</param>
+    /// <param name="attributes">attributes to apply to circle.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddCircle(Circle circle, DocObjects.ObjectAttributes attributes)
     {
@@ -2869,16 +2869,16 @@ namespace Rhino.DocObjects.Tables
     }
 
 
-    /// <summary>Adds a curve object to the document representing an ellipse</summary>
+    /// <summary>Adds a curve object to the document representing an ellipse.</summary>
     /// <param name="ellipse"></param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddEllipse(Ellipse ellipse)
     {
       return UnsafeNativeMethods.CRhinoDoc_AddEllipse(m_doc.m_docId, ref ellipse, IntPtr.Zero);
     }
-    /// <summary>Adds a curve object to the document representing an ellipse</summary>
+    /// <summary>Adds a curve object to the document representing an ellipse.</summary>
     /// <param name="ellipse"></param>
-    /// <param name="attributes">attributes to apply to ellipse</param>
+    /// <param name="attributes">attributes to apply to ellipse.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddEllipse(Ellipse ellipse, DocObjects.ObjectAttributes attributes)
     {
@@ -2907,7 +2907,7 @@ namespace Rhino.DocObjects.Tables
     //  CRhinoCurveObject* AddCurveObject( const ON_BezierCurve& bezier_curve, const ON_3dmObjectAttributes* pAttributes = NULL, CRhinoHistory* pHistory = NULL,  BOOL bReference = NULL );
 
 
-    /// <summary>Adds a curve object to Rhino</summary>
+    /// <summary>Adds a curve object to Rhino.</summary>
     /// <param name="curve"></param>
     /// <returns>A unique identifier for the object.</returns>
     /// <example>
@@ -2922,9 +2922,9 @@ namespace Rhino.DocObjects.Tables
       IntPtr curvePtr = curve.ConstPointer();
       return UnsafeNativeMethods.CRhinoDoc_AddCurve(m_doc.m_docId, curvePtr, IntPtr.Zero);
     }
-    /// <summary>Adds a curve object to Rhino</summary>
-    /// <param name="curve">A duplicate of this curve is added to Rhino</param>
-    /// <param name="attributes">attributes to apply to curve</param>
+    /// <summary>Adds a curve object to Rhino.</summary>
+    /// <param name="curve">A duplicate of this curve is added to Rhino.</param>
+    /// <param name="attributes">attributes to apply to curve.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddCurve(Geometry.Curve curve, DocObjects.ObjectAttributes attributes)
     {
@@ -2937,7 +2937,7 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_AddCurve(m_doc.m_docId, curvePtr, attrPtr);
     }
 
-    /// <summary>Adds a text dot object to Rhino</summary>
+    /// <summary>Adds a text dot object to Rhino.</summary>
     /// <param name="text"></param>
     /// <param name="location"></param>
     /// <returns>A unique identifier for the object.</returns>
@@ -2948,7 +2948,7 @@ namespace Rhino.DocObjects.Tables
       dot.Dispose();
       return rc;
     }
-    /// <summary>Adds a text dot object to Rhino</summary>
+    /// <summary>Adds a text dot object to Rhino.</summary>
     /// <param name="text"></param>
     /// <param name="location"></param>
     /// <param name="attributes"></param>
@@ -2960,7 +2960,7 @@ namespace Rhino.DocObjects.Tables
       dot.Dispose();
       return rc;
     }
-    /// <summary>Adds a text dot object to Rhino</summary>
+    /// <summary>Adds a text dot object to Rhino.</summary>
     /// <param name="dot"></param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddTextDot(Geometry.TextDot dot)
@@ -2970,7 +2970,7 @@ namespace Rhino.DocObjects.Tables
       IntPtr ptr = dot.ConstPointer();
       return UnsafeNativeMethods.CRhinoDoc_AddTextDot(m_doc.m_docId, ptr, IntPtr.Zero);
     }
-    /// <summary>Adds a text dot object to Rhino</summary>
+    /// <summary>Adds a text dot object to Rhino.</summary>
     /// <param name="dot"></param>
     /// <param name="attributes"></param>
     /// <returns>A unique identifier for the object.</returns>
@@ -3069,8 +3069,8 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
-    /// <summary>Adds a surface object to Rhino</summary>
-    /// <param name="surface">A duplicate of this surface is added to Rhino</param>
+    /// <summary>Adds a surface object to Rhino.</summary>
+    /// <param name="surface">A duplicate of this surface is added to Rhino.</param>
     /// <returns>A unique identifier for the object.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addtorus.vb' lang='vbnet'/>
@@ -3084,8 +3084,8 @@ namespace Rhino.DocObjects.Tables
       IntPtr surfacePtr = surface.ConstPointer();
       return UnsafeNativeMethods.CRhinoDoc_AddSurface(m_doc.m_docId, surfacePtr, IntPtr.Zero);
     }
-    /// <summary>Adds a surface object to Rhino</summary>
-    /// <param name="surface">A duplicate of this surface is added to Rhino</param>
+    /// <summary>Adds a surface object to Rhino.</summary>
+    /// <param name="surface">A duplicate of this surface is added to Rhino.</param>
     /// <param name="attributes"></param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddSurface(Geometry.Surface surface, DocObjects.ObjectAttributes attributes)
@@ -3100,15 +3100,15 @@ namespace Rhino.DocObjects.Tables
     }
 
 #if USING_V5_SDK
-    /// <summary>Adds an extrusion object to Rhino</summary>
-    /// <param name="extrusion">A duplicate of this extrusion is added to Rhino</param>
+    /// <summary>Adds an extrusion object to Rhino.</summary>
+    /// <param name="extrusion">A duplicate of this extrusion is added to Rhino.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddExtrusion(Geometry.Extrusion extrusion)
     {
       return AddExtrusion(extrusion, null);
     }
-    /// <summary>Adds an extrusion object to Rhino</summary>
-    /// <param name="extrusion">A duplicate of this extrusion is added to Rhino</param>
+    /// <summary>Adds an extrusion object to Rhino.</summary>
+    /// <param name="extrusion">A duplicate of this extrusion is added to Rhino.</param>
     /// <param name="attributes"></param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddExtrusion(Geometry.Extrusion extrusion, DocObjects.ObjectAttributes attributes)
@@ -3124,8 +3124,8 @@ namespace Rhino.DocObjects.Tables
 #endif
 
 
-    /// <summary>Adds a mesh object to Rhino</summary>
-    /// <param name="mesh">A duplicate of this mesh is added to Rhino</param>
+    /// <summary>Adds a mesh object to Rhino.</summary>
+    /// <param name="mesh">A duplicate of this mesh is added to Rhino.</param>
     /// <returns>A unique identifier for the object.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addmesh.vb' lang='vbnet'/>
@@ -3139,8 +3139,8 @@ namespace Rhino.DocObjects.Tables
       IntPtr meshPtr = mesh.ConstPointer();
       return UnsafeNativeMethods.CRhinoDoc_AddMesh(m_doc.m_docId, meshPtr, IntPtr.Zero);
     }
-    /// <summary>Adds a mesh object to Rhino</summary>
-    /// <param name="mesh">A duplicate of this mesh is added to Rhino</param>
+    /// <summary>Adds a mesh object to Rhino.</summary>
+    /// <param name="mesh">A duplicate of this mesh is added to Rhino.</param>
     /// <param name="attributes"></param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddMesh(Geometry.Mesh mesh, DocObjects.ObjectAttributes attributes)
@@ -3155,8 +3155,8 @@ namespace Rhino.DocObjects.Tables
     }
 
 
-    /// <summary>Adds a brep object to Rhino</summary>
-    /// <param name="brep">A duplicate of this brep is added to Rhino</param>
+    /// <summary>Adds a brep object to Rhino.</summary>
+    /// <param name="brep">A duplicate of this brep is added to Rhino.</param>
     /// <returns>A unique identifier for the object.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addbrepbox.vb' lang='vbnet'/>
@@ -3170,9 +3170,9 @@ namespace Rhino.DocObjects.Tables
       IntPtr brepPtr = brep.ConstPointer();
       return UnsafeNativeMethods.CRhinoDoc_AddBrep(m_doc.m_docId, brepPtr, IntPtr.Zero);
     }
-    /// <summary>Adds a brep object to Rhino</summary>
-    /// <param name="brep">A duplicate of this brep is added to Rhino</param>
-    /// <param name="attributes">attributes to apply to brep</param>
+    /// <summary>Adds a brep object to Rhino.</summary>
+    /// <param name="brep">A duplicate of this brep is added to Rhino.</param>
+    /// <param name="attributes">attributes to apply to brep.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddBrep(Geometry.Brep brep, DocObjects.ObjectAttributes attributes)
     {
@@ -3332,9 +3332,9 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Deletes objref.Object(). The deletion can be undone by calling UndeleteObject(). 
     /// </summary>
-    /// <param name="objref">objref.Object() will be deleted</param>
+    /// <param name="objref">objref.Object() will be deleted.</param>
     /// <param name="quiet">If false, a message box will appear when an object cannot be deleted.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Delete(DocObjects.ObjRef objref, bool quiet)
     {
       if (null == objref)
@@ -3347,7 +3347,7 @@ namespace Rhino.DocObjects.Tables
     /// </summary>
     /// <param name="obj">The object to delete.</param>
     /// <param name="quiet">If false, a message box will appear when an object cannot be deleted.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Delete(DocObjects.RhinoObject obj, bool quiet)
     {
       if (null == obj)
@@ -3360,9 +3360,9 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Deletes object from document. The deletion can be undone by calling UndeleteObject(). 
     /// </summary>
-    /// <param name="objectId">Id of the object to delete</param>
+    /// <param name="objectId">Id of the object to delete.</param>
     /// <param name="quiet">If false, a message box will appear when an object cannot be deleted.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Delete(Guid objectId, bool quiet)
     {
       DocObjects.ObjRef objref = new Rhino.DocObjects.ObjRef(objectId);
@@ -3390,7 +3390,7 @@ namespace Rhino.DocObjects.Tables
 
     /// <summary>
     /// Removes object from document and deletes the pointer. Typically you will
-    /// want to call Delete instead in order to keep the object on the undo list
+    /// want to call Delete instead in order to keep the object on the undo list.
     /// </summary>
     /// <param name="runtimeSerialNumber"></param>
     /// <returns></returns>
@@ -3402,7 +3402,7 @@ namespace Rhino.DocObjects.Tables
 
     /// <summary>
     /// Removes object from document and deletes the pointer. Typically you will
-    /// want to call Delete instead in order to keep the object on the undo list
+    /// want to call Delete instead in order to keep the object on the undo list.
     /// </summary>
     /// <param name="rhinoObject"></param>
     /// <returns></returns>
@@ -3428,7 +3428,7 @@ namespace Rhino.DocObjects.Tables
     /// Select a single object.
     /// </summary>
     /// <param name="objref">Object represented by this ObjRef is selected.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Select(DocObjects.ObjRef objref)
     {
       return Select(objref, true);
@@ -3438,7 +3438,7 @@ namespace Rhino.DocObjects.Tables
     /// </summary>
     /// <param name="objref">Object represented by this ObjRef is selected.</param>
     /// <param name="select">If true, the object will be selected, if false, it will be deselected.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Select(DocObjects.ObjRef objref, bool select)
     {
       return Select(objref, select, true);
@@ -3452,7 +3452,7 @@ namespace Rhino.DocObjects.Tables
     /// If true, then the object is highlighted if it is selected 
     /// and unhighlighted if is is not selected.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Select(DocObjects.ObjRef objref, bool select, bool syncHighlight)
     {
       return Select(objref, select, syncHighlight, true);
@@ -3469,7 +3469,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="persistentSelect">
     /// Objects that are persistently selected stay selected when a command terminates.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Select(DocObjects.ObjRef objref, bool select, bool syncHighlight, bool persistentSelect)
     {
       return Select(objref, select, syncHighlight, persistentSelect, false, false, false);
@@ -3497,7 +3497,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="ignoreLayerVisibility">
     /// If true, then objects on hidden layers can be selectable.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Select(DocObjects.ObjRef objref, bool select, bool syncHighlight, bool persistentSelect, bool ignoreGripsState, bool ignoreLayerLocking, bool ignoreLayerVisibility)
     {
       if (objref == null) { throw new ArgumentNullException("objref"); }
@@ -3537,7 +3537,7 @@ namespace Rhino.DocObjects.Tables
     /// Select a single object.
     /// </summary>
     /// <param name="objectId">Id of object to select.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_dividebylength.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_dividebylength.cs' lang='cs'/>
@@ -3554,7 +3554,7 @@ namespace Rhino.DocObjects.Tables
     /// </summary>
     /// <param name="objectId">Id of object to select.</param>
     /// <param name="select">If true, the object will be selected, if false, it will be deselected.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Select(Guid objectId, bool select)
     {
       ObjRef objref = new ObjRef(objectId);
@@ -3570,7 +3570,7 @@ namespace Rhino.DocObjects.Tables
     /// If true, then the object is highlighted if it is selected 
     /// and unhighlighted if is is not selected.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Select(Guid objectId, bool select, bool syncHighlight)
     {
       ObjRef objref = new ObjRef(objectId);
@@ -3589,7 +3589,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="persistentSelect">
     /// Objects that are persistently selected stay selected when a command terminates.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Select(Guid objectId, bool select, bool syncHighlight, bool persistentSelect)
     {
       ObjRef objref = new ObjRef(objectId);
@@ -3619,7 +3619,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="ignoreLayerVisibility">
     /// If true, then objects on hidden layers can be selectable.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Select(Guid objectId, bool select, bool syncHighlight, bool persistentSelect, bool ignoreGripsState, bool ignoreLayerLocking, bool ignoreLayerVisibility)
     {
       ObjRef objref = new ObjRef(objectId);
@@ -3656,17 +3656,17 @@ namespace Rhino.DocObjects.Tables
       return count;
     }
 
-    /// <summary>Unselect objects</summary>
+    /// <summary>Unselect objects.</summary>
     /// <param name="ignorePersistentSelections">
-    /// if true, then objects that are persistently selected will not be unselected
+    /// if true, then objects that are persistently selected will not be unselected.
     /// </param>
-    /// <returns>Number of object that were unselected</returns>
+    /// <returns>Number of object that were unselected.</returns>
     public int UnselectAll(bool ignorePersistentSelections)
     {
       return UnsafeNativeMethods.CRhinoDoc_UnselectAll(m_doc.m_docId, ignorePersistentSelections);
     }
-    /// <summary>Unselect objects</summary>
-    /// <returns>Number of object that were unselected</returns>
+    /// <summary>Unselect objects.</summary>
+    /// <returns>Number of object that were unselected.</returns>
     public int UnselectAll()
     {
       return UnselectAll(false);
@@ -3675,12 +3675,12 @@ namespace Rhino.DocObjects.Tables
 
 #region Object replacement
     /// <summary>
-    /// Modifies an object's attributes.  Cannot be used to change object id
+    /// Modifies an object's attributes.  Cannot be used to change object id.
     /// </summary>
-    /// <param name="objref">reference to object to modify</param>
-    /// <param name="newAttributes">new attributes</param>
-    /// <param name="quiet">if true, then warning message boxes are disabled</param>
-    /// <returns>true if successful</returns>
+    /// <param name="objref">reference to object to modify.</param>
+    /// <param name="newAttributes">new attributes.</param>
+    /// <param name="quiet">if true, then warning message boxes are disabled.</param>
+    /// <returns>true if successful.</returns>
     public bool ModifyAttributes(DocObjects.ObjRef objref, DocObjects.ObjectAttributes newAttributes, bool quiet)
     {
       if (null == objref || null == newAttributes)
@@ -3690,12 +3690,12 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_ModifyObjectAttributes(m_doc.m_docId, pObjRef, pAttrs, quiet);
     }
     /// <summary>
-    /// Modifies an object's attributes.  Cannot be used to change object id
+    /// Modifies an object's attributes.  Cannot be used to change object id.
     /// </summary>
-    /// <param name="obj">object to modify</param>
-    /// <param name="newAttributes">new attributes</param>
-    /// <param name="quiet">if true, then warning message boxes are disabled</param>
-    /// <returns>true if successful</returns>
+    /// <param name="obj">object to modify.</param>
+    /// <param name="newAttributes">new attributes.</param>
+    /// <param name="quiet">if true, then warning message boxes are disabled.</param>
+    /// <returns>true if successful.</returns>
     public bool ModifyAttributes(DocObjects.RhinoObject obj, DocObjects.ObjectAttributes newAttributes, bool quiet)
     {
       if (null == obj || null == newAttributes)
@@ -3703,12 +3703,12 @@ namespace Rhino.DocObjects.Tables
       return ModifyAttributes(obj.Id, newAttributes, quiet);
     }
     /// <summary>
-    /// Modifies an object's attributes.  Cannot be used to change object id
+    /// Modifies an object's attributes.  Cannot be used to change object id.
     /// </summary>
-    /// <param name="objectId">Id of object to modify</param>
-    /// <param name="newAttributes">new attributes</param>
-    /// <param name="quiet">if true, then warning message boxes are disabled</param>
-    /// <returns>true if successful</returns>
+    /// <param name="objectId">Id of object to modify.</param>
+    /// <param name="newAttributes">new attributes.</param>
+    /// <param name="quiet">if true, then warning message boxes are disabled.</param>
+    /// <returns>true if successful.</returns>
     public bool ModifyAttributes(Guid objectId, DocObjects.ObjectAttributes newAttributes, bool quiet)
     {
       if (Guid.Empty == objectId || null == newAttributes)
@@ -3723,14 +3723,14 @@ namespace Rhino.DocObjects.Tables
 
     // Removed - You should not be able to create a RhinoObject outside of the RhinoDoc
     ///// <summary>
-    ///// Replace one object with another. Conceptually, this function is the same as calling
+    ///// Replaces one object with another. Conceptually, this function is the same as calling
     ///// Setting new_object attributes = old_object attributes
     ///// DeleteObject(old_object);
     ///// AddObject(old_object);
     ///// </summary>
     ///// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted.</param>
     ///// <param name="newObject">new object to be activated - must not be in document.</param>
-    ///// <returns>true if successful</returns>
+    ///// <returns>true if successful.</returns>
     //public bool Replace(DocObjects.ObjRef objref, DocObjects.RhinoObject newObject)
     //{
     //  if (null == objref || null == newObject)
@@ -3743,12 +3743,12 @@ namespace Rhino.DocObjects.Tables
     //  return rc;
     //}
 
-    /// <summary>Replace one object with new point object</summary>
+    /// <summary>Replaces one object with new point object.</summary>
     /// <param name="objref">
     /// Reference to old object to be replaced. The object objref.Object() will be deleted.
     /// </param>
-    /// <param name="point">new point to be added.  The point is copied</param>
-    /// <returns>true if successful</returns>
+    /// <param name="point">new point to be added.  The point is copied.</param>
+    /// <returns>true if successful.</returns>
     public bool Replace(DocObjects.ObjRef objref, Point3d point)
     {
       // 7 Jan. 2009 S. Baer
@@ -3764,10 +3764,10 @@ namespace Rhino.DocObjects.Tables
       return true;
     }
 
-    /// <summary>Replace one object with new point object</summary>
-    /// <param name="objectId">Id of object to be replaced</param>
-    /// <param name="point">new point to be added.  The point is copied</param>
-    /// <returns>true if successful</returns>
+    /// <summary>Replaces one object with new point object.</summary>
+    /// <param name="objectId">Id of object to be replaced.</param>
+    /// <param name="point">new point to be added.  The point is copied.</param>
+    /// <returns>true if successful.</returns>
     public bool Replace(Guid objectId, Point3d point)
     {
       using (ObjRef objref = new ObjRef(objectId))
@@ -3776,12 +3776,12 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
-    /// <summary>Replace one object with new textdot object</summary>
+    /// <summary>Replaces one object with new textdot object.</summary>
     /// <param name="objref">
     /// Reference to old object to be replaced. The object objref.Object() will be deleted.
     /// </param>
-    /// <param name="dot">new textdot to be added.  The textdot is copied</param>
-    /// <returns>true if successful</returns>
+    /// <param name="dot">new textdot to be added.  The textdot is copied.</param>
+    /// <returns>true if successful.</returns>
     public bool Replace(DocObjects.ObjRef objref, Geometry.TextDot dot)
     {
       if (null == objref || null == dot)
@@ -3792,10 +3792,10 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
-    /// <summary>Replace one object with new textdot object</summary>
-    /// <param name="objectId">Id of object to be replaced</param>
-    /// <param name="dot">new textdot to be added.  The textdot is copied</param>
-    /// <returns>true if successful</returns>
+    /// <summary>Replaces one object with new textdot object.</summary>
+    /// <param name="objectId">Id of object to be replaced.</param>
+    /// <param name="dot">new textdot to be added.  The textdot is copied.</param>
+    /// <returns>true if successful.</returns>
     public bool Replace(Guid objectId, Geometry.TextDot dot)
     {
       using (ObjRef objref = new ObjRef(objectId))
@@ -3804,21 +3804,21 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
-    /// <summary>Replace one object with new line curve object</summary>
+    /// <summary>Replaces one object with new line curve object.</summary>
     /// <param name="objref">
     /// Reference to old object to be replaced. The object objref.Object() will be deleted.
     /// </param>
-    /// <param name="line">new line to be added.  The line is copied</param>
-    /// <returns>true if successful</returns>
+    /// <param name="line">new line to be added.  The line is copied.</param>
+    /// <returns>true if successful.</returns>
     public bool Replace(DocObjects.ObjRef objref, Geometry.Line line)
     {
       return Replace(objref, new LineCurve(line));
     }
 
-    /// <summary>Replace one object with new line curve object</summary>
-    /// <param name="objectId">Id of object to be replaced</param>
-    /// <param name="line">new line to be added.  The line is copied</param>
-    /// <returns>true if successful</returns>
+    /// <summary>Replaces one object with new line curve object.</summary>
+    /// <param name="objectId">Id of object to be replaced.</param>
+    /// <param name="line">new line to be added.  The line is copied.</param>
+    /// <returns>true if successful.</returns>
     public bool Replace(Guid objectId, Geometry.Line line)
     {
       using (ObjRef objref = new ObjRef(objectId))
@@ -3827,21 +3827,21 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
-    /// <summary>Replace one object with new curve object</summary>
+    /// <summary>Replaces one object with new curve object.</summary>
     /// <param name="objref">
     /// Reference to old object to be replaced. The object objref.Object() will be deleted.
     /// </param>
-    /// <param name="circle">new circle to be added.  The circle is copied</param>
-    /// <returns>true if successful</returns>
+    /// <param name="circle">new circle to be added.  The circle is copied.</param>
+    /// <returns>true if successful.</returns>
     public bool Replace(DocObjects.ObjRef objref, Geometry.Circle circle)
     {
       return Replace(objref, new ArcCurve(circle));
     }
 
-    /// <summary>Replace one object with new curve object</summary>
-    /// <param name="objectId">Id of object to be replaced</param>
-    /// <param name="circle">new circle to be added.  The circle is copied</param>
-    /// <returns>true if successful</returns>
+    /// <summary>Replaces one object with new curve object.</summary>
+    /// <param name="objectId">Id of object to be replaced.</param>
+    /// <param name="circle">new circle to be added.  The circle is copied.</param>
+    /// <returns>true if successful.</returns>
     public bool Replace(Guid objectId, Geometry.Circle circle)
     {
       using (ObjRef objref = new ObjRef(objectId))
@@ -3850,21 +3850,21 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
-    /// <summary>Replace one object with new curve object</summary>
+    /// <summary>Replaces one object with new curve object.</summary>
     /// <param name="objref">
     /// Reference to old object to be replaced. The object objref.Object() will be deleted.
     /// </param>
-    /// <param name="arc">new arc to be added.  The arc is copied</param>
-    /// <returns>true if successful</returns>
+    /// <param name="arc">new arc to be added.  The arc is copied.</param>
+    /// <returns>true if successful.</returns>
     public bool Replace(DocObjects.ObjRef objref, Geometry.Arc arc)
     {
       return Replace(objref, new ArcCurve(arc));
     }
 
-    /// <summary>Replace one object with new curve object</summary>
-    /// <param name="objectId">Id of object to be replaced</param>
-    /// <param name="arc">new arc to be added.  The arc is copied</param>
-    /// <returns>true if successful</returns>
+    /// <summary>Replaces one object with new curve object.</summary>
+    /// <param name="objectId">Id of object to be replaced.</param>
+    /// <param name="arc">new arc to be added.  The arc is copied.</param>
+    /// <returns>true if successful.</returns>
     public bool Replace(Guid objectId, Geometry.Arc arc)
     {
       using (ObjRef objref = new ObjRef(objectId))
@@ -3873,21 +3873,21 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
-    /// <summary>Replace one object with new curve object</summary>
+    /// <summary>Replaces one object with new curve object.</summary>
     /// <param name="objref">
     /// Reference to old object to be replaced. The object objref.Object() will be deleted.
     /// </param>
-    /// <param name="polyline">new polyline to be added.  The polyline is copied</param>
-    /// <returns>true if successful</returns>
+    /// <param name="polyline">new polyline to be added.  The polyline is copied.</param>
+    /// <returns>true if successful.</returns>
     public bool Replace(DocObjects.ObjRef objref, Geometry.Polyline polyline)
     {
       return Replace(objref, new PolylineCurve(polyline));
     }
 
-    /// <summary>Replace one object with new curve object</summary>
-    /// <param name="objectId">Id of object to be replaced</param>
-    /// <param name="polyline">new polyline to be added.  The polyline is copied</param>
-    /// <returns>true if successful</returns>
+    /// <summary>Replaces one object with new curve object.</summary>
+    /// <param name="objectId">Id of object to be replaced.</param>
+    /// <param name="polyline">new polyline to be added.  The polyline is copied.</param>
+    /// <returns>true if successful.</returns>
     public bool Replace(Guid objectId, Geometry.Polyline polyline)
     {
       using (ObjRef objref = new ObjRef(objectId))
@@ -3897,13 +3897,13 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Replace one object with new curve object
+    /// Replaces one object with new curve object.
     /// </summary>
-    /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted</param>
+    /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted.</param>
     /// <param name="curve">
     /// New curve to be added. A duplicate of the curve is added to the Rhino model.
     /// </param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_insertknot.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_insertknot.cs' lang='cs'/>
@@ -3919,12 +3919,12 @@ namespace Rhino.DocObjects.Tables
       return (IntPtr.Zero != pCurveObject);
     }
 
-    /// <summary>Replace one object with new curve object</summary>
-    /// <param name="objectId">Id of object to be replaced</param>
+    /// <summary>Replaces one object with new curve object.</summary>
+    /// <param name="objectId">Id of object to be replaced.</param>
     /// <param name="curve">
     /// New curve to be added. A duplicate of the curve is added to the Rhino model.
     /// </param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool Replace(Guid objectId, Geometry.Curve curve)
     {
       using (ObjRef objref = new ObjRef(objectId))
@@ -3934,14 +3934,14 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Replace one object with new surface object
+    /// Replaces one object with new surface object.
     /// </summary>
-    /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted</param>
+    /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted.</param>
     /// <param name="surface">
     /// new surface to be added
-    /// A duplicate of the surface is added to the Rhino model
+    /// A duplicate of the surface is added to the Rhino model.
     /// </param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool Replace(DocObjects.ObjRef objref, Geometry.Surface surface)
     {
       if (null == objref || null == surface)
@@ -3952,13 +3952,13 @@ namespace Rhino.DocObjects.Tables
       return (IntPtr.Zero != pSurfaceObject);
     }
 
-    /// <summary>Replace one object with new surface object</summary>
-    /// <param name="objectId">Id of object to be replaced</param>
+    /// <summary>Replaces one object with new surface object.</summary>
+    /// <param name="objectId">Id of object to be replaced.</param>
     /// <param name="surface">
     /// new surface to be added
-    /// A duplicate of the surface is added to the Rhino model
+    /// A duplicate of the surface is added to the Rhino model.
     /// </param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool Replace(Guid objectId, Geometry.Surface surface)
     {
       using (ObjRef objref = new ObjRef(objectId))
@@ -3968,14 +3968,14 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Replace one object with new brep object
+    /// Replaces one object with new brep object.
     /// </summary>
-    /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted</param>
+    /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted.</param>
     /// <param name="brep">
     /// new brep to be added
-    /// A duplicate of the brep is added to the Rhino model
+    /// A duplicate of the brep is added to the Rhino model.
     /// </param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool Replace(DocObjects.ObjRef objref, Geometry.Brep brep)
     {
       if (null == objref || null == brep)
@@ -3986,13 +3986,13 @@ namespace Rhino.DocObjects.Tables
       return (IntPtr.Zero != pBrepObject);
     }
 
-    /// <summary>Replace one object with new brep object</summary>
-    /// <param name="objectId">Id of object to be replaced</param>
+    /// <summary>Replaces one object with new brep object.</summary>
+    /// <param name="objectId">Id of object to be replaced.</param>
     /// <param name="brep">
     /// new surface to be added
-    /// A duplicate of the brep is added to the Rhino model
+    /// A duplicate of the brep is added to the Rhino model.
     /// </param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool Replace(Guid objectId, Geometry.Brep brep)
     {
       using (ObjRef objref = new ObjRef(objectId))
@@ -4002,14 +4002,14 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Replace one object with new mesh object
+    /// Replaces one object with new mesh object.
     /// </summary>
-    /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted</param>
+    /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted.</param>
     /// <param name="mesh">
     /// new mesh to be added
-    /// A duplicate of the mesh is added to the Rhino model
+    /// A duplicate of the mesh is added to the Rhino model.
     /// </param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool Replace(DocObjects.ObjRef objref, Geometry.Mesh mesh)
     {
       if (null == objref || null == mesh)
@@ -4020,13 +4020,13 @@ namespace Rhino.DocObjects.Tables
       return (IntPtr.Zero != pMeshObject);
     }
 
-    /// <summary>Replace one object with new mesh object</summary>
-    /// <param name="objectId">Id of object to be replaced</param>
+    /// <summary>Replaces one object with new mesh object.</summary>
+    /// <param name="objectId">Id of object to be replaced.</param>
     /// <param name="mesh">
     /// new mesh to be added
-    /// A duplicate of the mesh is added to the Rhino model
+    /// A duplicate of the mesh is added to the Rhino model.
     /// </param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool Replace(Guid objectId, Geometry.Mesh mesh)
     {
       using (ObjRef objref = new ObjRef(objectId))
@@ -4036,14 +4036,14 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Replace one object with new text object
+    /// Replaces one object with new text object.
     /// </summary>
-    /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted</param>
+    /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted.</param>
     /// <param name="text">
     /// new text to be added
-    /// A duplicate of the text is added to the Rhino model
+    /// A duplicate of the text is added to the Rhino model.
     /// </param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool Replace(DocObjects.ObjRef objref, Geometry.TextEntity text)
     {
       if (null == objref || null == text)
@@ -4055,14 +4055,14 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Replace one object with new text object
+    /// Replaces one object with new text object.
     /// </summary>
-    /// <param name="objectId">Id of object to be replaced</param>
+    /// <param name="objectId">Id of object to be replaced.</param>
     /// <param name="text">
     /// new text to be added
-    /// A duplicate of the text is added to the Rhino model
+    /// A duplicate of the text is added to the Rhino model.
     /// </param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool Replace(Guid objectId, Geometry.TextEntity text)
     {
       using (ObjRef objref = new ObjRef(objectId))
@@ -4129,11 +4129,11 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// If objref.Object().IsNormal() is true, then the object will be hidden.
     /// </summary>
-    /// <param name="objref">reference to object to hide</param>
+    /// <param name="objref">reference to object to hide.</param>
     /// <param name="ignoreLayerMode">
-    /// if true, the object will be hidden even if it is on a layer that is locked or off
+    /// if true, the object will be hidden even if it is on a layer that is locked or off.
     /// </param>
-    /// <returns>true if the object was successfully hidden</returns>
+    /// <returns>true if the object was successfully hidden.</returns>
     public bool Hide(DocObjects.ObjRef objref, bool ignoreLayerMode)
     {
       if (null == objref)
@@ -4144,11 +4144,11 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// If obj.IsNormal() is true, then the object will be hidden.
     /// </summary>
-    /// <param name="obj">object to hide</param>
+    /// <param name="obj">object to hide.</param>
     /// <param name="ignoreLayerMode">
-    /// if true, the object will be hidden even if it is on a layer that is locked or off
+    /// if true, the object will be hidden even if it is on a layer that is locked or off.
     /// </param>
-    /// <returns>true if the object was successfully hidden</returns>
+    /// <returns>true if the object was successfully hidden.</returns>
     public bool Hide(DocObjects.RhinoObject obj, bool ignoreLayerMode)
     {
       if (null == obj)
@@ -4158,11 +4158,11 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// If Object().IsNormal() is true, then the object will be hidden.
     /// </summary>
-    /// <param name="objectId">Id of object to hide</param>
+    /// <param name="objectId">Id of object to hide.</param>
     /// <param name="ignoreLayerMode">
-    /// if true, the object will be hidden even if it is on a layer that is locked or off
+    /// if true, the object will be hidden even if it is on a layer that is locked or off.
     /// </param>
-    /// <returns>true if the object was successfully hidden</returns>
+    /// <returns>true if the object was successfully hidden.</returns>
     public bool Hide(Guid objectId, bool ignoreLayerMode)
     {
       if (Guid.Empty == objectId)
@@ -4177,11 +4177,11 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// If objref.Object().IsHidden() is true, then the object will be returned to normal (visible and selectable) mode.
     /// </summary>
-    /// <param name="objref">reference to normal object to show</param>
+    /// <param name="objref">reference to normal object to show.</param>
     /// <param name="ignoreLayerMode">
-    /// if true, the object will be shown even if it is on a layer that is locked or off
+    /// if true, the object will be shown even if it is on a layer that is locked or off.
     /// </param>
-    /// <returns>true if the object was successfully shown</returns>
+    /// <returns>true if the object was successfully shown.</returns>
     public bool Show(DocObjects.ObjRef objref, bool ignoreLayerMode)
     {
       if (null == objref)
@@ -4192,11 +4192,11 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// If obj.IsHidden() is true, then the object will be returned to normal (visible and selectable) mode.
     /// </summary>
-    /// <param name="obj">the normal object to show</param>
+    /// <param name="obj">the normal object to show.</param>
     /// <param name="ignoreLayerMode">
-    /// if true, the object will be shown even if it is on a layer that is locked or off
+    /// if true, the object will be shown even if it is on a layer that is locked or off.
     /// </param>
-    /// <returns>true if the object was successfully shown</returns>
+    /// <returns>true if the object was successfully shown.</returns>
     public bool Show(DocObjects.RhinoObject obj, bool ignoreLayerMode)
     {
       if (null == obj)
@@ -4206,11 +4206,11 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// If Object().IsHidden() is true, then the object will be returned to normal (visible and selectable) mode.
     /// </summary>
-    /// <param name="objectId">Id of the normal object to show</param>
+    /// <param name="objectId">Id of the normal object to show.</param>
     /// <param name="ignoreLayerMode">
-    /// if true, the object will be shown even if it is on a layer that is locked or off
+    /// if true, the object will be shown even if it is on a layer that is locked or off.
     /// </param>
-    /// <returns>true if the object was successfully shown</returns>
+    /// <returns>true if the object was successfully shown.</returns>
     public bool Show(Guid objectId, bool ignoreLayerMode)
     {
       if (Guid.Empty == objectId)
@@ -4225,11 +4225,11 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// If objref.Object().IsNormal() is true, then the object will be locked.
     /// </summary>
-    /// <param name="objref">reference to normal object to lock</param>
+    /// <param name="objref">reference to normal object to lock.</param>
     /// <param name="ignoreLayerMode">
-    /// if true, the object will be locked even if it is on a layer that is locked or off
+    /// if true, the object will be locked even if it is on a layer that is locked or off.
     /// </param>
-    /// <returns>true if the object was successfully locked</returns>
+    /// <returns>true if the object was successfully locked.</returns>
     public bool Lock(DocObjects.ObjRef objref, bool ignoreLayerMode)
     {
       if (null == objref)
@@ -4240,11 +4240,11 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// If obj.IsNormal() is true, then the object will be locked.
     /// </summary>
-    /// <param name="obj">normal object to lock</param>
+    /// <param name="obj">normal object to lock.</param>
     /// <param name="ignoreLayerMode">
-    /// if true, the object will be locked even if it is on a layer that is locked or off
+    /// if true, the object will be locked even if it is on a layer that is locked or off.
     /// </param>
-    /// <returns>true if the object was successfully locked</returns>
+    /// <returns>true if the object was successfully locked.</returns>
     public bool Lock(DocObjects.RhinoObject obj, bool ignoreLayerMode)
     {
       if (null == obj)
@@ -4254,11 +4254,11 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// If objref.Object().IsNormal() is true, then the object will be locked.
     /// </summary>
-    /// <param name="objectId">Id of normal object to lock</param>
+    /// <param name="objectId">Id of normal object to lock.</param>
     /// <param name="ignoreLayerMode">
-    /// if true, the object will be locked even if it is on a layer that is locked or off
+    /// if true, the object will be locked even if it is on a layer that is locked or off.
     /// </param>
-    /// <returns>true if the object was successfully locked</returns>
+    /// <returns>true if the object was successfully locked.</returns>
     public bool Lock(Guid objectId, bool ignoreLayerMode)
     {
       if (Guid.Empty == objectId)
@@ -4271,13 +4271,13 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// If objref.Object().IsLocked() is true, then the object will be returned to normal (visible and selectable) mode
+    /// If objref.Object().IsLocked() is true, then the object will be returned to normal (visible and selectable) mode.
     /// </summary>
-    /// <param name="objref">reference to locked object to unlock</param>
+    /// <param name="objref">reference to locked object to unlock.</param>
     /// <param name="ignoreLayerMode">
-    /// if true, the object will be unlocked even if it is on a layer that is locked or off
+    /// if true, the object will be unlocked even if it is on a layer that is locked or off.
     /// </param>
-    /// <returns>true if the object was successfully unlocked</returns>
+    /// <returns>true if the object was successfully unlocked.</returns>
     public bool Unlock(DocObjects.ObjRef objref, bool ignoreLayerMode)
     {
       if (null == objref)
@@ -4286,13 +4286,13 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_SetObjectState(m_doc.m_docId, pObjRef, ignoreLayerMode, idxUnlockObject);
     }
     /// <summary>
-    /// If obj.IsLocked() is true, then the object will be returned to normal (visible and selectable) mode
+    /// If obj.IsLocked() is true, then the object will be returned to normal (visible and selectable) mode.
     /// </summary>
-    /// <param name="obj">locked object to unlock</param>
+    /// <param name="obj">locked object to unlock.</param>
     /// <param name="ignoreLayerMode">
-    /// if true, the object will be unlocked even if it is on a layer that is locked or off
+    /// if true, the object will be unlocked even if it is on a layer that is locked or off.
     /// </param>
-    /// <returns>true if the object was successfully unlocked</returns>
+    /// <returns>true if the object was successfully unlocked.</returns>
     public bool Unlock(DocObjects.RhinoObject obj, bool ignoreLayerMode)
     {
       if (null == obj)
@@ -4300,13 +4300,13 @@ namespace Rhino.DocObjects.Tables
       return Unlock(obj.Id, ignoreLayerMode);
     }
     /// <summary>
-    /// If Object().IsLocked() is true, then the object will be returned to normal (visible and selectable) mode
+    /// If Object().IsLocked() is true, then the object will be returned to normal (visible and selectable) mode.
     /// </summary>
-    /// <param name="objectId">Id of locked object to unlock</param>
+    /// <param name="objectId">Id of locked object to unlock.</param>
     /// <param name="ignoreLayerMode">
-    /// if true, the object will be unlocked even if it is on a layer that is locked or off
+    /// if true, the object will be unlocked even if it is on a layer that is locked or off.
     /// </param>
-    /// <returns>true if the object was successfully unlocked</returns>
+    /// <returns>true if the object was successfully unlocked.</returns>
     public bool Unlock(Guid objectId, bool ignoreLayerMode)
     {
       if (Guid.Empty == objectId)
@@ -4323,7 +4323,7 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Gets the boundingbox for all objects (normal, locked and hidden) in this
     /// document that exist in "model" space. This bounding box does not include
-    /// objects that exist in layout space
+    /// objects that exist in layout space.
     /// </summary>
     public BoundingBox BoundingBox
     {
@@ -4341,7 +4341,7 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Gets the boundingbox for all visible objects (normal and locked) in this
     /// document that exist in "model" space. This bounding box does not include
-    /// hidden objects or any objects that exist in layout space
+    /// hidden objects or any objects that exist in layout space.
     /// </summary>
     public BoundingBox BoundingBoxVisible
     {
@@ -4358,23 +4358,23 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Creates a new object that is the transformation of the existing object
+    /// Constructs a new object that is the transformation of the existing object
     /// and deletes the existing object if deleteOriginal is true.
     /// </summary>
     /// <param name="objref">
-    /// reference to object to transform. The objref.Object() will be deleted if deleteOriginal is true
+    /// reference to object to transform. The objref.Object() will be deleted if deleteOriginal is true.
     /// </param>
-    /// <param name="xform">transformation to apply</param>
+    /// <param name="xform">transformation to apply.</param>
     /// <param name="deleteOriginal">
     /// if true, the original object is deleted
-    /// if false, the original object is not deleted
+    /// if false, the original object is not deleted.
     /// </param>
     /// <returns>
     /// Id of the new object that is the transformation of the existing_object.
     /// The new object has identical attributes.
     /// </returns>
     /// <remarks>
-    /// If the object is locked or on a locked layer, then it cannot be transformed
+    /// If the object is locked or on a locked layer, then it cannot be transformed.
     /// </remarks>
     /// <example>
     /// <code source='examples\vbnet\ex_orientonsrf.vb' lang='vbnet'/>
@@ -4389,23 +4389,23 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_TransformObject(m_doc.m_docId, pObjRef, ref xform, deleteOriginal, false, false);
     }
     /// <summary>
-    /// Creates a new object that is the transformation of the existing object
+    /// Constructs a new object that is the transformation of the existing object
     /// and deletes the existing object if deleteOriginal is true.
     /// </summary>
     /// <param name="obj">
     /// Rhino object to transform. This object will be deleted if deleteOriginal is true.
     /// </param>
-    /// <param name="xform">transformation to apply</param>
+    /// <param name="xform">transformation to apply.</param>
     /// <param name="deleteOriginal">
     /// if true, the original object is deleted
-    /// if false, the original object is not deleted
+    /// if false, the original object is not deleted.
     /// </param>
     /// <returns>
     /// Id of the new object that is the transformation of the existing_object.
     /// The new object has identical attributes.
     /// </returns>
     /// <remarks>
-    /// If the object is locked or on a locked layer, then it cannot be transformed
+    /// If the object is locked or on a locked layer, then it cannot be transformed.
     /// </remarks>
     public Guid Transform(DocObjects.RhinoObject obj, Transform xform, bool deleteOriginal)
     {
@@ -4417,23 +4417,23 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
     /// <summary>
-    /// Creates a new object that is the transformation of the existing object
+    /// Constructs a new object that is the transformation of the existing object
     /// and deletes the existing object if deleteOriginal is true.
     /// </summary>
     /// <param name="objectId">
     /// Id of rhino object to transform. This object will be deleted if deleteOriginal is true.
     /// </param>
-    /// <param name="xform">transformation to apply</param>
+    /// <param name="xform">transformation to apply.</param>
     /// <param name="deleteOriginal">
     /// if true, the original object is deleted
-    /// if false, the original object is not deleted
+    /// if false, the original object is not deleted.
     /// </param>
     /// <returns>
     /// Id of the new object that is the transformation of the existing_object.
     /// The new object has identical attributes.
     /// </returns>
     /// <remarks>
-    /// If the object is locked or on a locked layer, then it cannot be transformed
+    /// If the object is locked or on a locked layer, then it cannot be transformed.
     /// </remarks>
     public Guid Transform(Guid objectId, Transform xform, bool deleteOriginal)
     {
@@ -4444,21 +4444,21 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Creates a new object that is the transformation of the existing object
+    /// Constructs a new object that is the transformation of the existing object
     /// and records history of the transformation if history recording is turned on.
     /// If history recording is not enabled, this function will act the same as
     /// Transform(objref, xform, false)
     /// </summary>
     /// <param name="objref">
-    /// reference to object to transform
+    /// reference to object to transform.
     /// </param>
-    /// <param name="xform">transformation to apply</param>
+    /// <param name="xform">transformation to apply.</param>
     /// <returns>
     /// Id of the new object that is the transformation of the existing_object.
     /// The new object has identical attributes.
     /// </returns>
     /// <remarks>
-    /// If the object is locked or on a locked layer, then it cannot be transformed
+    /// If the object is locked or on a locked layer, then it cannot be transformed.
     /// </remarks>
     public Guid TransformWithHistory(DocObjects.ObjRef objref, Transform xform)
     {
@@ -4468,21 +4468,21 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_TransformObject(m_doc.m_docId, pObjRef, ref xform, false, false, true);
     }
     /// <summary>
-    /// Creates a new object that is the transformation of the existing object
+    /// Constructs a new object that is the transformation of the existing object
     /// and records history of the transformation if history recording is turned on.
     /// If history recording is not enabled, this function will act the same as
     /// Transform(obj, xform, false)
     /// </summary>
     /// <param name="obj">
-    /// Rhino object to transform
+    /// Rhino object to transform.
     /// </param>
-    /// <param name="xform">transformation to apply</param>
+    /// <param name="xform">transformation to apply.</param>
     /// <returns>
     /// Id of the new object that is the transformation of the existing_object.
     /// The new object has identical attributes.
     /// </returns>
     /// <remarks>
-    /// If the object is locked or on a locked layer, then it cannot be transformed
+    /// If the object is locked or on a locked layer, then it cannot be transformed.
     /// </remarks>
     public Guid TransformWithHistory(DocObjects.RhinoObject obj, Transform xform)
     {
@@ -4494,21 +4494,21 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
     /// <summary>
-    /// Creates a new object that is the transformation of the existing object
+    /// Constructs a new object that is the transformation of the existing object
     /// and records history of the transformation if history recording is turned on.
     /// If history recording is not enabled, this function will act the same as
     /// Transform(objectId, xform, false)
     /// </summary>
     /// <param name="objectId">
-    /// Id of rhino object to transform
+    /// Id of rhino object to transform.
     /// </param>
-    /// <param name="xform">transformation to apply</param>
+    /// <param name="xform">transformation to apply.</param>
     /// <returns>
     /// Id of the new object that is the transformation of the existing_object.
     /// The new object has identical attributes.
     /// </returns>
     /// <remarks>
-    /// If the object is locked or on a locked layer, then it cannot be transformed
+    /// If the object is locked or on a locked layer, then it cannot be transformed.
     /// </remarks>
     public Guid TransformWithHistory(Guid objectId, Transform xform)
     {
@@ -4637,11 +4637,11 @@ namespace Rhino.DocObjects.Tables
 
     /// <summary>
     /// Altered grip positions on a RhinoObject are used to calculate an updated object
-    /// that is added to the document
+    /// that is added to the document.
     /// </summary>
-    /// <param name="obj">object with modified grips to update</param>
-    /// <param name="deleteOriginal">if true, obj is deleted from the document</param>
-    /// <returns>new RhinoObject on success; otherwise null</returns>
+    /// <param name="obj">object with modified grips to update.</param>
+    /// <param name="deleteOriginal">if true, obj is deleted from the document.</param>
+    /// <returns>new RhinoObject on success; otherwise null.</returns>
     public DocObjects.RhinoObject GripUpdate(DocObjects.RhinoObject obj, bool deleteOriginal)
     {
       if (null == obj)
@@ -4750,14 +4750,14 @@ namespace Rhino.DocObjects.Tables
       m_doc = doc;
     }
 
-    /// <summary>Document that owns this object table</summary>
+    /// <summary>Document that owns this object table.</summary>
     public RhinoDoc Document
     {
       get { return m_doc; }
     }
 
     /// <summary>
-    /// The number of user data strings in the current document
+    /// The number of user data strings in the current document.
     /// </summary>
     public int Count
     {
@@ -4797,7 +4797,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Gets a user data string from the document
+    /// Gets a user data string from the document.
     /// </summary>
     /// <param name="section"></param>
     /// <param name="entry"></param>
@@ -4812,7 +4812,7 @@ namespace Rhino.DocObjects.Tables
 
     /// <summary>
     /// Return list of all the section names for user data strings in the document.
-    /// By default a section name is a key that is prefixed with a string separated by a backslash
+    /// By default a section name is a key that is prefixed with a string separated by a backslash.
     /// </summary>
     /// <returns></returns>
     public string[] GetSectionNames()
@@ -4841,7 +4841,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Return list of all entry names for a given section of user data strings in the document
+    /// Return list of all entry names for a given section of user data strings in the document.
     /// </summary>
     /// <param name="section"></param>
     /// <returns></returns>
@@ -4869,7 +4869,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="entry"></param>
     /// <param name="value"></param>
     /// <returns>
-    /// the previous value if successful and a previous value existed
+    /// the previous value if successful and a previous value existed.
     /// </returns>
     public string SetString(string section, string entry, string value)
     {
@@ -4889,10 +4889,10 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Removes user data strings from the document
+    /// Removes user data strings from the document.
     /// </summary>
-    /// <param name="section">name of section to delete. If null, all sections will be deleted</param>
-    /// <param name="entry">name of entry to delete. If null, all entries will be deleted for a given section</param>
+    /// <param name="section">name of section to delete. If null, all sections will be deleted.</param>
+    /// <param name="entry">name of entry to delete. If null, all entries will be deleted for a given section.</param>
     public void Delete(string section, string entry)
     {
       if (null == section)

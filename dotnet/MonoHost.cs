@@ -27,7 +27,7 @@ namespace Rhino.Runtime
   /// <summary>
   /// This class should only ever be called from the MonoManager.rhp. Luckily
   /// when embedding mono, you can call private classes with no problem so we
-  /// don't need to expose this to the SDK
+  /// don't need to expose this to the SDK.
   /// </summary>
   class MonoHost
   {

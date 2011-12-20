@@ -67,22 +67,22 @@ namespace Rhino.Runtime
 #endif
 
     /// <summary>
-    /// Create a RhinoCommon Geometry class from a given ON_Geomety*. The ON_Geometry*
-    /// must be declared on the heap and it's lifetime becomes controlled by RhinoCommon
+    /// Constructs a RhinoCommon Geometry class from a given ON_Geomety*. The ON_Geometry*
+    /// must be declared on the heap and it's lifetime becomes controlled by RhinoCommon.
     /// </summary>
     /// <param name="pGeometry">ON_Geometry*</param>
-    /// <returns>The appropriate geometry class in RhinoCommon on success</returns>
+    /// <returns>The appropriate geometry class in RhinoCommon on success.</returns>
     public static Geometry.GeometryBase CreateFromNativePointer(IntPtr pGeometry)
     {
       return Geometry.GeometryBase.CreateGeometryHelper(pGeometry, null);
     }
 
     /// <summary>
-    /// Attempts to copy the contents of a RMA.OpenNURBS.OnArc to a Rhino.Geometry.Arc
+    /// Attempts to copy the contents of a RMA.OpenNURBS.OnArc to a Rhino.Geometry.Arc.
     /// </summary>
     /// <param name="source"></param>
     /// <param name="destination"></param>
-    /// <returns>true on success</returns>
+    /// <returns>true on success.</returns>
     public static bool TryCopyFromOnArc(object source, out Rhino.Geometry.Arc destination)
     {
       destination = new Rhino.Geometry.Arc();
@@ -97,7 +97,7 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Attempts to copy the contents of a Rhino.Geometry.Arc to a RMA.OpenNURBS.OnArc
+    /// Attempts to copy the contents of a Rhino.Geometry.Arc to a RMA.OpenNURBS.OnArc.
     /// </summary>
     /// <param name="source"></param>
     /// <param name="destination"></param>
@@ -140,7 +140,7 @@ namespace Rhino.Runtime
     /// Copies a Rhino_DotNet brep to a RhinoCommon brep class.
     /// </summary>
     /// <param name="source">
-    /// RMA.OpenNURBS.IOnBrep or RMA.OpenNURBS.OnBrep
+    /// RMA.OpenNURBS.IOnBrep or RMA.OpenNURBS.OnBrep.
     /// </param>
     /// <returns>
     /// RhinoCommon object on success. This will be an independent copy.
@@ -159,7 +159,7 @@ namespace Rhino.Runtime
     /// Any of the following in the RMA.OpenNURBS namespace are acceptable.
     /// IOnSurface, OnSurface, IOnPlaneSurface, OnPlaneSurface, IOnClippingPlaneSurface,
     /// OnClippingPlaneSurface, IOnNurbsSurface, OnNurbsSurfac, IOnRevSurface, OnRevSurface,
-    /// IOnSumSurface, OnSumSurface
+    /// IOnSumSurface, OnSumSurface.
     /// </param>
     /// <returns>
     /// RhinoCommon object on success. This will be an independent copy.
@@ -185,7 +185,7 @@ namespace Rhino.Runtime
     /// Copies a Rhino_DotNet mesh to a RhinoCommon mesh class.
     /// </summary>
     /// <param name="source">
-    /// RMA.OpenNURBS.IOnMesh or RMA.OpenNURBS.OnMesh
+    /// RMA.OpenNURBS.IOnMesh or RMA.OpenNURBS.OnMesh.
     /// </param>
     /// <returns>
     /// RhinoCommon object on success. This will be an independent copy.
@@ -232,7 +232,7 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Creates a Rhino_DotNet OnBrep that is a copy of a given brep.
+    /// Constructs a Rhino_DotNet OnBrep that is a copy of a given brep.
     /// </summary>
     /// <param name="source"></param>
     /// <returns>
@@ -253,7 +253,7 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Create a Rhino_DotNet OnSurface that is a copy of a given curve.
+    /// Constructs a Rhino_DotNet OnSurface that is a copy of a given curve.
     /// </summary>
     /// <param name="source"></param>
     /// <returns>
@@ -274,7 +274,7 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Create a Rhino_DotNet OnMesh that is a copy of a given mesh.
+    /// Constructs a Rhino_DotNet OnMesh that is a copy of a given mesh.
     /// </summary>
     /// <param name="source"></param>
     /// <returns>
@@ -295,7 +295,7 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Create a Rhino_DotNet OnCurve that is a copy of a given curve.
+    /// Constructs a Rhino_DotNet OnCurve that is a copy of a given curve.
     /// </summary>
     /// <param name="source"></param>
     /// <returns>
@@ -316,7 +316,7 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Create a Rhino_DotNet OnXform from a given RhinoCommon Transform
+    /// Constructs a Rhino_DotNet OnXform from a given RhinoCommon Transform.
     /// </summary>
     /// <param name="source"></param>
     /// <returns>
@@ -343,7 +343,7 @@ namespace Rhino.Runtime
 
 #if RHINO_SDK
     /// <summary>
-    /// Convert a Rhino.Display.Viewport to an RMA.Rhino.IRhinoViewport
+    /// Convert a Rhino.Display.Viewport to an RMA.Rhino.IRhinoViewport.
     /// </summary>
     /// <param name="source"></param>
     /// <returns>

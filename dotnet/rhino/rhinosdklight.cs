@@ -43,7 +43,7 @@ namespace Rhino.DocObjects.Tables
       m_doc = doc;
     }
 
-    /// <summary>Document that owns this light table</summary>
+    /// <summary>Document that owns this light table.</summary>
     public RhinoDoc Document
     {
       get { return m_doc; }
@@ -75,7 +75,7 @@ namespace Rhino.DocObjects.Tables
     }
 #endif
 
-    /// <summary>Number of lights in the light table.  Does not include Sun or Skylight</summary>
+    /// <summary>Number of lights in the light table.  Does not include Sun or Skylight.</summary>
     public int Count
     {
       get
@@ -96,7 +96,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     ///// <summary>
-    ///// Find all of the lights with a given name
+    ///// Finds all of the lights with a given name
     ///// </summary>
     ///// <param name="lightName"></param>
     ///// <param name="ignoreDeletedLights"></param>

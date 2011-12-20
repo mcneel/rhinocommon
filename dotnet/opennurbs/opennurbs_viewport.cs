@@ -60,7 +60,7 @@ namespace Rhino.DocObjects
 
 #if RHINO_SDK
     /// <summary>
-    /// Copies all of the ViewportInfo data from an existing RhinoViewport
+    /// Copies all of the ViewportInfo data from an existing RhinoViewport.
     /// </summary>
     /// <param name="rhinoViewport"></param>
     public ViewportInfo(Rhino.Display.RhinoViewport rhinoViewport)
@@ -195,7 +195,7 @@ namespace Rhino.DocObjects
     /// Otherwise it must be > 0 and indicates which plane in the current view frustum should be perserved.
     /// </param>
     /// <param name="symmetricFrustum">
-    /// True if you want the resulting frustum to be symmetric.
+    /// true if you want the resulting frustum to be symmetric.
     /// </param>
     /// <param name="lensLength">(pass 50.0 when in doubt)
     /// 35 mm lens length to use when changing from parallel
@@ -676,9 +676,9 @@ namespace Rhino.DocObjects
     /// </summary>
     /// <param name="point"></param>
     /// <param name="distance">distance of the point (can be &lt; 0)</param>
-    /// <returns>True if the bounding box intersects the view frustum and
+    /// <returns>true if the bounding box intersects the view frustum and
     /// near_dist/far_dist were set.
-    /// False if the bounding box does not intesect the view frustum.</returns>
+    /// false if the bounding box does not intesect the view frustum.</returns>
     public bool GetPointDepth(Rhino.Geometry.Point3d point, out double distance)
     {
       IntPtr pConstThis = ConstPointer();
@@ -703,8 +703,8 @@ namespace Rhino.DocObjects
     /// negative when the camera location is inside bbox.</param>
     /// <param name="farDistance">Far distance of the box. This value can be equal to 
     /// near_dist, zero or negative when the camera location is in front of the bounding box.</param>
-    /// <returns>True if the bounding box intersects the view frustum and near_dist/far_dist were set. 
-    /// False if the bounding box does not intesect the view frustum.</returns>
+    /// <returns>true if the bounding box intersects the view frustum and near_dist/far_dist were set. 
+    /// false if the bounding box does not intesect the view frustum.</returns>
     public bool GetBoundingBoxDepth(Rhino.Geometry.BoundingBox bbox, out double nearDistance, out double farDistance)
     {
       IntPtr pConstThis = ConstPointer();
@@ -719,8 +719,8 @@ namespace Rhino.DocObjects
     /// <param name="sphere"></param>
     /// <param name="nearDistance">Near distance of the sphere (can be &lt; 0)</param>
     /// <param name="farDistance">Far distance of the sphere (can be equal to near_dist)</param>
-    /// <returns>True if the sphere intersects the view frustum and near_dist/far_dist were set.
-    /// False if the sphere does not intesect the view frustum.</returns>
+    /// <returns>true if the sphere intersects the view frustum and near_dist/far_dist were set.
+    /// false if the sphere does not intesect the view frustum.</returns>
     public bool GetSphereDepth(Rhino.Geometry.Sphere sphere, out double nearDistance, out double farDistance)
     {
       IntPtr pConstThis = ConstPointer();
@@ -732,8 +732,8 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Sets near and far clipping distance subject to constraints.
     /// </summary>
-    /// <param name="nearDistance">(>0) desired near clipping distance</param>
-    /// <param name="farDistance">(>near_dist) desired near clipping distance</param>
+    /// <param name="nearDistance">(>0) desired near clipping distance.</param>
+    /// <param name="farDistance">(>near_dist) desired near clipping distance.</param>
     /// <param name="minNearDistance">
     /// If min_near_dist &lt;= 0.0, it is ignored.
     /// If min_near_dist &gt; 0 and near_dist &lt; min_near_dist, then the frustum's near_dist will be increased to min_near_dist.
@@ -834,7 +834,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets the corners of near clipping plane rectangle.
     /// 4 points are returned in the order of bottom left, bottom right,
-    /// top left, top right
+    /// top left, top right.
     /// </summary>
     /// <returns>
     /// Four corner points on success.
@@ -855,7 +855,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets the corners of far clipping plane rectangle.
     /// 4 points are returned in the order of bottom left, bottom right,
-    /// top left, top right
+    /// top left, top right.
     /// </summary>
     /// <returns>
     /// Four corner points on success.
@@ -1055,9 +1055,9 @@ namespace Rhino.DocObjects
     /// Gets the world coordinate line in the view frustum
     /// that projects to a point on the screen.
     /// </summary>
-    /// <param name="screenX">(screenx,screeny) = screen location</param>
-    /// <param name="screenY">(screenx,screeny) = screen location</param>
-    /// <returns>3d world coordinate line segment starting on the near clipping plane and ending on the far clipping plane</returns>
+    /// <param name="screenX">(screenx,screeny) = screen location.</param>
+    /// <param name="screenY">(screenx,screeny) = screen location.</param>
+    /// <returns>3d world coordinate line segment starting on the near clipping plane and ending on the far clipping plane.</returns>
     Rhino.Geometry.Line GetFrustumLine( double screenX, double screenY)
     {
       Rhino.Geometry.Line line = new Rhino.Geometry.Line();
@@ -1080,7 +1080,7 @@ namespace Rhino.DocObjects
     /// 
     /// </summary>
     /// <param name="pointInFrustum">point in viewing frustum.</param>
-    /// <returns>number of pixels per world unit at the 3d point</returns>
+    /// <returns>number of pixels per world unit at the 3d point.</returns>
     double GetWorldToScreenScale(Rhino.Geometry.Point3d pointInFrustum)
     {
       double d = 0.0;
@@ -1155,9 +1155,9 @@ namespace Rhino.DocObjects
     /// To update the frustum's clipping planes call DollyFrustum(d)
     /// with d = dollyVector o cameraFrameZ.  To convert screen locations
     /// into a dolly vector, use GetDollyCameraVector().
-    /// Does not update frustum.  To update frustum use DollyFrustum(d) with d = dollyVector o cameraFrameZ
+    /// Does not update frustum.  To update frustum use DollyFrustum(d) with d = dollyVector o cameraFrameZ.
     /// </summary>
-    /// <param name="dollyVector">dolly vector in world coordinates</param>
+    /// <param name="dollyVector">dolly vector in world coordinates.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
     public bool DollyCamera(Rhino.Geometry.Vector3d dollyVector)
     {
@@ -1231,7 +1231,7 @@ namespace Rhino.DocObjects
     
     /* Don't wrap until someone asks for this.
     /// <summary>
-    /// Gets the m_clip_mod transformation
+    /// Gets the m_clip_mod transformation.
     /// </summary>
     public Rhino.Geometry.Transform ClipModTransform
     {
@@ -1244,7 +1244,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets the m_clip_mod inverse transformation
+    /// Gets the m_clip_mod inverse transformation.
     /// </summary>
     public Rhino.Geometry.Transform ClipModInverseTransform
     {
@@ -1278,7 +1278,7 @@ namespace Rhino.DocObjects
     /// is valid with near > 0.0, then 0.5*(near + far) will be used
     /// as the targetDistance.</param>
     /// <returns>A point on the frustum's central axis.  If the viewport or input
-    /// is not valid, then ON_3dPoint::UnsetPoint is returned</returns>
+    /// is not valid, then ON_3dPoint::UnsetPoint is returned.</returns>
     public Rhino.Geometry.Point3d FrustumCenterPoint( double targetDistance ) 
     {
       Rhino.Geometry.Point3d point = Rhino.Geometry.Point3d.Unset;

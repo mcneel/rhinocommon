@@ -21,7 +21,7 @@ namespace Rhino.Render
       m_doc = doc;
     }
     /// <summary>
-    /// The number of top level content objects in this list
+    /// The number of top level content objects in this list.
     /// </summary>
     public int Count
     {
@@ -32,7 +32,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// The unique identifier for this list
+    /// The unique identifier for this list.
     /// </summary>
     public Guid Id
     {
@@ -43,11 +43,11 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Find a content by its instance id.
+    /// Finds a content by its instance id.
     /// </summary>
-    /// <param name="instanceId">Instance id of the content to find</param>
+    /// <param name="instanceId">Instance id of the content to find.</param>
     /// <param name="includeChildren">Specifies if children should be searched as well as top-level content.</param>
-    /// <returns>The found content or null</returns>
+    /// <returns>The found content or null.</returns>
     public RenderContent FindInstance(Guid instanceId, bool includeChildren)
     {
       IntPtr pContent = UnsafeNativeMethods.Rdk_ContentList_FindInstance(ConstPointer(), instanceId, includeChildren);

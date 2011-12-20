@@ -122,7 +122,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Constructs as VariantTypes.Null
+    /// Constructs as VariantTypes.Null.
     /// </summary>
     public Variant()
     {
@@ -148,7 +148,7 @@ namespace Rhino.Render
     #endregion
 
     /// <summary>
-    /// Units associated with numeric values, see AsModelFloat etc
+    /// Units associated with numeric values, see AsModelFloat etc.
     /// </summary>
     public Rhino.UnitSystem Units
     {

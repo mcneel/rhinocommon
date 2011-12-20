@@ -83,7 +83,7 @@ namespace Rhino.Render
     private Int32 m_sig = 0;
 
     /// <summary>
-    /// Call this function to return the unique signature for this scene
+    /// Call this function to return the unique signature for this scene.
     /// </summary>
     public Int32 Signature
     {
@@ -93,7 +93,7 @@ namespace Rhino.Render
     private Guid m_content_instance_id = Guid.Empty;
 
     /// <summary>
-    /// The content being previewed
+    /// The content being previewed.
     /// </summary>
     public Rhino.Render.RenderContent PreviewContent
     {
@@ -103,7 +103,7 @@ namespace Rhino.Render
     Rhino.Render.RenderEnvironment m_environment = null;
 
     /// <summary>
-    /// The environment that the previewed object is rendered in
+    /// The environment that the previewed object is rendered in.
     /// </summary>
     public Rhino.Render.RenderEnvironment Environment
     {

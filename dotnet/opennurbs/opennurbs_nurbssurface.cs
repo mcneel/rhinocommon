@@ -53,7 +53,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a Ruled surface between two curves. Curves must share the same knot-vector.
+    /// Constructs a Ruled surface between two curves. Curves must share the same knot-vector.
     /// </summary>
     /// <param name="curveA">First curve.</param>
     /// <param name="curveB">Second curve.</param>
@@ -72,7 +72,7 @@ namespace Rhino.Geometry
 
 #if RHINO_SDK
     /// <summary>
-    /// Create a surface from control-points.
+    /// Constructs a surface from control-points.
     /// </summary>
     /// <param name="points">Control point locations.</param>
     /// <param name="uCount">Number of points in U direction.</param>
@@ -111,15 +111,15 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a surface from control-points.
+    /// Constructs a surface from control-points.
     /// </summary>
     /// <param name="points">Control point locations.</param>
     /// <param name="uCount">Number of points in U direction.</param>
     /// <param name="vCount">Number of points in V direction.</param>
     /// <param name="uDegree">Degree of surface in U direction.</param>
     /// <param name="vDegree">Degree of surface in V direction.</param>
-    /// <param name="uClosed">True if the surface should be closed in the U direction.</param>
-    /// <param name="vClosed">True if the surface should be closed in the V direction.</param>
+    /// <param name="uClosed">true if the surface should be closed in the U direction.</param>
+    /// <param name="vClosed">true if the surface should be closed in the V direction.</param>
     /// <returns>A NurbsSurface on success or null on failure.</returns>
     /// <remarks>uCount multiplied by vCount must equal the number of points supplied.</remarks>
     public static NurbsSurface CreateThroughPoints(IEnumerable<Point3d> points, int uCount, int vCount, int uDegree, int vDegree, bool uClosed, bool vClosed)
@@ -152,26 +152,26 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Make a surface from 4 corner points
+    /// Make a surface from 4 corner points.
     /// </summary>
     /// <param name="corner1"></param>
     /// <param name="corner2"></param>
     /// <param name="corner3"></param>
     /// <param name="corner4"></param>
-    /// <returns>the resulting surface or null on error</returns>
+    /// <returns>the resulting surface or null on error.</returns>
     public static NurbsSurface CreateFromCorners(Point3d corner1, Point3d corner2, Point3d corner3, Point3d corner4)
     {
       return CreateFromCorners(corner1, corner2, corner3, corner4, 0.0);
     }
     /// <summary>
-    /// Make a surface from 4 corner points
+    /// Make a surface from 4 corner points.
     /// </summary>
     /// <param name="corner1"></param>
     /// <param name="corner2"></param>
     /// <param name="corner3"></param>
     /// <param name="corner4"></param>
-    /// <param name="tolerance">minimum edge length without collapsing to a singularity</param>
-    /// <returns>the resulting surface or null on error</returns>
+    /// <param name="tolerance">minimum edge length without collapsing to a singularity.</param>
+    /// <returns>the resulting surface or null on error.</returns>
     public static NurbsSurface CreateFromCorners(Point3d corner1, Point3d corner2, Point3d corner3, Point3d corner4, double tolerance)
     {
       IntPtr pSurface = UnsafeNativeMethods.RHC_RhinoCreateSurfaceFromCorners(corner1, corner2, corner3, corner4, tolerance);
@@ -180,12 +180,12 @@ namespace Rhino.Geometry
       return new NurbsSurface(pSurface, null);
     }
     /// <summary>
-    /// Make a surface from 3 corner points
+    /// Make a surface from 3 corner points.
     /// </summary>
     /// <param name="corner1"></param>
     /// <param name="corner2"></param>
     /// <param name="corner3"></param>
-    /// <returns>the resulting surface or null on error</returns>
+    /// <returns>the resulting surface or null on error.</returns>
     public static NurbsSurface CreateFromCorners(Point3d corner1, Point3d corner2, Point3d corner3)
     {
       return CreateFromCorners(corner1, corner2, corner3, corner3, 0.0);
@@ -193,7 +193,7 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>
-    /// Creates a railed Surface-of-Revolution.
+    /// Constructs a railed Surface-of-Revolution.
     /// </summary>
     /// <param name="profile">Profile curve for revolution.</param>
     /// <param name="rail">Rail curve for revolution.</param>
@@ -212,29 +212,29 @@ namespace Rhino.Geometry
 
 #if USING_V5_SDK && RHINO_SDK
     /// <summary>
-    /// Builds a surface from ordered network of curves/edges
+    /// Builds a surface from ordered network of curves/edges.
     /// </summary>
     /// <param name="uCurves"></param>
     /// <param name="uContinuityStart">
-    /// continuity at first U segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature
+    /// continuity at first U segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature.
     /// </param>
     /// <param name="uContinuityEnd">
-    /// continuity at last U segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature
+    /// continuity at last U segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature.
     /// </param>
     /// <param name="vCurves"></param>
     /// <param name="vContinuityStart">
-    /// continuity at first V segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature
+    /// continuity at first V segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature.
     /// </param>
     /// <param name="vContinuityEnd">
-    /// continuity at last V segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature
+    /// continuity at last V segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature.
     /// </param>
-    /// <param name="edgeTolerance">tolerance to use along network surface edge</param>
-    /// <param name="interiorTolerance">tolerance to use for the interior curves</param>
-    /// <param name="angleTolerance">angle tolerance to use</param>
+    /// <param name="edgeTolerance">tolerance to use along network surface edge.</param>
+    /// <param name="interiorTolerance">tolerance to use for the interior curves.</param>
+    /// <param name="angleTolerance">angle tolerance to use.</param>
     /// <param name="error">
     /// If the NurbsSurface could not be created, the error value describes where
     /// the failure occured.  0 = success,  1 = curve sorter failed, 2 = network initializing failed,
-    /// 3 = failed to build surface, 4 = network surface is not valid
+    /// 3 = failed to build surface, 4 = network surface is not valid.
     /// </param>
     /// <returns>A NurbsSurface or null on failure.</returns>
     public static NurbsSurface CreateNetworkSurface(IEnumerable<Curve> uCurves, int uContinuityStart, int uContinuityEnd,
@@ -258,15 +258,15 @@ namespace Rhino.Geometry
     /// <summary>
     /// Builds a surface from autosorted network of curves/edges.
     /// </summary>
-    /// <param name="curves">array of curves/edges, sorted automatically into U and V curves</param>
-    /// <param name="continuity">continuity along edges, 0 = loose, 1 = pos, 2 = tan, 3 = curvature</param>
-    /// <param name="edgeTolerance">tolerance to use along network surface edge</param>
-    /// <param name="interiorTolerance">tolerance to use for the interior curves</param>
-    /// <param name="angleTolerance">angle tolerance to use</param>
+    /// <param name="curves">array of curves/edges, sorted automatically into U and V curves.</param>
+    /// <param name="continuity">continuity along edges, 0 = loose, 1 = pos, 2 = tan, 3 = curvature.</param>
+    /// <param name="edgeTolerance">tolerance to use along network surface edge.</param>
+    /// <param name="interiorTolerance">tolerance to use for the interior curves.</param>
+    /// <param name="angleTolerance">angle tolerance to use.</param>
     /// <param name="error">
     /// If the NurbsSurface could not be created, the error value describes where
     /// the failure occured.  0 = success,  1 = curve sorter failed, 2 = network initializing failed,
-    /// 3 = failed to build surface, 4 = network surface is not valid
+    /// 3 = failed to build surface, 4 = network surface is not valid.
     /// </param>
     /// <returns>A NurbsSurface or null on failure.</returns>
     public static NurbsSurface CreateNetworkSurface(IEnumerable<Curve> curves, int continuity,
@@ -317,7 +317,7 @@ namespace Rhino.Geometry
     private Collections.NurbsSurfaceKnotList m_KnotsU;
     private Collections.NurbsSurfaceKnotList m_KnotsV;
     /// <summary>
-    /// The U direction knot vector
+    /// The U direction knot vector.
     /// </summary>
     public Collections.NurbsSurfaceKnotList KnotsU
     {
@@ -330,7 +330,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// The V direction knot vector
+    /// The V direction knot vector.
     /// </summary>
     public Collections.NurbsSurfaceKnotList KnotsV
     {
@@ -459,7 +459,7 @@ namespace Rhino.Geometry
     //}
 
     /// <summary>
-    /// Create a MorphControl that allows for morphing between two curves
+    /// Constructs a MorphControl that allows for morphing between two curves.
     /// </summary>
     /// <param name="originCurve"></param>
     /// <param name="targetCurve"></param>
@@ -509,7 +509,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// True if the morph should be done as quickly as possible because the
+    /// true if the morph should be done as quickly as possible because the
     /// result is being used for some type of dynamic preview.  If QuickPreview
     /// is true, the tolerance may be ignored. The QuickPreview value does not
     /// affect the way meshes and points are morphed. The default is false.
@@ -529,7 +529,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// True if the morph should be done in a way that preserves the structure
+    /// true if the morph should be done in a way that preserves the structure
     /// of the geometry.  In particular, for NURBS objects, true  eans that
     /// only the control points are moved.  The PreserveStructure value does not
     /// affect the way meshes and points are morphed. The default is false.
@@ -548,9 +548,9 @@ namespace Rhino.Geometry
       }
     }
 
-    /// <summary>Apply the space morph to geometry</summary>
+    /// <summary>Apply the space morph to geometry.</summary>
     /// <param name="geometry"></param>
-    /// <returns>true on success, false on failure</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Morph(GeometryBase geometry)
     {
       // dont' copy a const geometry if we don't have to
@@ -659,7 +659,7 @@ namespace Rhino.Geometry.Collections
     /// <param name="u">Index of control-point along surface 'U' direction.</param>
     /// <param name="v">Index of control-point along surface 'U' direction.</param>
     /// <param name="cp">The control point location to set (weight is assumed to be 1.0).</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetControlPoint(int u, int v, Point3d cp)
     {
       return SetControlPoint(u, v, new ControlPoint(cp));
@@ -671,7 +671,7 @@ namespace Rhino.Geometry.Collections
     /// <param name="u">Index of control-point along surface 'U' direction.</param>
     /// <param name="v">Index of control-point along surface 'U' direction.</param>
     /// <param name="cp">The control point to set.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetControlPoint(int u, int v, ControlPoint cp)
     {
       if (u < 0) { throw new IndexOutOfRangeException("u must be larger than or equal to zero."); }
@@ -801,7 +801,7 @@ namespace Rhino.Geometry.Collections
       }
     }
 
-    /// <summary>Determine if knot vector is clamped</summary>
+    /// <summary>Determine if knot vector is clamped.</summary>
     public bool ClampedAtStart
     {
       get
@@ -810,7 +810,7 @@ namespace Rhino.Geometry.Collections
         return UnsafeNativeMethods.ON_NurbsSurface_GetBoolDir(pConstSurf, NurbsSurface.idxIsClampedStart, m_direction);
       }
     }
-    /// <summary>Determine if knot vector is clamped</summary>
+    /// <summary>Determine if knot vector is clamped.</summary>
     public bool ClampedAtEnd
     {
       get
@@ -858,30 +858,30 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Insert a knot and update control point locations.
+    /// Inserts a knot and update control point locations.
     /// Does not change parameterization or locus of curve.
     /// </summary>
     /// <param name="value">Knot value to insert.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool InsertKnot(double value)
     {
       return InsertKnot(value, 1);
     }
 
     /// <summary>
-    /// Insert a knot and update control point locations.
+    /// Inserts a knot and update control point locations.
     /// Does not change parameterization or locus of curve.
     /// </summary>
     /// <param name="value">Knot value to insert.</param>
     /// <param name="multiplicity">Multiplicity of knot to insert.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool InsertKnot(double value, int multiplicity)
     {
       IntPtr ptr = m_surface.NonConstPointer();
       return UnsafeNativeMethods.ON_NurbsSurface_InsertKnot(ptr, m_direction, value, multiplicity);
     }
 
-    /// <summary>Get knot multiplicity</summary>
+    /// <summary>Get knot multiplicity.</summary>
     /// <param name="index">Index of knot to query.</param>
     /// <returns>The multiplicity (valence) of the knot.</returns>
     public int KnotMultiplicity(int index)
@@ -896,7 +896,7 @@ namespace Rhino.Geometry.Collections
     /// vertices.
     /// </summary>
     /// <param name="knotSpacing">Spacing of subsequent knots.</param>
-    /// <returns>True on success, False on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool CreateUniformKnots(double knotSpacing)
     {
       IntPtr ptr = m_surface.NonConstPointer();
@@ -909,7 +909,7 @@ namespace Rhino.Geometry.Collections
     /// vertices.
     /// </summary>
     /// <param name="knotSpacing">Spacing of subsequent knots.</param>
-    /// <returns>True on success, False on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool CreatePeriodicKnots(double knotSpacing)
     {
       IntPtr ptr = m_surface.NonConstPointer();

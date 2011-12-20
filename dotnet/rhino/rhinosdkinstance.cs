@@ -15,7 +15,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// This instance definition is never updated. If m_source_archive is set,
     /// it records the origin of the instance definition geometry, but
-    /// m_source_archive is never used to update the instance definition
+    /// m_source_archive is never used to update the instance definition.
     /// </summary>
     Static = 0,
     /// <summary>
@@ -47,7 +47,7 @@ namespace Rhino.DocObjects
       : base(serialNumber) { }
 
     /// <summary>
-    /// transformation applied to an instance definition for this object
+    /// transformation applied to an instance definition for this object.
     /// </summary>
     public Transform InstanceXform
     {
@@ -60,7 +60,7 @@ namespace Rhino.DocObjects
       }
     }
 
-    /// <summary>Basepoint coordinates of a block</summary>
+    /// <summary>Basepoint coordinates of a block.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_blockinsertionpoint.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_blockinsertionpoint.cs' lang='cs'/>
@@ -76,7 +76,7 @@ namespace Rhino.DocObjects
       }
     }
 
-    /// <summary>instance definition that this object uses</summary>
+    /// <summary>instance definition that this object uses.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_instancedefinitionobjects.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_instancedefinitionobjects.cs' lang='cs'/>
@@ -97,12 +97,12 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Explodes the instance reference into pieces
+    /// Explodes the instance reference into pieces.
     /// </summary>
     /// <param name="explodeNestedInstances">
     /// If true, then nested instance  references are recursively exploded into
     /// until actual geometry is found. If false, an InstanceObject is added to
-    /// piece_list when this InstanceObject has nested references
+    /// piece_list when this InstanceObject has nested references.
     /// </param>
     /// <param name="pieces"></param>
     /// <param name="pieceAttributes"></param>
@@ -167,10 +167,10 @@ namespace Rhino.DocObjects
     /// <summary>
     /// returns an object used as part of this definition.
     /// </summary>
-    /// <param name="index">0 &lt;= index &lt; ObjectCount</param>
+    /// <param name="index">0 &lt;= index &lt; ObjectCount.</param>
     /// <returns>
     /// Returns an object that is used to define the geometry.
-    /// Does NOT return an object that references this definition.count the number of references to this instance
+    /// Does NOT return an object that references this definition.count the number of references to this instance.
     /// </returns>
     public DocObjects.RhinoObject Object(int index)
     {
@@ -206,7 +206,7 @@ namespace Rhino.DocObjects
     /// <param name="wheretoLook">
     /// 0 = get top level references in active document
     /// 1 = get top level and nested references in active document
-    /// 2 = check for references from other instance definitions
+    /// 2 = check for references from other instance definitions.
     /// </param>
     /// <returns></returns>
     public InstanceObject[] GetReferences(int wheretoLook)
@@ -261,7 +261,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Determine if this instance definition contains a reference to another instance definition.
     /// </summary>
-    /// <param name="otherIdefIndex">index of another instance definition</param>
+    /// <param name="otherIdefIndex">index of another instance definition.</param>
     /// <returns>
     ///   0      no
     ///   1      other_idef_index is the index of this instance definition
@@ -279,7 +279,7 @@ namespace Rhino.DocObjects
     /// <param name="wheretoLook">
     /// 0 = check for top level references in active document
     /// 1 = check for top level and nested references in active document
-    /// 2 = check for references in other instance definitions
+    /// 2 = check for references in other instance definitions.
     /// </param>
     /// <returns></returns>
     public bool InUse(int wheretoLook)
@@ -384,13 +384,13 @@ namespace Rhino.DocObjects.Tables
       m_doc = doc;
     }
 
-    /// <summary>Document that owns this table</summary>
+    /// <summary>Document that owns this table.</summary>
     public RhinoDoc Document
     {
       get { return m_doc; }
     }
 
-    /// <summary>Number of items in the instance definitions table</summary>
+    /// <summary>Number of items in the instance definitions table.</summary>
     public int Count
     {
       get
@@ -400,7 +400,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Number of items in the instance definitions table, excluding deleted definitions
+    /// Number of items in the instance definitions table, excluding deleted definitions.
     /// </summary>
     public int ActiveCount
     {
@@ -413,9 +413,9 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Conceptually, the InstanceDefinition table is an array of Instance definions.
     /// The operator[] can be used to get individual instance definition. An instance
-    /// definition is either active or deleted and this state is reported by IsDeleted
+    /// definition is either active or deleted and this state is reported by IsDeleted.
     /// </summary>
-    /// <param name="index">zero based array index</param>
+    /// <param name="index">zero based array index.</param>
     /// <returns>
     /// </returns>
     public DocObjects.InstanceDefinition this[int index]
@@ -427,10 +427,10 @@ namespace Rhino.DocObjects.Tables
         return new InstanceDefinition(index, m_doc);
       }
     }
-    /// <summary>Finds the instance definition with a given name</summary>
+    /// <summary>Finds the instance definition with a given name.</summary>
     /// <param name="instanceDefinitionName">name of instance definition to search for (ignores case)</param>
-    /// <param name="ignoreDeletedInstanceDefinitions">true means don't search deleted instance definitions</param>
-    /// <returns>InstanceDefinition on success or null if no instance definition could be found</returns>
+    /// <param name="ignoreDeletedInstanceDefinitions">true means don't search deleted instance definitions.</param>
+    /// <returns>InstanceDefinition on success or null if no instance definition could be found.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_createblock.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_createblock.cs' lang='cs'/>
@@ -446,9 +446,9 @@ namespace Rhino.DocObjects.Tables
       return new Rhino.DocObjects.InstanceDefinition(index, m_doc);
     }
 
-    /// <summary>Finds the instance definition with a given id</summary>
-    /// <param name="instanceId">Unique id of the instance definition to search for</param>
-    /// <param name="ignoreDeletedInstanceDefinitions">true means don't search deleted instance definitions</param>
+    /// <summary>Finds the instance definition with a given id.</summary>
+    /// <param name="instanceId">Unique id of the instance definition to search for.</param>
+    /// <param name="ignoreDeletedInstanceDefinitions">true means don't search deleted instance definitions.</param>
     /// <returns></returns>
     public DocObjects.InstanceDefinition Find(Guid instanceId, bool ignoreDeletedInstanceDefinitions)
     {
@@ -469,7 +469,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="geometry"></param>
     /// <param name="attributes"></param>
     /// <returns>
-    /// &gt;=0  index of instance definition in the instance definition table. -1 on failure
+    /// &gt;=0  index of instance definition in the instance definition table. -1 on failure.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_createblock.vb' lang='vbnet'/>
@@ -504,7 +504,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="basePoint"></param>
     /// <param name="geometry"></param>
     /// <returns>
-    /// &gt;=0  index of instance definition in the instance definition table. -1 on failure
+    /// &gt;=0  index of instance definition in the instance definition table. -1 on failure.
     /// </returns>
     public int Add(string name, string description, Point3d basePoint, IEnumerable<GeometryBase> geometry)
     {
@@ -520,7 +520,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="geometry"></param>
     /// <param name="attributes"></param>
     /// <returns>
-    /// &gt;=0  index of instance definition in the instance definition table. -1 on failure
+    /// &gt;=0  index of instance definition in the instance definition table. -1 on failure.
     /// </returns>
     public int Add(string name, string description, Point3d basePoint, GeometryBase geometry, DocObjects.ObjectAttributes attributes)
     {
@@ -538,7 +538,7 @@ namespace Rhino.DocObjects.Tables
     /// if true, information message boxes pop up when illegal changes are attempted.
     /// </param>
     /// <returns>
-    /// true if successful
+    /// true if successful.
     /// </returns>
     public bool Modify(DocObjects.InstanceDefinition idef, string newName, string newDescription, bool quiet)
     {
@@ -556,7 +556,7 @@ namespace Rhino.DocObjects.Tables
     /// if true, information message boxes pop up when illegal changes are attempted.
     /// </param>
     /// <returns>
-    /// true if successful
+    /// true if successful.
     /// </returns>
     public bool Modify(int idefIndex, string newName, string newDescription, bool quiet)
     {
@@ -614,16 +614,16 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Marks the source path for a linked instance definition as relative or absolute
+    /// Marks the source path for a linked instance definition as relative or absolute.
     /// </summary>
     /// <param name="idef"></param>
     /// <param name="relative">
     /// if true, the path should be considered as relative
-    /// if false, the path should be considered as absolute
+    /// if false, the path should be considered as absolute.
     /// </param>
     /// <param name="quiet"></param>
     /// <returns>
-    /// true if the instance defintion could be modified
+    /// true if the instance defintion could be modified.
     /// </returns>
     public bool MakeSourcePathRelative(DocObjects.InstanceDefinition idef, bool relative, bool quiet)
     {
@@ -633,11 +633,11 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Deletes instance definition
+    /// Deletes instance definition.
     /// </summary>
     /// <param name="idefIndex">
     /// zero based index of instance definition to delete.
-    /// This must be in the range 0 &lt;= idefIndex &lt; InstanceDefinitionTable.Count
+    /// This must be in the range 0 &lt;= idefIndex &lt; InstanceDefinitionTable.Count.
     /// </param>
     /// <param name="deleteReferences">
     /// true to delete all references to this definition.
@@ -726,7 +726,7 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="ignoreDeleted">if true then deleted layers are filtered out</param>
+    /// <param name="ignoreDeleted">if true then deleted layers are filtered out.</param>
     /// <returns></returns>
     public DocObjects.InstanceDefinition[] GetList(bool ignoreDeleted)
     {

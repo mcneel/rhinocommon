@@ -32,7 +32,7 @@ namespace Rhino.Display
     internal IntPtr NonConstPointer() { return m_pDisplayBmp; }
 
     /// <summary>
-    /// Create a DisplayBitmap from an existing bitmap
+    /// Constructs a DisplayBitmap from an existing bitmap.
     /// </summary>
     /// <param name="bitmap"></param>
     public DisplayBitmap(System.Drawing.Bitmap bitmap)
@@ -47,7 +47,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Load a DisplayBitmap from and image file on disk
+    /// Load a DisplayBitmap from and image file on disk.
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
@@ -64,7 +64,7 @@ namespace Rhino.Display
     /// with the current framebuffer color.  The default setting is SourceAlpha
     /// for source and OneMinusSourceAlpha for destination.  See OpenGL's
     /// glBlendFunc for details
-    /// http://www.opengl.org/sdk/docs/man/xhtml/glBlendFunc.xml
+    /// http://www.opengl.org/sdk/docs/man/xhtml/glBlendFunc.xml.
     /// </summary>
     /// <param name="source"></param>
     /// <param name="destination"></param>
@@ -125,7 +125,7 @@ namespace Rhino.Display
     /// Maximum number of cached sort order index lists stored on this class.
     /// Default is 10, but depending on the number of points in this list you
     /// may get better performance by setting this value to a certain percentage
-    /// of the point count
+    /// of the point count.
     /// </summary>
     public int MaximumCachedSortLists { get; set; }
 
@@ -264,7 +264,7 @@ namespace Rhino.Geometry
       }
     }
 
-    /// <summary>3d Location of the Particle</summary>
+    /// <summary>3d Location of the Particle.</summary>
     public Point3d Location
     {
       get { return m_location; }
@@ -332,8 +332,8 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="particle"></param>
     /// <returns>
-    /// True if this particle aws added to the system or if is already in the system.
-    /// False if the particle already exists in a different system
+    /// true if this particle aws added to the system or if is already in the system.
+    /// false if the particle already exists in a different system.
     /// </returns>
     public virtual bool Add(Particle particle)
     {
@@ -371,7 +371,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Remove a single Particle from this system
+    /// Remove a single Particle from this system.
     /// </summary>
     /// <param name="particle"></param>
     public virtual void Remove(Particle particle)
@@ -393,7 +393,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Remove all Particles from this system
+    /// Remove all Particles from this system.
     /// </summary>
     public virtual void Clear()
     {
@@ -412,7 +412,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Calls Update on every particle in the system
+    /// Calls Update on every particle in the system.
     /// </summary>
     public virtual void Update()
     {

@@ -400,7 +400,7 @@ namespace Rhino.Geometry
     /// Determines whether a point is included in this box. This is the same as calling Contains(point,false)
     /// </summary>
     /// <param name="point">Point to test.</param>
-    /// <returns>True if the point is on the inside of or coincident with this Box.</returns>
+    /// <returns>true if the point is on the inside of or coincident with this Box.</returns>
     public bool Contains(Point3d point)
     {
       return Contains(point, false);
@@ -412,7 +412,7 @@ namespace Rhino.Geometry
     /// <param name="point">Point to test.</param>
     /// <param name="strict">If true, the point needs to be fully on the inside of the Box. 
     /// I.e. coincident points will be considered 'outside'.</param>
-    /// <returns>True if the point is (strictly) on the inside of this Box.</returns>
+    /// <returns>true if the point is (strictly) on the inside of this Box.</returns>
     public bool Contains(Point3d point, bool strict)
     {
       if (!point.IsValid) { return false; }
@@ -430,7 +430,7 @@ namespace Rhino.Geometry
     /// Test a boundingbox for Box inclusion. This is the same as calling Contains(box,false)
     /// </summary>
     /// <param name="box">Box to test.</param>
-    /// <returns>True if the box is on the inside of or coincident with this Box.</returns>
+    /// <returns>true if the box is on the inside of or coincident with this Box.</returns>
     public bool Contains(BoundingBox box)
     {
       return Contains(box, false);
@@ -441,7 +441,7 @@ namespace Rhino.Geometry
     /// <param name="box">Box to test.</param>
     /// <param name="strict">If true, the boundingbox needs to be fully on the inside of this Box. 
     /// I.e. coincident boxes will be considered 'outside'.</param>
-    /// <returns>True if the box is (strictly) on the inside of this Box.</returns>
+    /// <returns>true if the box is (strictly) on the inside of this Box.</returns>
     public bool Contains(BoundingBox box, bool strict)
     {
       if (!box.IsValid) { return false; }
@@ -457,7 +457,7 @@ namespace Rhino.Geometry
     /// Test a box for Box inclusion. This is the same as calling Contains(box,false)
     /// </summary>
     /// <param name="box">Box to test.</param>
-    /// <returns>True if the box is on the inside of or coincident with this Box.</returns>
+    /// <returns>true if the box is on the inside of or coincident with this Box.</returns>
     public bool Contains(Box box)
     {
       return Contains(box, false);
@@ -469,7 +469,7 @@ namespace Rhino.Geometry
     /// <param name="box">Box to test.</param>
     /// <param name="strict">If true, the box needs to be fully on the inside of this Box. 
     /// I.e. coincident boxes will be considered 'outside'.</param>
-    /// <returns>True if the box is (strictly) on the inside of this Box.</returns>
+    /// <returns>true if the box is (strictly) on the inside of this Box.</returns>
     public bool Contains(Box box, bool strict)
     {
       if (!box.IsValid) { return false; }
@@ -503,8 +503,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Attempts to make the Box valid. This is not always possible.
     /// </summary>
-    /// <returns>True if the box was made valid, or if it was valid to begin with. 
-    /// False if the box remains in a differently abled state.</returns>
+    /// <returns>true if the box was made valid, or if it was valid to begin with. 
+    /// false if the box remains in a differently abled state.</returns>
     public bool MakeValid()
     {
       // David: This code is untested.
@@ -552,7 +552,7 @@ namespace Rhino.Geometry
     /// Similarity, the dimensions of the resulting box cannot be trusted.
     /// </summary>
     /// <param name="xform">Transformation matrix to apply to this Box.</param>
-    /// <returns>True if the Box was successfully transformed, False if otherwise.</returns>
+    /// <returns>true if the Box was successfully transformed, false if otherwise.</returns>
     public bool Transform(Transform xform)
     {
       // David: This code is untested.

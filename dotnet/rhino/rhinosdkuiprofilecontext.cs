@@ -16,12 +16,12 @@ namespace Rhino
 {
   //////////////////////////////////////////////////////////////////////////////////////////////
   /// <summary>
-  /// PersistentSettings contains a dictionary of these items
+  /// PersistentSettings contains a dictionary of these items.
   /// </summary>
   class SettingValue : ISerializable
   {
     /// <summary>
-    /// ISerializable constructor
+    /// ISerializable constructor.
     /// </summary>
     /// <param name="info"></param>
     /// <param name="context"></param>
@@ -31,10 +31,10 @@ namespace Rhino
       m_default_value = info.GetString("default_value");
     }
     /// <summary>
-    /// Constructor
+    /// Constructor.
     /// </summary>
-    /// <param name="value">Current value string</param>
-    /// <param name="default_value">Default value string</param>
+    /// <param name="value">Current value string.</param>
+    /// <param name="default_value">Default value string.</param>
     public SettingValue(string value, string default_value)
     {
       if (!string.IsNullOrEmpty(value))
@@ -43,7 +43,7 @@ namespace Rhino
         this.m_default_value = default_value;
     }
     /// <summary>
-    /// ISerializable required method
+    /// ISerializable required method.
     /// </summary>
     /// <param name="info"></param>
     /// <param name="context"></param>
@@ -56,7 +56,7 @@ namespace Rhino
     /// <summary>
     /// Copy values from another SettingsValue object, if the destination contains more than one item
     /// assume it is a string list and append values from the source object that are not currently in
-    /// the array
+    /// the array.
     /// </summary>
     /// <param name="source"></param>
     public void CopyFrom(SettingValue source)
@@ -68,7 +68,7 @@ namespace Rhino
       }
     }
     /// <summary>
-    /// Check to see if two SettingsValue have the same data, do not compare default values
+    /// Check to see if two SettingsValue have the same data, do not compare default values.
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
@@ -77,7 +77,7 @@ namespace Rhino
       return ValuesAreEqual(other, false);
     }
     /// <summary>
-    /// Check to see if two SettingsValues have the same data and optionally compare default data
+    /// Check to see if two SettingsValues have the same data and optionally compare default data.
     /// </summary>
     /// <param name="other"></param>
     /// <param name="compareDefaults"></param>
@@ -93,10 +93,10 @@ namespace Rhino
       return true;
     }
     /// <summary>
-    /// Set either the current or default value string
+    /// Set either the current or default value string.
     /// </summary>
-    /// <param name="bDefault">If true then the current value string is set otherwise the default value string is</param>
-    /// <param name="s">New value string</param>
+    /// <param name="bDefault">If true then the current value string is set otherwise the default value string is.</param>
+    /// <param name="s">New value string.</param>
     public void SetValue(bool bDefault, string s)
     {
       if (bDefault)
@@ -105,20 +105,20 @@ namespace Rhino
         this.m_value = s;
     }
     /// <summary>
-    /// Gets the current or default value as requested
+    /// Gets the current or default value as requested.
     /// </summary>
-    /// <param name="bDefault">If true then the default value string is returned otherwise the current value string is returned</param>
-    /// <returns>If bDefault is true then the default value string is returned otherwise the current value string is returned</returns>
+    /// <param name="bDefault">If true then the default value string is returned otherwise the current value string is returned.</param>
+    /// <returns>If bDefault is true then the default value string is returned otherwise the current value string is returned.</returns>
     public string GetValue(bool bDefault)
     {
       return (bDefault ? m_default_value : m_value);
     }
     /// <summary>
-    /// Compare current and default values and return true if they are identical, compare is case sensitive
+    /// Compare current and default values and return true if they are identical, compare is case sensitive.
     /// </summary>
     public bool ValueSameAsDefault { get { return (0 == string.Compare(m_value, m_default_value, StringComparison.Ordinal)); } }
     /// <summary>
-    /// Compare current and default values and return true if they differ, compare is case sensitive
+    /// Compare current and default values and return true if they differ, compare is case sensitive.
     /// </summary>
     public bool ValueDifferentThanDefault { get { return (!ValueSameAsDefault); } }
 
@@ -166,7 +166,7 @@ namespace Rhino
     /// <summary>
     /// I was going to use Path.PathSeparator, ';' which works when specifying a path but is a valid file name character so
     /// it does not work in a file name list, the '|' character is in both the Path.GetInvalidFileNameChars() and 
-    /// Path.GetInvalidPathChars() list of characters so I went ahead and used it for now
+    /// Path.GetInvalidPathChars() list of characters so I went ahead and used it for now.
     /// </summary>
     public static readonly char StringListSeparator = '|';
     /// <summary>
@@ -569,7 +569,7 @@ namespace Rhino
 
 
   /// <summary>
-  /// A dictionary of SettingValue items
+  /// A dictionary of SettingValue items.
   /// </summary>
   [Serializable]
   public class PersistentSettings : ISerializable
@@ -1248,12 +1248,12 @@ namespace Rhino
     }
     /// <summary>
     /// Adding this string to a string list when calling SetStringList will cause the ProgramData setting to
-    /// get inserted at that location in the list
+    /// get inserted at that location in the list.
     /// </summary>
     public static string StringListRootKey { get { return SettingValue.StringListRootKey; } }
     /// <summary>
     /// Including a item with the value of StringListRootKey will cause the ProgramData value to get inserted at
-    /// that location in the list when calling GetStringList
+    /// that location in the list when calling GetStringList.
     /// </summary>
     /// <param name="key"></param>
     /// <param name="value"></param>
@@ -1370,13 +1370,13 @@ namespace Rhino
     }
     /// <summary>
     /// If the settings dictionary contains one or more values, which are not equal to the default value, then Write the contents
-    /// of this settings dictionary to the specified XmlWriter contained within elementName
+    /// of this settings dictionary to the specified XmlWriter contained within elementName.
     /// </summary>
-    /// <param name="xmlWriter">XmlWriter object to write to</param>
-    /// <param name="elementName">Element which will contain key value pairs</param>
-    /// <param name="attributeName">Optional element attribute</param>
-    /// <param name="attributeValue">Optional element attribute value</param>
-    /// <param name="allUserSettings">All users settings to compare with</param>
+    /// <param name="xmlWriter">XmlWriter object to write to.</param>
+    /// <param name="elementName">Element which will contain key value pairs.</param>
+    /// <param name="attributeName">Optional element attribute.</param>
+    /// <param name="attributeValue">Optional element attribute value.</param>
+    /// <param name="allUserSettings">All users settings to compare with.</param>
     internal void WriteXmlElement(XmlWriter xmlWriter, string elementName, string attributeName, string attributeValue, PersistentSettings allUserSettings)
     {
       if (null != m_Settings && ContainsModifiedValues(allUserSettings))
@@ -1417,7 +1417,7 @@ namespace Rhino
     /// <summary>
     /// Parse XmlNode for settings "entry" elements, add entry elements to the dictionary
     /// first and if then check the defaults list and make sure the entry is in the list before setting the 
-    /// default value
+    /// default value.
     /// </summary>
     /// <param name="nodeRoot"></param>
     internal void ParseXmlNodes(XmlNode nodeRoot)
@@ -1477,11 +1477,11 @@ namespace Rhino
       return null;
     }
     /// <summary>
-    /// Main settings element id attribute value, used to query valid settings section in settings XML file
+    /// Main settings element id attribute value, used to query valid settings section in settings XML file.
     /// </summary>
     private const string CURRENT_XML_FORMAT_VERSION = "1.0";
     /// <summary>
-    /// Compute folder to read or write settings files
+    /// Compute folder to read or write settings files.
     /// </summary>
     /// <param name="localSettings"></param>
     /// <returns></returns>
@@ -1490,7 +1490,7 @@ namespace Rhino
       return Rhino.PlugIns.PlugIn.SettingsDirectoryHelper(localSettings, this.m_assembly);
     }
     /// <summary>
-    /// Compute full path to settings file to read or write
+    /// Compute full path to settings file to read or write.
     /// </summary>
     /// <param name="localSettings"></param>
     /// <returns></returns>
@@ -1499,9 +1499,9 @@ namespace Rhino
       return Path.Combine(SettingsFileFolder(localSettings), "settings.xml");
     }
 
-    /// <summary>PersistentSettingsManager constructor</summary>
-    /// <param name="pluginAssembly">Requires a valid PlugIn object to attach to</param>
-    /// <param name="allUserSettings">All user setting to compare for changes</param>
+    /// <summary>PersistentSettingsManager constructor.</summary>
+    /// <param name="pluginAssembly">Requires a valid PlugIn object to attach to.</param>
+    /// <param name="allUserSettings">All user setting to compare for changes.</param>
     internal PlugInSettings(System.Reflection.Assembly pluginAssembly, PlugInSettings allUserSettings)
     {
       m_assembly = pluginAssembly;
@@ -1510,7 +1510,7 @@ namespace Rhino
     /// <summary>
     /// Gets the Plug-in settings associated with this plug-in, if this is the first time called then
     /// the plug-in settings member variable will get initialized and if a settings file exists it
-    /// will get loaded
+    /// will get loaded.
     /// </summary>
     public PersistentSettings PluginSettings
     {
@@ -1525,10 +1525,10 @@ namespace Rhino
     /// Gets the PersistentSettings associated with the specified command.  If the settings file
     /// has not been previously loaded and exists then it will get read.  If the command name is
     /// not in the command settings dictionary then a new entry will get created and its settings
-    /// will be returned
+    /// will be returned.
     /// </summary>
-    /// <param name="name">Command name key to search for and/or add</param>
-    /// <returns>Returns PersistentSettings object associated with command name on success or null on error</returns>
+    /// <param name="name">Command name key to search for and/or add.</param>
+    /// <returns>Returns PersistentSettings object associated with command name on success or null on error.</returns>
     public PersistentSettings CommandSettings(string name)
     {
       if (m_CommandSettingsDict == null)
@@ -1567,7 +1567,7 @@ namespace Rhino
     /// Clears the dirty flag for the settings. 
     /// </summary>
     /// <returns>
-    /// True if settings are successfully read. False if there was no existing
+    /// true if settings are successfully read. false if there was no existing
     /// settings file to read, or if a read lock could not be acquired.
     /// </returns>
     public bool ReadSettingsHelper(bool localSettings)
@@ -1702,10 +1702,10 @@ namespace Rhino
       return true;
     }
     /// <summary>
-    /// Helper method to delete a directory if it is empty
+    /// Helper method to delete a directory if it is empty.
     /// </summary>
-    /// <param name="directory">Full path to directory to delete</param>
-    /// <returns>Returns true if the directory was empty and successfully deleted otherwise returns false</returns>
+    /// <param name="directory">Full path to directory to delete.</param>
+    /// <returns>Returns true if the directory was empty and successfully deleted otherwise returns false.</returns>
     private bool DeleteDirectory(string directory)
     {
       bool rc = false;
@@ -1726,9 +1726,9 @@ namespace Rhino
       return rc;
     }
     /// <summary>
-    /// Check the plug-in and command settings dictionaries for values other than default value
+    /// Check the plug-in and command settings dictionaries for values other than default value.
     /// </summary>
-    /// <returns>Returns true if either the plug-ins or commands dictionaries contains a modified item otherwise false</returns>
+    /// <returns>Returns true if either the plug-ins or commands dictionaries contains a modified item otherwise false.</returns>
     public bool ContainsModifiedValues()
     {
       if (null != m_PluginSettings && m_PluginSettings.ContainsModifiedValues(this.AllUserPlugInSettings))
@@ -1792,7 +1792,7 @@ namespace Rhino
     /// or the file does not exist, it writes out a new file.
     /// </summary>
     /// <returns>
-    /// True if settings where flushed to disk, otherwise false. 
+    /// true if settings where flushed to disk, otherwise false. 
     /// </returns>
     internal bool WriteSettingsHelper(bool localSettings)
     {
@@ -1852,7 +1852,7 @@ namespace Rhino
       return result;
     }
     /// <summary>
-    /// Create a temporary file and write plug-in and plug-in command settings to the temp file.
+    /// Constructs a temporary file and write plug-in and plug-in command settings to the temp file.
     /// Only writes PersistentSettings that contain one or more item with a value that differs
     /// from the default value.
     /// </summary>
@@ -1915,9 +1915,9 @@ namespace Rhino
 
     private readonly PlugInSettings SettingsLocal;
     /// <summary>
-    /// PersistentSettingsManager constructor
+    /// PersistentSettingsManager constructor.
     /// </summary>
-    /// <param name="plugin">Requires a valid PlugIn object to attach to</param>
+    /// <param name="plugin">Requires a valid PlugIn object to attach to.</param>
     PersistentSettingsManager(Rhino.PlugIns.PlugIn plugin)
     {
       m_assembly = plugin.Assembly;
@@ -1961,33 +1961,33 @@ namespace Rhino
     /// <summary>
     /// Gets the Plug-in settings associated with this plug-in, if this is the first time called then
     /// the plug-in settings member variable will get initialized and if a settings file exists it
-    /// will get loaded
+    /// will get loaded.
     /// </summary>
     public PersistentSettings PluginSettings { get { return SettingsLocal.PluginSettings; } }
     /// <summary>
     /// Gets the PersistentSettings associated with the specified command.  If the settings file
     /// has not been previously loaded and exists then it will get read.  If the command name is
     /// not in the command settings dictionary then a new entry will get created and its settings
-    /// will be returned
+    /// will be returned.
     /// </summary>
-    /// <param name="name">Command name key to search for and/or add</param>
-    /// <returns>Returns PersistentSettings object associated with command name on success or null on error</returns>
+    /// <param name="name">Command name key to search for and/or add.</param>
+    /// <returns>Returns PersistentSettings object associated with command name on success or null on error.</returns>
     public PersistentSettings CommandSettings(string name)
     {
       return SettingsLocal.CommandSettings(name);
     }
     /// <summary>
-    /// Check the plug-in and command settings dictionaries for values other than default value
+    /// Check the plug-in and command settings dictionaries for values other than default value.
     /// </summary>
-    /// <returns>Returns true if either the plug-ins or commands dictionaries contains a modified item otherwise false</returns>
+    /// <returns>Returns true if either the plug-ins or commands dictionaries contains a modified item otherwise false.</returns>
     public bool ContainsModifiedValues()
     {
       return SettingsLocal.ContainsModifiedValues();
     }
     /// <summary>
-    /// If they exist and contain modified values write global settings first then local settings
+    /// If they exist and contain modified values write global settings first then local settings.
     /// </summary>
-    /// <returns>Returns true if local settings were successfully written</returns>
+    /// <returns>Returns true if local settings were successfully written.</returns>
     public bool WriteSettings()
     {
       return SettingsLocal.WriteSettings();

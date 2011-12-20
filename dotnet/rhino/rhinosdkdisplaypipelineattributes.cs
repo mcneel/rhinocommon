@@ -447,7 +447,7 @@ namespace Rhino.Display
       }
 
       /// <summary>
-      /// Color.Empty means that we are NOT using a single color for all mesh wires
+      /// Color.Empty means that we are NOT using a single color for all mesh wires.
       /// </summary>
       public Color AllMeshWiresColor
       {

@@ -65,7 +65,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="circle">Circle to base arc upon.</param>
     /// <param name="angleIntervalRadians">
-    /// Increasing angle interval in radians with angleIntervalRadians.Length() &lt;= 2.0*Math.PI
+    /// Increasing angle interval in radians with angleIntervalRadians.Length() &lt;= 2.0*Math.PI.
     /// </param>
     public Arc(Circle circle, Interval angleIntervalRadians)
       : this()
@@ -157,9 +157,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets a value indicating whether or not this arc is valid.
     /// Detail:
-    ///	 Radius&gt;0 and 0&lt;AngleRadians()&lt;=2*Math.Pi
+    ///	 Radius&gt;0 and 0&lt;AngleRadians()&lt;=2*Math.Pi.
     /// </summary>
-    /// <returns>True if the arc is valid.</returns>
+    /// <returns>true if the arc is valid.</returns>
     public bool IsValid
     {
       get
@@ -327,9 +327,9 @@ namespace Rhino.Geometry
     /// Sets arc's angle domain (in radians) as a subdomain of the circle.
     /// </summary>
     /// <param name="domain">
-    /// 0 &lt; domain[1] - domain[0] &lt;= 2.0 * RhinoMath.Pi
+    /// 0 &lt; domain[1] - domain[0] &lt;= 2.0 * RhinoMath.Pi.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Trim(Interval domain)
     {
       bool rc = false;
@@ -484,7 +484,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="xform">Transformations to apply. 
     /// Note that arcs cannot handle non-euclidian transformations.</param>
-    /// <returns>True on success, False on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Transform(Transform xform)
     {
       return UnsafeNativeMethods.ON_Arc_Transform(ref this, ref xform);
@@ -516,7 +516,7 @@ namespace Rhino.Geometry
     /// Input arc's 3d axis aligned bounding box or the
     /// union of the input box with the arc's bounding box.
     /// </summary>
-    /// <param name="bbox">3d axis aligned bounding box</param>
+    /// <param name="bbox">3d axis aligned bounding box.</param>
     /// <param name="bGrowBox">If true, then the union of the input bbox and
     /// the arc's bounding box is returned in bbox. If false, the arc's 
     /// bounding box is returned in bbox.</param>
@@ -531,13 +531,13 @@ namespace Rhino.Geometry
     /// <summary>
     /// Input tight bounding box.
     /// </summary>
-    /// <param name="tight_bbox">tight bounding box</param>
+    /// <param name="tight_bbox">tight bounding box.</param>
     /// <param name="bGrowBox">If true and the input tight_bbox is valid,
     /// then returned tight_bbox is the union of the input tight_bbox and
     /// the arc's tight bounding box.</param>
     /// <param name="xform">If not NULL, the tight bounding box of the
     /// transformed arc is calculated. The arc is not modified.</param>
-    /// <returns>True if a valid tight_bbox is returned.</returns>
+    /// <returns>true if a valid tight_bbox is returned.</returns>
     public bool GetTightBoundingBox(ref ON_BoundingBox tight_bbox, bool bGrowBox, ref ON_Xform xform)
     {
       return UnsafeNativeMethods.ON_Arc_GetTightBoundingBox(ref this,
@@ -552,7 +552,7 @@ namespace Rhino.Geometry
     //}
 
     //[skipping] - David thinks this is also needlessly convoluted.
-    ///// <summary>The arc's domain in degrees</summary>
+    ///// <summary>The arc's domain in degrees.</summary>
     //public Interval DomainDegrees
     //{
     //  get
@@ -568,7 +568,7 @@ namespace Rhino.Geometry
     ///// <summary>
     ///// Sets arc's subtended angle in radians.
     ///// </summary>
-    ///// <param name="angleRadians">0 &lt;= angleRadians &lt;= 2.0 * ON_Math.PI</param>
+    ///// <param name="angleRadians">0 &lt;= angleRadians &lt;= 2.0 * ON_Math.PI.</param>
     ///// <returns></returns>
     //public bool SetAngleRadians(double angleRadians)
     //{
@@ -608,7 +608,7 @@ namespace Rhino.Geometry
     ///// <summary>
     ///// Sets arc's subtended angle in degrees.
     ///// </summary>
-    ///// <param name="angleDegrees">0 &lt; angleDegrees &lt;= 360</param>
+    ///// <param name="angleDegrees">0 &lt; angleDegrees &lt;= 360.</param>
     ///// <returns></returns>
     //public bool SetAngleDegrees(double angleDegrees)
     //{

@@ -7,30 +7,30 @@ namespace Rhino.UI.Gumball
 #if RHINO_SDK
   #if USING_V5_SDK
   /// <summary>
-  /// Transformation modes for gumballs
+  /// Transformation modes for gumballs.
   /// </summary>
   public enum GumballMode : int
   {
     None = 0, //gb_mode_nothing
 
-    /// <summary>gumball menu button was picked</summary>
+    /// <summary>gumball menu button was picked.</summary>
     Menu  = 1, //gb_mode_menu
 
-    /// <summary>Unconstrained translation</summary>
+    /// <summary>Unconstrained translation.</summary>
     TranslateFree = 2, //gb_mode_translatefree
 
-    /// <summary>Translation along a single axis</summary>
+    /// <summary>Translation along a single axis.</summary>
     TranslateX = 3, //gb_mode_translatex
-    /// <summary>Translation along a single axis</summary>
+    /// <summary>Translation along a single axis.</summary>
     TranslateY = 4, //gb_mode_translatey
-    /// <summary>Translation along a single axis</summary>
+    /// <summary>Translation along a single axis.</summary>
     TranslateZ = 5, //gb_mode_translatez
 
-    /// <summary>Translation in a plane</summary>
+    /// <summary>Translation in a plane.</summary>
     TranslateXY = 6, //gb_mode_translatexy
-    /// <summary>Translation in a plane</summary>
+    /// <summary>Translation in a plane.</summary>
     TranslateYZ = 7, //gb_mode_translateyz
-    /// <summary>Translation in a plane</summary>
+    /// <summary>Translation in a plane.</summary>
     TranslateZX = 8, //gb_mode_translatezx
 
     /// <summary>
@@ -126,9 +126,9 @@ namespace Rhino.UI.Gumball
     /// <summary>
     /// </summary>
     /// <param name="frame"></param>
-    /// <param name="frameBoundingBox">bounding box with respect to frame</param>
+    /// <param name="frameBoundingBox">bounding box with respect to frame.</param>
     /// <returns>
-    /// True if input is valid and gumball is set. False if input is not valid.
+    /// true if input is valid and gumball is set. false if input is not valid.
     /// In this case, gumball is set to the default.
     /// </returns>
     public bool SetFromBoundingBox(Plane frame, BoundingBox frameBoundingBox)
@@ -414,38 +414,38 @@ namespace Rhino.UI.Gumball
     /// </summary>
     public int FreeTranslate { get; set; }
 
-    /// <summary>Default is Red</summary>
+    /// <summary>Default is Red.</summary>
     public System.Drawing.Color ColorX { get; set; }
-    /// <summary>Default is Green</summary>
+    /// <summary>Default is Green.</summary>
     public System.Drawing.Color ColorY { get; set; }
-    /// <summary>Default is Blue</summary>
+    /// <summary>Default is Blue.</summary>
     public System.Drawing.Color ColorZ { get; set; }
 
     public System.Drawing.Color ColorMenuButton { get; set; }
 
-    /// <summary>in pixels</summary>
+    /// <summary>in pixels.</summary>
     public int Radius { get; set; }
 
-    /// <summary>in pixels</summary>
+    /// <summary>in pixels.</summary>
     public int ArrowHeadLength { get; set; }
 
-    /// <summary>in pixels</summary>
+    /// <summary>in pixels.</summary>
     public int ArrowHeadWidth { get; set; }
 
-    /// <summary>in pixels</summary>
+    /// <summary>in pixels.</summary>
     public int ScaleGripSize { get; set; }
 
-    /// <summary>in pixels</summary>
+    /// <summary>in pixels.</summary>
     public int PlanarTranslationGripCorner { get; set; }
-    /// <summary>in pixels</summary>
+    /// <summary>in pixels.</summary>
     public int PlanarTranslationGripSize { get; set; }
-    /// <summary>in pixels</summary>
+    /// <summary>in pixels.</summary>
     public int AxisThickness { get; set; }
-    /// <summary>in pixels</summary>
+    /// <summary>in pixels.</summary>
     public int ArcThickness { get; set; }
-    /// <summary>Distance of menu ball from center</summary>
+    /// <summary>Distance of menu ball from center.</summary>
     public int MenuDistance { get; set; }
-    /// <summary>Radius of menu circle</summary>
+    /// <summary>Radius of menu circle.</summary>
     public int MenuSize { get; set; }
   }
 
@@ -532,7 +532,7 @@ namespace Rhino.UI.Gumball
 
     /// <summary>
     /// The gumball transformation is the transformation calculated by comparing
-    /// the current gumball to the starting BaseGumball
+    /// the current gumball to the starting BaseGumball.
     /// </summary>
     public Transform GumballTransform
     {
@@ -540,7 +540,7 @@ namespace Rhino.UI.Gumball
     }
 
     /// <summary>
-    /// The total transformation is GumballTransform * PreTransform
+    /// The total transformation is GumballTransform * PreTransform.
     /// </summary>
     public Transform TotalTransform
     {
@@ -549,7 +549,7 @@ namespace Rhino.UI.Gumball
 
     internal GumballObject m_base_gumball;
     internal GumballObject m_gumball;
-    /// <summary>Starting location</summary>
+    /// <summary>Starting location.</summary>
     public GumballObject BaseGumball
     {
       get
@@ -567,7 +567,7 @@ namespace Rhino.UI.Gumball
     }
 
     /// <summary>
-    /// Gumball's contents are copied to this class' base gumball
+    /// Gumball's contents are copied to this class' base gumball.
     /// </summary>
     /// <param name="gumball"></param>
     public void SetBaseGumball(GumballObject gumball)
@@ -576,7 +576,7 @@ namespace Rhino.UI.Gumball
     }
 
     /// <summary>
-    /// Gumball's contents are copied to this class' base gumball
+    /// Gumball's contents are copied to this class' base gumball.
     /// </summary>
     /// <param name="gumball"></param>
     /// <param name="appearanceSettings"></param>
@@ -598,7 +598,7 @@ namespace Rhino.UI.Gumball
 
 
     GumballPickResult m_pick_result;
-    /// <summary>The inital mouse down event sets PickResult</summary>
+    /// <summary>The inital mouse down event sets PickResult.</summary>
     public GumballPickResult PickResult
     {
       get

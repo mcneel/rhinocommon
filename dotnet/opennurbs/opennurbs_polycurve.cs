@@ -103,7 +103,7 @@ namespace Rhino.Geometry
     //  ON_Curve* LastSegmentCurve() const;  // returns NULL if count = 0
 
     /// <summary>
-    /// Create an array containing all polycurve segments.
+    /// Constructs an array containing all polycurve segments.
     /// </summary>
     /// <returns>An array of all the segments that make up this PolyCurve.</returns>
     public Curve[] SegmentCurves()
@@ -221,7 +221,7 @@ namespace Rhino.Geometry
     /// This function will fail if the polycurve is closed.
     /// </summary>
     /// <param name="line">Line segment to append.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Append(Line line)
     {
       if (!line.IsValid) { return false; }
@@ -232,7 +232,7 @@ namespace Rhino.Geometry
     /// This function will fail if the polycurve is closed or if SegmentCount > 0 and the arc is closed.
     /// </summary>
     /// <param name="arc">Arc segment to append.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Append(Arc arc)
     {
       IntPtr ptr = NonConstPointer();
@@ -244,7 +244,7 @@ namespace Rhino.Geometry
     /// This function will fail if the PolyCurve is closed or if SegmentCount > 0 and the new segment is closed.
     /// </summary>
     /// <param name="curve">Segment to append.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Append(Curve curve)
     {
       if (null == curve)

@@ -6,7 +6,7 @@ using Rhino.Geometry;
 namespace Rhino.Collections
 {
   /// <summary>
-  /// Used by the TransformCommand and GetTransform classes
+  /// Used by the TransformCommand and GetTransform classes.
   /// </summary>
   public class TransformObjectList : IDisposable
   {

@@ -254,7 +254,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new Mirror transformation.
+    /// Constructs a new Mirror transformation.
     /// </summary>
     /// <param name="mirrorPlane">Plane that defines the mirror orientation and position.</param>
     /// <returns>A transformation matrix which mirrors geometry in a specified plane.</returns>
@@ -271,7 +271,7 @@ namespace Rhino.Geometry
     /// <param name="plane1">Target coordinate system in which we want the geometry to be described.</param>
     /// <returns>
     /// A transformation matrix which orients geometry from one coordinate system to another on success.
-    /// Transform.Unset on failure
+    /// Transform.Unset on failure.
     /// </returns>
     public static Transform ChangeBasis(Plane plane0, Plane plane1)
     {
@@ -296,15 +296,15 @@ namespace Rhino.Geometry
     /// Computes a change of basis transformation. A basis change is essentially a remapping 
     /// of geometry from one coordinate system to another.
     /// </summary>
-    /// <param name="initialBasisX">can be any 3d basis</param>
-    /// <param name="initialBasisY">can be any 3d basis</param>
-    /// <param name="initialBasisZ">can be any 3d basis</param>
-    /// <param name="finalBasisX">can be any 3d basis</param>
-    /// <param name="finalBasisY">can be any 3d basis</param>
-    /// <param name="finalBasisZ">can be any 3d basis</param>
+    /// <param name="initialBasisX">can be any 3d basis.</param>
+    /// <param name="initialBasisY">can be any 3d basis.</param>
+    /// <param name="initialBasisZ">can be any 3d basis.</param>
+    /// <param name="finalBasisX">can be any 3d basis.</param>
+    /// <param name="finalBasisY">can be any 3d basis.</param>
+    /// <param name="finalBasisZ">can be any 3d basis.</param>
     /// <returns>
     /// A transformation matrix which orients geometry from one coordinate system to another on success.
-    /// Transform.Unset on failure
+    /// Transform.Unset on failure.
     /// </returns>
     public static Transform ChangeBasis(Vector3d initialBasisX, Vector3d initialBasisY, Vector3d initialBasisZ,
       Vector3d finalBasisX, Vector3d finalBasisY, Vector3d finalBasisZ)
@@ -316,7 +316,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a projection transformation.
+    /// Constructs a projection transformation.
     /// </summary>
     /// <param name="plane">Plane onto which everything will be perpendicularly projected.</param>
     /// <returns>A transformation matrix which projects geometry onto a specified plane.</returns>
@@ -328,7 +328,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a Shear transformation.
+    /// Constructs a Shear transformation.
     /// </summary>
     /// <param name="plane">Base plane for shear.</param>
     /// <param name="x">Shearing vector along plane x-axis.</param>
@@ -351,7 +351,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="a">A tranform.</param>
     /// <param name="b">Another tranform.</param>
-    /// <returns>True if transfroms are equal; otherwise false.</returns>
+    /// <returns>true if transfroms are equal; otherwise false.</returns>
     public static bool operator ==(Transform a, Transform b)
     {
       return a.m_00 == b.m_00 && a.m_01 == b.m_01 && a.m_02 == b.m_02 && a.m_03 == b.m_03 &&
@@ -365,7 +365,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="a">A tranform.</param>
     /// <param name="b">Another tranform.</param>
-    /// <returns>True if transfroms are different; otherwise false.</returns>
+    /// <returns>true if transfroms are different; otherwise false.</returns>
     public static bool operator !=(Transform a, Transform b)
     {
       return a.m_00 != b.m_00 || a.m_01 != b.m_01 || a.m_02 != b.m_02 || a.m_03 != b.m_03 ||
@@ -729,7 +729,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="inverseTransform"></param>
     /// <returns>
-    /// True on success. 
+    /// true on success. 
     /// If false is returned and this Transform is Invalid, inserveTransform will be set to this Transform. 
     /// If false is returned and this Transform is Valid, inverseTransform will be set to a pseudo inverse.
     /// </returns>
@@ -797,9 +797,9 @@ namespace Rhino.Geometry
     private bool m_bPreserveStructure;
 
     #region from ON_Geometry - moved here to keep clutter out of geometry class
-    /// <summary>Apply the space morph to geometry</summary>
+    /// <summary>Apply the space morph to geometry.</summary>
     /// <param name="geometry"></param>
-    /// <returns>true on success, false on failure</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Morph(GeometryBase geometry)
     {
       return PerformGeometryMorph(geometry);
@@ -820,7 +820,7 @@ namespace Rhino.Geometry
 
     /// <summary>Morphs Euclidean point.</summary>
     /// <param name="point"></param>
-    /// <returns>morphed point</returns>
+    /// <returns>morphed point.</returns>
     public abstract Point3d MorphPoint(Point3d point);
 
     /// <summary>
@@ -836,7 +836,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// True if the morph should be done as quickly as possible because the result
+    /// true if the morph should be done as quickly as possible because the result
     /// is being used for some type of dynamic preview. If QuickPreview is true,
     /// the tolerance may be ignored.
     /// The QuickPreview value does not affect the way meshes and points are morphed.
@@ -849,7 +849,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// True if the morph should be done in a way that preserves the structure of the geometry.
+    /// true if the morph should be done in a way that preserves the structure of the geometry.
     /// In particular, for NURBS objects, true means that only the control points are moved.
     /// The PreserveStructure value does not affect the way meshes and points are morphed.
     /// The default is false.

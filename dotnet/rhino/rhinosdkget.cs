@@ -54,7 +54,7 @@ namespace Rhino.Input
     /// <summary>
     /// Returns true if the document is current in a "Get" operation.
     /// </summary>
-    /// <returns>True if a getter is currently active.</returns>
+    /// <returns>true if a getter is currently active.</returns>
     public static bool InGet(RhinoDoc doc)
     {
       return doc.InGet;
@@ -102,12 +102,12 @@ namespace Rhino.Input
     /// Gets a point coordinate from the document.
     /// </summary>
     /// <param name="prompt">Prompt to display in command line during the operation.</param>
-    /// <param name="acceptNothing">if true, the user can press enter</param>
-    /// <param name="point">point value returned here</param>
+    /// <param name="acceptNothing">if true, the user can press enter.</param>
+    /// <param name="point">point value returned here.</param>
     /// <returns>
     /// Commands.Result.Success - got point
     /// Commands.Result.Nothing - user pressed enter
-    /// Commands.Result.Cancel - user cancel point getting
+    /// Commands.Result.Cancel - user cancel point getting.
     /// </returns>
     /// <remarks>
     /// If you need options or more advanced user interface, then use GetPoint class.
@@ -125,7 +125,7 @@ namespace Rhino.Input
     }
 
     /// <summary>
-    /// Gets a point constrained to an existing mesh in the document
+    /// Gets a point constrained to an existing mesh in the document.
     /// </summary>
     /// <param name="meshObjectId"></param>
     /// <param name="prompt"></param>
@@ -147,7 +147,7 @@ namespace Rhino.Input
     }
 
     /// <summary>
-    /// Gets a point constrained to an existing mesh in the document
+    /// Gets a point constrained to an existing mesh in the document.
     /// </summary>
     /// <param name="meshObject"></param>
     /// <param name="prompt"></param>
@@ -159,14 +159,14 @@ namespace Rhino.Input
       return GetPointOnMesh( meshObject.Id, prompt, acceptNothing, out point);
     }
 
-    /// <summary>Easy to use color getter</summary>
-    /// <param name="prompt">command prompt</param>
-    /// <param name="acceptNothing">if true, the user can press enter</param>
-    /// <param name="color">color value returned here. also used as default color</param>
+    /// <summary>Easy to use color getter.</summary>
+    /// <param name="prompt">command prompt.</param>
+    /// <param name="acceptNothing">if true, the user can press enter.</param>
+    /// <param name="color">color value returned here. also used as default color.</param>
     /// <returns>
     /// Commands.Result.Success - got color
     /// Commands.Result.Nothing - user pressed enter
-    /// Commands.Result.Cancel - user cancel color getting
+    /// Commands.Result.Cancel - user cancel color getting.
     /// </returns>
     /// <remarks>
     /// If you need options or more advanced user interface, then use GetColor class.
@@ -179,15 +179,15 @@ namespace Rhino.Input
       return (Rhino.Commands.Result)rc;
     }
 
-    /// <summary>Easy to use object getter</summary>
-    /// <param name="prompt">command prompt</param>
-    /// <param name="acceptNothing">if true, the user can press enter</param>
-    /// <param name="filter">geometry filter to use when getting objects</param>
-    /// <param name="rhObject">result of the get. may be null</param>
+    /// <summary>Easy to use object getter.</summary>
+    /// <param name="prompt">command prompt.</param>
+    /// <param name="acceptNothing">if true, the user can press enter.</param>
+    /// <param name="filter">geometry filter to use when getting objects.</param>
+    /// <param name="rhObject">result of the get. may be null.</param>
     /// <returns>
     /// Commands.Result.Success - got object
     /// Commands.Result.Nothing - user pressed enter
-    /// Commands.Result.Cancel - user cancel object getting
+    /// Commands.Result.Cancel - user cancel object getting.
     /// </returns>
     /// <remarks>
     /// If you need options or more advanced user interface, then use GetObject class.
@@ -215,15 +215,15 @@ namespace Rhino.Input
       return rc;
     }
 
-    /// <summary>Easy to use object getter for getting multiple objects</summary>
-    /// <param name="prompt">command prompt</param>
-    /// <param name="acceptNothing">if true, the user can press enter</param>
-    /// <param name="filter">geometry filter to use when getting objects</param>
-    /// <param name="rhObjects">result of the get. may be null</param>
+    /// <summary>Easy to use object getter for getting multiple objects.</summary>
+    /// <param name="prompt">command prompt.</param>
+    /// <param name="acceptNothing">if true, the user can press enter.</param>
+    /// <param name="filter">geometry filter to use when getting objects.</param>
+    /// <param name="rhObjects">result of the get. may be null.</param>
     /// <returns>
     /// Commands.Result.Success - got object
     /// Commands.Result.Nothing - user pressed enter
-    /// Commands.Result.Cancel - user cancel object getting
+    /// Commands.Result.Cancel - user cancel object getting.
     /// </returns>
     /// <remarks>
     /// If you need options or more advanced user interface, then use GetObject class.
@@ -251,14 +251,14 @@ namespace Rhino.Input
       return rc;
     }
 
-    /// <summary>Easy to use string getter</summary>
-    /// <param name="prompt">command prompt</param>
-    /// <param name="acceptNothing">if true, the user can press enter</param>
-    /// <param name="outputString">default string set to this value and string value returned here</param>
+    /// <summary>Easy to use string getter.</summary>
+    /// <param name="prompt">command prompt.</param>
+    /// <param name="acceptNothing">if true, the user can press enter.</param>
+    /// <param name="outputString">default string set to this value and string value returned here.</param>
     /// <returns>
     /// Commands.Result.Success - got string
     /// Commands.Result.Nothing - user pressed enter
-    /// Commands.Result.Cancel - user cancel string getting
+    /// Commands.Result.Cancel - user cancel string getting.
     /// </returns>
     /// <remarks>
     /// If you need options or more advanced user interface, then use GetString class.
@@ -277,12 +277,12 @@ namespace Rhino.Input
       return (Rhino.Commands.Result)rc;
     }
 
-    /// <summary>Easy to use bool getter</summary>
-    /// <param name="prompt">command prompt</param>
-    /// <param name="acceptNothing">if true, the user can press enter</param>
+    /// <summary>Easy to use bool getter.</summary>
+    /// <param name="prompt">command prompt.</param>
+    /// <param name="acceptNothing">if true, the user can press enter.</param>
     /// <param name="offPrompt"></param>
     /// <param name="onPrompt"></param>
-    /// <param name="boolValue">default bool value set to this and returned here</param>
+    /// <param name="boolValue">default bool value set to this and returned here.</param>
     /// <returns></returns>
     public static Commands.Result GetBool(string prompt, bool acceptNothing, string offPrompt, string onPrompt, ref bool boolValue)
     {
@@ -316,17 +316,17 @@ namespace Rhino.Input
     /// <summary>
     /// Easy to use number getter.
     /// </summary>
-    /// <param name="prompt">command prompt</param>
-    /// <param name="acceptNothing">if true, the user can press enter</param>
+    /// <param name="prompt">command prompt.</param>
+    /// <param name="acceptNothing">if true, the user can press enter.</param>
     /// <param name="outputNumber">
-    /// default number is set to this value and number value returned here
+    /// default number is set to this value and number value returned here.
     /// </param>
     /// <param name="lowerLimit"></param>
     /// <param name="upperLimit"></param>
     /// <returns>
     /// Commands.Result.Success - got number
     /// Commands.Result.Nothing - user pressed enter
-    /// Commands.Result.Cancel - user cancel number getting
+    /// Commands.Result.Cancel - user cancel number getting.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_dividebylength.vb' lang='vbnet'/>
@@ -341,15 +341,15 @@ namespace Rhino.Input
     /// <summary>
     /// Easy to use number getter.
     /// </summary>
-    /// <param name="prompt">command prompt</param>
-    /// <param name="acceptNothing">if true, the user can press enter</param>
+    /// <param name="prompt">command prompt.</param>
+    /// <param name="acceptNothing">if true, the user can press enter.</param>
     /// <param name="outputNumber">
-    /// default number is set to this value and number value returned here
+    /// default number is set to this value and number value returned here.
     /// </param>
     /// <returns>
     /// Commands.Result.Success - got number
     /// Commands.Result.Nothing - user pressed enter
-    /// Commands.Result.Cancel - user cancel number getting
+    /// Commands.Result.Cancel - user cancel number getting.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_dividebylength.vb' lang='vbnet'/>
@@ -364,15 +364,15 @@ namespace Rhino.Input
     /// <summary>
     /// Easy to use number getter.
     /// </summary>
-    /// <param name="prompt">command prompt</param>
-    /// <param name="acceptNothing">if true, the user can press enter</param>
+    /// <param name="prompt">command prompt.</param>
+    /// <param name="acceptNothing">if true, the user can press enter.</param>
     /// <param name="outputNumber">
-    /// default number is set to this value and number value returned here
+    /// default number is set to this value and number value returned here.
     /// </param>
     /// <returns>
     /// Commands.Result.Success - got number
     /// Commands.Result.Nothing - user pressed enter
-    /// Commands.Result.Cancel - user cancel number getting
+    /// Commands.Result.Cancel - user cancel number getting.
     /// </returns>
     public static Commands.Result GetInteger(string prompt, bool acceptNothing, ref int outputNumber)
     {
@@ -381,17 +381,17 @@ namespace Rhino.Input
     /// <summary>
     /// Easy to use number getter.
     /// </summary>
-    /// <param name="prompt">command prompt</param>
-    /// <param name="acceptNothing">if true, the user can press enter</param>
+    /// <param name="prompt">command prompt.</param>
+    /// <param name="acceptNothing">if true, the user can press enter.</param>
     /// <param name="outputNumber">
-    /// default number is set to this value and number value returned here
+    /// default number is set to this value and number value returned here.
     /// </param>
     /// <param name="lowerLimit"></param>
     /// <param name="upperLimit"></param>
     /// <returns>
     /// Commands.Result.Success - got number
     /// Commands.Result.Nothing - user pressed enter
-    /// Commands.Result.Cancel - user cancel number getting
+    /// Commands.Result.Cancel - user cancel number getting.
     /// </returns>
     public static Commands.Result GetInteger(string prompt, bool acceptNothing, ref int outputNumber, int lowerLimit, int upperLimit)
     {
@@ -407,7 +407,7 @@ namespace Rhino.Input
     }
 
     /// <summary>
-    /// Gets an oriented infinite plane
+    /// Gets an oriented infinite plane.
     /// </summary>
     /// <param name="plane"></param>
     /// <returns></returns>
@@ -419,10 +419,10 @@ namespace Rhino.Input
     }
 
     /// <summary>
-    /// Gets a 3d rectangle
+    /// Gets a 3d rectangle.
     /// </summary>
-    /// <param name="corners">corners of the rectangle in counter-clockwise order</param>
-    /// <returns>Commands.Result.Success if successful</returns>
+    /// <param name="corners">corners of the rectangle in counter-clockwise order.</param>
+    /// <returns>Commands.Result.Success if successful.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addclippingplane.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addclippingplane.cs' lang='cs'/>
@@ -438,13 +438,13 @@ namespace Rhino.Input
     }
 
     /// <summary>
-    /// Gets a 3d rectangle
+    /// Gets a 3d rectangle.
     /// </summary>
     /// <param name="mode"></param>
-    /// <param name="firstPoint">first corner used. Pass Point3d.Unset if you do not want to set this</param>
-    /// <param name="prompts">optional prompts to display while getting points. May be null</param>
-    /// <param name="corners">corners of the rectangle in counter-clockwise order</param>
-    /// <returns>Commands.Result.Success if successful</returns>
+    /// <param name="firstPoint">first corner used. Pass Point3d.Unset if you do not want to set this.</param>
+    /// <param name="prompts">optional prompts to display while getting points. May be null.</param>
+    /// <param name="corners">corners of the rectangle in counter-clockwise order.</param>
+    /// <returns>Commands.Result.Success if successful.</returns>
     public static Commands.Result GetRectangle(GetBoxMode mode, Rhino.Geometry.Point3d firstPoint, System.Collections.Generic.IEnumerable<string> prompts, out Rhino.Geometry.Point3d[] corners)
     {
       corners = new Point3d[4];
@@ -466,19 +466,19 @@ namespace Rhino.Input
     }
 
     /// <summary>
-    /// Gets a rectangle in view window coordinates
+    /// Gets a rectangle in view window coordinates.
     /// </summary>
     /// <param name="solidPen">
     /// If true, a solid pen is used for drawing while the user selects a rectangle.
-    /// If false, a dotted pen is used for drawing while the user selects a rectangle
+    /// If false, a dotted pen is used for drawing while the user selects a rectangle.
     /// </param>
     /// <param name="rectangle">
-    /// user selected rectangle in window coordinates
+    /// user selected rectangle in window coordinates.
     /// </param>
     /// <param name="rectView">
-    /// view that the user selected the window in
+    /// view that the user selected the window in.
     /// </param>
-    /// <returns>Success or Cancel</returns>
+    /// <returns>Success or Cancel.</returns>
     public static Commands.Result Get2dRectangle(bool solidPen, out System.Drawing.Rectangle rectangle, out Rhino.Display.RhinoView rectView)
     {
       rectangle = System.Drawing.Rectangle.Empty;
@@ -509,7 +509,7 @@ namespace Rhino.Input
     /// </summary>
     /// <param name="box">If the result is Success, this parameter will be filled out.</param>
     /// <param name="mode"></param>
-    /// <param name="basePoint">Optional base point. Supply Point3d.Unset if you don't want to use this</param>
+    /// <param name="basePoint">Optional base point. Supply Point3d.Unset if you don't want to use this.</param>
     /// <param name="prompt1">Optional first prompt. Supply a null to use the default prompt.</param>
     /// <param name="prompt2">Optional second prompt. Supply a null to use the default prompt.</param>
     /// <param name="prompt3">Optional third prompt. Supply a null to use the default prompt.</param>
@@ -686,7 +686,7 @@ namespace Rhino.Input
     }
 
     /// <summary>
-    /// Allow the user to interactively pick a viewport
+    /// Allow the user to interactively pick a viewport.
     /// </summary>
     /// <param name="command_prompt"></param>
     /// <param name="view"></param>
@@ -879,7 +879,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Sets prompt message that appears in the command prompt window.
     /// </summary>
-    /// <param name="prompt">command prompt message</param>
+    /// <param name="prompt">command prompt message.</param>
     /// <example>
     /// <code source='examples\vbnet\ex_addline.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addline.cs' lang='cs'/>
@@ -896,7 +896,7 @@ namespace Rhino.Input.Custom
     /// This description appears in angle brackets &lt;> in the command prompt window. You do
     /// not need to provide a default value description unless you explicity enable AcceptNothing.
     /// </summary>
-    /// <param name="defaultValue">description of default value</param>
+    /// <param name="defaultValue">description of default value.</param>
     /// <example>
     /// ON_3dPoint default_center = new ON_3dPoint(2,3,4);
     /// GetPoint gp = new GetPoint();
@@ -921,7 +921,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Sets a point as default value that will be returned if the user presses the ENTER key during the get.
     /// </summary>
-    /// <param name="point">value for default point</param>
+    /// <param name="point">value for default point.</param>
     /// <remarks>
     /// Calling SetDefaultPoint will automatically handle setting the command prompt default and reacting to
     /// the user pressing ENTER.  If the user presses enter to accept the default point, GetResult.Point is
@@ -937,7 +937,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Sets a number as default value that will be returned if the user presses ENTER key during the get.
     /// </summary>
-    /// <param name="defaultNumber">value for default number</param>
+    /// <param name="defaultNumber">value for default number.</param>
     /// <remarks>
     /// Calling SetDefaultNumber will automatically handle setting the command prompt default and
     /// reacting to the user pressing ENTER. If the user presses ENTER to accept the default number,
@@ -953,7 +953,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Sets a number as default value that will be returned if the user presses ENTER key during the get.
     /// </summary>
-    /// <param name="defaultValue">value for default number</param>
+    /// <param name="defaultValue">value for default number.</param>
     /// <remarks>
     /// Calling SetDefaultInteger will automatically handle setting the command prompt default and
     /// reacting to the user pressing ENTER. If the user presses ENTER to accept the default integer,
@@ -970,7 +970,7 @@ namespace Rhino.Input.Custom
     /// Sets a string as default value that will be returned
     /// if the user presses ENTER key during the get.
     /// </summary>
-    /// <param name="defaultValue">value for default string</param>
+    /// <param name="defaultValue">value for default string.</param>
     /// <remarks>
     /// Calling SetDefaultString will automatically handle setting the command prompt
     /// default and reacting to the user pressing ENTER. If the user presses ENTER to
@@ -992,7 +992,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Sets a color as default value that will be returned if the user presses ENTER key during the get.
     /// </summary>
-    /// <param name="defaultColor">value for default color</param>
+    /// <param name="defaultColor">value for default color.</param>
     /// <remarks>
     /// Calling SetDefaultColor will automatically handle setting the command prompt default and
     /// reacting to the user pressing ENTER.  If the user presses ENTER to accept the default color,
@@ -1021,7 +1021,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Clears any defaults set using SetDefaultPoint, SetDefaultNumber, SetDefaultString, or SetCommandPromptDefault
+    /// Clears any defaults set using SetDefaultPoint, SetDefaultNumber, SetDefaultString, or SetCommandPromptDefault.
     /// </summary>
     public void ClearDefault()
     {
@@ -1043,13 +1043,13 @@ namespace Rhino.Input.Custom
 
     #region commandlineoptions
     /// <summary>
-    /// Adds a command line option
+    /// Adds a command line option.
     /// </summary>
     /// <param name="englishOption">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
     /// </param>
     /// <returns>
-    /// option index value (>0) or 0 if option cannot be added
+    /// option index value (>0) or 0 if option cannot be added.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_advanceddisplay.vb' lang='vbnet'/>
@@ -1062,14 +1062,14 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Adds a command line option
+    /// Adds a command line option.
     /// </summary>
     /// <param name="englishOption">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
     /// </param>
     /// <param name="englishOptionValue"></param>
     /// <returns>
-    /// option index value (>0) or 0 if option cannot be added
+    /// option index value (>0) or 0 if option cannot be added.
     /// </returns>
     public int AddOption(string englishOption, string englishOptionValue) //, bool hidden)
     {
@@ -1079,13 +1079,13 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Adds a command line option
+    /// Adds a command line option.
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
     /// </param>
     /// <returns>
-    /// option index value (>0) or 0 if option cannot be added
+    /// option index value (>0) or 0 if option cannot be added.
     /// </returns>
     public int AddOption(Rhino.UI.LocalizeStringPair optionName)
     {
@@ -1093,14 +1093,14 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Adds a command line option
+    /// Adds a command line option.
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
     /// </param>
     /// <param name="optionValue"></param>
     /// <returns>
-    /// option index value (>0) or 0 if option cannot be added
+    /// option index value (>0) or 0 if option cannot be added.
     /// </returns>
     public int AddOption(Rhino.UI.LocalizeStringPair optionName, Rhino.UI.LocalizeStringPair optionValue)
     {
@@ -1119,10 +1119,10 @@ namespace Rhino.Input.Custom
     // 9 Feb 2010 S. Baer
     // Commenting out until we find a need for this version of the function
     ///// <summary>
-    ///// Add a simple command line option with a number as a value
+    ///// Adds a simple command line option with a number as a value
     ///// </summary>
     ///// <param name="englishOption"></param>
-    ///// <param name="numberValue">current value</param>
+    ///// <param name="numberValue">current value.</param>
     ///// <returns>
     ///// option index value (>0) or 0 if option cannot be added
     ///// </returns>
@@ -1133,7 +1133,7 @@ namespace Rhino.Input.Custom
     //}
 
     /// <summary>
-    /// Adds a command line option to get numbers and automatically save the value
+    /// Adds a command line option to get numbers and automatically save the value.
     /// </summary>
     /// <param name="englishName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1144,7 +1144,7 @@ namespace Rhino.Input.Custom
     /// option name is used as the get number prompt.
     /// </param>
     /// <returns>
-    /// option index value (>0) or 0 if option cannot be added
+    /// option index value (>0) or 0 if option cannot be added.
     /// </returns>
     public int AddOptionDouble(string englishName, ref Rhino.Input.Custom.OptionDouble numberValue, string prompt)
     {
@@ -1152,7 +1152,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Adds a command line option to get numbers and automatically save the value
+    /// Adds a command line option to get numbers and automatically save the value.
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1163,7 +1163,7 @@ namespace Rhino.Input.Custom
     /// option name is used as the get number prompt.
     /// </param>
     /// <returns>
-    /// option index value (>0) or 0 if option cannot be added
+    /// option index value (>0) or 0 if option cannot be added.
     /// </returns>
     public int AddOptionDouble(Rhino.UI.LocalizeStringPair optionName, ref Rhino.Input.Custom.OptionDouble numberValue, string prompt)
     {
@@ -1173,14 +1173,14 @@ namespace Rhino.Input.Custom
       return rc;
     }
     /// <summary>
-    /// Adds a command line option to get numbers and automatically save the value
+    /// Adds a command line option to get numbers and automatically save the value.
     /// </summary>
     /// <param name="englishName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
     /// </param>
     /// <param name="numberValue"></param>
     /// <returns>
-    /// option index value (>0) or 0 if option cannot be added
+    /// option index value (>0) or 0 if option cannot be added.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
@@ -1193,14 +1193,14 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Adds a command line option to get numbers and automatically save the value
+    /// Adds a command line option to get numbers and automatically save the value.
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
     /// </param>
     /// <param name="numberValue"></param>
     /// <returns>
-    /// option index value (>0) or 0 if option cannot be added
+    /// option index value (>0) or 0 if option cannot be added.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
@@ -1213,7 +1213,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Adds a command line option to get integers and automatically save the value
+    /// Adds a command line option to get integers and automatically save the value.
     /// </summary>
     /// <param name="englishName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1224,7 +1224,7 @@ namespace Rhino.Input.Custom
     /// option name is used as the get number prompt.
     /// </param>
     /// <returns>
-    /// option index value (>0) or 0 if option cannot be added
+    /// option index value (>0) or 0 if option cannot be added.
     /// </returns>
     public int AddOptionInteger(string englishName, ref Rhino.Input.Custom.OptionInteger intValue, string prompt)
     {
@@ -1232,7 +1232,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Adds a command line option to get integers and automatically save the value
+    /// Adds a command line option to get integers and automatically save the value.
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
@@ -1243,7 +1243,7 @@ namespace Rhino.Input.Custom
     /// option name is used as the get number prompt.
     /// </param>
     /// <returns>
-    /// option index value (>0) or 0 if option cannot be added
+    /// option index value (>0) or 0 if option cannot be added.
     /// </returns>
     public int AddOptionInteger(Rhino.UI.LocalizeStringPair optionName, ref Rhino.Input.Custom.OptionInteger intValue, string prompt)
     {
@@ -1254,14 +1254,14 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Adds a command line option to get integers and automatically save the value
+    /// Adds a command line option to get integers and automatically save the value.
     /// </summary>
     /// <param name="englishName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
     /// </param>
     /// <param name="intValue"></param>
     /// <returns>
-    /// option index value (>0) or 0 if option cannot be added
+    /// option index value (>0) or 0 if option cannot be added.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
@@ -1274,14 +1274,14 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Adds a command line option to get integers and automatically save the value
+    /// Adds a command line option to get integers and automatically save the value.
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
     /// </param>
     /// <param name="intValue"></param>
     /// <returns>
-    /// option index value (>0) or 0 if option cannot be added
+    /// option index value (>0) or 0 if option cannot be added.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
@@ -1327,13 +1327,13 @@ namespace Rhino.Input.Custom
     //      );
 
     /// <summary>
-    /// Adds a command line option to toggle a setting
+    /// Adds a command line option to toggle a setting.
     /// </summary>
     /// <param name="englishName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
     /// </param>
     /// <param name="toggleValue"></param>
-    /// <returns>option index value (>0) or 0 if option cannot be added</returns>
+    /// <returns>option index value (>0) or 0 if option cannot be added.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
@@ -1345,13 +1345,13 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Adds a command line option to toggle a setting
+    /// Adds a command line option to toggle a setting.
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
     /// </param>
     /// <param name="toggleValue"></param>
-    /// <returns>option index value (>0) or 0 if option cannot be added</returns>
+    /// <returns>option index value (>0) or 0 if option cannot be added.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_commandlineoptions.cs' lang='cs'/>
@@ -1366,13 +1366,13 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Adds a command line list option
+    /// Adds a command line list option.
     /// </summary>
     /// <param name="englishOptionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
     /// </param>
     /// <param name="listValues"></param>
-    /// <param name="listCurrentIndex">zero based index of current option</param>
+    /// <param name="listCurrentIndex">zero based index of current option.</param>
     /// <returns>option index value (>0) or 0 if option cannot be added.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_objectdisplaymode.vb' lang='vbnet'/>
@@ -1392,13 +1392,13 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Adds a command line list option
+    /// Adds a command line list option.
     /// </summary>
     /// <param name="optionName">
     /// Must only consist of letters and numbers (no characters list periods, spaces, or dashes)
     /// </param>
     /// <param name="listValues"></param>
-    /// <param name="listCurrentIndex">zero based index of current option</param>
+    /// <param name="listCurrentIndex">zero based index of current option.</param>
     /// <returns>option index value (>0) or 0 if option cannot be added.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_objectdisplaymode.vb' lang='vbnet'/>
@@ -1422,7 +1422,7 @@ namespace Rhino.Input.Custom
       return rc;
     }
 
-    /// <summary>Clear all command options</summary>
+    /// <summary>Clear all command options.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_arraybydistance.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_arraybydistance.cs' lang='cs'/>
@@ -1558,7 +1558,7 @@ namespace Rhino.Input.Custom
     //static void PostCustomWindowsMessage( 
     //void SetWaitDuration( double seconds );
 
-    /// <summary>returns result of the Get*() call</summary>
+    /// <summary>returns result of the Get*() call.</summary>
     /// <returns></returns>
     [CLSCompliant(false)]
     public GetResult Result()
@@ -1569,7 +1569,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Handy tool for getting command result value from getter results
+    /// Handy tool for getting command result value from getter results.
     /// </summary>
     /// <returns></returns>
     /// <example>
@@ -1612,7 +1612,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Used to get number if GetPoint.Get(), GetObject.GetObjects(), etc., returns GetResult.Number
+    /// Used to get number if GetPoint.Get(), GetObject.GetObjects(), etc., returns GetResult.Number.
     /// </summary>
     /// <returns></returns>
     /// <example>
@@ -1627,7 +1627,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Used to get string if GetPoint.Get(), GetObject.GetObjects(), etc., returns GetResult.String
+    /// Used to get string if GetPoint.Get(), GetObject.GetObjects(), etc., returns GetResult.String.
     /// </summary>
     /// <returns></returns>
     /// <example>
@@ -1645,7 +1645,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Used to get point if Get*() returns GetResult.Point
+    /// Used to get point if Get*() returns GetResult.Point.
     /// </summary>
     /// <returns></returns>
     /// <example>
@@ -1673,7 +1673,7 @@ namespace Rhino.Input.Custom
       return rc;
     }
 
-    /// <summary>Used to get color if Get*() returns GetResult.Color</summary>
+    /// <summary>Used to get color if Get*() returns GetResult.Color.</summary>
     /// <returns></returns>
     public System.Drawing.Color Color()
     {
@@ -1719,7 +1719,7 @@ namespace Rhino.Input.Custom
 
     /// <summary>
     /// Returns location in view of point in selected in GetPoint::Get() or GetPoint::Get2dPoint().
-    /// (0,0) = upper left corner of window
+    /// (0,0) = upper left corner of window.
     /// </summary>
     /// <returns></returns>
     public System.Drawing.Point Point2d()
@@ -1738,7 +1738,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Returns location in view of 2d rectangle selected in GetPoint::Get2dRectangle().
     /// rect.left &lt; rect.right and rect.top &lt; rect.bottom
-    /// (0,0) = upper left corner of window
+    /// (0,0) = upper left corner of window.
     /// </summary>
     /// <returns></returns>
     public System.Drawing.Rectangle Rectangle2d()
@@ -1752,7 +1752,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Returns two points defining location in view window of 2d line selected
     /// in GetPoint::Get2dLine().
-    /// (0,0) = upper left corner of window
+    /// (0,0) = upper left corner of window.
     /// </summary>
     /// <returns></returns>
     public System.Drawing.Point[] Line2d()
@@ -1777,7 +1777,7 @@ namespace Rhino.Input.Custom
     /// Test a string to see if it can be used as an option name in any of the RhinoGet::AddCommandOption...() functions.
     /// </summary>
     /// <param name="optionName"></param>
-    /// <returns>true if string can be used as an option name</returns>
+    /// <returns>true if string can be used as an option name.</returns>
     public static bool IsValidOptionName(string optionName)
     {
       if (String.IsNullOrEmpty(optionName))
@@ -1790,7 +1790,7 @@ namespace Rhino.Input.Custom
     /// RhinoGet::AddCommandOptionToggle, or RhinoGet::AddCommandOptionList.
     /// </summary>
     /// <param name="optionValue"></param>
-    /// <returns>true if string can be used as an option value</returns>
+    /// <returns>true if string can be used as an option value.</returns>
     public static bool IsValidOptionValueName(string optionValue)
     {
       if (String.IsNullOrEmpty(optionValue))
@@ -1948,7 +1948,7 @@ namespace Rhino.Input.Custom
     /// <param name="initialValue"></param>
     /// <param name="setLowerLimit">
     /// if true, limit sets the lower limit and upper limit is undefined
-    /// if false, limit sets the upper limit and lower limit is undefined
+    /// if false, limit sets the upper limit and lower limit is undefined.
     /// </param>
     /// <param name="limit"></param>
     public OptionDouble(double initialValue, bool setLowerLimit, double limit)
@@ -2061,7 +2061,7 @@ namespace Rhino.Input.Custom
     /// <param name="initialValue"></param>
     /// <param name="setLowerLimit">
     /// if true, limit sets the lower limit and upper limit is undefined
-    /// if false, limit sets the upper limit and lower limit is undefined
+    /// if false, limit sets the upper limit and lower limit is undefined.
     /// </param>
     /// <param name="limit"></param>
     public OptionInteger(int initialValue, bool setLowerLimit, int limit)

@@ -97,7 +97,7 @@ namespace Rhino.DocObjects.Custom
 
     /// <summary>
     /// What kind of line is used to display things like control polygons.
-    /// 0 = no control polygon,  1 = solid control polygon,  2 = dotted control polygon
+    /// 0 = no control polygon,  1 = solid control polygon,  2 = dotted control polygon.
     /// </summary>
     public int ControlPolygonStyle
     {
@@ -154,32 +154,32 @@ namespace Rhino.DocObjects.Custom
     }
 
     /// <summary>
-    /// Helper function for drawing lines in control polygons
+    /// Helper function for drawing lines in control polygons.
     /// </summary>
-    /// <param name="line">Line between two grips</param>
-    /// <param name="startStatus">Grip status at start of line</param>
-    /// <param name="endStatus">Grip status at end of line</param>
+    /// <param name="line">Line between two grips.</param>
+    /// <param name="startStatus">Grip status at start of line.</param>
+    /// <param name="endStatus">Grip status at end of line.</param>
     public void DrawControlPolygonLine( Rhino.Geometry.Line line, GripStatus startStatus, GripStatus endStatus )
     {
       DrawControlPolygonLine(line, startStatus.m_index, endStatus.m_index);
     }
     /// <summary>
-    /// Helper function for drawing lines in control polygons
+    /// Helper function for drawing lines in control polygons.
     /// </summary>
-    /// <param name="line">Line between two grips</param>
-    /// <param name="startStatus">index of Grip status at start of line</param>
-    /// <param name="endStatus">index if Grip status at end of line</param>
+    /// <param name="line">Line between two grips.</param>
+    /// <param name="startStatus">index of Grip status at start of line.</param>
+    /// <param name="endStatus">index if Grip status at end of line.</param>
     public void DrawControlPolygonLine(Rhino.Geometry.Line line, int startStatus, int endStatus)
     {
       DrawControlPolygonLine(line.From, line.To, startStatus, endStatus);
     }
     /// <summary>
-    /// Helper function for drawing lines in control polygons
+    /// Helper function for drawing lines in control polygons.
     /// </summary>
     /// <param name="start"></param>
     /// <param name="end"></param>
-    /// <param name="startStatus">index of Grip status at start of line defined by start and end</param>
-    /// <param name="endStatus">index if Grip status at end of line defined by start and end</param>
+    /// <param name="startStatus">index of Grip status at start of line defined by start and end.</param>
+    /// <param name="endStatus">index if Grip status at end of line defined by start and end.</param>
     public void DrawControlPolygonLine(Rhino.Geometry.Point3d start, Rhino.Geometry.Point3d end, int startStatus, int endStatus)
     {
       UnsafeNativeMethods.CRhinoDrawGripsSettings_DrawControlPolygonLine(m_pGripsDrawSettings, start, end, startStatus, endStatus);
@@ -286,7 +286,7 @@ namespace Rhino.DocObjects.Custom
     const int idxDragging = 2;
 
     /// <summary>
-    /// true if grips are currently being dragged
+    /// true if grips are currently being dragged.
     /// </summary>
     /// <returns></returns>
     public static bool Dragging()
@@ -327,7 +327,7 @@ namespace Rhino.DocObjects.Custom
     }
 
 
-    /// <summary>Owner of the grips</summary>
+    /// <summary>Owner of the grips.</summary>
     public Rhino.DocObjects.RhinoObject OwnerObject
     {
       get
@@ -412,22 +412,22 @@ namespace Rhino.DocObjects.Custom
       UnsafeNativeMethods.CRhinoObjectGrips_DrawBase(pThis, args.m_pGripsDrawSettings);
     }
 
-    /// <summary>Get neighbors</summary>
-    /// <param name="gripIndex">index of grip where the search begins</param>
+    /// <summary>Get neighbors.</summary>
+    /// <param name="gripIndex">index of grip where the search begins.</param>
     /// <param name="dr">
-    /// 1 = next grip in the first parameter direction
-    /// -1 = prev grip in the first parameter direction
+    /// <para>1 = next grip in the first parameter direction.</para>
+    /// <para>-1 = prev grip in the first parameter direction.</para>
     /// </param>
     /// <param name="ds">
-    /// 1 = next grip in the second parameter direction
-    /// -1 = prev grip in the second parameter direction
+    /// <para>1 = next grip in the second parameter direction.</para>
+    /// <para>-1 = prev grip in the second parameter direction.</para>
     /// </param>
     /// <param name="dt">
-    /// 1 = next grip in the third parameter direction
-    /// -1 = prev grip in the third parameter direction
+    /// <para>1 = next grip in the third parameter direction.</para>
+    /// <para>-1 = prev grip in the third parameter direction.</para>
     /// </param>
     /// <param name="wrap">If true and object is "closed", the search will wrap.</param>
-    /// <returns>Pointer to the desired neighbor or NULL if there is no neighbor</returns>
+    /// <returns>Pointer to the desired neighbor or NULL if there is no neighbor.</returns>
     protected virtual GripObject NeighborGrip(int gripIndex, int dr, int ds, int dt, bool wrap) { return null; }
 
     /// <summary>
@@ -443,7 +443,7 @@ namespace Rhino.DocObjects.Custom
     /// If the grips control a NURBS surface, this returns a pointer to that
     /// surface.  You can look at but you must NEVER change this surface.
     /// </summary>
-    /// <returns>A pointer to a NURBS surface or NULL</returns>
+    /// <returns>A pointer to a NURBS surface or NULL.</returns>
     protected virtual Rhino.Geometry.NurbsSurface NurbsSurface() { return null; }
 
     ~CustomObjectGrips() { Dispose(false); }

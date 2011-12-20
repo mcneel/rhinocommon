@@ -385,7 +385,7 @@ namespace Rhino.Geometry
     /// Computes the distance or norm of the difference between this and another quaternion.
     /// </summary>
     /// <param name="q">Another quaternion.</param>
-    /// <returns>(this - q).Length</returns>
+    /// <returns>(this - q).Length.</returns>
     public double DistanceTo(Quaternion q)
     {
       Quaternion pq = new Quaternion(q.m_a-m_a, q.m_b-m_b, q.m_c-m_c, q.m_d-m_d);
@@ -434,7 +434,7 @@ namespace Rhino.Geometry
     /// Scales the quaternion's coordinates so that a*a + b*b + c*c + d*d = 1.
     /// </summary>
     /// <returns>
-    /// True if successful.  False if the quaternion is zero and cannot be unitized.
+    /// true if successful.  false if the quaternion is zero and cannot be unitized.
     /// </returns>
     public bool Unitize()
     {
@@ -447,7 +447,7 @@ namespace Rhino.Geometry
     /// where (x,y,z) is the unit vector parallel to axis.  This is the unit quaternion
     /// that represents the rotation of angle about axis.
     /// </summary>
-    /// <param name="angle">in radians</param>
+    /// <param name="angle">in radians.</param>
     /// <param name="axisOfRotation"></param>
     public void SetRotation(double angle, Vector3d axisOfRotation)
     {
@@ -465,7 +465,7 @@ namespace Rhino.Geometry
     /// where (x,y,z) is the unit vector parallel to axis.  This is the
     /// unit quaternion that represents the rotation of angle about axis.
     /// </summary>
-    /// <param name="angle">in radians</param>
+    /// <param name="angle">in radians.</param>
     /// <param name="axisOfRotation"></param>
     /// <returns></returns>
     public static Quaternion Rotation(double angle, Vector3d axisOfRotation)
@@ -506,13 +506,13 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Returns the rotation defined by the quaternion
+    /// Returns the rotation defined by the quaternion.
     /// </summary>
-    /// <param name="angle">in radians</param>
-    /// <param name="axis">unit axis of rotation of 0 if (b,c,d) is the zero vector</param>
+    /// <param name="angle">in radians.</param>
+    /// <param name="axis">unit axis of rotation of 0 if (b,c,d) is the zero vector.</param>
     /// <returns></returns>
     /// <remarks>
-    /// If the quaternion is not unitized, the rotation of its unitized form is returned
+    /// If the quaternion is not unitized, the rotation of its unitized form is returned.
     /// </remarks>
     public bool GetRotation(out double angle, out Vector3d axis)
     {
@@ -539,7 +539,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Rotates a 3d vector. This operation is also called conjugation,
     /// because the result is the same as
-    /// (q.Conjugate()*(0,x,y,x)*q/q.LengthSquared).Vector
+    /// (q.Conjugate()*(0,x,y,x)*q/q.LengthSquared).Vector.
     /// </summary>
     /// <param name="v"></param>
     /// <returns>
@@ -547,7 +547,7 @@ namespace Rhino.Geometry
     /// This is mathematically the same as the values
     /// (Inverse(q)*(0,x,y,z)*q).Vector
     /// and
-    /// (q.Conjugate()*(0,x,y,x)*q/q.LengthSquared).Vector
+    /// (q.Conjugate()*(0,x,y,x)*q/q.LengthSquared).Vector.
     /// </returns>
     /// <remarks>
     /// If you need to rotate more than a dozen or so vectors,
@@ -580,7 +580,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// True if a, b, c, and d are all zero.
+    /// true if a, b, c, and d are all zero.
     /// </summary>
     public bool IsZero
     {
@@ -588,7 +588,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// True if b, c, and d are all zero.
+    /// true if b, c, and d are all zero.
     /// </summary>
     public bool IsScalar
     {
@@ -596,7 +596,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// True if a = 0 and at least one of b, c, or d is not zero.
+    /// true if a = 0 and at least one of b, c, or d is not zero.
     /// </summary>
     public bool IsVector
     {

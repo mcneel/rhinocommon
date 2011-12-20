@@ -32,7 +32,7 @@ namespace Rhino.UI
     }
 
     /// <summary>
-    /// Look for XML file decorating the name with both the Locale ID as a number and a System.Globalization.CultureInfo.Name
+    /// Look for XML file decorating the name with both the Locale ID as a number and a System.Globalization.CultureInfo.Name.
     /// </summary>
     /// <param name="dir"></param>
     /// <param name="filename"></param>
@@ -59,7 +59,7 @@ namespace Rhino.UI
     }
 
     /// <summary>
-    /// Strip trailing "[[some number]]" from end of string
+    /// Strip trailing "[[some number]]" from end of string.
     /// </summary>
     /// <param name="s"></param>
     /// <returns></returns>
@@ -72,7 +72,7 @@ namespace Rhino.UI
     }
     /// <summary>
     /// Takes an embedded resource name and checks to see if it contains ".Localization." in the name and starts
-    /// or ends with the locale ID or locale culture string
+    /// or ends with the locale ID or locale culture string.
     /// </summary>
     /// <param name="s"></param>
     /// <param name="language_id"></param>
@@ -100,7 +100,7 @@ namespace Rhino.UI
     }
     /// <summary>
     /// Looks in the specified assembly for an embedded resource that contains ".Localization." in the name and starts
-    /// or ends with the locale ID or locale culture string
+    /// or ends with the locale ID or locale culture string.
     /// </summary>
     /// <param name="assembly"></param>
     /// <param name="language_id"></param>
@@ -138,7 +138,7 @@ namespace Rhino.UI
     }
     /// <summary>
     /// Look in the assembly folder or sub folders for a XML file that starts with the locale ID or locale ID
-    /// converted to culture string (something like "es-es") and if it is found attach a XmlTextReader to it
+    /// converted to culture string (something like "es-es") and if it is found attach a XmlTextReader to it.
     /// </summary>
     /// <param name="a"></param>
     /// <param name="language_id"></param>
@@ -204,8 +204,8 @@ namespace Rhino.UI
     /// for an embedded resource with the name "*.Localization.[locale]*.xml", if one is found then parse the XML
     /// and extract the strings from it.
     /// </summary>
-    /// <param name="a">Check this assembly folder and its embedded resources for the specified locale XML file</param>
-    /// <param name="language_id">Locale ID to check for</param>
+    /// <param name="a">Check this assembly folder and its embedded resources for the specified locale XML file.</param>
+    /// <param name="language_id">Locale ID to check for.</param>
     /// <returns></returns>
     public bool LoadFromFile(Assembly a, int language_id)
     {

@@ -33,12 +33,12 @@ namespace Rhino.Geometry
     }
     #region statics
     /// <summary>
-    /// Gets an extrusion form of a cylinder
+    /// Gets an extrusion form of a cylinder.
     /// </summary>
-    /// <param name="cylinder">IsFinite must be true</param>
-    /// <param name="capBottom">If true, the end at cylinder.Height1 will be capped</param>
-    /// <param name="capTop">If true, the end at cylinder.Height2 will be capped</param>
-    /// <returns>Extrusion on success. null on failure</returns>
+    /// <param name="cylinder">IsFinite must be true.</param>
+    /// <param name="capBottom">If true, the end at cylinder.Height1 will be capped.</param>
+    /// <param name="capTop">If true, the end at cylinder.Height2 will be capped.</param>
+    /// <returns>Extrusion on success. null on failure.</returns>
     public static Extrusion CreateCylinderExtrusion(Cylinder cylinder, bool capBottom, bool capTop)
     {
       IntPtr pExtrusion = UnsafeNativeMethods.ON_Extrusion_CreateCylinder(ref cylinder, capBottom, capTop);
@@ -46,16 +46,16 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets an extrusion form of a pipe
+    /// Gets an extrusion form of a pipe.
     /// </summary>
     /// <param name="cylinder">IsFinite must be true.</param>
     /// <param name="otherRadius">
     /// If cylinder.Radius is less than other radius, then the cylinder will be the inside
     /// of the pipe.
     /// </param>
-    /// <param name="capBottom">If true, the end at cylinder.Height1 will be capped</param>
-    /// <param name="capTop">If true, the end at cylinder.Height2 will be capped</param>
-    /// <returns>Extrusion on success. null on failure</returns>
+    /// <param name="capBottom">If true, the end at cylinder.Height1 will be capped.</param>
+    /// <param name="capTop">If true, the end at cylinder.Height2 will be capped.</param>
+    /// <returns>Extrusion on success. null on failure.</returns>
     public static Extrusion CreatePipeExtrusion(Cylinder cylinder, double otherRadius, bool capTop, bool capBottom)
     {
       IntPtr pExtrusion = UnsafeNativeMethods.ON_Extrusion_CreatePipe(ref cylinder, otherRadius, capBottom, capTop);
@@ -132,7 +132,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets the up vector of the path
+    /// Gets the up vector of the path.
     /// </summary>
     public Vector3d PathTangent
     {
@@ -264,9 +264,9 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="s">
     /// 0.0 = starting profile
-    /// 1.0 = ending profile
+    /// 1.0 = ending profile.
     /// </param>
-    /// <returns>A Transformation. The transform is Invalid on failure</returns>
+    /// <returns>A Transformation. The transform is Invalid on failure.</returns>
     public Transform GetProfileTransformation(double s)
     {
       Transform xform = new Transform();
@@ -282,7 +282,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="s">
     /// 0.0 = starting profile
-    /// 1.0 = ending profile
+    /// 1.0 = ending profile.
     /// </param>
     /// <returns>A plane. The plane is Invalid on failure.</returns>
     /// <remarks>
@@ -302,7 +302,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="s">
     /// 0.0 = starting profile
-    /// 1.0 = ending profile
+    /// 1.0 = ending profile.
     /// </param>
     /// <returns>A plane. The plane is Invalid on failure.</returns>
     /// <remarks>
@@ -320,13 +320,13 @@ namespace Rhino.Geometry
     /// <summary>
     /// Sets the outer profile of the extrusion.
     /// </summary>
-    /// <param name="outerProfile">curve in the XY plane or a 2D curve</param>
+    /// <param name="outerProfile">curve in the XY plane or a 2D curve.</param>
     /// <param name="cap">
     /// If outerProfile is a closed curve, then cap determines if the extrusion
     /// has end caps. If outerProfile is an open curve, cap is ignored.
     /// </param>
     /// <returns>
-    /// True if the profile was set. If the outer profile is closed, then the
+    /// true if the profile was set. If the outer profile is closed, then the
     /// extrusion may also have inner profiles. If the outer profile is open,
     /// the extrusion may not have inner profiles. If the extrusion already
     /// has a profile, the set will fail.
@@ -341,8 +341,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Adds an inner profile.
     /// </summary>
-    /// <param name="innerProfile">Closed curve in the XY plane or a 2d curve</param>
-    /// <returns>True if the profile was set</returns>
+    /// <param name="innerProfile">Closed curve in the XY plane or a 2d curve.</param>
+    /// <returns>true if the profile was set.</returns>
     public bool AddInnerProfile(Curve innerProfile)
     {
       IntPtr pThis = NonConstPointer();
@@ -371,14 +371,14 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="profileIndex">
     /// 0 &lt;= profileIndex &lt; ProfileCount
-    /// The outer profile has index 0
+    /// The outer profile has index 0.
     /// </param>
     /// <param name="s">
     /// 0.0 &lt;= s &lt;= 1.0
     /// A relative parameter controling which profile is returned.
-    /// 0 = bottom profile and 1 = top profile
+    /// 0 = bottom profile and 1 = top profile.
     /// </param>
-    /// <returns></returns>
+    /// <returns>The profile.</returns>
     public Curve Profile3d(int profileIndex, double s)
     {
       IntPtr pConstThis = ConstPointer();

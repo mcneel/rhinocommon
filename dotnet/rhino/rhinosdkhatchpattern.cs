@@ -53,10 +53,10 @@ namespace Rhino.DocObjects
     #endregion
 
     /// <summary>
-    /// Read hatch pattern definitions from a file
+    /// Read hatch pattern definitions from a file.
     /// </summary>
     /// <param name="filename">
-    /// Name of an existing file. If filename is null or empty, default hatch pattern filename is used
+    /// Name of an existing file. If filename is null or empty, default hatch pattern filename is used.
     /// </param>
     /// <param name="quiet">
     /// If file doesn't exist, and quiet is false, an error meesage box is shown.
@@ -131,7 +131,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Index in the hatch pattern table for this pattern. -1 if not in the table
+    /// Index in the hatch pattern table for this pattern. -1 if not in the table.
     /// </summary>
     public int Index
     {
@@ -213,7 +213,7 @@ namespace Rhino.DocObjects
 namespace Rhino.DocObjects.Tables
 {
   /// <summary>
-  /// All of the hatch pattern definitions contained in a rhino document
+  /// All of the hatch pattern definitions contained in a rhino document.
   /// </summary>
   public sealed class HatchPatternTable : IEnumerable<HatchPattern>, Rhino.Collections.IRhinoTable<HatchPattern>
   {
@@ -224,13 +224,13 @@ namespace Rhino.DocObjects.Tables
       m_doc = doc;
     }
 
-    /// <summary>Document that owns this table</summary>
+    /// <summary>Document that owns this table.</summary>
     public RhinoDoc Document
     {
       get { return m_doc; }
     }
 
-    /// <summary>Number of patterns in the table</summary>
+    /// <summary>Number of patterns in the table.</summary>
     public int Count
     {
       get
@@ -242,11 +242,11 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Conceptually, the hatch pattern table is an array of hatch patterns.
     /// The operator[] can be used to get individual hatch patterns. A hatch pattern is
-    /// either active or deleted and this state is reported by HatchPattern.IsDeleted
+    /// either active or deleted and this state is reported by HatchPattern.IsDeleted.
     /// </summary>
-    /// <param name="index">zero based array index</param>
+    /// <param name="index">zero based array index.</param>
     /// <returns>
-    /// If index is out of range, the current hatch pattern is returned
+    /// If index is out of range, the current hatch pattern is returned.
     /// </returns>
     public DocObjects.HatchPattern this[int index]
     {
@@ -284,8 +284,8 @@ namespace Rhino.DocObjects.Tables
     /// Finds the hatch pattern with a given name. Search ignores case.
     /// </summary>
     /// <param name="name"></param>
-    /// <param name="ignoreDeleted">true means don't search deleted hatch patterns</param>
-    /// <returns>index of the hatch pattern with the given name. -1 if no hatch pattern found</returns>
+    /// <param name="ignoreDeleted">true means don't search deleted hatch patterns.</param>
+    /// <returns>index of the hatch pattern with the given name. -1 if no hatch pattern found.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_hatchcurve.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_hatchcurve.cs' lang='cs'/>
@@ -297,7 +297,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Adds a new hatch pattern with specified definition to the table
+    /// Adds a new hatch pattern with specified definition to the table.
     /// </summary>
     /// <param name="pattern">
     /// definition of new hatch pattern. The information in pattern is copied.
@@ -307,7 +307,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>
     /// >=0 index of new hatch pattern
     /// -1  not added because a hatch pattern with that name already exists or
-    /// some other problem occured
+    /// some other problem occured.
     /// </returns>
     public int Add(Rhino.DocObjects.HatchPattern pattern)
     {

@@ -250,7 +250,7 @@ namespace Rhino.Geometry
     }
     /// <summary>
     /// Gets or sets whether or not the mesh is allowed to have jagged seams. 
-    /// When this flag is set to True, meshes on either side of a Brep Edge will not match up.
+    /// When this flag is set to true, meshes on either side of a Brep Edge will not match up.
     /// </summary>
     public bool JaggedSeams
     {
@@ -479,11 +479,10 @@ namespace Rhino.Geometry
     /// <summary>
     /// Attempts to construct a mesh from a closed planar curve.
     /// </summary>
-    /// <param name="boundary">must be a closed planar curve</param>
-    /// <param name="parameters">parameters used for creating the mesh</param>
+    /// <param name="boundary">must be a closed planar curve.</param>
+    /// <param name="parameters">parameters used for creating the mesh.</param>
     /// <returns>
-    /// new Mesh on success
-    /// null on failure
+    /// New mesh on success or null on failure.
     /// </returns>
     public static Mesh CreateFromPlanarBoundary(Curve boundary, MeshingParameters parameters)
     {
@@ -852,14 +851,14 @@ namespace Rhino.Geometry
     /// If true, the query treats coincident vertices as the same.
     /// </param>
     /// <param name="isOriented">
-    /// isOriented will be set to True if the mesh is a manifold 
+    /// isOriented will be set to true if the mesh is a manifold 
     /// and adjacent faces have compatible face normals.
     /// </param>
     /// <param name="hasBoundary">
-    /// hasBoundary will be set to True if the mesh is a manifold 
+    /// hasBoundary will be set to true if the mesh is a manifold 
     /// and there is at least one "edge" with no more than one adjacent face.
     /// </param>
-    /// <returns>True if every mesh "edge" has at most two adjacent faces.</returns>
+    /// <returns>true if every mesh "edge" has at most two adjacent faces.</returns>
     public bool IsManifold(bool topologicalTest, out bool isOriented, out bool hasBoundary)
     {
       isOriented = false;
@@ -1016,7 +1015,7 @@ namespace Rhino.Geometry
     #region methods
     /// <summary>
     /// If the mesh has SurfaceParameters, the surface is evaluated at
-    /// these parameters and the mesh geometry is updated
+    /// these parameters and the mesh geometry is updated.
     /// </summary>
     /// <param name="surface"></param>
     /// <returns></returns>
@@ -1035,7 +1034,7 @@ namespace Rhino.Geometry
     /// Removes any unreferenced objects from arrays, reindexes as needed 
     /// and shrinks arrays to minimum required size.
     /// </summary>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addmesh.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addmesh.cs' lang='cs'/>
@@ -1048,9 +1047,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>Reverses the direction of the mesh.</summary>
-    /// <param name="vertexNormals">If True, vertex normals will be reversed.</param>
-    /// <param name="faceNormals">If True, face normals will be reversed.</param>
-    /// <param name="faceOrientation">If True, face orientations will be reversed.</param>
+    /// <param name="vertexNormals">If true, vertex normals will be reversed.</param>
+    /// <param name="faceNormals">If true, face normals will be reversed.</param>
+    /// <param name="faceOrientation">If true, face orientations will be reversed.</param>
     public void Flip(bool vertexNormals, bool faceNormals, bool faceOrientation)
     {
       IntPtr ptr = NonConstPointer();
@@ -1058,12 +1057,12 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determine orientation of a "solid" mesh
+    /// Determine orientation of a "solid" mesh.
     /// </summary>
     /// <returns>
-    /// +1 = mesh is solid with outward facing normals.
-    /// -1 = mesh is solid with inward facing normals.
-    /// 0 = mesh is not solid
+    /// <para>+1 = mesh is solid with outward facing normals.</para>
+    /// <para>-1 = mesh is solid with inward facing normals.</para>
+    /// <para>0 = mesh is not solid.</para>
     /// </returns>
     public int SolidOrientation()
     {
@@ -1072,9 +1071,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determine if a point is inside a solid mesh
+    /// Determine if a point is inside a solid mesh.
     /// </summary>
-    /// <param name="point">3d point to test</param>
+    /// <param name="point">3d point to test.</param>
     /// <param name="tolerance">
     /// (&gt;=0) 3d distance tolerance used for ray-mesh intersection
     /// and determining strict inclusion.
@@ -1086,7 +1085,7 @@ namespace Rhino.Geometry
     /// point is inside or the distance from point to a mesh face is &lt;= tolerance.
     /// </param>
     /// <returns>
-    /// true if point is inside the solid mesh, false if not
+    /// true if point is inside the solid mesh, false if not.
     /// </returns>
     /// <remarks>
     /// The caller is responsible for making certing the mesh is solid before
@@ -1112,7 +1111,7 @@ namespace Rhino.Geometry
     /// than or equal to angleToleranceRadians have unique vertexes along that edge,
     /// adding vertices if necessary.
     /// </summary>
-    /// <param name="angleToleranceRadians">Angle at which to make unique vertices</param>
+    /// <param name="angleToleranceRadians">Angle at which to make unique vertices.</param>
     /// <param name="modifyNormals">
     /// Determines whether new vertex normals will have the same vertex normal as the original (false)
     /// or vertex normals made from the corrsponding face normals (true)
@@ -1128,7 +1127,7 @@ namespace Rhino.Geometry
     /// than or equal to angleToleranceRadians share vertexes along that edge, vertex normals
     /// are averaged.
     /// </summary>
-    /// <param name="angleToleranceRadians">Angle at which to weld vertices</param>
+    /// <param name="angleToleranceRadians">Angle at which to weld vertices.</param>
     public void Weld(double angleToleranceRadians)
     {
       IntPtr pThis = NonConstPointer();
@@ -1142,7 +1141,7 @@ namespace Rhino.Geometry
     /// normals to make them all consistent. You may want to call Mesh.Normals.ConputeNormals()
     /// to recompute vertex normals after calling this functions.
     /// </summary>
-    /// <returns>number of faces that were modified</returns>
+    /// <returns>number of faces that were modified.</returns>
     public int UnifyNormals()
     {
       int rc;
@@ -1160,7 +1159,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Splits up the mesh into its unconnected pieces
+    /// Splits up the mesh into its unconnected pieces.
     /// </summary>
     /// <returns>An array containing all the disjoint pieces that make up this Mesh.</returns>
     public Mesh[] SplitDisjointPieces()
@@ -1181,7 +1180,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Split a mesh by an infinite plane
+    /// Split a mesh by an infinite plane.
     /// </summary>
     /// <param name="plane"></param>
     /// <returns></returns>
@@ -1202,7 +1201,7 @@ namespace Rhino.Geometry
       return rc;
     }
     /// <summary>
-    /// Split a mesh with another mesh
+    /// Split a mesh with another mesh.
     /// </summary>
     /// <param name="mesh">Mesh to split with.</param>
     /// <returns>An array of mesh segments representing the split result.</returns>
@@ -1264,7 +1263,7 @@ namespace Rhino.Geometry
 
 #if RHINO_SDK
     /// <summary>
-    /// Create outlines of a mesh projected against a plane
+    /// Create outlines of a mesh projected against a plane.
     /// </summary>
     /// <param name="plane"></param>
     /// <returns></returns>
@@ -1296,7 +1295,7 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Create outlines of a mesh. The projection information in the
-    /// viewport is used to determine how the outlines are projected
+    /// viewport is used to determine how the outlines are projected.
     /// </summary>
     /// <param name="viewport"></param>
     /// <returns></returns>
@@ -1329,7 +1328,7 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Returns all edges of a mesh that are considered "naked" in the
-    /// sense that the edge only has one face
+    /// sense that the edge only has one face.
     /// </summary>
     /// <returns></returns>
     public Polyline[] GetNakedEdges()
@@ -1425,7 +1424,7 @@ namespace Rhino.Geometry
     /// then set maximumDistance to that value. 
     /// This parameter is ignored if you pass 0.0 for a maximumDistance.
     /// </param>
-    /// <returns>closest point information on success. null on failure</returns>
+    /// <returns>closest point information on success. null on failure.</returns>
     public MeshPoint ClosestMeshPoint(Point3d testPoint, double maximumDistance)
     {
       IntPtr pConstThis = ConstPointer();
@@ -1496,11 +1495,11 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Evaluate a mesh at a set of barycentric coordinates. Barycentric coordinates must 
-    /// be assigned in accordance with the rules as defined by MeshPoint.T
+    /// be assigned in accordance with the rules as defined by MeshPoint.T.
     /// </summary>
-    /// <param name="faceIndex">Index of triangle or quad to evaluate</param>
+    /// <param name="faceIndex">Index of triangle or quad to evaluate.</param>
     /// <param name="t0">First barycentric coordinate.</param>
-    /// <param name="t1">Second barycentric coordinate</param>
+    /// <param name="t1">Second barycentric coordinate.</param>
     /// <param name="t2">Third barycentric coordinate.</param>
     /// <param name="t3">Fourth barycentric coordinate. If the face is a triangle, this coordinate will be ignored.</param>
     /// <returns>A Point on the mesh or Point3d.Unset if the faceIndex is not valid or if the barycentric coordinates could not be evaluated.</returns>
@@ -1536,7 +1535,7 @@ namespace Rhino.Geometry
     /// Same as Mesh.Offset(distance, false)
     /// </summary>
     /// <param name="distance"></param>
-    /// <returns>new mesh on success, null on failure</returns>
+    /// <returns>new mesh on success, null on failure.</returns>
     public Mesh Offset(double distance)
     {
       return Offset(distance, false);
@@ -1642,7 +1641,7 @@ namespace Rhino.Geometry
     ///// <summary>
     ///// finds all coincident vertices and merges them if break angle is small enough
     ///// </summary>
-    ///// <param name="tolerance">coordinate tols for considering vertices to be coincident</param>
+    ///// <param name="tolerance">coordinate tols for considering vertices to be coincident.</param>
     ///// <param name="cosineNormalAngle">
     ///// cosine normal angle tolerance in radians
     ///// if vertices are coincident, then they are combined
@@ -1933,7 +1932,7 @@ namespace Rhino.Geometry.Collections
     /// <param name="x">X component of vertex location.</param>
     /// <param name="y">Y component of vertex location.</param>
     /// <param name="z">Z component of vertex location.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetVertex(int index, float x, float y, float z)
     {
       IntPtr ptr = m_mesh.NonConstPointer();
@@ -1950,7 +1949,7 @@ namespace Rhino.Geometry.Collections
     /// <param name="x">X component of vertex location.</param>
     /// <param name="y">Y component of vertex location.</param>
     /// <param name="z">Z component of vertex location.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetVertex(int index, double x, double y, double z)
     {
       return SetVertex(index, (float)x, (float)y, (float)z);
@@ -1963,7 +1962,7 @@ namespace Rhino.Geometry.Collections
     /// </summary>
     /// <param name="index">Index of vertex to set.</param>
     /// <param name="vertex">Vertex location.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetVertex(int index, Point3f vertex)
     {
       return SetVertex(index, vertex.X, vertex.Y, vertex.Z);
@@ -1976,7 +1975,7 @@ namespace Rhino.Geometry.Collections
     /// </summary>
     /// <param name="index">Index of vertex to set.</param>
     /// <param name="vertex">Vertex location.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetVertex(int index, Point3d vertex)
     {
       return SetVertex(index, (float)vertex.X, (float)vertex.Y, (float)vertex.Z);
@@ -1986,7 +1985,7 @@ namespace Rhino.Geometry.Collections
     /// Gets a value indicating whether or not a vertex is hidden.
     /// </summary>
     /// <param name="vertexIndex">Index of vertex to query.</param>
-    /// <returns>True if the vertex is hidden, false if it is not.</returns>
+    /// <returns>true if the vertex is hidden, false if it is not.</returns>
     public bool IsHidden(int vertexIndex)
     {
       return UnsafeNativeMethods.ON_Mesh_GetHiddenValue(m_mesh.ConstPointer(), vertexIndex);
@@ -2061,7 +2060,7 @@ namespace Rhino.Geometry.Collections
     /// will not be taken into consideration when comparing vertices.
     /// </param>
     /// <returns>
-    /// True if the mesh is changed, in which case the mesh will have fewer vertices than before.
+    /// true if the mesh is changed, in which case the mesh will have fewer vertices than before.
     /// </returns>
     public bool CombineIdentical(bool ignoreNormals, bool ignoreAdditional)
     {
@@ -2070,10 +2069,10 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Gets a list of all of the faces that share a given vertex
+    /// Gets a list of all of the faces that share a given vertex.
     /// </summary>
     /// <param name="vertexIndex"></param>
-    /// <returns>list of indices of faces on success, null on failure</returns>
+    /// <returns>list of indices of faces on success, null on failure.</returns>
     public int[] GetVertexFaces(int vertexIndex)
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
@@ -2088,12 +2087,12 @@ namespace Rhino.Geometry.Collections
 
     /// <summary>
     /// Gets a list of other vertices which a "topologically" identical
-    /// to this vertex
+    /// to this vertex.
     /// </summary>
     /// <param name="vertexIndex"></param>
     /// <returns>
     /// Array of indices of vertices that are topoligically the same as this vertex. The
-    /// array includes vertexIndex. Returns null on failure
+    /// array includes vertexIndex. Returns null on failure.
     /// </returns>
     public int[] GetTopologicalIndenticalVertices(int vertexIndex)
     {
@@ -2167,7 +2166,7 @@ namespace Rhino.Geometry.Collections
     /// </summary>
     /// <param name="index">Index of vertex to remove.</param>
     /// <param name="shrinkFaces">If true, quads that reference the deleted vertex will be converted to triangles.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Remove(int index, bool shrinkFaces)
     {
       return Remove(new int[] { index }, shrinkFaces);
@@ -2177,7 +2176,7 @@ namespace Rhino.Geometry.Collections
     /// </summary>
     /// <param name="indices">Vertex indices to remove.</param>
     /// <param name="shrinkFaces">If true, quads that reference the deleted vertex will be converted to triangles.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Remove(IEnumerable<int> indices, bool shrinkFaces)
     {
       if (indices == null) { throw new ArgumentNullException("indices"); }
@@ -2271,7 +2270,7 @@ namespace Rhino.Geometry.Collections
   /// <summary>
   /// Provides access to the mesh topology vertices of a mesh. Topology vertices are
   /// sets of vertices in the MeshVertexList that can topologically be considered the
-  /// same vertex
+  /// same vertex.
   /// </summary>
   public class MeshTopologyVertexList : IEnumerable<Point3f>, Rhino.Collections.IRhinoTable<Point3f>
   {
@@ -2335,10 +2334,10 @@ namespace Rhino.Geometry.Collections
     #region methods
     /// <summary>
     /// Gets the topology vertex index for an existing mesh vertex in the mesh's
-    /// VertexList
+    /// VertexList.
     /// </summary>
-    /// <param name="vertexIndex">index of a vertex in the Mesh.Vertices</param>
-    /// <returns>index of a topology vertex in the Mesh.TopologyVertices</returns>
+    /// <param name="vertexIndex">index of a vertex in the Mesh.Vertices.</param>
+    /// <returns>index of a topology vertex in the Mesh.TopologyVertices.</returns>
     /// <exception cref="IndexOutOfRangeException"></exception>
     public int TopologyVertexIndex(int vertexIndex)
     {
@@ -2352,7 +2351,7 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Gets all indices of the mesh vertices that a given topology vertex represents.
     /// </summary>
-    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices</param>
+    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices.</param>
     /// <returns>
     /// Indices of all vertices that in Mesh.Vertices that a topology vertex represents.
     /// </returns>
@@ -2371,7 +2370,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Returns TopologyVertexIndices for a given mesh face index
+    /// Returns TopologyVertexIndices for a given mesh face index.
     /// </summary>
     /// <param name="faceIndex"></param>
     /// <returns></returns>
@@ -2393,12 +2392,12 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Gets all topological vertices that are connected to a given vertex
+    /// Gets all topological vertices that are connected to a given vertex.
     /// </summary>
-    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices</param>
+    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices.</param>
     /// <returns>
     /// Indices of all topological vertices that are connected to this topological vertex.
-    /// null if no vertices are connected to this vertex
+    /// null if no vertices are connected to this vertex.
     /// </returns>
     /// <exception cref="IndexOutOfRangeException"></exception>
     public int[] ConnectedTopologyVertices(int topologyVertexIndex)
@@ -2415,13 +2414,13 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Gets all topological vertices that are connected to a given vertex
+    /// Gets all topological vertices that are connected to a given vertex.
     /// </summary>
-    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices</param>
-    /// <param name="sorted">if true, thr vertices are returned in a radially sorted order</param>
+    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices.</param>
+    /// <param name="sorted">if true, thr vertices are returned in a radially sorted order.</param>
     /// <returns>
     /// Indices of all topological vertices that are connected to this topological vertex.
-    /// null if no vertices are connected to this vertex
+    /// null if no vertices are connected to this vertex.
     /// </returns>
     /// <exception cref="IndexOutOfRangeException"></exception>
     public int[] ConnectedTopologyVertices(int topologyVertexIndex, bool sorted)
@@ -2438,7 +2437,7 @@ namespace Rhino.Geometry.Collections
     /// to sorting.  If any boundary or nonmanifold edges end at the
     /// vertex, then the first edge will be a boundary or nonmanifold edge.
     /// </summary>
-    /// <returns>true on success</returns>
+    /// <returns>true on success.</returns>
     public bool SortEdges()
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
@@ -2453,7 +2452,7 @@ namespace Rhino.Geometry.Collections
     /// vertex, then the first edge will be a boundary or nonmanifold edge.
     /// </summary>
     /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices></param>
-    /// <returns>true on success</returns>
+    /// <returns>true on success.</returns>
     public bool SortEdges(int topologyVertexIndex)
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
@@ -2464,20 +2463,20 @@ namespace Rhino.Geometry.Collections
     /// Returns true if the topological vertex is hidden. The mesh topology
     /// vertex is hidden if and only if all the ON_Mesh vertices it represents is hidden.
     /// </summary>
-    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices</param>
-    /// <returns>True if mesh topology vertex is hidden.</returns>
+    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices.</param>
+    /// <returns>true if mesh topology vertex is hidden.</returns>
     public bool IsHidden(int topologyVertexIndex)
     {
       return m_mesh.TopItemIsHidden(Mesh.idxTopVertexIsHidden, topologyVertexIndex);
     }
 
     /// <summary>
-    /// Gets all faces that are connected to a given vertex
+    /// Gets all faces that are connected to a given vertex.
     /// </summary>
-    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices</param>
+    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices.</param>
     /// <returns>
     /// Indices of all faces in Mesh.Faces that are connected to this topological vertex.
-    /// null if no faces are connected to this vertex
+    /// null if no faces are connected to this vertex.
     /// </returns>
     /// <exception cref="IndexOutOfRangeException"></exception>
     public int[] ConnectedFaces(int topologyVertexIndex)
@@ -2538,7 +2537,7 @@ namespace Rhino.Geometry.Collections
     }
     #endregion
 
-    /// <summary>Gets the two topology vertices for a given topology edge</summary>
+    /// <summary>Gets the two topology vertices for a given topology edge.</summary>
     /// <param name="topologyEdgeIndex"></param>
     /// <returns></returns>
     public IndexPair GetTopologyVertices(int topologyEdgeIndex)
@@ -2550,7 +2549,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Gets indices of faces connected to this edge
+    /// Gets indices of faces connected to this edge.
     /// </summary>
     /// <param name="topologyEdgeIndex"></param>
     /// <returns></returns>
@@ -2566,7 +2565,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Gets indices of faces connected to this edge
+    /// Gets indices of faces connected to this edge.
     /// </summary>
     /// <param name="topologyEdgeIndex"></param>
     /// <param name="faceOrientationMatchesEdgeDirection"></param>
@@ -2587,7 +2586,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Gets indices of edges that surround a given face
+    /// Gets indices of edges that surround a given face.
     /// </summary>
     /// <param name="faceIndex"></param>
     /// <returns></returns>
@@ -2610,7 +2609,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Gets indices of edges that surround a given face
+    /// Gets indices of edges that surround a given face.
     /// </summary>
     /// <param name="faceIndex"></param>
     /// <param name="sameOrientation">
@@ -2657,7 +2656,7 @@ namespace Rhino.Geometry.Collections
     /// <summary>Gets the 3d line along an edge.</summary>
     /// <param name="topologyEdgeIndex"></param>
     /// <returns>
-    /// Line along edge.  If input is not valid, an Invalid Line is returned
+    /// Line along edge.  If input is not valid, an Invalid Line is returned.
     /// </returns>
     public Line EdgeLine(int topologyEdgeIndex)
     {
@@ -2671,7 +2670,7 @@ namespace Rhino.Geometry.Collections
     /// Replaces a mesh edge with a vertex at its center and update adjacent faces as needed.
     /// </summary>
     /// <param name="topologyEdgeIndex"></param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool CollapseEdge(int topologyEdgeIndex)
     {
       return m_mesh.IndexOpBool(Mesh.idxCollapseEdge, topologyEdgeIndex);
@@ -2681,7 +2680,7 @@ namespace Rhino.Geometry.Collections
     /// Determines if a mesh edge index is valid input for <see cref="SwapEdge"/>.
     /// </summary>
     /// <param name="topologyEdgeIndex"></param>
-    /// <returns>true if edge can be swapped</returns>
+    /// <returns>true if edge can be swapped.</returns>
     public bool IsSwappableEdge(int topologyEdgeIndex)
     {
       return m_mesh.IndexOpBool(Mesh.idxIsSwappableEdge, topologyEdgeIndex);
@@ -2691,7 +2690,7 @@ namespace Rhino.Geometry.Collections
     /// If the edge is shared by two triangular face, then the edge is swapped.
     /// </summary>
     /// <param name="topologyEdgeIndex"></param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool SwapEdge(int topologyEdgeIndex)
     {
       return m_mesh.IndexOpBool(Mesh.idxSwapEdge, topologyEdgeIndex);
@@ -2701,8 +2700,8 @@ namespace Rhino.Geometry.Collections
     /// Returns true if the topological edge is hidden. The mesh topology
     /// edge is hidden only if either of its mesh topology vertices is hidden.
     /// </summary>
-    /// <param name="topologyEdgeIndex">index of a topology edge in Mesh.TopologyEdges</param>
-    /// <returns>True if mesh topology edge is hidden.</returns>
+    /// <param name="topologyEdgeIndex">index of a topology edge in Mesh.TopologyEdges.</param>
+    /// <returns>true if mesh topology edge is hidden.</returns>
     public bool IsHidden(int topologyEdgeIndex)
     {
       return m_mesh.TopItemIsHidden(Mesh.idxTopEdgeIsHidden, topologyEdgeIndex);
@@ -2843,7 +2842,7 @@ namespace Rhino.Geometry.Collections
     /// Appends a collection of normal vectors.
     /// </summary>
     /// <param name="normals">Normals to append.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool AddRange(Vector3f[] normals)
     {
       return SetNormalsHelper(normals, true);
@@ -2859,7 +2858,7 @@ namespace Rhino.Geometry.Collections
     /// <param name="x">X component of vertex normal.</param>
     /// <param name="y">Y component of vertex normal.</param>
     /// <param name="z">Z component of vertex normal.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetNormal(int index, float x, float y, float z)
     {
       return SetNormal(index, new Vector3f(x, y, z));
@@ -2874,7 +2873,7 @@ namespace Rhino.Geometry.Collections
     /// <param name="x">X component of vertex normal.</param>
     /// <param name="y">Y component of vertex normal.</param>
     /// <param name="z">Z component of vertex normal.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetNormal(int index, double x, double y, double z)
     {
       return SetNormal(index, new Vector3f((float)x, (float)y, (float)z));
@@ -2887,7 +2886,7 @@ namespace Rhino.Geometry.Collections
     /// </summary>
     /// <param name="index">Index of vertex normal to set.</param>
     /// <param name="normal"></param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetNormal(int index, Vector3f normal)
     {
       IntPtr ptr = m_mesh.NonConstPointer();
@@ -2901,7 +2900,7 @@ namespace Rhino.Geometry.Collections
     /// </summary>
     /// <param name="index">Index of vertex normal to set.</param>
     /// <param name="normal"></param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetNormal(int index, Vector3d normal)
     {
       return SetNormal(index, new Vector3f((float)normal.m_x, (float)normal.m_y, (float)normal.m_z));
@@ -2910,7 +2909,7 @@ namespace Rhino.Geometry.Collections
     /// Sets all normal vectors in one go. This method destroys the current normal array if it exists.
     /// </summary>
     /// <param name="normals">Normals for the entire mesh.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetNormals(Vector3f[] normals)
     {
       return SetNormalsHelper(normals, false);
@@ -2921,7 +2920,7 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Computes the vertex normals based on the physical shape of the mesh.
     /// </summary>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addmesh.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addmesh.cs' lang='cs'/>
@@ -2936,7 +2935,7 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Unitizes all vertex normals.
     /// </summary>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool UnitizeNormals()
     {
       IntPtr ptr = m_mesh.NonConstPointer();
@@ -3302,7 +3301,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>Splits all quads along the short diagonal.</summary>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ConvertQuadsToTriangles()
     {
       IntPtr ptr = m_mesh.NonConstPointer();
@@ -3323,7 +3322,7 @@ namespace Rhino.Geometry.Collections
     /// (length of the shortest diagonal)/(length of longest diagonal). 
     /// has to be >= minimumDiagonalLengthRatio. When in doubt us .875.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ConvertTrianglesToQuads(double angleToleranceRadians, double minimumDiagonalLengthRatio)
     {
       IntPtr ptr = m_mesh.NonConstPointer();
@@ -3570,7 +3569,7 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Unitizes all the existing face normals.
     /// </summary>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool UnitizeFaceNormals()
     {
       IntPtr ptr = m_mesh.NonConstPointer();
@@ -3580,7 +3579,7 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Computes all the face normals for this mesh based on the physical shape of the mesh.
     /// </summary>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ComputeFaceNormals()
     {
       IntPtr ptr = m_mesh.NonConstPointer();
@@ -3745,7 +3744,7 @@ namespace Rhino.Geometry.Collections
     /// <param name="red">Red component of vertex color. Value must be in the 0~255 range.</param>
     /// <param name="green">Green component of vertex color. Value must be in the 0~255 range.</param>
     /// <param name="blue">Blue component of vertex color. Value must be in the 0~255 range.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetColor(int index, int red, int green, int blue)
     {
       return SetColor(index, Color.FromArgb(red, green, blue));
@@ -3759,7 +3758,7 @@ namespace Rhino.Geometry.Collections
     /// <param name="index">Index of vertex color to set. 
     /// If index equals Count, then the color will be appended.</param>
     /// <param name="color">Color to set, Alpha channels will be ignored.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetColor(int index, Color color)
     {
       if (index < 0 || index > Count)
@@ -3803,10 +3802,10 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Creates a valid vertex color list consisting of a single color.
+    /// Constructs a valid vertex color list consisting of a single color.
     /// </summary>
     /// <param name="baseColor">Color to apply to every vertex.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool CreateMonotoneMesh(Color baseColor)
     {
       int count = m_mesh.Vertices.Count;
@@ -3823,7 +3822,7 @@ namespace Rhino.Geometry.Collections
     /// of colors must match the number of vertices.
     /// </summary>
     /// <param name="colors">Colors to set.</param>
-    /// <returns>True on success, False on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_analysismode.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_analysismode.cs' lang='cs'/>
@@ -3838,7 +3837,7 @@ namespace Rhino.Geometry.Collections
     /// For the Mesh to be valid, the number of colors must match the number of vertices.
     /// </summary>
     /// <param name="colors">Colors to append.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool AppendColors(Color[] colors)
     {
       return SetColorsHelper(colors, true);
@@ -3981,7 +3980,7 @@ namespace Rhino.Geometry.Collections
     /// Appends an array of texture coordinates.
     /// </summary>
     /// <param name="textureCoordinates">Texture coordinates to append.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool AddRange(Point2f[] textureCoordinates)
     {
       return SetTextureCoordinatesHelper(textureCoordinates, true);
@@ -3996,7 +3995,7 @@ namespace Rhino.Geometry.Collections
     /// <param name="index">Index of texture coordinate to set.</param>
     /// <param name="s">S component of texture coordinate.</param>
     /// <param name="t">T component of texture coordinate.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetTextureCoordinate(int index, float s, float t)
     {
       IntPtr ptr = m_mesh.NonConstPointer();
@@ -4011,7 +4010,7 @@ namespace Rhino.Geometry.Collections
     /// <param name="index">Index of texture coordinate to set.</param>
     /// <param name="s">S component of texture coordinate.</param>
     /// <param name="t">T component of texture coordinate.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetTextureCoordinate(int index, double s, double t)
     {
       return SetTextureCoordinate(index, (float)s, (float)t);
@@ -4024,7 +4023,7 @@ namespace Rhino.Geometry.Collections
     /// </summary>
     /// <param name="index">Index of texture coordinate to set.</param>
     /// <param name="tc">Texture coordinate point.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetTextureCoordinate(int index, Point2f tc)
     {
       return SetTextureCoordinate(index, tc.m_x, tc.m_y);
@@ -4037,7 +4036,7 @@ namespace Rhino.Geometry.Collections
     /// </summary>
     /// <param name="index">Index of texture coordinate to set.</param>
     /// <param name="tc">Texture coordinate point.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetTextureCoordinate(int index, Point3f tc)
     {
       return SetTextureCoordinate(index, tc.m_x, tc.m_y);
@@ -4046,7 +4045,7 @@ namespace Rhino.Geometry.Collections
     /// Sets all texture coordinates in one go.
     /// </summary>
     /// <param name="textureCoordinates">Texture coordinates to assign to the mesh.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool SetTextureCoordinates(Point2f[] textureCoordinates)
     {
       return SetTextureCoordinatesHelper(textureCoordinates, false);
@@ -4066,7 +4065,7 @@ namespace Rhino.Geometry.Collections
     /// Scales the texture coordinates so the texture domains are [0,1] 
     /// and eliminate any texture rotations.
     /// </summary>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool NormalizeTextureCoordinates()
     {
       IntPtr ptr = m_mesh.NonConstPointer();
@@ -4077,7 +4076,7 @@ namespace Rhino.Geometry.Collections
     /// <para>The region of the bitmap the texture uses does not change.
     /// All texture coordinates rows (Us) become columns (Vs), and vice versa.</para>
     /// </summary>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool TransposeTextureCoordinates()
     {
       IntPtr ptr = m_mesh.NonConstPointer();
@@ -4089,10 +4088,10 @@ namespace Rhino.Geometry.Collections
     /// Either Us or Vs direction is flipped.</para>
     /// </summary>
     /// <param name="direction">
-    /// 0 = first texture coordinate is reversed
-    /// 1 = second texture coordinate is reversed
+    /// <para>0 = first texture coordinate is reversed.</para>
+    /// <para>1 = second texture coordinate is reversed.</para>
     /// </param>
-    /// <returns></returns>
+    /// <returns>true if operation succeeded; otherwise, false.</returns>
     public bool ReverseTextureCoordinates(int direction)
     {
       IntPtr ptr = m_mesh.NonConstPointer();
@@ -4550,7 +4549,7 @@ namespace Rhino.Geometry
 
     #region constructors
     /// <summary>
-    /// Create a new triangular Mesh face.
+    /// Constructs a new triangular Mesh face.
     /// </summary>
     /// <param name="a">Index of first corner.</param>
     /// <param name="b">Index of second corner.</param>
@@ -4563,7 +4562,7 @@ namespace Rhino.Geometry
       m_d = c;
     }
     /// <summary>
-    /// Create a new quadrangular Mesh face.
+    /// Constructs a new quadrangular Mesh face.
     /// </summary>
     /// <param name="a">Index of first corner.</param>
     /// <param name="b">Index of second corner.</param>
@@ -4692,7 +4691,7 @@ namespace Rhino.Geometry
     /// this function takes upper bound indices into account.
     /// </summary>
     /// <param name="vertexCount">Number of vertices in the mesh that this face is a part of.</param>
-    /// <returns>True if the face is considered valid, false if not.</returns>
+    /// <returns>true if the face is considered valid, false if not.</returns>
     public bool IsValid(int vertexCount)
     {
       if (!IsValid()) { return false; }

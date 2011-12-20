@@ -291,7 +291,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Returns point on sphere that is closest to given point
+    /// Returns point on sphere that is closest to given point.
     /// </summary>
     /// <param name="testPoint">Point to project onto Sphere.</param>
     /// <returns>Point on sphere surface closest to testPoint.</returns>
@@ -307,7 +307,7 @@ namespace Rhino.Geometry
     /// <param name="testPoint">Point to project onto the sphere.</param>
     /// <param name="longitudeRadians">The longitudinal angle (in radians; 0.0 to 2pi) where the sphere approaches testPoint best.</param>
     /// <param name="latitudeRadians">The latitudinal angle (in radians; -0.5pi to +0.5pi) where the sphere approaches testPoint best.</param>
-    /// <returns>True on success, false on failure. This function will fail if the point it coincident with the sphere center.</returns>
+    /// <returns>true on success, false on failure. This function will fail if the point it coincident with the sphere center.</returns>
     public bool ClosestParameter(Point3d testPoint, out double longitudeRadians, out double latitudeRadians)
     {
       longitudeRadians = 0.0;
@@ -414,7 +414,7 @@ namespace Rhino.Geometry
     /// cannot be applied to a sphere as that would result in an ellipsoid.
     /// </summary>
     /// <param name="xform">Transformation matrix to apply.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Transform(Transform xform)
     {
       Circle xc = new Circle(m_plane, m_radius);

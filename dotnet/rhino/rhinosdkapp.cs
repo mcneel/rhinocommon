@@ -5,7 +5,7 @@ using Rhino.ApplicationSettings;
 namespace Rhino.ApplicationSettings
 {
   /// <summary>
-  /// Provides valid values for license node types
+  /// Provides valid values for license node types.
   /// </summary>
   public enum LicenseNode : int
   {
@@ -21,7 +21,7 @@ namespace Rhino.ApplicationSettings
   }
 
   /// <summary>
-  /// Provides valid values for the Rhino license installation group
+  /// Provides valid values for the Rhino license installation group.
   /// </summary>
   public enum Installation : int
   {
@@ -54,7 +54,7 @@ namespace Rhino
     }
   }
 
-  ///<summary>.NET RhinoApp is parallel to C++ CRhinoApp</summary>
+  ///<summary>.NET RhinoApp is parallel to C++ CRhinoApp.</summary>
   public static class RhinoApp
   {
     const int idxSdkVersion = 0;
@@ -128,7 +128,7 @@ namespace Rhino
 
     /// <summary>
     /// McNeel version control revision identifier at the time this version
-    /// of Rhino was built
+    /// of Rhino was built.
     /// </summary>
     public static string VersionControlRevision
     {
@@ -232,7 +232,7 @@ namespace Rhino
 
     //static bool IsRhinoId( System::Guid id );
     static readonly object m_lock_object = new object();
-    ///<summary>Print formatted text in the command window</summary>
+    ///<summary>Print formatted text in the command window.</summary>
     public static void Write(string message)
     {
       lock (m_lock_object)
@@ -242,28 +242,28 @@ namespace Rhino
         UnsafeNativeMethods.CRhinoApp_Print(message);
       }
     }
-    ///<summary>Print formatted text in the command window</summary>
+    ///<summary>Print formatted text in the command window.</summary>
     public static void Write(string format, object arg0)
     {
       Write(String.Format(System.Globalization.CultureInfo.InvariantCulture, format, arg0));
     }
-    ///<summary>Print formatted text in the command window</summary>
+    ///<summary>Print formatted text in the command window.</summary>
     public static void Write(string format, object arg0, object arg1)
     {
       Write(String.Format(System.Globalization.CultureInfo.InvariantCulture, format, arg0, arg1));
     }
-    ///<summary>Print formatted text in the command window</summary>
+    ///<summary>Print formatted text in the command window.</summary>
     public static void Write(string format, object arg0, object arg1, object arg2)
     {
       Write(String.Format(System.Globalization.CultureInfo.InvariantCulture, format, arg0, arg1, arg2));
     }
 
-    ///<summary>Print a newline in the command window</summary>
+    ///<summary>Print a newline in the command window.</summary>
     public static void WriteLine()
     {
       Write("\n");
     }
-    ///<summary>Print text in the command window</summary>
+    ///<summary>Print text in the command window.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayer.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addlayer.cs' lang='cs'/>
@@ -273,7 +273,7 @@ namespace Rhino
     {
       Write(message + "\n");
     }
-    ///<summary>Print formatted text with a newline in the command window</summary>
+    ///<summary>Print formatted text with a newline in the command window.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayer.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addlayer.cs' lang='cs'/>
@@ -283,18 +283,18 @@ namespace Rhino
     {
       Write(format + "\n", arg0);
     }
-    ///<summary>Print formatted text with a newline in the command window</summary>
+    ///<summary>Print formatted text with a newline in the command window.</summary>
     public static void WriteLine(string format, object arg0, object arg1)
     {
       Write(format + "\n", arg0, arg1);
     }
-    ///<summary>Print formatted text with a newline in the command window</summary>
+    ///<summary>Print formatted text with a newline in the command window.</summary>
     public static void WriteLine(string format, object arg0, object arg1, object arg2)
     {
       Write(format + "\n", arg0, arg1, arg2);
     }
 
-    ///<summary>Set Rhino command prompt</summary>
+    ///<summary>Set Rhino command prompt.</summary>
     ///<param name="prompt"></param>
     ///<param name="promptDefault">
     ///text that appears in angle brackets and indicates what will happen if the user pressed ENTER.
@@ -304,7 +304,7 @@ namespace Rhino
       UnsafeNativeMethods.CRhinoApp_SetCommandPrompt(prompt, promptDefault);
       RhinoApp.Wait();
     }
-    ///<summary>Set Rhino command prompt</summary>
+    ///<summary>Set Rhino command prompt.</summary>
     ///<param name="prompt"></param>
     public static void SetCommandPrompt(string prompt)
     {
@@ -331,7 +331,7 @@ namespace Rhino
     }
 
     /// <summary>
-    /// Text in Rhino's command history window
+    /// Text in Rhino's command history window.
     /// </summary>
     public static string CommandHistoryWindowText
     {
@@ -349,7 +349,7 @@ namespace Rhino
       }
     }
     /// <summary>
-    /// Clear the text in Rhino's command history window
+    /// Clear the text in Rhino's command history window.
     /// </summary>
     public static void ClearCommandHistoryWindow()
     {
@@ -400,7 +400,7 @@ namespace Rhino
 
 
     ///<summary>Run a Rhino command script.</summary>
-    ///<param name="script">[in] script to run</param>
+    ///<param name="script">[in] script to run.</param>
     ///<param name="echo">
     ///Controls how the script is echoed in the command output window.
     ///false = silent - nothing is echoed
@@ -420,7 +420,7 @@ namespace Rhino
 
     /// <summary>
     /// Pause to keep Windows message pump alive so views will update
-    /// and windows will repaint
+    /// and windows will repaint.
     /// </summary>
     public static void Wait()
     {
@@ -465,7 +465,7 @@ namespace Rhino
     /// Note the plug-in must have already been installed in Rhino or the plug-in manager
     /// will not know where to look for a plug-in with a matching id.
     /// </summary>
-    /// <param name="pluginId">Guid for a given plug-in</param>
+    /// <param name="pluginId">Guid for a given plug-in.</param>
     /// <returns>
     /// Result of PlugIn.GetPlugInObject for a given plug-in on success.
     /// </returns>
@@ -510,7 +510,7 @@ namespace Rhino
     /// Note the plug-in must have already been installed in Rhino or the plug-in manager
     /// will not know where to look for a plug-in with a matching name.
     /// </summary>
-    /// <param name="plugin">Name of a plug-in</param>
+    /// <param name="plugin">Name of a plug-in.</param>
     /// <returns>
     /// Result of PlugIn.GetPlugInObject for a given plug-in on success.
     /// </returns>
@@ -708,7 +708,7 @@ namespace Rhino
     internal static EventHandler m_new_rdk_document;
 
     /// <summary>
-    /// Monitors when RDK document information is rebuilt
+    /// Monitors when RDK document information is rebuilt.
     /// </summary>
     public static event EventHandler RdkNewDocument
     {
@@ -746,7 +746,7 @@ namespace Rhino
     internal static EventHandler m_rdk_global_settings_changed;
 
     /// <summary>
-    /// Monitors when RDK global settings are modified
+    /// Monitors when RDK global settings are modified.
     /// </summary>
     public static event EventHandler RdkGlobalSettingsChanged
     {
@@ -783,7 +783,7 @@ namespace Rhino
     internal static EventHandler m_rdk_update_all_previews;
 
     /// <summary>
-    /// Monitors when RDK thumbnails are updated
+    /// Monitors when RDK thumbnails are updated.
     /// </summary>
     public static event EventHandler RdkUpdateAllPreviews
     {
@@ -895,7 +895,7 @@ namespace Rhino
     internal static EventHandler m_client_plugin_unloading;
 
     /// <summary>
-    /// Monitors when RDK client plugins are unloaded
+    /// Monitors when RDK client plugins are unloaded.
     /// </summary>
     public static event EventHandler RdkPlugInUnloading
     {
@@ -964,15 +964,15 @@ namespace Rhino.UI
     /// <summary>
     /// Starts, or shows, Rhino's status bar progress meter.
     /// </summary>
-    /// <param name="lowerLimit">The lower limit of the progress meter's range</param>
-    /// <param name="upperLimit">The upper limit of the progress meter's range</param>
+    /// <param name="lowerLimit">The lower limit of the progress meter's range.</param>
+    /// <param name="upperLimit">The upper limit of the progress meter's range.</param>
     /// <param name="label">The short description of the progress (e.g. "Calculating", "Meshing", etc)</param>
     /// <param name="embedLabel">
     /// If true, then the label will be embeded in the progress meter.
     /// If false, then the label will appear to the left of the progress meter.
     /// </param>
     /// <param name="showPercentComplete">
-    /// If true, then the percent complete will appear in the progress meter
+    /// If true, then the percent complete will appear in the progress meter.
     /// </param>
     /// <returns>
     /// 1 - The progress meter was created successfully.
@@ -985,7 +985,7 @@ namespace Rhino.UI
     }
 
     /// <summary>
-    /// Sets the current position of Rhino's status bar progress meter
+    /// Sets the current position of Rhino's status bar progress meter.
     /// </summary>
     /// <param name="position"></param>
     /// <param name="absolute">
@@ -993,7 +993,7 @@ namespace Rhino.UI
     /// If false, then the progress meter is moved position from the current position (relative).
     /// </param>
     /// <returns>
-    /// The previous position if successful
+    /// The previous position if successful.
     /// </returns>
     public static int UpdateProgressMeter(int position, bool absolute)
     {

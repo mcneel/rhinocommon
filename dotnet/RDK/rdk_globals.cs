@@ -102,7 +102,7 @@ namespace Rhino.Render
     internal static void SetShowIncompatibleContent(RenderContent.Kinds kind, bool bShow) { UnsafeNativeMethods.Rdk_Globals_SetShowIncompatbileContent(RenderContent.KindString(kind), bShow); }
 
     /// <summary>
-    /// Specifies whether incompatible content should be shown in the corresponding editor
+    /// Specifies whether incompatible content should be shown in the corresponding editor.
     /// </summary>
     public static bool ShowIncompatibleMaterials
     {
@@ -111,7 +111,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Specifies whether incompatible content should be shown in the corresponding editor
+    /// Specifies whether incompatible content should be shown in the corresponding editor.
     /// </summary>
     public static bool ShowIncompatibleEnvironments
     {
@@ -120,7 +120,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Specifies whether incompatible content should be shown in the corresponding editor
+    /// Specifies whether incompatible content should be shown in the corresponding editor.
     /// </summary>
     public static bool ShowIncompatibleTextures
     {
@@ -144,8 +144,8 @@ namespace Rhino.Render
     /// Allow the user to choose a content by displaying the Content Chooser dialog.
 	  /// The dialog will have OK, Cancel and Help buttons, and optional New and Edit buttons.
     /// </summary>
-    /// <param name="instanceId">Sets the initially selected content and receives the instance id of the chosen content</param>
-    /// <param name="kinds">Specifies the kind(s) of content that should be displayed in the chooser</param>
+    /// <param name="instanceId">Sets the initially selected content and receives the instance id of the chosen content.</param>
+    /// <param name="kinds">Specifies the kind(s) of content that should be displayed in the chooser.</param>
     /// <param name="flags">Specifies flags controlling the browser.</param>
     /// <param name="doc"></param>
     /// <returns></returns>
@@ -195,9 +195,9 @@ namespace Rhino.Render
     public static bool IsGroundPlaneVisible  { get { return 1==UnsafeNativeMethods.Rdk_Globals_IsGroundPlaneVisible(); } }
         
     /// <summary>
-    /// Create a new basic material from an ON_Material.
+    /// Constructs a new basic material from an ON_Material.
     /// </summary>
-    /// <param name="material">The material to create the basic material from</param>
+    /// <param name="material">The material to create the basic material from.</param>
     /// <returns></returns>
     public static RenderMaterial NewBasicMaterial(Rhino.DocObjects.Material material)
     {
@@ -207,9 +207,9 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Create a new basic environment from a SimulatedEnvironment
+    /// Constructs a new basic environment from a SimulatedEnvironment.
     /// </summary>
-    /// <param name="environment">The environment to create the basic environment from</param>
+    /// <param name="environment">The environment to create the basic environment from.</param>
     /// <returns></returns>
     public static RenderEnvironment NewBasicEnvironment(SimulatedEnvironment environment)
     {
@@ -219,9 +219,9 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Create a new basic texture from a SimulatedTexture
+    /// Constructs a new basic texture from a SimulatedTexture.
     /// </summary>
-    /// <param name="texture">The texture to create the basic texture from</param>
+    /// <param name="texture">The texture to create the basic texture from.</param>
     /// <returns></returns>
     public static RenderTexture NewBitmapTexture(SimulatedTexture texture)
     {
@@ -238,7 +238,7 @@ namespace Rhino.Render
     };
 
     /// <summary>
-    /// Create a new content of the specified type and add it to the persistent content list.
+    /// Constructs a new content of the specified type and add it to the persistent content list.
 	  /// This function cannot be used to create temporary content that you delete after use.
 	  /// Content created by this function is owned by RDK and appears in the content editor.
 	  /// To create a temporary content which is owned by you, call RhRdkContentFactories().NewContentFromType().
@@ -254,7 +254,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Create a new content of the specified type and add it to the persistent content list.
+    /// Constructs a new content of the specified type and add it to the persistent content list.
     /// This function cannot be used to create temporary content that you delete after use.
     /// Content created by this function is owned by RDK and appears in the content editor.
     /// To create a temporary content which is owned by you, call RhRdkContentFactories().NewContentFromType().
@@ -274,13 +274,13 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Create a new content chosen by the user and add it to the persistent content list.
+    /// Constructs a new content chosen by the user and add it to the persistent content list.
 	  /// This function cannot be used to create temporary content that you delete after use.
 	  /// Content created by this function is owned by RDK and appears in the content editor.
     /// </summary>
-    /// <param name="defaultType">The default content type</param>
-    /// <param name="defaultInstance">The default selected content instance</param>
-    /// <param name="kinds">Determines which content kinds are allowed to be chosen from the dialog</param>
+    /// <param name="defaultType">The default content type.</param>
+    /// <param name="defaultInstance">The default selected content instance.</param>
+    /// <param name="kinds">Determines which content kinds are allowed to be chosen from the dialog.</param>
     /// <param name="flags"></param>
     /// <param name="doc"></param>
     /// <returns></returns>
@@ -294,9 +294,9 @@ namespace Rhino.Render
     /// Change the type of a content. This deletes the content and creates a replacement
 	  /// of the specified type allowing the caller to decide about harvesting.
     /// </summary>
-    /// <param name="oldContent">oldContent is the old content which is deleted</param>
+    /// <param name="oldContent">oldContent is the old content which is deleted.</param>
     /// <param name="newType">The type of content to replace pOldContent with.</param>
-    /// <param name="harvestParameters">Determines whether or not parameter harvesting will be performed</param>
+    /// <param name="harvestParameters">Determines whether or not parameter harvesting will be performed.</param>
     /// <returns></returns>
     public static RenderContent ChangeContentType(RenderContent oldContent, Guid newType, bool harvestParameters)
     {
@@ -305,7 +305,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Access to the material table
+    /// Access to the material table.
     /// </summary>
     /// <param name="doc"></param>
     /// <returns></returns>
@@ -315,7 +315,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Access to the environment table
+    /// Access to the environment table.
     /// </summary>
     /// <param name="doc"></param>
     /// <returns></returns>
@@ -325,7 +325,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Access to the texture table
+    /// Access to the texture table.
     /// </summary>
     /// <param name="doc"></param>
     /// <returns></returns>
@@ -335,7 +335,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Access to any content table given a (single) kind
+    /// Access to any content table given a (single) kind.
     /// </summary>
     /// <param name="kind"></param>
     /// <param name="doc"></param>
@@ -369,8 +369,8 @@ namespace Rhino.Render
     /// <summary>
     /// Loads a content from a library file.  Adds the content to the persistent content list.
     /// </summary>
-    /// <param name="filename">is the full path to the file to be loaded</param>
-    /// <returns>The loaded content or null if an error occurred</returns>
+    /// <param name="filename">is the full path to the file to be loaded.</param>
+    /// <returns>The loaded content or null if an error occurred.</returns>
     public static RenderContent LoadPersistantRenderContentFromFile(String filename)
     {
       IntPtr pContent = UnsafeNativeMethods.Rdk_RenderContent_LoadPersistantContentFromFile(filename);
@@ -378,10 +378,10 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Loads a content from a library file.  Does not add the content to the persistent content list.  Use AddPersistantContent to add it to the list
+    /// Loads a content from a library file.  Does not add the content to the persistent content list.  Use AddPersistantContent to add it to the list.
     /// </summary>
-    /// <param name="filename">is the full path to the file to be loaded</param>
-    /// <returns>The loaded content or null if an error occurred</returns>
+    /// <param name="filename">is the full path to the file to be loaded.</param>
+    /// <returns>The loaded content or null if an error occurred.</returns>
     public static RenderContent LoadRenderContentFromFile(String filename)
     {
       IntPtr pContent = UnsafeNativeMethods.Rdk_RenderContent_LoadContentFromFile(filename);
@@ -430,10 +430,10 @@ namespace Rhino.Render
     /// <summary>
     /// Shows the content chooser to allow the user to select a new or existing content.
     /// </summary>
-    /// <param name="defaultType">The content type that will be initially selected in the 'New' tab</param>
+    /// <param name="defaultType">The content type that will be initially selected in the 'New' tab.</param>
     /// <param name="defaultInstanceId">The content instance that will be initially selected in the 'Existing' tab.</param>
-    /// <param name="kinds">Specifies which content kinds will be displayed</param>
-    /// <param name="instanceIdOut">accepts the UUID of the chosen item. Depending on eRhRdkSccResult, this can be the type id of a content type or the instance id of an existing content</param>
+    /// <param name="kinds">Specifies which content kinds will be displayed.</param>
+    /// <param name="instanceIdOut">accepts the UUID of the chosen item. Depending on eRhRdkSccResult, this can be the type id of a content type or the instance id of an existing content.</param>
     /// <param name="flags"></param>
     /// <param name="doc"></param>
     /// <returns></returns>
@@ -443,7 +443,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Replacement for CRhinoFileUtilities::FindFile() which also handles network shares
+    /// Replacement for CRhinoFileUtilities::FindFile() which also handles network shares.
     /// </summary>
     /// <param name="fullPathToFile"></param>
     /// <returns></returns>
@@ -461,7 +461,7 @@ namespace Rhino.Render
     /// <summary>
     /// Determine if any texture in any persistent content list is using the specified file name for caching.
     /// </summary>
-    /// <param name="textureFileName">The file name to check for. The extension is ignored</param>
+    /// <param name="textureFileName">The file name to check for. The extension is ignored.</param>
     /// <returns></returns>
     public static bool IsCachedTextureFileInUse(String textureFileName)
     {

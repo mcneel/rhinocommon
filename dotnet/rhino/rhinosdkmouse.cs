@@ -61,7 +61,7 @@ namespace Rhino.UI
   }
 
   /// <summary>
-  /// Used for intercepting mouse events in the Rhino viewports
+  /// Used for intercepting mouse events in the Rhino viewports.
   /// </summary>
   public abstract class MouseCallback
   {

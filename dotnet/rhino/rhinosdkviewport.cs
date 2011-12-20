@@ -6,7 +6,7 @@ using Rhino.Geometry;
 namespace Rhino.Display
 {
   /// <summary>
-  /// Different parallel and perspective projections that are "standard" in Rhino
+  /// Different parallel and perspective projections that are "standard" in Rhino.
   /// </summary>
   public enum DefinedViewportProjection : int
   {
@@ -135,7 +135,7 @@ namespace Rhino.Display
       }
     }
 
-    /// <summary>Unique id for this viewport</summary>
+    /// <summary>Unique id for this viewport.</summary>
     public Guid Id
     {
       get
@@ -186,7 +186,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Set the size of the RhinoViewport
+    /// Set the size of the RhinoViewport.
     /// </summary>
     /// <param name="width"></param>
     /// <param name="height"></param>
@@ -211,7 +211,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Set optimal clipping planes to view objects in a world coordinate 3d bounding box
+    /// Set optimal clipping planes to view objects in a world coordinate 3d bounding box.
     /// </summary>
     /// <param name="box"></param>
     public void SetClippingPlanes(BoundingBox box)
@@ -220,7 +220,7 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoViewport_SetClippingPlanes(pThis, box.Min, box.Max);
     }
 
-    /// <summary>name associated with this viewport</summary>
+    /// <summary>name associated with this viewport.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addnamedview.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addnamedview.cs' lang='cs'/>
@@ -246,7 +246,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Viewport target point
+    /// Viewport target point.
     /// </summary>
     public Point3d CameraTarget
     {
@@ -264,7 +264,7 @@ namespace Rhino.Display
     /// is translated so that the camera direction vector is parallel
     /// to the vector from the camera location to the target location.
     /// </summary>
-    /// <param name="targetLocation">new target location</param>
+    /// <param name="targetLocation">new target location.</param>
     /// <param name="updateCameraLocation">
     /// if true, the camera location is translated so that the camera direction
     /// vector is parallel to the vector from the camera location to the target
@@ -291,8 +291,8 @@ namespace Rhino.Display
     /// changed so that it is parallel to the vector from the camera location to
     /// the target location.
     /// </summary>
-    /// <param name="targetLocation">new target location</param>
-    /// <param name="cameraLocation">new camera location</param>
+    /// <param name="targetLocation">new target location.</param>
+    /// <param name="cameraLocation">new camera location.</param>
     public void SetCameraLocations(Point3d targetLocation, Point3d cameraLocation)
     {
       IntPtr pThis = NonConstPointer();
@@ -304,7 +304,7 @@ namespace Rhino.Display
     ///  the vector from the camera location to the target is parallel to the camera direction
     ///  vector.
     /// </summary>
-    /// <param name="cameraLocation">new camera location</param>
+    /// <param name="cameraLocation">new camera location.</param>
     /// <param name="updateTargetLocation">
     /// if true, the target location is changed so that the vector from the camera
     /// location to the target is parallel to the camera direction vector.  
@@ -326,7 +326,7 @@ namespace Rhino.Display
     /// Set viewport camera direction. By default the target location is changed so that
     /// the vector from the camera location to the target is parallel to the camera direction.
     /// </summary>
-    /// <param name="cameraDirection">new camera direction</param>
+    /// <param name="cameraDirection">new camera direction.</param>
     /// <param name="updateTargetLocation">
     /// if true, the target location is changed so that the vector from the camera
     /// location to the target is parallel to the camera direction.
@@ -357,7 +357,7 @@ namespace Rhino.Display
 
     /// <summary>
     /// Simple plane information for this viewport's construction plane. If you want
-    /// detailed construction lpane information, use GetConstructionPlane
+    /// detailed construction lpane information, use GetConstructionPlane.
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addbackgroundbitmap.vb' lang='vbnet'/>
@@ -425,7 +425,7 @@ namespace Rhino.Display
     /// Sets the construction plane to the plane that was
     /// active before the last call to PushConstructionPlane.
     /// </summary>
-    /// <returns>true if a construction plane was popped</returns>
+    /// <returns>true if a construction plane was popped.</returns>
     public bool PopConstructionPlane()
     {
       IntPtr ptr = NonConstPointer();
@@ -436,7 +436,7 @@ namespace Rhino.Display
     /// Sets the construction plane to the plane that was
     /// active before the last call to PreviousConstructionPlane.
     /// </summary>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool NextConstructionPlane()
     {
       IntPtr ptr = NonConstPointer();
@@ -448,7 +448,7 @@ namespace Rhino.Display
     /// active before the last call to NextConstructionPlane
     /// or SetConstructionPlane.
     /// </summary>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool PreviousConstructionPlane()
     {
       IntPtr ptr = NonConstPointer();
@@ -506,12 +506,12 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Set viewport to a defined projection
+    /// Set viewport to a defined projection.
     /// </summary>
     /// <param name="projection"></param>
-    /// <param name="viewName">if not null or empty, the name is set</param>
-    /// <param name="updateConstructionPlane">if true, the construction plane is set to the viewport plane</param>
-    /// <returns>true if successful</returns>
+    /// <param name="viewName">if not null or empty, the name is set.</param>
+    /// <param name="updateConstructionPlane">if true, the construction plane is set to the viewport plane.</param>
+    /// <returns>true if successful.</returns>
     public bool SetProjection(DefinedViewportProjection projection, string viewName, bool updateConstructionPlane)
     {
       if (projection == DefinedViewportProjection.None)
@@ -537,14 +537,14 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Sets the viewport camera projection
+    /// Sets the viewport camera projection.
     /// </summary>
     /// <param name="projection"></param>
     /// <param name="updateTargetLocation">
     /// if true, the target location is changed so that the vector from the camera location to the target
     /// is parallel to the camera direction vector.  If false, the target location is not changed.
     /// </param>
-    /// <returns>true on success</returns>
+    /// <returns>true on success.</returns>
     public bool SetViewProjection(Rhino.DocObjects.ViewportInfo projection, bool updateTargetLocation)
     {
       IntPtr pThis = NonConstPointer();
@@ -556,7 +556,7 @@ namespace Rhino.Display
     /// Sets the view projection and target to the settings at the top of
     /// the view stack and removes those settings from the view stack.
     /// </summary>
-    /// <returns>true if there were settings that could be popped from the stack</returns>
+    /// <returns>true if there were settings that could be popped from the stack.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addnamedview.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addnamedview.cs' lang='cs'/>
@@ -579,7 +579,7 @@ namespace Rhino.Display
     /// Sets the view projection and target to the settings that 
     /// were active before the last call to PrevView.
     /// </summary>
-    /// <returns>true if the view stack was popped</returns>
+    /// <returns>true if the view stack was popped.</returns>
     public bool NextViewProjection()
     {
       IntPtr pThis = NonConstPointer();
@@ -590,7 +590,7 @@ namespace Rhino.Display
     /// Sets the view projection and target to the settings that
     /// were active before the last call to NextViewProjection.
     /// </summary>
-    /// <returns>true if the view stack was popped</returns>
+    /// <returns>true if the view stack was popped.</returns>
     public bool PreviousViewProjection()
     {
       IntPtr pThis = NonConstPointer();
@@ -601,7 +601,7 @@ namespace Rhino.Display
     //void ClearUndoInformation( bool bClearProjections = true, bool bClearCPlanes = true );
 
     /// <summary>
-    /// true if construction plane z axis is parallel to camera direction
+    /// true if construction plane z axis is parallel to camera direction.
     /// </summary>
     public bool IsPlanView
     {
@@ -617,7 +617,7 @@ namespace Rhino.Display
     /// selected document objects that can be seen in view. If the projection is
     /// perspective, the camera angle is not changed.
     /// </summary>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
@@ -634,7 +634,7 @@ namespace Rhino.Display
     /// selected document objects that can be seen in view. If the projection is
     /// perspective, the camera angle is not changed.
     /// </summary>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool ZoomExtentsSelected()
     {
       IntPtr pThis = NonConstPointer();
@@ -642,10 +642,10 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Zooms the viewport to the given bounding box
+    /// Zooms the viewport to the given bounding box.
     /// </summary>
     /// <param name="box"></param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool ZoomBoundingBox(BoundingBox box)
     {
       IntPtr pThis = NonConstPointer();
@@ -661,7 +661,7 @@ namespace Rhino.Display
     const int idxMouseDollyZoom = 5;
 
     /// <summary>
-    /// Rotate viewport around target
+    /// Rotate viewport around target.
     /// </summary>
     /// <param name="mousePreviousPoint"></param>
     /// <param name="mouseCurrentPoint"></param>
@@ -672,7 +672,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Rotate view around camera location
+    /// Rotate view around camera location.
     /// </summary>
     /// <param name="mousePreviousPoint"></param>
     /// <param name="mouseCurrentPoint"></param>
@@ -714,12 +714,12 @@ namespace Rhino.Display
     #endregion
 
     /// <summary>
-    /// Keyboard arrow key interaction tool
+    /// Keyboard arrow key interaction tool.
     /// </summary>
-    /// <param name="leftRight">left/right rotate if true, up/down rotate if false</param>
+    /// <param name="leftRight">left/right rotate if true, up/down rotate if false.</param>
     /// <param name="angleRadians">
     /// If less than 0, rotation is to left or down.
-    /// If greater than 0, rotation is to right or up
+    /// If greater than 0, rotation is to right or up.
     /// </param>
     /// <returns></returns>
     public bool KeyboardRotate(bool leftRight, double angleRadians)
@@ -729,9 +729,9 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Keyboard arrow key interaction tool
+    /// Keyboard arrow key interaction tool.
     /// </summary>
-    /// <param name="leftRight">left/right dolly if true, up/down dolly if false</param>
+    /// <param name="leftRight">left/right dolly if true, up/down dolly if false.</param>
     /// <param name="amount"></param>
     /// <returns></returns>
     public bool KeyboardDolly(bool leftRight, double amount)
@@ -741,7 +741,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Keyboard arrow key interaction tool
+    /// Keyboard arrow key interaction tool.
     /// </summary>
     /// <param name="amount"></param>
     /// <returns></returns>
@@ -797,7 +797,7 @@ namespace Rhino.Display
     /// that maps the 3d frustum defined by the rectangle to a -1/+1 clipping
     /// coordinate box. This takes a single point and inflates it by
     /// Rhino.ApplicationSettings.ModelAidSettings.MousePickBoxRadius to define
-    /// the screen rectangle
+    /// the screen rectangle.
     /// </summary>
     /// <param name="clientX"></param>
     /// <param name="clientY"></param>
@@ -815,7 +815,7 @@ namespace Rhino.Display
     /// that maps the 3d frustum defined by the rectangle to a -1/+1 clipping
     /// coordinate box. This takes a single point and inflates it by
     /// Rhino.ApplicationSettings.ModelAidSettings.MousePickBoxRadius to define
-    /// the screen rectangle
+    /// the screen rectangle.
     /// </summary>
     /// <param name="clientPoint"></param>
     /// <returns></returns>
@@ -845,14 +845,14 @@ namespace Rhino.Display
     /// <summary>
     /// Convert a point in parent RhinoView client window coordinates to the Viewport screen port
     /// client coordinates. The screen port of a RhinoViewport may not match the client area of
-    /// the parent RhinoView. This occurs in cases when the RhinoViewport is a nested child viewport
+    /// the parent RhinoView. This occurs in cases when the RhinoViewport is a nested child viewport.
     /// </summary>
     /// <param name="point">
     /// point in client coordinates of parent RhinoView window as input. This is
-    /// converted to the screen port client coordinates of the viewport as output
+    /// converted to the screen port client coordinates of the viewport as output.
     /// </param>
     /// <returns>
-    /// true if the point is inside of the RhinoViewport's screen port rectangle
+    /// true if the point is inside of the RhinoViewport's screen port rectangle.
     /// </returns>
     [Obsolete("use ClientToScreen instead - this will be removed in a future WIP")]
     public bool ClientToScreenPort(ref System.Drawing.Point point)
@@ -882,10 +882,10 @@ namespace Rhino.Display
     /// Rotates about the specified axis. A positive rotation angle results
     /// in a counter-clockwise rotation about the axis (right hand rule).
     /// </summary>
-    /// <param name="angleRadians">angle of rotation in radians</param>
-    /// <param name="rotationAxis">direction of the axis of rotation</param>
-    /// <param name="rotationCenter">point on the axis of rotation</param>
-    /// <returns>true if geometry successfully rotated</returns>
+    /// <param name="angleRadians">angle of rotation in radians.</param>
+    /// <param name="rotationAxis">direction of the axis of rotation.</param>
+    /// <param name="rotationCenter">point on the axis of rotation.</param>
+    /// <returns>true if geometry successfully rotated.</returns>
     public bool Rotate(double angleRadians, Vector3d rotationAxis, Point3d rotationCenter)
     {
       IntPtr pConstThis = NonConstPointer();
@@ -948,7 +948,7 @@ namespace Rhino.Display
     /// It will make common additional adjustments to the frustum so the resulting views are
     /// similar. The camera location and direction will not be changed.
     /// </summary>
-    /// <param name="symmetricFrustum">True if you want the resulting frustum to be symmetric.</param>
+    /// <param name="symmetricFrustum">true if you want the resulting frustum to be symmetric.</param>
     /// <returns>
     /// If the current projection is parallel and bSymmetricFrustum, FrustumIsLeftRightSymmetric()
     /// and FrustumIsTopBottomSymmetric() are all equal, then no changes are made and true is returned.
@@ -964,7 +964,7 @@ namespace Rhino.Display
     /// It will make common additional adjustments to the frustum and camera location so the
     /// resulting views are similar. The camera direction and target point are not be changed.
     /// </summary>
-    /// <param name="symmetricFrustum">True if you want the resulting frustum to be symmetric.</param>
+    /// <param name="symmetricFrustum">true if you want the resulting frustum to be symmetric.</param>
     /// <param name="lensLength">
     /// (pass 50.0 when in doubt) 35 mm lens length to use when changing from parallel to perspective
     /// projections. If the current projection is perspective or lens_length is &lt;= 0.0, then
@@ -988,7 +988,7 @@ namespace Rhino.Display
     /// If RhinoMath.UnsetValue this parameter is ignored. Otherwise it must be > 0 and indicates
     /// which plane in the current view frustum should be perserved.
     /// </param>
-    /// <param name="symmetricFrustum">True if you want the resulting frustum to be symmetric.</param>
+    /// <param name="symmetricFrustum">true if you want the resulting frustum to be symmetric.</param>
     /// <param name="lensLength">
     /// (pass 50.0 when in doubt) 35 mm lens length to use when changing from parallel to perspective
     /// projections. If the current projection is perspective or lens_length is &lt;= 0.0, then
@@ -1053,7 +1053,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Returns true if current camera orientation is valid
+    /// Returns true if current camera orientation is valid.
     /// </summary>
     /// <param name="frame"></param>
     /// <returns></returns>
@@ -1064,7 +1064,7 @@ namespace Rhino.Display
       return UnsafeNativeMethods.CRhinoViewport_VP_GetCameraFrame(pConstThis, ref frame);
     }
 
-    /// <summary>unit to right vector</summary>
+    /// <summary>unit to right vector.</summary>
     public Vector3d CameraX
     {
       get
@@ -1075,7 +1075,7 @@ namespace Rhino.Display
         return v;
       }
     }
-    /// <summary>unit up vector</summary>
+    /// <summary>unit up vector.</summary>
     public Vector3d CameraY
     {
       get
@@ -1086,7 +1086,7 @@ namespace Rhino.Display
         return v;
       }
     }
-    /// <summary>unit vector in CameraDirection</summary>
+    /// <summary>unit vector in CameraDirection.</summary>
     public Vector3d CameraZ
     {
       get
@@ -1101,12 +1101,12 @@ namespace Rhino.Display
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="left">left &lt; right</param>
-    /// <param name="right">left &lt; right</param>
-    /// <param name="bottom">bottom &lt; top</param>
-    /// <param name="top">bottom &lt; top</param>
-    /// <param name="nearDistance">0 &lt; nearDistance &lt; farDistance</param>
-    /// <param name="farDistance">0 &lt; nearDistance &lt; farDistance</param>
+    /// <param name="left">left &lt; right.</param>
+    /// <param name="right">left &lt; right.</param>
+    /// <param name="bottom">bottom &lt; top.</param>
+    /// <param name="top">bottom &lt; top.</param>
+    /// <param name="nearDistance">0 &lt; nearDistance &lt; farDistance.</param>
+    /// <param name="farDistance">0 &lt; nearDistance &lt; farDistance.</param>
     /// <returns></returns>
     public bool GetFrustum(out double left, out double right, out double bottom, out double top, out double nearDistance, out double farDistance)
     {
@@ -1126,7 +1126,7 @@ namespace Rhino.Display
     const int idxScreenPortAspect = 1;
     const int idxCamera35mmLensLength = 2;
 
-    /// <summary>frustum's width/height</summary>
+    /// <summary>frustum's width/height.</summary>
     public double FrustumAspect
     {
       get
@@ -1137,10 +1137,10 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Returns world coordinates of frustum's center
+    /// Returns world coordinates of frustum's center.
     /// </summary>
     /// <param name="center"></param>
-    /// <returns>true if the center was successfully computed</returns>
+    /// <returns>true if the center was successfully computed.</returns>
     public bool GetFrustumCenter(out Point3d center)
     {
       center = new Point3d();
@@ -1148,12 +1148,12 @@ namespace Rhino.Display
       return UnsafeNativeMethods.CRhinoViewport_VP_GetFrustumCenter(ptr, ref center);
     }
     
-    /// <summary>Get clipping distance of a point</summary>
+    /// <summary>Get clipping distance of a point.</summary>
     /// <param name="point"></param>
     /// <param name="distance"></param>
     /// <returns>
-    /// True if the point is ing the view frustum and near_dist/far_dist were set.
-    /// False if the bounding box does not intesect the view frustum.
+    /// true if the point is ing the view frustum and near_dist/far_dist were set.
+    /// false if the bounding box does not intesect the view frustum.
     /// </returns>
     public bool GetDepth(Point3d point, out double distance)
     {
@@ -1162,14 +1162,14 @@ namespace Rhino.Display
       return UnsafeNativeMethods.CRhinoViewport_VP_GetDepth1(ptr, point, ref distance);
     }
     /// <summary>
-    /// Gets near and far clipping distances of a bounding box
+    /// Gets near and far clipping distances of a bounding box.
     /// </summary>
     /// <param name="bbox"></param>
     /// <param name="nearDistance"></param>
     /// <param name="farDistance"></param>
     /// <returns>
-    /// True if the bounding box intersects the view frustum and near_dist/far_dist were set.
-    /// False if the bounding box does not intesect the view frustum.
+    /// true if the bounding box intersects the view frustum and near_dist/far_dist were set.
+    /// false if the bounding box does not intesect the view frustum.
     /// </returns>
     public bool GetDepth(BoundingBox bbox, out double nearDistance, out double farDistance)
     {
@@ -1178,14 +1178,14 @@ namespace Rhino.Display
       return UnsafeNativeMethods.CRhinoViewport_VP_GetDepth2(ptr, bbox.m_min, bbox.m_max, ref nearDistance, ref farDistance);
     }
     /// <summary>
-    /// Gets near and far clipping distances of a sphere
+    /// Gets near and far clipping distances of a sphere.
     /// </summary>
     /// <param name="sphere"></param>
     /// <param name="nearDistance"></param>
     /// <param name="farDistance"></param>
     /// <returns>
-    /// True if the sphere intersects the view frustum and near_dist/far_dist were set.
-    /// False if the sphere does not intesect the view frustum.
+    /// true if the sphere intersects the view frustum and near_dist/far_dist were set.
+    /// false if the sphere does not intesect the view frustum.
     /// </returns>
     public bool GetDepth(Sphere sphere, out double nearDistance, out double farDistance)
     {
@@ -1201,7 +1201,7 @@ namespace Rhino.Display
     const int idxGetFrustumBottomPlane = 4;
     const int idxGetFrustumTopPlane = 5;
 
-    /// <summary>Get near clipping plane</summary>
+    /// <summary>Get near clipping plane.</summary>
     /// <param name="plane">
     /// near clipping plane if camera and frustum are valid. The plane's
     /// frame is the same as the camera's frame. The origin is located at
@@ -1209,7 +1209,7 @@ namespace Rhino.Display
     /// plane.
     /// </param>
     /// <returns>
-    /// true if camera and frustum are valid
+    /// true if camera and frustum are valid.
     /// </returns>
     public bool GetFrustumNearPlane(out Plane plane)
     {
@@ -1217,7 +1217,7 @@ namespace Rhino.Display
       plane = new Plane();
       return UnsafeNativeMethods.CRhinoViewport_VP_GetPlane(ptr, idxGetFrustumNearPlane, ref plane);
     }
-    /// <summary>Get far clipping plane</summary>
+    /// <summary>Get far clipping plane.</summary>
     /// <param name="plane">
     /// far clipping plane if camera and frustum are valid. The plane's
     /// frame is the same as the camera's frame. The origin is located at
@@ -1225,7 +1225,7 @@ namespace Rhino.Display
     /// plane.
     /// </param>
     /// <returns>
-    /// true if camera and frustum are valid
+    /// true if camera and frustum are valid.
     /// </returns>
     public bool GetFrustumFarPlane(out Plane plane)
     {
@@ -1233,56 +1233,56 @@ namespace Rhino.Display
       plane = new Plane();
       return UnsafeNativeMethods.CRhinoViewport_VP_GetPlane(ptr, idxGetFrustumFarPlane, ref plane);
     }
-    /// <summary>Get left world frustum clipping plane</summary>
+    /// <summary>Get left world frustum clipping plane.</summary>
     /// <param name="plane">
     /// frustum left side clipping plane. The normal points into the visible
     /// region of the frustum. If the projection is perspective, the origin
     /// is at the camera location, otherwise the origin isthe point on the
     /// plane that is closest to the camera location.
     /// </param>
-    /// <returns>True if camera and frustum are valid and plane was set</returns>
+    /// <returns>true if camera and frustum are valid and plane was set.</returns>
     public bool GetFrustumLeftPlane(out Plane plane)
     {
       IntPtr ptr = ConstPointer();
       plane = new Plane();
       return UnsafeNativeMethods.CRhinoViewport_VP_GetPlane(ptr, idxGetFrustumLeftPlane, ref plane);
     }
-    /// <summary>Get right world frustum clipping plane</summary>
+    /// <summary>Get right world frustum clipping plane.</summary>
     /// <param name="plane">
     /// frustum right side clipping plane. The normal points into the visible
     /// region of the frustum. If the projection is perspective, the origin
     /// is at the camera location, otherwise the origin isthe point on the
     /// plane that is closest to the camera location.
     /// </param>
-    /// <returns>True if camera and frustum are valid and plane was set</returns>
+    /// <returns>true if camera and frustum are valid and plane was set.</returns>
     public bool GetFrustumRightPlane(out Plane plane)
     {
       IntPtr ptr = ConstPointer();
       plane = new Plane();
       return UnsafeNativeMethods.CRhinoViewport_VP_GetPlane(ptr, idxGetFrustumRightPlane, ref plane);
     }
-    /// <summary>Get bottom world frustum clipping plane</summary>
+    /// <summary>Get bottom world frustum clipping plane.</summary>
     /// <param name="plane">
     /// frustum bottom side clipping plane. The normal points into the visible
     /// region of the frustum. If the projection is perspective, the origin
     /// is at the camera location, otherwise the origin isthe point on the
     /// plane that is closest to the camera location.
     /// </param>
-    /// <returns>True if camera and frustum are valid and plane was set</returns>
+    /// <returns>true if camera and frustum are valid and plane was set.</returns>
     public bool GetFrustumBottomPlane(out Plane plane)
     {
       IntPtr ptr = ConstPointer();
       plane = new Plane();
       return UnsafeNativeMethods.CRhinoViewport_VP_GetPlane(ptr, idxGetFrustumBottomPlane, ref plane);
     }
-    /// <summary>Get top world frustum clipping plane</summary>
+    /// <summary>Get top world frustum clipping plane.</summary>
     /// <param name="plane">
     /// frustum top side clipping plane. The normal points into the visible
     /// region of the frustum. If the projection is perspective, the origin
     /// is at the camera location, otherwise the origin isthe point on the
     /// plane that is closest to the camera location.
     /// </param>
-    /// <returns>True if camera and frustum are valid and plane was set</returns>
+    /// <returns>true if camera and frustum are valid and plane was set.</returns>
     public bool GetFrustumTopPlane(out Plane plane)
     {
       IntPtr ptr = ConstPointer();
@@ -1290,10 +1290,10 @@ namespace Rhino.Display
       return UnsafeNativeMethods.CRhinoViewport_VP_GetPlane(ptr, idxGetFrustumTopPlane, ref plane);
     }
 
-    /// <summary>Get corners of near clipping plane rectangle</summary>
+    /// <summary>Get corners of near clipping plane rectangle.</summary>
     /// <returns>
     /// [left_bottom, right_bottom, left_top, right_top] points on success
-    /// null on failure
+    /// null on failure.
     /// </returns>
     public Point3d[] GetNearRect()
     {
@@ -1303,10 +1303,10 @@ namespace Rhino.Display
         rc = null;
       return rc;
     }
-    /// <summary>Get corners of far clipping plane rectangle</summary>
+    /// <summary>Get corners of far clipping plane rectangle.</summary>
     /// <returns>
     /// [left_bottom, right_bottom, left_top, right_top] points on success
-    /// null on failure
+    /// null on failure.
     /// </returns>
     public Point3d[] GetFarRect()
     {
@@ -1321,10 +1321,10 @@ namespace Rhino.Display
     /// Location of viewport in pixels.  These are provided so you can set the port you are using
     /// and get the appropriate transformations to and from screen space.
     /// </summary>
-    /// <param name="portLeft">portLeft != portRight</param>
-    /// <param name="portRight">portLeft != portRight</param>
-    /// <param name="portBottom">portTop != portBottom</param>
-    /// <param name="portTop">portTop != portBottom</param>
+    /// <param name="portLeft">portLeft != portRight.</param>
+    /// <param name="portRight">portLeft != portRight.</param>
+    /// <param name="portBottom">portTop != portBottom.</param>
+    /// <param name="portTop">portTop != portBottom.</param>
     /// <param name="portNear"></param>
     /// <param name="portFar"></param>
     /// <returns></returns>
@@ -1355,7 +1355,7 @@ namespace Rhino.Display
 
 
     /// <summary>
-    /// Gets the size and location of the viewport, in pixels, relative to the parent view
+    /// Gets the size and location of the viewport, in pixels, relative to the parent view.
     /// </summary>
     public System.Drawing.Rectangle Bounds
     {
@@ -1369,7 +1369,7 @@ namespace Rhino.Display
 
 
     /// <summary>
-    /// screen port's width/height
+    /// screen port's width/height.
     /// </summary>
     public double ScreenPortAspect
     {
@@ -1408,7 +1408,7 @@ namespace Rhino.Display
     /// <param name="destinationSystem"></param>
     /// <returns>
     /// 4x4 transformation matrix (acts on the left)
-    /// Identity matrix is returned if this function fails
+    /// Identity matrix is returned if this function fails.
     /// </returns>
     public Transform GetTransform(Rhino.DocObjects.CoordinateSystem sourceSystem, Rhino.DocObjects.CoordinateSystem destinationSystem)
     {
@@ -1422,8 +1422,8 @@ namespace Rhino.Display
     /// <summary>
     /// Gets the world coordinate line in the view frustum that projects to a point on the screen.
     /// </summary>
-    /// <param name="screenX">(screenx,screeny) = screen location</param>
-    /// <param name="screenY">(screenx,screeny) = screen location</param>
+    /// <param name="screenX">(screenx,screeny) = screen location.</param>
+    /// <param name="screenY">(screenx,screeny) = screen location.</param>
     /// <param name="worldLine">
     /// 3d world coordinate line segment starting on the near clipping
     /// plane and ending on the far clipping plane.
@@ -1443,7 +1443,7 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="pointInFrustum"></param>
     /// <param name="pixelsPerUnit">
-    /// scale = number of pixels per world unit at the 3d point
+    /// scale = number of pixels per world unit at the 3d point.
     /// </param>
     /// <returns></returns>
     public bool GetWorldToScreenScale(Point3d pointInFrustum, out double pixelsPerUnit)
@@ -1570,7 +1570,7 @@ namespace Rhino.Display
 
 
     /// <summary>
-    /// Remove trace image (background bitmap) for this viewport if one exists
+    /// Remove trace image (background bitmap) for this viewport if one exists.
     /// </summary>
     public void ClearTraceImage()
     {
@@ -1579,15 +1579,15 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Set trace image (background bitmap) for this viewport
+    /// Set trace image (background bitmap) for this viewport.
     /// </summary>
     /// <param name="bitmapFileName"></param>
     /// <param name="plane"></param>
     /// <param name="width"></param>
     /// <param name="height"></param>
     /// <param name="grayscale"></param>
-    /// <param name="filtered">true if image should be filtered (bilinear) before displayed</param>
-    /// <returns>true if successful</returns>
+    /// <param name="filtered">true if image should be filtered (bilinear) before displayed.</param>
+    /// <returns>true if successful.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addbackgroundbitmap.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addbackgroundbitmap.cs' lang='cs'/>

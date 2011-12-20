@@ -107,8 +107,8 @@ namespace Rhino
     /// <para>System.Double.IsNaN(x) evaluates to false</para>
     /// <para>System.Double.IsInfinity(x) evaluates to false</para>
     /// </summary>
-    /// <param name="x"><see cref="double"/> number to test for validity</param>
-    /// <returns>True if the number if valid, False if the number is NaN, Infinity or Unset</returns>
+    /// <param name="x"><see cref="double"/> number to test for validity.</param>
+    /// <returns>true if the number if valid, false if the number is NaN, Infinity or Unset.</returns>
     public static bool IsValidDouble(double x)
     {
       return (x != UnsetValue) && (!double.IsInfinity(x)) && (!double.IsNaN(x));
@@ -121,8 +121,8 @@ namespace Rhino
     /// <para>System.Single.IsNaN(x) evaluates to false</para>
     /// <para>System.Single.IsInfinity(x) evaluates to false</para>
     /// </summary>
-    /// <param name="x"><see cref="float"/> number to test for validity</param>
-    /// <returns>True if the number if valid, False if the number is NaN, Infinity or Unset</returns>
+    /// <param name="x"><see cref="float"/> number to test for validity.</param>
+    /// <returns>true if the number if valid, false if the number is NaN, Infinity or Unset.</returns>
     public static bool IsValidSingle(float x)
     {
       return (x != UnsetSingle) && (!float.IsInfinity(x)) && (!float.IsNaN(x));
@@ -187,7 +187,7 @@ namespace Rhino
 
     /// <summary>
     /// Advances the cyclic redundancy check value remainder given a byte array.
-    /// http://en.wikipedia.org/wiki/Cyclic_redundancy_check
+    /// http://en.wikipedia.org/wiki/Cyclic_redundancy_check.
     /// </summary>
     /// <param name="currentRemainder">The remainder from which to start.</param>
     /// <param name="buffer">The value to add to the current remainder.</param>
@@ -200,7 +200,7 @@ namespace Rhino
 
     /// <summary>
     /// Advances the cyclic redundancy check value remainder given a <see cref="double"/>.
-    /// http://en.wikipedia.org/wiki/Cyclic_redundancy_check
+    /// http://en.wikipedia.org/wiki/Cyclic_redundancy_check.
     /// </summary>
     /// <param name="currentRemainder">The remainder from which to start.</param>
     /// <param name="value">The value to add to the current remainder.</param>
@@ -217,7 +217,7 @@ namespace Rhino
 
     /// <summary>
     /// Advances the cyclic redundancy check value remainder given a <see cref="int"/>.
-    /// http://en.wikipedia.org/wiki/Cyclic_redundancy_check
+    /// http://en.wikipedia.org/wiki/Cyclic_redundancy_check.
     /// </summary>
     /// <param name="currentRemainder">The remainder from which to start.</param>
     /// <param name="value">The value to add to the current remainder.</param>
@@ -240,7 +240,7 @@ namespace Rhino
     Angstroms = 12,
     /// <summary>1.0e-9 meters.</summary>
     Nanometers = 13,
-    /// <summary>1.0e-6 meters</summary>
+    /// <summary>1.0e-6 meters.</summary>
     Microns = 1,
     /// <summary>1.0e-3 meters.</summary>
     Millimeters = 2,
@@ -304,12 +304,12 @@ namespace Rhino
     /// <summary>
     /// Parallax Second
     /// http://en.wikipedia.org/wiki/Parsec
-    /// 3.085678e+16 meters   http://units.nist.gov/Pubs/SP811/appenB9.htm
+    /// 3.085678e+16 meters   http://units.nist.gov/Pubs/SP811/appenB9.htm.
     /// </summary>
     Parsecs = 25,
     /// <summary>
     /// Custom unit systems
-    /// x meters with x defined in ON_3dmUnitsAndTolerances.m_custom_unit_scale
+    /// x meters with x defined in ON_3dmUnitsAndTolerances.m_custom_unit_scale.
     /// </summary>
     CustomUnitSystem = 11
   }
@@ -541,15 +541,15 @@ namespace Rhino
     /// </summary>
     public enum ObjectColorSource : int
     {
-      /// <summary>use color assigned to layer</summary>
+      /// <summary>use color assigned to layer.</summary>
       ColorFromLayer = 0,
-      /// <summary>use color assigned to object</summary>
+      /// <summary>use color assigned to object.</summary>
       ColorFromObject = 1,
-      /// <summary>use diffuse render material color</summary>
+      /// <summary>use diffuse render material color.</summary>
       ColorFromMaterial = 2,
       /// <summary>
       /// for objects with parents (like objects in instance references, use parent linetype)
-      /// if no parent, treat as color_from_layer
+      /// if no parent, treat as color_from_layer.
       /// </summary>
       ColorFromParent = 3
     }
@@ -559,15 +559,15 @@ namespace Rhino
     /// </summary>
     public enum ObjectPlotColorSource : int
     {
-      /// <summary>use plot color assigned to layer</summary>
+      /// <summary>use plot color assigned to layer.</summary>
       PlotColorFromLayer = 0,
-      /// <summary>use plot color assigned to object</summary>
+      /// <summary>use plot color assigned to object.</summary>
       PlotColorFromObject = 1,
-      /// <summary>use display color</summary>
+      /// <summary>use display color.</summary>
       PlotColorFromDisplay = 2,
       /// <summary>
       /// for objects with parents (like objects in instance references, use parent plot color)
-      /// if no parent, treat as plot_color_from_layer
+      /// if no parent, treat as plot_color_from_layer.
       /// </summary>
       PlotColorFromParent = 3
     }
@@ -577,13 +577,13 @@ namespace Rhino
     /// </summary>
     public enum ObjectPlotWeightSource : int
     {
-      /// <summary>use plot color assigned to layer</summary>
+      /// <summary>use plot color assigned to layer.</summary>
       PlotWeightFromLayer = 0,
-      /// <summary>use plot color assigned to object</summary>
+      /// <summary>use plot color assigned to object.</summary>
       PlotWeightFromObject = 1,
       /// <summary>
       /// for objects with parents (like objects in instance references, use parent plot color)
-      /// if no parent, treat as plot_color_from_layer
+      /// if no parent, treat as plot_color_from_layer.
       /// </summary>
       PlotWeightFromParent = 3
     }
@@ -593,9 +593,9 @@ namespace Rhino
     /// </summary>
     public enum ObjectLinetypeSource : int
     {
-      /// <summary>use line style assigned to layer</summary>
+      /// <summary>use line style assigned to layer.</summary>
       LinetypeFromLayer = 0,
-      /// <summary>use line style assigned to object</summary>
+      /// <summary>use line style assigned to object.</summary>
       LinetypeFromObject = 1,
       /// <summary>
       /// for objects with parents (like objects in instance references, use parent linetype)
@@ -609,9 +609,9 @@ namespace Rhino
     /// </summary>
     public enum ObjectMaterialSource : int
     {
-      /// <summary>use material assigned to layer</summary>
+      /// <summary>use material assigned to layer.</summary>
       MaterialFromLayer = 0,
-      /// <summary>use material assigned to object</summary>
+      /// <summary>use material assigned to object.</summary>
       MaterialFromObject = 1,
       /// <summary>
       /// for objects with parents, like definition geometry in instance
@@ -770,7 +770,7 @@ namespace Rhino
       /// </summary>
       TextDot = 0x2000,
 
-      /// <summary>Selection filter value - not a real object type</summary>
+      /// <summary>Selection filter value - not a real object type.</summary>
       Grip = 0x4000,
 
       /// <summary>
@@ -792,11 +792,11 @@ namespace Rhino
       /// A brep loop.
       /// </summary>
       BrepLoop = 0x80000,
-      /// <summary>Selection filter value - not a real object type</summary>
+      /// <summary>Selection filter value - not a real object type.</summary>
       PolysrfFilter = 0x200000,
-      /// <summary>Selection filter value - not a real object type</summary>
+      /// <summary>Selection filter value - not a real object type.</summary>
       EdgeFilter = 0x400000,
-      /// <summary>Selection filter value - not a real object type</summary>
+      /// <summary>Selection filter value - not a real object type.</summary>
       PolyedgeFilter = 0x800000,
 
       /// <summary>
@@ -1039,7 +1039,7 @@ namespace Rhino.Geometry
     /// dim_radial_point   RadialDimension2::POINT_INDEX
     /// dim_angular_point  AngularDimension2::POINT_INDEX
     /// dim_ordinate_point OrdinateDimension2::POINT_INDEX
-    /// dim_text_point     TextEntity2 origin point
+    /// dim_text_point     TextEntity2 origin point.
     /// </summary>
     public ComponentIndexType ComponentIndexType
     {
@@ -1070,7 +1070,7 @@ namespace Rhino.Geometry
     /// dim_radial_point   RadialDimension2::POINT_INDEX
     /// dim_angular_point  AngularDimension2::POINT_INDEX
     /// dim_ordinate_point OrdinateDimension2::POINT_INDEX
-    /// dim_text_point     TextEntity2 origin point
+    /// dim_text_point     TextEntity2 origin point.
     /// </summary>
     public int Index
     {

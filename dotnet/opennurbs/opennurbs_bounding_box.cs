@@ -19,7 +19,7 @@ namespace Rhino.Geometry
 
     #region constructors
     /// <summary>
-    /// Create a new boundingbox from two corner points.
+    /// Constructs a new boundingbox from two corner points.
     /// </summary>
     /// <param name="min">Point containing all the minimum coordinates.</param>
     /// <param name="max">Point containing all the maximum coordinates.</param>
@@ -35,7 +35,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a boundingbox from numeric extremes.
+    /// Constructs a boundingbox from numeric extremes.
     /// </summary>
     /// <param name="minX">Lower extreme for box X size.</param>
     /// <param name="minY">Lower extreme for box Y size.</param>
@@ -51,7 +51,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a boundingbox from a collection of points.
+    /// Constructs a boundingbox from a collection of points.
     /// </summary>
     /// <param name="points">Points to include in the boundingbox.</param>
     public BoundingBox(System.Collections.Generic.IEnumerable<Point3d> points)
@@ -110,7 +110,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Constructs the string representation of this aligned boundingbox.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Text.</returns>
     public override string ToString()
     {
       return string.Format("{0} - {1}", m_min.ToString(), m_max.ToString());
@@ -204,7 +204,7 @@ namespace Rhino.Geometry
     /// Finds the closest point on or in the boundingbox.
     /// </summary>
     /// <param name="point">Sample point.</param>
-    /// <param name="includeInterior">If False, the point is projected onto the boundary faces only, 
+    /// <param name="includeInterior">If false, the point is projected onto the boundary faces only, 
     /// otherwise the interior of the box is also taken into consideration.</param>
     /// <returns>The point on or in the box that is closest to the sample point.</returns>
     public Point3d ClosestPoint(Point3d point, bool includeInterior)
@@ -410,7 +410,7 @@ namespace Rhino.Geometry
     /// <param name="box">Box to test.</param>
     /// <param name="strict">If true, the box needs to be fully on the inside of the boundingbox. 
     /// I.e. coincident boxes will be considered 'outside'.</param>
-    /// <returns>True if the box is (strictly) on the inside of this BoundingBox.</returns>
+    /// <returns>true if the box is (strictly) on the inside of this BoundingBox.</returns>
     public bool Contains(BoundingBox box, bool strict)
     {
       if (!box.IsValid) { return false; }
@@ -441,7 +441,7 @@ namespace Rhino.Geometry
     /// Ensures that the box is defined in an increasing fashion along X, Y and Z axes.
     /// If the Min or Max points are unset, this function will not change the box.
     /// </summary>
-    /// <returns>True if the box was made valid, False if the box could not be made valid.</returns>
+    /// <returns>true if the box was made valid, false if the box could not be made valid.</returns>
     public bool MakeValid()
     {
       if (!m_min.IsValid || !m_max.IsValid)
@@ -462,7 +462,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets one of the eight corners of the box
+    /// Gets one of the eight corners of the box.
     /// </summary>
     /// <param name="minX">true for the minimum on the X axis; false for the maximum.</param>
     /// <param name="minY">true for the minimum on the Y axis; false for the maximum.</param>
@@ -488,7 +488,7 @@ namespace Rhino.Geometry
     /// 1 = box is a rectangle (degenerate in one direction).
     /// 2 = box is a line (degenerate in two directions).
     /// 3 = box is a point (degenerate in three directions)
-    /// 4 = box is not valid
+    /// 4 = box is not valid.
     /// </returns>
     public int IsDegenerate(double tolerance)
     {
@@ -552,7 +552,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets an array of the 12 edges of this box
+    /// Gets an array of the 12 edges of this box.
     /// </summary>
     /// <returns>If the boundingbox IsValid, the 12 edges; otherwise, null.</returns>
     public Line[] GetEdges()
@@ -670,7 +670,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Computes the intersection of two bounding boxes
+    /// Computes the intersection of two bounding boxes.
     /// </summary>
     /// <param name="a"></param>
     /// <param name="b"></param>

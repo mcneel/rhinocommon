@@ -275,7 +275,7 @@ namespace Rhino.Geometry
     /// Determines whether the specified System.Object is a Point3f and has the same values as the present point.
     /// </summary>
     /// <param name="obj">The specified object.</param>
-    /// <returns>true if obj is Point3f and has the same coordinates as this; otherwise False.</returns>
+    /// <returns>true if obj is Point3f and has the same coordinates as this; otherwise false.</returns>
     public override bool Equals(object obj)
     {
       return (obj is Point3f && this == (Point3f)obj);
@@ -624,7 +624,7 @@ namespace Rhino.Geometry
 
     #region constructors
     /// <summary>
-    /// Create a new vector from 3 single precision numbers.
+    /// Constructs a new vector from 3 single precision numbers.
     /// </summary>
     /// <param name="x">X component of vector.</param>
     /// <param name="y">Y component of vector.</param>

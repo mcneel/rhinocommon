@@ -8,7 +8,7 @@ namespace Rhino.Input.Custom
 {
   public class GetPoint : GetBaseClass
   {
-    /// <summary>Create a new GetPoint</summary>
+    /// <summary>Create a new GetPoint.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addline.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addline.cs' lang='cs'/>
@@ -133,7 +133,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Controls drawing of dynamic a line from the start point
+    /// Controls drawing of dynamic a line from the start point.
     /// </summary>
     /// <param name="enable">
     /// if true, a dynamic line is drawn from the DrawLineFromPoint startPoint to the point being picked.
@@ -148,7 +148,7 @@ namespace Rhino.Input.Custom
     /// </summary>
     /// <param name="permit">
     /// if true, then GetPoint pays attention to the Rhino "ortho snap" and "planar snap" settings
-    /// reported by ModelAidSettings.Ortho and ModelAidSettings.Planar
+    /// reported by ModelAidSettings.Ortho and ModelAidSettings.Planar.
     /// </param>
     public void PermitOrthoSnap( bool permit )
     {
@@ -236,7 +236,7 @@ namespace Rhino.Input.Custom
     /// Adds a point to the list of osnap points.
     /// </summary>
     /// <param name="point"></param>
-    /// <returns>Total number of snap points</returns>
+    /// <returns>Total number of snap points.</returns>
     /// <remarks>
     /// When point osnap is enabled, GetPoint will snap to points in the Rhino model.
     /// If you want the user to be able to snap to additional points, then use
@@ -249,10 +249,10 @@ namespace Rhino.Input.Custom
       return UnsafeNativeMethods.CRhinoGetPoint_AddSnapPoints(ptr, 1, pts, true);
     }
     /// <summary>
-    /// Add points to the list of osnap points.
+    /// Adds points to the list of osnap points.
     /// </summary>
     /// <param name="points"></param>
-    /// <returns>Total number of snap points</returns>
+    /// <returns>Total number of snap points.</returns>
     /// <remarks>
     /// When point osnap is enabled, GetPoint will snap to points in the Rhino model.
     /// If you want the user to be able to snap to additional points, then use
@@ -272,7 +272,7 @@ namespace Rhino.Input.Custom
     /// Adds a point to the list of construction points.
     /// </summary>
     /// <param name="point"></param>
-    /// <returns>Total number of construction points</returns>
+    /// <returns>Total number of construction points.</returns>
     /// <remarks>
     /// Construction points are like snap points except that they get snapped to even when
     /// point osnap is off.  Typically, there are only a few construction points while there
@@ -286,10 +286,10 @@ namespace Rhino.Input.Custom
       return UnsafeNativeMethods.CRhinoGetPoint_AddSnapPoints(ptr, 1, pts, false);
     }
     /// <summary>
-    /// Add points to the list of construction points
+    /// Adds points to the list of construction points.
     /// </summary>
     /// <param name="points"></param>
-    /// <returns>Total number of construction points</returns>
+    /// <returns>Total number of construction points.</returns>
     /// <remarks>
     /// Construction points are like snap points except that they get snapped to even when
     /// point osnap is off.  Typically, there are only a few construction points while there
@@ -320,7 +320,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Remove all construction points
+    /// Remove all construction points.
     /// </summary>
     /// <remarks>
     /// Construction points are like snap points except that they get snapped to
@@ -351,7 +351,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Gets current construction points
+    /// Gets current construction points.
     /// </summary>
     /// <returns></returns>
     /// <remarks>
@@ -377,13 +377,13 @@ namespace Rhino.Input.Custom
     const int idxEnableCurveSnapArrow = 3;
 
     /// <summary>
-    /// Controls display of the curve snap tangent bar icon
+    /// Controls display of the curve snap tangent bar icon.
     /// </summary>
     /// <param name="drawTangentBarAtSnapPoint">
-    /// true to draw a tangent bar icon whenever GetPoint snaps to a curve
+    /// true to draw a tangent bar icon whenever GetPoint snaps to a curve.
     /// </param>
     /// <param name="drawEndPoints">
-    /// true to draw points at the end of the tangent bar
+    /// true to draw points at the end of the tangent bar.
     /// </param>
     /// <remarks>
     /// The tangent bar is drawn by GetPoint::DynamicDraw. If you override GetPoint::DynamicDraw,
@@ -398,10 +398,10 @@ namespace Rhino.Input.Custom
     /// Controls display of the curve snap perpendicular bar icon.
     /// </summary>
     /// <param name="drawPerpBarAtSnapPoint">
-    /// true to draw a tangent bar icon  whenever GetPoint snaps to a curve
+    /// true to draw a tangent bar icon  whenever GetPoint snaps to a curve.
     /// </param>
     /// <param name="drawEndPoints">
-    /// true to draw points at the end of the tangent bar
+    /// true to draw points at the end of the tangent bar.
     /// </param>
     public void EnableCurveSnapPerpBar(bool drawPerpBarAtSnapPoint, bool drawEndPoints)
     {
@@ -409,13 +409,13 @@ namespace Rhino.Input.Custom
       UnsafeNativeMethods.CRhinoGetPoint_EnableItem2(ptr, idxEnableCurveSnapPerpBar, drawPerpBarAtSnapPoint, drawEndPoints);
     }
     /// <summary>
-    /// Controls display of the curve snap arrow icon
+    /// Controls display of the curve snap arrow icon.
     /// </summary>
     /// <param name="drawDirectionArrowAtSnapPoint">
-    /// true to draw arrow icon whenever GetPoint snaps to a curve
+    /// true to draw arrow icon whenever GetPoint snaps to a curve.
     /// </param>
     /// <param name="reverseArrow">
-    /// true if arrow icon direction should be the reverse of the first derivative direction
+    /// true if arrow icon direction should be the reverse of the first derivative direction.
     /// </param>
     /// <remarks>
     /// The tangent bar is drawn by GetPoint::DynamicDraw. If you override GetPoint::DynamicDraw,
@@ -438,10 +438,10 @@ namespace Rhino.Input.Custom
       EnableItem(idxEnableSnapToCurves, enable);
     }
 
-    /// <summary>constrain the picked point to lie on a line</summary>
+    /// <summary>constrain the picked point to lie on a line.</summary>
     /// <param name="from"></param>
     /// <param name="to"></param>
-    /// <returns>true if constraint could be applied</returns>
+    /// <returns>true if constraint could be applied.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_arraybydistance.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_arraybydistance.cs' lang='cs'/>
@@ -452,9 +452,9 @@ namespace Rhino.Input.Custom
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain1(ptr, from, to);
     }
-    /// <summary>constrain the picked point to lie on a line</summary>
+    /// <summary>constrain the picked point to lie on a line.</summary>
     /// <param name="line"></param>
-    /// <returns>true if constraint could be applied</returns>
+    /// <returns>true if constraint could be applied.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_constrainedcopy.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_constrainedcopy.cs' lang='cs'/>
@@ -465,49 +465,49 @@ namespace Rhino.Input.Custom
       return Constrain(line.From, line.To);
     }
 
-    /// <summary>constrain the picked point to lie on an arc</summary>
+    /// <summary>constrain the picked point to lie on an arc.</summary>
     /// <param name="arc"></param>
-    /// <returns>true if constraint could be applied</returns>
+    /// <returns>true if constraint could be applied.</returns>
     public bool Constrain(Arc arc)
     {
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain2(ptr, ref arc);
     }
-    /// <summary>constrain the picked point to lie on a circle</summary>
+    /// <summary>constrain the picked point to lie on a circle.</summary>
     /// <param name="circle"></param>
-    /// <returns>true if constraint could be applied</returns>
+    /// <returns>true if constraint could be applied.</returns>
     public bool Constrain(Circle circle)
     {
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain3(ptr, ref circle);
     }
-    /// <summary>constrain the picked point to lie on a plane</summary>
+    /// <summary>constrain the picked point to lie on a plane.</summary>
     /// <param name="plane"></param>
     /// <param name="allowElevator"></param>
-    /// <returns>true if constraint could be applied</returns>
+    /// <returns>true if constraint could be applied.</returns>
     public bool Constrain(Plane plane, bool allowElevator)
     {
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain4(ptr, ref plane, allowElevator);
     }
-    /// <summary>constrain the picked point to lie on a sphere</summary>
+    /// <summary>constrain the picked point to lie on a sphere.</summary>
     /// <param name="sphere"></param>
-    /// <returns>true if constraint could be applied</returns>
+    /// <returns>true if constraint could be applied.</returns>
     public bool Constrain(Sphere sphere)
     {
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain5(ptr, ref sphere);
     }
-    /// <summary>constrain the picked point to lie on a cylinder</summary>
+    /// <summary>constrain the picked point to lie on a cylinder.</summary>
     /// <param name="cylinder"></param>
-    /// <returns>true if constraint could be applied</returns>
+    /// <returns>true if constraint could be applied.</returns>
     public bool Constrain(Cylinder cylinder)
     {
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain6(ptr, ref cylinder);
     }
 
-    /// <summary>constrain the picked point to lie on a curve</summary>
+    /// <summary>constrain the picked point to lie on a curve.</summary>
     /// <param name="curve"></param>
     /// <param name="allowPickingPointOffObject">
     /// defines whether the point pick is allowed to happen off object. When false,
@@ -515,7 +515,7 @@ namespace Rhino.Input.Custom
     /// a normal point picking cursor is used and the marker is visible also when
     /// the cursor is not on the object.
     /// </param>
-    /// <returns>true if constraint could be applied</returns>
+    /// <returns>true if constraint could be applied.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_insertknot.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_insertknot.cs' lang='cs'/>
@@ -527,7 +527,7 @@ namespace Rhino.Input.Custom
       IntPtr pCurve = curve.ConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain7(ptr, pCurve, allowPickingPointOffObject);
     }
-    /// <summary>constrain the picked point to lie on a surface</summary>
+    /// <summary>constrain the picked point to lie on a surface.</summary>
     /// <param name="surface"></param>
     /// <param name="allowPickingPointOffObject">
     /// defines whether the point pick is allowed to happen off object. When false,
@@ -535,7 +535,7 @@ namespace Rhino.Input.Custom
     /// a normal point picking cursor is used and the marker is visible also when
     /// the cursor is not on the object.
     /// </param>
-    /// <returns>true if constraint could be applied</returns>
+    /// <returns>true if constraint could be applied.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_orientonsrf.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_orientonsrf.cs' lang='cs'/>
@@ -547,7 +547,7 @@ namespace Rhino.Input.Custom
       IntPtr pSurface = surface.ConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain8(ptr, pSurface, allowPickingPointOffObject);
     }
-    /// <summary>constrain the picked point to lie on a brep</summary>
+    /// <summary>constrain the picked point to lie on a brep.</summary>
     /// <param name="brep"></param>
     /// <param name="wireDensity">
     /// When wire_density&lt;0, isocurve intersection snapping is turned off, when wire_density>=0, the value
@@ -562,7 +562,7 @@ namespace Rhino.Input.Custom
     /// a normal point picking cursor is used and the marker is visible also when
     /// the cursor is not on the object.
     /// </param>
-    /// <returns>true if constraint could be applied</returns>
+    /// <returns>true if constraint could be applied.</returns>
     public bool Constrain(Geometry.Brep brep, int wireDensity, int faceIndex, bool allowPickingPointOffObject)
     {
       IntPtr ptr = NonConstPointer();
@@ -570,7 +570,7 @@ namespace Rhino.Input.Custom
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain9(ptr, pBrep, wireDensity, faceIndex, allowPickingPointOffObject);
     }
 
-    /// <summary>constrain the picked point to lie on a mesh</summary>
+    /// <summary>constrain the picked point to lie on a mesh.</summary>
     /// <param name="mesh"></param>
     /// <param name="allowPickingPointOffObject">
     /// defines whether the point pick is allowed to happen off object. When false,
@@ -578,7 +578,7 @@ namespace Rhino.Input.Custom
     /// a normal point picking cursor is used and the marker is visible also when
     /// the cursor is not on the object.
     /// </param>
-    /// <returns>true if constraint could be applied</returns>
+    /// <returns>true if constraint could be applied.</returns>
     public bool Constrain(Geometry.Mesh mesh, bool allowPickingPointOffObject)
     {
       IntPtr ptr = NonConstPointer();
@@ -722,11 +722,11 @@ namespace Rhino.Input.Custom
     /// Called every time the mouse moves. MouseMove is called once per mouse move and is called
     /// BEFORE any calls to OnDynamicDraw. If you are doing anything that takes a long time,
     /// periodically call InterruptMouseMove() to see if you should stop. If the view is such
-    /// that the 2d screen point can't be mapped to a 3d point, the 'point' argument will be Unset
+    /// that the 2d screen point can't be mapped to a 3d point, the 'point' argument will be Unset.
     /// </summary>
     public event EventHandler<GetPointMouseEventArgs> MouseMove;
 
-    /// <summary>Default calls the MouseMove event</summary>
+    /// <summary>Default calls the MouseMove event.</summary>
     /// <param name="e"></param>
     protected virtual void OnMouseMove(GetPointMouseEventArgs e)
     {
@@ -737,7 +737,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Arbitrary object that can be attached to this GetPoint instance.  Useful for passing some
     /// information that you may need in a DynamicDraw event since you can get at this Tag from
-    /// the GetPointDrawEventArgs
+    /// the GetPointDrawEventArgs.
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_arraybydistance.vb' lang='vbnet'/>
@@ -753,7 +753,7 @@ namespace Rhino.Input.Custom
     /// </summary>
     public event EventHandler<GetPointMouseEventArgs> MouseDown;
 
-    /// <summary>Default calls the MouseDown event</summary>
+    /// <summary>Default calls the MouseDown event.</summary>
     /// <param name="e"></param>
     protected virtual void OnMouseDown(GetPointMouseEventArgs e)
     {
@@ -771,7 +771,7 @@ namespace Rhino.Input.Custom
     /// </summary>
     public event EventHandler<GetPointDrawEventArgs> DynamicDraw;
 
-    /// <summary>Default calls the DynamicDraw event</summary>
+    /// <summary>Default calls the DynamicDraw event.</summary>
     /// <param name="e"></param>
     protected virtual void OnDynamicDraw(GetPointDrawEventArgs e)
     {
@@ -787,7 +787,7 @@ namespace Rhino.Input.Custom
     /// as well as OnPostDrawObjects
     /// NOTE!! Setting this value to true comes with a significant performance penalty because the
     /// scene needs to be fully regenerated every frame where the standard
-    /// DynamicDraw event draws temporary decorations (geometry) on top of a static scene
+    /// DynamicDraw event draws temporary decorations (geometry) on top of a static scene.
     /// </summary>
     public bool FullFrameRedrawDuringGet
     {
@@ -806,7 +806,7 @@ namespace Rhino.Input.Custom
     /// Same as the DisplayPipeline.PostDrawObjects, but only works during the 
     /// operation of the Get() function.
     /// NOTE: You must set FullFrameRedrawDuringGet to true in order for this
-    /// event to be called
+    /// event to be called.
     /// </summary>
     public event EventHandler<Rhino.Display.DrawEventArgs> PostDrawObjects;
 
@@ -815,7 +815,7 @@ namespace Rhino.Input.Custom
     /// a GetPoint operation, override the OnPostDrawObjects function.
     /// NOTE!! Overriding this function comes with a significant performance penalty because the
     /// scene needs to be fully regenerated every frame where the standard
-    /// DynamicDraw event draws temporary decorations (geometry) on top of a static scene
+    /// DynamicDraw event draws temporary decorations (geometry) on top of a static scene.
     /// </summary>
     /// <param name="e"></param>
     protected virtual void OnPostDrawObjects(Rhino.Display.DrawEventArgs e)
@@ -825,7 +825,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// After setting up options and so on, call GetPoint::Get to get a 3d point
+    /// After setting up options and so on, call GetPoint::Get to get a 3d point.
     /// </summary>
     /// <param name="onMouseUp">
     /// If false, the point is returned when the left mouse button goes down.
@@ -926,7 +926,7 @@ namespace Rhino.Input.Custom
 
     /// <summary>
     /// Call this function to see if the point was on an object. If the point was
-    /// on an object an ObjRef is returned; otherwise null is returned
+    /// on an object an ObjRef is returned; otherwise null is returned.
     /// </summary>
     /// <returns></returns>
     public Rhino.DocObjects.ObjRef PointOnObject()
@@ -943,7 +943,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Use to determine is point was on a curve
+    /// Use to determine is point was on a curve.
     /// </summary>
     /// <param name="t">
     /// If the point was on a curve, then the t is the curve
@@ -987,7 +987,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// GetPoint class that this draw event originated from
+    /// GetPoint class that this draw event originated from.
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_arraybydistance.vb' lang='vbnet'/>

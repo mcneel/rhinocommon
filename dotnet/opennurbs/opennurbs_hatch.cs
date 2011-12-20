@@ -10,7 +10,7 @@ namespace Rhino.Geometry
   /// The loops, patterns, angles, etc are all in this local coordinate system.
   /// The Hatch object manages the plane and loop array
   /// Fill definitions are in the HatchPattern or class derived from HatchPattern
-  /// Hatch has an index to get the pattern definition from the pattern table
+  /// Hatch has an index to get the pattern definition from the pattern table.
   /// </summary>
   [Serializable]
   public class Hatch : GeometryBase, ISerializable
@@ -35,7 +35,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Creates an array of <see cref="Hatch">hatches</see> from a set of curves.
+    /// Constructs an array of <see cref="Hatch">hatches</see> from a set of curves.
     /// </summary>
     /// <param name="curves">An array, a list or any enumarable set of <see cref="Curve"/>.</param>
     /// <param name="hatchPatternIndex">The index of the hatch pattern in the document hatch pattern table.</param>
@@ -71,7 +71,7 @@ namespace Rhino.Geometry
     /// <code source='examples\py\ex_hatchcurve.py' lang='py'/>
     /// </example>
     /// <summary>
-    /// Creates an array of <see cref="Hatch">hatches</see> from one curve.
+    /// Constructs an array of <see cref="Hatch">hatches</see> from one curve.
     /// </summary>
     /// <param name="curve">A <see cref="Curve"/>.</param>
     /// <param name="hatchPatternIndex">The index of the hatch pattern in the document hatch pattern table.</param>

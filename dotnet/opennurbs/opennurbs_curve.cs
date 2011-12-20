@@ -44,7 +44,7 @@ namespace Rhino.Geometry
   public enum CurveKnotStyle : int
   {
     /// <summary>
-    /// Parameter spacing between consecutive knots is 1.0
+    /// Parameter spacing between consecutive knots is 1.0.
     /// </summary>
     Uniform = 0,
 
@@ -284,7 +284,7 @@ namespace Rhino.Geometry
     /// <param name="points">
     /// Points to interpolate (Count must be >= 2)
     /// </param>
-    /// <returns>interpolated curve on success. null on failure</returns>
+    /// <returns>interpolated curve on success. null on failure.</returns>
     public static Curve CreateInterpolatedCurve(IEnumerable<Point3d> points, int degree)
     {
       return CreateInterpolatedCurve(points, degree, CurveKnotStyle.Uniform);
@@ -301,7 +301,7 @@ namespace Rhino.Geometry
     /// <param name="knots">
     /// Knot-style to use  and specifies if the curve should be periodic.
     /// </param>
-    /// <returns>interpolated curve on success. null on failure</returns>
+    /// <returns>interpolated curve on success. null on failure.</returns>
     public static Curve CreateInterpolatedCurve(IEnumerable<Point3d> points, int degree, CurveKnotStyle knots)
     {
       return CreateInterpolatedCurve(points, degree, knots, Vector3d.Unset, Vector3d.Unset);
@@ -320,7 +320,7 @@ namespace Rhino.Geometry
     /// </param>
     /// <param name="startTangent"></param>
     /// <param name="endTangent"></param>
-    /// <returns>interpolated curve on success. null on failure</returns>
+    /// <returns>interpolated curve on success. null on failure.</returns>
     public static Curve CreateInterpolatedCurve(IEnumerable<Point3d> points, int degree, CurveKnotStyle knots, Vector3d startTangent, Vector3d endTangent)
     {
       if (null == points)
@@ -373,7 +373,7 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>
-    /// Create a curve from a set of control-point locations.
+    /// Constructs a curve from a set of control-point locations.
     /// </summary>
     /// <param name="points">Control points.</param>
     /// <param name="degree">Degree of curve. The number of control points must be at least degree+1.</param>
@@ -395,7 +395,7 @@ namespace Rhino.Geometry
       return GeometryBase.CreateGeometryHelper(ptr, null) as NurbsCurve;
     }
     /// <summary>
-    /// Create a control-point of degree=3 (or less).
+    /// Constructs a control-point of degree=3 (or less).
     /// </summary>
     /// <param name="points">Control points of curve.</param>
     public static Curve CreateControlPointCurve(IEnumerable<Point3d> points)
@@ -405,7 +405,7 @@ namespace Rhino.Geometry
 
 #if RHINO_SDK
     /// <summary>
-    /// Creates a mean, or average, curve from two curves.
+    /// Constructs a mean, or average, curve from two curves.
     /// </summary>
     /// <param name="curveA"></param>
     /// <param name="curveB"></param>
@@ -425,7 +425,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Creates a mean, or average, curve from two curves.
+    /// Constructs a mean, or average, curve from two curves.
     /// </summary>
     /// <param name="curveA"></param>
     /// <param name="curveB"></param>
@@ -439,7 +439,7 @@ namespace Rhino.Geometry
     /// Joins a collection of curve segments together.
     /// </summary>
     /// <param name="inputCurves">Curve segments to join.</param>
-    /// <returns>An array of curves which contains</returns>
+    /// <returns>An array of curves which contains.</returns>
     public static Curve[] JoinCurves(IEnumerable<Curve> inputCurves)
     {
       return JoinCurves(inputCurves, 0.0, false);
@@ -450,7 +450,7 @@ namespace Rhino.Geometry
     /// <param name="inputCurves">Curve segments to join.</param>
     /// <param name="joinTolerance">Joining tolerance, 
     /// i.e. the distance between segment end-points that is allowed.</param>
-    /// <returns>An array of curves which contains</returns>
+    /// <returns>An array of curves which contains.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_dividebylength.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_dividebylength.cs' lang='cs'/>
@@ -493,15 +493,15 @@ namespace Rhino.Geometry
     /// <summary>
     /// Makes adjustments to the ends of one or both input curves so that they meet at a point.
     /// </summary>
-    /// <param name="curveA">1st curve to adjust</param>
+    /// <param name="curveA">1st curve to adjust.</param>
     /// <param name="adjustStartCurveA">
-    /// which end of the 1st curve to adjust true==start, false==end
+    /// Which end of the 1st curve to adjust: true is start, false is end.
     /// </param>
-    /// <param name="curveB">2nd curve to adjust</param>
+    /// <param name="curveB">2nd curve to adjust.</param>
     /// <param name="adjustStartCurveB">
-    /// which end of the 2nd curve to adjust true==start, false==end
+    /// which end of the 2nd curve to adjust true==start, false==end.
     /// </param>
-    /// <returns>true on success</returns>
+    /// <returns>true on success.</returns>
     public static bool MakeEndsMeet(Curve curveA, bool adjustStartCurveA, Curve curveB, bool adjustStartCurveB)
     {
       IntPtr pCurveA = curveA.NonConstPointer();
@@ -522,7 +522,7 @@ namespace Rhino.Geometry
     /// <param name="filletPlane">
     /// The fillet is contained in this plane with the fillet center at the plane origin.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     /// <remarks>
     /// A fillet point is a pair of curve parameters (t0,t1) such that there is a circle
     /// of radius point3 tangent to curve c0 at t0 and tangent to curve c1 at t1. Of all possible
@@ -633,7 +633,7 @@ namespace Rhino.Geometry
     /// Note, curves must be co-planar.
     /// </summary>
     /// <param name="curveA">The first closed, planar curve.</param>
-    /// <param name="subtractors">curves to subtract from the first closed curve</param>
+    /// <param name="subtractors">curves to subtract from the first closed curve.</param>
     /// <returns>Result curves on success, empty array if no difference could be calculated.</returns>
     public static Curve[] CreateBooleanDifference(Curve curveA, IEnumerable<Curve> subtractors)
     {
@@ -656,7 +656,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="curveA">First curve to test.</param>
     /// <param name="curveB">Second curve to test.</param>
-    /// <returns>True if both curves more or less point in the same direction, 
+    /// <returns>true if both curves more or less point in the same direction, 
     /// false if they point in the opposite directions.</returns>
     public static bool DoDirectionsMatch(Curve curveA, Curve curveB)
     {
@@ -974,7 +974,7 @@ namespace Rhino.Geometry
     //}
 
     /// <summary>
-    /// Create an exact duplicate of this Curve.
+    /// Constructs an exact duplicate of this Curve.
     /// </summary>
     /// <seealso cref="DuplicateCurve"/>
     public override GeometryBase Duplicate()
@@ -985,7 +985,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create an exact duplicate of this curve.
+    /// Constructs an exact duplicate of this curve.
     /// </summary>
     /// <returns>An exact copy of this curve.</returns>
     public Curve DuplicateCurve()
@@ -1169,7 +1169,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Test a curve to see if it is linear to within RhinoMath.ZeroTolerance units (1e-12).
     /// </summary>
-    /// <returns>True if the curve is linear.</returns>
+    /// <returns>true if the curve is linear.</returns>
     public bool IsLinear()
     {
       return IsLinear(RhinoMath.ZeroTolerance);
@@ -1179,7 +1179,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="tolerance">Tolerance to use when checking linearity.</param>
     /// <returns>
-    /// True if the ends of the curve are farther than tolerance apart
+    /// true if the ends of the curve are farther than tolerance apart
     /// and the maximum distance from any point on the curve to
     /// the line segment connecting the curve ends is &lt;= tolerance.
     /// </returns>
@@ -1212,7 +1212,7 @@ namespace Rhino.Geometry
     /// <param name="polyline">
     /// If true is returned, then the polyline form is returned here.
     /// </param>
-    /// <returns>True if the curve can be represented as a polyline, false if not.</returns>
+    /// <returns>true if the curve can be represented as a polyline, false if not.</returns>
     public bool TryGetPolyline(out Polyline polyline)
     {
       polyline = null;
@@ -1243,9 +1243,9 @@ namespace Rhino.Geometry
     /// </param>
     /// <param name="parameters">
     /// if true is returned, then the parameters of the polyline
-    /// points are returned here
+    /// points are returned here.
     /// </param>
-    /// <returns>True if the curve can be represented as a polyline, false if not.</returns>
+    /// <returns>true if the curve can be represented as a polyline, false if not.</returns>
     public bool TryGetPolyline(out Polyline polyline, out double[] parameters)
     {
       polyline = null;
@@ -1272,7 +1272,7 @@ namespace Rhino.Geometry
     /// Test a curve to see if it can be represented by an arc or circle within RhinoMath.ZeroTolerance.
     /// </summary>
     /// <returns>
-    /// True if the curve can be represented by an Arc or a Circle to within tolerance.
+    /// true if the curve can be represented by an Arc or a Circle to within tolerance.
     /// </returns>
     public bool IsArc()
     {
@@ -1283,7 +1283,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="tolerance">Tolerance to use when checking.</param>
     /// <returns>
-    /// True if the curve can be represented by an Arc or a Circle to within tolerance.
+    /// true if the curve can be represented by an Arc or a Circle to within tolerance.
     /// </returns>
     public bool IsArc(double tolerance)
     {
@@ -1296,7 +1296,7 @@ namespace Rhino.Geometry
     /// Try to convert this curve into an Arc using RhinoMath.ZeroTolerance.
     /// </summary>
     /// <param name="arc">On success, the Arc will be filled in.</param>
-    /// <returns>True if the curve could be converted into an Arc.</returns>
+    /// <returns>true if the curve could be converted into an Arc.</returns>
     public bool TryGetArc(out Arc arc)
     {
       return TryGetArc(out arc, RhinoMath.ZeroTolerance);
@@ -1306,7 +1306,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="arc">On success, the Arc will be filled in.</param>
     /// <param name="tolerance">Tolerance to use when checking.</param>
-    /// <returns>True if the curve could be converted into an Arc.</returns>
+    /// <returns>true if the curve could be converted into an Arc.</returns>
     public bool TryGetArc(out Arc arc, double tolerance)
     {
       arc = new Arc();
@@ -1319,7 +1319,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="plane">Plane in which the comparison is performed.</param>
     /// <param name="arc">On success, the Arc will be filled in.</param>
-    /// <returns>True if the curve could be converted into an Arc within the given plane.</returns>
+    /// <returns>true if the curve could be converted into an Arc within the given plane.</returns>
     public bool TryGetArc(Plane plane, out Arc arc)
     {
       return TryGetArc(plane, out arc, RhinoMath.ZeroTolerance);
@@ -1330,7 +1330,7 @@ namespace Rhino.Geometry
     /// <param name="plane">Plane in which the comparison is performed.</param>
     /// <param name="arc">On success, the Arc will be filled in.</param>
     /// <param name="tolerance">Tolerance to use when checking.</param>
-    /// <returns>True if the curve could be converted into an Arc within the given plane.</returns>
+    /// <returns>true if the curve could be converted into an Arc within the given plane.</returns>
     public bool TryGetArc(Plane plane, out Arc arc, double tolerance)
     {
       arc = new Arc();
@@ -1342,7 +1342,7 @@ namespace Rhino.Geometry
     /// Test a curve to see if it can be represented by a circle within RhinoMath.ZeroTolerance.
     /// </summary>
     /// <returns>
-    /// True if the Curve can be represented by a circle within tolerance.
+    /// true if the Curve can be represented by a circle within tolerance.
     /// </returns>
     public bool IsCircle()
     {
@@ -1353,7 +1353,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="tolerance">Tolerance to use when checking.</param>
     /// <returns>
-    /// True if the curve can be represented by a Circle to within tolerance.
+    /// true if the curve can be represented by a Circle to within tolerance.
     /// </returns>
     public bool IsCircle(double tolerance)
     {
@@ -1364,7 +1364,7 @@ namespace Rhino.Geometry
     /// Try to convert this curve into a Circle using RhinoMath.ZeroTolerance.
     /// </summary>
     /// <param name="circle">On success, the Circle will be filled in.</param>
-    /// <returns>True if the curve could be converted into a Circle.</returns>
+    /// <returns>true if the curve could be converted into a Circle.</returns>
     public bool TryGetCircle(out Circle circle)
     {
       return TryGetCircle(out circle, RhinoMath.ZeroTolerance);
@@ -1374,7 +1374,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="circle">On success, the Circle will be filled in.</param>
     /// <param name="tolerance">Tolerance to use when checking.</param>
-    /// <returns>True if the curve could be converted into a Circle within tolerance.</returns>
+    /// <returns>true if the curve could be converted into a Circle within tolerance.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_circlecenter.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_circlecenter.cs' lang='cs'/>
@@ -1400,7 +1400,7 @@ namespace Rhino.Geometry
     /// Test a curve to see if it can be represented by an ellipse within RhinoMath.ZeroTolerance.
     /// </summary>
     /// <returns>
-    /// True if the Curve can be represented by an ellipse within tolerance.
+    /// true if the Curve can be represented by an ellipse within tolerance.
     /// </returns>
     public bool IsEllipse()
     {
@@ -1411,7 +1411,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="tolerance">Tolerance to use for checking.</param>
     /// <returns>
-    /// True if the Curve can be represented by an ellipse within tolerance.
+    /// true if the Curve can be represented by an ellipse within tolerance.
     /// </returns>
     public bool IsEllipse(double tolerance)
     {
@@ -1424,7 +1424,7 @@ namespace Rhino.Geometry
     /// Try to convert this curve into an Ellipse within RhinoMath.ZeroTolerance.
     /// </summary>
     /// <param name="ellipse">On success, the Ellipse will be filled in.</param>
-    /// <returns>True if the curve could be converted into an Ellipse.</returns>
+    /// <returns>true if the curve could be converted into an Ellipse.</returns>
     public bool TryGetEllipse(out Ellipse ellipse)
     {
       return TryGetEllipse(out ellipse, RhinoMath.ZeroTolerance);
@@ -1434,7 +1434,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="ellipse">On success, the Ellipse will be filled in.</param>
     /// <param name="tolerance">Tolerance to use when checking.</param>
-    /// <returns>True if the curve could be converted into an Ellipse.</returns>
+    /// <returns>true if the curve could be converted into an Ellipse.</returns>
     public bool TryGetEllipse(out Ellipse ellipse, double tolerance)
     {
       Plane plane = Plane.WorldXY;
@@ -1447,7 +1447,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="plane">Plane in which the comparison is performed.</param>
     /// <param name="ellipse">On success, the Ellipse will be filled in.</param>
-    /// <returns>True if the curve could be converted into an Ellipse within the given plane.</returns>
+    /// <returns>true if the curve could be converted into an Ellipse within the given plane.</returns>
     public bool TryGetEllipse(Plane plane, out Ellipse ellipse)
     {
       return TryGetEllipse(plane, out ellipse, RhinoMath.ZeroTolerance);
@@ -1458,7 +1458,7 @@ namespace Rhino.Geometry
     /// <param name="plane">Plane in which the comparison is performed.</param>
     /// <param name="ellipse">On success, the Ellipse will be filled in.</param>
     /// <param name="tolerance">Tolerance to use when checking.</param>
-    /// <returns>True if the curve could be converted into an Ellipse within the given plane.</returns>
+    /// <returns>true if the curve could be converted into an Ellipse within the given plane.</returns>
     public bool TryGetEllipse(Plane plane, out Ellipse ellipse, double tolerance)
     {
       ellipse = new Ellipse();
@@ -1468,7 +1468,7 @@ namespace Rhino.Geometry
 
     /// <summary>Test a curve for planarity.</summary>
     /// <returns>
-    /// True if the curve is planar (flat) to within RhinoMath.ZeroTolerance units (1e-12).
+    /// true if the curve is planar (flat) to within RhinoMath.ZeroTolerance units (1e-12).
     /// </returns>
     public bool IsPlanar()
     {
@@ -1477,7 +1477,7 @@ namespace Rhino.Geometry
     /// <summary>Test a curve for planarity.</summary>
     /// <param name="tolerance">Tolerance to use when checking.</param>
     /// <returns>
-    /// True if there is a plane such that the maximum distance from the curve to the plane is &lt;= tolerance.
+    /// true if there is a plane such that the maximum distance from the curve to the plane is &lt;= tolerance.
     /// </returns>
     public bool IsPlanar(double tolerance)
     {
@@ -1488,7 +1488,7 @@ namespace Rhino.Geometry
     /// <summary>Test a curve for planarity and return the plane.</summary>
     /// <param name="plane">On success, the plane parameters are filled in.</param>
     /// <returns>
-    /// True if there is a plane such that the maximum distance from the curve to the plane is &lt;= RhinoMath.ZeroTolerance.
+    /// true if there is a plane such that the maximum distance from the curve to the plane is &lt;= RhinoMath.ZeroTolerance.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_constrainedcopy.vb' lang='vbnet'/>
@@ -1503,7 +1503,7 @@ namespace Rhino.Geometry
     /// <param name="plane">On success, the plane parameters are filled in.</param>
     /// <param name="tolerance">Tolerance to use when checking.</param>
     /// <returns>
-    /// True if there is a plane such that the maximum distance from the curve to the plane is &lt;= tolerance.
+    /// true if there is a plane such that the maximum distance from the curve to the plane is &lt;= tolerance.
     /// </returns>
     public bool TryGetPlane(out Plane plane, double tolerance)
     {
@@ -1514,7 +1514,7 @@ namespace Rhino.Geometry
     /// <summary>Test a curve to see if it lies in a specific plane.</summary>
     /// <param name="testPlane">Plane to test for.</param>
     /// <returns>
-    /// True if the maximum distance from the curve to the testPlane is &lt;= RhinoMath.ZeroTolerance.
+    /// true if the maximum distance from the curve to the testPlane is &lt;= RhinoMath.ZeroTolerance.
     /// </returns>
     public bool IsInPlane(Plane testPlane)
     {
@@ -1524,7 +1524,7 @@ namespace Rhino.Geometry
     /// <param name="testPlane">Plane to test for.</param>
     /// <param name="tolerance">Tolerance to use when checking.</param>
     /// <returns>
-    /// True if the maximum distance from the curve to the testPlane is &lt;= tolerance.
+    /// true if the maximum distance from the curve to the testPlane is &lt;= tolerance.
     /// </returns>
     public bool IsInPlane(Plane testPlane, double tolerance)
     {
@@ -1582,9 +1582,9 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="tolerance">
     /// Maximum allowable distance between start and end. 
-    /// If start - end gap is greater than tolerance, this function will return False.
+    /// If start - end gap is greater than tolerance, this function will return false.
     /// </param>
-    /// <returns>True if start and end points are close enough based on above conditions.</returns>
+    /// <returns>true if start and end points are close enough based on above conditions.</returns>
     public bool IsClosable(double tolerance)
     {
       return IsClosable(tolerance, 0.0, 10.0);
@@ -1596,17 +1596,17 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="tolerance">
     /// Maximum allowable distance between start and end. 
-    /// If start - end gap is greater than tolerance, this function will return False.
+    /// If start - end gap is greater than tolerance, this function will return false.
     /// </param>
     /// <param name="minimumAbsoluteSize">
     /// If greater than 0.0 and none of the interior sampled points are at
-    /// least minimumAbsoluteSize from start, this function will return False.
+    /// least minimumAbsoluteSize from start, this function will return false.
     /// </param>
     /// <param name="minimumRelativeSize">
     /// If greater than 1.0 and chord length is less than 
-    /// minimumRelativeSize*gap, this function will return False.
+    /// minimumRelativeSize*gap, this function will return false.
     /// </param>
-    /// <returns>True if start and end points are close enough based on above conditions.</returns>
+    /// <returns>true if start and end points are close enough based on above conditions.</returns>
     public bool IsClosable(double tolerance, double minimumAbsoluteSize, double minimumRelativeSize)
     {
       IntPtr ptr = ConstPointer();
@@ -1616,7 +1616,7 @@ namespace Rhino.Geometry
 
 #if RHINO_SDK
     /// <summary>
-    /// If IsClosed, just return True. Otherwise, decide if curve can be closed as 
+    /// If IsClosed, just return true. Otherwise, decide if curve can be closed as 
     /// follows: Linear curves polylinear curves with 2 segments, Nurbs with 3 or less 
     /// control points cannot be made closed. Also, if tolerance > 0 and the gap between 
     /// start and end is larger than tolerance, curve cannot be made closed. 
@@ -1625,7 +1625,7 @@ namespace Rhino.Geometry
     /// <param name="tolerance">
     /// If nonzero, and the gap is more than tolerance, curve cannot be made closed.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool MakeClosed(double tolerance)
     {
       if (IsClosed)
@@ -1686,7 +1686,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Reverse the direction of the curve.
     /// </summary>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     /// <remarks>If reversed, the domain changes from [a,b] to [-b,-a]</remarks>
     public bool Reverse()
     {
@@ -1695,29 +1695,29 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Find parameter of the point on a curve that is closest to testPoint.
+    /// Finds parameter of the point on a curve that is closest to testPoint.
     /// If the maximumDistance parameter is > 0, then only points whose distance
     /// to the given point is &lt;= maximumDistance will be returned.  Using a 
     /// positive value of maximumDistance can substantially speed up the search.
     /// </summary>
     /// <param name="testPoint">Point to search from.</param>
     /// <param name="t">Parameter of local closest point.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ClosestPoint(Point3d testPoint, out double t)
     {
       return ClosestPoint(testPoint, out t, -1.0);
     }
 
     /// <summary>
-    /// Find parameter of the point on a curve that is closest to testPoint.
+    /// Finds parameter of the point on a curve that is closest to testPoint.
     /// If the maximumDistance parameter is > 0, then only points whose distance
     /// to the given point is &lt;= maximumDistance will be returned.  Using a 
     /// positive value of maximumDistance can substantially speed up the search.
     /// </summary>
     /// <param name="testPoint">Point to project.</param>
-    /// <param name="t">parameter of local closest point returned here</param>
+    /// <param name="t">parameter of local closest point returned here.</param>
     /// <param name="maximumDistance"></param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ClosestPoint(Point3d testPoint, out double t, double maximumDistance)
     {
       t = 0.0;
@@ -1732,12 +1732,12 @@ namespace Rhino.Geometry
     /// this curve. Allowable objects to test the curve against include Brep, Surface,
     /// Curve, and PointCloud objects.
     /// </summary>
-    /// <param name="geometry">list of geometry to test this curve against</param>
+    /// <param name="geometry">list of geometry to test this curve against.</param>
     /// <param name="pointOnCurve"></param>
     /// <param name="pointOnObject"></param>
     /// <param name="whichGeometry"></param>
-    /// <param name="maximumDistance">maximum allowable distance</param>
-    /// <returns>True on success, false on failure</returns>
+    /// <param name="maximumDistance">maximum allowable distance.</param>
+    /// <returns>true on success, false on failure.</returns>
     public bool ClosestPoints(IEnumerable<GeometryBase> geometry,
       out Point3d pointOnCurve,
       out Point3d pointOnObject,
@@ -1760,11 +1760,11 @@ namespace Rhino.Geometry
     /// this curve. Allowable objects to test the curve against include Brep, Surface,
     /// Curve, and PointCloud objects.
     /// </summary>
-    /// <param name="geometry">list of geometry to test this curve against</param>
+    /// <param name="geometry">list of geometry to test this curve against.</param>
     /// <param name="pointOnCurve"></param>
     /// <param name="pointOnObject"></param>
     /// <param name="whichGeometry"></param>
-    /// <returns>True on success, false on failure</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ClosestPoints(IEnumerable<GeometryBase> geometry,
       out Point3d pointOnCurve,
       out Point3d pointOnObject,
@@ -1774,7 +1774,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets closest points between two curves
+    /// Gets closest points between two curves.
     /// </summary>
     /// <param name="otherCurve"></param>
     /// <param name="pointOnThisCurve"></param>
@@ -1921,7 +1921,7 @@ namespace Rhino.Geometry
     /// <summary>Force the curve to start at a specified point. 
     /// Not all curve types support this operation.</summary>
     /// <param name="point">New start point of curve.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     /// <remarks>Some start points cannot be moved. Be sure to check return code.</remarks>
     public bool SetStartPoint(Point3d point)
     {
@@ -1931,7 +1931,7 @@ namespace Rhino.Geometry
     /// <summary>Force the curve to end at a specified point. 
     /// Not all curve types support this operation.</summary>
     /// <param name="point">New end point of curve.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     /// <remarks>Some end points cannot be moved. Be sure to check return code</remarks>
     public bool SetEndPoint(Point3d point)
     {
@@ -1972,7 +1972,7 @@ namespace Rhino.Geometry
     /// <summary>Return a 3d frame at a parameter.</summary>
     /// <param name="t">Evaluation parameter.</param>
     /// <param name="plane">The frame is returned here.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool FrameAt(double t, out Plane plane)
     {
       plane = Plane.WorldXY;
@@ -2037,7 +2037,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="t">Evaluation parameter.</param>
     /// <param name="plane">The frame is returned here.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool PerpendicularFrameAt(double t, out Plane plane)
     {
       plane = Plane.WorldXY;
@@ -2094,7 +2094,7 @@ namespace Rhino.Geometry
     /// <param name="continuityType">Type of continuity to test for.</param>
     /// <param name="t">Parameter to test.</param>
     /// <returns>
-    /// True if the curve has at least the c type continuity at the parameter t.
+    /// true if the curve has at least the c type continuity at the parameter t.
     /// </returns>
     public bool IsContinuous(Continuity continuityType, double t)
     {
@@ -2102,7 +2102,7 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Curve_IsContinuous(ptr, (int)continuityType, t);
     }
     /// <summary>
-    /// Search for a derivative, tangent, or curvature discontinuity.
+    /// Searches for a derivative, tangent, or curvature discontinuity.
     /// </summary>
     /// <param name="continuityType">Type of continuity to search for.</param>
     /// <param name="t0">
@@ -2135,7 +2135,7 @@ namespace Rhino.Geometry
 
     #region size related methods
     /// <summary>
-    /// Gets the length of the curve with a fractional tolerance of 1.0e-8
+    /// Gets the length of the curve with a fractional tolerance of 1.0e-8.
     /// </summary>
     /// <returns>The length of the curve on success, or zero on failure.</returns>
     /// <example>
@@ -2191,7 +2191,7 @@ namespace Rhino.Geometry
 
     /// <summary>Used to quickly find short curves.</summary>
     /// <param name="tolerance">Length threshold value for "shortness".</param>
-    /// <returns>True if the length of the curve is &lt;= tolerance.</returns>
+    /// <returns>true if the length of the curve is &lt;= tolerance.</returns>
     /// <remarks>Faster than calling Length() and testing the result.</remarks>
     /// <example>
     /// <code source='examples\vbnet\ex_dividebylength.vb' lang='vbnet'/>
@@ -2209,7 +2209,7 @@ namespace Rhino.Geometry
     /// <param name="subdomain">
     /// The test is performed on the interval that is the intersection of subdomain with Domain()
     /// </param>
-    /// <returns>True if the length of the curve is &lt;= tolerance.</returns>
+    /// <returns>true if the length of the curve is &lt;= tolerance.</returns>
     /// <remarks>Faster than calling Length() and testing the result.</remarks>
     public bool IsShort(double tolerance, Interval subdomain)
     {
@@ -2223,8 +2223,8 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="tolerance">Tolerance which defines "short" segments.</param>
     /// <returns>
-    /// True if removable short segments were found. 
-    /// False if no removable short segments were found.
+    /// true if removable short segments were found. 
+    /// false if no removable short segments were found.
     /// </returns>
     public bool RemoveShortSegments(double tolerance)
     {
@@ -2242,7 +2242,7 @@ namespace Rhino.Geometry
     /// <param name="t">
     /// Parameter such that the length of the curve from the curve start point to t equals length.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool LengthParameter(double segmentLength, out double t)
     {
       return LengthParameter(segmentLength, out t, 1.0e-8);
@@ -2258,9 +2258,9 @@ namespace Rhino.Geometry
     /// </param>
     /// <param name="fractionalTolerance">
     /// Desired fractional precision.
-    /// fabs(("exact" length from start to t) - arc_length)/arc_length &lt;= fractionalTolerance
+    /// fabs(("exact" length from start to t) - arc_length)/arc_length &lt;= fractionalTolerance.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool LengthParameter(double segmentLength, out double t, double fractionalTolerance)
     {
       t = 0.0;
@@ -2275,7 +2275,7 @@ namespace Rhino.Geometry
     }
     /// <summary>
     /// Gets the parameter along the curve which coincides with a given length along the curve. 
-    /// A fractional tolerance of 1e-8 is used in this version of the function
+    /// A fractional tolerance of 1e-8 is used in this version of the function.
     /// </summary>
     /// <param name="segmentLength">
     /// Length of segment to measure. Must be less than or equal to the length of the subdomain.
@@ -2286,7 +2286,7 @@ namespace Rhino.Geometry
     /// <param name="subdomain">
     /// The calculation is performed on the specified sub-domain of the curve rather than the whole curve.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool LengthParameter(double segmentLength, out double t, Interval subdomain)
     {
       return LengthParameter(segmentLength, out t, 1.0e-8, subdomain);
@@ -2298,16 +2298,16 @@ namespace Rhino.Geometry
     /// Length of segment to measure. Must be less than or equal to the length of the subdomain.
     /// </param>
     /// <param name="t">
-    /// Parameter such that the length of the curve from the start of the subdomain to t is s
+    /// Parameter such that the length of the curve from the start of the subdomain to t is s.
     /// </param>
     /// <param name="fractionalTolerance">
     /// Desired fractional precision. 
-    /// fabs(("exact" length from start to t) - arc_length)/arc_length &lt;= fractionalTolerance
+    /// fabs(("exact" length from start to t) - arc_length)/arc_length &lt;= fractionalTolerance.
     /// </param>
     /// <param name="subdomain">
     /// The calculation is performed on the specified sub-domain of the curve rather than the whole curve.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool LengthParameter(double segmentLength, out double t, double fractionalTolerance, Interval subdomain)
     {
       t = 0.0;
@@ -2330,9 +2330,9 @@ namespace Rhino.Geometry
     /// E.g., 0 = start of curve, 1/2 = midpoint of curve, 1 = end of curve.
     /// </param>
     /// <param name="t">
-    /// Parameter such that the length of the curve from its start to t is arc_length
+    /// Parameter such that the length of the curve from its start to t is arc_length.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool NormalizedLengthParameter(double s, out double t)
     {
       return NormalizedLengthParameter(s, out t, 1.0e-8);
@@ -2351,7 +2351,7 @@ namespace Rhino.Geometry
     /// Desired fractional precision. 
     /// fabs(("exact" length from start to t) - arc_length)/arc_length &lt;= fractionalTolerance.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool NormalizedLengthParameter(double s, out double t, double fractionalTolerance)
     {
       t = 0.0;
@@ -2374,7 +2374,7 @@ namespace Rhino.Geometry
     /// <param name="subdomain">
     /// The calculation is performed on the specified sub-domain of the curve.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool NormalizedLengthParameter(double s, out double t, Interval subdomain)
     {
       return NormalizedLengthParameter(s, out t, 1.0e-8, subdomain);
@@ -2396,7 +2396,7 @@ namespace Rhino.Geometry
     /// <param name="subdomain">
     /// The calculation is performed on the specified sub-domain of the curve.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool NormalizedLengthParameter(double s, out double t, double fractionalTolerance, Interval subdomain)
     {
       t = 0.0;
@@ -2606,7 +2606,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="segmentLength">The length of each and every segment (except potentially the last one).</param>
     /// <param name="includeStart">If true, then the point at the start of the curve is included.</param>
-    /// <param name="points">If function is successful, points at each parameter value are returned in points</param>
+    /// <param name="points">If function is successful, points at each parameter value are returned in points.</param>
     /// <returns>Array containing division curve parameters if successful, null on failure.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_dividebylength.vb' lang='vbnet'/>
@@ -2633,9 +2633,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Calculates 3d points on a curve where the linear distance between the points is equal
+    /// Calculates 3d points on a curve where the linear distance between the points is equal.
     /// </summary>
-    /// <param name="distance">The distance betwen division points</param>
+    /// <param name="distance">The distance betwen division points.</param>
     /// <returns></returns>
     public Point3d[] DivideEquidistant(double distance)
     {
@@ -2650,7 +2650,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Contour divide the curve by defining a contour line
+    /// Contour divide the curve by defining a contour line.
     /// </summary>
     /// <param name="contourStart"></param>
     /// <param name="contourEnd"></param>
@@ -2675,8 +2675,8 @@ namespace Rhino.Geometry
     /// Convert a NURBS curve parameter to a curve parameter.
     /// </summary>
     /// <param name="nurbsParameter">Nurbs form parameter.</param>
-    /// <param name="curveParameter">Curve parameter</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <param name="curveParameter">Curve parameter.</param>
+    /// <returns>true on success, false on failure.</returns>
     /// <remarks>
     /// If HasNurbForm returns 2, this function converts the curve parameter to the NURBS curve parameter.
     /// </remarks>
@@ -2686,10 +2686,10 @@ namespace Rhino.Geometry
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.ON_Curve_GetNurbParameter(ptr, nurbsParameter, ref curveParameter, true);
     }
-    /// <summary>Convert a curve parameter to a NURBS curve parameter</summary>
-    /// <param name="curveParameter">Curve parameter</param>
-    /// <param name="nurbsParameter">Nurbs form parameter</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <summary>Convert a curve parameter to a NURBS curve parameter.</summary>
+    /// <param name="curveParameter">Curve parameter.</param>
+    /// <param name="nurbsParameter">Nurbs form parameter.</param>
+    /// <returns>true on success, false on failure.</returns>
     /// <remarks>
     /// If GetNurbForm returns 2, this function converts the curve parameter to the NURBS curve parameter.
     /// </remarks>
@@ -2794,7 +2794,7 @@ namespace Rhino.Geometry
 
 #if RHINO_SDK
     /// <summary>
-    /// Splits a curve into pieces using a surface or a polysurface
+    /// Splits a curve into pieces using a surface or a polysurface.
     /// </summary>
     /// <param name="cutter"></param>
     /// <param name="tolerance"></param>
@@ -2812,7 +2812,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Splits a curve into pieces using a surface or a polysurface
+    /// Splits a curve into pieces using a surface or a polysurface.
     /// </summary>
     /// <param name="cutter"></param>
     /// <param name="tolerance"></param>
@@ -2886,7 +2886,7 @@ namespace Rhino.Geometry
     const int idxExtendTypeSmooth = 2;
 
     /// <summary>
-    /// Extend a curve until it intersects a collection of objects
+    /// Extend a curve until it intersects a collection of objects.
     /// </summary>
     /// <param name="side">The end of the curve to extend.</param>
     /// <param name="style"></param>
@@ -2918,7 +2918,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Extend a curve to a point
+    /// Extend a curve to a point.
     /// </summary>
     /// <param name="side">The end of the curve to extend.</param>
     /// <param name="style"></param>
@@ -3065,7 +3065,7 @@ namespace Rhino.Geometry
     ///    that they meet with G1-continuity to within machine precision.
     /// </para>
     /// </summary>
-    /// <param name="options">Simplification options</param>
+    /// <param name="options">Simplification options.</param>
     /// <param name="distanceTolerance"></param>
     /// <param name="angleToleranceRadians"></param>
     /// <returns>New simplified curve on success, null on failure.</returns>
@@ -3114,7 +3114,7 @@ namespace Rhino.Geometry
     /// <para>1 = preserve start point and 1st derivative</para>
     /// <para>2 = preserve start point, 1st and 2nd derivative</para>
     /// </param>
-    /// <param name="clampEnd">Same as clampStart</param>
+    /// <param name="clampEnd">Same as clampStart.</param>
     /// <param name="iterations">The number of iteratoins to use in adjusting the curve.</param>
     /// <returns>Returns new faired Curve on success, null on failure.</returns>
     public Curve Fair(double distanceTolerance, double angleTolerance, int clampStart, int clampEnd, int iterations)
@@ -3174,7 +3174,7 @@ namespace Rhino.Geometry
     ///               curve is correct. However, This curve's parameterization and the
     ///               NURBS curve parameterization may not match. This situation happens
     ///               when getting NURBS representations of curves that have a
-    ///               transendental parameterization like circles
+    ///               transendental parameterization like circles.
     /// </returns>
     public int HasNurbsForm()
     {
@@ -3183,7 +3183,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a NURBS curve representation of this curve.
+    /// Constructs a NURBS curve representation of this curve.
     /// </summary>
     /// <returns>NURBS representation of the curve on success, null on failure.</returns>
     public NurbsCurve ToNurbsCurve()
@@ -3195,7 +3195,7 @@ namespace Rhino.Geometry
       return GeometryBase.CreateGeometryHelper(rc, null) as NurbsCurve;
     }
     /// <summary>
-    /// Create a NURBS curve representation of this curve.
+    /// Constructs a NURBS curve representation of this curve.
     /// </summary>
     /// <param name="subdomain">The NURBS representation for this portion of the curve is returned.</param>
     /// <returns>NURBS representation of the curve on success, null on failure.</returns>

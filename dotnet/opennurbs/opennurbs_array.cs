@@ -261,7 +261,7 @@ namespace Rhino.Runtime.InteropWrappers
 {
   /// <summary>
   /// Wrapper for ON_SimpleArray&lt;int&gt;. If you are not writing C++ code
-  /// then this class is not for you
+  /// then this class is not for you.
   /// </summary>
   public class SimpleArrayInt : IDisposable
   {
@@ -338,7 +338,7 @@ namespace Rhino.Runtime.InteropWrappers
 
   /// <summary>
   /// Wrapper for ON_SimpleArray&lt;ON_UUID&gt;. If you are not writing C++ code
-  /// then this class is not for you
+  /// then this class is not for you.
   /// </summary>
   public class SimpleArrayGuid : IDisposable
   {
@@ -676,7 +676,7 @@ namespace Rhino.Runtime.InteropWrappers
 
   /// <summary>
   /// Wrapper for ON_SimpleArray&lt;ON_Line&gt;. If you are not writing C++ code
-  /// then this class is not for you
+  /// then this class is not for you.
   /// </summary>
   public class SimpleArrayLine : IDisposable
   {
@@ -843,7 +843,7 @@ namespace Rhino.Runtime.InteropWrappers
 
   /// <summary>
   /// Wrapper for a C++ ON_SimpleArray of ON_Curve* or const ON_Curve*.  If you are not
-  /// writing C++ code, then you can ignore this class
+  /// writing C++ code, then you can ignore this class.
   /// </summary>
   public class SimpleArrayCurvePointer : IDisposable
   {
@@ -950,7 +950,7 @@ namespace Rhino.Runtime.InteropWrappers
 
   /// <summary>
   /// Wrapper for a C++ ON_SimpleArray of ON_Geometry* or const ON_Geometry*.  If you are not
-  /// writing C++ code, then this class is not for you
+  /// writing C++ code, then this class is not for you.
   /// </summary>
   public class SimpleArrayGeometryPointer : IDisposable
   {
@@ -1029,7 +1029,7 @@ namespace Rhino.Runtime.InteropWrappers
 
   /// <summary>
   /// Wrapper for a C++ ON_SimpleArray of ON_Mesh* or const ON_Mesh*. If you are not
-  /// writing C++ code then this class is not for you
+  /// writing C++ code then this class is not for you.
   /// </summary>
   public class SimpleArrayMeshPointer : IDisposable
   {

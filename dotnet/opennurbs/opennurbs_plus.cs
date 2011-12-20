@@ -60,7 +60,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// When set, EdgeIndex is an index of an edge in the mesh's edge list
+    /// When set, EdgeIndex is an index of an edge in the mesh's edge list.
     /// </summary>
     public int EdgeIndex
     {
@@ -83,7 +83,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets the mesh face indices of the triangle where the
     /// intersection is on the face takes into consideration
-    /// the way the quad was split during the intersection
+    /// the way the quad was split during the intersection.
     /// </summary>
     public bool GetTriangle(out int a, out int b, out int c)
     {
@@ -100,7 +100,7 @@ namespace Rhino.Geometry
     /// A is 0,1,2
     /// B is 0,2,3
     /// C is 0,1,3
-    /// D is 1,2,3
+    /// D is 1,2,3.
     /// </summary>
     public char Triangle
     {
@@ -201,7 +201,7 @@ namespace Rhino.Geometry.Intersect
 
 
     /// <summary>
-    /// Search for locations where the distance from a mesh in one set of meshes
+    /// Searches for locations where the distance from a mesh in one set of meshes
     /// is less than distance to a mesh in a second set of meshes.
     /// </summary>
     /// <param name="setA"></param>
@@ -259,7 +259,7 @@ namespace Rhino.Geometry.Intersect
     }
 
     /// <summary>
-    /// Search for locations where the distance from a mesh is less
+    /// Searches for locations where the distance from a mesh is less
     /// than distance to a mesh in a set of meshes.
     /// </summary>
     /// <param name="meshA"></param>
@@ -273,7 +273,7 @@ namespace Rhino.Geometry.Intersect
     }
 
     /// <summary>
-    /// Search for locations where the distance from a mesh is less than distance
+    /// Searches for locations where the distance from a mesh is less than distance
     /// to another mesh.
     /// </summary>
     /// <param name="meshA"></param>

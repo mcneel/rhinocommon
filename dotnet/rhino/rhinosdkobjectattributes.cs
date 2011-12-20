@@ -68,7 +68,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Create a copy of this ObjectAttributes
+    /// Constructs a copy of this ObjectAttributes.
     /// </summary>
     /// <returns></returns>
     public ObjectAttributes Duplicate()
@@ -144,7 +144,7 @@ namespace Rhino.DocObjects
       get { return GetBool(idxIsInstanceDefinitionObject); }
     }
 
-    /// <summary>object visibility</summary>
+    /// <summary>object visibility.</summary>
     public bool Visible
     {
       get { return GetBool(idxIsVisible); }
@@ -212,7 +212,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Determines if an object has a display mode override for a given viewport.
     /// </summary>
-    /// <param name="viewportId">Id of a Rhino Viewport</param>
+    /// <param name="viewportId">Id of a Rhino Viewport.</param>
     /// <returns></returns>
     /// <example>
     /// <code source='examples\vbnet\ex_objectdisplaymode.vb' lang='vbnet'/>
@@ -233,7 +233,7 @@ namespace Rhino.DocObjects
     /// This version affects the object's display mode for all viewports.
     /// </summary>
     /// <param name="mode"></param>
-    /// <returns>true on success</returns>
+    /// <returns>true on success.</returns>
     public bool SetDisplayModeOverride(Rhino.Display.DisplayModeDescription mode)
     {
       return SetDisplayModeOverride(mode, Guid.Empty);
@@ -242,11 +242,11 @@ namespace Rhino.DocObjects
     /// By default, objects are drawn using the display mode of the viewport that
     /// the object is being drawn in. Setting a specific display mode, instructs
     /// Rhino to always use that display mode, regardless of the viewport's mode.
-    /// This version sets a display mode for a specific viewport
+    /// This version sets a display mode for a specific viewport.
     /// </summary>
     /// <param name="mode"></param>
     /// <param name="rhinoViewportId"></param>
-    /// <returns>true on success</returns>
+    /// <returns>true on success.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_objectdisplaymode.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_objectdisplaymode.cs' lang='cs'/>
@@ -265,7 +265,7 @@ namespace Rhino.DocObjects
     /// the object is being drawn in. Setting a specific display mode, instructs
     /// Rhino to always use that display mode, regardless of the viewport's mode.
     /// This function resets an object to use the viewport's display mode for all
-    /// viewports
+    /// viewports.
     /// </summary>
     public void RemoveDisplayModeOverride()
     {
@@ -276,9 +276,9 @@ namespace Rhino.DocObjects
     /// By default, objects are drawn using the display mode of the viewport that
     /// the object is being drawn in. Setting a specific display mode, instructs
     /// Rhino to always use that display mode, regardless of the viewport's mode.
-    /// This function resets an object to use the viewport's display mode
+    /// This function resets an object to use the viewport's display mode.
     /// </summary>
-    /// <param name="rhinoViewportId">viewport that display mode overrides should be cleared from</param>
+    /// <param name="rhinoViewportId">viewport that display mode overrides should be cleared from.</param>
     /// <example>
     /// <code source='examples\vbnet\ex_objectdisplaymode.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_objectdisplaymode.cs' lang='cs'/>
@@ -312,7 +312,7 @@ namespace Rhino.DocObjects
     /// 4: render material
     /// 8: plot color
     /// 0x10: plot weight
-    /// 0x20: linetype
+    /// 0x20: linetype.
     /// </returns>
     public int ApplyParentalControl(ObjectAttributes parentAttributes, int controlLimits)
     {
@@ -332,7 +332,7 @@ namespace Rhino.DocObjects
     /// 4: render material
     /// 8: plot color
     /// 0x10: plot weight
-    /// 0x20: linetype
+    /// 0x20: linetype.
     /// </returns>
     public int ApplyParentalControl(ObjectAttributes parentAttributes)
     {
@@ -540,7 +540,7 @@ namespace Rhino.DocObjects
     /// value    number of isoparametric wires
     /// 0        boundary and knot wires 
     /// 1        boundary and knot wires and, if there are no interior knots, a single interior wire.
-    /// N>=2     boundary and knot wires and (N+1) interior wires
+    /// N>=2     boundary and knot wires and (N+1) interior wires.
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_isocurvedensity.vb' lang='vbnet'/>
@@ -585,7 +585,7 @@ namespace Rhino.DocObjects
       set { SetInt(idxSpace, (int)value); }
     }
 
-    /// <summary>number of groups object belongs to</summary>
+    /// <summary>number of groups object belongs to.</summary>
     public int GroupCount
     {
       get { return GetInt(idxGroupCount); }
@@ -641,7 +641,7 @@ namespace Rhino.DocObjects
     // [skipping]
     // void RemoveFromTopGroup(); don't understand how this is used
 
-    /// <summary>Removes object from all groups</summary>
+    /// <summary>Removes object from all groups.</summary>
     public void RemoveFromAllGroups()
     {
       IntPtr ptr = NonConstPointer();
@@ -659,11 +659,11 @@ namespace Rhino.DocObjects
 
     #region user strings
     /// <summary>
-    /// Attach a user string (key,value combination) to this geometry
+    /// Attach a user string (key,value combination) to this geometry.
     /// </summary>
-    /// <param name="key">id used to retrieve this string</param>
-    /// <param name="value">string associated with key</param>
-    /// <returns>true on success</returns>
+    /// <param name="key">id used to retrieve this string.</param>
+    /// <param name="value">string associated with key.</param>
+    /// <returns>true on success.</returns>
     public bool SetUserString(string key, string value)
     {
       //const lie
@@ -674,8 +674,8 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets a user string.
     /// </summary>
-    /// <param name="key">id used to retrieve the string</param>
-    /// <returns>string associated with the key if successful. null if no key was found</returns>
+    /// <param name="key">id used to retrieve the string.</param>
+    /// <returns>string associated with the key if successful. null if no key was found.</returns>
     public string GetUserString(string key)
     {
       IntPtr pThis = ConstPointer();

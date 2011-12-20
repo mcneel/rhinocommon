@@ -450,7 +450,7 @@ namespace Rhino.DocObjects
 
     /// <summary>
     /// Gets or sets a point latitude on earth, in decimal degrees.
-    /// +90 = north pole, 0 = equator, -90 = south pole
+    /// +90 = north pole, 0 = equator, -90 = south pole.
     /// </summary>
     public double EarthBasepointLatitude
     {
@@ -618,7 +618,7 @@ namespace Rhino.DocObjects
     /// </summary>
     /// <param name="modelUnitSystem">The model unit system.</param>
     /// <returns>
-    /// Transform on success. Inalid Transform on error
+    /// Transform on success. Inalid Transform on error.
     /// </returns>
     /// <remarks>
     /// If M is a point in model coordinates and E = model_to_earth*M,
@@ -638,7 +638,7 @@ namespace Rhino.DocObjects
     /// the m_model_basepoint, then the maximum approximation errors are
     /// latitude error  &lt;=
     /// longitude error &lt;=
-    /// elevation error &lt;= 8 centimeters
+    /// elevation error &lt;= 8 centimeters.
     /// </remarks>
     public Transform GetModelToEarthTransform(UnitSystem modelUnitSystem)
     {
@@ -918,7 +918,7 @@ namespace Rhino.Render
     const int idxImageHeight = 6;
 
     /// <summary>
-    /// 0=none, 1=normal, 2=best
+    /// 0=none, 1=normal, 2=best.
     /// </summary>
     public int AntialiasLevel
     {
@@ -945,7 +945,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// 0=none, 1=normal, 2=best
+    /// 0=none, 1=normal, 2=best.
     /// </summary>
     public int ShadowmapLevel
     {
@@ -954,7 +954,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// How the viewport's backgroun should be filled
+    /// How the viewport's backgroun should be filled.
     /// </summary>
     public Rhino.Display.BackgroundStyle BackgroundStyle
     {
@@ -988,15 +988,15 @@ namespace Rhino.Render
 namespace Rhino.Display
 {
   /// <summary>
-  /// How a viewport's background should be filled
+  /// How a viewport's background should be filled.
   /// </summary>
   public enum BackgroundStyle : int
   {
-    /// <summary>Single solid color fill</summary>
+    /// <summary>Single solid color fill.</summary>
     SolidColor = 0,
-    /// <summary>Simple image background wallpaper</summary>
+    /// <summary>Simple image background wallpaper.</summary>
     WallpaperImage = 1,
-    /// <summary>Two color top/bottom color gradient</summary>
+    /// <summary>Two color top/bottom color gradient.</summary>
     Gradient = 2,
     /// <summary></summary>
     Environment = 3

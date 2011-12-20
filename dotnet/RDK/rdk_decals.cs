@@ -35,13 +35,13 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// The decal ID associated with this decal
+    /// The decal ID associated with this decal.
     /// </summary>
     /// <returns></returns>
     public Int32 Id { get { return (Int32)UnsafeNativeMethods.Rdk_Decal_Id(ConstPointer()); } }
 
     /// <summary>
-    /// The texture ID for this decal
+    /// The texture ID for this decal.
     /// </summary>
     /// <returns></returns>
     public Guid TextureInstanceId { get { return UnsafeNativeMethods.Rdk_Decal_TextureInstanceId(ConstPointer()); } }
@@ -53,7 +53,7 @@ namespace Rhino.Render
     public MappingTypes MappingType { get { return (MappingTypes)UnsafeNativeMethods.Rdk_Decal_Mapping(ConstPointer()); } }
 
     /// <summary>
-    /// The decal's projection. Used only when mapping is planar
+    /// The decal's projection. Used only when mapping is planar.
     /// </summary>
     /// <returns></returns>
     public ProjectionTypes ProjectionType { get { return (ProjectionTypes)UnsafeNativeMethods.Rdk_Decal_Projection(ConstPointer()); } }
@@ -71,7 +71,7 @@ namespace Rhino.Render
     public double Transparency { get { return UnsafeNativeMethods.Rdk_Decal_Transparency(ConstPointer()); } }
 
     /// <summary>
-    /// The origin of the decal in world space
+    /// The origin of the decal in world space.
     /// </summary>
     /// <returns></returns>
     public Rhino.Geometry.Point3d Origin
@@ -158,7 +158,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Gets custom data associated with this decal - see Rhino.Plugins.RenderPlugIn.ShowDecalProperties
+    /// Gets custom data associated with this decal - see Rhino.Plugins.RenderPlugIn.ShowDecalProperties.
     /// </summary>
     /// <returns>The return value can be null if there is no data associated with this decal.</returns>
     public List<Rhino.Render.NamedValue> CustomData()
@@ -176,7 +176,7 @@ namespace Rhino.Render
     /// <param name="point">The point in space or, if the decal is uv-mapped, the uv-coordinate of that point.</param>
     /// <param name="normal">The face normal of the given point.</param>
     /// <param name="colInOut">The color to blend the decal color to.</param>
-    /// <param name="uvOut">the UV on the texture that the color point was read from</param>
+    /// <param name="uvOut">the UV on the texture that the color point was read from.</param>
     /// <returns>true if the given point hits the decal, else \e false.</returns>
     public bool Color(Rhino.Geometry.Point3d point, Rhino.Geometry.Vector3d normal, ref Rhino.Display.Color4f colInOut, ref Rhino.Geometry.Point2d uvOut)
     {

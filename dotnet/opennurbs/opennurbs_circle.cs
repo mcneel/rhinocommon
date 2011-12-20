@@ -88,7 +88,7 @@ namespace Rhino.Geometry
 
     #region constructors
     /// <summary>
-    /// Initializes a circle with center (0,0,0) in the world XY plane
+    /// Initializes a circle with center (0,0,0) in the world XY plane.
     /// </summary>
     /// <param name="radius">Radius of circle, should be a positive number.</param>
     public Circle(double radius) : this(Plane.WorldXY, radius) { }
@@ -336,7 +336,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="plane">Plane.</param>
     /// <param name="tolerance">Tolerance to use.</param>
-    /// <returns>True if the circle plane is co-planar with the given plane within tolerance.</returns>
+    /// <returns>true if the circle plane is co-planar with the given plane within tolerance.</returns>
     public bool IsInPlane(Plane plane, double tolerance)
     {
       return UnsafeNativeMethods.ON_Circle_IsInPlane(ref this, ref plane, tolerance);
@@ -344,7 +344,7 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Circles use trigonometric parameterization: 
-    /// t -> center + cos(t)*radius*xaxis + sin(t)*radius*yaxis
+    /// t -> center + cos(t)*radius*xaxis + sin(t)*radius*yaxis.
     /// </summary>
     /// <param name="t">Parameter of point to evaluate.</param>
     /// <returns>The point on the circle at the given parameter.</returns>
@@ -355,7 +355,7 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Circles use trigonometric parameterization: 
-    /// t -> center + cos(t)*radius*xaxis + sin(t)*radius*yaxis
+    /// t -> center + cos(t)*radius*xaxis + sin(t)*radius*yaxis.
     /// </summary>
     /// <param name="t">Parameter of tangent to evaluate.</param>
     /// <returns>The tangent at the circle at the given parameter.</returns>
@@ -404,7 +404,7 @@ namespace Rhino.Geometry
     ///// <summary>
     ///// Evaluate circle's implicit equation in plane.
     ///// </summary>
-    ///// <param name="p">coordinates in plane</param>
+    ///// <param name="p">coordinates in plane.</param>
     ///// <returns></returns>
     //public double EquationAt(Point2d p)
     //{
@@ -426,7 +426,7 @@ namespace Rhino.Geometry
     ///// <summary>
     ///// 
     ///// </summary>
-    ///// <param name="p">coordinates in plane</param>
+    ///// <param name="p">coordinates in plane.</param>
     ///// <returns></returns>
     //public Vector2d GradientAt(Point2d p)
     //{
@@ -449,7 +449,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="testPoint">Point to project onto the circle.</param>
     /// <param name="t">Parameter on circle closes to testPoint.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ClosestParameter(Point3d testPoint, out double t)
     {
       t = 0;
@@ -478,7 +478,7 @@ namespace Rhino.Geometry
     /// Transforms this circle using an xform matrix. 
     /// </summary>
     /// <param name="xform">Transformation to apply.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     /// <remarks>
     /// Circles may not be transformed accurately if the xform defines a 
     /// non-euclidian transformation.
@@ -540,7 +540,7 @@ namespace Rhino.Geometry
     /// Moves the circle.
     /// </summary>
     /// <param name="delta">Translation vector.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Translate(Vector3d delta)
     {
       return m_plane.Translate(delta);
@@ -558,7 +558,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a nurbs curve representation of this circle. 
+    /// Constructs a nurbs curve representation of this circle. 
     /// This amounts to the same as calling NurbsCurve.CreateFromCircle().
     /// </summary>
     /// <returns>A nurbs curve representation of this circle or null if no such representation could be made.</returns>
@@ -658,7 +658,7 @@ namespace Rhino.Geometry
     //    If not NULL, the tight bounding box of the transformed
     //    arc is calculated.  The arc is not modified.
     //Returns:
-    //  True if a valid tight_bbox is returned.
+    //  true if a valid tight_bbox is returned.
     //*/
     //bool GetTightBoundingBox( 
     //    ON_BoundingBox& tight_bbox, 

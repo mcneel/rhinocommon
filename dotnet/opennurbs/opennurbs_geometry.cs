@@ -86,7 +86,7 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// If true this object may not be modified. Any properties or functions that attempt
-    /// to modify this object when it is set to "IsReadOnly" will throw a NotSupportedException
+    /// to modify this object when it is set to "IsReadOnly" will throw a NotSupportedException.
     /// </summary>
     public sealed override bool IsDocumentControlled
     {
@@ -377,7 +377,7 @@ namespace Rhino.Geometry
 
     /// <summary>Translates the object along the specified vector.</summary>
     /// <param name="translationVector"></param>
-    /// <returns>true if geometry successfully translated</returns>
+    /// <returns>true if geometry successfully translated.</returns>
     public bool Translate(Vector3d translationVector)
     {
       IntPtr ptr = NonConstPointer();
@@ -388,7 +388,7 @@ namespace Rhino.Geometry
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="z"></param>
-    /// <returns>true if geometry successfully translated</returns>
+    /// <returns>true if geometry successfully translated.</returns>
     public bool Translate(double x, double y, double z)
     {
       Vector3d t = new Vector3d(x, y, z);
@@ -399,7 +399,7 @@ namespace Rhino.Geometry
     /// Scales the object by the specified factor. The scale is centered at the origin.
     /// </summary>
     /// <param name="scaleFactor"></param>
-    /// <returns>true if geometry successfully scaled</returns>
+    /// <returns>true if geometry successfully scaled.</returns>
     public bool Scale(double scaleFactor)
     {
       IntPtr ptr = NonConstPointer();
@@ -410,10 +410,10 @@ namespace Rhino.Geometry
     /// Rotates the object about the specified axis. A positive rotation 
     /// angle results in a counter-clockwise rotation about the axis (right hand rule).
     /// </summary>
-    /// <param name="angleRadians">angle of rotation in radians</param>
-    /// <param name="rotationAxis">direction of the axis of rotation</param>
-    /// <param name="rotationCenter">point on the axis of rotation</param>
-    /// <returns>true if geometry successfully rotated</returns>
+    /// <param name="angleRadians">angle of rotation in radians.</param>
+    /// <param name="rotationAxis">direction of the axis of rotation.</param>
+    /// <param name="rotationCenter">point on the axis of rotation.</param>
+    /// <returns>true if geometry successfully rotated.</returns>
     public bool Rotate(double angleRadians, Vector3d rotationAxis, Point3d rotationCenter)
     {
       IntPtr ptr = NonConstPointer();
@@ -436,7 +436,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Boundingbox solver. Gets the world axis aligned boundingbox for the geometry.
     /// </summary>
-    /// <param name="accurate">If True, a physically accurate boundingbox will be computed. 
+    /// <param name="accurate">If true, a physically accurate boundingbox will be computed. 
     /// If not, a boundingbox estimate will be computed. For some geometry types there is no 
     /// difference between the estimate and the accurate boundingbox. Estimated boundingboxes 
     /// can be computed much (much) faster than accurate (or "tight") bounding boxes. 
@@ -559,7 +559,7 @@ namespace Rhino.Geometry
     internal const int idxIsMorphable = 2;
 
     /// <summary>
-    /// True if object can be accurately modified with "squishy" transformations like
+    /// true if object can be accurately modified with "squishy" transformations like
     /// projections, shears, and non-uniform scaling.
     /// </summary>
     public bool IsDeformable
@@ -576,7 +576,7 @@ namespace Rhino.Geometry
     /// with "squishy" transformations like projections, shears, an non-uniform scaling.
     /// </summary>
     /// <returns>
-    /// False if object cannot be converted to a deformable object. True if object was
+    /// false if object cannot be converted to a deformable object. true if object was
     /// already deformable or was converted into a deformable object.
     /// </returns>
     public bool MakeDeformable()
@@ -620,11 +620,11 @@ namespace Rhino.Geometry
 
     #region user strings
     /// <summary>
-    /// Attach a user string (key,value combination) to this geometry
+    /// Attach a user string (key,value combination) to this geometry.
     /// </summary>
-    /// <param name="key">id used to retrieve this string</param>
-    /// <param name="value">string associated with key</param>
-    /// <returns>true on success</returns>
+    /// <param name="key">id used to retrieve this string.</param>
+    /// <param name="value">string associated with key.</param>
+    /// <returns>true on success.</returns>
     public bool SetUserString(string key, string value)
     {
       //const lie
@@ -633,10 +633,10 @@ namespace Rhino.Geometry
       return rc;
     }
     /// <summary>
-    /// Gets user string from this geometry
+    /// Gets user string from this geometry.
     /// </summary>
-    /// <param name="key">id used to retrieve the string</param>
-    /// <returns>string associated with the key if successful. null if no key was found</returns>
+    /// <param name="key">id used to retrieve the string.</param>
+    /// <returns>string associated with the key if successful. null if no key was found.</returns>
     public string GetUserString(string key)
     {
       IntPtr pThis = ConstPointer();
@@ -658,7 +658,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets all (key, value) user strings attached to this geometry
+    /// Gets all (key, value) user strings attached to this geometry.
     /// </summary>
     /// <returns></returns>
     public System.Collections.Specialized.NameValueCollection GetUserStrings()

@@ -11,7 +11,7 @@ namespace Rhino.Runtime
   }
 
   /// <summary>
-  /// Base class for .NET classes that wrap C++ unmanaged Rhino classes
+  /// Base class for .NET classes that wrap C++ unmanaged Rhino classes.
   /// </summary>
   [Serializable]
   public abstract class CommonObject : IDisposable, ISerializable
@@ -138,7 +138,7 @@ namespace Rhino.Runtime
 
     /// <summary>
     /// If true this object may not be modified. Any properties or functions that attempt
-    /// to modify this object when it is set to "IsReadOnly" will throw a NotSupportedException
+    /// to modify this object when it is set to "IsReadOnly" will throw a NotSupportedException.
     /// </summary>
     public virtual bool IsDocumentControlled
     {
@@ -147,7 +147,7 @@ namespace Rhino.Runtime
 
     /// <summary>
     /// Used for "temporary" wrapping of objects that we don't want .NET to destruct
-    /// on disposal
+    /// on disposal.
     /// </summary>
     internal void ReleaseNonConstPointer()
     {
@@ -173,7 +173,7 @@ namespace Rhino.Runtime
       // we in-place copy
     }
 
-    /// <summary>Tests an object to see if it is valid</summary>
+    /// <summary>Tests an object to see if it is valid.</summary>
     public virtual bool IsValid
     {
       get
@@ -184,8 +184,8 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Tests an object to see if it is valid. Also provides a report on errors if this
-    /// object happens to not be valid.
+    /// Determines if an object is valid. Also provides a report on errors if this
+    /// object happens not to be valid.
     /// </summary>
     /// <param name="log"></param>
     /// <returns></returns>
@@ -284,7 +284,7 @@ namespace Rhino.Runtime
 
     Rhino.DocObjects.Custom.UserDataList m_userdatalist;
     /// <summary>
-    /// List of custom information that is attached to this class
+    /// List of custom information that is attached to this class.
     /// </summary>
     public Rhino.DocObjects.Custom.UserDataList UserData
     {

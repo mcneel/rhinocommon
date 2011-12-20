@@ -57,7 +57,7 @@ namespace Rhino.Geometry
     /// GetParameterFromRadian() to convert between the NURBS curve 
     /// parameter and the transcendental parameter.
     /// </summary>
-    /// <returns>Curve on success, null on failure</returns>
+    /// <returns>Curve on success, null on failure.</returns>
     public static NurbsCurve CreateFromCircle(Circle circle)
     {
       IntPtr pNC = UnsafeNativeMethods.ON_NurbsCurve_New(IntPtr.Zero);
@@ -122,12 +122,12 @@ namespace Rhino.Geometry
     /// <summary>
     /// Constructs a 3D NURBS curve from a list of control points.
     /// </summary>
-    /// <param name="periodic">If true, create a periodic uniform curve. If false, create a clamped uniform curve</param>
-    /// <param name="degree">(>=1) degree=order-1</param>
-    /// <param name="points">control vertex locations</param>
+    /// <param name="periodic">If true, create a periodic uniform curve. If false, create a clamped uniform curve.</param>
+    /// <param name="degree">(>=1) degree=order-1.</param>
+    /// <param name="points">control vertex locations.</param>
     /// <returns>
     /// new NURBS curve on success
-    /// null on error
+    /// null on error.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addnurbscurve.vb' lang='vbnet'/>
@@ -198,7 +198,7 @@ namespace Rhino.Geometry
     // public ON_NurbsCurve(ON_BezierCurve)
 
     /// <summary>
-    /// Create a new Nurbscurve with a specific degree and control-point count.
+    /// Constructs a new Nurbscurve with a specific degree and control-point count.
     /// </summary>
     /// <param name="degree">Degree of curve. Must be equal to or larger than 1 and smaller than or equal to 11.</param>
     /// <param name="pointCount">Number of control-points.</param>
@@ -210,12 +210,12 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new NurbsCurve with knot and CV memory allocated
+    /// Constructs a new NurbsCurve with knot and CV memory allocated.
     /// </summary>
-    /// <param name="dimension">&gt;=1</param>
-    /// <param name="rational">true to make a rational NURBS</param>
-    /// <param name="order">(&gt;= 2) The order=degree+1</param>
-    /// <param name="pointCount">(&gt;= order) number of control vertices</param>
+    /// <param name="dimension">&gt;=1.</param>
+    /// <param name="rational">true to make a rational NURBS.</param>
+    /// <param name="order">(&gt;= 2) The order=degree+1.</param>
+    /// <param name="pointCount">(&gt;= order) number of control vertices.</param>
     /// <example>
     /// <code source='examples\vbnet\ex_addnurbscircle.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addnurbscircle.cs' lang='cs'/>
@@ -251,7 +251,7 @@ namespace Rhino.Geometry
     private Collections.NurbsCurvePointList m_points;
 
     /// <summary>
-    /// Gets the order of the curve. Order = Degree + 1
+    /// Gets the order of the curve. Order = Degree + 1.
     /// </summary>
     public int Order
     {
@@ -352,7 +352,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="desiredDegree">The desired degree. 
     /// Degrees should be number between and including 1 and 11.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool IncreaseDegree(int desiredDegree)
     {
       IntPtr ptr = NonConstPointer();
@@ -379,7 +379,7 @@ namespace Rhino.Geometry
     /// If true and the first or last weight is not one, then the first and
     /// last spans are reparameterized so that the end weights are one.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool MakePiecewiseBezier(bool setEndWeightsToOne)
     {
       IntPtr ptr = NonConstPointer();
@@ -397,7 +397,7 @@ namespace Rhino.Geometry
     /// Note that lambda(0) = 0, lambda(1) = 1, lambda'(t) > 0, 
     /// lambda'(0) = c and lambda'(1) = 1/c.
     /// </param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     /// <remarks>
     /// The cv and knot values are values are changed so that output_nurbs(t) = input_nurbs(lambda(t)).
     /// </remarks>
@@ -501,7 +501,7 @@ namespace Rhino.Geometry
 
     #region constructors
     /// <summary>
-    /// Creates a new unweighted control point.
+    /// Constructs a new unweighted control point.
     /// </summary>
     /// <param name="x">X coordinate of Control Point.</param>
     /// <param name="y">Y coordinate of Control Point.</param>
@@ -511,7 +511,7 @@ namespace Rhino.Geometry
       m_vertex = new Point4d(x, y, z, 1.0);
     }
     /// <summary>
-    /// Creates a new weighted control point.
+    /// Constructs a new weighted control point.
     /// </summary>
     /// <param name="x">X coordinate of Control Point.</param>
     /// <param name="y">Y coordinate of Control Point.</param>
@@ -523,7 +523,7 @@ namespace Rhino.Geometry
       m_vertex = new Point4d(x, y, z, weight);
     }
     /// <summary>
-    /// Creates a new unweighted control point.
+    /// Constructs a new unweighted control point.
     /// </summary>
     /// <param name="pt">Coordinate of Control Point.</param>
     public ControlPoint(Point3d pt)
@@ -531,7 +531,7 @@ namespace Rhino.Geometry
       m_vertex = new Point4d(pt.X, pt.Y, pt.Z, 1.0);
     }
     /// <summary>
-    /// Creates a new weighted control point.
+    /// Constructs a new weighted control point.
     /// </summary>
     /// <param name="pt">Coordinate of Control Point.</param>
     /// <param name="weight">Weight factor of Control Point. 
@@ -541,7 +541,7 @@ namespace Rhino.Geometry
       m_vertex = new Point4d(pt.X, pt.Y, pt.Z, weight);
     }
     /// <summary>
-    /// Creates a new weighted control point.
+    /// Constructs a new weighted control point.
     /// </summary>
     /// <param name="pt">Control point values.</param>
     public ControlPoint(Point4d pt)
@@ -669,11 +669,11 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Insert a knot and update control point locations.
+    /// Inserts a knot and update control point locations.
     /// Does not change parameterization or locus of curve.
     /// </summary>
     /// <param name="value">Knot value to insert.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_insertknot.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_insertknot.cs' lang='cs'/>
@@ -685,19 +685,19 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Insert a knot and update control point locations.
+    /// Inserts a knot and update control point locations.
     /// Does not change parameterization or locus of curve.
     /// </summary>
     /// <param name="value">Knot value to insert.</param>
     /// <param name="multiplicity">Multiplicity of knot to insert.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool InsertKnot(double value, int multiplicity)
     {
       IntPtr ptr = m_curve.NonConstPointer();
       return UnsafeNativeMethods.ON_NurbsCurve_InsertKnot(ptr, value, multiplicity);
     }
 
-    /// <summary>Get knot multiplicity</summary>
+    /// <summary>Get knot multiplicity.</summary>
     /// <param name="index">Index of knot to query.</param>
     /// <returns>The multiplicity (valence) of the knot.</returns>
     public int KnotMultiplicity(int index)
@@ -712,7 +712,7 @@ namespace Rhino.Geometry.Collections
     /// vertices.
     /// </summary>
     /// <param name="knotSpacing">Spacing of subsequent knots.</param>
-    /// <returns>True on success, False on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool CreateUniformKnots(double knotSpacing)
     {
       IntPtr ptr = m_curve.NonConstPointer();
@@ -725,7 +725,7 @@ namespace Rhino.Geometry.Collections
     /// vertices.
     /// </summary>
     /// <param name="knotSpacing">Spacing of subsequent knots.</param>
-    /// <returns>True on success, False on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool CreatePeriodicKnots(double knotSpacing)
     {
       IntPtr ptr = m_curve.NonConstPointer();
@@ -762,7 +762,7 @@ namespace Rhino.Geometry.Collections
     /// Clamp end knots. Does not modify control point locations.
     /// </summary>
     /// <param name="end">Curve end to clamp.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ClampEnd(CurveEnd end)
     {
       IntPtr ptr = m_curve.NonConstPointer();
@@ -883,7 +883,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Create a polyline through all the control points. 
+    /// Constructs a polyline through all the control points. 
     /// Note that periodic curves generate a closed polyline with <i>fewer</i> 
     /// points than control-points.
     /// </summary>
@@ -910,7 +910,7 @@ namespace Rhino.Geometry.Collections
     /// </summary>
     /// <param name="w0">Weight for first control point.</param>
     /// <param name="w1">Weight for last control point.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     ///<remarks>
     /// The domain, euclidean locations of the control points, and locus of the curve
     /// do not change, but the weights, homogeneous cv values and internal knot values
@@ -925,7 +925,7 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Turns the curve into a Rational nurbs curve.
     /// </summary>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool MakeRational()
     {
       IntPtr ptr = m_curve.NonConstPointer();
@@ -933,9 +933,9 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Sets all the control points to 1.0
+    /// Sets all the control points to 1.0.
     /// </summary>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool MakeNonRational()
     {
       IntPtr ptr = m_curve.NonConstPointer();

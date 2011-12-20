@@ -17,11 +17,11 @@ namespace Rhino.Geometry
 
     #region constructors
     /// <summary>
-    /// Create a new, empty Interpolator.
+    /// Constructs a new, empty Interpolator.
     /// </summary>
     public Interpolator() { }
     /// <summary>
-    /// Create an empty Interpolator with a certain capacity.
+    /// Constructs an empty Interpolator with a certain capacity.
     /// </summary>
     /// <param name="initialCapacity">Number of items this interpolator can store without resizing.</param>
     public Interpolator(int initialCapacity) : base(initialCapacity) { }
@@ -31,12 +31,12 @@ namespace Rhino.Geometry
     /// <param name="list">List to mimic.</param>
     public Interpolator(RhinoList<double> list) : base(list) { }
     /// <summary>
-    /// Create an Interpolator from a collection of numbers.
+    /// Constructs an Interpolator from a collection of numbers.
     /// </summary>
     /// <param name="collection">Collection of numbers to duplicate.</param>
     public Interpolator(IEnumerable<double> collection) : base(collection) { }
     /// <summary>
-    /// Create a new Interpolator with a specified amount of numbers.
+    /// Constructs a new Interpolator with a specified amount of numbers.
     /// </summary>
     /// <param name="amount">Number of values to add to this Interpolator. Must be equal to or larger than zero.</param>
     /// <param name="defaultValue">Number to add.</param>

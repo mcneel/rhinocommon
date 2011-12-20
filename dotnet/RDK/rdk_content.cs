@@ -144,7 +144,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Internal string ids to be used in the GetString method
+    /// Internal string ids to be used in the GetString method.
     /// </summary>
     internal enum StringIds : int
     {
@@ -170,9 +170,9 @@ namespace Rhino.Render
     /// you have content defined in a different assembly (for example a Grasshopper component), then
     /// you need to explicitly call RegisterContent.
     /// </summary>
-    /// <param name="assembly">Assembly where custom content is defined</param>
-    /// <param name="pluginId">Parent plug-in for this assembly</param>
-    /// <returns>array of render content types registered on succes. null on error</returns>
+    /// <param name="assembly">Assembly where custom content is defined.</param>
+    /// <param name="pluginId">Parent plug-in for this assembly.</param>
+    /// <returns>array of render content types registered on succes. null on error.</returns>
     public static Type[] RegisterContent(System.Reflection.Assembly assembly, System.Guid pluginId)
     {
       Rhino.PlugIns.PlugIn plugin = Rhino.PlugIns.PlugIn.GetLoadedPlugIn(pluginId);
@@ -349,7 +349,7 @@ namespace Rhino.Render
     public abstract String TypeDescription { get; }
 
     /// <summary>
-    /// Returns either KindMaterial, KindTexture or KindEnvironment
+    /// Returns either KindMaterial, KindTexture or KindEnvironment.
     /// </summary>
     public Kinds Kind
     {
@@ -369,7 +369,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Notes for this content
+    /// Notes for this content.
     /// </summary>
     public String Notes
     {
@@ -381,7 +381,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Instance identifier for this content
+    /// Instance identifier for this content.
     /// </summary>
     public Guid InstanceId
     {
@@ -396,7 +396,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Returns true if this content has no parent, false if it is the child of another content
+    /// Returns true if this content has no parent, false if it is the child of another content.
     /// </summary>
     public bool TopLevel
     {
@@ -404,7 +404,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Returns true if this content is a resident of one of the persistant lists
+    /// Returns true if this content is a resident of one of the persistant lists.
     /// </summary>
     public bool InDocument
     {
@@ -414,8 +414,8 @@ namespace Rhino.Render
     /// <summary>
     /// Helper function to check which content kind this content is.
     /// </summary>
-    /// <param name="kind">Either KindMaterial, KindEnvironment or KindTexture</param>
-    /// <returns>true if the content is the specified kind, otherwise false</returns>
+    /// <param name="kind">Either KindMaterial, KindEnvironment or KindTexture.</param>
+    /// <returns>true if the content is the specified kind, otherwise false.</returns>
     public bool IsKind(Kinds kind)
     {
       return 1 == UnsafeNativeMethods.Rdk_RenderContent_IsKind(ConstPointer(), KindString(kind));
@@ -431,7 +431,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Determines if the content is considered the "Current" content - currently only used for Environments
+    /// Determines if the content is considered the "Current" content - currently only used for Environments.
     /// </summary>
     public bool Current
     {
@@ -439,7 +439,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Returns the top content in this parent/child chain
+    /// Returns the top content in this parent/child chain.
     /// </summary>
     public RenderContent TopLevelParent
     {
@@ -556,7 +556,7 @@ namespace Rhino.Render
       AutoEdit = 0x0002,
 
       /// <summary>
-      /// Mask to use to isolate harvesting flags
+      /// Mask to use to isolate harvesting flags.
       /// </summary>
       HarvestMask = 0xF000,
       /// <summary>
@@ -608,7 +608,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Context of a change to content parameters
+    /// Context of a change to content parameters.
     /// </summary>
     public enum ChangeContexts
     {
@@ -680,8 +680,8 @@ namespace Rhino.Render
     /// shader access functions
     /// If you overide this function, you must ensure that you call "IsCompatible" and return IntPtr.Zero is that returns false.
     /// </summary>
-    /// <param name="renderEngineId">The render engine requesting the shader</param>
-    /// <param name="privateData">A pointer to the render engine's own context object</param>
+    /// <param name="renderEngineId">The render engine requesting the shader.</param>
+    /// <param name="privateData">A pointer to the render engine's own context object.</param>
     /// <returns></returns>
     public virtual IntPtr GetShader(Guid renderEngineId, IntPtr privateData)
     {
@@ -1249,7 +1249,7 @@ namespace Rhino.Render
 
 
     /// <summary>
-    /// Used to monitor render content types being registered
+    /// Used to monitor render content types being registered.
     /// </summary>
     public static event EventHandler<ContentTypeEventArgs> RenderContentTypeAdded
     {
@@ -1275,7 +1275,7 @@ namespace Rhino.Render
 
 
     /// <summary>
-    /// Used to monitor render content types being registered
+    /// Used to monitor render content types being registered.
     /// </summary>
     public static event EventHandler<ContentTypeEventArgs> RenderContentTypeDeleting
     {
@@ -1301,7 +1301,7 @@ namespace Rhino.Render
 
 
     /// <summary>
-    /// Used to monitor render content types being registered
+    /// Used to monitor render content types being registered.
     /// </summary>
     public static event EventHandler<ContentKindEventArgs> RenderContentTypeDeleted
     {

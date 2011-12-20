@@ -38,7 +38,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Create a texture evaluator. This is an independent lightweight object
+    /// Constructs a texture evaluator. This is an independent lightweight object
     /// capable of evaluating texture color throughout uvw space. May be called
     /// from within a rendering shade pipeline.
     /// </summary>

@@ -117,7 +117,7 @@ namespace Rhino
 
 
       /// <summary>
-      /// Destroy the splash screen if it is being displayed
+      /// Destroy the splash screen if it is being displayed.
       /// </summary>
       public static void KillSplash()
       {
@@ -127,7 +127,7 @@ namespace Rhino
       /// <summary>
       /// Hides a form, calls a provided function, and then shows the form. This works for
       /// modal forms. Useful for selecting objects or getting points while a modal dialog
-      /// is running
+      /// is running.
       /// </summary>
       /// <param name="form"></param>
       /// <param name="pickFunction"></param>
@@ -194,7 +194,7 @@ namespace Rhino
 
 
       /// <summary>
-      /// Display a text dialog similar to the dialog used for the "What" command
+      /// Display a text dialog similar to the dialog used for the "What" command.
       /// </summary>
       /// <param name="message">Text to display as the message content.</param>
       /// <param name="title">Test to display as the form title.</param>
@@ -331,7 +331,7 @@ namespace Rhino
       /// <param name="color">
       /// [in/out] Default color for dialog, and will receive new color if function returns true.
       /// </param>
-      /// <returns>True if the color changed. False if the color has not changed or the user pressed cancel.</returns>
+      /// <returns>true if the color changed. false if the color has not changed or the user pressed cancel.</returns>
       public static bool ShowColorDialog(ref System.Drawing.Color color)
       {
         return ShowColorDialog(ref color, false, null);
@@ -346,8 +346,8 @@ namespace Rhino
       /// <param name="includeButtonColors">
       /// Display button face and text options at top of named color list.
       /// </param>
-      /// <param name="dialogTitle">The title of the dialog</param>
-      /// <returns>True if the color changed. False if the color has not changed or the user pressed cancel</returns>
+      /// <param name="dialogTitle">The title of the dialog.</param>
+      /// <returns>true if the color changed. false if the color has not changed or the user pressed cancel.</returns>
       public static bool ShowColorDialog(ref System.Drawing.Color color, bool includeButtonColors, string dialogTitle)
       {
         bool rc = false;
@@ -375,11 +375,11 @@ namespace Rhino
       }
 
       /// <summary>
-      /// Display Rhino's single layer selection dialog
+      /// Display Rhino's single layer selection dialog.
       /// </summary>
       /// <param name="layerIndex">
       /// Initial layer for the dialog, and will receive selected
-      /// layer if function returns DialogResult.OK
+      /// layer if function returns DialogResult.OK.
       /// </param>
       /// <param name="dialogTitle"></param>
       /// <param name="showNewLayerButton"></param>
@@ -402,7 +402,7 @@ namespace Rhino
       /// <param name="items"></param>
       /// <returns>
       /// selected item
-      /// null if the user canceled
+      /// null if the user canceled.
       /// </returns>
       public static object ShowComboListBox(string title, string message, System.Collections.IList items)
       {
@@ -471,7 +471,7 @@ namespace Rhino
 
       /// <summary>
       /// FOR INTERNAL TESTING
-      /// Ignore - this is for internal testing and will be removed
+      /// Ignore - this is for internal testing and will be removed.
       /// </summary>
       /// <returns>
       /// On Windows (.NET)

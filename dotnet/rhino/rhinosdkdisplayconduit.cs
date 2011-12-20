@@ -74,7 +74,7 @@ namespace Rhino.Display
 
     /// <summary>
     /// Use this function to increase the bounding box of scene so it includes the
-    /// geometry that you plan to draw in the "Draw" virtual functions
+    /// geometry that you plan to draw in the "Draw" virtual functions.
     /// </summary>
     /// <param name="e"></param>
     protected virtual void CalculateBoundingBox(CalculateBoundingBoxEventArgs e) {}
@@ -84,7 +84,7 @@ namespace Rhino.Display
     /// then you will need to override ZoomExtentsBoundingBox.  Typically you could just
     /// call your CalculateBoundingBox override, but you may also want to spend a little
     /// more time here and compute a tighter bounding box for your conduit geometry if
-    /// that is needed
+    /// that is needed.
     /// </summary>
     /// <param name="e"></param>
     protected virtual void CalculateBoundingBoxZoomExtents(CalculateBoundingBoxEventArgs e) {}
@@ -97,7 +97,7 @@ namespace Rhino.Display
 
     /// <summary>
     /// Called after all non-highlighted objects have been drawn. Depth writing and testing are
-    /// still turned on. If you want to draw without depth writing/testing, see DrawForeground
+    /// still turned on. If you want to draw without depth writing/testing, see DrawForeground.
     /// </summary>
     /// <param name="e"></param>
     protected virtual void PostDrawObjects(DrawEventArgs e) {}
@@ -105,7 +105,7 @@ namespace Rhino.Display
     /// <summary>
     /// Called after all non-highlighted objects have been drawn and PostDrawObjects has been called.
     /// Depth writing and testing are turned OFF. If you want to draw with depth writing/testing,
-    /// see PostDrawObjects
+    /// see PostDrawObjects.
     /// </summary>
     /// <param name="e"></param>
     protected virtual void DrawForeground(DrawEventArgs e) {}

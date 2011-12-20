@@ -26,7 +26,7 @@ namespace Rhino.Display
   /// <summary>
   /// <para>
   /// The display pipeline calls events during specific phases of drawing
-  /// During the drawing of a single frame the events are called in the following order
+  /// During the drawing of a single frame the events are called in the following order.
   /// </para>
   /// [Begin Drawing of a Frame]
   /// <list type="bullet">
@@ -287,7 +287,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Calculate a bounding to include in the Zoom Extents command
+    /// Calculate a bounding to include in the Zoom Extents command.
     /// </summary>
     public static event EventHandler<CalculateBoundingBoxEventArgs> CalculateBoundingBoxZoomExtents
     {
@@ -345,7 +345,7 @@ namespace Rhino.Display
 
     /// <summary>
     /// Called after all non-highlighted objects have been drawn. Depth writing and testing are
-    /// still turned on. If you want to draw without depth writing/testing, see DrawForeground
+    /// still turned on. If you want to draw without depth writing/testing, see DrawForeground.
     /// </summary>
     public static event EventHandler<DrawEventArgs> PostDrawObjects
     {
@@ -375,7 +375,7 @@ namespace Rhino.Display
     /// <summary>
     /// Called after all non-highlighted objects have been drawn and PostDrawObjects has been called.
     /// Depth writing and testing are turned OFF. If you want to draw with depth writing/testing,
-    /// see PostDrawObjects
+    /// see PostDrawObjects.
     /// </summary>
     public static event EventHandler<DrawEventArgs> DrawForeground
     {
@@ -649,7 +649,7 @@ namespace Rhino.Display
     /// When DepthTesting is disabled, objects in front will no 
     /// longer occlude objects behind them.
     /// </summary>
-    /// <param name="enable">True to enable DepthTesting, false to disable.</param>
+    /// <param name="enable">true to enable DepthTesting, false to disable.</param>
     public void EnableDepthTesting(bool enable)
     {
       UnsafeNativeMethods.CRhinoDisplayPipeline_Enable(m_ptr, enable, idxDepthTesting);
@@ -659,7 +659,7 @@ namespace Rhino.Display
     /// Enable or disable the DepthWriting behaviour of the engine. 
     /// When DepthWriting is disabled, drawn geometry does not affect the Z-Buffer.
     /// </summary>
-    /// <param name="enable">True to enable DepthWriting, false to disable.</param>
+    /// <param name="enable">true to enable DepthWriting, false to disable.</param>
     public void EnableDepthWriting(bool enable)
     {
       UnsafeNativeMethods.CRhinoDisplayPipeline_Enable(m_ptr, enable, idxDepthWriting);
@@ -668,7 +668,7 @@ namespace Rhino.Display
     /// <summary>
     /// Enable or disable the ColorWriting behaviour of the engine. 
     /// </summary>
-    /// <param name="enable">True to enable ColorWriting, false to disable.</param>
+    /// <param name="enable">true to enable ColorWriting, false to disable.</param>
     public void EnableColorWriting(bool enable)
     {
       UnsafeNativeMethods.CRhinoDisplayPipeline_Enable(m_ptr, enable, idxColorWriting);
@@ -677,7 +677,7 @@ namespace Rhino.Display
     /// <summary>
     /// Enable or disable the Lighting logic of the engine. 
     /// </summary>
-    /// <param name="enable">True to enable Lighting, false to disable.</param>
+    /// <param name="enable">true to enable Lighting, false to disable.</param>
     public void EnableLighting(bool enable)
     {
       UnsafeNativeMethods.CRhinoDisplayPipeline_Enable(m_ptr, enable, idxLighting);
@@ -686,7 +686,7 @@ namespace Rhino.Display
     /// <summary>
     /// Enable or disable the Clipping Plane logic of the engine. 
     /// </summary>
-    /// <param name="enable">True to enable Clipping Planes, false to disable.</param>
+    /// <param name="enable">true to enable Clipping Planes, false to disable.</param>
     public void EnableClippingPlanes(bool enable)
     {
       UnsafeNativeMethods.CRhinoDisplayPipeline_Enable(m_ptr, enable, idxClippingPlanes);
@@ -789,8 +789,8 @@ namespace Rhino.Display
 
     #region methods
     /// <summary>
-    /// True if backfaces of surface and mesh control polygons are culled. This value
-    /// is determined by the CullControlPolygon command
+    /// true if backfaces of surface and mesh control polygons are culled. This value
+    /// is determined by the CullControlPolygon command.
     /// </summary>
     /// <returns></returns>
     public static bool CullControlPolygon()
@@ -802,8 +802,8 @@ namespace Rhino.Display
     /// Test a given 3d world coordinate point for visibility inside the view 
     /// frustum under the current viewport and model transformation settings.
     /// </summary>
-    /// <param name="worldCoordinate">Point to test for visibility</param>
-    /// <returns>True if the point is visible, false if it is not.</returns>
+    /// <param name="worldCoordinate">Point to test for visibility.</param>
+    /// <returns>true if the point is visible, false if it is not.</returns>
     public bool IsVisible(Point3d worldCoordinate)
     {
       return UnsafeNativeMethods.CRhinoDisplayPipeline_IsVisible1(m_ptr, worldCoordinate);
@@ -822,7 +822,7 @@ namespace Rhino.Display
     ///       tests based on object type.
     /// </summary>
     /// <param name="rhinoObject">Object to test.</param>
-    /// <returns>True if the object is visible, false if not.</returns>
+    /// <returns>true if the object is visible, false if not.</returns>
     public bool IsVisible(DocObjects.RhinoObject rhinoObject)
     {
       IntPtr pRhinoObject = rhinoObject.ConstPointer();
@@ -833,8 +833,8 @@ namespace Rhino.Display
     /// Test a given box for visibility inside the view frustum under the current 
     /// viewport and model transformation settings.
     /// </summary>
-    /// <param name="bbox">Box to test for visibility</param>
-    /// <returns>True if at least some portion of the box is visible, false if not.</returns>
+    /// <param name="bbox">Box to test for visibility.</param>
+    /// <returns>true if at least some portion of the box is visible, false if not.</returns>
     public bool IsVisible(BoundingBox bbox)
     {
       return UnsafeNativeMethods.CRhinoDisplayPipeline_IsVisible2(m_ptr, ref bbox);
@@ -850,7 +850,7 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="rhinoObject">Object to test.</param>
     /// <returns>
-    /// True if this object can be drawn in the pipeline's viewport based on it's object type and display attributes.
+    /// true if this object can be drawn in the pipeline's viewport based on it's object type and display attributes.
     /// </returns>
     public bool IsActive(DocObjects.RhinoObject rhinoObject)
     {
@@ -864,7 +864,7 @@ namespace Rhino.Display
     /// finish up and show the frame buffer. This is used in dynamic drawing operations. 
     /// </summary>
     /// <returns>
-    /// True if the pipeline should stop attempting to draw more geometry and just show the frame buffer.
+    /// true if the pipeline should stop attempting to draw more geometry and just show the frame buffer.
     /// </returns>
     public bool InterruptDrawing()
     {
@@ -953,7 +953,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draws a shaded mesh representation of a brep
+    /// Draws a shaded mesh representation of a brep.
     /// </summary>
     /// <param name="brep">Brep to draw.</param>
     /// <param name="material">Material to draw faces with.</param>
@@ -1187,11 +1187,11 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draws a set of connected lines (polyline) in a dotted pattern
+    /// Draws a set of connected lines (polyline) in a dotted pattern.
     /// </summary>
-    /// <param name="points">End points of each line segment</param>
-    /// <param name="color">Color of polyline</param>
-    /// <param name="close">Draw a line between the first and last points</param>
+    /// <param name="points">End points of each line segment.</param>
+    /// <param name="color">Color of polyline.</param>
+    /// <param name="close">Draw a line between the first and last points.</param>
     public void DrawDottedPolyline(System.Collections.Generic.IEnumerable<Point3d> points, System.Drawing.Color color, bool close)
     {
       Point3d first_point = Point3d.Unset;
@@ -1281,8 +1281,8 @@ namespace Rhino.Display
     /// </param>
     /// <param name="color">Color to draw with.</param>
     /// <param name="filled">
-    /// True if the closed area should be filled with color. 
-    /// False if you want to draw just the border of the closed shape.
+    /// true if the closed area should be filled with color. 
+    /// false if you want to draw just the border of the closed shape.
     /// </param>
     public void DrawPolygon(System.Collections.Generic.IEnumerable<Point3d> points, System.Drawing.Color color, bool filled)
     {
@@ -1655,12 +1655,12 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draws 2D text on the viewport
+    /// Draws 2D text on the viewport.
     /// </summary>
-    /// <param name="text">the string to draw</param>
-    /// <param name="color">text color</param>
+    /// <param name="text">the string to draw.</param>
+    /// <param name="color">text color.</param>
     /// <param name="screenCoordinate">definition point in screen coordinates (0,0 is top-left corner)</param>
-    /// <param name="middleJustified">if true text is centered around the definition point, otherwise it is lower-left justified</param>
+    /// <param name="middleJustified">if true text is centered around the definition point, otherwise it is lower-left justified.</param>
     public void Draw2dText(string text, System.Drawing.Color color, Point2d screenCoordinate, bool middleJustified)
     {
       IntPtr pThis = NonConstPointer();
@@ -1668,12 +1668,12 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draws 2D text on the viewport
+    /// Draws 2D text on the viewport.
     /// </summary>
-    /// <param name="text">the string to draw</param>
-    /// <param name="color">text color</param>
+    /// <param name="text">the string to draw.</param>
+    /// <param name="color">text color.</param>
     /// <param name="screenCoordinate">definition point in screen coordinates (0,0 is top-left corner)</param>
-    /// <param name="middleJustified">if true text is centered around the definition point, otherwise it is lower-left justified</param>
+    /// <param name="middleJustified">if true text is centered around the definition point, otherwise it is lower-left justified.</param>
     /// <param name="height">height in pixels (good default is 12)</param>
     public void Draw2dText(string text, System.Drawing.Color color, Point2d screenCoordinate, bool middleJustified, int height)
     {
@@ -1682,12 +1682,12 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draws 2D text on the viewport
+    /// Draws 2D text on the viewport.
     /// </summary>
-    /// <param name="text">the string to draw</param>
-    /// <param name="color">text color</param>
+    /// <param name="text">the string to draw.</param>
+    /// <param name="color">text color.</param>
     /// <param name="screenCoordinate">definition point in screen coordinates (0,0 is top-left corner)</param>
-    /// <param name="middleJustified">if true text is centered around the definition point, otherwise it is lower-left justified</param>
+    /// <param name="middleJustified">if true text is centered around the definition point, otherwise it is lower-left justified.</param>
     /// <param name="height">height in pixels (good default is 12)</param>
     /// <param name="fontface">font name (good default is "Arial")</param>
     public void Draw2dText(string text, System.Drawing.Color color, Point2d screenCoordinate, bool middleJustified, int height, string fontface)
@@ -1697,12 +1697,12 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draws 2D text on the viewport
+    /// Draws 2D text on the viewport.
     /// </summary>
-    /// <param name="text">the string to draw</param>
-    /// <param name="color">text color</param>
-    /// <param name="worldCoordinate">definition point in world coordinates</param>
-    /// <param name="middleJustified">if true text is centered around the definition point, otherwise it is lower-left justified</param>
+    /// <param name="text">the string to draw.</param>
+    /// <param name="color">text color.</param>
+    /// <param name="worldCoordinate">definition point in world coordinates.</param>
+    /// <param name="middleJustified">if true text is centered around the definition point, otherwise it is lower-left justified.</param>
     public void Draw2dText(string text, System.Drawing.Color color, Point3d worldCoordinate, bool middleJustified)
     {
       IntPtr pThis = NonConstPointer();
@@ -1710,12 +1710,12 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draws 2D text on the viewport
+    /// Draws 2D text on the viewport.
     /// </summary>
-    /// <param name="text">the string to draw</param>
-    /// <param name="color">text color</param>
-    /// <param name="worldCoordinate">definition point in world coordinates</param>
-    /// <param name="middleJustified">if true text is centered around the definition point, otherwise it is lower-left justified</param>
+    /// <param name="text">the string to draw.</param>
+    /// <param name="color">text color.</param>
+    /// <param name="worldCoordinate">definition point in world coordinates.</param>
+    /// <param name="middleJustified">if true text is centered around the definition point, otherwise it is lower-left justified.</param>
     /// <param name="height">height in pixels (good default is 12)</param>
     public void Draw2dText(string text, System.Drawing.Color color, Point3d worldCoordinate, bool middleJustified, int height)
     {
@@ -1724,12 +1724,12 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draws 2D text on the viewport
+    /// Draws 2D text on the viewport.
     /// </summary>
-    /// <param name="text">the string to draw</param>
-    /// <param name="color">text color</param>
-    /// <param name="worldCoordinate">definition point in world coordinates</param>
-    /// <param name="middleJustified">if true text is centered around the definition point, otherwise it is lower-left justified</param>
+    /// <param name="text">the string to draw.</param>
+    /// <param name="color">text color.</param>
+    /// <param name="worldCoordinate">definition point in world coordinates.</param>
+    /// <param name="middleJustified">if true text is centered around the definition point, otherwise it is lower-left justified.</param>
     /// <param name="height">height in pixels (good default is 12)</param>
     /// <param name="fontface">font name (good default is "Arial")</param>
     public void Draw2dText(string text, System.Drawing.Color color, Point3d worldCoordinate, bool middleJustified, int height, string fontface)
@@ -1752,7 +1752,7 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_Draw3dText2(pThis, pAnnotationText, text.FontFace, color.ToArgb(), text.Bold, text.Italic);
     }
     /// <summary>
-    /// Draw 3d text with a different plane than what is defined in the Text3d class
+    /// Draw 3d text with a different plane than what is defined in the Text3d class.
     /// </summary>
     /// <param name="text"></param>
     /// <param name="color"></param>
@@ -1765,7 +1765,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draws 3d text using the Text3d plane with an adjusted origin
+    /// Draws 3d text using the Text3d plane with an adjusted origin.
     /// </summary>
     /// <param name="text"></param>
     /// <param name="color"></param>
@@ -1783,14 +1783,14 @@ namespace Rhino.Display
     /// Determine screen rectangle that would be drawn to using the DrawString(..) function
     /// with the same parameters.
     /// </summary>
-    /// <param name="measuredRectangle">rectangle in the viewport's screen coordinates on success</param>
-    /// <param name="text">text to measure</param>
-    /// <param name="definitionPoint">either lower-left or middle of text</param>
-    /// <param name="middleJustified">true=middle justified. false=lower-left justified</param>
-    /// <param name="rotation">text rotation in 1/10 degrees</param>
+    /// <param name="measuredRectangle">rectangle in the viewport's screen coordinates on success.</param>
+    /// <param name="text">text to measure.</param>
+    /// <param name="definitionPoint">either lower-left or middle of text.</param>
+    /// <param name="middleJustified">true=middle justified. false=lower-left justified.</param>
+    /// <param name="rotation">text rotation in 1/10 degrees.</param>
     /// <param name="height">height in pixels (good default is 12)</param>
     /// <param name="fontface">font name (good default is "Arial")</param>
-    /// <returns>true on success, false on failure</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool MeasureString( out System.Drawing.Rectangle measuredRectangle, string text, ON_2dPoint definitionPoint, bool middleJustified, int rotation, int height, string fontFace )
     {
     }
@@ -1809,7 +1809,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw a RhinoObject with an applied transformation
+    /// Draw a RhinoObject with an applied transformation.
     /// </summary>
     /// <param name="rhinoObject"></param>
     /// <param name="xform"></param>
@@ -2029,11 +2029,11 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw wireframe display for a single surface
+    /// Draw wireframe display for a single surface.
     /// </summary>
     /// <param name="surface">Surface to draw.</param>
     /// <param name="wireColor">Color to draw with.</param>
-    /// <param name="wireDensity">Thickness (in pixels) or wires to draw</param>
+    /// <param name="wireDensity">Thickness (in pixels) or wires to draw.</param>
     public void DrawSurface(Geometry.Surface surface, System.Drawing.Color wireColor, int wireDensity)
     {
       surface.Draw(this, wireColor, wireDensity);
@@ -2162,7 +2162,7 @@ namespace Rhino.Display
 
     /// <summary>
     /// Unions a bounding box with the current display bounding box in order to ensure
-    /// dynamic objects in "box" are drawn
+    /// dynamic objects in "box" are drawn.
     /// </summary>
     /// <param name="box"></param>
     public void IncludeBoundingBox(BoundingBox box)

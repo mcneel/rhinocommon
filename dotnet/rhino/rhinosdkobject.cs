@@ -7,7 +7,7 @@ namespace Rhino.DocObjects
 
 #if RHINO_SDK
   /// <summary>
-  /// RhinoObjects should only ever be creatable by the RhinoDoc
+  /// RhinoObjects should only ever be creatable by the RhinoDoc.
   /// </summary>
   public class RhinoObject //: Runtime.CommonObject - We don't want to allow for any private copies of RhinoObjects
   {
@@ -328,7 +328,7 @@ namespace Rhino.DocObjects
 
     /// <summary>
     /// true if the object is deleted. Deleted objects are kept by the document
-    /// for undo purposes. Call RhinoDoc.UndeleteObject to undelete an object
+    /// for undo purposes. Call RhinoDoc.UndeleteObject to undelete an object.
     /// </summary>
     public bool IsDeleted
     {
@@ -389,7 +389,7 @@ namespace Rhino.DocObjects
       get { return GetBool(idxIsReference); }
     }
 
-    /// <summary>object visibility</summary>
+    /// <summary>object visibility.</summary>
     public bool Visible
     {
       get
@@ -418,10 +418,10 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Moves changes made to this RhinoObject into the RhinoDoc
+    /// Moves changes made to this RhinoObject into the RhinoDoc.
     /// </summary>
     /// <returns>
-    /// true if changes were made
+    /// true if changes were made.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
@@ -520,7 +520,7 @@ namespace Rhino.DocObjects
       }
     }
 
-    /// <summary>number of groups object belongs to</summary>
+    /// <summary>number of groups object belongs to.</summary>
     public int GroupCount
     {
       get
@@ -544,7 +544,7 @@ namespace Rhino.DocObjects
       return rc;
     }
 
-    /// <summary>Check selection state</summary>
+    /// <summary>Check selection state.</summary>
     /// <param name="checkSubObjects">
     /// (false is good default)
     /// If true and the entire object is not selected, and some subset of the object
@@ -563,8 +563,8 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.CRhinoObject_IsSelected(ptr, checkSubObjects);
     }
 
-    /// <summary>Check sub-object selection state</summary>
-    /// <param name="componentIndex">index of subobject to check</param>
+    /// <summary>Check sub-object selection state.</summary>
+    /// <param name="componentIndex">index of subobject to check.</param>
     /// <returns></returns>
     /// <remarks>subobject cannot be persistently selected</remarks>
     public bool IsSubObjectSelected(ComponentIndex componentIndex)
@@ -573,7 +573,7 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.CRhinoObject_IsSubObjectSelected(ptr, componentIndex);
     }
 
-    /// <summary>Get a list of all selected sub-objects</summary>
+    /// <summary>Get a list of all selected sub-objects.</summary>
     /// <returns></returns>
     public ComponentIndex[] GetSelectedSubObjects()
     {
@@ -590,7 +590,7 @@ namespace Rhino.DocObjects
       return rc;
     }
 
-    /// <summary>Reports if an object can be selected</summary>
+    /// <summary>Reports if an object can be selected.</summary>
     /// <param name="ignoreSelectionState">
     /// If true, then selected objects are selectable.
     /// If false, then selected objects are not selectable.
@@ -607,7 +607,7 @@ namespace Rhino.DocObjects
     /// If true, then objects on hidden layers are selectable.
     /// If false, then objects on hidden layers are not selectable.
     /// </param>
-    /// <returns>true if object is capable of being selected</returns>
+    /// <returns>true if object is capable of being selected.</returns>
     /// <remarks>
     /// Objects that are locked, hidden, or on locked or hidden layers
     /// cannot be selected. If IsSelectableWithGripsOn() returns false,
@@ -618,8 +618,8 @@ namespace Rhino.DocObjects
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.CRhinoObject_IsSelectable(ptr, ignoreSelectionState, ignoreGripsState, ignoreLayerLocking, ignoreLayerVisibility);
     }
-    /// <summary>Reports if an object can be selected</summary>
-    /// <returns>true if object is capable of being selected</returns>
+    /// <summary>Reports if an object can be selected.</summary>
+    /// <returns>true if object is capable of being selected.</returns>
     /// <remarks>
     /// Objects that are locked, hidden, or on locked or hidden layers
     /// cannot be selected. If IsSelectableWithGripsOn() returns false,
@@ -630,8 +630,8 @@ namespace Rhino.DocObjects
       return IsSelectable(false, false, false, false);
     }
 
-    /// <summary>Reports if a subobject can be selected</summary>
-    /// <param name="componentIndex">index of subobject to check</param>
+    /// <summary>Reports if a subobject can be selected.</summary>
+    /// <param name="componentIndex">index of subobject to check.</param>
     /// <param name="ignoreSelectionState">
     /// If true, then selected objects are selectable.
     /// If false, then selected objects are not selectable.
@@ -648,7 +648,7 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.CRhinoObject_IsSubObjectSelectable(ptr, componentIndex, ignoreSelectionState);
     }
 
-    /// <summary>Reports if an object can be selected</summary>
+    /// <summary>Reports if an object can be selected.</summary>
     /// <param name="on"></param>
     /// <param name="syncHighlight">
     /// If true, then the object is highlighted if it is selected 
@@ -673,7 +673,7 @@ namespace Rhino.DocObjects
     /// <returns>
     /// 0: object is not selected
     /// 1: object is selected
-    /// 2: object is selected persistently
+    /// 2: object is selected persistently.
     /// </returns>
     /// <remarks>
     /// Objects that are locked, hidden, or on locked or hidden layers
@@ -686,12 +686,12 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.CRhinoObject_Select(ptr, on, syncHighlight, persistentSelect, ignoreGripsState, ignoreLayerLocking, ignoreLayerVisibility);
     }
 
-    /// <summary>Reports if an object can be selected</summary>
+    /// <summary>Reports if an object can be selected.</summary>
     /// <param name="on"></param>
     /// <returns>
     /// 0: object is not selected
     /// 1: object is selected
-    /// 2: object is selected persistently
+    /// 2: object is selected persistently.
     /// </returns>
     /// <remarks>
     /// Objects that are locked, hidden, or on locked or hidden layers
@@ -708,7 +708,7 @@ namespace Rhino.DocObjects
       return Select(on, true);
     }
 
-    /// <summary>Reports if an object can be selected</summary>
+    /// <summary>Reports if an object can be selected.</summary>
     /// <param name="on"></param>
     /// <param name="syncHighlight">
     /// If true, then the object is hightlighted if it is selected
@@ -717,7 +717,7 @@ namespace Rhino.DocObjects
     /// <returns>
     /// 0: object is not selected
     /// 1: object is selected
-    /// 2: object is selected persistently
+    /// 2: object is selected persistently.
     /// </returns>
     /// <remarks>
     /// Objects that are locked, hidden, or on locked or hidden layers
@@ -729,8 +729,8 @@ namespace Rhino.DocObjects
       return Select(on, syncHighlight, true, false, false, false);
     }
 
-    /// <summary>Reports if an object can be selected</summary>
-    /// <param name="componentIndex">index of subobject to check</param>
+    /// <summary>Reports if an object can be selected.</summary>
+    /// <param name="componentIndex">index of subobject to check.</param>
     /// <param name="select"></param>
     /// <param name="syncHighlight">
     /// (default=true)
@@ -740,7 +740,7 @@ namespace Rhino.DocObjects
     /// <returns>
     /// 0: object is not selected
     /// 1: object is selected
-    /// 2: object is selected persistently
+    /// 2: object is selected persistently.
     /// </returns>
     /// <remarks>
     /// Objects that are locked, hidden, or on locked or hidden layers
@@ -754,7 +754,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Returns number of unselected subobjects
+    /// Returns number of unselected subobjects.
     /// </summary>
     /// <returns></returns>
     public int UnselectAllSubObjects()
@@ -769,7 +769,7 @@ namespace Rhino.DocObjects
       return GetInt(idxUnselectAllSubObjects);
     }
 
-    /// <summary>Check highlight state</summary>
+    /// <summary>Check highlight state.</summary>
     /// <param name="checkSubObjects">
     /// If true and the entire object is not highlighted, and some subset of the object
     /// is highlighted, like some edges of a surface, then 3 is returned.
@@ -778,7 +778,7 @@ namespace Rhino.DocObjects
     /// <returns>
     /// 0 object is not highlighted
     /// 1 entire object is highlighted
-    /// 3 one or more proper sub-objects are highlighted
+    /// 3 one or more proper sub-objects are highlighted.
     /// </returns>
     public int IsHighlighted(bool checkSubObjects)
     {
@@ -799,7 +799,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets a list of all highlighted sub-objects
+    /// Gets a list of all highlighted sub-objects.
     /// </summary>
     /// <returns></returns>
     public ComponentIndex[] GetHighlightedSubObjects()
@@ -824,7 +824,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Returns number of changed subobjects
+    /// Returns number of changed subobjects.
     /// </summary>
     /// <returns></returns>
     public int UnhighlightAllSubObjects()
@@ -834,7 +834,7 @@ namespace Rhino.DocObjects
       return GetInt(idxUnhighightAllSubObjects);
     }
 
-    /// <summary>State of object's default editing grips</summary>
+    /// <summary>State of object's default editing grips.</summary>
     public bool GripsOn
     {
       get
@@ -854,7 +854,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// True if grips are turned on and at least one is selected
+    /// true if grips are turned on and at least one is selected.
     /// </summary>
     public bool GripsSelected
     {
@@ -864,10 +864,10 @@ namespace Rhino.DocObjects
       }
     }
 
-    /// <summary>Turns on/off the object's editing grips</summary>
+    /// <summary>Turns on/off the object's editing grips.</summary>
     /// <param name="customGrips"></param>
     /// <returns>
-    /// True if the call succeeded.  If you attempt to add custom grips to an
+    /// true if the call succeeded.  If you attempt to add custom grips to an
     /// object that does not support custom grips, then false is returned.
     /// </returns>
     public bool EnableCustomGrips(Rhino.DocObjects.Custom.CustomObjectGrips customGrips)
@@ -914,11 +914,11 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Used to turn analysis modes on and off
+    /// Used to turn analysis modes on and off.
     /// </summary>
     /// <param name="mode"></param>
     /// <param name="enable"></param>
-    /// <returns>true if this object supports the analysis mode</returns>
+    /// <returns>true if this object supports the analysis mode.</returns>
     public bool EnableVisualAnalysisMode(Rhino.Display.VisualAnalysisMode mode, bool enable)
     {
       IntPtr pConstThis = ConstPointer();
@@ -927,7 +927,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Reports if any visual analysis mode is currently active for an object
+    /// Reports if any visual analysis mode is currently active for an object.
     /// </summary>
     /// <returns></returns>
     public bool InVisualAnalysisMode()
@@ -936,10 +936,10 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Reports if a visual analysis mode is currently active for an object
+    /// Reports if a visual analysis mode is currently active for an object.
     /// </summary>
     /// <param name="mode">
-    /// The mode to check for. Pass null if you want to see if any mode is active
+    /// The mode to check for. Pass null if you want to see if any mode is active.
     /// </param>
     /// <returns></returns>
     public bool InVisualAnalysisMode(Rhino.Display.VisualAnalysisMode mode)
@@ -969,7 +969,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Localized short description os an object
+    /// Localized short description os an object.
     /// </summary>
     /// <param name="plural"></param>
     /// <returns></returns>

@@ -9,7 +9,7 @@ namespace Rhino.Render
 {
   /// <summary>
   /// A collection of all of the available render content types registered with Rhino.
-  /// Gets this object from Rhino.Render.Utilities.RenderContentTypes
+  /// Gets this object from Rhino.Render.Utilities.RenderContentTypes.
   /// </summary>
   public class RenderContentTypes : IEnumerator
   {
@@ -79,7 +79,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Determines if this type is of the specified kind
+    /// Determines if this type is of the specified kind.
     /// </summary>
     /// <param name="kind"></param>
     /// <returns></returns>
@@ -102,7 +102,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Returns the type identifier associated with this type
+    /// Returns the type identifier associated with this type.
     /// </summary>
     public Guid Id
     {
@@ -113,7 +113,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Returns the internal name identifier associated with this type
+    /// Returns the internal name identifier associated with this type.
     /// </summary>
     public String InternalName
     {

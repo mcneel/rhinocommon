@@ -99,7 +99,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// True if the grip has moved from OriginalLocation
+    /// true if the grip has moved from OriginalLocation.
     /// </summary>
     public bool Moved
     {
@@ -111,10 +111,10 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Move the grip to a new location
+    /// Moves the grip to a new location.
     /// </summary>
     /// <param name="xform">
-    /// Transformation appliead to the OriginalLocation point
+    /// Transformation appliead to the OriginalLocation point.
     /// </param>
     public void Move(Transform xform)
     {
@@ -122,10 +122,10 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.CRhinoGripObject_MoveGrip1(ptr, ref xform);
     }
     /// <summary>
-    /// Move the grip to a new location
+    /// Moves the grip to a new location.
     /// </summary>
     /// <param name="delta">
-    /// Translation applied to the OriginalLocation point
+    /// Translation applied to the OriginalLocation point.
     /// </param>
     public void Move(Vector3d delta)
     {
@@ -134,10 +134,10 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.CRhinoGripObject_MoveGrip2(ptr, point, true);
     }
     /// <summary>
-    /// Move the grip to a new location
+    /// Moves the grip to a new location.
     /// </summary>
     /// <param name="newLocation">
-    /// New location for grip
+    /// New location for grip.
     /// </param>
     public void Move(Point3d newLocation)
     {
@@ -146,7 +146,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Undoes any grip moves made by calling Move
+    /// Undoes any grip moves made by calling Move.
     /// </summary>
     public void UndoMove()
     {
@@ -156,7 +156,7 @@ namespace Rhino.DocObjects
 
     /// <summary>
     /// The weight of a NURBS control point grip or RhinoMath.UnsetValue
-    /// if the grip is not a NURBS control point grip
+    /// if the grip is not a NURBS control point grip.
     /// </summary>
     public virtual double Weight
     {

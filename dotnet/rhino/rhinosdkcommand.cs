@@ -30,7 +30,7 @@ namespace Rhino.Commands
     Transparent = 4,
     /// <summary>
     /// The command should not be repeated by pressing "ENTER" immediately after
-    /// the command finishes
+    /// the command finishes.
     /// </summary>
     DoNotRepeat = 8,
     /// <summary>
@@ -64,7 +64,7 @@ namespace Rhino.Commands
     /// </summary>
     /// <param name="styles">
     /// set of values combined using a bitwise OR operation to get the desired combination
-    /// of command styles
+    /// of command styles.
     /// </param>
     public CommandStyleAttribute(Style styles)
     {
@@ -79,18 +79,18 @@ namespace Rhino.Commands
 
   public enum Result : int
   {
-    /// <summary>command worked</summary>
+    /// <summary>command worked.</summary>
     Success = 0,
-    /// <summary>user canceled command</summary>
+    /// <summary>user canceled command.</summary>
     Cancel  = 1, 
-    /// <summary>command did nothing but cancel was not pressed</summary>
+    /// <summary>command did nothing but cancel was not pressed.</summary>
     Nothing = 2,
     /// <summary>command failed (bad input, computational problem, etc.)</summary>
     Failure,
     /// <summary>command not found (user probably had a typo in command name)</summary>
     UnknownCommand,
     CancelModelessDialog,
-    /// <summary>exit RhinoCommon</summary>
+    /// <summary>exit RhinoCommon.</summary>
     ExitRhino = 0x0FFFFFFF
   }
 
@@ -305,7 +305,7 @@ namespace Rhino.Commands
     /// <summary>
     /// Determines if Rhino is currently running a command.
     /// </summary>
-    /// <returns>True if a command is currently running, false if no commands are currently running.</returns>
+    /// <returns>true if a command is currently running, false if no commands are currently running.</returns>
     public static bool InCommand()
     {
       return GetCommandStack() != null;
@@ -316,7 +316,7 @@ namespace Rhino.Commands
     /// a script running command like "ReadCommandFile" or the RhinoScript
     /// plug-in's "RunScript".
     /// </summary>
-    /// <returns>True if a script running command is active.</returns>
+    /// <returns>true if a script running command is active.</returns>
     public static bool InScriptRunnerCommand()
     {
       int rc = UnsafeNativeMethods.CRhinoApp_GetInt(RhinoApp.idxInScriptRunner);
@@ -346,15 +346,15 @@ namespace Rhino.Commands
     }
 
     /// <summary>
-    /// Gets list of command names in Rhino. This list does not include Test, Alpha, or System commands
+    /// Gets list of command names in Rhino. This list does not include Test, Alpha, or System commands.
     /// </summary>
     /// <param name="english">
     ///  if true, retrieve the english name for every command.
-    ///  if false, retrieve the local name for every command
+    ///  if false, retrieve the local name for every command.
     /// </param>
     /// <param name="loaded">
     /// if true, only get names of currently loaded commands.
-    /// if false, get names of all registered (may not be currently loaded) commands
+    /// if false, get names of all registered (may not be currently loaded) commands.
     /// </param>
     /// <returns></returns>
     public static string[] GetCommandNames(bool english, bool loaded)
@@ -611,7 +611,7 @@ namespace Rhino.Commands
     string m_plugin_name;
     /// <summary>
     /// Gets the name of the plug-in that this command belongs to.  If the command is internal
-    /// to Rhino, then this propert is an empty string
+    /// to Rhino, then this propert is an empty string.
     /// </summary>
     public string CommandPluginName
     {

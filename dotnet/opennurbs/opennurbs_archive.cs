@@ -122,14 +122,14 @@ namespace Rhino.Collections
       }
     }
 
-    /// <summary>Initializes an instance of a dictionary for writing to a 3dm archive</summary>
+    /// <summary>Initializes an instance of a dictionary for writing to a 3dm archive.</summary>
     public ArchivableDictionary()
     {
       m_version = 0;
       m_name = String.Empty;
     }
 
-    /// <summary>Initializes an instance of a dictionary for writing to a 3dm archive</summary>
+    /// <summary>Initializes an instance of a dictionary for writing to a 3dm archive.</summary>
     /// <param name="version">
     /// Custom version used to help the plug-in developer determine which version of
     /// a dictionary is being written. One good way to write version information is to
@@ -141,7 +141,7 @@ namespace Rhino.Collections
       m_name = String.Empty;
     }
 
-    ///<summary>Initializes an instance of a dictionary for writing to a 3dm archive</summary>
+    ///<summary>Initializes an instance of a dictionary for writing to a 3dm archive.</summary>
     ///<param name="version">
     /// custom version used to help the plug-in developer determine which version of
     /// a dictionary is being written. One good way to write version information is to
@@ -166,7 +166,7 @@ namespace Rhino.Collections
     ///The archive to read from. The archive position should be at the beginning of
     ///the dictionary
     ///</param>
-    ///<returns>new filled dictionary on success. null on failure</returns>
+    ///<returns>new filled dictionary on success. null on failure.</returns>
     internal static ArchivableDictionary Read(Rhino.FileIO.BinaryArchiveReader archive)
     {
       Guid dictionary_id;
@@ -514,10 +514,10 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Writes this dictionary to an archive
+    /// Writes this dictionary to an archive.
     /// </summary>
     /// <param name="archive">The archive to write to.</param>
-    /// <returns>true on success</returns>
+    /// <returns>true on success.</returns>
     internal bool Write(Rhino.FileIO.BinaryArchiveWriter archive)
     {
       uint version = (uint)m_version;
@@ -706,7 +706,7 @@ namespace Rhino.Collections
       }
     }
 
-    /// <summary>Gets all values in this dictionary</summary>
+    /// <summary>Gets all values in this dictionary.</summary>
     public object[] Values
     {
       get
@@ -1390,7 +1390,7 @@ namespace Rhino.FileIO
 {
   /// <summary>
   /// Thrown by BinaryArchiveReader and BinaryArchiveWriter classes when
-  /// an IO error has occured
+  /// an IO error has occured.
   /// </summary>
   public class BinaryArchiveException : System.IO.IOException
   {
@@ -1447,7 +1447,7 @@ namespace Rhino.FileIO
     /// 3     a version 3 3dm archive is being read/written
     /// 4     a version 4 3dm archive is being read/written
     /// 5     an old version 5 3dm archive is being read
-    /// 50    a version 5 3dm archive is being read/written
+    /// 50    a version 5 3dm archive is being read/written.
     /// </summary>
     public int Archive3dmVersion
     {
@@ -1465,9 +1465,9 @@ namespace Rhino.FileIO
     /// Increment the major version if the format of the chunk changes
     /// in some other way.
     /// </summary>
-    /// <param name="major">0 to 15</param>
-    /// <param name="minor">0 to 16</param>
-    /// <returns>true on successful read</returns>
+    /// <param name="major">0 to 15.</param>
+    /// <param name="minor">0 to 16.</param>
+    /// <returns>true on successful read.</returns>
     public void Write3dmChunkVersion(int major, int minor)
     {
       m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_Write3dmChunkVersion(m_ptr, major, minor);
@@ -2116,7 +2116,7 @@ namespace Rhino.FileIO
     /// 3     a version 3 3dm archive is being read/written
     /// 4     a version 4 3dm archive is being read/written
     /// 5     an old version 5 3dm archive is being read
-    /// 50    a version 5 3dm archive is being read/written
+    /// 50    a version 5 3dm archive is being read/written.
     /// </summary>
     public int Archive3dmVersion
     {
@@ -2134,9 +2134,9 @@ namespace Rhino.FileIO
     /// Increment the major version if the format of the chunk changes
     /// in some other way.
     /// </summary>
-    /// <param name="major">0 to 15</param>
-    /// <param name="minor">0 to 16</param>
-    /// <returns>true on successful read</returns>
+    /// <param name="major">0 to 15.</param>
+    /// <param name="minor">0 to 16.</param>
+    /// <returns>true on successful read.</returns>
     public void Read3dmChunkVersion(out int major, out int minor)
     {
       major = 0;
@@ -2869,7 +2869,7 @@ namespace Rhino.FileIO
     /// 0: serious IO error
     /// 1: success
     /// read information and then call EndReadDictionaryEntry()
-    /// 2: at end of dictionary
+    /// 2: at end of dictionary.
     /// </returns>
     internal int BeginReadDictionaryEntry(out int entryType, out string entryName)
     {

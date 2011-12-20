@@ -22,30 +22,30 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Enumeration type for use in TextureChildSlotName method
+    /// Enumeration type for use in TextureChildSlotName method.
     /// </summary>
     public enum StandardChildSlots : int
     {
       /// <summary>
-      /// Corresponds to ON_Texture::bitmap_texture
+      /// Corresponds to ON_Texture::bitmap_texture.
       /// </summary>
       Diffuse = 0,
       /// <summary>
-      /// Corresponds to ON_Texture::transparancy_texture
+      /// Corresponds to ON_Texture::transparancy_texture.
       /// </summary>
       Transparency = 1,
       /// <summary>
-      /// Corresponds to ON_Texture::bump_texture
+      /// Corresponds to ON_Texture::bump_texture.
       /// </summary>
       Bump = 2,
       /// <summary>
-      /// Corresponds to ON_Texture::emap_texture
+      /// Corresponds to ON_Texture::emap_texture.
       /// </summary>
       Environment = 3,
     }
 
     /// <summary>
-    /// Parameter names for use in GetNamedParameter and SetNamedParameter with basic materials
+    /// Parameter names for use in GetNamedParameter and SetNamedParameter with basic materials.
     /// </summary>
     public class BasicMaterialParameterNames
     {
@@ -106,7 +106,7 @@ namespace Rhino.Render
     /// Override this function to provide a Rhino.DocObjects.Material definition for this material
     /// to be used by other rendering engines including the display.
     /// </summary>
-    /// <param name="simulation">Set the properties of the input basic material to provide the simulation for this material</param>
+    /// <param name="simulation">Set the properties of the input basic material to provide the simulation for this material.</param>
     /// <param name="isForDataOnly">Called when only asking for a hash - don't write any textures to the disk - just provide the filenames they will get.</param>
     public virtual void SimulateMaterial(ref Rhino.DocObjects.Material simulation, bool isForDataOnly)
     {

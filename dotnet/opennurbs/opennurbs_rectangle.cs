@@ -379,7 +379,7 @@ namespace Rhino.Geometry
     /// Gets the point on the rectangle that is closest to a test-point.
     /// </summary>
     /// <param name="point">Point to project.</param>
-    /// <param name="includeInterior">If False, the point is projected onto the boundary edge only, 
+    /// <param name="includeInterior">If false, the point is projected onto the boundary edge only, 
     /// otherwise the interior of the rectangle is also taken into consideration.</param>
     /// <returns>The point on the rectangle closest to the test point or Point3d.Unset on failure.</returns>
     public Point3d ClosestPoint(Point3d point, bool includeInterior)

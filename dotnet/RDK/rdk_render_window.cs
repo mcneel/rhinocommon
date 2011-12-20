@@ -60,7 +60,7 @@ namespace Rhino.Render
     /// 
     /// </summary>
     /// <param name="text"></param>
-    /// <param name="progress">0.0f - 1.0f</param>
+    /// <param name="progress">0.0f - 1.0f.</param>
     public void SetProgress(string text, float progress)
     {
       UnsafeNativeMethods.Rdk_RenderWindow_SetProgress(ConstPointer(), text, (int)(progress * 100.0f));

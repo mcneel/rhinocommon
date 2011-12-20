@@ -595,7 +595,7 @@ namespace Rhino.Geometry
     /// Smoothing requires a polyline with exclusively valid vertices.
     /// </summary>
     /// <param name="amount">Amount to smooth. Zero equals no smoothing, one equals complete smoothing.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Smooth(double amount)
     {
       int count = this.Count;

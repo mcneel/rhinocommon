@@ -84,7 +84,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Computes an AreaMassProperties for a hatch.
     /// </summary>
-    /// <param name="hatch">Hatch to measure</param>
+    /// <param name="hatch">Hatch to measure.</param>
     /// <returns>The AreaMassProperties for the given hatch or null on failure.</returns>
     /// <exception cref="System.ArgumentNullException">When hatch is null.</exception>
     public static AreaMassProperties Compute(Hatch hatch)
@@ -277,7 +277,7 @@ namespace Rhino.Geometry
     /// Returns the world coordinate first moments if they were able to be calculated.
     /// X is integral of "x dm" over the area
     /// Y is integral of "y dm" over the area
-    /// Z is integral of "z dm" over the area
+    /// Z is integral of "z dm" over the area.
     /// </summary>
     public Vector3d WorldCoordinatesFirstMoments
     {
@@ -290,7 +290,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Uncertainty in world coordinates first moments calculation
+    /// Uncertainty in world coordinates first moments calculation.
     /// </summary>
     public Vector3d WorldCoordinatesFirstMomentsError
     {
@@ -306,7 +306,7 @@ namespace Rhino.Geometry
     /// Returns the world coordinate first moments if they were able to be calculated.
     /// X is integral of "xx dm" over the area
     /// Y is integral of "yy dm" over the area
-    /// Z is integral of "zz dm" over the area
+    /// Z is integral of "zz dm" over the area.
     /// </summary>
     public Vector3d WorldCoordinatesSecondMoments
     {
@@ -318,7 +318,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Uncertainty in world coordinates second moments calculation
+    /// Uncertainty in world coordinates second moments calculation.
     /// </summary>
     public Vector3d WorldCoordinatesSecondMomentsError
     {
@@ -334,7 +334,7 @@ namespace Rhino.Geometry
     /// Returns the world coordinate product moments if they were able to be calculated.
     /// X is integral of "xy dm" over the area
     /// Y is integral of "yz dm" over the area
-    /// Z is integral of "zx dm" over the area
+    /// Z is integral of "zx dm" over the area.
     /// </summary>
     public Vector3d WorldCoordinatesProductMoments
     {
@@ -346,7 +346,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Uncertainty in world coordinates second moments calculation
+    /// Uncertainty in world coordinates second moments calculation.
     /// </summary>
     public Vector3d WorldCoordinatesProductMomentsError
     {
@@ -362,7 +362,7 @@ namespace Rhino.Geometry
     /// The moments of inertia about the world coordinate axes.
     /// X = integral of (y^2 + z^2) dm
     /// Y = integral of (z^2 + x^2) dm
-    /// Z = integral of (z^2 + y^2) dm
+    /// Z = integral of (z^2 + y^2) dm.
     /// </summary>
     /// <remarks>
     /// What is meant by "moments of intertia" varies widely in textbooks and papers.
@@ -380,7 +380,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Uncertainty in world coordinates moments of inertia calculation
+    /// Uncertainty in world coordinates moments of inertia calculation.
     /// </summary>
     public Vector3d WorldCoordinatesMomentsOfInertiaError
     {
@@ -429,7 +429,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Uncertainty in centroid coordinates second moments calculation
+    /// Uncertainty in centroid coordinates second moments calculation.
     /// </summary>
     public Vector3d CentroidCoordinatesSecondMomentsError
     {
@@ -464,7 +464,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Uncertainty in centroid coordinates moments of inertia calculation
+    /// Uncertainty in centroid coordinates moments of inertia calculation.
     /// </summary>
     public Vector3d CentroidCoordinatesMomentsOfInertiaError
     {
@@ -502,8 +502,8 @@ namespace Rhino.Geometry
     ///// <summary>
     ///// Sum mass properties together to get an aggregate mass.
     ///// </summary>
-    ///// <param name="summand">mass properties to add</param>
-    ///// <returns>True if successful.</returns>
+    ///// <param name="summand">mass properties to add.</param>
+    ///// <returns>true if successful.</returns>
     //public bool Sum(AreaMassProperties summand)
     //{
     //  IntPtr pSum = summand.ConstPointer();
@@ -698,7 +698,7 @@ namespace Rhino.Geometry
     /// Returns the world coordinate first moments if they were able to be calculated.
     /// X is integral of "x dm" over the volume
     /// Y is integral of "y dm" over the volume
-    /// Z is integral of "z dm" over the volume
+    /// Z is integral of "z dm" over the volume.
     /// </summary>
     public Vector3d WorldCoordinatesFirstMoments
     {
@@ -711,7 +711,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Uncertainty in world coordinates first moments calculation
+    /// Uncertainty in world coordinates first moments calculation.
     /// </summary>
     public Vector3d WorldCoordinatesFirstMomentsError
     {
@@ -727,7 +727,7 @@ namespace Rhino.Geometry
     /// Returns the world coordinate first moments if they were able to be calculated.
     /// X is integral of "xx dm" over the area
     /// Y is integral of "yy dm" over the area
-    /// Z is integral of "zz dm" over the area
+    /// Z is integral of "zz dm" over the area.
     /// </summary>
     public Vector3d WorldCoordinatesSecondMoments
     {
@@ -739,7 +739,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Uncertainty in world coordinates second moments calculation
+    /// Uncertainty in world coordinates second moments calculation.
     /// </summary>
     public Vector3d WorldCoordinatesSecondMomentsError
     {
@@ -755,7 +755,7 @@ namespace Rhino.Geometry
     /// Returns the world coordinate product moments if they were able to be calculated.
     /// X is integral of "xy dm" over the area
     /// Y is integral of "yz dm" over the area
-    /// Z is integral of "zx dm" over the area
+    /// Z is integral of "zx dm" over the area.
     /// </summary>
     public Vector3d WorldCoordinatesProductMoments
     {
@@ -767,7 +767,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Uncertainty in world coordinates second moments calculation
+    /// Uncertainty in world coordinates second moments calculation.
     /// </summary>
     public Vector3d WorldCoordinatesProductMomentsError
     {
@@ -783,7 +783,7 @@ namespace Rhino.Geometry
     /// The moments of inertia about the world coordinate axes.
     /// X = integral of (y^2 + z^2) dm
     /// Y = integral of (z^2 + x^2) dm
-    /// Z = integral of (z^2 + y^2) dm
+    /// Z = integral of (z^2 + y^2) dm.
     /// </summary>
     /// <remarks>
     /// What is meant by "moments of intertia" varies widely in textbooks and papers.
@@ -801,7 +801,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Uncertainty in world coordinates moments of inertia calculation
+    /// Uncertainty in world coordinates moments of inertia calculation.
     /// </summary>
     public Vector3d WorldCoordinatesMomentsOfInertiaError
     {
@@ -850,7 +850,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Uncertainty in centroid coordinates second moments calculation
+    /// Uncertainty in centroid coordinates second moments calculation.
     /// </summary>
     public Vector3d CentroidCoordinatesSecondMomentsError
     {
@@ -885,7 +885,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Uncertainty in centroid coordinates moments of inertia calculation
+    /// Uncertainty in centroid coordinates moments of inertia calculation.
     /// </summary>
     public Vector3d CentroidCoordinatesMomentsOfInertiaError
     {
@@ -923,8 +923,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Sum mass properties together to get an aggregate mass.
     /// </summary>
-    /// <param name="summand">mass properties to add</param>
-    /// <returns>True if successful.</returns>
+    /// <param name="summand">mass properties to add.</param>
+    /// <returns>true if successful.</returns>
     public bool Sum(VolumeMassProperties summand)
     {
       IntPtr pSum = summand.ConstPointer();

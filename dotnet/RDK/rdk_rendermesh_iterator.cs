@@ -55,7 +55,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Returns the mesh associated with the object
+    /// Returns the mesh associated with the object.
     /// </summary>
     public Rhino.Geometry.Mesh Mesh
     {
@@ -75,7 +75,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Returns a sphere if this object represents a primitive sphere, or null
+    /// Returns a sphere if this object represents a primitive sphere, or null.
     /// </summary>
     public Rhino.Geometry.Sphere Sphere
     {
@@ -132,7 +132,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Will return null if "IsRenderMaterial" returns false
+    /// Will return null if "IsRenderMaterial" returns false.
     /// </summary>
     public Rhino.Render.RenderMaterial Material
     {

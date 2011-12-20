@@ -8,7 +8,7 @@ using System.Security.Permissions;
 namespace Rhino.Display
 {
   /// <summary>
-  /// Color defined by 4 floating point values
+  /// Color defined by 4 floating point values.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 16)]
   [DebuggerDisplay("{m_r}, {m_g}, {m_b}, {m_a}")]

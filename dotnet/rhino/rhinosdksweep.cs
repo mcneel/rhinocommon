@@ -7,7 +7,7 @@ namespace Rhino.Geometry
 {
   /// <summary>
   /// Utility class for generating breps by sweeping cross section curves over
-  /// a single rail curve
+  /// a single rail curve.
   /// </summary>
   public class SweepOneRail
   {
@@ -98,7 +98,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// 0: don't miter,  1: intersect surfaces and trim sweeps,  2: rotate shapes at kinks and don't trim
+    /// 0: don't miter,  1: intersect surfaces and trim sweeps,  2: rotate shapes at kinks and don't trim.
     /// </summary>
     public int MiterType
     {
@@ -312,7 +312,7 @@ namespace Rhino.Geometry
 
   /// <summary>
   /// Utility class for generating breps by sweeping cross section curves over
-  /// two rail curves
+  /// two rail curves.
   /// </summary>
   /*public*/ class SweepTwoRail
   {

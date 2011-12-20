@@ -11,7 +11,7 @@ namespace Rhino.UI
 {
   /// <summary>
   /// Used a placeholded which is used by LocalizationProcessor application to create contextId
-  /// mapped localized strings
+  /// mapped localized strings.
   /// </summary>
   public static class LOC
   {
@@ -21,14 +21,14 @@ namespace Rhino.UI
     /// through the source code of a project and looks for LOC.STR. The function is then replaced with a
     /// call to Localization.LocalizeString using a unique context ID.
     ///</summary>
-    ///<param name='english'>[in] The English string to localize</param>
+    ///<param name='english'>[in] The English string to localize.</param>
     public static string STR(string english)
     {
       return english;
     }
 
     /// <summary>
-    /// Similar to String::Format function
+    /// Similar to String::Format function.
     /// </summary>
     /// <param name="english"></param>
     /// <param name="assemblyOrObject"></param>
@@ -45,7 +45,7 @@ namespace Rhino.UI
     /// name for the translators that can be used by developers in a commands overridden Rhino.Commands.Command.LocalName
     /// which should call Rhino.UI.Localization.LocalizeCommandName(EnglishName)
     ///</summary>
-    ///<param name='english'>[in] The English string to localize</param>
+    ///<param name='english'>[in] The English string to localize.</param>
     public static string COMMANDNAME(string english)
     {
       return english;
@@ -57,8 +57,8 @@ namespace Rhino.UI
     /// through the source code of a project and looks for LOC.CON. The function is then replaced with a
     /// call to Localization.LocalizeCommandOptionName using a unique context ID.
     ///</summary>
-    ///<param name='english'>[in] The English string to localize</param>
-    /// <returns>Returns localized string pair with both the English and local names set to the English value</returns>
+    ///<param name='english'>[in] The English string to localize.</param>
+    /// <returns>Returns localized string pair with both the English and local names set to the English value.</returns>
     public static LocalizeStringPair CON(string english)
     {
       return new LocalizeStringPair(english, english);
@@ -70,9 +70,9 @@ namespace Rhino.UI
     /// through the source code of a project and looks for LOC.CON. The function is then replaced with a
     /// call to Localization.LocalizeCommandOptionName using a unique context ID.
     ///</summary>
-    ///<param name='english'>[in] The English string to localize</param>
-    ///<param name='assemblyFromObject'>[in] The object that identifies the assembly that owns the command option name</param>
-    /// <returns>Returns localized string pair with both the English and local names set to the English value</returns>
+    ///<param name='english'>[in] The English string to localize.</param>
+    ///<param name='assemblyFromObject'>[in] The object that identifies the assembly that owns the command option name.</param>
+    /// <returns>Returns localized string pair with both the English and local names set to the English value.</returns>
     public static LocalizeStringPair CON(string english, object assemblyFromObject)
     {
       return new LocalizeStringPair(english, english);
@@ -84,8 +84,8 @@ namespace Rhino.UI
     /// through the source code of a project and looks for LOC.COV. The function is then replaced with a
     /// call to Localization.LocalizeCommandOptionValue using a unique context ID.
     ///</summary>
-    ///<param name='engilsh'>[in] The English string to localize</param>
-    /// <returns>Returns localized string pair with both the English and local names set to the English value</returns>
+    ///<param name='engilsh'>[in] The English string to localize.</param>
+    /// <returns>Returns localized string pair with both the English and local names set to the English value.</returns>
     public static LocalizeStringPair COV(string engilsh)
     {
       return new LocalizeStringPair(engilsh, engilsh);
@@ -97,9 +97,9 @@ namespace Rhino.UI
     /// through the source code of a project and looks for LOC.COV. The function is then replaced with a
     /// call to Localization.LocalizeCommandOptionValue using a unique context ID.
     ///</summary>
-    ///<param name='engilsh'>[in] The English string to localize</param>
-    ///<param name='assemblyFromObject'>[in] The object that identifies the assembly that owns the command option value</param>
-    /// <returns>Returns localized string pair with both the English and local names set to the English value</returns>
+    ///<param name='engilsh'>[in] The English string to localize.</param>
+    ///<param name='assemblyFromObject'>[in] The object that identifies the assembly that owns the command option value.</param>
+    /// <returns>Returns localized string pair with both the English and local names set to the English value.</returns>
     public static LocalizeStringPair COV(string engilsh, object assemblyFromObject)
     {
       return new LocalizeStringPair(engilsh, engilsh);
@@ -109,7 +109,7 @@ namespace Rhino.UI
   public static class Localization
   {
     /// <summary>
-    /// Gets localized unit system name.  Uses current application locale id
+    /// Gets localized unit system name.  Uses current application locale id.
     /// </summary>
     /// <param name="units"></param>
     /// <param name="capitalize"></param>
@@ -128,7 +128,7 @@ namespace Rhino.UI
 
     /// <summary>
     /// Returns localized version of a given English string. This function should be autogenerated by the
-    /// RmaLDotNetLocalizationProcessor application for every function that uses RMASTR
+    /// RmaLDotNetLocalizationProcessor application for every function that uses RMASTR.
     /// </summary>
     /// <param name="english"></param>
     /// <param name="contextId"></param>
@@ -140,7 +140,7 @@ namespace Rhino.UI
     }
     /// <summary>
     /// Returns localized version of a given English string. This function should be autogenerated by the
-    /// RmaLDotNetLocalizationProcessor application for every function that uses RMASTR
+    /// RmaLDotNetLocalizationProcessor application for every function that uses RMASTR.
     /// </summary>
     /// <param name="english"></param>
     /// <param name="assemblyOrObject"></param>
@@ -153,7 +153,7 @@ namespace Rhino.UI
     }
 
     /// <summary>
-    /// Check to see if the passed object is an assembly, if not then get the assembly that owns the object type
+    /// Check to see if the passed object is an assembly, if not then get the assembly that owns the object type.
     /// </summary>
     /// <param name="assemblyOrObject"></param>
     /// <returns></returns>
@@ -271,7 +271,7 @@ namespace Rhino.UI
   }
 
   /// <summary>
-  /// Pair of strings used for localization
+  /// Pair of strings used for localization.
   /// </summary>
   public sealed class LocalizeStringPair
   {

@@ -39,7 +39,7 @@ namespace Rhino.Geometry
     //   m_basecircle.plane.origin + m_height2*m_basecircle.plane.zaxis.
 
     /// <summary>
-    /// Create a new cylinder with infinite height.
+    /// Constructs a new cylinder with infinite height.
     /// </summary>
     /// <param name="baseCircle">Base circle for infinite cylinder.</param>
     public Cylinder(Circle baseCircle)
@@ -50,7 +50,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new cylinder with a finite height.
+    /// Constructs a new cylinder with a finite height.
     /// </summary>
     /// <param name="baseCircle">Base circle for cylinder.</param>
     /// <param name="height">Height of cylinder (zero for infinite cylinder).</param>
@@ -94,8 +94,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// True if the cylinder is finite (Height0 != Height1)
-    /// False if the cylinder is infinite.
+    /// true if the cylinder is finite (Height0 != Height1)
+    /// false if the cylinder is infinite.
     /// </summary>
     public bool IsFinite
     {
@@ -188,7 +188,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a Brep representation of this Cylinder. 
+    /// Constructs a Brep representation of this Cylinder. 
     /// This is synonymous with calling NurbsSurface.CreateFromCylinder().
     /// </summary>
     /// <param name="capBottom">If true, the bottom of the cylinder will be capped.</param>
@@ -205,7 +205,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a Nurbs surface representation of this cylinder. 
+    /// Constructs a Nurbs surface representation of this cylinder. 
     /// This is synonymous with calling NurbsSurface.CreateFromCylinder().
     /// </summary>
     /// <returns>A Nurbs surface representation of the cylinder or null.</returns>
@@ -215,7 +215,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a RevSurface representation of this Cylinder. 
+    /// Constructs a RevSurface representation of this Cylinder. 
     /// This is synonymous with calling RevSurface.CreateFromCylinder().
     /// </summary>
     /// <returns>A RevSurface representation of the cylinder or null.</returns>

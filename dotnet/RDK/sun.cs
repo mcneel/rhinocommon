@@ -17,7 +17,7 @@ namespace Rhino.Render
     // in this class.
     internal Sun(Rhino.RhinoDoc doc) { m_doc = doc; }
 
-    /// <summary>Turn to sun on/off in this document</summary>
+    /// <summary>Turn to sun on/off in this document.</summary>
     public bool Enabled
     {
       get
@@ -30,7 +30,7 @@ namespace Rhino.Render
     /// <summary>
     /// Angle in degrees on world X-Y plane that should be considered north in the model. Angle is
     /// measured starting at X-Axis and travels counterclockwise. Y-Axis would be a north angle of 90
-    /// degrees
+    /// degrees.
     /// </summary>
     public double North
     {
@@ -136,7 +136,7 @@ namespace Rhino.Render
       return new DateTime(year, month, day, hours, minutes, seconds);
     }
     
-    /// <summary>Show the tabbed sun dialog</summary>
+    /// <summary>Show the tabbed sun dialog.</summary>
     public void ShowDialog()
     {
       IntPtr pSun = NonConstPointer();

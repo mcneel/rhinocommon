@@ -5,7 +5,7 @@ using System;
 namespace Rhino.Input.Custom
 {
   /// <summary>
-  /// Provides picking values that describe common CAD picking behavior
+  /// Provides picking values that describe common CAD picking behavior.
   /// </summary>
   public enum PickStyle : int
   {
@@ -16,7 +16,7 @@ namespace Rhino.Input.Custom
   }
 
   /// <summary>
-  /// Privides storage for picking operations
+  /// Privides storage for picking operations.
   /// </summary>
   public class PickContext : IDisposable
   {
@@ -68,7 +68,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// pick chord starts on near clipping plane and ends on far clipping plane
+    /// pick chord starts on near clipping plane and ends on far clipping plane.
     /// </summary>
     public Rhino.Geometry.Line PickLine
     {

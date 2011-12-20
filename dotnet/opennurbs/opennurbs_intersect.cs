@@ -27,8 +27,8 @@ namespace Rhino.Geometry.Intersect
     /// If tolerance &lt;= 0.0, then the closest point between the lines is reported.
     /// </param>
     /// <param name="finiteSegments">
-    /// If True, the input lines are treated as finite segments. 
-    /// If False, the input lines are treated as infinite lines.
+    /// If true, the input lines are treated as finite segments. 
+    /// If false, the input lines are treated as infinite lines.
     /// </param>
     /// <returns>
     /// true if a closest point can be calculated and the result passes the tolerance parameter test; otherwise false.
@@ -36,7 +36,7 @@ namespace Rhino.Geometry.Intersect
     /// <remarks>
     /// If the lines are exactly parallel, meaning the system of equations used to find a and b 
     /// has no numerical solution, then false is returned. If the lines are nearly parallel, which 
-    /// is often numerically True even if you think the lines look exactly parallel, then the 
+    /// is often numerically true even if you think the lines look exactly parallel, then the 
     /// closest points are found and true is returned. So, if you care about weeding out "parallel" 
     /// lines, then you need to do something like the following:
     /// <code lang="cs">
@@ -99,7 +99,7 @@ namespace Rhino.Geometry.Intersect
     /// The shortest distance between the lines is the chord from lineA.PointAt(a) to lineB.PointAt(b)
     /// </param>
     /// <returns>
-    /// True if points are found and false if the lines are numerically parallel. 
+    /// true if points are found and false if the lines are numerically parallel. 
     /// Numerically parallel means the 2x2 matrix:
     /// <para>+AoA  -AoB</para>
     /// <para>-AoB  +BoB</para>
@@ -324,7 +324,7 @@ namespace Rhino.Geometry.Intersect
     /// <param name="lineParameters">
     /// The chord from line.PointAt(lineParameters.T0) to line.PointAt(lineParameters.T1) is the intersection.
     /// </param>
-    /// <returns>True if the line intersects the box, false if no intersection occurs.</returns>
+    /// <returns>true if the line intersects the box, false if no intersection occurs.</returns>
     public static bool LineBox(Line line, BoundingBox box, double tolerance, out Interval lineParameters)
     {
       lineParameters = new Interval();
@@ -342,7 +342,7 @@ namespace Rhino.Geometry.Intersect
     /// <param name="lineParameters">
     /// The chord from line.PointAt(lineParameters.T0) to line.PointAt(lineParameters.T1) is the intersection.
     /// </param>
-    /// <returns>True if the line intersects the box, false if no intersection occurs.</returns>
+    /// <returns>true if the line intersects the box, false if no intersection occurs.</returns>
     public static bool LineBox(Line line, Box box, double tolerance, out Interval lineParameters)
     {
       //David: test this!
@@ -589,14 +589,14 @@ namespace Rhino.Geometry.Intersect
     /// <summary>
     /// Intersects a curve with a Brep. This function returns the 3D points of intersection
     /// and 3D overlap curves. If an error occurs while processing overlap curves, this function 
-    /// will return False, but it will still provide partial results.
+    /// will return false, but it will still provide partial results.
     /// </summary>
     /// <param name="curve">Curve for intersection.</param>
     /// <param name="brep">Brep for intersection.</param>
     /// <param name="tolerance">Fitting and near miss tolerance.</param>
     /// <param name="overlapCurves">The overlap curves will be returned here.</param>
     /// <param name="intersectionPoints">The intersection points will be returned here.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public static bool CurveBrep(Curve curve, Brep brep, double tolerance, out Curve[] overlapCurves, out Point3d[] intersectionPoints)
     {
       overlapCurves = new Curve[0];
@@ -633,7 +633,7 @@ namespace Rhino.Geometry.Intersect
     /// <param name="tolerance">Fitting and near miss tolerance.</param>
     /// <param name="overlapCurves">A overlap curves array argument. This out reference is assigned during the call.</param>
     /// <param name="intersectionPoints">A points array argument. This out reference is assigned during the call.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public static bool CurveBrepFace(Curve curve, BrepFace face, double tolerance, out Curve[] overlapCurves, out Point3d[] intersectionPoints)
     {
       overlapCurves = new Curve[0];
@@ -670,7 +670,7 @@ namespace Rhino.Geometry.Intersect
     /// <param name="tolerance">Intersection tolerance.</param>
     /// <param name="intersectionCurves">The intersection curves will be returned here.</param>
     /// <param name="intersectionPoints">The intersection points will be returned here.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public static bool SurfaceSurface(Surface surfaceA, Surface surfaceB, double tolerance, out Curve[] intersectionCurves, out Point3d[] intersectionPoints)
     {
       intersectionCurves = new Curve[0];
@@ -835,7 +835,7 @@ namespace Rhino.Geometry.Intersect
     /// <param name="ray">A ray to be casted.</param>
     /// <returns>
     /// >= 0.0 parameter along ray if successful.
-    /// &lt; 0.0 if no intersection found
+    /// &lt; 0.0 if no intersection found.
     /// </returns>
     public static double MeshRay(Mesh mesh, Ray3d ray)
     {
@@ -944,11 +944,11 @@ namespace Rhino.Geometry.Intersect
     /// <summary>
     /// Projects points onto meshes.
     /// </summary>
-    /// <param name="meshes">the meshes to project on to</param>
-    /// <param name="points">the points to project</param>
-    /// <param name="direction">the direction to project</param>
+    /// <param name="meshes">the meshes to project on to.</param>
+    /// <param name="points">the points to project.</param>
+    /// <param name="direction">the direction to project.</param>
     /// <param name="tolerance">
-    /// Projection tolerances used for culling close points and for line-mesh intersection
+    /// Projection tolerances used for culling close points and for line-mesh intersection.
     /// </param>
     /// <returns>
     /// Array of projected points, or null in case of any error or invalid input.

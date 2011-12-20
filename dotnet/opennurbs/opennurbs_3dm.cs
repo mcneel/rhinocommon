@@ -60,44 +60,44 @@ namespace Rhino.FileIo
     public const uint TCODE_ENDOFFILE_GOO = 0x00007FFE;
 
     public const uint TCODE_LEGACY_GEOMETRY   = 0x00010000;
-    /// <summary>0x00020000</summary>
+    /// <summary>0x00020000.</summary>
     public const uint TCODE_OPENNURBS_OBJECT = 0x00020000;
-    /// <summary>0x0010000</summary>
+    /// <summary>0x0010000.</summary>
     public const uint TCODE_GEOMETRY = 0x00100000;
-    /// <summary>0x0020000</summary>
+    /// <summary>0x0020000.</summary>
     public const uint TCODE_ANNOTATION = 0x00200000;
-    /// <summary>0x0040000</summary>
+    /// <summary>0x0040000.</summary>
     public const uint TCODE_DISPLAY = 0x00400000;
-    /// <summary>0x0080000</summary>
+    /// <summary>0x0080000.</summary>
     public const uint TCODE_RENDER = 0x00800000;
-    /// <summary>0x02000000</summary>
+    /// <summary>0x02000000.</summary>
     public const uint TCODE_INTERFACE = 0x02000000;
-    /// <summary>0x08000000</summary>
+    /// <summary>0x08000000.</summary>
     public const uint TCODE_TOLERANCE = 0x08000000;
-    /// <summary>0x10000000</summary>
+    /// <summary>0x10000000.</summary>
     public const uint TCODE_TABLE = 0x10000000;
-    /// <summary>0x20000000</summary>
+    /// <summary>0x20000000.</summary>
     public const uint TCODE_TABLEREC = 0x20000000;
-    /// <summary>0x40000000</summary>
+    /// <summary>0x40000000.</summary>
     public const uint TCODE_USER = 0x40000000;
-    /// <summary>0x80000000</summary>
+    /// <summary>0x80000000.</summary>
     public const uint TCODE_SHORT = 0x80000000;
-    /// <summary>0x8000</summary>
+    /// <summary>0x8000.</summary>
     public const uint TCODE_CRC = 0x8000;
     /// <summary>(TCODE_USER | TCODE_CRC | 0x0000)</summary>
     public const uint TCODE_ANONYMOUS_CHUNK = (TCODE_USER | TCODE_CRC | 0x0000);
 
   
-    /// <summary>rendering materials</summary>
+    /// <summary>rendering materials.</summary>
     public const uint TCODE_MATERIAL_TABLE = (TCODE_TABLE | 0x0010);
-    /// <summary>layers</summary>
+    /// <summary>layers.</summary>
     public const uint TCODE_LAYER_TABLE      =(TCODE_TABLE | 0x0011);
-    /// <summary>rendering lights</summary>
+    /// <summary>rendering lights.</summary>
     public const uint TCODE_LIGHT_TABLE      =(TCODE_TABLE | 0x0012);
-    /// <summary>geometry and annotation</summary>
+    /// <summary>geometry and annotation.</summary>
     public const uint TCODE_OBJECT_TABLE     =(TCODE_TABLE | 0x0013);
     /// <summary>
-    /// Model Properties: revision history, notes, preview image
+    /// Model Properties: revision history, notes, preview image.
     /// </summary>
     public const uint TCODE_PROPERTIES_TABLE =(TCODE_TABLE | 0x0014);
                                                       

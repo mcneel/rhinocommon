@@ -24,7 +24,7 @@ namespace Rhino.DocObjects.Tables
       get { return m_doc; }
     }
 
-    /// <summary>Number of construction planes in the table</summary>
+    /// <summary>Number of construction planes in the table.</summary>
     public int Count
     {
       get
@@ -37,7 +37,7 @@ namespace Rhino.DocObjects.Tables
     /// Conceptually, the named construction plane table is an array of ConstructionPlanes
     /// and their associated names. The operator[] can be used to get individual ConstructionPlanes.
     /// </summary>
-    /// <param name="index">zero based array index</param>
+    /// <param name="index">zero based array index.</param>
     /// <returns>
     /// </returns>
     public DocObjects.ConstructionPlane this[int index]
@@ -49,13 +49,13 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
-    /// <summary>Find a named construction plane</summary>
+    /// <summary>Finds a named construction plane.</summary>
     /// <param name="name">
     /// Name of construction plane to search for.
     /// </param>
     /// <returns>
     /// &gt;=0 index of the construction plane with the given name.
-    /// -1 no construction plane found with the given name
+    /// -1 no construction plane found with the given name.
     /// </returns>
     public int Find(string name)
     {
@@ -63,7 +63,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Add named construction plane to document.
+    /// Adds named construction plane to document.
     /// </summary>
     /// <param name="name">
     /// If name is empty, a unique name is automatically created.
@@ -73,7 +73,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="plane"></param>
     /// <returns>
     /// 0 based index of named construction plane.
-    /// -1 on failure
+    /// -1 on failure.
     /// </returns>
     public int Add(string name, Rhino.Geometry.Plane plane)
     {
@@ -81,20 +81,20 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Remove named construction plane from the document
+    /// Remove named construction plane from the document.
     /// </summary>
-    /// <param name="index">zero based array index</param>
-    /// <returns>true if successful</returns>
+    /// <param name="index">zero based array index.</param>
+    /// <returns>true if successful.</returns>
     public bool Delete(int index)
     {
       return UnsafeNativeMethods.CRhinoDocProperties_RemoveCPlane(m_doc.m_docId, index);
     }
 
     /// <summary>
-    /// Remove named construction plane from the document
+    /// Remove named construction plane from the document.
     /// </summary>
-    /// <param name="name">name of the construction plane</param>
-    /// <returns>true if successful</returns>
+    /// <param name="name">name of the construction plane.</param>
+    /// <returns>true if successful.</returns>
     public bool Delete(string name)
     {
       int index = Find(name);
@@ -114,7 +114,7 @@ namespace Rhino.DocObjects.Tables
   }
 
   /// <summary>
-  /// All named views in a rhino document
+  /// All named views in a rhino document.
   /// </summary>
   public sealed class NamedViewTable : IEnumerable<ViewInfo>, Rhino.Collections.IRhinoTable<ViewInfo>
   {
@@ -125,13 +125,13 @@ namespace Rhino.DocObjects.Tables
       m_doc = doc;
     }
 
-    /// <summary>Document that owns this table</summary>
+    /// <summary>Document that owns this table.</summary>
     public RhinoDoc Document
     {
       get { return m_doc; }
     }
 
-    /// <summary>Number of named views in the table</summary>
+    /// <summary>Number of named views in the table.</summary>
     public int Count
     {
       get
@@ -144,7 +144,7 @@ namespace Rhino.DocObjects.Tables
     /// Conceptually, the named view table is an array of ViewInfo and their associated names.
     /// The operator[] can be used to get individual ViewInfo items.
     /// </summary>
-    /// <param name="index">zero based array index</param>
+    /// <param name="index">zero based array index.</param>
     /// <returns></returns>
     public DocObjects.ViewInfo this[int index]
     {
@@ -163,11 +163,11 @@ namespace Rhino.DocObjects.Tables
       return FindByName(name);
     }
 
-    /// <summary>Find a named view</summary>
-    /// <param name="name">name to search for</param>
+    /// <summary>Finds a named view.</summary>
+    /// <param name="name">name to search for.</param>
     /// <returns>
     /// &gt;=0 index of the found named view
-    /// -1 no named view found
+    /// -1 no named view found.
     /// </returns>
     public int FindByName(string name)
     {
@@ -175,17 +175,17 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Add named view to document which is based on an existing viewport
+    /// Adds named view to document which is based on an existing viewport.
     /// </summary>
     /// <param name="name">
     /// If name is empty, a unique name is automatically created.
     /// If there is already a named view with the same name, that view is replaced.
     /// </param>
     /// <param name="viewportId">
-    /// Id of an existing viewport in the document. View information is copied from this viewport</param>
+    /// Id of an existing viewport in the document. View information is copied from this viewport.</param>
     /// <returns>
     /// 0 based index of named view.
-    /// -1 on failure
+    /// -1 on failure.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addnamedview.vb' lang='vbnet'/>
@@ -203,17 +203,17 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDocProperties_AddNamedView2(m_doc.m_docId, pConstView);
     }
 
-    /// <summary>Remove named view from the document</summary>
-    /// <param name="index">index of the named view in the named view table</param>
-    /// <returns>true if successful</returns>
+    /// <summary>Remove named view from the document.</summary>
+    /// <param name="index">index of the named view in the named view table.</param>
+    /// <returns>true if successful.</returns>
     public bool Delete(int index)
     {
       return UnsafeNativeMethods.CRhinoDocProperties_RemoveNamedView(m_doc.m_docId, index);
     }
 
-    /// <summary>Remove named view from the document</summary>
-    /// <param name="name">name of the view</param>
-    /// <returns>true if successful</returns>
+    /// <summary>Remove named view from the document.</summary>
+    /// <param name="name">name of the view.</param>
+    /// <returns>true if successful.</returns>
     public bool Delete(string name)
     {
       int index = FindByName(name);

@@ -9,7 +9,7 @@ namespace Rhino.Display
   /// <summary>
   /// A RhinoView represents a single "window" display of a document. A view could
   /// contain one or many RhinoViewports (many in the case of Layout views with detail viewports).
-  /// Standard Rhino modeling views have one viewport
+  /// Standard Rhino modeling views have one viewport.
   /// </summary>
   public class RhinoView
   {
@@ -73,7 +73,7 @@ namespace Rhino.Display
     // to wrap CView base class functions
 
     /// <summary>
-    /// Gets the window handle that this view is bound to
+    /// Gets the window handle that this view is bound to.
     /// </summary>
     public IntPtr Handle
     {
@@ -130,7 +130,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert a point in screen coordinates to client coordinates for this view
+    /// Convert a point in screen coordinates to client coordinates for this view.
     /// </summary>
     /// <param name="screenPoint"></param>
     /// <returns></returns>
@@ -162,7 +162,7 @@ namespace Rhino.Display
     //  functionality in CView base class
     //  UUID PlugInID() const;
 
-    /// <summary>Redraw this view</summary>
+    /// <summary>Redraw this view.</summary>
     /// <remarks>
     /// If you change something in "this" view like the projection, construction plane,
     /// background bitmap, etc., then you need to call RhinoView.Redraw() to redraw
@@ -210,7 +210,7 @@ namespace Rhino.Display
     ///<param name='size'>[in] The width and height of the bitmap in pixels.</param>
     ///<param name="ignoreHighlights"></param>
     ///<param name="drawConstructionPlane"></param>
-    ///<returns>true if successful</returns>
+    ///<returns>true if successful.</returns>
     public bool CreateWireframePreviewImage(string imagePath,
                                             System.Drawing.Size size,
                                             bool ignoreHighlights,
@@ -235,7 +235,7 @@ namespace Rhino.Display
     /// <param name="ignoreHighlights"></param>
     /// <param name="drawConstructionPlane"></param>
     /// <param name="useGhostedShading"></param>
-    ///<returns>true if successful</returns>
+    ///<returns>true if successful.</returns>
     public bool CreateShadedPreviewImage(string imagePath,
                                          System.Drawing.Size size,
                                          bool ignoreHighlights,
@@ -266,7 +266,7 @@ namespace Rhino.Display
     /// <summary>
     /// Capture View contents to a bitmap.
     /// </summary>
-    /// <param name="size">Size of Bitmap to capture to</param>
+    /// <param name="size">Size of Bitmap to capture to.</param>
     /// <returns></returns>
     public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size)
     {
@@ -284,7 +284,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Capture View contents to a bitmap allowing for visibility of grid and axes
+    /// Capture View contents to a bitmap allowing for visibility of grid and axes.
     /// </summary>
     /// <param name="size"></param>
     /// <param name="grid"></param>
@@ -307,7 +307,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Capture View contents to a bitmap allowing for visibility of grid and axes
+    /// Capture View contents to a bitmap allowing for visibility of grid and axes.
     /// </summary>
     /// <param name="grid"></param>
     /// <param name="worldAxes"></param>
@@ -320,7 +320,7 @@ namespace Rhino.Display
 
     /// <summary>
     /// Capture View contents to a bitmap using a display mode description to define
-    /// how drawing is performed
+    /// how drawing is performed.
     /// </summary>
     /// <param name="size"></param>
     /// <param name="mode"></param>
@@ -333,7 +333,7 @@ namespace Rhino.Display
 
     /// <summary>
     /// Capture View contents to a bitmap using a display mode description to define
-    /// how drawing is performed
+    /// how drawing is performed.
     /// </summary>
     /// <param name="mode"></param>
     /// <returns></returns>
@@ -344,7 +344,7 @@ namespace Rhino.Display
 
     /// <summary>
     /// Capture View contents to a bitmap using display attributes to define how
-    /// drawing is performed
+    /// drawing is performed.
     /// </summary>
     /// <param name="size"></param>
     /// <param name="attributes"></param>
@@ -367,7 +367,7 @@ namespace Rhino.Display
 
     /// <summary>
     /// Capture View contents to a bitmap using display attributes to define how
-    /// drawing is performed
+    /// drawing is performed.
     /// </summary>
     /// <param name="attributes"></param>
     /// <returns></returns>
@@ -411,7 +411,7 @@ namespace Rhino.Display
     /// A RhinoView contains a "main viewport" that fills the entire view client window.
     /// RhinoPageViews may also contain nested child RhinoViewports for implementing
     /// detail viewports.
-    /// The MainViewport will always return this RhinoView's m_vp
+    /// The MainViewport will always return this RhinoView's m_vp.
     /// </summary>
     public RhinoViewport MainViewport
     {
@@ -470,7 +470,7 @@ namespace Rhino.Display
     //  void UpdateTitle( BOOL );
 
     /// <summary>
-    /// Visibility of the viewport title window
+    /// Visibility of the viewport title window.
     /// </summary>
     public bool TitleVisible
     {
@@ -537,9 +537,9 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="floating">
     /// if true, then the view will be in a floating frame window. Otherwise
-    /// the view will be embeded in the main frame
+    /// the view will be embeded in the main frame.
     /// </param>
-    /// <returns>true on success</returns>
+    /// <returns>true on success.</returns>
     [Obsolete("Use Floating property - this will be removed in a future WIP")]
     public bool FloatRhinoView(bool floating)
     {
@@ -550,7 +550,7 @@ namespace Rhino.Display
     /// <summary>
     /// Floating state of RhinoView.
     /// if true, then the view will be in a floating frame window. Otherwise
-    /// the view will be embeded in the main frame
+    /// the view will be embeded in the main frame.
     /// </summary>
     public bool Floating
     {

@@ -4,7 +4,7 @@ using System;
 namespace Rhino.UI
 {
   /// <summary>
-  /// Provides a base class to inherit from for the addition of stacked dialog pages
+  /// Provides a base class to inherit from for the addition of stacked dialog pages.
   /// </summary>
   public abstract class StackedDialogPage
   {
@@ -50,7 +50,7 @@ namespace Rhino.UI
       get { return EnglishPageTitle; }
     }
     
-    /// <summary>Called when stacked dialog OK button is pressed</summary>
+    /// <summary>Called when stacked dialog OK button is pressed.</summary>
     /// <returns>
     /// If return value is true then the dialog will be closed. A return of false means
     /// there was an error and dialog remains open so page can be properly updated.

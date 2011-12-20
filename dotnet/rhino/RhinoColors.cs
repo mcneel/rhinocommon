@@ -23,7 +23,7 @@ namespace Rhino.Display
 
     #region constructors
     /// <summary>
-    /// Create a new instance of ColorHSL that is equivalent to an RGB color.
+    /// Constructs a new instance of ColorHSL that is equivalent to an RGB color.
     /// </summary>
     /// <param name="rgb">RGB color to mimic.</param>
     /// <remarks>Exact conversions between color spaces are often not possible.</remarks>
@@ -33,9 +33,9 @@ namespace Rhino.Display
       ColorConverter.RGB_To_HSL(rgb.R, rgb.G, rgb.B, out m_h, out m_s, out m_l);
     }
     /// <summary>
-    /// Create a new instance of ColorHSL with custom channel values.
+    /// Constructs a new instance of ColorHSL with custom channel values.
     /// </summary>
-    /// <param name="hue">Hue channel value. Hue channels rotate between 0.0 and 1.0</param>
+    /// <param name="hue">Hue channel value. Hue channels rotate between 0.0 and 1.0.</param>
     /// <param name="saturation">Saturation channel value. Channel will be limited to 0~1.</param>
     /// <param name="luminance">Luminance channel value. Channel will be limited to 0~1.</param>
     public ColorHSL(double hue, double saturation, double luminance)
@@ -46,10 +46,10 @@ namespace Rhino.Display
       m_a = 0.0f;
     }
     /// <summary>
-    /// Create a new instance of ColorHSL with custom channel values.
+    /// Constructs a new instance of ColorHSL with custom channel values.
     /// </summary>
     /// <param name="alpha">Alpha channel value. Channel will be limited to 0~1.</param>
-    /// <param name="hue">Hue channel value. Hue channels rotate between 0.0 and 1.0</param>
+    /// <param name="hue">Hue channel value. Hue channels rotate between 0.0 and 1.0.</param>
     /// <param name="saturation">Saturation channel value. Channel will be limited to 0~1.</param>
     /// <param name="luminance">Luminance channel value. Channel will be limited to 0~1.</param>
     public ColorHSL(double alpha, double hue, double saturation, double luminance)
@@ -108,7 +108,7 @@ namespace Rhino.Display
     #region properties
     /// <summary>
     /// Gets or sets the hue channel value. 
-    /// Hue channels rotate between 0.0 and 1.0
+    /// Hue channels rotate between 0.0 and 1.0.
     /// </summary>
     public double H
     {
@@ -153,7 +153,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert HSL color to an equivalent System.Drawing.Color
+    /// Convert HSL color to an equivalent System.Drawing.Color.
     /// </summary>
     /// <returns></returns>
     public System.Drawing.Color ToArgbColor()
@@ -392,7 +392,7 @@ namespace Rhino.Display
 
     #region constructors
     /// <summary>
-    /// Create a new instance of ColorXYZ that is equivalent to an RGB color.
+    /// Constructs a new instance of ColorXYZ that is equivalent to an RGB color.
     /// </summary>
     /// <param name="rgb">RGB color to mimic.</param>
     /// <remarks>Exact conversions between color spaces are often not possible.</remarks>
@@ -402,7 +402,7 @@ namespace Rhino.Display
       ColorConverter.RGB_To_XYZ(rgb.R, rgb.G, rgb.B, out m_x, out m_y, out m_z); 
     }
     /// <summary>
-    /// Create a new instance of ColorXYZ with custom channel values.
+    /// Constructs a new instance of ColorXYZ with custom channel values.
     /// </summary>
     /// <param name="x">X channel value, channel will be limited to 0~1.</param>
     /// <param name="y">Y channel value, channel will be limited to 0~1.</param>
@@ -415,7 +415,7 @@ namespace Rhino.Display
       m_a = 0.0;
     }
     /// <summary>
-    /// Create a new instance of ColorXYZ with custom channel values.
+    /// Constructs a new instance of ColorXYZ with custom channel values.
     /// </summary>
     /// <param name="alpha">Alpha channel value, channel will be limited to 0~1.</param>
     /// <param name="x">X channel value, channel will be limited to 0~1.</param>
@@ -596,7 +596,7 @@ namespace Rhino.Display
 
     #region constructors
     /// <summary>
-    /// Create a new instance of ColorLAB that is equivalent to an RGB color.
+    /// Constructs a new instance of ColorLAB that is equivalent to an RGB color.
     /// </summary>
     /// <param name="rgb">RGB color to mimic.</param>
     /// <remarks>Exact conversions between color spaces are often not possible.</remarks>
@@ -605,7 +605,7 @@ namespace Rhino.Display
       this = CreateFromXYZ(new ColorXYZ(rgb));
     }
     /// <summary>
-    /// Create a new instance of ColorLAB with custom channel values.
+    /// Constructs a new instance of ColorLAB with custom channel values.
     /// </summary>
     public ColorLAB(double lightness, double a, double b)
     {
@@ -615,7 +615,7 @@ namespace Rhino.Display
       m_alpha = 0.0;
     }
     /// <summary>
-    /// Create a new instance of ColorLAB with custom channel values.
+    /// Constructs a new instance of ColorLAB with custom channel values.
     /// </summary>
     public ColorLAB(double alpha, double lightness, double a, double b)
     {
@@ -756,7 +756,7 @@ namespace Rhino.Display
 
     #region constructors
     /// <summary>
-    /// Create a new instance of ColorLCH that is equivalent to an RGB color.
+    /// Constructs a new instance of ColorLCH that is equivalent to an RGB color.
     /// </summary>
     /// <param name="rgb">RGB color to mimic.</param>
     /// <remarks>Exact conversions between color spaces are often not possible.</remarks>
@@ -765,7 +765,7 @@ namespace Rhino.Display
       this = CreateFromLAB(new ColorLAB(rgb));
     }
     /// <summary>
-    /// Create a new instance of ColorLCH with custom channel values.
+    /// Constructs a new instance of ColorLCH with custom channel values.
     /// </summary>
     /// <param name="lightness">Value of lightness channel. This channel is limited to 0~1.</param>
     /// <param name="chroma">Value of chroma channel. This channel is limited to -1~1.</param>
@@ -778,7 +778,7 @@ namespace Rhino.Display
       m_a = 0.0;
     }
     /// <summary>
-    /// Create a new instance of ColorLCH with custom channel values.
+    /// Constructs a new instance of ColorLCH with custom channel values.
     /// </summary>
     /// <param name="alpha">Value of Alpha channel. This channel is limited to 0~1.</param>
     /// <param name="lightness">Value of Lightness channel. This channel is limited to 0~1.</param>
@@ -853,7 +853,7 @@ namespace Rhino.Display
       set { m_l = ClipL(value); }
     }
     /// <summary>
-    /// Gets or sets the Chroma channel. Chroma is defined from -1.0 to +1.0
+    /// Gets or sets the Chroma channel. Chroma is defined from -1.0 to +1.0.
     /// </summary>
     public double C
     {

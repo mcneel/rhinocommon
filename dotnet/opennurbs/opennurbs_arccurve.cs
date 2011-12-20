@@ -93,7 +93,7 @@ namespace Rhino.Geometry
     /// needed parametrization of the arc.
     /// <para>Circle will not be newly cut at these parameterizations.</para>
     /// </summary>
-    /// <param name="circle">A circle</param>
+    /// <param name="circle">A circle.</param>
     /// <param name="t0">A new Domain.T0 value.</param>
     /// <param name="t1">A new Domain.T1 value.</param>
     public ArcCurve(Circle circle, double t0, double t1)

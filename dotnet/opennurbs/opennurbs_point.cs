@@ -273,7 +273,7 @@ namespace Rhino.Geometry
     }
 
     // If we decide that Interval.Empty should indeed be replaced with Interval.Unset, this function becomes pointless
-    /////<summary>Returns true if T[0] == T[1] == ON.UnsetValue</summary>
+    /////<summary>Returns true if T[0] == T[1] == ON.UnsetValue.</summary>
     //public bool IsEmpty
     //{
     //  get { return (RhinoMath.UnsetValue == m_t0 && RhinoMath.UnsetValue == m_t1); }
@@ -464,7 +464,7 @@ namespace Rhino.Geometry
       return x;
     }
 
-    ///<summary>Converts interval value, or pair of values, to normalized parameter</summary>
+    ///<summary>Converts interval value, or pair of values, to normalized parameter.</summary>
     ///<returns>Normalized parameter x so that min*(1.0-x) + max*x = intervalParameter.</returns>
     ///<seealso>ParameterAt</seealso>
     public Interval NormalizedIntervalAt(Interval intervalParameter)
@@ -586,7 +586,7 @@ namespace Rhino.Geometry
     public double X { get { return m_x; } set { m_x = value; } }
 
     /// <summary>
-    /// Gets or sets the Y (second) coordinate of the point
+    /// Gets or sets the Y (second) coordinate of the point.
     /// </summary>
     public double Y { get { return m_y; } set { m_y = value; } }
 
@@ -3073,7 +3073,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Uses RhinoMath.ZeroTolerance for IsTiny calculation
+    /// Uses RhinoMath.ZeroTolerance for IsTiny calculation.
     /// </summary>
     /// <returns>true if vector is very small, otherwise false.</returns>
     public bool IsTiny()

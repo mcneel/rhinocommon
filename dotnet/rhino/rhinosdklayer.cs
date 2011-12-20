@@ -69,7 +69,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Creates a Layer with the current default layer properties.
+    /// Constructs a Layer with the current default layer properties.
     /// The default layer properties are:
     /// color = Rhino.ApplicationSettings.AppearanceSettings.DefaultLayerColor
     /// line style = Rhino.ApplicationSettings.AppearanceSettings.DefaultLayerLineStyle
@@ -132,7 +132,7 @@ namespace Rhino.DocObjects
     const int idxIsLocked = 1;
     const int idxIsExpanded = 2;
     #region properties
-    /// <summary>The name of this layer</summary>
+    /// <summary>The name of this layer.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_sellayer.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_sellayer.cs' lang='cs'/>
@@ -412,7 +412,7 @@ namespace Rhino.DocObjects
     }
 #endif
 
-    /// <summary>Runtime index used to sort layers in layer dialog</summary>
+    /// <summary>Runtime index used to sort layers in layer dialog.</summary>
     public int SortIndex
     {
       get
@@ -466,7 +466,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Determine if a given string is valid for a layer name
+    /// Determine if a given string is valid for a layer name.
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
@@ -506,9 +506,9 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets immediate children of this layer. Note that child layers may have their own children
+    /// Gets immediate children of this layer. Note that child layers may have their own children.
     /// </summary>
-    /// <returns>Array of child layers. null if this layer does not have any children</returns>
+    /// <returns>Array of child layers. null if this layer does not have any children.</returns>
     public Layer[] GetChildren()
     {
       Runtime.InteropWrappers.SimpleArrayInt childIndices = new Rhino.Runtime.InteropWrappers.SimpleArrayInt();
@@ -543,9 +543,9 @@ namespace Rhino.DocObjects.Tables
     Deleted = 1,
     Undeleted = 2,
     Modified = 3,
-    /// <summary>LayerTable.Sort() potentially changed sort order</summary>
+    /// <summary>LayerTable.Sort() potentially changed sort order.</summary>
     Sorted = 4,
-    /// <summary>Current layer change</summary>
+    /// <summary>Current layer change.</summary>
     Current = 5
   }
 
@@ -617,7 +617,7 @@ namespace Rhino.DocObjects.Tables
       m_doc = doc;
     }
 
-    /// <summary>Document that owns this table</summary>
+    /// <summary>Document that owns this table.</summary>
     public RhinoDoc Document
     {
       get { return m_doc; }
@@ -635,7 +635,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Returns number of layers in the layer table, excluding deleted layers
+    /// Returns number of layers in the layer table, excluding deleted layers.
     /// </summary>
     public int ActiveCount
     {
@@ -648,9 +648,9 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Conceptually, the layer table is an array of layers.
     /// The operator[] can be used to get individual layers. A layer is
-    /// either active or deleted and this state is reported by Layer.IsDeleted
+    /// either active or deleted and this state is reported by Layer.IsDeleted.
     /// </summary>
-    /// <param name="index">zero based array index</param>
+    /// <param name="index">zero based array index.</param>
     /// <returns>
     /// Refererence to the layer.  If layer_index is out of range, the current
     /// layer is returned. Note that this reference may become invalid after
@@ -669,7 +669,7 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// At all times, there is a "current" layer.  Unless otherwise specified, new objects
     /// are assigned to the current layer. The current layer is never locked, hidden, or deleted.
-    /// Resturns: Zero based layer table index of the current layer
+    /// Resturns: Zero based layer table index of the current layer.
     /// </summary>
     public int CurrentLayerIndex
     {
@@ -725,7 +725,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="ignoreDeletedLayers">true means don't search deleted layers.</param>
     /// <returns>
     /// >=0 index of the layer with the given name
-    /// -1  no layer has the given name
+    /// -1  no layer has the given name.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayer.vb' lang='vbnet'/>
@@ -755,12 +755,12 @@ namespace Rhino.DocObjects.Tables
     }
 #endif
 
-    /// <summary>Find a layer with a matching id</summary>
+    /// <summary>Finds a layer with a matching id.</summary>
     /// <param name="layerId"></param>
-    /// <param name="ignoreDeletedLayers">If true, deleted layers are not checked</param>
+    /// <param name="ignoreDeletedLayers">If true, deleted layers are not checked.</param>
     /// <returns>
     /// >=0 index of the layer with the given name
-    /// -1  no layer has the given name
+    /// -1  no layer has the given name.
     /// </returns>
     public int Find(Guid layerId, bool ignoreDeletedLayers)
     {
@@ -768,7 +768,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Adds a new layer with specified definition to the layer table
+    /// Adds a new layer with specified definition to the layer table.
     /// </summary>
     /// <param name="layer">
     /// definition of new layer. The information in layer is copied. If layer.Name is empty
@@ -791,7 +791,7 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoLayerTable_AddLayer(m_doc.m_docId, pLayer, false);
     }
     /// <summary>
-    /// Adds a new layer with specified definition to the layer table
+    /// Adds a new layer with specified definition to the layer table.
     /// </summary>
     /// <param name="layerName">Name for new layer. Cannot be a null or zero-length string.</param>
     /// <param name="layerColor">Color of new layer. Alpha components will be ignored.</param>
@@ -820,7 +820,7 @@ namespace Rhino.DocObjects.Tables
 
     /// <summary>
     /// Adds a new reference layer with specified definition to the layer table
-    /// Reference layers are not saved in files
+    /// Reference layers are not saved in files.
     /// </summary>
     /// <param name="layer">
     /// definition of new layer. The information in layer is copied. If layer.Name is empty
@@ -841,25 +841,25 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Adds a new layer with default definition to the layer table.
     /// </summary>
-    /// <returns>index of new layer</returns>
+    /// <returns>index of new layer.</returns>
     public int Add()
     {
       return UnsafeNativeMethods.CRhinoLayerTable_AddLayer(m_doc.m_docId, IntPtr.Zero, false);
     }
     /// <summary>
     /// Adds a new reference layer with default definition to the layer table.
-    /// Reference layers are not saved in files
+    /// Reference layers are not saved in files.
     /// </summary>
-    /// <returns>index of new layer</returns>
+    /// <returns>index of new layer.</returns>
     public int AddReferenceLayer()
     {
       return UnsafeNativeMethods.CRhinoLayerTable_AddLayer(m_doc.m_docId, IntPtr.Zero, true);
     }
 
-    /// <summary>Modify layer settings</summary>
-    /// <param name="newSettings">This information is copied</param>
+    /// <summary>Modify layer settings.</summary>
+    /// <param name="newSettings">This information is copied.</param>
     /// <param name="layerIndex">
-    /// zero based index of layer to set.  This must be in the range 0 &lt;= layerIndex &lt; LayerTable.Count
+    /// zero based index of layer to set.  This must be in the range 0 &lt;= layerIndex &lt; LayerTable.Count.
     /// </param>
     /// <param name="quiet">if true, information message boxes pop up when illegal changes are attempted.</param>
     /// <returns>
@@ -875,7 +875,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Make a layer and all of it's parent layers visible
+    /// Make a layer and all of it's parent layers visible.
     /// </summary>
     /// <param name="layerId"></param>
     /// <returns></returns>
@@ -885,7 +885,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Make a layer and all of it's parent layers visible
+    /// Make a layer and all of it's parent layers visible.
     /// </summary>
     /// <param name="layerIndex"></param>
     /// <returns></returns>
@@ -900,7 +900,7 @@ namespace Rhino.DocObjects.Tables
     /// </summary>
     /// <param name="layerIndex"></param>
     /// <param name="undoRecordSerialNumber"></param>
-    /// <returns>true if this layer had been modified and the modifications were undone</returns>
+    /// <returns>true if this layer had been modified and the modifications were undone.</returns>
     [CLSCompliant(false)]
     public bool UndoModify(int layerIndex, uint undoRecordSerialNumber)
     {
@@ -912,9 +912,9 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoLayerTable_UndoModifyLayer(m_doc.m_docId, layerIndex, 0);
     }
 
-    /// <summary>Deletes layer</summary>
+    /// <summary>Deletes layer.</summary>
     /// <param name="layerIndex">
-    /// zero based index of layer to delete. This must be in the range 0 &lt;= layerIndex &lt; LayerTable.Count
+    /// zero based index of layer to delete. This must be in the range 0 &lt;= layerIndex &lt; LayerTable.Count.
     /// </param>
     /// <param name="quiet">
     /// If true, no warning message box appears if a layer the layer cannot be
@@ -937,9 +937,9 @@ namespace Rhino.DocObjects.Tables
     /// </summary>
     /// <param name="layerIndex">
     /// zero based index of layer to undelete.
-    /// This must be in the range 0 &lt;= layerIndex &lt; LayerTable.Count
+    /// This must be in the range 0 &lt;= layerIndex &lt; LayerTable.Count.
     /// </param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool Undelete(int layerIndex)
     {
       return UnsafeNativeMethods.CRhinoLayerTable_UndeleteLayer(m_doc.m_docId, layerIndex);

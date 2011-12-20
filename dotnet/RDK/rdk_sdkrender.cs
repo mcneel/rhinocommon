@@ -147,7 +147,7 @@ namespace Rhino.Render
     /// A new render mesh iterator. The caller shall delete the iterator. Any meshes created by the iterator persist in memory for the lifetime of the iterator.
     /// </summary>
     /// <param name="forceTriMesh"></param>
-    /// <param name="vp">The rendering view camera</param>
+    /// <param name="vp">The rendering view camera.</param>
     /// <returns></returns>
     /// //TODO - ON_Viewport
     public RenderMeshIterator NewRenderMeshIterator(Rhino.DocObjects.ViewportInfo vp, bool forceTriMesh)

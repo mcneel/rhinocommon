@@ -8,7 +8,7 @@ namespace Rhino.Display
 {
   /// <summary>
   /// Description of a how Rhino will display in a viewport. These are the modes
-  /// that are listed under "Advanced display" in the options dialog
+  /// that are listed under "Advanced display" in the options dialog.
   /// </summary>
   [Serializable]
   public class DisplayModeDescription : IDisposable, ISerializable
@@ -91,11 +91,11 @@ namespace Rhino.Display
 
     #region statics
     /// <summary>
-    /// Gets all display mode descriptions that Rhino currently knows about
+    /// Gets all display mode descriptions that Rhino currently knows about.
     /// </summary>
     /// <returns>
     /// Copies of all of the display mode descriptions. If you want to modify
-    /// these descriptions, you must call UpdateDisplayMode or AddDisplayMode
+    /// these descriptions, you must call UpdateDisplayMode or AddDisplayMode.
     /// </returns>
     /// <example>
     /// <code source='examples\vbnet\ex_advanceddisplay.vb' lang='vbnet'/>

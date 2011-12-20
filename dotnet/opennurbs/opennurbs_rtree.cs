@@ -58,7 +58,7 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Sphere bounds used during a search. You can modify the sphere in a search callback to
-    /// help reduce the bounds to search
+    /// help reduce the bounds to search.
     /// </summary>
     public Sphere SearchSphere
     {
@@ -103,7 +103,7 @@ namespace Rhino.Geometry
   /// </summary>
   /// <remarks>
   /// The opennurbs rtree code is a modifed version of the free and unrestricted
-  /// R-tree implementation obtianed from http://www.superliminal.com/sources/sources.htm
+  /// R-tree implementation obtianed from http://www.superliminal.com/sources/sources.htm .
   /// </remarks>
   public class RTree : IDisposable
   {
@@ -120,7 +120,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Creates a new tree with an element for each face in the mesh.
+    /// Constructs a new tree with an element for each face in the mesh.
     /// The element id is set to the index of the face.
     /// </summary>
     /// <param name="mesh">A mesh.</param>
@@ -142,7 +142,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Creates a new tree with an element for each pointcloud point.
+    /// Constructs a new tree with an element for each pointcloud point.
     /// </summary>
     /// <param name="cloud">A pointcloud.</param>
     /// <returns>A new tree, or null on error.</returns>
@@ -190,7 +190,7 @@ namespace Rhino.Geometry
       return Insert(box, new IntPtr(elementId));
     }
 
-    /// <summary>Insert an element into the tree.</summary>
+    /// <summary>Inserts an element into the tree.</summary>
     /// <param name="box">A bounding box.</param>
     /// <param name="elementId">A pointer.</param>
     /// <returns>true if element was successfully inserted.</returns>
@@ -257,10 +257,10 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_RTree_InsertRemove(pThis, false, box.Min, box.Max, elementId);
     }
 
-    /// <summary>Removes an element from the tree</summary>
+    /// <summary>Removes an element from the tree.</summary>
     /// <param name="point">A point.</param>
     /// <param name="elementId">A number.</param>
-    /// <returns>true if element was successfully removed</returns>
+    /// <returns>true if element was successfully removed.</returns>
     public bool Remove(Point2d point, int elementId)
     {
       return Remove(new Point3d(point.X, point.Y, 0), elementId);
@@ -377,9 +377,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Searches for items in a sphere
+    /// Searches for items in a sphere.
     /// </summary>
-    /// <param name="sphere">bounds used for searching</param>
+    /// <param name="sphere">bounds used for searching.</param>
     /// <param name="callback">An event handler to be raised when items are found.</param>
     /// <returns>
     /// true if entire tree was searched. It is possible no results were found.
@@ -390,9 +390,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Searches for items in a sphere
+    /// Searches for items in a sphere.
     /// </summary>
-    /// <param name="sphere">bounds used for searching</param>
+    /// <param name="sphere">bounds used for searching.</param>
     /// <param name="callback">An event handler to be raised when items are found.</param>
     /// <param name="tag">State to be passed inside the <see cref="RTreeEventArgs"/> Tag property.</param>
     /// <returns>
@@ -433,7 +433,7 @@ namespace Rhino.Geometry
     /// </param>
     /// <param name="callback">A callback event handler.</param>
     /// <returns>
-    /// True if entire tree was searched.  It is possible no results were found.
+    /// true if entire tree was searched.  It is possible no results were found.
     /// </returns>
     public static bool SearchOverlaps(RTree treeA, RTree treeB, double tolerance, EventHandler<RTreeEventArgs> callback)
     {

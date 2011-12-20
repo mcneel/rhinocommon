@@ -15,7 +15,7 @@ namespace Rhino.Display
 
     #region constructors
     /// <summary>
-    /// Create a default material.
+    /// Constructs a default material.
     /// </summary>
     public DisplayMaterial()
     {
@@ -37,7 +37,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Create a default material with a specific diffuse color.
+    /// Constructs a default material with a specific diffuse color.
     /// </summary>
     /// <param name="diffuse">Diffuse color of material. The alpha component of the Diffuse color is ignored.</param>
     public DisplayMaterial(Color diffuse)
@@ -46,7 +46,7 @@ namespace Rhino.Display
       m_ptr = UnsafeNativeMethods.CDisplayPipelineMaterial_New1(argb);
     }
     /// <summary>
-    /// Create a default material with a specific diffuse color and transparency.
+    /// Constructs a default material with a specific diffuse color and transparency.
     /// </summary>
     /// <param name="diffuse">Diffuse color of material. The alpha component of the Diffuse color is ignored.</param>
     /// <param name="transparency">Transparency factor (0.0 = opaque, 1.0 = transparent)</param>
@@ -56,7 +56,7 @@ namespace Rhino.Display
       m_ptr = UnsafeNativeMethods.CDisplayPipelineMaterial_New2(argb, transparency);
     }
     /// <summary>
-    /// Create a material with custom properties.
+    /// Constructs a material with custom properties.
     /// </summary>
     /// <param name="diffuse">Diffuse color of material. The alpha component of the Diffuse color is ignored.</param>
     /// <param name="specular">Specular color of material. The alpha component of the Specular color is ignored.</param>
@@ -319,7 +319,7 @@ namespace Rhino.Display
 
     #region Bump
     /// <summary>
-    /// may be null if no bump texture has been added to this material
+    /// may be null if no bump texture has been added to this material.
     /// </summary>
     /// <returns></returns>
     public Rhino.DocObjects.Texture GetBumpTexture(bool front)

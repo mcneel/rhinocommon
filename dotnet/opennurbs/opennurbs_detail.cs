@@ -112,7 +112,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Sets the detail viewport's projection so geometry is displayed at a certain scale
+    /// Sets the detail viewport's projection so geometry is displayed at a certain scale.
     /// </summary>
     /// <param name="modelLength">Reference model length.</param>
     /// <param name="modelUnits">Units for model length.</param>

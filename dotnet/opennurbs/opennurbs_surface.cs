@@ -11,31 +11,31 @@ namespace Rhino.Geometry
   public enum IsoStatus : int
   {
     /// <summary>
-    /// curve is not an isoparameteric curve
+    /// curve is not an isoparameteric curve.
     /// </summary>
     None = 0,
     /// <summary>
-    /// curve is a "x" = constant (vertical) isoparametric curve in the interior of the surface's domain
+    /// curve is a "x" = constant (vertical) isoparametric curve in the interior of the surface's domain.
     /// </summary>
     X = 1,
     /// <summary>
-    /// curve is a "y" = constant (horizontal) isoparametric curve in the interior of the surface's domain
+    /// curve is a "y" = constant (horizontal) isoparametric curve in the interior of the surface's domain.
     /// </summary>
     Y = 2,
     /// <summary>
-    /// curve is a "x" = constant isoparametric curve along the west side of the surface's domain
+    /// curve is a "x" = constant isoparametric curve along the west side of the surface's domain.
     /// </summary>
     West = 3,
     /// <summary>
-    /// curve is a "y" = constant isoparametric curve along the south side of the surface's domain
+    /// curve is a "y" = constant isoparametric curve along the south side of the surface's domain.
     /// </summary>
     South = 4,
     /// <summary>
-    /// curve is a "x" = constant isoparametric curve along the east side of the surface's domain
+    /// curve is a "x" = constant isoparametric curve along the east side of the surface's domain.
     /// </summary>
     East = 5,
     /// <summary>
-    /// curve is a "y" = constant isoparametric curve along the north side of the surface's domain
+    /// curve is a "y" = constant isoparametric curve along the north side of the surface's domain.
     /// </summary>
     North = 6
   }
@@ -392,9 +392,9 @@ namespace Rhino.Geometry
     /// Gets an estimate of the size of the rectangle that would be created
     /// if the 3d surface where flattened into a rectangle.
     /// </summary>
-    /// <param name="width">corresponds to the first surface parameter</param>
-    /// <param name="height">corresponds to the second surface parameter</param>
-    /// <returns>true if successful</returns>
+    /// <param name="width">corresponds to the first surface parameter.</param>
+    /// <param name="height">corresponds to the second surface parameter.</param>
+    /// <returns>true if successful.</returns>
     /// <example>
     /// Reparameterize a surface to minimize distortion in the map from parameter space to 3d.
     /// Surface surf = ...;
@@ -461,17 +461,17 @@ namespace Rhino.Geometry
 
 #if RHINO_SDK
     /// <summary>
-    /// Extends an untrimmed surface along one edge
+    /// Extends an untrimmed surface along one edge.
     /// </summary>
     /// <param name="edge">
-    /// Edge to extend.  Must be North, South, East, or West
+    /// Edge to extend.  Must be North, South, East, or West.
     /// </param>
-    /// <param name="extensionLength">distance to extend</param>
+    /// <param name="extensionLength">distance to extend.</param>
     /// <param name="smooth">
     /// true for smooth (C-infinity) extension. 
-    /// false for a C1- ruled extension
+    /// false for a C1- ruled extension.
     /// </param>
-    /// <returns>New extended surface on success</returns>
+    /// <returns>New extended surface on success.</returns>
     public Surface Extend(IsoStatus edge, double extensionLength, bool smooth)
     {
       IntPtr pConstThis = ConstPointer();
@@ -480,10 +480,10 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Rebuilds an existing surface to a given degree and point count
+    /// Rebuilds an existing surface to a given degree and point count.
     /// </summary>
-    /// <param name="uDegree">the output surface u degree</param>
-    /// <param name="vDegree">the output surface u degree</param>
+    /// <param name="uDegree">the output surface u degree.</param>
+    /// <param name="vDegree">the output surface u degree.</param>
     /// <param name="uPointCount">
     /// The number of points in the output surface u direction. Must be bigger
     /// than uDegree (maximum value is 1000)
@@ -492,7 +492,7 @@ namespace Rhino.Geometry
     /// The number of points in the output surface v direction. Must be bigger
     /// than vDegree (maximum value is 1000)
     /// </param>
-    /// <returns>new rebuilt surface on success. null on failure</returns>
+    /// <returns>new rebuilt surface on success. null on failure.</returns>
     public NurbsSurface Rebuild(int uDegree, int vDegree, int uPointCount, int vPointCount)
     {
       IntPtr pConstThis = ConstPointer();
@@ -505,9 +505,9 @@ namespace Rhino.Geometry
     /// Reverses parameterization Domain changes from [a,b] to [-b,-a]
     /// </summary>
     /// <param name="direction">
-    /// 0 for first parameter's domain, 1 for second parameter's domain
+    /// 0 for first parameter's domain, 1 for second parameter's domain.
     /// </param>
-    /// <returns>a new reversed surface on success</returns>
+    /// <returns>a new reversed surface on success.</returns>
     public Surface Reverse(int direction)
     {
       IntPtr pConstThis = ConstPointer();
@@ -529,9 +529,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Evaluates a point at a given parameter.
     /// </summary>
-    /// <param name="u">evaluation parameters</param>
-    /// <param name="v">evaluation parameters</param>
-    /// <returns>Point3d.Unset on failure</returns>
+    /// <param name="u">evaluation parameters.</param>
+    /// <param name="v">evaluation parameters.</param>
+    /// <returns>Point3d.Unset on failure.</returns>
     public Point3d PointAt(double u, double v)
     {
       Point3d rc = new Point3d();
@@ -627,7 +627,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets a value indicating if the surface is closed in a direction.
     /// </summary>
-    /// <param name="direction">0 = U, 1 = V</param>
+    /// <param name="direction">0 = U, 1 = V.</param>
     /// <returns>The indicating boolean value.</returns>
     public bool IsClosed(int direction)
     {
@@ -637,7 +637,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets a value indicating if thr surface is periodic in a direction (default is false).
     /// </summary>
-    /// <param name="direction">0 = U, 1 = V</param>
+    /// <param name="direction">0 = U, 1 = V.</param>
     /// <returns>The indicating boolean value.</returns>
     public bool IsPeriodic(int direction)
     {
@@ -645,11 +645,11 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Surface_GetBool(ptr, direction, idxIsPeriodic);
     }
     /// <summary>
-    /// true if surface side is collapsed to a point
+    /// true if surface side is collapsed to a point.
     /// </summary>
     /// <param name="side">
     /// side of parameter space to test
-    /// 0 = south, 1 = east, 2 = north, 3 = west
+    /// 0 = south, 1 = east, 2 = north, 3 = west.
     /// </param>
     /// <returns></returns>
     public bool IsSingular(int side)
@@ -666,14 +666,14 @@ namespace Rhino.Geometry
     /// If true, test if (u,v) is exactly at a singularity.
     /// If false, test if close enough to cause numerical problems.
     /// </param>
-    /// <returns>True if surface is singular at (s,t)</returns>
+    /// <returns>true if surface is singular at (s,t)</returns>
     public bool IsAtSingularity(double u, double v, bool exact)
     {
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.ON_Surface_IsAtSingularity(ptr, u, v, exact);
     }
     /// <summary>
-    /// Test if a surface parameter value is at a seam
+    /// Test if a surface parameter value is at a seam.
     /// </summary>
     /// <param name="u">Surface u parameter to test.</param>
     /// <param name="v">Surface v parameter to test.</param>
@@ -693,16 +693,16 @@ namespace Rhino.Geometry
     /// Test continuity at a surface parameter value.
     /// </summary>
     /// <param name="continuityType"></param>
-    /// <param name="u">surface u parameter to test</param>
-    /// <param name="v">surface v parameter to test</param>
-    /// <returns>True if the surface has at least the specified continuity at the (u,v) parameter.</returns>
+    /// <param name="u">surface u parameter to test.</param>
+    /// <param name="v">surface v parameter to test.</param>
+    /// <returns>true if the surface has at least the specified continuity at the (u,v) parameter.</returns>
     public bool IsContinuous(Continuity continuityType, double u, double v)
     {
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.ON_Surface_IsContinuous(ptr, (int)continuityType, u, v);
     }
     /// <summary>
-    /// Search for a derivative, tangent, or curvature discontinuity.
+    /// Searches for a derivative, tangent, or curvature discontinuity.
     /// </summary>
     /// <param name="direction">
     /// If 0, then "u" parameter is checked. If 1, then the "v" parameter is checked.
@@ -744,12 +744,12 @@ namespace Rhino.Geometry
     //  virtual ON_SurfaceTree* CreateSurfaceTree() const;
 
     /// <summary>
-    /// Input the parameters of the point on the surface that is closest to testPoint
+    /// Input the parameters of the point on the surface that is closest to testPoint.
     /// </summary>
     /// <param name="testPoint"></param>
-    /// <param name="u">U parameter of the surface that is closest to testPoint</param>
-    /// <param name="v">V parameter of the surface that is closest to testPoint</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <param name="u">U parameter of the surface that is closest to testPoint.</param>
+    /// <param name="v">V parameter of the surface that is closest to testPoint.</param>
+    /// <returns>true on success, false on failure.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_orientonsrf.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_orientonsrf.cs' lang='cs'/>
@@ -765,7 +765,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a sub-surface that covers the specified UV trimming domain.
+    /// Constructs a sub-surface that covers the specified UV trimming domain.
     /// </summary>
     /// <param name="u">Domain of surface along U direction to include in the subsurface.</param>
     /// <param name="v">Domain of surface along V direction to include in the subsurface.</param>
@@ -788,7 +788,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new surface which is offset from the current surface.
+    /// Constructs a new surface which is offset from the current surface.
     /// </summary>
     /// <param name="distance">Distance (along surface normal) to offset.</param>
     /// <param name="tolerance">Offset accuracy.</param>
@@ -803,9 +803,9 @@ namespace Rhino.Geometry
     }
 
 #if RHINO_SDK
-    /// <summary>Fits a new surface through an existing surface</summary>
-    /// <param name="uDegree">the output surface U degree. Must be bigger than 1</param>
-    /// <param name="vDegree">the output surface V degree. Must be bigger than 1</param>
+    /// <summary>Fits a new surface through an existing surface.</summary>
+    /// <param name="uDegree">the output surface U degree. Must be bigger than 1.</param>
+    /// <param name="vDegree">the output surface V degree. Must be bigger than 1.</param>
     /// <param name="fitTolerance"></param>
     /// <returns></returns>
     public Surface Fit(int uDegree, int vDegree, double fitTolerance)
@@ -862,10 +862,10 @@ namespace Rhino.Geometry
     /// 
     /// 1 first parameter is constant and second parameter varies
     /// e.g., point on IsoCurve(1,c) at t is srf(c,t
-    /// This is a vertical line from bottom to top
+    /// This is a vertical line from bottom to top.
     /// </param>
     /// <param name="constantParameter"></param>
-    /// <returns>Isoparametric curve</returns>
+    /// <returns>Isoparametric curve.</returns>
     /// <remarks>
     /// In this function "direction" indicates which direction the resulting curve runs.
     /// 0: horizontal, 1: vertical
@@ -962,12 +962,12 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Constructs a geodesic between 2 points, used by ShortPath command in Rhino
+    /// Constructs a geodesic between 2 points, used by ShortPath command in Rhino.
     /// </summary>
-    /// <param name="start">start point of curve in parameter space. Points must be distinct in the domain of thie surface</param>
-    /// <param name="end">end point of curve in parameter space. Points must be distinct in the domain of thie surface</param>
-    /// <param name="tolerance">tolerance used in fitting discrete solution</param>
-    /// <returns>a geodesic curve on the surface on success. null on failure</returns>
+    /// <param name="start">start point of curve in parameter space. Points must be distinct in the domain of thie surface.</param>
+    /// <param name="end">end point of curve in parameter space. Points must be distinct in the domain of thie surface.</param>
+    /// <param name="tolerance">tolerance used in fitting discrete solution.</param>
+    /// <returns>a geodesic curve on the surface on success. null on failure.</returns>
     public Curve ShortPath(Point2d start, Point2d end, double tolerance)
     {
       IntPtr pConstSurface = ConstPointer();
@@ -979,12 +979,12 @@ namespace Rhino.Geometry
     /// <summary>
     /// Computes a 3d curve that is the composite of a 2d curve and the surface map.
     /// </summary>
-    /// <param name="curve2d">a 2d curve whose image is in the surface's domain</param>
+    /// <param name="curve2d">a 2d curve whose image is in the surface's domain.</param>
     /// <param name="tolerance">
     /// the maximum acceptable distance from the returned 3d curve to the image of curve_2d on the surface.
     /// </param>
     /// <param name="curve2dSubdomain"></param>
-    /// <returns>3d curve</returns>
+    /// <returns>3d curve.</returns>
     public Curve Pushup(Curve curve2d, double tolerance, Interval curve2dSubdomain)
     {
       if (null == curve2d)
@@ -997,11 +997,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Computes a 3d curve that is the composite of a 2d curve and the surface map.
     /// </summary>
-    /// <param name="curve2d">a 2d curve whose image is in the surface's domain</param>
+    /// <param name="curve2d">a 2d curve whose image is in the surface's domain.</param>
     /// <param name="tolerance">
     /// the maximum acceptable distance from the returned 3d curve to the image of curve_2d on the surface.
     /// </param>
-    /// <returns>3d curve</returns>
+    /// <returns>3d curve.</returns>
     public Curve Pushup(Curve curve2d, double tolerance)
     {
       return Pushup(curve2d, tolerance, Interval.Unset);
@@ -1014,7 +1014,7 @@ namespace Rhino.Geometry
     /// the maximum acceptable 3d distance between from surface(curve_2d(t))
     /// to the locus of points on the surface that are closest to curve_3d.
     /// </param>
-    /// <returns>2d curve</returns>
+    /// <returns>2d curve.</returns>
     public Curve Pullback(Curve curve3d, double tolerance)
     {
       return Pullback(curve3d, tolerance, Interval.Unset);
@@ -1028,7 +1028,7 @@ namespace Rhino.Geometry
     /// to the locus of points on the surface that are closest to curve_3d.
     /// </param>
     /// <param name="curve3dSubdomain"></param>
-    /// <returns>2d curve</returns>
+    /// <returns>2d curve.</returns>
     public Curve Pullback(Curve curve3d, double tolerance, Interval curve3dSubdomain)
     {
       if (null == curve3d)
@@ -1092,7 +1092,7 @@ namespace Rhino.Geometry
     /// </para>
     /// <para>
     /// 1 = success - returned NURBS parameterization matches the surface's
-    /// to the desired accuracy
+    /// to the desired accuracy.
     /// </para>
     /// <para>
     /// 2 = success - returned NURBS point locus matches the surface's to the
@@ -1118,10 +1118,10 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Test a surface to see if it is planar to zero tolerance
+    /// Test a surface to see if it is planar to zero tolerance.
     /// </summary>
     /// <returns>
-    /// True if the surface is planar (flat) to within RhinoMath.ZeroTolerance units (1e-12).
+    /// true if the surface is planar (flat) to within RhinoMath.ZeroTolerance units (1e-12).
     /// </returns>
     public bool IsPlanar()
     {
@@ -1130,7 +1130,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Test a surface to see if it is planar to a given tolerance.
     /// </summary>
-    /// <param name="tolerance">tolerance to use when checking</param>
+    /// <param name="tolerance">tolerance to use when checking.</param>
     /// <returns>
     /// true if there is a plane such that the maximum distance from
     /// the surface to the plane is &lt;= tolerance.
@@ -1144,7 +1144,7 @@ namespace Rhino.Geometry
     /// <summary>Test a surface for planarity and return the plane.</summary>
     /// <param name="plane">On success, the plane parameters are filled in.</param>
     /// <returns>
-    /// True if there is a plane such that the maximum distance from the surface to the plane is &lt;= RhinoMath.ZeroTolerance.
+    /// true if there is a plane such that the maximum distance from the surface to the plane is &lt;= RhinoMath.ZeroTolerance.
     /// </returns>
     public bool TryGetPlane(out Plane plane)
     {
@@ -1152,9 +1152,9 @@ namespace Rhino.Geometry
     }
     /// <summary>Test a surface for planarity and return the plane.</summary>
     /// <param name="plane">On success, the plane parameters are filled in.</param>
-    /// <param name="tolerance">tolerance to use when checking</param>
+    /// <param name="tolerance">tolerance to use when checking.</param>
     /// <returns>
-    /// True if there is a plane such that the maximum distance from the surface to the plane is &lt;= tolerance.
+    /// true if there is a plane such that the maximum distance from the surface to the plane is &lt;= tolerance.
     /// </returns>
     public bool TryGetPlane(out Plane plane, double tolerance)
     {
@@ -1164,18 +1164,18 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determine if the surface is a portion of a sphere within RhinoMath.ZeroTolerance
+    /// Determine if the surface is a portion of a sphere within RhinoMath.ZeroTolerance.
     /// </summary>
-    /// <returns>True if the surface is a portion of a sphere</returns>
+    /// <returns>true if the surface is a portion of a sphere.</returns>
     public bool IsSphere()
     {
       return IsSphere(RhinoMath.ZeroTolerance);
     }
     /// <summary>
-    /// Determine if the surface is a portion of a sphere within a given tolerance
+    /// Determine if the surface is a portion of a sphere within a given tolerance.
     /// </summary>
-    /// <param name="tolerance">tolerance to use when checking</param>
-    /// <returns>True if the surface is a portion of a sphere</returns>
+    /// <param name="tolerance">tolerance to use when checking.</param>
+    /// <returns>true if the surface is a portion of a sphere.</returns>
     public bool IsSphere(double tolerance)
     {
       Sphere sphere = new Sphere();
@@ -1184,15 +1184,15 @@ namespace Rhino.Geometry
     }
     /// <summary>Test a surface to see if it is a portion of a sphere and return the sphere.</summary>
     /// <param name="sphere">On success, the sphere parameters are filled in.</param>
-    /// <returns>True if the surface is a portion of a sphere</returns>
+    /// <returns>true if the surface is a portion of a sphere.</returns>
     public bool TryGetSphere(out Sphere sphere)
     {
       return TryGetSphere(out sphere, RhinoMath.ZeroTolerance);
     }
     /// <summary>Test a surface to see if it is a portion of a sphere and return the sphere.</summary>
     /// <param name="sphere">On success, the sphere parameters are filled in.</param>
-    /// <param name="tolerance">tolerance to use when checking</param>
-    /// <returns>True if the surface is a portion of a sphere</returns>
+    /// <param name="tolerance">tolerance to use when checking.</param>
+    /// <returns>true if the surface is a portion of a sphere.</returns>
     public bool TryGetSphere(out Sphere sphere, double tolerance)
     {
       sphere = new Sphere();
@@ -1201,16 +1201,16 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determine if the surface is a portion of a cylinder within RhinoMath.ZeroTolerance
+    /// Determine if the surface is a portion of a cylinder within RhinoMath.ZeroTolerance.
     /// </summary>
-    /// <returns>True if the surface is a portion of a cylinder.</returns>
+    /// <returns>true if the surface is a portion of a cylinder.</returns>
     public bool IsCylinder()
     {
       return IsCylinder(RhinoMath.ZeroTolerance);
     }
-    /// <summary>Determine if the surface is a portion of a cylinder within a given tolerance</summary>
-    /// <param name="tolerance">tolerance to use when checking</param>
-    /// <returns>True if the surface is a portion of a cylinder.</returns>
+    /// <summary>Determine if the surface is a portion of a cylinder within a given tolerance.</summary>
+    /// <param name="tolerance">tolerance to use when checking.</param>
+    /// <returns>true if the surface is a portion of a cylinder.</returns>
     public bool IsCylinder(double tolerance)
     {
       Cylinder cylinder = new Cylinder();
@@ -1219,15 +1219,15 @@ namespace Rhino.Geometry
     }
     /// <summary>Test a surface to see if it is a portion of a cylinder within RhinoMath.ZeroTolerance and return the cylinder.</summary>
     /// <param name="cylinder">On success, the cylinder parameters are filled in.</param>
-    /// <returns>True if the surface is a portion of a cylinder</returns>
+    /// <returns>true if the surface is a portion of a cylinder.</returns>
     public bool TryGetCylinder(out Cylinder cylinder)
     {
       return TryGetCylinder(out cylinder, RhinoMath.ZeroTolerance);
     }
     /// <summary>Test a surface to see if it is a portion of a cylinder and return the cylinder.</summary>
     /// <param name="cylinder">On success, the cylinder parameters are filled in.</param>
-    /// <param name="tolerance">tolerance to use when checking</param>
-    /// <returns>True if the surface is a portion of a cylinder</returns>
+    /// <param name="tolerance">tolerance to use when checking.</param>
+    /// <returns>true if the surface is a portion of a cylinder.</returns>
     public bool TryGetCylinder(out Cylinder cylinder, double tolerance)
     {
       cylinder = new Cylinder();
@@ -1236,16 +1236,16 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determine if the surface is a portion of a cone within RhinoMath.ZeroTolerance
+    /// Determine if the surface is a portion of a cone within RhinoMath.ZeroTolerance.
     /// </summary>
-    /// <returns>True if the surface is a portion of a cone.</returns>
+    /// <returns>true if the surface is a portion of a cone.</returns>
     public bool IsCone()
     {
       return IsCone(RhinoMath.ZeroTolerance);
     }
-    /// <summary>Determine if the surface is a portion of a cone within a given tolerance</summary>
-    /// <param name="tolerance">tolerance to use when checking</param>
-    /// <returns>True if the surface is a portion of a cone.</returns>
+    /// <summary>Determine if the surface is a portion of a cone within a given tolerance.</summary>
+    /// <param name="tolerance">tolerance to use when checking.</param>
+    /// <returns>true if the surface is a portion of a cone.</returns>
     public bool IsCone(double tolerance)
     {
       Cone cone = new Cone();
@@ -1254,15 +1254,15 @@ namespace Rhino.Geometry
     }
     /// <summary>Test a surface to see if it is a portion of a cone within RhinoMath.ZeroTolerance and return the cone.</summary>
     /// <param name="cone">On success, the cone parameters are filled in.</param>
-    /// <returns>True if the surface is a portion of a cone</returns>
+    /// <returns>true if the surface is a portion of a cone.</returns>
     public bool TryGetCone(out Cone cone)
     {
       return TryGetCone(out cone, RhinoMath.ZeroTolerance);
     }
     /// <summary>Test a surface to see if it is a portion of a cone and return the cone.</summary>
     /// <param name="cone">On success, the cone parameters are filled in.</param>
-    /// <param name="tolerance">tolerance to use when checking</param>
-    /// <returns>True if the surface is a portion of a cone</returns>
+    /// <param name="tolerance">tolerance to use when checking.</param>
+    /// <returns>true if the surface is a portion of a cone.</returns>
     public bool TryGetCone(out Cone cone, double tolerance)
     {
       cone = new Cone();
@@ -1270,15 +1270,15 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Surface_IsCone(pThis, ref cone, tolerance, true);
     }
 
-    /// <summary>Determine if the surface is a portion of a torus within RhinoMath.ZeroTolerance</summary>
-    /// <returns>True if the surface is a portion of a torus.</returns>
+    /// <summary>Determine if the surface is a portion of a torus within RhinoMath.ZeroTolerance.</summary>
+    /// <returns>true if the surface is a portion of a torus.</returns>
     public bool IsTorus()
     {
       return IsTorus(RhinoMath.ZeroTolerance);
     }
-    /// <summary>Determine if the surface is a portion of a torus within a ginev tolerance</summary>
-    /// <param name="tolerance">tolerance to use when checking</param>
-    /// <returns>True if the surface is a portion of a torus.</returns>
+    /// <summary>Determine if the surface is a portion of a torus within a ginev tolerance.</summary>
+    /// <param name="tolerance">tolerance to use when checking.</param>
+    /// <returns>true if the surface is a portion of a torus.</returns>
     public bool IsTorus(double tolerance)
     {
       Torus torus = new Torus();
@@ -1287,15 +1287,15 @@ namespace Rhino.Geometry
     }
     /// <summary>Test a surface to see if it is a portion of a torus within RhinoMath.ZeroTolerance and return the torus.</summary>
     /// <param name="torus">On success, the torus parameters are filled in.</param>
-    /// <returns>True if the surface is a portion of a torus</returns>
+    /// <returns>true if the surface is a portion of a torus.</returns>
     public bool TryGetTorus(out Torus torus)
     {
       return TryGetTorus(out torus, RhinoMath.ZeroTolerance);
     }
     /// <summary>Test a surface to see if it is a portion of a torus and return the torus.</summary>
     /// <param name="torus">On success, the torus parameters are filled in.</param>
-    /// <param name="tolerance">tolerance to use when checking</param>
-    /// <returns>True if the surface is a portion of a torus</returns>
+    /// <param name="tolerance">tolerance to use when checking.</param>
+    /// <returns>true if the surface is a portion of a torus.</returns>
     public bool TryGetTorus(out Torus torus, double tolerance)
     {
       torus = new Torus();

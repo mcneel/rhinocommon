@@ -94,14 +94,14 @@ namespace Rhino.UI
 
   /// <summary>
   /// Similar to the System.Windows.Forms.OpenFileDialog, but with customized
-  /// Rhino user interface
+  /// Rhino user interface.
   /// </summary>
   public class OpenFileDialog
   {
     readonly FileDialogBase m_base;
     //OpenFileDialogType m_type = OpenFileDialogType.Standard;
     
-    /// <summary>Create a new open file dialog</summary>
+    /// <summary>Create a new open file dialog.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addbackgroundbitmap.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addbackgroundbitmap.cs' lang='cs'/>
@@ -119,7 +119,7 @@ namespace Rhino.UI
     //}
 
     /// <summary>
-    /// The default file name extension. The returned string does not include the period
+    /// The default file name extension. The returned string does not include the period.
     /// </summary>
     public string DefaultExt
     {
@@ -153,7 +153,7 @@ namespace Rhino.UI
     /// <summary>
     /// Gets or sets the current file name filter string, which determines
     /// the choices that appear in the "Save as file type" or "Files of type"
-    /// box in the dialog box. See System.Windows.Forms.FileDialog for details
+    /// box in the dialog box. See System.Windows.Forms.FileDialog for details.
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addbackgroundbitmap.vb' lang='vbnet'/>
@@ -175,7 +175,7 @@ namespace Rhino.UI
       set { m_base.InitialDirectory = value; }
     }
 
-    /// <summary>Show the actual dialog to allow the user to select a file</summary>
+    /// <summary>Show the actual dialog to allow the user to select a file.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addbackgroundbitmap.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addbackgroundbitmap.cs' lang='cs'/>
@@ -214,7 +214,7 @@ namespace Rhino.UI
 
   /// <summary>
   /// Similar to the System.Windows.Forms.SaveFileDialog, but with customized
-  /// Rhino user interface
+  /// Rhino user interface.
   /// </summary>
   public class SaveFileDialog
   {
@@ -233,7 +233,7 @@ namespace Rhino.UI
     //}
 
     /// <summary>
-    /// The default file name extension. The returned string does not include the period
+    /// The default file name extension. The returned string does not include the period.
     /// </summary>
     public string DefaultExt
     {
@@ -262,7 +262,7 @@ namespace Rhino.UI
     /// <summary>
     /// Gets or sets the current file name filter string, which determines
     /// the choices that appear in the "Save as file type" or "Files of type"
-    /// box in the dialog box. See System.Windows.Forms.FileDialog for details
+    /// box in the dialog box. See System.Windows.Forms.FileDialog for details.
     /// </summary>
     public string Filter
     {

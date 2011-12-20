@@ -82,7 +82,7 @@ namespace Rhino.DocObjects.Custom
       return m_pNativePointer;
     }
 
-    /// <summary>Descriptive name of the user data</summary>
+    /// <summary>Descriptive name of the user data.</summary>
     public virtual string Description { get { return "RhinoCommon UserData"; } }
 
     /// <summary>
@@ -290,7 +290,7 @@ namespace Rhino.DocObjects.Custom
     /// Expert user tool that copies user data that has a positive 
     /// CopyCount from the source object to a destination object.
     /// Generally speaking you don't need to use Copy().
-    /// Simply rely things like copy constructors to do the right thing
+    /// Simply rely things like copy constructors to do the right thing.
     /// </summary>
     /// <param name="source"></param>
     /// <param name="destination"></param>
@@ -306,12 +306,12 @@ namespace Rhino.DocObjects.Custom
     /// identifierd by the return Guid.  When MoveUserDataFrom returns, the
     /// objectWithUserData will not have any user data.
     /// </summary>
-    /// <param name="objectWithUserData">Object with user data attached</param>
+    /// <param name="objectWithUserData">Object with user data attached.</param>
     /// <returns>
     /// Guid identifier for storage of UserData that is held in a temporary list
     /// by this class. This function should be used in conjunction with MoveUserDataTo
     /// to transfer the user data to a different object.
-    /// Returns Guid.Empty if there was no user data to transfer
+    /// Returns Guid.Empty if there was no user data to transfer.
     /// </returns>
     public static Guid MoveUserDataFrom(Rhino.Runtime.CommonObject objectWithUserData)
     {
@@ -323,7 +323,7 @@ namespace Rhino.DocObjects.Custom
     }
     
     /// <summary>
-    /// See MoverUserDataFrom
+    /// See MoverUserDataFrom.
     /// </summary>
     /// <param name="objectToGetUserData"></param>
     /// <param name="id"></param>
@@ -465,7 +465,7 @@ namespace Rhino.DocObjects.Custom
     }
 
     /// <summary>
-    /// Writes this entity if the count is larger than 0
+    /// Writes this entity if the count is larger than 0.
     /// </summary>
     public override bool ShouldWrite
     {

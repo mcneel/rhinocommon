@@ -82,8 +82,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets or sets the matrix value at the given row and column indixes.
     /// </summary>
-    /// <param name="row">Index of row to access</param>
-    /// <param name="column">Index of column to access</param>
+    /// <param name="row">Index of row to access.</param>
+    /// <param name="column">Index of column to access.</param>
     /// <returns>The value at [row, column].</returns>
     /// <value>The new value at [row, column].</value>
     public double this[int row, int column]
@@ -143,7 +143,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Sets diagonal value and zeros off diagonal values
+    /// Sets diagonal value and zeros off diagonal values.
     /// </summary>
     /// <param name="d"></param>
     public void SetDiagonal(double d)
@@ -287,7 +287,7 @@ namespace Rhino.Geometry
     /// (&gt;=0.0) zero tolerance for pivot test. If the absolute value of a pivot
     /// is &lt;= zero_tolerance, then the pivot is assumed to be zero.
     /// </param>
-    /// <param name="b">an array of RowCount values that is row reduced with the matrix
+    /// <param name="b">an array of RowCount values that is row reduced with the matrix.
     /// </param>
     /// <param name="pivot">the value of the smallest pivot is returned here.</param>
     /// <returns>Rank of the matrix.</returns>
@@ -313,7 +313,7 @@ namespace Rhino.Geometry
     /// </param>
     /// <param name="b">An array of RowCount 3d points that is row reduced with the matrix.
     /// </param>
-    /// <param name="pivot">The value of the smallest pivot is returned here</param>
+    /// <param name="pivot">The value of the smallest pivot is returned here.</param>
     /// <returns>Rank of the matrix.</returns>
     /// <remarks>
     /// The matrix itself is row reduced so that the result is an upper
@@ -336,7 +336,7 @@ namespace Rhino.Geometry
     /// <param name="b">The values in B[RowCount],...,B[B.Length-1] are tested to
     /// make sure they are within "zeroTolerance".</param>
     /// <returns>
-    /// Array of length ColumnCount on success. null on error
+    /// Array of length ColumnCount on success. null on error.
     /// </returns>
     public double[] BackSolve(double zeroTolerance, double[] b)
     {
@@ -355,7 +355,7 @@ namespace Rhino.Geometry
     /// <param name="b">The values in B[RowCount],...,B[B.Length-1] are tested to
     /// make sure they are "zero".</param>
     /// <returns>
-    /// Array of length ColumnCount on success. null on error
+    /// Array of length ColumnCount on success. null on error.
     /// </returns>
     public Point3d[] BackSolvePoints(double zeroTolerance, Point3d[] b)
     {

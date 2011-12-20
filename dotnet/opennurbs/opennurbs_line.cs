@@ -84,7 +84,7 @@ namespace Rhino.Geometry
 
     #region constructors
     /// <summary>
-    /// Create a new line segment between two points.
+    /// Constructs a new line segment between two points.
     /// </summary>
     /// <param name="from">Start point of line.</param>
     /// <param name="to">End point of line.</param>
@@ -95,7 +95,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new line segment from start point and span vector.
+    /// Constructs a new line segment from start point and span vector.
     /// </summary>
     /// <param name="start">Start point of line segment.</param>
     /// <param name="span">Direction and length of line segment.</param>
@@ -106,7 +106,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new line segment from start point, direction and length.
+    /// Constructs a new line segment from start point, direction and length.
     /// </summary>
     /// <param name="start">Start point of line segment.</param>
     /// <param name="direction">Direction of line segment.</param>
@@ -122,7 +122,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create a new line segment between two points.
+    /// Constructs a new line segment between two points.
     /// </summary>
     /// <param name="x0"></param>
     /// <param name="y0"></param>
@@ -237,8 +237,8 @@ namespace Rhino.Geometry
     /// Attempt to fit a line through a set of points.
     /// </summary>
     /// <param name="points">The points through which to fit.</param>
-    /// <param name="fitLine">The resulting line on success</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <param name="fitLine">The resulting line on success.</param>
+    /// <returns>true on success, false on failure.</returns>
     public static bool TryFitLineToPoints(IEnumerable<Point3d> points, out Line fitLine)
     {
       fitLine = new Line();
@@ -259,8 +259,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether an object is a line that has the same value as this line.
     /// </summary>
-    /// <param name="obj">An object</param>
-    /// <returns>true if obj is a Line and has the same coordinates as this; otherwise false</returns>
+    /// <param name="obj">An object.</param>
+    /// <returns>true if obj is a Line and has the same coordinates as this; otherwise false.</returns>
     public override bool Equals(object obj)
     {
       return obj is Line && this == (Line)obj;
@@ -269,8 +269,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether a line has the same value as this line.
     /// </summary>
-    /// <param name="other">A line</param>
-    /// <returns>true if other has the same coordinates as this; otherwise false</returns>
+    /// <param name="other">A line.</param>
+    /// <returns>true if other has the same coordinates as this; otherwise false.</returns>
     public bool Equals(Line other)
     {
       return this == other;
@@ -279,7 +279,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Computes a hash number that represents this line.
     /// </summary>
-    /// <returns>A number that is not unique to the value of this line</returns>
+    /// <returns>A number that is not unique to the value of this line.</returns>
     public override int GetHashCode()
     {
       return From.GetHashCode() ^ To.GetHashCode();
@@ -365,8 +365,8 @@ namespace Rhino.Geometry
       return pp.DistanceTo(testPoint);
     }
     /// <summary>
-    /// Find the shortest distance between this line as a finite segment
-    /// and a test point
+    /// Finds the shortest distance between this line as a finite segment
+    /// and a test point.
     /// </summary>
     /// <param name="testPoint"></param>
     /// <returns></returns>
@@ -375,8 +375,8 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Line_DistanceToPoint(ref this, testPoint, true);
     }
     /// <summary>
-    /// Find the shortest distance between this line as a finite segment
-    /// and another finite segment
+    /// Finds the shortest distance between this line as a finite segment
+    /// and another finite segment.
     /// </summary>
     /// <param name="testLine"></param>
     /// <returns></returns>
@@ -385,8 +385,8 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Line_DistanceToLine(ref this, ref testLine, true);
     }
     /// <summary>
-    /// Find the largest distance between this line as a finite segment
-    /// and a test point
+    /// Finds the largest distance between this line as a finite segment
+    /// and a test point.
     /// </summary>
     /// <param name="testPoint"></param>
     /// <returns></returns>
@@ -395,8 +395,8 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Line_DistanceToPoint(ref this, testPoint, false);
     }
     /// <summary>
-    /// Find the largest distance between this line as a finite segment
-    /// and another finite segment
+    /// Finds the largest distance between this line as a finite segment
+    /// and another finite segment.
     /// </summary>
     /// <param name="testLine"></param>
     /// <returns></returns>
@@ -409,14 +409,14 @@ namespace Rhino.Geometry
     /// Transform the line using a Transformation matrix.
     /// </summary>
     /// <param name="xform">Transform to apply to this line.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Transform(Transform xform)
     {
       return UnsafeNativeMethods.ON_Line_Transform(ref this, ref xform);
     }
 
     /// <summary>
-    /// Create a nurbs curve representation of this line. 
+    /// Constructs a nurbs curve representation of this line. 
     /// This amounts to the same as calling NurbsCurve.CreateFromLine().
     /// </summary>
     /// <returns>A nurbs curve representation of this line or null if no such representation could be made.</returns>
@@ -438,7 +438,7 @@ namespace Rhino.Geometry
     /// Distance to extend the line at the end point. 
     /// Positive distance result in longer lines.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Extend(double startLength, double endLength)
     {
       if (!IsValid) { return false; }
@@ -464,7 +464,7 @@ namespace Rhino.Geometry
     /// that overlaps the box.
     /// </summary>
     /// <param name="box">Box to extend through.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ExtendThroughBox(BoundingBox box)
     {
       if (!IsValid) { return false; }
@@ -478,7 +478,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="box">Box to extend through.</param>
     /// <param name="additionalLength">Additional length to append at both sides of the line.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ExtendThroughBox(BoundingBox box, double additionalLength)
     {
       if (!IsValid) { return false; }
@@ -491,7 +491,7 @@ namespace Rhino.Geometry
     /// Note, this does not result in the shortest possible line that overlaps the box.
     /// </summary>
     /// <param name="box">Box to extend through.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ExtendThroughBox(Box box)
     {
       if (!IsValid) { return false; }
@@ -505,7 +505,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="box">Box to extend through.</param>
     /// <param name="additionalLength">Additional length to append at both sides of the line.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ExtendThroughBox(Box box, double additionalLength)
     {
       if (!IsValid) { return false; }
@@ -551,7 +551,7 @@ namespace Rhino.Geometry
     /// If possible, a plane parallel to the world xy, yz, or zx plane is returned.
     /// </summary>
     /// <param name="plane"></param>
-    /// <returns>true on success</returns>
+    /// <returns>true on success.</returns>
     public bool TryGetPlane(out Plane plane)
     {
       plane = new Plane();
@@ -562,9 +562,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether two lines have the same value.
     /// </summary>
-    /// <param name="a">A line</param>
-    /// <param name="b">Another line</param>
-    /// <returns>true if a has the same coordinates as b; otherwise false</returns>
+    /// <param name="a">A line.</param>
+    /// <param name="b">Another line.</param>
+    /// <returns>true if a has the same coordinates as b; otherwise false.</returns>
     public static bool operator ==(Line a, Line b)
     {
       return a.From == b.From && a.To == b.To;
@@ -573,9 +573,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether two lines have different values.
     /// </summary>
-    /// <param name="a">A line</param>
-    /// <param name="b">Another line</param>
-    /// <returns>true if a has any coordinate that distinguishes it from b; otherwise false</returns>
+    /// <param name="a">A line.</param>
+    /// <param name="b">Another line.</param>
+    /// <returns>true if a has any coordinate that distinguishes it from b; otherwise false.</returns>
     public static bool operator !=(Line a, Line b)
     {
       return a.From != b.From || a.To != b.To;

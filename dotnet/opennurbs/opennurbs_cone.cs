@@ -71,7 +71,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// True if plane is valid, height is not zero and radius is not zero
+    /// true if plane is valid, height is not zero and radius is not zero.
     /// </summary>
     public bool IsValid
     {
@@ -83,7 +83,7 @@ namespace Rhino.Geometry
       }
     }
 
-    /// <summary>Center of base circle</summary>
+    /// <summary>Center of base circle.</summary>
     public Point3d BasePoint
     {
       get
@@ -92,7 +92,7 @@ namespace Rhino.Geometry
       }
     }
 
-    /// <summary>Point at tip of the cone</summary>
+    /// <summary>Point at tip of the cone.</summary>
     public Point3d ApexPoint
     {
       get
@@ -101,7 +101,7 @@ namespace Rhino.Geometry
       }
     }
 
-    /// <summary>Unit vector axis of cone</summary>
+    /// <summary>Unit vector axis of cone.</summary>
     public Vector3d Axis
     {
       get
@@ -136,7 +136,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Creates a Nurbs surface representation of this Cone. 
+    /// Constructs a Nurbs surface representation of this Cone. 
     /// This is synonymous with calling NurbsSurface.CreateFromCone().
     /// </summary>
     /// <returns>A Nurbs surface representation of the cone or null.</returns>
@@ -146,7 +146,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Creates a RevSurface representation of this Cone. 
+    /// Constructs a RevSurface representation of this Cone. 
     /// This is synonymous with calling RevSurface.CreateFromCone().
     /// </summary>
     /// <returns>A RevSurface representation of the cone or null.</returns>

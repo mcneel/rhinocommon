@@ -325,9 +325,9 @@ namespace Rhino.Render.CustomRenderMesh
     /// Determine if custom render meshes will be built for a particular object.
     /// </summary>
     /// <param name="vp">the viewport being rendered.</param>
-    /// <param name="obj">the Rhino object of interest</param>
-    /// <param name="requestingPlugIn">type of mesh to build</param>
-    /// <param name="meshType">UUID of the plug-in requesting the meshes</param>
+    /// <param name="obj">the Rhino object of interest.</param>
+    /// <param name="requestingPlugIn">type of mesh to build.</param>
+    /// <param name="meshType">UUID of the plug-in requesting the meshes.</param>
     /// <param name="soleProviderId">the UUID of the sole provider to call.</param>
     /// <returns>true if BuildCustomMeshes() will build custom render mesh(es) for the given object.</returns>
     public static bool WillBuildCustomMeshes(Rhino.DocObjects.ViewportInfo vp, Rhino.DocObjects.RhinoObject obj, Guid requestingPlugIn, MeshTypes meshType, Guid soleProviderId)
@@ -339,9 +339,9 @@ namespace Rhino.Render.CustomRenderMesh
     /// Determine if custom render meshes will be built for a particular object.
     /// </summary>
     /// <param name="vp">the viewport being rendered.</param>
-    /// <param name="obj">the Rhino object of interest</param>
-    /// <param name="requestingPlugIn">type of mesh to build</param>
-    /// <param name="meshType">UUID of the plug-in requesting the meshes</param>
+    /// <param name="obj">the Rhino object of interest.</param>
+    /// <param name="requestingPlugIn">type of mesh to build.</param>
+    /// <param name="meshType">UUID of the plug-in requesting the meshes.</param>
     /// <returns>true if BuildCustomMeshes() will build custom render mesh(es) for the given object.</returns>
     public static bool WillBuildCustomMeshes(Rhino.DocObjects.ViewportInfo vp, Rhino.DocObjects.RhinoObject obj, Guid requestingPlugIn, MeshTypes meshType)
     {
@@ -351,12 +351,12 @@ namespace Rhino.Render.CustomRenderMesh
     /// <summary>
     /// Returns a bounding box for the custom render meshes for the given object.
     /// </summary>
-    /// <param name="vp"> the viewport being rendered</param>
-    /// <param name="obj">Rhino object of interest</param>
-    /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes</param>
-    /// <param name="meshType"> type of mesh(es) to build the bounding box for</param>
+    /// <param name="vp"> the viewport being rendered.</param>
+    /// <param name="obj">Rhino object of interest.</param>
+    /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes.</param>
+    /// <param name="meshType"> type of mesh(es) to build the bounding box for.</param>
     /// <param name="soleProviderId">the sole provider to call.</param>
-    /// <returns>ON_BoundingBox for the meshes</returns>
+    /// <returns>ON_BoundingBox for the meshes.</returns>
     public static Rhino.Geometry.BoundingBox BoundingBox(Rhino.DocObjects.ViewportInfo vp, Rhino.DocObjects.RhinoObject obj, Guid requestingPlugIn, MeshTypes meshType, Guid soleProviderId)
     {
       Geometry.Point3d min = new Geometry.Point3d();
@@ -374,11 +374,11 @@ namespace Rhino.Render.CustomRenderMesh
     /// <summary>
     /// Returns a bounding box for the custom render meshes for the given object.
     /// </summary>
-    /// <param name="vp"> the viewport being rendered</param>
-    /// <param name="obj">Rhino object of interest</param>
-    /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes</param>
-    /// <param name="meshType"> type of mesh(es) to build the bounding box for</param>
-    /// <returns>ON_BoundingBox for the meshes</returns>
+    /// <param name="vp"> the viewport being rendered.</param>
+    /// <param name="obj">Rhino object of interest.</param>
+    /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes.</param>
+    /// <param name="meshType"> type of mesh(es) to build the bounding box for.</param>
+    /// <returns>ON_BoundingBox for the meshes.</returns>
     public static Rhino.Geometry.BoundingBox BoundingBox(Rhino.DocObjects.ViewportInfo vp, Rhino.DocObjects.RhinoObject obj, Guid requestingPlugIn, MeshTypes meshType)
     {
       Rhino.Geometry.Point3d min = new Geometry.Point3d();
@@ -396,27 +396,27 @@ namespace Rhino.Render.CustomRenderMesh
     }
 
     /// <summary>
-    /// Build custom render mesh(es) for the given object
+    /// Build custom render mesh(es) for the given object.
     /// </summary>
-    /// <param name="vp">the viewport being rendered</param>
+    /// <param name="vp">the viewport being rendered.</param>
     /// <param name="objMeshes">The meshes object to fill with custom meshes - the Object property will already be set.</param>
-    /// <param name="requestingPlugIn">the UUID of the RDK plug-in requesting the meshes</param>
-    /// <param name="meshType"> type of mesh(es) to build</param>
-    /// <param name="soleProviderId">the sole provider to call</param>
-    /// <returns>true if successful</returns>
+    /// <param name="requestingPlugIn">the UUID of the RDK plug-in requesting the meshes.</param>
+    /// <param name="meshType"> type of mesh(es) to build.</param>
+    /// <param name="soleProviderId">the sole provider to call.</param>
+    /// <returns>true if successful.</returns>
     public static bool BuildCustomMeshes(Rhino.DocObjects.ViewportInfo vp, ObjectMeshes objMeshes, Guid requestingPlugIn, MeshTypes meshType, Guid soleProviderId)
     {
       return UnsafeNativeMethods.Rdk_CRMManager_BuildCustomMeshesSole(vp.ConstPointer(), objMeshes.NonConstPointer(), requestingPlugIn, (int)meshType, soleProviderId);
     }
 
     /// <summary>
-    /// Build custom render mesh(es) for the given object
+    /// Build custom render mesh(es) for the given object.
     /// </summary>
-    /// <param name="vp">the viewport being rendered</param>
+    /// <param name="vp">the viewport being rendered.</param>
     /// <param name="objMeshes">The meshes object to fill with custom meshes - the Object property will already be set.</param>
-    /// <param name="requestingPlugIn">the UUID of the RDK plug-in requesting the meshes</param>
-    /// <param name="meshType"> type of mesh(es) to build</param>
-    /// <returns>true if successful</returns>
+    /// <param name="requestingPlugIn">the UUID of the RDK plug-in requesting the meshes.</param>
+    /// <param name="meshType"> type of mesh(es) to build.</param>
+    /// <returns>true if successful.</returns>
     public static bool BuildCustomMeshes(Rhino.DocObjects.ViewportInfo vp, ObjectMeshes objMeshes, Guid requestingPlugIn, MeshTypes meshType)
     {
       return UnsafeNativeMethods.Rdk_CRMManager_BuildCustomMeshes(vp.ConstPointer(), objMeshes.NonConstPointer(), requestingPlugIn, (int)meshType);
@@ -438,7 +438,7 @@ namespace Rhino.Render.CustomRenderMesh
     internal static EventHandler m_custom_render_meshes_changed;
 
     /// <summary>
-    /// Monitors when custom render meshes are changed
+    /// Monitors when custom render meshes are changed.
     /// </summary>
     public static event EventHandler CustomRenderMeshesChanged
     {
@@ -534,20 +534,20 @@ namespace Rhino.Render.CustomRenderMesh
     /// <summary>
     /// Determine if custom render meshes will be built for a particular object.
     /// </summary>
-    /// <param name="vp">the viewport being rendered</param>
-    /// <param name="obj">the Rhino object of interest</param>
-    /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes</param>
-    /// <param name="meshType">ype of mesh to build</param>
+    /// <param name="vp">the viewport being rendered.</param>
+    /// <param name="obj">the Rhino object of interest.</param>
+    /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes.</param>
+    /// <param name="meshType">ype of mesh to build.</param>
     /// <returns></returns>
     public abstract bool WillBuildCustomMeshes(Rhino.DocObjects.ViewportInfo vp, Rhino.DocObjects.RhinoObject obj, Guid requestingPlugIn, MeshTypes meshType);
 
     /// <summary>
-    /// Returns a bounding box for the custom render meshes for the given object
+    /// Returns a bounding box for the custom render meshes for the given object.
     /// </summary>
-    /// <param name="vp">the viewport being rendered</param>
-    /// <param name="obj">the Rhino object of interest</param>
-    /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes</param>
-    /// <param name="meshType">ype of mesh to build</param>
+    /// <param name="vp">the viewport being rendered.</param>
+    /// <param name="obj">the Rhino object of interest.</param>
+    /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes.</param>
+    /// <param name="meshType">ype of mesh to build.</param>
     /// <returns></returns>
     public virtual Rhino.Geometry.BoundingBox BoundingBox(Rhino.DocObjects.ViewportInfo vp, Rhino.DocObjects.RhinoObject obj, Guid requestingPlugIn, MeshTypes meshType)
     {
@@ -567,10 +567,10 @@ namespace Rhino.Render.CustomRenderMesh
     /// <summary>
     /// Build custom render mesh(es).
     /// </summary>
-    /// <param name="vp">the viewport being rendered</param>
-    /// <param name="objMeshes">The meshes class to populate with custom meshes</param>
-    /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes</param>
-    /// <param name="meshType">ype of mesh to build</param>
+    /// <param name="vp">the viewport being rendered.</param>
+    /// <param name="objMeshes">The meshes class to populate with custom meshes.</param>
+    /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes.</param>
+    /// <param name="meshType">ype of mesh to build.</param>
     /// <returns></returns>
     public abstract bool BuildCustomMeshes(Rhino.DocObjects.ViewportInfo vp, ObjectMeshes objMeshes, Guid requestingPlugIn, MeshTypes meshType);
 

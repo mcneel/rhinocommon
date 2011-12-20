@@ -106,8 +106,8 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// True if the page is active instead of any detail views. This occurs
-    /// when the MainViewport.Id == ActiveViewportID
+    /// true if the page is active instead of any detail views. This occurs
+    /// when the MainViewport.Id == ActiveViewportID.
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_activeviewport.vb' lang='vbnet'/>
@@ -123,13 +123,13 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    ///  Create a detail view object that is displayed on this page and adds it to the doc
+    ///  Create a detail view object that is displayed on this page and adds it to the doc.
     /// </summary>
     /// <param name="title"></param>
-    /// <param name="corner0">corners of the detail view in world coordinates</param>
-    /// <param name="corner1">corners of the detail view in world coordinates</param>
+    /// <param name="corner0">corners of the detail view in world coordinates.</param>
+    /// <param name="corner1">corners of the detail view in world coordinates.</param>
     /// <param name="initialProjection"></param>
-    /// <returns>newly created detail view on success. null on error</returns>
+    /// <returns>newly created detail view on success. null on error.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
@@ -153,7 +153,7 @@ namespace Rhino.Display
 
 
     /// <summary>
-    /// Gets a list of the detail view objects associated with this layout
+    /// Gets a list of the detail view objects associated with this layout.
     /// </summary>
     /// <returns></returns>
     public Rhino.DocObjects.DetailViewObject[] GetDetailViews()
@@ -190,7 +190,7 @@ namespace Rhino.Display
       }
     }
 
-    /// <summary>Same as the MainViewport.Name</summary>
+    /// <summary>Same as the MainViewport.Name.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_activeviewport.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_activeviewport.cs' lang='cs'/>

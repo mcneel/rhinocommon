@@ -72,7 +72,7 @@ namespace Rhino.DocObjects
     }
 
     #region properties
-    /// <summary>The name of this linetype</summary>
+    /// <summary>The name of this linetype.</summary>
     public string Name
     {
       get
@@ -99,7 +99,7 @@ namespace Rhino.DocObjects
       set { SetInt(idxLinetypeIndex, value); }
     }
 
-    /// <summary>Total length of one repeat of the pattern</summary>
+    /// <summary>Total length of one repeat of the pattern.</summary>
     public double PatternLength
     {
       get
@@ -109,7 +109,7 @@ namespace Rhino.DocObjects
       }
     }
 
-    /// <summary>Number of segments in the pattern</summary>
+    /// <summary>Number of segments in the pattern.</summary>
     public int SegmentCount
     {
       get { return GetInt(idxSegmentCount); }
@@ -205,7 +205,7 @@ namespace Rhino.DocObjects
 
     #region methods
     /// <summary>
-    /// Set linetype to default settings
+    /// Set linetype to default settings.
     /// </summary>
     public void Default()
     {
@@ -213,33 +213,33 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.ON_Linetype_Default(pThis);
     }
 
-    /// <summary>Adds a segment to the pattern</summary>
+    /// <summary>Adds a segment to the pattern.</summary>
     /// <param name="length"></param>
     /// <param name="isSolid">
     /// If true, the length is interpreted as a line. If false,
-    /// the length is interpreted as a space
+    /// the length is interpreted as a space.
     /// </param>
-    /// <returns>index of the added segment</returns>
+    /// <returns>index of the added segment.</returns>
     public int AppendSegment(double length, bool isSolid)
     {
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.ON_Linetype_AppendSegment(pThis, length, isSolid);
     }
 
-    /// <summary>Removes a segment in the linetype</summary>
-    /// <param name="index">Zero based index of the segment to remove</param>
-    /// <returns>True if the segment index was removed</returns>
+    /// <summary>Removes a segment in the linetype.</summary>
+    /// <param name="index">Zero based index of the segment to remove.</param>
+    /// <returns>true if the segment index was removed.</returns>
     public bool RemoveSegment(int index)
     {
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.ON_Linetype_RemoveSegment(pThis, index);
     }
 
-    /// <summary>Sets the length and type of the segment at index</summary>
-    /// <param name="index">Zero based index of the segment</param>
+    /// <summary>Sets the length and type of the segment at index.</summary>
+    /// <param name="index">Zero based index of the segment.</param>
     /// <param name="length"></param>
     /// <param name="isSolid"></param>
-    /// <returns>True on success</returns>
+    /// <returns>true on success.</returns>
     public bool SetSegment(int index, double length, bool isSolid)
     {
       IntPtr pThis = NonConstPointer();
@@ -278,7 +278,7 @@ namespace Rhino.DocObjects.Tables
       m_doc = doc;
     }
 
-    /// <summary>Document that owns this table</summary>
+    /// <summary>Document that owns this table.</summary>
     public RhinoDoc Document
     {
       get { return m_doc; }
@@ -296,7 +296,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Returns number of linetypes in the linetypes table, excluding deleted linetypes
+    /// Returns number of linetypes in the linetypes table, excluding deleted linetypes.
     /// </summary>
     public int ActiveCount
     {
@@ -309,7 +309,7 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// At all times, there is a "current" linetype.  Unless otherwise specified,
     /// new objects are assigned to the current linetype. If the current linetype
-    /// source is LinetypeFromLayer the object's layer's linetype is used instead
+    /// source is LinetypeFromLayer the object's layer's linetype is used instead.
     /// </summary>
     public int CurrentLinetypeIndex
     {
@@ -339,9 +339,9 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Conceptually, the linetype table is an array of linetypes.
     /// The operator[] can be used to get individual linetypes. A linetype is
-    /// either active or deleted and this state is reported by Linetype.IsDeleted
+    /// either active or deleted and this state is reported by Linetype.IsDeleted.
     /// </summary>
-    /// <param name="index">zero based array index</param>
+    /// <param name="index">zero based array index.</param>
     /// <returns>
     /// Refererence to the linetype.  If index is out of range, the current
     /// linetype is returned. Note that this reference may become invalid after
@@ -419,12 +419,12 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
-    /// <summary>Finds the linetype with a given name</summary>
-    /// <param name="name">search ignores case</param>
-    /// <param name="ignoreDeletedLinetypes">If true, deleted linetypes are not checked</param>
+    /// <summary>Finds the linetype with a given name.</summary>
+    /// <param name="name">search ignores case.</param>
+    /// <param name="ignoreDeletedLinetypes">If true, deleted linetypes are not checked.</param>
     /// <returns>
     /// >=0 index of the linetype with the given name
-    /// -1  no linetype has the given name
+    /// -1  no linetype has the given name.
     /// </returns>
     public int Find(string name, bool ignoreDeletedLinetypes)
     {
@@ -433,12 +433,12 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoLinetypeTable_FindLinetype(m_doc.m_docId, name, ignoreDeletedLinetypes);
     }
 
-    /// <summary>Find a linetype with a matching id</summary>
+    /// <summary>Finds a linetype with a matching id.</summary>
     /// <param name="id"></param>
-    /// <param name="ignoreDeletedLinetypes">If true, deleted linetypes are not checked</param>
+    /// <param name="ignoreDeletedLinetypes">If true, deleted linetypes are not checked.</param>
     /// <returns>
     /// >=0 index of the linetype with the given name
-    /// -1  no linetype has the given name
+    /// -1  no linetype has the given name.
     /// </returns>
     public int Find(Guid id, bool ignoreDeletedLinetypes)
     {
@@ -454,7 +454,7 @@ namespace Rhino.DocObjects.Tables
     /// will be automatically created.
     /// </param>
     /// <returns>
-    /// index of new linetype or -1 on error
+    /// index of new linetype or -1 on error.
     /// </returns>
     public int Add(DocObjects.Linetype linetype)
     {
@@ -466,9 +466,9 @@ namespace Rhino.DocObjects.Tables
     /// Adds a new linetype with specified definition to the linetype table.
     /// </summary>
     /// <param name="name"></param>
-    /// <param name="segmentLengths">Positive values are dashes, negative values are gaps</param>
+    /// <param name="segmentLengths">Positive values are dashes, negative values are gaps.</param>
     /// <returns>
-    /// index of new linetype or -1 on error
+    /// index of new linetype or -1 on error.
     /// </returns>
     public int Add(string name, IEnumerable<double> segmentLengths)
     {
@@ -480,7 +480,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Reference linetypes are not saved in files
+    /// Reference linetypes are not saved in files.
     /// </summary>
     /// <param name="linetype"></param>
     /// <returns></returns>
@@ -490,9 +490,9 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoLinetypeTable_AddLinetype(m_doc.m_docId, pConstLinetype, true);
     }
 
-    /// <summary>Modify linetype settings</summary>
+    /// <summary>Modify linetype settings.</summary>
     /// <param name="linetype">new settings.  This information is copied.</param>
-    /// <param name="index">zero based index of linetype to set</param>
+    /// <param name="index">zero based index of linetype to set.</param>
     /// <param name="quiet">
     /// if true, information message boxes pop up when illegal changes are attempted.
     /// </param>
@@ -512,15 +512,15 @@ namespace Rhino.DocObjects.Tables
     /// </summary>
     /// <param name="index"></param>
     /// <returns>
-    /// true if this linetype had been modified and the modifications were undone
+    /// true if this linetype had been modified and the modifications were undone.
     /// </returns>
     public bool UndoModify(int index)
     {
       return UnsafeNativeMethods.CRhinoLinetypeTable_Un(m_doc.m_docId, index, true);
     }
 
-    /// <summary>Deletes linetype</summary>
-    /// <param name="index">zero based index of linetype to delete</param>
+    /// <summary>Deletes linetype.</summary>
+    /// <param name="index">zero based index of linetype to delete.</param>
     /// <param name="quiet">
     /// If true, no warning message box appears if a linetype the
     /// linetype cannot be deleted because it is the current linetype
@@ -536,7 +536,7 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoLinetypeTable_Delete(m_doc.m_docId, index, quiet);
     }
 
-    /// <summary>Deletes multiple linetypes</summary>
+    /// <summary>Deletes multiple linetypes.</summary>
     /// <param name="indices"></param>
     /// <param name="quiet"></param>
     /// <returns></returns>
@@ -547,9 +547,9 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoLinetypeTable_Delete2(m_doc.m_docId, _indices.Length, _indices, quiet);
     }
 
-    /// <summary>Undeletes a linetype that has been deleted</summary>
+    /// <summary>Undeletes a linetype that has been deleted.</summary>
     /// <param name="index"></param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool Undelete(int index)
     {
       return UnsafeNativeMethods.CRhinoLinetypeTable_Un(m_doc.m_docId, index, false);
@@ -559,7 +559,7 @@ namespace Rhino.DocObjects.Tables
     /// Gets unused linetype name used as default when creating new linetypes.
     /// </summary>
     /// <param name="ignoreDeleted">
-    /// if this is true then may use a name used by a deleted linetype
+    /// if this is true then may use a name used by a deleted linetype.
     /// </param>
     /// <returns></returns>
     public string GetUnusedLinetypeName(bool ignoreDeleted)
@@ -573,7 +573,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Returns the text name of the continuous linetype
+    /// Returns the text name of the continuous linetype.
     /// </summary>
     public string ContinuousLinetypeName
     {
@@ -585,7 +585,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Returns the text name of the bylayer linetype
+    /// Returns the text name of the bylayer linetype.
     /// </summary>
     public string ByLayerLinetypeName
     {

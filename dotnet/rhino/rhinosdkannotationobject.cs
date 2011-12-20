@@ -128,7 +128,7 @@ namespace Rhino.Display
 
     #region constructors
     /// <summary>
-    /// Create a new instance of Text3d.
+    /// Constructs a new instance of Text3d.
     /// </summary>
     /// <param name="text">Text string.</param>
     public Text3d(string text)
@@ -137,7 +137,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Create a new instance of Text3d.
+    /// Constructs a new instance of Text3d.
     /// </summary>
     /// <param name="text">Text string.</param>
     /// <param name="plane">3D Plane for text.</param>

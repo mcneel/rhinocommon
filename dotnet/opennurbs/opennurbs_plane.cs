@@ -103,7 +103,7 @@ namespace Rhino.Geometry
 
     #region constants
     /// <summary>
-    /// plane coincident with the World XY plane
+    /// plane coincident with the World XY plane.
     /// </summary>
     public static Plane WorldXY
     {
@@ -118,7 +118,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// plane coincident with the World YZ plane
+    /// plane coincident with the World YZ plane.
     /// </summary>
     public static Plane WorldYZ
     {
@@ -133,7 +133,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// plane coincident with the World ZX plane
+    /// plane coincident with the World ZX plane.
     /// </summary>
     public static Plane WorldZX
     {
@@ -165,7 +165,7 @@ namespace Rhino.Geometry
     #endregion
 
     #region constructors
-    /// <summary>Copy constructor</summary>
+    /// <summary>Copy constructor.</summary>
     /// <param name="other"></param>
     public Plane(Plane other)
     {
@@ -230,7 +230,7 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Constructs a plane from an equation
-    /// ax+by+cz=d
+    /// ax+by+cz=d.
     /// </summary>
     public Plane(double a, double b, double c, double d)
       : this()
@@ -241,7 +241,7 @@ namespace Rhino.Geometry
 #if RHINO_SDK
     /// <summary>Fit a plane through a collection of points.</summary>
     /// <param name="points">Points to fit to.</param>
-    /// <param name="plane">Resulting plane</param>
+    /// <param name="plane">Resulting plane.</param>
     /// <returns>A value indicating the result of the operation.</returns>
     public static PlaneFitResult FitPlaneToPoints(System.Collections.Generic.IEnumerable<Point3d> points, out Plane plane)
     {
@@ -251,7 +251,7 @@ namespace Rhino.Geometry
 
     /// <summary>Fit a plane through a collection of points.</summary>
     /// <param name="points">Points to fit to.</param>
-    /// <param name="plane">Resulting plane</param>
+    /// <param name="plane">Resulting plane.</param>
     /// <param name="maximumDeviation">The distance from the furthest point to the plane.</param>
     /// <returns>A value indicating the result of the operation.</returns>
     public static PlaneFitResult FitPlaneToPoints(System.Collections.Generic.IEnumerable<Point3d> points, out Plane plane, out double maximumDeviation)
@@ -328,10 +328,10 @@ namespace Rhino.Geometry
 
     #region methods
     /// <summary>
-    /// Gets the plane equation for this plane in the format of Ax+By+Cz+D=0
+    /// Gets the plane equation for this plane in the format of Ax+By+Cz+D=0.
     /// </summary>
     /// <returns>
-    /// Array of four values
+    /// Array of four values.
     /// </returns>
     public double[] GetPlaneEquation()
     {
@@ -342,21 +342,21 @@ namespace Rhino.Geometry
     /// <summary>
     /// Evaluate a point on the plane.
     /// </summary>
-    /// <param name="u">evaulation parameter</param>
-    /// <param name="v">evaulation parameter</param>
-    /// <returns>plane.origin + u*plane.xaxis + v*plane.yaxis</returns>
+    /// <param name="u">evaulation parameter.</param>
+    /// <param name="v">evaulation parameter.</param>
+    /// <returns>plane.origin + u*plane.xaxis + v*plane.yaxis.</returns>
     public Point3d PointAt(double u, double v)
     {
       return (Origin + u * XAxis + v * YAxis);
     }
 
     /// <summary>
-    /// Evaluate a point on the plane
+    /// Evaluate a point on the plane.
     /// </summary>
-    /// <param name="u">evaulation parameter</param>
-    /// <param name="v">evaulation parameter</param>
-    /// <param name="w">evaulation parameter</param>
-    /// <returns>plane.origin + u*plane.xaxis + v*plane.yaxis + z*plane.zaxis</returns>
+    /// <param name="u">evaulation parameter.</param>
+    /// <param name="v">evaulation parameter.</param>
+    /// <param name="w">evaulation parameter.</param>
+    /// <returns>plane.origin + u*plane.xaxis + v*plane.yaxis + z*plane.zaxis.</returns>
     public Point3d PointAt(double u, double v, double w)
     {
       return (Origin + u * XAxis + v * YAxis + w * ZAxis);
@@ -369,16 +369,16 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="box"></param>
     /// <param name="s">
-    /// If this function returns True, 
+    /// If this function returns true, 
     /// the s parameter returns the Interval on the plane along the X direction that will 
     /// encompass the Box.
     /// </param>
     /// <param name="t">
-    /// If this function returns True, 
+    /// If this function returns true, 
     /// the t parameter returns the Interval on the plane along the Y direction that will 
     /// encompass the Box.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ExtendThroughBox(BoundingBox box, out Interval s, out Interval t)
     {
       s = Interval.Unset;
@@ -394,16 +394,16 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="box"></param>
     /// <param name="s">
-    /// If this function returns True, 
+    /// If this function returns true, 
     /// the s parameter returns the Interval on the plane along the X direction that will 
     /// encompass the Box.
     /// </param>
     /// <param name="t">
-    /// If this function returns True, 
+    /// If this function returns true, 
     /// the t parameter returns the Interval on the plane along the Y direction that will 
     /// encompass the Box.
     /// </param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool ExtendThroughBox(Box box, out Interval s, out Interval t)
     {
       s = Interval.Unset;
@@ -452,7 +452,7 @@ namespace Rhino.Geometry
     /// <param name="s">Parameter along plane X-direction.</param>
     /// <param name="t">Parameter along plane Y-direction.</param>
     /// <returns>
-    /// True if a parameter could be found, 
+    /// true if a parameter could be found, 
     /// false if the point could not be projected successfully.
     /// </returns>
     /// <example>
@@ -505,7 +505,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="ptSample">World point to remap.</param>
     /// <param name="ptPlane">Point in plane (s,t,d) coordinates.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     /// <remarks>D stands for distance, not disease.</remarks>
     public bool RemapToPlaneSpace(Point3d ptSample, out Point3d ptPlane)
     {
@@ -539,7 +539,7 @@ namespace Rhino.Geometry
     /// Transform the plane with a Transformation matrix.
     /// </summary>
     /// <param name="xform">Transformation to apply to plane.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Transform(Transform xform)
     {
       return UnsafeNativeMethods.ON_Plane_Transform(ref this, ref xform);
@@ -548,8 +548,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Translate (move) the plane along a vector.
     /// </summary>
-    /// <param name="delta">Translation (motion) vector</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <param name="delta">Translation (motion) vector.</param>
+    /// <returns>true on success, false on failure.</returns>
     public bool Translate(Vector3d delta)
     {
       if (!delta.IsValid)
@@ -565,7 +565,7 @@ namespace Rhino.Geometry
     /// <param name="sinAngle">Sin(angle).</param>
     /// <param name="cosAngle">Cos(angle).</param>
     /// <param name="axis">Axis of rotation.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Rotate(double sinAngle, double cosAngle, Vector3d axis)
     {
       bool rc = true;
@@ -590,7 +590,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="angle">Angle in radians.</param>
     /// <param name="axis">Axis of rotation.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Rotate(double angle, Vector3d axis)
     {
       return Rotate(Math.Sin(angle), Math.Cos(angle), axis);
@@ -602,7 +602,7 @@ namespace Rhino.Geometry
     /// <param name="angle">Angle in radians.</param>
     /// <param name="axis">Axis of rotation.</param>
     /// <param name="centerOfRotation">Center of rotation.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Rotate(double angle, Vector3d axis, Point3d centerOfRotation)
     {
       return Rotate(Math.Sin(angle), Math.Cos(angle), axis, centerOfRotation);
@@ -613,7 +613,7 @@ namespace Rhino.Geometry
     /// <param name="cosAngle">Cos(angle)</param>
     /// <param name="axis">Axis of rotation.</param>
     /// <param name="centerOfRotation">Center of rotation.</param>
-    /// <returns>True on success, false on failure.</returns>
+    /// <returns>true on success, false on failure.</returns>
     public bool Rotate(double sinAngle, double cosAngle, Vector3d axis, Point3d centerOfRotation)
     {
       if (centerOfRotation == Origin)

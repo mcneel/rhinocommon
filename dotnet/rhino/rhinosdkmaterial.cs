@@ -183,7 +183,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets or sets the shine factor of the material
+    /// Gets or sets the shine factor of the material.
     /// </summary>
     public double Shine
     {
@@ -252,7 +252,7 @@ namespace Rhino.DocObjects
     #endregion
 
     /// <summary>
-    /// Set material to default settings
+    /// Set material to default settings.
     /// </summary>
     public void Default()
     {
@@ -316,7 +316,7 @@ namespace Rhino.DocObjects
 
     #region Bump
     /// <summary>
-    /// may be null if no bump texture has been added to this material
+    /// may be null if no bump texture has been added to this material.
     /// </summary>
     /// <returns></returns>
     public Texture GetBumpTexture()
@@ -389,7 +389,7 @@ namespace Rhino.DocObjects.Tables
       m_doc = doc;
     }
 
-    /// <summary>Document that owns this table</summary>
+    /// <summary>Document that owns this table.</summary>
     public RhinoDoc Document
     {
       get { return m_doc; }
@@ -414,9 +414,9 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Conceptually, the material table is an array of materials.
     /// The operator[] can be used to get individual materials. A material is
-    /// either active or deleted and this state is reported by Material.IsDeleted
+    /// either active or deleted and this state is reported by Material.IsDeleted.
     /// </summary>
-    /// <param name="index">zero based array index</param>
+    /// <param name="index">zero based array index.</param>
     /// <returns>
     /// If index is out of range, the current material is returned.
     /// </returns>
@@ -464,7 +464,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Adds a new material to the table based on the default material
+    /// Adds a new material to the table based on the default material.
     /// </summary>
     /// <returns></returns>
     public int Add()
@@ -473,7 +473,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Adds a new material to the table based on a given material
+    /// Adds a new material to the table based on a given material.
     /// </summary>
     /// <param name="material"></param>
     /// <returns></returns>
@@ -483,7 +483,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Adds a new material to the table based on a given material
+    /// Adds a new material to the table based on a given material.
     /// </summary>
     /// <param name="material"></param>
     /// <param name="reference">
@@ -498,35 +498,35 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Finds a meterial with a given name
+    /// Finds a meterial with a given name.
     /// </summary>
     /// <param name="materialName">Name of the material to search for. The search ignores case.</param>
-    /// <param name="ignoreDeletedMaterials">true means don't search deleted materials</param>
+    /// <param name="ignoreDeletedMaterials">true means don't search deleted materials.</param>
     /// <returns>
     /// >=0 index of the material with the given name
-    /// -1  no material has the given name
+    /// -1  no material has the given name.
     /// </returns>
     public int Find(string materialName, bool ignoreDeletedMaterials)
     {
       return UnsafeNativeMethods.CRhinoMaterialTable_FindByName(m_doc.m_docId, materialName, ignoreDeletedMaterials);
     }
 
-    /// <summary>Find a material with a matching id</summary>
+    /// <summary>Finds a material with a matching id.</summary>
     /// <param name="materialId"></param>
-    /// <param name="ignoreDeletedMaterials">If true, deleted materials are not checked</param>
+    /// <param name="ignoreDeletedMaterials">If true, deleted materials are not checked.</param>
     /// <returns>
     /// >=0 index of the material with the given name
-    /// -1  no material has the given name
+    /// -1  no material has the given name.
     /// </returns>
     public int Find(Guid materialId, bool ignoreDeletedMaterials)
     {
       return UnsafeNativeMethods.CRhinoMaterialTable_FindById(m_doc.m_docId, materialId, ignoreDeletedMaterials);
     }
 
-    /// <summary>Modify material settings</summary>
-    /// <param name="newSettings">This information is copied</param>
+    /// <summary>Modify material settings.</summary>
+    /// <param name="newSettings">This information is copied.</param>
     /// <param name="materialIndex">
-    /// zero based index of material to set.  This must be in the range 0 &lt;= layerIndex &lt; MaterialTable.Count
+    /// zero based index of material to set.  This must be in the range 0 &lt;= layerIndex &lt; MaterialTable.Count.
     /// </param>
     /// <param name="quiet">if true, information message boxes pop up when illegal changes are attempted.</param>
     /// <returns>

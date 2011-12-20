@@ -79,7 +79,7 @@ namespace Rhino.Display
     /// Dispose() when you are done with this instance, otherwise
     /// the display methods will never be switched off.
     /// </summary>
-    /// <param name="enable">If True, the display will be enabled immediately.</param>
+    /// <param name="enable">If true, the display will be enabled immediately.</param>
     public CustomDisplay(bool enable)
     {
       m_clip = BoundingBox.Empty;
@@ -242,7 +242,7 @@ namespace Rhino.Display
     /// <summary>
     /// Adds a new, black line to the display list.
     /// </summary>
-    /// <param name="line">Line to add</param>
+    /// <param name="line">Line to add.</param>
     public void AddLine(Line line)
     {
       if (m_disposed) { throw new ObjectDisposedException("This CustomDisplay instance has been disposed and cannot be modified"); }
@@ -324,7 +324,7 @@ namespace Rhino.Display
     /// <summary>
     /// Adds a new, black arc to the display list.
     /// </summary>
-    /// <param name="arc">Arc to add</param>
+    /// <param name="arc">Arc to add.</param>
     public void AddArc(Arc arc)
     {
       if (m_disposed) { throw new ObjectDisposedException("This CustomDisplay instance has been disposed and cannot be modified"); }
@@ -363,7 +363,7 @@ namespace Rhino.Display
     /// <summary>
     /// Adds a new, black circle to the display list.
     /// </summary>
-    /// <param name="circle">Circle to add</param>
+    /// <param name="circle">Circle to add.</param>
     public void AddCircle(Circle circle)
     {
       if (m_disposed) { throw new ObjectDisposedException("This CustomDisplay instance has been disposed and cannot be modified"); }
@@ -398,7 +398,7 @@ namespace Rhino.Display
     /// The curve will be duplicated so changes to the 
     /// original will not affect the display.
     /// </summary>
-    /// <param name="curve">Curve to add</param>
+    /// <param name="curve">Curve to add.</param>
     public void AddCurve(Curve curve)
     {
       if (m_disposed) { throw new ObjectDisposedException("This CustomDisplay instance has been disposed and cannot be modified"); }
@@ -501,7 +501,7 @@ namespace Rhino.Display
       m_clip.Union(cdu.m_text.BoundingBox);
     }
     /// <summary>
-    ///  Add a new 3D text object to the display list.
+    ///  Adds a new 3D text object to the display list.
     /// </summary>
     /// <param name="text">Text object to add.</param>
     /// <param name="color">Color of text object.</param>

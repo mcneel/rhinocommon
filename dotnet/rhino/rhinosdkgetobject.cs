@@ -40,7 +40,7 @@ namespace Rhino.Input.Custom
     /// (points, curves, surfaces, meshes, etc.) can be selected.
     /// The default geometry type filter permits selection of all
     /// types of geometry.
-    /// NOTE: the filter can be a bitwise combination of multiple ObjectTypes
+    /// NOTE: the filter can be a bitwise combination of multiple ObjectTypes.
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_orientonsrf.vb' lang='vbnet'/>
@@ -97,12 +97,12 @@ namespace Rhino.Input.Custom
     /// Checks geometry to see if it can be selected.
     /// Override to provide fancy filtering.
     /// </summary>
-    /// <param name="rhObject">parent object being considered</param>
-    /// <param name="geometry">geometry being considered</param>
+    /// <param name="rhObject">parent object being considered.</param>
+    /// <param name="geometry">geometry being considered.</param>
     /// <param name="componentIndex">
-    /// if >= 0, geometry is a proper sub-part of object->Geometry() with componentIndex
+    /// if >= 0, geometry is a proper sub-part of object->Geometry() with componentIndex.
     /// </param>
-    /// <returns>The default always returns true</returns>
+    /// <returns>The default always returns true.</returns>
     public virtual bool CustomGeometryFilter( DocObjects.RhinoObject rhObject, GeometryBase geometry, ComponentIndex componentIndex )
     {
       return true;
@@ -111,8 +111,8 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Checks geometry to see if it passes the basic GeometryAttributeFilter.
     /// </summary>
-    /// <param name="rhObject">parent object being considered</param>
-    /// <param name="geometry">geometry being considered</param>
+    /// <param name="rhObject">parent object being considered.</param>
+    /// <param name="geometry">geometry being considered.</param>
     /// <param name="componentIndex">if >= 0, geometry is a proper sub-part of object->Geometry() with componentIndex.</param>
     /// <returns>
     /// true if the geometry passes the filter returned by GeometryAttributeFilter().
@@ -132,7 +132,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Control the pre selection behavior GetObjects.
     /// </summary>
-    /// <param name="enable">if true, pre-selection is enabled</param>
+    /// <param name="enable">if true, pre-selection is enabled.</param>
     /// <param name="ignoreUnacceptablePreselectedObjects">
     /// If true and some acceptable objects are pre-selected, then any unacceptable
     /// pre-selected objects are ignored. If false and any unacceptable are pre-selected,
@@ -194,7 +194,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// True if pre-selected input will be deselected before
+    /// true if pre-selected input will be deselected before
     /// post-selection begins when no pre-selected input is valid.
     /// </summary>
     /// <example>
@@ -286,7 +286,7 @@ namespace Rhino.Input.Custom
     /// By default, any object selected during a command becomes part of the
     /// "previous selection set" and can be reselected by the SelPrev command.
     /// If you need to select objects but do not want them to be selected by
-    /// a subsquent call to SelPrev, then call EnableSelPrev = false
+    /// a subsquent call to SelPrev, then call EnableSelPrev = false.
     /// </summary>
     public void EnableSelPrevious(bool enable)
     {
@@ -296,7 +296,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// By default, any object post-pick selected by GetObjects() is highlighted.
     /// If you want to post-pick objects and not have them automatically highlight,
-    /// then call EnableHighlight = false
+    /// then call EnableHighlight = false.
     /// </summary>
     public void EnableHighlight( bool enable )
     {
@@ -305,7 +305,7 @@ namespace Rhino.Input.Custom
 
     /// <summary>
     /// By default, reference objects can be selected. If you do not want to be
-    /// able to select reference objects, then call EnableReferenceObjectSelect=false
+    /// able to select reference objects, then call EnableReferenceObjectSelect=false.
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_createblock.vb' lang='vbnet'/>
@@ -391,7 +391,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Call to select a single object
+    /// Call to select a single object.
     /// </summary>
     /// <returns>
     /// Success - objects selected.
@@ -694,17 +694,17 @@ namespace Rhino.Input.Custom
     /// closed and open meshs will pass the attribute filter.
     ///</summary>
     OpenMesh = 1 << 20,
-    ///<summary>all trimming edges are boundary edges</summary>
+    ///<summary>all trimming edges are boundary edges.</summary>
     BoundaryInnerLoop = 1 << 21,
-    ///<summary>all trimming edges are mated</summary>
+    ///<summary>all trimming edges are mated.</summary>
     MatedInnerLoop = 1 << 22,
-    ///<summary>any inner loop is acceptable</summary>
+    ///<summary>any inner loop is acceptable.</summary>
     InnerLoop = (1 << 21) | (1 << 22),
-    ///<summary>all trimming edges are boundary edges</summary>
+    ///<summary>all trimming edges are boundary edges.</summary>
     BoundaryOuterLoop = 1 << 23,
-    ///<summary>all trimming edges are mated</summary>
+    ///<summary>all trimming edges are mated.</summary>
     MatedOuterLoop = 1 << 24,
-    ///<summary>any outer loop is acceptable</summary>
+    ///<summary>any outer loop is acceptable.</summary>
     OuterLoop = (1 << 23) | (1 << 24),
     ///<summary>slit, crvonsrf, ptonsrf, etc.</summary>
     SpecialLoop = (1 << 25),

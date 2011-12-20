@@ -63,13 +63,13 @@ namespace Rhino.DocObjects.Tables
       m_doc = doc;
     }
 
-    /// <summary>Document that owns this table</summary>
+    /// <summary>Document that owns this table.</summary>
     public RhinoDoc Document
     {
       get { return m_doc; }
     }
 
-    /// <summary>Number of fonts in the table</summary>
+    /// <summary>Number of fonts in the table.</summary>
     public int Count
     {
       get

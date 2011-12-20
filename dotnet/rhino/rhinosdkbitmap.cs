@@ -50,7 +50,7 @@
 namespace Rhino.DocObjects.Tables
 {
   /// <summary>
-  /// Store the list of bitmaps in a Rhino document
+  /// Store the list of bitmaps in a Rhino document.
   /// </summary>
   public sealed class BitmapTable
   {
@@ -61,13 +61,13 @@ namespace Rhino.DocObjects.Tables
       m_doc = doc;
     }
 
-    /// <summary>Document that owns this bitmap table</summary>
+    /// <summary>Document that owns this bitmap table.</summary>
     public RhinoDoc Document
     {
       get { return m_doc; }
     }
 
-    /// <summary>Number of bitmaps in the table</summary>
+    /// <summary>Number of bitmaps in the table.</summary>
     public int Count
     {
       get
@@ -129,7 +129,7 @@ namespace Rhino.DocObjects.Tables
     //     );
 
 
-    /// <summary>Adds a new bitmap with specified name to the bitmap table</summary>
+    /// <summary>Adds a new bitmap with specified name to the bitmap table.</summary>
     /// <param name="bitmapFilename">
     /// If NULL or empty, then a unique name of the form "Bitmap 01" will be automatically created.
     /// </param>
@@ -138,7 +138,7 @@ namespace Rhino.DocObjects.Tables
     /// If false and there is already a bitmap using the specified name, then -1 is returned.
     /// </param>
     /// <returns>
-    /// index of new bitmap in table on success. -1 on error
+    /// index of new bitmap in table on success. -1 on error.
     /// </returns>
     public int AddBitmap(string bitmapFilename, bool replaceExisting)
     {
@@ -162,7 +162,7 @@ namespace Rhino.DocObjects.Tables
     //      bool bReplaceExisting = false
     //      );
 
-    /// <summary>deletes bitmap</summary>
+    /// <summary>deletes bitmap.</summary>
     /// <param name="bitmapFilename"></param>
     /// <returns>
     /// true if successful. false if the bitmap cannot be deleted because it
@@ -191,24 +191,24 @@ namespace Rhino.DocObjects.Tables
     //    ON_SimpleArray<const CRhinoBitmap*>& sorted_list
     //    ) const;
 
-    /// <summary>Export all the bitmaps in the table to files</summary>
+    /// <summary>Export all the bitmaps in the table to files.</summary>
     /// <param name="directoryPath">
     /// full path to the directory where the bitmaps should be saved.
     /// If NULL, a dialog is used to interactively get the directory name.
     /// </param>
-    /// <param name="overwrite">0 = no, 1 = yes, 2 = ask</param>
-    /// <returns>Number of bitmaps written</returns>
+    /// <param name="overwrite">0 = no, 1 = yes, 2 = ask.</param>
+    /// <returns>Number of bitmaps written.</returns>
     public int ExportToFiles(string directoryPath, int overwrite)
     {
       return UnsafeNativeMethods.CRhinoBitmapTable_ExportToFiles(m_doc.m_docId, directoryPath, overwrite);
     }
 
-    /// <summary>Write a bitmap to a file</summary>
+    /// <summary>Write a bitmap to a file.</summary>
     /// <param name="index"></param>
     /// <param name="path">
-    /// full path, including file name and extension, name of the file to write
+    /// full path, including file name and extension, name of the file to write.
     /// </param>
-    /// <returns>true if successful</returns>
+    /// <returns>true if successful.</returns>
     public bool ExportToFile(int index, string path)
     {
       return UnsafeNativeMethods.CRhinoBitmapTable_ExportToFile(m_doc.m_docId, index, path);

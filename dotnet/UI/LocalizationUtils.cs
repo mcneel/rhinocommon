@@ -168,7 +168,7 @@ namespace Rhino.UI
     }
     /// <summary>
     /// Check to see if there are any System.Window.Control items in any components lists associated with the control like System.Windows.Forms.ContextMenuStrip
-    /// which need to be localized
+    /// which need to be localized.
     /// </summary>
     /// <param name="control"></param>
     /// <returns></returns>
@@ -196,7 +196,7 @@ namespace Rhino.UI
     }
     /// <summary>
     /// Iterate a controls list of data members for filed's of type System.ComponentModel.IContainer and if found
-    /// then iterate the containers control components and return the ToolTip components found
+    /// then iterate the containers control components and return the ToolTip components found.
     /// </summary>
     /// <param name="control"></param>
     /// <returns></returns>

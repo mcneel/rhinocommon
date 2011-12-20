@@ -5,7 +5,7 @@ using System;
 namespace Rhino.DocObjects
 {
   /// <summary>
-  /// The Rhino cliping plane object, as accessible in the Rhino document
+  /// The Rhino cliping plane object, as accessible in the Rhino document.
   /// </summary>
   public class ClippingPlaneObject : RhinoObject
   {

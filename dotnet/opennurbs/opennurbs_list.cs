@@ -364,7 +364,7 @@ namespace Rhino.Collections
     /// Remap an index in the infinite range onto the List index range.
     /// </summary>
     /// <param name="index">Index to remap.</param>
-    /// <returns>Remapped index</returns>
+    /// <returns>Remapped index.</returns>
     public int RemapIndex(int index)
     {
       int c = index % (m_size - 1);
@@ -394,7 +394,7 @@ namespace Rhino.Collections
     bool ICollection<T>.IsReadOnly { get { return false; } }
 
     /// <summary>
-    /// Creates a multi-line string representation of all the items in this list.
+    /// Constructs a multi-line string representation of all the items in this list.
     /// </summary>
     string ListToString
     {
@@ -776,7 +776,7 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Creates a shallow copy of a range of elements in the source List.
+    /// Constructs a shallow copy of a range of elements in the source List.
     /// </summary>
     /// <param name="index">The zero-based List index at which the range starts.</param>
     /// <param name="count">The number of elements in the range.</param>
@@ -1732,7 +1732,7 @@ namespace Rhino.Collections
     #region Properties
     /// <summary>
     /// Even though this is a property, it is not a "fast" calculation. Every point is
-    /// evaluated in order to get the bounding box of the list
+    /// evaluated in order to get the bounding box of the list.
     /// </summary>
     public BoundingBox BoundingBox
     {
@@ -1762,10 +1762,10 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Finds the index of the point that is closest to a test point in this list
+    /// Finds the index of the point that is closest to a test point in this list.
     /// </summary>
-    /// <param name="testPoint">point to compare against</param>
-    /// <returns>index of closest point in the list on success. -1 on error</returns>
+    /// <param name="testPoint">point to compare against.</param>
+    /// <returns>index of closest point in the list on success. -1 on error.</returns>
     public int ClosestIndex(Point3d testPoint)
     {
       return ClosestIndexInList(this, testPoint);
@@ -1900,7 +1900,7 @@ namespace Rhino.Collections
 
     #region methods
     /// <summary>
-    /// Adds a ON_3dPoint to the end of the List with given x,y,z coordinates
+    /// Adds a ON_3dPoint to the end of the List with given x,y,z coordinates.
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
@@ -1969,7 +1969,7 @@ namespace Rhino.Collections
     /// <param name="testPoint">Point to compare against.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentException">
-    /// list must contain at least one point and testPoint must be valid
+    /// list must contain at least one point and testPoint must be valid.
     /// </exception>
     public static Point3d ClosestPointInList(IList<Point3d> list, Point3d testPoint)
     {
@@ -2120,7 +2120,7 @@ namespace Rhino.Collections
     #region Geometry utilities
     /// <summary>
     /// Transform all the curves in this list. If at least a single transform failed 
-    /// this function returns False.
+    /// this function returns false.
     /// </summary>
     /// <param name="xform">Transformation to apply to all curves.</param>
     public bool Transform(Transform xform)

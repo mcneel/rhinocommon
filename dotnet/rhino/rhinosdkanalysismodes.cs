@@ -198,7 +198,7 @@ namespace Rhino.Display
     #region ids
     /// <summary>
     /// Id for Rhino's built-in edge analysis mode. Brep and mesh edges are
-    /// shown in a selected color
+    /// shown in a selected color.
     /// </summary>
     public static Guid RhinoEdgeAnalysisModeId
     {
@@ -216,7 +216,7 @@ namespace Rhino.Display
 
     /// <summary>
     /// Id for Rhino's built-in zebra stripe analysis mode. Zebra stripes are
-    /// shown on surfaces and meshes
+    /// shown on surfaces and meshes.
     /// </summary>
     public static Guid RhinoZebraStripeAnalysisModeId
     {
@@ -225,7 +225,7 @@ namespace Rhino.Display
 
     /// <summary>
     /// Id for Rhino's built-in emap analysis mode.  An environment map is
-    /// shown on sufaces and meshes
+    /// shown on sufaces and meshes.
     /// </summary>
     public static Guid RhinoEmapAnalysisModeId
     {
@@ -266,10 +266,10 @@ namespace Rhino.Display
     /// register calls will notice that the type has already been registered.
     /// </summary>
     /// <param name="customAnalysisModeType">
-    /// Must be a type that is a subclass of VisualAnalysisMode
+    /// Must be a type that is a subclass of VisualAnalysisMode.
     /// </param>
     /// <returns>
-    /// Instance of registered analysis mode on success
+    /// Instance of registered analysis mode on success.
     /// </returns>
     public static VisualAnalysisMode Register(Type customAnalysisModeType)
     {
@@ -314,7 +314,7 @@ namespace Rhino.Display
       return null;
     }
     /// <summary>
-    /// Find a VisualAnalysis mode by id
+    /// Finds a VisualAnalysis mode by id.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -374,7 +374,7 @@ namespace Rhino.Display
     public virtual void EnableUserInterface(bool on) {}
 
     /// <summary>
-    /// Return true if this visual analysis mode can be used on a given Rhino object
+    /// Return true if this visual analysis mode can be used on a given Rhino object.
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
@@ -386,7 +386,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// True if this visual analysis mode should show isocuves on shaded surface
+    /// true if this visual analysis mode should show isocuves on shaded surface
     /// objects.  Often a mode's user interface will provide a way to change this
     /// setting.
     /// </summary>
@@ -410,7 +410,7 @@ namespace Rhino.Display
     protected virtual void SetUpDisplayAttributes(Rhino.DocObjects.RhinoObject obj, DisplayPipelineAttributes attributes) { }
 
     /// <summary>
-    /// If Style==FalseColor, then this virtual function must be overridden.
+    /// If Style==falseColor, then this virtual function must be overridden.
     /// Rhino calls this function when it is time for to set the false colors
     /// on the analysis mesh vertices.  For breps, there is one mesh per face.
     /// For mesh objects there is a single mesh.
@@ -421,7 +421,7 @@ namespace Rhino.Display
 
     /// <summary>
     /// If Style==Wireframe, then the default decomposes the curve object into
-    /// nurbs curve segments and calls the virtual DrawNurbsCurve for each segment
+    /// nurbs curve segments and calls the virtual DrawNurbsCurve for each segment.
     /// </summary>
     /// <param name="curve"></param>
     /// <param name="pipeline"></param>

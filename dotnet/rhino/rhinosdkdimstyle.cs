@@ -217,7 +217,7 @@ namespace Rhino.DocObjects
       set { SetInt(idxAngleResolution, value); }
     }
 
-    /// <summary>Linear display precision</summary>
+    /// <summary>Linear display precision.</summary>
     public int LengthResolution
     {
       get { return GetInt(idxLengthResolution); }
@@ -309,13 +309,13 @@ namespace Rhino.DocObjects.Tables
       m_doc = doc;
     }
 
-    /// <summary>Document that owns this dimstyle table</summary>
+    /// <summary>Document that owns this dimstyle table.</summary>
     public RhinoDoc Document
     {
       get { return m_doc; }
     }
 
-    /// <summary>Number of dimstyles in the table</summary>
+    /// <summary>Number of dimstyles in the table.</summary>
     public int Count
     {
       get
@@ -339,9 +339,9 @@ namespace Rhino.DocObjects.Tables
     /// with the current default dimension style properties.
     /// </summary>
     /// <param name="name">
-    /// Name of the new dimension style. If null or empty, Rhino automatically generates the name
+    /// Name of the new dimension style. If null or empty, Rhino automatically generates the name.
     /// </param>
-    /// <returns>index of new dimension style</returns>
+    /// <returns>index of new dimension style.</returns>
     public int Add(string name)
     {
       return Add(name, false);
@@ -352,10 +352,10 @@ namespace Rhino.DocObjects.Tables
     /// with the current default dimension style properties.
     /// </summary>
     /// <param name="name">
-    /// Name of the new dimension style. If null or empty, Rhino automatically generates the name
+    /// Name of the new dimension style. If null or empty, Rhino automatically generates the name.
     /// </param>
-    /// <param name="reference">if true the dimstyle will not be saved in files</param>
-    /// <returns>index of new dimension style</returns>
+    /// <param name="reference">if true the dimstyle will not be saved in files.</param>
+    /// <returns>index of new dimension style.</returns>
     public int Add(string name, bool reference)
     {
       return UnsafeNativeMethods.CRhinoDimStyleTable_Add(m_doc.m_docId, name, reference);

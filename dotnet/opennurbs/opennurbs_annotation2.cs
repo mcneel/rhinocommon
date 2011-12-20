@@ -308,7 +308,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Index of DimensionStyle in document DimStyle table used by the dimension
+    /// Index of DimensionStyle in document DimStyle table used by the dimension.
     /// </summary>
     public int DimensionStyleIndex
     {
@@ -578,8 +578,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Initializes a new textdot based on the text and the location.
     /// </summary>
-    /// <param name="text">Text</param>
-    /// <param name="location">A position</param>
+    /// <param name="text">Text.</param>
+    /// <param name="location">A position.</param>
     public TextDot(string text, Point3d location)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_TextDot_New(text, location);

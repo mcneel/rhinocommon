@@ -8,22 +8,22 @@ namespace Rhino.ApplicationSettings
 {
   public enum PaintColor : int
   {
-    /// <summary>Gradient start for active toolbar tab and non-client area of Rhino</summary>
+    /// <summary>Gradient start for active toolbar tab and non-client area of Rhino.</summary>
     NormalStart = 0,
-    /// <summary>Gradient end for active toolbar tab and non-client area of Rhino</summary>
+    /// <summary>Gradient end for active toolbar tab and non-client area of Rhino.</summary>
     NormalEnd = 1,
-    /// <summary>Edge color used for grippers, toolbar border, resize bars, status bar pane borders</summary>
+    /// <summary>Edge color used for grippers, toolbar border, resize bars, status bar pane borders.</summary>
     NormalBorder = 2,
-    /// <summary>Gradient start for inactive toolbar tab</summary>
+    /// <summary>Gradient start for inactive toolbar tab.</summary>
     HotStart = 3,
-    /// <summary>Gradient end for inactive toolbar tab</summary>
+    /// <summary>Gradient end for inactive toolbar tab.</summary>
     HotEnd = 4,
-    /// <summary>Inactive toolbar tab border</summary>
+    /// <summary>Inactive toolbar tab border.</summary>
     HotBorder = 5,
     PressedStart = 6,
     PressedEnd = 7,
     PressedBorder = 8,
-    /// <summary>Toolbar tab text and status bar text</summary>
+    /// <summary>Toolbar tab text and status bar text.</summary>
     TextEnabled = 9,
     TextDisabled = 10,
     MouseOverControlStart = 11,
@@ -39,7 +39,7 @@ namespace Rhino.ApplicationSettings
   //  Hidden    // = CRhinoAppAppearanceSettings::command_prompt_hidden
   //}
 
-  /// <summary>Snapshot of AppearanceSettings</summary>
+  /// <summary>Snapshot of AppearanceSettings.</summary>
   public class AppearanceSettingsState
   {
     internal AppearanceSettingsState(){}
@@ -480,16 +480,16 @@ namespace Rhino.ApplicationSettings
 #endregion
 
     /*
-    ///<summary>length of world coordinate sprite axis in pixels</summary>
+    ///<summary>length of world coordinate sprite axis in pixels.</summary>
     public static property int WorldCoordIconAxisSize{ int get(); void set(int); }
-    ///<summary>&quot;radius&quot; of letter in pixels</summary>
+    ///<summary>&quot;radius&quot; of letter in pixels.</summary>
     public static property int WorldCoordIconLabelSize{ int get(); void set(int); }
-    ///<summary>true to move axis letters as sprite rotates</summary>
+    ///<summary>true to move axis letters as sprite rotates.</summary>
     public static property bool WorldCoordIconMoveLabels{ bool get(); void set(bool); }
 
-    ///<summary>length of direction arrow shaft icon in pixels</summary>
+    ///<summary>length of direction arrow shaft icon in pixels.</summary>
     public static property int DirectionArrowIconShaftSize{ int get(); void set(int); }
-    ///<summary>length of direction arrowhead icon in pixels</summary>
+    ///<summary>length of direction arrowhead icon in pixels.</summary>
     public static property int DirectionArrowIconHeadSize{ int get(); void set(int); }
 
     ///<summary>
@@ -587,7 +587,7 @@ namespace Rhino.ApplicationSettings
     /// </summary>
     /// <param name="bounds"></param>
     /// <param name="state"></param>
-    /// <returns>false if the information could not be retrieved</returns>
+    /// <returns>false if the information could not be retrieved.</returns>
     public static bool InitialMainWindowState(out System.Drawing.Rectangle bounds, out System.Windows.Forms.FormWindowState state)
     {
       bounds = Rectangle.Empty;
@@ -637,7 +637,7 @@ namespace Rhino.ApplicationSettings
       return rc;
     }
 
-    ///<summary>Remove all aliases from the list</summary>
+    ///<summary>Remove all aliases from the list.</summary>
     public static void Clear()
     {
       UnsafeNativeMethods.RhCommandAliasList_DestroyList();
@@ -658,7 +658,7 @@ namespace Rhino.ApplicationSettings
     ///<summary>Modifies the macro of a command alias.</summary>
     ///<param name='alias'>[in] The name of the command alias.</param>
     ///<param name='macro'>[in] The new command macro to run when the alias is executed.</param>
-    ///<returns>true if successful</returns>
+    ///<returns>true if successful.</returns>
     public static bool SetMacro(string alias, string macro)
     {
       return UnsafeNativeMethods.RhCommandAliasList_SetMacro(alias, macro);
@@ -667,7 +667,7 @@ namespace Rhino.ApplicationSettings
     ///<summary>Adds a new command alias to Rhino.</summary>
     ///<param name='alias'>[in] The name of the command alias.</param>
     ///<param name='macro'>[in] The command macro to run when the alias is executed.</param>
-    ///<returns>true if successful</returns>
+    ///<returns>true if successful.</returns>
     public static bool Add(string alias, string macro)
     {
       return UnsafeNativeMethods.RhCommandAliasList_Add(alias, macro);
@@ -675,7 +675,7 @@ namespace Rhino.ApplicationSettings
 
     ///<summary>Deletes an existing command alias from Rhino.</summary>
     ///<param name='alias'>[in] The name of the command alias.</param>
-    ///<returns>true if successful</returns>
+    ///<returns>true if successful.</returns>
     public static bool Delete(string alias)
     {
       return UnsafeNativeMethods.RhCommandAliasList_Delete(alias);
@@ -683,14 +683,14 @@ namespace Rhino.ApplicationSettings
 
     ///<summary>Verifies that a command alias exists in Rhino.</summary>
     ///<param name='alias'>[in] The name of the command alias.</param>
-    ///<returns>true if the alias exists</returns>
+    ///<returns>true if the alias exists.</returns>
     public static bool IsAlias(string alias)
     {
       return UnsafeNativeMethods.RhCommandAliasList_IsAlias(alias);
     }
 
     /// <summary>
-    /// Gets Name/Macro combinations as a dictionary
+    /// Gets Name/Macro combinations as a dictionary.
     /// </summary>
     /// <returns></returns>
     public static System.Collections.Generic.Dictionary<string,string> ToDictionary()
@@ -707,7 +707,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Returns true if the current alias list is the same as the default alias list
+    /// Returns true if the current alias list is the same as the default alias list.
     /// </summary>
     /// <returns></returns>
     public static bool IsDefault()
@@ -730,7 +730,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Gets the default set of Name/Macro combinations
+    /// Gets the default set of Name/Macro combinations.
     /// </summary>
     /// <returns></returns>
     public static System.Collections.Generic.Dictionary<string, string> GetDefaults()
@@ -761,7 +761,7 @@ namespace Rhino.ApplicationSettings
     }
   }
 
-  /// <summary>Snapshot of EdgeAnalysisSettings</summary>
+  /// <summary>Snapshot of EdgeAnalysisSettings.</summary>
   public class EdgeAnalysisSettingsState
   {
     internal EdgeAnalysisSettingsState() { }
@@ -820,7 +820,7 @@ namespace Rhino.ApplicationSettings
       }
     }
 
-    ///<summary>0 = all, 1 = naked, 2 = non-manifold</summary>
+    ///<summary>0 = all, 1 = naked, 2 = non-manifold.</summary>
     public static int ShowEdges
     {
       get
@@ -838,22 +838,22 @@ namespace Rhino.ApplicationSettings
   {
     internal FileSettingsState() { }
 
-    ///<summary>how often the document will be saved when Rhino&apos;s automatic file saving mechanism is enabled</summary>
+    ///<summary>how often the document will be saved when Rhino&apos;s automatic file saving mechanism is enabled.</summary>
     public System.TimeSpan AutoSaveInterval { get; set; }
 
     ///<summary>Enables or disables Rhino&apos;s automatic file saving mechanism.</summary>
     public bool AutoSaveEnabled { get; set; }
 
-    ///<summary>save render and display meshes in autosave file</summary>
+    ///<summary>save render and display meshes in autosave file.</summary>
     public bool AutoSaveMeshes { get; set; }
     
-    ///<summary>true for users who consider view changes a document change</summary>
+    ///<summary>true for users who consider view changes a document change.</summary>
     public bool SaveViewChanges { get; set; }
 
-    ///<summary>Ensure that only one person at a time can have a file open for saving</summary>
+    ///<summary>Ensure that only one person at a time can have a file open for saving.</summary>
     public bool FileLockingEnabled { get; set; }
 
-    ///<summary>Display information dialog which identifies computer file is open on</summary>
+    ///<summary>Display information dialog which identifies computer file is open on.</summary>
     public bool FileLockingOpenWarning { get; set; }
 
     ///<summary>
@@ -974,10 +974,10 @@ namespace Rhino.ApplicationSettings
     /// Searches for a file using Rhino's search imagePath. Rhino will look for a file in the following locations:
     /// 1. The current document's folder.
     /// 2. Folder's specified in Options dialog, File tab.
-    /// 3. Rhino's System folders
+    /// 3. Rhino's System folders.
     /// </summary>
-    /// <param name="fileName">short file name to search for</param>
-    /// <returns> full imagePath on success; null on error</returns>
+    /// <param name="fileName">short file name to search for.</param>
+    /// <returns> full imagePath on success; null on error.</returns>
     public static string FindFile(string fileName)
     {
       IntPtr rc = UnsafeNativeMethods.RhDirectoryManager_FindFile(fileName);
@@ -1094,7 +1094,7 @@ namespace Rhino.ApplicationSettings
     }
 
 
-    ///<summary>how often the document will be saved when Rhino&apos;s automatic file saving mechanism is enabled</summary>
+    ///<summary>how often the document will be saved when Rhino&apos;s automatic file saving mechanism is enabled.</summary>
     public static System.TimeSpan AutoSaveInterval
     {
       get
@@ -1125,14 +1125,14 @@ namespace Rhino.ApplicationSettings
       set { UnsafeNativeMethods.CRhinoAppFileSettings_SetBool(IntPtr.Zero, idxAutoSaveEnabled, value); }
     }
 
-    ///<summary>save render and display meshes in autosave file</summary>
+    ///<summary>save render and display meshes in autosave file.</summary>
     public static bool AutoSaveMeshes
     {
       get { return UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(IntPtr.Zero, idxAutoSaveMeshes); }
       set { UnsafeNativeMethods.CRhinoAppFileSettings_SetBool(IntPtr.Zero, idxAutoSaveMeshes, value); }
     }
 
-    ///<summary>Input list of commands that force AutoSave prior to running</summary>
+    ///<summary>Input list of commands that force AutoSave prior to running.</summary>
     public static string[] AutoSaveBeforeCommands()
     {
       IntPtr rc = UnsafeNativeMethods.RhFileSettings_AutosaveBeforeCommands();
@@ -1142,7 +1142,7 @@ namespace Rhino.ApplicationSettings
       return s == null ? null : s.Split(new char[] { ' ' });
     }
 
-    ///<summary>Set list of commands that force AutoSave prior to running</summary>
+    ///<summary>Set list of commands that force AutoSave prior to running.</summary>
     public static void SetAutoSaveBeforeCommands(string[] commands)
     {
       System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -1158,21 +1158,21 @@ namespace Rhino.ApplicationSettings
       UnsafeNativeMethods.RhFileSettings_SetAutosaveBeforeCommands(sb.ToString());
     }
 
-    ///<summary>true for users who consider view changes a document change</summary>
+    ///<summary>true for users who consider view changes a document change.</summary>
     public static bool SaveViewChanges
     {
       get { return UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(IntPtr.Zero, idxSaveViewChanges); }
       set { UnsafeNativeMethods.CRhinoAppFileSettings_SetBool(IntPtr.Zero, idxSaveViewChanges, value); }
     }
 
-    ///<summary>Ensure that only one person at a time can have a file open for saving</summary>
+    ///<summary>Ensure that only one person at a time can have a file open for saving.</summary>
     public static bool FileLockingEnabled
     {
       get { return UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(IntPtr.Zero, idxFileLockingEnabled); }
       set { UnsafeNativeMethods.CRhinoAppFileSettings_SetBool(IntPtr.Zero, idxFileLockingEnabled, value); }
     }
 
-    ///<summary>Display information dialog which identifies computer file is open on</summary>
+    ///<summary>Display information dialog which identifies computer file is open on.</summary>
     public static bool FileLockingOpenWarning
     {
       get { return UnsafeNativeMethods.CRhinoAppFileSettings_GetBool(IntPtr.Zero, idxFileLockingOpenWarning); }
@@ -1208,7 +1208,7 @@ namespace Rhino.ApplicationSettings
       }
     }
 
-    /// <summary>Returns directory where the main Rhino executable is located</summary>
+    /// <summary>Returns directory where the main Rhino executable is located.</summary>
     public static string ExecutableFolder
     {
       get
@@ -1222,7 +1222,7 @@ namespace Rhino.ApplicationSettings
       }
     }
 
-    /// <summary>Returns Rhino's installation folder</summary>
+    /// <summary>Returns Rhino's installation folder.</summary>
     public static System.IO.DirectoryInfo InstallFolder
     {
       get
@@ -1273,7 +1273,7 @@ namespace Rhino.ApplicationSettings
     ///Only use the list if somebody modifies it via CRhinoAppSettings::SetDontRepeatCommands()
     ///
     ///A return value of true means CRhinoCommand don&apos;t repeat flags will be ignored and the m_dont_repeat_list
-    ///will be used instead.  False means the individual CRhinoCommands will determine if they are repeatable.
+    ///will be used instead.  false means the individual CRhinoCommands will determine if they are repeatable.
     ///</summary>
     public static bool UseNeverRepeatList
     {
@@ -1300,7 +1300,7 @@ namespace Rhino.ApplicationSettings
       return UnsafeNativeMethods.RhDontRepeatList_SetList(sb.ToString());
     }
 
-    ///<summary>The list of commands to not repeat</summary>
+    ///<summary>The list of commands to not repeat.</summary>
     public static string[] CommandNames()
     {
       using(Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
@@ -1341,13 +1341,13 @@ namespace Rhino.ApplicationSettings
 
     /// <summary>
     /// Undo records will be purged if there are more than MinimumUndoSteps and
-    /// they use more than MaximumUndoMemoryMb
+    /// they use more than MaximumUndoMemoryMb.
     /// </summary>
     public int MinimumUndoSteps { get; set; }
 
     /// <summary>
     /// Undo records will be purged if there are more than MinimumUndoSteps and
-    /// they use more than MaximumUndoMemoryMb
+    /// they use more than MaximumUndoMemoryMb.
     /// </summary>
     public int MaximumUndoMemoryMb { get; set; }
 
@@ -1356,17 +1356,17 @@ namespace Rhino.ApplicationSettings
     public MiddleMouseMode MiddleMouseMode { get; set; }
 
     /// <summary>
-    /// True if right mouse down + delay will pop up context menu on a mouse up if no move happens
+    /// true if right mouse down + delay will pop up context menu on a mouse up if no move happens.
     /// </summary>
     public bool EnableContextMenu { get; set; }
 
     /// <summary>
-    /// Time to wait before permitting context menu display
+    /// Time to wait before permitting context menu display.
     /// </summary>
     public System.TimeSpan ContextMenuDelay { get; set; }
 
     /// <summary>
-    /// Command help dialog auto-update feature
+    /// Command help dialog auto-update feature.
     /// </summary>
     public bool AutoUpdateCommandHelp { get; set; }
   }
@@ -1431,7 +1431,7 @@ namespace Rhino.ApplicationSettings
 
     /// <summary>
     /// Undo records will be purged if there are more than MinimumUndoSteps and
-    /// they use more than MaximumUndoMemoryMb
+    /// they use more than MaximumUndoMemoryMb.
     /// </summary>
     public static int MinimumUndoSteps
     {
@@ -1441,7 +1441,7 @@ namespace Rhino.ApplicationSettings
 
     /// <summary>
     /// Undo records will be purged if there are more than MinimumUndoSteps and
-    /// they use more than MaximumUndoMemoryMb
+    /// they use more than MaximumUndoMemoryMb.
     /// </summary>
     public static int MaximumUndoMemoryMb
     {
@@ -1477,7 +1477,7 @@ namespace Rhino.ApplicationSettings
     const int idxAutoUpdateCommandContext = 1;
 
     /// <summary>
-    /// True if right mouse down + delay will pop up context menu on a mouse up if no move happens
+    /// true if right mouse down + delay will pop up context menu on a mouse up if no move happens.
     /// </summary>
     public static bool EnableContextMenu
     {
@@ -1486,7 +1486,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Time to wait before permitting context menu display
+    /// Time to wait before permitting context menu display.
     /// </summary>
     public static System.TimeSpan ContextMenuDelay
     {
@@ -1503,7 +1503,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Command help dialog auto-update feature
+    /// Command help dialog auto-update feature.
     /// </summary>
     public static bool AutoUpdateCommandHelp
     {
@@ -1558,11 +1558,11 @@ namespace Rhino.ApplicationSettings
 
   public enum ClipboardState : int
   {
-    ///<summary>Always keep clipboard data, regardless of size and never prompt the user</summary>
+    ///<summary>Always keep clipboard data, regardless of size and never prompt the user.</summary>
     KeepData = 0, //CRhinoAppFileSettings::keep_clipboard_data=0
-    ///<summary>Always delete clipboard data, regardless of size and never prompt the user</summary>
+    ///<summary>Always delete clipboard data, regardless of size and never prompt the user.</summary>
     DeleteData,  // = CRhinoAppFileSettings::delete_clipboard_data,
-    ///<summary>Prompt user when clipboard memory is large</summary>
+    ///<summary>Prompt user when clipboard memory is large.</summary>
     PromptWhenBig //= CRhinoAppFileSettings::prompt_user_when_clipboard_big
   }
 
@@ -1594,14 +1594,14 @@ namespace Rhino.ApplicationSettings
 
   public enum PointDisplayMode : int
   {
-    ///<summary>points are displayed in world coordinates</summary>
+    ///<summary>points are displayed in world coordinates.</summary>
     WorldPoint = 0, // = CRhinoAppModelAidSettings::world_point,
-    ///<summary>points are displayed in cplane coordinates</summary>
+    ///<summary>points are displayed in cplane coordinates.</summary>
     CplanePoint     // = CRhinoAppModelAidSettings::cplane_point
   };
 
   /// <summary>
-  /// Snapshot of ModelAidSettings
+  /// Snapshot of ModelAidSettings.
   /// </summary>
   public class ModelAidSettingsState
   {
@@ -1650,7 +1650,7 @@ namespace Rhino.ApplicationSettings
     ///<summary>Enables or disables Rhino's planar modeling aid.</summary>
     public int OsnapPickboxRadius{ get; set; }
 
-    ///<summary>0 = world, 1 = cplane, 2 = view, 3 = uvn, -1 = not set</summary>
+    ///<summary>0 = world, 1 = cplane, 2 = view, 3 = uvn, -1 = not set.</summary>
     public int NudgeMode{ get; set; }
 
     public int ControlPolygonDisplayDensity{ get; set; }
@@ -1663,7 +1663,7 @@ namespace Rhino.ApplicationSettings
     ///</summary>
     public OsnapModes OsnapModes{ get; set; }
 
-    ///<summary>radius of mouse pick box in pixels</summary>
+    ///<summary>radius of mouse pick box in pixels.</summary>
     public int MousePickboxRadius{ get; set; }
 
     public PointDisplayMode PointDisplay{ get; set; }
@@ -1889,7 +1889,7 @@ namespace Rhino.ApplicationSettings
       get { return GetInt(idxOsnapPickboxRadius); }
       set { SetInt(idxOsnapPickboxRadius, value); }
     }
-    ///<summary>0 = world, 1 = cplane, 2 = view, 3 = uvn, -1 = not set</summary>
+    ///<summary>0 = world, 1 = cplane, 2 = view, 3 = uvn, -1 = not set.</summary>
     public static int NudgeMode
     {
       get { return GetInt(idxNudgeMode); }
@@ -1930,7 +1930,7 @@ namespace Rhino.ApplicationSettings
         SetInt(idxOSnapModes, (int)value);
       }
     }
-    ///<summary>radius of mouse pick box in pixels</summary>
+    ///<summary>radius of mouse pick box in pixels.</summary>
     public static int MousePickboxRadius
     {
       get { return GetInt(idxMousePickboxRadius); }
@@ -1953,7 +1953,7 @@ namespace Rhino.ApplicationSettings
   }
 
   /// <summary>
-  /// Snapshot of ViewSettings
+  /// Snapshot of ViewSettings.
   /// </summary>
   public class ViewSettingsState
   {
@@ -1972,7 +1972,7 @@ namespace Rhino.ApplicationSettings
     public bool RotateReverseKeyboard { get; set; }
 
     /// <summary>
-    /// false means around world axes
+    /// false means around world axes.
     /// </summary>
     public bool RotateToView { get; set; }
 
@@ -2120,7 +2120,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// false means around world axes
+    /// false means around world axes.
     /// </summary>
     public static bool RotateToView
     {
@@ -2154,7 +2154,7 @@ namespace Rhino.ApplicationSettings
   }
 
   /// <summary>
-  /// Snapshot of SmartTrackSettings
+  /// Snapshot of SmartTrackSettings.
   /// </summary>
   public class SmartTrackSettingsState
   {
@@ -2320,7 +2320,7 @@ namespace Rhino.ApplicationSettings
   }
 
   /// <summary>
-  /// Snapshot of CursorTooltipSettings
+  /// Snapshot of CursorTooltipSettings.
   /// </summary>
   public class CursorTooltipSettingsState
   {
@@ -2339,7 +2339,7 @@ namespace Rhino.ApplicationSettings
 
   /// <summary>
   /// Cursor tooltips place information at the cursor location.
-  /// Note: Turning on cursor tooltips turns off object snap cursors
+  /// Note: Turning on cursor tooltips turns off object snap cursors.
   /// </summary>
   public static class CursorTooltipSettings
   {
@@ -2376,7 +2376,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Turn on/off cursor tooltips
+    /// Turn on/off cursor tooltips.
     /// </summary>
     public static bool TooltipsEnabled
     {
@@ -2385,7 +2385,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// The x and y distances in pixels from the cursor location to the tooltip
+    /// The x and y distances in pixels from the cursor location to the tooltip.
     /// </summary>
     public static System.Drawing.Point Offset
     {
@@ -2402,7 +2402,7 @@ namespace Rhino.ApplicationSettings
       }
     }
 
-    /// <summary>Tooltip background color</summary>
+    /// <summary>Tooltip background color.</summary>
     public static System.Drawing.Color BackgroundColor
     {
       get
@@ -2417,7 +2417,7 @@ namespace Rhino.ApplicationSettings
       }
     }
 
-    /// <summary>Tooltip text color</summary>
+    /// <summary>Tooltip text color.</summary>
     public static System.Drawing.Color TextColor
     {
       get
@@ -2433,7 +2433,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Displays the current object snap selection
+    /// Displays the current object snap selection.
     /// </summary>
     public static bool OsnapPane
     {
@@ -2451,7 +2451,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Displays the current construction plane coordinates
+    /// Displays the current construction plane coordinates.
     /// </summary>
     public static bool PointPane
     {
@@ -2460,7 +2460,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Displays the relative construction plane coordinates and angle from the last picked point
+    /// Displays the relative construction plane coordinates and angle from the last picked point.
     /// </summary>
     public static bool RelativePointPane
     {
@@ -2469,7 +2469,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Displays the current command prompt
+    /// Displays the current command prompt.
     /// </summary>
     public static bool CommandPromptPane
     {
@@ -2478,7 +2478,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Attempts to display only the most useful tooltip
+    /// Attempts to display only the most useful tooltip.
     /// </summary>
     public static bool AutoSuppress
     {

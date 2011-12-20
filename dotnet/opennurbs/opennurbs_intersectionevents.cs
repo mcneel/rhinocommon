@@ -29,7 +29,7 @@ namespace Rhino.Geometry.Intersect
 
     #region properties
     /// <summary>
-    /// All curve intersection events are either a single point or an overlap
+    /// All curve intersection events are either a single point or an overlap.
     /// </summary>
     public bool IsPoint
     {
@@ -37,7 +37,7 @@ namespace Rhino.Geometry.Intersect
     }
 
     /// <summary>
-    /// All curve intersection events are either a single point or an overlap
+    /// All curve intersection events are either a single point or an overlap.
     /// </summary>
     public bool IsOverlap
     {
@@ -398,7 +398,7 @@ namespace Rhino.Geometry.Intersect
     /// <para>This method is O(n), where n is the Count of elements in this collection.</para>
     /// </summary>
     /// <param name="item">Object to be found.</param>
-    /// <returns>True if element is contained; otherwise false.</returns>
+    /// <returns>true if element is contained; otherwise false.</returns>
     bool ICollection<IntersectionEvent>.Contains(IntersectionEvent item)
     {
       for (int i = 0; i < Count; i++)

@@ -25,7 +25,7 @@ namespace Rhino.Display
     /// <summary>
     /// Create a new instance of ColorHSL that is equivalent to an RGB color.
     /// </summary>
-    /// <param name="rgb">RGB Color to mimic.</param>
+    /// <param name="rgb">RGB color to mimic.</param>
     /// <remarks>Exact conversions between color spaces are often not possible.</remarks>
     public ColorHSL(System.Drawing.Color rgb)
     {
@@ -186,9 +186,9 @@ namespace Rhino.Display
 
     #region constructors
     /// <summary>
-    /// Create a new instance of ColorCMYK that is equivalent to an RGB color.
+    /// Initializes a new instance of ColorCMYK that is equivalent to an RGB color.
     /// </summary>
-    /// <param name="rgb">RGB Color to mimic.</param>
+    /// <param name="rgb">RGB color to mimic.</param>
     /// <remarks>Exact conversions between color spaces are often not possible.</remarks>
     public ColorCMYK(System.Drawing.Color rgb)
     {
@@ -199,7 +199,7 @@ namespace Rhino.Display
       m_a = 1.0 - ((double)rgb.A / 255.0);
     }
     /// <summary>
-    /// Create a new instance of ColorCMYK with custom channel values. 
+    /// Initializes a new instance of ColorCMYK with custom channel values. 
     /// The cyan, magenta and yellow values will be adjusted based on their 
     /// combined darkness.
     /// </summary>
@@ -231,7 +231,7 @@ namespace Rhino.Display
       }
     }
     /// <summary>
-    /// Create a new instance of ColorCMYK with custom channel values. 
+    /// Initializes a new instance of ColorCMYK with custom channel values. 
     /// </summary>
     /// <param name="cyan">Cyan channel value. Cyan channels are limited to the 0.0 and 1.0 range.</param>
     /// <param name="magenta">Magenta channel value. Magenta channels are limited to the 0.0 and 1.0 range.</param>
@@ -246,7 +246,7 @@ namespace Rhino.Display
       m_a = 0.0;
     }
     /// <summary>
-    /// Create a new instance of ColorCMYK with custom channel values. 
+    /// Initializes a new instance of ColorCMYK with custom channel values. 
     /// </summary>
     /// <param name="alpha">Alpha channel value. Alpha channels are limited to the 0.0 and 1.0 range.</param>
     /// <param name="cyan">Cyan channel value. Cyan channels are limited to the 0.0 and 1.0 range.</param>
@@ -263,7 +263,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Create the nearest CMYK equivalent of an HSL color.
+    /// Constructs the nearest CMYK equivalent of an HSL color.
     /// </summary>
     /// <param name="hsl">Target color in HSL space.</param>
     /// <returns>The CMYK equivalent of the HSL color.</returns>
@@ -272,7 +272,7 @@ namespace Rhino.Display
       return new ColorCMYK(hsl);
     }
     /// <summary>
-    /// Create the nearest CMYK equivalent of an XYZ color.
+    /// Constructs the nearest CMYK equivalent of an XYZ color.
     /// </summary>
     /// <param name="xyz">Target color in XYZ space.</param>
     /// <returns>The CMYK equivalent of the XYZ color.</returns>
@@ -281,7 +281,7 @@ namespace Rhino.Display
       return new ColorCMYK(xyz);
     }
     /// <summary>
-    /// Create the nearest CMYK equivalent of a LAB color.
+    /// Constructs the nearest CMYK equivalent of a LAB color.
     /// </summary>
     /// <param name="lab">Target color in LAB space.</param>
     /// <returns>The CMYK equivalent of the LAB color.</returns>
@@ -290,7 +290,7 @@ namespace Rhino.Display
       return new ColorCMYK(lab);
     }
     /// <summary>
-    /// Create the nearest CMYK equivalent of a LCH color.
+    /// Constructs the nearest CMYK equivalent of a LCH color.
     /// </summary>
     /// <param name="lch">Target color in LCH space.</param>
     /// <returns>The CMYK equivalent of the LCH color.</returns>
@@ -394,7 +394,7 @@ namespace Rhino.Display
     /// <summary>
     /// Create a new instance of ColorXYZ that is equivalent to an RGB color.
     /// </summary>
-    /// <param name="rgb">RGB Color to mimic.</param>
+    /// <param name="rgb">RGB color to mimic.</param>
     /// <remarks>Exact conversions between color spaces are often not possible.</remarks>
     public ColorXYZ(System.Drawing.Color rgb)
     {
@@ -598,7 +598,7 @@ namespace Rhino.Display
     /// <summary>
     /// Create a new instance of ColorLAB that is equivalent to an RGB color.
     /// </summary>
-    /// <param name="rgb">RGB Color to mimic.</param>
+    /// <param name="rgb">RGB color to mimic.</param>
     /// <remarks>Exact conversions between color spaces are often not possible.</remarks>
     public ColorLAB(System.Drawing.Color rgb)
     {
@@ -758,7 +758,7 @@ namespace Rhino.Display
     /// <summary>
     /// Create a new instance of ColorLCH that is equivalent to an RGB color.
     /// </summary>
-    /// <param name="rgb">RGB Color to mimic.</param>
+    /// <param name="rgb">RGB color to mimic.</param>
     /// <remarks>Exact conversions between color spaces are often not possible.</remarks>
     public ColorLCH(System.Drawing.Color rgb)
     {
@@ -925,7 +925,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert XYZ space colors to RGB.
+    /// Converts XYZ space colors to RGB.
     /// </summary>
     /// <param name="x">X channel (0.0~1.0)</param>
     /// <param name="y">Y channel (0.0~1.0)</param>
@@ -961,7 +961,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert RGB space colors to XYZ. 
+    /// Converts RGB space colors to XYZ. 
     /// </summary>
     /// <param name="r">Red channel (0~255)</param>
     /// <param name="g">Green channel (0~255)</param>
@@ -1001,7 +1001,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert XYZ space colors to CIE-L*ab. 
+    /// Converts XYZ space colors to CIE-L*ab. 
     /// </summary>
     /// <param name="x">X channel (0.0~1.0)</param>
     /// <param name="y">Y channel (0.0~1.0)</param>
@@ -1041,7 +1041,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert CIE-L*ab space colors to XYZ. 
+    /// Converts CIE-L*ab space colors to XYZ. 
     /// </summary>
     /// <param name="l">Luminance channel (0.0~1.0)</param>
     /// <param name="a">A channel (0.0~1.0)</param>
@@ -1082,7 +1082,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert CIE-L*ab space colors to CIE-L*CH. 
+    /// Converts CIE-L*ab space colors to CIE-L*CH. 
     /// </summary>
     /// <param name="l">Luminance channel (0.0~1.0)</param>
     /// <param name="a">A channel (0.0~1.0)</param>
@@ -1117,7 +1117,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert CIE-L*CH space colors to CIE-L*ab. 
+    /// Converts CIE-L*CH space colors to CIE-L*ab. 
     /// </summary>
     /// <param name="lum">Luminance channel (0.0~1.0)</param>
     /// <param name="c">Chroma channel (0.0~1.0)</param>
@@ -1133,7 +1133,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert RGB space colors to HSL. 
+    /// Converts RGB space colors to HSL. 
     /// </summary>
     /// <param name="r">Red channel (0~255)</param>
     /// <param name="g">Green channel (0~255)</param>
@@ -1188,7 +1188,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert HSL space colors to RGB. 
+    /// Converts HSL space colors to RGB. 
     /// </summary>
     /// <param name="h">Hue channel (0.0~1.0)</param>
     /// <param name="s">Saturation channel (0.0~1.0)</param>
@@ -1240,7 +1240,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert RGB space colors to CMY. 
+    /// Converts RGB space colors to CMY. 
     /// </summary>
     /// <param name="r">Red channel (0~255)</param>
     /// <param name="g">Green channel (0~255)</param>
@@ -1256,7 +1256,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert CMY space colors to RGB. 
+    /// Converts CMY space colors to RGB. 
     /// </summary>
     /// <param name="c">Cyan channel (0.0~1.0)</param>
     /// <param name="y">Yellow channel (0.0~1.0)</param>
@@ -1272,7 +1272,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert CMY space colors to CMYK. 
+    /// Converts CMY space colors to CMYK. 
     /// </summary>
     /// <param name="c">Cyan channel (0.0~1.0)</param>
     /// <param name="y">Yellow channel (0.0~1.0)</param>
@@ -1308,7 +1308,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert CMYK space colors to CMY. 
+    /// Converts CMYK space colors to CMY. 
     /// </summary>
     /// <param name="cyan">Cyan channel (0.0~1.0)</param>
     /// <param name="magenta">Magenta channel (0.0~1.0)</param>

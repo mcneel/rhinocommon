@@ -105,7 +105,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Set a lower limit on the number that can be returned.
+    /// Sets a lower limit on the number that can be returned.
     /// By default there is no lower limit.
     /// </summary>
     /// <param name="lowerLimit">smallest acceptable number</param>
@@ -124,7 +124,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Set an upper limit on the number that can be returned.
+    /// Sets an upper limit on the number that can be returned.
     /// By default there is no upper limit.
     /// </summary>
     /// <param name="upperLimit">largest acceptable number</param>
@@ -165,7 +165,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Set a lower limit on the number that can be returned.
+    /// Sets a lower limit on the number that can be returned.
     /// By default there is no lower limit.
     /// </summary>
     /// <param name="lowerLimit">smallest acceptable number</param>
@@ -179,7 +179,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Set an upper limit on the number that can be returned.
+    /// Sets an upper limit on the number that can be returned.
     /// By default there is no upper limit.
     /// </summary>
     /// <param name="upperLimit">largest acceptable number</param>

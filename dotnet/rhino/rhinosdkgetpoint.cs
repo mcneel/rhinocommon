@@ -26,7 +26,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Set base point used by ortho snap, from snap, planar snap, etc.
+    /// Sets a base point used by ortho snap, from snap, planar snap, etc.
     /// </summary>
     /// <param name="basePoint"></param>
     /// <param name="showDistanceInStatusBar">
@@ -55,7 +55,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Set distance constraint from base point
+    /// Sets distance constraint from base point.
     /// </summary>
     /// <param name="distance">
     /// pass UnsetValue to clear this constraint. Pass 0.0 to disable the
@@ -336,7 +336,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Get current snap points.
+    /// Gets current snap points.
     /// </summary>
     /// <returns></returns>
     public Point3d[] GetSnapPoints()
@@ -351,7 +351,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Get current construction points
+    /// Gets current construction points
     /// </summary>
     /// <returns></returns>
     /// <remarks>

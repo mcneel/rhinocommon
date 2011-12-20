@@ -517,7 +517,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Get the current stereo projection if stereo mode is on.
+    /// Gets the current stereo projection if stereo mode is on.
     /// <para>0 = left</para>
     /// <para>1 = right</para>
     /// If stereo mode is not enables, this property always returns 0.
@@ -892,7 +892,7 @@ namespace Rhino.Display
 
     #region CDisplayPipeline draw functions
     /// <summary>
-    /// Draw all the wires in a given mesh.
+    /// Draws all the wires in a given mesh.
     /// </summary>
     /// <param name="mesh">Mesh for wire drawing.</param>
     /// <param name="color">Color of mesh wires.</param>
@@ -901,7 +901,7 @@ namespace Rhino.Display
       DrawMeshWires(mesh, color, 1);
     }
     /// <summary>
-    /// Draw all the wires in a given mesh.
+    /// Draws all the wires in a given mesh.
     /// </summary>
     /// <param name="mesh">Mesh for wire drawing.</param>
     /// <param name="color">Color of mesh wires.</param>
@@ -916,7 +916,7 @@ namespace Rhino.Display
       }
     }
     /// <summary>
-    /// Draw all the vertices in a given mesh.
+    /// Draws all the vertices in a given mesh.
     /// </summary>
     /// <param name="mesh">Mesh for vertex drawing.</param>
     /// <param name="color">Color of mesh vertices.</param>
@@ -928,7 +928,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw the shaded faces of a given mesh.
+    /// Draws the shaded faces of a given mesh.
     /// </summary>
     /// <param name="mesh">Mesh to draw.</param>
     /// <param name="material">Material to draw faces with.</param>
@@ -942,7 +942,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw the mesh faces as False Color patches. 
+    /// Draws the mesh faces as false color patches. 
     /// The mesh must have Vertex Colors defined for this to work.
     /// </summary>
     /// <param name="mesh">Mesh to draw.</param>
@@ -953,7 +953,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw a shaded mesh representation of a brep
+    /// Draws a shaded mesh representation of a brep
     /// </summary>
     /// <param name="brep">Brep to draw.</param>
     /// <param name="material">Material to draw faces with.</param>
@@ -967,7 +967,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw all the wireframe curves of a Brep object.
+    /// Draws all the wireframe curves of a brep object.
     /// </summary>
     /// <param name="brep">Brep to draw.</param>
     /// <param name="color">Color of Wireframe curves.</param>
@@ -976,7 +976,7 @@ namespace Rhino.Display
       DrawBrepWires(brep, color, 1);
     }
     /// <summary>
-    /// Draw all the wireframe curves of a Brep object.
+    /// Draws all the wireframe curves of a brep object.
     /// </summary>
     /// <param name="brep">Brep to draw.</param>
     /// <param name="color">Color of Wireframe curves.</param>
@@ -993,14 +993,14 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBrep(m_ptr, pBrep, argb, wireDensity);
     }
 
-    /// <summary>Draw a point with a given radius, style and color.</summary>
+    /// <summary>Draws a point with a given radius, style and color.</summary>
     /// <param name="point">Location of point in world coordinates.</param>
     /// <param name="color">Color of point.</param>
     public void DrawPoint(Point3d point, System.Drawing.Color color)
     {
       DrawPoint(point, PointStyle.ControlPoint, 3, color);
     }
-    /// <summary>Draw a point with a given radius, style and color.</summary>
+    /// <summary>Draws a point with a given radius, style and color.</summary>
     /// <param name="point">Location of point in world coordinates.</param>
     /// <param name="style">Point display style.</param>
     /// <param name="radius">Point size in pixels.</param>
@@ -1031,7 +1031,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw a point cloud.
+    /// Draws a point cloud.
     /// </summary>
     /// <param name="cloud">Point cloud to draw, if the cloud has a color array, it will be used, otherwise the points will be black.</param>
     /// <param name="size">Size of points.</param>
@@ -1040,7 +1040,7 @@ namespace Rhino.Display
       DrawPointCloud(cloud, size, System.Drawing.Color.Black);
     }
     /// <summary>
-    /// Draw a point cloud.
+    /// Draws a point cloud.
     /// </summary>
     /// <param name="cloud">Point cloud to draw.</param>
     /// <param name="size">Size of points.</param>
@@ -1057,7 +1057,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw a single arrow object. An arrow consists of a Shaft and an Arrow head at the end of the shaft.
+    /// Draws a single arrow object. An arrow consists of a Shaft and an Arrow head at the end of the shaft.
     /// </summary>
     /// <param name="line">Arrow shaft.</param>
     /// <param name="color">Color of arrow.</param>
@@ -1067,7 +1067,7 @@ namespace Rhino.Display
       DrawArrows(lines, color);
     }
     /// <summary>
-    /// Draw a single arrow object. 
+    /// Draws a single arrow object. 
     /// An arrow consists of a Shaft and an Arrow head at the end of the shaft.
     /// </summary>
     /// <param name="line">Arrow shaft.</param>
@@ -1080,7 +1080,7 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawArrows2(m_ptr, 1, lines, color.ToArgb(), screenSize, relativeSize);
     }
     /// <summary>
-    /// Draw a collection of arrow objects. An arrow consists of a Shaft and an Arrow head at the end of the shaft.
+    /// Draws a collection of arrow objects. An arrow consists of a Shaft and an Arrow head at the end of the shaft.
     /// </summary>
     /// <param name="lines">Arrow shafts.</param>
     /// <param name="color">Color of arrows.</param>
@@ -1090,7 +1090,7 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawArrows(m_ptr, lines.Length, lines, argb);
     }
     /// <summary>
-    /// Draw a collection of arrow objects. An arrow consists of a Shaft and an Arrow head at the end of the shaft. 
+    /// Draws a collection of arrow objects. An arrow consists of a Shaft and an Arrow head at the end of the shaft. 
     /// </summary>
     /// <param name="lines">Arrow shafts.</param>
     /// <param name="color">Color of arrows.</param>
@@ -1126,7 +1126,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw a single line object.
+    /// Draws a single line object.
     /// </summary>
     /// <param name="line">Line to draw.</param>
     /// <param name="color">Color to draw line in.</param>
@@ -1135,7 +1135,7 @@ namespace Rhino.Display
       DrawLine(line.From, line.To, color, 1);
     }
     /// <summary>
-    /// Draw a single line object.
+    /// Draws a single line object.
     /// </summary>
     /// <param name="line">Line to draw.</param>
     /// <param name="color">Color to draw line in.</param>
@@ -1145,7 +1145,7 @@ namespace Rhino.Display
       DrawLine(line.From, line.To, color, thickness);
     }
     /// <summary>
-    /// Draw a single line object.
+    /// Draws a single line object.
     /// </summary>
     /// <param name="from">Line from point.</param>
     /// <param name="to">Line to point.</param>
@@ -1155,7 +1155,7 @@ namespace Rhino.Display
       DrawLine(from, to, color, 1);
     }
     /// <summary>
-    /// Draw a single line object.
+    /// Draws a single line object.
     /// </summary>
     /// <param name="from">Line from point.</param>
     /// <param name="to">Line to point.</param>
@@ -1167,7 +1167,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw a single dotted line.
+    /// Draws a single dotted line.
     /// </summary>
     /// <param name="line">Line to draw.</param>
     /// <param name="color">Color of line.</param>
@@ -1176,7 +1176,7 @@ namespace Rhino.Display
       DrawDottedLine(line.From, line.To, color);
     }
     /// <summary>
-    /// Draw a single dotted line.
+    /// Draws a single dotted line.
     /// </summary>
     /// <param name="from">Line start point.</param>
     /// <param name="to">Line end point.</param>
@@ -1187,7 +1187,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw a set of connected lines (polyline) in a dotted pattern
+    /// Draws a set of connected lines (polyline) in a dotted pattern
     /// </summary>
     /// <param name="points">End points of each line segment</param>
     /// <param name="color">Color of polyline</param>
@@ -1211,7 +1211,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw a set of lines with a given color and thickness. If you want the fastest possible set of lines
+    /// Draws a set of lines with a given color and thickness. If you want the fastest possible set of lines
     /// to be drawn, pass a Line[] for lines.
     /// </summary>
     /// <param name="lines">Lines to draw.</param>
@@ -1221,7 +1221,7 @@ namespace Rhino.Display
       DrawLines(lines, color, 1);
     }
     /// <summary>
-    /// Draw a set of lines with a given color and thickness. If you want the fastest possible set of lines
+    /// Draws a set of lines with a given color and thickness. If you want the fastest possible set of lines
     /// to be drawn, pass a Line[] for lines.
     /// </summary>
     /// <param name="lines">Lines to draw.</param>
@@ -1247,7 +1247,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw a single Polyline object.
+    /// Draws a single Polyline object.
     /// </summary>
     /// <param name="polyline">Polyline to draw.</param>
     /// <param name="color">Color to draw in.</param>
@@ -1256,7 +1256,7 @@ namespace Rhino.Display
       DrawPolyline(polyline, color, 1);
     }
     /// <summary>
-    /// Draw a single Polyline object.
+    /// Draws a single Polyline object.
     /// </summary>
     /// <param name="polyline">Polyline to draw.</param>
     /// <param name="color">Color to draw in.</param>
@@ -1273,7 +1273,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw a filled polygon.
+    /// Draws a filled polygon.
     /// </summary>
     /// <param name="points">
     /// Collection of world coordinate points that are connected by lines to form a closed shape. 
@@ -1296,7 +1296,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw a text dot in screen coordinates.
+    /// Draws a text dot in screen coordinates.
     /// </summary>
     /// <param name="screenX">X coordinate (in pixels) of dot center.</param>
     /// <param name="screenY">Y coordinate (in pixels) of dot center.</param>
@@ -1311,7 +1311,7 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawDot3(pThis, screenX, screenY, text, argbDot, argbText);
     }
     /// <summary>
-    /// Draw a text dot in screen coordinates.
+    /// Draws a text dot in screen coordinates.
     /// </summary>
     /// <param name="screenX">X coordinate (in pixels) of dot center.</param>
     /// <param name="screenY">Y coordinate (in pixels) of dot center.</param>
@@ -1336,7 +1336,7 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawDot(pThis, worldPosition, text, argbDot, argbText);
     }
     /// <summary>
-    /// Draw a text dot in world coordinates.
+    /// Draws a text dot in world coordinates.
     /// </summary>
     /// <param name="worldPosition">Location of dot in world coordinates.</param>
     /// <param name="text">Text content of dot.</param>
@@ -1347,7 +1347,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw the edges of a BoundingBox.
+    /// Draws the edges of a BoundingBox.
     /// </summary>
     /// <param name="box">Box to draw.</param>
     /// <param name="color">Color to draw in.</param>
@@ -1357,7 +1357,7 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBox(m_ptr, box.m_min, box.m_max, argb, 1);
     }
     /// <summary>
-    /// Draw the edges of a BoundingBox.
+    /// Draws the edges of a BoundingBox.
     /// </summary>
     /// <param name="box">Box to draw.</param>
     /// <param name="color">Color to draw in.</param>
@@ -1368,7 +1368,7 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBox(m_ptr, box.m_min, box.m_max, argb, thickness);
     }
     /// <summary>
-    /// Draw the edges of a Box object.
+    /// Draws the edges of a Box object.
     /// </summary>
     /// <param name="box">Box to draw.</param>
     /// <param name="color">Color to draw in.</param>
@@ -1377,7 +1377,7 @@ namespace Rhino.Display
       DrawBox(box, color, 1);
     }
     /// <summary>
-    /// Draw the edges of a Box object.
+    /// Draws the edges of a Box object.
     /// </summary>
     /// <param name="box">Box to draw.</param>
     /// <param name="color">Color to draw in.</param>
@@ -1456,7 +1456,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw corner widgets of a world aligned boundingbox. 
+    /// Draws corner widgets of a world aligned boundingbox. 
     /// Widget size will be 5% of the Box diagonal.
     /// </summary>
     /// <param name="box">Box to draw.</param>
@@ -1467,7 +1467,7 @@ namespace Rhino.Display
       DrawBoxCorners(box, color, 0.05 * diag, 1);
     }
     /// <summary>
-    /// Draw corner widgets of a world aligned boundingbox. 
+    /// Draws corner widgets of a world aligned boundingbox. 
     /// </summary>
     /// <param name="box">Box to draw.</param>
     /// <param name="color">Color to draw with.</param>
@@ -1477,7 +1477,7 @@ namespace Rhino.Display
       DrawBoxCorners(box, color, size, 1);
     }
     /// <summary>
-    /// Draw corner widgets of a world aligned boundingbox. 
+    /// Draws corner widgets of a world aligned boundingbox. 
     /// </summary>
     /// <param name="box">Box to draw.</param>
     /// <param name="color">Color to draw with.</param>
@@ -1584,7 +1584,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw an arrow marker as a view-aligned widget.
+    /// Draws an arrow marker as a view-aligned widget.
     /// </summary>
     /// <param name="tip">Location of arrow tip point.</param>
     /// <param name="direction">Direction of arrow.</param>
@@ -1593,8 +1593,9 @@ namespace Rhino.Display
     {
       DrawMarker(tip, direction, color, 3, 16, 0.0);
     }
+
     /// <summary>
-    /// Draw an arrow marker as a view-aligned widget.
+    /// Draws an arrow marker as a view-aligned widget.
     /// </summary>
     /// <param name="tip">Location of arrow tip point.</param>
     /// <param name="direction">Direction of arrow.</param>
@@ -1604,8 +1605,9 @@ namespace Rhino.Display
     {
       DrawMarker(tip, direction, color, thickness, 16.0, 0.0);
     }
+
     /// <summary>
-    /// Draw an arrow marker as a view-aligned widget.
+    /// Draws an arrow marker as a view-aligned widget.
     /// </summary>
     /// <param name="tip">Location of arrow tip point.</param>
     /// <param name="direction">Direction of arrow.</param>
@@ -1616,8 +1618,9 @@ namespace Rhino.Display
     {
       DrawMarker(tip, direction, color, thickness, size, 0.0);
     }
+
     /// <summary>
-    /// Draw an arrow marker as a view-aligned widget.
+    /// Draws an arrow marker as a view-aligned widget.
     /// </summary>
     /// <param name="tip">Location of arrow tip point.</param>
     /// <param name="direction">Direction of arrow.</param>
@@ -1735,6 +1738,7 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_Draw2dText2(pThis, text.Length, text, color.ToArgb(), worldCoordinate, middleJustified, height, fontface);
     }
 
+
     public void Draw3dText(string text, System.Drawing.Color color, Plane textPlane, double height, string fontface)
     {
       IntPtr pThis = NonConstPointer();
@@ -1761,7 +1765,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw 3d text using the Text3d plane with an adjusted origin
+    /// Draws 3d text using the Text3d plane with an adjusted origin
     /// </summary>
     /// <param name="text"></param>
     /// <param name="color"></param>

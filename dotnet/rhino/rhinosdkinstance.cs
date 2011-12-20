@@ -179,7 +179,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Get a list of the objects that belong to this instance definition.
+    /// Gets a list of the objects that belong to this instance definition.
     /// </summary>
     /// <returns></returns>
     /// <example>
@@ -200,7 +200,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Get a list of the CRhinoInstanceObjects (inserts) that contains
+    /// Gets a list of the CRhinoInstanceObjects (inserts) that contains
     /// a reference this instance definition.
     /// </summary>
     /// <param name="wheretoLook">
@@ -229,7 +229,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Get a list of all the InstanceDefinitions that contain a reference this InstanceDefinition.
+    /// Gets a list of all the InstanceDefinitions that contain a reference this InstanceDefinition.
     /// </summary>
     /// <returns></returns>
     public InstanceDefinition[] GetContainers()

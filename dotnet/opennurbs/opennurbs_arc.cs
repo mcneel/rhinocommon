@@ -4,7 +4,8 @@ using System.Runtime.InteropServices;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents a subcurve of a three-dimensional circle.
+  /// Represents the value of a plane, two angles and a radius in
+  /// a subcurve of a three-dimensional circle.
   /// 
   /// <para>The curve is parameterized by an angle expressed in radians. For an IsValid arc
   /// the total subtended angle AngleRadians() = Domain()(1) - Domain()(0) must satisfy
@@ -323,7 +324,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Set arc's angle domain (in radians) as a subdomain of the circle.
+    /// Sets arc's angle domain (in radians) as a subdomain of the circle.
     /// </summary>
     /// <param name="domain">
     /// 0 &lt; domain[1] - domain[0] &lt;= 2.0 * RhinoMath.Pi
@@ -565,7 +566,7 @@ namespace Rhino.Geometry
     //}
 
     ///// <summary>
-    ///// Set arc's subtended angle in radians.
+    ///// Sets arc's subtended angle in radians.
     ///// </summary>
     ///// <param name="angleRadians">0 &lt;= angleRadians &lt;= 2.0 * ON_Math.PI</param>
     ///// <returns></returns>
@@ -587,7 +588,7 @@ namespace Rhino.Geometry
     //}
 
     ///// <summary>
-    ///// Set arc's angle interval in radians.
+    ///// Sets arc's angle interval in radians.
     ///// </summary>
     ///// <param name="angleRadians">
     ///// Increasing interval with start and end angle in radians. 
@@ -605,7 +606,7 @@ namespace Rhino.Geometry
     //}
 
     ///// <summary>
-    ///// Set arc's subtended angle in degrees.
+    ///// Sets arc's subtended angle in degrees.
     ///// </summary>
     ///// <param name="angleDegrees">0 &lt; angleDegrees &lt;= 360</param>
     ///// <returns></returns>

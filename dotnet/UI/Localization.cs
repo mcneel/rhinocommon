@@ -109,7 +109,7 @@ namespace Rhino.UI
   public static class Localization
   {
     /// <summary>
-    /// Get localized unit system name.  Uses current application locale id
+    /// Gets localized unit system name.  Uses current application locale id
     /// </summary>
     /// <param name="units"></param>
     /// <param name="capitalize"></param>

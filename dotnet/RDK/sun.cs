@@ -58,7 +58,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Set position of the sun based on azimuth and altitude values
+    /// Sets position of the sun based on azimuth and altitude values.
     /// </summary>
     /// <param name="azimuthDegrees"></param>
     /// <param name="altitudeDegrees"></param>
@@ -69,7 +69,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Set position of the sun based on physical location and time
+    /// Sets position of the sun based on physical location and time.
     /// </summary>
     /// <param name="when"></param>
     /// <param name="whenKind"></param>

@@ -613,7 +613,7 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     /// <summary>
-    /// Get the Greville point (u, v) coordinates associated with the control point at the given indices.
+    /// Gets the Greville point (u, v) coordinates associated with the control point at the given indices.
     /// </summary>
     /// <param name="u">Index of control-point along surface 'U' direction.</param>
     /// <param name="v">Index of control-point along surface 'U' direction.</param>

@@ -186,9 +186,10 @@ namespace Rhino.Runtime
     public abstract string GetStackTraceFromException(Exception ex);
 
     /// <summary>
-    /// By default string output goes to the Rhino.RhinoApp.Write function
+    /// Gets or sets the Python script "print()" target.
+    /// <para>By default string output goes to the Rhino.RhinoApp.Write function.
     /// Set Output if you want to redirect the output from python to a different function
-    /// while this script executes.
+    /// while this script executes.</para>
     /// </summary>
     public Action<string> Output
     {

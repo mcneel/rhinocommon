@@ -408,7 +408,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Simple version of fit that uses a specified starting surface
+    /// Constructs a brep patch.
+    /// <para>This is the simple version of fit that uses a specified starting surface.</para>
     /// </summary>
     /// <param name="geometry">
     /// Combination of Curves, BrepTrims, Points, PointClouds or Meshes.
@@ -420,7 +421,7 @@ namespace Rhino.Geometry
     /// Tolerance used by input analysis functions for loop finding, trimming, etc
     /// </param>
     /// <returns>
-    /// Brep fit through input on success. null on error
+    /// Brep fit through input on success, or null on error.
     /// </returns>
     public static Brep CreatePatch(IEnumerable<GeometryBase> geometry, Surface startingSurface, double tolerance)
     {
@@ -436,22 +437,24 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Simple version of fit that uses a plane with u x v spans.  Makes a plane by fitting to
-    /// the points from the input geometry to use as the starting surface. The surface has the
-    /// specified u and v span count.
+    /// Constructs a brep patch.
+    /// <para>This is the simple version of fit that uses a plane with u x v spans.
+    /// It makes a plane by fitting to the points from the input geometry to use as the starting surface.
+    /// The surface has the specified u and v span count.</para>
     /// </summary>
     /// <param name="geometry">
-    /// Combination of Curves, BrepTrims, Points, PointClouds or Meshes.
+    /// A combination of <see cref="Curve">curves</see>, brep trims,
+    /// <see cref="Point">points</see>, <see cref="PointCloud">point clouds</see> or <see cref="Mesh">meshes</see>.
     /// Curves and trims are sampled to get points. Trims are sampled for
-    /// points and normals
+    /// points and normals.
     /// </param>
-    /// <param name="uSpans"></param>
-    /// <param name="vSpans"></param>
+    /// <param name="uSpans">The number of spans in the U direction.</param>
+    /// <param name="vSpans">The number of spans in the V direction.</param>
     /// <param name="tolerance">
     /// Tolerance used by input analysis functions for loop finding, trimming, etc
     /// </param>
     /// <returns>
-    /// Brep fit through input on success. null on error
+    /// A brep fit through input on success, or null on error.
     /// </returns>
     public static Brep CreatePatch(IEnumerable<GeometryBase> geometry, int uSpans, int vSpans, double tolerance)
     {
@@ -2001,7 +2004,7 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>
-    /// Set the surface domain of this Face.
+    /// Sets the surface domain of this face.
     /// </summary>
     /// <param name="direction">Direction of face to set (0 = U, 1 = V).</param>
     /// <param name="domain">Domain to apply.</param>
@@ -2030,7 +2033,7 @@ namespace Rhino.Geometry
       return IntPtr.Zero == pNewBrep ? null : new Brep(pNewBrep, null);
     }
     /// <summary>
-    /// Get a copy to the untrimmed surface that this face is based on.
+    /// Gets a copy to the untrimmed surface that this face is based on.
     /// </summary>
     /// <returns>A copy of this face's underlying surface.</returns>
     public Surface DuplicateSurface()
@@ -2041,7 +2044,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get the untrimmed surface that this face is based on.
+    /// Gets the untrimmed surface that this face is based on.
     /// </summary>
     /// <returns></returns>
     public Surface UnderlyingSurface()
@@ -2087,7 +2090,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get intervals where the iso curve exists on a BrepFace (trimmed surface)
+    /// Gets intervals where the iso curve exists on a BrepFace (trimmed surface)
     /// </summary>
     /// <param name="direction">Direction of isocurve.
     /// <para>0 = Isocurve connects all points with a constant U value.</para>

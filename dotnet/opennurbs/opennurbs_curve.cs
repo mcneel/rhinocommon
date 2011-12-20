@@ -1774,7 +1774,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get closest points between two curves
+    /// Gets closest points between two curves
     /// </summary>
     /// <param name="otherCurve"></param>
     /// <param name="pointOnThisCurve"></param>
@@ -1889,7 +1889,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get a point at a certain length along the curve. The length must be 
+    /// Gets a point at a certain length along the curve. The length must be 
     /// non-negative and less than or equal to the length of the curve. 
     /// Lengths will not be wrapped when the curve is closed or periodic.
     /// </summary>
@@ -1906,7 +1906,7 @@ namespace Rhino.Geometry
       return !LengthParameter(length, out t) ? Point3d.Unset : PointAt(t);
     }
     /// <summary>
-    /// Get a point at a certain normalized length along the curve. The length must be 
+    /// Gets a point at a certain normalized length along the curve. The length must be 
     /// between or including 0.0 and 1.0, where 0.0 equals the start of the curve and 
     /// 1.0 equals the end of the curve. 
     /// </summary>
@@ -2046,7 +2046,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get a collection of perpendicular frames along the curve. Perpendicular frames 
+    /// Gets a collection of perpendicular frames along the curve. Perpendicular frames 
     /// are also known as 'Zero-twisting frames' and they minimize rotation from one frame to the next.
     /// </summary>
     /// <param name="parameters">A collection of <i>strictly increasing</i> curve parameters to place perpendicular frames on.</param>
@@ -2135,7 +2135,7 @@ namespace Rhino.Geometry
 
     #region size related methods
     /// <summary>
-    /// Get the length of the curve with a fractional tolerance of 1.0e-8
+    /// Gets the length of the curve with a fractional tolerance of 1.0e-8
     /// </summary>
     /// <returns>The length of the curve on success, or zero on failure.</returns>
     /// <example>
@@ -2233,7 +2233,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get the parameter along the curve which coincides with a given length along the curve. 
+    /// Gets the parameter along the curve which coincides with a given length along the curve. 
     /// A fractional tolerance of 1e-8 is used in this version of the function.
     /// </summary>
     /// <param name="segmentLength">
@@ -2248,7 +2248,7 @@ namespace Rhino.Geometry
       return LengthParameter(segmentLength, out t, 1.0e-8);
     }
     /// <summary>
-    /// Get the parameter along the curve which coincides with a given length along the curve.
+    /// Gets the parameter along the curve which coincides with a given length along the curve.
     /// </summary>
     /// <param name="segmentLength">
     /// Length of segment to measure. Must be less than or equal to the length of the curve.
@@ -2274,7 +2274,7 @@ namespace Rhino.Geometry
       return NormalizedLengthParameter(segmentLength, out t, fractionalTolerance);
     }
     /// <summary>
-    /// Get the parameter along the curve which coincides with a given length along the curve. 
+    /// Gets the parameter along the curve which coincides with a given length along the curve. 
     /// A fractional tolerance of 1e-8 is used in this version of the function
     /// </summary>
     /// <param name="segmentLength">
@@ -2292,7 +2292,7 @@ namespace Rhino.Geometry
       return LengthParameter(segmentLength, out t, 1.0e-8, subdomain);
     }
     /// <summary>
-    /// Get the parameter along the curve which coincides with a given length along the curve.
+    /// Gets the parameter along the curve which coincides with a given length along the curve.
     /// </summary>
     /// <param name="segmentLength">
     /// Length of segment to measure. Must be less than or equal to the length of the subdomain.
@@ -3209,7 +3209,7 @@ namespace Rhino.Geometry
 
 #if RHINO_SDK
     /// <summary>
-    /// Get a polyline approximation of a curve.
+    /// Gets a polyline approximation of a curve.
     /// </summary>
     /// <param name="mainSegmentCount">
     /// If mainSegmentCount &lt;= 0, then both subSegmentCount and mainSegmentCount are ignored. 
@@ -3264,7 +3264,7 @@ namespace Rhino.Geometry
       return poly;
     }
     /// <summary>
-    /// Get a polyline approximation of a curve.
+    /// Gets a polyline approximation of a curve.
     /// </summary>
     /// <param name="mainSegmentCount">
     /// If mainSegmentCount &lt;= 0, then both subSegmentCount and mainSegmentCount are ignored. 

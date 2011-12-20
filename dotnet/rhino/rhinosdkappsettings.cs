@@ -690,7 +690,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Get Name/Macro combinations as a dictionary
+    /// Gets Name/Macro combinations as a dictionary
     /// </summary>
     /// <returns></returns>
     public static System.Collections.Generic.Dictionary<string,string> ToDictionary()
@@ -730,7 +730,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Get the default set of Name/Macro combinations
+    /// Gets the default set of Name/Macro combinations
     /// </summary>
     /// <returns></returns>
     public static System.Collections.Generic.Dictionary<string, string> GetDefaults()

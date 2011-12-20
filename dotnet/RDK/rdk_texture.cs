@@ -22,7 +22,7 @@ namespace Rhino.Render
 
 
     /// <summary>
-    /// Get the transformation that can be applied to the UVW vector to convert it
+    /// Gets the transformation that can be applied to the UVW vector to convert it
     /// from normalized texture space into locally mapped space (ie - with repeat,
     /// offset and rotation applied.)
     /// </summary>

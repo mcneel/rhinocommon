@@ -1662,7 +1662,7 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Construct a new Point3dList from a given number of points.
+    /// Constructs a new point list from points.
     /// </summary>
     /// <param name="initialPoints">Points to add to the list.</param>
     public Point3dList(params Point3d[] initialPoints)

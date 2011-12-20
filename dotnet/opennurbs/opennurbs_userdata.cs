@@ -1,10 +1,9 @@
-#pragma warning disable 1591
 using System;
 
 namespace Rhino.DocObjects.Custom
 {
   /// <summary>
-  /// Base class for custom classes of information which may be "hung" off of
+  /// Provides a base class for custom classes of information which may be attached to
   /// geometry or attribute classes.
   /// </summary>
   public abstract class UserData : IDisposable
@@ -14,22 +13,36 @@ namespace Rhino.DocObjects.Custom
     IntPtr m_pNativePointer = IntPtr.Zero;
 
     /// <summary>
-    /// Protected constructor for internal use.
+    /// Protected constructor for inheriting classes.
     /// </summary>
     protected UserData() { }
 
     #region IDisposable implementation
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~UserData()
     {
       Dispose(false);
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero == m_pNativePointer)
@@ -37,7 +50,7 @@ namespace Rhino.DocObjects.Custom
 
       // Leak for now. We want to make sure that the class is not
       // attached to an object before deleting.
-      //UnsafeNativeMethods.CRhCmnUserData_Delete(m_pNativePointer, m_serial_number);
+      // UnsafeNativeMethods.CRhCmnUserData_Delete(m_pNativePointer, m_serial_number);
       m_pNativePointer = IntPtr.Zero;
     }
     #endregion
@@ -75,23 +88,30 @@ namespace Rhino.DocObjects.Custom
     /// <summary>
     /// If you want to save this user data in a 3dm file, override
     /// ShouldWrite and return true.  If you do support serialization,
-    /// you must also override the Read and Write functions
+    /// you must also override the Read and Write functions.
     /// </summary>
     public virtual bool ShouldWrite { get { return false; } }
 
-    /// <summary>
-    /// </summary>
-    /// <param name="archive"></param>
-    /// <returns></returns>
+    /// <summary>Writes the content of this data to a stream archive.</summary>
+    /// <param name="archive">An archive.</param>
+    /// <returns>true if the data was successfully written. The default implementation always returns false.</returns>
     protected virtual bool Write(Rhino.FileIO.BinaryArchiveWriter archive) { return false; }
 
-    /// <summary>
-    /// </summary>
-    /// <param name="archive"></param>
-    /// <returns></returns>
+    /// <summary>Reads the content of this data from a stream archive.</summary>
+    /// <param name="archive">An archive.</param>
+    /// <returns>true if the data was successfully written. The default implementation always returns false.</returns>
     protected virtual bool Read(Rhino.FileIO.BinaryArchiveReader archive) { return false; }
 
+    /// <summary>
+    /// Is called when the object associated with this data is transformed.
+    /// </summary>
+    /// <param name="transform">The transform being applied.</param>
     protected virtual void OnTransform(Rhino.Geometry.Transform transform) { }
+
+    /// <summary>
+    /// Is called when the object is being duplicated.
+    /// </summary>
+    /// <param name="source">The source data.</param>
     protected virtual void OnDuplicate(UserData source) { }
 
     internal delegate void TransformUserDataCallback(int serial_number, ref Rhino.Geometry.Transform xform);
@@ -319,13 +339,23 @@ namespace Rhino.DocObjects.Custom
     #endregion
   }
 
+  /// <summary>
+  /// Represents user data with unknown origin.
+  /// </summary>
   public class UnknownUserData : UserData
   {
+    /// <summary>
+    /// Constructs a new unknown data entity.
+    /// </summary>
+    /// <param name="pNativeUserData">A pointer to the entity.</param>
     public UnknownUserData(IntPtr pNativeUserData)
     {
     }
   }
 
+  /// <summary>
+  /// Represets a regulated collection of user data.
+  /// </summary>
   public class UserDataList
   {
     readonly Rhino.Runtime.CommonObject m_parent;
@@ -335,7 +365,7 @@ namespace Rhino.DocObjects.Custom
     }
 
     /// <summary>
-    /// Number of UserData objects in this list
+    /// Number of UserData objects in this list.
     /// </summary>
     public int Count
     {
@@ -348,10 +378,10 @@ namespace Rhino.DocObjects.Custom
 
     /// <summary>
     /// If the userdata is already in a different UserDataList, it
-    /// will be removed from that list and added to this list
+    /// will be removed from that list and added to this list.
     /// </summary>
-    /// <param name="userdata"></param>
-    /// <returns></returns>
+    /// <param name="userdata">Data element.</param>
+    /// <returns>Whether this operation succeeded.</returns>
     public bool Add(UserData userdata)
     {
       if (!(userdata is SharedUserDictionary))
@@ -380,6 +410,11 @@ namespace Rhino.DocObjects.Custom
     }
 */
 
+    /// <summary>
+    /// Finds a specific data type in this regulated collection.
+    /// </summary>
+    /// <param name="userdataType">A data type.</param>
+    /// <returns>The found data, or null of nothing was found.</returns>
     public UserData Find(Type userdataType)
     {
       if (!userdataType.IsSubclassOf(typeof(UserData)))
@@ -391,15 +426,25 @@ namespace Rhino.DocObjects.Custom
     }
   }
 
+  /// <summary>
+  /// Defines the storage data class for a <see cref="Rhino.Collections.ArchivableDictionary">user dictionary</see>.
+  /// </summary>
   [System.Runtime.InteropServices.Guid("171E831F-7FEF-40E2-9857-E5CCD39446F0")]
   public class UserDictionary : UserData
   {
     Rhino.Collections.ArchivableDictionary m_dictionary;
+    /// <summary>
+    /// Gets the dictionary that is associated with this class.
+    /// <para>This dictionary is unique.</para>
+    /// </summary>
     public Rhino.Collections.ArchivableDictionary Dictionary
     {
       get { return m_dictionary??(m_dictionary=new Collections.ArchivableDictionary()); }
     }
 
+    /// <summary>
+    /// Gets the text "RhinoCommon UserDictionary".
+    /// </summary>
     public override string Description
     {
       get
@@ -408,6 +453,10 @@ namespace Rhino.DocObjects.Custom
       }
     }
 
+    /// <summary>
+    /// Clones the user data.
+    /// </summary>
+    /// <param name="source"></param>
     protected override void OnDuplicate(UserData source)
     {
       UserDictionary dict = source as UserDictionary;
@@ -415,17 +464,30 @@ namespace Rhino.DocObjects.Custom
         m_dictionary = dict.m_dictionary.Clone();
     }
 
+    /// <summary>
+    /// Writes this entity if the count is larger than 0
+    /// </summary>
     public override bool ShouldWrite
     {
       get { return m_dictionary.Count > 0; }
     }
 
+    /// <summary>
+    /// Is called to read this entity.
+    /// </summary>
+    /// <param name="archive">An archive.</param>
+    /// <returns>Always returns true.</returns>
     protected override bool Read(FileIO.BinaryArchiveReader archive)
     {
       m_dictionary = archive.ReadDictionary();
       return true;
     }
 
+    /// <summary>
+    /// Is called to write this entity.
+    /// </summary>
+    /// <param name="archive">An archive.</param>
+    /// <returns>Always returns true.</returns>
     protected override bool Write(FileIO.BinaryArchiveWriter archive)
     {
       archive.WriteDictionary(Dictionary);

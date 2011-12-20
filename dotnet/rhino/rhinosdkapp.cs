@@ -458,7 +458,7 @@ namespace Rhino
     }
 
     /// <summary>
-    /// Get the object that is returned by PlugIn.GetPlugInObject for a given
+    /// Gets the object that is returned by PlugIn.GetPlugInObject for a given
     /// plug-in. This function attempts to find and load a plug-in with a given Id.
     /// When a plug-in is found, it's GetPlugInObject function is called and the
     /// result is returned here.
@@ -503,7 +503,7 @@ namespace Rhino
     }
 
     /// <summary>
-    /// Get the object that is returned by PlugIn.GetPlugInObject for a given
+    /// Gets the object that is returned by PlugIn.GetPlugInObject for a given
     /// plug-in. This function attempts to find and load a plug-in with a given name.
     /// When a plug-in is found, it's GetPlugInObject function is called and the
     /// result is returned here.

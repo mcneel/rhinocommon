@@ -1,14 +1,19 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.Serialization;
 
 namespace Rhino.DocObjects
 {
+  /// <summary>
+  /// Represents a texture that is mapped on objects.
+  /// </summary>
   [Serializable]
   public class Texture : Rhino.Runtime.CommonObject
   {
-    readonly int m_index = 0;
+    readonly int m_index;
 
+    /// <summary>
+    /// Initializes a new texture.
+    /// </summary>
     public Texture()
     {
       IntPtr pTexture = UnsafeNativeMethods.ON_Texture_New();
@@ -84,6 +89,9 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.ON_Object_Duplicate(pConstPointer);
     }
 
+    /// <summary>
+    /// Gets or sets a file name that is used by this texture.
+    /// </summary>
     public string FileName
     {
       get
@@ -105,6 +113,9 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <summary>
+    /// Gets the globally unique identifier of this texture.
+    /// </summary>
     public Guid Id
     {
       get

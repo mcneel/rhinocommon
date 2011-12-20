@@ -1,9 +1,11 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents the value of a plane and two radii in a torus that is oriented in three-dimensional space.
+  /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 144)]
   [Serializable]
   public struct Torus
@@ -27,7 +29,7 @@ namespace Rhino.Geometry
 
     #region constructors
     /// <summary>
-    /// Create a new Torus from base pane and two radii.
+    /// Initializes a new Torus from base pane and two radii.
     /// </summary>
     /// <param name="basePlane">Base plane for major radius circle.</param>
     /// <param name="majorRadius">Radius of circle that lies at the heart of the torus.</param>
@@ -91,20 +93,20 @@ namespace Rhino.Geometry
 
     #region methods
     /// <summary>
-    /// Convert this Torus to a NurbsSurface representation. 
+    /// Converts this torus to its nurbs surface representation. 
     /// This is synonymous with calling NurbsSurface.CreateFromTorus().
     /// </summary>
-    /// <returns>A nurbs surface representation of this torus or null.</returns>
+    /// <returns>A nurbs surface representation of this torus, or null on error.</returns>
     public NurbsSurface ToNurbsSurface()
     {
       return NurbsSurface.CreateFromTorus(this);
     }
 
     /// <summary>
-    /// Convert this Torus to a RevSurface representation. 
+    /// Convert this torus to a surface of revolution representation. 
     /// This is synonymous with calling RevSurface.CreateFromTorus().
     /// </summary>
-    /// <returns>A surface of revolution representation of this torus or null.</returns>
+    /// <returns>A surface of revolution representation of this torus, or null on error.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addtorus.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addtorus.cs' lang='cs'/>

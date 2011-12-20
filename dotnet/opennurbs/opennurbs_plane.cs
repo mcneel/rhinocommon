@@ -173,7 +173,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Construct a plane from a point and a normal vector.
+    /// Constructs a plane from a point and a normal vector.
     /// </summary>
     /// <param name="origin">Origin point of the plane.</param>
     /// <param name="normal">Non-zero normal to the plane.</param>
@@ -190,7 +190,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Construct a plane from a point and two vectors in the plane.
+    /// Constructs a plane from a point and two vectors in the plane.
     /// </summary>
     /// <param name='origin'>Origin point of the plane.</param>
     /// <param name='xDirection'>
@@ -229,7 +229,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Construct a plane from an equation
+    /// Constructs a plane from an equation
     /// ax+by+cz=d
     /// </summary>
     public Plane(double a, double b, double c, double d)
@@ -328,7 +328,7 @@ namespace Rhino.Geometry
 
     #region methods
     /// <summary>
-    /// Get the plane equation for this plane in the format of Ax+By+Cz+D=0
+    /// Gets the plane equation for this plane in the format of Ax+By+Cz+D=0
     /// </summary>
     /// <returns>
     /// Array of four values

@@ -4797,7 +4797,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Get a user data string from the document
+    /// Gets a user data string from the document
     /// </summary>
     /// <param name="section"></param>
     /// <param name="entry"></param>

@@ -247,7 +247,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Get segment information at index
+    /// Gets the segment information at a index.
     /// </summary>
     /// <param name="index"></param>
     /// <param name="length"></param>

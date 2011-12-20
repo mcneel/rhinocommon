@@ -85,7 +85,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get the segment curve at the given index.
+    /// Gets the segment curve at the given index.
     /// </summary>
     /// <param name="index">Index of segment to retrieve.</param>
     /// <returns>The segment at the given index or null on failure.</returns>

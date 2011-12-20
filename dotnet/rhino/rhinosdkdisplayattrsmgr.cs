@@ -91,7 +91,7 @@ namespace Rhino.Display
 
     #region statics
     /// <summary>
-    /// Get all display mode descriptions that Rhino currently knows about
+    /// Gets all display mode descriptions that Rhino currently knows about
     /// </summary>
     /// <returns>
     /// Copies of all of the display mode descriptions. If you want to modify

@@ -346,7 +346,7 @@ namespace Rhino.Commands
     }
 
     /// <summary>
-    /// Get list of command names in Rhino. This list does not include Test, Alpha, or System commands
+    /// Gets list of command names in Rhino. This list does not include Test, Alpha, or System commands
     /// </summary>
     /// <param name="english">
     ///  if true, retrieve the english name for every command.

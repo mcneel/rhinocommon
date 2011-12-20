@@ -672,7 +672,7 @@ namespace Rhino.DocObjects
       return rc;
     }
     /// <summary>
-    /// Get user string
+    /// Gets a user string.
     /// </summary>
     /// <param name="key">id used to retrieve the string</param>
     /// <returns>string associated with the key if successful. null if no key was found</returns>
@@ -696,9 +696,9 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Get all (key, value) user strings attached
+    /// Gets an independent copy of the collection of (user text key, user text value) pairs attached to this object.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A collection of key strings and values strings. This </returns>
     public System.Collections.Specialized.NameValueCollection GetUserStrings()
     {
       System.Collections.Specialized.NameValueCollection rc = new System.Collections.Specialized.NameValueCollection();

@@ -871,7 +871,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Get a list of installed plug-in names.  The list can be restricted by some filters
+    /// Gets a list of installed plug-in names.  The list can be restricted by some filters
     /// </summary>
     /// <param name="typeFilter">
     /// 
@@ -923,7 +923,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Get a plug-in name for an installed plug-in given the path to that plug-in
+    /// Gets a plug-in name for an installed plug-in given the path to that plug-in
     /// </summary>
     /// <param name="pluginPath"></param>
     /// <returns></returns>
@@ -979,7 +979,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Get names of all "non-test" commands for a given plug-in
+    /// Gets names of all "non-test" commands for a given plug-in
     /// </summary>
     /// <param name="pluginId"></param>
     /// <returns></returns>

@@ -158,7 +158,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Get custom data associated with this decal - see Rhino.Plugins.RenderPlugIn.ShowDecalProperties
+    /// Gets custom data associated with this decal - see Rhino.Plugins.RenderPlugIn.ShowDecalProperties
     /// </summary>
     /// <returns>The return value can be null if there is no data associated with this decal.</returns>
     public List<Rhino.Render.NamedValue> CustomData()

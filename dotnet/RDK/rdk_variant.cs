@@ -113,7 +113,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Construct from a variant coming from C++
+    /// Constructs from a variant coming from C++
     /// </summary>
     /// <param name="pVariant"></param>
     internal Variant(IntPtr pVariant)
@@ -122,7 +122,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Construct as VariantTypes.Null
+    /// Constructs as VariantTypes.Null
     /// </summary>
     public Variant()
     {
@@ -379,7 +379,7 @@ namespace Rhino.Render
 
     #region units support
     /// <summary>
-    /// Retrieve the value as a float in model units. Null or varying returns 0.0.
+    /// Retrieves the value as a float in model units. Null or varying returns 0.0.
     /// The value will be converted from the variant's units to model units if necessary.
 		/// \see Units(). \see SetUnits().
     /// </summary>
@@ -391,7 +391,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Retrieve the value as a double in model units. Null or varying returns 0.0.
+    /// Retrieves the value as a double in model units. Null or varying returns 0.0.
     /// The value will be converted from the variant's units to model units if necessary.
 		/// \see Units(). \see SetUnits().
     /// </summary>
@@ -403,7 +403,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Set the value to a float in model units.
+    /// Sets the value to a float in model units.
     /// The value will be converted from model units to the variant's units if necessary. 
     /// </summary>
     /// <param name="f"></param>
@@ -414,7 +414,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Set the value to a double in model units.
+    /// Sets the value to a double in model units.
     /// The value will be converted from model units to the variant's units if necessary. 
     /// </summary>
     /// <param name="d"></param>

@@ -166,7 +166,7 @@ namespace Rhino.DocObjects
 
   #region statics
     /// <summary>
-    /// Get the runtime serial number that will be assigned to
+    /// Gets the runtime serial number that will be assigned to
     /// the next Rhino Object that is created.
     /// </summary>
     [CLSCompliant(false)]
@@ -241,8 +241,8 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// All rhino objects are composed of geometry and attributes.
-    /// Get the underlying geometry for this object
+    /// Gets the underlying geometry for this object.
+    /// <para>All rhino objects are composed of geometry and attributes.</para>
     /// </summary>
     public Rhino.Geometry.GeometryBase Geometry
     {
@@ -799,7 +799,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Get a list of all highlighted sub-objects
+    /// Gets a list of all highlighted sub-objects
     /// </summary>
     /// <returns></returns>
     public ComponentIndex[] GetHighlightedSubObjects()
@@ -952,7 +952,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Get list of currently enabled analysis modes for this object
+    /// Gets a list of currently enabled analysis modes for this object.
     /// </summary>
     /// <returns></returns>
     public Rhino.Display.VisualAnalysisMode[] GetActiveVisualAnalysisModes()
@@ -1115,7 +1115,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Get the component index of the referenced (sub) geometry.
+    /// Gets the component index of the referenced (sub) geometry.
     /// Some objects have subobjects that are valid pieces of geometry. For
     /// example, breps have edges and faces that are valid curves and surfaces.
     /// Each subobject has a component index that is &gt; 0. The parent
@@ -1302,7 +1302,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Get the method used to select this object.
+    /// Gets the method used to select this object.
     /// </summary>
     /// <returns>The method used to select this object.</returns>
     public SelectionMethod SelectionMethod()

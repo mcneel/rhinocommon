@@ -67,7 +67,7 @@ namespace Rhino.Geometry
     /// greater than kinkTolerance at some point P, the list of beziers will
     /// also have a kink at P.
     /// </param>
-    /// <returns></returns>
+    /// <returns>A new array of bezier curves. The array can be empty and might contain null items.</returns>
     public static BezierCurve[] CreateCubicBeziers(Curve sourceCurve, double distanceTolerance, double kinkTolerance)
     {
       IntPtr pConstCurve = sourceCurve.ConstPointer();

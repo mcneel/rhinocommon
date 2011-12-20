@@ -269,7 +269,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Get an array of all of the objects in a group
+    /// Gets an array of all of the objects in a group
     /// </summary>
     /// <param name="groupIndex"></param>
     /// <returns></returns>

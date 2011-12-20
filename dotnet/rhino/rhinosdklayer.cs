@@ -457,7 +457,7 @@ namespace Rhino.DocObjects
     #endregion
 
     /// <summary>
-    /// Set layer to default settings
+    /// Sets layer to default settings.
     /// </summary>
     public void Default()
     {
@@ -506,7 +506,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Get immediate children of this layer. Note that child layers may have their own children
+    /// Gets immediate children of this layer. Note that child layers may have their own children
     /// </summary>
     /// <returns>Array of child layers. null if this layer does not have any children</returns>
     public Layer[] GetChildren()

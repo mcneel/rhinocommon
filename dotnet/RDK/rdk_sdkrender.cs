@@ -20,7 +20,7 @@ namespace Rhino.Render
     private static readonly Dictionary<int, RenderPipeline> m_all_render_pipelines = new Dictionary<int, RenderPipeline>();
 
     /// <summary>
-    /// Construct a subclass of this object on the stack in your Rhino plug-in's Render() or RenderWindow() implementation.
+    /// Constructs a subclass of this object on the stack in your Rhino plug-in's Render() or RenderWindow() implementation.
     /// </summary>
     /// <param name="doc"></param>
     /// <param name="mode"></param>
@@ -107,7 +107,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Get the render size as specified in the ON_3dmRenderSettings. Will automatically return the correct size based on the ActiveView or custom settings.
+    /// Gets the render size as specified in the ON_3dmRenderSettings. Will automatically return the correct size based on the ActiveView or custom settings.
     /// </summary>
     /// <returns></returns>
     public static System.Drawing.Size RenderSize()
@@ -133,7 +133,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Set the number of seconds that need to elapse during rendering before the user is asked if the rendered image should be saved.
+    /// Sets the number of seconds that need to elapse during rendering before the user is asked if the rendered image should be saved.
     /// </summary>
     public int ConfirmationSeconds
     {

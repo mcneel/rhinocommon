@@ -75,8 +75,8 @@ namespace Rhino.Display
 
     #region constructors
     /// <summary>
-    /// Construct a new CustomDisplay instance. You <i>must</i> place a call to 
-    /// Dispose() when you are done with this instance, otherwise 
+    /// Constructs a new CustomDisplay instance. You <i>must</i> call
+    /// Dispose() when you are done with this instance, otherwise
     /// the display methods will never be switched off.
     /// </summary>
     /// <param name="enable">If True, the display will be enabled immediately.</param>

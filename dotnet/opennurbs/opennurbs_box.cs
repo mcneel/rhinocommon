@@ -5,7 +5,8 @@ using System.Runtime.InteropServices;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents an orthogonal, oriented box that is not tied to the world Y,X,Z-axis directions.
+  /// Represents the value of a plane and three intervals in
+  /// an orthogonal, oriented box that is not necessarily parallel to the world Y, X, Z axes.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 176)]
   [Serializable]
@@ -618,7 +619,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Constructs a Brep representation of this Box.
+    /// Constructs a brep representation of this box.
     /// </summary>
     /// <returns>A Brep representation of this box or null.</returns>
     public Brep ToBrep()

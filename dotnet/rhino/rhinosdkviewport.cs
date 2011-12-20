@@ -1162,7 +1162,7 @@ namespace Rhino.Display
       return UnsafeNativeMethods.CRhinoViewport_VP_GetDepth1(ptr, point, ref distance);
     }
     /// <summary>
-    /// Get near and far clipping distances of a bounding box
+    /// Gets near and far clipping distances of a bounding box
     /// </summary>
     /// <param name="bbox"></param>
     /// <param name="nearDistance"></param>
@@ -1178,7 +1178,7 @@ namespace Rhino.Display
       return UnsafeNativeMethods.CRhinoViewport_VP_GetDepth2(ptr, bbox.m_min, bbox.m_max, ref nearDistance, ref farDistance);
     }
     /// <summary>
-    /// Get near and far clipping distances of a sphere
+    /// Gets near and far clipping distances of a sphere
     /// </summary>
     /// <param name="sphere"></param>
     /// <param name="nearDistance"></param>
@@ -1420,7 +1420,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Get the world coordinate line in the view frustum that projects to a point on the screen.
+    /// Gets the world coordinate line in the view frustum that projects to a point on the screen.
     /// </summary>
     /// <param name="screenX">(screenx,screeny) = screen location</param>
     /// <param name="screenY">(screenx,screeny) = screen location</param>

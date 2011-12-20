@@ -445,7 +445,7 @@ namespace Rhino.Geometry
     //}
 
     /// <summary>
-    /// Get the parameter on the circle which is closest to a test point.
+    /// Gets the parameter on the circle which is closest to a test point.
     /// </summary>
     /// <param name="testPoint">Point to project onto the circle.</param>
     /// <param name="t">Parameter on circle closes to testPoint.</param>
@@ -457,7 +457,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get the point on the circle which is closest to a test point.
+    /// Gets the point on the circle which is closest to a test point.
     /// </summary>
     /// <param name="testPoint">Point to project onto the circle.</param>
     /// <returns>

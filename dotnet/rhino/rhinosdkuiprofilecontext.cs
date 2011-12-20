@@ -105,7 +105,7 @@ namespace Rhino
         this.m_value = s;
     }
     /// <summary>
-    /// Get the current or default value as requested
+    /// Gets the current or default value as requested
     /// </summary>
     /// <param name="bDefault">If true then the default value string is returned otherwise the current value string is returned</param>
     /// <returns>If bDefault is true then the default value string is returned otherwise the current value string is returned</returns>
@@ -1508,7 +1508,7 @@ namespace Rhino
       AllUserSettings = allUserSettings;
     }
     /// <summary>
-    /// Get the Plug-in settings associated with this plug-in, if this is the first time called then
+    /// Gets the Plug-in settings associated with this plug-in, if this is the first time called then
     /// the plug-in settings member variable will get initialized and if a settings file exists it
     /// will get loaded
     /// </summary>
@@ -1522,7 +1522,7 @@ namespace Rhino
       }
     }
     /// <summary>
-    /// Get the PersistentSettings associated with the specified command.  If the settings file
+    /// Gets the PersistentSettings associated with the specified command.  If the settings file
     /// has not been previously loaded and exists then it will get read.  If the command name is
     /// not in the command settings dictionary then a new entry will get created and its settings
     /// will be returned
@@ -1959,13 +1959,13 @@ namespace Rhino
     }
 
     /// <summary>
-    /// Get the Plug-in settings associated with this plug-in, if this is the first time called then
+    /// Gets the Plug-in settings associated with this plug-in, if this is the first time called then
     /// the plug-in settings member variable will get initialized and if a settings file exists it
     /// will get loaded
     /// </summary>
     public PersistentSettings PluginSettings { get { return SettingsLocal.PluginSettings; } }
     /// <summary>
-    /// Get the PersistentSettings associated with the specified command.  If the settings file
+    /// Gets the PersistentSettings associated with the specified command.  If the settings file
     /// has not been previously loaded and exists then it will get read.  If the command name is
     /// not in the command settings dictionary then a new entry will get created and its settings
     /// will be returned

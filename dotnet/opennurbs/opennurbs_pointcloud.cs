@@ -28,7 +28,7 @@ namespace Rhino.Geometry
 
     #region properties
     /// <summary>
-    /// Gets or sets the Location of this PointCloudItem.
+    /// Gets or sets the location of this point cloud item.
     /// </summary>
     public Point3d Location
     {
@@ -46,7 +46,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Gets or sets the X component of this PointCloudItem location.
+    /// Gets or sets the X component of this point cloud item location.
     /// </summary>
     public double X
     {
@@ -62,7 +62,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Gets or sets the Y component of this PointCloudItem location.
+    /// Gets or sets the Y component of this point cloud item location.
     /// </summary>
     public double Y
     {
@@ -78,7 +78,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Gets or sets the Z component of this PointCloudItem location.
+    /// Gets or sets the Z component of this point cloud item location.
     /// </summary>
     public double Z
     {
@@ -95,7 +95,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets or sets the Normal vector for this PointCloudItem.
+    /// Gets or sets the normal vector for this point cloud item.
     /// </summary>
     public Vector3d Normal
     {
@@ -113,7 +113,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Gets or sets the color of this PointCloudItem.
+    /// Gets or sets the color of this point cloud item.
     /// </summary>
     public Color Color
     {
@@ -131,7 +131,7 @@ namespace Rhino.Geometry
       }
     }
     /// <summary>
-    /// Gets or sets the hidden flag of this PointCloudItem.
+    /// Gets or sets the hidden flag of this point cloud item.
     /// </summary>
     public bool Hidden
     {
@@ -150,7 +150,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets the index of this PointCloud item.
+    /// Gets the index of this point cloud item.
     /// </summary>
     public int Index
     {
@@ -327,7 +327,7 @@ namespace Rhino.Geometry
 
     #region methods
     /// <summary>
-    /// Destroy the Color information in this PointCloud.
+    /// Destroys the color information in this point cloud.
     /// </summary>
     public void ClearColors()
     {
@@ -338,7 +338,7 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_PointCloud_DestroyArray(pThis, idx_Colors);
     }
     /// <summary>
-    /// Destroy the Normal vector information in this PointCloud.
+    /// Destroys the normal vector information in this point cloud.
     /// </summary>
     public void ClearNormals()
     {
@@ -349,7 +349,7 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_PointCloud_DestroyArray(pThis, idx_Normals);
     }
     /// <summary>
-    /// Destroy the Hidden flag information in this PointCloud.
+    /// Destroys the hidden flag information in this point cloud.
     /// </summary>
     public void ClearHiddenFlags()
     {
@@ -361,7 +361,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Append a new PointCloudItem to the end of this PointCloud.
+    /// Append a new PointCloudItem to the end of this point cloud.
     /// </summary>
     /// <returns>The newly appended item.</returns>
     public PointCloudItem AppendNew()
@@ -432,7 +432,7 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_PointCloud_AppendPoint4(ptr, point, color.ToArgb(), normal);
     }
     /// <summary>
-    /// Append a collection of points to this PointCloud.
+    /// Append a collection of points to this point cloud.
     /// </summary>
     /// <param name="points">Points to append.</param>
     public void AddRange(IEnumerable<Point3d> points)
@@ -502,7 +502,7 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_PointCloud_InsertPoint4(ptr, index, point, color.ToArgb(), normal);
     }
     /// <summary>
-    /// Append a collection of points to this PointCloud.
+    /// Append a collection of points to this point cloud.
     /// </summary>
     /// <param name="index">Index at which to insert the new collection.</param>
     /// <param name="points">Points to append.</param>
@@ -533,9 +533,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Copy all the point coordinates in this PointCloud to an array.
+    /// Copy all the point coordinates in this point cloud to an array.
     /// </summary>
-    /// <returns>An array containing all the points in this PointCloud.</returns>
+    /// <returns>An array containing all the points in this point cloud.</returns>
     public Point3d[] GetPoints()
     {
       IntPtr pConstThis = ConstPointer();
@@ -548,9 +548,9 @@ namespace Rhino.Geometry
       return rc;
     }
     /// <summary>
-    /// Copy all the normal vectors in this PointCloud to an array.
+    /// Copy all the normal vectors in this point cloud to an array.
     /// </summary>
-    /// <returns>An array containing all the normals in this PointCloud.</returns>
+    /// <returns>An array containing all the normals in this point cloud.</returns>
     public Vector3d[] GetNormals()
     {
       IntPtr pConstThis = ConstPointer();
@@ -563,9 +563,9 @@ namespace Rhino.Geometry
       return rc;
     }
     /// <summary>
-    /// Copy all the point colors in this PointCloud to an array.
+    /// Copy all the point colors in this point cloud to an array.
     /// </summary>
-    /// <returns>An array containing all the colors in this PointCloud.</returns>
+    /// <returns>An array containing all the colors in this point cloud.</returns>
     public Color[] GetColors()
     {
       IntPtr pConstThis = ConstPointer();
@@ -820,7 +820,7 @@ namespace Rhino.Geometry
 
   ////  #region methods
   ////  /// <summary>
-  ////  /// Add a new point to this PointCloud.
+  ////  /// Add a new point to this point cloud.
   ////  /// </summary>
   ////  /// <param name="point">Point to add.</param>
   ////  public void Add(Point3d point)
@@ -829,7 +829,7 @@ namespace Rhino.Geometry
   ////    UnsafeNativeMethods.ON_PointCloud_AppendPoint(ptr, ref point);
   ////  }
   ////  /// <summary>
-  ////  /// Add a new point to this PointCloud.
+  ////  /// Add a new point to this point cloud.
   ////  /// </summary>
   ////  /// <param name="point">Point to add.</param>
   ////  public void Add(Point3f point)
@@ -837,7 +837,7 @@ namespace Rhino.Geometry
   ////    Add(new Point3d(point));
   ////  }
   ////  /// <summary>
-  ////  /// Add a new point to this PointCloud.
+  ////  /// Add a new point to this point cloud.
   ////  /// </summary>
   ////  /// <param name="point">Point to add.</param>
   ////  /// <param name="color">Color of new point.</param>
@@ -847,7 +847,7 @@ namespace Rhino.Geometry
   ////    UnsafeNativeMethods.ON_PointCloud_AppendPoint2(ptr, ref point, color.ToArgb());
   ////  }
   ////  /// <summary>
-  ////  /// Add a new point to this PointCloud.
+  ////  /// Add a new point to this point cloud.
   ////  /// </summary>
   ////  /// <param name="point">Point to add.</param>
   ////  /// <param name="color">Color of new point.</param>
@@ -856,7 +856,7 @@ namespace Rhino.Geometry
   ////    Add(new Point3d(point), color);
   ////  }
   ////  /// <summary>
-  ////  /// Add a new point to this PointCloud.
+  ////  /// Add a new point to this point cloud.
   ////  /// </summary>
   ////  /// <param name="point">Point to add.</param>
   ////  /// <param name="normal">Normal vector of new point.</param>
@@ -866,7 +866,7 @@ namespace Rhino.Geometry
   ////    UnsafeNativeMethods.ON_PointCloud_AppendPoint3(ptr, ref point, ref normal);
   ////  }
   ////  /// <summary>
-  ////  /// Add a new point to this PointCloud.
+  ////  /// Add a new point to this point cloud.
   ////  /// </summary>
   ////  /// <param name="point">Point to add.</param>
   ////  /// <param name="normal">Normal vector of new point.</param>
@@ -875,7 +875,7 @@ namespace Rhino.Geometry
   ////    Add(new Point3d(point), new Vector3d(normal));
   ////  }
   ////  /// <summary>
-  ////  /// Add a new point to this PointCloud.
+  ////  /// Add a new point to this point cloud.
   ////  /// </summary>
   ////  /// <param name="point">Point to add.</param>
   ////  /// <param name="color">Color of new point.</param>
@@ -886,7 +886,7 @@ namespace Rhino.Geometry
   ////    UnsafeNativeMethods.ON_PointCloud_AppendPoint4(ptr, ref point, color.ToArgb(), ref normal);
   ////  }
   ////  /// <summary>
-  ////  /// Add a new point to this PointCloud.
+  ////  /// Add a new point to this point cloud.
   ////  /// </summary>
   ////  /// <param name="point">Point to add.</param>
   ////  /// <param name="color">Color of new point.</param>
@@ -971,7 +971,7 @@ namespace Rhino.Geometry
 
   //  #region methods
   //  /// <summary>
-  //  /// Add a new point to this PointCloud.
+  //  /// Add a new point to this point cloud.
   //  /// </summary>
   //  /// <param name="point">Point to add.</param>
   //  public void Add(Point3d point)
@@ -980,7 +980,7 @@ namespace Rhino.Geometry
   //    UnsafeNativeMethods.ON_PointCloud_AppendPoint(ptr, ref point);
   //  }
   //  /// <summary>
-  //  /// Add a new point to this PointCloud.
+  //  /// Add a new point to this point cloud.
   //  /// </summary>
   //  /// <param name="point">Point to add.</param>
   //  public void Add(Point3f point)
@@ -988,7 +988,7 @@ namespace Rhino.Geometry
   //    Add(new Point3d(point));
   //  }
   //  /// <summary>
-  //  /// Add a new point to this PointCloud.
+  //  /// Add a new point to this point cloud.
   //  /// </summary>
   //  /// <param name="point">Point to add.</param>
   //  /// <param name="color">Color of new point.</param>
@@ -998,7 +998,7 @@ namespace Rhino.Geometry
   //    UnsafeNativeMethods.ON_PointCloud_AppendPoint2(ptr, ref point, color.ToArgb());
   //  }
   //  /// <summary>
-  //  /// Add a new point to this PointCloud.
+  //  /// Add a new point to this point cloud.
   //  /// </summary>
   //  /// <param name="point">Point to add.</param>
   //  /// <param name="color">Color of new point.</param>
@@ -1007,7 +1007,7 @@ namespace Rhino.Geometry
   //    Add(new Point3d(point), color);
   //  }
   //  /// <summary>
-  //  /// Add a new point to this PointCloud.
+  //  /// Add a new point to this point cloud.
   //  /// </summary>
   //  /// <param name="point">Point to add.</param>
   //  /// <param name="normal">Normal vector of new point.</param>
@@ -1017,7 +1017,7 @@ namespace Rhino.Geometry
   //    UnsafeNativeMethods.ON_PointCloud_AppendPoint3(ptr, ref point, ref normal);
   //  }
   //  /// <summary>
-  //  /// Add a new point to this PointCloud.
+  //  /// Add a new point to this point cloud.
   //  /// </summary>
   //  /// <param name="point">Point to add.</param>
   //  /// <param name="normal">Normal vector of new point.</param>
@@ -1026,7 +1026,7 @@ namespace Rhino.Geometry
   //    Add(new Point3d(point), new Vector3d(normal));
   //  }
   //  /// <summary>
-  //  /// Add a new point to this PointCloud.
+  //  /// Add a new point to this point cloud.
   //  /// </summary>
   //  /// <param name="point">Point to add.</param>
   //  /// <param name="color">Color of new point.</param>
@@ -1037,7 +1037,7 @@ namespace Rhino.Geometry
   //    UnsafeNativeMethods.ON_PointCloud_AppendPoint4(ptr, ref point, color.ToArgb(), ref normal);
   //  }
   //  /// <summary>
-  //  /// Add a new point to this PointCloud.
+  //  /// Add a new point to this point cloud.
   //  /// </summary>
   //  /// <param name="point">Point to add.</param>
   //  /// <param name="color">Color of new point.</param>
@@ -1163,7 +1163,7 @@ namespace Rhino.Geometry
   //  }
 
   //  /// <summary>
-  //  /// Get a value indicating whether or not Normals have been defined for this cloud. 
+  //  /// Gets a value indicating whether or not Normals have been defined for this cloud. 
   //  /// In order for normals to truly 'exist', the Count must be equal to the number of 
   //  /// points in the cloud.
   //  /// </summary>
@@ -1288,7 +1288,7 @@ namespace Rhino.Geometry
   //}
 
   ///// <summary>
-  ///// Provides access to the Colors in a PointCloud.
+  ///// Provides access to the colors in a point cloud.
   ///// </summary>
   //public class PointCloudColorList : IEnumerable<Color>
   //{
@@ -1325,7 +1325,7 @@ namespace Rhino.Geometry
   //  }
 
   //  /// <summary>
-  //  /// Get a value indicating whether or not Colors have been defined for this cloud. 
+  //  /// Gets a value indicating whether colors have been defined for this cloud. 
   //  /// In order for colors to truly 'exist', the Count must be equal to the number of 
   //  /// points in the cloud.
   //  /// </summary>

@@ -180,7 +180,7 @@ namespace Rhino.Geometry
     /// <param name="surfaceB">A second surface.</param>
     /// <param name="radius">A radius value.</param>
     /// <param name="tolerance">A tolerance value.</param>
-    /// <returns>A new array of rolling ball fillet surfaces; this array can be empty.</returns>
+    /// <returns>A new array of rolling ball fillet surfaces; this array can be empty on failure.</returns>
     /// <exception cref="ArgumentNullException">If surfaceA or surfaceB are null.</exception>
     public static Surface[] CreateRollingBallFillet(Surface surfaceA, Surface surfaceB, double radius, double tolerance)
     {
@@ -196,7 +196,7 @@ namespace Rhino.Geometry
     /// <param name="flipB">A value that indicates whether B should be used in flipped mode.</param>
     /// <param name="radius">A radius value.</param>
     /// <param name="tolerance">A tolerance value.</param>
-    /// <returns>A new array of rolling ball fillet surfaces; this array can be empty.</returns>
+    /// <returns>A new array of rolling ball fillet surfaces; this array can be empty on failure.</returns>
     /// <exception cref="ArgumentNullException">If surfaceA or surfaceB are null.</exception>
     public static Surface[] CreateRollingBallFillet(Surface surfaceA, bool flipA, Surface surfaceB, bool flipB, double radius, double tolerance)
     {
@@ -218,12 +218,12 @@ namespace Rhino.Geometry
     /// Constructs a rolling ball fillet between two surfaces.
     /// </summary>
     /// <param name="surfaceA">A first surface.</param>
-    /// <param name="uvA"></param>
+    /// <param name="uvA">A point in the parameter space of FaceA near where the fillet is expected to hit the surface.</param>
     /// <param name="surfaceB">A second surface.</param>
-    /// <param name="uvB"></param>
+    /// <param name="uvB">A point in the parameter space of FaceB near where the fillet is expected to hit the surface.</param>
     /// <param name="radius">A radius value.</param>
-    /// <param name="tolerance">A tolerance value.</param>
-    /// <returns>A new array of rolling ball fillet surfaces; this array can be empty.</returns>
+    /// <param name="tolerance">A tolerance value used for approximating and intersecting offset surfaces.</param>
+    /// <returns>A new array of rolling ball fillet surfaces; this array can be empty on failure.</returns>
     /// <exception cref="ArgumentNullException">If surfaceA or surfaceB are null.</exception>
     public static Surface[] CreateRollingBallFillet(Surface surfaceA, Point2d uvA, Surface surfaceB, Point2d uvB, double radius, double tolerance)
     {
@@ -389,7 +389,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get an estimate of the size of the rectangle that would be created
+    /// Gets an estimate of the size of the rectangle that would be created
     /// if the 3d surface where flattened into a rectangle.
     /// </summary>
     /// <param name="width">corresponds to the first surface parameter</param>
@@ -1073,7 +1073,7 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Surface_HasNurbsForm(ptr);
     }
     /// <summary>
-    /// Get a NURBS surface representation of this surface. Default 
+    /// Gets a NURBS surface representation of this surface. Default 
     /// tolerance of 0.0 is used. 
     /// </summary>
     /// <returns>NurbsSurface on success, null on failure.</returns>
@@ -1083,7 +1083,7 @@ namespace Rhino.Geometry
       return ToNurbsSurface(0.0, out accuracy);
     }
     /// <summary>
-    /// Get a NURBS surface representation of this surface.
+    /// Gets a NURBS surface representation of this surface.
     /// </summary>
     /// <param name="tolerance">tolerance to use when creating NURBS representation.</param>
     /// <param name="accuracy">

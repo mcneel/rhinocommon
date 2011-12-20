@@ -409,7 +409,7 @@ namespace Rhino.Geometry
 
     #region greville point methods
     /// <summary>
-    /// Get the greville (edit point) parameter that belongs 
+    /// Gets the greville (edit point) parameter that belongs 
     /// to the control point at the specified index.
     /// </summary>
     /// <param name="index">Index of Greville (Edit) point.</param>
@@ -420,7 +420,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get the greville (edit point) parameter that belongs 
+    /// Gets the greville (edit point) parameter that belongs 
     /// to the control point at the specified index.
     /// </summary>
     /// <param name="index">Index of Greville (Edit) point.</param>
@@ -431,7 +431,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get all Greville (Edit point) parameters for this curve.
+    /// Gets all Greville (Edit point) parameters for this curve.
     /// </summary>
     public double[] GrevilleParameters()
     {
@@ -444,7 +444,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get all Greville (Edit) points for this curve.
+    /// Gets all Greville (Edit) points for this curve.
     /// </summary>
     public Point3dList GrevillePoints()
     {
@@ -943,7 +943,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Set a specific control-point.
+    /// Sets a specific control-point.
     /// </summary>
     /// <param name="index">Index of control-point to set.</param>
     /// <param name="x">X coordinate of control-point.</param>
@@ -961,7 +961,7 @@ namespace Rhino.Geometry.Collections
       return SetPoint(index, point);
     }
     /// <summary>
-    /// Set a specific control-point.
+    /// Sets a specific control-point.
     /// </summary>
     /// <param name="index">Index of control-point to set.</param>
     /// <param name="point">Coordinate of control-point.</param>
@@ -971,7 +971,7 @@ namespace Rhino.Geometry.Collections
       return SetPoint(index, pt);
     }
     /// <summary>
-    /// Set a specific weighted control-point.
+    /// Sets a specific weighted control-point.
     /// </summary>
     /// <param name="index">Index of control-point to set.</param>
     /// <param name="point">Coordinate and weight of control-point.</param>

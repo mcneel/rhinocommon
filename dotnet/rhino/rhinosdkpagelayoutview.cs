@@ -153,7 +153,7 @@ namespace Rhino.Display
 
 
     /// <summary>
-    /// Get a list of the detail view objects associated with this layout
+    /// Gets a list of the detail view objects associated with this layout
     /// </summary>
     /// <returns></returns>
     public Rhino.DocObjects.DetailViewObject[] GetDetailViews()

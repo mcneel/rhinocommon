@@ -65,12 +65,12 @@ namespace Rhino.Collections
     #endregion
 
     /// <summary>
-    /// Get BoundingBox of all of the objects that this list contains
+    /// Gets the bounding box of all of the objects that this list contains.
     /// </summary>
     /// <param name="regularObjects"></param>
     /// <param name="grips"></param>
     /// <returns>
-    /// Unset BoundingBox if this list is empty
+    /// Unset BoundingBox if this list is empty.
     /// </returns>
     public BoundingBox GetBoundingBox(bool regularObjects, bool grips)
     {

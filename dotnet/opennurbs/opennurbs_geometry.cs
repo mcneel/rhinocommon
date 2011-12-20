@@ -633,7 +633,7 @@ namespace Rhino.Geometry
       return rc;
     }
     /// <summary>
-    /// Get user string from this geometry
+    /// Gets user string from this geometry
     /// </summary>
     /// <param name="key">id used to retrieve the string</param>
     /// <returns>string associated with the key if successful. null if no key was found</returns>
@@ -658,7 +658,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get all (key, value) user strings attached to this geometry
+    /// Gets all (key, value) user strings attached to this geometry
     /// </summary>
     /// <returns></returns>
     public System.Collections.Specialized.NameValueCollection GetUserStrings()

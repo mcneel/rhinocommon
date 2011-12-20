@@ -33,7 +33,7 @@ namespace Rhino.Geometry
     }
     #region statics
     /// <summary>
-    /// Get an extrusion form of a cylinder
+    /// Gets an extrusion form of a cylinder
     /// </summary>
     /// <param name="cylinder">IsFinite must be true</param>
     /// <param name="capBottom">If true, the end at cylinder.Height1 will be capped</param>
@@ -46,7 +46,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get an extrusion form of a pipe
+    /// Gets an extrusion form of a pipe
     /// </summary>
     /// <param name="cylinder">IsFinite must be true.</param>
     /// <param name="otherRadius">
@@ -73,15 +73,15 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Constructs a Brep form of the extrusion. The outer profile is always the first face of the Brep.
-    /// If there are inner profiles, additional Brep faces are created for each profile. If the
-    /// outer profile is closed, then end caps are added as the last two faces of the Brep.
+    /// Constructs a brep form of the extrusion. The outer profile is always the first face of the brep.
+    /// If there are inner profiles, additional brep faces are created for each profile. If the
+    /// outer profile is closed, then end caps are added as the last two faces of the brep.
     /// </summary>
     /// <param name="splitKinkyFaces">
     /// If true and the profiles have kinks, then the faces corresponding to those profiles are split
     /// so they will be G1.
     /// </param>
-    /// <returns>A Brep with a similar shape like this extrustion, or null on error.</returns>
+    /// <returns>A brep with a similar shape like this extrustion, or null on error.</returns>
     public Brep ToBrep(bool splitKinkyFaces)
     {
       IntPtr pConstThis = ConstPointer();
@@ -318,7 +318,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Set the outer profile of the extrusion
+    /// Sets the outer profile of the extrusion.
     /// </summary>
     /// <param name="outerProfile">curve in the XY plane or a 2D curve</param>
     /// <param name="cap">

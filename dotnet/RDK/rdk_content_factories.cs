@@ -9,7 +9,7 @@ namespace Rhino.Render
 {
   /// <summary>
   /// A collection of all of the available render content types registered with Rhino.
-  /// Get this object from Rhino.Render.Utilities.RenderContentTypes
+  /// Gets this object from Rhino.Render.Utilities.RenderContentTypes
   /// </summary>
   public class RenderContentTypes : IEnumerator
   {

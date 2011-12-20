@@ -99,7 +99,7 @@ namespace Rhino.Input
     */
 
     /// <summary>
-    /// Get a point coordinate from the document.
+    /// Gets a point coordinate from the document.
     /// </summary>
     /// <param name="prompt">Prompt to display in command line during the operation.</param>
     /// <param name="acceptNothing">if true, the user can press enter</param>
@@ -125,7 +125,7 @@ namespace Rhino.Input
     }
 
     /// <summary>
-    /// Get a point constrained to an existing mesh in the document
+    /// Gets a point constrained to an existing mesh in the document
     /// </summary>
     /// <param name="meshObjectId"></param>
     /// <param name="prompt"></param>
@@ -147,7 +147,7 @@ namespace Rhino.Input
     }
 
     /// <summary>
-    /// Get a point constrained to an existing mesh in the document
+    /// Gets a point constrained to an existing mesh in the document
     /// </summary>
     /// <param name="meshObject"></param>
     /// <param name="prompt"></param>
@@ -419,7 +419,7 @@ namespace Rhino.Input
     }
 
     /// <summary>
-    /// Get a 3d rectangle
+    /// Gets a 3d rectangle
     /// </summary>
     /// <param name="corners">corners of the rectangle in counter-clockwise order</param>
     /// <returns>Commands.Result.Success if successful</returns>
@@ -438,7 +438,7 @@ namespace Rhino.Input
     }
 
     /// <summary>
-    /// Get a 3d rectangle
+    /// Gets a 3d rectangle
     /// </summary>
     /// <param name="mode"></param>
     /// <param name="firstPoint">first corner used. Pass Point3d.Unset if you do not want to set this</param>
@@ -466,7 +466,7 @@ namespace Rhino.Input
     }
 
     /// <summary>
-    /// Get a rectangle in view window coordinates
+    /// Gets a rectangle in view window coordinates
     /// </summary>
     /// <param name="solidPen">
     /// If true, a solid pen is used for drawing while the user selects a rectangle.
@@ -877,7 +877,7 @@ namespace Rhino.Input.Custom
     const int idxCommandPromptDefault = 1;
     const int idxDefaultString = 2;
     /// <summary>
-    /// Set prompt message that appears in the command prompt window.
+    /// Sets prompt message that appears in the command prompt window.
     /// </summary>
     /// <param name="prompt">command prompt message</param>
     /// <example>
@@ -892,7 +892,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Set message that describes what default value will be used if the user presses enter.
+    /// Sets message that describes what default value will be used if the user presses enter.
     /// This description appears in angle brackets &lt;> in the command prompt window. You do
     /// not need to provide a default value description unless you explicity enable AcceptNothing.
     /// </summary>
@@ -919,7 +919,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Set a point as default value that will be returned if the user presses the ENTER key during the get.
+    /// Sets a point as default value that will be returned if the user presses the ENTER key during the get.
     /// </summary>
     /// <param name="point">value for default point</param>
     /// <remarks>
@@ -935,7 +935,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Set a number as default value that will be returned if the user presses ENTER key during the get.
+    /// Sets a number as default value that will be returned if the user presses ENTER key during the get.
     /// </summary>
     /// <param name="defaultNumber">value for default number</param>
     /// <remarks>
@@ -951,7 +951,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Set a number as default value that will be returned if the user presses ENTER key during the get.
+    /// Sets a number as default value that will be returned if the user presses ENTER key during the get.
     /// </summary>
     /// <param name="defaultValue">value for default number</param>
     /// <remarks>
@@ -967,7 +967,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Set a string as default value that will be returned
+    /// Sets a string as default value that will be returned
     /// if the user presses ENTER key during the get.
     /// </summary>
     /// <param name="defaultValue">value for default string</param>
@@ -990,7 +990,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Set a color as default value that will be returned if the user presses ENTER key during the get.
+    /// Sets a color as default value that will be returned if the user presses ENTER key during the get.
     /// </summary>
     /// <param name="defaultColor">value for default color</param>
     /// <remarks>
@@ -1007,7 +1007,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Set the wait duration (in milliseconds) of the getter. If the duration passes without 
+    /// Sets the wait duration (in milliseconds) of the getter. If the duration passes without 
     /// the user making a decision, the GetResult.Timeout code is returned.
     /// </summary>
     /// <param name="milliseconds">Number of milliseconds to wait.</param>

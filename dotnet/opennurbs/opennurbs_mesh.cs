@@ -102,7 +102,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets the MeshingParameters that are currently set for a document.
     /// These are the same settings that are shown in the DocumentProperties
-    /// Mesh settings user interface.
+    /// "mesh settings" user interface.
     /// </summary>
     /// <param name="doc">A Rhino document to query.</param>
     /// <returns>Meshing parameters of the document.</returns>
@@ -1398,7 +1398,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get the point on the mesh that is closest to a given test point.
+    /// Gets the point on the mesh that is closest to a given test point.
     /// </summary>
     /// <param name="testPoint">Point to seach for.</param>
     /// <returns>The point on the mesh closest to testPoint, or Point3d.Unset on failure.</returns>
@@ -1413,7 +1413,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get the point on the mesh that is closest to a given test point. Similar to the 
+    /// Gets the point on the mesh that is closest to a given test point. Similar to the 
     /// ClosestPoint function except this returns a MeshPointData class which includes
     /// extra information beyond just the location of the closest point.
     /// </summary>
@@ -1436,7 +1436,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get the point on the mesh that is closest to a given test point.
+    /// Gets the point on the mesh that is closest to a given test point.
     /// </summary>
     /// <param name="testPoint">Point to seach for.</param>
     /// <param name="pointOnMesh">Point on the mesh closest to testPoint.</param>
@@ -1459,7 +1459,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get the point on the mesh that is closest to a given test point.
+    /// Gets the point on the mesh that is closest to a given test point.
     /// </summary>
     /// <param name="testPoint">Point to seach for.</param>
     /// <param name="pointOnMesh">Point on the mesh closest to testPoint.</param>
@@ -3672,6 +3672,9 @@ namespace Rhino.Geometry.Collections
     /// <code source='examples\vbnet\ex_analysismode.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_analysismode.cs' lang='cs'/>
     /// </example>
+    /// <summary>
+    /// Gets or sets a mapping information for the mesh associated with these vertex colors.
+    /// </summary>
     public Rhino.Render.MappingTag Tag
     {
       get
@@ -3700,7 +3703,7 @@ namespace Rhino.Geometry.Collections
 
     #region access
     /// <summary>
-    /// Clears the Vertex Color list on the mesh.
+    /// Clears the vertex color list on the mesh.
     /// </summary>
     public void Clear()
     {
@@ -3709,7 +3712,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Adds a new vertex color to the end of the Color list.
+    /// Adds a new vertex color to the end of the color list.
     /// </summary>
     /// <param name="red">Red component of color, must be in the 0~255 range.</param>
     /// <param name="green">Green component of color, must be in the 0~255 range.</param>
@@ -3721,7 +3724,7 @@ namespace Rhino.Geometry.Collections
       return Count - 1;
     }
     /// <summary>
-    /// Adds a new vertex color to the end of the Color list.
+    /// Adds a new vertex color to the end of the color list.
     /// </summary>
     /// <param name="color">Color to append, Alpha channels will be ignored.</param>
     /// <returns>The index of the newly added color.</returns>
@@ -3732,7 +3735,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Sets or adds a vertex color to the Color List.
+    /// Sets or adds a vertex color to the color List.
     /// <para>If [index] is less than [Count], the existing vertex at [index] will be modified.</para>
     /// <para>If [index] equals [Count], a new vertex is appended to the end of the vertex list.</para> 
     /// <para>If [index] is larger than [Count], the function will return false.</para>
@@ -3831,7 +3834,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Appends a collection of colors to the Vertex Color list. 
+    /// Appends a collection of colors to the vertex color list. 
     /// For the Mesh to be valid, the number of colors must match the number of vertices.
     /// </summary>
     /// <param name="colors">Colors to append.</param>
@@ -4718,7 +4721,7 @@ namespace Rhino.Geometry
 
     #region methods
     /// <summary>
-    /// Set all the corners for this face as a triangle.
+    /// Sets all the corners for this face as a triangle.
     /// </summary>
     /// <param name="a">Index of first corner.</param>
     /// <param name="b">Index of second corner.</param>
@@ -4731,7 +4734,7 @@ namespace Rhino.Geometry
       m_d = c;
     }
     /// <summary>
-    /// Set all the corners for this face as a quad.
+    /// Sets all the corners for this face as a quad.
     /// </summary>
     /// <param name="a">Index of first corner.</param>
     /// <param name="b">Index of second corner.</param>

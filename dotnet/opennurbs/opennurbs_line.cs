@@ -139,7 +139,7 @@ namespace Rhino.Geometry
 
     #region constants
     /// <summary>
-    /// Get a line segment which has Unset end points.
+    /// Gets a line segment which has <see cref="Point3d.Unset"/> end points.
     /// </summary>
     static public Line Unset
     {
@@ -547,7 +547,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Get a plane that contains the line. The origin of the plane is at the start of the line.
+    /// Gets a plane that contains the line. The origin of the plane is at the start of the line.
     /// If possible, a plane parallel to the world xy, yz, or zx plane is returned.
     /// </summary>
     /// <param name="plane"></param>

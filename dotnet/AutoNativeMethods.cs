@@ -3664,7 +3664,30 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_RTree_CreatePointCloudTree(IntPtr pTree, IntPtr pConstCloud);
 
+  //bool ON_RTreeSearchContext_GetBoundingBox(const ON_RTreeSearchContext* pConstContext, ON_3dPoint* p0, ON_3dPoint* p1)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_RTreeSearchContext_GetBoundingBox(IntPtr pConstContext, ref Point3d p0, ref Point3d p1);
+
+  //bool ON_RTreeSearchContext_SetBoundingBox(ON_RTreeSearchContext* pContext, ON_3DPOINT_STRUCT min_pt, ON_3DPOINT_STRUCT max_pt)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_RTreeSearchContext_SetBoundingBox(IntPtr pContext, Point3d min_pt, Point3d max_pt);
+
+  //bool ON_RTreeSearchContext_GetSphere(const ON_RTreeSearchContext* pConstContext, ON_3dPoint* center, double* radius)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_RTreeSearchContext_GetSphere(IntPtr pConstContext, ref Point3d center, ref double radius);
+
+  //bool ON_RTreeSearchContext_SetSphere(ON_RTreeSearchContext* pContext, ON_3DPOINT_STRUCT center, double radius)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_RTreeSearchContext_SetSphere(IntPtr pContext, Point3d center, double radius);
+
   //bool ON_RTree_Search(const ON_RTree* pConstTree, ON_3DPOINT_STRUCT pt0, ON_3DPOINT_STRUCT pt1, int serial_number, RTREESEARCHPROC searchCB)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //bool ON_RTree_SearchSphere(const ON_RTree* pConstTree, ON_3DPOINT_STRUCT center, double radius, int serial_number, RTREESEARCHPROC searchCB)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //bool ON_RTree_Search2(const ON_RTree* pConstTreeA, const ON_RTree* pConstTreeB, double tolerance, int serial_number, RTREESEARCHPROC searchCB)

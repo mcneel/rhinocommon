@@ -1,4 +1,3 @@
-//#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 
@@ -11,16 +10,14 @@ namespace Rhino.Geometry
   public class RTreeEventArgs : EventArgs
   {
     IntPtr m_element_a;
-    IntPtr m_element_b = IntPtr.Zero;
+    IntPtr m_element_b;
+    IntPtr m_pContext;
     bool m_bCancel = false;
-    internal RTreeEventArgs(IntPtr a)
-    {
-      m_element_a = a;
-    }
-    internal RTreeEventArgs(IntPtr a, IntPtr b)
+    internal RTreeEventArgs(IntPtr a, IntPtr b, IntPtr pContext)
     {
       m_element_a = a;
       m_element_b = b;
+      m_pContext = pContext;
     }
 
     /// <summary>
@@ -58,6 +55,46 @@ namespace Rhino.Geometry
     /// This object will "stick" through a single search and can represent user-defined state.
     /// </summary>
     public object Tag { get; set; }
+
+    /// <summary>
+    /// Sphere bounds used during a search. You can modify the sphere in a search callback to
+    /// help reduce the bounds to search
+    /// </summary>
+    public Sphere SearchSphere
+    {
+      get
+      {
+        Point3d center = new Point3d();
+        double radius = 0;
+        if( !UnsafeNativeMethods.ON_RTreeSearchContext_GetSphere(m_pContext, ref center, ref radius) )
+          return Sphere.Unset;
+        return new Sphere(center, radius);
+      }
+      set
+      {
+        UnsafeNativeMethods.ON_RTreeSearchContext_SetSphere(m_pContext, value.Center, value.Radius);
+      }
+    }
+
+    /// <summary>
+    /// Bounding box bounds used during a search. You may modify the box in a search callback
+    /// to help reduce the bounds to search.
+    /// </summary>
+    public BoundingBox SearchBoundingBox
+    {
+      get
+      {
+        Point3d min_pt = new Point3d();
+        Point3d max_pt = new Point3d();
+        if (!UnsafeNativeMethods.ON_RTreeSearchContext_GetBoundingBox(m_pContext, ref min_pt, ref max_pt))
+          return BoundingBox.Unset;
+        return new BoundingBox(min_pt, max_pt);
+      }
+      set
+      {
+        UnsafeNativeMethods.ON_RTreeSearchContext_SetBoundingBox(m_pContext, value.Min, value.Max);
+      }
+    }
   }
 
   /// <summary>
@@ -265,8 +302,8 @@ namespace Rhino.Geometry
     }
     static List<Callbackholder> m_callbacks;
 
-    internal delegate int SearchCallback(int serial_number, IntPtr idA, IntPtr idB);
-    private static int CustomSearchCallback(int serial_number, IntPtr idA, IntPtr idB)
+    internal delegate int SearchCallback(int serial_number, IntPtr idA, IntPtr idB, IntPtr pContext);
+    private static int CustomSearchCallback(int serial_number, IntPtr idA, IntPtr idB, IntPtr pContext)
     {
       Callbackholder cbh = null;
       for (int i = 0; i < m_callbacks.Count; i++)
@@ -281,7 +318,7 @@ namespace Rhino.Geometry
       int rc = 1;
       if (cbh != null)
       {
-        RTreeEventArgs e = new RTreeEventArgs(idA, idB);
+        RTreeEventArgs e = new RTreeEventArgs(idA, idB, pContext);
         e.Tag = cbh.Tag;
         cbh.Callback(cbh.Sender, e);
         if (e.Cancel)
@@ -328,6 +365,52 @@ namespace Rhino.Geometry
       m_callbacks.Add(cbh);
       SearchCallback searcher = CustomSearchCallback;
       bool rc = UnsafeNativeMethods.ON_RTree_Search(pConstTree, box.Min, box.Max, cbh.SerialNumber, searcher);
+      for (int i = 0; i < m_callbacks.Count; i++)
+      {
+        if (m_callbacks[i].SerialNumber == cbh.SerialNumber)
+        {
+          m_callbacks.RemoveAt(i);
+          break;
+        }
+      }
+      return rc;
+    }
+
+    /// <summary>
+    /// Searches for items in a sphere
+    /// </summary>
+    /// <param name="sphere">bounds used for searching</param>
+    /// <param name="callback">An event handler to be raised when items are found.</param>
+    /// <returns>
+    /// true if entire tree was searched. It is possible no results were found.
+    /// </returns>
+    public bool Search(Sphere sphere, EventHandler<RTreeEventArgs> callback)
+    {
+      return Search(sphere, callback, null);
+    }
+
+    /// <summary>
+    /// Searches for items in a sphere
+    /// </summary>
+    /// <param name="sphere">bounds used for searching</param>
+    /// <param name="callback">An event handler to be raised when items are found.</param>
+    /// <param name="tag">State to be passed inside the <see cref="RTreeEventArgs"/> Tag property.</param>
+    /// <returns>
+    /// true if entire tree was searched. It is possible no results were found.
+    /// </returns>
+    public bool Search(Sphere sphere, EventHandler<RTreeEventArgs> callback, object tag)
+    {
+      IntPtr pConstTree = ConstPointer();
+      if (m_callbacks == null)
+        m_callbacks = new List<Callbackholder>();
+      Callbackholder cbh = new Callbackholder();
+      cbh.SerialNumber = m_next_serial_number++;
+      cbh.Callback = callback;
+      cbh.Sender = this;
+      cbh.Tag = tag;
+      m_callbacks.Add(cbh);
+      SearchCallback searcher = CustomSearchCallback;
+      bool rc = UnsafeNativeMethods.ON_RTree_SearchSphere(pConstTree, sphere.Center, sphere.Radius, cbh.SerialNumber, searcher);
       for (int i = 0; i < m_callbacks.Count; i++)
       {
         if (m_callbacks[i].SerialNumber == cbh.SerialNumber)

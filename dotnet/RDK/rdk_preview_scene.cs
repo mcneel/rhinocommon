@@ -7,15 +7,100 @@ using System.Collections.Generic;
 
 namespace Rhino.Render
 {
-  public class PreviewScene
+  public class CreateTexture2dPreviewEventArgs : EventArgs
   {
-    private IntPtr m_pSceneServer;
-    internal PreviewScene(IntPtr pSceneServer)
+    readonly System.Drawing.Size m_preview_size;
+    readonly RenderTexture m_render_texture;
+
+    internal CreateTexture2dPreviewEventArgs(RenderTexture texture, System.Drawing.Size size)
     {
-      m_pSceneServer = pSceneServer;
+      m_preview_size = size;
+      m_render_texture = texture;
     }
 
-    internal void Initialize()
+    RenderTexture Texture { get { return m_render_texture; } }
+
+    /// <summary>
+    /// Pixel size of the image that is being requested for the preview scene
+    /// </summary>
+    public System.Drawing.Size PreviewImageSize
+    {
+      get { return m_preview_size; }
+    }
+
+    /// <summary>
+    /// Initially null.  If this image is set, then this image will be used for
+    /// the preview.  If never set, the default internal simulation preview will
+    /// be used.
+    /// </summary>
+    public System.Drawing.Bitmap PreviewImage { get; set; }
+  }
+
+  public enum PreviewSceneQuality : int
+  {
+    /// <summary>Very fast preview. Typically using the internal OpenGL preview generator.</summary>
+    RealtimeQuick = -1,
+    /// <summary>Low quality rendering for quick preview.</summary>
+    RefineFirstPass = 1,
+    /// <summary>Medium quality rendering for intermediate preview.</summary>
+    RefineSecondPass = 2,
+    /// <summary>Full quality rendering (quality comes from user settings)</summary>
+    RefineThirdPass = 3,
+  };
+
+  public class CreatePreviewEventArgs : EventArgs
+  {
+    IntPtr m_pSceneServer;
+    readonly System.Drawing.Size m_preview_size;
+    readonly PreviewSceneQuality m_quality;
+    bool m_cancel;
+    int m_sig;
+    Rhino.DocObjects.ViewportInfo m_viewport;
+
+
+    internal CreatePreviewEventArgs(IntPtr pSceneServer, System.Drawing.Size preview_size, PreviewSceneQuality quality)
+    {
+      m_pSceneServer = pSceneServer;
+      m_preview_size = preview_size;
+      m_quality = quality;
+    }
+
+    /// <summary>
+    /// Pixel size of the image that is being requested for the preview scene
+    /// </summary>
+    public System.Drawing.Size PreviewImageSize
+    {
+      get { return m_preview_size; }
+    }
+
+    /// <summary>
+    /// Quality of the preview image that is being requested for the preview scene
+    /// </summary>
+    public PreviewSceneQuality Quality
+    {
+      get { return m_quality; }
+    }
+
+    /// <summary>
+    /// Initially null.  If this image is set, then this image will be used for
+    /// the preview.  If never set, the default internal simulation preview will
+    /// be used.
+    /// </summary>
+    public System.Drawing.Bitmap PreviewImage { get; set; }
+
+    /// <summary>
+    /// Get set by Rhino if the preview generation should be canceled for this 
+    /// </summary>
+    public bool Cancel
+    {
+      get { return m_cancel; }
+      internal set
+      {
+        m_cancel = value;
+      }
+    }
+
+    void Initialize()
     {
       IntPtr pSceneServer = m_pSceneServer;
 
@@ -73,21 +158,21 @@ namespace Rhino.Render
 
         //Just the view left...
 
-        m_view = new Rhino.DocObjects.ViewportInfo();
-        UnsafeNativeMethods.Rdk_SceneServer_View(pSceneServer, m_view.NonConstPointer());
+        m_viewport = new Rhino.DocObjects.ViewportInfo();
+        UnsafeNativeMethods.Rdk_SceneServer_View(pSceneServer, m_viewport.NonConstPointer());
       }
 
       m_pSceneServer = IntPtr.Zero;
     }
 
-    private Int32 m_sig = 0;
-
-    /// <summary>
-    /// Call this function to return the unique signature for this scene.
-    /// </summary>
-    public Int32 Signature
+    /// <summary>Unique Id for this scene.</summary>
+    public int Id
     {
-      get { Initialize(); return m_sig; }
+      get
+      {
+        Initialize();
+        return m_sig;
+      }
     }
 
     private Guid m_content_instance_id = Guid.Empty;
@@ -140,7 +225,7 @@ namespace Rhino.Render
 
     private List<Rhino.Geometry.Light> m_scene_lights = null;
 
-    public List<Rhino.Geometry.Light> Lightts
+    public List<Rhino.Geometry.Light> Lights
     {
       get
       {
@@ -149,14 +234,13 @@ namespace Rhino.Render
       }
     }
 
-    private Rhino.DocObjects.ViewportInfo m_view = null;
 
-    public Rhino.DocObjects.ViewportInfo View
+    public Rhino.DocObjects.ViewportInfo Viewport
     {
       get
       {
         Initialize();
-        return m_view;
+        return m_viewport;
       }
     }
   }

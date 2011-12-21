@@ -1341,19 +1341,6 @@ namespace Rhino.PlugIns
       CustomDecalProperties = 9,
     }
 
-    public enum PreviewQuality : int
-    {
-      /// <summary>No quality set.</summary>
-      None = 0,
-      /// <summary>Low quality rendering for quick preview.</summary>
-      Low = 1,
-      /// <summary>Medium quality rendering for intermediate preview.</summary>
-      Medium = 2,
-      /// <summary>Full quality rendering (quality comes from user settings)</summary>
-      Full = 3,
-    };
-
-
     /// <summary>
     /// Return true if your renderer supports the specific feature.
     /// </summary>
@@ -1367,102 +1354,69 @@ namespace Rhino.PlugIns
 
 #if RDK_UNCHECKED
     /// <summary>
-    /// You must implement this function to abort preview renderings initiated using CreatePreview (if possible)
+    /// Create the preview bitmap that will appear in the content editor's
+    /// thumbnail display when previewing materials and environments. If this
+    /// function is not overridden or the PreviewImage is not set on the
+    /// args, then the internal OpenGL renderer will generate a simulation of
+    /// the content.
+    /// 
+    /// This function is called with four different preview quality settings.
+    /// The first quality level of RealtimeQuick is called on the main thread
+    /// and needs to be drawn as fast as possible.  This function is called
+    /// with the other three quality settings on a separate thread and are
+    /// meant for generating progressively refined preview.
     /// </summary>
-    protected virtual void AbortPreviewRender()
+    /// <param name="args"></param>
+    protected virtual void CreatePreview(CreatePreviewEventArgs args) { }
+
+    /// <summary>
+    /// Create the preview bitmap that will appear in the content editor's
+    /// thumbnail display when previewing textures in 2d (UV) mode.
+    ///
+    /// If this function is not overridden or the PreviewImage is not set on the
+    /// args, then the internal OpenGL renderer will generate a simulation.
+    /// </summary>
+    /// <param name="args"></param>
+    protected virtual void CreateTexture2dPreview(CreateTexture2dPreviewEventArgs args) { }
+
+    /// <summary>
+    /// Default implementation returns true which means the content can be
+    /// picked from the content browser by the user. Override this method and
+    /// return false if you don't want to allow a certain content type to be
+    /// picked from the content browser while your render engine is current.
+    /// </summary>
+    /// <param name="content"></param>
+    /// <returns></returns>
+    protected virtual bool AllowChooseContent(Rhino.Render.RenderContent content) { return true; }
+
+    /// <summary>
+    /// Override to return a list of output types which your renderer can write.
+    /// The default implementation returns bmp, jpg, png, tif, tga.
+    /// </summary>
+    /// <returns></returns>
+    protected virtual List<Rhino.FileIO.FileType> SupportedOutputTypes()
     {
+      using (StringHolder shExt = new StringHolder())
+      using (StringHolder shDesc = new StringHolder())
+      {
+        var rc = new List<Rhino.FileIO.FileType>();
+        int iIndex = 0;
+        while (1 == UnsafeNativeMethods.Rdk_RenderPlugIn_BaseOutputTypeAtIndex(NonConstPointer(), iIndex++, shExt.NonConstPointer(), shDesc.NonConstPointer()))
+        {
+          rc.Add(new Rhino.FileIO.FileType(shExt.ToString(), shDesc.ToString()));
+        }
+        return rc;
+      }
     }
 
-    protected virtual bool AllowChooseContent(Rhino.Render.RenderContent content)
-    {
-      return true;
-    }
+
+
+
 
     protected virtual void CreateDefaultContent(RhinoDoc doc)
     {
     }
 
-    public class OutputTypeInfo
-    {
-      public OutputTypeInfo(string ext, string type)
-      {
-        _fileExtension = ext;
-        _typeDescription = type;
-      }
-
-      private readonly string _fileExtension;
-      public string fileExtension
-      {
-        get { return _fileExtension; }
-      }
-      private readonly string _typeDescription;
-      public string typeDescription
-      {
-        get { return _typeDescription; }
-      }
-    }
-
-    protected virtual List<OutputTypeInfo> OutputTypes()
-    {
-      //TODO - base class call
-      int iIndex = 0;
-
-      StringHolder shExt = new StringHolder();
-      StringHolder shDesc = new StringHolder();
-
-      List<OutputTypeInfo> list = new List<OutputTypeInfo>();
-
-      while ( 1==UnsafeNativeMethods.Rdk_RenderPlugIn_BaseOutputTypeAtIndex(NonConstPointer(), iIndex++, shExt.NonConstPointer(), shDesc.NonConstPointer()))
-      {
-        list.Add(new OutputTypeInfo(shExt.ToString(), shDesc.ToString()));
-      }
-      return list;
-    }
-
-    /// <summary>
-    /// Implement this method to create the preview bitmap that will appear in the 
-    /// content editor's thumbnail display when previewing textures in 2d (UV) mode.
-    /// </summary>
-    /// <param name="pixels">The pixel dimensions of the bitmap you should return.</param>
-    /// <param name="texture">The texture you should render as a 2D image.</param>
-    /// <returns>Return null if you want Rhino to generate its own texture preview.</returns>
-    protected virtual System.Drawing.Image CreateTexturePreview(System.Drawing.Size pixels, Rhino.Render.RenderTexture texture)
-    {
-      return null;
-    }
-
-    /// <summary>
-    /// You must implement this method to create the preview bitmap that will appear
-    /// in the content editor's thumbnail display when previewing materials and environments.
-    /// NB. This preview is the "renderer preview" and is called 3 times with varying levels
-    /// of quality. If you don't want to implement this kind of preview, and are satisfied with the
-    /// "QuickPreview" generated from CreateQuickPreview, just return null. If you don't support
-    /// progressive refinement, return NULL from the first two quality levels.
-    /// </summary>
-    /// <param name="pixels"></param>
-    /// <param name="quality"></param>
-    /// <param name="scene"></param>
-    /// <returns></returns>
-    protected virtual System.Drawing.Image CreatePreview(System.Drawing.Size pixels, PreviewQuality quality, PreviewScene scene)
-    {
-      return null;
-    }
-
-    /// <summary>
-    /// Optionally implement this method to change the way quick content previews are generated.
-    /// By default, this is handled by the internal RDK OpenGL renderer and is based on the
-    /// simulation of the content. If you want to implement an instant render based on the
-    /// actual content parameters, or if you just think you can do a better job, override this
-		/// Note: The first plug-in to return a non-null value will get to draw the preview, so if you
-    /// decide not to draw based on the contents of the scene server, please return null.
-    /// </summary>
-    /// <param name="pixels"></param>
-    /// <param name="scene"></param>
-    /// <returns></returns>
-    protected virtual System.Drawing.Image CreateQuickPreview(System.Drawing.Size pixels, PreviewScene scene)
-    {
-      return null;
-    }
 
     /// <summary>
     /// Override this function to handle showing a modal dialog with your plugin's
@@ -1516,9 +1470,9 @@ namespace Rhino.PlugIns
 
     internal delegate void AbortRenderCallback(int serial_number);
     private static AbortRenderCallback m_OnAbortRender = OnAbortRender;
-    private static void OnAbortRender(int serial_number)
+    private static void OnAbortRender(int plugin_serial_number)
     {
-      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      RenderPlugIn p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugIn;
       if (null == p)
       {
         HostUtils.DebugString("ERROR: Invalid input for OnAbortRender");
@@ -1527,11 +1481,13 @@ namespace Rhino.PlugIns
       {
         try
         {
-          p.AbortPreviewRender();
+          var args = p.ActivePreviewArgs.ToArray();
+          for (int i = 0; i < args.Length; i++)
+            args[i].Cancel = true;
         }
         catch (Exception ex)
         {
-          string error_msg = "Error occured during plug-in OnAbortRender\n Details:\n";
+          string error_msg = "Error occured during plug-in OnCreateScenePreviewAbort\n Details:\n";
           error_msg += ex.Message;
           HostUtils.DebugString("Error " + error_msg);
         }
@@ -1592,45 +1548,42 @@ namespace Rhino.PlugIns
 
     internal delegate void OutputTypesCallback(int serial_number, IntPtr pON_wStringExt, IntPtr pON_wStringDesc);
     private static OutputTypesCallback m_OnOutputTypes = OnOutputTypes;
-    private static void OnOutputTypes(int serial_number, IntPtr pON_wStringExt, IntPtr pON_wStringDesc)
+    private static void OnOutputTypes(int plugin_serial_number, IntPtr pON_wStringExt, IntPtr pON_wStringDesc)
     {
-      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
+      RenderPlugIn p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugIn;
 
       if (null == p || (IntPtr.Zero == pON_wStringDesc) || (IntPtr.Zero == pON_wStringExt))
       {
         HostUtils.DebugString("ERROR: Invalid input for OnOutputTypes");
+        return;
       }
-      else
+
+      try
       {
-        try
+        var types = p.SupportedOutputTypes();
+
+        System.Text.StringBuilder sbExt = new System.Text.StringBuilder();
+        System.Text.StringBuilder sbDesc = new System.Text.StringBuilder();
+
+        foreach (var type in types)
         {
-          List<OutputTypeInfo> types = p.OutputTypes();
+          if (sbExt.Length != 0)
+            sbExt.Append(";");
 
-          System.Text.StringBuilder sbExt = new System.Text.StringBuilder();
-          System.Text.StringBuilder sbDesc = new System.Text.StringBuilder();
+          sbExt.Append(type.Extension);
 
-          foreach (OutputTypeInfo type in types)
-          {
-            if (sbExt.Length != 0)
-              sbExt.Append(";");
+          if (sbDesc.Length != 0)
+            sbDesc.Append(";");
 
-            sbExt.Append(type.fileExtension);
-
-            if (sbDesc.Length != 0)
-              sbDesc.Append(";");
-
-            sbDesc.Append(type.typeDescription);
-          }
-
-          UnsafeNativeMethods.ON_wString_Set(pON_wStringExt, sbExt.ToString());
-          UnsafeNativeMethods.ON_wString_Set(pON_wStringDesc, sbDesc.ToString());
+          sbDesc.Append(type.Description);
         }
-        catch (Exception ex)
-        {
-          string error_msg = "Error occured during plug-in OnOutputTypes\n Details:\n";
-          error_msg += ex.Message;
-          HostUtils.DebugString("Error " + error_msg);
-        }
+
+        UnsafeNativeMethods.ON_wString_Set(pON_wStringExt, sbExt.ToString());
+        UnsafeNativeMethods.ON_wString_Set(pON_wStringDesc, sbDesc.ToString());
+      }
+      catch (Exception ex)
+      {
+        HostUtils.ExceptionReport("OnOutputTypes", ex);
       }
     }
 
@@ -1639,86 +1592,67 @@ namespace Rhino.PlugIns
     private static IntPtr OnCreateTexturePreview(int serial_number, int x, int y, IntPtr pTexture)
     {
       RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
-      RenderTexture texture = IntPtr.Zero == pTexture ? null : RenderContent.FromPointer(pTexture) as RenderTexture;
-
-      if (null == p || null == texture || x == 0 || y == 0)
+      if (p == null || x < 1 || y < 1 || pTexture == IntPtr.Zero)
       {
         HostUtils.DebugString("ERROR: Invalid input for OnCreateTexturePreview");
+        return IntPtr.Zero;
       }
-      else
+
+      var texture = RenderContent.FromPointer(pTexture) as RenderTexture;
+
+      IntPtr pBitmap = IntPtr.Zero;
+      CreateTexture2dPreviewEventArgs args = new CreateTexture2dPreviewEventArgs(texture, new Size(x, y));
+      try
       {
-        try
-        {
-          System.Drawing.Image preview = p.CreateTexturePreview(new System.Drawing.Size(x, y), texture);
-
-          if (preview != null)
-          {
-            System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            preview.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-
-            IntPtr pBitmap = new System.Drawing.Bitmap(ms).GetHbitmap();
-
-            return pBitmap;
-          }
-          return IntPtr.Zero;
-        }
-        catch (Exception ex)
-        {
-          string error_msg = "Error occured during plug-in OnCreateTexturePreview\n Details:\n";
-          error_msg += ex.Message;
-          HostUtils.DebugString("Error " + error_msg);
-        }
+        p.CreateTexture2dPreview(args);
+        if (args.PreviewImage != null)
+          pBitmap = args.PreviewImage.GetHbitmap();
+      }
+      catch (Exception ex)
+      {
+        HostUtils.ExceptionReport("OnCreateTexturePreview", ex);
+        pBitmap = IntPtr.Zero;
       }
 
-      return IntPtr.Zero;
+      return pBitmap;
     }
 
+    List<CreatePreviewEventArgs> m_active_preview_args;
+    List<CreatePreviewEventArgs> ActivePreviewArgs { get { return m_active_preview_args ?? (m_active_preview_args = new List<CreatePreviewEventArgs>()); } }
 
     internal delegate IntPtr CreatePreviewCallback(int serial_number, int x, int y, int iQuality, IntPtr pScene);
     private static CreatePreviewCallback m_OnCreatePreview = OnCreatePreview;
-    private static IntPtr OnCreatePreview(int serial_number, int x, int y, int iQuality, IntPtr pPreviewScene)
+    private static IntPtr OnCreatePreview(int plugin_serial_number, int x, int y, int iQuality, IntPtr pPreviewScene)
     {
-      RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
-      PreviewScene scene = IntPtr.Zero == pPreviewScene ? null : new PreviewScene(pPreviewScene);
-
-      if (null == p || null == scene || x == 0 || y == 0)
+      RenderPlugIn p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugIn;
+      if (p == null || pPreviewScene == IntPtr.Zero || x < 1 || y < 1)
       {
         HostUtils.DebugString("ERROR: Invalid input for OnCreatePreview");
+        return IntPtr.Zero;
       }
-      else
+
+      var size = new System.Drawing.Size(x, y);
+      var args = new CreatePreviewEventArgs(pPreviewScene, size, (PreviewSceneQuality)iQuality);
+
+      IntPtr pBitmap = IntPtr.Zero;
+      try
       {
-        try
-        {
-          System.Drawing.Image preview = null;
-          if (-1 == iQuality)
-          {
-            preview = p.CreateQuickPreview(new System.Drawing.Size(x, y), scene);
-          }
-          else
-          {
-            preview = p.CreatePreview(new System.Drawing.Size(x, y), (PreviewQuality)iQuality, scene);
-          }
-
-          if (preview != null)
-          {
-            System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            preview.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-
-            IntPtr pBitmap = new System.Drawing.Bitmap(ms).GetHbitmap();
-
-            return pBitmap;
-          }
-          return IntPtr.Zero;
-        }
-        catch (Exception ex)
-        {
-          string error_msg = "Error occured during plug-in OnCreatePreview\n Details:\n";
-          error_msg += ex.Message;
-          HostUtils.DebugString("Error " + error_msg);
-        }
+        p.ActivePreviewArgs.Add(args);
+        p.CreatePreview(args);
+        if (args.PreviewImage != null)
+          pBitmap = args.PreviewImage.GetHbitmap();
+      }
+      catch (Exception ex)
+      {
+        HostUtils.ExceptionReport("OnCreatePreview", ex);
+        pBitmap = IntPtr.Zero;
+      }
+      finally
+      {
+        p.ActivePreviewArgs.Remove(args);
       }
 
-      return IntPtr.Zero;
+      return pBitmap;
     }
 
     internal delegate int DecalCallback(int serial_number, IntPtr pXmlSection, int bInitialize);
@@ -2785,3 +2719,17 @@ namespace Rhino.PlugIns
 
 }
 #endif
+
+namespace Rhino.FileIO
+{
+  public class FileType
+  {
+    public FileType(string extension, string description)
+    {
+      Description = description;
+      Extension = extension;
+    }
+    public string Description { get; private set; }
+    public string Extension { get; private set; }
+  }
+}

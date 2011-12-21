@@ -779,7 +779,7 @@ namespace Rhino.Geometry.Collections
     /// These make it appear so that the first and last curve spans are different from interior spans.
     /// <para>http://wiki.mcneel.com/developer/onsuperfluousknot</para>
     /// </summary>
-    /// <param name="start">trueif the query targets the first knot. Otherwise, the last knot.</param>
+    /// <param name="start">true if the query targets the first knot. Otherwise, the last knot.</param>
     /// <returns>A component.</returns>
     public double SuperfluousKnot(bool start)
     {

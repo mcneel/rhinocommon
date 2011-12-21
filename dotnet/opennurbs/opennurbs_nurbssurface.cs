@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,10 +8,23 @@ using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents a Non Uniform Rational B-Splines (NURBS) surface.
+  /// </summary>
   [Serializable]
   public class NurbsSurface : Surface, ISerializable
   {
     #region static create functions
+    /// <summary>
+    /// Constructs a new NURBS surface with internal uninitialized arrays.
+    /// </summary>
+    /// <param name="dimension">The number of dimensions.<para>&gt;= 1. This value is usually 3.</para></param>
+    /// <param name="isRational">true to make a rational NURBS.</param>
+    /// <param name="order0">The order in U direction.<para>&gt;= 2.</para></param>
+    /// <param name="order1">The order in V direction.<para>&gt;= 2.</para></param>
+    /// <param name="controlPointCount0">Control point count in U direction.<para>&gt;= order0.</para></param>
+    /// <param name="controlPointCount1">Control point count in V direction.<para>&gt;= order1.</para></param>
+    /// <returns>A new NURBS surface, or null on error.</returns>
     public static NurbsSurface Create(int dimension, bool isRational, int order0, int order1, int controlPointCount0, int controlPointCount1)
     {
       if (dimension < 1 || order0 < 2 || order1 < 2 || controlPointCount0 < order0 || controlPointCount1 < order1)
@@ -23,6 +35,11 @@ namespace Rhino.Geometry
       return new NurbsSurface(ptr, null);
     }
 
+    /// <summary>
+    /// Creates a NURBS surfaces from cone data.
+    /// </summary>
+    /// <param name="cone">A cone value.</param>
+    /// <returns>A new NURBS surface, or null on error.</returns>
     public static NurbsSurface CreateFromCone(Cone cone)
     {
       IntPtr pNurbsSurface = UnsafeNativeMethods.ON_Cone_GetNurbForm(ref cone);
@@ -30,6 +47,12 @@ namespace Rhino.Geometry
         return null;
       return new NurbsSurface(pNurbsSurface, null);
     }
+
+    /// <summary>
+    /// Creates a NURBS surfaces from cylinder data.
+    /// </summary>
+    /// <param name="cylinder">A cylinder value.</param>
+    /// <returns>A new NURBS surface, or null on error.</returns>
     public static NurbsSurface CreateFromCylinder(Cylinder cylinder)
     {
       IntPtr pNurbsSurface = UnsafeNativeMethods.ON_Cylinder_GetNurbForm(ref cylinder);
@@ -37,6 +60,12 @@ namespace Rhino.Geometry
         return null;
       return new NurbsSurface(pNurbsSurface, null);
     }
+
+    /// <summary>
+    /// Creates a NURBS surfaces from sphere data.
+    /// </summary>
+    /// <param name="sphere">A sphere value.</param>
+    /// <returns>A new NURBS surface, or null on error.</returns>
     public static NurbsSurface CreateFromSphere(Sphere sphere)
     {
       IntPtr pNurbsSurface = UnsafeNativeMethods.ON_Sphere_GetNurbsForm(ref sphere);
@@ -44,6 +73,12 @@ namespace Rhino.Geometry
         return null;
       return new NurbsSurface(pNurbsSurface, null);
     }
+
+    /// <summary>
+    /// Creates a NURBS surfaces from torus data.
+    /// </summary>
+    /// <param name="torus">A torus value.</param>
+    /// <returns>A new NURBS surface, or null on error.</returns>
     public static NurbsSurface CreateFromTorus(Torus torus)
     {
       IntPtr pNurbsSurface = UnsafeNativeMethods.ON_Torus_GetNurbForm(ref torus);
@@ -53,7 +88,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Constructs a Ruled surface between two curves. Curves must share the same knot-vector.
+    /// Constructs a ruled surface between two curves. Curves must share the same knot-vector.
     /// </summary>
     /// <param name="curveA">First curve.</param>
     /// <param name="curveB">Second curve.</param>
@@ -152,7 +187,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Make a surface from 4 corner points.
+    /// Makes a surface from 4 corner points.
     /// </summary>
     /// <param name="corner1"></param>
     /// <param name="corner2"></param>
@@ -164,14 +199,14 @@ namespace Rhino.Geometry
       return CreateFromCorners(corner1, corner2, corner3, corner4, 0.0);
     }
     /// <summary>
-    /// Make a surface from 4 corner points.
+    /// Makes a surface from 4 corner points.
     /// </summary>
-    /// <param name="corner1"></param>
-    /// <param name="corner2"></param>
-    /// <param name="corner3"></param>
-    /// <param name="corner4"></param>
-    /// <param name="tolerance">minimum edge length without collapsing to a singularity.</param>
-    /// <returns>the resulting surface or null on error.</returns>
+    /// <param name="corner1">The first corner.</param>
+    /// <param name="corner2">The second corner.</param>
+    /// <param name="corner3">The third corner.</param>
+    /// <param name="corner4">The fourth corner.</param>
+    /// <param name="tolerance">Minimum edge length without collapsing to a singularity.</param>
+    /// <returns>The resulting surface or null on error.</returns>
     public static NurbsSurface CreateFromCorners(Point3d corner1, Point3d corner2, Point3d corner3, Point3d corner4, double tolerance)
     {
       IntPtr pSurface = UnsafeNativeMethods.RHC_RhinoCreateSurfaceFromCorners(corner1, corner2, corner3, corner4, tolerance);
@@ -180,12 +215,12 @@ namespace Rhino.Geometry
       return new NurbsSurface(pSurface, null);
     }
     /// <summary>
-    /// Make a surface from 3 corner points.
+    /// Makes a surface from 3 corner points.
     /// </summary>
-    /// <param name="corner1"></param>
-    /// <param name="corner2"></param>
-    /// <param name="corner3"></param>
-    /// <returns>the resulting surface or null on error.</returns>
+    /// <param name="corner1">The first corner.</param>
+    /// <param name="corner2">The second corner.</param>
+    /// <param name="corner3">The third corner.</param>
+    /// <returns>The resulting surface or null on error.</returns>
     public static NurbsSurface CreateFromCorners(Point3d corner1, Point3d corner2, Point3d corner3)
     {
       return CreateFromCorners(corner1, corner2, corner3, corner3, 0.0);
@@ -286,6 +321,10 @@ namespace Rhino.Geometry
 #endregion
 
     #region constructors
+    /// <summary>
+    /// Initializes a new NURBS surface by copying the values from another surface.
+    /// </summary>
+    /// <param name="other">Another surface.</param>
     public NurbsSurface(NurbsSurface other)
     {
       IntPtr pConstOther = other.ConstPointer();
@@ -343,6 +382,10 @@ namespace Rhino.Geometry
     }
 
     private Collections.NurbsSurfacePointList m_Points;
+
+    /// <summary>
+    /// Gets a collection of surface control points that form this surface.
+    /// </summary>
     public Collections.NurbsSurfacePointList Points
     {
       get
@@ -364,11 +407,21 @@ namespace Rhino.Geometry
         return UnsafeNativeMethods.ON_NurbsSurface_GetBool(ptr, idxIsRational);
       }
     }
+
+    /// <summary>
+    /// Makes this surface rational.
+    /// </summary>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
     public bool MakeRational()
     {
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.ON_NurbsSurface_GetBool(pThis, idxMakeRational);
     }
+
+    /// <summary>
+    /// Makes this surface non-rational.
+    /// </summary>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
     public bool MakeNonRational()
     {
       IntPtr pThis = NonConstPointer();
@@ -377,6 +430,10 @@ namespace Rhino.Geometry
 
     #endregion
 
+    /// <summary>
+    /// Copies this NURBS surface from another NURBS surface.
+    /// </summary>
+    /// <param name="other"></param>
     public void CopyFrom(NurbsSurface other)
     {
       IntPtr pConstOther = other.ConstPointer();
@@ -429,10 +486,17 @@ namespace Rhino.Geometry
     }
 #endif
 
+    /// <summary>
+    /// Gets the order in the U direction.
+    /// </summary>
     public int OrderU
     {
       get { return GetIntDir(idxOrder, 0); }
     }
+
+    /// <summary>
+    /// Gets the order in the V direction.
+    /// </summary>
     public int OrderV
     {
       get { return GetIntDir(idxOrder, 1); }
@@ -441,6 +505,9 @@ namespace Rhino.Geometry
   //  public class ON_NurbsCage : ON_Geometry { }
   //  public class ON_MorphControl : ON_Geometry { }
 
+  /// <summary>
+  /// 
+  /// </summary>
   [Serializable]
   public class MorphControl : GeometryBase, ISerializable
   {
@@ -581,7 +648,11 @@ namespace Rhino.Geometry.Collections
       m_surface = ownerSurface;
     }
     #endregion
-
+    /// <summary>
+    /// If you want to keep a copy of this class around by holding onto it in a variable after a command
+    /// completes, call EnsurePrivateCopy to make sure that this class is not tied to the document. You can
+    /// call this function as many times as you want.
+    /// </summary>
     public void EnsurePrivateCopy()
     {
       m_surface.EnsurePrivateCopy();
@@ -792,7 +863,7 @@ namespace Rhino.Geometry.Collections
 
     #region properties
 
-    /// <summary>Total number of knots in this curve.</summary>
+    /// <summary>Gets the total number of knots in this curve.</summary>
     public int Count
     {
       get
@@ -801,7 +872,7 @@ namespace Rhino.Geometry.Collections
       }
     }
 
-    /// <summary>Determine if knot vector is clamped.</summary>
+    /// <summary>Determines if a knot vector is clamped.</summary>
     public bool ClampedAtStart
     {
       get
@@ -810,7 +881,7 @@ namespace Rhino.Geometry.Collections
         return UnsafeNativeMethods.ON_NurbsSurface_GetBoolDir(pConstSurf, NurbsSurface.idxIsClampedStart, m_direction);
       }
     }
-    /// <summary>Determine if knot vector is clamped.</summary>
+    /// <summary>Determines if a knot vector is clamped.</summary>
     public bool ClampedAtEnd
     {
       get
@@ -820,6 +891,13 @@ namespace Rhino.Geometry.Collections
       }
     }
 
+    /// <summary>
+    /// Computes the knots that are superfluous because they are not used in NURBs evaluation.
+    /// These make it appear so that the first and last surface spans are different from interior spans.
+    /// <para>http://wiki.mcneel.com/developer/onsuperfluousknot</para>
+    /// </summary>
+    /// <param name="start">true if the query targets the first knot. Otherwise, the last knot.</param>
+    /// <returns>A component.</returns>
     public double SuperfluousKnot(bool start)
     {
       IntPtr pConstSurf = m_surface.ConstPointer();
@@ -851,7 +929,11 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     #region knot utility methods
-
+    /// <summary>
+    /// If you want to keep a copy of this class around by holding onto it in a variable after a command
+    /// completes, call EnsurePrivateCopy to make sure that this class is not tied to the document. You can
+    /// call this function as many times as you want.
+    /// </summary>
     public void EnsurePrivateCopy()
     {
       m_surface.EnsurePrivateCopy();

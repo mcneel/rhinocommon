@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -28,6 +27,9 @@ namespace Rhino.Geometry
     public double m_Pz;
   }
 
+  /// <summary>
+  /// Represents a point that is found on a mesh.
+  /// </summary>
   public class MeshPoint
   {
     internal Mesh m_parent;
@@ -38,19 +40,25 @@ namespace Rhino.Geometry
       m_data = ds;
     }
 
+    /// <summary>
+    /// The mesh that is ralated to this point.
+    /// </summary>
     public Mesh Mesh
     {
       get { return m_parent; }
     }
 
     /// <summary>
-    /// Edge parameter when 
+    /// Edge parameter when found.
     /// </summary>
     public double EdgeParameter
     {
       get { return m_data.m_et; }
     }
 
+    /// <summary>
+    /// Gets the component index of the intersecting element in the mesh.
+    /// </summary>
     public ComponentIndex ComponentIndex
     {
       get
@@ -95,12 +103,12 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Face triangle where the intersection takes place;
-    /// 0 is unset
-    /// A is 0,1,2
-    /// B is 0,2,3
-    /// C is 0,1,3
-    /// D is 1,2,3.
+    /// Face triangle where the intersection takes place:
+    /// <para>0 is unset</para>
+    /// <para>A is 0,1,2</para>
+    /// <para>B is 0,2,3</para>
+    /// <para>C is 0,1,3</para>
+    /// <para>D is 1,2,3</para>
     /// </summary>
     public char Triangle
     {
@@ -127,6 +135,9 @@ namespace Rhino.Geometry
     }
     double[] m_t;
 
+    /// <summary>
+    /// Gets the location (position) of this point.
+    /// </summary>
     public Point3d Point
     {
       get { return new Point3d(m_data.m_Px, m_data.m_Py, m_data.m_Pz); }
@@ -178,6 +189,10 @@ namespace Rhino.Geometry.Intersect
   //also add ON_RTree
 
 #if USING_V5_SDK // only available in V5
+
+  /// <summary>
+  /// Represents a particular instance of a clash or intersection between two meshes.
+  /// </summary>
   public class MeshClash
   {
     Mesh m_mesh_a = null;
@@ -187,8 +202,14 @@ namespace Rhino.Geometry.Intersect
 
     private MeshClash() { }
 
+    /// <summary>
+    /// Gets the first mesh.
+    /// </summary>
     public Mesh MeshA { get { return m_mesh_a; } }
 
+    /// <summary>
+    /// Gets the second mesh.
+    /// </summary>
     public Mesh MeshB { get { return m_mesh_b; } }
 
     /// <summary>
@@ -197,8 +218,10 @@ namespace Rhino.Geometry.Intersect
     /// </summary>
     public Point3d ClashPoint { get { return m_P; } }
 
+    /// <summary>
+    /// Gets the clash, or intersection, radius.
+    /// </summary>
     public double ClashRadius { get { return m_radius; } }
-
 
     /// <summary>
     /// Searches for locations where the distance from a mesh in one set of meshes

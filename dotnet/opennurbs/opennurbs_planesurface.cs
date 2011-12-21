@@ -1,9 +1,11 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents a plane surface, with plane and two intervals.
+  /// </summary>
   [Serializable]
   public class PlaneSurface : Surface, ISerializable
   {
@@ -12,7 +14,7 @@ namespace Rhino.Geometry
     { }
 
     /// <summary>
-    /// Constructs a PlaneSurface with x and y intervals.
+    /// Initializes a plane surface with x and y intervals.
     /// </summary>
     /// <param name="plane">The plane.</param>
     /// <param name="xExtents">The x interval of the plane that defines the rectangle.
@@ -38,7 +40,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Make a plane that includes a line and a vector and goes through a bounding box.
+    /// Makes a plane that includes a line and a vector and goes through a bounding box.
     /// </summary>
     /// <param name="lineInPlane"></param>
     /// <param name="vectorInPlane"></param>
@@ -53,7 +55,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Extend a plane so that is goes through a bounding box.
+    /// Extends a plane so that is goes through a bounding box.
     /// </summary>
     /// <param name="plane"></param>
     /// <param name="box"></param>
@@ -72,6 +74,9 @@ namespace Rhino.Geometry
     }
   }
 
+  /// <summary>
+  /// Represents a planar surface that is used as clipping plane in viewports.
+  /// </summary>
   [Serializable]
   public class ClippingPlaneSurface : PlaneSurface, ISerializable
   {
@@ -79,7 +84,11 @@ namespace Rhino.Geometry
       : base(ptr, parent)
     { }
 
-    // serialization constructor
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
     protected ClippingPlaneSurface(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
@@ -90,6 +99,9 @@ namespace Rhino.Geometry
       return new ClippingPlaneSurface(IntPtr.Zero, null);
     }
 
+    /// <summary>
+    /// Gets or sets the clipping plane.
+    /// </summary>
     public Plane Plane
     {
       get

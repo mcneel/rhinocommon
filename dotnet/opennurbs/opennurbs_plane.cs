@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 
@@ -26,6 +25,9 @@ namespace Rhino.Geometry
     Inconclusive = 1
   }
 
+  /// <summary>
+  /// Represents the value of a center point and two axes in a plane in three dimensions.
+  /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 128)]
   [Serializable]
   public struct Plane
@@ -274,6 +276,12 @@ namespace Rhino.Geometry
     #endregion
 
     #region operators
+    /// <summary>
+    /// Determines if two planes are equal.
+    /// </summary>
+    /// <param name="a">A first plane.</param>
+    /// <param name="b">A second plane.</param>
+    /// <returns>true if the two planes have all equal components; false otherwise.</returns>
     public static bool operator ==(Plane a, Plane b)
     {
       return (a.m_origin == b.m_origin) &&
@@ -281,6 +289,13 @@ namespace Rhino.Geometry
              (a.m_yaxis == b.m_yaxis) &&
              (a.m_zaxis == b.m_zaxis);
     }
+
+    /// <summary>
+    /// Determines if two planes are different.
+    /// </summary>
+    /// <param name="a">A first plane.</param>
+    /// <param name="b">A second plane.</param>
+    /// <returns>true if the two planes have any different componet components; false otherwise.</returns>
     public static bool operator !=(Plane a, Plane b)
     {
       return (a.m_origin != b.m_origin) ||
@@ -288,20 +303,36 @@ namespace Rhino.Geometry
              (a.m_yaxis != b.m_yaxis) ||
              (a.m_zaxis != b.m_zaxis);
     }
+
+    /// <summary>
+    /// Determines if an object is a plane and has the same components as this plane.
+    /// </summary>
+    /// <param name="obj">An object.</param>
+    /// <returns>true if obj is a plane and has the same components as this plane; false otherwise.</returns>
     public override bool Equals(object obj)
     {
       return ((obj is Plane) && (this == (Plane)obj));
     }
+
+    /// <summary>
+    /// Gets a non-unique hashing code for this entity.
+    /// </summary>
+    /// <returns>A particular number for a specific instance of plane.</returns>
     public override int GetHashCode()
     {
       // MSDN docs recommend XOR'ing the internal values to get a hash code
       return m_origin.GetHashCode() ^ m_xaxis.GetHashCode() ^ m_yaxis.GetHashCode() ^ m_zaxis.GetHashCode();
     }
+
+    /// <summary>
+    /// Constructs the string representation of this plane.
+    /// </summary>
+    /// <returns>Text.</returns>
     public override string ToString()
     {
       string rc = String.Format(System.Globalization.CultureInfo.InvariantCulture,
         "Origin={0} XAxis={1}, YAxis={2}, ZAxis={3}",
-        Origin, XAxis, YAxis, ZAxis);
+        Origin, XAxis, YAxis, ZAxis.ToString());
       return rc;
     }
     #endregion

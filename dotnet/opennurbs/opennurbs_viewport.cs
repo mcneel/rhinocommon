@@ -62,7 +62,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Copies all of the ViewportInfo data from an existing RhinoViewport.
     /// </summary>
-    /// <param name="rhinoViewport"></param>
+    /// <param name="rhinoViewport">A viewport to copy.</param>
     public ViewportInfo(Rhino.Display.RhinoViewport rhinoViewport)
     {
       IntPtr pRhinoViewport = rhinoViewport.ConstPointer();
@@ -674,7 +674,7 @@ namespace Rhino.DocObjects
     /// infinte view region with the bounding box and returns the
     /// near and far distances of the projection.
     /// </summary>
-    /// <param name="point"></param>
+    /// <param name="point">A point to measure.</param>
     /// <param name="distance">distance of the point (can be &lt; 0)</param>
     /// <returns>true if the bounding box intersects the view frustum and
     /// near_dist/far_dist were set.
@@ -698,7 +698,7 @@ namespace Rhino.DocObjects
     /// bounding box and returns the near and far distances of the
     /// projection.
     /// </summary>
-    /// <param name="bbox"></param>
+    /// <param name="bbox">The bounding box to sample.</param>
     /// <param name="nearDistance">Near distance of the box. This value can be zero or 
     /// negative when the camera location is inside bbox.</param>
     /// <param name="farDistance">Far distance of the box. This value can be equal to 
@@ -716,7 +716,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets near and far clipping distances of a bounding sphere.
     /// </summary>
-    /// <param name="sphere"></param>
+    /// <param name="sphere">The sphere to sample.</param>
     /// <param name="nearDistance">Near distance of the sphere (can be &lt; 0)</param>
     /// <param name="farDistance">Far distance of the sphere (can be equal to near_dist)</param>
     /// <returns>true if the sphere intersects the view frustum and near_dist/far_dist were set.
@@ -891,12 +891,12 @@ namespace Rhino.DocObjects
     /// /                     port_bottom, port_top, 
     /// /                     port_near, port_far );
     /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right">(port_left != port_right)</param>
-    /// <param name="bottom"></param>
-    /// <param name="top">(port_top != port_bottom)</param>
-    /// <param name="near"></param>
-    /// <param name="far"></param>
+    /// <param name="left">A left value.</param>
+    /// <param name="right">A left value. (port_left != port_right)</param>
+    /// <param name="bottom">A bottom value.</param>
+    /// <param name="top">A top value. (port_top != port_bottom)</param>
+    /// <param name="near">A near value.</param>
+    /// <param name="far">A far value.</param>
     /// <returns>true if input is valid.</returns>
     public bool SetScreenPort(int left, int right, int bottom, int top, int near, int far)
     {
@@ -1039,9 +1039,9 @@ namespace Rhino.DocObjects
 
     /// <summary>
     /// </summary>
-    /// <param name="sourceSystem"></param>
-    /// <param name="destinationSystem"></param>
-    /// <returns>4x4 transformation matrix (acts on the left)</returns>
+    /// <param name="sourceSystem">The coordinate system to map from.</param>
+    /// <param name="destinationSystem">The coordinate system to map into.</param>
+    /// <returns>The 4x4 transformation matrix (acts on the left).</returns>
     public Rhino.Geometry.Transform GetXform(Rhino.DocObjects.CoordinateSystem sourceSystem, Rhino.DocObjects.CoordinateSystem destinationSystem)
     {
       Rhino.Geometry.Transform matrix = new Rhino.Geometry.Transform();
@@ -1093,13 +1093,14 @@ namespace Rhino.DocObjects
     //TODO bool GetCoordinateSprite(
 
     /// <summary>
-    /// Use Extents() as a quick way to set a viewport to so that bounding
+    /// Extends this viewport view to include a bounding box.
+    /// <para>Use Extents() as a quick way to set a viewport to so that bounding
     /// volume is inside of a viewports frustrum.
-    /// The view angle is used to determine the position of the camera.
+    /// The view angle is used to determine the position of the camera.</para>
     /// </summary>
-    /// <param name="halfViewAngleRadians"></param>
-    /// <param name="bbox"></param>
-    /// <returns></returns>
+    /// <param name="halfViewAngleRadians">1/2 smallest subtended view angle in radians.</param>
+    /// <param name="bbox">A bounding box in 3d world coordinates.</param>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
     public bool Extents(double halfViewAngleRadians, Rhino.Geometry.BoundingBox bbox)
     {
       IntPtr pThis = NonConstPointer();
@@ -1107,13 +1108,14 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Use Extents() as a quick way to set a viewport to so that bounding
+    /// Extends this viewport view to include a sphere.
+    /// <para>Use Extents() as a quick way to set a viewport to so that bounding
     /// volume is inside of a viewports frustrum.
-    /// The view angle is used to determine the position of the camera.
+    /// The view angle is used to determine the position of the camera.</para>
     /// </summary>
-    /// <param name="halfViewAngleRadians"></param>
-    /// <param name="sphere"></param>
-    /// <returns></returns>
+    /// <param name="halfViewAngleRadians">1/2 smallest subtended view angle in radians.</param>
+    /// <param name="sphere">A sphere in 3d world coordinates.</param>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
     public bool Extents(double halfViewAngleRadians, Rhino.Geometry.Sphere sphere)
     {
       IntPtr pThis = NonConstPointer();

@@ -1,10 +1,13 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
 namespace Rhino.Runtime
 {
+  /// <summary>
+  /// Represents the error that happen when a class user attempts to execute a modifying operation
+  /// on an object that has been added to a document.
+  /// </summary>
   [Serializable]
   public class DocumentCollectedException : Exception
   {
@@ -94,6 +97,10 @@ namespace Rhino.Runtime
     internal abstract IntPtr _InternalGetConstPointer();
     internal abstract IntPtr _InternalDuplicate(out bool applymempressure);
 
+    /// <summary>
+    /// For derived classes implementers.
+    /// <para>Defines the necessary implementation to free the instance from being const.</para>
+    /// </summary>
     protected virtual void NonConstOperation()
     {
       if ( IntPtr.Zero==m_ptr )
@@ -124,6 +131,9 @@ namespace Rhino.Runtime
       }
     }
 
+    /// <summary>
+    /// Is called when a non-const operation first occurs.
+    /// </summary>
     protected virtual void OnSwitchToNonConst(){}
 
     /// <summary>
@@ -164,6 +174,11 @@ namespace Rhino.Runtime
       m_ptr = nativePointer;
     }
 
+    /// <summary>
+    /// Assigns a parent object and a subobject index to this.
+    /// </summary>
+    /// <param name="parentObject">The parent object.</param>
+    /// <param name="subobject_index">The subobject index.</param>
     protected void ConstructConstObject(object parentObject, int subobject_index)
     {
       m__parent = parentObject;
@@ -222,17 +237,30 @@ namespace Rhino.Runtime
     }
 
     #region IDisposable implementation
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~CommonObject()
     {
       Dispose(false);
     }
-
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero == m_ptr || m__parent is ConstCastHolder)
@@ -268,6 +296,9 @@ namespace Rhino.Runtime
       }
     }
 
+    /// <summary>
+    /// Allows construction from inheriting classes.
+    /// </summary>
     protected CommonObject() { }
 
     /// <summary>
@@ -368,6 +399,11 @@ namespace Rhino.Runtime
       UnsafeNativeMethods.ON_WriteBufferArchive_Delete(pWriteBuffer);
     }
 
+    /// <summary>
+    /// Populates a System.Runtime.Serialization.SerializationInfo with the data needed to serialize the target object.
+    /// </summary>
+    /// <param name="info">The System.Runtime.Serialization.SerializationInfo to populate with data.</param>
+    /// <param name="context">The destination (see System.Runtime.Serialization.StreamingContext) for this serialization.</param>
     [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.SerializationFormatter)]
     public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
     {

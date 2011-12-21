@@ -210,13 +210,13 @@ namespace Rhino.Geometry
     /// <summary>
     /// Constructs a transformation that maps X0 to X1, Y0 to Y1, Z0 to Z1.
     /// </summary>
-    /// <param name="x0"></param>
-    /// <param name="y0"></param>
-    /// <param name="z0"></param>
-    /// <param name="x1"></param>
-    /// <param name="y1"></param>
-    /// <param name="z1"></param>
-    /// <returns></returns>
+    /// <param name="x0">First "from" vector.</param>
+    /// <param name="y0">Second "from" vector.</param>
+    /// <param name="z0">Third "from" vector.</param>
+    /// <param name="x1">First "to" vector.</param>
+    /// <param name="y1">Second "to" vector.</param>
+    /// <param name="z1">Third "to" vector.</param>
+    /// <returns>A rotation transformation value.</returns>
     public static Transform Rotation(Vector3d x0, Vector3d y0, Vector3d z0,
       Vector3d x1, Vector3d y1, Vector3d z1)
     {
@@ -727,7 +727,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Attempts to get the inverse transform of this transform.
     /// </summary>
-    /// <param name="inverseTransform"></param>
+    /// <param name="inverseTransform">The inverse transform. This out reference will be assigned during this call.</param>
     /// <returns>
     /// true on success. 
     /// If false is returned and this Transform is Invalid, inserveTransform will be set to this Transform. 
@@ -798,7 +798,7 @@ namespace Rhino.Geometry
 
     #region from ON_Geometry - moved here to keep clutter out of geometry class
     /// <summary>Apply the space morph to geometry.</summary>
-    /// <param name="geometry"></param>
+    /// <param name="geometry">Geometry to morph.</param>
     /// <returns>true on success, false on failure.</returns>
     public bool Morph(GeometryBase geometry)
     {
@@ -818,9 +818,9 @@ namespace Rhino.Geometry
     #endregion
 
 
-    /// <summary>Morphs Euclidean point.</summary>
-    /// <param name="point"></param>
-    /// <returns>morphed point.</returns>
+    /// <summary>Morphs an Euclidean point. <para>This method is abstract.</para></summary>
+    /// <param name="point">A point that will be morphed by this function.</param>
+    /// <returns>Resulting morphed point.</returns>
     public abstract Point3d MorphPoint(Point3d point);
 
     /// <summary>

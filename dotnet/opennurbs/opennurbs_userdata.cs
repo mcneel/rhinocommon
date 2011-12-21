@@ -290,10 +290,10 @@ namespace Rhino.DocObjects.Custom
     /// Expert user tool that copies user data that has a positive 
     /// CopyCount from the source object to a destination object.
     /// Generally speaking you don't need to use Copy().
-    /// Simply rely things like copy constructors to do the right thing.
+    /// Simply rely on things like the copy constructors to do the right thing.
     /// </summary>
-    /// <param name="source"></param>
-    /// <param name="destination"></param>
+    /// <param name="source">A source object for the data.</param>
+    /// <param name="destination">A destination object for the data.</param>
     public static void Copy(Rhino.Runtime.CommonObject source, Rhino.Runtime.CommonObject destination)
     {
       IntPtr pConstSource = source.ConstPointer();
@@ -323,11 +323,12 @@ namespace Rhino.DocObjects.Custom
     }
     
     /// <summary>
-    /// See MoverUserDataFrom.
+    /// Moves the user data.
+    /// <para>See <see cref="MoverUserDataFrom"/> for more information.</para>
     /// </summary>
-    /// <param name="objectToGetUserData"></param>
-    /// <param name="id"></param>
-    /// <param name="append"></param>
+    /// <param name="objectToGetUserData">Object data source.</param>
+    /// <param name="id">Target.</param>
+    /// <param name="append">If the data should be appended or replaced.</param>
     public static void MoveUserDataTo(Rhino.Runtime.CommonObject objectToGetUserData, Guid id, bool append)
     {
       if (id != Guid.Empty)

@@ -1,9 +1,11 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
+  /// <summary>
+  /// Represents a light that shines in the modeling space.
+  /// </summary>
   [Serializable]
   public class Light : GeometryBase, ISerializable
   {
@@ -326,22 +328,36 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Light_SetDouble(pThis, which, val);
     }
 
+    /// <summary>
+    /// Gets or sets the light intensity.
+    /// </summary>
     public double Intensity
     {
       get { return GetDouble(idxIntensity); }
       set { SetDouble(idxIntensity, value); }
     }
 
+    /// <summary>
+    /// Gets or sets the light power in watts (W).
+    /// </summary>
     public double PowerWatts
     {
       get { return GetDouble(idxPowerWatts); }
       set { SetDouble(idxPowerWatts, value); }
     }
+
+    /// <summary>
+    /// Gets or sets the light power in lumens (lm).
+    /// </summary>
     public double PowerLumens
     {
       get { return GetDouble(idxPowerLumens); }
       set { SetDouble(idxPowerLumens, value); }
     }
+
+    /// <summary>
+    /// Gets or sets the light power in candelas (cd).
+    /// </summary>
     public double PowerCandela
     {
       get { return GetDouble(idxPowerCandela); }
@@ -364,16 +380,27 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Light_SetColor(pThis, which, argb);
     }
 
+    /// <summary>
+    /// Gets or sets the ambient color.
+    /// </summary>
     public System.Drawing.Color Ambient
     {
       get { return GetColor(idxAmbient); }
       set { SetColor(idxAmbient, value); }
     }
+
+    /// <summary>
+    /// Gets or sets the diffuse color.
+    /// </summary>
     public System.Drawing.Color Diffuse
     {
       get { return GetColor(idxDiffuse); }
       set { SetColor(idxDiffuse, value); }
     }
+
+    /// <summary>
+    /// Gets or sets the specular color.
+    /// </summary>
     public System.Drawing.Color Specular
     {
       get { return GetColor(idxSpecular); }
@@ -381,8 +408,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// attenuation settings (ignored for "directional" and "ambient" lights)
-    /// attenuation = 1/(a0 + d*a1 + d^2*a2) where d = distance to light.
+    /// Sets the attenuation settings (ignored for "directional" and "ambient" lights).
+    /// <para>attenuation = 1/(a0 + d*a1 + d^2*a2) where d = distance to light.</para>
     /// </summary>
     /// <param name="a0"></param>
     /// <param name="a1"></param>
@@ -393,8 +420,8 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Light_SetAttenuation(pThis, a0, a1, a2);
     }
     /// <summary>
-    /// attenuation settings (ignored for "directional" and "ambient" lights)
-    /// attenuation = 1/(a0 + d*a1 + d^2*a2) where d = distance to light.
+    /// Gets the attenuation settings (ignored for "directional" and "ambient" lights).
+    /// <para>attenuation = 1/(a0 + d*a1 + d^2*a2) where d = distance to light.</para>
     /// </summary>
     /// <param name="d"></param>
     /// <returns>0 if a0 + d*a1 + d^2*a2 &lt;= 0.</returns>
@@ -405,8 +432,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// ignored for non-spot lights
-    /// angle = 0 to pi/2  (0 to 90 degrees)
+    /// Gets or sets the spot angle in radians.
+    /// <para>Ignored for non-spot lights.</para>
+    /// <para>angle = 0 to pi/2  (0 to 90 degrees).</para>
     /// </summary>
     public double SpotAngleRadians
     {
@@ -443,6 +471,12 @@ namespace Rhino.Geometry
       set { SetDouble(idxHotSpot, value); }
     }
 
+    /// <summary>
+    /// Gets the spot light radii.
+    /// </summary>
+    /// <param name="innerRadius">The inner radius. This out parameter is assigned during this call.</param>
+    /// <param name="outerRadius">The outer radius. This out parameter is assigned during this call.</param>
+    /// <returns>true if operation succeeded; otherwise, false.</returns>
     public bool GetSpotLightRadii(out double innerRadius, out double outerRadius)
     {
       innerRadius = 0;
@@ -452,8 +486,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// linear and rectangular light parameter
-    /// (ignored for non-linear/rectangular lights)
+    /// Gets or sets the height in linear and rectangular lights.
+    /// <para>(ignored for non-linear/rectangular lights.)</para>
     /// </summary>
     public Vector3d Length
     {
@@ -462,8 +496,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// linear and rectangular light parameter
-    /// (ignored for non-linear/rectangular lights)
+    /// Gets or sets the width in linear and rectangular lights.
+    /// <para>(ignored for non-linear/rectangular lights.)</para>
     /// </summary>
     public Vector3d Width
     {
@@ -471,12 +505,19 @@ namespace Rhino.Geometry
       set { SetVector(idxWidth, value); }
     }
 
+    /// <summary>
+    /// Gets or sets the spot light shadow intensity.
+    /// <para>(ignored for non-spot lights.)</para>
+    /// </summary>
     public double SpotLightShadowIntensity
     {
       get { return GetDouble(idxShadowIntensity); }
       set { SetDouble(idxShadowIntensity, value); }
     }
 
+    /// <summary>
+    /// Gets or sets the spot light name.
+    /// </summary>
     public string Name
     {
       get

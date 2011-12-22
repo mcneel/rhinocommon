@@ -36,7 +36,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Creates a NURBS surfaces from cone data.
+    /// Constructs a new NURBS surfaces from cone data.
     /// </summary>
     /// <param name="cone">A cone value.</param>
     /// <returns>A new NURBS surface, or null on error.</returns>
@@ -49,7 +49,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Creates a NURBS surfaces from cylinder data.
+    /// Constructs a new NURBS surfaces from cylinder data.
     /// </summary>
     /// <param name="cylinder">A cylinder value.</param>
     /// <returns>A new NURBS surface, or null on error.</returns>
@@ -62,7 +62,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Creates a NURBS surfaces from sphere data.
+    /// Constructs a new NURBS surfaces from sphere data.
     /// </summary>
     /// <param name="sphere">A sphere value.</param>
     /// <returns>A new NURBS surface, or null on error.</returns>
@@ -75,7 +75,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Creates a NURBS surfaces from torus data.
+    /// Constructs a new NURBS surfaces from torus data.
     /// </summary>
     /// <param name="torus">A torus value.</param>
     /// <returns>A new NURBS surface, or null on error.</returns>

@@ -385,7 +385,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Creates closed polysurfaces from surfaces and polysurfaces that bound a region in space.
+    /// Constructs closed polysurfaces from surfaces and polysurfaces that bound a region in space.
     /// </summary>
     /// <param name="breps">
     /// The intersecting surfaces and polysurfaces to automatically trim and join into closed polysurfaces.
@@ -473,7 +473,7 @@ namespace Rhino.Geometry
 
 #if RHINO_SDK
     /// <summary>
-    /// Creates one or more Breps by lofting through a set of curves.
+    /// Constructs one or more Breps by lofting through a set of curves.
     /// </summary>
     /// <param name="curves">
     /// The curves to loft through. This function will not perform any curve sorting. You must pass in
@@ -499,7 +499,7 @@ namespace Rhino.Geometry
       return LoftHelper(curves, start, end, loftType, 0, 0, 0.0, closed);
     }
     /// <summary>
-    /// Creates one or more Breps by lofting through a set of curves. Input for the loft is simplified by
+    /// Constructs one or more Breps by lofting through a set of curves. Input for the loft is simplified by
     /// rebuilding to a specified number of control points.
     /// </summary>
     /// <param name="curves">
@@ -527,7 +527,7 @@ namespace Rhino.Geometry
       return LoftHelper(curves, start, end, loftType, 1, rebuildPointCount, 0.0, closed);
     }
     /// <summary>
-    /// Creates one or more Breps by lofting through a set of curves. Input for the loft is simplified by
+    /// Constructs one or more Breps by lofting through a set of curves. Input for the loft is simplified by
     /// refitting to a specified tolerance.
     /// </summary>
     /// <param name="curves">
@@ -973,9 +973,9 @@ namespace Rhino.Geometry
 
     #region methods
     /// <summary>
-    /// Creates copy of this Brep.
+    /// Copies this brep.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A brep.</returns>
     public override GeometryBase Duplicate()
     {
       IntPtr ptr = ConstPointer();
@@ -984,9 +984,10 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Same as Duplicate() function, but performs the casting to a Brep for you.
+    /// Same as <see cref="Duplicate()"/>, but already performs a cast to a brep.
+    /// <para>This cast always succeeds.</para>
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A brep.</returns>
     public Brep DuplicateBrep()
     {
       Brep rc = Duplicate() as Brep;

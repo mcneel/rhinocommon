@@ -368,7 +368,7 @@ namespace Rhino.Geometry
     /// <param name="xform">
     /// Transformation to apply to geometry.
     /// </param>
-    /// <returns></returns>
+    /// <returns>true if geometry successfully transformed.</returns>
     public bool Transform(Transform xform)
     {
       IntPtr ptr = NonConstPointer();
@@ -376,7 +376,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>Translates the object along the specified vector.</summary>
-    /// <param name="translationVector"></param>
+    /// <param name="translationVector">A moving vector.</param>
     /// <returns>true if geometry successfully translated.</returns>
     public bool Translate(Vector3d translationVector)
     {
@@ -385,9 +385,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>Translates the object along the specified vector.</summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="z"></param>
+    /// <param name="x">The X component.</param>
+    /// <param name="y">The Y component.</param>
+    /// <param name="z">The Z component.</param>
     /// <returns>true if geometry successfully translated.</returns>
     public bool Translate(double x, double y, double z)
     {
@@ -398,7 +398,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Scales the object by the specified factor. The scale is centered at the origin.
     /// </summary>
-    /// <param name="scaleFactor"></param>
+    /// <param name="scaleFactor">The uniform scaling factor.</param>
     /// <returns>true if geometry successfully scaled.</returns>
     public bool Scale(double scaleFactor)
     {
@@ -410,9 +410,9 @@ namespace Rhino.Geometry
     /// Rotates the object about the specified axis. A positive rotation 
     /// angle results in a counter-clockwise rotation about the axis (right hand rule).
     /// </summary>
-    /// <param name="angleRadians">angle of rotation in radians.</param>
-    /// <param name="rotationAxis">direction of the axis of rotation.</param>
-    /// <param name="rotationCenter">point on the axis of rotation.</param>
+    /// <param name="angleRadians">Angle of rotation in radians.</param>
+    /// <param name="rotationAxis">Direction of the axis of rotation.</param>
+    /// <param name="rotationCenter">Point on the axis of rotation.</param>
     /// <returns>true if geometry successfully rotated.</returns>
     public bool Rotate(double angleRadians, Vector3d rotationAxis, Point3d rotationCenter)
     {
@@ -422,10 +422,9 @@ namespace Rhino.Geometry
     #endregion
 
     /// <summary>
-    /// Compute an estimate of the number of bytes that this object is using in memory.
+    /// Computes an estimate of the number of bytes that this object is using in memory.
     /// </summary>
-    /// <returns></returns>
-    /// 
+    /// <returns>An estimated memory footprint.</returns>
     [CLSCompliant(false)]
     public uint MemoryEstimate()
     {
@@ -658,9 +657,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets all (key, value) user strings attached to this geometry.
+    /// Gets a copy of all (user key string, user value string) pairs attached to this geometry.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A new collection.</returns>
     public System.Collections.Specialized.NameValueCollection GetUserStrings()
     {
       System.Collections.Specialized.NameValueCollection rc = new System.Collections.Specialized.NameValueCollection();

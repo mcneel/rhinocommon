@@ -324,7 +324,7 @@ namespace Rhino.DocObjects.Custom
     
     /// <summary>
     /// Moves the user data.
-    /// <para>See <see cref="MoverUserDataFrom"/> for more information.</para>
+    /// <para>See <see cref="MoveUserDataFrom"/> for more information.</para>
     /// </summary>
     /// <param name="objectToGetUserData">Object data source.</param>
     /// <param name="id">Target.</param>

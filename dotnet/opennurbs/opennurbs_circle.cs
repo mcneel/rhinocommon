@@ -367,9 +367,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determine the Nth order derivative. 
+    /// Determine the value of the Nth derivative at a parameter. 
     /// </summary>
-    /// <param name="derivative"></param>
+    /// <param name="derivative">Which order of derivative is wanted.</param>
     /// <param name="t">Parameter to evaluate derivative. Valid values are 0, 1, 2 and 3.</param>
     /// <returns>The derivative of the circle at the given parameter.</returns>
     public Vector3d DerivativeAt(int derivative, double t)

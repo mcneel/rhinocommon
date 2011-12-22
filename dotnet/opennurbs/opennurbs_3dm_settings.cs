@@ -597,12 +597,11 @@ namespace Rhino.DocObjects
 
 
     /// <summary>
-    /// Returns a plane in model coordinates whose xaxis points East,
-    /// yaxis points North and zaxis points up.  The origin
-    /// is set to ModelBasepoint. An Invalid plane is returned
-    /// on error.
+    /// Returns a plane in model coordinates whose X axis points East,
+    /// Y axis points North and Z axis points Up. The origin
+    /// is set to ModelBasepoint.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A plane value. This might be invalid on error.</returns>
     public Plane GetModelCompass()
     {
       Plane rc = Plane.Unset;
@@ -988,7 +987,8 @@ namespace Rhino.Render
 namespace Rhino.Display
 {
   /// <summary>
-  /// How a viewport's background should be filled.
+  /// Contains enumerated constants that define how the background of
+  /// a viewport should be filled.
   /// </summary>
   public enum BackgroundStyle : int
   {
@@ -998,7 +998,7 @@ namespace Rhino.Display
     WallpaperImage = 1,
     /// <summary>Two color top/bottom color gradient.</summary>
     Gradient = 2,
-    /// <summary></summary>
+    /// <summary>Using a special environment.</summary>
     Environment = 3
   }
 

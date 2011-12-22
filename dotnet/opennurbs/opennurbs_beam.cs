@@ -413,8 +413,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets one of the longitudinal surfaces of the extrusion.
     /// </summary>
-    /// <param name="ci"></param>
-    /// <returns></returns>
+    /// <param name="ci">The index specifying which precise item to retrieve.</param>
+    /// <returns>The surface.</returns>
     public Surface WallSurface(ComponentIndex ci)
     {
       IntPtr pConstThis = ConstPointer();
@@ -425,7 +425,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets the line-like curve that is the conceptual axis of the extrusion.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The path as a line curve.</returns>
     public LineCurve PathLineCurve()
     {
       IntPtr pConstThis = ConstPointer();

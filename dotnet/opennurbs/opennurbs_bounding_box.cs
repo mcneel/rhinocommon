@@ -672,9 +672,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Computes the intersection of two bounding boxes.
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns></returns>
+    /// <param name="a">A first bounding box.</param>
+    /// <param name="b">A second bounding box.</param>
+    /// <returns>The intersection bounding box.</returns>
     public static BoundingBox Intersection(BoundingBox a, BoundingBox b)
     {
       BoundingBox rc = Unset;

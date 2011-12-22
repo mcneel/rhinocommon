@@ -129,7 +129,7 @@ namespace Rhino.Geometry
     /// side of the cone.
     /// The angle and the height have the same sign.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An angle in degrees.</returns>
     public double AngleInDegrees()
     {
       return 180.0 * AngleInRadians() / Math.PI;

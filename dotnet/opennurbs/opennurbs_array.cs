@@ -1028,8 +1028,9 @@ namespace Rhino.Runtime.InteropWrappers
   }
 
   /// <summary>
-  /// Wrapper for a C++ ON_SimpleArray of ON_Mesh* or const ON_Mesh*. If you are not
-  /// writing C++ code then this class is not for you.
+  /// Represents a wrapper to an unmanaged "array" (list) of mesh pointers.
+  /// <para>Wrapper for a C++ ON_SimpleArray of ON_Mesh* or const ON_Mesh*. If you are not
+  /// writing C++ code then this class is not for you.</para>
   /// </summary>
   public class SimpleArrayMeshPointer : IDisposable
   {
@@ -1069,10 +1070,10 @@ namespace Rhino.Runtime.InteropWrappers
     }
 
     /// <summary>
-    /// Adds a mesh to 
+    /// Adds a mesh to the list.
     /// </summary>
-    /// <param name="mesh"></param>
-    /// <param name="asConst"></param>
+    /// <param name="mesh">A mesh to add.</param>
+    /// <param name="asConst">Whether this mesh should be treated as non-modifiable.</param>
     public void Add(Geometry.Mesh mesh, bool asConst)
     {
       if (null != mesh)

@@ -651,14 +651,14 @@ namespace Rhino.Geometry
     /// side of parameter space to test
     /// 0 = south, 1 = east, 2 = north, 3 = west.
     /// </param>
-    /// <returns></returns>
+    /// <returns>True if this specific side of the surface is singular; otherwise, false.</returns>
     public bool IsSingular(int side)
     {
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.ON_Surface_GetBool(ptr, side, idxIsSingular);
     }
     /// <summary>
-    /// Test if a surface parameter value is at a singularity.
+    /// Tests if a surface parameter value is at a singularity.
     /// </summary>
     /// <param name="u">Surface u parameter to test.</param>
     /// <param name="v">Surface v parameter to test.</param>
@@ -673,7 +673,7 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Surface_IsAtSingularity(ptr, u, v, exact);
     }
     /// <summary>
-    /// Test if a surface parameter value is at a seam.
+    /// Tests if a surface parameter value is at a seam.
     /// </summary>
     /// <param name="u">Surface u parameter to test.</param>
     /// <param name="v">Surface v parameter to test.</param>
@@ -690,11 +690,11 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Test continuity at a surface parameter value.
+    /// Tests continuity at a surface parameter value.
     /// </summary>
-    /// <param name="continuityType"></param>
-    /// <param name="u">surface u parameter to test.</param>
-    /// <param name="v">surface v parameter to test.</param>
+    /// <param name="continuityType">The continuity type to sample.</param>
+    /// <param name="u">Surface u parameter to test.</param>
+    /// <param name="v">Surface v parameter to test.</param>
     /// <returns>true if the surface has at least the specified continuity at the (u,v) parameter.</returns>
     public bool IsContinuous(Continuity continuityType, double u, double v)
     {
@@ -746,7 +746,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Input the parameters of the point on the surface that is closest to testPoint.
     /// </summary>
-    /// <param name="testPoint"></param>
+    /// <param name="testPoint">A point to test against.</param>
     /// <param name="u">U parameter of the surface that is closest to testPoint.</param>
     /// <param name="v">V parameter of the surface that is closest to testPoint.</param>
     /// <returns>true on success, false on failure.</returns>
@@ -806,8 +806,8 @@ namespace Rhino.Geometry
     /// <summary>Fits a new surface through an existing surface.</summary>
     /// <param name="uDegree">the output surface U degree. Must be bigger than 1.</param>
     /// <param name="vDegree">the output surface V degree. Must be bigger than 1.</param>
-    /// <param name="fitTolerance"></param>
-    /// <returns></returns>
+    /// <param name="fitTolerance">The fitting tolerance.</param>
+    /// <returns>A surface, or null on error.</returns>
     public Surface Fit(int uDegree, int vDegree, double fitTolerance)
     {
       IntPtr pConstThis = ConstPointer();
@@ -818,14 +818,14 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>
-    /// Mathematical surface evaluator.
+    /// Evaluates a surface mathematically.
     /// </summary>
-    /// <param name="u"></param>
-    /// <param name="v"></param>
-    /// <param name="numberDerivatives"></param>
-    /// <param name="point"></param>
-    /// <param name="derivatives"></param>
-    /// <returns></returns>
+    /// <param name="u">A U parameter.</param>
+    /// <param name="v">A V parameter.</param>
+    /// <param name="numberDerivatives">The number of derivatives.</param>
+    /// <param name="point">A point. This out parameter will be assigned during this call.</param>
+    /// <param name="derivatives">A vector array. This out parameter will be assigned during this call. This can be null.</param>
+    /// <returns>true if the operation succeeded; false otherwise.</returns>
     public bool Evaluate(double u, double v, int numberDerivatives, out Point3d point, out Vector3d[] derivatives)
     {
       point = Point3d.Unset;
@@ -854,7 +854,7 @@ namespace Rhino.Geometry
       return rc;
     }
 
-    /// <summary>Get isoparametric curve.</summary>
+    /// <summary>Gets isoparametric curve.</summary>
     /// <param name="direction">
     /// 0 first parameter varies and second parameter is constant
     /// e.g., point on IsoCurve(0,c) at t is srf(t,c)
@@ -864,8 +864,8 @@ namespace Rhino.Geometry
     /// e.g., point on IsoCurve(1,c) at t is srf(c,t
     /// This is a vertical line from bottom to top.
     /// </param>
-    /// <param name="constantParameter"></param>
-    /// <returns>Isoparametric curve.</returns>
+    /// <param name="constantParameter">The parameter that was constant on the original surface.</param>
+    /// <returns>An isoparametric curve or null on error.</returns>
     /// <remarks>
     /// In this function "direction" indicates which direction the resulting curve runs.
     /// 0: horizontal, 1: vertical
@@ -1022,12 +1022,12 @@ namespace Rhino.Geometry
     /// <summary>
     /// Pulls a 3d curve back to the surface's parameter space.
     /// </summary>
-    /// <param name="curve3d"></param>
+    /// <param name="curve3d">A curve.</param>
     /// <param name="tolerance">
     /// the maximum acceptable 3d distance between from surface(curve_2d(t))
     /// to the locus of points on the surface that are closest to curve_3d.
     /// </param>
-    /// <param name="curve3dSubdomain"></param>
+    /// <param name="curve3dSubdomain">A subdomain of the curve to sample.</param>
     /// <returns>2d curve.</returns>
     public Curve Pullback(Curve curve3d, double tolerance, Interval curve3dSubdomain)
     {

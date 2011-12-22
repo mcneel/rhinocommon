@@ -87,9 +87,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Creates new Brep that matches a bounding box.
+    /// Constructs new brep that matches a bounding box.
     /// </summary>
-    /// <param name="box"></param>
+    /// <param name="box">A box to use for creation.</param>
     /// <returns></returns>
     public static Brep CreateFromBox(BoundingBox box)
     {
@@ -97,7 +97,7 @@ namespace Rhino.Geometry
       return IntPtr.Zero == ptr ? null : new Brep(ptr, null);
     }
     /// <summary>
-    /// Creates new Brep that matches an aligned box.
+    /// Constructs new brep that matches an aligned box.
     /// </summary>
     /// <param name="box">Box to match.</param>
     /// <returns>A Brep with 6 faces that is similar to the Box.</returns>
@@ -106,24 +106,26 @@ namespace Rhino.Geometry
       return CreateFromBox(box.GetCorners());
     }
     /// <summary>
-    /// Creates new Brep from 8 corner points.
+    /// Constructs new brep from 8 corner points.
     /// </summary>
     /// <param name="corners">
-    /// 8 points defining the box corners arranged as the vN lables indicate.
-    /// v7_______e6_____v6
-    /// |\             |\
-    /// | e7           | e5
-    /// |  \ ______e4_____\ 
-    /// e11 v4         |   v5
-    /// |   |        e10   |
-    /// |   |          |   |
-    /// v3--|---e2----v2   e9
-    /// \   e8         \   |
-    ///  e3 |           e1 |
-    ///   \ |            \ |
-    ///    \v0_____e0_____\v1
+    /// 8 points defining the box corners arranged as the vN labels indicate.
+    /// <pre>
+    /// <para>v7_______e6____v6</para>
+    /// <para>|\             |\</para>
+    /// <para>| e7           | e5</para>
+    /// <para>|  \ ______e4_____\</para>
+    /// <para>e11 v4         |   v5</para>
+    /// <para>|   |        e10   |</para>
+    /// <para>|   |          |   |</para>
+    /// <para>v3--|---e2----v2   e9</para>
+    /// <para> \  e8          \  |</para>
+    /// <para> e3 |            e1|</para>
+    /// <para>   \|             \|</para>
+    /// <para>    v0_____e0______v1</para>
+    /// </pre>
     /// </param>
-    /// <returns></returns>
+    /// <returns>A new box Brep, on null on error.</returns>
     public static Brep CreateFromBox(IEnumerable<Point3d> corners)
     {
       Point3d[] box_corners = new Point3d[8];

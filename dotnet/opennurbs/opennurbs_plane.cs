@@ -30,7 +30,7 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 128)]
   [Serializable]
-  public struct Plane
+  public struct Plane : IEquatable<Plane>
   {
     // This is a special case struct that does not match it's C++ counterpart (ON_Plane)
     // The reason we did this was to remove ON_PlaneEquation from the struct and allow for
@@ -284,10 +284,7 @@ namespace Rhino.Geometry
     /// <returns>true if the two planes have all equal components; false otherwise.</returns>
     public static bool operator ==(Plane a, Plane b)
     {
-      return (a.m_origin == b.m_origin) &&
-             (a.m_xaxis == b.m_xaxis) &&
-             (a.m_yaxis == b.m_yaxis) &&
-             (a.m_zaxis == b.m_zaxis);
+      return a.Equals(b);
     }
 
     /// <summary>
@@ -312,6 +309,19 @@ namespace Rhino.Geometry
     public override bool Equals(object obj)
     {
       return ((obj is Plane) && (this == (Plane)obj));
+    }
+
+    /// <summary>
+    /// Determines if another plane has the same components as this plane.
+    /// </summary>
+    /// <param name="plane">A plane.</param>
+    /// <returns>true if plane has the same components as this plane; false otherwise.</returns>
+    public bool Equals(Plane plane)
+    {
+      return (m_origin == plane.m_origin) &&
+             (m_xaxis == plane.m_xaxis) &&
+             (m_yaxis == plane.m_yaxis) &&
+             (m_zaxis == plane.m_zaxis);
     }
 
     /// <summary>

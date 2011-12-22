@@ -12,7 +12,7 @@ namespace Rhino.Runtime
   public class DocumentCollectedException : Exception
   {
     /// <summary>
-    /// Initializes a new instance of the document controlled excetion class.
+    /// Initializes a new instance of the document controlled exception class.
     /// </summary>
     public DocumentCollectedException() :
       base("This object cannot be modified because it is controlled by a document.") { }

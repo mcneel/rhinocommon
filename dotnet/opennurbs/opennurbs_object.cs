@@ -207,8 +207,8 @@ namespace Rhino.Runtime
     /// Determines if an object is valid. Also provides a report on errors if this
     /// object happens not to be valid.
     /// </summary>
-    /// <param name="log"></param>
-    /// <returns></returns>
+    /// <param name="log">A textual log. This out parameter is assigned during this call.</param>
+    /// <returns>true if this object is valid; false otherwise.</returns>
     public bool IsValidWithLog(out string log)
     {
       log = String.Empty;

@@ -919,7 +919,7 @@ namespace Rhino.ApplicationSettings
     /// Returns list of recently opened files. Note that this function does not
     /// check to make sure that these files still exist.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An array of strings with the paths to the recently opened files.</returns>
     public static string[] RecentlyOpenedFiles()
     {
       IntPtr pStrings = UnsafeNativeMethods.ON_StringArray_New();

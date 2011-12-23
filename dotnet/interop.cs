@@ -23,11 +23,11 @@ namespace Rhino.Runtime
 #endif
 
     /// <summary>
-    /// Return the underlying const ON_Geometry* for a RhinoCommon class. You should only
+    /// Returns the underlying const ON_Geometry* for a RhinoCommon class. You should only
     /// be interested in using this function if you are writing C++ code.
     /// </summary>
-    /// <param name="geometry"></param>
-    /// <returns></returns>
+    /// <param name="geometry">A geometry object. This can be null and in such a case <see cref="IntPtr.Zero"/> is returned.</param>
+    /// <returns>A pointer to the const geometry.</returns>
     public static IntPtr NativeGeometryConstPointer(Geometry.GeometryBase geometry)
     {
       IntPtr rc = IntPtr.Zero;
@@ -40,8 +40,8 @@ namespace Rhino.Runtime
     /// Return the underlying non-const ON_Geometry* for a RhinoCommon class. You should
     /// only be interested in using this function if you are writing C++ code.
     /// </summary>
-    /// <param name="geometry"></param>
-    /// <returns></returns>
+    /// <param name="geometry">A geometry object. This can be null and in such a case <see cref="IntPtr.Zero"/> is returned.</param>
+    /// <returns>A pointer to the non-const geometry.</returns>
     public static IntPtr NativeGeometryNonConstPointer(Geometry.GeometryBase geometry)
     {
       IntPtr rc = IntPtr.Zero;
@@ -55,8 +55,8 @@ namespace Rhino.Runtime
     /// Return the underlying const CRhinoObject* for a RhinoCommon class. You should only
     /// be interested in using this function if you are writing C++ code.
     /// </summary>
-    /// <param name="rhinoObject"></param>
-    /// <returns></returns>
+    /// <param name="rhinoObject">A Rhino object.</param>
+    /// <returns>A pointer to the Rhino const object.</returns>
     public static IntPtr RhinoObjectConstPointer(Rhino.DocObjects.RhinoObject rhinoObject)
     {
       IntPtr rc = IntPtr.Zero;
@@ -68,7 +68,7 @@ namespace Rhino.Runtime
 
     /// <summary>
     /// Constructs a RhinoCommon Geometry class from a given ON_Geomety*. The ON_Geometry*
-    /// must be declared on the heap and it's lifetime becomes controlled by RhinoCommon.
+    /// must be declared on the heap and its lifetime becomes controlled by RhinoCommon.
     /// </summary>
     /// <param name="pGeometry">ON_Geometry*</param>
     /// <returns>The appropriate geometry class in RhinoCommon on success.</returns>
@@ -80,9 +80,9 @@ namespace Rhino.Runtime
     /// <summary>
     /// Attempts to copy the contents of a RMA.OpenNURBS.OnArc to a Rhino.Geometry.Arc.
     /// </summary>
-    /// <param name="source"></param>
-    /// <param name="destination"></param>
-    /// <returns>true on success.</returns>
+    /// <param name="source">A source OnArc.</param>
+    /// <param name="destination">A destination arc.</param>
+    /// <returns>true if the operation succeeded; false otherwise.</returns>
     public static bool TryCopyFromOnArc(object source, out Rhino.Geometry.Arc destination)
     {
       destination = new Rhino.Geometry.Arc();
@@ -99,9 +99,9 @@ namespace Rhino.Runtime
     /// <summary>
     /// Attempts to copy the contents of a Rhino.Geometry.Arc to a RMA.OpenNURBS.OnArc.
     /// </summary>
-    /// <param name="source"></param>
-    /// <param name="destination"></param>
-    /// <returns></returns>
+    /// <param name="source">A source arc.</param>
+    /// <param name="destination">A destination OnArc.</param>
+    /// <returns>true if the operation succeeded; false otherwise.</returns>
     public static bool TryCopyToOnArc(Rhino.Geometry.Arc source, object destination)
     {
       bool rc = false;
@@ -234,7 +234,7 @@ namespace Rhino.Runtime
     /// <summary>
     /// Constructs a Rhino_DotNet OnBrep that is a copy of a given brep.
     /// </summary>
-    /// <param name="source"></param>
+    /// <param name="source">A source brep.</param>
     /// <returns>
     /// Rhino_DotNet object on success. This will be an independent copy.
     /// </returns>
@@ -255,7 +255,7 @@ namespace Rhino.Runtime
     /// <summary>
     /// Constructs a Rhino_DotNet OnSurface that is a copy of a given curve.
     /// </summary>
-    /// <param name="source"></param>
+    /// <param name="source">A source brep.</param>
     /// <returns>
     /// Rhino_DotNet object on success. This will be an independent copy.
     /// </returns>
@@ -276,7 +276,7 @@ namespace Rhino.Runtime
     /// <summary>
     /// Constructs a Rhino_DotNet OnMesh that is a copy of a given mesh.
     /// </summary>
-    /// <param name="source"></param>
+    /// <param name="source">A source brep.</param>
     /// <returns>
     /// Rhino_DotNet object on success. This will be an independent copy.
     /// </returns>
@@ -297,7 +297,7 @@ namespace Rhino.Runtime
     /// <summary>
     /// Constructs a Rhino_DotNet OnCurve that is a copy of a given curve.
     /// </summary>
-    /// <param name="source"></param>
+    /// <param name="source">A RhinoCommon source curve.</param>
     /// <returns>
     /// Rhino_DotNet object on success. This will be an independent copy.
     /// </returns>
@@ -318,7 +318,7 @@ namespace Rhino.Runtime
     /// <summary>
     /// Constructs a Rhino_DotNet OnXform from a given RhinoCommon Transform.
     /// </summary>
-    /// <param name="source"></param>
+    /// <param name="source">A RhinoCommon source transform.</param>
     /// <returns>
     /// Rhino_DotNet object on success. This will be an independent copy.
     /// </returns>
@@ -345,9 +345,9 @@ namespace Rhino.Runtime
     /// <summary>
     /// Convert a Rhino.Display.Viewport to an RMA.Rhino.IRhinoViewport.
     /// </summary>
-    /// <param name="source"></param>
+    /// <param name="source">A RhinoCommon viewport.</param>
     /// <returns>
-    /// Rhino_DotNet object on success. This will be an independent copy.
+    /// Rhino_DotNet IRhinoViewport object on success. This will be an independent copy.
     /// </returns>
     public static object ToIRhinoViewport(Rhino.Display.RhinoViewport source)
     {

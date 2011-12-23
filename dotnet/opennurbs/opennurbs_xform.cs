@@ -351,7 +351,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="a">A tranform.</param>
     /// <param name="b">Another tranform.</param>
-    /// <returns>true if transfroms are equal; otherwise false.</returns>
+    /// <returns>true if transforms are equal; otherwise false.</returns>
     public static bool operator ==(Transform a, Transform b)
     {
       return a.m_00 == b.m_00 && a.m_01 == b.m_01 && a.m_02 == b.m_02 && a.m_03 == b.m_03 &&
@@ -365,7 +365,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="a">A tranform.</param>
     /// <param name="b">Another tranform.</param>
-    /// <returns>true if transfroms are different; otherwise false.</returns>
+    /// <returns>true if transforms are different; otherwise false.</returns>
     public static bool operator !=(Transform a, Transform b)
     {
       return a.m_00 != b.m_00 || a.m_01 != b.m_01 || a.m_02 != b.m_02 || a.m_03 != b.m_03 ||
@@ -690,7 +690,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines if another transform equals this transform value.
     /// </summary>
-    /// <param name="other">Another transfrom.</param>
+    /// <param name="other">Another transform.</param>
     /// <returns>true if other has the same value as this transform; otherwise, false.</returns>
     public bool Equals(Transform other)
     {

@@ -6,7 +6,7 @@ namespace Rhino.Geometry
 {
   /// <summary>
   /// Represents a Bezier curve.
-  /// <para>Note: the bezier curve is not derived from <see cref="Curve"/>.</para>
+  /// <para>Note: as an exception, the bezier curve <b>is not</b> derived from <see cref="Curve"/>.</para>
   /// </summary>
   public class BezierCurve : IDisposable
   {

@@ -15,7 +15,7 @@ namespace Rhino
     int m_i, m_j;
 
     /// <summary>
-    /// Initializes a new instance of <see cref="IndexPair"/>.
+    /// Initializes a new instance of <see cref="IndexPair"/> with two indices.
     /// </summary>
     /// <param name="i">A first index.</param>
     /// <param name="j">A second index.</param>

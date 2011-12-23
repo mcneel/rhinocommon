@@ -413,7 +413,7 @@ namespace Rhino.Geometry
     /// -d -c  b  a
     /// which has the same arithmetic properties as the quaternion. 
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A transform value.</returns>
     /// <remarks>
     /// Do not confuse this with the rotation defined by the quaternion. This
     /// function will only be interesting to math nerds and is not useful in
@@ -465,9 +465,9 @@ namespace Rhino.Geometry
     /// where (x,y,z) is the unit vector parallel to axis.  This is the
     /// unit quaternion that represents the rotation of angle about axis.
     /// </summary>
-    /// <param name="angle">in radians.</param>
-    /// <param name="axisOfRotation"></param>
-    /// <returns></returns>
+    /// <param name="angle">An angle in radians.</param>
+    /// <param name="axisOfRotation">The axis of rotation.</param>
+    /// <returns>A new quaternion.</returns>
     public static Quaternion Rotation(double angle, Vector3d axisOfRotation)
     {
       double s = axisOfRotation.Length;
@@ -494,10 +494,10 @@ namespace Rhino.Geometry
     /// plane0.xaxis to plane1.xaxis, plane0.yaxis to plane1.yaxis, and 
     /// plane0.zaxis to plane1.zaxis.
     /// </summary>
-    /// <param name="plane0"></param>
-    /// <param name="plane1"></param>
-    /// <returns></returns>
-    /// <remarks>the plane origins are ignored</remarks>
+    /// <param name="plane0">The first plane.</param>
+    /// <param name="plane1">The second plane.</param>
+    /// <returns>A quaternion value.</returns>
+    /// <remarks>The plane origins are ignored</remarks>
     public static Quaternion Rotation(Plane plane0, Plane plane1)
     {
       Quaternion q = new Quaternion();
@@ -508,9 +508,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Returns the rotation defined by the quaternion.
     /// </summary>
-    /// <param name="angle">in radians.</param>
+    /// <param name="angle">An angle in radians.</param>
     /// <param name="axis">unit axis of rotation of 0 if (b,c,d) is the zero vector.</param>
-    /// <returns></returns>
+    /// <returns>True if the operation succeeded; otherwise, false.</returns>
     /// <remarks>
     /// If the quaternion is not unitized, the rotation of its unitized form is returned.
     /// </remarks>
@@ -528,8 +528,8 @@ namespace Rhino.Geometry
     /// Returns the frame created by applying the quaternion's rotation
     /// to the canonical world frame (1,0,0),(0,1,0),(0,0,1).
     /// </summary>
-    /// <param name="plane"></param>
-    /// <returns></returns>
+    /// <param name="plane">A plane. This out value will be assigned during this call.</param>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
     public bool GetRotation(out Plane plane)
     {
       plane = new Plane();
@@ -606,9 +606,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// The quaternion product of p and q.  This is the same value as p*q.
     /// </summary>
-    /// <param name="p"></param>
-    /// <param name="q"></param>
-    /// <returns></returns>
+    /// <param name="p">The first trasform.</param>
+    /// <param name="q">The second trasform.</param>
+    /// <returns>A transform value.</returns>
     public static Quaternion Product( Quaternion p, Quaternion q )
     {
       return new Quaternion(p.m_a*q.m_a - p.m_b*q.m_b - p.m_c*q.m_c - p.m_d*q.m_d,

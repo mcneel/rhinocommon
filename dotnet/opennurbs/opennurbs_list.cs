@@ -1691,9 +1691,9 @@ namespace Rhino.Collections
     /// <summary>
     /// Anything calling this function should not be modifying the contents of the array.
     /// </summary>
-    /// <param name="points"></param>
-    /// <param name="count"></param>
-    /// <returns></returns>
+    /// <param name="points">A list, an array or any enumerable set of points.</param>
+    /// <param name="count">The resulting count of elements.</param>
+    /// <returns>An array.</returns>
     internal static Point3d[] GetConstPointArray(IEnumerable<Point3d> points, out int count)
     {
       RhinoList<Point3d> pointlist = points as RhinoList<Point3d>;
@@ -1967,9 +1967,9 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="list">A list of points.</param>
     /// <param name="testPoint">Point to compare against.</param>
-    /// <returns></returns>
+    /// <returns>A point.</returns>
     /// <exception cref="ArgumentException">
-    /// list must contain at least one point and testPoint must be valid.
+    /// List must contain at least one point and testPoint must be valid.
     /// </exception>
     public static Point3d ClosestPointInList(IList<Point3d> list, Point3d testPoint)
     {

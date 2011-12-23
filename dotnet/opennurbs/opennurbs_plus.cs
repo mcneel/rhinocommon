@@ -224,14 +224,15 @@ namespace Rhino.Geometry.Intersect
     public double ClashRadius { get { return m_radius; } }
 
     /// <summary>
-    /// Searches for locations where the distance from a mesh in one set of meshes
-    /// is less than distance to a mesh in a second set of meshes.
+    /// Searches for locations where the distance from <i>a mesh in one set</i> of meshes
+    /// is less than distance to <i>another mesh in a second set</i> of meshes.
     /// </summary>
-    /// <param name="setA"></param>
-    /// <param name="setB"></param>
-    /// <param name="distance"></param>
-    /// <param name="maxEventCount"></param>
-    /// <returns></returns>
+    /// <param name="setA">The first set of meshes.</param>
+    /// <param name="setB">The second set of meshes.</param>
+    /// <param name="distance">The largest distance at which there is a clash.
+    /// All values smaller than this cause a clash as well.</param>
+    /// <param name="maxEventCount">The maximum number of clash objects.</param>
+    /// <returns>An array of clash objects.</returns>
     public static MeshClash[] Search(IEnumerable<Mesh> setA, IEnumerable<Mesh> setB, double distance, int maxEventCount)
     {
       IList<Mesh> _setA = setA as IList<Mesh>;
@@ -282,28 +283,30 @@ namespace Rhino.Geometry.Intersect
     }
 
     /// <summary>
-    /// Searches for locations where the distance from a mesh is less
-    /// than distance to a mesh in a set of meshes.
+    /// Searches the locations where the distance from <i>the first mesh</i> to <i>a mesh in the second set</i> of meshes
+    /// is less than the provided value.
     /// </summary>
-    /// <param name="meshA"></param>
-    /// <param name="setB"></param>
-    /// <param name="distance"></param>
-    /// <param name="maxEventCount"></param>
-    /// <returns></returns>
+    /// <param name="meshA">The first mesh.</param>
+    /// <param name="setB">The second set of meshes.</param>
+    /// <param name="distance">The largest distance at which there is a clash.
+    /// All values smaller than this cause a clash as well.</param>
+    /// <param name="maxEventCount">The maximum number of clash objects.</param>
+    /// <returns>An array of clash objects.</returns>
     public static MeshClash[] Search(Mesh meshA, IEnumerable<Mesh> setB, double distance, int maxEventCount)
     {
       return Search(new Mesh[] { meshA }, setB, distance, maxEventCount);
     }
 
     /// <summary>
-    /// Searches for locations where the distance from a mesh is less than distance
-    /// to another mesh.
+    /// Searches the locations where the distance from <i>the first mesh</i> to <i>the second mesh</i>
+    /// is less than the provided value.
     /// </summary>
-    /// <param name="meshA"></param>
-    /// <param name="meshB"></param>
-    /// <param name="distance"></param>
-    /// <param name="maxEventCount"></param>
-    /// <returns></returns>
+    /// <param name="meshA">The first mesh.</param>
+    /// <param name="meshB">The second mesh.</param>
+    /// <param name="distance">The largest distance at which there is a clash.
+    /// All values smaller than this cause a clash as well.</param>
+    /// <param name="maxEventCount">The maximum number of clash objects.</param>
+    /// <returns>An array of clash objects.</returns>
     public static MeshClash[] Search(Mesh meshA, Mesh meshB, double distance, int maxEventCount)
     {
       return Search(new Mesh[] { meshA }, new Mesh[] { meshB }, distance, maxEventCount);

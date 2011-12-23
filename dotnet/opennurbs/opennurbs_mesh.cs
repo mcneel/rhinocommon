@@ -644,9 +644,9 @@ namespace Rhino.Geometry
     /// <summary>
     /// Splits a set of meshes with another set.
     /// </summary>
-    /// <param name="meshesToSplit">A list, an array, or any enumerable set of meshes to be split.</param>
-    /// <param name="meshSplitters">A list, an array, or any enumerable set of meshes that cut.</param>
-    /// <returns></returns>
+    /// <param name="meshesToSplit">A list, an array, or any enumerable set of meshes to be split. If this is null, null will be returned.</param>
+    /// <param name="meshSplitters">A list, an array, or any enumerable set of meshes that cut. If this is null, null will be returned.</param>
+    /// <returns>A new mesh array, or null on error.</returns>
     public static Mesh[] CreateBooleanSplit(IEnumerable<Mesh> meshesToSplit, IEnumerable<Mesh> meshSplitters)
     {
       return MeshBooleanHelper(meshesToSplit, meshSplitters, idxSplit);
@@ -1017,8 +1017,8 @@ namespace Rhino.Geometry
     /// If the mesh has SurfaceParameters, the surface is evaluated at
     /// these parameters and the mesh geometry is updated.
     /// </summary>
-    /// <param name="surface"></param>
-    /// <returns></returns>
+    /// <param name="surface">An input surface.</param>
+    /// <returns>true if the operation succceeded; false otherwise.</returns>
     public bool EvaluateMeshGeometry(Surface surface)
     {
       // don't switch to non-const if we don't have to
@@ -1183,7 +1183,7 @@ namespace Rhino.Geometry
     /// Split a mesh by an infinite plane.
     /// </summary>
     /// <param name="plane"></param>
-    /// <returns></returns>
+    /// <returns>A new mesh array with the split result. This can be null if no result was found.</returns>
     public Mesh[] Split(Plane plane)
     {
       IntPtr pConstThis = ConstPointer();
@@ -1263,10 +1263,10 @@ namespace Rhino.Geometry
 
 #if RHINO_SDK
     /// <summary>
-    /// Create outlines of a mesh projected against a plane.
+    /// Constructs the outlines of a mesh projected against a plane.
     /// </summary>
-    /// <param name="plane"></param>
-    /// <returns></returns>
+    /// <param name="plane">A plane to project against.</param>
+    /// <returns>An array of polylines, or null on error.</returns>
     public Polyline[] GetOutlines(Plane plane)
     {
       IntPtr pConstMesh = ConstPointer();
@@ -1294,11 +1294,11 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Create outlines of a mesh. The projection information in the
+    /// Constructs the outlines of a mesh. The projection information in the
     /// viewport is used to determine how the outlines are projected.
     /// </summary>
-    /// <param name="viewport"></param>
-    /// <returns></returns>
+    /// <param name="viewport">A viewport to determine projection direction.</param>
+    /// <returns>An array of polylines, or null on error.</returns>
     public Polyline[] GetOutlines(Rhino.Display.RhinoViewport viewport)
     {
       IntPtr pConstMesh = ConstPointer();
@@ -1330,7 +1330,7 @@ namespace Rhino.Geometry
     /// Returns all edges of a mesh that are considered "naked" in the
     /// sense that the edge only has one face.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An array of polylines, or null on error.</returns>
     public Polyline[] GetNakedEdges()
     {
       IntPtr pConstThis = ConstPointer();
@@ -1494,7 +1494,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Evaluate a mesh at a set of barycentric coordinates. Barycentric coordinates must 
+    /// Evaluates a mesh at a set of barycentric coordinates. Barycentric coordinates must 
     /// be assigned in accordance with the rules as defined by MeshPoint.T.
     /// </summary>
     /// <param name="faceIndex">Index of triangle or quad to evaluate.</param>
@@ -1514,10 +1514,10 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Pull a collection of points to a mesh.
+    /// Pulls a collection of points to a mesh.
     /// </summary>
     /// <param name="points"></param>
-    /// <returns></returns>
+    /// <returns>An array of points. This can be empty.</returns>
     public Point3d[] PullPointsToMesh(IEnumerable<Point3d> points)
     {
       List<Point3d> rc = new List<Point3d>();
@@ -1531,24 +1531,24 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Make a new mesh with vertices offset a distance in the opposite direction of the existing vertex normals.
+    /// Makes a new mesh with vertices offset a distance in the opposite direction of the existing vertex normals.
     /// Same as Mesh.Offset(distance, false)
     /// </summary>
-    /// <param name="distance"></param>
-    /// <returns>new mesh on success, null on failure.</returns>
+    /// <param name="distance">A distance value to use for offsetting.</param>
+    /// <returns>A new mesh on success, or null on failure.</returns>
     public Mesh Offset(double distance)
     {
       return Offset(distance, false);
     }
 
     /// <summary>
-    /// Make a new mesh with vertices offset a distance in the opposite direction of the existing vertex normals.
+    /// Makes a new mesh with vertices offset a distance in the opposite direction of the existing vertex normals.
     /// Optionally, based on the value of solidify, adds the input mesh and a ribbon of faces along any naked edges.
     /// If solidify is false it acts exactly as the Offset(distance) function.
     /// </summary>
-    /// <param name="distance"></param>
-    /// <param name="solidify"></param>
-    /// <returns></returns>
+    /// <param name="distance">A distance value.</param>
+    /// <param name="solidify">true if the mesh should be solidified.</param>
+    /// <returns>A new mesh on success, or null on failure.</returns>
     public Mesh Offset(double distance, bool solidify)
     {
       IntPtr pConstMesh = ConstPointer();
@@ -1601,7 +1601,8 @@ namespace Rhino.Geometry
     /// mesh. Each value corresponds to a mesh vertex and is set to true if the vertex is
     /// not completely surrounded by faces.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An array of true/false flags that, at each index, reveals if the corresponding
+    /// vertex is completely surrounded by faces.</returns>
     public bool[] GetNakedEdgePointStatus()
     {
       int count = this.Vertices.Count;
@@ -2110,8 +2111,8 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Gets indices of all vertices that form "edges" with a given vertex index.
     /// </summary>
-    /// <param name="vertexIndex"></param>
-    /// <returns></returns>
+    /// <param name="vertexIndex">The index of a vertex to query.</param>
+    /// <returns>An array of vertex indices that are connected with the specified vertex.</returns>
     public int[] GetConnectedVertices(int vertexIndex)
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
@@ -2336,8 +2337,8 @@ namespace Rhino.Geometry.Collections
     /// Gets the topology vertex index for an existing mesh vertex in the mesh's
     /// VertexList.
     /// </summary>
-    /// <param name="vertexIndex">index of a vertex in the Mesh.Vertices.</param>
-    /// <returns>index of a topology vertex in the Mesh.TopologyVertices.</returns>
+    /// <param name="vertexIndex">Index of a vertex in the Mesh.Vertices.</param>
+    /// <returns>Index of a topology vertex in the Mesh.TopologyVertices.</returns>
     /// <exception cref="IndexOutOfRangeException"></exception>
     public int TopologyVertexIndex(int vertexIndex)
     {
@@ -2351,7 +2352,7 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Gets all indices of the mesh vertices that a given topology vertex represents.
     /// </summary>
-    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices.</param>
+    /// <param name="topologyVertexIndex">Index of a topology vertex in Mesh.TopologyVertices to query.</param>
     /// <returns>
     /// Indices of all vertices that in Mesh.Vertices that a topology vertex represents.
     /// </returns>
@@ -2372,8 +2373,8 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Returns TopologyVertexIndices for a given mesh face index.
     /// </summary>
-    /// <param name="faceIndex"></param>
-    /// <returns></returns>
+    /// <param name="faceIndex">The index of a face to query.</param>
+    /// <returns>An array of vertex indices.</returns>
     public int[] IndicesFromFace(int faceIndex)
     {
       int[] rc = null;
@@ -2538,8 +2539,8 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     /// <summary>Gets the two topology vertices for a given topology edge.</summary>
-    /// <param name="topologyEdgeIndex"></param>
-    /// <returns></returns>
+    /// <param name="topologyEdgeIndex">An index of a topology edge.</param>
+    /// <returns>The pair of vertex indices the edge connects.</returns>
     public IndexPair GetTopologyVertices(int topologyEdgeIndex)
     {
       int i = -1, j = -1;
@@ -2549,10 +2550,10 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Gets indices of faces connected to this edge.
+    /// Gets indices of faces connected to an edge.
     /// </summary>
-    /// <param name="topologyEdgeIndex"></param>
-    /// <returns></returns>
+    /// <param name="topologyEdgeIndex">An index of a topology edge that is queried.</param>
+    /// <returns>An array of face indices the edge borders. This might be empty on error.</returns>
     public int[] GetConnectedFaces(int topologyEdgeIndex)
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
@@ -2565,11 +2566,11 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Gets indices of faces connected to this edge.
+    /// Gets indices of faces connected to an edge.
     /// </summary>
-    /// <param name="topologyEdgeIndex"></param>
+    /// <param name="topologyEdgeIndex">An index of a topology edge that is queried.</param>
     /// <param name="faceOrientationMatchesEdgeDirection"></param>
-    /// <returns></returns>
+    /// <returns>An array of face indices the edge borders. This might be empty on error.</returns>
     public int[] GetConnectedFaces(int topologyEdgeIndex, out bool[] faceOrientationMatchesEdgeDirection)
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
@@ -2588,8 +2589,8 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Gets indices of edges that surround a given face.
     /// </summary>
-    /// <param name="faceIndex"></param>
-    /// <returns></returns>
+    /// <param name="faceIndex">A face index.</param>
+    /// <returns>A new array of indices to the topological edges that are connected with the specified face.</returns>
     public int[] GetEdgesForFace(int faceIndex)
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
@@ -2611,13 +2612,13 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Gets indices of edges that surround a given face.
     /// </summary>
-    /// <param name="faceIndex"></param>
+    /// <param name="faceIndex">A face index.</param>
     /// <param name="sameOrientation">
     /// Same length as returned edge index array. For each edge, the sameOrientation value
     /// tells you if the edge orientation matches the face orientation (true), or is
-    /// reversed (false)
+    /// reversed (false) compared to it.
     /// </param>
-    /// <returns></returns>
+    /// <returns>A new array of indices to the topological edges that are connected with the specified face.</returns>
     public int[] GetEdgesForFace(int faceIndex, out bool[] sameOrientation)
     {
       sameOrientation = new bool[0];
@@ -2644,9 +2645,9 @@ namespace Rhino.Geometry.Collections
     /// Returns index of edge that connects topological vertices. 
     /// returns -1 if no edge is found.
     /// </summary>
-    /// <param name="topologyVertex1"></param>
-    /// <param name="topologyVertex2"></param>
-    /// <returns></returns>
+    /// <param name="topologyVertex1">The first topology vertex index.</param>
+    /// <param name="topologyVertex2">The second topology vertex index.</param>
+    /// <returns>The edge index.</returns>
     public int GetEdgeIndex(int topologyVertex1, int topologyVertex2)
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
@@ -2654,9 +2655,9 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>Gets the 3d line along an edge.</summary>
-    /// <param name="topologyEdgeIndex"></param>
+    /// <param name="topologyEdgeIndex">The topology edge index.</param>
     /// <returns>
-    /// Line along edge.  If input is not valid, an Invalid Line is returned.
+    /// Line along edge. If input is not valid, an Invalid Line is returned.
     /// </returns>
     public Line EdgeLine(int topologyEdgeIndex)
     {

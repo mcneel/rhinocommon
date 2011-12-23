@@ -121,7 +121,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Returns Ids of viewports that this clipping plane is supposed to clip.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An array of globally unique ideantifiers (Guids) to the viewports.</returns>
     public Guid[] ViewportIds()
     {
       IntPtr pConstThis = ConstPointer();

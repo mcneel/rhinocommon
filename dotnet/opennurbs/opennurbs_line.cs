@@ -286,9 +286,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Contructs the string representation of this line, in the form From,To.
+    /// Contructs the string representation of this line, in the form "From,To".
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A text string.</returns>
     public override string ToString()
     {
       return string.Format("{0},{1}", From.ToString(), To.ToString());
@@ -368,8 +368,8 @@ namespace Rhino.Geometry
     /// Finds the shortest distance between this line as a finite segment
     /// and a test point.
     /// </summary>
-    /// <param name="testPoint"></param>
-    /// <returns></returns>
+    /// <param name="testPoint">A point to test.</param>
+    /// <returns>The minimum distance.</returns>
     public double MinimumDistanceTo(Point3d testPoint)
     {
       return UnsafeNativeMethods.ON_Line_DistanceToPoint(ref this, testPoint, true);
@@ -378,8 +378,8 @@ namespace Rhino.Geometry
     /// Finds the shortest distance between this line as a finite segment
     /// and another finite segment.
     /// </summary>
-    /// <param name="testLine"></param>
-    /// <returns></returns>
+    /// <param name="testLine">A line to test.</param>
+    /// <returns>The minimum distance.</returns>
     public double MinimumDistanceTo(Line testLine)
     {
       return UnsafeNativeMethods.ON_Line_DistanceToLine(ref this, ref testLine, true);
@@ -388,8 +388,8 @@ namespace Rhino.Geometry
     /// Finds the largest distance between this line as a finite segment
     /// and a test point.
     /// </summary>
-    /// <param name="testPoint"></param>
-    /// <returns></returns>
+    /// <param name="testPoint">A point to test.</param>
+    /// <returns>The maximum distance.</returns>
     public double MaximumDistanceTo(Point3d testPoint)
     {
       return UnsafeNativeMethods.ON_Line_DistanceToPoint(ref this, testPoint, false);
@@ -398,8 +398,8 @@ namespace Rhino.Geometry
     /// Finds the largest distance between this line as a finite segment
     /// and another finite segment.
     /// </summary>
-    /// <param name="testLine"></param>
-    /// <returns></returns>
+    /// <param name="testLine">A line to test.</param>
+    /// <returns>The maximum distance.</returns>
     public double MaximumDistanceTo(Line testLine)
     {
       return UnsafeNativeMethods.ON_Line_DistanceToLine(ref this, ref testLine, false);

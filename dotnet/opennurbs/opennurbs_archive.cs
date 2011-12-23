@@ -2861,10 +2861,7 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ON_BinaryArchive_EndReadDictionary(m_ptr);
     }
 
-    /// <summary>
-    /// </summary>
-    /// <param name="entryType"></param>
-    /// <param name="entryName"></param>
+    /// <summary>See return.</summary>
     /// <returns>
     /// 0: serious IO error
     /// 1: success

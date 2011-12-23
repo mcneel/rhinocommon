@@ -650,7 +650,7 @@ namespace Rhino.Render
     {
       if (1 != UnsafeNativeMethods.Rdk_RenderContent_SetVariantParameter(ConstPointer(), parameterName, new Variant(value).ConstPointer(), (int)changeContext))
       {
-        throw new InvalidOperationException("SetNamedParamter doesn't support this type");
+        throw new InvalidOperationException("SetNamedParamter doesn't support this type.");
       }
     }
 
@@ -671,7 +671,7 @@ namespace Rhino.Render
           return variant;
         }
       }
-      throw new InvalidOperationException("Type not supported");
+      throw new InvalidOperationException("Type not supported.");
     }
 
     /// <summary>

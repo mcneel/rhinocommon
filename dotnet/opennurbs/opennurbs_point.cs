@@ -1433,6 +1433,16 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Negates all values in the point
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
+    public static Point3d operator -(Point3d point)
+    {
+      return new Point3d(-point.m_x, -point.m_y, -point.m_z);
+    }
+
+    /// <summary>
     /// Determines whether two Point3d have equal values.
     /// </summary>
     /// <param name="a">The first point.</param>

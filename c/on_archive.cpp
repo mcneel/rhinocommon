@@ -1762,3 +1762,34 @@ RH_C_FUNCTION ON_3dmSettings* ONX_Model_3dmSettingsPointer(ONX_Model* pModel)
     rc = &(pModel->m_settings);
   return rc;
 }
+
+RH_C_FUNCTION bool ONX_Model_ReadPreviewImage(const RHMONO_STRING* path, CRhinoDib* pRhinoDib)
+{
+  bool rc = false;
+  INPUTSTRINGCOERCE(_path, path);
+  if( NULL==pRhinoDib )
+    return false;
+
+  FILE* fp = ON::OpenFile( _path, L"rb" );
+  if( fp )
+  {
+    ON_BinaryFile file( ON::read3dm, fp);
+    int version = 0;
+    ON_String comments;
+    if( file.Read3dmStartSection( &version, comments ) )
+    {
+      ON_3dmProperties prop;
+      if( file.Read3dmProperties(prop) )
+      {
+        BITMAPINFO* pBMI = prop.m_PreviewImage.m_bmi;
+        if( pBMI )
+        {
+          pRhinoDib->SetDib(pBMI, false);
+          rc = true;
+        }
+      }
+    }
+    ON::CloseFile(fp);
+  }
+  return rc;
+}

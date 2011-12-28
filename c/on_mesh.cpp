@@ -1880,9 +1880,9 @@ RH_C_FUNCTION ON_MassProperties* ON_Mesh_MassProperties(bool bArea, const ON_Mes
     rc = new ON_MassProperties();
     bool success = false;
     if( bArea )
-      success = pMesh->AreaMassProperties( *rc, true, true, false, false );
+      success = pMesh->AreaMassProperties( *rc, true, true, true, true );
     else
-      success = pMesh->VolumeMassProperties( *rc, true, true, false, false, ON_UNSET_POINT );
+      success = pMesh->VolumeMassProperties( *rc, true, true, true, true, ON_UNSET_POINT );
 
     if( !success )
     {

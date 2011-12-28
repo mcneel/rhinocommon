@@ -897,6 +897,11 @@ internal partial class UnsafeNativeMethods
   //ON_3dmSettings* ONX_Model_3dmSettingsPointer(ONX_Model* pModel)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ONX_Model_3dmSettingsPointer(IntPtr pModel);
+
+  //bool ONX_Model_ReadPreviewImage(const RHMONO_STRING* path, CRhinoDib* pRhinoDib)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ONX_Model_ReadPreviewImage([MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr pRhinoDib);
   #endregion
 
 

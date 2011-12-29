@@ -8917,6 +8917,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_RhinoPlanarClosedCurveContainmentTest(IntPtr pConstCurveA, IntPtr pConstCurveB, ref Plane plane, double tolerance);
 
+  //bool RHC_RhinoPlanarCurveCollisionTest( const ON_Curve* pConstCurveA, const ON_Curve* pConstCurveB, ON_PLANE_STRUCT* plane, double tolerance )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoPlanarCurveCollisionTest(IntPtr pConstCurveA, IntPtr pConstCurveB, ref Plane plane, double tolerance);
+
   //int RHC_PointInClosedRegion( const ON_Curve* pConstCurve, ON_3DPOINT_STRUCT test_point, ON_PLANE_STRUCT plane, double tolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_PointInClosedRegion(IntPtr pConstCurve, Point3d test_point, Plane plane, double tolerance);

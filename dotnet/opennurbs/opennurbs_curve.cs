@@ -917,6 +917,21 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Determines if tro coplanar curves collide (intersect)
+    /// </summary>
+    /// <param name="curveA"></param>
+    /// <param name="curveB"></param>
+    /// <param name="testPlane">plane containing the curves</param>
+    /// <param name="tolerance">intersection tolerance</param>
+    /// <returns>true if the curves intersect, otherwise false</returns>
+    public static bool PlanarCurveCollision(Curve curveA, Curve curveB, Plane testPlane, double tolerance)
+    {
+      IntPtr pConstCurveA = curveA.ConstPointer();
+      IntPtr pConstCurveB = curveB.ConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoPlanarCurveCollisionTest(pConstCurveA, pConstCurveB, ref testPlane, tolerance);
+    }
+
+    /// <summary>
     /// Determines whether two coplanar simple closed curves are disjoint or intersect;
     /// otherwise, if the regions have a containment relationship, discovers
     /// which curve encloses the other. This method is obsolete and will be removed in future versions of the SDK.

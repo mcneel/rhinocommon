@@ -72,7 +72,7 @@ RH_C_FUNCTION void ON_Light_GetVector(const ON_Light* pConstLight, ON_3dVector* 
 RH_C_FUNCTION void ON_Light_SetVector(ON_Light* pLight, ON_3DVECTOR_STRUCT v, int which)
 {
   const int idxDirection = 0;
-  const int idxPerpendicularDirection = 1;
+  //const int idxPerpendicularDirection = 1; // no set version - only "get"
   const int idxLength = 2;
   const int idxWidth = 3;
   if( pLight )

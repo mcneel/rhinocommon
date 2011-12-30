@@ -164,7 +164,7 @@ RH_C_FUNCTION bool ON_Mesh_SetNormals(ON_Mesh* ptr, int count, /*ARRAY*/const ON
   {
     int startIndex = 0;
     if( append )
-      int startIndex = ptr->m_N.Count();
+      startIndex = ptr->m_N.Count();
     
     ptr->m_N.SetCapacity(startIndex + count);
     ON_3fVector* dest = ptr->m_N.Array() + startIndex;
@@ -185,7 +185,7 @@ RH_C_FUNCTION bool ON_Mesh_SetTextureCoordinates(ON_Mesh* ptr, int count, /*ARRA
   {
     int startIndex = 0;
     if( append )
-      int startIndex = ptr->m_T.Count();
+      startIndex = ptr->m_T.Count();
     
     ptr->m_T.SetCapacity(startIndex + count);
     ON_2fPoint* dest = ptr->m_T.Array() + startIndex;
@@ -239,7 +239,7 @@ RH_C_FUNCTION bool ON_Mesh_SetVertexColors(ON_Mesh* pMesh, int count, /*ARRAY*/c
 
     int startIndex = 0;
     if( append )
-      int startIndex = pMesh->m_C.Count();
+      startIndex = pMesh->m_C.Count();
     
     pMesh->m_C.SetCapacity(startIndex + count);
     ON_Color* dest = pMesh->m_C.Array() + startIndex;
@@ -1804,7 +1804,7 @@ RH_C_FUNCTION bool ON_Mesh_MeshPointAt(const ON_Mesh* pConstMesh, int faceIndex,
           p0 = pConstMesh->m_V[face.vi[0]];
           p1 = pConstMesh->m_V[face.vi[2]];
           p2 = pConstMesh->m_V[face.vi[3]];
-          t0 = t0;
+          //t0 = t0;
           t1 = t2;
           t2 = t3;
         }
@@ -1813,8 +1813,8 @@ RH_C_FUNCTION bool ON_Mesh_MeshPointAt(const ON_Mesh* pConstMesh, int faceIndex,
           p0 = pConstMesh->m_V[face.vi[0]];
           p1 = pConstMesh->m_V[face.vi[1]];
           p2 = pConstMesh->m_V[face.vi[3]];
-          t0 = t0;
-          t1 = t1;
+          //t0 = t0;
+          //t1 = t1;
           t2 = t3;
         }
         else

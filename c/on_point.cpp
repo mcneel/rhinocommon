@@ -13,7 +13,7 @@ unsigned int ABGR_to_ARGB( unsigned int abgr )
 {
   // ON_Color defines alpha=0 as opaque where System.Drawing.Color defines alpha=255 as opaque
   // This function is for converting from ON_Color to System.Drawing.Color
-  unsigned int alpha = (abgr && 0xff000000)>>24;
+  unsigned int alpha = (abgr & 0xff000000)>>24;
   alpha = (255-alpha);
   unsigned int argb = (alpha)<<24 | (abgr & 0x000000ff)<<16 | (abgr & 0x0000ff00) | (abgr & 0x00ff0000)>>16;
   return argb;
@@ -113,7 +113,6 @@ RH_C_FUNCTION bool ON_Line_ClosestPointTo( ON_3DPOINT_STRUCT testPoint, ON_3DPOI
 
 RH_C_FUNCTION bool ON_4dPoint_Equality( ON_4DPOINT_STRUCT a, ON_4DPOINT_STRUCT b )
 {
-  bool rc = false;
   const ON_4dPoint* _a = (const ON_4dPoint*)&a;
   const ON_4dPoint* _b = (const ON_4dPoint*)&b;
   return ((*_a) == (*_b));

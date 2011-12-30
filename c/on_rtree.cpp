@@ -44,12 +44,12 @@ struct ON_RTreeSphere
   double m_radius;
 };
 
-struct ON_RTreeCapsule
-{
-  double m_point[2][3];
-  double m_radius;
-  double m_domain[2];
-};
+//struct ON_RTreeCapsule
+//{
+//  double m_point[2][3];
+//  double m_radius;
+//  double m_domain[2];
+//};
 #endif
 
 struct ON_RTreeSearchContext
@@ -58,7 +58,7 @@ struct ON_RTreeSearchContext
   int m_mode; //0=none, 1=bbox, 2=sphere, 3=capsule
   ON_RTreeBBox m_bbox;
   ON_RTreeSphere m_sphere;
-  ON_RTreeCapsule m_capsule;
+  // ON_RTreeCapsule m_capsule; // not using yet
 };
 
 RH_C_FUNCTION bool ON_RTreeSearchContext_GetBoundingBox(const ON_RTreeSearchContext* pConstContext, ON_3dPoint* p0, ON_3dPoint* p1)

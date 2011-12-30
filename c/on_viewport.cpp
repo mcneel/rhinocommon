@@ -125,10 +125,10 @@ RH_C_FUNCTION bool ON_Viewport_SetCameraUp(ON_Viewport* pVP, ON_3DVECTOR_STRUCT 
 
 RH_C_FUNCTION void ON_Viewport_SetLocked(ON_Viewport* pViewport, int which, bool b)
 {
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
   const int idxCameraLocationLock = 0;
   const int idxCameraDirectionLock = 1;
   const int idxCameraUpLock = 2;
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
   if( pViewport )
   {
     if( idxCameraLocationLock == which )
@@ -423,7 +423,7 @@ RH_C_FUNCTION bool ON_Viewport_GetNearFarRect(const ON_Viewport* pConstViewport,
 										   ON_3dPoint* leftBottom, ON_3dPoint* rightBottom, ON_3dPoint* leftTop, ON_3dPoint* rightTop)
 {
   bool rc = false;
-	if (pConstViewport && leftBottom && rightBottom && leftTop && leftBottom)
+	if (pConstViewport && leftBottom && rightBottom && leftTop && rightTop)
 	{
     if( _near )
       rc = pConstViewport->GetNearRect(*leftBottom, *rightBottom, *leftTop, *rightTop);

@@ -597,7 +597,7 @@ CRhCmnWrite3dmBufferArchive::~CRhCmnWrite3dmBufferArchive()
 void CRhCmnWrite3dmBufferArchive::AllocBuffer( size_t sz )
 {
   if ( sz > m_sizeof_buffer 
-       && (m_max_sizeof_buffer <= 0 || sz <= m_max_sizeof_buffer) 
+       && (m_max_sizeof_buffer == 0 || sz <= m_max_sizeof_buffer) 
      )
   {
     if ( sz < 2*m_sizeof_buffer )
@@ -651,7 +651,7 @@ bool CRhCmnWrite3dmBufferArchive::SeekFromCurrentPosition( int offset )
 bool CRhCmnWrite3dmBufferArchive::SeekFromStart( size_t offset )
 {
   bool rc = false;
-  if ( m_buffer && offset >= 0 ) 
+  if ( m_buffer ) 
   {
     m_buffer_position = offset;
     rc = true;
@@ -666,7 +666,7 @@ bool CRhCmnWrite3dmBufferArchive::AtEnd() const
 
 size_t CRhCmnWrite3dmBufferArchive::Read( size_t count, void* buffer )
 {
-  if ( count <= 0 || 0 == buffer )
+  if ( 0 == count || 0 == buffer )
     return 0;
 
   size_t maxcount = ( m_sizeof_buffer > m_buffer_position ) 
@@ -686,7 +686,7 @@ size_t CRhCmnWrite3dmBufferArchive::Read( size_t count, void* buffer )
 
 size_t CRhCmnWrite3dmBufferArchive::Write( size_t sz, const void* buffer )
 {
-  if ( sz <= 0 || 0 == buffer )
+  if ( 0 == sz || 0 == buffer )
     return 0;
 
   if ( m_buffer_position + sz > m_sizeof_buffer )

@@ -753,7 +753,7 @@ RH_C_FUNCTION CRhCmnWrite3dmBufferArchive* ON_WriteBufferArchive_NewWriter(const
       holder.MoveUserDataFrom(*pConstObject);
     *length = 0;
     size_t sz = pConstObject->SizeOf() + 256;
-    rc = new CRhCmnWrite3dmBufferArchive(sz, -1, rhinoversion, ON::Version());
+    rc = new CRhCmnWrite3dmBufferArchive(sz, 0, rhinoversion, ON::Version());
     if( rc->WriteObject(pConstObject) )
     {
       *length = (unsigned int)rc->SizeOfArchive();
@@ -1561,9 +1561,9 @@ RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddLeader(ONX_Model* pModel, const R
       leader->m_points.Append(points2d[i]);
 
 #if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
-    leader->SetTextValue(_text);
+    leader->SetTextValue(text);
 #else
-    leader->SetUserText(_text);
+    leader->SetUserText(text);
 #endif
 
     ONX_Model_Object mo;

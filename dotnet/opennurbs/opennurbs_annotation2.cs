@@ -481,6 +481,15 @@ namespace Rhino.Geometry
   [Serializable]
   public class TextEntity : AnnotationBase, ISerializable
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextEntity"/> class.
+    /// </summary>
+    public TextEntity()
+    {
+      IntPtr ptr = UnsafeNativeMethods.ON_TextEntity2_New();
+      ConstructNonConstObject(ptr);
+    }
+
     internal TextEntity(IntPtr native_pointer, object parent)
       : base(native_pointer, parent)
     { }
@@ -512,6 +521,23 @@ namespace Rhino.Geometry
       {
         IntPtr pThis = NonConstPointer();
         UnsafeNativeMethods.ON_Annotation2_Index(pThis, true, value);
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the justification of text in relation to it's base point
+    /// </summary>
+    public TextJustification Justification
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return (TextJustification)UnsafeNativeMethods.ON_Annotation2_GetJustification(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_Annotation2_SetJustification(pThis, (int)value);
       }
     }
 

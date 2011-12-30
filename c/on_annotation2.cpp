@@ -89,6 +89,23 @@ RH_C_FUNCTION void ON_Annotation2_Plane(ON_Annotation2* ptr, ON_PLANE_STRUCT* pl
   }
 }
 
+RH_C_FUNCTION int ON_Annotation2_GetJustification(const ON_Annotation2* pConstAnnotation2)
+{
+  int rc = 0;
+  if( pConstAnnotation2 )
+  {
+    ON_Annotation2* pAnnotation = const_cast<ON_Annotation2*>(pConstAnnotation2);
+    rc = (int)(pAnnotation->Justification());
+  }
+  return rc;
+}
+
+RH_C_FUNCTION void ON_Annotation2_SetJustification(ON_Annotation2* pAnnotation2, int justification)
+{
+  if( pAnnotation2 )
+    pAnnotation2->SetJustification((unsigned int)justification);
+}
+
 RH_C_FUNCTION ON_LinearDimension2* ON_LinearDimension2_New()
 {
   return new ON_LinearDimension2();
@@ -187,6 +204,10 @@ RH_C_FUNCTION void ON_TextDot_GetSetText(ON_TextDot* ptr, bool set, const RHMONO
   }
 }
 
+RH_C_FUNCTION ON_TextEntity2* ON_TextEntity2_New()
+{
+  return new ON_TextEntity2();
+}
 
 #if !defined(OPENNURBS_BUILD) // only available in Rhino
 RH_C_FUNCTION int ON_TextEntity_Explode(const ON_TextEntity2* pConstTextEntity2, ON_SimpleArray<ON_Curve*>* pCurveArray)

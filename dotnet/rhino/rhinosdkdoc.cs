@@ -3069,6 +3069,20 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
+    public Guid AddText(Rhino.Geometry.TextEntity text)
+    {
+      return AddText(text, null);
+    }
+    public Guid AddText(Rhino.Geometry.TextEntity text, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pConstTextEntity = text.ConstPointer();
+      IntPtr pConstAttributes = IntPtr.Zero;
+      if (attributes != null)
+        pConstAttributes = attributes.ConstPointer();
+      Guid rc = UnsafeNativeMethods.CRhinoDoc_AddText2(m_doc.m_docId, pConstTextEntity, pConstAttributes);
+      return rc;
+    }
+
     /// <summary>Adds a surface object to Rhino.</summary>
     /// <param name="surface">A duplicate of this surface is added to Rhino.</param>
     /// <returns>A unique identifier for the object.</returns>

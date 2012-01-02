@@ -1287,7 +1287,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Joins naked edge pairs within the same brep that overlap within tolerance.
     /// </summary>
-    /// <param name="tolerance"></param>
+    /// <param name="tolerance">The tolerance value.</param>
     /// <returns>number of joins made.</returns>
     public int JoinNakedEdges(double tolerance)
     {
@@ -1309,8 +1309,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Splits a Brep into pieces.
     /// </summary>
-    /// <param name="splitter"></param>
-    /// <param name="intersectionTolerance"></param>
+    /// <param name="intersectionTolerance">The tolerance with which to compute intersections.</param>
     /// <returns>A new array of breps. This array can be empty.</returns>
     public Brep[] Split(Brep splitter, double intersectionTolerance)
     {
@@ -1321,8 +1320,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Splits a Brep into pieces.
     /// </summary>
-    /// <param name="splitter"></param>
-    /// <param name="intersectionTolerance"></param>
+    /// <param name="splitter">The splitting polysurface.</param>
+    /// <param name="intersectionTolerance">The tolerance with which to compute intersections.</param>
     /// <param name="toleranceWasRaised">
     /// set to true if the split failed at intersectionTolerance but succeeded
     /// when the tolerance was increased to twice intersectionTolerance.
@@ -1344,7 +1343,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Trims a Brep with an oriented cutter. The parts of the Brep that lie inside
+    /// Trims a brep with an oriented cutter. The parts of the brep that lie inside
     /// (opposite the normal) of the cutter are retained while the parts to the
     /// outside (in the direction of the normal) are discarded.  If the Cutter is
     /// closed, then a connected component of the Brep that does not intersect the
@@ -1377,8 +1376,8 @@ namespace Rhino.Geometry
     /// cutter opposite from the normal of cutter, or in the case of a Plane cutter
     /// the halfspace opposite from the plane normal.
     /// </summary>
-    /// <param name="cutter"></param>
-    /// <param name="intersectionTolerance"></param>
+    /// <param name="cutter">A cutting plane.</param>
+    /// <param name="intersectionTolerance">A tolerance value with which to compute intersections.</param>
     /// <returns>This Brep is not modified, the trim results are returned in an array.</returns>
     public Brep[] Trim(Plane cutter, double intersectionTolerance)
     {
@@ -1399,7 +1398,7 @@ namespace Rhino.Geometry
     /// <param name="surface">A copy of the surface is added to this brep.</param>
     /// <returns>
     /// Index that should be used to reference the geometry.
-    /// -1 is returned if the input is not acceptable.
+    /// <para>-1 is returned if the input is not acceptable.</para>
     /// </returns>
     public int AddSurface(Surface surface)
     {
@@ -2533,7 +2532,7 @@ namespace Rhino.Geometry.Collections
 
     #region methods
     /// <summary>
-    /// Shrink all the faces in this Brep. Sometimes the surfaces extend far beyond the trimming 
+    /// Shrinks all the faces in this Brep. Sometimes the surfaces extend far beyond the trimming 
     /// boundaries of the Brep Face. This function will remove those portions of the surfaces 
     /// that are not used.
     /// </summary>
@@ -2545,7 +2544,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Split any faces with creases into G1 pieces.
+    /// Splits any faces with creases into G1 pieces.
     /// </summary>
     /// <returns>true on success, false on failure.</returns>
     /// <remarks>If you need to detect whether splitting occured, 
@@ -2555,7 +2554,7 @@ namespace Rhino.Geometry.Collections
       return SplitKinkyFaces(1e-2, false);
     }
     /// <summary>
-    /// Split any faces with creases into G1 pieces.
+    /// Splits any faces with creases into G1 pieces.
     /// </summary>
     /// <param name="kinkTolerance">Tolerance (in radians) to use for crease detection.</param>
     /// <returns>true on success, false on failure.</returns>
@@ -2566,7 +2565,7 @@ namespace Rhino.Geometry.Collections
       return SplitKinkyFaces(kinkTolerance, false);
     }
     /// <summary>
-    /// Split any faces with creases into G1 pieces.
+    /// Splits any faces with creases into G1 pieces.
     /// </summary>
     /// <param name="kinkTolerance">Tolerance (in radians) to use for crease detection.</param>
     /// <param name="compact">If true, the Brep will be compacted if possible.</param>
@@ -2580,9 +2579,9 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Split a single face into G1 pieces.
+    /// Splits a single face into G1 pieces.
     /// </summary>
-    /// <param name="faceIndex"></param>
+    /// <param name="faceIndex">The index of the face to split.</param>
     /// <param name="kinkTolerance">Tolerance (in radians) to use for crease detection.</param>
     /// <returns>true on success, false on failure.</returns>
     /// <remarks>
@@ -2666,7 +2665,7 @@ namespace Rhino.Geometry.Collections
     /// uses.  When done, the face will be the only face that references its 3d
     /// surface, and the orientations of the face and 3d surface will be the same. 
     /// </summary>
-    /// <param name="faceIndex"></param>
+    /// <param name="faceIndex">The index of the face.</param>
     /// <returns>true if successful.</returns>
     public bool StandardizeFaceSurface(int faceIndex)
     {
@@ -2790,9 +2789,9 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     #region methods
-    /// <summary>Split the edge into G1 pieces.</summary>
-    /// <param name="edgeIndex">index of edge to test and split.</param>
-    /// <param name="kinkToleranceRadians"></param>
+    /// <summary>Splits the edge into G1 pieces.</summary>
+    /// <param name="edgeIndex">Index of edge to test and split.</param>
+    /// <param name="kinkToleranceRadians">The split tolerance in radians.</param>
     /// <returns>true if successful.</returns>
     /// <remarks>
     /// This function leaves deleted stuff in the brep.  Call Brep.Compact() to
@@ -2805,10 +2804,10 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Split an edge at the specified parameters.
+    /// Splits an edge at the specified parameters.
     /// </summary>
-    /// <param name="edgeIndex"></param>
-    /// <param name="edgeParameters"></param>
+    /// <param name="edgeIndex">The index of the edge to be addressed.</param>
+    /// <param name="edgeParameters">The parameter along that edge.</param>
     /// <returns>
     /// Number of splits applied to the edge.
     /// </returns>

@@ -529,7 +529,7 @@ namespace Rhino.Geometry.Intersect
     /// <param name="curveB">Second curve for intersection.</param>
     /// <param name="tolerance">Intersection tolerance. If the curves approach each other to within tolerance, 
     /// an intersection is assumed.</param>
-    /// <param name="overlapTolerance"></param>
+    /// <param name="overlapTolerance">The tolerance with which the curves are tested.</param>
     /// <returns>A collection of intersection events.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_intersectcurves.vb' lang='vbnet'/>
@@ -550,7 +550,7 @@ namespace Rhino.Geometry.Intersect
     /// <param name="surface">Surface for intersection.</param>
     /// <param name="tolerance">Intersection tolerance. If the curve approaches the surface to within tolerance, 
     /// an intersection is assumed.</param>
-    /// <param name="overlapTolerance"></param>
+    /// <param name="overlapTolerance">The tolerance with which the curves are tested.</param>
     /// <returns>A collection of intersection events.</returns>
     public static CurveIntersections CurveSurface(Curve curve, Surface surface, double tolerance, double overlapTolerance)
     {
@@ -570,7 +570,7 @@ namespace Rhino.Geometry.Intersect
     /// <param name="surface">Surface for intersection.</param>
     /// <param name="tolerance">Intersection tolerance. If the curve approaches the surface to within tolerance, 
     /// an intersection is assumed.</param>
-    /// <param name="overlapTolerance"></param>
+    /// <param name="overlapTolerance">The tolerance with which the curves are tested.</param>
     /// <returns>A collection of intersection events.</returns>
     public static CurveIntersections CurveSurface(Curve curve, Interval curveDomain, Surface surface, double tolerance, double overlapTolerance)
     {
@@ -984,7 +984,7 @@ namespace Rhino.Geometry.Intersect
     /// <param name="breps">The breps projection targets.</param>
     /// <param name="points">The points to project.</param>
     /// <param name="direction">The direction to project.</param>
-    /// <param name="tolerance"></param>
+    /// <param name="tolerance">The tolerance used for intersections.</param>
     /// <returns>
     /// Array of projected points, or null in case of any error or invalid input.
     /// </returns>

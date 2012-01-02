@@ -411,9 +411,9 @@ namespace Rhino.Geometry
     /// Sets the attenuation settings (ignored for "directional" and "ambient" lights).
     /// <para>attenuation = 1/(a0 + d*a1 + d^2*a2) where d = distance to light.</para>
     /// </summary>
-    /// <param name="a0"></param>
-    /// <param name="a1"></param>
-    /// <param name="a2"></param>
+    /// <param name="a0">The new constant attenuation divisor term.</param>
+    /// <param name="a1">The new reverse linear attenuation divisor term.</param>
+    /// <param name="a2">The new reverse quadratic attenuation divisor term.</param>
     public void SetAttenuation(double a0, double a1, double a2)
     {
       IntPtr pThis = NonConstPointer();
@@ -423,7 +423,7 @@ namespace Rhino.Geometry
     /// Gets the attenuation settings (ignored for "directional" and "ambient" lights).
     /// <para>attenuation = 1/(a0 + d*a1 + d^2*a2) where d = distance to light.</para>
     /// </summary>
-    /// <param name="d"></param>
+    /// <param name="d">The distance to evaluate.</param>
     /// <returns>0 if a0 + d*a1 + d^2*a2 &lt;= 0.</returns>
     public double GetAttenuation(double d)
     {

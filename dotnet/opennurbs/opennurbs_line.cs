@@ -124,12 +124,12 @@ namespace Rhino.Geometry
     /// <summary>
     /// Constructs a new line segment between two points.
     /// </summary>
-    /// <param name="x0"></param>
-    /// <param name="y0"></param>
-    /// <param name="z0"></param>
-    /// <param name="x1"></param>
-    /// <param name="y1"></param>
-    /// <param name="z1"></param>
+    /// <param name="x0">The X coordinate of the first point.</param>
+    /// <param name="y0">The Y coordinate of the first point.</param>
+    /// <param name="z0">The Z coordinate of the first point.</param>
+    /// <param name="x1">The X coordinate of the second point.</param>
+    /// <param name="y1">The Y coordinate of the second point.</param>
+    /// <param name="z1">The Z coordinate of the second point.</param>
     public Line(double x0, double y0, double z0, double x1, double y1, double z1)
     {
       m_from = new Point3d(x0, y0, z0);
@@ -550,7 +550,7 @@ namespace Rhino.Geometry
     /// Gets a plane that contains the line. The origin of the plane is at the start of the line.
     /// If possible, a plane parallel to the world xy, yz, or zx plane is returned.
     /// </summary>
-    /// <param name="plane"></param>
+    /// <param name="plane">If the return value is true, the plane out parameter is assigned during this call.</param>
     /// <returns>true on success.</returns>
     public bool TryGetPlane(out Plane plane)
     {

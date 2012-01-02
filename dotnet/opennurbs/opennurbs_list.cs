@@ -1647,22 +1647,23 @@ namespace Rhino.Collections
     /// <code source='examples\cs\ex_addnurbscurve.cs' lang='cs'/>
     /// <code source='examples\py\ex_addnurbscurve.py' lang='py'/>
     /// </example>
+    /// <param name="initialCapacity">The number of added items before which the underlying array will be resized.</param>
     public Point3dList(int initialCapacity)
       : base(initialCapacity)
     {
     }
 
     /// <summary>
-    /// 
+    /// Initializes a new point list by copying the values from another set.
     /// </summary>
-    /// <param name="collection"></param>
+    /// <param name="collection">The collection to copy from.</param>
     public Point3dList(IEnumerable<Point3d> collection)
       : base(collection)
     {
     }
 
     /// <summary>
-    /// Constructs a new point list from points.
+    /// Constructs a new point list from values in a point array.
     /// </summary>
     /// <param name="initialPoints">Points to add to the list.</param>
     public Point3dList(params Point3d[] initialPoints)
@@ -1900,11 +1901,11 @@ namespace Rhino.Collections
 
     #region methods
     /// <summary>
-    /// Adds a ON_3dPoint to the end of the List with given x,y,z coordinates.
+    /// Adds a Point3d to the end of the list with given x,y,z coordinates.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="z"></param>
+    /// <param name="x">The X coordinate.</param>
+    /// <param name="y">The Y coordinate.</param>
+    /// <param name="z">The Z coordinate.</param>
     /// <example>
     /// <code source='examples\vbnet\ex_addnurbscurve.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addnurbscurve.cs' lang='cs'/>
@@ -1916,7 +1917,7 @@ namespace Rhino.Collections
     }
 
     /// <summary>
-    /// Apply a transform to all the points in the list.
+    /// Applies a transform to all the points in the list.
     /// </summary>
     /// <param name="xform">Transform to apply.</param>
     public void Transform(Transform xform)

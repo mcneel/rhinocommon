@@ -597,7 +597,7 @@ CRhCmnWrite3dmBufferArchive::~CRhCmnWrite3dmBufferArchive()
 void CRhCmnWrite3dmBufferArchive::AllocBuffer( size_t sz )
 {
   if ( sz > m_sizeof_buffer 
-       && (m_max_sizeof_buffer <= 0 || sz <= m_max_sizeof_buffer) 
+       && (m_max_sizeof_buffer == 0 || sz <= m_max_sizeof_buffer) 
      )
   {
     if ( sz < 2*m_sizeof_buffer )
@@ -651,7 +651,7 @@ bool CRhCmnWrite3dmBufferArchive::SeekFromCurrentPosition( int offset )
 bool CRhCmnWrite3dmBufferArchive::SeekFromStart( size_t offset )
 {
   bool rc = false;
-  if ( m_buffer && offset >= 0 ) 
+  if ( m_buffer ) 
   {
     m_buffer_position = offset;
     rc = true;
@@ -666,7 +666,7 @@ bool CRhCmnWrite3dmBufferArchive::AtEnd() const
 
 size_t CRhCmnWrite3dmBufferArchive::Read( size_t count, void* buffer )
 {
-  if ( count <= 0 || 0 == buffer )
+  if ( 0 == count || 0 == buffer )
     return 0;
 
   size_t maxcount = ( m_sizeof_buffer > m_buffer_position ) 
@@ -686,7 +686,7 @@ size_t CRhCmnWrite3dmBufferArchive::Read( size_t count, void* buffer )
 
 size_t CRhCmnWrite3dmBufferArchive::Write( size_t sz, const void* buffer )
 {
-  if ( sz <= 0 || 0 == buffer )
+  if ( 0 == sz || 0 == buffer )
     return 0;
 
   if ( m_buffer_position + sz > m_sizeof_buffer )
@@ -753,7 +753,7 @@ RH_C_FUNCTION CRhCmnWrite3dmBufferArchive* ON_WriteBufferArchive_NewWriter(const
       holder.MoveUserDataFrom(*pConstObject);
     *length = 0;
     size_t sz = pConstObject->SizeOf() + 256;
-    rc = new CRhCmnWrite3dmBufferArchive(sz, -1, rhinoversion, ON::Version());
+    rc = new CRhCmnWrite3dmBufferArchive(sz, 0, rhinoversion, ON::Version());
     if( rc->WriteObject(pConstObject) )
     {
       *length = (unsigned int)rc->SizeOfArchive();
@@ -1561,9 +1561,9 @@ RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddLeader(ONX_Model* pModel, const R
       leader->m_points.Append(points2d[i]);
 
 #if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
-    leader->SetTextValue(_text);
+    leader->SetTextValue(text);
 #else
-    leader->SetUserText(_text);
+    leader->SetUserText(text);
 #endif
 
     ONX_Model_Object mo;
@@ -1760,5 +1760,36 @@ RH_C_FUNCTION ON_3dmSettings* ONX_Model_3dmSettingsPointer(ONX_Model* pModel)
   ON_3dmSettings* rc = NULL;
   if( pModel )
     rc = &(pModel->m_settings);
+  return rc;
+}
+
+RH_C_FUNCTION bool ONX_Model_ReadPreviewImage(const RHMONO_STRING* path, CRhinoDib* pRhinoDib)
+{
+  bool rc = false;
+  INPUTSTRINGCOERCE(_path, path);
+  if( NULL==pRhinoDib )
+    return false;
+
+  FILE* fp = ON::OpenFile( _path, L"rb" );
+  if( fp )
+  {
+    ON_BinaryFile file( ON::read3dm, fp);
+    int version = 0;
+    ON_String comments;
+    if( file.Read3dmStartSection( &version, comments ) )
+    {
+      ON_3dmProperties prop;
+      if( file.Read3dmProperties(prop) )
+      {
+        BITMAPINFO* pBMI = prop.m_PreviewImage.m_bmi;
+        if( pBMI )
+        {
+          pRhinoDib->SetDib(pBMI, false);
+          rc = true;
+        }
+      }
+    }
+    ON::CloseFile(fp);
+  }
   return rc;
 }

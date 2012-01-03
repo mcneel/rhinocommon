@@ -283,6 +283,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Annotation2_Plane(IntPtr ptr, ref Plane plane, [MarshalAs(UnmanagedType.U1)]bool set);
 
+  //int ON_Annotation2_GetJustification(const ON_Annotation2* pConstAnnotation2)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Annotation2_GetJustification(IntPtr pConstAnnotation2);
+
+  //void ON_Annotation2_SetJustification(ON_Annotation2* pAnnotation2, int justification)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Annotation2_SetJustification(IntPtr pAnnotation2, int justification);
+
   //ON_LinearDimension2* ON_LinearDimension2_New()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_LinearDimension2_New();
@@ -316,6 +324,10 @@ internal partial class UnsafeNativeMethods
   //void ON_TextDot_GetSetText(ON_TextDot* ptr, bool set, const RHMONO_STRING* _text, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_TextDot_GetSetText(IntPtr ptr, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.LPWStr)]string _text, IntPtr pStringHolder);
+
+  //ON_TextEntity2* ON_TextEntity2_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_TextEntity2_New();
 
   //int ON_TextEntity_Explode(const ON_TextEntity2* pConstTextEntity2, ON_SimpleArray<ON_Curve*>* pCurveArray)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -897,6 +909,11 @@ internal partial class UnsafeNativeMethods
   //ON_3dmSettings* ONX_Model_3dmSettingsPointer(ONX_Model* pModel)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ONX_Model_3dmSettingsPointer(IntPtr pModel);
+
+  //bool ONX_Model_ReadPreviewImage(const RHMONO_STRING* path, CRhinoDib* pRhinoDib)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ONX_Model_ReadPreviewImage([MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr pRhinoDib);
   #endregion
 
 
@@ -5922,6 +5939,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoDoc_AddText(int docId, [MarshalAs(UnmanagedType.LPWStr)]string _text, ref Plane plane, double height, [MarshalAs(UnmanagedType.LPWStr)]string _fontName, int fontStyle, int justification, IntPtr attrs);
 
+  //ON_UUID CRhinoDoc_AddText2(int docId, const ON_TextEntity2* pConstTextEntity2, const ON_3dmObjectAttributes* pConstAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoDoc_AddText2(int docId, IntPtr pConstTextEntity2, IntPtr pConstAttributes);
+
   //ON_UUID CRhinoDoc_AddBrep(int docId, const ON_Brep* pBrep, const ON_3dmObjectAttributes* attr )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoDoc_AddBrep(int docId, IntPtr pBrep, IntPtr attr);
@@ -8911,6 +8932,11 @@ internal partial class UnsafeNativeMethods
   //                                                             double tolerance )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_RhinoPlanarClosedCurveContainmentTest(IntPtr pConstCurveA, IntPtr pConstCurveB, ref Plane plane, double tolerance);
+
+  //bool RHC_RhinoPlanarCurveCollisionTest( const ON_Curve* pConstCurveA, const ON_Curve* pConstCurveB, ON_PLANE_STRUCT* plane, double tolerance )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoPlanarCurveCollisionTest(IntPtr pConstCurveA, IntPtr pConstCurveB, ref Plane plane, double tolerance);
 
   //int RHC_PointInClosedRegion( const ON_Curve* pConstCurve, ON_3DPOINT_STRUCT test_point, ON_PLANE_STRUCT plane, double tolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

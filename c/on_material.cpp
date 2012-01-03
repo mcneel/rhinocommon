@@ -134,7 +134,7 @@ RH_C_FUNCTION void ON_Material_SetDouble(ON_Material* pMaterial, int which, doub
 
 RH_C_FUNCTION bool ON_Material_AddTexture(ON_Material* pMaterial, const RHMONO_STRING* filename, int which)
 {
-  const int idxBitmapTexture = 0;
+  // const int idxBitmapTexture = 0;
   const int idxBumpTexture = 1;
   const int idxEmapTexture = 2;
   const int idxTransparencyTexture = 3;
@@ -156,7 +156,7 @@ RH_C_FUNCTION bool ON_Material_AddTexture(ON_Material* pMaterial, const RHMONO_S
 
 RH_C_FUNCTION bool ON_Material_SetTexture(ON_Material* pMaterial, const ON_Texture* pConstTexture, int which)
 {
-  const int idxBitmapTexture = 0;
+  // const int idxBitmapTexture = 0;
   const int idxBumpTexture = 1;
   const int idxEmapTexture = 2;
   const int idxTransparencyTexture = 3;
@@ -180,7 +180,7 @@ RH_C_FUNCTION bool ON_Material_SetTexture(ON_Material* pMaterial, const ON_Textu
 
 RH_C_FUNCTION int ON_Material_GetTexture(const ON_Material* pConstMaterial, int which)
 {
-  const int idxBitmapTexture = 0;
+  // const int idxBitmapTexture = 0;
   const int idxBumpTexture = 1;
   const int idxEmapTexture = 2;
   const int idxTransparencyTexture = 3;

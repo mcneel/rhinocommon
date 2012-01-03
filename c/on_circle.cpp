@@ -208,12 +208,10 @@ RH_C_FUNCTION bool ON_Circle_TryFitTT(const ON_Curve* c1, const ON_Curve* c2,
   if( !circleFit ) { return false; }
 
   //copied this (with modifications) from CRhGetCircleTTT::CalculateCircleTanTan
-  double d1=0.0, d2=0.0;
   double t1 = seed1;
   double t2 = seed2;
 
   double tol = RhinoCurveTangencyTolerance();
-  bool found = false;
 
   // initialize points and tangents
   ON_3dPoint pt1 = c1->PointAt(t1);

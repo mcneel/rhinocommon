@@ -569,7 +569,6 @@ RH_C_FUNCTION void ON_3dmRenderSettings_SetInt(ON_3dmRenderSettings* pRenderSett
   const int idxShadowmapHeight = 4;
   const int idxImageWidth = 5;
   const int idxImageHeight = 6;
-  int rc = 0;
   if( pRenderSettings )
   {
     switch(which)

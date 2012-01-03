@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 
+
 RH_C_FUNCTION ON_RTree* ON_RTree_New()
 {
   return new ON_RTree();
@@ -36,13 +37,28 @@ RH_C_FUNCTION bool ON_RTree_CreatePointCloudTree(ON_RTree* pTree, const ON_Point
   return rc;
 }
 
+#if defined(GRASSHOPPER_V4)
+struct ON_RTreeSphere
+{
+  double m_point[3];
+  double m_radius;
+};
+
+//struct ON_RTreeCapsule
+//{
+//  double m_point[2][3];
+//  double m_radius;
+//  double m_domain[2];
+//};
+#endif
+
 struct ON_RTreeSearchContext
 {
   int m_serial_number;
   int m_mode; //0=none, 1=bbox, 2=sphere, 3=capsule
   ON_RTreeBBox m_bbox;
   ON_RTreeSphere m_sphere;
-  ON_RTreeCapsule m_capsule;
+  // ON_RTreeCapsule m_capsule; // not using yet
 };
 
 RH_C_FUNCTION bool ON_RTreeSearchContext_GetBoundingBox(const ON_RTreeSearchContext* pConstContext, ON_3dPoint* p0, ON_3dPoint* p1)
@@ -142,7 +158,11 @@ RH_C_FUNCTION bool ON_RTree_Search(const ON_RTree* pConstTree, ON_3DPOINT_STRUCT
     context.m_bbox.m_max[1] = bbox.m_max[1];
     context.m_bbox.m_max[2] = bbox.m_max[2];
     g_theRTreeSearcher = searchCB;
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
+    rc = pConstTree->Search(&(context.m_bbox), RhCmnTreeSearch1, (void*)(&context));
+#else
     rc = pConstTree->Search(pt0.val, pt1.val, RhCmnTreeSearch1, (void*)(&context));
+#endif
   }
   return rc;
 }
@@ -159,9 +179,10 @@ RH_C_FUNCTION bool ON_RTree_SearchSphere(const ON_RTree* pConstTree, ON_3DPOINT_
     context.m_sphere.m_point[1] = center.val[1];
     context.m_sphere.m_point[2] = center.val[2];
     context.m_sphere.m_radius = radius;
-
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
     g_theRTreeSearcher = searchCB;
     rc = pConstTree->Search(&(context.m_sphere), RhCmnTreeSearch1, (void*)(&context));
+#endif
   }
   return rc;
 }

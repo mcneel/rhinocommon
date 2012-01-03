@@ -110,6 +110,26 @@ namespace Rhino.FileIO
         applicationDetails = shDetails.ToString();
       }
     }
+
+    /// <summary>
+    /// Attempt to read the preview image out of a 3dm file
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static System.Drawing.Bitmap ReadPreviewImage(string path)
+    {
+      if (!File.Exists(path))
+        throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
+      System.Drawing.Bitmap rc = null;
+      IntPtr pDib = UnsafeNativeMethods.CRhinoDib_New();
+      if (UnsafeNativeMethods.ONX_Model_ReadPreviewImage(path, pDib))
+      {
+        IntPtr hBitmap = UnsafeNativeMethods.CRhinoDib_Bitmap(pDib);
+        rc = System.Drawing.Bitmap.FromHbitmap(hBitmap);
+      }
+      UnsafeNativeMethods.CRhinoDib_Delete(pDib);
+      return rc;
+    }
     #endregion
 
     /// <summary>

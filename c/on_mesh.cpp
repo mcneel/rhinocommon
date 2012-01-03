@@ -178,23 +178,31 @@ RH_C_FUNCTION bool ON_Mesh_SetNormals(ON_Mesh* ptr, int count, /*ARRAY*/const ON
   return rc;
 }
 
-RH_C_FUNCTION bool ON_Mesh_SetTextureCoordinates(ON_Mesh* ptr, int count, /*ARRAY*/const ON_2fPoint* tcs, bool append)
+RH_C_FUNCTION bool ON_Mesh_SetTextureCoordinates(ON_Mesh* pMesh, int count, /*ARRAY*/const ON_2fPoint* tcs, bool append)
 {
   bool rc = false;
-  if( ptr && count>0 && tcs )
+  if( pMesh && count>0 && tcs )
   {
     int startIndex = 0;
     if( append )
-      startIndex = ptr->m_T.Count();
+      startIndex = pMesh->m_T.Count();
     
-    ptr->m_T.SetCapacity(startIndex + count);
-    ON_2fPoint* dest = ptr->m_T.Array() + startIndex;
+    pMesh->m_T.SetCapacity(startIndex + count);
+    ON_2fPoint* dest = pMesh->m_T.Array() + startIndex;
     ::memcpy(dest, tcs, count*sizeof(ON_2fPoint));
-    ptr->m_T.SetCount(startIndex+count);
+    pMesh->m_T.SetCount(startIndex+count);
 
     rc = true;
-    ptr->InvalidateBoundingBoxes();
-    ptr->DestroyTopology();
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Mesh_SetTextureCoordinates2(ON_Mesh* pMesh, const ON_TextureMapping* pConstTextureMapping)
+{
+  bool rc = false;
+  if( pMesh && pConstTextureMapping )
+  {
+    rc = pMesh->SetTextureCoordinates(*pConstTextureMapping);
   }
   return rc;
 }
@@ -1893,3 +1901,58 @@ RH_C_FUNCTION ON_MassProperties* ON_Mesh_MassProperties(bool bArea, const ON_Mes
   return rc;
 }
 #endif
+
+RH_C_FUNCTION ON_TextureMapping* ON_TextureMapping_New()
+{
+  return new ON_TextureMapping();
+}
+
+RH_C_FUNCTION bool ON_TextureMapping_SetPlaneMapping(ON_TextureMapping* pTextureMapping, const ON_PLANE_STRUCT* plane, ON_INTERVAL_STRUCT dx, ON_INTERVAL_STRUCT dy, ON_INTERVAL_STRUCT dz)
+{
+  bool rc = false;
+  if( pTextureMapping && plane )
+  {
+    ON_Plane _plane = FromPlaneStruct(*plane);
+    ON_Interval _dx(dx.val[0], dx.val[1]);
+    ON_Interval _dy(dy.val[0], dy.val[1]);
+    ON_Interval _dz(dz.val[0], dz.val[1]);
+    rc = pTextureMapping->SetPlaneMapping(_plane, _dx, _dy, _dz);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_TextureMapping_SetCylinderMapping(ON_TextureMapping* pTextureMapping, ON_Cylinder* pCylinder, bool capped)
+{
+  bool rc = false;
+  if( pTextureMapping && pCylinder )
+  {
+    pCylinder->circle.plane.UpdateEquation();
+    rc = pTextureMapping->SetCylinderMapping(*pCylinder, capped);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_TextureMapping_SetSphereMapping(ON_TextureMapping* pTextureMapping, ON_Sphere* pSphere)
+{
+  bool rc = false;
+  if( pTextureMapping && pSphere )
+  {
+    pSphere->plane.UpdateEquation();
+    rc = pTextureMapping->SetSphereMapping(*pSphere);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_TextureMapping_SetBoxMapping(ON_TextureMapping* pTextureMapping, const ON_PLANE_STRUCT* plane, ON_INTERVAL_STRUCT dx, ON_INTERVAL_STRUCT dy, ON_INTERVAL_STRUCT dz, bool capped)
+{
+  bool rc = false;
+  if( pTextureMapping && plane )
+  {
+    ON_Plane _plane = FromPlaneStruct(*plane);
+    ON_Interval _dx(dx.val[0], dx.val[1]);
+    ON_Interval _dy(dy.val[0], dy.val[1]);
+    ON_Interval _dz(dz.val[0], dz.val[1]);
+    rc = pTextureMapping->SetBoxMapping(_plane, _dx, _dy, _dz, capped);
+  }
+  return rc;
+}

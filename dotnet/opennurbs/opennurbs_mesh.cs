@@ -4053,6 +4053,18 @@ namespace Rhino.Geometry.Collections
         return false;
       return UnsafeNativeMethods.ON_Mesh_SetTextureCoordinates(ptr, textureCoordinates.Length, ref textureCoordinates[0], append);
     }
+
+    /// <summary>
+    /// Set all texture coordinates based on a texture mapping function
+    /// </summary>
+    /// <param name="mapping"></param>
+    /// <returns>true on success, false on failure.</returns>
+    public bool SetTextureCoordinates(Rhino.Render.TextureMapping mapping)
+    {
+      IntPtr pMesh = m_mesh.NonConstPointer();
+      IntPtr pConstMapping = mapping.ConstPointer();
+      return UnsafeNativeMethods.ON_Mesh_SetTextureCoordinates2(pMesh, pConstMapping);
+    }
     #endregion
 
     #region methods

@@ -209,6 +209,100 @@ RH_C_FUNCTION ON_TextEntity2* ON_TextEntity2_New()
   return new ON_TextEntity2();
 }
 
+RH_C_FUNCTION bool ON_TextEntity2_DrawTextMask(const ON_TextEntity2* pConstTextEntity2)
+{
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
+  if( pConstTextEntity2 )
+    return pConstTextEntity2->DrawTextMask();
+#endif
+  return false;
+}
+
+RH_C_FUNCTION void ON_TextEntity2_SetDrawTextMask(ON_TextEntity2* pTextEntity2, bool val)
+{
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
+  if( pTextEntity2 )
+    pTextEntity2->SetDrawTextMask(val);
+#endif
+}
+
+RH_C_FUNCTION bool ON_TextEntity2_AnnotativeScaling(const ON_TextEntity2* pConstTextEntity2)
+{
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
+  if( pConstTextEntity2 )
+    return pConstTextEntity2->AnnotativeScaling();
+#endif
+  return false;
+}
+
+RH_C_FUNCTION void ON_TextEntity2_SetAnnotativeScaling(ON_TextEntity2* pTextEntity2, bool val)
+{
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
+  if( pTextEntity2 )
+    pTextEntity2->SetAnnotativeScaling(val);
+#endif
+}
+
+RH_C_FUNCTION int ON_TextEntity2_MaskColorSource(const ON_TextEntity2* pConstTextEntity2)
+{
+  int rc = 0;
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
+  if( pConstTextEntity2 )
+    rc = pConstTextEntity2->MaskColorSource();
+#endif
+  return rc;
+}
+
+RH_C_FUNCTION int ON_TextEntity2_MaskColor(const ON_TextEntity2* pConstTextEntity2)
+{
+  int abgr = 0;
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
+  if( pConstTextEntity2 )
+  {
+    ON_Color c = pConstTextEntity2->MaskColor();
+    abgr = (int)((unsigned int)c);
+  }
+#endif
+  return abgr;
+}
+
+RH_C_FUNCTION void ON_TextEntity2_SetMaskColor(ON_TextEntity2* pTextEntity2, int argb, bool source_is_viewport)
+{
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
+  if( pTextEntity2 )
+  {
+    if( source_is_viewport )
+    {
+      pTextEntity2->SetMaskColorSource(0);
+    }
+    else
+    {
+      pTextEntity2->SetMaskColorSource(1);
+      ON_Color c = ARGB_to_ABGR(argb);
+      pTextEntity2->SetMaskColor(c);
+    }
+  }
+#endif
+}
+
+RH_C_FUNCTION double ON_TextEntity2_MaskOffsetFactor(const ON_TextEntity2* pConstTextEntity2)
+{
+  double rc = 0;
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
+  if( pConstTextEntity2 )
+    rc = pConstTextEntity2->MaskOffsetFactor();
+#endif
+  return rc;
+}
+
+RH_C_FUNCTION void ON_TextEntity2_SetMaskOffsetFactor(ON_TextEntity2* pTextEntity2, double factor)
+{
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
+  if( pTextEntity2 )
+    pTextEntity2->SetMaskOffsetFactor(factor);
+#endif
+}
+
 #if !defined(OPENNURBS_BUILD) // only available in Rhino
 RH_C_FUNCTION int ON_TextEntity_Explode(const ON_TextEntity2* pConstTextEntity2, ON_SimpleArray<ON_Curve*>* pCurveArray)
 {

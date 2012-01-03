@@ -329,6 +329,44 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_TextEntity2_New();
 
+  //bool ON_TextEntity2_DrawTextMask(const ON_TextEntity2* pConstTextEntity2)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_TextEntity2_DrawTextMask(IntPtr pConstTextEntity2);
+
+  //void ON_TextEntity2_SetDrawTextMask(ON_TextEntity2* pTextEntity2, bool val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_TextEntity2_SetDrawTextMask(IntPtr pTextEntity2, [MarshalAs(UnmanagedType.U1)]bool val);
+
+  //bool ON_TextEntity2_AnnotativeScaling(const ON_TextEntity2* pConstTextEntity2)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_TextEntity2_AnnotativeScaling(IntPtr pConstTextEntity2);
+
+  //void ON_TextEntity2_SetAnnotativeScaling(ON_TextEntity2* pTextEntity2, bool val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_TextEntity2_SetAnnotativeScaling(IntPtr pTextEntity2, [MarshalAs(UnmanagedType.U1)]bool val);
+
+  //int ON_TextEntity2_MaskColorSource(const ON_TextEntity2* pConstTextEntity2)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_TextEntity2_MaskColorSource(IntPtr pConstTextEntity2);
+
+  //int ON_TextEntity2_MaskColor(const ON_TextEntity2* pConstTextEntity2)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_TextEntity2_MaskColor(IntPtr pConstTextEntity2);
+
+  //void ON_TextEntity2_SetMaskColor(ON_TextEntity2* pTextEntity2, int argb, bool source_is_viewport)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_TextEntity2_SetMaskColor(IntPtr pTextEntity2, int argb, [MarshalAs(UnmanagedType.U1)]bool source_is_viewport);
+
+  //double ON_TextEntity2_MaskOffsetFactor(const ON_TextEntity2* pConstTextEntity2)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_TextEntity2_MaskOffsetFactor(IntPtr pConstTextEntity2);
+
+  //void ON_TextEntity2_SetMaskOffsetFactor(ON_TextEntity2* pTextEntity2, double factor)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_TextEntity2_SetMaskOffsetFactor(IntPtr pTextEntity2, double factor);
+
   //int ON_TextEntity_Explode(const ON_TextEntity2* pConstTextEntity2, ON_SimpleArray<ON_Curve*>* pCurveArray)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_TextEntity_Explode(IntPtr pConstTextEntity2, IntPtr pCurveArray);
@@ -2624,10 +2662,15 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Mesh_SetNormals(IntPtr ptr, int count, Vector3f[] normals, [MarshalAs(UnmanagedType.U1)]bool append);
 
-  //bool ON_Mesh_SetTextureCoordinates(ON_Mesh* ptr, int count, /*ARRAY*/const ON_2fPoint* tcs, bool append)
+  //bool ON_Mesh_SetTextureCoordinates(ON_Mesh* pMesh, int count, /*ARRAY*/const ON_2fPoint* tcs, bool append)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Mesh_SetTextureCoordinates(IntPtr ptr, int count, ref Point2f tcs, [MarshalAs(UnmanagedType.U1)]bool append);
+  internal static extern bool ON_Mesh_SetTextureCoordinates(IntPtr pMesh, int count, ref Point2f tcs, [MarshalAs(UnmanagedType.U1)]bool append);
+
+  //bool ON_Mesh_SetTextureCoordinates2(ON_Mesh* pMesh, const ON_TextureMapping* pConstTextureMapping)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Mesh_SetTextureCoordinates2(IntPtr pMesh, IntPtr pConstTextureMapping);
 
   //void ON_Mesh_GetMappingTag(const ON_Mesh* pConstMesh, int which_tag, ON_UUID* id, int* mapping_type, unsigned int* crc, ON_Xform* xf)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -2945,6 +2988,30 @@ internal partial class UnsafeNativeMethods
   //ON_MassProperties* ON_Mesh_MassProperties(bool bArea, const ON_Mesh* pMesh)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Mesh_MassProperties([MarshalAs(UnmanagedType.U1)]bool bArea, IntPtr pMesh);
+
+  //ON_TextureMapping* ON_TextureMapping_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_TextureMapping_New();
+
+  //bool ON_TextureMapping_SetPlaneMapping(ON_TextureMapping* pTextureMapping, const ON_PLANE_STRUCT* plane, ON_INTERVAL_STRUCT dx, ON_INTERVAL_STRUCT dy, ON_INTERVAL_STRUCT dz)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_TextureMapping_SetPlaneMapping(IntPtr pTextureMapping, ref Plane plane, Interval dx, Interval dy, Interval dz);
+
+  //bool ON_TextureMapping_SetCylinderMapping(ON_TextureMapping* pTextureMapping, ON_Cylinder* pCylinder, bool capped)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_TextureMapping_SetCylinderMapping(IntPtr pTextureMapping, ref Cylinder pCylinder, [MarshalAs(UnmanagedType.U1)]bool capped);
+
+  //bool ON_TextureMapping_SetSphereMapping(ON_TextureMapping* pTextureMapping, ON_Sphere* pSphere)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_TextureMapping_SetSphereMapping(IntPtr pTextureMapping, ref Sphere pSphere);
+
+  //bool ON_TextureMapping_SetBoxMapping(ON_TextureMapping* pTextureMapping, const ON_PLANE_STRUCT* plane, ON_INTERVAL_STRUCT dx, ON_INTERVAL_STRUCT dy, ON_INTERVAL_STRUCT dz, bool capped)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_TextureMapping_SetBoxMapping(IntPtr pTextureMapping, ref Plane plane, Interval dx, Interval dy, Interval dz, [MarshalAs(UnmanagedType.U1)]bool capped);
   #endregion
 
 

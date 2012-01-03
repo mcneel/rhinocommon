@@ -78,7 +78,7 @@ namespace Rhino.Geometry
       set { m_origin.Z = value; }
     }
     /// <summary>
-    /// Gets or sets the Xaxis vector of this plane.
+    /// Gets or sets the X axis vector of this plane.
     /// </summary>
     public Vector3d XAxis
     {
@@ -86,7 +86,7 @@ namespace Rhino.Geometry
       set { m_xaxis = value; }
     }
     /// <summary>
-    /// Gets or sets the Yaxis vector of this plane.
+    /// Gets or sets the Y axis vector of this plane.
     /// </summary>
     public Vector3d YAxis
     {
@@ -94,7 +94,7 @@ namespace Rhino.Geometry
       set { m_yaxis = value; }
     }
     /// <summary>
-    /// Gets or sets the Zaxis vector of this plane.
+    /// Gets or sets the Z axis vector of this plane.
     /// </summary>
     public Vector3d ZAxis
     {
@@ -167,8 +167,10 @@ namespace Rhino.Geometry
     #endregion
 
     #region constructors
-    /// <summary>Copy constructor.</summary>
-    /// <param name="other"></param>
+    /// <summary>Copy constructor.
+    /// <para>This is nothing special and performs the same as assigning to another variable.</para>
+    /// </summary>
+    /// <param name="other">The source plane value.</param>
     public Plane(Plane other)
     {
       this = other;
@@ -406,9 +408,9 @@ namespace Rhino.Geometry
     //David: all extend methods are untested as of yet.
 
     /// <summary>
-    /// Extend this plane through a Box. 
+    /// Extends this plane through a bounding box. 
     /// </summary>
-    /// <param name="box"></param>
+    /// <param name="box">A box to use as minimal extension boundary.</param>
     /// <param name="s">
     /// If this function returns true, 
     /// the s parameter returns the Interval on the plane along the X direction that will 
@@ -433,7 +435,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Extend this plane through a Box. 
     /// </summary>
-    /// <param name="box"></param>
+    /// <param name="box">A box to use for extension.</param>
     /// <param name="s">
     /// If this function returns true, 
     /// the s parameter returns the Interval on the plane along the X direction that will 

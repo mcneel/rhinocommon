@@ -448,7 +448,7 @@ namespace Rhino.Geometry
     /// that represents the rotation of angle about axis.
     /// </summary>
     /// <param name="angle">in radians.</param>
-    /// <param name="axisOfRotation"></param>
+    /// <param name="axisOfRotation">The direction of the axis of rotation.</param>
     public void SetRotation(double angle, Vector3d axisOfRotation)
     {
       double s = axisOfRotation.Length;
@@ -481,9 +481,9 @@ namespace Rhino.Geometry
     /// plane0.xaxis to plane1.xaxis, plane0.yaxis to plane1.yaxis,
     /// and plane0.zaxis to plane1.zaxis.
     /// </summary>
-    /// <param name="plane0"></param>
-    /// <param name="plane1"></param>
-    /// <remarks>the plane origins are ignored</remarks>
+    /// <param name="plane0">The "from" rotation plane. Origin point is ignored.</param>
+    /// <param name="plane1">The "to" rotation plane. Origin point is ignored.</param>
+    /// <remarks>The plane origins are ignored</remarks>
     public void SetRotation(Plane plane0, Plane plane1)
     {
       UnsafeNativeMethods.ON_Quaternion_SetRotation(ref this, ref plane0, ref plane1);
@@ -541,7 +541,7 @@ namespace Rhino.Geometry
     /// because the result is the same as
     /// (q.Conjugate()*(0,x,y,x)*q/q.LengthSquared).Vector.
     /// </summary>
-    /// <param name="v"></param>
+    /// <param name="v">The vector to be rotated.</param>
     /// <returns>
     /// R*v, where R is the rotation defined by the unit quaternion.
     /// This is mathematically the same as the values

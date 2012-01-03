@@ -525,7 +525,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets or sets the justification of text in relation to it's base point
+    /// Gets or sets the justification of text in relation to its base point.
     /// </summary>
     public TextJustification Justification
     {

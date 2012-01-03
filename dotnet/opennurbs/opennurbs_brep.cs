@@ -1309,6 +1309,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Splits a Brep into pieces.
     /// </summary>
+    /// <param name="splitter">A splitting surface or polysurface.</param>
     /// <param name="intersectionTolerance">The tolerance with which to compute intersections.</param>
     /// <returns>A new array of breps. This array can be empty.</returns>
     public Brep[] Split(Brep splitter, double intersectionTolerance)

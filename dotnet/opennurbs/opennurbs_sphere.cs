@@ -352,7 +352,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="sinAngle">sin(angle)</param>
     /// <param name="cosAngle">cos(angle)</param>
-    /// <param name="axisOfRotation"></param>
+    /// <param name="axisOfRotation">The direction of the axis of rotation.</param>
     /// <returns>true on success; false on failure.</returns>
     public bool Rotate(double sinAngle, double cosAngle, Vector3d axisOfRotation)
     {

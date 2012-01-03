@@ -42,10 +42,10 @@ namespace Rhino.Geometry
     /// <summary>
     /// Makes a plane that includes a line and a vector and goes through a bounding box.
     /// </summary>
-    /// <param name="lineInPlane"></param>
-    /// <param name="vectorInPlane"></param>
-    /// <param name="box">box to cut through.</param>
-    /// <returns>new PlaneSurface on success, NULL on error.</returns>
+    /// <param name="lineInPlane">A line that will lie on the plane.</param>
+    /// <param name="vectorInPlane">A vector the direction of which will be in plane.</param>
+    /// <param name="box">A box to cut through.</param>
+    /// <returns>A new plane surface on success, or null on error.</returns>
     public static PlaneSurface CreateThroughBox(Line lineInPlane, Vector3d vectorInPlane, BoundingBox box)
     {
       IntPtr ptr = UnsafeNativeMethods.RHC_RhinoPlaneThroughBox(ref lineInPlane, vectorInPlane, ref box);
@@ -55,11 +55,11 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Extends a plane so that is goes through a bounding box.
+    /// Extends a plane into a plane surface so that the latter goes through a bounding box.
     /// </summary>
-    /// <param name="plane"></param>
-    /// <param name="box"></param>
-    /// <returns>new PlaneSurface on success, NULL on error.</returns>
+    /// <param name="plane">An original plane value.</param>
+    /// <param name="box">A box to use for extension boundary.</param>
+    /// <returns>A new plane surface on success, or null on error.</returns>
     public static PlaneSurface CreateThroughBox(Plane plane, BoundingBox box)
     {
       IntPtr ptr = UnsafeNativeMethods.RHC_RhinoPlaneThroughBox2(ref plane, ref box);

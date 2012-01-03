@@ -188,11 +188,12 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Makes a surface from 4 corner points.
+    /// <para>This is the same as calling <see cref="CreateFromCorners(Point3d,Point3d,Point3d,Point3d,double)"/> with tolerance 0.</para>
     /// </summary>
-    /// <param name="corner1"></param>
-    /// <param name="corner2"></param>
-    /// <param name="corner3"></param>
-    /// <param name="corner4"></param>
+    /// <param name="corner1">The first corner.</param>
+    /// <param name="corner2">The second corner.</param>
+    /// <param name="corner3">The third corner.</param>
+    /// <param name="corner4">The fourth corner.</param>
     /// <returns>the resulting surface or null on error.</returns>
     public static NurbsSurface CreateFromCorners(Point3d corner1, Point3d corner2, Point3d corner3, Point3d corner4)
     {
@@ -247,16 +248,16 @@ namespace Rhino.Geometry
 
 #if USING_V5_SDK && RHINO_SDK
     /// <summary>
-    /// Builds a surface from ordered network of curves/edges.
+    /// Builds a surface from an ordered network of curves/edges.
     /// </summary>
-    /// <param name="uCurves"></param>
+    /// <param name="uCurves">An array, a list or any enumerable set of U curves.</param>
     /// <param name="uContinuityStart">
     /// continuity at first U segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature.
     /// </param>
     /// <param name="uContinuityEnd">
     /// continuity at last U segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature.
     /// </param>
-    /// <param name="vCurves"></param>
+    /// <param name="vCurves">An array, a list or any enumerable set of V curves.</param>
     /// <param name="vContinuityStart">
     /// continuity at first V segment, 0 = loose, 1 = pos, 2 = tan, 3 = curvature.
     /// </param>
@@ -291,9 +292,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Builds a surface from autosorted network of curves/edges.
+    /// Builds a surface from an autosorted network of curves/edges.
     /// </summary>
-    /// <param name="curves">array of curves/edges, sorted automatically into U and V curves.</param>
+    /// <param name="curves">An array, a list or any enumerable set of curves/edges, sorted automatically into U and V curves.</param>
     /// <param name="continuity">continuity along edges, 0 = loose, 1 = pos, 2 = tan, 3 = curvature.</param>
     /// <param name="edgeTolerance">tolerance to use along network surface edge.</param>
     /// <param name="interiorTolerance">tolerance to use for the interior curves.</param>
@@ -433,7 +434,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Copies this NURBS surface from another NURBS surface.
     /// </summary>
-    /// <param name="other"></param>
+    /// <param name="other">The other NURBS surface to use as source.</param>
     public void CopyFrom(NurbsSurface other)
     {
       IntPtr pConstOther = other.ConstPointer();
@@ -528,8 +529,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Constructs a MorphControl that allows for morphing between two curves.
     /// </summary>
-    /// <param name="originCurve"></param>
-    /// <param name="targetCurve"></param>
+    /// <param name="originCurve">The origin curve for morphing.</param>
+    /// <param name="targetCurve">The target curve for morphing.</param>
     public MorphControl(NurbsCurve originCurve, NurbsCurve targetCurve)
     {
       IntPtr pCurve0 = originCurve.ConstPointer();
@@ -615,8 +616,8 @@ namespace Rhino.Geometry
       }
     }
 
-    /// <summary>Apply the space morph to geometry.</summary>
-    /// <param name="geometry"></param>
+    /// <summary>Applies the space morph to geometry.</summary>
+    /// <param name="geometry">The geometry to be morphed.</param>
     /// <returns>true on success, false on failure.</returns>
     public bool Morph(GeometryBase geometry)
     {

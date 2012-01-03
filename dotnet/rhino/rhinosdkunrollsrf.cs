@@ -30,7 +30,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Adds curves that should be unrolled along with the Surface/Brep.
     /// </summary>
-    /// <param name="curves"></param>
+    /// <param name="curves">An array, a list or any enumerable set of curves.</param>
     public void AddFollowingGeometry(IEnumerable<Curve> curves)
     {
       m_curves.AddRange(curves);
@@ -47,7 +47,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Adds points that should be unrolled along with the Surface/Brep.
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="points">An array, a list or any enumerable set of points.</param>
     public void AddFollowingGeometry(IEnumerable<Point3d> points)
     {
       m_points.AddRange(points);
@@ -55,7 +55,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Adds point that should be unrolled along with the Surface/Brep.
     /// </summary>
-    /// <param name="point"></param>
+    /// <param name="point">A point.</param>
     public void AddFollowingGeometry(Point3d point)
     {
       m_points.Add(point);
@@ -63,7 +63,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Adds point that should be unrolled along with the Surface/Brep.
     /// </summary>
-    /// <param name="point"></param>
+    /// <param name="point">A point.</param>
     public void AddFollowingGeometry(Point point)
     {
       m_points.Add(point.Location);
@@ -72,7 +72,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Adds text dots that should be unrolled along with the Surface/Brep.
     /// </summary>
-    /// <param name="dots"></param>
+    /// <param name="dots">A dot.</param>
     public void AddFollowingGeometry(IEnumerable<TextDot> dots)
     {
       m_dots.AddRange(dots);
@@ -80,7 +80,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Adds text dot that should be unrolled along with the Surface/Brep.
     /// </summary>
-    /// <param name="dot"></param>
+    /// <param name="dot">A dot.</param>
     public void AddFollowingGeometry(TextDot dot)
     {
       m_dots.Add(dot);
@@ -90,7 +90,7 @@ namespace Rhino.Geometry
     /// Adds text dots that should be unrolled along with the Surface/Brep.
     /// </summary>
     /// <param name="dotLocations"></param>
-    /// <param name="dotText"></param>
+    /// <param name="dotText">A dot.</param>
     public void AddFollowingGeometry(IEnumerable<Point3d> dotLocations, IEnumerable<string> dotText)
     {
       List<Point3d> pts = new List<Point3d>(dotLocations);
@@ -104,8 +104,8 @@ namespace Rhino.Geometry
     /// <summary>
     /// Adds text dot that should be unrolled along with the Surface/Brep.
     /// </summary>
-    /// <param name="dotLocation"></param>
-    /// <param name="dotText"></param>
+    /// <param name="dotLocation">A dot point.</param>
+    /// <param name="dotText">A dot text.</param>
     public void AddFollowingGeometry(Point3d dotLocation, string dotText)
     {
       TextDot dot = new TextDot(dotText, dotLocation);
@@ -122,12 +122,23 @@ namespace Rhino.Geometry
       get { return m_dExplodeSpacing; }
       set { m_dExplodeSpacing = value; }
     }
-
+    
+    /// <summary>
+    /// Gets or sets the absolute tolerance for the unrolling operation.
+    /// <para>Absolute tolerance is used in the evaluation of new entities,
+    /// such as intersections, reprojections and splits.</para>
+    /// </summary>
     public double AbsoluteTolerance
     {
       get { return m_dAbsoluteTolerance; }
       set { m_dAbsoluteTolerance = value; }
     }
+
+    /// <summary>
+    /// Gets or sets the relative tolerance for the unrolling operation.
+    /// <para>Relative tolerance is used in the evaluation of intrinsic properties,
+    /// such as computations "along" the surface or brep.</para>
+    /// </summary>
     public double RelativeTolerance
     {
       get { return m_dRelativeTolerance; }

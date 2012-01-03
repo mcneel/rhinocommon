@@ -1433,10 +1433,10 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Negates all values in the point
+    /// Computes the additive inverse of all coordinates in the point, and returns the new point.
     /// </summary>
-    /// <param name="point"></param>
-    /// <returns></returns>
+    /// <param name="point">A point.</param>
+    /// <returns>A point value that, when summed with the point input, yields the <see cref="Origin"/>.</returns>
     public static Point3d operator -(Point3d point)
     {
       return new Point3d(-point.m_x, -point.m_y, -point.m_z);

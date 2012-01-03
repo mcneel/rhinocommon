@@ -457,7 +457,7 @@ namespace Rhino.DocObjects.Custom
     /// <summary>
     /// Clones the user data.
     /// </summary>
-    /// <param name="source"></param>
+    /// <param name="source">The source data.</param>
     protected override void OnDuplicate(UserData source)
     {
       UserDictionary dict = source as UserDictionary;

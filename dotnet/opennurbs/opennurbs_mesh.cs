@@ -1182,7 +1182,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Split a mesh by an infinite plane.
     /// </summary>
-    /// <param name="plane"></param>
+    /// <param name="plane">The splitting plane.</param>
     /// <returns>A new mesh array with the split result. This can be null if no result was found.</returns>
     public Mesh[] Split(Plane plane)
     {
@@ -1416,7 +1416,7 @@ namespace Rhino.Geometry
     /// ClosestPoint function except this returns a MeshPoint class which includes
     /// extra information beyond just the location of the closest point.
     /// </summary>
-    /// <param name="testPoint"></param>
+    /// <param name="testPoint">The source of the search.</param>
     /// <param name="maximumDistance">
     /// Optional upper bound on the distance from test point to the mesh. 
     /// If you are only interested in finding a point Q on the mesh when 
@@ -1516,7 +1516,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Pulls a collection of points to a mesh.
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="points">An array, a list or any enumerable set of points.</param>
     /// <returns>An array of points. This can be empty.</returns>
     public Point3d[] PullPointsToMesh(IEnumerable<Point3d> points)
     {
@@ -2072,8 +2072,8 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Gets a list of all of the faces that share a given vertex.
     /// </summary>
-    /// <param name="vertexIndex"></param>
-    /// <returns>list of indices of faces on success, null on failure.</returns>
+    /// <param name="vertexIndex">The index of a vertex in the mesh.</param>
+    /// <returns>An array of indices of faces on success, null on failure.</returns>
     public int[] GetVertexFaces(int vertexIndex)
     {
       IntPtr pConstMesh = m_mesh.ConstPointer();
@@ -2087,10 +2087,10 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Gets a list of other vertices which a "topologically" identical
+    /// Gets a list of other vertices which are "topologically" identical
     /// to this vertex.
     /// </summary>
-    /// <param name="vertexIndex"></param>
+    /// <param name="vertexIndex">A vertex index in the mesh.</param>
     /// <returns>
     /// Array of indices of vertices that are topoligically the same as this vertex. The
     /// array includes vertexIndex. Returns null on failure.
@@ -2303,7 +2303,6 @@ namespace Rhino.Geometry.Collections
     /// The index must be valid or an IndexOutOfRangeException will be thrown.
     /// </summary>
     /// <param name="index">Index of topology vertex to access.</param>
-    /// <exception cref="IndexOutOfRangeException">Thrown when the index is invalid.</exception>
     /// <returns>The topological vertex at [index].</returns>
     public Point3f this[int index]
     {
@@ -2339,7 +2338,6 @@ namespace Rhino.Geometry.Collections
     /// </summary>
     /// <param name="vertexIndex">Index of a vertex in the Mesh.Vertices.</param>
     /// <returns>Index of a topology vertex in the Mesh.TopologyVertices.</returns>
-    /// <exception cref="IndexOutOfRangeException"></exception>
     public int TopologyVertexIndex(int vertexIndex)
     {
       IntPtr ptr = m_mesh.ConstPointer();
@@ -2356,7 +2354,6 @@ namespace Rhino.Geometry.Collections
     /// <returns>
     /// Indices of all vertices that in Mesh.Vertices that a topology vertex represents.
     /// </returns>
-    /// <exception cref="IndexOutOfRangeException"></exception>
     public int[] MeshVertexIndices(int topologyVertexIndex)
     {
       IntPtr ptr = m_mesh.ConstPointer();
@@ -2400,7 +2397,6 @@ namespace Rhino.Geometry.Collections
     /// Indices of all topological vertices that are connected to this topological vertex.
     /// null if no vertices are connected to this vertex.
     /// </returns>
-    /// <exception cref="IndexOutOfRangeException"></exception>
     public int[] ConnectedTopologyVertices(int topologyVertexIndex)
     {
       IntPtr ptr = m_mesh.ConstPointer();
@@ -2423,7 +2419,6 @@ namespace Rhino.Geometry.Collections
     /// Indices of all topological vertices that are connected to this topological vertex.
     /// null if no vertices are connected to this vertex.
     /// </returns>
-    /// <exception cref="IndexOutOfRangeException"></exception>
     public int[] ConnectedTopologyVertices(int topologyVertexIndex, bool sorted)
     {
       if (sorted)
@@ -2474,12 +2469,11 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Gets all faces that are connected to a given vertex.
     /// </summary>
-    /// <param name="topologyVertexIndex">index of a topology vertex in Mesh.TopologyVertices.</param>
+    /// <param name="topologyVertexIndex">Index of a topology vertex in Mesh.TopologyVertices.</param>
     /// <returns>
     /// Indices of all faces in Mesh.Faces that are connected to this topological vertex.
     /// null if no faces are connected to this vertex.
     /// </returns>
-    /// <exception cref="IndexOutOfRangeException"></exception>
     public int[] ConnectedFaces(int topologyVertexIndex)
     {
       IntPtr ptr = m_mesh.ConstPointer();

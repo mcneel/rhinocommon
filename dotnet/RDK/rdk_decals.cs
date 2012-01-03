@@ -35,45 +35,39 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// The decal ID associated with this decal.
+    /// Gets the decal ID associated with this decal.
     /// </summary>
-    /// <returns></returns>
     public Int32 Id { get { return (Int32)UnsafeNativeMethods.Rdk_Decal_Id(ConstPointer()); } }
 
     /// <summary>
-    /// The texture ID for this decal.
+    /// Gets the texture ID for this decal.
     /// </summary>
-    /// <returns></returns>
     public Guid TextureInstanceId { get { return UnsafeNativeMethods.Rdk_Decal_TextureInstanceId(ConstPointer()); } }
 
     /// <summary>
-    /// The decal's mapping.
+    /// Gets the mapping of the decal.
     /// </summary>
-    /// <returns></returns>
     public MappingTypes MappingType { get { return (MappingTypes)UnsafeNativeMethods.Rdk_Decal_Mapping(ConstPointer()); } }
 
     /// <summary>
-    /// The decal's projection. Used only when mapping is planar.
+    /// Gets the decal's projection. Used only when mapping is planar.
     /// </summary>
-    /// <returns></returns>
     public ProjectionTypes ProjectionType { get { return (ProjectionTypes)UnsafeNativeMethods.Rdk_Decal_Projection(ConstPointer()); } }
 
     /// <summary>
     /// Used only when mapping is cylindrical or spherical.
     /// </summary>
-    /// <returns>true if texture is mapped to inside of sphere or cylinder, else \e false.</returns>
+    /// <value>true if texture is mapped to inside of sphere or cylinder, else \e false.</value>
     public bool MapToInside { get { return 1 == UnsafeNativeMethods.Rdk_Decal_MapToInside(ConstPointer()); } }
 
     /// <summary>
-    /// The decal's transparency in the range 0 to 1.
+    /// Gets the decal's transparency in the range 0 to 1.
     /// </summary>
-    /// <returns></returns>
     public double Transparency { get { return UnsafeNativeMethods.Rdk_Decal_Transparency(ConstPointer()); } }
 
     /// <summary>
-    /// The origin of the decal in world space.
+    /// Gets the origin of the decal in world space.
     /// </summary>
-    /// <returns></returns>
     public Rhino.Geometry.Point3d Origin
     {
       get
@@ -99,9 +93,9 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// For cylindrical and spherical mapping, the vector is unitized.
+    /// Gets the vector across. For cylindrical and spherical mapping, the vector is unitized.
     /// </summary>
-    /// <returns>The 'across' vector of the decal. For planar mapping the length of the vector is relevant.</returns>
+    /// <value>The 'across' vector of the decal. For planar mapping the length of the vector is relevant.</value>
     public Rhino.Geometry.Vector3d VectorAcross
     {
       get
@@ -114,43 +108,37 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// The height of the decal. Only used when mapping is cylindrical.
+    /// Gets the height of the decal. Only used when mapping is cylindrical.
     /// </summary>
-    /// <returns></returns>
     public double Height { get { return UnsafeNativeMethods.Rdk_Decal_Height(ConstPointer()); } }
 
     /// <summary>
-    /// The radius of the decal. Only used when mapping is cylindrical or spherical.
+    /// Gets thhe radius of the decal. Only used when mapping is cylindrical or spherical.
     /// </summary>
-    /// <returns></returns>
     public double Radius { get { return UnsafeNativeMethods.Rdk_Decal_Radius(ConstPointer()); } }
 
     /// <summary>
-    /// The start latitude of the decal's sweep. Only used when mapping is cylindrical or spherical.
+    /// Gets the start latitude of the decal's sweep. Only used when mapping is cylindrical or spherical.
     /// </summary>
-    /// <returns></returns>
     public double LatStart { get { return UnsafeNativeMethods.Rdk_Decal_LatStart(ConstPointer()); } }
 
     /// <summary>
-    /// The stop latitude of the decal's sweep. Only used when mapping is cylindrical or spherical.
+    /// Gets the stop latitude of the decal's sweep. Only used when mapping is cylindrical or spherical.
     /// </summary>
-    /// <returns></returns>
     public double LatEnd { get { return UnsafeNativeMethods.Rdk_Decal_LatEnd(ConstPointer()); } }
 
     /// <summary>
-    /// The start longitude of the decal's sweep. Only used when mapping is spherical.
+    /// Gets the start longitude of the decal's sweep. Only used when mapping is spherical.
     /// </summary>
-    /// <returns></returns>
     public double LonStart { get { return UnsafeNativeMethods.Rdk_Decal_LonStart(ConstPointer()); } }
 
     /// <summary>
-    /// The stop longitude of the decal's sweep. Only used when mapping is spherical.
+    /// Gets the stop longitude of the decal's sweep. Only used when mapping is spherical.
     /// </summary>
-    /// <returns></returns>
     public double LonEnd { get { return UnsafeNativeMethods.Rdk_Decal_LonEnd(ConstPointer()); } }
 
     /// <summary>
-    /// The UV bounds of the decal. Only used when mapping is UV. */
+    /// The UV bounds of the decal. Only used when mapping is UV.
     /// </summary>
     public void UVBounds(ref double minUOut, ref double minVOut, ref double maxUOut, ref double maxVOut)
     {

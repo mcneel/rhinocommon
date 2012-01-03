@@ -112,10 +112,11 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Attempt to read the preview image out of a 3dm file
+    /// Attempts to read the preview image out of a 3dm file.
     /// </summary>
-    /// <param name="path"></param>
-    /// <returns></returns>
+    /// <param name="path">The location of the file.</param>
+    /// <returns>A bitmap, or null on failure.</returns>
+    /// <exception cref="FileNotFoundException">If the provided path is null, does not exist or cannot be accessed.</exception>
     public static System.Drawing.Bitmap ReadPreviewImage(string path)
     {
       if (!File.Exists(path))

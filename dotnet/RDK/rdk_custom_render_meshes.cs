@@ -544,10 +544,10 @@ namespace Rhino.Render.CustomRenderMesh
     /// <summary>
     /// Returns a bounding box for the custom render meshes for the given object.
     /// </summary>
-    /// <param name="vp">the viewport being rendered.</param>
-    /// <param name="obj">the Rhino object of interest.</param>
+    /// <param name="vp">The viewport being rendered.</param>
+    /// <param name="obj">The Rhino object of interest.</param>
     /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes.</param>
-    /// <param name="meshType">ype of mesh to build.</param>
+    /// <param name="meshType">Type of mesh to build.</param>
     /// <returns>A bounding box value.</returns>
     public virtual Rhino.Geometry.BoundingBox BoundingBox(Rhino.DocObjects.ViewportInfo vp, Rhino.DocObjects.RhinoObject obj, Guid requestingPlugIn, MeshTypes meshType)
     {
@@ -567,10 +567,10 @@ namespace Rhino.Render.CustomRenderMesh
     /// <summary>
     /// Build custom render mesh(es).
     /// </summary>
-    /// <param name="vp">the viewport being rendered.</param>
+    /// <param name="vp">The viewport being rendered.</param>
     /// <param name="objMeshes">The meshes class to populate with custom meshes.</param>
     /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes.</param>
-    /// <param name="meshType">ype of mesh to build.</param>
+    /// <param name="meshType">Type of mesh to build.</param>
     /// <returns></returns>
     public abstract bool BuildCustomMeshes(Rhino.DocObjects.ViewportInfo vp, ObjectMeshes objMeshes, Guid requestingPlugIn, MeshTypes meshType);
 

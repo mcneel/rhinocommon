@@ -707,7 +707,7 @@ namespace Rhino.Geometry
     /// <param name="direction">
     /// If 0, then "u" parameter is checked. If 1, then the "v" parameter is checked.
     /// </param>
-    /// <param name="continuityType"></param>
+    /// <param name="continuityType">The desired continuity.</param>
     /// <param name="t0">
     /// Search begins at t0. If there is a discontinuity at t0, it will be ignored. 
     /// This makes it possible to repeatedly call GetNextDiscontinuity and step through the discontinuities.
@@ -983,7 +983,7 @@ namespace Rhino.Geometry
     /// <param name="tolerance">
     /// the maximum acceptable distance from the returned 3d curve to the image of curve_2d on the surface.
     /// </param>
-    /// <param name="curve2dSubdomain"></param>
+    /// <param name="curve2dSubdomain">The curve interval (a sub-domain of the original curve) to use.</param>
     /// <returns>3d curve.</returns>
     public Curve Pushup(Curve curve2d, double tolerance, Interval curve2dSubdomain)
     {
@@ -1009,7 +1009,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Pulls a 3d curve back to the surface's parameter space.
     /// </summary>
-    /// <param name="curve3d"></param>
+    /// <param name="curve3d">The curve to pull.</param>
     /// <param name="tolerance">
     /// the maximum acceptable 3d distance between from surface(curve_2d(t))
     /// to the locus of points on the surface that are closest to curve_3d.

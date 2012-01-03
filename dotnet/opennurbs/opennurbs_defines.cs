@@ -317,7 +317,8 @@ namespace Rhino
   namespace Geometry
   {
     /// <summary>
-    /// Provides enumerated values for continuity along geometry.
+    /// Provides enumerated values for continuity along geometry,
+    /// such as continuous first derivative or continuous unit tangent and curvature.
     /// </summary>
     public enum Continuity : int
     {

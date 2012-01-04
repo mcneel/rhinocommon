@@ -90,40 +90,44 @@ namespace Rhino.Render
     }
   }
 
+  // Giulio thinks: this should be marked as [Flags]
+  /// <summary>
+  /// Defines constant values for all render content kinds, such as material, environment or texture.
+  /// </summary>
+  public enum RenderContentKind : int
+  {
+    None = 0,
+    Material = 1,
+    Environment = 2,
+    Texture = 4,
+  }
+
   public abstract class RenderContent : IDisposable
   {
     #region Kinds
 
-    public enum Kinds : int
+    internal static RenderContentKind KindFromString(string kind)
     {
-      None = 0,
-      Material = 1,
-      Environment = 2,
-      Texture = 4,
-    }
-
-    internal static Kinds KindFromString(String kind)
-    {
-      Kinds k = Kinds.None;
+      RenderContentKind k = RenderContentKind.None;
       if (kind.Contains("material"))
-        k |= Kinds.Material;
+        k |= RenderContentKind.Material;
       if (kind.Contains("environment"))
-        k |= Kinds.Environment;
+        k |= RenderContentKind.Environment;
       if (kind.Contains("texture"))
-        k |= Kinds.Texture;
+        k |= RenderContentKind.Texture;
       return k;
     }
 
-    internal static String KindString(Kinds kinds)
+    internal static String KindString(RenderContentKind kinds)
     {
       System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-      if ((kinds & Kinds.Material) == Kinds.Material)
+      if ((kinds & RenderContentKind.Material) == RenderContentKind.Material)
       {
         sb.Append("material");
       }
 
-      if ((kinds & Kinds.Environment) == Kinds.Environment)
+      if ((kinds & RenderContentKind.Environment) == RenderContentKind.Environment)
       {
         if (sb.Length != 0)
         {
@@ -132,7 +136,7 @@ namespace Rhino.Render
         sb.Append("environment");
       }
 
-      if ((kinds & Kinds.Texture) == Kinds.Texture)
+      if ((kinds & RenderContentKind.Texture) == RenderContentKind.Texture)
       {
         if (sb.Length != 0)
         {
@@ -351,7 +355,7 @@ namespace Rhino.Render
     /// <summary>
     /// Returns either KindMaterial, KindTexture or KindEnvironment.
     /// </summary>
-    public Kinds Kind
+    public RenderContentKind Kind
     {
       get { return KindFromString(GetString(StringIds.Kind)); }
     }
@@ -416,7 +420,7 @@ namespace Rhino.Render
     /// </summary>
     /// <param name="kind">Either KindMaterial, KindEnvironment or KindTexture.</param>
     /// <returns>true if the content is the specified kind, otherwise false.</returns>
-    public bool IsKind(Kinds kind)
+    public bool IsKind(RenderContentKind kind)
     {
       return 1 == UnsafeNativeMethods.Rdk_RenderContent_IsKind(ConstPointer(), KindString(kind));
     }
@@ -893,19 +897,19 @@ namespace Rhino.Render
 
     public class ContentKindEventArgs : EventArgs
     {
-      readonly Kinds m_kind;
-      internal ContentKindEventArgs(Kinds kind) { m_kind = kind; }
-      public Kinds Content { get { return m_kind; } }
+      readonly RenderContentKind m_kind;
+      internal ContentKindEventArgs(RenderContentKind kind) { m_kind = kind; }
+      public RenderContentKind Content { get { return m_kind; } }
     }
 
     public class CurrentContentChangedEventArgs : ContentEventArgs
     {
-      internal CurrentContentChangedEventArgs(RenderContent content, RenderContent.Kinds kind)
+      internal CurrentContentChangedEventArgs(RenderContent content, RenderContentKind kind)
         : base(content)
       { m_kind = kind; }
 
-      readonly RenderContent.Kinds m_kind;
-      public RenderContent.Kinds Kind { get { return m_kind; } }
+      readonly RenderContentKind m_kind;
+      public RenderContentKind Kind { get { return m_kind; } }
     }
 
     internal delegate void ContentAddedCallback(IntPtr pContent);
@@ -927,7 +931,7 @@ namespace Rhino.Render
     {
       if (m_current_content_changed_event != null)
       {
-        try { m_current_content_changed_event(null, new CurrentContentChangedEventArgs(Rhino.Render.RenderContent.FromPointer(pContent), (RenderContent.Kinds)kind)); }
+        try { m_current_content_changed_event(null, new CurrentContentChangedEventArgs(Rhino.Render.RenderContent.FromPointer(pContent), (RenderContentKind)kind)); }
         catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
       }
     }
@@ -961,7 +965,7 @@ namespace Rhino.Render
     {
       if (m_content_type_deleted_event != null)
       {
-        try { m_content_type_deleted_event(null, new ContentKindEventArgs((Kinds)kind)); }
+        try { m_content_type_deleted_event(null, new ContentKindEventArgs((RenderContentKind)kind)); }
         catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
       }
     }

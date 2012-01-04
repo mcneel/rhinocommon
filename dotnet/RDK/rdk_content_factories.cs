@@ -36,7 +36,7 @@ namespace Rhino.Render
     /// The kind of content that this type represents.
     /// </summary>
     /// <returns></returns>
-	  public RenderContent.Kinds Kind
+	  public RenderContentKind Kind
     {
       get
       {
@@ -54,7 +54,7 @@ namespace Rhino.Render
     /// </summary>
     /// <param name="kind"></param>
     /// <returns></returns>
-	  public bool IsKind(RenderContent.Kinds kind) { return Kind == kind; }
+	  public bool IsKind(RenderContentKind kind) { return Kind == kind; }
 
     /// <summary>
     /// Returns a new instance of the render content of this type.  This content can be added to a persistant list.

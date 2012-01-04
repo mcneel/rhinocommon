@@ -90,16 +90,16 @@ namespace Rhino.Render
       return b;
     }
 
-    internal static bool ShowIncompatibleContent(RenderContent.Kinds kind) { return 1 == UnsafeNativeMethods.Rdk_Globals_ShowIncompatibleContent(RenderContent.KindString(kind)); }
-    internal static void SetShowIncompatibleContent(RenderContent.Kinds kind, bool bShow) { UnsafeNativeMethods.Rdk_Globals_SetShowIncompatbileContent(RenderContent.KindString(kind), bShow); }
+    internal static bool ShowIncompatibleContent(RenderContentKind kind) { return 1 == UnsafeNativeMethods.Rdk_Globals_ShowIncompatibleContent(RenderContent.KindString(kind)); }
+    internal static void SetShowIncompatibleContent(RenderContentKind kind, bool bShow) { UnsafeNativeMethods.Rdk_Globals_SetShowIncompatbileContent(RenderContent.KindString(kind), bShow); }
 
     /// <summary>
     /// Specifies whether incompatible content should be shown in the corresponding editor.
     /// </summary>
     public static bool ShowIncompatibleMaterials
     {
-      get { return ShowIncompatibleContent(RenderContent.Kinds.Material); }
-      set { SetShowIncompatibleContent(RenderContent.Kinds.Material, value); }
+      get { return ShowIncompatibleContent(RenderContentKind.Material); }
+      set { SetShowIncompatibleContent(RenderContentKind.Material, value); }
     }
 
     /// <summary>
@@ -107,8 +107,8 @@ namespace Rhino.Render
     /// </summary>
     public static bool ShowIncompatibleEnvironments
     {
-      get { return ShowIncompatibleContent(RenderContent.Kinds.Environment); }
-      set { SetShowIncompatibleContent(RenderContent.Kinds.Environment, value); }
+      get { return ShowIncompatibleContent(RenderContentKind.Environment); }
+      set { SetShowIncompatibleContent(RenderContentKind.Environment, value); }
     }
 
     /// <summary>
@@ -116,8 +116,8 @@ namespace Rhino.Render
     /// </summary>
     public static bool ShowIncompatibleTextures
     {
-      get { return ShowIncompatibleContent(RenderContent.Kinds.Texture); }
-      set { SetShowIncompatibleContent(RenderContent.Kinds.Texture, value); }
+      get { return ShowIncompatibleContent(RenderContentKind.Texture); }
+      set { SetShowIncompatibleContent(RenderContentKind.Texture, value); }
     }
 
     public enum ChooseContentFlags : int
@@ -141,12 +141,12 @@ namespace Rhino.Render
     /// <param name="flags">Specifies flags controlling the browser.</param>
     /// <param name="doc"></param>
     /// <returns></returns>
-    public static bool ChooseContent(ref Guid instanceId, RenderContent.Kinds kinds, ChooseContentFlags flags, RhinoDoc doc)
+    public static bool ChooseContent(ref Guid instanceId, RenderContentKind kinds, ChooseContentFlags flags, RhinoDoc doc)
     {
       return 1 == UnsafeNativeMethods.Rdk_Globals_ChooseContentEx(ref instanceId, RenderContent.KindString(kinds), (int)flags, doc.m_docId);
     }
 
-    internal static bool IsKindEditorVisible(RenderContent.Kinds kind)
+    internal static bool IsKindEditorVisible(RenderContentKind kind)
     {
       return 1==UnsafeNativeMethods.Rdk_Globals_IsContentEditorVisible(RenderContent.KindString(kind));
     }
@@ -154,17 +154,17 @@ namespace Rhino.Render
     /// <summary>
     /// Queries whether or not the material editor is visible.
     /// </summary>
-    public static bool IsMaterialEditorVisible { get { return IsKindEditorVisible(RenderContent.Kinds.Material); } }
+    public static bool IsMaterialEditorVisible { get { return IsKindEditorVisible(RenderContentKind.Material); } }
 
     /// <summary>
     /// Queries whether or not the environment editor is visible.
     /// </summary>
-    public static bool IsEnvironmentEditorVisible { get { return IsKindEditorVisible(RenderContent.Kinds.Environment); } }
+    public static bool IsEnvironmentEditorVisible { get { return IsKindEditorVisible(RenderContentKind.Environment); } }
 
     /// <summary>
     /// Queries whether or not the texture palette is visible.
     /// </summary>
-    public static bool IsTexturePaletteVisible { get { return IsKindEditorVisible(RenderContent.Kinds.Texture); } }
+    public static bool IsTexturePaletteVisible { get { return IsKindEditorVisible(RenderContentKind.Texture); } }
 
     /// <summary>
     /// Queries whether or not the sun dock bar is visible.
@@ -276,7 +276,7 @@ namespace Rhino.Render
     /// <param name="flags"></param>
     /// <param name="doc"></param>
     /// <returns></returns>
-    public static RenderContent CreateContentByUser(Guid defaultType, Guid defaultInstance, RenderContent.Kinds kinds, ChooseContentFlags flags, RhinoDoc doc)
+    public static RenderContent CreateContentByUser(Guid defaultType, Guid defaultInstance, RenderContentKind kinds, ChooseContentFlags flags, RhinoDoc doc)
     {
       IntPtr pContent = UnsafeNativeMethods.Rdk_Globals_CreateContentByUser(defaultType, defaultInstance, RenderContent.KindString(kinds), (int)flags, doc.m_docId);
       return pContent == IntPtr.Zero ? null : RenderContent.FromPointer(pContent);
@@ -303,7 +303,7 @@ namespace Rhino.Render
     /// <returns></returns>
     public static ContentList MaterialList(RhinoDoc doc)
     {
-      return new ContentList(RenderContent.Kinds.Material, doc);
+      return new ContentList(RenderContentKind.Material, doc);
     }
 
     /// <summary>
@@ -313,7 +313,7 @@ namespace Rhino.Render
     /// <returns></returns>
     public static ContentList EnvironmentList(RhinoDoc doc)
     {
-      return new ContentList(RenderContent.Kinds.Environment, doc);
+      return new ContentList(RenderContentKind.Environment, doc);
     }
 
     /// <summary>
@@ -323,7 +323,7 @@ namespace Rhino.Render
     /// <returns></returns>
     public static ContentList TextureList(RhinoDoc doc)
     {
-      return new ContentList(RenderContent.Kinds.Texture, doc);
+      return new ContentList(RenderContentKind.Texture, doc);
     }
 
     /// <summary>
@@ -332,7 +332,7 @@ namespace Rhino.Render
     /// <param name="kind"></param>
     /// <param name="doc"></param>
     /// <returns></returns>
-    public static ContentList ContentList(RenderContent.Kinds kind, RhinoDoc doc)
+    public static ContentList ContentList(RenderContentKind kind, RhinoDoc doc)
     {
       return new ContentList(kind, doc);
     }
@@ -429,7 +429,7 @@ namespace Rhino.Render
     /// <param name="flags"></param>
     /// <param name="doc"></param>
     /// <returns></returns>
-    public static ShowContentChooserResults ShowContentChooser(Guid defaultType, Guid defaultInstanceId, RenderContent.Kinds kinds, ref Guid instanceIdOut, ShowContentChooserFlags flags, RhinoDoc doc)
+    public static ShowContentChooserResults ShowContentChooser(Guid defaultType, Guid defaultInstanceId, RenderContentKind kinds, ref Guid instanceIdOut, ShowContentChooserFlags flags, RhinoDoc doc)
     {
       return (ShowContentChooserResults)UnsafeNativeMethods.Rdk_Globals_ShowContentChooser(defaultType, defaultInstanceId, RenderContent.KindString(kinds), ref instanceIdOut, (int)flags, doc.m_docId);
     }

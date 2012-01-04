@@ -13,9 +13,9 @@ namespace Rhino.Render
   /// </summary>
   public class ContentList : IEnumerator<RenderContent>, IDisposable
   {
-    private RenderContent.Kinds m_kind;
+    private RenderContentKind m_kind;
     private RhinoDoc m_doc;
-    internal ContentList(RenderContent.Kinds kind, RhinoDoc doc)
+    internal ContentList(RenderContentKind kind, RhinoDoc doc)
     {
       m_kind = kind;
       m_doc = doc;
@@ -59,7 +59,7 @@ namespace Rhino.Render
     public class ContentListEventArgs : EventArgs
     {
       readonly ContentList m_content_list;
-      internal ContentListEventArgs(RenderContent.Kinds kind, RhinoDoc doc) { m_content_list = new Rhino.Render.ContentList(kind, doc); }
+      internal ContentListEventArgs(RenderContentKind kind, RhinoDoc doc) { m_content_list = new Rhino.Render.ContentList(kind, doc); }
       public ContentList ContentList { get { return m_content_list; } }
     }
 
@@ -72,7 +72,7 @@ namespace Rhino.Render
     {
       if (m_content_list_clearing_event != null)
       {
-        try { m_content_list_clearing_event(null, new ContentListEventArgs((RenderContent.Kinds)kind, RhinoDoc.FromId(docId))); }
+        try { m_content_list_clearing_event(null, new ContentListEventArgs((RenderContentKind)kind, RhinoDoc.FromId(docId))); }
         catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
       }
     }
@@ -83,7 +83,7 @@ namespace Rhino.Render
     {
       if (m_content_list_cleared_event != null)
       {
-        try { m_content_list_cleared_event(null, new ContentListEventArgs((RenderContent.Kinds)kind, RhinoDoc.FromId(docId))); }
+        try { m_content_list_cleared_event(null, new ContentListEventArgs((RenderContentKind)kind, RhinoDoc.FromId(docId))); }
         catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
       }
     }
@@ -94,7 +94,7 @@ namespace Rhino.Render
     {
       if (m_content_list_loaded_event != null)
       {
-        try { m_content_list_loaded_event(null, new ContentListEventArgs((RenderContent.Kinds)kind, RhinoDoc.FromId(docId))); }
+        try { m_content_list_loaded_event(null, new ContentListEventArgs((RenderContentKind)kind, RhinoDoc.FromId(docId))); }
         catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
       }
     }

@@ -6,7 +6,8 @@ using System.Runtime.InteropServices;
 namespace Rhino.Render
 {
   /// <summary>
-  /// Infinite plane for implementation by renderers.  See "SupportsFeature"
+  /// Represents an infinite plane for implementation by renderers.
+  /// See <see cref="RenderPlugin.SupportsFeature"/> and <see cref="RenderFeature"/>.
   /// </summary>
   public class GroundPlane
   {
@@ -17,6 +18,7 @@ namespace Rhino.Render
 
     internal GroundPlane(Rhino.RhinoDoc doc)
     {
+      Rhino.PlugIns.RenderPlugIn.RenderFeature
       m_doc = doc;
     }
 

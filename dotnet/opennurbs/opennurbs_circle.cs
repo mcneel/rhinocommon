@@ -4,16 +4,14 @@ using System.Runtime.InteropServices;
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Represents is a circle in 3d.
+  /// Represents a circle in 3D.
   /// <para>The values used are a radius and an orthonormal frame	of the plane containing the circle,
   /// with origin at the center.</para>
-  ///
-  /// <para>An IsValid circle has positive radius and an IsValid plane defining the frame.</para>
-  ///
   /// <para>The circle is parameterized by radians from 0 to 2 Pi given by</para>
   /// <para>t -> center + cos(t)*radius*xaxis + sin(t)*radius*yaxis</para>
-  /// <para>where center, xaxis and yaxis define the orthonormal frame of the circle's plane.</para>
+  /// <para>where center, xaxis and yaxis define the orthonormal frame of the circle plane.</para>
   /// </summary>
+  /// <remarks>>An IsValid circle has positive radius and an IsValid plane defining the frame.</remarks>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 136)]
   [Serializable]
   public struct Circle

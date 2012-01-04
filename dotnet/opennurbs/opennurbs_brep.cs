@@ -1753,7 +1753,7 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
-  /// Each brep loop has a defined type.
+  /// Each brep loop has a defined type, e.g. outer, inner or point on surface.
   /// </summary>
   public enum BrepLoopType : int
   {

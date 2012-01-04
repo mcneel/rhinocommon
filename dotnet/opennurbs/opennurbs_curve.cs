@@ -917,12 +917,12 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determines if tro coplanar curves collide (intersect)
+    /// Determines if tro coplanar curves collide (intersect).
     /// </summary>
-    /// <param name="curveA"></param>
-    /// <param name="curveB"></param>
-    /// <param name="testPlane">plane containing the curves</param>
-    /// <param name="tolerance">intersection tolerance</param>
+    /// <param name="curveA">A curve.</param>
+    /// <param name="curveB">Another curve.</param>
+    /// <param name="testPlane">A valid plane containing the curves.</param>
+    /// <param name="tolerance">A tolerance value for intersection.</param>
     /// <returns>true if the curves intersect, otherwise false</returns>
     public static bool PlanarCurveCollision(Curve curveA, Curve curveB, Plane testPlane, double tolerance)
     {
@@ -938,8 +938,8 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="curveA">A curve.</param>
     /// <param name="curveB">Another curve.</param>
-    /// <param name="testPlane">A valid plane.</param>
-    /// <param name="tolerance">A tolerance value.</param>
+    /// <param name="testPlane">A valid plane containing the curves.</param>
+    /// <param name="tolerance">A tolerance value for intersection.</param>
     /// <returns>
     /// A value indicating the relationship between the first and the second curve.
     /// <para>0: regions bounded by the curves are disjoint.</para>
@@ -1375,7 +1375,7 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="tolerance">Tolerance to use when checking.</param>
     /// <returns>
-    /// true if the curve can be represented by a Circle to within tolerance.
+    /// true if the curve can be represented by a circle to within tolerance.
     /// </returns>
     public bool IsCircle(double tolerance)
     {
@@ -1383,7 +1383,7 @@ namespace Rhino.Geometry
       return TryGetArc(out arc, tolerance) && arc.IsCircle;
     }
     /// <summary>
-    /// Try to convert this curve into a Circle using RhinoMath.ZeroTolerance.
+    /// Try to convert this curve into a circle using RhinoMath.ZeroTolerance.
     /// </summary>
     /// <param name="circle">On success, the Circle will be filled in.</param>
     /// <returns>true if the curve could be converted into a Circle.</returns>

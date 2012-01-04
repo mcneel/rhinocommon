@@ -2,62 +2,33 @@
 using System;
 using System.Diagnostics;
 using System.Collections;
+using System.Collections.Generic;
 
 #if RDK_UNCHECKED
 
 namespace Rhino.Render
 {
   /// <summary>
-  /// A collection of all of the available render content types registered with Rhino.
-  /// Gets this object from Rhino.Render.Utilities.RenderContentTypes.
+  /// Represents one of the render content types registered with Rhino.
   /// </summary>
-  public class RenderContentTypes : IEnumerator
-  {
-    private int _index = -1;
-
-    #region IEnumerator implemenation
-    public void Reset()
-    {
-        _index = -1;
-    }
-    public object Current
-    {
-      get
-      {
-        Guid typeId = UnsafeNativeMethods.Rdk_Factories_GetTypeIdAtIndex(_index);
-        if (typeId != Guid.Empty)
-        {
-          return new RenderContentType(typeId);
-        }
-        return null;
-      }
-    }
-    public bool MoveNext()
-    {
-      return Guid.Empty != UnsafeNativeMethods.Rdk_Factories_GetTypeIdAtIndex(++_index);
-    }
-    #endregion
-
-    public static RenderContentType GetTypeInformation(Guid typeId)
-    {
-      return new RenderContentType(typeId);
-    }
-  }
-
-  /// <summary>
-  /// Represents one of the render content types registered with Rhino.  Use the RenderContentTypes class
-  /// to access these objects.
-  /// </summary>
-  public class RenderContentType : IDisposable, IEnumerable
+  public class RenderContentType : IDisposable
   {
     internal RenderContentType(Guid typeId)
     {
       m_typeId = typeId;
     }
 
-    public IEnumerator GetEnumerator()
+    /// <summary>
+    /// Gets an array of all available render content types registered with Rhino.
+    /// </summary>
+    /// <returns>An array with all types.</returns>
+    public static RenderContentType[] GetAllAvailableTypes()
     {
-      return new RenderContentTypes();
+      var list = new List<RenderContentType>();
+      Guid typeId;
+      while ((typeId = UnsafeNativeMethods.Rdk_Factories_GetTypeIdAtIndex(list.Count)) != Guid.Empty)
+          list.Add(new RenderContentType(typeId));
+      return list.ToArray();
     }
 
     #region properties

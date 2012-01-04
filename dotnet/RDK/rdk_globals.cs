@@ -90,14 +90,6 @@ namespace Rhino.Render
       return b;
     }
 
-    public static RenderContentTypes RenderContentTypes
-    {
-      get
-      {
-        return new RenderContentTypes();
-      }
-    }
-
     internal static bool ShowIncompatibleContent(RenderContent.Kinds kind) { return 1 == UnsafeNativeMethods.Rdk_Globals_ShowIncompatibleContent(RenderContent.KindString(kind)); }
     internal static void SetShowIncompatibleContent(RenderContent.Kinds kind, bool bShow) { UnsafeNativeMethods.Rdk_Globals_SetShowIncompatbileContent(RenderContent.KindString(kind), bShow); }
 

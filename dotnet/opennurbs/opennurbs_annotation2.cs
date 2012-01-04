@@ -541,6 +541,87 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Determines whether or not to draw a Text Mask
+    /// </summary>
+    public bool MaskEnabled
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_TextEntity2_DrawTextMask(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_TextEntity2_SetDrawTextMask(pThis, value);
+      }
+    }
+
+    /// <summary>
+    /// Color to use for drawing a text mask when it is enabled. If the mask is
+    /// enabled and MaskColor is System.Drawing.Color.Transparent, then the
+    /// viewport's color will be used for the MaskColor
+    /// </summary>
+    public System.Drawing.Color MaskColor
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        if (UnsafeNativeMethods.ON_TextEntity2_MaskColorSource(pConstThis) == 0)
+          return System.Drawing.Color.Transparent;
+        else
+        {
+          int abgr = UnsafeNativeMethods.ON_TextEntity2_MaskColor(pConstThis);
+          return System.Drawing.ColorTranslator.FromWin32(abgr);
+        }
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        int argb = value.ToArgb();
+        int argb_transparent = System.Drawing.Color.Transparent.ToArgb();
+        bool source_is_viewport = (argb==argb_transparent);
+        UnsafeNativeMethods.ON_TextEntity2_SetMaskColor(pThis, argb, source_is_viewport);
+      }
+    }
+
+    /// <summary>
+    /// distance around text to display mask
+    /// </summary>
+    public double MaskOffset
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_TextEntity2_MaskOffsetFactor(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_TextEntity2_SetMaskOffsetFactor(pThis, value);
+      }
+    }
+
+    /// <summary>
+    /// Scale annotation according to detail scale factor in paperspace
+    /// or by 1.0 in paperspace and not in a detail
+    /// Otherwise, dimscale or text scale is used
+    /// </summary>
+    public bool AnnotativeScalingEnabled
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_TextEntity2_AnnotativeScaling(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_TextEntity2_SetAnnotativeScaling(pThis, value);
+      }
+    }
+
 #if RHINO_SDK
     /// <summary>
     /// Explodes this text entity into an array of curves.

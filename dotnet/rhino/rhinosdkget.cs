@@ -1292,39 +1292,55 @@ namespace Rhino.Input.Custom
     {
       return AddOptionInteger(optionName, ref intValue, null);
     }
-    //Description:
-    //  Add a command line option to get colors and automatically
-    //  save the value.
-    //Parameters:
-    //  option_name - [in] english option description 
-    //      Automatic localization uses command option string table.
-    //  color_value - [in/out] pointer to current value of the number.
-    //      If the user changes the integer's value, the value of 
-    //      *integer_value is changed but the current call to 
-    //      GetPoint/GetString/... does not return.
-    //  option_prompt - [in] option prompt shown if the user selects
-    //      this option.  If NULL, then option_name.m_local_option_name
-    //      is used as the get number prompt.
-    //Example:
-    //     CRhinoGetPoint gp;
-    //     ...
-    //     ON_Color favorite_color(0,0,0);
-    //     gp.AddCommandOptionColor(
-    //         RHCMDOPTNAME(L"FavoriteColor"),
-    //         &favorite_color,
-    //         RHSTR(L"What is your favorite color?")
-    //         );
-    //     ...
-    //Returns:
-    //  option index value (>0) or 0 if option cannot be added.
-    //See Also:
-    //  CRhinoGet::AddCommandOption
-    //*/
-    //int AddCommandOptionColor( 
-    //      CRhinoCommandOptionName option_name,
-    //      ON_Color* color_value,
-    //      const wchar_t* option_prompt = NULL
-    //      );
+
+    /// <summary>
+    /// Add a command line option to get colors and automatically save the value.
+    /// </summary>
+    /// <param name="optionName">option description</param>
+    /// <param name="colorValue"></param>
+    /// <param name="prompt">option prompt shown if the user selects this option</param>
+    /// <returns>option index value (>0) or 0 if option cannot be added.</returns>
+    public int AddOptionColor(Rhino.UI.LocalizeStringPair optionName, ref Rhino.Input.Custom.OptionColor colorValue, string prompt)
+    {
+      IntPtr ptr = NonConstPointer();
+      IntPtr pOption = colorValue.OptionHolderPointer;
+      int rc = UnsafeNativeMethods.CRhinoGet_AddCommandOption5Loc(ptr, optionName.English, optionName.Local, pOption, prompt);
+      return rc;
+    }
+
+    /// <summary>
+    /// Add a command line option to get colors and automatically save the value.
+    /// </summary>
+    /// <param name="optionName">option description</param>
+    /// <param name="colorValue"></param>
+    /// <returns>option index value (>0) or 0 if option cannot be added.</returns>
+    public int AddOptionColor(Rhino.UI.LocalizeStringPair optionName, ref Rhino.Input.Custom.OptionColor colorValue)
+    {
+      return AddOptionColor(optionName, ref colorValue, null);
+    }
+
+    /// <summary>
+    /// Add a command line option to get colors and automatically save the value.
+    /// </summary>
+    /// <param name="englishName">option description</param>
+    /// <param name="colorValue"></param>
+    /// <param name="prompt"></param>
+    /// <returns>option index value (>0) or 0 if option cannot be added.</returns>
+    public int AddOptionColor(string englishName, ref Rhino.Input.Custom.OptionColor colorValue, string prompt)
+    {
+      return AddOptionColor(new UI.LocalizeStringPair(englishName, englishName), ref colorValue, prompt);
+    }
+
+    /// <summary>
+    /// Add a command line option to get colors and automatically save the value.
+    /// </summary>
+    /// <param name="englishName">option description</param>
+    /// <param name="colorValue"></param>
+    /// <returns>option index value (>0) or 0 if option cannot be added.</returns>
+    public int AddOptionColor(string englishName, ref Rhino.Input.Custom.OptionColor colorValue)
+    {
+      return AddOptionColor(new UI.LocalizeStringPair(englishName, englishName), ref colorValue, null);
+    }
 
     /// <summary>
     /// Adds a command line option to toggle a setting.
@@ -1361,7 +1377,8 @@ namespace Rhino.Input.Custom
     {
       IntPtr ptr = NonConstPointer();
       IntPtr pToggle = toggleValue.OptionHolderPointer;
-      int rc = UnsafeNativeMethods.CRhinoGet_AddCommandOptionToggleLoc(ptr, pToggle, optionName.English, optionName.Local, toggleValue.m_offValue, toggleValue.m_onValue);
+      int rc = UnsafeNativeMethods.CRhinoGet_AddCommandOptionToggleLoc(ptr, pToggle, optionName.English, optionName.Local,
+        toggleValue.m_offValue.English, toggleValue.m_offValue.Local, toggleValue.m_onValue.English, toggleValue.m_onValue.Local);
       return rc;
     }
 
@@ -1839,8 +1856,8 @@ namespace Rhino.Input.Custom
   {
     internal IntPtr m_pOptionHolder = IntPtr.Zero;
     readonly bool m_initialValue;
-    internal readonly string m_offValue;
-    internal readonly string m_onValue;
+    internal readonly Rhino.UI.LocalizeStringPair m_offValue;
+    internal readonly Rhino.UI.LocalizeStringPair m_onValue;
 
     /// <example>
     /// <code source='examples\vbnet\ex_commandlineoptions.vb' lang='vbnet'/>
@@ -1848,6 +1865,13 @@ namespace Rhino.Input.Custom
     /// <code source='examples\py\ex_commandlineoptions.py' lang='py'/>
     /// </example>
     public OptionToggle(bool initialValue, string offValue, string onValue)
+    {
+      m_initialValue = initialValue;
+      m_offValue = new UI.LocalizeStringPair(offValue, offValue);
+      m_onValue = new UI.LocalizeStringPair(onValue, onValue);
+    }
+
+    public OptionToggle(bool initialValue, Rhino.UI.LocalizeStringPair offValue, Rhino.UI.LocalizeStringPair onValue)
     {
       m_initialValue = initialValue;
       m_offValue = offValue;
@@ -2132,6 +2156,74 @@ namespace Rhino.Input.Custom
       {
         if (IntPtr.Zero == m_pOptionHolder)
           m_pOptionHolder = UnsafeNativeMethods.CRhCommonOptionHolder_New2(m_initialValue);
+        return m_pOptionHolder;
+      }
+    }
+  }
+
+  public class OptionColor : IDisposable
+  {
+    internal IntPtr m_pOptionHolder = IntPtr.Zero;
+    System.Drawing.Color m_initialValue;
+
+    public OptionColor(System.Drawing.Color initialValue)
+    {
+      m_initialValue = initialValue;
+    }
+
+    ~OptionColor()
+    {
+      Dispose(false);
+    }
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected void Dispose(bool disposing)
+    {
+      if (m_pOptionHolder != IntPtr.Zero)
+      {
+        UnsafeNativeMethods.CRhCommonOptionHolder_Delete(m_pOptionHolder);
+        m_pOptionHolder = IntPtr.Zero;
+      }
+    }
+
+    public System.Drawing.Color CurrentValue
+    {
+      get
+      {
+        var rc = m_initialValue;
+        if (IntPtr.Zero != m_pOptionHolder)
+        {
+          int abgr = UnsafeNativeMethods.CRhCommonOptionHolder_Color(m_pOptionHolder);
+          rc = System.Drawing.ColorTranslator.FromWin32(abgr);
+        }
+        return rc;
+      }
+      set
+      {
+        IntPtr pThis = OptionHolderPointer;
+        int argb = value.ToArgb();
+        UnsafeNativeMethods.CRhCommonOptionHolder_SetColor(pThis, argb);
+      }
+    }
+
+    public System.Drawing.Color InitialValue
+    {
+      get { return m_initialValue; }
+    }
+
+    internal IntPtr OptionHolderPointer
+    {
+      get
+      {
+        if (IntPtr.Zero == m_pOptionHolder)
+        {
+          int argb = m_initialValue.ToArgb();
+          m_pOptionHolder = UnsafeNativeMethods.CRhCommonOptionHolder_New4(argb);
+        }
         return m_pOptionHolder;
       }
     }

@@ -98,6 +98,7 @@
     <Compile Include="ex_blockinsertionpoint.cs" />
     <Compile Include="ex_booleandifference.cs" />
     <Compile Include="ex_circlecenter.cs" />
+    <Compile Include="ex_closestpoint.cs" />
     <Compile Include="ex_commandlineoptions.cs" />
     <Compile Include="ex_createblock.cs" />
     <Compile Include="ex_curveboundingbox.cs" />
@@ -121,6 +122,8 @@
     <Compile Include="ex_objectlayer.cs" />
     <Compile Include="ex_orientonsrf.cs" />
     <Compile Include="ex_sellayer.cs" />
+    <Compile Include="ex_showsurfacedirection.cs" />
+    <Compile Include="ex_spritedrawing.cs" />
     <Compile Include="ex_sweep1.cs" />
     <Compile Include="ex_sweep2.cs" />
     <Compile Include="ex_transformbrep.cs" />

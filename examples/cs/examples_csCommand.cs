@@ -285,8 +285,6 @@ namespace examples_cs
 
     protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
     {
-      Test(Examples.HatchCurve, doc);
-      return Rhino.Commands.Result.Success;
       examples_csPlugIn.ThePlugIn.IncrementRunCommandCount();
       Test(Examples.ActiveViewport, doc);
       Test(Examples.AddBrepBox, doc);
@@ -324,6 +322,7 @@ namespace examples_cs
       Test(Examples.DupBorder, doc);
       Test(Examples.EditText, doc);
       Test(Examples.FindObjectsByName, doc);
+      Test(Examples.HatchCurve, doc);
       Test(Examples.IntersectCurves, doc);
       Test(Examples.InsertKnot, doc);
       Test(Examples.IntersectLines, doc);
@@ -334,18 +333,13 @@ namespace examples_cs
       Test(Examples.ObjectDisplayMode, doc);
       Test(Examples.OrientOnSrf, doc);
       Test(Examples.SelLayer, doc);
+      Test(Examples.ShowSurfaceDirection, doc);
       Test(Examples.Sweep1, doc);
       Test(Examples.UnrollSurface, doc);
       Test(Examples.UnrollSurface2, doc);
       Test(Examples.ZoomToObject, doc);
       
       return Rhino.Commands.Result.Success;
-    }
-
-
-    void Command_EndCommand(object sender, Rhino.Commands.CommandEventArgs e)
-    {
-      string s = e.CommandPluginName;
     }
   }
 }

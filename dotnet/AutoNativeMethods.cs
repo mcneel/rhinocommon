@@ -355,9 +355,17 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_TextEntity2_MaskColor(IntPtr pConstTextEntity2);
 
-  //void ON_TextEntity2_SetMaskColor(ON_TextEntity2* pTextEntity2, int argb, bool source_is_viewport)
+  //void ON_TextEntity2_SetMaskColor(ON_TextEntity2* pTextEntity2, int argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void ON_TextEntity2_SetMaskColor(IntPtr pTextEntity2, int argb, [MarshalAs(UnmanagedType.U1)]bool source_is_viewport);
+  internal static extern void ON_TextEntity2_SetMaskColor(IntPtr pTextEntity2, int argb);
+
+  //int ON_TextEntity2_MaskSource(const ON_TextEntity2* pConstTextEntity2)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_TextEntity2_MaskSource(IntPtr pConstTextEntity2);
+
+  //void ON_TextEntity2_SetMaskSource(ON_TextEntity2* pTextEntity2, int source)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_TextEntity2_SetMaskSource(IntPtr pTextEntity2, int source);
 
   //double ON_TextEntity2_MaskOffsetFactor(const ON_TextEntity2* pConstTextEntity2)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6613,6 +6621,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhCommonOptionHolder_New3([MarshalAs(UnmanagedType.U1)]bool bVal);
 
+  //CRhCommonOptionHolder* CRhCommonOptionHolder_New4(int argb)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhCommonOptionHolder_New4(int argb);
+
   //void CRhCommonOptionHolder_Delete(CRhCommonOptionHolder* pHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhCommonOptionHolder_Delete(IntPtr pHolder);
@@ -6633,6 +6645,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhCommonOptionHolder_SetInt(IntPtr pHolder, int val);
 
+  //int CRhCommonOptionHolder_Color(CRhCommonOptionHolder* pHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhCommonOptionHolder_Color(IntPtr pHolder);
+
+  //void CRhCommonOptionHolder_SetColor(CRhCommonOptionHolder* pHolder, int argb)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhCommonOptionHolder_SetColor(IntPtr pHolder, int argb);
+
   //bool CRhCommonOptionHolder_Bool(CRhCommonOptionHolder* pHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -6649,6 +6669,10 @@ internal partial class UnsafeNativeMethods
   //int CRhinoGet_AddCommandOption4Loc( CRhinoGet* pRhinoGet, const RHMONO_STRING* _englishName, const RHMONO_STRING* _localName, CRhCommonOptionHolder* pHolder, double lowerLimit, double upperLimit, const RHMONO_STRING* _prompt)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoGet_AddCommandOption4Loc(IntPtr pRhinoGet, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, [MarshalAs(UnmanagedType.LPWStr)]string _localName, IntPtr pHolder, double lowerLimit, double upperLimit, [MarshalAs(UnmanagedType.LPWStr)]string _prompt);
+
+  //int CRhinoGet_AddCommandOption5Loc( CRhinoGet* pRhinoGet, const RHMONO_STRING* _englishName, const RHMONO_STRING* _localName, CRhCommonOptionHolder* pHolder, const RHMONO_STRING* _prompt)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoGet_AddCommandOption5Loc(IntPtr pRhinoGet, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, [MarshalAs(UnmanagedType.LPWStr)]string _localName, IntPtr pHolder, [MarshalAs(UnmanagedType.LPWStr)]string _prompt);
 
   //void CRhinoGet_ClearCommandOptions( CRhinoGet* pRhinoGet)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6668,10 +6692,10 @@ internal partial class UnsafeNativeMethods
 
   //int CRhinoGet_AddCommandOptionToggleLoc(CRhinoGet* pRhinoGet, CRhCommonOptionHolder* pHolder,
   //                                                   const RHMONO_STRING* _englishName, const RHMONO_STRING* _localName,
-  //                                                   const RHMONO_STRING* _offValue, 
-  //                                                   const RHMONO_STRING* _onValue)
+  //                                                   const RHMONO_STRING* _offEnglishValue, const RHMONO_STRING* _offLocalValue,
+  //                                                   const RHMONO_STRING* _onEnglishValue, const RHMONO_STRING* _onLocalValue)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int CRhinoGet_AddCommandOptionToggleLoc(IntPtr pRhinoGet, IntPtr pHolder, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, [MarshalAs(UnmanagedType.LPWStr)]string _localName, [MarshalAs(UnmanagedType.LPWStr)]string _offValue, [MarshalAs(UnmanagedType.LPWStr)]string _onValue);
+  internal static extern int CRhinoGet_AddCommandOptionToggleLoc(IntPtr pRhinoGet, IntPtr pHolder, [MarshalAs(UnmanagedType.LPWStr)]string _englishName, [MarshalAs(UnmanagedType.LPWStr)]string _localName, [MarshalAs(UnmanagedType.LPWStr)]string _offEnglishValue, [MarshalAs(UnmanagedType.LPWStr)]string _offLocalValue, [MarshalAs(UnmanagedType.LPWStr)]string _onEnglishValue, [MarshalAs(UnmanagedType.LPWStr)]string _onLocalValue);
 
   //unsigned int RHC_RhinoGetSpiralHelix( ON_NurbsCurve* curve, bool spiral )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

@@ -266,22 +266,32 @@ RH_C_FUNCTION int ON_TextEntity2_MaskColor(const ON_TextEntity2* pConstTextEntit
   return abgr;
 }
 
-RH_C_FUNCTION void ON_TextEntity2_SetMaskColor(ON_TextEntity2* pTextEntity2, int argb, bool source_is_viewport)
+RH_C_FUNCTION void ON_TextEntity2_SetMaskColor(ON_TextEntity2* pTextEntity2, int argb)
 {
 #if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pTextEntity2 )
   {
-    if( source_is_viewport )
-    {
-      pTextEntity2->SetMaskColorSource(0);
-    }
-    else
-    {
-      pTextEntity2->SetMaskColorSource(1);
-      ON_Color c = ARGB_to_ABGR(argb);
-      pTextEntity2->SetMaskColor(c);
-    }
+    ON_Color c = ARGB_to_ABGR(argb);
+    pTextEntity2->SetMaskColor(c);
   }
+#endif
+}
+
+RH_C_FUNCTION int ON_TextEntity2_MaskSource(const ON_TextEntity2* pConstTextEntity2)
+{
+  int rc = 0;
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
+  if( pConstTextEntity2 )
+    rc = pConstTextEntity2->MaskColorSource();
+#endif
+  return rc;
+}
+
+RH_C_FUNCTION void ON_TextEntity2_SetMaskSource(ON_TextEntity2* pTextEntity2, int source)
+{
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
+  if( pTextEntity2 )
+    pTextEntity2->SetMaskColorSource(source);
 #endif
 }
 

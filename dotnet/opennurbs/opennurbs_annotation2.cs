@@ -559,6 +559,25 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// If true, the viewport's color is used for the mask color. If
+    /// false, the color defined by MaskColor is used
+    /// </summary>
+    public bool MaskUsesViewportColor
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_TextEntity2_MaskSource(pConstThis)==0;
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        int source = value ? 0 : 1;
+        UnsafeNativeMethods.ON_TextEntity2_SetMaskSource(pThis, source);
+      }
+    }
+
+    /// <summary>
     /// Color to use for drawing a text mask when it is enabled. If the mask is
     /// enabled and MaskColor is System.Drawing.Color.Transparent, then the
     /// viewport's color will be used for the MaskColor
@@ -568,21 +587,14 @@ namespace Rhino.Geometry
       get
       {
         IntPtr pConstThis = ConstPointer();
-        if (UnsafeNativeMethods.ON_TextEntity2_MaskColorSource(pConstThis) == 0)
-          return System.Drawing.Color.Transparent;
-        else
-        {
-          int abgr = UnsafeNativeMethods.ON_TextEntity2_MaskColor(pConstThis);
-          return System.Drawing.ColorTranslator.FromWin32(abgr);
-        }
+        int abgr = UnsafeNativeMethods.ON_TextEntity2_MaskColor(pConstThis);
+        return System.Drawing.ColorTranslator.FromWin32(abgr);
       }
       set
       {
         IntPtr pThis = NonConstPointer();
         int argb = value.ToArgb();
-        int argb_transparent = System.Drawing.Color.Transparent.ToArgb();
-        bool source_is_viewport = (argb==argb_transparent);
-        UnsafeNativeMethods.ON_TextEntity2_SetMaskColor(pThis, argb, source_is_viewport);
+        UnsafeNativeMethods.ON_TextEntity2_SetMaskColor(pThis, argb);
       }
     }
 

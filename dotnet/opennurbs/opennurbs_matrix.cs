@@ -143,9 +143,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Sets diagonal value and zeros off diagonal values.
+    /// Sets diagonal value and zeros off all non-diagonal values.
     /// </summary>
-    /// <param name="d"></param>
+    /// <param name="d">The new diagonal value.</param>
     public void SetDiagonal(double d)
     {
       UnsafeNativeMethods.ON_Matrix_SetDiagonal(m_ptr, d);

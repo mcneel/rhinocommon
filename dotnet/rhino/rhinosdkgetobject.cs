@@ -346,7 +346,8 @@ namespace Rhino.Input.Custom
     /// The default prompt when EnablePressEnterWhenDonePrompt is enabled is "Press Enter
     /// when done". Use this function to specify a different string to be appended.
     /// </summary>
-    /// <param name="prompt"></param>
+    /// <param name="prompt">The text that will be displayed just after the prompt,
+    /// after the selection has been made.</param>
     public void SetPressEnterWhenDonePrompt(string prompt)
     {
       IntPtr ptr = NonConstPointer();
@@ -359,7 +360,7 @@ namespace Rhino.Input.Custom
     /// in the selection set more than once. Calling EnableAlreadySelectedObjectSelect = true
     /// overrides that restriction and allows selected objects to be selected and
     /// returned by GetObjects. This is useful because, coupled with the return immediately
-    /// mode of GetObjects( 1, -1), it is possible to select a selected object to deselect
+    /// mode of GetObjects(1, -1), it is possible to select a selected object to deselect
     /// when the selected objects are being managed outside GetObjects() as in the case of
     /// CRhinoPolyEdge::GetEdge().
     /// </summary>
@@ -508,7 +509,7 @@ namespace Rhino.Input.Custom
     /// cleared when you call Input, then call EnableClearObjectsOnEntry(false) before
     /// calling GetObjects().
     /// </summary>
-    /// <param name="enable"></param>
+    /// <param name="enable">The state to set.</param>
     public void EnableClearObjectsOnEntry(bool enable)
     {
       SetBool(idxClearObjectsOnEntry, enable);
@@ -520,7 +521,7 @@ namespace Rhino.Input.Custom
     /// selected when non-object input is returned, then call EnableClearObjectsOnExit(false)
     /// before calling GetObjects().
     /// </summary>
-    /// <param name="enable"></param>
+    /// <param name="enable">The state to set.</param>
     public void EnableUnselectObjectsOnExit(bool enable)
     {
       SetBool(idxUnselectObjectsOnExit, enable);

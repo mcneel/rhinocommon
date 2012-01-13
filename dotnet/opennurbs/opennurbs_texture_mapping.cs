@@ -52,7 +52,7 @@ namespace Rhino.Render
     }
 
     /// <summary>Create a planar projection texture mapping</summary>
-    /// <param name="plane"></param>
+    /// <param name="plane">A plane to use for mapping.</param>
     /// <param name="dx">portion of the plane's x axis that is mapped to [0,1] (can be a decreasing interval)</param>
     /// <param name="dy">portion of the plane's y axis that is mapped to [0,1] (can be a decreasing interval)</param>
     /// <param name="dz">portion of the plane's z axis that is mapped to [0,1] (can be a decreasing interval)</param>

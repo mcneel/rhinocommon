@@ -490,7 +490,7 @@ namespace Rhino.Render
     /// If you want an automatic user interface to be constructed for a field,
     /// call this function in your class constructor.
     /// </summary>
-    /// <param name="f"></param>
+    /// <param name="f">A constructed field.</param>
     protected void AddAutomaticUiField(Field f)
     {
       m_autoui_fields.Add(f);
@@ -525,7 +525,7 @@ namespace Rhino.Render
     /// Implement this to transfer data from another content to this content during creation.
     /// </summary>
     /// <param name="oldContent">An old content object from which the implementation may harvest data.</param>
-    /// <returns></returns>
+    /// <returns>The harvested result.</returns>
     public virtual HarvestedResult HarvestData(RenderContent oldContent)
     {
       if (IsNativeWrapper())
@@ -686,7 +686,7 @@ namespace Rhino.Render
     /// </summary>
     /// <param name="renderEngineId">The render engine requesting the shader.</param>
     /// <param name="privateData">A pointer to the render engine's own context object.</param>
-    /// <returns></returns>
+    /// <returns>A pointer to the unmanaged shader.</returns>
     public virtual IntPtr GetShader(Guid renderEngineId, IntPtr privateData)
     {
       if (IsNativeWrapper())

@@ -2563,7 +2563,7 @@ namespace Rhino.Geometry.Collections
     /// Gets indices of faces connected to an edge.
     /// </summary>
     /// <param name="topologyEdgeIndex">An index of a topology edge that is queried.</param>
-    /// <param name="faceOrientationMatchesEdgeDirection"></param>
+    /// <param name="faceOrientationMatchesEdgeDirection">An array of Boolean values that explains whether each face direction matches the direction of the specified edge.</param>
     /// <returns>An array of face indices the edge borders. This might be empty on error.</returns>
     public int[] GetConnectedFaces(int topologyEdgeIndex, out bool[] faceOrientationMatchesEdgeDirection)
     {
@@ -2664,7 +2664,7 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Replaces a mesh edge with a vertex at its center and update adjacent faces as needed.
     /// </summary>
-    /// <param name="topologyEdgeIndex"></param>
+    /// <param name="topologyEdgeIndex">An index of a topology edge in <see cref="Mesh.TopologyEdges"/>.</param>
     /// <returns>true if successful.</returns>
     public bool CollapseEdge(int topologyEdgeIndex)
     {
@@ -2674,7 +2674,7 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Determines if a mesh edge index is valid input for <see cref="SwapEdge"/>.
     /// </summary>
-    /// <param name="topologyEdgeIndex"></param>
+    /// <param name="topologyEdgeIndex">An index of a topology edge in <see cref="Mesh.TopologyEdges"/>.</param>
     /// <returns>true if edge can be swapped.</returns>
     public bool IsSwappableEdge(int topologyEdgeIndex)
     {
@@ -2684,7 +2684,7 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// If the edge is shared by two triangular face, then the edge is swapped.
     /// </summary>
-    /// <param name="topologyEdgeIndex"></param>
+    /// <param name="topologyEdgeIndex">An index of a topology edge in <see cref="Mesh.TopologyEdges"/>.</param>
     /// <returns>true if successful.</returns>
     public bool SwapEdge(int topologyEdgeIndex)
     {
@@ -2695,7 +2695,7 @@ namespace Rhino.Geometry.Collections
     /// Returns true if the topological edge is hidden. The mesh topology
     /// edge is hidden only if either of its mesh topology vertices is hidden.
     /// </summary>
-    /// <param name="topologyEdgeIndex">index of a topology edge in Mesh.TopologyEdges.</param>
+    /// <param name="topologyEdgeIndex">An index of a topology edge in <see cref="Mesh.TopologyEdges"/>.</param>
     /// <returns>true if mesh topology edge is hidden.</returns>
     public bool IsHidden(int topologyEdgeIndex)
     {
@@ -2880,7 +2880,7 @@ namespace Rhino.Geometry.Collections
     /// <para>If [index] is larger than [Count], the function will return false.</para>
     /// </summary>
     /// <param name="index">Index of vertex normal to set.</param>
-    /// <param name="normal"></param>
+    /// <param name="normal">The new normal at the index.</param>
     /// <returns>true on success, false on failure.</returns>
     public bool SetNormal(int index, Vector3f normal)
     {
@@ -2894,7 +2894,7 @@ namespace Rhino.Geometry.Collections
     /// <para>If [index] is larger than [Count], the function will return false.</para>
     /// </summary>
     /// <param name="index">Index of vertex normal to set.</param>
-    /// <param name="normal"></param>
+    /// <param name="normal">The new normal at the index.</param>
     /// <returns>true on success, false on failure.</returns>
     public bool SetNormal(int index, Vector3d normal)
     {
@@ -4057,7 +4057,7 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Set all texture coordinates based on a texture mapping function
     /// </summary>
-    /// <param name="mapping"></param>
+    /// <param name="mapping">The new mapping type.</param>
     /// <returns>true on success, false on failure.</returns>
     public bool SetTextureCoordinates(Rhino.Render.TextureMapping mapping)
     {

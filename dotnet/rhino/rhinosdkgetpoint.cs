@@ -28,9 +28,9 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Sets a base point used by ortho snap, from snap, planar snap, etc.
     /// </summary>
-    /// <param name="basePoint"></param>
+    /// <param name="basePoint">The new base point.</param>
     /// <param name="showDistanceInStatusBar">
-    /// if true, then the distance from base_point to the current point will be in the
+    /// If true, then the distance from base_point to the current point will be in the
     /// status bar distance pane.
     /// </param>
     /// <example>
@@ -235,7 +235,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Adds a point to the list of osnap points.
     /// </summary>
-    /// <param name="point"></param>
+    /// <param name="point">A point.</param>
     /// <returns>Total number of snap points.</returns>
     /// <remarks>
     /// When point osnap is enabled, GetPoint will snap to points in the Rhino model.
@@ -251,7 +251,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Adds points to the list of osnap points.
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="points">An array of points to snap onto.</param>
     /// <returns>Total number of snap points.</returns>
     /// <remarks>
     /// When point osnap is enabled, GetPoint will snap to points in the Rhino model.
@@ -271,7 +271,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Adds a point to the list of construction points.
     /// </summary>
-    /// <param name="point"></param>
+    /// <param name="point">A point to be added.</param>
     /// <returns>Total number of construction points.</returns>
     /// <remarks>
     /// Construction points are like snap points except that they get snapped to even when
@@ -288,7 +288,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Adds points to the list of construction points.
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="points">An array of points to be added.</param>
     /// <returns>Total number of construction points.</returns>
     /// <remarks>
     /// Construction points are like snap points except that they get snapped to even when
@@ -338,7 +338,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Gets current snap points.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An array of points.</returns>
     public Point3d[] GetSnapPoints()
     {
       Runtime.InteropWrappers.SimpleArrayPoint3d pts = new Rhino.Runtime.InteropWrappers.SimpleArrayPoint3d();
@@ -353,7 +353,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Gets current construction points.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An array of points.</returns>
     /// <remarks>
     /// Construction points are like snap points except that they get snapped to
     /// even when point osnap is off. Typically, there are only a few construction
@@ -432,15 +432,15 @@ namespace Rhino.Input.Custom
     /// (like the center point in the Circle command when the AroundCurve option is on),
     /// then enable the snap to curves option.
     /// </summary>
-    /// <param name="enable"></param>
+    /// <param name="enable">Whether points should be enabled.</param>
     public void EnableSnapToCurves(bool enable)
     {
       EnableItem(idxEnableSnapToCurves, enable);
     }
 
-    /// <summary>constrain the picked point to lie on a line.</summary>
-    /// <param name="from"></param>
-    /// <param name="to"></param>
+    /// <summary>Constrains the picked point to lie on a line.</summary>
+    /// <param name="from">The start point of constraint.</param>
+    /// <param name="to">The end point of constraint.</param>
     /// <returns>true if constraint could be applied.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_arraybydistance.vb' lang='vbnet'/>
@@ -452,8 +452,8 @@ namespace Rhino.Input.Custom
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain1(ptr, from, to);
     }
-    /// <summary>constrain the picked point to lie on a line.</summary>
-    /// <param name="line"></param>
+    /// <summary>Constrains the picked point to lie on a line.</summary>
+    /// <param name="line">A line to use as constraint.</param>
     /// <returns>true if constraint could be applied.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_constrainedcopy.vb' lang='vbnet'/>
@@ -465,16 +465,16 @@ namespace Rhino.Input.Custom
       return Constrain(line.From, line.To);
     }
 
-    /// <summary>constrain the picked point to lie on an arc.</summary>
-    /// <param name="arc"></param>
+    /// <summary>Constrains the picked point to lie on an arc.</summary>
+    /// <param name="arc">An arc to use as constraint.</param>
     /// <returns>true if constraint could be applied.</returns>
     public bool Constrain(Arc arc)
     {
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain2(ptr, ref arc);
     }
-    /// <summary>constrain the picked point to lie on a circle.</summary>
-    /// <param name="circle"></param>
+    /// <summary>Constrains the picked point to lie on a circle.</summary>
+    /// <param name="circle">A circle to use as constraint.</param>
     /// <returns>true if constraint could be applied.</returns>
     public bool Constrain(Circle circle)
     {
@@ -482,24 +482,24 @@ namespace Rhino.Input.Custom
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain3(ptr, ref circle);
     }
     /// <summary>constrain the picked point to lie on a plane.</summary>
-    /// <param name="plane"></param>
-    /// <param name="allowElevator"></param>
+    /// <param name="plane">A plane to use as constraint.</param>
+    /// <param name="allowElevator">true if elevator mode should be allowed at user request.</param>
     /// <returns>true if constraint could be applied.</returns>
     public bool Constrain(Plane plane, bool allowElevator)
     {
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain4(ptr, ref plane, allowElevator);
     }
-    /// <summary>constrain the picked point to lie on a sphere.</summary>
-    /// <param name="sphere"></param>
+    /// <summary>Constrains the picked point to lie on a sphere.</summary>
+    /// <param name="sphere">A sphere to use as constraint.</param>
     /// <returns>true if constraint could be applied.</returns>
     public bool Constrain(Sphere sphere)
     {
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain5(ptr, ref sphere);
     }
-    /// <summary>constrain the picked point to lie on a cylinder.</summary>
-    /// <param name="cylinder"></param>
+    /// <summary>Constrains the picked point to lie on a cylinder.</summary>
+    /// <param name="cylinder">A cylinder to use as constraint.</param>
     /// <returns>true if constraint could be applied.</returns>
     public bool Constrain(Cylinder cylinder)
     {
@@ -507,8 +507,8 @@ namespace Rhino.Input.Custom
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain6(ptr, ref cylinder);
     }
 
-    /// <summary>constrain the picked point to lie on a curve.</summary>
-    /// <param name="curve"></param>
+    /// <summary>Constrains the picked point to lie on a curve.</summary>
+    /// <param name="curve">A curve to use as constraint.</param>
     /// <param name="allowPickingPointOffObject">
     /// defines whether the point pick is allowed to happen off object. When false,
     /// a "no no" cursor is shown when the cursor is not on the object. When true,
@@ -527,8 +527,8 @@ namespace Rhino.Input.Custom
       IntPtr pCurve = curve.ConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain7(ptr, pCurve, allowPickingPointOffObject);
     }
-    /// <summary>constrain the picked point to lie on a surface.</summary>
-    /// <param name="surface"></param>
+    /// <summary>Constrains the picked point to lie on a surface.</summary>
+    /// <param name="surface">A surface to use as constraint.</param>
     /// <param name="allowPickingPointOffObject">
     /// defines whether the point pick is allowed to happen off object. When false,
     /// a "no no" cursor is shown when the cursor is not on the object. When true,
@@ -547,8 +547,8 @@ namespace Rhino.Input.Custom
       IntPtr pSurface = surface.ConstPointer();
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain8(ptr, pSurface, allowPickingPointOffObject);
     }
-    /// <summary>constrain the picked point to lie on a brep.</summary>
-    /// <param name="brep"></param>
+    /// <summary>Constrains the picked point to lie on a brep.</summary>
+    /// <param name="brep">A brep to use as constraint.</param>
     /// <param name="wireDensity">
     /// When wire_density&lt;0, isocurve intersection snapping is turned off, when wire_density>=0, the value
     /// defines the isocurve density used for isocurve intersection snapping.
@@ -570,8 +570,8 @@ namespace Rhino.Input.Custom
       return UnsafeNativeMethods.CRhinoGetPoint_Constrain9(ptr, pBrep, wireDensity, faceIndex, allowPickingPointOffObject);
     }
 
-    /// <summary>constrain the picked point to lie on a mesh.</summary>
-    /// <param name="mesh"></param>
+    /// <summary>Constrains the picked point to lie on a mesh.</summary>
+    /// <param name="mesh">A mesh to use as constraint.</param>
     /// <param name="allowPickingPointOffObject">
     /// defines whether the point pick is allowed to happen off object. When false,
     /// a "no no" cursor is shown when the cursor is not on the object. When true,
@@ -593,9 +593,9 @@ namespace Rhino.Input.Custom
     /// the base point and is parallel to the active construction plane. By default this
     /// constraint is enabled.
     /// </summary>
-    /// <param name="throughBasePoint"></param>
+    /// <param name="throughBasePoint">true if the base point should be used as compulsory level reference.</param>
     /// <returns>
-    /// if true and the base point is set, then the point is constrained to be on the plane parallel
+    /// If true and the base point is set, then the point is constrained to be on the plane parallel
     /// to the construction plane that passes through the base point, even when planar mode is off.
     /// If throughBasePoint is false, then the base point shift only happens if planar mode is on.
     /// </returns>
@@ -611,7 +611,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Constrain point to lie on a plane that is parallel to the
+    /// Constrains point to lie on a plane that is parallel to the
     /// viewing plane and passes through the view's target point.
     /// </summary>
     public void ConstrainToTargetPlane()
@@ -619,14 +619,14 @@ namespace Rhino.Input.Custom
       EnableItem(idxConstrainToTargetPlane, true);
     }
 
-    //  // Description:
-    //  //   If enabled, the picked point is constrained to be on the 
-    //  //   intersection of the plane and the virtual CPlane going through
-    //  //   the plane origin.
-    //  //   If the planes are parallel, the constraint works just like planar constraint.
-    //  // Parameters:
-    //  //   ON_Plane& - The plane used for the plane - virtual CPlane intersection.
-    //  BOOL ConstrainToVirtualCPlaneIntersection( const ON_Plane& );
+    /// <summary>
+    /// If enabled, the picked point is constrained to be on the 
+    /// intersection of the plane and the virtual CPlane going through
+    /// the plane origin.
+    /// If the planes are parallel, the constraint works just like planar constraint.
+    /// </summary>
+    /// <param name="plane">The plane used for the plane - virtual CPlane intersection.</param>
+    /// <returns>true if the operation succeeded; false otherwise.</returns>
     public bool ConstrainToVirtualCPlaneIntersection(Plane plane)
     {
       IntPtr ptr = NonConstPointer();
@@ -634,7 +634,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Remove any explicit constraints added by calls to GetPoint::Constraint() and enable
+    /// Removes any explicit constraints added by calls to GetPoint::Constraint() and enable
     /// the built-in constraint options.
     /// </summary>
     /// <example>
@@ -653,7 +653,7 @@ namespace Rhino.Input.Custom
     /// overrides, then periodically call InterruptMouseMove() to see if you
     /// should interrupt your work because the mouse has moved again.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>true if you should interrupt your work; false otherwise.</returns>
     public bool InterruptMouseMove()
     {
       IntPtr ptr = ConstPointer();
@@ -726,8 +726,8 @@ namespace Rhino.Input.Custom
     /// </summary>
     public event EventHandler<GetPointMouseEventArgs> MouseMove;
 
-    /// <summary>Default calls the MouseMove event.</summary>
-    /// <param name="e"></param>
+    /// <summary>Calls the <see cref="MouseMove"/> event and can/should be called by overriding implementation.</summary>
+    /// <param name="e">Current argument for the event.</param>
     protected virtual void OnMouseMove(GetPointMouseEventArgs e)
     {
       if (MouseMove != null)
@@ -735,8 +735,8 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// Arbitrary object that can be attached to this GetPoint instance.  Useful for passing some
-    /// information that you may need in a DynamicDraw event since you can get at this Tag from
+    /// Gets or sets an arbitrary object that can be attached to this <see cref="GetPoint"/> instance.
+    /// Useful for passing some/ information that you may need in a DynamicDraw event since you can get at this Tag from
     /// the GetPointDrawEventArgs.
     /// </summary>
     /// <example>
@@ -754,7 +754,7 @@ namespace Rhino.Input.Custom
     public event EventHandler<GetPointMouseEventArgs> MouseDown;
 
     /// <summary>Default calls the MouseDown event.</summary>
-    /// <param name="e"></param>
+    /// <param name="e">Current argument for the event.</param>
     protected virtual void OnMouseDown(GetPointMouseEventArgs e)
     {
       if (MouseDown != null)
@@ -772,7 +772,7 @@ namespace Rhino.Input.Custom
     public event EventHandler<GetPointDrawEventArgs> DynamicDraw;
 
     /// <summary>Default calls the DynamicDraw event.</summary>
-    /// <param name="e"></param>
+    /// <param name="e">Current argument for the event.</param>
     protected virtual void OnDynamicDraw(GetPointDrawEventArgs e)
     {
       if (DynamicDraw != null)
@@ -817,7 +817,7 @@ namespace Rhino.Input.Custom
     /// scene needs to be fully regenerated every frame where the standard
     /// DynamicDraw event draws temporary decorations (geometry) on top of a static scene.
     /// </summary>
-    /// <param name="e"></param>
+    /// <param name="e">Current argument for the event.</param>
     protected virtual void OnPostDrawObjects(Rhino.Display.DrawEventArgs e)
     {
       if (PostDrawObjects != null)
@@ -825,13 +825,13 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>
-    /// After setting up options and so on, call GetPoint::Get to get a 3d point.
+    /// After setting up options and so on, call this method to get a 3d point.
     /// </summary>
     /// <param name="onMouseUp">
     /// If false, the point is returned when the left mouse button goes down.
     /// If true, the point is returned when the left mouse button goes up.
     /// </param>
-    /// <returns></returns>
+    /// <returns><see cref="GetResult.Point"/> if the user chose a point; other enumeration value otherwise.</returns>
     [CLSCompliant(false)]
     public GetResult Get(bool onMouseUp)
     {
@@ -928,7 +928,7 @@ namespace Rhino.Input.Custom
     /// Call this function to see if the point was on an object. If the point was
     /// on an object an ObjRef is returned; otherwise null is returned.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A point object reference.</returns>
     public Rhino.DocObjects.ObjRef PointOnObject()
     {
       Rhino.DocObjects.ObjRef rc = new Rhino.DocObjects.ObjRef();
@@ -950,7 +950,7 @@ namespace Rhino.Input.Custom
     /// parameter for the point.  The point returned by Point()
     /// is the same as curve.PointAt(t).
     /// </param>
-    /// <returns></returns>
+    /// <returns>A curve at a specified parameter value.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_insertknot.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_insertknot.cs' lang='cs'/>

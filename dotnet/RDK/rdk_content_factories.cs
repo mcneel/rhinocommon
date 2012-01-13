@@ -52,7 +52,7 @@ namespace Rhino.Render
     /// <summary>
     /// Determines if this type is of the specified kind.
     /// </summary>
-    /// <param name="kind"></param>
+    /// <param name="kind">The render content kind to check against.</param>
     /// <returns></returns>
 	  public bool IsKind(RenderContentKind kind) { return Kind == kind; }
 

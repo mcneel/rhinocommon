@@ -20,8 +20,8 @@ namespace Rhino.Input.Custom
       Construct(ptr);
     }
 
-    /// <summary>call to get a string.</summary>
-    /// <returns></returns>
+    /// <summary>Returns the string that the user typed. By default, space stops the string input.</summary>
+    /// <returns>The result type. If the user typed a string, this is <see cref="GetResult.String"/>.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayer.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addlayer.cs' lang='cs'/>
@@ -35,12 +35,14 @@ namespace Rhino.Input.Custom
       return (GetResult)rc;
     }
 
+    /// <summary>Returns the string that the user typed. By default, space does not stop input.</summary>
+    /// <returns>The result type. If the user typed a string, this is <see cref="GetResult.String"/>.</returns>
     [CLSCompliant(false)]
     public GetResult GetLiteralString()
     {
 #if USING_V5_SDK
       IntPtr ptr = NonConstPointer();
-      int rc = UnsafeNativeMethods.CRhinoGetString_Get(ptr,true);
+      int rc = UnsafeNativeMethods.CRhinoGetString_Get(ptr, true);
       return (GetResult)rc;
 #else
       return Get();
@@ -64,7 +66,7 @@ namespace Rhino.Input.Custom
     /// Call to get an option. A return value of "option" means the user selected
     /// a valid option. Use Option() the determine which option.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>If the user chose an option, then <see cref="GetResult.Option"/>; another enumeration value otherwise.</returns>
     [CLSCompliant(false)]
     public GetResult Get()
     {
@@ -74,7 +76,7 @@ namespace Rhino.Input.Custom
     }
   }
 
-  /// <summary>used to get double precision numbers.</summary>
+  /// <summary>Used to get double precision numbers.</summary>
   public class GetNumber : GetBaseClass
   {
     /// <summary>Create a new GetNumber.</summary>
@@ -90,7 +92,7 @@ namespace Rhino.Input.Custom
     }
 
     /// <summary>Call to get a number.</summary>
-    /// <returns></returns>
+    /// <returns>If the user chose a number, then <see cref="GetResult.Number"/>; another enumeration value otherwise.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addbackgroundbitmap.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addbackgroundbitmap.cs' lang='cs'/>
@@ -137,7 +139,7 @@ namespace Rhino.Input.Custom
 
   }
 
-  /// <summary>used to get integer numbers.</summary>
+  /// <summary>Used to get integer numbers.</summary>
   public class GetInteger : GetBaseClass
   {
     public GetInteger()
@@ -149,7 +151,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// Call to get an integer.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>If the user chose a number, then <see cref="GetResult.Number"/>; another enumeration value otherwise.</returns>
     [CLSCompliant(false)]
     public GetResult Get()
     {

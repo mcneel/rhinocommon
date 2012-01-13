@@ -1141,4 +1141,118 @@ namespace Rhino.Runtime.InteropWrappers
     }
   }
 
+  /// <summary>
+  /// Represents a wrapper to an unmanaged "array" (list) of CRhinoObjRef instances.
+  /// <para>Wrapper for a C++ ON_ClassArray of CRhinoObjRef</para>
+  /// </summary>
+  public sealed class ClassArrayObjRef : IDisposable
+  {
+    IntPtr m_ptr; // ON_ClassArray<CRhinoObjRef>*
+
+    /// <summary>
+    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <returns>The const pointer.</returns>
+    public IntPtr ConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Gets the non-const pointer (for modification) of this array.
+    /// </summary>
+    /// <returns>The non-const pointer.</returns>
+    public IntPtr NonConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Initializes a new <see cref="ClassArrayObjRef"/> instance.
+    /// </summary>
+    public ClassArrayObjRef()
+    {
+      m_ptr = UnsafeNativeMethods.ON_ClassArrayCRhinoObjRef_New();
+    }
+
+    /// <summary>
+    /// Initializes a new instances from a set of ObjRefs
+    /// </summary>
+    /// <param name="objrefs"></param>
+    public ClassArrayObjRef(System.Collections.Generic.IEnumerable<Rhino.DocObjects.ObjRef> objrefs)
+    {
+      m_ptr = UnsafeNativeMethods.ON_ClassArrayCRhinoObjRef_New();
+      foreach (var objref in objrefs)
+      {
+        Add(objref);
+      }
+    }
+
+    /// <summary>
+    /// Gets the number of CRhinoObjRef instances in this array.
+    /// </summary>
+    public int Count
+    {
+      get
+      {
+        IntPtr ptr = ConstPointer();
+        return UnsafeNativeMethods.ON_ClassArrayCRhinoObjRef_Count(ptr);
+      }
+    }
+
+    /// <summary>
+    /// Adds an ObjRef to the list.
+    /// </summary>
+    /// <param name="objref">An ObjRef to add.</param>
+    public void Add(Rhino.DocObjects.ObjRef objref)
+    {
+      if (null != objref)
+      {
+        IntPtr pConstObjRef = objref.ConstPointer();
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_ClassArrayCRhinoObjRef_Append(pThis, pConstObjRef);
+      }
+    }
+    
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~ClassArrayObjRef()
+    {
+      Dispose(false);
+    }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_ptr)
+      {
+        UnsafeNativeMethods.ON_ClassArrayCRhinoObjRef_Delete(m_ptr);
+        m_ptr = IntPtr.Zero;
+      }
+    }
+
+    /// <summary>
+    /// Copies the unmanaged array to a managed counterpart.
+    /// </summary>
+    /// <returns>The managed array.</returns>
+    public Rhino.DocObjects.ObjRef[] ToNonConstArray()
+    {
+      int count = Count;
+      if (count < 1)
+        return new DocObjects.ObjRef[0];
+      IntPtr ptr = ConstPointer();
+
+      Rhino.DocObjects.ObjRef[] rc = new DocObjects.ObjRef[count];
+      for (int i = 0; i < count; i++)
+      {
+        IntPtr pObjRef = UnsafeNativeMethods.ON_ClassArrayCRhinoObjRef_Get(ptr, i);
+        if (IntPtr.Zero != pObjRef)
+          rc[i] = new DocObjects.ObjRef(pObjRef);
+      }
+      return rc;
+    }
+  }
 }

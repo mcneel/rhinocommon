@@ -1126,6 +1126,40 @@ namespace Rhino.Display
     }
 
     /// <summary>
+    /// Draws a single arrow head.
+    /// </summary>
+    /// <param name="tip">Point of arrow head tip.</param>
+    /// <param name="direction">Direction in which arrow head is pointing.</param>
+    /// <param name="color">Color of arrow head.</param>
+    /// <param name="screenSize">If screenSize != 0.0, then the size (in screen pixels) of the arrow head will be equal to the screenSize.</param>
+    /// <param name="worldSize">If worldSize != 0.0 and screensize == 0.0 the size of the arrow head will be equal to the number of units in worldSize.</param>
+    public void DrawArrowHead(Point3d tip, Vector3d direction, System.Drawing.Color color, double screenSize, double worldSize)
+    {
+      if (screenSize != 0.0)
+      {
+        Line line = new Line(tip, tip - direction);
+        UnsafeNativeMethods.CRhinoDisplayPipeline_DrawArrowHead(m_ptr, ref line, color.ToArgb(), screenSize, 0.0);
+      }
+      else if (worldSize != 0.0)
+      {
+        if (!direction.Unitize()) { return; }
+        Line line = new Line(tip, tip - direction * worldSize);
+        UnsafeNativeMethods.CRhinoDisplayPipeline_DrawArrowHead(m_ptr, ref line, color.ToArgb(), 0.0, 1.0);
+      }
+    }
+    /// <summary>
+    /// Draws an arrow made up of three line segments.
+    /// </summary>
+    /// <param name="line">Base line for arrow.</param>
+    /// <param name="color">Color of arrow.</param>
+    /// <param name="thickness">Thickness (in pixels) of the arrow line segments.</param>
+    /// <param name="size">Size (in world units) of the arrow tip lines.</param>
+    public void DrawLineArrow(Line line, System.Drawing.Color color, int thickness, double size)
+    {
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawLineArrow(m_ptr, ref line, color.ToArgb(), thickness, size);
+    }
+
+    /// <summary>
     /// Draws a single line object.
     /// </summary>
     /// <param name="line">Line to draw.</param>
@@ -1593,7 +1627,6 @@ namespace Rhino.Display
     {
       DrawMarker(tip, direction, color, 3, 16, 0.0);
     }
-
     /// <summary>
     /// Draws an arrow marker as a view-aligned widget.
     /// </summary>
@@ -1605,7 +1638,6 @@ namespace Rhino.Display
     {
       DrawMarker(tip, direction, color, thickness, 16.0, 0.0);
     }
-
     /// <summary>
     /// Draws an arrow marker as a view-aligned widget.
     /// </summary>
@@ -1618,7 +1650,6 @@ namespace Rhino.Display
     {
       DrawMarker(tip, direction, color, thickness, size, 0.0);
     }
-
     /// <summary>
     /// Draws an arrow marker as a view-aligned widget.
     /// </summary>

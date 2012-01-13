@@ -23,6 +23,25 @@ RH_C_FUNCTION void ON_Revision(CRhCmnStringHolder* pStringHolder)
 #endif
 }
 
+RH_C_FUNCTION ON_wString* ON_wString_New()
+{
+  return new ON_wString();
+}
+
+RH_C_FUNCTION void ON_wString_Delete(ON_wString* pString)
+{
+  if( pString )
+    delete pString;
+}
+
+RH_C_FUNCTION const wchar_t* ON_wString_Get(ON_wString* pString)
+{
+  const wchar_t* rc = NULL;
+  if( pString )
+    rc = pString->Array();
+  return rc;
+}
+
 RH_C_FUNCTION void ON_wString_Set(ON_wString* pString, const RHMONO_STRING* _text)
 {
   if( pString )

@@ -276,6 +276,7 @@ namespace Rhino.Runtime
       get { return Type.GetType("Mono.Runtime") != null; }
     }
 
+    static int m_running_in_rhino_state = 0; //1=false, 2=true
     /// <summary>
     /// Tests if RhinoCommon is currently executing inside of the Rhino.exe process.
     /// There are other cases where RhinoCommon could be running; specifically inside
@@ -287,18 +288,22 @@ namespace Rhino.Runtime
     {
       get
       {
-        bool rc = false;
 #if RHINO_SDK
-        try
+        if (m_running_in_rhino_state == 0)
         {
-          return Rhino.RhinoApp.SdkVersion>0;
-        }
-        catch (Exception)
-        {
-          rc = false;
+          m_running_in_rhino_state = 1;
+          try
+          {
+            if (Rhino.RhinoApp.SdkVersion > 0)
+              m_running_in_rhino_state = 2;
+          }
+          catch (Exception)
+          {
+            m_running_in_rhino_state = 1;
+          }
         }
 #endif
-        return rc;
+        return (m_running_in_rhino_state == 2);
       }
     }
 

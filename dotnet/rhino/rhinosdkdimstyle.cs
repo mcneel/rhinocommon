@@ -190,12 +190,12 @@ namespace Rhino.DocObjects
     const int idxLengthFormat = 3;
     const int idxTextAlignment = 4;
 
-    public int GetInt(int which)
+    int GetInt(int which)
     {
       IntPtr pConstThis = ConstPointer();
       return UnsafeNativeMethods.ON_DimStyle_GetInt(pConstThis, which);
     }
-    public void SetInt(int which, int val)
+    void SetInt(int which, int val)
     {
       IntPtr pThis = NonConstPointer();
       UnsafeNativeMethods.ON_DimStyle_SetInt(pThis, which, val);

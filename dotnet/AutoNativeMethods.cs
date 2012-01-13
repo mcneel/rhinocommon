@@ -1868,6 +1868,18 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Revision(IntPtr pStringHolder);
 
+  //ON_wString* ON_wString_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_wString_New();
+
+  //void ON_wString_Delete(ON_wString* pString)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_wString_Delete(IntPtr pString);
+
+  //const wchar_t* ON_wString_Get(ON_wString* pString)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_wString_Get(IntPtr pString);
+
   //void ON_wString_Set(ON_wString* pString, const RHMONO_STRING* _text)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_wString_Set(IntPtr pString, [MarshalAs(UnmanagedType.LPWStr)]string _text);
@@ -5707,6 +5719,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawDirectionArrow(IntPtr pPipeline, Point3d location, Vector3d direction, int argb);
 
+  //void CRhinoDisplayPipeline_DrawLineArrow(CRhinoDisplayPipeline* pPipeline, const ON_Line* line, int argb, int thickness, double size)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_DrawLineArrow(IntPtr pPipeline, ref Line line, int argb, int thickness, double size);
+
+  //void CRhinoDisplayPipeline_DrawArrowHead( CRhinoDisplayPipeline* pPipeline, const ON_Line* line, int argb, double screenSize, double relativeSize )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_DrawArrowHead(IntPtr pPipeline, ref Line line, int argb, double screenSize, double relativeSize);
+
   //void CRhinoDisplayPipeline_DrawArrows(CRhinoDisplayPipeline* pPipeline, int line_count, /*ARRAY*/const ON_Line* lines, int argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawArrows(IntPtr pPipeline, int line_count, Line[] lines, int argb);
@@ -8370,6 +8390,26 @@ internal partial class UnsafeNativeMethods
   //void CRhCmnGripObject_NewLocationBase(CRhCmnGripObject* pGripObject)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhCmnGripObject_NewLocationBase(IntPtr pGripObject);
+
+  //ON_ClassArray<CRhinoObjRef>* ON_ClassArrayCRhinoObjRef_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_ClassArrayCRhinoObjRef_New();
+
+  //int ON_ClassArrayCRhinoObjRef_Count(const ON_ClassArray<CRhinoObjRef>* pConstObjRefArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_ClassArrayCRhinoObjRef_Count(IntPtr pConstObjRefArray);
+
+  //void ON_ClassArrayCRhinoObjRef_Append(ON_ClassArray<CRhinoObjRef>* pObjRefArray, const CRhinoObjRef* pConstObjRef)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_ClassArrayCRhinoObjRef_Append(IntPtr pObjRefArray, IntPtr pConstObjRef);
+
+  //void ON_ClassArrayCRhinoObjRef_Delete(ON_ClassArray<CRhinoObjRef>* pObjRefArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_ClassArrayCRhinoObjRef_Delete(IntPtr pObjRefArray);
+
+  //const CRhinoObjRef* ON_ClassArrayCRhinoObjRef_Get(const ON_ClassArray<CRhinoObjRef>* pConstObjRefArray, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_ClassArrayCRhinoObjRef_Get(IntPtr pConstObjRefArray, int index);
   #endregion
 
 

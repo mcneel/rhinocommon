@@ -64,6 +64,11 @@ namespace Rhino.Runtime
         rc = rhinoObject.ConstPointer();
       return rc;
     }
+
+    public static Rhino.DocObjects.RhinoObject RhinoObjectFromPointer(IntPtr pRhinoObject)
+    {
+      return Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(pRhinoObject);
+    }
 #endif
 
     /// <summary>

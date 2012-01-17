@@ -155,7 +155,7 @@ namespace Rhino.Display
     /// <summary>
     /// Convert HSL color to an equivalent System.Drawing.Color.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A .Net framework library color value.</returns>
     public System.Drawing.Color ToArgbColor()
     {
       byte a = (byte)(255.0 * A);

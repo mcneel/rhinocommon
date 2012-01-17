@@ -319,9 +319,9 @@ namespace Rhino.Display
 
     #region Bump
     /// <summary>
-    /// may be null if no bump texture has been added to this material.
+    /// Gets the bump texture for this display material.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The texture, or null if no bump texture has been added to this material.</returns>
     public Rhino.DocObjects.Texture GetBumpTexture(bool front)
     {
       return GetTexture(Rhino.DocObjects.Material.idxBumpTexture, front);

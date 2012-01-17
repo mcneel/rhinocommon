@@ -206,7 +206,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Id for Rhino's built-in curvature graphs analysis mode.  Curvature hair
+    /// Id for Rhino's built-in curvature graphs analysis mode. Curvature hair
     /// is shown on curves and surfaces.
     /// </summary>
     public static Guid RhinoCurvatureGraphAnalysisModeId
@@ -261,7 +261,7 @@ namespace Rhino.Display
     #endregion
 
     /// <summary>
-    /// Register a custom visual analysis mode for use in Rhino.  It is OK to call
+    /// Registers a custom visual analysis mode for use in Rhino.  It is OK to call
     /// register multiple times for a single custom analysis mode type, since subsequent
     /// register calls will notice that the type has already been registered.
     /// </summary>
@@ -269,7 +269,7 @@ namespace Rhino.Display
     /// Must be a type that is a subclass of VisualAnalysisMode.
     /// </param>
     /// <returns>
-    /// Instance of registered analysis mode on success.
+    /// An instance of registered analysis mode on success.
     /// </returns>
     public static VisualAnalysisMode Register(Type customAnalysisModeType)
     {
@@ -278,7 +278,7 @@ namespace Rhino.Display
 
       // make sure this class has not already been registered
       var rc = Find(customAnalysisModeType);
-      if( rc == null )
+      if (rc == null)
       {
         if (m_registered_modes == null)
           m_registered_modes = new System.Collections.Generic.List<VisualAnalysisMode>();
@@ -314,10 +314,10 @@ namespace Rhino.Display
       return null;
     }
     /// <summary>
-    /// Finds a VisualAnalysis mode by id.
+    /// Finds a visual analysis mode by guid.
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">The globally unique identifier to search for.</param>
+    /// <returns>The found visual analysis mode, or null if it was not found, or on error.</returns>
     public static VisualAnalysisMode Find(Guid id)
     {
       VisualAnalysisMode rc = FindLocal(id);
@@ -348,7 +348,7 @@ namespace Rhino.Display
 
 
     /// <summary>
-    /// Name of the analysis mode.  Used by the What command and the object
+    /// Gets the name of the analysis mode. It is used by the _What command and the object
     /// properties details window to describe the object.
     /// </summary>
     public abstract string Name { get; }
@@ -366,18 +366,18 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Turn the analysis mode's user interface on and off.  For Rhino's built
+    /// Turns the analysis mode's user interface on and off. For Rhino's built
     /// in modes this opens or closes the modeless dialog that controls the
     /// analysis mode's display settings.
     /// </summary>
-    /// <param name="on"></param>
+    /// <param name="on">true if the inferface should be shown; false if it should be concealed.</param>
     public virtual void EnableUserInterface(bool on) {}
 
     /// <summary>
-    /// Return true if this visual analysis mode can be used on a given Rhino object.
+    /// Gets a value indicating if this visual analysis mode can be used on a given Rhino object.
     /// </summary>
-    /// <param name="obj"></param>
-    /// <returns></returns>
+    /// <param name="obj">The object to be tested.</param>
+    /// <returns>true if this mode can indeed be used on the object; otherwise false.</returns>
     public virtual bool ObjectSupportsAnalysisMode(Rhino.DocObjects.RhinoObject obj)
     {
       IntPtr pConstPointer = ConstPointer();
@@ -386,9 +386,10 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// true if this visual analysis mode should show isocuves on shaded surface
+    /// Gets true if this visual analysis mode will show isocuves on shaded surface
     /// objects.  Often a mode's user interface will provide a way to change this
     /// setting.
+    /// <para>The default is false.</para>
     /// </summary>
     public virtual bool ShowIsoCurves
     {
@@ -405,8 +406,8 @@ namespace Rhino.Display
     /// override this function set the tex, diffuse_color, and EnableLighting
     /// parameter.
     /// </remarks>
-    /// <param name="obj"></param>
-    /// <param name="attributes"></param>
+    /// <param name="obj">The object for which to set up attributes.</param>
+    /// <param name="attributes">The linked attributes.</param>
     protected virtual void SetUpDisplayAttributes(Rhino.DocObjects.RhinoObject obj, DisplayPipelineAttributes attributes) { }
 
     /// <summary>
@@ -415,17 +416,17 @@ namespace Rhino.Display
     /// on the analysis mesh vertices.  For breps, there is one mesh per face.
     /// For mesh objects there is a single mesh.
     /// </summary>
-    /// <param name="obj"></param>
-    /// <param name="meshes"></param>
+    /// <param name="obj">The object for which to update vertex colors.</param>
+    /// <param name="meshes">An array of meshes that should be updated.</param>
     protected virtual void UpdateVertexColors(Rhino.DocObjects.RhinoObject obj, Rhino.Geometry.Mesh[] meshes) { }
 
     /// <summary>
     /// If Style==Wireframe, then the default decomposes the curve object into
     /// nurbs curve segments and calls the virtual DrawNurbsCurve for each segment.
     /// </summary>
-    /// <param name="curve"></param>
-    /// <param name="pipeline"></param>
-    protected virtual void DrawCurveObject( Rhino.DocObjects.CurveObject curve, DisplayPipeline pipeline )
+    /// <param name="curve">A document curve object.</param>
+    /// <param name="pipeline">The drawing pipeline.</param>
+    protected virtual void DrawCurveObject(Rhino.DocObjects.CurveObject curve, DisplayPipeline pipeline )
     {
       IntPtr pConstThis = ConstPointer();
       IntPtr pConstCurve = curve.ConstPointer();
@@ -433,38 +434,71 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoVisualAnalysisMode_DrawCurveObject(pConstThis, pConstCurve, pPipeline);
     }
 
-    protected virtual void DrawMeshObject( Rhino.DocObjects.MeshObject mesh, DisplayPipeline pipeline )
-    {
-    }
-
-    protected virtual void DrawBrepObject( Rhino.DocObjects.BrepObject brep, DisplayPipeline pipeline )
-    {
-    }
-
-    protected virtual void DrawPointObject( Rhino.DocObjects.PointObject point, DisplayPipeline pipeline )
-    {
-    }
-
-    protected virtual void DrawPointCloudObject( Rhino.DocObjects.PointCloudObject pointCloud, DisplayPipeline pipeline )
+    /// <summary>
+    /// Draws one mesh. Override this method to add your custom behavior.
+    /// <para>The default implementation does nothing.</para>
+    /// </summary>
+    /// <param name="mesh">A mesh object.</param>
+    /// <param name="pipeline">The current display pipeline.</param>
+    protected virtual void DrawMeshObject(Rhino.DocObjects.MeshObject mesh, DisplayPipeline pipeline )
     {
     }
 
     /// <summary>
-    /// The default does nothing. This is a good function to override for
-    /// analysis modes like curvature hair display.
+    /// Draws one brep. Override this method to add your custom behavior.
+    /// <para>The default implementation does nothing.</para>
     /// </summary>
-    /// <param name="obj"></param>
-    /// <param name="curve"></param>
-    /// <param name="pipeline"></param>
-    protected virtual void DrawNurbsCurve( Rhino.DocObjects.RhinoObject obj, Rhino.Geometry.NurbsCurve curve, DisplayPipeline pipeline)
+    /// <param name="brep">A brep object.</param>
+    /// <param name="pipeline">The current display pipeline.</param>
+    protected virtual void DrawBrepObject(Rhino.DocObjects.BrepObject brep, DisplayPipeline pipeline )
     {
     }
 
-    protected virtual void DrawNurbsSurface( Rhino.DocObjects.RhinoObject obj, Rhino.Geometry.NurbsSurface surface, DisplayPipeline pipeline)
+    /// <summary>
+    /// Draws one point. Override this method to add your custom behavior.
+    /// <para>The default implementation does nothing.</para>
+    /// </summary>
+    /// <param name="point">A point object.</param>
+    /// <param name="pipeline">The current display pipeline.</param>
+    protected virtual void DrawPointObject(Rhino.DocObjects.PointObject point, DisplayPipeline pipeline )
     {
     }
 
-    protected virtual void DrawMesh( Rhino.DocObjects.RhinoObject obj, Rhino.Geometry.Mesh mesh, DisplayPipeline pipeline )
+    /// <summary>
+    /// Draws one point cloud. Override this method to add your custom behavior.
+    /// <para>The default implementation does nothing.</para>
+    /// </summary>
+    /// <param name="pointCloud">A point cloud object.</param>
+    /// <param name="pipeline">The current display pipeline.</param>
+    protected virtual void DrawPointCloudObject(Rhino.DocObjects.PointCloudObject pointCloud, DisplayPipeline pipeline )
+    {
+    }
+
+    /// <summary>
+    /// Draws a NURBS curve. This is a good function to override for
+    /// analysis modes like curvature hair display.
+    /// <para>The default implementation does nothing.</para>
+    /// </summary>
+    /// <param name="obj">A Rhino object corresponding to the curve.</param>
+    /// <param name="curve">The curve geometry.</param>
+    /// <param name="pipeline">The current display pipeline.</param>
+    protected virtual void DrawNurbsCurve(Rhino.DocObjects.RhinoObject obj, Rhino.Geometry.NurbsCurve curve, DisplayPipeline pipeline)
+    {
+    }
+
+    /// <summary>
+    /// Draws a NURBS surface. This is a good function to override
+    /// to display object-related meshes.
+    /// <para>The default implementation does nothing.</para>
+    /// </summary>
+    /// <param name="obj">A Rhino object corresponding to the surface.</param>
+    /// <param name="surface">The surface geometry.</param>
+    /// <param name="pipeline">The current display pipeline.</param>
+    protected virtual void DrawNurbsSurface(Rhino.DocObjects.RhinoObject obj, Rhino.Geometry.NurbsSurface surface, DisplayPipeline pipeline)
+    {
+    }
+
+    protected virtual void DrawMesh(Rhino.DocObjects.RhinoObject obj, Rhino.Geometry.Mesh mesh, DisplayPipeline pipeline )
     {
     }
   }

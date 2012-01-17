@@ -585,8 +585,8 @@ namespace Rhino.ApplicationSettings
     /// Location where the Main Rhino window attempts to show when the application is first
     /// started.
     /// </summary>
-    /// <param name="bounds"></param>
-    /// <param name="state"></param>
+    /// <param name="bounds">The rectangle in which the main window attempts to shows is assigned to this out parameter during the call.</param>
+    /// <param name="state">The form state is assigned to this out parameter during the call.</param>
     /// <returns>false if the information could not be retrieved.</returns>
     public static bool InitialMainWindowState(out System.Drawing.Rectangle bounds, out System.Windows.Forms.FormWindowState state)
     {
@@ -690,9 +690,10 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Gets Name/Macro combinations as a dictionary.
+    /// Constructs a new dictionary that contains: as keys all names and as values all macros.
+    /// <para>Modifications to this dictionary do not affect any Rhino command alias.</para>
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The new dictionary.</returns>
     public static System.Collections.Generic.Dictionary<string,string> ToDictionary()
     {
       var rc = new System.Collections.Generic.Dictionary<string,string>();
@@ -707,9 +708,9 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Returns true if the current alias list is the same as the default alias list.
+    /// Computes a value indicating if the current alias list is the same as the default alias list.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>true if the current alias list is exactly equal to the default alias list; false otherwise.</returns>
     public static bool IsDefault()
     {
       var current = ToDictionary();
@@ -730,9 +731,10 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>
-    /// Gets the default set of Name/Macro combinations.
+    /// Constructs a dictionary containing as keys the default names and as value the default macro.
+    /// <para>The returned dicionary contains a copy of the settings.</para>
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A new dictionary with the default name/macro combinantions.</returns>
     public static System.Collections.Generic.Dictionary<string, string> GetDefaults()
     {
       var rc = new System.Collections.Generic.Dictionary<string,string>();

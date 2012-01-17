@@ -356,7 +356,7 @@ namespace Rhino.Commands
     /// if true, only get names of currently loaded commands.
     /// if false, get names of all registered (may not be currently loaded) commands.
     /// </param>
-    /// <returns></returns>
+    /// <returns>An array instance with command names. This array could be empty, but not null.</returns>
     public static string[] GetCommandNames(bool english, bool loaded)
     {
       IntPtr pStrings = UnsafeNativeMethods.ON_StringArray_New();
@@ -694,8 +694,8 @@ namespace Rhino.Commands
     /// <summary>
     /// Override this virtual function and return true if object should be selected.
     /// </summary>
-    /// <param name="rhObj"></param>
-    /// <returns></returns>
+    /// <param name="rhObj">The object to check regarding selection status.</param>
+    /// <returns>true if the object should be selected; false otherwise.</returns>
     protected abstract bool SelFilter(Rhino.DocObjects.RhinoObject rhObj);
     static int OnSelFilter(int command_serial_number, IntPtr pRhinoObject)
     {
@@ -741,20 +741,26 @@ namespace Rhino.Commands
 #if USING_V5_SDK
   public abstract class TransformCommand : Command
   {
-    protected Result SelectObjects( string prompt, Rhino.Collections.TransformObjectList list )
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="prompt">The selection prompt.</param>
+    /// <param name="list">A list of objects to transform. This is a special list type.</param>
+    /// <returns>The operation result.</returns>
+    protected Result SelectObjects(string prompt, Rhino.Collections.TransformObjectList list)
     {
       IntPtr pList = list.NonConstPointer();
       int rc = UnsafeNativeMethods.CRhinoTransformCommand_SelectObjects(Id, prompt, pList);
       return (Result)rc;
     }
     
-    protected void TransformObjects( Rhino.Collections.TransformObjectList list, Rhino.Geometry.Transform xform, bool copy, bool autoHistory)
+    protected void TransformObjects(Rhino.Collections.TransformObjectList list, Rhino.Geometry.Transform xform, bool copy, bool autoHistory)
     {
       IntPtr pList = list.NonConstPointer();
       UnsafeNativeMethods.CRhinoTransformCommand_TransformObjects(Id, pList, ref xform, copy, autoHistory);
     }
 
-    protected void DuplicateObjects( Rhino.Collections.TransformObjectList list )
+    protected void DuplicateObjects(Rhino.Collections.TransformObjectList list)
     {
       IntPtr pList = list.NonConstPointer();
       UnsafeNativeMethods.CRhinoTransformCommand_DuplicateObjects(Id, pList);
@@ -764,14 +770,12 @@ namespace Rhino.Commands
     /// Sets dynamic grip locations back to starting grip locations. This makes things
     /// like the Copy command work when grips are "copied".
     /// </summary>
-    /// <param name="list"></param>
-    protected void ResetGrips( Rhino.Collections.TransformObjectList list )
+    /// <param name="list">A list of object to transform. This is a special list type.</param>
+    protected void ResetGrips(Rhino.Collections.TransformObjectList list)
     {
       IntPtr pList = list.NonConstPointer();
       UnsafeNativeMethods.CRhinoTransformCommand_ResetGrips(Id, pList);
     }
-
-
 
     //CRhinoView* View() { return m_view; }
     //bool ObjectsWerePreSelected() { return m_objects_were_preselected; }

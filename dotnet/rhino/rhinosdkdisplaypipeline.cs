@@ -789,10 +789,11 @@ namespace Rhino.Display
 
     #region methods
     /// <summary>
-    /// true if backfaces of surface and mesh control polygons are culled. This value
-    /// is determined by the CullControlPolygon command.
+    /// Returns a value indicating if only points on the side of the surface that
+    /// face the camera are displayed.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>true if backfaces of surface and mesh control polygons are culled.
+    /// This value is determined by the _CullControlPolygon command.</returns>
     public static bool CullControlPolygon()
     {
       return UnsafeNativeMethods.RHC_RhinoCullControlPolygon();
@@ -1757,18 +1758,17 @@ namespace Rhino.Display
     /// <summary>
     /// Draws 2D text on the viewport.
     /// </summary>
-    /// <param name="text">the string to draw.</param>
-    /// <param name="color">text color.</param>
-    /// <param name="worldCoordinate">definition point in world coordinates.</param>
-    /// <param name="middleJustified">if true text is centered around the definition point, otherwise it is lower-left justified.</param>
-    /// <param name="height">height in pixels (good default is 12)</param>
-    /// <param name="fontface">font name (good default is "Arial")</param>
+    /// <param name="text">The string to draw.</param>
+    /// <param name="color">Text color.</param>
+    /// <param name="worldCoordinate">Definition point in world coordinates.</param>
+    /// <param name="middleJustified">If true text is centered around the definition point, otherwise it is lower-left justified.</param>
+    /// <param name="height">Height in pixels (good default is 12).</param>
+    /// <param name="fontface">Font name (good default is "Arial").</param>
     public void Draw2dText(string text, System.Drawing.Color color, Point3d worldCoordinate, bool middleJustified, int height, string fontface)
     {
       IntPtr pThis = NonConstPointer();
       UnsafeNativeMethods.CRhinoDisplayPipeline_Draw2dText2(pThis, text.Length, text, color.ToArgb(), worldCoordinate, middleJustified, height, fontface);
     }
-
 
     public void Draw3dText(string text, System.Drawing.Color color, Plane textPlane, double height, string fontface)
     {
@@ -1782,12 +1782,13 @@ namespace Rhino.Display
       IntPtr pAnnotationText = text.NonConstPointer();
       UnsafeNativeMethods.CRhinoDisplayPipeline_Draw3dText2(pThis, pAnnotationText, text.FontFace, color.ToArgb(), text.Bold, text.Italic);
     }
+
     /// <summary>
-    /// Draw 3d text with a different plane than what is defined in the Text3d class.
+    /// Draws 3d text with a different plane than what is defined in the Text3d class.
     /// </summary>
-    /// <param name="text"></param>
-    /// <param name="color"></param>
-    /// <param name="textPlane"></param>
+    /// <param name="text">The string to draw.</param>
+    /// <param name="color">Text color.</param>
+    /// <param name="textPlane">The plane for the text object.</param>
     public void Draw3dText(Text3d text, System.Drawing.Color color, Plane textPlane)
     {
       IntPtr pThis = NonConstPointer();
@@ -1798,9 +1799,9 @@ namespace Rhino.Display
     /// <summary>
     /// Draws 3d text using the Text3d plane with an adjusted origin.
     /// </summary>
-    /// <param name="text"></param>
-    /// <param name="color"></param>
-    /// <param name="textPlaneOrigin"></param>
+    /// <param name="text">The string to draw.</param>
+    /// <param name="color">Text color.</param>
+    /// <param name="textPlaneOrigin">The origin of the plane to draw.</param>
     public void Draw3dText(Text3d text, System.Drawing.Color color, Point3d textPlaneOrigin)
     {
       IntPtr pThis = NonConstPointer();
@@ -1840,9 +1841,9 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Draw a RhinoObject with an applied transformation.
+    /// Draws a <see cref="DocObjects.RhinoObject">RhinoObject</see> with an applied transformation.
     /// </summary>
-    /// <param name="rhinoObject"></param>
+    /// <param name="rhinoObject">The Rhino object.</param>
     /// <param name="xform"></param>
     /// <example>
     /// <code source='examples\vbnet\ex_arraybydistance.vb' lang='vbnet'/>

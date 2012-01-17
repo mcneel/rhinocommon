@@ -70,7 +70,7 @@ namespace Rhino.DocObjects.Tables
     /// If there is already a named onstruction plane with the same name, that 
     /// construction plane is replaced.
     /// </param>
-    /// <param name="plane"></param>
+    /// <param name="plane">The plane value.</param>
     /// <returns>
     /// 0 based index of named construction plane.
     /// -1 on failure.
@@ -142,10 +142,10 @@ namespace Rhino.DocObjects.Tables
 
     /// <summary>
     /// Conceptually, the named view table is an array of ViewInfo and their associated names.
-    /// The operator[] can be used to get individual ViewInfo items.
+    /// The indexing operator ([] in C#) can be used to get individual ViewInfo items.
     /// </summary>
-    /// <param name="index">zero based array index.</param>
-    /// <returns></returns>
+    /// <param name="index">Zero based array index.</param>
+    /// <returns>The view that was found.</returns>
     public DocObjects.ViewInfo this[int index]
     {
       get

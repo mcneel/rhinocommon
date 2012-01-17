@@ -294,10 +294,10 @@ namespace Rhino
       Write(format + "\n", arg0, arg1, arg2);
     }
 
-    ///<summary>Set Rhino command prompt.</summary>
-    ///<param name="prompt"></param>
+    ///<summary>Sets the command prompt in Rhino.</summary>
+    ///<param name="prompt">The new prompt text.</param>
     ///<param name="promptDefault">
-    ///text that appears in angle brackets and indicates what will happen if the user pressed ENTER.
+    /// Text that appears in angle brackets and indicates what will happen if the user pressed ENTER.
     ///</param>
     public static void SetCommandPrompt(string prompt, string promptDefault)
     {
@@ -305,7 +305,7 @@ namespace Rhino
       RhinoApp.Wait();
     }
     ///<summary>Set Rhino command prompt.</summary>
-    ///<param name="prompt"></param>
+    ///<param name="prompt">The new prompt text.</param>
     public static void SetCommandPrompt(string prompt)
     {
       UnsafeNativeMethods.CRhinoApp_SetCommandPrompt(prompt, null);
@@ -399,18 +399,18 @@ namespace Rhino
     }
 
 
-    ///<summary>Run a Rhino command script.</summary>
+    ///<summary>Runs a Rhino command script.</summary>
     ///<param name="script">[in] script to run.</param>
     ///<param name="echo">
-    ///Controls how the script is echoed in the command output window.
-    ///false = silent - nothing is echoed
-    ///true = verbatim - the script is echoed literally
+    /// Controls how the script is echoed in the command output window.
+    /// false = silent - nothing is echoed.
+    /// true = verbatim - the script is echoed literally.
     ///</param>
     ///<remarks>
-    ///Rhino acts as if each character in the script string had been typed in the command prompt.
-    ///When RunScript is called from a &quot;script runner&quot; command, it completely runs the
-    ///script before returning. When RunScript is called outside of a command, it returns and the
-    ///script is run. This way menus and buttons can use RunScript to execute complicated functions.
+    /// Rhino acts as if each character in the script string had been typed in the command prompt.
+    /// When RunScript is called from a &quot;script runner&quot; command, it completely runs the
+    /// script before returning. When RunScript is called outside of a command, it returns and the
+    /// script is run. This way menus and buttons can use RunScript to execute complicated functions.
     ///</remarks>
     public static bool RunScript(string script, bool echo)
     {
@@ -419,7 +419,7 @@ namespace Rhino
     }
 
     /// <summary>
-    /// Pause to keep Windows message pump alive so views will update
+    /// Pauses to keep Windows message pump alive so views will update
     /// and windows will repaint.
     /// </summary>
     public static void Wait()
@@ -932,7 +932,7 @@ namespace Rhino.UI
     /// Sets a cursor tooltip string shown next to the mouse cursor.
     /// Overrides all cursor tooltip panes.
     /// </summary>
-    /// <param name="tooltip"></param>
+    /// <param name="tooltip">The text to show.</param>
     public static void SetToolTip(string tooltip)
     {
       UnsafeNativeMethods.CRhinoApp_SetCursorTooltip(tooltip);
@@ -987,7 +987,8 @@ namespace Rhino.UI
     /// <summary>
     /// Sets the current position of Rhino's status bar progress meter.
     /// </summary>
-    /// <param name="position"></param>
+    /// <param name="position">The new value. This can be stated in absolute terms, or relative compared to the current position.
+    /// <para>The interval bounds are specified when you first show the bar using <see cref="ShowProgressMeter"/>.</para></param>
     /// <param name="absolute">
     /// If true, then the progress meter is moved to position.
     /// If false, then the progress meter is moved position from the current position (relative).

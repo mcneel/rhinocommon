@@ -569,8 +569,8 @@ namespace Rhino
 
 #if RDK_CHECKED
     private Rhino.Render.GroundPlane m_ground_plane;
-    /// <summary></summary>
-    /// <exception cref="Rhino.Runtime.RdkNotLoadedException"></exception>
+    /// <summary>Gets the ground plane of this document.</summary>
+    /// <exception cref="Rhino.Runtime.RdkNotLoadedException">If the RDK is not loaded.</exception>
     public Rhino.Render.GroundPlane GroundPlane
     {
       get
@@ -650,12 +650,12 @@ namespace Rhino
     }
 
     /// <summary>
-    /// Used to begin recording undo information when the document
-    /// is changed outside of a command.  An example begin changes
+    /// Instructs Rhino to begin recording undo information when the document
+    /// is changed outside of a command. We use this, e.g., to save changes
     /// caused by the modeless layer or object properties dialogs
     /// when commands are not running.
     /// </summary>
-    /// <param name="description"></param>
+    /// <param name="description">A text describing the record.</param>
     /// <returns>
     /// Serial number of record.  Returns 0 if record is not started
     /// because undo information is already being recorded or
@@ -2052,7 +2052,7 @@ namespace Rhino.DocObjects.Tables
     /// Cause objects selection state to change momentarily so the object
     /// appears to flash on the screen.
     /// </summary>
-    /// <param name="list"></param>
+    /// <param name="list">An array, a list or any enumerable set of Rhino objects.</param>
     /// <param name="useSelectionColor">
     /// If true, flash between object color and selection color. If false,
     /// flash between visible and invisible.

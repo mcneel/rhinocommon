@@ -7,7 +7,7 @@ namespace Rhino.Render
 {
   /// <summary>
   /// Represents an infinite plane for implementation by renderers.
-  /// See <see cref="Rhino.PlugIns.RenderPlugIn.SupportsFeature"/>.
+  /// See <see cref="Rhino.PlugIns.RenderPlugIn.SupportsFeature">SupportsFeature</see>.
   /// </summary>
   public class GroundPlane
   {

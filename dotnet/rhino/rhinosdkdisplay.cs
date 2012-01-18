@@ -34,7 +34,7 @@ namespace Rhino.Display
     /// <summary>
     /// Constructs a DisplayBitmap from an existing bitmap.
     /// </summary>
-    /// <param name="bitmap"></param>
+    /// <param name="bitmap">The original bitmap.</param>
     public DisplayBitmap(System.Drawing.Bitmap bitmap)
     {
       IntPtr hBitmap = bitmap.GetHbitmap();
@@ -49,8 +49,8 @@ namespace Rhino.Display
     /// <summary>
     /// Load a DisplayBitmap from and image file on disk.
     /// </summary>
-    /// <param name="path"></param>
-    /// <returns></returns>
+    /// <param name="path">A location from which to load the file.</param>
+    /// <returns>The new display bitmap, or null on error.</returns>
     public static DisplayBitmap Load(string path)
     {
       IntPtr pBmp = UnsafeNativeMethods.CRhCmnDisplayBitmap_New2(path);
@@ -63,12 +63,12 @@ namespace Rhino.Display
     /// Sets blending function used to determine how this bitmap is blended
     /// with the current framebuffer color.  The default setting is SourceAlpha
     /// for source and OneMinusSourceAlpha for destination.  See OpenGL's
-    /// glBlendFunc for details
-    /// http://www.opengl.org/sdk/docs/man/xhtml/glBlendFunc.xml.
+    /// glBlendFunc for details.
+    /// <para>http://www.opengl.org/sdk/docs/man/xhtml/glBlendFunc.xml</para>
     /// </summary>
-    /// <param name="source"></param>
-    /// <param name="destination"></param>
-    public void SetBlendFunction( BlendMode source, BlendMode destination )
+    /// <param name="source">The source blend mode.</param>
+    /// <param name="destination">The destination blend mode.</param>
+    public void SetBlendFunction(BlendMode source, BlendMode destination)
     {
       UnsafeNativeMethods.CRhCmnDisplayBitmap_SetBlendFunction(m_pDisplayBmp, (int)source, (int)destination);
     }
@@ -231,9 +231,11 @@ namespace Rhino.Display
 namespace Rhino.Geometry
 {
   /// <summary>
-  /// Generic particle class. This base class only defines position and display properties
-  /// (size, color, bitmap id). You will most likely create a class that derives from this
-  /// particle class to perform some sort of physical simulation (movement over time or frames)
+  /// Represents a simple particle.
+  /// <para>This base class only defines position and display properties (size, color, bitmap id).
+  /// You will most likely create a class that derives from this particle class to perform some
+  /// sort of physical simulation (movement over time or frames).
+  /// </para>
   /// </summary>
   public class Particle
   {
@@ -245,7 +247,7 @@ namespace Rhino.Geometry
       Color = System.Drawing.Color.White;
     }
 
-    public ParticleSystem ParentSystem{ get; internal set; }
+    public ParticleSystem ParentSystem { get; internal set; }
     /// <summary>
     /// Index in ParentSystem for this Particle. Can change when the particle
     /// system is modified.

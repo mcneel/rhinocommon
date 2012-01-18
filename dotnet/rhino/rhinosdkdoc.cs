@@ -2064,8 +2064,8 @@ namespace Rhino.DocObjects.Tables
       UnsafeNativeMethods.CRhinoDoc_FlashObjectList(m_doc.m_docId, pArray, useSelectionColor);
     }
 
-    ///<summary>Redraws all views.</summary>
-    ///<remarks>
+    /// <summary>Redraws all views.</summary>
+    /// <remarks>
     /// If you change something in the active document -- like adding
     /// objects, deleting objects, modifying layer or object display 
     /// attributes, etc., then you need to call CRhinoDoc::Redraw to 
@@ -2086,9 +2086,9 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>Gets an array of all the views.</summary>
-    /// <param name="includeStandardViews"></param>
-    /// <param name="includePageViews"></param>
-    /// <returns></returns>
+    /// <param name="includeStandardViews">true if "Right", "Perspective", etc., view should be included; false otherwise.</param>
+    /// <param name="includePageViews">true if page-related views should be included; false otherwise.</param>
+    /// <returns>A array of Rhino views. This array can be emptry, but not null.</returns>
     public Rhino.Display.RhinoView[] GetViewList(bool includeStandardViews, bool includePageViews)
     {
       if (!includeStandardViews && !includePageViews)
@@ -2113,7 +2113,11 @@ namespace Rhino.DocObjects.Tables
     {
       return GetViewList(true, false);
     }
-
+    
+    /// <summary>
+    /// Gets all page views in the document.
+    /// </summary>
+    /// <returns>An array with all page views. The return value can be an empty array but not null.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
@@ -2136,7 +2140,7 @@ namespace Rhino.DocObjects.Tables
     /// Finds a view in this document with a given main viewport Id.
     /// </summary>
     /// <param name="mainViewportId"></param>
-    /// <returns>View on success. null if no view could be found in this document.</returns>
+    /// <returns>View on success. null if the view could not be found in this document.</returns>
     public Rhino.Display.RhinoView Find(Guid mainViewportId)
     {
       IntPtr pView = UnsafeNativeMethods.CRhinoDoc_FindView(m_doc.m_docId, mainViewportId);
@@ -2149,9 +2153,9 @@ namespace Rhino.DocObjects.Tables
     /// the first view found. If you want to find all the views with a given name, use the GetViewList
     /// function and iterate through the views.
     /// </summary>
-    /// <param name="mainViewportName"></param>
-    /// <param name="compareCase"></param>
-    /// <returns></returns>
+    /// <param name="mainViewportName">The name of the main viewport.</param>
+    /// <param name="compareCase">true if capitalization influences comparison; otherwise, false.</param>
+    /// <returns>A Rhino view on success; null on error.</returns>
     public Rhino.Display.RhinoView Find(string mainViewportName, bool compareCase)
     {
       IntPtr pView = UnsafeNativeMethods.CRhinoDoc_FindView2(m_doc.m_docId, mainViewportName, compareCase);
@@ -2183,13 +2187,13 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Constructs a new RhinoView.
+    /// Constructs a new Rhino view and, at the same time, adds it to the list.
     /// </summary>
-    /// <param name="title"></param>
-    /// <param name="projection"></param>
-    /// <param name="position"></param>
-    /// <param name="floating"></param>
-    /// <returns></returns>
+    /// <param name="title">The title of the new Rhino view.</param>
+    /// <param name="projection">A basic projection type.</param>
+    /// <param name="position">A position.</param>
+    /// <param name="floating">true if the view floats; false if it is docked.</param>
+    /// <returns>The newly constructed Rhino view; or null on error.</returns>
     public Rhino.Display.RhinoView Add(string title, DefinedViewportProjection projection, System.Drawing.Rectangle position, bool floating)
     {
       IntPtr pView = UnsafeNativeMethods.CRhinoView_Create(m_doc.m_docId, position.Left, position.Top, position.Right, position.Bottom, floating);
@@ -2204,12 +2208,12 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Constructs a new page view with a given title.
+    /// Constructs a new page view with a given title and, at the same time, adds it to the list.
     /// </summary>
     /// <param name="title">
     /// If null or empty, a name will be generated as "Page #" where # is the largest page number.
     /// </param>
-    /// <returns>newly created page view on success. Null on error.</returns>
+    /// <returns>The newly created page view on success; or null on error.</returns>
     public Rhino.Display.RhinoPageView AddPageView(string title)
     {
       IntPtr pPageView = UnsafeNativeMethods.CRhinoPageView_CreateView(title, 0, 0);
@@ -2221,14 +2225,14 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Constructs a new page view with a given title and size.
+    /// Constructs a new page view with a given title and size and, at the same time, adds it to the list.
     /// </summary>
     /// <param name="title">
     /// If null or empty, a name will be generated as "Page #" where # is the largest page number.
     /// </param>
-    /// <param name="pageWidth"></param>
-    /// <param name="pageHeight"></param>
-    /// <returns>newly created page view on success. Null on error.</returns>
+    /// <param name="pageWidth">The page total width.</param>
+    /// <param name="pageHeight">The page total height.</param>
+    /// <returns>The newly created page view on success; or null on error.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
@@ -2381,8 +2385,8 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Same as GetObjectList but converts the result to an array.
     /// </summary>
-    /// <param name="filter"></param>
-    /// <returns></returns>
+    /// <param name="filter">The object enumerator filter to customize inclusion requirements.</param>
+    /// <returns>A Rhino object array. This array can be emptry but not null.</returns>
     public Rhino.DocObjects.RhinoObject[] FindByFilter(Rhino.DocObjects.ObjectEnumeratorSettings filter)
     {
       List<Rhino.DocObjects.RhinoObject> list = new List<RhinoObject>(GetObjectList(filter));
@@ -2466,8 +2470,8 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Finds all of the clipping plane objects that actively clip a viewport.
     /// </summary>
-    /// <param name="viewport"></param>
-    /// <returns></returns>
+    /// <param name="viewport">The viewport in which clipping planes are searched.</param>
+    /// <returns>An array of clipping plane objects. The array can be emptry but not null.</returns>
     public Rhino.DocObjects.ClippingPlaneObject[] FindClippingPlanesForViewport(Rhino.Display.RhinoViewport viewport)
     {
       Guid id = viewport.Id;
@@ -2635,7 +2639,7 @@ namespace Rhino.DocObjects.Tables
     }
     /// <summary>Adds a point cloud object to the document.</summary>
     /// <param name="cloud">PointCloud to add.</param>
-    /// <param name="attributes">attributes to apply to point cloud.</param>
+    /// <param name="attributes">Attributes to apply to point cloud.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPointCloud(PointCloud cloud, DocObjects.ObjectAttributes attributes)
     {
@@ -2650,14 +2654,14 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_AddPointCloud2(m_doc.m_docId, pCloud, pAttrs);
     }
     /// <summary>Adds a point cloud object to the document.</summary>
-    /// <param name="points"></param>
+    /// <param name="points">A list, an array or any enumerable set of points.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPointCloud(IEnumerable<Point3d> points)
     {
       return AddPointCloud(points, null);
     }
     /// <summary>Adds a point cloud object to the document.</summary>
-    /// <param name="points"></param>
+    /// <param name="points">A list, an array or any enumerable set of points.</param>
     /// <param name="attributes">attributes to apply to point cloud.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPointCloud(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes)
@@ -2678,10 +2682,10 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Adds a clipping plane object to Rhino.
     /// </summary>
-    /// <param name="plane"></param>
-    /// <param name="uMagnitude"></param>
-    /// <param name="vMagnitude"></param>
-    /// <param name="clippedViewportId">viewport id that the new clipping plane will clip.</param>
+    /// <param name="plane">The plane value.</param>
+    /// <param name="uMagnitude">The size in the U direction.</param>
+    /// <param name="vMagnitude">The size in the V direction.</param>
+    /// <param name="clippedViewportId">Viewport ID that the new clipping plane will clip.</param>
     /// <returns>A unique identifier for the object.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addclippingplane.vb' lang='vbnet'/>
@@ -2695,10 +2699,11 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Adds a clipping plane object to Rhino.
     /// </summary>
-    /// <param name="plane"></param>
-    /// <param name="uMagnitude"></param>
-    /// <param name="vMagnitude"></param>
-    /// <param name="clippedViewportIds">list of viewport ids that the new clipping plane will clip.</param>
+    /// <param name="plane">The plane value.</param>
+    /// <param name="uMagnitude">The size in the U direction.</param>
+    /// <param name="vMagnitude">The size in the V direction.</param>
+    /// <param name="clippedViewportIds">A list, an array or any enumerable set of viewport IDs
+    /// that the new clipping plane will clip.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddClippingPlane(Plane plane, double uMagnitude, double vMagnitude, IEnumerable<Guid> clippedViewportIds)
     {
@@ -2717,11 +2722,12 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Adds a clipping plane object to Rhino.
     /// </summary>
-    /// <param name="plane"></param>
-    /// <param name="uMagnitude"></param>
-    /// <param name="vMagnitude"></param>
-    /// <param name="clippedViewportIds">list of viewport ids that the new clipping plane will clip.</param>
-    /// <param name="attributes"></param>
+    /// <param name="plane">The plane value.</param>
+    /// <param name="uMagnitude">The size in the U direction.</param>
+    /// <param name="vMagnitude">The size in the V direction.</param>
+    /// <param name="clippedViewportIds">A list, an array or any enumerable set of viewport IDs
+    /// that the new clipping plane will clip.</param>
+    /// <param name="attributes">Document attributes for the plane.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddClippingPlane(Plane plane, double uMagnitude, double vMagnitude, IEnumerable<Guid> clippedViewportIds, DocObjects.ObjectAttributes attributes)
     {
@@ -2761,8 +2767,8 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>Adds a line object to Rhino.</summary>
-    /// <param name="from"></param>
-    /// <param name="to"></param>
+    /// <param name="from">The line origin.</param>
+    /// <param name="to">The line end.</param>
     /// <returns>A unique identifier for the object.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addline.vb' lang='vbnet'/>
@@ -2774,9 +2780,9 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_AddLine(m_doc.m_docId, from, to, IntPtr.Zero);
     }
     /// <summary>Adds a line object to Rhino.</summary>
-    /// <param name="from"></param>
-    /// <param name="to"></param>
-    /// <param name="attributes">attributes to apply to line.</param>
+    /// <param name="from">The line origin.</param>
+    /// <param name="to">The line end.</param>
+    /// <param name="attributes">Attributes to apply to line.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddLine(Point3d from, Point3d to, DocObjects.ObjectAttributes attributes)
     {
@@ -2791,8 +2797,8 @@ namespace Rhino.DocObjects.Tables
       return AddLine(line.From, line.To);
     }
     /// <summary>Adds a line object to Rhino.</summary>
-    /// <param name="line"></param>
-    /// <param name="attributes">attributes to apply to line.</param>
+    /// <param name="line">The line value.</param>
+    /// <param name="attributes">Attributes to apply to line.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddLine(Line line, DocObjects.ObjectAttributes attributes)
     {
@@ -2801,14 +2807,14 @@ namespace Rhino.DocObjects.Tables
 
 
     /// <summary>Adds a polyline object to Rhino.</summary>
-    /// <param name="points"></param>
+    /// <param name="points">A <see cref="Polyline"/>; a list, an array, or any enumerable set of <see cref="Point3d"/>.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPolyline(IEnumerable<Point3d> points)
     {
       return AddPolyline(points, null);
     }
     /// <summary>Adds a polyline object to Rhino.</summary>
-    /// <param name="points"></param>
+    /// <param name="points">A <see cref="Polyline"/>; a list, an array, or any enumerable set of <see cref="Point3d"/>.</param>
     /// <param name="attributes">attributes to apply to line.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPolyline(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes)
@@ -2827,15 +2833,15 @@ namespace Rhino.DocObjects.Tables
 
 
     /// <summary>Adds a curve object to the document representing an arc.</summary>
-    /// <param name="arc"></param>
+    /// <param name="arc">An arc value.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddArc(Arc arc)
     {
       return UnsafeNativeMethods.CRhinoDoc_AddArc(m_doc.m_docId, ref arc, IntPtr.Zero);
     }
     /// <summary>Adds a curve object to the document representing an arc.</summary>
-    /// <param name="arc"></param>
-    /// <param name="attributes">attributes to apply to arc.</param>
+    /// <param name="arc">An arc value.</param>
+    /// <param name="attributes">Attributes to apply to arc.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddArc(Arc arc, DocObjects.ObjectAttributes attributes)
     {
@@ -2846,7 +2852,7 @@ namespace Rhino.DocObjects.Tables
 
 
     /// <summary>Adds a curve object to the document representing a circle.</summary>
-    /// <param name="circle"></param>
+    /// <param name="circle">A circle value.</param>
     /// <returns>A unique identifier for the object.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addcircle.vb' lang='vbnet'/>
@@ -2858,8 +2864,8 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_AddCircle(m_doc.m_docId, ref circle, IntPtr.Zero);
     }
     /// <summary>Adds a curve object to the document representing a circle.</summary>
-    /// <param name="circle"></param>
-    /// <param name="attributes">attributes to apply to circle.</param>
+    /// <param name="circle">A circle value.</param>
+    /// <param name="attributes">Attributes to apply to circle.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddCircle(Circle circle, DocObjects.ObjectAttributes attributes)
     {
@@ -2870,15 +2876,15 @@ namespace Rhino.DocObjects.Tables
 
 
     /// <summary>Adds a curve object to the document representing an ellipse.</summary>
-    /// <param name="ellipse"></param>
+    /// <param name="ellipse">An ellipse value.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddEllipse(Ellipse ellipse)
     {
       return UnsafeNativeMethods.CRhinoDoc_AddEllipse(m_doc.m_docId, ref ellipse, IntPtr.Zero);
     }
     /// <summary>Adds a curve object to the document representing an ellipse.</summary>
-    /// <param name="ellipse"></param>
-    /// <param name="attributes">attributes to apply to ellipse.</param>
+    /// <param name="ellipse">An ellipse value.</param>
+    /// <param name="attributes">Attributes to apply to ellipse.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddEllipse(Ellipse ellipse, DocObjects.ObjectAttributes attributes)
     {
@@ -2908,7 +2914,7 @@ namespace Rhino.DocObjects.Tables
 
 
     /// <summary>Adds a curve object to Rhino.</summary>
-    /// <param name="curve"></param>
+    /// <param name="curve">A curve. A duplicate of this curve is added to Rhino.</param>
     /// <returns>A unique identifier for the object.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addnurbscircle.vb' lang='vbnet'/>
@@ -2923,8 +2929,8 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_AddCurve(m_doc.m_docId, curvePtr, IntPtr.Zero);
     }
     /// <summary>Adds a curve object to Rhino.</summary>
-    /// <param name="curve">A duplicate of this curve is added to Rhino.</param>
-    /// <param name="attributes">attributes to apply to curve.</param>
+    /// <param name="curve">A curve. A duplicate of this curve is added to Rhino.</param>
+    /// <param name="attributes">Attributes to apply to curve.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddCurve(Geometry.Curve curve, DocObjects.ObjectAttributes attributes)
     {
@@ -2938,8 +2944,8 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>Adds a text dot object to Rhino.</summary>
-    /// <param name="text"></param>
-    /// <param name="location"></param>
+    /// <param name="text">A text string.</param>
+    /// <param name="location">A point position.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddTextDot(string text, Point3d location)
     {
@@ -2949,9 +2955,9 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
     /// <summary>Adds a text dot object to Rhino.</summary>
-    /// <param name="text"></param>
-    /// <param name="location"></param>
-    /// <param name="attributes"></param>
+    /// <param name="text">A text string.</param>
+    /// <param name="location">A point position.</param>
+    /// <param name="attributes">Attributes to apply to curve.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddTextDot(string text, Point3d location, DocObjects.ObjectAttributes attributes)
     {
@@ -2961,7 +2967,7 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
     /// <summary>Adds a text dot object to Rhino.</summary>
-    /// <param name="dot"></param>
+    /// <param name="dot">A text dot that will be copied.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddTextDot(Geometry.TextDot dot)
     {
@@ -2971,8 +2977,8 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_AddTextDot(m_doc.m_docId, ptr, IntPtr.Zero);
     }
     /// <summary>Adds a text dot object to Rhino.</summary>
-    /// <param name="dot"></param>
-    /// <param name="attributes"></param>
+    /// <param name="dot">A text dot that will be copied.</param>
+    /// <param name="attributes">Attributes to apply to text dot.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddTextDot(Geometry.TextDot dot, DocObjects.ObjectAttributes attributes)
     {
@@ -4533,19 +4539,21 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Same as Transform(objref, ON_Xform.Identity, false)
+    /// Duplicates the object that is referenced by objref.
+    /// <para>Same as Transform(objref, <see cref="Geometry.Transform.Identity">Transform.Identity</see>, false)</para>
     /// </summary>
-    /// <param name="objref"></param>
-    /// <returns></returns>
+    /// <param name="objref">A Rhino object reference to follow for object duplication.</param>
+    /// <returns>The new object ID.</returns>
     public Guid Duplicate(DocObjects.ObjRef objref)
     {
       return Transform(objref, Geometry.Transform.Identity, false);
     }
     /// <summary>
-    /// Same as TransformObject(obj, ON_Xform.Identity, false)
+    /// Duplicates the object that is referenced by obj.
+    /// <para>Same as TransformObject(obj, <see cref="Geometry.Transform.Identity">Transform.Identity</see>y, false)</para>
     /// </summary>
-    /// <param name="obj"></param>
-    /// <returns></returns>
+    /// <param name="obj">A Rhino object to duplicate.</param>
+    /// <returns>The new object ID.</returns>
     public Guid Duplicate(DocObjects.RhinoObject obj)
     {
       return Transform(obj, Geometry.Transform.Identity, false);
@@ -4553,8 +4561,8 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Same as TransformObject(objref, ON_Xform.Identity, false)
     /// </summary>
-    /// <param name="objectId"></param>
-    /// <returns></returns>
+    /// <param name="objectId">An ID to an object in the document that needs to be duplicated.</param>
+    /// <returns>The new object ID.</returns>
     public Guid Duplicate(Guid objectId)
     {
       return Transform(objectId, Geometry.Transform.Identity, false);

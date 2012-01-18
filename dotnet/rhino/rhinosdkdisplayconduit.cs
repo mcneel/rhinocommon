@@ -73,10 +73,11 @@ namespace Rhino.Display
     private void _PreDrawObjects(object sender, DrawEventArgs e) { PreDrawObjects(e); }
 
     /// <summary>
-    /// Use this function to increase the bounding box of scene so it includes the
+    /// Library developers should override this function to increase the bounding box of scene so it includes the
     /// geometry that you plan to draw in the "Draw" virtual functions.
+    /// <para>The default implementation does nothing.</para>
     /// </summary>
-    /// <param name="e"></param>
+    /// <param name="e">The event argument contain the current bounding box state.</param>
     protected virtual void CalculateBoundingBox(CalculateBoundingBoxEventArgs e) {}
 
     /// <summary>
@@ -85,36 +86,41 @@ namespace Rhino.Display
     /// call your CalculateBoundingBox override, but you may also want to spend a little
     /// more time here and compute a tighter bounding box for your conduit geometry if
     /// that is needed.
+    /// <para>The default implementation does nothing.</para>
     /// </summary>
-    /// <param name="e"></param>
+    /// <param name="e">The event argument contain the current bounding box state.</param>
     protected virtual void CalculateBoundingBoxZoomExtents(CalculateBoundingBoxEventArgs e) {}
 
     /// <summary>
     /// Called before objects are been drawn. Depth writing and testing are on.
+    /// <para>The default implementation does nothing.</para>
     /// </summary>
-    /// <param name="e"></param>
+    /// <param name="e">The event argument contain the current viewport and display state.</param>
     protected virtual void PreDrawObjects(DrawEventArgs e) {}
 
     /// <summary>
     /// Called after all non-highlighted objects have been drawn. Depth writing and testing are
     /// still turned on. If you want to draw without depth writing/testing, see DrawForeground.
+    /// <para>The default implementation does nothing.</para>
     /// </summary>
-    /// <param name="e"></param>
+    /// <param name="e">The event argument contains the current viewport and display state.</param>
     protected virtual void PostDrawObjects(DrawEventArgs e) {}
 
     /// <summary>
     /// Called after all non-highlighted objects have been drawn and PostDrawObjects has been called.
     /// Depth writing and testing are turned OFF. If you want to draw with depth writing/testing,
     /// see PostDrawObjects.
+    /// <para>The default implementation does nothing.</para>
     /// </summary>
-    /// <param name="e"></param>
+    /// <param name="e">The event argument contains the current viewport and display state.</param>
     protected virtual void DrawForeground(DrawEventArgs e) {}
 
     /// <summary>
     /// If Rhino is in a feedback mode, the draw overlay call allows for temporary geometry to be drawn on top of
     /// everything in the scene. This is similar to the dynamic draw routine that occurs with custom get point.
+    /// <para>The default implementation does nothing.</para>
     /// </summary>
-    /// <param name="e"></param>
+    /// <param name="e">The event argument contains the current viewport and display state.</param>
     protected virtual void DrawOverlay(DrawEventArgs e) {}
   }
 }

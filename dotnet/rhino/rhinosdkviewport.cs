@@ -6,7 +6,7 @@ using Rhino.Geometry;
 namespace Rhino.Display
 {
   /// <summary>
-  /// Different parallel and perspective projections that are "standard" in Rhino.
+  /// Defines enumerated values for parallel and perspective projections that are "standard" in Rhino.
   /// </summary>
   public enum DefinedViewportProjection : int
   {

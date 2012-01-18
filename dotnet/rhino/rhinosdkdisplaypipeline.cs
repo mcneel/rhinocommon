@@ -1844,7 +1844,7 @@ namespace Rhino.Display
     /// Draws a <see cref="DocObjects.RhinoObject">RhinoObject</see> with an applied transformation.
     /// </summary>
     /// <param name="rhinoObject">The Rhino object.</param>
-    /// <param name="xform"></param>
+    /// <param name="xform">The transformation.</param>
     /// <example>
     /// <code source='examples\vbnet\ex_arraybydistance.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_arraybydistance.cs' lang='cs'/>
@@ -2184,6 +2184,9 @@ namespace Rhino.Display
       UnsafeNativeMethods.CChannelAttr_GetSetBBox(m_pDisplayConduit, false, ref m_bbox);
     }
 
+    /// <summary>
+    /// Gets the current bounding box.
+    /// </summary>
     public BoundingBox BoundingBox
     {
       get
@@ -2193,10 +2196,10 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Unions a bounding box with the current display bounding box in order to ensure
+    /// Unites a bounding box with the current display bounding box in order to ensure
     /// dynamic objects in "box" are drawn.
     /// </summary>
-    /// <param name="box"></param>
+    /// <param name="box">The box to unite.</param>
     public void IncludeBoundingBox(BoundingBox box)
     {
       m_bbox.Union(box);

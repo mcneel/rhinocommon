@@ -197,7 +197,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets or sets the color of the thinner, less prominent line.
     /// </summary>
-    public Color ThinLineColor { get; set; }
+    public System.Drawing.Color ThinLineColor { get; set; }
 
     /// <summary>
     /// Gets or sets the color of the thicker, wider line.

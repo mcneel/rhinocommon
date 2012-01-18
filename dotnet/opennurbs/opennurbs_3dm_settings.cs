@@ -1,6 +1,5 @@
 using System;
 using Rhino.Geometry;
-using System.Runtime.InteropServices;
 
 // Most of these should not need to be wrapped. Some of their
 // functionality is merged into other wrapper classes
@@ -63,7 +62,6 @@ namespace Rhino.DocObjects
 
     internal bool m_bShowGrid;
     internal bool m_bShowAxes;
-    System.Drawing.Color m_thin_line_color;
     System.Drawing.Color m_thick_line_color;
     System.Drawing.Color m_grid_x_color;
     System.Drawing.Color m_grid_y_color;
@@ -84,7 +82,7 @@ namespace Rhino.DocObjects
       m_bShowGrid = true;
       m_bShowAxes = true;
 #if RHINO_SDK
-      m_thin_line_color = ApplicationSettings.AppearanceSettings.GridThinLineColor;
+      ThinLineColor = ApplicationSettings.AppearanceSettings.GridThinLineColor;
       m_thick_line_color = ApplicationSettings.AppearanceSettings.GridThickLineColor;
       m_grid_x_color = ApplicationSettings.AppearanceSettings.GridXAxisLineColor;
       m_grid_y_color = ApplicationSettings.AppearanceSettings.GridYAxisLineColor;
@@ -199,11 +197,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets or sets the color of the thinner, less prominent line.
     /// </summary>
-    public System.Drawing.Color ThinLineColor
-    {
-      get { return m_thin_line_color; }
-      set { m_thin_line_color = value; }
-    }
+    public Color ThinLineColor { get; set; }
 
     /// <summary>
     /// Gets or sets the color of the thicker, wider line.
@@ -348,7 +342,7 @@ namespace Rhino.DocObjects
       }
     }
 
-    ViewportInfo m_viewport = null;
+    ViewportInfo m_viewport;
 
     /// <summary>
     /// Gets the viewport, or viewing frustum, associated with this view.
@@ -357,7 +351,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        return m_viewport ?? new ViewportInfo(this);
+        return m_viewport ?? (m_viewport = new ViewportInfo(this));
       }
     }
     internal IntPtr ConstViewportPointer()
@@ -682,7 +676,7 @@ namespace Rhino.Render
   public class RenderSettings : IDisposable
   {
 #if RHINO_SDK
-    Rhino.RhinoDoc m_doc;
+    readonly Rhino.RhinoDoc m_doc;
 #endif
     IntPtr m_ptr = IntPtr.Zero;
 
@@ -911,8 +905,8 @@ namespace Rhino.Render
     const int idxBackgroundStyle = 0;
     const int idxAntialiasStyle = 1;
     const int idxShadowmapStyle = 2;
-    const int idxShadowmapWidth = 3;
-    const int idxShadowmapHeight = 4;
+    //const int idxShadowmapWidth = 3;
+    //const int idxShadowmapHeight = 4;
     const int idxImageWidth = 5;
     const int idxImageHeight = 6;
 
@@ -1011,7 +1005,7 @@ namespace Rhino.FileIO
   /// </summary>
   public class File3dmSettings
   {
-    File3dm m_parent;
+    readonly File3dm m_parent;
     internal File3dmSettings(File3dm parent)
     {
       m_parent = parent;

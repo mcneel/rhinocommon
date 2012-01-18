@@ -647,8 +647,7 @@ namespace Rhino.Geometry
       if (null == curveA || null == subtractors)
         throw new ArgumentNullException(null == curveA ? "curveA" : "subtractors");
 
-      List<Curve> curves = new List<Curve>();
-      curves.Add(curveA);
+      List<Curve> curves = new List<Curve> {curveA};
       curves.AddRange(subtractors);
       SimpleArrayCurvePointer input = new SimpleArrayCurvePointer(curves);
       IntPtr inputPtr = input.ConstPointer();

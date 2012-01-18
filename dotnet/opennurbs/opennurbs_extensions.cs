@@ -126,7 +126,7 @@ namespace Rhino.FileIO
       if (UnsafeNativeMethods.ONX_Model_ReadPreviewImage(path, pDib))
       {
         IntPtr hBitmap = UnsafeNativeMethods.CRhinoDib_Bitmap(pDib);
-        rc = System.Drawing.Bitmap.FromHbitmap(hBitmap);
+        rc = System.Drawing.Image.FromHbitmap(hBitmap);
       }
       UnsafeNativeMethods.CRhinoDib_Delete(pDib);
       return rc;
@@ -200,7 +200,6 @@ namespace Rhino.FileIO
     public bool IsValid(out string errors)
     {
       IntPtr pConstThis = ConstPointer();
-      errors = "";
       using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
@@ -256,7 +255,6 @@ namespace Rhino.FileIO
     public int Audit(bool attemptRepair, out int repairCount, out string errors, out int[] warnings)
     {
       IntPtr pThis = NonConstPointer();
-      errors = "";
       repairCount = 0;
       using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
       {
@@ -414,7 +412,7 @@ namespace Rhino.FileIO
 
     //public System.Drawing.Bitmap PreviewImage { get; set; }
 
-    File3dmSettings m_settings = null;
+    File3dmSettings m_settings;
     /// <summary>
     /// Settings include tolerance, and unit system, and defaults used
     /// for creating views and objects.
@@ -458,20 +456,20 @@ namespace Rhino.FileIO
     #region diagnostic dumps
     const int idxDumpAll = 0;
     const int idxDumpSummary = 1;
-    const int idxBitmapTable = 2;
-    const int idxTextureMappingTable = 3;
-    const int idxMaterialTable = 4;
-    const int idxLinetypeTable = 5;
+    //const int idxBitmapTable = 2;
+    //const int idxTextureMappingTable = 3;
+    //const int idxMaterialTable = 4;
+    //const int idxLinetypeTable = 5;
     internal const int idxLayerTable = 6;
-    const int idxLightTable = 7;
-    const int idxGroupTable = 8;
-    const int idxFontTable = 9;
-    const int idxDimStyleTable = 10;
-    const int idxHatchPatternTable = 11;
-    const int idxIDefTable = 12;
+    //const int idxLightTable = 7;
+    //const int idxGroupTable = 8;
+    //const int idxFontTable = 9;
+    //const int idxDimStyleTable = 10;
+    //const int idxHatchPatternTable = 11;
+    //const int idxIDefTable = 12;
     internal const int idxObjectTable = 13;
-    const int idxHistoryRecordTable = 14;
-    const int idxUserDataTable = 15;
+    //const int idxHistoryRecordTable = 14;
+    //const int idxUserDataTable = 15;
     internal string Dump(int which)
     {
       using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
@@ -642,8 +640,8 @@ namespace Rhino.FileIO
   /// </summary>
   public class File3dmObject
   {
-    int m_index;
-    File3dm m_parent;
+    readonly int m_index;
+    readonly File3dm m_parent;
     Rhino.Geometry.GeometryBase m_geometry;
     Rhino.DocObjects.ObjectAttributes m_attributes;
 
@@ -703,7 +701,7 @@ namespace Rhino.FileIO
   /// </summary>
   public class File3dmObjectTable : IEnumerable<File3dmObject>, Rhino.Collections.IRhinoTable<File3dmObject>
   {
-    File3dm m_parent;
+    readonly File3dm m_parent;
     internal File3dmObjectTable(File3dm parent)
     {
       m_parent = parent;
@@ -1592,7 +1590,7 @@ namespace Rhino.FileIO
 
   class File3dmLayerTable : IList<Rhino.DocObjects.Layer>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.Layer>
   {
-    File3dm m_parent;
+    readonly File3dm m_parent;
     internal File3dmLayerTable(File3dm parent)
     {
       m_parent = parent;

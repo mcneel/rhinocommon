@@ -168,7 +168,8 @@ namespace Rhino.Runtime
 
     protected PythonScript()
     {
-      m_output = RhinoApp.Write;
+      ScriptContextDoc = null;
+      Output = RhinoApp.Write;
     }
 
     public abstract PythonCompiledCode Compile(string script);
@@ -191,22 +192,12 @@ namespace Rhino.Runtime
     /// Set Output if you want to redirect the output from python to a different function
     /// while this script executes.</para>
     /// </summary>
-    public Action<string> Output
-    {
-      get { return m_output; }
-      set { m_output = value; }
-    }
-    Action<string> m_output;
+    public Action<string> Output { get; set; }
 
     /// <summary>
     /// object set to variable held in scriptcontext.doc.
     /// </summary>
-    public object ScriptContextDoc
-    {
-      get { return m_scriptcontext_doc; }
-      set { m_scriptcontext_doc = value; }
-    }
-    object m_scriptcontext_doc = null;
+    public object ScriptContextDoc { get; set; }
 
     public int ContextId
     {
@@ -276,7 +267,7 @@ namespace Rhino.Runtime
       get { return Type.GetType("Mono.Runtime") != null; }
     }
 
-    static int m_running_in_rhino_state = 0; //1=false, 2=true
+    static int m_running_in_rhino_state; //0=unknown, 1=false, 2=true
     /// <summary>
     /// Tests if RhinoCommon is currently executing inside of the Rhino.exe process.
     /// There are other cases where RhinoCommon could be running; specifically inside
@@ -310,7 +301,7 @@ namespace Rhino.Runtime
     // 0== unknown
     // 1== loaded
     //-1== not loaded
-    static int m_rdk_loadtest = 0;
+    static int m_rdk_loadtest;
     public static bool CheckForRdk(bool throwOnFalse, bool usePreviousResult)
     {
       const int UNKNOWN = 0;
@@ -503,26 +494,26 @@ namespace Rhino.Runtime
     {
       // every command must have a RhinoId and Name attribute
       bool rc = false;
-      try
+      if (plugin != null)
       {
-        if (null != plugin)
+        try
+        {
           plugin.m_commands.Add(cmd);
+          int sn = cmd.m_runtime_serial_number;
+          IntPtr pPlugIn = plugin.NonConstPointer();
+          string englishName = cmd.EnglishName;
+          string localName = cmd.LocalName;
+          const int commandStyle = 2; //scripted
+          Guid id = cmd.Id;
+          UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle, 0);
 
-        int sn = cmd.m_runtime_serial_number;
-        IntPtr pPlugIn = plugin.NonConstPointer();
-        string englishName = cmd.EnglishName;
-        string localName = cmd.LocalName;
-        const int commandStyle = 2; //scripted
-        Guid id = cmd.Id;
-        UnsafeNativeMethods.CRhinoCommand_Create(pPlugIn, id, englishName, localName, sn, commandStyle, 0);
-
-        rc = true;
+          rc = true;
+        }
+        catch (Exception ex)
+        {
+          ExceptionReport(ex);
+        }
       }
-      catch (Exception ex)
-      {
-        ExceptionReport(ex);
-      }
-
       return rc;
     }
 #endif
@@ -639,11 +630,11 @@ namespace Rhino.Runtime
       return rc;
     }
     internal delegate int EvaluateExpressionCallback(IntPtr statements, IntPtr expression, int rhinoDocId, IntPtr resultString);
-    static EvaluateExpressionCallback m_evaluate_callback = EvaluateExpressionHelper;
+    static readonly EvaluateExpressionCallback m_evaluate_callback = EvaluateExpressionHelper;
     internal delegate int GetNowCallback(int locale_id, IntPtr format, IntPtr resultString);
-    static GetNowCallback m_getnow_callback = GetNowHelper;
+    static readonly GetNowCallback m_getnow_callback = GetNowHelper;
     internal delegate int GetFormattedTimeCallback(int locale, int sec, int min, int hour, int day, int month, int year, IntPtr format, IntPtr resultString);
-    static GetFormattedTimeCallback m_getformattedtime_callback = GetFormattedTimeHelper;
+    static readonly GetFormattedTimeCallback m_getformattedtime_callback = GetFormattedTimeHelper;
     static HostUtils()
     {
       // These need to be moved somewhere else because they throw security exceptions
@@ -693,7 +684,7 @@ namespace Rhino.Runtime
 
       // If we turn on debug messages, we always get debug output
       if (printDebugMessages)
-        SendDebugToCommandLine = printDebugMessages;
+        SendDebugToCommandLine = true;
 
       // this function should only be called by Rhino_DotNet.dll
       // we could add some safety checks by performing validation on
@@ -1005,7 +996,7 @@ namespace Rhino.Runtime
       {
         string entry = e.Name.Replace("::", "\\");
         string section = sectionBase;
-        int split_index = entry.LastIndexOf("\\");
+        int split_index = entry.LastIndexOf("\\", System.StringComparison.Ordinal);
         if (split_index > -1)
         {
           section = sectionBase + "\\" + entry.Substring(0, split_index);
@@ -1056,13 +1047,19 @@ namespace Rhino.Runtime
         else if( typeof(Rhino.Geometry.MeshingParameters) == t )
         {
           Rhino.Geometry.MeshingParameters mp = e.Value as Rhino.Geometry.MeshingParameters;
-          IntPtr pMp = mp.ConstPointer();
-          UnsafeNativeMethods.CRhinoProfileContext_SaveProfileMeshingParameters(pProfileContext, section, entry, pMp);
+          if (mp != null)
+          {
+            IntPtr pMp = mp.ConstPointer();
+            UnsafeNativeMethods.CRhinoProfileContext_SaveProfileMeshingParameters(pProfileContext, section, entry, pMp);
+          }
         }
         else if( typeof(byte[]) == t )
         {
           byte[] b = e.Value as byte[];
-          UnsafeNativeMethods.CRhinoProfileContext_SaveProfileBuffer(pProfileContext, section, entry, b.Length, b);
+          if (b != null)
+          {
+            UnsafeNativeMethods.CRhinoProfileContext_SaveProfileBuffer(pProfileContext, section, entry, b.Length, b);
+          }
         }
         else if (typeof(bool) == t)
           UnsafeNativeMethods.CRhinoProfileContext_SaveProfileBool(pProfileContext, section, entry, (bool)e.Value);

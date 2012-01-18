@@ -365,8 +365,8 @@ namespace Rhino.Geometry
     {
       if (obj is Interval)
         return CompareTo((Interval)obj);
-      else
-        throw new ArgumentException("Input must be of type Interval", "obj");
+
+      throw new ArgumentException("Input must be of type Interval", "obj");
     }
 
     /// <summary>
@@ -974,8 +974,8 @@ namespace Rhino.Geometry
     {
       if (obj is Point2d)
         return CompareTo((Point2d)obj);
-      else
-        throw new ArgumentException("Input must be of type Point2d", "obj");
+     
+      throw new ArgumentException("Input must be of type Point2d", "obj");
     }
 
     /// <summary>
@@ -2419,8 +2419,8 @@ namespace Rhino.Geometry
     {
       if (obj is Vector2d)
         return CompareTo((Vector2d)obj);
-      else
-        throw new ArgumentException("Input must be of type Vector2d", "obj");
+
+      throw new ArgumentException("Input must be of type Vector2d", "obj");
     }
 
     /// <summary>
@@ -3442,7 +3442,7 @@ namespace Rhino.Geometry
     /// <returns>true if position and direction of the two rays are equal; otherwise false.</returns>
     public static bool operator ==(Ray3d a, Ray3d b)
     {
-      return (a.m_P == b.m_P && a.m_V == b.m_V) ? true : false;
+      return (a.m_P == b.m_P && a.m_V == b.m_V);
     }
 
     /// <summary>
@@ -3453,7 +3453,7 @@ namespace Rhino.Geometry
     /// <returns>true if position or direction (or both) in the two rays are different; otherwise false.</returns>
     public static bool operator !=(Ray3d a, Ray3d b)
     {
-      return (a.m_P != b.m_P || a.m_V != b.m_V) ? true : false;
+      return (a.m_P != b.m_P || a.m_V != b.m_V);
     }
     #endregion
 

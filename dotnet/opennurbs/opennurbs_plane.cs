@@ -111,11 +111,7 @@ namespace Rhino.Geometry
     {
       get
       {
-        Plane p = new Plane();
-        p.XAxis = new Vector3d(1, 0, 0);
-        p.YAxis = new Vector3d(0, 1, 0);
-        p.ZAxis = new Vector3d(0, 0, 1);
-        return p;
+        return new Plane {XAxis = new Vector3d(1, 0, 0), YAxis = new Vector3d(0, 1, 0), ZAxis = new Vector3d(0, 0, 1)};
       }
     }
 
@@ -126,11 +122,7 @@ namespace Rhino.Geometry
     {
       get
       {
-        Plane p = new Plane();
-        p.XAxis = new Vector3d(0, 1, 0);
-        p.YAxis = new Vector3d(0, 0, 1);
-        p.ZAxis = new Vector3d(1, 0, 0);
-        return p;
+        return new Plane {XAxis = new Vector3d(0, 1, 0), YAxis = new Vector3d(0, 0, 1), ZAxis = new Vector3d(1, 0, 0)};
       }
     }
 
@@ -141,11 +133,7 @@ namespace Rhino.Geometry
     {
       get
       {
-        Plane p = new Plane();
-        p.XAxis = new Vector3d(0, 0, 1);
-        p.YAxis = new Vector3d(1, 0, 0);
-        p.ZAxis = new Vector3d(0, 1, 0);
-        return p;
+        return new Plane {XAxis = new Vector3d(0, 0, 1), YAxis = new Vector3d(1, 0, 0), ZAxis = new Vector3d(0, 1, 0)};
       }
     }
 
@@ -156,12 +144,7 @@ namespace Rhino.Geometry
     {
       get
       {
-        Plane p = new Plane();
-        p.Origin = Point3d.Unset;
-        p.XAxis = Vector3d.Unset;
-        p.YAxis = Vector3d.Unset;
-        p.ZAxis = Vector3d.Unset;
-        return p;
+        return new Plane {Origin = Point3d.Unset, XAxis = Vector3d.Unset, YAxis = Vector3d.Unset, ZAxis = Vector3d.Unset};
       }
     }
     #endregion
@@ -559,7 +542,7 @@ namespace Rhino.Geometry
         return false;
       }
 
-      double d = this.DistanceTo(ptSample);
+      double d = DistanceTo(ptSample);
 
       ptPlane = new Point3d(s, t, d);
       return true;
@@ -598,7 +581,7 @@ namespace Rhino.Geometry
       if (!delta.IsValid)
         return false;
 
-      this.Origin += delta;
+      Origin += delta;
       return true;
     }
 

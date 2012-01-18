@@ -155,10 +155,7 @@ namespace Rhino.Collections
     public ArchivableDictionary(int version, string name)
     {
       m_version = version;
-      if (String.IsNullOrEmpty(name))
-        m_name = String.Empty;
-      else
-        m_name = name;
+      m_name = String.IsNullOrEmpty(name) ? String.Empty : name;
     }
 
     ///<summary>Reads a dictionary from an archive.</summary>
@@ -1422,7 +1419,7 @@ namespace Rhino.FileIO
       m_ptr = IntPtr.Zero;
     }
 
-    bool m_bWriteErrorOccured = false;
+    bool m_bWriteErrorOccured;
 
     /// <summary>
     /// Gets or sets whether an error occurred.
@@ -1747,8 +1744,10 @@ namespace Rhino.FileIO
       int count = 0;
       foreach (Guid g in value)
         count++;
+
       WriteInt(count);
-      foreach(Guid g in value)
+
+      foreach (Guid g in value)
         WriteGuid(g);
     }
 
@@ -1762,11 +1761,13 @@ namespace Rhino.FileIO
       int count = 0;
       foreach (string s in value)
         count++;
+
       WriteInt(count);
+
       foreach (string s in value)
       {
         m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteString(m_ptr, s);
-        if( m_bWriteErrorOccured )
+        if (m_bWriteErrorOccured)
           throw new BinaryArchiveException("WriteStringArray failed");
       }
     }
@@ -2091,7 +2092,7 @@ namespace Rhino.FileIO
       m_ptr = IntPtr.Zero;
     }
 
-    bool m_bReadErrorOccured = false;
+    bool m_bReadErrorOccured;
 
     /// <summary>
     /// Gets or sets whether en error occurred during reading.
@@ -2849,12 +2850,13 @@ namespace Rhino.FileIO
     {
       dictionaryId = Guid.Empty;
       version = 0;
-      name = String.Empty;
-      Runtime.StringHolder str = new Rhino.Runtime.StringHolder();
-      bool rc = UnsafeNativeMethods.ON_BinaryArchive_BeginReadDictionary(m_ptr, ref dictionaryId, ref version, str.NonConstPointer());
-      name = str.ToString();
-      str.Dispose();
-      return rc;
+      using(Runtime.StringHolder str = new Rhino.Runtime.StringHolder())
+      {
+        bool rc = UnsafeNativeMethods.ON_BinaryArchive_BeginReadDictionary(m_ptr, ref dictionaryId, ref version,
+                                                                           str.NonConstPointer());
+        name = str.ToString();
+        return rc;
+      }
     }
     internal bool EndReadDictionary()
     {
@@ -2893,38 +2895,27 @@ namespace Rhino.FileIO
   /// </summary>
   public class SerializationOptions
   {
-    int m_rhinoversion;
-    bool m_writeuserdata;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="SerializationOptions"/> class.
     /// </summary>
     public SerializationOptions()
     {
 #if RHINO_SDK
-      m_rhinoversion = RhinoApp.ExeVersion;
+      RhinoVersion = RhinoApp.ExeVersion;
 #else
-      m_rhinoversion = 5;
+      RhinoVersion = 5;
 #endif
-      m_writeuserdata = true;
+      WriteUserData = true;
     }
 
     /// <summary>
     /// Gets or sets a value indicating the Rhino version.
     /// </summary>
-    public int RhinoVersion
-    {
-      get { return m_rhinoversion; }
-      set { m_rhinoversion = value; }
-    }
+    public int RhinoVersion { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether to write user data.
     /// </summary>
-    public bool WriteUserData
-    {
-      get { return m_writeuserdata; }
-      set { m_writeuserdata = value; }
-    }
+    public bool WriteUserData { get; set; }
   }
 }

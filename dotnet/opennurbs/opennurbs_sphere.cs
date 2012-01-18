@@ -314,7 +314,7 @@ namespace Rhino.Geometry
       latitudeRadians = 0.0;
 
       if (!testPoint.IsValid) { return false; }
-      if (!this.IsValid) { return false; }
+      if (!IsValid) { return false; }
 
       //Special case origin coincidence.
       if (testPoint == m_plane.Origin) { return false; }

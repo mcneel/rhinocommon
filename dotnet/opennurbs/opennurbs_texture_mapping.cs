@@ -44,11 +44,11 @@ namespace Rhino.Render
     private TextureMapping()
     {
       IntPtr ptr = UnsafeNativeMethods.ON_TextureMapping_New();
-      base.ConstructNonConstObject(ptr);
+      ConstructNonConstObject(ptr);
     }
     internal TextureMapping(IntPtr pTextureMapping)
     {
-      base.ConstructNonConstObject(pTextureMapping);
+      ConstructNonConstObject(pTextureMapping);
     }
 
     /// <summary>Create a planar projection texture mapping</summary>

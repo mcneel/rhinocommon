@@ -229,8 +229,7 @@ namespace Rhino.Geometry
     {
       if (null == inputLoop)
         return null;
-      Rhino.Collections.CurveList crvs = new Rhino.Collections.CurveList();
-      crvs.Add(inputLoop);
+      Rhino.Collections.CurveList crvs = new Rhino.Collections.CurveList {inputLoop};
       return CreatePlanarBreps(crvs);
     }
 
@@ -2442,8 +2441,8 @@ namespace Rhino.Geometry
 
   class MeshHolder
   {
-    BrepFace m_face;
-    MeshType m_meshtype;
+    readonly BrepFace m_face;
+    readonly MeshType m_meshtype;
 
     public MeshHolder(BrepFace face, MeshType meshType)
     {
@@ -2459,7 +2458,7 @@ namespace Rhino.Geometry
 
   class SurfaceOfHolder
   {
-    BrepFace m_face;
+    readonly BrepFace m_face;
     public SurfaceOfHolder(BrepFace face)
     {
       m_face = face;

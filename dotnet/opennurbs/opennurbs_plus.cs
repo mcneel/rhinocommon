@@ -147,28 +147,28 @@ namespace Rhino.Geometry
 
 namespace Rhino.Geometry.Intersect
 {
-  // keep private until we have something that works/makes sense
-  /*public*/ class RayShooter //: IDisposable
-  {
-    //IntPtr m_mesh_rtree = IntPtr.Zero;
-    //Mesh m_target_mesh;
-    //NOTE! This is NOT a direct wrapper around ON_RayShooter. The class name was used to define
-    //      a general ray shooter against geometry. Different low level unmanaged classes are used
-    //      by this class
-    public RayShooter(Mesh targetMesh)
-    {
-      //m_target_mesh = targetMesh;
-      //IntPtr pConstMesh = m_target_mesh.ConstPointer();
-      //m_mesh_rtree = UnsafeNativeMethods.ON_RTree_NewFromMesh(pConstMesh);
-    }
+  //// keep private until we have something that works/makes sense
+  //public class RayShooter //: IDisposable
+  //{
+  //  //IntPtr m_mesh_rtree = IntPtr.Zero;
+  //  //Mesh m_target_mesh;
+  //  //NOTE! This is NOT a direct wrapper around ON_RayShooter. The class name was used to define
+  //  //      a general ray shooter against geometry. Different low level unmanaged classes are used
+  //  //      by this class
+  //  public RayShooter(Mesh targetMesh)
+  //  {
+  //    //m_target_mesh = targetMesh;
+  //    //IntPtr pConstMesh = m_target_mesh.ConstPointer();
+  //    //m_mesh_rtree = UnsafeNativeMethods.ON_RTree_NewFromMesh(pConstMesh);
+  //  }
 
-    public double Shoot(Ray3d ray)
-    {
-      return 0;
-      //return UnsafeNativeMethods.ON_RTree_ShootRay(m_mesh_rtree, ref ray);
-    }
+  //  public double Shoot(Ray3d ray)
+  //  {
+  //    return 0;
+  //    //return UnsafeNativeMethods.ON_RTree_ShootRay(m_mesh_rtree, ref ray);
+  //  }
 
-  }
+  //}
 
   //public class ON_CurveLeafBox { }
   //public class ON_CurveTreeBezier : ON_BezierCurve { }
@@ -195,10 +195,10 @@ namespace Rhino.Geometry.Intersect
   /// </summary>
   public class MeshClash
   {
-    Mesh m_mesh_a = null;
-    Mesh m_mesh_b = null;
+    Mesh m_mesh_a;
+    Mesh m_mesh_b;
     Point3d m_P = Point3d.Unset;
-    double m_radius=0;
+    double m_radius;
 
     private MeshClash() { }
 
@@ -235,13 +235,9 @@ namespace Rhino.Geometry.Intersect
     /// <returns>An array of clash objects.</returns>
     public static MeshClash[] Search(IEnumerable<Mesh> setA, IEnumerable<Mesh> setB, double distance, int maxEventCount)
     {
-      IList<Mesh> _setA = setA as IList<Mesh>;
-      if( _setA==null )
-        _setA = new List<Mesh>(setA);
+      IList<Mesh> _setA = setA as IList<Mesh> ?? new List<Mesh>(setA);
 
-      IList<Mesh> _setB = setB as IList<Mesh>;
-      if( _setB==null )
-        _setB = new List<Mesh>(setB);
+      IList<Mesh> _setB = setB as IList<Mesh> ?? new List<Mesh>(setB);
 
 
       Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer meshes_a = new Runtime.InteropWrappers.SimpleArrayMeshPointer();

@@ -339,7 +339,7 @@ namespace Rhino.Geometry
     /// </summary>
     public void ClearColors()
     {
-      if (!ConstainsColors)
+      if (!ContainsColors)
         return;
 
       IntPtr pThis = NonConstPointer();

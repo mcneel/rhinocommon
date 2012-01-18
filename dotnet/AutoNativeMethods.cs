@@ -8897,6 +8897,10 @@ internal partial class UnsafeNativeMethods
   //void RHC_SetGetNowProc(GETNOWPROC proc, GETFORMATEDTIMEPROC gftproc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
+  //void RHC_RhinoFormatNumber( double x, int unit_system, int display_mode, int precision, bool append_name, CRhCmnStringHolder* pStringHolder )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void RHC_RhinoFormatNumber(double x, int unit_system, int display_mode, int precision, [MarshalAs(UnmanagedType.U1)]bool append_name, IntPtr pStringHolder);
+
   //int RHC_RhinoMessageBox( const RHMONO_STRING* _text, const RHMONO_STRING* _title, unsigned int flags )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_RhinoMessageBox([MarshalAs(UnmanagedType.LPWStr)]string _text, [MarshalAs(UnmanagedType.LPWStr)]string _title, uint flags);

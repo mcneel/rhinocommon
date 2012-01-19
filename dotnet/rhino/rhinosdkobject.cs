@@ -45,7 +45,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// !!!DO NOT CALL THIS FUNCTION UNLESS YOU ARE WORKING WITH CUSTOM RHINO OBJECTS!!!
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A pointer.</returns>
     internal IntPtr NonConstPointer()
     {
       if( IntPtr.Zero==m_pRhinoObject )
@@ -465,11 +465,11 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Compute an estimate of the number of bytes that this object is using in memory.
+    /// Computes an estimate of the number of bytes that this object is using in memory.
     /// Note that this is a runtime memory estimate and does not directly compare to the
     /// amount of space take up by the object when saved to a file.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The estimated number of bytes this object occupies in memory.</returns>
     [CLSCompliant(false)]
     public uint MemoryEstimate()
     {
@@ -520,7 +520,7 @@ namespace Rhino.DocObjects
       }
     }
 
-    /// <summary>number of groups object belongs to.</summary>
+    /// <summary>Number of groups object belongs to.</summary>
     public int GroupCount
     {
       get
@@ -530,9 +530,10 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Returns an array of GroupCount group indices.  If GroupCount is zero, then GetGroupList() returns null.
+    /// Allocates an array of group indices of length GroupCount.
+    /// If <see cref="GroupCount"/> is 0, then this method returns null.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An array of group indices, or null if <see cref="GroupCount"/> is 0.</returns>
     public int[] GetGroupList()
     {
       int count = GroupCount;
@@ -564,9 +565,9 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>Check sub-object selection state.</summary>
-    /// <param name="componentIndex">index of subobject to check.</param>
-    /// <returns></returns>
-    /// <remarks>subobject cannot be persistently selected</remarks>
+    /// <param name="componentIndex">Index of subobject to check.</param>
+    /// <returns>true if the subobject is selected.</returns>
+    /// <remarks>A subobject cannot be persistently selected.</remarks>
     public bool IsSubObjectSelected(ComponentIndex componentIndex)
     {
       IntPtr ptr = ConstPointer();
@@ -574,7 +575,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>Get a list of all selected sub-objects.</summary>
-    /// <returns></returns>
+    /// <returns>An array of subobject indices, or null if there are none.</returns>
     public ComponentIndex[] GetSelectedSubObjects()
     {
       IntPtr ptr = ConstPointer();
@@ -636,11 +637,11 @@ namespace Rhino.DocObjects
     /// If true, then selected objects are selectable.
     /// If false, then selected objects are not selectable.
     /// </param>
-    /// <returns></returns>
+    /// <returns>true if the specified subobject can be selected.</returns>
     /// <remarks>
     /// Objects that are locked, hidden, or on locked or hidden layers
     /// cannot be selected. If IsSelectableWithGripsOn() returns false,
-    /// then an that object is not selectable if it has grips turned on.
+    /// then that object is not selectable if it has grips turned on.
     /// </remarks>
     public bool IsSubObjectSelectable(ComponentIndex componentIndex, bool ignoreSelectionState)
     {
@@ -648,11 +649,12 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.CRhinoObject_IsSubObjectSelectable(ptr, componentIndex, ignoreSelectionState);
     }
 
-    /// <summary>Reports if an object can be selected.</summary>
-    /// <param name="on"></param>
+    /// <summary>Selects an object.</summary>
+    /// <param name="on">The new selection state; true activates selection.</param>
     /// <param name="syncHighlight">
     /// If true, then the object is highlighted if it is selected 
     /// and unhighlighted if is is not selected.
+    /// <para>Highlighting can be and stay out of sync, as its specification is independent.</para>
     /// </param>
     /// <param name="persistentSelect">
     /// Objects that are persistently selected stay selected when a command terminates.
@@ -671,9 +673,9 @@ namespace Rhino.DocObjects
     /// If false, then objects on hidden layers cannot be selected.
     /// </param>
     /// <returns>
-    /// 0: object is not selected
-    /// 1: object is selected
-    /// 2: object is selected persistently.
+    /// <para>0: object is not selected.</para>
+    /// <para>1: object is selected.</para>
+    /// <para>2: object is selected persistently.</para>
     /// </returns>
     /// <remarks>
     /// Objects that are locked, hidden, or on locked or hidden layers
@@ -686,12 +688,12 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.CRhinoObject_Select(ptr, on, syncHighlight, persistentSelect, ignoreGripsState, ignoreLayerLocking, ignoreLayerVisibility);
     }
 
-    /// <summary>Reports if an object can be selected.</summary>
-    /// <param name="on"></param>
+    /// <summary>Selects an object.</summary>
+    /// <param name="on">The new selection state; true activates selection.</param>
     /// <returns>
-    /// 0: object is not selected
-    /// 1: object is selected
-    /// 2: object is selected persistently.
+    /// <para>0: object is not selected.</para>
+    /// <para>1: object is selected.</para>
+    /// <para>2: object is selected persistently.</para>
     /// </returns>
     /// <remarks>
     /// Objects that are locked, hidden, or on locked or hidden layers
@@ -708,16 +710,17 @@ namespace Rhino.DocObjects
       return Select(on, true);
     }
 
-    /// <summary>Reports if an object can be selected.</summary>
-    /// <param name="on"></param>
+    /// <summary>Selects an object.</summary>
+    /// <param name="on">The new selection state; true activates selection.</param>
     /// <param name="syncHighlight">
     /// If true, then the object is hightlighted if it is selected
     /// and not hightlighted if is is not selected.
+    /// <para>Highlighting can be and stay out of sync, as its specification is independent.</para>
     /// </param>
     /// <returns>
-    /// 0: object is not selected
-    /// 1: object is selected
-    /// 2: object is selected persistently.
+    /// <para>0: object is not selected.</para>
+    /// <para>1: object is selected.</para>
+    /// <para>2: object is selected persistently.</para>
     /// </returns>
     /// <remarks>
     /// Objects that are locked, hidden, or on locked or hidden layers
@@ -730,8 +733,8 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>Reports if an object can be selected.</summary>
-    /// <param name="componentIndex">index of subobject to check.</param>
-    /// <param name="select"></param>
+    /// <param name="componentIndex">Index of subobject to check.</param>
+    /// <param name="select">The new selection state; true activates selection.</param>
     /// <param name="syncHighlight">
     /// (default=true)
     /// If true, then the object is highlighted if it is selected 
@@ -754,9 +757,9 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Returns number of unselected subobjects.
+    /// Removes selection from all subobjects.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The number of unselected subobjects.</returns>
     public int UnselectAllSubObjects()
     {
       // 20 Jan 2010 - S. Baer
@@ -799,9 +802,9 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets a list of all highlighted sub-objects.
+    /// Gets a list of all highlighted subobjects.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An array of all highlighted subobjects; or null is there are none.</returns>
     public ComponentIndex[] GetHighlightedSubObjects()
     {
       IntPtr ptr = ConstPointer();
@@ -824,9 +827,9 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Returns number of changed subobjects.
+    /// Removes highlighting from all subobjects.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The number of changed subobjects.</returns>
     public int UnhighlightAllSubObjects()
     {
       // 20 Jan 2010 - S. Baer
@@ -834,7 +837,7 @@ namespace Rhino.DocObjects
       return GetInt(idxUnhighightAllSubObjects);
     }
 
-    /// <summary>State of object's default editing grips.</summary>
+    /// <summary>Gets or sets the activation state of object default editing grips.</summary>
     public bool GripsOn
     {
       get
@@ -865,7 +868,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>Turns on/off the object's editing grips.</summary>
-    /// <param name="customGrips"></param>
+    /// <param name="customGrips">The custom object grips.</param>
     /// <returns>
     /// true if the call succeeded.  If you attempt to add custom grips to an
     /// object that does not support custom grips, then false is returned.

@@ -3,7 +3,7 @@
 namespace Rhino.ApplicationSettings
 {
   /// <summary>
-  /// Provides static (Shared in Vb.Net) methods to modify Rhino History settings.
+  /// Provides static (Shared in Vb.Net) properties to modify Rhino History settings.
   /// </summary>
   public static class HistorySettings
   {

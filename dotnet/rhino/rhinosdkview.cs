@@ -130,7 +130,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert a point in screen coordinates to client coordinates for this view.
+    /// Converts a point in screen coordinates to client coordinates for this view.
     /// </summary>
     /// <param name="screenPoint"></param>
     /// <returns></returns>
@@ -162,7 +162,7 @@ namespace Rhino.Display
     //  functionality in CView base class
     //  UUID PlugInID() const;
 
-    /// <summary>Redraw this view.</summary>
+    /// <summary>Redraws this view.</summary>
     /// <remarks>
     /// If you change something in "this" view like the projection, construction plane,
     /// background bitmap, etc., then you need to call RhinoView.Redraw() to redraw
@@ -185,8 +185,8 @@ namespace Rhino.Display
     //  void SetRedrawDisplayHint( unsigned int display_hint ) const;
 
     /// <summary>
-    /// Enables drawing. By default, drawing is enabled.  There are some rare
-    /// situations where scipts want to disable drawing for a while.
+    /// Gets or sets the 'drawing enabled' flag. By default, drawing is enabled.
+    /// <para>There are some rare situations where scipts want to disable drawing for a while.</para>
     /// </summary>
     public static bool EnableDrawing
     {
@@ -286,11 +286,11 @@ namespace Rhino.Display
     /// <summary>
     /// Capture View contents to a bitmap allowing for visibility of grid and axes.
     /// </summary>
-    /// <param name="size"></param>
-    /// <param name="grid"></param>
-    /// <param name="worldAxes"></param>
-    /// <param name="cplaneAxes"></param>
-    /// <returns></returns>
+    /// <param name="size">The width and height of the returned bitmap.</param>
+    /// <param name="grid">true if the construction plane grid should be visible.</param>
+    /// <param name="worldAxes">true if the world axis should be visible.</param>
+    /// <param name="cplaneAxes">true if the construction plane close the the grid should be visible.</param>
+    /// <returns>A new bitmap.</returns>
     public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size, bool grid, bool worldAxes, bool cplaneAxes)
     {
       IntPtr pConstView = this.ConstPointer();

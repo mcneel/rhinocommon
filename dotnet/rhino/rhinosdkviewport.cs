@@ -163,22 +163,21 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// returns true if some portion world coordinate bounding box is
+    /// Returns true if some portion of a world coordinate bounding box is
     /// potentially visible in the viewing frustum.
     /// </summary>
-    /// <param name="bbox"></param>
-    /// <returns></returns>
+    /// <param name="bbox">A bounding box that is tested for visibility.</param>
+    /// <returns>true if the box is potentially visible; otherwise false.</returns>
     public bool IsVisible(BoundingBox bbox)
     {
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.CRhinoViewport_IsVisible(ptr, bbox.Min, bbox.Max, true);
     }
     /// <summary>
-    /// returns true if some portion world coordinate point is
-    /// potentially visible in the viewing frustum.
+    /// Deterines if a world coordinate point is visible in the viewing frustum.
     /// </summary>
-    /// <param name="point"></param>
-    /// <returns></returns>
+    /// <param name="point">A point that is tested for visibility.</param>
+    /// <returns>true if the point is visible; otherwise false.</returns>
     public bool IsVisible(Point3d point)
     {
       IntPtr ptr = NonConstPointer();
@@ -186,10 +185,10 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Set the size of the RhinoViewport.
+    /// Do not use. Sets the size of the RhinoViewport.
     /// </summary>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
+    /// <param name="width">The width in pixels.</param>
+    /// <param name="height">The height in pixels.</param>
     [Obsolete("Replaced by Size property to be consistent with .NET - will be removed in future WIP")]
     public void SetScreenSize(int width, int height)
     {
@@ -211,16 +210,16 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Set optimal clipping planes to view objects in a world coordinate 3d bounding box.
+    /// Sets optimal clipping planes to view objects in a world coordinate 3d bounding box.
     /// </summary>
-    /// <param name="box"></param>
+    /// <param name="box">The bounding box </param>
     public void SetClippingPlanes(BoundingBox box)
     {
       IntPtr pThis = NonConstPointer();
       UnsafeNativeMethods.CRhinoViewport_SetClippingPlanes(pThis, box.Min, box.Max);
     }
 
-    /// <summary>name associated with this viewport.</summary>
+    /// <summary>Name associated with this viewport.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addnamedview.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addnamedview.cs' lang='cs'/>

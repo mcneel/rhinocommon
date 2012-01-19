@@ -68,9 +68,9 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Constructs a copy of this ObjectAttributes.
+    /// Constructs a copy of this <see cref="ObjectAttributes"/> instance.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A new instance on success, or null on failure.</returns>
     public ObjectAttributes Duplicate()
     {
       IntPtr pThis = ConstPointer();
@@ -213,7 +213,7 @@ namespace Rhino.DocObjects
     /// Determines if an object has a display mode override for a given viewport.
     /// </summary>
     /// <param name="viewportId">Id of a Rhino Viewport.</param>
-    /// <returns></returns>
+    /// <returns>true if the object has a display mode override for the viewport; otherwise, false.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_objectdisplaymode.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_objectdisplaymode.cs' lang='cs'/>
@@ -232,8 +232,8 @@ namespace Rhino.DocObjects
     /// Rhino to always use that display mode, regardless of the viewport's mode.
     /// This version affects the object's display mode for all viewports.
     /// </summary>
-    /// <param name="mode"></param>
-    /// <returns>true on success.</returns>
+    /// <param name="mode">The display mode.</param>
+    /// <returns>true if setting was successful.</returns>
     public bool SetDisplayModeOverride(Rhino.Display.DisplayModeDescription mode)
     {
       return SetDisplayModeOverride(mode, Guid.Empty);
@@ -244,8 +244,8 @@ namespace Rhino.DocObjects
     /// Rhino to always use that display mode, regardless of the viewport's mode.
     /// This version sets a display mode for a specific viewport.
     /// </summary>
-    /// <param name="mode"></param>
-    /// <param name="rhinoViewportId"></param>
+    /// <param name="mode">The display mode.</param>
+    /// <param name="rhinoViewportId">The Rhino viewport ID.</param>
     /// <returns>true on success.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_objectdisplaymode.vb' lang='vbnet'/>
@@ -595,7 +595,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Returns an array of GroupCount group indices.  If GroupCount is zero, then GetGroupList() returns null.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An array of group indices. null might be retuned in place of an empty array.</returns>
     public int[] GetGroupList()
     {
       int count = GroupCount;
@@ -619,19 +619,20 @@ namespace Rhino.DocObjects
 
     /// <summary>
     /// Adds object to the group with specified index by appending index to
-    /// group list (If the object is already in group, nothing is changed.)
+    /// group list.
+    /// <para>If the object is already in group, nothing is changed.</para>
     /// </summary>
-    /// <param name="groupIndex"></param>
+    /// <param name="groupIndex">The index that will be added.</param>
     public void AddToGroup(int groupIndex)
     {
       IntPtr ptr = NonConstPointer();
       UnsafeNativeMethods.ON_3dmObjectAttributes_GroupOp(ptr, idxAddToGroup, groupIndex);
     }
     /// <summary>
-    /// removes object from the group with specified index. If the 
-    /// object is not in the group, nothing is changed.
+    /// removes object from the group with specified index.
+    /// <para>If the object is not in the group, nothing is changed.</para>
     /// </summary>
-    /// <param name="groupIndex"></param>
+    /// <param name="groupIndex">The index that will be removed.</param>
     public void RemoveFromGroup(int groupIndex)
     {
       IntPtr ptr = NonConstPointer();

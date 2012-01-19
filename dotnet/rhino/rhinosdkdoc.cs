@@ -2139,7 +2139,7 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Finds a view in this document with a given main viewport Id.
     /// </summary>
-    /// <param name="mainViewportId"></param>
+    /// <param name="mainViewportId">The ID of the main viewport looked for.</param>
     /// <returns>View on success. null if the view could not be found in this document.</returns>
     public Rhino.Display.RhinoView Find(Guid mainViewportId)
     {
@@ -3057,7 +3057,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="fontName">Name of FontFace.</param>
     /// <param name="bold">Bold flag.</param>
     /// <param name="italic">Italic flag.</param>
-    /// <param name="attributes">Object Attributes.</param>
+    /// <param name="attributes">Attributes that will be linked with the object.</param>
     /// <returns>The Guid of the newly added object or Guid.Empty on failure.</returns>
     public Guid AddText(string text, Plane plane, double height, string fontName, bool bold, bool italic, DocObjects.ObjectAttributes attributes)
     {
@@ -3106,7 +3106,7 @@ namespace Rhino.DocObjects.Tables
     }
     /// <summary>Adds a surface object to Rhino.</summary>
     /// <param name="surface">A duplicate of this surface is added to Rhino.</param>
-    /// <param name="attributes"></param>
+    /// <param name="attributes">Attributes that will be linked with the surface object.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddSurface(Geometry.Surface surface, DocObjects.ObjectAttributes attributes)
     {
@@ -3129,7 +3129,7 @@ namespace Rhino.DocObjects.Tables
     }
     /// <summary>Adds an extrusion object to Rhino.</summary>
     /// <param name="extrusion">A duplicate of this extrusion is added to Rhino.</param>
-    /// <param name="attributes"></param>
+    /// <param name="attributes">Attributes that will be linked with the extrusion object.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddExtrusion(Geometry.Extrusion extrusion, DocObjects.ObjectAttributes attributes)
     {
@@ -3161,7 +3161,7 @@ namespace Rhino.DocObjects.Tables
     }
     /// <summary>Adds a mesh object to Rhino.</summary>
     /// <param name="mesh">A duplicate of this mesh is added to Rhino.</param>
-    /// <param name="attributes"></param>
+    /// <param name="attributes">Attributes that will be linked with the mesh object.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddMesh(Geometry.Mesh mesh, DocObjects.ObjectAttributes attributes)
     {
@@ -3412,8 +3412,8 @@ namespace Rhino.DocObjects.Tables
     /// Removes object from document and deletes the pointer. Typically you will
     /// want to call Delete instead in order to keep the object on the undo list.
     /// </summary>
-    /// <param name="runtimeSerialNumber"></param>
-    /// <returns></returns>
+    /// <param name="runtimeSerialNumber">A runtime serial number of the object that will be deleted.</param>
+    /// <returns>true if the object was purged; otherwise false.</returns>
     [CLSCompliant(false)]
     public bool Purge(uint runtimeSerialNumber)
     {
@@ -3424,8 +3424,8 @@ namespace Rhino.DocObjects.Tables
     /// Removes object from document and deletes the pointer. Typically you will
     /// want to call Delete instead in order to keep the object on the undo list.
     /// </summary>
-    /// <param name="rhinoObject"></param>
-    /// <returns></returns>
+    /// <param name="rhinoObject">A Rhino object that will be deleted.</param>
+    /// <returns>true if the object was purged; otherwise false.</returns>
     public bool Purge(Rhino.DocObjects.RhinoObject rhinoObject)
     {
       return Purge(rhinoObject.RuntimeSerialNumber);
@@ -4821,9 +4821,9 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Gets a user data string from the document.
     /// </summary>
-    /// <param name="section"></param>
-    /// <param name="entry"></param>
-    /// <returns></returns>
+    /// <param name="section">The section at which to get the value.</param>
+    /// <param name="entry">The entry to search for.</param>
+    /// <returns>The user data.</returns>
     public string GetValue(string section, string entry)
     {
       if (String.IsNullOrEmpty(section) || String.IsNullOrEmpty(entry))
@@ -4833,10 +4833,10 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Return list of all the section names for user data strings in the document.
-    /// By default a section name is a key that is prefixed with a string separated by a backslash.
+    /// Returns a list of all the section names for user data strings in the document.
+    /// <para>By default a section name is a key that is prefixed with a string separated by a backslash.</para>
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An array of section names. This can be empty, but not null.</returns>
     public string[] GetSectionNames()
     {
       int count = Count;
@@ -4865,8 +4865,8 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Return list of all entry names for a given section of user data strings in the document.
     /// </summary>
-    /// <param name="section"></param>
-    /// <returns></returns>
+    /// <param name="section">The section from which to retrieve section names.</param>
+    /// <returns>An array of section names. This can be empty, but not null.</returns>
     public string[] GetEntryNames(string section)
     {
       section += "\\";
@@ -4887,16 +4887,16 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Adds or sets a user data string to the document.
     /// </summary>
-    /// <param name="section"></param>
-    /// <param name="entry"></param>
-    /// <param name="value"></param>
+    /// <param name="section">The section.</param>
+    /// <param name="entry">The entry name.</param>
+    /// <param name="value">The entry value.</param>
     /// <returns>
-    /// the previous value if successful and a previous value existed.
+    /// The previous value if successful and a previous value existed.
     /// </returns>
     public string SetString(string section, string entry, string value)
     {
       string key = section;
-      if( !string.IsNullOrEmpty(entry) )
+      if ( !string.IsNullOrEmpty(entry) )
         key = section + "\\" + entry;
       string rc = GetValue(key);
       UnsafeNativeMethods.CRhinoDoc_SetDocTextString(m_doc.m_docId, key, value);

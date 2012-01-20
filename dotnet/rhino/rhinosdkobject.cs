@@ -889,7 +889,7 @@ namespace Rhino.DocObjects
     /// Returns grips for this object If grips are enabled. If grips are not
     /// enabled, returns null.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An array of grip objects; or null if there are no grips.</returns>
     public GripObject[] GetGrips()
     {
       IntPtr pThis = ConstPointer();
@@ -919,8 +919,8 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Used to turn analysis modes on and off.
     /// </summary>
-    /// <param name="mode"></param>
-    /// <param name="enable"></param>
+    /// <param name="mode">A visual analysis mode.</param>
+    /// <param name="enable">true if the mode should be activated; false otherwise.</param>
     /// <returns>true if this object supports the analysis mode.</returns>
     public bool EnableVisualAnalysisMode(Rhino.Display.VisualAnalysisMode mode, bool enable)
     {
@@ -932,7 +932,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Reports if any visual analysis mode is currently active for an object.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>true if an analysis mode is active; otherwise false.</returns>
     public bool InVisualAnalysisMode()
     {
       return InVisualAnalysisMode(null);
@@ -942,9 +942,10 @@ namespace Rhino.DocObjects
     /// Reports if a visual analysis mode is currently active for an object.
     /// </summary>
     /// <param name="mode">
-    /// The mode to check for. Pass null if you want to see if any mode is active.
+    /// The mode to check for.
+    /// <para>Use null if you want to see if any mode is active.</para>
     /// </param>
-    /// <returns></returns>
+    /// <returns>true if the specified analysis mode is active; otherwise false.</returns>
     public bool InVisualAnalysisMode(Rhino.Display.VisualAnalysisMode mode)
     {
       IntPtr pConstThis = ConstPointer();
@@ -957,7 +958,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets a list of currently enabled analysis modes for this object.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An array of visual analysis modes. The array can be empty, but not null.</returns>
     public Rhino.Display.VisualAnalysisMode[] GetActiveVisualAnalysisModes()
     {
       IntPtr pConstThis = ConstPointer();
@@ -972,10 +973,10 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Localized short description os an object.
+    /// Gets a localized short descriptive name of the object.
     /// </summary>
-    /// <param name="plural"></param>
-    /// <returns></returns>
+    /// <param name="plural">true if the descriptive name should in plural.</param>
+    /// <returns>A string with the short localized descriptive name.</returns>
     public string ShortDescription(bool plural)
     {
       using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
@@ -1194,7 +1195,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// If the referenced geometry is an edge, this returns the edge.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A boundary representation edge; or null on error.</returns>
     public Geometry.BrepEdge Edge()
     {
       IntPtr pBrepEdge = UnsafeNativeMethods.CRhinoObjRef_Edge(m_ptr);
@@ -1205,7 +1206,7 @@ namespace Rhino.DocObjects
     /// If the referenced geometry is a brep face, a brep with one face, or
     /// a surface, this returns the brep face.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A boundary representation face; or null on error.</returns>
     public Geometry.BrepFace Face()
     {
       IntPtr pBrepFace = UnsafeNativeMethods.CRhinoObjRef_Face(m_ptr);
@@ -1377,10 +1378,10 @@ namespace Rhino.DocObjects
     /// or surface edge with a selection point, then this gets the 
     /// surface paramters of the selection point.
     /// </summary>
-    /// <param name="u"></param>
-    /// <param name="v"></param>
+    /// <param name="u">The U value is assigned to this out parameter during the call.</param>
+    /// <param name="v">The V value is assigned to this out parameter during the call.</param>
     /// <returns>
-    /// If the selection point was on a surface, the the surface is returned.
+    /// If the selection point was on a surface, then the surface is returned.
     /// </returns>
     public Surface SurfaceParameter(out double u, out double v)
     {

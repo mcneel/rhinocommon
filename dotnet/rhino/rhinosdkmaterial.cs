@@ -316,9 +316,9 @@ namespace Rhino.DocObjects
 
     #region Bump
     /// <summary>
-    /// may be null if no bump texture has been added to this material.
+    /// Gets the bump texture of this material.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A texture; or null if no bump texture has been added to this material.</returns>
     public Texture GetBumpTexture()
     {
       return GetTexture(idxBumpTexture);
@@ -466,7 +466,7 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Adds a new material to the table based on the default material.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The position of the new material in the table.</returns>
     public int Add()
     {
       return UnsafeNativeMethods.CRhinoMaterialTable_GetInt(m_doc.m_docId, idxAddDefaultMaterial);
@@ -475,8 +475,8 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Adds a new material to the table based on a given material.
     /// </summary>
-    /// <param name="material"></param>
-    /// <returns></returns>
+    /// <param name="material">A model of the material to be added.</param>
+    /// <returns>The position of the new material in the table.</returns>
     public int Add(Material material)
     {
       return Add(material, false);
@@ -485,12 +485,12 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Adds a new material to the table based on a given material.
     /// </summary>
-    /// <param name="material"></param>
+    /// <param name="material">A model of the material to be added.</param>
     /// <param name="reference">
     /// true if this material is supposed to be a reference material.
     /// Reference materials are not saved in the file.
     /// </param>
-    /// <returns></returns>
+    /// <returns>The position of the new material in the table.</returns>
     public int Add(Material material, bool reference)
     {
       IntPtr pConstMaterial = material.ConstPointer();
@@ -512,7 +512,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>Finds a material with a matching id.</summary>
-    /// <param name="materialId"></param>
+    /// <param name="materialId">A material ID to be found.</param>
     /// <param name="ignoreDeletedMaterials">If true, deleted materials are not checked.</param>
     /// <returns>
     /// >=0 index of the material with the given name
@@ -545,11 +545,11 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// 
+    /// Removes a material at a specific position from this material table.
     /// </summary>
-    /// <param name="materialIndex"></param>
+    /// <param name="materialIndex">The position to be removed.</param>
     /// <returns>
-    /// true if successful. false if material_index is out of range or the
+    /// true if successful. false if materialIndex is out of range or the
     /// material cannot be deleted because it is the current material or because
     /// it material contains active geometry.
     /// </returns>

@@ -67,8 +67,8 @@ namespace Rhino.Collections
     /// <summary>
     /// Gets the bounding box of all of the objects that this list contains.
     /// </summary>
-    /// <param name="regularObjects"></param>
-    /// <param name="grips"></param>
+    /// <param name="regularObjects">true if any object except grips should be included; otherwise false.</param>
+    /// <param name="grips">true if grips should be included; otherwise false.</param>
     /// <returns>
     /// Unset BoundingBox if this list is empty.
     /// </returns>
@@ -137,8 +137,8 @@ namespace Rhino.Input.Custom
     /// Make sure no duplicates are in the list and that no grip ownwers are
     /// passed in as objects.
     /// </summary>
-    /// <param name="list"></param>
-    public void AddTransformObjects( Rhino.Collections.TransformObjectList list )
+    /// <param name="list">A custom transform object list.</param>
+    public void AddTransformObjects(Rhino.Collections.TransformObjectList list)
     {
       IntPtr pThis = NonConstPointer();
       IntPtr pConstList = list.ConstPointer();

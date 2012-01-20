@@ -112,11 +112,11 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Adds a new group to the group table with a set of objects.
     /// </summary>
-    /// <param name="groupName">name of new group.</param>
-    /// <param name="objectIds"></param>
+    /// <param name="groupName">Name of new group.</param>
+    /// <param name="objectIds">An array, a list or any enumerable set of object IDs.</param>
     /// <returns>
     /// &gt;=0 index of new group. 
-    /// -1 group not added because a group with that name already exists.
+    /// <para>-1 group not added because a group with that name already exists.</para>
     /// </returns>
     /// <remarks>
     /// In some cases, calling Add() can cause the group indices to become invalid.
@@ -138,10 +138,10 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Adds a new group to the group table with a set of objects.
     /// </summary>
-    /// <param name="objectIds"></param>
+    /// <param name="objectIds">An array, a list or any enumerable set of object IDs.</param>
     /// <returns>
-    /// &gt;=0 index of new group. 
-    /// -1 group not added because a group with that name already exists.
+    /// &gt;=0 index of new group.
+    /// <para>-1 group not added because a group with that name already exists.</para>
     /// </returns>
     /// <remarks>
     /// In some cases, calling Add() can cause the group indices to become invalid.
@@ -159,9 +159,9 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Adds an object to an existing group.
     /// </summary>
-    /// <param name="groupIndex"></param>
-    /// <param name="objectId"></param>
-    /// <returns></returns>
+    /// <param name="groupIndex">The group index value.</param>
+    /// <param name="objectId">An ID of an object.</param>
+    /// <returns>true if the operation was successful.</returns>
     public bool AddToGroup(int groupIndex, Guid objectId)
     {
       Guid[] ids = new Guid[] { objectId };
@@ -171,29 +171,30 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Adds a list of objects to an existing group.
     /// </summary>
-    /// <param name="groupIndex"></param>
-    /// <param name="objectIds"></param>
-    /// <returns></returns>
+    /// <param name="groupIndex">The group index value.</param>
+    /// <param name="objectIds">An array, a list or any enumerable set of IDs to objects.</param>
+    /// <returns>true if at least an operation was successful.</returns>
     public bool AddToGroup(int groupIndex, System.Collections.Generic.IEnumerable<Guid> objectIds)
     {
-      if( null==objectIds )
+      if (null == objectIds)
         return false;
       Rhino.Collections.RhinoList<Guid> ids = new Rhino.Collections.RhinoList<Guid>();
-      foreach( Guid id in objectIds)
+      foreach (Guid id in objectIds)
       {
         ids.Add(id);
       }
-      if( ids.Count<1 )
+      if (ids.Count < 1)
         return false;
       return UnsafeNativeMethods.CRhinoGroupTable_AddToGroup(m_doc.m_docId, groupIndex, ids.Count, ids.m_items);
     }
 
     /// <summary>
-    /// Deleted groups are kept in the runtime group table so that undo
-    /// will work with groups.  Call IsDeleted() to determine if a group is deleted.
+    /// Deletes a group from this table.
+    /// <para>Deleted groups are kept in the runtime group table so that undo
+    /// will work with groups.  Call IsDeleted() to determine if a group is deleted.</para>
     /// </summary>
-    /// <param name="groupIndex"></param>
-    /// <returns></returns>
+    /// <param name="groupIndex">An group index to be deleted.</param>
+    /// <returns>true if the operation was successful.</returns>
     public bool Delete(int groupIndex)
     {
       return UnsafeNativeMethods.CRhinoGroupTable_DeleteGroup(m_doc.m_docId, groupIndex, true);
@@ -271,8 +272,8 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Gets an array of all of the objects in a group.
     /// </summary>
-    /// <param name="groupIndex"></param>
-    /// <returns></returns>
+    /// <param name="groupIndex">The index of the group in this table.</param>
+    /// <returns>An array with all the objects in the specified group.</returns>
     public RhinoObject[] GroupMembers(int groupIndex)
     {
       using (Rhino.Runtime.INTERNAL_RhinoObjectArray rhobjs = new Runtime.INTERNAL_RhinoObjectArray())

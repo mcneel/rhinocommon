@@ -154,7 +154,8 @@ namespace Rhino.DocObjects.Custom
     }
 
     /// <summary>
-    /// Helper function for drawing lines in control polygons.
+    /// Draws the lines in a control polygons.
+    /// <para>This is an helper function.</para>
     /// </summary>
     /// <param name="line">Line between two grips.</param>
     /// <param name="startStatus">Grip status at start of line.</param>
@@ -164,22 +165,24 @@ namespace Rhino.DocObjects.Custom
       DrawControlPolygonLine(line, startStatus.m_index, endStatus.m_index);
     }
     /// <summary>
-    /// Helper function for drawing lines in control polygons.
+    /// Draws the lines in a control polygons.
+    /// <para>This is an helper function.</para>
     /// </summary>
     /// <param name="line">Line between two grips.</param>
-    /// <param name="startStatus">index of Grip status at start of line.</param>
-    /// <param name="endStatus">index if Grip status at end of line.</param>
+    /// <param name="startStatus">Index of Grip status at start of line.</param>
+    /// <param name="endStatus">Index if Grip status at end of line.</param>
     public void DrawControlPolygonLine(Rhino.Geometry.Line line, int startStatus, int endStatus)
     {
       DrawControlPolygonLine(line.From, line.To, startStatus, endStatus);
     }
     /// <summary>
-    /// Helper function for drawing lines in control polygons.
+    /// Draws the lines in a control polygons.
+    /// <para>This is an helper function.</para>
     /// </summary>
-    /// <param name="start"></param>
-    /// <param name="end"></param>
-    /// <param name="startStatus">index of Grip status at start of line defined by start and end.</param>
-    /// <param name="endStatus">index if Grip status at end of line defined by start and end.</param>
+    /// <param name="start">The point start.</param>
+    /// <param name="end">The point end.</param>
+    /// <param name="startStatus">Index of Grip status at start of line defined by start and end.</param>
+    /// <param name="endStatus">Index if Grip status at end of line defined by start and end.</param>
     public void DrawControlPolygonLine(Rhino.Geometry.Point3d start, Rhino.Geometry.Point3d end, int startStatus, int endStatus)
     {
       UnsafeNativeMethods.CRhinoDrawGripsSettings_DrawControlPolygonLine(m_pGripsDrawSettings, start, end, startStatus, endStatus);
@@ -286,9 +289,9 @@ namespace Rhino.DocObjects.Custom
     const int idxDragging = 2;
 
     /// <summary>
-    /// true if grips are currently being dragged.
+    /// Determines if grips are currently being dragged.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>true if grips are dragged.</returns>
     public static bool Dragging()
     {
       return UnsafeNativeMethods.CRhinoObjectGrips_GetBool(IntPtr.Zero, idxDragging);
@@ -364,11 +367,11 @@ namespace Rhino.DocObjects.Custom
     }
 
     /// <summary>
-    /// Just before Rhino shades an object with grips on, it calls OnUpdateMesh()
+    /// Just before Rhino shades an object with grips on, it calls this method
     /// to update the display meshes.  Grips that modify surface or mesh objects
     /// must override this function and modify the display meshes here.
     /// </summary>
-    /// <param name="meshType"></param>
+    /// <param name="meshType">The mesh type being updated.</param>
     protected virtual void OnUpdateMesh(Rhino.Geometry.MeshType meshType)
     {
       //base class does nothing
@@ -395,17 +398,17 @@ namespace Rhino.DocObjects.Custom
     /// NewGeometry() is called, return new geometry calculated from the current
     /// grip locations. This happens once at the end of a grip drag.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The new geometry. The default implementation returns null.</returns>
     protected virtual Rhino.Geometry.GeometryBase NewGeometry()
     {
       return null;
     }
 
     /// <summary>
-    /// The default draws the grips.  Override if you need to draw dynamic stuff
-    /// and then call CustomObjectGrips.OnDraw() to draw the grips themselves.
+    /// Draws the grips. In your implementation, override this if you need to draw
+    /// dynamic elements and then call this base implementation to draw the grips themselves.
     /// </summary>
-    /// <param name="args"></param>
+    /// <param name="args">The grips draw event arguments.</param>
     protected virtual void OnDraw(GripsDrawEventArgs args)
     {
       IntPtr pThis = NonConstPointer();
@@ -434,16 +437,16 @@ namespace Rhino.DocObjects.Custom
     /// If the grips are control points of a NURBS surface, then this gets the
     /// index of the grip that controls the (i,j)-th cv.
     /// </summary>
-    /// <param name="i"></param>
-    /// <param name="j"></param>
-    /// <returns>A grip controling a NURBS surface CV or NULL.</returns>
+    /// <param name="i">The index in the first dimension.</param>
+    /// <param name="j">The index in the second dimension.</param>
+    /// <returns>A grip controling a NURBS surface CV or null.</returns>
     protected virtual GripObject NurbsSurfaceGrip(int i, int j) { return null; }
 
     /// <summary>
     /// If the grips control a NURBS surface, this returns a pointer to that
     /// surface.  You can look at but you must NEVER change this surface.
     /// </summary>
-    /// <returns>A pointer to a NURBS surface or NULL.</returns>
+    /// <returns>A pointer to a NURBS surface or null.</returns>
     protected virtual Rhino.Geometry.NurbsSurface NurbsSurface() { return null; }
 
     ~CustomObjectGrips() { Dispose(false); }

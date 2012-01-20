@@ -53,7 +53,7 @@ namespace Rhino.DocObjects
     #endregion
 
     /// <summary>
-    /// Read hatch pattern definitions from a file.
+    /// Reads hatch pattern definitions from a file.
     /// </summary>
     /// <param name="filename">
     /// Name of an existing file. If filename is null or empty, default hatch pattern filename is used.
@@ -61,7 +61,7 @@ namespace Rhino.DocObjects
     /// <param name="quiet">
     /// If file doesn't exist, and quiet is false, an error meesage box is shown.
     /// </param>
-    /// <returns></returns>
+    /// <returns>An array of hatch patterns. This can be null, but not empty.</returns>
     public static HatchPattern[] ReadFromFile(string filename, bool quiet)
     {
       if (string.IsNullOrEmpty(filename))
@@ -283,9 +283,9 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Finds the hatch pattern with a given name. Search ignores case.
     /// </summary>
-    /// <param name="name"></param>
+    /// <param name="name">The name of the hatch patter to be found.</param>
     /// <param name="ignoreDeleted">true means don't search deleted hatch patterns.</param>
-    /// <returns>index of the hatch pattern with the given name. -1 if no hatch pattern found.</returns>
+    /// <returns>Index of the hatch pattern with the given name. -1 if no hatch pattern found.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_hatchcurve.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_hatchcurve.cs' lang='cs'/>

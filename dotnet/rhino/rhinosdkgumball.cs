@@ -124,9 +124,10 @@ namespace Rhino.UI.Gumball
     }
 
     /// <summary>
+    /// Sets the gumball bounding box with respect to a frame.
     /// </summary>
-    /// <param name="frame"></param>
-    /// <param name="frameBoundingBox">bounding box with respect to frame.</param>
+    /// <param name="frame">The frame.</param>
+    /// <param name="frameBoundingBox">Bounding box with respect to frame.</param>
     /// <returns>
     /// true if input is valid and gumball is set. false if input is not valid.
     /// In this case, gumball is set to the default.
@@ -567,19 +568,19 @@ namespace Rhino.UI.Gumball
     }
 
     /// <summary>
-    /// Gumball's contents are copied to this class' base gumball.
+    /// Contents of the gumball are copied to the base gumball of this class.
     /// </summary>
-    /// <param name="gumball"></param>
+    /// <param name="gumball">The gumball source.</param>
     public void SetBaseGumball(GumballObject gumball)
     {
       SetBaseGumball(gumball, null);
     }
 
     /// <summary>
-    /// Gumball's contents are copied to this class' base gumball.
+    /// Contents of the gumball are copied to the base gumball of this class.
     /// </summary>
-    /// <param name="gumball"></param>
-    /// <param name="appearanceSettings"></param>
+    /// <param name="gumball">The gumball source.</param>
+    /// <param name="appearanceSettings">The gumball appearance and behavior settings.</param>
     public void SetBaseGumball(GumballObject gumball, GumballAppearanceSettings appearanceSettings)
     {
       IntPtr pConstGumball = gumball.ConstPointer();

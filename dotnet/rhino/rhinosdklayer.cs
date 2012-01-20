@@ -69,17 +69,17 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Constructs a Layer with the current default layer properties.
+    /// Constructs a layer with the current default properties.
     /// The default layer properties are:
-    /// color = Rhino.ApplicationSettings.AppearanceSettings.DefaultLayerColor
-    /// line style = Rhino.ApplicationSettings.AppearanceSettings.DefaultLayerLineStyle
-    /// material index = -1
-    /// iges level = -1
-    /// mode = NormalLayer
-    /// name = empty
-    /// layer index = 0 (ignored by AddLayer)
+    /// <para>color = Rhino.ApplicationSettings.AppearanceSettings.DefaultLayerColor</para>
+    /// <para>line style = Rhino.ApplicationSettings.AppearanceSettings.DefaultLayerLineStyle</para>
+    /// <para>material index = -1</para>
+    /// <para>iges level = -1</para>
+    /// <para>mode = NormalLayer</para>
+    /// <para>name = empty</para>
+    /// <para>layer index = 0 (ignored by AddLayer)</para>
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A new layer instance.</returns>
     public static Layer GetDefaultLayerProperties()
     {
       Layer layer = new Layer();
@@ -466,10 +466,10 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Determine if a given string is valid for a layer name.
+    /// Determines if a given string is valid for a layer name.
     /// </summary>
-    /// <param name="name"></param>
-    /// <returns></returns>
+    /// <param name="name">A name to be validated.</param>
+    /// <returns>true if the name is valid for a layer name; otherwise, false.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayer.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addlayer.cs' lang='cs'/>
@@ -755,8 +755,8 @@ namespace Rhino.DocObjects.Tables
     }
 #endif
 
-    /// <summary>Finds a layer with a matching id.</summary>
-    /// <param name="layerId"></param>
+    /// <summary>Finds a layer with a matching ID.</summary>
+    /// <param name="layerId">A valid layer ID.</param>
     /// <param name="ignoreDeletedLayers">If true, deleted layers are not checked.</param>
     /// <returns>
     /// >=0 index of the layer with the given name
@@ -856,7 +856,7 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoLayerTable_AddLayer(m_doc.m_docId, IntPtr.Zero, true);
     }
 
-    /// <summary>Modify layer settings.</summary>
+    /// <summary>Modifies layer settings.</summary>
     /// <param name="newSettings">This information is copied.</param>
     /// <param name="layerIndex">
     /// zero based index of layer to set.  This must be in the range 0 &lt;= layerIndex &lt; LayerTable.Count.
@@ -875,31 +875,31 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Make a layer and all of it's parent layers visible.
+    /// Makes a layer and all of its parent layers visible.
     /// </summary>
-    /// <param name="layerId"></param>
-    /// <returns></returns>
+    /// <param name="layerId">The layer ID to be made visible.</param>
+    /// <returns>true if the operation succeeded.</returns>
     public bool ForceLayerVisible(Guid layerId)
     {
       return UnsafeNativeMethods.CRhinoLayerTable_ForceVisible(m_doc.m_docId, layerId);
     }
 
     /// <summary>
-    /// Make a layer and all of it's parent layers visible.
+    /// Makes a layer and all of its parent layers visible.
     /// </summary>
-    /// <param name="layerIndex"></param>
-    /// <returns></returns>
+    /// <param name="layerIndex">The layer index to be made visible.</param>
+    /// <returns>true if the operation succeeded.</returns>
     public bool ForceLayerVisible(int layerIndex)
     {
       return ForceLayerVisible(this[layerIndex].Id);
     }
 
     /// <summary>
-    /// If the layer has been modified and the modifcation can be undone,
-    /// then UndoModifyLayer() will restore the layer to its previous state.
+    /// Restores the layer to its previous state,
+    /// if the layer has been modified and the modification can be undone.
     /// </summary>
-    /// <param name="layerIndex"></param>
-    /// <param name="undoRecordSerialNumber"></param>
+    /// <param name="layerIndex">The layer index to be used.</param>
+    /// <param name="undoRecordSerialNumber">The undo record serial number. Pass 0 not to specify one.</param>
     /// <returns>true if this layer had been modified and the modifications were undone.</returns>
     [CLSCompliant(false)]
     public bool UndoModify(int layerIndex, uint undoRecordSerialNumber)
@@ -946,12 +946,12 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Gets unused layer name used as default when creating new layers.
+    /// Gets the next unused layer name used as default when creating new layers.
     /// </summary>
     /// <param name="ignoreDeleted">
-    /// if this is true then may use a name used by a deleted layer.
+    /// If this is true then Rhino may use a name used by a deleted layer.
     /// </param>
-    /// <returns></returns>
+    /// <returns>An unused layer name string.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayer.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addlayer.cs' lang='cs'/>

@@ -51,8 +51,11 @@ namespace Rhino.DocObjects.Tables
 
 #if RDK_CHECKED
     private Rhino.Render.Sun m_sun;
-    /// <summary></summary>
-    /// <exception cref="Rhino.Runtime.RdkNotLoadedException"></exception>
+    /// <summary>
+    /// Gets the Sun instance that is applied to the document.
+    /// <para>If the RDK is loaded, an instance is always returned.</para>
+    /// </summary>
+    /// <exception cref="Rhino.Runtime.RdkNotLoadedException">If the RDK is not loaded.</exception>
     public Rhino.Render.Sun Sun
     {
       get

@@ -10,7 +10,7 @@ namespace Rhino.DocObjects
   [Serializable]
   public sealed class ViewportInfo : IDisposable, ISerializable
   {
-    object m_parent = null;
+    readonly object m_parent;
     IntPtr m_pViewportPointer = IntPtr.Zero;
 
     internal IntPtr ConstPointer()
@@ -456,10 +456,6 @@ namespace Rhino.DocObjects
         return v;
       }
     }
-
-    //TODO
-    //bool IsCameraFrameWorldPlan( 
-    //bool GetCameraExtents( 
 
     /// <summary>
     /// Sets the view frustum. If FrustumSymmetryIsLocked() is true
@@ -956,8 +952,8 @@ namespace Rhino.DocObjects
     /// <returns>The rectangle, or <see cref="System.Drawing.Rectangle.Empty">Empty</see> rectangle on error.</returns>
     public System.Drawing.Rectangle GetScreenPort()
     {
-      int near = 0;
-      int far = 0;
+      int near;
+      int far;
       return GetScreenPort(out near, out far);
     }
 
@@ -1089,8 +1085,6 @@ namespace Rhino.DocObjects
         d = 0;
       return d;
     }
-
-    //TODO bool GetCoordinateSprite(
 
     /// <summary>
     /// Extends this viewport view to include a bounding box.

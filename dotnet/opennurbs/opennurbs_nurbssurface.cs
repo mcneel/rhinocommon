@@ -330,7 +330,7 @@ namespace Rhino.Geometry
     {
       IntPtr pConstOther = other.ConstPointer();
       IntPtr pThis = UnsafeNativeMethods.ON_NurbsSurface_New2(pConstOther);
-      this.ConstructNonConstObject(pThis);
+      ConstructNonConstObject(pThis);
     }
 
     internal NurbsSurface(IntPtr ptr, object parent)
@@ -361,12 +361,7 @@ namespace Rhino.Geometry
     /// </summary>
     public Collections.NurbsSurfaceKnotList KnotsU
     {
-      get
-      {
-        if (m_KnotsU == null)
-          m_KnotsU = new Rhino.Geometry.Collections.NurbsSurfaceKnotList(this, 0);
-        return m_KnotsU;
-      }
+      get { return m_KnotsU ?? (m_KnotsU = new Rhino.Geometry.Collections.NurbsSurfaceKnotList(this, 0)); }
     }
 
     /// <summary>
@@ -374,12 +369,7 @@ namespace Rhino.Geometry
     /// </summary>
     public Collections.NurbsSurfaceKnotList KnotsV
     {
-      get
-      {
-        if (m_KnotsV == null)
-          m_KnotsV = new Rhino.Geometry.Collections.NurbsSurfaceKnotList(this, 1);
-        return m_KnotsV;
-      }
+      get { return m_KnotsV ?? (m_KnotsV = new Rhino.Geometry.Collections.NurbsSurfaceKnotList(this, 1)); }
     }
 
     private Collections.NurbsSurfacePointList m_Points;
@@ -389,12 +379,7 @@ namespace Rhino.Geometry
     /// </summary>
     public Collections.NurbsSurfacePointList Points
     {
-      get
-      {
-        if (m_Points == null)
-          m_Points = new Rhino.Geometry.Collections.NurbsSurfacePointList(this);
-        return m_Points;
-      }
+      get { return m_Points ?? (m_Points = new Rhino.Geometry.Collections.NurbsSurfacePointList(this)); }
     }
 
     /// <summary>
@@ -537,7 +522,7 @@ namespace Rhino.Geometry
       IntPtr pCurve1 = targetCurve.ConstPointer();
 
       IntPtr pThis = UnsafeNativeMethods.ON_MorphControl_New(IntPtr.Zero);
-      this.ConstructNonConstObject(pThis);
+      ConstructNonConstObject(pThis);
       UnsafeNativeMethods.ON_MorphControl_SetCurves(pThis, pCurve0, pCurve1);
     }
 

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading;
-using System.Runtime.Serialization;
 
 using Rhino.Geometry;
 
@@ -20,7 +19,7 @@ namespace Rhino.Collections
   {
     readonly TABLE m_table;
     int m_position = -1;
-    int m_count;
+    readonly int m_count;
     public TableEnumerator(TABLE table)
     {
       m_table = table;
@@ -189,7 +188,7 @@ namespace Rhino.Collections
 
       if (list.m_size > 0)
       {
-        Array.Copy(list.m_items, this.m_items, list.m_items.Length);
+        Array.Copy(list.m_items, m_items, list.m_items.Length);
       }
     }
 
@@ -199,8 +198,8 @@ namespace Rhino.Collections
     /// <returns>An array containing all items in this list.</returns>
     public T[] ToArray()
     {
-      T[] destinationArray = new T[this.m_size];
-      Array.Copy(this.m_items, 0, destinationArray, 0, this.m_size);
+      T[] destinationArray = new T[m_size];
+      Array.Copy(m_items, 0, destinationArray, 0, m_size);
       return destinationArray;
     }
     #endregion
@@ -208,14 +207,14 @@ namespace Rhino.Collections
     #region Properties
     private void EnsureCapacity(int min)
     {
-      if (this.m_items.Length < min)
+      if (m_items.Length < min)
       {
-        int num = (this.m_items.Length == 0) ? 4 : (this.m_items.Length * 2);
+        int num = (m_items.Length == 0) ? 4 : (m_items.Length * 2);
         if (num < min)
         {
           num = min;
         }
-        this.Capacity = num;
+        Capacity = num;
       }
     }
 
@@ -227,7 +226,7 @@ namespace Rhino.Collections
     /// since that one only trims the excess if the excess exceeds 10% of the list length.</remarks>
     public void TrimExcess()
     {
-      this.Capacity = this.m_size;
+      Capacity = m_size;
     }
 
     /// <summary>
@@ -238,27 +237,27 @@ namespace Rhino.Collections
     {
       get
       {
-        return this.m_items.Length;
+        return m_items.Length;
       }
       set
       {
-        if (value != this.m_items.Length)
+        if (value != m_items.Length)
         {
-          if (value < this.m_size)
+          if (value < m_size)
             throw new ArgumentOutOfRangeException("value","Capacity must be larger than or equal to the list Count");
 
           if (value > 0)
           {
             T[] destinationArray = new T[value];
-            if (this.m_size > 0)
+            if (m_size > 0)
             {
-              Array.Copy(this.m_items, 0, destinationArray, 0, this.m_size);
+              Array.Copy(m_items, 0, destinationArray, 0, m_size);
             }
-            this.m_items = destinationArray;
+            m_items = destinationArray;
           }
           else
           {
-            this.m_items = new T[0];
+            m_items = new T[0];
           }
         }
       }
@@ -272,7 +271,7 @@ namespace Rhino.Collections
     {
       get
       {
-        return this.m_size;
+        return m_size;
       }
     }
 
@@ -290,7 +289,7 @@ namespace Rhino.Collections
         int N = 0;
         for (int i = 0; i < m_size; i++)
         {
-          if (this.m_items[i] == null) { N++; }
+          if (m_items[i] == null) { N++; }
         }
 
         return N;
@@ -309,15 +308,15 @@ namespace Rhino.Collections
       {
         // IronPython seems to expect IndexOutOfRangeExceptions with
         // indexing properties
-        if (index >= this.m_size) { throw new IndexOutOfRangeException("index"); }
-        return this.m_items[index];
+        if (index >= m_size) { throw new IndexOutOfRangeException("index"); }
+        return m_items[index];
       }
       set
       {
-        if (index >= this.m_size) { throw new IndexOutOfRangeException("You cannot set items which do not yet exist, consider using Insert or Add instead."); }
+        if (index >= m_size) { throw new IndexOutOfRangeException("You cannot set items which do not yet exist, consider using Insert or Add instead."); }
 
-        this.m_items[index] = value;
-        this.m_version++;
+        m_items[index] = value;
+        m_version++;
       }
     }
 
@@ -394,24 +393,6 @@ namespace Rhino.Collections
     bool ICollection<T>.IsReadOnly { get { return false; } }
 
     /// <summary>
-    /// Constructs a multi-line string representation of all the items in this list.
-    /// </summary>
-    string ListToString
-    {
-      get
-      {
-        System.Text.StringBuilder sb = new System.Text.StringBuilder(this.Count * 20);
-
-        for (int i = 0; i < this.Count; i++)
-        {
-          sb.AppendLine( this[i].ToString() );
-        }
-
-        return sb.ToString();
-      }
-    }
-
-    /// <summary>
     /// When implemented by a class, gets a value indicating whether access to the ICollection is synchronized (thread-safe).
     /// ON_List is never Synchronized.
     /// </summary>
@@ -426,11 +407,11 @@ namespace Rhino.Collections
     {
       get
       {
-        if (this.m_syncRoot == null)
+        if (m_syncRoot == null)
         {
-          Interlocked.CompareExchange(ref this.m_syncRoot, new object(), null);
+          Interlocked.CompareExchange(ref m_syncRoot, new object(), null);
         }
-        return this.m_syncRoot;
+        return m_syncRoot;
       }
     }
     #endregion
@@ -443,11 +424,11 @@ namespace Rhino.Collections
     /// </summary>
     public void Clear()
     {
-      if (this.m_size == 0) { return; }
+      if (m_size == 0) { return; }
 
-      Array.Clear(this.m_items, 0, this.m_size);
-      this.m_size = 0;
-      this.m_version++;
+      Array.Clear(m_items, 0, m_size);
+      m_size = 0;
+      m_version++;
     }
 
     /// <summary>
@@ -458,8 +439,8 @@ namespace Rhino.Collections
     int IList.Add(object item)
     {
       RhinoList<T>.VerifyValueType(item);
-      this.Add((T)item);
-      return (this.Count - 1);
+      Add((T)item);
+      return (Count - 1);
     }
     private static void VerifyValueType(object value)
     {
@@ -483,13 +464,13 @@ namespace Rhino.Collections
     /// <param name="item">Item to append.</param>
     public void Add(T item)
     {
-      if (this.m_size == this.m_items.Length)
+      if (m_size == m_items.Length)
       {
-        this.EnsureCapacity(this.m_size + 1);
+        EnsureCapacity(m_size + 1);
       }
 
-      this.m_items[this.m_size++] = item;
-      this.m_version++;
+      m_items[m_size++] = item;
+      m_version++;
     }
 
     /// <summary>
@@ -502,7 +483,7 @@ namespace Rhino.Collections
     /// </param>
     public void AddRange(IEnumerable<T> collection)
     {
-      this.InsertRange(this.m_size, collection);
+      InsertRange(m_size, collection);
     }
 
     /// <summary>
@@ -521,13 +502,13 @@ namespace Rhino.Collections
       {
         if (obj == null)
         {
-          this.Add(default(T));
+          Add(default(T));
           continue;
         }
 
         if (Tt.IsAssignableFrom(obj.GetType()))
         {
-          this.Add((T)obj);
+          Add((T)obj);
         }
         else
         {
@@ -551,7 +532,7 @@ namespace Rhino.Collections
     void IList.Insert(int index, object item)
     {
       RhinoList<T>.VerifyValueType(item);
-      this.Insert(index, (T)item);
+      Insert(index, (T)item);
     }
 
     /// <summary>
@@ -562,24 +543,24 @@ namespace Rhino.Collections
     /// (Nothing in Visual Basic) for reference types.</param>
     public void Insert(int index, T item)
     {
-      if (index > this.m_size)
+      if (index > m_size)
       {
         throw new ArgumentOutOfRangeException("index");
       }
 
-      if (this.m_size == this.m_items.Length)
+      if (m_size == m_items.Length)
       {
-        this.EnsureCapacity(this.m_size + 1);
+        EnsureCapacity(m_size + 1);
       }
 
-      if (index < this.m_size)
+      if (index < m_size)
       {
-        Array.Copy(this.m_items, index, this.m_items, index + 1, this.m_size - index);
+        Array.Copy(m_items, index, m_items, index + 1, m_size - index);
       }
 
-      this.m_items[index] = item;
-      this.m_size++;
-      this.m_version++;
+      m_items[index] = item;
+      m_size++;
+      m_version++;
     }
 
     /// <summary>
@@ -597,7 +578,7 @@ namespace Rhino.Collections
         throw new ArgumentNullException("collection");
       }
 
-      if (index > this.m_size)
+      if (index > m_size)
       {
         throw new ArgumentOutOfRangeException("index");
       }
@@ -608,23 +589,23 @@ namespace Rhino.Collections
         int count = is2.Count;
         if (count > 0)
         {
-          this.EnsureCapacity(this.m_size + count);
-          if (index < this.m_size)
+          EnsureCapacity(m_size + count);
+          if (index < m_size)
           {
-            Array.Copy(this.m_items, index, this.m_items, index + count, this.m_size - index);
+            Array.Copy(m_items, index, m_items, index + count, m_size - index);
           }
           if (this == is2)
           {
-            Array.Copy(this.m_items, 0, this.m_items, index, index);
-            Array.Copy(this.m_items, (index + count), this.m_items, (index * 2), (this.m_size - index));
+            Array.Copy(m_items, 0, m_items, index, index);
+            Array.Copy(m_items, (index + count), m_items, (index * 2), (m_size - index));
           }
           else
           {
             T[] array = new T[count];
             is2.CopyTo(array, 0);
-            array.CopyTo(this.m_items, index);
+            array.CopyTo(m_items, index);
           }
-          this.m_size += count;
+          m_size += count;
         }
       }
       else
@@ -633,11 +614,11 @@ namespace Rhino.Collections
         {
           while (enumerator.MoveNext())
           {
-            this.Insert(index++, enumerator.Current);
+            Insert(index++, enumerator.Current);
           }
         }
       }
-      this.m_version++;
+      m_version++;
     }
 
     /// <summary>
@@ -649,7 +630,7 @@ namespace Rhino.Collections
     {
       if (RhinoList<T>.IsCompatibleObject(item))
       {
-        this.Remove((T)item);
+        Remove((T)item);
       }
     }
 
@@ -662,10 +643,10 @@ namespace Rhino.Collections
     /// This method also returns false if item was not found in the List.</returns>
     public bool Remove(T item)
     {
-      int index = this.IndexOf(item);
+      int index = IndexOf(item);
       if (index >= 0)
       {
-        this.RemoveAt(index);
+        RemoveAt(index);
         return true;
       }
       return false;
@@ -684,33 +665,33 @@ namespace Rhino.Collections
       }
 
       int index = 0;
-      while ((index < this.m_size) && !match(this.m_items[index]))
+      while ((index < m_size) && !match(m_items[index]))
       {
         index++;
       }
 
-      if (index >= this.m_size)
+      if (index >= m_size)
       {
         return 0;
       }
 
       int num2 = index + 1;
-      while (num2 < this.m_size)
+      while (num2 < m_size)
       {
-        while ((num2 < this.m_size) && match(this.m_items[num2]))
+        while ((num2 < m_size) && match(m_items[num2]))
         {
           num2++;
         }
-        if (num2 < this.m_size)
+        if (num2 < m_size)
         {
-          this.m_items[index++] = this.m_items[num2++];
+          m_items[index++] = m_items[num2++];
         }
       }
 
-      Array.Clear(this.m_items, index, this.m_size - index);
-      int num3 = this.m_size - index;
-      this.m_size = index;
-      this.m_version++;
+      Array.Clear(m_items, index, m_size - index);
+      int num3 = m_size - index;
+      m_size = index;
+      m_version++;
 
       return num3;
     }
@@ -734,18 +715,18 @@ namespace Rhino.Collections
     /// <param name="index">The zero-based index of the element to remove.</param>
     public void RemoveAt(int index)
     {
-      if (index >= this.m_size)
+      if (index >= m_size)
       {
         throw new ArgumentOutOfRangeException("index");
       }
 
-      this.m_size--;
-      if (index < this.m_size)
+      m_size--;
+      if (index < m_size)
       {
-        Array.Copy(this.m_items, index + 1, this.m_items, index, this.m_size - index);
+        Array.Copy(m_items, index + 1, m_items, index, m_size - index);
       }
-      this.m_items[this.m_size] = default(T);
-      this.m_version++;
+      m_items[m_size] = default(T);
+      m_version++;
     }
 
     /// <summary>
@@ -758,20 +739,20 @@ namespace Rhino.Collections
       if (index < 0) { throw new ArgumentOutOfRangeException("index"); }
       if (count < 0) { throw new ArgumentOutOfRangeException("count"); }
 
-      if ((this.m_size - index) < count)
+      if ((m_size - index) < count)
       {
         throw new ArgumentException("This combination of index and count is not valid");
       }
 
       if (count > 0)
       {
-        this.m_size -= count;
-        if (index < this.m_size)
+        m_size -= count;
+        if (index < m_size)
         {
-          Array.Copy(this.m_items, index + count, this.m_items, index, this.m_size - index);
+          Array.Copy(m_items, index + count, m_items, index, m_size - index);
         }
-        Array.Clear(this.m_items, this.m_size, count);
-        this.m_version++;
+        Array.Clear(m_items, m_size, count);
+        m_version++;
       }
     }
 
@@ -786,11 +767,11 @@ namespace Rhino.Collections
       if ((index < 0) || (count < 0))
         throw new ArgumentOutOfRangeException("index");
 
-      if ((this.m_size - index) < count)
+      if ((m_size - index) < count)
         throw new ArgumentOutOfRangeException("index");
 
       RhinoList<T> list = new RhinoList<T>(count);
-      Array.Copy(this.m_items, index, list.m_items, 0, count);
+      Array.Copy(m_items, index, list.m_items, 0, count);
       list.m_size = count;
       return list;
     }
@@ -810,7 +791,7 @@ namespace Rhino.Collections
     {
       if (RhinoList<T>.IsCompatibleObject(item))
       {
-        return this.IndexOf((T)item);
+        return IndexOf((T)item);
       }
       return -1;
     }
@@ -826,7 +807,7 @@ namespace Rhino.Collections
     /// the entire List, if found; otherwise, –1.</returns>
     public int IndexOf(T item)
     {
-      return Array.IndexOf<T>(this.m_items, item, 0, this.m_size);
+      return Array.IndexOf<T>(m_items, item, 0, m_size);
     }
 
     /// <summary>
@@ -842,8 +823,8 @@ namespace Rhino.Collections
     /// the entire List, if found; otherwise, –1.</returns>
     public int IndexOf(T item, int index)
     {
-      if (index > this.m_size) { throw new ArgumentOutOfRangeException("index"); }
-      return Array.IndexOf<T>(this.m_items, item, index, this.m_size - index);
+      if (index > m_size) { throw new ArgumentOutOfRangeException("index"); }
+      return Array.IndexOf<T>(m_items, item, index, m_size - index);
     }
 
     /// <summary>
@@ -860,13 +841,13 @@ namespace Rhino.Collections
     /// the entire List, if found; otherwise, –1.</returns>
     public int IndexOf(T item, int index, int count)
     {
-      if (index > this.m_size) { throw new ArgumentOutOfRangeException("index"); }
-      if ((count < 0) || (index > (this.m_size - count)))
+      if (index > m_size) { throw new ArgumentOutOfRangeException("index"); }
+      if ((count < 0) || (index > (m_size - count)))
       {
         throw new ArgumentOutOfRangeException("count");
       }
 
-      return Array.IndexOf<T>(this.m_items, item, index, count);
+      return Array.IndexOf<T>(m_items, item, index, count);
     }
 
     /// <summary>
@@ -879,7 +860,7 @@ namespace Rhino.Collections
     /// the entire the List, if found; otherwise, –1.</returns>
     public int LastIndexOf(T item)
     {
-      return this.LastIndexOf(item, this.m_size - 1, this.m_size);
+      return LastIndexOf(item, m_size - 1, m_size);
     }
 
     /// <summary>
@@ -894,8 +875,8 @@ namespace Rhino.Collections
     /// the entire the List, if found; otherwise, –1.</returns>
     public int LastIndexOf(T item, int index)
     {
-      if (index >= this.m_size) { throw new ArgumentOutOfRangeException("index"); }
-      return this.LastIndexOf(item, index, index + 1);
+      if (index >= m_size) { throw new ArgumentOutOfRangeException("index"); }
+      return LastIndexOf(item, index, index + 1);
     }
 
     /// <summary>
@@ -911,14 +892,14 @@ namespace Rhino.Collections
     /// the entire the List, if found; otherwise, –1.</returns>
     public int LastIndexOf(T item, int index, int count)
     {
-      if (this.m_size == 0) { return -1; }
+      if (m_size == 0) { return -1; }
       if ((index < 0) || (count < 0))
         throw new ArgumentOutOfRangeException("index");
 
-      if ((index >= this.m_size) || (count > (index + 1)))
+      if ((index >= m_size) || (count > (index + 1)))
         throw new ArgumentOutOfRangeException("index");
 
-      return Array.LastIndexOf<T>(this.m_items, item, index, count);
+      return Array.LastIndexOf<T>(m_items, item, index, count);
     }
 
     /// <summary>
@@ -933,7 +914,7 @@ namespace Rhino.Collections
     /// the bitwise complement of Count.</returns>
     public int BinarySearch(T item)
     {
-      return this.BinarySearch(0, this.Count, item, null);
+      return BinarySearch(0, Count, item, null);
     }
 
     /// <summary>
@@ -951,7 +932,7 @@ namespace Rhino.Collections
     /// the bitwise complement of Count.</returns>
     public int BinarySearch(T item, IComparer<T> comparer)
     {
-      return this.BinarySearch(0, this.Count, item, comparer);
+      return BinarySearch(0, Count, item, comparer);
     }
 
     /// <summary>
@@ -974,12 +955,12 @@ namespace Rhino.Collections
       if (index < 0) { throw new ArgumentOutOfRangeException("index"); }
       if (count < 0) { throw new ArgumentOutOfRangeException("count"); }
 
-      if ((this.m_size - index) < count)
+      if ((m_size - index) < count)
       {
         throw new ArgumentException("This combination of index and count is not valid");
       }
 
-      return Array.BinarySearch<T>(this.m_items, index, count, item, comparer);
+      return Array.BinarySearch<T>(m_items, index, count, item, comparer);
     }
 
     /// <summary>
@@ -992,9 +973,9 @@ namespace Rhino.Collections
     {
       if (item == null)
       {
-        for (int j = 0; j < this.m_size; j++)
+        for (int j = 0; j < m_size; j++)
         {
-          if (this.m_items[j] == null)
+          if (m_items[j] == null)
           {
             return true;
           }
@@ -1003,9 +984,9 @@ namespace Rhino.Collections
       }
 
       EqualityComparer<T> comparer = EqualityComparer<T>.Default;
-      for (int i = 0; i < this.m_size; i++)
+      for (int i = 0; i < m_size; i++)
       {
-        if (comparer.Equals(this.m_items[i], item))
+        if (comparer.Equals(m_items[i], item))
         {
           return true;
         }
@@ -1021,7 +1002,7 @@ namespace Rhino.Collections
     /// <returns>true if item is found in the List; otherwise, false.</returns>
     bool IList.Contains(object item)
     {
-      return (RhinoList<T>.IsCompatibleObject(item) && this.Contains((T)item));
+      return (RhinoList<T>.IsCompatibleObject(item) && Contains((T)item));
     }
 
     /// <summary>
@@ -1033,7 +1014,7 @@ namespace Rhino.Collections
     /// conditions defined by the specified predicate; otherwise, false.</returns>
     public bool Exists(Predicate<T> match)
     {
-      return (this.FindIndex(match) != -1);
+      return (FindIndex(match) != -1);
     }
 
     /// <summary>
@@ -1047,11 +1028,11 @@ namespace Rhino.Collections
     {
       if (match == null) { throw new ArgumentNullException("match"); }
 
-      for (int i = 0; i < this.m_size; i++)
+      for (int i = 0; i < m_size; i++)
       {
-        if (match(this.m_items[i]))
+        if (match(m_items[i]))
         {
-          return this.m_items[i];
+          return m_items[i];
         }
       }
       return default(T);
@@ -1068,11 +1049,11 @@ namespace Rhino.Collections
     {
       if (match == null) { throw new ArgumentNullException("match"); }
 
-      for (int i = this.m_size - 1; i >= 0; i--)
+      for (int i = m_size - 1; i >= 0; i--)
       {
-        if (match(this.m_items[i]))
+        if (match(m_items[i]))
         {
-          return this.m_items[i];
+          return m_items[i];
         }
       }
       return default(T);
@@ -1088,12 +1069,12 @@ namespace Rhino.Collections
     {
       if (match == null) { throw new ArgumentNullException("match"); }
 
-      RhinoList<T> list = new RhinoList<T>(this.m_size);
-      for (int i = 0; i < this.m_size; i++)
+      RhinoList<T> list = new RhinoList<T>(m_size);
+      for (int i = 0; i < m_size; i++)
       {
-        if (match(this.m_items[i]))
+        if (match(m_items[i]))
         {
-          list.Add(this.m_items[i]);
+          list.Add(m_items[i]);
         }
       }
 
@@ -1111,9 +1092,9 @@ namespace Rhino.Collections
     {
       if (match == null) { throw new ArgumentNullException("match"); }
 
-      for (int i = 0; i < this.m_size; i++)
+      for (int i = 0; i < m_size; i++)
       {
-        if (!match(this.m_items[i]))
+        if (!match(m_items[i]))
         {
           return false;
         }
@@ -1128,9 +1109,9 @@ namespace Rhino.Collections
     public void ForEach(Action<T> action)
     {
       if (action == null) { throw new ArgumentNullException("action"); }
-      for (int i = 0; i < this.m_size; i++)
+      for (int i = 0; i < m_size; i++)
       {
-        action(this.m_items[i]);
+        action(m_items[i]);
       }
     }
 
@@ -1144,7 +1125,7 @@ namespace Rhino.Collections
     /// matches the conditions defined by match, if found; otherwise, –1.</returns>
     public int FindIndex(Predicate<T> match)
     {
-      return this.FindIndex(0, this.m_size, match);
+      return FindIndex(0, m_size, match);
     }
 
     /// <summary>
@@ -1158,7 +1139,7 @@ namespace Rhino.Collections
     /// matches the conditions defined by match, if found; otherwise, –1.</returns>
     public int FindIndex(int startIndex, Predicate<T> match)
     {
-      return this.FindIndex(startIndex, this.m_size - startIndex, match);
+      return FindIndex(startIndex, m_size - startIndex, match);
     }
 
     /// <summary>
@@ -1173,16 +1154,16 @@ namespace Rhino.Collections
     /// matches the conditions defined by match, if found; otherwise, –1.</returns>
     public int FindIndex(int startIndex, int count, Predicate<T> match)
     {
-      if (startIndex > this.m_size) { throw new ArgumentOutOfRangeException("count"); }
+      if (startIndex > m_size) { throw new ArgumentOutOfRangeException("count"); }
       if (count < 0) { throw new ArgumentOutOfRangeException("count"); }
-      if (startIndex > (this.m_size - count)) { throw new ArgumentOutOfRangeException("count"); }
+      if (startIndex > (m_size - count)) { throw new ArgumentOutOfRangeException("count"); }
 
       if (match == null) { throw new ArgumentNullException("match"); }
 
       int num = startIndex + count;
       for (int i = startIndex; i < num; i++)
       {
-        if (match(this.m_items[i]))
+        if (match(m_items[i]))
         {
           return i;
         }
@@ -1200,7 +1181,7 @@ namespace Rhino.Collections
     /// the conditions defined by match, if found; otherwise, –1.</returns>
     public int FindLastIndex(Predicate<T> match)
     {
-      return this.FindLastIndex(this.m_size - 1, this.m_size, match);
+      return FindLastIndex(m_size - 1, m_size, match);
     }
 
     /// <summary>
@@ -1218,7 +1199,7 @@ namespace Rhino.Collections
       if (startIndex == int.MaxValue)
         throw new ArgumentOutOfRangeException("startIndex", "startIndex must be less than Int32.MaxValue");
 
-      return this.FindLastIndex(startIndex, startIndex + 1, match);
+      return FindLastIndex(startIndex, startIndex + 1, match);
     }
 
     /// <summary>
@@ -1234,14 +1215,14 @@ namespace Rhino.Collections
     public int FindLastIndex(int startIndex, int count, Predicate<T> match)
     {
       if (match == null) { throw new ArgumentNullException("match"); }
-      if (this.m_size == 0)
+      if (m_size == 0)
       {
         if (startIndex != -1)
         {
           throw new ArgumentOutOfRangeException("startIndex");
         }
       }
-      else if (startIndex >= this.m_size)
+      else if (startIndex >= m_size)
       {
         throw new ArgumentOutOfRangeException("startIndex");
       }
@@ -1252,7 +1233,7 @@ namespace Rhino.Collections
       int num = startIndex - count;
       for (int i = startIndex; i > num; i--)
       {
-        if (match(this.m_items[i]))
+        if (match(m_items[i]))
         {
           return i;
         }
@@ -1267,7 +1248,7 @@ namespace Rhino.Collections
     /// </summary>
     public void Sort()
     {
-      this.Sort(0, this.Count, null);
+      Sort(0, Count, null);
     }
 
     /// <summary>
@@ -1277,7 +1258,7 @@ namespace Rhino.Collections
     /// or a null reference (Nothing in Visual Basic) to use the default comparer Comparer(T).Default.</param>
     public void Sort(IComparer<T> comparer)
     {
-      this.Sort(0, this.Count, comparer);
+      Sort(0, Count, comparer);
     }
 
     /// <summary>
@@ -1287,10 +1268,10 @@ namespace Rhino.Collections
     public void Sort(Comparison<T> comparison)
     {
       if (comparison == null) { throw new ArgumentNullException("comparison"); }
-      if (this.m_size > 0)
+      if (m_size > 0)
       {
         IComparer<T> comparer = new FunctorComparer<T>(comparison);
-        Array.Sort<T>(this.m_items, 0, this.m_size, comparer);
+        Array.Sort<T>(m_items, 0, m_size, comparer);
       }
     }
 
@@ -1307,11 +1288,11 @@ namespace Rhino.Collections
       if ((index < 0) || (count < 0))
         throw new ArgumentOutOfRangeException("index");
 
-      if ((this.m_size - index) < count)
+      if ((m_size - index) < count)
         throw new ArgumentException("index and count are not a valid combination");
 
-      Array.Sort<T>(this.m_items, index, count, comparer);
-      this.m_version++;
+      Array.Sort<T>(m_items, index, count, comparer);
+      m_version++;
     }
 
     /// <summary>
@@ -1324,20 +1305,20 @@ namespace Rhino.Collections
     public void Sort(double[] keys)
     {
       if (keys == null) { throw new ArgumentNullException("keys"); }
-      if (keys.Length != this.m_size)
+      if (keys.Length != m_size)
       {
         throw new ArgumentException("Keys array must have same length as this List.");
       }
 
       //cannot sort 1 item or less...
-      if (this.m_size < 2) { return; }
+      if (m_size < 2) { return; }
 
       //trim my internal array
-      this.Capacity = this.m_size;
+      Capacity = m_size;
 
       //duplicate the keys array
       double[] copy_keys = (double[])keys.Clone();
-      Array.Sort(copy_keys, this.m_items);
+      Array.Sort(copy_keys, m_items);
 
       m_version++;
     }
@@ -1352,20 +1333,20 @@ namespace Rhino.Collections
     public void Sort(int[] keys)
     {
       if (keys == null) { throw new ArgumentNullException("keys"); }
-      if (keys.Length != this.m_size)
+      if (keys.Length != m_size)
       {
         throw new ArgumentException("Keys array must have same length as this List.");
       }
 
       //cannot sort 1 item or less...
-      if (this.m_size < 2) { return; }
+      if (m_size < 2) { return; }
 
       //trim my internal array
-      this.Capacity = this.m_size;
+      Capacity = m_size;
 
       //duplicate the keys array
       int[] copy_keys = (int[])keys.Clone();
-      Array.Sort(copy_keys, this.m_items);
+      Array.Sort(copy_keys, m_items);
 
       m_version++;
     }
@@ -1380,7 +1361,7 @@ namespace Rhino.Collections
 
       public FunctorComparer(Comparison<Q> comparison)
       {
-        //this.c = Comparer<Q>.Default;
+        //c = Comparer<Q>.Default;
         m_comparison = comparison;
       }
 
@@ -1395,7 +1376,7 @@ namespace Rhino.Collections
     /// </summary>
     public void Reverse()
     {
-      this.Reverse(0, this.Count);
+      Reverse(0, Count);
     }
 
     /// <summary>
@@ -1408,11 +1389,11 @@ namespace Rhino.Collections
       if ((index < 0) || (count < 0))
         throw new ArgumentOutOfRangeException("index");
 
-      if ((this.m_size - index) < count)
+      if ((m_size - index) < count)
         throw new ArgumentOutOfRangeException("index");
 
-      Array.Reverse(this.m_items, index, count);
-      this.m_version++;
+      Array.Reverse(m_items, index, count);
+      m_version++;
     }
     #endregion
 
@@ -1436,13 +1417,13 @@ namespace Rhino.Collections
     {
       if (converter == null) { throw new ArgumentNullException("converter"); }
 
-      RhinoList<TOutput> list = new RhinoList<TOutput>(this.m_size);
-      for (int i = 0; i < this.m_size; i++)
+      RhinoList<TOutput> list = new RhinoList<TOutput>(m_size);
+      for (int i = 0; i < m_size; i++)
       {
-        list.m_items[i] = converter(this.m_items[i]);
+        list.m_items[i] = converter(m_items[i]);
       }
 
-      list.m_size = this.m_size;
+      list.m_size = m_size;
       return list;
     }
 
@@ -1454,7 +1435,7 @@ namespace Rhino.Collections
     /// of the elements copied from List. The Array must have zero-based indexing.</param>
     public void CopyTo(T[] array)
     {
-      this.CopyTo(array, 0);
+      CopyTo(array, 0);
     }
 
     /// <summary>
@@ -1466,7 +1447,7 @@ namespace Rhino.Collections
     /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
     public void CopyTo(T[] array, int arrayIndex)
     {
-      Array.Copy(this.m_items, 0, array, arrayIndex, this.m_size);
+      Array.Copy(m_items, 0, array, arrayIndex, m_size);
     }
 
     /// <summary>
@@ -1484,7 +1465,7 @@ namespace Rhino.Collections
       {
         throw new ArgumentOutOfRangeException("index");
       }
-      Array.Copy(this.m_items, index, array, arrayIndex, count);
+      Array.Copy(m_items, index, array, arrayIndex, count);
     }
 
     /// <summary>
@@ -1501,7 +1482,7 @@ namespace Rhino.Collections
       }
       try
       {
-        Array.Copy(this.m_items, 0, array, arrayIndex, this.m_size);
+        Array.Copy(m_items, 0, array, arrayIndex, m_size);
       }
       catch (ArrayTypeMismatchException)
       {
@@ -1527,17 +1508,17 @@ namespace Rhino.Collections
 
     private class Enumerator : IEnumerator<T>, IDisposable, IEnumerator
     {
-      private RhinoList<T> list;
-      private int index;
-      private int version;
-      private T current;
+      private readonly RhinoList<T> m_list;
+      private int m_index;
+      private readonly int m_version;
+      private T m_current;
 
       internal Enumerator(RhinoList<T> list)
       {
-        this.list = list;
-        this.index = 0;
-        this.version = list.m_version;
-        this.current = default(T);
+        m_list = list;
+        m_index = 0;
+        m_version = list.m_version;
+        m_current = default(T);
       }
 
       public void Dispose()
@@ -1547,24 +1528,24 @@ namespace Rhino.Collections
 
       public bool MoveNext()
       {
-        RhinoList<T> list = this.list;
-        if ((this.version == list.m_version) && (this.index < list.m_size))
+        RhinoList<T> list = m_list;
+        if ((m_version == list.m_version) && (m_index < list.m_size))
         {
-          this.current = list.m_items[this.index];
-          this.index++;
+          m_current = list.m_items[m_index];
+          m_index++;
           return true;
         }
-        return this.MoveNextRare();
+        return MoveNextRare();
       }
       private bool MoveNextRare()
       {
-        if (this.version != this.list.m_version)
+        if (m_version != m_list.m_version)
         {
           throw new InvalidOperationException("State of RhinoList changed during enumeration");
         }
 
-        this.index = this.list.m_size + 1;
-        this.current = default(T);
+        m_index = m_list.m_size + 1;
+        m_current = default(T);
         return false;
       }
 
@@ -1572,28 +1553,28 @@ namespace Rhino.Collections
       {
         get
         {
-          return this.current;
+          return m_current;
         }
       }
       object IEnumerator.Current
       {
         get
         {
-          if ((this.index == 0) || (this.index == (this.list.m_size + 1)))
+          if ((m_index == 0) || (m_index == (m_list.m_size + 1)))
           {
             throw new InvalidOperationException("Enum operation cannot happen");
           }
-          return this.Current;
+          return Current;
         }
       }
       void IEnumerator.Reset()
       {
-        if (this.version != this.list.m_version)
+        if (m_version != m_list.m_version)
         {
           throw new InvalidOperationException("State of RhinoList changed during enumeration");
         }
-        this.index = 0;
-        this.current = default(T);
+        m_index = 0;
+        m_current = default(T);
       }
     }
     #endregion
@@ -1605,13 +1586,13 @@ namespace Rhino.Collections
   internal class ListDebuggerDisplayProxy<T>
   {
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private ICollection<T> collection;
+    private readonly ICollection<T> m_collection;
 
     public ListDebuggerDisplayProxy(ICollection<T> collection)
     {
       if (collection == null)
         throw new ArgumentNullException("collection");
-      this.collection = collection;
+      m_collection = collection;
     }
 
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
@@ -1619,8 +1600,8 @@ namespace Rhino.Collections
     {
       get
       {
-        T[] array = new T[this.collection.Count];
-        this.collection.CopyTo(array, 0);
+        T[] array = new T[m_collection.Count];
+        m_collection.CopyTo(array, 0);
         return array;
       }
     }
@@ -1782,12 +1763,7 @@ namespace Rhino.Collections
     /// </summary>
     public XAccess X
     {
-      get
-      {
-        if (null == m_x_access)
-          m_x_access = new XAccess(this);
-        return m_x_access;
-      }
+      get { return m_x_access ?? (m_x_access = new XAccess(this)); }
     }
 
     /// <summary>
@@ -1795,12 +1771,7 @@ namespace Rhino.Collections
     /// </summary>
     public YAccess Y
     {
-      get
-      {
-        if (null == m_y_access)
-          m_y_access = new YAccess(this);
-        return m_y_access;
-      }
+      get { return m_y_access ?? (m_y_access = new YAccess(this)); }
     }
 
     /// <summary>
@@ -1808,12 +1779,7 @@ namespace Rhino.Collections
     /// </summary>
     public ZAccess Z
     {
-      get
-      {
-        if (null == m_z_access)
-          m_z_access = new ZAccess(this);
-        return m_z_access;
-      }
+      get { return m_z_access ?? (m_z_access = new ZAccess(this)); }
     }
 
     /// <summary>
@@ -1821,7 +1787,7 @@ namespace Rhino.Collections
     /// </summary>
     public class XAccess
     {
-      private Point3dList m_owner;
+      private readonly Point3dList m_owner;
 
       /// <summary>
       /// XAccess constructor. 
@@ -1848,7 +1814,7 @@ namespace Rhino.Collections
     /// </summary>
     public class YAccess
     {
-      private Point3dList m_owner;
+      private readonly Point3dList m_owner;
 
       /// <summary>
       /// XAccess constructor. 
@@ -1875,7 +1841,7 @@ namespace Rhino.Collections
     /// </summary>
     public class ZAccess
     {
-      private Point3dList m_owner;
+      private readonly Point3dList m_owner;
 
       /// <summary>
       /// XAccess constructor. 

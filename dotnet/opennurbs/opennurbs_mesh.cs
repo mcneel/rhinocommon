@@ -699,14 +699,6 @@ namespace Rhino.Geometry
       return base._GetConstObjectParent();
     }
 
-    /// <summary>
-    /// Is called when a non-const operation occurs.
-    /// </summary>
-    protected override void OnSwitchToNonConst()
-    {
-      base.OnSwitchToNonConst();
-    }
-
     internal Mesh(IntPtr native_pointer, object parent)
       : base(native_pointer, parent, -1)
     {
@@ -879,13 +871,7 @@ namespace Rhino.Geometry
     /// </example>
     public Rhino.Geometry.Collections.MeshVertexList Vertices
     {
-      get
-      {
-        if (null == m_vertices)
-          m_vertices = new Rhino.Geometry.Collections.MeshVertexList(this);
-
-        return m_vertices;
-      }
+      get { return m_vertices ?? (m_vertices = new Rhino.Geometry.Collections.MeshVertexList(this)); }
     }
 
     private Rhino.Geometry.Collections.MeshTopologyVertexList m_topology_vertices;

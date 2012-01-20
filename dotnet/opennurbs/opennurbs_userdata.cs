@@ -254,7 +254,7 @@ namespace Rhino.DocObjects.Custom
       }
     }
 
-    static System.Collections.Generic.List<Type> m_types = new System.Collections.Generic.List<Type>();
+    static readonly System.Collections.Generic.List<Type> m_types = new System.Collections.Generic.List<Type>();
     internal static void RegisterType(Type t)
     {
       m_types.Add(t);
@@ -269,12 +269,12 @@ namespace Rhino.DocObjects.Custom
     }
     #region statics
 
-    static System.Collections.Generic.Dictionary<int, UserData> m_attached_custom_user_datas = new System.Collections.Generic.Dictionary<int, UserData>();
+    static readonly System.Collections.Generic.Dictionary<int, UserData> m_attached_custom_user_datas = new System.Collections.Generic.Dictionary<int, UserData>();
     internal static UserData FromSerialNumber(int serial_number)
     {
       if (serial_number < 1)
         return null;
-      UserData rc = null;
+      UserData rc;
       if (m_attached_custom_user_datas.TryGetValue(serial_number, out rc))
         return rc;
 
@@ -394,7 +394,7 @@ namespace Rhino.DocObjects.Custom
       }
       IntPtr pOnObject = m_parent.ConstPointer();
       IntPtr pUserData = userdata.NonConstPointer(true);
-      bool detachIfNeeded = true;
+      const bool detachIfNeeded = true;
       bool rc = UnsafeNativeMethods.ON_Object_AttachUserData(pOnObject, pUserData, detachIfNeeded);
       if (rc)
         UserData.StoreInRuntimeList(userdata);

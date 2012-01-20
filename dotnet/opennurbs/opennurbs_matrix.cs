@@ -162,9 +162,9 @@ namespace Rhino.Geometry
       bool rc = UnsafeNativeMethods.ON_Matrix_Transpose(m_ptr);
       if (rc)
       {
-        int tmp = this.m_rows;
-        this.m_rows = this.m_columns;
-        this.m_columns = tmp;
+        int tmp = m_rows;
+        m_rows = m_columns;
+        m_columns = tmp;
       }
       return rc;
     }
@@ -202,9 +202,9 @@ namespace Rhino.Geometry
       bool rc = UnsafeNativeMethods.ON_Matrix_Invert(m_ptr, zeroTolerance);
       if (rc)
       {
-        int tmp = this.m_rows;
-        this.m_rows = this.m_columns;
-        this.m_columns = tmp;
+        int tmp = m_rows;
+        m_rows = m_columns;
+        m_columns = tmp;
       }
       return rc;
     }
@@ -298,7 +298,7 @@ namespace Rhino.Geometry
     public int RowReduce(double zeroTolerance, double[] b, out double pivot)
     {
       if (b.Length != RowCount)
-        throw new ArgumentOutOfRangeException("b.Length!=RowCount");
+        throw new ArgumentOutOfRangeException("b","b.Length!=RowCount");
       pivot = 0;
       return UnsafeNativeMethods.ON_Matrix_RowReduce2(m_ptr, zeroTolerance, b, ref pivot);
     }
@@ -322,7 +322,7 @@ namespace Rhino.Geometry
     public int RowReduce(double zeroTolerance, Point3d[] b, out double pivot)
     {
       if (b.Length != RowCount)
-        throw new ArgumentOutOfRangeException("b.Length!=RowCount");
+        throw new ArgumentOutOfRangeException("b", "b.Length!=RowCount");
       pivot = 0;
       return UnsafeNativeMethods.ON_Matrix_RowReduce3(m_ptr, zeroTolerance, b, ref pivot);
     }

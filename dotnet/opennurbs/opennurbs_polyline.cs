@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
@@ -179,7 +178,7 @@ namespace Rhino.Geometry
       {
         return this[idx];
       }
-      else if (t >= 1.0)
+      if (t >= 1.0)
       {
         return this[idx + 1];
       }
@@ -254,8 +253,7 @@ namespace Rhino.Geometry
       if (si1 >= N) { si1 = N; st1 = 0.0; }
 
       // Build trimmed polyline.
-      Polyline rc = new Polyline();
-      rc.Add(PointAt(t0));
+      Polyline rc = new Polyline {PointAt(t0)};
       for (int i = si0 + 1; i <= si1; i++)
       {
         rc.Add(m_items[i]);
@@ -439,7 +437,7 @@ namespace Rhino.Geometry
       if (m_size < 3) { return 0; }
 
       int count0 = m_size;
-      List<Point3d> P = new List<Point3d>(this.ToArray());
+      List<Point3d> P = new List<Point3d>(ToArray());
       List<double> L = new List<double>(m_size);
 
       // Build the Segment length list.
@@ -597,7 +595,7 @@ namespace Rhino.Geometry
     /// <returns>true on success, false on failure.</returns>
     public bool Smooth(double amount)
     {
-      int count = this.Count;
+      int count = Count;
       if (count < 3) { return false; }
 
       int N = count - 1;
@@ -689,8 +687,7 @@ namespace Rhino.Geometry
           if (frac[i])
           {
             segments.Add(segment);
-            segment = new Polyline();
-            segment.Add(this[i]);
+            segment = new Polyline {this[i]};
           }
         }
       }

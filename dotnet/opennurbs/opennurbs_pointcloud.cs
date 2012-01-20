@@ -291,7 +291,14 @@ namespace Rhino.Geometry
     /// Gets a value indicating whether or not the points in this 
     /// pointcloud have colors assigned to them.
     /// </summary>
-    public bool ConstainsColors
+    [Obsolete("Spelling mistake, use ContainsColors - will be removed in a future beta")]
+    public bool ConstainsColors { get { return ContainsColors; } }
+
+    /// <summary>
+    /// Gets a value indicating whether or not the points in this 
+    /// pointcloud have colors assigned to them.
+    /// </summary>
+    public bool ContainsColors
     {
       get
       {
@@ -299,9 +306,10 @@ namespace Rhino.Geometry
         return UnsafeNativeMethods.ON_PointCloud_GetBool(pConstThis, idx_Colors);
       }
     }
+
     /// <summary>
     /// Gets a value indicating whether or not the points in this 
-    /// pointcloud have colors assigned to them.
+    /// pointcloud have normals assigned to them.
     /// </summary>
     public bool ContainsNormals
     {
@@ -331,7 +339,7 @@ namespace Rhino.Geometry
     /// </summary>
     public void ClearColors()
     {
-      if (!ConstainsColors)
+      if (!ContainsColors)
         return;
 
       IntPtr pThis = NonConstPointer();

@@ -662,8 +662,7 @@ namespace Rhino.Display
       double l, a, b;
       ColorConverter.XYZ_To_CIELAB(xyz.m_x, xyz.m_y, xyz.m_z, out l, out a, out b);
 
-      ColorLAB lab = new ColorLAB(l, a, b);
-      lab.m_alpha = xyz.m_a;
+      ColorLAB lab = new ColorLAB(l, a, b) {m_alpha = xyz.m_a};
       return lab;
     }
     /// <summary>
@@ -676,8 +675,7 @@ namespace Rhino.Display
       double l, a, b;
       ColorConverter.CIELCH_To_CIELAB(lch.m_l , lch.m_c , lch.m_h, out l, out a, out b);
 
-      ColorLAB lab = new ColorLAB(l, a, b);
-      lab.m_alpha = lch.m_a;
+      ColorLAB lab = new ColorLAB(l, a, b) {m_alpha = lch.m_a};
       return lab;
     }
     #endregion
@@ -829,8 +827,7 @@ namespace Rhino.Display
       double l, c, h;
       ColorConverter.CIELAB_To_CIELCH(lab.m_l, lab.m_a, lab.m_b, out l, out c, out h);
 
-      ColorLCH lch = new ColorLCH(l, c, h);
-      lch.m_a = lab.m_alpha;
+      ColorLCH lch = new ColorLCH(l, c, h) {m_a = lab.m_alpha};
       return lch;
     }
     #endregion

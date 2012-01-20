@@ -17,13 +17,13 @@ namespace Rhino.DocObjects
     public Texture()
     {
       IntPtr pTexture = UnsafeNativeMethods.ON_Texture_New();
-      base.ConstructNonConstObject(pTexture);
+      ConstructNonConstObject(pTexture);
     }
 
     internal Texture(int index, Rhino.DocObjects.Material parent)
     {
       m_index = index;
-      this.m__parent = parent;
+      m__parent = parent;
     }
 
 #if RHINO_SDK
@@ -39,7 +39,7 @@ namespace Rhino.DocObjects
 #if RDK_UNCHECKED
     internal Texture(Rhino.Render.SimulatedTexture parent)
     {
-      this.m__parent = parent;
+      m__parent = parent;
     }
 #endif
 

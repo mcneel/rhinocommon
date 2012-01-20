@@ -281,12 +281,7 @@ namespace Rhino.Geometry
     /// </example>
     public Collections.NurbsCurveKnotList Knots
     {
-      get
-      {
-        if (m_knots == null)
-          m_knots = new Rhino.Geometry.Collections.NurbsCurveKnotList(this);
-        return m_knots;
-      }
+      get { return m_knots ?? (m_knots = new Rhino.Geometry.Collections.NurbsCurveKnotList(this)); }
     }
 
     /// <summary>
@@ -294,12 +289,7 @@ namespace Rhino.Geometry
     /// </summary>
     public Collections.NurbsCurvePointList Points
     {
-      get
-      {
-        if (m_points == null)
-          m_points = new Rhino.Geometry.Collections.NurbsCurvePointList(this);
-        return m_points;
-      }
+      get { return m_points ?? (m_points = new Rhino.Geometry.Collections.NurbsCurvePointList(this)); }
     }
     #endregion
 

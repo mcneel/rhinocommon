@@ -106,6 +106,13 @@ namespace Rhino.UI
     }
   }
 
+  public enum DistanceDisplayMode
+  {
+    Decimal = 0,
+    Fractional = 1,
+    FeetInches = 2
+  }
+
   public static class Localization
   {
     /// <summary>
@@ -122,6 +129,25 @@ namespace Rhino.UI
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoApp_UnitSystemName((int)units, capitalize, singular, abbreviate, pString);
+        return sh.ToString();
+      }
+    }
+
+    /// <summary>
+    /// Get a string version of a number in a given unit system / display mode
+    /// </summary>
+    /// <param name="x">the number to format into a string</param>
+    /// <param name="units">unit system for the number</param>
+    /// <param name="mode">how the number should be formatted</param>
+    /// <param name="precision">precision of the number</param>
+    /// <param name="appendUnitSystemName">add unit system name to the end of the number</param>
+    /// <returns></returns>
+    public static string FormatNumber( double x, UnitSystem units, DistanceDisplayMode mode, int precision, bool appendUnitSystemName )
+    {
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoFormatNumber(x, (int)units, (int)mode, precision, appendUnitSystemName, pString);
         return sh.ToString();
       }
     }

@@ -11,8 +11,8 @@ namespace Rhino.Geometry
   {
     IntPtr m_element_a;
     IntPtr m_element_b;
-    IntPtr m_pContext;
-    bool m_bCancel = false;
+    readonly IntPtr m_pContext;
+
     internal RTreeEventArgs(IntPtr a, IntPtr b, IntPtr pContext)
     {
       m_element_a = a;
@@ -34,11 +34,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets or sets a value that determines if the search should be conducted farther.
     /// </summary>
-    public bool Cancel
-    {
-      get { return m_bCancel; }
-      set { m_bCancel = value; }
-    }
+    public bool Cancel { get; set; }
 
     /// <summary>
     /// If search is using two r-trees, IdB is element b in the search.
@@ -108,7 +104,7 @@ namespace Rhino.Geometry
   public class RTree : IDisposable
   {
     IntPtr m_ptr; //ON_rTree* - this class is never const
-    long m_memory_pressure = 0;
+    long m_memory_pressure;
     int m_count = -1;
 
     /// <summary>
@@ -133,7 +129,7 @@ namespace Rhino.Geometry
       if (!UnsafeNativeMethods.ON_RTree_CreateMeshFaceTree(pRtree, pConstMesh))
       {
         rc.Dispose();
-        rc = null;
+        return null;
       }
       uint size = UnsafeNativeMethods.ON_RTree_SizeOf(pRtree);
       rc.m_memory_pressure = size;
@@ -154,7 +150,7 @@ namespace Rhino.Geometry
       if (!UnsafeNativeMethods.ON_RTree_CreatePointCloudTree(pRtree, pConstCloud))
       {
         rc.Dispose();
-        rc = null;
+        return null;
       }
       uint size = UnsafeNativeMethods.ON_RTree_SizeOf(pRtree);
       rc.m_memory_pressure = size;

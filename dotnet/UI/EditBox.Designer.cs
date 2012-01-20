@@ -36,17 +36,6 @@
       m_btnCancel = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
-      // m_btnOk
-      // 
-      this.m_btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.m_btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.m_btnOk.Location = new System.Drawing.Point(116, 227);
-      this.m_btnOk.Name = "m_btnOk";
-      this.m_btnOk.Size = new System.Drawing.Size(75, 23);
-      this.m_btnOk.TabIndex = 1;
-      this.m_btnOk.Text = "OK";
-      this.m_btnOk.UseVisualStyleBackColor = true;
-      // 
       // m_btnCancel
       // 
       m_btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -58,8 +47,21 @@
       m_btnCancel.Text = "Cancel";
       m_btnCancel.UseVisualStyleBackColor = true;
       // 
+      // m_btnOk
+      // 
+      this.m_btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+      this.m_btnOk.Location = new System.Drawing.Point(116, 227);
+      this.m_btnOk.Name = "m_btnOk";
+      this.m_btnOk.Size = new System.Drawing.Size(75, 23);
+      this.m_btnOk.TabIndex = 1;
+      this.m_btnOk.Text = "OK";
+      this.m_btnOk.UseVisualStyleBackColor = true;
+      // 
       // m_txtbox
       // 
+      this.m_txtbox.AcceptsReturn = true;
+      this.m_txtbox.AcceptsTab = true;
       this.m_txtbox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));

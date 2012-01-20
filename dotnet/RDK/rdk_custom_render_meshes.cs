@@ -94,7 +94,7 @@ namespace Rhino.Render.CustomRenderMesh
     {
       get
       {
-        return UnsafeNativeMethods.Rdk_CustomMeshes_UseObjectsMappingChannels(ConstPointer());;
+        return UnsafeNativeMethods.Rdk_CustomMeshes_UseObjectsMappingChannels(ConstPointer());
       }
       set
       {

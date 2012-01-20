@@ -129,8 +129,8 @@ namespace Rhino.Geometry
     {
       if (obj is Point2f)
         return CompareTo((Point2f)obj);
-      else
-        throw new ArgumentException("Input must be of type Point2f", "obj");
+
+      throw new ArgumentException("Input must be of type Point2f", "obj");
     }
 
     /// <summary>
@@ -327,8 +327,8 @@ namespace Rhino.Geometry
     {
       if (obj is Point3f)
         return CompareTo((Point3f)obj);
-      else
-        throw new ArgumentException("Input must be of type Point3f", "obj");
+
+      throw new ArgumentException("Input must be of type Point3f", "obj");
     }
 
     /// <summary>
@@ -509,8 +509,8 @@ namespace Rhino.Geometry
     {
       if (obj is Vector2f)
         return CompareTo((Vector2f)obj);
-      else
-        throw new ArgumentException("Input must be of type Vector2f", "obj");
+
+      throw new ArgumentException("Input must be of type Vector2f", "obj");
     }
 
     /// <summary>
@@ -710,8 +710,8 @@ namespace Rhino.Geometry
     {
       if (obj is Vector3f)
         return CompareTo((Vector3f)obj);
-      else
-        throw new ArgumentException("Input must be of type Vector3f", "obj");
+
+      throw new ArgumentException("Input must be of type Vector3f", "obj");
     }
 
     /// <summary>

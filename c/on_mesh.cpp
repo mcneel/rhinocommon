@@ -1887,10 +1887,19 @@ RH_C_FUNCTION ON_MassProperties* ON_Mesh_MassProperties(bool bArea, const ON_Mes
   {
     rc = new ON_MassProperties();
     bool success = false;
+
+    //David (19/01/2012): Weird bug in Rhino4, using true for the last two arguments results in a faulty volume.
+#if defined(RHINO_V5SR) // only available in V5
     if( bArea )
       success = pMesh->AreaMassProperties( *rc, true, true, true, true );
     else
       success = pMesh->VolumeMassProperties( *rc, true, true, true, true, ON_UNSET_POINT );
+#else
+    if( bArea )
+      success = pMesh->AreaMassProperties( *rc, true, true, false, false );
+    else
+      success = pMesh->VolumeMassProperties( *rc, true, true, false, false, ON_UNSET_POINT );
+#endif
 
     if( !success )
     {

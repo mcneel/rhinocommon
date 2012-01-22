@@ -8,6 +8,32 @@ namespace Rhino.DocObjects
 {
   public class Font
   {
+    public static string[] AvailableFontFaceNames()
+    {
+      IntPtr pStringArray = UnsafeNativeMethods.ON_StringArray_New();
+      int count = UnsafeNativeMethods.CRhinoFontTable_GetFontNames(pStringArray);
+      string[] rc = new string[count];
+      using(Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pStringHolder = sh.NonConstPointer();
+        for( int i=0; i<count; i++ )
+        {
+          UnsafeNativeMethods.ON_StringArray_Get(pStringArray, i, pStringHolder);
+          rc[i] = sh.ToString();
+        }
+      }
+      UnsafeNativeMethods.ON_StringArray_Delete(pStringArray);
+      if (count < 1)
+      {
+        System.Drawing.Text.InstalledFontCollection fonts = new System.Drawing.Text.InstalledFontCollection();
+        rc = new string[fonts.Families.Length];
+        for (int i = 0; i < fonts.Families.Length; i++)
+          rc[i] = fonts.Families[i].Name;
+      }
+      Array.Sort<string>(rc);
+      return rc;
+    }
+
     private readonly int m_index;
     private readonly RhinoDoc m_doc;
     private Font() { }

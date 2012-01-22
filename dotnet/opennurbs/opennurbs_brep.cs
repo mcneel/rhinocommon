@@ -5,6 +5,17 @@ using System.Runtime.Serialization;
 
 namespace Rhino.Geometry
 {
+  /// <summary> constansts used for CreatePipe functions </summary>
+  public enum PipeCapMode : int
+  {
+    /// <summary> No cap </summary>
+    None = 0,
+    /// <summary> Cap with planar surface </summary>
+    Flat = 1,
+    /// <summary> Cap with hemispherical surface </summary>
+    Round = 2
+  }
+
   /// <summary>
   /// Specifies enumerated constants for all supported loft types.
   /// </summary>
@@ -468,6 +479,79 @@ namespace Rhino.Geometry
         return new Brep(pBrep, null);
       }
     }
+
+    /// <summary>
+    /// Creates a single walled pipe
+    /// </summary>
+    /// <param name="rail">the path curve for the pipe</param>
+    /// <param name="radius">radius of the pipe</param>
+    /// <param name="localBlending">
+    /// If True, Local (pipe radius stays constant at the ends and changes more rapidly in the middle) is applied.
+    /// If False, Global (radius is linearly blended from one end to the other, creating pipes that taper from one radius to the other) is applied
+    /// </param>
+    /// <param name="cap">end cap mode</param>
+    /// <param name="fitRail">
+    /// If the curve is a polycurve of lines and arcs, the curve is fit and a single surface is created;
+    /// otherwise the result is a polysurface with joined surfaces created from the polycurve segments.
+    /// </param>
+    /// <param name="absoluteTolerance">
+    /// The sweeping and fitting tolerance. If you are unsure what to use, then use the document's absolute tolerance
+    /// </param>
+    /// <param name="angleToleranceRadians">
+    /// The angle tolerance. If you are unsure what to use, then either use the document's angle tolerance in radians
+    /// </param>
+    /// <returns>Array of created pipes on success</returns>
+    public static Brep[] CreatePipe(Curve rail, double radius, bool localBlending, PipeCapMode cap, bool fitRail, double absoluteTolerance, double angleToleranceRadians)
+    {
+      return CreatePipe(rail, new double[] { 0 }, new double[] { radius }, localBlending, cap, fitRail, absoluteTolerance, angleToleranceRadians);
+    }
+
+    /// <summary>
+    /// Creates a single walled pipe
+    /// </summary>
+    /// <param name="rail">the path curve for the pipe</param>
+    /// <param name="railRadiiParameters">
+    /// one or more normalized curve parameters where changes in radius occur.
+    /// Important: curve parameters must be normalized - ranging between 0.0 and 1.0.
+    /// </param>
+    /// <param name="radii">An array of radii - one at each normalized curve parameter in railRadiiParameters.</param>
+    /// <param name="localBlending">
+    /// If True, Local (pipe radius stays constant at the ends and changes more rapidly in the middle) is applied.
+    /// If False, Global (radius is linearly blended from one end to the other, creating pipes that taper from one radius to the other) is applied
+    /// </param>
+    /// <param name="cap">end cap mode</param>
+    /// <param name="fitRail">
+    /// If the curve is a polycurve of lines and arcs, the curve is fit and a single surface is created;
+    /// otherwise the result is a polysurface with joined surfaces created from the polycurve segments.
+    /// </param>
+    /// <param name="absoluteTolerance">
+    /// The sweeping and fitting tolerance. If you are unsure what to use, then use the document's absolute tolerance
+    /// </param>
+    /// <param name="angleToleranceRadians">
+    /// The angle tolerance. If you are unsure what to use, then either use the document's angle tolerance in radians
+    /// </param>
+    /// <returns>Array of created pipes on success</returns>
+    public static Brep[] CreatePipe(Curve rail, IEnumerable<double> railRadiiParameters, IEnumerable<double> radii, bool localBlending, PipeCapMode cap, bool fitRail, double absoluteTolerance, double angleToleranceRadians)
+    {
+      List<double> _radii_params = new List<double>();
+      foreach (double d in railRadiiParameters)
+        _radii_params.Add(d);
+      List<double> _radii = new List<double>();
+      foreach (double d in radii)
+        _radii.Add(d);
+      if (_radii_params.Count < 1 || _radii_params.Count != _radii.Count)
+        throw new ArgumentException("railRadiiParameters and radii must have at least one element and must have equal lengths");
+      IntPtr pConstRail = rail.ConstPointer();
+      double[] __radii_params = _radii_params.ToArray();
+      double[] __radii = _radii.ToArray();
+      using (Rhino.Runtime.INTERNAL_BrepArray breps = new Runtime.INTERNAL_BrepArray())
+      {
+        IntPtr pBreps = breps.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoPipeBreps(pConstRail, __radii_params.Length, __radii_params, __radii, localBlending, (int)cap, fitRail, absoluteTolerance, angleToleranceRadians, pBreps);
+        return breps.ToNonConstArray();
+      }
+    }
+
 #endif
 
 #if RHINO_SDK

@@ -495,13 +495,13 @@ RH_C_FUNCTION ON_SimpleArray<ON_X_EVENT>* ON_Curve_IntersectPlane(const ON_Curve
 // Meshing and mass property calculations are not available in stand alone opennurbs
 
 #if !defined(OPENNURBS_BUILD)
-RH_C_FUNCTION ON_MassProperties* ON_Curve_AreaMassProperties(const ON_Curve* pCurve, double rel_tol, double abs_tol)
+RH_C_FUNCTION ON_MassProperties* ON_Curve_AreaMassProperties(const ON_Curve* pCurve, double rel_tol, double abs_tol, double curve_planar_tol)
 {
   ON_MassProperties* rc = NULL;
   if( pCurve )
   {
     ON_Plane plane;
-    if( pCurve->IsPlanar(&plane, abs_tol) && pCurve->IsClosed() )
+    if( pCurve->IsPlanar(&plane, curve_planar_tol) && pCurve->IsClosed() )
     {
       ON_BoundingBox bbox = pCurve->BoundingBox();
       ON_3dPoint basepoint = bbox.Center();

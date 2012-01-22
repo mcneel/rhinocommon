@@ -175,6 +175,17 @@ namespace Rhino.UI
       set { m_base.InitialDirectory = value; }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the dialog box allows multiple files to be selected
+    /// </summary>
+    public bool MultiSelect { get; set; }
+
+    /// <summary>
+    /// Gets the names of all of the selected files in the dialog box
+    /// </summary>
+    public string[] FileNames { get { return m_filenames; } }
+    string[] m_filenames = new string[0];
+
     /// <summary>Show the actual dialog to allow the user to select a file.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_addbackgroundbitmap.vb' lang='vbnet'/>
@@ -191,8 +202,11 @@ namespace Rhino.UI
         dlg.Filter = Filter;
         dlg.InitialDirectory = InitialDirectory;
         dlg.Title = Title;
+        dlg.Multiselect = MultiSelect;
         var dlg_rc = dlg.ShowDialog(Rhino.RhinoApp.MainWindow());
         FileName = dlg.FileName;
+        if (MultiSelect)
+          m_filenames = dlg.FileNames;
         return dlg_rc;
       }
 

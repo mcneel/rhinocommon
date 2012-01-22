@@ -70,13 +70,26 @@ namespace Rhino.Geometry
     /// <exception cref="System.ArgumentNullException">When closedPlanarCurve is null.</exception>
     public static AreaMassProperties Compute(Curve closedPlanarCurve)
     {
+      const double absoluteTolerance = 1.0e-6;
+      return Compute(closedPlanarCurve, absoluteTolerance);
+    }
+
+    /// <summary>
+    /// Computes an AreaMassProperties for a closed planar curve.
+    /// </summary>
+    /// <param name="closedPlanarCurve">Curve to measure.</param>
+    /// <param name="planarTolerance">absolute tolerance used to insure the closed curve is planar</param>
+    /// <returns>The AreaMassProperties for the given curve or null on failure.</returns>
+    /// <exception cref="System.ArgumentNullException">When closedPlanarCurve is null.</exception>
+    public static AreaMassProperties Compute(Curve closedPlanarCurve, double planarTolerance)
+    {
       if (closedPlanarCurve == null)
         throw new ArgumentNullException("closedPlanarCurve");
 
       const double relativeTolerance = 1.0e-6;
       const double absoluteTolerance = 1.0e-6;
       IntPtr ptr = closedPlanarCurve.ConstPointer();
-      IntPtr rc = UnsafeNativeMethods.ON_Curve_AreaMassProperties(ptr, relativeTolerance, absoluteTolerance);
+      IntPtr rc = UnsafeNativeMethods.ON_Curve_AreaMassProperties(ptr, relativeTolerance, absoluteTolerance, planarTolerance);
       return rc == IntPtr.Zero ? null : new AreaMassProperties(rc, false);
     }
 

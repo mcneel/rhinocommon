@@ -141,6 +141,39 @@ RH_C_FUNCTION bool ON_Surface_IsCylinder( const ON_Surface* pConstSurface, ON_Cy
       fillin = cylinder;
 
     rc = pConstSurface->IsCylinder( fillin, tolerance )?true:false;
+    if( rc && fillin )
+    {
+      ON_Line line;
+      ON_Curve* crv = pConstSurface->IsoCurve(0,0);
+      if( crv && crv->IsLinear() )
+      {
+        line.from = crv->PointAtStart();
+        line.to = crv->PointAtEnd();
+        delete crv;
+        crv = NULL;
+      }
+      else
+      {
+        if( crv )
+          delete crv;
+        crv = pConstSurface->IsoCurve(1,0);
+        if( crv && crv->IsLinear() )
+        {
+          line.from = crv->PointAtStart();
+          line.to = crv->PointAtEnd();
+        }
+        if( crv )
+          delete crv;
+      }
+      if( line.Length() > 0 )
+      {
+        ON_3dPoint origin = fillin->circle.Center();
+        origin = origin + (line.from - line.PointAt(0.5));
+        fillin->circle.plane.SetOrigin(origin);
+        fillin->height[0] = 0;
+        fillin->height[1] = line.Length();
+      }
+    }
   }
   return rc;
 }

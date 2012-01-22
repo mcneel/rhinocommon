@@ -1849,9 +1849,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Curve_IntersectPlane(IntPtr pConstCurve, ref Plane plane, double tolerance);
 
-  //ON_MassProperties* ON_Curve_AreaMassProperties(const ON_Curve* pCurve, double rel_tol, double abs_tol)
+  //ON_MassProperties* ON_Curve_AreaMassProperties(const ON_Curve* pCurve, double rel_tol, double abs_tol, double curve_planar_tol)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_Curve_AreaMassProperties(IntPtr pCurve, double rel_tol, double abs_tol);
+  internal static extern IntPtr ON_Curve_AreaMassProperties(IntPtr pCurve, double rel_tol, double abs_tol, double curve_planar_tol);
   #endregion
 
 
@@ -6502,6 +6502,10 @@ internal partial class UnsafeNativeMethods
   //int CRhinoFontTable_CurrentFontIndex(int docId)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoFontTable_CurrentFontIndex(int docId);
+
+  //int CRhinoFontTable_GetFontNames(ON_ClassArray<ON_wString>* pStrings)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoFontTable_GetFontNames(IntPtr pStrings);
   #endregion
 
 
@@ -9550,6 +9554,11 @@ internal partial class UnsafeNativeMethods
   //int RHC_ShowContextMenu(const ON_SimpleArray<ON_wString>* items, int screenX, int screenY, int modeCount, /*ARRAY*/const int* modes)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_ShowContextMenu(IntPtr items, int screenX, int screenY, int modeCount, int[] modes);
+
+  //void RHC_RhinoPipeBreps(const ON_Curve* pConstCurve, int param_count, /*ARRAY*/const double* rail_params, /*ARRAY*/const double* radii,
+  //                                      bool local_blending, int cap, bool fit_rail, double abs_tol, double ang_tol, ON_SimpleArray<ON_Brep*>* pBrepArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void RHC_RhinoPipeBreps(IntPtr pConstCurve, int param_count, double[] rail_params, double[] radii, [MarshalAs(UnmanagedType.U1)]bool local_blending, int cap, [MarshalAs(UnmanagedType.U1)]bool fit_rail, double abs_tol, double ang_tol, IntPtr pBrepArray);
   #endregion
 
 

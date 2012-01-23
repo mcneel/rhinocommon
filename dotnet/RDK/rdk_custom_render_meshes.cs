@@ -571,7 +571,7 @@ namespace Rhino.Render.CustomRenderMesh
     /// <param name="objMeshes">The meshes class to populate with custom meshes.</param>
     /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes.</param>
     /// <param name="meshType">Type of mesh to build.</param>
-    /// <returns></returns>
+    /// <returns>true if operation was successful.</returns>
     public abstract bool BuildCustomMeshes(Rhino.DocObjects.ViewportInfo vp, ObjectMeshes objMeshes, Guid requestingPlugIn, MeshTypes meshType);
 
 

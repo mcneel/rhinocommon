@@ -1172,7 +1172,7 @@ namespace Rhino.Runtime.InteropWrappers
     /// <summary>
     /// Initializes a new instances from a set of ObjRefs
     /// </summary>
-    /// <param name="objrefs"></param>
+    /// <param name="objrefs">An array, a list or any enumerable set of Rhino object references.</param>
     public ClassArrayObjRef(System.Collections.Generic.IEnumerable<Rhino.DocObjects.ObjRef> objrefs)
     {
       m_ptr = UnsafeNativeMethods.ON_ClassArrayCRhinoObjRef_New();

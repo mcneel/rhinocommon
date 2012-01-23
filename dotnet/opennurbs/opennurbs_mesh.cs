@@ -1634,7 +1634,7 @@ namespace Rhino.Geometry
     ///// if vertices are coincident, then they are combined
     ///// if NormalA o NormalB >= this value
     ///// </param>
-    ///// <returns></returns>
+    ///// <returns>-</returns>
     //public bool CombineCoincidentVertices(Vector3f tolerance, double cosineNormalAngle)
     //{
     //  IntPtr ptr = NonConstPointer();

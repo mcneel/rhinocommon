@@ -2772,8 +2772,8 @@ namespace Rhino.Geometry.Collections
     /// have the same surface, and they are joined along a set of edges that do
     /// not have any other faces, then this will combine the two faces into one.
     /// </summary>
-    /// <param name="faceIndex0"></param>
-    /// <param name="faceIndex1"></param>
+    /// <param name="faceIndex0">-</param>
+    /// <param name="faceIndex1">-</param>
     /// <returns>index of merged face if faces were successfully merged. -1 if not merged.</returns>
     /// <remarks>Caller should call Compact when done</remarks>
     public int MergeFaces(int faceIndex0, int faceIndex1)

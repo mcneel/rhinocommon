@@ -132,8 +132,8 @@ namespace Rhino.Display
     /// <summary>
     /// Converts a point in screen coordinates to client coordinates for this view.
     /// </summary>
-    /// <param name="screenPoint"></param>
-    /// <returns></returns>
+    /// <param name="screenPoint">The 2D screen point.</param>
+    /// <returns>A 2D point in client coordinates.</returns>
     public System.Drawing.Point ScreenToClient(System.Drawing.Point screenPoint)
     {
       System.Drawing.Rectangle screen = ScreenRectangle;
@@ -208,8 +208,8 @@ namespace Rhino.Display
     ///the format of the bitmap file created (bmp, tga, jpg, pcx, png, tif).
     ///</param>
     ///<param name='size'>[in] The width and height of the bitmap in pixels.</param>
-    ///<param name="ignoreHighlights"></param>
-    ///<param name="drawConstructionPlane"></param>
+    ///<param name="ignoreHighlights">true if highlighted elements should be drawn normally.</param>
+    ///<param name="drawConstructionPlane">true if the CPlane should be drawn.</param>
     ///<returns>true if successful.</returns>
     public bool CreateWireframePreviewImage(string imagePath,
                                             System.Drawing.Size size,
@@ -232,9 +232,9 @@ namespace Rhino.Display
     ///the format of the bitmap file created (bmp, tga, jpg, pcx, png, tif).
     ///</param>
     ///<param name='size'>[in] The width and height of the bitmap in pixels.</param>
-    /// <param name="ignoreHighlights"></param>
-    /// <param name="drawConstructionPlane"></param>
-    /// <param name="useGhostedShading"></param>
+    ///<param name="ignoreHighlights">true if highlighted elements should be drawn normally.</param>
+    ///<param name="drawConstructionPlane">true if the CPlane should be drawn.</param>
+    /// <param name="useGhostedShading">true if ghosted shading (partially transparent shading) should be used.</param>
     ///<returns>true if successful.</returns>
     public bool CreateShadedPreviewImage(string imagePath,
                                          System.Drawing.Size size,
@@ -257,7 +257,7 @@ namespace Rhino.Display
     /// <summary>
     /// Capture View contents to a bitmap.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The bitmap of the complete view.</returns>
     public System.Drawing.Bitmap CaptureToBitmap()
     {
       return CaptureToBitmap(ClientRectangle.Size);
@@ -267,7 +267,7 @@ namespace Rhino.Display
     /// Capture View contents to a bitmap.
     /// </summary>
     /// <param name="size">Size of Bitmap to capture to.</param>
-    /// <returns></returns>
+    /// <returns>The bitmap of the specified part of the view.</returns>
     public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size)
     {
       IntPtr pConstView = this.ConstPointer();

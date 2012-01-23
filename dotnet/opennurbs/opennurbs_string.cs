@@ -58,9 +58,9 @@ namespace Rhino.Runtime.InteropWrappers
     }
 
     /// <summary>
-    /// Returns string contents of this wrapper
+    /// Returns the string contents of this wrapper.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A managed string.</returns>
     public override string ToString()
     {
       IntPtr pString = UnsafeNativeMethods.ON_wString_Get(m_ptr);
@@ -69,9 +69,9 @@ namespace Rhino.Runtime.InteropWrappers
     }
 
     /// <summary>
-    /// Set contents of this string
+    /// Set contents of this string.
     /// </summary>
-    /// <param name="s"></param>
+    /// <param name="s">The new string.</param>
     public void SetString(string s)
     {
       UnsafeNativeMethods.ON_wString_Set(m_ptr, s);

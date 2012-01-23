@@ -403,7 +403,7 @@ namespace Rhino.Geometry
     ///// Evaluate circle's implicit equation in plane.
     ///// </summary>
     ///// <param name="p">coordinates in plane.</param>
-    ///// <returns></returns>
+    ///// <returns>-</returns>
     //public double EquationAt(Point2d p)
     //{
     //  double e, x, y;
@@ -425,7 +425,7 @@ namespace Rhino.Geometry
     ///// 
     ///// </summary>
     ///// <param name="p">coordinates in plane.</param>
-    ///// <returns></returns>
+    ///// <returns>-</returns>
     //public Vector2d GradientAt(Point2d p)
     //{
     //  Vector2d g = new Vector2d();
@@ -575,8 +575,8 @@ namespace Rhino.Geometry
     ///// <summary>
     ///// Convert a NURBS curve circle parameter to a circle radians parameter.
     ///// </summary>
-    ///// <param name="nurbsParameter"></param>
-    ///// <param name="radiansParameter"></param>
+    ///// <param name="nurbsParameter">-</param>
+    ///// <param name="radiansParameter">-</param>
     ///// <example>
     ///// <code>
     /////  ON_Circle circle = ...
@@ -601,7 +601,7 @@ namespace Rhino.Geometry
     ///// <see>
     /////  GetNurbFormParameterFromRadian
     ///// </see>
-    ///// <returns></returns>
+    ///// <returns>-</returns>
     //public bool GetRadianFromNurbsFormParameter(double nurbsParameter, out double radiansParameter)
     //{
     //  radiansParameter = 0.0;
@@ -611,8 +611,8 @@ namespace Rhino.Geometry
     ///// <summary>
     ///// Convert a arc radians parameter to a NURBS curve arc parameter.
     ///// </summary>
-    ///// <param name="radiansParameter"></param>
-    ///// <param name="nurbsParameter"></param>
+    ///// <param name="radiansParameter">-</param>
+    ///// <param name="nurbsParameter">-</param>
     ///// <example>
     ///// <code>
     ///// ON_Circle circle = ...;
@@ -635,7 +635,7 @@ namespace Rhino.Geometry
     ///// <see>
     ///// GetRadianFromNurbFormParameter
     ///// </see>
-    ///// <returns></returns>
+    ///// <returns>-</returns>
     //public bool GetNurbsFormParameterFromRadian(double radiansParameter, out double nurbsParameter)
     //{
     //  nurbsParameter = 0.0;

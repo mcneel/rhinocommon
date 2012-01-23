@@ -50,7 +50,7 @@
 namespace Rhino.DocObjects.Tables
 {
   /// <summary>
-  /// Store the list of bitmaps in a Rhino document.
+  /// Stores the list of bitmaps in a Rhino document.
   /// </summary>
   public sealed class BitmapTable
   {
@@ -61,13 +61,13 @@ namespace Rhino.DocObjects.Tables
       m_doc = doc;
     }
 
-    /// <summary>Document that owns this bitmap table.</summary>
+    /// <summary>Gets the document that owns this bitmap table.</summary>
     public RhinoDoc Document
     {
       get { return m_doc; }
     }
 
-    /// <summary>Number of bitmaps in the table.</summary>
+    /// <summary>Gets the number of bitmaps in the table.</summary>
     public int Count
     {
       get
@@ -162,8 +162,8 @@ namespace Rhino.DocObjects.Tables
     //      bool bReplaceExisting = false
     //      );
 
-    /// <summary>deletes bitmap.</summary>
-    /// <param name="bitmapFilename"></param>
+    /// <summary>Deletes a bitmap.</summary>
+    /// <param name="bitmapFilename">The bitmap file name.</param>
     /// <returns>
     /// true if successful. false if the bitmap cannot be deleted because it
     /// is the current bitmap or because it bitmap contains active geometry.
@@ -191,7 +191,7 @@ namespace Rhino.DocObjects.Tables
     //    ON_SimpleArray<const CRhinoBitmap*>& sorted_list
     //    ) const;
 
-    /// <summary>Export all the bitmaps in the table to files.</summary>
+    /// <summary>Exports all the bitmaps in the table to files.</summary>
     /// <param name="directoryPath">
     /// full path to the directory where the bitmaps should be saved.
     /// If NULL, a dialog is used to interactively get the directory name.
@@ -203,10 +203,10 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoBitmapTable_ExportToFiles(m_doc.m_docId, directoryPath, overwrite);
     }
 
-    /// <summary>Write a bitmap to a file.</summary>
-    /// <param name="index"></param>
+    /// <summary>Writes a bitmap to a file.</summary>
+    /// <param name="index">The index of the bitmap to be written.</param>
     /// <param name="path">
-    /// full path, including file name and extension, name of the file to write.
+    /// The full path, including file name and extension, name of the file to write.
     /// </param>
     /// <returns>true if successful.</returns>
     public bool ExportToFile(int index, string path)

@@ -149,13 +149,13 @@ namespace Rhino.Input.Custom
     //void AppendObject( const CRhinoObject* object );
 
     /// <summary>
-    /// Override this virtual function to provide your own custom transformation method.
-    /// Call this function to retrieve the final transformation.
+    /// Retrieves the final transformation.
+    /// <para>Override this virtual function to provide your own custom transformation method.</para>
     /// </summary>
-    /// <param name="viewport"></param>
-    /// <param name="point"></param>
-    /// <returns></returns>
-    public abstract Rhino.Geometry.Transform CalculateTransform( Rhino.Display.RhinoViewport viewport, Rhino.Geometry.Point3d point);
+    /// <param name="viewport">A Rhino viewport that the user is using.</param>
+    /// <param name="point">A point that the user is selecting.</param>
+    /// <returns>A transformation matrix value.</returns>
+    public abstract Rhino.Geometry.Transform CalculateTransform(Rhino.Display.RhinoViewport viewport, Rhino.Geometry.Point3d point);
 
     // I think this can be handled in the Get() function in the base class
     //virtual CRhinoGet::result GetXform( CRhinoHistory* pHistory = NULL );
@@ -232,9 +232,10 @@ namespace Rhino.Input.Custom
 
 
     /// <summary>
-    /// After setting up options and so on, call GetPoint::GetXform to get the Transformation.
+    /// Gets the Transformation.
+    /// <para>Call this after having set up options and so on.</para>
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The result based on user choice.</returns>
     [CLSCompliant(false)]
     public GetResult GetXform()
     {

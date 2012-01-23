@@ -1333,7 +1333,7 @@ namespace Rhino.DocObjects
     /// Gets suggested values for setting the perspective minimum
     /// near distance and minimum near/far ratio.
     /// </summary>
-    /// <param name="cameraLocation"></param>
+    /// <param name="cameraLocation">-</param>
     /// <param name="depthBufferBitDepth">Typically 32, 34, 16 or 8, but any value can be passed in.</param>
     /// <param name="minNearDist">Suggest value for passing to SetPerspectiveMinNearDist().  </param>
     /// <param name="minNearOverFar">Suggest value for passing to SetPerspectiveMinNearOverFar().    </param>

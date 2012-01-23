@@ -4,18 +4,64 @@ using System.Collections.Generic;
 
 namespace Rhino.Display
 {
+  /// <summary>
+  /// Defines enmerated constants for display blend modes.
+  /// </summary>
   public enum BlendMode : int
   {
+    /// <summary>
+    /// Blends using 0.
+    /// </summary>
     Zero = 0,
+
+    /// <summary>
+    /// Blends using 1.
+    /// </summary>
     One = 1,
+
+    /// <summary>
+    /// Blends using source color.
+    /// </summary>
     SourceColor = 0x0300,
+
+    /// <summary>
+    /// Blends using 1-source color.
+    /// </summary>
     OneMinusSourceColor = 0x0301,
+
+    /// <summary>
+    /// Blends using the source alpha channel.
+    /// </summary>
     SourceAlpha = 0x0302,
+
+    /// <summary>
+    /// Blends using 1-the source alpha channel.
+    /// </summary>
     OneMinusSourceAlpha = 0x0303,
+
+    /// <summary>
+    /// Blends using the destination alpha channel.
+    /// </summary>
     DestinationAlpha = 0x0304,
+
+    /// <summary>
+    /// Blends using 1-the destination alpha channel.
+    /// </summary>
     OneMinusDestinationAlpha = 0x0305,
+
+    /// <summary>
+    /// Blends using the destination color.
+    /// </summary>
     DestinationColor = 0x0306,
+
+    /// <summary>
+    /// Blends using 1-the destination color.
+    /// </summary>
     OneMinusDestinationColor = 0x0307,
+
+    /// <summary>
+    /// Blends using the source alpha saturation.
+    /// </summary>
     SourceAlphaSaturate = 0x0308
   }
 
@@ -73,6 +119,11 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhCmnDisplayBitmap_SetBlendFunction(m_pDisplayBmp, (int)source, (int)destination);
     }
 
+    /// <summary>
+    /// Gets the source and destination blend modes.
+    /// </summary>
+    /// <param name="source">The source blend mode is assigned to this out parameter.</param>
+    /// <param name="destination">The destination blend mode is assigned to this out parameter.</param>
     public void GetBlendModes(out BlendMode source, out BlendMode destination)
     {
       int s = 0, d = 0;
@@ -81,14 +132,28 @@ namespace Rhino.Display
       destination = (BlendMode)d;
     }
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~DisplayBitmap() { Dispose(false); }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_pDisplayBmp)
@@ -242,12 +307,19 @@ namespace Rhino.Geometry
     int m_index = -1;
     Point3d m_location;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Particle"/> class.
+    /// </summary>
     public Particle()
     {
       Color = System.Drawing.Color.White;
     }
 
+    /// <summary>
+    /// Gets the parent particle system of this particle.
+    /// </summary>
     public ParticleSystem ParentSystem { get; internal set; }
+
     /// <summary>
     /// Index in ParentSystem for this Particle. Can change when the particle
     /// system is modified.
@@ -329,12 +401,12 @@ namespace Rhino.Geometry
     /// <summary>
     /// Adds a particle to this ParticleSystem. A Particle can only be in one system
     /// at a time.  If the Particle already exists in a different system, this function
-    /// will return false.  You should remove the particle from the other system first
+    /// will return false. You should remove the particle from the other system first
     /// before adding it.
     /// </summary>
-    /// <param name="particle"></param>
+    /// <param name="particle">A particle to be added.</param>
     /// <returns>
-    /// true if this particle aws added to the system or if is already in the system.
+    /// true if this particle was added to the system or if is already in the system.
     /// false if the particle already exists in a different system.
     /// </returns>
     public virtual bool Add(Particle particle)
@@ -373,9 +445,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Remove a single Particle from this system.
+    /// Removes a single particle from this system.
     /// </summary>
-    /// <param name="particle"></param>
+    /// <param name="particle">The particle to be removed.</param>
     public virtual void Remove(Particle particle)
     {
       int index = particle.Index;

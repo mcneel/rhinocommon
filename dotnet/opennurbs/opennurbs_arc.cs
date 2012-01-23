@@ -569,7 +569,7 @@ namespace Rhino.Geometry
     ///// Sets arc's subtended angle in radians.
     ///// </summary>
     ///// <param name="angleRadians">0 &lt;= angleRadians &lt;= 2.0 * ON_Math.PI.</param>
-    ///// <returns></returns>
+    ///// <returns>-</returns>
     //public bool SetAngleRadians(double angleRadians)
     //{
     //  if (angleRadians < 0.0)
@@ -593,7 +593,7 @@ namespace Rhino.Geometry
     ///// <param name="angleRadians">
     ///// Increasing interval with start and end angle in radians. 
     ///// Length of the interval &lt;= 2.0 * ON_Math.PI.</param>
-    ///// <returns></returns>
+    ///// <returns>-</returns>
     //public bool SetAngleIntervalRadians(Interval angleRadians)
     //{
     //  bool rc = angleRadians.IsIncreasing
@@ -609,7 +609,7 @@ namespace Rhino.Geometry
     ///// Sets arc's subtended angle in degrees.
     ///// </summary>
     ///// <param name="angleDegrees">0 &lt; angleDegrees &lt;= 360.</param>
-    ///// <returns></returns>
+    ///// <returns>-</returns>
     //public bool SetAngleDegrees(double angleDegrees)
     //{
     //  return SetAngleRadians((angleDegrees / 180.0) * RhinoMath.PI);
@@ -619,8 +619,8 @@ namespace Rhino.Geometry
     ///// <summary>
     ///// Convert a NURBS curve arc parameter to a arc radians parameter.
     ///// </summary>
-    ///// <param name="nurbsParameter"></param>
-    ///// <param name="arcRadiansParameter"></param>
+    ///// <param name="nurbsParameter">-</param>
+    ///// <param name="arcRadiansParameter">-</param>
     ///// <example>
     ///// <code>
     /////  ON_Arc arc = ...
@@ -643,7 +643,7 @@ namespace Rhino.Geometry
     ///// <see>
     /////  GetNurbFormParameterFromRadian
     ///// </see>
-    ///// <returns></returns>
+    ///// <returns>-</returns>
     //public bool GetRadianFromNurbsFormParameter(double nurbsParameter, out double arcRadiansParameter)
     //{
     //  arcRadiansParameter = 0.0;
@@ -653,8 +653,8 @@ namespace Rhino.Geometry
     ///// <summary>
     ///// Convert a arc radians parameter to a NURBS curve arc parameter.
     ///// </summary>
-    ///// <param name="arcRadiansParameter"></param>
-    ///// <param name="nurbsParameter"></param>
+    ///// <param name="arcRadiansParameter">-</param>
+    ///// <param name="nurbsParameter">-</param>
     ///// <example>
     ///// <code>
     ///// ON_Arc arc = ...;
@@ -677,7 +677,7 @@ namespace Rhino.Geometry
     ///// <see>
     ///// GetNurbFormParameterFromRadian
     ///// </see>
-    ///// <returns></returns>
+    ///// <returns>-</returns>
     //public bool GetNurbsFormParameterFromRadian(double arcRadiansParameter, out double nurbsParameter)
     //{
     //  nurbsParameter = 0.0;

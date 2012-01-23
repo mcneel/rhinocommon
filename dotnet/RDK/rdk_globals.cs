@@ -58,23 +58,23 @@ namespace Rhino.Render
     /// <summary>
     /// Returns the RDK_MAJOR_VERSION this RDK was built with.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The Rdk major version.</returns>
     public static int RdkMajorVersion()    {   return UnsafeNativeMethods.Rdk_Globals_RdkMajorVersion();    }
     
     /// <summary>
     /// Returns the RDK_MINOR_VERSION this RDK was built with.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The Rdk minor version.</returns>
     public static int RdkMinorVersion()   {    return UnsafeNativeMethods.Rdk_Globals_RdkMinorVersion();    }
 
     /// <summary>
     /// Returns the RDK_BETA_RELEASE this RDK was built with.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The Rdk beta release.</returns>
     public static int RdkBetaRelease()   {    return UnsafeNativeMethods.Rdk_Globals_RdkBetaRelease();    }
 
     /// <summary>
-    /// Display the standard modal color picker dialog.
+    /// Displays the standard modal color picker dialog.
     /// </summary>
     /// <param name="colorInOut">The initial color to set the picker to and also accepts the user's choice.</param>
     /// <param name="bUseAlpha">Specifies if the color picker should allow changes to the alpha channel or not.</param>
@@ -133,7 +133,7 @@ namespace Rhino.Render
     };
 
     /// <summary>
-    /// Allow the user to choose a content by displaying the Content Chooser dialog.
+    /// Allows the user to choose a content by displaying the Content Chooser dialog.
 	  /// The dialog will have OK, Cancel and Help buttons, and optional New and Edit buttons.
     /// </summary>
     /// <param name="instanceId">Sets the initially selected content and receives the instance id of the chosen content.</param>

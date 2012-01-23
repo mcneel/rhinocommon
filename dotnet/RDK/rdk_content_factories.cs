@@ -33,9 +33,9 @@ namespace Rhino.Render
 
     #region properties
     /// <summary>
-    /// The kind of content that this type represents.
+    /// Gets the kind of content that this type represents.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The kind of content that this type represents.</returns>
 	  public RenderContentKind Kind
     {
       get
@@ -53,13 +53,13 @@ namespace Rhino.Render
     /// Determines if this type is of the specified kind.
     /// </summary>
     /// <param name="kind">The render content kind to check against.</param>
-    /// <returns></returns>
+    /// <returns>true if this instance is of the specified type.</returns>
 	  public bool IsKind(RenderContentKind kind) { return Kind == kind; }
 
     /// <summary>
     /// Returns a new instance of the render content of this type.  This content can be added to a persistant list.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A new render content instance.</returns>
     public RenderContent NewRenderContent()
     {
       IntPtr pContent = UnsafeNativeMethods.Rdk_Factory_NewContent(ConstPointer());

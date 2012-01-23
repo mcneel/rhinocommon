@@ -496,91 +496,91 @@ namespace Rhino.FileIO
     }
     /*
     /// <summary>text dump of bitmap table.</summary>
-    /// <returns></returns>
+    /// <returns>-</returns>
     public string DumpBitmapTable()
     {
       return Dump(idxDumpBitmapTable);
     }
 
     /// <summary>text dump of texture mapping table.</summary>
-    /// <returns></returns>
+    /// <returns>-</returns>
     public string DumpTextureMappingTable()
     {
       return Dump(idxDumpTextureMappingTable);
     }
 
     /// <summary>text dump of render material table.</summary>
-    /// <returns></returns>
+    /// <returns>-</returns>
     public string DumpMaterialTable()
     {
       return Dump(idxDumpMaterialTable);
     }
 
     /// <summary>text dump of line type table.</summary>
-    /// <returns></returns>
+    /// <returns>-</returns>
     public string DumpLinetypeTable()
     {
       return Dump(idxDumpLinetypeTable);
     }
 
     /// <summary>text dump of layer table.</summary>
-    /// <returns></returns>
+    /// <returns>-</returns>
     public string DumpLayerTable()
     {
       return Dump(idxDumpLayerTable);
     }
 
     /// <summary>text dump of light table.</summary>
-    /// <returns></returns>
+    /// <returns>-</returns>
     public string DumpLightTable()
     {
       return Dump(idxDumpLightTable);
     }
 
     /// <summary>text dump of group table.</summary>
-    /// <returns></returns>
+    /// <returns>-</returns>
     public string DumpGroupTable()
     {
       return Dump(idxDumpGroupTable);
     }
 
     /// <summary>text dump of font table.</summary>
-    /// <returns></returns>
+    /// <returns>-</returns>
     public string DumpFontTable()
     {
       return Dump(idxDumpFontTable);
     }
 
     /// <summary>text dump of dimstyle table.</summary>
-    /// <returns></returns>
+    /// <returns>-</returns>
     public string DumpDimStyleTable()
     {
       return Dump(idxDumpDimStyleTable);
     }
 
     /// <summary>text dump of hatch pattern table.</summary>
-    /// <returns></returns>
+    /// <returns>-</returns>
     public string DumpHatchPatternTable()
     {
       return Dump(idxDumpHatchPatternTable);
     }
 
     /// <summary>text dump of instance definition table.</summary>
-    /// <returns></returns>
+    /// <returns>-</returns>
     public string DumpIDefTable()
     {
       return Dump(idxDumpIDefTable);
     }
 
     /// <summary>text dump of history record table.</summary>
-    /// <returns></returns>
+    /// <returns>-</returns>
     public string DumpHistoryRecordTable()
     {
       return Dump(idxDumpHistoryRecordTable);
     }
 
     /// <summary>text dump of user data table.</summary>
-    /// <returns></returns>
+    /// <returns>-</returns>
     public string DumpUserDataTable()
     {
       return Dump(idxDumpUserDataTable);

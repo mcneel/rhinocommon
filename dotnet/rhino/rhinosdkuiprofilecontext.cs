@@ -23,8 +23,8 @@ namespace Rhino
     /// <summary>
     /// ISerializable constructor.
     /// </summary>
-    /// <param name="info"></param>
-    /// <param name="context"></param>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
     protected SettingValue(SerializationInfo info, StreamingContext context)
     {
       m_value = info.GetString("value");
@@ -45,8 +45,8 @@ namespace Rhino
     /// <summary>
     /// ISerializable required method.
     /// </summary>
-    /// <param name="info"></param>
-    /// <param name="context"></param>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
     [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
     void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
     {
@@ -54,11 +54,11 @@ namespace Rhino
       info.AddValue("default_value", m_default_value);
     }
     /// <summary>
-    /// Copy values from another SettingsValue object, if the destination contains more than one item
-    /// assume it is a string list and append values from the source object that are not currently in
+    /// Copies values from another SettingsValue object. If the destination contains more than one item,
+    /// assumes it is a string list and appends values from the source object that are not currently in
     /// the array.
     /// </summary>
-    /// <param name="source"></param>
+    /// <param name="source">The source settings.</param>
     public void CopyFrom(SettingValue source)
     {
       if (null != source)
@@ -68,7 +68,7 @@ namespace Rhino
       }
     }
     /// <summary>
-    /// Check to see if two SettingsValue have the same data, do not compare default values.
+    /// Determines if two SettingsValue have the same data. Does not compare default values.
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
@@ -77,7 +77,7 @@ namespace Rhino
       return ValuesAreEqual(other, false);
     }
     /// <summary>
-    /// Check to see if two SettingsValues have the same data and optionally compare default data.
+    /// Determines if two SettingsValues have the same data and optionally compare default data.
     /// </summary>
     /// <param name="other"></param>
     /// <param name="compareDefaults"></param>

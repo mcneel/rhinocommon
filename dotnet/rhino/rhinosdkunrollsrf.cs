@@ -46,9 +46,9 @@ namespace Rhino.Geometry
       m_curves.AddRange(curves);
     }
     /// <summary>
-    /// Adds curve that should be unrolled along with the surface/brep.
+    /// Adds a curve that should be unrolled along with the surface/brep.
     /// </summary>
-    /// <param name="curve"></param>
+    /// <param name="curve">The curve.</param>
     public void AddFollowingGeometry(Curve curve)
     {
       m_curves.Add(curve);
@@ -63,7 +63,7 @@ namespace Rhino.Geometry
       m_points.AddRange(points);
     }
     /// <summary>
-    /// Adds point that should be unrolled along with the surface/brep.
+    /// Adds a point that should be unrolled along with the surface/brep.
     /// </summary>
     /// <param name="point">A point.</param>
     public void AddFollowingGeometry(Point3d point)
@@ -71,7 +71,7 @@ namespace Rhino.Geometry
       m_points.Add(point);
     }
     /// <summary>
-    /// Adds point that should be unrolled along with the surface/brep.
+    /// Adds a point that should be unrolled along with the surface/brep.
     /// </summary>
     /// <param name="point">A point.</param>
     public void AddFollowingGeometry(Point point)
@@ -88,7 +88,7 @@ namespace Rhino.Geometry
       m_dots.AddRange(dots);
     }
     /// <summary>
-    /// Adds text dot that should be unrolled along with the surface/brep.
+    /// Adds a text dot that should be unrolled along with the surface/brep.
     /// </summary>
     /// <param name="dot">A text dot.</param>
     public void AddFollowingGeometry(TextDot dot)
@@ -112,7 +112,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Adds text dot that should be unrolled along with the surface/brep.
+    /// Adds a text dot that should be unrolled along with the surface/brep.
     /// </summary>
     /// <param name="dotLocation">A dot point.</param>
     /// <param name="dotText">A dot text.</param>

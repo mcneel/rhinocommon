@@ -8,6 +8,9 @@ using System.Drawing;
 #if RHINO_SDK
 namespace Rhino.Display
 {
+  /// <summary>
+  /// Represents display pipeline settings, such as "show transparency" and "show grips".
+  /// </summary>
   [Serializable]
   public class DisplayPipelineAttributes : IDisposable, ISerializable
   {

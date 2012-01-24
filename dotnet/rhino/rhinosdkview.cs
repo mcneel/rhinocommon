@@ -284,7 +284,7 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Capture View contents to a bitmap allowing for visibility of grid and axes.
+    /// Captures a part of the view contents to a bitmap allowing for visibility of grid and axes.
     /// </summary>
     /// <param name="size">The width and height of the returned bitmap.</param>
     /// <param name="grid">true if the construction plane grid should be visible.</param>
@@ -307,12 +307,12 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Capture View contents to a bitmap allowing for visibility of grid and axes.
+    /// Captures the view contents to a bitmap allowing for visibility of grid and axes.
     /// </summary>
-    /// <param name="grid"></param>
-    /// <param name="worldAxes"></param>
-    /// <param name="cplaneAxes"></param>
-    /// <returns></returns>
+    /// <param name="grid">true if the construction plane grid should be visible.</param>
+    /// <param name="worldAxes">true if the world axis should be visible.</param>
+    /// <param name="cplaneAxes">true if the construction plane close the the grid should be visible.</param>
+    /// <returns>A new bitmap.</returns>
     public System.Drawing.Bitmap CaptureToBitmap(bool grid, bool worldAxes, bool cplaneAxes)
     {
       return CaptureToBitmap(this.ClientRectangle.Size, grid, worldAxes, cplaneAxes);
@@ -322,9 +322,9 @@ namespace Rhino.Display
     /// Capture View contents to a bitmap using a display mode description to define
     /// how drawing is performed.
     /// </summary>
-    /// <param name="size"></param>
-    /// <param name="mode"></param>
-    /// <returns></returns>
+    /// <param name="size">The width and height of the returned bitmap.</param>
+    /// <param name="mode">The display mode.</param>
+    /// <returns>A new bitmap.</returns>
     public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size, Rhino.Display.DisplayModeDescription mode)
     {
       Rhino.Display.DisplayPipelineAttributes attr = new DisplayPipelineAttributes(mode);
@@ -335,8 +335,8 @@ namespace Rhino.Display
     /// Capture View contents to a bitmap using a display mode description to define
     /// how drawing is performed.
     /// </summary>
-    /// <param name="mode"></param>
-    /// <returns></returns>
+    /// <param name="mode">The display mode.</param>
+    /// <returns>A new bitmap.</returns>
     public System.Drawing.Bitmap CaptureToBitmap(Rhino.Display.DisplayModeDescription mode)
     {
       return CaptureToBitmap(ClientRectangle.Size, mode);
@@ -346,9 +346,9 @@ namespace Rhino.Display
     /// Capture View contents to a bitmap using display attributes to define how
     /// drawing is performed.
     /// </summary>
-    /// <param name="size"></param>
-    /// <param name="attributes"></param>
-    /// <returns></returns>
+    /// <param name="size">The width and height of the returned bitmap.</param>
+    /// <param name="attributes">The specific display mode attributes.</param>
+    /// <returns>A new bitmap.</returns>
     public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size, Rhino.Display.DisplayPipelineAttributes attributes)
     {
       IntPtr pConstView = this.ConstPointer();
@@ -366,11 +366,11 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Capture View contents to a bitmap using display attributes to define how
+    /// Captures view contents to a bitmap using display attributes to define how
     /// drawing is performed.
     /// </summary>
-    /// <param name="attributes"></param>
-    /// <returns></returns>
+    /// <param name="attributes">The specific display mode attributes.</param>
+    /// <returns>A new bitmap.</returns>
     public System.Drawing.Bitmap CaptureToBitmap(Rhino.Display.DisplayPipelineAttributes attributes)
     {
       return CaptureToBitmap(ClientRectangle.Size, attributes);

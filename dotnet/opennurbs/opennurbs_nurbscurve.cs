@@ -150,11 +150,8 @@ namespace Rhino.Geometry
       NurbsCurve nc = new NurbsCurve();
       IntPtr pCurve = nc.NonConstPointer();
 
-      bool rc;
-      if (periodic)
-        rc = UnsafeNativeMethods.ON_NurbsCurve_CreatePeriodicUniformNurbs(pCurve, dimension, order, count, ptArray, knotDelta);
-      else
-        rc = UnsafeNativeMethods.ON_NurbsCurve_CreateClampedUniformNurbs(pCurve, dimension, order, count, ptArray, knotDelta);
+      bool rc = periodic ? UnsafeNativeMethods.ON_NurbsCurve_CreatePeriodicUniformNurbs(pCurve, dimension, order, count, ptArray, knotDelta) :
+                           UnsafeNativeMethods.ON_NurbsCurve_CreateClampedUniformNurbs(pCurve, dimension, order, count, ptArray, knotDelta);
 
       if (false == rc)
       {

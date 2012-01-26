@@ -24,7 +24,7 @@ namespace Rhino.DocObjects
     {
       // Creates a new non-document control ON_Layer
       IntPtr pLayer = UnsafeNativeMethods.ON_Layer_New();
-      base.ConstructNonConstObject(pLayer);
+      ConstructNonConstObject(pLayer);
     }
 
 #if RHINO_SDK
@@ -32,13 +32,13 @@ namespace Rhino.DocObjects
     {
       m_id = UnsafeNativeMethods.CRhinoLayerTable_GetLayerId(doc.m_docId, index);
       m_doc = doc;
-      this.m__parent = m_doc;
+      m__parent = m_doc;
     }
 #endif
 
     class LayerHolder
     {
-      IntPtr m_pConstLayer;
+      readonly IntPtr m_pConstLayer;
       public LayerHolder(IntPtr pConstLayer)
       {
         m_pConstLayer = pConstLayer;
@@ -52,14 +52,14 @@ namespace Rhino.DocObjects
     internal Layer(IntPtr pConstLayer)
     {
       LayerHolder holder = new LayerHolder(pConstLayer);
-      base.ConstructConstObject(holder, -1);
+      ConstructConstObject(holder, -1);
     }
 
     internal Layer(Guid id, Rhino.FileIO.File3dm onxModel)
     {
       m_id = id;
       m_onx_model = onxModel;
-      this.m__parent = onxModel;
+      m__parent = onxModel;
     }
 
     // serialization constructor
@@ -554,7 +554,7 @@ namespace Rhino.DocObjects.Tables
     readonly int m_docId;
     readonly LayerTableEventType m_event_type;
     readonly int m_layer_index;
-    IntPtr m_pOldLayer;
+    readonly IntPtr m_pOldLayer;
 
     internal LayerTableEventArgs(int docId, int event_type, int index, IntPtr pConstOldLayer)
     {
@@ -564,7 +564,7 @@ namespace Rhino.DocObjects.Tables
       m_pOldLayer = pConstOldLayer;
     }
 
-    RhinoDoc m_doc = null;
+    RhinoDoc m_doc;
     public RhinoDoc Document
     {
       get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_docId)); }
@@ -583,14 +583,7 @@ namespace Rhino.DocObjects.Tables
     Layer m_new_layer;
     public Layer NewState
     {
-      get
-      {
-        if (m_new_layer == null)
-        {
-          m_new_layer = new Layer(LayerIndex, Document);
-        }
-        return m_new_layer;
-      }
+      get { return m_new_layer ?? (m_new_layer = new Layer(LayerIndex, Document)); }
     }
 
     Layer m_old_layer;

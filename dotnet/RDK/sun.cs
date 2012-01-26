@@ -1,6 +1,5 @@
 #pragma warning disable 1591
 using System;
-using System.Runtime.InteropServices;
 
 namespace Rhino.Render
 {
@@ -10,7 +9,7 @@ namespace Rhino.Render
   /// </summary>
   public class Sun
   {
-    Rhino.RhinoDoc m_doc;
+    readonly Rhino.RhinoDoc m_doc;
 
     // Only access to this class is through the Sun property on the document's light table.
     // That property calls CheckForRdk so we don't need to "recheck" for functions/properties
@@ -23,7 +22,8 @@ namespace Rhino.Render
       get
       {
         IntPtr pConstSun = ConstPointer();
-        return UnsafeNativeMethods.Rdk_Sun_Enabled(ConstPointer()); }
+        return UnsafeNativeMethods.Rdk_Sun_Enabled(pConstSun);
+      }
       set { UnsafeNativeMethods.Rdk_Sun_SetEnabled(NonConstPointer(), value); }
     }
 
@@ -79,9 +79,7 @@ namespace Rhino.Render
     {
       IntPtr pSun = NonConstPointer();
       UnsafeNativeMethods.Rdk_Sun_SetLatitudeLongitude(pSun, latitudeDegrees, longitudeDegrees);
-      bool local = true;
-      if (whenKind == DateTimeKind.Utc)
-        local = false;
+      bool local = whenKind != DateTimeKind.Utc;
       UnsafeNativeMethods.Rdk_Sun_SetDateTime(pSun, local, when.Year, when.Month, when.Day, when.Hour, when.Minute, when.Second);
     }
 
@@ -161,7 +159,7 @@ namespace Rhino.Render
 #if RDK_UNCHECKED
   public class Skylight
   {
-    private Rhino.RhinoDoc m_doc;
+    private readonly Rhino.RhinoDoc m_doc;
 
     internal Skylight(Rhino.RhinoDoc doc)
     {

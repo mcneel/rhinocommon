@@ -109,9 +109,6 @@ namespace Rhino.DocObjects
     /// <param name="pieceTransforms">An array of the previously applied transform matrices will be assigned to this out parameter during this call.</param>
     public void Explode(bool explodeNestedInstances, out RhinoObject[] pieces, out ObjectAttributes[] pieceAttributes, out Transform[] pieceTransforms)
     {
-      pieces = new RhinoObject[0];
-      pieceAttributes = new ObjectAttributes[0];
-      pieceTransforms = new Transform[0];
       IntPtr pConstThis = ConstPointer();
       IntPtr pPieceList = UnsafeNativeMethods.CRhinoInstanceObject_Explode(pConstThis, explodeNestedInstances);
       int count = UnsafeNativeMethods.CRhinoInstanceObjectPieceArray_Count(pPieceList);
@@ -357,11 +354,12 @@ namespace Rhino.DocObjects
 
     public System.Drawing.Bitmap CreatePreviewBitmap(Rhino.Display.DefinedViewportProjection definedViewportProjection, System.Drawing.Size bitmapSize)
     {
-      System.Drawing.Bitmap rc = null;
       IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoInstanceDefinition_GetPreviewBitmap(m_doc.m_docId, m_index, (int)definedViewportProjection, 0, bitmapSize.Width, bitmapSize.Height);
       if (IntPtr.Zero == pRhinoDib)
-        return rc;
+        return null;
+
       IntPtr hBmp = UnsafeNativeMethods.CRhinoDib_Bitmap(pRhinoDib);
+      System.Drawing.Bitmap rc = null;
       if (IntPtr.Zero != hBmp)
       {
         rc = System.Drawing.Image.FromHbitmap(hBmp);

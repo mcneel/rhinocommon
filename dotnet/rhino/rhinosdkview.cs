@@ -29,7 +29,7 @@ namespace Rhino.Display
 
       // look through the cached viewlist first
       int count = m_view_list.Count;
-      RhinoView view = null;
+      RhinoView view;
       for (int i = 0; i < count; i++)
       {
         view = m_view_list[i];
@@ -270,7 +270,7 @@ namespace Rhino.Display
     /// <returns>The bitmap of the specified part of the view.</returns>
     public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size)
     {
-      IntPtr pConstView = this.ConstPointer();
+      IntPtr pConstView = ConstPointer();
       IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoDib_New();
       System.Drawing.Bitmap rc = null;
       if (UnsafeNativeMethods.CRhinoView_CaptureToBitmap(pConstView, pRhinoDib, size.Width, size.Height, IntPtr.Zero))
@@ -293,7 +293,7 @@ namespace Rhino.Display
     /// <returns>A new bitmap.</returns>
     public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size, bool grid, bool worldAxes, bool cplaneAxes)
     {
-      IntPtr pConstView = this.ConstPointer();
+      IntPtr pConstView = ConstPointer();
       IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoDib_New();
       System.Drawing.Bitmap rc = null;
       if (UnsafeNativeMethods.CRhinoView_CaptureToBitmap2(pConstView, pRhinoDib, size.Width, size.Height, grid, worldAxes, cplaneAxes))
@@ -315,7 +315,7 @@ namespace Rhino.Display
     /// <returns>A new bitmap.</returns>
     public System.Drawing.Bitmap CaptureToBitmap(bool grid, bool worldAxes, bool cplaneAxes)
     {
-      return CaptureToBitmap(this.ClientRectangle.Size, grid, worldAxes, cplaneAxes);
+      return CaptureToBitmap(ClientRectangle.Size, grid, worldAxes, cplaneAxes);
     }
 
     /// <summary>
@@ -351,7 +351,7 @@ namespace Rhino.Display
     /// <returns>A new bitmap.</returns>
     public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size, Rhino.Display.DisplayPipelineAttributes attributes)
     {
-      IntPtr pConstView = this.ConstPointer();
+      IntPtr pConstView = ConstPointer();
       IntPtr pAttributes = attributes.ConstPointer();
       IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoDib_New();
       System.Drawing.Bitmap rc = null;

@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Rhino.UI
 {
-  partial class EditBoxForm : Form
+  sealed partial class EditBoxForm : Form
   {
     public EditBoxForm(string title, string message, string default_text)
     {

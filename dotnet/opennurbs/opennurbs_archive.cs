@@ -1338,7 +1338,7 @@ namespace Rhino.Collections
       {
         throw new ArgumentOutOfRangeException("arrayIndex");
       }
-      if (array.Length - arrayIndex < this.Count)
+      if (array.Length - arrayIndex < Count)
       {
         throw new ArgumentException("This dictionary does not fit into the array.");
       }
@@ -2873,12 +2873,12 @@ namespace Rhino.FileIO
     internal int BeginReadDictionaryEntry(out int entryType, out string entryName)
     {
       entryType = 0;
-      entryName = string.Empty;
-      Runtime.StringHolder str = new Rhino.Runtime.StringHolder();
-      int rc = UnsafeNativeMethods.ON_BinaryArchive_BeginReadDictionaryEntry(m_ptr, ref entryType, str.NonConstPointer());
-      entryName = str.ToString();
-      str.Dispose();
-      return rc;
+      using (Runtime.StringHolder str = new Rhino.Runtime.StringHolder())
+      {
+        int rc = UnsafeNativeMethods.ON_BinaryArchive_BeginReadDictionaryEntry(m_ptr, ref entryType, str.NonConstPointer());
+        entryName = str.ToString();
+        return rc;
+      }
     }
 
     internal bool EndReadDictionaryEntry()

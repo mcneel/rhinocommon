@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace Rhino.UI
 {
-  partial class ListBoxForm : Form
+  sealed partial class ListBoxForm : Form
   {
     public ListBoxForm(string title, string message, System.Collections.IList items)
     {

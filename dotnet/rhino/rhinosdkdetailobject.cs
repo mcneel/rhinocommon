@@ -13,7 +13,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        Rhino.Geometry.DetailView rc = this.Geometry as Rhino.Geometry.DetailView;
+        Rhino.Geometry.DetailView rc = Geometry as Rhino.Geometry.DetailView;
         return rc;
       }
     }
@@ -40,14 +40,7 @@ namespace Rhino.DocObjects
     Rhino.Display.RhinoViewport m_viewport;
     public Rhino.Display.RhinoViewport Viewport
     {
-      get
-      {
-        if (null == m_viewport)
-        {
-          m_viewport = new Rhino.Display.RhinoViewport(this);
-        }
-        return m_viewport;
-      }
+      get { return m_viewport ?? (m_viewport = new Rhino.Display.RhinoViewport(this)); }
     }
 
     public bool CommitViewportChanges()

@@ -1,8 +1,6 @@
 #pragma warning disable 1591
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Rhino.Geometry;
 
 #if RDK_UNCHECKED
 
@@ -17,7 +15,7 @@ namespace Rhino.Render
     }
 
     private string m_name = String.Empty;
-    private Variant m_value = new Variant();
+    private readonly Variant m_value = new Variant();
 
     public string Name
     {
@@ -372,7 +370,7 @@ namespace Rhino.Render
     public DateTime ToDateTime()
     {
       System.DateTime dt = new DateTime(1970, 1, 1);
-      dt.AddSeconds(UnsafeNativeMethods.Rdk_Variant_GetTimeValue(ConstPointer()));
+      dt = dt.AddSeconds(UnsafeNativeMethods.Rdk_Variant_GetTimeValue(ConstPointer()));
       return dt;
     }
     #endregion
@@ -446,7 +444,7 @@ namespace Rhino.Render
     {
       Dispose(true);
     }
-    private bool disposed = false;
+    private bool disposed;
     private void Dispose(bool disposing)
     {
       if (!disposed)

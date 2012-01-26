@@ -1,7 +1,6 @@
 #pragma warning disable 1591
 //public class WireframeObject : RhinoObject { }
 //public class CageObject : WireframeObject { }
-using Rhino.Geometry;
 
 #if RHINO_SDK
 namespace Rhino.DocObjects

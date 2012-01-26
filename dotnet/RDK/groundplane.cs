@@ -1,6 +1,5 @@
 #pragma warning disable 1591
 using System;
-using System.Runtime.InteropServices;
 
 #if RDK_CHECKED
 namespace Rhino.Render
@@ -14,7 +13,7 @@ namespace Rhino.Render
     // Functions/Properties in this class do not need to check for Rdk since the only
     // way to access the Rdk is throuh the GroundPlane property on the RhinoDoc. That
     // propertt does the check before returning this class
-    private Rhino.RhinoDoc m_doc;
+    private readonly Rhino.RhinoDoc m_doc;
 
     internal GroundPlane(Rhino.RhinoDoc doc)
     {

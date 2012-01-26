@@ -1,6 +1,5 @@
 #pragma warning disable 1591
 using System;
-using System.Runtime.InteropServices;
 
 #if RDK_UNCHECKED
 namespace Rhino.Render
@@ -8,7 +7,7 @@ namespace Rhino.Render
   public class SimulatedEnvironment : IDisposable
   {
     private IntPtr m_pSim = IntPtr.Zero;
-    private bool m_bAutoDelete = true;
+    private readonly bool m_bAutoDelete = true;
 
     public SimulatedEnvironment()
     {

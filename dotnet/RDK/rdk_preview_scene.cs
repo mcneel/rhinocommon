@@ -1,6 +1,5 @@
 #pragma warning disable 1591
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 #if RDK_UNCHECKED
@@ -53,7 +52,6 @@ namespace Rhino.Render
     IntPtr m_pSceneServer;
     readonly System.Drawing.Size m_preview_size;
     readonly PreviewSceneQuality m_quality;
-    bool m_cancel;
     int m_sig;
     Rhino.DocObjects.ViewportInfo m_viewport;
 
@@ -91,14 +89,7 @@ namespace Rhino.Render
     /// <summary>
     /// Get set by Rhino if the preview generation should be canceled for this 
     /// </summary>
-    public bool Cancel
-    {
-      get { return m_cancel; }
-      internal set
-      {
-        m_cancel = value;
-      }
-    }
+    public bool Cancel { get; internal set; }
 
     void Initialize()
     {
@@ -185,7 +176,7 @@ namespace Rhino.Render
       get { Initialize(); return Rhino.Render.RenderContent.FromInstanceId(m_content_instance_id); }
     }
 
-    Rhino.Render.RenderEnvironment m_environment = null;
+    Rhino.Render.RenderEnvironment m_environment;
 
     /// <summary>
     /// The environment that the previewed object is rendered in.
@@ -209,11 +200,11 @@ namespace Rhino.Render
       public Rhino.Geometry.Mesh Mesh             { get { return m_mesh; } }
       public Rhino.Render.RenderMaterial Material { get { return m_material; } }
 
-      private Rhino.Geometry.Mesh m_mesh;
-      private Rhino.Render.RenderMaterial m_material;
+      private readonly Rhino.Geometry.Mesh m_mesh;
+      private readonly Rhino.Render.RenderMaterial m_material;
     }
 
-    private List<SceneObject> m_scene_objects = null;
+    private List<SceneObject> m_scene_objects;
     public List<SceneObject> Objects
     {
       get
@@ -223,7 +214,7 @@ namespace Rhino.Render
       }
     }
 
-    private List<Rhino.Geometry.Light> m_scene_lights = null;
+    private List<Rhino.Geometry.Light> m_scene_lights;
 
     public List<Rhino.Geometry.Light> Lights
     {

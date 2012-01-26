@@ -929,7 +929,7 @@ namespace Rhino.PlugIns
     /// <returns></returns>
     public static string NameFromPath(string pluginPath)
     {
-      string rc = null;
+      string rc;
       using (StringHolder sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
@@ -943,7 +943,7 @@ namespace Rhino.PlugIns
         // and the plug-in hasn't officially been registered with Rhino.
         for (int i = 0; i < m_plugins.Count; i++)
         {
-          if (string.Compare(m_plugins[i].Assembly.Location, pluginPath, true) == 0)
+          if (string.Compare(m_plugins[i].Assembly.Location, pluginPath, StringComparison.OrdinalIgnoreCase) == 0)
           {
             rc = m_plugins[i].Name;
             break;

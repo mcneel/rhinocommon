@@ -211,7 +211,6 @@ namespace Rhino.Runtime
     /// <returns>true if this object is valid; false otherwise.</returns>
     public bool IsValidWithLog(out string log)
     {
-      log = String.Empty;
       IntPtr pConstThis = ConstPointer();
       using (StringHolder sh = new StringHolder())
       {
@@ -338,8 +337,7 @@ namespace Rhino.Runtime
     {
       get
       {
-        Rhino.DocObjects.Custom.UserDictionary ud = null;
-        ud = UserData.Find(typeof(Rhino.DocObjects.Custom.SharedUserDictionary)) as Rhino.DocObjects.Custom.SharedUserDictionary;
+        Rhino.DocObjects.Custom.UserDictionary ud = UserData.Find(typeof(Rhino.DocObjects.Custom.SharedUserDictionary)) as Rhino.DocObjects.Custom.SharedUserDictionary;
         if (ud == null)
         {
           ud = new DocObjects.Custom.SharedUserDictionary();

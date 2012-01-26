@@ -914,13 +914,7 @@ namespace Rhino.Geometry
     /// </example>
     public Rhino.Geometry.Collections.MeshVertexNormalList Normals
     {
-      get
-      {
-        if (null == m_normals)
-          m_normals = new Rhino.Geometry.Collections.MeshVertexNormalList(this);
-
-        return m_normals;
-      }
+      get { return m_normals ?? (m_normals = new Rhino.Geometry.Collections.MeshVertexNormalList(this)); }
     }
 
     private Rhino.Geometry.Collections.MeshFaceList m_faces;
@@ -934,13 +928,7 @@ namespace Rhino.Geometry
     /// </example>
     public Rhino.Geometry.Collections.MeshFaceList Faces
     {
-      get
-      {
-        if (null == m_faces)
-          m_faces = new Rhino.Geometry.Collections.MeshFaceList(this);
-
-        return m_faces;
-      }
+      get { return m_faces ?? (m_faces = new Rhino.Geometry.Collections.MeshFaceList(this)); }
     }
 
     private Rhino.Geometry.Collections.MeshFaceNormalList m_facenormals;
@@ -949,13 +937,7 @@ namespace Rhino.Geometry
     /// </summary>
     public Rhino.Geometry.Collections.MeshFaceNormalList FaceNormals
     {
-      get
-      {
-        if (null == m_facenormals)
-          m_facenormals = new Rhino.Geometry.Collections.MeshFaceNormalList(this);
-
-        return m_facenormals;
-      }
+      get { return m_facenormals ?? (m_facenormals = new Rhino.Geometry.Collections.MeshFaceNormalList(this)); }
     }
 
     private Rhino.Geometry.Collections.MeshVertexColorList m_vertexcolors;
@@ -964,12 +946,7 @@ namespace Rhino.Geometry
     /// </summary>
     public Rhino.Geometry.Collections.MeshVertexColorList VertexColors
     {
-      get
-      {
-        if (null == m_vertexcolors)
-          m_vertexcolors = new Rhino.Geometry.Collections.MeshVertexColorList(this);
-        return m_vertexcolors;
-      }
+      get { return m_vertexcolors ?? (m_vertexcolors = new Rhino.Geometry.Collections.MeshVertexColorList(this)); }
     }
 
     private Rhino.Geometry.Collections.MeshTextureCoordinateList m_texcoords;
@@ -978,13 +955,7 @@ namespace Rhino.Geometry
     /// </summary>
     public Rhino.Geometry.Collections.MeshTextureCoordinateList TextureCoordinates
     {
-      get
-      {
-        if (null == m_texcoords)
-          m_texcoords = new Rhino.Geometry.Collections.MeshTextureCoordinateList(this);
-
-        return m_texcoords;
-      }
+      get { return m_texcoords ?? (m_texcoords = new Rhino.Geometry.Collections.MeshTextureCoordinateList(this)); }
     }
 
     /// <summary>
@@ -1591,7 +1562,7 @@ namespace Rhino.Geometry
     /// vertex is completely surrounded by faces.</returns>
     public bool[] GetNakedEdgePointStatus()
     {
-      int count = this.Vertices.Count;
+      int count = Vertices.Count;
       if (count < 1)
         return null;
 
@@ -2360,15 +2331,12 @@ namespace Rhino.Geometry.Collections
     /// <returns>An array of vertex indices.</returns>
     public int[] IndicesFromFace(int faceIndex)
     {
-      int[] rc = null;
+      int[] rc;
       int a = 0, b = 0, c = 0, d = 0;
       IntPtr pConstMesh = m_mesh.ConstPointer();
       if (UnsafeNativeMethods.ON_MeshTopology_GetTopFaceVertices(pConstMesh, faceIndex, ref a, ref b, ref c, ref d))
       {
-        if (c == d)
-          rc = new int[] { a, b, c };
-        else
-          rc = new int[] { a, b, c, d };
+        rc = c == d ? new int[] { a, b, c } : new int[] { a, b, c, d };
       }
       else
         rc = new int[0];
@@ -2463,7 +2431,7 @@ namespace Rhino.Geometry.Collections
     public int[] ConnectedFaces(int topologyVertexIndex)
     {
       IntPtr ptr = m_mesh.ConstPointer();
-      if (topologyVertexIndex < 0 || topologyVertexIndex >= this.Count)
+      if (topologyVertexIndex < 0 || topologyVertexIndex >= Count)
         throw new IndexOutOfRangeException();
       using (Runtime.InteropWrappers.SimpleArrayInt arr = new Rhino.Runtime.InteropWrappers.SimpleArrayInt())
       {

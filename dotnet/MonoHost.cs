@@ -69,7 +69,7 @@ namespace Rhino.Runtime
 
       // Reflection Load assembly first in order to check versioning
       // and make sure the plug-in hasn't already been loaded
-      System.Reflection.Assembly plugin_assembly = null;
+      System.Reflection.Assembly plugin_assembly;
       try
       {
         plugin_assembly = System.Reflection.Assembly.ReflectionOnlyLoadFrom(path);

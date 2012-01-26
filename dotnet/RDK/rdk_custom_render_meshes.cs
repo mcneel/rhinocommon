@@ -1,6 +1,5 @@
 ﻿#pragma warning disable 1591
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 #if RDK_UNCHECKED
@@ -258,7 +257,7 @@ namespace Rhino.Render.CustomRenderMesh
 
     #region internals
     private IntPtr m_pRenderMeshes = IntPtr.Zero;
-    bool m_bAutoDelete;
+    readonly bool m_bAutoDelete;
     internal IntPtr ConstPointer()     { return m_pRenderMeshes; }
     internal IntPtr NonConstPointer()  { return m_pRenderMeshes; }
     #endregion
@@ -272,7 +271,7 @@ namespace Rhino.Render.CustomRenderMesh
     {
       Dispose(true);
     }
-    private bool disposed = false;
+    private bool disposed;
     private void Dispose(bool disposing)
     {
       if (!disposed)
@@ -468,11 +467,11 @@ namespace Rhino.Render.CustomRenderMesh
 
   public abstract class Provider
   {
-    internal int m_runtime_serial_number = 0;
+    internal int m_runtime_serial_number;
     static int m_current_serial_number = 1;
     static readonly Dictionary<int, Provider> m_all_providers = new Dictionary<int, Provider>();
 
-    public Provider()
+    protected Provider()
     {
     }
 
@@ -482,8 +481,6 @@ namespace Rhino.Render.CustomRenderMesh
     {
       Type t = GetType();
       Guid providerId = t.GUID;
-      string name = String.Empty;
-
       m_runtime_serial_number = m_current_serial_number++;
       
       return UnsafeNativeMethods.CRhCmnCRMProvider_New(m_runtime_serial_number, providerId, Name, pluginId);
@@ -528,7 +525,6 @@ namespace Rhino.Render.CustomRenderMesh
         }
 
       }
-      return;
     }
 
     /// <summary>
@@ -555,13 +551,9 @@ namespace Rhino.Render.CustomRenderMesh
       Geometry.Point3d max = new Geometry.Point3d();
 
       if (UnsafeNativeMethods.Rdk_RMPBoundingBoxImpl(m_runtime_serial_number, vp.ConstPointer(), obj.ConstPointer(), requestingPlugIn, (int)meshType, ref min, ref max))
-      {
         return new Rhino.Geometry.BoundingBox(min, max);
-      }
-      else
-      {
-        return new Rhino.Geometry.BoundingBox();
-      }
+
+      return new Rhino.Geometry.BoundingBox();
     }
 
     /// <summary>
@@ -661,7 +653,7 @@ namespace Rhino.Render.CustomRenderMesh
     #region internals
     internal static Provider FromSerialNumber(int serial_number)
     {
-      Provider rc = null;
+      Provider rc;
       m_all_providers.TryGetValue(serial_number, out rc);
       return rc;
     }

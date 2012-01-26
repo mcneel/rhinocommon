@@ -1,6 +1,5 @@
 #pragma warning disable 1591
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 #if RDK_UNCHECKED
@@ -24,7 +23,7 @@ namespace Rhino.Render
             Guid uuid = new Guid();
             b = 1==UnsafeNativeMethods.Rdk_RenderPlugInInfo(pList, ref uuid, pString);
             
-            this.Add(new RenderPlugInInfo(uuid, pString.ToString()));
+            Add(new RenderPlugInInfo(uuid, pString.ToString()));
           }
         }
 
@@ -38,20 +37,14 @@ namespace Rhino.Render
   {
     internal RenderPlugInInfo(Guid plugInId, String name)//, Rhino.PlugIns.RenderPlugIn plugIn)
     {
-      _plugInId = plugInId;
-      _name = name;
+      PlugInId = plugInId;
+      Name = name;
       //_plugIn = plugIn;
     }
 
-    private Guid _plugInId;
-    private String _name;
     //private Rhino.PlugIns.RenderPlugIn _plugIn;
 
-    public String Name
-    {
-      get { return _name; }
-      set { _name = value; }
-    }
+    public string Name { get; set; }
 
     //internal Rhino.PlugIns.RenderPlugIn PlugIn
     //{
@@ -59,11 +52,7 @@ namespace Rhino.Render
     //  set { _plugIn = value; }
     //}
 
-    public Guid PlugInId
-    {
-      get { return _plugInId; }
-      set { _plugInId = value; }
-    }
+    public Guid PlugInId { get; set; }
   }
 }
 

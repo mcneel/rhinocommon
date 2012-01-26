@@ -29,7 +29,7 @@ namespace Rhino
     public bool WriteFile(string path, Rhino.FileIO.FileWriteOptions options)
     {
       IntPtr pOptions = options.ConstPointer();
-      return UnsafeNativeMethods.RHC_RhinoWriteFile(this.m_docId, path, pOptions);
+      return UnsafeNativeMethods.RHC_RhinoWriteFile(m_docId, path, pOptions);
     }
  
     internal int m_docId;
@@ -783,10 +783,11 @@ namespace Rhino
       {
         path = RhinoDoc.ActiveDoc.Path;
       }
-      System.Drawing.Bitmap rc = null;
       IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoDoc_ExtractPreviewImage(path);
       if (IntPtr.Zero == pRhinoDib)
-        return rc;
+        return null;
+
+      System.Drawing.Bitmap rc = null;
       IntPtr hBmp = UnsafeNativeMethods.CRhinoDib_Bitmap(pRhinoDib);
       if (IntPtr.Zero != hBmp)
       {
@@ -1660,13 +1661,7 @@ namespace Rhino
     /// </summary>
     public RhinoDoc Document
     {
-      get
-      {
-        if (m_doc == null)
-          m_doc = RhinoDoc.FromId(m_docId);
-
-        return m_doc;
-      }
+      get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_docId)); }
     }
   }
 
@@ -1802,7 +1797,7 @@ namespace Rhino
     public class RhinoObjectSelectionEventArgs : EventArgs
     {
       private readonly bool m_select;
-      private int m_docId;
+      private readonly int m_docId;
       private readonly IntPtr m_pRhinoObject;
       private readonly IntPtr m_pRhinoObjectList;
 
@@ -1823,18 +1818,13 @@ namespace Rhino
         get { return m_select; }
       }
 
-      RhinoDoc m_doc = null;
+      RhinoDoc m_doc;
       public RhinoDoc Document
       {
-        get
-        {
-          if (m_doc == null)
-            m_doc = RhinoDoc.FromId(m_docId);
-          return m_doc;
-        }
+        get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_docId)); }
       }
 
-      List<RhinoObject> m_objects = null;
+      List<RhinoObject> m_objects;
       public RhinoObject[] RhinoObjects
       {
         get
@@ -1937,15 +1927,10 @@ namespace Rhino
         get { return m_object_count; }
       }
 
-      RhinoDoc m_doc = null;
+      RhinoDoc m_doc;
       public RhinoDoc Document
       {
-        get
-        {
-          if (m_doc == null)
-            m_doc = RhinoDoc.FromId(m_docId);
-          return m_doc;
-        }
+        get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_docId)); }
       }
     }
 
@@ -1963,22 +1948,16 @@ namespace Rhino
         m_pOldObjectAttributes = pOldObjectAttributes;
       }
 
-      RhinoDoc m_doc = null;
+      RhinoDoc m_doc;
       public RhinoDoc Document
       {
-        get
-        {
-          return m_doc ?? (m_doc = RhinoDoc.FromId(m_docId));
-        }
+        get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_docId)); }
       }
 
-      RhinoObject m_object = null;
+      RhinoObject m_object;
       public RhinoObject RhinoObject
       {
-        get
-        {
-          return m_object ?? (m_object = RhinoObject.CreateRhinoObjectHelper(m_pRhinoObject));
-        }
+        get { return m_object ?? (m_object = RhinoObject.CreateRhinoObjectHelper(m_pRhinoObject)); }
       }
 
       ObjectAttributes m_old_attributes;
@@ -2460,7 +2439,7 @@ namespace Rhino.DocObjects.Tables
       DocObjects.ObjectIterator it = new ObjectIterator(m_doc, filter);
       IntPtr pIterator = it.NonConstPointer();
 
-      int rc = UnsafeNativeMethods.CRhinoDoc_LookupObjectsByUserText(key, value, caseSensitive, searchGeometry, searchAttributes, pIterator, pArray);
+      UnsafeNativeMethods.CRhinoDoc_LookupObjectsByUserText(key, value, caseSensitive, searchGeometry, searchAttributes, pIterator, pArray);
 
       Rhino.DocObjects.RhinoObject[] objs = rhobjs.ToArray();
       rhobjs.Dispose();
@@ -3566,7 +3545,6 @@ namespace Rhino.DocObjects.Tables
     public bool Select(Guid objectId)
     {
       ObjRef objref = new ObjRef(objectId);
-      if (objref == null) { return false; }
       return Select(objref);
     }
     /// <summary>
@@ -3578,7 +3556,6 @@ namespace Rhino.DocObjects.Tables
     public bool Select(Guid objectId, bool select)
     {
       ObjRef objref = new ObjRef(objectId);
-      if (objref == null) { return false; }
       return Select(objref, select);
     }
     /// <summary>
@@ -3594,7 +3571,6 @@ namespace Rhino.DocObjects.Tables
     public bool Select(Guid objectId, bool select, bool syncHighlight)
     {
       ObjRef objref = new ObjRef(objectId);
-      if (objref == null) { return false; }
       return Select(objref, select, syncHighlight);
     }
     /// <summary>
@@ -3613,7 +3589,6 @@ namespace Rhino.DocObjects.Tables
     public bool Select(Guid objectId, bool select, bool syncHighlight, bool persistentSelect)
     {
       ObjRef objref = new ObjRef(objectId);
-      if (objref == null) { return false; }
       return Select(objref, select, syncHighlight, persistentSelect);
     }
     /// <summary>
@@ -3643,7 +3618,6 @@ namespace Rhino.DocObjects.Tables
     public bool Select(Guid objectId, bool select, bool syncHighlight, bool persistentSelect, bool ignoreGripsState, bool ignoreLayerLocking, bool ignoreLayerVisibility)
     {
       ObjRef objref = new ObjRef(objectId);
-      if (objref == null) { return false; }
       return Select(objref, select, syncHighlight, persistentSelect, ignoreGripsState, ignoreLayerLocking, ignoreLayerVisibility);
     }
 
@@ -3667,7 +3641,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>Number of objects successfully selected or deselected.</returns>
     public int Select(IEnumerable<Guid> objectIds, bool select)
     {
-      if (objectIds == null) { throw new ArgumentNullException("objectsIds"); }
+      if (objectIds == null) { throw new ArgumentNullException("objectIds"); }
       int count = 0;
       foreach (Guid objectId in objectIds)
       {
@@ -4846,7 +4820,7 @@ namespace Rhino.DocObjects.Tables
         string key = GetKey(i);
         if (string.IsNullOrEmpty(key))
           continue;
-        int index = key.IndexOf("\\");
+        int index = key.IndexOf("\\", System.StringComparison.Ordinal);
         if (index > 0)
         {
           string section = key.Substring(0, index);

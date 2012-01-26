@@ -259,12 +259,7 @@ namespace Rhino.Display
     ViewDisplayAttributes m_ViewSpecificAttributes;
     public ViewDisplayAttributes ViewSpecificAttributes
     {
-      get
-      {
-        if (null == m_ViewSpecificAttributes)
-          m_ViewSpecificAttributes = new ViewDisplayAttributes(this);
-        return m_ViewSpecificAttributes;
-      }
+      get { return m_ViewSpecificAttributes ?? (m_ViewSpecificAttributes = new ViewDisplayAttributes(this)); }
     }
     #endregion
 
@@ -515,12 +510,7 @@ namespace Rhino.Display
     MeshDisplayAttributes m_MeshSpecificAttributes;
     public MeshDisplayAttributes MeshSpecificAttributes
     {
-      get
-      {
-        if (null == m_MeshSpecificAttributes)
-          m_MeshSpecificAttributes = new MeshDisplayAttributes(this);
-        return m_MeshSpecificAttributes;
-      }
+      get { return m_MeshSpecificAttributes ?? (m_MeshSpecificAttributes = new MeshDisplayAttributes(this)); }
     }
 
     #endregion

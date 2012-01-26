@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Reflection;
 
 #if RDK_UNCHECKED
 
@@ -60,7 +61,6 @@ namespace Rhino.Render
   public sealed class CustomRenderContentAttribute : System.Attribute
   {
     private RenderContentStyles m_style = RenderContentStyles.None;
-    private bool m_bIsImageBased; // = false; initialized by runtime
     private readonly Guid m_renderengine_id;
 
     public CustomRenderContentAttribute()
@@ -83,17 +83,14 @@ namespace Rhino.Render
       set { m_style = value; }
     }
 
-    public bool ImageBased
-    {
-      get { return m_bIsImageBased; }
-      set { m_bIsImageBased = value; }
-    }
+    public bool ImageBased { get; set; }
   }
 
   // Giulio thinks: this should be marked as [Flags]
   /// <summary>
   /// Defines constant values for all render content kinds, such as material, environment or texture.
   /// </summary>
+  [Flags]
   public enum RenderContentKind : int
   {
     None = 0,
@@ -309,11 +306,10 @@ namespace Rhino.Render
         Debug.Assert(false);
       }
 
-      System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Public |
-        System.Reflection.BindingFlags.NonPublic |
-        System.Reflection.BindingFlags.Instance;
+      const BindingFlags flags = System.Reflection.BindingFlags.Public |
+                                 System.Reflection.BindingFlags.NonPublic |
+                                 System.Reflection.BindingFlags.Instance;
       System.Reflection.FieldInfo[] fields = t.GetFields(flags);
-      System.Reflection.PropertyInfo[] properties = t.GetProperties(flags);
       if (fields != null)
       {
         for (int i = 0; i < fields.Length; i++)
@@ -495,7 +491,8 @@ namespace Rhino.Render
     {
       m_autoui_fields.Add(f);
     }
-    List<Field> m_autoui_fields = new List<Field>();
+
+    readonly List<Field> m_autoui_fields = new List<Field>();
 
     public bool AddAutomaticUISection(string caption, int id)
     {
@@ -505,13 +502,9 @@ namespace Rhino.Render
     public virtual bool IsContentTypeAcceptableAsChild(Guid type, String childSlotName)
     {
       if (IsNativeWrapper())
-      {
         return 1 == UnsafeNativeMethods.Rdk_RenderContent_IsContentTypeAcceptableAsChild(ConstPointer(), type, childSlotName);
-      }
-      else
-      {
-        return 1 == UnsafeNativeMethods.Rdk_RenderContent_CallIsContentTypeAcceptableAsChildBase(ConstPointer(), type, childSlotName);
-      }
+
+      return 1 == UnsafeNativeMethods.Rdk_RenderContent_CallIsContentTypeAcceptableAsChildBase(ConstPointer(), type, childSlotName);
     }
 
     public enum HarvestedResult : int // Return values for HarvestData()
@@ -529,13 +522,9 @@ namespace Rhino.Render
     public virtual HarvestedResult HarvestData(RenderContent oldContent)
     {
       if (IsNativeWrapper())
-      {
         return (HarvestedResult)UnsafeNativeMethods.Rdk_RenderContent_HarvestData(ConstPointer(), oldContent.ConstPointer());
-      }
-      else
-      {
-        return (HarvestedResult)UnsafeNativeMethods.Rdk_RenderContent_CallHarvestDataBase(ConstPointer(), oldContent.ConstPointer());
-      }
+
+      return (HarvestedResult)UnsafeNativeMethods.Rdk_RenderContent_CallHarvestDataBase(ConstPointer(), oldContent.ConstPointer());
     }
 
     #region Operations
@@ -691,7 +680,7 @@ namespace Rhino.Render
     {
       if (IsNativeWrapper())
       {
-        return (IntPtr)UnsafeNativeMethods.Rdk_RenderContent_GetShader(ConstPointer(), renderEngineId, privateData);
+        return UnsafeNativeMethods.Rdk_RenderContent_GetShader(ConstPointer(), renderEngineId, privateData);
       }
       return IntPtr.Zero;
     }
@@ -763,7 +752,7 @@ namespace Rhino.Render
     {
       try
       {
-        RenderContent content = RenderContent.FromSerialNumber(serialNumber) as RenderContent;
+        RenderContent content = RenderContent.FromSerialNumber(serialNumber);
         if (content != null && childSlotName != IntPtr.Zero)
           return content.IsContentTypeAcceptableAsChild(type, System.Runtime.InteropServices.Marshal.PtrToStringUni(childSlotName));
       }
@@ -780,7 +769,7 @@ namespace Rhino.Render
     {
       try
       {
-        RenderContent content = RenderContent.FromSerialNumber(serialNumber) as RenderContent;
+        RenderContent content = RenderContent.FromSerialNumber(serialNumber);
         RenderContent old = RenderContent.FromPointer(oldContent);
         if (content != null && old != null)
           return content.HarvestData(old);
@@ -854,7 +843,7 @@ namespace Rhino.Render
     {
       try
       {
-        RenderContent content = RenderContent.FromSerialNumber(serialNumber) as RenderContent;
+        RenderContent content = RenderContent.FromSerialNumber(serialNumber);
         if (content != null)
           return content.GetShader(renderEngineId, privateData);
       }
@@ -1343,7 +1332,7 @@ namespace Rhino.Render
 
     internal static RenderContent FromSerialNumber(int serial_number)
     {
-      RenderContent rc = null;
+      RenderContent rc;
       m_all_custom_content.TryGetValue(serial_number, out rc);
       return rc;
     }

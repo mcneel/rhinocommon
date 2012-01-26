@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Rhino.Geometry;
 
 #if RDK_UNCHECKED
 
@@ -30,7 +29,7 @@ namespace Rhino.Render
     /// <param name="channels"></param>
     /// <param name="reuseRenderWindow"></param>
     /// <param name="clearLastRendering"></param>
-    public RenderPipeline(RhinoDoc doc,
+    protected RenderPipeline(RhinoDoc doc,
                           Rhino.Commands.RunMode mode,
                           Rhino.PlugIns.PlugIn plugin,
                           System.Drawing.Size sizeRendering,
@@ -55,7 +54,7 @@ namespace Rhino.Render
 
     internal static RenderPipeline FromSerialNumber(int serial_number)
     {
-      RenderPipeline rc = null;
+      RenderPipeline rc;
       m_all_render_pipelines.TryGetValue(serial_number, out rc);
       return rc;
     }
@@ -281,7 +280,7 @@ namespace Rhino.Render
               {
                 if (pObj != IntPtr.Zero)
                 {
-                  Rhino.DocObjects.LightObject obj = Rhino.DocObjects.LightObject.CreateRhinoObjectHelper(pObj) as Rhino.DocObjects.LightObject;
+                  Rhino.DocObjects.LightObject obj = Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(pObj) as Rhino.DocObjects.LightObject;
                   if (obj != null)
                     return pipe.AddLightToScene(obj) ? 1 : 0;
                 }

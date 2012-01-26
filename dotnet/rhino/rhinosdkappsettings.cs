@@ -909,10 +909,8 @@ namespace Rhino.ApplicationSettings
       using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
       {
         IntPtr pStringHolder = sh.NonConstPointer();
-        if (currentUser)
-          UnsafeNativeMethods.CRhinoFileUtilities_GetDataFolder(pStringHolder, idxGetRhinoRoamingProfileDataFolder);
-        else
-          UnsafeNativeMethods.CRhinoFileUtilities_GetDataFolder(pStringHolder, idxGetRhinoApplicationDataFolder);
+        int which = currentUser ? idxGetRhinoRoamingProfileDataFolder : idxGetRhinoApplicationDataFolder;
+        UnsafeNativeMethods.CRhinoFileUtilities_GetDataFolder(pStringHolder, which);
         return sh.ToString();
       }
     }

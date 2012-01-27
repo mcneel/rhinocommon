@@ -107,9 +107,12 @@ namespace Rhino.Geometry
     long m_memory_pressure;
     int m_count = -1;
 
-    /// <summary>
-    /// Initializes a new, empty instance of the tree.
-    /// </summary>
+    /// <summary>Initializes a new, empty instance of the tree.</summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_closestpoint.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_closestpoint.cs' lang='cs'/>
+    /// <code source='examples\py\ex_closestpoint.py' lang='py'/>
+    /// </example>
     public RTree()
     {
       m_ptr = UnsafeNativeMethods.ON_RTree_New();
@@ -163,6 +166,11 @@ namespace Rhino.Geometry
     /// <param name="point">A point.</param>
     /// <param name="elementId">A number.</param>
     /// <returns>true if element was successfully inserted.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_closestpoint.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_closestpoint.cs' lang='cs'/>
+    /// <code source='examples\py\ex_closestpoint.py' lang='py'/>
+    /// </example>
     public bool Insert(Point3d point, int elementId)
     {
       return Insert(new BoundingBox(point, point), elementId);
@@ -395,6 +403,11 @@ namespace Rhino.Geometry
     /// <returns>
     /// true if entire tree was searched. It is possible no results were found.
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_closestpoint.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_closestpoint.cs' lang='cs'/>
+    /// <code source='examples\py\ex_closestpoint.py' lang='py'/>
+    /// </example>
     public bool Search(Sphere sphere, EventHandler<RTreeEventArgs> callback, object tag)
     {
       IntPtr pConstTree = ConstPointer();

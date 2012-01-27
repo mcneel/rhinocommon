@@ -20,7 +20,7 @@ namespace Rhino.DocObjects
     {
       // Creates a new non-document control ON_DimStyle
       IntPtr pOnDimStyle = UnsafeNativeMethods.ON_DimStyle_New();
-      base.ConstructNonConstObject(pOnDimStyle);
+      ConstructNonConstObject(pOnDimStyle);
     }
 
 #if RHINO_SDK
@@ -28,7 +28,7 @@ namespace Rhino.DocObjects
     {
       m_id = UnsafeNativeMethods.CRhinoDimStyleTable_GetGuid(doc.m_docId, index);
       m_doc = doc;
-      this.m__parent = m_doc;
+      m__parent = m_doc;
     }
 #endif
 
@@ -286,7 +286,7 @@ namespace Rhino.DocObjects
 #if RHINO_SDK
         if (m_doc == null || m_id == Guid.Empty)
           return false;
-        int index = this.Index;
+        int index = Index;
         return UnsafeNativeMethods.CRhinoDimStyle_IsReference(m_doc.m_docId, index);
 #else
         return false;

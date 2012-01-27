@@ -54,10 +54,10 @@ namespace Rhino.DocObjects
     {
       get
       {
-        Rhino.Geometry.LinearDimension ld = this.Geometry as Rhino.Geometry.LinearDimension;
-        if( ld==null || this.Document==null )
+        Rhino.Geometry.LinearDimension ld = Geometry as Rhino.Geometry.LinearDimension;
+        if( ld==null || Document==null )
           return null;
-        return this.Document.DimStyles[ld.DimensionStyleIndex];
+        return Document.DimStyles[ld.DimensionStyleIndex];
       }
     }
 
@@ -97,7 +97,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        Rhino.Geometry.TextEntity rc = this.Geometry as Rhino.Geometry.TextEntity;
+        Rhino.Geometry.TextEntity rc = Geometry as Rhino.Geometry.TextEntity;
         return rc;
       }
     }
@@ -122,8 +122,7 @@ namespace Rhino.Display
     string m_text = string.Empty;
     double m_height = 1;
     string m_fontface; // = null; initialized to null by runtime
-    bool m_bold; // = false; initialized to false by runtime
-    bool m_italic; // = false; initialized to false by runtime
+
     #endregion
 
     #region constructors
@@ -266,34 +265,12 @@ namespace Rhino.Display
     /// <summary>
     /// Gets or sets whether this Text3d object will be drawn in Bold.
     /// </summary>
-    public bool Bold
-    {
-      get { return m_bold; }
-      set
-      {
-        //if (m_bold != value)
-        //{
-        m_bold = value;
-        //  m_bDirty = true;
-        //}
-      }
-    }
+    public bool Bold { get; set; }
 
     /// <summary>
     /// Gets or sets whether this Text3d object will be drawn in Italics.
     /// </summary>
-    public bool Italic
-    {
-      get { return m_italic; }
-      set
-      {
-        //if (m_italic != value)
-        //{
-        m_italic = value;
-        //  m_bDirty = true;
-        //}
-      }
-    }
+    public bool Italic { get; set; }
 
     /// <summary>
     /// Gets the boundingbox for this Text3d object.

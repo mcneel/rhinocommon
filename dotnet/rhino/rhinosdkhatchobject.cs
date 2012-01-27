@@ -16,7 +16,7 @@ namespace Rhino.DocObjects
 
     public Hatch HatchGeometry
     {
-      get { return this.Geometry as Hatch; }
+      get { return Geometry as Hatch; }
     }
   }
 }

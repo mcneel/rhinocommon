@@ -13,15 +13,15 @@ namespace Rhino.UI
       m_checkedListBox.Visible = false;
 
       if (!string.IsNullOrEmpty(title))
-        this.Text = title;
+        Text = title;
       if (!string.IsNullOrEmpty(message))
-        this.m_lblMessage.Text = message;
+        m_lblMessage.Text = message;
 
       if (items != null)
       {
         object[] list = new object[items.Count];
         items.CopyTo(list, 0);
-        this.m_list.Items.AddRange(list);
+        m_list.Items.AddRange(list);
       }
     }
 
@@ -32,14 +32,14 @@ namespace Rhino.UI
       m_checkedListBox.Visible = true;
 
       if (!string.IsNullOrEmpty(title))
-        this.Text = title;
+        Text = title;
       if (!string.IsNullOrEmpty(message))
-        this.m_lblMessage.Text = message;
+        m_lblMessage.Text = message;
       if (items != null)
       {
         object[] list = new object[items.Count];
         items.CopyTo(list, 0);
-        this.m_checkedListBox.Items.AddRange(list);
+        m_checkedListBox.Items.AddRange(list);
         if (itemState != null && itemState.Count == items.Count)
         {
           for (int i = 0; i < items.Count; i++)
@@ -68,12 +68,6 @@ namespace Rhino.UI
         }
       }
       return rc;
-    }
-
-    private void m_list_DoubleClick(object sender, EventArgs e)
-    {
-      this.DialogResult = DialogResult.OK;
-      Close();
     }
   }
 }

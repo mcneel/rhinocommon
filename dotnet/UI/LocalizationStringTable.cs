@@ -17,19 +17,9 @@ namespace Rhino.UI
     readonly Dictionary<string, string> m_string_list = new Dictionary<string, string>();
     readonly Dictionary<string, string> m_dialog_list = new Dictionary<string, string>();
 
-    public LocalizationStringTable()
-    {
-    }
+    public Dictionary<string, string> StringList { get { return m_string_list; } }
 
-    public Dictionary<string, string> StringList
-    {
-      get { return m_string_list; }
-    }
-
-    public Dictionary<string, string> CommandList
-    {
-      get { return m_command_list; }
-    }
+    public Dictionary<string, string> CommandList { get { return m_command_list; } }
 
     /// <summary>
     /// Look for XML file decorating the name with both the Locale ID as a number and a System.Globalization.CultureInfo.Name.
@@ -253,7 +243,7 @@ namespace Rhino.UI
             string value = string_list[i].Attributes["Localized"].Value;
             // Only add to dictionary if the value has been translated
             if (0 != string.Compare(key, value)&& !m_string_list.ContainsKey(key))
-              m_string_list.Add(key, this.StripTrailingSquareBrackets(value));
+              m_string_list.Add(key, StripTrailingSquareBrackets(value));
           }
         }
         

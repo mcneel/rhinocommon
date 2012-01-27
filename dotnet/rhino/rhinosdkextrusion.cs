@@ -13,13 +13,13 @@ namespace Rhino.DocObjects
     {
       get
       {
-        Extrusion rc = this.Geometry as Extrusion;
+        Extrusion rc = Geometry as Extrusion;
         return rc;
       }
     }
     public Extrusion DuplicateExtrusionGeometry()
     {
-      Extrusion rc = this.DuplicateGeometry() as Extrusion;
+      Extrusion rc = DuplicateGeometry() as Extrusion;
       return rc;
     }
 

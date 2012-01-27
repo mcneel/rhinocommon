@@ -13,14 +13,14 @@ namespace Rhino.DocObjects
     {
       get
       {
-        Mesh rc = this.Geometry as Mesh;
+        Mesh rc = Geometry as Mesh;
         return rc;
       }
     }
 
     public Mesh DuplicateMeshGeometry()
     {
-      Mesh rc = this.DuplicateGeometry() as Mesh;
+      Mesh rc = DuplicateGeometry() as Mesh;
       return rc;
     }
 

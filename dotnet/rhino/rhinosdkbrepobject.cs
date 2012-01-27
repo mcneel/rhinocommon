@@ -13,13 +13,13 @@ namespace Rhino.DocObjects
     {
       get
       {
-        Brep rc = this.Geometry as Brep;
+        Brep rc = Geometry as Brep;
         return rc;
       }
     }
     public Brep DuplicateBrepGeometry()
     {
-      Brep rc = this.DuplicateGeometry() as Brep;
+      Brep rc = DuplicateGeometry() as Brep;
       return rc;
     }
 
@@ -39,14 +39,14 @@ namespace Rhino.DocObjects
     {
       get
       {
-        Surface rc = this.Geometry as Surface;
+        Surface rc = Geometry as Surface;
         return rc;
       }
     }
 
     public Surface DuplicateSurfaceGeometry()
     {
-      Surface rc = this.DuplicateGeometry() as Surface;
+      Surface rc = DuplicateGeometry() as Surface;
       return rc;
     }
 

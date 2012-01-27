@@ -14,14 +14,14 @@ namespace Rhino.DocObjects
     {
       get
       {
-        Curve rc = this.Geometry as Curve;
+        Curve rc = Geometry as Curve;
         return rc;
       }
     }
 
     public Curve DuplicateCurveGeometry()
     {
-      Curve rc = this.DuplicateGeometry() as Curve;
+      Curve rc = DuplicateGeometry() as Curve;
       return rc;
     }
 

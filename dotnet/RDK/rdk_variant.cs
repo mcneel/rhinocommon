@@ -266,7 +266,7 @@ namespace Rhino.Render
     #region value getters
     public object AsObject()
     {
-      VariantTypes vt = this.Type;
+      VariantTypes vt = Type;
 
       switch (vt)
       {

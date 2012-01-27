@@ -10,7 +10,7 @@ namespace Rhino.UI
       InitializeComponent();
 
       if (!string.IsNullOrEmpty(title))
-        this.Text = title;
+        Text = title;
       if (!string.IsNullOrEmpty(message))
         m_lblMessage.Text = message;
       if (!string.IsNullOrEmpty(default_text))

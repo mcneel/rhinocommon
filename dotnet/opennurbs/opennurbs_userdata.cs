@@ -12,11 +12,6 @@ namespace Rhino.DocObjects.Custom
     int m_serial_number=-1;
     IntPtr m_pNativePointer = IntPtr.Zero;
 
-    /// <summary>
-    /// Protected constructor for inheriting classes.
-    /// </summary>
-    protected UserData() { }
-
     #region IDisposable implementation
     /// <summary>
     /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
@@ -55,14 +50,13 @@ namespace Rhino.DocObjects.Custom
     }
     #endregion
 
-
     internal virtual IntPtr NonConstPointer(bool createIfMissing)
     {
 #if RHINO_SDK
       if (createIfMissing && IntPtr.Zero == m_pNativePointer)
       {
         m_serial_number = m_next_serial_number++;
-        Type t = this.GetType();
+        Type t = GetType();
         Guid managed_type_id = t.GUID;
         string description = Description;
 

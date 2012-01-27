@@ -22,7 +22,8 @@ namespace Rhino.Collections
     }
 
     #region IDisposable/Pointer handling
-    Rhino.Input.Custom.GetTransform m_parent;
+
+    readonly Rhino.Input.Custom.GetTransform m_parent;
     IntPtr m_ptr;
     internal IntPtr ConstPointer()
     {
@@ -106,7 +107,7 @@ namespace Rhino.Input.Custom
 {
   public abstract class GetTransform : GetPoint
   {
-    public GetTransform() : base(true)
+    protected GetTransform() : base(true)
     {
       IntPtr ptr = UnsafeNativeMethods.CRhinoGetXform_New();
       Construct(ptr);

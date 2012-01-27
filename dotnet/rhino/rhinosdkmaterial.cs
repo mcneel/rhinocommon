@@ -23,14 +23,14 @@ namespace Rhino.DocObjects
     {
       // Creates a new non-document control ON_Material
       IntPtr pMaterial = UnsafeNativeMethods.ON_Material_New(IntPtr.Zero);
-      base.ConstructNonConstObject(pMaterial);
+      ConstructNonConstObject(pMaterial);
     }
 #if RHINO_SDK
     internal Material(int index, RhinoDoc doc)
     {
       m_id = UnsafeNativeMethods.CRhinoMaterialTable_GetMaterialId(doc.m_docId, index);
       m_doc = doc;
-      this.m__parent = m_doc;
+      m__parent = m_doc;
     }
 #endif
 
@@ -46,7 +46,7 @@ namespace Rhino.DocObjects
     }
     private Material(IntPtr pMaterial)
     {
-      base.ConstructNonConstObject(pMaterial);
+      ConstructNonConstObject(pMaterial);
     }
 
     // serialization constructor
@@ -87,7 +87,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        if (!this.IsDocumentControlled)
+        if (!IsDocumentControlled)
           return false;
         IntPtr pConstThis = ConstPointer();
         return UnsafeNativeMethods.CRhinoMaterial_GetBool(pConstThis, idxIsDeleted);
@@ -102,7 +102,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        if (!this.IsDocumentControlled)
+        if (!IsDocumentControlled)
           return false;
         IntPtr pConstThis = ConstPointer();
         return UnsafeNativeMethods.CRhinoMaterial_GetBool(pConstThis, idxIsReference);
@@ -122,7 +122,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        if (!this.IsDocumentControlled)
+        if (!IsDocumentControlled)
           return false;
         IntPtr pConstThis = ConstPointer();
         return UnsafeNativeMethods.CRhinoMaterial_GetBool(pConstThis, idxIsDefaultMaterial);
@@ -136,7 +136,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        if (!this.IsDocumentControlled)
+        if (!IsDocumentControlled)
           return 0;
         IntPtr pConstThis = ConstPointer();
         return UnsafeNativeMethods.CRhinoMaterial_InUse(pConstThis);

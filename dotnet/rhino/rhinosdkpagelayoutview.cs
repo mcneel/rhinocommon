@@ -123,13 +123,13 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    ///  Create a detail view object that is displayed on this page and adds it to the doc.
+    /// Creates a detail view object that is displayed on this page and adds it to the doc.
     /// </summary>
-    /// <param name="title"></param>
-    /// <param name="corner0">corners of the detail view in world coordinates.</param>
-    /// <param name="corner1">corners of the detail view in world coordinates.</param>
-    /// <param name="initialProjection"></param>
-    /// <returns>newly created detail view on success. null on error.</returns>
+    /// <param name="title">The detail view title.</param>
+    /// <param name="corner0">Corners of the detail view in world coordinates.</param>
+    /// <param name="corner1">Corners of the detail view in world coordinates.</param>
+    /// <param name="initialProjection">The defined initial projection type.</param>
+    /// <returns>Newly created detail view on success. null on error.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_addlayout.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_addlayout.cs' lang='cs'/>
@@ -155,7 +155,7 @@ namespace Rhino.Display
     /// <summary>
     /// Gets a list of the detail view objects associated with this layout.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A detail view object array. This can be null, but not empty.</returns>
     public Rhino.DocObjects.DetailViewObject[] GetDetailViews()
     {
       IntPtr pList = UnsafeNativeMethods.CRhinoDetailViewArray_New();

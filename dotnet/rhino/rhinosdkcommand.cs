@@ -39,6 +39,9 @@ namespace Rhino.Commands
     NotUndoable = 16
   }
 
+  /// <summary>
+  /// Provides enumerated constants for a command running mode. This is currently interactive or scripted.
+  /// </summary>
   public enum RunMode : int
   {
     /// <summary>

@@ -345,12 +345,12 @@ namespace Rhino.Geometry
     //David: this function is disabled in the public SDK until I can get it to work right.
     /// <summary>
     /// </summary>
-    /// <param name="points"></param>
-    /// <param name="degree"></param>
-    /// <param name="startTangent"></param>
-    /// <param name="endTangent"></param>
-    /// <param name="fittingTolerance"></param>
-    /// <returns></returns>
+    /// <param name="points">-</param>
+    /// <param name="degree">-</param>
+    /// <param name="startTangent">-</param>
+    /// <param name="endTangent">-</param>
+    /// <param name="fittingTolerance">-</param>
+    /// <returns>-</returns>
     [System.ComponentModel.Browsable(false), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public static Curve CreateFittedCurve(IEnumerable<Point3d> points, int degree, Vector3d startTangent, Vector3d endTangent, double fittingTolerance)
     {

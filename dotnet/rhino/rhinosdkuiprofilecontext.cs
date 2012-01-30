@@ -17,6 +17,7 @@ namespace Rhino
   //////////////////////////////////////////////////////////////////////////////////////////////
   /// <summary>
   /// PersistentSettings contains a dictionary of these items.
+  /// An instance of this class contains two items: the default value of a setting and the current setting.
   /// </summary>
   class SettingValue : ISerializable
   {
@@ -70,18 +71,18 @@ namespace Rhino
     /// <summary>
     /// Determines if two SettingsValue have the same data. Does not compare default values.
     /// </summary>
-    /// <param name="other"></param>
-    /// <returns></returns>
+    /// <param name="other">The other value.</param>
+    /// <returns>true if this and other setting have the same value, without comparing the default. Otherwise, false.</returns>
     public bool ValuesAreEqual(SettingValue other)
     {
       return ValuesAreEqual(other, false);
     }
     /// <summary>
-    /// Determines if two SettingsValues have the same data and optionally compare default data.
+    /// Determines if two SettingsValues have the same data and optionally compares default data.
     /// </summary>
-    /// <param name="other"></param>
-    /// <param name="compareDefaults"></param>
-    /// <returns></returns>
+    /// <param name="other">The other value.</param>
+    /// <param name="compareDefaults">true if the default value should be compared.</param>
+    /// <returns>true if this and other setting have the same value, optionally comparing the default. Otherwise, false.</returns>
     public bool ValuesAreEqual(SettingValue other, bool compareDefaults)
     {
       if (null == other)
@@ -547,9 +548,9 @@ namespace Rhino
   }
   //////////////////////////////////////////////////////////////////////////////////////////////
   /// <summary>
-  /// 
+  /// Represents the persistent settings modification event arguments.
   /// </summary>
-  /// <typeparam name="T"></typeparam>
+  /// <typeparam name="T">The type of the current and new setting that is being modified.</typeparam>
   public class PersistentSettingsEventArgs<T> : PersistentSettingsEventArgs
   {
     public PersistentSettingsEventArgs(T currentValue, T newValue)
@@ -1255,8 +1256,8 @@ namespace Rhino
     /// Including a item with the value of StringListRootKey will cause the ProgramData value to get inserted at
     /// that location in the list when calling GetStringList.
     /// </summary>
-    /// <param name="key"></param>
-    /// <param name="value"></param>
+    /// <param name="key">The string key.</param>
+    /// <param name="value">An array of values to set.</param>
     public void SetStringList(string key, string[] value)
     {
       GetValue(key).SetStringList(false, value, GetValidator(key));
@@ -1419,7 +1420,6 @@ namespace Rhino
     /// first and if then check the defaults list and make sure the entry is in the list before setting the 
     /// default value.
     /// </summary>
-    /// <param name="nodeRoot"></param>
     internal void ParseXmlNodes(XmlNode nodeRoot)
     {
       if (null != m_Settings && null != nodeRoot)
@@ -1443,11 +1443,7 @@ namespace Rhino
         }
       }
     }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="node"></param>
-    /// <returns></returns>
+
     private string[] XmlNodeToStringArray(XmlNode node)
     {
       if (null == node)
@@ -1480,20 +1476,17 @@ namespace Rhino
     /// Main settings element id attribute value, used to query valid settings section in settings XML file.
     /// </summary>
     private const string CURRENT_XML_FORMAT_VERSION = "1.0";
+
     /// <summary>
-    /// Compute folder to read or write settings files.
+    /// Computes folder to read or write settings files.
     /// </summary>
-    /// <param name="localSettings"></param>
-    /// <returns></returns>
     private string SettingsFileFolder(bool localSettings)
     {
       return Rhino.PlugIns.PlugIn.SettingsDirectoryHelper(localSettings, this.m_assembly);
     }
     /// <summary>
-    /// Compute full path to settings file to read or write.
+    /// Computes full path to settings file to read or write.
     /// </summary>
-    /// <param name="localSettings"></param>
-    /// <returns></returns>
     private string SettingsFileName(bool localSettings)
     {
       return Path.Combine(SettingsFileFolder(localSettings), "settings.xml");
@@ -1544,10 +1537,7 @@ namespace Rhino
       m_CommandSettingsDict[name] = new PersistentSettings(this.AllUserCommandSettings(name));
       return m_CommandSettingsDict[name];
     }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
+
     public bool ReadSettings()
     {
       bool result = false;
@@ -1739,10 +1729,7 @@ namespace Rhino
             return true; // This command's settings have been modified
       return false;
     }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
+
     internal bool WriteSettings()
     {
       // The following, commented out code, would attempt to write to the All Users (global) file first, if that succeeded then the
@@ -1761,10 +1748,7 @@ namespace Rhino
       // function for more information.
       return this.WriteSettingsHelper(true);
     }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="localSettings"></param>
+
     private void DeleteSettingsFile(bool localSettings)
     {
       string settingsFileName = SettingsFileName(localSettings);
@@ -1856,8 +1840,6 @@ namespace Rhino
     /// Only writes PersistentSettings that contain one or more item with a value that differs
     /// from the default value.
     /// </summary>
-    /// <param name="outputFolder"></param>
-    /// <returns></returns>
     private string WriteTempFile(string outputFolder)
     {
       string fileName = null;

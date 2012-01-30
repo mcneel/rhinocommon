@@ -139,8 +139,8 @@ namespace Rhino.Render
     /// <param name="instanceId">Sets the initially selected content and receives the instance id of the chosen content.</param>
     /// <param name="kinds">Specifies the kind(s) of content that should be displayed in the chooser.</param>
     /// <param name="flags">Specifies flags controlling the browser.</param>
-    /// <param name="doc"></param>
-    /// <returns></returns>
+    /// <param name="doc">A Rhino document.</param>
+    /// <returns>true if the operation succeeded.</returns>
     public static bool ChooseContent(ref Guid instanceId, RenderContentKind kinds, ChooseContentFlags flags, RhinoDoc doc)
     {
       return 1 == UnsafeNativeMethods.Rdk_Globals_ChooseContentEx(ref instanceId, RenderContent.KindString(kinds), (int)flags, doc.m_docId);
@@ -187,10 +187,10 @@ namespace Rhino.Render
     public static bool IsGroundPlaneVisible  { get { return 1==UnsafeNativeMethods.Rdk_Globals_IsGroundPlaneVisible(); } }
         
     /// <summary>
-    /// Constructs a new basic material from an ON_Material.
+    /// Constructs a new basic material from a <see cref="Rhino.DocObjects.Material">Material</see>.
     /// </summary>
     /// <param name="material">The material to create the basic material from.</param>
-    /// <returns></returns>
+    /// <returns>A new basic material.</returns>
     public static RenderMaterial NewBasicMaterial(Rhino.DocObjects.Material material)
     {
       NativeRenderMaterial newMaterial = RenderContent.FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicMaterial(material == null ? IntPtr.Zero : material.ConstPointer())) as NativeRenderMaterial;
@@ -199,10 +199,10 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Constructs a new basic environment from a SimulatedEnvironment.
+    /// Constructs a new <see cref="RenderEnvironment"/> from a <see cref="SimulatedEnvironment"/>.
     /// </summary>
     /// <param name="environment">The environment to create the basic environment from.</param>
-    /// <returns></returns>
+    /// <returns>A new basic environment.</returns>
     public static RenderEnvironment NewBasicEnvironment(SimulatedEnvironment environment)
     {
       NativeRenderEnvironment newEnvironment = RenderContent.FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicEnvironment(environment == null ? IntPtr.Zero : environment.ConstPointer())) as NativeRenderEnvironment;
@@ -214,7 +214,7 @@ namespace Rhino.Render
     /// Constructs a new basic texture from a SimulatedTexture.
     /// </summary>
     /// <param name="texture">The texture to create the basic texture from.</param>
-    /// <returns></returns>
+    /// <returns>A new render texture.</returns>
     public static RenderTexture NewBitmapTexture(SimulatedTexture texture)
     {
       NativeRenderTexture newTexture = RenderContent.FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicTexture(texture == null ? IntPtr.Zero : texture.ConstPointer())) as NativeRenderTexture;
@@ -235,10 +235,10 @@ namespace Rhino.Render
 	  /// Content created by this function is owned by RDK and appears in the content editor.
 	  /// To create a temporary content which is owned by you, call RhRdkContentFactories().NewContentFromType().
     /// </summary>
-    /// <param name="type">is the type of the content to add.</param>
-    /// <param name="flags"></param>
-    /// <param name="doc"></param>
-    /// <returns></returns>
+    /// <param name="type">Is the type of the content to add.</param>
+    /// <param name="flags">Options for the tab.</param>
+    /// <param name="doc">The current Rhino document.</param>
+    /// <returns>A new persistent render content.</returns>
     public static RenderContent CreateContentByType(Guid type, ShowContentChooserFlags flags, Rhino.RhinoDoc doc)
     {
       IntPtr pContent = UnsafeNativeMethods.Rdk_Globals_CreateContentByType(type, IntPtr.Zero, String.Empty, (int)flags, doc.m_docId);
@@ -256,9 +256,9 @@ namespace Rhino.Render
     /// in the persistent content list (either top-level or child). The new content then becomes its child.
     /// If NULL, the new content is added to the top-level content list instead.</param>
     /// <param name="childSlotName">ChildSlotName is the unique child identifier to use for the new content when creating it as a child of pParent (i.e., when pParent is not NULL)</param>
-    /// <param name="flags"></param>
-    /// <param name="doc"></param>
-    /// <returns></returns>
+    /// <param name="flags">Options for the tab.</param>
+    /// <param name="doc">The current Rhino document.</param>
+    /// <returns>A new persistent render content.</returns>
     public static RenderContent CreateContentByType(Guid type, RenderContent parent, String childSlotName, ShowContentChooserFlags flags, Rhino.RhinoDoc doc)
     {
       IntPtr pContent = UnsafeNativeMethods.Rdk_Globals_CreateContentByType(type, parent.ConstPointer(), childSlotName, (int)flags, doc.m_docId);
@@ -273,9 +273,9 @@ namespace Rhino.Render
     /// <param name="defaultType">The default content type.</param>
     /// <param name="defaultInstance">The default selected content instance.</param>
     /// <param name="kinds">Determines which content kinds are allowed to be chosen from the dialog.</param>
-    /// <param name="flags"></param>
-    /// <param name="doc"></param>
-    /// <returns></returns>
+    /// <param name="flags">Options for the tab.</param>
+    /// <param name="doc">The current Rhino document.</param>
+    /// <returns>A new persistent render content.</returns>
     public static RenderContent CreateContentByUser(Guid defaultType, Guid defaultInstance, RenderContentKind kinds, ChooseContentFlags flags, RhinoDoc doc)
     {
       IntPtr pContent = UnsafeNativeMethods.Rdk_Globals_CreateContentByUser(defaultType, defaultInstance, RenderContent.KindString(kinds), (int)flags, doc.m_docId);
@@ -283,13 +283,13 @@ namespace Rhino.Render
     }
     
     /// <summary>
-    /// Change the type of a content. This deletes the content and creates a replacement
+    /// Changes the type of a content. This deletes the content and creates a replacement
 	  /// of the specified type allowing the caller to decide about harvesting.
     /// </summary>
     /// <param name="oldContent">oldContent is the old content which is deleted.</param>
     /// <param name="newType">The type of content to replace pOldContent with.</param>
     /// <param name="harvestParameters">Determines whether or not parameter harvesting will be performed.</param>
-    /// <returns></returns>
+    /// <returns>A new persistent render content.</returns>
     public static RenderContent ChangeContentType(RenderContent oldContent, Guid newType, bool harvestParameters)
     {
       IntPtr pContent = UnsafeNativeMethods.Rdk_Globals_ChangeContentType(oldContent.NonConstPointer(), newType, harvestParameters);
@@ -297,55 +297,55 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Access to the material table.
+    /// Accesses the material table.
     /// </summary>
-    /// <param name="doc"></param>
-    /// <returns></returns>
+    /// <param name="doc">A Rhino document.</param>
+    /// <returns>The materials list.</returns>
     public static ContentList MaterialList(RhinoDoc doc)
     {
       return new ContentList(RenderContentKind.Material, doc);
     }
 
     /// <summary>
-    /// Access to the environment table.
+    /// Accesses the environment table.
     /// </summary>
-    /// <param name="doc"></param>
-    /// <returns></returns>
+    /// <param name="doc">A Rhino document.</param>
+    /// <returns>The environments list.</returns>
     public static ContentList EnvironmentList(RhinoDoc doc)
     {
       return new ContentList(RenderContentKind.Environment, doc);
     }
 
     /// <summary>
-    /// Access to the texture table.
+    /// Accesses the texture table.
     /// </summary>
-    /// <param name="doc"></param>
-    /// <returns></returns>
+    /// <param name="doc">A Rhino document.</param>
+    /// <returns>The textures list.</returns>
     public static ContentList TextureList(RhinoDoc doc)
     {
       return new ContentList(RenderContentKind.Texture, doc);
     }
 
     /// <summary>
-    /// Access to any content table given a (single) kind.
+    /// Accesses any content table given a (single) kind.
     /// </summary>
-    /// <param name="kind"></param>
-    /// <param name="doc"></param>
-    /// <returns></returns>
+    /// <param name="kind">A single kind.</param>
+    /// <param name="doc">A Rhino document.</param>
+    /// <returns>The (render content kind) list.</returns>
     public static ContentList ContentList(RenderContentKind kind, RhinoDoc doc)
     {
       return new ContentList(kind, doc);
     }
 
     /// <summary>
-    /// Prompt the user for a save file name and the width, height and depth of an image to be saved.
+    /// Prompts the user for a save file name and the width, height and depth of an image to be saved.
     /// </summary>
-    /// <param name="filename"></param>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
-    /// <param name="colorDepth"></param>
-    /// <returns></returns>
-    public static String PromptForSaveImageFileParameters(String filename, ref int width, ref int height, ref int colorDepth)
+    /// <param name="filename">The original file path.</param>
+    /// <param name="width">A width.</param>
+    /// <param name="height">An height.</param>
+    /// <param name="colorDepth">A color depth.</param>
+    /// <returns>The new file name.</returns>
+    public static string PromptForSaveImageFileParameters(string filename, ref int width, ref int height, ref int colorDepth)
     {
       using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
       {
@@ -391,8 +391,8 @@ namespace Rhino.Render
     /// RenderContent::MakeCopy, NewContentFromType or a similar function that returns a non-document
     /// content.
     /// </summary>
-    /// <param name="renderContent"></param>
-    /// <returns></returns>
+    /// <param name="renderContent">The render content.</param>
+    /// <returns>true on success.</returns>
     public static bool AddPersistentRenderContent(RenderContent renderContent)
     {
       renderContent.AutoDelete = false;
@@ -424,22 +424,23 @@ namespace Rhino.Render
     /// </summary>
     /// <param name="defaultType">The content type that will be initially selected in the 'New' tab.</param>
     /// <param name="defaultInstanceId">The content instance that will be initially selected in the 'Existing' tab.</param>
-    /// <param name="kinds">Specifies which content kinds will be displayed.</param>
-    /// <param name="instanceIdOut">accepts the UUID of the chosen item. Depending on eRhRdkSccResult, this can be the type id of a content type or the instance id of an existing content.</param>
-    /// <param name="flags"></param>
-    /// <param name="doc"></param>
-    /// <returns></returns>
+    /// <param name="kinds">Which content kinds will be displayed.</param>
+    /// <param name="instanceIdOut">The UUID of the chosen item. Depending on eRhRdkSccResult, this can be the type id of a content type or the instance id of an existing content.</param>
+    /// <param name="flags">Tabs specifications.</param>
+    /// <param name="doc">A Rhino document.</param>
+    /// <returns>The result.</returns>
     public static ShowContentChooserResults ShowContentChooser(Guid defaultType, Guid defaultInstanceId, RenderContentKind kinds, ref Guid instanceIdOut, ShowContentChooserFlags flags, RhinoDoc doc)
     {
       return (ShowContentChooserResults)UnsafeNativeMethods.Rdk_Globals_ShowContentChooser(defaultType, defaultInstanceId, RenderContent.KindString(kinds), ref instanceIdOut, (int)flags, doc.m_docId);
     }
 
     /// <summary>
-    /// Replacement for CRhinoFileUtilities::FindFile() which also handles network shares.
+    /// Finds a file and also handles network shares.
+    /// <remarks>This is a replacement for CRhinoFileUtilities::FindFile().</remarks>
     /// </summary>
     /// <param name="fullPathToFile"></param>
     /// <returns></returns>
-    public static String FindFile(String fullPathToFile)
+    public static string FindFile(string fullPathToFile)
     {
       using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
       {
@@ -451,7 +452,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Determine if any texture in any persistent content list is using the specified file name for caching.
+    /// Determines if any texture in any persistent content list is using the specified file name for caching.
     /// </summary>
     /// <param name="textureFileName">The file name to check for. The extension is ignored.</param>
     /// <returns></returns>

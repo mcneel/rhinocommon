@@ -186,8 +186,6 @@ namespace Rhino.PlugIns
     /// <summary>
     /// Only searches through list of RhinoCommon plug-ins.
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
     internal static PlugIn GetLoadedPlugIn(Guid id)
     {
       PlugIn rc = null;
@@ -223,8 +221,9 @@ namespace Rhino.PlugIns
     /// <summary>
     /// Finds the plug-in instance that was loaded from a given assembly.
     /// </summary>
-    /// <param name="pluginAssembly"></param>
-    /// <returns></returns>
+    /// <param name="pluginAssembly">The plug-in assembly.
+    /// <para>You can get the assembly instance at runtime with the <see cref="System.Type.Assembly"/> instance property.</para></param>
+    /// <returns>The assembly plug-in instance if successful. Otherwise, null.</returns>
     public static PlugIn Find(System.Reflection.Assembly pluginAssembly)
     {
       if (null == pluginAssembly)
@@ -503,7 +502,8 @@ namespace Rhino.PlugIns
     /// If a load error is returned and this string is set. This string is the 
     /// error message that will be reported back to the user.
     /// </param>
-    /// <returns></returns>
+    /// <returns>An appropriate load return code.
+    /// <para>The default implementation returns <see cref="LoadReturnCode.Success"/>.</para></returns>
     protected virtual LoadReturnCode OnLoad(ref string errorMessage)
     {
       return LoadReturnCode.Success;
@@ -609,7 +609,7 @@ namespace Rhino.PlugIns
     /// saved in a version 5 .3dm file, then you must override this
     /// function to return true and you must override WriteDocument().
     /// </summary>
-    /// <param name="options"></param>
+    /// <param name="options">The file write options, such as "include preview image" and "include render meshes".</param>
     /// <returns>
     /// true if the plug-in wants to save document user data in the
     /// version 5 .3dm file.  The default returns false.
@@ -623,7 +623,7 @@ namespace Rhino.PlugIns
     /// Called when Rhino is saving a .3dm file to allow the plug-in
     /// to save document user data.
     /// </summary>
-    /// <param name="doc"></param>
+    /// <param name="doc">The Rhino document instance that is being saved.</param>
     /// <param name="archive">
     /// OpenNURBS file archive object Rhino is using to write the file.
     /// Use BinaryArchiveWriter.Write*() functions to write plug-in data.
@@ -633,7 +633,7 @@ namespace Rhino.PlugIns
     /// then archive.WriteErrorOccured will be true and you should immediately return.
     /// Setting archive.WriteErrorOccured to true will cause Rhino to stop saving the file.
     /// </param>
-    /// <param name="options"></param>
+    /// <param name="options">The file write options, such as "include preview image" and "include render meshes".</param>
     protected virtual void WriteDocument(Rhino.RhinoDoc doc, Rhino.FileIO.BinaryArchiveWriter archive, Rhino.FileIO.FileWriteOptions options)
     {
     }
@@ -642,7 +642,7 @@ namespace Rhino.PlugIns
     /// Called whenever a Rhino document is being loaded and plug-in user data was
     /// encountered written by a plug-in with this plug-in's GUID.
     /// </summary>
-    /// <param name="doc"></param>
+    /// <param name="doc">A Rhino document that is being loaded.</param>
     /// <param name="archive">
     /// OpenNURBS file archive object Rhino is using to read this file.
     /// Use BinaryArchiveReader.Read*() functions to read plug-in data.
@@ -874,11 +874,11 @@ namespace Rhino.PlugIns
     /// Gets a list of installed plug-in names.  The list can be restricted by some filters.
     /// </summary>
     /// <param name="typeFilter">
-    /// 
+    /// The enumeration flags that determine which types of plug-ins are included.
     /// </param>
-    /// <param name="loaded"></param>
-    /// <param name="unloaded"></param>
-    /// <returns></returns>
+    /// <param name="loaded">true if loaded plug-ins are returned.</param>
+    /// <param name="unloaded">true if unloaded plug-ins are returned.</param>
+    /// <returns>An array of installed plug-in names. This can be empty, but not null.</returns>
     public static string[] GetInstalledPlugInNames(PlugInType typeFilter, bool loaded, bool unloaded)
     {
       int count = InstalledPlugInCount;
@@ -925,8 +925,8 @@ namespace Rhino.PlugIns
     /// <summary>
     /// Gets a plug-in name for an installed plug-in given the path to that plug-in.
     /// </summary>
-    /// <param name="pluginPath"></param>
-    /// <returns></returns>
+    /// <param name="pluginPath">The path of the plug-in.</param>
+    /// <returns>The plug-in name.</returns>
     public static string NameFromPath(string pluginPath)
     {
       string rc = null;
@@ -981,8 +981,8 @@ namespace Rhino.PlugIns
     /// <summary>
     /// Gets names of all "non-test" commands for a given plug-in.
     /// </summary>
-    /// <param name="pluginId"></param>
-    /// <returns></returns>
+    /// <param name="pluginId">The plug-in ID.</param>
+    /// <returns>An array with all plug-in names. This can be empty, but not null.</returns>
     public static string[] GetEnglishCommandNames(Guid pluginId)
     {
       IntPtr pStrings = UnsafeNativeMethods.ON_StringArray_New();
@@ -1342,10 +1342,10 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Return true if your renderer supports the specific feature.
+    /// Determines if your renderer supports a specific feature.
     /// </summary>
-    /// <param name="feature"></param>
-    /// <returns></returns>
+    /// <param name="feature">A feature to be controlled.</param>
+    /// <returns>true if the renderer indeed supports the feature.</returns>
     protected virtual bool SupportsFeature(RenderFeature feature)
     {
       return true;
@@ -1354,7 +1354,7 @@ namespace Rhino.PlugIns
 
 #if RDK_UNCHECKED
     /// <summary>
-    /// Create the preview bitmap that will appear in the content editor's
+    /// Creates the preview bitmap that will appear in the content editor's
     /// thumbnail display when previewing materials and environments. If this
     /// function is not overridden or the PreviewImage is not set on the
     /// args, then the internal OpenGL renderer will generate a simulation of
@@ -1370,7 +1370,7 @@ namespace Rhino.PlugIns
     protected virtual void CreatePreview(CreatePreviewEventArgs args) { }
 
     /// <summary>
-    /// Create the preview bitmap that will appear in the content editor's
+    /// Creates the preview bitmap that will appear in the content editor's
     /// thumbnail display when previewing textures in 2d (UV) mode.
     ///
     /// If this function is not overridden or the PreviewImage is not set on the
@@ -1390,8 +1390,8 @@ namespace Rhino.PlugIns
     protected virtual bool AllowChooseContent(Rhino.Render.RenderContent content) { return true; }
 
     /// <summary>
-    /// Override to return a list of output types which your renderer can write.
-    /// The default implementation returns bmp, jpg, png, tif, tga.
+    /// Returns a list of output types which your renderer can write.
+    /// <para>The default implementation returns bmp, jpg, png, tif, tga.</para>
     /// </summary>
     /// <returns></returns>
     protected virtual List<Rhino.FileIO.FileType> SupportedOutputTypes()
@@ -1703,10 +1703,10 @@ namespace Rhino.PlugIns
     /// <summary>
     /// Called by Render and RenderPreview commands if this plug-in is set as the default render engine. 
     /// </summary>
-    /// <param name="doc"></param>
-    /// <param name="mode"></param>
+    /// <param name="doc">A document.</param>
+    /// <param name="mode">A command running mode.</param>
     /// <param name="fastPreview">If true, lower quality faster render expected.</param>
-    /// <returns></returns>
+    /// <returns>If true, then the renderer is reuired to construct a rapid preview and not the high-quality final result.</returns>
     protected abstract Rhino.Commands.Result Render(RhinoDoc doc, Rhino.Commands.RunMode mode, bool fastPreview);
 
     protected abstract Rhino.Commands.Result RenderWindow(RhinoDoc doc, Rhino.Commands.RunMode modes, bool fastPreview, Rhino.Display.RhinoView view, System.Drawing.Rectangle rect, bool inWindow);
@@ -1813,9 +1813,9 @@ namespace Rhino.PlugIns
     /// Rhino will not calibrate the digitizer.
     /// </summary>
     /// <param name="enable">
-    /// If true, enable the digitizer.  If false, disable the digitizer.
+    /// If true, enable the digitizer. If false, disable the digitizer.
     /// </param>
-    /// <returns></returns>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
     protected abstract bool EnableDigitizer(bool enable);
 
     /// <summary>
@@ -1843,8 +1843,8 @@ namespace Rhino.PlugIns
     /// </summary>
     /// <param name="point">3d point in digitizer coordinates.</param>
     /// <param name="mousebuttons">corresponding digitizer button is down.</param>
-    /// <param name="shiftKey"></param>
-    /// <param name="controlKey"></param>
+    /// <param name="shiftKey">true if the Shift keyboard key was pressed. Otherwise, false.</param>
+    /// <param name="controlKey">true if the Control keyboard key was pressed. Otherwise, false.</param>
     public void SendPoint(Rhino.Geometry.Point3d point, System.Windows.Forms.MouseButtons mousebuttons, bool shiftKey, bool controlKey)
     {
       uint flags = CreateFlags(mousebuttons, shiftKey, controlKey);

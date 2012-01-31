@@ -10,7 +10,7 @@ namespace Rhino.Render
   sealed class RdkPlugIn : IDisposable
   {
     #region statics
-    static bool m_callbacks_set = false;
+    static bool m_callbacks_set;
     internal static void SetRdkCallbackFunctions(bool on)
     {
       // All of the RDK callback functions - gets called every time a new RdkPlugIn is created
@@ -21,7 +21,7 @@ namespace Rhino.Render
         UnsafeNativeMethods.Rdk_SetNewEnvironmentCallback(Rhino.Render.RenderEnvironment.m_NewEnvironment);
 
         UnsafeNativeMethods.Rdk_SetRenderContentDeleteThisCallback(RenderContent.m_DeleteThis);
-        UnsafeNativeMethods.Rdk_SetContentStringCallback(Rhino.Render.RenderTexture.m_GetRenderContentString);
+        UnsafeNativeMethods.Rdk_SetContentStringCallback(Rhino.Render.RenderContent.m_GetRenderContentString);
         UnsafeNativeMethods.Rdk_SetNewTextureEvaluatorCallback(Rhino.Render.RenderTexture.m_NewTextureEvaluator);
         UnsafeNativeMethods.Rdk_SetTextureEvaluatorCallbacks(TextureEvaluator.m_GetColor, TextureEvaluator.m_OnDeleteThis);
         UnsafeNativeMethods.Rdk_SetSimulateTextureCallback(Rhino.Render.RenderTexture.m_SimulateTexture);
@@ -85,7 +85,7 @@ namespace Rhino.Render
       }
     }
 
-    static List<RdkPlugIn> m_all_rdk_plugins = new List<RdkPlugIn>();
+    static readonly List<RdkPlugIn> m_all_rdk_plugins = new List<RdkPlugIn>();
 
     public static RdkPlugIn GetRdkPlugIn(Rhino.PlugIns.PlugIn plugin)
     {
@@ -163,7 +163,7 @@ namespace Rhino.Render
       for (int i = 0; i < m_all_rdk_plugins.Count; i++)
       {
         RdkPlugIn rdk = m_all_rdk_plugins[i];
-        Type found_t = rdk.m_render_content_types.Find(delegate(Type t) { return t.GUID == id; });
+        Type found_t = rdk.m_render_content_types.Find(t => t.GUID == id);
         if (found_t != null)
         {
           plugin_id = rdk.m_rhino_plugin_id;
@@ -175,9 +175,9 @@ namespace Rhino.Render
 
     #endregion
 
-    Guid m_rhino_plugin_id;
-    IntPtr m_pRdkPlugIn = IntPtr.Zero;
-    List<Type> m_render_content_types = new List<Type>();
+    readonly Guid m_rhino_plugin_id;
+    readonly IntPtr m_pRdkPlugIn = IntPtr.Zero;
+    readonly List<Type> m_render_content_types = new List<Type>();
     private RdkPlugIn(IntPtr pRdkPlugIn, Guid rhinoPlugInId)
     {
       m_pRdkPlugIn = pRdkPlugIn;
@@ -205,7 +205,7 @@ namespace Rhino.Render
       GC.SuppressFinalize(this);
     }
 
-    private bool disposed = false;
+    private bool disposed ;
     private void Dispose(bool disposing)
     {
       if (!disposed)

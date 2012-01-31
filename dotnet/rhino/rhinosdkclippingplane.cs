@@ -1,5 +1,4 @@
 #pragma warning disable 1591
-using System;
 
 #if RHINO_SDK
 namespace Rhino.DocObjects
@@ -22,7 +21,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        Rhino.Geometry.ClippingPlaneSurface rc = this.Geometry as Rhino.Geometry.ClippingPlaneSurface;
+        Rhino.Geometry.ClippingPlaneSurface rc = Geometry as Rhino.Geometry.ClippingPlaneSurface;
         return rc;
       }
     }

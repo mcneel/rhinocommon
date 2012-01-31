@@ -23,6 +23,7 @@ namespace examples_cs
       int option_size = go.AddOptionDouble("Size", ref size_option);
       int option_space = go.AddOptionToggle("DrawSpace", ref space_option);
       int option_go = go.AddOption("Spin");
+      int option_file = go.AddOption("FileSprite");
 
       Rhino.Display.DisplayPipeline.PostDrawObjects += new EventHandler<Rhino.Display.DrawEventArgs>(DisplayPipeline_PostDrawObjects);
       Rhino.Display.DisplayPipeline.CalculateBoundingBox += new EventHandler<Rhino.Display.CalculateBoundingBoxEventArgs>(DisplayPipeline_CalculateBoundingBox);
@@ -45,6 +46,16 @@ namespace examples_cs
             vp.Rotate(0.1, Vector3d.ZAxis, Point3d.Origin);
             doc.Views.Redraw();
           }
+        }
+        else if (go.OptionIndex() == option_file)
+        {
+          System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
+          if (dlg.ShowDialog(RhinoApp.MainWindow()) == System.Windows.Forms.DialogResult.OK)
+          {
+            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(dlg.FileName);
+            m_sprite = new Rhino.Display.DisplayBitmap(bmp);
+          }
+          doc.Views.Redraw();
         }
         else
           doc.Views.Redraw();
@@ -75,9 +86,9 @@ namespace examples_cs
       if (m_draw_single_sprite)
       {
         if (m_draw_world_location)
-          e.Display.DrawSprite(spr, new Point3d(20, 0, 0), m_sprite_size, System.Drawing.Color.Red, false);
+          e.Display.DrawSprite(spr, new Point3d(20, 0, 0), m_sprite_size, System.Drawing.Color.White, false);
         else
-          e.Display.DrawSprite(spr, new Point2d(150, 150), m_sprite_size, System.Drawing.Color.Red);
+          e.Display.DrawSprite(spr, new Point2d(150, 150), m_sprite_size, System.Drawing.Color.White);
       }
       else
       {

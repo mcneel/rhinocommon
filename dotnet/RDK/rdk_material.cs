@@ -1,8 +1,6 @@
 #pragma warning disable 1591
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using Rhino.Geometry;
 
 #if RDK_UNCHECKED
 namespace Rhino.Render
@@ -91,14 +89,12 @@ namespace Rhino.Render
         }
         return GetString(iString);
       }
-      else
+
+      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
       {
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
-        {
-          IntPtr pString = sh.NonConstPointer();
-          UnsafeNativeMethods.Rdk_RenderMaterial_CallTextureChildSlotNameBase(ConstPointer(), pString, (int)slot);
-          return sh.ToString();
-        }
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.Rdk_RenderMaterial_CallTextureChildSlotNameBase(ConstPointer(), pString, (int)slot);
+        return sh.ToString();
       }
     }
 

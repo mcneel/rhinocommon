@@ -929,7 +929,7 @@ namespace Rhino.PlugIns
     /// <returns>The plug-in name.</returns>
     public static string NameFromPath(string pluginPath)
     {
-      string rc = null;
+      string rc;
       using (StringHolder sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
@@ -943,7 +943,7 @@ namespace Rhino.PlugIns
         // and the plug-in hasn't officially been registered with Rhino.
         for (int i = 0; i < m_plugins.Count; i++)
         {
-          if (string.Compare(m_plugins[i].Assembly.Location, pluginPath, true) == 0)
+          if (string.Compare(m_plugins[i].Assembly.Location, pluginPath, StringComparison.OrdinalIgnoreCase) == 0)
           {
             rc = m_plugins[i].Name;
             break;
@@ -1997,43 +1997,56 @@ namespace Rhino.PlugIns
       if (null == validateDelegate)
         return false;
 
-      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-      if (null == zooAss)
+      // 26 Jan 2012 - S. Baer (RR 97943)
+      // We were able to get this function to thrown exceptions with a bogus license file, but
+      // don't quite understand exactly where the problem was occuring.  Adding a ExceptionReport
+      // to this function in order to try and log the exception before Rhino goes down in a blaze
+      // of glory
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
+
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
+
+        System.Reflection.MethodInfo mi = t.GetMethod("GetLicense");
+        if (mi == null)
+          return false;
+
+        // If this delegate is defined in a C++ plug-in, find the plug-in's descriptive
+        // information from the Rhino_DotNet wrapper class which is the delegate's target.
+
+        System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
+        System.Reflection.Assembly rhDotNet = HostUtils.GetRhinoDotNetAssembly();
+        if (delegate_method.Module.Assembly != rhDotNet)
+          return false;
+
+        object wrapper_class = validateDelegate.Target;
+        if (null == wrapper_class)
+          return false;
+
+        Type wrapper_type = wrapper_class.GetType();
+        System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
+        System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
+        System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
+        string productPath = get_path_method.Invoke(wrapper_class, null) as string;
+        string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
+        Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
+
+        object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productType, productTitle, validateDelegate });
+        if (null == invoke_rc)
+          return false;
+
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
         return false;
-
-      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-      if (t == null)
-        return false;
-
-      System.Reflection.MethodInfo mi = t.GetMethod("GetLicense");
-      if (mi == null)
-        return false;
-
-      // If this delegate is defined in a C++ plug-in, find the plug-in's descriptive
-      // information from the Rhino_DotNet wrapper class which is the delegate's target.
-
-      System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
-      System.Reflection.Assembly rhDotNet = HostUtils.GetRhinoDotNetAssembly();
-      if (delegate_method.Module.Assembly != rhDotNet)
-        return false;
-
-      object wrapper_class = validateDelegate.Target;
-      if (null == wrapper_class)
-        return false;
-
-      Type wrapper_type = wrapper_class.GetType();
-      System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
-      System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
-      System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
-      string productPath = get_path_method.Invoke(wrapper_class, null) as string;
-      string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
-      Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
-
-      object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productType, productTitle, validateDelegate });
-      if (null == invoke_rc)
-        return false;
-
-      return (bool)invoke_rc;
+      }
     }
 
     /// <summary>
@@ -2284,17 +2297,21 @@ namespace Rhino.PlugIns
     }
   }
 
-  /// <summary>
-  /// ValidateProductKeyDelegate result code.
-  /// </summary>
+  /// <summary>ValidateProductKeyDelegate result code.</summary>
   public enum ValidateResult : int
   {
-    Success = 1,          // The product key or license is validated successfully.
-    ErrorShowMessage = 0, // There was an error validating the product key or license,
-                          //   the license manager show an error message.
-    ErrorHideMessage = -1 // There was an error validating the product key or license,
-                          //   the validating delegate will show an error message,
-                          //   not the license manager.
+    /// <summary>The product key or license is validated successfully.</summary>
+    Success = 1,
+    /// <summary>
+    /// There was an error validating the product key or license, the license
+    /// manager show an error message.
+    /// </summary>
+    ErrorShowMessage = 0,
+    /// <summary>
+    /// There was an error validating the product key or license. The validating
+    /// delegate will show an error message, not the license manager.
+    /// </summary>
+    ErrorHideMessage = -1
   }
 
   /// <summary>
@@ -2302,29 +2319,22 @@ namespace Rhino.PlugIns
   /// </summary>
   public delegate ValidateResult ValidateProductKeyDelegate(string productKey, out LicenseData licenseData);
 
-  /// <summary>
-  /// License build type enumerations.
-  /// </summary>
+  /// <summary>License build type enumerations.</summary>
   public enum LicenseBuildType
   {
-    Release = 100,      // A release build (e.g. commercical, education, nfr, etc.)
-    Evaluation = 200,   // A evaluation build
-    Beta = 300          // A beta build (e.g. wip)
+    /// <summary>A release build (e.g. commercical, education, nfr, etc.)</summary>
+    Release = 100,
+    /// <summary>A evaluation build</summary>
+    Evaluation = 200,
+    /// <summary>A beta build (e.g. wip)</summary>
+    Beta = 300
   }
 
-  /// <summary>
-  /// Zoo plugin license data.
-  /// </summary>
+  /// <summary>Zoo plugin license data.</summary>
   public class LicenseData
   {
     #region LicenseData data
 
-    string m_product_license;
-    string m_serial_number;
-    string m_license_title;
-    LicenseBuildType m_build_type;
-    int m_license_count;
-    DateTime? m_date_to_expire;
     Icon m_product_icon;
 
     public void Dispose()
@@ -2338,64 +2348,40 @@ namespace Rhino.PlugIns
     /// The actual product license. 
     /// This is provided by the plugin that validated the license.
     /// </summary>
-    public string ProductLicense
-    {
-      get { return m_product_license; }
-      set { m_product_license = value; }
-    }
+    public string ProductLicense{ get; set; }
 
     /// <summary>
     /// The "for display only" product license.
     /// This is provided by the plugin that validated the license.
     /// </summary>
-    public string SerialNumber
-    {
-      get { return m_serial_number; }
-      set { m_serial_number = value; }
-    }
+    public string SerialNumber{ get; set; }
 
     /// <summary>
     /// The title of the license.
     /// This is provided by the plugin that validated the license.
     /// (e.g. "Rhinoceros 5.0 Commercial")
     /// </summary>
-    public string LicenseTitle
-    {
-      get { return m_license_title; }
-      set { m_license_title = value; }
-    }
+    public string LicenseTitle{ get; set; }
 
     /// <summary>
     /// The build of the product that this license work with.
     /// When your product requests a license from the Zoo, it
     /// will specify one of these build types.
     /// </summary>
-    public LicenseBuildType BuildType
-    {
-      get { return m_build_type; }
-      set { m_build_type = value; }
-    }
+    public LicenseBuildType BuildType{ get; set; }
 
     /// <summary>
     /// The number of instances supported by this license.
     /// This is provided by the plugin that validated the license.
     /// </summary>
-    public int LicenseCount
-    {
-      get { return m_license_count; }
-      set { m_license_count = value; }
-    }
+    public int LicenseCount{ get; set; }
 
     /// <summary>
     /// The date and time the license is set to expire.
     /// This is provided by the plugin that validated the license.
     /// This time value should be in Coordinated Universal Time (UTC).
     /// </summary>
-    public DateTime? DateToExpire
-    {
-      get { return m_date_to_expire; }
-      set { m_date_to_expire = value; }
-    }
+    public DateTime? DateToExpire{ get; set;}
 
     /// <summary>
     /// The product's icon. This will displayed in the "license"
@@ -2559,43 +2545,26 @@ namespace Rhino.PlugIns
     #endregion
   }
 
-  /// <summary>
-  /// LicenseType enumeration.
-  /// </summary>
+  /// <summary>LicenseType enumeration.</summary>
   public enum LicenseType
   {
-    Standalone,       // A standalone license
-    Network,          // A network license that has not been fulfilled by a Zoo
-    NetworkLoanedOut, // A license on temporary loan from a Zoo
-    NetworkCheckedOut // A license on permanent check out from a Zoo
+    /// <summary>A standalone license</summary>
+    Standalone,
+    /// <summary>A network license that has not been fulfilled by a Zoo</summary>
+    Network,
+    /// <summary>A license on temporary loan from a Zoo</summary>
+    NetworkLoanedOut,
+    /// <summary>A license on permanent check out from a Zoo</summary>
+    NetworkCheckedOut
   }
 
-  /// <summary>
-  /// LicenseStatus class.
-  /// </summary>
+  /// <summary>LicenseStatus class.</summary>
   public class LicenseStatus
   {
     #region LicenseStatus data
 
-    Guid m_product_id;
-    LicenseBuildType m_build_type;
-    string m_license_title;
-    string m_serial_number;
-    LicenseType m_license_type;
-    DateTime? m_expiration_date;
-    DateTime? m_checkout_expiration_date;
-    string m_registered_owner;
-    string m_registered_organization;
-    Icon m_product_icon;
-
-    /// <summary>
-    /// The id of the product or plugin.
-    /// </summary>
-    public Guid ProductId
-    {
-      get { return m_product_id; }
-      set { m_product_id = value; }
-    }
+    /// <summary>The id of the product or plugin.</summary>
+    public Guid ProductId{ get; set; }
 
     /// <summary>
     /// The build type of the product, where:
@@ -2603,40 +2572,16 @@ namespace Rhino.PlugIns
     ///   200 = A evaluation build
     ///   300 = A beta build, such as a wip.
     /// </summary>
-    public LicenseBuildType BuildType
-    {
-      get { return m_build_type; }
-      set { m_build_type = value; }
-    }
+    public LicenseBuildType BuildType{ get; set; }
 
-    /// <summary>
-    /// The title of the license.
-    /// (e.g. "Rhinoceros 5.0 Commercial")
-    /// </summary>
-    public string LicenseTitle
-    {
-      get { return m_license_title; }
-      set { m_license_title = value; }
-    }
+    /// <summary>The title of the license. (e.g. "Rhinoceros 5.0 Commercial")</summary>
+    public string LicenseTitle{ get; set; }
 
-    /// <summary>
-    /// The "for display only" product license or serial number.
-    /// </summary>
-    public string SerialNumber
-    {
-      get { return m_serial_number; }
-      set { m_serial_number = value; }
-    }
+    /// <summary>The "for display only" product license or serial number.</summary>
+    public string SerialNumber{ get; set; }
 
-    /// <summary>
-    /// The license type.
-    /// (e.g. Standalone, Network, etc.)
-    /// </summary>
-    public LicenseType LicenseType
-    {
-      get { return m_license_type; }
-      set { m_license_type = value; }
-    }
+    /// <summary>The license type. (e.g. Standalone, Network, etc.)</summary>
+    public LicenseType LicenseType{ get; set; }
 
     /// <summary>
     /// The date and time the license will expire.
@@ -2646,11 +2591,7 @@ namespace Rhino.PlugIns
     ///   3.) The license type is "NetworkCheckedOut" and the checkout does not expire
     /// Note, date and time is in local time coordinates.
     /// </summary>
-    public DateTime? ExpirationDate
-    {
-      get { return m_expiration_date; }
-      set { m_expiration_date = value; }
-    }
+    public DateTime? ExpirationDate{ get; set; }
 
     /// <summary>
     /// The date and time the checked out license will expire.
@@ -2658,63 +2599,33 @@ namespace Rhino.PlugIns
     /// and if "limited license checkout" was enabled on the Zoo server.
     /// Note, date and time is in local time coordinates.
     /// </summary>
-    public DateTime? CheckOutExpirationDate
-    {
-      get { return m_checkout_expiration_date; }
-      set { m_checkout_expiration_date = value; }
-    }
+    public DateTime? CheckOutExpirationDate{ get; set; }
 
-    /// <summary>
-    /// The registered owner of the product.
-    /// (e.g. "Dale Fugier")
-    /// </summary>
-    public string RegisteredOwner
-    {
-      get { return m_registered_owner; }
-      set { m_registered_owner = value; }
-    }
+    /// <summary>The registered owner of the product. (e.g. "Dale Fugier")</summary>
+    public string RegisteredOwner{ get; set; }
 
-    /// <summary>
-    /// The registered organization of the product
-    /// (e.g. "Robert McNeel and Associates")
-    /// </summary>
-    public string RegisteredOrganization
-    {
-      get { return m_registered_organization; }
-      set { m_registered_organization = value; }
-    }
+    /// <summary>The registered organization of the product (e.g. "Robert McNeel and Associates")</summary>
+    public string RegisteredOrganization { get; set; }
 
-    /// <summary>
-    /// The product's icon. Note, this can be null.
-    /// </summary>
-    public Icon ProductIcon
-    {
-      get { return m_product_icon; }
-      set { m_product_icon = value; }
-    }
+    /// <summary>The product's icon. Note, this can be null.</summary>
+    public Icon ProductIcon{ get; set; }
 
     #endregion
 
-    #region LicenseStatus construction
-
-    /// <summary>
-    /// Public constructor.
-    /// </summary>
+    /// <summary>Public constructor.</summary>
     public LicenseStatus()
     {
-      m_product_id = Guid.Empty;
-      m_build_type = 0;
-      m_license_title = string.Empty;
-      m_serial_number = string.Empty;
-      m_license_type = PlugIns.LicenseType.Standalone;
-      m_expiration_date = null;
-      m_checkout_expiration_date = null;
-      m_registered_owner = string.Empty;
-      m_registered_organization = string.Empty;
-      m_product_icon = null;
+      ProductId = Guid.Empty;
+      BuildType = 0;
+      LicenseTitle = string.Empty;
+      SerialNumber = string.Empty;
+      LicenseType = PlugIns.LicenseType.Standalone;
+      ExpirationDate = null;
+      CheckOutExpirationDate = null;
+      RegisteredOwner = string.Empty;
+      RegisteredOrganization = string.Empty;
+      ProductIcon = null;
     }
-
-    #endregion
   }
 
 }

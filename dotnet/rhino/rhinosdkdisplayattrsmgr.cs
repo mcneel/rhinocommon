@@ -142,7 +142,7 @@ namespace Rhino.Display
       {
         for (int i = 0; i < modes.Length; i++)
         {
-          if( string.Compare( modes[i].EnglishName, englishName, true )== 0 )
+          if( string.Compare( modes[i].EnglishName, englishName, StringComparison.OrdinalIgnoreCase )== 0 )
             return modes[i];
         }
       }
@@ -238,12 +238,7 @@ namespace Rhino.Display
     /// </example>
     public DisplayPipelineAttributes DisplayAttributes
     {
-      get
-      {
-        if (null == m_display_attrs)
-          m_display_attrs = new DisplayPipelineAttributes(this);
-        return m_display_attrs;
-      }
+      get { return m_display_attrs ?? (m_display_attrs = new DisplayPipelineAttributes(this)); }
     }
 
     public string EnglishName

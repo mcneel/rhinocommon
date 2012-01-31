@@ -1,6 +1,5 @@
 #pragma warning disable 1591
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 #if RDK_UNCHECKED
@@ -9,7 +8,7 @@ namespace Rhino.Render
 {
   public class Decal
   {
-    IntPtr m_pDecal = IntPtr.Zero;
+    readonly IntPtr m_pDecal = IntPtr.Zero;
     //Forces a reference to the decal iterator to stick around until this object is GCd.
     ObjectDecals m_decals;
 
@@ -37,7 +36,7 @@ namespace Rhino.Render
     /// <summary>
     /// Gets the decal ID associated with this decal.
     /// </summary>
-    public Int32 Id { get { return (Int32)UnsafeNativeMethods.Rdk_Decal_Id(ConstPointer()); } }
+    public Int32 Id { get { return UnsafeNativeMethods.Rdk_Decal_Id(ConstPointer()); } }
 
     /// <summary>
     /// Gets the texture ID for this decal.
@@ -185,7 +184,7 @@ namespace Rhino.Render
 
   public class ObjectDecals : IEnumerator<Decal>, IDisposable
   {
-    private IntPtr m_pDecalIterator;
+    private readonly IntPtr m_pDecalIterator;
     internal ObjectDecals(Rhino.DocObjects.RhinoObject obj)
     {
       m_pDecalIterator = UnsafeNativeMethods.Rdk_Decals_NewDecalIterator(obj.Attributes.ObjectId);

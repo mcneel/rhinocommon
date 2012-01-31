@@ -789,18 +789,7 @@ namespace Rhino.Input.Custom
     /// scene needs to be fully regenerated every frame where the standard
     /// DynamicDraw event draws temporary decorations (geometry) on top of a static scene.
     /// </summary>
-    public bool FullFrameRedrawDuringGet
-    {
-      get
-      {
-        return m_bFullFrameRedraw;
-      }
-      set
-      {
-        m_bFullFrameRedraw = value;
-      }
-    }
-    bool m_bFullFrameRedraw;
+    public bool FullFrameRedrawDuringGet { get; set; }
 
     /// <summary>
     /// Same as the DisplayPipeline.PostDrawObjects, but only works during the 
@@ -861,9 +850,8 @@ namespace Rhino.Input.Custom
         }
 
       }
-      uint rc = 0;
       IntPtr ptr = NonConstPointer();
-      rc = UnsafeNativeMethods.CRhinoGetPoint_GetPoint(ptr, onMouseUp, mouseCB, drawCB, postDrawCB, calcXformCB);
+      uint rc = UnsafeNativeMethods.CRhinoGetPoint_GetPoint(ptr, onMouseUp, mouseCB, drawCB, postDrawCB, calcXformCB);
 
       m_active_gp = old;
 
@@ -901,10 +889,10 @@ namespace Rhino.Input.Custom
         }
 
       }
-      uint rc = 0;
+
       IntPtr ptr = NonConstPointer();
       GetTransform.CalculateXformCallack calcXformCB = GetTransform.CustomCalcXform;
-      rc = UnsafeNativeMethods.CRhinoGetXform_GetXform(ptr, mouseCB, drawCB, postDrawCB, calcXformCB);
+      uint rc = UnsafeNativeMethods.CRhinoGetXform_GetXform(ptr, mouseCB, drawCB, postDrawCB, calcXformCB);
       m_active_gp = old;
 
       return (GetResult)rc;

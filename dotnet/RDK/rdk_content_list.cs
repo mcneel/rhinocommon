@@ -1,6 +1,5 @@
 #pragma warning disable 1591
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 #if RDK_UNCHECKED
@@ -13,8 +12,8 @@ namespace Rhino.Render
   /// </summary>
   public class ContentList : IEnumerator<RenderContent>, IDisposable
   {
-    private RenderContentKind m_kind;
-    private RhinoDoc m_doc;
+    private readonly RenderContentKind m_kind;
+    private readonly RhinoDoc m_doc;
     internal ContentList(RenderContentKind kind, RhinoDoc doc)
     {
       m_kind = kind;
@@ -179,7 +178,7 @@ namespace Rhino.Render
 
     #region IEnumerator implemenation
     private IntPtr m_pIterator = IntPtr.Zero;
-    private RenderContent m_content = null;
+    private RenderContent m_content;
     public void Reset()
     {
         UnsafeNativeMethods.Rdk_ContentLists_DeleteIterator(m_pIterator);

@@ -11,7 +11,7 @@ namespace Rhino.UI
 {
   static class LocalizationUtils
   {
-    static AssemblyTranslations m_assembly_translations = null;
+    static AssemblyTranslations m_assembly_translations;
     static LocalizationStringTable GetStringTable(Assembly assembly, int languageId)
     {
       if (null == m_assembly_translations || m_assembly_translations.LanguageID != languageId)
@@ -27,8 +27,8 @@ namespace Rhino.UI
       // No string table with the requested languaeId so just return the English string
       if (null == st)
         return english;
-      string loc_str = english;
-      if (!st.CommandList.TryGetValue(english.ToString(), out loc_str) || string.IsNullOrEmpty(loc_str))
+      string loc_str;
+      if (!st.CommandList.TryGetValue(english, out loc_str) || string.IsNullOrEmpty(loc_str))
         loc_str = english;
       return loc_str;
     }
@@ -47,13 +47,13 @@ namespace Rhino.UI
       // Make a copy of the English string so it can get messaged to form a proper key string
       StringBuilder key = new StringBuilder(english);
       // Check for leading spaces and save the number of spaces removed (iStart)
-      int iStart = 0;
+      int iStart;
       for (iStart = 0; key[iStart] == ' '; iStart++)
         ;
       if (iStart > 0)
         key.Remove(0, iStart);
       // Check for trailing spaces and save the number of spaces removed (jEnd - iEnd)
-      int iEnd = key.Length - 1, jEnd = 0;
+      int iEnd = key.Length - 1, jEnd;
       for (jEnd = iEnd; key[iEnd] == ' '; iEnd--)
         ;
       if (jEnd > iEnd)
@@ -83,7 +83,7 @@ namespace Rhino.UI
         key.Append(contextId.ToString());
         key.Append("]]");
       }
-      string loc_str = english;
+      string loc_str;
       if (!st.StringList.TryGetValue(key.ToString(), out loc_str) || string.IsNullOrEmpty(loc_str))
         loc_str = english;
       else if (iStart > 0 || jEnd > iEnd || bN || bR || bT || bQuot || bBS)
@@ -125,10 +125,8 @@ namespace Rhino.UI
       if (st != null)
       {
         string form_name = form.Name;
-        string form_class_name = string.Empty;
         Type type = form.GetType();
-        if (null != type)
-          form_class_name = type.Name;
+        string form_class_name = type.Name;
         st.LocalizeControlTree(form_name, form_class_name, form, GetToolTip(form));
       }
     }
@@ -226,23 +224,21 @@ namespace Rhino.UI
     public static void LocalizeToolStripItemCollection(Assembly a, int language_id, Control parent, ToolStripItemCollection collection)
     {
       LocalizationStringTable st = LocalizationUtils.GetStringTable(a, language_id);
-      if (st != null)
+      if (st != null && parent!=null)
       {
         string form_name = parent.Name;
-        string form_class_name = string.Empty;
         Type type = parent.GetType();
-        if (null != type)
-          form_class_name = type.Name;
+        string form_class_name = type.Name;
         st.LocalizeToolStripCollection(form_name, form_class_name, collection);
       }
     }
   }
 
 
-  class AssemblyTranslations
+  sealed class AssemblyTranslations
   {
-    int m_language_id;
-    Dictionary<string, LocalizationStringTable> m_string_tables;
+    readonly int m_language_id;
+    readonly Dictionary<string, LocalizationStringTable> m_string_tables;
 
     public AssemblyTranslations(int language_id)
     {
@@ -258,7 +254,7 @@ namespace Rhino.UI
     public LocalizationStringTable GetStringTable(Assembly a)
     {
       string key = a.Location;
-      LocalizationStringTable st = null;
+      LocalizationStringTable st;
       if (m_string_tables.TryGetValue(key, out st))
         return st;
       // If we get here, the key does not exist in the dictionary.

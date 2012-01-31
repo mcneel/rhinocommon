@@ -3,14 +3,15 @@ using System.Windows.Forms;
 
 namespace Rhino.UI
 {
-  partial class StringBoxForm : Form
+  sealed partial class StringBoxForm : Form
   {
     public StringBoxForm(string title, string message, string default_text)
     {
+      OnlyNumbers = false;
       InitializeComponent();
 
       if (!string.IsNullOrEmpty(title))
-        this.Text = title;
+        Text = title;
       if (!string.IsNullOrEmpty(message))
         m_lblMessage.Text = message;
       if (!string.IsNullOrEmpty(default_text))
@@ -43,18 +44,13 @@ namespace Rhino.UI
         }
         else if (!char.IsControl(e.KeyChar))
         {
-          double num = 0;
+          double num;
           string text = m_txtbox.Text + e.KeyChar;
           e.Handled = !double.TryParse(text, out num);
         }
       }
     }
 
-    bool m_bOnlyNumbers = false;
-    public bool OnlyNumbers
-    {
-      get { return m_bOnlyNumbers; }
-      set { m_bOnlyNumbers = value; }
-    }
+    public bool OnlyNumbers { get; set; }
   }
 }

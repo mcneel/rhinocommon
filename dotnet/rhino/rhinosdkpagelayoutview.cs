@@ -25,7 +25,7 @@ namespace Rhino.Display
         bool bMainViewport = false;
         IntPtr viewport_ptr = UnsafeNativeMethods.CRhinoView_ActiveViewport(ptr, ref bMainViewport);
         if (bMainViewport)
-          return this.MainViewport;
+          return MainViewport;
         return new RhinoViewport(this, viewport_ptr);
       }
     }
@@ -185,7 +185,7 @@ namespace Rhino.Display
     {
       get
       {
-        IntPtr pConstThis = this.ConstPointer();
+        IntPtr pConstThis = ConstPointer();
         return UnsafeNativeMethods.CRhinoPageView_GetPageNumber(pConstThis);
       }
     }

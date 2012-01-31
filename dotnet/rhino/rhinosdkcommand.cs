@@ -193,7 +193,7 @@ namespace Rhino.Commands
     {
       get
       {
-        return this.m_plugin;
+        return m_plugin;
       }
     }
 
@@ -201,7 +201,7 @@ namespace Rhino.Commands
     {
       get
       {
-        return this.GetType().GUID;
+        return GetType().GUID;
       }
     }
 
@@ -213,7 +213,7 @@ namespace Rhino.Commands
 
     public PersistentSettings Settings
     {
-      get { return m_plugin.CommandSettings( this.EnglishName ); }
+      get { return m_plugin.CommandSettings( EnglishName ); }
     }
 
 #endregion
@@ -323,7 +323,7 @@ namespace Rhino.Commands
     public static bool InScriptRunnerCommand()
     {
       int rc = UnsafeNativeMethods.CRhinoApp_GetInt(RhinoApp.idxInScriptRunner);
-      return (1 == rc) ? true : false;
+      return (1 == rc);
     }
 
     public static bool IsCommand(string name)
@@ -583,10 +583,7 @@ namespace Rhino.Commands
         if (m_english_name == null)
         {
           IntPtr pName = UnsafeNativeMethods.CRhinoCommand_Name(m_pCommand, true);
-          if (IntPtr.Zero == pName)
-            m_english_name = string.Empty;
-          else
-            m_english_name = Marshal.PtrToStringUni(pName);
+          m_english_name = IntPtr.Zero == pName ? string.Empty : Marshal.PtrToStringUni(pName);
         }
         return m_english_name;
       }
@@ -602,10 +599,7 @@ namespace Rhino.Commands
         if (m_local_name == null)
         {
           IntPtr pName = UnsafeNativeMethods.CRhinoCommand_Name(m_pCommand, false);
-          if (IntPtr.Zero == pName)
-            m_local_name = string.Empty;
-          else
-            m_local_name = Marshal.PtrToStringUni(pName);
+          m_local_name = IntPtr.Zero == pName ? string.Empty : Marshal.PtrToStringUni(pName);
         }
         return m_local_name;
       }
@@ -623,10 +617,7 @@ namespace Rhino.Commands
         if (m_plugin_name == null)
         {
           IntPtr pName = UnsafeNativeMethods.CRhinoCommand_PlugInName(m_pCommand);
-          if (IntPtr.Zero == pName)
-            m_plugin_name = string.Empty;
-          else
-            m_plugin_name = Marshal.PtrToStringUni(pName);
+          m_plugin_name = IntPtr.Zero == pName ? string.Empty : Marshal.PtrToStringUni(pName);
         }
         return m_plugin_name;
       }
@@ -706,7 +697,8 @@ namespace Rhino.Commands
       try
       {
         SelCommand cmd = Command.LookUpBySerialNumber(command_serial_number) as SelCommand;
-        rc = cmd.SelFilter(Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(pRhinoObject)) ? 1:0;
+        if( cmd!=null )
+          rc = cmd.SelFilter(Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(pRhinoObject)) ? 1:0;
       }
       catch (Exception ex)
       {

@@ -27,7 +27,7 @@ namespace Rhino.DocObjects.Tables
       m_event_type = (GroupTableEventType)event_type;
     }
 
-    RhinoDoc m_doc = null;
+    RhinoDoc m_doc;
     public RhinoDoc Document
     {
       get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_docId)); }

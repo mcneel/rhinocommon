@@ -432,7 +432,7 @@ namespace Rhino.Input.Custom
       GetObject old = m_active_go;
       m_active_go = this;
       GeometryFilterCallback cb = null;
-      Type t = this.GetType();
+      Type t = GetType();
       // Hook up CustomGeometryFilter virtual function is this is a subclass. This way we
       // don't have to pin anything and this class will get collected on the next appropriate GC
       if (t.IsSubclassOf(typeof(GetObject)))

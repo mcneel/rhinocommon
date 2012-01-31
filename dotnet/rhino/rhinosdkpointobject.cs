@@ -15,14 +15,14 @@ namespace Rhino.DocObjects
     {
       get
       {
-        Rhino.Geometry.Point rc = this.Geometry as Rhino.Geometry.Point;
+        Rhino.Geometry.Point rc = Geometry as Rhino.Geometry.Point;
         return rc;
       }
     }
 
     public Rhino.Geometry.Point DuplicatePointGeometry()
     {
-      Rhino.Geometry.Point rc = this.DuplicateGeometry() as Rhino.Geometry.Point;
+      Rhino.Geometry.Point rc = DuplicateGeometry() as Rhino.Geometry.Point;
       return rc;
     }
 
@@ -42,14 +42,14 @@ namespace Rhino.DocObjects
     {
       get
       {
-        Rhino.Geometry.PointCloud rc = this.Geometry as Rhino.Geometry.PointCloud;
+        Rhino.Geometry.PointCloud rc = Geometry as Rhino.Geometry.PointCloud;
         return rc;
       }
     }
 
     public Rhino.Geometry.PointCloud DuplicatePointCloudGeometry()
     {
-      Rhino.Geometry.PointCloud rc = this.DuplicateGeometry() as Rhino.Geometry.PointCloud;
+      Rhino.Geometry.PointCloud rc = DuplicateGeometry() as Rhino.Geometry.PointCloud;
       return rc;
     }
 
@@ -199,7 +199,7 @@ namespace Rhino.DocObjects.Custom
   {
     #region statics
     // this will probably end up in RhinoObject
-    static System.Collections.Generic.List<CustomGripObject> m_all_custom_grips = new System.Collections.Generic.List<CustomGripObject>();
+    static readonly System.Collections.Generic.List<CustomGripObject> m_all_custom_grips = new System.Collections.Generic.List<CustomGripObject>();
     static CustomGripObject m_prev_found;
     static RhinoObject GetCustomObject(uint serial_number)
     {
@@ -285,9 +285,9 @@ namespace Rhino.DocObjects.Custom
     internal delegate double CRhinoGripObjectWeightCallback(uint serial_number);
     internal delegate void CRhinoGripObjectSetWeightCallback(uint serial_number, double weight);
 
-    private static CRhinoObjectDestructorCallback m_Destructor = CRhinoObject_Destructor;
-    private static CRhinoGripObjectWeightCallback m_GetWeight = CRhinoGripObject_GetWeight;
-    private static CRhinoGripObjectSetWeightCallback m_SetWeight = CRhinoGripObject_SetWeight;
+    private static readonly CRhinoObjectDestructorCallback m_Destructor = CRhinoObject_Destructor;
+    private static readonly CRhinoGripObjectWeightCallback m_GetWeight = CRhinoGripObject_GetWeight;
+    private static readonly CRhinoGripObjectSetWeightCallback m_SetWeight = CRhinoGripObject_SetWeight;
 
     private static void CRhinoObject_Destructor(uint serial_number)
     {

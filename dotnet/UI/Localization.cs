@@ -1,7 +1,5 @@
 #pragma warning disable 1591
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -283,10 +281,7 @@ namespace Rhino.UI
 #if RHINO_SDK
           // This code is commonly called while working in theVisual Studio designer
           // and we want to try and not throw exceptions in order to show the winform
-          if (Rhino.Runtime.HostUtils.RunningInRhino)
-            m_language_id = Rhino.ApplicationSettings.AppearanceSettings.LanguageIdentifier;
-          else
-            m_language_id = 1033;
+          m_language_id = Rhino.Runtime.HostUtils.RunningInRhino ? Rhino.ApplicationSettings.AppearanceSettings.LanguageIdentifier : 1033;
 #else
           m_language_id = 1033;
 #endif
@@ -303,11 +298,11 @@ namespace Rhino.UI
   {
     public LocalizeStringPair(string english, string local)
     {
-      m_english = english;
-      m_local = local;
+      English = english;
+      Local = local;
     }
-    string m_english, m_local;
-    public string English { get { return m_english; } }
-    public string Local { get { return m_local; } }
+
+    public string English { get; private set; }
+    public string Local { get; private set; }
   }
 }

@@ -1,8 +1,5 @@
 #pragma warning disable 1591
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Rhino.Geometry;
 
 #if RDK_UNCHECKED
 
@@ -75,7 +72,7 @@ namespace Rhino.Render
     {
       return m_pUndo;
     }
-    private IntPtr m_pUndo;
+    private readonly IntPtr m_pUndo;
     #endregion
   }
 
@@ -111,7 +108,7 @@ namespace Rhino.Render
     {
       return m_pUndoBlocker;
     }
-    private IntPtr m_pUndoBlocker;
+    private readonly IntPtr m_pUndoBlocker;
     #endregion
   }
 }

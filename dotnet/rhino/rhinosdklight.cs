@@ -15,13 +15,13 @@ namespace Rhino.DocObjects
     {
       get
       {
-        Light rc = this.Geometry as Light;
+        Light rc = Geometry as Light;
         return rc;
       }
     }
     public Light DuplicateLightGeometry()
     {
-      Light rc = this.DuplicateGeometry() as Light;
+      Light rc = DuplicateGeometry() as Light;
       return rc;
     }
 

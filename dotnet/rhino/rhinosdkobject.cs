@@ -410,7 +410,7 @@ namespace Rhino.DocObjects
       if (null != m_edited_geometry)
         return m_edited_geometry.Duplicate();
 
-      GeometryBase g = this.Geometry;
+      GeometryBase g = Geometry;
       if (null != g)
         return g.Duplicate();
 
@@ -1163,7 +1163,7 @@ namespace Rhino.DocObjects
         return null;
       object parent;
       if (UnsafeNativeMethods.CRhinoObjRef_IsTopLevelGeometryPointer(m_ptr, pGeometry))
-        parent = this.Object();
+        parent = Object();
       else
         parent = new ObjRef(this); // copy in case user decides to call Dispose on this ObjRef
       return null == parent ? null : Rhino.Geometry.GeometryBase.CreateGeometryHelper(pGeometry, parent);
@@ -1266,10 +1266,10 @@ namespace Rhino.DocObjects
       return ObjRefToGeometryHelper(pLight) as Light;
     }
 
-    private bool IsSubGeometry()
-    {
-      return UnsafeNativeMethods.CRhinoObjRef_IsSubGeometry(m_ptr);
-    }
+    //private bool IsSubGeometry()
+    //{
+    //  return UnsafeNativeMethods.CRhinoObjRef_IsSubGeometry(m_ptr);
+    //}
 
     ~ObjRef()
     {

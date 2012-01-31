@@ -382,7 +382,14 @@ namespace Rhino.Runtime
       if (!string.IsNullOrEmpty(source))
         DebugString(source);
       DebugString(msg);
+
+      if (OnExceptionReport != null)
+        OnExceptionReport(source, ex);
     }
+
+    public delegate void ExceptionReportDelegate(string source, Exception ex);
+    public static event ExceptionReportDelegate OnExceptionReport;
+
 
     static System.Windows.Forms.Form m_invoke_window = null;
     static void CreateInvokeWindow()

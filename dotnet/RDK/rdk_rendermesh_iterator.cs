@@ -1,7 +1,6 @@
 #pragma warning disable 1591
 using System;
 using System.Collections;
-using System.Diagnostics;
 using Rhino.Geometry;
 
 #if RDK_UNCHECKED
@@ -10,7 +9,7 @@ namespace Rhino.Render
 {
   public class RenderMesh
   {
-    private IntPtr m_renderMesh = IntPtr.Zero;
+    private readonly IntPtr m_renderMesh = IntPtr.Zero;
     private RenderMeshIterator m_iterator;
 
     internal RenderMesh(IntPtr pRenderMesh, RenderMeshIterator iterator)
@@ -196,7 +195,7 @@ namespace Rhino.Render
       }
     }
 
-    private IntPtr m_pIterator = IntPtr.Zero;
+    private readonly IntPtr m_pIterator = IntPtr.Zero;
     internal RenderMeshIterator(IntPtr pIterator)
     {
       m_pIterator = pIterator;
@@ -279,14 +278,7 @@ namespace Rhino.Render
 
       bool bRet = 1 == UnsafeNativeMethods.Rdk_RenderMeshIterator_Next(ConstPointer(), mesh.NonConstPointer());
 
-      if (bRet)
-      {
-        m_current = mesh;
-      }
-      else
-      {
-        m_current = null;
-      }
+      m_current = bRet ? mesh : null;
 
       return bRet;
     }

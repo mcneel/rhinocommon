@@ -1,7 +1,7 @@
 #pragma warning disable 1591
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Globalization;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
@@ -10,26 +10,16 @@ using System.Xml;
 
 namespace Rhino.UI
 {
-  class LocalizationStringTable
+  sealed class LocalizationStringTable
   {
     // NOTE: we may want to use System.Collections.Specialized.StringDictionary instead
-    Dictionary<string, string> m_command_list = new Dictionary<string, string>();
-    Dictionary<string, string> m_string_list = new Dictionary<string, string>();
-    Dictionary<string, string> m_dialog_list = new Dictionary<string, string>();
+    readonly Dictionary<string, string> m_command_list = new Dictionary<string, string>();
+    readonly Dictionary<string, string> m_string_list = new Dictionary<string, string>();
+    readonly Dictionary<string, string> m_dialog_list = new Dictionary<string, string>();
 
-    public LocalizationStringTable()
-    {
-    }
+    public Dictionary<string, string> StringList { get { return m_string_list; } }
 
-    public Dictionary<string, string> StringList
-    {
-      get { return this.m_string_list; }
-    }
-
-    public Dictionary<string, string> CommandList
-    {
-      get { return this.m_command_list; }
-    }
+    public Dictionary<string, string> CommandList { get { return m_command_list; } }
 
     /// <summary>
     /// Look for XML file decorating the name with both the Locale ID as a number and a System.Globalization.CultureInfo.Name.
@@ -41,17 +31,17 @@ namespace Rhino.UI
     private string XmlFileExists(string dir, string filename, int language_id)
     {
       string[] sSeps = { "_", "-", " ", "" };
-      string xmlPath = null;
+
       for (int i = 0; i < sSeps.Length; i++)
       {
-        xmlPath = System.IO.Path.Combine(dir, String.Format("{0}{1}{2}.xml", filename, sSeps[i], language_id));
+        string xmlPath = System.IO.Path.Combine(dir, String.Format("{0}{1}{2}.xml", filename, sSeps[i], language_id));
         if (System.IO.File.Exists(xmlPath))
           return xmlPath;
       }
-      System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo((int)language_id);
+      System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo(language_id);
       for (int i = 0; i < sSeps.Length; i++)
       {
-        xmlPath = System.IO.Path.Combine(dir, String.Format("{0}{1}{2}.xml", filename, sSeps[i], ci.Name));
+        string xmlPath = System.IO.Path.Combine(dir, String.Format("{0}{1}{2}.xml", filename, sSeps[i], ci.Name));
         if (System.IO.File.Exists(xmlPath))
           return xmlPath;
       }
@@ -65,7 +55,7 @@ namespace Rhino.UI
     /// <returns></returns>
     private string StripTrailingSquareBrackets(string s)
     {
-      int i = s.LastIndexOf("[[");
+      int i = s.LastIndexOf("[[", System.StringComparison.Ordinal);
       if (i < 0)
         return s;
       return s.Substring(0, i);
@@ -84,11 +74,11 @@ namespace Rhino.UI
         return false;
       // Convert string to upper case so our checks can be case insensitive
       string sUpper = s.ToUpper();
-      string key = ".LOCALIZATION.";
+      const string key = ".LOCALIZATION.";
       if (sUpper.Contains(key))
       { // Contains the localization key
-        string _s = sUpper.Substring(sUpper.IndexOf(key) + key.Length);
-        string s_language_id = language_id.ToString();
+        string _s = sUpper.Substring(sUpper.IndexOf(key, System.StringComparison.Ordinal) + key.Length);
+        string s_language_id = language_id.ToString(CultureInfo.InvariantCulture);
         // Check to see if it starts or ends with language ID or ends with langage id + ".xml"
         if (_s.StartsWith(s_language_id) || _s.EndsWith(s_language_id) || _s.EndsWith(s_language_id + ".XML"))
           return true;
@@ -128,8 +118,7 @@ namespace Rhino.UI
             if (null != resource_stream)
             {
               System.IO.StreamReader stream = new System.IO.StreamReader(resource_stream);
-              if (null != stream)
-                return new XmlTextReader(stream);
+              return new XmlTextReader(stream);
             }
           }
         }
@@ -158,7 +147,7 @@ namespace Rhino.UI
       //
       for (int x = 0; string.IsNullOrEmpty(xmlPath) && x < 2; x++)
       {
-        string filename = null;
+        string filename;
         if (x < 1)
         {
           // First check using the actual assembly file name
@@ -176,15 +165,15 @@ namespace Rhino.UI
           if (start_index >= 0)
             filename = filename.Remove(start_index);
         }
-        xmlPath = this.XmlFileExists(dir, filename, language_id);
-        if (string.IsNullOrEmpty(xmlPath))
+        xmlPath = XmlFileExists(dir, filename, language_id);
+        if (string.IsNullOrEmpty(xmlPath) && !string.IsNullOrEmpty(dir))
         {
           bool found = false;
           System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(dir);
           System.IO.DirectoryInfo[] sub_directories = di.GetDirectories();
           for (int i = 0; i < sub_directories.Length; i++)
           {
-            xmlPath = this.XmlFileExists(sub_directories[i].FullName, filename, language_id);
+            xmlPath = XmlFileExists(sub_directories[i].FullName, filename, language_id);
             if (!string.IsNullOrEmpty(xmlPath))
             {
               found = true;
@@ -193,7 +182,7 @@ namespace Rhino.UI
           }
           if (found)
             break;
-          else if (x > 0 && !found)
+          if (x > 0 && !found)
             return null;
         }
       }
@@ -228,7 +217,7 @@ namespace Rhino.UI
 
         if (null != command_list)
         {
-          string prefix = "Command::";
+          const string prefix = "Command::";
           int prefix_length = prefix.Length;
           int count = command_list.Count;
           for (int i = 0; i < count; i++)
@@ -241,7 +230,7 @@ namespace Rhino.UI
               value = value.Substring(last_index + 2);
             // Only add to dictionary if the value has been translated
             if (0 != string.Compare(key, value) && !m_command_list.ContainsKey(key))
-              m_command_list.Add(key, this.StripTrailingSquareBrackets(value));
+              m_command_list.Add(key, StripTrailingSquareBrackets(value));
           }
         }
 
@@ -254,7 +243,7 @@ namespace Rhino.UI
             string value = string_list[i].Attributes["Localized"].Value;
             // Only add to dictionary if the value has been translated
             if (0 != string.Compare(key, value)&& !m_string_list.ContainsKey(key))
-              m_string_list.Add(key, this.StripTrailingSquareBrackets(value));
+              m_string_list.Add(key, StripTrailingSquareBrackets(value));
           }
         }
         
@@ -340,8 +329,8 @@ namespace Rhino.UI
       if (!string.IsNullOrEmpty(ctrl.Text))
       {
         string key= form_name + "::" + ctrl.Name + "::Text";
-        string value = null;
-        if (this.m_dialog_list.TryGetValue(key, out value))
+        string value;
+        if (m_dialog_list.TryGetValue(key, out value))
           ctrl.Text = value;
         else if (!string.IsNullOrEmpty(form_class_name))
         {
@@ -362,17 +351,17 @@ namespace Rhino.UI
         if (string.IsNullOrEmpty(ctrl_class_name))
           ctrl_class_name = form_class_name;
         for (int i = 0; i < componentControls.Length; i++)
-          this.LocalizeControlTree(form_name, ctrl_class_name, componentControls[i], tooltips);
+          LocalizeControlTree(form_name, ctrl_class_name, componentControls[i], tooltips);
       }
 
       if( null != (ctrl as ToolStrip))
-        this.LocalizeToolStripCollection(form_name, form_class_name, (ctrl as ToolStrip).Items);
+        LocalizeToolStripCollection(form_name, form_class_name, (ctrl as ToolStrip).Items);
       else if (null != (ctrl as ListBox))
-        this.LocalizeListBoxItems(form_name, form_class_name, ctrl as ListBox);
+        LocalizeListBoxItems(form_name, form_class_name, ctrl as ListBox);
       else if (null != (ctrl as ListView))
-        this.LocalizeListView(form_name, form_class_name, ctrl as ListView);
+        LocalizeListView(form_name, form_class_name, ctrl as ListView);
       else if (null != (ctrl as ComboBox))
-        this.LocalizeComboBoxItems(form_name, form_class_name, ctrl as ComboBox);
+        LocalizeComboBoxItems(form_name, form_class_name, ctrl as ComboBox);
       else
       {
         int count = ctrl.Controls.Count;
@@ -394,8 +383,8 @@ namespace Rhino.UI
                   // This child control has a tooltip so attempt to find the controls ToolTipText entry
                   // in the string table and localize it if found
                   string key = form_name + "::" + c.Name + toolTipText[k];
-                  string value = null;
-                  if (this.m_dialog_list.TryGetValue(key, out value))
+                  string value;
+                  if (m_dialog_list.TryGetValue(key, out value))
                   {
                     // This will clear the tool-tip prior to setting the new string, not doing this causes strange
                     // things to happen in certain Asian language systems
@@ -406,7 +395,7 @@ namespace Rhino.UI
                   else if (!string.IsNullOrEmpty(form_class_name))
                   {
                     key = form_class_name + "::" + c.Name + toolTipText[k];
-                    if (this.m_dialog_list.TryGetValue(key, out value))
+                    if (m_dialog_list.TryGetValue(key, out value))
                     {
                       // This will clear the tool-tip prior to setting the new string, not doing this causes strange
                       // things to happen in certain Asian language systems
@@ -419,7 +408,7 @@ namespace Rhino.UI
               }
             }
           }
-          this.LocalizeControlTree(form_name, form_class_name, ctrl.Controls[i], tooltips);
+          LocalizeControlTree(form_name, form_class_name, ctrl.Controls[i], tooltips);
         }
       }
     }
@@ -441,13 +430,13 @@ namespace Rhino.UI
         if (!string.IsNullOrEmpty(tsi.Text))
         {
           string key= form_name + "::" + tsi.Name + "::Text";
-          string value=null;
-          if (this.m_dialog_list.TryGetValue(key, out value))
+          string value;
+          if (m_dialog_list.TryGetValue(key, out value))
             tsi.Text = value;
           else if (!string.IsNullOrEmpty(form_class_name))
           {
             key = form_class_name + "::" + tsi.Name + "::Text";
-            if (this.m_dialog_list.TryGetValue(key, out value))
+            if (m_dialog_list.TryGetValue(key, out value))
               tsi.Text = value;
           }
         }
@@ -457,8 +446,8 @@ namespace Rhino.UI
           for (int k = 0; k < toolTipText.Length; k++)
           {
             string key = form_name + "::" + tsi.Name + toolTipText[k];
-            string value = null;
-            if (this.m_dialog_list.TryGetValue(key, out value))
+            string value;
+            if (m_dialog_list.TryGetValue(key, out value))
             {
               tsi.ToolTipText = value;
               break;
@@ -466,7 +455,7 @@ namespace Rhino.UI
             else if (!string.IsNullOrEmpty(form_class_name))
             {
               key = form_class_name + "::" + tsi.Name + toolTipText[k];
-              if (this.m_dialog_list.TryGetValue(key, out value))
+              if (m_dialog_list.TryGetValue(key, out value))
               {
                 tsi.ToolTipText = value;
                 break;
@@ -501,15 +490,15 @@ namespace Rhino.UI
             string key= form_name + "::" + lb.Name + "::Items";
             if (i > 0)
               key += i.ToString();
-            string value = null;
-            if (this.m_dialog_list.TryGetValue(key, out value))
+            string value;
+            if (m_dialog_list.TryGetValue(key, out value))
               lb.Items[i] = value;
             else if (!string.IsNullOrEmpty(form_class_name))
             {
               key = form_name + "::" + form_class_name + "::Items";
               if (i > 0)
                 key += i.ToString();
-              if (this.m_dialog_list.TryGetValue(key, out value))
+              if (m_dialog_list.TryGetValue(key, out value))
                 lb.Items[i] = value;
             }
           }
@@ -563,20 +552,20 @@ namespace Rhino.UI
                 {
                   // Look up the localized string for this column header item
                   string key = form_name + "::" + control_field_name + "::Text";
-                  string value = string.Empty;
-                  if (this.m_dialog_list.TryGetValue(key, out value))
+                  string value;
+                  if (m_dialog_list.TryGetValue(key, out value))
                     header.Text = value;
                   else if (!string.IsNullOrEmpty(form_class_name))
                   {
                     key= form_name + "::" + form_class_name + "::" + control_field_name + "::Text";
-                    if (this.m_dialog_list.TryGetValue(key, out value))
+                    if (m_dialog_list.TryGetValue(key, out value))
                     {
                       header.Text = value;
                     }
                     else
                     {
                       key = form_class_name + "::" + control_field_name + "::Text";
-                      if (this.m_dialog_list.TryGetValue(key, out value))
+                      if (m_dialog_list.TryGetValue(key, out value))
                         header.Text = value;
                     }
                   }
@@ -607,22 +596,22 @@ namespace Rhino.UI
           string key = form_name + "::" + cb.Name + "::Items";
           if (i > 0)
             key += i.ToString();
-          string value = null;
-          if (this.m_dialog_list.TryGetValue(key, out value))
+          string value;
+          if (m_dialog_list.TryGetValue(key, out value))
             cb.Items[i] = value;
           else if (!string.IsNullOrEmpty(form_class_name))
           {
             key = form_name + "::" + form_class_name + "::Items";
             if (i > 0)
               key += i.ToString();
-            if (this.m_dialog_list.TryGetValue(key, out value))
+            if (m_dialog_list.TryGetValue(key, out value))
               cb.Items[i] = value;
             else
             {
               key = form_class_name + "::" + cb.Name + "::Items";
               if (i > 0)
                 key += i.ToString();
-              if (this.m_dialog_list.TryGetValue(key, out value))
+              if (m_dialog_list.TryGetValue(key, out value))
                 cb.Items[i] = value;
             }
           }

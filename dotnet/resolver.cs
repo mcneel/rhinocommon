@@ -75,10 +75,8 @@ namespace Rhino.Runtime
       List<string> potential_files = new List<string>();
 
       // Collect all potential files in the plug-in directories.
-      string[] plugin_folders = null;
 #if RHINO_SDK
-      plugin_folders = Rhino.PlugIns.PlugIn.GetInstalledPlugInFolders();
-#endif
+      string[] plugin_folders = Rhino.PlugIns.PlugIn.GetInstalledPlugInFolders();
       if (plugin_folders != null)
       {
         foreach (string plugin_folder in plugin_folders)
@@ -90,6 +88,7 @@ namespace Rhino.Runtime
           if (files != null) { potential_files.AddRange(files); }
         }
       }
+#endif
 
       // Collect all potential files in the custom directories.
       if (m_custom_folders != null)

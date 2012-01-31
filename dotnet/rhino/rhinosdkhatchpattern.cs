@@ -30,19 +30,19 @@ namespace Rhino.DocObjects
     {
       // Creates a new non-document control ON_HatchPattern
       IntPtr pHP = UnsafeNativeMethods.ON_HatchPattern_New();
-      base.ConstructNonConstObject(pHP);
+      ConstructNonConstObject(pHP);
     }
 #if RHINO_SDK
     internal HatchPattern(int index, RhinoDoc doc)
     {
       m_id = UnsafeNativeMethods.CRhinoHatchPatternTable_GetHatchPatternId(doc.m_docId, index);
       m_doc = doc;
-      this.m__parent = m_doc;
+      m__parent = m_doc;
     }
 #endif
     internal HatchPattern(IntPtr pHatchPattern)
     {
-      base.ConstructNonConstObject(pHatchPattern);
+      ConstructNonConstObject(pHatchPattern);
     }
 
     // serialization constructor
@@ -108,7 +108,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        if (!this.IsDocumentControlled)
+        if (!IsDocumentControlled)
           return false;
         IntPtr pConstThis = ConstPointer();
         return UnsafeNativeMethods.CRhinoHatchPattern_GetBool(pConstThis, idxIsDeleted);
@@ -123,7 +123,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        if (!this.IsDocumentControlled)
+        if (!IsDocumentControlled)
           return false;
         IntPtr pConstThis = ConstPointer();
         return UnsafeNativeMethods.CRhinoHatchPattern_GetBool(pConstThis, idxIsReference);
@@ -137,7 +137,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        if (!this.IsDocumentControlled)
+        if (!IsDocumentControlled)
           return -1;
         IntPtr pConstThis = ConstPointer();
         return UnsafeNativeMethods.CRhinoHatchPattern_GetIndex(pConstThis);

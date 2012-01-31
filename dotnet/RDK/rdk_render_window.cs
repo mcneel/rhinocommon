@@ -1,8 +1,5 @@
 #pragma warning disable 1591
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Rhino.Geometry;
 
 #if RDK_UNCHECKED
 
@@ -10,7 +7,7 @@ namespace Rhino.Render
 {
   public class RenderWindow
   {
-    private Rhino.Render.RenderPipeline m_renderPipe;
+    private readonly Rhino.Render.RenderPipeline m_renderPipe;
     internal RenderWindow(Rhino.Render.RenderPipeline pipe)
     {
       m_renderPipe = pipe;

@@ -1,7 +1,5 @@
 #pragma warning disable 1591
 using System;
-using System.Diagnostics;
-using System.Collections;
 using System.Collections.Generic;
 
 #if RDK_UNCHECKED
@@ -117,7 +115,7 @@ namespace Rhino.Render
     #endregion
 
     #region internals
-    private Guid m_typeId;
+    private readonly Guid m_typeId;
     internal IntPtr ConstPointer()
     {
       return UnsafeNativeMethods.Rdk_Factories_ConstPointerFromTypeId(m_typeId);

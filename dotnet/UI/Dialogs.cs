@@ -70,14 +70,11 @@ namespace Rhino
       public static void SetCustomColorDialog( EventHandler<GetColorEventArgs> handler)
       {
         m_ShowCustomColorDialog = handler;
-        if (handler == null)
-          UnsafeNativeMethods.RHC_SetReplaceColorDialogCallback(null);
-        else
-          UnsafeNativeMethods.RHC_SetReplaceColorDialogCallback(m_callback);
+        UnsafeNativeMethods.RHC_SetReplaceColorDialogCallback(handler == null ? null : m_callback);
       }
 
       private static EventHandler<GetColorEventArgs> m_ShowCustomColorDialog;
-      private static ColorDialogCallback m_callback = OnCustomColorDialog;
+      private static readonly ColorDialogCallback m_callback = OnCustomColorDialog;
       internal delegate int ColorDialogCallback(ref int argn, int colorButtons, [MarshalAs(UnmanagedType.LPWStr)]string title, IntPtr hParent);
 
       private static int OnCustomColorDialog(ref int argb, int colorButtons, string title, IntPtr hParent)
@@ -89,7 +86,7 @@ namespace Rhino
           {
             var color = System.Drawing.Color.FromArgb(argb);
             System.Windows.Forms.IWin32Window parent = null;
-            GetColorEventArgs e = new GetColorEventArgs(color, colorButtons==1?true:false, title);
+            GetColorEventArgs e = new GetColorEventArgs(color, colorButtons==1, title);
 
             if( hParent != IntPtr.Zero )
               parent = new WindowWrapper(hParent);
@@ -177,12 +174,12 @@ namespace Rhino
 
       class SemiModalFormMessenger
       {
-        System.Windows.Forms.Form m_form;
+        readonly System.Windows.Forms.Form m_form;
         public SemiModalFormMessenger(System.Windows.Forms.Form f)
         {
           m_form = f;
           if( Rhino.Runtime.HostUtils.RunningOnWindows )
-            m_form.Load += new EventHandler(m_form_Load);
+            m_form.Load += m_form_Load;
         }
 
         void m_form_Load(object sender, EventArgs e)

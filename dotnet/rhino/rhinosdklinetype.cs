@@ -24,7 +24,7 @@ namespace Rhino.DocObjects
     {
       // Creates a new non-document control ON_Linetype
       IntPtr pLinetype = UnsafeNativeMethods.ON_Linetype_New();
-      base.ConstructNonConstObject(pLinetype);
+      ConstructNonConstObject(pLinetype);
     }
 
 #if RHINO_SDK
@@ -32,7 +32,7 @@ namespace Rhino.DocObjects
     {
       m_id = UnsafeNativeMethods.CRhinoLinetypeTable_GetLinetypeId(doc.m_docId, index);
       m_doc = doc;
-      this.m__parent = m_doc;
+      m__parent = m_doc;
     }
 #endif
 

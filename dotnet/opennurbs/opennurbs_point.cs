@@ -3161,8 +3161,8 @@ namespace Rhino.Geometry
     {
       if (obj is Vector3d)
         return CompareTo((Vector3d)obj);
-      else
-        throw new ArgumentException("Input must be of type Vector3d", "obj");
+      
+      throw new ArgumentException("Input must be of type Vector3d", "obj");
     }
 
     /// <summary>

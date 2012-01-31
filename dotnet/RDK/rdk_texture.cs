@@ -169,7 +169,7 @@ namespace Rhino.Render
 
     public virtual Rhino.Display.Color4f GetColor(Rhino.Geometry.Point3d uvw, Rhino.Geometry.Vector3d duvwdx, Rhino.Geometry.Vector3d duvwdy)
     {
-      if (this.m_runtime_serial_number > 0)
+      if (m_runtime_serial_number > 0)
         return Rhino.Display.Color4f.Empty;
       IntPtr pConstThis = ConstPointer();
       Rhino.Display.Color4f rc = new Rhino.Display.Color4f();
@@ -211,7 +211,7 @@ namespace Rhino.Render
 
     #region pointer tracking
     IntPtr m_pRhRdkTextureEvaluator = IntPtr.Zero;
-    readonly int m_runtime_serial_number = 0;
+    readonly int m_runtime_serial_number;
     static int m_serial_number_counter = 1;
     static readonly List<TextureEvaluator> m_all_custom_evaluators = new List<TextureEvaluator>();
 
@@ -271,17 +271,17 @@ namespace Rhino.Render
 
     protected abstract void AddAdditionalUISections();
 
-    private ColorField m_color1 = new ColorField("color-one", "Color 1", Rhino.Display.Color4f.Black);
-    private ColorField m_color2 = new ColorField("color-two", "Color 2", Rhino.Display.Color4f.White);
+    private readonly ColorField m_color1 = new ColorField("color-one", "Color 1", Rhino.Display.Color4f.Black);
+    private readonly ColorField m_color2 = new ColorField("color-two", "Color 2", Rhino.Display.Color4f.White);
 
-    private BoolField m_texture1_on = new BoolField("texture-on-one", "Texture1 On", true);
-    private BoolField m_texture2_on = new BoolField("texture-on-two", "Texture2 On", true);
+    private readonly BoolField m_texture1_on = new BoolField("texture-on-one", "Texture1 On", true);
+    private readonly BoolField m_texture2_on = new BoolField("texture-on-two", "Texture2 On", true);
 
-    private DoubleField m_texture1_amount = new DoubleField("texture-amount-one", "Texture1 Amt", 1.0);
-    private DoubleField m_texture2_amount = new DoubleField("texture-amount-two", "Texture2 Amt", 1.0);
+    private readonly DoubleField m_texture1_amount = new DoubleField("texture-amount-one", "Texture1 Amt", 1.0);
+    private readonly DoubleField m_texture2_amount = new DoubleField("texture-amount-two", "Texture2 Amt", 1.0);
 
-    private BoolField m_swap_colors = new BoolField("swap-colors", "Swap Colors", false);
-    private BoolField m_super_sample = new BoolField("super-sample", "Super sample", false);
+    private readonly BoolField m_swap_colors = new BoolField("swap-colors", "Swap Colors", false);
+    private readonly BoolField m_super_sample = new BoolField("super-sample", "Super sample", false);
 
     public Rhino.Display.Color4f Color1
     {

@@ -24,7 +24,7 @@ namespace Rhino.Render
     /// Call this *after* adding a content. Undo will cause the content to be deleted.
     /// </summary>
     /// <param name="content">Content you just added to the ContentList.</param>
-    /// <returns></returns>
+    /// <returns>true if the content was added.</returns>
     public bool AddContent(RenderContent content)
     {
       return 1 == UnsafeNativeMethods.Rdk_ContentUndo_AddContent(ConstPointer(), content.ConstPointer());
@@ -34,7 +34,7 @@ namespace Rhino.Render
     ///  Call this before modifying or deleting a content. Undo will cause the content to be restored.
     /// </summary>
     /// <param name="content">Content you are about to modify.</param>
-    /// <returns></returns>
+    /// <returns>true if the content was modified.</returns>
     public bool ModifyContent(RenderContent content)
     {
       return 1 == UnsafeNativeMethods.Rdk_ContentUndo_ModifyContent(ConstPointer(), content.ConstPointer());
@@ -43,9 +43,9 @@ namespace Rhino.Render
     /// <summary>
     /// Call this before tweaking a single content parameter. Undo will cause the parameter to be restored.
     /// </summary>
-    /// <param name="content"></param>
+    /// <param name="content">The render content</param>
     /// <param name="parameterName">The parameter name you are about to change.</param>
-    /// <returns></returns>
+    /// <returns>true if the content was tweaked.</returns>
     public bool TweakContent(RenderContent content, String parameterName)
     {
       return 1 == UnsafeNativeMethods.Rdk_ContentUndo_TweakContent(ConstPointer(), content.ConstPointer(), parameterName);

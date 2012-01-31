@@ -20,7 +20,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Enumeration type for use in TextureChildSlotName method.
+    /// Defines enumerated constant values for use in <see cref="TextureChildSlotName"/> method.
     /// </summary>
     public enum StandardChildSlots : int
     {
@@ -47,27 +47,27 @@ namespace Rhino.Render
     /// </summary>
     public class BasicMaterialParameterNames
     {
-      public const String Ambient = "ambient";
-      public const String Emission = "emission";
-      public const String FlamingoLibrary = "flamingo-library";
-      public const String DisableLighting = "disable-lighting";
-      public const String Diffuse = "diffuse";
-      public const String Specular = "specular";
-      public const String TransparencyColor = "transparency-color";
-      public const String ReflectivityColor = "reflectivity-color";
-      public const String Shine = "shine";
-      public const String Transparency = "transparency";
-      public const String Reflectivity = "reflectivity";
-      public const String Ior = "ior";
+      public const string Ambient = "ambient";
+      public const string Emission = "emission";
+      public const string FlamingoLibrary = "flamingo-library";
+      public const string DisableLighting = "disable-lighting";
+      public const string Diffuse = "diffuse";
+      public const string Specular = "specular";
+      public const string TransparencyColor = "transparency-color";
+      public const string ReflectivityColor = "reflectivity-color";
+      public const string Shine = "shine";
+      public const string Transparency = "transparency";
+      public const string Reflectivity = "reflectivity";
+      public const string Ior = "ior";
     }
 
     /// <summary>
     /// Override this function to provide information about which texture is used for
     /// the standard (ie - defined in ON_Texture) texture channels.
     /// </summary>
-    /// <param name="slot">See the StandardChildSlots enumeration for valid values.</param>
-    /// <returns></returns>
-    public virtual String TextureChildSlotName(StandardChildSlots slot)
+    /// <param name="slot">An valid slot.</param>
+    /// <returns>The texture used for the channel.</returns>
+    public virtual string TextureChildSlotName(StandardChildSlots slot)
     {
       if (IsNativeWrapper())
       {

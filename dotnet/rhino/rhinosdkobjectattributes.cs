@@ -295,7 +295,7 @@ namespace Rhino.DocObjects
     /// If "this" has attributes (color, plot weight, ...) with "by parent" sources,
     /// then the values of those attributes on parentAttributes are copied.
     /// </summary>
-    /// <param name="parentAttributes"></param>
+    /// <param name="parentAttributes">-</param>
     /// <param name="controlLimits">
     /// The bits in controlLimits determine which attributes may be copied.
     /// 1: visibility
@@ -324,7 +324,7 @@ namespace Rhino.DocObjects
     /// If "this" has attributes (color, plot weight, ...) with "by parent" sources,
     /// then the values of those attributes on parentAttributes are copied.
     /// </summary>
-    /// <param name="parentAttributes"></param>
+    /// <param name="parentAttributes">-</param>
     /// <returns>
     /// The bits in the returned integer indicate which attributes were actually modified.
     /// 1: visibility

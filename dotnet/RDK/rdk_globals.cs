@@ -435,8 +435,8 @@ namespace Rhino.Render
     /// Finds a file and also handles network shares.
     /// <remarks>This is a replacement for CRhinoFileUtilities::FindFile().</remarks>
     /// </summary>
-    /// <param name="fullPathToFile"></param>
-    /// <returns></returns>
+    /// <param name="fullPathToFile">The file to be found.</param>
+    /// <returns>The found file.</returns>
     public static string FindFile(string fullPathToFile)
     {
       using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
@@ -452,8 +452,8 @@ namespace Rhino.Render
     /// Determines if any texture in any persistent content list is using the specified file name for caching.
     /// </summary>
     /// <param name="textureFileName">The file name to check for. The extension is ignored.</param>
-    /// <returns></returns>
-    public static bool IsCachedTextureFileInUse(String textureFileName)
+    /// <returns>true if the texture is present.</returns>
+    public static bool IsCachedTextureFileInUse(string textureFileName)
     {
       return 1 == UnsafeNativeMethods.Rdk_Globals_IsCachedTextureFileInUse(textureFileName);
     }

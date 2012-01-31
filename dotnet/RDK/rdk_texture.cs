@@ -42,8 +42,7 @@ namespace Rhino.Render
     /// capable of evaluating texture color throughout uvw space. May be called
     /// from within a rendering shade pipeline.
     /// </summary>
-    /// <returns></returns>
-
+    /// <returns>A texture evaluator instance.</returns>
     public virtual TextureEvaluator CreateEvaluator()
     {
       if (IsNativeWrapper())

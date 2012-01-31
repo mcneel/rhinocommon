@@ -1366,7 +1366,7 @@ namespace Rhino.PlugIns
     /// with the other three quality settings on a separate thread and are
     /// meant for generating progressively refined preview.
     /// </summary>
-    /// <param name="args"></param>
+    /// <param name="args">Event argument with several preview option state properties.</param>
     protected virtual void CreatePreview(CreatePreviewEventArgs args) { }
 
     /// <summary>
@@ -1376,7 +1376,7 @@ namespace Rhino.PlugIns
     /// If this function is not overridden or the PreviewImage is not set on the
     /// args, then the internal OpenGL renderer will generate a simulation.
     /// </summary>
-    /// <param name="args"></param>
+    /// <param name="args">Event argument with several preview option state properties.</param>
     protected virtual void CreateTexture2dPreview(CreateTexture2dPreviewEventArgs args) { }
 
     /// <summary>
@@ -1385,15 +1385,15 @@ namespace Rhino.PlugIns
     /// return false if you don't want to allow a certain content type to be
     /// picked from the content browser while your render engine is current.
     /// </summary>
-    /// <param name="content"></param>
-    /// <returns></returns>
+    /// <param name="content">A render context.</param>
+    /// <returns>true if the operation was successful.</returns>
     protected virtual bool AllowChooseContent(Rhino.Render.RenderContent content) { return true; }
 
     /// <summary>
     /// Returns a list of output types which your renderer can write.
     /// <para>The default implementation returns bmp, jpg, png, tif, tga.</para>
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A list of file types.</returns>
     protected virtual List<Rhino.FileIO.FileType> SupportedOutputTypes()
     {
       using (StringHolder shExt = new StringHolder())
@@ -1436,7 +1436,9 @@ namespace Rhino.PlugIns
     /// Initialize your custom decal properties here.  The input list will be empty - add your
     /// default named property values and return.
     /// </summary>
-    /// <param name="properties"></param>
+    /// <param name="properties">A list of named values that will be stored on the object
+    /// the input values are the current ones, you should modify the values after the dialog
+    /// closes.</param>
     protected virtual void InitializeDecalProperties(ref List<NamedValue> properties)
     {
     }

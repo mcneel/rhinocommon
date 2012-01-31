@@ -131,11 +131,11 @@ namespace Rhino.UI
       }
     }
     /// <summary>
-    /// 
+    /// Obtains container properties from a control.
     /// </summary>
-    /// <param name="c"></param>
-    /// <param name="components"></param>
-    static public void GetContainersPropertiesFromControl(Control c, out List<System.ComponentModel.IContainer> components)
+    /// <param name="c">A control.</param>
+    /// <param name="components">A list of components is returned.</param>
+    public static void GetContainersPropertiesFromControl(Control c, out List<System.ComponentModel.IContainer> components)
     {
       components = null;
       Type t = null == c ? null : c.GetType();
@@ -168,8 +168,8 @@ namespace Rhino.UI
     /// Check to see if there are any System.Window.Control items in any components lists associated with the control like System.Windows.Forms.ContextMenuStrip
     /// which need to be localized.
     /// </summary>
-    /// <param name="control"></param>
-    /// <returns></returns>
+    /// <param name="control">A control that might need to be localized.</param>
+    /// <returns>An array of controls.</returns>
     static public Control[] GetComponentControls(Control control)
     {
       List<Control> result = null;
@@ -196,8 +196,8 @@ namespace Rhino.UI
     /// Iterate a controls list of data members for filed's of type System.ComponentModel.IContainer and if found
     /// then iterate the containers control components and return the ToolTip components found.
     /// </summary>
-    /// <param name="control"></param>
-    /// <returns></returns>
+    /// <param name="control">A control.</param>
+    /// <returns>An array of tooltips.</returns>
     static public ToolTip[] GetToolTip(Control control)
     {
       List<ToolTip> result = null;

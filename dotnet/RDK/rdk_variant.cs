@@ -113,7 +113,6 @@ namespace Rhino.Render
     /// <summary>
     /// Constructs from a variant coming from C++
     /// </summary>
-    /// <param name="pVariant"></param>
     internal Variant(IntPtr pVariant)
     {
       m_pVariant = UnsafeNativeMethods.Rdk_Variant_New(pVariant);
@@ -381,8 +380,10 @@ namespace Rhino.Render
     /// The value will be converted from the variant's units to model units if necessary.
 		/// \see Units(). \see SetUnits().
     /// </summary>
-    /// <param name="document"></param>
-    /// <returns></returns>
+    /// <param name="document">A Rhino document.</param>
+    /// <returns>The value in model units.
+    /// <para>This is a single-precision value.</para>
+    /// </returns>
     public float AsModelFloat(Rhino.RhinoDoc document)
     {
       return UnsafeNativeMethods.Rdk_Variant_AsModelFloat(ConstPointer(), document.m_docId);
@@ -393,8 +394,9 @@ namespace Rhino.Render
     /// The value will be converted from the variant's units to model units if necessary.
 		/// \see Units(). \see SetUnits().
     /// </summary>
-    /// <param name="document"></param>
-    /// <returns></returns>
+    /// <param name="document">A Rhino document.</param>
+    /// <returns>The value in model units.
+    /// <para>This is a double-precision value.</para></returns>
     public double AsModelDouble(Rhino.RhinoDoc document)
     {
       return UnsafeNativeMethods.Rdk_Variant_AsModelDouble(ConstPointer(), document.m_docId);
@@ -404,8 +406,8 @@ namespace Rhino.Render
     /// Sets the value to a float in model units.
     /// The value will be converted from model units to the variant's units if necessary. 
     /// </summary>
-    /// <param name="f"></param>
-    /// <param name="document"></param>
+    /// <param name="f">The value in model units.</param>
+    /// <param name="document">A Rhino document.</param>
     public void SetAsModelFloat(float f, Rhino.RhinoDoc document)
     {
       UnsafeNativeMethods.Rdk_Variant_SetAsModelFloat(NonConstPointer(), f, document.m_docId);
@@ -415,8 +417,8 @@ namespace Rhino.Render
     /// Sets the value to a double in model units.
     /// The value will be converted from model units to the variant's units if necessary. 
     /// </summary>
-    /// <param name="d"></param>
-    /// <param name="document"></param>
+    /// <param name="d">The value in model units.</param>
+    /// <param name="document">A Rhino document.</param>
     public void SetAsModelDouble(double d, Rhino.RhinoDoc document)
     {
       UnsafeNativeMethods.Rdk_Variant_SetAsModelDouble(NonConstPointer(), d, document.m_docId);

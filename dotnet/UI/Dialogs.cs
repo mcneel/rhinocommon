@@ -126,8 +126,8 @@ namespace Rhino
       /// modal forms. Useful for selecting objects or getting points while a modal dialog
       /// is running.
       /// </summary>
-      /// <param name="form"></param>
-      /// <param name="pickFunction"></param>
+      /// <param name="form">A form window.</param>
+      /// <param name="pickFunction">A picking delegate.</param>
       public static void PushPickButton(System.Windows.Forms.Form form, System.EventHandler<EventArgs> pickFunction)
       {
         if (form == null || pickFunction == null)
@@ -372,17 +372,17 @@ namespace Rhino
       }
 
       /// <summary>
-      /// Display Rhino's single layer selection dialog.
+      /// Displays Rhino's single layer selection dialog.
       /// </summary>
       /// <param name="layerIndex">
       /// Initial layer for the dialog, and will receive selected
       /// layer if function returns DialogResult.OK.
       /// </param>
-      /// <param name="dialogTitle"></param>
-      /// <param name="showNewLayerButton"></param>
-      /// <param name="showSetCurrentButton"></param>
-      /// <param name="initialSetCurrentState"></param>
-      /// <returns></returns>
+      /// <param name="dialogTitle">The dialog title.</param>
+      /// <param name="showNewLayerButton">true if the new layer button will be visible.</param>
+      /// <param name="showSetCurrentButton">true if the set current button will be visible.</param>
+      /// <param name="initialSetCurrentState">true if the current state will be initially set.</param>
+      /// <returns>A dilog result based on user choice.</returns>
       public static System.Windows.Forms.DialogResult ShowSelectLayerDialog(ref int layerIndex, string dialogTitle, bool showNewLayerButton, bool showSetCurrentButton, ref bool initialSetCurrentState)
       {
         bool rc = UnsafeNativeMethods.RHC_RhinoSelectLayerDialog(dialogTitle, ref layerIndex, showNewLayerButton, showSetCurrentButton, ref initialSetCurrentState);
@@ -392,14 +392,14 @@ namespace Rhino
       }
 
       /// <summary>
-      /// 
+      /// Displays Rhino's combo list box.
       /// </summary>
-      /// <param name="title"></param>
-      /// <param name="message"></param>
-      /// <param name="items"></param>
+      /// <param name="title">The dialog title.</param>
+      /// <param name="message">The dialog message.</param>
+      /// <param name="items">A list of items to show.</param>
       /// <returns>
-      /// selected item
-      /// null if the user canceled.
+      /// <para>selected item.</para>
+      /// <para>null if the user canceled.</para>
       /// </returns>
       public static object ShowComboListBox(string title, string message, System.Collections.IList items)
       {
@@ -426,13 +426,13 @@ namespace Rhino
       }
 
       /// <summary>
-      /// 
+      /// Displays Rhino's check list box.
       /// </summary>
-      /// <param name="title"></param>
-      /// <param name="message"></param>
-      /// <param name="items"></param>
-      /// <param name="checkState"></param>
-      /// <returns></returns>
+      /// <param name="title">The dialog title.</param>
+      /// <param name="message">The dialog message.</param>
+      /// <param name="items">A list of items to show.</param>
+      /// <param name="checkState">A list of true/false boolean values.</param>
+      /// <returns>An array or boolean values determining if the user checked the corresponding box. On error, null.</returns>
       public static bool[] ShowCheckListBox(string title, string message, System.Collections.IList items, System.Collections.Generic.IList<bool> checkState)
       {
         bool[] rc = null;

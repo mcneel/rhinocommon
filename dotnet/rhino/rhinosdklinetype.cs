@@ -258,7 +258,7 @@ namespace Rhino.DocObjects
     /// If the length is interpreted as a line, true is assigned during the call to this out parameter.
     /// <para>If the length is interpreted as a space, then false is assigned during the call to this out parameter.</para>
     /// </param>
-    /// <exception cref="IndexOutOfRangeException"></exception>
+    /// <exception cref="IndexOutOfRangeException">If the index is unacceptable.</exception>
     public void GetSegment(int index, out double length, out bool isSolid)
     {
       if (index < 0 || index >= SegmentCount)

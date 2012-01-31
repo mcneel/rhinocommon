@@ -54,10 +54,10 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// 
+    /// Accepts a rendering progress value to inform the user of the rendering advances.
     /// </summary>
-    /// <param name="text"></param>
-    /// <param name="progress">0.0f - 1.0f.</param>
+    /// <param name="text">The progress text.</param>
+    /// <param name="progress">A progress value in the domain [0.0f; 1.0f].</param>
     public void SetProgress(string text, float progress)
     {
       UnsafeNativeMethods.Rdk_RenderWindow_SetProgress(ConstPointer(), text, (int)(progress * 100.0f));
@@ -102,11 +102,11 @@ namespace Rhino.Render
       }
 
       /// <summary>
-      /// The size of one pixel's data in the channel. For RDK standard channels, this value is always sizeof(float). 
+      /// Returns the size of the data in one pixel in the channel. For RDK standard channels, this value is always sizeof(float). 
       /// For the special chanRGBA collective channel,
       /// this value is 4 * sizeof(float).
       /// </summary>
-      /// <returns></returns>
+      /// <returns>The size of a pixel.</returns>
       public int PixelSize()
       {
         return UnsafeNativeMethods.Rdk_RenderWindowChannel_PixelSize(ConstPointer());

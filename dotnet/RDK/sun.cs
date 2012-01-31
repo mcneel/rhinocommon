@@ -58,10 +58,10 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Sets position of the sun based on azimuth and altitude values.
+    /// Sets position of the Sun based on azimuth and altitude values.
     /// </summary>
-    /// <param name="azimuthDegrees"></param>
-    /// <param name="altitudeDegrees"></param>
+    /// <param name="azimuthDegrees">The azimut sun angle in degrees.</param>
+    /// <param name="altitudeDegrees">The altitude sun angle in degrees.</param>
     public void SetPosition(double azimuthDegrees, double altitudeDegrees)
     {
       IntPtr pSun = NonConstPointer();
@@ -69,17 +69,35 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Sets position of the sun based on physical location and time.
+    /// This method is obsolete. Do not use this method. This method is hidden from autocompletion.
     /// </summary>
-    /// <param name="when"></param>
-    /// <param name="whenKind"></param>
-    /// <param name="latitudeDegrees"></param>
-    /// <param name="longitudeDegrees"></param>
+    /// <param name="when">-</param>
+    /// <param name="whenKind">-</param>
+    /// <param name="latitudeDegrees">-</param>
+    /// <param name="longitudeDegrees">-</param>
+    [Obsolete("Removed in favor of version that does not require a DateTimeKind since this is embedded in a DateTime. Will be removed in a future beta.")]
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public void SetPosition(DateTime when, DateTimeKind whenKind, double latitudeDegrees, double longitudeDegrees)
     {
       IntPtr pSun = NonConstPointer();
       UnsafeNativeMethods.Rdk_Sun_SetLatitudeLongitude(pSun, latitudeDegrees, longitudeDegrees);
       bool local = whenKind != DateTimeKind.Utc;
+      UnsafeNativeMethods.Rdk_Sun_SetDateTime(pSun, local, when.Year, when.Month, when.Day, when.Hour, when.Minute, when.Second);
+    }
+
+    /// <summary>
+    /// Sets position of the sun based on physical location and time.
+    /// </summary>
+    /// <param name="when">A datetime instance.
+    /// <para>If the date <see cref="System.DateTime.Kind">Kind</see> is <see cref="System.DateTimeKind.Local">DateTimeKind.Local</see>,
+    /// or <see cref="System.DateTimeKind.Unspecified">DateTimeKind.Unspecified</see>, the date is considered local.</para></param>
+    /// <param name="latitudeDegrees">The latitude, in degrees, of the location on Earth.</param>
+    /// <param name="longitudeDegrees">The longitude, in degrees, of the location on Earth.</param>
+    public void SetPosition(DateTime when, double latitudeDegrees, double longitudeDegrees)
+    {
+      IntPtr pSun = NonConstPointer();
+      UnsafeNativeMethods.Rdk_Sun_SetLatitudeLongitude(pSun, latitudeDegrees, longitudeDegrees);
+      bool local = (when.Kind == DateTimeKind.Local || when.Kind == DateTimeKind.Unspecified);
       UnsafeNativeMethods.Rdk_Sun_SetDateTime(pSun, local, when.Year, when.Month, when.Day, when.Hour, when.Minute, when.Second);
     }
 

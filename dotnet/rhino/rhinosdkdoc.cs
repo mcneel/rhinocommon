@@ -3188,8 +3188,8 @@ namespace Rhino.DocObjects.Tables
     /// Adds an object to the document. The attributes need to be set before you add the object.
     /// Use GetDefaultObjectAttributes() to get the current default attributes.
     /// </summary>
-    /// <param name="rhinoObject"></param>
-    /// <returns></returns>
+    /// <param name="rhinoObject">-</param>
+    /// <returns>-</returns>
     public Guid AddObject(DocObjects.RhinoObject rhinoObject)
     {
       if (null == rhinoObject)

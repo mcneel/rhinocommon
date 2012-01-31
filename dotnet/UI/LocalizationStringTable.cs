@@ -24,10 +24,6 @@ namespace Rhino.UI
     /// <summary>
     /// Look for XML file decorating the name with both the Locale ID as a number and a System.Globalization.CultureInfo.Name.
     /// </summary>
-    /// <param name="dir"></param>
-    /// <param name="filename"></param>
-    /// <param name="language_id"></param>
-    /// <returns></returns>
     private string XmlFileExists(string dir, string filename, int language_id)
     {
       string[] sSeps = { "_", "-", " ", "" };
@@ -51,8 +47,6 @@ namespace Rhino.UI
     /// <summary>
     /// Strip trailing "[[some number]]" from end of string.
     /// </summary>
-    /// <param name="s"></param>
-    /// <returns></returns>
     private string StripTrailingSquareBrackets(string s)
     {
       int i = s.LastIndexOf("[[", System.StringComparison.Ordinal);
@@ -64,10 +58,6 @@ namespace Rhino.UI
     /// Takes an embedded resource name and checks to see if it contains ".Localization." in the name and starts
     /// or ends with the locale ID or locale culture string.
     /// </summary>
-    /// <param name="s"></param>
-    /// <param name="language_id"></param>
-    /// <param name="culture_name"></param>
-    /// <returns></returns>
     private bool ResourceNameContainsLocaleID(string s, int language_id, string culture_name)
     {
       if (string.IsNullOrEmpty(s))
@@ -92,9 +82,6 @@ namespace Rhino.UI
     /// Looks in the specified assembly for an embedded resource that contains ".Localization." in the name and starts
     /// or ends with the locale ID or locale culture string.
     /// </summary>
-    /// <param name="assembly"></param>
-    /// <param name="language_id"></param>
-    /// <returns></returns>
     private XmlTextReader LoadFromAssemblyEmbeddedResource(Assembly assembly, int language_id)
     {
       if (null != assembly)
@@ -129,9 +116,6 @@ namespace Rhino.UI
     /// Look in the assembly folder or sub folders for a XML file that starts with the locale ID or locale ID
     /// converted to culture string (something like "es-es") and if it is found attach a XmlTextReader to it.
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="language_id"></param>
-    /// <returns></returns>
     private XmlTextReader TextReaderFromFile(Assembly a, int language_id)
     {
       //Attempt to load the XML file. First place to look is in the same directory as the assembly
@@ -195,7 +179,7 @@ namespace Rhino.UI
     /// </summary>
     /// <param name="a">Check this assembly folder and its embedded resources for the specified locale XML file.</param>
     /// <param name="language_id">Locale ID to check for.</param>
-    /// <returns></returns>
+    /// <returns>true if the operation was successful.</returns>
     public bool LoadFromFile(Assembly a, int language_id)
     {
       bool rc = true;
@@ -317,10 +301,6 @@ namespace Rhino.UI
     /// <summary>
     /// Recursive helper function for LocalizeUtils.LocalizeForm.
     /// </summary>
-    /// <param name="form_name"></param>
-    /// <param name="form_class_name"></param>
-    /// <param name="ctrl"></param>
-    /// <param name="tooltips"></param>
     internal void LocalizeControlTree(string form_name, string form_class_name, Control ctrl, ToolTip[] tooltips)
     {
       if (form_name == null || ctrl == null)
@@ -416,9 +396,6 @@ namespace Rhino.UI
     /// <summary>
     /// Recursive helper function for LocalizeUtils.LocalizeForm.
     /// </summary>
-    /// <param name="form_name"></param>
-    /// <param name="form_class_name"></param>
-    /// <param name="collection"></param>
     internal void LocalizeToolStripCollection(string form_name, string form_class_name, ToolStripItemCollection collection)
     {
       if (null == form_name || null == collection)
@@ -468,12 +445,6 @@ namespace Rhino.UI
       }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="form_name"></param>
-    /// <param name="form_class_name"></param>
-    /// <param name="lb"></param>
     void LocalizeListBoxItems(string form_name, string form_class_name, ListBox lb)
     {
       if (null == form_name || null == lb || string.IsNullOrEmpty(lb.Name))
@@ -506,12 +477,6 @@ namespace Rhino.UI
       }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="form_name"></param>
-    /// <param name="form_class_name"></param>
-    /// <param name="lv"></param>
     void LocalizeListView(string form_name, string form_class_name, ListView lv)
     {
       if (null == form_name || null == lv || string.IsNullOrEmpty(lv.Name))
@@ -578,11 +543,11 @@ namespace Rhino.UI
     }
 
     /// <summary>
-    /// 
+    /// Localizes combo list items.
     /// </summary>
-    /// <param name="form_name"></param>
-    /// <param name="form_class_name"></param>
-    /// <param name="cb"></param>
+    /// <param name="form_name">The form name.</param>
+    /// <param name="form_class_name">The form class name.</param>
+    /// <param name="cb">A Windows Forms combo box.</param>
     public void LocalizeComboBoxItems(string form_name, string form_class_name, ComboBox cb)
     {
       if (null == form_name || null == cb || string.IsNullOrEmpty(cb.Name))

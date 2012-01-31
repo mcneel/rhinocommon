@@ -21,14 +21,14 @@ namespace Rhino.Render
     /// <summary>
     /// Constructs a subclass of this object on the stack in your Rhino plug-in's Render() or RenderWindow() implementation.
     /// </summary>
-    /// <param name="doc"></param>
-    /// <param name="mode"></param>
-    /// <param name="plugin"></param>
-    /// <param name="sizeRendering"></param>
+    /// <param name="doc">A Rhino document.</param>
+    /// <param name="mode">A command running mode, such as scripted or interactive.</param>
+    /// <param name="plugin">A plug-in.</param>
+    /// <param name="sizeRendering">The width and height of the rendering.</param>
     /// <param name="caption">The caption to display in the frame window.</param>
-    /// <param name="channels"></param>
-    /// <param name="reuseRenderWindow"></param>
-    /// <param name="clearLastRendering"></param>
+    /// <param name="channels">The color channel or channels.</param>
+    /// <param name="reuseRenderWindow">true if the rendering window should be reused; otherwise, a new one will be instanciated.</param>
+    /// <param name="clearLastRendering">true if the last rendering should be removed.</param>
     protected RenderPipeline(RhinoDoc doc,
                           Rhino.Commands.RunMode mode,
                           Rhino.PlugIns.PlugIn plugin,
@@ -78,7 +78,7 @@ namespace Rhino.Render
     /// <summary>
     /// Call this function to render the scene normally. The function returns when rendering is complete (or cancelled).
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A code that explains how rendering completed.</returns>
     public RenderReturnCodes Render()
     {
       if (IntPtr.Zero != m_pSdkRender)
@@ -93,8 +93,8 @@ namespace Rhino.Render
     /// </summary>
     /// <param name="view">the view that the user selected a rectangle in.</param>
     /// <param name="rect">rectangle that the user selected.</param>
-    /// <param name="inWindow">true to render directly into the view window. */</param>
-    /// <returns></returns>
+    /// <param name="inWindow">true to render directly into the view window.</param>
+    /// <returns>A code that explains how rendering completed.</returns>
     /// //TODO - ViewInfo is wrong here
     public RenderReturnCodes RenderWindow(Rhino.Display.RhinoView view, System.Drawing.Rectangle rect, bool inWindow)
     {
@@ -108,7 +108,7 @@ namespace Rhino.Render
     /// <summary>
     /// Gets the render size as specified in the ON_3dmRenderSettings. Will automatically return the correct size based on the ActiveView or custom settings.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The render size.</returns>
     public static System.Drawing.Size RenderSize()
     {
       int width = 0; int height = 0;
@@ -143,11 +143,13 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// A new render mesh iterator. The caller shall delete the iterator. Any meshes created by the iterator persist in memory for the lifetime of the iterator.
+    /// A new render mesh iterator.
+    /// <para>The caller shall dispose the iterator.
+    /// Meshes created by the iterator are accessible up till when the iterator is disposed.</para>
     /// </summary>
-    /// <param name="forceTriMesh"></param>
+    /// <param name="forceTriMesh">true if quad meshes should be triangulated.</param>
     /// <param name="vp">The rendering view camera.</param>
-    /// <returns></returns>
+    /// <returns>A render mesh iterator.</returns>
     /// //TODO - ON_Viewport
     public RenderMeshIterator NewRenderMeshIterator(Rhino.DocObjects.ViewportInfo vp, bool forceTriMesh)
     {

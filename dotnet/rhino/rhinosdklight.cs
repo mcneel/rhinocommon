@@ -101,9 +101,6 @@ namespace Rhino.DocObjects.Tables
     ///// <summary>
     ///// Finds all of the lights with a given name
     ///// </summary>
-    ///// <param name="lightName"></param>
-    ///// <param name="ignoreDeletedLights"></param>
-    ///// <returns></returns>
     //public int[] FindByName(string lightName, bool ignoreDeletedLights)
     //{
     //}

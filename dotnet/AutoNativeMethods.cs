@@ -1868,9 +1868,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Revision(IntPtr pStringHolder);
 
-  //ON_wString* ON_wString_New()
+  //ON_wString* ON_wString_New(const RHMONO_STRING* _text)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_wString_New();
+  internal static extern IntPtr ON_wString_New([MarshalAs(UnmanagedType.LPWStr)]string _text);
 
   //void ON_wString_Delete(ON_wString* pString)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

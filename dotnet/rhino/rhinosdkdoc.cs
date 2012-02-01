@@ -2447,6 +2447,28 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
+    /// Finds all objects whose draw color matches a given color.
+    /// </summary>
+    /// <param name="drawColor">alpha value of this color is ignored</param>
+    /// <param name="includeLights"></param>
+    /// <returns></returns>
+    public Rhino.DocObjects.RhinoObject[] FindByDrawColor(System.Drawing.Color drawColor, bool includeLights)
+    {
+      ObjectEnumeratorSettings it = new ObjectEnumeratorSettings();
+      it.IncludeLights = includeLights;
+      it.IncludeGrips = false;
+      it.IncludePhantoms = true;
+      List<Rhino.DocObjects.RhinoObject> rc = new List<RhinoObject>();
+      foreach( RhinoObject obj in GetObjectList(it))
+      {
+        System.Drawing.Color objColor = obj.Attributes.DrawColor(m_doc);
+        if( objColor.R == drawColor.R && objColor.G == drawColor.G && objColor.B==drawColor.B)
+          rc.Add(obj);
+      }
+      return rc.ToArray();
+    }
+
+    /// <summary>
     /// Finds all of the clipping plane objects that actively clip a viewport.
     /// </summary>
     /// <param name="viewport">The viewport in which clipping planes are searched.</param>

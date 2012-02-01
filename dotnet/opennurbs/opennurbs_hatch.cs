@@ -87,6 +87,11 @@ namespace Rhino.Geometry
     /// Decomposes the hatch pattern into an array of geometry.
     /// </summary>
     /// <returns>An array of geometry that formed the appearance of the original elements.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_explodehatch.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_explodehatch.cs' lang='cs'/>
+    /// <code source='examples\cs\ex_explodehatch.py' lang='py'/>
+    /// </example>
     public GeometryBase[] Explode()
     {
       Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer geometry = new Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer();

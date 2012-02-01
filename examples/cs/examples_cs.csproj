@@ -107,6 +107,7 @@
     <Compile Include="ex_drawoverlay.cs" />
     <Compile Include="ex_dupborder.cs" />
     <Compile Include="ex_edittext.cs" />
+    <Compile Include="ex_explodehatch.cs" />
     <Compile Include="ex_findobjectsbyname.cs" />
     <Compile Include="ex_constrainedcopy.cs" />
     <Compile Include="ex_gumball.cs" />

@@ -382,7 +382,7 @@ namespace Rhino
       /// <param name="showNewLayerButton">true if the new layer button will be visible.</param>
       /// <param name="showSetCurrentButton">true if the set current button will be visible.</param>
       /// <param name="initialSetCurrentState">true if the current state will be initially set.</param>
-      /// <returns>A dilog result based on user choice.</returns>
+      /// <returns>A dialog result based on user choice.</returns>
       public static System.Windows.Forms.DialogResult ShowSelectLayerDialog(ref int layerIndex, string dialogTitle, bool showNewLayerButton, bool showSetCurrentButton, ref bool initialSetCurrentState)
       {
         bool rc = UnsafeNativeMethods.RHC_RhinoSelectLayerDialog(dialogTitle, ref layerIndex, showNewLayerButton, showSetCurrentButton, ref initialSetCurrentState);

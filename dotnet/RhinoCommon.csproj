@@ -314,6 +314,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="rhino\rhinosdkget.cs" />
     <Compile Include="rhino\rhinosdkpolyedge.cs" />
+    <Compile Include="rhino\rhinosdkprintinfo.cs" />
     <Compile Include="rhino\rhinosdkstackeddialogpage.cs" />
     <Compile Include="rhino\rhinosdksweep.cs" />
     <Compile Include="rhino\rhinosdkuiprofilecontext.cs" />

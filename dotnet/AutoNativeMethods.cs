@@ -8703,6 +8703,26 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region rh_printinfo.cpp
+  //CRhinoPrintInfo* CRhinoPrintInfo_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoPrintInfo_New();
+
+  //void CRhinoPrintInfo_Delete(CRhinoPrintInfo* pPrintInfo)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoPrintInfo_Delete(IntPtr pPrintInfo);
+
+  //void CRhinoPrintInfo_SetViewport(CRhinoPrintInfo* pPrintInfo, const CRhinoViewport* pConstRhinoViewport)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoPrintInfo_SetViewport(IntPtr pPrintInfo, IntPtr pConstRhinoViewport);
+
+  //bool CRhinoPrintInfo_DrawToSingleDib(CRhinoPrintInfo* pPrintInfo, CRhinoDib* pRhinoDib, int width, int height)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPrintInfo_DrawToSingleDib(IntPtr pPrintInfo, IntPtr pRhinoDib, int width, int height);
+  #endregion
+
+
   #region rh_skindll.cpp
   //CRhinoSkinDLL* CRhinoSkin_New( SPLASHPROC cb, const RHMONO_STRING* name, HICON icon )
   // SKIPPING - Contains a function pointer which needs to be written by hand

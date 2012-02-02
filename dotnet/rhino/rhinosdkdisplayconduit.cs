@@ -5,6 +5,33 @@ using System.Reflection;
 #if RHINO_SDK
 namespace Rhino.Display
 {
+  [Flags]
+  [CLSCompliant(false)]
+  public enum DrawFrameStages : uint
+  {
+    InitializeFrameBuffer = 0x00000001,
+    SetupFrustum = 0x00000002,
+    ObjectCulling = 0x00000004,
+    CalculateBoundingBox = 0x00000008,
+    CalculateClippingPlanes = 0x00000010,
+    SetupLighting = 0x00000020,
+    DrawBackground = 0x00000040,
+    PreDrawObjects = 0x00000080,
+    DrawObject = 0x00000100,
+    PostDrawObjects = 0x00000200,
+    DrawForeGround = 0x00000400,
+    DrawOverlay = 0x00000800,
+    PostProcessFrameBuffer = 0x00001000,
+    MeshingParameters = 0x00002000,
+    ObjectDisplayAttributes = 0x00004000,
+    PreObjectDraw = 0x00008000,
+    PostObjectDraw = 0x00010000,
+    ViewExtents = 0x00020000,
+    DrawMiddleGround = PreDrawObjects | DrawObject | PostDrawObjects,
+    ObjectBasedChannel = ObjectCulling | DrawObject | ObjectDisplayAttributes | PreObjectDraw | PostObjectDraw,
+    All = 0xFFFFFFFF & ~ViewExtents
+  }
+
   public abstract class DisplayConduit
   {
     bool m_bEnabled;
@@ -12,10 +39,7 @@ namespace Rhino.Display
 
     public bool Enabled
     {
-      get
-      {
-        return m_bEnabled;
-      }
+      get { return m_bEnabled; }
       set
       {
         m_bEnabled = value;
@@ -50,6 +74,10 @@ namespace Rhino.Display
           if (mi.DeclaringType != base_type)
             DisplayPipeline.PostDrawObjects += _PostDrawObjects;
 
+          mi = t.GetMethod("PreDrawObject", flags);
+          if (mi.DeclaringType != base_type)
+            DisplayPipeline.PreDrawObject += _PreDrawObject;
+
           mi = t.GetMethod("PreDrawObjects", flags);
           if (mi.DeclaringType != base_type)
             DisplayPipeline.PreDrawObjects += _PreDrawObjects;
@@ -62,6 +90,7 @@ namespace Rhino.Display
           DisplayPipeline.DrawOverlay -= _DrawOverlay;
           DisplayPipeline.PostDrawObjects -= _PostDrawObjects;
           DisplayPipeline.PreDrawObjects -= _PreDrawObjects;
+          DisplayPipeline.PreDrawObject -= _PreDrawObject;
         }
       }
     }
@@ -72,6 +101,7 @@ namespace Rhino.Display
     private void _DrawOverlay(object sender, DrawEventArgs e)  { DrawOverlay(e); }
     private void _PostDrawObjects(object sender, DrawEventArgs e) { PostDrawObjects(e); }
     private void _PreDrawObjects(object sender, DrawEventArgs e) { PreDrawObjects(e); }
+    private void _PreDrawObject(object sender, DrawObjectEventArgs e) { PreDrawObject(e); }
 
     /// <summary>
     /// Library developers should override this function to increase the bounding box of scene so it includes the
@@ -98,6 +128,12 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="e">The event argument contain the current viewport and display state.</param>
     protected virtual void PreDrawObjects(DrawEventArgs e) {}
+
+    /// <summary>
+    /// Called before every object in the scene is drawn.
+    /// </summary>
+    /// <param name="e"></param>
+    protected virtual void PreDrawObject(DrawObjectEventArgs e) { }
 
     /// <summary>
     /// Called after all non-highlighted objects have been drawn. Depth writing and testing are

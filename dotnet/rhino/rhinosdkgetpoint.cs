@@ -710,7 +710,7 @@ namespace Rhino.Input.Custom
 
       try
       {
-        Rhino.Display.DrawEventArgs e = new DrawEventArgs(pPipeline);
+        Rhino.Display.DrawEventArgs e = new DrawEventArgs(pPipeline, pConduit);
         m_active_gp.OnPostDrawObjects(e);
       }
       catch (Exception ex)
@@ -962,7 +962,7 @@ namespace Rhino.Input.Custom
     //private IntPtr m_pRhinoViewport;
     private readonly Point3d m_point;
     private readonly GetPoint m_source;
-    internal GetPointDrawEventArgs(GetPoint source, IntPtr pDisplayPipeline, Point3d point) : base(pDisplayPipeline)
+    internal GetPointDrawEventArgs(GetPoint source, IntPtr pDisplayPipeline, Point3d point) : base(pDisplayPipeline, IntPtr.Zero)
     {
       //m_pRhinoViewport = pRhinoViewport;
       m_point = point;

@@ -5449,6 +5449,19 @@ internal partial class UnsafeNativeMethods
   //void CChannelAttr_GetSetBBox(CRhinoDisplayConduit* pConduit, bool set, ON_BoundingBox* bbox)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CChannelAttr_GetSetBBox(IntPtr pConduit, [MarshalAs(UnmanagedType.U1)]bool set, ref BoundingBox bbox);
+
+  //const CRhinoObject* CChannelAttributes_RhinoObject(CRhinoDisplayConduit* pConduit)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CChannelAttributes_RhinoObject(IntPtr pConduit);
+
+  //bool CChannelAttributes_GetBool(CRhinoDisplayConduit* pConduit, int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CChannelAttributes_GetBool(IntPtr pConduit, int which);
+
+  //void CChannelAttributes_SetBool(CRhinoDisplayConduit* pConduit, int which, bool val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CChannelAttributes_SetBool(IntPtr pConduit, int which, [MarshalAs(UnmanagedType.U1)]bool val);
   #endregion
 
 
@@ -5803,6 +5816,10 @@ internal partial class UnsafeNativeMethods
   //                                                        bool worldSize)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawParticles2(IntPtr pPipeline, int texture_id_count, uint[] texture_ids, int point_count, Point3d[] points, float[] sizes, int[] colors_argb, int[] point_texture_ids, [MarshalAs(UnmanagedType.U1)]bool worldSize);
+
+  //CRhinoDoc* CRhinoDisplayPipeline_RhinoDoc(CRhinoDisplayPipeline* pPipeline)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoDisplayPipeline_RhinoDoc(IntPtr pPipeline);
   #endregion
 
 
@@ -8716,10 +8733,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoPrintInfo_SetViewport(IntPtr pPrintInfo, IntPtr pConstRhinoViewport);
 
-  //bool CRhinoPrintInfo_DrawToSingleDib(CRhinoPrintInfo* pPrintInfo, CRhinoDib* pRhinoDib, int width, int height)
+  //bool CRhinoPrintInfo_GetBool(const CRhinoPrintInfo* pConstPrintInfo, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool CRhinoPrintInfo_DrawToSingleDib(IntPtr pPrintInfo, IntPtr pRhinoDib, int width, int height);
+  internal static extern bool CRhinoPrintInfo_GetBool(IntPtr pConstPrintInfo, int which);
+
+  //void CRhinoPrintInfo_SetBool(CRhinoPrintInfo* pPrintInfo, int which, bool val)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoPrintInfo_SetBool(IntPtr pPrintInfo, int which, [MarshalAs(UnmanagedType.U1)]bool val);
   #endregion
 
 

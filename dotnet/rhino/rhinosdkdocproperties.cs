@@ -37,8 +37,9 @@ namespace Rhino.DocObjects.Tables
     /// Conceptually, the named construction plane table is an array of ConstructionPlanes
     /// and their associated names. The operator[] can be used to get individual ConstructionPlanes.
     /// </summary>
-    /// <param name="index">zero based array index.</param>
+    /// <param name="index">Zero based array index.</param>
     /// <returns>
+    /// A construction plane at the index, or null on error.
     /// </returns>
     public DocObjects.ConstructionPlane this[int index]
     {

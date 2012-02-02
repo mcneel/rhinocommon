@@ -497,6 +497,7 @@ namespace Rhino.PlugIns
 
     #region default virtual function implementations
     /// <summary>
+    /// Is called when the plug-in is being loaded.
     /// </summary>
     /// <param name="errorMessage">
     /// If a load error is returned and this string is set. This string is the 

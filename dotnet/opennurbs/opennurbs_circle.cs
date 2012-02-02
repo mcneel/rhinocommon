@@ -421,9 +421,7 @@ namespace Rhino.Geometry
     //}
 
     // David asks : what is this function used for? It sounds awfully nerdy to me.
-    ///// <summary>
-    ///// 
-    ///// </summary>
+    ///// <summary>-</summary>
     ///// <param name="p">coordinates in plane.</param>
     ///// <returns>-</returns>
     //public Vector2d GradientAt(Point2d p)

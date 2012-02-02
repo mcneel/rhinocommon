@@ -414,8 +414,7 @@ namespace Rhino.DocObjects.Tables
     /// definition is either active or deleted and this state is reported by IsDeleted.
     /// </summary>
     /// <param name="index">zero based array index.</param>
-    /// <returns>
-    /// </returns>
+    /// <returns>The instance definition at the specified index.</returns>
     public DocObjects.InstanceDefinition this[int index]
     {
       get

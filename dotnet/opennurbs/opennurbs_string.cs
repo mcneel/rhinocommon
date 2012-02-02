@@ -5,13 +5,15 @@ using System;
 namespace Rhino.Runtime.InteropWrappers
 {
   /// <summary>
-  /// Wraps a ON_wString* for working with C++
+  /// Represents a wrapper to an unmanaged OpenNurbs string.
+  /// <para>Wraps a C++ ON_wString*.</para>
   /// </summary>
   public class StringWrapper : IDisposable
   {
     IntPtr m_ptr;
 
     /// <summary>
+    /// Initializes a new empty unmanaged string.
     /// </summary>
     public StringWrapper()
     {
@@ -19,8 +21,9 @@ namespace Rhino.Runtime.InteropWrappers
     }
 
     /// <summary>
+    /// Initializes a new unmanaged string with an initial value.
     /// </summary>
-    /// <param name="s"></param>
+    /// <param name="s">The initial value.</param>
     public StringWrapper(string s)
     {
       m_ptr = UnsafeNativeMethods.ON_wString_New(s);

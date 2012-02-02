@@ -267,8 +267,7 @@ namespace Rhino.Geometry
       return LongitudeRadians(RhinoMath.ToRadians(degrees));
     }
 
-    /// <summary>
-    /// </summary>
+    /// <summary>Evaluates the sphere at specific longitude and latitude angles.</summary>
     /// <param name="longitudeRadians">A number within the interval [0, 2pi].</param>
     /// <param name="latitudeRadians">A number within the interval [-pi/2,pi/2].</param>
     /// <returns>A point value.</returns>

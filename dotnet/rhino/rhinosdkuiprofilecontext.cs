@@ -159,7 +159,7 @@ namespace Rhino
     public static readonly char StringListSeparator = '|';
 
     /// <summary>
-    /// 
+    /// Gets the <see cref="StringListSeparator"/> value in an array.
     /// </summary>
     public static char[] StringListSeparatorAsArray { get { return new char[] { StringListSeparator }; } }
 
@@ -519,7 +519,7 @@ namespace Rhino
   }
 
   /// <summary>
-  /// 
+  /// Represents event data that is passed as state in persistent settings events.
   /// </summary>
   public abstract class PersistentSettingsEventArgs : EventArgs
   {

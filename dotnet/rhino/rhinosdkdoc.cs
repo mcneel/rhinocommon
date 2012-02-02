@@ -2449,9 +2449,9 @@ namespace Rhino.DocObjects.Tables
     /// <summary>
     /// Finds all objects whose draw color matches a given color.
     /// </summary>
-    /// <param name="drawColor">alpha value of this color is ignored</param>
-    /// <param name="includeLights"></param>
-    /// <returns></returns>
+    /// <param name="drawColor">The alpha value of this color is ignored.</param>
+    /// <param name="includeLights">true if lights should be included.</param>
+    /// <returns>An array of Rhino document objects. This array can be empty.</returns>
     public Rhino.DocObjects.RhinoObject[] FindByDrawColor(System.Drawing.Color drawColor, bool includeLights)
     {
       ObjectEnumeratorSettings it = new ObjectEnumeratorSettings();

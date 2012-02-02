@@ -5,7 +5,7 @@ namespace Rhino.Render
 {
 #if RDK_CHECKED
   /// <summary>
-  /// 
+  /// Represents the Sun on a little portion of Earth.
   /// </summary>
   public class Sun
   {

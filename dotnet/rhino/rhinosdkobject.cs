@@ -1234,7 +1234,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets the geometry linked to the object targeted by this reference.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The geometry.</returns>
     public Geometry.GeometryBase Geometry()
     {
       IntPtr pGeometry = UnsafeNativeMethods.CRhinoObjRef_Geometry(m_ptr);

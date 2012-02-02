@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace Rhino.Collections
 {
-  ///<summary>
+  /// <summary>
   /// <para>Represents a dictionary class that can be attached to objects and
   /// can be serialized (saved) at necessity.</para>
   /// <para>See remarks for layout.</para>
-  ///</summary>
-  ///<remarks>
+  /// </summary>
+  /// <remarks>
   /// <para>This is the layout of this object:</para>
-  /// <para> </para>
+  /// <para>.</para>
   /// <para>BEGINCHUNK (TCODE_ANONYMOUS_CHUNK)</para>
   /// <para>|- version (int)</para>
   /// <para>|- entry count (int)</para>

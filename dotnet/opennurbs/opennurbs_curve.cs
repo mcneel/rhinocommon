@@ -343,8 +343,7 @@ namespace Rhino.Geometry
 
 #if !USING_V5_SDK
     //David: this function is disabled in the public SDK until I can get it to work right.
-    /// <summary>
-    /// </summary>
+    /// <summary>-</summary>
     /// <param name="points">-</param>
     /// <param name="degree">-</param>
     /// <param name="startTangent">-</param>
@@ -1657,11 +1656,10 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>
-    /// Determine the orientation (counterclockwise or clockwise) of a closed planar curve in a given plane.
+    /// Determines the orientation (counterclockwise or clockwise) of a closed planar curve in a given plane.
     /// Only works with simple (no self intersections) closed planar curves.
     /// </summary>
-    /// <param name="upDirection">
-    /// </param>
+    /// <param name="upDirection">A vector that is considered "up".</param>
     /// <returns>The orientation of this curve with respect to a defined up direction.</returns>
     public CurveOrientation ClosedCurveOrientation(Vector3d upDirection)
     {
@@ -1669,7 +1667,7 @@ namespace Rhino.Geometry
       return ClosedCurveOrientation(plane);
     }
     /// <summary>
-    /// Determine the orientation (counterclockwise or clockwise) of a closed planar curve in a given plane.
+    /// Determines the orientation (counterclockwise or clockwise) of a closed planar curve in a given plane.
     /// Only works with simple (no self intersections) closed planar curves.
     /// </summary>
     /// <param name="plane">
@@ -1685,7 +1683,7 @@ namespace Rhino.Geometry
       return ClosedCurveOrientation(xform);
     }
     /// <summary>
-    /// Determine the orientation (counterclockwise or clockwise) of a closed planar curve.
+    /// Determines the orientation (counterclockwise or clockwise) of a closed planar curve.
     /// Only works with simple (no self intersections) closed planar curves.
     /// </summary>
     /// <param name="xform">
@@ -1705,7 +1703,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Reverse the direction of the curve.
+    /// Reverses the direction of the curve.
     /// </summary>
     /// <returns>true on success, false on failure.</returns>
     /// <remarks>If reversed, the domain changes from [a,b] to [-b,-a]</remarks>

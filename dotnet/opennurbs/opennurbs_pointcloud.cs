@@ -369,7 +369,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Append a new PointCloudItem to the end of this point cloud.
+    /// Appends a new PointCloudItem to the end of this point cloud.
     /// </summary>
     /// <returns>The newly appended item.</returns>
     public PointCloudItem AppendNew()
@@ -378,7 +378,7 @@ namespace Rhino.Geometry
       return this[Count - 1];
     }
     /// <summary>
-    /// 
+    /// Inserts a new <see cref="PointCloudItem"/> at a specific position of the point cloud.
     /// </summary>
     /// <param name="index">Index of new item.</param>
     /// <returns>The newly inserted item.</returns>

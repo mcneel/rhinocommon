@@ -492,7 +492,7 @@ namespace Rhino.Geometry
   //  public class ON_MorphControl : ON_Geometry { }
 
   /// <summary>
-  /// 
+  /// Represents a geometry that is able to control the morphing behaviour of some other geometry.
   /// </summary>
   [Serializable]
   public class MorphControl : GeometryBase, ISerializable

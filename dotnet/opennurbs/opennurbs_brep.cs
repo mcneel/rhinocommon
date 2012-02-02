@@ -193,8 +193,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Constructs a brep form of a surface of revolution.
     /// </summary>
-    /// <param name="surface">
-    /// </param>
+    /// <param name="surface">The surface of revolution.</param>
     /// <param name="capStart">
     /// if true, the start of the revolute is not on the axis of revolution,
     /// and the surface of revolution is closed, then a circular cap will be

@@ -63,10 +63,10 @@ namespace Rhino.Commands
   {
     private readonly Style m_style;
     /// <summary>
-    /// 
+    /// Initializes a new command style attribute class.
     /// </summary>
     /// <param name="styles">
-    /// set of values combined using a bitwise OR operation to get the desired combination
+    /// Set of values combined using a bitwise OR operation to get the desired combination
     /// of command styles.
     /// </param>
     public CommandStyleAttribute(Style styles)
@@ -737,7 +737,7 @@ namespace Rhino.Commands
   public abstract class TransformCommand : Command
   {
     /// <summary>
-    /// 
+    /// Selects objects within the command.
     /// </summary>
     /// <param name="prompt">The selection prompt.</param>
     /// <param name="list">A list of objects to transform. This is a special list type.</param>

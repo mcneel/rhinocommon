@@ -37,7 +37,7 @@ namespace Rhino.Render
   }
 
   /// <summary>
-  /// 
+  /// Represents a texture mapping.
   /// </summary>
   public class TextureMapping : Rhino.Runtime.CommonObject
   {

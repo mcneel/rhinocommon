@@ -1977,7 +1977,7 @@ namespace Rhino.Input.Custom
       m_upperLimit = upperLimit;
     }
     /// <summary>
-    /// 
+    /// Initializes a new instance of the double option class.
     /// </summary>
     /// <param name="initialValue">The initial number .</param>
     /// <param name="setLowerLimit">

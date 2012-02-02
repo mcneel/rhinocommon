@@ -1034,6 +1034,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
+    /// Computes a transform from a coordinate system to another.
     /// </summary>
     /// <param name="sourceSystem">The coordinate system to map from.</param>
     /// <param name="destinationSystem">The coordinate system to map into.</param>
@@ -1073,7 +1074,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// 
+    /// Gets the scale factor from point in frustum to screen scale.
     /// </summary>
     /// <param name="pointInFrustum">point in viewing frustum.</param>
     /// <returns>number of pixels per world unit at the 3d point.</returns>

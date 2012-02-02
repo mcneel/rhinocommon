@@ -449,6 +449,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
+    /// Gets or sets the current material source.
     /// </summary>
     public ObjectMaterialSource CurrentMaterialSource
     {

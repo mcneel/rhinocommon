@@ -1,16 +1,15 @@
-#pragma warning disable 1591
 using System;
 
 namespace Rhino.Runtime
 {
   /// <summary>
-  /// Use for moving object types between RhinoCommon and legacy Rhino_DotNet or C++
+  /// Contains static methods to marshal objects between RhinoCommon and legacy Rhino_DotNet or C++.
   /// </summary>
   public static class Interop
   {
 #if RHINO_SDK
     /// <summary>
-    /// Get the C++ CRhinoDoc* for a given RhinoCommon RhinoDoc class.
+    /// Gets the C++ CRhinoDoc* for a given RhinoCommon RhinoDoc class.
     /// </summary>
     /// <param name="doc">A document.</param>
     /// <returns>A pointer value.</returns>
@@ -37,7 +36,7 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Return the underlying non-const ON_Geometry* for a RhinoCommon class. You should
+    /// Returns the underlying non-const ON_Geometry* for a RhinoCommon class. You should
     /// only be interested in using this function if you are writing C++ code.
     /// </summary>
     /// <param name="geometry">A geometry object. This can be null and in such a case <see cref="IntPtr.Zero"/> is returned.</param>
@@ -52,7 +51,7 @@ namespace Rhino.Runtime
 
 #if RHINO_SDK
     /// <summary>
-    /// Return the underlying const CRhinoObject* for a RhinoCommon class. You should only
+    /// Returns the underlying const CRhinoObject* for a RhinoCommon class. You should only
     /// be interested in using this function if you are writing C++ code.
     /// </summary>
     /// <param name="rhinoObject">A Rhino object.</param>
@@ -65,6 +64,11 @@ namespace Rhino.Runtime
       return rc;
     }
 
+    /// <summary>
+    /// Constructs a RhinoCommon Rhino object from an unmanaged C++ RhinoObject pointer.
+    /// </summary>
+    /// <param name="pRhinoObject">The original pointer.</param>
+    /// <returns>A new Rhino object, or null if the pointer was invalid or <see cref="IntPtr.Zero"/>.</returns>
     public static Rhino.DocObjects.RhinoObject RhinoObjectFromPointer(IntPtr pRhinoObject)
     {
       return Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(pRhinoObject);

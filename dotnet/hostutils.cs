@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 
@@ -10,7 +9,8 @@ namespace Rhino.Runtime
 {
 #if RHINO_SDK
   /// <summary>
-  /// Skin DLLs must contain a single class that derives from the Skin class.
+  /// Represents a customized environment that changes the appearance of Rhino.
+  /// <para>Skin DLLs must contain a single class that derives from the Skin class.</para>
   /// </summary>
   public abstract class Skin
   {
@@ -82,6 +82,10 @@ namespace Rhino.Runtime
     }
 
     IntPtr m_pSkin;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Skin"/> class.
+    /// </summary>
     protected Skin()
     {
       if (m_theSingleSkin != null) return;
@@ -101,14 +105,30 @@ namespace Rhino.Runtime
       m_pSkin = UnsafeNativeMethods.CRhinoSkin_New(m_ShowSplash, name, hicon);
       m_theSingleSkin = this;
     }
+    /// <summary>Is called when the splash screen should be shown.</summary>
     protected virtual void ShowSplash() { }
+
+    /// <summary>Is called when the splash screen should be hidden.</summary>
     protected virtual void HideSplash() { }
 
+    /// <summary>Is called when the main frame window is created.</summary>
     protected virtual void OnMainFrameWindowCreated() { }
+
+    /// <summary>Is called when the license check is completed.</summary>
     protected virtual void OnLicenseCheckCompleted() { }
+
+    /// <summary>Is called when built-in commands are registered.</summary>
     protected virtual void OnBuiltInCommandsRegistered() { }
+
+    /// <summary>Is called when the first plug-in that loads at start-up is going to be loaded.</summary>
+    /// <param name="expectedCount">The complete amount of plug-ins.</param>
     protected virtual void OnBeginLoadAtStartPlugIns(int expectedCount) { }
+
+    /// <summary>Is called when a specific plug-in is going to be loaded.</summary>
+    /// <param name="description">The plug-in description.</param>
     protected virtual void OnBeginLoadPlugIn(string description) { }
+
+    /// <summary>Is called when all plug-ins are loaded.</summary>
     protected virtual void OnEndLoadPlugIn() { }
 
     /// <summary>If you want to provide a custom icon for your skin.</summary>
@@ -124,6 +144,10 @@ namespace Rhino.Runtime
     }
 
     PersistentSettingsManager m_SettingsManager;
+
+    /// <summary>
+    /// Gets access to the skin persistent settings.
+    /// </summary>
     public PersistentSettings Settings
     {
       get
@@ -149,13 +173,27 @@ namespace Rhino.Runtime
     }
   }
 
+  /// <summary>
+  /// Represents scripting compiled code.
+  /// </summary>
   public abstract class PythonCompiledCode
   {
+    /// <summary>
+    /// Executes the script in a specific scope.
+    /// </summary>
+    /// <param name="scope">The scope where the script should be executed.</param>
     public abstract void Execute(PythonScript scope);
   }
 
+  /// <summary>
+  /// Represents a Python script.
+  /// </summary>
   public abstract class PythonScript
   {
+    /// <summary>
+    /// Constructs a new Python script context.
+    /// </summary>
+    /// <returns>A new Python script, or null if none could be created. Rhino 4 always returns null.</returns>
     public static PythonScript Create()
     {
       Guid ip_id = new Guid("814d908a-e25c-493d-97e9-ee3861957f49");
@@ -166,24 +204,89 @@ namespace Rhino.Runtime
       return pyscript;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PythonScript"/> class.
+    /// </summary>
     protected PythonScript()
     {
       ScriptContextDoc = null;
       Output = RhinoApp.Write;
     }
 
+    /// <summary>
+    /// Compiles a class in a quick-to-execute proxy.
+    /// </summary>
+    /// <param name="script">A string text.</param>
+    /// <returns>A Python compiled code instance.</returns>
     public abstract PythonCompiledCode Compile(string script);
+
+    /// <summary>
+    /// Determines if the main scripting context has a variable with a name.
+    /// </summary>
+    /// <param name="name">The variable name.</param>
+    /// <returns>true if the variable is present.</returns>
     public abstract bool ContainsVariable(string name);
+
+    /// <summary>
+    /// Retrieves all variable names in the script.
+    /// </summary>
+    /// <returns>An enumerable set with all names of the variables.</returns>
     public abstract System.Collections.Generic.IEnumerable<string> GetVariableNames();
+
+    /// <summary>
+    /// Gets the object associated with a variable name in the main scripting context.
+    /// </summary>
+    /// <param name="name">A variable name.</param>
+    /// <returns>The variable object.</returns>
     public abstract object GetVariable(string name);
+
+    /// <summary>
+    /// Sets a variable with a name and an object. Object can be null (Nothing in Visual Basic).
+    /// </summary>
+    /// <param name="name">A valid variable name in Python.</param>
+    /// <param name="value">A valid value for that variable name.</param>
     public abstract void SetVariable(string name, object value);
+
+    /// <summary>
+    /// Sets a variable for runtime introspection.
+    /// </summary>
+    /// <param name="name">A variable name.</param>
+    /// <param name="value">A variable value.</param>
     public virtual void SetIntellisenseVariable(string name, object value) { }
+
+    /// <summary>
+    /// Removes a defined variable from the main scripting context.
+    /// </summary>
+    /// <param name="name">The variable name.</param>
     public abstract void RemoveVariable(string name);
 
+    /// <summary>
+    /// Evaluates statements and an expression in the main scripting context.
+    /// </summary>
+    /// <param name="statements">One or several statements.</param>
+    /// <param name="expression">An expression.</param>
+    /// <returns>The expression result.</returns>
     public abstract object EvaluateExpression(string statements, string expression);
+
+    /// <summary>
+    /// Executes a Python file.
+    /// </summary>
+    /// <param name="path">The path to the file.</param>
+    /// <returns>true if the file executed. This method can throw scripting-runtime based exceptions.</returns>
     public abstract bool ExecuteFile(string path);
+
+    /// <summary>
+    /// Executes a Python string.
+    /// </summary>
+    /// <param name="script">A Python text.</param>
+    /// <returns>true if the file executed. This method can throw scripting-runtime based exceptions.</returns>
     public abstract bool ExecuteScript(string script);
 
+    /// <summary>
+    /// Retrieves a meaningful representation of the call stack.
+    /// </summary>
+    /// <param name="ex">An exception that was thrown by some of the methods in this class.</param>
+    /// <returns>A string that represents the Python exception.</returns>
     public abstract string GetStackTraceFromException(Exception ex);
 
     /// <summary>
@@ -199,6 +302,9 @@ namespace Rhino.Runtime
     /// </summary>
     public object ScriptContextDoc { get; set; }
 
+    /// <summary>
+    /// Gets or sets a context unique identified.
+    /// </summary>
     public int ContextId
     {
       get { return m_context_id; }
@@ -206,10 +312,19 @@ namespace Rhino.Runtime
     }
     int m_context_id = 1;
 
+    /// <summary>
+    /// Creates a control where the user is able to type Python code.
+    /// </summary>
+    /// <param name="script">A starting script.</param>
+    /// <param name="helpcallback">A method that is called when help is shown for a function, a class or a method.</param>
+    /// <returns>A Windows Forms control.</returns>
     public abstract System.Windows.Forms.Control CreateTextEditorControl(string script, Action<string> helpcallback);
   }
 #endif
 
+  /// <summary>
+  /// Contains static methods to deal with teh runtime environment.
+  /// </summary>
   public static class HostUtils
   {
     /// <summary>
@@ -302,6 +417,15 @@ namespace Rhino.Runtime
     // 1== loaded
     //-1== not loaded
     static int m_rdk_loadtest;
+    /// <summary>
+    /// Determines if the RDK is loaded.
+    /// </summary>
+    /// <param name="throwOnFalse">if the RDK is not loaded, then throws a
+    /// <see cref="RdkNotLoadedException"/>.</param>
+    /// <param name="usePreviousResult">if true, then the last result can be used instaed of
+    /// performing a full check.</param>
+    /// <returns>true if the RDK is loaded; false if the RDK is not loaded. Note that the
+    /// <see cref="RdkNotLoadedException"/> will hinder the retrieval of any return value.</returns>
     public static bool CheckForRdk(bool throwOnFalse, bool usePreviousResult)
     {
       const int UNKNOWN = 0;
@@ -361,11 +485,20 @@ namespace Rhino.Runtime
       set { m_bSendDebugToRhino = value; }
     }
 
+    /// <summary>
+    /// Informs RhinoCommon of an exception that has been handled but that the developer wants to screen.
+    /// </summary>
+    /// <param name="ex">An exception.</param>
     public static void ExceptionReport(Exception ex)
     {
       ExceptionReport(null, ex);
     }
 
+    /// <summary>
+    /// Informs RhinoCommon of an exception that has been handled but that the developer wants to screen.
+    /// </summary>
+    /// <param name="source">An exception source text.</param>
+    /// <param name="ex">An exception.</param>
     public static void ExceptionReport(string source, Exception ex)
     {
       if (null == ex)
@@ -387,7 +520,16 @@ namespace Rhino.Runtime
         OnExceptionReport(source, ex);
     }
 
+    /// <summary>
+    /// Represents a reference to a method that will be called when an exception occurs.
+    /// </summary>
+    /// <param name="source">An exception source text.</param>
+    /// <param name="ex">An exception.</param>
     public delegate void ExceptionReportDelegate(string source, Exception ex);
+
+    /// <summary>
+    /// Is raised when an exception is reported with one of the <see cref="ExceptionReport(Exception)"/> method.
+    /// </summary>
     public static event ExceptionReportDelegate OnExceptionReport;
 
 
@@ -415,6 +557,11 @@ namespace Rhino.Runtime
       */
     }
 
+    /// <summary>
+    /// Calls a method on the main Rhino UI thread if this is necessary.
+    /// </summary>
+    /// <param name="method">A method. This method is called with no arguments.</param>
+    /// <returns>A return object, or null.</returns>
     public static object InvokeOnMainUiThread(Delegate method)
     {
       if (m_invoke_window != null && RunningOnWindows && m_invoke_window.InvokeRequired)
@@ -423,6 +570,12 @@ namespace Rhino.Runtime
       return method.DynamicInvoke(null);
     }
 
+    /// <summary>
+    /// Calls a method on the main Rhino UI thread if this is necessary.
+    /// </summary>
+    /// <param name="method">A method. This method is called with args arguments.</param>
+    /// <param name="args">The method arguments.</param>
+    /// <returns>A return object, or null.</returns>
     public static object InvokeOnMainUiThread(Delegate method, params object[] args)
     {
       if (m_invoke_window != null && RunningOnWindows && m_invoke_window.InvokeRequired)
@@ -682,6 +835,12 @@ namespace Rhino.Runtime
     }
 
 #if RHINO_SDK
+    /// <summary>
+    /// Instantiates a plug-in type and registers the associated commands and classes.
+    /// </summary>
+    /// <param name="pluginType">A plug-in type. This type must derive from <see cref="PlugIn"/>.</param>
+    /// <param name="printDebugMessages">true if debug messages should be printed.</param>
+    /// <returns>A new plug-in instance.</returns>
     public static PlugIn CreatePlugIn(Type pluginType, bool printDebugMessages)
     {
       if (null == pluginType || !typeof(PlugIn).IsAssignableFrom(pluginType))
@@ -826,6 +985,9 @@ namespace Rhino.Runtime
     }
     static System.Reflection.Assembly m_rhdn_assembly;
 
+    /// <summary>
+    /// Informs the runtime that the application is shutting down.
+    /// </summary>
     public static void SetInShutDown()
     {
       try
@@ -1087,9 +1249,15 @@ namespace Rhino.Runtime
     }
   }
 
+  /// <summary>
+  /// Is thrown when the RDK is not loaded.
+  /// </summary>
   [Serializable]
   public class RdkNotLoadedException : Exception
   {
+    /// <summary>
+    /// Initializes a new instance of the RDK not loaded exception with a standard message.
+    /// </summary>
     public RdkNotLoadedException() : base("The Rhino Rdk is not loaded.") { }
   }
 }

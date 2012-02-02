@@ -122,7 +122,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Constructs a deep (or full) copy of this object.
+    /// Constructs a deep (full) copy of this object.
     /// </summary>
     /// <returns>An object of the same type as this, with the same properties and behavior.</returns>
     public virtual GeometryBase Duplicate()

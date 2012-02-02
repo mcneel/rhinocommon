@@ -1,16 +1,28 @@
-#pragma warning disable 1591
 using System;
 using Rhino.Runtime;
 
 #if RHINO_SDK
 namespace Rhino.Display
 {
+
+  /// <summary>
+  /// Represents a base class for visual analysis modes.
+  /// <para>This class is abstract.</para>
+  /// </summary>
   public abstract class VisualAnalysisMode
   {
+    /// <summary>
+    /// Contains enumerated values for analysis styles, such as wireframe, texture or false colors..
+    /// </summary>
     public enum AnalysisStyle : int
     {
+      /// <summary>The analysis is showing with wires.</summary>
       Wireframe = 1,
+
+      /// <summary>The analysis is showing with textures.</summary>
       Texture = 2,
+
+      /// <summary>The analysis is showing with false colors.</summary>
       FalseColor = 4
     }
 
@@ -336,6 +348,11 @@ namespace Rhino.Display
       return null;
     }
 
+    /// <summary>
+    /// Finds a visual analysis mode by type.
+    /// </summary>
+    /// <param name="t">A visual analysis mode type.</param>
+    /// <returns>A visual analysis mode on success, or null on error.</returns>
     public static VisualAnalysisMode Find(Type t)
     {
       return Find(t.GUID);
@@ -352,9 +369,19 @@ namespace Rhino.Display
     /// properties details window to describe the object.
     /// </summary>
     public abstract string Name { get; }
+
+    /// <summary>
+    /// Gets the visual analysis mode style.
+    /// </summary>
     public abstract AnalysisStyle Style { get; }
 
     internal Guid m_id = Guid.Empty;
+
+    /// <summary>
+    /// Gets the visual analysis mode GUID.
+    /// The Guid is specified with the <see cref="System.Runtime.InteropServices.GuidAttribute">GuidAttribute</see>
+    /// applied to the class.
+    /// </summary>
     public Guid Id
     {
       get
@@ -498,6 +525,13 @@ namespace Rhino.Display
     {
     }
 
+    /// <summary>
+    /// Draws a mesh.
+    /// <para>The default implementation does nothing.</para>
+    /// </summary>
+    /// <param name="obj">A Rhino object corresponding to the surface.</param>
+    /// <param name="mesh">The mesh geometry.</param>
+    /// <param name="pipeline">The current display pipeline.</param>
     protected virtual void DrawMesh(Rhino.DocObjects.RhinoObject obj, Rhino.Geometry.Mesh mesh, DisplayPipeline pipeline )
     {
     }

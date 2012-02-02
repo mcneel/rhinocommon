@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 
 namespace Rhino.Display
@@ -99,6 +98,12 @@ namespace Rhino.Display
     #endregion
 
     #region operators
+
+    /// <summary>
+    /// Implicitly converts a ColorHSL in a .Net library color.
+    /// </summary>
+    /// <param name="hsl">A HSL color.</param>
+    /// <returns>A ARGB .Net library color.</returns>
     public static implicit operator System.Drawing.Color(ColorHSL hsl)
     {
       return hsl.ToArgbColor();
@@ -301,6 +306,12 @@ namespace Rhino.Display
     #endregion
 
     #region operators
+
+    /// <summary>
+    /// Implicitly converts a CMYK color into a .Net library color.
+    /// </summary>
+    /// <param name="cmyk">A CMYK color.</param>
+    /// <returns>A ARGB .Net library color.</returns>
     public static implicit operator System.Drawing.Color(ColorCMYK cmyk)
     {
       double c0, m0, y0;
@@ -522,6 +533,12 @@ namespace Rhino.Display
     #endregion
 
     #region operators
+
+    /// <summary>
+    /// Implicitly converts a XYZ color into a .Net library color.
+    /// </summary>
+    /// <param name="xyz">A XYZ color.</param>
+    /// <returns>A ARGB .Net library color.</returns>
     public static implicit operator System.Drawing.Color(ColorXYZ xyz)
     {
       byte a = (byte)(xyz.A * 255.0);
@@ -681,6 +698,12 @@ namespace Rhino.Display
     #endregion
 
     #region operators
+
+    /// <summary>
+    /// Implicitly converts a LAB color into a .Net library color.
+    /// </summary>
+    /// <param name="lab">A LAB color.</param>
+    /// <returns>A ARGB .Net library color.</returns>
     public static implicit operator System.Drawing.Color(ColorLAB lab)
     {
       System.Drawing.Color col = ColorXYZ.CreateFromLAB(lab);
@@ -833,6 +856,12 @@ namespace Rhino.Display
     #endregion
 
     #region operators
+
+    /// <summary>
+    /// Implicitly converts a LCH color into a .Net library color.
+    /// </summary>
+    /// <param name="lch">A LCH color.</param>
+    /// <returns>A ARGB .Net library color.</returns>
     public static implicit operator System.Drawing.Color(ColorLCH lch)
     {
       System.Drawing.Color col = ColorLAB.CreateFromLCH(lch);

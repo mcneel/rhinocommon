@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
 
@@ -69,6 +68,10 @@ namespace Rhino.DocObjects
   //public class RadialDimension : AnnotationObject { }
   //public class AngularDimension : AnnotationObject { }
   //public class OrdinateDimension : AnnotationObject { }
+
+  /// <summary>
+  /// Represents a text dot that is a document.
+  /// </summary>
   public class TextDotObject : RhinoObject
   {
     internal TextDotObject(uint serialNumber)
@@ -81,7 +84,10 @@ namespace Rhino.DocObjects
   }
   //public class AnnotationTextEx : AnnotationEx { }
 
-  // Wrapper for CRhinoAnnotationText
+  /// <summary>
+  /// Represents a text object in a document.
+  /// <para>This is a wrapper for CRhinoAnnotationText.</para>
+  /// </summary>
   public class TextObject : AnnotationObjectBase
   {
     internal TextObject(uint serialNumber)
@@ -93,6 +99,9 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.CRhinoAnnotationText_InternalCommitChanges;
     }
 
+    /// <summary>
+    /// Gets the text entity geometry of this text object.
+    /// </summary>
     public Rhino.Geometry.TextEntity TextGeometry
     {
       get
@@ -148,15 +157,31 @@ namespace Rhino.Display
       m_height = height;
     }
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~Text3d()
     {
       Dispose(false);
     }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)

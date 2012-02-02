@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using Rhino.Geometry;
 using System.Runtime.InteropServices;

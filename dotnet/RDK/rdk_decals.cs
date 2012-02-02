@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 namespace Rhino.Render
 {
+  /// <summary>
+  /// Represents a decal, or a picture that can be moved on an object.
+  /// </summary>
   public class Decal
   {
     readonly IntPtr m_pDecal = IntPtr.Zero;
@@ -164,7 +167,7 @@ namespace Rhino.Render
     /// <param name="normal">The face normal of the given point.</param>
     /// <param name="colInOut">The color to blend the decal color to.</param>
     /// <param name="uvOut">the UV on the texture that the color point was read from.</param>
-    /// <returns>true if the given point hits the decal, else \e false.</returns>
+    /// <returns>true if the given point hits the decal, else false.</returns>
     public bool Color(Rhino.Geometry.Point3d point, Rhino.Geometry.Vector3d normal, ref Rhino.Display.Color4f colInOut, ref Rhino.Geometry.Point2d uvOut)
     {
       return 1 == UnsafeNativeMethods.Rdk_Decal_Color(ConstPointer(), point, normal, ref colInOut, ref uvOut);
@@ -181,7 +184,9 @@ namespace Rhino.Render
 
 
 
-
+  /// <summary>
+  /// Represents all the decals of an object.
+  /// </summary>
   public class ObjectDecals : IEnumerator<Decal>, IDisposable
   {
     private readonly IntPtr m_pDecalIterator;

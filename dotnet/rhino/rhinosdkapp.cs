@@ -1,14 +1,16 @@
-#pragma warning disable 1591
 using System;
 using Rhino.ApplicationSettings;
 
 namespace Rhino.ApplicationSettings
 {
   /// <summary>
-  /// Provides valid values for license node types.
+  /// Provides enumerated constant values for license node types.
   /// </summary>
   public enum LicenseNode : int
   {
+    /// <summary>
+    /// An independent node.
+    /// </summary>
     Standalone = 0,
     /// <summary>
     /// Network (obtains license from Zoo server)
@@ -25,15 +27,34 @@ namespace Rhino.ApplicationSettings
   /// </summary>
   public enum Installation : int
   {
+    ///<summary>The group is unknown.</summary>
     Undefined = 0,   // = CRhinoApp::installation_undefined,
+
+    ///<summary>The group is commercial.</summary>
     Commercial,      // = CRhinoApp::installation_commercial,
+
+    ///<summary>The group is educational.</summary>
     Educational,     // = CRhinoApp::installation_educational,
+
+    ///<summary>The group is an educational laboratory.</summary>
     EducationalLab,  // = CRhinoApp::installation_educational_lab,
+
+    ///<summary>The group is not for resale.</summary>
     NotForResale,    // = CRhinoApp::installation_not_for_resale,
+
+    ///<summary>The group is for a laboratory but not for resale.</summary>
     NotForResaleLab, // = CRhinoApp::installation_not_for_resale_lab,
+
+    ///<summary>The group is beta.</summary>
     Beta,            // = CRhinoApp::installation_beta,
+
+    ///<summary>The group is a laboratory beta.</summary>
     BetaLab,         // = CRhinoApp::installation_beta_lab,
+
+    ///<summary>The group is evaluation.</summary>
     Evaluation,      // = CRhinoApp::installation_evaluation,
+
+    ///<summary>The group is corporate.</summary>
     Corporate        // = CRhinoApp::installation_corporate
   }
 }
@@ -111,6 +132,9 @@ namespace Rhino
       get { return UnsafeNativeMethods.CRhinoApp_GetInt(idxExeServiceRelease); }
     }
 
+    /// <summary>
+    /// Gets the build date.
+    /// </summary>
     public static System.DateTime BuildDate
     {
       get
@@ -151,9 +175,7 @@ namespace Rhino
     internal const int idxHelpFilePath = 5;
     internal const int idxDefaultRuiFile = 6;
 
-    /// <summary>
-    /// The product serial number, as seen in Rhino's ABOUT dialog box.
-    /// </summary>
+    /// <summary>Gets the product serial number, as seen in Rhino's ABOUT dialog box.</summary>
     public static string SerialNumber
     {
       get
@@ -167,6 +189,7 @@ namespace Rhino
       }
     }
 
+    /// <summary>Gets the application name.</summary>
     public static string Name
     {
       get
@@ -180,6 +203,7 @@ namespace Rhino
       }
     }
 
+    /// <summary>Gets license the node type.</summary>
     public static LicenseNode NodeType
     {
       get
@@ -189,7 +213,7 @@ namespace Rhino
       }
     }
 
-    ///<summary>The product installation type, as seen in Rhino's ABOUT dialog box.</summary>
+    ///<summary>Gets the product installation type, as seen in Rhino's ABOUT dialog box.</summary>
     public static Installation InstallationType
     {
       get
@@ -208,23 +232,31 @@ namespace Rhino
     const int idxRhino5Id = 3;
     const int idxCurrentRhinoId = 4;
 
-
+    ///<summary>Gets the ID of Rhino 2.</summary>
     public static Guid Rhino2Id
     {
       get { return UnsafeNativeMethods.CRhinoApp_GetGUID(idxRhino2Id); }
     }
+
+    ///<summary>Gets the ID of Rhino 3.</summary>
     public static Guid Rhino3Id
     {
       get { return UnsafeNativeMethods.CRhinoApp_GetGUID(idxRhino3Id); }
     }
+
+    ///<summary>Gets the ID of Rhino 4.</summary>
     public static Guid Rhino4Id
     {
       get { return UnsafeNativeMethods.CRhinoApp_GetGUID(idxRhino4Id); }
     }
+
+    ///<summary>Gets the ID of Rhino 5.</summary>
     public static Guid Rhino5Id
     {
       get { return UnsafeNativeMethods.CRhinoApp_GetGUID(idxRhino5Id); }
     }
+
+    ///<summary>Gets the current ID of Rhino.</summary>
     public static Guid CurrentRhinoId
     {
       get { return UnsafeNativeMethods.CRhinoApp_GetGUID(idxCurrentRhinoId); }
@@ -364,11 +396,13 @@ namespace Rhino
       UnsafeNativeMethods.CRhinoApp_SendKeystrokes(characters, appendReturn);
     }
 
+    ///<summary>Sets the focus to the main window.</summary>
     public static void SetFocusToMainWindow()
     {
       UnsafeNativeMethods.CRhinoApp_SetFocusToMainWindow();
     }
 
+    ///<summary>Releases the mouse capture.</summary>
     public static bool ReleaseMouseCapture()
     {
       return UnsafeNativeMethods.CRhinoApp_ReleaseCapture();
@@ -429,6 +463,10 @@ namespace Rhino
 
     static WindowWrapper m_mainwnd;
 
+    /// <summary>
+    /// Gets the Window32 interface handle of the main window.
+    /// </summary>
+    /// <returns>A interface to the handle.</returns>
     public static System.Windows.Forms.IWin32Window MainWindow()
     {
       if (null == m_mainwnd)
@@ -552,6 +590,10 @@ namespace Rhino
       }
     }
     private static EventHandler m_escape_key;
+
+    /// <summary>
+    /// Can add or removed delagates that are raised when the escape key is clicked.
+    /// </summary>
     public static event EventHandler EscapeKeyPressed
     {
       add
@@ -591,6 +633,10 @@ namespace Rhino
       }
     }
     internal static EventHandler m_init_app;
+
+    /// <summary>
+    /// Is raised when the apllication is fully initialized.
+    /// </summary>
     public static event EventHandler Initialized
     {
       add
@@ -631,6 +677,10 @@ namespace Rhino
     }
 
     internal static EventHandler m_close_app;
+
+    /// <summary>
+    /// Is raised when the application is about to close.
+    /// </summary>
     public static event EventHandler Closing
     {
       add
@@ -669,7 +719,12 @@ namespace Rhino
         }
       }
     }
+
     internal static EventHandler m_appsettings_changed;
+
+    /// <summary>
+    /// Is raised when settings are changed.
+    /// </summary>
     public static event EventHandler AppSettingsChanged
     {
       add
@@ -926,6 +981,9 @@ namespace Rhino
 
 namespace Rhino.UI
 {
+  /// <summary>
+  /// Contains static methods to control the mouse icon.
+  /// </summary>
   public static class MouseCursor
   {
     /// <summary>
@@ -939,23 +997,41 @@ namespace Rhino.UI
     }
   }
 
+  /// <summary>
+  /// Contains static methods to control the application status bar.
+  /// </summary>
   public static class StatusBar
   {
+    /// <summary>
+    /// Sets the distance pane to a distance value.
+    /// </summary>
+    /// <param name="distance">The distance value.</param>
     public static void SetDistancePane(double distance)
     {
       UnsafeNativeMethods.CRhinoApp_SetStatusBarDistancePane(distance);
     }
 
+    /// <summary>
+    /// Sets the point pane to a point value.
+    /// </summary>
+    /// <param name="point">The point value.</param>
     public static void SetPointPane(Rhino.Geometry.Point3d point)
     {
       UnsafeNativeMethods.CRhinoApp_SetStatusBarPointPane(point);
     }
 
+    /// <summary>
+    /// Sets the message pane to a message.
+    /// </summary>
+    /// <param name="message">The message value.</param>
     public static void SetMessagePane(string message)
     {
       UnsafeNativeMethods.CRhinoApp_SetStatusBarMessagePane(message);
     }
 
+    /// <summary>
+    /// Removes the message from the message pane.
+    /// </summary>
     public static void ClearMessagePane()
     {
       SetMessagePane(null);

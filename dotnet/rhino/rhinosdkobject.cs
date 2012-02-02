@@ -1,4 +1,3 @@
-#pragma warning disable 1591
 using System;
 using Rhino.Geometry;
 
@@ -7,7 +6,8 @@ namespace Rhino.DocObjects
 
 #if RHINO_SDK
   /// <summary>
-  /// RhinoObjects should only ever be creatable by the RhinoDoc.
+  /// Represents an object in the document.
+  /// <para>RhinoObjects should only ever be creatable by the RhinoDoc.</para>
   /// </summary>
   public class RhinoObject //: Runtime.CommonObject - We don't want to allow for any private copies of RhinoObjects
   {
@@ -178,6 +178,13 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <summary>
+    /// Gets the render meshes of some objects.
+    /// </summary>
+    /// <param name="rhinoObjects">An array, a list, or any enumerable set of Rhino objects.</param>
+    /// <param name="okToCreate">true if the method is allowed to instantiate new meshes if they do not exist.</param>
+    /// <param name="returnAllObjects">true if all objects should be returned.</param>
+    /// <returns>An array of object references.</returns>
     public static ObjRef[] GetRenderMeshes(System.Collections.Generic.IEnumerable<RhinoObject> rhinoObjects, bool okToCreate, bool returnAllObjects)
     {
       ObjRef[] rc = null;
@@ -205,6 +212,9 @@ namespace Rhino.DocObjects
     #endregion
 
   #region properties
+    /// <summary>
+    /// Gets the Rhino-based object type.
+    /// </summary>
     [CLSCompliant(false)]
     public ObjectType ObjectType
     {
@@ -269,6 +279,9 @@ namespace Rhino.DocObjects
       // geometry getters (CurveObject.CurveGeometry)
     }
 
+    /// <summary>
+    /// Gets or sets the object attributes.
+    /// </summary>
     public ObjectAttributes Attributes
     {
       get
@@ -290,6 +303,9 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <summary>
+    /// Gets the objects runtime serial number.
+    /// </summary>
     [CLSCompliant(false)]
     public uint RuntimeSerialNumber
     {
@@ -405,6 +421,10 @@ namespace Rhino.DocObjects
 
     #endregion
 
+    /// <summary>
+    /// Constructs a deep (full) copy of the geometry.
+    /// </summary>
+    /// <returns>A copy of the internal geometry.</returns>
     public Rhino.Geometry.GeometryBase DuplicateGeometry()
     {
       if (null != m_edited_geometry)
@@ -779,9 +799,9 @@ namespace Rhino.DocObjects
     /// If false and the entire object is not highlighted, then zero is returned.
     /// </param>
     /// <returns>
-    /// 0 object is not highlighted
-    /// 1 entire object is highlighted
-    /// 3 one or more proper sub-objects are highlighted.
+    /// <para>0: object is not highlighted.</para>
+    /// <para>1: entire object is highlighted.</para>
+    /// <para>3: one or more proper sub-objects are highlighted.</para>
     /// </returns>
     public int IsHighlighted(bool checkSubObjects)
     {
@@ -789,12 +809,22 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.CRhinoObject_IsHighlighted(ptr, checkSubObjects);
     }
 
+    /// <summary>
+    /// Modifies the highlighting of the object.
+    /// </summary>
+    /// <param name="enable">true if highlighting should be enabled.</param>
+    /// <returns>true if the object is now highlighted.</returns>
     public bool Highlight(bool enable)
     {
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.CRhinoObject_Highlight(ptr, enable);
     }
 
+    /// <summary>
+    /// Determines if a subobject is highlighted.
+    /// </summary>
+    /// <param name="componentIndex">A subobject component index.</param>
+    /// <returns>true if the subobject is highlighted.</returns>
     public bool IsSubObjectHighlighted(ComponentIndex componentIndex)
     {
       IntPtr ptr = ConstPointer();
@@ -820,6 +850,12 @@ namespace Rhino.DocObjects
       return rc;
     }
 
+    /// <summary>
+    /// Highlights a subobject.
+    /// </summary>
+    /// <param name="componentIndex">A subobject component index.</param>
+    /// <param name="highlight">true if the subobject should be highlighted.</param>
+    /// <returns>true if the subobject is now highlighted.</returns>
     public bool HighlightSubObject(ComponentIndex componentIndex, bool highlight)
     {
       IntPtr ptr = ConstPointer();
@@ -988,6 +1024,10 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <summary>
+    /// Gets an array of subobjects.
+    /// </summary>
+    /// <returns>An array of subobjects, or null if there are none.</returns>
     public DocObjects.RhinoObject[] GetSubObjects()
     {
       Runtime.INTERNAL_RhinoObjectArray arr = new Runtime.INTERNAL_RhinoObjectArray();
@@ -1002,6 +1042,9 @@ namespace Rhino.DocObjects
     }
 
 #if RDK_UNCHECKED
+    /// <summary>
+    /// Gets the instance ID of the render material associated with this object.
+    /// </summary>
     public Guid RenderMaterialInstanceId
     {
       get
@@ -1015,6 +1058,10 @@ namespace Rhino.DocObjects
       //  UnsafeNativeMethods.Rdk_RenderContent_SetObjectMaterialInstanceid(pThis, value);
       //}
     }
+
+    /// <summary>
+    /// Gets the render material associated with this object.
+    /// </summary>
     public Rhino.Render.RenderMaterial RenderMaterial
     {
       get
@@ -1026,6 +1073,10 @@ namespace Rhino.DocObjects
       //  RenderMaterialInstanceId = value.InstanceId;
       //}
     }
+
+    /// <summary>
+    /// Gets all object decals associated with this object.
+    /// </summary>
     public Rhino.Render.ObjectDecals Decals
     {
       get
@@ -1038,7 +1089,7 @@ namespace Rhino.DocObjects
   }
 #endif
   /// <summary>
-  /// Enumerates different kinds of selection methods.
+  /// Defines enumerated values for several kinds of selection methods.
   /// </summary>
   public enum SelectionMethod : int
   {
@@ -1069,6 +1120,9 @@ namespace Rhino.DocObjects
 
 #if RHINO_SDK
   // all ObjRef's are created in .NET
+  /// <summary>
+  /// Represents a reference to a Rhino object.
+  /// </summary>
   public class ObjRef : IDisposable
   {
     private IntPtr m_ptr; // pointer to unmanaged CRhinoObjRef
@@ -1088,11 +1142,19 @@ namespace Rhino.DocObjects
       m_ptr = UnsafeNativeMethods.CRhinoObjRef_Copy(pOtherObjRef);
     }
 
+    /// <summary>
+    /// Initializes a new object reference from a globally unique identifier (<see cref="Guid"/>).
+    /// </summary>
+    /// <param name="id">The ID.</param>
     public ObjRef(Guid id)
     {
       m_ptr = UnsafeNativeMethods.CRhinoObjRef_New1(id);
     }
 
+    /// <summary>
+    /// Initializes a new object reference from a Rhino object.
+    /// </summary>
+    /// <param name="rhinoObject">The Rhino object.</param>
     public ObjRef(DocObjects.RhinoObject rhinoObject)
     {
       IntPtr pObject = rhinoObject.ConstPointer();
@@ -1169,12 +1231,20 @@ namespace Rhino.DocObjects
       return null == parent ? null : Rhino.Geometry.GeometryBase.CreateGeometryHelper(pGeometry, parent);
     }
 
+    /// <summary>
+    /// Gets the geometry linked to the object targeted by this reference.
+    /// </summary>
+    /// <returns></returns>
     public Geometry.GeometryBase Geometry()
     {
       IntPtr pGeometry = UnsafeNativeMethods.CRhinoObjRef_Geometry(m_ptr);
       return ObjRefToGeometryHelper(pGeometry);
     }
 
+    /// <summary>
+    /// Gets the clipping plane surface if this reference targeted one.
+    /// </summary>
+    /// <returns>A clipping plane surface, or null if this reference targeted something else.</returns>
     public Geometry.ClippingPlaneSurface ClippingPlaneSurface()
     {
       IntPtr pClippingPlaneSurface = UnsafeNativeMethods.CRhinoObjRef_ClippingPlaneSurface(m_ptr);
@@ -1186,6 +1256,10 @@ namespace Rhino.DocObjects
     /// <code source='examples\cs\ex_intersectcurves.cs' lang='cs'/>
     /// <code source='examples\py\ex_intersectcurves.py' lang='py'/>
     /// </example>
+    /// <summary>
+    /// Gets the curve if this reference targeted one.
+    /// </summary>
+    /// <returns>A curve, or null if this reference targeted something else.</returns>
     public Geometry.Curve Curve()
     {
       IntPtr pCurve = UnsafeNativeMethods.CRhinoObjRef_Curve(m_ptr);
@@ -1193,7 +1267,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// If the referenced geometry is an edge, this returns the edge.
+    /// Gets the edge if this reference geometry is one.
     /// </summary>
     /// <returns>A boundary representation edge; or null on error.</returns>
     public Geometry.BrepEdge Edge()
@@ -1218,6 +1292,10 @@ namespace Rhino.DocObjects
     /// <code source='examples\cs\ex_booleandifference.cs' lang='cs'/>
     /// <code source='examples\py\ex_booleandifference.py' lang='py'/>
     /// </example>
+    /// <summary>
+    ///  Gets the brep if this reference geometry is one.
+    /// </summary>
+    /// <returns>A boundary representation; or null on error.</returns>
     public Geometry.Brep Brep()
     {
       IntPtr pBrep = UnsafeNativeMethods.CRhinoObjRef_Brep(m_ptr);
@@ -1229,37 +1307,70 @@ namespace Rhino.DocObjects
     /// <code source='examples\cs\ex_orientonsrf.cs' lang='cs'/>
     /// <code source='examples\py\ex_orientonsrf.py' lang='py'/>
     /// </example>
+    /// <summary>
+    /// Gets the surface if the referenced geometry is one.
+    /// </summary>
+    /// <returns>A surface; or null if the referenced object is not a surface, or on error.</returns>
     public Geometry.Surface Surface()
     {
       IntPtr pSurface = UnsafeNativeMethods.CRhinoObjRef_Surface(m_ptr);
       return ObjRefToGeometryHelper(pSurface) as Surface;
     }
 
+    /// <summary>
+    /// Gets the text dot if the referenced geometry is one.
+    /// </summary>
+    /// <returns>A text dot; or null if the referenced object is not a text dot, or on error.</returns>
     public Geometry.TextDot TextDot()
     {
       IntPtr pTextDot = UnsafeNativeMethods.CRhinoObjRef_TextDot(m_ptr);
       return ObjRefToGeometryHelper(pTextDot) as TextDot;
     }
+
+    /// <summary>
+    /// Gets the mesh if the referenced geometry is one.
+    /// </summary>
+    /// <returns>A mesh; or null if the referenced object is not a mesh, or on error.</returns>
     public Geometry.Mesh Mesh()
     {
       IntPtr pMesh = UnsafeNativeMethods.CRhinoObjRef_Mesh(m_ptr);
       return ObjRefToGeometryHelper(pMesh) as Mesh;
     }
+
+    /// <summary>
+    /// Gets the point if the referenced geometry is one.
+    /// </summary>
+    /// <returns>A point; or null if the referenced object is not a point, or on error.</returns>
     public Geometry.Point Point()
     {
       IntPtr pPoint = UnsafeNativeMethods.CRhinoObjRef_Point(m_ptr);
       return ObjRefToGeometryHelper(pPoint) as Point;
     }
+
+    /// <summary>
+    /// Gets the point cloud if the referenced geometry is one.
+    /// </summary>
+    /// <returns>A point cloud; or null if the referenced object is not a point cloud, or on error.</returns>
     public Geometry.PointCloud PointCloud()
     {
       IntPtr pPointCloud = UnsafeNativeMethods.CRhinoObjRef_PointCloud(m_ptr);
       return ObjRefToGeometryHelper(pPointCloud) as PointCloud;
     }
+
+    /// <summary>
+    /// Gets the text entity if the referenced geometry is one.
+    /// </summary>
+    /// <returns>A text entity; or null if the referenced object is not a text entity, or on error.</returns>
     public Geometry.TextEntity TextEntity()
     {
       IntPtr pTextEntity = UnsafeNativeMethods.CRhinoObjRef_Annotation(m_ptr);
       return ObjRefToGeometryHelper(pTextEntity) as TextEntity;
     }
+
+    /// <summary>
+    /// Gets the light if the referenced geometry is one.
+    /// </summary>
+    /// <returns>A light; or null if the referenced object is not a light, or on error.</returns>
     public Geometry.Light Light()
     {
       IntPtr pLight = UnsafeNativeMethods.CRhinoObjRef_Light(m_ptr);
@@ -1271,17 +1382,31 @@ namespace Rhino.DocObjects
     //  return UnsafeNativeMethods.CRhinoObjRef_IsSubGeometry(m_ptr);
     //}
 
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
     ~ObjRef()
     {
       Dispose(false);
     }
 
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)

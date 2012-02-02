@@ -23,8 +23,12 @@ RH_C_FUNCTION void ON_Revision(CRhCmnStringHolder* pStringHolder)
 #endif
 }
 
-RH_C_FUNCTION ON_wString* ON_wString_New()
+RH_C_FUNCTION ON_wString* ON_wString_New(const RHMONO_STRING* _text)
 {
+  INPUTSTRINGCOERCE(text, _text);
+  if( text )
+    return new ON_wString(text);
+  
   return new ON_wString();
 }
 

@@ -78,6 +78,7 @@ Public Class examples_vbCommand
     Test(AddressOf Examples.UnrollSurface, doc)
     Test(AddressOf Examples.UnrollSurface2, doc)
     Test(AddressOf Examples.ZoomToObject, doc)
+    Test(AddressOf Examples.ExplodeHatch, doc)
     GC.Collect()
   End Function
 End Class

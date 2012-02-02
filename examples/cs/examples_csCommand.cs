@@ -338,6 +338,7 @@ namespace examples_cs
       Test(Examples.UnrollSurface, doc);
       Test(Examples.UnrollSurface2, doc);
       Test(Examples.ZoomToObject, doc);
+      Test(Examples.ExplodeHatch, doc);
       
       return Rhino.Commands.Result.Success;
     }

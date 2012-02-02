@@ -1868,9 +1868,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Revision(IntPtr pStringHolder);
 
-  //ON_wString* ON_wString_New()
+  //ON_wString* ON_wString_New(const RHMONO_STRING* _text)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_wString_New();
+  internal static extern IntPtr ON_wString_New([MarshalAs(UnmanagedType.LPWStr)]string _text);
 
   //void ON_wString_Delete(ON_wString* pString)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -8700,6 +8700,26 @@ internal partial class UnsafeNativeMethods
   //void CRhinoGripObject_SetIndex(CRhinoGripObject* pRhinoGripObject, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoGripObject_SetIndex(IntPtr pRhinoGripObject, int index);
+  #endregion
+
+
+  #region rh_printinfo.cpp
+  //CRhinoPrintInfo* CRhinoPrintInfo_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoPrintInfo_New();
+
+  //void CRhinoPrintInfo_Delete(CRhinoPrintInfo* pPrintInfo)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoPrintInfo_Delete(IntPtr pPrintInfo);
+
+  //void CRhinoPrintInfo_SetViewport(CRhinoPrintInfo* pPrintInfo, const CRhinoViewport* pConstRhinoViewport)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoPrintInfo_SetViewport(IntPtr pPrintInfo, IntPtr pConstRhinoViewport);
+
+  //bool CRhinoPrintInfo_DrawToSingleDib(CRhinoPrintInfo* pPrintInfo, CRhinoDib* pRhinoDib, int width, int height)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPrintInfo_DrawToSingleDib(IntPtr pPrintInfo, IntPtr pRhinoDib, int width, int height);
   #endregion
 
 

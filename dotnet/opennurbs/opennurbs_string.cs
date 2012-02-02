@@ -12,21 +12,28 @@ namespace Rhino.Runtime.InteropWrappers
     IntPtr m_ptr;
 
     /// <summary>
-    /// 
     /// </summary>
     public StringWrapper()
     {
-      m_ptr = UnsafeNativeMethods.ON_wString_New();
+      m_ptr = UnsafeNativeMethods.ON_wString_New(null);
     }
 
     /// <summary>
-    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <param name="s"></param>
+    public StringWrapper(string s)
+    {
+      m_ptr = UnsafeNativeMethods.ON_wString_New(s);
+    }
+
+    /// <summary>
+    /// Gets the const pointer (const ON_wString*).
     /// </summary>
     /// <returns>The const pointer.</returns>
     public IntPtr ConstPointer { get { return m_ptr; } }
 
     /// <summary>
-    /// Gets the non-const pointer (for modification) of this array.
+    /// Gets the non-const pointer (ON_wString*).
     /// </summary>
     /// <returns>The non-const pointer.</returns>
     public IntPtr NonConstPointer { get { return m_ptr; } }

@@ -646,7 +646,7 @@ namespace Rhino.Geometry.Collections
 
     #region properties
     /// <summary>
-    /// Gets the number of control points in the 'U' direction of this surface.
+    /// Gets the number of control points in the U direction of this surface.
     /// </summary>
     public int CountU
     {
@@ -657,7 +657,7 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
-    /// Gets the number of control points in the 'V' direction of this surface.
+    /// Gets the number of control points in the V direction of this surface.
     /// </summary>
     public int CountV
     {
@@ -672,8 +672,8 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Gets the Greville point (u, v) coordinates associated with the control point at the given indices.
     /// </summary>
-    /// <param name="u">Index of control-point along surface 'U' direction.</param>
-    /// <param name="v">Index of control-point along surface 'U' direction.</param>
+    /// <param name="u">Index of control-point along surface U direction.</param>
+    /// <param name="v">Index of control-point along surface V direction.</param>
     /// <returns>A Surface UV coordinate on success, Point2d.Unset on failure.</returns>
     public Point2d GetGrevillePoint(int u, int v)
     {
@@ -692,8 +692,8 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Gets the control point at the given (u, v) index.
     /// </summary>
-    /// <param name="u">Index of control-point along surface 'U' direction.</param>
-    /// <param name="v">Index of control-point along surface 'U' direction.</param>
+    /// <param name="u">Index of control-point along surface U direction.</param>
+    /// <param name="v">Index of control-point along surface V direction.</param>
     /// <returns>The control point at the given (u, v) index.</returns>
     public ControlPoint GetControlPoint(int u, int v)
     {
@@ -713,8 +713,8 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Sets the control point at the given (u, v) index.
     /// </summary>
-    /// <param name="u">Index of control-point along surface 'U' direction.</param>
-    /// <param name="v">Index of control-point along surface 'U' direction.</param>
+    /// <param name="u">Index of control-point along surface U direction.</param>
+    /// <param name="v">Index of control-point along surface V direction.</param>
     /// <param name="cp">The control point location to set (weight is assumed to be 1.0).</param>
     /// <returns>true on success, false on failure.</returns>
     public bool SetControlPoint(int u, int v, Point3d cp)
@@ -725,8 +725,8 @@ namespace Rhino.Geometry.Collections
     /// <summary>
     /// Sets the control point at the given (u, v) index.
     /// </summary>
-    /// <param name="u">Index of control-point along surface 'U' direction.</param>
-    /// <param name="v">Index of control-point along surface 'U' direction.</param>
+    /// <param name="u">Index of control-point along surface U direction.</param>
+    /// <param name="v">Index of control-point along surface V direction.</param>
     /// <param name="cp">The control point to set.</param>
     /// <returns>true on success, false on failure.</returns>
     public bool SetControlPoint(int u, int v, ControlPoint cp)

@@ -62,8 +62,7 @@ namespace Rhino.DocObjects.Custom
     internal GripsDrawEventArgs(IntPtr pGripsDrawSettings)
     {
       m_pGripsDrawSettings = pGripsDrawSettings;
-      IntPtr pDisplayPipeline = UnsafeNativeMethods.CRhinoDrawGripsSettings_DisplayPipelinePtr(pGripsDrawSettings);
-      m_dp = new Rhino.Display.DisplayPipeline(pDisplayPipeline);
+      m_pDisplayPipeline = UnsafeNativeMethods.CRhinoDrawGripsSettings_DisplayPipelinePtr(pGripsDrawSettings);
     }
 
     /// <summary>

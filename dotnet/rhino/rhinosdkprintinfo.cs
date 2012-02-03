@@ -3,6 +3,8 @@ using System;
 
 namespace Rhino.Display
 {
+  //NOT public on purpose. This still needs a lot of work
+
   /// <summary>
   /// Used to hold the information required to generate high resolution output
   /// of a RhinoViewport.  This is used for generating paper prints or image files
@@ -37,17 +39,87 @@ namespace Rhino.Display
 
     public System.Drawing.Bitmap ToBitmap(System.Drawing.Size size)
     {
-      System.Drawing.Bitmap rc = null;
-      IntPtr pDib = UnsafeNativeMethods.CRhinoDib_New();
-      IntPtr pConstThis = ConstPointer();
-      if (UnsafeNativeMethods.CRhinoPrintInfo_DrawToSingleDib(pConstThis, pDib, size.Width, size.Height))
-      {
-        IntPtr hBitmap = UnsafeNativeMethods.CRhinoDib_Bitmap(pDib);
-        rc = System.Drawing.Image.FromHbitmap(hBitmap);
-      }
-      UnsafeNativeMethods.CRhinoDib_Delete(pDib);
+      return ToBitmap(size, DrawFrameStages.All);
+    }
+
+    [CLSCompliant(false)]
+    public System.Drawing.Bitmap ToBitmap(System.Drawing.Size size, DrawFrameStages enabledStages)
+    {
+      System.Drawing.Bitmap rc = new System.Drawing.Bitmap(size.Width, size.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+      //IntPtr pConstThis = ConstPointer();
+
+      //var bitmap_data = rc.LockBits(new System.Drawing.Rectangle(0, 0, size.Width, size.Height), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+      //if (UnsafeNativeMethods.CRhinoPrintInfo_DrawToSingleDib(pConstThis, bitmap_data.Scan0, size.Width, size.Height, TransparentBackground, (uint)enabledStages))
+      //{
+      //}
+      //rc.UnlockBits(bitmap_data);
       return rc;
     }
+
+    public bool TransparentBackground { get; set; }
+
+    const int idxDrawBackground = 0;
+    const int idxDrawGrid = 1;
+    const int idxDrawAxis = 2;
+    const int idxDrawLineWeights = 3;
+    const int idxDrawBackgroundBitmap = 4;
+    const int idxDrawWallpaper = 5;
+    const int idxDrawLockedObjects = 6;
+
+    /*
+    bool GetBool(int which)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.CRhinoPrintInfo_GetBool(pConstThis, which);
+    }
+    void SetBool(int which, bool val)
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.CRhinoPrintInfo_SetBool(pThis, which, val);
+    }
+
+    public bool DrawBackground
+    {
+      get { return GetBool(idxDrawBackground); }
+      set { SetBool(idxDrawBackground, value); }
+    }
+
+    public bool DrawGrid
+    {
+      get { return GetBool(idxDrawGrid); }
+      set { SetBool(idxDrawGrid, value); }
+    }
+
+    public bool DrawAxis
+    {
+      get { return GetBool(idxDrawAxis); }
+      set { SetBool(idxDrawAxis, value); }
+    }
+
+    public bool DrawLineWeights
+    {
+      get { return GetBool(idxDrawLineWeights); }
+      set { SetBool(idxDrawLineWeights, value); }
+    }
+
+    public bool DrawBackgroundBitmap
+    {
+      get { return GetBool(idxDrawBackgroundBitmap); }
+      set { SetBool(idxDrawBackgroundBitmap, value); }
+    }
+
+    public bool DrawWallpaper
+    {
+      get { return GetBool(idxDrawWallpaper); }
+      set { SetBool(idxDrawWallpaper, value); }
+    }
+
+    public bool DrawLockedObjects
+    {
+      get { return GetBool(idxDrawLockedObjects); }
+      set { SetBool(idxDrawLockedObjects, value); }
+    }
+    */
 
     #region IDisposable implementation
     /// <summary>Actively reclaims unmanaged resources that this instance uses.</summary>

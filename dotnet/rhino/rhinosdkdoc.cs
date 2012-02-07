@@ -4935,6 +4935,11 @@ namespace Rhino.DocObjects.Tables
         UnsafeNativeMethods.CRhinoDoc_DeleteDocTextString(m_doc.m_docId, key);
       }
     }
+
+    public void Delete(string key)
+    {
+      UnsafeNativeMethods.CRhinoDoc_DeleteDocTextString(m_doc.m_docId, key);
+    }
   }
 }
 

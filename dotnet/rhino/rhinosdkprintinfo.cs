@@ -37,24 +37,24 @@ namespace Rhino.Display
       }
     }
 
-    public System.Drawing.Bitmap ToBitmap(System.Drawing.Size size)
-    {
-      return ToBitmap(size, DrawFrameStages.All);
-    }
-
-    //[CLSCompliant(false)] checks are not performed as it is in internal class
-    public System.Drawing.Bitmap ToBitmap(System.Drawing.Size size, DrawFrameStages enabledStages)
-    {
-      System.Drawing.Bitmap rc = new System.Drawing.Bitmap(size.Width, size.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-      //IntPtr pConstThis = ConstPointer();
-
-      //var bitmap_data = rc.LockBits(new System.Drawing.Rectangle(0, 0, size.Width, size.Height), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-      //if (UnsafeNativeMethods.CRhinoPrintInfo_DrawToSingleDib(pConstThis, bitmap_data.Scan0, size.Width, size.Height, TransparentBackground, (uint)enabledStages))
-      //{
-      //}
-      //rc.UnlockBits(bitmap_data);
-      return rc;
-    }
+    //public System.Drawing.Bitmap ToBitmap(System.Drawing.Size size)
+    //{
+    //  return ToBitmap(size, DrawFrameStages.All);
+    //}
+    //
+    //[CLSCompliant(false)]
+    //public System.Drawing.Bitmap ToBitmap(System.Drawing.Size size, DrawFrameStages enabledStages)
+    //{
+    //  System.Drawing.Bitmap rc = new System.Drawing.Bitmap(size.Width, size.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+    //  //IntPtr pConstThis = ConstPointer();
+    //
+    //  //var bitmap_data = rc.LockBits(new System.Drawing.Rectangle(0, 0, size.Width, size.Height), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+    //  //if (UnsafeNativeMethods.CRhinoPrintInfo_DrawToSingleDib(pConstThis, bitmap_data.Scan0, size.Width, size.Height, TransparentBackground, (uint)enabledStages))
+    //  //{
+    //  //}
+    //  //rc.UnlockBits(bitmap_data);
+    //  return rc;
+    //}
 
     public bool TransparentBackground { get; set; }
 

@@ -365,7 +365,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determine the value of the Nth derivative at a parameter. 
+    /// Determines the value of the Nth derivative at a parameter. 
     /// </summary>
     /// <param name="derivative">Which order of derivative is wanted.</param>
     /// <param name="t">Parameter to evaluate derivative. Valid values are 0, 1, 2 and 3.</param>

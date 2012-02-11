@@ -396,7 +396,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Determine if an object is a reference object. An object from a work session
+    /// Gets a value indicating if an object is a reference object. An object from a work session
     /// reference model is a reference object and cannot be modified. An object is
     /// a reference object if, and only if, it is on a reference layer.
     /// </summary>
@@ -405,7 +405,7 @@ namespace Rhino.DocObjects
       get { return GetBool(idxIsReference); }
     }
 
-    /// <summary>object visibility.</summary>
+    /// <summary>Gets the object visibility.</summary>
     public bool Visible
     {
       get

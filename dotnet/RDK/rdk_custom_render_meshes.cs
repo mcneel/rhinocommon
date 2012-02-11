@@ -321,7 +321,7 @@ namespace Rhino.Render.CustomRenderMesh
     }
 
     /// <summary>
-    /// Determine if custom render meshes will be built for a particular object.
+    /// Determines if custom render meshes will be built for a particular object.
     /// </summary>
     /// <param name="vp">the viewport being rendered.</param>
     /// <param name="obj">the Rhino object of interest.</param>
@@ -335,7 +335,7 @@ namespace Rhino.Render.CustomRenderMesh
     }
 
     /// <summary>
-    /// Determine if custom render meshes will be built for a particular object.
+    /// Determines if custom render meshes will be built for a particular object.
     /// </summary>
     /// <param name="vp">the viewport being rendered.</param>
     /// <param name="obj">the Rhino object of interest.</param>

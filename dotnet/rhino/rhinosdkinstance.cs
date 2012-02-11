@@ -256,7 +256,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Determine if this instance definition contains a reference to another instance definition.
+    /// Determines if this instance definition contains a reference to another instance definition.
     /// </summary>
     /// <param name="otherIdefIndex">index of another instance definition.</param>
     /// <returns>

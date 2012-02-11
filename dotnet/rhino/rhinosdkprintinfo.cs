@@ -42,7 +42,7 @@ namespace Rhino.Display
       return ToBitmap(size, DrawFrameStages.All);
     }
 
-    [CLSCompliant(false)]
+    //[CLSCompliant(false)] checks are not performed as it is in internal class
     public System.Drawing.Bitmap ToBitmap(System.Drawing.Size size, DrawFrameStages enabledStages)
     {
       System.Drawing.Bitmap rc = new System.Drawing.Bitmap(size.Width, size.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);

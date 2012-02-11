@@ -424,11 +424,12 @@ namespace Rhino.DocObjects
       set { SetInt(idxLayerIndex, value); }
     }
     /// <summary>
-    /// Linetype definitions in an OpenNURBS model are stored in a linetype table.
+    /// Gets or sets the linetype index.
+    /// <para>Linetype definitions in an OpenNURBS model are stored in a linetype table.
     /// The linetype table is conceptually an array of ON_Linetype classes. Every
     /// OpenNURBS object in a model references some linetype.  The object's linetype
-    /// is specified by zero based indicies into the ON_Linetype array.
-    /// index 0 is reserved for continuous linetype (no pattern)
+    /// is specified by zero based indicies into the ON_Linetype array.</para>
+    /// <para>Index 0 is reserved for continuous linetype (no pattern).</para>
     /// </summary>
     public int LinetypeIndex
     {
@@ -436,12 +437,16 @@ namespace Rhino.DocObjects
       set { SetInt(idxLinetypeIndex, value); }
     }
     /// <summary>
-    /// If you want something simple and fast, set m_material_index to the index of
-    /// the rendering material and ignore m_rendering_attributes. If you are developing
-    /// a high quality plug-in renderer, and a user is assigning one of your fabulous
-    /// rendering materials to this object, then add rendering material information to
-    /// the m_rendering_attributes.m_materials[] array. 
+    /// Gets or sets the material index.
+    /// <para>If you want something simple and fast, set the index of
+    /// the rendering material.</para>
     /// </summary>
+    /*
+     * ...and ignore m_rendering_attributes. If you are developing
+     * a high quality plug-in renderer, and a user is assigning one of your fabulous
+     * rendering materials to this object, then add rendering material information to
+     * the m_rendering_attributes.m_materials[] array.
+    */
     public int MaterialIndex
     {
       get { return GetInt(idxMaterialIndex); }
@@ -452,7 +457,7 @@ namespace Rhino.DocObjects
     // ON_ObjectRenderingAttributes m_rendering_attributes;
 
     /// <summary>
-    /// Determine if the simple material should come from the object or from it's layer.
+    /// Determines if the simple material should come from the object or from it's layer.
     /// High quality rendering plug-ins should use m_rendering_attributes.
     /// </summary>
     public ObjectMaterialSource MaterialSource

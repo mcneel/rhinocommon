@@ -1042,7 +1042,7 @@ namespace Rhino.Geometry
 
     #region converters
     /// <summary>
-    /// Convert the surface into a Brep.
+    /// Converts the surface into a Brep.
     /// </summary>
     /// <returns>A Brep with a similar shape like this surface or null.</returns>
     public Brep ToBrep()
@@ -1118,7 +1118,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Test a surface to see if it is planar to zero tolerance.
+    /// Tests a surface to see if it is planar to zero tolerance.
     /// </summary>
     /// <returns>
     /// true if the surface is planar (flat) to within RhinoMath.ZeroTolerance units (1e-12).
@@ -1128,7 +1128,7 @@ namespace Rhino.Geometry
       return IsPlanar(RhinoMath.ZeroTolerance);
     }
     /// <summary>
-    /// Test a surface to see if it is planar to a given tolerance.
+    /// Tests a surface to see if it is planar to a given tolerance.
     /// </summary>
     /// <param name="tolerance">tolerance to use when checking.</param>
     /// <returns>
@@ -1141,7 +1141,7 @@ namespace Rhino.Geometry
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.ON_Surface_IsPlanar(ptr, ref plane, tolerance, false);
     }
-    /// <summary>Test a surface for planarity and return the plane.</summary>
+    /// <summary>Tests a surface for planarity and return the plane.</summary>
     /// <param name="plane">On success, the plane parameters are filled in.</param>
     /// <returns>
     /// true if there is a plane such that the maximum distance from the surface to the plane is &lt;= RhinoMath.ZeroTolerance.
@@ -1150,7 +1150,7 @@ namespace Rhino.Geometry
     {
       return TryGetPlane(out plane, RhinoMath.ZeroTolerance);
     }
-    /// <summary>Test a surface for planarity and return the plane.</summary>
+    /// <summary>Tests a surface for planarity and return the plane.</summary>
     /// <param name="plane">On success, the plane parameters are filled in.</param>
     /// <param name="tolerance">tolerance to use when checking.</param>
     /// <returns>
@@ -1164,7 +1164,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determine if the surface is a portion of a sphere within RhinoMath.ZeroTolerance.
+    /// Determines if the surface is a portion of a sphere within RhinoMath.ZeroTolerance.
     /// </summary>
     /// <returns>true if the surface is a portion of a sphere.</returns>
     public bool IsSphere()
@@ -1172,7 +1172,7 @@ namespace Rhino.Geometry
       return IsSphere(RhinoMath.ZeroTolerance);
     }
     /// <summary>
-    /// Determine if the surface is a portion of a sphere within a given tolerance.
+    /// Determines if the surface is a portion of a sphere within a given tolerance.
     /// </summary>
     /// <param name="tolerance">tolerance to use when checking.</param>
     /// <returns>true if the surface is a portion of a sphere.</returns>
@@ -1201,14 +1201,14 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determine if the surface is a portion of a cylinder within RhinoMath.ZeroTolerance.
+    /// Determines if the surface is a portion of a cylinder within RhinoMath.ZeroTolerance.
     /// </summary>
     /// <returns>true if the surface is a portion of a cylinder.</returns>
     public bool IsCylinder()
     {
       return IsCylinder(RhinoMath.ZeroTolerance);
     }
-    /// <summary>Determine if the surface is a portion of a cylinder within a given tolerance.</summary>
+    /// <summary>Determines if the surface is a portion of a cylinder within a given tolerance.</summary>
     /// <param name="tolerance">tolerance to use when checking.</param>
     /// <returns>true if the surface is a portion of a cylinder.</returns>
     public bool IsCylinder(double tolerance)
@@ -1217,14 +1217,14 @@ namespace Rhino.Geometry
       IntPtr pThis = ConstPointer();
       return UnsafeNativeMethods.ON_Surface_IsCylinder(pThis, ref cylinder, tolerance, false);
     }
-    /// <summary>Test a surface to see if it is a portion of a cylinder within RhinoMath.ZeroTolerance and return the cylinder.</summary>
+    /// <summary>Tests a surface to see if it is a portion of a cylinder within RhinoMath.ZeroTolerance and return the cylinder.</summary>
     /// <param name="cylinder">On success, the cylinder parameters are filled in.</param>
     /// <returns>true if the surface is a portion of a cylinder.</returns>
     public bool TryGetCylinder(out Cylinder cylinder)
     {
       return TryGetCylinder(out cylinder, RhinoMath.ZeroTolerance);
     }
-    /// <summary>Test a surface to see if it is a portion of a cylinder and return the cylinder.</summary>
+    /// <summary>Tests a surface to see if it is a portion of a cylinder and return the cylinder.</summary>
     /// <param name="cylinder">On success, the cylinder parameters are filled in.</param>
     /// <param name="tolerance">tolerance to use when checking.</param>
     /// <returns>true if the surface is a portion of a cylinder.</returns>
@@ -1236,14 +1236,14 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determine if the surface is a portion of a cone within RhinoMath.ZeroTolerance.
+    /// Determines if the surface is a portion of a cone within RhinoMath.ZeroTolerance.
     /// </summary>
     /// <returns>true if the surface is a portion of a cone.</returns>
     public bool IsCone()
     {
       return IsCone(RhinoMath.ZeroTolerance);
     }
-    /// <summary>Determine if the surface is a portion of a cone within a given tolerance.</summary>
+    /// <summary>Determines if the surface is a portion of a cone within a given tolerance.</summary>
     /// <param name="tolerance">tolerance to use when checking.</param>
     /// <returns>true if the surface is a portion of a cone.</returns>
     public bool IsCone(double tolerance)
@@ -1252,14 +1252,14 @@ namespace Rhino.Geometry
       IntPtr pThis = ConstPointer();
       return UnsafeNativeMethods.ON_Surface_IsCone(pThis, ref cone, tolerance, false);
     }
-    /// <summary>Test a surface to see if it is a portion of a cone within RhinoMath.ZeroTolerance and return the cone.</summary>
+    /// <summary>Tests a surface to see if it is a portion of a cone within RhinoMath.ZeroTolerance and return the cone.</summary>
     /// <param name="cone">On success, the cone parameters are filled in.</param>
     /// <returns>true if the surface is a portion of a cone.</returns>
     public bool TryGetCone(out Cone cone)
     {
       return TryGetCone(out cone, RhinoMath.ZeroTolerance);
     }
-    /// <summary>Test a surface to see if it is a portion of a cone and return the cone.</summary>
+    /// <summary>Tests a surface to see if it is a portion of a cone and returns the cone.</summary>
     /// <param name="cone">On success, the cone parameters are filled in.</param>
     /// <param name="tolerance">tolerance to use when checking.</param>
     /// <returns>true if the surface is a portion of a cone.</returns>
@@ -1270,13 +1270,13 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Surface_IsCone(pThis, ref cone, tolerance, true);
     }
 
-    /// <summary>Determine if the surface is a portion of a torus within RhinoMath.ZeroTolerance.</summary>
+    /// <summary>Determines if the surface is a portion of a torus within RhinoMath.ZeroTolerance.</summary>
     /// <returns>true if the surface is a portion of a torus.</returns>
     public bool IsTorus()
     {
       return IsTorus(RhinoMath.ZeroTolerance);
     }
-    /// <summary>Determine if the surface is a portion of a torus within a ginev tolerance.</summary>
+    /// <summary>Determines if the surface is a portion of a torus within a given tolerance.</summary>
     /// <param name="tolerance">tolerance to use when checking.</param>
     /// <returns>true if the surface is a portion of a torus.</returns>
     public bool IsTorus(double tolerance)
@@ -1285,14 +1285,14 @@ namespace Rhino.Geometry
       IntPtr pThis = ConstPointer();
       return UnsafeNativeMethods.ON_Surface_IsTorus(pThis, ref torus, tolerance, false);
     }
-    /// <summary>Test a surface to see if it is a portion of a torus within RhinoMath.ZeroTolerance and return the torus.</summary>
+    /// <summary>Tests a surface to see if it is a portion of a torus within RhinoMath.ZeroTolerance and returns the torus.</summary>
     /// <param name="torus">On success, the torus parameters are filled in.</param>
     /// <returns>true if the surface is a portion of a torus.</returns>
     public bool TryGetTorus(out Torus torus)
     {
       return TryGetTorus(out torus, RhinoMath.ZeroTolerance);
     }
-    /// <summary>Test a surface to see if it is a portion of a torus and return the torus.</summary>
+    /// <summary>Tests a surface to see if it is a portion of a torus and returns the torus.</summary>
     /// <param name="torus">On success, the torus parameters are filled in.</param>
     /// <param name="tolerance">tolerance to use when checking.</param>
     /// <returns>true if the surface is a portion of a torus.</returns>

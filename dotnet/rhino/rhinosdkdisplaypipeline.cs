@@ -1863,7 +1863,7 @@ namespace Rhino.Display
     /*
 
     /// <summary>
-    /// Determine screen rectangle that would be drawn to using the DrawString(..) function
+    /// Determines screen rectangle that would be drawn to using the DrawString(..) function
     /// with the same parameters.
     /// </summary>
     /// <param name="measuredRectangle">rectangle in the viewport's screen coordinates on success.</param>

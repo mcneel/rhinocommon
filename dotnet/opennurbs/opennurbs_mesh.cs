@@ -1014,7 +1014,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determine orientation of a "solid" mesh.
+    /// Determines orientation of a "solid" mesh.
     /// </summary>
     /// <returns>
     /// <para>+1 = mesh is solid with outward facing normals.</para>
@@ -1028,7 +1028,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determine if a point is inside a solid mesh.
+    /// Determines if a point is inside a solid mesh.
     /// </summary>
     /// <param name="point">3d point to test.</param>
     /// <param name="tolerance">
@@ -1064,7 +1064,7 @@ namespace Rhino.Geometry
 
 #if USING_V5_SDK
     /// <summary>
-    /// Make sure that faces sharing an edge and having a difference of normal greater
+    /// Makes sure that faces sharing an edge and having a difference of normal greater
     /// than or equal to angleToleranceRadians have unique vertexes along that edge,
     /// adding vertices if necessary.
     /// </summary>
@@ -1080,7 +1080,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Make sure that faces sharing an edge and having a difference of normal greater
+    /// Makes sure that faces sharing an edge and having a difference of normal greater
     /// than or equal to angleToleranceRadians share vertexes along that edge, vertex normals
     /// are averaged.
     /// </summary>

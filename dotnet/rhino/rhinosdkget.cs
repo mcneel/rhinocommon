@@ -714,6 +714,27 @@ namespace Rhino.Input
       return (Rhino.Commands.Result)command_rc;
 
     }
+
+    public static string GetFileName(Custom.GetFileNameMode mode, string defaultName, string title, System.Windows.Forms.IWin32Window parent)
+    {
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        IntPtr pParent = parent != null ? parent.Handle : IntPtr.Zero;
+        UnsafeNativeMethods.CRhinoGetFileDialog_Get((int)mode, defaultName, title, pParent, pString);
+        return sh.ToString();
+      }
+    }
+
+    public static string GetFileNameScripted(Custom.GetFileNameMode mode, string defaultName)
+    {
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoGetFileDialog_Get2((int)mode, defaultName, pString);
+        return sh.ToString();
+      }
+    }
     #endregion
   }
 

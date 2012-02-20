@@ -40,6 +40,18 @@ namespace Rhino.DocObjects
     Linked = 3
   }
 
+  /// <summary>
+  /// A InstanceDefinitionUpdateType.Static or InstanceDefinitionUpdateType.LinkedAndEmbedded idef
+  /// must have LayerStyle = Unset, a InstanceDefinitionUpdateType.Linked InstanceDefnition must
+  /// have LayerStyle = Active or Reference
+  /// </summary>
+  public enum InstanceDefinitionLayerStyle
+  {
+    None = 0,
+    Active = 1,   // linked InstanceDefinition layers will be active
+    Reference = 2 // linked InstanceDefinition layers will be reference
+  }
+
 #if RHINO_SDK
   public class InstanceObject : RhinoObject
   {
@@ -302,6 +314,35 @@ namespace Rhino.DocObjects
       get
       {
         return UnsafeNativeMethods.CRhinoInstanceDefinition_IsReference(m_doc.m_docId, m_index);
+      }
+    }
+
+    public bool IsTenuous
+    {
+      get
+      {
+        return UnsafeNativeMethods.CRhinoInstanceDefinition_IsTenuous(m_doc.m_docId, m_index);
+      }
+    }
+
+    public int UpdateDepth
+    {
+      get
+      {
+        return UnsafeNativeMethods.CRhinoInstanceDefinition_UpdateDepth(m_doc.m_docId, m_index);
+      }
+    }
+
+    public InstanceDefinitionLayerStyle LayerStyle
+    {
+      get
+      {
+        int layerStyle = UnsafeNativeMethods.CRhinoInstanceDefinition_LayerStyle(m_doc.m_docId, m_index);
+        if (layerStyle == (int)InstanceDefinitionLayerStyle.Active)
+          return InstanceDefinitionLayerStyle.Active;
+        if (layerStyle == (int)InstanceDefinitionLayerStyle.Reference)
+          return InstanceDefinitionLayerStyle.Reference;
+        return InstanceDefinitionLayerStyle.None;
       }
     }
 
@@ -747,12 +788,64 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
-  //Description:
-  //  Gets unsed instance definition name used as default when
-  //  creating new instance definitions.
-  //Parameters:
-  //  result - [out] this is the wString which receives new name
-  //void GetUnusedInstanceDefinitionName( ON_wString& result) const;
+    /// <summary>
+    /// Gets unsed instance definition name used as default when creating
+    /// new instance definitions.
+    /// </summary>
+    /// <returns>An unused instance definition name string.</returns>
+    public string GetUnusedInstanceDefinitionName()
+    {
+      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName(m_doc.m_docId, pString);
+        return sh.ToString();
+      }
+    }
+
+    /// <summary>
+    /// Gets unsed instance definition name used as default when creating
+    /// new instance definitions.
+    /// </summary>
+    /// <param name="root">
+    /// The returned name is 'root nn'  If root is empty, then 'Block' (localized) is used.
+    /// </param>
+    /// <returns>An unused instance definition name string.</returns>
+    public string GetUnusedInstanceDefinitionName(string root)
+    {
+      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName2(m_doc.m_docId, root, pString);
+        return sh.ToString();
+      }
+    }
+
+    /// <summary>
+    /// Gets unsed instance definition name used as default when creating
+    /// new instance definitions.
+    /// </summary>
+    /// <param name="root">
+    /// The returned name is 'root nn'  If root is empty, then 'Block' (localized) is used.
+    /// </param>
+    /// <param name="defaultSuffix">
+    /// Unique names are created by appending a decimal number to the
+    /// localized term for "Block" as in "Block 01", "Block 02",
+    /// and so on.  When defaultSuffix is supplied, the search for an unused
+    /// name begins at "Block suffix".
+    /// </param>
+    /// <returns>An unused instance definition name string.</returns>
+    [CLSCompliant(false)]
+    public string GetUnusedInstanceDefinitionName(string root, uint defaultSuffix)
+    {
+      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName3(m_doc.m_docId, root, defaultSuffix, pString);
+        return sh.ToString();
+      }
+    }
+
 
     #region enumerator
     // for IEnumerable<Layer>

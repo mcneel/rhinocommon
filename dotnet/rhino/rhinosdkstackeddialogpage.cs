@@ -15,6 +15,19 @@ namespace Rhino.UI
       m_english_page_title = englishPageTitle;
     }
 
+    System.Collections.Generic.List<StackedDialogPage> m_children;
+    public System.Collections.Generic.List<StackedDialogPage> Children
+    {
+      get
+      {
+        return m_children ?? (m_children = new System.Collections.Generic.List<StackedDialogPage>());
+      }
+    }
+    public bool HasChildren
+    {
+      get { return (m_children!=null && m_children.Count>0); }
+    }
+
     internal IntPtr ConstructWithRhinoDotNet()
     {
       // This is only going to work on Windows. Use functions defined in Rhino.NET through

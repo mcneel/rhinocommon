@@ -6495,6 +6495,10 @@ internal partial class UnsafeNativeMethods
   //void CRhinoFileUtilities_GetDataFolder(CRhCmnStringHolder* pStringHolder, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoFileUtilities_GetDataFolder(IntPtr pStringHolder, int which);
+
+  //void CRhinoFileUtilities_FindFile(int docId, const RHMONO_STRING* filename, CRhCmnStringHolder* pFoundFileName)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoFileUtilities_FindFile(int docId, [MarshalAs(UnmanagedType.LPWStr)]string filename, IntPtr pFoundFileName);
   #endregion
 
 
@@ -6753,6 +6757,14 @@ internal partial class UnsafeNativeMethods
   //unsigned int RHC_RhinoGetCircle( ON_CIRCLE_STRUCT* circle )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern uint RHC_RhinoGetCircle(ref Circle circle);
+
+  //void CRhinoGetFileDialog_Get(int mode, const RHMONO_STRING* default_name, const RHMONO_STRING* title, HWND hParent, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoGetFileDialog_Get(int mode, [MarshalAs(UnmanagedType.LPWStr)]string default_name, [MarshalAs(UnmanagedType.LPWStr)]string title, IntPtr hParent, IntPtr pStringHolder);
+
+  //void CRhinoGetFileDialog_Get2(int mode, const RHMONO_STRING* default_name, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoGetFileDialog_Get2(int mode, [MarshalAs(UnmanagedType.LPWStr)]string default_name, IntPtr pStringHolder);
   #endregion
 
 
@@ -7584,6 +7596,19 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoInstanceDefinition_IsReference(int docId, int idef_index);
 
+  //bool CRhinoInstanceDefinition_IsTenuous( int docId, int idef_index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoInstanceDefinition_IsTenuous(int docId, int idef_index);
+
+  //int CRhinoInstanceDefinition_LayerStyle( int docId, int idef_index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoInstanceDefinition_LayerStyle(int docId, int idef_index);
+
+  //int CRhinoInstanceDefinition_UpdateDepth( int docId, int idef_index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoInstanceDefinition_UpdateDepth(int docId, int idef_index);
+
   //const RHMONO_STRING* CRhinoInstanceDefinition_GetString( int docId, int idef_index, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoInstanceDefinition_GetString(int docId, int idef_index, int which);
@@ -7641,6 +7666,18 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoInstanceDefinitionTable_ModifyGeometry(int docId, int idefIndex, IntPtr geometry, IntPtr attributes);
+
+  //void CRhinoInstanceDefinitionTable_GetUnusedName(int docId, CRhCmnStringHolder* pString)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoInstanceDefinitionTable_GetUnusedName(int docId, IntPtr pString);
+
+  //void CRhinoInstanceDefinitionTable_GetUnusedName2(int docId, const RHMONO_STRING* root, CRhCmnStringHolder* pString)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoInstanceDefinitionTable_GetUnusedName2(int docId, [MarshalAs(UnmanagedType.LPWStr)]string root, IntPtr pString);
+
+  //void CRhinoInstanceDefinitionTable_GetUnusedName3(int docId, const RHMONO_STRING* root, unsigned int default_suffix, CRhCmnStringHolder* pString)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoInstanceDefinitionTable_GetUnusedName3(int docId, [MarshalAs(UnmanagedType.LPWStr)]string root, uint default_suffix, IntPtr pString);
   #endregion
 
 

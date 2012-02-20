@@ -31,6 +31,28 @@ namespace Rhino
       IntPtr pOptions = options.ConstPointer();
       return UnsafeNativeMethods.RHC_RhinoWriteFile(m_docId, path, pOptions);
     }
+
+    /// <summary>
+    /// Search for a file using Rhino's search path.  Rhino will look in the
+    /// following places:
+    /// 1. Current model folder
+    /// 2. Path specified in options dialog/File tab
+    /// 3. Rhino system folders
+    /// 4. Rhino executable folder
+    /// </summary>
+    /// <param name="filename"></param>
+    /// <returns>
+    /// Path to existing file if found, an empty string if no file was found
+    /// </returns>
+    public string FindFile(string filename)
+    {
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoFileUtilities_FindFile(m_docId, filename, pString);
+        return sh.ToString();
+      }
+    }
  
     internal int m_docId;
     private RhinoDoc(int id)

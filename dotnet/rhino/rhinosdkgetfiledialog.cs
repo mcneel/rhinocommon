@@ -4,6 +4,46 @@ using System.Runtime.InteropServices;
 
 #if RHINO_SDK
 // NOTE: Much of this is a combination of rhinoSdkGetFileDialog.h and RhinoSdkUiFileDialog.h
+
+
+namespace Rhino.Input.Custom
+{
+  // Commented out items that I'm not sure apply. We can always
+  // uncomment these if we find a need for them
+
+  /// <summary>
+  /// </summary>
+  public enum GetFileNameMode
+  {
+    Open = 0,
+    OpenTemplate = 1,
+    OpenImage = 2,
+    OpenRhinoOnly = 3,
+    //OpenToolbarCollection = 4,
+    OpenTextFile = 5,
+    OpenWorksession = 6,
+    Import = 7,
+    Attach = 8,
+    //LoadPlugIn = 9,
+    Save = 10,
+    SaveSmall = 11,
+    SaveTemplate = 12,
+    SaveImage = 13,
+    Export = 14,
+    //SaveSymbol = 15,
+    //SaveToolbarCollection = 16,
+    SaveTextFile = 17,
+    SaveWorksession = 18,
+    //SaveCurrentToolbarCollectionOnly = 19
+  }
+
+  // There are a couple GetFileName functions on RhinoGet.  If we need
+  // more customization, we can create a GetFileName class which wraps
+  // CRhinoGetFileDialog
+}
+
+
+
 namespace Rhino.UI
 {
   //public enum OpenFileDialogType : int

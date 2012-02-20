@@ -368,16 +368,16 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets the position of text on the plane.
+    /// Gets and sets the position of text on the plane.
     /// </summary>
     public Point2d TextPosition
     {
       get { return GetPoint(userpositionedtext_pt_index); }
-      //set { SetPoint(userpositionedtext_pt_index, value); }
+      set { SetPoint(userpositionedtext_pt_index, value); }
     }
 
     /// <summary>
-    /// Sets the three locations of the point, unsing two-dimensional points that refer to the plane of the annotation.
+    /// Sets the three locations of the point, using two-dimensional points that refer to the plane of the annotation.
     /// </summary>
     public void SetLocations(Point2d extensionLine1End, Point2d extensionLine2End, Point2d pointOnDimensionLine)
     {

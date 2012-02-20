@@ -38,6 +38,7 @@ namespace Rhino.Runtime
       const int BUILTIN_COMMANDS_REGISTERED = 3000;
       const int BEGIN_LOAD_PLUGIN = 4000;
       const int END_LOAD_PLUGIN = 5000;
+      const int END_LOAD_AT_START_PLUGINS = 6000;
       const int BEGIN_LOAD_PLUGINS_BASE = 100000;
       try
       {
@@ -65,6 +66,9 @@ namespace Rhino.Runtime
               break;
             case END_LOAD_PLUGIN:
               m_theSingleSkin.OnEndLoadPlugIn();
+              break;
+            case END_LOAD_AT_START_PLUGINS:
+              m_theSingleSkin.OnEndLoadAtStartPlugIns();
               break;
           }
           if (mode >= BEGIN_LOAD_PLUGINS_BASE)
@@ -128,8 +132,11 @@ namespace Rhino.Runtime
     /// <param name="description">The plug-in description.</param>
     protected virtual void OnBeginLoadPlugIn(string description) { }
 
-    /// <summary>Is called when all plug-ins are loaded.</summary>
+    /// <summary>Is called after each plug-in has been loaded.</summary>
     protected virtual void OnEndLoadPlugIn() { }
+
+    /// <summary>Is called after all of the load at start plug-ins have been loaded.</summary>
+    protected virtual void OnEndLoadAtStartPlugIns() { }
 
     /// <summary>If you want to provide a custom icon for your skin.</summary>
     protected virtual System.Drawing.Bitmap MainRhinoIcon

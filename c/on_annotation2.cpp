@@ -20,6 +20,8 @@ RH_C_FUNCTION void ON_Annotation2_SetPoint(ON_Annotation2* pAnnotation, int whic
   {
     ON_2dPoint _point(point.val[0], point.val[1]);
     pAnnotation->SetPoint(which, _point);
+    if( ON_LinearDimension2::userpositionedtext_pt_index == which )
+      pAnnotation->m_userpositionedtext = true;
   }
 }
 

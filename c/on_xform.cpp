@@ -165,9 +165,6 @@ RH_C_FUNCTION bool ON_SpaceMorph_MorphGeometry(ON_Geometry* pGeometry, double to
 
 #endif
 
-////////////////////////////////////////////////////
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)
-
 RH_C_FUNCTION ON_Matrix* ON_Matrix_New(int rows, int cols)
 {
   return new ON_Matrix(rows, cols);
@@ -331,5 +328,3 @@ RH_C_FUNCTION bool ON_Matrix_GetBool(const ON_Matrix* pConstMatrix, int which)
   }
   return rc;
 }
-
-#endif

@@ -1,10 +1,9 @@
-#pragma warning disable 1591
-
 #if RHINO_SDK
 namespace Rhino.DocObjects
 {
   /// <summary>
-  /// The Rhino cliping plane object, as accessible in the Rhino document.
+  /// Represents the object of a <see cref="Rhino.Geometry.ClippingPlaneSurface">clipping plane</see>,
+  /// stored in the Rhino document and with attributes.
   /// </summary>
   public class ClippingPlaneObject : RhinoObject
   {
@@ -17,6 +16,9 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.CRhinoClippingPlaneObject_InternalCommitChanges;
     }
 
+    /// <summary>
+    /// Gets the clipping plane surface.
+    /// </summary>
     public Rhino.Geometry.ClippingPlaneSurface ClippingPlaneGeometry
     {
       get

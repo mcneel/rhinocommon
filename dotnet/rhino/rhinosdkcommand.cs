@@ -1,4 +1,5 @@
 #pragma warning disable 1591
+
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
@@ -6,9 +7,16 @@ using System.Collections.Generic;
 #if RHINO_SDK
 namespace Rhino.Commands
 {
+  /// <summary>
+  /// Defines bitwise mask flags for different styles of commands, such as
+  /// <see cref="Style.Hidden">Hidden</see> or <see cref="Style.DoNotRepeat">DoNotRepeat</see>.
+  /// </summary>
   [Flags]
   public enum Style : int
   {
+    /// <summary>
+    /// No flag is defined.
+    /// </summary>
     None = 0,
     /// <summary>
     /// Also known as a "test" command. The command name does not auto-complete
@@ -58,6 +66,9 @@ namespace Rhino.Commands
     Scripted = 1
   }
 
+  /// <summary>
+  /// Decorates <see cref="Command">commands</see> to provide styles.
+  /// </summary>
   [AttributeUsage(AttributeTargets.Class)]
   public sealed class CommandStyleAttribute : System.Attribute
   {
@@ -74,42 +85,63 @@ namespace Rhino.Commands
       m_style = styles;
     }
 
+    /// <summary>
+    /// Gets the associated style.
+    /// </summary>
     public Style Styles
     {
       get { return m_style; }
     }
   }
 
+  /// <summary>
+  /// Defines enumerated constant values for several command result types.
+  /// </summary>
   public enum Result : int
   {
-    /// <summary>command worked.</summary>
+    /// <summary>Command worked.</summary>
     Success = 0,
-    /// <summary>user canceled command.</summary>
+    /// <summary>User canceled command.</summary>
     Cancel  = 1, 
-    /// <summary>command did nothing but cancel was not pressed.</summary>
+    /// <summary>Command did nothing but cancel was not pressed.</summary>
     Nothing = 2,
-    /// <summary>command failed (bad input, computational problem, etc.)</summary>
+    /// <summary>Command failed (bad input, computational problem, etc.)</summary>
     Failure,
-    /// <summary>command not found (user probably had a typo in command name)</summary>
+    /// <summary>Command not found (user probably had a typo in command name).</summary>
     UnknownCommand,
+    /// <summary>Commands canceled and modeless dialog.</summary>
     CancelModelessDialog,
     /// <summary>exit RhinoCommon.</summary>
     ExitRhino = 0x0FFFFFFF
   }
 
+  /// <summary>
+  /// Stores the macro and display string of the most recent command.
+  /// </summary>
   public class MostRecentCommandDescription
   {
     public string DisplayString { get; set; }
     public string Macro { get; set; }
   }
 
+  /// <summary>
+  /// Defines a base class for all commands. This class is abstract.
+  /// </summary>
   public abstract class Command
   {
+    /// <summary>
+    /// Determines if a string is a valid command name.
+    /// </summary>
+    /// <param name="name">A string.</param>
+    /// <returns>true if the string is a valid command name.</returns>
     public static bool IsValidCommandName(string name)
     {
       return UnsafeNativeMethods.CRhinoCommand_IsValidCommandName(name);
     }
 
+    /// <summary>
+    /// Gets the ID of the last commands.
+    /// </summary>
     public static Guid LastCommandId
     {
       get
@@ -117,6 +149,10 @@ namespace Rhino.Commands
         return UnsafeNativeMethods.CRhinoEventWatcher_LastCommandId();
       }
     }
+
+    /// <summary>
+    /// Gets the result code of the last command.
+    /// </summary>
     public static Result LastCommandResult
     {
       get
@@ -126,6 +162,10 @@ namespace Rhino.Commands
       }
     }
 
+    /// <summary>
+    /// Gets an array of most recent command descriptions.
+    /// </summary>
+    /// <returns>An array of command descriptions.</returns>
     public static MostRecentCommandDescription[] GetMostRecentCommands()
     {
       IntPtr pDisplayStrings = UnsafeNativeMethods.ON_StringArray_New();
@@ -169,8 +209,9 @@ namespace Rhino.Commands
       return null;
     }
 
-
-    // only allow instantiation through subclassing
+    /// <summary>
+    /// Default protected constructor. It only allows instantiation through subclassing.
+    /// </summary>
     protected Command()
     {
       m_runtime_serial_number = m_serial_number_counter;
@@ -189,6 +230,9 @@ namespace Rhino.Commands
     }
 
 #region properties
+    /// <summary>
+    /// Gets the plug-in where this commands is placed.
+    /// </summary>
     public PlugIns.PlugIn PlugIn
     {
       get
@@ -197,6 +241,12 @@ namespace Rhino.Commands
       }
     }
 
+    /// <summary>
+    /// Gets the ID of this command.
+    /// You can associate an ID with the
+    /// <see cref="System.Runtime.InteropServices.GuidAttribute">GuidAttribute</see> attribute
+    /// applied to the class.
+    /// </summary>
     public virtual Guid Id
     {
       get
@@ -205,12 +255,23 @@ namespace Rhino.Commands
       }
     }
 
+    /// <summary>
+    /// Gets the name of the command.
+    /// This method is abstract.
+    /// </summary>
     public abstract string EnglishName{ get; }
+
+    /// <summary>
+    /// Gets the local name of the command.
+    /// </summary>
     public virtual string LocalName
     {
       get { return Rhino.UI.Localization.LocalizeCommandName(EnglishName, this); }
     }
 
+    /// <summary>
+    /// Gets the settings of the command.
+    /// </summary>
     public PersistentSettings Settings
     {
       get { return m_plugin.CommandSettings( EnglishName ); }
@@ -218,6 +279,12 @@ namespace Rhino.Commands
 
 #endregion
 
+    /// <summary>
+    /// Executes the command.
+    /// </summary>
+    /// <param name="doc">The current document.</param>
+    /// <param name="mode">The command running mode.</param>
+    /// <returns>The command result code.</returns>
     protected abstract Result RunCommand(RhinoDoc doc, RunMode mode);
     internal int OnRunCommand(int command_serial_number, int doc_id, int mode)
     {
@@ -242,7 +309,15 @@ namespace Rhino.Commands
       return (int)rc;
     }
 
+    /// <summary>
+    /// Is called when the user needs assistance with this command.
+    /// </summary>
     protected virtual void OnHelp() { }
+
+    /// <summary>
+    /// Gets the URL of the command contextual help. This is usually a location of a local CHM file.
+    /// <para>The default implementation return an empty string.</para>
+    /// </summary>
     protected string CommandContextHelpUrl{ get { return string.Empty; } }
     static void OnDoHelp(int command_serial_number)
     {
@@ -326,20 +401,37 @@ namespace Rhino.Commands
       return (1 == rc);
     }
 
+    /// <summary>
+    /// Determines is a string is a command.
+    /// </summary>
+    /// <param name="name">A string.</param>
+    /// <returns>true if the string is a command.</returns>
     public static bool IsCommand(string name)
     {
       return UnsafeNativeMethods.RhCommand_IsCommand(name);
     }
 
+    /// <summary>
+    /// Returns the ID of a command.
+    /// </summary>
+    /// <param name="name">The name of the command.</param>
+    /// <param name="searchForEnglishName">true if the name is to searched in English. This ensures that a '_' is prepended to the name.</param>
+    /// <returns>An of the command, or <see cref="Guid.Empty"/> on error.</returns>
     public static Guid LookupCommandId(string name, bool searchForEnglishName)
     {
       if( searchForEnglishName && !name.StartsWith("_", StringComparison.Ordinal))
         name = "_" + name;
-
+      
       Guid rc = UnsafeNativeMethods.CRhinoApp_LookupCommandByName(name);
       return rc;
     }
 
+    /// <summary>
+    /// Returns the command name given a command ID.
+    /// </summary>
+    /// <param name="commandId">A command ID.</param>
+    /// <param name="englishName">true if the requested command is in English.</param>
+    /// <returns>The command name, or null on error.</returns>
     public static string LookupCommandName(Guid commandId, bool englishName)
     {
       IntPtr pName = UnsafeNativeMethods.CRhinoApp_LookupCommandById(commandId, englishName);
@@ -378,6 +470,10 @@ namespace Rhino.Commands
       return rc;
     }
 
+    /// <summary>
+    /// Displays help for a command.
+    /// </summary>
+    /// <param name="commandId">A command ID.</param>
     public static void DisplayHelp(Guid commandId)
     {
       UnsafeNativeMethods.CRhinoApp_DisplayCommandHelp(commandId);
@@ -528,7 +624,12 @@ namespace Rhino.Commands
 
     #endregion
 
-
+    /// <summary>
+    /// Repeats an operation of a command.
+    /// </summary>
+    /// <param name="replayData">The replay history information.</param>
+    /// <returns>true if the operation succeeded.
+    /// <para>The default implementation always returns false.</para></returns>
     protected virtual bool ReplayHistory(Rhino.DocObjects.ReplayHistoryData replayData)
     {
       return false;

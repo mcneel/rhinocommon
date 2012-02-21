@@ -5,7 +5,7 @@ namespace Rhino.Geometry
   /// <summary>
   /// Represents an arbitrarily sized matrix of <see cref="double">double</see>-precision
   /// floating point numbers. If you are working with a 4x4 matrix, then you may want
-  /// to use the Transform class instead.
+  /// to use the <see cref="Transform"/> class instead.
   /// </summary>
   public class Matrix : IDisposable
   {

@@ -1,5 +1,3 @@
-#pragma warning disable 1591
-
 #if RHINO_SDK
 
 //  public class RhinoBitmap { }

@@ -1,14 +1,19 @@
-#pragma warning disable 1591
 using Rhino.Geometry;
 
 #if RHINO_SDK
 namespace Rhino.DocObjects
 {
+  /// <summary>
+  /// Represents a <see cref="Rhino.Geometry.Brep">brep</see> in a document.
+  /// </summary>
   public class BrepObject : RhinoObject
   {
     internal BrepObject(uint serialNumber)
       : base(serialNumber) { }
 
+    /// <summary>
+    /// Gets the brep geometry linked with this object.
+    /// </summary>
     public Brep BrepGeometry
     {
       get
@@ -17,6 +22,11 @@ namespace Rhino.DocObjects
         return rc;
       }
     }
+
+    /// <summary>
+    /// Constructs a new deep copy of the brep geometry.
+    /// </summary>
+    /// <returns>The copy of the geometry.</returns>
     public Brep DuplicateBrepGeometry()
     {
       Brep rc = DuplicateGeometry() as Brep;
@@ -29,12 +39,17 @@ namespace Rhino.DocObjects
     }
   }
 
-  
+  /// <summary>
+  /// Represents a <see cref="Rhino.Geometry.Surface">surface</see> in a document.
+  /// </summary>
   public class SurfaceObject : RhinoObject
   {
     internal SurfaceObject(uint serialNumber)
       : base(serialNumber) { }
 
+    /// <summary>
+    /// Gets the surface geometry linked with this object.
+    /// </summary>
     public Surface SurfaceGeometry
     {
       get
@@ -44,6 +59,10 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <summary>
+    /// Constructs a new deep copy of the surface geometry.
+    /// </summary>
+    /// <returns>The copy of the geometry.</returns>
     public Surface DuplicateSurfaceGeometry()
     {
       Surface rc = DuplicateGeometry() as Surface;

@@ -2525,6 +2525,96 @@ namespace Rhino.DocObjects.Tables
 
 #region Object addition
     /// <summary>
+    /// Adds geometry that is not further specified.
+    /// <para>This is meant, for example, to handle addition of sets of different geometrical entities.</para>
+    /// </summary>
+    /// <param name="geometry">The base geometry. This cannot be null.</param>
+    /// <returns>The new object ID on success.</returns>
+    /// <exception cref="ArgumentNullException">If geometry is null.</exception>
+    public Guid Add(GeometryBase geometry)
+    {
+      return Add(geometry, null);
+    }
+
+    /// <summary>
+    /// Adds geometry that is not further specified.
+    /// <para>This is meant, for example, to handle addition of sets of different geometrical entities.</para>
+    /// </summary>
+    /// <param name="geometry">The base geometry. This cannot be null.</param>
+    /// <param name="attributes">The object attributes. This can be null.</param>
+    /// <returns>The new object ID on success.</returns>
+    /// <exception cref="ArgumentNullException">If geometry is null.</exception>
+    public Guid Add(GeometryBase geometry, ObjectAttributes attributes)
+    {
+      if (geometry == null)
+      {
+        throw new ArgumentNullException("geometry");
+      }
+
+      Guid objId;
+      switch (geometry.ObjectType)
+      {
+        case ObjectType.Point:
+          objId = AddPoint(((Point)geometry).Location, attributes);
+          break;
+        case ObjectType.PointSet:
+          objId = AddPointCloud((PointCloud)geometry, attributes);
+          break;
+        case ObjectType.Curve:
+          objId = AddCurve((Curve)geometry, attributes);
+          break;
+        case ObjectType.Surface:
+          objId = AddSurface((Surface)geometry, attributes);
+          break;
+        case ObjectType.Brep:
+          objId = AddBrep((Brep)geometry, attributes);
+          break;
+        case ObjectType.Mesh:
+          objId = AddMesh((Mesh)geometry, attributes);
+          break;
+        case ObjectType.Light:
+          Light light = (Light)geometry;
+          var index = Document.Lights.Add(light, attributes);
+          objId = Document.Lights[index].Id;
+          break;
+        case ObjectType.Annotation:
+          throw new NotImplementedException("It is currently impossible to add a loose annotation instance.");
+        case ObjectType.InstanceDefinition:
+          throw new NotImplementedException("It is currently impossible to add a loose instance definition.");
+        case ObjectType.InstanceReference:
+          throw new NotImplementedException("It is currently impossible to add a loose instance references.");
+        case ObjectType.TextDot:
+          objId = AddTextDot((TextDot)geometry, attributes);
+          break;
+        case ObjectType.Grip:
+          throw new NotImplementedException("It is currently impossible to add a loose grip.");
+        case ObjectType.Detail:
+          throw new NotImplementedException("It is currently impossible to add a loose detail.");
+        case ObjectType.Hatch:
+          objId = AddHatch((Hatch)geometry, attributes);
+          break;
+        case ObjectType.MorphControl:
+          objId = AddMorphControl((MorphControl)geometry, attributes);
+          break;
+        case ObjectType.Cage:
+          throw new NotImplementedException("It is currently impossible to add a loose cage.");
+        case ObjectType.Phantom:
+          throw new NotImplementedException("It is currently impossible to add a loose phantom object.");
+        case ObjectType.ClipPlane:
+          throw new NotSupportedException("A clipping plane needs to be added to specific ViewPorts.");
+#if USING_V5_SDK
+        case ObjectType.Extrusion:
+          objId = AddExtrusion((Extrusion)geometry, attributes);
+          break;
+#endif
+        default:
+          throw new NotSupportedException("Only native types can be added to the document.");
+      }
+      return objId;
+    }
+
+
+    /// <summary>
     /// Adds a point object to the document.
     /// </summary>
     /// <param name="x">X component of point coordinate.</param>

@@ -289,6 +289,20 @@ namespace Rhino.UI
         return m_language_id;
       }
     }
+
+    /// <summary>
+    /// Sets the Id used for Localization in RhinoCommon.  Only useful for when
+    /// using RhinoCommon outside of the Rhino process
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>true if the language id could be set</returns>
+    public static bool SetLanguageId(int id)
+    {
+      if (Rhino.Runtime.HostUtils.RunningInRhino)
+        return false;
+      m_language_id = id;
+      return true;
+    }
   }
 
   /// <summary>

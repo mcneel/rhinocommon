@@ -8,6 +8,19 @@ using System.Runtime.Serialization;
 namespace Rhino.Geometry
 {
   /// <summary>
+  /// Used in curve and surface blending functions
+  /// </summary>
+  public enum BlendContinuity : int
+  {
+    /// <summary></summary>
+    Position = 0,
+    /// <summary></summary>
+    Tangency = 1,
+    /// <summary></summary>
+    Curvature = 2
+  }
+
+  /// <summary>
   /// Defines enumerated values for all implemented corner styles in curve offsets.
   /// </summary>
   public enum CurveOffsetCornerStyle : int
@@ -438,6 +451,37 @@ namespace Rhino.Geometry
     {
       return CreateMeanCurve(curveA, curveB, RhinoMath.UnsetValue);
     }
+
+#if USING_V5_SDK
+
+    /// <summary>
+    /// Makes a curve blend between 2 curves at the parameters specified
+    /// with the directions and continuities specified
+    /// </summary>
+    /// <param name="curve0">First curve to blend from</param>
+    /// <param name="t0">Parameter on first curve for blend endpoint</param>
+    /// <param name="reverse0">
+    /// If false, the blend will go in the natural direction of the curve.
+    /// If true, the blend will go in the opposite direction to the curve
+    /// </param>
+    /// <param name="continuity0">continuity for the blend at the start</param>
+    /// <param name="curve1">Second curve to blend from</param>
+    /// <param name="t1">Parameter on second curve for blend endpoint</param>
+    /// <param name="reverse1">
+    /// If false, the blend will go in the natural direction of the curve.
+    /// If true, the blend will go in the opposite direction to the curve
+    /// </param>
+    /// <param name="continuity1">continuity for the blend at the end</param>
+    /// <returns>the blend curve on success. null on failure</returns>
+    public static Curve CreateBlendCurve(Curve curve0, double t0, bool reverse0, BlendContinuity continuity0,
+                                         Curve curve1, double t1, bool reverse1, BlendContinuity continuity1)
+    {
+      IntPtr pConstCurve0 = curve0.ConstPointer();
+      IntPtr pConstCurve1 = curve1.ConstPointer();
+      IntPtr pCurve = UnsafeNativeMethods.CRhinoBlend_CurveBlend(pConstCurve0, t0, reverse0, (int)continuity0, pConstCurve1, t1, reverse1, (int)continuity1);
+      return GeometryBase.CreateGeometryHelper(pCurve, null) as Curve;
+    }
+#endif
 
     /// <summary>
     /// Joins a collection of curve segments together.

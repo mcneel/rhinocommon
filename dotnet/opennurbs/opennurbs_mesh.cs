@@ -425,6 +425,7 @@ namespace Rhino.Geometry
   public class Mesh : GeometryBase, ISerializable
   {
     #region static mesh creation
+#if RHINO_SDK
     /// <summary>
     /// Constructs a planar mesh grid.
     /// </summary>
@@ -433,9 +434,9 @@ namespace Rhino.Geometry
     /// <param name="yInterval">Interval describing size and extends of mesh along plane y-direction.</param>
     /// <param name="xCount">Number of faces in x-direction.</param>
     /// <param name="yCount">Number of faces in y-direction.</param>
-    /// <exception cref="ArgumentNullException">Thrown when plane is a null reference.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when xInterval is a null reference.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when yInterval is a null reference.</exception>
+    /// <exception cref="ArgumentException">Thrown when plane is a null reference.</exception>
+    /// <exception cref="ArgumentException">Thrown when xInterval is a null reference.</exception>
+    /// <exception cref="ArgumentException">Thrown when yInterval is a null reference.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when xCount is less than or equal to zero.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when yCount is less than or equal to zero.</exception>
     public static Mesh CreateFromPlane(Plane plane, Interval xInterval, Interval yInterval, int xCount, int yCount)
@@ -459,9 +460,10 @@ namespace Rhino.Geometry
     /// <param name="sphere">Base sphere for mesh.</param>
     /// <param name="xCount">Number of faces in the around direction.</param>
     /// <param name="yCount">Number of faces in the top-to-bottom direction.</param>
-    /// <exception cref="ArgumentNullException">Thrown when sphere is invalid.</exception>
+    /// <exception cref="ArgumentException">Thrown when sphere is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when xCount is less than or equal to two.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when yCount is less than or equal to two.</exception>
+    /// <returns></returns>
     public static Mesh CreateFromSphere(Sphere sphere, int xCount, int yCount)
     {
       if (!sphere.IsValid) { throw new ArgumentException("sphere is invalid"); }
@@ -475,7 +477,32 @@ namespace Rhino.Geometry
       return new Mesh(ptr, null);
     }
 
-#if RHINO_SDK
+    /// <summary>Constructs a mesh cylinder</summary>
+    /// <param name="cylinder"></param>
+    /// <param name="vertical">Number of faces in the top-to-bottom direction</param>
+    /// <param name="around">Number of faces around the cylinder</param>
+    /// <exception cref="ArgumentException">Thrown when cylinder is invalid.</exception>
+    /// <returns></returns>
+    public static Mesh CreateFromCylinder(Cylinder cylinder, int vertical, int around)
+    {
+      if (!cylinder.IsValid) { throw new ArgumentException("cylinder is invalid"); }
+      IntPtr pMesh = UnsafeNativeMethods.RHC_RhinoMeshCylinder(ref cylinder, vertical, around);
+      return GeometryBase.CreateGeometryHelper(pMesh, null) as Mesh;
+    }
+
+    /// <summary>Constructs a mesh cone</summary>
+    /// <param name="cone"></param>
+    /// <param name="vertical">Number of faces in the top-to-bottom direction</param>
+    /// <param name="around">Number of faces around the cone</param>
+    /// <exception cref="ArgumentException">Thrown when cone is invalid.</exception>
+    /// <returns></returns>
+    public static Mesh CreateFromCone(Cone cone, int vertical, int around)
+    {
+      if (!cone.IsValid) { throw new ArgumentException("cone is invalid"); }
+      IntPtr pMesh = UnsafeNativeMethods.RHC_RhinoMeshCone(ref cone, vertical, around);
+      return GeometryBase.CreateGeometryHelper(pMesh, null) as Mesh;
+    }
+
     /// <summary>
     /// Attempts to construct a mesh from a closed planar curve.
     /// </summary>

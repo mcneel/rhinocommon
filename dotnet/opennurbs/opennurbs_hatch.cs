@@ -90,7 +90,7 @@ namespace Rhino.Geometry
     /// <example>
     /// <code source='examples\vbnet\ex_explodehatch.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_explodehatch.cs' lang='cs'/>
-    /// <code source='examples\cs\ex_explodehatch.py' lang='py'/>
+    /// <code source='examples\py\ex_explodehatch.py' lang='py'/>
     /// </example>
     public GeometryBase[] Explode()
     {

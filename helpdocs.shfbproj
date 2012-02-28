@@ -46,7 +46,7 @@
     </ComponentConfigurations>
     <NamingMethod>MemberName</NamingMethod>
     <PresentationStyle>vs2005</PresentationStyle>
-    <FooterText>Last updated 23 January 2012 - Robert McNeel and Associates</FooterText>
+    <FooterText>Last updated 21 February 2012 - Robert McNeel and Associates</FooterText>
     <CopyrightHref>https://github.com/mcneel/rhinocommon/issues</CopyrightHref>
   </PropertyGroup>
   <!-- There are no properties for these two groups but they need to appear in

@@ -5111,6 +5111,14 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region rh_blend.cpp
+  //ON_Curve* CRhinoBlend_CurveBlend( const ON_Curve* pConstCurve0, double t0, bool bRev0, int continuity0,
+  //                                                const ON_Curve* pConstCurve1, double t1, bool bRev1, int continuity1)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoBlend_CurveBlend(IntPtr pConstCurve0, double t0, [MarshalAs(UnmanagedType.U1)]bool bRev0, int continuity0, IntPtr pConstCurve1, double t1, [MarshalAs(UnmanagedType.U1)]bool bRev1, int continuity1);
+  #endregion
+
+
   #region rh_brepobject.cpp
   //void ON_Brep_GetWireframe( const ON_Brep* pBrep, int density, ON_SimpleArray<ON_Curve*>* pWireframe )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6026,6 +6034,14 @@ internal partial class UnsafeNativeMethods
   //ON_UUID CRhinoDoc_AddLinearDimension( int docId, const ON_LinearDimension2* pConstDimension, const ON_3dmObjectAttributes* pConstAttributes )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoDoc_AddLinearDimension(int docId, IntPtr pConstDimension, IntPtr pConstAttributes);
+
+  //ON_UUID CRhinoDoc_AddRadialDimension( int docId, const ON_RadialDimension2* pConstDimension, const ON_3dmObjectAttributes* pConstAttributes )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoDoc_AddRadialDimension(int docId, IntPtr pConstDimension, IntPtr pConstAttributes);
+
+  //ON_UUID CRhinoDoc_AddAngularDimension( int docId, const ON_AngularDimension2* pConstDimension, const ON_3dmObjectAttributes* pConstAttributes )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoDoc_AddAngularDimension(int docId, IntPtr pConstDimension, IntPtr pConstAttributes);
 
   //ON_UUID CRhinoDoc_AddCurve(int docId, const ON_Curve* pCurve, const ON_3dmObjectAttributes* attr )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -8001,6 +8017,14 @@ internal partial class UnsafeNativeMethods
   //ON_Mesh* ON_Mesh_CreateMeshSphere(const ON_PLANE_STRUCT* plane, double radius, int x_cnt, int y_cnt)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Mesh_CreateMeshSphere(ref Plane plane, double radius, int x_cnt, int y_cnt);
+
+  //ON_Mesh* RHC_RhinoMeshCylinder(ON_Cylinder* cylinder, int vertical, int around)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoMeshCylinder(ref Cylinder cylinder, int vertical, int around);
+
+  //ON_Mesh* RHC_RhinoMeshCone(ON_Cone* cone, int vertical, int around)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoMeshCone(ref Cone cone, int vertical, int around);
   #endregion
 
 
@@ -8398,6 +8422,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern uint CRhinoLinearDimension_InternalCommitChanges(uint serial_number, IntPtr pConstGeometry);
 
+  //unsigned int CRhinoRadialDimension_InternalCommitChanges(unsigned int serial_number, const ON_Geometry* pConstGeometry)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern uint CRhinoRadialDimension_InternalCommitChanges(uint serial_number, IntPtr pConstGeometry);
+
+  //unsigned int CRhinoAngularDimension_InternalCommitChanges(unsigned int serial_number, const ON_Geometry* pConstGeometry)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern uint CRhinoAngularDimension_InternalCommitChanges(uint serial_number, IntPtr pConstGeometry);
+
   //unsigned int CRhinoAnnotationText_InternalCommitChanges(unsigned int serial_number, const ON_Geometry* pConstGeometry)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern uint CRhinoAnnotationText_InternalCommitChanges(uint serial_number, IntPtr pConstGeometry);
@@ -8742,6 +8774,10 @@ internal partial class UnsafeNativeMethods
   //double CRhinoGripObject_GetSetWeight( CRhinoGripObject* ptr, bool set, double setval )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern double CRhinoGripObject_GetSetWeight(IntPtr ptr, [MarshalAs(UnmanagedType.U1)]bool set, double setval);
+
+  //unsigned int CRhinoGripObject_NeighborGrip( const CRhinoGripObject* pConstRhinoGripObject, int dr, int ds, int dt, bool wrap )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern uint CRhinoGripObject_NeighborGrip(IntPtr pConstRhinoGripObject, int dr, int ds, int dt, [MarshalAs(UnmanagedType.U1)]bool wrap);
 
   //ON_UUID CRhinoGripObject_GetOwnerId( const CRhinoGripObject* pConstRhinoGripObject )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

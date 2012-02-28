@@ -84,6 +84,8 @@ namespace Rhino.DocObjects
     const int idxCRhinoAnnotationObject = 16;
     const int idxCRhinoLight = 17;
     const int idxCRhinoMorphControl = 18;
+    const int idxCRhinoRadialDimension = 19;
+    const int idxCRhinoAngularDimension = 20;
 
     internal static RhinoObject CreateRhinoObjectHelper(IntPtr pRhinoObject)
     {
@@ -155,6 +157,12 @@ namespace Rhino.DocObjects
           break;
         case idxCRhinoMorphControl: //18
           rc = new MorphControlObject(sn);
+          break;
+        case idxCRhinoRadialDimension: //19
+          rc = new RadialDimensionObject(sn);
+          break;
+        case idxCRhinoAngularDimension: //20
+          rc = new AngularDimensionObject(sn);
           break;
         default:
           rc = new RhinoObject(sn);

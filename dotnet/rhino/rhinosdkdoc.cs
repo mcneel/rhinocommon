@@ -2879,6 +2879,35 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_AddLinearDimension(m_doc.m_docId, pConstDimension, pAttributes);
     }
 
+
+    public Guid AddRadialDimension(RadialDimension dimension)
+    {
+      return AddRadialDimension(dimension, null);
+    }
+
+    public Guid AddRadialDimension(RadialDimension dimension, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pConstDimension = dimension.ConstPointer();
+      IntPtr pAttributes = IntPtr.Zero;
+      if (attributes != null)
+        pAttributes = attributes.ConstPointer();
+      return UnsafeNativeMethods.CRhinoDoc_AddRadialDimension(m_doc.m_docId, pConstDimension, pAttributes);
+    }
+
+    public Guid AddAngularDimension(AngularDimension dimension)
+    {
+      return AddAngularDimension(dimension, null);
+    }
+
+    public Guid AddAngularDimension(AngularDimension dimension, DocObjects.ObjectAttributes attributes)
+    {
+      IntPtr pConstDimension = dimension.ConstPointer();
+      IntPtr pAttributes = IntPtr.Zero;
+      if (attributes != null)
+        pAttributes = attributes.ConstPointer();
+      return UnsafeNativeMethods.CRhinoDoc_AddAngularDimension(m_doc.m_docId, pConstDimension, pAttributes);
+    }
+
     /// <summary>Adds a line object to Rhino.</summary>
     /// <param name="from">The line origin.</param>
     /// <param name="to">The line end.</param>

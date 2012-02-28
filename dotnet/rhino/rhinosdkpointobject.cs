@@ -181,6 +181,32 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <summary>
+    /// Used to get a grip's logical neighbors, like NURBS curve, suface,
+    /// and cage control point grips.
+    /// </summary>
+    /// <param name="directionR">
+    /// -1 to go back one grip, +1 to move forward one grip.  For curves, surfaces
+    /// and cages, this is the first parameter direction.
+    /// </param>
+    /// <param name="directionS">
+    /// -1 to go back one grip, +1 to move forward one grip.  For surfaces and
+    /// cages this is the second parameter direction.
+    /// </param>
+    /// <param name="directionT">
+    /// For cages this is the third parameter direction
+    /// </param>
+    /// <param name="wrap"></param>
+    /// <returns>logical neighbor or null if the is no logical neighbor</returns>
+    public GripObject NeighborGrip(int directionR, int directionS, int directionT, bool wrap)
+    {
+      IntPtr pConstThis = ConstPointer();
+      uint sn = UnsafeNativeMethods.CRhinoGripObject_NeighborGrip(pConstThis, directionR, directionS, directionT, wrap);
+      if( sn!=0 )
+        return new GripObject(sn);
+      return null;
+    }
+
     public int Index
     {
       get

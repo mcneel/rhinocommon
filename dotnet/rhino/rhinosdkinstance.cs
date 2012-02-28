@@ -12,7 +12,14 @@ namespace Rhino.DocObjects
   /// </summary>
   public enum InstanceDefinitionUpdateType : int
   {
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // NOTE - When wrapping functions that use InstanceDefinitionUpdateType
+    // make sure to talk to Steve or Dale Lear first.  The underlying enum
+    // has a value that we no longer use.
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     /// <summary>
+    /// The Rhino user interface uses the term "Embedded" for Static update types.
     /// This instance definition is never updated. If m_source_archive is set,
     /// it records the origin of the instance definition geometry, but
     /// m_source_archive is never used to update the instance definition.
@@ -23,6 +30,7 @@ namespace Rhino.DocObjects
     /// and is embedded. If m_source_archive changes, the user is asked if they want to update
     /// the instance definition.
     /// </summary>
+    [Obsolete("Always use Static. Will be removed in a future beta")]
     Embedded = 1,
     /// <summary>
     /// This instance definition geometry was imported from another archive (m_source_archive)
@@ -324,12 +332,15 @@ namespace Rhino.DocObjects
         return UnsafeNativeMethods.CRhinoInstanceDefinition_IsTenuous(m_doc.m_docId, m_index);
       }
     }
-
-    public int UpdateDepth
+    /// <summary>
+    /// Controls how much geometry is read when a linked InstanceDefinition is updated.
+    /// </summary>
+    /// <returns>If this returns true then nested linked InstanceDefinition objects will be skipped otherwise; read everything, included nested linked InstanceDefinition objects</returns>
+    public bool SkipNestedLinkedDefinitions
     {
       get
       {
-        return UnsafeNativeMethods.CRhinoInstanceDefinition_UpdateDepth(m_doc.m_docId, m_index);
+        return (UnsafeNativeMethods.CRhinoInstanceDefinition_UpdateDepth(m_doc.m_docId, m_index) != 0);
       }
     }
 
@@ -365,6 +376,9 @@ namespace Rhino.DocObjects
     const int idxName = 0;
     const int idxDescription = 1;
     const int idxSourceArchive = 2;
+    const int idxUrlTag = 3;
+    const int idxUrl = 4;
+
     string GetString(int which)
     {
       IntPtr ptr = UnsafeNativeMethods.CRhinoInstanceDefinition_GetString(m_doc.m_docId, m_index, which);
@@ -392,10 +406,24 @@ namespace Rhino.DocObjects
     {
       get { return GetString(idxSourceArchive); }
     }
-
-    public System.Drawing.Bitmap CreatePreviewBitmap(Rhino.Display.DefinedViewportProjection definedViewportProjection, System.Drawing.Size bitmapSize)
+    /// <summary>
+    /// The URL description displayed as a hyperlink in the Insert and Block UI
+    /// </summary>
+    public string UrlDescription
     {
-      IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoInstanceDefinition_GetPreviewBitmap(m_doc.m_docId, m_index, (int)definedViewportProjection, 0, bitmapSize.Width, bitmapSize.Height);
+      get { return GetString(idxUrlTag); }
+    }
+    /// <summary>
+    /// The hyperlink URL that is executed when the UrlDescription hyperlink is clicked on in the Insert and Block UI
+    /// </summary>
+    public string Url
+    {
+      get { return GetString(idxUrl); }
+    }
+
+    public System.Drawing.Bitmap CreatePreviewBitmap(Rhino.Display.DefinedViewportProjection definedViewportProjection, Rhino.DocObjects.DisplayMode displayMode, System.Drawing.Size bitmapSize)
+    {
+      IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoInstanceDefinition_GetPreviewBitmap(m_doc.m_docId, m_index, (int)definedViewportProjection, (int)displayMode, bitmapSize.Width, bitmapSize.Height);
       if (IntPtr.Zero == pRhinoDib)
         return null;
 
@@ -407,6 +435,11 @@ namespace Rhino.DocObjects
       }
       UnsafeNativeMethods.CRhinoDib_Delete(pRhinoDib);
       return rc;
+    }
+
+    public System.Drawing.Bitmap CreatePreviewBitmap(Rhino.Display.DefinedViewportProjection definedViewportProjection, System.Drawing.Size bitmapSize)
+    {
+      return CreatePreviewBitmap(definedViewportProjection, Rhino.DocObjects.DisplayMode.Wireframe, bitmapSize);
     }
   }
 }

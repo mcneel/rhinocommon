@@ -35,7 +35,6 @@ namespace Rhino.DocObjects
   //public class AnnotationLeader : AnnotationObject { }
 
 
-  // Wrapper for CRhinoLinearDimension
   /// <summary>
   /// Represents a <see cref="Rhino.Geometry.LinearDimension"/>
   /// that is placed in a document.
@@ -65,8 +64,35 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.CRhinoLinearDimension_InternalCommitChanges;
     }
   }
-  //public class RadialDimension : AnnotationObject { }
-  //public class AngularDimension : AnnotationObject { }
+
+  /// <summary>
+  /// A radius style dimension
+  /// </summary>
+  public class RadialDimensionObject : AnnotationObjectBase
+  {
+    internal RadialDimensionObject(uint serialNumber)
+      : base(serialNumber) { }
+
+    internal override CommitGeometryChangesFunc GetCommitFunc()
+    {
+      return UnsafeNativeMethods.CRhinoRadialDimension_InternalCommitChanges;
+    }
+  }
+
+  /// <summary>
+  /// Angular style dimension
+  /// </summary>
+  public class AngularDimensionObject : AnnotationObjectBase
+  {
+    internal AngularDimensionObject(uint serialNumber)
+      : base(serialNumber) { }
+
+    internal override CommitGeometryChangesFunc GetCommitFunc()
+    {
+      return UnsafeNativeMethods.CRhinoAngularDimension_InternalCommitChanges;
+    }
+  }
+
   //public class OrdinateDimension : AnnotationObject { }
 
   /// <summary>

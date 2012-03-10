@@ -89,6 +89,12 @@ namespace Rhino.Render
       get { return UnsafeNativeMethods.Rdk_GroundPlane_TextureRotation(); }
       set { UnsafeNativeMethods.Rdk_GroundPlane_SetTextureRotation(value); }
     }
+
+
+    // ?? Why is this static ??
+    // Queries whether or not the Ground Plane is visible.
+    //public static bool IsGroundPlaneVisible { get { return 1 == UnsafeNativeMethods.Rdk_Globals_IsGroundPlaneVisible(); } }
+
   }
 }
 #endif

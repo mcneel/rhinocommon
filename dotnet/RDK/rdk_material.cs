@@ -221,7 +221,7 @@ namespace Rhino.Render
       IntPtr pContent = UnsafeNativeMethods.Rdk_FindContentInstance(m_native_instance_id);
       return pContent;
     }
-    protected override bool IsNativeWrapper()
+    internal override bool IsNativeWrapper()
     {
       return true;
     }

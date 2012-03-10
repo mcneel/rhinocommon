@@ -1307,6 +1307,91 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region on_bezier.cpp
+  //ON_BezierCurve* ON_BezierCurve_New2d(int count, /*ARRAY*/const ON_2dPoint* points)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_BezierCurve_New2d(int count, Point2d[] points);
+
+  //ON_BezierCurve* ON_BezierCurve_New3d(int count, /*ARRAY*/const ON_3dPoint* points)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_BezierCurve_New3d(int count, Point3d[] points);
+
+  //ON_BezierCurve* ON_BezierCurve_New4d(int count, /*ARRAY*/const ON_4dPoint* points)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_BezierCurve_New4d(int count, Point4d[] points);
+
+  //bool ON_BezierCurve_IsValid(const ON_BezierCurve* pConstBezierCurve)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BezierCurve_IsValid(IntPtr pConstBezierCurve);
+
+  //void ON_BezierCurve_Dump(const ON_BezierCurve* pConstBezierCurve, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_BezierCurve_Dump(IntPtr pConstBezierCurve, IntPtr pStringHolder);
+
+  //int ON_BezierCurve_Dimension(const ON_BezierCurve* pConstBezierCurve)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_BezierCurve_Dimension(IntPtr pConstBezierCurve);
+
+  //ON_BezierCurve* ON_BezierCurve_Loft(int count, /*ARRAY*/const ON_3dPoint* points)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_BezierCurve_Loft(int count, Point3d[] points);
+
+  //ON_BezierCurve* ON_BezierCurve_Loft2(int count, /*ARRAY*/const ON_2dPoint* points)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_BezierCurve_Loft2(int count, Point2d[] points);
+
+  //void ON_BezierCurve_BoundingBox(const ON_BezierCurve* pConstBezierCurve, bool accurate, ON_BoundingBox* bounding_box)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_BezierCurve_BoundingBox(IntPtr pConstBezierCurve, [MarshalAs(UnmanagedType.U1)]bool accurate, ref BoundingBox bounding_box);
+
+  //void ON_BezierCurve_PointAt(const ON_BezierCurve* pConstBezierCurve, double t, ON_3dPoint* point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_BezierCurve_PointAt(IntPtr pConstBezierCurve, double t, ref Point3d point);
+
+  //void ON_BezierCurve_TangentAt(const ON_BezierCurve* pConstBezierCurve, double t, ON_3dVector* tangent)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_BezierCurve_TangentAt(IntPtr pConstBezierCurve, double t, ref Vector3d tangent);
+
+  //void ON_BezierCurve_CurvatureAt(const ON_BezierCurve* pConstBezierCurve, double t, ON_3dVector* tangent)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_BezierCurve_CurvatureAt(IntPtr pConstBezierCurve, double t, ref Vector3d tangent);
+
+  //ON_NurbsCurve* ON_BezierCurve_GetNurbForm(const ON_BezierCurve* pConstBezierCurve)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_BezierCurve_GetNurbForm(IntPtr pConstBezierCurve);
+
+  //bool ON_BezierCurve_IsRational(const ON_BezierCurve* pConstBezierCurve)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BezierCurve_IsRational(IntPtr pConstBezierCurve);
+
+  //int ON_BezierCurve_CVCount(const ON_BezierCurve* pConstBezierCurve)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_BezierCurve_CVCount(IntPtr pConstBezierCurve);
+
+  //bool ON_BezierCurve_GetCV3d(const ON_BezierCurve* pConstBezierCurve, int index, ON_3dPoint* point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BezierCurve_GetCV3d(IntPtr pConstBezierCurve, int index, ref Point3d point);
+
+  //bool ON_BezierCurve_GetCV4d(const ON_BezierCurve* pConstBezierCurve, int index, ON_4dPoint* point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BezierCurve_GetCV4d(IntPtr pConstBezierCurve, int index, ref Point4d point);
+
+  //bool ON_BezierCurve_MakeRational(ON_BezierCurve* pBezierCurve, bool on)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BezierCurve_MakeRational(IntPtr pBezierCurve, [MarshalAs(UnmanagedType.U1)]bool on);
+
+  //bool ON_BezierCurve_ChangeInt(ON_BezierCurve* pBezierCurve, bool degree, int newInt)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BezierCurve_ChangeInt(IntPtr pBezierCurve, [MarshalAs(UnmanagedType.U1)]bool degree, int newInt);
+  #endregion
+
+
   #region on_brep.cpp
   //double ON_BrepEdge_GetTolerance(const ON_BrepEdge* pConstBrepEdge)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -2621,6 +2706,10 @@ internal partial class UnsafeNativeMethods
   //ON_UUID ON_Texture_GetId(const ON_Texture* pConstTexture)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid ON_Texture_GetId(IntPtr pConstTexture);
+
+  //ON_UUID ON_Material_ModelObjectId(const ON_Material* pConstMaterial)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ON_Material_ModelObjectId(IntPtr pConstMaterial);
   #endregion
 
 

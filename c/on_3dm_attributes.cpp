@@ -59,7 +59,9 @@ RH_C_FUNCTION int ON_3dmObjectAttributes_GetSetInt( ON_3dmObjectAttributes* ptr,
         ptr->m_object_decoration = ON::ObjectDecoration(set_value);
         break;
       case idxWireDensity:
-        ptr->m_wire_density = set_value<0?0:set_value;
+        // 28-Feb-2012 Dale Fugier, -1 is acceptable
+        // ptr->m_wire_density = set_value<0?0:set_value;
+        ptr->m_wire_density = set_value<-1?-1:set_value;
         break;
       case idxSpace:
         ptr->m_space = ON::ActiveSpace(set_value);

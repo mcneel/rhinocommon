@@ -949,10 +949,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_SetMaterialToOnMaterial(IntPtr pMaterial, Guid uuid);
 
-  //int Rdk_Globals_RdkIsAvailable()
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_Globals_RdkIsAvailable();
-
   //void Rdk_Globals_RdkVersion(CRhCmnStringHolder* pSH)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_Globals_RdkVersion(IntPtr pSH);

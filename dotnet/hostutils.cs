@@ -592,7 +592,7 @@ namespace Rhino.Runtime
     }
 
     /// <summary>
-    /// Gets the debug dumpts. This is a text description of the geometric contents.
+    /// Gets the debug dumps. This is a text description of the geometric contents.
     /// DebugDump() is intended for debugging and is not suitable for creating high
     /// quality text descriptions of an object.
     /// </summary>
@@ -605,6 +605,24 @@ namespace Rhino.Runtime
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.ON_Object_Dump(pConstThis, pString);
+        return sh.ToString();
+      }
+    }
+
+    /// <summary>
+    /// Gets the debug dumps. This is a text description of the geometric contents.
+    /// DebugDump() is intended for debugging and is not suitable for creating high
+    /// quality text descriptions of an object.
+    /// </summary>
+    /// <param name="bezierCurve">curve to evaluate</param>
+    /// <returns>A debug dump text.</returns>
+    public static string DebugDumpToString(Rhino.Geometry.BezierCurve bezierCurve)
+    {
+      IntPtr pConstThis = bezierCurve.ConstPointer();
+      using (Rhino.Runtime.StringHolder sh = new StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.ON_BezierCurve_Dump(pConstThis, pString);
         return sh.ToString();
       }
     }

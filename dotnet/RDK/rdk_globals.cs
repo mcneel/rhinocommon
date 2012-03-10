@@ -7,18 +7,6 @@ namespace Rhino.Render
   public class Utilities
   {
     /// <summary>
-    /// RDK may fail to load if something has gone wrong during installation. You can check this properties if you want to be certain that RDK is actually available before using it.
-    /// </summary>
-    public static bool RdkIsAvailable
-    {
-      get
-      {
-        return 1==UnsafeNativeMethods.Rdk_Globals_RdkIsAvailable();
-      }
-    }
-
-
-    /// <summary>
     /// Returns the RDK_SDK_VERSION this RDK was built with.
     /// </summary>
     public static String RdkVersion
@@ -70,23 +58,6 @@ namespace Rhino.Render
     /// <returns>The Rdk beta release.</returns>
     public static int RdkBetaRelease()   {    return UnsafeNativeMethods.Rdk_Globals_RdkBetaRelease();    }
 
-    /// <summary>
-    /// Displays the standard modal color picker dialog.
-    /// </summary>
-    /// <param name="colorInOut">The initial color to set the picker to and also accepts the user's choice.</param>
-    /// <param name="bUseAlpha">Specifies if the color picker should allow changes to the alpha channel or not.</param>
-    /// <returns>true if a color was picked, false if the user canceled the picker dialog.</returns>
-    public static bool ShowColorPicker(ref Rhino.Display.Color4f colorInOut, bool bUseAlpha)
-    {
-      Rhino.Display.Color4f c = new Rhino.Display.Color4f();
-
-      bool b = 1==UnsafeNativeMethods.Rdk_Globals_ShowColorPicker(colorInOut, bUseAlpha, ref c);
-
-      if (b) { colorInOut = c; }
-      
-      return b;
-    }
-
     internal static bool ShowIncompatibleContent(RenderContentKind kind) { return 1 == UnsafeNativeMethods.Rdk_Globals_ShowIncompatibleContent(RenderContent.KindString(kind)); }
     internal static void SetShowIncompatibleContent(RenderContentKind kind, bool bShow) { UnsafeNativeMethods.Rdk_Globals_SetShowIncompatbileContent(RenderContent.KindString(kind), bShow); }
 
@@ -128,7 +99,7 @@ namespace Rhino.Render
       /// </summary>
 	    EditButton = 2,
     };
-
+    /*
     /// <summary>
     /// Allows the user to choose a content by displaying the Content Chooser dialog.
 	  /// The dialog will have OK, Cancel and Help buttons, and optional New and Edit buttons.
@@ -142,7 +113,7 @@ namespace Rhino.Render
     {
       return 1 == UnsafeNativeMethods.Rdk_Globals_ChooseContentEx(ref instanceId, RenderContent.KindString(kinds), (int)flags, doc.m_docId);
     }
-
+    */
     internal static bool IsKindEditorVisible(RenderContentKind kind)
     {
       return 1==UnsafeNativeMethods.Rdk_Globals_IsContentEditorVisible(RenderContent.KindString(kind));
@@ -178,10 +149,6 @@ namespace Rhino.Render
     /// </summary>
     public static bool IsSafeFrameEnabled    { get { return 1==UnsafeNativeMethods.Rdk_Globals_IsSafeFrameVisible(); } }
 
-    /// <summary>
-    /// Queries whether or not the Ground Plane is visible.
-    /// </summary>
-    public static bool IsGroundPlaneVisible  { get { return 1==UnsafeNativeMethods.Rdk_Globals_IsGroundPlaneVisible(); } }
         
     /// <summary>
     /// Constructs a new basic material from a <see cref="Rhino.DocObjects.Material">Material</see>.
@@ -262,6 +229,7 @@ namespace Rhino.Render
       return pContent == IntPtr.Zero ? null : RenderContent.FromPointer(pContent);
     }
 
+    /*
     /// <summary>
     /// Constructs a new content chosen by the user and add it to the persistent content list.
 	  /// This function cannot be used to create temporary content that you delete after use.
@@ -278,7 +246,8 @@ namespace Rhino.Render
       IntPtr pContent = UnsafeNativeMethods.Rdk_Globals_CreateContentByUser(defaultType, defaultInstance, RenderContent.KindString(kinds), (int)flags, doc.m_docId);
       return pContent == IntPtr.Zero ? null : RenderContent.FromPointer(pContent);
     }
-    
+    */
+
     /// <summary>
     /// Changes the type of a content. This deletes the content and creates a replacement
 	  /// of the specified type allowing the caller to decide about harvesting.
@@ -323,16 +292,16 @@ namespace Rhino.Render
       return new ContentList(RenderContentKind.Texture, doc);
     }
 
-    /// <summary>
-    /// Accesses any content table given a (single) kind.
-    /// </summary>
-    /// <param name="kind">A single kind.</param>
-    /// <param name="doc">A Rhino document.</param>
-    /// <returns>The (render content kind) list.</returns>
-    public static ContentList ContentList(RenderContentKind kind, RhinoDoc doc)
-    {
-      return new ContentList(kind, doc);
-    }
+    // <summary>
+    // Accesses any content table given a (single) kind.
+    // </summary>
+    // <param name="kind">A single kind.</param>
+    // <param name="doc">A Rhino document.</param>
+    // <returns>The (render content kind) list.</returns>
+    //public static ContentList ContentList(RenderContentKind kind, RhinoDoc doc)
+    //{
+    //  return new ContentList(kind, doc);
+    //}
 
     /// <summary>
     /// Prompts the user for a save file name and the width, height and depth of an image to be saved.
@@ -416,6 +385,7 @@ namespace Rhino.Render
 	    Instance, 
     };
 
+    /*
     /// <summary>
     /// Shows the content chooser to allow the user to select a new or existing content.
     /// </summary>
@@ -430,7 +400,8 @@ namespace Rhino.Render
     {
       return (ShowContentChooserResults)UnsafeNativeMethods.Rdk_Globals_ShowContentChooser(defaultType, defaultInstanceId, RenderContent.KindString(kinds), ref instanceIdOut, (int)flags, doc.m_docId);
     }
-
+    */
+ 
     /// <summary>
     /// Finds a file and also handles network shares.
     /// <remarks>This is a replacement for CRhinoFileUtilities::FindFile().</remarks>

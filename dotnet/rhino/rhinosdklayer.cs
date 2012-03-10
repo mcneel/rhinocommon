@@ -132,12 +132,14 @@ namespace Rhino.DocObjects
     const int idxIsLocked = 1;
     const int idxIsExpanded = 2;
     #region properties
-    /// <summary>The name of this layer.</summary>
+    /// <summary>Gets or sets the name of this layer.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_sellayer.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_sellayer.cs' lang='cs'/>
     /// <code source='examples\py\ex_sellayer.py' lang='py'/>
     /// </example>
+    /// <remarks>If you are modifying a layer inside a Rhino document, 
+    /// you must call CommitChanges for the modifications to take effect.</remarks>
     public string Name
     {
       get
@@ -157,6 +159,9 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <summary>
+    /// Gets the full path to this layer. The full path includes nesting information.
+    /// </summary>
     public string FullPath
     {
       get
@@ -184,7 +189,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets the index of this layer.
+    /// Gets or sets the index of this layer.
     /// </summary>
     public int LayerIndex
     {
@@ -193,7 +198,8 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets the ID of this layer object.
+    /// Gets or sets the ID of this layer object. 
+    /// You typically do not need to assign a custom ID.
     /// </summary>
     public Guid Id
     {
@@ -234,7 +240,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets the IGES level for this layer.
+    /// Gets or sets the IGES level for this layer.
     /// </summary>
     public int IgesLevel
     {
@@ -243,8 +249,10 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets the display color for this layer.
+    /// Gets or sets the display color for this layer.
     /// </summary>
+    /// <remarks>If you are modifying a layer inside a Rhino document, 
+    /// you must call CommitChanges for the modifications to take effect.</remarks>
     public System.Drawing.Color Color
     {
       get
@@ -262,8 +270,10 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets the plot color for this layer.
+    /// Gets or sets the plot color for this layer.
     /// </summary>
+    /// <remarks>If you are modifying a layer inside a Rhino document, 
+    /// you must call CommitChanges for the modifications to take effect.</remarks>
     public System.Drawing.Color PlotColor
     {
       get
@@ -281,9 +291,11 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets the thickness of the plotting pen in millimeters. 
+    /// Gets or sets the thickness of the plotting pen in millimeters. 
     /// A thickness of 0.0 indicates the "default" pen weight should be used.
     /// </summary>
+    /// <remarks>If you are modifying a layer inside a Rhino document, 
+    /// you must call CommitChanges for the modifications to take effect.</remarks>
     public double PlotWeight
     {
       get
@@ -299,8 +311,10 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets the line-type index for this layer.
+    /// Gets or sets the line-type index for this layer.
     /// </summary>
+    /// <remarks>If you are modifying a layer inside a Rhino document, 
+    /// you must call CommitChanges for the modifications to take effect.</remarks>
     public int LinetypeIndex
     {
       get { return GetInt(idxLinetypeIndex); }
@@ -308,12 +322,14 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets the index of render material for objects on this layer that have
+    /// Gets or sets the index of render material for objects on this layer that have
     /// MaterialSource() == MaterialFromLayer. 
     /// A material index of -1 indicates no material has been assigned 
     /// and the material created by the default Material constructor 
     /// should be used.
     /// </summary>
+    /// <remarks>If you are modifying a layer inside a Rhino document, 
+    /// you must call CommitChanges for the modifications to take effect.</remarks>
     public int RenderMaterialIndex
     {
       get { return GetInt(idxRenderMaterialIndex); }
@@ -321,8 +337,10 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets the visibility of this layer.
+    /// Gets or sets the visibility of this layer.
     /// </summary>
+    /// <remarks>If you are modifying a layer inside a Rhino document, 
+    /// you must call CommitChanges for the modifications to take effect.</remarks>
     public bool IsVisible
     {
       get { return GetBool(idxIsVisible); }
@@ -330,8 +348,10 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets a value indicating the locked state of this layer.
+    /// Gets or sets a value indicating the locked state of this layer.
     /// </summary>
+    /// <remarks>If you are modifying a layer inside a Rhino document, 
+    /// you must call CommitChanges for the modifications to take effect.</remarks>
     public bool IsLocked
     {
       get { return GetBool(idxIsLocked); }
@@ -339,8 +359,10 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets a value indicating whether this layer is expanded in the Rhino Layer dialog.
+    /// Gets or sets a value indicating whether this layer is expanded in the Rhino Layer dialog.
     /// </summary>
+    /// <remarks>If you are modifying a layer inside a Rhino document, 
+    /// you must call CommitChanges for the modifications to take effect.</remarks>
     public bool IsExpanded
     {
       get { return GetBool(idxIsExpanded); }
@@ -407,12 +429,14 @@ namespace Rhino.DocObjects
       }
       set
       {
-        RenderMaterialInstanceId = value.InstanceId;
+        RenderMaterialInstanceId = value.Id;
       }
     }
 #endif
 
-    /// <summary>Runtime index used to sort layers in layer dialog.</summary>
+    /// <summary>
+    /// Runtime index used to sort layers in layer dialog.
+    /// </summary>
     public int SortIndex
     {
       get
@@ -427,7 +451,6 @@ namespace Rhino.DocObjects
 #endif
       }
     }
-
 
     const int idxLinetypeIndex = 0;
     const int idxRenderMaterialIndex = 1;
@@ -459,6 +482,8 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Sets layer to default settings.
     /// </summary>
+    /// <remarks>If you are modifying a layer inside a Rhino document, 
+    /// you must call CommitChanges for the modifications to take effect.</remarks>
     public void Default()
     {
       IntPtr pThis = NonConstPointer();

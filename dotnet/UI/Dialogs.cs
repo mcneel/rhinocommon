@@ -371,6 +371,24 @@ namespace Rhino
         return rc;
       }
 
+#if RDK_CHECKED
+      /// <summary>
+      /// Displays the standard modal color picker dialog for floating point colors.
+      /// </summary>
+      /// <param name="color">The initial color to set the picker to and also accepts the user's choice.</param>
+      /// <param name="allowAlpha">Specifies if the color picker should allow changes to the alpha channel or not.</param>
+      /// <returns>true if a color was picked, false if the user canceled the picker dialog.</returns>
+      public static bool ShowColorDialog(ref Rhino.Display.Color4f color, bool allowAlpha)
+      {
+        Rhino.Display.Color4f c = Rhino.Display.Color4f.Empty;
+
+        bool rc = (1 == UnsafeNativeMethods.Rdk_Globals_ShowColorPicker(color, allowAlpha, ref c));
+        if (rc)
+          color = c;
+        return rc;
+      }
+#endif
+
       /// <summary>
       /// Displays Rhino's single layer selection dialog.
       /// </summary>

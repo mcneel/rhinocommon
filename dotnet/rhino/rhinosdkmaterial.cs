@@ -34,7 +34,7 @@ namespace Rhino.DocObjects
     }
 #endif
 
-    // Thish is for temporary wrappers. You should always call
+    // This is for temporary wrappers. You should always call
     // ReleaseNonConstPointer after you are done using this material
     internal static Material NewTemporaryMaterial(IntPtr pON_Material)
     {
@@ -93,6 +93,17 @@ namespace Rhino.DocObjects
         return UnsafeNativeMethods.CRhinoMaterial_GetBool(pConstThis, idxIsDeleted);
       }
     }
+
+    /// <summary>Gets or sets the ID of this material.</summary>
+    public Guid Id
+    {
+      get
+      {
+        IntPtr pMaterial = ConstPointer();
+        return UnsafeNativeMethods.ON_Material_ModelObjectId(pMaterial);
+      }
+    }
+
 
     /// <summary>
     /// Rhino allows multiple files to be viewed simultaneously. Materials in the

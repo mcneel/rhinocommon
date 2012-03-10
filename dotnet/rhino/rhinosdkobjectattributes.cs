@@ -540,9 +540,10 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// When a surface object is displayed in wireframe, m_wire_density controls
+    /// When a surface object is displayed in wireframe, this controls
     /// how many isoparametric wires are used.
     /// value    number of isoparametric wires
+    /// -1       boundary wires (off)
     /// 0        boundary and knot wires 
     /// 1        boundary and knot wires and, if there are no interior knots, a single interior wire.
     /// N>=2     boundary and knot wires and (N+1) interior wires.

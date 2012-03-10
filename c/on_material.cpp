@@ -366,3 +366,9 @@ RH_C_FUNCTION ON_UUID ON_Texture_GetId(const ON_Texture* pConstTexture)
   return ON_nil_uuid;
 }
 
+RH_C_FUNCTION ON_UUID ON_Material_ModelObjectId(const ON_Material* pConstMaterial)
+{
+  if( pConstMaterial )
+    return pConstMaterial->ModelObjectId();
+  return ON_nil_uuid;
+}

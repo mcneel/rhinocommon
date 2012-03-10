@@ -261,11 +261,11 @@ namespace Rhino.Render
   public abstract class TwoColorRenderTexture : RenderTexture
   {
 
-    public override sealed void AddUISections()
+    protected override sealed void OnAddUserInterfaceSections()
     {
       UnsafeNativeMethods.Rdk_RenderTexture_AddTwoColorSection(NonConstPointer());
       AddAdditionalUISections();
-      base.AddUISections();
+      base.OnAddUserInterfaceSections();
     }
 
     protected abstract void AddAdditionalUISections();
@@ -347,7 +347,7 @@ namespace Rhino.Render
       IntPtr pContent = UnsafeNativeMethods.Rdk_FindContentInstance(m_native_instance_id);
       return pContent;
     }
-    protected override bool IsNativeWrapper()
+    internal override bool IsNativeWrapper()
     {
       return true;
     }

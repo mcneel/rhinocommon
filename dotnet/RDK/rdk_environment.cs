@@ -29,7 +29,7 @@ namespace Rhino.Render
       set
       {
         RhinoDoc doc = Rhino.RhinoDoc.ActiveDoc;
-        UnsafeNativeMethods.Rdk_RenderEnvironment_SetCurrentEnvironment(doc.m_docId, value.InstanceId);
+        UnsafeNativeMethods.Rdk_RenderEnvironment_SetCurrentEnvironment(doc.m_docId, value.Id);
       }
     }
 
@@ -121,7 +121,7 @@ namespace Rhino.Render
       IntPtr pContent = UnsafeNativeMethods.Rdk_FindContentInstance(m_native_instance_id);
       return pContent;
     }
-    protected override bool IsNativeWrapper()
+    internal override bool IsNativeWrapper()
     {
       return true;
     }

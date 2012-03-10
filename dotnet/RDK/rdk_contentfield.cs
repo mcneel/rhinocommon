@@ -5,9 +5,9 @@ using System;
 #if RDK_UNCHECKED
 namespace Rhino.Render
 {
-  public abstract class Field : IDisposable
+  abstract class Field : IDisposable
   {
-    public enum ChangeContexts : int
+    internal enum ChangeContexts : int
     {
       UI = 0, // Change occurred as a result of user activity in the content's UI.
       Drop = 1, // Change occurred as a result of drag and drop.
@@ -19,11 +19,11 @@ namespace Rhino.Render
       Serialize = 7, // Change occurred during serialization (loading).
     }
 
-    protected IntPtr m_pField = IntPtr.Zero;
+    internal IntPtr m_pField = IntPtr.Zero;
     private bool m_bAutoDelete = true;
 
-    protected string m_sInternal;
-    protected string m_sFriendly;
+    string m_sInternal;
+    string m_sFriendly;
 
     internal Field(string internalName, string friendlyName)
     {
@@ -63,9 +63,11 @@ namespace Rhino.Render
     {
       return m_pField;
     }
+
+    public string InternalName { get { return m_sInternal; } }
   }
 
-  public class StringField : Field
+  class StringField : Field
   {
     private String m_defaultValue;
 
@@ -109,10 +111,7 @@ namespace Rhino.Render
     }
   }
 
-
-
-
-  public class BoolField : Field
+  class BoolField : Field
   {
     private bool m_defaultValue;
 
@@ -135,8 +134,7 @@ namespace Rhino.Render
     }
   }
 
-
-  public class IntField : Field
+  class IntField : Field
   {
     private int m_defaultValue;
 
@@ -159,9 +157,7 @@ namespace Rhino.Render
     }
   }
 
-
-
-  public class DoubleField : Field
+  class DoubleField : Field
   {
     private double m_defaultValue;
 
@@ -184,9 +180,7 @@ namespace Rhino.Render
     }
   }
 
-
-
-  public class FloatField : Field
+  class FloatField : Field
   {
     private float m_defaultValue;
 
@@ -209,9 +203,7 @@ namespace Rhino.Render
     }
   }
 
-
-
-  public class ColorField : Field
+  class ColorField : Field
   {
     private Rhino.Display.Color4f m_defaultValue;
 
@@ -242,8 +234,7 @@ namespace Rhino.Render
     }
   }
 
-
-  public class Vector2dField : Field
+  class Vector2dField : Field
   {
     private Rhino.Geometry.Vector2d m_defaultValue;
 
@@ -251,6 +242,11 @@ namespace Rhino.Render
       : base(internalName, friendlyName)
     {
       m_defaultValue = defaultValue;
+    }
+    public Vector2dField(string internalName, string friendlyName, Rhino.Geometry.Point2d defaultValue)
+      : base(internalName, friendlyName)
+    {
+      m_defaultValue = new Geometry.Vector2d(defaultValue.X, defaultValue.Y);
     }
 
     internal override void CreateCppPointer(RenderContent parentContent, bool isVisibleToAutoUI)
@@ -274,7 +270,7 @@ namespace Rhino.Render
     }
   }
 
-  public class Vector3dField : Field
+  class Vector3dField : Field
   {
     private Rhino.Geometry.Vector3d m_defaultValue;
 
@@ -282,6 +278,12 @@ namespace Rhino.Render
       : base(internalName, friendlyName)
     {
       m_defaultValue = defaultValue;
+    }
+
+    public Vector3dField(string internalName, string friendlyName, Rhino.Geometry.Point3d defaultValue)
+      : base(internalName, friendlyName)
+    {
+      m_defaultValue = new Rhino.Geometry.Vector3d(defaultValue);
     }
 
     internal override void CreateCppPointer(RenderContent parentContent, bool isVisibleToAutoUI)
@@ -305,7 +307,7 @@ namespace Rhino.Render
     }
   }
 
-  public class Point4dField : Field
+  class Point4dField : Field
   {
     private Rhino.Geometry.Point4d m_defaultValue;
 
@@ -336,9 +338,7 @@ namespace Rhino.Render
     }
   }
 
-
-
-  public class GuidField : Field
+  class GuidField : Field
   {
     private Guid m_defaultValue;
 
@@ -361,9 +361,7 @@ namespace Rhino.Render
     }
   }
 
-
-
-  public class TransformField : Field
+  class TransformField : Field
   {
     private Rhino.Geometry.Transform m_defaultValue;
 
@@ -391,9 +389,7 @@ namespace Rhino.Render
     }
   }
 
-
-
-  public class DateTimeField : Field
+  class DateTimeField : Field
   {
     private DateTime m_defaultValue;
 
@@ -428,6 +424,5 @@ namespace Rhino.Render
     }
   }
 }
-
 
 #endif

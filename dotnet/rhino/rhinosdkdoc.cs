@@ -2578,18 +2578,36 @@ namespace Rhino.DocObjects.Tables
           objId = Document.Lights[index].Id;
           break;
         case ObjectType.Annotation:
-          throw new NotImplementedException("It is currently impossible to add a loose annotation instance.");
+          LinearDimension ld = geometry as LinearDimension;
+          if (ld != null)
+          {
+            objId = AddLinearDimension(ld, attributes);
+            break;
+          }
+          RadialDimension rd = geometry as RadialDimension;
+          if (rd != null)
+          {
+            objId = AddRadialDimension(rd, attributes);
+            break;
+          }
+          AngularDimension ad = geometry as AngularDimension;
+          if (ad != null)
+          {
+            objId = AddAngularDimension(ad, attributes);
+            break;
+          }
+          throw new NotImplementedException("Add currently does not support this annotation type.");
         case ObjectType.InstanceDefinition:
-          throw new NotImplementedException("It is currently impossible to add a loose instance definition.");
+          throw new NotImplementedException("Add currently does not support instance definition types.");
         case ObjectType.InstanceReference:
-          throw new NotImplementedException("It is currently impossible to add a loose instance references.");
+          throw new NotImplementedException("Add currently does not support instance reference types.");
         case ObjectType.TextDot:
           objId = AddTextDot((TextDot)geometry, attributes);
           break;
         case ObjectType.Grip:
-          throw new NotImplementedException("It is currently impossible to add a loose grip.");
+          throw new NotImplementedException("Add currently does not support grip types.");
         case ObjectType.Detail:
-          throw new NotImplementedException("It is currently impossible to add a loose detail.");
+          throw new NotImplementedException("Add currently does not support detail types.");
         case ObjectType.Hatch:
           objId = AddHatch((Hatch)geometry, attributes);
           break;
@@ -2597,11 +2615,11 @@ namespace Rhino.DocObjects.Tables
           objId = AddMorphControl((MorphControl)geometry, attributes);
           break;
         case ObjectType.Cage:
-          throw new NotImplementedException("It is currently impossible to add a loose cage.");
+          throw new NotImplementedException("Add currently does not support cage types.");
         case ObjectType.Phantom:
-          throw new NotImplementedException("It is currently impossible to add a loose phantom object.");
+          throw new NotImplementedException("Add currently does not support phantom types.");
         case ObjectType.ClipPlane:
-          throw new NotSupportedException("A clipping plane needs to be added to specific ViewPorts.");
+          throw new NotSupportedException("Add currently does not support clipping planes.");
 #if USING_V5_SDK
         case ObjectType.Extrusion:
           objId = AddExtrusion((Extrusion)geometry, attributes);

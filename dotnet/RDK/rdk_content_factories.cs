@@ -30,29 +30,35 @@ namespace Rhino.Render
     }
 
     #region properties
-    /// <summary>
-    /// Gets the kind of content that this type represents.
-    /// </summary>
-    /// <returns>The kind of content that this type represents.</returns>
-	  public RenderContentKind Kind
-    {
-      get
-      {
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
-        {
-          IntPtr pString = sh.NonConstPointer();
-          UnsafeNativeMethods.Rdk_Factory_Kind(ConstPointer(), pString);
-          return RenderContent.KindFromString(sh.ToString());
-        }
-      }
-    }
 
-    /// <summary>
-    /// Determines if this type is of the specified kind.
-    /// </summary>
-    /// <param name="kind">The render content kind to check against.</param>
-    /// <returns>true if this instance is of the specified type.</returns>
-	  public bool IsKind(RenderContentKind kind) { return Kind == kind; }
+    // 6 March 2012 - S. Baer
+    // I don't think we need to export the Kind enum. .NET languages already have
+    // runtime type information to determine what the case 'is' or cast it 'as' something
+    // If we do need to make this enum public, I would like to find a less generic name
+    // than 'Kind'
+
+    // <summary>
+    // Gets the kind of content that this type represents.
+    // </summary>
+	  //public RenderContentKind Kind
+    //{
+    //  get
+    //  {
+    //    using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+    //    {
+    //      IntPtr pString = sh.NonConstPointer();
+    //      UnsafeNativeMethods.Rdk_Factory_Kind(ConstPointer(), pString);
+    //      return RenderContent.KindFromString(sh.ToString());
+    //    }
+    //  }
+    //}
+
+    // <summary>
+    // Determines if this type is of the specified kind.
+    // </summary>
+    // <param name="kind">The render content kind to check against.</param>
+    // <returns>true if this instance is of the specified type.</returns>
+	  // public bool IsKind(RenderContentKind kind) { return Kind == kind; }
 
     /// <summary>
     /// Returns a new instance of the render content of this type.  This content can be added to a persistant list.

@@ -909,17 +909,18 @@ namespace Rhino.Geometry.Intersect
       // We should handle better the case of a null entry inside the geometry collection.
       // Currently a NullReferenceException occurs.
 
-      Rhino.Runtime.INTERNAL_GeometryArray geom = new Rhino.Runtime.INTERNAL_GeometryArray(geometry);
-      IntPtr pGeometry = geom.ConstPointer();
-      Point3d[] rc = null;
-      using (Rhino.Runtime.InteropWrappers.SimpleArrayPoint3d points = new Rhino.Runtime.InteropWrappers.SimpleArrayPoint3d())
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer geom = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
       {
-        IntPtr pPoints = points.NonConstPointer();
-        int count = UnsafeNativeMethods.ON_RayShooter_ShootRay(ray.Position, ray.Direction, pGeometry, pPoints, maxReflections);
-        if (count > 0) rc = points.ToArray();
+        IntPtr pGeometry = geom.ConstPointer();
+        Point3d[] rc = null;
+        using (Rhino.Runtime.InteropWrappers.SimpleArrayPoint3d points = new Rhino.Runtime.InteropWrappers.SimpleArrayPoint3d())
+        {
+          IntPtr pPoints = points.NonConstPointer();
+          int count = UnsafeNativeMethods.ON_RayShooter_ShootRay(ray.Position, ray.Direction, pGeometry, pPoints, maxReflections);
+          if (count > 0) rc = points.ToArray();
+        }
+        return rc;
       }
-      geom.Dispose();
-      return rc;
     }
 
     //public static Point3d[] RaySurfaces(Ray3d ray, IEnumerable<Surface> surfaces, int maxReflections)
@@ -993,9 +994,9 @@ namespace Rhino.Geometry.Intersect
       Point3d[] rc = null;
       if (breps != null && points != null)
       {
-        Rhino.Runtime.INTERNAL_BrepArray brep_array = new Rhino.Runtime.INTERNAL_BrepArray();
+        Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer brep_array = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer();
         foreach (Brep brep in breps)
-          brep_array.AddBrep(brep, true);
+          brep_array.Add(brep, true);
 
         Rhino.Collections.Point3dList inputpoints = new Rhino.Collections.Point3dList(points);
         if (inputpoints.Count > 0)

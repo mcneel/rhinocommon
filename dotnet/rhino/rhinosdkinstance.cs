@@ -549,22 +549,23 @@ namespace Rhino.DocObjects.Tables
     /// </example>
     public int Add(string name, string description, Point3d basePoint, IEnumerable<GeometryBase> geometry, IEnumerable<DocObjects.ObjectAttributes> attributes)
     {
-      Rhino.Runtime.INTERNAL_GeometryArray g = new Runtime.INTERNAL_GeometryArray(geometry);
-      IntPtr pAttributes = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_New();
-      if (attributes != null)
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer g = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
       {
-        foreach (ObjectAttributes att in attributes)
+        IntPtr pAttributes = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_New();
+        if (attributes != null)
         {
-          IntPtr pAtt = att.ConstPointer();
-          UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Add(pAttributes, pAtt);
+          foreach (ObjectAttributes att in attributes)
+          {
+            IntPtr pAtt = att.ConstPointer();
+            UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Add(pAttributes, pAtt);
+          }
         }
-      }
-      IntPtr pGeometry = g.ConstPointer();
-      int rc = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_Add(m_doc.m_docId, name, description, basePoint, pGeometry, pAttributes);
+        IntPtr pGeometry = g.ConstPointer();
+        int rc = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_Add(m_doc.m_docId, name, description, basePoint, pGeometry, pAttributes);
 
-      UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Delete(pAttributes);
-      g.Dispose();
-      return rc;
+        UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Delete(pAttributes);
+        return rc;
+      }
     }
 
     /// <summary>
@@ -655,22 +656,23 @@ namespace Rhino.DocObjects.Tables
     /// <returns>true if operation succeeded.</returns>
     public bool ModifyGeometry(int idefIndex, IEnumerable<GeometryBase> newGeometry, IEnumerable<ObjectAttributes> newAttributes)
     {
-      Rhino.Runtime.INTERNAL_GeometryArray g = new Runtime.INTERNAL_GeometryArray(newGeometry);
-      IntPtr pAttributes = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_New();
-      if (newAttributes != null)
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer g = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(newGeometry))
       {
-        foreach (ObjectAttributes att in newAttributes)
+        IntPtr pAttributes = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_New();
+        if (newAttributes != null)
         {
-          IntPtr pAtt = att.ConstPointer();
-          UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Add(pAttributes, pAtt);
+          foreach (ObjectAttributes att in newAttributes)
+          {
+            IntPtr pAtt = att.ConstPointer();
+            UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Add(pAttributes, pAtt);
+          }
         }
-      }
-      IntPtr pGeometry = g.ConstPointer();
-      bool rc = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_ModifyGeometry(m_doc.m_docId, idefIndex, pGeometry, pAttributes);
+        IntPtr pGeometry = g.ConstPointer();
+        bool rc = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_ModifyGeometry(m_doc.m_docId, idefIndex, pGeometry, pAttributes);
 
-      UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Delete(pAttributes);
-      g.Dispose();
-      return rc;
+        UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Delete(pAttributes);
+        return rc;
+      }
     }
 
     public bool ModifyGeometry(int idefIndex, IEnumerable<GeometryBase> newGeometry)

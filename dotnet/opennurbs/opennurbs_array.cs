@@ -4,99 +4,6 @@ using Rhino.Geometry;
 
 namespace Rhino.Runtime
 {
-  class INTERNAL_GeometryArray : IDisposable
-  {
-    IntPtr m_ptr; //ON_SimpleArray<ON_Geometry*>*
-    public IntPtr ConstPointer() { return m_ptr; }
-    public IntPtr NonConstPointer() { return m_ptr; }
-
-    public INTERNAL_GeometryArray()
-    {
-      m_ptr = UnsafeNativeMethods.ON_GeometryArray_New(0);
-    }
-
-    //public INTERNAL_GeometryArray(GeometryBase[] geom)
-    //{
-    //  int initial_capacity = 0;
-    //  if (geom != null)
-    //    initial_capacity = geom.Length;
-    //  m_ptr = UnsafeNativeMethods.ON_GeometryArray_New(initial_capacity);
-    //  for (int i = 0; i < geom.Length; i++)
-    //  {
-    //    IntPtr geomPtr = geom[i].ConstPointer();
-    //    UnsafeNativeMethods.ON_GeometryArray_Append(m_ptr, geomPtr);
-    //  }
-    //}
-
-    public INTERNAL_GeometryArray(System.Collections.Generic.IEnumerable<GeometryBase> geom)
-    {
-      m_ptr = UnsafeNativeMethods.ON_GeometryArray_New(0);
-
-      foreach (GeometryBase gb in geom)
-      {
-        IntPtr geomPtr = gb.ConstPointer();
-        UnsafeNativeMethods.ON_GeometryArray_Append(m_ptr, geomPtr);
-      }
-    }
-
-    public INTERNAL_GeometryArray(System.Collections.Generic.IEnumerable<Surface> srfs)
-    {
-      m_ptr = UnsafeNativeMethods.ON_GeometryArray_New(0);
-
-      foreach (Surface s in srfs)
-      {
-        IntPtr geomPtr = s.ConstPointer();
-        UnsafeNativeMethods.ON_GeometryArray_Append(m_ptr, geomPtr);
-      }
-    }
-
-    public INTERNAL_GeometryArray(System.Collections.Generic.IEnumerable<TextDot> dots)
-    {
-      m_ptr = UnsafeNativeMethods.ON_GeometryArray_New(0);
-
-      foreach (TextDot td in dots)
-      {
-        IntPtr geomPtr = td.ConstPointer();
-        UnsafeNativeMethods.ON_GeometryArray_Append(m_ptr, geomPtr);
-      }
-    }
-    //public GeometryBase[] ToArray(bool isConst)
-    //{
-    //  int count = UnsafeNativeMethods.ON_GeometryArray_Count(m_ptr);
-    //  GeometryBase[] rc = new GeometryBase[count];
-    //  for (int i = 0; i < count; i++)
-    //  {
-    //    IntPtr geom = UnsafeNativeMethods.ON_GeometryArray_Get(m_ptr, i);
-    //    if (IntPtr.Zero == geom)
-    //      continue;
-    //    rc[i] = GeometryBase.CreateGeometryHelper(geom, isConst, 0);
-    //  }
-    //  return rc;
-    //}
-
-    ~INTERNAL_GeometryArray()
-    {
-      Dispose(false);
-    }
-
-    public void Dispose()
-    {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-      if (IntPtr.Zero != m_ptr)
-      {
-        UnsafeNativeMethods.ON_GeometryArray_Delete(m_ptr);
-        m_ptr = IntPtr.Zero;
-      }
-    }
-  }
-
-  //////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////
   class INTERNAL_ComponentIndexArray : IDisposable
   {
     public IntPtr m_ptr; // ON_SimpleArray<ON_COMPONENT_INDEX>
@@ -182,79 +89,6 @@ namespace Rhino.Runtime
       return rc ?? String.Empty;
     }
   }
-
-  //////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////
-  class INTERNAL_BrepArray : IDisposable
-  {
-    IntPtr m_ptr; // ON_SimpleArray<ON_Brep*>*
-    internal IntPtr ConstPointer() { return m_ptr; }
-    internal IntPtr NonConstPointer() { return m_ptr; }
-
-    public INTERNAL_BrepArray()
-    {
-      m_ptr = UnsafeNativeMethods.ON_BrepArray_New();
-    }
-
-    ~INTERNAL_BrepArray()
-    {
-      Dispose(false);
-    }
-
-    public void Dispose()
-    {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose( bool disposing )
-    {
-      if (IntPtr.Zero != m_ptr)
-      {
-        UnsafeNativeMethods.ON_BrepArray_Delete(m_ptr);
-        m_ptr = IntPtr.Zero;
-      }
-    }
-
-    public int Count
-    {
-      get
-      {
-        IntPtr ptr = ConstPointer();
-        int count = UnsafeNativeMethods.ON_BrepArray_Count(ptr);
-        return count;
-      }
-    }
-
-    public void AddBrep(Geometry.Brep brep, bool asConst)
-    {
-      if (null != brep)
-      {
-        IntPtr pBrep = brep.ConstPointer();
-        if (!asConst)
-          pBrep = brep.NonConstPointer();
-        IntPtr ptr = NonConstPointer();
-        UnsafeNativeMethods.ON_BrepArray_Append(ptr, pBrep);
-      }
-    }
-
-    public Geometry.Brep[] ToNonConstArray()
-    {
-      int count = Count;
-      if (count < 1)
-        return new Geometry.Brep[0]; //MSDN guidelines prefer empty arrays
-      IntPtr ptr = ConstPointer();
-      Brep[] rc = new Brep[count];
-      for (int i = 0; i < count; i++)
-      {
-        IntPtr pBrep = UnsafeNativeMethods.ON_BrepArray_Get(ptr, i);
-        if (IntPtr.Zero != pBrep)
-          rc[i] = new Brep(pBrep, null);
-      }
-      return rc;
-    }
-  }
-
 }
 
 namespace Rhino.Runtime.InteropWrappers
@@ -949,8 +783,8 @@ namespace Rhino.Runtime.InteropWrappers
   }
 
   /// <summary>
-  /// Wrapper for a C++ ON_SimpleArray of ON_Geometry* or const ON_Geometry*.  If you are not
-  /// writing C++ code, then this class is not for you.
+  /// Wrapper for a C++ ON_SimpleArray&lt;ON_Geometry*&gt;* or ON_SimpleArray&lt;const ON_Geometry*&gt;.
+  /// If you are not writing C++ code, then this class is not for you.
   /// </summary>
   public class SimpleArrayGeometryPointer : IDisposable
   {
@@ -974,6 +808,40 @@ namespace Rhino.Runtime.InteropWrappers
     public SimpleArrayGeometryPointer()
     {
       m_ptr = UnsafeNativeMethods.ON_GeometryArray_New(0);
+    }
+
+    /// <summary>
+    /// Create an ON_SimpleArray&lt;ON_Geometry*&gt; filled with items in geometry
+    /// </summary>
+    /// <param name="geometry"></param>
+    public SimpleArrayGeometryPointer(System.Collections.Generic.IEnumerable<GeometryBase> geometry)
+    {
+      m_ptr = UnsafeNativeMethods.ON_GeometryArray_New(0);
+
+      foreach (GeometryBase gb in geometry)
+      {
+        IntPtr geomPtr = gb.ConstPointer();
+        UnsafeNativeMethods.ON_GeometryArray_Append(m_ptr, geomPtr);
+      }
+    }
+
+    /// <summary>
+    /// Expects all of the items in the IEnumerable to be GeometryBase types
+    /// </summary>
+    /// <param name="geometry"></param>
+    public SimpleArrayGeometryPointer(System.Collections.IEnumerable geometry)
+    {
+      m_ptr = UnsafeNativeMethods.ON_GeometryArray_New(0);
+
+      foreach (object o in geometry)
+      {
+        GeometryBase gb = o as GeometryBase;
+        if (gb != null)
+        {
+          IntPtr geomPtr = gb.ConstPointer();
+          UnsafeNativeMethods.ON_GeometryArray_Append(m_ptr, geomPtr);
+        }
+      }
     }
 
     /// <summary>
@@ -1028,7 +896,7 @@ namespace Rhino.Runtime.InteropWrappers
   }
 
   /// <summary>
-  /// Represents a wrapper to an unmanaged "array" (list) of mesh pointers.
+  /// Represents a wrapper to an unmanaged array of mesh pointers.
   /// <para>Wrapper for a C++ ON_SimpleArray of ON_Mesh* or const ON_Mesh*. If you are not
   /// writing C++ code then this class is not for you.</para>
   /// </summary>
@@ -1104,13 +972,9 @@ namespace Rhino.Runtime.InteropWrappers
     }
 
     /// <summary>
-    /// For derived class implementers.
-    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
-    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
-    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
-    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// 
     /// </summary>
-    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+    /// <param name="disposing"></param>
     protected virtual void Dispose(bool disposing)
     {
       if (IntPtr.Zero != m_ptr)
@@ -1136,6 +1000,115 @@ namespace Rhino.Runtime.InteropWrappers
         IntPtr pMesh = UnsafeNativeMethods.ON_MeshArray_Get(ptr, i);
         if (IntPtr.Zero != pMesh)
           rc[i] = new Mesh(pMesh, null);
+      }
+      return rc;
+    }
+  }
+
+  /// <summary>
+  /// Wrapper for a C++ ON_SimpleArray&lt;ON_Brep*&gt; or ON_SimpleArray&lt;const ON_Brep*&gt;
+  /// If you are not writing C++ code then this class is not for you.
+  /// </summary>
+  public class SimpleArrayBrepPointer : IDisposable
+  {
+    IntPtr m_ptr; // ON_SimpleArray<ON_Brep*>*
+
+    /// <summary>
+    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <returns>The const pointer.</returns>
+    public IntPtr ConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Gets the non-const pointer (for modification) of this array.
+    /// </summary>
+    /// <returns>The non-const pointer.</returns>
+    public IntPtr NonConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Initializes a new <see cref="SimpleArrayBrepPointer"/> instance.
+    /// </summary>
+    public SimpleArrayBrepPointer()
+    {
+      m_ptr = UnsafeNativeMethods.ON_BrepArray_New();
+    }
+
+    /// <summary>
+    /// Gets the amount of breps in this array.
+    /// </summary>
+    public int Count
+    {
+      get
+      {
+        IntPtr ptr = ConstPointer();
+        int count = UnsafeNativeMethods.ON_BrepArray_Count(ptr);
+        return count;
+      }
+    }
+
+    /// <summary>
+    /// Adds a brep to the list.
+    /// </summary>
+    /// <param name="brep">A brep to add.</param>
+    /// <param name="asConst">Whether this brep should be treated as non-modifiable.</param>
+    public void Add(Geometry.Brep brep, bool asConst)
+    {
+      if (null != brep)
+      {
+        IntPtr pBrep = brep.ConstPointer();
+        if (!asConst)
+          pBrep = brep.NonConstPointer();
+        IntPtr ptr = NonConstPointer();
+        UnsafeNativeMethods.ON_BrepArray_Append(ptr, pBrep);
+      }
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~SimpleArrayBrepPointer()
+    {
+      Dispose(false);
+    }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="disposing"></param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_ptr)
+      {
+        UnsafeNativeMethods.ON_BrepArray_Delete(m_ptr);
+        m_ptr = IntPtr.Zero;
+      }
+    }
+
+    /// <summary>
+    /// Copies the unmanaged array to a managed counterpart.
+    /// </summary>
+    /// <returns>The managed array.</returns>
+    public Geometry.Brep[] ToNonConstArray()
+    {
+      int count = Count;
+      if (count < 1)
+        return new Geometry.Brep[0]; //MSDN guidelines prefer empty arrays
+      IntPtr ptr = ConstPointer();
+      Brep[] rc = new Brep[count];
+      for (int i = 0; i < count; i++)
+      {
+        IntPtr pBrep = UnsafeNativeMethods.ON_BrepArray_Get(ptr, i);
+        if (IntPtr.Zero != pBrep)
+          rc[i] = new Brep(pBrep, null);
       }
       return rc;
     }

@@ -212,9 +212,11 @@ namespace Rhino.Geometry
         }
         if (m_dots.Count > 0)
         {
-          Runtime.INTERNAL_GeometryArray dots = new Rhino.Runtime.INTERNAL_GeometryArray(m_dots);
-          IntPtr pDots = dots.ConstPointer();
-          UnsafeNativeMethods.CRhinoUnroll_PrepareDots(pUnroller, pDots);
+          using (Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer dots = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(m_dots))
+          {
+            IntPtr pDots = dots.ConstPointer();
+            UnsafeNativeMethods.CRhinoUnroll_PrepareDots(pUnroller, pDots);
+          }
         }
 
         int brepCount = 0;

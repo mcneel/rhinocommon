@@ -353,7 +353,7 @@ namespace Rhino.Geometry
       if (null == inputLoops)
         return null;
       Runtime.InteropWrappers.SimpleArrayCurvePointer crvs = new Runtime.InteropWrappers.SimpleArrayCurvePointer(inputLoops.m_items);
-      Runtime.INTERNAL_BrepArray breps = new Runtime.INTERNAL_BrepArray();
+      Runtime.InteropWrappers.SimpleArrayBrepPointer breps = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
       IntPtr pInputLoops = crvs.ConstPointer();
       IntPtr pBreps = breps.NonConstPointer();
       int brepCount = UnsafeNativeMethods.RHC_RhinoMakePlanarBreps(pInputLoops, pBreps);
@@ -405,10 +405,10 @@ namespace Rhino.Geometry
     /// <returns>The resulting polysurfaces on success or null on failure.</returns>
     public static Brep[] CreateSolid(IEnumerable<Brep> breps, double tolerance)
     {
-      Rhino.Runtime.INTERNAL_BrepArray inbreps = new Rhino.Runtime.INTERNAL_BrepArray();
+      Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer inbreps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer();
       foreach (Brep b in breps)
-        inbreps.AddBrep(b, true);
-      Rhino.Runtime.INTERNAL_BrepArray outbreps = new Rhino.Runtime.INTERNAL_BrepArray();
+        inbreps.Add(b, true);
+      Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer outbreps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer();
       IntPtr pInBreps = inbreps.ConstPointer();
       IntPtr pOutBreps = outbreps.NonConstPointer();
       UnsafeNativeMethods.RHC_RhinoCreateSolid(pInBreps, pOutBreps, tolerance);
@@ -436,7 +436,7 @@ namespace Rhino.Geometry
     /// </returns>
     public static Brep CreatePatch(IEnumerable<GeometryBase> geometry, Surface startingSurface, double tolerance)
     {
-      using (Rhino.Runtime.INTERNAL_GeometryArray _g = new Runtime.INTERNAL_GeometryArray(geometry))
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer _g = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
       {
         IntPtr pGeometry = _g.NonConstPointer();
         IntPtr pSurface = startingSurface.ConstPointer();
@@ -469,7 +469,7 @@ namespace Rhino.Geometry
     /// </returns>
     public static Brep CreatePatch(IEnumerable<GeometryBase> geometry, int uSpans, int vSpans, double tolerance)
     {
-      using (Rhino.Runtime.INTERNAL_GeometryArray _g = new Runtime.INTERNAL_GeometryArray(geometry))
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer _g = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
       {
         IntPtr pGeometry = _g.NonConstPointer();
         IntPtr pBrep = UnsafeNativeMethods.CRhinoFitPatch_Fit2(pGeometry, uSpans, vSpans, tolerance);
@@ -543,7 +543,7 @@ namespace Rhino.Geometry
       IntPtr pConstRail = rail.ConstPointer();
       double[] __radii_params = _radii_params.ToArray();
       double[] __radii = _radii.ToArray();
-      using (Rhino.Runtime.INTERNAL_BrepArray breps = new Runtime.INTERNAL_BrepArray())
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer breps = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
       {
         IntPtr pBreps = breps.NonConstPointer();
         UnsafeNativeMethods.RHC_RhinoPipeBreps(pConstRail, __radii_params.Length, __radii_params, __radii, localBlending, (int)cap, fitRail, absoluteTolerance, angleToleranceRadians, pBreps);
@@ -641,7 +641,7 @@ namespace Rhino.Geometry
     {
       Runtime.InteropWrappers.SimpleArrayCurvePointer _curves = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer(curves);
       IntPtr pCurves = _curves.ConstPointer();
-      Runtime.INTERNAL_BrepArray _breps = new Rhino.Runtime.INTERNAL_BrepArray();
+      Runtime.InteropWrappers.SimpleArrayBrepPointer _breps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer();
       IntPtr pBreps = _breps.NonConstPointer();
       int count = UnsafeNativeMethods.RHC_RhinoSdkLoft(pCurves, start, end, (int)loftType, simplifyMethod, rebuildCount, refitTol, closed, pBreps);
       _curves.Dispose();
@@ -663,14 +663,14 @@ namespace Rhino.Geometry
       if (null == breps)
         return null;
 
-      Runtime.INTERNAL_BrepArray input = new Runtime.INTERNAL_BrepArray();
+      Runtime.InteropWrappers.SimpleArrayBrepPointer input = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
       foreach (Brep brep in breps)
       {
         if (null == brep)
           continue;
-        input.AddBrep(brep, true);
+        input.Add(brep, true);
       }
-      Runtime.INTERNAL_BrepArray output = new Runtime.INTERNAL_BrepArray();
+      Runtime.InteropWrappers.SimpleArrayBrepPointer output = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
 
       IntPtr pInput = input.ConstPointer();
       IntPtr pOutput = output.NonConstPointer();
@@ -695,23 +695,23 @@ namespace Rhino.Geometry
       if (null == firstSet || null == secondSet)
         return new Brep[0];
 
-      Runtime.INTERNAL_BrepArray inputSet1 = new Runtime.INTERNAL_BrepArray();
+      Runtime.InteropWrappers.SimpleArrayBrepPointer inputSet1 = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
       foreach (Brep brep in firstSet)
       {
         if (null == brep)
           continue;
-        inputSet1.AddBrep(brep, true);
+        inputSet1.Add(brep, true);
       }
 
-      Runtime.INTERNAL_BrepArray inputSet2 = new Runtime.INTERNAL_BrepArray();
+      Runtime.InteropWrappers.SimpleArrayBrepPointer inputSet2 = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
       foreach (Brep brep in secondSet)
       {
         if (null == brep)
           continue;
-        inputSet2.AddBrep(brep, true);
+        inputSet2.Add(brep, true);
       }
 
-      Runtime.INTERNAL_BrepArray output = new Runtime.INTERNAL_BrepArray();
+      Runtime.InteropWrappers.SimpleArrayBrepPointer output = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
 
       IntPtr pInputSet1 = inputSet1.ConstPointer();
       IntPtr pInputSet2 = inputSet2.ConstPointer();
@@ -813,14 +813,14 @@ namespace Rhino.Geometry
       if (null == brepsToJoin)
         return null;
 
-      Runtime.INTERNAL_BrepArray input = new Runtime.INTERNAL_BrepArray();
+      Runtime.InteropWrappers.SimpleArrayBrepPointer input = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
       foreach (Brep brep in brepsToJoin)
       {
         if (null == brep)
           continue;
-        input.AddBrep(brep, true);
+        input.Add(brep, true);
       }
-      Runtime.INTERNAL_BrepArray output = new Runtime.INTERNAL_BrepArray();
+      Runtime.InteropWrappers.SimpleArrayBrepPointer output = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
 
       IntPtr pInput = input.NonConstPointer();
       IntPtr pOutput = output.NonConstPointer();
@@ -859,12 +859,12 @@ namespace Rhino.Geometry
       if (null == brepsToMerge)
         return null;
 
-      Runtime.INTERNAL_BrepArray input = new Runtime.INTERNAL_BrepArray();
+      Runtime.InteropWrappers.SimpleArrayBrepPointer input = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
       foreach (Brep brep in brepsToMerge)
       {
         if (null == brep)
           continue;
-        input.AddBrep(brep, true);
+        input.Add(brep, true);
       }
 
       IntPtr pInput = input.NonConstPointer();
@@ -1415,7 +1415,7 @@ namespace Rhino.Geometry
       toleranceWasRaised = false;
       IntPtr pConstThis = ConstPointer();
       IntPtr pConstSplitter = splitter.ConstPointer();
-      using (Rhino.Runtime.INTERNAL_BrepArray breps = new Rhino.Runtime.INTERNAL_BrepArray())
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer breps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer())
       {
         IntPtr pBrepArray = breps.NonConstPointer();
         int count = UnsafeNativeMethods.RHC_RhinoBrepSplit(pConstThis, pConstSplitter, pBrepArray, intersectionTolerance, ref toleranceWasRaised);
@@ -1441,7 +1441,7 @@ namespace Rhino.Geometry
     {
       IntPtr pConstThis = ConstPointer();
       IntPtr pConstCutter = cutter.ConstPointer();
-      using (Rhino.Runtime.INTERNAL_BrepArray rc = new Runtime.INTERNAL_BrepArray())
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer rc = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
       {
         IntPtr pBreps = rc.NonConstPointer();
         if (UnsafeNativeMethods.RHC_RhinoBrepTrim1(pConstThis, pConstCutter, intersectionTolerance, pBreps) > 0)
@@ -1465,7 +1465,7 @@ namespace Rhino.Geometry
     public Brep[] Trim(Plane cutter, double intersectionTolerance)
     {
       IntPtr pConstThis = ConstPointer();
-      using (Rhino.Runtime.INTERNAL_BrepArray rc = new Runtime.INTERNAL_BrepArray())
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer rc = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
       {
         IntPtr pBreps = rc.NonConstPointer();
         if (UnsafeNativeMethods.RHC_RhinoBrepTrim2(pConstThis, ref cutter, intersectionTolerance, pBreps) > 0)

@@ -222,7 +222,7 @@ namespace Rhino.Geometry
       }
 
       ArgsSweep1 sweep = ArgsSweep1.Construct(rail, crossSections, crossSectionParameters, m_roadlike_up, m_bClosed, m_sweep_tol, m_angle_tol, m_miter_type);
-      Runtime.INTERNAL_BrepArray breps = new Rhino.Runtime.INTERNAL_BrepArray();
+      Runtime.InteropWrappers.SimpleArrayBrepPointer breps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer();
       IntPtr pArgsSweep1 = sweep.NonConstPointer();
       IntPtr pBreps = breps.NonConstPointer();
       UnsafeNativeMethods.RHC_Sweep1(pArgsSweep1, pBreps);
@@ -260,7 +260,7 @@ namespace Rhino.Geometry
     public Brep[] PerformSweepRefit(Curve rail, IEnumerable<Curve> crossSections, IEnumerable<double> crossSectionParameters, double refitTolerance)
     {
       ArgsSweep1 sweep = ArgsSweep1.Construct(rail, crossSections, crossSectionParameters, m_roadlike_up, m_bClosed, m_sweep_tol, m_angle_tol, m_miter_type);
-      Runtime.INTERNAL_BrepArray breps = new Rhino.Runtime.INTERNAL_BrepArray();
+      Runtime.InteropWrappers.SimpleArrayBrepPointer breps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer();
       IntPtr pArgsSweep1 = sweep.NonConstPointer();
       IntPtr pBreps = breps.NonConstPointer();
       UnsafeNativeMethods.RHC_Sweep1Refit(pArgsSweep1, pBreps, refitTolerance);
@@ -298,7 +298,7 @@ namespace Rhino.Geometry
     public Brep[] PerformSweepRebuild(Curve rail, IEnumerable<Curve> crossSections, IEnumerable<double> crossSectionParameters, int rebuildCount)
     {
       ArgsSweep1 sweep = ArgsSweep1.Construct(rail, crossSections, crossSectionParameters, m_roadlike_up, m_bClosed, m_sweep_tol, m_angle_tol, m_miter_type);
-      Runtime.INTERNAL_BrepArray breps = new Rhino.Runtime.INTERNAL_BrepArray();
+      Runtime.InteropWrappers.SimpleArrayBrepPointer breps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer();
       IntPtr pArgsSweep1 = sweep.NonConstPointer();
       IntPtr pBreps = breps.NonConstPointer();
       UnsafeNativeMethods.RHC_Sweep1Rebuild(pArgsSweep1, pBreps, rebuildCount);

@@ -1959,6 +1959,24 @@ namespace Rhino.PlugIns
       return invoke_rc;
     }
 
+    public static bool ShowLicenseValidationUi(string cdkey)
+    {
+      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+      if (null == zooAss)
+        return false;
+
+      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+      if (t == null)
+        return false;
+
+      System.Reflection.MethodInfo mi = t.GetMethod("ShowLicenseValidationUi");
+      if (mi == null)
+        return false;
+
+      object invoke_rc = mi.Invoke(null, new object[] { cdkey });
+      return (bool)invoke_rc;
+    }
+
     /// <summary>
     /// This (internal) version of Rhino.PlugIns.LicenseUtils.GetLicense
     /// is used by Rhino.PlugIns.PlugIn objects.

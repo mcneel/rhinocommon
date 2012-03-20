@@ -10,7 +10,7 @@ namespace Rhino.Runtime.InteropWrappers
   /// </summary>
   public class StringWrapper : IDisposable
   {
-    IntPtr m_ptr;
+    IntPtr m_ptr; //ON_wString*
 
     /// <summary>
     /// Initializes a new empty unmanaged string.
@@ -85,6 +85,27 @@ namespace Rhino.Runtime.InteropWrappers
     public void SetString(string s)
     {
       UnsafeNativeMethods.ON_wString_Set(m_ptr, s);
+    }
+
+    /// <summary>
+    /// Set contents of an ON_wString*
+    /// </summary>
+    /// <param name="pON_wString"></param>
+    /// <param name="s"></param>
+    public static void SetStringOnPointer(IntPtr pON_wString, string s)
+    {
+      UnsafeNativeMethods.ON_wString_Set(pON_wString, s);
+    }
+
+    /// <summary>
+    /// Get string from an ON_wString*
+    /// </summary>
+    /// <param name="pConstON_wString"></param>
+    /// <returns></returns>
+    public static string GetStringFromPointer(IntPtr pConstON_wString)
+    {
+      string rc = System.Runtime.InteropServices.Marshal.PtrToStringUni(pConstON_wString);
+      return rc ?? String.Empty;
     }
   }
 }

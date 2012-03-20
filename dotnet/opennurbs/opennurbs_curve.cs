@@ -439,7 +439,6 @@ namespace Rhino.Geometry
       IntPtr pNewCurve = UnsafeNativeMethods.RHC_RhinoMeanCurve(pCurveA, pCurveB, angleToleranceRadians);
       return GeometryBase.CreateGeometryHelper(pNewCurve, null) as Curve;
     }
-
     /// <summary>
     /// Constructs a mean, or average, curve from two curves.
     /// </summary>
@@ -450,6 +449,51 @@ namespace Rhino.Geometry
     public static Curve CreateMeanCurve(Curve curveA, Curve curveB)
     {
       return CreateMeanCurve(curveA, curveB, RhinoMath.UnsetValue);
+    }
+
+    /// <summary>
+    /// Create a Blend curve between two existing curves.
+    /// </summary>
+    /// <param name="curveA">Curve to blend from (blending will occur at curve end point).</param>
+    /// <param name="curveB">Curve to blend to (blending will occur at curve start point).</param>
+    /// <param name="continuity">Continuity of blend.</param>
+    /// <returns>A curve representing the blend between A and B or null on failure.</returns>
+    public static Curve CreateBlendCurve(Curve curveA, Curve curveB, BlendContinuity continuity)
+    {
+      return CreateBlendCurve(curveA, curveB, continuity);
+    }
+    /// <summary>
+    /// Create a Blend curve between two existing curves.
+    /// </summary>
+    /// <param name="curveA">Curve to blend from (blending will occur at curve end point).</param>
+    /// <param name="curveB">Curve to blend to (blending will occur at curve start point).</param>
+    /// <param name="continuity">Continuity of blend.</param>
+    /// <param name="bulgeA">Bulge factor at curveA end of blend. Values near 1.0 work best.</param>
+    /// <param name="bulgeB">Bulge factor at curveB end of blend. Values near 1.0 work best.</param>
+    /// <returns>A curve representing the blend between A and B or null on failure.</returns>
+    public static Curve CreateBlendCurve(Curve curveA, Curve curveB, BlendContinuity continuity, double bulgeA, double bulgeB)
+    {
+      if (curveA == null) throw new ArgumentNullException("curveA");
+      if (curveB == null) throw new ArgumentNullException("curveB");
+
+      IntPtr pCurveA = curveA.ConstPointer();
+      IntPtr pCurveB = curveB.ConstPointer();
+
+      switch (continuity)
+      {
+        case BlendContinuity.Position:
+          return new LineCurve(curveA.PointAtEnd, curveB.PointAtStart);
+          
+        case BlendContinuity.Tangency:
+          IntPtr pG1Curve = UnsafeNativeMethods.RHC_RhinoBlendG1Curve(pCurveA, pCurveB, bulgeA, bulgeB);
+          return GeometryBase.CreateGeometryHelper(pG1Curve, null) as Curve;
+
+        case BlendContinuity.Curvature:
+          IntPtr pG2Curve = UnsafeNativeMethods.RHC_RhinoBlendG2Curve(pCurveA, pCurveB, bulgeA, bulgeB);
+          return GeometryBase.CreateGeometryHelper(pG2Curve, null) as Curve;
+      }
+
+      return null;
     }
 
 #if USING_V5_SDK
@@ -690,7 +734,7 @@ namespace Rhino.Geometry
       if (null == curveA || null == subtractors)
         throw new ArgumentNullException(null == curveA ? "curveA" : "subtractors");
 
-      List<Curve> curves = new List<Curve> {curveA};
+      List<Curve> curves = new List<Curve> { curveA };
       curves.AddRange(subtractors);
       SimpleArrayCurvePointer input = new SimpleArrayCurvePointer(curves);
       IntPtr inputPtr = input.ConstPointer();
@@ -766,23 +810,19 @@ namespace Rhino.Geometry
         g.Add(msh);
       }
 
-      SimpleArrayCurvePointer crv_array = new SimpleArrayCurvePointer(curves);
-      Runtime.INTERNAL_GeometryArray mesh_array = new Runtime.INTERNAL_GeometryArray(g);
+      using(SimpleArrayCurvePointer crv_array = new SimpleArrayCurvePointer(curves))
+      using(Runtime.InteropWrappers.SimpleArrayGeometryPointer mesh_array = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(g))
+      using (SimpleArrayCurvePointer curves_out = new SimpleArrayCurvePointer())
+      {
+        IntPtr pCurvesIn = crv_array.ConstPointer();
+        IntPtr pMeshes = mesh_array.ConstPointer();
+        IntPtr pCurvesOut = curves_out.NonConstPointer();
 
-      IntPtr pCurvesIn = crv_array.ConstPointer();
-      IntPtr pMeshes = mesh_array.ConstPointer();
-
-      SimpleArrayCurvePointer curves_out = new SimpleArrayCurvePointer();
-      IntPtr pCurvesOut = curves_out.NonConstPointer();
-
-      Curve[] rc = new Curve[0];
-      if (UnsafeNativeMethods.RHC_RhinoProjectCurveToMesh(pMeshes, pCurvesIn, direction, tolerance, pCurvesOut))
-        rc = curves_out.ToNonConstArray();
-
-      crv_array.Dispose();
-      mesh_array.Dispose();
-      curves_out.Dispose();
-      return rc;
+        Curve[] rc = new Curve[0];
+        if (UnsafeNativeMethods.RHC_RhinoProjectCurveToMesh(pMeshes, pCurvesIn, direction, tolerance, pCurvesOut))
+          rc = curves_out.ToNonConstArray();
+        return rc;
+      }
     }
 
     /// <summary>
@@ -867,8 +907,8 @@ namespace Rhino.Geometry
       foreach (Brep brp in breps) { if (brp == null) { throw new ArgumentNullException("breps"); } }
 
       SimpleArrayCurvePointer crv_array = new SimpleArrayCurvePointer(curves);
-      Runtime.INTERNAL_BrepArray brp_array = new Runtime.INTERNAL_BrepArray();
-      foreach (Brep brp in breps) { brp_array.AddBrep(brp, true); }
+      Runtime.InteropWrappers.SimpleArrayBrepPointer brp_array = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
+      foreach (Brep brp in breps) { brp_array.Add(brp, true); }
 
       IntPtr ptr_crv_array = crv_array.ConstPointer();
       IntPtr ptr_brp_array = brp_array.ConstPointer();
@@ -1114,7 +1154,7 @@ namespace Rhino.Geometry
     /// <param name="info">Serialization data.</param>
     /// <param name="context">Serialization stream.</param>
     protected Curve(SerializationInfo info, StreamingContext context)
-      :base(info, context)
+      : base(info, context)
     {
     }
 
@@ -1813,15 +1853,16 @@ namespace Rhino.Geometry
     {
       if (geometry == null) throw new ArgumentNullException("geometry");
 
-      Runtime.INTERNAL_GeometryArray geom = new Runtime.INTERNAL_GeometryArray(geometry);
-      pointOnCurve = Point3d.Unset;
-      pointOnObject = Point3d.Unset;
-      IntPtr pConstThis = ConstPointer();
-      IntPtr pGeometryArray = geom.ConstPointer();
-      whichGeometry = 0;
-      bool rc = UnsafeNativeMethods.RHC_RhinoGetClosestPoint(pConstThis, pGeometryArray, maximumDistance, ref pointOnCurve, ref pointOnObject, ref whichGeometry);
-      geom.Dispose();
-      return rc;
+      using (SimpleArrayGeometryPointer geom = new SimpleArrayGeometryPointer(geometry))
+      {
+        pointOnCurve = Point3d.Unset;
+        pointOnObject = Point3d.Unset;
+        IntPtr pConstThis = ConstPointer();
+        IntPtr pGeometryArray = geom.ConstPointer();
+        whichGeometry = 0;
+        bool rc = UnsafeNativeMethods.RHC_RhinoGetClosestPoint(pConstThis, pGeometryArray, maximumDistance, ref pointOnCurve, ref pointOnObject, ref whichGeometry);
+        return rc;
+      }
     }
 
     /// <summary>
@@ -2976,18 +3017,20 @@ namespace Rhino.Geometry
         _side = 2;
 
       IntPtr pConstPtr = ConstPointer();
-      Runtime.INTERNAL_GeometryArray geometryArray = new Runtime.INTERNAL_GeometryArray(geometry);
 
-      IntPtr geometryArrayPtr = geometryArray.ConstPointer();
+      using (SimpleArrayGeometryPointer geometryArray = new SimpleArrayGeometryPointer(geometry))
+      {
+        IntPtr geometryArrayPtr = geometryArray.ConstPointer();
 
-      int extendStyle = idxExtendTypeLine;
-      if (style == CurveExtensionStyle.Arc)
-        extendStyle = idxExtendTypeArc;
-      else if (style == CurveExtensionStyle.Smooth)
-        extendStyle = idxExtendTypeSmooth;
+        int extendStyle = idxExtendTypeLine;
+        if (style == CurveExtensionStyle.Arc)
+          extendStyle = idxExtendTypeArc;
+        else if (style == CurveExtensionStyle.Smooth)
+          extendStyle = idxExtendTypeSmooth;
 
-      IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve1(pConstPtr, extendStyle, _side, geometryArrayPtr);
-      return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
+        IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve1(pConstPtr, extendStyle, _side, geometryArrayPtr);
+        return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
+      }
     }
 
     /// <summary>

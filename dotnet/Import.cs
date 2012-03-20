@@ -201,6 +201,9 @@ internal partial class UnsafeNativeMethods
   internal static extern void CRhinoEventWatcher_SetRenameViewCallback(Rhino.Display.RhinoView.ViewCallback cb, Rhino.Runtime.HostUtils.ReportCallback report_cb);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoEventWatcher_SetDetailEventCallback(Rhino.Display.RhinoPageView.PageViewCallback cb);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern uint CRhinoGetObject_GetObjects(IntPtr ptr, int min, int max, Rhino.Input.Custom.GetObject.GeometryFilterCallback cb);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]

@@ -707,6 +707,45 @@ namespace Rhino.Display
       }
     }
   }
+
+  public class PageViewSpaceChangeEventArgs : EventArgs
+  {
+    readonly IntPtr m_pPageView;
+    internal PageViewSpaceChangeEventArgs(IntPtr pPageView, Guid newActiveId, Guid oldActiveId)
+    {
+      m_pPageView = pPageView;
+      NewActiveDetailId = newActiveId;
+      OldActiveDetailId = oldActiveId;
+    }
+
+    RhinoPageView m_pageview;
+    /// <summary>
+    /// The page view on which a different detail object was set active.
+    /// </summary>
+    public RhinoPageView PageView
+    {
+      get
+      {
+        if (m_pageview == null && m_pPageView != IntPtr.Zero)
+          m_pageview = RhinoView.FromIntPtr(m_pPageView) as RhinoPageView;
+        return m_pageview;
+      }
+    }
+
+    /// <summary>
+    /// The id of the detail object was set active.  Note, if this id is
+    /// equal to Guid.Empty, then the active detail object is the page
+    /// view itself.
+    /// </summary>
+    public Guid NewActiveDetailId { get; private set; }
+
+    /// <summary>
+    /// The id of the previously active detail object. Note, if this id
+    /// is equal to Guid.Empty, then the active detail object was the
+    /// page view itself.
+    /// </summary>
+    public Guid OldActiveDetailId { get; private set; }
+  }
 }
 
 #endif

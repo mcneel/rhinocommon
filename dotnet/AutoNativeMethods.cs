@@ -6574,6 +6574,9 @@ internal partial class UnsafeNativeMethods
   //void CRhinoEventWatcher_LogState( const RHMONO_STRING* _str )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoEventWatcher_LogState([MarshalAs(UnmanagedType.LPWStr)]string _str);
+
+  //void CRhinoEventWatcher_SetDetailEventCallback(DETAILEVENTPROC cb)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
   #endregion
 
 
@@ -9567,6 +9570,14 @@ internal partial class UnsafeNativeMethods
   //ON_Curve* RHC_RhinoMeanCurve( const ON_Curve* pConstCurveA, const ON_Curve* pConstCurveB, double angle_tolerance )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoMeanCurve(IntPtr pConstCurveA, IntPtr pConstCurveB, double angle_tolerance);
+
+  //ON_Curve* RHC_RhinoBlendG1Curve( const ON_Curve* pConstCurveA, const ON_Curve* pConstCurveB, double bulgeA, double bulgeB )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoBlendG1Curve(IntPtr pConstCurveA, IntPtr pConstCurveB, double bulgeA, double bulgeB);
+
+  //ON_Curve* RHC_RhinoBlendG2Curve( const ON_Curve* pConstCurveA, const ON_Curve* pConstCurveB, double bulgeA, double bulgeB )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoBlendG2Curve(IntPtr pConstCurveA, IntPtr pConstCurveB, double bulgeA, double bulgeB);
 
   //ON_Curve* RHC_RhinoOffsetCurveNormal( const ON_Curve* pConstCurve, const ON_Surface* pConstSurface, double height )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

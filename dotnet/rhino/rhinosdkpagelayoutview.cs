@@ -213,6 +213,38 @@ namespace Rhino.Display
       }
     }
 
+    internal delegate void PageViewCallback(IntPtr pView, Guid newDetailId, Guid oldDetailId);
+    private static PageViewCallback m_OnPageSpaceChanged;
+    private static EventHandler<PageViewSpaceChangeEventArgs> m_detail_space_change;
+    private static void OnActiveDetailChange(IntPtr pPageView, Guid newDetailId, Guid oldDetailId)
+    {
+      if (m_detail_space_change != null)
+        m_detail_space_change(null, new PageViewSpaceChangeEventArgs(pPageView, newDetailId, oldDetailId));
+    }
+    public static event EventHandler<PageViewSpaceChangeEventArgs> PageViewSpaceChange
+    {
+      add
+      {
+        if( Rhino.Runtime.HostUtils.ContainsDelegate(m_detail_space_change, value) )
+          return;
+        if (m_detail_space_change == null)
+        {
+          m_OnPageSpaceChanged = OnActiveDetailChange;
+          UnsafeNativeMethods.CRhinoEventWatcher_SetDetailEventCallback(m_OnPageSpaceChanged);
+        }
+        m_detail_space_change += value;
+      }
+      remove
+      {
+        m_detail_space_change -= value;
+        if (m_detail_space_change == null)
+        {
+          UnsafeNativeMethods.CRhinoEventWatcher_SetDetailEventCallback(null);
+          m_OnPageSpaceChanged = null;
+        }
+      }
+    }
+
   }
 }
 #endif

@@ -750,63 +750,67 @@ namespace Rhino.Input
     ///<summary>User pressed enter - typically used to accept defaults.</summary>
     Nothing = 2,
     ///<summary>User specified an option - call Option() to get option index.</summary>
-    Option,
+    Option = 3,
     ///<summary>User entered a real number - call Number() to get value.</summary>
-    Number,
+    Number = 4,
     ///<summary>User entered a color - call Color() to get value.</summary>
-    Color,
+    Color = 5,
     ///<summary>User pressed undo.</summary>
-    Undo,
+    Undo = 6,
     ///<summary>User clicked and missed.</summary>
-    Miss,
+    Miss = 7,
     ///<summary>User picked 3d point - call Point() to get 3d point.</summary>
-    Point,
+    Point = 8,
     ///<summary>
     ///User picked 2d window point in CRhinoGetPoint::Get2dPoint()
     ///call ON_2dPoint() to get the point and View() to get the view.
     ///</summary>
-    Point2d,
+    Point2d = 9,
     ///<summary>
     ///User picked a 2d line in CRhinoGetPoint::Get2dLine() call Line2d()
     ///to get the line and View() to get the view.
     ///</summary>
-    Line2d,
+    Line2d = 10,
     ///<summary>
     ///User picked a 2d rectangle in CRhinoGetPoint::Get2dRectangle() call
     ///Rectangle2d() to get the rectangle and View() to get the view.
     ///</summary>
-    Rectangle2d,
+    Rectangle2d = 11,
     ///<summary>User selected an object - call Object() to get object.</summary>
-    Object,
+    Object = 12,
     ///<summary>User typed a string - call String() to get the string.</summary>
-    String,
+    String = 13,
     ///<summary>
     ///Windows posted a message id that was in the list passed to
     ///RhinoGet::AcceptWindowsMessage(). Call CRhinoGet::WndMsg() to get the message.
     ///</summary>
-    WindowsMessage,
+    [Obsolete("Use CustomMessage instead. Will be removed in a future beta")]
+    WindowsMessage = 14,
+    ///<summary>
+    ///A custom message was posted to the RhinoGet
+    ///</summary>
+    CustomMessage = 14,
     ///<summary>
     ///The getter waited for the amount of time specifed in RhinoGet::SetWaitDuration()
     ///and then gave up.
     ///</summary>
-    Timeout,
-
+    Timeout = 15,
     ///<summary>call CRhinoGetCircle::GetCircle() to get the circle.</summary>
-    Circle,
+    Circle = 16,
     ///<summary>call CRhinoGetPlane::GetPlane() to get the plane.</summary>
-    Plane,
+    Plane = 17,
     ///<summary>call CRhinoGetCylinder::GetCylinder() to get the cylinder.</summary>
-    Cylinder,
+    Cylinder = 18,
     ///<summary>call CRhinoGetSphere::GetSphere() to get the sphere.</summary>
-    Sphere,
+    Sphere = 19,
     ///<summary>call CRhinoGetAngle::Angle() to get the angle in radians (CRhinoGetAngle() returns this for typed number, too).</summary>
-    Angle,
+    Angle = 20,
     ///<summary>call CRhinoGetDistance::Distance() to get the distance value.</summary>
-    Distance,
+    Distance = 21,
     ///<summary>call CRhinoGetDirection::Direction() to get the direction vector.</summary>
-    Direction,
+    Direction = 22,
     ///<summary>call CRhinoGetFrame::Frame() to get the frame that was picked.</summary>
-    Frame,
+    Frame = 23,
 
     User1 = 0xFFFFFFFF,
     User2 = 0xFFFFFFFE,
@@ -1601,10 +1605,35 @@ namespace Rhino.Input.Custom
       SetBool(idxAcceptString, enable);
     }
 
-    //[skipping]
-    //bool AcceptCustomWindowsMessage(UINT winmsg_id);
-    //static void PostCustomWindowsMessage( 
-    //void SetWaitDuration( double seconds );
+    const uint custom_message_id = 0xC001;
+    public void AcceptCustomMessage(bool enable)
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.CRhinoGet_AcceptCustomMessage(pThis, custom_message_id, enable);
+    }
+
+    public static void PostCustomMessage( object messageData )
+    {
+      m_message_data = messageData;
+      UnsafeNativeMethods.CRhinoGet_PostCustomMessage(custom_message_id);
+    }
+    static object m_message_data;
+    object m_local_message_data;
+
+    public object CustomMessage()
+    {
+      IntPtr pConstThis = ConstPointer();
+      uint id = UnsafeNativeMethods.CRhinoGet_WindowsMessage(pConstThis);
+      if( id!=custom_message_id )
+        return null;
+
+      if( m_message_data!=null )
+      {
+        m_local_message_data = m_message_data;
+        m_message_data = null;
+      }
+      return m_local_message_data;
+    }
 
     /// <summary>Returns result of the Get*() call.</summary>
     /// <returns>The result of the last Get*() call.</returns>

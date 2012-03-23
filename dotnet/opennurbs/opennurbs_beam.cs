@@ -146,7 +146,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets or sets the normal of the miter plane at start.
+    /// Gets or sets the normal of the miter plane at the start in profile coordinates.
+    /// In profile coordinates, 0,0,1 always maps to the extrusion axis
     /// </summary>
     public Vector3d MiterPlaneNormalAtStart
     {
@@ -165,7 +166,8 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets or sets the normal of the miter plane at the end.
+    /// Gets or sets the normal of the miter plane at the end in profile coordinates.
+    /// In profile coordinates, 0,0,1 always maps to the extrusion axis
     /// </summary>
     public Vector3d MiterPlaneNormalAtEnd
     {

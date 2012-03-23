@@ -4720,6 +4720,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoApp_GetMainFrameHWND();
 
+  //bool CRhinoApp_IsAutomated()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoApp_IsAutomated();
+
   //int CRhinoApp_GetInt(int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoApp_GetInt(int which);
@@ -5809,6 +5814,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawShadedMesh(IntPtr pPipeline, IntPtr pMesh, IntPtr pMaterial);
 
+  //void CRhinoDisplayPipeline_DrawShadedMesh2(CRhinoDisplayPipeline* pPipeline, const ON_Mesh* pMesh, const CDisplayPipelineMaterial* pMaterial, int count, /*ARRAY*/int* face_indices)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_DrawShadedMesh2(IntPtr pPipeline, IntPtr pMesh, IntPtr pMaterial, int count, [In,Out] int[] face_indices);
+
   //void CRhinoDisplayPipeline_DrawMeshFalseColors(CRhinoDisplayPipeline* pPipeline, const ON_Mesh* pMesh, bool useLights)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_DrawMeshFalseColors(IntPtr pPipeline, IntPtr pMesh, [MarshalAs(UnmanagedType.U1)]bool useLights);
@@ -6873,6 +6882,18 @@ internal partial class UnsafeNativeMethods
   //void CRhinoGetFileDialog_Get2(int mode, const RHMONO_STRING* default_name, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoGetFileDialog_Get2(int mode, [MarshalAs(UnmanagedType.LPWStr)]string default_name, IntPtr pStringHolder);
+
+  //void CRhinoGet_AcceptCustomMessage(CRhinoGet* pRhinoGet, unsigned int message_id, bool enable)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoGet_AcceptCustomMessage(IntPtr pRhinoGet, uint message_id, [MarshalAs(UnmanagedType.U1)]bool enable);
+
+  //void CRhinoGet_PostCustomMessage(unsigned int message_id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoGet_PostCustomMessage(uint message_id);
+
+  //unsigned int CRhinoGet_WindowsMessage(const CRhinoGet* pConstRhinoGet)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern uint CRhinoGet_WindowsMessage(IntPtr pConstRhinoGet);
   #endregion
 
 

@@ -22,40 +22,31 @@ namespace Rhino.ApplicationSettings
     NetworkCheckedOut = 2
   }
 
-  /// <summary>
-  /// Provides valid values for the Rhino license installation group.
-  /// </summary>
+  /// <summary>The type of Rhino executable that is executing</summary>
   public enum Installation : int
   {
-    ///<summary>The group is unknown.</summary>
-    Undefined = 0,   // = CRhinoApp::installation_undefined,
-
-    ///<summary>The group is commercial.</summary>
-    Commercial,      // = CRhinoApp::installation_commercial,
-
-    ///<summary>The group is educational.</summary>
-    Educational,     // = CRhinoApp::installation_educational,
-
-    ///<summary>The group is an educational laboratory.</summary>
-    EducationalLab,  // = CRhinoApp::installation_educational_lab,
-
-    ///<summary>The group is not for resale.</summary>
-    NotForResale,    // = CRhinoApp::installation_not_for_resale,
-
-    ///<summary>The group is for a laboratory but not for resale.</summary>
-    NotForResaleLab, // = CRhinoApp::installation_not_for_resale_lab,
-
-    ///<summary>The group is beta.</summary>
-    Beta,            // = CRhinoApp::installation_beta,
-
-    ///<summary>The group is a laboratory beta.</summary>
-    BetaLab,         // = CRhinoApp::installation_beta_lab,
-
-    ///<summary>The group is evaluation.</summary>
-    Evaluation,      // = CRhinoApp::installation_evaluation,
-
-    ///<summary>The group is corporate.</summary>
-    Corporate        // = CRhinoApp::installation_corporate
+    ///<summary>Unknown</summary>
+    Undefined = 0,
+    ///<summary></summary>
+    Commercial,
+    ///<summary></summary>
+    Educational,
+    ///<summary></summary>
+    EducationalLab,
+    ///<summary></summary>
+    NotForResale,
+    ///<summary></summary>
+    NotForResaleLab,
+    ///<summary></summary>
+    Beta,
+    ///<summary></summary>
+    BetaLab,
+    ///<summary>25 Save limit evaluation version of Rhino</summary>
+    Evaluation,
+    ///<summary></summary>
+    Corporate,
+    ///<summary>90 day time limit evaluation version of Rhino</summary>
+    EvaluationTimed
   }
 }
 
@@ -260,6 +251,12 @@ namespace Rhino
     public static Guid CurrentRhinoId
     {
       get { return UnsafeNativeMethods.CRhinoApp_GetGUID(idxCurrentRhinoId); }
+    }
+
+    /// <summary>Is Rhino currently being executed through automation</summary>
+    public static bool IsRunningAutomated
+    {
+      get { return UnsafeNativeMethods.CRhinoApp_IsAutomated(); }
     }
 
     //static bool IsRhinoId( System::Guid id );

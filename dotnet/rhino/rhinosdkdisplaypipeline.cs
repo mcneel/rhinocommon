@@ -994,6 +994,21 @@ namespace Rhino.Display
     }
 
     /// <summary>
+    /// Draws the shaded faces of a given mesh.
+    /// </summary>
+    /// <param name="mesh">Mesh to draw.</param>
+    /// <param name="material">Material to draw faces with.</param>
+    /// <param name="faceIndices">Indices of specific faces to draw</param>
+    public void DrawMeshShaded(Mesh mesh, DisplayMaterial material, int[] faceIndices)
+    {
+      IntPtr pMesh = mesh.ConstPointer();
+      IntPtr pMaterial = IntPtr.Zero;
+      if (null != material)
+        pMaterial = material.ConstPointer();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawShadedMesh2(m_ptr, pMesh, pMaterial, faceIndices.Length, faceIndices);
+    }
+
+    /// <summary>
     /// Draws the mesh faces as false color patches. 
     /// The mesh must have Vertex Colors defined for this to work.
     /// </summary>

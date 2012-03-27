@@ -8971,6 +8971,34 @@ internal partial class UnsafeNativeMethods
   //int RHC_Sweep1Rebuild(CArgsRhinoSweep1* pArgsSweep1, ON_SimpleArray<ON_Brep*>* pBreps, int rebuild)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_Sweep1Rebuild(IntPtr pArgsSweep1, IntPtr pBreps, int rebuild);
+
+  //CArgsRhinoSweep2* CArgsRhinoSweep2_New(const ON_Curve* pConstRailCurve1,
+  //                                                     const ON_Curve* pConstRailCurve2,
+  //                                                     const ON_SimpleArray<const ON_Curve*>* pConstSectionCurves,
+  //                                                     /*ARRAY*/const double* tvals0,
+  //                                                     /*ARRAY*/const double* tvals1,
+  //                                                     bool closed,
+  //                                                     double sweep_tol,
+  //                                                     double angle_tol,
+  //                                                     bool maintain_height)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CArgsRhinoSweep2_New(IntPtr pConstRailCurve1, IntPtr pConstRailCurve2, IntPtr pConstSectionCurves, double[] tvals0, double[] tvals1, [MarshalAs(UnmanagedType.U1)]bool closed, double sweep_tol, double angle_tol, [MarshalAs(UnmanagedType.U1)]bool maintain_height);
+
+  //void CArgsRhinoSweep2_Delete(CArgsRhinoSweep2* pArgsSweep2)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CArgsRhinoSweep2_Delete(IntPtr pArgsSweep2);
+
+  //int RHC_Sweep2(CArgsRhinoSweep2* pArgsSweep2, ON_SimpleArray<ON_Brep*>* pBreps)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_Sweep2(IntPtr pArgsSweep2, IntPtr pBreps);
+
+  //int RHC_Sweep2Refit(CArgsRhinoSweep2* pArgsSweep2, ON_SimpleArray<ON_Brep*>* pBreps, double refit)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_Sweep2Refit(IntPtr pArgsSweep2, IntPtr pBreps, double refit);
+
+  //int RHC_Sweep2Rebuild(CArgsRhinoSweep2* pArgsSweep2, ON_SimpleArray<ON_Brep*>* pBreps, int rebuild)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_Sweep2Rebuild(IntPtr pArgsSweep2, IntPtr pBreps, int rebuild);
   #endregion
 
 

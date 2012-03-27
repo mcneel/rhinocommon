@@ -314,17 +314,245 @@ namespace Rhino.Geometry
   /// Utility class for generating breps by sweeping cross section curves over
   /// two rail curves.
   /// </summary>
-  /*public*/ class SweepTwoRail
+  public class SweepTwoRail
   {
-    public SweepTwoRail()
-    { }
+    bool m_bClosed = true;
+    double m_sweep_tol = -1;
+    double m_angle_tol = -1;
 
+    public SweepTwoRail()
+    {
+    }
+
+    public double SweepTolerance
+    {
+      get
+      {
+        if (m_sweep_tol < 0)
+          m_sweep_tol = RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
+        return m_sweep_tol;
+      }
+      set
+      {
+        m_sweep_tol = value;
+      }
+    }
+
+    public double AngleToleranceRadians
+    {
+      get
+      {
+        if (m_angle_tol < 0)
+          m_angle_tol = RhinoDoc.ActiveDoc.ModelAngleToleranceRadians;
+        return m_angle_tol;
+      }
+      set
+      {
+        m_angle_tol = value;
+      }
+    }
+
+    public bool MaintainHeight { get; set; } // false is the proper default
+
+    /// <summary>
+    /// If the input rails are closed, ClosedSweep determines if the swept breps
+    /// will also be closed.
+    /// </summary>
+    public bool ClosedSweep
+    {
+      get { return m_bClosed; }
+      set { m_bClosed = value; }
+    }
+
+    #region no simplify
+    public Brep[] PerformSweep(Curve rail1, Curve rail2, Curve crossSection)
+    {
+      return PerformSweep(rail1, rail2, new Curve[] { crossSection });
+    }
+
+    public Brep[] PerformSweep(Curve rail1, Curve rail2, Curve crossSection, double crossSectionParameterRail1, double crossSectionParameterRail2)
+    {
+      return PerformSweep(rail1, rail2, new Curve[] { crossSection }, new double[] { crossSectionParameterRail1 }, new double[] { crossSectionParameterRail2 });
+    }
 
     public Brep[] PerformSweep(Curve rail1, Curve rail2, IEnumerable<Curve> crossSections)
     {
-      return null;
+      List<double> rail_params1 = new List<double>();
+      List<double> rail_params2 = new List<double>();
+      Interval domain1 = rail1.Domain;
+      Interval domain2 = rail2.Domain;
+      foreach (Curve c in crossSections)
+      {
+        Point3d point_at_start = c.PointAtStart;
+        double t;
+        rail1.ClosestPoint(point_at_start, out t);
+        if (t == domain1.Max)
+          t = domain1.Max - RhinoMath.SqrtEpsilon;
+        rail_params1.Add(t);
+
+        rail2.ClosestPoint(point_at_start, out t);
+        if (t == domain2.Max)
+          t = domain2.Max - RhinoMath.SqrtEpsilon;
+        rail_params2.Add(t);
+      }
+
+      // NOTE: See if we need to do anything special in a rail_params1.Count==1 case
+      // like we do in the Sweep1 counterpart function
+      return PerformSweep(rail1, rail2, crossSections, rail_params1, rail_params2);
     }
 
+    public Brep[] PerformSweep(Curve rail1, Curve rail2, IEnumerable<Curve> crossSections, IEnumerable<double> crossSectionParameters1, IEnumerable<double> crossSectionParameters2)
+    {
+      ArgsSweep2 sweep = ArgsSweep2.Construct(rail1, rail2, crossSections, crossSectionParameters1, crossSectionParameters2, m_bClosed, m_sweep_tol, m_angle_tol, MaintainHeight);
+      using (var breps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      {
+        IntPtr pArgsSweep2 = sweep.NonConstPointer();
+        IntPtr pBreps = breps.NonConstPointer();
+        UnsafeNativeMethods.RHC_Sweep2(pArgsSweep2, pBreps);
+        Brep[] rc = breps.ToNonConstArray();
+        sweep.Dispose();
+        return rc;
+      }
+    }
+    #endregion
+
+    #region refit
+    public Brep[] PerformSweepRefit(Curve rail1, Curve rail2, Curve crossSection, double refitTolerance)
+    {
+      return PerformSweepRefit(rail1, rail2, new Curve[] { crossSection }, refitTolerance);
+    }
+
+    public Brep[] PerformSweepRefit(Curve rail1, Curve rail2, Curve crossSection, double crossSectionParameterRail1, double crossSectionParameterRail2, double refitTolerance)
+    {
+      return PerformSweepRefit(rail1, rail2, new Curve[] { crossSection }, new double[] { crossSectionParameterRail1 }, new double[] { crossSectionParameterRail2 }, refitTolerance);
+    }
+
+    public Brep[] PerformSweepRefit(Curve rail1, Curve rail2, IEnumerable<Curve> crossSections, double refitTolerance)
+    {
+      List<double> rail_params1 = new List<double>();
+      List<double> rail_params2 = new List<double>();
+      foreach (Curve c in crossSections)
+      {
+        Point3d point_at_start = c.PointAtStart;
+        double t;
+        rail1.ClosestPoint(point_at_start, out t);
+        rail_params1.Add(t);
+        rail2.ClosestPoint(point_at_start, out t);
+        rail_params2.Add(t);
+      }
+      return PerformSweepRefit(rail1, rail2, crossSections, rail_params1, rail_params2, refitTolerance);
+    }
+
+    public Brep[] PerformSweepRefit(Curve rail1, Curve rail2, IEnumerable<Curve> crossSections, IEnumerable<double> crossSectionParametersRail1, IEnumerable<double> crossSectionParametersRail2, double refitTolerance)
+    {
+      ArgsSweep2 sweep = ArgsSweep2.Construct(rail1, rail2, crossSections, crossSectionParametersRail1, crossSectionParametersRail2, m_bClosed, m_sweep_tol, m_angle_tol, MaintainHeight);
+      using (var breps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      {
+        IntPtr pArgsSweep2 = sweep.NonConstPointer();
+        IntPtr pBreps = breps.NonConstPointer();
+        UnsafeNativeMethods.RHC_Sweep2Refit(pArgsSweep2, pBreps, refitTolerance);
+        Brep[] rc = breps.ToNonConstArray();
+        sweep.Dispose();
+        return rc;
+      }
+    }
+    #endregion
+
+    #region rebuild
+    public Brep[] PerformSweepRebuild(Curve rail1, Curve rail2, Curve crossSection, int rebuildCount)
+    {
+      return PerformSweepRebuild(rail1, rail2, new Curve[] { crossSection }, rebuildCount);
+    }
+
+    public Brep[] PerformSweepRebuild(Curve rail1, Curve rail2, Curve crossSection, double crossSectionParameterRail1, double crossSectionParameterRail2, int rebuildCount)
+    {
+      return PerformSweepRebuild(rail1, rail2, new Curve[] { crossSection }, new double[] { crossSectionParameterRail1 }, new double[] { crossSectionParameterRail2 }, rebuildCount);
+    }
+
+    public Brep[] PerformSweepRebuild(Curve rail1, Curve rail2, IEnumerable<Curve> crossSections, int rebuildCount)
+    {
+      List<double> rail_params1 = new List<double>();
+      List<double> rail_params2 = new List<double>();
+      foreach (Curve c in crossSections)
+      {
+        Point3d point_at_start = c.PointAtStart;
+        double t;
+        rail1.ClosestPoint(point_at_start, out t);
+        rail_params1.Add(t);
+        rail2.ClosestPoint(point_at_start, out t);
+        rail_params2.Add(t);
+      }
+      return PerformSweepRebuild(rail1, rail2, crossSections, rail_params1, rail_params2, rebuildCount);
+    }
+
+    public Brep[] PerformSweepRebuild(Curve rail1, Curve rail2, IEnumerable<Curve> crossSections, IEnumerable<double> crossSectionParametersRail1, IEnumerable<double> crossSectionParametersRail2, int rebuildCount)
+    {
+      ArgsSweep2 sweep = ArgsSweep2.Construct(rail1, rail2, crossSections, crossSectionParametersRail1, crossSectionParametersRail2, m_bClosed, m_sweep_tol, m_angle_tol, MaintainHeight);
+      using (var breps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      {
+        IntPtr pArgsSweep2 = sweep.NonConstPointer();
+        IntPtr pBreps = breps.NonConstPointer();
+        UnsafeNativeMethods.RHC_Sweep2Rebuild(pArgsSweep2, pBreps, rebuildCount);
+        Brep[] rc = breps.ToNonConstArray();
+        sweep.Dispose();
+        return rc;
+      }
+    }
+    #endregion
+
+    class ArgsSweep2 : IDisposable
+    {
+      IntPtr m_ptr; //CArgsRhinoSweep2*
+      public static ArgsSweep2 Construct(Curve rail1, Curve rail2, IEnumerable<Curve> crossSections,
+        IEnumerable<double> crossSectionParameters1, IEnumerable<double> crossSectionParameters2,
+        bool closed, double sweep_tol, double angle_tol, bool maintain_height)
+      {
+        ArgsSweep2 rc = new ArgsSweep2();
+        List<Curve> xsec = new List<Curve>(crossSections);
+        List<double> xsec_t1 = new List<double>(crossSectionParameters1);
+        List<double> xsec_t2 = new List<double>(crossSectionParameters2);
+        if (xsec.Count < 1)
+          throw new ArgumentException("must have at least one cross section");
+        if (xsec.Count != xsec_t1.Count || xsec.Count != xsec_t2.Count)
+          throw new ArgumentException("must have same number of elements in crossSections and crossSectionParameters");
+
+        IntPtr pConstRail1 = rail1.ConstPointer();
+        IntPtr pConstRail2 = rail2.ConstPointer();
+        using (var sections = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer(crossSections))
+        {
+          IntPtr pSections = sections.ConstPointer();
+          double[] tvals1 = xsec_t1.ToArray();
+          double[] tvals2 = xsec_t2.ToArray();
+          rc.m_ptr = UnsafeNativeMethods.CArgsRhinoSweep2_New(pConstRail1, pConstRail2, pSections, tvals1, tvals2, closed, sweep_tol, angle_tol, maintain_height);
+        }
+        return rc;
+      }
+
+      public IntPtr NonConstPointer()
+      {
+        return m_ptr;
+      }
+
+      ~ArgsSweep2()
+      {
+        Dispose(false);
+      }
+
+      public void Dispose()
+      {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+      }
+
+      protected virtual void Dispose(bool disposing)
+      {
+        if (IntPtr.Zero != m_ptr)
+        {
+          UnsafeNativeMethods.CArgsRhinoSweep2_Delete(m_ptr);
+          m_ptr = IntPtr.Zero;
+        }
+      }
+    }
   }
 }
 #endif

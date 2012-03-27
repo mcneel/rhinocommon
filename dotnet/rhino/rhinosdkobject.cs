@@ -1385,6 +1385,14 @@ namespace Rhino.DocObjects
       return ObjRefToGeometryHelper(pLight) as Light;
     }
 
+    /// <summary>
+    /// Gets the hatch if the referenced geometry is one.
+    /// </summary>
+    /// <returns>A hatch; or null if the referenced object is not a hatch</returns>
+    public Geometry.Hatch Hatch()
+    {
+      return Geometry() as Hatch;
+    }
     //private bool IsSubGeometry()
     //{
     //  return UnsafeNativeMethods.CRhinoObjRef_IsSubGeometry(m_ptr);

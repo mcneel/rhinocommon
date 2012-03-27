@@ -884,7 +884,29 @@ namespace Rhino.Geometry.Intersect
       int count = 0;
       IntPtr rc = UnsafeNativeMethods.ON_Intersect_MeshPolyline1(pConstMesh, pConstCurve, ref count);
       if (0 == count || IntPtr.Zero == rc)
-        return null;
+        return new Point3d[0];
+
+      Point3d[] points = new Point3d[count];
+      faceIds = new int[count];
+      UnsafeNativeMethods.ON_Intersect_MeshPolyline_Fill(rc, count, points, faceIds);
+      return points;
+    }
+
+    /// <summary>
+    /// Finds the intersection of a mesh and a line
+    /// </summary>
+    /// <param name="mesh">A mesh to intersect</param>
+    /// <param name="line">The line to intersect with the mesh</param>
+    /// <param name="faceIds">The indices of the intersecting faces. This out reference is assigned during the call.</param>
+    /// <returns>An array of points: one for each face that was passed by the faceIds out reference.</returns>
+    public static Point3d[] MeshLine(Mesh mesh, Line line, out int[] faceIds)
+    {
+      faceIds = null;
+      IntPtr pConstMesh = mesh.ConstPointer();
+      int count = 0;
+      IntPtr rc = UnsafeNativeMethods.ON_Intersect_MeshLine(pConstMesh, line.From, line.To, ref count);
+      if (0 == count || IntPtr.Zero == rc)
+        return new Point3d[0];
 
       Point3d[] points = new Point3d[count];
       faceIds = new int[count];

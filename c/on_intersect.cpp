@@ -612,6 +612,25 @@ RH_C_FUNCTION ON_SimpleArray<ON_CMX_EVENT>* ON_Intersect_MeshPolyline1(const ON_
   return rc;
 }
 
+RH_C_FUNCTION ON_SimpleArray<ON_CMX_EVENT>* ON_Intersect_MeshLine(const ON_Mesh* pConstMesh, ON_3DPOINT_STRUCT from, ON_3DPOINT_STRUCT to, int* count)
+{
+  ON_SimpleArray<ON_CMX_EVENT>* rc = NULL;
+  if( pConstMesh )
+  {
+    ON_3dPoint start(from.val);
+    ON_3dPoint end(to.val);
+    ON_Line line(start, end);
+    const ON_MeshTree* mesh_tree = pConstMesh->MeshTree();
+    if( mesh_tree )
+    {
+      rc = new ON_SimpleArray<ON_CMX_EVENT>();
+      if( mesh_tree->IntersectLine(line, *rc) && count )
+        *count = rc->Count();
+    }
+  }
+  return rc;
+}
+
 RH_C_FUNCTION void ON_Intersect_MeshPolyline_Fill(ON_SimpleArray<ON_CMX_EVENT>* pCMX, int count, /*ARRAY*/ON_3dPoint* points, /*ARRAY*/int* faceIds)
 {
   if( pCMX && points && faceIds && pCMX->Count()==count )
@@ -626,4 +645,5 @@ RH_C_FUNCTION void ON_Intersect_MeshPolyline_Fill(ON_SimpleArray<ON_CMX_EVENT>* 
   if( pCMX )
     delete pCMX;
 }
+
 #endif

@@ -340,3 +340,21 @@ RH_C_FUNCTION int ON_TextEntity_Explode(const ON_TextEntity2* pConstTextEntity2,
   return rc;
 }
 #endif
+
+RH_C_FUNCTION ON_AngularDimension2* ON_AngularDimension2_New(ON_Arc* arc, double offset)
+{
+  ON_AngularDimension2* rc = NULL;
+  if( arc )
+  {
+    rc = new ON_AngularDimension2();
+    ON_3dVector v = arc->StartPoint()-arc->Center();
+    v.Unitize();
+    ON_3dPoint apex = arc->Center();
+    ON_3dPoint p0 = arc->StartPoint();
+    ON_3dPoint p1 = arc->EndPoint();
+    ON_3dPoint arc_pt = p0 + ( v * offset );
+    ON_3dVector normal = arc->Normal();
+    rc->CreateFromPoints(apex, p0, p1, arc_pt, normal);
+  }
+  return rc;
+}

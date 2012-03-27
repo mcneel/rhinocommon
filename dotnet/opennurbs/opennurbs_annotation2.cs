@@ -442,6 +442,17 @@ namespace Rhino.Geometry
   [Serializable]
   public class AngularDimension : AnnotationBase, ISerializable
   {
+    /// <summary>
+    /// Create an angular dimension from a give arc
+    /// </summary>
+    /// <param name="arc">The start and end points of the arc are the start and endpoints of the dimension</param>
+    /// <param name="offset">How far to offset the dimension location from the arc</param>
+    public AngularDimension(Arc arc, double offset)
+    {
+      IntPtr ptr = UnsafeNativeMethods.ON_AngularDimension2_New(ref arc, offset);
+      ConstructNonConstObject(ptr);
+    }
+
     internal AngularDimension(IntPtr native_pointer, object parent)
       : base(native_pointer, parent)
     { }

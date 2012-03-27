@@ -73,6 +73,10 @@ namespace Rhino.UI
 
     protected virtual void OnMouseDoubleClick(MouseCallbackEventArgs e) { }
 
+    protected virtual void OnMouseEnter(Rhino.Display.RhinoView view) { }
+    protected virtual void OnMouseLeave(Rhino.Display.RhinoView view) { }
+    protected virtual void OnMouseHover(Rhino.Display.RhinoView view) { }
+    
     private static readonly List<MouseCallback> m_enabled_list = new List<MouseCallback>();
 
     public bool Enabled
@@ -117,6 +121,9 @@ namespace Rhino.UI
       const int callbackMouseUp = 1;
       const int callbackMouseMove = 2;
       const int callbackMouseDoubleClick = 3;
+      const int callbackMouseEnter = 4;
+      const int callbackMouseLeave = 5;
+      const int callbackMouseHover = 6;
 
       if (m_enabled_list.Count > 0)
       {
@@ -137,6 +144,15 @@ namespace Rhino.UI
               break;
             case callbackMouseDoubleClick:
               m_enabled_list[i].OnMouseDoubleClick(e);
+              break;
+            case callbackMouseEnter:
+              m_enabled_list[i].OnMouseEnter(e.View);
+              break;
+            case callbackMouseLeave:
+              m_enabled_list[i].OnMouseLeave(e.View);
+              break;
+            case callbackMouseHover:
+              m_enabled_list[i].OnMouseHover(e.View);
               break;
           }
 

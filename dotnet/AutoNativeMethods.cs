@@ -378,6 +378,10 @@ internal partial class UnsafeNativeMethods
   //int ON_TextEntity_Explode(const ON_TextEntity2* pConstTextEntity2, ON_SimpleArray<ON_Curve*>* pCurveArray)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_TextEntity_Explode(IntPtr pConstTextEntity2, IntPtr pCurveArray);
+
+  //ON_AngularDimension2* ON_AngularDimension2_New(ON_Arc* arc, double offset)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_AngularDimension2_New(ref Arc arc, double offset);
   #endregion
 
 
@@ -2309,6 +2313,10 @@ internal partial class UnsafeNativeMethods
   //ON_SimpleArray<ON_CMX_EVENT>* ON_Intersect_MeshPolyline1(const ON_Mesh* pMesh, const ON_PolylineCurve* pCurve, int* count)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Intersect_MeshPolyline1(IntPtr pMesh, IntPtr pCurve, ref int count);
+
+  //ON_SimpleArray<ON_CMX_EVENT>* ON_Intersect_MeshLine(const ON_Mesh* pConstMesh, ON_3DPOINT_STRUCT from, ON_3DPOINT_STRUCT to, int* count)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_Intersect_MeshLine(IntPtr pConstMesh, Point3d from, Point3d to, ref int count);
 
   //void ON_Intersect_MeshPolyline_Fill(ON_SimpleArray<ON_CMX_EVENT>* pCMX, int count, /*ARRAY*/ON_3dPoint* points, /*ARRAY*/int* faceIds)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -9212,24 +9220,27 @@ internal partial class UnsafeNativeMethods
   //                                          ON_3DPOINT_STRUCT start_point,
   //                                          ON_3DPOINT_STRUCT end_point,
   //                                          double interval,
-  //                                          ON_SimpleArray<ON_3dPoint>* output_points)
+  //                                          ON_SimpleArray<ON_3dPoint>* output_points,
+  //                                          double tolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool RHC_MakeRhinoContours1(IntPtr pConstCurve, Point3d start_point, Point3d end_point, double interval, IntPtr output_points);
+  internal static extern bool RHC_MakeRhinoContours1(IntPtr pConstCurve, Point3d start_point, Point3d end_point, double interval, IntPtr output_points, double tolerance);
 
   //int RHC_MakeRhinoContours2(const ON_Geometry* pConstGeometry,
   //                                          ON_3DPOINT_STRUCT start_point,
   //                                          ON_3DPOINT_STRUCT end_point,
   //                                          double interval,
-  //                                          ON_SimpleArray<ON_Curve*>* output_curves)
+  //                                          ON_SimpleArray<ON_Curve*>* output_curves,
+  //                                          double tolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RHC_MakeRhinoContours2(IntPtr pConstGeometry, Point3d start_point, Point3d end_point, double interval, IntPtr output_curves);
+  internal static extern int RHC_MakeRhinoContours2(IntPtr pConstGeometry, Point3d start_point, Point3d end_point, double interval, IntPtr output_curves, double tolerance);
 
   //int RHC_MakeRhinoContours3(const ON_Geometry* pConstGeometry,
   //                                          ON_PLANE_STRUCT* plane,
-  //                                          ON_SimpleArray<ON_Curve*>* output_curves)
+  //                                          ON_SimpleArray<ON_Curve*>* output_curves,
+  //                                          double tolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int RHC_MakeRhinoContours3(IntPtr pConstGeometry, ref Plane plane, IntPtr output_curves);
+  internal static extern int RHC_MakeRhinoContours3(IntPtr pConstGeometry, ref Plane plane, IntPtr output_curves, double tolerance);
 
   //ON_NurbsCurve* RHC_RhinoInterpCurve(int degree, int count, /*ARRAY*/const ON_3dPoint* _array_pts, ON_3DVECTOR_STRUCT start_tan, ON_3DVECTOR_STRUCT end_tan, int knotStyle)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

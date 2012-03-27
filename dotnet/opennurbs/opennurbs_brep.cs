@@ -889,8 +889,9 @@ namespace Rhino.Geometry
       IntPtr pConstBrep = brepToContour.ConstPointer();
       using (Runtime.InteropWrappers.SimpleArrayCurvePointer outputcurves = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer())
       {
+        double tolerance = RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
         IntPtr pCurves = outputcurves.NonConstPointer();
-        int count = UnsafeNativeMethods.RHC_MakeRhinoContours2(pConstBrep, contourStart, contourEnd, interval, pCurves);
+        int count = UnsafeNativeMethods.RHC_MakeRhinoContours2(pConstBrep, contourStart, contourEnd, interval, pCurves, tolerance);
         return 0 == count ? new Curve[0] : outputcurves.ToNonConstArray();
       }
     }
@@ -906,8 +907,9 @@ namespace Rhino.Geometry
       IntPtr pConstBrep = brepToContour.ConstPointer();
       using (Runtime.InteropWrappers.SimpleArrayCurvePointer outputcurves = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer())
       {
+        double tolerance = RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
         IntPtr pCurves = outputcurves.NonConstPointer();
-        int count = UnsafeNativeMethods.RHC_MakeRhinoContours3(pConstBrep, ref sectionPlane, pCurves);
+        int count = UnsafeNativeMethods.RHC_MakeRhinoContours3(pConstBrep, ref sectionPlane, pCurves, tolerance);
         return 0 == count ? new Curve[0] : outputcurves.ToNonConstArray();
       }
     }

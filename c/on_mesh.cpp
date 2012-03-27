@@ -764,13 +764,34 @@ RH_C_FUNCTION bool ON_Mesh_NakedEdgePoints( const ON_Mesh* pMesh, /*ARRAY*/int* 
 RH_C_FUNCTION bool ON_Mesh_IsPointInside(const ON_Mesh* pConstMesh, ON_3DPOINT_STRUCT point, double tolerance, bool strictlyin)
 {
   bool rc = false;
-#if defined(RHINO_V5SR) // only available in V5
+  // 27 March 2012 - S. Baer
+  // The low-level ON_Mesh::IsPointInside has not been completed and always returns false.
+  // Calling an intersector for now and counting the number of crossings. Odd == inside.
+  // I realize this isn't foolproof since points on faces may cause problems, but it could
+  // hold us over until Dale completes the function (which looks nearly complete in TL_MeshTools.cpp)
   if( pConstMesh )
   {
     ON_3dPoint _point(point.val);
-    rc = pConstMesh->IsPointInside(_point, tolerance, strictlyin);
+
+    if( pConstMesh->IsSolid() )
+    {
+      ON_BoundingBox bbox = pConstMesh->BoundingBox();
+      ON_Line line(_point, bbox.m_max + ON_3dPoint(100,100,100));
+
+      const ON_MeshTree* mesh_tree = pConstMesh->MeshTree();
+      if( mesh_tree )
+      {
+        ON_SimpleArray<ON_CMX_EVENT> events;
+        if( mesh_tree->IntersectLine(line, events) )
+        {
+          rc = (events.Count() % 2)==1;
+        }
+      }
+    }
+//#if defined(RHINO_V5SR) // only available in V5
+//    rc = pConstMesh->IsPointInside(_point, tolerance, strictlyin);
+//#endif
   }
-#endif
   return rc;
 }
 

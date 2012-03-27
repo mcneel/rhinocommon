@@ -2775,7 +2775,8 @@ namespace Rhino.Geometry
       {
         IntPtr pConstThis = ConstPointer();
         IntPtr pPoints = points.NonConstPointer();
-        if (UnsafeNativeMethods.RHC_MakeRhinoContours1(pConstThis, contourStart, contourEnd, interval, pPoints))
+        double tolerance = RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
+        if (UnsafeNativeMethods.RHC_MakeRhinoContours1(pConstThis, contourStart, contourEnd, interval, pPoints, tolerance))
           rc = points.ToArray();
       }
       return rc;

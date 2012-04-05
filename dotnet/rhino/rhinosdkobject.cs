@@ -57,6 +57,12 @@ namespace Rhino.DocObjects
     internal RhinoObject()
     {
       m_rhinoobject_serial_number = 0;
+      m_theDrawCallback = OnRhinoObjectDraw;
+      m_theDuplicateCallback = OnRhinoObjectDuplicate;
+      m_theDocNotifyCallback = OnRhinoObjectDocNotify;
+      m_theActiveInViewportCallback = OnRhinoObjectActiveInViewport;
+      m_theSelectionCallback = OnRhinoObjectSelection;
+      UnsafeNativeMethods.CRhinoObject_SetCallbacks(m_theDuplicateCallback, m_theDrawCallback, m_theDocNotifyCallback, m_theActiveInViewportCallback, m_theSelectionCallback);
     }
 
     internal RhinoObject(uint sn)
@@ -64,6 +70,80 @@ namespace Rhino.DocObjects
       m_rhinoobject_serial_number = sn;
     }
 
+    internal delegate void RhinoObjectDrawCallback(IntPtr pConstRhinoObject, IntPtr pDisplayPipeline);
+    internal delegate void RhinoObjectDuplicateCallback(int docId, uint sourceObjectSerialNumber, uint newObjectSerialNumber);
+    internal delegate void RhinoObjectDocNotifyCallback(int docId, uint serialNumber, int add);
+    internal delegate int RhinoObjectActiveInViewportCallback(int docId, uint serialNumber, IntPtr pRhinoViewport);
+    internal delegate void RhinoObjectSelectionCallback(int docId, uint serialNumber);
+    static RhinoObjectDrawCallback m_theDrawCallback;
+    static RhinoObjectDuplicateCallback m_theDuplicateCallback;
+    static RhinoObjectDocNotifyCallback m_theDocNotifyCallback;
+    static RhinoObjectActiveInViewportCallback m_theActiveInViewportCallback;
+    static RhinoObjectSelectionCallback m_theSelectionCallback;
+
+    static void OnRhinoObjectDraw(IntPtr pConstRhinoObject, IntPtr pDisplayPipeline)
+    {
+      RhinoObject rhobj = RhinoObject.CreateRhinoObjectHelper(pConstRhinoObject);
+      if( rhobj!=null )
+        rhobj.OnDraw(new Display.DrawEventArgs(pDisplayPipeline, IntPtr.Zero));
+    }
+
+    static void OnRhinoObjectDuplicate(int docId, uint sourceObjectSerialNumber, uint newObjectSerialNumber)
+    {
+      RhinoDoc doc = RhinoDoc.FromId(docId);
+      if (doc != null)
+      {
+        RhinoObject rhobj = doc.Objects.FindCustomObject(sourceObjectSerialNumber);
+        if (rhobj != null)
+        {
+          Type t = rhobj.GetType();
+          RhinoObject newobj = System.Activator.CreateInstance(t) as RhinoObject;
+          newobj.m_rhinoobject_serial_number = newObjectSerialNumber;
+          doc.Objects.AddCustomObject(newObjectSerialNumber, newobj);
+          newobj.OnDuplicate(rhobj);
+        }
+      }
+    }
+
+    static void OnRhinoObjectDocNotify(int docId, uint serialNumber, int add)
+    {
+      RhinoDoc doc = RhinoDoc.FromId(docId);
+      if (doc != null)
+      {
+        RhinoObject rhobj = doc.Objects.FindCustomObject(serialNumber);
+        if (rhobj != null)
+        {
+          if (add == 1)
+            rhobj.OnAddToDocument(doc);
+          else
+            rhobj.OnDeleteFromDocument(doc);
+        }
+      }
+    }
+
+    static int OnRhinoObjectActiveInViewport(int docId, uint serialNumber, IntPtr pRhinoViewport)
+    {
+      int rc = -1;
+      RhinoDoc doc = RhinoDoc.FromId(docId);
+      if (doc != null)
+      {
+        RhinoObject rhobj = doc.Objects.FindCustomObject(serialNumber);
+        if (rhobj != null)
+          rc = rhobj.IsActiveInViewport(new Rhino.Display.RhinoViewport(null, pRhinoViewport)) ? 1 : 0;
+      }
+      return rc;
+    }
+
+    static void OnRhinoObjectSelection(int docId, uint serialNumber)
+    {
+      RhinoDoc doc = RhinoDoc.FromId(docId);
+      if (doc != null)
+      {
+        RhinoObject rhobj = doc.Objects.FindCustomObject(serialNumber);
+        if (rhobj != null)
+          rhobj.OnSelectionChanged();
+      }
+    }
 
     //const int idxCRhinoObject = 0;
     const int idxCRhinoPointObject = 1;
@@ -95,6 +175,16 @@ namespace Rhino.DocObjects
       uint sn = UnsafeNativeMethods.CRhinoObject_RuntimeSN(pRhinoObject);
       if (sn < 1)
         return null;
+
+      int doc_id = UnsafeNativeMethods.CRhinoObject_Document(pRhinoObject);
+      RhinoDoc doc = RhinoDoc.FromId(doc_id);
+      if (doc != null)
+      {
+        RhinoObject custom = doc.Objects.FindCustomObject(sn);
+        if (custom != null)
+          return custom;
+      }
+
 
       int type = UnsafeNativeMethods.CRhinoRhinoObject_GetRhinoObjectType(pRhinoObject);
       if (type < 0)
@@ -1021,7 +1111,7 @@ namespace Rhino.DocObjects
     /// </summary>
     /// <param name="plural">true if the descriptive name should in plural.</param>
     /// <returns>A string with the short localized descriptive name.</returns>
-    public string ShortDescription(bool plural)
+    public virtual string ShortDescription(bool plural)
     {
       using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
       {
@@ -1094,6 +1184,60 @@ namespace Rhino.DocObjects
       }
     }
 #endif
+    /// <summary>
+    /// Called when Rhino wants to draw this object
+    /// </summary>
+    /// <param name="e"></param>
+    protected virtual void OnDraw(Rhino.Display.DrawEventArgs e)
+    {
+      IntPtr pConstThis = ConstPointer();
+      UnsafeNativeMethods.CRhinoObject_Draw(pConstThis, e.m_pDisplayPipeline);
+    }
+
+    /// <summary>
+    /// Called when this a new instance of this object is created and copied from
+    /// an existing object
+    /// </summary>
+    /// <param name="source"></param>
+    protected virtual void OnDuplicate(RhinoObject source) { }
+
+    /// <summary>
+    /// This call informs an object it is about to be deleted.
+    /// Some objects, like clipping planes, need to do a little extra cleanup
+    /// before they are deleted.
+    /// </summary>
+    /// <param name="doc"></param>
+    protected virtual void OnDeleteFromDocument(RhinoDoc doc) { }
+
+    /// <summary>
+    /// This call informs an object it is about to be added to the list of
+    /// active objects in the document.
+    /// </summary>
+    /// <param name="doc"></param>
+    protected virtual void OnAddToDocument(RhinoDoc doc) { }
+
+    /// <summary>
+    /// Determine if this object is active in a particular viewport.
+    /// </summary>
+    /// <param name="viewport"></param>
+    /// <remarks>
+    /// The default implementation tests for space and viewport id. This
+    /// handles things like testing if a page space object is visible in a
+    /// modeling view.
+    /// </remarks>
+    /// <returns>True if the object is active in viewport</returns>
+    public virtual bool IsActiveInViewport(Rhino.Display.RhinoViewport viewport)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.CRhinoObject_IsActiveInViewport(pConstThis, viewport.ConstPointer());
+    }
+
+    /// <summary>
+    /// Called when the selection state of this object has changed
+    /// </summary>
+    protected virtual void OnSelectionChanged()
+    {
+    }
   }
 #endif
   /// <summary>

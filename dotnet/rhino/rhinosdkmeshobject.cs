@@ -1,5 +1,6 @@
 #pragma warning disable 1591
 using Rhino.Geometry;
+using System;
 
 #if RHINO_SDK
 namespace Rhino.DocObjects
@@ -8,6 +9,8 @@ namespace Rhino.DocObjects
   {
     internal MeshObject(uint serialNumber)
       : base(serialNumber) { }
+
+    protected MeshObject() { }
 
     public Mesh MeshGeometry
     {
@@ -32,4 +35,5 @@ namespace Rhino.DocObjects
 
   // skipping CRhinoMeshDensity, CRhinoObjectMesh, CRhinoMeshObjectsUI, CRhinoMeshStlUI
 }
+
 #endif

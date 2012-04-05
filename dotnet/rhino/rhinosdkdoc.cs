@@ -2524,6 +2524,76 @@ namespace Rhino.DocObjects.Tables
     }
 
 #region Object addition
+    public void AddRhinoObject(Rhino.DocObjects.MeshObject meshObject, Rhino.Geometry.Mesh mesh)
+    {
+      AddRhinoObjectHelper(meshObject, mesh);
+    }
+
+    public void AddRhinoObject(Rhino.DocObjects.BrepObject brepObject, Rhino.Geometry.Brep brep)
+    {
+      AddRhinoObjectHelper(brepObject, brep);
+    }
+    /*
+    public void AddRhinoObject(Rhino.DocObjects.PointCloudObject pointCloudObject, Rhino.Geometry.PointCloud pointCloud)
+    {
+      AddRhinoObjectHelper(pointCloudObject, pointCloud);
+    }
+    public void AddRhinoObject(Rhino.DocObjects.PointObject pointObject, Rhino.Geometry.Point point)
+    {
+      AddRhinoObjectHelper(pointObject, point);
+    }
+    public void AddRhinoObject(Rhino.DocObjects.CurveObject curveObject, Rhino.Geometry.Curve curve)
+    {
+      AddRhinoObjectHelper(curveObject, curve);
+    }
+    */
+    void AddRhinoObjectHelper(RhinoObject rhinoObject, GeometryBase geometry)
+    {
+      if (rhinoObject.m_rhinoobject_serial_number != 0 || rhinoObject.m_pRhinoObject != IntPtr.Zero)
+        throw new NotImplementedException();
+
+      Type t = rhinoObject.GetType();
+      if (t.GetConstructor(Type.EmptyTypes) == null)
+        throw new NotImplementedException("class must have a public parameterless constructor");
+
+      IntPtr pConstGeometry = geometry.ConstPointer();
+      IntPtr pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New(pConstGeometry);
+
+      uint serial_number = UnsafeNativeMethods.CRhinoObject_RuntimeSN(pRhinoObject);
+      if (serial_number > 0)
+      {
+        rhinoObject.m_rhinoobject_serial_number = serial_number;
+        AddCustomObject(serial_number, rhinoObject);
+        UnsafeNativeMethods.CRhinoDoc_AddRhinoObject(m_doc.m_docId, pRhinoObject);
+
+        Type base_type = typeof(RhinoObject);
+        var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public;
+        System.Reflection.MethodInfo mi = t.GetMethod("ShortDescription", flags);
+        if (mi.DeclaringType != base_type)
+        {
+          string description = rhinoObject.ShortDescription(false);
+          string description_plural = rhinoObject.ShortDescription(true);
+          UnsafeNativeMethods.CRhinoCustomObject_SetDescriptionStrings(pRhinoObject, description, description_plural);
+        }
+      }
+    }
+
+    System.Collections.Generic.SortedList<uint, RhinoObject> m_custom_objects;
+    internal void AddCustomObject(uint serialNumber, RhinoObject rhobj)
+    {
+      if (m_custom_objects == null)
+        m_custom_objects = new SortedList<uint, RhinoObject>();
+      m_custom_objects.Add(serialNumber, rhobj);
+    }
+    internal RhinoObject FindCustomObject(uint serialNumber)
+    {
+      RhinoObject rc = null;
+      if (m_custom_objects != null)
+        m_custom_objects.TryGetValue(serialNumber, out rc);
+      return rc;
+    }
+
+
     /// <summary>
     /// Adds geometry that is not further specified.
     /// <para>This is meant, for example, to handle addition of sets of different geometrical entities.</para>

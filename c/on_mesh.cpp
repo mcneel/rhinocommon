@@ -773,7 +773,11 @@ RH_C_FUNCTION bool ON_Mesh_IsPointInside(const ON_Mesh* pConstMesh, ON_3DPOINT_S
   {
     ON_3dPoint _point(point.val);
 
+#if defined(RHINO_V5SR) // only available in V5
     if( pConstMesh->IsSolid() )
+#else
+    if( pConstMesh->IsClosed() )
+#endif
     {
       ON_BoundingBox bbox = pConstMesh->BoundingBox();
       ON_Line line(_point, bbox.m_max + ON_3dPoint(100,100,100));

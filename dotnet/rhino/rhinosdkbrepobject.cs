@@ -12,6 +12,11 @@ namespace Rhino.DocObjects
       : base(serialNumber) { }
 
     /// <summary>
+    /// Protected constructor for custom subclasses
+    /// </summary>
+    protected BrepObject() { }
+
+    /// <summary>
     /// Gets the brep geometry linked with this object.
     /// </summary>
     public Brep BrepGeometry

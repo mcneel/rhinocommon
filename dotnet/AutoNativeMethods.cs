@@ -3129,6 +3129,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_TextureMapping_SetBoxMapping(IntPtr pTextureMapping, ref Plane plane, Interval dx, Interval dy, Interval dz, [MarshalAs(UnmanagedType.U1)]bool capped);
+
+  //bool ON_Mesh_SplitMeshEdge(ON_Mesh* pMesh, int edge_index, ON_3DPOINT_STRUCT point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Mesh_SplitMeshEdge(IntPtr pMesh, int edge_index, Point3d point);
   #endregion
 
 
@@ -8621,6 +8626,34 @@ internal partial class UnsafeNativeMethods
   //const CRhinoObjRef* ON_ClassArrayCRhinoObjRef_Get(const ON_ClassArray<CRhinoObjRef>* pConstObjRefArray, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_ClassArrayCRhinoObjRef_Get(IntPtr pConstObjRefArray, int index);
+
+  //void CRhinoObject_SetCallbacks(RHINOOBJECT_DUPLICATEPROC duplicate,
+  //                                             RHINOOBJECT_DRAWPROC draw,
+  //                                             RHINOOBJECT_DOCNOTIFYPROC doc_notify,
+  //                                             RHINOOBJECT_ACTIVEINVIEWPORTPROC active_in_viewport)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRhinoObject_Draw(const CRhinoObject* pConstRhinoObject, CRhinoDisplayPipeline* pPipeline)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoObject_Draw(IntPtr pConstRhinoObject, IntPtr pPipeline);
+
+  //bool CRhinoObject_IsActiveInViewport(const CRhinoObject* pConstRhinoObject, const CRhinoViewport* pConstRhinoViewport)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoObject_IsActiveInViewport(IntPtr pConstRhinoObject, IntPtr pConstRhinoViewport);
+
+  //void CRhinoCustomObject_SetDescriptionStrings(CRhinoObject* pRhinoObject, const RHMONO_STRING* description, const RHMONO_STRING* description_plural)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoCustomObject_SetDescriptionStrings(IntPtr pRhinoObject, [MarshalAs(UnmanagedType.LPWStr)]string description, [MarshalAs(UnmanagedType.LPWStr)]string description_plural);
+
+  //CRhinoObject* CRhinoCustomObject_New(const ON_Geometry* pConstGeometry)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoCustomObject_New(IntPtr pConstGeometry);
+
+  //bool CRhinoDoc_AddRhinoObject(int doc_id, CRhinoObject* pRhinoObject)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoDoc_AddRhinoObject(int doc_id, IntPtr pRhinoObject);
   #endregion
 
 

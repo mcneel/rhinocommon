@@ -219,26 +219,15 @@ internal partial class UnsafeNativeMethods
                                                       Rhino.Input.Custom.GetPoint.DrawCallback drawCB,
                                                       Rhino.Display.DisplayPipeline.ConduitCallback postDrawCB,
                                                       Rhino.Input.Custom.GetTransform.CalculateXformCallack calcXformCB);
-#endif
 
+  //In RhinoObject
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_RTree_Search(IntPtr pConstRtree, Point3d pt0, Point3d pt1, int serial_number, RTree.SearchCallback searchCB);
+  internal static extern void CRhinoObject_SetCallbacks(Rhino.DocObjects.RhinoObject.RhinoObjectDuplicateCallback duplicate,
+                                                        Rhino.DocObjects.RhinoObject.RhinoObjectDrawCallback draw,
+                                                        Rhino.DocObjects.RhinoObject.RhinoObjectDocNotifyCallback doc_notify,
+                                                        Rhino.DocObjects.RhinoObject.RhinoObjectActiveInViewportCallback active_in_viewport,
+                                                        Rhino.DocObjects.RhinoObject.RhinoObjectSelectionCallback selection_change);
 
-  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_RTree_SearchSphere(IntPtr pConstRtree, Point3d center, double radius, int serial_number, RTree.SearchCallback searchCB);
-
-  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_RTree_Search2(IntPtr pConstRtreeA, IntPtr pConstRtreeB, double tolerance, int serial_number, RTree.SearchCallback searchCB);
-
-  //bool ON_Arc_Copy(ON_Arc* pRdnArc, ON_Arc* pRhCmnArc, bool rdn_to_rhc)
-  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Arc_Copy(IntPtr pRdnArc, ref Arc pRhCmnArc, [MarshalAs(UnmanagedType.U1)]bool rdn_to_rhc);
-
-#if RHINO_SDK
   //void CRhinoMouseCallback_Enable(bool on, RHMOUSECALLBACK_FUNC mouse_cb)
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoMouseCallback_Enable([MarshalAs(UnmanagedType.U1)]bool on, Rhino.UI.MouseCallback.MouseCallbackFromCPP callback_func);
@@ -412,4 +401,21 @@ internal partial class UnsafeNativeMethods
     Rhino.DocObjects.Custom.UserData.DuplicateUserDataCallback duplicate_func,
     Rhino.DocObjects.Custom.UserData.CreateUserDataCallback create_func,
     Rhino.DocObjects.Custom.UserData.DeleteUserDataCallback delete_func);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_RTree_Search(IntPtr pConstRtree, Point3d pt0, Point3d pt1, int serial_number, RTree.SearchCallback searchCB);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_RTree_SearchSphere(IntPtr pConstRtree, Point3d center, double radius, int serial_number, RTree.SearchCallback searchCB);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_RTree_Search2(IntPtr pConstRtreeA, IntPtr pConstRtreeB, double tolerance, int serial_number, RTree.SearchCallback searchCB);
+
+  //bool ON_Arc_Copy(ON_Arc* pRdnArc, ON_Arc* pRhCmnArc, bool rdn_to_rhc)
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Arc_Copy(IntPtr pRdnArc, ref Arc pRhCmnArc, [MarshalAs(UnmanagedType.U1)]bool rdn_to_rhc);
 }

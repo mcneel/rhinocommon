@@ -2655,6 +2655,37 @@ namespace Rhino.Geometry.Collections
     }
 
     /// <summary>
+    /// Divides a mesh edge to create two or more triangles
+    /// </summary>
+    /// <param name="topologyEdgeIndex">Edge to divide</param>
+    /// <param name="t">
+    /// Parameter along edge. This is the same as getting an EdgeLine and calling PointAt(t) on that line
+    /// </param>
+    /// <returns>true if successful</returns>
+    public bool SplitEdge(int topologyEdgeIndex, double t)
+    {
+      Line l = EdgeLine(topologyEdgeIndex);
+      if (!l.IsValid)
+        return false;
+      Point3d point = l.PointAt(t);
+      return SplitEdge(topologyEdgeIndex, point);
+    }
+
+    /// <summary>
+    /// Divides a mesh edge to create two or more triangles
+    /// </summary>
+    /// <param name="topologyEdgeIndex">Edge to divide</param>
+    /// <param name="point">
+    /// Location to perform the split
+    /// </param>
+    /// <returns>true if successful</returns>
+    public bool SplitEdge(int topologyEdgeIndex, Point3d point)
+    {
+      IntPtr pMesh = m_mesh.NonConstPointer();
+      return UnsafeNativeMethods.ON_Mesh_SplitMeshEdge(pMesh, topologyEdgeIndex, point);
+    }
+
+    /// <summary>
     /// Determines if a mesh edge index is valid input for <see cref="SwapEdge"/>.
     /// </summary>
     /// <param name="topologyEdgeIndex">An index of a topology edge in <see cref="Mesh.TopologyEdges"/>.</param>

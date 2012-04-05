@@ -732,6 +732,7 @@ namespace Rhino.Runtime
         string dateformat = Marshal.PtrToStringUni(format);
         System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo(locale_id);
         DateTime dt = new DateTime(year, month, day, hour, min, sec);
+        dt = dt.ToLocalTime();
         string s = string.IsNullOrEmpty(dateformat) ? dt.ToString(ci) : dt.ToString(dateformat, ci);
         UnsafeNativeMethods.ON_wString_Set(pResultString, s);
         rc = 1;
@@ -830,7 +831,7 @@ namespace Rhino.Runtime
       */
     }
 
-    private static bool m_rhinocommoninitialized = false;
+    private static bool m_rhinocommoninitialized;
     /// <summary>
     /// Makes sure all static RhinoCommon components is set up correctly. 
     /// This happens automatically when a plug-in is loaded, so you probably won't 

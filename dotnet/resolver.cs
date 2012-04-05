@@ -204,12 +204,50 @@ namespace Rhino.Runtime
       #region IComparer<string> Members
       public int Compare(string x, string y)
       {
-        //This can be made a lot smarter with substring searches.
-        x = System.IO.Path.GetFileName(x);
-        y = System.IO.Path.GetFileName(y);
+        bool x_exists = System.IO.File.Exists(x);
+        bool y_exists = System.IO.File.Exists(y);
+        if (!x_exists && !y_exists)
+          return 0;
+        if (!x_exists)
+          return 1;
+        if (!y_exists)
+          return -1;
 
-        int index_x = x.IndexOf(m_search, StringComparison.OrdinalIgnoreCase);
-        int index_y = y.IndexOf(m_search, StringComparison.OrdinalIgnoreCase);
+        //This can be made a lot smarter with substring searches.
+        string filename_x = System.IO.Path.GetFileName(x);
+        string filename_y = System.IO.Path.GetFileName(y);
+
+        int index_x = filename_x.IndexOf(m_search, StringComparison.OrdinalIgnoreCase);
+        int index_y = filename_y.IndexOf(m_search, StringComparison.OrdinalIgnoreCase);
+
+        // 4 April 2012 - S. Baer
+        // If the file names are the same, the highest version number or most
+        // recent file date is sorted to the top.  Plug-ins like PanelingTools
+        // have historically moved around on where they are installed on a user's
+        // computer, so we may end up with duplicates
+        if (index_x>=0 && index_y>=0 && string.Compare(filename_x, filename_y, StringComparison.OrdinalIgnoreCase) == 0)
+        {
+          try
+          {
+            var assembly_x = Assembly.ReflectionOnlyLoadFrom(x);
+            var assembly_y = Assembly.ReflectionOnlyLoadFrom(y);
+            Version version_x = assembly_x.GetName().Version;
+            Version version_y = assembly_y.GetName().Version;
+            int rc = version_x.CompareTo(version_y);
+            if( rc!=0 )
+              return rc;
+            //same version. try using the file date
+            FileInfo info_x = new FileInfo(x);
+            FileInfo info_y = new FileInfo(y);
+            rc = info_x.LastAccessTimeUtc.CompareTo(info_y.LastAccessTimeUtc);
+            if( rc!=0 )
+              return rc;
+          }
+          catch (Exception ex)
+          {
+            Rhino.Runtime.HostUtils.ExceptionReport("duplicate assembly resolve", ex);
+          }
+        }
 
         if (index_x < 0) { index_x = int.MaxValue; }
         if (index_y < 0) { index_y = int.MaxValue; }

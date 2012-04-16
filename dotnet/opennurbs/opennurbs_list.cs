@@ -61,8 +61,8 @@ namespace Rhino.Collections
 
   }
 
-  
-  
+
+
   /// <summary>
   /// Represents a list of generic data. This class is similar to System.Collections.Generic.List(T) 
   /// but exposes a few more methods.
@@ -224,6 +224,7 @@ namespace Rhino.Collections
     /// </summary>
     /// <remarks>This function differs from the DotNET implementation of List&lt;T&gt; 
     /// since that one only trims the excess if the excess exceeds 10% of the list length.</remarks>
+    [DebuggerStepThrough()]
     public void TrimExcess()
     {
       Capacity = m_size;
@@ -232,19 +233,20 @@ namespace Rhino.Collections
     /// <summary>
     /// Gets or sets the total number of elements the internal data structure can hold without resizing.
     /// </summary>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public int Capacity
     {
+      [DebuggerStepThrough()]
       get
       {
         return m_items.Length;
       }
+      [DebuggerStepThrough()]
       set
       {
         if (value != m_items.Length)
         {
           if (value < m_size)
-            throw new ArgumentOutOfRangeException("value","Capacity must be larger than or equal to the list Count");
+            throw new ArgumentOutOfRangeException("value", "Capacity must be larger than or equal to the list Count");
 
           if (value > 0)
           {
@@ -266,9 +268,9 @@ namespace Rhino.Collections
     /// <summary>
     /// Gets the number of elements actually contained in the List.
     /// </summary>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public int Count
     {
+      [DebuggerStepThrough()]
       get
       {
         return m_size;
@@ -277,10 +279,11 @@ namespace Rhino.Collections
 
     /// <summary>
     /// Gets the number of null references (Nothing in Visual Basic) in this list. 
-    /// If T is a valuetype, this property always return zero.
+    /// If T is a ValueType, this property always return zero.
     /// </summary>
     public int NullCount
     {
+      [DebuggerStepThrough()]
       get
       {
         Type Tt = typeof(T);
@@ -301,9 +304,9 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="index">The zero-based index of the element to get or set.</param>
     /// <returns>The element at the specified index.</returns>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public T this[int index]
     {
+      [DebuggerStepThrough()]
       get
       {
         // IronPython seems to expect IndexOutOfRangeExceptions with
@@ -311,6 +314,7 @@ namespace Rhino.Collections
         if (index >= m_size) { throw new IndexOutOfRangeException("index"); }
         return m_items[index];
       }
+      [DebuggerStepThrough()]
       set
       {
         if (index >= m_size) { throw new IndexOutOfRangeException("You cannot set items which do not yet exist, consider using Insert or Add instead."); }
@@ -325,13 +329,14 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="index">The zero-based index of the element to get or set.</param>
     /// <returns>The element at the specified index.</returns>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     object IList.this[int index]
     {
+      [DebuggerStepThrough()]
       get
       {
         return this[index];
       }
+      [DebuggerStepThrough()]
       set
       {
         RhinoList<T>.VerifyValueType(value);
@@ -342,20 +347,22 @@ namespace Rhino.Collections
     /// <summary>
     /// Gets or sets the first item in the list. This is synonymous to calling List[0].
     /// </summary>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public T First
     {
+      [DebuggerStepThrough()]
       get { return this[0]; }
+      [DebuggerStepThrough()]
       set { this[0] = value; }
     }
 
     /// <summary>
     /// Gets or sets the last item in the list. This is synonymous to calling List[Count-1].
     /// </summary>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public T Last
     {
+      [DebuggerStepThrough()]
       get { return this[m_size - 1]; }
+      [DebuggerStepThrough()]
       set { this[m_size - 1] = value; }
     }
 
@@ -364,6 +371,7 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="index">Index to remap.</param>
     /// <returns>Remapped index.</returns>
+    [DebuggerStepThrough()]
     public int RemapIndex(int index)
     {
       int c = index % (m_size - 1);
@@ -518,7 +526,7 @@ namespace Rhino.Collections
             "You cannot add an object of type {0} to a list of type {1}",
             import_type,
             local_type);
-          throw new InvalidCastException( msg );
+          throw new InvalidCastException(msg);
         }
       }
     }
@@ -1913,8 +1921,8 @@ namespace Rhino.Collections
       {
         Point3d p = list[i];
         double dSquared = (p.X - testPoint.X) * (p.X - testPoint.X) +
-                   (p.Y - testPoint.Y) * (p.Y - testPoint.Y) +
-                   (p.Z - testPoint.Z) * (p.Z - testPoint.Z);
+                          (p.Y - testPoint.Y) * (p.Y - testPoint.Y) +
+                          (p.Z - testPoint.Z) * (p.Z - testPoint.Z);
 
         //quick abort in case of exact match
         if (dSquared == 0.0)

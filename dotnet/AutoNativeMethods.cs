@@ -3129,11 +3129,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_TextureMapping_SetBoxMapping(IntPtr pTextureMapping, ref Plane plane, Interval dx, Interval dy, Interval dz, [MarshalAs(UnmanagedType.U1)]bool capped);
-
-  //bool ON_Mesh_SplitMeshEdge(ON_Mesh* pMesh, int edge_index, ON_3DPOINT_STRUCT point)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Mesh_SplitMeshEdge(IntPtr pMesh, int edge_index, Point3d point);
   #endregion
 
 
@@ -8070,6 +8065,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_material.cpp
+  //const CRhinoMaterial* CRhinoMaterial_DefaultMaterial()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoMaterial_DefaultMaterial();
+
   //bool CRhinoMaterial_GetBool( const CRhinoMaterial* pConstRhinoMaterial, int which )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -8373,6 +8372,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoObjRef_New2(IntPtr pRhinoObject);
 
+  //CRhinoObjRef* CRhinoObjRef_New3(const CRhinoObject* pConstRhinoObject, const ON_Geometry* pConstGeometry)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoObjRef_New3(IntPtr pConstRhinoObject, IntPtr pConstGeometry);
+
   //CRhinoObjRef* CRhinoObjRef_Copy(const CRhinoObjRef* pOther)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoObjRef_Copy(IntPtr pOther);
@@ -8596,6 +8599,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoObject_ShortDescription(IntPtr pConstRhinoObject, IntPtr pString, [MarshalAs(UnmanagedType.U1)]bool plural);
 
+  //void CRhinoObject_GetRenderMeshParameters(const CRhinoObject* pConstRhinoObject, ON_MeshParameters* pMeshParameters)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoObject_GetRenderMeshParameters(IntPtr pConstRhinoObject, IntPtr pMeshParameters);
+
   //CRhCmnGripObject* CRhCmnGripObject_New()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhCmnGripObject_New();
@@ -8630,8 +8637,26 @@ internal partial class UnsafeNativeMethods
   //void CRhinoObject_SetCallbacks(RHINOOBJECT_DUPLICATEPROC duplicate,
   //                                             RHINOOBJECT_DRAWPROC draw,
   //                                             RHINOOBJECT_DOCNOTIFYPROC doc_notify,
-  //                                             RHINOOBJECT_ACTIVEINVIEWPORTPROC active_in_viewport)
+  //                                             RHINOOBJECT_ACTIVEINVIEWPORTPROC active_in_viewport,
+  //                                             RHINOOBJECT_SELECTPROC selection_changed)
   // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //bool CRhinoObject_IsMeshable(const CRhinoObject* pConstRhinoObject, int mesh_type)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoObject_IsMeshable(IntPtr pConstRhinoObject, int mesh_type);
+
+  //int CRhinoObject_MeshCount(const CRhinoObject* pConstRhinoObject, int mesh_type, const ON_MeshParameters* pConstMeshParameters)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoObject_MeshCount(IntPtr pConstRhinoObject, int mesh_type, IntPtr pConstMeshParameters);
+
+  //void CRhinoObject_GetMeshes(const CRhinoObject* pConstRhinoObject, ON_SimpleArray<const ON_Mesh*>* pMeshArray, int mesh_type)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoObject_GetMeshes(IntPtr pConstRhinoObject, IntPtr pMeshArray, int mesh_type);
+
+  //int CRhinoObject_CreateMeshes(CRhinoObject* pRhinoObject, int mesh_type, const ON_MeshParameters* pConstMeshParameters, bool ignore_custom)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoObject_CreateMeshes(IntPtr pRhinoObject, int mesh_type, IntPtr pConstMeshParameters, [MarshalAs(UnmanagedType.U1)]bool ignore_custom);
 
   //void CRhinoObject_Draw(const CRhinoObject* pConstRhinoObject, CRhinoDisplayPipeline* pPipeline)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -10296,6 +10321,11 @@ internal partial class UnsafeNativeMethods
   //int TL_Brep_PointIsOnFace( const ON_Brep* pConstBrep, int faceIndex, double u, double v )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int TL_Brep_PointIsOnFace(IntPtr pConstBrep, int faceIndex, double u, double v);
+
+  //bool ON_Mesh_SplitMeshEdge(ON_Mesh* pMesh, int edge_index, ON_3DPOINT_STRUCT point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Mesh_SplitMeshEdge(IntPtr pMesh, int edge_index, Point3d point);
   #endregion
 
 

@@ -172,7 +172,7 @@ namespace Rhino.Runtime
       {
         if (m_theSingleSkin != null && m_theSingleSkin.m_SettingsManager != null)
         {
-          if (m_theSingleSkin.m_SettingsManager.m_plugin == null)
+          if (m_theSingleSkin.m_SettingsManager.m_plugin_id == Guid.Empty)
             m_theSingleSkin.m_SettingsManager.WriteSettings();
         }
       }
@@ -539,7 +539,10 @@ namespace Rhino.Runtime
     /// </summary>
     public static event ExceptionReportDelegate OnExceptionReport;
 
-
+    // April 4, 2012 Tim
+    // If you don't explicitly set this to null, even though it gets initialized to null, you get compiler
+    // warnings in the build process.  This makes Dale jumpy.  So, don't remove the "= null", even though it 
+    // isn't necessary.
     static System.Windows.Forms.Form m_invoke_window = null;
     static void CreateInvokeWindow()
     {

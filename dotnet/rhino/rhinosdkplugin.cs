@@ -783,19 +783,33 @@ namespace Rhino.PlugIns
       return plugin_name;
     }
 
-    internal static string SettingsDirectoryHelper(bool bLocalUser, System.Reflection.Assembly assembly)
+    static string PlugInNameFromId(Guid pluginId)
+    {
+      Dictionary<Guid,string>plugins = PlugIn.GetInstalledPlugIns();
+      string result;
+      plugins.TryGetValue(pluginId, out result);
+      return result;
+    }
+
+    internal static string SettingsDirectoryHelper(bool bLocalUser, System.Reflection.Assembly assembly, Guid pluginId)
     {
       string result = null;
       string path = null;
       if (HostUtils.RunningOnWindows)
       {
-        string name = PlugInNameFromAssembly(assembly);
-        object[] idAttr = assembly.GetCustomAttributes(typeof(GuidAttribute), false);
-        GuidAttribute idattr = (GuidAttribute)(idAttr[0]);
-        Guid id = new Guid(idattr.Value);
+        string name = string.Empty;
+        if (null == assembly)
+          name = PlugInNameFromId(pluginId);
+        else
+        {
+          name = PlugInNameFromAssembly(assembly);
+          object[] idAttr = assembly.GetCustomAttributes(typeof(GuidAttribute), false);
+          GuidAttribute idattr = (GuidAttribute)(idAttr[0]);
+          pluginId = new Guid(idattr.Value);
+        }
 
         System.Globalization.CultureInfo ci = System.Globalization.CultureInfo.InvariantCulture;
-        string pluginName = string.Format(ci, "{0} ({1})", name, id.ToString().ToLower(ci));
+        string pluginName = string.Format(ci, "{0} ({1})", name, pluginId.ToString().ToLower(ci));
         // remove invalid characters from string
         char[] invalid_chars = System.IO.Path.GetInvalidFileNameChars();
         int index = pluginName.IndexOfAny(invalid_chars);
@@ -811,8 +825,16 @@ namespace Rhino.PlugIns
       }
       else if (HostUtils.RunningOnOSX)
       {
-        // put the settings directory next to the rhp
-        path = System.IO.Path.GetDirectoryName(assembly.Location);
+        if (null == assembly)
+        {
+          // TODO: Add support for settings classes in plug-in SDK dll's
+          throw new NotImplementedException("Tell steve@mcneel.com about this");
+        }
+        else
+        {
+          // put the settings directory next to the rhp
+          path = System.IO.Path.GetDirectoryName(assembly.Location);
+        }
       }
       if (path != null)
         result = System.IO.Path.Combine(path, "settings");

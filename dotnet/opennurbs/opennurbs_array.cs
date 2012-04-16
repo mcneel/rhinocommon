@@ -1003,6 +1003,23 @@ namespace Rhino.Runtime.InteropWrappers
       }
       return rc;
     }
+
+    internal Geometry.Mesh[] ToConstArray(Rhino.DocObjects.RhinoObject parent)
+    {
+      int count = Count;
+      if (count < 1)
+        return new Geometry.Mesh[0];
+      IntPtr ptr = ConstPointer();
+
+      Mesh[] rc = new Mesh[count];
+      for (int i = 0; i < rc.Length; i++)
+      {
+        IntPtr pMesh = UnsafeNativeMethods.ON_MeshArray_Get(ptr, i);
+        Rhino.DocObjects.ObjRef objref = new DocObjects.ObjRef(parent, pMesh);
+        rc[i] = objref.Mesh();
+      }
+      return rc;
+    }
   }
 
   /// <summary>

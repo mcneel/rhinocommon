@@ -1123,6 +1123,89 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
+    /// Returns true if the object is capable of having a mesh of the specified type
+    /// </summary>
+    /// <param name="meshType"></param>
+    /// <returns></returns>
+    public virtual bool IsMeshable(Rhino.Geometry.MeshType meshType)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.CRhinoObject_IsMeshable(pConstThis, (int)meshType);
+    }
+
+    /// <summary>
+    /// Meshing parameters that this object uses for generating render meshes. If the
+    /// object's attributes do not have custom meshing parameters, then the document's
+    /// meshing parameters are used.
+    /// </summary>
+    /// <returns></returns>
+    public MeshingParameters GetRenderMeshParameters()
+    {
+      MeshingParameters rc = new MeshingParameters();
+      IntPtr pMeshingParameters = rc.NonConstPointer();
+      IntPtr pConstThis = ConstPointer();
+      UnsafeNativeMethods.CRhinoObject_GetRenderMeshParameters(pConstThis, pMeshingParameters);
+      return rc;
+    }
+
+    /// <summary>
+    /// RhinoObjects can have several different types of meshes and 
+    /// different numbers of meshes.  A b-rep can have a render and 
+    /// an analysis mesh on each face.  A mesh object has a single 
+    /// render mesh and no analysis mesh. Curve, point, and annotation
+    /// objects have no meshes.
+    /// </summary>
+    /// <param name="meshType">type of mesh to count</param>
+    /// <param name="parameters">
+    /// if not null and if the object can change its mesh (like a brep),
+    /// then only meshes that were created with these mesh parameters are counted.
+    /// </param>
+    /// <returns>number of meshes</returns>
+    public virtual int MeshCount(MeshType meshType, MeshingParameters parameters)
+    {
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pMeshParameters = IntPtr.Zero;
+      if (parameters != null)
+        pMeshParameters = parameters.ConstPointer();
+      return UnsafeNativeMethods.CRhinoObject_MeshCount(pConstThis, (int)meshType, pMeshParameters);
+    }
+
+    /// <summary>
+    /// Create meshes used to render and analyze surface and polysrf objects.
+    /// </summary>
+    /// <param name="meshType">type of meshes to create</param>
+    /// <param name="parameters">
+    /// in parameters that control the quality of the meshes that are created
+    /// </param>
+    /// <param name="ignoreCustomParameters">
+    /// Default should be false. Should the object ignore any custom meshing
+    /// parameters on the object's attributes
+    /// </param>
+    /// <returns>number of meshes created</returns>
+    public virtual int CreateMeshes(MeshType meshType, MeshingParameters parameters, bool ignoreCustomParameters)
+    {
+      IntPtr pThis = NonConstPointer_I_KnowWhatImDoing();
+      IntPtr pConstMeshParameters = parameters.ConstPointer();
+      return UnsafeNativeMethods.CRhinoObject_CreateMeshes(pThis, (int)meshType, pConstMeshParameters, ignoreCustomParameters);
+    }
+
+    /// <summary>
+    /// Get existing meshes used to render and analyze surface and polysrf objects.
+    /// </summary>
+    /// <param name="meshType"></param>
+    /// <returns></returns>
+    public virtual Mesh[] GetMeshes(MeshType meshType)
+    {
+      using (var mesh_array = new Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer())
+      {
+        IntPtr pMeshArray = mesh_array.NonConstPointer();
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.CRhinoObject_GetMeshes(pConstThis, pMeshArray, (int)meshType);
+        return mesh_array.ToConstArray(this);
+      }
+    }
+
+    /// <summary>
     /// Gets an array of subobjects.
     /// </summary>
     /// <returns>An array of subobjects, or null if there are none.</returns>
@@ -1292,6 +1375,12 @@ namespace Rhino.DocObjects
     internal ObjRef(IntPtr pOtherObjRef)
     {
       m_ptr = UnsafeNativeMethods.CRhinoObjRef_Copy(pOtherObjRef);
+    }
+
+    internal ObjRef(RhinoObject parent, IntPtr pGeometry)
+    {
+      IntPtr pParent = parent.ConstPointer();
+      m_ptr = UnsafeNativeMethods.CRhinoObjRef_New3(pParent, pGeometry);
     }
 
     /// <summary>

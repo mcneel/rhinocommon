@@ -15,6 +15,8 @@ namespace Rhino.DocObjects
     readonly Guid m_id=Guid.Empty;
 #if RHINO_SDK
     readonly RhinoDoc m_doc;
+    bool m_is_default;
+    static Material m_default_material;
 #endif
     #endregion
 
@@ -31,6 +33,25 @@ namespace Rhino.DocObjects
       m_id = UnsafeNativeMethods.CRhinoMaterialTable_GetMaterialId(doc.m_docId, index);
       m_doc = doc;
       m__parent = m_doc;
+    }
+
+    public static Material DefaultMaterial
+    {
+      get
+      {
+        if (m_default_material == null || !m_default_material.IsDocumentControlled)
+          m_default_material = new Material(true);
+        return m_default_material;
+      }
+    }
+
+    Material(bool defaultMaterial)
+    {
+      IntPtr pConstThis = UnsafeNativeMethods.CRhinoMaterial_DefaultMaterial();
+      m_is_default = true;
+      m_id = UnsafeNativeMethods.ON_Material_ModelObjectId(pConstThis);
+      m_doc = null;
+      m__parent = null;
     }
 #endif
 
@@ -59,6 +80,8 @@ namespace Rhino.DocObjects
     internal override IntPtr _InternalGetConstPointer()
     {
 #if RHINO_SDK
+      if( m_is_default )
+        return UnsafeNativeMethods.CRhinoMaterial_DefaultMaterial();
       if (m_doc != null)
         return UnsafeNativeMethods.CRhinoMaterialTable_GetMaterialPointer(m_doc.m_docId, m_id);
 #endif
@@ -71,7 +94,11 @@ namespace Rhino.DocObjects
       IntPtr pConstPointer = ConstPointer();
       return UnsafeNativeMethods.ON_Object_Duplicate(pConstPointer);
     }
-
+    protected override void OnSwitchToNonConst()
+    {
+      m_is_default = false;
+      base.OnSwitchToNonConst();
+    }
     #region properties
     const int idxIsDeleted = 0;
     const int idxIsReference = 1;

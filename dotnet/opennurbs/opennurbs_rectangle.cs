@@ -249,6 +249,7 @@ namespace Rhino.Geometry
       get
       {
         BoundingBox box = new BoundingBox(Corner(0), Corner(1));
+        box.MakeValid();
         box.Union(Corner(2));
         box.Union(Corner(3));
         return box;

@@ -571,6 +571,13 @@ namespace Rhino
     }
 
     private readonly PersistentSettings AllUserSettings;
+
+    public PersistentSettings FromPlugInId(Guid pluginId)
+    {
+      PersistentSettingsManager manager = PersistentSettingsManager.Create(pluginId);
+      return manager.PluginSettings;
+    }
+
     public PersistentSettings(PersistentSettings allUserSettings)
     {
       AllUserSettings = allUserSettings;
@@ -1451,7 +1458,8 @@ namespace Rhino
 #if RHINO_SDK
   class PlugInSettings
   {
-    private readonly System.Reflection.Assembly m_assembly; // plugin or skin assembly
+    private readonly System.Reflection.Assembly m_assembly; // plug-in or skin assembly
+    private readonly Guid m_plugin_id;
     private readonly PlugInSettings AllUserSettings;
     private PersistentSettings m_PluginSettings; // = null; initialized by runtime
     private Dictionary<string, PersistentSettings> m_CommandSettingsDict; // = null; initialized by runtime
@@ -1472,7 +1480,7 @@ namespace Rhino
     /// </summary>
     private string SettingsFileFolder(bool localSettings)
     {
-      return Rhino.PlugIns.PlugIn.SettingsDirectoryHelper(localSettings, m_assembly);
+      return Rhino.PlugIns.PlugIn.SettingsDirectoryHelper(localSettings, m_assembly, m_plugin_id);
     }
     /// <summary>
     /// Computes full path to settings file to read or write.
@@ -1483,11 +1491,21 @@ namespace Rhino
     }
 
     /// <summary>PersistentSettingsManager constructor.</summary>
-    /// <param name="pluginAssembly">Requires a valid PlugIn object to attach to.</param>
+    /// <param name="pluginAssembly">Requires a valid Skin, DLL or PlugIn object to attach to.</param>
+    /// <param name="pluginId">Requires a PlugIn Id to attach to.</param>
     /// <param name="allUserSettings">All user setting to compare for changes.</param>
-    internal PlugInSettings(System.Reflection.Assembly pluginAssembly, PlugInSettings allUserSettings)
+    internal PlugInSettings(System.Reflection.Assembly pluginAssembly, Guid pluginId, PlugInSettings allUserSettings)
     {
       m_assembly = pluginAssembly;
+      m_plugin_id = pluginId;
+      AllUserSettings = allUserSettings;
+    }
+    /// <summary>PersistentSettingsManager constructor</summary>
+    /// <param name="pluginId"></param>
+    /// <param name="allUserSettings"></param>
+    internal PlugInSettings(Guid pluginId, PlugInSettings allUserSettings)
+    {
+      m_plugin_id = pluginId;
       AllUserSettings = allUserSettings;
     }
     /// <summary>
@@ -1527,7 +1545,10 @@ namespace Rhino
       m_CommandSettingsDict[name] = new PersistentSettings(AllUserCommandSettings(name));
       return m_CommandSettingsDict[name];
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public bool ReadSettings()
     {
       bool result = false;
@@ -1894,50 +1915,93 @@ namespace Rhino
   class PersistentSettingsManager
   {
     static readonly List<PersistentSettingsManager> m_all_managers = new List<PersistentSettingsManager>();
-    readonly System.Reflection.Assembly m_assembly;
-    internal Rhino.PlugIns.PlugIn m_plugin;
-
+    System.Reflection.Assembly m_assembly;
+    /// <summary>
+    /// If this settings PersistentSettingsManager is created by plug-in provided DLL then save the plug-in ID
+    /// so that when the plug-in requests its setting it will get the same PersistentSettingsManager
+    /// </summary>
+    internal readonly Guid m_plugin_id;
     private readonly PlugInSettings SettingsLocal;
+
     /// <summary>
     /// PersistentSettingsManager constructor.
     /// </summary>
-    /// <param name="plugin">Requires a valid PlugIn object to attach to.</param>
-    PersistentSettingsManager(Rhino.PlugIns.PlugIn plugin)
+    /// <param name="assembly">Requires a valid Assembly object to attach to.</param>
+    /// <param name="pluginId">Optional plug-in Id which identifies the plug-in associated with this settings class.</param>
+    PersistentSettingsManager(System.Reflection.Assembly assembly, Guid pluginId)
     {
-      m_assembly = plugin.Assembly;
-      SettingsLocal = new PlugInSettings(m_assembly, new PlugInSettings(m_assembly, null));
+      m_assembly = assembly;
+      m_plugin_id = pluginId;
+      SettingsLocal = new PlugInSettings(m_assembly, m_plugin_id, new PlugInSettings(m_assembly, m_plugin_id, null));
     }
-
+    /// <summary>
+    /// PersistentSettingsManager constructor.
+    /// </summary>
+    /// <param name="pluginId">Requires a valid pluginId to attach to</param>
+    PersistentSettingsManager(Guid pluginId)
+    {
+      m_plugin_id = pluginId;
+      SettingsLocal = new PlugInSettings(pluginId, new PlugInSettings(pluginId, null));
+    }
+    /// <summary>
+    /// PersistentSettingsManager constructor.
+    /// </summary>
+    /// <param name="skin"></param>
     PersistentSettingsManager(Rhino.Runtime.Skin skin)
     {
-      m_assembly = skin.GetType().Assembly;
-      SettingsLocal = new PlugInSettings(m_assembly, new PlugInSettings(m_assembly, null));
+      m_plugin_id = Guid.Empty;
+      System.Reflection.Assembly assembly = skin.GetType().Assembly;
+      SettingsLocal = new PlugInSettings(assembly, m_plugin_id, new PlugInSettings(assembly, m_plugin_id, null));
     }
-
-    public static PersistentSettingsManager Create(Rhino.PlugIns.PlugIn plugin)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="pluginId"></param>
+    /// <returns></returns>
+    public static PersistentSettingsManager Create(Guid pluginId)
     {
       for (int i = 0; i < m_all_managers.Count; i++)
-      {
-        if (m_all_managers[i].m_assembly == plugin.Assembly)
-        {
-          m_all_managers[i].m_plugin = plugin;
+        if (m_all_managers[i].m_plugin_id == pluginId)
           return m_all_managers[i];
-        }
-      }
-      var ps = new PersistentSettingsManager(plugin);
-      ps.m_plugin = plugin;
+      var ps = new PersistentSettingsManager(pluginId);
       m_all_managers.Add(ps);
       return ps;
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="plugin"></param>
+    /// <returns></returns>
+    public static PersistentSettingsManager Create(Rhino.PlugIns.PlugIn plugin)
+    {
+      Guid pluginId = plugin.Id;
+      System.Reflection.Assembly assembly = plugin.GetType().Assembly;
+      for (int i = 0; i < m_all_managers.Count; i++)
+      {
+        if (m_all_managers[i].m_assembly == assembly || m_all_managers[i].m_plugin_id == pluginId)
+        {
+          m_all_managers[i].m_assembly = assembly;
+          return m_all_managers[i];
+        }
+      }
+      var ps = new PersistentSettingsManager(assembly, pluginId);
+      m_all_managers.Add(ps);
+      return ps;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="skin"></param>
+    /// <returns></returns>
     public static PersistentSettingsManager Create(Rhino.Runtime.Skin skin)
     {
       System.Reflection.Assembly assembly = skin.GetType().Assembly;
       for (int i = 0; i < m_all_managers.Count; i++)
-      {
         if (m_all_managers[i].m_assembly == assembly)
           return m_all_managers[i];
-      }
-      var ps = new PersistentSettingsManager(skin);
+      var ps = new PersistentSettingsManager(assembly, Guid.Empty);
       m_all_managers.Add(ps);
       return ps;
     }

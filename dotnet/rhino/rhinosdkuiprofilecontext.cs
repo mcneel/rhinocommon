@@ -572,7 +572,7 @@ namespace Rhino
 
     private readonly PersistentSettings AllUserSettings;
 
-    public PersistentSettings FromPlugInId(Guid pluginId)
+    public static PersistentSettings FromPlugInId(Guid pluginId)
     {
       PersistentSettingsManager manager = PersistentSettingsManager.Create(pluginId);
       return manager.PluginSettings;

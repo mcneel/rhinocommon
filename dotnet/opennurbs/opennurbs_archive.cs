@@ -93,6 +93,7 @@ namespace Rhino.Collections
     int m_version;
     string m_name;
     readonly System.Collections.Generic.Dictionary<string, DictionaryItem> m_items = new Dictionary<string, DictionaryItem>();
+    Rhino.DocObjects.Custom.UserData m_parent_userdata;
 
     /// <summary>
     /// Gets or sets the version of this <see cref="ArchivableDictionary"/>.
@@ -129,6 +130,17 @@ namespace Rhino.Collections
       m_name = String.Empty;
     }
 
+    /// <summary>Initializes an instance of a dictionary for writing to a 3dm archive</summary>
+    /// <param name="parentUserData">
+    /// parent user data if this dictionary is associated with user data
+    /// </param>
+    public ArchivableDictionary(Rhino.DocObjects.Custom.UserData parentUserData)
+    {
+      m_parent_userdata = parentUserData;
+      m_version = 0;
+      m_name = String.Empty;
+    }
+
     /// <summary>Initializes an instance of a dictionary for writing to a 3dm archive.</summary>
     /// <param name="version">
     /// Custom version used to help the plug-in developer determine which version of
@@ -156,6 +168,35 @@ namespace Rhino.Collections
     {
       m_version = version;
       m_name = String.IsNullOrEmpty(name) ? String.Empty : name;
+    }
+
+    /// <summary>
+    /// If this dictionary is part of userdata (or is a UserDictionary), then
+    /// this is the parent user data. null if this dictionary is not part of
+    /// userdata
+    /// </summary>
+    public Rhino.DocObjects.Custom.UserData ParentUserData
+    {
+      get { return m_parent_userdata; }
+    }
+
+    /// <summary>
+    /// Recursively sets the parent user data for this dictionary
+    /// </summary>
+    /// <param name="parent"></param>
+    internal void SetParentUserData(Rhino.DocObjects.Custom.UserData parent)
+    {
+      m_parent_userdata = parent;
+      object[] values = Values;
+      if (values != null)
+      {
+        for (int i = 0; i < values.Length; i++)
+        {
+          ArchivableDictionary dict = values[i] as ArchivableDictionary;
+          if (dict != null)
+            dict.SetParentUserData(parent);
+        }
+      }
     }
 
     ///<summary>Reads a dictionary from an archive.</summary>

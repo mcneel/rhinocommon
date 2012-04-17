@@ -821,7 +821,6 @@ namespace Rhino
 
 
 #region events
-
     internal delegate void DocumentCallback(int docId);
     private static DocumentCallback m_OnCloseDocumentCallback;
     private static DocumentCallback m_OnNewDocumentCallback;
@@ -927,25 +926,33 @@ namespace Rhino
       }
     }
 
+    private static object m_event_lock = new object();
     internal static EventHandler<DocumentEventArgs> m_close_document;
     public static event EventHandler<DocumentEventArgs> CloseDocument
     {
       add
       {
-        if (m_close_document == null)
+        lock (m_event_lock)
         {
-          m_OnCloseDocumentCallback = OnCloseDocument;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetCloseDocumentCallback(m_OnCloseDocumentCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_close_document == null)
+          {
+            m_OnCloseDocumentCallback = OnCloseDocument;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetCloseDocumentCallback(m_OnCloseDocumentCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_close_document -= value;
+          m_close_document += value;
         }
-        m_close_document += value;
       }
       remove
       {
-        m_close_document -= value;
-        if (m_close_document == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetCloseDocumentCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnCloseDocumentCallback = null;
+          m_close_document -= value;
+          if (m_close_document == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetCloseDocumentCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnCloseDocumentCallback = null;
+          }
         }
       }
     }
@@ -955,20 +962,27 @@ namespace Rhino
     {
       add
       {
-        if (m_new_document == null)
+        lock (m_event_lock)
         {
-          m_OnNewDocumentCallback = OnNewDocument;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetNewDocumentCallback(m_OnNewDocumentCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_new_document == null)
+          {
+            m_OnNewDocumentCallback = OnNewDocument;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetNewDocumentCallback(m_OnNewDocumentCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_new_document -= value;
+          m_new_document += value;
         }
-        m_new_document += value;
       }
       remove
       {
-        m_new_document -= value;
-        if (m_new_document == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetNewDocumentCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnNewDocumentCallback = null;
+          m_new_document -= value;
+          if (m_new_document == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetNewDocumentCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnNewDocumentCallback = null;
+          }
         }
       }
     }
@@ -978,20 +992,27 @@ namespace Rhino
     {
       add
       {
-        if (m_document_properties_changed == null)
+        lock (m_event_lock)
         {
-          m_OnDocumentPropertiesChanged = OnDocumentPropertiesChanged;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetDocPropChangeCallback(m_OnDocumentPropertiesChanged, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_document_properties_changed == null)
+          {
+            m_OnDocumentPropertiesChanged = OnDocumentPropertiesChanged;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetDocPropChangeCallback(m_OnDocumentPropertiesChanged, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_document_properties_changed -= value;
+          m_document_properties_changed += value;
         }
-        m_document_properties_changed += value;
       }
       remove
       {
-        m_document_properties_changed -= value;
-        if (m_document_properties_changed == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetDocPropChangeCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnDocumentPropertiesChanged = null;
+          m_document_properties_changed -= value;
+          if (m_document_properties_changed == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetDocPropChangeCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnDocumentPropertiesChanged = null;
+          }
         }
       }
     }
@@ -1005,20 +1026,27 @@ namespace Rhino
     {
       add
       {
-        if (m_begin_open_document == null)
+        lock (m_event_lock)
         {
-          m_OnBeginOpenDocument = OnBeginOpenDocument;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetBeginOpenDocumentCallback(m_OnBeginOpenDocument, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_begin_open_document == null)
+          {
+            m_OnBeginOpenDocument = OnBeginOpenDocument;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetBeginOpenDocumentCallback(m_OnBeginOpenDocument, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_begin_open_document -= value;
+          m_begin_open_document += value;
         }
-        m_begin_open_document += value;
       }
       remove
       {
-        m_begin_open_document -= value;
-        if (m_begin_open_document == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetBeginOpenDocumentCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnBeginOpenDocument = null;
+          m_begin_open_document -= value;
+          if (m_begin_open_document == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetBeginOpenDocumentCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnBeginOpenDocument = null;
+          }
         }
       }
     }
@@ -1028,20 +1056,27 @@ namespace Rhino
     {
       add
       {
-        if (m_end_open_document == null)
+        lock (m_event_lock)
         {
-          m_OnEndOpenDocument = OnEndOpenDocument;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetEndOpenDocumentCallback(m_OnEndOpenDocument, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_end_open_document == null)
+          {
+            m_OnEndOpenDocument = OnEndOpenDocument;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetEndOpenDocumentCallback(m_OnEndOpenDocument, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_end_open_document -= value;
+          m_end_open_document += value;
         }
-        m_end_open_document += value;
       }
       remove
       {
-        m_end_open_document -= value;
-        if (m_end_open_document == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetEndOpenDocumentCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnEndOpenDocument = null;
+          m_end_open_document -= value;
+          if (m_end_open_document == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetEndOpenDocumentCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnEndOpenDocument = null;
+          }
         }
       }
     }
@@ -1051,20 +1086,27 @@ namespace Rhino
     {
       add
       {
-        if (m_begin_save_document == null)
+        lock (m_event_lock)
         {
-          m_OnBeginSaveDocument = OnBeginSaveDocument;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetBeginSaveDocumentCallback(m_OnBeginSaveDocument, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_begin_save_document == null)
+          {
+            m_OnBeginSaveDocument = OnBeginSaveDocument;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetBeginSaveDocumentCallback(m_OnBeginSaveDocument, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_begin_save_document -= value;
+          m_begin_save_document += value;
         }
-        m_begin_save_document += value;
       }
       remove
       {
-        m_begin_save_document -= value;
-        if (m_begin_save_document == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetBeginSaveDocumentCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnBeginSaveDocument = null;
+          m_begin_save_document -= value;
+          if (m_begin_save_document == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetBeginSaveDocumentCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnBeginSaveDocument = null;
+          }
         }
       }
     }
@@ -1074,20 +1116,27 @@ namespace Rhino
     {
       add
       {
-        if (m_end_save_document == null)
+        lock (m_event_lock)
         {
-          m_OnEndSaveDocument = OnEndSaveDocument;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetEndSaveDocumentCallback(m_OnEndSaveDocument, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_end_save_document == null)
+          {
+            m_OnEndSaveDocument = OnEndSaveDocument;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetEndSaveDocumentCallback(m_OnEndSaveDocument, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_end_save_document -= value;
+          m_end_save_document += value;
         }
-        m_end_save_document += value;
       }
       remove
       {
-        m_end_save_document -= value;
-        if (m_end_save_document == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetEndSaveDocumentCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnEndSaveDocument = null;
+          m_end_save_document -= value;
+          if (m_end_save_document == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetEndSaveDocumentCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnEndSaveDocument = null;
+          }
         }
       }
     }
@@ -1120,20 +1169,27 @@ namespace Rhino
     {
       add
       {
-        if (m_add_object == null)
+        lock (m_event_lock)
         {
-          m_OnAddRhinoObject = OnAddObject;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetAddObjectCallback(m_OnAddRhinoObject, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_add_object == null)
+          {
+            m_OnAddRhinoObject = OnAddObject;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetAddObjectCallback(m_OnAddRhinoObject, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_add_object -= value;
+          m_add_object += value;
         }
-        m_add_object += value;
       }
       remove
       {
-        m_add_object -= value;
-        if (m_add_object == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetAddObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnAddRhinoObject = null;
+          m_add_object -= value;
+          if (m_add_object == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetAddObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnAddRhinoObject = null;
+          }
         }
       }
     }
@@ -1160,20 +1216,27 @@ namespace Rhino
     {
       add
       {
-        if (m_delete_object == null)
+        lock (m_event_lock)
         {
-          m_OnDeleteObjectCallback = OnDeleteObject;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetDeleteObjectCallback(m_OnDeleteObjectCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_delete_object == null)
+          {
+            m_OnDeleteObjectCallback = OnDeleteObject;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetDeleteObjectCallback(m_OnDeleteObjectCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_delete_object -= value;
+          m_delete_object += value;
         }
-        m_delete_object += value;
       }
       remove
       {
-        m_delete_object -= value;
-        if (m_delete_object == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetDeleteObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnDeleteObjectCallback = null;
+          m_delete_object -= value;
+          if (m_delete_object == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetDeleteObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnDeleteObjectCallback = null;
+          }
         }
       }
     }
@@ -1207,20 +1270,27 @@ namespace Rhino
     {
       add
       {
-        if (m_replace_object == null)
+        lock (m_event_lock)
         {
-          m_OnReplaceObject = OnReplaceObject;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetReplaceObjectCallback(m_OnReplaceObject, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_replace_object == null)
+          {
+            m_OnReplaceObject = OnReplaceObject;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetReplaceObjectCallback(m_OnReplaceObject, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_replace_object -= value;
+          m_replace_object += value;
         }
-        m_replace_object += value;
       }
       remove
       {
-        m_replace_object -= value;
-        if (m_replace_object == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetReplaceObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnReplaceObject = null;
+          m_replace_object -= value;
+          if (m_replace_object == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetReplaceObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnReplaceObject = null;
+          }
         }
       }
     }
@@ -1245,20 +1315,27 @@ namespace Rhino
     {
       add
       {
-        if (m_undelete_object == null)
+        lock (m_event_lock)
         {
-          m_OnUndeleteObject = OnUndeleteObject;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetUnDeleteObjectCallback(m_OnUndeleteObject, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_undelete_object == null)
+          {
+            m_OnUndeleteObject = OnUndeleteObject;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetUnDeleteObjectCallback(m_OnUndeleteObject, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_undelete_object -= value;
+          m_undelete_object += value;
         }
-        m_undelete_object += value;
       }
       remove
       {
-        m_undelete_object -= value;
-        if (m_undelete_object == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetUnDeleteObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnUndeleteObject = null;
+          m_undelete_object -= value;
+          if (m_undelete_object == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetUnDeleteObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnUndeleteObject = null;
+          }
         }
       }
     }
@@ -1285,20 +1362,27 @@ namespace Rhino
     {
       add
       {
-        if (m_purge_object == null)
+        lock (m_event_lock)
         {
-          m_OnPurgeObject = OnPurgeObject;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetPurgeObjectCallback(m_OnPurgeObject, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_purge_object == null)
+          {
+            m_OnPurgeObject = OnPurgeObject;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetPurgeObjectCallback(m_OnPurgeObject, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_purge_object -= value;
+          m_purge_object += value;
         }
-        m_purge_object += value;
       }
       remove
       {
-        m_purge_object -= value;
-        if (m_purge_object == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetPurgeObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnPurgeObject = null;
+          m_purge_object -= value;
+          if (m_purge_object == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetPurgeObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnPurgeObject = null;
+          }
         }
       }
     }
@@ -1344,20 +1428,27 @@ namespace Rhino
     {
       add
       {
-        if (m_select_objects == null)
+        lock (m_event_lock)
         {
-          m_OnSelectRhinoObjectCallback = OnSelectObject;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetSelectObjectCallback(m_OnSelectRhinoObjectCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_select_objects == null)
+          {
+            m_OnSelectRhinoObjectCallback = OnSelectObject;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetSelectObjectCallback(m_OnSelectRhinoObjectCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_select_objects -= value;
+          m_select_objects += value;
         }
-        m_select_objects += value;
       }
       remove
       {
-        m_select_objects -= value;
-        if (m_select_objects == null && m_deselect_objects == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetSelectObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnSelectRhinoObjectCallback = null;
+          m_select_objects -= value;
+          if (m_select_objects == null && m_deselect_objects == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetSelectObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnSelectRhinoObjectCallback = null;
+          }
         }
       }
     }
@@ -1369,20 +1460,27 @@ namespace Rhino
     {
       add
       {
-        if (m_deselect_objects == null)
+        lock (m_event_lock)
         {
-          m_OnSelectRhinoObjectCallback = OnSelectObject;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetSelectObjectCallback(m_OnSelectRhinoObjectCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_deselect_objects == null)
+          {
+            m_OnSelectRhinoObjectCallback = OnSelectObject;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetSelectObjectCallback(m_OnSelectRhinoObjectCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_deselect_objects -= value;
+          m_deselect_objects += value;
         }
-        m_deselect_objects += value;
       }
       remove
       {
-        m_deselect_objects -= value;
-        if (m_select_objects == null && m_deselect_objects == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetSelectObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnSelectRhinoObjectCallback = null;
+          m_deselect_objects -= value;
+          if (m_select_objects == null && m_deselect_objects == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetSelectObjectCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnSelectRhinoObjectCallback = null;
+          }
         }
       }
     }
@@ -1414,20 +1512,27 @@ namespace Rhino
     {
       add
       {
-        if (m_deselect_allobjects == null)
+        lock (m_event_lock)
         {
-          m_OnDeselectAllRhinoObjectsCallback = OnDeselectAllObjects;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetDeselectAllObjectsCallback(m_OnDeselectAllRhinoObjectsCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_deselect_allobjects == null)
+          {
+            m_OnDeselectAllRhinoObjectsCallback = OnDeselectAllObjects;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetDeselectAllObjectsCallback(m_OnDeselectAllRhinoObjectsCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_deselect_allobjects -= value;
+          m_deselect_allobjects += value;
         }
-        m_deselect_allobjects += value;
       }
       remove
       {
-        m_deselect_allobjects -= value;
-        if (m_deselect_allobjects == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetDeselectAllObjectsCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnDeselectAllRhinoObjectsCallback = null;
+          m_deselect_allobjects -= value;
+          if (m_deselect_allobjects == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetDeselectAllObjectsCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnDeselectAllRhinoObjectsCallback = null;
+          }
         }
       }
     }
@@ -1460,20 +1565,27 @@ namespace Rhino
     {
       add
       {
-        if (m_modify_object_attributes == null)
+        lock (m_event_lock)
         {
-          m_OnModifyObjectAttributesCallback = OnModifyObjectAttributes;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetModifyObjectAttributesCallback(m_OnModifyObjectAttributesCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_modify_object_attributes == null)
+          {
+            m_OnModifyObjectAttributesCallback = OnModifyObjectAttributes;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetModifyObjectAttributesCallback(m_OnModifyObjectAttributesCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_modify_object_attributes -= value;
+          m_modify_object_attributes += value;
         }
-        m_modify_object_attributes += value;
       }
       remove
       {
-        m_modify_object_attributes -= value;
-        if (m_modify_object_attributes == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetModifyObjectAttributesCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnModifyObjectAttributesCallback = null;
+          m_modify_object_attributes -= value;
+          if (m_modify_object_attributes == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetModifyObjectAttributesCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnModifyObjectAttributesCallback = null;
+          }
         }
       }
     }
@@ -1505,20 +1617,27 @@ namespace Rhino
     {
       add
       {
-        if (m_layer_table_event == null)
+        lock (m_event_lock)
         {
-          m_OnLayerTableEventCallback = OnLayerTableEvent;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetLayerTableEventCallback(m_OnLayerTableEventCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_layer_table_event == null)
+          {
+            m_OnLayerTableEventCallback = OnLayerTableEvent;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetLayerTableEventCallback(m_OnLayerTableEventCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_layer_table_event -= value;
+          m_layer_table_event += value;
         }
-        m_layer_table_event += value;
       }
       remove
       {
-        m_layer_table_event -= value;
-        if (m_layer_table_event == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetLayerTableEventCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnLayerTableEventCallback = null;
+          m_layer_table_event -= value;
+          if (m_layer_table_event == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetLayerTableEventCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnLayerTableEventCallback = null;
+          }
         }
       }
     }
@@ -1549,20 +1668,27 @@ namespace Rhino
     {
       add
       {
-        if (m_group_table_event == null)
+        lock (m_event_lock)
         {
-          m_OnGroupTableEventCallback = OnGroupTableEvent;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetGroupTableEventCallback(m_OnGroupTableEventCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_group_table_event == null)
+          {
+            m_OnGroupTableEventCallback = OnGroupTableEvent;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetGroupTableEventCallback(m_OnGroupTableEventCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_group_table_event -= value;
+          m_group_table_event += value;
         }
-        m_group_table_event += value;
       }
       remove
       {
-        m_group_table_event -= value;
-        if (m_group_table_event == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetGroupTableEventCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnGroupTableEventCallback = null;
+          m_group_table_event -= value;
+          if (m_group_table_event == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetGroupTableEventCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnGroupTableEventCallback = null;
+          }
         }
       }
     }

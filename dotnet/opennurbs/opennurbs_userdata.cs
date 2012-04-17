@@ -97,10 +97,14 @@ namespace Rhino.DocObjects.Custom
     protected virtual bool Read(Rhino.FileIO.BinaryArchiveReader archive) { return false; }
 
     /// <summary>
-    /// Is called when the object associated with this data is transformed.
+    /// Is called when the object associated with this data is transformed. If you override this
+    /// function, make sure to call the base class if you want the stored Transform to be updated.
     /// </summary>
     /// <param name="transform">The transform being applied.</param>
-    protected virtual void OnTransform(Rhino.Geometry.Transform transform) { }
+    protected virtual void OnTransform(Rhino.Geometry.Transform transform)
+    {
+      UnsafeNativeMethods.ON_UserData_OnTransform(m_pNativePointer, ref transform);
+    }
 
     /// <summary>
     /// Is called when the object is being duplicated.
@@ -331,6 +335,34 @@ namespace Rhino.DocObjects.Custom
         UnsafeNativeMethods.ON_UserDataHolder_MoveUserDataTo(id, pConstObject, append);
       }
     }
+
+    Rhino.Geometry.Transform m_cached_transform = Rhino.Geometry.Transform.Identity;
+    /// <summary>
+    /// Updated if user data is attached to a piece of geometry that is
+    /// transformed and the virtual OnTransform() is not overridden.  If you
+    /// override OnTransform() and want Transform to be updated, then call the 
+    /// base class OnTransform() in your override.
+    /// The default constructor sets Transform to the identity.
+    /// </summary>
+    public Rhino.Geometry.Transform Transform
+    {
+      get
+      {
+        if (IntPtr.Zero != m_pNativePointer)
+        {
+          UnsafeNativeMethods.ON_UserData_GetTransform(m_pNativePointer, ref m_cached_transform);
+        }
+        return m_cached_transform;
+      }
+      protected set
+      {
+        m_cached_transform = value;
+        if (IntPtr.Zero != m_pNativePointer)
+        {
+          UnsafeNativeMethods.ON_UserData_SetTransform(m_pNativePointer, ref m_cached_transform);
+        }
+      }
+    }
     #endregion
   }
 
@@ -434,7 +466,7 @@ namespace Rhino.DocObjects.Custom
     /// </summary>
     public Rhino.Collections.ArchivableDictionary Dictionary
     {
-      get { return m_dictionary??(m_dictionary=new Collections.ArchivableDictionary()); }
+      get { return m_dictionary??(m_dictionary=new Collections.ArchivableDictionary(this)); }
     }
 
     /// <summary>
@@ -456,7 +488,10 @@ namespace Rhino.DocObjects.Custom
     {
       UserDictionary dict = source as UserDictionary;
       if (dict != null)
+      {
         m_dictionary = dict.m_dictionary.Clone();
+        m_dictionary.SetParentUserData(this);
+      }
     }
 
     /// <summary>

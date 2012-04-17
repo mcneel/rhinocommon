@@ -807,6 +807,7 @@ namespace Rhino.Render
     const int idxRenderIsoparams = 6;
     const int idxRenderMeshEdges = 7;
     const int idxRenderAnnotation = 8;
+    const int idxUseViewportSize = 9;
 
     /// <summary>
     /// Gets or sets a value indicating whether to render using lights that are on layers that are off.
@@ -920,7 +921,19 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Gets or sets a value indicating the size of the rendering result.
+    /// Gets or sets a value indicating whether to use the resolution of the
+    /// viewport being rendered or ImageSize when rendering
+    /// </summary>
+    public bool UseViewportSize
+    {
+      get { return GetBool(idxUseViewportSize); }
+      set { SetBool(idxUseViewportSize, value); }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating the size of the rendering result if
+    /// UseViewportSize is set to false.  If UseViewportSize is set to true,
+    /// then this value is ignored.
     /// </summary>
     public System.Drawing.Size ImageSize
     {

@@ -351,6 +351,56 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Each coordinate of the point must pass the <see cref="RhinoMath.IsValidSingle"/> test.
+    /// </summary>
+    public bool IsValid
+    {
+      get { return RhinoMath.IsValidSingle(m_x) && RhinoMath.IsValidSingle(m_y) && RhinoMath.IsValidSingle(m_z); }
+    }
+
+    /// <summary>
+    /// Computes the distance between two points.
+    /// </summary>
+    /// <param name="other">Other point for distance measurement.</param>
+    /// <returns>The length of the line between this and the other point; or 0 if any of the points is not valid.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_intersectcurves.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_intersectcurves.cs' lang='cs'/>
+    /// <code source='examples\py\ex_intersectcurves.py' lang='py'/>
+    /// </example>
+    public double DistanceTo(Point3f other)
+    {
+      double d = 0.0;
+      if (IsValid && other.IsValid)
+      {
+        double dx = other.m_x - m_x;
+        double dy = other.m_y - m_y;
+        double dz = other.m_z - m_z;
+        d = Vector3d.GetLengthHelper(dx, dy, dz);
+      }
+      return d;
+    }
+
+    /// <summary>
+    /// Transforms the present point in place. The transformation matrix acts on the left of the point. i.e.,
+    /// <para>result = transformation*point</para>
+    /// </summary>
+    /// <param name="xform">Transformation to apply.</param>
+    public void Transform(Transform xform)
+    {
+      //David: this method doesn't test for validity. Should it?
+      double ww = xform.m_30 * m_x + xform.m_31 * m_y + xform.m_32 * m_z + xform.m_33;
+      if (ww != 0.0) { ww = 1.0 / ww; }
+
+      double tx = ww * (xform.m_00 * m_x + xform.m_01 * m_y + xform.m_02 * m_z + xform.m_03);
+      double ty = ww * (xform.m_10 * m_x + xform.m_11 * m_y + xform.m_12 * m_z + xform.m_13);
+      double tz = ww * (xform.m_20 * m_x + xform.m_21 * m_y + xform.m_22 * m_z + xform.m_23);
+      m_x = (float)tx;
+      m_y = (float)ty;
+      m_z = (float)tz;
+    }
+
+    /// <summary>
     /// Determines whether two points have equal values.
     /// </summary>
     /// <param name="a">The first point.</param>

@@ -4134,6 +4134,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region on_userdata.cpp
+  //void ON_UserData_OnTransform(ON_UserData* pUserData, const ON_Xform* xform)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_UserData_OnTransform(IntPtr pUserData, ref Transform xform);
+
   //void ON_UserData_RegisterCustomUserData( const RHMONO_STRING* managed_type_name, ON_UUID managed_type_id )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_UserData_RegisterCustomUserData([MarshalAs(UnmanagedType.LPWStr)]string managed_type_name, Guid managed_type_id);
@@ -4166,6 +4170,14 @@ internal partial class UnsafeNativeMethods
   //void ON_UserDataHolder_MoveUserDataTo( ON_UUID id, const ON_Object* pConstObject, bool append)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_UserDataHolder_MoveUserDataTo(Guid id, IntPtr pConstObject, [MarshalAs(UnmanagedType.U1)]bool append);
+
+  //void ON_UserData_GetTransform(const ON_UserData* pConstUserData, ON_Xform* transform)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_UserData_GetTransform(IntPtr pConstUserData, ref Transform transform);
+
+  //void ON_UserData_SetTransform(ON_UserData* pUserData, const ON_Xform* transform)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_UserData_SetTransform(IntPtr pUserData, ref Transform transform);
   #endregion
 
 
@@ -8679,6 +8691,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoDoc_AddRhinoObject(int doc_id, IntPtr pRhinoObject);
+
+  //int CRhinoObject_GetMaterial(const CRhinoObject* pConstRhinoObject, bool frontMaterial)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoObject_GetMaterial(IntPtr pConstRhinoObject, [MarshalAs(UnmanagedType.U1)]bool frontMaterial);
   #endregion
 
 

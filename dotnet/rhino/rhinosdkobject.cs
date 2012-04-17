@@ -1268,6 +1268,30 @@ namespace Rhino.DocObjects
     }
 #endif
     /// <summary>
+    /// Gets material that this object uses based on it's attributes and the document
+    /// that the object is associated with.  In the rare case that a document is not
+    /// associated with this object, null will be returned.
+    /// </summary>
+    /// <param name="frontMaterial">
+    /// If true, gets the material used to render the object's front side
+    /// </param>
+    /// <returns></returns>
+    public Material GetMaterial(bool frontMaterial)
+    {
+      IntPtr pConstThis = ConstPointer();
+      var doc = Document;
+      if (doc == null)
+        return null;
+      int index = UnsafeNativeMethods.CRhinoObject_GetMaterial(pConstThis, frontMaterial);
+      if( index<-2 ) // -1 and -2 are valid since the material may be the "default" or "locked default" material
+        return null;
+
+      if( -1==index )
+        return Material.DefaultMaterial;
+      return doc.Materials[index];
+    }
+
+    /// <summary>
     /// Called when Rhino wants to draw this object
     /// </summary>
     /// <param name="e"></param>

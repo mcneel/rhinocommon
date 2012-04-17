@@ -167,7 +167,9 @@ RH_C_FUNCTION bool ON_SpaceMorph_MorphGeometry(ON_Geometry* pGeometry, double to
 
 RH_C_FUNCTION ON_Matrix* ON_Matrix_New(int rows, int cols)
 {
-  return new ON_Matrix(rows, cols);
+  ON_Matrix* rc = new ON_Matrix(rows, cols);
+  rc->Zero();
+  return rc;
 }
 
 RH_C_FUNCTION ON_Matrix* ON_Matrix_New2(const ON_Xform* pXform)

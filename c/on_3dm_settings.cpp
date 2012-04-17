@@ -431,6 +431,7 @@ RH_C_FUNCTION bool ON_3dmRenderSettings_GetBool(const ON_3dmRenderSettings* pCon
   const int idxRenderIsoparams = 6;
   const int idxRenderMeshEdges = 7;
   const int idxRenderAnnotation = 8;
+  const int idxUseViewportSize = 9;
   bool rc = false;
   if( pConstRenderSettings )
   {
@@ -463,6 +464,9 @@ RH_C_FUNCTION bool ON_3dmRenderSettings_GetBool(const ON_3dmRenderSettings* pCon
     case idxRenderAnnotation:
       rc = pConstRenderSettings->m_bRenderAnnotation?true:false;
       break;
+    case idxUseViewportSize:
+      rc = pConstRenderSettings->m_bCustomImageSize?false:true;
+      break;
     default:
       break;
     }
@@ -481,6 +485,7 @@ RH_C_FUNCTION void ON_3dmRenderSettings_SetBool(ON_3dmRenderSettings* pRenderSet
   const int idxRenderIsoparams = 6;
   const int idxRenderMeshEdges = 7;
   const int idxRenderAnnotation = 8;
+  const int idxUseViewportSize = 9;
   if( pRenderSettings )
   {
     switch(which)
@@ -511,6 +516,9 @@ RH_C_FUNCTION void ON_3dmRenderSettings_SetBool(ON_3dmRenderSettings* pRenderSet
       break;
     case idxRenderAnnotation:
       pRenderSettings->m_bRenderAnnotation = b;
+      break;
+    case idxUseViewportSize:
+      pRenderSettings->m_bCustomImageSize = !b;
       break;
     default:
       break;

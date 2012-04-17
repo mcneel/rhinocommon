@@ -80,8 +80,20 @@ BOOL CRhCmnUserData::Transform(const ON_Xform& xform)
 {
   // Tell .NET that Transform virtual function has been called
   if( m_transform )
+  {
     m_transform(m_serial_number, &xform);
-  return TRUE;
+    return TRUE;
+  }
+  return ON_UserData::Transform(xform);
+}
+
+RH_C_FUNCTION void ON_UserData_OnTransform(ON_UserData* pUserData, const ON_Xform* xform)
+{
+  USERDATATRANSFORMPROC temp = CRhCmnUserData::m_transform;
+  CRhCmnUserData::m_transform = NULL;
+  if( pUserData && xform )
+    pUserData->Transform(*xform);
+  CRhCmnUserData::m_transform = temp;
 }
 
 BOOL CRhCmnUserData::Archive() const
@@ -364,4 +376,16 @@ RH_C_FUNCTION void ON_UserDataHolder_MoveUserDataTo( ON_UUID id, const ON_Object
       }
     }
   }
+}
+
+RH_C_FUNCTION void ON_UserData_GetTransform(const ON_UserData* pConstUserData, ON_Xform* transform)
+{
+  if( pConstUserData && transform )
+    *transform = pConstUserData->m_userdata_xform;
+}
+
+RH_C_FUNCTION void ON_UserData_SetTransform(ON_UserData* pUserData, const ON_Xform* transform)
+{
+  if( pUserData && transform )
+    pUserData->m_userdata_xform = *transform;
 }

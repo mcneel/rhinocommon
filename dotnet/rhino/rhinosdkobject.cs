@@ -62,7 +62,11 @@ namespace Rhino.DocObjects
       m_theDocNotifyCallback = OnRhinoObjectDocNotify;
       m_theActiveInViewportCallback = OnRhinoObjectActiveInViewport;
       m_theSelectionCallback = OnRhinoObjectSelection;
+      m_thePickCallback = OnRhinoObjectPick;
+      m_thePickedCallback = OnRhinoObjectPicked;
+
       UnsafeNativeMethods.CRhinoObject_SetCallbacks(m_theDuplicateCallback, m_theDrawCallback, m_theDocNotifyCallback, m_theActiveInViewportCallback, m_theSelectionCallback);
+      UnsafeNativeMethods.CRhinoObject_SetPickCallbacks(m_thePickCallback, m_thePickedCallback);
     }
 
     internal RhinoObject(uint sn)
@@ -75,11 +79,15 @@ namespace Rhino.DocObjects
     internal delegate void RhinoObjectDocNotifyCallback(int docId, uint serialNumber, int add);
     internal delegate int RhinoObjectActiveInViewportCallback(int docId, uint serialNumber, IntPtr pRhinoViewport);
     internal delegate void RhinoObjectSelectionCallback(int docId, uint serialNumber);
+    internal delegate void RhinoObjectPickCallback(int docId, uint serialNumber, IntPtr pConstRhinoObject, IntPtr pRhinoObjRefArray);
+    internal delegate void RhinoObjectPickedCallback(int docId, uint serialNumber, IntPtr pConstRhinoObject, IntPtr pRhinoObjRefArray, int count);
     static RhinoObjectDrawCallback m_theDrawCallback;
     static RhinoObjectDuplicateCallback m_theDuplicateCallback;
     static RhinoObjectDocNotifyCallback m_theDocNotifyCallback;
     static RhinoObjectActiveInViewportCallback m_theActiveInViewportCallback;
     static RhinoObjectSelectionCallback m_theSelectionCallback;
+    static RhinoObjectPickCallback m_thePickCallback;
+    static RhinoObjectPickedCallback m_thePickedCallback;
 
     static void OnRhinoObjectDraw(IntPtr pConstRhinoObject, IntPtr pDisplayPipeline)
     {
@@ -142,6 +150,53 @@ namespace Rhino.DocObjects
         RhinoObject rhobj = doc.Objects.FindCustomObject(serialNumber);
         if (rhobj != null)
           rhobj.OnSelectionChanged();
+      }
+    }
+
+    static System.Collections.Generic.IEnumerable<ObjRef> ObjRefCollectionFromIntPtr(IntPtr pRhinoObjRefArray, int count)
+    {
+      for (int i = count - 1; i >= 0; i--)
+      {
+        IntPtr pRhinoObjRef = UnsafeNativeMethods.CRhinoObjRefArray_GetLastItem(pRhinoObjRefArray, i);
+        if( IntPtr.Zero!=pRhinoObjRef )
+        {
+          yield return new ObjRef(pRhinoObjRef);
+        }
+      }
+    }
+
+    static void OnRhinoObjectPick(int docId, uint serialNumber, IntPtr pConstRhinoPickContext, IntPtr pRhinoObjRefArray)
+    {
+      RhinoDoc doc = RhinoDoc.FromId(docId);
+      if (doc != null)
+      {
+        RhinoObject rhobj = doc.Objects.FindCustomObject(serialNumber);
+        if (rhobj != null)
+        {
+          System.Collections.Generic.IEnumerable<ObjRef> objs = rhobj.OnPick(new Input.Custom.PickContext(pConstRhinoPickContext));
+          if (objs != null)
+          {
+            foreach (ObjRef objref in objs)
+            {
+              IntPtr pConstObjRef = objref.ConstPointer();
+              UnsafeNativeMethods.CRhinoObjRefArray_Append(pRhinoObjRefArray, pConstObjRef);
+            }
+          }
+        }
+      }
+    }
+
+    static void OnRhinoObjectPicked(int docId, uint serialNumber, IntPtr pConstRhinoPickContext, IntPtr pRhinoObjRefArray, int count)
+    {
+      RhinoDoc doc = RhinoDoc.FromId(docId);
+      if (doc != null)
+      {
+        RhinoObject rhobj = doc.Objects.FindCustomObject(serialNumber);
+        var list = ObjRefCollectionFromIntPtr(pRhinoObjRefArray, count);
+        if (rhobj != null)
+        {
+          rhobj.OnPicked(new Input.Custom.PickContext(pConstRhinoPickContext), list);
+        }
       }
     }
 
@@ -1340,6 +1395,33 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
+    /// Called to determine if this object or some sub-portion of this object should be
+    /// picked given a pick context.
+    /// </summary>
+    /// <param name="context"></param>
+    protected virtual System.Collections.Generic.IEnumerable<ObjRef> OnPick(Rhino.Input.Custom.PickContext context)
+    {
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pConstContext = context.ConstPointer();
+      IntPtr pObjRefArray = UnsafeNativeMethods.CRhinoObject_Pick(pConstThis, pConstContext);
+      if (IntPtr.Zero == pObjRefArray)
+        return null;
+      return new Runtime.INTERNAL_RhinoObjRefArray(pObjRefArray);
+    }
+
+    /// <summary>
+    /// Called when this object has been picked
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="pickedItems">
+    /// Items that were picked. This parameter is enumerable because there may
+    /// have been multiple sub-objects picked
+    /// </param>
+    protected virtual void OnPicked(Rhino.Input.Custom.PickContext context, System.Collections.Generic.IEnumerable<ObjRef> pickedItems)
+    {
+    }
+
+    /// <summary>
     /// Called when the selection state of this object has changed
     /// </summary>
     protected virtual void OnSelectionChanged()
@@ -1424,6 +1506,18 @@ namespace Rhino.DocObjects
     {
       IntPtr pObject = rhinoObject.ConstPointer();
       m_ptr = UnsafeNativeMethods.CRhinoObjRef_New2(pObject);
+    }
+
+    /// <summary>
+    /// Initialized a new object reference from a Rhino object and pick context
+    /// </summary>
+    /// <param name="rhinoObject"></param>
+    /// <param name="pickContext"></param>
+    public ObjRef(DocObjects.RhinoObject rhinoObject, Rhino.Input.Custom.PickContext pickContext)
+    {
+      IntPtr pObject = rhinoObject.ConstPointer();
+      IntPtr pPickContext = pickContext.ConstPointer();
+      m_ptr = UnsafeNativeMethods.CRhinoObjRef_New4(pObject, pPickContext);
     }
 
     /// <summary>Returns the id of the referenced Rhino object.</summary>
@@ -1789,6 +1883,19 @@ namespace Rhino.DocObjects
       IntPtr pSurface = UnsafeNativeMethods.CRhinoObjRef_SurfaceParameter(m_ptr, ref u, ref v);
       return ObjRefToGeometryHelper(pSurface) as Surface;
     }
+
+    /// <summary>
+    /// When an object is selected by picking a sub-object, SetSelectionComponent
+    /// may be used to identify the sub-object.
+    /// </summary>
+    /// <param name="componentIndex"></param>
+    public void SetSelectionComponent(ComponentIndex componentIndex)
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.CRhinoObjRef_SetSelectionComponent(pThis, componentIndex);
+    }
+
+
   }
 #endif
 
@@ -1873,6 +1980,60 @@ namespace Rhino.Runtime
         UnsafeNativeMethods.RhinoObjectArray_Delete(m_ptr);
         m_ptr = IntPtr.Zero;
       }
+    }
+  }
+
+  class INTERNAL_RhinoObjRefArray : System.Collections.Generic.IEnumerable<Rhino.DocObjects.ObjRef>, IDisposable
+  {
+    IntPtr m_pRhinoObjRefArray; //CRhinoObjRefArray*
+    //public IntPtr ConstPointer() { return m_ptr; }
+    public IntPtr NonConstPointer() { return m_pRhinoObjRefArray; }
+
+    public INTERNAL_RhinoObjRefArray(IntPtr pRhinoObjRefArray)
+    {
+      m_pRhinoObjRefArray = pRhinoObjRefArray;
+    }
+
+    ~INTERNAL_RhinoObjRefArray()
+    {
+      Dispose(false);
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_pRhinoObjRefArray)
+      {
+        UnsafeNativeMethods.CRhinoObjRefArray_Delete(m_pRhinoObjRefArray);
+        m_pRhinoObjRefArray = IntPtr.Zero;
+      }
+    }
+
+    System.Collections.Generic.IEnumerator<DocObjects.ObjRef> GetEnumeratorHelper()
+    {
+      int count = UnsafeNativeMethods.CRhinoObjRefArray_Count(m_pRhinoObjRefArray);
+      for (int i = 0; i < count; i++)
+      {
+        IntPtr pRhinoObjRef = UnsafeNativeMethods.CRhinoObjRefArray_GetItem(m_pRhinoObjRefArray, i);
+        if (IntPtr.Zero != pRhinoObjRef)
+        {
+          yield return new Rhino.DocObjects.ObjRef(pRhinoObjRef);
+        }
+      }
+    }
+
+    public System.Collections.Generic.IEnumerator<DocObjects.ObjRef> GetEnumerator()
+    {
+      return GetEnumeratorHelper();
+    }
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return GetEnumeratorHelper();
     }
   }
 }

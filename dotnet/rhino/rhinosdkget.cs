@@ -875,12 +875,26 @@ namespace Rhino.Input.Custom
   {
     #region constructor
     private IntPtr m_ptr; // CRhinoGet*
-    internal IntPtr NonConstPointer() { return m_ptr; }
+    bool m_is_const;
+    internal IntPtr NonConstPointer()
+    {
+      if (m_is_const)
+        return IntPtr.Zero;
+      return m_ptr;
+    }
     internal IntPtr ConstPointer() { return m_ptr; }
 
     internal void Construct(IntPtr ptr)
     {
+      m_is_const = false;
       m_ptr = ptr;
+    }
+
+    internal void ConstConstruct(IntPtr ptr)
+    {
+      m_is_const = true;
+      m_ptr = ptr;
+      GC.SuppressFinalize(this);
     }
 
     ~GetBaseClass()
@@ -896,11 +910,11 @@ namespace Rhino.Input.Custom
 
     protected virtual void Dispose(bool disposing)
     {
-      if (IntPtr.Zero != m_ptr)
+      if (IntPtr.Zero != m_ptr && !m_is_const)
       {
         UnsafeNativeMethods.CRhinoGet_Delete(m_ptr);
-        m_ptr = IntPtr.Zero;
       }
+      m_ptr = IntPtr.Zero;
       if (m_option != null)
       {
         m_option.m_ptr = IntPtr.Zero;

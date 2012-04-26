@@ -613,7 +613,6 @@ namespace Rhino
       }
     }
 
-
     private static RhCmnEmptyCallback m_OnInitApp;
     private static void OnInitApp()
     {
@@ -631,6 +630,8 @@ namespace Rhino
     }
     internal static EventHandler m_init_app;
 
+    private static object m_event_lock = new object();
+
     /// <summary>
     /// Is raised when the apllication is fully initialized.
     /// </summary>
@@ -638,20 +639,27 @@ namespace Rhino
     {
       add
       {
-        if (m_init_app == null)
+        lock (m_event_lock)
         {
-          m_OnInitApp = OnInitApp;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetInitAppCallback(m_OnInitApp, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_init_app == null)
+          {
+            m_OnInitApp = OnInitApp;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetInitAppCallback(m_OnInitApp, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_init_app -= value;
+          m_init_app += value;
         }
-        m_init_app += value;
       }
       remove
       {
-        m_init_app -= value;
-        if (m_init_app == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetInitAppCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnInitApp = null;
+          m_init_app -= value;
+          if (m_init_app == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetInitAppCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnInitApp = null;
+          }
         }
       }
     }
@@ -682,20 +690,27 @@ namespace Rhino
     {
       add
       {
-        if (m_close_app == null)
+        lock (m_event_lock)
         {
-          m_OnCloseApp = OnCloseApp;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetCloseAppCallback(m_OnCloseApp, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_close_app == null)
+          {
+            m_OnCloseApp = OnCloseApp;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetCloseAppCallback(m_OnCloseApp, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_close_app -= value;
+          m_close_app += value;
         }
-        m_close_app += value;
       }
       remove
       {
-        m_close_app -= value;
-        if (m_close_app == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetCloseAppCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnCloseApp = null;
+          m_close_app -= value;
+          if (m_close_app == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetCloseAppCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnCloseApp = null;
+          }
         }
       }
     }
@@ -726,20 +741,27 @@ namespace Rhino
     {
       add
       {
-        if (m_appsettings_changed == null)
+        lock (m_event_lock)
         {
-          m_OnAppSettingsChanged = OnAppSettingsChanged;
-          UnsafeNativeMethods.CRhinoEventWatcher_SetAppSettingsChangeCallback(m_OnAppSettingsChanged, Rhino.Runtime.HostUtils.m_ew_report);
+          if (m_appsettings_changed == null)
+          {
+            m_OnAppSettingsChanged = OnAppSettingsChanged;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetAppSettingsChangeCallback(m_OnAppSettingsChanged, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_appsettings_changed -= value;
+          m_appsettings_changed += value;
         }
-        m_appsettings_changed += value;
       }
       remove
       {
-        m_appsettings_changed -= value;
-        if (m_appsettings_changed == null)
+        lock (m_event_lock)
         {
-          UnsafeNativeMethods.CRhinoEventWatcher_SetAppSettingsChangeCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
-          m_OnAppSettingsChanged = null;
+          m_appsettings_changed -= value;
+          if (m_appsettings_changed == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetAppSettingsChangeCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnAppSettingsChanged = null;
+          }
         }
       }
     }

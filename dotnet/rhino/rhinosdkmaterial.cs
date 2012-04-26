@@ -5,6 +5,32 @@ using System.Collections.Generic;
 
 namespace Rhino.DocObjects
 {
+  class MaterialHolder
+  {
+    IntPtr m_pConstMaterial;
+    public MaterialHolder(IntPtr pConstMaterial)
+    {
+      m_pConstMaterial = pConstMaterial;
+    }
+    public void Done()
+    {
+      m_pConstMaterial = IntPtr.Zero;
+    }
+    public IntPtr ConstMaterialPointer()
+    {
+      return m_pConstMaterial;
+    }
+
+    Material m_cached_material;
+    public Material GetMaterial()
+    {
+      if (m_cached_material == null)
+        m_cached_material = new Material(this);
+      return m_cached_material;
+    }
+
+  }
+
   [Serializable]
   public class Material : Rhino.Runtime.CommonObject, ISerializable
   {
@@ -70,6 +96,11 @@ namespace Rhino.DocObjects
       ConstructNonConstObject(pMaterial);
     }
 
+    internal Material(MaterialHolder holder)
+    {
+      ConstructConstObject(holder, -1);
+    }
+
     // serialization constructor
     protected Material(SerializationInfo info, StreamingContext context)
       : base (info, context)
@@ -79,6 +110,9 @@ namespace Rhino.DocObjects
 
     internal override IntPtr _InternalGetConstPointer()
     {
+      MaterialHolder mh = m__parent as MaterialHolder;
+      if( mh!=null )
+        return mh.ConstMaterialPointer();
 #if RHINO_SDK
       if( m_is_default )
         return UnsafeNativeMethods.CRhinoMaterial_DefaultMaterial();
@@ -418,6 +452,64 @@ namespace Rhino.DocObjects
 #if RHINO_SDK
 namespace Rhino.DocObjects.Tables
 {
+  public enum MaterialTableEventType : int
+  {
+    Added = 0,
+    Deleted = 1,
+    Undeleted = 2,
+    Modified = 3,
+    Sorted = 4,
+    Current = 5
+  }
+
+  public class MaterialTableEventArgs : EventArgs
+  {
+    readonly int m_docId;
+    readonly MaterialTableEventType m_event_type;
+    readonly int m_material_index;
+    readonly MaterialHolder m_holder;
+
+    internal MaterialTableEventArgs(int docId, int event_type, int index, IntPtr pOldSettings)
+    {
+      m_docId = docId;
+      m_event_type = (MaterialTableEventType)event_type;
+      m_material_index = index;
+      if( pOldSettings!=IntPtr.Zero )
+        m_holder = new MaterialHolder(pOldSettings);
+    }
+
+    internal void Done()
+    {
+      m_holder.Done();
+    }
+
+    RhinoDoc m_doc;
+    public RhinoDoc Document
+    {
+      get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_docId)); }
+    }
+
+    public MaterialTableEventType EventType
+    {
+      get { return m_event_type; }
+    }
+
+    public int Index
+    {
+      get { return m_material_index; }
+    }
+
+    public Material OldSettings
+    {
+      get
+      {
+        if( m_holder != null )
+          return m_holder.GetMaterial();
+        return null;
+      }
+    }
+  }
+
   public sealed class MaterialTable : IEnumerable<Material>, Rhino.Collections.IRhinoTable<Material>
   {
     private readonly RhinoDoc m_doc;

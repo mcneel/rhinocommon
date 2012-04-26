@@ -185,6 +185,9 @@ internal partial class UnsafeNativeMethods
   internal static extern void CRhinoEventWatcher_SetLayerTableEventCallback(Rhino.RhinoDoc.RhinoTableCallback cb, Rhino.Runtime.HostUtils.ReportCallback report);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoEventWatcher_SetMaterialTableEventCallback(Rhino.RhinoDoc.RhinoTableCallback cb, Rhino.Runtime.HostUtils.ReportCallback report);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoEventWatcher_SetGroupTableEventCallback(Rhino.RhinoDoc.RhinoTableCallback cb, Rhino.Runtime.HostUtils.ReportCallback report);
 
   //In RhinoView
@@ -227,6 +230,10 @@ internal partial class UnsafeNativeMethods
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectDocNotifyCallback doc_notify,
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectActiveInViewportCallback active_in_viewport,
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectSelectionCallback selection_change);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoObject_SetPickCallbacks(Rhino.DocObjects.RhinoObject.RhinoObjectPickCallback pick,
+                                                        Rhino.DocObjects.RhinoObject.RhinoObjectPickedCallback picked_callback);
 
   //void CRhinoMouseCallback_Enable(bool on, RHMOUSECALLBACK_FUNC mouse_cb)
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]

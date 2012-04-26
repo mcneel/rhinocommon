@@ -6,6 +6,8 @@ using Rhino.DocObjects;
 #if RHINO_SDK
 namespace Rhino.Input.Custom
 {
+  public delegate bool GetObjectGeometryFilter(DocObjects.RhinoObject rhObject, GeometryBase geometry, ComponentIndex componentIndex);
+
   /// <summary>
   /// The GetObject class is the tool commands use to interactively select objects.
   /// </summary>
@@ -33,6 +35,11 @@ namespace Rhino.Input.Custom
     {
       IntPtr ptr = UnsafeNativeMethods.CRhinoGetObject_New();
       Construct(ptr);
+    }
+
+    internal GetObject(IntPtr pConstGetObject)
+    {
+      Construct(pConstGetObject);
     }
 
     /// <summary>
@@ -102,10 +109,26 @@ namespace Rhino.Input.Custom
     /// <param name="componentIndex">
     /// if >= 0, geometry is a proper sub-part of object->Geometry() with componentIndex.
     /// </param>
-    /// <returns>The default always returns true.</returns>
+    /// <returns>
+    /// The default returns true unless you've set a custom geometry filter. If a custom
+    /// filter has been set, that delegate is called
+    /// </returns>
     public virtual bool CustomGeometryFilter( DocObjects.RhinoObject rhObject, GeometryBase geometry, ComponentIndex componentIndex )
     {
+      if (m_filter != null)
+        return m_filter(rhObject, geometry, componentIndex);
       return true;
+    }
+
+    GetObjectGeometryFilter m_filter;
+
+    /// <summary>
+    /// Set filter callback function that will be called by the CustomGeometryFilter
+    /// </summary>
+    /// <param name="filter"></param>
+    public void SetCustomGeometryFilter(GetObjectGeometryFilter filter)
+    {
+      m_filter = filter;
     }
 
     /// <summary>
@@ -372,6 +395,7 @@ namespace Rhino.Input.Custom
 
     internal delegate bool GeometryFilterCallback(IntPtr rhObject, IntPtr geometry, ComponentIndex componentIndex);
     private static GetObject m_active_go; // = null; [runtime default]
+    internal static GetObject ActiveGetObject { get { return m_active_go; } }
     private static bool CustomGeometryFilter(IntPtr rhObject, IntPtr geometry, ComponentIndex componentIndex)
     {
       bool rc = true;
@@ -433,9 +457,9 @@ namespace Rhino.Input.Custom
       m_active_go = this;
       GeometryFilterCallback cb = null;
       Type t = GetType();
-      // Hook up CustomGeometryFilter virtual function is this is a subclass. This way we
+      // Hook up CustomGeometryFilter virtual function if this is a subclass. This way we
       // don't have to pin anything and this class will get collected on the next appropriate GC
-      if (t.IsSubclassOf(typeof(GetObject)))
+      if (m_filter!=null || t.IsSubclassOf(typeof(GetObject)))
         cb = CustomGeometryFilter;
 
       IntPtr ptr = NonConstPointer();

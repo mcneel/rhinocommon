@@ -1642,6 +1642,57 @@ namespace Rhino
       }
     }
 
+    private static RhinoTableCallback m_OnMaterialTableEventCallback;
+    private static void OnMaterialTableEvent(int docId, int event_type, int index, IntPtr pConstOldSettings)
+    {
+      if (m_material_table_event != null)
+      {
+        try
+        {
+          DocObjects.Tables.MaterialTableEventArgs args = new DocObjects.Tables.MaterialTableEventArgs(docId, event_type, index, pConstOldSettings);
+          m_material_table_event(null, args);
+          args.Done();
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
+    internal static EventHandler<DocObjects.Tables.MaterialTableEventArgs> m_material_table_event;
+
+    /// <summary>
+    /// Called when any modification happens to a document's material table.
+    /// </summary>
+    public static event EventHandler<Rhino.DocObjects.Tables.MaterialTableEventArgs> MaterialTableEvent
+    {
+      add
+      {
+        lock (m_event_lock)
+        {
+          if (m_material_table_event == null)
+          {
+            m_OnMaterialTableEventCallback = OnMaterialTableEvent;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetMaterialTableEventCallback(m_OnMaterialTableEventCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_material_table_event -= value;
+          m_material_table_event += value;
+        }
+      }
+      remove
+      {
+        lock (m_event_lock)
+        {
+          m_material_table_event -= value;
+          if (m_material_table_event == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetMaterialTableEventCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnMaterialTableEventCallback = null;
+          }
+        }
+      }
+    }
+
 
     private static RhinoTableCallback m_OnGroupTableEventCallback;
     private static void OnGroupTableEvent(int docId, int event_type, int index, IntPtr pConstOldSettings)

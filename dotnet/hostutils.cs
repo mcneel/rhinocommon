@@ -335,6 +335,16 @@ namespace Rhino.Runtime
   public static class HostUtils
   {
     /// <summary>
+    /// Returns list of directory names where additional libraries (plug-ins, DLLs, Grasshopper components)
+    /// may be located
+    /// </summary>
+    /// <returns></returns>
+    public static string[] GetLibrarySearchPaths()
+    {
+      return PlugIn.GetInstalledPlugInFolders();
+    }
+
+    /// <summary>
     /// DO NOT USE UNLESS YOU ARE CERTAIN ABOUT THE IMPLICATIONS.
     /// <para>This is an expert user function which should not be needed in most
     /// cases. This function is similar to a const_cast in C++ to allow an object

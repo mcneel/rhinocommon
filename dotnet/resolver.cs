@@ -76,7 +76,7 @@ namespace Rhino.Runtime
 
       // Collect all potential files in the plug-in directories.
 #if RHINO_SDK
-      string[] plugin_folders = Rhino.PlugIns.PlugIn.GetInstalledPlugInFolders();
+      string[] plugin_folders = Rhino.Runtime.HostUtils.GetLibrarySearchPaths();
       if (plugin_folders != null)
       {
         foreach (string plugin_folder in plugin_folders)

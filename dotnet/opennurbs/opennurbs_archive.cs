@@ -844,37 +844,298 @@ namespace Rhino.Collections
       return false;
     }
 
-    // WORK IN PROGRESS...
-    /*
-    public bool TryGetValue(string key, out bool value, bool defaultIfMissing)
+    // Mimic what PersistentSettings data access methods
+    
+    bool TryGetHelper<T>(string key, out T value, T defaultValue)
     {
-      return TryGetHelper<bool>(key, out value, defaultIfMissing);
-    }
-    public bool TryGetValue(string key, out byte value, byte defaultIfMissing)
-    {
-      return TryGetHelper<byte>(key, out value, defaultIfMissing);
-    }
-    [CLSCompliant(false)]
-    public bool TryGetValue(string key, out sbyte value, sbyte defaultIfMissing)
-    {
-      return TryGetHelper<sbyte>(key, out value, defaultIfMissing);
-    }
-
-    bool TryGetHelper<T>(string key, out T value, T defaultIfMissing)
-    {
-      DictionaryItem di;
-      if (m_items.TryGetValue(key, out di))
+      object obj;
+      if (TryGetValue(key, out obj) && obj is T)
       {
-        if (di.m_value is T)
-        {
-          value = (T)di.m_value;
-          return true;
-        }
+        value = (T)obj;
+        return true;
       }
-      value = defaultIfMissing;
+      value = defaultValue;
       return false;
     }
-    */
+
+    T GetHelper<T>(string key, T defaultValue)
+    {
+      if (!m_items.ContainsKey(key))
+        throw new KeyNotFoundException(key);
+      T rc;
+      if (TryGetHelper<T>(key, out rc, defaultValue))
+        return rc;
+      throw new Exception("key '" + key + "' value type is not a " + defaultValue.GetType());
+    }
+
+    T GetWithDefaultHelper<T>(string key, T defaultValue)
+    {
+      T rc;
+      TryGetHelper<T>(key, out rc, defaultValue);
+      return rc;
+    }
+
+    /// <summary>
+    /// Get value as string, will only succeed if value was created using Set(string key, string value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public bool TryGetString(string key, out string value)
+    {
+      return TryGetHelper<string>(key, out value, string.Empty);
+    }
+    /// <summary>
+    /// Get value as string, will only succeed if value was created using Set(string key, string value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public string GetString(string key)
+    {
+      return GetHelper<string>(key, string.Empty);
+    }
+    /// <summary>
+    /// Get value as string, will return defaultValue unless value was created using Set(string key, string value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public string GetString(string key, string defaultValue)
+    {
+      return GetWithDefaultHelper<string>(key, defaultValue);
+    }
+    /// <summary>
+    /// Get value as bool, will only succeed if value was created using Set(string key, bool value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public bool TryGetBool(string key, out bool value)
+    {
+      return TryGetHelper<bool>(key, out value, false);
+    }
+    /// <summary>
+    /// Get value as bool, will only succeed if value was created using Set(string key, bool value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public bool GetBool(string key)
+    {
+      return GetHelper<bool>(key, false);
+    }
+    /// <summary>
+    /// Get value as bool, will return defaultValue unless value was created using Set(string key, bool value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public bool GetBool(string key, bool defaultValue)
+    {
+      return GetWithDefaultHelper<bool>(key, defaultValue);
+    }
+    /// <summary>
+    /// Get value as float, will only succeed if value was created using Set(string key, float value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public bool TryGetFloat(string key, out float value)
+    {
+      return TryGetHelper<float>(key, out value, 0f);
+    }
+    /// <summary>
+    /// Get value as float, will only succeed if value was created using Set(string key, float value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public float GetFloat(string key)
+    {
+      return GetHelper<float>(key, 0f);
+    }
+    /// <summary>
+    /// Get value as float, will return defaultValue unless value was created using Set(string key, float value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public float GetFloat(string key, float defaultValue)
+    {
+      return GetWithDefaultHelper<float>(key, defaultValue);
+    }
+    /// <summary>
+    /// Get value as double, will only succeed if value was created using Set(string key, double value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public bool TryGetDouble(string key, out double value)
+    {
+      return TryGetHelper<double>(key, out value, 0.0);
+    }
+    /// <summary>
+    /// Get value as double, will only succeed if value was created using Set(string key, double value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public double GetDouble(string key)
+    {
+      return GetHelper<double>(key, 0.0);
+    }
+    /// <summary>
+    /// Get value as int, will return defaultValue unless value was created using Set(string key, int value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public int GetInteger(string key, int defaultValue)
+    {
+      return GetWithDefaultHelper<int>(key, defaultValue);
+    }
+    /// <summary>
+    /// Get value as int, will only succeed if value was created using Set(string key, int value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public bool TryGetInteger(string key, out int value)
+    {
+      return TryGetHelper<int>(key, out value, 0);
+    }
+    /// <summary>
+    /// Get value as int, will only succeed if value was created using Set(string key, int value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public int GetInteger(string key)
+    {
+      return GetHelper<int>(key, 0);
+    }
+    /// <summary>
+    /// Get value as int, will return defaultValue unless value was created using Set(string key, int value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public int Getint(string key, int defaultValue)
+    {
+      return GetWithDefaultHelper<int>(key, defaultValue);
+    }
+    /// <summary>
+    /// Get value as Point3f, will only succeed if value was created using Set(string key, Point3f value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public bool TryGetPoint3f(string key, out Rhino.Geometry.Point3f value)
+    {
+      return TryGetHelper<Rhino.Geometry.Point3f>(key, out value, Rhino.Geometry.Point3f.Unset);
+    }
+    /// <summary>
+    /// Get value as Point3f, will only succeed if value was created using Set(string key, Point3f value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public Rhino.Geometry.Point3f GetPoint3f(string key)
+    {
+      return GetHelper<Rhino.Geometry.Point3f>(key, Rhino.Geometry.Point3f.Unset);
+    }
+    /// <summary>
+    /// Get value as Point3f, will return defaultValue unless value was created using Set(string key, Point3f value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public Rhino.Geometry.Point3f GetPoint3f(string key, Rhino.Geometry.Point3f defaultValue)
+    {
+      return GetWithDefaultHelper<Rhino.Geometry.Point3f>(key, defaultValue);
+    }
+    /// <summary>
+    /// Get value as Point3d, will only succeed if value was created using Set(string key, Point3d value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public bool TryGetPoint3d(string key, out Rhino.Geometry.Point3d value)
+    {
+      return TryGetHelper<Rhino.Geometry.Point3d>(key, out value, Rhino.Geometry.Point3d.Unset);
+    }
+    /// <summary>
+    /// Get value as Point3d, will only succeed if value was created using Set(string key, Point3d value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public Rhino.Geometry.Point3d GetPoint3d(string key)
+    {
+      return GetHelper<Rhino.Geometry.Point3d>(key, Rhino.Geometry.Point3d.Unset);
+    }
+    /// <summary>
+    /// Get value as Point3d, will return defaultValue unless value was created using Set(string key, Point3d value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public Rhino.Geometry.Point3d GetPoint3d(string key, Rhino.Geometry.Point3d defaultValue)
+    {
+      return GetWithDefaultHelper<Rhino.Geometry.Point3d>(key, defaultValue);
+    }
+    /// <summary>
+    /// Get value as Vector3d, will only succeed if value was created using Set(string key, Vector3d value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public bool TryGetVector3d(string key, out Rhino.Geometry.Vector3d value)
+    {
+      return TryGetHelper<Rhino.Geometry.Vector3d>(key, out value, Rhino.Geometry.Vector3d.Unset);
+    }
+    /// <summary>
+    /// Get value as Vector3d, will only succeed if value was created using Set(string key, Vector3d value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public Rhino.Geometry.Vector3d GetVector3d(string key)
+    {
+      return GetHelper<Rhino.Geometry.Vector3d>(key, Rhino.Geometry.Vector3d.Unset);
+    }
+    /// <summary>
+    /// Get value as Vector3d, will return defaultValue unless value was created using Set(string key, Vector3d value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public Rhino.Geometry.Vector3d GetVector3d(string key, Rhino.Geometry.Vector3d defaultValue)
+    {
+      return GetWithDefaultHelper<Rhino.Geometry.Vector3d>(key, defaultValue);
+    }
+    /// <summary>
+    /// Get value as Guid, will only succeed if value was created using Set(string key, Guid value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public bool TryGetGuid(string key, out Guid value)
+    {
+      return TryGetHelper<Guid>(key, out value, Guid.Empty);
+    }
+    /// <summary>
+    /// Get value as Guid, will only succeed if value was created using Set(string key, Guid value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public Guid GetGuid(string key)
+    {
+      return GetHelper<Guid>(key, Guid.Empty);
+    }
+    /// <summary>
+    /// Get value as Guid, will return defaultValue unless value was created using Set(string key, Guid value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public Guid GetGuid(string key, Guid defaultValue)
+    {
+      return GetWithDefaultHelper<Guid>(key, defaultValue);
+    }
 
     /// <summary>
     /// Sets a <see cref="bool"/>.

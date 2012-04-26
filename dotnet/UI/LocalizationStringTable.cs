@@ -289,11 +289,18 @@ namespace Rhino.UI
           }
         }
       }
+#if RHINO_SDK
       catch(Exception exception)
       {
         Rhino.Runtime.HostUtils.ExceptionReport(exception);
         rc = false;
       }
+#else
+      catch(Exception)
+      {
+        rc = false;
+      }
+#endif
 
       return rc;
     }

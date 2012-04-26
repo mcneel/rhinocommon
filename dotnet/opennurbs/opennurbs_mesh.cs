@@ -561,6 +561,24 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Create a minimal representation of a Brep. Only Brep Faces with a single loop 
+    /// containing either 3 or 4 sharp corners will be included in the mesh. 
+    /// This method is in development and may well disappear, do not use it.
+    /// </summary>
+    /// <param name="brep">Brep to approximate.</param>
+    /// <returns>A minimal representation of the Brep or null on failure.</returns>
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    public static Mesh CreateFromBrepSimple(Brep brep)
+    {
+      IntPtr pConstBrep = brep.ConstPointer();
+      IntPtr newMesh = UnsafeNativeMethods.ON_Mesh_BrepToMeshSimple(pConstBrep);
+      if (newMesh == null)
+        return null;
+
+      return new Mesh(newMesh, null);
+    }
+
+    /// <summary>
     /// Computes the solid union of a set of meshes.
     /// </summary>
     /// <param name="meshes">Meshes to union.</param>
@@ -1720,7 +1738,7 @@ namespace Rhino.Geometry
       {
         double tolerance = RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
         IntPtr pCurves = outputcurves.NonConstPointer();
-        int count = UnsafeNativeMethods.RHC_MakeRhinoContours3(pConstMesh, ref sectionPlane, pCurves ,tolerance);
+        int count = UnsafeNativeMethods.RHC_MakeRhinoContours3(pConstMesh, ref sectionPlane, pCurves, tolerance);
         return 0 == count ? new Curve[0] : outputcurves.ToNonConstArray();
       }
     }
@@ -4666,18 +4684,18 @@ namespace Rhino.Geometry
     {
       get
       {
-        if( index==0 ) return m_a;
-        if( index==1 ) return m_b;
-        if( index==2 ) return m_c;
-        if( index==3 ) return m_d;
+        if (index == 0) return m_a;
+        if (index == 1) return m_b;
+        if (index == 2) return m_c;
+        if (index == 3) return m_d;
         throw new IndexOutOfRangeException();
       }
       set
       {
-        if( index==0 ) m_a = value;
-        else if( index==1 ) m_b = value;
-        else if( index==2 ) m_c = value;
-        else if( index==3 ) m_d = value;
+        if (index == 0) m_a = value;
+        else if (index == 1) m_b = value;
+        else if (index == 2) m_c = value;
+        else if (index == 3) m_d = value;
         else
           throw new IndexOutOfRangeException();
       }

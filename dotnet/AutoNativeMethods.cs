@@ -3129,6 +3129,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_TextureMapping_SetBoxMapping(IntPtr pTextureMapping, ref Plane plane, Interval dx, Interval dy, Interval dz, [MarshalAs(UnmanagedType.U1)]bool capped);
+
+  //ON_Mesh* ON_Mesh_BrepToMeshSimple(const ON_Brep* pBrep)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_Mesh_BrepToMeshSimple(IntPtr pBrep);
   #endregion
 
 
@@ -6586,6 +6590,9 @@ internal partial class UnsafeNativeMethods
   //void CRhinoEventWatcher_SetUndoEventCallback(UNDOEVENTPROC cb, REPORTPROC report)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
+  //void CRhinoEventWatcher_SetMaterialTableEventCallback(MATERIALTABLEEVENTPROC cb, REPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
   //void CRhinoEventWatcher_SetGroupTableEventCallback(GROUPTABLEEVENTPROC cb, REPORTPROC report)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
@@ -8388,6 +8395,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoObjRef_New3(IntPtr pConstRhinoObject, IntPtr pConstGeometry);
 
+  //CRhinoObjRef* CRhinoObjRef_New4(const CRhinoObject* pRhinoObject, const CRhinoPickContext* pConstRhinoPickContext)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoObjRef_New4(IntPtr pRhinoObject, IntPtr pConstRhinoPickContext);
+
   //CRhinoObjRef* CRhinoObjRef_Copy(const CRhinoObjRef* pOther)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoObjRef_Copy(IntPtr pOther);
@@ -8412,6 +8423,10 @@ internal partial class UnsafeNativeMethods
   //void CRhinoObjRef_GeometryComponentIndex( const CRhinoObjRef* pConstRhinoObjRef, ON_COMPONENT_INDEX* pComponentIndex )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoObjRef_GeometryComponentIndex(IntPtr pConstRhinoObjRef, ref ComponentIndex pComponentIndex);
+
+  //void CRhinoObjRef_SetSelectionComponent( CRhinoObjRef* pRhinoObjRef, ON_2INTS componentIndex )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoObjRef_SetSelectionComponent(IntPtr pRhinoObjRef, ComponentIndex componentIndex);
 
   //const ON_Geometry* CRhinoObjRef_Geometry(CRhinoObjRef* ptr)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -8653,6 +8668,9 @@ internal partial class UnsafeNativeMethods
   //                                             RHINOOBJECT_SELECTPROC selection_changed)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
+  //void CRhinoObject_SetPickCallbacks(RHINOOBJECT_PICKPROC pick, RHINOOBJECT_PICKEDPROC picked)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
   //bool CRhinoObject_IsMeshable(const CRhinoObject* pConstRhinoObject, int mesh_type)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -8679,6 +8697,14 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoObject_IsActiveInViewport(IntPtr pConstRhinoObject, IntPtr pConstRhinoViewport);
 
+  //CRhinoObjRefArray* CRhinoObject_Pick(const CRhinoObject* pConstRhinoObject, const CRhinoPickContext* pConstPickContext)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoObject_Pick(IntPtr pConstRhinoObject, IntPtr pConstPickContext);
+
+  //ON_Mesh* CRhinoMeshObject_SetMesh(CRhinoMeshObject* pRhinoMeshObject, ON_Mesh* pMesh)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoMeshObject_SetMesh(IntPtr pRhinoMeshObject, IntPtr pMesh);
+
   //void CRhinoCustomObject_SetDescriptionStrings(CRhinoObject* pRhinoObject, const RHMONO_STRING* description, const RHMONO_STRING* description_plural)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoCustomObject_SetDescriptionStrings(IntPtr pRhinoObject, [MarshalAs(UnmanagedType.LPWStr)]string description, [MarshalAs(UnmanagedType.LPWStr)]string description_plural);
@@ -8695,6 +8721,26 @@ internal partial class UnsafeNativeMethods
   //int CRhinoObject_GetMaterial(const CRhinoObject* pConstRhinoObject, bool frontMaterial)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoObject_GetMaterial(IntPtr pConstRhinoObject, [MarshalAs(UnmanagedType.U1)]bool frontMaterial);
+
+  //CRhinoObjRef* CRhinoObjRefArray_GetLastItem(CRhinoObjRefArray* pRhinoObjRefArray, int offset)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoObjRefArray_GetLastItem(IntPtr pRhinoObjRefArray, int offset);
+
+  //void CRhinoObjRefArray_Append(CRhinoObjRefArray* pRhinoObjRefArray, const CRhinoObjRef* pConstRhinoObjRef)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoObjRefArray_Append(IntPtr pRhinoObjRefArray, IntPtr pConstRhinoObjRef);
+
+  //int CRhinoObjRefArray_Count(const CRhinoObjRefArray* pConstRhinoObjRefArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoObjRefArray_Count(IntPtr pConstRhinoObjRefArray);
+
+  //void CRhinoObjRefArray_Delete(CRhinoObjRefArray* pRhinoObjRefArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoObjRefArray_Delete(IntPtr pRhinoObjRefArray);
+
+  //CRhinoObjRef* CRhinoObjRefArray_GetItem(CRhinoObjRefArray* pRhinoObjRefArray, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoObjRefArray_GetItem(IntPtr pRhinoObjRefArray, int index);
   #endregion
 
 
@@ -8827,6 +8873,87 @@ internal partial class UnsafeNativeMethods
   //void CRhinoPickContext_UpdateClippingPlanes(CRhinoPickContext* pRhinoPickContext)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoPickContext_UpdateClippingPlanes(IntPtr pRhinoPickContext);
+
+  //int CRhinoPickContext_PickMode(const CRhinoPickContext* pConstRhinoPickContext)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoPickContext_PickMode(IntPtr pConstRhinoPickContext);
+
+  //void CRhinoPickContext_SetPickMode(CRhinoPickContext* pRhinoPickContext, int pickmode)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoPickContext_SetPickMode(IntPtr pRhinoPickContext, int pickmode);
+
+  //bool CRhinoPickContext_GetPickGroups(const CRhinoPickContext* pConstRhinoPickContext)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPickContext_GetPickGroups(IntPtr pConstRhinoPickContext);
+
+  //void CRhinoPickContext_SetPickGroups(CRhinoPickContext* pRhinoPickContext, bool on)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoPickContext_SetPickGroups(IntPtr pRhinoPickContext, [MarshalAs(UnmanagedType.U1)]bool on);
+
+  //bool CRhinoPickContext_GetSubSelect(const CRhinoPickContext* pConstRhinoPickContext)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPickContext_GetSubSelect(IntPtr pConstRhinoPickContext);
+
+  //void CRhinoPickContext_SetSubSelect(CRhinoPickContext* pRhinoPickContext, bool on)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoPickContext_SetSubSelect(IntPtr pRhinoPickContext, [MarshalAs(UnmanagedType.U1)]bool on);
+
+  //const CRhinoGetObject* CRhinoPickContext_GetObject(const CRhinoPickContext* pConstRhinoPickContext)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoPickContext_GetObject(IntPtr pConstRhinoPickContext);
+
+  //bool CRhinoPickContext_PickBox(const CRhinoPickContext* pConstRhinoPickContext, const ON_BoundingBox* bbox, bool* boxCompletelyIn)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPickContext_PickBox(IntPtr pConstRhinoPickContext, ref BoundingBox bbox, [MarshalAs(UnmanagedType.U1)]ref bool boxCompletelyIn);
+
+  //bool CRhinoPickContext_PickPoint(const CRhinoPickContext* pConstRhinoPickContext, ON_3DPOINT_STRUCT point, double* depth, double* distance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPickContext_PickPoint(IntPtr pConstRhinoPickContext, Point3d point, ref double depth, ref double distance);
+
+  //bool CRhinoPickContext_PickPointCloud(const CRhinoPickContext* pConstRhinoPickContext, int count, /*ARRAY*/const ON_3dPoint* points, int* point_index, double* depth, double* distance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPickContext_PickPointCloud(IntPtr pConstRhinoPickContext, int count, Point3d[] points, ref int point_index, ref double depth, ref double distance);
+
+  //bool CRhinoPickContext_PickPointCloud2(const CRhinoPickContext* pConstRhinoPickContext, const ON_PointCloud* pConstPointCloud, int* point_index, double* depth, double* distance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPickContext_PickPointCloud2(IntPtr pConstRhinoPickContext, IntPtr pConstPointCloud, ref int point_index, ref double depth, ref double distance);
+
+  //bool CRhinoPickContext_PickLine2(const CRhinoPickContext* pConstRhinoPickContext, ON_3DPOINT_STRUCT from, ON_3DPOINT_STRUCT to, double* t, double* depth, double* distance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPickContext_PickLine2(IntPtr pConstRhinoPickContext, Point3d from, Point3d to, ref double t, ref double depth, ref double distance);
+
+  //bool CRhinoPickContext_PickBezier(const CRhinoPickContext* pConstRhinoPickContext, const ON_BezierCurve* pConstBezierCurve, double* t, double* depth, double* dist)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPickContext_PickBezier(IntPtr pConstRhinoPickContext, IntPtr pConstBezierCurve, ref double t, ref double depth, ref double dist);
+
+  //bool CRhinoPickContext_PickNurbsCurve(const CRhinoPickContext* pConstRhinoPickContext, const ON_NurbsCurve* pConstNurbsCurve, double* t, double* depth, double* dist)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPickContext_PickNurbsCurve(IntPtr pConstRhinoPickContext, IntPtr pConstNurbsCurve, ref double t, ref double depth, ref double dist);
+
+  //bool CRhinoPickContext_PickMesh(const CRhinoPickContext* pConstRhinoPickContext, const ON_Mesh* pConstMesh, int pick_style,
+  //  ON_3dPoint* hit_point, ON_2dPoint* hit_srf_uv, ON_2dPoint* hit_tex_st, double* depth, double* dist, int* vef_flag, int* vef_index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPickContext_PickMesh(IntPtr pConstRhinoPickContext, IntPtr pConstMesh, int pick_style, ref Point3d hit_point, ref Point2d hit_srf_uv, ref Point2d hit_tex_st, ref double depth, ref double dist, ref int vef_flag, ref int vef_index);
+
+  //bool CRhinoPickContext_PickMesh2(const CRhinoPickContext* pConstRhinoPickContext, const ON_Mesh* pConstMesh, int pick_style,
+  //  ON_3dPoint* hit_point, double* depth, double* dist, int* vef_flag, int* vef_index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPickContext_PickMesh2(IntPtr pConstRhinoPickContext, IntPtr pConstMesh, int pick_style, ref Point3d hit_point, ref double depth, ref double dist, ref int vef_flag, ref int vef_index);
+
+  //int CRhinoPickContext_PickMeshTopologyVertices(const CRhinoPickContext* pConstRhinoPickContext, const ON_Mesh* pConstMesh, ON_SimpleArray<int>* indices)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoPickContext_PickMeshTopologyVertices(IntPtr pConstRhinoPickContext, IntPtr pConstMesh, IntPtr indices);
   #endregion
 
 

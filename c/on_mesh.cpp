@@ -1990,3 +1990,80 @@ RH_C_FUNCTION bool ON_TextureMapping_SetBoxMapping(ON_TextureMapping* pTextureMa
   }
   return rc;
 }
+
+static bool GetBrepFaceCorners(const ON_BrepFace& face, ON_SimpleArray<ON_3fPoint>& points)
+{
+  points.Destroy();
+
+  // Validate face has only a single loop.
+  if (face.LoopCount() != 1) { return false; }
+
+  // Validate loop.
+  ON_BrepLoop* loop = face.Loop(0);
+  if (!loop) { return false; }
+  if (loop->m_type == ON_BrepLoop::inner) { return false; }
+  if (loop->m_type == ON_BrepLoop::ptonsrf) { return false; }
+  if (loop->m_type == ON_BrepLoop::slit) { return false; }
+  if (loop->m_type == ON_BrepLoop::unknown) { return false; }
+
+  // Iterate over all trims.
+  for (int i = 0; i < loop->TrimCount(); i++)
+  {
+    ON_BrepTrim* trim = loop->Trim(i);
+    if (!trim) { continue; }
+
+    // Get the vertex at the end (1) of the trim.
+    int vi = trim->m_vi[1]; 
+    ON_BrepVertex& v = face.Brep()->m_V[vi];
+    points.Append(v.Point());
+  }
+
+  return (points.Count() == 3 || points.Count() == 4);
+}
+
+RH_C_FUNCTION ON_Mesh* ON_Mesh_BrepToMeshSimple(const ON_Brep* pBrep)
+{
+  if( !pBrep ) 
+    return NULL;
+
+  // Create a new mesh.
+  ON_Mesh mesh;
+
+  // Iterate over all Brep faces.
+  for (int i = 0; i < pBrep->m_F.Count(); i++)
+  {
+    // Get the corner points of the current face.
+    const ON_BrepFace& face = pBrep->m_F[i];
+    ON_SimpleArray<ON_3fPoint> points;
+    if (!GetBrepFaceCorners(face, points))
+      continue;
+
+    // Append a new quad or triangle to the mesh.
+    int N = mesh.m_V.Count();
+    for (int k = 0; k < points.Count(); k++)
+    { mesh.m_V.Append(points[k]); }
+
+    ON_MeshFace meshFace;
+    if (points.Count() == 3)
+    {
+      meshFace.vi[0] = N + 0;
+      meshFace.vi[1] = N + 1;
+      meshFace.vi[2] = N + 2;
+      meshFace.vi[3] = N + 2;
+    }
+    else
+    {
+      meshFace.vi[0] = N + 0;
+      meshFace.vi[1] = N + 1;
+      meshFace.vi[2] = N + 2;
+      meshFace.vi[3] = N + 3;
+    }
+    mesh.m_F.Append(meshFace);
+  }
+
+  ON_Mesh* newMesh = RhinoUnifyMeshNormals(mesh);
+  newMesh->ComputeFaceNormals();
+  newMesh->ComputeVertexNormals();
+ 
+  return newMesh;
+}

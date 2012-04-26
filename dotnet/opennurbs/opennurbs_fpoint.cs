@@ -257,6 +257,22 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Gets the value of a point at location 0,0,0.
+    /// </summary>
+    public static Point3f Origin
+    {
+      get { return new Point3f(0f, 0f, 0f); }
+    }
+
+    /// <summary>
+    /// Gets the value of a point at location RhinoMath.UnsetValue,RhinoMath.UnsetValue,RhinoMath.UnsetValue.
+    /// </summary>
+    public static Point3f Unset
+    {
+      get { return new Point3f(RhinoMath.UnsetSingle, RhinoMath.UnsetSingle, RhinoMath.UnsetSingle); }
+    }
+
+    /// <summary>
     /// Gets or sets the X (first) component of the vector.
     /// </summary>
     public float X { get { return m_x; } set { m_x = value; } }

@@ -1344,7 +1344,11 @@ RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddSphere(ONX_Model* pModel, ON_Sphe
   {
     // make sure the plane equation is in-sync for this sphere
     sphere->plane.UpdateEquation();
+#if defined(RHINO_V5SR)
+    ON_RevSurface* pRevSurface = sphere->RevSurfaceForm(false);
+#else
     ON_RevSurface* pRevSurface = sphere->RevSurfaceForm();
+#endif
     if( pRevSurface )
     {
       ONX_Model_Object mo;

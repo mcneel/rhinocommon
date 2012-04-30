@@ -1711,6 +1711,10 @@ internal partial class UnsafeNativeMethods
   //int ON_Brep_CreateMesh3( const ON_Brep* pConstBrep, ON_SimpleArray<ON_Mesh*>* meshes, const ON_MeshParameters* pConstMeshParameters )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Brep_CreateMesh3(IntPtr pConstBrep, IntPtr meshes, IntPtr pConstMeshParameters);
+
+  //ON_Brep* ON_Brep_FromSphere( const ON_Sphere* pConstSphere )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_Brep_FromSphere(ref Sphere pConstSphere);
   #endregion
 
 
@@ -9200,6 +9204,14 @@ internal partial class UnsafeNativeMethods
   //int RHC_Sweep2Rebuild(CArgsRhinoSweep2* pArgsSweep2, ON_SimpleArray<ON_Brep*>* pBreps, int rebuild)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RHC_Sweep2Rebuild(IntPtr pArgsSweep2, IntPtr pBreps, int rebuild);
+
+  //void RHC_Rhino1RailSweep(const ON_Curve* pConstRailCurve, const ON_SimpleArray<const ON_Curve*>* pConstShapeCurveArray, bool closed, double tolerance, ON_SimpleArray<ON_Brep*>* pBrepArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void RHC_Rhino1RailSweep(IntPtr pConstRailCurve, IntPtr pConstShapeCurveArray, [MarshalAs(UnmanagedType.U1)]bool closed, double tolerance, IntPtr pBrepArray);
+
+  //void RHC_Rhino2RailSweep(const ON_Curve* pConstRailCurve1, const ON_Curve* pConstRailCurve2, const ON_SimpleArray<const ON_Curve*>* pConstShapeCurveArray, bool closed, double tolerance, ON_SimpleArray<ON_Brep*>* pBrepArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void RHC_Rhino2RailSweep(IntPtr pConstRailCurve1, IntPtr pConstRailCurve2, IntPtr pConstShapeCurveArray, [MarshalAs(UnmanagedType.U1)]bool closed, double tolerance, IntPtr pBrepArray);
   #endregion
 
 

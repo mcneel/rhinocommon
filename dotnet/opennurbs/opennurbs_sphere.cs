@@ -427,6 +427,15 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Converts this sphere is it Brep representation
+    /// </summary>
+    /// <returns></returns>
+    public Brep ToBrep()
+    {
+      return Brep.CreateFromSphere(this);
+    }
+
+    /// <summary>
     /// Converts this sphere to its NurbsSurface representation. 
     /// This is synonymous with calling NurbsSurface.CreateFromSphere().
     /// </summary>

@@ -25,7 +25,11 @@ RH_C_FUNCTION ON_RevSurface* ON_Sphere_RevSurfaceForm(ON_Sphere* sphere)
   if( sphere )
   {
     sphere->plane.UpdateEquation();
+#if defined(RHINO_V5SR)
+    rc = sphere->RevSurfaceForm(false);
+#else
     rc = sphere->RevSurfaceForm();
+#endif
   }
   return rc;
 }

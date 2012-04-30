@@ -1161,3 +1161,11 @@ RH_C_FUNCTION int ON_Brep_CreateMesh3( const ON_Brep* pConstBrep, ON_SimpleArray
 }
 
 #endif
+
+RH_C_FUNCTION ON_Brep* ON_Brep_FromSphere( const ON_Sphere* pConstSphere )
+{
+  ON_Brep* rc = NULL;
+  if( pConstSphere )
+    rc = ON_BrepSphere(*pConstSphere);
+  return rc;
+}

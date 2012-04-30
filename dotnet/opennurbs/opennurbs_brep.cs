@@ -175,6 +175,17 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Constructs a Brep definition of a sphere.
+    /// </summary>
+    /// <param name="sphere"></param>
+    /// <returns></returns>
+    public static Brep CreateFromSphere(Sphere sphere)
+    {
+      IntPtr ptr = UnsafeNativeMethods.ON_Brep_FromSphere(ref sphere);
+      return IntPtr.Zero == ptr ? null : new Brep(ptr, null);
+    }
+
+    /// <summary>
     /// Constructs a Brep representation of the cone with a single
     /// face for the cone, an edge along the cone seam, 
     /// and vertices at the base and apex ends of this seam edge.
@@ -551,6 +562,80 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// General 1 rail sweep. If you are not producing the sweep results that you are after, then
+    /// use the SweepOneRail class with options to generate the swept geometry
+    /// </summary>
+    /// <param name="rail">Rail to sweep shapes along</param>
+    /// <param name="shape">Shape curve</param>
+    /// <param name="closed">Only matters if shape is closed</param>
+    /// <param name="tolerance">Tolerance for fitting surface and rails</param>
+    /// <returns>Array of Brep sweep results</returns>
+    public static Brep[] CreateFromSweep(Curve rail, Curve shape, bool closed, double tolerance)
+    {
+      return CreateFromSweep(rail, new Curve[] { shape }, closed, tolerance);
+    }
+
+    /// <summary>
+    /// General 1 rail sweep. If you are not producing the sweep results that you are after, then
+    /// use the SweepOneRail class with options to generate the swept geometry
+    /// </summary>
+    /// <param name="rail">Rail to sweep shapes along</param>
+    /// <param name="shapes">Shape curves</param>
+    /// <param name="closed">Only matters if shapes are closed</param>
+    /// <param name="tolerance">Tolerance for fitting surface and rails</param>
+    /// <returns>Array of Brep sweep results</returns>
+    public static Brep[] CreateFromSweep(Curve rail, IEnumerable<Curve> shapes, bool closed, double tolerance)
+    {
+      IntPtr pConstRail = rail.ConstPointer();
+      using (var shapearray = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer(shapes))
+      using (var rc = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      {
+        IntPtr pShapes = shapearray.ConstPointer();
+        IntPtr pBreps = rc.NonConstPointer();
+        UnsafeNativeMethods.RHC_Rhino1RailSweep(pConstRail, pShapes, closed, tolerance, pBreps);
+        return rc.ToNonConstArray();
+      }
+    }
+
+    /// <summary>
+    /// General 2 rail sweep. If you are not producing the sweep results that you are after, then
+    /// use the SweepTwoRail class with options to generate the swept geometry
+    /// </summary>
+    /// <param name="rail1">Rail to sweep shapes along</param>
+    /// <param name="rail2">Rail to sweep shapes along</param>
+    /// <param name="shape">Shape curve</param>
+    /// <param name="closed">Only matters if shape is closed</param>
+    /// <param name="tolerance">Tolerance for fitting surface and rails</param>
+    /// <returns>Array of Brep sweep results</returns>
+    public static Brep[] CreateFromSweep(Curve rail1, Curve rail2, Curve shape, bool closed, double tolerance)
+    {
+      return CreateFromSweep(rail1, rail2, new Curve[] { shape }, closed, tolerance);
+    }
+
+    /// <summary>
+    /// General 2 rail sweep. If you are not producing the sweep results that you are after, then
+    /// use the SweepTwoRail class with options to generate the swept geometry
+    /// </summary>
+    /// <param name="rail1">Rail to sweep shapes along</param>
+    /// <param name="rail2">Rail to sweep shapes along</param>
+    /// <param name="shapes">Shape curves</param>
+    /// <param name="closed">Only matters if shapes are closed</param>
+    /// <param name="tolerance">Tolerance for fitting surface and rails</param>
+    /// <returns>Array of Brep sweep results</returns>
+    public static Brep[] CreateFromSweep(Curve rail1, Curve rail2, IEnumerable<Curve> shapes, bool closed, double tolerance)
+    {
+      IntPtr pConstRail1 = rail1.ConstPointer();
+      IntPtr pConstRail2 = rail2.ConstPointer();
+      using (var shapearray = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer(shapes))
+      using (var rc = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      {
+        IntPtr pShapes = shapearray.ConstPointer();
+        IntPtr pBreps = rc.NonConstPointer();
+        UnsafeNativeMethods.RHC_Rhino2RailSweep(pConstRail1, pConstRail2, pShapes, closed, tolerance, pBreps);
+        return rc.ToNonConstArray();
+      }
+    }
 #endif
 
 #if RHINO_SDK

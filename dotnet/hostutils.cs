@@ -335,11 +335,11 @@ namespace Rhino.Runtime
   public static class HostUtils
   {
     /// <summary>
-    /// Returns list of directory names where additional libraries (plug-ins, DLLs, Grasshopper components)
+    /// Returns list of directory names where additional assemblies (plug-ins, DLLs, Grasshopper components)
     /// may be located
     /// </summary>
     /// <returns></returns>
-    public static string[] GetLibrarySearchPaths()
+    public static string[] GetAssemblySearchPaths()
     {
       return PlugIn.GetInstalledPlugInFolders();
     }

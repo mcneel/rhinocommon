@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
 namespace Rhino.Render
 {
   // Not public
@@ -16,6 +16,7 @@ namespace Rhino.Render
       // All of the RDK callback functions - gets called every time a new RdkPlugIn is created
       if (on)
       {
+#if RDK_UNCHECKED
         UnsafeNativeMethods.Rdk_SetNewTextureCallback(Rhino.Render.RenderTexture.m_NewTexture);
         UnsafeNativeMethods.Rdk_SetNewMaterialCallback(Rhino.Render.RenderMaterial.m_NewMaterial);
         UnsafeNativeMethods.Rdk_SetNewEnvironmentCallback(Rhino.Render.RenderEnvironment.m_NewEnvironment);
@@ -37,20 +38,23 @@ namespace Rhino.Render
         //Environments
         UnsafeNativeMethods.Rdk_SetSimulateEnvironmentCallback(Rhino.Render.RenderEnvironment.m_SimulateEnvironment);
 
-        //SdkRender
-        UnsafeNativeMethods.Rdk_SetSdkRenderCallback(Rhino.Render.RenderPipeline.m_ReturnBoolGeneralCallback);
-
         //CustomRenderMeshes
         UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_DeleteThis(Rhino.Render.CustomRenderMesh.Provider.m_DeleteThis);
         UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_WillBuild(Rhino.Render.CustomRenderMesh.Provider.m_WillBuild);
         UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_BBox(Rhino.Render.CustomRenderMesh.Provider.m_BBox);
         UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_Build(Rhino.Render.CustomRenderMesh.Provider.m_Build);
+#endif
+#if RDK_CHECKED
+        //SdkRender
+        UnsafeNativeMethods.Rdk_SetSdkRenderCallback(Rhino.Render.RenderPipeline.m_ReturnBoolGeneralCallback);
+#endif
         m_callbacks_set = true;
       }
       else
       {
         if (m_callbacks_set)
         {
+#if RDK_UNCHECKED
           UnsafeNativeMethods.Rdk_SetNewTextureCallback(null);
           UnsafeNativeMethods.Rdk_SetNewMaterialCallback(null);
           UnsafeNativeMethods.Rdk_SetNewEnvironmentCallback(null);
@@ -72,14 +76,16 @@ namespace Rhino.Render
           //Environments
           UnsafeNativeMethods.Rdk_SetSimulateEnvironmentCallback(null);
 
-          //SdkRender
-          UnsafeNativeMethods.Rdk_SetSdkRenderCallback(null);
-
           //CustomRenderMeshes
           UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_DeleteThis(null);
           UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_WillBuild(null);
           UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_BBox(null);
           UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_Build(null);
+#endif
+          //SdkRender
+#if RDK_CHECKED
+          UnsafeNativeMethods.Rdk_SetSdkRenderCallback(null);
+#endif
           m_callbacks_set = false;
         }
       }
@@ -172,7 +178,6 @@ namespace Rhino.Render
       }
       return null;
     }
-
     #endregion
 
     readonly Guid m_rhino_plugin_id;

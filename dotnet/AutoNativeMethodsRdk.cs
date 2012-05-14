@@ -1298,6 +1298,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_RenderWindow_Size(IntPtr pWindow, ref int piWidth, ref int piHeight);
 
+  //void Rdk_RenderWindow_SetSize(IRhRdkRenderWindow* pWindow, int width, int height)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindow_SetSize(IntPtr pWindow, int width, int height);
+
   //void Rdk_RenderWindow_SetProgress(IRhRdkRenderWindow* pWindow, const RHMONO_STRING* _ps, int iPC)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_RenderWindow_SetProgress(IntPtr pWindow, [MarshalAs(UnmanagedType.LPWStr)]string _ps, int iPC);
@@ -1306,6 +1310,16 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr Rdk_RenderWindow_OpenChannel(IntPtr pWindow, int id);
 
+  //bool Rdk_RenderWindow_AddChannel(IRhRdkRenderWindow* pWindow, const ON_UUID* uuidChannel, unsigned int pixelSize)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_RenderWindow_AddChannel(IntPtr pWindow, ref Guid uuidChannel, uint pixelSize);
+
+  //bool Rdk_RenderWindow_AddWireframeChannel(IRhRdkRenderWindow* pWindow, int rhinoDocId, const ON_Viewport* constPointerToON_Viewport, int* xy, int* lrtb)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_RenderWindow_AddWireframeChannel(IntPtr pWindow, int rhinoDocId, IntPtr constPointerToON_Viewport, ref int xy, ref int lrtb);
+
   //int Rdk_RenderWindowChannel_PixelSize(IRhRdkRenderWindow::IChannel* pChannel)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int Rdk_RenderWindowChannel_PixelSize(IntPtr pChannel);
@@ -1313,6 +1327,10 @@ internal partial class UnsafeNativeMethods
   //void Rdk_RenderWindowChannel_SetFloatValue(IRhRdkRenderWindow::IChannel* pChannel, int x, int y, float value)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_RenderWindowChannel_SetFloatValue(IntPtr pChannel, int x, int y, float value);
+
+  //void Rdk_RenderWindowChannel_SetValueRect(IRhRdkRenderWindow::IChannel* pChannel, int x, int y, int width, int height, /*ARRAY*/const ON_4FVECTOR_STRUCT* colors)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_RenderWindowChannel_SetValueRect(IntPtr pChannel, int x, int y, int width, int height, Color4f[] colors);
 
   //void Rdk_RenderWindowChannel_SetColorValue(IRhRdkRenderWindow::IChannel* pChannel, int x, int y, ON_4FVECTOR_STRUCT value)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]

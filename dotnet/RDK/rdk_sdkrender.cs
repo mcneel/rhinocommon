@@ -3,10 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
 
 namespace Rhino.Render
 {
+  /// <summary>
+  /// Provides facilities to a render plug-in for integrating with the standard
+  /// Rhino render window. Also adds helper functions for processing a render
+  /// scene. This is the suggested class to use when integrating a renderer with
+  /// Rhino and maintaining a "standard" user interface that users will expect.
+  /// </summary>
   public abstract class RenderPipeline : IDisposable
   {
     private IntPtr m_pSdkRender;
@@ -59,9 +65,9 @@ namespace Rhino.Render
       return rc;
     }
 
-    public enum RenderReturnCodes : int
+    public enum RenderReturnCode : int
     {
-      OK = 0,
+      Ok = 0,
       EmptyScene,
       Cancel,
       NoActiveView,
@@ -71,21 +77,47 @@ namespace Rhino.Render
       ErrorStartingRender,
       EnterModalLoop,
       ExitModalLoop,
-      WMQuit,
+      ExitRhino,
       InternalError
     };
+
+    public Rhino.Commands.Result CommandResult()
+    {
+      return CommandResultFromReturnCode(m_ReturnCode);
+    }
+
+    /// <summary>
+    /// Convert RenderReturnCode to 
+    /// </summary>
+    /// <param name="code"></param>
+    /// <returns></returns>
+    static Rhino.Commands.Result CommandResultFromReturnCode(RenderReturnCode code)
+    {
+      if (code == RenderReturnCode.Ok)
+        return Commands.Result.Success;
+      if (code == RenderReturnCode.Cancel)
+        return Commands.Result.Cancel;
+      if (code == RenderReturnCode.EmptyScene)
+        return Commands.Result.Nothing;
+      if (code == RenderReturnCode.ExitRhino)
+        return Commands.Result.ExitRhino;
+      return Commands.Result.Failure;
+    }
+
+    RenderReturnCode m_ReturnCode = RenderReturnCode.EmptyScene;
 
     /// <summary>
     /// Call this function to render the scene normally. The function returns when rendering is complete (or cancelled).
     /// </summary>
     /// <returns>A code that explains how rendering completed.</returns>
-    public RenderReturnCodes Render()
+    public RenderReturnCode Render()
     {
+      m_ReturnCode = RenderReturnCode.InternalError;
       if (IntPtr.Zero != m_pSdkRender)
       {
-        return (RenderReturnCodes)UnsafeNativeMethods.Rdk_SdkRender_Render(m_pSdkRender, m_size.Height, m_size.Width);
+        m_ReturnCode = (RenderReturnCode)UnsafeNativeMethods.Rdk_SdkRender_Render(m_pSdkRender, m_size.Height, m_size.Width);
       }
-      return RenderReturnCodes.InternalError;
+      return m_ReturnCode;
     }
 
     /// <summary>
@@ -96,13 +128,14 @@ namespace Rhino.Render
     /// <param name="inWindow">true to render directly into the view window.</param>
     /// <returns>A code that explains how rendering completed.</returns>
     /// //TODO - ViewInfo is wrong here
-    public RenderReturnCodes RenderWindow(Rhino.Display.RhinoView view, System.Drawing.Rectangle rect, bool inWindow)
+    public RenderReturnCode RenderWindow(Rhino.Display.RhinoView view, System.Drawing.Rectangle rect, bool inWindow)
     {
+      m_ReturnCode = RenderReturnCode.InternalError;
       if (m_pSdkRender != IntPtr.Zero)
       {
-        return (RenderReturnCodes)UnsafeNativeMethods.Rdk_SdkRender_RenderWindow(m_pSdkRender, view.ConstPointer(), rect.Top, rect.Left, rect.Bottom, rect.Right, inWindow);
+        m_ReturnCode = (RenderReturnCode)UnsafeNativeMethods.Rdk_SdkRender_RenderWindow(m_pSdkRender, view.ConstPointer(), rect.Top, rect.Left, rect.Bottom, rect.Right, inWindow);
       }
-      return RenderReturnCodes.InternalError;
+      return m_ReturnCode;
     }
 
     /// <summary>
@@ -142,6 +175,7 @@ namespace Rhino.Render
       }
     }
 
+#if RDK_UNCHECKED
     /// <summary>
     /// A new render mesh iterator.
     /// <para>The caller shall dispose the iterator.
@@ -160,12 +194,21 @@ namespace Rhino.Render
       }
       return null;
     }
+#endif
 
+    #region Abstract methods
     /// <summary>
-    /// Implement this method to start your rendering thread.
+    /// Called by the framework when it is time to start rendering, the render window will be created at this point and it is safe to start 
     /// </summary>
-    protected abstract bool StartRendering();
-    protected abstract bool StartRenderingInWindow(Rhino.Display.RhinoView view, System.Drawing.Rectangle rectangle);
+    /// <returns></returns>
+    protected abstract bool OnRenderBegin();
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="view"></param>
+    /// <param name="rectangle"></param>
+    /// <returns></returns>
+    protected abstract bool OnRenderWindowBegin(Rhino.Display.RhinoView view, System.Drawing.Rectangle rectangle);
 
     public Rhino.PlugIns.PlugIn PlugIn
     {
@@ -175,9 +218,20 @@ namespace Rhino.Render
       }
     }
 
-    protected virtual void StopRendering()
-    {
-    }
+    /// <summary>
+    /// Called by the framework when the user closes the render window or clicks
+    /// on the stop button in the render window.
+    /// </summary>
+    /// <param name="e"></param>
+    protected abstract void OnRenderEnd(RenderEndEventArgs e);
+    /// <summary>
+    /// Frequently called during a rendering by the frame work in order to
+    /// determine if the rendering should continue.
+    /// </summary>
+    /// <returns>Returns true if the rendering should continue.</returns>
+    protected abstract bool ContinueModal();
+    #endregion Abstract methods
+
     protected virtual bool NeedToProcessGeometryTable()
     {
       return true;
@@ -202,10 +256,7 @@ namespace Rhino.Render
     {
       return true;
     }
-    protected virtual bool RenderContinueModal()
-    {
-      return false;
-    }
+
     protected virtual bool IgnoreRhinoObject(Rhino.DocObjects.RhinoObject obj)
     {
       return true;
@@ -237,9 +288,9 @@ namespace Rhino.Render
       AddLightToScene = 12,
     }
 
-    internal delegate int ReturnBoolGeneralCallback(int serial_number, int iVirtualFunction, IntPtr pObj, IntPtr pMat, IntPtr pMesh);
+    internal delegate int ReturnBoolGeneralCallback(int serial_number, int iVirtualFunction, IntPtr pObj, IntPtr pMat, IntPtr pMesh, IntPtr pView, int rectLeft, int rectTop, int rectRight, int rectBottom);
     internal static ReturnBoolGeneralCallback m_ReturnBoolGeneralCallback = OnReturnBoolGeneralCallback;
-    static int OnReturnBoolGeneralCallback(int serial_number, int iVirtualFunction, IntPtr pObj, IntPtr pMat, IntPtr pMesh)
+    static int OnReturnBoolGeneralCallback(int serial_number, int iVirtualFunction, IntPtr pObj, IntPtr pMat, IntPtr pMesh, IntPtr pView, int rectLeft, int rectTop, int rectRight, int rectBottom)
     {
       try
       {
@@ -249,9 +300,15 @@ namespace Rhino.Render
           switch ((VirtualFunctions)iVirtualFunction)
           {
             case VirtualFunctions.StartRendering:
-              return pipe.StartRendering() ? 1 : 0;
+              return pipe.OnRenderBegin() ? 1 : 0;
+            case VirtualFunctions.StartRenderingInWindow:
+              {
+                Rhino.Display.RhinoView view = Rhino.Display.RhinoView.FromIntPtr(pView);
+                System.Drawing.Rectangle rect = System.Drawing.Rectangle.FromLTRB(rectLeft, rectTop, rectRight, rectBottom);
+                return pipe.OnRenderWindowBegin(view, rect) ? 1 : 0;
+              }
             case VirtualFunctions.StopRendering:
-              pipe.StopRendering();
+              pipe.OnRenderEnd(new RenderEndEventArgs());
               return 1;
             case VirtualFunctions.NeedToProcessGeometryTable:
               return pipe.NeedToProcessGeometryTable() ? 1 : 0;
@@ -266,7 +323,7 @@ namespace Rhino.Render
             case VirtualFunctions.RenderExitModalLoop:
               return pipe.RenderExitModalLoop() ? 1 : 0;
             case VirtualFunctions.RenderContinueModal:
-              return pipe.RenderContinueModal() ? 1 : 0;
+              return pipe.ContinueModal() ? 1 : 0;
 
             case VirtualFunctions.IgnoreRhinoObject:
               {
@@ -346,6 +403,13 @@ namespace Rhino.Render
     }
 
     #endregion
+  }
+
+  /// <summary>
+  /// Contains information about why OnRenderEnd was called
+  /// </summary>
+  public class RenderEndEventArgs : EventArgs
+  {
   }
 }
 

@@ -1310,9 +1310,33 @@ namespace Rhino.Geometry
     const int idxIsSingular = 2;
     const int idxIsSolid = 3;
 
+    /// <summary>
+    /// Splits (divides) the surface into two parts at the specified parameter
+    /// </summary>
+    /// <param name="direction">
+    /// 0 = The surface is split vertically. The "west" side is returned as the first
+    /// surface in the array and the "east" side is returned as the second surface in
+    /// the array.
+    /// 1 = The surface is split horizontally. The "south" side is returned as the first surface in the array and the "north"
+    /// side is returned as the second surfae in the array
+    /// </param>
+    /// <param name="parameter">
+    /// value of constant parameter in interval returned by Domain(direction)
+    /// </param>
+    /// <returns>Array of two surfaces on success</returns>
+    public Surface[] Split(int direction, double parameter)
+    {
+      using (var surfaces = new Runtime.InteropWrappers.SimpleArraySurfacePointer())
+      {
+        IntPtr pSurfaces = surfaces.NonConstPointer();
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_Surface_Split(pConstThis, direction, parameter, pSurfaces);
+        return surfaces.ToNonConstArray();
+      }
+    }
+
     //[skipping]
     //  bool Extend( int dir,  const ON_Interval& domain );
-    //  virtual BOOL Split( int dir, double c,
     //  BOOL GetLocalClosestPoint( const ON_3dPoint&, // test_point
 
     //  virtual int GetNurbForm( ON_NurbsSurface& nurbs_surface,

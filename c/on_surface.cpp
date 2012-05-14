@@ -493,6 +493,28 @@ RH_C_FUNCTION ON_Surface* ON_Surface_Transpose( const ON_Surface* pConstSurface 
   return rc;
 }
 
+RH_C_FUNCTION void ON_Surface_Split(const ON_Surface* pConstSurface, int direction, double c, ON_SimpleArray<ON_Surface*>* pSurfaceArray)
+{
+  if( pConstSurface && pSurfaceArray )
+  {
+    ON_Surface* pSurf1 = NULL;
+    ON_Surface* pSurf2 = NULL;
+    if( !pConstSurface->Split(direction, c, pSurf1, pSurf2) )
+    {
+      if( pSurf1 )
+        delete pSurf1;
+      if( pSurf2 )
+        delete pSurf2;
+      pSurf1 = NULL;
+      pSurf2 = NULL;
+    }
+    if( pSurf1 )
+      pSurfaceArray->Append(pSurf1);
+    if( pSurf2 )
+      pSurfaceArray->Append(pSurf2);
+  }
+}
+
 RH_C_FUNCTION bool ON_Surface_Evaluate(const ON_Surface* pConstSurface, double u, double v, int numDer, int stride, /*ARRAY*/double* der_array)
 {
   bool rc = false;

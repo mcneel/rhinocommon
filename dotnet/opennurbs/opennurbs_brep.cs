@@ -1977,7 +1977,6 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_BrepLoop_GetPointer(pConstBrep, m_index);
     }
 
-
     #region properties
     /// <summary>
     /// Gets the Brep that owns this loop.
@@ -2020,6 +2019,19 @@ namespace Rhino.Geometry
         IntPtr pConstBrep = m_brep.ConstPointer();
         return (BrepLoopType)UnsafeNativeMethods.ON_BrepLoop_Type(pConstBrep, m_index);
       }
+    }
+
+    /// <summary>
+    /// Create a 3D curve that approximates the loop geometry.
+    /// </summary>
+    /// <returns>A 3D curve that approximates the loop or null on failure.</returns>
+    public Curve To3dCurve()
+    {
+      IntPtr pConstBrep = m_brep.ConstPointer();
+      IntPtr pLoopCurve = UnsafeNativeMethods.ON_BrepLoop_GetCurve3d(pConstBrep, m_index);
+      if (pLoopCurve == IntPtr.Zero)
+        return null;
+      return new PolyCurve(pLoopCurve, null, -1);
     }
     #endregion
   }

@@ -57,6 +57,18 @@ RH_C_FUNCTION ON_BrepLoop* ON_BrepLoop_GetPointer(const ON_Brep* pConstBrep, int
   return rc;
 }
 
+RH_C_FUNCTION ON_Curve* ON_BrepLoop_GetCurve3d(const ON_Brep* pConstBrep, int loop_index)
+{
+  ON_Curve* rc = NULL;
+  if( pConstBrep )
+  {
+    ON_BrepLoop* pLoop = pConstBrep->Loop(loop_index);
+    if( pLoop )
+      rc = pConstBrep->Loop3dCurve(*pLoop, true);
+  }
+  return rc;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // ON_BrepFace
 

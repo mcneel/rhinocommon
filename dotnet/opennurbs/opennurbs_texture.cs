@@ -124,5 +124,23 @@ namespace Rhino.DocObjects
         return UnsafeNativeMethods.ON_Texture_GetId(pConstThis);
       }
     }
+
+    /// <summary>
+    /// If the texture is enabled then it will be visible in the rendered
+    /// display otherwise it will not.
+    /// </summary>
+    public bool Enabled
+    {
+      get
+      {
+        IntPtr pConstTexture = ConstPointer();
+        return UnsafeNativeMethods.ON_Texture_GetEnabled(pConstTexture);
+      }
+      set
+      {
+        IntPtr pTexture = NonConstPointer();
+        UnsafeNativeMethods.ON_Texture_SetEnabled(pTexture, value);
+      }
+    }
   }
 }

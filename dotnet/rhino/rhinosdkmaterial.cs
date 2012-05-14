@@ -165,6 +165,22 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <summary>
+    /// The Id of the RenderPlugIn that is associated with this material.
+    /// </summary>
+    public Guid RenderPlugInId
+    {
+      get
+      {
+        IntPtr pMaterial = ConstPointer();
+        return UnsafeNativeMethods.ON_Material_PlugInId(pMaterial);
+      }
+      set
+      {
+        IntPtr pMaterial = NonConstPointer();
+        UnsafeNativeMethods.ON_Material_SetPlugInId(pMaterial, value);
+      }
+    }
 
     /// <summary>
     /// Rhino allows multiple files to be viewed simultaneously. Materials in the
@@ -446,6 +462,46 @@ namespace Rhino.DocObjects
       return true;
 #endif
     }
+
+    #region user strings
+    /// <summary>
+    /// Attach a user string (key,value combination) to this geometry.
+    /// </summary>
+    /// <param name="key">id used to retrieve this string.</param>
+    /// <param name="value">string associated with key.</param>
+    /// <returns>true on success.</returns>
+    public bool SetUserString(string key, string value)
+    {
+      return _SetUserString(key, value);
+    }
+    /// <summary>
+    /// Gets a user string.
+    /// </summary>
+    /// <param name="key">id used to retrieve the string.</param>
+    /// <returns>string associated with the key if successful. null if no key was found.</returns>
+    public string GetUserString(string key)
+    {
+      return _GetUserString(key);
+    }
+
+    public int UserStringCount
+    {
+      get
+      {
+        return _UserStringCount;
+      }
+    }
+
+    /// <summary>
+    /// Gets an independent copy of the collection of (user text key, user text value) pairs attached to this object.
+    /// </summary>
+    /// <returns>A collection of key strings and values strings. This </returns>
+    public System.Collections.Specialized.NameValueCollection GetUserStrings()
+    {
+      return _GetUserStrings();
+    }
+    #endregion
+
   }
 }
 

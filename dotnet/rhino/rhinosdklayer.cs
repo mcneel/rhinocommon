@@ -555,6 +555,48 @@ namespace Rhino.DocObjects
     }
 #endif
     #endregion
+
+    #region user strings
+    /// <summary>
+    /// Attach a user string (key,value combination) to this geometry.
+    /// </summary>
+    /// <param name="key">id used to retrieve this string.</param>
+    /// <param name="value">string associated with key.</param>
+    /// <returns>true on success.</returns>
+    public bool SetUserString(string key, string value)
+    {
+      return _SetUserString(key, value);
+    }
+    /// <summary>
+    /// Gets user string from this geometry.
+    /// </summary>
+    /// <param name="key">id used to retrieve the string.</param>
+    /// <returns>string associated with the key if successful. null if no key was found.</returns>
+    public string GetUserString(string key)
+    {
+      return _GetUserString(key);
+    }
+
+    /// <summary>
+    /// Gets the amount of user strings.
+    /// </summary>
+    public int UserStringCount
+    {
+      get
+      {
+        return _UserStringCount;
+      }
+    }
+
+    /// <summary>
+    /// Gets a copy of all (user key string, user value string) pairs attached to this geometry.
+    /// </summary>
+    /// <returns>A new collection.</returns>
+    public System.Collections.Specialized.NameValueCollection GetUserStrings()
+    {
+      return _GetUserStrings();
+    }
+    #endregion
   }
 }
 

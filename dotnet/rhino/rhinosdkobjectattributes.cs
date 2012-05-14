@@ -673,10 +673,7 @@ namespace Rhino.DocObjects
     /// <returns>true on success.</returns>
     public bool SetUserString(string key, string value)
     {
-      //const lie
-      IntPtr pThis = ConstPointer();
-      bool rc = UnsafeNativeMethods.ON_Object_SetUserString(pThis, key, value);
-      return rc;
+      return _SetUserString(key, value);
     }
     /// <summary>
     /// Gets a user string.
@@ -685,20 +682,14 @@ namespace Rhino.DocObjects
     /// <returns>string associated with the key if successful. null if no key was found.</returns>
     public string GetUserString(string key)
     {
-      IntPtr pThis = ConstPointer();
-      IntPtr pValue = UnsafeNativeMethods.ON_Object_GetUserString(pThis, key);
-      if (IntPtr.Zero == pValue)
-        return null;
-      return Marshal.PtrToStringUni(pValue);
+      return _GetUserString(key);
     }
 
     public int UserStringCount
     {
       get
       {
-        IntPtr pThis = ConstPointer();
-        int rc = UnsafeNativeMethods.ON_Object_UserStringCount(pThis);
-        return rc;
+        return _UserStringCount;
       }
     }
 
@@ -708,28 +699,7 @@ namespace Rhino.DocObjects
     /// <returns>A collection of key strings and values strings. This </returns>
     public System.Collections.Specialized.NameValueCollection GetUserStrings()
     {
-      System.Collections.Specialized.NameValueCollection rc = new System.Collections.Specialized.NameValueCollection();
-      IntPtr pThis = ConstPointer();
-      int count = 0;
-      IntPtr pUserStrings = UnsafeNativeMethods.ON_Object_GetUserStrings(pThis, ref count);
-
-      for (int i = 0; i < count; i++)
-      {
-        IntPtr pKey = UnsafeNativeMethods.ON_UserStringList_KeyValue(pUserStrings, i, true);
-        IntPtr pValue = UnsafeNativeMethods.ON_UserStringList_KeyValue(pUserStrings, i, false);
-        if (IntPtr.Zero != pKey && IntPtr.Zero != pValue)
-        {
-          string key = Marshal.PtrToStringUni(pKey);
-          string value = Marshal.PtrToStringUni(pValue);
-          if(key!=null && value!=null)
-            rc.Add(key, value);
-        }
-      }
-
-      if (IntPtr.Zero != pUserStrings)
-        UnsafeNativeMethods.ON_UserStringList_Delete(pUserStrings);
-
-      return rc;
+      return _GetUserStrings();
     }
     #endregion
   }

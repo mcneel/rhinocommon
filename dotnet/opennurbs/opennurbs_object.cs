@@ -353,6 +353,79 @@ namespace Rhino.Runtime
       }
     }
 
+
+
+    #region user strings
+    /// <summary>
+    /// Attach a user string (key,value combination) to this geometry.
+    /// </summary>
+    /// <param name="key">id used to retrieve this string.</param>
+    /// <param name="value">string associated with key.</param>
+    /// <returns>true on success.</returns>
+    internal bool _SetUserString(string key, string value)
+    {
+      //const lie
+      IntPtr pThis = ConstPointer();
+      bool rc = UnsafeNativeMethods.ON_Object_SetUserString(pThis, key, value);
+      return rc;
+    }
+    /// <summary>
+    /// Gets user string from this geometry.
+    /// </summary>
+    /// <param name="key">id used to retrieve the string.</param>
+    /// <returns>string associated with the key if successful. null if no key was found.</returns>
+    internal string _GetUserString(string key)
+    {
+      IntPtr pThis = ConstPointer();
+      IntPtr pValue = UnsafeNativeMethods.ON_Object_GetUserString(pThis, key);
+      return IntPtr.Zero == pValue ? String.Empty : System.Runtime.InteropServices.Marshal.PtrToStringUni(pValue);
+    }
+
+    /// <summary>
+    /// Gets the amount of user strings.
+    /// </summary>
+    internal int _UserStringCount
+    {
+      get
+      {
+        IntPtr pThis = ConstPointer();
+        int rc = UnsafeNativeMethods.ON_Object_UserStringCount(pThis);
+        return rc;
+      }
+    }
+
+    /// <summary>
+    /// Gets a copy of all (user key string, user value string) pairs attached to this geometry.
+    /// </summary>
+    /// <returns>A new collection.</returns>
+    internal System.Collections.Specialized.NameValueCollection _GetUserStrings()
+    {
+      System.Collections.Specialized.NameValueCollection rc = new System.Collections.Specialized.NameValueCollection();
+      IntPtr pThis = ConstPointer();
+      int count = 0;
+      IntPtr pUserStrings = UnsafeNativeMethods.ON_Object_GetUserStrings(pThis, ref count);
+
+      for (int i = 0; i < count; i++)
+      {
+        IntPtr pKey = UnsafeNativeMethods.ON_UserStringList_KeyValue(pUserStrings, i, true);
+        IntPtr pValue = UnsafeNativeMethods.ON_UserStringList_KeyValue(pUserStrings, i, false);
+        if (IntPtr.Zero != pKey && IntPtr.Zero != pValue)
+        {
+          string key = System.Runtime.InteropServices.Marshal.PtrToStringUni(pKey);
+          string value = System.Runtime.InteropServices.Marshal.PtrToStringUni(pValue);
+          if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
+            rc.Add(key, value);
+        }
+      }
+
+      if (IntPtr.Zero != pUserStrings)
+        UnsafeNativeMethods.ON_UserStringList_Delete(pUserStrings);
+
+      return rc;
+    }
+    #endregion
+
+
     #region serialization support
     const string ARCHIVE_3DM_VERSION = "archive3dm";
     const string ARCHIVE_OPENNURBS_VERSION = "opennurbs";

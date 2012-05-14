@@ -359,6 +359,22 @@ RH_C_FUNCTION void ON_Texture_SetFileName(ON_Texture* pTexture, const RHMONO_STR
   }
 }
 
+RH_C_FUNCTION bool ON_Texture_GetEnabled(const ON_Texture* pConstTexture)
+{
+  if( pConstTexture )
+    return pConstTexture->m_bOn;
+  return false;
+}
+
+RH_C_FUNCTION void ON_Texture_SetEnabled(ON_Texture* pTexture, bool enabled)
+{
+  if( pTexture )
+  {
+    pTexture->m_bOn = enabled;
+  }
+}
+
+
 RH_C_FUNCTION ON_UUID ON_Texture_GetId(const ON_Texture* pConstTexture)
 {
   if( pConstTexture )
@@ -371,4 +387,17 @@ RH_C_FUNCTION ON_UUID ON_Material_ModelObjectId(const ON_Material* pConstMateria
   if( pConstMaterial )
     return pConstMaterial->ModelObjectId();
   return ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ON_Material_PlugInId(const ON_Material* pConstMaterial)
+{
+  if( pConstMaterial )
+    return pConstMaterial->m_plugin_id;
+  return ON_nil_uuid;
+}
+
+RH_C_FUNCTION void ON_Material_SetPlugInId(ON_Material* pMaterial, ON_UUID id)
+{
+  if( pMaterial )
+    pMaterial->m_plugin_id = id;
 }

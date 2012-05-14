@@ -782,7 +782,11 @@ RH_C_FUNCTION bool ON_Mesh_IsPointInside(const ON_Mesh* pConstMesh, ON_3DPOINT_S
       ON_BoundingBox bbox = pConstMesh->BoundingBox();
       ON_Line line(_point, bbox.m_max + ON_3dPoint(100,100,100));
 
+#if defined(RHINO_V5SR) // only available in V5
+      const ON_MeshTree* mesh_tree = pConstMesh->MeshTree(true);
+#else
       const ON_MeshTree* mesh_tree = pConstMesh->MeshTree();
+#endif
       if( mesh_tree )
       {
         ON_SimpleArray<ON_CMX_EVENT> events;
@@ -1866,6 +1870,186 @@ RH_C_FUNCTION bool ON_Mesh_MeshPointAt(const ON_Mesh* pConstMesh, int faceIndex,
       p->z = t0 * p0.z + t1 * p1.z + t2 * p2.z;
 
       rc = true;
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Mesh_MeshNormalAt(const ON_Mesh* pConstMesh, int faceIndex, double t0, double t1, double t2, double t3, ON_3dVector* n)
+{
+  bool rc = false;
+  if( pConstMesh && n )
+  {
+    // test to see if face exists
+    if( faceIndex >= 0 && faceIndex < pConstMesh->m_F.Count() )
+    {
+      /// Barycentric quad coordinates for the point on the mesh
+      /// face mesh.Faces[FaceIndex].  
+      
+      /// If the face is a triangle
+      /// disregard T[3] (it should be set to 0.0). 
+      
+      /// If the face is
+      /// a quad and is split between vertexes 0 and 2, then T[3]
+      /// will be 0.0 when point is on the triangle defined by vi[0],
+      /// vi[1], vi[2] 
+
+      /// T[1] will be 0.0 when point is on the
+      /// triangle defined by vi[0], vi[2], vi[3]. 
+
+      /// If the face is a
+      /// quad and is split between vertexes 1 and 3, then T[2] will
+      /// be -1 when point is on the triangle defined by vi[0],
+      /// vi[1], vi[3] 
+
+      /// and m_t[0] will be -1 when point is on the
+      /// triangle defined by vi[1], vi[2], vi[3].
+
+      const ON_MeshFace& face = pConstMesh->m_F[faceIndex];
+
+      // Collect data for barycentric evaluation.
+      ON_3dVector p0, p1, p2;
+
+      if( face.IsTriangle() )
+      {
+        p0 = pConstMesh->m_N[face.vi[0]];
+        p1 = pConstMesh->m_N[face.vi[1]];
+        p2 = pConstMesh->m_N[face.vi[2]];
+      }
+      else
+      {
+        if( t3 == 0 )
+        { // point is on subtriangle {0,1,2}
+          p0 = pConstMesh->m_N[face.vi[0]];
+          p1 = pConstMesh->m_N[face.vi[1]];
+          p2 = pConstMesh->m_N[face.vi[2]];
+        }
+        else if( t1 == 0 )
+        { // point is on subtriangle {0,2,3}
+          p0 = pConstMesh->m_N[face.vi[0]];
+          p1 = pConstMesh->m_N[face.vi[2]];
+          p2 = pConstMesh->m_N[face.vi[3]];
+          //t0 = t0;
+          t1 = t2;
+          t2 = t3;
+        }
+        else if( t2 == -1 )
+        { // point is on subtriangle {0,1,3}
+          p0 = pConstMesh->m_N[face.vi[0]];
+          p1 = pConstMesh->m_N[face.vi[1]];
+          p2 = pConstMesh->m_N[face.vi[3]];
+          //t0 = t0;
+          //t1 = t1;
+          t2 = t3;
+        }
+        else
+        { // point must be on remaining subtriangle {1,2,3}
+          p0 = pConstMesh->m_N[face.vi[1]];
+          p1 = pConstMesh->m_N[face.vi[2]];
+          p2 = pConstMesh->m_N[face.vi[3]];
+          t0 = t1;
+          t1 = t2;
+          t2 = t3;
+        }
+      }
+
+      n->x = t0 * p0.x + t1 * p1.x + t2 * p2.x;
+      n->y = t0 * p0.y + t1 * p1.y + t2 * p2.y;
+      n->z = t0 * p0.z + t1 * p1.z + t2 * p2.z;
+
+      rc = true;
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Mesh_MeshColorAt(const ON_Mesh* pConstMesh, int faceIndex, double t0, double t1, double t2, double t3)
+{
+  int rc = -1;
+  if( pConstMesh && pConstMesh->HasVertexColors() )
+  {
+    // test to see if face exists
+    if( faceIndex >= 0 && faceIndex < pConstMesh->m_F.Count() )
+    {
+      /// Barycentric quad coordinates for the point on the mesh
+      /// face mesh.Faces[FaceIndex].  
+      
+      /// If the face is a triangle
+      /// disregard T[3] (it should be set to 0.0). 
+      
+      /// If the face is
+      /// a quad and is split between vertexes 0 and 2, then T[3]
+      /// will be 0.0 when point is on the triangle defined by vi[0],
+      /// vi[1], vi[2] 
+
+      /// T[1] will be 0.0 when point is on the
+      /// triangle defined by vi[0], vi[2], vi[3]. 
+
+      /// If the face is a
+      /// quad and is split between vertexes 1 and 3, then T[2] will
+      /// be -1 when point is on the triangle defined by vi[0],
+      /// vi[1], vi[3] 
+
+      /// and m_t[0] will be -1 when point is on the
+      /// triangle defined by vi[1], vi[2], vi[3].
+
+      ON_MeshFace face = pConstMesh->m_F[faceIndex];
+
+      // Collect data for barycentric evaluation.
+      ON_Color p0, p1, p2;
+
+      if( face.IsTriangle() )
+      {
+        p0 = pConstMesh->m_C[face.vi[0]];
+        p1 = pConstMesh->m_C[face.vi[1]];
+        p2 = pConstMesh->m_C[face.vi[2]];
+      }
+      else
+      {
+        if( t3 == 0 )
+        { // point is on subtriangle {0,1,2}
+          p0 = pConstMesh->m_C[face.vi[0]];
+          p1 = pConstMesh->m_C[face.vi[1]];
+          p2 = pConstMesh->m_C[face.vi[2]];
+        }
+        else if( t1 == 0 )
+        { // point is on subtriangle {0,2,3}
+          p0 = pConstMesh->m_C[face.vi[0]];
+          p1 = pConstMesh->m_C[face.vi[2]];
+          p2 = pConstMesh->m_C[face.vi[3]];
+          //t0 = t0;
+          t1 = t2;
+          t2 = t3;
+        }
+        else if( t2 == -1 )
+        { // point is on subtriangle {0,1,3}
+          p0 = pConstMesh->m_C[face.vi[0]];
+          p1 = pConstMesh->m_C[face.vi[1]];
+          p2 = pConstMesh->m_C[face.vi[3]];
+          //t0 = t0;
+          //t1 = t1;
+          t2 = t3;
+        }
+        else
+        { // point must be on remaining subtriangle {1,2,3}
+          p0 = pConstMesh->m_C[face.vi[1]];
+          p1 = pConstMesh->m_C[face.vi[2]];
+          p2 = pConstMesh->m_C[face.vi[3]];
+          t0 = t1;
+          t1 = t2;
+          t2 = t3;
+        }
+      }
+
+      double r = t0 * p0.FractionRed()   + t1 * p1.FractionRed()   + t2 * p2.FractionRed();
+      double g = t0 * p0.FractionGreen() + t1 * p1.FractionGreen() + t2 * p2.FractionGreen();
+      double b = t0 * p0.FractionBlue()  + t1 * p1.FractionBlue()  + t2 * p2.FractionBlue();
+
+      ON_Color color;
+      color.SetFractionalRGB(r, g, b);
+      
+      unsigned int abgr = (unsigned int)color;
+      rc = (int)abgr;
     }
   }
   return rc;

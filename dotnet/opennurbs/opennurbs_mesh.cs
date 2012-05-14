@@ -560,23 +560,25 @@ namespace Rhino.Geometry
       }
     }
 
-    /// <summary>
-    /// Create a minimal representation of a Brep. Only Brep Faces with a single loop 
-    /// containing either 3 or 4 sharp corners will be included in the mesh. 
-    /// This method is in development and may well disappear, do not use it.
-    /// </summary>
-    /// <param name="brep">Brep to approximate.</param>
-    /// <returns>A minimal representation of the Brep or null on failure.</returns>
-    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    public static Mesh CreateFromBrepSimple(Brep brep)
-    {
-      IntPtr pConstBrep = brep.ConstPointer();
-      IntPtr newMesh = UnsafeNativeMethods.ON_Mesh_BrepToMeshSimple(pConstBrep);
-      if (newMesh == null)
-        return null;
+    //DR: I was testing this, but I removed it as it is now possible to get 3D curves out of BrepLoops,
+    //    so this can be implemented in pure .NET.
+    ///// <summary>
+    ///// Create a minimal representation of a Brep. Only Brep Faces with a single loop 
+    ///// containing either 3 or 4 sharp corners will be included in the mesh. 
+    ///// This method is in development and may well disappear, do not use it.
+    ///// </summary>
+    ///// <param name="brep">Brep to approximate.</param>
+    ///// <returns>A minimal representation of the Brep or null on failure.</returns>
+    //[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    //public static Mesh CreateFromBrepSimple(Brep brep)
+    //{
+    //  IntPtr pConstBrep = brep.ConstPointer();
+    //  IntPtr newMesh = UnsafeNativeMethods.ON_Mesh_BrepToMeshSimple(pConstBrep);
+    //  if (newMesh == null)
+    //    return null;
 
-      return new Mesh(newMesh, null);
-    }
+    //  return new Mesh(newMesh, null);
+    //}
 
     /// <summary>
     /// Computes the solid union of a set of meshes.
@@ -1494,7 +1496,6 @@ namespace Rhino.Geometry
       if (meshPoint == null) { throw new ArgumentNullException("meshPoint"); }
       return PointAt(meshPoint.FaceIndex, meshPoint.T[0], meshPoint.T[1], meshPoint.T[2], meshPoint.T[3]);
     }
-
     /// <summary>
     /// Evaluates a mesh at a set of barycentric coordinates. Barycentric coordinates must 
     /// be assigned in accordance with the rules as defined by MeshPoint.T.
@@ -1513,6 +1514,67 @@ namespace Rhino.Geometry
       if (UnsafeNativeMethods.ON_Mesh_MeshPointAt(pConstThis, faceIndex, t0, t1, t2, t3, ref pt))
         return pt;
       return Point3d.Unset;
+    }
+
+    /// <summary>
+    /// Evaluate a mesh normal at a set of barycentric coordinates.
+    /// </summary>
+    /// <param name="meshPoint">MeshPoint instance contiaining a valid Face Index and Barycentric coordinates.</param>
+    /// <returns>A Normal vector to the mesh or Vector3d.Unset if the faceIndex is not valid or if the barycentric coordinates could not be evaluated.</returns>
+    public Vector3d NormalAt(MeshPoint meshPoint)
+    {
+      if (meshPoint == null) { throw new ArgumentNullException("meshPoint"); }
+      return NormalAt(meshPoint.FaceIndex, meshPoint.T[0], meshPoint.T[1], meshPoint.T[2], meshPoint.T[3]);
+    }
+    /// <summary>
+    /// Evaluate a mesh normal at a set of barycentric coordinates. Barycentric coordinates must 
+    /// be assigned in accordance with the rules as defined by MeshPoint.T.
+    /// </summary>
+    /// <param name="faceIndex">Index of triangle or quad to evaluate.</param>
+    /// <param name="t0">First barycentric coordinate.</param>
+    /// <param name="t1">Second barycentric coordinate.</param>
+    /// <param name="t2">Third barycentric coordinate.</param>
+    /// <param name="t3">Fourth barycentric coordinate. If the face is a triangle, this coordinate will be ignored.</param>
+    /// <returns>A Normal vector to the mesh or Vector3d.Unset if the faceIndex is not valid or if the barycentric coordinates could not be evaluated.</returns>
+    public Vector3d NormalAt(int faceIndex, double t0, double t1, double t2, double t3)
+    {
+      IntPtr pConstThis = ConstPointer();
+      Vector3d nr = Vector3d.Unset;
+
+      if (UnsafeNativeMethods.ON_Mesh_MeshNormalAt(pConstThis, faceIndex, t0, t1, t2, t3, ref nr))
+        return nr;
+      return Vector3d.Unset;
+    }
+
+    /// <summary>
+    /// Evaluate a mesh color at a set of barycentric coordinates.
+    /// </summary>
+    /// <param name="meshPoint">MeshPoint instance contiaining a valid Face Index and Barycentric coordinates.</param>
+    /// <returns>The interpolated vertex color on the mesh or Color.Transparent if the faceIndex is not valid, 
+    /// if the barycentric coordinates could not be evaluated, or if there are no colors defined on the mesh.</returns>
+    public Color ColorAt(MeshPoint meshPoint)
+    {
+      if (meshPoint == null) { throw new ArgumentNullException("meshPoint"); }
+      return ColorAt(meshPoint.FaceIndex, meshPoint.T[0], meshPoint.T[1], meshPoint.T[2], meshPoint.T[3]);
+    }
+    /// <summary>
+    /// Evaluate a mesh normal at a set of barycentric coordinates. Barycentric coordinates must 
+    /// be assigned in accordance with the rules as defined by MeshPoint.T.
+    /// </summary>
+    /// <param name="faceIndex">Index of triangle or quad to evaluate.</param>
+    /// <param name="t0">First barycentric coordinate.</param>
+    /// <param name="t1">Second barycentric coordinate.</param>
+    /// <param name="t2">Third barycentric coordinate.</param>
+    /// <param name="t3">Fourth barycentric coordinate. If the face is a triangle, this coordinate will be ignored.</param>
+    /// <returns>The interpolated vertex color on the mesh or Color.Transparent if the faceIndex is not valid, 
+    /// if the barycentric coordinates could not be evaluated, or if there are no colors defined on the mesh.</returns>
+    public Color ColorAt(int faceIndex, double t0, double t1, double t2, double t3)
+    {
+      IntPtr pConstThis = ConstPointer();
+      int abgr = UnsafeNativeMethods.ON_Mesh_MeshColorAt(pConstThis, faceIndex, t0, t1, t2, t3);
+
+      if (abgr < 0) { return Color.Transparent; }
+      return System.Drawing.ColorTranslator.FromWin32(abgr);
     }
 
     /// <summary>

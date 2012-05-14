@@ -527,7 +527,11 @@ RH_C_FUNCTION double ON_Intersect_MeshRay1(const ON_Mesh* pMesh, ON_3dRay* ray, 
   // it is ok if face_indices is null
   if( pMesh && ray )
   {
+#if defined(RHINO_V5SR) // only available in V5
+    const ON_MeshTree* mt = pMesh->MeshTree(true);
+#else
     const ON_MeshTree* mt = pMesh->MeshTree();
+#endif
     ON_3dVector rayVec = ray->m_V;
     if( mt && rayVec.Unitize() )
     {
@@ -597,7 +601,11 @@ RH_C_FUNCTION ON_SimpleArray<ON_CMX_EVENT>* ON_Intersect_MeshPolyline1(const ON_
   if( pMesh && pCurve && count )
   {
     *count = 0;
+#if defined(RHINO_V5SR) // only available in V5
+    const ON_MeshTree* mesh_tree = pMesh->MeshTree(true);
+#else
     const ON_MeshTree* mesh_tree = pMesh->MeshTree();
+#endif
     if( mesh_tree )
     {
       rc = new ON_SimpleArray<ON_CMX_EVENT>();
@@ -620,7 +628,11 @@ RH_C_FUNCTION ON_SimpleArray<ON_CMX_EVENT>* ON_Intersect_MeshLine(const ON_Mesh*
     ON_3dPoint start(from.val);
     ON_3dPoint end(to.val);
     ON_Line line(start, end);
+#if defined(RHINO_V5SR) // only available in V5
+    const ON_MeshTree* mesh_tree = pConstMesh->MeshTree(true);
+#else
     const ON_MeshTree* mesh_tree = pConstMesh->MeshTree();
+#endif
     if( mesh_tree )
     {
       rc = new ON_SimpleArray<ON_CMX_EVENT>();

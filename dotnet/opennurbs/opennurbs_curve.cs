@@ -948,6 +948,32 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Pull a curve to a BrepFace using closest point projection.
+    /// </summary>
+    /// <param name="curve">Curve to pull.</param>
+    /// <param name="face">Brepface that pulls.</param>
+    /// <param name="tolerance">Tolerance to use for pulling.</param>
+    /// <returns>An array of pulled curves, or an empty array on failure.</returns>
+    public static Curve[] PullToBrepFace(Curve curve, BrepFace face, double tolerance)
+    {
+      IntPtr brep_ptr = face.m_brep.ConstPointer();
+      IntPtr curve_ptr = curve.ConstPointer();
+
+      using (SimpleArrayCurvePointer rc = new SimpleArrayCurvePointer())
+      {
+        IntPtr rc_ptr = rc.NonConstPointer();
+        if (UnsafeNativeMethods.RHC_RhinoPullCurveToBrep(brep_ptr, face.FaceIndex, curve_ptr, tolerance, rc_ptr))
+        {
+          return rc.ToNonConstArray();
+        }
+        else
+        {
+          return new Curve[0];
+        }
+      }
+    }
+
+    /// <summary>
     /// Computes the distance between two arbitrary curves.
     /// </summary>
     /// <param name="curveA">A curve.</param>

@@ -215,6 +215,37 @@ namespace Rhino.Input
       return rc;
     }
 
+
+    /// <summary>Easy to use object getter.</summary>
+    /// <param name="prompt">command prompt.</param>
+    /// <param name="acceptNothing">if true, the user can press enter.</param>
+    /// <param name="filter">geometry filter to use when getting objects.</param>
+    /// <param name="objref">result of the get. may be null.</param>
+    /// <returns>
+    /// Commands.Result.Success - got object
+    /// Commands.Result.Nothing - user pressed enter
+    /// Commands.Result.Cancel - user cancel object getting.
+    /// </returns>
+    /// <remarks>
+    /// If you need options or more advanced user interface, then use GetObject class.
+    /// </remarks>
+    public static Commands.Result GetOneObject(string prompt, bool acceptNothing, Rhino.Input.Custom.GetObjectGeometryFilter filter, out Rhino.DocObjects.ObjRef objref)
+    {
+      objref = null;
+      Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject();
+      go.SetCommandPrompt(prompt);
+      go.AcceptNothing(acceptNothing);
+      go.SetCustomGeometryFilter(filter);
+      go.Get();
+      Commands.Result rc = go.CommandResult();
+      if (rc == Rhino.Commands.Result.Success && go.ObjectCount > 0)
+      {
+        objref = go.Object(0);
+      }
+      go.Dispose();
+      return rc;
+    }
+
     /// <summary>Easy to use object getter for getting multiple objects.</summary>
     /// <param name="prompt">command prompt.</param>
     /// <param name="acceptNothing">if true, the user can press enter.</param>
@@ -241,6 +272,36 @@ namespace Rhino.Input
       go.SetCommandPrompt(prompt);
       go.AcceptNothing(acceptNothing);
       go.GeometryFilter = filter;
+      go.GetMultiple(1, 0); //David: changed this from GetMultiple(1, -1), which is a much rarer case (imo).
+      Commands.Result rc = go.CommandResult();
+      if (rc == Rhino.Commands.Result.Success && go.ObjectCount > 0)
+      {
+        rhObjects = go.Objects();
+      }
+      go.Dispose();
+      return rc;
+    }
+
+    /// <summary>Easy to use object getter for getting multiple objects.</summary>
+    /// <param name="prompt">command prompt.</param>
+    /// <param name="acceptNothing">if true, the user can press enter.</param>
+    /// <param name="filter">geometry filter to use when getting objects.</param>
+    /// <param name="rhObjects">result of the get. may be null.</param>
+    /// <returns>
+    /// Commands.Result.Success - got object
+    /// Commands.Result.Nothing - user pressed enter
+    /// Commands.Result.Cancel - user cancel object getting.
+    /// </returns>
+    /// <remarks>
+    /// If you need options or more advanced user interface, then use GetObject class.
+    /// </remarks>
+    public static Commands.Result GetMultipleObjects(string prompt, bool acceptNothing, Rhino.Input.Custom.GetObjectGeometryFilter filter, out Rhino.DocObjects.ObjRef[] rhObjects)
+    {
+      rhObjects = null;
+      Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject();
+      go.SetCommandPrompt(prompt);
+      go.AcceptNothing(acceptNothing);
+      go.SetCustomGeometryFilter(filter);
       go.GetMultiple(1, 0); //David: changed this from GetMultiple(1, -1), which is a much rarer case (imo).
       Commands.Result rc = go.CommandResult();
       if (rc == Rhino.Commands.Result.Success && go.ObjectCount > 0)

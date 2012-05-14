@@ -323,21 +323,22 @@ namespace Rhino.PlugIns
         {
           rc = p.OnLoad(ref error_msg);
 
-#if RDK_UNCHECKED
           // after calling the OnLoad function, check to see if we should be creating
           // an RDK plugin. This is the typical spot where C++ plug-ins perform their
           // RDK initialization.
           if (rc == LoadReturnCode.Success)
           {
+#if RDK_CHECKED
             if (p is RenderPlugIn)
             {
               Rhino.Render.RdkPlugIn.GetRdkPlugIn(p.Id, plugin_serial_number);
             }
-
+#endif
+#if RDK_UNCHECKED
             Rhino.Render.RenderContent.RegisterContent(p.Assembly, p.Id);
             Rhino.Render.CustomRenderMesh.Provider.RegisterProviders(p.Assembly, p.Id);
-          }
 #endif
+          }
 
         }
         catch (Exception ex)

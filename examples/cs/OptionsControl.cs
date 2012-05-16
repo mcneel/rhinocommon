@@ -28,6 +28,8 @@ namespace examples_cs
       : base("CS_OptionPage")
     { }
 
+    public CustomOptionPage(string name) : base(name) { }
+
     public override Control PageControl
     {
       get { return null; }

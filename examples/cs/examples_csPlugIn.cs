@@ -55,7 +55,11 @@ namespace examples_cs
 
     protected override void OptionsDialogPages(System.Collections.Generic.List<Rhino.UI.OptionsDialogPage> pages)
     {
-      pages.Add(new CustomOptionPage());
+      /*
+      var page = new CustomOptionPage("parent");
+      page.Children.Add(new CustomOptionPage("child"));
+      pages.Add(page);
+       */
     }
   }
 }

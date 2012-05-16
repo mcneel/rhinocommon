@@ -116,6 +116,7 @@
     <Compile Include="ex_instancedefinitionobjects.cs" />
     <Compile Include="ex_intersectcurves.cs" />
     <Compile Include="ex_intersectlines.cs" />
+    <Compile Include="ex_isbrepbox.cs" />
     <Compile Include="ex_isocurvedensity.cs" />
     <Compile Include="ex_movecplane.cs" />
     <Compile Include="ex_objectdecoration.cs" />

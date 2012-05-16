@@ -286,6 +286,7 @@ namespace examples_cs
     protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
     {
       examples_csPlugIn.ThePlugIn.IncrementRunCommandCount();
+      /*
       Test(Examples.ActiveViewport, doc);
       Test(Examples.AddBrepBox, doc);
       Test(Examples.AddChildLayer, doc);
@@ -327,6 +328,9 @@ namespace examples_cs
       Test(Examples.InsertKnot, doc);
       Test(Examples.IntersectLines, doc);
       Test(Examples.InstanceDefinitionObjects, doc);
+      */
+      Test(Examples.TestBrepBox, doc);
+      /*
       Test(Examples.IsocurveDensity, doc);
       Test(Examples.MoveCPlane, doc);
       Test(Examples.ObjectDecoration, doc);
@@ -339,7 +343,7 @@ namespace examples_cs
       Test(Examples.UnrollSurface2, doc);
       Test(Examples.ZoomToObject, doc);
       Test(Examples.ExplodeHatch, doc);
-      
+      */
       return Rhino.Commands.Result.Success;
     }
   }

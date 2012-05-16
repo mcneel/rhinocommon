@@ -125,6 +125,7 @@
     <Compile Include="ex_instancedefinitionobjects.vb" />
     <Compile Include="ex_intersectcurves.vb" />
     <Compile Include="ex_intersectlines.vb" />
+    <Compile Include="ex_isbrepbox.vb" />
     <Compile Include="ex_isocurvedensity.vb" />
     <Compile Include="ex_movecplane.vb" />
     <Compile Include="ex_objectdecoration.vb" />

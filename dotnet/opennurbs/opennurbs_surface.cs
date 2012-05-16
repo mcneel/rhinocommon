@@ -1156,6 +1156,11 @@ namespace Rhino.Geometry
     /// <returns>
     /// true if there is a plane such that the maximum distance from the surface to the plane is &lt;= tolerance.
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_isbrepbox.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_isbrepbox.cs' lang='cs'/>
+    /// <code source='examples\py\ex_isbrepbox.py' lang='py'/>
+    /// </example>
     public bool TryGetPlane(out Plane plane, double tolerance)
     {
       plane = new Plane();

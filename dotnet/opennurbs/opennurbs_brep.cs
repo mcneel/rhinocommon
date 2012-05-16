@@ -1055,6 +1055,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Determines whether this brep is a solid, or a closed oriented manifold.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_isbrepbox.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_isbrepbox.cs' lang='cs'/>
+    /// <code source='examples\py\ex_isbrepbox.py' lang='py'/>
+    /// </example>
     public bool IsSolid
     {
       get

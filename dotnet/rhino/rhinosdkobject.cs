@@ -64,8 +64,9 @@ namespace Rhino.DocObjects
       m_theSelectionCallback = OnRhinoObjectSelection;
       m_thePickCallback = OnRhinoObjectPick;
       m_thePickedCallback = OnRhinoObjectPicked;
+      m_theTransformCallback = OnRhinoObjectTransform;
 
-      UnsafeNativeMethods.CRhinoObject_SetCallbacks(m_theDuplicateCallback, m_theDrawCallback, m_theDocNotifyCallback, m_theActiveInViewportCallback, m_theSelectionCallback);
+      UnsafeNativeMethods.CRhinoObject_SetCallbacks(m_theDuplicateCallback, m_theDrawCallback, m_theDocNotifyCallback, m_theActiveInViewportCallback, m_theSelectionCallback, m_theTransformCallback);
       UnsafeNativeMethods.CRhinoObject_SetPickCallbacks(m_thePickCallback, m_thePickedCallback);
     }
 
@@ -79,6 +80,7 @@ namespace Rhino.DocObjects
     internal delegate void RhinoObjectDocNotifyCallback(int docId, uint serialNumber, int add);
     internal delegate int RhinoObjectActiveInViewportCallback(int docId, uint serialNumber, IntPtr pRhinoViewport);
     internal delegate void RhinoObjectSelectionCallback(int docId, uint serialNumber);
+    internal delegate void RhinoObjectTransformCallback(int docId, uint serialNumber, IntPtr pConstTransform);
     internal delegate void RhinoObjectPickCallback(int docId, uint serialNumber, IntPtr pConstRhinoObject, IntPtr pRhinoObjRefArray);
     internal delegate void RhinoObjectPickedCallback(int docId, uint serialNumber, IntPtr pConstRhinoObject, IntPtr pRhinoObjRefArray, int count);
     static RhinoObjectDrawCallback m_theDrawCallback;
@@ -86,6 +88,7 @@ namespace Rhino.DocObjects
     static RhinoObjectDocNotifyCallback m_theDocNotifyCallback;
     static RhinoObjectActiveInViewportCallback m_theActiveInViewportCallback;
     static RhinoObjectSelectionCallback m_theSelectionCallback;
+    static RhinoObjectTransformCallback m_theTransformCallback;
     static RhinoObjectPickCallback m_thePickCallback;
     static RhinoObjectPickedCallback m_thePickedCallback;
 
@@ -150,6 +153,20 @@ namespace Rhino.DocObjects
         RhinoObject rhobj = doc.Objects.FindCustomObject(serialNumber);
         if (rhobj != null)
           rhobj.OnSelectionChanged();
+      }
+    }
+
+    static void OnRhinoObjectTransform(int docId, uint serialNumber, IntPtr pConstTransform)
+    {
+      RhinoDoc doc = RhinoDoc.FromId(docId);
+      if (doc != null)
+      {
+        RhinoObject rhobj = doc.Objects.FindCustomObject(serialNumber);
+        if (rhobj != null)
+        {
+          Transform xf = (Transform)System.Runtime.InteropServices.Marshal.PtrToStructure(pConstTransform, typeof(Transform));
+          rhobj.OnTransform(xf);
+        }
       }
     }
 
@@ -481,6 +498,7 @@ namespace Rhino.DocObjects
     const int idxIsHidden = 7;
     //const int idxIsSolid = 8;
     const int idxGripsSelected = 9;
+    const int idxHasDynamicTransform = 10;
     bool GetBool(int which)
     {
       IntPtr ptr = ConstPointer();
@@ -1277,6 +1295,32 @@ namespace Rhino.DocObjects
       return rc;
     }
 
+    /// <summary>
+    /// True if the object has a dynamic transformation
+    /// </summary>
+    public bool HasDynamicTransform
+    {
+      get { return GetBool(idxHasDynamicTransform); }
+    }
+
+    /// <summary>
+    /// While an object is being dynamically tranformed (dragged, rotated, ...),
+    /// the current transformation can be retrieved and used for creating
+    /// dynamic display.
+    /// </summary>
+    /// <param name="transform"></param>
+    /// <returns>
+    /// True if the object is being edited and its transformation
+    /// is available.  False if the object is not being edited,
+    /// in which case the identity xform is returned.
+    /// </returns>
+    public bool GetDynamicTransform(out Transform transform)
+    {
+      transform = Transform.Identity;
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.CRhinoObject_GetDynamicTransform(pConstThis, ref transform);
+    }
+
 #if RDK_UNCHECKED
     /// <summary>
     /// Gets the instance ID of the render material associated with this object.
@@ -1425,6 +1469,14 @@ namespace Rhino.DocObjects
     /// Called when the selection state of this object has changed
     /// </summary>
     protected virtual void OnSelectionChanged()
+    {
+    }
+
+    /// <summary>
+    /// Called when a transformation has been applied to the geometry
+    /// </summary>
+    /// <param name="transform"></param>
+    protected virtual void OnTransform(Rhino.Geometry.Transform transform)
     {
     }
   }
@@ -1646,30 +1698,30 @@ namespace Rhino.DocObjects
       return ObjRefToGeometryHelper(pBrepFace) as BrepFace;
     }
 
+    /// <summary>
+    ///  Gets the brep if this reference geometry is one.
+    /// </summary>
+    /// <returns>A boundary representation; or null on error.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_booleandifference.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_booleandifference.cs' lang='cs'/>
     /// <code source='examples\py\ex_booleandifference.py' lang='py'/>
     /// </example>
-    /// <summary>
-    ///  Gets the brep if this reference geometry is one.
-    /// </summary>
-    /// <returns>A boundary representation; or null on error.</returns>
     public Geometry.Brep Brep()
     {
       IntPtr pBrep = UnsafeNativeMethods.CRhinoObjRef_Brep(m_ptr);
       return ObjRefToGeometryHelper(pBrep) as Brep;
     }
 
+    /// <summary>
+    /// Gets the surface if the referenced geometry is one.
+    /// </summary>
+    /// <returns>A surface; or null if the referenced object is not a surface, or on error.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_orientonsrf.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_orientonsrf.cs' lang='cs'/>
     /// <code source='examples\py\ex_orientonsrf.py' lang='py'/>
     /// </example>
-    /// <summary>
-    /// Gets the surface if the referenced geometry is one.
-    /// </summary>
-    /// <returns>A surface; or null if the referenced object is not a surface, or on error.</returns>
     public Geometry.Surface Surface()
     {
       IntPtr pSurface = UnsafeNativeMethods.CRhinoObjRef_Surface(m_ptr);

@@ -4778,6 +4778,14 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_app.cpp
+  //bool CRhMainFrame_Invoke(MAINFRAMEINVOKEPROC proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //bool CRhMainFrame_InvokeRequired()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhMainFrame_InvokeRequired();
+
   //HWND CRhinoApp_GetMainFrameHWND()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoApp_GetMainFrameHWND();
@@ -8302,6 +8310,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoObject_GetSubObjects(IntPtr pConstRhinoObject, IntPtr pRhinoObjectArray);
 
+  //bool CRhinoObject_GetDynamicTransform(const CRhinoObject* pConstRhinoObject, ON_Xform* transform)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoObject_GetDynamicTransform(IntPtr pConstRhinoObject, ref Transform transform);
+
   //int CRhinoObject_IsSelected( const CRhinoObject* pConstRhinoObject, bool checkSubObjects)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoObject_IsSelected(IntPtr pConstRhinoObject, [MarshalAs(UnmanagedType.U1)]bool checkSubObjects);
@@ -8703,7 +8716,8 @@ internal partial class UnsafeNativeMethods
   //                                             RHINOOBJECT_DRAWPROC draw,
   //                                             RHINOOBJECT_DOCNOTIFYPROC doc_notify,
   //                                             RHINOOBJECT_ACTIVEINVIEWPORTPROC active_in_viewport,
-  //                                             RHINOOBJECT_SELECTPROC selection_changed)
+  //                                             RHINOOBJECT_SELECTPROC selection_changed,
+  //                                             RHINOOBJECT_TRANSFORMPROC transform)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //void CRhinoObject_SetPickCallbacks(RHINOOBJECT_PICKPROC pick, RHINOOBJECT_PICKEDPROC picked)

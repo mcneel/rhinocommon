@@ -46,6 +46,10 @@ internal partial class UnsafeNativeMethods
 
 #if RHINO_SDK
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhMainFrame_Invoke(Rhino.RhinoWindow.InvokeAction invoke_proc);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoVisualAnalysisMode_SetCallbacks(Rhino.Display.VisualAnalysisMode.ANALYSISMODEENABLEUIPROC enableui_proc,
     Rhino.Display.VisualAnalysisMode.ANALYSISMODEOBJECTSUPPORTSPROC objectSupportProc,
     Rhino.Display.VisualAnalysisMode.ANALYSISMODESHOWISOCURVESPROC showIsoCurvesProc,
@@ -229,7 +233,8 @@ internal partial class UnsafeNativeMethods
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectDrawCallback draw,
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectDocNotifyCallback doc_notify,
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectActiveInViewportCallback active_in_viewport,
-                                                        Rhino.DocObjects.RhinoObject.RhinoObjectSelectionCallback selection_change);
+                                                        Rhino.DocObjects.RhinoObject.RhinoObjectSelectionCallback selection_change,
+                                                        Rhino.DocObjects.RhinoObject.RhinoObjectTransformCallback transform);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoObject_SetPickCallbacks(Rhino.DocObjects.RhinoObject.RhinoObjectPickCallback pick,

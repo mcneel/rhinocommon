@@ -152,3 +152,5 @@
 /c/rh_analysismodes.cpp
 /c/rh_fileutilities.cpp
 /c/glext.h
+/c/rh_blend.cpp
+/c/rh_printinfo.cpp

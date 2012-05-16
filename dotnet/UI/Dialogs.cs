@@ -89,7 +89,7 @@ namespace Rhino
             GetColorEventArgs e = new GetColorEventArgs(color, colorButtons==1, title);
 
             if( hParent != IntPtr.Zero )
-              parent = new WindowWrapper(hParent);
+              parent = new RhinoWindow(hParent);
             m_ShowCustomColorDialog(parent, e);
             if( e.SelectedColor != System.Drawing.Color.Empty )
             {

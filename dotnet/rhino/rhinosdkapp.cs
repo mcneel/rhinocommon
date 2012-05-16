@@ -53,16 +53,85 @@ namespace Rhino.ApplicationSettings
 #if RHINO_SDK
 namespace Rhino
 {
-  class WindowWrapper : System.Windows.Forms.IWin32Window
+  /// <summary>
+  /// Represents the top level window in Rhino
+  /// </summary>
+  public class RhinoWindow : System.Windows.Forms.IWin32Window
   {
     readonly IntPtr m_handle;
-    public WindowWrapper(IntPtr handle)
+
+    internal RhinoWindow(IntPtr handle)
     {
       m_handle = handle;
     }
+    
+    /// <summary>
+    /// 
+    /// </summary>
     public IntPtr Handle
     {
       get { return m_handle; }
+    }
+
+    static object m_invoke_lock = new object();
+    static System.Collections.Generic.List<Delegate> m_callbacks;
+    internal delegate void InvokeAction();
+    private static InvokeAction m_OnInvokeCallback;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="method"></param>
+    /// <returns></returns>
+    public void Invoke(Delegate method)
+    {
+      lock (m_invoke_lock)
+      {
+        if (m_callbacks == null)
+          m_callbacks = new System.Collections.Generic.List<Delegate>();
+        m_callbacks.Add(method);
+      }
+
+      if (m_OnInvokeCallback == null)
+        m_OnInvokeCallback = InvokeCallback;
+      UnsafeNativeMethods.CRhMainFrame_Invoke(m_OnInvokeCallback);
+    }
+
+    /// <summary>
+    /// See Control.InvokeRequired
+    /// </summary>
+    public bool InvokeRequired
+    {
+      get
+      {
+        return UnsafeNativeMethods.CRhMainFrame_InvokeRequired();
+      }
+    }
+
+    private static void InvokeCallback()
+    {
+      Delegate[] actions = null;
+      lock (m_invoke_lock)
+      {
+        if (m_callbacks != null)
+        {
+          actions = m_callbacks.ToArray();
+          m_callbacks.Clear();
+        }
+      }
+      if (actions == null || actions.Length < 1)
+        return;
+      try
+      {
+        for (int i = 0; i < actions.Length; i++)
+        {
+          actions[i].DynamicInvoke(null);
+        }
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
     }
   }
 
@@ -458,10 +527,10 @@ namespace Rhino
       UnsafeNativeMethods.CRhinoApp_Wait(0);
     }
 
-    static WindowWrapper m_mainwnd;
+    static RhinoWindow m_mainwnd;
 
     /// <summary>
-    /// Gets the Window32 interface handle of the main window.
+    /// Gets the Windows interface handle of the main window.
     /// </summary>
     /// <returns>A interface to the handle.</returns>
     public static System.Windows.Forms.IWin32Window MainWindow()
@@ -470,9 +539,17 @@ namespace Rhino
       {
         IntPtr pWnd = MainWindowHandle();
         if (IntPtr.Zero != pWnd)
-          m_mainwnd = new WindowWrapper(pWnd);
+          m_mainwnd = new RhinoWindow(pWnd);
       }
       return m_mainwnd;
+    }
+
+    /// <summary>
+    /// Same as MainWindow function, but provides the concrete class instead of an interface
+    /// </summary>
+    public static RhinoWindow MainApplicationWindow
+    {
+      get { return RhinoApp.MainWindow() as RhinoWindow; }
     }
 
     /// <summary>

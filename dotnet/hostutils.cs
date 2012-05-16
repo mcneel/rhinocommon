@@ -33,6 +33,7 @@ namespace Rhino.Runtime
     {
       const int HIDESPLASH = 0;
       const int SHOWSPLASH = 1;
+      const int SHOWHELP = 2;
       const int MAINFRAMECREATED = 1000;
       const int LICENSECHECKED = 2000;
       const int BUILTIN_COMMANDS_REGISTERED = 3000;
@@ -51,6 +52,9 @@ namespace Rhino.Runtime
               break;
             case SHOWSPLASH:
               m_theSingleSkin.ShowSplash();
+              break;
+            case SHOWHELP:
+              m_theSingleSkin.ShowHelp();
               break;
             case MAINFRAMECREATED:
               m_theSingleSkin.OnMainFrameWindowCreated();
@@ -111,6 +115,12 @@ namespace Rhino.Runtime
     }
     /// <summary>Is called when the splash screen should be shown.</summary>
     protected virtual void ShowSplash() { }
+
+    /// <summary>
+    /// Called when the "help" splash screen should be shown. Default
+    /// implementation just calls ShowSplash()
+    /// </summary>
+    protected virtual void ShowHelp() { ShowSplash(); }
 
     /// <summary>Is called when the splash screen should be hidden.</summary>
     protected virtual void HideSplash() { }

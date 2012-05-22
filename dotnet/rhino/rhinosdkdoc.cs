@@ -16,13 +16,15 @@ namespace Rhino.Commands
     readonly String m_action_description;
     readonly bool m_created_by_redo;
     readonly uint m_undo_event_sn;
+    readonly object m_tag;
 
-    internal CustomUndoEventArgs(Guid command_id, string description, bool createdByRedo, uint eventSn)
+    internal CustomUndoEventArgs(Guid command_id, string description, bool createdByRedo, uint eventSn, object tag)
     {
       m_command_id = command_id;
       m_action_description = description;
       m_created_by_redo = createdByRedo;
       m_undo_event_sn = eventSn;
+      m_tag = tag;
     }
 
     public Guid CommandId
@@ -45,6 +47,11 @@ namespace Rhino.Commands
     {
       get { return m_created_by_redo; }
     }
+
+    public object Tag
+    {
+      get { return m_tag; }
+    }
   }
 }
 
@@ -53,13 +60,15 @@ namespace Rhino
   class CustomUndoCallback
   {
     readonly EventHandler<Rhino.Commands.CustomUndoEventArgs> m_handler;
-    public CustomUndoCallback(uint serialNumber, EventHandler<Rhino.Commands.CustomUndoEventArgs> handler)
+    public CustomUndoCallback(uint serialNumber, EventHandler<Rhino.Commands.CustomUndoEventArgs> handler, object tag)
     {
       m_handler = handler;
       SerialNumber = serialNumber;
+      Tag = tag;
     }
     public uint SerialNumber { get; private set; }
     public EventHandler<Rhino.Commands.CustomUndoEventArgs> Handler { get { return m_handler; } }
+    public object Tag { get; private set; }
   }
 
   /// <summary>
@@ -759,8 +768,9 @@ namespace Rhino
             var handler = m_custom_undo_callbacks[i].Handler;
             if( handler!=null )
             {
+              object tag = m_custom_undo_callbacks[i].Tag;
               string description = Marshal.PtrToStringUni(action_description);
-              handler(null, new Commands.CustomUndoEventArgs(command_id, description, created_by_redo==1, sn));
+              handler(null, new Commands.CustomUndoEventArgs(command_id, description, created_by_redo==1, sn, tag));
             }
             break;
           }
@@ -785,7 +795,12 @@ namespace Rhino
 
     public bool AddCustomUndoEvent(string description, EventHandler<Rhino.Commands.CustomUndoEventArgs> handler)
     {
-      if( string.IsNullOrEmpty(description) || handler==null )
+      return AddCustomUndoEvent(description, handler, null);
+    }
+
+    public bool AddCustomUndoEvent(string description, EventHandler<Rhino.Commands.CustomUndoEventArgs> handler, object tag)
+    {
+      if (string.IsNullOrEmpty(description) || handler == null)
         return false;
 
       m_undo_event_handler = OnUndoEventHandler;
@@ -795,9 +810,9 @@ namespace Rhino
       if (rc == 0)
         return false;
 
-      if( m_custom_undo_callbacks==null )
+      if (m_custom_undo_callbacks == null)
         m_custom_undo_callbacks = new List<CustomUndoCallback>();
-      m_custom_undo_callbacks.Add(new CustomUndoCallback(rc, handler));
+      m_custom_undo_callbacks.Add(new CustomUndoCallback(rc, handler, tag));
       return true;
     }
 

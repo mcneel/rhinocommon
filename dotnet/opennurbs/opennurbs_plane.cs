@@ -223,6 +223,11 @@ namespace Rhino.Geometry
       : this()
     {
       UnsafeNativeMethods.ON_Plane_CreateFromEquation(ref this, a, b, c, d);
+
+      // David 16/05/2012
+      // This constructor resulted in an invalid plane unless the equation 
+      // already defined a unitized zaxis vector. Adding unitize now to fix this.
+      this.m_zaxis.Unitize();
     }
 
 #if RHINO_SDK

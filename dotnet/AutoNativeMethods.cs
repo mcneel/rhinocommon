@@ -3563,6 +3563,20 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern double ON_2dVector_Length(Vector2d v);
 
+  //bool ON_3fVector_Unitize( ON_3fVector* v )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_3fVector_Unitize(ref Vector3f v);
+
+  //void ON_3fVector_Rotate( ON_3fVector* v, double angle, ON_3FVECTOR_STRUCT axis )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_3fVector_Rotate(ref Vector3f v, double angle, Vector3f axis);
+
+  //bool ON_3fVector_PerpendicularTo( ON_3fVector* v, ON_3FVECTOR_STRUCT other )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_3fVector_PerpendicularTo(ref Vector3f v, Vector3f other);
+
   //bool ON_3dVector_Unitize( ON_3dVector* v )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -6459,6 +6473,9 @@ internal partial class UnsafeNativeMethods
   //void CRhinoDoc_ClearRedoRecords(int doc_id)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDoc_ClearRedoRecords(int doc_id);
+
+  //unsigned int CRhinoDoc_AddCustomUndoEvent(int doc_id, const RHMONO_STRING* description, CUSTOMUNDOEVENTPROC undo_proc, CUSTOMUNDODELETEPROC undo_delete_proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
   #endregion
 
 

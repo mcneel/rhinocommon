@@ -499,6 +499,31 @@ namespace Rhino.Geometry
     {
       return a.CompareTo(b) >= 0;
     }
+
+    /// <summary>
+    /// Subtracts a point from another point.
+    /// </summary>
+    /// <param name="point1">A point.</param>
+    /// <param name="point2">Another point.</param>
+    /// <returns>A new vector that is the difference of point minus vector.</returns>
+    public static Vector3f operator -(Point3f point1, Point3f point2)
+    {
+      return new Vector3f(point1.m_x - point2.m_x, point1.m_y - point2.m_y, point1.m_z - point2.m_z);
+    }
+
+    /// <summary>
+    /// Subtracts a point from another point.
+    /// <para>(Provided for languages that do not support operator overloading. You can use the - operator otherwise)</para>
+    /// </summary>
+    /// <param name="point1">A point.</param>
+    /// <param name="point2">Another point.</param>
+    /// <returns>A new vector that is the difference of point minus vector.</returns>
+    public static Vector3f Subtract(Point3f point1, Point3f point2)
+    {
+      return new Vector3f(point1.m_x - point2.m_x, point1.m_y - point2.m_y, point1.m_z - point2.m_z);
+    }
+
+
   }
 
   //skipping ON_4fPoint. I don't think I've ever seen this used in Rhino.
@@ -703,6 +728,48 @@ namespace Rhino.Geometry
     }
     #endregion
 
+    #region static properties
+    /// <summary>
+    /// Gets the value of the vector with components 0,0,0.
+    /// </summary>
+    public static Vector3f Zero
+    {
+      get { return new Vector3f(); }
+    }
+
+    /// <summary>
+    /// Gets the value of the vector with components 1,0,0.
+    /// </summary>
+    public static Vector3f XAxis
+    {
+      get { return new Vector3f(1f, 0f, 0f); }
+    }
+
+    /// <summary>
+    /// Gets the value of the vector with components 0,1,0.
+    /// </summary>
+    public static Vector3f YAxis
+    {
+      get { return new Vector3f(0f, 1f, 0f); }
+    }
+
+    /// <summary>
+    /// Gets the value of the vector with components 0,0,1.
+    /// </summary>
+    public static Vector3f ZAxis
+    {
+      get { return new Vector3f(0f, 0f, 1f); }
+    }
+
+    /// <summary>
+    /// Gets the value of the vector with each component set to RhinoMath.UnsetValue.
+    /// </summary>
+    public static Vector3f Unset
+    {
+      get { return new Vector3f(RhinoMath.UnsetSingle, RhinoMath.UnsetSingle, RhinoMath.UnsetSingle); }
+    }
+    #endregion static properties
+
     #region properties
     /// <summary>
     /// Gets or sets the X (first) component of this vector.
@@ -802,6 +869,76 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Unitizes the vector in place. A unit vector has length 1 unit. 
+    /// <para>An invalid or zero length vector cannot be unitized.</para>
+    /// </summary>
+    /// <returns>true on success or false on failure.</returns>
+    public bool Unitize()
+    {
+      bool rc = UnsafeNativeMethods.ON_3fVector_Unitize(ref this);
+      return rc;
+    }
+
+    /// <summary>
+    /// Transforms the vector in place.
+    /// <para>The transformation matrix acts on the left of the vector; i.e.,</para>
+    /// <para>result = transformation*vector</para>
+    /// </summary>
+    /// <param name="transformation">Transformation matrix to apply.</param>
+    public void Transform(Transform transformation)
+    {
+      double xx = transformation.m_00 * m_x + transformation.m_01 * m_y + transformation.m_02 * m_z;
+      double yy = transformation.m_10 * m_x + transformation.m_11 * m_y + transformation.m_12 * m_z;
+      double zz = transformation.m_20 * m_x + transformation.m_21 * m_y + transformation.m_22 * m_z;
+
+      m_x = (float)xx;
+      m_y = (float)yy;
+      m_z = (float)zz;
+    }
+
+    /// <summary>
+    /// Rotates this vector around a given axis.
+    /// </summary>
+    /// <param name="angleRadians">Angle of rotation (in radians).</param>
+    /// <param name="rotationAxis">Axis of rotation.</param>
+    /// <returns>true on success, false on failure.</returns>
+    public bool Rotate(double angleRadians, Vector3f rotationAxis)
+    {
+      if (RhinoMath.UnsetValue == angleRadians) { return false; }
+
+      UnsafeNativeMethods.ON_3fVector_Rotate(ref this, angleRadians, rotationAxis);
+      return true;
+    }
+
+    ///<summary>
+    /// Reverses (inverts) this vector in place.
+    /// <para>If this vector contains RhinoMath.UnsetValue, the 
+    /// reverse will also be invalid and false will be returned.</para>
+    ///</summary>
+    ///<returns>true on success or false if the vector is invalid.</returns>
+    public bool Reverse()
+    {
+      bool rc = true;
+
+      if (RhinoMath.UnsetSingle != m_x) { m_x = -m_x; } else { rc = false; }
+      if (RhinoMath.UnsetSingle != m_y) { m_y = -m_y; } else { rc = false; }
+      if (RhinoMath.UnsetSingle != m_z) { m_z = -m_z; } else { rc = false; }
+
+      return rc;
+    }
+
+    ///<summary>
+    /// Sets this vector to be perpendicular to another vector. 
+    /// Result is not unitized.
+    ///</summary>
+    /// <param name="other">Vector to use as guide.</param>
+    ///<returns>true on success, false if input vector is zero or invalid.</returns>
+    public bool PerpendicularTo(Vector3f other)
+    {
+      return UnsafeNativeMethods.ON_3fVector_PerpendicularTo(ref this, other);
+    }
+
+    /// <summary>
     /// Determines whether two vectors have equal values.
     /// </summary>
     /// <param name="a">The first vector.</param>
@@ -885,6 +1022,143 @@ namespace Rhino.Geometry
     public static bool operator >=(Vector3f a, Vector3f b)
     {
       return a.CompareTo(b) >= 0;
+    }
+
+    /// <summary>
+    /// Sums up a point and a vector, and returns a new point.
+    /// </summary>
+    /// <param name="point">A point.</param>
+    /// <param name="vector">A vector.</param>
+    /// <returns>A new point that results from the addition of point and vector.</returns>
+    public static Point3f operator +(Point3f point, Vector3f vector)
+    {
+      return new Point3f(point.m_x + vector.m_x, point.m_y + vector.m_y, point.m_z + vector.m_z);
+    }
+
+    /// <summary>
+    /// Sums up a point and a vector, and returns a new point.
+    /// <para>(Provided for languages that do not support operator overloading. You can use the + operator otherwise)</para>
+    /// </summary>
+    /// <param name="point">A point.</param>
+    /// <param name="vector">A vector.</param>
+    /// <returns>A new point that results from the addition of point and vector.</returns>
+    public static Point3f Add(Point3f point, Vector3f vector)
+    {
+      return new Point3f(point.m_x + vector.m_x, point.m_y + vector.m_y, point.m_z + vector.m_z);
+    }
+
+    /// <summary>
+    /// Multiplies a vector by a number, having the effect of scaling it.
+    /// </summary>
+    /// <param name="vector">A vector.</param>
+    /// <param name="t">A number.</param>
+    /// <returns>A new vector that is the original vector coordinatewise multiplied by t.</returns>
+    public static Vector3f operator *(Vector3f vector, float t)
+    {
+      return new Vector3f(vector.m_x * t, vector.m_y * t, vector.m_z * t);
+    }
+
+    /// <summary>
+    /// Multiplies a vector by a number, having the effect of scaling it.
+    /// <para>(Provided for languages that do not support operator overloading. You can use the * operator otherwise)</para>
+    /// </summary>
+    /// <param name="vector">A vector.</param>
+    /// <param name="t">A number.</param>
+    /// <returns>A new vector that is the original vector coordinatewise multiplied by t.</returns>
+    public static Vector3f Multiply(Vector3f vector, float t)
+    {
+      return new Vector3f(vector.m_x * t, vector.m_y * t, vector.m_z * t);
+    }
+
+    /// <summary>
+    /// Multiplies a vector by a number, having the effect of scaling it.
+    /// </summary>
+    /// <param name="t">A number.</param>
+    /// <param name="vector">A vector.</param>
+    /// <returns>A new vector that is the original vector coordinatewise multiplied by t.</returns>
+    public static Vector3f operator *(float t, Vector3f vector)
+    {
+      return new Vector3f(vector.m_x * t, vector.m_y * t, vector.m_z * t);
+    }
+
+    /// <summary>
+    /// Multiplies a vector by a number, having the effect of scaling it.
+    /// <para>(Provided for languages that do not support operator overloading. You can use the * operator otherwise)</para>
+    /// </summary>
+    /// <param name="t">A number.</param>
+    /// <param name="vector">A vector.</param>
+    /// <returns>A new vector that is the original vector coordinatewise multiplied by t.</returns>
+    public static Vector3f Multiply(float t, Vector3f vector)
+    {
+      return new Vector3f(vector.m_x * t, vector.m_y * t, vector.m_z * t);
+    }
+
+    /// <summary>
+    /// Computes the cross product (or vector product, or exterior product) of two vectors.
+    /// <para>This operation is not commutative.</para>
+    /// </summary>
+    /// <param name="a">First vector.</param>
+    /// <param name="b">Second vector.</param>
+    /// <returns>A new vector that is perpendicular to both a and b,
+    /// <para>has Length == a.Length * b.Length and</para>
+    /// <para>with a result that is oriented following the right hand rule.</para>
+    /// </returns>
+    public static Vector3f CrossProduct(Vector3f a, Vector3f b)
+    {
+      return new Vector3f(a.m_y * b.m_z - b.m_y * a.m_z, a.m_z * b.m_x - b.m_z * a.m_x, a.m_x * b.m_y - b.m_x * a.m_y);
+    }
+
+    /// <summary>
+    /// Computes the length (or magnitude, or size) of this vector.
+    /// This is an application of Pythagoras' theorem.
+    /// If this vector is invalid, its length is considered 0.
+    /// </summary>
+    public float Length
+    {
+      get { return GetLengthHelper(m_x, m_y, m_z); }
+    }
+
+    internal static float GetLengthHelper(float dx, float dy, float dz)
+    {
+      if (!RhinoMath.IsValidSingle(dx) ||
+          !RhinoMath.IsValidSingle(dy) ||
+          !RhinoMath.IsValidSingle(dz))
+        return 0f;
+
+      float len;
+      float fx = Math.Abs(dx);
+      float fy = Math.Abs(dy);
+      float fz = Math.Abs(dz);
+      if (fy >= fx && fy >= fz)
+      {
+        len = fx; fx = fy; fy = len;
+      }
+      else if (fz >= fx && fz >= fy)
+      {
+        len = fx; fx = fz; fz = len;
+      }
+
+      // 15 September 2003 Dale Lear
+      //     For small denormalized doubles (positive but smaller
+      //     than DBL_MIN), some compilers/FPUs set 1.0/fx to +INF.
+      //     Without the ON_DBL_MIN test we end up with
+      //     microscopic vectors that have infinite length!
+      //
+      //     Since this code starts with doubles, none of this
+      //     should be necessary, but it doesn't hurt anything.
+      const float ON_SINGLE_MIN = (float)2.2250738585072014e-308;
+      if (fx > ON_SINGLE_MIN)
+      {
+        len = 1f / fx;
+        fy *= len;
+        fz *= len;
+        len = fx * (float)Math.Sqrt(1.0 + fy * fy + fz * fz);
+      }
+      else if (fx > 0.0 && RhinoMath.IsValidSingle(fx))
+        len = fx;
+      else
+        len = 0f;
+      return len;
     }
   }
 }

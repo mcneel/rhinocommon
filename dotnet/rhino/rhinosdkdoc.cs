@@ -8,8 +8,60 @@ using Rhino.Collections;
 using System.Collections.Generic;
 
 #if RHINO_SDK
+namespace Rhino.Commands
+{
+  public class CustomUndoEventArgs : EventArgs
+  {
+    readonly Guid m_command_id;
+    readonly String m_action_description;
+    readonly bool m_created_by_redo;
+    readonly uint m_undo_event_sn;
+
+    internal CustomUndoEventArgs(Guid command_id, string description, bool createdByRedo, uint eventSn)
+    {
+      m_command_id = command_id;
+      m_action_description = description;
+      m_created_by_redo = createdByRedo;
+      m_undo_event_sn = eventSn;
+    }
+
+    public Guid CommandId
+    {
+      get { return m_command_id; }
+    }
+
+    [CLSCompliant(false)]
+    public uint UndoSerialNumber
+    {
+      get { return m_undo_event_sn; }
+    }
+
+    public string ActionDescription
+    {
+      get { return m_action_description; }
+    }
+
+    public bool CreatedByRedo
+    {
+      get { return m_created_by_redo; }
+    }
+  }
+}
+
 namespace Rhino
 {
+  class CustomUndoCallback
+  {
+    readonly EventHandler<Rhino.Commands.CustomUndoEventArgs> m_handler;
+    public CustomUndoCallback(uint serialNumber, EventHandler<Rhino.Commands.CustomUndoEventArgs> handler)
+    {
+      m_handler = handler;
+      SerialNumber = serialNumber;
+    }
+    public uint SerialNumber { get; private set; }
+    public EventHandler<Rhino.Commands.CustomUndoEventArgs> Handler { get { return m_handler; } }
+  }
+
   /// <summary>
   /// Represents an active model.
   /// </summary>
@@ -688,6 +740,67 @@ namespace Rhino
     {
       return UnsafeNativeMethods.CRhinoDoc_BeginUndoRecordEx(m_docId, description);
     }
+
+    static List<CustomUndoCallback> m_custom_undo_callbacks;
+    internal delegate void RhinoUndoEventHandlerCallback(Guid command_id, IntPtr action_description, int created_by_redo, uint sn);
+    internal delegate void RhinoDeleteUndoEventHandlerCallback(uint sn);
+
+    static RhinoUndoEventHandlerCallback m_undo_event_handler;
+    static RhinoDeleteUndoEventHandlerCallback m_delete_undo_event_handler;
+
+    static void OnUndoEventHandler(Guid command_id, IntPtr action_description, int created_by_redo, uint sn)
+    {
+      if (m_custom_undo_callbacks != null)
+      {
+        for (int i = 0; i < m_custom_undo_callbacks.Count; i++)
+        {
+          if (m_custom_undo_callbacks[i].SerialNumber == sn)
+          {
+            var handler = m_custom_undo_callbacks[i].Handler;
+            if( handler!=null )
+            {
+              string description = Marshal.PtrToStringUni(action_description);
+              handler(null, new Commands.CustomUndoEventArgs(command_id, description, created_by_redo==1, sn));
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    static void OnDeleteUndoEventHandler(uint sn)
+    {
+      if (m_custom_undo_callbacks != null)
+      {
+        for (int i = 0; i < m_custom_undo_callbacks.Count; i++)
+        {
+          if (m_custom_undo_callbacks[i].SerialNumber == sn)
+          {
+            m_custom_undo_callbacks.RemoveAt(i);
+            return;
+          }
+        }
+      }
+    }
+
+    public bool AddCustomUndoEvent(string description, EventHandler<Rhino.Commands.CustomUndoEventArgs> handler)
+    {
+      if( string.IsNullOrEmpty(description) || handler==null )
+        return false;
+
+      m_undo_event_handler = OnUndoEventHandler;
+      m_delete_undo_event_handler = OnDeleteUndoEventHandler;
+
+      uint rc = UnsafeNativeMethods.CRhinoDoc_AddCustomUndoEvent(m_docId, description, m_undo_event_handler, m_delete_undo_event_handler);
+      if (rc == 0)
+        return false;
+
+      if( m_custom_undo_callbacks==null )
+        m_custom_undo_callbacks = new List<CustomUndoCallback>();
+      m_custom_undo_callbacks.Add(new CustomUndoCallback(rc, handler));
+      return true;
+    }
+
 
     [CLSCompliant(false)]
     public bool EndUndoRecord(uint undoRecordSerialNumber)

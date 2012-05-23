@@ -10092,6 +10092,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoFitPatch_Fit2(IntPtr pGeometryArray, int uSpans, int vSpans, double tolerance);
 
+  //ON_Brep* CRhinoFitPatch_Fit3(ON_SimpleArray<const ON_Geometry*>* pGeometryArray, const ON_Surface* pConstSurface, int u_spans, int v_spans,
+  //  bool bTrim, bool bTangency, double point_spacing, double flexibility, double surface_pull, /*ARRAY*/const int* fix_edges, double tolerance )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoFitPatch_Fit3(IntPtr pGeometryArray, IntPtr pConstSurface, int u_spans, int v_spans, [MarshalAs(UnmanagedType.U1)]bool bTrim, [MarshalAs(UnmanagedType.U1)]bool bTangency, double point_spacing, double flexibility, double surface_pull, int[] fix_edges, double tolerance);
+
   //int ON_Curve_BooleanOperation( const ON_SimpleArray<const ON_Curve*>* inputCurves, ON_SimpleArray<ON_Curve*>* outputCurves, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Curve_BooleanOperation(IntPtr inputCurves, IntPtr outputCurves, int which);

@@ -491,6 +491,74 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Constructs a brep patch using all controls
+    /// </summary>
+    /// <param name="geometry">
+    /// A combination of <see cref="Curve">curves</see>, brep trims,
+    /// <see cref="Point">points</see>, <see cref="PointCloud">point clouds</see> or <see cref="Mesh">meshes</see>.
+    /// Curves and trims are sampled to get points. Trims are sampled for
+    /// points and normals.
+    /// </param>
+    /// <param name="startingSurface">A starting surface.</param>
+    /// <param name="uSpans">
+    /// Number of surface spans used when a plane is fit through points to start in the U direction.
+    /// </param>
+    /// <param name="vSpans">
+    /// Number of surface spans used when a plane is fit through points to start in the U direction.
+    /// </param>
+    /// <param name="trim">
+    /// If true, try to find an outer loop from among the input curves and trim the result to that loop
+    /// </param>
+    /// <param name="tangency">
+    /// If true, try to find brep trims in the outer loop of curves and try to
+    /// fit to the normal direction of the trim's surface at those locations.
+    /// </param>
+    /// <param name="pointSpacing">
+    /// Basic distance between points sampled from input curves.
+    /// </param>
+    /// <param name="flexibility">
+    /// Determines the behavior of the surface in areas where its not otherwise
+    /// controlled by the input.  Lower numbers make the surface behave more
+    /// like a stiff material; higher, less like a stiff material.  That is,
+    /// each span is made to more closely match the spans adjacent to it if there
+    /// is no input geometry mapping to that area of the surface when the
+    /// flexibility value is low.  The scale is logrithmic. Numbers around 0.001
+    /// or 0.1 make the patch pretty stiff and numbers around 10 or 100 make the
+    /// surface flexible.
+    /// </param>
+    /// <param name="surfacePull">
+    /// Tends to keep the result surface where it was before the fit in areas where
+    /// there is on influence from the input geometry
+    /// </param>
+    /// <param name="fixEdges">
+    /// Array of four elements. Flags to keep the edges of a starting (untrimmed)
+    /// surface in place while fitting the interior of the surface.  Order of
+    /// flags is left, bottom, right, top
+    ///</param>
+    /// <param name="tolerance">
+    /// Tolerance used by input analysis functions for loop finding, trimming, etc.
+    /// </param>
+    /// <returns>
+    /// A brep fit through input on success, or null on error.
+    /// </returns>
+    public static Brep CreatePatch(IEnumerable<GeometryBase> geometry, Surface startingSurface, int uSpans, int vSpans, bool trim,
+      bool tangency, double pointSpacing, double flexibility, double surfacePull, bool[] fixEdges, double tolerance)
+    {
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer _g = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
+      {
+        IntPtr pGeometry = _g.NonConstPointer();
+        IntPtr pSurface = startingSurface.ConstPointer();
+        int[] _fix_edges = new int[4];
+        for (int i = 0; i < 4; i++)
+          _fix_edges[i] = fixEdges[i] ? 1 : 0;
+        IntPtr pBrep = UnsafeNativeMethods.CRhinoFitPatch_Fit3(pGeometry, pSurface, uSpans, vSpans, trim, tangency, pointSpacing, flexibility, surfacePull, _fix_edges, tolerance);
+        if (IntPtr.Zero == pBrep)
+          return null;
+        return new Brep(pBrep, null);
+      }
+    }
+
+    /// <summary>
     /// Creates a single walled pipe
     /// </summary>
     /// <param name="rail">the path curve for the pipe</param>

@@ -8774,6 +8774,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoMeshObject_SetMesh(IntPtr pRhinoMeshObject, IntPtr pMesh);
 
+  //ON_Curve* CRhinoCurveObject_SetCurve(CRhinoCurveObject* pRhinoCurveObject, ON_Curve* pCurve)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoCurveObject_SetCurve(IntPtr pRhinoCurveObject, IntPtr pCurve);
+
   //void CRhinoCustomObject_SetDescriptionStrings(CRhinoObject* pRhinoObject, const RHMONO_STRING* description, const RHMONO_STRING* description_plural)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoCustomObject_SetDescriptionStrings(IntPtr pRhinoObject, [MarshalAs(UnmanagedType.LPWStr)]string description, [MarshalAs(UnmanagedType.LPWStr)]string description_plural);

@@ -10,6 +10,9 @@ using System.Collections.Generic;
 #if RHINO_SDK
 namespace Rhino.Commands
 {
+  /// <summary>
+  /// Argument package that is passed to a custom undo delegate
+  /// </summary>
   public class CustomUndoEventArgs : EventArgs
   {
     readonly Guid m_command_id;
@@ -2847,11 +2850,12 @@ namespace Rhino.DocObjects.Tables
     {
       AddRhinoObjectHelper(pointObject, point);
     }
+    */
     public void AddRhinoObject(Rhino.DocObjects.CurveObject curveObject, Rhino.Geometry.Curve curve)
     {
       AddRhinoObjectHelper(curveObject, curve);
     }
-    */
+
     void AddRhinoObjectHelper(RhinoObject rhinoObject, GeometryBase geometry)
     {
       if (rhinoObject.m_rhinoobject_serial_number != 0 || rhinoObject.m_pRhinoObject != IntPtr.Zero)

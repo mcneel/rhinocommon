@@ -351,7 +351,11 @@ namespace Rhino.Runtime
     /// <returns></returns>
     public static string[] GetAssemblySearchPaths()
     {
+#if RHINO_SDK
       return PlugIn.GetInstalledPlugInFolders();
+#else
+      return new string[0];
+#endif
     }
 
     /// <summary>
@@ -421,9 +425,9 @@ namespace Rhino.Runtime
     {
       get
       {
-#if RHINO_SDK
         if (m_running_in_rhino_state == 0)
         {
+#if RHINO_SDK
           m_running_in_rhino_state = 1;
           try
           {
@@ -434,8 +438,10 @@ namespace Rhino.Runtime
           {
             m_running_in_rhino_state = 1;
           }
-        }
+#else
+          m_running_in_rhino_state = 1;
 #endif
+        }
         return (m_running_in_rhino_state == 2);
       }
     }

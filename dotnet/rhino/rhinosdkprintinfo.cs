@@ -4,7 +4,7 @@ using System;
 namespace Rhino.Display
 {
   //NOT public on purpose. This still needs a lot of work
-
+#if RHINO_SDK
   /// <summary>
   /// Used to hold the information required to generate high resolution output
   /// of a RhinoViewport.  This is used for generating paper prints or image files
@@ -148,6 +148,7 @@ namespace Rhino.Display
 
     #endregion
   }
+#endif
 }
 
 

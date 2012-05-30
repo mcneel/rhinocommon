@@ -5,9 +5,6 @@ namespace Rhino
   /// <summary>
   /// The Rhino namespace contains fundamental types that
   /// define commonly-used value types and classes used in Rhino.
-  /// <para>Examples are the Rhino <see cref="RhinoDoc">document class</see>,
-  /// <see cref="RhinoMath">math class</see> and
-  /// <see cref="RhinoApp">application class</see>.</para>
   /// </summary>
   [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
   class NamespaceDoc

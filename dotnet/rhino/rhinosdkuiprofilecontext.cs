@@ -574,8 +574,12 @@ namespace Rhino
 
     public static PersistentSettings FromPlugInId(Guid pluginId)
     {
+#if RHINO_SDK
       PersistentSettingsManager manager = PersistentSettingsManager.Create(pluginId);
       return manager.PluginSettings;
+#else
+      return null;
+#endif
     }
 
     public PersistentSettings(PersistentSettings allUserSettings)

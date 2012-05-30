@@ -1004,6 +1004,7 @@ namespace Rhino.Runtime.InteropWrappers
       return rc;
     }
 
+#if RHINO_SDK
     internal Geometry.Mesh[] ToConstArray(Rhino.DocObjects.RhinoObject parent)
     {
       int count = Count;
@@ -1020,6 +1021,7 @@ namespace Rhino.Runtime.InteropWrappers
       }
       return rc;
     }
+#endif
   }
 
   /// <summary>
@@ -1131,6 +1133,8 @@ namespace Rhino.Runtime.InteropWrappers
     }
   }
 
+
+#if RHINO_SDK
   /// <summary>
   /// Represents a wrapper to an unmanaged "array" (list) of CRhinoObjRef instances.
   /// <para>Wrapper for a C++ ON_ClassArray of CRhinoObjRef</para>
@@ -1245,4 +1249,5 @@ namespace Rhino.Runtime.InteropWrappers
       return rc;
     }
   }
+#endif
 }

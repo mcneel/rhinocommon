@@ -130,7 +130,9 @@ namespace Rhino.DocObjects
     }
     protected override void OnSwitchToNonConst()
     {
+#if RHINO_SDK
       m_is_default = false;
+#endif
       base.OnSwitchToNonConst();
     }
     #region properties

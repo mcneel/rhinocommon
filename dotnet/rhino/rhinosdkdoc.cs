@@ -2858,20 +2858,49 @@ namespace Rhino.DocObjects.Tables
 
     void AddRhinoObjectHelper(RhinoObject rhinoObject, GeometryBase geometry)
     {
-      if (rhinoObject.m_rhinoobject_serial_number != 0 || rhinoObject.m_pRhinoObject != IntPtr.Zero)
+      bool is_proper_subclass = rhinoObject is Rhino.DocObjects.BrepObject ||
+                                rhinoObject is Rhino.DocObjects.Custom.CustomCurveObject ||
+                                rhinoObject is Rhino.DocObjects.MeshObject;
+
+      // Once the deprecated functions are removed, we should switch to checking for custom subclasses
+      //bool is_proper_subclass = rhinoObject is Rhino.DocObjects.Custom.CustomBrepObject ||
+      //                          rhinoObject is Rhino.DocObjects.Custom.CustomCurveObject ||
+      //                          rhinoObject is Rhino.DocObjects.Custom.CustomMeshObject;
+      if( !is_proper_subclass )
+        throw new NotImplementedException();
+
+      if( rhinoObject.Document != null )
         throw new NotImplementedException();
 
       Type t = rhinoObject.GetType();
       if (t.GetConstructor(Type.EmptyTypes) == null)
         throw new NotImplementedException("class must have a public parameterless constructor");
 
-      IntPtr pConstGeometry = geometry.ConstPointer();
-      IntPtr pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New(pConstGeometry);
+      IntPtr pRhinoObject = rhinoObject.m_pRhinoObject;
+      if (geometry != null)
+      {
+        if ((rhinoObject is Rhino.DocObjects.BrepObject && !(geometry is Rhino.Geometry.Brep)) ||
+            (rhinoObject is Rhino.DocObjects.CurveObject && !(geometry is Rhino.Geometry.Curve)) ||
+            (rhinoObject is Rhino.DocObjects.MeshObject && !(geometry is Rhino.Geometry.Mesh)))
+        {
+          throw new NotImplementedException("geometry type does not match rhino object class");
+        }
+        IntPtr pConstGeometry = geometry.ConstPointer();
+        pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New(pRhinoObject, pConstGeometry);
+      }
+      else
+      {
+        Rhino.Geometry.GeometryBase g = rhinoObject.Geometry;
+        if (g == null)
+          throw new NotImplementedException("no geometry associated with this RhinoObject");
+      }
 
       uint serial_number = UnsafeNativeMethods.CRhinoObject_RuntimeSN(pRhinoObject);
       if (serial_number > 0)
       {
         rhinoObject.m_rhinoobject_serial_number = serial_number;
+        rhinoObject.m_pRhinoObject = IntPtr.Zero;
+        GC.SuppressFinalize(rhinoObject);
         AddCustomObject(serial_number, rhinoObject);
         UnsafeNativeMethods.CRhinoDoc_AddRhinoObject(m_doc.m_docId, pRhinoObject);
 

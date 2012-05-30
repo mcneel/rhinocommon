@@ -888,6 +888,7 @@ namespace Rhino.Geometry
     /// <param name="secondSet">Second set of Breps.</param>
     /// <param name="tolerance">Tolerance to use for intersection operation.</param>
     /// <returns>An array of Brep results or null on failure.</returns>
+    /// <remarks>The solid orientation of the breps make a difference when calling this function</remarks>
     public static Brep[] CreateBooleanIntersection(System.Collections.Generic.IEnumerable<Brep> firstSet,
       System.Collections.Generic.IEnumerable<Brep> secondSet,
       double tolerance)
@@ -901,6 +902,7 @@ namespace Rhino.Geometry
     /// <param name="secondBrep">Second Brep for boolean intersection.</param>
     /// <param name="tolerance">Tolerance to use for intersection operation.</param>
     /// <returns>An array of Brep results or null on failure.</returns>
+    /// <remarks>The solid orientation of the breps make a difference when calling this function</remarks>
     public static Brep[] CreateBooleanIntersection(Brep firstBrep, Brep secondBrep, double tolerance)
     {
       if (firstBrep == null) { throw new ArgumentNullException("firstBrep"); }
@@ -922,6 +924,7 @@ namespace Rhino.Geometry
     /// <param name="secondSet">Second set of Breps (the set to subtract).</param>
     /// <param name="tolerance">Tolerance to use for difference operation.</param>
     /// <returns>An array of Brep results or null on failure.</returns>
+    /// <remarks>The solid orientation of the breps make a difference when calling this function</remarks>
     /// <example>
     /// <code source='examples\vbnet\ex_booleandifference.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_booleandifference.cs' lang='cs'/>
@@ -940,6 +943,7 @@ namespace Rhino.Geometry
     /// <param name="secondBrep">Second Brep for boolean difference.</param>
     /// <param name="tolerance">Tolerance to use for difference operation.</param>
     /// <returns>An array of Brep results or null on failure.</returns>
+    /// <remarks>The solid orientation of the breps make a difference when calling this function</remarks>
     public static Brep[] CreateBooleanDifference(Brep firstBrep, Brep secondBrep, double tolerance)
     {
       if (firstBrep == null) { throw new ArgumentNullException("firstBrep"); }

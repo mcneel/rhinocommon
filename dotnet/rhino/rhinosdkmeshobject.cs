@@ -10,7 +10,10 @@ namespace Rhino.DocObjects
     internal MeshObject(uint serialNumber)
       : base(serialNumber) { }
 
+    [Obsolete("Derive your Mesh class from Rhino.DocObjects.Custom.CustomMeshObject. This will be removed in a future beta")]
     protected MeshObject() { }
+
+    internal MeshObject(bool custom) { }
 
     public Mesh MeshGeometry
     {
@@ -64,6 +67,42 @@ namespace Rhino.DocObjects
   }
 
   // skipping CRhinoMeshDensity, CRhinoObjectMesh, CRhinoMeshObjectsUI, CRhinoMeshStlUI
+}
+
+namespace Rhino.DocObjects.Custom
+{
+  public abstract class CustomMeshObject : MeshObject, IDisposable
+  {
+    protected CustomMeshObject()
+      : base(true)
+    {
+      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomMeshObject_New();
+    }
+    protected CustomMeshObject(Mesh mesh)
+      : base(true)
+    {
+      IntPtr pConstMesh = mesh.ConstPointer();
+      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New2(pConstMesh);
+    }
+
+    ~CustomMeshObject() { Dispose(false); }
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_pRhinoObject)
+      {
+        // This delete is safe in that it makes sure the object is NOT
+        // under control of the Rhino Document
+        UnsafeNativeMethods.CRhinoObject_Delete(m_pRhinoObject);
+      }
+      m_pRhinoObject = IntPtr.Zero;
+    }
+  }
 }
 
 #endif

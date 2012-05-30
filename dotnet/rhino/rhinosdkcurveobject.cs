@@ -14,7 +14,7 @@ namespace Rhino.DocObjects
       : base(serialNumber)
     { }
 
-    protected CurveObject() { }
+    internal CurveObject() { }
 
     public Curve CurveGeometry
     {
@@ -23,6 +23,51 @@ namespace Rhino.DocObjects
         Curve rc = Geometry as Curve;
         return rc;
       }
+    }
+
+    public Curve DuplicateCurveGeometry()
+    {
+      Curve rc = DuplicateGeometry() as Curve;
+      return rc;
+    }
+
+    internal override RhinoObject.CommitGeometryChangesFunc GetCommitFunc()
+    {
+      return UnsafeNativeMethods.CRhinoCurveObject_InternalCommitChanges;
+    }
+  }
+}
+
+namespace Rhino.DocObjects.Custom
+{
+  public abstract class CustomCurveObject : CurveObject, IDisposable
+  {
+    protected CustomCurveObject() : base()
+    {
+      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomCurveObject_New();
+    }
+    protected CustomCurveObject(Curve curve) : base()
+    {
+      IntPtr pConstCurve = curve.ConstPointer();
+      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New2(pConstCurve);
+    }
+
+    ~CustomCurveObject() { Dispose(false); }
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if ( IntPtr.Zero != m_pRhinoObject )
+      {
+        // This delete is safe in that it makes sure the object is NOT
+        // under control of the Rhino Document
+        UnsafeNativeMethods.CRhinoObject_Delete(m_pRhinoObject);
+      }
+      m_pRhinoObject = IntPtr.Zero;
     }
 
     /// <summary>
@@ -53,17 +98,6 @@ namespace Rhino.DocObjects
       if (pOldCurve != pCurve && pOldCurve != IntPtr.Zero)
         return new Curve(pOldCurve, null);
       return curve;
-    }
-
-    public Curve DuplicateCurveGeometry()
-    {
-      Curve rc = DuplicateGeometry() as Curve;
-      return rc;
-    }
-
-    internal override RhinoObject.CommitGeometryChangesFunc GetCommitFunc()
-    {
-      return UnsafeNativeMethods.CRhinoCurveObject_InternalCommitChanges;
     }
   }
 }

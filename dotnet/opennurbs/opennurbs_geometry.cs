@@ -57,7 +57,7 @@ namespace Rhino.Geometry
       if (null != parent_object)
         serial_number = parent_object.m_rhinoobject_serial_number;
       ComponentIndex ci = new ComponentIndex();
-      return UnsafeNativeMethods.CRhinoObject_Geometry(serial_number, ci);
+      return UnsafeNativeMethods.CRhinoObject_Geometry2(serial_number, ci);
 #else
       Rhino.FileIO.File3dmObject fileobject = m__parent as Rhino.FileIO.File3dmObject;
       if (null != fileobject)

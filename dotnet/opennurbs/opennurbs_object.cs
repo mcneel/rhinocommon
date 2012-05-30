@@ -299,11 +299,13 @@ namespace Rhino.Runtime
         m_ptr = IntPtr.Zero;
       }
     }
+#if RHINO_SDK
     internal void ChangeToConstObject(Rhino.DocObjects.RhinoObject parent)
     {
       m_ptr = IntPtr.Zero;
       m__parent = parent;
     }
+#endif
 
     /// <summary>
     /// Allows construction from inheriting classes.

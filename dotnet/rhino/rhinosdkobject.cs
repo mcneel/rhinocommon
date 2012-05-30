@@ -3,7 +3,6 @@ using Rhino.Geometry;
 
 namespace Rhino.DocObjects
 {
-
 #if RHINO_SDK
   /// <summary>
   /// Represents an object in the document.
@@ -435,9 +434,10 @@ namespace Rhino.DocObjects
         {
           ComponentIndex ci = new ComponentIndex();
           // use the "const" geometry that is associated with this RhinoObject
-          IntPtr pGeometry = UnsafeNativeMethods.CRhinoObject_Geometry(m_rhinoobject_serial_number, ci);
+          IntPtr pConstThis = ConstPointer();
+          IntPtr pGeometry = UnsafeNativeMethods.CRhinoObject_Geometry(pConstThis, ci);
           if (IntPtr.Zero == pGeometry)
-            throw new Rhino.Runtime.DocumentCollectedException();
+            return null;
 
           m_original_geometry = GeometryBase.CreateGeometryHelper(pGeometry, this);
         }
@@ -511,6 +511,12 @@ namespace Rhino.DocObjects
     public bool IsDeletable
     {
       get { return GetBool(idxIsDeletable); }
+      protected set
+      {
+        // only custom subclasses can set this flag
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.CRhinoCustomObject_SetIsDeletable(pConstThis, value);
+      }
     }
 
     /// <summary>

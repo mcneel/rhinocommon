@@ -1,3 +1,5 @@
+#pragma warning disable 1591
+using System;
 using Rhino.Geometry;
 
 #if RHINO_SDK
@@ -14,7 +16,10 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Protected constructor for custom subclasses
     /// </summary>
+    [Obsolete("Derive your Brep class from Rhino.DocObjects.Custom.CustomBrepObject. This will be removed in a future beta")]
     protected BrepObject() { }
+
+    internal BrepObject(bool custom) { }
 
     /// <summary>
     /// Gets the brep geometry linked with this object.
@@ -77,6 +82,42 @@ namespace Rhino.DocObjects
     internal override CommitGeometryChangesFunc GetCommitFunc()
     {
       return UnsafeNativeMethods.CRhinoSurfaceObject_InternalCommitChanges;
+    }
+  }
+}
+
+namespace Rhino.DocObjects.Custom
+{
+  public abstract class CustomBrepObject : BrepObject, IDisposable
+  {
+    protected CustomBrepObject()
+      : base(true)
+    {
+      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomBrepObject_New();
+    }
+    protected CustomBrepObject(Brep brep)
+      : base(true)
+    {
+      IntPtr pConstBrep = brep.ConstPointer();
+      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New2(pConstBrep);
+    }
+
+    ~CustomBrepObject() { Dispose(false); }
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_pRhinoObject)
+      {
+        // This delete is safe in that it makes sure the object is NOT
+        // under control of the Rhino Document
+        UnsafeNativeMethods.CRhinoObject_Delete(m_pRhinoObject);
+      }
+      m_pRhinoObject = IntPtr.Zero;
     }
   }
 }

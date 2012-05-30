@@ -1,4 +1,4 @@
-/dotnet/UI/*.resources
+﻿/dotnet/UI/*.resources
 /dotnet/monostart/bin
 /dotnet/monostart/obj
 /dotnet/monostart/monostart.pidb
@@ -156,6 +156,15 @@
 /examples/opennurbs_build/cs/example_read/ipch
 /examples/opennurbs_build/cs/example_read/obj
 /examples/opennurbs_build/cs/example_read/Debug
+/examples/opennurbs_build/cs/example_read/Release
 /examples/opennurbs_build/cs/example_read/example_read.csproj.user
 /examples/opennurbs_build/cs/example_read/example_read.sdf
 /examples/opennurbs_build/cs/example_read/example_read.suo
+/examples/opennurbs_build/cs/localize_3dm/ipch
+/examples/opennurbs_build/cs/localize_3dm/obj
+/examples/opennurbs_build/cs/localize_3dm/Debug
+/examples/opennurbs_build/cs/localize_3dm/Release
+/examples/opennurbs_build/cs/localize_3dm/bin
+/examples/opennurbs_build/cs/localize_3dm/example_read.csproj.user
+/examples/opennurbs_build/cs/localize_3dm/example_read.sdf
+/examples/opennurbs_build/cs/localize_3dm/example_read.suo

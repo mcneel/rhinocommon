@@ -28,7 +28,9 @@ I'm going to need to come up with better instructions on compiling and using the
 
 Installation / Configuration
 ----------------------------
-
+RhinoCommon is written to work under different "modes".
+- Assembly running in Rhino: Rhino 5 (and Grasshopper in Rhino 4) ship a precompiled version of RhinoCommon that contains full access to the Rhino SDK. This means highre level functionality of things like intersections or working with the RhinoDoc are supported
+- Stand alone assembly accessing OpenNURBS: A special build flavor of RhinoCommon is supported that let's you build RhinoCommon as a .NET layer on top of the C++ OpenNURBS toolkit (www.opennurbs.org)
 
 Authors
 -------
@@ -38,10 +40,11 @@ Specific people to contact about this project:
 
 * Steve Baer - https://github.com/sbaer steve@mcneel.com
 * David Rutten - https://github.com/DavidRutten
+* Giulio Piacentino - https://github.com/piac
 
 Legal Stuff
 -----------
-Copyright (c) 2011 Robert McNeel & Associates. All Rights Reserved.
+Copyright (c) 2012 Robert McNeel & Associates. All Rights Reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

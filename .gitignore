@@ -155,3 +155,9 @@
 /c/rh_blend.cpp
 /c/rh_printinfo.cpp
 /c/opennurbs
+/examples/opennurbs_build/cs/example_read/ipch
+/examples/opennurbs_build/cs/example_read/obj
+/examples/opennurbs_build/cs/example_read/Debug
+/examples/opennurbs_build/cs/example_read/example_read.csproj.user
+/examples/opennurbs_build/cs/example_read/example_read.sdf
+/examples/opennurbs_build/cs/example_read/example_read.suo

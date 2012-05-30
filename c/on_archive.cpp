@@ -1767,6 +1767,7 @@ RH_C_FUNCTION ON_3dmSettings* ONX_Model_3dmSettingsPointer(ONX_Model* pModel)
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION bool ONX_Model_ReadPreviewImage(const RHMONO_STRING* path, CRhinoDib* pRhinoDib)
 {
   bool rc = false;
@@ -1797,3 +1798,4 @@ RH_C_FUNCTION bool ONX_Model_ReadPreviewImage(const RHMONO_STRING* path, CRhinoD
   }
   return rc;
 }
+#endif

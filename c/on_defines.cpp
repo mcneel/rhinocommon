@@ -1,5 +1,12 @@
 #include "StdAfx.h"
 
+RH_C_FUNCTION void ON_Begin()
+{
+#if defined(OPENNURBS_BUILD) // don't call Begin when running in Rhino
+  ON::Begin();
+#endif
+}
+
 RH_C_FUNCTION double ONC_UnitScale(int from, int to)
 {
   ON::unit_system usFrom = ON::UnitSystem(from);

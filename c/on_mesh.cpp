@@ -764,6 +764,9 @@ RH_C_FUNCTION bool ON_Mesh_NakedEdgePoints( const ON_Mesh* pMesh, /*ARRAY*/int* 
 RH_C_FUNCTION bool ON_Mesh_IsPointInside(const ON_Mesh* pConstMesh, ON_3DPOINT_STRUCT point, double tolerance, bool strictlyin)
 {
   bool rc = false;
+#if defined(OPENNURBS_BUILD)
+  // do nothing, not supported
+#else
   // 27 March 2012 - S. Baer
   // The low-level ON_Mesh::IsPointInside has not been completed and always returns false.
   // Calling an intersector for now and counting the number of crossings. Odd == inside.
@@ -800,6 +803,7 @@ RH_C_FUNCTION bool ON_Mesh_IsPointInside(const ON_Mesh* pConstMesh, ON_3DPOINT_S
 //    rc = pConstMesh->IsPointInside(_point, tolerance, strictlyin);
 //#endif
   }
+#endif
   return rc;
 }
 
@@ -2207,6 +2211,9 @@ static bool GetBrepFaceCorners(const ON_BrepFace& face, ON_SimpleArray<ON_3fPoin
 
 RH_C_FUNCTION ON_Mesh* ON_Mesh_BrepToMeshSimple(const ON_Brep* pBrep)
 {
+#if defined(OPENNURBS_BUILD)
+  return NULL;
+#else
   if( !pBrep ) 
     return NULL;
 
@@ -2250,4 +2257,5 @@ RH_C_FUNCTION ON_Mesh* ON_Mesh_BrepToMeshSimple(const ON_Brep* pBrep)
   newMesh->ComputeVertexNormals();
  
   return newMesh;
+#endif
 }

@@ -108,6 +108,7 @@ RH_C_FUNCTION bool ON_Circle_TryFitTTT(const ON_Curve* c1, const ON_Curve* c2, c
                                        double seed1, double seed2, double seed3, 
                                        ON_CIRCLE_STRUCT* circleFit)
 {
+#if !defined(OPENNURBS_BUILD)
   if( !c1 || !c2 || !c3 ) { return false; }
   if( !circleFit ) { return false; }
 
@@ -197,6 +198,7 @@ RH_C_FUNCTION bool ON_Circle_TryFitTTT(const ON_Curve* c1, const ON_Curve* c2, c
     CopyToCircleStruct(*circleFit, circle);
     return true;
   }
+#endif
   return false;
 }
 
@@ -204,7 +206,8 @@ RH_C_FUNCTION bool ON_Circle_TryFitTT(const ON_Curve* c1, const ON_Curve* c2,
                                       double seed1, double seed2,
                                       ON_CIRCLE_STRUCT* circleFit)
 {
-    if( !c1 || !c2 ) { return false; }
+#if !defined(OPENNURBS_BUILD)
+  if( !c1 || !c2 ) { return false; }
   if( !circleFit ) { return false; }
 
   //copied this (with modifications) from CRhGetCircleTTT::CalculateCircleTanTan
@@ -247,5 +250,6 @@ RH_C_FUNCTION bool ON_Circle_TryFitTT(const ON_Curve* c1, const ON_Curve* c2,
     pt1 = c1->PointAt( t1);
 
   }
+#endif
   return false;
  }

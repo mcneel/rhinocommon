@@ -46,8 +46,10 @@
 #endif //  !defined(ON_MSC_LIB_DIR)
 
 #pragma message( " --- statically linking opennurbs." )
-#pragma comment(lib, "\"" ON_MSC_SOLUTION_DIR ON_MSC_LIB_DIR "zlib.lib" "\"")
-#pragma comment(lib, "\"" ON_MSC_SOLUTION_DIR ON_MSC_LIB_DIR "opennurbs_staticlib.lib" "\"")
+//#pragma comment(lib, "\"" ON_MSC_SOLUTION_DIR ON_MSC_LIB_DIR "zlib.lib" "\"")
+//#pragma comment(lib, "\"" ON_MSC_SOLUTION_DIR ON_MSC_LIB_DIR "opennurbs_staticlib.lib" "\"")
+#pragma comment(lib, "zlib.lib")
+#pragma comment(lib, "opennurbs_staticlib.lib")
 
 #else
 

@@ -43,8 +43,8 @@ __declspec(selectany) int _forceAtlDllManifestRTM;
 
 #include "../../../rhinosdk/rhino4/sdk/inc/rhinoSdkStdafxPreamble.h"
 #elif defined(OPENNURBS_BUILD)
-#include "../../opennurbs/opennurbs.h"
-#include "../../opennurbs/zlib/zlib.h"
+#include "./opennurbs/opennurbs.h"
+#include "./opennurbs/zlib/zlib.h"
 #else
 #include "../../../rhino4/SDK/Inc/RhinoSdkStdafxPreamble.h"
 #endif

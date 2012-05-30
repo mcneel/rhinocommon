@@ -1953,6 +1953,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region on_defines.cpp
+  //void ON_Begin()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Begin();
+
   //double ONC_UnitScale(int from, int to)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern double ONC_UnitScale(int from, int to);
@@ -8397,9 +8401,13 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_LookupObjectBySerialNumber(uint sn);
 
-  //const ON_Geometry* CRhinoObject_Geometry(unsigned int rhino_object_serial_number, ON_2INTS componentIndex)
+  //const ON_Geometry* CRhinoObject_Geometry(const CRhinoObject* pConstRhinoObject, ON_2INTS componentIndex)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr CRhinoObject_Geometry(uint rhino_object_serial_number, ComponentIndex componentIndex);
+  internal static extern IntPtr CRhinoObject_Geometry(IntPtr pConstRhinoObject, ComponentIndex componentIndex);
+
+  //const ON_Geometry* CRhinoObject_Geometry2(unsigned int rhino_object_serial_number, ON_2INTS componentIndex)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoObject_Geometry2(uint rhino_object_serial_number, ComponentIndex componentIndex);
 
   //const CRhinoObjectAttributes* CRhinoObject_Attributes(unsigned int rhino_object_serial_number)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -8782,9 +8790,29 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoCustomObject_SetDescriptionStrings(IntPtr pRhinoObject, [MarshalAs(UnmanagedType.LPWStr)]string description, [MarshalAs(UnmanagedType.LPWStr)]string description_plural);
 
-  //CRhinoObject* CRhinoCustomObject_New(const ON_Geometry* pConstGeometry)
+  //CRhinoObject* CRhinoCustomObject_New(CRhinoObject* pRhinoObject, const ON_Geometry* pConstGeometry)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr CRhinoCustomObject_New(IntPtr pConstGeometry);
+  internal static extern IntPtr CRhinoCustomObject_New(IntPtr pRhinoObject, IntPtr pConstGeometry);
+
+  //CRhinoObject* CRhinoCustomObject_New2(const ON_Geometry* pConstGeometry)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoCustomObject_New2(IntPtr pConstGeometry);
+
+  //CRhCmnMeshObject* CRhinoCustomMeshObject_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoCustomMeshObject_New();
+
+  //CRhCmnBrepObject* CRhinoCustomBrepObject_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoCustomBrepObject_New();
+
+  //CRhCmnCurveObject* CRhinoCustomCurveObject_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoCustomCurveObject_New();
+
+  //void CRhinoCustomObject_SetIsDeletable(const CRhinoObject* pConstRhinoObject, bool deletable)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoCustomObject_SetIsDeletable(IntPtr pConstRhinoObject, [MarshalAs(UnmanagedType.U1)]bool deletable);
 
   //bool CRhinoDoc_AddRhinoObject(int doc_id, CRhinoObject* pRhinoObject)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

@@ -51,6 +51,37 @@ namespace Rhino.UI
       }
     }
 
-    public bool OnlyNumbers { get; set; }
+    bool OnlyNumbers { get; set; }
+    double MinimumNumberValue { get; set; }
+    double MaximumNumberValue { get; set; }
+    public void SetAsNumberInput(double minimum, double maximum)
+    {
+      OnlyNumbers = true;
+      MinimumNumberValue = RhinoMath.IsValidDouble(minimum) ? minimum : RhinoMath.UnsetValue;
+      MaximumNumberValue = RhinoMath.IsValidDouble(maximum) ? maximum : RhinoMath.UnsetValue;
+    }
+
+    private void OnFormClosing(object sender, FormClosingEventArgs e)
+    {
+      if (OnlyNumbers && (e.CloseReason == CloseReason.UserClosing || e.CloseReason== CloseReason.None) && DialogResult == System.Windows.Forms.DialogResult.OK)
+      {
+        string text = GetText();
+        if (!string.IsNullOrEmpty(text))
+        {
+          double d;
+          if (!double.TryParse(text, out d))
+          {
+            e.Cancel = true;
+            return;
+          }
+          if ((RhinoMath.IsValidDouble(MinimumNumberValue) && d < MinimumNumberValue) ||
+              (RhinoMath.IsValidDouble(MaximumNumberValue) && d > MaximumNumberValue))
+          {
+            e.Cancel = true;
+            return;
+          }
+        }
+      }
+    }
   }
 }

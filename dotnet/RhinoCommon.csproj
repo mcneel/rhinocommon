@@ -18,7 +18,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;USING_V5_SDK RHINO_SDK RDK_UNCHECKED RDK_CHECKED</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;USING_V5_SDK RHINO_SDK RDK_CHECKED RDK_UNCHECKED</DefineConstants>
     <DocumentationFile>Debug\RhinoCommon.XML</DocumentationFile>
     <NoWarn>
     </NoWarn>

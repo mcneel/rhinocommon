@@ -529,11 +529,16 @@ namespace Rhino
 
       public static System.Windows.Forms.DialogResult ShowNumberBox(string title, string message, ref double number)
       {
+        return ShowNumberBox(title, message, ref number, RhinoMath.UnsetValue, RhinoMath.UnsetValue);
+      }
+
+      public static System.Windows.Forms.DialogResult ShowNumberBox(string title, string message, ref double number, double minimum, double maximum)
+      {
         string defaultText = String.Empty;
-        if( number != RhinoMath.UnsetValue )
+        if (number != RhinoMath.UnsetValue)
           defaultText = number.ToString();
         StringBoxForm dlg = new StringBoxForm(title, message, defaultText);
-        dlg.OnlyNumbers = true;
+        dlg.SetAsNumberInput(minimum, maximum);
         System.Windows.Forms.DialogResult rc = dlg.ShowDialog(RhinoApp.MainWindow());
         if (rc == System.Windows.Forms.DialogResult.OK)
         {

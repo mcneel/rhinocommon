@@ -92,6 +92,7 @@
       this.MinimizeBox = false;
       this.Name = "StringBoxForm";
       this.Text = "StringBox";
+      this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
       this.ResumeLayout(false);
       this.PerformLayout();
 

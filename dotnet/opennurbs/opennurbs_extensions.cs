@@ -15,6 +15,7 @@ namespace Rhino.FileIO
     IntPtr m_ptr = IntPtr.Zero; //ONX_Model*
     File3dmObjectTable m_object_table;
     File3dmLayerTable m_layer_table;
+    File3dmPlugInDataTable m_userdata_table;
 
     internal IntPtr ConstPointer()
     {
@@ -458,6 +459,14 @@ namespace Rhino.FileIO
       get { return null; }
     }
 
+    /// <summary>
+    /// Custom plug-in data in this file.  This data is not attached to any geometry or attributes
+    /// </summary>
+    public File3dmPlugInDataTable PlugInData
+    {
+      get { return m_userdata_table ?? (m_userdata_table = new File3dmPlugInDataTable(this)); }
+    }
+
     #region diagnostic dumps
     const int idxDumpAll = 0;
     const int idxDumpSummary = 1;
@@ -474,7 +483,7 @@ namespace Rhino.FileIO
     //const int idxIDefTable = 12;
     internal const int idxObjectTable = 13;
     //const int idxHistoryRecordTable = 14;
-    //const int idxUserDataTable = 15;
+    internal const int idxUserDataTable = 15;
     internal const int idxViewTable = 16;
     internal const int idxNamedViewTable = 17;
     internal string Dump(int which)
@@ -1594,6 +1603,105 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddHatch(pThis, pConstHatch, pAttr);
     }
     #endregion
+  }
+
+  /// <summary>
+  /// Custom data in the file supplied by a plug-in
+  /// </summary>
+  public class File3dmPlugInData
+  {
+    readonly Guid m_id;
+    internal File3dmPlugInData(Guid id)
+    {
+      m_id = id;
+    }
+
+    /// <summary>
+    /// Plug-in this data is associated with
+    /// </summary>
+    public Guid PlugInId
+    {
+      get { return m_id; }
+    }
+  }
+
+  /// <summary>
+  /// Table of custom data provided by plug-ins
+  /// </summary>
+  public class File3dmPlugInDataTable : IEnumerable<File3dmPlugInData>, Rhino.Collections.IRhinoTable<File3dmPlugInData>
+  {
+    readonly File3dm m_parent;
+    internal File3dmPlugInDataTable(File3dm parent)
+    {
+      m_parent = parent;
+    }
+
+    /// <summary>Prepares a text dump of table.</summary>
+    /// <returns>A string containing the dump.</returns>
+    public string Dump()
+    {
+      return m_parent.Dump(File3dm.idxLayerTable);
+    }
+
+    #region properties
+    /// <summary>
+    /// Gets the number of File3dmPlugInData in this table.
+    /// </summary>
+    public int Count
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxUserDataTable);
+      }
+    }
+
+    /// <summary>
+    /// Gets the File3dmPlugInData at the given index. 
+    /// The index must be valid or an IndexOutOfRangeException will be thrown.
+    /// </summary>
+    /// <param name="index">Index of File3dmPlugInData to access.</param>
+    /// <exception cref="IndexOutOfRangeException">Thrown when the index is invalid.</exception>
+    /// <returns>The File3dmPlugInData at [index].</returns>
+    public File3dmPlugInData this[int index]
+    {
+      get
+      {
+        int count = Count;
+        if (index < 0 || index >= count)
+          throw new IndexOutOfRangeException();
+
+        IntPtr pModel = m_parent.ConstPointer();
+        Guid id = UnsafeNativeMethods.ONX_Model_UserDataTable_Uuid(pModel, index);
+        if (Guid.Empty == id)
+          throw new IndexOutOfRangeException();
+        return new File3dmPlugInData(id);
+      }
+    }
+    #endregion
+
+    public void Clear()
+    {
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_UserDataTable_Clear(pParent);
+    }
+
+
+    #region IEnumerable Implementation
+    /// <summary>
+    /// Gets the enumerator that visits any <see cref="File3dmPlugInData"/> in this table.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    public IEnumerator<File3dmPlugInData> GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmPlugInDataTable, File3dmPlugInData>(this);
+    }
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmPlugInDataTable, File3dmPlugInData>(this);
+    }
+    #endregion
+
   }
 
   class File3dmLayerTable : IList<Rhino.DocObjects.Layer>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.Layer>

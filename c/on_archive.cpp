@@ -1863,6 +1863,23 @@ RH_C_FUNCTION void ONX_Model_ViewTable_RemoveAt(ONX_Model* pModel, int index, bo
   }
 }
 
+RH_C_FUNCTION ON_UUID ONX_Model_UserDataTable_Uuid(const ONX_Model* pConstModel, int index)
+{
+  if( pConstModel )
+  {
+    const ONX_Model_UserData* pUD = pConstModel->m_userdata_table.At(index);
+    if( pUD )
+      return pUD->m_uuid;
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION void ONX_Model_UserDataTable_Clear(ONX_Model* pModel)
+{
+  if( pModel )
+    pModel->m_userdata_table.Empty();
+}
+
 #if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION bool ONX_Model_ReadPreviewImage(const RHMONO_STRING* path, CRhinoDib* pRhinoDib)
 {

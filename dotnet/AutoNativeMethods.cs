@@ -984,6 +984,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_ViewTable_RemoveAt(IntPtr pModel, int index, [MarshalAs(UnmanagedType.U1)]bool named_view_table);
 
+  //ON_UUID ONX_Model_UserDataTable_Uuid(const ONX_Model* pConstModel, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_UserDataTable_Uuid(IntPtr pConstModel, int index);
+
+  //void ONX_Model_UserDataTable_Clear(ONX_Model* pModel)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_UserDataTable_Clear(IntPtr pModel);
+
   //bool ONX_Model_ReadPreviewImage(const RHMONO_STRING* path, CRhinoDib* pRhinoDib)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]

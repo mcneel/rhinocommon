@@ -433,10 +433,15 @@ namespace Rhino
 
       public static object ShowListBox(string title, string message, System.Collections.IList items)
       {
+        return ShowListBox(title, message, items, null);
+      }
+
+      public static object ShowListBox(string title, string message, System.Collections.IList items, object selectedItem)
+      {
         object rc = null;
         if (items != null && items.Count > 0)
         {
-          ListBoxForm dlg = new ListBoxForm(title, message, items);
+          ListBoxForm dlg = new ListBoxForm(title, message, items, selectedItem);
           if (dlg.ShowDialog(RhinoApp.MainWindow()) == System.Windows.Forms.DialogResult.OK)
             rc = dlg.SelectedItem();
         }

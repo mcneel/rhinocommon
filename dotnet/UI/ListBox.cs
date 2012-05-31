@@ -7,7 +7,7 @@ namespace Rhino.UI
 {
   sealed partial class ListBoxForm : Form
   {
-    public ListBoxForm(string title, string message, System.Collections.IList items)
+    public ListBoxForm(string title, string message, System.Collections.IList items, object selectedItem)
     {
       InitializeComponent();
       m_checkedListBox.Visible = false;
@@ -22,6 +22,19 @@ namespace Rhino.UI
         object[] list = new object[items.Count];
         items.CopyTo(list, 0);
         m_list.Items.AddRange(list);
+        m_list.DoubleClick += OnDoubleClickList;
+
+        if (selectedItem != null)
+          m_list.SelectedItem = selectedItem;
+      }
+    }
+
+    void OnDoubleClickList(object sender, EventArgs e)
+    {
+      if (m_list.SelectedIndex >= 0)
+      {
+        DialogResult = System.Windows.Forms.DialogResult.OK;
+        Close();
       }
     }
 

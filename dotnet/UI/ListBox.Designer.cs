@@ -71,9 +71,9 @@
       // 
       // m_list
       // 
-      this.m_list.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_list.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.m_list.FormattingEnabled = true;
       this.m_list.Location = new System.Drawing.Point(13, 26);
       this.m_list.Name = "m_list";
@@ -82,9 +82,9 @@
       // 
       // m_checkedListBox
       // 
-      this.m_checkedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_checkedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.m_checkedListBox.CheckOnClick = true;
       this.m_checkedListBox.FormattingEnabled = true;
       this.m_checkedListBox.Location = new System.Drawing.Point(13, 26);
@@ -93,10 +93,12 @@
       this.m_checkedListBox.TabIndex = 8;
       this.m_checkedListBox.Visible = false;
       // 
-      // ListBox
+      // ListBoxForm
       // 
+      this.AcceptButton = m_btnOk;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.CancelButton = m_btnCancel;
       this.ClientSize = new System.Drawing.Size(228, 262);
       this.Controls.Add(this.m_checkedListBox);
       this.Controls.Add(m_btnCancel);
@@ -106,7 +108,7 @@
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MaximizeBox = false;
       this.MinimizeBox = false;
-      this.Name = "ListBox";
+      this.Name = "ListBoxForm";
       this.Text = "ListBox";
       this.ResumeLayout(false);
       this.PerformLayout();

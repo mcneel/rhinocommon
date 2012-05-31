@@ -243,15 +243,19 @@ namespace Rhino.DocObjects
   //public class ON_3dmPageSettings { }
   
   /// <summary>
-  /// Represents the name and orientation of a NamedView.
-  /// <para>Namedviews can be thought of as cameras.</para>
+  /// Represents the name and orientation of a View (and named view).
+  /// <para>views can be thought of as cameras.</para>
   /// </summary>
   public class ViewInfo : IDisposable // ON_3dmView
   {
     private IntPtr m_ptr; // ON_3dmView*
+    internal object m_parent;
+
+    // for when parent is File3dm
+    private Guid m_id = Guid.Empty;
+    readonly bool m_named_view_table;
 
 #if RHINO_SDK
-    private object m_parent;
     private int m_index=-1;
     internal ViewInfo(Rhino.RhinoDoc doc, int index)
     {
@@ -260,10 +264,23 @@ namespace Rhino.DocObjects
     }
 #endif
 
+    internal ViewInfo(Rhino.FileIO.File3dm parent, Guid id, bool named_view_table)
+    {
+      m_parent = parent;
+      m_id = id;
+      m_named_view_table = named_view_table;
+    }
+
     internal IntPtr ConstPointer()
     {
       if (m_ptr != IntPtr.Zero)
         return m_ptr;
+      FileIO.File3dm parent_file = m_parent as FileIO.File3dm;
+      if (parent_file != null)
+      {
+        IntPtr pParent = parent_file.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_ViewPointer(pParent, m_id, m_named_view_table);
+      }
 #if RHINO_SDK
       if (m_index >= 0)
       {
@@ -277,6 +294,13 @@ namespace Rhino.DocObjects
 
     internal IntPtr NonConstPointer()
     {
+      FileIO.File3dm parent_file = m_parent as FileIO.File3dm;
+      if (parent_file != null)
+      {
+        IntPtr pParent = parent_file.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_ViewPointer(pParent, m_id, m_named_view_table);
+      }
+
       if (m_ptr == IntPtr.Zero)
       {
         IntPtr pConstThis = ConstPointer();

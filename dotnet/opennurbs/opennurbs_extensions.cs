@@ -426,16 +426,6 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Do not use. Use Objects instead.
-    /// </summary>
-    [Obsolete("Use Objects instead. This will be removed from a future WIP")]
-    [System.ComponentModel.Browsable(false), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    public File3dmObjectTable ObjectTable
-    {
-      get { return m_object_table ?? (m_object_table = new File3dmObjectTable(this)); }
-    }
-
-    /// <summary>
     /// Gets access to the <see cref="File3dmObjectTable"/> class associated with this file,
     /// which contains all objects.
     /// </summary>
@@ -445,12 +435,27 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Gets access to the <see cref="File3dmLayerTable"/> class associated with this file,
-    /// which contains all layers.
+    /// Layers in this file.
     /// </summary>
     public IList<Rhino.DocObjects.Layer> Layers
     {
       get { return m_layer_table ?? (m_layer_table = new File3dmLayerTable(this)); }
+    }
+
+    /// <summary>
+    /// Views that represent the RhinoViews which are displayed when Rhino loads this file
+    /// </summary>
+    public IList<Rhino.DocObjects.ViewInfo> Views
+    {
+      get { return null; }
+    }
+
+    /// <summary>
+    /// Named view list
+    /// </summary>
+    public IList<Rhino.DocObjects.ViewInfo> NamedViews
+    {
+      get { return null; }
     }
 
     #region diagnostic dumps
@@ -470,6 +475,8 @@ namespace Rhino.FileIO
     internal const int idxObjectTable = 13;
     //const int idxHistoryRecordTable = 14;
     //const int idxUserDataTable = 15;
+    internal const int idxViewTable = 16;
+    internal const int idxNamedViewTable = 17;
     internal string Dump(int which)
     {
       using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
@@ -480,6 +487,7 @@ namespace Rhino.FileIO
         return sh.ToString();
       }
     }
+
 
     /// <summary>Prepares a text dump of the entire model.</summary>
     /// <returns>The text dump.</returns>
@@ -1707,6 +1715,135 @@ namespace Rhino.FileIO
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<File3dmLayerTable, Rhino.DocObjects.Layer>(this);
+    }
+  }
+
+  class File3dmViewTable : IList<Rhino.DocObjects.ViewInfo>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.ViewInfo>
+  {
+    readonly File3dm m_parent;
+    readonly bool m_named_views;
+    internal File3dmViewTable(File3dm parent, bool namedViews)
+    {
+      m_parent = parent;
+      m_named_views = namedViews;
+    }
+
+    public int Find(string name)
+    {
+      int cnt = Count;
+      for (int i = 0; i < cnt; i++)
+      {
+        if (this[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+          return i;
+      }
+      return -1;
+    }
+
+    public int IndexOf(DocObjects.ViewInfo item)
+    {
+      File3dm file = item.m_parent as File3dm;
+      if (file == m_parent)
+      {
+        IntPtr pViewPtr = item.ConstPointer();
+        IntPtr pModelPtr = m_parent.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_ViewTable_Index(pModelPtr, pViewPtr, m_named_views);
+      }
+      return -1;
+    }
+
+    public void Insert(int index, DocObjects.ViewInfo item)
+    {
+      if (index < 0 || index > Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      IntPtr pConstView = item.ConstPointer();
+      UnsafeNativeMethods.ONX_Model_ViewTable_Insert(pParent, pConstView, index, m_named_views);
+    }
+
+    public void RemoveAt(int index)
+    {
+      if (index < 0 || index >= Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_ViewTable_RemoveAt(pParent, index, m_named_views);
+    }
+
+    public DocObjects.ViewInfo this[int index]
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        Guid id = UnsafeNativeMethods.ONX_Model_ViewTable_Id(pConstParent, index, m_named_views);
+        if (id==Guid.Empty )
+          throw new IndexOutOfRangeException();
+        return new DocObjects.ViewInfo(m_parent, id, m_named_views);
+      }
+      set
+      {
+        Insert(index, value);
+      }
+    }
+
+    public void Add(DocObjects.ViewInfo item)
+    {
+      int index = Count;
+      Insert(index, item);
+    }
+
+    public void Clear()
+    {
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_ViewTable_Clear(pParent, m_named_views);
+    }
+
+    public bool Contains(DocObjects.ViewInfo item)
+    {
+      return IndexOf(item) != -1;
+    }
+
+    public void CopyTo(DocObjects.ViewInfo[] array, int arrayIndex)
+    {
+      int available = array.Length - arrayIndex;
+      int cnt = Count;
+      if (available < cnt)
+        throw new ArgumentException("The number of elements in the source ICollection<T> is greater than the available space from arrayIndex to the end of the destination array.");
+      for (int i = 0; i < cnt; i++)
+      {
+        array[arrayIndex++] = this[i];
+      }
+    }
+
+    public int Count
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        int which = m_named_views ? File3dm.idxViewTable : File3dm.idxNamedViewTable;
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, which);
+      }
+    }
+
+    public bool IsReadOnly
+    {
+      get { return false; }
+    }
+
+    public bool Remove(DocObjects.ViewInfo item)
+    {
+      int index = IndexOf(item);
+      if (index >= 0)
+        RemoveAt(index);
+      return (index >= 0);
+    }
+
+    public IEnumerator<DocObjects.ViewInfo> GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmViewTable, Rhino.DocObjects.ViewInfo>(this);
+    }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmViewTable, Rhino.DocObjects.ViewInfo>(this);
     }
   }
 }

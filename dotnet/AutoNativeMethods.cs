@@ -960,6 +960,30 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ONX_Model_3dmSettingsPointer(IntPtr pModel);
 
+  //ON_3dmView* ONX_Model_ViewPointer(ONX_Model* pModel, ON_UUID id, bool named_view_table)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_ViewPointer(IntPtr pModel, Guid id, [MarshalAs(UnmanagedType.U1)]bool named_view_table);
+
+  //ON_UUID ONX_Model_ViewTable_Id(const ONX_Model* pConstModel, int index, bool named_view_table)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_ViewTable_Id(IntPtr pConstModel, int index, [MarshalAs(UnmanagedType.U1)]bool named_view_table);
+
+  //void ONX_Model_ViewTable_Clear(ONX_Model* pModel, bool named_view_table)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_ViewTable_Clear(IntPtr pModel, [MarshalAs(UnmanagedType.U1)]bool named_view_table);
+
+  //int ONX_Model_ViewTable_Index(const ONX_Model* pConstModel, const ON_3dmView* pConstView, bool named_view_table)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ONX_Model_ViewTable_Index(IntPtr pConstModel, IntPtr pConstView, [MarshalAs(UnmanagedType.U1)]bool named_view_table);
+
+  //void ONX_Model_ViewTable_Insert(ONX_Model* pModel, const ON_3dmView* pConstView, int index, bool named_view_table)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_ViewTable_Insert(IntPtr pModel, IntPtr pConstView, int index, [MarshalAs(UnmanagedType.U1)]bool named_view_table);
+
+  //void ONX_Model_ViewTable_RemoveAt(ONX_Model* pModel, int index, bool named_view_table)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_ViewTable_RemoveAt(IntPtr pModel, int index, [MarshalAs(UnmanagedType.U1)]bool named_view_table);
+
   //bool ONX_Model_ReadPreviewImage(const RHMONO_STRING* path, CRhinoDib* pRhinoDib)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]

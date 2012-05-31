@@ -986,6 +986,8 @@ RH_C_FUNCTION int ONX_Model_TableCount(const ONX_Model* pConstModel, int which)
   const int idxObjectTable = 13;
   const int idxHistoryRecordTable = 14;
   const int idxUserDataTable = 15;
+  const int idxViewTable = 16;
+  const int idxNamedViewTable = 17;
 
   int rc = 0;
   if( pConstModel )
@@ -1033,6 +1035,12 @@ RH_C_FUNCTION int ONX_Model_TableCount(const ONX_Model* pConstModel, int which)
       break;
     case idxUserDataTable:
       rc = pConstModel->m_userdata_table.Count();
+      break;
+    case idxViewTable:
+      rc = pConstModel->m_settings.m_views.Count();
+      break;
+    case idxNamedViewTable:
+      rc = pConstModel->m_settings.m_named_views.Count();
       break;
     default:
       break;
@@ -1765,6 +1773,94 @@ RH_C_FUNCTION ON_3dmSettings* ONX_Model_3dmSettingsPointer(ONX_Model* pModel)
   if( pModel )
     rc = &(pModel->m_settings);
   return rc;
+}
+
+RH_C_FUNCTION ON_3dmView* ONX_Model_ViewPointer(ONX_Model* pModel, ON_UUID id, bool named_view_table)
+{
+  ON_3dmView* rc = NULL;
+  if( pModel )
+  {
+    ON_ClassArray<ON_3dmView>* views = named_view_table ? &(pModel->m_settings.m_named_views) : &(pModel->m_settings.m_views);
+    if( views )
+    {
+      for( int i=0; i<views->Count(); i++ )
+      {
+        ON_3dmView* pView = views->At(i);
+        if( pView && pView->m_vp.ViewportId() == id )
+        {
+          rc = pView;
+          break;
+        }
+      }
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_ViewTable_Id(const ONX_Model* pConstModel, int index, bool named_view_table)
+{
+  if( pConstModel )
+  {
+    const ON_3dmView* pView = named_view_table ? pConstModel->m_settings.m_named_views.At(index) :
+                                                 pConstModel->m_settings.m_views.At(index);
+    if( pView )
+      return pView->m_vp.ViewportId();
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION void ONX_Model_ViewTable_Clear(ONX_Model* pModel, bool named_view_table)
+{
+  if( pModel )
+  {
+    if( named_view_table )
+      pModel->m_settings.m_named_views.Empty();
+    else
+      pModel->m_settings.m_views.Empty();
+  }
+}
+
+RH_C_FUNCTION int ONX_Model_ViewTable_Index(const ONX_Model* pConstModel, const ON_3dmView* pConstView, bool named_view_table)
+{
+  int rc = -1;
+  if( pConstModel && pConstView )
+  {
+    const ON_ClassArray<ON_3dmView>* views = named_view_table ? &(pConstModel->m_settings.m_named_views) : &(pConstModel->m_settings.m_views);
+    if( views )
+    {
+      for( int i=0; i<views->Count(); i++ )
+      {
+        if( views->At(i) == pConstView )
+        {
+          rc = i;
+          break;
+        }
+      }
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION void ONX_Model_ViewTable_Insert(ONX_Model* pModel, const ON_3dmView* pConstView, int index, bool named_view_table)
+{
+  if( pModel && pConstView && index>=0)
+  {
+    ON_ClassArray<ON_3dmView>* views = named_view_table ? &(pModel->m_settings.m_named_views) : &(pModel->m_settings.m_views);
+    if( views )
+    {
+      views->Insert(index, *pConstView);
+    }
+  }
+}
+
+RH_C_FUNCTION void ONX_Model_ViewTable_RemoveAt(ONX_Model* pModel, int index, bool named_view_table)
+{
+  if( pModel && index>=0)
+  {
+    ON_ClassArray<ON_3dmView>* views = named_view_table ? &(pModel->m_settings.m_named_views) : &(pModel->m_settings.m_views);
+    if( views )
+      views->Remove(index);
+  }
 }
 
 #if !defined(OPENNURBS_BUILD)

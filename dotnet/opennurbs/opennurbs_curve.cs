@@ -460,7 +460,7 @@ namespace Rhino.Geometry
     /// <returns>A curve representing the blend between A and B or null on failure.</returns>
     public static Curve CreateBlendCurve(Curve curveA, Curve curveB, BlendContinuity continuity)
     {
-      return CreateBlendCurve(curveA, curveB, continuity);
+      return CreateBlendCurve(curveA, curveB, continuity, 1, 1);
     }
     /// <summary>
     /// Create a Blend curve between two existing curves.

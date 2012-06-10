@@ -16,6 +16,8 @@ namespace Rhino.FileIO
     File3dmObjectTable m_object_table;
     File3dmLayerTable m_layer_table;
     File3dmPlugInDataTable m_userdata_table;
+    File3dmViewTable m_view_table;
+    File3dmViewTable m_named_view_table;
 
     internal IntPtr ConstPointer()
     {
@@ -448,7 +450,7 @@ namespace Rhino.FileIO
     /// </summary>
     public IList<Rhino.DocObjects.ViewInfo> Views
     {
-      get { return null; }
+      get { return m_view_table ?? (m_view_table = new File3dmViewTable(this, false)); }
     }
 
     /// <summary>
@@ -456,7 +458,7 @@ namespace Rhino.FileIO
     /// </summary>
     public IList<Rhino.DocObjects.ViewInfo> NamedViews
     {
-      get { return null; }
+      get { return m_named_view_table ?? (m_named_view_table = new File3dmViewTable(this, true)); }
     }
 
     /// <summary>

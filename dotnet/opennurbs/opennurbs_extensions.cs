@@ -1928,7 +1928,7 @@ namespace Rhino.FileIO
       get
       {
         IntPtr pConstParent = m_parent.ConstPointer();
-        int which = m_named_views ? File3dm.idxViewTable : File3dm.idxNamedViewTable;
+        int which = m_named_views ? File3dm.idxNamedViewTable : File3dm.idxViewTable;
         return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, which);
       }
     }

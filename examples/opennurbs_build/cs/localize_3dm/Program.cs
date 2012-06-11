@@ -41,16 +41,37 @@ namespace localize_3dm
             continue;
           }
 
+          Console.Out.WriteLine("Layers:");
           foreach (var layer in model.Layers)
           {
-            Console.Out.WriteLine("{0} ({1}) color: {2}", layer.FullPath, layer.Name, layer.Color);
+            Console.Out.WriteLine("  {0} ({1}) color: {2}", layer.FullPath, layer.Name, layer.Color);
           }
 
+          Console.Out.WriteLine("Objects:");
           foreach (var obj in model.Objects)
           {
-            Console.Out.WriteLine("{0} ({1}) {3}->{2}", obj.Attributes.ObjectId, obj.Attributes.Name, obj.Attributes.ObjectColor, obj.Attributes.ColorSource);
+            Console.Out.WriteLine("  {0} ({1}) {3}->{2}", obj.Attributes.ObjectId, obj.Attributes.Name, obj.Attributes.ObjectColor, obj.Attributes.ColorSource);
           }
 
+          if (null != model.Views)
+          {
+            Console.Out.WriteLine("Views:");
+            foreach (var view in model.Views)
+            {
+              Console.Out.WriteLine("  {0}", view.Name);
+            }
+          }
+
+          if (null != model.NamedViews)
+          {
+            Console.Out.WriteLine("Named Views:");
+            foreach (var view in model.NamedViews)
+            {
+              Console.Out.WriteLine("  {0}", view.Name);
+            }
+          }
+
+          Console.Out.WriteLine("Notes:");
           Console.Out.WriteLine(model.Notes.Notes);
 
         }

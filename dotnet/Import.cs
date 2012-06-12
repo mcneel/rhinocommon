@@ -247,7 +247,8 @@ internal partial class UnsafeNativeMethods
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectDocNotifyCallback doc_notify,
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectActiveInViewportCallback active_in_viewport,
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectSelectionCallback selection_change,
-                                                        Rhino.DocObjects.RhinoObject.RhinoObjectTransformCallback transform);
+                                                        Rhino.DocObjects.RhinoObject.RhinoObjectTransformCallback transform,
+                                                        Rhino.DocObjects.RhinoObject.RhinoObjectDeletedCallback deleted);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoObject_SetPickCallbacks(Rhino.DocObjects.RhinoObject.RhinoObjectPickCallback pick,

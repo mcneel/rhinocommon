@@ -93,7 +93,8 @@ namespace Rhino.DocObjects.Custom
     protected CustomBrepObject()
       : base(true)
     {
-      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomBrepObject_New();
+      if (SubclassCreateNativePointer)
+        m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomBrepObject_New();
     }
     protected CustomBrepObject(Brep brep)
       : base(true)

@@ -44,7 +44,8 @@ namespace Rhino.DocObjects.Custom
   {
     protected CustomCurveObject() : base()
     {
-      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomCurveObject_New();
+      if (SubclassCreateNativePointer)
+        m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomCurveObject_New();
     }
     protected CustomCurveObject(Curve curve) : base()
     {

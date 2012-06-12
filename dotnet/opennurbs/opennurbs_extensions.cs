@@ -1682,6 +1682,9 @@ namespace Rhino.FileIO
     }
     #endregion
 
+    /// <summary>
+    /// Remove all entries from this table
+    /// </summary>
     public void Clear()
     {
       IntPtr pParent = m_parent.NonConstPointer();

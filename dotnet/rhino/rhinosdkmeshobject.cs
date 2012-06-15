@@ -76,7 +76,8 @@ namespace Rhino.DocObjects.Custom
     protected CustomMeshObject()
       : base(true)
     {
-      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomMeshObject_New();
+      if( SubclassCreateNativePointer )
+        m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomMeshObject_New();
     }
     protected CustomMeshObject(Mesh mesh)
       : base(true)

@@ -64,8 +64,9 @@ namespace Rhino.DocObjects
       m_thePickCallback = OnRhinoObjectPick;
       m_thePickedCallback = OnRhinoObjectPicked;
       m_theTransformCallback = OnRhinoObjectTransform;
+      m_theDeleteCallback = OnRhinoObjectDeleted;
 
-      UnsafeNativeMethods.CRhinoObject_SetCallbacks(m_theDuplicateCallback, m_theDrawCallback, m_theDocNotifyCallback, m_theActiveInViewportCallback, m_theSelectionCallback, m_theTransformCallback);
+      UnsafeNativeMethods.CRhinoObject_SetCallbacks(m_theDuplicateCallback, m_theDrawCallback, m_theDocNotifyCallback, m_theActiveInViewportCallback, m_theSelectionCallback, m_theTransformCallback, m_theDeleteCallback);
       UnsafeNativeMethods.CRhinoObject_SetPickCallbacks(m_thePickCallback, m_thePickedCallback);
     }
 
@@ -75,13 +76,14 @@ namespace Rhino.DocObjects
     }
 
     internal delegate void RhinoObjectDrawCallback(IntPtr pConstRhinoObject, IntPtr pDisplayPipeline);
-    internal delegate void RhinoObjectDuplicateCallback(int docId, uint sourceObjectSerialNumber, uint newObjectSerialNumber);
+    internal delegate void RhinoObjectDuplicateCallback(int docId, uint sourceObjectSerialNumber, uint newObjectSerialNumber, IntPtr newObjectPointer);
     internal delegate void RhinoObjectDocNotifyCallback(int docId, uint serialNumber, int add);
     internal delegate int RhinoObjectActiveInViewportCallback(int docId, uint serialNumber, IntPtr pRhinoViewport);
     internal delegate void RhinoObjectSelectionCallback(int docId, uint serialNumber);
     internal delegate void RhinoObjectTransformCallback(int docId, uint serialNumber, IntPtr pConstTransform);
     internal delegate void RhinoObjectPickCallback(int docId, uint serialNumber, IntPtr pConstRhinoObject, IntPtr pRhinoObjRefArray);
     internal delegate void RhinoObjectPickedCallback(int docId, uint serialNumber, IntPtr pConstRhinoObject, IntPtr pRhinoObjRefArray, int count);
+    internal delegate void RhinoObjectDeletedCallback(uint serialNumber);
     static RhinoObjectDrawCallback m_theDrawCallback;
     static RhinoObjectDuplicateCallback m_theDuplicateCallback;
     static RhinoObjectDocNotifyCallback m_theDocNotifyCallback;
@@ -90,6 +92,7 @@ namespace Rhino.DocObjects
     static RhinoObjectTransformCallback m_theTransformCallback;
     static RhinoObjectPickCallback m_thePickCallback;
     static RhinoObjectPickedCallback m_thePickedCallback;
+    static RhinoObjectDeletedCallback m_theDeleteCallback;
 
     static void OnRhinoObjectDraw(IntPtr pConstRhinoObject, IntPtr pDisplayPipeline)
     {
@@ -98,7 +101,12 @@ namespace Rhino.DocObjects
         rhobj.OnDraw(new Display.DrawEventArgs(pDisplayPipeline, IntPtr.Zero));
     }
 
-    static void OnRhinoObjectDuplicate(int docId, uint sourceObjectSerialNumber, uint newObjectSerialNumber)
+    internal static bool SubclassCreateNativePointer { get; set; }
+    static RhinoObject()
+    {
+      SubclassCreateNativePointer = true;
+    }
+    static void OnRhinoObjectDuplicate(int docId, uint sourceObjectSerialNumber, uint newObjectSerialNumber, IntPtr newObjectPointer)
     {
       RhinoDoc doc = RhinoDoc.FromId(docId);
       if (doc != null)
@@ -107,13 +115,18 @@ namespace Rhino.DocObjects
         if (rhobj != null)
         {
           Type t = rhobj.GetType();
+          SubclassCreateNativePointer = false;
           RhinoObject newobj = System.Activator.CreateInstance(t) as RhinoObject;
+          SubclassCreateNativePointer = true;
           newobj.m_rhinoobject_serial_number = newObjectSerialNumber;
+          newobj.m_pRhinoObject = newObjectPointer;
           doc.Objects.AddCustomObject(newObjectSerialNumber, newobj);
           newobj.OnDuplicate(rhobj);
         }
       }
     }
+
+    static System.Collections.Generic.List<RhinoObject> m_custom_objects;
 
     static void OnRhinoObjectDocNotify(int docId, uint serialNumber, int add)
     {
@@ -124,7 +137,12 @@ namespace Rhino.DocObjects
         if (rhobj != null)
         {
           if (add == 1)
+          {
+            if (m_custom_objects == null)
+              m_custom_objects = new System.Collections.Generic.List<RhinoObject>();
+            m_custom_objects.Add(rhobj);
             rhobj.OnAddToDocument(doc);
+          }
           else
             rhobj.OnDeleteFromDocument(doc);
         }
@@ -165,6 +183,25 @@ namespace Rhino.DocObjects
         {
           Transform xf = (Transform)System.Runtime.InteropServices.Marshal.PtrToStructure(pConstTransform, typeof(Transform));
           rhobj.OnTransform(xf);
+        }
+      }
+    }
+
+    static void OnRhinoObjectDeleted(uint serialNumber)
+    {
+      if (m_custom_objects != null)
+      {
+        for (int i = 0; i < m_custom_objects.Count; i++)
+        {
+          RhinoObject rhobj = m_custom_objects[i];
+          if (rhobj != null && rhobj.m_rhinoobject_serial_number == serialNumber)
+          {
+            rhobj.m_pRhinoObject = IntPtr.Zero;
+            rhobj.m_rhinoobject_serial_number = 0;
+            System.GC.SuppressFinalize(rhobj);
+            m_custom_objects.RemoveAt(i);
+            return;
+          }
         }
       }
     }

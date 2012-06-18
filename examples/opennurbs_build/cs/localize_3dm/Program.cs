@@ -72,6 +72,16 @@ namespace localize_3dm
             obj.Attributes.Name = node.GetAttribute("Localized");
         }
 
+        // TODO: Handle 
+        /*
+         * Dimension style Names
+         * Linetype Names
+         * Hatch Names
+         * Material Names
+         * Texture Names
+         * Environment Names
+         */
+
         var notesNode = (XmlElement)doc.SelectSingleNode("//RhinoModel/Notes");
         if (notesNode != null)
         {

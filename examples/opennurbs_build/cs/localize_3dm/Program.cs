@@ -8,13 +8,13 @@ namespace localize_3dm
 {
   class Program
   {
-    static void Main(string[] args)
+    static int Main(string[] args)
     {
       if (args.Length < 1)
       {
         var exe_name = System.AppDomain.CurrentDomain.FriendlyName;
         Console.WriteLine("Syntax: {0} -action:[extract|localize] -xml:XML -3dm:MODEL [-targetDir:Output]", exe_name);
-        return;
+        return 1;
       }
 
       string action = "", model = "", xml = "", targetDir = "";
@@ -34,17 +34,16 @@ namespace localize_3dm
       switch (action)
       {
         case "extract":
-          Extract(xml, model);
-          return;
+          return Extract(xml, model);
         case "localize":
-          Localize(xml, model, targetDir);
-          return;
+          return Localize(xml, model, targetDir);
         default:
-          return;
+          Console.Error.WriteLine("Unrecognized action");
+          return 1;
       }
     }
 
-    static void Localize(string xml, string sourceModel, string targetDir)
+    static int Localize(string xml, string sourceModel, string targetDir)
     {
       XmlDocument doc = new XmlDocument();
       doc.Load(xml);
@@ -52,6 +51,11 @@ namespace localize_3dm
 
       using (var file3dm = Rhino.FileIO.File3dm.Read(sourceModel))
       {
+        if (file3dm == null)
+        {
+          Console.Error.WriteLine("Unable to open file '{0}'", sourceModel);
+          return 1;
+        }
         foreach (var layer in file3dm.Layers)
         {
           var path = string.Format("//RhinoModel/Layers/Layer[@English='{0}']", layer.Name);
@@ -80,10 +84,12 @@ namespace localize_3dm
 
         file3dm.Polish();
         file3dm.Write(System.IO.Path.Combine(targetDir, filename), 5);
+
+        return 0;
       }
     }
 
-    static void Extract(string xml, string model)
+    static int Extract(string xml, string model)
     {
       XmlDocument doc = new XmlDocument();
       doc.AppendChild(doc.CreateXmlDeclaration("1.0", "utf-8", "yes"));
@@ -95,15 +101,15 @@ namespace localize_3dm
       if (!System.IO.File.Exists(model))
       {
         Console.WriteLine("Error: File does not exist: " + model);
-        return;
+        return 1;
       }
 
       using (var file3dm = Rhino.FileIO.File3dm.Read(model))
       {
         if (file3dm == null)
         {
-          Console.Out.WriteLine("Unable to open file");
-          return;
+          Console.Error.WriteLine("Unable to open file '{0}'", model);
+          return 1;
         }
 
         XmlElement layers = (XmlElement)body.AppendChild(doc.CreateElement("Layers"));
@@ -151,6 +157,7 @@ namespace localize_3dm
         notes.InnerText = file3dm.Notes.Notes;
 
         doc.Save(xml);
+        return 0;
       }      
     }
   }

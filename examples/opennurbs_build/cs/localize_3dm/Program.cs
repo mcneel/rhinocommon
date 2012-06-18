@@ -72,7 +72,7 @@ namespace localize_3dm
             obj.Attributes.Name = node.GetAttribute("Localized");
         }
 
-        // TODO: Handle 
+        // TODO: Handle These:
         /*
          * Dimension style Names
          * Linetype Names

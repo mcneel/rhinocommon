@@ -942,10 +942,11 @@ RH_C_FUNCTION void ONX_Model_SetStartSectionComments(ONX_Model* pModel, const RH
 
 RH_C_FUNCTION void ONX_Model_GetNotes(const ONX_Model* pConstModel, CRhCmnStringHolder* pString, bool* visible, bool* html, int* left, int* top, int* right, int* bottom)
 {
-  if( pConstModel && pString && visible && html && left && top && right && bottom )
+  if( pConstModel && visible && html && left && top && right && bottom )
   {
     const ON_3dmNotes& notes = pConstModel->m_properties.m_Notes;
-    pString->Set(notes.m_notes);
+    if( pString )
+      pString->Set(notes.m_notes);
     *visible = notes.m_bVisible?true:false;
     *html = notes.m_bHTML?true:false;
     *left = notes.m_window_left;
@@ -955,12 +956,19 @@ RH_C_FUNCTION void ONX_Model_GetNotes(const ONX_Model* pConstModel, CRhCmnString
   }
 }
 
-RH_C_FUNCTION void ONX_Model_SetNotes(ONX_Model* pModel, const RHMONO_STRING* notes, bool visible, bool html, int left, int top, int right, int bottom)
+RH_C_FUNCTION void ONX_Model_SetNotesString(ONX_Model* pModel, const RHMONO_STRING* notes)
 {
   if( pModel )
   {
     INPUTSTRINGCOERCE(_notes, notes);
     pModel->m_properties.m_Notes.m_notes = _notes;
+  }
+}
+
+RH_C_FUNCTION void ONX_Model_SetNotes(ONX_Model* pModel, bool visible, bool html, int left, int top, int right, int bottom)
+{
+  if( pModel )
+  {
     pModel->m_properties.m_Notes.m_bHTML = html?1:0;
     pModel->m_properties.m_Notes.m_bVisible = visible?1:0;
     pModel->m_properties.m_Notes.m_window_left = left;
@@ -1653,6 +1661,24 @@ RH_C_FUNCTION ON_Layer* ONX_Model_GetLayerPointer(ONX_Model* pModel, ON_UUID id)
   return rc;
 }
 
+RH_C_FUNCTION ON_DimStyle* ONX_Model_GetDimStylePointer(ONX_Model* pModel, ON_UUID id)
+{
+  ON_DimStyle* rc = NULL;
+  if( pModel )
+  {
+    int count = pModel->m_dimstyle_table.Count();
+    for( int i=0; i<count; i++ )
+    {
+      if( pModel->m_dimstyle_table[i].m_dimstyle_id == id )
+      {
+        rc = &(pModel->m_dimstyle_table[i]);
+        break;
+      }
+    }
+  }
+  return rc;
+}
+
 RH_C_FUNCTION void ONX_Model_LayerTable_Insert(ONX_Model* pModel, const ON_Layer* pConstLayer, int index)
 {
   if( pModel && pConstLayer && index>=0)
@@ -1664,14 +1690,36 @@ RH_C_FUNCTION void ONX_Model_LayerTable_Insert(ONX_Model* pModel, const ON_Layer
   }
 }
 
+RH_C_FUNCTION void ONX_Model_DimStyleTable_Insert(ONX_Model* pModel, const ON_DimStyle* pConstDimStyle, int index)
+{
+  if( pModel && pConstDimStyle && index>=0)
+  {
+    pModel->m_dimstyle_table.Insert(index, *pConstDimStyle);
+    // update layer indices
+    for( int i=index; i<pModel->m_dimstyle_table.Count(); i++ )
+      pModel->m_dimstyle_table[i].m_dimstyle_index = i;
+  }
+}
+
 RH_C_FUNCTION void ONX_Model_LayerTable_RemoveAt(ONX_Model* pModel, int index)
 {
   if( pModel && index>=0)
   {
     pModel->m_layer_table.Remove(index);
-    // update layer indices
+    // update indices
     for( int i=index; i<pModel->m_layer_table.Count(); i++ )
       pModel->m_layer_table[i].m_layer_index = i;
+  }
+}
+
+RH_C_FUNCTION void ONX_Model_DimStyleTable_RemoveAt(ONX_Model* pModel, int index)
+{
+  if( pModel && index>=0)
+  {
+    pModel->m_dimstyle_table.Remove(index);
+    // update indices
+    for( int i=index; i<pModel->m_dimstyle_table.Count(); i++ )
+      pModel->m_dimstyle_table[i].m_dimstyle_index = i;
   }
 }
 
@@ -1684,11 +1732,103 @@ RH_C_FUNCTION ON_UUID ONX_Model_LayerTable_Id(const ONX_Model* pConstModel, int 
   return ::ON_nil_uuid;
 }
 
-RH_C_FUNCTION void ONX_Model_LayerTable_Clear(ONX_Model* pModel)
+RH_C_FUNCTION ON_UUID ONX_Model_DimStyleTable_Id(const ONX_Model* pConstModel, int index)
 {
-  if( pModel )
-    pModel->m_layer_table.Empty();
+  if( pConstModel && index>=0 && index<pConstModel->m_dimstyle_table.Count())
+  {
+    return pConstModel->m_dimstyle_table[index].m_dimstyle_id;
+  }
+  return ::ON_nil_uuid;
 }
+
+RH_C_FUNCTION void ONX_Model_TableClear(ONX_Model* pModel, int which_table)
+{
+  const int idxBitmapTable = 2;
+  const int idxTextureMappingTable = 3;
+  const int idxMaterialTable = 4;
+  const int idxLinetypeTable = 5;
+  const int idxLayerTable = 6;
+  const int idxLightTable = 7;
+  const int idxGroupTable = 8;
+  const int idxFontTable = 9;
+  const int idxDimStyleTable = 10;
+  const int idxHatchPatternTable = 11;
+  const int idxIDefTable = 12;
+  const int idxObjectTable = 13;
+  const int idxHistoryRecordTable = 14;
+  const int idxUserDataTable = 15;
+  const int idxViewTable = 16;
+  const int idxNamedViewTable = 17;
+
+  if( pModel )
+  {
+    pModel->m_layer_table.Empty();
+    switch(which_table)
+    {
+    case idxBitmapTable:
+      {
+        for( int i=0; i<pModel->m_bitmap_table.Count(); i++ )
+        {
+          ON_Bitmap* pBitmap = pModel->m_bitmap_table[i];
+          if( pBitmap )
+            delete pBitmap;
+          pModel->m_bitmap_table[i] = NULL;
+        }
+        pModel->m_bitmap_table.Empty();
+      }
+      break;
+    case idxTextureMappingTable:
+      pModel->m_mapping_table.Empty();
+      break;
+    case idxMaterialTable:
+      pModel->m_material_table.Empty();
+      break;
+    case idxLinetypeTable:
+      pModel->m_linetype_table.Empty();
+      break;
+    case idxLayerTable:
+      pModel->m_layer_table.Empty();
+      break;
+    case idxLightTable:
+      pModel->m_light_table.Empty();
+      break;
+    case idxGroupTable:
+      pModel->m_group_table.Empty();
+      break;
+    case idxFontTable:
+      pModel->m_font_table.Empty();
+      break;
+    case idxDimStyleTable:
+      pModel->m_dimstyle_table.Empty();
+      break;
+    case idxHatchPatternTable:
+      pModel->m_hatch_pattern_table.Empty();
+      break;
+    case idxIDefTable:
+      pModel->m_idef_table.Empty();
+      break;
+    case idxObjectTable:
+      pModel->m_object_table.Empty();
+      break;
+    case idxHistoryRecordTable:
+      {
+        for( int i=0; i<pModel->m_history_record_table.Count(); i++ )
+        {
+          ON_HistoryRecord* pRecord = pModel->m_history_record_table[i];
+          if( pRecord )
+            delete pRecord;
+          pModel->m_history_record_table[i] = NULL;
+        }
+        pModel->m_history_record_table.Empty();
+      }
+      break;
+    case idxUserDataTable:
+      pModel->m_userdata_table.Empty();
+      break;
+    }
+  }
+}
+
 
 RH_C_FUNCTION void ONX_Model_GetString( const ONX_Model* pConstModel, int which, CRhCmnStringHolder* pString )
 {
@@ -1775,7 +1915,7 @@ RH_C_FUNCTION ON_3dmSettings* ONX_Model_3dmSettingsPointer(ONX_Model* pModel)
   return rc;
 }
 
-RH_C_FUNCTION ON_3dmView* ONX_Model_ViewPointer(ONX_Model* pModel, ON_UUID id, bool named_view_table)
+RH_C_FUNCTION ON_3dmView* ONX_Model_ViewPointer(ONX_Model* pModel, ON_UUID id, const ON_3dmView* pConstView, bool named_view_table)
 {
   ON_3dmView* rc = NULL;
   if( pModel )
@@ -1788,6 +1928,8 @@ RH_C_FUNCTION ON_3dmView* ONX_Model_ViewPointer(ONX_Model* pModel, ON_UUID id, b
         ON_3dmView* pView = views->At(i);
         if( pView && pView->m_vp.ViewportId() == id )
         {
+          if( ::ON_UuidIsNil(id) && pConstView!=pView )
+            continue;
           rc = pView;
           break;
         }
@@ -1795,6 +1937,17 @@ RH_C_FUNCTION ON_3dmView* ONX_Model_ViewPointer(ONX_Model* pModel, ON_UUID id, b
     }
   }
   return rc;
+}
+
+RH_C_FUNCTION ON_3dmView* ONX_Model_ViewTable_Pointer(ONX_Model* pModel, int index, bool named_view_table)
+{
+  ON_3dmView* pView = NULL;
+  if( pModel )
+  {
+    pView = named_view_table ? pModel->m_settings.m_named_views.At(index) :
+                               pModel->m_settings.m_views.At(index);
+  }
+  return pView;
 }
 
 RH_C_FUNCTION ON_UUID ONX_Model_ViewTable_Id(const ONX_Model* pConstModel, int index, bool named_view_table)

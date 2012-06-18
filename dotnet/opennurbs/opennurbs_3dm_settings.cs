@@ -256,7 +256,7 @@ namespace Rhino.DocObjects
     readonly bool m_named_view_table;
 
 #if RHINO_SDK
-    private int m_index=-1;
+    private int m_index = -1;
     internal ViewInfo(Rhino.RhinoDoc doc, int index)
     {
       m_parent = doc;
@@ -264,10 +264,11 @@ namespace Rhino.DocObjects
     }
 #endif
 
-    internal ViewInfo(Rhino.FileIO.File3dm parent, Guid id, bool named_view_table)
+    internal ViewInfo(Rhino.FileIO.File3dm parent, Guid id, IntPtr ptr, bool named_view_table)
     {
       m_parent = parent;
       m_id = id;
+      m_ptr = ptr;
       m_named_view_table = named_view_table;
     }
 
@@ -279,7 +280,7 @@ namespace Rhino.DocObjects
       if (parent_file != null)
       {
         IntPtr pParent = parent_file.ConstPointer();
-        return UnsafeNativeMethods.ONX_Model_ViewPointer(pParent, m_id, m_named_view_table);
+        return UnsafeNativeMethods.ONX_Model_ViewPointer(pParent, m_id, m_ptr, m_named_view_table);
       }
 #if RHINO_SDK
       if (m_index >= 0)
@@ -298,7 +299,7 @@ namespace Rhino.DocObjects
       if (parent_file != null)
       {
         IntPtr pParent = parent_file.ConstPointer();
-        return UnsafeNativeMethods.ONX_Model_ViewPointer(pParent, m_id, m_named_view_table);
+        return UnsafeNativeMethods.ONX_Model_ViewPointer(pParent, m_id, m_ptr, m_named_view_table);
       }
 
       if (m_ptr == IntPtr.Zero)
@@ -337,7 +338,7 @@ namespace Rhino.DocObjects
     /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
-      if (IntPtr.Zero != m_ptr)
+      if (IntPtr.Zero != m_ptr && !(m_parent is FileIO.File3dm))
       {
         UnsafeNativeMethods.ON_3dmView_Delete(m_ptr);
       }

@@ -69,7 +69,7 @@ namespace Rhino.Runtime
       return m__parent;
     }
 
-    internal IntPtr NonConstPointer()
+    internal virtual IntPtr NonConstPointer()
     {
       if (IntPtr.Zero == m_ptr && m_subobject_index >= 0 && m__parent!=null)
       {
@@ -81,13 +81,6 @@ namespace Rhino.Runtime
           return pThis;
         }
 
-        Rhino.FileIO.File3dm file = m__parent as Rhino.FileIO.File3dm;
-        if (file != null && this is Rhino.DocObjects.Layer)
-        {
-          Rhino.DocObjects.Layer layer = this as Rhino.DocObjects.Layer;
-          return layer._InternalGetConstPointer();
-        }
-
         if (this is Rhino.Geometry.BrepLoop)
         {
           Rhino.Geometry.BrepLoop loop = this as Rhino.Geometry.BrepLoop;
@@ -95,6 +88,7 @@ namespace Rhino.Runtime
           return UnsafeNativeMethods.ON_BrepLoop_GetPointer(pBrep, loop.LoopIndex);
         }
       }
+
       NonConstOperation(); // allows cached data to clean up
       return m_ptr;
     }

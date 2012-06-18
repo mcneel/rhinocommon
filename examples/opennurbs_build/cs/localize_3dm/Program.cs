@@ -22,13 +22,13 @@ namespace localize_3dm
       foreach (string arg in args)
       {
         if (arg.StartsWith("-action:", StringComparison.InvariantCultureIgnoreCase))
-          action = arg.Substring("-action:".Length);
+          action = arg.Substring("-action:".Length).Trim();
         else if (arg.StartsWith("-3dm:", StringComparison.InvariantCultureIgnoreCase))
-          model = arg.Substring("-3dm:".Length);
+          model = arg.Substring("-3dm:".Length).Trim();
         else if (arg.StartsWith("-xml:", StringComparison.InvariantCultureIgnoreCase))
-          xml = arg.Substring("-xml:".Length);
+          xml = arg.Substring("-xml:".Length).Trim();
         else if (arg.StartsWith("-targetDir:", StringComparison.InvariantCultureIgnoreCase))
-          targetDir = arg.Substring("-targetDir:".Length);
+          targetDir = arg.Substring("-targetDir:".Length).Trim();
       }
 
       switch (action)
@@ -63,6 +63,20 @@ namespace localize_3dm
           if (nameNode != null)
             layer.Name = nameNode.GetAttribute("Localized");
         }
+        foreach (var dimstyle in file3dm.DimStyles)
+        {
+          var path = string.Format("//RhinoModel/DimStyles/DimStyle[@English='{0}']", dimstyle.Name);
+          var nameNode = (XmlElement)doc.SelectSingleNode(path);
+          if (nameNode != null)
+            dimstyle.Name = nameNode.GetAttribute("Localized");
+        }
+        foreach (var view in file3dm.Views)
+        {
+          var path = string.Format("//RhinoModel/Viewports/Viewport[@English='{0}']", view.Name);
+          var nameNode = (XmlElement)doc.SelectSingleNode(path);
+          if (nameNode != null)
+            view.Name = nameNode.GetAttribute("Localized");
+        }
 
         foreach (var obj in file3dm.Objects)
         {
@@ -74,7 +88,6 @@ namespace localize_3dm
 
         // TODO: Handle These:
         /*
-         * Dimension style Names
          * Linetype Names
          * Hatch Names
          * Material Names
@@ -130,6 +143,22 @@ namespace localize_3dm
           layerElem.SetAttribute("Localized", layer.Name);
         }
 
+        XmlElement dimstyles = (XmlElement)body.AppendChild(doc.CreateElement("DimStyles"));
+        foreach (var dimstyle in file3dm.DimStyles)
+        {
+          XmlElement dimstyleElem = (XmlElement)layers.AppendChild(doc.CreateElement("DimStyle"));
+          dimstyleElem.SetAttribute("English", dimstyle.Name);
+          dimstyleElem.SetAttribute("Localized", dimstyle.Name);
+        }
+
+        XmlNode views = (XmlElement)body.AppendChild(doc.CreateElement("Viewports"));
+        foreach (var view in file3dm.Views)
+        {
+          XmlElement viewNode = (XmlElement)views.AppendChild(doc.CreateElement("Viewport"));
+          viewNode.SetAttribute("English", view.Name);
+          viewNode.SetAttribute("Localized", view.Name);
+        }
+
         XmlNode objects = (XmlElement)body.AppendChild(doc.CreateElement("Objects"));
         foreach (var obj in file3dm.Objects)
         {
@@ -140,18 +169,6 @@ namespace localize_3dm
           objNode.SetAttribute("English", obj.Attributes.Name);
           objNode.SetAttribute("Localized", obj.Attributes.Name);
         }
-
-        if (null != file3dm.Views)
-        {
-          XmlNode views = (XmlElement)body.AppendChild(doc.CreateElement("Viewports"));
-          foreach (var view in file3dm.Views)
-          {
-            XmlElement viewNode = (XmlElement)views.AppendChild(doc.CreateElement("Viewport"));
-            viewNode.SetAttribute("English", view.Name);
-            viewNode.SetAttribute("Localized", view.Name);
-          }
-        }
-
         //if (null != file3dm.NamedViews)
         //{
         //  XmlNode namedViews = (XmlElement)body.AppendChild(doc.CreateElement("NamedViews"));

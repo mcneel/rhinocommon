@@ -128,6 +128,16 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.ON_Object_Duplicate(pConstPointer);
     }
 
+    internal override IntPtr NonConstPointer()
+    {
+      if (m__parent is Rhino.FileIO.File3dm)
+      {
+        return _InternalGetConstPointer();
+      }
+
+      return base.NonConstPointer();
+    }
+
     const int idxIsVisible = 0;
     const int idxIsLocked = 1;
     const int idxIsExpanded = 2;

@@ -807,9 +807,13 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_GetNotes(IntPtr pConstModel, IntPtr pString, [MarshalAs(UnmanagedType.U1)]ref bool visible, [MarshalAs(UnmanagedType.U1)]ref bool html, ref int left, ref int top, ref int right, ref int bottom);
 
-  //void ONX_Model_SetNotes(ONX_Model* pModel, const RHMONO_STRING* notes, bool visible, bool html, int left, int top, int right, int bottom)
+  //void ONX_Model_SetNotesString(ONX_Model* pModel, const RHMONO_STRING* notes)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void ONX_Model_SetNotes(IntPtr pModel, [MarshalAs(UnmanagedType.LPWStr)]string notes, [MarshalAs(UnmanagedType.U1)]bool visible, [MarshalAs(UnmanagedType.U1)]bool html, int left, int top, int right, int bottom);
+  internal static extern void ONX_Model_SetNotesString(IntPtr pModel, [MarshalAs(UnmanagedType.LPWStr)]string notes);
+
+  //void ONX_Model_SetNotes(ONX_Model* pModel, bool visible, bool html, int left, int top, int right, int bottom)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_SetNotes(IntPtr pModel, [MarshalAs(UnmanagedType.U1)]bool visible, [MarshalAs(UnmanagedType.U1)]bool html, int left, int top, int right, int bottom);
 
   //int ONX_Model_TableCount(const ONX_Model* pConstModel, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -924,21 +928,37 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ONX_Model_GetLayerPointer(IntPtr pModel, Guid id);
 
+  //ON_DimStyle* ONX_Model_GetDimStylePointer(ONX_Model* pModel, ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_GetDimStylePointer(IntPtr pModel, Guid id);
+
   //void ONX_Model_LayerTable_Insert(ONX_Model* pModel, const ON_Layer* pConstLayer, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_LayerTable_Insert(IntPtr pModel, IntPtr pConstLayer, int index);
+
+  //void ONX_Model_DimStyleTable_Insert(ONX_Model* pModel, const ON_DimStyle* pConstDimStyle, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_DimStyleTable_Insert(IntPtr pModel, IntPtr pConstDimStyle, int index);
 
   //void ONX_Model_LayerTable_RemoveAt(ONX_Model* pModel, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_LayerTable_RemoveAt(IntPtr pModel, int index);
 
+  //void ONX_Model_DimStyleTable_RemoveAt(ONX_Model* pModel, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_DimStyleTable_RemoveAt(IntPtr pModel, int index);
+
   //ON_UUID ONX_Model_LayerTable_Id(const ONX_Model* pConstModel, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid ONX_Model_LayerTable_Id(IntPtr pConstModel, int index);
 
-  //void ONX_Model_LayerTable_Clear(ONX_Model* pModel)
+  //ON_UUID ONX_Model_DimStyleTable_Id(const ONX_Model* pConstModel, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void ONX_Model_LayerTable_Clear(IntPtr pModel);
+  internal static extern Guid ONX_Model_DimStyleTable_Id(IntPtr pConstModel, int index);
+
+  //void ONX_Model_TableClear(ONX_Model* pModel, int which_table)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_TableClear(IntPtr pModel, int which_table);
 
   //void ONX_Model_GetString( const ONX_Model* pConstModel, int which, CRhCmnStringHolder* pString )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -960,9 +980,13 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ONX_Model_3dmSettingsPointer(IntPtr pModel);
 
-  //ON_3dmView* ONX_Model_ViewPointer(ONX_Model* pModel, ON_UUID id, bool named_view_table)
+  //ON_3dmView* ONX_Model_ViewPointer(ONX_Model* pModel, ON_UUID id, const ON_3dmView* pConstView, bool named_view_table)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ONX_Model_ViewPointer(IntPtr pModel, Guid id, [MarshalAs(UnmanagedType.U1)]bool named_view_table);
+  internal static extern IntPtr ONX_Model_ViewPointer(IntPtr pModel, Guid id, IntPtr pConstView, [MarshalAs(UnmanagedType.U1)]bool named_view_table);
+
+  //ON_3dmView* ONX_Model_ViewTable_Pointer(ONX_Model* pModel, int index, bool named_view_table)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_ViewTable_Pointer(IntPtr pModel, int index, [MarshalAs(UnmanagedType.U1)]bool named_view_table);
 
   //ON_UUID ONX_Model_ViewTable_Id(const ONX_Model* pConstModel, int index, bool named_view_table)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -2048,6 +2072,11 @@ internal partial class UnsafeNativeMethods
   //ON_DimStyle* ON_DimStyle_New()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_DimStyle_New();
+
+  //bool ON_DimStyle_Name(const ON_DimStyle* pConstDimStyle, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_DimStyle_Name(IntPtr pConstDimStyle, IntPtr pStringHolder);
 
   //int ON_DimStyle_GetIndex(const ON_DimStyle* pConstDimStyle)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5551,11 +5580,6 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_dimstyle.cpp
-  //bool CRhinoDimStyle_Name(const ON_DimStyle* pConstDimStyle, CRhCmnStringHolder* pStringHolder)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool CRhinoDimStyle_Name(IntPtr pConstDimStyle, IntPtr pStringHolder);
-
   //int CRhinoDimStyleTable_DimStyleCount(int docId)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoDimStyleTable_DimStyleCount(int docId);
@@ -8774,7 +8798,8 @@ internal partial class UnsafeNativeMethods
   //                                             RHINOOBJECT_DOCNOTIFYPROC doc_notify,
   //                                             RHINOOBJECT_ACTIVEINVIEWPORTPROC active_in_viewport,
   //                                             RHINOOBJECT_SELECTPROC selection_changed,
-  //                                             RHINOOBJECT_TRANSFORMPROC transform)
+  //                                             RHINOOBJECT_TRANSFORMPROC transform,
+  //                                             RHINOOBJECT_DELETEPROC ondelete)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //void CRhinoObject_SetPickCallbacks(RHINOOBJECT_PICKPROC pick, RHINOOBJECT_PICKEDPROC picked)

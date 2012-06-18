@@ -5,6 +5,18 @@ RH_C_FUNCTION ON_DimStyle* ON_DimStyle_New()
   return new ON_DimStyle();
 }
 
+RH_C_FUNCTION bool ON_DimStyle_Name(const ON_DimStyle* pConstDimStyle, CRhCmnStringHolder* pStringHolder)
+{
+  bool rc = false;
+  if( pConstDimStyle )
+  {
+    pStringHolder->Set( pConstDimStyle->Name() );
+    rc = true;
+  }
+  return rc;
+}
+
+
 RH_C_FUNCTION int ON_DimStyle_GetIndex(const ON_DimStyle* pConstDimStyle)
 {
   int rc = -1;

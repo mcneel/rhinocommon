@@ -32,6 +32,12 @@ namespace Rhino.DocObjects
     }
 #endif
 
+    internal DimensionStyle(Guid id, Rhino.FileIO.File3dm parent)
+    {
+      m_id = id;
+      m__parent = parent;
+    }
+
     // serialization constructor
     protected DimensionStyle(SerializationInfo info, StreamingContext context)
       : base (info, context)
@@ -57,7 +63,26 @@ namespace Rhino.DocObjects
       if (m_doc != null)
         return UnsafeNativeMethods.CRhinoDimStyleTable_GetDimStylePointer(m_doc.m_docId, m_id);
 #endif
+
+      FileIO.File3dm file_parent = m__parent as FileIO.File3dm;
+      if( file_parent!=null )
+      {
+        IntPtr pConstParent = file_parent.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_GetDimStylePointer(pConstParent, m_id);
+      }
       return IntPtr.Zero;
+    }
+
+    internal override IntPtr NonConstPointer()
+    {
+      FileIO.File3dm file_parent = m__parent as FileIO.File3dm;
+      if (file_parent != null)
+      {
+        IntPtr pConstParent = file_parent.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_GetDimStylePointer(pConstParent, m_id);
+      }
+
+      return base.NonConstPointer();
     }
 
     internal override IntPtr _InternalDuplicate(out bool applymempressure)
@@ -86,7 +111,7 @@ namespace Rhino.DocObjects
         {
           IntPtr pStringHolder = sh.NonConstPointer();
           IntPtr pConstThis = ConstPointer();
-          UnsafeNativeMethods.CRhinoDimStyle_Name(pConstThis, pStringHolder);
+          UnsafeNativeMethods.ON_DimStyle_Name(pConstThis, pStringHolder);
           return sh.ToString();
         }
       }

@@ -15,6 +15,7 @@ namespace Rhino.FileIO
     IntPtr m_ptr = IntPtr.Zero; //ONX_Model*
     File3dmObjectTable m_object_table;
     File3dmLayerTable m_layer_table;
+    File3dmDimStyleTable m_dimstyle_table;
     File3dmPlugInDataTable m_userdata_table;
     File3dmViewTable m_view_table;
     File3dmViewTable m_named_view_table;
@@ -297,6 +298,7 @@ namespace Rhino.FileIO
       }
     }
 
+    File3dmNotes m_notes;
     /// <summary>
     /// Gets or sets the model notes.
     /// </summary>
@@ -304,27 +306,12 @@ namespace Rhino.FileIO
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
-        {
-          IntPtr pString = sh.NonConstPointer();
-          bool visible = false;
-          bool html = false;
-          int top=0, bottom=0, left=0, right=0;
-          UnsafeNativeMethods.ONX_Model_GetNotes(pConstThis, pString, ref visible, ref html, ref left, ref top, ref right, ref bottom);
-          File3dmNotes n = new File3dmNotes();
-          n.IsHtml = html;
-          n.Notes = sh.ToString();
-          n.IsVisible = visible;
-          n.WindowRectangle = System.Drawing.Rectangle.FromLTRB(left, top, right, bottom);
-          return n;
-        }
+        return m_notes ?? (m_notes = new File3dmNotes(this));
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        File3dmNotes n = value ?? new File3dmNotes();
-        UnsafeNativeMethods.ONX_Model_SetNotes(pThis, n.Notes, n.IsVisible, n.IsHtml, n.WindowRectangle.Left, n.WindowRectangle.Top, n.WindowRectangle.Right, n.WindowRectangle.Bottom);
+        value.SetParent(this);
+        m_notes = value;
       }
     }
 
@@ -446,6 +433,14 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
+    /// Dimension Styles in this file
+    /// </summary>
+    public IList<Rhino.DocObjects.DimensionStyle> DimStyles
+    {
+      get { return m_dimstyle_table ?? (m_dimstyle_table = new File3dmDimStyleTable(this)); }
+    }
+
+    /// <summary>
     /// Views that represent the RhinoViews which are displayed when Rhino loads this file
     /// </summary>
     public IList<Rhino.DocObjects.ViewInfo> Views
@@ -480,7 +475,7 @@ namespace Rhino.FileIO
     //const int idxLightTable = 7;
     //const int idxGroupTable = 8;
     //const int idxFontTable = 9;
-    //const int idxDimStyleTable = 10;
+    internal const int idxDimStyleTable = 10;
     //const int idxHatchPatternTable = 11;
     //const int idxIDefTable = 12;
     internal const int idxObjectTable = 13;
@@ -1778,7 +1773,7 @@ namespace Rhino.FileIO
     public void Clear()
     {
       IntPtr pParent = m_parent.NonConstPointer();
-      UnsafeNativeMethods.ONX_Model_LayerTable_Clear(pParent);
+      UnsafeNativeMethods.ONX_Model_TableClear(pParent, File3dm.idxLayerTable);
     }
 
     public bool Contains(DocObjects.Layer item)
@@ -1828,6 +1823,128 @@ namespace Rhino.FileIO
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<File3dmLayerTable, Rhino.DocObjects.Layer>(this);
+    }
+  }
+
+  class File3dmDimStyleTable : IList<Rhino.DocObjects.DimensionStyle>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.DimensionStyle>
+  {
+    readonly File3dm m_parent;
+    internal File3dmDimStyleTable(File3dm parent)
+    {
+      m_parent = parent;
+    }
+
+    public int Find(string name)
+    {
+      int cnt = Count;
+      for (int i = 0; i < cnt; i++)
+      {
+        if (this[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+          return i;
+      }
+      return -1;
+    }
+
+    public int IndexOf(DocObjects.DimensionStyle item)
+    {
+      File3dm file = item.m__parent as File3dm;
+      if (file == m_parent)
+        return item.Index;
+      return -1;
+    }
+
+    public void Insert(int index, DocObjects.DimensionStyle item)
+    {
+      if (index < 0 || index > Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      IntPtr pConstDimStyle = item.ConstPointer();
+      UnsafeNativeMethods.ONX_Model_DimStyleTable_Insert(pParent, pConstDimStyle, index);
+    }
+
+    public void RemoveAt(int index)
+    {
+      if (index < 0 || index >= Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_DimStyleTable_RemoveAt(pParent, index);
+    }
+
+    public DocObjects.DimensionStyle this[int index]
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        Guid id = UnsafeNativeMethods.ONX_Model_DimStyleTable_Id(pConstParent, index);
+        if (id==Guid.Empty )
+          throw new IndexOutOfRangeException();
+        return new DocObjects.DimensionStyle(id, m_parent);
+      }
+      set
+      {
+        Insert(index, value);
+      }
+    }
+
+    public void Add(DocObjects.DimensionStyle item)
+    {
+      int index = Count;
+      Insert(index, item);
+    }
+
+    public void Clear()
+    {
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_TableClear(pParent, File3dm.idxDimStyleTable);
+    }
+
+    public bool Contains(DocObjects.DimensionStyle item)
+    {
+      return IndexOf(item) != -1;
+    }
+
+    public void CopyTo(DocObjects.DimensionStyle[] array, int arrayIndex)
+    {
+      int available = array.Length - arrayIndex;
+      int cnt = Count;
+      if (available < cnt)
+        throw new ArgumentException("The number of elements in the source ICollection<T> is greater than the available space from arrayIndex to the end of the destination array.");
+      for (int i = 0; i < cnt; i++)
+      {
+        array[arrayIndex++] = this[i];
+      }
+    }
+
+    public int Count
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxDimStyleTable);
+      }
+    }
+
+    public bool IsReadOnly
+    {
+      get { return false; }
+    }
+
+    public bool Remove(DocObjects.DimensionStyle item)
+    {
+      int index = IndexOf(item);
+      if (index >= 0)
+        RemoveAt(index);
+      return (index >= 0);
+    }
+
+    public IEnumerator<DocObjects.DimensionStyle> GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmDimStyleTable, Rhino.DocObjects.DimensionStyle>(this);
+    }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmDimStyleTable, Rhino.DocObjects.DimensionStyle>(this);
     }
   }
 
@@ -1887,9 +2004,10 @@ namespace Rhino.FileIO
       {
         IntPtr pConstParent = m_parent.ConstPointer();
         Guid id = UnsafeNativeMethods.ONX_Model_ViewTable_Id(pConstParent, index, m_named_views);
-        if (id==Guid.Empty )
+        IntPtr pView = UnsafeNativeMethods.ONX_Model_ViewTable_Pointer(pConstParent, index, m_named_views);
+        if (IntPtr.Zero == pView)
           throw new IndexOutOfRangeException();
-        return new DocObjects.ViewInfo(m_parent, id, m_named_views);
+        return new DocObjects.ViewInfo(m_parent, id, pView, m_named_views);
       }
       set
       {

@@ -1643,6 +1643,24 @@ RH_C_FUNCTION void ONX_Model_BoundingBox(const ONX_Model* pConstModel, ON_Boundi
   }
 }
 
+RH_C_FUNCTION ON_Linetype* ONX_Model_GetLinetypePointer(ONX_Model* pModel, ON_UUID id)
+{
+  ON_Linetype* rc = NULL;
+  if( pModel )
+  {
+    int count = pModel->m_linetype_table.Count();
+    for( int i=0; i<count; i++ )
+    {
+      if( pModel->m_linetype_table[i].m_linetype_id == id )
+      {
+        rc = &(pModel->m_linetype_table[i]);
+        break;
+      }
+    }
+  }
+  return rc;
+}
+
 RH_C_FUNCTION ON_Layer* ONX_Model_GetLayerPointer(ONX_Model* pModel, ON_UUID id)
 {
   ON_Layer* rc = NULL;
@@ -1679,6 +1697,53 @@ RH_C_FUNCTION ON_DimStyle* ONX_Model_GetDimStylePointer(ONX_Model* pModel, ON_UU
   return rc;
 }
 
+RH_C_FUNCTION ON_HatchPattern* ONX_Model_GetHatchPatternPointer(ONX_Model* pModel, ON_UUID id)
+{
+  ON_HatchPattern* rc = NULL;
+  if( pModel )
+  {
+    int count = pModel->m_hatch_pattern_table.Count();
+    for( int i=0; i<count; i++ )
+    {
+      if( pModel->m_hatch_pattern_table[i].m_hatchpattern_id == id )
+      {
+        rc = &(pModel->m_hatch_pattern_table[i]);
+        break;
+      }
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION ON_Material* ONX_Model_GetMaterialPointer(ONX_Model* pModel, ON_UUID id)
+{
+  ON_Material* rc = NULL;
+  if( pModel )
+  {
+    int count = pModel->m_material_table.Count();
+    for( int i=0; i<count; i++ )
+    {
+      if( pModel->m_material_table[i].m_material_id == id )
+      {
+        rc = &(pModel->m_material_table[i]);
+        break;
+      }
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION void ONX_Model_LinetypeTable_Insert(ONX_Model* pModel, const ON_Linetype* pConstLinetype, int index)
+{
+  if( pModel && pConstLinetype && index>=0)
+  {
+    pModel->m_linetype_table.Insert(index, *pConstLinetype);
+    // update indices
+    for( int i=index; i<pModel->m_linetype_table.Count(); i++ )
+      pModel->m_linetype_table[i].m_linetype_index = i;
+  }
+}
+
 RH_C_FUNCTION void ONX_Model_LayerTable_Insert(ONX_Model* pModel, const ON_Layer* pConstLayer, int index)
 {
   if( pModel && pConstLayer && index>=0)
@@ -1695,9 +1760,42 @@ RH_C_FUNCTION void ONX_Model_DimStyleTable_Insert(ONX_Model* pModel, const ON_Di
   if( pModel && pConstDimStyle && index>=0)
   {
     pModel->m_dimstyle_table.Insert(index, *pConstDimStyle);
-    // update layer indices
+    // update indices
     for( int i=index; i<pModel->m_dimstyle_table.Count(); i++ )
       pModel->m_dimstyle_table[i].m_dimstyle_index = i;
+  }
+}
+
+RH_C_FUNCTION void ONX_Model_HatchPatternTable_Insert(ONX_Model* pModel, const ON_HatchPattern* pConstHatchPattern, int index)
+{
+  if( pModel && pConstHatchPattern && index>=0)
+  {
+    pModel->m_hatch_pattern_table.Insert(index, *pConstHatchPattern);
+    // update indices
+    for( int i=index; i<pModel->m_hatch_pattern_table.Count(); i++ )
+      pModel->m_hatch_pattern_table[i].m_hatchpattern_index = i;
+  }
+}
+
+RH_C_FUNCTION void ONX_Model_MaterialTable_Insert(ONX_Model* pModel, const ON_Material* pConstMaterial, int index)
+{
+  if( pModel && pConstMaterial && index>=0)
+  {
+    pModel->m_material_table.Insert(index, *pConstMaterial);
+    // update indices
+    for( int i=index; i<pModel->m_material_table.Count(); i++ )
+      pModel->m_material_table[i].m_material_index = i;
+  }
+}
+
+RH_C_FUNCTION void ONX_Model_LinetypeTable_RemoveAt(ONX_Model* pModel, int index)
+{
+  if( pModel && index>=0)
+  {
+    pModel->m_linetype_table.Remove(index);
+    // update indices
+    for( int i=index; i<pModel->m_linetype_table.Count(); i++ )
+      pModel->m_linetype_table[i].m_linetype_index = i;
   }
 }
 
@@ -1723,6 +1821,37 @@ RH_C_FUNCTION void ONX_Model_DimStyleTable_RemoveAt(ONX_Model* pModel, int index
   }
 }
 
+RH_C_FUNCTION void ONX_Model_HatchPatternTable_RemoveAt(ONX_Model* pModel, int index)
+{
+  if( pModel && index>=0)
+  {
+    pModel->m_hatch_pattern_table.Remove(index);
+    // update indices
+    for( int i=index; i<pModel->m_hatch_pattern_table.Count(); i++ )
+      pModel->m_hatch_pattern_table[i].m_hatchpattern_index = i;
+  }
+}
+
+RH_C_FUNCTION void ONX_Model_MaterialTable_RemoveAt(ONX_Model* pModel, int index)
+{
+  if( pModel && index>=0)
+  {
+    pModel->m_material_table.Remove(index);
+    // update indices
+    for( int i=index; i<pModel->m_material_table.Count(); i++ )
+      pModel->m_material_table[i].m_material_index = i;
+  }
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_LinetypeTable_Id(const ONX_Model* pConstModel, int index)
+{
+  if( pConstModel && index>=0 && index<pConstModel->m_linetype_table.Count())
+  {
+    return pConstModel->m_linetype_table[index].m_linetype_id;
+  }
+  return ::ON_nil_uuid;
+}
+
 RH_C_FUNCTION ON_UUID ONX_Model_LayerTable_Id(const ONX_Model* pConstModel, int index)
 {
   if( pConstModel && index>=0 && index<pConstModel->m_layer_table.Count())
@@ -1737,6 +1866,24 @@ RH_C_FUNCTION ON_UUID ONX_Model_DimStyleTable_Id(const ONX_Model* pConstModel, i
   if( pConstModel && index>=0 && index<pConstModel->m_dimstyle_table.Count())
   {
     return pConstModel->m_dimstyle_table[index].m_dimstyle_id;
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_HatchPatternTable_Id(const ONX_Model* pConstModel, int index)
+{
+  if( pConstModel && index>=0 && index<pConstModel->m_hatch_pattern_table.Count())
+  {
+    return pConstModel->m_hatch_pattern_table[index].m_hatchpattern_id;
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_MaterialTable_Id(const ONX_Model* pConstModel, int index)
+{
+  if( pConstModel && index>=0 && index<pConstModel->m_material_table.Count())
+  {
+    return pConstModel->m_material_table[index].m_material_id;
   }
   return ::ON_nil_uuid;
 }

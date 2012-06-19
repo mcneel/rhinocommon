@@ -14,8 +14,11 @@ namespace Rhino.FileIO
   {
     IntPtr m_ptr = IntPtr.Zero; //ONX_Model*
     File3dmObjectTable m_object_table;
+    File3dmMaterialTable m_material_table;
+    File3dmLinetypeTable m_linetype_table;
     File3dmLayerTable m_layer_table;
     File3dmDimStyleTable m_dimstyle_table;
+    File3dmHatchPatternTable m_hatchpattern_table;
     File3dmPlugInDataTable m_userdata_table;
     File3dmViewTable m_view_table;
     File3dmViewTable m_named_view_table;
@@ -425,6 +428,22 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
+    /// Materials in this file.
+    /// </summary>
+    public IList<Rhino.DocObjects.Material> Materials
+    {
+      get { return m_material_table ?? (m_material_table = new File3dmMaterialTable(this)); }
+    }
+
+    /// <summary>
+    /// Linetypes in this file.
+    /// </summary>
+    public IList<Rhino.DocObjects.Linetype> Linetypes
+    {
+      get { return m_linetype_table ?? (m_linetype_table = new File3dmLinetypeTable(this)); }
+    }
+
+    /// <summary>
     /// Layers in this file.
     /// </summary>
     public IList<Rhino.DocObjects.Layer> Layers
@@ -438,6 +457,14 @@ namespace Rhino.FileIO
     public IList<Rhino.DocObjects.DimensionStyle> DimStyles
     {
       get { return m_dimstyle_table ?? (m_dimstyle_table = new File3dmDimStyleTable(this)); }
+    }
+
+    /// <summary>
+    /// Hatch patterns in this file
+    /// </summary>
+    public IList<Rhino.DocObjects.HatchPattern> HatchPatterns
+    {
+      get { return m_hatchpattern_table ?? (m_hatchpattern_table = new File3dmHatchPatternTable(this)); }
     }
 
     /// <summary>
@@ -469,14 +496,14 @@ namespace Rhino.FileIO
     const int idxDumpSummary = 1;
     //const int idxBitmapTable = 2;
     //const int idxTextureMappingTable = 3;
-    //const int idxMaterialTable = 4;
-    //const int idxLinetypeTable = 5;
+    internal const int idxMaterialTable = 4;
+    internal const int idxLinetypeTable = 5;
     internal const int idxLayerTable = 6;
     //const int idxLightTable = 7;
     //const int idxGroupTable = 8;
     //const int idxFontTable = 9;
     internal const int idxDimStyleTable = 10;
-    //const int idxHatchPatternTable = 11;
+    internal const int idxHatchPatternTable = 11;
     //const int idxIDefTable = 12;
     internal const int idxObjectTable = 13;
     //const int idxHistoryRecordTable = 14;
@@ -1704,6 +1731,253 @@ namespace Rhino.FileIO
 
   }
 
+  class File3dmMaterialTable : IList<Rhino.DocObjects.Material>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.Material>
+  {
+    readonly File3dm m_parent;
+    internal File3dmMaterialTable(File3dm parent)
+    {
+      m_parent = parent;
+    }
+
+    public int Find(string name)
+    {
+      int cnt = Count;
+      for (int i = 0; i < cnt; i++)
+      {
+        if (this[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+          return i;
+      }
+      return -1;
+    }
+
+    public int IndexOf(DocObjects.Material item)
+    {
+      File3dm file = item.m__parent as File3dm;
+      if (file == m_parent)
+      {
+        IntPtr pConstMaterial = item.ConstPointer();
+        return UnsafeNativeMethods.ON_Material_Index(pConstMaterial);
+      }
+      return -1;
+    }
+
+    public void Insert(int index, DocObjects.Material item)
+    {
+      if (index < 0 || index > Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      IntPtr pConstMaterial = item.ConstPointer();
+      UnsafeNativeMethods.ONX_Model_MaterialTable_Insert(pParent, pConstMaterial, index);
+    }
+
+    public void RemoveAt(int index)
+    {
+      if (index < 0 || index >= Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_MaterialTable_RemoveAt(pParent, index);
+    }
+
+    public DocObjects.Material this[int index]
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        Guid id = UnsafeNativeMethods.ONX_Model_MaterialTable_Id(pConstParent, index);
+        if (id == Guid.Empty)
+          throw new IndexOutOfRangeException();
+        return new DocObjects.Material(id, m_parent);
+      }
+      set
+      {
+        Insert(index, value);
+      }
+    }
+
+    public void Add(DocObjects.Material item)
+    {
+      int index = Count;
+      Insert(index, item);
+    }
+
+    public void Clear()
+    {
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_TableClear(pParent, File3dm.idxMaterialTable);
+    }
+
+    public bool Contains(DocObjects.Material item)
+    {
+      return IndexOf(item) != -1;
+    }
+
+    public void CopyTo(DocObjects.Material[] array, int arrayIndex)
+    {
+      int available = array.Length - arrayIndex;
+      int cnt = Count;
+      if (available < cnt)
+        throw new ArgumentException("The number of elements in the source ICollection<T> is greater than the available space from arrayIndex to the end of the destination array.");
+      for (int i = 0; i < cnt; i++)
+      {
+        array[arrayIndex++] = this[i];
+      }
+    }
+
+    public int Count
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxMaterialTable);
+      }
+    }
+
+    public bool IsReadOnly
+    {
+      get { return false; }
+    }
+
+    public bool Remove(DocObjects.Material item)
+    {
+      int index = IndexOf(item);
+      if (index >= 0)
+        RemoveAt(index);
+      return (index >= 0);
+    }
+
+    public IEnumerator<DocObjects.Material> GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmMaterialTable, Rhino.DocObjects.Material>(this);
+    }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmMaterialTable, Rhino.DocObjects.Material>(this);
+    }
+  }
+
+  class File3dmLinetypeTable : IList<Rhino.DocObjects.Linetype>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.Linetype>
+  {
+    readonly File3dm m_parent;
+    internal File3dmLinetypeTable(File3dm parent)
+    {
+      m_parent = parent;
+    }
+
+    public int Find(string name)
+    {
+      int cnt = Count;
+      for (int i = 0; i < cnt; i++)
+      {
+        if (this[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+          return i;
+      }
+      return -1;
+    }
+
+    public int IndexOf(DocObjects.Linetype item)
+    {
+      File3dm file = item.m__parent as File3dm;
+      if (file == m_parent)
+        return item.LinetypeIndex;
+      return -1;
+    }
+
+    public void Insert(int index, DocObjects.Linetype item)
+    {
+      if (index < 0 || index > Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      IntPtr pConstLayer = item.ConstPointer();
+      UnsafeNativeMethods.ONX_Model_LinetypeTable_Insert(pParent, pConstLayer, index);
+    }
+
+    public void RemoveAt(int index)
+    {
+      if (index < 0 || index >= Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_LinetypeTable_RemoveAt(pParent, index);
+    }
+
+    public DocObjects.Linetype this[int index]
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        Guid id = UnsafeNativeMethods.ONX_Model_LinetypeTable_Id(pConstParent, index);
+        if (id == Guid.Empty)
+          throw new IndexOutOfRangeException();
+        return new DocObjects.Linetype(id, m_parent);
+      }
+      set
+      {
+        Insert(index, value);
+      }
+    }
+
+    public void Add(DocObjects.Linetype item)
+    {
+      int index = Count;
+      Insert(index, item);
+    }
+
+    public void Clear()
+    {
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_TableClear(pParent, File3dm.idxLinetypeTable);
+    }
+
+    public bool Contains(DocObjects.Linetype item)
+    {
+      return IndexOf(item) != -1;
+    }
+
+    public void CopyTo(DocObjects.Linetype[] array, int arrayIndex)
+    {
+      int available = array.Length - arrayIndex;
+      int cnt = Count;
+      if (available < cnt)
+        throw new ArgumentException("The number of elements in the source ICollection<T> is greater than the available space from arrayIndex to the end of the destination array.");
+      for (int i = 0; i < cnt; i++)
+      {
+        array[arrayIndex++] = this[i];
+      }
+    }
+
+    public int Count
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxLinetypeTable);
+      }
+    }
+
+    public bool IsReadOnly
+    {
+      get { return false; }
+    }
+
+    public bool Remove(DocObjects.Linetype item)
+    {
+      int index = IndexOf(item);
+      if (index >= 0)
+        RemoveAt(index);
+      return (index >= 0);
+    }
+
+    public IEnumerator<DocObjects.Linetype> GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmLinetypeTable, Rhino.DocObjects.Linetype>(this);
+    }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmLinetypeTable, Rhino.DocObjects.Linetype>(this);
+    }
+  }
+
   class File3dmLayerTable : IList<Rhino.DocObjects.Layer>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.Layer>
   {
     readonly File3dm m_parent;
@@ -1945,6 +2219,128 @@ namespace Rhino.FileIO
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<File3dmDimStyleTable, Rhino.DocObjects.DimensionStyle>(this);
+    }
+  }
+
+  class File3dmHatchPatternTable : IList<Rhino.DocObjects.HatchPattern>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.HatchPattern>
+  {
+    readonly File3dm m_parent;
+    internal File3dmHatchPatternTable(File3dm parent)
+    {
+      m_parent = parent;
+    }
+
+    public int Find(string name)
+    {
+      int cnt = Count;
+      for (int i = 0; i < cnt; i++)
+      {
+        if (this[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+          return i;
+      }
+      return -1;
+    }
+
+    public int IndexOf(DocObjects.HatchPattern item)
+    {
+      File3dm file = item.m__parent as File3dm;
+      if (file == m_parent)
+        return item.Index;
+      return -1;
+    }
+
+    public void Insert(int index, DocObjects.HatchPattern item)
+    {
+      if (index < 0 || index > Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      IntPtr pConstHatchPattern = item.ConstPointer();
+      UnsafeNativeMethods.ONX_Model_HatchPatternTable_Insert(pParent, pConstHatchPattern, index);
+    }
+
+    public void RemoveAt(int index)
+    {
+      if (index < 0 || index >= Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_HatchPatternTable_RemoveAt(pParent, index);
+    }
+
+    public DocObjects.HatchPattern this[int index]
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        Guid id = UnsafeNativeMethods.ONX_Model_HatchPatternTable_Id(pConstParent, index);
+        if (id == Guid.Empty)
+          throw new IndexOutOfRangeException();
+        return new DocObjects.HatchPattern(id, m_parent);
+      }
+      set
+      {
+        Insert(index, value);
+      }
+    }
+
+    public void Add(DocObjects.HatchPattern item)
+    {
+      int index = Count;
+      Insert(index, item);
+    }
+
+    public void Clear()
+    {
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_TableClear(pParent, File3dm.idxHatchPatternTable);
+    }
+
+    public bool Contains(DocObjects.HatchPattern item)
+    {
+      return IndexOf(item) != -1;
+    }
+
+    public void CopyTo(DocObjects.HatchPattern[] array, int arrayIndex)
+    {
+      int available = array.Length - arrayIndex;
+      int cnt = Count;
+      if (available < cnt)
+        throw new ArgumentException("The number of elements in the source ICollection<T> is greater than the available space from arrayIndex to the end of the destination array.");
+      for (int i = 0; i < cnt; i++)
+      {
+        array[arrayIndex++] = this[i];
+      }
+    }
+
+    public int Count
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxHatchPatternTable);
+      }
+    }
+
+    public bool IsReadOnly
+    {
+      get { return false; }
+    }
+
+    public bool Remove(DocObjects.HatchPattern item)
+    {
+      int index = IndexOf(item);
+      if (index >= 0)
+        RemoveAt(index);
+      return (index >= 0);
+    }
+
+    public IEnumerator<DocObjects.HatchPattern> GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmHatchPatternTable, Rhino.DocObjects.HatchPattern>(this);
+    }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmHatchPatternTable, Rhino.DocObjects.HatchPattern>(this);
     }
   }
 

@@ -924,6 +924,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_BoundingBox(IntPtr pConstModel, ref BoundingBox pBBox);
 
+  //ON_Linetype* ONX_Model_GetLinetypePointer(ONX_Model* pModel, ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_GetLinetypePointer(IntPtr pModel, Guid id);
+
   //ON_Layer* ONX_Model_GetLayerPointer(ONX_Model* pModel, ON_UUID id)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ONX_Model_GetLayerPointer(IntPtr pModel, Guid id);
@@ -931,6 +935,18 @@ internal partial class UnsafeNativeMethods
   //ON_DimStyle* ONX_Model_GetDimStylePointer(ONX_Model* pModel, ON_UUID id)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ONX_Model_GetDimStylePointer(IntPtr pModel, Guid id);
+
+  //ON_HatchPattern* ONX_Model_GetHatchPatternPointer(ONX_Model* pModel, ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_GetHatchPatternPointer(IntPtr pModel, Guid id);
+
+  //ON_Material* ONX_Model_GetMaterialPointer(ONX_Model* pModel, ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_GetMaterialPointer(IntPtr pModel, Guid id);
+
+  //void ONX_Model_LinetypeTable_Insert(ONX_Model* pModel, const ON_Linetype* pConstLinetype, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_LinetypeTable_Insert(IntPtr pModel, IntPtr pConstLinetype, int index);
 
   //void ONX_Model_LayerTable_Insert(ONX_Model* pModel, const ON_Layer* pConstLayer, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -940,6 +956,18 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_DimStyleTable_Insert(IntPtr pModel, IntPtr pConstDimStyle, int index);
 
+  //void ONX_Model_HatchPatternTable_Insert(ONX_Model* pModel, const ON_HatchPattern* pConstHatchPattern, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_HatchPatternTable_Insert(IntPtr pModel, IntPtr pConstHatchPattern, int index);
+
+  //void ONX_Model_MaterialTable_Insert(ONX_Model* pModel, const ON_Material* pConstMaterial, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_MaterialTable_Insert(IntPtr pModel, IntPtr pConstMaterial, int index);
+
+  //void ONX_Model_LinetypeTable_RemoveAt(ONX_Model* pModel, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_LinetypeTable_RemoveAt(IntPtr pModel, int index);
+
   //void ONX_Model_LayerTable_RemoveAt(ONX_Model* pModel, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_LayerTable_RemoveAt(IntPtr pModel, int index);
@@ -948,6 +976,18 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_DimStyleTable_RemoveAt(IntPtr pModel, int index);
 
+  //void ONX_Model_HatchPatternTable_RemoveAt(ONX_Model* pModel, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_HatchPatternTable_RemoveAt(IntPtr pModel, int index);
+
+  //void ONX_Model_MaterialTable_RemoveAt(ONX_Model* pModel, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_MaterialTable_RemoveAt(IntPtr pModel, int index);
+
+  //ON_UUID ONX_Model_LinetypeTable_Id(const ONX_Model* pConstModel, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_LinetypeTable_Id(IntPtr pConstModel, int index);
+
   //ON_UUID ONX_Model_LayerTable_Id(const ONX_Model* pConstModel, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid ONX_Model_LayerTable_Id(IntPtr pConstModel, int index);
@@ -955,6 +995,14 @@ internal partial class UnsafeNativeMethods
   //ON_UUID ONX_Model_DimStyleTable_Id(const ONX_Model* pConstModel, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid ONX_Model_DimStyleTable_Id(IntPtr pConstModel, int index);
+
+  //ON_UUID ONX_Model_HatchPatternTable_Id(const ONX_Model* pConstModel, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_HatchPatternTable_Id(IntPtr pConstModel, int index);
+
+  //ON_UUID ONX_Model_MaterialTable_Id(const ONX_Model* pConstModel, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_MaterialTable_Id(IntPtr pConstModel, int index);
 
   //void ONX_Model_TableClear(ONX_Model* pModel, int which_table)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -2684,6 +2732,10 @@ internal partial class UnsafeNativeMethods
   //void ON_Material_Default(ON_Material* pMaterial)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Material_Default(IntPtr pMaterial);
+
+  //int ON_Material_Index(const ON_Material* pConstMaterial)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Material_Index(IntPtr pConstMaterial);
 
   //int ON_Material_FindBitmapTexture(const ON_Material* pConstMaterial, const RHMONO_STRING* filename)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

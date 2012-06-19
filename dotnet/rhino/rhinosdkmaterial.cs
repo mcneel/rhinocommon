@@ -101,6 +101,12 @@ namespace Rhino.DocObjects
       ConstructConstObject(holder, -1);
     }
 
+    internal Material(Guid id, Rhino.FileIO.File3dm parent)
+    {
+      m_id = id;
+      m__parent = parent;
+    }
+
     // serialization constructor
     protected Material(SerializationInfo info, StreamingContext context)
       : base (info, context)
@@ -119,7 +125,21 @@ namespace Rhino.DocObjects
       if (m_doc != null)
         return UnsafeNativeMethods.CRhinoMaterialTable_GetMaterialPointer(m_doc.m_docId, m_id);
 #endif
+      Rhino.FileIO.File3dm parent_file = m__parent as Rhino.FileIO.File3dm;
+      if (parent_file != null)
+      {
+        IntPtr pModel = parent_file.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_GetMaterialPointer(pModel, m_id);
+      }
       return IntPtr.Zero;
+    }
+
+    internal override IntPtr NonConstPointer()
+    {
+      if (m__parent is Rhino.FileIO.File3dm)
+        return _InternalGetConstPointer();
+
+      return base.NonConstPointer();
     }
 
     internal override IntPtr _InternalDuplicate(out bool applymempressure)

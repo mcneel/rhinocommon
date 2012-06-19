@@ -70,6 +70,34 @@ namespace localize_3dm
           if (nameNode != null)
             dimstyle.Name = nameNode.GetAttribute("Localized");
         }
+        foreach (var linetype in file3dm.Linetypes)
+        {
+          var path = string.Format("//RhinoModel/Linetypes/Linetype[@English='{0}']", linetype.Name);
+          var nameNode = (XmlElement)doc.SelectSingleNode(path);
+          if (nameNode != null)
+            linetype.Name = nameNode.GetAttribute("Localized");
+        }
+        foreach (var hatchpattern in file3dm.HatchPatterns)
+        {
+          var path = string.Format("//RhinoModel/HatchPatterns/HatchPattern[@English='{0}']", hatchpattern.Name);
+          var nameNode = (XmlElement)doc.SelectSingleNode(path);
+          if (nameNode != null)
+            hatchpattern.Name = nameNode.GetAttribute("Localized");
+        }
+        foreach (var material in file3dm.Materials)
+        {
+          var path = string.Format("//RhinoModel/Materials/Material[@English='{0}']", material.Name);
+          var nameNode = (XmlElement)doc.SelectSingleNode(path);
+          if (nameNode != null)
+            material.Name = nameNode.GetAttribute("Localized");
+        }
+
+        // TODO: Handle These:
+        /*
+         * Texture Names
+         * Environment Names
+         */
+
         foreach (var view in file3dm.Views)
         {
           var path = string.Format("//RhinoModel/Viewports/Viewport[@English='{0}']", view.Name);
@@ -85,15 +113,6 @@ namespace localize_3dm
           if (node != null)
             obj.Attributes.Name = node.GetAttribute("Localized");
         }
-
-        // TODO: Handle These:
-        /*
-         * Linetype Names
-         * Hatch Names
-         * Material Names
-         * Texture Names
-         * Environment Names
-         */
 
         var notesNode = (XmlElement)doc.SelectSingleNode("//RhinoModel/Notes");
         if (notesNode != null)
@@ -146,9 +165,33 @@ namespace localize_3dm
         XmlElement dimstyles = (XmlElement)body.AppendChild(doc.CreateElement("DimStyles"));
         foreach (var dimstyle in file3dm.DimStyles)
         {
-          XmlElement dimstyleElem = (XmlElement)layers.AppendChild(doc.CreateElement("DimStyle"));
+          XmlElement dimstyleElem = (XmlElement)dimstyles.AppendChild(doc.CreateElement("DimStyle"));
           dimstyleElem.SetAttribute("English", dimstyle.Name);
           dimstyleElem.SetAttribute("Localized", dimstyle.Name);
+        }
+
+        XmlElement linetypes = (XmlElement)body.AppendChild(doc.CreateElement("Linetypes"));
+        foreach (var linetype in file3dm.Linetypes)
+        {
+          XmlElement linetypeElem = (XmlElement)linetypes.AppendChild(doc.CreateElement("Linetype"));
+          linetypeElem.SetAttribute("English", linetype.Name);
+          linetypeElem.SetAttribute("Localized", linetype.Name);
+        }
+
+        XmlElement hatchpatterns = (XmlElement)body.AppendChild(doc.CreateElement("HatchPatterns"));
+        foreach (var hatchpattern in file3dm.HatchPatterns)
+        {
+          XmlElement hatchpatternElem = (XmlElement)hatchpatterns.AppendChild(doc.CreateElement("HatchPattern"));
+          hatchpatternElem.SetAttribute("English", hatchpattern.Name);
+          hatchpatternElem.SetAttribute("Localized", hatchpattern.Name);
+        }
+
+        XmlElement materials = (XmlElement)body.AppendChild(doc.CreateElement("Materials"));
+        foreach (var material in file3dm.Materials)
+        {
+          XmlElement materialElem = (XmlElement)materials.AppendChild(doc.CreateElement("Material"));
+          materialElem.SetAttribute("English", material.Name);
+          materialElem.SetAttribute("Localized", material.Name);
         }
 
         XmlNode views = (XmlElement)body.AppendChild(doc.CreateElement("Viewports"));

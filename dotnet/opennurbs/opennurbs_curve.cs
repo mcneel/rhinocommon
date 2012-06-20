@@ -3502,7 +3502,7 @@ namespace Rhino.Geometry
       for (int i = 0; i < 100; i++)
       {
         double t = Domain.ParameterAt(rnd.NextDouble());
-        if (this.IsContinuous(Continuity.G1_continuous, t))
+        if (IsContinuous(Continuity.G1_continuous, t))
         {
           Point3d p = PointAt(t);
           Vector3d v = TangentAt(t);

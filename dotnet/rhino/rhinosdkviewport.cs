@@ -1482,7 +1482,7 @@ namespace Rhino.Display
       System.Drawing.Point rc = new System.Drawing.Point();
       rc.X = clientPoint.X - bounds.Left;
       rc.Y = clientPoint.Y - bounds.Top;
-      var parent = this.ParentView;
+      var parent = ParentView;
       if (parent != null)
         rc = parent.ClientToScreen(rc);
       return rc;
@@ -1491,7 +1491,7 @@ namespace Rhino.Display
     public System.Drawing.Point ScreenToClient(System.Drawing.Point screenPoint)
     {
       System.Drawing.Point rc = screenPoint;
-      var parent = this.ParentView;
+      var parent = ParentView;
       if (parent != null)
         rc = parent.ScreenToClient(rc);
       var bounds = Bounds;

@@ -2684,10 +2684,10 @@ namespace Rhino.DocObjects.Tables
     /// </example>
     public Rhino.DocObjects.RhinoObject[] FindByLayer(string layerName)
     {
-      int index = this.Document.Layers.Find(layerName, true);
+      int index = Document.Layers.Find(layerName, true);
       if (index < 0)
         return null;
-      Layer l = this.Document.Layers[index];
+      Layer l = Document.Layers[index];
       return FindByLayer(l);
     }
 

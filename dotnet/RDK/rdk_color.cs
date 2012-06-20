@@ -84,12 +84,12 @@ namespace Rhino.Display
 
     public static bool operator ==(Color4f a, Color4f b)
     {
-      return (a.m_r == b.m_r && a.m_g == b.m_g && a.m_b == b.m_b && a.m_a == b.m_a) ? true : false;
+      return (a.m_r == b.m_r && a.m_g == b.m_g && a.m_b == b.m_b && a.m_a == b.m_a);
     }
 
     public static bool operator !=(Color4f a, Color4f b)
     {
-      return (a.m_r != b.m_r || a.m_g != b.m_g || a.m_b != b.m_b || a.m_a != b.m_a) ? true : false;
+      return (a.m_r != b.m_r || a.m_g != b.m_g || a.m_b != b.m_b || a.m_a != b.m_a);
     }
 
     public override bool Equals(object obj)

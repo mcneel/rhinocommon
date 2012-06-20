@@ -737,7 +737,7 @@ namespace Rhino.Geometry
     {
       inverseTransform = this;
       bool rc = false;
-      if( this.IsValid )
+      if( IsValid )
         rc = UnsafeNativeMethods.ON_Xform_Invert(ref inverseTransform);
       return rc;
     }

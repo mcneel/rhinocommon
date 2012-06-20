@@ -516,7 +516,7 @@ namespace Rhino.Geometry
     /// </remarks>
     public bool GetRotation(out double angle, out Vector3d axis)
     {
-      double s = this.Length;
+      double s = Length;
       angle = (s > double.MinValue) ? 2.0*Math.Acos(m_a/s) : 0.0;
       axis.m_x = m_b;
       axis.m_y = m_c;

@@ -1762,8 +1762,8 @@ namespace Rhino.Geometry
     {
       if (obj is Point3d)
         return CompareTo((Point3d)obj);
-      else
-        throw new ArgumentException("Input must be of type Point3d", "obj");
+
+      throw new ArgumentException("Input must be of type Point3d", "obj");
     }
 
     /// <summary>

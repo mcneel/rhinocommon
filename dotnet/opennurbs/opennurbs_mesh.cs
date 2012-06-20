@@ -1393,7 +1393,7 @@ namespace Rhino.Geometry
     /// <param name="other">Mesh to append to this one.</param>
     public void Append(Mesh other)
     {
-      if (null == other || other.ConstPointer() == this.ConstPointer())
+      if (null == other || other.ConstPointer() == ConstPointer())
         return;
       IntPtr ptr = NonConstPointer();
       IntPtr otherPtr = other.ConstPointer();

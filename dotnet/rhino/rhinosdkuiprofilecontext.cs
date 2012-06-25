@@ -189,7 +189,12 @@ namespace Rhino
     public bool TryGetColor(bool bDefault, out Color value)
     {
       value = Color.Empty;
-      string[] argb = GetValue(bDefault).Split(',');
+      string getValue = GetValue(bDefault);
+      
+      if (string.IsNullOrEmpty(getValue))
+        return true; // Color set to Color.Empty
+
+      string[] argb = getValue.Split(',');
 
       if (argb.Length != 4)
         return false;
@@ -436,11 +441,14 @@ namespace Rhino
           return;
         value = a.NewValue;
       }
-      SetValue(bDefault, string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}",
-                                       value.A.ToString(CultureInfo.InvariantCulture.NumberFormat),
-                                       value.R.ToString(CultureInfo.InvariantCulture.NumberFormat),
-                                       value.G.ToString(CultureInfo.InvariantCulture.NumberFormat),
-                                       value.B.ToString(CultureInfo.InvariantCulture.NumberFormat)));
+      if (value.IsEmpty)
+        SetValue(bDefault, string.Empty);
+      else
+        SetValue(bDefault, string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}",
+                                         value.A.ToString(CultureInfo.InvariantCulture.NumberFormat),
+                                         value.R.ToString(CultureInfo.InvariantCulture.NumberFormat),
+                                         value.G.ToString(CultureInfo.InvariantCulture.NumberFormat),
+                                         value.B.ToString(CultureInfo.InvariantCulture.NumberFormat)));
     }
 
     public void SetPoint3d(bool bDefault, Point3d value, EventHandler<PersistentSettingsEventArgs> validator)

@@ -97,6 +97,9 @@ __declspec(selectany) int _forceAtlDllManifestRTM;
 // When building for Rhino5, this dll is part of the shipping Rhino and acts
 // like a system plug-in
 #include "../../../rhino4/rhino3SystemPlugIn.h"
+#if defined(_WIN32)
+#include "../../../rhino4/SDK/inc/RhinoSdkUiFile.h"
+#endif
 #endif
 
 // gh_private_sdk.h is where all of the "private" TL and Rhino functions are declared

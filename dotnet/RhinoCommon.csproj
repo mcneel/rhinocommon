@@ -317,6 +317,7 @@
     <Compile Include="rhino\rhinosdkprintinfo.cs" />
     <Compile Include="rhino\rhinosdkstackeddialogpage.cs" />
     <Compile Include="rhino\rhinosdksweep.cs" />
+    <Compile Include="rhino\rhinosdkuifile.cs" />
     <Compile Include="rhino\rhinosdkuiprofilecontext.cs" />
     <Compile Include="rhino\rhinosdkunrollsrf.cs" />
     <Compile Include="rhino\rhinosdkview.cs" />

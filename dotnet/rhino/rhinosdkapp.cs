@@ -1072,6 +1072,15 @@ namespace Rhino
 
     #endregion
 #endif
+
+    static Rhino.UI.ToolbarFileCollection m_toolbar_files;
+    /// <summary>
+    /// Collection of currently open toolbar files in the application
+    /// </summary>
+    public static Rhino.UI.ToolbarFileCollection ToolbarFiles
+    {
+      get { return m_toolbar_files ?? (m_toolbar_files = new Rhino.UI.ToolbarFileCollection()); }
+    }
   }
 }
 

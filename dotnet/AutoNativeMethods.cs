@@ -9464,6 +9464,44 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoUiFile_FileSaveAs(Guid id, [MarshalAs(UnmanagedType.LPWStr)]string _path);
+
+  //int CRhinoUiFile_GroupCount(ON_UUID file_id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoUiFile_GroupCount(Guid file_id);
+
+  //int CRhinoUiFile_ToolbarCount(ON_UUID file_id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoUiFile_ToolbarCount(Guid file_id);
+
+  //ON_UUID CRhinoUiFile_ToolBarID(ON_UUID file_id, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoUiFile_ToolBarID(Guid file_id, int index);
+
+  //void CRhinoUiFile_ToolBarName(ON_UUID file_id, ON_UUID toolbar_id, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoUiFile_ToolBarName(Guid file_id, Guid toolbar_id, IntPtr pStringHolder);
+
+  //ON_UUID CRhinoUiFile_GroupID(ON_UUID file_id, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoUiFile_GroupID(Guid file_id, int index);
+
+  //void CRhinoUiFile_GroupName(ON_UUID file_id, ON_UUID group_id, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoUiFile_GroupName(Guid file_id, Guid group_id, IntPtr pStringHolder);
+
+  //bool CRhinoUiFile_GroupIsVisible(ON_UUID file_id, ON_UUID group_id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoUiFile_GroupIsVisible(Guid file_id, Guid group_id);
+
+  //void CRhinoUiFile_GroupShow(ON_UUID file_id, ON_UUID group_id, bool show)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoUiFile_GroupShow(Guid file_id, Guid group_id, [MarshalAs(UnmanagedType.U1)]bool show);
+
+  //bool CRhinoUiFile_GroupIsDocked(ON_UUID file_id, ON_UUID group_id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoUiFile_GroupIsDocked(Guid file_id, Guid group_id);
   #endregion
 
 

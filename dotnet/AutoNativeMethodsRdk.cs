@@ -969,9 +969,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int Rdk_Globals_RdkBetaRelease();
 
-  //int Rdk_Globals_ShowColorPicker(ON_4FVECTOR_STRUCT v, bool bUseAlpha, ON_4fPoint* pColor)
+  //int Rdk_Globals_ShowColorPicker(HWND hWnd, ON_4FVECTOR_STRUCT v, bool bUseAlpha, ON_4fPoint* pColor)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_Globals_ShowColorPicker(Color4f v, [MarshalAs(UnmanagedType.U1)]bool bUseAlpha, ref Color4f pColor);
+  internal static extern int Rdk_Globals_ShowColorPicker(IntPtr hWnd, Color4f v, [MarshalAs(UnmanagedType.U1)]bool bUseAlpha, ref Color4f pColor);
 
   //int Rdk_Globals_ShowIncompatibleContent(const RHMONO_STRING* _ps)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]

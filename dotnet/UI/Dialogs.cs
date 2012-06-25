@@ -375,17 +375,35 @@ namespace Rhino
       /// <summary>
       /// Displays the standard modal color picker dialog for floating point colors.
       /// </summary>
+      /// <param name="parent">Parent window for this dialog, should always pass this if calling from a form or user control.</param>
+      /// <param name="color">The initial color to set the picker to and also accepts the user's choice.</param>
+      /// <param name="allowAlpha">Specifies if the color picker should allow changes to the alpha channel or not.</param>
+      /// <returns>true if a color was picked, false if the user canceled the picker dialog.</returns>
+      public static bool ShowColorDialog(System.Windows.Forms.IWin32Window parent, ref Rhino.Display.Color4f color, bool allowAlpha)
+      {
+        if (null == parent)
+          parent = RhinoApp.MainWindow();
+
+        IntPtr hWnd = IntPtr.Zero;
+        if (null != parent)
+          hWnd = parent.Handle;
+
+        Rhino.Display.Color4f c = Rhino.Display.Color4f.Empty;
+
+        bool rc = (1 == UnsafeNativeMethods.Rdk_Globals_ShowColorPicker(hWnd, color, allowAlpha, ref c));
+        if (rc)
+          color = c;
+        return rc;
+      }
+      /// <summary>
+      /// Displays the standard modal color picker dialog for floating point colors.
+      /// </summary>
       /// <param name="color">The initial color to set the picker to and also accepts the user's choice.</param>
       /// <param name="allowAlpha">Specifies if the color picker should allow changes to the alpha channel or not.</param>
       /// <returns>true if a color was picked, false if the user canceled the picker dialog.</returns>
       public static bool ShowColorDialog(ref Rhino.Display.Color4f color, bool allowAlpha)
       {
-        Rhino.Display.Color4f c = Rhino.Display.Color4f.Empty;
-
-        bool rc = (1 == UnsafeNativeMethods.Rdk_Globals_ShowColorPicker(color, allowAlpha, ref c));
-        if (rc)
-          color = c;
-        return rc;
+        return ShowColorDialog(null, ref color, allowAlpha);
       }
 #endif
 

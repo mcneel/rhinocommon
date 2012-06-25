@@ -50,6 +50,25 @@ RH_C_FUNCTION int ON_Curve_SpanCount(const ON_Curve* pConstCurve)
   return rc;
 }
 
+RH_C_FUNCTION bool ON_Curve_SpanInterval(const ON_Curve* pConstCurve, int spanIndex, ON_Interval* spanDomain)
+{
+  bool rc = false;
+  if( pConstCurve && spanDomain )
+  {
+    int count = pConstCurve->SpanCount();
+    if( spanIndex >= 0 && spanIndex < count )
+    {
+      double* knots = new double[count + 1];
+      pConstCurve->GetSpanVector(knots); 
+      spanDomain->Set(knots[spanIndex], knots[spanIndex+1]);
+
+      delete [] knots;
+      rc = true;
+    }
+  }
+  return rc;
+}
+
 RH_C_FUNCTION int ON_Curve_Dimension(const ON_Curve* pConstCurve)
 {
   int rc = 0;

@@ -1901,6 +1901,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Curve_SpanCount(IntPtr pConstCurve);
 
+  //bool ON_Curve_SpanInterval(const ON_Curve* pConstCurve, int spanIndex, ON_Interval* spanDomain)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Curve_SpanInterval(IntPtr pConstCurve, int spanIndex, ref Interval spanDomain);
+
   //int ON_Curve_Dimension(const ON_Curve* pConstCurve)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Curve_Dimension(IntPtr pConstCurve);
@@ -9425,6 +9430,40 @@ internal partial class UnsafeNativeMethods
   //int CRhinoTextOut_ShowDialog(const RHMONO_STRING* _text, const RHMONO_STRING* _title )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoTextOut_ShowDialog([MarshalAs(UnmanagedType.LPWStr)]string _text, [MarshalAs(UnmanagedType.LPWStr)]string _title);
+  #endregion
+
+
+  #region rh_uifile.cpp
+  //int CRhinoUiFile_FileCount()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoUiFile_FileCount();
+
+  //ON_UUID CRhinoUiFile_FileID(int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoUiFile_FileID(int index);
+
+  //ON_UUID CRhinoUiFile_FileOpen(const RHMONO_STRING* _path)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoUiFile_FileOpen([MarshalAs(UnmanagedType.LPWStr)]string _path);
+
+  //void CRhinoUiFile_FileName(ON_UUID id, CRhCmnStringHolder* pStringHolder, bool isAlias)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoUiFile_FileName(Guid id, IntPtr pStringHolder, [MarshalAs(UnmanagedType.U1)]bool isAlias);
+
+  //bool CRhinoUiFile_FileClose(ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoUiFile_FileClose(Guid id);
+
+  //bool CRhinoUiFile_FileSave(ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoUiFile_FileSave(Guid id);
+
+  //bool CRhinoUiFile_FileSaveAs(ON_UUID id, const RHMONO_STRING* _path)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoUiFile_FileSaveAs(Guid id, [MarshalAs(UnmanagedType.LPWStr)]string _path);
   #endregion
 
 

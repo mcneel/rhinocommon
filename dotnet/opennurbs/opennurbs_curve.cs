@@ -483,7 +483,7 @@ namespace Rhino.Geometry
       {
         case BlendContinuity.Position:
           return new LineCurve(curveA.PointAtEnd, curveB.PointAtStart);
-          
+
         case BlendContinuity.Tangency:
           IntPtr pG1Curve = UnsafeNativeMethods.RHC_RhinoBlendG1Curve(pCurveA, pCurveB, bulgeA, bulgeB);
           return GeometryBase.CreateGeometryHelper(pG1Curve, null) as Curve;
@@ -810,8 +810,8 @@ namespace Rhino.Geometry
         g.Add(msh);
       }
 
-      using(SimpleArrayCurvePointer crv_array = new SimpleArrayCurvePointer(curves))
-      using(Runtime.InteropWrappers.SimpleArrayGeometryPointer mesh_array = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(g))
+      using (SimpleArrayCurvePointer crv_array = new SimpleArrayCurvePointer(curves))
+      using (Runtime.InteropWrappers.SimpleArrayGeometryPointer mesh_array = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(g))
       using (SimpleArrayCurvePointer curves_out = new SimpleArrayCurvePointer())
       {
         IntPtr pCurvesIn = crv_array.ConstPointer();
@@ -3348,6 +3348,25 @@ namespace Rhino.Geometry
       IntPtr ptr = ConstPointer();
       IntPtr rc = UnsafeNativeMethods.ON_Curve_NurbsCurve(ptr, tolerance, subdomain, false);
       return GeometryBase.CreateGeometryHelper(rc, null) as NurbsCurve;
+    }
+
+    /// <summary>
+    /// Get the domain of the curve span with the given index. 
+    /// Use the SpanCount property to test how many spans there are.
+    /// </summary>
+    /// <param name="spanIndex">Index of span.</param>
+    /// <returns>Interval of the span with the given index.</returns>
+    public Interval SpanDomain(int spanIndex)
+    {
+      int spanCount = SpanCount;
+      if (spanIndex < 0) { throw new IndexOutOfRangeException("spanIndex must be larger than or equal to zero"); }
+      if (spanIndex >= SpanCount) { throw new IndexOutOfRangeException("spanIndex must be smaller than spanCount"); }
+
+      Interval domain = Interval.Unset;
+      if (UnsafeNativeMethods.ON_Curve_SpanInterval(ConstPointer(), spanIndex, ref domain))
+        return domain;
+
+      return Interval.Unset;
     }
 
 #if RHINO_SDK

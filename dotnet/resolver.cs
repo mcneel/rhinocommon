@@ -36,6 +36,7 @@ namespace Rhino.Runtime
       }
     }
 
+    private static List<string> m_noassembly_match_list;
     private static ResolveEventHandler m_assembly_resolve;
     private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
     {
@@ -46,17 +47,24 @@ namespace Rhino.Runtime
 
       // Get the significant name of the assembly we're looking for.
       string searchname = args.Name;
-      int index = searchname.IndexOf(',');
+      // do not attempt to handle resource searching
+      int index = searchname.IndexOf(".resources");
+      if (index > 0)
+        return null;
+
+      // The resolver is commonly called multiple times with the same search name.
+      // If we couldn't find it the first time, just add it to a list so we know
+      // not to go about searching again.
+      if (m_noassembly_match_list != null && m_noassembly_match_list.Contains(args.Name))
+        return null;
+
+      index = searchname.IndexOf(',');
       if (index > 0)
       {
         searchname = searchname.Substring(0, index);
       }
 
-      //do not attempt to handle resource searching
-      if (searchname.EndsWith(".resources", StringComparison.OrdinalIgnoreCase))
-        return null;
-
-      HostUtils.DebugString("CurrentDomain_AssemblyResolve called for " + args.Name + "\n");
+      //HostUtils.DebugString("CurrentDomain_AssemblyResolve called for " + args.Name + "\n");
       // See if the assembly is already loaded.
       Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
       for (int i = 0; i < assemblies.Length; i++)
@@ -126,8 +134,14 @@ namespace Rhino.Runtime
       foreach (string file in potential_files)
       {
         Assembly asm = TryLoadAssembly(file, searchname, args.Name);
-        if (asm != null) { return asm; }
+        if (asm != null)
+          return asm;
       }
+
+      if (m_noassembly_match_list == null)
+        m_noassembly_match_list = new List<string>();
+      if( !m_noassembly_match_list.Contains(args.Name) )
+        m_noassembly_match_list.Add(args.Name);
 
       return null;
     }
@@ -136,7 +150,8 @@ namespace Rhino.Runtime
       // Don't try to load an assembly that already failed to load in the past.
       if (m_loadfailures != null)
       {
-        if (m_loadfailures.ContainsKey(filename)) { return null; }
+        if (m_loadfailures.ContainsKey(filename))
+          return null;
       }
 
       // David: restrict loading to known file-types. Steve, you'll need to handle rhp loading as I have no idea how.
@@ -172,16 +187,11 @@ namespace Rhino.Runtime
             }
           }
 
-          if (returnAssembly) { return asm; }
+          if (returnAssembly)
+            return asm;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-          // Print out recursive exception messages.
-          for (; ex != null; ex = ex.InnerException)
-          {
-            HostUtils.DebugString("Exception in ReflectionOnlyLoad: " + ex.Message + "\n");
-          }
-
           // If the assembly fails to load, don't try again.
           if (m_loadfailures != null && !m_loadfailures.ContainsKey(filename))
           {

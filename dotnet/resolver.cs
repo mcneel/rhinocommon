@@ -36,7 +36,7 @@ namespace Rhino.Runtime
       }
     }
 
-    private static List<string> m_noassembly_match_list;
+    private static Dictionary<string, Assembly> m_match_dictionary;
     private static ResolveEventHandler m_assembly_resolve;
     private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
     {
@@ -53,10 +53,9 @@ namespace Rhino.Runtime
         return null;
 
       // The resolver is commonly called multiple times with the same search name.
-      // If we couldn't find it the first time, just add it to a list so we know
-      // not to go about searching again.
-      if (m_noassembly_match_list != null && m_noassembly_match_list.Contains(args.Name))
-        return null;
+      // Keep the results around so we don't keep doing the same job over and over
+      if (m_match_dictionary != null && m_match_dictionary.ContainsKey(args.Name))
+        return m_match_dictionary[args.Name];
 
       index = searchname.IndexOf(',');
       if (index > 0)
@@ -131,19 +130,20 @@ namespace Rhino.Runtime
       FuzzyComparer fuzzy = new FuzzyComparer(searchname);
       potential_files.Sort(fuzzy);
 
+      Assembly asm = null;
       foreach (string file in potential_files)
       {
-        Assembly asm = TryLoadAssembly(file, searchname, args.Name);
+        asm = TryLoadAssembly(file, searchname, args.Name);
         if (asm != null)
-          return asm;
+          break;
       }
 
-      if (m_noassembly_match_list == null)
-        m_noassembly_match_list = new List<string>();
-      if( !m_noassembly_match_list.Contains(args.Name) )
-        m_noassembly_match_list.Add(args.Name);
+      if (m_match_dictionary == null)
+        m_match_dictionary = new Dictionary<string, Assembly>();
+      if( !m_match_dictionary.ContainsKey(args.Name) )
+        m_match_dictionary.Add(args.Name, asm);
 
-      return null;
+      return asm;
     }
     private static Assembly TryLoadAssembly(string filename, string searchname, string asmname)
     {

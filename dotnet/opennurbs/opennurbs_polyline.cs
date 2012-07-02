@@ -718,6 +718,33 @@ namespace Rhino.Geometry
       center /= weight;
       return center;
     }
+
+#if RHINO_SDK
+    /// <summary>
+    /// Attempts to create a list of triangles which represent a
+    /// triangulation of a closed polyline
+    /// </summary>
+    /// <returns></returns>
+    public MeshFace[] TriangulateClosedPolyline()
+    {
+      if (!IsClosed)
+        return null;
+      int triangle_count = (Count - 3) * 3;
+      if (triangle_count < 1)
+        return null;
+      int[] triangles = new int[triangle_count];
+      if (!UnsafeNativeMethods.TLC_Triangulate3dPolygon(Count, ToArray(), triangle_count, triangles))
+        return null;
+      int face_count = triangle_count / 3;
+      MeshFace[] rc = new MeshFace[face_count];
+      for (int i = 0; i < face_count; i++)
+      {
+        rc[i] = new MeshFace(triangles[i * 3], triangles[i * 3 + 1], triangles[i * 3 + 2]);
+      }
+      return rc;
+    }
+#endif
+
     #endregion
   }
 }

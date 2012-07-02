@@ -1916,22 +1916,31 @@ namespace Rhino.PlugIns
     /// </summary>
     private static System.Reflection.Assembly GetLicenseClientAssembly()
     {
-      if (null == m_license_client_assembly)
+      try
       {
-        const string filename = "ZooClient.dll";
-        System.Reflection.Assembly thisAssembly = System.Reflection.Assembly.GetExecutingAssembly();
-        if (thisAssembly != null)
+        if (null == m_license_client_assembly)
         {
-          string path = thisAssembly.Location;
-          path = System.IO.Path.GetDirectoryName(path);
-          path = string.IsNullOrEmpty(path) ? filename : System.IO.Path.Combine(path, filename);
-          if (System.IO.File.Exists(path))
+          const string filename = "ZooClient.dll";
+          System.Reflection.Assembly thisAssembly = System.Reflection.Assembly.GetExecutingAssembly();
+          if (thisAssembly != null)
           {
-            m_license_client_assembly = System.Reflection.Assembly.LoadFrom(path);
+            string path = thisAssembly.Location;
+            path = System.IO.Path.GetDirectoryName(path);
+            path = string.IsNullOrEmpty(path) ? filename : System.IO.Path.Combine(path, filename);
+            if (System.IO.File.Exists(path))
+            {
+              m_license_client_assembly = System.Reflection.Assembly.LoadFrom(path);
+            }
           }
         }
+        return m_license_client_assembly;
       }
-      return m_license_client_assembly;
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return null;
     }
 
     /// <summary>
@@ -1939,23 +1948,32 @@ namespace Rhino.PlugIns
     /// </summary>
     public static bool Initialize()
     {
-      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-      if (null == zooAss)
-        return false;
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
 
-      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-      if (t == null)
-        return false;
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
 
-      System.Reflection.MethodInfo mi = t.GetMethod("Initialize");
-      if (mi == null)
-        return false;
+        System.Reflection.MethodInfo mi = t.GetMethod("Initialize");
+        if (mi == null)
+          return false;
 
-      object invoke_rc = mi.Invoke(null, null);
-      if (null == invoke_rc)
-        return false;
+        object invoke_rc = mi.Invoke(null, null);
+        if (null == invoke_rc)
+          return false;
 
-      return (bool)invoke_rc;
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return false;
     }
 
     /// <summary>
@@ -1966,38 +1984,62 @@ namespace Rhino.PlugIns
       if (string.IsNullOrEmpty(message))
         return null;
 
-      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-      if (null == zooAss)
-        return null;
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return null;
 
-      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-      if (t == null)
-        return null;
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return null;
 
-      System.Reflection.MethodInfo mi = t.GetMethod("Echo");
-      if (mi == null)
-        return null;
+        System.Reflection.MethodInfo mi = t.GetMethod("Echo");
+        if (mi == null)
+          return null;
 
-      string invoke_rc = mi.Invoke(null, new object[] { message }) as String;
-      return invoke_rc;
+        string invoke_rc = mi.Invoke(null, new object[] { message }) as String;
+        return invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return null;
     }
 
+    /// <summary>
+    /// ShowLicenseValidationUi
+    /// </summary>
     public static bool ShowLicenseValidationUi(string cdkey)
     {
-      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-      if (null == zooAss)
+      if (string.IsNullOrEmpty(cdkey))
         return false;
 
-      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-      if (t == null)
-        return false;
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
 
-      System.Reflection.MethodInfo mi = t.GetMethod("ShowLicenseValidationUi");
-      if (mi == null)
-        return false;
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
 
-      object invoke_rc = mi.Invoke(null, new object[] { cdkey });
-      return (bool)invoke_rc;
+        System.Reflection.MethodInfo mi = t.GetMethod("ShowLicenseValidationUi");
+        if (mi == null)
+          return false;
+
+        object invoke_rc = mi.Invoke(null, new object[] { cdkey });
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return false;
     }
 
     /// <summary>
@@ -2013,23 +2055,32 @@ namespace Rhino.PlugIns
         )
         return false;
 
-      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-      if (null == zooAss)
-        return false;
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
 
-      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-      if (t == null)
-        return false;
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
 
-      System.Reflection.MethodInfo mi = t.GetMethod("GetLicense");
-      if (mi == null)
-        return false;
+        System.Reflection.MethodInfo mi = t.GetMethod("GetLicense");
+        if (mi == null)
+          return false;
 
-      object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productBuildType, productTitle, validateDelegate });
-      if (null == invoke_rc)
-        return false;
+        object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productBuildType, productTitle, validateDelegate });
+        if (null == invoke_rc)
+          return false;
 
-      return (bool)invoke_rc;
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return false;
     }
 
     /// <summary>
@@ -2089,8 +2140,9 @@ namespace Rhino.PlugIns
       catch (Exception ex)
       {
         Rhino.Runtime.HostUtils.ExceptionReport(ex);
-        return false;
       }
+
+      return false;
     }
 
     /// <summary>
@@ -2105,23 +2157,32 @@ namespace Rhino.PlugIns
         )
         return false;
 
-      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-      if (null == zooAss)
-        return false;
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
 
-      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-      if (t == null)
-        return false;
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
 
-      System.Reflection.MethodInfo mi = t.GetMethod("ReturnLicense");
-      if (mi == null)
-        return false;
+        System.Reflection.MethodInfo mi = t.GetMethod("ReturnLicense");
+        if (mi == null)
+          return false;
 
-      object invoke_rc = mi.Invoke(null, new object[] { productId });
-      if (null == invoke_rc)
-        return false;
+        object invoke_rc = mi.Invoke(null, new object[] { productId });
+        if (null == invoke_rc)
+          return false;
 
-      return (bool)invoke_rc;
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return false;
     }
 
     /// <summary>
@@ -2133,43 +2194,52 @@ namespace Rhino.PlugIns
       if (null == validateDelegate)
         return false;
 
-      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-      if (null == zooAss)
-        return false;
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
 
-      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-      if (t == null)
-        return false;
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
 
-      System.Reflection.MethodInfo mi = t.GetMethod("ReturnLicense");
-      if (mi == null)
-        return false;
+        System.Reflection.MethodInfo mi = t.GetMethod("ReturnLicense");
+        if (mi == null)
+          return false;
 
-      // If this delegate is defined in a C++ plug-in, find the plug-in's descriptive
-      // information from the Rhino_DotNet wrapper class which is the delegate's target.
+        // If this delegate is defined in a C++ plug-in, find the plug-in's descriptive
+        // information from the Rhino_DotNet wrapper class which is the delegate's target.
 
-      System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
-      System.Reflection.Assembly rhDotNet = HostUtils.GetRhinoDotNetAssembly();
-      if (delegate_method.Module.Assembly != rhDotNet)
-        return false;
+        System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
+        System.Reflection.Assembly rhDotNet = HostUtils.GetRhinoDotNetAssembly();
+        if (delegate_method.Module.Assembly != rhDotNet)
+          return false;
 
-      object wrapper_class = validateDelegate.Target;
-      if (null == wrapper_class)
-        return false;
+        object wrapper_class = validateDelegate.Target;
+        if (null == wrapper_class)
+          return false;
 
-      Type wrapper_type = wrapper_class.GetType();
-      System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
-      System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
-      System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
-      string productPath = get_path_method.Invoke(wrapper_class, null) as string;
-      string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
-      Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
+        Type wrapper_type = wrapper_class.GetType();
+        System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
+        System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
+        System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
+        string productPath = get_path_method.Invoke(wrapper_class, null) as string;
+        string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
+        Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
 
-      object invoke_rc = mi.Invoke(null, new object[] { productId });
-      if (null == invoke_rc)
-        return false;
+        object invoke_rc = mi.Invoke(null, new object[] { productId });
+        if (null == invoke_rc)
+          return false;
 
-      return (bool)invoke_rc;
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return false;
     }
 
     /// <summary>
@@ -2177,23 +2247,32 @@ namespace Rhino.PlugIns
     /// </summary>
     public static bool ReturnLicense(Guid productId)
     {
-      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-      if (null == zooAss)
-        return false;
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
 
-      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-      if (t == null)
-        return false;
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
 
-      System.Reflection.MethodInfo mi = t.GetMethod("ReturnLicense");
-      if (mi == null)
-        return false;
+        System.Reflection.MethodInfo mi = t.GetMethod("ReturnLicense");
+        if (mi == null)
+          return false;
 
-      object invoke_rc = mi.Invoke(null, new object[] { productId });
-      if (null == invoke_rc)
-        return false;
+        object invoke_rc = mi.Invoke(null, new object[] { productId });
+        if (null == invoke_rc)
+          return false;
 
-      return (bool)invoke_rc;
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return false;
     }
 
     /// <summary>
@@ -2209,23 +2288,32 @@ namespace Rhino.PlugIns
     /// </returns>
     public static bool CheckOutLicense(Guid productId)
     {
-      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-      if (null == zooAss)
-        return false;
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
 
-      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-      if (t == null)
-        return false;
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
 
-      System.Reflection.MethodInfo mi = t.GetMethod("CheckOutLicense");
-      if (mi == null)
-        return false;
+        System.Reflection.MethodInfo mi = t.GetMethod("CheckOutLicense");
+        if (mi == null)
+          return false;
 
-      object invoke_rc = mi.Invoke(null, new object[] { productId });
-      if (null == invoke_rc)
-        return false;
+        object invoke_rc = mi.Invoke(null, new object[] { productId });
+        if (null == invoke_rc)
+          return false;
 
-      return (bool)invoke_rc;
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return false;
     }
 
     /// <summary>
@@ -2241,23 +2329,32 @@ namespace Rhino.PlugIns
     /// </returns>
     public static bool CheckInLicense(Guid productId)
     {
-      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-      if (null == zooAss)
-        return false;
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
 
-      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-      if (t == null)
-        return false;
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
 
-      System.Reflection.MethodInfo mi = t.GetMethod("CheckInLicense");
-      if (mi == null)
-        return false;
+        System.Reflection.MethodInfo mi = t.GetMethod("CheckInLicense");
+        if (mi == null)
+          return false;
 
-      object invoke_rc = mi.Invoke(null, new object[] { productId });
-      if (null == invoke_rc)
-        return false;
+        object invoke_rc = mi.Invoke(null, new object[] { productId });
+        if (null == invoke_rc)
+          return false;
 
-      return (bool)invoke_rc;
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return false;
     }
 
     /// <summary>
@@ -2273,23 +2370,65 @@ namespace Rhino.PlugIns
     /// </returns>
     public static bool ConvertLicense(Guid productId)
     {
-      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-      if (null == zooAss)
-        return false;
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
 
-      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-      if (t == null)
-        return false;
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
 
-      System.Reflection.MethodInfo mi = t.GetMethod("ConvertLicense");
-      if (mi == null)
-        return false;
+        System.Reflection.MethodInfo mi = t.GetMethod("ConvertLicense");
+        if (mi == null)
+          return false;
 
-      object invoke_rc = mi.Invoke(null, new object[] { productId });
-      if (null == invoke_rc)
-        return false;
+        object invoke_rc = mi.Invoke(null, new object[] { productId });
+        if (null == invoke_rc)
+          return false;
 
-      return (bool)invoke_rc;
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return false;
+    }
+
+    /// <summary>
+    /// Returns the type of a specified product license
+    /// </summary>
+    public static int GetLicenseType(Guid productId)
+    {
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return -1;
+
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return -1;
+
+        System.Reflection.MethodInfo mi = t.GetMethod("GetLicenseType");
+        if (mi == null)
+          return -1;
+
+        object invoke_rc = mi.Invoke(null, new object[] { productId });
+        if (null == invoke_rc)
+          return -1;
+
+        return (int)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return -1;
     }
 
     /// <summary>
@@ -2297,23 +2436,32 @@ namespace Rhino.PlugIns
     /// </summary>
     public static bool IsCheckOutEnabled()
     {
-      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-      if (null == zooAss)
-        return false;
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
 
-      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-      if (t == null)
-        return false;
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
 
-      System.Reflection.MethodInfo mi = t.GetMethod("IsCheckOutEnabled");
-      if (mi == null)
-        return false;
+        System.Reflection.MethodInfo mi = t.GetMethod("IsCheckOutEnabled");
+        if (mi == null)
+          return false;
 
-      object invoke_rc = mi.Invoke(null, null);
-      if (null == invoke_rc)
-        return false;
+        object invoke_rc = mi.Invoke(null, null);
+        if (null == invoke_rc)
+          return false;
 
-      return (bool)invoke_rc;
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return false;
     }
 
     /// <summary>
@@ -2321,23 +2469,32 @@ namespace Rhino.PlugIns
     /// </summary>
     public static LicenseStatus[] GetLicenseStatus()
     {
-      System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-      if (null == zooAss)
-        return null;
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return null;
 
-      System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-      if (t == null)
-        return null;
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return null;
 
-      System.Reflection.MethodInfo mi = t.GetMethod("GetLicenseStatus");
-      if (mi == null)
-        return null;
+        System.Reflection.MethodInfo mi = t.GetMethod("GetLicenseStatus");
+        if (mi == null)
+          return null;
 
-      LicenseStatus[] invoke_rc = mi.Invoke(null, null) as LicenseStatus[];
-      if (null == invoke_rc)
-        return null;
+        LicenseStatus[] invoke_rc = mi.Invoke(null, null) as LicenseStatus[];
+        if (null == invoke_rc)
+          return null;
 
-      return invoke_rc;
+        return invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return null;
     }
   }
 

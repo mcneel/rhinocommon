@@ -10774,6 +10774,16 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Mesh_SplitMeshEdge(IntPtr pMesh, int edge_index, Point3d point);
+
+  //bool TLC_MeshPolyline( int closed_point_count, /*ARRAY*/const ON_3dPoint* points, ON_Mesh* pMesh )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool TLC_MeshPolyline(int closed_point_count, Point3d[] points, IntPtr pMesh);
+
+  //bool TLC_Triangulate3dPolygon( int closed_point_count, /*ARRAY*/const ON_3dPoint* points, int triangle_count, /*ARRAY*/int* triangles )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool TLC_Triangulate3dPolygon(int closed_point_count, Point3d[] points, int triangle_count, [In,Out] int[] triangles);
   #endregion
 
 

@@ -522,6 +522,24 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Attempts to create a Mesh that is a triangulation of a closed polyline
+    /// </summary>
+    /// <param name="polyline">must be closed</param>
+    /// <returns>
+    /// New mesh on success or null on failure.
+    /// </returns>
+    public static Mesh CreateFromClosedPolyline(Polyline polyline)
+    {
+      if (!polyline.IsClosed)
+        return null;
+      Mesh rc = new Mesh();
+      IntPtr pMesh = rc.NonConstPointer();
+      if (UnsafeNativeMethods.TLC_MeshPolyline(polyline.Count, polyline.ToArray(), pMesh))
+        return rc;
+      return null;
+    }
+
+    /// <summary>
     /// Constructs a mesh from a brep.
     /// </summary>
     /// <param name="brep">Brep to approximate.</param>

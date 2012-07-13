@@ -553,14 +553,18 @@ namespace Rhino.PlugIns
       return CreateCommandsHelper(this, this.NonConstPointer(), command.GetType(), command);
     }
 
+    internal static PlugIn m_active_plugin_at_command_creation = null;
     internal static bool CreateCommandsHelper(PlugIn plugin, IntPtr pPlugIn, Type command_type, Commands.Command new_command)
     {
       bool rc = false;
       try
       {
+        // added in case the command tries to access it's plug-in in the constructor
+        m_active_plugin_at_command_creation = plugin;
         if( new_command==null )
           new_command = (Commands.Command)System.Activator.CreateInstance(command_type);
-        new_command.m_plugin = plugin;
+        new_command.PlugIn = plugin;
+        m_active_plugin_at_command_creation = null;
 
         if (null != plugin)
           plugin.m_commands.Add(new_command);

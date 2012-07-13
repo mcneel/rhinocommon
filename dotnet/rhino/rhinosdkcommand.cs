@@ -196,7 +196,7 @@ namespace Rhino.Commands
 
     internal int m_runtime_serial_number;
     internal Style m_style_flags;
-    internal Rhino.PlugIns.PlugIn m_plugin;
+    Rhino.PlugIns.PlugIn m_plugin;
 
     internal static Command LookUpBySerialNumber(int sn)
     {
@@ -237,7 +237,13 @@ namespace Rhino.Commands
     {
       get
       {
+        if (null == m_plugin)
+          return Rhino.PlugIns.PlugIn.m_active_plugin_at_command_creation;
         return m_plugin;
+      }
+      internal set
+      {
+        m_plugin = value;
       }
     }
 
@@ -274,7 +280,7 @@ namespace Rhino.Commands
     /// </summary>
     public PersistentSettings Settings
     {
-      get { return m_plugin.CommandSettings( EnglishName ); }
+      get { return PlugIn.CommandSettings( EnglishName ); }
     }
 
 #endregion
@@ -318,7 +324,7 @@ namespace Rhino.Commands
     /// Gets the URL of the command contextual help. This is usually a location of a local CHM file.
     /// <para>The default implementation return an empty string.</para>
     /// </summary>
-    protected string CommandContextHelpUrl{ get { return string.Empty; } }
+    protected virtual string CommandContextHelpUrl{ get { return string.Empty; } }
     static void OnDoHelp(int command_serial_number)
     {
       try

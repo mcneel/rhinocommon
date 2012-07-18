@@ -57,13 +57,20 @@ namespace Rhino.Runtime
       if (m_match_dictionary != null && m_match_dictionary.ContainsKey(args.Name))
         return m_match_dictionary[args.Name];
 
+      bool probably_python = false;
       index = searchname.IndexOf(',');
       if (index > 0)
       {
         searchname = searchname.Substring(0, index);
       }
+      else
+      {
+        // Python scripts typically just look for very short names, like "MyFunctions.dll"
+        if (searchname.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+          searchname = searchname.Substring(0, searchname.Length - ".dll".Length);
+        probably_python = true;
+      }
 
-      //HostUtils.DebugString("CurrentDomain_AssemblyResolve called for " + args.Name + "\n");
       // See if the assembly is already loaded.
       Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
       for (int i = 0; i < assemblies.Length; i++)
@@ -96,6 +103,15 @@ namespace Rhino.Runtime
         }
       }
 #endif
+      if (probably_python)
+      {
+        string current_dir = System.IO.Directory.GetCurrentDirectory();
+        if (!string.IsNullOrEmpty(current_dir))
+        {
+          string[] files = Directory.GetFiles(current_dir, @"*.dll", SearchOption.TopDirectoryOnly); //Why TopDirectoryOnly?
+          if (files != null) { potential_files.AddRange(files); }
+        }
+      }
 
       // Collect all potential files in the custom directories.
       if (m_custom_folders != null)
@@ -145,14 +161,13 @@ namespace Rhino.Runtime
 
       return asm;
     }
+
     private static Assembly TryLoadAssembly(string filename, string searchname, string asmname)
     {
       // Don't try to load an assembly that already failed to load in the past.
-      if (m_loadfailures != null)
-      {
-        if (m_loadfailures.ContainsKey(filename))
-          return null;
-      }
+      if (m_loadfailures != null && m_loadfailures.ContainsKey(filename))
+        return null;
+
 
       // David: restrict loading to known file-types. Steve, you'll need to handle rhp loading as I have no idea how.
       if (filename.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)) //TODO: implement .rhp loading
@@ -161,13 +176,12 @@ namespace Rhino.Runtime
         {
           // First load a Reflection Only flavour so we can trivially reject incompatible assemblies.
           Assembly ro_asm = Assembly.ReflectionOnlyLoadFrom(filename);
-          if ((ro_asm.FullName != asmname) &&
-             (!ro_asm.FullName.StartsWith(searchname)))
+
+          if (!ro_asm.FullName.StartsWith(searchname + ",", StringComparison.OrdinalIgnoreCase))
             return null;
 
           // Load for real.
           Assembly asm = Assembly.LoadFile(filename);
-          if (asm == null) { return null; }
 
           // Check dependencies
           bool returnAssembly = true;

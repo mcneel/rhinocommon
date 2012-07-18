@@ -239,11 +239,13 @@ namespace Rhino.UI
   {
     readonly int m_language_id;
     readonly Dictionary<string, LocalizationStringTable> m_string_tables;
+    readonly object m_sync_object;
 
     public AssemblyTranslations(int language_id)
     {
       m_language_id = language_id;
       m_string_tables = new Dictionary<string, LocalizationStringTable>();
+      m_sync_object = new object();
     }
 
     public int LanguageID
@@ -254,21 +256,39 @@ namespace Rhino.UI
     public LocalizationStringTable GetStringTable(Assembly a)
     {
       string key = a.Location;
+      if (string.IsNullOrEmpty(key))
+        return null;
+
       LocalizationStringTable st;
       if (m_string_tables.TryGetValue(key, out st))
         return st;
-      // If we get here, the key does not exist in the dictionary.
-      // Add a new string table
-      st = new LocalizationStringTable();
-      if (!st.LoadFromFile(a, m_language_id))
+
+      // 18 July 2012 S. Baer
+      // In the case that two threads are attempting to create the string
+      // table at the same time, use a syncronization lock to only allow
+      // one thread in the following block at any time
+      lock (m_sync_object)
       {
-        // If string table fails to load then set it to null so that
-        // the next call which looks for this string table will return
-        // the null string table instead of searching the disk or assemblies
-        // embedded resources for the file
-        st = null;
+        // perform the "TryGet" again in case a second thread was
+        // blocked while the string table was being build
+        if (m_string_tables.TryGetValue(key, out st))
+          return st;
+
+        // If we get here, the key does not exist in the dictionary.
+        // Add a new string table
+        st = new LocalizationStringTable();
+        if (!st.LoadFromFile(a, m_language_id))
+        {
+          // If string table fails to load then set it to null so that
+          // the next call which looks for this string table will return
+          // the null string table instead of searching the disk or assemblies
+          // embedded resources for the file
+          st = null;
+        }
+
+        m_string_tables[key] = st;
       }
-      m_string_tables.Add(key, st);
+
       return st;
     }
   }

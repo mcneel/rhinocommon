@@ -109,11 +109,36 @@ RH_C_FUNCTION ON_Brep* ON_Brep_New(const ON_Brep* pOther)
   return ON_Brep::New();
 }
 
+class CRhHackBrep : public CRhinoBrepObject
+{
+public:
+  void ClearBrep(){m_geometry=0;}
+};
+
 RH_C_FUNCTION bool ON_Brep_IsDuplicate(const ON_Brep* pConstBrep1, const ON_Brep* pConstBrep2, double tolerance)
 {
   bool rc = false;
   if( pConstBrep1 && pConstBrep2 )
-    rc = pConstBrep1->IsDuplicate(*pConstBrep2, tolerance);
+  {
+#if !defined(OPENNURBS_BUILD)
+    if( pConstBrep1==pConstBrep2 )
+      return true;
+    // Really lame that the Rhino SDK requires CRhinoObjects for
+    // comparison, but it works for now.  Create temporary CRhinoBrep
+    // objects that hold the ON_Breps and call RhinoCompareGeometry
+    CRhHackBrep brepa;
+    CRhHackBrep brepb;
+    ON_Brep* pBrepA = const_cast<ON_Brep*>(pConstBrep1);
+    ON_Brep* pBrepB = const_cast<ON_Brep*>(pConstBrep2);
+
+    brepa.SetBrep(pBrepA);
+    brepb.SetBrep(pBrepB);
+    rc = ::RhinoCompareGeometry(&brepa, &brepb);
+    brepa.ClearBrep();
+    brepb.ClearBrep();
+    //rc = pConstBrep1->IsDuplicate(*pConstBrep2, tolerance);
+#endif
+  }
   return rc;
 }
 
@@ -1178,6 +1203,10 @@ RH_C_FUNCTION ON_Brep* ON_Brep_FromSphere( const ON_Sphere* pConstSphere )
 {
   ON_Brep* rc = NULL;
   if( pConstSphere )
+  {
+    ON_Sphere* pSphere = const_cast<ON_Sphere*>(pConstSphere);
+    pSphere->plane.UpdateEquation();
     rc = ON_BrepSphere(*pConstSphere);
+  }
   return rc;
 }

@@ -6593,6 +6593,11 @@ internal partial class UnsafeNativeMethods
 
   //unsigned int CRhinoDoc_AddCustomUndoEvent(int doc_id, const RHMONO_STRING* description, CUSTOMUNDOEVENTPROC undo_proc, CUSTOMUNDODELETEPROC undo_delete_proc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //bool CRhinoDoc_CloseRhinoView( int doc_id, CRhinoView* pRhinoView )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoDoc_CloseRhinoView(int doc_id, IntPtr pRhinoView);
   #endregion
 
 

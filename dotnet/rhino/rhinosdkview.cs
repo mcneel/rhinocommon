@@ -13,11 +13,11 @@ namespace Rhino.Display
   /// </summary>
   public class RhinoView
   {
-    private readonly Guid m_mainviewport_id; // id of mainviewport for this view. The view m_ptr is nulled
+    private Guid m_mainviewport_id; // id of mainviewport for this view. The view m_ptr is nulled
                                     // out at the end of a command. This is is used to reassocaite
                                     // the view pointer is if a plug-in developer attempts to hold
                                     // on to a view longer than a command
-    private readonly IntPtr m_ptr; // CRhinoView*
+    private IntPtr m_ptr; // CRhinoView*
 
     private static readonly List<RhinoView> m_view_list = new List<RhinoView>();
 
@@ -502,7 +502,6 @@ namespace Rhino.Display
     //  int GetVisibleObjects( CRect  pick_rect, ON_SimpleArray<const CRhinoObject*>& visible_objects );
     //  enum rhino_view_type
     //  int RhinoViewType() const;
-    //  class CRhViewSdkExtension* m__view_sdk_extension;
     //  virtual const CRuntimeClass* GetDefaultDisplayPipelineClass() const;
     //  CRhinoDisplayPipeline*        CreateDisplayPipeline(const CRuntimeClass*,  bool  bAttach = true);
     //  bool                          SetupDisplayPipeline(void);
@@ -512,40 +511,10 @@ namespace Rhino.Display
     //  const CRhinoDisplayPipeline*  DisplayPipeline(void) const;
     //  CDisplayPipelineAttributes*         DisplayAttributes(void);
     //  const CDisplayPipelineAttributes*   DisplayAttributes(void) const;
-    //  struct tagDRAW_CALLBACK
-    //  virtual bool RecreateHWND();
-
-    /// <summary>
-    /// Used by Rhino main frame and doc/view manager to determine if this view is
-    /// in a floating frame or a child of the MDIClient window associated with the
-    /// Rhino main frame window.
-    /// 
-    /// Returns true If this view is in a free floating frame window.
-    /// </summary>
-    [Obsolete("Use Floating property - this will be removed in a future WIP")]
-    public bool IsFloatingRhinoView
-    {
-      get{ return GetBool(idxIsFloatingRhinoView); }
-    }
-
-    //[skipping]
     //  void SetFloatingRhinoViewPlacement( const WINDOWPLACEMENT& wp);
     //  WINDOWPLACEMENT* FloatingRhinoViewPlacement() const;
-
-    /// <summary>
-    /// Change floating state of RhinoView 
-    /// </summary>
-    /// <param name="floating">
-    /// if true, then the view will be in a floating frame window. Otherwise
-    /// the view will be embeded in the main frame.
-    /// </param>
-    /// <returns>true on success.</returns>
-    [Obsolete("Use Floating property - this will be removed in a future WIP")]
-    public bool FloatRhinoView(bool floating)
-    {
-      IntPtr ptr = NonConstPointer();
-      return UnsafeNativeMethods.CRhinoView_FloatRhinoView(ptr, floating);
-    }
+    // 
+    //  void EnableCameraIcon( CRhinoView* view );  <-IN CRhinoDoc, but should probably be in CRhinoView
 
     /// <summary>
     /// Floating state of RhinoView.
@@ -565,9 +534,24 @@ namespace Rhino.Display
       }
     }
 
-    // THESE ARE IN CRhinoDoc, but should probably be in CRhinoView
-    //  void EnableCameraIcon( CRhinoView* view );
-    //  bool CloseRhinoView( CRhinoView* pView);
+    /// <summary>
+    /// Remove this View from Rhino. DO NOT attempt to use this instance of this
+    /// class after calling Close.
+    /// </summary>
+    /// <returns>true on success</returns>
+    public bool Close()
+    {
+      IntPtr pView = NonConstPointer();
+      int doc_id = this.Document.DocumentId;
+      bool rc = UnsafeNativeMethods.CRhinoDoc_CloseRhinoView(doc_id, pView);
+      if (rc)
+      {
+        m_ptr = IntPtr.Zero;
+        m_mainviewport_id = Guid.Empty;
+        m_view_list.Remove(this);
+      }
+      return rc;
+    }
 
     #region events
     internal delegate void ViewCallback(IntPtr pView);

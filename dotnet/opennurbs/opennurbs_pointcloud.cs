@@ -291,13 +291,6 @@ namespace Rhino.Geometry
     /// Gets a value indicating whether or not the points in this 
     /// pointcloud have colors assigned to them.
     /// </summary>
-    [Obsolete("Spelling mistake, use ContainsColors - will be removed in a future beta")]
-    public bool ConstainsColors { get { return ContainsColors; } }
-
-    /// <summary>
-    /// Gets a value indicating whether or not the points in this 
-    /// pointcloud have colors assigned to them.
-    /// </summary>
     public bool ContainsColors
     {
       get

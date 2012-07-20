@@ -514,7 +514,7 @@ namespace Rhino.Render.CustomRenderMesh
         foreach (Type t in provider_types)
         {
           Provider p = System.Activator.CreateInstance(t) as Provider;
-
+          if (p == null) continue;
           IntPtr pCppObject = p.CreateCppObject(pluginId);
           if (pCppObject != IntPtr.Zero)
           {

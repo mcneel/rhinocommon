@@ -1187,18 +1187,12 @@ namespace Rhino.Geometry
     public Mesh[] SplitDisjointPieces()
     {
       IntPtr pConstThis = ConstPointer();
-      IntPtr pMeshArray = UnsafeNativeMethods.ON_MeshArray_New();
-      int count = UnsafeNativeMethods.RHC_RhinoSplitDisjointMesh(pConstThis, pMeshArray);
-      Mesh[] rc = null;
-      if (count > 0)
-        rc = new Mesh[count];
-      for (int i = 0; i < count; i++)
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer())
       {
-        IntPtr pMesh = UnsafeNativeMethods.ON_MeshArray_Get(pMeshArray, i);
-        rc[i] = new Mesh(pMesh, null);
+        IntPtr pMeshArray = meshes.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoSplitDisjointMesh(pConstThis, pMeshArray);
+        return meshes.ToNonConstArray();
       }
-      UnsafeNativeMethods.ON_MeshArray_Delete(pMeshArray);
-      return rc;
     }
 
     /// <summary>
@@ -1209,18 +1203,12 @@ namespace Rhino.Geometry
     public Mesh[] Split(Plane plane)
     {
       IntPtr pConstThis = ConstPointer();
-      IntPtr pMeshArray = UnsafeNativeMethods.ON_MeshArray_New();
-      int count = UnsafeNativeMethods.RHC_RhinoMeshBooleanSplit(pConstThis, pMeshArray, ref plane);
-      Mesh[] rc = null;
-      if (count > 0)
-        rc = new Mesh[count];
-      for (int i = 0; i < count; i++)
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer())
       {
-        IntPtr pMesh = UnsafeNativeMethods.ON_MeshArray_Get(pMeshArray, i);
-        rc[i] = new Mesh(pMesh, null);
+        IntPtr pMeshArray = meshes.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoMeshBooleanSplit(pConstThis, pMeshArray, ref plane);
+        return meshes.ToNonConstArray();
       }
-      UnsafeNativeMethods.ON_MeshArray_Delete(pMeshArray);
-      return rc;
     }
     /// <summary>
     /// Split a mesh with another mesh.
@@ -1235,19 +1223,12 @@ namespace Rhino.Geometry
       Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer pSplitters = new Runtime.InteropWrappers.SimpleArrayMeshPointer();
       pSplitters.Add(mesh, true);
 
-      IntPtr pResult = UnsafeNativeMethods.ON_MeshArray_New();
-
-      int count = UnsafeNativeMethods.RHC_RhinoMeshBooleanSplit2(pMeshes.ConstPointer(), pSplitters.ConstPointer(), pResult);
-      Mesh[] rc = null;
-      if (count > 0)
-        rc = new Mesh[count];
-      for (int i = 0; i < count; i++)
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer())
       {
-        IntPtr pMesh = UnsafeNativeMethods.ON_MeshArray_Get(pResult, i);
-        rc[i] = new Mesh(pMesh, null);
+        IntPtr pResult = meshes.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoMeshBooleanSplit2(pMeshes.ConstPointer(), pSplitters.ConstPointer(), pResult);
+        return meshes.ToNonConstArray();
       }
-      UnsafeNativeMethods.ON_MeshArray_Delete(pResult);
-      return rc;
     }
     /// <summary>
     /// Split a mesh with a collection of meshes.
@@ -1268,19 +1249,13 @@ namespace Rhino.Geometry
         }
       }
 
-      IntPtr pResult = UnsafeNativeMethods.ON_MeshArray_New();
-
-      int count = UnsafeNativeMethods.RHC_RhinoMeshBooleanSplit2(pMeshes.ConstPointer(), pSplitters.ConstPointer(), pResult);
-      Mesh[] rc = null;
-      if (count > 0)
-        rc = new Mesh[count];
-      for (int i = 0; i < count; i++)
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer on_meshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer())
       {
-        IntPtr pMesh = UnsafeNativeMethods.ON_MeshArray_Get(pResult, i);
-        rc[i] = new Mesh(pMesh, null);
+        IntPtr pResult = on_meshes.NonConstPointer();
+        int count = UnsafeNativeMethods.RHC_RhinoMeshBooleanSplit2(pMeshes.ConstPointer(), pSplitters.ConstPointer(),
+                                                                   pResult);
+        return on_meshes.ToNonConstArray();
       }
-      UnsafeNativeMethods.ON_MeshArray_Delete(pResult);
-      return rc;
     }
 
 #if RHINO_SDK
@@ -1390,18 +1365,12 @@ namespace Rhino.Geometry
     public Mesh[] ExplodeAtUnweldedEdges()
     {
       IntPtr pConstThis = ConstPointer();
-      IntPtr pMeshArray = UnsafeNativeMethods.ON_MeshArray_New();
-      int count = UnsafeNativeMethods.RHC_RhinoExplodeMesh(pConstThis, pMeshArray);
-      Mesh[] rc = null;
-      if (count > 0)
-        rc = new Mesh[count];
-      for (int i = 0; i < count; i++)
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer())
       {
-        IntPtr pMesh = UnsafeNativeMethods.ON_MeshArray_Get(pMeshArray, i);
-        rc[i] = new Mesh(pMesh, null);
+        IntPtr pMeshArray = meshes.NonConstPointer();
+        int count = UnsafeNativeMethods.RHC_RhinoExplodeMesh(pConstThis, pMeshArray);
+        return meshes.ToNonConstArray();
       }
-      UnsafeNativeMethods.ON_MeshArray_Delete(pMeshArray);
-      return rc;
     }
 #endif
 

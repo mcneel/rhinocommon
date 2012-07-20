@@ -802,7 +802,7 @@ namespace Rhino.PlugIns
       string path = null;
       if (HostUtils.RunningOnWindows)
       {
-        string name = string.Empty;
+        string name;
         if (null == assembly)
           name = PlugInNameFromId(pluginId);
         else
@@ -835,13 +835,10 @@ namespace Rhino.PlugIns
           // TODO: Add support for settings classes in plug-in SDK dll's
           throw new NotImplementedException("Tell steve@mcneel.com about this");
         }
-        else
-        {
-          // put the settings directory next to the rhp
-          path = System.IO.Path.GetDirectoryName(assembly.Location);
-        }
+        // put the settings directory next to the rhp
+        path = System.IO.Path.GetDirectoryName(assembly.Location);
       }
-      if (path != null)
+      if (!string.IsNullOrEmpty(path))
         result = System.IO.Path.Combine(path, "settings");
       return result;
     }
@@ -1273,8 +1270,8 @@ namespace Rhino.PlugIns
     #region render and render window virtual function implementation
     internal delegate int RenderFunc(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr context);
     internal delegate int RenderWindowFunc(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow, IntPtr context);
-    private static RenderFunc m_OnRender = InternalOnRender;
-    private static RenderWindowFunc m_OnRenderWindow = InternalOnRenderWindow;
+    private static readonly RenderFunc m_OnRender = InternalOnRender;
+    private static readonly RenderWindowFunc m_OnRenderWindow = InternalOnRenderWindow;
     private static int InternalOnRender(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr context)
     {
       m_render_command_context = context;
@@ -1474,7 +1471,7 @@ namespace Rhino.PlugIns
 
     #region other virtual function implementation
     internal delegate int SupportsFeatureCallback(int serial_number, RenderFeature f);
-    private static SupportsFeatureCallback m_OnSupportsFeature = OnSupportsFeature;
+    private static readonly SupportsFeatureCallback m_OnSupportsFeature = OnSupportsFeature;
     private static int OnSupportsFeature(int serial_number, RenderFeature f)
     {
       RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
@@ -1499,7 +1496,7 @@ namespace Rhino.PlugIns
     }
 
     internal delegate void AbortRenderCallback(int serial_number);
-    private static AbortRenderCallback m_OnAbortRender = OnAbortRender;
+    private static readonly AbortRenderCallback m_OnAbortRender = OnAbortRender;
     private static void OnAbortRender(int plugin_serial_number)
     {
       RenderPlugIn p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugIn;
@@ -1525,7 +1522,7 @@ namespace Rhino.PlugIns
     }
 
     internal delegate int AllowChooseContentCallback(int serial_number, IntPtr pConstContent);
-    private static AllowChooseContentCallback m_OnAllowChooseContent = OnAllowChooseContent;
+    private static readonly AllowChooseContentCallback m_OnAllowChooseContent = OnAllowChooseContent;
     private static int OnAllowChooseContent(int serial_number, IntPtr pConstContent)
     {
       RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
@@ -1551,7 +1548,7 @@ namespace Rhino.PlugIns
     }
 
     internal delegate void CreateDefaultContentCallback(int serial_number, int docId);
-    private static CreateDefaultContentCallback m_OnCreateDefaultContent = OnCreateDefaultContent;
+    private static readonly CreateDefaultContentCallback m_OnCreateDefaultContent = OnCreateDefaultContent;
     private static void OnCreateDefaultContent(int serial_number, int docId)
     {
       RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
@@ -1577,7 +1574,7 @@ namespace Rhino.PlugIns
     }
 
     internal delegate void OutputTypesCallback(int serial_number, IntPtr pON_wStringExt, IntPtr pON_wStringDesc);
-    private static OutputTypesCallback m_OnOutputTypes = OnOutputTypes;
+    private static readonly OutputTypesCallback m_OnOutputTypes = OnOutputTypes;
     private static void OnOutputTypes(int plugin_serial_number, IntPtr pON_wStringExt, IntPtr pON_wStringDesc)
     {
       RenderPlugIn p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugIn;
@@ -1618,7 +1615,7 @@ namespace Rhino.PlugIns
     }
 
     internal delegate IntPtr CreateTexturePreviewCallback(int serial_number, int x, int y, IntPtr pTexture);
-    private static CreateTexturePreviewCallback m_OnCreateTexturePreview = OnCreateTexturePreview;
+    private static readonly CreateTexturePreviewCallback m_OnCreateTexturePreview = OnCreateTexturePreview;
     private static IntPtr OnCreateTexturePreview(int serial_number, int x, int y, IntPtr pTexture)
     {
       RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
@@ -1651,7 +1648,7 @@ namespace Rhino.PlugIns
     List<CreatePreviewEventArgs> ActivePreviewArgs { get { return m_active_preview_args ?? (m_active_preview_args = new List<CreatePreviewEventArgs>()); } }
 
     internal delegate IntPtr CreatePreviewCallback(int serial_number, int x, int y, int iQuality, IntPtr pScene);
-    private static CreatePreviewCallback m_OnCreatePreview = OnCreatePreview;
+    private static readonly CreatePreviewCallback m_OnCreatePreview = OnCreatePreview;
     private static IntPtr OnCreatePreview(int plugin_serial_number, int x, int y, int iQuality, IntPtr pPreviewScene)
     {
       RenderPlugIn p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugIn;
@@ -1686,12 +1683,12 @@ namespace Rhino.PlugIns
     }
 
     internal delegate int DecalCallback(int serial_number, IntPtr pXmlSection, int bInitialize);
-    private static DecalCallback m_OnDecalProperties = OnDecalProperties;
+    private static readonly DecalCallback m_OnDecalProperties = OnDecalProperties;
     private static int OnDecalProperties(int serial_number, IntPtr pXmlSection, int bInitialize)
     {
       RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
       
-      if (null == p && pXmlSection!=IntPtr.Zero)
+      if (null == p || pXmlSection!=IntPtr.Zero)
       {
         HostUtils.DebugString("ERROR: Invalid input for OnDecalProperties");
       }
@@ -1717,9 +1714,7 @@ namespace Rhino.PlugIns
         }
         catch (Exception ex)
         {
-          string error_msg = "Error occured during plug-in OnDecalProperties\n Details:\n";
-          error_msg += ex.Message;
-          HostUtils.DebugString("Error " + error_msg);
+          HostUtils.ExceptionReport("OnDecalProperties", ex);
         }
       }
 

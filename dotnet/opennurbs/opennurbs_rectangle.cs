@@ -415,13 +415,11 @@ namespace Rhino.Geometry
         if (dy0 < dy1) { return m_plane.PointAt(x, m_y.Min); } //Project to bottom edge
         return m_plane.PointAt(x, m_y.Max); //Project to top edge
       }
-      else
-      {
-        if (dy0 < dx0 && dy0 < dx1) { return m_plane.PointAt(x, m_y.Min); } //Project to bottom edge
-        if (dy1 < dx0 && dy1 < dx1) { return m_plane.PointAt(x, m_y.Max); } //Project to top edge
-        if (dx0 < dx1) { return m_plane.PointAt(m_x.Min, y); } //Project to left edge
-        return m_plane.PointAt(m_x.Max, y); //Project to right edge
-      }
+
+      if (dy0 < dx0 && dy0 < dx1) { return m_plane.PointAt(x, m_y.Min); } //Project to bottom edge
+      if (dy1 < dx0 && dy1 < dx1) { return m_plane.PointAt(x, m_y.Max); } //Project to top edge
+      if (dx0 < dx1) { return m_plane.PointAt(m_x.Min, y); } //Project to left edge
+      return m_plane.PointAt(m_x.Max, y); //Project to right edge
     }
 
     /// <summary>

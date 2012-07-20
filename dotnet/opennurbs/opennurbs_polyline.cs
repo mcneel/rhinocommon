@@ -679,16 +679,12 @@ namespace Rhino.Geometry
         if (i == (count - 1))
         {
           segments.Add(segment);
-          segment = null;
           break;
         }
-        else
+        if (frac[i])
         {
-          if (frac[i])
-          {
-            segments.Add(segment);
-            segment = new Polyline {this[i]};
-          }
+          segments.Add(segment);
+          segment = new Polyline {this[i]};
         }
       }
 

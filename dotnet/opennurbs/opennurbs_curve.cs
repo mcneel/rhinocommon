@@ -966,10 +966,7 @@ namespace Rhino.Geometry
         {
           return rc.ToNonConstArray();
         }
-        else
-        {
-          return new Curve[0];
-        }
+        return new Curve[0];
       }
     }
 

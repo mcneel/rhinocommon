@@ -241,8 +241,8 @@ namespace Rhino.Runtime
         string filename_x = System.IO.Path.GetFileName(x);
         string filename_y = System.IO.Path.GetFileName(y);
 
-        int index_x = filename_x.IndexOf(m_search, StringComparison.OrdinalIgnoreCase);
-        int index_y = filename_y.IndexOf(m_search, StringComparison.OrdinalIgnoreCase);
+        int index_x = filename_x == null ? -1 : filename_x.IndexOf(m_search, StringComparison.OrdinalIgnoreCase);
+        int index_y = filename_y == null ? -1 : filename_y.IndexOf(m_search, StringComparison.OrdinalIgnoreCase);
 
         // 4 April 2012 - S. Baer
         // If the file names are the same, the highest version number or most

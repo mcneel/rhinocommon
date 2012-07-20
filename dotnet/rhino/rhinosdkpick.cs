@@ -343,7 +343,6 @@ namespace Rhino.Input.Custom
       hitTextureCoordinate = Rhino.Geometry.Point2d.Unset;
       depth = -1;
       distance = -1;
-      hitFlag = MeshHitFlag.Invalid;
       hitIndex = -1;
       IntPtr pConstThis = ConstPointer();
       IntPtr pConstMesh = mesh.ConstPointer();
@@ -379,7 +378,6 @@ namespace Rhino.Input.Custom
       hitPoint = Rhino.Geometry.Point3d.Unset;
       depth = -1;
       distance = -1;
-      hitFlag = MeshHitFlag.Invalid;
       hitIndex = -1;
       IntPtr pConstThis = ConstPointer();
       IntPtr pConstMesh = mesh.ConstPointer();

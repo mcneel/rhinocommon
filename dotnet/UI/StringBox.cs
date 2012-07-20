@@ -78,7 +78,6 @@ namespace Rhino.UI
               (RhinoMath.IsValidDouble(MaximumNumberValue) && d > MaximumNumberValue))
           {
             e.Cancel = true;
-            return;
           }
         }
       }

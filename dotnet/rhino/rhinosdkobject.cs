@@ -118,10 +118,13 @@ namespace Rhino.DocObjects
           SubclassCreateNativePointer = false;
           RhinoObject newobj = System.Activator.CreateInstance(t) as RhinoObject;
           SubclassCreateNativePointer = true;
-          newobj.m_rhinoobject_serial_number = newObjectSerialNumber;
-          newobj.m_pRhinoObject = newObjectPointer;
-          doc.Objects.AddCustomObject(newObjectSerialNumber, newobj);
-          newobj.OnDuplicate(rhobj);
+          if (newobj != null)
+          {
+            newobj.m_rhinoobject_serial_number = newObjectSerialNumber;
+            newobj.m_pRhinoObject = newObjectPointer;
+            doc.Objects.AddCustomObject(newObjectSerialNumber, newobj);
+            newobj.OnDuplicate(rhobj);
+          }
         }
       }
     }

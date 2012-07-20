@@ -351,7 +351,6 @@ namespace Rhino.Input
     /// </returns>
     public static Commands.Result GetBool(string prompt, bool acceptNothing, string offPrompt, string onPrompt, ref bool boolValue)
     {
-      Commands.Result result = Commands.Result.Failure;
       using (Rhino.Input.Custom.GetOption get = new Rhino.Input.Custom.GetOption())
       {
         get.SetCommandPrompt(prompt);
@@ -361,7 +360,7 @@ namespace Rhino.Input
         int onValue = get.AddOption(onPrompt);
         int offValue = get.AddOption(offPrompt);
         get.Get();
-        result = get.CommandResult();
+        Commands.Result result = get.CommandResult();
         if (result == Commands.Result.Success && get.Result() == GetResult.Option)
         {
           Rhino.Input.Custom.CommandLineOption option = get.Option();
@@ -373,8 +372,8 @@ namespace Rhino.Input
               boolValue = false;
           }
         }
+        return result;
       }
-      return result;
     }
 
 

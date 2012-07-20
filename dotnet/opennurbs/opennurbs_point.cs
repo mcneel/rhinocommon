@@ -2846,9 +2846,8 @@ namespace Rhino.Geometry
 
       Vector3d cross = Vector3d.CrossProduct(a, b);
       if (plane.ZAxis.IsParallelTo(cross) == +1)
-      { return angle; }
-      else
-      { return 2.0 * Math.PI - angle; }
+        return angle;
+      return 2.0 * Math.PI - angle;
     }
 
     /// <summary>

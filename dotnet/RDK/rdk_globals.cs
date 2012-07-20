@@ -158,7 +158,8 @@ namespace Rhino.Render
     public static RenderMaterial NewBasicMaterial(Rhino.DocObjects.Material material)
     {
       NativeRenderMaterial newMaterial = RenderContent.FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicMaterial(material == null ? IntPtr.Zero : material.ConstPointer())) as NativeRenderMaterial;
-      newMaterial.AutoDelete = true;
+      if( newMaterial!=null )
+        newMaterial.AutoDelete = true;
       return newMaterial;
     }
 
@@ -170,7 +171,8 @@ namespace Rhino.Render
     public static RenderEnvironment NewBasicEnvironment(SimulatedEnvironment environment)
     {
       NativeRenderEnvironment newEnvironment = RenderContent.FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicEnvironment(environment == null ? IntPtr.Zero : environment.ConstPointer())) as NativeRenderEnvironment;
-      newEnvironment.AutoDelete = true;
+      if( newEnvironment!=null )
+        newEnvironment.AutoDelete = true;
       return newEnvironment;
     }
 
@@ -182,7 +184,8 @@ namespace Rhino.Render
     public static RenderTexture NewBitmapTexture(SimulatedTexture texture)
     {
       NativeRenderTexture newTexture = RenderContent.FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicTexture(texture == null ? IntPtr.Zero : texture.ConstPointer())) as NativeRenderTexture;
-      newTexture.AutoDelete = true;
+      if( newTexture!=null )
+        newTexture.AutoDelete = true;
       return newTexture;
     }
 

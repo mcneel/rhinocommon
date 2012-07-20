@@ -159,7 +159,7 @@ namespace Rhino.Geometry
       return PerformSweep(rail, crossSections, rail_params);
     }
 
-    class ArgsSweep1 : IDisposable
+    sealed class ArgsSweep1 : IDisposable
     {
       IntPtr m_ptr; //CArgsRhinoSweep1*
       public static ArgsSweep1 Construct(Curve rail, IEnumerable<Curve> crossSections, IEnumerable<double> crossSectionParameters,
@@ -189,16 +189,16 @@ namespace Rhino.Geometry
 
       ~ArgsSweep1()
       {
-        Dispose(false);
+        DisposeHelper();
       }
 
       public void Dispose()
       {
-        Dispose(true);
+        DisposeHelper();
         GC.SuppressFinalize(this);
       }
 
-      protected virtual void Dispose(bool disposing)
+      void DisposeHelper()
       {
         if (IntPtr.Zero != m_ptr)
         {
@@ -500,7 +500,7 @@ namespace Rhino.Geometry
     }
     #endregion
 
-    class ArgsSweep2 : IDisposable
+    sealed class ArgsSweep2 : IDisposable
     {
       IntPtr m_ptr; //CArgsRhinoSweep2*
       public static ArgsSweep2 Construct(Curve rail1, Curve rail2, IEnumerable<Curve> crossSections,
@@ -535,16 +535,16 @@ namespace Rhino.Geometry
 
       ~ArgsSweep2()
       {
-        Dispose(false);
+        DisposeHelper();
       }
 
       public void Dispose()
       {
-        Dispose(true);
+        DisposeHelper();
         GC.SuppressFinalize(this);
       }
 
-      protected virtual void Dispose(bool disposing)
+      void DisposeHelper()
       {
         if (IntPtr.Zero != m_ptr)
         {

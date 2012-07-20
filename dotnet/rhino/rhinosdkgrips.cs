@@ -203,8 +203,8 @@ namespace Rhino.DocObjects.Custom
   {
     #region statics
     static int m_serial_number_counter = 1;
-    static List<CustomObjectGrips> m_all_custom_grips = new List<CustomObjectGrips>();
-    static Dictionary<Guid, TurnOnGripsEventHandler> m_registered_enablers = new Dictionary<Guid, TurnOnGripsEventHandler>();
+    static readonly List<CustomObjectGrips> m_all_custom_grips = new List<CustomObjectGrips>();
+    static readonly Dictionary<Guid, TurnOnGripsEventHandler> m_registered_enablers = new Dictionary<Guid, TurnOnGripsEventHandler>();
     static CustomObjectGrips FromSerialNumber(int serial_number)
     {
       for (int i = 0; i < m_all_custom_grips.Count; i++)
@@ -237,7 +237,8 @@ namespace Rhino.DocObjects.Custom
     #endregion
 
     #region pointer management
-    int m_runtime_serial_number;
+
+    readonly int m_runtime_serial_number;
     IntPtr m_ptr;
     bool m_bDeleteOnDispose = true;
 
@@ -263,7 +264,7 @@ namespace Rhino.DocObjects.Custom
       m_all_custom_grips.Add(this);
     }
 
-    List<CustomGripObject> m_grip_list = new List<CustomGripObject>();
+    readonly List<CustomGripObject> m_grip_list = new List<CustomGripObject>();
     protected void AddGrip(Rhino.DocObjects.Custom.CustomGripObject grip)
     {
       m_grip_list.Add(grip);
@@ -465,10 +466,10 @@ namespace Rhino.DocObjects.Custom
     }
 
     internal delegate void CRhinoGripsEnablerCallback(IntPtr pRhinoObject, Guid enabler_id);
-    private static CRhinoGripsEnablerCallback m_TurnOnGrips = CRhinoGripsEnabler_TurnOnGrips;
+    private static readonly CRhinoGripsEnablerCallback m_TurnOnGrips = CRhinoGripsEnabler_TurnOnGrips;
     private static void CRhinoGripsEnabler_TurnOnGrips(IntPtr pRhinoObject, Guid enabler_id)
     {
-      TurnOnGripsEventHandler handler = null;
+      TurnOnGripsEventHandler handler;
       if (m_registered_enablers.TryGetValue(enabler_id, out handler))
       {
         RhinoObject rhobj = RhinoObject.CreateRhinoObjectHelper(pRhinoObject);
@@ -486,14 +487,14 @@ namespace Rhino.DocObjects.Custom
     internal delegate IntPtr CRhinoObjectGripsNurbsSurfaceGripCallback(int serial_number, int i, int j);
     internal delegate IntPtr CRhinoObjectGripsNurbsSurfaceCallback(int serial_number);
     
-    private static CRhinoObjectGripsResetCallback m_OnResetCallback = CRhinoObjectGrips_Reset;
-    private static CRhinoObjectGripsResetCallback m_OnResetMeshesCallback = CRhinoObjectGrips_ResetMeshes;
-    private static CRhinoObjectGripsUpdateMeshCallback m_OnUpdateMeshCallback = CRhinoObjectGrips_UpdateMesh;
-    private static CRhinoObjectGripsNewGeometryCallback m_OnNewGeometryCallback = CRhinoObjectGrips_NewGeometry;
-    private static CRhinoObjectGripsDrawCallback m_OnDrawCallback = CRhinoObjectGrips_Draw;
-    private static CRhinoObjectGripsNeighborGripCallback m_OnNeighborGripCallback = CRhinoObjectGrips_NeighborGrip;
-    private static CRhinoObjectGripsNurbsSurfaceGripCallback m_OnNurbsSurfaceGripCallback = CRhinoObjectGrips_NurbsSurfaceGrip;
-    private static CRhinoObjectGripsNurbsSurfaceCallback m_NurbsSurfaceCallback = CRhinoObjectGrips_NurbsSurface;
+    private static readonly CRhinoObjectGripsResetCallback m_OnResetCallback = CRhinoObjectGrips_Reset;
+    private static readonly CRhinoObjectGripsResetCallback m_OnResetMeshesCallback = CRhinoObjectGrips_ResetMeshes;
+    private static readonly CRhinoObjectGripsUpdateMeshCallback m_OnUpdateMeshCallback = CRhinoObjectGrips_UpdateMesh;
+    private static readonly CRhinoObjectGripsNewGeometryCallback m_OnNewGeometryCallback = CRhinoObjectGrips_NewGeometry;
+    private static readonly CRhinoObjectGripsDrawCallback m_OnDrawCallback = CRhinoObjectGrips_Draw;
+    private static readonly CRhinoObjectGripsNeighborGripCallback m_OnNeighborGripCallback = CRhinoObjectGrips_NeighborGrip;
+    private static readonly CRhinoObjectGripsNurbsSurfaceGripCallback m_OnNurbsSurfaceGripCallback = CRhinoObjectGrips_NurbsSurfaceGrip;
+    private static readonly CRhinoObjectGripsNurbsSurfaceCallback m_NurbsSurfaceCallback = CRhinoObjectGrips_NurbsSurface;
 
     private static void CRhinoObjectGrips_Reset(int serial_number)
     {

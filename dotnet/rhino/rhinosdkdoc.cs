@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 
 using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Rhino.Geometry;
 using Rhino.Display;
@@ -2905,7 +2906,7 @@ namespace Rhino.DocObjects.Tables
         UnsafeNativeMethods.CRhinoDoc_AddRhinoObject(m_doc.m_docId, pRhinoObject);
 
         Type base_type = typeof(RhinoObject);
-        var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public;
+        const BindingFlags flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public;
         System.Reflection.MethodInfo mi = t.GetMethod("ShortDescription", flags);
         if (mi.DeclaringType != base_type)
         {

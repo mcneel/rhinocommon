@@ -131,8 +131,11 @@ namespace Rhino.Render
         if (t != null && plugin_id != Guid.Empty)
         {
           RenderMaterial Material = System.Activator.CreateInstance(t) as RenderMaterial;
-          Material.Construct(plugin_id);
-          rc = Material.NonConstPointer();
+          if (Material != null)
+          {
+            Material.Construct(plugin_id);
+            rc = Material.NonConstPointer();
+          }
         }
       }
       catch

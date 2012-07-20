@@ -224,7 +224,7 @@ namespace Rhino.Collections
     /// </summary>
     /// <remarks>This function differs from the DotNET implementation of List&lt;T&gt; 
     /// since that one only trims the excess if the excess exceeds 10% of the list length.</remarks>
-    [DebuggerStepThrough()]
+    [DebuggerStepThrough]
     public void TrimExcess()
     {
       Capacity = m_size;
@@ -235,12 +235,12 @@ namespace Rhino.Collections
     /// </summary>
     public int Capacity
     {
-      [DebuggerStepThrough()]
+      [DebuggerStepThrough]
       get
       {
         return m_items.Length;
       }
-      [DebuggerStepThrough()]
+      [DebuggerStepThrough]
       set
       {
         if (value != m_items.Length)
@@ -270,7 +270,7 @@ namespace Rhino.Collections
     /// </summary>
     public int Count
     {
-      [DebuggerStepThrough()]
+      [DebuggerStepThrough]
       get
       {
         return m_size;
@@ -283,7 +283,7 @@ namespace Rhino.Collections
     /// </summary>
     public int NullCount
     {
-      [DebuggerStepThrough()]
+      [DebuggerStepThrough]
       get
       {
         Type Tt = typeof(T);
@@ -306,7 +306,7 @@ namespace Rhino.Collections
     /// <returns>The element at the specified index.</returns>
     public T this[int index]
     {
-      [DebuggerStepThrough()]
+      [DebuggerStepThrough]
       get
       {
         // IronPython seems to expect IndexOutOfRangeExceptions with
@@ -314,7 +314,7 @@ namespace Rhino.Collections
         if (index >= m_size) { throw new IndexOutOfRangeException("index"); }
         return m_items[index];
       }
-      [DebuggerStepThrough()]
+      [DebuggerStepThrough]
       set
       {
         if (index >= m_size) { throw new IndexOutOfRangeException("You cannot set items which do not yet exist, consider using Insert or Add instead."); }
@@ -331,12 +331,12 @@ namespace Rhino.Collections
     /// <returns>The element at the specified index.</returns>
     object IList.this[int index]
     {
-      [DebuggerStepThrough()]
+      [DebuggerStepThrough]
       get
       {
         return this[index];
       }
-      [DebuggerStepThrough()]
+      [DebuggerStepThrough]
       set
       {
         RhinoList<T>.VerifyValueType(value);
@@ -349,9 +349,9 @@ namespace Rhino.Collections
     /// </summary>
     public T First
     {
-      [DebuggerStepThrough()]
+      [DebuggerStepThrough]
       get { return this[0]; }
-      [DebuggerStepThrough()]
+      [DebuggerStepThrough]
       set { this[0] = value; }
     }
 
@@ -360,9 +360,9 @@ namespace Rhino.Collections
     /// </summary>
     public T Last
     {
-      [DebuggerStepThrough()]
+      [DebuggerStepThrough]
       get { return this[m_size - 1]; }
-      [DebuggerStepThrough()]
+      [DebuggerStepThrough]
       set { this[m_size - 1] = value; }
     }
 
@@ -371,7 +371,7 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="index">Index to remap.</param>
     /// <returns>Remapped index.</returns>
-    [DebuggerStepThrough()]
+    [DebuggerStepThrough]
     public int RemapIndex(int index)
     {
       int c = index % (m_size - 1);

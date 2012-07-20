@@ -84,8 +84,11 @@ namespace Rhino.Render
         if (t != null && plugin_id != Guid.Empty)
         {
           RenderTexture texture = System.Activator.CreateInstance(t) as RenderTexture;
-          texture.Construct(plugin_id);
-          rc = texture.NonConstPointer();
+          if (texture != null)
+          {
+            texture.Construct(plugin_id);
+            rc = texture.NonConstPointer();
+          }
         }
       }
       catch

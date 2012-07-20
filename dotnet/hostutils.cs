@@ -570,28 +570,6 @@ namespace Rhino.Runtime
     // warnings in the build process.  This makes Dale jumpy.  So, don't remove the "= null", even though it 
     // isn't necessary.
     static System.Windows.Forms.Form m_invoke_window = null;
-    static void CreateInvokeWindow()
-    {
-      // 27 July 2011 - S. Baer
-      // David: uncomment the following and test to see if this works for you. My tests appeared to work,
-      //        but they really weren't thorough enough.
-      /*
-      if (m_invoke_window != null)
-        return;
-
-      m_invoke_window = new System.Windows.Forms.Form();
-      m_invoke_window.Text = "RhinoCommon_Invoke";
-      m_invoke_window.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-      m_invoke_window.ShowInTaskbar = false;
-      m_invoke_window.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-      m_invoke_window.Location = new System.Drawing.Point(-1000, -1000);
-      m_invoke_window.Size = new System.Drawing.Size(1, 1);
-      m_invoke_window.Visible = false;
-      m_invoke_window.Enabled = false;
-      m_invoke_window.Show();
-      m_invoke_window.Hide();
-      */
-    }
 
     /// <summary>
     /// Calls a method on the main Rhino UI thread if this is necessary.
@@ -737,6 +715,8 @@ namespace Rhino.Runtime
       try
       {
         string dateformat = Marshal.PtrToStringUni(format);
+        if (string.IsNullOrEmpty(dateformat))
+          return 0;
         // surround apostrophe with quotes in order to keep the formatter happy
         dateformat = dateformat.Replace("'", "\"'\"");
         System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo(locale_id);
@@ -886,7 +866,6 @@ namespace Rhino.Runtime
 
       UnsafeNativeMethods.RHC_SetGetNowProc(m_getnow_callback, m_getformattedtime_callback);
       UnsafeNativeMethods.RHC_SetPythonEvaluateCallback(m_evaluate_callback);
-      CreateInvokeWindow();
     }
 
 #if RHINO_SDK

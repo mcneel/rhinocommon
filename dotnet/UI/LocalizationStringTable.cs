@@ -381,7 +381,7 @@ namespace Rhino.UI
                     tooltip.SetToolTip(c, value);
                     break;
                   }
-                  else if (!string.IsNullOrEmpty(form_class_name))
+                  if (!string.IsNullOrEmpty(form_class_name))
                   {
                     key = form_class_name + "::" + c.Name + toolTipText[k];
                     if (m_dialog_list.TryGetValue(key, out value))
@@ -438,7 +438,7 @@ namespace Rhino.UI
               tsi.ToolTipText = value;
               break;
             }
-            else if (!string.IsNullOrEmpty(form_class_name))
+            if (!string.IsNullOrEmpty(form_class_name))
             {
               key = form_class_name + "::" + tsi.Name + toolTipText[k];
               if (m_dialog_list.TryGetValue(key, out value))

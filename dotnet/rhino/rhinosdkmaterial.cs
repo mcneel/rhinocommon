@@ -24,15 +24,12 @@ namespace Rhino.DocObjects
     Material m_cached_material;
     public Material GetMaterial()
     {
-      if (m_cached_material == null)
-        m_cached_material = new Material(this);
-      return m_cached_material;
+      return m_cached_material ?? (m_cached_material = new Material(this));
     }
-
   }
 
   [Serializable]
-  public class Material : Rhino.Runtime.CommonObject, ISerializable
+  public class Material : Rhino.Runtime.CommonObject
   {
     #region members
     // Represents both a CRhinoMaterial and an ON_Material. When m_ptr is

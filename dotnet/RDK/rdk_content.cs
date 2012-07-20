@@ -286,10 +286,13 @@ namespace Rhino.Render
       if (attr != null && attr.Length > 0)
       {
         CustomRenderContentAttribute custom = attr[0] as CustomRenderContentAttribute;
-        image_based = custom.ImageBased;
-        render_engine = custom.RenderEngineId;
+        if (custom != null)
+        {
+          image_based = custom.ImageBased;
+          render_engine = custom.RenderEngineId;
+        }
       }
-      int category = 0;
+      const int category = 0;
       Guid type_id = t.GUID;
 
       if (this is RenderTexture)

@@ -59,8 +59,11 @@ namespace Rhino.Render
         if (t != null && plugin_id != Guid.Empty)
         {
           RenderEnvironment Environment = System.Activator.CreateInstance(t) as RenderEnvironment;
-          Environment.Construct(plugin_id);
-          rc = Environment.NonConstPointer();
+          if (Environment != null)
+          {
+            Environment.Construct(plugin_id);
+            rc = Environment.NonConstPointer();
+          }
         }
       }
       catch

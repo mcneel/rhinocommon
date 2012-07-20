@@ -20,10 +20,10 @@ namespace Rhino.Render
     }
 
     internal IntPtr m_pField = IntPtr.Zero;
-    private bool m_bAutoDelete = true;
+    private const bool m_bAutoDelete = true;
 
-    string m_sInternal;
-    string m_sFriendly;
+    readonly string m_sInternal;
+    readonly string m_sFriendly;
 
     internal Field(string internalName, string friendlyName)
     {
@@ -69,7 +69,7 @@ namespace Rhino.Render
 
   class StringField : Field
   {
-    private String m_defaultValue;
+    private readonly String m_defaultValue;
 
     public StringField(string internalName, string friendlyName, string defaultValue)
       : base(internalName, friendlyName)
@@ -113,7 +113,7 @@ namespace Rhino.Render
 
   class BoolField : Field
   {
-    private bool m_defaultValue;
+    private readonly bool m_defaultValue;
 
     public BoolField(string internalName, string friendlyName, bool defaultValue)
       : base(internalName, friendlyName)
@@ -136,7 +136,7 @@ namespace Rhino.Render
 
   class IntField : Field
   {
-    private int m_defaultValue;
+    private readonly int m_defaultValue;
 
     public IntField(string internalName, string friendlyName, int defaultValue)
       : base(internalName, friendlyName)
@@ -159,7 +159,7 @@ namespace Rhino.Render
 
   class DoubleField : Field
   {
-    private double m_defaultValue;
+    private readonly double m_defaultValue;
 
     public DoubleField(string internalName, string friendlyName, double defaultValue)
       : base(internalName, friendlyName)
@@ -182,7 +182,7 @@ namespace Rhino.Render
 
   class FloatField : Field
   {
-    private float m_defaultValue;
+    private readonly float m_defaultValue;
 
     public FloatField(string internalName, string friendlyName, float defaultValue)
       : base(internalName, friendlyName)
@@ -205,7 +205,7 @@ namespace Rhino.Render
 
   class ColorField : Field
   {
-    private Rhino.Display.Color4f m_defaultValue;
+    private readonly Rhino.Display.Color4f m_defaultValue;
 
     public ColorField(string internalName, string friendlyName, Rhino.Display.Color4f defaultValue)
       : base(internalName, friendlyName)
@@ -236,7 +236,7 @@ namespace Rhino.Render
 
   class Vector2dField : Field
   {
-    private Rhino.Geometry.Vector2d m_defaultValue;
+    private readonly Rhino.Geometry.Vector2d m_defaultValue;
 
     public Vector2dField(string internalName, string friendlyName, Rhino.Geometry.Vector2d defaultValue)
       : base(internalName, friendlyName)
@@ -272,7 +272,7 @@ namespace Rhino.Render
 
   class Vector3dField : Field
   {
-    private Rhino.Geometry.Vector3d m_defaultValue;
+    private readonly Rhino.Geometry.Vector3d m_defaultValue;
 
     public Vector3dField(string internalName, string friendlyName, Rhino.Geometry.Vector3d defaultValue)
       : base(internalName, friendlyName)
@@ -309,7 +309,7 @@ namespace Rhino.Render
 
   class Point4dField : Field
   {
-    private Rhino.Geometry.Point4d m_defaultValue;
+    private readonly Rhino.Geometry.Point4d m_defaultValue;
 
     public Point4dField(string internalName, string friendlyName, Rhino.Geometry.Point4d defaultValue)
       : base(internalName, friendlyName)
@@ -340,7 +340,7 @@ namespace Rhino.Render
 
   class GuidField : Field
   {
-    private Guid m_defaultValue;
+    private readonly Guid m_defaultValue;
 
     public GuidField(string internalName, string friendlyName, Guid defaultValue)
       : base(internalName, friendlyName)
@@ -363,7 +363,7 @@ namespace Rhino.Render
 
   class TransformField : Field
   {
-    private Rhino.Geometry.Transform m_defaultValue;
+    private readonly Rhino.Geometry.Transform m_defaultValue;
 
     public TransformField(string internalName, string friendlyName, Rhino.Geometry.Transform defaultValue)
       : base(internalName, friendlyName)

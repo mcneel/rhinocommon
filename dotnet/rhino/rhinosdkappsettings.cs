@@ -1305,7 +1305,7 @@ namespace Rhino.ApplicationSettings
         {
           RhinoWindow wnd = RhinoApp.MainApplicationWindow;
           if( wnd==null || wnd.InvokeRequired )
-            return; ;
+            return;
         }
 
         SetFileString(value, idxTemplateFile);

@@ -197,11 +197,14 @@ namespace Rhino.DocObjects.Custom
         {
           Type t = ud.GetType();
           UserData new_ud = System.Activator.CreateInstance(t) as UserData;
-          new_ud.m_serial_number = UserData.m_next_serial_number++;
-          new_ud.m_pNativePointer = pNativeUserData;
-          UserData.StoreInRuntimeList(new_ud);
-          new_ud.OnDuplicate(ud);
-          rc = new_ud.m_serial_number;
+          if (new_ud != null)
+          {
+            new_ud.m_serial_number = UserData.m_next_serial_number++;
+            new_ud.m_pNativePointer = pNativeUserData;
+            UserData.StoreInRuntimeList(new_ud);
+            new_ud.OnDuplicate(ud);
+            rc = new_ud.m_serial_number;
+          }
         }
         catch (Exception ex)
         {

@@ -172,11 +172,11 @@ namespace Rhino.Runtime
         if (e != null)
         {
           HostUtils.DebugString("Got some loader exceptions");
-        }
-        for (int i = 0; i < e.Length; i++)
-        {
-          HostUtils.DebugString(ex.ToString());
-          internal_types = null;
+          for (int i = 0; i < e.Length; i++)
+          {
+            HostUtils.DebugString(ex.ToString());
+            internal_types = null;
+          }
         }
       }
       catch (Exception ex)
@@ -316,6 +316,7 @@ namespace Rhino.Runtime
     {
       // this should ONLY ever be called if we are actually using Mono
       Exception ex = e.ExceptionObject as Exception;
+      if (ex == null) return;
       string msg = ex.ToString() + "\n\nStackTrace:\n" + ex.StackTrace;
       if (sender != null)
       {

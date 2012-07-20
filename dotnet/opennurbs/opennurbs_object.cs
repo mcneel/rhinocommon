@@ -81,9 +81,9 @@ namespace Rhino.Runtime
           return pThis;
         }
 
-        if (this is Rhino.Geometry.BrepLoop)
+        Rhino.Geometry.BrepLoop loop = this as Rhino.Geometry.BrepLoop;
+        if (loop != null)
         {
-          Rhino.Geometry.BrepLoop loop = this as Rhino.Geometry.BrepLoop;
           IntPtr pBrep = loop.Brep.NonConstPointer();
           return UnsafeNativeMethods.ON_BrepLoop_GetPointer(pBrep, loop.LoopIndex);
         }

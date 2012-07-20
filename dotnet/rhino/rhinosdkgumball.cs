@@ -70,7 +70,7 @@ namespace Rhino.UI.Gumball
 
     #region IDisposable/Pointer handling
     GumballDisplayConduit m_parent;
-    bool m_base_gumball;
+    readonly bool m_base_gumball;
     IntPtr m_pGumball;
     internal IntPtr ConstPointer()
     {
@@ -650,7 +650,7 @@ namespace Rhino.UI.Gumball
 
   public class GumballPickResult
   {
-    GumballDisplayConduit m_parent;
+    readonly GumballDisplayConduit m_parent;
     internal GumballPickResult(GumballDisplayConduit parent)
     {
       m_parent = parent;

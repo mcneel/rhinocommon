@@ -809,7 +809,7 @@ namespace Rhino.FileIO
     public File3dmObject[] FindByLayer(string layer)
     {
       File3dmLayerTable layers = m_parent.Layers as File3dmLayerTable;
-      int layer_index = layers.Find(layer);
+      int layer_index = layers==null ? -1: layers.Find(layer);
       if (layer_index < 0)
         return new File3dmObject[0];
 
@@ -2368,7 +2368,7 @@ namespace Rhino.FileIO
     public int IndexOf(DocObjects.ViewInfo item)
     {
       File3dm file = item.m_parent as File3dm;
-      if (file == m_parent)
+      if (file == m_parent && m_parent!=null)
       {
         IntPtr pViewPtr = item.ConstPointer();
         IntPtr pModelPtr = m_parent.ConstPointer();

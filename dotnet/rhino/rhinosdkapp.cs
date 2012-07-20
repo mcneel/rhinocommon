@@ -73,7 +73,7 @@ namespace Rhino
       get { return m_handle; }
     }
 
-    static object m_invoke_lock = new object();
+    static readonly object m_invoke_lock = new object();
     static System.Collections.Generic.List<Delegate> m_callbacks;
     internal delegate void InvokeAction();
     private static InvokeAction m_OnInvokeCallback;
@@ -707,7 +707,7 @@ namespace Rhino
     }
     internal static EventHandler m_init_app;
 
-    private static object m_event_lock = new object();
+    private static readonly object m_event_lock = new object();
 
     /// <summary>
     /// Is raised when the apllication is fully initialized.

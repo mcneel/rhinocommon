@@ -50,4 +50,4 @@ using System.Runtime.InteropServices;
 // Plug-Ins that are being loaded from a network drive will throw security exceptions
 // if they are not marked with the AllowPartiallyTrustedCallersAttribute. This assembly
 // also requires that this attribute be set in order for things to work.
-[assembly: System.Security.AllowPartiallyTrustedCallers()]
+[assembly: System.Security.AllowPartiallyTrustedCallers]

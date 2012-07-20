@@ -47,7 +47,7 @@ namespace Rhino.Display
         catch (Exception) { }
       }
     }
-    static ANALYSISMODEENABLEUIPROC m_ANALYSISMODEENABLEUIPROC = OnEnableUiProc;
+    static readonly ANALYSISMODEENABLEUIPROC m_ANALYSISMODEENABLEUIPROC = OnEnableUiProc;
     
     static int OnObjectSupportsProc(Guid am_id, IntPtr pConstRhinoObject)
     {
@@ -64,7 +64,7 @@ namespace Rhino.Display
       }
       return 0;
     }
-    static ANALYSISMODEOBJECTSUPPORTSPROC m_ANALYSISMODEOBJECTSUPPORTSPROC = OnObjectSupportsProc;
+    static readonly ANALYSISMODEOBJECTSUPPORTSPROC m_ANALYSISMODEOBJECTSUPPORTSPROC = OnObjectSupportsProc;
 
     static int OnShowIsoCurvesProc(Guid am_id)
     {
@@ -79,7 +79,7 @@ namespace Rhino.Display
       }
       return 0;
     }
-    static ANALYSISMODESHOWISOCURVESPROC m_ANALYSISMODESHOWISOCURVESPROC = OnShowIsoCurvesProc;
+    static readonly ANALYSISMODESHOWISOCURVESPROC m_ANALYSISMODESHOWISOCURVESPROC = OnShowIsoCurvesProc;
 
     static void OnSetDisplayAttributesProc(Guid am_id, IntPtr pConstRhinoObject, IntPtr pDisplayPipelineAttributes)
     {
@@ -96,7 +96,7 @@ namespace Rhino.Display
         catch (Exception) { }
       }
     }
-    static ANALYSISMODESETDISPLAYATTRIBUTESPROC m_ANALYSISMODESETDISPLAYATTRIBUTESPROC = OnSetDisplayAttributesProc;
+    static readonly ANALYSISMODESETDISPLAYATTRIBUTESPROC m_ANALYSISMODESETDISPLAYATTRIBUTESPROC = OnSetDisplayAttributesProc;
 
     static void OnUpdateVertexColorsProc(Guid am_id, IntPtr pConstRhinoObject, IntPtr pSimpleArrayConstMeshes, int meshCount)
     {
@@ -121,7 +121,7 @@ namespace Rhino.Display
         catch (Exception) { }
       }
     }
-    static ANALYSISMODEUPDATEVERTEXCOLORSPROC m_ANALYSISMODEUPDATEVERTEXCOLORSPROC = OnUpdateVertexColorsProc;
+    static readonly ANALYSISMODEUPDATEVERTEXCOLORSPROC m_ANALYSISMODEUPDATEVERTEXCOLORSPROC = OnUpdateVertexColorsProc;
 
     static void OnDrawRhinoObjectProc(Guid am_id, IntPtr pConstRhinoObject, IntPtr pRhinoDisplayPipeline)
     {
@@ -166,7 +166,7 @@ namespace Rhino.Display
         catch (Exception) { }
       }
     }
-    static ANALYSISMODEDRAWRHINOOBJECTPROC m_ANALYSISMODEDRAWRHINOOBJECTPROC = OnDrawRhinoObjectProc;
+    static readonly ANALYSISMODEDRAWRHINOOBJECTPROC m_ANALYSISMODEDRAWRHINOOBJECTPROC = OnDrawRhinoObjectProc;
 
     static void OnDrawGeometryProc(Guid am_id, IntPtr pConstRhinoObject, IntPtr pConstGeometry, IntPtr pRhinoDisplayPipeline)
     {
@@ -202,7 +202,7 @@ namespace Rhino.Display
         catch (Exception) { }
       }
     }
-    static ANALYSISMODEDRAWGEOMETRYPROC m_ANALYSISMODEDRAWGEOMETRYPROC = OnDrawGeometryProc;
+    static readonly ANALYSISMODEDRAWGEOMETRYPROC m_ANALYSISMODEDRAWGEOMETRYPROC = OnDrawGeometryProc;
     #endregion
 
     static System.Collections.Generic.List<VisualAnalysisMode> m_registered_modes;

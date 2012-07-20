@@ -3193,7 +3193,7 @@ namespace Rhino.Geometry
     /// <returns>true on success or false on failure.</returns>
     public bool Unitize()
     {
-      bool rc = UnsafeNativeMethods.ON_3dVector_Unitize(ref this);
+      bool rc = IsValid && UnsafeNativeMethods.ON_3dVector_Unitize(ref this);
       return rc;
     }
 
@@ -3222,28 +3222,27 @@ namespace Rhino.Geometry
     /// <returns>true on success, false on failure.</returns>
     public bool Rotate(double angleRadians, Vector3d rotationAxis)
     {
-      if (RhinoMath.UnsetValue == angleRadians) { return false; }
-      if (!rotationAxis.IsValid) { return false; }
-
-      UnsafeNativeMethods.ON_3dVector_Rotate(ref this, angleRadians, rotationAxis);
-      return true;
+      if (RhinoMath.IsValidDouble(angleRadians) && rotationAxis.IsValid)
+      {
+        UnsafeNativeMethods.ON_3dVector_Rotate(ref this, angleRadians, rotationAxis);
+        return true;
+      }
+      return false;
     }
 
     ///<summary>
     /// Reverses (inverts) this vector in place.
-    /// <para>If this vector contains RhinoMath.UnsetValue, the 
-    /// reverse will also be invalid and false will be returned.</para>
+    /// <para>If this vector is Invalid, no changes will occur and false will be returned.</para>
     ///</summary>
     ///<returns>true on success or false if the vector is invalid.</returns>
     public bool Reverse()
     {
-      bool rc = true;
-
-      if (RhinoMath.UnsetValue != m_x) { m_x = -m_x; } else { rc = false; }
-      if (RhinoMath.UnsetValue != m_y) { m_y = -m_y; } else { rc = false; }
-      if (RhinoMath.UnsetValue != m_z) { m_z = -m_z; } else { rc = false; }
-
-      return rc;
+      if (!IsValid)
+        return false;
+      m_x = -m_x;
+      m_y = -m_y;
+      m_z = -m_z;
+      return true;
     }
 
     /// <summary>

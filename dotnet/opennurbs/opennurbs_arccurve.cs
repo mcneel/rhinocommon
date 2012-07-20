@@ -17,7 +17,7 @@ namespace Rhino.Geometry
   /// and a strictly increasing Domain.</para>
   /// </remarks>
   [Serializable]
-  public class ArcCurve : Curve, ISerializable
+  public class ArcCurve : Curve
   {
     #region constructors
     internal ArcCurve(IntPtr ptr, object parent, int subobject_index)

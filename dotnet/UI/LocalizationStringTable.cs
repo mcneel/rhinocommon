@@ -170,6 +170,8 @@ namespace Rhino.UI
             return null;
         }
       }
+      if (string.IsNullOrEmpty(xmlPath))
+        return null;
       return new XmlTextReader(xmlPath);
     }
     /// <summary>

@@ -584,7 +584,6 @@ namespace Rhino.Collections
       if (!archive.BeginWriteDictionaryEntry((int)it, entry_name))
         return false;
 
-      bool rc = true;
       switch (it)
       {
         case ItemType.itBool: // 1
@@ -729,7 +728,7 @@ namespace Rhino.Collections
           archive.WriteGeometry((Rhino.Geometry.GeometryBase)val);
           break;
       }
-      rc = rc && archive.EndWriteDictionaryEntry();
+      bool rc = archive.EndWriteDictionaryEntry();
       return rc;    
     }
 

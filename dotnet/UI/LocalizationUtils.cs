@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Reflection;
 using System.Windows.Forms;
@@ -49,13 +50,15 @@ namespace Rhino.UI
       // Check for leading spaces and save the number of spaces removed (iStart)
       int iStart;
       for (iStart = 0; key[iStart] == ' '; iStart++)
-        ;
+      {
+      }
       if (iStart > 0)
         key.Remove(0, iStart);
       // Check for trailing spaces and save the number of spaces removed (jEnd - iEnd)
       int iEnd = key.Length - 1, jEnd;
       for (jEnd = iEnd; key[iEnd] == ' '; iEnd--)
-        ;
+      {
+      }
       if (jEnd > iEnd)
         key.Remove(iEnd + 1, jEnd - iEnd);
       // If string to localize contains special characters then replace them with \\ versions since
@@ -80,7 +83,7 @@ namespace Rhino.UI
       if (contextId >= 0)
       {
         key.Append("[[");
-        key.Append(contextId.ToString());
+        key.Append(contextId.ToString(CultureInfo.InvariantCulture));
         key.Append("]]");
       }
       string loc_str;
@@ -140,11 +143,13 @@ namespace Rhino.UI
       components = null;
       Type t = null == c ? null : c.GetType();
       Type typeIContainer = typeof(System.ComponentModel.IContainer);
-      if (null != t && null != typeIContainer)
+      if (null != t)
       {
         // Get a list of all of the public, private and protected members in the control "c"
+        // MSDN docs state that GetMembers ALWAYS returns an array and the array will be empty
+        // if there are no members.  I want to see the exception if this function returns null
         MemberInfo[] members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        if (null != members)
+        if (members.Length>0)
         {
           // Iterate the member list and exit when the first IContainer is found
           components = new List<System.ComponentModel.IContainer>();

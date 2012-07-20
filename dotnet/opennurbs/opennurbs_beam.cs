@@ -9,7 +9,7 @@ namespace Rhino.Geometry
   /// that can be represented by profile curves and two miter planes at the extremes.
   /// </summary>
   [Serializable]
-  public class Extrusion : Surface, ISerializable
+  public class Extrusion : Surface
   {
     #region internals
     internal Extrusion(IntPtr native_ptr, object parent)

@@ -252,7 +252,7 @@ namespace Rhino.DocObjects
     internal object m_parent;
 
     // for when parent is File3dm
-    private Guid m_id = Guid.Empty;
+    private readonly Guid m_id = Guid.Empty;
     readonly bool m_named_view_table;
 
 #if RHINO_SDK

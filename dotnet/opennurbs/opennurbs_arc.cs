@@ -363,10 +363,10 @@ namespace Rhino.Geometry
     /// Determines whether another arc has the same value as this arc.
     /// </summary>
     /// <param name="other">An arc.</param>
-    /// <returns>true if obj is exactly equal to this arc; otherwise false.</returns>
+    /// <returns>true if obj is equal to this arc; otherwise false.</returns>
     public bool Equals(Arc other)
     {
-      return m_radius == other.m_radius && m_angle == other.m_angle && m_plane == other.m_plane;
+      return Math.Abs(m_radius-other.m_radius)<RhinoMath.ZeroTolerance && m_angle == other.m_angle && m_plane == other.m_plane;
     }
 
     /// <summary>
@@ -397,7 +397,7 @@ namespace Rhino.Geometry
     /// <returns>true if any value of the two arcs differ; otherwise false.</returns>
     public static bool operator !=(Arc a, Arc b)
     {
-      return a.m_radius != b.m_radius || a.m_angle != b.m_angle || a.m_plane != b.m_plane;
+      return !a.Equals(b);
     }
 
     /// <summary>

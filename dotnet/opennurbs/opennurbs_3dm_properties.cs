@@ -72,7 +72,10 @@ namespace Rhino.FileIO
       set
       {
         if (m_parent == null)
+        {
           m_notes = value;
+          return;
+        }
 
         IntPtr pParent = m_parent.NonConstPointer();
         UnsafeNativeMethods.ONX_Model_SetNotesString(pParent, value);
@@ -99,7 +102,10 @@ namespace Rhino.FileIO
       set
       {
         if (m_parent == null)
+        {
           m_visible = value;
+          return;
+        }
         IntPtr pParent = m_parent.NonConstPointer();
         System.Drawing.Rectangle r = WindowRectangle;
         UnsafeNativeMethods.ONX_Model_SetNotes(pParent, value, IsHtml, r.Left, r.Top, r.Right, r.Bottom);
@@ -126,7 +132,10 @@ namespace Rhino.FileIO
       set
       {
         if (m_parent == null)
+        {
           m_html = value;
+          return;
+        }
         IntPtr pParent = m_parent.NonConstPointer();
         System.Drawing.Rectangle r = WindowRectangle;
         UnsafeNativeMethods.ONX_Model_SetNotes(pParent, IsVisible, value, r.Left, r.Top, r.Right, r.Bottom);
@@ -153,10 +162,12 @@ namespace Rhino.FileIO
       set
       {
         if (m_parent == null)
+        {
           m_winrect = value;
+          return;
+        }
 
         IntPtr pParent = m_parent.NonConstPointer();
-        System.Drawing.Rectangle r = WindowRectangle;
         UnsafeNativeMethods.ONX_Model_SetNotes(pParent, IsVisible, IsHtml, value.Left, value.Top, value.Right, value.Bottom);
       }
     }

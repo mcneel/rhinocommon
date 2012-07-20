@@ -1299,6 +1299,15 @@ namespace Rhino.ApplicationSettings
       {
         if (!string.IsNullOrEmpty(value) && !System.IO.File.Exists(value))
           return; //throw exception or just allow invalid strings??
+
+        // This setting MUST be done on the main application thread in Windows
+        if (Rhino.Runtime.HostUtils.RunningOnWindows)
+        {
+          RhinoWindow wnd = RhinoApp.MainApplicationWindow;
+          if( wnd==null || wnd.InvokeRequired )
+            return; ;
+        }
+
         SetFileString(value, idxTemplateFile);
       }
     }

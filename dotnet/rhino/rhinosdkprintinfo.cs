@@ -13,7 +13,6 @@ namespace Rhino.Display
   {
     IntPtr m_pPrintInfo; //CRhinoPrintInfo*
 
-    IntPtr ConstPointer() { return m_pPrintInfo; }
     IntPtr NonConstPointer() { return m_pPrintInfo; }
 
     public ViewCapture()

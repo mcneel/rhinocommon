@@ -254,7 +254,7 @@ namespace Rhino.Display
 
       m_camera_vector = cameraDirection;
       int[] indices = d.Indices;
-      Array.Sort<int>(indices, IndexComparison);
+      Array.Sort(indices, IndexComparison);
       d.Direction = cameraDirection;
       m_order.AddFirst(d);
       if (m_order.Count > MaximumCachedSortLists)
@@ -367,7 +367,7 @@ namespace Rhino.Geometry
 
   public class ParticleSystem : IEnumerable<Particle>
   {
-    List<Particle> m_particles = new List<Particle>();
+    readonly List<Particle> m_particles = new List<Particle>();
     int m_empty_slot_count; // = 0 initialized by runtime
     BoundingBox m_bbox = BoundingBox.Unset;
 

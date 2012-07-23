@@ -238,7 +238,6 @@ namespace Rhino.DocObjects.Tables
   public sealed class HatchPatternTable : IEnumerable<HatchPattern>, Rhino.Collections.IRhinoTable<HatchPattern>
   {
     private readonly RhinoDoc m_doc;
-    private HatchPatternTable() { }
     internal HatchPatternTable(RhinoDoc doc)
     {
       m_doc = doc;

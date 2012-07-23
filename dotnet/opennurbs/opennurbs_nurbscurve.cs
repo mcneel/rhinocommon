@@ -11,7 +11,7 @@ namespace Rhino.Geometry
   /// Represents a Non Uniform Rational B-Splines (NURBS) curve.
   /// </summary>
   [Serializable]
-  public class NurbsCurve : Curve, ISerializable
+  public class NurbsCurve : Curve
   {
     #region statics
     /// <summary>

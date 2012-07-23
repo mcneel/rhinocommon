@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// Represents a view of the model placed on a page layout.
   /// </summary>
   [Serializable]
-  public class DetailView : GeometryBase, ISerializable
+  public class DetailView : GeometryBase
   {
     internal DetailView(IntPtr native_ptr, object parent)
       : base(native_ptr, parent, -1)

@@ -45,7 +45,6 @@ namespace Rhino.DocObjects.Tables
   public sealed class GroupTable
   {
     private readonly RhinoDoc m_doc;
-    private GroupTable() { }
     internal GroupTable(RhinoDoc doc)
     {
       m_doc = doc;

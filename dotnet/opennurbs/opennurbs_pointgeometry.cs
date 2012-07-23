@@ -9,7 +9,7 @@ namespace Rhino.Geometry
   /// <see cref="GeometryBase"/> and contains a single <see cref="Point3d"/> location.</para>
   /// </summary>
   [Serializable]
-  public class Point : GeometryBase, ISerializable
+  public class Point : GeometryBase
   {
     internal Point(IntPtr native_pointer, object parent)
       : base(native_pointer, parent, -1)

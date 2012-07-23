@@ -1058,7 +1058,7 @@ namespace Rhino
       }
     }
 
-    private static object m_event_lock = new object();
+    private static readonly object m_event_lock = new object();
     internal static EventHandler<DocumentEventArgs> m_close_document;
     public static event EventHandler<DocumentEventArgs> CloseDocument
     {
@@ -2322,7 +2322,6 @@ namespace Rhino.DocObjects.Tables
   public sealed class ViewTable : IEnumerable<RhinoView>
   {
     private readonly RhinoDoc m_doc;
-    private ViewTable() { }
     internal ViewTable(RhinoDoc doc)
     {
       m_doc = doc;
@@ -2586,7 +2585,6 @@ namespace Rhino.DocObjects.Tables
   public sealed class ObjectTable : IEnumerable<Rhino.DocObjects.RhinoObject>
   {
     private readonly RhinoDoc m_doc;
-    private ObjectTable() { }
     internal ObjectTable(RhinoDoc doc)
     {
       m_doc = doc;
@@ -5330,7 +5328,6 @@ namespace Rhino.DocObjects.Tables
   public sealed class StringTable
   {
     private readonly RhinoDoc m_doc;
-    private StringTable() { }
     internal StringTable(RhinoDoc doc)
     {
       m_doc = doc;
@@ -5741,7 +5738,7 @@ namespace Rhino.DocObjects
   }
 
   // ObjectIterator is not public. We only want to give the user an enumerator
-  class ObjectIterator : IDisposable, IEnumerator<RhinoObject>
+  class ObjectIterator : IEnumerator<RhinoObject>
   {
 #region IEnumerator Members
     Rhino.DocObjects.RhinoObject m_current;

@@ -569,7 +569,7 @@ namespace Rhino.Runtime
     // If you don't explicitly set this to null, even though it gets initialized to null, you get compiler
     // warnings in the build process.  This makes Dale jumpy.  So, don't remove the "= null", even though it 
     // isn't necessary.
-    static System.Windows.Forms.Form m_invoke_window = null;
+    static readonly System.Windows.Forms.Form m_invoke_window = null;
 
     /// <summary>
     /// Calls a method on the main Rhino UI thread if this is necessary.

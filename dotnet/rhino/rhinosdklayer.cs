@@ -681,7 +681,6 @@ namespace Rhino.DocObjects.Tables
   public sealed class LayerTable : IEnumerable<Layer>, Rhino.Collections.IRhinoTable<Layer>
   {
     private readonly RhinoDoc m_doc;
-    private LayerTable() { }
     internal LayerTable(RhinoDoc doc)
     {
       m_doc = doc;

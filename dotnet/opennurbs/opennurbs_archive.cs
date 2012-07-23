@@ -862,7 +862,7 @@ namespace Rhino.Collections
       if (!m_items.ContainsKey(key))
         throw new KeyNotFoundException(key);
       T rc;
-      if (TryGetHelper<T>(key, out rc, defaultValue))
+      if (TryGetHelper(key, out rc, defaultValue))
         return rc;
       throw new Exception("key '" + key + "' value type is not a " + defaultValue.GetType());
     }
@@ -870,7 +870,7 @@ namespace Rhino.Collections
     T GetWithDefaultHelper<T>(string key, T defaultValue)
     {
       T rc;
-      TryGetHelper<T>(key, out rc, defaultValue);
+      TryGetHelper(key, out rc, defaultValue);
       return rc;
     }
 
@@ -882,7 +882,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public bool TryGetString(string key, out string value)
     {
-      return TryGetHelper<string>(key, out value, string.Empty);
+      return TryGetHelper(key, out value, string.Empty);
     }
     /// <summary>
     /// Get value as string, will only succeed if value was created using Set(string key, string value)
@@ -891,7 +891,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public string GetString(string key)
     {
-      return GetHelper<string>(key, string.Empty);
+      return GetHelper(key, string.Empty);
     }
     /// <summary>
     /// Get value as string, will return defaultValue unless value was created using Set(string key, string value)
@@ -901,7 +901,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public string GetString(string key, string defaultValue)
     {
-      return GetWithDefaultHelper<string>(key, defaultValue);
+      return GetWithDefaultHelper(key, defaultValue);
     }
     /// <summary>
     /// Get value as bool, will only succeed if value was created using Set(string key, bool value)
@@ -911,7 +911,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public bool TryGetBool(string key, out bool value)
     {
-      return TryGetHelper<bool>(key, out value, false);
+      return TryGetHelper(key, out value, false);
     }
     /// <summary>
     /// Get value as bool, will only succeed if value was created using Set(string key, bool value)
@@ -920,7 +920,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public bool GetBool(string key)
     {
-      return GetHelper<bool>(key, false);
+      return GetHelper(key, false);
     }
     /// <summary>
     /// Get value as bool, will return defaultValue unless value was created using Set(string key, bool value)
@@ -930,7 +930,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public bool GetBool(string key, bool defaultValue)
     {
-      return GetWithDefaultHelper<bool>(key, defaultValue);
+      return GetWithDefaultHelper(key, defaultValue);
     }
     /// <summary>
     /// Get value as float, will only succeed if value was created using Set(string key, float value)
@@ -940,7 +940,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public bool TryGetFloat(string key, out float value)
     {
-      return TryGetHelper<float>(key, out value, 0f);
+      return TryGetHelper(key, out value, 0f);
     }
     /// <summary>
     /// Get value as float, will only succeed if value was created using Set(string key, float value)
@@ -949,7 +949,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public float GetFloat(string key)
     {
-      return GetHelper<float>(key, 0f);
+      return GetHelper(key, 0f);
     }
     /// <summary>
     /// Get value as float, will return defaultValue unless value was created using Set(string key, float value)
@@ -959,7 +959,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public float GetFloat(string key, float defaultValue)
     {
-      return GetWithDefaultHelper<float>(key, defaultValue);
+      return GetWithDefaultHelper(key, defaultValue);
     }
     /// <summary>
     /// Get value as double, will only succeed if value was created using Set(string key, double value)
@@ -969,7 +969,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public bool TryGetDouble(string key, out double value)
     {
-      return TryGetHelper<double>(key, out value, 0.0);
+      return TryGetHelper(key, out value, 0.0);
     }
     /// <summary>
     /// Get value as double, will only succeed if value was created using Set(string key, double value)
@@ -978,7 +978,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public double GetDouble(string key)
     {
-      return GetHelper<double>(key, 0.0);
+      return GetHelper(key, 0.0);
     }
     /// <summary>
     /// Get value as int, will return defaultValue unless value was created using Set(string key, int value)
@@ -988,7 +988,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public int GetInteger(string key, int defaultValue)
     {
-      return GetWithDefaultHelper<int>(key, defaultValue);
+      return GetWithDefaultHelper(key, defaultValue);
     }
     /// <summary>
     /// Get value as int, will only succeed if value was created using Set(string key, int value)
@@ -998,7 +998,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public bool TryGetInteger(string key, out int value)
     {
-      return TryGetHelper<int>(key, out value, 0);
+      return TryGetHelper(key, out value, 0);
     }
     /// <summary>
     /// Get value as int, will only succeed if value was created using Set(string key, int value)
@@ -1007,7 +1007,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public int GetInteger(string key)
     {
-      return GetHelper<int>(key, 0);
+      return GetHelper(key, 0);
     }
     /// <summary>
     /// Get value as int, will return defaultValue unless value was created using Set(string key, int value)
@@ -1017,7 +1017,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public int Getint(string key, int defaultValue)
     {
-      return GetWithDefaultHelper<int>(key, defaultValue);
+      return GetWithDefaultHelper(key, defaultValue);
     }
     /// <summary>
     /// Get value as Point3f, will only succeed if value was created using Set(string key, Point3f value)
@@ -1027,7 +1027,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public bool TryGetPoint3f(string key, out Rhino.Geometry.Point3f value)
     {
-      return TryGetHelper<Rhino.Geometry.Point3f>(key, out value, Rhino.Geometry.Point3f.Unset);
+      return TryGetHelper(key, out value, Rhino.Geometry.Point3f.Unset);
     }
     /// <summary>
     /// Get value as Point3f, will only succeed if value was created using Set(string key, Point3f value)
@@ -1036,7 +1036,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public Rhino.Geometry.Point3f GetPoint3f(string key)
     {
-      return GetHelper<Rhino.Geometry.Point3f>(key, Rhino.Geometry.Point3f.Unset);
+      return GetHelper(key, Rhino.Geometry.Point3f.Unset);
     }
     /// <summary>
     /// Get value as Point3f, will return defaultValue unless value was created using Set(string key, Point3f value)
@@ -1046,7 +1046,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public Rhino.Geometry.Point3f GetPoint3f(string key, Rhino.Geometry.Point3f defaultValue)
     {
-      return GetWithDefaultHelper<Rhino.Geometry.Point3f>(key, defaultValue);
+      return GetWithDefaultHelper(key, defaultValue);
     }
     /// <summary>
     /// Get value as Point3d, will only succeed if value was created using Set(string key, Point3d value)
@@ -1056,7 +1056,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public bool TryGetPoint3d(string key, out Rhino.Geometry.Point3d value)
     {
-      return TryGetHelper<Rhino.Geometry.Point3d>(key, out value, Rhino.Geometry.Point3d.Unset);
+      return TryGetHelper(key, out value, Rhino.Geometry.Point3d.Unset);
     }
     /// <summary>
     /// Get value as Point3d, will only succeed if value was created using Set(string key, Point3d value)
@@ -1065,7 +1065,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public Rhino.Geometry.Point3d GetPoint3d(string key)
     {
-      return GetHelper<Rhino.Geometry.Point3d>(key, Rhino.Geometry.Point3d.Unset);
+      return GetHelper(key, Rhino.Geometry.Point3d.Unset);
     }
     /// <summary>
     /// Get value as Point3d, will return defaultValue unless value was created using Set(string key, Point3d value)
@@ -1075,7 +1075,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public Rhino.Geometry.Point3d GetPoint3d(string key, Rhino.Geometry.Point3d defaultValue)
     {
-      return GetWithDefaultHelper<Rhino.Geometry.Point3d>(key, defaultValue);
+      return GetWithDefaultHelper(key, defaultValue);
     }
     /// <summary>
     /// Get value as Vector3d, will only succeed if value was created using Set(string key, Vector3d value)
@@ -1085,7 +1085,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public bool TryGetVector3d(string key, out Rhino.Geometry.Vector3d value)
     {
-      return TryGetHelper<Rhino.Geometry.Vector3d>(key, out value, Rhino.Geometry.Vector3d.Unset);
+      return TryGetHelper(key, out value, Rhino.Geometry.Vector3d.Unset);
     }
     /// <summary>
     /// Get value as Vector3d, will only succeed if value was created using Set(string key, Vector3d value)
@@ -1094,7 +1094,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public Rhino.Geometry.Vector3d GetVector3d(string key)
     {
-      return GetHelper<Rhino.Geometry.Vector3d>(key, Rhino.Geometry.Vector3d.Unset);
+      return GetHelper(key, Rhino.Geometry.Vector3d.Unset);
     }
     /// <summary>
     /// Get value as Vector3d, will return defaultValue unless value was created using Set(string key, Vector3d value)
@@ -1104,7 +1104,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public Rhino.Geometry.Vector3d GetVector3d(string key, Rhino.Geometry.Vector3d defaultValue)
     {
-      return GetWithDefaultHelper<Rhino.Geometry.Vector3d>(key, defaultValue);
+      return GetWithDefaultHelper(key, defaultValue);
     }
     /// <summary>
     /// Get value as Guid, will only succeed if value was created using Set(string key, Guid value)
@@ -1114,7 +1114,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public bool TryGetGuid(string key, out Guid value)
     {
-      return TryGetHelper<Guid>(key, out value, Guid.Empty);
+      return TryGetHelper(key, out value, Guid.Empty);
     }
     /// <summary>
     /// Get value as Guid, will only succeed if value was created using Set(string key, Guid value)
@@ -1123,7 +1123,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public Guid GetGuid(string key)
     {
-      return GetHelper<Guid>(key, Guid.Empty);
+      return GetHelper(key, Guid.Empty);
     }
     /// <summary>
     /// Get value as Guid, will return defaultValue unless value was created using Set(string key, Guid value)
@@ -1133,7 +1133,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public Guid GetGuid(string key, Guid defaultValue)
     {
-      return GetWithDefaultHelper<Guid>(key, defaultValue);
+      return GetWithDefaultHelper(key, defaultValue);
     }
 
     /// <summary>

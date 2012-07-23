@@ -8,7 +8,7 @@ namespace Rhino.Geometry
   /// <para>Revolutions can be incomplete (they can form arcs).</para>
   /// </summary>
   [Serializable]
-  public class RevSurface : Surface, ISerializable
+  public class RevSurface : Surface
   {
     #region static create functions
 

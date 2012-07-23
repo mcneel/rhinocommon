@@ -1,12 +1,11 @@
 #pragma warning disable 1591
 using System;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
 namespace Rhino.DocObjects
 {
   [Serializable]
-  public class ObjectAttributes : Runtime.CommonObject, ISerializable
+  public class ObjectAttributes : Runtime.CommonObject
   {
     internal override IntPtr _InternalDuplicate(out bool applymempressure)
     {
@@ -95,7 +94,7 @@ namespace Rhino.DocObjects
     const int idxColorSource = 2;
     const int idxPlotColorSource = 3;
     const int idxPlotWeightSource = 4;
-    const int idxDisplayMode = 5;
+    //const int idxDisplayMode = 5;
     const int idxLayerIndex = 6;
     const int idxLinetypeIndex = 7;
     const int idxMaterialIndex = 8;

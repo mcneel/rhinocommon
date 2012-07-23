@@ -8,7 +8,7 @@ namespace Rhino.Geometry
   /// Represents a linear curve.
   /// </summary>
   [Serializable]
-  public class LineCurve : Curve, ISerializable
+  public class LineCurve : Curve
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="LineCurve"/> class.

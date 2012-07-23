@@ -422,7 +422,7 @@ namespace Rhino.Geometry
   /// <para>This is often called a face-vertex mesh.</para>
   /// </summary>
   [Serializable]
-  public class Mesh : GeometryBase, ISerializable
+  public class Mesh : GeometryBase
   {
     #region static mesh creation
 #if RHINO_SDK
@@ -1252,8 +1252,7 @@ namespace Rhino.Geometry
       using (Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer on_meshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer())
       {
         IntPtr pResult = on_meshes.NonConstPointer();
-        int count = UnsafeNativeMethods.RHC_RhinoMeshBooleanSplit2(pMeshes.ConstPointer(), pSplitters.ConstPointer(),
-                                                                   pResult);
+        UnsafeNativeMethods.RHC_RhinoMeshBooleanSplit2(pMeshes.ConstPointer(), pSplitters.ConstPointer(),pResult);
         return on_meshes.ToNonConstArray();
       }
     }
@@ -1368,7 +1367,7 @@ namespace Rhino.Geometry
       using (Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer())
       {
         IntPtr pMeshArray = meshes.NonConstPointer();
-        int count = UnsafeNativeMethods.RHC_RhinoExplodeMesh(pConstThis, pMeshArray);
+        UnsafeNativeMethods.RHC_RhinoExplodeMesh(pConstThis, pMeshArray);
         return meshes.ToNonConstArray();
       }
     }

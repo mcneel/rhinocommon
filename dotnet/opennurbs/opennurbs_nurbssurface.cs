@@ -12,7 +12,7 @@ namespace Rhino.Geometry
   /// Represents a Non Uniform Rational B-Splines (NURBS) surface.
   /// </summary>
   [Serializable]
-  public class NurbsSurface : Surface, ISerializable
+  public class NurbsSurface : Surface
   {
     #region static create functions
     /// <summary>
@@ -495,7 +495,7 @@ namespace Rhino.Geometry
   /// Represents a geometry that is able to control the morphing behaviour of some other geometry.
   /// </summary>
   [Serializable]
-  public class MorphControl : GeometryBase, ISerializable
+  public class MorphControl : GeometryBase
   {
     #region constructors
     //public MorphControl()

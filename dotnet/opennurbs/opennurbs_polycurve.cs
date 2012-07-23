@@ -9,7 +9,7 @@ namespace Rhino.Geometry
   /// types of curves.
   /// </summary>
   [Serializable]
-  public class PolyCurve : Curve, ISerializable
+  public class PolyCurve : Curve
   {
     #region constructors
     internal PolyCurve(IntPtr ptr, object parent, int subobject_index)

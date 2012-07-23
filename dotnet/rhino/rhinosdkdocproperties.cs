@@ -12,7 +12,6 @@ namespace Rhino.DocObjects.Tables
   public sealed class NamedConstructionPlaneTable : IEnumerable<ConstructionPlane>, Rhino.Collections.IRhinoTable<ConstructionPlane>
   {
     private readonly RhinoDoc m_doc;
-    private NamedConstructionPlaneTable() { }
     internal NamedConstructionPlaneTable(RhinoDoc doc)
     {
       m_doc = doc;
@@ -120,7 +119,6 @@ namespace Rhino.DocObjects.Tables
   public sealed class NamedViewTable : IEnumerable<ViewInfo>, Rhino.Collections.IRhinoTable<ViewInfo>
   {
     private readonly RhinoDoc m_doc;
-    private NamedViewTable() { }
     internal NamedViewTable(RhinoDoc doc)
     {
       m_doc = doc;

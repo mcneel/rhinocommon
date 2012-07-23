@@ -53,7 +53,6 @@ namespace Rhino.DocObjects.Tables
   public sealed class BitmapTable
   {
     readonly RhinoDoc m_doc;
-    private BitmapTable() { }
     internal BitmapTable(RhinoDoc doc)
     {
       m_doc = doc;

@@ -37,7 +37,6 @@ namespace Rhino.DocObjects.Tables
   public class LightTable : IEnumerable<LightObject>, Rhino.Collections.IRhinoTable<LightObject>
   {
     private readonly RhinoDoc m_doc;
-    private LightTable() { }
     internal LightTable(RhinoDoc doc)
     {
       m_doc = doc;

@@ -163,7 +163,7 @@ namespace Rhino.Geometry
   /// Represents a collection of coordinates with optional normal vectors and colors.
   /// </summary>
   [Serializable]
-  public class PointCloud : GeometryBase, IEnumerable<PointCloudItem>, ISerializable
+  public class PointCloud : GeometryBase, IEnumerable<PointCloudItem>
   {
     #region constructors
     internal PointCloud(IntPtr native_pointer, object parent)
@@ -642,73 +642,6 @@ namespace Rhino.Geometry
           try
           {
             return m_owner[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      object IEnumerator.Current
-      {
-        get
-        {
-          try
-          {
-            return m_owner[position];
-          }
-          catch (IndexOutOfRangeException)
-          {
-            throw new InvalidOperationException();
-          }
-        }
-      }
-      #endregion
-
-      #region IDisposable logic
-      private bool m_disposed; // = false; <- initialized by runtime
-      public void Dispose()
-      {
-        if (m_disposed) { return; }
-        m_disposed = true;
-        GC.SuppressFinalize(this);
-      }
-      #endregion
-    }
-
-    //This class isn't used at the moment.
-    private class PointCloudPointEnumerator : IEnumerator<Point3d>
-    {
-      #region members
-      private readonly PointCloud m_owner;
-      int position = -1;
-      #endregion
-
-      #region constructor
-      public PointCloudPointEnumerator(PointCloud cloud_points)
-      {
-        m_owner = cloud_points;
-      }
-      #endregion
-
-      #region enumeration logic
-      public bool MoveNext()
-      {
-        position++;
-        return (position < m_owner.Count);
-      }
-      public void Reset()
-      {
-        position = -1;
-      }
-
-      public Point3d Current
-      {
-        get
-        {
-          try
-          {
-            return m_owner[position].Location;
           }
           catch (IndexOutOfRangeException)
           {

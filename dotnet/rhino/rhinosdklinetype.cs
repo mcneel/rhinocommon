@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace Rhino.DocObjects
 {
   [Serializable]
-  public class Linetype : Rhino.Runtime.CommonObject, ISerializable
+  public class Linetype : Rhino.Runtime.CommonObject
   {
     #region members
     // Represents both a CRhinoLinetype and an ON_Linetype. When m_ptr is
@@ -300,7 +300,6 @@ namespace Rhino.DocObjects.Tables
   public sealed class LinetypeTable : IEnumerable<Linetype>, Rhino.Collections.IRhinoTable<Linetype>
   {
     private readonly RhinoDoc m_doc;
-    private LinetypeTable() { }
     internal LinetypeTable(RhinoDoc doc)
     {
       m_doc = doc;

@@ -169,7 +169,7 @@ namespace Rhino.Geometry
   /// two independent parameters, usually called (u, v), or sometimes (s, t).</para>
   /// </summary>
   [Serializable]
-  public class Surface : GeometryBase, ISerializable
+  public class Surface : GeometryBase
   {
     #region statics
 #if RHINO_SDK

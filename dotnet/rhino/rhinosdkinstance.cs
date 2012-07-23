@@ -153,7 +153,7 @@ namespace Rhino.DocObjects
   {
     private readonly int m_index;
     private readonly RhinoDoc m_doc;
-    private InstanceDefinition() { }
+
     internal InstanceDefinition(int index, RhinoDoc doc)
     {
       m_index = index;
@@ -450,7 +450,6 @@ namespace Rhino.DocObjects.Tables
   public sealed class InstanceDefinitionTable : IEnumerable<InstanceDefinition>, Rhino.Collections.IRhinoTable<InstanceDefinition>
   {
     private readonly RhinoDoc m_doc;
-    private InstanceDefinitionTable() { }
     internal InstanceDefinitionTable(RhinoDoc doc)
     {
       m_doc = doc;

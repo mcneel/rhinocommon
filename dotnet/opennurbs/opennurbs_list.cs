@@ -70,7 +70,7 @@ namespace Rhino.Collections
   [Serializable,
   DebuggerTypeProxy(typeof(ListDebuggerDisplayProxy<>)),
   DebuggerDisplay("Count = {Count}")]
-  public class RhinoList<T> : IList<T>, ICollection<T>, IEnumerable<T>, IList, ICollection, IEnumerable
+  public class RhinoList<T> : IList<T>, IList
   {
     #region Fields
 
@@ -815,7 +815,7 @@ namespace Rhino.Collections
     /// the entire List, if found; otherwise, –1.</returns>
     public int IndexOf(T item)
     {
-      return Array.IndexOf<T>(m_items, item, 0, m_size);
+      return Array.IndexOf(m_items, item, 0, m_size);
     }
 
     /// <summary>
@@ -832,7 +832,7 @@ namespace Rhino.Collections
     public int IndexOf(T item, int index)
     {
       if (index > m_size) { throw new ArgumentOutOfRangeException("index"); }
-      return Array.IndexOf<T>(m_items, item, index, m_size - index);
+      return Array.IndexOf(m_items, item, index, m_size - index);
     }
 
     /// <summary>
@@ -855,7 +855,7 @@ namespace Rhino.Collections
         throw new ArgumentOutOfRangeException("count");
       }
 
-      return Array.IndexOf<T>(m_items, item, index, count);
+      return Array.IndexOf(m_items, item, index, count);
     }
 
     /// <summary>
@@ -907,7 +907,7 @@ namespace Rhino.Collections
       if ((index >= m_size) || (count > (index + 1)))
         throw new ArgumentOutOfRangeException("index");
 
-      return Array.LastIndexOf<T>(m_items, item, index, count);
+      return Array.LastIndexOf(m_items, item, index, count);
     }
 
     /// <summary>
@@ -968,7 +968,7 @@ namespace Rhino.Collections
         throw new ArgumentException("This combination of index and count is not valid");
       }
 
-      return Array.BinarySearch<T>(m_items, index, count, item, comparer);
+      return Array.BinarySearch(m_items, index, count, item, comparer);
     }
 
     /// <summary>
@@ -1279,7 +1279,7 @@ namespace Rhino.Collections
       if (m_size > 0)
       {
         IComparer<T> comparer = new FunctorComparer<T>(comparison);
-        Array.Sort<T>(m_items, 0, m_size, comparer);
+        Array.Sort(m_items, 0, m_size, comparer);
       }
     }
 
@@ -1299,7 +1299,7 @@ namespace Rhino.Collections
       if ((m_size - index) < count)
         throw new ArgumentException("index and count are not a valid combination");
 
-      Array.Sort<T>(m_items, index, count, comparer);
+      Array.Sort(m_items, index, count, comparer);
       m_version++;
     }
 
@@ -1514,7 +1514,7 @@ namespace Rhino.Collections
       return GetEnumerator();
     }
 
-    private class Enumerator : IEnumerator<T>, IDisposable, IEnumerator
+    private class Enumerator : IEnumerator<T>
     {
       private readonly RhinoList<T> m_list;
       private int m_index;

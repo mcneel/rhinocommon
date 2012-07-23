@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 #if RDK_UNCHECKED
 
-using Rhino.Render;
-
 namespace Rhino.Render.CustomRenderMesh
 {
   public enum PrimitiveType : int
@@ -17,8 +15,6 @@ namespace Rhino.Render.CustomRenderMesh
       Box = 4,
       Cone = 5,
   }
-
-  
 
   public class ObjectMeshes : IDisposable
   {

@@ -285,7 +285,7 @@ namespace Rhino.Geometry
   /// a single parameter, usually called t.</para>
   /// </summary>
   [Serializable]
-  public class Curve : GeometryBase, ISerializable
+  public class Curve : GeometryBase
   {
     #region statics
 #if RHINO_SDK
@@ -3355,7 +3355,6 @@ namespace Rhino.Geometry
     /// <returns>Interval of the span with the given index.</returns>
     public Interval SpanDomain(int spanIndex)
     {
-      int spanCount = SpanCount;
       if (spanIndex < 0) { throw new IndexOutOfRangeException("spanIndex must be larger than or equal to zero"); }
       if (spanIndex >= SpanCount) { throw new IndexOutOfRangeException("spanIndex must be smaller than spanCount"); }
 

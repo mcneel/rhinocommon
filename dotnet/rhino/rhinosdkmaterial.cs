@@ -588,7 +588,6 @@ namespace Rhino.DocObjects.Tables
   public sealed class MaterialTable : IEnumerable<Material>, Rhino.Collections.IRhinoTable<Material>
   {
     private readonly RhinoDoc m_doc;
-    private MaterialTable() { }
     internal MaterialTable(RhinoDoc doc)
     {
       m_doc = doc;

@@ -30,13 +30,13 @@ namespace Rhino.DocObjects
         for (int i = 0; i < fonts.Families.Length; i++)
           rc[i] = fonts.Families[i].Name;
       }
-      Array.Sort<string>(rc);
+      Array.Sort(rc);
       return rc;
     }
 
     private readonly int m_index;
     private readonly RhinoDoc m_doc;
-    private Font() { }
+
     internal Font(int index, RhinoDoc doc)
     {
       m_index = index;
@@ -83,7 +83,6 @@ namespace Rhino.DocObjects.Tables
   public sealed class FontTable : IEnumerable<Font>, Rhino.Collections.IRhinoTable<Font>
   {
     private readonly RhinoDoc m_doc;
-    private FontTable() { }
     internal FontTable(RhinoDoc doc)
     {
       m_doc = doc;

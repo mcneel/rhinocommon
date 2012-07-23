@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// Represents a rectangular grid of 3D points.
   /// </summary>
   [Serializable]
-  public class Point3dGrid : GeometryBase, ISerializable
+  public class Point3dGrid : GeometryBase
   {
     /// <summary>
     /// Initializes a rectangular grid of points, with no points in it.

@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// Represents a sum surface, or an extrusion of a curve along a curved path.
   /// </summary>
   [Serializable]
-  public class SumSurface : Surface, ISerializable
+  public class SumSurface : Surface
   {
     /// <summary>
     /// Constructs a new sum surface by extruding a curve A along a path B.

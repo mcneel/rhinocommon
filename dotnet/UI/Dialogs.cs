@@ -168,25 +168,15 @@ namespace Rhino
       /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
       public static System.Windows.Forms.DialogResult ShowSemiModal(System.Windows.Forms.Form form)
       {
-        SemiModalFormMessenger semihelper = new SemiModalFormMessenger(form);
+        if (Rhino.Runtime.HostUtils.RunningOnWindows)
+          form.Load += SemiModalFormLoad;
         return form.ShowDialog(RhinoApp.MainWindow());
       }
 
-      class SemiModalFormMessenger
+      static void SemiModalFormLoad(object sender, EventArgs e)
       {
-        readonly System.Windows.Forms.Form m_form;
-        public SemiModalFormMessenger(System.Windows.Forms.Form f)
-        {
-          m_form = f;
-          if( Rhino.Runtime.HostUtils.RunningOnWindows )
-            m_form.Load += m_form_Load;
-        }
-
-        void m_form_Load(object sender, EventArgs e)
-        {
-          IntPtr hMainWnd = RhinoApp.MainWindowHandle();
-          UnsafeNativeMethods.EnableWindow(hMainWnd, true);
-        }
+        IntPtr hMainWnd = RhinoApp.MainWindowHandle();
+        UnsafeNativeMethods.EnableWindow(hMainWnd, true);
       }
 
 

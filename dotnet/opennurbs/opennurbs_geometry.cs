@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using Rhino.DocObjects;
 
@@ -9,7 +8,7 @@ namespace Rhino.Geometry
   /// Provides a common base for most geometric classes. This class is abstract.
   /// </summary>
   [Serializable]
-  public abstract class GeometryBase : Runtime.CommonObject, ISerializable
+  public abstract class GeometryBase : Runtime.CommonObject
   {
     #region constructors / wrapped pointer manipulation
     GeometryBase m_shallow_parent;

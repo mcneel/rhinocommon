@@ -31,7 +31,7 @@ namespace Rhino.Runtime
       if (null == m_assembly_resolve)
       {
         //Rhino.Runtime.HostUtils.DebugString("Assembly Resolver initialized\n");
-        m_assembly_resolve = new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+        m_assembly_resolve = CurrentDomain_AssemblyResolve;
         AppDomain.CurrentDomain.AssemblyResolve += m_assembly_resolve;
       }
     }

@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// Represents a plane surface, with plane and two intervals.
   /// </summary>
   [Serializable]
-  public class PlaneSurface : Surface, ISerializable
+  public class PlaneSurface : Surface
   {
     internal PlaneSurface(IntPtr ptr, object parent) 
       : base(ptr, parent)
@@ -78,7 +78,7 @@ namespace Rhino.Geometry
   /// Represents a planar surface that is used as clipping plane in viewports.
   /// </summary>
   [Serializable]
-  public class ClippingPlaneSurface : PlaneSurface, ISerializable
+  public class ClippingPlaneSurface : PlaneSurface
   {
     internal ClippingPlaneSurface(IntPtr ptr, object parent)
       : base(ptr, parent)

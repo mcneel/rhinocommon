@@ -96,7 +96,7 @@ namespace Rhino.Geometry
   /// <para>This class refers to the geometric element that is independent from the document.</para>
   /// </summary>
   [Serializable]
-  public class AnnotationBase : GeometryBase, ISerializable
+  public class AnnotationBase : GeometryBase
   {
     internal AnnotationBase(IntPtr native_pointer, object parent)
       : base(native_pointer, parent, -1)
@@ -234,7 +234,7 @@ namespace Rhino.Geometry
   /// <para>This entity refers to the geometric element that is independent from the document.</para>
   /// </summary>
   [Serializable]
-  public class LinearDimension : AnnotationBase, ISerializable
+  public class LinearDimension : AnnotationBase
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="LinearDimension"/> class.
@@ -408,7 +408,7 @@ namespace Rhino.Geometry
   /// <para>This entity refers to the geometric element that is independent from the document.</para>
   /// </summary>
   [Serializable]
-  public class RadialDimension : AnnotationBase, ISerializable
+  public class RadialDimension : AnnotationBase
   {
     internal RadialDimension(IntPtr native_pointer, object parent)
       : base(native_pointer, parent)
@@ -440,7 +440,7 @@ namespace Rhino.Geometry
   /// <para>This entity refers to the geometric element that is independent from the document.</para>
   /// </summary>
   [Serializable]
-  public class AngularDimension : AnnotationBase, ISerializable
+  public class AngularDimension : AnnotationBase
   {
     /// <summary>
     /// Create an angular dimension from a give arc
@@ -471,7 +471,7 @@ namespace Rhino.Geometry
   /// <para>This class refers to the geometric element that is independent from the document.</para>
   /// </summary>
   [Serializable]
-  public class OrdinateDimension : AnnotationBase, ISerializable
+  public class OrdinateDimension : AnnotationBase
   {
     internal OrdinateDimension(IntPtr native_pointer, object parent)
       : base(native_pointer, parent)
@@ -491,7 +491,7 @@ namespace Rhino.Geometry
   /// <para>This class refers to the geometric element that is independent from the document.</para>
   /// </summary>
   [Serializable]
-  public class TextEntity : AnnotationBase, ISerializable
+  public class TextEntity : AnnotationBase
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="TextEntity"/> class.
@@ -667,7 +667,7 @@ namespace Rhino.Geometry
   /// <para>This class refers to the geometric element that is independent from the document.</para>
   /// </summary>
   [Serializable]
-  public class Leader : AnnotationBase, ISerializable
+  public class Leader : AnnotationBase
   {
     internal Leader(IntPtr native_pointer, object parent)
       : base(native_pointer, parent)
@@ -687,7 +687,7 @@ namespace Rhino.Geometry
   /// <para>This class refers to the geometric element that is independent from the document.</para>
   /// </summary>
   [Serializable]
-  public class TextDot : GeometryBase, ISerializable
+  public class TextDot : GeometryBase
   {
     internal TextDot(IntPtr native_pointer, object parent)
       :base(native_pointer, parent, -1)

@@ -10,7 +10,7 @@ namespace Rhino.Geometry
   /// and internally contains a <see cref="Polyline"/>.</para>
   /// </summary>
   [Serializable]
-  public class PolylineCurve : Curve, ISerializable
+  public class PolylineCurve : Curve
   {
     #region constructors
 

@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// Represents a light that shines in the modeling space.
   /// </summary>
   [Serializable]
-  public class Light : GeometryBase, ISerializable
+  public class Light : GeometryBase
   {
 #if RDK_CHECKED
     /// <summary>

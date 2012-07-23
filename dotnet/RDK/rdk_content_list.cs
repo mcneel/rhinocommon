@@ -10,7 +10,7 @@ namespace Rhino.Render
   /// Base class that provides access to the document lists of RenderContent instances
   /// ie - the Material, Environment and Texture tables.
   /// </summary>
-  public class ContentList : IEnumerator<RenderContent>, IDisposable
+  public class ContentList : IEnumerator<RenderContent>
   {
     private readonly RenderContentKind m_kind;
     private readonly RhinoDoc m_doc;

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Rhino.DocObjects
 {
   [Serializable]
-  public class DimensionStyle : Rhino.Runtime.CommonObject, ISerializable
+  public class DimensionStyle : Rhino.Runtime.CommonObject
   {
     // Represents both a CRhinoDimStyle and an ON_DimStyle. When m_ptr
     // is null, the object uses m_doc and m_id to look up the const
@@ -328,7 +328,6 @@ namespace Rhino.DocObjects.Tables
   public sealed class DimStyleTable : IEnumerable<DimensionStyle>, Rhino.Collections.IRhinoTable<DimensionStyle>
   {
     private readonly RhinoDoc m_doc;
-    private DimStyleTable() { }
     internal DimStyleTable(RhinoDoc doc)
     {
       m_doc = doc;

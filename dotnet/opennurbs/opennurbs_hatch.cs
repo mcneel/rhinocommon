@@ -13,7 +13,7 @@ namespace Rhino.Geometry
   /// Hatch has an index to get the pattern definition from the pattern table.
   /// </summary>
   [Serializable]
-  public class Hatch : GeometryBase, ISerializable
+  public class Hatch : GeometryBase
   {
     internal Hatch(IntPtr native_ptr, object parent)
       : base(native_ptr, parent, -1)

@@ -187,7 +187,7 @@ namespace Rhino.Render
   /// <summary>
   /// Represents all the decals of an object.
   /// </summary>
-  public class ObjectDecals : IEnumerator<Decal>, IDisposable
+  public class ObjectDecals : IEnumerator<Decal>
   {
     private readonly IntPtr m_pDecalIterator;
     internal ObjectDecals(Rhino.DocObjects.RhinoObject obj)

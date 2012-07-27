@@ -73,7 +73,11 @@ RH_C_FUNCTION int ON_PolyCurve_HasGap( const ON_PolyCurve* pCurve)
 {
   int rc = 0;
   if( pCurve )
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in Rhino 5
+    rc = pCurve->FindNextGap(0);
+#else
     rc = pCurve->HasGap();
+#endif
   return rc;
 }
 

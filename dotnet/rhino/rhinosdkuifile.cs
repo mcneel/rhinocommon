@@ -225,7 +225,7 @@ namespace Rhino
       {
         foreach (ToolbarFile tb in this)
         {
-          if (string.Compare(tb.Path, path, true) == 0)
+          if (string.Compare(tb.Path, path, StringComparison.InvariantCultureIgnoreCase) == 0)
             return tb;
         }
         return null;

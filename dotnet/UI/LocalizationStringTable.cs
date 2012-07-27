@@ -208,14 +208,26 @@ namespace Rhino.UI
           int count = command_list.Count;
           for (int i = 0; i < count; i++)
           {
-            string key = command_list[i].Attributes["English"].Value;
+            if (command_list[i].Attributes == null)
+              continue;
+
+            var en = command_list[i].Attributes["English"];
+            if (en == null)
+              continue;
+
+            string key = en.Value;
             key = key.Substring(prefix_length);
+            var loc = command_list[i].Attributes["Localized"];
+            if (loc == null)
+              continue;
+
             string value = command_list[i].Attributes["Localized"].Value;
-            int last_index = value.LastIndexOf("::");
-            if (last_index > 0)
-              value = value.Substring(last_index + 2);
+            int lastIndex = value.LastIndexOf("::", System.StringComparison.Ordinal);
+            if (lastIndex > 0)
+              value = value.Substring(lastIndex + 2);
+
             // Only add to dictionary if the value has been translated
-            if (0 != string.Compare(key, value) && !m_command_list.ContainsKey(key))
+            if (0 != System.String.CompareOrdinal(key, value) && !m_command_list.ContainsKey(key))
               m_command_list.Add(key, StripTrailingSquareBrackets(value));
           }
         }
@@ -225,10 +237,13 @@ namespace Rhino.UI
           int count = string_list.Count;
           for (int i = 0; i < count; i++)
           {
+            if (string_list[i].Attributes == null)
+              continue;
+
             string key = string_list[i].Attributes["English"].Value;
             string value = string_list[i].Attributes["Localized"].Value;
             // Only add to dictionary if the value has been translated
-            if (0 != string.Compare(key, value)&& !m_string_list.ContainsKey(key))
+            if (0 != System.String.CompareOrdinal(key, value)&& !m_string_list.ContainsKey(key))
               m_string_list.Add(key, StripTrailingSquareBrackets(value));
           }
         }
@@ -239,6 +254,9 @@ namespace Rhino.UI
           for (int current_dialog = 0; current_dialog < dialog_count; current_dialog++)
           {
             XmlNode dialog_node = dialog_list[current_dialog];
+            if (dialog_node.Attributes == null)
+              continue;
+
             XmlAttribute attrib = dialog_node.Attributes["English"];
             if (null != attrib)
             {
@@ -271,6 +289,9 @@ namespace Rhino.UI
               for (int current_control = 0; current_control < control_count; current_control++)
               {
                 XmlNode control_node = control_list[current_control];
+                if (control_node.Attributes == null)
+                  continue;
+
                 String key = control_node.Attributes["English"].Value;
                 String value = control_node.Attributes["Localized"].Value;
                 String english_value = key;

@@ -698,7 +698,7 @@ namespace Rhino
       get
       {
         if (Runtime.HostUtils.RunningOnOSX)
-          throw new NotImplementedException();
+          throw new NotSupportedException();
         return GetBool(idxIsSendingMail);
       }
     }
@@ -2216,6 +2216,8 @@ namespace Rhino
           if (null == m_old_rhino_object || m_old_rhino_object.ConstPointer() != m_pOldRhinoObject)
           {
             m_old_rhino_object = RhinoObject.CreateRhinoObjectHelper(m_pOldRhinoObject);
+            if( m_old_rhino_object!=null )
+              m_old_rhino_object.m_pRhinoObject = m_pOldRhinoObject;
           }
           return m_old_rhino_object;
         }
@@ -2228,6 +2230,10 @@ namespace Rhino
           if (null == m_new_rhino_object || m_new_rhino_object.ConstPointer() != m_pNewRhinoObject)
           {
             m_new_rhino_object = RhinoObject.CreateRhinoObjectHelper(m_pNewRhinoObject);
+            // Have to explicitly set the pointer since the object is not "officially"
+            // in the document yet (can't find it by runtime serial number)
+            if (m_new_rhino_object != null)
+              m_new_rhino_object.m_pRhinoObject = m_pNewRhinoObject;
           }
           return m_new_rhino_object;
         }

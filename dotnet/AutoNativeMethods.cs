@@ -1788,6 +1788,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Brep_MassProperties([MarshalAs(UnmanagedType.U1)]bool bArea, IntPtr pBrep, double relativeTolerance, double absoluteTolerance);
 
+  //double ON_Brep_Area(const ON_Brep* pBrep, double relativeTolerance, double absoluteTolerance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Brep_Area(IntPtr pBrep, double relativeTolerance, double absoluteTolerance);
+
+  //double ON_Brep_Volume(const ON_Brep* pBrep, double relativeTolerance, double absoluteTolerance)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double ON_Brep_Volume(IntPtr pBrep, double relativeTolerance, double absoluteTolerance);
+
   //ON_MassProperties* ON_GeometryMassProperties(bool bArea, ON_SimpleArray<const ON_Geometry*>* pGeometry, double relativeTolerance, double absoluteTolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_GeometryMassProperties([MarshalAs(UnmanagedType.U1)]bool bArea, IntPtr pGeometry, double relativeTolerance, double absoluteTolerance);
@@ -5131,21 +5139,21 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool RhDirectoryManager_DeleteSearchPath([MarshalAs(UnmanagedType.LPWStr)]string _folder);
 
-  //const RHMONO_STRING* RhDirectoryManager_FindFile(const RHMONO_STRING* _filename)
+  //void RhDirectoryManager_FindFile(const RHMONO_STRING* _filename, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RhDirectoryManager_FindFile([MarshalAs(UnmanagedType.LPWStr)]string _filename);
+  internal static extern void RhDirectoryManager_FindFile([MarshalAs(UnmanagedType.LPWStr)]string _filename, IntPtr pStringHolder);
 
   //int RhDirectoryManager_SearchPathCount()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int RhDirectoryManager_SearchPathCount();
 
-  //const RHMONO_STRING* RhDirectoryManager_SearchPath(int i)
+  //void RhDirectoryManager_SearchPath(int i, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RhDirectoryManager_SearchPath(int i);
+  internal static extern void RhDirectoryManager_SearchPath(int i, IntPtr pStringHolder);
 
-  //const RHMONO_STRING* RhDirectoryManager_WorkingFolder(const RHMONO_STRING* _folder)
+  //void RhDirectoryManager_WorkingFolder(const RHMONO_STRING* _folder, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RhDirectoryManager_WorkingFolder([MarshalAs(UnmanagedType.LPWStr)]string _folder);
+  internal static extern void RhDirectoryManager_WorkingFolder([MarshalAs(UnmanagedType.LPWStr)]string _folder, IntPtr pStringHolder);
 
   //CRhinoAppFileSettings* CRhinoAppFileSettings_New(bool current)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5180,9 +5188,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoAppFileSettings_GetClipboardOnExit(IntPtr pConstFileSettings);
 
-  //const RHMONO_STRING* RhFileSettings_AutosaveBeforeCommands()
+  //void RhFileSettings_AutosaveBeforeCommands(CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr RhFileSettings_AutosaveBeforeCommands();
+  internal static extern void RhFileSettings_AutosaveBeforeCommands(IntPtr pStringHolder);
 
   //void RhFileSettings_SetAutosaveBeforeCommands(const RHMONO_STRING* _cmds)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5236,6 +5244,14 @@ internal partial class UnsafeNativeMethods
   //void CRhinoAppGeneralSettings_Delete(CRhinoAppGeneralSettings* pGeneralSettings)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoAppGeneralSettings_Delete(IntPtr pGeneralSettings);
+
+  //void CRhinoAppGeneralSettings_GetString(const CRhinoAppGeneralSettings* pConstGeneralSettings, int which, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppGeneralSettings_GetString(IntPtr pConstGeneralSettings, int which, IntPtr pStringHolder);
+
+  //void CRhinoAppGeneralSettings_SetString( CRhinoAppGeneralSettings* pGeneralSettings, int which, const RHMONO_STRING* _str)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppGeneralSettings_SetString(IntPtr pGeneralSettings, int which, [MarshalAs(UnmanagedType.LPWStr)]string _str);
 
   //int CRhinoAppGeneralSettings_GetInt(const CRhinoAppGeneralSettings* pConstGeneralSettings, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -9507,6 +9523,15 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoUiFile_GroupIsDocked(Guid file_id, Guid group_id);
+
+  //void CRhinoUiFile_ShowSidebar(bool mruSidebar, bool show)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoUiFile_ShowSidebar([MarshalAs(UnmanagedType.U1)]bool mruSidebar, [MarshalAs(UnmanagedType.U1)]bool show);
+
+  //bool CRhinoUiFile_SidebarIsVisible(bool mruSidebar)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoUiFile_SidebarIsVisible([MarshalAs(UnmanagedType.U1)]bool mruSidebar);
   #endregion
 
 

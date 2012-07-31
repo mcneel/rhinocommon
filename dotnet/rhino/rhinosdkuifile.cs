@@ -252,6 +252,18 @@ namespace Rhino
         int count = Count;
         for (int i = 0; i < count; i++) yield return this[i];
       }
+
+      public static bool SidebarIsVisible
+      {
+        get { return UnsafeNativeMethods.CRhinoUiFile_SidebarIsVisible(false); }
+        set { UnsafeNativeMethods.CRhinoUiFile_ShowSidebar(false, value); }
+      }
+
+      public static bool MruSidebarIsVisible
+      {
+        get { return UnsafeNativeMethods.CRhinoUiFile_SidebarIsVisible(true); }
+        set { UnsafeNativeMethods.CRhinoUiFile_ShowSidebar(true, value); }
+      }
     }
   }
 }

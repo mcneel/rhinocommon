@@ -1191,10 +1191,12 @@ namespace Rhino.ApplicationSettings
     /// <returns> full imagePath on success; null on error.</returns>
     public static string FindFile(string fileName)
     {
-      IntPtr rc = UnsafeNativeMethods.RhDirectoryManager_FindFile(fileName);
-      if (IntPtr.Zero == rc)
-        return null;
-      return Marshal.PtrToStringUni(rc);
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pStringHolder = sh.NonConstPointer();
+        UnsafeNativeMethods.RhDirectoryManager_FindFile(fileName, pStringHolder);
+        return sh.ToString();
+      }
     }
 
     /// <summary>
@@ -1213,17 +1215,18 @@ namespace Rhino.ApplicationSettings
     /// </summary>
     public static string[] GetSearchPaths()
     {
-      int count = SearchPathCount;
-      string[] rc = new string[count];
-      for (int i = 0; i < count; i++)
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
       {
-        IntPtr ptr = UnsafeNativeMethods.RhDirectoryManager_SearchPath(i);
-        if (ptr != IntPtr.Zero)
+        int count = SearchPathCount;
+        string[] rc = new string[count];
+        for (int i = 0; i < count; i++)
         {
-          rc[i] = Marshal.PtrToStringUni(ptr);
+          IntPtr pStringHolder = sh.NonConstPointer();
+          UnsafeNativeMethods.RhDirectoryManager_SearchPath(i, pStringHolder);
+          rc[i] = sh.ToString();
         }
+        return rc;
       }
-      return rc;
     }
 
     /// <summary>
@@ -1234,14 +1237,16 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        IntPtr rc = UnsafeNativeMethods.RhDirectoryManager_WorkingFolder(null);
-        if (IntPtr.Zero == rc)
-          return null;
-        return Marshal.PtrToStringUni(rc);
+        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        {
+          IntPtr pStringHolder = sh.NonConstPointer();
+          UnsafeNativeMethods.RhDirectoryManager_WorkingFolder(null,pStringHolder);
+          return sh.ToString();
+        }
       }
       set
       {
-        UnsafeNativeMethods.RhDirectoryManager_WorkingFolder(value);
+        UnsafeNativeMethods.RhDirectoryManager_WorkingFolder(value,IntPtr.Zero);
       }
     }
 
@@ -1358,11 +1363,15 @@ namespace Rhino.ApplicationSettings
     ///<summary>Input list of commands that force AutoSave prior to running.</summary>
     public static string[] AutoSaveBeforeCommands()
     {
-      IntPtr rc = UnsafeNativeMethods.RhFileSettings_AutosaveBeforeCommands();
-      if (IntPtr.Zero == rc)
-        return null;
-      string s = Marshal.PtrToStringUni(rc);
-      return s == null ? null : s.Split(new char[] { ' ' });
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pStringHolder = sh.NonConstPointer();
+        UnsafeNativeMethods.RhFileSettings_AutosaveBeforeCommands(pStringHolder);
+        string s = sh.ToString();
+        if( string.IsNullOrEmpty(s) )
+          return null;
+        return s.Split(new char[] { ' ' });
+      }
     }
 
     ///<summary>Set list of commands that force AutoSave prior to running.</summary>
@@ -1631,6 +1640,20 @@ namespace Rhino.ApplicationSettings
     public MiddleMouseMode MiddleMouseMode { get; set; }
 
     /// <summary>
+    /// Gets or sets the toolbar to popup when the middle mouse is clicked on
+    /// a view, this value is only used when MiddleMouseMode is set to
+    /// PopupToolbar.
+    /// </summary>
+    public string MiddleMousePopupToolbar { get; set; }
+
+    /// <summary>
+    /// Gets or sets the toolbar to popup when the middle mouse is clicked on
+    /// a view, this value is only used when MiddleMouseMode is set to
+    /// PopupToolbar.
+    /// </summary>
+    public string MiddleMouseMacro { get; set; }
+
+    /// <summary>
     /// true if right mouse down + delay will pop up context menu on a mouse up if no move happens.
     /// </summary>
     public bool EnableContextMenu { get; set; }
@@ -1662,6 +1685,15 @@ namespace Rhino.ApplicationSettings
       rc.MaximumUndoMemoryMb = UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(pGeneralSettings, idxMaxUndoMemoryMb);
       rc.NewObjectIsoparmCount = UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(pGeneralSettings, idxNewObjectIsoparmCount);
       rc.MiddleMouseMode = (MiddleMouseMode)UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(pGeneralSettings, idxMiddleMouseMode);
+
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pStringHolder = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoAppGeneralSettings_GetString(IntPtr.Zero, idxMiddleMousePopupToolbar, pStringHolder);
+        rc.MiddleMousePopupToolbar = sh.ToString();
+        UnsafeNativeMethods.CRhinoAppGeneralSettings_GetString(IntPtr.Zero, idxMiddleMouseMacro, pStringHolder);
+        rc.MiddleMouseMacro = sh.ToString();
+      }
       rc.EnableContextMenu = UnsafeNativeMethods.CRhinoAppGeneralSettings_GetBool(pGeneralSettings, idxEnableContextMenu);
       int ms = UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(pGeneralSettings, idxContextMenuDelay);
       rc.ContextMenuDelay = TimeSpan.FromMilliseconds(ms);
@@ -1762,6 +1794,47 @@ namespace Rhino.ApplicationSettings
     {
       get { return (MiddleMouseMode)UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(IntPtr.Zero, idxMiddleMouseMode); }
       set { UnsafeNativeMethods.CRhinoAppGeneralSettings_SetInt(IntPtr.Zero, idxMiddleMouseMode, (int)value); }
+    }
+
+    const int idxMiddleMousePopupToolbar = 0;
+    const int idxMiddleMouseMacro = 1;
+
+    /// <summary>
+    /// Gets or sets the toolbar to popup when the middle mouse is clicked on
+    /// a view, this value is only used when MiddleMouseMode is set to
+    /// PopupToolbar.
+    /// </summary>
+    public static string MiddleMousePopupToolbar
+    {
+      get
+      {
+        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        {
+          IntPtr pStringHolder = sh.NonConstPointer();
+          UnsafeNativeMethods.CRhinoAppGeneralSettings_GetString(IntPtr.Zero, idxMiddleMousePopupToolbar, pStringHolder);
+          return sh.ToString();
+        }
+      }
+      set { UnsafeNativeMethods.CRhinoAppGeneralSettings_SetString(IntPtr.Zero, idxMiddleMousePopupToolbar, value); }
+    }
+
+    /// <summary>
+    /// Gets or sets the toolbar to popup when the middle mouse is clicked on
+    /// a view, this value is only used when MiddleMouseMode is set to
+    /// PopupToolbar.
+    /// </summary>
+    public static string MiddleMouseMacro
+    {
+      get
+      {
+        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        {
+          IntPtr pStringHolder = sh.NonConstPointer();
+          UnsafeNativeMethods.CRhinoAppGeneralSettings_GetString(IntPtr.Zero, idxMiddleMouseMacro, pStringHolder);
+          return sh.ToString();
+        }
+      }
+      set { UnsafeNativeMethods.CRhinoAppGeneralSettings_SetString(IntPtr.Zero, idxMiddleMouseMacro, value); }
     }
 
     ////Description:

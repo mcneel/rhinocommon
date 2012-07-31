@@ -1669,6 +1669,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool Rdk_Sun_IsSunLight(IntPtr pLight);
+
+  //void Rdk_Sun_SunDirection(double latitude, double longitude, bool local, int iYear, int iMonth, int iDay, int iHours, int iMinutes, int iSeconds, ON_3dVector* direction)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Sun_SunDirection(double latitude, double longitude, [MarshalAs(UnmanagedType.U1)]bool local, int iYear, int iMonth, int iDay, int iHours, int iMinutes, int iSeconds, ref Vector3d direction);
   #endregion
 
 

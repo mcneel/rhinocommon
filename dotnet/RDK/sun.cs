@@ -7,24 +7,75 @@ namespace Rhino.Render
   /// <summary>
   /// Represents the Sun on a little portion of Earth.
   /// </summary>
-  public class Sun
+  public class Sun : IDisposable
   {
+    public static Rhino.Geometry.Vector3d SunDirection(double latitude, double longitude, DateTime when)
+    {
+      Rhino.Geometry.Vector3d rc = new Geometry.Vector3d();
+      bool local = (when.Kind == DateTimeKind.Local || when.Kind == DateTimeKind.Unspecified);
+      UnsafeNativeMethods.Rdk_Sun_SunDirection(latitude, longitude, local, when.Year, when.Month, when.Day, when.Hour, when.Minute, when.Second, ref rc);
+      return rc;
+    }
+
     readonly Rhino.RhinoDoc m_doc;
+    IntPtr m_pLocalSun;
 
     // Only access to this class is through the Sun property on the document's light table.
     // That property calls CheckForRdk so we don't need to "recheck" for functions/properties
     // in this class.
-    internal Sun(Rhino.RhinoDoc doc) { m_doc = doc; }
+    internal Sun(Rhino.RhinoDoc doc)
+    {
+      m_doc = doc;
+      m_pLocalSun = IntPtr.Zero;
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Create a non-document controlled Sun
+    /// </summary>
+    public Sun()
+    {
+      m_pLocalSun = UnsafeNativeMethods.Rdk_SunNew();
+      m_doc = null;
+    }
+
+    ~Sun()
+    {
+      Dispose(false);
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (m_pLocalSun != IntPtr.Zero)
+      {
+        UnsafeNativeMethods.Rdk_SunDelete(m_pLocalSun);
+      }
+      m_pLocalSun = IntPtr.Zero;
+    }
+
 
     /// <summary>Turn to sun on/off in this document.</summary>
     public bool Enabled
     {
       get
       {
+        if (null == m_doc)
+          return false;
+
         IntPtr pConstSun = ConstPointer();
         return UnsafeNativeMethods.Rdk_Sun_Enabled(pConstSun);
       }
-      set { UnsafeNativeMethods.Rdk_Sun_SetEnabled(NonConstPointer(), value); }
+      set
+      {
+        if( m_doc!=null )
+          UnsafeNativeMethods.Rdk_Sun_SetEnabled(NonConstPointer(), value);
+      }
     }
 
     /// <summary>
@@ -66,23 +117,6 @@ namespace Rhino.Render
     {
       IntPtr pSun = NonConstPointer();
       UnsafeNativeMethods.Rdk_Sun_SetAzimuthAltitude(pSun, azimuthDegrees, altitudeDegrees);
-    }
-
-    /// <summary>
-    /// This method is obsolete. Do not use this method. This method is hidden from autocompletion.
-    /// </summary>
-    /// <param name="when">-</param>
-    /// <param name="whenKind">-</param>
-    /// <param name="latitudeDegrees">-</param>
-    /// <param name="longitudeDegrees">-</param>
-    [Obsolete("Removed in favor of version that does not require a DateTimeKind since this is embedded in a DateTime. Will be removed in a future beta.")]
-    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    public void SetPosition(DateTime when, DateTimeKind whenKind, double latitudeDegrees, double longitudeDegrees)
-    {
-      IntPtr pSun = NonConstPointer();
-      UnsafeNativeMethods.Rdk_Sun_SetLatitudeLongitude(pSun, latitudeDegrees, longitudeDegrees);
-      bool local = whenKind != DateTimeKind.Utc;
-      UnsafeNativeMethods.Rdk_Sun_SetDateTime(pSun, local, when.Year, when.Month, when.Day, when.Hour, when.Minute, when.Second);
     }
 
     /// <summary>
@@ -155,17 +189,24 @@ namespace Rhino.Render
     /// <summary>Show the tabbed sun dialog.</summary>
     public void ShowDialog()
     {
-      IntPtr pSun = NonConstPointer();
-      UnsafeNativeMethods.Rdk_Sun_ShowDialog(pSun);
+      if (m_doc != null)
+      {
+        IntPtr pSun = NonConstPointer();
+        UnsafeNativeMethods.Rdk_Sun_ShowDialog(pSun);
+      }
     }
 
     internal IntPtr ConstPointer()
     {
+      if (m_pLocalSun != IntPtr.Zero)
+        return UnsafeNativeMethods.Rdk_SunInterface(m_pLocalSun);
       return UnsafeNativeMethods.Rdk_DocSunInterface(m_doc.m_docId);
     }
 
     IntPtr NonConstPointer()
     {
+      if (m_pLocalSun != IntPtr.Zero)
+        return UnsafeNativeMethods.Rdk_SunInterface(m_pLocalSun);
       return UnsafeNativeMethods.Rdk_DocSunInterface(m_doc.m_docId);
     }
   }

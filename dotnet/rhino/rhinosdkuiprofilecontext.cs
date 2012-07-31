@@ -1285,12 +1285,6 @@ namespace Rhino
       GetValue(key).SetPoint3d(false, value, GetValidator(key));
     }
 
-    [Obsolete("Use SetRectangle - this will be removed in a future WIP")]
-    public void SetRect(string key, System.Drawing.Rectangle value)
-    {
-      SetRectangle(key, value);
-    }
-
     public void SetRectangle(string key, System.Drawing.Rectangle value)
     {
       GetValue(key).SetRectangle(false, value, GetValidator(key));

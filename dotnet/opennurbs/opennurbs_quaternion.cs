@@ -213,32 +213,6 @@ namespace Rhino.Geometry
     /// <param name="q">A quaternion.</param>
     /// <param name="y">A number.</param>
     /// <returns>A new quaternion.</returns>
-    [Obsolete("This overload is obsolete because it is redundant. Please only use the overload that accepts doubles. You can cast to a double from your call site to use the correct version.")]
-    public static Quaternion operator/(Quaternion q, int y)
-    {
-      double x = (0!=y) ? 1d/y : 0.0;
-      return new Quaternion(q.m_a*x,q.m_b*x,q.m_c*x,q.m_d*x);
-    }
-
-    /// <summary>
-    /// Divides all quaternion coefficients by a factor and returns a new quaternion with the result.
-    /// </summary>
-    /// <param name="q">A quaternion.</param>
-    /// <param name="y">A number.</param>
-    /// <returns>A new quaternion.</returns>
-    [Obsolete("This overload is obsolete because it is redundant. Please only use the overload that accepts doubles. You can cast to a double from your call site to use the correct version.")]
-    public static Quaternion operator/(Quaternion q, float y)
-    {
-      double x = (0f!=y) ? 1d/y : 0.0;
-      return new Quaternion(q.m_a*x,q.m_b*x,q.m_c*x,q.m_d*x);
-    }
-
-    /// <summary>
-    /// Divides all quaternion coefficients by a factor and returns a new quaternion with the result.
-    /// </summary>
-    /// <param name="q">A quaternion.</param>
-    /// <param name="y">A number.</param>
-    /// <returns>A new quaternion.</returns>
     public static Quaternion operator/(Quaternion q, double y)
     {
       double x = (0d!=y) ? 1d/y : 0.0;

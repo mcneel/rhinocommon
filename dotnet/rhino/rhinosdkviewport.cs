@@ -185,18 +185,6 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Do not use. Sets the size of the RhinoViewport.
-    /// </summary>
-    /// <param name="width">The width in pixels.</param>
-    /// <param name="height">The height in pixels.</param>
-    [Obsolete("Replaced by Size property to be consistent with .NET - will be removed in future WIP")]
-    public void SetScreenSize(int width, int height)
-    {
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.CRhinoViewport_SetScreenSize(pThis, width, height);
-    }
-
-    /// <summary>
     /// Gets or sets the height and width of the viewport (in pixels)
     /// </summary>
     public System.Drawing.Size Size
@@ -841,29 +829,6 @@ namespace Rhino.Display
 
     //  CRhinoDisplayPipeline* DisplayPipeline(void) const;
 
-    /// <summary>
-    /// Convert a point in parent RhinoView client window coordinates to the Viewport screen port
-    /// client coordinates. The screen port of a RhinoViewport may not match the client area of
-    /// the parent RhinoView. This occurs in cases when the RhinoViewport is a nested child viewport.
-    /// </summary>
-    /// <param name="point">
-    /// point in client coordinates of parent RhinoView window as input. This is
-    /// converted to the screen port client coordinates of the viewport as output.
-    /// </param>
-    /// <returns>
-    /// true if the point is inside of the RhinoViewport's screen port rectangle.
-    /// </returns>
-    [Obsolete("use ClientToScreen instead - this will be removed in a future WIP")]
-    public bool ClientToScreenPort(ref System.Drawing.Point point)
-    {
-      IntPtr pConstThis = ConstPointer();
-      int x = point.X;
-      int y = point.Y;
-      bool rc = UnsafeNativeMethods.CRhinoViewport_ClientToScreenPort(pConstThis, ref x, ref y);
-      point = new System.Drawing.Point(x,y);
-      return rc;
-    }
-
     #region Wrappers for ON_Viewport
 
     // from ON_Geometry
@@ -1339,17 +1304,6 @@ namespace Rhino.Display
       portNear = items[4];
       portFar = items[5];
       return rc;
-    }
-
-    [Obsolete("Replaced by Bounds to be consistent with .NET - will be removed in a future WIP")]
-    public System.Drawing.Rectangle ScreenPortBounds
-    {
-      get
-      {
-        int l, r, t, b, n, f;
-        GetScreenPort(out l, out r, out b, out t, out n, out f);
-        return System.Drawing.Rectangle.FromLTRB(l, t, r, b);
-      }
     }
 
 

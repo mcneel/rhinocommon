@@ -333,17 +333,6 @@ namespace Rhino.ApplicationSettings
       UnsafeNativeMethods.RhAppearanceSettings_GetSetColor(which, true, argb, IntPtr.Zero);
     }
 #if USING_V5_SDK
-    /// <summary>
-    /// Obsolete. Do not use.
-    /// </summary>
-    [System.ComponentModel.Browsable(false), Obsolete("Call UsePaintColors instead")]
-    public static bool UsingNewSchoolColors
-    {
-      get
-      {
-        return UnsafeNativeMethods.RhColors_UsingNewSchool();
-      }
-    }
 
     /// <summary>
     /// Gets the .Net library color that is currently associated with a paint color.

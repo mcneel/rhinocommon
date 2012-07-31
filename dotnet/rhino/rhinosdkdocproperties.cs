@@ -156,12 +156,6 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
-    [Obsolete("Use FindByName instead - this will be removed in a future WIP")]
-    public int Find(string name)
-    {
-      return FindByName(name);
-    }
-
     /// <summary>Finds a named view.</summary>
     /// <param name="name">name to search for.</param>
     /// <returns>

@@ -182,10 +182,10 @@ namespace Rhino.Collections
     public RhinoList(RhinoList<T> list)
     {
       if (list == null) { throw new ArgumentNullException("list"); }
-
-      //Set capacity to match.
-      Capacity = list.Capacity;
-
+      
+      // initialize items array at same capacity
+      m_items = new T[list.Capacity];
+      
       if (list.m_size > 0)
       {
         Array.Copy(list.m_items, m_items, list.m_items.Length);

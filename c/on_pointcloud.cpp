@@ -134,9 +134,10 @@ RH_C_FUNCTION int ON_PointCloud_GetInt(const ON_PointCloud* pConstPointCloud, in
 
 RH_C_FUNCTION bool ON_PointCloud_GetBool(const ON_PointCloud* pConstPointCloud, int which)
 {
-  const int idx_Normals = 0;
-  const int idx_Colors = 1;
+  const int idx_Colors = 0;
+  const int idx_Normals = 1;
   const int idx_Hidden = 2;
+
   bool rc = false;
   if( pConstPointCloud )
   {

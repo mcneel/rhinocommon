@@ -189,6 +189,7 @@ namespace Rhino.Collections
       if (list.m_size > 0)
       {
         Array.Copy(list.m_items, m_items, list.m_items.Length);
+        m_size = list.m_size;
       }
     }
 

@@ -1021,6 +1021,31 @@ RH_C_FUNCTION ON_MassProperties* ON_Brep_MassProperties(bool bArea, const ON_Bre
   return rc;
 }
 
+RH_C_FUNCTION double ON_Brep_Area(const ON_Brep* pBrep, double relativeTolerance, double absoluteTolerance)
+{
+  double area = 0.0;
+  if( pBrep )
+  {
+    ON_MassProperties rc;
+    bool success = false;
+    success = pBrep->AreaMassProperties(rc, true, false, false, false, relativeTolerance, absoluteTolerance);
+    area = rc.Area();
+  }
+  return area;
+}
+RH_C_FUNCTION double ON_Brep_Volume(const ON_Brep* pBrep, double relativeTolerance, double absoluteTolerance)
+{
+  double volume = 0.0;
+  if( pBrep )
+  {
+    ON_MassProperties rc;
+    bool success = false;
+    success = pBrep->VolumeMassProperties(rc, true, false, false, false, ON_UNSET_POINT, relativeTolerance, absoluteTolerance);
+    volume = rc.Volume();
+  }
+  return volume;
+}
+
 RH_C_FUNCTION ON_MassProperties* ON_GeometryMassProperties(bool bArea, ON_SimpleArray<const ON_Geometry*>* pGeometry, double relativeTolerance, double absoluteTolerance)
 {
   ON_MassProperties* rc = NULL;

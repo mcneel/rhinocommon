@@ -1637,6 +1637,52 @@ namespace Rhino.Geometry
       }
       return new Brep[0];
     }
+
+    /// <summary>
+    /// Compute the Area of the Brep. If you want proper Area data with moments 
+    /// and error information, use the AreaMassProperties class.
+    /// </summary>
+    /// <returns>The area of the Brep.</returns>
+    public double GetArea()
+    {
+      return GetArea(1.0e-6, 1.0e-6);
+    }
+    /// <summary>
+    /// Compute the Area of the Brep. If you want proper Area data with moments 
+    /// and error information, use the AreaMassProperties class.
+    /// </summary>
+    /// <param name="relativeTolerance">Relative tolerance to use for area calculation.</param>
+    /// <param name="absoluteTolerance">Absolute tolerance to use for area calculation.</param>
+    /// <returns>The area of the Brep.</returns>
+    public double GetArea(double relativeTolerance, double absoluteTolerance)
+    {
+      IntPtr pBrep = ConstPointer();
+      double area = UnsafeNativeMethods.ON_Brep_Area(pBrep, relativeTolerance, absoluteTolerance);
+      return area;
+    }
+
+    /// <summary>
+    /// Compute the Volume of the Brep. If you want proper Volume data with moments 
+    /// and error information, use the VolumeMassProperties class.
+    /// </summary>
+    /// <returns>The volume of the Brep.</returns>
+    public double GetVolume()
+    {
+      return GetVolume(1.0e-6, 1.0e-6);
+    }
+    /// <summary>
+    /// Compute the Volume of the Brep. If you want proper Volume data with moments 
+    /// and error information, use the VolumeMassProperties class.
+    /// </summary>
+    /// <param name="relativeTolerance">Relative tolerance to use for area calculation.</param>
+    /// <param name="absoluteTolerance">Absolute tolerance to use for area calculation.</param>
+    /// <returns>The volume of the Brep.</returns>
+    public double GetVolume(double relativeTolerance, double absoluteTolerance)
+    {
+      IntPtr pBrep = ConstPointer();
+      double volume = UnsafeNativeMethods.ON_Brep_Volume(pBrep, relativeTolerance, absoluteTolerance);
+      return volume;
+    }
 #endif
 
     /// <summary>

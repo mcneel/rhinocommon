@@ -3,6 +3,8 @@
 /dotnet/monostart/obj
 /dotnet/monostart/monostart.pidb
 /dotnet/RhinoCommonMono.userprefs
+/dotnet/RhinoCommonMono*.suo
+/dotnet/_Resharper*
 /dotnet/Debug
 /dotnet/Release
 /dotnet/bin

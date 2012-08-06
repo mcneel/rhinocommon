@@ -10369,6 +10369,18 @@ internal partial class UnsafeNativeMethods
   //                                      bool local_blending, int cap, bool fit_rail, double abs_tol, double ang_tol, ON_SimpleArray<ON_Brep*>* pBrepArray)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void RHC_RhinoPipeBreps(IntPtr pConstCurve, int param_count, double[] rail_params, double[] radii, [MarshalAs(UnmanagedType.U1)]bool local_blending, int cap, [MarshalAs(UnmanagedType.U1)]bool fit_rail, double abs_tol, double ang_tol, IntPtr pBrepArray);
+
+  //void RHC_RegisterTabbedDockBar(const RHMONO_STRING* caption, ON_UUID tab_id, ON_UUID plugin_id, HICON icon, CREATEPANELPROC create_proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //bool RHC_RhinoUiIsTabVisible(ON_UUID tab_id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoUiIsTabVisible(Guid tab_id);
+
+  //void RHC_RhinoUiOpenCloseDockbarTab(ON_UUID tab_id, bool open)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void RHC_RhinoUiOpenCloseDockbarTab(Guid tab_id, [MarshalAs(UnmanagedType.U1)]bool open);
   #endregion
 
 

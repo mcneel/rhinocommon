@@ -275,6 +275,11 @@ internal partial class UnsafeNativeMethods
   internal static extern void CRhCmnGripObject_SetCallbacks(Rhino.DocObjects.Custom.CustomGripObject.CRhinoObjectDestructorCallback destructor_func,
     Rhino.DocObjects.Custom.CustomGripObject.CRhinoGripObjectWeightCallback getweight_func,
     Rhino.DocObjects.Custom.CustomGripObject.CRhinoGripObjectSetWeightCallback setweight_func);
+
+  // Docking Tabs in rh_utilities.cpp
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void RHC_RegisterTabbedDockBar([MarshalAs(UnmanagedType.LPWStr)]string caption, Guid tab_id, Guid plugin_id, IntPtr icon, Rhino.UI.Panels.CreatePanelCallback create_proc);
+
 #endif
 
   #region RDK Functions

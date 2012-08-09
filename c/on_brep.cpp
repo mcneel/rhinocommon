@@ -109,11 +109,13 @@ RH_C_FUNCTION ON_Brep* ON_Brep_New(const ON_Brep* pOther)
   return ON_Brep::New();
 }
 
+#if !defined(OPENNURBS_BUILD)
 class CRhHackBrep : public CRhinoBrepObject
 {
 public:
   void ClearBrep(){m_geometry=0;}
 };
+#endif
 
 RH_C_FUNCTION bool ON_Brep_IsDuplicate(const ON_Brep* pConstBrep1, const ON_Brep* pConstBrep2, double tolerance)
 {

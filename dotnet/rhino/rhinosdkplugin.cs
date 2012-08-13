@@ -287,9 +287,10 @@ namespace Rhino.PlugIns
         m_OnWriteDocument = InternalWriteDocument;
         m_OnReadDocument = InternalReadDocument;
         m_OnAddPagesToOptions = InternalAddPagesToOptions;
+        m_OnAddPagesToObjectProperties = InternalAddPagesToObjectProperties;
         UnsafeNativeMethods.CRhinoPlugIn_SetCallbacks(m_OnLoad, m_OnShutDown, m_OnGetPlugInObject);
         UnsafeNativeMethods.CRhinoPlugIn_SetCallbacks2(m_OnCallWriteDocument, m_OnWriteDocument, m_OnReadDocument);
-        UnsafeNativeMethods.CRhinoPlugIn_SetCallbacks3(m_OnAddPagesToOptions);
+        UnsafeNativeMethods.CRhinoPlugIn_SetCallbacks3(m_OnAddPagesToOptions, m_OnAddPagesToObjectProperties);
       }
     }
 
@@ -300,7 +301,8 @@ namespace Rhino.PlugIns
     internal delegate int CallWriteDocumentDelegate(int plugin_serial_number, IntPtr pWriteOptions);
     internal delegate int WriteDocumentDelegate(int plugin_serial_number, int doc_id, IntPtr pBinaryArchive, IntPtr pWriteOptions);
     internal delegate int ReadDocumentDelegate(int plugin_serial_number, int doc_id, IntPtr pBinaryArchive, IntPtr pReadOptions);
-    internal delegate void OnAddPagesToOptionsDelegate(int plugin_serial_number, IntPtr pPageList);
+    internal delegate void OnAddPagesToObjectPropertiesDelegate(int plugin_serial_number, IntPtr pPageList);
+    internal delegate void OnAddPagesToOptionsDelegate(int plugin_serial_number, IntPtr pPageList, int options_page, int doc_id);
 
     private static OnLoadDelegate m_OnLoad;
     private static OnShutdownDelegate m_OnShutDown;
@@ -308,6 +310,7 @@ namespace Rhino.PlugIns
     private static CallWriteDocumentDelegate m_OnCallWriteDocument;
     private static WriteDocumentDelegate m_OnWriteDocument;
     private static ReadDocumentDelegate m_OnReadDocument;
+    private static OnAddPagesToObjectPropertiesDelegate m_OnAddPagesToObjectProperties;
     private static OnAddPagesToOptionsDelegate m_OnAddPagesToOptions;
     
 
@@ -470,15 +473,40 @@ namespace Rhino.PlugIns
       }
       return rc;
     }
-    private static void InternalAddPagesToOptions(int plugin_serial_number, IntPtr pPageList)
+
+    private static void InternalAddPagesToObjectProperties(int plugin_serial_number, IntPtr pPageList)
     {
-#if RHINO_SDK
+      PlugIn p = LookUpBySerialNumber(plugin_serial_number);
+      if (p != null)
+      {
+        try
+        {
+          System.Collections.Generic.List<Rhino.UI.ObjectPropertiesPage> pages = new System.Collections.Generic.List<Rhino.UI.ObjectPropertiesPage>();
+          p.ObjectPropertiesPages(pages);
+          for (int i = 0; i < pages.Count; i++)
+          {
+            IntPtr ptr = pages[i].ConstructWithRhinoDotNet();
+            if (ptr != IntPtr.Zero)
+              UnsafeNativeMethods.CRhinoPlugIn_AddObjectPropertiesPage(pPageList, ptr);
+          }
+        }
+        catch (Exception e)
+        {
+          HostUtils.ExceptionReport(e);
+        }
+      }
+    }
+
+    private static void InternalAddPagesToOptions(int plugin_serial_number, IntPtr pPageList, int options_page, int doc_id)
+    {
       PlugIn p = LookUpBySerialNumber(plugin_serial_number);
       if (p != null)
       {
         try
         {
           System.Collections.Generic.List<Rhino.UI.OptionsDialogPage> pages = new System.Collections.Generic.List<Rhino.UI.OptionsDialogPage>();
+          if (options_page == 1)
+          {
           p.OptionsDialogPages(pages);
           for (int i = 0; i < pages.Count; i++)
           {
@@ -487,12 +515,22 @@ namespace Rhino.PlugIns
               UnsafeNativeMethods.CRhinoPlugIn_AddOptionPage(pPageList, ptr);
           }
         }
+          else
+          {
+            p.DocumentPropertiesDialogPages(RhinoDoc.FromId(doc_id), pages);
+            for (int i = 0; i < pages.Count; i++)
+            {
+              IntPtr ptr = pages[i].ConstructWithRhinoDotNet();
+              if (ptr != IntPtr.Zero)
+                UnsafeNativeMethods.CRhinoPlugIn_AddOptionPage(pPageList, ptr);
+            }
+          }
+        }
         catch (Exception e)
         {
           HostUtils.ExceptionReport(e);
         }
       }
-#endif
     }
     #endregion
 
@@ -668,6 +706,25 @@ namespace Rhino.PlugIns
     /// </summary>
     /// <param name="pages">list of pages to add your custom options dialog page(s) to.</param>
     protected virtual void OptionsDialogPages( System.Collections.Generic.List<Rhino.UI.OptionsDialogPage> pages )
+    {
+    }
+
+    /// <summary>
+    /// Override this function if you want to extend the document properties sections
+    /// of the options dialog. This function is called whenever the user brings up the
+    /// Options dialog.
+    /// </summary>
+    /// <param name="doc">document that the pages are set up for</param>
+    /// <param name="pages">list of pages to add your custom options dialog page(s) to.</param>
+    protected virtual void DocumentPropertiesDialogPages(RhinoDoc doc, System.Collections.Generic.List<Rhino.UI.OptionsDialogPage> pages)
+    {
+    }
+
+    /// <summary>
+    /// Override this function is you want to extend the object properties dialog
+    /// </summary>
+    /// <param name="pages"></param>
+    protected virtual void ObjectPropertiesPages(System.Collections.Generic.List<Rhino.UI.ObjectPropertiesPage> pages)
     {
     }
 #endif

@@ -6483,6 +6483,11 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoDoc_ReplaceTextEntity(int docId, IntPtr pObjRef, IntPtr pText);
 
+  //bool CRhinoDoc_ReplacePointCloud(int docId, const CRhinoObjRef* pObjRef, const ON_PointCloud* pConstPointCloud)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoDoc_ReplacePointCloud(int docId, IntPtr pObjRef, IntPtr pConstPointCloud);
+
   //const CRhinoPointObject* CRhinoDoc_ReplaceObject2(int docId, const CRhinoObjRef* pObjRef, ON_3DPOINT_STRUCT point)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoDoc_ReplaceObject2(int docId, IntPtr pObjRef, Point3d point);
@@ -9209,7 +9214,7 @@ internal partial class UnsafeNativeMethods
   //void CRhinoPlugIn_SetCallbacks2(ONCALLWRITEDOCPLUGINPROC oncallwrite, WRITEDOCPLUGINPROC writedoc, READDOCPLUGINPROC readdoc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
-  //void CRhinoPlugIn_SetCallbacks3(ADDOPTIONPAGESPROC onaddoptionpages)
+  //void CRhinoPlugIn_SetCallbacks3(ADDOPTIONPAGESPROC onaddoptionpages, ADDOBJPROPPAGESPROC onaddobjproppages)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //void CRhinoFileImportPlugIn_SetCallbacks(ADDREADFILETYPEPROC addfiletype, READFILEPROC readfile)
@@ -9251,6 +9256,10 @@ internal partial class UnsafeNativeMethods
   //void CRhinoPlugIn_AddOptionPage(ON_SimpleArray<CRhinoOptionsDialogPage*>* pPageList, CRhinoOptionsDialogPage* pPage)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoPlugIn_AddOptionPage(IntPtr pPageList, IntPtr pPage);
+
+  //void CRhinoPlugIn_AddObjectPropertiesPage(ON_SimpleArray<CRhinoObjectPropertiesDialogPage*>* pPageList, CRhinoObjectPropertiesDialogPage* pPage)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoPlugIn_AddObjectPropertiesPage(IntPtr pPageList, IntPtr pPage);
   #endregion
 
 

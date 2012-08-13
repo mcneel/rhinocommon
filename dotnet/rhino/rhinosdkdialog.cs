@@ -105,6 +105,20 @@ namespace Rhino
         UnsafeNativeMethods.RHC_RegisterTabbedDockBar(caption, panelType.GUID, plugin.Id, icon.Handle, m_create_panel_callback);
       }
 
+      public static object GetPanel(Guid panelId)
+      {
+        if (m_existing_panels == null)
+          return null;
+
+        for (int i = 0; i < m_existing_panels.Count; i++)
+        {
+          Type t = m_existing_panels[i].PanelType;
+          if (t.GUID == panelId)
+            return m_existing_panels[i].Panel;
+        }
+        return null;
+      }
+
       public static bool IsPanelVisible(Guid panelId)
       {
         return UnsafeNativeMethods.RHC_RhinoUiIsTabVisible(panelId);

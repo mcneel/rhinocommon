@@ -772,9 +772,16 @@ namespace Rhino
             var handler = m_custom_undo_callbacks[i].Handler;
             if( handler!=null )
             {
+              try
+              {
               object tag = m_custom_undo_callbacks[i].Tag;
               string description = Marshal.PtrToStringUni(action_description);
               handler(null, new Commands.CustomUndoEventArgs(command_id, description, created_by_redo==1, sn, tag));
+            }
+              catch (Exception ex)
+              {
+                Rhino.Runtime.HostUtils.ExceptionReport("OnUndoEventHandler", ex);
+              }
             }
             break;
           }
@@ -1330,6 +1337,8 @@ namespace Rhino
     {
       if (m_delete_object != null)
       {
+        bool old_state = RhinoApp.InEventWatcher;
+        RhinoApp.InEventWatcher = true;
         try
         {
           m_delete_object(null, new DocObjects.RhinoObjectEventArgs(pDoc, pObject));
@@ -1338,6 +1347,7 @@ namespace Rhino
         {
           Runtime.HostUtils.ExceptionReport(ex);
         }
+        RhinoApp.InEventWatcher = old_state;
       }
     }
     internal static EventHandler<DocObjects.RhinoObjectEventArgs> m_delete_object;
@@ -4658,6 +4668,43 @@ namespace Rhino.DocObjects.Tables
         return Replace(objref, text);
       }
     }
+
+    /// <summary>
+    /// Replaces one object with new pointcloud object.
+    /// </summary>
+    /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted.</param>
+    /// <param name="pointcloud">
+    /// new pointcloud to be added
+    /// A duplicate of the pointcloud is added to the Rhino model.
+    /// </param>
+    /// <returns>true if successful.</returns>
+    public bool Replace(DocObjects.ObjRef objref, Geometry.PointCloud pointcloud)
+    {
+      if (null == objref || null == pointcloud)
+        return false;
+      IntPtr pObjRef = objref.ConstPointer();
+      IntPtr pCloud = pointcloud.ConstPointer();
+      bool rc = UnsafeNativeMethods.CRhinoDoc_ReplacePointCloud(m_doc.m_docId, pObjRef, pCloud);
+      return rc;
+    }
+    
+    /// <summary>
+    /// Replaces one object with new pointcloud object.
+    /// </summary>
+    /// <param name="objectId">Id of object to be replaced.</param>
+    /// <param name="pointcloud">
+    /// new pointcloud to be added
+    /// A duplicate of the pointcloud is added to the Rhino model.
+    /// </param>
+    /// <returns>true if successful.</returns>
+    public bool Replace(Guid objectId, Geometry.PointCloud pointcloud)
+    {
+      using (ObjRef objref = new ObjRef(objectId))
+      {
+        return Replace(objref, pointcloud);
+      }
+    }
+
     #endregion
 
 #region Find geometry

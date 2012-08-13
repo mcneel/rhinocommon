@@ -3132,15 +3132,6 @@ namespace Rhino.Geometry.Collections
     {
       return AddFace(face.m_a, face.m_b, face.m_c, face.m_d);
     }
-    ///// <summary>
-    ///// Append a new face to the end of the mesh face list.
-    ///// </summary>
-    ///// <param name="face">Face to append.</param>
-    ///// <returns>The index of the newly added face.</returns>
-    //public int AddFace(MeshFace face)
-    //{
-    //  return AddFace(face.m_a, face.m_b, face.m_c, face.m_d);
-    //}
     /// <summary>
     /// Appends a new triangular face to the end of the mesh face list.
     /// </summary>
@@ -3169,6 +3160,22 @@ namespace Rhino.Geometry.Collections
     {
       IntPtr ptr = m_mesh.NonConstPointer();
       return UnsafeNativeMethods.ON_Mesh_AddFace(ptr, vertex1, vertex2, vertex3, vertex4);
+    }
+
+    /// <summary>
+    /// Appends a list of faces to the end of the mesh face list.
+    /// </summary>
+    /// <param name="faces">Faces to add.</param>
+    /// <returns>Indices of the newly created faces</returns>
+    public int[] AddFaces(IEnumerable<MeshFace> faces)
+    {
+      List<int> rc = new List<int>();
+      foreach(MeshFace face in faces)
+      {
+        int index = AddFace(face);
+        rc.Add(index);
+      }
+      return rc.ToArray();
     }
 
     /// <summary>

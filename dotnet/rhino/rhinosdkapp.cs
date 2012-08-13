@@ -498,6 +498,7 @@ namespace Rhino
       UnsafeNativeMethods.CRhinoApp_Exit();
     }
 
+    internal static bool InEventWatcher { get; set; }
 
     ///<summary>Runs a Rhino command script.</summary>
     ///<param name="script">[in] script to run.</param>
@@ -512,8 +513,16 @@ namespace Rhino
     /// script before returning. When RunScript is called outside of a command, it returns and the
     /// script is run. This way menus and buttons can use RunScript to execute complicated functions.
     ///</remarks>
+    ///<exception cref="System.ApplicationException">
+    /// If RunScript is being called while inside an event watcher.
+    ///</exception>
     public static bool RunScript(string script, bool echo)
     {
+      if (InEventWatcher)
+      {
+        const string msg = "Do not call RunScript inside of an event watcher.  Contact steve@mcneel.com to dicuss why you need to do this.";
+        throw new ApplicationException(msg);
+      }
       int echoMode = echo ? 1 : 0;
       return UnsafeNativeMethods.CRhinoApp_RunScript(script, echoMode);
     }

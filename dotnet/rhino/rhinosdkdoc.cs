@@ -21,14 +21,16 @@ namespace Rhino.Commands
     readonly bool m_created_by_redo;
     readonly uint m_undo_event_sn;
     readonly object m_tag;
+    readonly RhinoDoc m_doc;
 
-    internal CustomUndoEventArgs(Guid command_id, string description, bool createdByRedo, uint eventSn, object tag)
+    internal CustomUndoEventArgs(Guid command_id, string description, bool createdByRedo, uint eventSn, object tag, RhinoDoc doc)
     {
       m_command_id = command_id;
       m_action_description = description;
       m_created_by_redo = createdByRedo;
       m_undo_event_sn = eventSn;
       m_tag = tag;
+      m_doc = doc;
     }
 
     public Guid CommandId
@@ -56,6 +58,11 @@ namespace Rhino.Commands
     {
       get { return m_tag; }
     }
+
+    public RhinoDoc Document
+    {
+      get { return m_doc; }
+    }
   }
 }
 
@@ -64,15 +71,19 @@ namespace Rhino
   class CustomUndoCallback
   {
     readonly EventHandler<Rhino.Commands.CustomUndoEventArgs> m_handler;
-    public CustomUndoCallback(uint serialNumber, EventHandler<Rhino.Commands.CustomUndoEventArgs> handler, object tag)
+    public CustomUndoCallback(uint serialNumber, EventHandler<Rhino.Commands.CustomUndoEventArgs> handler, object tag, string description, RhinoDoc document)
     {
       m_handler = handler;
       SerialNumber = serialNumber;
       Tag = tag;
+      Description = description;
+      Document = document;
     }
     public uint SerialNumber { get; private set; }
     public EventHandler<Rhino.Commands.CustomUndoEventArgs> Handler { get { return m_handler; } }
     public object Tag { get; private set; }
+    public RhinoDoc Document { get; private set; }
+    public string Description { get; private set; }
   }
 
   /// <summary>
@@ -775,8 +786,9 @@ namespace Rhino
               try
               {
               object tag = m_custom_undo_callbacks[i].Tag;
-              string description = Marshal.PtrToStringUni(action_description);
-              handler(null, new Commands.CustomUndoEventArgs(command_id, description, created_by_redo==1, sn, tag));
+                string description = m_custom_undo_callbacks[i].Description;
+                RhinoDoc doc = m_custom_undo_callbacks[i].Document;
+                handler(null, new Commands.CustomUndoEventArgs(command_id, description, created_by_redo == 1, sn, tag, doc));
             }
               catch (Exception ex)
               {
@@ -809,6 +821,19 @@ namespace Rhino
       return AddCustomUndoEvent(description, handler, null);
     }
 
+    /// <summary>
+    /// Add a custom undo event so you can undo private plug-in data
+    /// when the user performs an undo or redo
+    /// </summary>
+    /// <param name="description"></param>
+    /// <param name="handler"></param>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_customundo.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_customundo.cs' lang='cs'/>
+    /// <code source='examples\py\ex_customundo.py' lang='py'/>
+    /// </example>
     public bool AddCustomUndoEvent(string description, EventHandler<Rhino.Commands.CustomUndoEventArgs> handler, object tag)
     {
       if (string.IsNullOrEmpty(description) || handler == null)
@@ -823,7 +848,7 @@ namespace Rhino
 
       if (m_custom_undo_callbacks == null)
         m_custom_undo_callbacks = new List<CustomUndoCallback>();
-      m_custom_undo_callbacks.Add(new CustomUndoCallback(rc, handler, tag));
+      m_custom_undo_callbacks.Add(new CustomUndoCallback(rc, handler, tag, description, this));
       return true;
     }
 

@@ -545,6 +545,7 @@ namespace Rhino.Commands
           m_OnBeginCommand = OnBeginCommand;
           UnsafeNativeMethods.CRhinoEventWatcher_SetBeginCommandCallback(m_OnBeginCommand, Rhino.Runtime.HostUtils.m_ew_report);
         }
+        m_begin_command -= value;
         m_begin_command += value;
       }
       remove
@@ -572,6 +573,7 @@ namespace Rhino.Commands
           m_OnEndCommand = OnEndCommand;
           UnsafeNativeMethods.CRhinoEventWatcher_SetEndCommandCallback(m_OnEndCommand, Rhino.Runtime.HostUtils.m_ew_report);
         }
+        m_end_command -= value;
         m_end_command += value;
       }
       remove
@@ -615,6 +617,7 @@ namespace Rhino.Commands
           m_OnUndoEvent = OnUndoEvent;
           UnsafeNativeMethods.CRhinoEventWatcher_SetUndoEventCallback(m_OnUndoEvent, Rhino.Runtime.HostUtils.m_ew_report);
         }
+        m_undo_event -= value;
         m_undo_event += value;
       }
       remove

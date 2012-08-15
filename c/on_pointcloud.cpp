@@ -230,13 +230,13 @@ RH_C_FUNCTION bool ON_PointCloud_SetNormal( ON_PointCloud* pPointCloud, int inde
   return rc;
 }
 
-RH_C_FUNCTION bool ON_PointCloud_GetColor(const ON_PointCloud* pConstPointCloud, int index, int* abgr)
+RH_C_FUNCTION bool ON_PointCloud_GetColor(const ON_PointCloud* pConstPointCloud, int index, int* argb)
 {
   bool rc = false;
-  if( pConstPointCloud && abgr && (index >= 0) && (index < pConstPointCloud->m_C.Count()) )
+  if( pConstPointCloud && argb && (index >= 0) && (index < pConstPointCloud->m_C.Count()) )
   {
     unsigned int c = (unsigned int)(pConstPointCloud->m_C[index]);
-    *abgr = (int)c;
+    *argb = (int)ABGR_to_ARGB(c);
     rc = true;
   }
   return rc;
@@ -534,7 +534,7 @@ RH_C_FUNCTION void ON_PointCloud_GetColors(const ON_PointCloud* pConstPointCloud
     for( int i = 0; i < pConstPointCloud->m_C.Count(); i++)
     {
       unsigned int abgr = (unsigned int)(pConstPointCloud->m_C[i]);
-      colors[i] = (int)abgr;
+      colors[i] = (int)ABGR_to_ARGB(abgr);
     }
   }
 }

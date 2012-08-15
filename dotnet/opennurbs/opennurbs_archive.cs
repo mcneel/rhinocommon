@@ -2823,11 +2823,11 @@ namespace Rhino.FileIO
     /// <returns>The element that was read.</returns>
     public System.Drawing.Color ReadColor()
     {
-      int abgr = 0;
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadColor(m_ptr, ref abgr);
+      int argb = 0;
+      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadColor(m_ptr, ref argb);
       if( m_bReadErrorOccured )
         throw new BinaryArchiveException("ReadColor failed");
-      return System.Drawing.ColorTranslator.FromWin32(abgr);
+      return System.Drawing.Color.FromArgb(argb);
     }
 
     /// <summary>

@@ -45,6 +45,7 @@ using System.Runtime.InteropServices;
 //                           was actually rolling version numbers
 // 10 Aug 2012 (5.1.30000.1) Added document properties and object properties custom page support
 //                           Added ObjectTable.Replace which takes a point cloud
+//                           Added MeshFaceList.AddFaces
 [assembly: AssemblyVersion("5.1.30000.1")]
 
 [assembly: AssemblyFileVersion("5.0.20693.0")]

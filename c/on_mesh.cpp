@@ -672,13 +672,13 @@ RH_C_FUNCTION bool ON_Mesh_GetNormal(const ON_Mesh* pConstMesh, int index, ON_3f
   return rc;
 }
 
-RH_C_FUNCTION bool ON_Mesh_GetColor(const ON_Mesh* pConstMesh, int index, int* abgr)
+RH_C_FUNCTION bool ON_Mesh_GetColor(const ON_Mesh* pConstMesh, int index, int* argb)
 {
   bool rc = false;
-  if( pConstMesh && abgr && index>=0 && index<pConstMesh->m_C.Count() )
+  if( pConstMesh && argb && index>=0 && index<pConstMesh->m_C.Count() )
   {
     unsigned int c = (unsigned int)(pConstMesh->m_C[index]);
-    *abgr = (int)c;
+    *argb = (int)ABGR_to_ARGB(c);
     rc = true;
   }
   return rc;
@@ -2053,7 +2053,7 @@ RH_C_FUNCTION int ON_Mesh_MeshColorAt(const ON_Mesh* pConstMesh, int faceIndex, 
       color.SetFractionalRGB(r, g, b);
       
       unsigned int abgr = (unsigned int)color;
-      rc = (int)abgr;
+      rc = (int)ABGR_to_ARGB(abgr);
     }
   }
   return rc;

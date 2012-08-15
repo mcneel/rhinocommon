@@ -289,17 +289,17 @@ RH_C_FUNCTION bool ON_BinaryArchive_WriteString(ON_BinaryArchive* pArchive, cons
   return rc;
 }
 
-RH_C_FUNCTION bool ON_BinaryArchive_ReadColor(ON_BinaryArchive* pArchive, int* abgr)
+RH_C_FUNCTION bool ON_BinaryArchive_ReadColor(ON_BinaryArchive* pArchive, int* argb)
 {
   bool rc = false;
-  if( pArchive && abgr )
+  if( pArchive && argb )
   {
     ON_Color c;
     rc = pArchive->ReadColor(c);
     if( rc )
     {
       unsigned int _c = (unsigned int)c;
-      *abgr = (int)_c;
+      *argb = (int)ABGR_to_ARGB(_c);
     }
   }
   return rc;

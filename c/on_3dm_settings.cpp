@@ -392,7 +392,7 @@ RH_C_FUNCTION int ON_3dmRenderSettings_GetColor(const ON_3dmRenderSettings* pCon
       abgr = (unsigned int)(pConstRenderSettings->m_background_bottom_color);
       break;
     }
-    rc = (int)abgr;
+    rc = (int)ABGR_to_ARGB(abgr);
   }
   return rc;
 }

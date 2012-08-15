@@ -370,8 +370,8 @@ namespace Rhino.Geometry
     System.Drawing.Color GetColor(int which)
     {
       IntPtr pConstThis = ConstPointer();
-      int abgr = UnsafeNativeMethods.ON_Light_GetColor(pConstThis, which);
-      return System.Drawing.ColorTranslator.FromWin32(abgr);
+      int argb = UnsafeNativeMethods.ON_Light_GetColor(pConstThis, which);
+      return System.Drawing.Color.FromArgb(argb);
     }
     void SetColor(int which, System.Drawing.Color c)
     {

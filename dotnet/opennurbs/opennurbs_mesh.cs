@@ -1557,10 +1557,10 @@ namespace Rhino.Geometry
     public Color ColorAt(int faceIndex, double t0, double t1, double t2, double t3)
     {
       IntPtr pConstThis = ConstPointer();
-      int abgr = UnsafeNativeMethods.ON_Mesh_MeshColorAt(pConstThis, faceIndex, t0, t1, t2, t3);
+      int argb = UnsafeNativeMethods.ON_Mesh_MeshColorAt(pConstThis, faceIndex, t0, t1, t2, t3);
 
-      if (abgr < 0) { return Color.Transparent; }
-      return System.Drawing.ColorTranslator.FromWin32(abgr);
+      if (argb < 0) { return Color.Transparent; }
+      return System.Drawing.Color.FromArgb(argb);
     }
 
     /// <summary>
@@ -3732,12 +3732,12 @@ namespace Rhino.Geometry.Collections
     {
       get
       {
-        int abgr = 0;
+        int argb = 0;
         IntPtr ptr = m_mesh.ConstPointer();
         // get color will return false when the index is out of range
-        if (!UnsafeNativeMethods.ON_Mesh_GetColor(ptr, index, ref abgr))
+        if (!UnsafeNativeMethods.ON_Mesh_GetColor(ptr, index, ref argb))
           throw new IndexOutOfRangeException();
-        return ColorTranslator.FromWin32(abgr);
+        return Color.FromArgb(argb);
       }
       set
       {

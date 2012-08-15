@@ -650,10 +650,10 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_BinaryArchive_WriteString(IntPtr pArchive, [MarshalAs(UnmanagedType.LPWStr)]string str);
 
-  //bool ON_BinaryArchive_ReadColor(ON_BinaryArchive* pArchive, int* abgr)
+  //bool ON_BinaryArchive_ReadColor(ON_BinaryArchive* pArchive, int* argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_BinaryArchive_ReadColor(IntPtr pArchive, ref int abgr);
+  internal static extern bool ON_BinaryArchive_ReadColor(IntPtr pArchive, ref int argb);
 
   //bool ON_BinaryArchive_WriteColor(ON_BinaryArchive* pArchive, int argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -3021,10 +3021,10 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Mesh_GetNormal(IntPtr pConstMesh, int index, ref Vector3f vector, [MarshalAs(UnmanagedType.U1)]bool faceNormal);
 
-  //bool ON_Mesh_GetColor(const ON_Mesh* pConstMesh, int index, int* abgr)
+  //bool ON_Mesh_GetColor(const ON_Mesh* pConstMesh, int index, int* argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Mesh_GetColor(IntPtr pConstMesh, int index, ref int abgr);
+  internal static extern bool ON_Mesh_GetColor(IntPtr pConstMesh, int index, ref int argb);
 
   //bool ON_Mesh_GetFace(const ON_Mesh* pConstMesh, int face_index, ON_MeshFace* face)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -3801,10 +3801,10 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_PointCloud_SetNormal(IntPtr pPointCloud, int index, Vector3d normal);
 
-  //bool ON_PointCloud_GetColor(const ON_PointCloud* pConstPointCloud, int index, int* abgr)
+  //bool ON_PointCloud_GetColor(const ON_PointCloud* pConstPointCloud, int index, int* argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_PointCloud_GetColor(IntPtr pConstPointCloud, int index, ref int abgr);
+  internal static extern bool ON_PointCloud_GetColor(IntPtr pConstPointCloud, int index, ref int argb);
 
   //bool ON_PointCloud_SetColor( ON_PointCloud* pPointCloud, int index, int argb)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

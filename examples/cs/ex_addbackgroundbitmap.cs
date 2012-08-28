@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 partial class Examples
 {
@@ -12,7 +11,7 @@ partial class Examples
       return Rhino.Commands.Result.Cancel;
 
     // Verify the file that was selected
-    System.Drawing.Image image = null;
+    System.Drawing.Image image;
     try
     {
       image = System.Drawing.Image.FromFile(fd.FileName);
@@ -50,8 +49,8 @@ partial class Examples
 
     // Cook up some scale factors
     double w = gn.Number();
-    double image_width = (double)image.Width;
-    double image_height = (double)image.Height;
+    double image_width = image.Width;
+    double image_height = image.Height;
     double h = w * (image_height / image_width);
 
     Rhino.Geometry.Plane plane = view.ActiveViewport.ConstructionPlane();

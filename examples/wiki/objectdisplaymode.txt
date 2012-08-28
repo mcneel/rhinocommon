@@ -4,10 +4,9 @@
 <code c#>
 public static Rhino.Commands.Result ObjectDisplayMode(Rhino.RhinoDoc doc)
 {
-  Rhino.Commands.Result rc = Rhino.Commands.Result.Cancel;
-  ObjectType filter = ObjectType.Mesh | ObjectType.Brep;
+  const ObjectType filter = ObjectType.Mesh | ObjectType.Brep;
   ObjRef objref;
-  rc = Rhino.Input.RhinoGet.GetOneObject("Select mesh or surface", true, filter, out objref);
+  Result rc = Rhino.Input.RhinoGet.GetOneObject("Select mesh or surface", true, filter, out objref);
   if (rc != Rhino.Commands.Result.Success)
     return rc;
   Guid viewportId = doc.Views.ActiveView.ActiveViewportID;
@@ -47,8 +46,8 @@ public static Rhino.Commands.Result ObjectDisplayMode(Rhino.RhinoDoc doc)
 ===== VB.NET =====
 <code vb>
 Public Shared Function ObjectDisplayMode(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-  Dim rc As Rhino.Commands.Result = Rhino.Commands.Result.Cancel
-  Dim filter As ObjectType = ObjectType.Mesh Or ObjectType.Brep
+  Dim rc As Rhino.Commands.Result
+  Const filter As ObjectType = ObjectType.Mesh Or ObjectType.Brep
   Dim objref As ObjRef = Nothing
   rc = Rhino.Input.RhinoGet.GetOneObject("Select mesh or surface", True, filter, objref)
   If rc <> Rhino.Commands.Result.Success Then

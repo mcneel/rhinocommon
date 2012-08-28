@@ -1,7 +1,9 @@
-﻿Partial Class Examples
+﻿Imports Rhino.DocObjects
+
+Partial Class Examples
   Public Shared Function AddTexture(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
     ' Select object to add texture
-    Dim filter As Rhino.DocObjects.ObjectType = Rhino.DocObjects.ObjectType.Surface Or Rhino.DocObjects.ObjectType.PolysrfFilter Or Rhino.DocObjects.ObjectType.Mesh
+    Const filter As ObjectType = Rhino.DocObjects.ObjectType.Surface Or Rhino.DocObjects.ObjectType.PolysrfFilter Or Rhino.DocObjects.ObjectType.Mesh
     Dim objref As Rhino.DocObjects.ObjRef = Nothing
     Dim rc As Rhino.Commands.Result = Rhino.Input.RhinoGet.GetOneObject("Select object to add texture", False, filter, objref)
     If rc <> Rhino.Commands.Result.Success Then

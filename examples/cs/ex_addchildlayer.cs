@@ -1,5 +1,3 @@
-using System;
-
 partial class Examples
 {
   public static Rhino.Commands.Result AddChildLayer(Rhino.RhinoDoc doc)

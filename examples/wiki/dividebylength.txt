@@ -4,8 +4,8 @@
 <code c#>
 public static Rhino.Commands.Result DivideByLengthPoints(Rhino.RhinoDoc doc)
 {
-  Rhino.DocObjects.ObjectType filter = Rhino.DocObjects.ObjectType.Curve; 
-  Rhino.DocObjects.ObjRef objref = null;
+  const ObjectType filter = Rhino.DocObjects.ObjectType.Curve; 
+  Rhino.DocObjects.ObjRef objref;
   Rhino.Commands.Result rc = Rhino.Input.RhinoGet.GetOneObject("Select curve to divide", false, filter, out objref);
   if (rc != Rhino.Commands.Result.Success || objref == null)
     return rc;
@@ -22,7 +22,7 @@ public static Rhino.Commands.Result DivideByLengthPoints(Rhino.RhinoDoc doc)
   if (rc != Rhino.Commands.Result.Success)
     return rc;
 
-  Rhino.Geometry.Point3d[] points = null;
+  Rhino.Geometry.Point3d[] points;
   crv.DivideByLength(seg_length, true, out points);
   if (points == null)
     return Rhino.Commands.Result.Failure;
@@ -37,7 +37,7 @@ public static Rhino.Commands.Result DivideByLengthPoints(Rhino.RhinoDoc doc)
 ===== VB.NET =====
 <code vb>
 Public Shared Function DivideByLengthPoints(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-  Dim filter As Rhino.DocObjects.ObjectType = Rhino.DocObjects.ObjectType.Curve
+  Const filter As ObjectType = Rhino.DocObjects.ObjectType.Curve
   Dim objref As Rhino.DocObjects.ObjRef = Nothing
   Dim rc As Rhino.Commands.Result = Rhino.Input.RhinoGet.GetOneObject("Select curve to divide", False, filter, objref)
   If rc <> Rhino.Commands.Result.Success OrElse objref Is Nothing Then

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 partial class Examples
 {
   public static Rhino.Commands.Result ActiveViewport(Rhino.RhinoDoc doc)

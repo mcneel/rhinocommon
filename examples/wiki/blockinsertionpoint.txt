@@ -4,9 +4,8 @@
 <code c#>
 public static Rhino.Commands.Result BlockInsertionPoint(Rhino.RhinoDoc doc)
 {
-  Rhino.Commands.Result rc = Rhino.Commands.Result.Success;
   Rhino.DocObjects.ObjRef objref;
-  rc = Rhino.Input.RhinoGet.GetOneObject("Select instance", true, Rhino.DocObjects.ObjectType.InstanceReference, out objref);
+  Result rc = Rhino.Input.RhinoGet.GetOneObject("Select instance", true, Rhino.DocObjects.ObjectType.InstanceReference, out objref);
   if (rc != Rhino.Commands.Result.Success)
     return rc;
   Rhino.DocObjects.InstanceObject instance = objref.Object() as Rhino.DocObjects.InstanceObject;
@@ -22,7 +21,7 @@ public static Rhino.Commands.Result BlockInsertionPoint(Rhino.RhinoDoc doc)
 ===== VB.NET =====
 <code vb>
 Public Shared Function BlockInsertionPoint(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-  Dim rc As Rhino.Commands.Result = Rhino.Commands.Result.Success
+  Dim rc As Rhino.Commands.Result
   Dim objref As Rhino.DocObjects.ObjRef = Nothing
   rc = Rhino.Input.RhinoGet.GetOneObject("Select instance", True, Rhino.DocObjects.ObjectType.InstanceReference, objref)
   If rc <> Rhino.Commands.Result.Success Then

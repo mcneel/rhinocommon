@@ -1,6 +1,4 @@
-﻿using System;
-
-partial class Examples
+﻿partial class Examples
 {
   /// <summary>
   /// Generate a layout with a single detail view that zooms to a list of objects

@@ -1,15 +1,15 @@
 ﻿using System;
 using Rhino;
+using Rhino.Commands;
 using Rhino.DocObjects;
 
 partial class Examples
 {
   public static Rhino.Commands.Result ObjectDisplayMode(Rhino.RhinoDoc doc)
   {
-    Rhino.Commands.Result rc = Rhino.Commands.Result.Cancel;
-    ObjectType filter = ObjectType.Mesh | ObjectType.Brep;
+    const ObjectType filter = ObjectType.Mesh | ObjectType.Brep;
     ObjRef objref;
-    rc = Rhino.Input.RhinoGet.GetOneObject("Select mesh or surface", true, filter, out objref);
+    Result rc = Rhino.Input.RhinoGet.GetOneObject("Select mesh or surface", true, filter, out objref);
     if (rc != Rhino.Commands.Result.Success)
       return rc;
     Guid viewportId = doc.Views.ActiveView.ActiveViewportID;

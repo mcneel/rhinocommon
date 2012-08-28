@@ -4,8 +4,8 @@
 <code c#>
 public static Rhino.Commands.Result ExplodeHatch(Rhino.RhinoDoc doc)
 {
-  Rhino.DocObjects.ObjectType filter = Rhino.DocObjects.ObjectType.Hatch;
-  Rhino.DocObjects.ObjRef objref = null;
+  const ObjectType filter = Rhino.DocObjects.ObjectType.Hatch;
+  Rhino.DocObjects.ObjRef objref;
   Rhino.Commands.Result rc = Rhino.Input.RhinoGet.GetOneObject("Select hatch to explode", false, filter, out objref);
   if (rc != Rhino.Commands.Result.Success || objref == null)
     return rc;
@@ -57,7 +57,7 @@ public static Rhino.Commands.Result ExplodeHatch(Rhino.RhinoDoc doc)
 <code vb>
 Public Shared Function ExplodeHatch(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
 
-  Dim filter As Rhino.DocObjects.ObjectType = Rhino.DocObjects.ObjectType.Hatch
+  Const filter As ObjectType = Rhino.DocObjects.ObjectType.Hatch
   Dim objref As Rhino.DocObjects.ObjRef = Nothing
   Dim rc As Rhino.Commands.Result = Rhino.Input.RhinoGet.GetOneObject("Select hatch to explode", False, filter, objref)
   If rc <> Rhino.Commands.Result.Success OrElse objref Is Nothing Then

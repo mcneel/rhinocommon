@@ -6,11 +6,11 @@ partial class Examples
   public static Rhino.Commands.Result AddTruncatedCone(Rhino.RhinoDoc doc)
   {
     Point3d bottom_pt = new Point3d(0,0,0);
-    double bottom_radius = 2;
+    const double bottom_radius = 2;
     Circle bottom_circle = new Circle(bottom_pt, bottom_radius);
 
     Point3d top_pt = new Point3d(0,0,10);
-    double top_radius = 6;
+    const double top_radius = 6;
     Circle top_circle = new Circle(top_pt, top_radius);
 
     LineCurve shapeCurve = new LineCurve(bottom_circle.PointAt(0), top_circle.PointAt(0));

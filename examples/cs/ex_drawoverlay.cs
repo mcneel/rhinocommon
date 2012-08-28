@@ -1,4 +1,3 @@
-using System;
 using Rhino;
 
 namespace examples_cs
@@ -18,7 +17,7 @@ namespace examples_cs
   {
     public override string EnglishName { get { return "csDrawOverlay"; } }
 
-    CustomConduit m_conduit = new CustomConduit();
+    readonly CustomConduit m_conduit = new CustomConduit();
     protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
     {
       // toggle conduit on/off

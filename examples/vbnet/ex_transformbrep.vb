@@ -1,5 +1,4 @@
 ﻿Imports Rhino.Input
-Imports System.Collections.Generic
 
 Partial Class Examples
   Public Shared Function TransformBrep(doc As Rhino.RhinoDoc) As Rhino.Commands.Result

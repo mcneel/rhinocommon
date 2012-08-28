@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-partial class Examples
+﻿partial class Examples
 {
   public static Rhino.Commands.Result AddBrepBox(Rhino.RhinoDoc doc)
   {

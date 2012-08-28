@@ -53,10 +53,7 @@ public static Rhino.Commands.Result TestBrepBox(Rhino.RhinoDoc doc)
     var brep = obj_ref.Brep();
     if (brep != null)
     {
-      if (IsBrepBox(brep))
-        Rhino.RhinoApp.WriteLine("Yes it is a box");
-      else
-        Rhino.RhinoApp.WriteLine("No it is not a box");
+      Rhino.RhinoApp.WriteLine(IsBrepBox(brep) ? "Yes it is a box" : "No it is not a box");
     }
   }
   return rc;

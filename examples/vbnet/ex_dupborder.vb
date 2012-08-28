@@ -1,6 +1,8 @@
-﻿Partial Class Examples
+﻿Imports Rhino.DocObjects
+
+Partial Class Examples
   Public Shared Function DupBorder(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-    Dim filter As Rhino.DocObjects.ObjectType = Rhino.DocObjects.ObjectType.Surface Or Rhino.DocObjects.ObjectType.PolysrfFilter
+    Const filter As ObjectType = Rhino.DocObjects.ObjectType.Surface Or Rhino.DocObjects.ObjectType.PolysrfFilter
     Dim objref As Rhino.DocObjects.ObjRef = Nothing
     Dim rc As Rhino.Commands.Result = Rhino.Input.RhinoGet.GetOneObject("Select surface or polysurface", False, filter, objref)
     If rc <> Rhino.Commands.Result.Success OrElse objref Is Nothing Then

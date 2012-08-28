@@ -21,7 +21,7 @@ namespace examples_cs
       }
       m_python.ScriptContextDoc = new CustomPythonDoc(doc);
 
-      string script = @"
+      const string script = @"
 import rhinoscriptsyntax as rs
 rs.AddLine((0,0,0), (10,10,10))
 ";
@@ -29,18 +29,19 @@ rs.AddLine((0,0,0), (10,10,10))
       return Rhino.Commands.Result.Success;
     }
 
-    Rhino.Runtime.PythonScript m_python = null;
+    Rhino.Runtime.PythonScript m_python;
   }
 
   // our fake RhinoDoc
   public class CustomPythonDoc
   {
-    RhinoDoc m_doc;
+    readonly RhinoDoc m_doc;
     public CustomPythonDoc(RhinoDoc doc)
     {
       m_doc = doc;
     }
-    CustomObjectTable m_table = new CustomObjectTable();
+
+    readonly CustomObjectTable m_table = new CustomObjectTable();
     public CustomObjectTable Objects
     {
       get { return m_table; }
@@ -70,7 +71,7 @@ rs.AddLine((0,0,0), (10,10,10))
       return Guid.Empty;
     }
 
-    System.Collections.Generic.Dictionary<Guid, Rhino.Geometry.Line> m_lines_dict = new System.Collections.Generic.Dictionary<Guid, Rhino.Geometry.Line>();
+    readonly System.Collections.Generic.Dictionary<Guid, Rhino.Geometry.Line> m_lines_dict = new System.Collections.Generic.Dictionary<Guid, Rhino.Geometry.Line>();
   }
 
 }

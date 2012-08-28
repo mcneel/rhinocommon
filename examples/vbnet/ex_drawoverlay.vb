@@ -10,7 +10,7 @@ Public Class ex_drawoverlay
     End Get
   End Property
 
-  Dim m_conduit As New CustomConduit()
+  ReadOnly m_conduit As New CustomConduit()
 
   Protected Overrides Function RunCommand(ByVal doc As RhinoDoc, ByVal mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
     ' toggle conduit on/off

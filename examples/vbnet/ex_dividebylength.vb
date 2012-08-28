@@ -1,6 +1,8 @@
+Imports Rhino.DocObjects
+
 Partial Class Examples
   Public Shared Function DivideByLengthPoints(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-    Dim filter As Rhino.DocObjects.ObjectType = Rhino.DocObjects.ObjectType.Curve
+    Const filter As ObjectType = Rhino.DocObjects.ObjectType.Curve
     Dim objref As Rhino.DocObjects.ObjRef = Nothing
     Dim rc As Rhino.Commands.Result = Rhino.Input.RhinoGet.GetOneObject("Select curve to divide", False, filter, objref)
     If rc <> Rhino.Commands.Result.Success OrElse objref Is Nothing Then

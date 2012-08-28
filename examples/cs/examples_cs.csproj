@@ -103,6 +103,7 @@
     <Compile Include="ex_createblock.cs" />
     <Compile Include="ex_curveboundingbox.cs" />
     <Compile Include="ex_custompython.cs" />
+    <Compile Include="ex_customundo.cs" />
     <Compile Include="ex_dividebylength.cs" />
     <Compile Include="ex_drawoverlay.cs" />
     <Compile Include="ex_dupborder.cs" />
@@ -142,6 +143,11 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ex_selbyusertext.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="WpfOptionsPage.xaml.cs">
       <DependentUpon>WpfOptionsPage.xaml</DependentUpon>
     </Compile>
@@ -185,12 +191,19 @@
       <SubType>Designer</SubType>
       <DependentUpon>OptionsControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Page Include="WpfOptionsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mapping_match.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

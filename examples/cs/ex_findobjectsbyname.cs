@@ -4,7 +4,7 @@ partial class Examples
 {
   public static Rhino.Commands.Result FindObjectsByName(Rhino.RhinoDoc doc)
   {
-    string name = "abc";
+    const string name = "abc";
     Rhino.DocObjects.ObjectEnumeratorSettings settings = new Rhino.DocObjects.ObjectEnumeratorSettings();
     settings.NameFilter = name;
     System.Collections.Generic.List<Guid> ids = new System.Collections.Generic.List<Guid>();
@@ -16,12 +16,10 @@ partial class Examples
       Rhino.RhinoApp.WriteLine("No objects with the name " + name);
       return Rhino.Commands.Result.Failure;
     }
-    else
-    {
-      Rhino.RhinoApp.WriteLine("Found {0} objects", ids.Count);
-      for (int i = 0; i < ids.Count; i++)
-        Rhino.RhinoApp.WriteLine("  {0}", ids[i]);
-    }
+
+    Rhino.RhinoApp.WriteLine("Found {0} objects", ids.Count);
+    foreach (Guid id in ids)
+      Rhino.RhinoApp.WriteLine("  {0}", id);
 
     return Rhino.Commands.Result.Success;
   }

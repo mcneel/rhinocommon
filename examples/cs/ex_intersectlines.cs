@@ -1,5 +1,4 @@
-﻿using System;
-using Rhino.Geometry;
+﻿using Rhino.Geometry;
 
 partial class Examples
 {

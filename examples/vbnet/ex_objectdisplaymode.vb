@@ -3,8 +3,8 @@ Imports Rhino.DocObjects
 
 Partial Class Examples
   Public Shared Function ObjectDisplayMode(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-    Dim rc As Rhino.Commands.Result = Rhino.Commands.Result.Cancel
-    Dim filter As ObjectType = ObjectType.Mesh Or ObjectType.Brep
+    Dim rc As Rhino.Commands.Result
+    Const filter As ObjectType = ObjectType.Mesh Or ObjectType.Brep
     Dim objref As ObjRef = Nothing
     rc = Rhino.Input.RhinoGet.GetOneObject("Select mesh or surface", True, filter, objref)
     If rc <> Rhino.Commands.Result.Success Then

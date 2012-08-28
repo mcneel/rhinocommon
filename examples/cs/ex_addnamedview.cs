@@ -1,10 +1,8 @@
-﻿using System;
-
-partial class Examples
+﻿partial class Examples
 {
   public static Rhino.Commands.Result AddNamedView(Rhino.RhinoDoc doc)
   {
-    Rhino.Display.RhinoView view = null;
+    Rhino.Display.RhinoView view;
     Rhino.Commands.Result rc = Rhino.Input.RhinoGet.GetView("Select view to adjust", out view);
     if (rc != Rhino.Commands.Result.Success)
       return rc;

@@ -1,6 +1,4 @@
-﻿Imports Rhino.Geometry
-
-Partial Class Examples
+﻿Partial Class Examples
   Public Shared Function CommandLineOptions(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
     ' For this example we will use a GetPoint class, but all of the custom
     ' "Get" classes support command line options.

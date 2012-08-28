@@ -2,7 +2,7 @@
 
 Class MoveCPlanePoint
   Inherits Rhino.Input.Custom.GetPoint
-  Private m_cplane As Rhino.DocObjects.ConstructionPlane
+  Private ReadOnly m_cplane As Rhino.DocObjects.ConstructionPlane
   Public Sub New(ByVal cplane As Rhino.DocObjects.ConstructionPlane)
     m_cplane = cplane
   End Sub

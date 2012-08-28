@@ -1,4 +1,3 @@
-using System;
 using Rhino;
 
 namespace examples_cs
@@ -55,11 +54,23 @@ namespace examples_cs
 
     protected override void OptionsDialogPages(System.Collections.Generic.List<Rhino.UI.OptionsDialogPage> pages)
     {
-      /*
+      
+      //var page = new CustomOptionPage("parent");
+      //page.Children.Add(new CustomOptionPage("child"));
+      //pages.Add(page);
+      
+    }
+    protected override void DocumentPropertiesDialogPages(RhinoDoc doc, System.Collections.Generic.List<Rhino.UI.OptionsDialogPage> pages)
+    {
       var page = new CustomOptionPage("parent");
-      page.Children.Add(new CustomOptionPage("child"));
-      pages.Add(page);
-       */
+      //page.Children.Add(new CustomOptionPage("child"));
+      //pages.Add(page);
+      //base.DocumentPropertiesDialogPages(doc, pages);
+    }
+
+    protected override void ObjectPropertiesPages(System.Collections.Generic.List<Rhino.UI.ObjectPropertiesPage> pages)
+    {
+      pages.Add(new CustomObjPropPage());
     }
   }
 }

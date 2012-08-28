@@ -4,10 +4,9 @@
 <code c#>
 public static Rhino.Commands.Result InsertKnot(Rhino.RhinoDoc doc)
 {
-  Rhino.Commands.Result rc = Rhino.Commands.Result.Success;
-  Rhino.DocObjects.ObjectType filter = Rhino.DocObjects.ObjectType.Curve;
+  const ObjectType filter = Rhino.DocObjects.ObjectType.Curve;
   Rhino.DocObjects.ObjRef objref;
-  rc = Rhino.Input.RhinoGet.GetOneObject("Select curve for knot insertion", false, filter, out objref);
+  Result rc = Rhino.Input.RhinoGet.GetOneObject("Select curve for knot insertion", false, filter, out objref);
   if (rc != Rhino.Commands.Result.Success)
     return rc;
   Rhino.Geometry.Curve curve = objref.Curve();
@@ -37,8 +36,8 @@ public static Rhino.Commands.Result InsertKnot(Rhino.RhinoDoc doc)
 ===== VB.NET =====
 <code vb>
 Public Shared Function InsertKnot(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-  Dim rc As Rhino.Commands.Result = Rhino.Commands.Result.Success
-  Dim filter As Rhino.DocObjects.ObjectType = Rhino.DocObjects.ObjectType.Curve
+  Dim rc As Rhino.Commands.Result
+  Const filter As ObjectType = Rhino.DocObjects.ObjectType.Curve
   Dim objref As Rhino.DocObjects.ObjRef = Nothing
   rc = Rhino.Input.RhinoGet.GetOneObject("Select curve for knot insertion", False, filter, objref)
   If rc <> Rhino.Commands.Result.Success Then

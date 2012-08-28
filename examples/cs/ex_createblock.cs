@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Rhino.DocObjects;
 
 partial class Examples
 {
@@ -12,9 +12,9 @@ partial class Examples
     go.GroupSelect = true;
 
     // Phantoms, grips, lights, etc., cannot be in blocks.
-    var forbidden_geometry_filter = Rhino.DocObjects.ObjectType.Light |
-      Rhino.DocObjects.ObjectType.Grip | Rhino.DocObjects.ObjectType.Phantom;
-    var geometry_filter = forbidden_geometry_filter ^ Rhino.DocObjects.ObjectType.AnyObject;
+    const ObjectType forbidden_geometry_filter = Rhino.DocObjects.ObjectType.Light |
+                                                 Rhino.DocObjects.ObjectType.Grip | Rhino.DocObjects.ObjectType.Phantom;
+    const ObjectType geometry_filter = forbidden_geometry_filter ^ Rhino.DocObjects.ObjectType.AnyObject;
     go.GeometryFilter = geometry_filter;
     go.GetMultiple(1, 0);
     if (go.CommandResult() != Rhino.Commands.Result.Success)

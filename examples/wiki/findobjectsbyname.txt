@@ -4,7 +4,7 @@
 <code c#>
 public static Rhino.Commands.Result FindObjectsByName(Rhino.RhinoDoc doc)
 {
-  string name = "abc";
+  const string name = "abc";
   Rhino.DocObjects.ObjectEnumeratorSettings settings = new Rhino.DocObjects.ObjectEnumeratorSettings();
   settings.NameFilter = name;
   System.Collections.Generic.List<Guid> ids = new System.Collections.Generic.List<Guid>();
@@ -16,12 +16,10 @@ public static Rhino.Commands.Result FindObjectsByName(Rhino.RhinoDoc doc)
     Rhino.RhinoApp.WriteLine("No objects with the name " + name);
     return Rhino.Commands.Result.Failure;
   }
-  else
-  {
-    Rhino.RhinoApp.WriteLine("Found {0} objects", ids.Count);
-    for (int i = 0; i < ids.Count; i++)
-      Rhino.RhinoApp.WriteLine("  {0}", ids[i]);
-  }
+
+  Rhino.RhinoApp.WriteLine("Found {0} objects", ids.Count);
+  foreach (Guid id in ids)
+    Rhino.RhinoApp.WriteLine("  {0}", id);
 
   return Rhino.Commands.Result.Success;
 }
@@ -29,7 +27,7 @@ public static Rhino.Commands.Result FindObjectsByName(Rhino.RhinoDoc doc)
 ===== VB.NET =====
 <code vb>
 Public Shared Function FindObjectsByName(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-  Dim name As String = "abc"
+  Const name As String = "abc"
   Dim settings As New Rhino.DocObjects.ObjectEnumeratorSettings()
   settings.NameFilter = name
   Dim ids As New System.Collections.Generic.List(Of Guid)()

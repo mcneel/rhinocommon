@@ -1,7 +1,9 @@
-﻿Partial Class Examples
+﻿Imports Rhino.DocObjects
+
+Partial Class Examples
   Public Shared Function UnrollSurface2(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-    Dim rc As Rhino.Commands.Result = Rhino.Commands.Result.Success
-    Dim filter As Rhino.DocObjects.ObjectType = Rhino.DocObjects.ObjectType.Brep Or Rhino.DocObjects.ObjectType.Surface
+    Dim rc As Rhino.Commands.Result
+    Const filter As ObjectType = Rhino.DocObjects.ObjectType.Brep Or Rhino.DocObjects.ObjectType.Surface
     Dim objref As Rhino.DocObjects.ObjRef = Nothing
     rc = Rhino.Input.RhinoGet.GetOneObject("Select surface or brep to unroll", False, filter, objref)
     If rc <> Rhino.Commands.Result.Success Then
@@ -32,7 +34,7 @@
     Dim curves As Rhino.Geometry.Curve() = Nothing
     Dim points As Rhino.Geometry.Point3d() = Nothing
     Dim dots As Rhino.Geometry.TextDot() = Nothing
-    Dim breps As Rhino.Geometry.Brep() = unroll.PerformUnroll(curves, points, dots)
+    unroll.PerformUnroll(curves, points, dots)
 
     ' change the mesh vertices to the flattened form and add it to the document
     If points.Length = mesh.Vertices.Count Then

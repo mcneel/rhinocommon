@@ -4,10 +4,9 @@
 <code c#>
 public static Rhino.Commands.Result SelLayer(Rhino.RhinoDoc doc)
 {
-  Rhino.Commands.Result rc = Rhino.Commands.Result.Cancel;
   // Prompt for a layer name
   string layername = doc.Layers.CurrentLayer.Name;
-  rc = Rhino.Input.RhinoGet.GetString("Name of layer to select objects", true, ref layername);
+  Result rc = Rhino.Input.RhinoGet.GetString("Name of layer to select objects", true, ref layername);
   if (rc != Rhino.Commands.Result.Success)
     return rc;
 
@@ -26,7 +25,7 @@ public static Rhino.Commands.Result SelLayer(Rhino.RhinoDoc doc)
 ===== VB.NET =====
 <code vb>
 Public Shared Function SelLayer(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-  Dim rc As Rhino.Commands.Result = Rhino.Commands.Result.Cancel
+  Dim rc As Rhino.Commands.Result
   ' Prompt for a layer name
   Dim layername As String = doc.Layers.CurrentLayer.Name
   rc = Rhino.Input.RhinoGet.GetString("Name of layer to select objects", True, layername)

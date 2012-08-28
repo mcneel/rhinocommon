@@ -4,10 +4,9 @@
 <code c#>
 public static Rhino.Commands.Result BooleanDifference(Rhino.RhinoDoc doc)
 {
-  Rhino.Commands.Result rc;
   Rhino.DocObjects.ObjRef[] objrefs;
-  rc = Rhino.Input.RhinoGet.GetMultipleObjects("Select first set of polysurfaces",
-    false, Rhino.DocObjects.ObjectType.PolysrfFilter, out objrefs);
+  Result rc = Rhino.Input.RhinoGet.GetMultipleObjects("Select first set of polysurfaces",
+                                                      false, Rhino.DocObjects.ObjectType.PolysrfFilter, out objrefs);
   if (rc != Rhino.Commands.Result.Success)
     return rc;
   if (objrefs == null || objrefs.Length < 1)

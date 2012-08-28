@@ -7,7 +7,7 @@ public class SpriteDrawingCommand : Rhino.Commands.Command
 {
   public override string EnglishName { get { return "cs_spritedrawing"; } }
 
-  bool m_draw_single_sprite = false;
+  bool m_draw_single_sprite;
   float m_sprite_size = 30;
   bool m_draw_world_location = true;
   protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
@@ -17,14 +17,14 @@ public class SpriteDrawingCommand : Rhino.Commands.Command
     var space_option = new Rhino.Input.Custom.OptionToggle(m_draw_world_location, "Screen", "World");
     var go = new Rhino.Input.Custom.GetOption();
     go.SetCommandPrompt("Sprite drawing mode");
-    int option_mode = go.AddOptionToggle("Mode", ref sprite_mode);
-    int option_size = go.AddOptionDouble("Size", ref size_option);
-    int option_space = go.AddOptionToggle("DrawSpace", ref space_option);
+    go.AddOptionToggle("Mode", ref sprite_mode);
+    go.AddOptionDouble("Size", ref size_option);
+    go.AddOptionToggle("DrawSpace", ref space_option);
     int option_go = go.AddOption("Spin");
     int option_file = go.AddOption("FileSprite");
 
-    Rhino.Display.DisplayPipeline.PostDrawObjects += new EventHandler<Rhino.Display.DrawEventArgs>(DisplayPipeline_PostDrawObjects);
-    Rhino.Display.DisplayPipeline.CalculateBoundingBox += new EventHandler<Rhino.Display.CalculateBoundingBoxEventArgs>(DisplayPipeline_CalculateBoundingBox);
+    Rhino.Display.DisplayPipeline.PostDrawObjects += DisplayPipeline_PostDrawObjects;
+    Rhino.Display.DisplayPipeline.CalculateBoundingBox += DisplayPipeline_CalculateBoundingBox;
 
     doc.Views.Redraw();
     while (go.Get() == Rhino.Input.GetResult.Option)

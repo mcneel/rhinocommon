@@ -1,6 +1,6 @@
 ﻿Partial Class Examples
   Public Shared Function BlockInsertionPoint(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-    Dim rc As Rhino.Commands.Result = Rhino.Commands.Result.Success
+    Dim rc As Rhino.Commands.Result
     Dim objref As Rhino.DocObjects.ObjRef = Nothing
     rc = Rhino.Input.RhinoGet.GetOneObject("Select instance", True, Rhino.DocObjects.ObjectType.InstanceReference, objref)
     If rc <> Rhino.Commands.Result.Success Then

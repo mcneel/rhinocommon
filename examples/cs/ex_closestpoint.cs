@@ -1,4 +1,3 @@
-using System;
 using Rhino;
 using Rhino.Geometry;
 
@@ -12,6 +11,8 @@ namespace examples_cs
     void SearchCallback(object sender, RTreeEventArgs e)
     {
       SearchData data = e.Tag as SearchData;
+      if (data == null)
+        return;
       data.HitCount = data.HitCount + 1;
       Point3f vertex = data.Mesh.Vertices[e.Id];
       double distance = data.Point.DistanceTo(vertex);
@@ -36,8 +37,8 @@ namespace examples_cs
       }
 
       public int HitCount { get; set; }
-      public Point3d Point { get; set; }
-      public Mesh Mesh { get; set; }
+      public Point3d Point { get; private set; }
+      public Mesh Mesh { get; private set; }
       public int Index { get; set; }
       public double Distance { get; set; }
     }
@@ -62,9 +63,9 @@ namespace examples_cs
           tree.Insert(mesh.Vertices[i], i);
         }
 
-        Point3d point;
         while (true)
         {
+          Point3d point;
           rc = Rhino.Input.RhinoGet.GetPoint("test point", false, out point);
           if (rc != Rhino.Commands.Result.Success)
             break;

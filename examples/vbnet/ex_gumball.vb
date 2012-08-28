@@ -1,4 +1,3 @@
-Imports System.Collections.Generic
 Imports Rhino
 Imports Rhino.Geometry
 
@@ -20,7 +19,7 @@ Public Class GumballExampleCommand
     Dim bbox = list.GetBoundingBox(True, True)
     If Not bbox.IsValid Then Return Rhino.Commands.Result.Failure
 
-    Dim cmdrc As Rhino.Commands.Result = Rhino.Commands.Result.Success
+    Dim cmdrc As Rhino.Commands.Result
 
     Dim base_gumball = New Rhino.UI.Gumball.GumballObject()
     base_gumball.SetFromBoundingBox(bbox)
@@ -89,7 +88,7 @@ End Class
 
 Class GetGumballXform
   Inherits Rhino.Input.Custom.GetTransform
-  Private m_dc As Rhino.UI.Gumball.GumballDisplayConduit
+  Private ReadOnly m_dc As Rhino.UI.Gumball.GumballDisplayConduit
   Public Sub New(dc As Rhino.UI.Gumball.GumballDisplayConduit)
     m_dc = dc
   End Sub

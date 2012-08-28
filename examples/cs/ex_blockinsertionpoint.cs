@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Rhino.Commands;
 
 partial class Examples
 {
   public static Rhino.Commands.Result BlockInsertionPoint(Rhino.RhinoDoc doc)
   {
-    Rhino.Commands.Result rc = Rhino.Commands.Result.Success;
     Rhino.DocObjects.ObjRef objref;
-    rc = Rhino.Input.RhinoGet.GetOneObject("Select instance", true, Rhino.DocObjects.ObjectType.InstanceReference, out objref);
+    Result rc = Rhino.Input.RhinoGet.GetOneObject("Select instance", true, Rhino.DocObjects.ObjectType.InstanceReference, out objref);
     if (rc != Rhino.Commands.Result.Success)
       return rc;
     Rhino.DocObjects.InstanceObject instance = objref.Object() as Rhino.DocObjects.InstanceObject;

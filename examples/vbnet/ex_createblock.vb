@@ -1,4 +1,6 @@
-﻿Partial Class Examples
+﻿Imports Rhino.DocObjects
+
+Partial Class Examples
   Public Shared Function CreateBlock(doc As Rhino.RhinoDoc) As Rhino.Commands.Result
     ' Select objects to define block
     Dim go = New Rhino.Input.Custom.GetObject()
@@ -8,8 +10,8 @@
     go.GroupSelect = True
 
     ' Phantoms, grips, lights, etc., cannot be in blocks.
-    Dim forbidden_geometry_filter = Rhino.DocObjects.ObjectType.Light Or Rhino.DocObjects.ObjectType.Grip Or Rhino.DocObjects.ObjectType.Phantom
-    Dim geometry_filter = forbidden_geometry_filter Xor Rhino.DocObjects.ObjectType.AnyObject
+    Const forbidden_geometry_filter As ObjectType = Rhino.DocObjects.ObjectType.Light Or Rhino.DocObjects.ObjectType.Grip Or Rhino.DocObjects.ObjectType.Phantom
+    Const geometry_filter As ObjectType = forbidden_geometry_filter Xor Rhino.DocObjects.ObjectType.AnyObject
     go.GeometryFilter = geometry_filter
     go.GetMultiple(1, 0)
     If go.CommandResult() <> Rhino.Commands.Result.Success Then

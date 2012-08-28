@@ -1,6 +1,4 @@
-﻿using System;
-
-partial class Examples
+﻿partial class Examples
 {
   public static Rhino.Commands.Result IntersectCurves(Rhino.RhinoDoc doc)
   {
@@ -19,8 +17,8 @@ partial class Examples
       return Rhino.Commands.Result.Failure;
 
     // Calculate the intersection
-    double intersection_tolerance = 0.001;
-    double overlap_tolerance = 0.0;
+    const double intersection_tolerance = 0.001;
+    const double overlap_tolerance = 0.0;
     var events = Rhino.Geometry.Intersect.Intersection.CurveCurve(curveA, curveB, intersection_tolerance, overlap_tolerance);
 
     // Process the results

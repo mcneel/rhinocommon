@@ -1,5 +1,6 @@
 using System;
 using Rhino;
+using Rhino.DocObjects;
 using Rhino.Geometry;
 
 
@@ -13,7 +14,7 @@ public class AnalysisModeOnCommand : Rhino.Commands.Command
     // make sure our custom visual analysis mode is registered
     var zmode = Rhino.Display.VisualAnalysisMode.Register(typeof(ZAnalysisMode));
 
-    var filter = Rhino.DocObjects.ObjectType.Surface | Rhino.DocObjects.ObjectType.PolysrfFilter | Rhino.DocObjects.ObjectType.Mesh;
+    const ObjectType filter = Rhino.DocObjects.ObjectType.Surface | Rhino.DocObjects.ObjectType.PolysrfFilter | Rhino.DocObjects.ObjectType.Mesh;
     Rhino.DocObjects.ObjRef[] objs;
     var rc = Rhino.Input.RhinoGet.GetMultipleObjects("Select objects for Z analysis", false, filter, out objs);
     if (rc != Rhino.Commands.Result.Success)
@@ -68,7 +69,7 @@ public class ZAnalysisMode : Rhino.Display.VisualAnalysisMode
 {
   Interval m_z_range = new Interval(-10,10);
   Interval m_hue_range = new Interval(0,4*Math.PI / 3);
-  bool m_show_isocurves = true;
+  private const bool m_show_isocurves = true;
 
   public override string Name { get { return "Z-Analysis"; } }
   public override Rhino.Display.VisualAnalysisMode.AnalysisStyle Style { get { return AnalysisStyle.FalseColor; } }

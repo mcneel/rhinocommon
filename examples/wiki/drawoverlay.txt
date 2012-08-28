@@ -17,7 +17,7 @@ public class ex_drawoverlay : Rhino.Commands.Command
 {
   public override string EnglishName { get { return "csDrawOverlay"; } }
 
-  CustomConduit m_conduit = new CustomConduit();
+  readonly CustomConduit m_conduit = new CustomConduit();
   protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
   {
     // toggle conduit on/off
@@ -39,7 +39,7 @@ Public Overrides ReadOnly Property EnglishName() As String
   End Get
 End Property
 
-Dim m_conduit As New CustomConduit()
+ReadOnly m_conduit As New CustomConduit()
 
 Protected Overrides Function RunCommand(ByVal doc As RhinoDoc, ByVal mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
   ' toggle conduit on/off

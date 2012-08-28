@@ -1,16 +1,14 @@
-﻿using System;
-
-partial class Examples
+﻿partial class Examples
 {
   public static Rhino.Commands.Result AddCone(Rhino.RhinoDoc doc)
   {
     Rhino.Geometry.Plane plane = Rhino.Geometry.Plane.WorldXY;
-    double height = 10;
-    double radius = 5;
+    const double height = 10;
+    const double radius = 5;
     Rhino.Geometry.Cone cone = new Rhino.Geometry.Cone(plane, height, radius);
     if (cone.IsValid)
     {
-      bool cap_bottom = true;
+      const bool cap_bottom = true;
       Rhino.Geometry.Brep cone_brep = cone.ToBrep(cap_bottom);
       if (cone_brep!=null)
       {

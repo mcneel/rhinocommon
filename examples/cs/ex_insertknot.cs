@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Rhino.Commands;
+using Rhino.DocObjects;
 
 partial class Examples
 {
   public static Rhino.Commands.Result InsertKnot(Rhino.RhinoDoc doc)
   {
-    Rhino.Commands.Result rc = Rhino.Commands.Result.Success;
-    Rhino.DocObjects.ObjectType filter = Rhino.DocObjects.ObjectType.Curve;
+    const ObjectType filter = Rhino.DocObjects.ObjectType.Curve;
     Rhino.DocObjects.ObjRef objref;
-    rc = Rhino.Input.RhinoGet.GetOneObject("Select curve for knot insertion", false, filter, out objref);
+    Result rc = Rhino.Input.RhinoGet.GetOneObject("Select curve for knot insertion", false, filter, out objref);
     if (rc != Rhino.Commands.Result.Success)
       return rc;
     Rhino.Geometry.Curve curve = objref.Curve();

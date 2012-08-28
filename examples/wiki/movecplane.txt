@@ -2,7 +2,7 @@
 
 ===== C# =====
 <code c#>
-Rhino.DocObjects.ConstructionPlane m_cplane;
+readonly Rhino.DocObjects.ConstructionPlane m_cplane;
 public MoveCPlanePoint(Rhino.DocObjects.ConstructionPlane cplane)
 {
   m_cplane = cplane;
@@ -23,7 +23,7 @@ protected override void OnDynamicDraw(Rhino.Input.Custom.GetPointDrawEventArgs e
 ===== VB.NET =====
 <code vb>
 Inherits Rhino.Input.Custom.GetPoint
-Private m_cplane As Rhino.DocObjects.ConstructionPlane
+Private ReadOnly m_cplane As Rhino.DocObjects.ConstructionPlane
 Public Sub New(ByVal cplane As Rhino.DocObjects.ConstructionPlane)
   m_cplane = cplane
 End Sub

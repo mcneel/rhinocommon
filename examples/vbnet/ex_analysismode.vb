@@ -1,3 +1,4 @@
+Imports Rhino.DocObjects
 Imports Rhino
 Imports Rhino.Geometry
 
@@ -15,7 +16,7 @@ Public Class AnalysisModeOnCommand
     ' make sure our custom visual analysis mode is registered
     Dim zmode = Rhino.Display.VisualAnalysisMode.Register(GetType(ZAnalysisMode))
 
-    Dim filter = Rhino.DocObjects.ObjectType.Surface Or Rhino.DocObjects.ObjectType.PolysrfFilter Or Rhino.DocObjects.ObjectType.Mesh
+    Const filter As ObjectType = Rhino.DocObjects.ObjectType.Surface Or Rhino.DocObjects.ObjectType.PolysrfFilter Or Rhino.DocObjects.ObjectType.Mesh
     Dim objs As Rhino.DocObjects.ObjRef() = Nothing
     Dim rc = Rhino.Input.RhinoGet.GetMultipleObjects("Select objects for Z analysis", False, filter, objs)
     If rc <> Rhino.Commands.Result.Success Then
@@ -73,7 +74,7 @@ Public Class ZAnalysisMode
   Inherits Rhino.Display.VisualAnalysisMode
   Private m_z_range As New Interval(-10, 10)
   Private m_hue_range As New Interval(0, 4 * Math.PI / 3)
-  Private m_show_isocurves As Boolean = True
+  Private Const m_show_isocurves As Boolean = True
 
   Public Overrides ReadOnly Property Name() As String
     Get

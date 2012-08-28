@@ -1,6 +1,4 @@
-﻿using System;
-
-partial class Examples
+﻿partial class Examples
 {
   public static Rhino.Commands.Result DetermineObjectLayer(Rhino.RhinoDoc doc)
   {

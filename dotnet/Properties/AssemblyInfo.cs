@@ -46,7 +46,11 @@ using System.Runtime.InteropServices;
 // 10 Aug 2012 (5.1.30000.1) Added document properties and object properties custom page support
 //                           Added ObjectTable.Replace which takes a point cloud
 //                           Added MeshFaceList.AddFaces
-[assembly: AssemblyVersion("5.1.30000.1")]
+// 21 Aug 2012 (5.1.30000.2) Added RunScript version that takes a display string
+//                           Added gumball and keyboard shortcut settings
+// 23 Aug 2012 (5.1.30000.3) Added DrawForegroundEventArgs
+//                           Added OnSpaceMorph virtual function for custom objects
+[assembly: AssemblyVersion("5.1.30000.3")]
 
 [assembly: AssemblyFileVersion("5.0.20693.0")]
 

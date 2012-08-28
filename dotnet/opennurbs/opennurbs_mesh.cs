@@ -1160,7 +1160,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Attempts to fix inconsistencies in the directions of meshfaces for a mesh. This function
     /// does not modify the vertex normals, but rather rearranges the mesh face winding and face
-    /// normals to make them all consistent. You may want to call Mesh.Normals.ConputeNormals()
+    /// normals to make them all consistent. You may want to call Mesh.Normals.ComputeNormals()
     /// to recompute vertex normals after calling this functions.
     /// </summary>
     /// <returns>number of faces that were modified.</returns>

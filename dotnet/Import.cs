@@ -249,6 +249,7 @@ internal partial class UnsafeNativeMethods
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectActiveInViewportCallback active_in_viewport,
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectSelectionCallback selection_change,
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectTransformCallback transform,
+                                                        Rhino.DocObjects.RhinoObject.RhinoObjectSpaceMorphCallback morph,
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectDeletedCallback deleted);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]

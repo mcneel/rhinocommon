@@ -93,6 +93,38 @@ namespace Rhino.Runtime
       return m_ptr;
     }
 
+    // 27 Aug. 2012 - S. Baer
+    // I'm not entirely confident that overriding Equals and GetHashCode
+    // is a good thing since internal native pointers can change after
+    // function calls suddenly making things that were equal into not equal
+    /*
+    /// <summary>
+    /// Equals is overloaded to check against the underlying native pointer
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public override bool Equals(object obj)
+    {
+      CommonObject co = obj as CommonObject;
+      if (co == null)
+        return false;
+
+      IntPtr pThis = ConstPointer();
+      IntPtr pObj = co.ConstPointer();
+      return pThis == pObj;
+    }
+
+    /// <summary>
+    /// Uses the native pointer for hash code generation
+    /// </summary>
+    /// <returns></returns>
+    public override int GetHashCode()
+    {
+      IntPtr pThis = ConstPointer();
+      return pThis.ToInt32();
+    }
+    */
+
     internal abstract IntPtr _InternalGetConstPointer();
     internal abstract IntPtr _InternalDuplicate(out bool applymempressure);
 

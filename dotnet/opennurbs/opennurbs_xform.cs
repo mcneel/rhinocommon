@@ -787,6 +787,30 @@ namespace Rhino.Geometry
   //public class ON_ClippingRegion { }
   //public class ON_Localizer { }
 
+  class NativeSpaceMorphWrapper : SpaceMorph
+  {
+    internal IntPtr m_pSpaceMorph;
+    public NativeSpaceMorphWrapper(IntPtr pSpaceMorph)
+    {
+      m_pSpaceMorph = pSpaceMorph;
+      double tolerance = 0;
+      bool quickpreview = false;
+      bool preservestructure = true;
+      if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(pSpaceMorph, ref tolerance, ref quickpreview, ref preservestructure))
+      {
+        Tolerance = tolerance;
+        QuickPreview = quickpreview;
+        PreserveStructure = preservestructure;
+      }
+    }
+
+    public override Point3d MorphPoint(Point3d point)
+    {
+      UnsafeNativeMethods.ON_SpaceMorph_MorphPoint(m_pSpaceMorph, ref point);
+      return point;
+    }
+  }
+
   /// <summary>
   /// Represents a spacial, Euclidean morph.
   /// </summary>
@@ -876,9 +900,15 @@ namespace Rhino.Geometry
       if (null == geometry || !IsMorphable(geometry))
         return false;
 
+      IntPtr pGeometry = geometry.NonConstPointer();
+      NativeSpaceMorphWrapper native_wrapper = this as NativeSpaceMorphWrapper;
+      if (native_wrapper!=null)
+      {
+        return UnsafeNativeMethods.ON_SpaceMorph_MorphGeometry2(pGeometry, native_wrapper.m_pSpaceMorph);
+      }
+
       SpaceMorph oldActive = m_active_morph;
       m_active_morph = this;
-      IntPtr pGeometry = geometry.NonConstPointer();
       MorphPointCallback cb = OnMorphPoint;
       bool rc = UnsafeNativeMethods.ON_SpaceMorph_MorphGeometry(pGeometry, m_tolerance, m_bQuickPreview, m_bPreserveStructure, cb);
       m_active_morph = oldActive;

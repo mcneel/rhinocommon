@@ -5,6 +5,20 @@ using Rhino.Geometry;
 #if RHINO_SDK
 namespace Rhino.Display
 {
+  public enum DepthMode : int
+  {
+    Neutral = 0,
+    AlwaysInFront = 1,
+    AlwaysInBack = 2
+  }
+
+  public enum ZBiasMode : int
+  {
+    Neutral = 0,
+    TowardsCamera = 1,
+    AwayFromCamera = 2
+  }
+
   public enum CullFaceMode : int
   {
     DrawFrontAndBack = 0,
@@ -86,9 +100,13 @@ namespace Rhino.Display
     const int idxSupportsShading = 8;
     const int idxModelTransformIsIdentity = 9;
 
+    // get/set integers
     const int idxActiveStereoProjection = 0;
     const int idxRenderPass = 1;
     const int idxNestLevel = 2;
+    const int idxDepthMode = 3;
+    const int idxZBiasMode = 4;
+
 
     const int idxModelTransform = 0;
     const int idxDepthTesting = 1;
@@ -258,7 +276,7 @@ namespace Rhino.Display
       {
         try
         {
-          m_drawforeground(null, new DrawEventArgs(pPipeline, pConduit));
+          m_drawforeground(null, new DrawForegroundEventArgs(pPipeline, pConduit));
         }
         catch (Exception ex)
         {
@@ -294,6 +312,7 @@ namespace Rhino.Display
           UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxCalcBoundingBox, m_CalcBoundingBoxCallback, m_report);
         }
 
+        m_calcbbox -= value;
         m_calcbbox += value;
       }
       remove
@@ -323,6 +342,7 @@ namespace Rhino.Display
           UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxCalcBoundingBoxZoomExtents, m_CalcBoundingBoxZoomExtentsCallback, m_report);
         }
 
+        m_calcbbox_zoomextents -= value;
         m_calcbbox_zoomextents += value;
       }
       remove
@@ -351,6 +371,7 @@ namespace Rhino.Display
           m_PreDrawObjectsCallback = OnPreDrawObjects;
           UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxPreDrawObjects, m_PreDrawObjectsCallback, m_report);
         }
+        m_predrawobjects -= value;
         m_predrawobjects += value;
       }
       remove
@@ -381,6 +402,7 @@ namespace Rhino.Display
           m_DrawObjectCallback = OnDrawObject;
           UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxDrawObject, m_DrawObjectCallback, m_report);
         }
+        m_drawobject -= value;
         m_drawobject += value;
       }
       remove
@@ -410,6 +432,7 @@ namespace Rhino.Display
           m_PostDrawObjectsCallback = OnPostDrawObjects;
           UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxPostDrawObjects, m_PostDrawObjectsCallback, m_report);
         }
+        m_postdrawobjects -= value;
         m_postdrawobjects += value;
       }
       remove
@@ -428,6 +451,11 @@ namespace Rhino.Display
     /// Depth writing and testing are turned OFF. If you want to draw with depth writing/testing,
     /// see PostDrawObjects.
     /// </summary>
+    /// <remarks>
+    /// This event is actually passed a DrawForegroundEventArgs, but we could not change
+    /// the event declaration without breaking the SDK. Cast to a DrawForegroundEventArgs
+    /// if you need it.
+    /// </remarks>
     public static event EventHandler<DrawEventArgs> DrawForeground
     {
       add
@@ -440,6 +468,7 @@ namespace Rhino.Display
           m_DrawForegroundCallback = OnDrawForeground;
           UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxDrawForeground, m_DrawForegroundCallback, m_report);
         }
+        m_drawforeground -= value;
         m_drawforeground += value;
       }
       remove
@@ -469,6 +498,7 @@ namespace Rhino.Display
           m_DrawOverlayCallback = OnDrawOverlay;
           UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxDrawOverlay, m_DrawOverlayCallback, m_report);
         }
+        m_drawoverlay -= value;
         m_drawoverlay += value;
       }
       remove
@@ -811,6 +841,17 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_Pop(m_ptr, idxCullFaceMode);
     }
 
+    public DepthMode DepthMode
+    {
+      get { return (DepthMode)UnsafeNativeMethods.CRhinoDisplayPipeline_GetInt(m_ptr, idxDepthMode); }
+      set { UnsafeNativeMethods.CRhinoDisplayPipeline_SetInt(m_ptr, idxDepthMode, (int)value); }
+    }
+
+    public ZBiasMode ZBiasMode
+    {
+      get { return (ZBiasMode)UnsafeNativeMethods.CRhinoDisplayPipeline_GetInt(m_ptr, idxZBiasMode); }
+      set { UnsafeNativeMethods.CRhinoDisplayPipeline_SetInt(m_ptr, idxZBiasMode, (int)value); }
+    }
     /*
     public DepthMode DepthMode
     {
@@ -2252,6 +2293,38 @@ namespace Rhino.Display
         return m_doc;
       }
     }
+
+
+    internal const int idxDrawObject = 0;
+    internal const int idxWorldAxesDrawn = 1;
+    internal const int idxDrawWorldAxes = 2;
+
+    internal bool GetChannelAttributeBool(int which)
+    {
+      return UnsafeNativeMethods.CChannelAttributes_GetBool(m_pDisplayConduit, which);
+    }
+    internal void SetChannelAttributeBool(int which, bool value)
+    {
+      UnsafeNativeMethods.CChannelAttributes_SetBool(m_pDisplayConduit, which, value);
+    }
+  }
+
+  public class DrawForegroundEventArgs : DrawEventArgs
+  {
+    internal DrawForegroundEventArgs(IntPtr pDisplayPipeline, IntPtr pDisplayConduit)
+      : base(pDisplayPipeline, pDisplayConduit)
+    {
+    }
+    public bool WorldAxesDrawn
+    {
+      get { return GetChannelAttributeBool(idxWorldAxesDrawn); }
+      set { SetChannelAttributeBool(idxWorldAxesDrawn, value); }
+    }
+    public bool DrawWorldAxes
+    {
+      get { return GetChannelAttributeBool(idxDrawWorldAxes); }
+      set { SetChannelAttributeBool(idxDrawWorldAxes, value); }
+    }
   }
 
   public class DrawObjectEventArgs : DrawEventArgs
@@ -2275,12 +2348,10 @@ namespace Rhino.Display
       }
     }
 
-    const int idxDrawObject = 0;
-
     public bool DrawObject
     {
-      get { return UnsafeNativeMethods.CChannelAttributes_GetBool(m_pDisplayConduit, idxDrawObject); }
-      set { UnsafeNativeMethods.CChannelAttributes_SetBool(m_pDisplayConduit, idxDrawObject, value); }
+      get { return GetChannelAttributeBool(idxDrawObject); }
+      set { SetChannelAttributeBool(idxDrawObject, value); }
     }
   }
 

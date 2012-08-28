@@ -926,6 +926,17 @@ namespace Rhino.PlugIns
       }
     }
 
+    public static bool PlugInExists(Guid id, out bool loaded, out bool loadProtected)
+    {
+      loaded = loadProtected = false;
+      int index = UnsafeNativeMethods.CRhinoPlugInManager_GetPlugInIndexFromId(id);
+      if (index < 0)
+        return false;
+      loaded = UnsafeNativeMethods.CRhinoPlugInManager_PassesFilter(index, (int)PlugInType.Any, true, false, false);
+      loadProtected = UnsafeNativeMethods.CRhinoPlugInManager_PassesFilter(index, (int)PlugInType.Any, false, false, true);
+      return true;
+    }
+
     public static System.Collections.Generic.Dictionary<Guid, string> GetInstalledPlugIns()
     {
       int count = InstalledPlugInCount;
@@ -970,7 +981,7 @@ namespace Rhino.PlugIns
         IntPtr name = UnsafeNativeMethods.CRhinoPlugInManager_GetName(i);
         if (name != IntPtr.Zero)
         {
-          if (UnsafeNativeMethods.CRhinoPlugInManager_PassesFilter(i, (int)typeFilter, loaded, unloaded))
+          if (UnsafeNativeMethods.CRhinoPlugInManager_PassesFilter(i, (int)typeFilter, loaded, unloaded, false))
           {
             string sName = Marshal.PtrToStringUni(name);
             if (!string.IsNullOrEmpty(sName))

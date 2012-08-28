@@ -2872,9 +2872,20 @@ namespace Rhino.DocObjects.Tables
     }
 
 #region Object addition
+    public void AddRhinoObject(Rhino.DocObjects.Custom.CustomMeshObject meshObject)
+    {
+      AddRhinoObjectHelper(meshObject, null);
+    }
+
     public void AddRhinoObject(Rhino.DocObjects.MeshObject meshObject, Rhino.Geometry.Mesh mesh)
     {
       AddRhinoObjectHelper(meshObject, mesh);
+    }
+
+    public void AddRhinoObject(Rhino.DocObjects.Custom.CustomBrepObject brepObject)
+    {
+      //helper will use geometry already hung off of the custom object
+      AddRhinoObjectHelper(brepObject, null);
     }
 
     public void AddRhinoObject(Rhino.DocObjects.BrepObject brepObject, Rhino.Geometry.Brep brep)
@@ -2941,7 +2952,7 @@ namespace Rhino.DocObjects.Tables
         rhinoObject.m_rhinoobject_serial_number = serial_number;
         rhinoObject.m_pRhinoObject = IntPtr.Zero;
         GC.SuppressFinalize(rhinoObject);
-        AddCustomObject(serial_number, rhinoObject);
+        AddCustomObjectForTracking(serial_number, rhinoObject);
         UnsafeNativeMethods.CRhinoDoc_AddRhinoObject(m_doc.m_docId, pRhinoObject);
 
         Type base_type = typeof(RhinoObject);
@@ -2957,7 +2968,7 @@ namespace Rhino.DocObjects.Tables
     }
 
     System.Collections.Generic.SortedList<uint, RhinoObject> m_custom_objects;
-    internal void AddCustomObject(uint serialNumber, RhinoObject rhobj)
+    internal void AddCustomObjectForTracking(uint serialNumber, RhinoObject rhobj)
     {
       if (m_custom_objects == null)
         m_custom_objects = new SortedList<uint, RhinoObject>();
@@ -4344,27 +4355,46 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
-    // Removed - You should not be able to create a RhinoObject outside of the RhinoDoc
-    ///// <summary>
-    ///// Replaces one object with another. Conceptually, this function is the same as calling
-    ///// Setting new_object attributes = old_object attributes
-    ///// DeleteObject(old_object);
-    ///// AddObject(old_object);
-    ///// </summary>
-    ///// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted.</param>
-    ///// <param name="newObject">new object to be activated - must not be in document.</param>
-    ///// <returns>true if successful.</returns>
-    //public bool Replace(DocObjects.ObjRef objref, DocObjects.RhinoObject newObject)
-    //{
-    //  if (null == objref || null == newObject)
-    //    return false;
-    //  IntPtr pObjRef = objref.ConstPointer();
-    //  IntPtr pObject = newObject.NonConstPointer();
-    //  bool rc = UnsafeNativeMethods.CRhinoDoc_ReplaceObject1(m_doc.m_docId, pObjRef, pObject);
-    //  if (rc)
-    //    newObject.m_is_readonly = true;
-    //  return rc;
-    //}
+    /// <summary>
+    /// Replaces one object with another. Conceptually, this function is the same as calling
+    /// Setting new_object attributes = old_object attributes
+    /// DeleteObject(old_object);
+    /// AddObject(old_object);
+    /// </summary>
+    /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted.</param>
+    /// <param name="newObject">new replacement object - must not be in document.</param>
+    /// <returns>true if successful.</returns>
+    public bool Replace(DocObjects.ObjRef objref, DocObjects.RhinoObject newObject)
+    {
+      if (null == objref || null == newObject || newObject.Document != null)
+        return false;
+
+      // Once the deprecated functions are removed, we should switch to checking for custom subclasses
+      bool is_proper_subclass = newObject is Rhino.DocObjects.Custom.CustomBrepObject ||
+                                newObject is Rhino.DocObjects.Custom.CustomCurveObject ||
+                                newObject is Rhino.DocObjects.Custom.CustomMeshObject;
+      if (!is_proper_subclass)
+        throw new NotImplementedException();
+
+      Type t = newObject.GetType();
+      if (t.GetConstructor(Type.EmptyTypes) == null)
+        throw new NotImplementedException("class must have a public parameterless constructor");
+
+
+      IntPtr pObjRef = objref.ConstPointer();
+      IntPtr pRhinoObject = newObject.NonConstPointer();
+      bool rc = UnsafeNativeMethods.CRhinoDoc_ReplaceObject1(m_doc.m_docId, pObjRef, pRhinoObject);
+      if (rc)
+      {
+        uint serial_number = UnsafeNativeMethods.CRhinoObject_RuntimeSN(pRhinoObject);
+        if (serial_number > 0)
+          newObject.m_rhinoobject_serial_number = serial_number;
+        newObject.m_pRhinoObject = IntPtr.Zero;
+        GC.SuppressFinalize(newObject);
+        AddCustomObjectForTracking(serial_number, newObject);
+      }
+      return rc;
+    }
 
     /// <summary>Replaces one object with new point object.</summary>
     /// <param name="objref">
@@ -5367,6 +5397,14 @@ namespace Rhino.DocObjects.Tables
       return new EnumeratorWrapper(e);
     }
 
+    public IEnumerable<DocObjects.RhinoObject> GetObjectList(Type typeFilter)
+    {
+      Rhino.DocObjects.ObjectEnumeratorSettings settings = new ObjectEnumeratorSettings();
+      settings.ClassTypeFilter = typeFilter;
+      Rhino.DocObjects.ObjectIterator it = new Rhino.DocObjects.ObjectIterator(m_doc, settings);
+      return new EnumeratorWrapper(it);
+    }
+
     [CLSCompliant(false)]
     public IEnumerable<DocObjects.RhinoObject> GetObjectList(Rhino.DocObjects.ObjectType typeFilter)
     {
@@ -5537,9 +5575,7 @@ namespace Rhino.DocObjects.Tables
       string key = section;
       if ( !string.IsNullOrEmpty(entry) )
         key = section + "\\" + entry;
-      string rc = GetValue(key);
-      UnsafeNativeMethods.CRhinoDoc_SetDocTextString(m_doc.m_docId, key, value);
-      return rc;
+      return SetString(key, value);
     }
 
     public string SetString(string key, string value)
@@ -5630,6 +5666,7 @@ namespace Rhino.DocObjects
     internal bool m_bVisible; //=false (initialized by Runtime)
     internal ObjectType m_objectfilter = ObjectType.None;
     internal int m_layerindex_filter = -1;
+    internal Type m_classtype_filter; //=null (initialized by Runtime)
 
     /// <example>
     /// <code source='examples\vbnet\ex_findobjectsbyname.vb' lang='vbnet'/>
@@ -5781,6 +5818,11 @@ namespace Rhino.DocObjects
       set { m_objectfilter = value; }
     }
 
+    public Type ClassTypeFilter
+    {
+      get { return m_classtype_filter; }
+      set { m_classtype_filter = value; }
+    }
 
     public int LayerIndexFilter
     {
@@ -5819,6 +5861,7 @@ namespace Rhino.DocObjects
   class ObjectIterator : IEnumerator<RhinoObject>
   {
 #region IEnumerator Members
+    bool m_first = true;
     Rhino.DocObjects.RhinoObject m_current;
 
     object System.Collections.IEnumerator.Current
@@ -5831,7 +5874,8 @@ namespace Rhino.DocObjects
 
     public bool MoveNext()
     {
-      bool first = (null == m_current);
+      bool first = m_first;
+      m_first = false;
       IntPtr ptr = NonConstPointer();
       string name_filter = null;
       if (null != m_settings)
@@ -5840,11 +5884,20 @@ namespace Rhino.DocObjects
       if (IntPtr.Zero == pRhinoObject)
         return false;
       m_current = DocObjects.RhinoObject.CreateRhinoObjectHelper(pRhinoObject);
+      if (m_settings != null && m_settings.ClassTypeFilter != null && m_current != null)
+      {
+        if (!m_settings.ClassTypeFilter.IsInstanceOfType(m_current))
+        {
+          m_current = null;
+          return MoveNext();
+        }
+      }
       return true;
     }
 
     public void Reset()
     {
+      m_first = true;
       m_current = null;
     }
 

@@ -4766,6 +4766,20 @@ internal partial class UnsafeNativeMethods
   //bool ON_SpaceMorph_MorphGeometry(ON_Geometry* pGeometry, double tolerance, bool quickpreview, bool preserveStructure, MORPHPOINTPROC callback)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
+  //bool ON_SpaceMorph_MorphGeometry2(ON_Geometry* pGeometry, const ON_SpaceMorph* pConstSpaceMorph)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_SpaceMorph_MorphGeometry2(IntPtr pGeometry, IntPtr pConstSpaceMorph);
+
+  //bool ON_SpaceMorph_GetValues(const ON_SpaceMorph* pConstSpaceMorph, double* tolerance, bool* quickpreview, bool* preserveStructure)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_SpaceMorph_GetValues(IntPtr pConstSpaceMorph, ref double tolerance, [MarshalAs(UnmanagedType.U1)]ref bool quickpreview, [MarshalAs(UnmanagedType.U1)]ref bool preserveStructure);
+
+  //void ON_SpaceMorph_MorphPoint(const ON_SpaceMorph* pConstSpaceMorph, ON_3dPoint* point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_SpaceMorph_MorphPoint(IntPtr pConstSpaceMorph, ref Point3d point);
+
   //ON_Matrix* ON_Matrix_New(int rows, int cols)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Matrix_New(int rows, int cols);
@@ -4979,10 +4993,15 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoApp_Exit();
 
-  //bool CRhinoApp_RunScript(const RHMONO_STRING* _script, int echo_mode)
+  //bool CRhinoApp_RunScript1(const RHMONO_STRING* _script, int echo_mode)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool CRhinoApp_RunScript([MarshalAs(UnmanagedType.LPWStr)]string _script, int echo_mode);
+  internal static extern bool CRhinoApp_RunScript1([MarshalAs(UnmanagedType.LPWStr)]string _script, int echo_mode);
+
+  //bool CRhinoApp_RunScript2(const RHMONO_STRING* _script, const RHMONO_STRING* _mruDisplayString, int echo_mode)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoApp_RunScript2([MarshalAs(UnmanagedType.LPWStr)]string _script, [MarshalAs(UnmanagedType.LPWStr)]string _mruDisplayString, int echo_mode);
 
   //void CRhinoApp_GetString(int which, CRhCmnStringHolder* pString)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5327,6 +5346,14 @@ internal partial class UnsafeNativeMethods
   //int CRhinoAppViewSettings_GetSetInt(int which, bool set, int set_value, CRhinoAppViewSettings* pViewSettings)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoAppViewSettings_GetSetInt(int which, [MarshalAs(UnmanagedType.U1)]bool set, int set_value, IntPtr pViewSettings);
+
+  //void CRhinoAppShortcutKeys_Macro( int shortcut, CRhCmnStringHolder* pStringHolder )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppShortcutKeys_Macro(int shortcut, IntPtr pStringHolder);
+
+  //void CRhinoAppShortcutKeys_SetMacro( int shortcut, const RHMONO_STRING* macro)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoAppShortcutKeys_SetMacro(int shortcut, [MarshalAs(UnmanagedType.LPWStr)]string macro);
 
   //bool RhColors_UsingNewSchool()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5801,6 +5828,10 @@ internal partial class UnsafeNativeMethods
   //int CRhinoDisplayPipeline_GetInt(CRhinoDisplayPipeline* pPipeline, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoDisplayPipeline_GetInt(IntPtr pPipeline, int which);
+
+  //void CRhinoDisplayPipeline_SetInt(CRhinoDisplayPipeline* pPipeline, int which, int value)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoDisplayPipeline_SetInt(IntPtr pPipeline, int which, int value);
 
   //void CRhinoDisplayPipeline_GetSetModelTransform(CRhinoDisplayPipeline* pPipeline, bool set, ON_Xform* xf)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -6487,6 +6518,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoDoc_ReplacePointCloud(int docId, IntPtr pObjRef, IntPtr pConstPointCloud);
+
+  //bool CRhinoDoc_ReplaceObject1(int docId, const CRhinoObjRef* pObjRef, CRhinoObject* pRhinoObject)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoDoc_ReplaceObject1(int docId, IntPtr pObjRef, IntPtr pRhinoObject);
 
   //const CRhinoPointObject* CRhinoDoc_ReplaceObject2(int docId, const CRhinoObjRef* pObjRef, ON_3DPOINT_STRUCT point)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -7911,6 +7947,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoInstanceObjectPieceArray_Delete(IntPtr pPieceArray);
 
+  //const CRhinoInstanceDefinition* CRhinoInstanceDefinition_GetInstanceDef(int docId, int idef_index )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoInstanceDefinition_GetInstanceDef(int docId, int idef_index);
+
   //CRhinoDib* CRhinoInstanceDefinition_GetPreviewBitmap(int docId, int idef_index, int definedViewportProjection, int displayMode, int width, int height)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoInstanceDefinition_GetPreviewBitmap(int docId, int idef_index, int definedViewportProjection, int displayMode, int width, int height);
@@ -8882,6 +8922,7 @@ internal partial class UnsafeNativeMethods
   //                                             RHINOOBJECT_ACTIVEINVIEWPORTPROC active_in_viewport,
   //                                             RHINOOBJECT_SELECTPROC selection_changed,
   //                                             RHINOOBJECT_TRANSFORMPROC transform,
+  //                                             RHINOOBJECT_MORPHPROC morph,
   //                                             RHINOOBJECT_DELETEPROC ondelete)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
@@ -8986,6 +9027,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_objectattributes.cpp
+  //const CRhinoObjectAttributes* CRhinoObjectAttributes_FromRhinoObject(const CRhinoObject* pRhinoObject)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoObjectAttributes_FromRhinoObject(IntPtr pRhinoObject);
+
   //CRhinoObjectAttributes* CRhinoObjectAttributes_New(const CRhinoObjectAttributes* pOther)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoObjectAttributes_New(IntPtr pOther);
@@ -9276,10 +9321,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoPlugInManager_GetName(int index);
 
-  //bool CRhinoPlugInManager_PassesFilter(int index, int typeFilter, bool loaded, bool unloaded)
+  //bool CRhinoPlugInManager_PassesFilter(int index, int typeFilter, bool loaded, bool unloaded, bool loadProtected)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool CRhinoPlugInManager_PassesFilter(int index, int typeFilter, [MarshalAs(UnmanagedType.U1)]bool loaded, [MarshalAs(UnmanagedType.U1)]bool unloaded);
+  internal static extern bool CRhinoPlugInManager_PassesFilter(int index, int typeFilter, [MarshalAs(UnmanagedType.U1)]bool loaded, [MarshalAs(UnmanagedType.U1)]bool unloaded, [MarshalAs(UnmanagedType.U1)]bool loadProtected);
 
   //ON_UUID CRhinoPlugInManager_GetID(int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -9301,6 +9346,10 @@ internal partial class UnsafeNativeMethods
   //ON_UUID CRhinoPlugInManager_GetPlugInId(const RHMONO_STRING* _name)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoPlugInManager_GetPlugInId([MarshalAs(UnmanagedType.LPWStr)]string _name);
+
+  //int CRhinoPlugInManager_GetPlugInIndexFromId(ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoPlugInManager_GetPlugInIndexFromId(Guid id);
 
   //CRhinoPlugIn* CRhinoPlugInManager_GetPlugInFromId(ON_UUID id, bool onlyDotNet)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

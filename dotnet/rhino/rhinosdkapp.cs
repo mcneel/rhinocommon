@@ -524,7 +524,35 @@ namespace Rhino
         throw new ApplicationException(msg);
       }
       int echoMode = echo ? 1 : 0;
-      return UnsafeNativeMethods.CRhinoApp_RunScript(script, echoMode);
+      return UnsafeNativeMethods.CRhinoApp_RunScript1(script, echoMode);
+    }
+
+    ///<summary>Runs a Rhino command script.</summary>
+    ///<param name="script">[in] script to run.</param>
+    ///<param name="mruDisplayString">[in] String to display in the most recent command list.</param>
+    ///<param name="echo">
+    /// Controls how the script is echoed in the command output window.
+    /// false = silent - nothing is echoed.
+    /// true = verbatim - the script is echoed literally.
+    ///</param>
+    ///<remarks>
+    /// Rhino acts as if each character in the script string had been typed in the command prompt.
+    /// When RunScript is called from a &quot;script runner&quot; command, it completely runs the
+    /// script before returning. When RunScript is called outside of a command, it returns and the
+    /// script is run. This way menus and buttons can use RunScript to execute complicated functions.
+    ///</remarks>
+    ///<exception cref="System.ApplicationException">
+    /// If RunScript is being called while inside an event watcher.
+    ///</exception>
+    public static bool RunScript(string script, string mruDisplayString, bool echo)
+    {
+      if (InEventWatcher)
+      {
+        const string msg = "Do not call RunScript inside of an event watcher.  Contact steve@mcneel.com to dicuss why you need to do this.";
+        throw new ApplicationException(msg);
+      }
+      int echoMode = echo ? 1 : 0;
+      return UnsafeNativeMethods.CRhinoApp_RunScript2(script, mruDisplayString, echoMode);
     }
 
     /// <summary>

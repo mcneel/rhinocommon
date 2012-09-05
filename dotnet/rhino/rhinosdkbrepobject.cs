@@ -13,12 +13,6 @@ namespace Rhino.DocObjects
     internal BrepObject(uint serialNumber)
       : base(serialNumber) { }
 
-    /// <summary>
-    /// Protected constructor for custom subclasses
-    /// </summary>
-    [Obsolete("Derive your Brep class from Rhino.DocObjects.Custom.CustomBrepObject. This will be removed in a future beta")]
-    protected BrepObject() { }
-
     internal BrepObject(bool custom) { }
 
     /// <summary>

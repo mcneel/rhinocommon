@@ -30,7 +30,7 @@ namespace Rhino.DocObjects
     /// and is embedded. If m_source_archive changes, the user is asked if they want to update
     /// the instance definition.
     /// </summary>
-    [Obsolete("Always use Static. Will be removed in a future beta")]
+    [Obsolete("Always use Static")]
     Embedded = 1,
     /// <summary>
     /// This instance definition geometry was imported from another archive (m_source_archive)

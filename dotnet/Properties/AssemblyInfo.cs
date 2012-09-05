@@ -50,7 +50,8 @@ using System.Runtime.InteropServices;
 //                           Added gumball and keyboard shortcut settings
 // 23 Aug 2012 (5.1.30000.3) Added DrawForegroundEventArgs
 //                           Added OnSpaceMorph virtual function for custom objects
-[assembly: AssemblyVersion("5.1.30000.3")]
+// 29 Aug 2012 (5.1.30000.4) Adding support for history and history replay
+[assembly: AssemblyVersion("5.1.30000.4")]
 
 [assembly: AssemblyFileVersion("5.0.20693.0")]
 

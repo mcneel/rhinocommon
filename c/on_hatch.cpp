@@ -158,6 +158,16 @@ RH_C_FUNCTION void ON_Hatch_Explode(const ON_Hatch* pConstHatch,
     if( NULL==pConstParentRhinoObject )
     {
       hatchobject.SetHatch(*pConstHatch);
+
+      // 5 September 2012 S. Baer (Super-Mega-Hack)
+      // The hatch object needs to create a cached hatch display in order
+      // for GetSubObjects to properly work.  We need to eventually fix
+      // the problem in the core, buit for now I'm just calling Pick since
+      // it will create a HatchDisplay when one doesn't exist
+      CRhinoPickContext pc;
+      CRhinoObjRefArray ar;
+      hatchobject.Pick(pc, ar);
+
       pConstParentRhinoObject = &hatchobject;
     }
 
@@ -176,3 +186,22 @@ RH_C_FUNCTION void ON_Hatch_Explode(const ON_Hatch* pConstHatch,
   }
 }
 #endif
+
+RH_C_FUNCTION void ON_Hatch_LoopCurve3d(const ON_Hatch* pConstHatch, ON_SimpleArray<ON_Curve*>* pCurveArray, bool outer)
+{
+  if( pConstHatch && pCurveArray )
+  {
+    ON_HatchLoop::eLoopType looptype = outer ? ON_HatchLoop::ltOuter : ON_HatchLoop::ltInner;
+    int count = pConstHatch->LoopCount();
+    for( int i=0; i<count; i++ )
+    {
+      const ON_HatchLoop* pLoop = pConstHatch->Loop(i);
+      if( pLoop && pLoop->Type()==looptype )
+      {
+        ON_Curve* crv = pConstHatch->LoopCurve3d(i);
+        if( crv )
+          pCurveArray->Append(crv);
+      }
+    }
+  }
+}

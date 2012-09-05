@@ -2304,6 +2304,10 @@ internal partial class UnsafeNativeMethods
   //                                    ON_SimpleArray<ON_Geometry*>* pOutputGeometry)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Hatch_Explode(IntPtr pConstHatch, IntPtr pConstParentRhinoObject, IntPtr pOutputGeometry);
+
+  //void ON_Hatch_LoopCurve3d(const ON_Hatch* pConstHatch, ON_SimpleArray<ON_Curve*>* pCurveArray, bool outer)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Hatch_LoopCurve3d(IntPtr pConstHatch, IntPtr pCurveArray, [MarshalAs(UnmanagedType.U1)]bool outer);
   #endregion
 
 

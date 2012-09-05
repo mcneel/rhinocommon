@@ -94,7 +94,8 @@ namespace Rhino.Geometry
     /// </example>
     public GeometryBase[] Explode()
     {
-      Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer geometry = new Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer();
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer geometry = new Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer())
+      {
       IntPtr pParentRhinoObject = IntPtr.Zero;
 
 #if RHINO_SDK
@@ -110,8 +111,24 @@ namespace Rhino.Geometry
 
       UnsafeNativeMethods.ON_Hatch_Explode(pConstThis, pParentRhinoObject, pGeometryArray);
       GeometryBase[] rc = geometry.ToNonConstArray();
-      geometry.Dispose();
       return rc;
+      }
+    }
+
+    /// <summary>
+    /// Gets 3d curves that define the boundaries of the hatch
+    /// </summary>
+    /// <param name="outer">true to get the outer curves, false to get the inner curves</param>
+    /// <returns></returns>
+    public Curve[] Get3dCurves(bool outer)
+    {
+      using (Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer curves = new Runtime.InteropWrappers.SimpleArrayCurvePointer())
+      {
+        IntPtr pCurveArray = curves.NonConstPointer();
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_Hatch_LoopCurve3d(pConstThis, pCurveArray, outer);
+        return curves.ToNonConstArray();
+      }
     }
 
     /// <summary>

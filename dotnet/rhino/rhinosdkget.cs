@@ -841,12 +841,6 @@ namespace Rhino.Input
     ///<summary>User typed a string - call String() to get the string.</summary>
     String = 13,
     ///<summary>
-    ///Windows posted a message id that was in the list passed to
-    ///RhinoGet::AcceptWindowsMessage(). Call CRhinoGet::WndMsg() to get the message.
-    ///</summary>
-    [Obsolete("Use CustomMessage instead. Will be removed in a future beta")]
-    WindowsMessage = 14,
-    ///<summary>
     ///A custom message was posted to the RhinoGet
     ///</summary>
     CustomMessage = 14,

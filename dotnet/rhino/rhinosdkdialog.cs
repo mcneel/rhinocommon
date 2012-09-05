@@ -129,6 +129,11 @@ namespace Rhino
         return IsPanelVisible(panelType.GUID);
       }
 
+      public static bool OpenPanelAsSibling(Guid panelId, Guid existingSiblingId)
+      {
+        return UnsafeNativeMethods.RHC_OpenTabOnDockBar(panelId, existingSiblingId);
+      }
+
       public static void OpenPanel(Guid panelId)
       {
         UnsafeNativeMethods.RHC_RhinoUiOpenCloseDockbarTab(panelId, true);
@@ -147,6 +152,16 @@ namespace Rhino
       public static void ClosePanel(Type panelType)
       {
         ClosePanel(panelType.GUID);
+      }
+
+      public static Guid[] GetOpenPanelIds()
+      {
+        using (Runtime.InteropWrappers.SimpleArrayGuid ids = new Runtime.InteropWrappers.SimpleArrayGuid())
+        {
+          IntPtr pIds = ids.NonConstPointer();
+          UnsafeNativeMethods.RHC_GetOpenTabIds(pIds);
+          return ids.ToArray();
+        }
       }
     }
   }

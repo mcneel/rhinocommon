@@ -7,6 +7,7 @@ namespace Rhino.DocObjects
   [Serializable]
   public class ObjectAttributes : Runtime.CommonObject
   {
+#if RHINO_SDK
     public override bool IsDocumentControlled
     {
       get
@@ -21,6 +22,7 @@ namespace Rhino.DocObjects
         return rc;
       }
     }
+#endif
     internal override IntPtr _InternalDuplicate(out bool applymempressure)
     {
       applymempressure = false;
@@ -56,6 +58,7 @@ namespace Rhino.DocObjects
       ConstructNonConstObject(pNonConstAttributes);
     }
 
+#if RHINO_SDK
     internal override IntPtr NonConstPointer()
     {
       RhinoObject parent = m__parent as RhinoObject;
@@ -68,7 +71,6 @@ namespace Rhino.DocObjects
       return base.NonConstPointer();
     }
 
-#if RHINO_SDK
     internal ObjectAttributes(RhinoObject parentObject)
     {
       ConstructConstObject(parentObject, -1);

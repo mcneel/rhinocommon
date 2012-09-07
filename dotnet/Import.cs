@@ -280,7 +280,9 @@ internal partial class UnsafeNativeMethods
 
   // Docking Tabs in rh_utilities.cpp
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void RHC_RegisterTabbedDockBar([MarshalAs(UnmanagedType.LPWStr)]string caption, Guid tab_id, Guid plugin_id, IntPtr icon, Rhino.UI.Panels.CreatePanelCallback create_proc);
+  internal static extern void RHC_RegisterTabbedDockBar([MarshalAs(UnmanagedType.LPWStr)]string caption, Guid tab_id, Guid plugin_id, IntPtr icon,
+    Rhino.UI.Panels.CreatePanelCallback create_proc,
+    Rhino.UI.Panels.VisiblePanelCallback visible_proc);
 
 #endif
 

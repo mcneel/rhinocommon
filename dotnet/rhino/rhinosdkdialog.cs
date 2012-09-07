@@ -23,6 +23,19 @@ namespace Rhino
       public Guid PlugInId { get; set; }
     }
 
+    public static class PanelIds
+    {
+      public static Guid Materials { get{ return new Guid("{ 0x52aa515a, 0xa83a, 0x4f9c, { 0x82, 0x8f, 0x55, 0x67, 0x48, 0x3f, 0x65, 0xc5 } }"); } }
+      public static Guid Environment { get { return new Guid("{ 0x2ff47e01, 0x3696, 0x4e61, { 0x83, 0x84, 0x39, 0xfc, 0x66, 0xd2, 0x63, 0x25 } }"); } }
+      public static Guid LightManager { get { return new Guid("{ 0x86777b3d, 0x3d68, 0x4965, { 0x84, 0xf8, 0x9e, 0x1, 0x9c, 0x40, 0x24, 0x33 } }"); } }
+      public static Guid Sun { get { return new Guid("{ 0x1012681e, 0xd276, 0x49d3, { 0x9c, 0xd9, 0x7d, 0xe9, 0x2d, 0xc2, 0x40, 0x4a } }"); } }
+      public static Guid GroundPlane { get { return new Guid("{ 0x987b1930, 0xecde, 0x4e62, { 0x82, 0x82, 0x97, 0xab, 0x4a, 0xd3, 0x25, 0xfe } }"); } }
+      public static Guid Layers { get { return new Guid("{ 0x3610bf83, 0x47d, 0x4f7f, { 0x93, 0xfd, 0x16, 0x3e, 0xa3, 0x5, 0xb4, 0x93 } }"); } }
+      public static Guid ObjectProperties { get { return new Guid("{ 0x34ffb674, 0xc504, 0x49d9, { 0x9f, 0xcd, 0x99, 0xcc, 0x81, 0x1d, 0xcd, 0xa2 } }"); } }
+      public static Guid Display { get { return new Guid("{ 0xb68e9e9f, 0xc79c, 0x473c, { 0xa7, 0xef, 0x84, 0x6a, 0x11, 0xdc, 0x4e, 0x7b } }"); } }
+      public static Guid ContextHelp { get { return new Guid("{ 0xf8fb4f9, 0xc213, 0x4a6e, { 0x8e, 0x79, 0xb, 0xec, 0xe0, 0x2d, 0xf8, 0x2a } }"); } }
+    }
+
     public static class Panels
     {
       static List<PanelData> m_existing_panels;
@@ -53,13 +66,28 @@ namespace Rhino
       }
 
       internal delegate IntPtr CreatePanelCallback(Guid pluginId, Guid tabId, IntPtr hParent);
+      internal delegate int VisiblePanelCallback(Guid pluginId, Guid tabId, uint state);
+
       static CreatePanelCallback m_create_panel_callback;
+      static VisiblePanelCallback m_visible_panel_callback;
+
       static IntPtr OnCreatePanelCallback(Guid pluginId, Guid tabId, IntPtr hParent)
       {
         IWin32Window panel = FindOrCreatePanel(pluginId, tabId);
         if (panel != null)
           return panel.Handle;
         return IntPtr.Zero;
+      }
+      static int OnVisiblePanelCallback(Guid pluginId, Guid tabId, uint state)
+      {
+        PanelData data = FindExistingPanelData(pluginId, tabId);
+        if( data==null )
+          return 0;
+        System.Windows.Forms.Control panel = data.Panel as System.Windows.Forms.Control;
+        if (panel == null)
+          return 0;
+        panel.Visible = (state != 0);
+        return 1;
       }
 
       /// <summary>
@@ -102,7 +130,8 @@ namespace Rhino
 
 
         m_create_panel_callback = OnCreatePanelCallback;
-        UnsafeNativeMethods.RHC_RegisterTabbedDockBar(caption, panelType.GUID, plugin.Id, icon.Handle, m_create_panel_callback);
+        m_visible_panel_callback = OnVisiblePanelCallback;
+        UnsafeNativeMethods.RHC_RegisterTabbedDockBar(caption, panelType.GUID, plugin.Id, icon.Handle, m_create_panel_callback, m_visible_panel_callback);
       }
 
       public static object GetPanel(Guid panelId)

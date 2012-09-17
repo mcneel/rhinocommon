@@ -127,7 +127,7 @@ namespace Rhino.DocObjects
           {
             newobj.m_rhinoobject_serial_number = newObjectSerialNumber;
             newobj.m_pRhinoObject = newObjectPointer;
-            doc.Objects.AddCustomObjectForTracking(newObjectSerialNumber, newobj);
+            doc.Objects.AddCustomObjectForTracking(newObjectSerialNumber, newobj, newObjectPointer);
             newobj.OnDuplicate(rhobj);
           }
         }

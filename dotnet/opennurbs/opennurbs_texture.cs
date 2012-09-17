@@ -91,6 +91,11 @@ namespace Rhino.DocObjects
 
     /// <summary>
     /// Gets or sets a file name that is used by this texture.
+    /// NOTE: this filename may well not be a path that makes sense
+    /// on a user's computer because it was a path initially set on
+    /// a different user's computer. If you want to get a workable path
+    /// for this user, use the BitmapTable.Find function using this
+    /// property.
     /// </summary>
     public string FileName
     {

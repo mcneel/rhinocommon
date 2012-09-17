@@ -2952,28 +2952,33 @@ namespace Rhino.DocObjects.Tables
         rhinoObject.m_rhinoobject_serial_number = serial_number;
         rhinoObject.m_pRhinoObject = IntPtr.Zero;
         GC.SuppressFinalize(rhinoObject);
-        AddCustomObjectForTracking(serial_number, rhinoObject);
+        AddCustomObjectForTracking(serial_number, rhinoObject, pRhinoObject);
         UnsafeNativeMethods.CRhinoDoc_AddRhinoObject(m_doc.m_docId, pRhinoObject);
-
-        Type base_type = typeof(RhinoObject);
-        const BindingFlags flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public;
-        System.Reflection.MethodInfo mi = t.GetMethod("ShortDescription", flags);
-        if (mi.DeclaringType != base_type)
-        {
-          string description = rhinoObject.ShortDescription(false);
-          string description_plural = rhinoObject.ShortDescription(true);
-          UnsafeNativeMethods.CRhinoCustomObject_SetDescriptionStrings(pRhinoObject, description, description_plural);
-        }
       }
     }
 
     System.Collections.Generic.SortedList<uint, RhinoObject> m_custom_objects;
-    internal void AddCustomObjectForTracking(uint serialNumber, RhinoObject rhobj)
+    internal void AddCustomObjectForTracking(uint serialNumber, RhinoObject rhobj, IntPtr pRhinoObject)
     {
       if (m_custom_objects == null)
         m_custom_objects = new SortedList<uint, RhinoObject>();
       m_custom_objects.Add(serialNumber, rhobj);
-    }
+
+      // 17 Sept 2012 S. Baer
+      // This seems like the best spot to get everything in sync.
+      // Update the description strings when replacing the object
+        Type base_type = typeof(RhinoObject);
+      Type t = rhobj.GetType();
+        const BindingFlags flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public;
+        System.Reflection.MethodInfo mi = t.GetMethod("ShortDescription", flags);
+      // Don't set description strings if the function has not been overloaded
+        if (mi.DeclaringType != base_type)
+        {
+        string description = rhobj.ShortDescription(false);
+        string description_plural = rhobj.ShortDescription(true);
+          UnsafeNativeMethods.CRhinoCustomObject_SetDescriptionStrings(pRhinoObject, description, description_plural);
+        }
+      }
     internal RhinoObject FindCustomObject(uint serialNumber)
     {
       RhinoObject rc = null;
@@ -4510,7 +4515,7 @@ namespace Rhino.DocObjects.Tables
           newObject.m_rhinoobject_serial_number = serial_number;
         newObject.m_pRhinoObject = IntPtr.Zero;
         GC.SuppressFinalize(newObject);
-        AddCustomObjectForTracking(serial_number, newObject);
+        AddCustomObjectForTracking(serial_number, newObject, pRhinoObject);
       }
       return rc;
     }

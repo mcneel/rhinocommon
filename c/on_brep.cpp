@@ -636,11 +636,12 @@ RH_C_FUNCTION int ON_Brep_FaceFaceIndices( const ON_Brep* pConstBrep, int face_i
   if( pConstBrep && fi )
   {
     int faceCount = pConstBrep->m_F.Count();
-    if( face_index >= faceCount ) { return 0; }
+    if( face_index >= faceCount )
+      return 0;
 
     ON_SimpleArray<bool> map(faceCount);
     for( int i = 0; i < faceCount; i++ )
-    { map[i] = false; }
+      map[i] = false;
     map[face_index] = true;
 
     const ON_BrepFace* pFace = pConstBrep->Face(face_index);
@@ -649,18 +650,29 @@ RH_C_FUNCTION int ON_Brep_FaceFaceIndices( const ON_Brep* pConstBrep, int face_i
     for( int i = 0; i < loopCount; i++ )
     {
       const ON_BrepLoop* pLoop = pFace->Loop(i);
+      if( NULL==pLoop )
+        continue;
       int trimCount = pLoop->TrimCount();
 
       for( int j = 0; j < trimCount; j++ )
       {
         const ON_BrepTrim* pTrim = pLoop->Trim(j);
+        if( NULL==pTrim )
+          continue;
         const ON_BrepEdge* pEdge = pTrim->Edge();
+        if( NULL==pEdge )
+          continue;
 
         int edgetrimCount = pEdge->TrimCount();
         for( int k = 0; k < edgetrimCount; k++ )
         {
           const ON_BrepTrim* peTrim = pEdge->Trim(k);
-          int index = peTrim->Face()->m_face_index;
+          if( NULL==peTrim )
+            continue;
+          ON_BrepFace* peTrimFace = peTrim->Face();
+          if( NULL==peTrimFace )
+            continue;
+          int index = peTrimFace->m_face_index;
           if (!map[index])
           {
             fi->Append(index);

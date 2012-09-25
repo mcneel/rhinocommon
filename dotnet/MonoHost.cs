@@ -100,17 +100,17 @@ namespace Rhino.Runtime
           {
             Version referenced_version = referenced_assemblies[i].Version;
             Version this_version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            HostUtils.DebugString("this_version = {0}", this_version);
-            HostUtils.DebugString("referenced_version = {0}", referenced_version);
+            HostUtils.DebugString("Installed RhinoCommon version = {0}", this_version);
+            HostUtils.DebugString("Plug-In built against = {0}", referenced_version);
             // major and minor MUST match
             if (referenced_version.Major == this_version.Major && referenced_version.Minor == this_version.Minor)
             {
               // At this point the SDK is changing too rapidly to allow for "safe" updates
               // build of this_version must be == build of referenced version
-              // revision of this_version must be <= build of referenced version
+              // revision of this_version must be >= build of referenced version
               if (this_version.Build == referenced_version.Build)
               {
-                if (this_version.Revision <= referenced_version.Revision)
+                if (this_version.Revision >= referenced_version.Revision)
                 {
                   passesVersionCheck = true;
                 }

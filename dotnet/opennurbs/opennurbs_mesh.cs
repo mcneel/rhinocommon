@@ -1160,7 +1160,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Attempts to fix inconsistencies in the directions of meshfaces for a mesh. This function
     /// does not modify the vertex normals, but rather rearranges the mesh face winding and face
-    /// normals to make them all consistent. You may want to call Mesh.Normals.ConputeNormals()
+    /// normals to make them all consistent. You may want to call Mesh.Normals.ComputeNormals()
     /// to recompute vertex normals after calling this functions.
     /// </summary>
     /// <returns>number of faces that were modified.</returns>
@@ -1557,10 +1557,10 @@ namespace Rhino.Geometry
     public Color ColorAt(int faceIndex, double t0, double t1, double t2, double t3)
     {
       IntPtr pConstThis = ConstPointer();
-      int abgr = UnsafeNativeMethods.ON_Mesh_MeshColorAt(pConstThis, faceIndex, t0, t1, t2, t3);
+      int argb = UnsafeNativeMethods.ON_Mesh_MeshColorAt(pConstThis, faceIndex, t0, t1, t2, t3);
 
-      if (abgr < 0) { return Color.Transparent; }
-      return System.Drawing.ColorTranslator.FromWin32(abgr);
+      if (argb < 0) { return Color.Transparent; }
+      return System.Drawing.Color.FromArgb(argb);
     }
 
     /// <summary>
@@ -3132,15 +3132,6 @@ namespace Rhino.Geometry.Collections
     {
       return AddFace(face.m_a, face.m_b, face.m_c, face.m_d);
     }
-    ///// <summary>
-    ///// Append a new face to the end of the mesh face list.
-    ///// </summary>
-    ///// <param name="face">Face to append.</param>
-    ///// <returns>The index of the newly added face.</returns>
-    //public int AddFace(MeshFace face)
-    //{
-    //  return AddFace(face.m_a, face.m_b, face.m_c, face.m_d);
-    //}
     /// <summary>
     /// Appends a new triangular face to the end of the mesh face list.
     /// </summary>
@@ -3169,6 +3160,22 @@ namespace Rhino.Geometry.Collections
     {
       IntPtr ptr = m_mesh.NonConstPointer();
       return UnsafeNativeMethods.ON_Mesh_AddFace(ptr, vertex1, vertex2, vertex3, vertex4);
+    }
+
+    /// <summary>
+    /// Appends a list of faces to the end of the mesh face list.
+    /// </summary>
+    /// <param name="faces">Faces to add.</param>
+    /// <returns>Indices of the newly created faces</returns>
+    public int[] AddFaces(IEnumerable<MeshFace> faces)
+    {
+      List<int> rc = new List<int>();
+      foreach(MeshFace face in faces)
+      {
+        int index = AddFace(face);
+        rc.Add(index);
+      }
+      return rc.ToArray();
     }
 
     /// <summary>
@@ -3725,12 +3732,12 @@ namespace Rhino.Geometry.Collections
     {
       get
       {
-        int abgr = 0;
+        int argb = 0;
         IntPtr ptr = m_mesh.ConstPointer();
         // get color will return false when the index is out of range
-        if (!UnsafeNativeMethods.ON_Mesh_GetColor(ptr, index, ref abgr))
+        if (!UnsafeNativeMethods.ON_Mesh_GetColor(ptr, index, ref argb))
           throw new IndexOutOfRangeException();
-        return ColorTranslator.FromWin32(abgr);
+        return Color.FromArgb(argb);
       }
       set
       {

@@ -11,10 +11,10 @@ partial class Examples
     // Rhino.Geometry.NurbsCurve nc = c.ToNurbsCurve();
     //
     // This sample demonstrates creating a NURBS curve from scratch.
-    int dimension = 3;
-    bool isRational = true;
-    int order = 3;
-    int cv_count = 9;
+    const int dimension = 3;
+    const bool isRational = true;
+    const int order = 3;
+    const int cv_count = 9;
     Rhino.Geometry.NurbsCurve nc = new Rhino.Geometry.NurbsCurve(dimension, isRational, order, cv_count);
     nc.Points.SetPoint(0, 1.0, 0.0, 0.0, 1.0);
     nc.Points.SetPoint(1, 0.707107, 0.707107, 0.0, 0.707107);

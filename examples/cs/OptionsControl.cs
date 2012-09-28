@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 
 namespace examples_cs
@@ -17,7 +12,28 @@ namespace examples_cs
 
     private void OptionsControl_Load(object sender, EventArgs e)
     {
-      throw new Exception("My exception");
+      //throw new Exception("My exception");
+    }
+  }
+
+  class CustomObjPropPage : Rhino.UI.ObjectPropertiesPage
+  {
+    OptionsControl m_control = new OptionsControl();
+
+
+    public override System.Drawing.Icon Icon
+    {
+      get { return Properties.Resources.mapping_match; }
+    }
+
+    public override Control PageControl
+    {
+      get { return m_control; }
+    }
+
+    public override string EnglishPageTitle
+    {
+      get { return "Awesome props"; }
     }
   }
 
@@ -57,7 +73,7 @@ namespace examples_cs
 
 
     System.Windows.Interop.HwndSource m_source;
-    WpfOptionsPage m_page = new WpfOptionsPage();
+    readonly WpfOptionsPage m_page = new WpfOptionsPage();
     public override void OnCreateParent(IntPtr hwndParent)
     {
       var parameters = new System.Windows.Interop.HwndSourceParameters("CS_Options");
@@ -73,11 +89,12 @@ namespace examples_cs
 
       m_source = new System.Windows.Interop.HwndSource(parameters);
       m_source.SizeToContent = System.Windows.SizeToContent.WidthAndHeight;
-      m_source.AddHook(new System.Windows.Interop.HwndSourceHook(ChildHwndSourceHook));
-      m_source.CompositionTarget.BackgroundColor = System.Windows.SystemColors.WindowBrush.Color;
+      m_source.AddHook(ChildHwndSourceHook);
+      if( m_source.CompositionTarget!=null )
+        m_source.CompositionTarget.BackgroundColor = System.Windows.SystemColors.WindowBrush.Color;
       m_source.RootVisual = m_page;
     }
-    private static Action EmptyDelegate = delegate() { };
+    private static readonly Action EmptyDelegate = delegate { };
 
     public override void OnSizeParent(int cx, int cy)
     {

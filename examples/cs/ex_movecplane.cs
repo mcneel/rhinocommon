@@ -1,9 +1,8 @@
-﻿using System;
-using Rhino.Geometry;
+﻿using Rhino.Geometry;
 
 class MoveCPlanePoint : Rhino.Input.Custom.GetPoint
 {
-  Rhino.DocObjects.ConstructionPlane m_cplane;
+  readonly Rhino.DocObjects.ConstructionPlane m_cplane;
   public MoveCPlanePoint(Rhino.DocObjects.ConstructionPlane cplane)
   {
     m_cplane = cplane;

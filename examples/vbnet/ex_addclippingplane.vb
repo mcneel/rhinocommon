@@ -15,7 +15,6 @@
 
     Dim p0 As Rhino.Geometry.Point3d = corners(0)
     Dim p1 As Rhino.Geometry.Point3d = corners(1)
-    Dim p2 As Rhino.Geometry.Point3d = corners(2)
     Dim p3 As Rhino.Geometry.Point3d = corners(3)
 
     ' Create a plane from the corner points

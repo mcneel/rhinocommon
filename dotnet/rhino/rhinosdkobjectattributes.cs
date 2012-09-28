@@ -7,6 +7,22 @@ namespace Rhino.DocObjects
   [Serializable]
   public class ObjectAttributes : Runtime.CommonObject
   {
+#if RHINO_SDK
+    public override bool IsDocumentControlled
+    {
+      get
+      {
+        bool rc = base.IsDocumentControlled;
+        if (rc)
+        {
+          RhinoObject parent = m__parent as RhinoObject;
+          if (parent != null)
+            rc = parent.m_pRhinoObject == IntPtr.Zero;
+        }
+        return rc;
+      }
+    }
+#endif
     internal override IntPtr _InternalDuplicate(out bool applymempressure)
     {
       applymempressure = false;
@@ -43,6 +59,18 @@ namespace Rhino.DocObjects
     }
 
 #if RHINO_SDK
+    internal override IntPtr NonConstPointer()
+    {
+      RhinoObject parent = m__parent as RhinoObject;
+      if (parent != null && parent.m_pRhinoObject != IntPtr.Zero)
+      {
+        IntPtr pThis = UnsafeNativeMethods.CRhinoObjectAttributes_FromRhinoObject(parent.m_pRhinoObject);
+        if (pThis != IntPtr.Zero)
+          return pThis;
+      }
+      return base.NonConstPointer();
+    }
+
     internal ObjectAttributes(RhinoObject parentObject)
     {
       ConstructConstObject(parentObject, -1);

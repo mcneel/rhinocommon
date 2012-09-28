@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Rhino.DocObjects;
 
 partial class Examples
 {
   public static Rhino.Commands.Result ExplodeHatch(Rhino.RhinoDoc doc)
   {
-    Rhino.DocObjects.ObjectType filter = Rhino.DocObjects.ObjectType.Hatch;
-    Rhino.DocObjects.ObjRef objref = null;
+    const ObjectType filter = Rhino.DocObjects.ObjectType.Hatch;
+    Rhino.DocObjects.ObjRef objref;
     Rhino.Commands.Result rc = Rhino.Input.RhinoGet.GetOneObject("Select hatch to explode", false, filter, out objref);
     if (rc != Rhino.Commands.Result.Success || objref == null)
       return rc;

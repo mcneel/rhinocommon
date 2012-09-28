@@ -73,7 +73,7 @@
         Dim xform As Rhino.Geometry.Transform = Rhino.Geometry.Transform.PlaneToPlane(source_plane, target_plane)
 
         ' Do the transformation. In this example, we will copy the original objects
-        Dim delete_original As Boolean = False
+        Const delete_original As Boolean = False
         For i As Integer = 0 To go.ObjectCount - 1
           doc.Objects.Transform(go.[Object](i), xform, delete_original)
         Next

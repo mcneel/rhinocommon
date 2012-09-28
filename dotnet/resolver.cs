@@ -146,9 +146,17 @@ namespace Rhino.Runtime
       FuzzyComparer fuzzy = new FuzzyComparer(searchname);
       potential_files.Sort(fuzzy);
 
+      // 23 August 2012 S. Baer
+      // Make sure that at least part of the searchname matches part of the filename
+      // Just use the first 5 characters as a required pattern in the filename
+      const int length_match = 5;
+      string must_be_in_filename = searchname.Substring(0, searchname.Length > length_match ? length_match : searchname.Length);
+
       Assembly asm = null;
       foreach (string file in potential_files)
       {
+        if (file.IndexOf(must_be_in_filename, StringComparison.InvariantCultureIgnoreCase) == -1)
+          continue;
         asm = TryLoadAssembly(file, searchname, args.Name);
         if (asm != null)
           break;

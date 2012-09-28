@@ -51,6 +51,14 @@ namespace Rhino.Collections
     public bool MoveNext()
     {
       m_position++;
+      // Skip null records
+      if (m_position < m_count)
+      {
+        var value = m_table[m_position];
+        while (null == value && m_position < m_count)
+          if (++m_position < m_count)
+            value = m_table[m_position];
+      }
       return (m_position < m_count);
     }
 

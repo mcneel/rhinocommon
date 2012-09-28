@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Rhino.Commands;
 
 partial class Examples
 {
   public static Rhino.Commands.Result SelLayer(Rhino.RhinoDoc doc)
   {
-    Rhino.Commands.Result rc = Rhino.Commands.Result.Cancel;
     // Prompt for a layer name
     string layername = doc.Layers.CurrentLayer.Name;
-    rc = Rhino.Input.RhinoGet.GetString("Name of layer to select objects", true, ref layername);
+    Result rc = Rhino.Input.RhinoGet.GetString("Name of layer to select objects", true, ref layername);
     if (rc != Rhino.Commands.Result.Success)
       return rc;
 

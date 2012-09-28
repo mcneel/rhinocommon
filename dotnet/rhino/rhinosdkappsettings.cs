@@ -2199,6 +2199,8 @@ namespace Rhino.ApplicationSettings
     const int idxOsnap = 10;
     const int idxSnapToLocked = 11;
     const int idxUniversalConstructionPlaneMode = 12;
+    const int idxShowAutoGumball = 13;
+    const int idxSnappyGumball = 14;
 
     ///<summary>Gets or sets the enabled state of Rhino's grid snap modeling aid.</summary>
     public static bool GridSnap
@@ -2416,6 +2418,38 @@ namespace Rhino.ApplicationSettings
       {
         int mode = (int)value;
         SetInt(idxPointDisplay, mode);
+      }
+    }
+
+    /// <summary>
+    /// When AutoGumball is on, a gumball automatically appears
+    /// when objects are prepicked.
+    /// </summary>
+    public static bool AutoGumballEnabled
+    {
+      get
+      {
+        return GetBool(idxShowAutoGumball);
+      }
+      set
+      {
+        SetBool(idxShowAutoGumball, value);
+      }
+    }
+
+    /// <summary>
+    /// When SnappyGumball is on, a dragging a gumball moves the center point.
+    /// When snappy gumball is off, dragging a gumball moves the mouse down point.
+    /// </summary>
+    public static bool SnappyGumballEnabled
+    {
+      get
+      {
+        return GetBool(idxSnappyGumball);
+      }
+      set
+      {
+        SetBool(idxSnappyGumball, value);
       }
     }
   }
@@ -2711,6 +2745,396 @@ namespace Rhino.ApplicationSettings
     {
       get { return GetBool(idxLinkedViewports); }
       set { SetBool(idxLinkedViewports, value); }
+    }
+  }
+
+  /// <summary>
+  /// Shortcut key combinations
+  /// </summary>
+  public enum ShortcutKey : int
+  {
+    /// <summary>F1</summary>
+    F1 = 0,
+    /// <summary>F2</summary>
+    F2,
+    /// <summary>F3</summary>
+    F3,
+    /// <summary>F4</summary>
+    F4,
+    /// <summary>F5</summary>
+    F5,
+    /// <summary>F6</summary>
+    F6,
+    /// <summary>F7</summary>
+    F7,
+    /// <summary>F8</summary>
+    F8,
+    /// <summary>F9</summary>
+    F9,
+    /// <summary>F10</summary>
+    F10,
+    /// <summary>F11</summary>
+    F11,
+    /// <summary>F12</summary>
+    F12,
+    /// <summary>Ctrl + F1</summary>
+    CtrlF1,
+    /// <summary>Ctrl + F2</summary>
+    CtrlF2,
+    /// <summary>Ctrl + F3</summary>
+    CtrlF3,
+    /// <summary>Ctrl + F4</summary>
+    CtrlF4,
+    /// <summary>Ctrl + F5</summary>
+    CtrlF5,
+    /// <summary>Ctrl + F6</summary>
+    CtrlF6,
+    /// <summary>Ctrl + F7</summary>
+    CtrlF7,
+    /// <summary>Ctrl + F8</summary>
+    CtrlF8,
+    /// <summary>Ctrl + F9</summary>
+    CtrlF9,
+    /// <summary>Ctrl + F10</summary>
+    CtrlF10,
+    /// <summary>Ctrl + F11</summary>
+    CtrlF11,
+    /// <summary>Ctrl + F12</summary>
+    CtrlF12,
+    /// <summary>Shift + Ctrl + F1</summary>
+    ShiftCtrlF1,
+    /// <summary>Shift + Ctrl + F2</summary>
+    ShiftCtrlF2,
+    /// <summary>Shift + Ctrl + F3</summary>
+    ShiftCtrlF3,
+    /// <summary>Shift + Ctrl + F4</summary>
+    ShiftCtrlF4,
+    /// <summary>Shift + Ctrl + F5</summary>
+    ShiftCtrlF5,
+    /// <summary>Shift + Ctrl + F6</summary>
+    ShiftCtrlF6,
+    /// <summary>Shift + Ctrl + F7</summary>
+    ShiftCtrlF7,
+    /// <summary>Shift + Ctrl + F8</summary>
+    ShiftCtrlF8,
+    /// <summary>Shift + Ctrl + F9</summary>
+    ShiftCtrlF9,
+    /// <summary>Shift + Ctrl + F10</summary>
+    ShiftCtrlF10,
+    /// <summary>Shift + Ctrl + F11</summary>
+    ShiftCtrlF11,
+    /// <summary>Shift + Ctrl + F12</summary>
+    ShiftCtrlF12,
+    /// <summary>Alt + Ctrl + F1</summary>
+    AltCtrlF1,
+    /// <summary>Alt + Ctrl + F2</summary>
+    AltCtrlF2,
+    /// <summary>Alt + Ctrl + F3</summary>
+    AltCtrlF3,
+    /// <summary>Alt + Ctrl + F4</summary>
+    AltCtrlF4,
+    /// <summary>Alt + Ctrl + F5</summary>
+    AltCtrlF5,
+    /// <summary>Alt + Ctrl + F6</summary>
+    AltCtrlF6,
+    /// <summary>Alt + Ctrl + F7</summary>
+    AltCtrlF7,
+    /// <summary>Alt + Ctrl + F8</summary>
+    AltCtrlF8,
+    /// <summary>Alt + Ctrl + F9</summary>
+    AltCtrlF9,
+    /// <summary>Alt + Ctrl + F10</summary>
+    AltCtrlF10,
+    /// <summary>Alt + Ctrl + F11</summary>
+    AltCtrlF11,
+    /// <summary>Alt + Ctrl + F12</summary>
+    AltCtrlF12,
+    /// <summary>Ctrl + A</summary>
+    CtrlA,
+    /// <summary>Ctrl + B</summary>
+    CtrlB,
+    /// <summary>Ctrl + C</summary>
+    CtrlC,
+    /// <summary>Ctrl + D</summary>
+    CtrlD,
+    /// <summary>Ctrl + E</summary>
+    CtrlE,
+    /// <summary>Ctrl + F</summary>
+    CtrlF,
+    /// <summary>Ctrl + G</summary>
+    CtrlG,
+    /// <summary>Ctrl + H</summary>
+    CtrlH,
+    /// <summary>Ctrl + I</summary>
+    CtrlI,
+    /// <summary>Ctrl + J</summary>
+    CtrlJ,
+    /// <summary>Ctrl + K</summary>
+    CtrlK,
+    /// <summary>Ctrl + L</summary>
+    CtrlL,
+    /// <summary>Ctrl + M</summary>
+    CtrlM,
+    /// <summary>Ctrl + N</summary>
+    CtrlN,
+    /// <summary>Ctrl + O</summary>
+    CtrlO,
+    /// <summary>Ctrl + P</summary>
+    CtrlP,
+    /// <summary>Ctrl + Q</summary>
+    CtrlQ,
+    /// <summary>Ctrl + R</summary>
+    CtrlR,
+    /// <summary>Ctrl + S</summary>
+    CtrlS,
+    /// <summary>Ctrl + T</summary>
+    CtrlT,
+    /// <summary>Ctrl + U</summary>
+    CtrlU,
+    /// <summary>Ctrl + V</summary>
+    CtrlV,
+    /// <summary>Ctrl + W</summary>
+    CtrlW,
+    /// <summary>Ctrl + X</summary>
+    CtrlX,
+    /// <summary>Ctrl + Y</summary>
+    CtrlY,
+    /// <summary>Ctrl + Z</summary>
+    CtrlZ,
+    /// <summary>Shift + Ctrl + A</summary>
+    ShiftCtrlA,
+    /// <summary>Shift + Ctrl + B</summary>
+    ShiftCtrlB,
+    /// <summary>Shift + Ctrl + C</summary>
+    ShiftCtrlC,
+    /// <summary>Shift + Ctrl + D</summary>
+    ShiftCtrlD,
+    /// <summary>Shift + Ctrl + E</summary>
+    ShiftCtrlE,
+    /// <summary>Shift + Ctrl + F</summary>
+    ShiftCtrlF,
+    /// <summary>Shift + Ctrl + G</summary>
+    ShiftCtrlG,
+    /// <summary>Shift + Ctrl + H</summary>
+    ShiftCtrlH,
+    /// <summary>Shift + Ctrl + I</summary>
+    ShiftCtrlI,
+    /// <summary>Shift + Ctrl + J</summary>
+    ShiftCtrlJ,
+    /// <summary>Shift + Ctrl + K</summary>
+    ShiftCtrlK,
+    /// <summary>Shift + Ctrl + L</summary>
+    ShiftCtrlL,
+    /// <summary>Shift + Ctrl + M</summary>
+    ShiftCtrlM,
+    /// <summary>Shift + Ctrl + N</summary>
+    ShiftCtrlN,
+    /// <summary>Shift + Ctrl + O</summary>
+    ShiftCtrlO,
+    /// <summary>Shift + Ctrl + P</summary>
+    ShiftCtrlP,
+    /// <summary>Shift + Ctrl + Q</summary>
+    ShiftCtrlQ,
+    /// <summary>Shift + Ctrl + R</summary>
+    ShiftCtrlR,
+    /// <summary>Shift + Ctrl + S</summary>
+    ShiftCtrlS,
+    /// <summary>Shift + Ctrl + T</summary>
+    ShiftCtrlT,
+    /// <summary>Shift + Ctrl + U</summary>
+    ShiftCtrlU,
+    /// <summary>Shift + Ctrl + V</summary>
+    ShiftCtrlV,
+    /// <summary>Shift + Ctrl + W</summary>
+    ShiftCtrlW,
+    /// <summary>Shift + Ctrl + X</summary>
+    ShiftCtrlX,
+    /// <summary>Shift + Ctrl + Y</summary>
+    ShiftCtrlY,
+    /// <summary>Shift + Ctrl + Z</summary>
+    ShiftCtrlZ,
+    /// <summary>Alt + Ctrl + A</summary>
+    AltCtrlA,
+    /// <summary>Alt + Ctrl + B</summary>
+    AltCtrlB,
+    /// <summary>Alt + Ctrl + C</summary>
+    AltCtrlC,
+    /// <summary>Alt + Ctrl + D</summary>
+    AltCtrlD,
+    /// <summary>Alt + Ctrl + E</summary>
+    AltCtrlE,
+    /// <summary>Alt + Ctrl + F</summary>
+    AltCtrlF,
+    /// <summary>Alt + Ctrl + G</summary>
+    AltCtrlG,
+    /// <summary>Alt + Ctrl + H</summary>
+    AltCtrlH,
+    /// <summary>Alt + Ctrl + I</summary>
+    AltCtrlI,
+    /// <summary>Alt + Ctrl + J</summary>
+    AltCtrlJ,
+    /// <summary>Alt + Ctrl + K</summary>
+    AltCtrlK,
+    /// <summary>Alt + Ctrl + L</summary>
+    AltCtrlL,
+    /// <summary>Alt + Ctrl + M</summary>
+    AltCtrlM,
+    /// <summary>Alt + Ctrl + N</summary>
+    AltCtrlN,
+    /// <summary>Alt + Ctrl + O</summary>
+    AltCtrlO,
+    /// <summary>Alt + Ctrl + P</summary>
+    AltCtrlP,
+    /// <summary>Alt + Ctrl + Q</summary>
+    AltCtrlQ,
+    /// <summary>Alt + Ctrl + R</summary>
+    AltCtrlR,
+    /// <summary>Alt + Ctrl + S</summary>
+    AltCtrlS,
+    /// <summary>Alt + Ctrl + T</summary>
+    AltCtrlT,
+    /// <summary>Alt + Ctrl + U</summary>
+    AltCtrlU,
+    /// <summary>Alt + Ctrl + V</summary>
+    AltCtrlV,
+    /// <summary>Alt + Ctrl + W</summary>
+    AltCtrlW,
+    /// <summary>Alt + Ctrl + X</summary>
+    AltCtrlX,
+    /// <summary>Alt + Ctrl + Y</summary>
+    AltCtrlY,
+    /// <summary>Alt + Ctrl + Z</summary>
+    AltCtrlZ,
+    /// <summary>Ctrl + 0</summary>
+    Ctrl0,
+    /// <summary>Ctrl + 1</summary>
+    Ctrl1,
+    /// <summary>Ctrl + 2</summary>
+    Ctrl2,
+    /// <summary>Ctrl + 3</summary>
+    Ctrl3,
+    /// <summary>Ctrl + 4</summary>
+    Ctrl4,
+    /// <summary>Ctrl + 5</summary>
+    Ctrl5,
+    /// <summary>Ctrl + 6</summary>
+    Ctrl6,
+    /// <summary>Ctrl + 7</summary>
+    Ctrl7,
+    /// <summary>Ctrl + 8</summary>
+    Ctrl8,
+    /// <summary>Ctrl + 9</summary>
+    Ctrl9,
+    /// <summary>Shift + Ctrl + 0</summary>
+    ShiftCtrl0,
+    /// <summary>Shift + Ctrl + 1</summary>
+    ShiftCtrl1,
+    /// <summary>Shift + Ctrl + 2</summary>
+    ShiftCtrl2,
+    /// <summary>Shift + Ctrl + 3</summary>
+    ShiftCtrl3,
+    /// <summary>Shift + Ctrl + 4</summary>
+    ShiftCtrl4,
+    /// <summary>Shift + Ctrl + 5</summary>
+    ShiftCtrl5,
+    /// <summary>Shift + Ctrl + 6</summary>
+    ShiftCtrl6,
+    /// <summary>Shift + Ctrl + 7</summary>
+    ShiftCtrl7,
+    /// <summary>Shift + Ctrl + 8</summary>
+    ShiftCtrl8,
+    /// <summary>Shift + Ctrl + 9</summary>
+    ShiftCtrl9,
+    /// <summary>Alt + Ctrl + 0</summary>
+    AltCtrl0,
+    /// <summary>Alt + Ctrl + 1</summary>
+    AltCtrl1,
+    /// <summary>Alt + Ctrl + 2</summary>
+    AltCtrl2,
+    /// <summary>Alt + Ctrl + 3</summary>
+    AltCtrl3,
+    /// <summary>Alt + Ctrl + 4</summary>
+    AltCtrl4,
+    /// <summary>Alt + Ctrl + 5</summary>
+    AltCtrl5,
+    /// <summary>Alt + Ctrl + 6</summary>
+    AltCtrl6,
+    /// <summary>Alt + Ctrl + 7</summary>
+    AltCtrl7,
+    /// <summary>Alt + Ctrl + 8</summary>
+    AltCtrl8,
+    /// <summary>Alt + Ctrl + 9</summary>
+    AltCtrl9,
+    /// <summary>Home</summary>
+    Home,
+    /// <summary>End</summary>
+    End,
+    /// <summary>Ctrl + Home</summary>
+    CtrlHome,
+    /// <summary>Ctrl + End</summary>
+    CtrlEnd,
+    /// <summary>Shift + Home</summary>
+    ShiftHome,
+    /// <summary>Shift + End</summary>
+    ShiftEnd,
+    /// <summary>Shift + Ctrl + Home</summary>
+    ShiftCtrlHome,
+    /// <summary>Shift + Ctrl + End</summary>
+    ShiftCtrlEnd,
+    /// <summary>Alt + Ctrl + Home</summary>
+    AltCtrlHome,
+    /// <summary>Alt + Ctrl + End</summary>
+    AltCtrlEnd,
+    /// <summary>Page Up</summary>
+    PageUp,
+    /// <summary>Page Down</summary>
+    PageDown,
+    /// <summary>Shift + Page Up</summary>
+    ShiftPageUp,
+    /// <summary>Shift + Page Down</summary>
+    ShiftPageDown,
+    /// <summary>Ctrl + Page Up</summary>
+    CtrlPageUp,
+    /// <summary>Ctrl + Page Down</summary>
+    CtrlPageDown,
+    /// <summary>Shift + Ctrl + Page Up</summary>
+    ShiftCtrlPageUp,
+    /// <summary>Shift + Ctrl + Page Down</summary>
+    ShiftCtrlPageDown,
+    /// <summary>Alt + Ctrl + Page Up</summary>
+    AltCtrlPageUp,
+    /// <summary>Alt + Ctrl + Page Down</summary>
+    AltCtrlPageDown
+  }
+
+  /// <summary>
+  /// Contains static methods and properties to control keyboard shortcut keys
+  /// </summary>
+  public static class ShortcutKeySettings
+  {
+    /// <summary>
+    /// Get macro associated with a given keyboard shortcut
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public static string GetMacro(ShortcutKey key)
+    {
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pString = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoAppShortcutKeys_Macro((int)key, pString);
+        return sh.ToString();
+      }
+    }
+
+    /// <summary>
+    /// Set macro associated with a keyboard shortcut
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="macro"></param>
+    public static void SetMacro(ShortcutKey key, string macro)
+    {
+      UnsafeNativeMethods.CRhinoAppShortcutKeys_SetMacro((int)key, macro);
     }
   }
 

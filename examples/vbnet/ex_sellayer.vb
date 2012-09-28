@@ -1,6 +1,6 @@
 ﻿Partial Class Examples
   Public Shared Function SelLayer(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-    Dim rc As Rhino.Commands.Result = Rhino.Commands.Result.Cancel
+    Dim rc As Rhino.Commands.Result
     ' Prompt for a layer name
     Dim layername As String = doc.Layers.CurrentLayer.Name
     rc = Rhino.Input.RhinoGet.GetString("Name of layer to select objects", True, layername)

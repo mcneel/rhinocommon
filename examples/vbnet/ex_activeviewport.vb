@@ -1,5 +1,3 @@
-Imports System.Collections.Generic
-
 Partial Class Examples
   Public Shared Function ActiveViewport(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
     Dim view As Rhino.Display.RhinoView = doc.Views.ActiveView

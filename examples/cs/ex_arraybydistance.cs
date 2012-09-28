@@ -1,5 +1,4 @@
-﻿using System;
-using Rhino;
+﻿using Rhino;
 
 [System.Runtime.InteropServices.Guid("3CDCBB20-B4E4-4AB6-B870-C911C7435BD7")]
 public class ArrayByDistanceCommand : Rhino.Commands.Command

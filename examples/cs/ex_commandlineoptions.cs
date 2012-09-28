@@ -1,7 +1,4 @@
-﻿using System;
-using Rhino.Geometry;
-
-partial class Examples
+﻿partial class Examples
 {
   public static Rhino.Commands.Result CommandLineOptions(Rhino.RhinoDoc doc)
   {

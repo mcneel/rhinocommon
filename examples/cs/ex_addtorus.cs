@@ -4,8 +4,8 @@ partial class Examples
 {
   public static Rhino.Commands.Result AddTorus(Rhino.RhinoDoc doc)
   {
-    double major_radius = 4.0;
-    double minor_radius = 2.0;
+    const double major_radius = 4.0;
+    const double minor_radius = 2.0;
 
     Rhino.Geometry.Plane plane = Rhino.Geometry.Plane.WorldXY;
     Rhino.Geometry.Torus torus = new Rhino.Geometry.Torus(plane, major_radius, minor_radius);

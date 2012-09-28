@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Rhino.DocObjects;
 
 partial class Examples
 {
   public static Rhino.Commands.Result AddTexture(Rhino.RhinoDoc doc)
   {
     // Select object to add texture
-    Rhino.DocObjects.ObjectType filter = Rhino.DocObjects.ObjectType.Surface |
-      Rhino.DocObjects.ObjectType.PolysrfFilter |
-      Rhino.DocObjects.ObjectType.Mesh;
+    const ObjectType filter = Rhino.DocObjects.ObjectType.Surface |
+                              Rhino.DocObjects.ObjectType.PolysrfFilter |
+                              Rhino.DocObjects.ObjectType.Mesh;
     Rhino.DocObjects.ObjRef objref;
     Rhino.Commands.Result rc = Rhino.Input.RhinoGet.GetOneObject("Select object to add texture", false, filter, out objref);
     if( rc!= Rhino.Commands.Result.Success )
@@ -29,10 +29,7 @@ partial class Examples
       return Rhino.Commands.Result.Nothing;
 
     // Make sure the object has it's material source set to "material_from_object"
-    if( rhino_object.Attributes.MaterialSource != Rhino.DocObjects.ObjectMaterialSource.MaterialFromObject )
-    {
-      rhino_object.Attributes.MaterialSource = Rhino.DocObjects.ObjectMaterialSource.MaterialFromObject;
-    }
+    rhino_object.Attributes.MaterialSource = Rhino.DocObjects.ObjectMaterialSource.MaterialFromObject;
 
     // Make sure the object has a material assigned
     int material_index = rhino_object.Attributes.MaterialIndex;

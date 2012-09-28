@@ -1,7 +1,9 @@
-﻿Partial Class Examples
+﻿Imports Rhino.DocObjects
+
+Partial Class Examples
   Public Shared Function ExplodeHatch(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
 
-    Dim filter As Rhino.DocObjects.ObjectType = Rhino.DocObjects.ObjectType.Hatch
+    Const filter As ObjectType = Rhino.DocObjects.ObjectType.Hatch
     Dim objref As Rhino.DocObjects.ObjRef = Nothing
     Dim rc As Rhino.Commands.Result = Rhino.Input.RhinoGet.GetOneObject("Select hatch to explode", False, filter, objref)
     If rc <> Rhino.Commands.Result.Success OrElse objref Is Nothing Then

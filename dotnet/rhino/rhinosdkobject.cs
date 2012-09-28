@@ -64,9 +64,12 @@ namespace Rhino.DocObjects
       m_thePickCallback = OnRhinoObjectPick;
       m_thePickedCallback = OnRhinoObjectPicked;
       m_theTransformCallback = OnRhinoObjectTransform;
+      m_theSpaceMorphCallback = OnRhinoObjectSpaceMorph;
       m_theDeleteCallback = OnRhinoObjectDeleted;
 
-      UnsafeNativeMethods.CRhinoObject_SetCallbacks(m_theDuplicateCallback, m_theDrawCallback, m_theDocNotifyCallback, m_theActiveInViewportCallback, m_theSelectionCallback, m_theTransformCallback, m_theDeleteCallback);
+      UnsafeNativeMethods.CRhinoObject_SetCallbacks(m_theDuplicateCallback, m_theDrawCallback, m_theDocNotifyCallback,
+                                                    m_theActiveInViewportCallback, m_theSelectionCallback, m_theTransformCallback,
+                                                    m_theSpaceMorphCallback, m_theDeleteCallback);
       UnsafeNativeMethods.CRhinoObject_SetPickCallbacks(m_thePickCallback, m_thePickedCallback);
     }
 
@@ -81,6 +84,7 @@ namespace Rhino.DocObjects
     internal delegate int RhinoObjectActiveInViewportCallback(int docId, uint serialNumber, IntPtr pRhinoViewport);
     internal delegate void RhinoObjectSelectionCallback(int docId, uint serialNumber);
     internal delegate void RhinoObjectTransformCallback(int docId, uint serialNumber, IntPtr pConstTransform);
+    internal delegate void RhinoObjectSpaceMorphCallback(int docId, uint serialNumber, IntPtr pConstSpaceMorph);
     internal delegate void RhinoObjectPickCallback(int docId, uint serialNumber, IntPtr pConstRhinoObject, IntPtr pRhinoObjRefArray);
     internal delegate void RhinoObjectPickedCallback(int docId, uint serialNumber, IntPtr pConstRhinoObject, IntPtr pRhinoObjRefArray, int count);
     internal delegate void RhinoObjectDeletedCallback(uint serialNumber);
@@ -90,6 +94,7 @@ namespace Rhino.DocObjects
     static RhinoObjectActiveInViewportCallback m_theActiveInViewportCallback;
     static RhinoObjectSelectionCallback m_theSelectionCallback;
     static RhinoObjectTransformCallback m_theTransformCallback;
+    static RhinoObjectSpaceMorphCallback m_theSpaceMorphCallback;
     static RhinoObjectPickCallback m_thePickCallback;
     static RhinoObjectPickedCallback m_thePickedCallback;
     static RhinoObjectDeletedCallback m_theDeleteCallback;
@@ -122,7 +127,7 @@ namespace Rhino.DocObjects
           {
             newobj.m_rhinoobject_serial_number = newObjectSerialNumber;
             newobj.m_pRhinoObject = newObjectPointer;
-            doc.Objects.AddCustomObject(newObjectSerialNumber, newobj);
+            doc.Objects.AddCustomObjectForTracking(newObjectSerialNumber, newobj, newObjectPointer);
             newobj.OnDuplicate(rhobj);
           }
         }
@@ -173,6 +178,21 @@ namespace Rhino.DocObjects
         RhinoObject rhobj = doc.Objects.FindCustomObject(serialNumber);
         if (rhobj != null)
           rhobj.OnSelectionChanged();
+      }
+    }
+
+    static void OnRhinoObjectSpaceMorph(int docId, uint serialNumber, IntPtr pConstSpaceMorph)
+    {
+      RhinoDoc doc = RhinoDoc.FromId(docId);
+      if (doc != null)
+      {
+        RhinoObject rhobj = doc.Objects.FindCustomObject(serialNumber);
+        if (rhobj != null)
+        {
+          NativeSpaceMorphWrapper sm = new NativeSpaceMorphWrapper(pConstSpaceMorph);
+          rhobj.OnSpaceMorph(sm);
+          sm.m_pSpaceMorph = IntPtr.Zero; // null the pointer out in case someone accidentally holds onto the spacemorph
+        }
       }
     }
 
@@ -1523,6 +1543,15 @@ namespace Rhino.DocObjects
     /// </summary>
     /// <param name="transform"></param>
     protected virtual void OnTransform(Rhino.Geometry.Transform transform)
+    {
+    }
+
+    /// <summary>
+    /// Called when a space morph has been applied to the geometry.
+    /// Currently this only works for CustomMeshObject instances
+    /// </summary>
+    /// <param name="morph"></param>
+    protected virtual void OnSpaceMorph(Rhino.Geometry.SpaceMorph morph)
     {
     }
   }

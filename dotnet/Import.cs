@@ -77,7 +77,8 @@ internal partial class UnsafeNativeMethods
     Rhino.PlugIns.PlugIn.ReadDocumentDelegate readdocumentCallback);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void CRhinoPlugIn_SetCallbacks3(Rhino.PlugIns.PlugIn.OnAddPagesToOptionsDelegate addoptionpagesCallback);
+  internal static extern void CRhinoPlugIn_SetCallbacks3(Rhino.PlugIns.PlugIn.OnAddPagesToOptionsDelegate addoptionpagesCallback,
+                                                         Rhino.PlugIns.PlugIn.OnAddPagesToObjectPropertiesDelegate addobjectpropertiespagesCallback);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoFileImportPlugIn_SetCallbacks(Rhino.PlugIns.FileImportPlugIn.AddFileType addfiletype,
@@ -248,6 +249,7 @@ internal partial class UnsafeNativeMethods
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectActiveInViewportCallback active_in_viewport,
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectSelectionCallback selection_change,
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectTransformCallback transform,
+                                                        Rhino.DocObjects.RhinoObject.RhinoObjectSpaceMorphCallback morph,
                                                         Rhino.DocObjects.RhinoObject.RhinoObjectDeletedCallback deleted);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
@@ -275,6 +277,13 @@ internal partial class UnsafeNativeMethods
   internal static extern void CRhCmnGripObject_SetCallbacks(Rhino.DocObjects.Custom.CustomGripObject.CRhinoObjectDestructorCallback destructor_func,
     Rhino.DocObjects.Custom.CustomGripObject.CRhinoGripObjectWeightCallback getweight_func,
     Rhino.DocObjects.Custom.CustomGripObject.CRhinoGripObjectSetWeightCallback setweight_func);
+
+  // Docking Tabs in rh_utilities.cpp
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void RHC_RegisterTabbedDockBar([MarshalAs(UnmanagedType.LPWStr)]string caption, Guid tab_id, Guid plugin_id, IntPtr icon,
+    Rhino.UI.Panels.CreatePanelCallback create_proc,
+    Rhino.UI.Panels.VisiblePanelCallback visible_proc);
+
 #endif
 
   #region RDK Functions

@@ -10,9 +10,6 @@ namespace Rhino.DocObjects
     internal MeshObject(uint serialNumber)
       : base(serialNumber) { }
 
-    [Obsolete("Derive your Mesh class from Rhino.DocObjects.Custom.CustomMeshObject. This will be removed in a future beta")]
-    protected MeshObject() { }
-
     internal MeshObject(bool custom) { }
 
     public Mesh MeshGeometry

@@ -7,10 +7,10 @@
     ' Dim nc As Rhino.Geometry.NurbsCurve = c.ToNurbsCurve()
     '
     ' This sample demonstrates creating a NURBS curve from scratch.
-    Dim dimension As Integer = 3
-    Dim isRational As Boolean = True
-    Dim order As Integer = 3
-    Dim cv_count As Integer = 9
+    Const dimension As Integer = 3
+    Const isRational As Boolean = True
+    Const order As Integer = 3
+    Const cv_count As Integer = 9
     Dim nc As New Rhino.Geometry.NurbsCurve(dimension, isRational, order, cv_count)
     nc.Points.SetPoint(0, 1.0, 0.0, 0.0, 1.0)
     nc.Points.SetPoint(1, 0.707107, 0.707107, 0.0, 0.707107)

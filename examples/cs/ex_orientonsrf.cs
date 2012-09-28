@@ -1,6 +1,4 @@
-﻿using System;
-
-partial class Examples
+﻿partial class Examples
 {
   public static Rhino.Commands.Result OrientOnSrf(Rhino.RhinoDoc doc)
   {
@@ -73,7 +71,7 @@ partial class Examples
         Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.PlaneToPlane(source_plane, target_plane);
 
         // Do the transformation. In this example, we will copy the original objects
-        bool delete_original = false;
+        const bool delete_original = false;
         for (int i = 0; i < go.ObjectCount; i++)
           doc.Objects.Transform(go.Object(i), xform, delete_original);
 

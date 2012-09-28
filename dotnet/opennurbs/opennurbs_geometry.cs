@@ -53,9 +53,18 @@ namespace Rhino.Geometry
       }
 
       uint serial_number = 0;
+      IntPtr pParentRhinoObject = IntPtr.Zero;
       if (null != parent_object)
+      {
         serial_number = parent_object.m_rhinoobject_serial_number;
+        pParentRhinoObject = parent_object.m_pRhinoObject;
+      }
       ComponentIndex ci = new ComponentIndex();
+      // There are a few cases (like in ReplaceObject callback) where the parent
+      // rhino object temporarily holds onto the CRhinoObject* because the object
+      // is not officially in the document yet.
+      if (pParentRhinoObject != IntPtr.Zero)
+        return UnsafeNativeMethods.CRhinoObject_Geometry(pParentRhinoObject, ci);
       return UnsafeNativeMethods.CRhinoObject_Geometry2(serial_number, ci);
 #else
       Rhino.FileIO.File3dmObject fileobject = m__parent as Rhino.FileIO.File3dmObject;

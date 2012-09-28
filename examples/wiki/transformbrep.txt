@@ -4,7 +4,7 @@
 <code c#>
 public static Rhino.Commands.Result TransformBrep(Rhino.RhinoDoc doc)
 {
-  Rhino.DocObjects.ObjRef rhobj = null;
+  Rhino.DocObjects.ObjRef rhobj;
   var rc = RhinoGet.GetOneObject("Select brep", true, Rhino.DocObjects.ObjectType.Brep, out rhobj);
   if(rc!= Rhino.Commands.Result.Success)
     return rc;

@@ -11,7 +11,7 @@ public static Rhino.Commands.Result AddBackgroundBitmap(Rhino.RhinoDoc doc)
     return Rhino.Commands.Result.Cancel;
 
   // Verify the file that was selected
-  System.Drawing.Image image = null;
+  System.Drawing.Image image;
   try
   {
     image = System.Drawing.Image.FromFile(fd.FileName);
@@ -49,8 +49,8 @@ public static Rhino.Commands.Result AddBackgroundBitmap(Rhino.RhinoDoc doc)
 
   // Cook up some scale factors
   double w = gn.Number();
-  double image_width = (double)image.Width;
-  double image_height = (double)image.Height;
+  double image_width = image.Width;
+  double image_height = image.Height;
   double h = w * (image_height / image_width);
 
   Rhino.Geometry.Plane plane = view.ActiveViewport.ConstructionPlane();
@@ -71,7 +71,7 @@ Public Shared Function AddBackgroundBitmap(ByVal doc As Rhino.RhinoDoc) As Rhino
   End If
 
   ' Verify the file that was selected
-  Dim image As System.Drawing.Image = Nothing
+  Dim image As System.Drawing.Image
   Try
     image = System.Drawing.Image.FromFile(fd.FileName)
   Catch generatedExceptionName As Exception

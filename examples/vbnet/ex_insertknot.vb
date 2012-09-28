@@ -1,7 +1,9 @@
-﻿Partial Class Examples
+﻿Imports Rhino.DocObjects
+
+Partial Class Examples
   Public Shared Function InsertKnot(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-    Dim rc As Rhino.Commands.Result = Rhino.Commands.Result.Success
-    Dim filter As Rhino.DocObjects.ObjectType = Rhino.DocObjects.ObjectType.Curve
+    Dim rc As Rhino.Commands.Result
+    Const filter As ObjectType = Rhino.DocObjects.ObjectType.Curve
     Dim objref As Rhino.DocObjects.ObjRef = Nothing
     rc = Rhino.Input.RhinoGet.GetOneObject("Select curve for knot insertion", False, filter, objref)
     If rc <> Rhino.Commands.Result.Success Then

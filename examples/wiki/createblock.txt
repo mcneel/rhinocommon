@@ -12,9 +12,9 @@ public static Rhino.Commands.Result CreateBlock(Rhino.RhinoDoc doc)
   go.GroupSelect = true;
 
   // Phantoms, grips, lights, etc., cannot be in blocks.
-  var forbidden_geometry_filter = Rhino.DocObjects.ObjectType.Light |
-    Rhino.DocObjects.ObjectType.Grip | Rhino.DocObjects.ObjectType.Phantom;
-  var geometry_filter = forbidden_geometry_filter ^ Rhino.DocObjects.ObjectType.AnyObject;
+  const ObjectType forbidden_geometry_filter = Rhino.DocObjects.ObjectType.Light |
+                                               Rhino.DocObjects.ObjectType.Grip | Rhino.DocObjects.ObjectType.Phantom;
+  const ObjectType geometry_filter = forbidden_geometry_filter ^ Rhino.DocObjects.ObjectType.AnyObject;
   go.GeometryFilter = geometry_filter;
   go.GetMultiple(1, 0);
   if (go.CommandResult() != Rhino.Commands.Result.Success)
@@ -79,8 +79,8 @@ Public Shared Function CreateBlock(doc As Rhino.RhinoDoc) As Rhino.Commands.Resu
   go.GroupSelect = True
 
   ' Phantoms, grips, lights, etc., cannot be in blocks.
-  Dim forbidden_geometry_filter = Rhino.DocObjects.ObjectType.Light Or Rhino.DocObjects.ObjectType.Grip Or Rhino.DocObjects.ObjectType.Phantom
-  Dim geometry_filter = forbidden_geometry_filter Xor Rhino.DocObjects.ObjectType.AnyObject
+  Const forbidden_geometry_filter As ObjectType = Rhino.DocObjects.ObjectType.Light Or Rhino.DocObjects.ObjectType.Grip Or Rhino.DocObjects.ObjectType.Phantom
+  Const geometry_filter As ObjectType = forbidden_geometry_filter Xor Rhino.DocObjects.ObjectType.AnyObject
   go.GeometryFilter = geometry_filter
   go.GetMultiple(1, 0)
   If go.CommandResult() <> Rhino.Commands.Result.Success Then

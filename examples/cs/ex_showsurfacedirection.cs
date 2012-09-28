@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Rhino.Geometry;
 
 partial class Examples
@@ -59,8 +58,8 @@ partial class Examples
 class TestSurfaceDirConduit : Rhino.Display.DisplayConduit
 {
   readonly Brep m_brep;
-  List<Point3d> m_points;
-  List<Vector3d> m_normals;
+  readonly List<Point3d> m_points;
+  readonly List<Vector3d> m_normals;
 
   public TestSurfaceDirConduit(Brep brep)
   {

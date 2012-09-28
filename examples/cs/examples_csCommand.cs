@@ -1,7 +1,6 @@
 using System;
 using Rhino;
 using Rhino.Geometry;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace examples_cs
@@ -49,7 +48,7 @@ namespace examples_cs
       if (Math.Abs(len2) < 0.000001)
         return Transform.Identity;
 
-      Scale = len2 / len1; ;
+      Scale = len2 / len1;
       return Transform.Scale(plane, Scale, Scale, Scale);
     }
     public override Transform CalculateTransform(Rhino.Display.RhinoViewport viewport, Point3d point)
@@ -77,7 +76,7 @@ namespace examples_cs
     public override string EnglishName { get { return "examples_csTransform"; } }
 
     double m_scale = 1;
-    bool m_copy = false;
+    bool m_copy;
     protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
     {
       // Select objects to scale
@@ -86,9 +85,9 @@ namespace examples_cs
       if (rc != Rhino.Commands.Result.Success)
         return rc;
 
-      var anchor = new Point3d();
-      var _ref = new Point3d();
-      Plane plane = new Plane();
+      Point3d anchor;
+      Point3d _ref;
+      Plane plane;
 
       // Origin point
       var gp = new Rhino.Input.Custom.GetPoint();
@@ -247,9 +246,6 @@ namespace examples_cs
         if (res == Rhino.Input.GetResult.Option)
           continue;
 
-        if (res == Rhino.Input.GetResult.Nothing)
-          break;
-
         break;
       }
 
@@ -270,18 +266,6 @@ namespace examples_cs
       Rhino.Commands.Result rc = func(doc);
       RhinoApp.WriteLine("[TEST DONE] - result = " + rc.ToString());
     }
-
-    [DllImport("user32.dll")]
-    static extern uint GetSysColor(int nIndex);
-
-    [DllImport("user32.dll")]
-    static extern bool SetSysColors(int cElements, int[] lpaElements,  uint[] lpaRgbValues);
-    
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
-
-    [DllImport("user32.dll")]
-    static extern bool InvalidateRect(IntPtr hWnd, IntPtr lpRect, bool bErase);
 
     protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
     {

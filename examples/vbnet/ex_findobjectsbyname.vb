@@ -1,6 +1,6 @@
 ﻿Partial Class Examples
   Public Shared Function FindObjectsByName(ByVal doc As Rhino.RhinoDoc) As Rhino.Commands.Result
-    Dim name As String = "abc"
+    Const name As String = "abc"
     Dim settings As New Rhino.DocObjects.ObjectEnumeratorSettings()
     settings.NameFilter = name
     Dim ids As New System.Collections.Generic.List(Of Guid)()

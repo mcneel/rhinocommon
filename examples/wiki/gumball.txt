@@ -18,7 +18,7 @@ public class GumballExampleCommand : Rhino.Commands.TransformCommand
     if (!bbox.IsValid)
       return Rhino.Commands.Result.Failure;
 
-    Rhino.Commands.Result cmdrc = Rhino.Commands.Result.Success;
+    Rhino.Commands.Result cmdrc;
 
     var base_gumball = new Rhino.UI.Gumball.GumballObject();
     base_gumball.SetFromBoundingBox(bbox);
@@ -93,7 +93,7 @@ public class GumballExampleCommand : Rhino.Commands.TransformCommand
 
 class GetGumballXform : Rhino.Input.Custom.GetTransform
 {
-  Rhino.UI.Gumball.GumballDisplayConduit m_dc;
+  readonly Rhino.UI.Gumball.GumballDisplayConduit m_dc;
   public GetGumballXform(Rhino.UI.Gumball.GumballDisplayConduit dc)
   {
     m_dc = dc;
@@ -197,7 +197,7 @@ Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.
   Dim bbox = list.GetBoundingBox(True, True)
   If Not bbox.IsValid Then Return Rhino.Commands.Result.Failure
 
-  Dim cmdrc As Rhino.Commands.Result = Rhino.Commands.Result.Success
+  Dim cmdrc As Rhino.Commands.Result
 
   Dim base_gumball = New Rhino.UI.Gumball.GumballObject()
   base_gumball.SetFromBoundingBox(bbox)

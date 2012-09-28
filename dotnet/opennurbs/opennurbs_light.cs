@@ -35,36 +35,6 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// This method is deprecated. Do not use it.
-    /// </summary>
-    /// <param name="northAngleDegrees">This argument is specified in a deprecated method. Do not use it.</param>
-    /// <param name="when">This argument is specified in a deprecated method. Do not use it.</param>
-    /// <param name="whenKind">This argument is specified in a deprecated method. Do not use it.</param>
-    /// <param name="latitudeDegrees">This argument is specified in a deprecated method. Do not use it.</param>
-    /// <param name="longitudeDegrees">This argument is specified in a deprecated method. Do not use it.</param>
-    /// <returns>This return value is specified by a deprecated method. Do not use it.</returns>
-    [Obsolete("Removed in favor of version that does not require a DateTimeKind since this is embedded in a DateTime. Will be removed in a future beta.")]
-    public static Light CreateSunLight(double northAngleDegrees, DateTime when, DateTimeKind whenKind, double latitudeDegrees, double longitudeDegrees)
-    {
-      Rhino.Runtime.HostUtils.CheckForRdk(true, true);
-      if (whenKind == DateTimeKind.Unspecified)
-        throw new ArgumentException("whenKind must be specified");
-
-      IntPtr pSun = UnsafeNativeMethods.Rdk_SunNew();
-      IntPtr pSunInterface = UnsafeNativeMethods.Rdk_SunInterface(pSun);
-      UnsafeNativeMethods.Rdk_Sun_SetNorth(pSunInterface, northAngleDegrees);
-      UnsafeNativeMethods.Rdk_Sun_SetLatitudeLongitude(pSunInterface, latitudeDegrees, longitudeDegrees);
-
-      bool local = whenKind== DateTimeKind.Local;
-      UnsafeNativeMethods.Rdk_Sun_SetDateTime(pSunInterface, local, when.Year, when.Month, when.Day, when.Hour, when.Minute, when.Second);
-      Light rc = new Light();
-      IntPtr pLight = rc.NonConstPointer();
-      UnsafeNativeMethods.Rdk_Sun_Light(pSunInterface, pLight);
-      UnsafeNativeMethods.Rdk_SunDelete(pSun);
-      return rc;
-    }
-
-    /// <summary>
     /// Constructs a light which simulates the Sun based on a given time and location on Earth.
     /// </summary>
     /// <param name="northAngleDegrees">The angle of North in degrees. North is the angle between positive World Y axis and model North, as measured on World XY plane.</param>
@@ -370,8 +340,8 @@ namespace Rhino.Geometry
     System.Drawing.Color GetColor(int which)
     {
       IntPtr pConstThis = ConstPointer();
-      int abgr = UnsafeNativeMethods.ON_Light_GetColor(pConstThis, which);
-      return System.Drawing.ColorTranslator.FromWin32(abgr);
+      int argb = UnsafeNativeMethods.ON_Light_GetColor(pConstThis, which);
+      return System.Drawing.Color.FromArgb(argb);
     }
     void SetColor(int which, System.Drawing.Color c)
     {

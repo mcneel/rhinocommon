@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Rhino.Commands;
+using Rhino.DocObjects;
 
 partial class Examples
 {
   public static Rhino.Commands.Result UnrollSurface(Rhino.RhinoDoc doc)
   {
-    Rhino.Commands.Result rc = Rhino.Commands.Result.Success;
-    Rhino.DocObjects.ObjectType filter = Rhino.DocObjects.ObjectType.Brep | Rhino.DocObjects.ObjectType.Surface;
+    const ObjectType filter = Rhino.DocObjects.ObjectType.Brep | Rhino.DocObjects.ObjectType.Surface;
     Rhino.DocObjects.ObjRef objref;
-    rc = Rhino.Input.RhinoGet.GetOneObject("Select surface or brep to unroll", false, filter, out objref);
+    Result rc = Rhino.Input.RhinoGet.GetOneObject("Select surface or brep to unroll", false, filter, out objref);
     if (rc != Rhino.Commands.Result.Success)
       return rc;
     Rhino.Geometry.Unroller unroll=null;

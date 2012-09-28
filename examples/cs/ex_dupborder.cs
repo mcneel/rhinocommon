@@ -1,11 +1,12 @@
 ﻿using System;
+using Rhino.DocObjects;
 
 partial class Examples
 {
   public static Rhino.Commands.Result DupBorder(Rhino.RhinoDoc doc)
   {
-    Rhino.DocObjects.ObjectType filter = Rhino.DocObjects.ObjectType.Surface | Rhino.DocObjects.ObjectType.PolysrfFilter;
-    Rhino.DocObjects.ObjRef objref = null;
+    const ObjectType filter = Rhino.DocObjects.ObjectType.Surface | Rhino.DocObjects.ObjectType.PolysrfFilter;
+    Rhino.DocObjects.ObjRef objref;
     Rhino.Commands.Result rc = Rhino.Input.RhinoGet.GetOneObject("Select surface or polysurface", false, filter, out objref);
     if (rc != Rhino.Commands.Result.Success || objref == null)
       return rc;

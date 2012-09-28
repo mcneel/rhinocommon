@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 
 partial class Examples
 {
   public static Rhino.Commands.Result AddClippingPlane(Rhino.RhinoDoc doc)
   {
     // Define the corners of the clipping plane
-    Rhino.Geometry.Point3d[] corners = null;
+    Rhino.Geometry.Point3d[] corners;
     Rhino.Commands.Result rc = Rhino.Input.RhinoGet.GetRectangle(out corners);
     if (rc != Rhino.Commands.Result.Success)
       return rc;
@@ -18,7 +17,6 @@ partial class Examples
 
     Rhino.Geometry.Point3d p0 = corners[0];
     Rhino.Geometry.Point3d p1 = corners[1];
-    Rhino.Geometry.Point3d p2 = corners[2];
     Rhino.Geometry.Point3d p3 = corners[3];
 
     // Create a plane from the corner points

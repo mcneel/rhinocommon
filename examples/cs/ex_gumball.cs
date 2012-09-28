@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Rhino;
 using Rhino.Geometry;
 
@@ -22,7 +20,7 @@ namespace examples_cs
       if (!bbox.IsValid)
         return Rhino.Commands.Result.Failure;
 
-      Rhino.Commands.Result cmdrc = Rhino.Commands.Result.Success;
+      Rhino.Commands.Result cmdrc;
 
       var base_gumball = new Rhino.UI.Gumball.GumballObject();
       base_gumball.SetFromBoundingBox(bbox);
@@ -97,7 +95,7 @@ namespace examples_cs
 
   class GetGumballXform : Rhino.Input.Custom.GetTransform
   {
-    Rhino.UI.Gumball.GumballDisplayConduit m_dc;
+    readonly Rhino.UI.Gumball.GumballDisplayConduit m_dc;
     public GetGumballXform(Rhino.UI.Gumball.GumballDisplayConduit dc)
     {
       m_dc = dc;

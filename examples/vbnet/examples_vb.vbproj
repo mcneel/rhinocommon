@@ -61,17 +61,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
     <Import Include="System" />
     <Import Include="System.Collections" />
     <Import Include="System.Collections.Generic" />
-    <Import Include="System.Data" />
     <Import Include="System.Diagnostics" />
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +109,7 @@
     <Compile Include="ex_commandlineoptions.vb" />
     <Compile Include="ex_createblock.vb" />
     <Compile Include="ex_curveboundingbox.vb" />
+    <Compile Include="ex_customundo.vb" />
     <Compile Include="ex_dividebylength.vb" />
     <Compile Include="ex_drawoverlay.vb" />
     <Compile Include="ex_dupborder.vb" />
@@ -207,6 +205,9 @@
       <Name>RhinoCommon</Name>
       <Private>False</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MyIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

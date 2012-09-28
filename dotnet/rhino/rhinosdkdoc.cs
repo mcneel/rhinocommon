@@ -21,14 +21,16 @@ namespace Rhino.Commands
     readonly bool m_created_by_redo;
     readonly uint m_undo_event_sn;
     readonly object m_tag;
+    readonly RhinoDoc m_doc;
 
-    internal CustomUndoEventArgs(Guid command_id, string description, bool createdByRedo, uint eventSn, object tag)
+    internal CustomUndoEventArgs(Guid command_id, string description, bool createdByRedo, uint eventSn, object tag, RhinoDoc doc)
     {
       m_command_id = command_id;
       m_action_description = description;
       m_created_by_redo = createdByRedo;
       m_undo_event_sn = eventSn;
       m_tag = tag;
+      m_doc = doc;
     }
 
     public Guid CommandId
@@ -56,6 +58,11 @@ namespace Rhino.Commands
     {
       get { return m_tag; }
     }
+
+    public RhinoDoc Document
+    {
+      get { return m_doc; }
+    }
   }
 }
 
@@ -64,15 +71,19 @@ namespace Rhino
   class CustomUndoCallback
   {
     readonly EventHandler<Rhino.Commands.CustomUndoEventArgs> m_handler;
-    public CustomUndoCallback(uint serialNumber, EventHandler<Rhino.Commands.CustomUndoEventArgs> handler, object tag)
+    public CustomUndoCallback(uint serialNumber, EventHandler<Rhino.Commands.CustomUndoEventArgs> handler, object tag, string description, RhinoDoc document)
     {
       m_handler = handler;
       SerialNumber = serialNumber;
       Tag = tag;
+      Description = description;
+      Document = document;
     }
     public uint SerialNumber { get; private set; }
     public EventHandler<Rhino.Commands.CustomUndoEventArgs> Handler { get { return m_handler; } }
     public object Tag { get; private set; }
+    public RhinoDoc Document { get; private set; }
+    public string Description { get; private set; }
   }
 
   /// <summary>
@@ -772,9 +783,17 @@ namespace Rhino
             var handler = m_custom_undo_callbacks[i].Handler;
             if( handler!=null )
             {
+              try
+              {
               object tag = m_custom_undo_callbacks[i].Tag;
-              string description = Marshal.PtrToStringUni(action_description);
-              handler(null, new Commands.CustomUndoEventArgs(command_id, description, created_by_redo==1, sn, tag));
+                string description = m_custom_undo_callbacks[i].Description;
+                RhinoDoc doc = m_custom_undo_callbacks[i].Document;
+                handler(null, new Commands.CustomUndoEventArgs(command_id, description, created_by_redo == 1, sn, tag, doc));
+            }
+              catch (Exception ex)
+              {
+                Rhino.Runtime.HostUtils.ExceptionReport("OnUndoEventHandler", ex);
+              }
             }
             break;
           }
@@ -802,6 +821,19 @@ namespace Rhino
       return AddCustomUndoEvent(description, handler, null);
     }
 
+    /// <summary>
+    /// Add a custom undo event so you can undo private plug-in data
+    /// when the user performs an undo or redo
+    /// </summary>
+    /// <param name="description"></param>
+    /// <param name="handler"></param>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_customundo.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_customundo.cs' lang='cs'/>
+    /// <code source='examples\py\ex_customundo.py' lang='py'/>
+    /// </example>
     public bool AddCustomUndoEvent(string description, EventHandler<Rhino.Commands.CustomUndoEventArgs> handler, object tag)
     {
       if (string.IsNullOrEmpty(description) || handler == null)
@@ -816,7 +848,7 @@ namespace Rhino
 
       if (m_custom_undo_callbacks == null)
         m_custom_undo_callbacks = new List<CustomUndoCallback>();
-      m_custom_undo_callbacks.Add(new CustomUndoCallback(rc, handler, tag));
+      m_custom_undo_callbacks.Add(new CustomUndoCallback(rc, handler, tag, description, this));
       return true;
     }
 
@@ -1330,6 +1362,8 @@ namespace Rhino
     {
       if (m_delete_object != null)
       {
+        bool old_state = RhinoApp.InEventWatcher;
+        RhinoApp.InEventWatcher = true;
         try
         {
           m_delete_object(null, new DocObjects.RhinoObjectEventArgs(pDoc, pObject));
@@ -1338,6 +1372,7 @@ namespace Rhino
         {
           Runtime.HostUtils.ExceptionReport(ex);
         }
+        RhinoApp.InEventWatcher = old_state;
       }
     }
     internal static EventHandler<DocObjects.RhinoObjectEventArgs> m_delete_object;
@@ -2837,9 +2872,20 @@ namespace Rhino.DocObjects.Tables
     }
 
 #region Object addition
+    public void AddRhinoObject(Rhino.DocObjects.Custom.CustomMeshObject meshObject)
+    {
+      AddRhinoObjectHelper(meshObject, null);
+    }
+
     public void AddRhinoObject(Rhino.DocObjects.MeshObject meshObject, Rhino.Geometry.Mesh mesh)
     {
       AddRhinoObjectHelper(meshObject, mesh);
+    }
+
+    public void AddRhinoObject(Rhino.DocObjects.Custom.CustomBrepObject brepObject)
+    {
+      //helper will use geometry already hung off of the custom object
+      AddRhinoObjectHelper(brepObject, null);
     }
 
     public void AddRhinoObject(Rhino.DocObjects.BrepObject brepObject, Rhino.Geometry.Brep brep)
@@ -2906,28 +2952,33 @@ namespace Rhino.DocObjects.Tables
         rhinoObject.m_rhinoobject_serial_number = serial_number;
         rhinoObject.m_pRhinoObject = IntPtr.Zero;
         GC.SuppressFinalize(rhinoObject);
-        AddCustomObject(serial_number, rhinoObject);
+        AddCustomObjectForTracking(serial_number, rhinoObject, pRhinoObject);
         UnsafeNativeMethods.CRhinoDoc_AddRhinoObject(m_doc.m_docId, pRhinoObject);
-
-        Type base_type = typeof(RhinoObject);
-        const BindingFlags flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public;
-        System.Reflection.MethodInfo mi = t.GetMethod("ShortDescription", flags);
-        if (mi.DeclaringType != base_type)
-        {
-          string description = rhinoObject.ShortDescription(false);
-          string description_plural = rhinoObject.ShortDescription(true);
-          UnsafeNativeMethods.CRhinoCustomObject_SetDescriptionStrings(pRhinoObject, description, description_plural);
-        }
       }
     }
 
     System.Collections.Generic.SortedList<uint, RhinoObject> m_custom_objects;
-    internal void AddCustomObject(uint serialNumber, RhinoObject rhobj)
+    internal void AddCustomObjectForTracking(uint serialNumber, RhinoObject rhobj, IntPtr pRhinoObject)
     {
       if (m_custom_objects == null)
         m_custom_objects = new SortedList<uint, RhinoObject>();
       m_custom_objects.Add(serialNumber, rhobj);
-    }
+
+      // 17 Sept 2012 S. Baer
+      // This seems like the best spot to get everything in sync.
+      // Update the description strings when replacing the object
+        Type base_type = typeof(RhinoObject);
+      Type t = rhobj.GetType();
+        const BindingFlags flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public;
+        System.Reflection.MethodInfo mi = t.GetMethod("ShortDescription", flags);
+      // Don't set description strings if the function has not been overloaded
+        if (mi.DeclaringType != base_type)
+        {
+        string description = rhobj.ShortDescription(false);
+        string description_plural = rhobj.ShortDescription(true);
+          UnsafeNativeMethods.CRhinoCustomObject_SetDescriptionStrings(pRhinoObject, description, description_plural);
+        }
+      }
     internal RhinoObject FindCustomObject(uint serialNumber)
     {
       RhinoObject rc = null;
@@ -3066,18 +3117,33 @@ namespace Rhino.DocObjects.Tables
     /// </example>
     public Guid AddPoint(Point3d point)
     {
-      return UnsafeNativeMethods.CRhinoDoc_AddPoint(m_doc.m_docId, point, IntPtr.Zero);
+      return AddPoint(point, null);
     }
     /// <summary>Adds a point object to the document.</summary>
     /// <param name="point">location of point.</param>
-    /// <param name="attributes">attributes to apply to point.</param>
+    /// <param name="attributes">attributes to apply to point. null is acceptible</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPoint(Point3d point, DocObjects.ObjectAttributes attributes)
     {
-      if (null == attributes)
-        return AddPoint(point);
-      return UnsafeNativeMethods.CRhinoDoc_AddPoint(m_doc.m_docId, point, attributes.ConstPointer());
+      return AddPoint(point, attributes, null, false);
     }
+
+    /// <summary>Adds a point object to the document</summary>
+    /// <param name="point">location of point</param>
+    /// <param name="attributes">attributes to apply to point. null is acceptible</param>
+    /// <param name="history">history associated with this point. null is acceptable</param>
+    /// <param name="reference">
+    /// true if the object is from a reference file.  Reference objects do
+    /// not persist in archives
+    /// </param>
+    /// <returns>A unique identifier for the object.</returns>
+    public Guid AddPoint(Point3d point, DocObjects.ObjectAttributes attributes, HistoryRecord history, bool reference)
+    {
+      IntPtr pAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddPoint(m_doc.m_docId, point, pAttributes, pHistory, reference);
+    }
+
     /// <summary>Adds a point object to the document.</summary>
     /// <param name="point">location of point.</param>
     /// <returns>A unique identifier for the object.</returns>
@@ -3109,7 +3175,8 @@ namespace Rhino.DocObjects.Tables
     /// <returns>List of object ids.</returns>
     public RhinoList<Guid> AddPoints(IEnumerable<Point3d> points)
     {
-      if (points == null) { throw new ArgumentNullException("points"); }
+      if (points == null)
+        throw new ArgumentNullException("points");
 
       RhinoList<Guid> ids = new RhinoList<Guid>();
       foreach (Point3d pt in points)
@@ -3187,16 +3254,30 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPointCloud(PointCloud cloud, DocObjects.ObjectAttributes attributes)
     {
-      if (cloud == null) { throw new ArgumentNullException("cloud"); }
+      return AddPointCloud(cloud, attributes, null, false);
+    }
+
+    /// <summary>Adds a point cloud object to the document.</summary>
+    /// <param name="cloud">PointCloud to add.</param>
+    /// <param name="attributes">Attributes to apply to point cloud. null is acceptable</param>
+    /// <param name="history">history associated with this pointcloud. null is acceptable</param>
+    /// <param name="reference">
+    /// true if the object is from a reference file.  Reference objects do
+    /// not persist in archives
+    /// </param>
+    /// <returns>A unique identifier for the object.</returns>
+    public Guid AddPointCloud(PointCloud cloud, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
+      if (cloud == null)
+        throw new ArgumentNullException("cloud");
 
       IntPtr pCloud = cloud.ConstPointer();
+      IntPtr pAttrs = (attributes==null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
 
-      IntPtr pAttrs = IntPtr.Zero;
-      if (null != attributes)
-        pAttrs = attributes.ConstPointer();
-
-      return UnsafeNativeMethods.CRhinoDoc_AddPointCloud2(m_doc.m_docId, pCloud, pAttrs);
+      return UnsafeNativeMethods.CRhinoDoc_AddPointCloud2(m_doc.m_docId, pCloud, pAttrs, pHistory, reference);
     }
+
     /// <summary>Adds a point cloud object to the document.</summary>
     /// <param name="points">A list, an array or any enumerable set of points.</param>
     /// <returns>A unique identifier for the object.</returns>
@@ -3219,9 +3300,30 @@ namespace Rhino.DocObjects.Tables
       if (null != attributes)
         pAttrs = attributes.ConstPointer();
 
-      return UnsafeNativeMethods.CRhinoDoc_AddPointCloud(m_doc.m_docId, count, ptArray, pAttrs);
+      return UnsafeNativeMethods.CRhinoDoc_AddPointCloud(m_doc.m_docId, count, ptArray, pAttrs, IntPtr.Zero, false);
     }
 
+    /// <summary>Adds a point cloud object to the document.</summary>
+    /// <param name="points">A list, an array or any enumerable set of points</param>
+    /// <param name="attributes">Attributes to apply to point cloud. null is acceptable</param>
+    /// <param name="history">history associated with this pointcloud. null is acceptable</param>
+    /// <param name="reference">
+    /// true if the object is from a reference file.  Reference objects do
+    /// not persist in archives
+    /// </param>
+    /// <returns>A unique identifier for the object.</returns>
+    public Guid AddPointCloud(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
+      int count;
+      Point3d[] ptArray = Collections.Point3dList.GetConstPointArray(points, out count);
+      if (null == ptArray || count < 1)
+        return Guid.Empty;
+
+      IntPtr pAttrs = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+
+      return UnsafeNativeMethods.CRhinoDoc_AddPointCloud(m_doc.m_docId, count, ptArray, pAttrs, pHistory, reference);
+    }
 
     /// <summary>
     /// Adds a clipping plane object to Rhino.
@@ -3240,6 +3342,7 @@ namespace Rhino.DocObjects.Tables
     {
       return AddClippingPlane(plane, uMagnitude, vMagnitude, new Guid[] { clippedViewportId });
     }
+
     /// <summary>
     /// Adds a clipping plane object to Rhino.
     /// </summary>
@@ -3260,7 +3363,7 @@ namespace Rhino.DocObjects.Tables
       int count = clippedIds.Length;
       if (count < 1)
         return Guid.Empty;
-      Guid rc = UnsafeNativeMethods.CRhinoDoc_AddClippingPlane(m_doc.m_docId, ref plane, uMagnitude, vMagnitude, count, clippedIds, IntPtr.Zero);
+      Guid rc = UnsafeNativeMethods.CRhinoDoc_AddClippingPlane(m_doc.m_docId, ref plane, uMagnitude, vMagnitude, count, clippedIds, IntPtr.Zero, IntPtr.Zero, false);
       return rc;
     }
     /// <summary>
@@ -3287,9 +3390,28 @@ namespace Rhino.DocObjects.Tables
       if (count < 1)
         return Guid.Empty;
       IntPtr pAttrs = attributes.ConstPointer();
-      Guid rc = UnsafeNativeMethods.CRhinoDoc_AddClippingPlane(m_doc.m_docId, ref plane, uMagnitude, vMagnitude, count, clippedIds, pAttrs);
+      Guid rc = UnsafeNativeMethods.CRhinoDoc_AddClippingPlane(m_doc.m_docId, ref plane, uMagnitude, vMagnitude, count, clippedIds, pAttrs, IntPtr.Zero, false);
       return rc;
     }
+
+    public Guid AddClippingPlane(Plane plane, double uMagnitude, double vMagnitude, Guid clippedViewportId, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
+      return AddClippingPlane(plane, uMagnitude, vMagnitude, new Guid[] { clippedViewportId }, attributes, history, reference);
+    }
+    public Guid AddClippingPlane(Plane plane, double uMagnitude, double vMagnitude, IEnumerable<Guid> clippedViewportIds, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
+      List<Guid> ids = new List<Guid>(clippedViewportIds);
+      Guid[] clippedIds = ids.ToArray();
+      int count = clippedIds.Length;
+      if (count < 1)
+        return Guid.Empty;
+
+      IntPtr pConstAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      Guid rc = UnsafeNativeMethods.CRhinoDoc_AddClippingPlane(m_doc.m_docId, ref plane, uMagnitude, vMagnitude, count, clippedIds, pConstAttributes, pHistory, reference);
+      return rc;
+    }
+
 
     /// <example>
     /// <code source='examples\vbnet\ex_addlineardimension.vb' lang='vbnet'/>
@@ -3303,13 +3425,16 @@ namespace Rhino.DocObjects.Tables
 
     public Guid AddLinearDimension(LinearDimension dimension, DocObjects.ObjectAttributes attributes)
     {
-      IntPtr pConstDimension = dimension.ConstPointer();
-      IntPtr pAttributes = IntPtr.Zero;
-      if (attributes != null)
-        pAttributes = attributes.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddLinearDimension(m_doc.m_docId, pConstDimension, pAttributes);
+      return AddLinearDimension(dimension, attributes, null, false);
     }
 
+    public Guid AddLinearDimension(LinearDimension dimension, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
+      IntPtr pConstDimension = dimension.ConstPointer();
+      IntPtr pAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddLinearDimension(m_doc.m_docId, pConstDimension, pAttributes, pHistory, reference);
+    }
 
     public Guid AddRadialDimension(RadialDimension dimension)
     {
@@ -3318,11 +3443,15 @@ namespace Rhino.DocObjects.Tables
 
     public Guid AddRadialDimension(RadialDimension dimension, DocObjects.ObjectAttributes attributes)
     {
+      return AddRadialDimension(dimension, attributes, null, false);
+    }
+
+    public Guid AddRadialDimension(RadialDimension dimension, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
       IntPtr pConstDimension = dimension.ConstPointer();
-      IntPtr pAttributes = IntPtr.Zero;
-      if (attributes != null)
-        pAttributes = attributes.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddRadialDimension(m_doc.m_docId, pConstDimension, pAttributes);
+      IntPtr pAttributes = (attributes==null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddRadialDimension(m_doc.m_docId, pConstDimension, pAttributes, pHistory, reference);
     }
 
     public Guid AddAngularDimension(AngularDimension dimension)
@@ -3332,11 +3461,15 @@ namespace Rhino.DocObjects.Tables
 
     public Guid AddAngularDimension(AngularDimension dimension, DocObjects.ObjectAttributes attributes)
     {
+      return AddAngularDimension(dimension, attributes, null, false);
+    }
+
+    public Guid AddAngularDimension(AngularDimension dimension, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
       IntPtr pConstDimension = dimension.ConstPointer();
-      IntPtr pAttributes = IntPtr.Zero;
-      if (attributes != null)
-        pAttributes = attributes.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddAngularDimension(m_doc.m_docId, pConstDimension, pAttributes);
+      IntPtr pAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddAngularDimension(m_doc.m_docId, pConstDimension, pAttributes, pHistory, reference);
     }
 
     /// <summary>Adds a line object to Rhino.</summary>
@@ -3350,7 +3483,7 @@ namespace Rhino.DocObjects.Tables
     /// </example>
     public Guid AddLine(Point3d from, Point3d to)
     {
-      return UnsafeNativeMethods.CRhinoDoc_AddLine(m_doc.m_docId, from, to, IntPtr.Zero);
+      return AddLine(from, to, null);
     }
     /// <summary>Adds a line object to Rhino.</summary>
     /// <param name="from">The line origin.</param>
@@ -3359,10 +3492,16 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddLine(Point3d from, Point3d to, DocObjects.ObjectAttributes attributes)
     {
-      if (null == attributes)
-        return AddLine(from, to);
-      return UnsafeNativeMethods.CRhinoDoc_AddLine(m_doc.m_docId, from, to, attributes.ConstPointer());
+      return AddLine(from, to, attributes, null, false);
     }
+
+    public Guid AddLine(Point3d from, Point3d to, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
+      IntPtr pAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddLine(m_doc.m_docId, from, to, pAttributes, pHistory, reference);
+    }
+
     /// <summary>Adds a line object to Rhino.</summary>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddLine(Line line)
@@ -3392,25 +3531,27 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddPolyline(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes)
     {
+      return AddPolyline(points, attributes, null, false);
+    }
+
+    public Guid AddPolyline(IEnumerable<Point3d> points, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
       int count;
       Point3d[] ptArray = Collections.Point3dList.GetConstPointArray(points, out count);
       if (null == ptArray || count < 1)
         return Guid.Empty;
 
-      IntPtr pAttrs = IntPtr.Zero;
-      if (null != attributes)
-        pAttrs = attributes.ConstPointer();
-
-      return UnsafeNativeMethods.CRhinoDoc_AddPolyLine(m_doc.m_docId, count, ptArray, pAttrs);
+      IntPtr pAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddPolyLine(m_doc.m_docId, count, ptArray, pAttributes, pHistory, reference);
     }
-
 
     /// <summary>Adds a curve object to the document representing an arc.</summary>
     /// <param name="arc">An arc value.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddArc(Arc arc)
     {
-      return UnsafeNativeMethods.CRhinoDoc_AddArc(m_doc.m_docId, ref arc, IntPtr.Zero);
+      return AddArc(arc, null, null, false);
     }
     /// <summary>Adds a curve object to the document representing an arc.</summary>
     /// <param name="arc">An arc value.</param>
@@ -3418,11 +3559,15 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddArc(Arc arc, DocObjects.ObjectAttributes attributes)
     {
-      if (attributes == null)
-        return AddArc(arc);
-      return UnsafeNativeMethods.CRhinoDoc_AddArc(m_doc.m_docId, ref arc, attributes.ConstPointer());
+      return AddArc(arc, attributes, null, false);
     }
 
+    public Guid AddArc(Arc arc, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
+      IntPtr pAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddArc(m_doc.m_docId, ref arc, pAttributes, pHistory, reference);
+    }
 
     /// <summary>Adds a curve object to the document representing a circle.</summary>
     /// <param name="circle">A circle value.</param>
@@ -3434,7 +3579,7 @@ namespace Rhino.DocObjects.Tables
     /// </example>
     public Guid AddCircle(Circle circle)
     {
-      return UnsafeNativeMethods.CRhinoDoc_AddCircle(m_doc.m_docId, ref circle, IntPtr.Zero);
+      return AddCircle(circle, null, null, false);
     }
     /// <summary>Adds a curve object to the document representing a circle.</summary>
     /// <param name="circle">A circle value.</param>
@@ -3442,9 +3587,14 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddCircle(Circle circle, DocObjects.ObjectAttributes attributes)
     {
-      if (attributes == null)
-        return AddCircle(circle);
-      return UnsafeNativeMethods.CRhinoDoc_AddCircle(m_doc.m_docId, ref circle, attributes.ConstPointer());
+      return AddCircle(circle, attributes, null, false);
+    }
+
+    public Guid AddCircle(Circle circle, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
+      IntPtr pAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddCircle(m_doc.m_docId, ref circle, pAttributes, pHistory, reference);
     }
 
 
@@ -3453,7 +3603,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddEllipse(Ellipse ellipse)
     {
-      return UnsafeNativeMethods.CRhinoDoc_AddEllipse(m_doc.m_docId, ref ellipse, IntPtr.Zero);
+      return AddEllipse(ellipse, null, null, false);
     }
     /// <summary>Adds a curve object to the document representing an ellipse.</summary>
     /// <param name="ellipse">An ellipse value.</param>
@@ -3461,9 +3611,14 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddEllipse(Ellipse ellipse, DocObjects.ObjectAttributes attributes)
     {
-      if (attributes == null)
-        return AddEllipse(ellipse);
-      return UnsafeNativeMethods.CRhinoDoc_AddEllipse(m_doc.m_docId, ref ellipse, attributes.ConstPointer());
+      return AddEllipse(ellipse, attributes, null, false);
+    }
+
+    public Guid AddEllipse(Ellipse ellipse, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
+      IntPtr pAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddEllipse(m_doc.m_docId, ref ellipse, pAttributes, pHistory, reference);
     }
 
     /// <example>
@@ -3473,13 +3628,18 @@ namespace Rhino.DocObjects.Tables
     /// </example>
     public Guid AddSphere(Sphere sphere)
     {
-      return UnsafeNativeMethods.CRhinoDoc_AddSphere(m_doc.m_docId, ref sphere, IntPtr.Zero);
+      return AddSphere(sphere, null, null, false);
     }
     public Guid AddSphere(Sphere sphere, DocObjects.ObjectAttributes attributes)
     {
-      if (attributes == null)
-        return AddSphere(sphere);
-      return UnsafeNativeMethods.CRhinoDoc_AddSphere(m_doc.m_docId, ref sphere, attributes.ConstPointer());
+      return AddSphere(sphere, attributes, null, false);
+    }
+
+    public Guid AddSphere(Sphere sphere, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
+      IntPtr pAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddSphere(m_doc.m_docId, ref sphere, pAttributes, pHistory, reference);
     }
 
     //[skipping]
@@ -3496,10 +3656,7 @@ namespace Rhino.DocObjects.Tables
     /// </example>
     public Guid AddCurve(Geometry.Curve curve)
     {
-      if (null == curve)
-        return Guid.Empty;
-      IntPtr curvePtr = curve.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddCurve(m_doc.m_docId, curvePtr, IntPtr.Zero);
+      return AddCurve(curve, null);
     }
     /// <summary>Adds a curve object to Rhino.</summary>
     /// <param name="curve">A curve. A duplicate of this curve is added to Rhino.</param>
@@ -3507,13 +3664,17 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddCurve(Geometry.Curve curve, DocObjects.ObjectAttributes attributes)
     {
+      return AddCurve(curve, attributes, null, false);
+    }
+
+    public Guid AddCurve(Geometry.Curve curve, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
       if (null == curve)
         return Guid.Empty;
-      if (attributes == null)
-        return AddCurve(curve);
+      IntPtr pAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
       IntPtr curvePtr = curve.ConstPointer();
-      IntPtr attrPtr = attributes.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddCurve(m_doc.m_docId, curvePtr, attrPtr);
+      return UnsafeNativeMethods.CRhinoDoc_AddCurve(m_doc.m_docId, curvePtr, pAttributes, pHistory, reference);
     }
 
     /// <summary>Adds a text dot object to Rhino.</summary>
@@ -3522,10 +3683,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddTextDot(string text, Point3d location)
     {
-      Geometry.TextDot dot = new Rhino.Geometry.TextDot(text, location);
-      Guid rc = AddTextDot(dot);
-      dot.Dispose();
-      return rc;
+      return AddTextDot(text, location, null);
     }
     /// <summary>Adds a text dot object to Rhino.</summary>
     /// <param name="text">A text string.</param>
@@ -3534,20 +3692,19 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddTextDot(string text, Point3d location, DocObjects.ObjectAttributes attributes)
     {
-      Geometry.TextDot dot = new Rhino.Geometry.TextDot(text, location);
+      using (Geometry.TextDot dot = new Rhino.Geometry.TextDot(text, location))
+      {
       Guid rc = AddTextDot(dot, attributes);
       dot.Dispose();
       return rc;
+    }
     }
     /// <summary>Adds a text dot object to Rhino.</summary>
     /// <param name="dot">A text dot that will be copied.</param>
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddTextDot(Geometry.TextDot dot)
     {
-      if (null == dot)
-        return Guid.Empty;
-      IntPtr ptr = dot.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddTextDot(m_doc.m_docId, ptr, IntPtr.Zero);
+      return AddTextDot(dot, null);
     }
     /// <summary>Adds a text dot object to Rhino.</summary>
     /// <param name="dot">A text dot that will be copied.</param>
@@ -3555,10 +3712,17 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddTextDot(Geometry.TextDot dot, DocObjects.ObjectAttributes attributes)
     {
-      if (null == attributes)
+      return AddTextDot(dot, attributes, null, false);
+    }
+
+    public Guid AddTextDot(Geometry.TextDot dot, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
+      if (null == dot)
         return Guid.Empty;
-      IntPtr ptr = dot.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddTextDot(m_doc.m_docId, ptr, attributes.ConstPointer());
+      IntPtr pConstDot = dot.ConstPointer();
+      IntPtr pAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddTextDot(m_doc.m_docId, pConstDot, pAttributes, pHistory, reference);
     }
 
     /// <summary>
@@ -3607,18 +3771,21 @@ namespace Rhino.DocObjects.Tables
 
     public Guid AddText(string text, Plane plane, double height, string fontName, bool bold, bool italic, TextJustification justification, DocObjects.ObjectAttributes attributes)
     {
+      return AddText(text, plane, height, fontName, bold, italic, justification, attributes, null, false);
+    }
+
+    public Guid AddText(string text, Plane plane, double height, string fontName, bool bold, bool italic, TextJustification justification, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
       if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(fontName))
         return Guid.Empty;
-      IntPtr pAttributes = IntPtr.Zero;
-      if (attributes != null)
-        pAttributes = attributes.ConstPointer();
       int fontStyle = 0;
       if (bold)
         fontStyle |= 1;
       if (italic)
         fontStyle |= 2;
-      Guid rc = UnsafeNativeMethods.CRhinoDoc_AddText(m_doc.m_docId, text, ref plane, height, fontName, fontStyle, (int)justification, pAttributes);
-      return rc;
+      IntPtr pConstAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddText(m_doc.m_docId, text, ref plane, height, fontName, fontStyle, (int)justification, pConstAttributes, pHistory, reference);
     }
 
     /// <summary>
@@ -3634,18 +3801,21 @@ namespace Rhino.DocObjects.Tables
     /// <returns>The Guid of the newly added object or Guid.Empty on failure.</returns>
     public Guid AddText(string text, Plane plane, double height, string fontName, bool bold, bool italic, DocObjects.ObjectAttributes attributes)
     {
+      return AddText(text, plane, height, fontName, bold, italic, attributes, null, false);
+    }
+
+    public Guid AddText(string text, Plane plane, double height, string fontName, bool bold, bool italic, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
       if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(fontName))
         return Guid.Empty;
-      IntPtr pAttributes = IntPtr.Zero;
-      if (attributes != null)
-        pAttributes = attributes.ConstPointer();
       int fontStyle = 0;
       if (bold)
         fontStyle |= 1;
       if (italic)
         fontStyle |= 2;
-      Guid rc = UnsafeNativeMethods.CRhinoDoc_AddText(m_doc.m_docId, text, ref plane, height, fontName, fontStyle, -1, pAttributes);
-      return rc;
+      IntPtr pConstAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddText(m_doc.m_docId, text, ref plane, height, fontName, fontStyle, -1, pConstAttributes, pHistory, reference);
     }
 
     public Guid AddText(Rhino.Geometry.TextEntity text)
@@ -3654,12 +3824,15 @@ namespace Rhino.DocObjects.Tables
     }
     public Guid AddText(Rhino.Geometry.TextEntity text, DocObjects.ObjectAttributes attributes)
     {
+      return AddText(text, attributes, null, false);
+    }
+
+    public Guid AddText(Rhino.Geometry.TextEntity text, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
       IntPtr pConstTextEntity = text.ConstPointer();
-      IntPtr pConstAttributes = IntPtr.Zero;
-      if (attributes != null)
-        pConstAttributes = attributes.ConstPointer();
-      Guid rc = UnsafeNativeMethods.CRhinoDoc_AddText2(m_doc.m_docId, pConstTextEntity, pConstAttributes);
-      return rc;
+      IntPtr pConstAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddText2(m_doc.m_docId, pConstTextEntity, pConstAttributes, pHistory, reference);
     }
 
     /// <summary>Adds a surface object to Rhino.</summary>
@@ -3672,10 +3845,7 @@ namespace Rhino.DocObjects.Tables
     /// </example>
     public Guid AddSurface(Geometry.Surface surface)
     {
-      if (null == surface)
-        return Guid.Empty;
-      IntPtr surfacePtr = surface.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddSurface(m_doc.m_docId, surfacePtr, IntPtr.Zero);
+      return AddSurface(surface, null);
     }
     /// <summary>Adds a surface object to Rhino.</summary>
     /// <param name="surface">A duplicate of this surface is added to Rhino.</param>
@@ -3683,13 +3853,17 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddSurface(Geometry.Surface surface, DocObjects.ObjectAttributes attributes)
     {
+      return AddSurface(surface, attributes, null, false);
+    }
+
+    public Guid AddSurface(Geometry.Surface surface, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
       if (null == surface)
         return Guid.Empty;
-      if (attributes == null)
-        return AddSurface(surface);
+      IntPtr pConstAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
       IntPtr surfacePtr = surface.ConstPointer();
-      IntPtr attrPtr = attributes.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddSurface(m_doc.m_docId, surfacePtr, attrPtr);
+      return UnsafeNativeMethods.CRhinoDoc_AddSurface(m_doc.m_docId, surfacePtr, pConstAttributes, pHistory, reference);
     }
 
 #if USING_V5_SDK
@@ -3706,13 +3880,17 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddExtrusion(Geometry.Extrusion extrusion, DocObjects.ObjectAttributes attributes)
     {
+      return AddExtrusion(extrusion, attributes, null, false);
+    }
+
+    public Guid AddExtrusion(Geometry.Extrusion extrusion, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
       if (null == extrusion)
         return Guid.Empty;
       IntPtr pConstExtrusion = extrusion.ConstPointer();
-      IntPtr pConstAttr = IntPtr.Zero;
-      if (attributes != null)
-        pConstAttr = attributes.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddExtrusion(m_doc.m_docId, pConstExtrusion, pConstAttr);
+      IntPtr pConstAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddExtrusion(m_doc.m_docId, pConstExtrusion, pConstAttributes, pHistory, reference);
     }
 #endif
 
@@ -3727,10 +3905,7 @@ namespace Rhino.DocObjects.Tables
     /// </example>
     public Guid AddMesh(Geometry.Mesh mesh)
     {
-      if (null == mesh)
-        return Guid.Empty;
-      IntPtr meshPtr = mesh.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddMesh(m_doc.m_docId, meshPtr, IntPtr.Zero);
+      return AddMesh(mesh, null);
     }
     /// <summary>Adds a mesh object to Rhino.</summary>
     /// <param name="mesh">A duplicate of this mesh is added to Rhino.</param>
@@ -3738,15 +3913,18 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddMesh(Geometry.Mesh mesh, DocObjects.ObjectAttributes attributes)
     {
-      if (null == mesh)
-        return Guid.Empty;
-      if (attributes == null)
-        return AddMesh(mesh);
-      IntPtr meshPtr = mesh.ConstPointer();
-      IntPtr attrPtr = attributes.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddMesh(m_doc.m_docId, meshPtr, attrPtr);
+      return AddMesh(mesh, attributes, null, false);
     }
 
+    public Guid AddMesh(Geometry.Mesh mesh, DocObjects.ObjectAttributes attributes, HistoryRecord history, bool reference)
+    {
+      if (null == mesh)
+        return Guid.Empty;
+      IntPtr pConstAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      IntPtr meshPtr = mesh.ConstPointer();
+      return UnsafeNativeMethods.CRhinoDoc_AddMesh(m_doc.m_docId, meshPtr, pConstAttributes, pHistory, reference);
+    }
 
     /// <summary>Adds a brep object to Rhino.</summary>
     /// <param name="brep">A duplicate of this brep is added to Rhino.</param>
@@ -3758,10 +3936,7 @@ namespace Rhino.DocObjects.Tables
     /// </example>
     public Guid AddBrep(Geometry.Brep brep)
     {
-      if (null == brep)
-        return Guid.Empty;
-      IntPtr brepPtr = brep.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddBrep(m_doc.m_docId, brepPtr, IntPtr.Zero);
+      return AddBrep(brep, null);
     }
     /// <summary>Adds a brep object to Rhino.</summary>
     /// <param name="brep">A duplicate of this brep is added to Rhino.</param>
@@ -3769,40 +3944,29 @@ namespace Rhino.DocObjects.Tables
     /// <returns>A unique identifier for the object.</returns>
     public Guid AddBrep(Geometry.Brep brep, DocObjects.ObjectAttributes attributes)
     {
-      if (null == attributes)
-        return AddBrep(brep);
+      return AddBrep(brep, attributes, null, false);
+    }
+
+    public Guid AddBrep(Geometry.Brep brep, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
       if (null == brep)
         return Guid.Empty;
       IntPtr brepPtr = brep.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddBrep(m_doc.m_docId, brepPtr, attributes.ConstPointer());
+      IntPtr pConstAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddBrep(m_doc.m_docId, brepPtr, pConstAttributes, pHistory, reference, -1);
     }
 
-    /*
-    /// <summary>
-    /// Adds an object to the document. The attributes need to be set before you add the object.
-    /// Use GetDefaultObjectAttributes() to get the current default attributes.
-    /// </summary>
-    /// <param name="rhinoObject">-</param>
-    /// <returns>-</returns>
-    public Guid AddObject(DocObjects.RhinoObject rhinoObject)
+    public Guid AddBrep(Geometry.Brep brep, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference, bool splitKinkySurfaces)
     {
-      if (null == rhinoObject)
+      if (null == brep)
         return Guid.Empty;
-
-      // if the object is const, make a copy
-      IntPtr ptr = rhinoObject.NonConstPointer();
-      bool success = UnsafeNativeMethods.CRhinoDoc_AddObject(m_doc.m_docId, ptr);
-
-      // set the object to const after adding it to the document
-      // this will make it so we don't accidentally try to GC this object
-      if (success)
-      {
-        rhinoObject.m_is_readonly = true;
-        return rhinoObject.Id;
-      }
-      return Guid.Empty;
+      IntPtr brepPtr = brep.ConstPointer();
+      IntPtr pConstAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddBrep(m_doc.m_docId, brepPtr, pConstAttributes, pHistory, reference, splitKinkySurfaces?1:0);
     }
-    */
+
     public Guid[] AddExplodedInstancePieces(InstanceObject instance)
     {
       IntPtr pRhinoObject = instance.ConstPointer();
@@ -3839,19 +4003,21 @@ namespace Rhino.DocObjects.Tables
 
     public Guid AddLeader(string text, Plane plane, IEnumerable<Point2d> points, DocObjects.ObjectAttributes attributes)
     {
+      return AddLeader(text, plane, points, attributes, null, false);
+    }
+
+    public Guid AddLeader(string text, Plane plane, IEnumerable<Point2d> points, DocObjects.ObjectAttributes attributes, DocObjects.HistoryRecord history, bool reference)
+    {
       string s = null;
       if (!string.IsNullOrEmpty(text))
         s = text;
-      Rhino.Collections.RhinoList<Point2d> pts = new Rhino.Collections.RhinoList<Point2d>();
-      foreach (Point2d pt in points)
-        pts.Add(pt);
+      Rhino.Collections.RhinoList<Point2d> pts = new Rhino.Collections.RhinoList<Point2d>(points);
       int count = pts.Count;
       if (count < 1)
         return Guid.Empty;
-      IntPtr pAttributes = IntPtr.Zero;
-      if (attributes != null)
-        pAttributes = attributes.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddLeader(m_doc.m_docId, s, ref plane, count, pts.m_items, pAttributes);
+      IntPtr pConstAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddLeader(m_doc.m_docId, s, ref plane, count, pts.m_items, pConstAttributes, pHistory, reference);
     }
 
     public Guid AddLeader(string text, Plane plane, IEnumerable<Point2d> points)
@@ -3897,11 +4063,15 @@ namespace Rhino.DocObjects.Tables
     }
     public Guid AddHatch(Hatch hatch, ObjectAttributes attributes)
     {
+      return AddHatch(hatch, attributes, null, false);
+    }
+
+    public Guid AddHatch(Hatch hatch, ObjectAttributes attributes, HistoryRecord history, bool reference)
+    {
       IntPtr pConstHatch = hatch.ConstPointer();
-      IntPtr pAttributes = IntPtr.Zero;
-      if (attributes != null)
-        pAttributes = attributes.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDoc_AddHatch(m_doc.m_docId, pConstHatch, pAttributes);
+      IntPtr pConstAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
+      IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
+      return UnsafeNativeMethods.CRhinoDoc_AddHatch(m_doc.m_docId, pConstHatch, pConstAttributes, pHistory, reference);
     }
 
     public Guid AddMorphControl(MorphControl morphControl)
@@ -4309,27 +4479,46 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
-    // Removed - You should not be able to create a RhinoObject outside of the RhinoDoc
-    ///// <summary>
-    ///// Replaces one object with another. Conceptually, this function is the same as calling
-    ///// Setting new_object attributes = old_object attributes
-    ///// DeleteObject(old_object);
-    ///// AddObject(old_object);
-    ///// </summary>
-    ///// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted.</param>
-    ///// <param name="newObject">new object to be activated - must not be in document.</param>
-    ///// <returns>true if successful.</returns>
-    //public bool Replace(DocObjects.ObjRef objref, DocObjects.RhinoObject newObject)
-    //{
-    //  if (null == objref || null == newObject)
-    //    return false;
-    //  IntPtr pObjRef = objref.ConstPointer();
-    //  IntPtr pObject = newObject.NonConstPointer();
-    //  bool rc = UnsafeNativeMethods.CRhinoDoc_ReplaceObject1(m_doc.m_docId, pObjRef, pObject);
-    //  if (rc)
-    //    newObject.m_is_readonly = true;
-    //  return rc;
-    //}
+    /// <summary>
+    /// Replaces one object with another. Conceptually, this function is the same as calling
+    /// Setting new_object attributes = old_object attributes
+    /// DeleteObject(old_object);
+    /// AddObject(old_object);
+    /// </summary>
+    /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted.</param>
+    /// <param name="newObject">new replacement object - must not be in document.</param>
+    /// <returns>true if successful.</returns>
+    public bool Replace(DocObjects.ObjRef objref, DocObjects.RhinoObject newObject)
+    {
+      if (null == objref || null == newObject || newObject.Document != null)
+        return false;
+
+      // Once the deprecated functions are removed, we should switch to checking for custom subclasses
+      bool is_proper_subclass = newObject is Rhino.DocObjects.Custom.CustomBrepObject ||
+                                newObject is Rhino.DocObjects.Custom.CustomCurveObject ||
+                                newObject is Rhino.DocObjects.Custom.CustomMeshObject;
+      if (!is_proper_subclass)
+        throw new NotImplementedException();
+
+      Type t = newObject.GetType();
+      if (t.GetConstructor(Type.EmptyTypes) == null)
+        throw new NotImplementedException("class must have a public parameterless constructor");
+
+
+      IntPtr pObjRef = objref.ConstPointer();
+      IntPtr pRhinoObject = newObject.NonConstPointer();
+      bool rc = UnsafeNativeMethods.CRhinoDoc_ReplaceObject1(m_doc.m_docId, pObjRef, pRhinoObject);
+      if (rc)
+      {
+        uint serial_number = UnsafeNativeMethods.CRhinoObject_RuntimeSN(pRhinoObject);
+        if (serial_number > 0)
+          newObject.m_rhinoobject_serial_number = serial_number;
+        newObject.m_pRhinoObject = IntPtr.Zero;
+        GC.SuppressFinalize(newObject);
+        AddCustomObjectForTracking(serial_number, newObject, pRhinoObject);
+      }
+      return rc;
+    }
 
     /// <summary>Replaces one object with new point object.</summary>
     /// <param name="objref">
@@ -4658,6 +4847,43 @@ namespace Rhino.DocObjects.Tables
         return Replace(objref, text);
       }
     }
+
+    /// <summary>
+    /// Replaces one object with new pointcloud object.
+    /// </summary>
+    /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted.</param>
+    /// <param name="pointcloud">
+    /// new pointcloud to be added
+    /// A duplicate of the pointcloud is added to the Rhino model.
+    /// </param>
+    /// <returns>true if successful.</returns>
+    public bool Replace(DocObjects.ObjRef objref, Geometry.PointCloud pointcloud)
+    {
+      if (null == objref || null == pointcloud)
+        return false;
+      IntPtr pObjRef = objref.ConstPointer();
+      IntPtr pCloud = pointcloud.ConstPointer();
+      bool rc = UnsafeNativeMethods.CRhinoDoc_ReplacePointCloud(m_doc.m_docId, pObjRef, pCloud);
+      return rc;
+    }
+    
+    /// <summary>
+    /// Replaces one object with new pointcloud object.
+    /// </summary>
+    /// <param name="objectId">Id of object to be replaced.</param>
+    /// <param name="pointcloud">
+    /// new pointcloud to be added
+    /// A duplicate of the pointcloud is added to the Rhino model.
+    /// </param>
+    /// <returns>true if successful.</returns>
+    public bool Replace(Guid objectId, Geometry.PointCloud pointcloud)
+    {
+      using (ObjRef objref = new ObjRef(objectId))
+      {
+        return Replace(objref, pointcloud);
+      }
+    }
+
     #endregion
 
 #region Find geometry
@@ -5295,6 +5521,14 @@ namespace Rhino.DocObjects.Tables
       return new EnumeratorWrapper(e);
     }
 
+    public IEnumerable<DocObjects.RhinoObject> GetObjectList(Type typeFilter)
+    {
+      Rhino.DocObjects.ObjectEnumeratorSettings settings = new ObjectEnumeratorSettings();
+      settings.ClassTypeFilter = typeFilter;
+      Rhino.DocObjects.ObjectIterator it = new Rhino.DocObjects.ObjectIterator(m_doc, settings);
+      return new EnumeratorWrapper(it);
+    }
+
     [CLSCompliant(false)]
     public IEnumerable<DocObjects.RhinoObject> GetObjectList(Rhino.DocObjects.ObjectType typeFilter)
     {
@@ -5465,9 +5699,7 @@ namespace Rhino.DocObjects.Tables
       string key = section;
       if ( !string.IsNullOrEmpty(entry) )
         key = section + "\\" + entry;
-      string rc = GetValue(key);
-      UnsafeNativeMethods.CRhinoDoc_SetDocTextString(m_doc.m_docId, key, value);
-      return rc;
+      return SetString(key, value);
     }
 
     public string SetString(string key, string value)
@@ -5558,6 +5790,7 @@ namespace Rhino.DocObjects
     internal bool m_bVisible; //=false (initialized by Runtime)
     internal ObjectType m_objectfilter = ObjectType.None;
     internal int m_layerindex_filter = -1;
+    internal Type m_classtype_filter; //=null (initialized by Runtime)
 
     /// <example>
     /// <code source='examples\vbnet\ex_findobjectsbyname.vb' lang='vbnet'/>
@@ -5709,6 +5942,11 @@ namespace Rhino.DocObjects
       set { m_objectfilter = value; }
     }
 
+    public Type ClassTypeFilter
+    {
+      get { return m_classtype_filter; }
+      set { m_classtype_filter = value; }
+    }
 
     public int LayerIndexFilter
     {
@@ -5747,6 +5985,7 @@ namespace Rhino.DocObjects
   class ObjectIterator : IEnumerator<RhinoObject>
   {
 #region IEnumerator Members
+    bool m_first = true;
     Rhino.DocObjects.RhinoObject m_current;
 
     object System.Collections.IEnumerator.Current
@@ -5759,7 +5998,8 @@ namespace Rhino.DocObjects
 
     public bool MoveNext()
     {
-      bool first = (null == m_current);
+      bool first = m_first;
+      m_first = false;
       IntPtr ptr = NonConstPointer();
       string name_filter = null;
       if (null != m_settings)
@@ -5768,11 +6008,20 @@ namespace Rhino.DocObjects
       if (IntPtr.Zero == pRhinoObject)
         return false;
       m_current = DocObjects.RhinoObject.CreateRhinoObjectHelper(pRhinoObject);
+      if (m_settings != null && m_settings.ClassTypeFilter != null && m_current != null)
+      {
+        if (!m_settings.ClassTypeFilter.IsInstanceOfType(m_current))
+        {
+          m_current = null;
+          return MoveNext();
+        }
+      }
       return true;
     }
 
     public void Reset()
     {
+      m_first = true;
       m_current = null;
     }
 

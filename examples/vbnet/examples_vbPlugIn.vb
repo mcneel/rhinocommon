@@ -1,5 +1,3 @@
-Imports Rhino
-
 '''<summary>
 ''' Every RhinoCommon plug-in must have one and only one PlugIn derived class.
 ''' DO NOT create an instance of this class. It is the responsibility of Rhino

@@ -213,7 +213,7 @@ RH_C_FUNCTION int ON_Light_GetColor(const ON_Light* pConstLight, int which)
       abgr = (unsigned int)(pConstLight->Specular());
       break;
     }
-    rc = (int)abgr;
+    rc = (int)ABGR_to_ARGB(abgr);
   }
   return rc;
 }

@@ -165,6 +165,34 @@ RH_C_FUNCTION bool ON_SpaceMorph_MorphGeometry(ON_Geometry* pGeometry, double to
 
 #endif
 
+RH_C_FUNCTION bool ON_SpaceMorph_MorphGeometry2(ON_Geometry* pGeometry, const ON_SpaceMorph* pConstSpaceMorph)
+{
+  if( pGeometry && pConstSpaceMorph )
+    return pGeometry->Morph(*pConstSpaceMorph);
+  return false;
+}
+
+RH_C_FUNCTION bool ON_SpaceMorph_GetValues(const ON_SpaceMorph* pConstSpaceMorph, double* tolerance, bool* quickpreview, bool* preserveStructure)
+{
+  bool rc = false;
+  if( pConstSpaceMorph && tolerance && quickpreview && preserveStructure )
+  {
+    *tolerance = pConstSpaceMorph->Tolerance();
+    *quickpreview = pConstSpaceMorph->QuickPreview();
+    *preserveStructure = pConstSpaceMorph->PreserveStructure();
+    rc = true;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION void ON_SpaceMorph_MorphPoint(const ON_SpaceMorph* pConstSpaceMorph, ON_3dPoint* point)
+{
+  if( pConstSpaceMorph && point )
+  {
+    *point = pConstSpaceMorph->MorphPoint(*point);
+  }
+}
+
 RH_C_FUNCTION ON_Matrix* ON_Matrix_New(int rows, int cols)
 {
   ON_Matrix* rc = new ON_Matrix(rows, cols);

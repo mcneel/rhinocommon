@@ -731,6 +731,15 @@ namespace Rhino.FileIO
         return m_attributes;
       }
     }
+
+    /// <summary>
+    /// Gets or sets the Name of the object. Equivalent to this.Attributes.Name.
+    /// </summary>
+    public string Name
+    {
+      get { return Attributes.Name; }
+      set { Attributes.Name = value; }
+    }
   }
 
   // Can't add a cref to an XML comment here since the ObjectTable is not included in the

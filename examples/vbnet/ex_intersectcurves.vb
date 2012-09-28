@@ -17,8 +17,8 @@
     End If
 
     ' Calculate the intersection
-    Dim intersection_tolerance As Double = 0.001
-    Dim overlap_tolerance As Double = 0.0
+    Const intersection_tolerance As Double = 0.001
+    Const overlap_tolerance As Double = 0.0
     Dim events = Rhino.Geometry.Intersect.Intersection.CurveCurve(curveA, curveB, intersection_tolerance, overlap_tolerance)
 
     ' Process the results

@@ -1,12 +1,10 @@
-﻿using System;
-using Rhino.Input;
-using System.Collections.Generic;
+﻿using Rhino.Input;
 
 partial class Examples
 {
   public static Rhino.Commands.Result TransformBrep(Rhino.RhinoDoc doc)
   {
-    Rhino.DocObjects.ObjRef rhobj = null;
+    Rhino.DocObjects.ObjRef rhobj;
     var rc = RhinoGet.GetOneObject("Select brep", true, Rhino.DocObjects.ObjectType.Brep, out rhobj);
     if(rc!= Rhino.Commands.Result.Success)
       return rc;

@@ -8,7 +8,7 @@
     End If
 
     ' Verify the file that was selected
-    Dim image As System.Drawing.Image = Nothing
+    Dim image As System.Drawing.Image
     Try
       image = System.Drawing.Image.FromFile(fd.FileName)
     Catch generatedExceptionName As Exception

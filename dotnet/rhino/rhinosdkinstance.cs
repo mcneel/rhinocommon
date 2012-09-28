@@ -30,7 +30,7 @@ namespace Rhino.DocObjects
     /// and is embedded. If m_source_archive changes, the user is asked if they want to update
     /// the instance definition.
     /// </summary>
-    [Obsolete("Always use Static. Will be removed in a future beta")]
+    [Obsolete("Always use Static")]
     Embedded = 1,
     /// <summary>
     /// This instance definition geometry was imported from another archive (m_source_archive)
@@ -482,9 +482,11 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Conceptually, the InstanceDefinition table is an array of Instance definions.
-    /// The operator[] can be used to get individual instance definition. An instance
-    /// definition is either active or deleted and this state is reported by IsDeleted.
+    /// Conceptually, the InstanceDefinition table is an array of Instance
+    /// definitions. The operator[] can be used to get individual instance
+    /// definition. An instance definition is either active or deleted and this
+    /// state is reported by IsDeleted or will be null if it has been purged
+    /// from the document.
     /// </summary>
     /// <param name="index">zero based array index.</param>
     /// <returns>The instance definition at the specified index.</returns>
@@ -494,6 +496,11 @@ namespace Rhino.DocObjects.Tables
       {
         if (index < 0 || index >= Count)
           throw new IndexOutOfRangeException();
+        // If the documents instance definition table contains a null
+        // definition (the definition was purged) then return null.
+        IntPtr ptr = UnsafeNativeMethods.CRhinoInstanceDefinition_GetInstanceDef(m_doc.m_docId, index);
+        if (IntPtr.Zero.Equals(ptr))
+          return null;
         return new InstanceDefinition(index, m_doc);
       }
     }
@@ -795,10 +802,10 @@ namespace Rhino.DocObjects.Tables
   //  bool bIgnoreDeleted = false
   //  ) const;
     /// <summary>
-    /// Gets an array of layers.
+    /// Gets an array of instance definitions.
     /// </summary>
-    /// <param name="ignoreDeleted">If true then deleted layers are filtered out.</param>
-    /// <returns>An array of layers. This can be empty, but not null.</returns>
+    /// <param name="ignoreDeleted">If true then deleted idefs are filtered out.</param>
+    /// <returns>An array of instance definitions. This can be empty, but not null.</returns>
     public DocObjects.InstanceDefinition[] GetList(bool ignoreDeleted)
     {
       Runtime.InteropWrappers.SimpleArrayInt arr = new Runtime.InteropWrappers.SimpleArrayInt();
@@ -812,9 +819,14 @@ namespace Rhino.DocObjects.Tables
         {
           count = indices.Length;
           rc = new Rhino.DocObjects.InstanceDefinition[count];
+          int docId = m_doc.m_docId;
           for (int i = 0; i < count; i++)
           {
-            rc[i] = new Rhino.DocObjects.InstanceDefinition(indices[i], m_doc);
+            // Purged instance definitions will still be in the document as null
+            // pointers so check to see if the index is pointing to a null
+            // definition and if it is then put a null entry in the array.
+            IntPtr idef = UnsafeNativeMethods.CRhinoInstanceDefinition_GetInstanceDef(docId, indices[i]);
+            rc[i] = IntPtr.Zero.Equals(idef) ? null : new Rhino.DocObjects.InstanceDefinition(indices[i], m_doc);
           }
         }
       }

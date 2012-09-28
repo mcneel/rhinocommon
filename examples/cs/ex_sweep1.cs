@@ -1,5 +1,4 @@
-﻿using System;
-using Rhino.Input;
+﻿using Rhino.Input;
 using System.Collections.Generic;
 
 partial class Examples

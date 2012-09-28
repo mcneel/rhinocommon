@@ -294,6 +294,7 @@
     <Compile Include="rhino\rhinosdkmouse.cs" />
     <Compile Include="rhino\rhinosdkobjectattributes.cs" />
     <Compile Include="rhino\rhinosdkobjecthistory.cs" />
+    <Compile Include="rhino\rhinosdkobjectpropertiesdialogpage.cs" />
     <Compile Include="rhino\rhinosdkoptionsdialogpage.cs" />
     <Compile Include="rhino\rhinosdkpagelayoutview.cs" />
     <Compile Include="rhino\rhinosdkpick.cs" />

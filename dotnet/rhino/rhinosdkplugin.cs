@@ -507,14 +507,14 @@ namespace Rhino.PlugIns
           System.Collections.Generic.List<Rhino.UI.OptionsDialogPage> pages = new System.Collections.Generic.List<Rhino.UI.OptionsDialogPage>();
           if (options_page == 1)
           {
-          p.OptionsDialogPages(pages);
-          for (int i = 0; i < pages.Count; i++)
-          {
-            IntPtr ptr = pages[i].ConstructWithRhinoDotNet();
-            if (ptr != IntPtr.Zero)
-              UnsafeNativeMethods.CRhinoPlugIn_AddOptionPage(pPageList, ptr);
+            p.OptionsDialogPages(pages);
+            for (int i = 0; i < pages.Count; i++)
+            {
+              IntPtr ptr = pages[i].ConstructWithRhinoDotNet();
+              if (ptr != IntPtr.Zero)
+                UnsafeNativeMethods.CRhinoPlugIn_AddOptionPage(pPageList, ptr);
+            }
           }
-        }
           else
           {
             p.DocumentPropertiesDialogPages(RhinoDoc.FromId(doc_id), pages);

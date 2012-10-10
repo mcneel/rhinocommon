@@ -785,11 +785,11 @@ namespace Rhino
             {
               try
               {
-              object tag = m_custom_undo_callbacks[i].Tag;
+                object tag = m_custom_undo_callbacks[i].Tag;
                 string description = m_custom_undo_callbacks[i].Description;
                 RhinoDoc doc = m_custom_undo_callbacks[i].Document;
                 handler(null, new Commands.CustomUndoEventArgs(command_id, description, created_by_redo == 1, sn, tag, doc));
-            }
+              }
               catch (Exception ex)
               {
                 Rhino.Runtime.HostUtils.ExceptionReport("OnUndoEventHandler", ex);
@@ -2967,18 +2967,18 @@ namespace Rhino.DocObjects.Tables
       // 17 Sept 2012 S. Baer
       // This seems like the best spot to get everything in sync.
       // Update the description strings when replacing the object
-        Type base_type = typeof(RhinoObject);
+      Type base_type = typeof(RhinoObject);
       Type t = rhobj.GetType();
-        const BindingFlags flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public;
-        System.Reflection.MethodInfo mi = t.GetMethod("ShortDescription", flags);
+      const BindingFlags flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public;
+      System.Reflection.MethodInfo mi = t.GetMethod("ShortDescription", flags);
       // Don't set description strings if the function has not been overloaded
-        if (mi.DeclaringType != base_type)
-        {
+      if (mi.DeclaringType != base_type)
+      {
         string description = rhobj.ShortDescription(false);
         string description_plural = rhobj.ShortDescription(true);
-          UnsafeNativeMethods.CRhinoCustomObject_SetDescriptionStrings(pRhinoObject, description, description_plural);
-        }
+        UnsafeNativeMethods.CRhinoCustomObject_SetDescriptionStrings(pRhinoObject, description, description_plural);
       }
+    }
     internal RhinoObject FindCustomObject(uint serialNumber)
     {
       RhinoObject rc = null;
@@ -3694,10 +3694,10 @@ namespace Rhino.DocObjects.Tables
     {
       using (Geometry.TextDot dot = new Rhino.Geometry.TextDot(text, location))
       {
-      Guid rc = AddTextDot(dot, attributes);
-      dot.Dispose();
-      return rc;
-    }
+        Guid rc = AddTextDot(dot, attributes);
+        dot.Dispose();
+        return rc;
+      }
     }
     /// <summary>Adds a text dot object to Rhino.</summary>
     /// <param name="dot">A text dot that will be copied.</param>

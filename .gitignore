@@ -169,3 +169,5 @@
 /examples/opennurbs_build/cs/localize_3dm/example_read.sdf
 /examples/opennurbs_build/cs/localize_3dm/example_read.suo
 /c/rh_uifile.cpp
+/examples/rhino3dmio/example_read/bin
+/examples/rhino3dmio/example_read/obj

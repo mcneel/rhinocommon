@@ -191,6 +191,7 @@
     <Compile Include="opennurbs\opennurbs_workspace.cs" />
     <Compile Include="opennurbs\opennurbs_x.cs" />
     <Compile Include="opennurbs\opennurbs_zlib.cs" />
+    <Compile Include="RDK\rdk_contentio.cs" />
     <Compile Include="RDK\groundplane.cs" />
     <Compile Include="RDK\rdk_color.cs" />
     <Compile Include="RDK\rdk_content.cs" />

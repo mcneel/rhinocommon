@@ -443,7 +443,10 @@ RH_C_FUNCTION bool ON_Viewport_SetScreenPort(ON_Viewport* pVP, int left, int rig
 RH_C_FUNCTION bool ON_Viewport_GetScreenPort(const ON_Viewport* pConstViewport, int* left, int* right, int* bottom, int* top, int* _near, int* _far)
 {
 	if (pConstViewport && left && right && bottom && top && _near && _far)
-		return pConstViewport->GetScreenPort(left, right, bottom, top, _near, _far);
+  {
+    pConstViewport->GetScreenPort(left, right, bottom, top, _near, _far);
+    return (right > left && top != bottom);
+  }
 	return false;
 }
 

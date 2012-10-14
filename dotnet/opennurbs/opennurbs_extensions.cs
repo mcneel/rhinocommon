@@ -217,6 +217,20 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
+    /// Checks a model to make sure it is valid.
+    /// </summary>
+    /// <param name="errors">
+    /// if errors are found, a description of the problem is put in this variable.
+    /// </param>
+    /// <returns>true if the model is valid.</returns>
+    public bool IsValid(TextLog errors)
+    {
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pTextLog = errors.NonConstPointer();
+      return UnsafeNativeMethods.ONX_Model_IsValid2(pConstThis, pTextLog);
+    }
+
+    /// <summary>
     /// Quickly fills in the little details, like making sure there is at least
     /// one layer and table indices make sense.  For a full blown check and repair,
     /// call Audit(true).
@@ -534,6 +548,15 @@ namespace Rhino.FileIO
     public string DumpSummary()
     {
       return Dump(idxDumpSummary);
+    }
+
+    /// <summary>Prepares a text dump of the entire model.</summary>
+    /// <param name="log"></param>
+    public void DumpToTextLog(TextLog log)
+    {
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pTextLog = log.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_Dump2(pConstThis, pTextLog);
     }
     /*
     /// <summary>text dump of bitmap table.</summary>

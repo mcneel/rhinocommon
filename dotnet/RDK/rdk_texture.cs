@@ -10,17 +10,6 @@ namespace Rhino.Render
 {
   public abstract class RenderTexture : RenderContent
   {
-    protected RenderTexture() : base(true) { }
-
-    internal RenderTexture(bool isCustom)
-      : base(false)
-    {
-      //This constructor is only used to construct native wrappers
-      Debug.Assert(isCustom == false);
-    }
-
-
-
     /// <summary>
     /// Gets the transformation that can be applied to the UVW vector to convert it
     /// from normalized texture space into locally mapped space (ie - with repeat,
@@ -72,30 +61,11 @@ namespace Rhino.Render
 
     #region callbacks from c++
 
-    internal delegate IntPtr NewTextureCallback(Guid type_id);
-    internal static NewTextureCallback m_NewTexture = OnNewTexture;
-    static IntPtr OnNewTexture(Guid type_id)
+    internal static NewRenderContentCallbackEvent m_NewTextureCallback = OnNewTexture;
+    static IntPtr OnNewTexture(Guid typeId)
     {
-      IntPtr rc = IntPtr.Zero;
-      try
-      {
-        Guid plugin_id;
-        Type t = RdkPlugIn.GetRenderContentType(type_id, out plugin_id);
-        if (t != null && plugin_id != Guid.Empty)
-        {
-          RenderTexture texture = System.Activator.CreateInstance(t) as RenderTexture;
-          if (texture != null)
-          {
-            texture.Construct(plugin_id);
-            rc = texture.NonConstPointer();
-          }
-        }
-      }
-      catch
-      {
-        rc = IntPtr.Zero;
-      }
-      return rc;
+      var renderContent = NewRenderContent(typeId, typeof(RenderTexture));
+      return (null == renderContent ? IntPtr.Zero : renderContent.NonConstPointer());
     }
 
     internal delegate void SimulateTextureCallback(int serial_number, IntPtr p, int bDataOnly);
@@ -114,8 +84,9 @@ namespace Rhino.Render
           }
         }
       }
-      catch
+      catch (Exception exception)
       {
+        Runtime.HostUtils.ExceptionReport(exception);
       }
     }
 
@@ -273,57 +244,72 @@ namespace Rhino.Render
 
     protected abstract void AddAdditionalUISections();
 
-    private readonly ColorField m_color1 = new ColorField("color-one", "Color 1", Rhino.Display.Color4f.Black);
-    private readonly ColorField m_color2 = new ColorField("color-two", "Color 2", Rhino.Display.Color4f.White);
+    public TwoColorRenderTexture()
+    {
+      m_color1 = Fields.Add("color-one", Display.Color4f.Black, UI.LOC.STR("Color 1"));
+      m_color2 = Fields.Add("color-two", Display.Color4f.White, "Color 2");
 
-    private readonly BoolField m_texture1_on = new BoolField("texture-on-one", "Texture1 On", true);
-    private readonly BoolField m_texture2_on = new BoolField("texture-on-two", "Texture2 On", true);
+      m_texture1On = Fields.Add("texture-on-one", true, "Texture1 On");
+      m_texture2On = Fields.Add("texture-on-two", true, "Texture2 On");
 
-    private readonly DoubleField m_texture1_amount = new DoubleField("texture-amount-one", "Texture1 Amt", 1.0);
-    private readonly DoubleField m_texture2_amount = new DoubleField("texture-amount-two", "Texture2 Amt", 1.0);
+      m_texture1Amount = Fields.Add("texture-amount-one", 1.0, "Texture1 Amt");
+      m_texture2Amount = Fields.Add("texture-amount-two", 1.0, "Texture2 Amt");
 
-    private readonly BoolField m_swap_colors = new BoolField("swap-colors", "Swap Colors", false);
-    private readonly BoolField m_super_sample = new BoolField("super-sample", "Super sample", false);
+      m_swapColors = Fields.Add("swap-colors", false, "Swap Colors");
+      m_superSample = Fields.Add("super-sample", false, "Super sample");
+    }
 
-    public Rhino.Display.Color4f Color1
+    private readonly Fields.Color4fField m_color1;
+    private readonly Fields.Color4fField m_color2;
+
+    private readonly Fields.BoolField m_texture1On;
+    private readonly Fields.BoolField m_texture2On;
+
+    private readonly Fields.DoubleField m_texture1Amount;
+    private readonly Fields.DoubleField m_texture2Amount;
+
+    private readonly Fields.BoolField m_swapColors;
+    private readonly Fields.BoolField m_superSample;
+
+    public Display.Color4f Color1
     {
       get { return m_color1.Value; }
       set { m_color1.Value = value; }
     }
-    public Rhino.Display.Color4f Color2
+    public Display.Color4f Color2
     {
       get { return m_color2.Value; }
       set { m_color2.Value = value; }
     }
     public bool Texture1On
     {
-      get { return m_texture1_on.Value; }
-      set { m_texture1_on.Value = value; }
+      get { return m_texture1On.Value; }
+      set { m_texture1On.Value = value; }
     }
     public bool Texture2On
     {
-      get { return m_texture2_on.Value; }
-      set { m_texture2_on.Value = value; }
+      get { return m_texture2On.Value; }
+      set { m_texture2On.Value = value; }
     }
     public double Texture1Amount
     {
-      get { return m_texture1_amount.Value; }
-      set { m_texture1_amount.Value = value; }
+      get { return m_texture1Amount.Value; }
+      set { m_texture1Amount.Value = value; }
     }
     public double Texture2Amount
     {
-      get { return m_texture2_amount.Value; }
-      set { m_texture2_amount.Value = value; }
+      get { return m_texture2Amount.Value; }
+      set { m_texture2Amount.Value = value; }
     }
     public bool SwapColors
     {
-      get { return m_swap_colors.Value; }
-      set { m_swap_colors.Value = value; }
+      get { return m_swapColors.Value; }
+      set { m_swapColors.Value = value; }
     }
     public bool SuperSample
     {
-      get { return m_super_sample.Value; }
-      set { m_super_sample.Value = value; }
+      get { return m_superSample.Value; }
+      set { m_superSample.Value = value; }
     }
   }
 
@@ -334,7 +320,6 @@ namespace Rhino.Render
   {
     readonly Guid m_native_instance_id = Guid.Empty;
     public NativeRenderTexture(IntPtr pRenderContent)
-      : base(false)
     {
       m_native_instance_id = UnsafeNativeMethods.Rdk_RenderContent_InstanceId(pRenderContent);
     }
@@ -349,10 +334,6 @@ namespace Rhino.Render
     {
       IntPtr pContent = UnsafeNativeMethods.Rdk_FindContentInstance(m_native_instance_id);
       return pContent;
-    }
-    internal override bool IsNativeWrapper()
-    {
-      return true;
     }
   }
   #endregion

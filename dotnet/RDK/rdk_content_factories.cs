@@ -11,7 +11,7 @@ namespace Rhino.Render
   /// </summary>
   public class RenderContentType : IDisposable
   {
-    internal RenderContentType(Guid typeId)
+    public RenderContentType(Guid typeId)
     {
       m_typeId = typeId;
     }

@@ -7,18 +7,6 @@ namespace Rhino.Render
 {
   public abstract class RenderEnvironment : RenderContent
   {
-    protected RenderEnvironment()
-      : base(true)
-    {
-    }
-
-    internal RenderEnvironment(bool isCustom)
-      : base(false)
-    {
-      //This constructor is only used to construct native wrappers
-      Debug.Assert(isCustom == false);
-    }
-
     public static RenderEnvironment CurrentEnvironment
     {
       get
@@ -47,30 +35,11 @@ namespace Rhino.Render
 
     #region callbacks from c++
 
-    internal delegate IntPtr NewEnvironmentCallback(Guid type_id);
-    internal static NewEnvironmentCallback m_NewEnvironment = OnNewEnvironment;
-    static IntPtr OnNewEnvironment(Guid type_id)
+    internal static NewRenderContentCallbackEvent m_NewEnvironmentCallback = OnNewEnvironment;
+    static IntPtr OnNewEnvironment(Guid typeId)
     {
-      IntPtr rc = IntPtr.Zero;
-      try
-      {
-        Guid plugin_id;
-        Type t = RdkPlugIn.GetRenderContentType(type_id, out plugin_id);
-        if (t != null && plugin_id != Guid.Empty)
-        {
-          RenderEnvironment Environment = System.Activator.CreateInstance(t) as RenderEnvironment;
-          if (Environment != null)
-          {
-            Environment.Construct(plugin_id);
-            rc = Environment.NonConstPointer();
-          }
-        }
-      }
-      catch
-      {
-        rc = IntPtr.Zero;
-      }
-      return rc;
+      var renderContent = NewRenderContent(typeId, typeof(RenderEnvironment));
+      return (null == renderContent ? IntPtr.Zero : renderContent.NonConstPointer());
     }
 
     internal delegate void SimulateEnvironmentCallback(int serial_number, IntPtr p, int bDataOnly);
@@ -79,18 +48,19 @@ namespace Rhino.Render
     {
       try
       {
-        RenderEnvironment texture = RenderContent.FromSerialNumber(serial_number) as RenderEnvironment;
+        var texture = FromSerialNumber(serial_number) as RenderEnvironment;
         if (texture != null)
         {
           if (pSim != IntPtr.Zero)
           {
-            SimulatedEnvironment sim = new SimulatedEnvironment(pSim);
+            var sim = new SimulatedEnvironment(pSim);
             texture.SimulateEnvironment(ref sim, 1 == bDataOnly);
           }
         }
       }
-      catch
+      catch (Exception exception)
       {
+        Runtime.HostUtils.ExceptionReport(exception);
       }
     }
 
@@ -108,7 +78,6 @@ namespace Rhino.Render
   {
     readonly Guid m_native_instance_id = Guid.Empty;
     public NativeRenderEnvironment(IntPtr pRenderContent)
-      : base(false)
     {
       m_native_instance_id = UnsafeNativeMethods.Rdk_RenderContent_InstanceId(pRenderContent);
     }
@@ -123,10 +92,6 @@ namespace Rhino.Render
     {
       IntPtr pContent = UnsafeNativeMethods.Rdk_FindContentInstance(m_native_instance_id);
       return pContent;
-    }
-    internal override bool IsNativeWrapper()
-    {
-      return true;
     }
   }
   #endregion

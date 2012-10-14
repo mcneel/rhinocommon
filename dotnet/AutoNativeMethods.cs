@@ -486,6 +486,20 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr StringHolder_Get(IntPtr pStringHolder);
 
+  //bool ON_BinaryArchive_AtEnd(const ON_BinaryArchive* pConstArchive)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_AtEnd(IntPtr pConstArchive);
+
+  //bool ON_BinaryArchive_Read3dmStartSection(ON_BinaryArchive* pBinaryArchive, int* version, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_Read3dmStartSection(IntPtr pBinaryArchive, ref int version, IntPtr pStringHolder);
+
+  //unsigned int ON_BinaryArchive_Dump3dmChunk(ON_BinaryArchive* pBinaryArchive, ON_TextLog* pTextLog, int recursion_depth)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern uint ON_BinaryArchive_Dump3dmChunk(IntPtr pBinaryArchive, IntPtr pTextLog, int recursion_depth);
+
   //int ON_BinaryArchive_Archive3dmVersion(ON_BinaryArchive* pArchive)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_BinaryArchive_Archive3dmVersion(IntPtr pArchive);
@@ -787,6 +801,11 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ONX_Model_IsValid(IntPtr pConstModel, IntPtr pString);
 
+  //bool ONX_Model_IsValid2(const ONX_Model* pConstModel, ON_TextLog* pTextLog)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ONX_Model_IsValid2(IntPtr pConstModel, IntPtr pTextLog);
+
   //void ONX_Model_Polish(ONX_Model* pModel)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_Polish(IntPtr pModel);
@@ -822,6 +841,10 @@ internal partial class UnsafeNativeMethods
   //void ONX_Model_Dump(const ONX_Model* pConstModel, int which, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_Dump(IntPtr pConstModel, int which, IntPtr pStringHolder);
+
+  //void ONX_Model_Dump2(const ONX_Model* pConstModel, ON_TextLog* pTextLog)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_Dump2(IntPtr pConstModel, IntPtr pTextLog);
 
   //const ON_Geometry* ONX_Model_ModelObjectGeometry(const ONX_Model* pConstModel, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -927,6 +950,10 @@ internal partial class UnsafeNativeMethods
   //ON_Linetype* ONX_Model_GetLinetypePointer(ONX_Model* pModel, ON_UUID id)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ONX_Model_GetLinetypePointer(IntPtr pModel, Guid id);
+
+  //ON_Bitmap* ONX_Model_GetBitmapPointer(ONX_Model* pModel, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_GetBitmapPointer(IntPtr pModel, int index);
 
   //ON_Layer* ONX_Model_GetLayerPointer(ONX_Model* pModel, ON_UUID id)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -1068,6 +1095,14 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ONX_Model_ReadPreviewImage([MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr pRhinoDib);
+
+  //CBinaryFileHelper* ON_BinaryFile_Open(const RHMONO_STRING* path, int mode)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_BinaryFile_Open([MarshalAs(UnmanagedType.LPWStr)]string path, int mode);
+
+  //void ON_BinaryFile_Close(CBinaryFileHelper* pBinaryFile)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_BinaryFile_Close(IntPtr pBinaryFile);
   #endregion
 
 
@@ -1412,6 +1447,10 @@ internal partial class UnsafeNativeMethods
   //int ON_Extrusion_ProfileIndex(const ON_Extrusion* pConstExtrusion, double profile_parameter)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Extrusion_ProfileIndex(IntPtr pConstExtrusion, double profile_parameter);
+
+  //ON_Extrusion* ON_Extrusion_CreateFrom3dCurve(const ON_Curve* pConstCurve, double height, bool cap)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_Extrusion_CreateFrom3dCurve(IntPtr pConstCurve, double height, [MarshalAs(UnmanagedType.U1)]bool cap);
   #endregion
 
 
@@ -4323,6 +4362,41 @@ internal partial class UnsafeNativeMethods
   #endregion
 
 
+  #region on_textlog.cpp
+  //ON_TextLog* ON_TextLog_New(ON_wString* pString)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_TextLog_New(IntPtr pString);
+
+  //void ON_TextLog_Delete(ON_TextLog* pTextLog)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_TextLog_Delete(IntPtr pTextLog);
+
+  //ON_TextLog* ON_TextLog_New2(const RHMONO_STRING* _filename)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_TextLog_New2([MarshalAs(UnmanagedType.LPWStr)]string _filename);
+
+  //void ON_TextLog_PushPopIndent(ON_TextLog* pTextLog, bool push)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_TextLog_PushPopIndent(IntPtr pTextLog, [MarshalAs(UnmanagedType.U1)]bool push);
+
+  //int ON_TextLog_IndentSize_Get(const ON_TextLog* pConstTextLog)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_TextLog_IndentSize_Get(IntPtr pConstTextLog);
+
+  //void ON_TextLog_IndentSize_Set(ON_TextLog* pTextLog, int s)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_TextLog_IndentSize_Set(IntPtr pTextLog, int s);
+
+  //void ON_TextLog_PrintWrappedText(ON_TextLog* pTextLog, const RHMONO_STRING* _text, int line_length)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_TextLog_PrintWrappedText(IntPtr pTextLog, [MarshalAs(UnmanagedType.LPWStr)]string _text, int line_length);
+
+  //void ON_TextLog_Print(ON_TextLog* pTextLog, const RHMONO_STRING* _text)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_TextLog_Print(IntPtr pTextLog, [MarshalAs(UnmanagedType.LPWStr)]string _text);
+  #endregion
+
+
   #region on_userdata.cpp
   //void ON_UserData_OnTransform(ON_UserData* pUserData, const ON_Xform* xform)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5434,6 +5508,32 @@ internal partial class UnsafeNativeMethods
 
 
   #region rh_bitmap.cpp
+  //const CRhinoBitmap* CRhinoBitmapTable_GetBitmapPointer(int docId, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoBitmapTable_GetBitmapPointer(int docId, int index);
+
+  //const ON_Bitmap* CRhinoBitmapTable_GetOnBitmapPointer(int docId, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoBitmapTable_GetOnBitmapPointer(int docId, int index);
+
+  //void CRhinoBitmap_GetBitmapName(int docId, int index, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoBitmap_GetBitmapName(int docId, int index, IntPtr pStringHolder);
+
+  //bool CRhinoBitmap_IsReference(int docId, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoBitmap_IsReference(int docId, int index);
+
+  //bool CRhinoBitmap_ExportToFile(int docId, int index, const RHMONO_STRING* _fileName)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoBitmap_ExportToFile(int docId, int index, [MarshalAs(UnmanagedType.LPWStr)]string _fileName);
+
+  //int CRhinoBitmapTable_BitmapFromFileName(int docId, const RHMONO_STRING* _name, bool addToBitmapTableIfFileExists)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoBitmapTable_BitmapFromFileName(int docId, [MarshalAs(UnmanagedType.LPWStr)]string _name, [MarshalAs(UnmanagedType.U1)]bool addToBitmapTableIfFileExists);
+
   //int CRhinoBitmapTable_BitmapCount(int docId)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoBitmapTable_BitmapCount(int docId);
@@ -7046,6 +7146,9 @@ internal partial class UnsafeNativeMethods
   internal static extern void CRhinoEventWatcher_LogState([MarshalAs(UnmanagedType.LPWStr)]string _str);
 
   //void CRhinoEventWatcher_SetDetailEventCallback(DETAILEVENTPROC cb)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRhinoEventWatcher_SetOnIdleCallback(ONIDLEEVENTPROC cb)
   // SKIPPING - Contains a function pointer which needs to be written by hand
   #endregion
 
@@ -8780,9 +8883,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoObject_Geometry2(uint rhino_object_serial_number, ComponentIndex componentIndex);
 
-  //const CRhinoObjectAttributes* CRhinoObject_Attributes(unsigned int rhino_object_serial_number)
+  //const CRhinoObjectAttributes* CRhinoObject_Attributes(const CRhinoObject* pConstParentRhinoObject)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr CRhinoObject_Attributes(uint rhino_object_serial_number);
+  internal static extern IntPtr CRhinoObject_Attributes(IntPtr pConstParentRhinoObject);
 
   //bool CRhinoObject_GetBool(const CRhinoObject* pRhinoObject, int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -10620,7 +10723,7 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void RHC_RhinoPipeBreps(IntPtr pConstCurve, int param_count, double[] rail_params, double[] radii, [MarshalAs(UnmanagedType.U1)]bool local_blending, int cap, [MarshalAs(UnmanagedType.U1)]bool fit_rail, double abs_tol, double ang_tol, IntPtr pBrepArray);
 
-  //void RHC_RegisterTabbedDockBar(const RHMONO_STRING* caption, ON_UUID tab_id, ON_UUID plugin_id, HICON icon, CREATEPANELPROC create_proc)
+  //void RHC_RegisterTabbedDockBar(const RHMONO_STRING* caption, ON_UUID tab_id, ON_UUID plugin_id, HICON icon, CREATEPANELPROC create_proc, VISIBLECHANGEPANELPROC visible_proc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //bool RHC_RhinoUiIsTabVisible(ON_UUID tab_id)

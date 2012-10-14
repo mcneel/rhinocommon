@@ -340,6 +340,7 @@ namespace Rhino.PlugIns
 #if RDK_UNCHECKED
             Rhino.Render.RenderContent.RegisterContent(p.Assembly, p.Id);
             Rhino.Render.CustomRenderMesh.Provider.RegisterProviders(p.Assembly, p.Id);
+            Rhino.Render.IOPlugIn.RegisterContentIo(p.Assembly, p.Id);
 #endif
           }
 
@@ -381,7 +382,7 @@ namespace Rhino.PlugIns
 
 #if RDK_UNCHECKED
           // check to see if we should be uninitializing an RDK plugin
-          Rhino.Render.RdkPlugIn pRdk = Rhino.Render.RdkPlugIn.GetRdkPlugInDuringShutdown(p);
+          RdkPlugIn pRdk = RdkPlugIn.FromRhinoPlugIn(p);
           if (pRdk != null)
             pRdk.Dispose();
 #endif
@@ -743,7 +744,7 @@ namespace Rhino.PlugIns
     /// validated.
     /// </summary>
     /// <param name="productBuildType">
-    /// The product build type required by your plug-in.
+    /// The product build contentType required by your plug-in.
     /// </param>
     /// <param name="validateDelegate">
     /// Since the Rhino licensing system knows nothing about your product license,
@@ -1475,7 +1476,7 @@ namespace Rhino.PlugIns
     /// <summary>
     /// Default implementation returns true which means the content can be
     /// picked from the content browser by the user. Override this method and
-    /// return false if you don't want to allow a certain content type to be
+    /// return false if you don't want to allow a certain content contentType to be
     /// picked from the content browser while your render engine is current.
     /// </summary>
     /// <param name="content">A render context.</param>
@@ -2466,7 +2467,7 @@ namespace Rhino.PlugIns
     }
 
     /// <summary>
-    /// Returns the type of a specified product license
+    /// Returns the contentType of a specified product license
     /// </summary>
     public static int GetLicenseType(Guid productId)
     {
@@ -2587,7 +2588,7 @@ namespace Rhino.PlugIns
   /// </summary>
   public delegate ValidateResult ValidateProductKeyDelegate(string productKey, out LicenseData licenseData);
 
-  /// <summary>License build type enumerations.</summary>
+  /// <summary>License build contentType enumerations.</summary>
   public enum LicenseBuildType
   {
     /// <summary>A release build (e.g. commercical, education, nfr, etc.)</summary>
@@ -2835,7 +2836,7 @@ namespace Rhino.PlugIns
     public Guid ProductId{ get; set; }
 
     /// <summary>
-    /// The build type of the product, where:
+    /// The build contentType of the product, where:
     ///   100 = A release build, either commercical, education, nfr, etc.
     ///   200 = A evaluation build
     ///   300 = A beta build, such as a wip.
@@ -2848,15 +2849,15 @@ namespace Rhino.PlugIns
     /// <summary>The "for display only" product license or serial number.</summary>
     public string SerialNumber{ get; set; }
 
-    /// <summary>The license type. (e.g. Standalone, Network, etc.)</summary>
+    /// <summary>The license contentType. (e.g. Standalone, Network, etc.)</summary>
     public LicenseType LicenseType{ get; set; }
 
     /// <summary>
     /// The date and time the license will expire.
     /// This value can be null if:
-    ///   1.) The license type is "Standalone" and the license does not expire.
-    ///   2.) The license type is "Network".
-    ///   3.) The license type is "NetworkCheckedOut" and the checkout does not expire
+    ///   1.) The license contentType is "Standalone" and the license does not expire.
+    ///   2.) The license contentType is "Network".
+    ///   3.) The license contentType is "NetworkCheckedOut" and the checkout does not expire
     /// Note, date and time is in local time coordinates.
     /// </summary>
     public DateTime? ExpirationDate{ get; set; }

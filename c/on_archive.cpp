@@ -18,6 +18,34 @@ RH_C_FUNCTION const RHMONO_STRING* StringHolder_Get(CRhCmnStringHolder* pStringH
 }
 
 
+RH_C_FUNCTION bool ON_BinaryArchive_AtEnd(const ON_BinaryArchive* pConstArchive)
+{
+  if( pConstArchive )
+    return pConstArchive->AtEnd();
+  return true;
+}
+
+RH_C_FUNCTION bool ON_BinaryArchive_Read3dmStartSection(ON_BinaryArchive* pBinaryArchive, int* version, CRhCmnStringHolder* pStringHolder)
+{
+  bool rc = false;
+  if( pBinaryArchive && version && pStringHolder )
+  {
+    ON_String comment;
+    rc = pBinaryArchive->Read3dmStartSection(version, comment);
+    ON_wString wComment(comment);
+    pStringHolder->Set(wComment);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION unsigned int ON_BinaryArchive_Dump3dmChunk(ON_BinaryArchive* pBinaryArchive, ON_TextLog* pTextLog, int recursion_depth)
+{
+  unsigned int rc = 0;
+  if( pBinaryArchive && pTextLog )
+    rc = pBinaryArchive->Dump3dmChunk(*pTextLog);
+  return rc;
+}
+
 RH_C_FUNCTION int ON_BinaryArchive_Archive3dmVersion(ON_BinaryArchive* pArchive)
 {
   int rc = 0;
@@ -904,6 +932,14 @@ RH_C_FUNCTION bool ONX_Model_IsValid(const ONX_Model* pConstModel, CRhCmnStringH
   return rc;
 }
 
+RH_C_FUNCTION bool ONX_Model_IsValid2(const ONX_Model* pConstModel, ON_TextLog* pTextLog)
+{
+  bool rc = false;
+  if( pConstModel && pTextLog )
+    rc = pConstModel->IsValid(pTextLog);
+  return rc;
+}
+
 RH_C_FUNCTION void ONX_Model_Polish(ONX_Model* pModel)
 {
   if( pModel )
@@ -1137,6 +1173,12 @@ RH_C_FUNCTION void ONX_Model_Dump(const ONX_Model* pConstModel, int which, CRhCm
   }
 }
 
+RH_C_FUNCTION void ONX_Model_Dump2(const ONX_Model* pConstModel, ON_TextLog* pTextLog)
+{
+  if( pConstModel && pTextLog )
+    pConstModel->Dump(*pTextLog);
+}
+
 RH_C_FUNCTION const ON_Geometry* ONX_Model_ModelObjectGeometry(const ONX_Model* pConstModel, int index)
 {
   const ON_Geometry* rc = NULL;
@@ -1360,7 +1402,7 @@ RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddSphere(ONX_Model* pModel, ON_Sphe
   {
     // make sure the plane equation is in-sync for this sphere
     sphere->plane.UpdateEquation();
-#if defined(RHINO_V5SR)
+#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)
     ON_RevSurface* pRevSurface = sphere->RevSurfaceForm(false);
 #else
     ON_RevSurface* pRevSurface = sphere->RevSurfaceForm();
@@ -1658,6 +1700,14 @@ RH_C_FUNCTION ON_Linetype* ONX_Model_GetLinetypePointer(ONX_Model* pModel, ON_UU
       }
     }
   }
+  return rc;
+}
+
+RH_C_FUNCTION ON_Bitmap* ONX_Model_GetBitmapPointer(ONX_Model* pModel, int index)
+{
+  ON_Bitmap* rc = NULL;
+  if( pModel && index >= 0 && index < pModel->m_bitmap_table.Count())
+    rc = pModel->m_bitmap_table[index];
   return rc;
 }
 
@@ -2212,3 +2262,37 @@ RH_C_FUNCTION bool ONX_Model_ReadPreviewImage(const RHMONO_STRING* path, CRhinoD
   return rc;
 }
 #endif
+
+class CBinaryFileHelper : public ON_BinaryFile
+{
+public:
+  CBinaryFileHelper(ON::archive_mode mode, FILE* fp)
+  : ON_BinaryFile(mode, fp)
+  {
+    m_file_pointer = fp;
+  }
+
+  FILE* m_file_pointer;
+};
+
+RH_C_FUNCTION CBinaryFileHelper* ON_BinaryFile_Open(const RHMONO_STRING* path, int mode)
+{
+  INPUTSTRINGCOERCE(_path, path);
+  FILE* fp = ON::OpenFile( _path, L"rb" );
+  if( fp )
+  {
+    ON::archive_mode archive_mode = ON::ArchiveMode(mode);
+    return new CBinaryFileHelper(archive_mode, fp);
+  }
+  return NULL;
+}
+
+RH_C_FUNCTION void ON_BinaryFile_Close(CBinaryFileHelper* pBinaryFile)
+{
+  if( pBinaryFile )
+  {
+    if( pBinaryFile->m_file_pointer )
+      ON::CloseFile(pBinaryFile->m_file_pointer);
+    delete pBinaryFile;
+  }
+}

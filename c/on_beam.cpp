@@ -249,4 +249,14 @@ RH_C_FUNCTION int ON_Extrusion_ProfileIndex(const ON_Extrusion* pConstExtrusion,
   return rc;
 }
 
+RH_C_FUNCTION ON_Extrusion* ON_Extrusion_CreateFrom3dCurve(const ON_Curve* pConstCurve, double height, bool cap)
+{
+  ON_Extrusion* rc = NULL;
+  if( pConstCurve )
+  {
+    rc = ON_Extrusion::CreateFrom3dCurve(*pConstCurve, NULL, height, cap);
+  }
+  return rc;
+}
+
 #endif

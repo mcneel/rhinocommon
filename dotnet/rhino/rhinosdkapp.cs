@@ -879,6 +879,57 @@ namespace Rhino
         }
       }
     }
+
+    private static RhCmnEmptyCallback m_OnIdle;
+    private static void OnIdle()
+    {
+      if (m_idle_occured != null)
+      {
+        try
+        {
+          m_idle_occured(null, System.EventArgs.Empty);
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
+    private static EventHandler m_idle_occured;
+
+    /// <summary>
+    /// Occurs when the application finishes processing and is about to enter the idle state
+    /// </summary>
+    public static event EventHandler Idle
+    {
+      add
+      {
+        lock (m_event_lock)
+        {
+          if (m_idle_occured == null)
+          {
+            m_OnIdle = OnIdle;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetOnIdleCallback(m_OnIdle);
+          }
+          m_idle_occured -= value;
+          m_idle_occured += value;
+        }
+      }
+      remove
+      {
+        lock (m_event_lock)
+        {
+          m_idle_occured -= value;
+          if (m_idle_occured == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetOnIdleCallback(null);
+            m_OnIdle = null;
+          }
+        }
+      }
+    }
+
+
     #endregion
 
 #if RDK_UNCHECKED

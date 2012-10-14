@@ -51,7 +51,9 @@ using System.Runtime.InteropServices;
 // 23 Aug 2012 (5.1.30000.3) Added DrawForegroundEventArgs
 //                           Added OnSpaceMorph virtual function for custom objects
 // 29 Aug 2012 (5.1.30000.4) Adding support for history and history replay
-[assembly: AssemblyVersion("5.1.30000.4")]
+//                           SR0 - Initial release of Rhino 5
+// 12 Oct 2012 (5.1.30000.5) Update for SR1 of Rhino 5
+[assembly: AssemblyVersion("5.1.30000.5")]
 
 [assembly: AssemblyFileVersion("5.0.20693.0")]
 
@@ -62,3 +64,7 @@ using System.Runtime.InteropServices;
 // if they are not marked with the AllowPartiallyTrustedCallersAttribute. This assembly
 // also requires that this attribute be set in order for things to work.
 [assembly: System.Security.AllowPartiallyTrustedCallers]
+
+#if !RHINO_SDK
+[assembly: System.Security.SecurityRules(System.Security.SecurityRuleSet.Level1)]
+#endif

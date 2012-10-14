@@ -42,6 +42,27 @@ namespace Rhino.Geometry
       m_ptr = UnsafeNativeMethods.ON_Matrix_New2(ref xform);
     }
 
+    /// <summary>
+    /// Create a duplicate of this matrix.
+    /// </summary>
+    /// <returns>An exact duplicate of this matrix.</returns>
+    public Matrix Duplicate()
+    {
+      int rc = RowCount;
+      int cc = ColumnCount;
+      Matrix dup = new Matrix(rc, cc);
+
+      for (int r = 0; r < rc; r++)
+      {
+        for (int c = 0; c < cc; c++)
+        {
+          dup[r, c] = this[r, c];
+        }
+      }
+
+      return dup;
+    }
+
     #region IDisposable implementation
     /// <summary>
     /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
@@ -77,7 +98,6 @@ namespace Rhino.Geometry
       m_ptr = IntPtr.Zero;
     }
     #endregion
-
 
     /// <summary>
     /// Gets or sets the matrix value at the given row and column indixes.
@@ -404,6 +424,28 @@ namespace Rhino.Geometry
     public bool IsColumnOrthoNormal
     {
       get { return GetBool(idxIsColumnOrthoNormal); }
+    }
+
+    /// <summary>
+    /// Gets the hash code for this matrix. The hash code will change 
+    /// when the matrix changes so you cannot change matrices while they are stored in 
+    /// hash tables.
+    /// </summary>
+    /// <returns>Hash code.</returns>
+    public override int GetHashCode()
+    {
+      // David: ideally the hash code ought not be computed based on mutable fields, 
+      //        but a matrix only has mutable fields. This implementation means a
+      //        matrix cannot be stored in a hashtable while it is modified.
+      int hash = 0;
+      for (int i = 0; i < RowCount; i++)
+      {
+        for (int j = 0; j < RowCount; j++)
+        {
+          hash = -i ^ j ^ hash ^ this[i, j].GetHashCode();
+        }
+      }
+      return hash;
     }
   }
 }

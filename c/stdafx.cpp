@@ -10,3 +10,22 @@
 #define ON_NEW_MFC_EARLY_ALLOCATION_MAX 0
 #define ON_NEW_MFC_EARLY_ALLOCATION_MIN 2
 #include "opennurbs_memory_new.cpp"
+
+
+#if defined(OPENNURBS_BUILD)
+class Rhino3dmIoInitializer
+{
+public:
+  Rhino3dmIoInitializer()
+  {
+    ON::Begin();
+  }
+
+  ~Rhino3dmIoInitializer()
+  {
+    ON::End();
+  }
+};
+
+static Rhino3dmIoInitializer theInitializer;
+#endif

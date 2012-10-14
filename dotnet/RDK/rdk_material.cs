@@ -7,18 +7,6 @@ namespace Rhino.Render
 {
   public abstract class RenderMaterial : RenderContent
   {
-    protected RenderMaterial()
-      : base(true)
-    {
-    }
-
-    internal RenderMaterial(bool isCustom)
-      : base(false)
-    {
-      //This constructor is only used to construct native wrappers
-      Debug.Assert(isCustom == false);
-    }
-
     /// <summary>
     /// Defines enumerated constant values for use in <see cref="TextureChildSlotName"/> method.
     /// </summary>
@@ -104,7 +92,7 @@ namespace Rhino.Render
     /// </summary>
     /// <param name="simulation">Set the properties of the input basic material to provide the simulation for this material.</param>
     /// <param name="isForDataOnly">Called when only asking for a hash - don't write any textures to the disk - just provide the filenames they will get.</param>
-    public virtual void SimulateMaterial(ref Rhino.DocObjects.Material simulation, bool isForDataOnly)
+    public virtual void SimulateMaterial(ref DocObjects.Material simulation, bool isForDataOnly)
     {
       if (IsNativeWrapper())
       {
@@ -119,30 +107,11 @@ namespace Rhino.Render
 
     #region callbacks from c++
 
-    internal delegate IntPtr NewMaterialCallback(Guid type_id);
-    internal static NewMaterialCallback m_NewMaterial = OnNewMaterial;
-    static IntPtr OnNewMaterial(Guid type_id)
+    internal static NewRenderContentCallbackEvent m_NewMaterialCallback = OnNewMaterial;
+    static IntPtr OnNewMaterial(Guid typeId)
     {
-      IntPtr rc = IntPtr.Zero;
-      try
-      {
-        Guid plugin_id;
-        Type t = RdkPlugIn.GetRenderContentType(type_id, out plugin_id);
-        if (t != null && plugin_id != Guid.Empty)
-        {
-          RenderMaterial Material = System.Activator.CreateInstance(t) as RenderMaterial;
-          if (Material != null)
-          {
-            Material.Construct(plugin_id);
-            rc = Material.NonConstPointer();
-          }
-        }
-      }
-      catch
-      {
-        rc = IntPtr.Zero;
-      }
-      return rc;
+      var renderContent = NewRenderContent(typeId, typeof(RenderMaterial));
+      return (null == renderContent ? IntPtr.Zero : renderContent.NonConstPointer());
     }
 
     internal delegate void TextureChildSlotNameCallback(int serial_number, int which, IntPtr pON_wString);
@@ -151,7 +120,7 @@ namespace Rhino.Render
     {
       try
       {
-        RenderMaterial material = RenderContent.FromSerialNumber(serial_number) as RenderMaterial;
+        var material = RenderContent.FromSerialNumber(serial_number) as RenderMaterial;
         if (material != null)
         {
           String str = material.TextureChildSlotName((StandardChildSlots)which);
@@ -161,8 +130,9 @@ namespace Rhino.Render
           }
         }
       }
-      catch
+      catch (Exception exception)
       {
+        Runtime.HostUtils.ExceptionReport(exception);
       }
     }
 
@@ -192,23 +162,12 @@ namespace Rhino.Render
     #endregion
   }
 
-
-
-
-
-
-
-
-
-
-
   #region Native wrapper
   // DO NOT make public
   internal class NativeRenderMaterial : RenderMaterial
   {
     readonly Guid m_native_instance_id = Guid.Empty;
     public NativeRenderMaterial(IntPtr pRenderContent)
-      : base(false)
     {
       m_native_instance_id = UnsafeNativeMethods.Rdk_RenderContent_InstanceId(pRenderContent);
     }
@@ -223,10 +182,6 @@ namespace Rhino.Render
     {
       IntPtr pContent = UnsafeNativeMethods.Rdk_FindContentInstance(m_native_instance_id);
       return pContent;
-    }
-    internal override bool IsNativeWrapper()
-    {
-      return true;
     }
   }
   #endregion

@@ -18,16 +18,16 @@
 // Release x64 (64 bit) libs
 #define ON_MSC_LIB_DIR "x64/Release/"
 #pragma message( " --- statically linking opennurbs." )
-#pragma comment(lib, "x64/release/zlib.lib")
-#pragma comment(lib, "x64/release/opennurbs_staticlib.lib")
+#pragma comment(lib, "../x64/release/zlib.lib")
+#pragma comment(lib, "../x64/release/opennurbs_staticlib.lib")
 
 #else // _DEBUG
 
 // Debug x64 (64 bit) libs
 #define ON_MSC_LIB_DIR "x64/Debug/"
 #pragma message( " --- statically linking opennurbs." )
-#pragma comment(lib, "x64/debug/zlib.lib")
-#pragma comment(lib, "x64/debug/opennurbs_staticlib.lib")
+#pragma comment(lib, "../x64/debug/zlib.lib")
+#pragma comment(lib, "../x64/debug/opennurbs_staticlib.lib")
 
 #endif // NDEBUG else _DEBUG
 

@@ -189,49 +189,6 @@ namespace Rhino.Render
       return newTexture;
     }
 
-    public enum ShowContentChooserFlags : int
-    {
-      None            = 0x0000,       
-	    HideNewTab      = 0x0001,
-	    HideExistingTab = 0x0002,
-    };
-
-    /// <summary>
-    /// Constructs a new content of the specified type and add it to the persistent content list.
-	  /// This function cannot be used to create temporary content that you delete after use.
-	  /// Content created by this function is owned by RDK and appears in the content editor.
-	  /// To create a temporary content which is owned by you, call RhRdkContentFactories().NewContentFromType().
-    /// </summary>
-    /// <param name="type">Is the type of the content to add.</param>
-    /// <param name="flags">Options for the tab.</param>
-    /// <param name="doc">The current Rhino document.</param>
-    /// <returns>A new persistent render content.</returns>
-    public static RenderContent CreateContentByType(Guid type, ShowContentChooserFlags flags, Rhino.RhinoDoc doc)
-    {
-      IntPtr pContent = UnsafeNativeMethods.Rdk_Globals_CreateContentByType(type, IntPtr.Zero, String.Empty, (int)flags, doc.m_docId);
-      return pContent == IntPtr.Zero ? null : RenderContent.FromPointer(pContent);
-    }
-
-    /// <summary>
-    /// Constructs a new content of the specified type and add it to the persistent content list.
-    /// This function cannot be used to create temporary content that you delete after use.
-    /// Content created by this function is owned by RDK and appears in the content editor.
-    /// To create a temporary content which is owned by you, call RhRdkContentFactories().NewContentFromType().
-    /// </summary>
-    /// <param name="type">is the type of the content to add.</param>
-    /// <param name="parent">Parent is the parent content. If not NULL, this must be an RDK-owned content that is
-    /// in the persistent content list (either top-level or child). The new content then becomes its child.
-    /// If NULL, the new content is added to the top-level content list instead.</param>
-    /// <param name="childSlotName">ChildSlotName is the unique child identifier to use for the new content when creating it as a child of pParent (i.e., when pParent is not NULL)</param>
-    /// <param name="flags">Options for the tab.</param>
-    /// <param name="doc">The current Rhino document.</param>
-    /// <returns>A new persistent render content.</returns>
-    public static RenderContent CreateContentByType(Guid type, RenderContent parent, String childSlotName, ShowContentChooserFlags flags, Rhino.RhinoDoc doc)
-    {
-      IntPtr pContent = UnsafeNativeMethods.Rdk_Globals_CreateContentByType(type, parent.ConstPointer(), childSlotName, (int)flags, doc.m_docId);
-      return pContent == IntPtr.Zero ? null : RenderContent.FromPointer(pContent);
-    }
-
     /*
     /// <summary>
     /// Constructs a new content chosen by the user and add it to the persistent content list.

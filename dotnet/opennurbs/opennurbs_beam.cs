@@ -32,6 +32,33 @@ namespace Rhino.Geometry
     {
     }
     #region statics
+
+    /// <summary>
+    /// Creates an extrusion of a 3d curve (which must be planar) and a height.
+    /// </summary>
+    /// <param name="planarCurve">
+    /// Planar curve used as profile
+    /// </param>
+    /// <param name="height">
+    /// If the height &gt; 0, the bottom of the extrusion will be in plane and
+    /// the top will be height units above the plane.
+    /// If the height &lt; 0, the top of the extrusion will be in plane and
+    /// the bottom will be height units below the plane.
+    /// The plane used is the one that is returned from the curve's TryGetPlane function.
+    /// </param>
+    /// <param name="cap">
+    /// If the curve is closed and cap is true, then the resulting extrusion is capped.
+    /// </param>
+    /// <returns>
+    /// If the input is valid, then a new extrusion is returned. Otherwise null is returned
+    /// </returns>
+    public static Extrusion Create(Curve planarCurve, double height, bool cap)
+    {
+      IntPtr pConstCurve = planarCurve.ConstPointer();
+      IntPtr pExtrusion = UnsafeNativeMethods.ON_Extrusion_CreateFrom3dCurve(pConstCurve, height, cap);
+      return IntPtr.Zero == pExtrusion ? null : new Extrusion(pExtrusion, null);
+    }
+
     /// <summary>
     /// Gets an extrusion form of a cylinder.
     /// </summary>

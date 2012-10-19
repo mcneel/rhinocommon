@@ -2379,7 +2379,7 @@ namespace Rhino.FileIO
 
   /// <summary>
   /// Represents an entity that is capable of reading a binary archive and
-  /// instantiating stringly-typed objects.
+  /// instantiating strongly-typed objects.
   /// </summary>
   public class BinaryArchiveReader
   {
@@ -3146,6 +3146,60 @@ namespace Rhino.FileIO
       return Rhino.Geometry.GeometryBase.CreateGeometryHelper(pGeometry, null);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="version">.3dm file version (2, 3, 4, 5 or 50)</param>
+    /// <param name="comment">
+    /// String with application name, et cetera.  This information is primarily
+    /// used when debugging files that contain problems.  McNeel and Associates
+    /// stores application name, application version, compile date, and the OS
+    /// in use when file was written.
+    /// </param>
+    /// <returns>true on success</returns>
+    public bool Read3dmStartSection(out int version, out string comment)
+    {
+      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      {
+        IntPtr pThis = NonConstPointer();
+        IntPtr pString = sh.NonConstPointer();
+        version = 0;
+        bool rc = UnsafeNativeMethods.ON_BinaryArchive_Read3dmStartSection(pThis, ref version, pString);
+        comment = sh.ToString();
+        return rc;
+      }
+    }
+
+    /// <summary>
+    /// Fnction for studying contents of a file.  The primary use is as an aid
+    /// to help dig through files that have been damaged (bad disks, transmission
+    /// errors, etc.) If an error is found, a line that begins with the word
+    /// "ERROR" is printed.
+    /// </summary>
+    /// <param name="log">log where information is printed to</param>
+    /// <returns>
+    /// 0 if something went wrong, otherwise the typecode of the chunk that
+    /// was just studied.
+    /// </returns>
+    [CLSCompliant(false)]
+    public uint Dump3dmChunk(TextLog log)
+    {
+      IntPtr pThis = NonConstPointer();
+      IntPtr pTextLog = log.NonConstPointer();
+      return UnsafeNativeMethods.ON_BinaryArchive_Dump3dmChunk(pThis, pTextLog, 0);
+    }
+
+    /// <summary>
+    /// true if at end of a file
+    /// </summary>
+    /// <returns></returns>
+    public bool AtEnd()
+    {
+      IntPtr pConstThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_BinaryArchive_AtEnd(pConstThis);
+    }
+
+
     #region dictionary support
     internal bool BeginReadDictionary( out Guid dictionaryId, out uint version, out string name )
     {
@@ -3188,6 +3242,102 @@ namespace Rhino.FileIO
     }
 
     #endregion
+  }
+
+  public enum BinaryArchiveMode : int
+  {
+    Unknown = 0,
+    Read = 1,
+    Write = 2,
+    ReadWrite = 3,
+    Read3dm = 5,
+    Write3dm = 6
+  }
+
+  public class BinaryArchiveFile : IDisposable
+  {
+    string m_filename;
+    BinaryArchiveMode m_mode;
+    IntPtr m_pBinaryFile = IntPtr.Zero;
+
+    BinaryArchiveReader m_reader;
+    BinaryArchiveWriter m_writer;
+
+    public BinaryArchiveFile(string filename, BinaryArchiveMode mode)
+    {
+      m_filename = filename;
+      m_mode = mode;
+    }
+
+    public bool Open()
+    {
+      if( m_pBinaryFile == IntPtr.Zero )
+        m_pBinaryFile = UnsafeNativeMethods.ON_BinaryFile_Open(m_filename, (int)m_mode);
+      return m_pBinaryFile != IntPtr.Zero;
+    }
+
+    public void Close()
+    {
+      UnsafeNativeMethods.ON_BinaryFile_Close(m_pBinaryFile);
+      m_pBinaryFile = IntPtr.Zero;
+      if (m_reader != null)
+        m_reader.ClearPointer();
+      m_reader = null;
+      if (m_writer != null)
+        m_writer.ClearPointer();
+      m_writer = null;
+    }
+
+    IntPtr NonConstPointer()
+    {
+      if (m_pBinaryFile == IntPtr.Zero)
+        throw new BinaryArchiveException("File has not been opened");
+      return m_pBinaryFile;
+    }
+
+    public BinaryArchiveReader Reader
+    {
+      get
+      {
+        if (m_reader == null)
+        {
+          IntPtr pFile = NonConstPointer();
+          if (m_mode != BinaryArchiveMode.Read && m_mode != BinaryArchiveMode.Read3dm && m_mode != BinaryArchiveMode.ReadWrite)
+            throw new BinaryArchiveException("File not created with a read mode");
+          m_reader = new BinaryArchiveReader(pFile);
+        }
+        return m_reader;
+      }
+    }
+
+    public BinaryArchiveWriter Writer
+    {
+      get
+      {
+        if (m_writer == null)
+        {
+          IntPtr pFile = NonConstPointer();
+          if (m_mode != BinaryArchiveMode.Write && m_mode != BinaryArchiveMode.Write3dm && m_mode != BinaryArchiveMode.ReadWrite)
+            throw new BinaryArchiveException("File not created with a write mode");
+          m_writer = new BinaryArchiveWriter(pFile);
+        }
+        return m_writer;
+      }
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~BinaryArchiveFile() { Close(); }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Close();
+      GC.SuppressFinalize(this);
+    }
   }
 
   /// <summary>

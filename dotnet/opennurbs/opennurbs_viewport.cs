@@ -942,7 +942,10 @@ namespace Rhino.DocObjects
       IntPtr pConstThis = ConstPointer();
       if (!UnsafeNativeMethods.ON_Viewport_GetScreenPort(pConstThis, ref left, ref right, ref bottom, ref top, ref near, ref far))
         return System.Drawing.Rectangle.Empty;
-      return System.Drawing.Rectangle.FromLTRB(left, top, right, bottom);
+      // .NET/Windows uses Y down so make sure the top and bottom are passed correctly to Rectangle.FromLTRB()
+      // OpenNurbs appears to by Y-Down and the RDK appears to by Y-Up so this check should ensure a Rectangle
+      // with a positive height.
+      return System.Drawing.Rectangle.FromLTRB(left, top > bottom ? bottom : top, right, top > bottom ? top : bottom);
     }
 
     /// <summary>

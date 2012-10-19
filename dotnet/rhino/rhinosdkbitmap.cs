@@ -1,56 +1,132 @@
 #if RHINO_SDK
+using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 
-//  public class RhinoBitmap { }
-  //class RHINO_SDK_CLASS CRhinoBitmap
-  //{
-  //public:
-  //  /*
-  //  Returns:
-  //    Bitmap name.  When the bitmap is an embedded bitmap file, the
-  //    full path to the file is returned.
-  //  */
-  //  const wchar_t* BitmapName() const;
+namespace Rhino.DocObjects
+{
+  /// <summary>
+  /// Rhino.DocObjects.Tables.BitmapTable entry
+  /// </summary>
+  [Serializable]
+  public class BitmapEntry : Runtime.CommonObject
+  {
+    #region members
+    // Represents both a CRhinoBitmap and an ON_Bitmap. When m_ptr is
+    // null, the object uses m_doc and m_id to look up the const
+    // CRhinoBitmap in the bitmap table.
+#if RHINO_SDK
+    readonly RhinoDoc m_doc;
+#endif
+    readonly int m_index = -1;
+    #endregion
 
-  //  /*
-  //  Description:
-  //    Gets a CRhinoDib of the bitmap
-  //  Parameters:
-  //    dib - [in] if not NULL, the dib is put into this bitmap.
-  //  Returns:
-  //    If successful, a pointer to a CRhinoDib.  The caller
-  //    is responsible for deleting this CRhinoDib.
-  //  */
-  //  class CRhinoDib* Dib( 
-  //    class CRhinoDib* dib = NULL
-  //    ) const;
+    #region constructors
+#if RHINO_SDK
+    internal BitmapEntry(int index, RhinoDoc doc)
+    {
+      m_index = index;
+      m_doc = doc;
+      m__parent = m_doc;
+    }
+#endif
 
-  //  /*
-  //  Description:
-  //    Get array index of the bitmap in the bitmap table.
-  //  Returns:
-  //     -1:  The bitmap is not in the bitmap table
-  //    >=0:  Index of the bitmap in the bitmap table.
-  //  */
-  //  int BitmapTableIndex() const;
+    /// <summary>
+    /// serialization constructor
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="context"></param>
+    protected BitmapEntry(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
 
-  //  // Runtime index used to sort bitmaps in bitmap dialog
-  //  int m_sort_index;   
+    internal BitmapEntry(int index, FileIO.File3dm onxModel)
+    {
+      m_index = index;
+      m__parent = onxModel;
+    }
 
-  //  // Runtime index used when remapping bitmaps for import/export
-  //  int m_remap_index;
+    #endregion
 
-  //  const ON_Bitmap* Bitmap() const;
+    internal override IntPtr _InternalGetConstPointer()
+    {
+      throw new NotImplementedException("Tell steve@mcneel.com if you need access to this method");
+    }
 
-  //[moved to function on Bitmap Table]
-  //  bool ExportToFile( const wchar_t* path ) const;
-  //};
+    internal override IntPtr NonConstPointer()
+    {
+      throw new NotImplementedException("Tell steve@mcneel.com if you need access to this method");
+    }
+
+    internal override IntPtr _InternalDuplicate(out bool applymempressure)
+    {
+      throw new NotImplementedException("Tell steve@mcneel.com if you need access to this method");
+    }
+
+    #region properties
+    /// <summary>The name of this bitmap.</summary>
+    public string FileName
+    {
+      get
+      {
+#if RHINO_SDK
+        if (null != m_doc)
+          using (var sh = new Runtime.StringHolder())
+          {
+            IntPtr pString = sh.NonConstPointer();
+            UnsafeNativeMethods.CRhinoBitmap_GetBitmapName(m_doc.m_docId, m_index, pString);
+            return sh.ToString();
+          }
+#endif
+        return string.Empty;
+      }
+    }
+
+    /// <summary>
+    /// Gets a value indicting whether this bitmap is a referenced bitmap. 
+    /// Referenced bitmaps are part of referenced documents.
+    /// </summary>
+    public bool IsReference
+    {
+      get
+      {
+#if RHINO_SDK
+        if (null == m_doc)
+          return false;
+        return UnsafeNativeMethods.CRhinoBitmap_IsReference(m_doc.m_docId, m_index);
+#else
+        return false;
+#endif
+      }
+    }
+    #endregion
+
+    #region methods
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <returns></returns>
+    public bool Save(string fileName)
+    {
+#if RHINO_SDK
+      if (null != m_doc)
+        return UnsafeNativeMethods.CRhinoBitmap_ExportToFile(m_doc.m_docId, m_index, fileName);
+#endif
+      return false;
+    }
+    #endregion
+  }
+}
 
 namespace Rhino.DocObjects.Tables
 {
   /// <summary>
   /// Stores the list of bitmaps in a Rhino document.
   /// </summary>
-  public sealed class BitmapTable
+  public sealed class BitmapTable : IEnumerable<BitmapEntry>, Rhino.Collections.IRhinoTable<BitmapEntry>
   {
     readonly RhinoDoc m_doc;
     internal BitmapTable(RhinoDoc doc)
@@ -73,58 +149,75 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
-    //  Parameters:
-    //    i - [in] 0 <= i < BitmapTable.Count
-    //  Returns:
-    //    Pointer to bitmap or NULL.
-    //  const CRhinoBitmap* operator[](int i) const;
+    /// <summary>
+    /// Conceptually, the bitmap table is an array of bitmaps.  The operator[]
+    /// can be used to get individual bitmaps.
+    /// </summary>
+    /// <param name="index">zero based array index.</param>
+    /// <returns>
+    /// Reference to the bitmap.  If index is out of range, then null is
+    /// returned. Note that this reference may become invalid after AddBitmap()
+    /// is called.
+    /// </returns>
+    public BitmapEntry this[int index]
+    {
+      get
+      {
+        if (null == Document || index < 0 || index >= Count)
+          return null;
+        return new BitmapEntry(index, Document);
+      }
+    }
 
-    //  const CRhinoBitmap* FindBitmap( 
-    //        ON_UUID bitmap_id,
-    //        bool bIgnoreDeleted = true
-    //        ) const;
-
-    //  Description:
-    //    Get a bitmap.
-    //  Parameters:
-    //    bitmap_name - [in] name of bitmap to search for.  The
-    //       search ignores case.  
-    //    bitmap - [out] if not NULL, then this bitmap
-    //       is filled in.
-    //    bLoadFromFile - [in] if true, and the bitmap is on disk
-    //       but not in the current table, then the bitmap is
-    //       added to the table.     
-    //  Returns:
-    //    NULL if the bitmap could not be found, otherwise a pointer
-    //    to the bitmap is returned.
-    //  const CRhinoBitmap* Bitmap( 
-    //        const wchar_t* bitmap_filename,
-    //        bool bLoadFromFile=false
-    //        ) const;
-
-    //  Description:
-    //    Adds a new bitmap with specified name to the bitmap table.
-    //  Parameters:
-    //    bmi - [in] definition of new bitmap. (Copied into the table.)  
-    //    bits - [in] pointer to bitmap bits.  If NULL, then it will
-    //           be assumed the bitmap bits are after the palette
-    //           in bmi.
-    //    bitmap_filename - [in] If NULL or empty, then a unique name
-    //        of the form "Bitmap 01" will be automatically created.
-    //    bReplaceExisting - [in] If true and the there is alread a bitmap
-    //        using the specified name, then that bitmap is replace.
-    //        If false and there is already a bitmap using the specified
-    //        name, then NULL is returned.
-    //  Returns:
-    //    A pointer to the added bitmap or NULL if the bitmap name
-    //    is in use and bReplaceExisting = false.
-    //  const CRhinoBitmap* AddBitmap( 
-    //     const BITMAPINFO* bmi,
-    //     const void* bits,
-    //     const wchar_t* bitmap_filename = NULL,
-    //     bool bReplaceExisting = false
-    //     );
-
+    /// <summary>
+    /// Use Document.FindFile to search for the specified file name, if the
+    /// file is found on the Rhino search path then fileName will contain the
+    /// full path to the requested file otherwise.  If the file was not found
+    /// then search this BitmapTable for a BitmapEntry that contains the
+    /// specified name and return it.  If the file was not found, the
+    /// createFile flag is set and a BitmapEntry is found then the BitmapEntry
+    /// will get saved to the Rhino bitmap file cache and fileName will contain
+    /// the full path to the cached file.
+    /// </summary>
+    /// <param name="name">
+    /// Name of the file to search for including file extension.
+    /// </param>
+    /// <param name="createFile">
+    /// If this is true, the file is not found on the disk but is found in
+    /// the BitmapTable then the BitmapEntry will get saved to the Rhino bitmap
+    /// file cache and fileName will contain the full path to the cached file.
+    /// </param>
+    /// <param name="fileName">
+    /// The full path to the current location of this file or an empty string
+    /// if the file was not found and/or not extracted successfully.
+    /// </param>
+    /// <returns>
+    /// Returns the BitmapEntry with the specified name if found otherwise;
+    /// returns null.
+    /// </returns>
+    public BitmapEntry Find(string name, bool createFile, out string fileName)
+    {
+      fileName = string.Empty;
+      int index = -1;
+      if (null != Document)
+      {
+        fileName = Document.FindFile(name);
+        if (string.IsNullOrEmpty(fileName))
+          index = UnsafeNativeMethods.CRhinoBitmapTable_BitmapFromFileName(Document.m_docId, name, false);
+        if (createFile && string.IsNullOrEmpty(fileName) && index >= 0)
+        {
+          string tempFileName = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "embedded_files");
+          tempFileName = System.IO.Path.Combine(tempFileName, System.IO.Path.GetFileName(name));
+          if (System.IO.File.Exists(tempFileName))
+            fileName = tempFileName;
+          else if (UnsafeNativeMethods.CRhinoBitmap_ExportToFile(m_doc.m_docId, index, tempFileName))
+            fileName = tempFileName;
+        }
+      }
+      if (index >= 0)
+        return new BitmapEntry(index, m_doc);
+      return null;
+    }
 
     /// <summary>Adds a new bitmap with specified name to the bitmap table.</summary>
     /// <param name="bitmapFilename">
@@ -142,23 +235,6 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoBitmapTable_AddBitmap(m_doc.m_docId, bitmapFilename, replaceExisting);
     }
 
-    //  Description:
-    //    Adds a new bitmap with specified name to the bitmap table.
-    //  Parameters:
-    //    pBitmap - [in] an bitmap created with either 
-    //       new ON_WindowsBitmapEx() or new ON_EmbeddedBitmap().
-    //       If pBitmap->m_name is not set, a name will be provided.
-    //    bReplaceExisting - [in] If true and the there is alread a bitmap
-    //        using the specified name, then that bitmap is replace.
-    //        If false and there is already a bitmap using the specified
-    //        name, then NULL is returned.
-    //  Returns:
-    //    NULL if the bitmap cannot be added or the name is in use.
-    //  const CRhinoBitmap* AddBitmap( 
-    //      ON_Bitmap* pBitmap,
-    //      bool bReplaceExisting = false
-    //      );
-
     /// <summary>Deletes a bitmap.</summary>
     /// <param name="bitmapFilename">The bitmap file name.</param>
     /// <returns>
@@ -169,24 +245,6 @@ namespace Rhino.DocObjects.Tables
     {
       return UnsafeNativeMethods.CRhinoBitmapTable_DeleteBitmap(m_doc.m_docId, bitmapFilename);
     }
-
-    //[skipping]
-    //  void Sort( int (*compare)(const CRhinoBitmap * const *,const CRhinoBitmap * const *,void*),
-
-    //  // Description:
-    //  //   Gets an array of pointers to bitmaps that is sorted by
-    //  //   the values of CRhinoBitmap::m_sort_index.
-    //  // Parameters:
-    //  //   sorted_list - [out] this array is returned with length
-    //  //       BitmapTable.Count and is sorted by the values of
-    //  //       CRhinoBitmap::m_sort_index.
-    //  //   bIgnoreDeleted - [in] TRUE means don't include
-    //  //       deleted bitmaps.
-    //  // Remarks:
-    //  //   Use Sort() to set the values of m_sort_index.
-    //  void GetSortedList(
-    //    ON_SimpleArray<const CRhinoBitmap*>& sorted_list
-    //    ) const;
 
     /// <summary>Exports all the bitmaps in the table to files.</summary>
     /// <param name="directoryPath">
@@ -213,6 +271,22 @@ namespace Rhino.DocObjects.Tables
 
     //[skipping]
     //  void SetRemapIndex( int, // bitmap_index
+
+    #region enumerator
+    /// <summary>
+    /// BitmapTable enumerator
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator<BitmapEntry> GetEnumerator()
+    {
+      return new Collections.TableEnumerator<BitmapTable, BitmapEntry>(this);
+    }
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new Collections.TableEnumerator<BitmapTable, BitmapEntry>(this);
+    }
+    #endregion
+
   }
 }
 #endif

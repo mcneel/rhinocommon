@@ -140,6 +140,7 @@ namespace Rhino.Render
     //public Variant(IntPtr v)                  : this()  { SetValue(v); }
     public Variant(Guid v)                    : this()  { SetValue(v); }
     public Variant(Rhino.Geometry.Transform v): this()  { SetValue(v); }
+    public Variant(byte[] v)                  : this()  { SetValue(v); }
     public Variant(object v) : this() { SetValue(v); }
     public Variant(DateTime v)                : this()  { SetValue(v); }
     #endregion
@@ -231,6 +232,9 @@ namespace Rhino.Render
     public void SetValue(Rhino.Geometry.Transform v)
     { UnsafeNativeMethods.Rdk_Variant_SetXformValue(NonConstPointer(), v); }
 
+    public void SetValue(byte[] v)
+    { UnsafeNativeMethods.Rdk_Variant_SetByteArrayValue(NonConstPointer(), v, null == v ? 0 : v.Length); }
+
     public void SetValue(DateTime v)
     {
       DateTime startTime = new DateTime(1970, 1, 1);
@@ -253,6 +257,7 @@ namespace Rhino.Render
       else if (v is Guid) SetValue((Guid)v);
       else if (v is Rhino.Geometry.Transform) SetValue((Rhino.Geometry.Transform)v);
       else if (v is DateTime) SetValue((DateTime)v);
+      else if (v is byte[]) SetValue((byte[])v);
       else
       {
         throw new InvalidOperationException("Type not supported for Rhino.Rhino.Variant");

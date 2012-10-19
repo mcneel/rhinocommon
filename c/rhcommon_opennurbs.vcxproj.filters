@@ -72,9 +72,6 @@
     <ClCompile Include="on_linecurve.cpp">
       <Filter>c api</Filter>
     </ClCompile>
-    <ClCompile Include="on_massprop.cpp">
-      <Filter>c api</Filter>
-    </ClCompile>
     <ClCompile Include="on_mesh.cpp">
       <Filter>c api</Filter>
     </ClCompile>
@@ -160,6 +157,9 @@
       <Filter>c api</Filter>
     </ClCompile>
     <ClCompile Include="on_rtree.cpp">
+      <Filter>c api</Filter>
+    </ClCompile>
+    <ClCompile Include="on_textlog.cpp">
       <Filter>c api</Filter>
     </ClCompile>
   </ItemGroup>

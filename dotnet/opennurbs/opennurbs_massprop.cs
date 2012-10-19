@@ -1,5 +1,7 @@
 using System;
 
+#if RHINO_SDK
+
 namespace Rhino.Geometry
 {
   /// <summary>
@@ -945,3 +947,5 @@ namespace Rhino.Geometry
     #endregion
   }
 }
+
+#endif

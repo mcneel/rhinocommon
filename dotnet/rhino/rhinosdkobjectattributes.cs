@@ -32,8 +32,6 @@ namespace Rhino.DocObjects
 
     internal override IntPtr _InternalGetConstPointer()
     {
-      uint serial_number = 0;
-      
 #if RHINO_SDK
       Rhino.DocObjects.RhinoObject parent_object = m__parent as Rhino.DocObjects.RhinoObject;
       if (null == parent_object)
@@ -42,14 +40,15 @@ namespace Rhino.DocObjects
         if (parent_model_object != null)
           return parent_model_object.GetAttributesConstPointer();
       }
+      IntPtr pConstParent = IntPtr.Zero;
       if (null != parent_object)
-        serial_number = parent_object.m_rhinoobject_serial_number;
-      return UnsafeNativeMethods.CRhinoObject_Attributes(serial_number);
+        pConstParent = parent_object.ConstPointer();
+      return UnsafeNativeMethods.CRhinoObject_Attributes(pConstParent);
 #else
       Rhino.FileIO.File3dmObject parent_model_object = m__parent as Rhino.FileIO.File3dmObject;
       if (parent_model_object != null)
         return parent_model_object.GetAttributesConstPointer();
-      return UnsafeNativeMethods.CRhinoObject_Attributes(serial_number);
+      return IntPtr.Zero;
 #endif
     }
 

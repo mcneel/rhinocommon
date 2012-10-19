@@ -77,6 +77,18 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_RenderContent_DeleteThis(IntPtr pRenderContent);
 
+  //int Rdk_RenderContent_FieldCount(CRhRdkContent* pContent)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_RenderContent_FieldCount(IntPtr pContent);
+
+  //CRhRdkContentField* Rdk_RenderContent_Field(CRhRdkContent* pContent, int index)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_RenderContent_Field(IntPtr pContent, int index);
+
+  //CRhRdkContentField* Rdk_RenderContent_FindField(CRhRdkContent* pContent, const RHMONO_STRING* _fieldName)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_RenderContent_FindField(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _fieldName);
+
   //void Rdk_RenderContent_ChildSlotNameFromParamName(CRhRdkContent* pContent, const RHMONO_STRING* _sParamName, CRhCmnStringHolder* pSH)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_RenderContent_ChildSlotNameFromParamName(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _sParamName, IntPtr pSH);
@@ -196,6 +208,27 @@ internal partial class UnsafeNativeMethods
   //int Rdk_RenderContent_IsCompatible(const CRhRdkContent* pContent, ON_UUID uuidRenderEngine)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int Rdk_RenderContent_IsCompatible(IntPtr pContent, Guid uuidRenderEngine);
+
+  //void Rdk_SetRenderContentIoDeleteThisCallback(RDK_RENDERCONTENTIO_DELETETHISPROC proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void Rdk_SetRenderContentIoLoadCallback(RDK_RENDERCONTENTIO_LOADPROC proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void Rdk_SetRenderContentIoSaveCallback(RDK_RENDERCONTENTIO_SAVEPROC proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void Rdk_SetRenderContentIoStringCallback(RDK_GETCONTENTIO_STRINGPROC proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //int CRhCmnContentIOPlugIn_New(int serial_number, const RHMONO_STRING* _ext, const RHMONO_STRING* _description, int kind, bool bSave, bool bLoad, ON_UUID pluginId)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhCmnContentIOPlugIn_New(int serial_number, [MarshalAs(UnmanagedType.LPWStr)]string _ext, [MarshalAs(UnmanagedType.LPWStr)]string _description, int kind, [MarshalAs(UnmanagedType.U1)]bool bSave, [MarshalAs(UnmanagedType.U1)]bool bLoad, Guid pluginId);
+
+  //bool Rdk_RenderContentIo_IsExtensionRegistered(const RHMONO_STRING* _ps)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_RenderContentIo_IsExtensionRegistered([MarshalAs(UnmanagedType.LPWStr)]string _ps);
   #endregion
 
 
@@ -239,6 +272,18 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr Rdk_ContentField_New(IntPtr pParent, [MarshalAs(UnmanagedType.LPWStr)]string _pInternal, [MarshalAs(UnmanagedType.LPWStr)]string _pFriendly, int iId);
 
+  //const CRhRdkVariant* Rdk_ContentField_Value(CRhRdkContentField* pField)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_ContentField_Value(IntPtr pField);
+
+  //void Rdk_ContentField_InternalName(CRhRdkContentField* pField, CRhCmnStringHolder* pSH)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_ContentField_InternalName(IntPtr pField, IntPtr pSH);
+
+  //void Rdk_ContentField_FriendlyName(CRhRdkContentField* pField, CRhCmnStringHolder* pSH)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_ContentField_FriendlyName(IntPtr pField, IntPtr pSH);
+
   //void Rdk_ContentField_Delete(CRhRdkContentField* pField)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_ContentField_Delete(IntPtr pField);
@@ -250,6 +295,23 @@ internal partial class UnsafeNativeMethods
   //void Rdk_ContentField_SetStringValue(CRhRdkContentField* pField, const RHMONO_STRING* _pValue, int iCC)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_ContentField_SetStringValue(IntPtr pField, [MarshalAs(UnmanagedType.LPWStr)]string _pValue, int iCC);
+
+  //void Rdk_ContentField_SetByteArrayValue(CRhRdkContentField* pField, /*ARRAY*/const char* buffer, int sizeOfBuffer, int iCC)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_ContentField_SetByteArrayValue(IntPtr pField, byte[] buffer, int sizeOfBuffer, int iCC);
+
+  //int Rdk_ContentField_GetByteArrayValueSize(CRhRdkContentField* pField)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_ContentField_GetByteArrayValueSize(IntPtr pField);
+
+  //bool Rdk_ContentField_GetByteArrayValue(CRhRdkContentField* pField, /*ARRAY*/char* buffer, int sizeOfBuffer)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_ContentField_GetByteArrayValue(IntPtr pField, [In,Out] byte[] buffer, int sizeOfBuffer);
+
+  //int Rdk_ContentField_SetVariantParameter(CRhRdkContentField* pField, const CRhRdkVariant* pV, int iCC)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_ContentField_SetVariantParameter(IntPtr pField, IntPtr pV, int iCC);
 
   //int Rdk_ContentField_BoolValue(CRhRdkContentField* pField)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
@@ -1812,6 +1874,10 @@ internal partial class UnsafeNativeMethods
   //void Rdk_Variant_SetXformValue(CRhRdkVariant* pV, ON_XFORM_STRUCT v)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_Variant_SetXformValue(IntPtr pV, Transform v);
+
+  //void Rdk_Variant_SetByteArrayValue(CRhRdkVariant* pV, /*ARRAY*/const char* buffer, int sizeOfBuffer)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_Variant_SetByteArrayValue(IntPtr pV, byte[] buffer, int sizeOfBuffer);
 
   //void Rdk_Variant_SetTimeValue(CRhRdkVariant* pV, time_t v)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]

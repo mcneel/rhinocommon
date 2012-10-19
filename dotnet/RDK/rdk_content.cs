@@ -1,7 +1,7 @@
 #pragma warning disable 1591
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 
 #if RDK_UNCHECKED
@@ -57,9 +57,6 @@ namespace Rhino.Render
     ModalEditing = 0x0200,
   }
 
-
-
-
   [AttributeUsage(AttributeTargets.Class)]
   public sealed class CustomRenderContentAttribute : System.Attribute
   {
@@ -89,12 +86,11 @@ namespace Rhino.Render
     public bool ImageBased { get; set; }
   }
 
-  // Giulio thinks: this should be marked as [Flags]
   /// <summary>
   /// Defines constant values for all render content kinds, such as material, environment or texture.
   /// </summary>
   [Flags]
-  enum RenderContentKind : int
+  public enum RenderContentKind : int
   {
     None = 0,
     Material = 1,
@@ -169,191 +165,325 @@ namespace Rhino.Render
     #endregion
 
     #region statics
+    public enum ShowContentChooserFlags : int
+    {
+      None = 0x0000,
+      HideNewTab = 0x0001,
+      HideExistingTab = 0x0002,
+    };
+
+    /// <summary>
+    /// Constructs a new content of the specified type and add it to the persistent content list.
+    /// This function cannot be used to create temporary content that you delete after use.
+    /// Content created by this function is owned by RDK and appears in the content editor.
+    /// To create a temporary content which is owned by you, call RhRdkContentFactories().NewContentFromType().
+    /// </summary>
+    /// <param name="type">Is the type of the content to add.</param>
+    /// <param name="flags">Options for the tab.</param>
+    /// <param name="doc">The current Rhino document.</param>
+    /// <returns>A new persistent render content.</returns>
+    public static RenderContent Create(Guid type, ShowContentChooserFlags flags, RhinoDoc doc)
+    {
+      IntPtr pContent = UnsafeNativeMethods.Rdk_Globals_CreateContentByType(type, IntPtr.Zero, String.Empty, (int)flags, doc.m_docId);
+      return pContent == IntPtr.Zero ? null : FromPointer(pContent);
+    }
+
+    /// <summary>
+    /// Constructs a new content of the specified type and add it to the persistent content list.
+    /// This function cannot be used to create temporary content that you delete after use.
+    /// Content created by this function is owned by RDK and appears in the content editor.
+    /// To create a temporary content which is owned by you, call RhRdkContentFactories().NewContentFromType().
+    /// </summary>
+    /// <param name="type">Is the type of the content to add.</param>
+    /// <param name="flags">Options for the tab.</param>
+    /// <param name="doc">The current Rhino document.</param>
+    /// <returns>A new persistent render content.</returns>
+    public static RenderContent Create(Type type, ShowContentChooserFlags flags, RhinoDoc doc)
+    {
+      return Create(type.GUID, flags, doc);
+    }
+
+    /// <summary>
+    /// Constructs a new content of the specified type and add it to the persistent content list.
+    /// This function cannot be used to create temporary content that you delete after use.
+    /// Content created by this function is owned by RDK and appears in the content editor.
+    /// To create a temporary content which is owned by you, call RhRdkContentFactories().NewContentFromType().
+    /// </summary>
+    /// <param name="type">is the type of the content to add.</param>
+    /// <param name="parent">Parent is the parent content. If not NULL, this must be an RDK-owned content that is
+    /// in the persistent content list (either top-level or child). The new content then becomes its child.
+    /// If NULL, the new content is added to the top-level content list instead.</param>
+    /// <param name="childSlotName">ChildSlotName is the unique child identifier to use for the new content when creating it as a child of pParent (i.e., when pParent is not NULL)</param>
+    /// <param name="flags">Options for the tab.</param>
+    /// <param name="doc">The current Rhino document.</param>
+    /// <returns>A new persistent render content.</returns>
+    public static RenderContent Create(Guid type, RenderContent parent, String childSlotName, ShowContentChooserFlags flags, RhinoDoc doc)
+    {
+      IntPtr pContent = UnsafeNativeMethods.Rdk_Globals_CreateContentByType(type, parent.ConstPointer(), childSlotName, (int)flags, doc.m_docId);
+      return pContent == IntPtr.Zero ? null : FromPointer(pContent);
+    }
+
+    /// <summary>
+    /// Constructs a new content of the specified type and add it to the persistent content list.
+    /// This function cannot be used to create temporary content that you delete after use.
+    /// Content created by this function is owned by RDK and appears in the content editor.
+    /// To create a temporary content which is owned by you, call RhRdkContentFactories().NewContentFromType().
+    /// </summary>
+    /// <param name="type">is the type of the content to add.</param>
+    /// <param name="parent">Parent is the parent content. If not NULL, this must be an RDK-owned content that is
+    /// in the persistent content list (either top-level or child). The new content then becomes its child.
+    /// If NULL, the new content is added to the top-level content list instead.</param>
+    /// <param name="childSlotName">ChildSlotName is the unique child identifier to use for the new content when creating it as a child of pParent (i.e., when pParent is not NULL)</param>
+    /// <param name="flags">Options for the tab.</param>
+    /// <param name="doc">The current Rhino document.</param>
+    /// <returns>A new persistent render content.</returns>
+    public static RenderContent Create(Type type, RenderContent parent, String childSlotName, ShowContentChooserFlags flags, RhinoDoc doc)
+    {
+      return Create(type.GUID, parent, childSlotName, flags, doc);
+    }
+
     /// <summary>
     /// Render content is automatically registered for the Assembly that a plug-in is defined in. If
     /// you have content defined in a different assembly (for example a Grasshopper component), then
     /// you need to explicitly call RegisterContent.
     /// </summary>
-    /// <param name="assembly">Assembly where custom content is defined.</param>
+    /// <param name="assembly">
+    /// Assembly where custom content is defined, this may be a plug-in assembly
+    /// or another assembly referenced by the plug-in.
+    /// </param>
     /// <param name="pluginId">Parent plug-in for this assembly.</param>
     /// <returns>array of render content types registered on success. null on error.</returns>
-    public static Type[] RegisterContent(System.Reflection.Assembly assembly, System.Guid pluginId)
+    public static Type[] RegisterContent(Assembly assembly, Guid pluginId)
     {
-      Rhino.PlugIns.PlugIn plugin = Rhino.PlugIns.PlugIn.GetLoadedPlugIn(pluginId);
-      if (plugin == null)
-        return null;
-      Type[] exported_types = assembly.GetExportedTypes();
-      if (exported_types != null)
+      // Check the Rhino plug-in for a RhinoPlugIn with the specified Id
+      var plugin = PlugIns.PlugIn.GetLoadedPlugIn(pluginId);
+      // RhinoPlugIn not found so bail, all content gets associated with a plug-in!
+      if (plugin == null) return null;
+      // Get a list of the publicly exported class types from the requested assembly
+      var exportedTypes = assembly.GetExportedTypes();
+      // Scan the exported class types for RenderContent derived classes
+      var contentTypes = new List<Type>();
+      var renderContentType = typeof (RenderContent);
+      for (int i = 0; i < exportedTypes.Length; i++)
       {
-        List<Type> content_types = new List<Type>();
-        for (int i = 0; i < exported_types.Length; i++)
-        {
-          Type t = exported_types[i];
-          if (!t.IsAbstract && t.IsSubclassOf(typeof(Rhino.Render.RenderContent)) && t.GetConstructor(new Type[] { }) != null)
-            content_types.Add(t);
-        }
-
-        if (content_types.Count == 0)
-          return null;
-
-        // make sure that content types have not already been registered
-        for (int i = 0; i < content_types.Count; i++)
-        {
-          if (RdkPlugIn.RenderContentTypeIsRegistered(content_types[i]))
-            return null; //just bail
-        }
-
-        RdkPlugIn rdk_plugin = RdkPlugIn.GetRdkPlugIn(plugin);
-        if (rdk_plugin == null)
-          return null;
-
-        rdk_plugin.AddRegisteredContentTypes(content_types);
-        int count = content_types.Count;
-        Guid[] ids = new Guid[count];
-        for (int i = 0; i < count; i++)
-        {
-          ids[i] = content_types[i].GUID;
-          if (content_types[i].IsSubclassOf(typeof(RenderTexture)))
-            UnsafeNativeMethods.Rdk_AddTextureFactory(ids[i]);
-          if (content_types[i].IsSubclassOf(typeof(RenderMaterial)))
-            UnsafeNativeMethods.Rdk_AddMaterialFactory(ids[i]);
-          if (content_types[i].IsSubclassOf(typeof(RenderEnvironment)))
-            UnsafeNativeMethods.Rdk_AddEnvironmentFactory(ids[i]);
-        }
-        return content_types.ToArray();
+        var exportedType = exportedTypes[i];
+        // If abstract class or not derived from RenderContent or does not contain a public constructor then skip it
+        if (exportedType.IsAbstract || !exportedType.IsSubclassOf(renderContentType) || exportedType.GetConstructor(new Type[] { }) == null)
+          continue;
+        // Check the class type for a GUID custom attribute
+        var attr = exportedType.GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), false);
+        // If the class does not have a GUID custom attribute then throw an exception
+        if (attr.Length < 1) throw new InvalidDataException("Class \"" + exportedType + "\" must include a GUID attribute");
+        // Add the class type to the content list
+        contentTypes.Add(exportedType);
       }
-      return null;
-    }
+      // If this plug-in does not contain any valid RenderContent derived objects then bail
+      if (contentTypes.Count == 0) return null;
 
+      // make sure that content types have not already been registered
+      foreach (var contentType in contentTypes)
+        if (RdkPlugIn.RenderContentTypeIsRegistered(contentType))
+          return null; // Bail out because this type was previously registered
+
+      // Get the RdkPlugIn associated with this RhinoPlugIn, if it is not in
+      // the RdkPlugIn dictionary it will get added if possible.
+      var rdkPlugIn = RdkPlugIn.GetRdkPlugIn(plugin);
+
+      // Plug-in not found or there was a problem adding it to the dictionary
+      if (rdkPlugIn == null) return null;
+
+      // Append the RdkPlugIn registered content type list
+      rdkPlugIn.AddRegisteredContentTypes(contentTypes);
+
+      // Process the valid class type list and register each class with the
+      // appropriate C++ RDK class factory
+      var textureType = typeof(RenderTexture);
+      var materialType = typeof(RenderMaterial);
+      var enviornmentType = typeof(RenderEnvironment);
+      foreach (var contentType in contentTypes)
+      {
+        var id = contentType.GUID;
+        if (contentType.IsSubclassOf(textureType))
+          UnsafeNativeMethods.Rdk_AddTextureFactory(id);
+        if (contentType.IsSubclassOf(materialType))
+          UnsafeNativeMethods.Rdk_AddMaterialFactory(id);
+        if (contentType.IsSubclassOf(enviornmentType))
+          UnsafeNativeMethods.Rdk_AddEnvironmentFactory(id);
+      }
+
+      // Return an array of the valid content types
+      return contentTypes.ToArray();
+    }
+    /// <summary>
+    /// Search for a C++ pointer of the requested Id
+    /// </summary>
+    /// <param name="instanceId"></param>
+    /// <returns></returns>
     internal static RenderContent FromInstanceId(Guid instanceId)
     {
       IntPtr renderContent = UnsafeNativeMethods.Rdk_FindContentInstance(instanceId);
       if (renderContent == IntPtr.Zero)
         return null;
-
       return FromPointer(renderContent);
     }
-
+    /// <summary>
+    /// Create a .NET object of the appropriate type and attach it to the
+    /// requested C++ pointer
+    /// </summary>
+    /// <param name="renderContent"></param>
+    /// <returns></returns>
     internal static RenderContent FromPointer(IntPtr renderContent)
     {
+      // If null C++ pointer then bail
       if (renderContent == IntPtr.Zero) return null;
-      int serial_number = UnsafeNativeMethods.CRhCmnRenderContent_IsRhCmnDefined(renderContent);
-      if (serial_number > 0)
-        return FromSerialNumber(serial_number);
-
+      // Get the runtime memory serial number for the requested item
+      var serialNumber = UnsafeNativeMethods.CRhCmnRenderContent_IsRhCmnDefined(renderContent);
+      // If the object has been created and not disposed of then return it
+      if (serialNumber > 0) return FromSerialNumber(serialNumber);
+      // Could not find the object in the runtime list so check to see if the C++
+      // pointer is a CRhRdkTexture pointer 
       IntPtr pTexture = UnsafeNativeMethods.Rdk_RenderContent_DynamicCastToTexture(renderContent);
-      if (pTexture != IntPtr.Zero)
-        return new NativeRenderTexture(pTexture);
-
+      // Is a RenderTexture so create one and attach it to the requested C++ pointer
+      if (pTexture != IntPtr.Zero) return new NativeRenderTexture(pTexture);
+      // Check to see if the C++ pointer is a CRhRdkMaterial pointer
       IntPtr pMaterial = UnsafeNativeMethods.Rdk_RenderContent_DynamicCastToMaterial(renderContent);
-      if (pMaterial != IntPtr.Zero)
-        return new NativeRenderMaterial(pMaterial);
-
+      // It is a RenderMaterial so create one and attach it to the requested C++ pointer
+      if (pMaterial != IntPtr.Zero) return new NativeRenderMaterial(pMaterial);
+      // Check to see if the C++ pointer is a CRhRdkEnviornmen pointer
       IntPtr pEnvironment = UnsafeNativeMethods.Rdk_RenderContent_DynamicCastToEnvironment(renderContent);
-      if (pEnvironment != IntPtr.Zero)
-        return new NativeRenderEnvironment(pEnvironment);
-
+      // It is a RenderEnviornment so create one and attach it to the requested C++ pointer
+      if (pEnvironment != IntPtr.Zero) return new NativeRenderEnvironment(pEnvironment);
       //This should never, ever, happen.
-
-      Debug.Assert(false);
-      return null;
+      throw new InvalidCastException("renderContent Pointer is not of a recognized type");
     }
     #endregion
 
     // -1 == Disposed content
+    /// <summary>
+    /// Serial number of the created object, valid values:
+    ///   -1  == OnDeleteRhCmnRenderContent() was called with this serial number
+    ///   >0  == Value set by the constructor
+    /// </summary>
     internal int m_runtime_serial_number;// = 0; initialized by runtime
+    /// <summary>
+    /// The next allocation serial number
+    /// </summary>
     static int m_current_serial_number = 1;
+    /// <summary>
+    /// I think this is the index to start the search from if we have an
+    /// idea as to where to start looking.
+    /// </summary>
     private int m_search_hint = -1;
-    static readonly Dictionary<int, RenderContent> m_all_custom_content = new Dictionary<int, RenderContent>();
-
-    // you never derive directly from RenderContent
-    internal RenderContent(bool isCustomContent)
+    /// <summary>
+    /// Contains a list of objects with a m_runtime_serial_number > 0,
+    /// OnDeleteRhCmnRenderContent() will remove objects from the dictionary
+    /// by m_runtime_serial_number.
+    /// </summary>
+    static readonly Dictionary<int, RenderContent> m_CustomContentDictionary = new Dictionary<int, RenderContent>();
+    /// <summary>
+    /// Rhino.Render.Fields FieldDictionary which provides access to setting
+    /// and retrieving field values.
+    /// </summary>
+    private Fields.FieldDictionary m_FieldDictionary;
+    /// <summary>
+    /// Rhino.Render.Fields FieldDictionary which provides access to setting
+    /// and retrieving field values.
+    /// </summary>
+    public Fields.FieldDictionary Fields
+    {
+      get { return m_FieldDictionary ?? (m_FieldDictionary = new Fields.FieldDictionary(this)); }
+    }
+    /// <summary>
+    /// Check to see if the class is defined by RhinoCommon or some other
+    /// assembly.
+    /// </summary>
+    /// <returns>
+    /// If the class assembly type is equal to the RhinoCommon assembly then
+    /// return true  indicating native content otherwise return false
+    /// indicating custom content.
+    /// </returns>
+    protected bool ClassDefinedInRhinoCommon()
+    {
+      var renderContent = typeof (RenderContent);
+      var classType = GetType();
+      return renderContent.Assembly.Equals(classType.Assembly);
+    }
+    /// <summary>
+    /// Check to see if the class type assembly is something other than
+    /// RhinoCommon.
+    /// </summary>
+    /// <returns>
+    /// Return true if the class definition resides in an assembly other than
+    /// RhinoCommon otherwise return false because it is native content.
+    /// </returns>
+    protected bool IsCustomClassDefintion()
+    {
+      return !ClassDefinedInRhinoCommon();
+    }
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    internal RenderContent()
     {
       // This constructor is being called because we have a custom .NET subclass
-      if (isCustomContent)
+      if (IsCustomClassDefintion())
       {
         m_runtime_serial_number = m_current_serial_number++;
-        m_all_custom_content.Add(m_runtime_serial_number, this);
+        m_CustomContentDictionary.Add(m_runtime_serial_number, this);
       }
-    }
-
-    internal void Construct(Guid pluginId)
-    {
-      Type t = GetType();
-      Guid render_engine = Guid.Empty;
-      bool image_based = false;
-      object[] attr = t.GetCustomAttributes(typeof(CustomRenderContentAttribute), false);
-      if (attr != null && attr.Length > 0)
+      // Find the plug-in that registered this class type
+      var type = GetType();
+      var typeId = type.GUID;
+      Guid pluginId;
+      RdkPlugIn.GetRenderContentType(typeId, out pluginId);
+      if (Guid.Empty == pluginId) return;
+      // Get information from custom class attributes
+      var renderEngine = Guid.Empty;
+      var imageBased = false;
+      var attr = type.GetCustomAttributes(typeof(CustomRenderContentAttribute), false);
+      if (attr.Length > 0)
       {
-        CustomRenderContentAttribute custom = attr[0] as CustomRenderContentAttribute;
+        var custom = attr[0] as CustomRenderContentAttribute;
         if (custom != null)
         {
-          image_based = custom.ImageBased;
-          render_engine = custom.RenderEngineId;
+          imageBased = custom.ImageBased;
+          renderEngine = custom.RenderEngineId;
         }
       }
+      // Crete C++ pointer of the appropriate type
       const int category = 0;
-      Guid type_id = t.GUID;
-
       if (this is RenderTexture)
-      {
-        UnsafeNativeMethods.CRhCmnTexture_New(m_runtime_serial_number, image_based, render_engine, pluginId, type_id, category);
-      }
+        UnsafeNativeMethods.CRhCmnTexture_New(m_runtime_serial_number, imageBased, renderEngine, pluginId, typeId, category);
       else if (this is RenderMaterial)
-      {
-        UnsafeNativeMethods.CRhCmnMaterial_New(m_runtime_serial_number, image_based, render_engine, pluginId, type_id, category);
-      }
+        UnsafeNativeMethods.CRhCmnMaterial_New(m_runtime_serial_number, imageBased, renderEngine, pluginId, typeId, category);
       else if (this is RenderEnvironment)
-      {
-        UnsafeNativeMethods.CRhCmnEnvironment_New(m_runtime_serial_number, image_based, render_engine, pluginId, type_id, category);
-      }
+        UnsafeNativeMethods.CRhCmnEnvironment_New(m_runtime_serial_number, imageBased, renderEngine, pluginId, typeId, category);
       else
-      {
-        Debug.Assert(false);
-      }
-
-      const BindingFlags flags = System.Reflection.BindingFlags.Public |
-                                 System.Reflection.BindingFlags.NonPublic |
-                                 System.Reflection.BindingFlags.Instance;
-      System.Reflection.FieldInfo[] fields = t.GetFields(flags);
-      if (fields != null)
-      {
-        for (int i = 0; i < fields.Length; i++)
-        {
-          if (fields[i].FieldType.IsSubclassOf(typeof(Field)))
-          {
-            Field f = fields[i].GetValue(this) as Field;
-            if (f != null)
-            {
-              bool visibleInUi = m_autoui_fields.Contains(f);
-              f.CreateCppPointer(this, visibleInUi);
-            }
-          }
-        }
-      }
+        throw new InvalidCastException("Content is of unknown type");
     }
-
+    /// <summary>
+    /// Internal method used to get string values from the C++ SDK
+    /// </summary>
+    /// <param name="which">Id of string value to get</param>
+    /// <returns>Returns the requested string value.</returns>
     internal string GetString(StringIds which)
     {
       IntPtr pConstThis = ConstPointer();
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (Runtime.StringHolder sh = new Runtime.StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.Rdk_RenderContent_GetString(pConstThis, pString, (int)which);
         return sh.ToString();
       }
     }
-
     /// <summary>
     /// Override this method to provide a name for your content type.  ie. "My .net Texture"
     /// </summary>
     public abstract String TypeName { get; }
-
     /// <summary>
     /// Override this method to provide a description for your content type.  ie.  "Procedural checker pattern"
     /// </summary>
     public abstract String TypeDescription { get; }
-
     // <summary>
     // Returns either KindMaterial, KindTexture or KindEnvironment.
     // </summary>
@@ -411,7 +541,7 @@ namespace Rhino.Render
 
     // Hiding for the time being. It may be better to just have a Document property
     /// <summary>
-    /// Returns true if this content is a resident of one of the persistant lists.
+    /// Returns true if this content is a resident of one of the persistent lists.
     /// </summary>
     /*public*/ bool InDocument
     {
@@ -489,186 +619,6 @@ namespace Rhino.Render
         UnsafeNativeMethods.Rdk_CallAddUISectionsBase(NonConstPointer());
       }
     }
-
-    // <summary>
-    // If you want an automatic user interface to be constructed for a field,
-    // call this function in your class constructor.
-    // </summary>
-    // <param name="f">A constructed field.</param>
-    //protected void AddAutomaticUiField(Field f)
-    //{
-    //  m_autoui_fields.Add(f);
-    //}
-
-    protected void AddUserInterfaceField(string internalName, string friendlyName, string initialFieldValue)
-    {
-      m_autoui_fields.Add(new StringField(internalName, friendlyName, initialFieldValue));
-    }
-    protected void AddUserInterfaceField(string internalName, string friendlyName, bool initialFieldValue)
-    {
-      m_autoui_fields.Add(new BoolField(internalName, friendlyName, initialFieldValue));
-    }
-    protected void AddUserInterfaceField(string internalName, string friendlyName, int initialFieldValue)
-    {
-      m_autoui_fields.Add(new IntField(internalName, friendlyName, initialFieldValue));
-    }
-    protected void AddUserInterfaceField(string internalName, string friendlyName, double initialFieldValue)
-    {
-      m_autoui_fields.Add(new DoubleField(internalName, friendlyName, initialFieldValue));
-    }
-    protected void AddUserInterfaceField(string internalName, string friendlyName, Rhino.Display.Color4f initialFieldValue)
-    {
-      m_autoui_fields.Add(new ColorField(internalName, friendlyName, initialFieldValue));
-    }
-    protected void AddUserInterfaceField(string internalName, string friendlyName, Rhino.Geometry.Vector2d initialFieldValue)
-    {
-      m_autoui_fields.Add(new Vector2dField(internalName, friendlyName, initialFieldValue));
-    }
-    protected void AddUserInterfaceField(string internalName, string friendlyName, Rhino.Geometry.Vector3d initialFieldValue)
-    {
-      m_autoui_fields.Add(new Vector3dField(internalName, friendlyName, initialFieldValue));
-    }
-    protected void AddUserInterfaceField(string internalName, string friendlyName, Rhino.Geometry.Point2d initialFieldValue)
-    {
-      m_autoui_fields.Add(new Vector2dField(internalName, friendlyName, initialFieldValue));
-    }
-    protected void AddUserInterfaceField(string internalName, string friendlyName, Rhino.Geometry.Point3d initialFieldValue)
-    {
-      m_autoui_fields.Add(new Vector3dField(internalName, friendlyName, initialFieldValue));
-    }
-    protected void AddUserInterfaceField(string internalName, string friendlyName, Rhino.Geometry.Point4d initialFieldValue)
-    {
-      m_autoui_fields.Add(new Point4dField(internalName, friendlyName, initialFieldValue));
-    }
-    protected void AddUserInterfaceField(string internalName, string friendlyName, Guid initialFieldValue)
-    {
-      m_autoui_fields.Add(new GuidField(internalName, friendlyName, initialFieldValue));
-    }
-    protected void AddUserInterfaceField(string internalName, string friendlyName, Rhino.Geometry.Transform initialFieldValue)
-    {
-      m_autoui_fields.Add(new TransformField(internalName, friendlyName, initialFieldValue));
-    }
-    protected void AddUserInterfaceField(string internalName, string friendlyName, DateTime initialFieldValue)
-    {
-      m_autoui_fields.Add(new DateTimeField(internalName, friendlyName, initialFieldValue));
-    }
-
-    Field FindField(string name)
-    {
-      for (int i = 0; i < m_autoui_fields.Count; i++)
-      {
-        if( string.Compare(name, m_autoui_fields[i].InternalName, StringComparison.OrdinalIgnoreCase)==0 )
-          return m_autoui_fields[i];
-      }
-      return null;
-    }
-
-    protected bool TryGetUserInterfaceField(string internalName, out string fieldValue)
-    {
-      fieldValue = String.Empty;
-      StringField f = FindField(internalName) as StringField;
-      if( f!=null )
-        fieldValue = f.Value;
-      return f!=null;
-    }
-    protected bool TryGetUserInterfaceField(string internalName, out bool fieldValue)
-    {
-      fieldValue = false;
-      BoolField f = FindField(internalName) as BoolField;
-      if (f != null)
-        fieldValue = f.Value;
-      return f != null;
-    }
-    protected bool TryGetUserInterfaceField(string internalName, out int fieldValue)
-    {
-      fieldValue = 0;
-      IntField f = FindField(internalName) as IntField;
-      if (f != null)
-        fieldValue = f.Value;
-      return f != null;
-    }
-    protected bool TryGetUserInterfaceField(string internalName, out double fieldValue)
-    {
-      fieldValue = 0;
-      DoubleField f = FindField(internalName) as DoubleField;
-      if (f != null)
-        fieldValue = f.Value;
-      return f != null;
-    }
-    protected bool TryGetUserInterfaceField(string internalName, out Rhino.Display.Color4f fieldValue)
-    {
-      fieldValue = Rhino.Display.Color4f.Empty;
-      ColorField f = FindField(internalName) as ColorField;
-      if (f != null)
-        fieldValue = f.Value;
-      return f != null;
-    }
-    protected bool TryGetUserInterfaceField(string internalName, out Rhino.Geometry.Vector2d fieldValue)
-    {
-      fieldValue = Rhino.Geometry.Vector2d.Unset;
-      var f = FindField(internalName) as Vector2dField;
-      if (f != null)
-        fieldValue = f.Value;
-      return f != null;
-    }
-    protected bool TryGetUserInterfaceField(string internalName, out Rhino.Geometry.Vector3d fieldValue)
-    {
-      fieldValue = Rhino.Geometry.Vector3d.Unset;
-      var f = FindField(internalName) as Vector3dField;
-      if (f != null)
-        fieldValue = f.Value;
-      return f != null;
-    }
-    protected bool TryGetUserInterfaceField(string internalName, out Rhino.Geometry.Point2d fieldValue)
-    {
-      fieldValue = Rhino.Geometry.Point2d.Unset;
-      var f = FindField(internalName) as Vector2dField;
-      if (f != null)
-        fieldValue = new Geometry.Point2d(f.Value);
-      return f != null;
-    }
-    protected bool TryGetUserInterfaceField(string internalName, out Rhino.Geometry.Point3d fieldValue)
-    {
-      fieldValue = Rhino.Geometry.Point3d.Unset;
-      var f = FindField(internalName) as Vector3dField;
-      if (f != null)
-        fieldValue = new Geometry.Point3d(f.Value);
-      return f != null;
-    }
-    protected bool TryGetUserInterfaceField(string internalName, out Rhino.Geometry.Point4d fieldValue)
-    {
-      fieldValue = Rhino.Geometry.Point4d.Unset;
-      var f = FindField(internalName) as Point4dField;
-      if (f != null)
-        fieldValue = f.Value;
-      return f != null;
-    }
-    protected bool TryGetUserInterfaceField(string internalName, out Guid fieldValue)
-    {
-      fieldValue = Guid.Empty;
-      var f = FindField(internalName) as GuidField;
-      if (f != null)
-        fieldValue = f.Value;
-      return f != null;
-    }
-    protected bool TryGetUserInterfaceField(string internalName, out Rhino.Geometry.Transform fieldValue)
-    {
-      fieldValue = Rhino.Geometry.Transform.Identity;
-      var f = FindField(internalName) as TransformField;
-      if (f != null)
-        fieldValue = f.Value;
-      return f != null;
-    }
-    protected bool TryGetUserInterfaceField(string internalName, out DateTime fieldValue)
-    {
-      fieldValue = DateTime.Now;
-      var f = FindField(internalName) as DateTimeField;
-      if (f != null)
-        fieldValue = f.Value;
-      return f != null;
-    }
-
-    readonly List<Field> m_autoui_fields = new List<Field>();
 
     public bool AddUserInterfaceSection(string caption, int id)
     {
@@ -818,36 +768,8 @@ namespace Rhino.Render
       Serialize = 7,
     }
 
-    public void SetNamedParameter<T>(String parameterName, T value, ChangeContexts changeContext)
-    {
-      if (1 != UnsafeNativeMethods.Rdk_RenderContent_SetVariantParameter(ConstPointer(), parameterName, new Variant(value).ConstPointer(), (int)changeContext))
-      {
-        throw new InvalidOperationException("SetNamedParamter doesn't support this type.");
-      }
-    }
-
-    /*public*/ object GetNamedParameter(String parameterName)
-    {
-      Rhino.Render.Variant variant = new Variant();
-      if (IsNativeWrapper())
-      {
-        if (1==UnsafeNativeMethods.Rdk_RenderContent_GetVariantParameter(ConstPointer(), parameterName, variant.NonConstPointer()))
-        {
-          return variant;
-        }
-      }
-      else
-      {
-        if (1 == UnsafeNativeMethods.Rdk_RenderContent_CallGetVariantParameterBase(ConstPointer(), parameterName, variant.NonConstPointer()))
-        {
-          return variant;
-        }
-      }
-      throw new InvalidOperationException("Type not supported.");
-    }
-
     /// <summary>
-    /// See C++ RDK documentation - this is a passthrough function that gives access to your own
+    /// See C++ RDK documentation - this is a pass through function that gives access to your own
     /// native shader.  .NET clients will more likely simply check the type of their content and call their own
     /// shader access functions
     /// If you overide this function, you must ensure that you call "IsCompatible" and return IntPtr.Zero is that returns false.
@@ -877,15 +799,15 @@ namespace Rhino.Render
     /// </summary>
     /// <param name="paramName">The name of a parameter field. Since child textures will usually correspond with some
     ///parameter (they generally either replace or modify a parameter over UV space) these functions are used to
-    ///specify which parameter corresponded with with child slot.  If there is no correspondance, return the empty
+    ///specify which parameter corresponded with child slot.  If there is no correspondence, return the empty
     ///string.</param>
     /// <returns>
-    /// The default behaviour for these functions is to return the input string.
+    /// The default behavior for these functions is to return the input string.
     /// Sub-classes may (in the future) override these functions to provide different mappings.
     /// </returns>
     public string ChildSlotNameFromParamName(String paramName)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (Runtime.StringHolder sh = new Runtime.StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         IntPtr pConstThis = ConstPointer();
@@ -931,6 +853,46 @@ namespace Rhino.Render
     #endregion
 
     #region C++->C# Callbacks
+
+    /// <summary>
+    /// Function pointer to pass to the C++ wrapper, there is one of these for 
+    /// each of RenderMaterail, RenderTexture and RenderEnvironment.
+    /// </summary>
+    /// <param name="typeId">Class type GUID custom attribute</param>
+    /// <returns>Returns a new C++ pointer of the requested content type.</returns>
+    internal delegate IntPtr NewRenderContentCallbackEvent(Guid typeId);
+    /// <summary>
+    /// Create content from type Id, called by the NewRenderContentCallbackEvent
+    /// methods to create a .NET object pointer of a specific type from a class
+    /// type Guid.
+    /// </summary>
+    /// <param name="typeId">The class GUID property to look up</param>
+    /// <param name="isSubclassOf">The created content must be this type</param>
+    /// <returns>Valid content object if the typeId is found otherwise null.</returns>
+    static protected RenderContent NewRenderContent(Guid typeId, Type isSubclassOf)
+    {
+      Type renderContentType = typeof(RenderContent);
+      // If the requested type is not derived from RenderContent
+      if (!isSubclassOf.IsSubclassOf(renderContentType)) throw new InvalidCastException();
+      // The class is at least derived from RenderContent so continue to try 
+      // an create and instance of it.
+      try
+      {
+        // Ask the RDK plug-in manager for the class Type to create and the
+        // plug-in that registered the class type.
+        Guid pluginId;
+        var type = RdkPlugIn.GetRenderContentType(typeId, out pluginId);
+        // If the requested typeId was found and is derived from the requested
+        // type then create an instance of the class.
+        if (null != type && !type.IsAbstract && type.IsSubclassOf(isSubclassOf))
+          return Activator.CreateInstance(type) as RenderContent;
+      }
+      catch (Exception exception)
+      {
+        Runtime.HostUtils.ExceptionReport(exception);
+      }
+      return null;
+    }
 
     internal delegate bool IsContentTypeAcceptableAsChildCallback(int serialNumber, Guid type, IntPtr childSlotName);
     internal static IsContentTypeAcceptableAsChildCallback m_IsContentTypeAcceptableAsChild = OnIsContentTypeAcceptableAsChild;
@@ -993,7 +955,7 @@ namespace Rhino.Render
         if (content != null)
         {
           content.m_runtime_serial_number = -1;
-          m_all_custom_content.Remove(serialNumber);
+          m_CustomContentDictionary.Remove(serialNumber);
         }
       }
       catch (Exception ex)
@@ -1041,8 +1003,6 @@ namespace Rhino.Render
     }
 
     #endregion
-
-
 
     #region events
 
@@ -1518,7 +1478,7 @@ namespace Rhino.Render
     internal static RenderContent FromSerialNumber(int serial_number)
     {
       RenderContent rc;
-      m_all_custom_content.TryGetValue(serial_number, out rc);
+      m_CustomContentDictionary.TryGetValue(serial_number, out rc);
       return rc;
     }
 
@@ -1533,9 +1493,9 @@ namespace Rhino.Render
       return pContent;
     }
 
-    internal virtual bool IsNativeWrapper()
+    internal bool IsNativeWrapper()
     {
-      return false;
+      return ClassDefinedInRhinoCommon();
     }
     #endregion
 
@@ -1553,6 +1513,11 @@ namespace Rhino.Render
 
     protected virtual void Dispose(bool disposing)
     {
+      if (null != m_FieldDictionary)
+      {
+        m_FieldDictionary.InternalDispose();
+        m_FieldDictionary = null;
+      }
       if (m_bAutoDelete)
       {
         UnsafeNativeMethods.Rdk_RenderContent_DeleteThis(NonConstPointer());

@@ -96,22 +96,22 @@ namespace Rhino.Geometry
     {
       using (Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer geometry = new Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer())
       {
-      IntPtr pParentRhinoObject = IntPtr.Zero;
+        IntPtr pParentRhinoObject = IntPtr.Zero;
 
 #if RHINO_SDK
-      if (IsDocumentControlled)
-      {
-        Rhino.DocObjects.RhinoObject rhobj = ParentRhinoObject();
-        if (rhobj != null)
-          pParentRhinoObject = rhobj.ConstPointer();
-      }
+        if (IsDocumentControlled)
+        {
+          Rhino.DocObjects.RhinoObject rhobj = ParentRhinoObject();
+          if (rhobj != null)
+            pParentRhinoObject = rhobj.ConstPointer();
+        }
 #endif
-      IntPtr pGeometryArray = geometry.NonConstPointer();
-      IntPtr pConstThis = ConstPointer();
+        IntPtr pGeometryArray = geometry.NonConstPointer();
+        IntPtr pConstThis = ConstPointer();
 
-      UnsafeNativeMethods.ON_Hatch_Explode(pConstThis, pParentRhinoObject, pGeometryArray);
-      GeometryBase[] rc = geometry.ToNonConstArray();
-      return rc;
+        UnsafeNativeMethods.ON_Hatch_Explode(pConstThis, pParentRhinoObject, pGeometryArray);
+        GeometryBase[] rc = geometry.ToNonConstArray();
+        return rc;
       }
     }
 

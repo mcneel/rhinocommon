@@ -111,6 +111,7 @@
     <Compile Include="ex_explodehatch.cs" />
     <Compile Include="ex_findobjectsbyname.cs" />
     <Compile Include="ex_constrainedcopy.cs" />
+    <Compile Include="ex_getmultiplewithoptions.cs" />
     <Compile Include="ex_gumball.cs" />
     <Compile Include="ex_hatchcurve.cs" />
     <Compile Include="ex_insertknot.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="ex_isbrepbox.cs" />
     <Compile Include="ex_isocurvedensity.cs" />
     <Compile Include="ex_movecplane.cs" />
+    <Compile Include="ex_nestedblock.cs" />
     <Compile Include="ex_objectdecoration.cs" />
     <Compile Include="ex_objectdisplaymode.cs" />
     <Compile Include="ex_objectlayer.cs" />

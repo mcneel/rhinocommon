@@ -584,6 +584,9 @@ namespace Rhino.DocObjects.Tables
     /// <returns>
     /// &gt;=0  index of instance definition in the instance definition table. -1 on failure.
     /// </returns>
+    /// <example>
+    /// <code source='examples\cs\ex_nestedblock.cs' lang='cs'/>
+    /// </example>
     public int Add(string name, string description, Point3d basePoint, IEnumerable<GeometryBase> geometry)
     {
       return Add(name, description, basePoint, geometry, null);

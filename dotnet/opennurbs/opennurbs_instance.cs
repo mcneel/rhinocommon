@@ -82,6 +82,20 @@ namespace Rhino.Geometry
   /// </summary>
   public class InstanceReferenceGeometry : GeometryBase
   {
+    /// <summary>
+    /// Constructor used when creating nested instance references.
+    /// </summary>
+    /// <param name="instanceDefinitionId"></param>
+    /// <param name="transform"></param>
+    /// <example>
+    /// <code source='examples\cs\ex_nestedblock.cs' lang='cs'/>
+    /// </example>
+    public InstanceReferenceGeometry(Guid instanceDefinitionId, Transform transform)
+    {
+      IntPtr ptr = UnsafeNativeMethods.ON_InstanceRef_New(instanceDefinitionId, ref transform);
+      ConstructNonConstObject(ptr);
+    }
+
     internal InstanceReferenceGeometry(IntPtr native_ptr, object parent)
       : base(native_ptr, parent, -1)
     { }

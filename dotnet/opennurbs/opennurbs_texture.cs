@@ -36,7 +36,7 @@ namespace Rhino.DocObjects
     }
 #endif
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
     internal Texture(Rhino.Render.SimulatedTexture parent)
     {
       m__parent = parent;
@@ -61,7 +61,7 @@ namespace Rhino.DocObjects
         return UnsafeNativeMethods.ON_Material_GetTexturePointer(pMaterial, m_index);
       }
 #endif
-#if RDK_UNCHECKED
+#if RDK_CHECKED
       Rhino.Render.SimulatedTexture parent_simulated_texture = m__parent as Rhino.Render.SimulatedTexture;
       if (parent_simulated_texture != null)
       {

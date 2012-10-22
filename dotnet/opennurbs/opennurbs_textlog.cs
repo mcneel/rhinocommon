@@ -111,7 +111,8 @@ namespace Rhino.FileIO
     /// <summary>
     /// Send formatted text to the textlog
     /// </summary>
-    /// <param name="text"></param>
+    /// <param name="format"></param>
+    /// <param name="arg0"></param>
     public void Print(string format, object arg0)
     {
       Print(string.Format(format, arg0));
@@ -119,7 +120,9 @@ namespace Rhino.FileIO
     /// <summary>
     /// Send formatted text to the textlog
     /// </summary>
-    /// <param name="text"></param>
+    /// <param name="format"></param>
+    /// <param name="arg0"></param>
+    /// <param name="arg1"></param>
     public void Print(string format, object arg0, object arg1)
     {
       Print(string.Format(format, arg0, arg1));

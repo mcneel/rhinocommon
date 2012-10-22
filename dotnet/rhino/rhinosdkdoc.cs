@@ -3978,6 +3978,15 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="instanceDefinitionIndex"></param>
+    /// <param name="instanceXform"></param>
+    /// <returns></returns>
+    /// <example>
+    /// <code source='examples\cs\ex_nestedblock.cs' lang='cs'/>
+    /// </example>
     public Guid AddInstanceObject(int instanceDefinitionIndex, Transform instanceXform)
     {
       return UnsafeNativeMethods.CRhinoDoc_AddInstanceObject(m_doc.m_docId, instanceDefinitionIndex, ref instanceXform, IntPtr.Zero);

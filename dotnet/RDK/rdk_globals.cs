@@ -151,19 +151,6 @@ namespace Rhino.Render
 
         
     /// <summary>
-    /// Constructs a new basic material from a <see cref="Rhino.DocObjects.Material">Material</see>.
-    /// </summary>
-    /// <param name="material">The material to create the basic material from.</param>
-    /// <returns>A new basic material.</returns>
-    public static RenderMaterial NewBasicMaterial(Rhino.DocObjects.Material material)
-    {
-      NativeRenderMaterial newMaterial = RenderContent.FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicMaterial(material == null ? IntPtr.Zero : material.ConstPointer())) as NativeRenderMaterial;
-      if( newMaterial!=null )
-        newMaterial.AutoDelete = true;
-      return newMaterial;
-    }
-
-    /// <summary>
     /// Constructs a new <see cref="RenderEnvironment"/> from a <see cref="SimulatedEnvironment"/>.
     /// </summary>
     /// <param name="environment">The environment to create the basic environment from.</param>
@@ -295,35 +282,6 @@ namespace Rhino.Render
       return IntPtr.Zero == pContent ? RenderContent.FromPointer(pContent) : null;
     }
 
-    /// <summary>
-    /// Loads a content from a library file.  Does not add the content to the persistent content list.  Use AddPersistantContent to add it to the list.
-    /// </summary>
-    /// <param name="filename">is the full path to the file to be loaded.</param>
-    /// <returns>The loaded content or null if an error occurred.</returns>
-    public static RenderContent LoadRenderContentFromFile(String filename)
-    {
-      IntPtr pContent = UnsafeNativeMethods.Rdk_RenderContent_LoadContentFromFile(filename);
-      if (pContent == IntPtr.Zero)
-        return null;
-
-      RenderContent newContent = RenderContent.FromPointer(pContent);
-      newContent.AutoDelete = true;
-      return newContent;
-    }
-
-    /// <summary>
-    /// Use this function to add a material, environment or texture to the internal
-    /// RDK document lists as a top level content.  The content must have been returned from
-    /// RenderContent::MakeCopy, NewContentFromType or a similar function that returns a non-document
-    /// content.
-    /// </summary>
-    /// <param name="renderContent">The render content.</param>
-    /// <returns>true on success.</returns>
-    public static bool AddPersistentRenderContent(RenderContent renderContent)
-    {
-      renderContent.AutoDelete = false;
-      return 1 == UnsafeNativeMethods.Rdk_Globals_AddPersistentContent(renderContent.ConstPointer());
-    }
 
     public enum ShowContentChooserResults
     {

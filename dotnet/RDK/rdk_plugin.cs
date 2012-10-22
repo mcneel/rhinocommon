@@ -21,6 +21,7 @@ namespace Rhino.Render
         UnsafeNativeMethods.Rdk_SetNewEnvironmentCallback(RenderEnvironment.m_NewEnvironmentCallback);
 
         UnsafeNativeMethods.Rdk_SetRenderContentDeleteThisCallback(RenderContent.m_DeleteThis);
+        UnsafeNativeMethods.Rdk_SetRenderContentBitFlagsCallback(RenderContent.m_BitFlags);
         UnsafeNativeMethods.Rdk_SetContentStringCallback(RenderContent.m_GetRenderContentString);
         UnsafeNativeMethods.Rdk_SetNewTextureEvaluatorCallback(RenderTexture.m_NewTextureEvaluator);
         UnsafeNativeMethods.Rdk_SetTextureEvaluatorCallbacks(TextureEvaluator.m_GetColor, TextureEvaluator.m_OnDeleteThis);
@@ -65,6 +66,7 @@ namespace Rhino.Render
           UnsafeNativeMethods.Rdk_SetNewEnvironmentCallback(null);
 
           UnsafeNativeMethods.Rdk_SetRenderContentDeleteThisCallback(null);
+          UnsafeNativeMethods.Rdk_SetRenderContentBitFlagsCallback(null);
           UnsafeNativeMethods.Rdk_SetContentStringCallback(null);
           UnsafeNativeMethods.Rdk_SetNewTextureEvaluatorCallback(null);
           UnsafeNativeMethods.Rdk_SetTextureEvaluatorCallbacks(null, null);

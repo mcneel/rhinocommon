@@ -32,6 +32,9 @@ internal partial class UnsafeNativeMethods
   //void Rdk_SetRenderContentDeleteThisCallback(RDK_RENDERCONTENTDELETETHISPROC proc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
+  //void Rdk_SetRenderContentBitFlagsCallback(RDK_RENDERCONTENTBITFLAGSPROC proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
   //void Rdk_SetIsContentTypeAcceptableAsChildCallback(RDK_ISCONTENTTYPEACCEPTABLEASCHILDPROC proc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
@@ -469,10 +472,44 @@ internal partial class UnsafeNativeMethods
 
 
   #region rdk_corecontent.cpp
+  //int Rdk_CoreContent_AddNewContentUiSection(int type, CRhRdkContent* pContent, ON_UUID classId, const RHMONO_STRING* _pCaption, HWND hWnd, bool createExpanded, bool createVisible)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_CoreContent_AddNewContentUiSection(int type, IntPtr pContent, Guid classId, [MarshalAs(UnmanagedType.LPWStr)]string _pCaption, IntPtr hWnd, [MarshalAs(UnmanagedType.U1)]bool createExpanded, [MarshalAs(UnmanagedType.U1)]bool createVisible);
+
+  //CRhRdkContentUISection* Rdk_CoreContent_AddFindContentUISectionPointer(int serialNumber, int* pSearchHint)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_CoreContent_AddFindContentUISectionPointer(int serialNumber, ref int pSearchHint);
+
+  //void Rdk_ContentUiSectionSetCallbacks( RDK_RHCMN_RENDERCONTENTSECTIONPROC deleteThisProc
+  //                                                    ,RDK_RHCMN_RENDERCONTENTSECTIONPROC displayDataProc
+  //                                                    ,RDK_RHCMN_RENDERCONTENTSECTIONBOOLPROC onExpandProc
+  //                                                   )
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
   //bool Rdk_CoreContent_AddAutomaticUISection(CRhRdkContent* pContent, const RHMONO_STRING* _pCaption, int iId)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool Rdk_CoreContent_AddAutomaticUISection(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _pCaption, int iId);
+
+  //CRhRdkContent* Rdk_CoreContent_RenderContentFromUISection(int serialNumber, int* pSearchHint)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr Rdk_CoreContent_RenderContentFromUISection(int serialNumber, ref int pSearchHint);
+
+  //int Rdk_CoreContent_UiSectionConentIdList(int serialNumber, int* pSearchHint, ON_SimpleArray<ON_UUID>* pArrayUuids)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_CoreContent_UiSectionConentIdList(int serialNumber, ref int pSearchHint, IntPtr pArrayUuids);
+
+  //void Rdk_CoreContent_UiSectionShow(int serialNumber, int* pSearchHint, bool show)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_CoreContent_UiSectionShow(int serialNumber, ref int pSearchHint, [MarshalAs(UnmanagedType.U1)]bool show);
+
+  //void Rdk_CoreContent_UiSectionExpand(int serialNumber, int* pSearchHint, bool expand)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void Rdk_CoreContent_UiSectionExpand(int serialNumber, ref int pSearchHint, [MarshalAs(UnmanagedType.U1)]bool expand);
+
+  //int Rdk_CoreContent_UiSectionConentSiblingList(int serialNumber, int* pSearchHint, ON_SimpleArray<int>* pArraySerialNumbers)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int Rdk_CoreContent_UiSectionConentSiblingList(int serialNumber, ref int pSearchHint, IntPtr pArraySerialNumbers);
   #endregion
 
 

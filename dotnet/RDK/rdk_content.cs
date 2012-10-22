@@ -3,8 +3,357 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Windows.Forms;
 
-#if RDK_UNCHECKED
+
+#if RDK_CHECKED
+
+namespace Rhino.Render.UI
+{
+  /// <summary>
+  /// Implement this interface in your user control to get UserInterfaceSection
+  /// event notification.
+  /// </summary>
+  public interface IUserInterfaceSection
+  {
+    /// <summary>
+    /// Called by UserInterfaceSection when the selected content changes or a
+    /// content field property value changes.
+    /// </summary>
+    /// <param name="userInterfaceSection">
+    /// The UserInterfaceSection object that called this interface method.
+    /// </param>
+    /// <param name="renderContentList">
+    /// The currently selected list of content items to edit.
+    /// </param>
+    void UserInterfaceDisplayData(UserInterfaceSection userInterfaceSection, RenderContent[] renderContentList);
+    /// <summary>
+    /// The UserInterfaceSection object that called this interface method.
+    /// </summary>
+    /// <param name="userInterfaceSection">
+    /// The UserInterfaceSection object that called this interface method.
+    /// </param>
+    /// <param name="expanding">
+    /// Will be true if the control has been createExpanded or false if it was
+    /// collapsed.
+    /// </param>
+    void OnUserInterfaceSectionExpanding(UserInterfaceSection userInterfaceSection, bool expanding);
+  }
+
+  /// <summary>
+  /// Custom user interface section manager
+  /// </summary>
+  public class UserInterfaceSection
+  {
+    #region Internals
+    /// <summary>
+    /// Internal constructor
+    /// </summary>
+    /// <param name="serialNumber">C++ pointer serial number returned by the C interface wrapper.</param>
+    /// <param name="window">The control created and embedded in the expandable tab control in the content browser.</param>
+    internal UserInterfaceSection(int serialNumber, IWin32Window window)
+    {
+      m_SerialNumber = serialNumber;
+      m_Window = window;
+      if (serialNumber > 0) m_UserInterfaceSectionDictionary.Add(serialNumber, this);
+      SetHooks();
+    }
+    /// <summary>
+    /// C++ pointer serial number returned by the C interface wrapper.
+    /// </summary>
+    internal int SerialNumber { get { return m_SerialNumber; } }
+    #endregion Internals
+
+    #region private members
+    /// <summary>
+    /// The control created and embedded in the expandable tab control in the content browser.
+    /// </summary>
+    private IWin32Window m_Window;
+    /// <summary>
+    /// C++ pointer serial number returned by the C interface wrapper.
+    /// </summary>
+    private int m_SerialNumber;
+    /// <summary>
+    /// Search hint helper
+    /// </summary>
+    private int m_SearchHint = -1;
+    /// <summary>
+    /// UserInterfaceSection instance dictionary, the constructor adds objects to the dictionary
+    /// and the C++ destructor callback removes them when they get destroyed.
+    /// </summary>
+    static private Dictionary<int, UserInterfaceSection> m_UserInterfaceSectionDictionary = new Dictionary<int, UserInterfaceSection>();
+    #endregion private members
+
+    #region C++ function callbacks
+    /// <summary>
+    /// Set C++ callback function pointers
+    /// </summary>
+    private void SetHooks()
+    {
+      // Need to set the hook using a static member variable otherwise it gets garbage
+      // collected to early on shutdown and the C++ code attempts to make a callback
+      // on a garbage collected function pointer.
+      m_deleteThisProc = DeleteThisProc;
+      m_displayDataProc = DisplayDataProc;
+      m_onExpandCallback = OnExpandProc;
+      UnsafeNativeMethods.Rdk_ContentUiSectionSetCallbacks(m_deleteThisProc, m_displayDataProc, m_onExpandCallback);
+    }
+    /// <summary>
+    /// Delegate used by Imports.cs for internal C++ method callbacks
+    /// </summary>
+    /// <param name="serialNumber">Runtime C++ memory pointer serial number.</param>
+    internal delegate void SerialNumberCallback(int serialNumber);
+    /// <summary>
+    /// Delegate used by Imports.cs for internal C++ method callbacks
+    /// </summary>
+    /// <param name="serialNumber">Runtime C++ memory pointer serial number.</param>
+    /// <param name="b"></param>
+    internal delegate void SerialNumberBoolCallback(int serialNumber, bool b);
+    /// <summary>
+    /// Called by the C++ destructor when a user interface section object is destroyed.
+    /// </summary>
+    private static SerialNumberCallback m_deleteThisProc;
+    /// <summary>
+    /// Called by the C++ SDK when it is time to initialize a user interface section.
+    /// </summary>
+    private static SerialNumberCallback m_displayDataProc;
+    /// <summary>
+    /// Called by the C++ SDK when a user interface section is being createExpanded
+    /// or collapsed.
+    /// </summary>
+    private static SerialNumberBoolCallback m_onExpandCallback;
+    /// <summary>
+    /// C++ user interface destructor callback, remove the object from the runtime
+    /// dictionary and dispose if it if possible.
+    /// </summary>
+    /// <param name="serialNumber"></param>
+    private static void DeleteThisProc(int serialNumber)
+    {
+      UserInterfaceSection uiSection = FromSerialNumber(serialNumber);
+      if (uiSection != null)
+      {
+        if (uiSection.m_Window is IDisposable) (uiSection.m_Window as IDisposable).Dispose();
+        uiSection.m_Window = null;
+        m_UserInterfaceSectionDictionary.Remove(serialNumber);
+      }
+    }
+    /// <summary>
+    /// Called when it is safe to initialize the control window.
+    /// </summary>
+    /// <param name="serialNumber"></param>
+    static private void DisplayDataProc(int serialNumber)
+    {
+      UserInterfaceSection uiSection;
+      IUserInterfaceSection iUiSection;
+      if (!UiFromSerialNumber(serialNumber, out uiSection, out iUiSection)) return;
+      var renderContentList = uiSection.GetContentList();
+      iUiSection.UserInterfaceDisplayData(uiSection, renderContentList);
+    }
+    /// <summary>
+    /// Called when a user interface section is being createExpanded or collapsed.
+    /// </summary>
+    /// <param name="serialNumber"></param>
+    /// <param name="expanding"></param>
+    static private void OnExpandProc(int serialNumber, bool expanding)
+    {
+      UserInterfaceSection uiSection;
+      IUserInterfaceSection iUiSection;
+      if (UiFromSerialNumber(serialNumber, out uiSection, out iUiSection))
+        iUiSection.OnUserInterfaceSectionExpanding(uiSection, expanding);
+    }
+    #endregion C++ function callbacks
+
+    #region Public properties
+    /// <summary>
+    /// The RenderContent object that created this user interface object.
+    /// </summary>
+    public RenderContent RenderContent
+    {
+      get
+      {
+        var pointer = UnsafeNativeMethods.Rdk_CoreContent_RenderContentFromUISection(SerialNumber, ref m_SearchHint);
+        RenderContent found = RenderContent.FromPointer(pointer);
+        return found;
+      }
+    }
+    /// <summary>
+    /// The user control associated with this user interface object.
+    /// </summary>
+    public IWin32Window Window { get { return m_Window; } }
+    #endregion Public properties
+
+    #region Public methods
+    /// <summary>
+    /// Get a list of the RhinoCommon added content sections associated with
+    /// this sections container.
+    /// </summary>
+    /// <returns>
+    /// Returns a list of the RhinoCommon added content sections associated
+    /// with this sections container.
+    /// </returns>
+    public UserInterfaceSection[] GetSiblings()
+    {
+      var idList = GetSiblingIdList();
+      var userInterfaceList = new List<UserInterfaceSection>(idList.Length);
+      foreach (var serialNumber in idList)
+      {
+        var found = FromSerialNumber(serialNumber);
+        if (null == found || found.SerialNumber == SerialNumber) continue;
+        userInterfaceList.Add(found);
+      }
+      return userInterfaceList.ToArray();
+    }
+    /// <summary>
+    /// Look for a UI section in the same container with the specified class Id.
+    /// </summary>
+    /// <param name="id">The class Id of the section to search for.</param>
+    /// <returns>
+    /// Returns the first section in this sections container whose window class
+    /// Id matches the specified Id or null if no match is found.
+    /// </returns>
+    public UserInterfaceSection GetSibling(Guid id)
+    {
+      var siblings = GetSiblings();
+      foreach (var section in siblings)
+        if (section.Window.GetType().GUID == id)
+          return section;
+      return null;
+    }
+    /// <summary>
+    /// Find the UserInterfaceSection that created the specified instance of a
+    /// window.
+    /// </summary>
+    /// <param name="window">
+    /// If window is not null then look for the UserInterfaceSection that
+    /// created the window.
+    /// </param>
+    /// <returns>
+    /// If a UserInterfaceSection object is found containing a reference to
+    /// the requested window then return the object otherwise return null.
+    /// </returns>
+    public static UserInterfaceSection FromWindow(IWin32Window window)
+    {
+      if (null != window)
+        foreach (var section in m_UserInterfaceSectionDictionary)
+          if (window.Equals(section.Value.Window)) return section.Value;
+      return null;
+    }
+    /// <summary>
+    /// Returns a list of currently selected content items to be edited.
+    /// </summary>
+    /// <returns>Returns a list of currently selected content items to be edited.</returns>
+    public RenderContent[] GetContentList()
+    {
+      var idList = GetContentIdList();
+      var renderContentList = new List<RenderContent>(idList.Length);
+      foreach (var guid in idList)
+      {
+        RenderContent content = RenderContent.FromInstanceId(guid);
+        if (null != content) renderContentList.Add(content);
+      }
+      return renderContentList.ToArray();
+    }
+    /// <summary>
+    /// Show or hide this content section.
+    /// </summary>
+    /// <param name="visible">If true then show the content section otherwise hide it.</param>
+    public void Show(bool visible)
+    {
+      var serialNumber = SerialNumber;
+      UnsafeNativeMethods.Rdk_CoreContent_UiSectionShow(serialNumber, ref m_SearchHint, visible);
+    }
+    /// <summary>
+    /// Expand or collapse this content section.
+    /// </summary>
+    /// <param name="expand">If true then expand the content section otherwise collapse it.</param>
+    public void Expand(bool expand)
+    {
+      var serialNumber = SerialNumber;
+      UnsafeNativeMethods.Rdk_CoreContent_UiSectionExpand(serialNumber, ref m_SearchHint, expand);
+    }
+    #endregion Public methods
+
+    #region Private properties
+    /// <summary>
+    /// Dereference the serial number as a C++ pointer, used for direct access to the C++ object.
+    /// </summary>
+    private IntPtr Pointer
+    {
+      get
+      {
+        IntPtr pointer = UnsafeNativeMethods.Rdk_CoreContent_AddFindContentUISectionPointer(SerialNumber, ref m_SearchHint);
+        return pointer;
+      }
+    }
+    #endregion Private properties
+
+    #region Private Methods
+    /// <summary>
+    /// Get a list of the RhinoCommon added content section serial numbers
+    /// associated with this sections container.
+    /// </summary>
+    /// <returns>
+    /// Return a list of the RhinoCommon added content section serial numbers
+    /// associated with this sections container.
+    /// </returns>
+    private int[] GetSiblingIdList()
+    {
+      using (var idList = new Runtime.InteropWrappers.SimpleArrayInt())
+      {
+        var pointerToIdList = idList.NonConstPointer();
+        var serialNumber = SerialNumber;
+        UnsafeNativeMethods.Rdk_CoreContent_UiSectionConentSiblingList(serialNumber, ref m_SearchHint, pointerToIdList);
+        return idList.ToArray();
+      }
+    }
+    /// <summary>
+    /// Returns a list of currently selected content item Id's to be edited.
+    /// </summary>
+    /// <returns>Returns a list of currently selected content item Id's to be edited.</returns>
+    private Guid[] GetContentIdList()
+    {
+      using (var idList = new Runtime.InteropWrappers.SimpleArrayGuid())
+      {
+        var pointerToIdList = idList.NonConstPointer();
+        var serialNumber = SerialNumber;
+        UnsafeNativeMethods.Rdk_CoreContent_UiSectionConentIdList(serialNumber, ref m_SearchHint, pointerToIdList);
+        return idList.ToArray();
+      }
+    }
+    /// <summary>
+    /// Look up a runtime instance of an user interface object by serial number.
+    /// </summary>
+    /// <param name="serialNumber"></param>
+    /// <returns></returns>
+    static private UserInterfaceSection FromSerialNumber(int serialNumber)
+    {
+      UserInterfaceSection found;
+      m_UserInterfaceSectionDictionary.TryGetValue(serialNumber, out found);
+      return found;
+    }
+    /// <summary>
+    /// Look up a runtime instance of an user interface object by serial number
+    /// and check the user interface Window object for a IUserInterfaceSection
+    /// instance.
+    /// </summary>
+    /// <param name="serialNumber"></param>
+    /// <param name="uiSection"></param>
+    /// <param name="iUiSection"></param>
+    /// <returns>
+    /// Returns true if both uiSection and iUiSection are non null otherwise;
+    /// return false.
+    /// </returns>
+    static private bool UiFromSerialNumber(int serialNumber, out UserInterfaceSection uiSection, out IUserInterfaceSection iUiSection)
+    {
+      iUiSection = null;
+      uiSection = FromSerialNumber(serialNumber);
+      if (null == uiSection) return false;
+      iUiSection = uiSection.Window as IUserInterfaceSection;
+      return (null != iUiSection);
+    }
+    #endregion Private Methods
+  }
+}
 
 namespace Rhino.Render
 {
@@ -58,9 +407,9 @@ namespace Rhino.Render
   }
 
   [AttributeUsage(AttributeTargets.Class)]
-  public sealed class CustomRenderContentAttribute : System.Attribute
+  /*public*/ sealed class CustomRenderContentAttribute : Attribute
   {
-    private RenderContentStyles m_style = RenderContentStyles.None;
+    private bool m_imageBased;
     private readonly Guid m_renderengine_id;
 
     public CustomRenderContentAttribute()
@@ -77,13 +426,11 @@ namespace Rhino.Render
       get { return m_renderengine_id; }
     }
 
-    public RenderContentStyles Styles
+    public bool ImageBased
     {
-      get { return m_style; }
-      set { m_style = value; }
+      get { return m_imageBased; } 
+      set { m_imageBased = value; }
     }
-
-    public bool ImageBased { get; set; }
   }
 
   /// <summary>
@@ -243,9 +590,18 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Render content is automatically registered for the Assembly that a plug-in is defined in. If
-    /// you have content defined in a different assembly (for example a Grasshopper component), then
-    /// you need to explicitly call RegisterContent.
+    /// Call RegisterContent in your plug-in's OnLoad function in order to register all of the
+    /// custom RenderContent classes in your assembly.
+    /// </summary>
+    /// <param name="plugin"></param>
+    /// <returns>array of render content types registered on success. null on error.</returns>
+    public static Type[] RegisterContent(Rhino.PlugIns.PlugIn plugin)
+    {
+      return RegisterContent(plugin.Assembly, plugin.Id);
+    }
+    /// <summary>
+    /// Call RegisterContent in your plug-in's OnLoad function in order to register all of the
+    /// custom RenderContent classes in your assembly.
     /// </summary>
     /// <param name="assembly">
     /// Assembly where custom content is defined, this may be a plug-in assembly
@@ -314,6 +670,39 @@ namespace Rhino.Render
       // Return an array of the valid content types
       return contentTypes.ToArray();
     }
+
+    /// <summary>
+    /// Loads content from a library file.  Does not add the content to the persistent content list.
+    /// Use AddPersistantContent to add it to the list.
+    /// </summary>
+    /// <param name="filename">full path to the file to be loaded.</param>
+    /// <returns>The loaded content or null if an error occurred.</returns>
+    public static RenderContent LoadFromFile(String filename)
+    {
+      IntPtr pContent = UnsafeNativeMethods.Rdk_RenderContent_LoadContentFromFile(filename);
+      if (pContent == IntPtr.Zero)
+        return null;
+
+      RenderContent newContent = RenderContent.FromPointer(pContent);
+      newContent.AutoDelete = true;
+      return newContent;
+    }
+
+    /// <summary>
+    /// Add a material, environment or texture to the internal RDK document lists as
+    /// top level content.  The content must have been returned from
+    /// RenderContent::MakeCopy, NewContentFromType or a similar function that returns
+    /// a non-document content.
+    /// </summary>
+    /// <param name="renderContent">The render content.</param>
+    /// <returns>true on success.</returns>
+    public static bool AddPersistentRenderContent(RenderContent renderContent)
+    {
+      renderContent.AutoDelete = false;
+      return 1 == UnsafeNativeMethods.Rdk_Globals_AddPersistentContent(renderContent.ConstPointer());
+    }
+
+
     /// <summary>
     /// Search for a C++ pointer of the requested Id
     /// </summary>
@@ -393,6 +782,7 @@ namespace Rhino.Render
     {
       get { return m_FieldDictionary ?? (m_FieldDictionary = new Fields.FieldDictionary(this)); }
     }
+
     /// <summary>
     /// Check to see if the class is defined by RhinoCommon or some other
     /// assembly.
@@ -402,7 +792,7 @@ namespace Rhino.Render
     /// return true  indicating native content otherwise return false
     /// indicating custom content.
     /// </returns>
-    protected bool ClassDefinedInRhinoCommon()
+    bool ClassDefinedInRhinoCommon()
     {
       var renderContent = typeof (RenderContent);
       var classType = GetType();
@@ -416,12 +806,14 @@ namespace Rhino.Render
     /// Return true if the class definition resides in an assembly other than
     /// RhinoCommon otherwise return false because it is native content.
     /// </returns>
-    protected bool IsCustomClassDefintion()
+    bool IsCustomClassDefintion()
     {
       return !ClassDefinedInRhinoCommon();
     }
+    
     /// <summary>
-    /// Constructor
+    /// internal because we don't want people to ever directly subclass RenderContent.
+    /// They should always derive from the subclasses of this class
     /// </summary>
     internal RenderContent()
     {
@@ -477,11 +869,11 @@ namespace Rhino.Render
       }
     }
     /// <summary>
-    /// Override this method to provide a name for your content type.  ie. "My .net Texture"
+    /// Name for your content type.  ie. "My .net Texture"
     /// </summary>
     public abstract String TypeName { get; }
     /// <summary>
-    /// Override this method to provide a description for your content type.  ie.  "Procedural checker pattern"
+    /// Description for your content type.  ie.  "Procedural checker pattern"
     /// </summary>
     public abstract String TypeDescription { get; }
     // <summary>
@@ -606,7 +998,7 @@ namespace Rhino.Render
     #endregion
 
     /// <summary>
-    /// Override this function to provide UI sections to display in the editor.
+    /// Override to provide UI sections to display in the editor.
     /// </summary>
     protected virtual void OnAddUserInterfaceSections()
     {
@@ -620,7 +1012,101 @@ namespace Rhino.Render
       }
     }
 
-    public bool AddUserInterfaceSection(string caption, int id)
+    /// <summary>
+    /// Create a new custom content user interface instance for this
+    /// RenderContext.
+    /// </summary>
+    /// <param name="classId">The class Type Guid which was created.</param>
+    /// <param name="caption">The expandable tab caption</param>
+    /// <param name="createExpanded">
+    /// If this is true the tab will initially be expanded otherwise it will be
+    /// collapsed.
+    /// </param>
+    /// <param name="createVisible">
+    /// If this is true the tab will initially be visible otherwise it will be
+    /// hidden.
+    /// </param>
+    /// <param name="window">The user control to embed in the expandable tab.</param>
+    /// <returns>
+    /// Returns the UserInterfaceSection object used to manage the new custom
+    /// UI.
+    ///  </returns>
+    /*protected*/ Rhino.Render.UI.UserInterfaceSection NewUiPointer(Guid classId, string caption, bool createExpanded, bool createVisible, IWin32Window window)
+    {
+      const int idxInvalid = 0;
+      const int idxMaterial = 1;
+      const int idxTexture = 2;
+      const int idxEnviornment = 3;
+      var type = idxInvalid;
+      if (this is RenderMaterial)
+        type = idxMaterial;
+      else if (this is RenderTexture)
+        type = idxTexture;
+      else if (this is RenderEnvironment)
+        type = idxEnviornment;
+      IntPtr hWnd = window.Handle;
+      var serialNumber = UnsafeNativeMethods.Rdk_CoreContent_AddNewContentUiSection(type, NonConstPointer(), classId, caption, hWnd, createExpanded, createVisible);
+      return ((serialNumber < 1) ? null : new Rhino.Render.UI.UserInterfaceSection(serialNumber, window));
+    }
+    /// <summary>
+    /// Dictionary of all currently created UserInterfaceSection objects, when
+    /// the C++ pointer is deleted the object will be removed from this dictionary.
+    /// </summary>
+    private Dictionary<Guid, int> m_UserInterfaceSections = new Dictionary<Guid, int>();
+    /// <summary>
+    /// Add a new .NET control to an content expandable tab section, the height
+    /// of the createExpanded tabs client area will be the initial height of the
+    /// specified control.
+    /// </summary>
+    /// <param name="classType">
+    /// The control class to create and embed as a child window in the
+    /// expandable tab client area.  This class type must be derived from
+    /// IWin32Window or this method will throw an ArgumentException.  Implement
+    /// the IUserInterfaceSection interface in your classType to get
+    /// UserInterfaceSection notification.
+    /// </param>
+    /// <param name="caption">Expandable tab caption.</param>
+    /// <param name="createExpanded">
+    /// If this value is true then the new expandable tab section will
+    /// initially be expanded, if it is false it will be collapsed.
+    /// </param>
+    /// <param name="createVisible">
+    /// If this value is true then the new expandable tab section will
+    /// initially be visible, if it is false it will be hidden.
+    /// </param>
+    /// <returns>
+    /// Returns the UserInterfaceSection object used to manage the new 
+    /// user control object.
+    /// </returns>
+    public Rhino.Render.UI.UserInterfaceSection AddUserInterfaceSection(Type classType, string caption, bool createExpanded, bool createVisible)
+    {
+      if (!typeof(IWin32Window).IsAssignableFrom(classType)) throw new ArgumentException("classType must implement IWin32Window interface", "classType");
+      ConstructorInfo constructor = classType.GetConstructor(Type.EmptyTypes);
+      if (!classType.IsPublic || constructor == null) throw new ArgumentException("panelType must be a public class and have a parameterless constructor", "classType");
+      object[] attr = classType.GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), false);
+      if (attr.Length != 1) throw new ArgumentException("classType must have a GuidAttribute", "classType");
+      var control = Activator.CreateInstance(classType) as IWin32Window;
+      if (null == control) return null;
+      var newUiSection = NewUiPointer(classType.GUID, caption, createExpanded, createVisible, control);
+      if (null == newUiSection)
+      {
+        if (control is IDisposable) (control as IDisposable).Dispose();
+        return null;
+      }
+      m_UserInterfaceSections[classType.GUID] = newUiSection.SerialNumber;
+      return newUiSection;
+    }
+    /// <summary>
+    /// Add a new automatic user interface section, Field values which include
+    /// prompts will be automatically added to this section.
+    /// </summary>
+    /// <param name="caption">Expandable tab caption.</param>
+    /// <param name="id">Tab id which may be used later on to reference this tab.</param>
+    /// <returns>
+    /// Returns true if the automatic tab section was added otherwise; returns
+    /// false on error.
+    /// </returns>
+    public bool AddAutomaticUserInterfaceSection(string caption, int id)
     {
       return UnsafeNativeMethods.Rdk_CoreContent_AddAutomaticUISection(NonConstPointer(), caption, id);
     }
@@ -869,7 +1355,7 @@ namespace Rhino.Render
     /// <param name="typeId">The class GUID property to look up</param>
     /// <param name="isSubclassOf">The created content must be this type</param>
     /// <returns>Valid content object if the typeId is found otherwise null.</returns>
-    static protected RenderContent NewRenderContent(Guid typeId, Type isSubclassOf)
+    static internal RenderContent NewRenderContent(Guid typeId, Type isSubclassOf)
     {
       Type renderContentType = typeof(RenderContent);
       // If the requested type is not derived from RenderContent
@@ -964,6 +1450,37 @@ namespace Rhino.Render
       }
     }
 
+    internal delegate ulong RenderContentBitFlagsCallback(int serialNumber, ulong flags);
+    internal static RenderContentBitFlagsCallback m_BitFlags = OnContentBitFlags;
+    static ulong OnContentBitFlags(int serialNumber, ulong flags)
+    {
+      try
+      {
+        RenderContent content = RenderContent.FromSerialNumber(serialNumber);
+        if (null != content)
+        {
+          var stylesToAdd= (ulong) content.m_StylesToAdd;
+          var stylesToRemove = (ulong)content.m_StylesToRemove;
+          flags |= stylesToAdd;
+          flags &= ~stylesToRemove;
+          return flags;
+        }
+      }
+      catch (Exception ex)
+      {
+        Runtime.HostUtils.ExceptionReport(ex);
+      }
+      return flags;
+    }
+
+    private RenderContentStyles m_StylesToAdd = RenderContentStyles.None;
+    private RenderContentStyles m_StylesToRemove = RenderContentStyles.None;
+
+    protected void ModifyRenderContentStyles(RenderContentStyles stylesToAdd, RenderContentStyles stylesToRemove)
+    {
+      m_StylesToAdd = stylesToAdd;
+      m_StylesToRemove = stylesToRemove;
+    }
 
     internal delegate void GetRenderContentStringCallback(int serialNumber, bool isName, IntPtr pON_wString);
     internal static GetRenderContentStringCallback m_GetRenderContentString = OnGetRenderContentString;
@@ -1187,7 +1704,7 @@ namespace Rhino.Render
     /// <summary>
     /// Used to monitor render content addition to the document.
     /// </summary>
-    public static event EventHandler<RenderContentEventArgs> RenderContentAdded
+    /*public*/ static event EventHandler<RenderContentEventArgs> RenderContentAdded
     {
       add
       {
@@ -1463,7 +1980,6 @@ namespace Rhino.Render
       }
     }
 
-
     #endregion
 
     #region pointer tracking
@@ -1532,7 +2048,7 @@ namespace Rhino.Render
     #endregion
   }
 
-  public class RenderContentEventArgs : EventArgs
+  /*public*/ class RenderContentEventArgs : EventArgs
   {
     readonly RenderContent m_content;
     internal RenderContentEventArgs(RenderContent content) { m_content = content; }

@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
 namespace Rhino.Render
 {
   public abstract class RenderEnvironment : RenderContent

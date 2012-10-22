@@ -952,7 +952,7 @@ namespace Rhino.Runtime
 #endif
     }
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
     internal delegate void RdkReportCallback(int c);
     internal static RdkReportCallback m_rdk_ew_report = RdkEventWatcherReport;
     internal static void RdkEventWatcherReport(int c)
@@ -1028,7 +1028,7 @@ namespace Rhino.Runtime
       {
         UnsafeNativeMethods.RhCmn_SetInShutDown();
         // Remove callbacks that should not happen after this point in time
-#if RDK_UNCHECKED
+#if RDK_CHECKED
         Rhino.Render.RdkPlugIn.SetRdkCallbackFunctions(false);
 #endif
       }

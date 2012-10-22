@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-#if RDK_UNCHECKED
-
+#if RDK_CHECKED
 namespace Rhino.Render
 {
   public sealed class NamedValue
@@ -465,5 +464,4 @@ namespace Rhino.Render
   }
 
 }
-
 #endif

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Rhino.Geometry;
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
 
 namespace Rhino.Render
 {
@@ -246,17 +246,17 @@ namespace Rhino.Render
 
     public TwoColorRenderTexture()
     {
-      m_color1 = Fields.Add("color-one", Display.Color4f.Black, UI.LOC.STR("Color 1"));
-      m_color2 = Fields.Add("color-two", Display.Color4f.White, "Color 2");
+      m_color1 = Fields.Add("color-one", Display.Color4f.Black, Rhino.UI.LOC.STR("Color 1"));
+      m_color2 = Fields.Add("color-two", Display.Color4f.White, Rhino.UI.LOC.STR("Color 2"));
 
-      m_texture1On = Fields.Add("texture-on-one", true, "Texture1 On");
-      m_texture2On = Fields.Add("texture-on-two", true, "Texture2 On");
+      m_texture1On = Fields.Add("texture-on-one", true, Rhino.UI.LOC.STR("Texture1 On"));
+      m_texture2On = Fields.Add("texture-on-two", true, Rhino.UI.LOC.STR("Texture2 On"));
 
-      m_texture1Amount = Fields.Add("texture-amount-one", 1.0, "Texture1 Amt");
-      m_texture2Amount = Fields.Add("texture-amount-two", 1.0, "Texture2 Amt");
+      m_texture1Amount = Fields.Add("texture-amount-one", 1.0, Rhino.UI.LOC.STR("Texture1 Amt"));
+      m_texture2Amount = Fields.Add("texture-amount-two", 1.0, Rhino.UI.LOC.STR("Texture2 Amt"));
 
-      m_swapColors = Fields.Add("swap-colors", false, "Swap Colors");
-      m_superSample = Fields.Add("super-sample", false, "Super sample");
+      m_swapColors = Fields.Add("swap-colors", false, Rhino.UI.LOC.STR("Swap Colors"));
+      m_superSample = Fields.Add("super-sample", false, Rhino.UI.LOC.STR("Super sample"));
     }
 
     private readonly Fields.Color4fField m_color1;

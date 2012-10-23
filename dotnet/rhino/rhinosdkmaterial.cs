@@ -273,6 +273,8 @@ namespace Rhino.DocObjects
 
     const int idxShine = 0;
     const int idxTransparency = 1;
+    const int idxIOR = 2;
+
     double GetDouble(int which)
     {
       IntPtr pConstThis = ConstPointer();
@@ -305,6 +307,16 @@ namespace Rhino.DocObjects
     {
       get { return GetDouble(idxTransparency); }
       set { SetDouble(idxTransparency, value); }
+    }
+
+    /// <summary>
+    /// Gets or sets the index of refraction of the material, generally
+    /// >= 1.0 (speed of light in vacuum)/(speed of light in material)
+    /// </summary>
+    public double IndexOfRefraction
+    {
+      get { return GetDouble(idxIOR); }
+      set { SetDouble(idxIOR, value); }
     }
 
     const int idxDiffuse = 0;

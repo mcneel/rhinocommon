@@ -1,7 +1,7 @@
 #pragma warning disable 1591
 using System;
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
 namespace Rhino.Render
 {
   public class SimulatedEnvironment : IDisposable

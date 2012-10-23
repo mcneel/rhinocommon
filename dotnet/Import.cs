@@ -91,7 +91,7 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoRenderPlugIn_SetCallbacks(Rhino.PlugIns.RenderPlugIn.RenderFunc render, Rhino.PlugIns.RenderPlugIn.RenderWindowFunc renderwindow);
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoRenderPlugIn_SetRdkCallbacks(Rhino.PlugIns.RenderPlugIn.SupportsFeatureCallback supportsFeatureCallback, 
                                                                  Rhino.PlugIns.RenderPlugIn.AbortRenderCallback abortRenderCallback,
@@ -305,35 +305,16 @@ internal partial class UnsafeNativeMethods
   internal static extern void Rdk_SetNewEnvironmentCallback(Rhino.Render.RenderEnvironment.NewRenderContentCallbackEvent callback_func);
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void Rdk_SetRenderContentDeleteThisCallback(Rhino.Render.RenderContent.RenderContentDeleteThisCallback callback_func);
-
-  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void Rdk_SetContentStringCallback(Rhino.Render.RenderContent.GetRenderContentStringCallback callback_func);
-
-  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetNewTextureEvaluatorCallback(Rhino.Render.RenderTexture.GetNewTextureEvaluatorCallback callback_func);
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetSimulateTextureCallback(Rhino.Render.RenderTexture.SimulateTextureCallback callback_func);
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void Rdk_SetAddUISectionsCallback(Rhino.Render.RenderContent.AddUISectionsCallback callback_func);
-
-  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void Rdk_SetIsContentTypeAcceptableAsChildCallback(Rhino.Render.RenderContent.IsContentTypeAcceptableAsChildCallback callback_func);
-
-  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void Rdk_SetHarvestDataCallback(Rhino.Render.RenderContent.HarvestDataCallback callback_func);
-
-  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void Rdk_SetGetShaderCallback(Rhino.Render.RenderContent.GetShaderCallback callback_func);
-
-  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetSimulateMaterialCallback(Rhino.Render.RenderMaterial.SimulateMaterialCallback callback_func);
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetSimulateEnvironmentCallback(Rhino.Render.RenderEnvironment.SimulateEnvironmentCallback callback_func);
-
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetRenderContentIoDeleteThisCallback(Rhino.Render.IOPlugIn.DeleteThisCallback callback_func);
@@ -346,7 +327,6 @@ internal partial class UnsafeNativeMethods
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetRenderContentIoStringCallback(Rhino.Render.IOPlugIn.GetRenderContentIoStringCallback callback_func);
-
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetTextureChildSlotNameCallback(Rhino.Render.RenderMaterial.TextureChildSlotNameCallback callback_func);
@@ -363,6 +343,49 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetCallback_CRMProvider_Build(Rhino.Render.CustomRenderMesh.Provider.CRMProviderBuildCallback callback_func);
 
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetCustomRenderMeshesChangedEventCallback(Rhino.Render.CustomRenderMesh.Manager.CRMManagerEmptyCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetContentListClearingEventCallback(Rhino.Render.ContentList.ContentListClearingCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetContentListClearedEventCallback(Rhino.Render.ContentList.ContentListClearedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetContentListLoadedEventCallback(Rhino.Render.ContentList.ContentListLoadedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetDocumentSettingsChangedEventCallback(Rhino.RhinoDoc.RdkDocumentSettingsChangedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+#endif
+
+#if RDK_CHECKED
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void Rdk_SetRenderContentDeleteThisCallback(Rhino.Render.RenderContent.RenderContentDeleteThisCallback callback_func);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void Rdk_SetRenderContentBitFlagsCallback(Rhino.Render.RenderContent.RenderContentBitFlagsCallback callback_func);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void Rdk_SetContentStringCallback(Rhino.Render.RenderContent.GetRenderContentStringCallback callback_func);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void Rdk_SetAddUISectionsCallback(Rhino.Render.RenderContent.AddUISectionsCallback callback_func);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void Rdk_SetIsContentTypeAcceptableAsChildCallback(Rhino.Render.RenderContent.IsContentTypeAcceptableAsChildCallback callback_func);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void Rdk_SetHarvestDataCallback(Rhino.Render.RenderContent.HarvestDataCallback callback_func);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void Rdk_SetGetShaderCallback(Rhino.Render.RenderContent.GetShaderCallback callback_func);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void Rdk_ContentUiSectionSetCallbacks(Rhino.Render.UI.UserInterfaceSection.SerialNumberCallback deleteThisCallback,
+                                                               Rhino.Render.UI.UserInterfaceSection.SerialNumberCallback displayDataCallback,
+                                                               Rhino.Render.UI.UserInterfaceSection.SerialNumberBoolCallback onExpandCallback
+                                                              );
 
   //Events
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
@@ -392,16 +415,6 @@ internal partial class UnsafeNativeMethods
 
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void CRdkCmnEventWatcher_SetContentListClearingEventCallback(Rhino.Render.ContentList.ContentListClearingCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
-
-  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void CRdkCmnEventWatcher_SetContentListClearedEventCallback(Rhino.Render.ContentList.ContentListClearedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
-
-  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void CRdkCmnEventWatcher_SetContentListLoadedEventCallback(Rhino.Render.ContentList.ContentListLoadedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
-
-
-  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRdkCmnEventWatcher_SetNewRdkDocumentEventCallback(Rhino.RhinoApp.RhCmnEmptyCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
@@ -415,10 +428,6 @@ internal partial class UnsafeNativeMethods
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRdkCmnEventWatcher_SetRendererChangedEventCallback(Rhino.RhinoApp.RhCmnEmptyCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
-
-  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void CRdkCmnEventWatcher_SetCustomRenderMeshesChangedEventCallback(Rhino.Render.CustomRenderMesh.Manager.CRMManagerEmptyCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
-
 
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
@@ -435,12 +444,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRdkCmnEventWatcher_SetClientPlugInUnloadingEventCallback(Rhino.RhinoApp.ClientPlugInUnloadingCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
 
-
-  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void CRdkCmnEventWatcher_SetDocumentSettingsChangedEventCallback(Rhino.RhinoDoc.RdkDocumentSettingsChangedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
-
-#endif
-#if RDK_CHECKED
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetSdkRenderCallback(Rhino.Render.RenderPipeline.ReturnBoolGeneralCallback callback_func);
 #endif

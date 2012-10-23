@@ -2,11 +2,26 @@
 using System;
 using System.Diagnostics;
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
 namespace Rhino.Render
 {
   public abstract class RenderMaterial : RenderContent
   {
+    /// <summary>
+    /// Constructs a new basic material from a <see cref="Rhino.DocObjects.Material">Material</see>.
+    /// </summary>
+    /// <param name="material">(optional)The material to create the basic material from.</param>
+    /// <returns>A new basic material.</returns>
+    public static RenderMaterial CreateBasicMaterial(Rhino.DocObjects.Material material)
+    {
+      IntPtr pConstSourceMaterial = (material == null ? IntPtr.Zero : material.ConstPointer());
+      IntPtr pNewMaterial = UnsafeNativeMethods.Rdk_Globals_NewBasicMaterial(pConstSourceMaterial);
+      NativeRenderMaterial newMaterial = RenderContent.FromPointer(pNewMaterial) as NativeRenderMaterial;
+      if (newMaterial != null)
+        newMaterial.AutoDelete = true;
+      return newMaterial;
+    }
+
     /// <summary>
     /// Defines enumerated constant values for use in <see cref="TextureChildSlotName"/> method.
     /// </summary>

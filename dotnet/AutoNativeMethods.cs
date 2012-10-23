@@ -2362,6 +2362,10 @@ internal partial class UnsafeNativeMethods
   //void ON_InstanceDefinition_SetString( ON_InstanceDefinition* pInstanceDefinition, int which, const RHMONO_STRING* _str)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_InstanceDefinition_SetString(IntPtr pInstanceDefinition, int which, [MarshalAs(UnmanagedType.LPWStr)]string _str);
+
+  //ON_InstanceRef* ON_InstanceRef_New( ON_UUID instanceDefinitionId, ON_Xform* instanceXform)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_InstanceRef_New(Guid instanceDefinitionId, ref Transform instanceXform);
   #endregion
 
 
@@ -5144,6 +5148,10 @@ internal partial class UnsafeNativeMethods
   //void CRhinoApp_UnitSystemName( int unit_system, bool capitalize, bool singular, bool abbreviate, CRhCmnStringHolder* pString )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoApp_UnitSystemName(int unit_system, [MarshalAs(UnmanagedType.U1)]bool capitalize, [MarshalAs(UnmanagedType.U1)]bool singular, [MarshalAs(UnmanagedType.U1)]bool abbreviate, IntPtr pString);
+
+  //void CRhinoApp_SetCursor(int cursor)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoApp_SetCursor(int cursor);
   #endregion
 
 
@@ -7610,6 +7618,10 @@ internal partial class UnsafeNativeMethods
   //void CRhinoGetPoint_SetBasePoint(CRhinoGetPoint* ptr, ON_3DPOINT_STRUCT basePoint, bool showDistance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoGetPoint_SetBasePoint(IntPtr ptr, Point3d basePoint, [MarshalAs(UnmanagedType.U1)]bool showDistance);
+
+  //void CRhinoGetPoint_SetGetPointCursor(CRhinoGetPoint* ptr, HCURSOR hCursor)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoGetPoint_SetGetPointCursor(IntPtr ptr, IntPtr hCursor);
 
   //bool CRhinoGetPoint_GetBasePoint(const CRhinoGetPoint* pConstGetPoint, ON_3dPoint* basePoint )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

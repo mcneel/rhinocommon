@@ -932,7 +932,7 @@ namespace Rhino
 
     #endregion
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
     #region RDK events
 
     private static RhCmnEmptyCallback m_OnNewRdkDocument;

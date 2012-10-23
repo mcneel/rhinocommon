@@ -1,12 +1,11 @@
 #pragma warning disable 1591
 using System;
 using System.Collections.Generic;
-
 using Rhino.Display;
 using Rhino.Geometry;
 
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
 namespace Rhino.Render.Fields
 {
   /////////////////////////////////////////////////////////////////////////////
@@ -114,6 +113,24 @@ namespace Rhino.Render.Fields
       return field;
     }
     #endregion Private and internal helper methods
+
+    #region Public methods
+    /// <summary>
+    /// Call this method to determine if a this FieldsList contains a field
+    /// with the specified field name.
+    /// </summary>
+    /// <param name="fieldName">Field to search for</param>
+    /// <returns>
+    /// Returns true if a field with that matches fieldName is found or false
+    /// if it is not found.
+    /// </returns>
+    public bool ContainsField(string fieldName)
+    {
+      if (string.IsNullOrEmpty(fieldName)) return false;
+      var found = FindField(fieldName, true);
+      return (null != found);
+    }
+    #endregion Public methods
 
     #region Overloaded AddField methods for the supported data types
     /// <summary>

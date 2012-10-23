@@ -2,39 +2,11 @@
 using System;
 using System.Collections.Generic;
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
 
 namespace Rhino.Render
 {
-  public class CreateTexture2dPreviewEventArgs : EventArgs
-  {
-    readonly System.Drawing.Size m_preview_size;
-    readonly RenderTexture m_render_texture;
-
-    internal CreateTexture2dPreviewEventArgs(RenderTexture texture, System.Drawing.Size size)
-    {
-      m_preview_size = size;
-      m_render_texture = texture;
-    }
-
-    RenderTexture Texture { get { return m_render_texture; } }
-
-    /// <summary>
-    /// Pixel size of the image that is being requested for the preview scene
-    /// </summary>
-    public System.Drawing.Size PreviewImageSize
-    {
-      get { return m_preview_size; }
-    }
-
-    /// <summary>
-    /// Initially null.  If this image is set, then this image will be used for
-    /// the preview.  If never set, the default internal simulation preview will
-    /// be used.
-    /// </summary>
-    public System.Drawing.Bitmap PreviewImage { get; set; }
-  }
-
+  /// <summary>Quality levels when creating preview images</summary>
   public enum PreviewSceneQuality : int
   {
     /// <summary>Very fast preview. Typically using the internal OpenGL preview generator.</summary>
@@ -45,8 +17,9 @@ namespace Rhino.Render
     RefineSecondPass = 2,
     /// <summary>Full quality rendering (quality comes from user settings)</summary>
     RefineThirdPass = 3,
-  };
+  }
 
+  /// <summary>Used in RenderPlugIn virtual CreatePreview function</summary>
   public class CreatePreviewEventArgs : EventArgs
   {
     IntPtr m_pSceneServer;
@@ -168,12 +141,14 @@ namespace Rhino.Render
 
     private Guid m_content_instance_id = Guid.Empty;
 
-    /// <summary>
-    /// The content being previewed.
-    /// </summary>
+    /// <summary>The content being previewed.</summary>
     public Rhino.Render.RenderContent PreviewContent
     {
-      get { Initialize(); return Rhino.Render.RenderContent.FromInstanceId(m_content_instance_id); }
+      get
+      {
+        Initialize();
+        return Rhino.Render.RenderContent.FromInstanceId(m_content_instance_id);
+      }
     }
 
     Rhino.Render.RenderEnvironment m_environment;
@@ -183,12 +158,16 @@ namespace Rhino.Render
     /// </summary>
     public Rhino.Render.RenderEnvironment Environment
     {
-      get { Initialize(); return m_environment; }
+      get
+      {
+        Initialize();
+        return m_environment;
+      }
     }
 
     //TODO_RDK Get information about the view.
-	  //virtual bool GetView(ON_Viewport& view) const = 0;
-    
+    //virtual bool GetView(ON_Viewport& view) const = 0;
+
     public class SceneObject
     {
       internal SceneObject(Rhino.Geometry.Mesh mesh, Rhino.Render.RenderMaterial material)
@@ -197,7 +176,7 @@ namespace Rhino.Render
         m_material = material;
       }
 
-      public Rhino.Geometry.Mesh Mesh             { get { return m_mesh; } }
+      public Rhino.Geometry.Mesh Mesh { get { return m_mesh; } }
       public Rhino.Render.RenderMaterial Material { get { return m_material; } }
 
       private readonly Rhino.Geometry.Mesh m_mesh;
@@ -225,7 +204,6 @@ namespace Rhino.Render
       }
     }
 
-
     public Rhino.DocObjects.ViewportInfo Viewport
     {
       get
@@ -234,6 +212,35 @@ namespace Rhino.Render
         return m_viewport;
       }
     }
+  }
+
+  public class CreateTexture2dPreviewEventArgs : EventArgs
+  {
+    readonly System.Drawing.Size m_preview_size;
+    readonly RenderTexture m_render_texture;
+
+    internal CreateTexture2dPreviewEventArgs(RenderTexture texture, System.Drawing.Size size)
+    {
+      m_preview_size = size;
+      m_render_texture = texture;
+    }
+
+    RenderTexture Texture { get { return m_render_texture; } }
+
+    /// <summary>
+    /// Pixel size of the image that is being requested for the preview scene
+    /// </summary>
+    public System.Drawing.Size PreviewImageSize
+    {
+      get { return m_preview_size; }
+    }
+
+    /// <summary>
+    /// Initially null.  If this image is set, then this image will be used for
+    /// the preview.  If never set, the default internal simulation preview will
+    /// be used.
+    /// </summary>
+    public System.Drawing.Bitmap PreviewImage { get; set; }
   }
 }
 

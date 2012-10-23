@@ -312,11 +312,13 @@ namespace examples_cs
       Test(Examples.InsertKnot, doc);
       Test(Examples.IntersectLines, doc);
       Test(Examples.InstanceDefinitionObjects, doc);
-      */
       Test(Examples.TestBrepBox, doc);
-      /*
+      Test
       Test(Examples.IsocurveDensity, doc);
       Test(Examples.MoveCPlane, doc);
+      */
+      Test(Examples.AddNestedBlock, doc);
+      /* 
       Test(Examples.ObjectDecoration, doc);
       Test(Examples.ObjectDisplayMode, doc);
       Test(Examples.OrientOnSrf, doc);

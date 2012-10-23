@@ -326,24 +326,15 @@ namespace Rhino.PlugIns
         {
           rc = p.OnLoad(ref error_msg);
 
+#if RDK_CHECKED
           // after calling the OnLoad function, check to see if we should be creating
           // an RDK plugin. This is the typical spot where C++ plug-ins perform their
           // RDK initialization.
-          if (rc == LoadReturnCode.Success)
-          {
-#if RDK_CHECKED
-            if (p is RenderPlugIn)
+          if (rc == LoadReturnCode.Success && p is RenderPlugIn)
             {
               Rhino.Render.RdkPlugIn.GetRdkPlugIn(p.Id, plugin_serial_number);
             }
 #endif
-#if RDK_UNCHECKED
-            Rhino.Render.RenderContent.RegisterContent(p.Assembly, p.Id);
-            Rhino.Render.CustomRenderMesh.Provider.RegisterProviders(p.Assembly, p.Id);
-            Rhino.Render.IOPlugIn.RegisterContentIo(p.Assembly, p.Id);
-#endif
-          }
-
         }
         catch (Exception ex)
         {
@@ -380,7 +371,7 @@ namespace Rhino.PlugIns
           Rhino.Runtime.Skin.WriteSettings();
           
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
           // check to see if we should be uninitializing an RDK plugin
           RdkPlugIn pRdk = RdkPlugIn.FromRhinoPlugIn(p);
           if (pRdk != null)
@@ -1408,7 +1399,7 @@ namespace Rhino.PlugIns
     {
       UnsafeNativeMethods.CRhinoRenderPlugIn_SetCallbacks(m_OnRender, m_OnRenderWindow);
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
       UnsafeNativeMethods.CRhinoRenderPlugIn_SetRdkCallbacks(m_OnSupportsFeature, 
                                                              m_OnAbortRender, 
                                                              m_OnAllowChooseContent, 
@@ -1444,9 +1435,6 @@ namespace Rhino.PlugIns
     {
       return true;
     }
-#endif
-
-#if RDK_UNCHECKED
     /// <summary>
     /// Creates the preview bitmap that will appear in the content editor's
     /// thumbnail display when previewing materials and environments. If this
@@ -1503,13 +1491,17 @@ namespace Rhino.PlugIns
       }
     }
 
-
-
-
-
+    /* 17 Oct 2012 - S. Baer
+     * Removed this virtual function until I understand what it is needed for.
+     * It seems like you can register default content in the plug-in's OnLoad
+     * virtual function and everything works fine
+     * 
+    // override this method to create extra default content for your renderer in
+    // addition to any content in the default content folder.
     protected virtual void CreateDefaultContent(RhinoDoc doc)
     {
     }
+    */
 
 
     /// <summary>
@@ -1620,6 +1612,10 @@ namespace Rhino.PlugIns
     private static readonly CreateDefaultContentCallback m_OnCreateDefaultContent = OnCreateDefaultContent;
     private static void OnCreateDefaultContent(int serial_number, int docId)
     {
+      /* 17 Oct 2012 S. Baer
+       * Removed virtual CreateDefaultContent for the time being. Don't
+       * understand yet why this is needed
+       * 
       RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
       RhinoDoc doc = RhinoDoc.FromId(docId);
 
@@ -1635,11 +1631,10 @@ namespace Rhino.PlugIns
         }
         catch (Exception ex)
         {
-          string error_msg = "Error occured during plug-in OnCreateDefaultContent\n Details:\n";
-          error_msg += ex.Message;
-          HostUtils.DebugString("Error " + error_msg);
+          HostUtils.ExceptionReport(ex);
         }
       }
+      */
     }
 
     internal delegate void OutputTypesCallback(int serial_number, IntPtr pON_wStringExt, IntPtr pON_wStringDesc);

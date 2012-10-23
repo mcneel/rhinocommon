@@ -44,6 +44,13 @@ namespace Rhino.Input.Custom
       UnsafeNativeMethods.CRhinoGetPoint_SetBasePoint(ptr, basePoint, showDistanceInStatusBar);
     }
 
+    public void SetCursor(System.Windows.Forms.Cursor cursor)
+    {
+      var handle = ((null == cursor) ? IntPtr.Zero : cursor.Handle);
+      var ptr = NonConstPointer();
+      UnsafeNativeMethods.CRhinoGetPoint_SetGetPointCursor(ptr, handle);
+    }
+
     public bool TryGetBasePoint(out Point3d basePoint)
     {
       IntPtr ptr = ConstPointer();

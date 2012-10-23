@@ -542,7 +542,7 @@ namespace Rhino.Input.Custom
     /// <summary>
     /// By default any objects in the object list are unselected when GetObject.GetObjects()
     /// exits with any return code besides Object. If you want to leave the objects
-    /// selected when non-object input is returned, then call EnableClearObjectsOnExit(false)
+    /// selected when non-object input is returned, then call EnableUnselectObjectsOnExit(false)
     /// before calling GetObjects().
     /// </summary>
     /// <param name="enable">The state to set.</param>

@@ -1,4 +1,12 @@
-﻿/dotnet/UI/*.resources
+﻿
+/Debug
+/Rhino3dmIo.sdf
+/Rhino3dmIo.suo
+/_Resharper.Rhino3dmIo
+/ipch
+/x64
+
+/dotnet/UI/*.resources
 /dotnet/monostart/bin
 /dotnet/monostart/obj
 /dotnet/monostart/monostart.pidb

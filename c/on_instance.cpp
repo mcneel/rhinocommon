@@ -43,3 +43,12 @@ RH_C_FUNCTION void ON_InstanceDefinition_SetString( ON_InstanceDefinition* pInst
     }
   }
 }
+
+RH_C_FUNCTION ON_InstanceRef* ON_InstanceRef_New( ON_UUID instanceDefinitionId, ON_Xform* instanceXform)
+{
+  ON_InstanceRef* ptr = new ON_InstanceRef();
+  if (instanceXform)
+    ptr->m_xform = *instanceXform;
+  ptr->m_instance_definition_uuid = instanceDefinitionId;
+  return ptr;
+}

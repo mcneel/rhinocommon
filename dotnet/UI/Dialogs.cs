@@ -48,6 +48,25 @@ namespace Rhino
 
     //public delegate System.Windows.Forms.DialogResult ShowColorDialogEventHandler(ref System.Drawing.Color color, bool includeButtonColors, string title, System.Windows.Forms.IWin32Window parent);
 
+    public class WaitCursor : IDisposable
+    {
+      private readonly int idxDefaultCursor = 0;
+      private readonly int idxWaitCursor = 1;
+
+      public WaitCursor()
+      {
+        Set();
+      }
+
+      public void Set() { UnsafeNativeMethods.CRhinoApp_SetCursor(idxWaitCursor); }
+      public void Clear() { UnsafeNativeMethods.CRhinoApp_SetCursor(idxDefaultCursor); }
+
+      public void Dispose()
+      {
+        Clear();
+      }
+    }
+
     public static class Dialogs
     {
       public static int ShowContextMenu(IEnumerable<string> items, System.Drawing.Point screenPoint, IEnumerable<int> modes)

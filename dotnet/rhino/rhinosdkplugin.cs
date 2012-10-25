@@ -331,9 +331,9 @@ namespace Rhino.PlugIns
           // an RDK plugin. This is the typical spot where C++ plug-ins perform their
           // RDK initialization.
           if (rc == LoadReturnCode.Success && p is RenderPlugIn)
-            {
-              Rhino.Render.RdkPlugIn.GetRdkPlugIn(p.Id, plugin_serial_number);
-            }
+          {
+            Rhino.Render.RdkPlugIn.GetRdkPlugIn(p.Id, plugin_serial_number);
+          }
 #endif
         }
         catch (Exception ex)

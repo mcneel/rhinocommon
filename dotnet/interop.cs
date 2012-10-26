@@ -49,6 +49,16 @@ namespace Rhino.Runtime
       return rc;
     }
 
+    /// <summary>
+    /// Get ON_Viewport* from a ViewportInfo instance
+    /// </summary>
+    /// <param name="viewport"></param>
+    /// <returns></returns>
+    public static IntPtr NativeNonConstPointer(DocObjects.ViewportInfo viewport)
+    {
+      return viewport.NonConstPointer();
+    }
+
 #if RHINO_SDK
     /// <summary>
     /// Returns the underlying const CRhinoObject* for a RhinoCommon class. You should only

@@ -799,7 +799,7 @@ namespace Rhino.Input
   }
 
   /// <summary>
-  /// Possible results from GetObject.Input(), GetPoint.Input(), etc...
+  /// Possible results from GetObject.Get(), GetPoint.Get(), etc...
   /// </summary>
   [CLSCompliant(false)]
   public enum GetResult : uint

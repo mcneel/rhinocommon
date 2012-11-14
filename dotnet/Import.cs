@@ -439,8 +439,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRdkCmnEventWatcher_SetFactoryDeletedEventCallback(Rhino.Render.RenderContent.ContentTypeDeletedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
 
-
-
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRdkCmnEventWatcher_SetClientPlugInUnloadingEventCallback(Rhino.RhinoApp.ClientPlugInUnloadingCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
 

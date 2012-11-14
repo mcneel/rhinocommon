@@ -1058,7 +1058,7 @@ namespace Rhino.DocObjects
     /// <param name="screenX">(screenx,screeny) = screen location.</param>
     /// <param name="screenY">(screenx,screeny) = screen location.</param>
     /// <returns>3d world coordinate line segment starting on the near clipping plane and ending on the far clipping plane.</returns>
-    Rhino.Geometry.Line GetFrustumLine( double screenX, double screenY)
+    public Rhino.Geometry.Line GetFrustumLine( double screenX, double screenY)
     {
       Rhino.Geometry.Line line = new Rhino.Geometry.Line();
       IntPtr pConstThis = ConstPointer();
@@ -1067,11 +1067,11 @@ namespace Rhino.DocObjects
       return line;
     }
 
-    Rhino.Geometry.Line GetFrustumLine(System.Drawing.Point screenPoint)
+    public Rhino.Geometry.Line GetFrustumLine(System.Drawing.Point screenPoint)
     {
       return GetFrustumLine(screenPoint.X, screenPoint.Y);
     }
-    Rhino.Geometry.Line GetFrustumLine(System.Drawing.PointF screenPoint)
+    public Rhino.Geometry.Line GetFrustumLine(System.Drawing.PointF screenPoint)
     {
       return GetFrustumLine(screenPoint.X, screenPoint.Y);
     }
@@ -1081,7 +1081,7 @@ namespace Rhino.DocObjects
     /// </summary>
     /// <param name="pointInFrustum">point in viewing frustum.</param>
     /// <returns>number of pixels per world unit at the 3d point.</returns>
-    double GetWorldToScreenScale(Rhino.Geometry.Point3d pointInFrustum)
+    public double GetWorldToScreenScale(Rhino.Geometry.Point3d pointInFrustum)
     {
       double d = 0.0;
       IntPtr pConstThis = ConstPointer();

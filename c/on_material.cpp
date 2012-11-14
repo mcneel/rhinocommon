@@ -104,7 +104,8 @@ RH_C_FUNCTION double ON_Material_GetDouble(const ON_Material* pConstMaterial, in
 {
   const int idxShine = 0;
   const int idxTransparency = 1;
-  
+  const int idxIOR = 2;
+ 
   double rc = 0;
   if( pConstMaterial )
   {
@@ -116,6 +117,8 @@ RH_C_FUNCTION double ON_Material_GetDouble(const ON_Material* pConstMaterial, in
     case idxTransparency:
       rc = pConstMaterial->m_transparency;
       break;
+    case idxIOR:
+      rc = pConstMaterial->m_index_of_refraction;
     }
   }
   return rc;
@@ -125,6 +128,7 @@ RH_C_FUNCTION void ON_Material_SetDouble(ON_Material* pMaterial, int which, doub
 {
   const int idxShine = 0;
   const int idxTransparency = 1;
+  const int idxIOR = 2;
   if( pMaterial )
   {
     switch(which)
@@ -134,6 +138,9 @@ RH_C_FUNCTION void ON_Material_SetDouble(ON_Material* pMaterial, int which, doub
       break;
     case idxTransparency:
       pMaterial->SetTransparency(val);
+      break;
+    case idxIOR:
+      pMaterial->m_index_of_refraction = val;
       break;
     }
   }

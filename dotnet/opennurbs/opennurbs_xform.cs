@@ -916,3 +916,128 @@ namespace Rhino.Geometry
     }
   }
 }
+
+#if RHINO_SDK
+namespace Rhino.Geometry.Morphs
+{
+  /// <summary>Twist Morph</summary>
+  public class TwistSpaceMorph : Rhino.Geometry.SpaceMorph, IDisposable
+  {
+    internal IntPtr m_pSpaceMorph;
+    IntPtr ConstPointer() { return m_pSpaceMorph; }
+    IntPtr NonConstPointer() { return m_pSpaceMorph; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public TwistSpaceMorph()
+    {
+      m_pSpaceMorph = UnsafeNativeMethods.CRhinoTwistSpaceMorph_New();
+      double tolerance = 0;
+      bool quickpreview = false;
+      bool preservestructure = true;
+      if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_pSpaceMorph, ref tolerance, ref quickpreview, ref preservestructure))
+      {
+        Tolerance = tolerance;
+        QuickPreview = quickpreview;
+        PreserveStructure = preservestructure;
+      }
+    }
+
+    /// <summary>Axis about which to twist</summary>
+    public Line TwistAxis
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        Line rc = new Line();
+        UnsafeNativeMethods.CRhinoTwistSpaceMorph_GetLine(pConstThis, ref rc);
+        return rc;
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.CRhinoTwistSpaceMorph_SetLine(pThis, ref value);
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public double TwistAngleRadians
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.CRhinoTwistSpaceMorph_GetTwistAngle(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.CRhinoTwistSpaceMorph_SetTwistAngle(pThis, value);
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public bool InfiniteTwist
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.CRhinoTwistSpaceMorph_GetInfiniteTwist(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.CRhinoTwistSpaceMorph_SetInfiniteTwist(pThis, value);
+      }
+    }
+
+    /// <summary>Morphs an Euclidean point. <para>This method is abstract.</para></summary>
+    /// <param name="point">A point that will be morphed by this function.</param>
+    /// <returns>Resulting morphed point.</returns>
+    public override Point3d MorphPoint(Point3d point)
+    {
+      UnsafeNativeMethods.ON_SpaceMorph_MorphPoint(m_pSpaceMorph, ref point);
+      return point;
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~TwistSpaceMorph()
+    {
+      Dispose(false);
+    }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_pSpaceMorph)
+      {
+        UnsafeNativeMethods.ON_SpaceMorph_Delete(m_pSpaceMorph);
+        m_pSpaceMorph = IntPtr.Zero;
+      }
+    }
+  }
+}
+#endif

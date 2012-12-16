@@ -516,6 +516,47 @@ namespace Rhino
       }
     }
 
+    /// <summary>
+    /// Type of MeshingParameters currently used by the document to mesh objects
+    /// </summary>
+    public Rhino.Geometry.MeshingParameterStyle MeshingParameterStyle
+    {
+      get
+      {
+        int rc = UnsafeNativeMethods.CRhinoDocProperties_GetRenderMeshStyle(m_docId);
+        return (Geometry.MeshingParameterStyle)rc;
+      }
+      set
+      {
+        UnsafeNativeMethods.CRhinoDocProperties_SetRenderMeshStyle(m_docId, (int)value);
+      }
+    }
+
+    /// <summary>
+    /// Get MeshingParameters currently used by the document
+    /// </summary>
+    /// <param name="style"></param>
+    /// <returns></returns>
+    public Rhino.Geometry.MeshingParameters GetMeshingParameters(MeshingParameterStyle style)
+    {
+      IntPtr pMeshingParameters = UnsafeNativeMethods.CRhinoDocProperties_GetRenderMeshParameters(m_docId, (int)style);
+      if (IntPtr.Zero == pMeshingParameters)
+        return null;
+      return new MeshingParameters(pMeshingParameters);
+    }
+
+    /// <summary>
+    /// Set the custom meshing parameters that this document will use. You must also modify the
+    /// MeshingParameterStyle property on the document to Custom if you want these meshing
+    /// parameters to be used
+    /// </summary>
+    /// <param name="mp"></param>
+    public void SetCustomMeshingParameters(MeshingParameters mp)
+    {
+      IntPtr pConstMeshingParameters = mp.ConstPointer();
+      UnsafeNativeMethods.CRhinoDocProperties_SetCustomRenderMeshParameters(m_docId, pConstMeshingParameters);
+    }
+
 #region tables
     private Rhino.DocObjects.Tables.ViewTable m_view_table;
     public Rhino.DocObjects.Tables.ViewTable Views
@@ -2000,7 +2041,6 @@ namespace Rhino
 #endregion
 #endif
   }
-
 
   /// <summary>
   /// Provides document information for RhinoDoc events.

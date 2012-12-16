@@ -41,6 +41,23 @@ namespace Rhino.Render
 namespace Rhino.Geometry
 {
   /// <summary>
+  /// Type of Mesh Parameters used by the RhinoDoc for meshing objects
+  /// </summary>
+  public enum MeshingParameterStyle : int
+  {
+    /// <summary>No style</summary>
+    None = 0,
+    /// <summary></summary>
+    Fast = 1,
+    /// <summary></summary>
+    Quality = 2,
+    /// <summary></summary>
+    Custom = 9,
+    /// <summary></summary>
+    PerObject = 10
+  }
+
+  /// <summary>
   /// Represents settings used for creating a mesh representation of a brep or surface.
   /// </summary>
   public class MeshingParameters : IDisposable

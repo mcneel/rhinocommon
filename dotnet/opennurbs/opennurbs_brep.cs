@@ -52,6 +52,22 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
+  /// Corner types used for creating a tapered extrusion
+  /// </summary>
+  public enum ExtrudeCornerType : int
+  {
+    /// <summary>No Corner</summary>
+    None = 0,
+    /// <summary></summary>
+    Sharp = 1,
+    /// <summary></summary>
+    Round = 2,
+    /// <summary></summary>
+    Smooth = 3,
+    /// <summary></summary>
+    Chamfer = 4
+  }
+  /// <summary>
   /// Boundary Representation. A surface or polysurface along with trim curve information.
   /// </summary>
   [Serializable]
@@ -701,6 +717,27 @@ namespace Rhino.Geometry
         IntPtr pShapes = shapearray.ConstPointer();
         IntPtr pBreps = rc.NonConstPointer();
         UnsafeNativeMethods.RHC_Rhino2RailSweep(pConstRail1, pConstRail2, pShapes, closed, tolerance, pBreps);
+        return rc.ToNonConstArray();
+      }
+    }
+
+    /// <summary>
+    /// Extrude a curve to a taper making a brep (potentially more than 1)
+    /// </summary>
+    /// <param name="curveToExtrude">the curve to extrude</param>
+    /// <param name="distance">the distance to extrude</param>
+    /// <param name="direction">the direction of the extrusion</param>
+    /// <param name="basePoint">the basepoint of the extrusion</param>
+    /// <param name="draftAngleRadians">angle of the extrusion</param>
+    /// <param name="cornerType"></param>
+    /// <returns>array of breps on success</returns>
+    public static Brep[] CreateFromTaperedExtrude(Curve curveToExtrude, double distance, Vector3d direction, Point3d basePoint, double draftAngleRadians, ExtrudeCornerType cornerType)
+    {
+      IntPtr pConstCurve = curveToExtrude.ConstPointer();
+      using (var rc = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      {
+        IntPtr pBreps = rc.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoCreateTaperedExtrude(pConstCurve, distance, direction, basePoint, draftAngleRadians, (int)cornerType, pBreps);
         return rc.ToNonConstArray();
       }
     }

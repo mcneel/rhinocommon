@@ -423,6 +423,37 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Construct a radial dimension from 3d input
+    /// </summary>
+    /// <param name="center">center of Circle</param>
+    /// <param name="arrowTip">3d point on the circle at the dimension arrow tip</param>
+    /// <param name="xAxis">x axis of the dimension's plane</param>
+    /// <param name="normal">normal to the dimension's plane</param>
+    /// <param name="offsetDistance">distance from arrow tip to knee point</param>
+    public RadialDimension(Point3d center, Point3d arrowTip, Vector3d xAxis, Vector3d normal, double offsetDistance)
+    {
+      IntPtr pThis = UnsafeNativeMethods.ON_RadialDimension2_New();
+      ConstructNonConstObject(pThis);
+      UnsafeNativeMethods.ON_RadialDimension2_CreateFromPoints(pThis, center, arrowTip, xAxis, normal, offsetDistance);
+    }
+
+    /// <summary>
+    /// Construct a radial dimension from 3d input
+    /// </summary>
+    /// <param name="circle"></param>
+    /// <param name="arrowTip">3d point on the circle at the dimension arrow tip</param>
+    /// <param name="offsetDistance">distance from arrow tip to knee point</param>
+    public RadialDimension(Circle circle, Point3d arrowTip, double offsetDistance)
+    {
+      IntPtr pThis = UnsafeNativeMethods.ON_RadialDimension2_New();
+      ConstructNonConstObject(pThis);
+      Point3d center = circle.Center;
+      Vector3d xAxis = circle.Plane.XAxis;
+      Vector3d normal = circle.Normal;
+      UnsafeNativeMethods.ON_RadialDimension2_CreateFromPoints(pThis, center, arrowTip, xAxis, normal, offsetDistance);
+    }
+
+    /// <summary>
     /// Gets a value indicating whether the value refers to the diameter, rather than the radius.
     /// </summary>
     public bool IsDiameterDimension

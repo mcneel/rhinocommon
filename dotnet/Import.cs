@@ -31,14 +31,6 @@ class Import
 [System.Security.SuppressUnmanagedCodeSecurity]
 internal partial class UnsafeNativeMethods
 {
-#if !RHINO_SDK
-  static UnsafeNativeMethods()
-  {
-    // When RhinoCommon is being used as a stand-alone wrapper around OpenNURBS.
-    // always called ON::Begin() before any calls are made to the rhcommon_c.dll
-    ON_Begin();
-  }
-#endif
   [DllImport("user32.dll")]
   [return: MarshalAs(UnmanagedType.Bool)]
   internal static extern bool EnableWindow(IntPtr hWnd, bool bEnable);

@@ -1067,10 +1067,23 @@ namespace Rhino.DocObjects
       return line;
     }
 
+    /// <summary>
+    /// Gets the world coordinate line in the view frustum
+    /// that projects to a point on the screen.
+    /// </summary>
+    /// <param name="screenPoint">screen location</param>
+    /// <returns>3d world coordinate line segment starting on the near clipping plane and ending on the far clipping plane.</returns>
     public Rhino.Geometry.Line GetFrustumLine(System.Drawing.Point screenPoint)
     {
       return GetFrustumLine(screenPoint.X, screenPoint.Y);
     }
+
+    /// <summary>
+    /// Gets the world coordinate line in the view frustum
+    /// that projects to a point on the screen.
+    /// </summary>
+    /// <param name="screenPoint">screen location</param>
+    /// <returns>3d world coordinate line segment starting on the near clipping plane and ending on the far clipping plane.</returns>
     public Rhino.Geometry.Line GetFrustumLine(System.Drawing.PointF screenPoint)
     {
       return GetFrustumLine(screenPoint.X, screenPoint.Y);

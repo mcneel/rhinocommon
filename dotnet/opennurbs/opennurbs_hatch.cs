@@ -34,6 +34,7 @@ namespace Rhino.Geometry
       return new Hatch(IntPtr.Zero, null);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Constructs an array of <see cref="Hatch">hatches</see> from a set of curves.
     /// </summary>
@@ -82,6 +83,7 @@ namespace Rhino.Geometry
     {
       return Create(new Curve[] { curve }, hatchPatternIndex, rotationRadians, scale);
     }
+#endif
 
     /// <summary>
     /// Decomposes the hatch pattern into an array of geometry.

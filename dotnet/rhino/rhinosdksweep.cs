@@ -16,6 +16,7 @@ namespace Rhino.Geometry
     double m_sweep_tol = -1;
     double m_angle_tol = -1;
     int m_miter_type = 1;
+    int m_shape_blending = 0;
 
     /// <example>
     /// <code source='examples\vbnet\ex_sweep1.vb' lang='vbnet'/>
@@ -114,6 +115,18 @@ namespace Rhino.Geometry
     {
       get { return m_bClosed; }
       set { m_bClosed = value; }
+    }
+
+    /// <summary>
+    /// If true, the sweep is linearly blended from one end to the other,
+    /// creating sweeps that taper from one cross-section curve to the other.
+    /// If false, the sweep stays constant at the ends and changes more
+    /// rapidly in the middle.
+    /// </summary>
+    public bool GlobalShapeBlending
+    {
+      get { return m_shape_blending == 1; }
+      set { m_shape_blending = value ? 1 : 0; }
     }
 
     #region no simplify
@@ -225,7 +238,7 @@ namespace Rhino.Geometry
       Runtime.InteropWrappers.SimpleArrayBrepPointer breps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer();
       IntPtr pArgsSweep1 = sweep.NonConstPointer();
       IntPtr pBreps = breps.NonConstPointer();
-      UnsafeNativeMethods.RHC_Sweep1(pArgsSweep1, pBreps);
+      UnsafeNativeMethods.RHC_Sweep1(pArgsSweep1, pBreps, m_shape_blending);
       Brep[] rc = breps.ToNonConstArray();
       sweep.Dispose();
       breps.Dispose();
@@ -263,7 +276,7 @@ namespace Rhino.Geometry
       Runtime.InteropWrappers.SimpleArrayBrepPointer breps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer();
       IntPtr pArgsSweep1 = sweep.NonConstPointer();
       IntPtr pBreps = breps.NonConstPointer();
-      UnsafeNativeMethods.RHC_Sweep1Refit(pArgsSweep1, pBreps, refitTolerance);
+      UnsafeNativeMethods.RHC_Sweep1Refit(pArgsSweep1, pBreps, refitTolerance, m_shape_blending);
       Brep[] rc = breps.ToNonConstArray();
       sweep.Dispose();
       breps.Dispose();
@@ -301,7 +314,7 @@ namespace Rhino.Geometry
       Runtime.InteropWrappers.SimpleArrayBrepPointer breps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer();
       IntPtr pArgsSweep1 = sweep.NonConstPointer();
       IntPtr pBreps = breps.NonConstPointer();
-      UnsafeNativeMethods.RHC_Sweep1Rebuild(pArgsSweep1, pBreps, rebuildCount);
+      UnsafeNativeMethods.RHC_Sweep1Rebuild(pArgsSweep1, pBreps, rebuildCount, m_shape_blending);
       Brep[] rc = breps.ToNonConstArray();
       sweep.Dispose();
       breps.Dispose();

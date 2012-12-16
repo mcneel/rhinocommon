@@ -1106,6 +1106,23 @@ namespace Rhino.Geometry
       }
       return d;
     }
+
+    /// <summary>
+    /// Transforms the present point in place. The transformation matrix acts on the left of the point. i.e.,
+    /// <para>result = transformation*point</para>
+    /// </summary>
+    /// <param name="xform">Transformation to apply.</param>
+    public void Transform(Transform xform)
+    {
+      double ww = xform.m_30 * m_x + xform.m_31 * m_y + xform.m_33;
+      if (ww != 0.0) { ww = 1.0 / ww; }
+
+      double tx = ww * (xform.m_00 * m_x + xform.m_01 * m_y + xform.m_03);
+      double ty = ww * (xform.m_10 * m_x + xform.m_11 * m_y + xform.m_13);
+      double tz = ww * (xform.m_20 * m_x + xform.m_21 * m_y + xform.m_23);
+      m_x = tx;
+      m_y = ty;
+    }
   }
 
   /// <summary>

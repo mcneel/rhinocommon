@@ -192,6 +192,12 @@ RH_C_FUNCTION void ON_SpaceMorph_MorphPoint(const ON_SpaceMorph* pConstSpaceMorp
 }
 #endif
 
+RH_C_FUNCTION void ON_SpaceMorph_Delete(ON_SpaceMorph* pSpaceMorph)
+{
+  if( pSpaceMorph )
+    delete pSpaceMorph;
+}
+
 RH_C_FUNCTION ON_Matrix* ON_Matrix_New(int rows, int cols)
 {
   ON_Matrix* rc = new ON_Matrix(rows, cols);

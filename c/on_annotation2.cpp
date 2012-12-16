@@ -166,12 +166,32 @@ RH_C_FUNCTION void ON_LinearDimension2_SetAligned( ON_LinearDimension2* pLinearD
   }
 }
 
+RH_C_FUNCTION ON_RadialDimension2* ON_RadialDimension2_New()
+{
+  return new ON_RadialDimension2();
+}
+
 RH_C_FUNCTION bool ON_RadialDimension2_IsDiameterDimension( const ON_RadialDimension2* pConstRadialDimension2 )
 {
   bool rc = false;
   if( pConstRadialDimension2 )
   {
     rc = (pConstRadialDimension2->Type() == ON::dtDimDiameter);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_RadialDimension2_CreateFromPoints(ON_RadialDimension2* pRadialDimension, ON_3DPOINT_STRUCT center, ON_3DPOINT_STRUCT arrowTip,
+                                                        ON_3DVECTOR_STRUCT xaxis, ON_3DVECTOR_STRUCT normal, double offset_distance)
+{
+  bool rc = false;
+  if( pRadialDimension )
+  {
+    ON_3dPoint _center(center.val);
+    ON_3dPoint _arrowtip(arrowTip.val);
+    ON_3dVector _xaxis(xaxis.val);
+    ON_3dVector _normal(normal.val);
+    rc = pRadialDimension->CreateFromPoints(_center, _arrowtip, _xaxis, _normal, offset_distance);
   }
   return rc;
 }

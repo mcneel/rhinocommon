@@ -46,8 +46,8 @@
 // Debug x86 (32 bit) libs
 #define ON_MSC_LIB_DIR "Debug/"
 #pragma message( " --- statically linking opennurbs." )
-#pragma comment(lib, "../debug/zlib.lib")
-#pragma comment(lib, "../debug/opennurbs_staticlib.lib")
+#pragma comment(lib, "../../debug/zlib.lib")
+#pragma comment(lib, "../../debug/opennurbs.lib")
 
 #endif // NDEBUG else _DEBUG
 

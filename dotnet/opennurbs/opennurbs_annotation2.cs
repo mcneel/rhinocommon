@@ -226,6 +226,22 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Index of DimensionStyle in document DimStyle table used by the dimension.
+    /// </summary>
+    public int Index
+    {
+      get
+      {
+        IntPtr pThis = ConstPointer();
+        return UnsafeNativeMethods.ON_Annotation2_Index(pThis, false, 0);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_Annotation2_Index(pThis, true, value);
+      }
+    }
 
   }
 

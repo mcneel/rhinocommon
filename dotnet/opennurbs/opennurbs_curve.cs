@@ -2843,10 +2843,41 @@ namespace Rhino.Geometry
     /// Trimming interval. Portions of the curve before curve(domain[0])
     /// and after curve(domain[1]) are removed.
     /// </param>
-    /// <returns>Trimmed portion of this curve is successfull, null on failure.</returns>
+    /// <returns>Trimmed curve if successful, null on failure.</returns>
     public Curve Trim(Interval domain)
     {
       return Trim(domain.T0, domain.T1);
+    }
+
+    /// <summary>
+    /// Shortens a curve by a given length
+    /// </summary>
+    /// <param name="side"></param>
+    /// <param name="length"></param>
+    /// <returns>Trimmed curve if successful, null on failure.</returns>
+    public Curve Trim(CurveEnd side, double length)
+    {
+      if( length<=0 )
+        throw new ArgumentException("length must be > 0", "length");
+      double cLength = GetLength();
+      if( IsClosed || length >= cLength )
+        return null;
+      if( side==CurveEnd.Both && length>=2.0*cLength)
+        return null;
+      
+      double t0 = Domain[0];
+      double t1 = Domain[1];
+      if( side == CurveEnd.Start || side == CurveEnd.Both )
+      {
+        double s = length / cLength;
+        NormalizedLengthParameter(s, out t0);
+      }
+      if( side == CurveEnd.End || side == CurveEnd.Both )
+      {
+        double s = (cLength - length) / cLength;
+        NormalizedLengthParameter(s, out t1);
+      }
+      return Trim(t0,t1);
     }
 
     /// <summary>

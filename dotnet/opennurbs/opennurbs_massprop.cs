@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 #if RHINO_SDK
 
@@ -167,39 +168,6 @@ namespace Rhino.Geometry
       return IntPtr.Zero == rc ? null : new AreaMassProperties(rc, false);
     }
 
-#if PLEASE_CHECK_STEVE 
-    /// <summary>
-    /// Computes the Area properties for a collection of Breps.
-    /// </summary>
-    /// <param name="breps">Breps to include in the area computation.</param>
-    /// <returns>The Area properties for the entire collection or null on failure.</returns>
-    public static AreaMassProperties Compute(IEnumerable<Brep> breps)
-    {
-      if (breps == null) { throw new ArgumentNullException("breps"); }
-      List<GeometryBase> ptr = new List<GeometryBase>();
-      foreach (Brep brep in breps)
-      {
-        if (brep == null) { continue; }
-        ptr.Add(brep);
-      }
-      return Compute(ptr);
-    }
-    /// <summary>
-    /// Computes the Area properties for a collection of Meshes.
-    /// </summary>
-    /// <param name="meshes">Meshes to include in the area computation.</param>
-    /// <returns>The Area properties for the entire collection or null on failure.</returns>
-    public static AreaMassProperties Compute(IEnumerable<Mesh> meshes)
-    {
-      if (meshes == null) { throw new ArgumentNullException("meshes"); }
-      List<GeometryBase> ptr = new List<GeometryBase>();
-      foreach (Mesh mesh in meshes)
-      {
-        if (mesh == null) { continue; }
-        ptr.Add(mesh);
-      }
-      return Compute(ptr);
-    }
     /// <summary>
     /// Computes the Area properties for a collection of geometric objects. 
     /// At present only Breps, Surfaces, Meshes and Planar Closed Curves are supported.
@@ -211,11 +179,11 @@ namespace Rhino.Geometry
       const double relativeTolerance = 1.0e-6;
       const double absoluteTolerance = 1.0e-6;
 
-      Rhino.Runtime.INTERNAL_GeometryArray array = new Rhino.Runtime.INTERNAL_GeometryArray(geometry);
-      IntPtr rc = UnsafeNativeMethods.ON_GeometryMassProperties(true, array.ConstPointer(), relativeTolerance, absoluteTolerance);
+      Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer array = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry);
+      IntPtr pConstGeometryArray = array.ConstPointer();
+      IntPtr rc = UnsafeNativeMethods.ON_Geometry_AreaMassProperties(pConstGeometryArray, relativeTolerance, absoluteTolerance);
       return IntPtr.Zero == rc ? null : new AreaMassProperties(rc, false);
     }
-#endif
 
     #region properties
     internal IntPtr ConstPointer()

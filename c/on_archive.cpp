@@ -780,7 +780,7 @@ RH_C_FUNCTION CRhCmnWrite3dmBufferArchive* ON_WriteBufferArchive_NewWriter(const
     if( !writeuserdata )
       holder.MoveUserDataFrom(*pConstObject);
     *length = 0;
-    size_t sz = pConstObject->SizeOf() + 256;
+    size_t sz = pConstObject->SizeOf() + 512; // 256 was too small on x86 builds to account for extra data written
     rc = new CRhCmnWrite3dmBufferArchive(sz, 0, rhinoversion, ON::Version());
     if( rc->WriteObject(pConstObject) )
     {

@@ -232,6 +232,34 @@ RH_C_FUNCTION void ON_TextDot_GetSetText(ON_TextDot* ptr, bool set, const RHMONO
   }
 }
 
+RH_C_FUNCTION int ON_TextDot_GetHeight(const ON_TextDot* pConstDot)
+{
+  if( pConstDot )
+    return pConstDot->Height();
+  return 0;
+}
+
+RH_C_FUNCTION void ON_TextDot_SetHeight(ON_TextDot* pDot, int height)
+{
+  if( pDot )
+    pDot->SetHeight(height);
+}
+
+RH_C_FUNCTION void ON_TextDot_GetFontFace(const ON_TextDot* pConstDot, CRhCmnStringHolder* pStringHolder)
+{
+  if( pConstDot && pStringHolder )
+    pStringHolder->Set(pConstDot->FontFace());
+}
+
+RH_C_FUNCTION void ON_TextDot_SetFontFace(ON_TextDot* pDot, const RHMONO_STRING* face)
+{
+  if( pDot && face )
+  {
+    INPUTSTRINGCOERCE(_face, face);
+    pDot->SetFontFace(_face);
+  }
+}
+
 RH_C_FUNCTION ON_TextEntity2* ON_TextEntity2_New()
 {
   return new ON_TextEntity2();

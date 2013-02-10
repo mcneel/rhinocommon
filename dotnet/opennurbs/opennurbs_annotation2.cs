@@ -805,6 +805,42 @@ namespace Rhino.Geometry
       }
     }
 
-    // Do not wrap height, fontface and display. These are not currently used in Rhino
+    /// <summary>
+    /// Height of font used for displaying the dot
+    /// </summary>
+    public int FontHeight
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_TextDot_GetHeight(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_TextDot_SetHeight(pThis, value);
+      }
+    }
+
+    /// <summary>Font face used for displaying the dot</summary>
+    public string FontFace
+    {
+      get
+      { 
+        IntPtr pConstThis = ConstPointer();
+        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        {
+          IntPtr pStringHolder = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_TextDot_GetFontFace(pConstThis, pStringHolder);
+          return sh.ToString();
+        }
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_TextDot_SetFontFace(pThis, value);
+      }
+    }
+
   }
 }

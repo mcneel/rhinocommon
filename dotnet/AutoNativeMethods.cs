@@ -335,6 +335,22 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_TextDot_GetSetText(IntPtr ptr, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.LPWStr)]string _text, IntPtr pStringHolder);
 
+  //int ON_TextDot_GetHeight(const ON_TextDot* pConstDot)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_TextDot_GetHeight(IntPtr pConstDot);
+
+  //void ON_TextDot_SetHeight(ON_TextDot* pDot, int height)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_TextDot_SetHeight(IntPtr pDot, int height);
+
+  //void ON_TextDot_GetFontFace(const ON_TextDot* pConstDot, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_TextDot_GetFontFace(IntPtr pConstDot, IntPtr pStringHolder);
+
+  //void ON_TextDot_SetFontFace(ON_TextDot* pDot, const RHMONO_STRING* face)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_TextDot_SetFontFace(IntPtr pDot, [MarshalAs(UnmanagedType.LPWStr)]string face);
+
   //ON_TextEntity2* ON_TextEntity2_New()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_TextEntity2_New();
@@ -2143,6 +2159,21 @@ internal partial class UnsafeNativeMethods
   //ON_MassProperties* ON_Curve_AreaMassProperties(const ON_Curve* pCurve, double rel_tol, double abs_tol, double curve_planar_tol)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Curve_AreaMassProperties(IntPtr pCurve, double rel_tol, double abs_tol, double curve_planar_tol);
+
+  //bool RHC_RhinoTweenCurves( const ON_Curve* pStartCurve, const ON_Curve* pEndCurve, int num_curves, ON_SimpleArray<ON_Curve*>* outputCurves )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoTweenCurves(IntPtr pStartCurve, IntPtr pEndCurve, int num_curves, IntPtr outputCurves);
+
+  //bool RHC_RhinoTweenCurvesWithMatching( const ON_Curve* pStartCurve, const ON_Curve* pEndCurve, int num_curves, ON_SimpleArray<ON_Curve*>* outputCurves )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoTweenCurvesWithMatching(IntPtr pStartCurve, IntPtr pEndCurve, int num_curves, IntPtr outputCurves);
+
+  //bool RHC_RhinoTweenCurveWithSampling( const ON_Curve* pStartCurve, const ON_Curve* pEndCurve, int num_curves, int num_samples, ON_SimpleArray<ON_Curve*>* outputCurves )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoTweenCurveWithSampling(IntPtr pStartCurve, IntPtr pEndCurve, int num_curves, int num_samples, IntPtr outputCurves);
   #endregion
 
 
@@ -8474,9 +8505,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoInstanceDefinition_UpdateType(int docId, int idef_index);
 
-  //int CRhinoInstanceDefinition_RhinoInstanceArchiveFileStatus( int docId, int idef_index )
+  //int RHC_RhinoInstanceArchiveFileStatus( int docId, int idef_index )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int CRhinoInstanceDefinition_RhinoInstanceArchiveFileStatus(int docId, int idef_index);
+  internal static extern int RHC_RhinoInstanceArchiveFileStatus(int docId, int idef_index);
 
   //int CRhinoInstanceDefinitionTable_InstanceDefinitionCount( int docId, bool all )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

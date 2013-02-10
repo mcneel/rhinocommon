@@ -502,7 +502,7 @@ namespace Rhino.DocObjects
     {
       get 
       {
-        int rc = UnsafeNativeMethods.CRhinoInstanceDefinition_RhinoInstanceArchiveFileStatus(m_doc.m_docId, m_index);
+        int rc = UnsafeNativeMethods.RHC_RhinoInstanceArchiveFileStatus(m_doc.m_docId, m_index);
         return (InstanceDefinitionArchiveFileStatus)rc;
       }
     }

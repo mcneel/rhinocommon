@@ -160,6 +160,93 @@ namespace Rhino.Geometry
       }
       return nc;
     }
+
+    /// <summary>
+    /// Creates a C1 cubic NURBS approximation of a helix or spiral. For a helix,
+    /// you may have radius0 == radius1. For a spiral radius0 == radius0 produces
+    /// a circle. Zero and negative radii are permissible.
+    /// </summary>
+    /// <param name="axisStart">Helix's axis starting point or center of spiral.</param>
+    /// <param name="axisDir">Helix's axis vector or normal to spiral's plane.</param>
+    /// <param name="radiusPoint">
+    /// Point used only to get a vector that is perpedicular to the axis. In
+    /// particular, this vector must not be (anti)parallel to the axis vector.
+    /// </param>
+    /// <param name="pitch">
+    /// The pitch, where a spiral has a pitch = 0, and pitch > 0 is the distance
+    /// between the helix's "threads".
+    /// </param>
+    /// <param name="turnCount">The number of turns in spiral or helix. Positive
+    /// values produce counter-clockwise orientation, negitive values produce
+    /// clockwise orientation. Note, for a helix, turnCount * pitch = length of
+    /// the helix's axis.
+    /// </param>
+    /// <param name="radius0">The starting radius.</param>
+    /// <param name="radius1">The ending radius.</param>
+    /// <returns>NurbsCurve on success, null on failure.</returns>
+    public static NurbsCurve CreateSpiral(Point3d axisStart, Vector3d axisDir, Point3d radiusPoint,
+      double pitch, double turnCount, double radius0, double radius1)
+    {
+      NurbsCurve curve = new NurbsCurve();
+      IntPtr pCurve = curve.NonConstPointer();
+      bool rc = UnsafeNativeMethods.RHC_RhinoCreateSpiral0(axisStart, axisDir, radiusPoint, pitch, turnCount, radius0, radius1, pCurve);
+      if (!rc)
+      {
+        curve.Dispose();
+        return null;
+      }
+      return curve;
+    }
+
+    /// <summary>
+    /// Create a C2 non-rational uniform cubic NURBS approximation of a swept helix or spiral.
+    /// </summary>
+    /// <param name="railCurve">The rail curve.</param>
+    /// <param name="t0">Starting portion of rail curve's domain to sweep along.</param>
+    /// <param name="t1">Ending portion of rail curve's domain to sweep along.</param>
+    /// <param name="radiusPoint">
+    /// Point used only to get a vector that is perpedicular to the axis. In
+    /// particular, this vector must not be (anti)parallel to the axis vector.
+    /// </param>
+    /// <param name="pitch">
+    /// The pitch. Positive values produce counter-clockwise orientation,
+    /// negative values produce clockwise orientation.
+    /// </param>
+    /// <param name="turnCount">
+    /// The turn count. If != 0, then the resulting helix will have this many
+    /// turns. If = 0, then pitch must be != 0 and the approximate distance
+    /// between turns will be set to pitch. Positive values produce counter-clockwise
+    /// orientation, negitive values produce clockwise orientation.
+    /// </param>
+    /// <param name="radius0">
+    /// The starting radius. At least one radii must benonzero. Negative values
+    /// are allowed.
+    /// </param>
+    /// <param name="radius1">
+    /// The ending radius. At least ont radii must be nonzero. Negative values
+    /// are allowed.
+    /// </param>
+    /// <param name="pointsPerTurn">
+    /// Number of points to intepolate per turn. Must be greater than 4.
+    /// When in doubt, use 12.
+    /// </param>
+    /// <returns>NurbsCurve on success, null on failure.</returns>
+    public static NurbsCurve CreateSpiral(Curve railCurve, double t0, double t1, Point3d radiusPoint, double pitch,
+      double turnCount, double radius0, double radius1, int pointsPerTurn)
+    {
+      IntPtr pRail = railCurve.ConstPointer();
+      NurbsCurve curve = new NurbsCurve();
+      IntPtr pCurve = curve.NonConstPointer();
+      bool rc = UnsafeNativeMethods.RHC_RhinoCreateSpiral1(pRail, t0, t1, radiusPoint, pitch, turnCount, radius0, radius1, pointsPerTurn, pCurve);
+      if (!rc)
+      {
+        curve.Dispose();
+        return null;
+      }
+      return curve;
+    }
+
+
     #endregion
 
     #region constructors

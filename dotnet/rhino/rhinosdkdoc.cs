@@ -196,7 +196,7 @@ namespace Rhino
     const int idxNotes = 3;
     const int idxTemplateFileUsed = 4;
 
-    ///<summary>Returns the name of the currently loaded RhinoCommon document (3DM file).</summary>
+    ///<summary>Returns the name of the currently loaded Rhino document (3DM file).</summary>
     public string Name
     {
       get
@@ -210,7 +210,7 @@ namespace Rhino
       }
     }
 
-    ///<summary>Returns the path of the currently loaded RhinoCommon document (3DM file).</summary>
+    ///<summary>Returns the path of the currently loaded Rhino document (3DM file).</summary>
     public string Path
     {
       get
@@ -221,7 +221,7 @@ namespace Rhino
     /*
         ///<summary>
         ///Returns or sets the uniform resource locator (URL) of the currently
-        ///loaded RhinoCommon document (3DM file).
+        ///loaded Rhino document (3DM file).
         ///</summary>
         public string URL
         {
@@ -381,7 +381,7 @@ namespace Rhino
 
     ///<summary>
     ///Returns the file version of the current document.  
-    ///Use this function to determine which version of RhinoCommon last saved the document.
+    ///Use this function to determine which version of Rhino last saved the document.
     ///</summary>
     ///<returns>
     ///The file version (e.g. 1, 2, 3, 4, etc.) or -1 if the document has not been read from disk.

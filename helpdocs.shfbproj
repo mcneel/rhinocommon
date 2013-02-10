@@ -18,9 +18,8 @@
     <OutputPath>.\Help\</OutputPath>
     <HtmlHelpName>RhinoCommon</HtmlHelpName>
     <DocumentationSources>
-      <DocumentationSource sourceFile="dotnet\Debug\RhinoCommon.dll" xmlns="" />
-      <DocumentationSource sourceFile="dotnet\Debug\RhinoCommon.xml" xmlns="" />
-    </DocumentationSources>
+      <DocumentationSource sourceFile="dotnet\Release\RhinoCommon.dll" />
+<DocumentationSource sourceFile="dotnet\Release\RhinoCommon.xml" /></DocumentationSources>
     <HelpFileFormat>HtmlHelp1, Website</HelpFileFormat>
     <CopyrightText>Report wishes and bugs: https://github.com/mcneel/rhinocommon/issues</CopyrightText>
     <FeedbackEMailAddress>steve%40mcneel.com</FeedbackEMailAddress>
@@ -46,7 +45,7 @@
     </ComponentConfigurations>
     <NamingMethod>MemberName</NamingMethod>
     <PresentationStyle>vs2005</PresentationStyle>
-    <FooterText>Last updated 17 September 2012 - Robert McNeel and Associates</FooterText>
+    <FooterText>Updated 5 February 2013 - Robert McNeel and Associates %28Rhino 5 SR1%29</FooterText>
     <CopyrightHref>https://github.com/mcneel/rhinocommon/issues</CopyrightHref>
   </PropertyGroup>
   <!-- There are no properties for these two groups but they need to appear in

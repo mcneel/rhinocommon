@@ -138,22 +138,33 @@ namespace Rhino.DocObjects
 
     static void OnRhinoObjectDocNotify(int docId, uint serialNumber, int add)
     {
-      RhinoDoc doc = RhinoDoc.FromId(docId);
-      if (doc != null)
+      try
       {
-        RhinoObject rhobj = doc.Objects.FindCustomObject(serialNumber);
-        if (rhobj != null)
+        RhinoDoc doc = RhinoDoc.FromId(docId);
+        if (doc != null)
         {
-          if (add == 1)
+          RhinoObject rhobj = doc.Objects.FindCustomObject(serialNumber);
+          if (rhobj != null)
           {
-            if (m_custom_objects == null)
-              m_custom_objects = new System.Collections.Generic.List<RhinoObject>();
-            m_custom_objects.Add(rhobj);
-            rhobj.OnAddToDocument(doc);
+            if (add == 1)
+            {
+              if (m_custom_objects == null)
+                m_custom_objects = new System.Collections.Generic.List<RhinoObject>();
+              m_custom_objects.Add(rhobj);
+              rhobj.OnAddToDocument(doc);
+            }
+            else
+              rhobj.OnDeleteFromDocument(doc);
           }
-          else
-            rhobj.OnDeleteFromDocument(doc);
         }
+      }
+      catch (Exception ex)
+      {
+        // 8 Feb 2013 S. Baer (RH-15766)
+        // Add exception handling since some custom objects were throwing
+        // exceptions and that is very dangerous during unmanaged callbacks
+        // like this
+        Runtime.HostUtils.ExceptionReport(ex);
       }
     }
 

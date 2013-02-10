@@ -60,6 +60,43 @@ namespace Rhino.DocObjects
     Reference = 2 // linked InstanceDefinition layers will be reference
   }
 
+  /// <summary>
+  /// The archive file of a linked instance definition can have the following possible states.
+  /// Use InstanceObject.ArchiveFileStatus to query a instance definition's archive file status.
+  /// </summary>
+  public enum InstanceDefinitionArchiveFileStatus : int
+  {
+    /// <summary>
+    /// The instance definition is not a linked instance definition.
+    /// </summary>
+    NotALinkedInstanceDefinition = -3,
+    /// <summary>
+    /// The instance definition's archive file is not readable.
+    /// </summary>
+    LinkedFileNotReadable = -2,
+    /// <summary>
+    /// The instance definition's archive file cannot be found.
+    /// </summary>
+    LinkedFileNotFound = -1,
+    /// <summary>
+    /// The instance definition's archive file is up-to-date.
+    /// </summary>
+    LinkedFileIsUpToDate = 0,
+    /// <summary>
+    /// The instance definition's archive file is newer.
+    /// </summary>
+    LinkedFileIsNewer = 1,
+    /// <summary>
+    /// The instance definition's archive file is older.
+    /// </summary>
+    LinkedFileIsOlder = 2,
+    /// <summary>
+    /// The instance definition's archive file is different.
+    /// </summary>
+    LinkedFileIsDifferent = 3
+  }
+
+
 #if RHINO_SDK
   public class InstanceObject : RhinoObject
   {
@@ -114,6 +151,22 @@ namespace Rhino.DocObjects
         RhinoDoc doc = RhinoDoc.FromId(docId);
         return new InstanceDefinition(idef_index, doc);
       }
+    }
+
+    /// <summary>Determine if this reference uses an instance definition</summary>
+    /// <param name="definitionIndex"></param>
+    /// <param name="nestingLevel">
+    /// If the instance definition is used, this is the definition's nesting depth
+    /// </param>
+    /// <returns>true or false depending on if the deifinition is used</returns>
+    public bool UsesDefinition(int definitionIndex, out int nestingLevel)
+    {
+      nestingLevel = 0;
+      IntPtr pConstThis = ConstPointer();
+      int rc = UnsafeNativeMethods.CRhinoInstanceObject_UsesDefinition(pConstThis, definitionIndex);
+      if (rc >= 0)
+        nestingLevel = rc;
+      return rc >= 0;
     }
 
     /// <summary>
@@ -440,6 +493,18 @@ namespace Rhino.DocObjects
     public System.Drawing.Bitmap CreatePreviewBitmap(Rhino.Display.DefinedViewportProjection definedViewportProjection, System.Drawing.Size bitmapSize)
     {
       return CreatePreviewBitmap(definedViewportProjection, Rhino.DocObjects.DisplayMode.Wireframe, bitmapSize);
+    }
+
+    /// <summary>
+    /// Returns the archive file status of a linked instance definition.
+    /// </summary>
+    public InstanceDefinitionArchiveFileStatus ArchiveFileStatus
+    {
+      get 
+      {
+        int rc = UnsafeNativeMethods.CRhinoInstanceDefinition_RhinoInstanceArchiveFileStatus(m_doc.m_docId, m_index);
+        return (InstanceDefinitionArchiveFileStatus)rc;
+      }
     }
   }
 }

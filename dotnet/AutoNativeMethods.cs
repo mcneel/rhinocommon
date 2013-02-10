@@ -969,6 +969,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid ONX_Model_ObjectTable_AddPolyLine(IntPtr pModel, int count, Point3d[] points, IntPtr pConstAttributes);
 
+  //bool ONX_Model_ObjectTable_Delete(ONX_Model* pModel, ON_UUID object_id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ONX_Model_ObjectTable_Delete(IntPtr pModel, Guid object_id);
+
   //void ONX_Model_BoundingBox(const ONX_Model* pConstModel, ON_BoundingBox* pBBox)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_BoundingBox(IntPtr pConstModel, ref BoundingBox pBBox);

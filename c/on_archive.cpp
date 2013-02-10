@@ -1676,6 +1676,23 @@ RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddPolyLine(ONX_Model* pModel, int c
   return ::ON_nil_uuid;
 }
 
+RH_C_FUNCTION bool ONX_Model_ObjectTable_Delete(ONX_Model* pModel, ON_UUID object_id)
+{
+  bool rc = false;
+  if( pModel )
+  {
+    for( int i=0; i<pModel->m_object_table.Count(); i++ )
+    {
+      if( pModel->m_object_table[i].m_attributes.m_uuid==object_id )
+      {
+        pModel->m_object_table.Remove(i);
+        rc = true;
+        break;
+      }
+    }
+  }
+  return rc;
+}
 
 RH_C_FUNCTION void ONX_Model_BoundingBox(const ONX_Model* pConstModel, ON_BoundingBox* pBBox)
 {

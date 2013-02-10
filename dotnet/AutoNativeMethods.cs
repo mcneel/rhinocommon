@@ -2698,6 +2698,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Line_InPlane(ref Line pConstLine, ref Plane plane);
+
+  //bool RHC_RhGetTanPerpPoint( const ON_Curve* pConstCurve0, const ON_Curve* pConstCurve1, double* t0, double* t1, bool perpendicular0, bool perpendicular1, ON_Line* pLine )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhGetTanPerpPoint(IntPtr pConstCurve0, IntPtr pConstCurve1, ref double t0, ref double t1, [MarshalAs(UnmanagedType.U1)]bool perpendicular0, [MarshalAs(UnmanagedType.U1)]bool perpendicular1, ref Line pLine);
   #endregion
 
 
@@ -3492,6 +3497,16 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_NurbsCurve_Reparameterize(IntPtr pCurve, double c);
+
+  //bool RHC_RhinoCreateSpiral0( ON_3DPOINT_STRUCT axis_start, ON_3DVECTOR_STRUCT axis_dir, ON_3DPOINT_STRUCT radius_point, double pitch, double turn_count, double radius0, double radius1, ON_NurbsCurve* pCurve )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoCreateSpiral0(Point3d axis_start, Vector3d axis_dir, Point3d radius_point, double pitch, double turn_count, double radius0, double radius1, IntPtr pCurve);
+
+  //bool RHC_RhinoCreateSpiral1( const ON_Curve* pRail, double rail_t0, double rail_t1, ON_3DPOINT_STRUCT radius_point, double pitch, double turn_count, double radius0, double radius1, int points_per_turn, ON_NurbsCurve* pCurve )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool RHC_RhinoCreateSpiral1(IntPtr pRail, double rail_t0, double rail_t1, Point3d radius_point, double pitch, double turn_count, double radius0, double radius1, int points_per_turn, IntPtr pCurve);
 
   //int ON_Ellipse_GetNurbForm(ON_Ellipse* ellipse, ON_NurbsCurve* pNurbsCurve)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -7587,6 +7602,10 @@ internal partial class UnsafeNativeMethods
   //void CArgsRhinoGetLine_SetLineMode(CArgsRhinoGetLine* pArgsGetLine, int linemode)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CArgsRhinoGetLine_SetLineMode(IntPtr pArgsGetLine, int linemode);
+
+  //int RHC_RhinoGetAngle(const RHMONO_STRING* prompt, ON_3DPOINT_STRUCT basePoint, ON_3DPOINT_STRUCT referencePoint, double defaultAngle, double* angle)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoGetAngle([MarshalAs(UnmanagedType.LPWStr)]string prompt, Point3d basePoint, Point3d referencePoint, double defaultAngle, ref double angle);
   #endregion
 
 
@@ -8359,6 +8378,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoInstanceObject_InstanceDefinition(IntPtr ptr, ref int docId);
 
+  //int CRhinoInstanceObject_UsesDefinition(const CRhinoInstanceObject* pConstInstanceObject, int definitionIndex)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoInstanceObject_UsesDefinition(IntPtr pConstInstanceObject, int definitionIndex);
+
   //ON_ClassArray<CRhinoInstanceObjectPiece>* CRhinoInstanceObject_Explode(const CRhinoInstanceObject* pConstInstanceObject, bool explodeNested)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoInstanceObject_Explode(IntPtr pConstInstanceObject, [MarshalAs(UnmanagedType.U1)]bool explodeNested);
@@ -8450,6 +8473,10 @@ internal partial class UnsafeNativeMethods
   //int CRhinoInstanceDefinition_UpdateType( int docId, int idef_index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoInstanceDefinition_UpdateType(int docId, int idef_index);
+
+  //int CRhinoInstanceDefinition_RhinoInstanceArchiveFileStatus( int docId, int idef_index )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoInstanceDefinition_RhinoInstanceArchiveFileStatus(int docId, int idef_index);
 
   //int CRhinoInstanceDefinitionTable_InstanceDefinitionCount( int docId, bool all )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

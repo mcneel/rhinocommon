@@ -525,6 +525,67 @@ namespace Rhino.Geometry
       IntPtr pCurve = UnsafeNativeMethods.CRhinoBlend_CurveBlend(pConstCurve0, t0, reverse0, (int)continuity0, pConstCurve1, t1, reverse1, (int)continuity1);
       return GeometryBase.CreateGeometryHelper(pCurve, null) as Curve;
     }
+
+    /// <summary>
+    /// Creates curves between two open or closed input curves. Uses the control points of the curves for finding tween curves.
+    /// That means the first control point of first curve is matched to first control point of the second curve and so on.
+    /// There is no matching of curves direction. Caller must match input curves direction before calling the function.
+    /// </summary>
+    /// <param name="curve0">The first, or starting, curve.</param>
+    /// <param name="curve1">The second, or ending, curve.</param>
+    /// <param name="numCurves">Number of tween curves to create.</param>
+    /// <returns>An array of joint curves. This array can be empty.</returns>
+    public static Curve[] CreateTweenCurves(Curve curve0, Curve curve1, int numCurves)
+    {
+      IntPtr pConstCurve0 = curve0.ConstPointer();
+      IntPtr pConstCurve1 = curve1.ConstPointer();
+      SimpleArrayCurvePointer output = new SimpleArrayCurvePointer();
+      IntPtr outputPtr = output.NonConstPointer();
+      bool rc = UnsafeNativeMethods.RHC_RhinoTweenCurves( pConstCurve0, pConstCurve1, numCurves, outputPtr);
+      return rc ? output.ToNonConstArray() : new Curve[0];
+    }
+
+    /// <summary>
+    /// Creates curves between two open or closed input curves. Make the structure of input curves compatible if needed.
+    /// Refits the input curves to have the same structure. The resulting curves are usually more complex than input unless
+    /// input curves are compatible and no refit is needed. There is no matching of curves direction.
+    /// Caller must match input curves direction before calling the function.
+    /// </summary>
+    /// <param name="curve0">The first, or starting, curve.</param>
+    /// <param name="curve1">The second, or ending, curve.</param>
+    /// <param name="numCurves">Number of tween curves to create.</param>
+    /// <returns>An array of joint curves. This array can be empty.</returns>
+    public static Curve[] CreateTweenCurvesWithMatching(Curve curve0, Curve curve1, int numCurves)
+    {
+      IntPtr pConstCurve0 = curve0.ConstPointer();
+      IntPtr pConstCurve1 = curve1.ConstPointer();
+      SimpleArrayCurvePointer output = new SimpleArrayCurvePointer();
+      IntPtr outputPtr = output.NonConstPointer();
+      bool rc = UnsafeNativeMethods.RHC_RhinoTweenCurvesWithMatching(pConstCurve0, pConstCurve1, numCurves, outputPtr);
+      return rc ? output.ToNonConstArray() : new Curve[0];
+    }
+
+    /// <summary>
+    /// Creates curves between two open or closed input curves. Use sample points method to make curves compatible.
+    /// This is how the algorithm workd: Divides the two curves into an equal number of points, finds the midpoint between the 
+    /// corresponding points on the curves and interpolates the tween curve through those points. There is no matching of curves
+    /// direction. Caller must match input curves direction before calling the function.
+    /// </summary>
+    /// <param name="curve0">The first, or starting, curve.</param>
+    /// <param name="curve1">The second, or ending, curve.</param>
+    /// <param name="numCurves">Number of tween curves to create.</param>
+    /// <param name="numSamples">Number of sample points along input curves.</param>
+    /// <returns>>An array of joint curves. This array can be empty.</returns>
+    public static Curve[] CreateTweenCurvesWithSampling(Curve curve0, Curve curve1, int numCurves, int numSamples)
+    {
+      IntPtr pConstCurve0 = curve0.ConstPointer();
+      IntPtr pConstCurve1 = curve1.ConstPointer();
+      SimpleArrayCurvePointer output = new SimpleArrayCurvePointer();
+      IntPtr outputPtr = output.NonConstPointer();
+      bool rc = UnsafeNativeMethods.RHC_RhinoTweenCurveWithSampling(pConstCurve0, pConstCurve1, numCurves, numSamples, outputPtr);
+      return rc ? output.ToNonConstArray() : new Curve[0];
+    }
+
 #endif
 
     /// <summary>

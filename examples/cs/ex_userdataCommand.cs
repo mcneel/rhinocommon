@@ -7,39 +7,38 @@ namespace examples_cs
   // You must define a Guid attribute for your user data derived class
   // in order to support serialization. Every custom user data class
   // needs a custom Guid
-  [Guid("DAAA9791-01DB-4F5F-B89B-4AE46767C783")]
-  public class PhysicalData : Rhino.DocObjects.Custom.UserData
+  [Guid("7098A105-CD3C-4192-A9AC-0F21017098DC")]
+  public class MyCustomData : Rhino.DocObjects.Custom.UserData
   {
-    public int Weight{ get; set; }
-    public double Density {get; set;}
-
+    public int IntegerData{ get; set; }
+    public string StringData {get; set;}
 
     // Your UserData class must have a public parameterless constructor
-    public PhysicalData(){}
+    public MyCustomData(){}
 
-    public PhysicalData(int weight, double density)
+    public MyCustomData(int i, string s)
     {
-      Weight = weight;
-      Density = density;
+      IntegerData = i;
+      StringData = s;
     }
 
     public override string Description
     {
-      get { return "Physical Properties"; }
+      get { return "Some Custom Properties"; }
     }
 
     public override string ToString()
     {
-      return String.Format("weight={0}, density={1}", Weight, Density);
+      return String.Format("integer={0}, string={1}", IntegerData, StringData);
     }
 
     protected override void OnDuplicate(Rhino.DocObjects.Custom.UserData source)
     {
-      PhysicalData src = source as PhysicalData;
+      MyCustomData src = source as MyCustomData;
       if (src != null)
       {
-        Weight = src.Weight;
-        Density = src.Density;
+        IntegerData = src.IntegerData;
+        StringData = src.StringData;
       }
     }
 
@@ -48,7 +47,8 @@ namespace examples_cs
     {
       get
       {
-        if (Weight > 0 && Density > 0)
+        // make up some rule as to if this should be saved in the 3dm file
+        if (IntegerData > 0 && !string.IsNullOrEmpty(StringData))
           return true;
         return false;
       }
@@ -57,10 +57,10 @@ namespace examples_cs
     protected override bool Read(Rhino.FileIO.BinaryArchiveReader archive)
     {
       Rhino.Collections.ArchivableDictionary dict = archive.ReadDictionary();
-      if (dict.ContainsKey("Weight") && dict.ContainsKey("Density"))
+      if (dict.ContainsKey("IntegerData") && dict.ContainsKey("StringData"))
       {
-        Weight = (int)dict["Weight"];
-        Density = (double)dict["Density"];
+        IntegerData = (int)dict["IntegerData"];
+        StringData = dict["StringData"] as String;
       }
       return true;
     }
@@ -71,11 +71,11 @@ namespace examples_cs
       // the dictionary for writing, your code would look something like.
       //
       //  archive.Write3dmChunkVersion(1, 0);
-      //  archive.WriteInt(Weight);
-      //  archive.WriteDouble(Density);
-      var dict = new Rhino.Collections.ArchivableDictionary(1, "Physical");
-      dict.Set("Weight", Weight);
-      dict.Set("Density", Density);
+      //  archive.WriteInt(IntegerData);
+      //  archive.WriteString(StringData);
+      var dict = new Rhino.Collections.ArchivableDictionary(1, "MyCustomData");
+      dict.Set("IntegerData", IntegerData);
+      dict.Set("StringData", StringData);
       archive.WriteDictionary(dict);
       return true;
     }
@@ -83,29 +83,33 @@ namespace examples_cs
 
 
   [Guid("ca9a110e-3969-49ec-9d59-a7c2ee0b85bd")]
-  public class ex_userdataCommand : Rhino.Commands.Command
+  public class ExUserdataCommand : Rhino.Commands.Command
   {
     public override string EnglishName { get { return "cs_userdataCommand"; } }
 
     protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
     {
       Rhino.DocObjects.ObjRef objref;
-      var rc = Rhino.Input.RhinoGet.GetOneObject("Select Object", false, Rhino.DocObjects.ObjectType.AnyObject, out objref);
+      var rc = Rhino.Input.RhinoGet.GetOneObject("Select Face", false, Rhino.DocObjects.ObjectType.Surface, out objref);
       if (rc != Rhino.Commands.Result.Success)
         return rc;
 
+      var face = objref.Face();
+
       // See if user data of my custom type is attached to the geomtry
-      var ud = objref.Geometry().UserData.Find(typeof(PhysicalData)) as PhysicalData;
+      // We need to use the underlying surface in order to get the user data
+      // to serialize with the file.
+      var ud = face.UnderlyingSurface().UserData.Find(typeof(MyCustomData)) as MyCustomData;
       if (ud == null)
       {
         // No user data found; create one and add it
-        int weight = 0;
-        rc = Rhino.Input.RhinoGet.GetInteger("Weight", false, ref weight);
+        int i = 0;
+        rc = Rhino.Input.RhinoGet.GetInteger("Integer Value", false, ref i);
         if (rc != Rhino.Commands.Result.Success)
           return rc;
 
-        ud = new PhysicalData(weight, 12.34);
-        objref.Geometry().UserData.Add(ud);
+        ud = new MyCustomData(i, "This is some text");
+        face.UnderlyingSurface().UserData.Add(ud);
       }
       else
       {

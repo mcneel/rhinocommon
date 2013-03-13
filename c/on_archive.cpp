@@ -439,7 +439,11 @@ RH_C_FUNCTION bool ON_BinaryArchive_WriteGeometry(ON_BinaryArchive* pArchive, co
   bool rc = false;
   if( pArchive && pConstGeometry )
   {
-    rc = pConstGeometry->Write(*pArchive) ? true:false;
+    // 13 March 2013 (S. Baer) RH-16957
+    // The geometry reader was using ReadObject, so we need to use the
+    // WriteObject function instead of the ON_Geometry::Write function
+    rc = pArchive->WriteObject(pConstGeometry);
+    //rc = pConstGeometry->Write(*pArchive) ? true:false;
   }
   return rc;
 }

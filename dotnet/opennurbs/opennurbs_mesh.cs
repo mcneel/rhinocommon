@@ -472,6 +472,77 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Constructs new mesh that matches a bounding box.
+    /// </summary>
+    /// <param name="box">A box to use for creation.</param>
+    /// <param name="xCount">Number of faces in x-direction.</param>
+    /// <param name="yCount">Number of faces in y-direction.</param>
+    /// <param name="zCount">Number of faces in z-direction.</param>
+    /// <returns>A new brep, or null on failure.</returns>
+    static Mesh CreateFromBox(BoundingBox box, int xCount, int yCount, int zCount)
+    {
+      IntPtr ptr = UnsafeNativeMethods.RHC_RhinoMeshBox2(box.Min, box.Max, xCount, yCount, zCount);
+      return IntPtr.Zero == ptr ? null : new Mesh(ptr, null);
+    }
+
+    /// <summary>
+    ///  Constructs new mesh that matches an aligned box.
+    /// </summary>
+    /// <param name="box">Box to match.</param>
+    /// <param name="xCount">Number of faces in x-direction.</param>
+    /// <param name="yCount">Number of faces in y-direction.</param>
+    /// <param name="zCount">Number of faces in z-direction.</param>
+    /// <returns></returns>
+    public static Mesh CreateFromBox(Box box, int xCount, int yCount, int zCount)
+    {
+      return CreateFromBox(box.GetCorners(), xCount, yCount, zCount);
+    }
+
+    /// <summary>
+    /// Constructs new mesh from 8 corner points.
+    /// </summary>
+    /// <param name="corners">
+    /// 8 points defining the box corners arranged as the vN labels indicate.
+    /// <pre>
+    /// <para>v7_____________v6</para>
+    /// <para>|\             |\</para>
+    /// <para>| \            | \</para>
+    /// <para>|  \ _____________\</para>
+    /// <para>|   v4         |   v5</para>
+    /// <para>|   |          |   |</para>
+    /// <para>|   |          |   |</para>
+    /// <para>v3--|----------v2  |</para>
+    /// <para> \  |           \  |</para>
+    /// <para>  \ |            \ |</para>
+    /// <para>   \|             \|</para>
+    /// <para>    v0_____________v1</para>
+    /// </pre>
+    /// </param>
+    /// <param name="xCount">Number of faces in x-direction.</param>
+    /// <param name="yCount">Number of faces in y-direction.</param>
+    /// <param name="zCount">Number of faces in z-direction.</param>
+    /// <returns>A new brep, or null on failure.</returns>
+        /// <returns>A new box mesh, on null on error.</returns>
+    public static Mesh CreateFromBox(IEnumerable<Point3d> corners, int xCount, int yCount, int zCount)
+    {
+      Point3d[] box_corners = new Point3d[8];
+      if (corners == null) { return null; }
+
+      int i = 0;
+      foreach (Point3d p in corners)
+      {
+        box_corners[i] = p;
+        i++;
+        if (8 == i) { break; }
+      }
+
+      if (i < 8) { return null; }
+
+      IntPtr ptr = UnsafeNativeMethods.RHC_RhinoMeshBox(box_corners, xCount, yCount, zCount);
+      return IntPtr.Zero == ptr ? null : new Mesh(ptr, null);
+    }
+
+    /// <summary>
     /// Constructs a mesh sphere.
     /// </summary>
     /// <param name="sphere">Base sphere for mesh.</param>

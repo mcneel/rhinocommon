@@ -15,7 +15,7 @@ namespace Rhino.Display
   public class DisplayPipelineAttributes : IDisposable, ISerializable
   {
     #region pointer tracking
-    readonly object m_parent;
+    private object m_parent;
     internal IntPtr m_pAttrs = IntPtr.Zero;
 
     internal DisplayPipelineAttributes(IntPtr pAttrs)
@@ -28,10 +28,21 @@ namespace Rhino.Display
       m_parent = parent;
     }
 
+    internal DisplayPipelineAttributes(DisplayPipeline parent)
+    {
+      m_parent = parent;
+    }
+
     internal IntPtr ConstPointer()
     {
       if (m_pAttrs != IntPtr.Zero)
         return m_pAttrs;
+
+      // Check pipeline_parent first since this is typically time critical
+      // code when this is used.
+      DisplayPipeline pipeline_parent = m_parent as DisplayPipeline;
+      if (pipeline_parent != null)
+        return pipeline_parent.DisplayAttributeConstPointer();
 
       DisplayModeDescription parent = m_parent as DisplayModeDescription;
       if (parent != null)
@@ -43,6 +54,22 @@ namespace Rhino.Display
     {
       if (m_pAttrs != IntPtr.Zero)
         return m_pAttrs;
+
+      // Check pipeline_parent first since this is typically time critical
+      // code when this is used.
+      DisplayPipeline pipeline_parent = m_parent as DisplayPipeline;
+      if (pipeline_parent != null)
+      {
+        // Can't change the attributes in a pipeline, so create a copy
+        // under the hood
+        IntPtr pConstAttributes = ConstPointer();
+        if (pConstAttributes != IntPtr.Zero)
+        {
+          m_pAttrs = UnsafeNativeMethods.CDisplayPipelineAttributes_New2(pConstAttributes);
+          m_parent = null;
+          return m_pAttrs;
+        }
+      }
 
       DisplayModeDescription parent = m_parent as DisplayModeDescription;
       if (parent != null)

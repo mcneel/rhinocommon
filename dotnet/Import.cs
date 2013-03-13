@@ -122,6 +122,9 @@ internal partial class UnsafeNativeMethods
   internal static extern void RHC_SetEscapeKeyCallback(Rhino.RhinoApp.RhCmnEmptyCallback cb);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void RHC_SetKeyboardCallback(Rhino.RhinoApp.KeyboardHookEvent cb);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoEventWatcher_SetInitAppCallback(Rhino.RhinoApp.RhCmnEmptyCallback cb, Rhino.Runtime.HostUtils.ReportCallback report_cb);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]

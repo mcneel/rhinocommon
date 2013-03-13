@@ -1083,7 +1083,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Determines if tro coplanar curves collide (intersect).
+    /// Determines if two coplanar curves collide (intersect).
     /// </summary>
     /// <param name="curveA">A curve.</param>
     /// <param name="curveB">Another curve.</param>

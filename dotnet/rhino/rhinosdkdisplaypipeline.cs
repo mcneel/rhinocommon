@@ -655,9 +655,13 @@ namespace Rhino.Display
       get { return UnsafeNativeMethods.CRhinoDisplayPipeline_GetInt(m_ptr, idxNestLevel); }
     }
 
-    //David: When are these 3 properties useful?
     /// <summary>
-    /// Gets a value that indicates whether the pipeline is currently in a curve drawing operation.
+    /// Gets a value that indicates whether the pipeline is currently in a curve
+    /// drawing operation. This is useful when inside of a draw event or display
+    /// conduit to check and see if the geometry is about to be drawn is going to
+    /// be drawing the wire representation of the geometry (mesh, extrusion, or
+    /// brep).  See DrawingSurfaces to check and see if the shaded mesh representation
+    /// of the geometry is going to be drawn.
     /// </summary>
     public bool DrawingWires
     {
@@ -671,7 +675,13 @@ namespace Rhino.Display
       get { return UnsafeNativeMethods.CRhinoDisplayPipeline_GetBool(m_ptr, idxDrawingGrips); }
     }
     /// <summary>
-    /// Gets a value that indicates whether the pipeline is currently in a surface drawing operation.
+    /// Gets a value that indicates whether the pipeline is currently in a surface
+    /// drawing operation.  Surface drawing means draw the shaded triangles of a mesh
+    /// representing the surface (mesh, extrusion, or brep).  This is useful when
+    /// inside of a draw event or display conduit to check and see if the geometry is
+    /// about to be drawn as a shaded set of triangles representing the geometry.
+    /// See DrawingWires to check and see if the wireframe representation of the
+    /// geometry is going to be drawn.
     /// </summary>
     public bool DrawingSurfaces
     {
@@ -705,6 +715,19 @@ namespace Rhino.Display
         return m_viewport;
       }
     }
+
+    DisplayPipelineAttributes m_display_attrs;
+    public DisplayPipelineAttributes DisplayPipelineAttributes
+    {
+      get { return m_display_attrs ?? (m_display_attrs = new DisplayPipelineAttributes(this)); }
+    }
+
+    internal IntPtr DisplayAttributeConstPointer()
+    {
+      IntPtr pConstThis = NonConstPointer(); // There is no const version of display pipeline accessible in RhinoCommon
+      return UnsafeNativeMethods.CRhinoDisplayPipeline_DisplayAttrs(pConstThis);
+    }
+
     #endregion
 
     #region pipeline settings

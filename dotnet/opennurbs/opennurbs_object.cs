@@ -298,7 +298,31 @@ namespace Rhino.Runtime
 
       if (m_bDestructOnDispose)
       {
-        UnsafeNativeMethods.ON_Object_Delete(m_ptr);
+        bool inFinalizer = !disposing;
+        if (inFinalizer)
+        {
+          // 11 Feb 2013 (S. Baer) RH-16157
+          // When running in the finalizer, the destructor is being called on the GC
+          // thread which results in nearly impossible to track down exceptions.
+          // Mask the exception in this case and post information to our logging system
+          // about the exception so we can better analyze and try to figure out what
+          // is going on
+          try
+          {
+            UnsafeNativeMethods.ON_Object_Delete(m_ptr);
+          }
+          catch (Exception ex)
+          {
+            HostUtils.ExceptionReport(ex);
+          }
+        }
+        else
+        {
+          // See above. In this case we are running on the main thread of execution
+          // and throwing an exception is a good thing so we can analyze and quickly
+          // fix whatever is going wrong
+          UnsafeNativeMethods.ON_Object_Delete(m_ptr);
+        }
         if (m_unmanaged_memory > 0)
           GC.RemoveMemoryPressure(m_unmanaged_memory);
       }

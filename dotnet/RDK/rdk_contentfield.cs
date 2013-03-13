@@ -130,6 +130,21 @@ namespace Rhino.Render.Fields
       var found = FindField(fieldName, true);
       return (null != found);
     }
+    /// <summary>
+    /// Call this method to get the field with the matching name.
+    /// </summary>
+    /// <param name="fieldName">Field name to search for.</param>
+    /// <returns>
+    /// If the field exists in the Fields dictionary then the field is returned
+    /// otherwise; null is returned.
+    /// </returns>
+    public Field GetField(string fieldName)
+    {
+      if (string.IsNullOrEmpty(fieldName)) return null;
+      var field = FindField(fieldName, true);
+      return field;
+    }
+
     #endregion Public methods
 
     #region Overloaded AddField methods for the supported data types

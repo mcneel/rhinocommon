@@ -5202,6 +5202,9 @@ internal partial class UnsafeNativeMethods
   //void RHC_SetEscapeKeyCallback(ESCAPEKEYPROC esc_proc)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
+  //void RHC_SetKeyboardCallback(KEYBOARDHOOKPROC hook_proc)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
   //void CRhinoApp_SetStatusBarDistancePane(double distance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoApp_SetStatusBarDistancePane(double distance);
@@ -6208,6 +6211,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoDisplayPipeline_RhinoViewport(IntPtr pipeline);
 
+  //const CDisplayPipelineAttributes* CRhinoDisplayPipeline_DisplayAttrs(const CRhinoDisplayPipeline* pConstDisplayPipeline)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoDisplayPipeline_DisplayAttrs(IntPtr pConstDisplayPipeline);
+
   //void CRhinoDisplayPipeline_FrameSize(const CRhinoDisplayPipeline* pDP, int* width, int* height)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDisplayPipeline_FrameSize(IntPtr pDP, ref int width, ref int height);
@@ -6573,6 +6580,10 @@ internal partial class UnsafeNativeMethods
   //CDisplayPipelineAttributes* CDisplayPipelineAttributes_New()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CDisplayPipelineAttributes_New();
+
+  //CDisplayPipelineAttributes* CDisplayPipelineAttributes_New2(const CDisplayPipelineAttributes* pConstDisplayAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CDisplayPipelineAttributes_New2(IntPtr pConstDisplayAttributes);
 
   //void CDisplayPipelineAttributes_Delete(CDisplayPipelineAttributes* pAttrs)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -8906,6 +8917,14 @@ internal partial class UnsafeNativeMethods
   //ON_Mesh* RHC_RhinoMeshCone(ON_Cone* cone, int vertical, int around)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_RhinoMeshCone(ref Cone cone, int vertical, int around);
+
+  //ON_Mesh* RHC_RhinoMeshBox( /*ARRAY*/ const ON_3dPoint* box_corners, int x_cnt, int y_cnt, int z_cnt )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoMeshBox(Point3d[] box_corners, int x_cnt, int y_cnt, int z_cnt);
+
+  //ON_Mesh* RHC_RhinoMeshBox2( ON_3DPOINT_STRUCT boxmin, ON_3DPOINT_STRUCT boxmax, int x_cnt, int y_cnt, int z_cnt )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_RhinoMeshBox2(Point3d boxmin, Point3d boxmax, int x_cnt, int y_cnt, int z_cnt);
   #endregion
 
 

@@ -703,7 +703,7 @@ namespace Rhino
     private static EventHandler m_escape_key;
 
     /// <summary>
-    /// Can add or removed delagates that are raised when the escape key is clicked.
+    /// Can add or removed delegates that are raised when the escape key is clicked.
     /// </summary>
     public static event EventHandler EscapeKeyPressed
     {
@@ -722,6 +722,59 @@ namespace Rhino
         if (null == m_escape_key)
         {
           UnsafeNativeMethods.RHC_SetEscapeKeyCallback(null);
+          m_OnEscapeKey = null;
+        }
+      }
+    }
+
+    // Callback that doesn't pass any parameters or return values
+    /// <summary>
+    /// KeyboardEvent delegate
+    /// </summary>
+    /// <param name="key"></param>
+    public delegate void KeyboardHookEvent(int key);
+
+    private static KeyboardHookEvent m_OnKeyboardEvent;
+    private static void OnKeyboardEvent(int key)
+    {
+      if (m_keyboard_event != null)
+      {
+        try
+        {
+          m_keyboard_event(key);
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private static KeyboardHookEvent m_keyboard_event;
+
+    /// <summary>
+    /// Can add or removed delegates that are raised by a keyboard event.
+    /// </summary>
+    public static event KeyboardHookEvent KeyboardEvent
+    {
+      add
+      {
+        if (Runtime.HostUtils.ContainsDelegate(m_escape_key, value))
+          return;
+
+        m_keyboard_event += value;
+        m_OnKeyboardEvent = OnKeyboardEvent;
+        UnsafeNativeMethods.RHC_SetKeyboardCallback(m_OnKeyboardEvent);
+      }
+      remove
+      {
+        m_keyboard_event -= value;
+        if (null == m_escape_key)
+        {
+          UnsafeNativeMethods.RHC_SetKeyboardCallback(null);
           m_OnEscapeKey = null;
         }
       }

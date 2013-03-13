@@ -128,7 +128,16 @@ namespace Rhino.DocObjects
             newobj.m_rhinoobject_serial_number = newObjectSerialNumber;
             newobj.m_pRhinoObject = newObjectPointer;
             doc.Objects.AddCustomObjectForTracking(newObjectSerialNumber, newobj, newObjectPointer);
-            newobj.OnDuplicate(rhobj);
+            try
+            {
+              // 7 March 2013 S. Baer (RH-16792)
+              // Don't allow plug-in code to bring down Rhino.
+              newobj.OnDuplicate(rhobj);
+            }
+            catch (Exception ex)
+            {
+              Runtime.HostUtils.ExceptionReport(ex);
+            }
           }
         }
       }

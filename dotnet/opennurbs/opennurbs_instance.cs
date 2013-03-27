@@ -14,6 +14,7 @@ namespace Rhino.Geometry
       : base(nativePtr, parent, -1)
     { }
 
+#if RHINO_SDK
     internal override IntPtr _InternalGetConstPointer()
     {
       Rhino.DocObjects.Tables.InstanceDefinitionTableEventArgs ide = m__parent as Rhino.DocObjects.Tables.InstanceDefinitionTableEventArgs;
@@ -21,6 +22,7 @@ namespace Rhino.Geometry
         return ide.ConstLightPointer();
       return base._InternalGetConstPointer();
     }
+#endif
 
     internal override GeometryBase DuplicateShallowHelper()
     {

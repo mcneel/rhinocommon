@@ -108,6 +108,7 @@ namespace Rhino.Geometry
     {
     }
 
+#if RHINO_SDK
     internal override IntPtr _InternalGetConstPointer()
     {
       Rhino.DocObjects.Tables.LightTableEventArgs lte = m__parent as Rhino.DocObjects.Tables.LightTableEventArgs;
@@ -115,6 +116,7 @@ namespace Rhino.Geometry
         return lte.ConstLightPointer();
       return base._InternalGetConstPointer();
     }
+#endif
 
     /// <summary>
     /// Gets or sets a value that defines if the light is turned on (true) or off (false).

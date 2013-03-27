@@ -512,6 +512,73 @@ namespace Rhino.DocObjects
 
 namespace Rhino.DocObjects.Tables
 {
+  public enum InstanceDefinitionTableEventType : int
+  {
+    Added = 0,
+    Deleted = 1,
+    Undeleted = 2,
+    Modified = 3,
+    /// <summary>InstanceDefinitionTable.Sort() potentially changed sort order.</summary>
+    Sorted = 4,
+  }
+
+  public class InstanceDefinitionTableEventArgs : EventArgs
+  {
+    readonly int m_doc_id;
+    readonly InstanceDefinitionTableEventType m_event_type;
+    readonly int m_idef_index;
+    readonly IntPtr m_pOldInstanceDefinition;
+
+    internal InstanceDefinitionTableEventArgs(int docId, int eventType, int index, IntPtr pConstInstanceDefinition)
+    {
+      m_doc_id = docId;
+      m_event_type = (InstanceDefinitionTableEventType)eventType;
+      m_idef_index = index;
+      m_pOldInstanceDefinition = pConstInstanceDefinition;
+    }
+
+    internal IntPtr ConstLightPointer()
+    {
+      return m_pOldInstanceDefinition;
+    }
+
+    RhinoDoc m_doc;
+    public RhinoDoc Document
+    {
+      get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_doc_id)); }
+    }
+
+    public InstanceDefinitionTableEventType EventType
+    {
+      get { return m_event_type; }
+    }
+
+    public int InstanceDefinitionIndex
+    {
+      get { return m_idef_index; }
+    }
+
+    InstanceDefinition m_new_idef;
+    public InstanceDefinition NewState
+    {
+      get { return m_new_idef ?? (m_new_idef = Document.InstanceDefinitions[m_idef_index]); }
+    }
+
+    InstanceDefinitionGeometry m_old_idef;
+    public InstanceDefinitionGeometry OldState
+    {
+      get
+      {
+        if (m_old_idef == null && m_pOldInstanceDefinition != IntPtr.Zero)
+        {
+          m_old_idef = new InstanceDefinitionGeometry(m_pOldInstanceDefinition, this);
+        }
+        return m_old_idef;
+      }
+    }
+  }
+
+
   public sealed class InstanceDefinitionTable : IEnumerable<InstanceDefinition>, Rhino.Collections.IRhinoTable<InstanceDefinition>
   {
     private readonly RhinoDoc m_doc;

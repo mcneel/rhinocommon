@@ -10,9 +10,17 @@ namespace Rhino.Geometry
   public class InstanceDefinitionGeometry : GeometryBase
   {
     #region internals
-    internal InstanceDefinitionGeometry(IntPtr native_ptr, object parent)
-      : base(native_ptr, parent, -1)
+    internal InstanceDefinitionGeometry(IntPtr nativePtr, object parent)
+      : base(nativePtr, parent, -1)
     { }
+
+    internal override IntPtr _InternalGetConstPointer()
+    {
+      Rhino.DocObjects.Tables.InstanceDefinitionTableEventArgs ide = m__parent as Rhino.DocObjects.Tables.InstanceDefinitionTableEventArgs;
+      if (ide != null)
+        return ide.ConstLightPointer();
+      return base._InternalGetConstPointer();
+    }
 
     internal override GeometryBase DuplicateShallowHelper()
     {

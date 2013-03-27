@@ -272,9 +272,8 @@ namespace Rhino.Geometry
       bool rc = UnsafeNativeMethods.RHC_RhGetTanPerpPoint(pCurve0, pCurve1, ref t0, ref t1, perpendicular0, perpendicular1, ref line);
       return rc;
     }
-
-
 #endif
+
     #endregion
 
     #region methods

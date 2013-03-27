@@ -193,6 +193,12 @@ internal partial class UnsafeNativeMethods
   internal static extern void CRhinoEventWatcher_SetLayerTableEventCallback(Rhino.RhinoDoc.RhinoTableCallback cb, Rhino.Runtime.HostUtils.ReportCallback report);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoEventWatcher_SetIdefTableEventCallback(Rhino.RhinoDoc.RhinoTableCallback cb, Rhino.Runtime.HostUtils.ReportCallback report);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoEventWatcher_SetLightTableEventCallback(Rhino.RhinoDoc.RhinoTableCallback cb, Rhino.Runtime.HostUtils.ReportCallback report);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoEventWatcher_SetMaterialTableEventCallback(Rhino.RhinoDoc.RhinoTableCallback cb, Rhino.Runtime.HostUtils.ReportCallback report);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]

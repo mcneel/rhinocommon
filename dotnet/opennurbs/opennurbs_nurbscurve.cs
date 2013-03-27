@@ -161,6 +161,7 @@ namespace Rhino.Geometry
       return nc;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Creates a C1 cubic NURBS approximation of a helix or spiral. For a helix,
     /// you may have radius0 == radius1. For a spiral radius0 == radius0 produces
@@ -245,7 +246,7 @@ namespace Rhino.Geometry
       }
       return curve;
     }
-
+#endif
 
     #endregion
 

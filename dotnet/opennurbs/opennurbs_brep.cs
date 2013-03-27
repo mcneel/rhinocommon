@@ -2520,6 +2520,7 @@ namespace Rhino.Geometry
         return points_pulled < 1 ? new Point3d[0] : outpoints.ToArray();
       }
     }
+
 #else
     /// <summary>
     /// Pulls one or more points to a brep face. This method has been backported in 
@@ -2557,6 +2558,25 @@ namespace Rhino.Geometry
     }
 #endif
 #endif
+
+    /// <summary>
+    /// Extrude a face in a Brep.
+    /// </summary>
+    /// <param name="pathCurve">The path to extrude along.</param>
+    /// <param name="bCap">If true, the extrusion is capped with a translation of the face being extruded</param>
+    /// <returns>A Brep on success or null on failure.</returns>
+    public Brep CreateExtrusion(Curve pathCurve, bool bCap)
+    {
+      IntPtr pConstBrep = m_brep.ConstPointer();
+      IntPtr pConstCurve = pathCurve.ConstPointer();
+      IntPtr pBrep = UnsafeNativeMethods.ON_BrepFace_BrepExtrudeFace(pConstBrep, m_index, pConstCurve, bCap);
+      if (IntPtr.Zero == pBrep)
+        return null;
+      // CreateGeometryHelper will create the "actual" surface type (Nurbs, Sum, Rev,...)
+      GeometryBase g = GeometryBase.CreateGeometryHelper(pBrep, null);
+      Brep rc = g as Brep;
+      return rc;
+    }
 
     /// <summary>
     /// Sets the surface domain of this face.

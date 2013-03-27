@@ -166,6 +166,30 @@ RH_C_FUNCTION int ON_BrepFace_OuterLoopIndex(const ON_BrepFace* pConstBrepFace)
   }
   return rc;
 }
+
+RH_C_FUNCTION ON_Brep* ON_BrepFace_BrepExtrudeFace(const ON_Brep* pConstBrep, int face_index, const ON_Curve* pConstCurve, bool bCap)
+{
+  ON_Brep* rc = NULL;
+  if( pConstBrep && pConstCurve )
+  {
+    if( face_index >= 0 && face_index < pConstBrep->m_F.Count() )
+    {
+      ON_Brep* pNewBrep = ON_Brep::New( *pConstBrep );
+      if( pNewBrep )
+      {
+        pNewBrep->DestroyMesh( ON::any_mesh );
+        int result = ON_BrepExtrudeFace( *pNewBrep, face_index, *pConstCurve, bCap );
+        // 0 == failure, 1 or 2 == success
+        if( 0 == result )
+          delete pNewBrep;
+        else
+          rc = pNewBrep;
+      }
+    }
+  }
+  return rc;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // ON_Brep
 

@@ -80,8 +80,8 @@ namespace Rhino.Geometry
     }
 #endif
 
-    internal Light(IntPtr native_ptr, object parent)
-      : base(native_ptr, parent, -1)
+    internal Light(IntPtr nativePtr, object parent)
+      : base(nativePtr, parent, -1)
     { }
 
     internal override GeometryBase DuplicateShallowHelper()
@@ -106,6 +106,14 @@ namespace Rhino.Geometry
     protected Light(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
+    }
+
+    internal override IntPtr _InternalGetConstPointer()
+    {
+      Rhino.DocObjects.Tables.LightTableEventArgs lte = m__parent as Rhino.DocObjects.Tables.LightTableEventArgs;
+      if (lte != null)
+        return lte.ConstLightPointer();
+      return base._InternalGetConstPointer();
     }
 
     /// <summary>

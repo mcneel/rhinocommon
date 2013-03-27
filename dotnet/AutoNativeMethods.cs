@@ -1632,6 +1632,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_BrepFace_OuterLoopIndex(IntPtr pConstBrepFace);
 
+  //ON_Brep* ON_BrepFace_BrepExtrudeFace(const ON_Brep* pConstBrep, int face_index, const ON_Curve* pConstCurve, bool bCap)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_BrepFace_BrepExtrudeFace(IntPtr pConstBrep, int face_index, IntPtr pConstCurve, [MarshalAs(UnmanagedType.U1)]bool bCap);
+
   //ON_Brep* ON_Brep_New(const ON_Brep* pOther)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Brep_New(IntPtr pOther);
@@ -5248,6 +5252,15 @@ internal partial class UnsafeNativeMethods
   //void CRhinoApp_SetCursor(int cursor)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoApp_SetCursor(int cursor);
+
+  //bool CRhinoApp_SetDefaultRenderApp( ON_UUID id )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoApp_SetDefaultRenderApp(Guid id);
+
+  //ON_UUID CRhinoApp_GetDefaultRenderApp()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoApp_GetDefaultRenderApp();
   #endregion
 
 
@@ -7259,6 +7272,12 @@ internal partial class UnsafeNativeMethods
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //void CRhinoEventWatcher_SetLayerTableEventCallback(LAYERTABLEEVENTPROC cb, REPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRhinoEventWatcher_SetIdefTableEventCallback(IDEFTABLEEVENTPROC cb, REPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //void CRhinoEventWatcher_SetLightTableEventCallback(LIGHTTABLEEVENTPROC cb, REPORTPROC report)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
   //ON_UUID CRhinoEventWatcher_LastCommandId()

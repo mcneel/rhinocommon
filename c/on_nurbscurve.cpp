@@ -311,6 +311,8 @@ RH_C_FUNCTION bool ON_NurbsCurve_Reparameterize(ON_NurbsCurve* pCurve, double c)
   return rc;
 }
 
+#if !defined(OPENNURBS_BUILD)  //not available in opennurbs build
+
 // 8-Feb-2013 Dale Fugier, http://mcneel.myjetbrains.com/youtrack/issue/RH-15661
 RH_C_FUNCTION bool RHC_RhinoCreateSpiral0( ON_3DPOINT_STRUCT axis_start, ON_3DVECTOR_STRUCT axis_dir, ON_3DPOINT_STRUCT radius_point, double pitch, double turn_count, double radius0, double radius1, ON_NurbsCurve* pCurve )
 {
@@ -341,6 +343,7 @@ RH_C_FUNCTION bool RHC_RhinoCreateSpiral1( const ON_Curve* pRail, double rail_t0
   return rc;
 }
 
+#endif
 
 /// This should eventually move to an on_ellipse.cpp file
 RH_C_FUNCTION int ON_Ellipse_GetNurbForm(ON_Ellipse* ellipse, ON_NurbsCurve* pNurbsCurve)

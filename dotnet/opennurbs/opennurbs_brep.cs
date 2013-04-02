@@ -52,6 +52,22 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
+  /// Corner types used for creating a tapered extrusion
+  /// </summary>
+  public enum ExtrudeCornerType : int
+  {
+    /// <summary>No Corner</summary>
+    None = 0,
+    /// <summary></summary>
+    Sharp = 1,
+    /// <summary></summary>
+    Round = 2,
+    /// <summary></summary>
+    Smooth = 3,
+    /// <summary></summary>
+    Chamfer = 4
+  }
+  /// <summary>
   /// Boundary Representation. A surface or polysurface along with trim curve information.
   /// </summary>
   [Serializable]
@@ -95,6 +111,23 @@ namespace Rhino.Geometry
 
       IntPtr ptr = UnsafeNativeMethods.ON_Brep_CopyTrims(pConstBrepFace, pConstSurface, tolerance);
       return IntPtr.Zero == ptr ? null : new Brep(ptr, null);
+    }
+
+    /// <summary>
+    /// Create a brep representation of a mesh
+    /// </summary>
+    /// <param name="mesh"></param>
+    /// <param name="trimmedTriangles">
+    /// if true, triangles in the mesh will be represented by trimmed planes in
+    /// the brep. If false, triangles in the mesh will be represented by
+    /// untrimmed singular bilinear NURBS surfaces in the brep.
+    /// </param>
+    /// <returns></returns>
+    public static Brep CreateFromMesh(Mesh mesh, bool trimmedTriangles)
+    {
+      IntPtr pConstMesh = mesh.ConstPointer();
+      IntPtr pBrep = UnsafeNativeMethods.ONC_BrepFromMesh(pConstMesh, trimmedTriangles);
+      return GeometryBase.CreateGeometryHelper(pBrep, null) as Brep;
     }
 
     /// <summary>
@@ -704,6 +737,27 @@ namespace Rhino.Geometry
         return rc.ToNonConstArray();
       }
     }
+
+    /// <summary>
+    /// Extrude a curve to a taper making a brep (potentially more than 1)
+    /// </summary>
+    /// <param name="curveToExtrude">the curve to extrude</param>
+    /// <param name="distance">the distance to extrude</param>
+    /// <param name="direction">the direction of the extrusion</param>
+    /// <param name="basePoint">the basepoint of the extrusion</param>
+    /// <param name="draftAngleRadians">angle of the extrusion</param>
+    /// <param name="cornerType"></param>
+    /// <returns>array of breps on success</returns>
+    public static Brep[] CreateFromTaperedExtrude(Curve curveToExtrude, double distance, Vector3d direction, Point3d basePoint, double draftAngleRadians, ExtrudeCornerType cornerType)
+    {
+      IntPtr pConstCurve = curveToExtrude.ConstPointer();
+      using (var rc = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      {
+        IntPtr pBreps = rc.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoCreateTaperedExtrude(pConstCurve, distance, direction, basePoint, draftAngleRadians, (int)cornerType, pBreps);
+        return rc.ToNonConstArray();
+      }
+    }
 #endif
 
 #if RHINO_SDK
@@ -1096,6 +1150,7 @@ namespace Rhino.Geometry
     const int idxIsManifold = 2;
     internal const int idxEdgeCount = 3;
     internal const int idxLoopCount = 4;
+    internal const int idxTrimCount = 5;
 
     Rhino.Geometry.Collections.BrepEdgeList m_edgelist;
     /// <summary>
@@ -1104,6 +1159,15 @@ namespace Rhino.Geometry
     public Rhino.Geometry.Collections.BrepEdgeList Edges
     {
       get { return m_edgelist ?? (m_edgelist = new Rhino.Geometry.Collections.BrepEdgeList(this)); }
+    }
+
+    Rhino.Geometry.Collections.BrepTrimList m_trimlist;
+    /// <summary>
+    /// Gets the brep trims list accessor.
+    /// </summary>
+    public Rhino.Geometry.Collections.BrepTrimList Trims
+    {
+      get { return m_trimlist ?? (m_trimlist = new Rhino.Geometry.Collections.BrepTrimList(this)); }
     }
 
     Rhino.Geometry.Collections.BrepLoopList m_looplist;
@@ -2045,6 +2109,164 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
+  /// Each brep trim has a defined type.
+  /// </summary>
+  public enum BrepTrimType : int
+  {
+    /// <summary>Unknown type</summary>
+    Unknown = 0,
+    /// <summary>
+    /// Trim is connected to an edge, is part of an outer, inner or
+    /// slit loop, and is the only trim connected to the edge.
+    /// </summary>
+    Boundary = 1,
+    /// <summary>
+    /// Trim is connected to an edge, is part of an outer, inner or slit loop,
+    /// no other trim from the same loop is connected to the edge, and at least
+    /// one trim from a different loop is connected to the edge.
+    /// </summary>
+    Mated = 2,
+    /// <summary>
+    /// trim is connected to an edge, is part of an outer, inner or slit loop,
+    /// and one other trim from the same loop is connected to the edge.
+    /// (There can be other mated trims that are also connected to the edge.
+    /// For example, the non-mainfold edge that results when a surface edge lies
+    /// in the middle of another surface.)  Non-mainfold "cuts" have seam trims too.
+    /// </summary>
+    Seam = 3,
+    /// <summary>
+    /// Trim is part of an outer loop, the trim's 2d curve runs along the singular
+    /// side of a surface, and the trim is NOT connected to an edge. (There is
+    /// no 3d edge because the surface side is singular.)
+    /// </summary>
+    Singular = 4,
+    /// <summary>
+    /// Trim is connected to an edge, is the only trim in a crfonsrf loop, and
+    /// is the only trim connected to the edge.
+    /// </summary>
+    CurveOnSurface = 5,
+    /// <summary>
+    /// Trim is a point on a surface, trim.m_pbox is records surface parameters,
+    /// and is the only trim in a ptonsrf loop.  This trim is not connected to
+    /// an edge and has no 2d curve.
+    /// </summary>
+    PointOnSurface = 6,
+    /// <summary></summary>
+    Slit = 7
+  }
+
+
+  /// <summary>
+  /// Brep trim information is stored in BrepTrim classes. Brep.Trims is an
+  /// array of all the trims in the brep. A BrepTrim is derived from CurveProxy
+  /// so the trim can supply easy to use evaluation tools via the Curve virtual
+  /// member functions.
+  /// Note well that the domains and orientations of the curve m_C2[trim.m_c2i]
+  /// and the trim as a curve may not agree.
+  /// </summary>
+  public class BrepTrim : CurveProxy
+  {
+    #region fields
+    internal int m_index;
+    internal Brep m_brep;
+    internal BrepTrim(int index, Brep owner)
+    {
+      m_index = index;
+      m_brep = owner;
+    }
+    #endregion
+
+    /// <summary>
+    /// Gets the Brep that owns this trim.
+    /// </summary>
+    public Brep Brep
+    {
+      get { return m_brep; }
+    }
+
+    const int idxLoopIndex = 0;
+    const int idxFaceIndex = 1;
+    const int idxEdgeIndex = 2;
+    int GetItemIndex(int which)
+    {
+      IntPtr pConstBrep = m_brep.ConstPointer();
+      return UnsafeNativeMethods.ON_BrepTrim_ItemIndex(pConstBrep, m_index, which);
+    }
+
+    /// <summary>
+    /// Loop that this trim belongs to
+    /// </summary>
+    public BrepLoop Loop
+    {
+      get
+      {
+        int index = GetItemIndex(idxLoopIndex);
+        if (index < 0)
+          return null;
+        return m_brep.Loops[index];
+      }
+    }
+
+    /// <summary>
+    /// Brep face this trim belongs to
+    /// </summary>
+    public BrepFace Face
+    {
+      get
+      {
+        int index = GetItemIndex(idxFaceIndex);
+        if (index < 0)
+          return null;
+        return m_brep.Faces[index];
+      }
+    }
+
+    /// <summary>
+    /// Brep edge this trim belongs to. This will be null for singular trims
+    /// </summary>
+    public BrepEdge Edge
+    {
+      get
+      {
+        int index = GetItemIndex(idxEdgeIndex);
+        if (index < 0)
+          return null;
+        return m_brep.Edges[index];
+      }
+    }
+
+    /// <summary>
+    /// Gets the index of this trim in the Brep.Trims collection.
+    /// </summary>
+    public int TrimIndex
+    {
+      get { return m_index; }
+    }
+
+    /// <summary>
+    /// Type of trim
+    /// </summary>
+    public BrepTrimType TrimType
+    {
+      get
+      {
+        IntPtr pConstBrep = m_brep.ConstPointer();
+        return (BrepTrimType)UnsafeNativeMethods.ON_BrepTrim_Type(pConstBrep, m_index);
+      }
+    }
+
+    internal override IntPtr _InternalGetConstPointer()
+    {
+      if (null != m_brep)
+      {
+        IntPtr pConstBrep = m_brep.ConstPointer();
+        return UnsafeNativeMethods.ON_Brep_BrepTrimPointer(pConstBrep, m_index);
+      }
+      return IntPtr.Zero;
+    }
+  }
+
+  /// <summary>
   /// Each brep loop has a defined type, e.g. outer, inner or point on surface.
   /// </summary>
   public enum BrepLoopType : int
@@ -2144,6 +2366,19 @@ namespace Rhino.Geometry
       }
     }
 
+    Rhino.Geometry.Collections.BrepTrimList m_trims;
+    /// <summary>
+    /// List of trims for this loop
+    /// </summary>
+    public Rhino.Geometry.Collections.BrepTrimList Trims
+    {
+      get { return m_trims ?? (m_trims = new Rhino.Geometry.Collections.BrepTrimList(this)); }
+    }
+
+    #endregion
+
+    #region methods
+
     /// <summary>
     /// Create a 3D curve that approximates the loop geometry.
     /// </summary>
@@ -2154,7 +2389,20 @@ namespace Rhino.Geometry
       IntPtr pLoopCurve = UnsafeNativeMethods.ON_BrepLoop_GetCurve3d(pConstBrep, m_index);
       if (pLoopCurve == IntPtr.Zero)
         return null;
-      return new PolyCurve(pLoopCurve, null, -1);
+      return GeometryBase.CreateGeometryHelper(pLoopCurve, null) as Curve;
+    }
+
+    /// <summary>
+    /// Create a 2d curve that traces the entire loop
+    /// </summary>
+    /// <returns></returns>
+    public Curve To2dCurve()
+    {
+      IntPtr pConstBrep = m_brep.ConstPointer();
+      IntPtr pLoopCurve = UnsafeNativeMethods.ON_BrepLoop_GetCurve2d(pConstBrep, m_index);
+      if (pLoopCurve == IntPtr.Zero)
+        return null;
+      return GeometryBase.CreateGeometryHelper(pLoopCurve, null) as Curve;
     }
     #endregion
   }
@@ -2272,6 +2520,7 @@ namespace Rhino.Geometry
         return points_pulled < 1 ? new Point3d[0] : outpoints.ToArray();
       }
     }
+
 #else
     /// <summary>
     /// Pulls one or more points to a brep face. This method has been backported in 
@@ -2309,6 +2558,25 @@ namespace Rhino.Geometry
     }
 #endif
 #endif
+
+    /// <summary>
+    /// Extrude a face in a Brep.
+    /// </summary>
+    /// <param name="pathCurve">The path to extrude along.</param>
+    /// <param name="bCap">If true, the extrusion is capped with a translation of the face being extruded</param>
+    /// <returns>A Brep on success or null on failure.</returns>
+    public Brep CreateExtrusion(Curve pathCurve, bool bCap)
+    {
+      IntPtr pConstBrep = m_brep.ConstPointer();
+      IntPtr pConstCurve = pathCurve.ConstPointer();
+      IntPtr pBrep = UnsafeNativeMethods.ON_BrepFace_BrepExtrudeFace(pConstBrep, m_index, pConstCurve, bCap);
+      if (IntPtr.Zero == pBrep)
+        return null;
+      // CreateGeometryHelper will create the "actual" surface type (Nurbs, Sum, Rev,...)
+      GeometryBase g = GeometryBase.CreateGeometryHelper(pBrep, null);
+      Brep rc = g as Brep;
+      return rc;
+    }
 
     /// <summary>
     /// Sets the surface domain of this face.
@@ -3148,6 +3416,107 @@ namespace Rhino.Geometry.Collections
     public IEnumerator<BrepEdge> GetEnumerator()
     {
       return new Rhino.Collections.TableEnumerator<BrepEdgeList, BrepEdge>(this);
+    }
+    #endregion
+  }
+
+  /// <summary>
+  /// Provides access to all the Trims in a Brep object
+  /// </summary>
+  public class BrepTrimList : IEnumerable<BrepTrim>, Rhino.Collections.IRhinoTable<BrepTrim>
+  {
+    readonly Brep m_brep;
+    readonly BrepLoop m_breploop;
+    #region constructors
+    internal BrepTrimList(Brep ownerBrep)
+    {
+      m_brep = ownerBrep;
+      m_breploop = null;
+    }
+    internal BrepTrimList(BrepLoop ownerLoop)
+    {
+      m_brep = ownerLoop.m_brep;
+      m_breploop = ownerLoop;
+    }
+    #endregion
+
+    #region properties
+    /// <summary>
+    /// Gets the number of brep trims.
+    /// </summary>
+    public int Count
+    {
+      get
+      {
+        if (m_breploop != null)
+        {
+          IntPtr pConstLoop = m_breploop.ConstPointer();
+          return UnsafeNativeMethods.ON_BrepLoop_TrimCount(pConstLoop);
+        }
+        IntPtr pConstBrep = m_brep.ConstPointer();
+        return UnsafeNativeMethods.ON_Brep_GetInt(pConstBrep, Brep.idxTrimCount);
+      }
+    }
+
+    /// <summary>
+    /// Gets the BrepTrim at the given index. 
+    /// The index must be valid or an IndexOutOfRangeException will be thrown.
+    /// </summary>
+    /// <param name="index">Index of BrepTrim to access.</param>
+    /// <exception cref="IndexOutOfRangeException">Thrown when the index is invalid.</exception>
+    /// <returns>The BrepTrim at [index].</returns>
+    public BrepTrim this[int index]
+    {
+      get
+      {
+        int count = Count;
+        if (index < 0 || index >= count)
+        {
+          throw new IndexOutOfRangeException();
+        }
+        if (m_trims == null)
+          m_trims = new List<BrepTrim>(count);
+        int existing_list_count = m_trims.Count;
+
+        IntPtr pConstLoop = IntPtr.Zero;
+        if (m_breploop != null)
+          pConstLoop = m_breploop.ConstPointer();
+
+        for (int i = existing_list_count; i < count; i++)
+        {
+          int trim_index = i;
+          if (pConstLoop != IntPtr.Zero)
+            trim_index = UnsafeNativeMethods.ON_BrepLoop_TrimIndex(pConstLoop, i);
+          m_trims.Add(new BrepTrim(trim_index, m_brep));
+        }
+
+        return m_trims[index];
+      }
+    }
+    List<BrepTrim> m_trims; // = null; initialized to null by runtime
+    #endregion
+
+    #region methods
+    #endregion
+
+    #region IEnumerable Implementation
+
+    /// <summary>
+    /// Gets the same enumerator as <see cref="GetEnumerator"/>.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    /// <summary>
+    /// Gets an enumerator that visits all edges.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    public IEnumerator<BrepTrim> GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<BrepTrimList, BrepTrim>(this);
     }
     #endregion
   }

@@ -756,7 +756,7 @@ namespace Rhino.Input
     /// <summary>
     /// Allows the user to interactively pick a viewport.
     /// </summary>
-    /// <param name="command_prompt">The command prompt during the request.</param>
+    /// <param name="commandPrompt">The command prompt during the request.</param>
     /// <param name="view">The view that the user picked.
     /// <para>If the operation is successful, then this out parameter is assigned the correct view during this call.</para>
     /// </param>
@@ -766,13 +766,39 @@ namespace Rhino.Input
     /// <code source='examples\cs\ex_addnamedview.cs' lang='cs'/>
     /// <code source='examples\py\ex_addnamedview.py' lang='py'/>
     /// </example>
-    public static Commands.Result GetView(string command_prompt, out Rhino.Display.RhinoView view)
+    public static Commands.Result GetView(string commandPrompt, out Rhino.Display.RhinoView view)
     {
       uint command_rc = 0;
-      IntPtr pView = UnsafeNativeMethods.RHC_RhinoGetView(command_prompt, ref command_rc);
+      IntPtr pView = UnsafeNativeMethods.RHC_RhinoGetView(commandPrompt, ref command_rc);
       view = Rhino.Display.RhinoView.FromIntPtr(pView);
       return (Rhino.Commands.Result)command_rc;
+    }
 
+    /// <summary>
+    /// Allows user to interactively pick an angle
+    /// </summary>
+    /// <param name="commandPrompt">if null, a default prompt will be displayed</param>
+    /// <param name="basePoint"></param>
+    /// <param name="referencePoint"></param>
+    /// <param name="defaultAngleRadians"></param>
+    /// <param name="angleRadians"></param>
+    /// <returns></returns>
+    public static Commands.Result GetAngle(string commandPrompt, Point3d basePoint, Point3d referencePoint,
+                                           double defaultAngleRadians, out double angleRadians)
+    {
+      angleRadians = 0;
+      int rc = UnsafeNativeMethods.RHC_RhinoGetAngle(commandPrompt, basePoint, referencePoint, defaultAngleRadians,
+                                            ref angleRadians);
+      GetResult get_rc = (GetResult)rc;
+      if (get_rc == GetResult.Angle)
+        return Commands.Result.Success;
+      if (get_rc == GetResult.ExitRhino)
+        return Commands.Result.ExitRhino;
+      if (get_rc == GetResult.Cancel)
+        return Commands.Result.Cancel;
+      if (get_rc == GetResult.Nothing)
+        return Commands.Result.Nothing;
+      return Commands.Result.Failure;
     }
 
     public static string GetFileName(Custom.GetFileNameMode mode, string defaultName, string title, System.Windows.Forms.IWin32Window parent)

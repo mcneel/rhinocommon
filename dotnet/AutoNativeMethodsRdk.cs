@@ -1048,26 +1048,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_SetMaterialToOnMaterial(IntPtr pMaterial, Guid uuid);
 
-  //void Rdk_Globals_RdkVersion(CRhCmnStringHolder* pSH)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_Globals_RdkVersion(IntPtr pSH);
-
-  //void Rdk_Globals_RdkBuildDate(CRhCmnStringHolder* pSH)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void Rdk_Globals_RdkBuildDate(IntPtr pSH);
-
-  //int Rdk_Globals_RdkMajorVersion()
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_Globals_RdkMajorVersion();
-
-  //int Rdk_Globals_RdkMinorVersion()
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_Globals_RdkMinorVersion();
-
-  //int Rdk_Globals_RdkBetaRelease()
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_Globals_RdkBetaRelease();
-
   //int Rdk_Globals_ShowColorPicker(HWND hWnd, ON_4FVECTOR_STRUCT v, bool bUseAlpha, ON_4fPoint* pColor)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int Rdk_Globals_ShowColorPicker(IntPtr hWnd, Color4f v, [MarshalAs(UnmanagedType.U1)]bool bUseAlpha, ref Color4f pColor);
@@ -1079,18 +1059,6 @@ internal partial class UnsafeNativeMethods
   //void Rdk_Globals_SetShowIncompatbileContent(const RHMONO_STRING* _ps, bool bShow)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_Globals_SetShowIncompatbileContent([MarshalAs(UnmanagedType.LPWStr)]string _ps, [MarshalAs(UnmanagedType.U1)]bool bShow);
-
-  //int Rdk_Globals_IsContentEditorVisible(const RHMONO_STRING* _ps)
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_Globals_IsContentEditorVisible([MarshalAs(UnmanagedType.LPWStr)]string _ps);
-
-  //int Rdk_Globals_IsSunDockBarVisible()
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_Globals_IsSunDockBarVisible();
-
-  //int Rdk_Globals_IsViewDockBarVisible()
-  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int Rdk_Globals_IsViewDockBarVisible();
 
   //int Rdk_Globals_IsSafeFrameVisible()
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]

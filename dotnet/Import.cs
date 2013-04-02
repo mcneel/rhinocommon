@@ -31,14 +31,6 @@ class Import
 [System.Security.SuppressUnmanagedCodeSecurity]
 internal partial class UnsafeNativeMethods
 {
-#if !RHINO_SDK
-  static UnsafeNativeMethods()
-  {
-    // When RhinoCommon is being used as a stand-alone wrapper around OpenNURBS.
-    // always called ON::Begin() before any calls are made to the rhcommon_c.dll
-    ON_Begin();
-  }
-#endif
   [DllImport("user32.dll")]
   [return: MarshalAs(UnmanagedType.Bool)]
   internal static extern bool EnableWindow(IntPtr hWnd, bool bEnable);
@@ -130,6 +122,9 @@ internal partial class UnsafeNativeMethods
   internal static extern void RHC_SetEscapeKeyCallback(Rhino.RhinoApp.RhCmnEmptyCallback cb);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void RHC_SetKeyboardCallback(Rhino.RhinoApp.KeyboardHookEvent cb);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoEventWatcher_SetInitAppCallback(Rhino.RhinoApp.RhCmnEmptyCallback cb, Rhino.Runtime.HostUtils.ReportCallback report_cb);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
@@ -196,6 +191,12 @@ internal partial class UnsafeNativeMethods
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoEventWatcher_SetLayerTableEventCallback(Rhino.RhinoDoc.RhinoTableCallback cb, Rhino.Runtime.HostUtils.ReportCallback report);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoEventWatcher_SetIdefTableEventCallback(Rhino.RhinoDoc.RhinoTableCallback cb, Rhino.Runtime.HostUtils.ReportCallback report);
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRhinoEventWatcher_SetLightTableEventCallback(Rhino.RhinoDoc.RhinoTableCallback cb, Rhino.Runtime.HostUtils.ReportCallback report);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRhinoEventWatcher_SetMaterialTableEventCallback(Rhino.RhinoDoc.RhinoTableCallback cb, Rhino.Runtime.HostUtils.ReportCallback report);

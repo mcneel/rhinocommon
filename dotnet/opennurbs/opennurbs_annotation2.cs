@@ -226,6 +226,22 @@ namespace Rhino.Geometry
       }
     }
 
+    /// <summary>
+    /// Index of DimensionStyle in document DimStyle table used by the dimension.
+    /// </summary>
+    public int Index
+    {
+      get
+      {
+        IntPtr pThis = ConstPointer();
+        return UnsafeNativeMethods.ON_Annotation2_Index(pThis, false, 0);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_Annotation2_Index(pThis, true, value);
+      }
+    }
 
   }
 
@@ -420,6 +436,37 @@ namespace Rhino.Geometry
     protected RadialDimension(SerializationInfo info, StreamingContext context)
       : base (info, context)
     {
+    }
+
+    /// <summary>
+    /// Construct a radial dimension from 3d input
+    /// </summary>
+    /// <param name="center">center of Circle</param>
+    /// <param name="arrowTip">3d point on the circle at the dimension arrow tip</param>
+    /// <param name="xAxis">x axis of the dimension's plane</param>
+    /// <param name="normal">normal to the dimension's plane</param>
+    /// <param name="offsetDistance">distance from arrow tip to knee point</param>
+    public RadialDimension(Point3d center, Point3d arrowTip, Vector3d xAxis, Vector3d normal, double offsetDistance)
+    {
+      IntPtr pThis = UnsafeNativeMethods.ON_RadialDimension2_New();
+      ConstructNonConstObject(pThis);
+      UnsafeNativeMethods.ON_RadialDimension2_CreateFromPoints(pThis, center, arrowTip, xAxis, normal, offsetDistance);
+    }
+
+    /// <summary>
+    /// Construct a radial dimension from 3d input
+    /// </summary>
+    /// <param name="circle"></param>
+    /// <param name="arrowTip">3d point on the circle at the dimension arrow tip</param>
+    /// <param name="offsetDistance">distance from arrow tip to knee point</param>
+    public RadialDimension(Circle circle, Point3d arrowTip, double offsetDistance)
+    {
+      IntPtr pThis = UnsafeNativeMethods.ON_RadialDimension2_New();
+      ConstructNonConstObject(pThis);
+      Point3d center = circle.Center;
+      Vector3d xAxis = circle.Plane.XAxis;
+      Vector3d normal = circle.Normal;
+      UnsafeNativeMethods.ON_RadialDimension2_CreateFromPoints(pThis, center, arrowTip, xAxis, normal, offsetDistance);
     }
 
     /// <summary>
@@ -758,6 +805,42 @@ namespace Rhino.Geometry
       }
     }
 
-    // Do not wrap height, fontface and display. These are not currently used in Rhino
+    /// <summary>
+    /// Height of font used for displaying the dot
+    /// </summary>
+    public int FontHeight
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_TextDot_GetHeight(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_TextDot_SetHeight(pThis, value);
+      }
+    }
+
+    /// <summary>Font face used for displaying the dot</summary>
+    public string FontFace
+    {
+      get
+      { 
+        IntPtr pConstThis = ConstPointer();
+        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        {
+          IntPtr pStringHolder = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_TextDot_GetFontFace(pConstThis, pStringHolder);
+          return sh.ToString();
+        }
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_TextDot_SetFontFace(pThis, value);
+      }
+    }
+
   }
 }

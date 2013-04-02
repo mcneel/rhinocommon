@@ -262,7 +262,7 @@ using Rhino.Display;
         if (sType.Contains("RHMONO_STRING"))
           return "string";
 
-        if (sType.Equals("HWND") ||sType.Equals("HBITMAP"))
+        if (sType.Equals("HWND") ||sType.Equals("HBITMAP") || sType.Equals("HCURSOR"))
           return "IntPtr";
 
         if (sType.EndsWith("**"))
@@ -298,9 +298,9 @@ using Rhino.Display;
             if (isArray)
             {
               if (isConst)
-                return "[MarshalAs(UnmanagedType.U1)] " + s + "[]";
+                return "[MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.U1)] " + s + "[]";
               else
-                return "[MarshalAs(UnmanagedType.U1), In, Out] " + s + "[]";
+                return "[MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.U1), In, Out] " + s + "[]";
             }
             s = "[MarshalAs(UnmanagedType.U1)]ref " + s;
             return s;
@@ -646,7 +646,7 @@ using Rhino.Display;
             rc = "ushort";
           else if (rc.Equals("ON_UUID"))
             rc = "Guid";
-          else if (rc.Equals("LPUNKNOWN") || rc.Equals("HBITMAP") || rc.Equals("HWND"))
+          else if (rc.Equals("LPUNKNOWN") || rc.Equals("HBITMAP") || rc.Equals("HWND") || rc.Equals("HCURSOR"))
             rc = "IntPtr";
           else if (rc.Equals("time_t"))
             rc = "Int64";

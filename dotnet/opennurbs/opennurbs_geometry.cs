@@ -191,6 +191,7 @@ namespace Rhino.Geometry
     const int idxON_PointGrid = 33;
     const int idxON_MorphControl = 34;
     const int idxON_BrepLoop = 35;
+    const int idxON_BrepTrim = 36;
     #endregion
 
     internal static GeometryBase CreateGeometryHelper(IntPtr pGeometry, object parent)
@@ -338,6 +339,17 @@ namespace Rhino.Geometry
             {
               Brep b = new Brep(pBrep, parent);
               rc = b.Loops[loopindex];
+            }
+          }
+          break;
+        case idxON_BrepTrim: // 36
+          {
+            int trimindex = -1;
+            IntPtr pBrep = UnsafeNativeMethods.ON_BrepSubItem_Brep(pGeometry, ref trimindex);
+            if (pBrep != IntPtr.Zero && trimindex >= 0)
+            {
+              Brep b = new Brep(pBrep, parent);
+              rc = b.Trims[trimindex];
             }
           }
           break;

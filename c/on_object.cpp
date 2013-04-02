@@ -77,7 +77,7 @@ RH_C_FUNCTION unsigned int ON_Object_SizeOf(const ON_Object* pObject)
 RH_C_FUNCTION bool ON_Object_SetUserString(const ON_Object* pObject, const RHMONO_STRING* _key, const RHMONO_STRING* _value)
 {
   bool rc = false;
-  if( pObject && _key && _value )
+  if( pObject && _key )
   {
     ON_Object* ptr = const_cast<ON_Object*>(pObject);
     INPUTSTRINGCOERCE(key, _key);

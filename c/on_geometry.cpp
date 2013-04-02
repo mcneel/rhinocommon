@@ -340,6 +340,7 @@ const int idxON_Light = 32;
 const int idxON_PointGrid = 33;
 const int idxON_MorphControl = 34;
 const int idxON_BrepLoop = 35;
+const int idxON_BrepTrim = 36;
 
 RH_C_FUNCTION int ON_Geometry_GetGeometryType( const ON_Object* pOnObject)
 {
@@ -374,9 +375,14 @@ RH_C_FUNCTION int ON_Geometry_GetGeometryType( const ON_Object* pOnObject)
       pCastTest = ON_ArcCurve::Cast(pGeometry);
       if( pCastTest )
         return idxON_ArcCurve; //5
+
       pCastTest = ON_BrepEdge::Cast(pGeometry);
       if( pCastTest )
         return idxON_BrepEdge; //21
+
+      pCastTest = ON_BrepTrim::Cast(pGeometry);
+      if( pCastTest )
+        return idxON_BrepTrim; //36
       return rc;
     }
 

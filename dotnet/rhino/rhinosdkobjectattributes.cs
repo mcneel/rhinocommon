@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace Rhino.DocObjects
 {
+  /// <summary>
+  /// Attributes (color, material, layer,...) associated with a rhino object
+  /// </summary>
   [Serializable]
   public class ObjectAttributes : Runtime.CommonObject
   {
@@ -695,7 +698,7 @@ namespace Rhino.DocObjects
     /// Attach a user string (key,value combination) to this geometry.
     /// </summary>
     /// <param name="key">id used to retrieve this string.</param>
-    /// <param name="value">string associated with key.</param>
+    /// <param name="value">string associated with key. If null, the key will be removed</param>
     /// <returns>true on success.</returns>
     public bool SetUserString(string key, string value)
     {

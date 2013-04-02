@@ -439,7 +439,11 @@ RH_C_FUNCTION bool ON_BinaryArchive_WriteGeometry(ON_BinaryArchive* pArchive, co
   bool rc = false;
   if( pArchive && pConstGeometry )
   {
-    rc = pConstGeometry->Write(*pArchive) ? true:false;
+    // 13 March 2013 (S. Baer) RH-16957
+    // The geometry reader was using ReadObject, so we need to use the
+    // WriteObject function instead of the ON_Geometry::Write function
+    rc = pArchive->WriteObject(pConstGeometry);
+    //rc = pConstGeometry->Write(*pArchive) ? true:false;
   }
   return rc;
 }
@@ -780,7 +784,7 @@ RH_C_FUNCTION CRhCmnWrite3dmBufferArchive* ON_WriteBufferArchive_NewWriter(const
     if( !writeuserdata )
       holder.MoveUserDataFrom(*pConstObject);
     *length = 0;
-    size_t sz = pConstObject->SizeOf() + 256;
+    size_t sz = pConstObject->SizeOf() + 512; // 256 was too small on x86 builds to account for extra data written
     rc = new CRhCmnWrite3dmBufferArchive(sz, 0, rhinoversion, ON::Version());
     if( rc->WriteObject(pConstObject) )
     {
@@ -1676,6 +1680,23 @@ RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddPolyLine(ONX_Model* pModel, int c
   return ::ON_nil_uuid;
 }
 
+RH_C_FUNCTION bool ONX_Model_ObjectTable_Delete(ONX_Model* pModel, ON_UUID object_id)
+{
+  bool rc = false;
+  if( pModel )
+  {
+    for( int i=0; i<pModel->m_object_table.Count(); i++ )
+    {
+      if( pModel->m_object_table[i].m_attributes.m_uuid==object_id )
+      {
+        pModel->m_object_table.Remove(i);
+        rc = true;
+        break;
+      }
+    }
+  }
+  return rc;
+}
 
 RH_C_FUNCTION void ONX_Model_BoundingBox(const ONX_Model* pConstModel, ON_BoundingBox* pBBox)
 {

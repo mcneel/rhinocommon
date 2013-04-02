@@ -53,7 +53,9 @@ using System.Runtime.InteropServices;
 // 29 Aug 2012 (5.1.30000.4) Adding support for history and history replay
 //                           SR0 - Initial release of Rhino 5
 // 12 Oct 2012 (5.1.30000.5) Update for SR1 of Rhino 5
-[assembly: AssemblyVersion("5.1.30000.5")]
+// 21 Feb 2013 (5.1.30000.6) Update for SR2 of Rhino 5
+// 21 Feb 2013 (5.1.30000.7) Update for SR3 of Rhino 5
+[assembly: AssemblyVersion("5.1.30000.7")]
 
 [assembly: AssemblyFileVersion("5.0.20693.0")]
 

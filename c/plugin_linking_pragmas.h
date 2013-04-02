@@ -38,8 +38,8 @@
 // Release x86 (32 bit) libs
 #define ON_MSC_LIB_DIR "Release/"
 #pragma message( " --- statically linking opennurbs." )
-#pragma comment(lib, "release/zlib.lib")
-#pragma comment(lib, "release/opennurbs_staticlib.lib")
+#pragma comment(lib, "../release/zlib.lib")
+#pragma comment(lib, "../release/opennurbs_staticlib.lib")
 
 #else // _DEBUG
 

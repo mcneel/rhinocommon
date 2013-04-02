@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 using System;
 using System.Diagnostics;
+using Rhino.Runtime;
 
 #if RDK_CHECKED
 namespace Rhino.Render
@@ -11,14 +12,28 @@ namespace Rhino.Render
     {
       get
       {
-        RhinoDoc doc = Rhino.RhinoDoc.ActiveDoc;
+        RhinoDoc doc = RhinoDoc.ActiveDoc;
         return FromPointer(UnsafeNativeMethods.Rdk_RenderEnvironment_CurrentEnvironment(doc.m_docId)) as RenderEnvironment;
       }
       set
       {
-        RhinoDoc doc = Rhino.RhinoDoc.ActiveDoc;
+        RhinoDoc doc = RhinoDoc.ActiveDoc;
         UnsafeNativeMethods.Rdk_RenderEnvironment_SetCurrentEnvironment(doc.m_docId, value.Id);
       }
+    }
+
+    /// <summary>
+    /// Constructs a new <see cref="RenderEnvironment"/> from a <see cref="SimulatedEnvironment"/>.
+    /// </summary>
+    /// <param name="environment">The environment to create the basic environment from.</param>
+    /// <returns>A new basic environment.</returns>
+    public static RenderEnvironment NewBasicEnvironment(SimulatedEnvironment environment)
+    {
+      IntPtr pEnvironment = environment == null ? IntPtr.Zero : environment.ConstPointer();
+      NativeRenderEnvironment newEnvironment = FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicEnvironment(pEnvironment)) as NativeRenderEnvironment;
+      if (newEnvironment != null)
+        newEnvironment.AutoDelete = true;
+      return newEnvironment;
     }
 
     public virtual void SimulateEnvironment(ref SimulatedEnvironment simualation, bool isForDataOnly)
@@ -60,7 +75,7 @@ namespace Rhino.Render
       }
       catch (Exception exception)
       {
-        Runtime.HostUtils.ExceptionReport(exception);
+        HostUtils.ExceptionReport(exception);
       }
     }
 

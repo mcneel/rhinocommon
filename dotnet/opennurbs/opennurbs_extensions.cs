@@ -1659,6 +1659,44 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddHatch(pThis, pConstHatch, pAttr);
     }
     #endregion
+
+    #region Object deletion
+    /// <summary>
+    /// Deletes object from document.
+    /// </summary>
+    /// <param name="obj">The object to delete.</param>
+    /// <returns>true on success, false on failure.</returns>
+    public bool Delete(File3dmObject obj)
+    {
+      return Delete(obj.Attributes.ObjectId);
+    }
+    /// <summary>
+    /// Deletes object from document.
+    /// </summary>
+    /// <param name="objectId">Id of the object to delete.</param>
+    /// <returns>true on success, false on failure.</returns>
+    public bool Delete(Guid objectId)
+    {
+      IntPtr pThis = m_parent.NonConstPointer();
+      return UnsafeNativeMethods.ONX_Model_ObjectTable_Delete(pThis, objectId);
+    }
+    /// <summary>
+    /// Deletes a collection of objects from the document.
+    /// </summary>
+    /// <param name="objectIds">Ids of all objects to delete.</param>
+    /// <returns>The number of successfully deleted objects.</returns>
+    public int Delete(IEnumerable<Guid> objectIds)
+    {
+      if (objectIds == null) { throw new ArgumentNullException("objectIds"); }
+
+      int count = 0;
+      foreach (Guid id in objectIds)
+      {
+        if (Delete(id)) { count++; }
+      }
+      return count;
+    }
+    #endregion
   }
 
   /// <summary>

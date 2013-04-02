@@ -181,12 +181,21 @@ namespace Rhino.Display
       return rc;
     }
 
+    /// <summary>
+    /// Gets or sets the runtime page number and updates the page number for all
+    /// of the other pages. The first page has a value of 0
+    /// </summary>
     public int PageNumber
     {
       get
       {
         IntPtr pConstThis = ConstPointer();
         return UnsafeNativeMethods.CRhinoPageView_GetPageNumber(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.CRhinoPageView_SetPageNumber(pThis, value);
       }
     }
 

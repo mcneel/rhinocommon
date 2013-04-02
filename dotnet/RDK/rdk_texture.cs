@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Rhino.Geometry;
+using Rhino.Runtime;
 
 #if RDK_CHECKED
 
@@ -11,15 +12,29 @@ namespace Rhino.Render
   public abstract class RenderTexture : RenderContent
   {
     /// <summary>
+    /// Constructs a new basic texture from a SimulatedTexture.
+    /// </summary>
+    /// <param name="texture">The texture to create the basic texture from.</param>
+    /// <returns>A new render texture.</returns>
+    public static RenderTexture NewBitmapTexture(SimulatedTexture texture)
+    {
+      IntPtr pConstTexture = texture == null ? IntPtr.Zero : texture.ConstPointer();
+      NativeRenderTexture newTexture = FromPointer(UnsafeNativeMethods.Rdk_Globals_NewBasicTexture(pConstTexture)) as NativeRenderTexture;
+      if (newTexture != null)
+        newTexture.AutoDelete = true;
+      return newTexture;
+    }
+
+    /// <summary>
     /// Gets the transformation that can be applied to the UVW vector to convert it
     /// from normalized texture space into locally mapped space (ie - with repeat,
     /// offset and rotation applied.)
     /// </summary>
-    public Rhino.Geometry.Transform LocalMappingTransform
+    public Transform LocalMappingTransform
     {
       get
       {
-        Rhino.Geometry.Transform xform = new Rhino.Geometry.Transform();
+        Transform xform = new Transform();
         IntPtr pConstThis = ConstPointer();
         UnsafeNativeMethods.Rdk_RenderTexture_LocalMappingTransform(pConstThis, ref xform);
         return xform;
@@ -74,7 +89,7 @@ namespace Rhino.Render
     {
       try
       {
-        RenderTexture texture = RenderContent.FromSerialNumber(serial_number) as RenderTexture;
+        RenderTexture texture = FromSerialNumber(serial_number) as RenderTexture;
         if (texture != null)
         {
           if (pSim != IntPtr.Zero)
@@ -86,7 +101,7 @@ namespace Rhino.Render
       }
       catch (Exception exception)
       {
-        Runtime.HostUtils.ExceptionReport(exception);
+        HostUtils.ExceptionReport(exception);
       }
     }
 
@@ -97,7 +112,7 @@ namespace Rhino.Render
       IntPtr rc = IntPtr.Zero;
       try
       {
-        RenderTexture texture = RenderContent.FromSerialNumber(serial_number) as RenderTexture;
+        RenderTexture texture = FromSerialNumber(serial_number) as RenderTexture;
         if (texture != null)
         {
           TextureEvaluator eval = texture.CreateEvaluator();

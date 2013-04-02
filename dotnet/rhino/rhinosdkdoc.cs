@@ -196,7 +196,7 @@ namespace Rhino
     const int idxNotes = 3;
     const int idxTemplateFileUsed = 4;
 
-    ///<summary>Returns the name of the currently loaded RhinoCommon document (3DM file).</summary>
+    ///<summary>Returns the name of the currently loaded Rhino document (3DM file).</summary>
     public string Name
     {
       get
@@ -210,7 +210,7 @@ namespace Rhino
       }
     }
 
-    ///<summary>Returns the path of the currently loaded RhinoCommon document (3DM file).</summary>
+    ///<summary>Returns the path of the currently loaded Rhino document (3DM file).</summary>
     public string Path
     {
       get
@@ -221,7 +221,7 @@ namespace Rhino
     /*
         ///<summary>
         ///Returns or sets the uniform resource locator (URL) of the currently
-        ///loaded RhinoCommon document (3DM file).
+        ///loaded Rhino document (3DM file).
         ///</summary>
         public string URL
         {
@@ -381,7 +381,7 @@ namespace Rhino
 
     ///<summary>
     ///Returns the file version of the current document.  
-    ///Use this function to determine which version of RhinoCommon last saved the document.
+    ///Use this function to determine which version of Rhino last saved the document.
     ///</summary>
     ///<returns>
     ///The file version (e.g. 1, 2, 3, 4, etc.) or -1 if the document has not been read from disk.
@@ -514,6 +514,47 @@ namespace Rhino
         IntPtr pConstRenderSettings = value.ConstPointer();
         UnsafeNativeMethods.CRhinoDocProperties_SetRenderSettings(m_docId, pConstRenderSettings);
       }
+    }
+
+    /// <summary>
+    /// Type of MeshingParameters currently used by the document to mesh objects
+    /// </summary>
+    public Rhino.Geometry.MeshingParameterStyle MeshingParameterStyle
+    {
+      get
+      {
+        int rc = UnsafeNativeMethods.CRhinoDocProperties_GetRenderMeshStyle(m_docId);
+        return (Geometry.MeshingParameterStyle)rc;
+      }
+      set
+      {
+        UnsafeNativeMethods.CRhinoDocProperties_SetRenderMeshStyle(m_docId, (int)value);
+      }
+    }
+
+    /// <summary>
+    /// Get MeshingParameters currently used by the document
+    /// </summary>
+    /// <param name="style"></param>
+    /// <returns></returns>
+    public Rhino.Geometry.MeshingParameters GetMeshingParameters(MeshingParameterStyle style)
+    {
+      IntPtr pMeshingParameters = UnsafeNativeMethods.CRhinoDocProperties_GetRenderMeshParameters(m_docId, (int)style);
+      if (IntPtr.Zero == pMeshingParameters)
+        return null;
+      return new MeshingParameters(pMeshingParameters);
+    }
+
+    /// <summary>
+    /// Set the custom meshing parameters that this document will use. You must also modify the
+    /// MeshingParameterStyle property on the document to Custom if you want these meshing
+    /// parameters to be used
+    /// </summary>
+    /// <param name="mp"></param>
+    public void SetCustomMeshingParameters(MeshingParameters mp)
+    {
+      IntPtr pConstMeshingParameters = mp.ConstPointer();
+      UnsafeNativeMethods.CRhinoDocProperties_SetCustomRenderMeshParameters(m_docId, pConstMeshingParameters);
     }
 
 #region tables
@@ -1758,15 +1799,15 @@ namespace Rhino
     }
 
 
-    internal delegate void RhinoTableCallback(int docId, int event_type, int index, IntPtr pConstOldSettings);
+    internal delegate void RhinoTableCallback(int docId, int eventType, int index, IntPtr pConstOldSettings);
     private static RhinoTableCallback m_OnLayerTableEventCallback;
-    private static void OnLayerTableEvent(int docId, int event_type, int index, IntPtr pConstOldSettings)
+    private static void OnLayerTableEvent(int docId, int eventType, int index, IntPtr pConstOldSettings)
     {
       if (m_layer_table_event != null)
       {
         try
         {
-          DocObjects.Tables.LayerTableEventArgs args = new DocObjects.Tables.LayerTableEventArgs(docId, event_type, index, pConstOldSettings);
+          DocObjects.Tables.LayerTableEventArgs args = new DocObjects.Tables.LayerTableEventArgs(docId, eventType, index, pConstOldSettings);
           m_layer_table_event(null, args);
         }
         catch (Exception ex)
@@ -1808,6 +1849,107 @@ namespace Rhino
         }
       }
     }
+
+    private static RhinoTableCallback m_OnIdefTableEventCallback;
+    private static void OnIdefTableEvent(int docId, int eventType, int index, IntPtr pConstOldSettings)
+    {
+      if (m_idef_table_event != null)
+      {
+        try
+        {
+          var args = new DocObjects.Tables.InstanceDefinitionTableEventArgs(docId, eventType, index, pConstOldSettings);
+          m_idef_table_event(null, args);
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
+    internal static EventHandler<DocObjects.Tables.InstanceDefinitionTableEventArgs> m_idef_table_event;
+
+    /// <summary>
+    /// Called when any modification happens to a document's light table.
+    /// </summary>
+    public static event EventHandler<Rhino.DocObjects.Tables.InstanceDefinitionTableEventArgs> InstanceDefinitionTableEvent
+    {
+      add
+      {
+        lock (m_event_lock)
+        {
+          if (m_idef_table_event == null)
+          {
+            m_OnIdefTableEventCallback = OnIdefTableEvent;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetIdefTableEventCallback(m_OnIdefTableEventCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_idef_table_event -= value;
+          m_idef_table_event += value;
+        }
+      }
+      remove
+      {
+        lock (m_event_lock)
+        {
+          m_idef_table_event -= value;
+          if (m_idef_table_event == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetIdefTableEventCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnIdefTableEventCallback = null;
+          }
+        }
+      }
+    }
+
+    private static RhinoTableCallback m_OnLightTableEventCallback;
+    private static void OnLightTableEvent(int docId, int eventType, int index, IntPtr pConstOldSettings)
+    {
+      if (m_light_table_event != null)
+      {
+        try
+        {
+          DocObjects.Tables.LightTableEventArgs args = new DocObjects.Tables.LightTableEventArgs(docId, eventType, index, pConstOldSettings);
+          m_light_table_event(null, args);
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
+    internal static EventHandler<DocObjects.Tables.LightTableEventArgs> m_light_table_event;
+
+    /// <summary>
+    /// Called when any modification happens to a document's light table.
+    /// </summary>
+    public static event EventHandler<Rhino.DocObjects.Tables.LightTableEventArgs> LightTableEvent
+    {
+      add
+      {
+        lock (m_event_lock)
+        {
+          if (m_light_table_event == null)
+          {
+            m_OnLightTableEventCallback = OnLightTableEvent;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetLightTableEventCallback(m_OnLightTableEventCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          m_light_table_event -= value;
+          m_light_table_event += value;
+        }
+      }
+      remove
+      {
+        lock (m_event_lock)
+        {
+          m_light_table_event -= value;
+          if (m_light_table_event == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetLightTableEventCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            m_OnLightTableEventCallback = null;
+          }
+        }
+      }
+    }
+
 
     private static RhinoTableCallback m_OnMaterialTableEventCallback;
     private static void OnMaterialTableEvent(int docId, int event_type, int index, IntPtr pConstOldSettings)
@@ -2000,7 +2142,6 @@ namespace Rhino
 #endregion
 #endif
   }
-
 
   /// <summary>
   /// Provides document information for RhinoDoc events.

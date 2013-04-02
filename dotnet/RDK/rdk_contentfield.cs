@@ -130,6 +130,21 @@ namespace Rhino.Render.Fields
       var found = FindField(fieldName, true);
       return (null != found);
     }
+    /// <summary>
+    /// Call this method to get the field with the matching name.
+    /// </summary>
+    /// <param name="fieldName">Field name to search for.</param>
+    /// <returns>
+    /// If the field exists in the Fields dictionary then the field is returned
+    /// otherwise; null is returned.
+    /// </returns>
+    public Field GetField(string fieldName)
+    {
+      if (string.IsNullOrEmpty(fieldName)) return null;
+      var field = FindField(fieldName, true);
+      return field;
+    }
+
     #endregion Public methods
 
     #region Overloaded AddField methods for the supported data types
@@ -1279,7 +1294,7 @@ namespace Rhino.Render.Fields
     /// <param name="changeContext">The reason why the value is changing.</param>
     internal void Set<T>(T value, RenderContent.ChangeContexts changeContext)
     {
-      IntPtr fieldPointer = FieldPointer;
+      var fieldPointer = FieldPointer;
       if (IntPtr.Zero == fieldPointer)
       {
         // Cache the value for use by CreateCppPointer()
@@ -1289,14 +1304,18 @@ namespace Rhino.Render.Fields
       {
         // Convert the value to a variant, will throw an exception if the value
         // type is not supported
-        using (Variant varient = new Variant(value))
+        using (var varient = new Variant(value))
         {
           // Get the variant C++ pointer
-          IntPtr variantPointer = varient.NonConstPointer();
+          var variantPointer = varient.NonConstPointer();
           // Tell the C++ RDK to change the value
-          int rc = UnsafeNativeMethods.Rdk_ContentField_SetVariantParameter(fieldPointer, variantPointer, (int)changeContext);
+          var rc = UnsafeNativeMethods.Rdk_ContentField_SetVariantParameter(fieldPointer, variantPointer, (int)changeContext);
           // If the C++ RDK failed to set the value throw an exception.
-          if (1 != rc) throw new InvalidOperationException("SetNamedParamter doesn't support this type.");
+          //  Note: A return value of 1 means the value was changed, 2 means
+          //        the current value is equal to "value" so nothing changed
+          //        and a value of 0 means there was an error setting the field
+          //        value.
+          if (rc < 1) throw new InvalidOperationException("SetNamedParamter doesn't support this type.");
         }
       }
     }

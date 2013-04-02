@@ -1087,6 +1087,12 @@ namespace Rhino.Render
       if (attr.Length != 1) throw new ArgumentException("classType must have a GuidAttribute", "classType");
       var control = Activator.CreateInstance(classType) as IWin32Window;
       if (null == control) return null;
+      if (ApplicationSettings.AppearanceSettings.UsePaintColors)
+      {
+        var asControl = control as Control;
+        if (null != asControl)
+          asControl.BackColor = ApplicationSettings.AppearanceSettings.GetPaintColor(ApplicationSettings.PaintColor.NormalEnd);
+      }
       var newUiSection = NewUiPointer(classType.GUID, caption, createExpanded, createVisible, control);
       if (null == newUiSection)
       {

@@ -48,3 +48,30 @@ RH_C_FUNCTION bool ON_Line_InPlane( const ON_Line* pConstLine, ON_PLANE_STRUCT* 
   }
   return rc;
 }
+
+
+#if !defined(OPENNURBS_BUILD) //not available in standalone opennurbs
+// 7-Feb-2013 Dale Fugier, http://mcneel.myjetbrains.com/youtrack/issue/RH-16086
+RH_C_FUNCTION bool RHC_RhGetTanPerpPoint( const ON_Curve* pConstCurve0, const ON_Curve* pConstCurve1, double* t0, double* t1, bool perpendicular0, bool perpendicular1, ON_Line* pLine )
+{
+  bool rc = false;
+  if( pConstCurve0 && pConstCurve1 && pLine && t0 && t1 )
+  {
+    double abs_tol = 0.001;
+    CRhinoDoc* doc = RhinoApp().ActiveDoc();
+    if( doc )
+      abs_tol = doc->AbsoluteTolerance();
+
+    double angle_tol = RhinoCurveTangencyTolerance();
+
+    ON_BOOL32 on_rc = RhGetTanPerpPoint( *pConstCurve0, *pConstCurve1, perpendicular0, perpendicular1, *t0, *t1, angle_tol, abs_tol );
+    if( on_rc )
+    {
+      pLine->from = pConstCurve0->PointAt( *t0 );
+      pLine->to = pConstCurve1->PointAt( *t1 );
+      rc = pLine->IsValid();
+    }
+  }
+  return rc;
+}
+#endif

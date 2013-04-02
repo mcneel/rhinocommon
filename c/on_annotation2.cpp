@@ -166,12 +166,32 @@ RH_C_FUNCTION void ON_LinearDimension2_SetAligned( ON_LinearDimension2* pLinearD
   }
 }
 
+RH_C_FUNCTION ON_RadialDimension2* ON_RadialDimension2_New()
+{
+  return new ON_RadialDimension2();
+}
+
 RH_C_FUNCTION bool ON_RadialDimension2_IsDiameterDimension( const ON_RadialDimension2* pConstRadialDimension2 )
 {
   bool rc = false;
   if( pConstRadialDimension2 )
   {
     rc = (pConstRadialDimension2->Type() == ON::dtDimDiameter);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_RadialDimension2_CreateFromPoints(ON_RadialDimension2* pRadialDimension, ON_3DPOINT_STRUCT center, ON_3DPOINT_STRUCT arrowTip,
+                                                        ON_3DVECTOR_STRUCT xaxis, ON_3DVECTOR_STRUCT normal, double offset_distance)
+{
+  bool rc = false;
+  if( pRadialDimension )
+  {
+    ON_3dPoint _center(center.val);
+    ON_3dPoint _arrowtip(arrowTip.val);
+    ON_3dVector _xaxis(xaxis.val);
+    ON_3dVector _normal(normal.val);
+    rc = pRadialDimension->CreateFromPoints(_center, _arrowtip, _xaxis, _normal, offset_distance);
   }
   return rc;
 }
@@ -209,6 +229,34 @@ RH_C_FUNCTION void ON_TextDot_GetSetText(ON_TextDot* ptr, bool set, const RHMONO
       if( pStringHolder )
         pStringHolder->Set(ptr->TextString());
     }
+  }
+}
+
+RH_C_FUNCTION int ON_TextDot_GetHeight(const ON_TextDot* pConstDot)
+{
+  if( pConstDot )
+    return pConstDot->Height();
+  return 0;
+}
+
+RH_C_FUNCTION void ON_TextDot_SetHeight(ON_TextDot* pDot, int height)
+{
+  if( pDot )
+    pDot->SetHeight(height);
+}
+
+RH_C_FUNCTION void ON_TextDot_GetFontFace(const ON_TextDot* pConstDot, CRhCmnStringHolder* pStringHolder)
+{
+  if( pConstDot && pStringHolder )
+    pStringHolder->Set(pConstDot->FontFace());
+}
+
+RH_C_FUNCTION void ON_TextDot_SetFontFace(ON_TextDot* pDot, const RHMONO_STRING* face)
+{
+  if( pDot && face )
+  {
+    INPUTSTRINGCOERCE(_face, face);
+    pDot->SetFontFace(_face);
   }
 }
 

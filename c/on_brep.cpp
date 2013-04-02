@@ -31,6 +31,41 @@ RH_C_FUNCTION bool ON_BrepEdge_IsSmoothManifoldEdge(const ON_BrepEdge* pConstBre
 #endif
 
 //////////////////////////////////////////////////////////////////////////
+// ON_BrepTrim
+RH_C_FUNCTION int ON_BrepTrim_Type(const ON_Brep* pConstBrep, int trim_index)
+{
+  int rc = 0;
+  if( pConstBrep && trim_index>=0 && trim_index<pConstBrep->m_T.Count() )
+    rc = (int)(pConstBrep->m_T[trim_index].m_type);
+  return rc;
+}
+
+RH_C_FUNCTION int ON_BrepTrim_ItemIndex(const ON_Brep* pConstBrep, int trim_index, int which)
+{
+  const int idxLoopIndex=0;
+  const int idxFaceIndex=1;
+  const int idxEdgeIndex=2;
+  int rc = -1;
+  if( pConstBrep && trim_index>=0 && trim_index<pConstBrep->m_T.Count() )
+  {
+    switch(which)
+    {
+    case idxLoopIndex:
+      rc = pConstBrep->m_T[trim_index].m_li;
+      break;
+    case idxFaceIndex:
+      rc = pConstBrep->m_T[trim_index].FaceIndexOf();
+      break;
+    case idxEdgeIndex:
+      rc = pConstBrep->m_T[trim_index].m_ei;
+      break;
+    }
+  }
+  return rc;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 // ON_BrepLoop
 
 RH_C_FUNCTION int ON_BrepLoop_FaceIndex(const ON_Brep* pConstBrep, int loop_index)
@@ -38,6 +73,26 @@ RH_C_FUNCTION int ON_BrepLoop_FaceIndex(const ON_Brep* pConstBrep, int loop_inde
   int rc = -1;
   if( pConstBrep && loop_index>=0 && loop_index<pConstBrep->m_L.Count() )
     rc = pConstBrep->m_L[loop_index].m_fi;
+  return rc;
+}
+
+RH_C_FUNCTION int ON_BrepLoop_TrimIndex(const ON_BrepLoop* pConstLoop, int trim_index)
+{
+  int rc = -1;
+  if( pConstLoop && trim_index>=0 && trim_index<pConstLoop->TrimCount())
+  {
+    const ON_BrepTrim* pConstTrim = pConstLoop->Trim(trim_index);
+    if( pConstTrim )
+      rc = pConstTrim->m_trim_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_BrepLoop_TrimCount(const ON_BrepLoop* pConstLoop)
+{
+  int rc = 0;
+  if( pConstLoop )
+    rc = pConstLoop->TrimCount();
   return rc;
 }
 
@@ -65,6 +120,18 @@ RH_C_FUNCTION ON_Curve* ON_BrepLoop_GetCurve3d(const ON_Brep* pConstBrep, int lo
     ON_BrepLoop* pLoop = pConstBrep->Loop(loop_index);
     if( pLoop )
       rc = pConstBrep->Loop3dCurve(*pLoop, true);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION ON_Curve* ON_BrepLoop_GetCurve2d(const ON_Brep* pConstBrep, int loop_index)
+{
+  ON_Curve* rc = NULL;
+  if( pConstBrep )
+  {
+    ON_BrepLoop* pLoop = pConstBrep->Loop(loop_index);
+    if( pLoop )
+      rc = pConstBrep->Loop2dCurve(*pLoop);
   }
   return rc;
 }
@@ -99,6 +166,30 @@ RH_C_FUNCTION int ON_BrepFace_OuterLoopIndex(const ON_BrepFace* pConstBrepFace)
   }
   return rc;
 }
+
+RH_C_FUNCTION ON_Brep* ON_BrepFace_BrepExtrudeFace(const ON_Brep* pConstBrep, int face_index, const ON_Curve* pConstCurve, bool bCap)
+{
+  ON_Brep* rc = NULL;
+  if( pConstBrep && pConstCurve )
+  {
+    if( face_index >= 0 && face_index < pConstBrep->m_F.Count() )
+    {
+      ON_Brep* pNewBrep = ON_Brep::New( *pConstBrep );
+      if( pNewBrep )
+      {
+        pNewBrep->DestroyMesh( ON::any_mesh );
+        int result = ON_BrepExtrudeFace( *pNewBrep, face_index, *pConstCurve, bCap );
+        // 0 == failure, 1 or 2 == success
+        if( 0 == result )
+          delete pNewBrep;
+        else
+          rc = pNewBrep;
+      }
+    }
+  }
+  return rc;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // ON_Brep
 
@@ -173,6 +264,17 @@ RH_C_FUNCTION bool ON_Brep_IsValidTest(const ON_Brep* pConstBrep, int which_test
 
     if( pStringHolder )
       pStringHolder->Set(str);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION ON_Brep* ONC_BrepFromMesh( const ON_Mesh* pConstMesh, bool bTrimmedTriangles)
+{
+  ON_Brep* rc = NULL;
+  if( pConstMesh )
+  {
+    const ON_MeshTopology& top = pConstMesh->Topology();
+    rc = ON_BrepFromMesh(top, bTrimmedTriangles);
   }
   return rc;
 }
@@ -349,6 +451,7 @@ RH_C_FUNCTION int ON_Brep_GetInt(const ON_Brep* pConstBrep, int which)
   const int idxIsManifold = 2;
   const int idxEdgeCount = 3;
   const int idxLoopCount = 4;
+  const int idxTrimCount = 5;
   int rc = 0;
   if( pConstBrep )
   {
@@ -368,6 +471,9 @@ RH_C_FUNCTION int ON_Brep_GetInt(const ON_Brep* pConstBrep, int which)
       break;
     case idxLoopCount:
       rc = pConstBrep->m_L.Count();
+      break;
+    case idxTrimCount:
+      rc = pConstBrep->m_T.Count();
       break;
     default:
       break;
@@ -456,6 +562,16 @@ RH_C_FUNCTION const ON_BrepEdge* ON_Brep_BrepEdgePointer( const ON_Brep* pConstB
   if( pConstBrep )
   {
     rc = pConstBrep->Edge(edgeIndex);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION const ON_BrepTrim* ON_Brep_BrepTrimPointer( const ON_Brep* pConstBrep, int trimIndex )
+{
+  const ON_BrepTrim* rc = NULL;
+  if( pConstBrep )
+  {
+    rc = pConstBrep->Trim(trimIndex);
   }
   return rc;
 }
@@ -552,6 +668,7 @@ RH_C_FUNCTION const ON_Brep* ON_BrepSubItem_Brep( const ON_Geometry* pConstGeome
   {
     const ON_BrepFace* pBrepFace = ON_BrepFace::Cast(pConstGeometry);
     const ON_BrepEdge* pBrepEdge = ON_BrepEdge::Cast(pConstGeometry);
+    const ON_BrepTrim* pBrepTrim = ON_BrepTrim::Cast(pConstGeometry);
     if( pBrepFace )
     {
       rc = pBrepFace->Brep();
@@ -561,6 +678,11 @@ RH_C_FUNCTION const ON_Brep* ON_BrepSubItem_Brep( const ON_Geometry* pConstGeome
     {
       rc = pBrepEdge->Brep();
       *index = pBrepEdge->m_edge_index;
+    }
+    else if( pBrepTrim )
+    {
+      rc = pBrepTrim->Brep();
+      *index = pBrepTrim->m_trim_index;
     }
   }
   return rc;
@@ -1060,86 +1182,55 @@ RH_C_FUNCTION double ON_Brep_Volume(const ON_Brep* pBrep, double relativeToleran
   return volume;
 }
 
-RH_C_FUNCTION ON_MassProperties* ON_GeometryMassProperties(bool bArea, ON_SimpleArray<const ON_Geometry*>* pGeometry, double relativeTolerance, double absoluteTolerance)
+RH_C_FUNCTION ON_MassProperties* ON_Geometry_AreaMassProperties(const ON_SimpleArray<const ON_Geometry*>* pConstGeometryArray, double relativeTolerance, double absoluteTolerance)
 {
   ON_MassProperties* rc = NULL;
-  if( pGeometry && pGeometry->Count() > 0 )
+  if( pConstGeometryArray && pConstGeometryArray->Count() > 0 )
   {
-    // Compute base-point of all geometry boundingboxes
-    ON_3dPoint basePoint(0,0,0);
-    if( !bArea )
+    ON_BoundingBox bbox;
+    for( int i = 0; i < pConstGeometryArray->Count(); i++ )
     {
-      for( int i = 0; i < pGeometry->Count(); i++ )
-      {
-        const ON_Geometry* geo = pGeometry->Array()[i];
-        ON_BoundingBox box = geo->BoundingBox();
-        basePoint += box.Center();
-      }
-      basePoint /= pGeometry->Count();
+      const ON_Geometry* geo = (*pConstGeometryArray)[i];
+      if( NULL==geo )
+        continue;
+      geo->GetBoundingBox(bbox,TRUE);
     }
+    ON_3dPoint basepoint = bbox.Center();
+
 
     // Aggregate all mass properties
-    rc = new ON_MassProperties();
-    for( int i = 0; i < pGeometry->Count(); i++ )
+    for( int i = 0; i < pConstGeometryArray->Count(); i++ )
     {
-      const ON_Geometry* geo = pGeometry->Array()[i];
+      const ON_Geometry* geo = (*pConstGeometryArray)[i];
+      if( NULL==geo )
+        continue;
 
       bool success = false;
       ON_MassProperties mp;
 
-      ON::object_type type = pGeometry->Array()[i]->ObjectType();
+      const ON_Brep* pBrep = ON_Brep::Cast(geo);
+      if( pBrep )
+        success = pBrep->AreaMassProperties(mp, true, true, true, true, relativeTolerance, absoluteTolerance);
 
-      const ON_Brep* pBrep;
-      const ON_Surface* pSurface;
-      const ON_Mesh* pMesh;
-      const ON_Curve* pCurve;
+      const ON_Surface* pSurface = success?0:ON_Surface::Cast(geo);
+      if( pSurface )
+        success = pSurface->AreaMassProperties(mp, true, true, true, true, relativeTolerance, absoluteTolerance);
 
-      switch (type)
-      {
-      case ON::brep_object:
-        pBrep = ON_Brep::Cast(geo);
-        if( bArea )
-          success = pBrep->AreaMassProperties(mp, true, true, true, true, relativeTolerance, absoluteTolerance);
-        else
-          success = pBrep->VolumeMassProperties(mp, true, true, true, true, basePoint, relativeTolerance, absoluteTolerance);
-        break;
+      const ON_Mesh* pMesh = success?0:ON_Mesh::Cast(geo);
+      if( pMesh )
+        success = pMesh->AreaMassProperties(mp, true, true, true, true);
 
-      case ON::surface_object:
-        pSurface = ON_Surface::Cast(geo);
-        if( bArea )
-          success = pSurface->AreaMassProperties(mp, true, true, true, true, relativeTolerance, absoluteTolerance);
-        else
-          success = pSurface->VolumeMassProperties(mp, true, true, true, true, basePoint, relativeTolerance, absoluteTolerance);
-        break;
-
-      case ON::mesh_object:
-        pMesh = ON_Mesh::Cast(geo);
-        if( bArea )
-          success = pMesh->AreaMassProperties(mp, true, true, true, true);
-        else
-          success = pMesh->VolumeMassProperties(mp, true, true, true, true, basePoint);
-        break;
-
-      case ON::curve_object:
-        if (bArea)
-        {
-          pCurve = ON_Curve::Cast(geo);
-          ON_Plane plane;
-          if( pCurve->IsPlanar(&plane, absoluteTolerance) && pCurve->IsClosed() )
-          {
-            success = pCurve->AreaMassProperties(basePoint, plane.Normal(), mp, true, true, true, true, relativeTolerance, absoluteTolerance);
-            if (success )
-            {
-              mp.m_mass = fabs(mp.m_mass);
-            }
-          }
-        }
-        break;
-      }
+      const ON_Curve* pCurve = success?0:ON_Curve::Cast(geo);
+      ON_Plane plane;
+      if( pCurve && pCurve->IsPlanar(&plane, absoluteTolerance) && pCurve->IsClosed() )
+        success = pCurve->AreaMassProperties(basepoint, plane.Normal(), mp, true, true, true, true, relativeTolerance, absoluteTolerance);
 
       if( success )
       {
-        rc->Sum(1, &mp, true);
+        if( NULL==rc )
+          rc = new ON_MassProperties(mp);
+        else
+          rc->Sum(1, &mp, true);
       }
     }
   }

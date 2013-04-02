@@ -15,7 +15,7 @@ namespace Rhino.Display
   public class DisplayPipelineAttributes : IDisposable, ISerializable
   {
     #region pointer tracking
-    readonly object m_parent;
+    private object m_parent;
     internal IntPtr m_pAttrs = IntPtr.Zero;
 
     internal DisplayPipelineAttributes(IntPtr pAttrs)
@@ -28,10 +28,21 @@ namespace Rhino.Display
       m_parent = parent;
     }
 
+    internal DisplayPipelineAttributes(DisplayPipeline parent)
+    {
+      m_parent = parent;
+    }
+
     internal IntPtr ConstPointer()
     {
       if (m_pAttrs != IntPtr.Zero)
         return m_pAttrs;
+
+      // Check pipeline_parent first since this is typically time critical
+      // code when this is used.
+      DisplayPipeline pipeline_parent = m_parent as DisplayPipeline;
+      if (pipeline_parent != null)
+        return pipeline_parent.DisplayAttributeConstPointer();
 
       DisplayModeDescription parent = m_parent as DisplayModeDescription;
       if (parent != null)
@@ -43,6 +54,22 @@ namespace Rhino.Display
     {
       if (m_pAttrs != IntPtr.Zero)
         return m_pAttrs;
+
+      // Check pipeline_parent first since this is typically time critical
+      // code when this is used.
+      DisplayPipeline pipeline_parent = m_parent as DisplayPipeline;
+      if (pipeline_parent != null)
+      {
+        // Can't change the attributes in a pipeline, so create a copy
+        // under the hood
+        IntPtr pConstAttributes = ConstPointer();
+        if (pConstAttributes != IntPtr.Zero)
+        {
+          m_pAttrs = UnsafeNativeMethods.CDisplayPipelineAttributes_New2(pConstAttributes);
+          m_parent = null;
+          return m_pAttrs;
+        }
+      }
 
       DisplayModeDescription parent = m_parent as DisplayModeDescription;
       if (parent != null)
@@ -282,6 +309,9 @@ namespace Rhino.Display
     const int idx_bSingleMeshWireColor = 15;
     const int idx_bShowMeshWires = 16;
     const int idx_bShowMeshVertices = 17;
+    const int idx_bShowCurves = 18;
+    const int idx_bShadeSurface = 19;
+    const int idx_bLockedObjectsBehind = 20;
 
     // skipped these because I don't see them actually used in Rhino
     //bool m_bIsSurface;
@@ -305,14 +335,15 @@ namespace Rhino.Display
     const int idx_WyColor = 2;
     const int idx_WzColor = 3;
     const int idx_MeshWireColor = 4;
+    const int idx_CurveColor = 5;
     //int                 m_nLineThickness;
     //UINT                m_nLinePattern;
 
     Color GetColor(int which)
     {
       IntPtr pConstThis = ConstPointer();
-      int abgr = UnsafeNativeMethods.CDisplayPipelineAttributes_GetSetColor(pConstThis, which, false, 0);
-      return ColorTranslator.FromWin32(abgr);
+      int argb = UnsafeNativeMethods.CDisplayPipelineAttributes_GetSetColor(pConstThis, which, false, 0);
+      return System.Drawing.Color.FromArgb(argb);
     }
     void SetColor(int which, Color c)
     {
@@ -339,6 +370,7 @@ namespace Rhino.Display
 
     #region int
     const int idx_nMeshWireThickness = 0;
+    const int idx_nCurveThickness = 1;
     int GetInt(int which)
     {
       IntPtr pConstThis = ConstPointer();
@@ -353,21 +385,44 @@ namespace Rhino.Display
 
 
     #region Curves specific attributes...
-    //bool m_bShowCurves;
-    //bool m_bUseDefaultCurve;
-    //int m_nCurveThickness;
-    //int m_nCurveTrans;
+    /// <summary>Draw curves</summary>
+    public bool ShowCurves
+    {
+      get { return GetBool(idx_bShowCurves); }
+      set { SetBool(idx_bShowCurves, value); }
+    }
+
+    //bool m_bUseDefaultCurve; -- doesn't appear to be used in display pipelane
+    /// <summary>Pixel thickness for curves</summary>
+    public int CurveThickness
+    {
+      get { return GetInt(idx_nCurveThickness); }
+      set { SetInt(idx_nCurveThickness, (int)value); }
+    }
+
     //UINT m_nCurvePattern;
     //bool m_bCurveKappaHair;
     //bool m_bSingleCurveColor;
-    //COLORREF m_CurveColor;
+    /// <summary>Color used for drawing curves</summary>
+    public System.Drawing.Color CurveColor
+    {
+      get { return GetColor(idx_CurveColor); }
+      set { SetColor(idx_CurveColor, value); }
+    }
     //ELineEndCapStyle m_eLineEndCapStyle;
     //ELineJoinStyle m_eLineJoinStyle;
     #endregion
 
     #region Both surface and mesh specific attributes...
     //bool m_bUseDefaultShading;
-    //bool m_bShadeSurface;
+
+    /// <summary>Draw shaded meshes and surfaces</summary>
+    public bool ShadingEnabled
+    {
+      get { return GetBool(idx_bShadeSurface); }
+      set { SetBool(idx_bShadeSurface, value); }
+    }
+
     //bool m_bUseObjectMaterial;
     //bool m_bSingleWireColor;
     //COLORREF m_WireColor;
@@ -425,7 +480,27 @@ namespace Rhino.Display
     //bool m_bGhostLockedObjects;
     //int m_nLockedTrans;
     //COLORREF m_LockedColor;
-    //bool m_bLockedObjectsBehind;
+    /*
+    /// <summary>
+    /// If Color.Unset, then a specific lock color is NOT used
+    /// </summary>
+    public System.Drawing.Color UseSpecificLockColor
+    {
+      get
+      {
+      }
+      set
+      {
+      }
+    }
+    */
+
+    /// <summary>Locked object are drawn behind other objects</summary>
+    public bool LockedObjectsDrawBehindOthers
+    {
+      get { return GetBool(idx_bLockedObjectsBehind); }
+      set { SetBool(idx_bLockedObjectsBehind, value); }
+    }
     #endregion
 
     #region Meshes specific attributes...
@@ -576,29 +651,11 @@ namespace Rhino.Display
 
 /* 
 public:
-/////////////////////////////////////
-// Misc....
   ON_MeshParameters*  m_pMeshSettings;
   CDisplayPipelineMaterial*  m_pMaterial;
   // experimental
   bool                m_bDegradeIsoDensity;
   bool                m_bLayersFollowLockUsage;
-  
-/////////////////////////////////////
-// Caching specific attributes...
-public:
-  bool                m_bUseDefaultCaching;
-  bool                m_bAutoUpdateCaching;
-  bool                m_bCachingEnabled;
-  bool                m_bCacheEverything;
-  UINT                m_nCacheLists;
-  
-/////////////////////////////////// 
-// general class object attributes...
-public:
-  const CRuntimeClass*  Pipeline(void) const;
-  ON_UUID               PipelineId(void) const;
-  void                  SetPipeline(const CRuntimeClass*);
 */
 
     public Guid Id

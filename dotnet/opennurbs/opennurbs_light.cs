@@ -80,8 +80,8 @@ namespace Rhino.Geometry
     }
 #endif
 
-    internal Light(IntPtr native_ptr, object parent)
-      : base(native_ptr, parent, -1)
+    internal Light(IntPtr nativePtr, object parent)
+      : base(nativePtr, parent, -1)
     { }
 
     internal override GeometryBase DuplicateShallowHelper()
@@ -107,6 +107,16 @@ namespace Rhino.Geometry
       : base (info, context)
     {
     }
+
+#if RHINO_SDK
+    internal override IntPtr _InternalGetConstPointer()
+    {
+      Rhino.DocObjects.Tables.LightTableEventArgs lte = m__parent as Rhino.DocObjects.Tables.LightTableEventArgs;
+      if (lte != null)
+        return lte.ConstLightPointer();
+      return base._InternalGetConstPointer();
+    }
+#endif
 
     /// <summary>
     /// Gets or sets a value that defines if the light is turned on (true) or off (false).

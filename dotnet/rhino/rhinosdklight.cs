@@ -34,6 +34,75 @@ namespace Rhino.DocObjects
 
 namespace Rhino.DocObjects.Tables
 {
+  public enum LightTableEventType : int
+  {
+    Added = 0,
+    Deleted = 1,
+    Undeleted = 2,
+    Modified = 3,
+    /// <summary>LightTable.Sort() potentially changed sort order.</summary>
+    Sorted = 4
+  }
+
+  public class LightTableEventArgs : EventArgs
+  {
+    readonly int m_doc_id;
+    readonly LightTableEventType m_event_type;
+    readonly int m_light_index;
+    readonly IntPtr m_pOldLight;
+
+    internal LightTableEventArgs(int docId, int eventType, int index, IntPtr pConstOldLight)
+    {
+      m_doc_id = docId;
+      m_event_type = (LightTableEventType)eventType;
+      m_light_index = index;
+      m_pOldLight = pConstOldLight;
+    }
+
+    internal IntPtr ConstLightPointer()
+    {
+      return m_pOldLight;
+    }
+
+    RhinoDoc m_doc;
+    public RhinoDoc Document
+    {
+      get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_doc_id)); }
+    }
+
+    public LightTableEventType EventType
+    {
+      get { return m_event_type; }
+    }
+
+    public int LightIndex
+    {
+      get { return m_light_index; }
+    }
+
+    LightObject m_new_light;
+    public LightObject NewState
+    {
+      get
+      {
+        return m_new_light ?? (m_new_light = Document.Lights[LightIndex]);
+      }
+    }
+
+    Light m_old_light;
+    public Light OldState
+    {
+      get
+      {
+        if (m_old_light == null && m_pOldLight != IntPtr.Zero)
+        {
+          m_old_light = new Light(m_pOldLight, this);
+        }
+        return m_old_light;
+      }
+    }
+  }
+
   public class LightTable : IEnumerable<LightObject>, Rhino.Collections.IRhinoTable<LightObject>
   {
     private readonly RhinoDoc m_doc;

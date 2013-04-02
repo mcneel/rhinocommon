@@ -540,5 +540,31 @@ RH_C_FUNCTION ON_MassProperties* ON_Curve_AreaMassProperties(const ON_Curve* pCu
   }
   return rc;
 }
+#endif
 
+
+#if defined(RHINO_V5SR) // only available in V5
+RH_C_FUNCTION bool RHC_RhinoTweenCurves( const ON_Curve* pStartCurve, const ON_Curve* pEndCurve, int num_curves, ON_SimpleArray<ON_Curve*>* outputCurves )
+{
+  bool rc = false;
+  if( pStartCurve && pEndCurve && outputCurves )
+    rc = RhinoTweenCurves( pStartCurve, pEndCurve, num_curves, *outputCurves );
+  return rc;
+}
+
+RH_C_FUNCTION bool RHC_RhinoTweenCurvesWithMatching( const ON_Curve* pStartCurve, const ON_Curve* pEndCurve, int num_curves, ON_SimpleArray<ON_Curve*>* outputCurves )
+{
+  bool rc = false;
+  if( pStartCurve && pEndCurve && outputCurves )
+    rc = RhinoTweenCurvesWithMatching( pStartCurve, pEndCurve, num_curves, *outputCurves );
+  return rc;
+}
+
+RH_C_FUNCTION bool RHC_RhinoTweenCurveWithSampling( const ON_Curve* pStartCurve, const ON_Curve* pEndCurve, int num_curves, int num_samples, ON_SimpleArray<ON_Curve*>* outputCurves )
+{
+  bool rc = false;
+  if( pStartCurve && pEndCurve && outputCurves )
+    rc = RhinoTweenCurveWithSampling( pStartCurve, pEndCurve, num_curves, num_samples, *outputCurves );
+  return rc;
+}
 #endif

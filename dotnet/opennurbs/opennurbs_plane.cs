@@ -30,7 +30,7 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 128)]
   [Serializable]
-  public struct Plane : IEquatable<Plane>
+  public struct Plane : IEquatable<Plane>, IEpsilonComparable<Plane>
   {
     // This is a special case struct that does not match it's C++ counterpart (ON_Plane)
     // The reason we did this was to remove ON_PlaneEquation from the struct and allow for
@@ -660,6 +660,14 @@ namespace Rhino.Geometry
     }
     #endregion
     #endregion
+
+    public bool EpsilonEquals(Plane other, double epsilon)
+    {
+        return m_origin.EpsilonEquals(other.m_origin, epsilon) &&
+               m_xaxis.EpsilonEquals(other.m_xaxis, epsilon) &&
+               m_yaxis.EpsilonEquals(other.m_yaxis, epsilon) &&
+               m_zaxis.EpsilonEquals(other.m_zaxis, epsilon);
+    }
   }
 
   //  public class ON_ClippingPlaneInfo { }

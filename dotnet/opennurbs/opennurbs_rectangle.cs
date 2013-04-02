@@ -8,9 +8,9 @@ namespace Rhino.Geometry
   /// that form an oriented rectangle in three dimensions.
   /// </summary>
   [Serializable]
-  public struct Rectangle3d
+  public struct Rectangle3d : IEpsilonComparable<Rectangle3d>
   {
-    #region fields
+    #region Members
     internal Plane m_plane;
     internal Interval m_x;
     internal Interval m_y;
@@ -501,5 +501,12 @@ namespace Rhino.Geometry
       return ToPolyline().ToNurbsCurve();
     }
     #endregion
+
+    public bool EpsilonEquals(Rectangle3d other, double epsilon)
+    {
+        return m_plane.EpsilonEquals(other.m_plane, epsilon) &&
+               m_x.EpsilonEquals(other.m_x, epsilon) &&
+               m_y.EpsilonEquals(other.m_y, epsilon);
+    }
   }
 }

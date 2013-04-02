@@ -8,7 +8,7 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 144)]
   [Serializable]
-  public struct Cone
+  public struct Cone : IEpsilonComparable<Cone>
   {
     internal Plane m_baseplane;
     internal double m_height;
@@ -169,5 +169,12 @@ namespace Rhino.Geometry
       return Brep.CreateFromCone(this, capBottom);
     }
     #endregion
+
+    public bool EpsilonEquals(Cone other, double epsilon)
+    {
+        return m_baseplane.EpsilonEquals(other.m_baseplane, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_height, other.m_height, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_radius, other.m_radius, epsilon);
+    }
   }
 }

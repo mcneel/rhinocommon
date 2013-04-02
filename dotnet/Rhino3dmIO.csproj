@@ -12,6 +12,7 @@
     <AssemblyName>Rhino3dmIO</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -106,6 +107,7 @@
     <Compile Include="opennurbs\opennurbs_gl.cs" />
     <Compile Include="opennurbs\opennurbs_group.cs" />
     <Compile Include="opennurbs\opennurbs_hatch.cs" />
+    <Compile Include="opennurbs\opennurbs_iepsiloncomparable.cs" />
     <Compile Include="opennurbs\opennurbs_instance.cs" />
     <Compile Include="opennurbs\opennurbs_intersect.cs" />
     <Compile Include="opennurbs\opennurbs_intersectionevents.cs" />

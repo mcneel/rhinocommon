@@ -13,7 +13,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_t0}, {m_t1})")]
   [Serializable]
-  public struct Interval : ISerializable, IEquatable<Interval>, IComparable<Interval>, IComparable
+  public struct Interval : ISerializable, IEquatable<Interval>, IComparable<Interval>, IComparable, IEpsilonComparable<Interval>
   {
     #region Members
     private double m_t0;
@@ -566,6 +566,13 @@ namespace Rhino.Geometry
       return rc;
     }
     #endregion
+
+    public bool EpsilonEquals(Interval other, double epsilon)
+    {
+        return FloatingPointCompare.EpsilonEquals(m_t0, other.m_t0, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_t1, other.m_t1, epsilon);
+
+    }
   }
 
   /// <summary>
@@ -575,7 +582,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_x}, {m_y})")]
   [Serializable]
-  public struct Point2d : ISerializable, IEquatable<Point2d>, IComparable<Point2d>, IComparable
+  public struct Point2d : ISerializable, IEquatable<Point2d>, IComparable<Point2d>, IComparable, IEpsilonComparable<Point2d>
   {
     private double m_x;
     private double m_y;
@@ -978,6 +985,12 @@ namespace Rhino.Geometry
       throw new ArgumentException("Input must be of type Point2d", "obj");
     }
 
+    public bool EpsilonEquals(Point2d other, double epsilon)
+    {
+        return FloatingPointCompare.EpsilonEquals(m_x, other.m_x, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_y, other.m_y, epsilon);
+    }
+
     /// <summary>
     /// Constructs the string representation for the current point.
     /// </summary>
@@ -1132,7 +1145,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 24)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
   [Serializable]
-  public struct Point3d : ISerializable, IEquatable<Point3d>, IComparable<Point3d>, IComparable
+  public struct Point3d : ISerializable, IEquatable<Point3d>, IComparable<Point3d>, IComparable, IEpsilonComparable<Point3d>
   {
     #region members
     internal double m_x;
@@ -1743,6 +1756,13 @@ namespace Rhino.Geometry
       return (obj is Point3d && this == (Point3d)obj);
     }
 
+    public bool EpsilonEquals(Point3d other, double epsilon)
+    {
+        return FloatingPointCompare.EpsilonEquals(m_x, other.m_x, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_y, other.m_y, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_z, other.m_z, epsilon);
+    }
+
     /// <summary>
     /// Compares this <see cref="Point3d" /> with another <see cref="Point3d" />.
     /// <para>Component evaluation priority is first X, then Y, then Z.</para>
@@ -1968,7 +1988,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 32)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z}, [{m_w}])")]
   [Serializable]
-  public struct Point4d : ISerializable, IEquatable<Point4d>
+  public struct Point4d : ISerializable, IEquatable<Point4d>, IEpsilonComparable<Point4d>
   {
     internal double m_x;
     internal double m_y;
@@ -2230,6 +2250,14 @@ namespace Rhino.Geometry
       return this == point;
     }
 
+    public bool EpsilonEquals(Point4d other, double epsilon)
+    {
+        return FloatingPointCompare.EpsilonEquals(m_x, other.m_x, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_y, other.m_y, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_z, other.m_z, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_w, other.m_w, epsilon);
+    }
+
     /// <summary>
     /// Computes the hash code for the present point.
     /// </summary>
@@ -2261,7 +2289,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_x}, {m_y})")]
   [Serializable]
-  public struct Vector2d : ISerializable, IEquatable<Vector2d>, IComparable<Vector2d>, IComparable
+  public struct Vector2d : ISerializable, IEquatable<Vector2d>, IComparable<Vector2d>, IComparable, IEpsilonComparable<Vector2d>
   {
     private double m_x;
     private double m_y;
@@ -2406,6 +2434,12 @@ namespace Rhino.Geometry
       return this == vector;
     }
 
+    public bool EpsilonEquals(Vector2d other, double epsilon)
+    {
+        return FloatingPointCompare.EpsilonEquals(m_x, other.m_x, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_y, other.m_y, epsilon);
+    }
+
     /// <summary>
     /// Compares this <see cref="Vector2d" /> with another <see cref="Vector2d" />.
     /// <para>Components evaluation priority is first X, then Y.</para>
@@ -2483,7 +2517,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 24)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
   [Serializable]
-  public struct Vector3d : ISerializable, IEquatable<Vector3d>, IComparable<Vector3d>, IComparable
+  public struct Vector3d : ISerializable, IEquatable<Vector3d>, IComparable<Vector3d>, IComparable, IEpsilonComparable<Vector3d>
   {
     #region fields
     internal double m_x;
@@ -3140,6 +3174,13 @@ namespace Rhino.Geometry
     {
       return this == vector;
     }
+    
+    public bool EpsilonEquals(Vector3d other, double epsilon)
+    {
+        return FloatingPointCompare.EpsilonEquals(m_x, other.m_x, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_y, other.m_y, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_z, other.m_z, epsilon); 
+    }
 
     /// <summary>
     /// Compares this <see cref="Vector3d" /> with another <see cref="Vector3d" />.
@@ -3387,7 +3428,7 @@ namespace Rhino.Geometry
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]
   [DebuggerDisplay("Pt({m_P.X},{m_P.Y},{m_P.Z}) Dir({m_V.X},{m_V.Y},{m_V.Z})")]
   [Serializable]
-  public struct Ray3d : ISerializable, IEquatable<Ray3d>
+  public struct Ray3d : ISerializable, IEquatable<Ray3d>, IEpsilonComparable<Ray3d>
   {
     readonly Point3d m_P;
     readonly Vector3d m_V;
@@ -3490,6 +3531,12 @@ namespace Rhino.Geometry
     public bool Equals(Ray3d ray)
     {
       return this == ray;
+    }
+
+    public bool EpsilonEquals(Ray3d other, double epsilon)
+    {
+        return m_P.EpsilonEquals(other.m_P, epsilon) &&
+               m_V.EpsilonEquals(other.m_V, epsilon);
     }
 
     /// <summary>

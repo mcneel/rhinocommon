@@ -1,8 +1,10 @@
 #pragma warning disable 1591
 using System;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using Rhino.Geometry;
 using Rhino.Display;
+using System.Collections.Generic;
 
 #if RHINO_SDK
 namespace Rhino.Input
@@ -1568,6 +1570,98 @@ namespace Rhino.Input.Custom
       return rc;
     }
 
+    /// <summary>
+    /// Add a choice of enum values as list option 
+    /// </summary>
+    /// <typeparam name="T">The enum type</typeparam>
+    /// <param name="englishOptionName">The name of the option</param>
+    /// <param name="defaultValue">The devault value</param>
+    /// <exception cref="ArgumentException">Gets thrown if defaultValue provided is not an enum type.</exception>
+    /// <returns>Option index</returns>
+    [CLSCompliant(false)]
+    public int AddOptionEnumList<T>(string englishOptionName, T defaultValue) 
+        where T : struct, IConvertible
+    {
+        Type enumType = typeof(T);
+        if (!enumType.IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+        
+        string[] names = Enum.GetNames(enumType);
+        int index = Array.IndexOf(names, defaultValue.ToString(CultureInfo.InvariantCulture));
+        return AddOptionList(englishOptionName, names, index);
+    }
+
+    /// <summary>
+    /// Add a list of enum values as option list. Use enumSelection[go.Option.CurrentListOptionIndex] to retrieve selection.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="englishOptionName"></param>
+    /// <param name="enumSelection"></param>
+    /// <param name="listCurrentIndex"></param>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public int AddOptionEnumSelectionList<T>(string englishOptionName, IEnumerable<T> enumSelection, int listCurrentIndex)
+        where T : struct, IConvertible
+    {
+        if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+        if (null == enumSelection) throw new ArgumentNullException("enumSelection");
+
+        List<String> names = new List<String>();
+        foreach(T e in enumSelection)
+            names.Add(e.ToString(CultureInfo.InvariantCulture));
+
+        return AddOptionList(englishOptionName, names, listCurrentIndex);
+    }
+
+    /// <summary>
+    /// Returns the selected enum value. Use this in combination with <see cref="AddOptionEnumList{T}"/>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <exception cref="ArgumentException">Gets thrown if type T is not an enum type.</exception>
+    /// <exception cref="IndexOutOfRangeException">If 0 &gt;= CurrentListOptionIndex or CurrentListOptionIndex &gt; N where N is the number of enum values.</exception>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public T GetSelectedEnumValue<T>()
+        where T : struct, IConvertible
+    {
+        Type enumType = typeof(T);
+        if (!enumType.IsEnum) throw new ArgumentException("!enumType.IsEnum");
+
+        Array values = Enum.GetValues(enumType);
+        T[] tValues = new T[values.Length];
+        for (int i = 0; i < values.Length; ++i)
+            tValues[i] = (T)values.GetValue(i);
+
+        return GetSelectedEnumValueFromSelectionList<T>(tValues);
+    }
+
+
+    /// <summary>
+    /// Returns the selected enum value by looking at the list of values from which to select.
+    /// Use this in combination with <see cref="AddOptionEnumSelectionList{T}"/>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="selectionList"> </param>
+    /// <exception cref="ArgumentException">Gets thrown if type T is not an enum type.</exception>
+    /// <exception cref="IndexOutOfRangeException">If 0 &gt;= CurrentListOptionIndex or CurrentListOptionIndex &gt; N where N is the number of enum values.</exception>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public T GetSelectedEnumValueFromSelectionList<T>(IEnumerable<T> selectionList)
+        where T : struct, IConvertible
+    {
+        Type enumType = typeof(T);
+        if (!enumType.IsEnum) throw new ArgumentException("!enumType.IsEnum");
+
+        List<T> values = new List<T>(selectionList);
+
+        int index = Option().CurrentListOptionIndex;
+        if (index >= values.Count || index < 0)
+        {
+            String errMsg = String.Format("GetSelectedEnumValue received incorrect index i [{0}]: i should be 0 <= i < N, where N is number of enum values in {1}. N = {2}",
+                index, enumType.Name, values.Count);
+            throw new IndexOutOfRangeException(errMsg);
+        }
+        return (T)values[index];
+    }
     /// <summary>Clear all command options.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_arraybydistance.vb' lang='vbnet'/>

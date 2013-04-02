@@ -14,7 +14,7 @@ namespace Rhino.Geometry
   /// <remarks>>An IsValid circle has positive radius and an IsValid plane defining the frame.</remarks>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 136)]
   [Serializable]
-  public struct Circle
+  public struct Circle : IEpsilonComparable<Circle>
   {
     #region "Static creation methods"
     /// <summary>
@@ -640,6 +640,12 @@ namespace Rhino.Geometry
     //  return UnsafeNativeMethods.ON_Circle_GetNurbFormParameterFromRadian(ref this, radiansParameter, ref nurbsParameter);
     //}
     #endregion
+
+    public bool EpsilonEquals(Circle other, double epsilon)
+    {
+        return FloatingPointCompare.EpsilonEquals(m_radius, other.m_radius, epsilon) &&
+               m_plane.EpsilonEquals(other.m_plane, epsilon);
+    }
 
     //*
     //Description:

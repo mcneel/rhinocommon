@@ -1,6 +1,8 @@
 #pragma warning disable 1591
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Reflection;
 
 namespace Rhino.Collections
 {
@@ -1545,6 +1547,176 @@ namespace Rhino.Collections
         return false;
       m_items[key] = new DictionaryItem(it, val);
       return true;
+    }
+
+    /// <summary>
+    /// Set an enum value
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="enumValue"></param>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public bool SetEnumValue<T>(T enumValue) 
+        where T : struct, IConvertible
+    {
+        if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+
+        Type enumType = typeof(T);
+
+        return SetEnumValue(enumType.Name, enumValue);
+    }
+
+    /// <summary>
+    /// Set an enum value in the dictionary with a custom key.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="key"></param>
+    /// <param name="enumValue"></param>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public bool SetEnumValue<T>(String key, T enumValue) 
+        where T : struct, IConvertible
+    {
+        if (null == key) throw new ArgumentNullException("key");
+
+        if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+        return Set(key, enumValue.ToString(CultureInfo.InvariantCulture));
+    }
+
+    /// <summary>
+    /// Get an enum value
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <exception cref="KeyNotFoundException">Thrown when the key is not found in the dictionary.</exception>
+    /// <exception cref="FormatException">Thrown when the string retrieved from the dictionary is not convertible to the enum type.</exception>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public T GetEnumValue<T>()
+        where T : struct, IConvertible
+    {
+        if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+        Type enumType = typeof(T);
+
+        return GetEnumValue<T>(enumType.Name);
+    }
+
+    /// <summary>
+    /// Get an enum value from the dictionary using a custom key.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="key"></param>
+    /// <exception cref="KeyNotFoundException">Thrown when the key is not found in the dictionary.</exception>
+    /// <exception cref="FormatException">Thrown when the string retrieved from the dictionary is not convertible to the enum type.</exception>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public T GetEnumValue<T>(String key) 
+        where T : struct, IConvertible
+    {
+        if (null == key) throw new ArgumentNullException("key");
+
+        if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+        if (ContainsKey(key))
+        {
+            T enumValue;
+            if (TryGetEnumValue(key, out enumValue))
+                return enumValue;
+            throw new FormatException("Could not recognize the value in the ArchivableDictionary as enum value.");
+        }
+        throw new KeyNotFoundException();
+    }
+
+
+    /// <summary>
+    /// Attempt to get an enum value from the dictionary using a custom key.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="key"></param>
+    /// <param name="enumValue"></param>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public bool TryGetEnumValue<T>(String key, out T enumValue) 
+        where T : struct, IConvertible
+    {
+        if (null == key) throw new ArgumentNullException("key");
+        
+        Type enumType = typeof (T);
+        if (!enumType.IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+        enumValue = default(T);
+        String enumString;
+        if (TryGetString(key, out enumString))
+        {
+            foreach (T e in Enum.GetValues(enumType))
+            {
+                if (enumString.Equals(e.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase))
+                {
+                    enumValue = e;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    /// <summary>
+    /// Remmove an enum value from the dictionary.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public bool RemoveEnumValue<T>()
+        where T : struct, IConvertible
+    {
+        Type enumType = typeof(T);
+        if (!enumType.IsEnum)
+            throw new ArgumentException("!typeof(T).IsEnum");
+
+        if (ContainsKey(enumType.Name))
+        {
+            return Remove(enumType.Name);
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Add the contents from the source dictionary.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public bool AddContentsFrom(ArchivableDictionary source)
+    {
+        if (null == source) throw new ArgumentNullException("source");
+
+        Type archDictType = GetType();
+        foreach (String key in source.Keys)
+        {
+            object o = source[key];
+            MethodInfo setter = archDictType.GetMethod("Set", new[] { typeof(String), o.GetType() });
+            if (setter != null)
+            {
+                setter.Invoke(this, new[] { key, o });
+            }
+            else
+            {
+                String err = "Could not find setter for type " + o.GetType();
+                throw new ArgumentException(err);
+            }
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Replace the contents of the dictionary with that of the given source dictionary.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public bool ReplaceContentsWith(ArchivableDictionary source)
+    {
+        if (null == source) throw new ArgumentNullException("source");
+
+        Clear();
+        return AddContentsFrom(source);
     }
 
     private class DictionaryItem

@@ -1213,6 +1213,132 @@ namespace Rhino
       return false;
     }
 
+    /// <summary>
+    /// Get a stored enum value, or return default value if not found
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public T GetEnumValue<T>(T defaultValue) 
+        where T : struct, IConvertible
+    {
+        Type enumType = typeof(T);
+        return GetEnumValue(enumType.Name, defaultValue);
+    }
+
+    /// <summary>
+    /// Get a stored enum value using a custom key, or return default value if not found. 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="key"> </param>
+    /// <param name="defaultValue"> </param>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public T GetEnumValue<T>(String key, T defaultValue) 
+        where T : struct, IConvertible
+    {
+        if (null == key) throw new ArgumentNullException("key");
+        if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+
+        String value = GetString(key, defaultValue.ToString(CultureInfo.InvariantCulture));
+        return (T)Enum.Parse(typeof(T), value);
+    }
+
+    /// <summary>
+    /// Get a stored enum value.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public T GetEnumValue<T>()
+        where T : struct, IConvertible
+    {
+        return GetEnumValue<T>(typeof(T).Name);
+    }
+
+    /// <summary>
+    /// Get a stored enum value using a custom key.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
+    [CLSCompliant(false)]
+    public T GetEnumValue<T>(String key)
+        where T : struct, IConvertible
+    {
+        if (null == key) throw new ArgumentNullException("key");
+        if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+
+        Type enumType = typeof(T);
+
+        String value;
+        if (TryGetString(key, out value))
+        {
+            foreach(T e in Enum.GetValues(enumType))
+            {
+                if (value.Equals(e.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase))
+                {
+                    return e;
+                }
+            }
+        }
+        String errMsg = String.Format("Value for key={0} for enum type {1} not found.", key, enumType.Name);
+        throw new KeyNotFoundException(errMsg);
+    }
+
+    /// <summary>
+    /// Attempt to get the stored value for an enum setting using a custom key. Note: the enum value ALWAYS gets assigned!
+    /// Be sure to check for success of this method to prevent erroneous use of the value.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="key"> </param>
+    /// <param name="enumValue"></param>
+    /// <returns>true if successful</returns>
+    [CLSCompliant(false)]
+    public bool TryGetEnumValue<T>(String key, out T enumValue)
+        where T : struct, IConvertible
+    {
+        if (null == key) throw new ArgumentNullException("key");
+        Type enumType = typeof (T);
+        if (!enumType.IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+
+        enumValue = default(T);
+
+        String value;
+        if (TryGetString(key, out value))
+        {
+            foreach(T e in Enum.GetValues(enumType))
+            {
+                if (value.Equals(e.ToString(CultureInfo.InvariantCulture),StringComparison.OrdinalIgnoreCase))
+                {
+                    enumValue = e;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Attempt to get the stored value for an enum setting. Note: the enum value ALWAYS gets assigned!
+    /// Be sure to check for success of this method to prevent erroneous use of the value.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="enumValue"></param>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public bool TryGetEnumValue<T>(out T enumValue)
+        where T : struct, IConvertible
+    {
+        Type enumType = typeof(T);
+        if (!enumType.IsEnum)
+            throw new ArgumentException("!typeof(T).IsEnum");
+
+        return TryGetEnumValue(enumType.Name, out enumValue);
+    }
+
     public void SetBool(string key, bool value)
     {
       GetValue(key).SetBool(false, value, GetValidator(key));
@@ -1364,6 +1490,38 @@ namespace Rhino
     {
       GetValue(key).SetPoint3d(true, value, GetValidator(key));
     }
+
+    /// <summary>
+    /// Set an enum value in the settings.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="enumValue"></param>
+    [CLSCompliant(false)]
+    public void SetEnumValue<T>(T enumValue)
+        where T : struct, IConvertible
+    {
+        Type enumType = typeof(T);
+        SetEnumValue(enumType.Name, enumValue);
+    }
+
+    /// <summary>
+    /// Set an enum value in the settings using a custom key
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="key"> </param>
+    /// <param name="enumValue"></param>
+    [CLSCompliant(false)]
+    public void SetEnumValue<T>(String key, T enumValue)
+        where T : struct, IConvertible
+    {
+        if (null == key) throw new ArgumentNullException("key");
+
+        if (!typeof(T).IsEnum) 
+            throw new ArgumentException("!typeof(T).IsEnum");
+
+        SetString(key, enumValue.ToString(CultureInfo.InvariantCulture));
+    }
+
     /// <summary>
     /// If the settings dictionary contains one or more values, which are not equal to the default value, then Write the contents
     /// of this settings dictionary to the specified XmlWriter contained within elementName.

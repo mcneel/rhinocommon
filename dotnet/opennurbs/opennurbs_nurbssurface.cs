@@ -12,7 +12,7 @@ namespace Rhino.Geometry
   /// Represents a Non Uniform Rational B-Splines (NURBS) surface.
   /// </summary>
   [Serializable]
-  public class NurbsSurface : Surface
+  public class NurbsSurface : Surface, IEpsilonComparable<NurbsSurface>
   {
     #region static create functions
     /// <summary>
@@ -472,6 +472,31 @@ namespace Rhino.Geometry
     }
 #endif
 
+    public bool EpsilonEquals(NurbsSurface other, double epsilon)
+    {
+        if (null == other) throw new ArgumentNullException("other");
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        if ((Degree(0) != other.Degree(0)) || (Degree(1) != other.Degree(1)))
+            return false;
+
+        if (IsRational != other.IsRational)
+            return false;
+
+        if (Points.CountU != other.Points.CountU || Points.CountV != other.Points.CountV)
+            return false;
+
+        if (!KnotsU.EpsilonEquals(other.KnotsU, epsilon))
+            return false;
+
+        if (!KnotsV.EpsilonEquals(other.KnotsV, epsilon))
+            return false;
+
+        return true;
+    }
+
     /// <summary>
     /// Gets the order in the U direction.
     /// </summary>
@@ -624,7 +649,7 @@ namespace Rhino.Geometry.Collections
   /// <summary>
   /// Provides access to the control points of a nurbs surface.
   /// </summary>
-  public sealed class NurbsSurfacePointList : IEnumerable<ControlPoint>
+  public sealed class NurbsSurfacePointList : IEnumerable<ControlPoint>, IEpsilonComparable<NurbsSurfacePointList>
   {
     private readonly NurbsSurface m_surface;
 
@@ -830,11 +855,40 @@ namespace Rhino.Geometry.Collections
       #endregion
     }
     #endregion
+
+      public bool EpsilonEquals(NurbsSurfacePointList other, double epsilon)
+      {
+          if (null == other) throw new ArgumentNullException("other");
+
+          if (ReferenceEquals(this, other))
+              return true;
+
+          if (CountU != other.CountU)
+              return false;
+
+          if (CountV != other.CountV)
+              return false;
+          
+
+          for (int u = 0; u < CountU; ++u)
+          {
+              for (int v = 0; v < CountV; ++v)
+              {
+                  ControlPoint mine = GetControlPoint(u, v);
+                  ControlPoint theirs = other.GetControlPoint(u, v);
+
+                  if (!mine.EpsilonEquals(theirs, epsilon))
+                      return false;
+              }
+          }
+
+          return true;
+      }
   }
   /// <summary>
   /// Provides access to the knot vector of a nurbs surface.
   /// </summary>
-  public sealed class NurbsSurfaceKnotList : IEnumerable<double>, Rhino.Collections.IRhinoTable<double>
+  public sealed class NurbsSurfaceKnotList : IEnumerable<double>, Rhino.Collections.IRhinoTable<double>, IEpsilonComparable<NurbsSurfaceKnotList>
   {
     private readonly NurbsSurface m_surface;
     private readonly int m_direction;
@@ -995,5 +1049,30 @@ namespace Rhino.Geometry.Collections
       return new Rhino.Collections.TableEnumerator<NurbsSurfaceKnotList, double>(this);
     }
     #endregion
+
+    public bool EpsilonEquals(NurbsSurfaceKnotList other, double epsilon)
+    {
+        if (null == other) throw new ArgumentNullException("other");
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        if (m_direction != other.m_direction)
+            return false;
+
+        if (Count != other.Count)
+            return false;
+
+        // check for equality of spans
+        for (int i = 1; i < Count; ++i)
+        {
+            double myDelta = this[i] - this[i - 1];
+            double theirDelta = other[i] - other[i - 1];
+            if (!FloatingPointCompare.EpsilonEquals(myDelta, theirDelta, epsilon))
+                return false;
+        }
+
+        return true;
+    }
   }
 }

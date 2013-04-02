@@ -10,7 +10,7 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 176)]
   [Serializable]
-  public struct Box
+  public struct Box : IEpsilonComparable<Box>
   {
     #region Members
     internal Plane m_plane;
@@ -680,5 +680,13 @@ namespace Rhino.Geometry
     //  return Box.Unset;
     //}
     #endregion
+
+    public bool EpsilonEquals(Box other, double epsilon)
+    {
+        return m_plane.EpsilonEquals(other.m_plane, epsilon) &&
+               m_dx.EpsilonEquals(other.m_dx, epsilon) &&
+               m_dy.EpsilonEquals(other.m_dy, epsilon) &&
+               m_dz.EpsilonEquals(other.m_dz, epsilon);
+    }
   }
 }

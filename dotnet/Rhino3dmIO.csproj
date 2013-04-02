@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Rhino</RootNamespace>
     <AssemblyName>Rhino3dmIO</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -44,7 +45,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;OPENNURBS_SDK</DefineConstants>
+    <DefineConstants>TRACE;RHINO_SDK</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -106,6 +107,7 @@
     <Compile Include="opennurbs\opennurbs_gl.cs" />
     <Compile Include="opennurbs\opennurbs_group.cs" />
     <Compile Include="opennurbs\opennurbs_hatch.cs" />
+    <Compile Include="opennurbs\opennurbs_iepsiloncomparable.cs" />
     <Compile Include="opennurbs\opennurbs_instance.cs" />
     <Compile Include="opennurbs\opennurbs_intersect.cs" />
     <Compile Include="opennurbs\opennurbs_intersectionevents.cs" />

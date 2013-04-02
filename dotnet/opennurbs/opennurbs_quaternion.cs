@@ -11,7 +11,7 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 32)]
   [Serializable]
-  public struct Quaternion : IEquatable<Quaternion>
+  public struct Quaternion : IEquatable<Quaternion>, IEpsilonComparable<Quaternion>
   {
     #region statics
     /// <summary>
@@ -117,6 +117,14 @@ namespace Rhino.Geometry
       return (obj is Quaternion && this == (Quaternion)obj);
     }
 
+    public bool EpsilonEquals(Quaternion other, double epsilon)
+    {
+        return FloatingPointCompare.EpsilonEquals(m_a, other.m_a, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_b, other.m_b, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_c, other.m_c, epsilon) &&
+               FloatingPointCompare.EpsilonEquals(m_d, other.m_d, epsilon);
+               
+    }
     /// <summary>
     /// Gets a non-unique but repeatable hashing code for this quaternion.
     /// </summary>

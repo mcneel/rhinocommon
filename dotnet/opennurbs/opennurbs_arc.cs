@@ -19,7 +19,7 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 152)]
   [Serializable]
-  public struct Arc : IEquatable<Arc>
+  public struct Arc : IEquatable<Arc>, IEpsilonComparable<Arc>
   {
     #region members
     internal Plane m_plane;
@@ -500,6 +500,13 @@ namespace Rhino.Geometry
       return NurbsCurve.CreateFromArc(this);
     }
     #endregion
+
+    public bool EpsilonEquals(Arc other, double epsilon)
+    {
+        return FloatingPointCompare.EpsilonEquals(m_radius, other.m_radius, epsilon) &&
+               m_plane.EpsilonEquals(other.m_plane, epsilon) &&
+               m_angle.EpsilonEquals(other.m_angle, epsilon);
+    }
 
     //// Description:
     ////   Creates a text dump of the arc listing the normal, center

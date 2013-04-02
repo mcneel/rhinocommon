@@ -9,7 +9,7 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]
   [Serializable]
-  public struct Line : IEquatable<Line>
+  public struct Line : IEquatable<Line>, IEpsilonComparable<Line>
   {
     #region members
     internal Point3d m_from;
@@ -295,6 +295,12 @@ namespace Rhino.Geometry
     public bool Equals(Line other)
     {
       return this == other;
+    }
+
+    public bool EpsilonEquals(Line other, double epsilon)
+    {
+        return m_from.EpsilonEquals(other.m_from, epsilon) &&
+               m_to.EpsilonEquals(other.m_to, epsilon);
     }
 
     /// <summary>

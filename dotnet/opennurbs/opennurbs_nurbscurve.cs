@@ -11,7 +11,7 @@ namespace Rhino.Geometry
   /// Represents a Non Uniform Rational B-Splines (NURBS) curve.
   /// </summary>
   [Serializable]
-  public class NurbsCurve : Curve
+  public class NurbsCurve : Curve, IEpsilonComparable<NurbsCurve>
   {
     #region statics
     /// <summary>
@@ -536,7 +536,31 @@ namespace Rhino.Geometry
       return gr_pts;
     }
     #endregion
+    
+    public bool EpsilonEquals(NurbsCurve other, double epsilon)
+    {
+        if (null == other) throw new ArgumentNullException("other");
+        
+        if (ReferenceEquals(this, other))
+            return true;
 
+        if (IsRational != other.IsRational)
+            return false;
+
+        if (Degree != other.Degree)
+            return false;
+
+        if (Points.Count != other.Points.Count)
+            return false;
+
+        if (!Knots.EpsilonEquals(other.Knots, epsilon))
+            return false;
+
+        if (!Points.EpsilonEquals(other.Points, epsilon))
+            return false;
+
+        return true;
+    }
     //[skipping]
     //   bool RepairBadKnots(
     //[skipping - slightly unusual for plugin devs]
@@ -568,7 +592,7 @@ namespace Rhino.Geometry
   /// Represents control-point geometry with three-dimensional position and weight.
   /// </summary>
   [Serializable]
-  public struct ControlPoint
+  public struct ControlPoint : IEpsilonComparable<ControlPoint>
   {
     #region members
     internal Point4d m_vertex;
@@ -678,6 +702,11 @@ namespace Rhino.Geometry
       }
     }
     #endregion
+
+    public bool EpsilonEquals(ControlPoint other, double epsilon)
+    {
+        return m_vertex.EpsilonEquals(other.m_vertex, epsilon);
+    }
   }
 }
 
@@ -686,7 +715,7 @@ namespace Rhino.Geometry.Collections
   /// <summary>
   /// Provides access to the knot vector of a nurbs curve.
   /// </summary>
-  public sealed class NurbsCurveKnotList : IEnumerable<double>, Rhino.Collections.IRhinoTable<double>
+  public sealed class NurbsCurveKnotList : IEnumerable<double>, Rhino.Collections.IRhinoTable<double>, IEpsilonComparable<NurbsCurveKnotList>
   {
     private readonly NurbsCurve m_curve;
 
@@ -873,12 +902,35 @@ namespace Rhino.Geometry.Collections
       return new Rhino.Collections.TableEnumerator<NurbsCurveKnotList, double>(this);
     }
     #endregion
+
+    public bool EpsilonEquals(NurbsCurveKnotList other, double epsilon)
+    {
+        if (null == other) 
+            throw new ArgumentNullException("other");
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        if (Count != other.Count)
+            return false;
+
+        // check for span equality
+        for (int i = 1; i < Count; ++i)
+        {
+            double myDelta = this[i] - this[i - 1];
+            double theirDelta = other[i] - other[i - 1];
+            if (!FloatingPointCompare.EpsilonEquals(myDelta, theirDelta, epsilon))
+                return false;
+        }
+
+        return true;
+    }
   }
 
   /// <summary>
   /// Provides access to the control points of a nurbs curve.
   /// </summary>
-  public class NurbsCurvePointList : IEnumerable<ControlPoint>, Rhino.Collections.IRhinoTable<ControlPoint>
+  public class NurbsCurvePointList : IEnumerable<ControlPoint>, Rhino.Collections.IRhinoTable<ControlPoint>, IEpsilonComparable<NurbsCurvePointList>
   {
     private readonly NurbsCurve m_curve;
 
@@ -1067,6 +1119,30 @@ namespace Rhino.Geometry.Collections
       return new Rhino.Collections.TableEnumerator<NurbsCurvePointList, ControlPoint>(this);
     }
     #endregion
+
+    public bool EpsilonEquals(NurbsCurvePointList other, double epsilon)
+    {
+        if (null == other) throw new ArgumentNullException("other");
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        if (Count != other.Count)
+            return false;
+
+        if (!FloatingPointCompare.EpsilonEquals(ControlPolygonLength, other.ControlPolygonLength, epsilon))
+            return false;
+
+        for (int i = 0; i < Count; ++i)
+        {
+            ControlPoint mine = this[i];
+            ControlPoint theirs = other[i];
+            if (!mine.EpsilonEquals(theirs, epsilon))
+                return false;
+        }
+
+        return true;
+    }
   }
 }
 

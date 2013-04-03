@@ -134,6 +134,7 @@ namespace Rhino.Display
     const int idxDrawOverlay = 4;
     const int idxCalcBoundingBoxZoomExtents = 5;
     const int idxDrawObject = 6;
+    const int idxObjectCulling = 7;
 
     static void ConduitReport(int which)
     {
@@ -160,7 +161,11 @@ namespace Rhino.Display
         case idxDrawObject:
           title = "DrawObject";
           cb = m_drawobject;
-          break;            
+          break;
+        case idxObjectCulling:
+          title = "ObjectCulling";
+          cb = m_objectCulling;
+          break;
       }
       if (!string.IsNullOrEmpty(title) && cb != null)
       {
@@ -183,6 +188,7 @@ namespace Rhino.Display
 
     // Callback used by C++ conduit to call into .NET
     internal delegate void ConduitCallback(IntPtr pPipeline, IntPtr pConduit);
+    private static ConduitCallback m_ObjectCullingCallback;
     private static ConduitCallback m_CalcBoundingBoxCallback;
     private static ConduitCallback m_CalcBoundingBoxZoomExtentsCallback;
     private static ConduitCallback m_PreDrawObjectsCallback;
@@ -191,6 +197,7 @@ namespace Rhino.Display
     private static ConduitCallback m_DrawForegroundCallback;
     private static ConduitCallback m_DrawOverlayCallback;
 
+    private static EventHandler<CullObjectEventArgs> m_objectCulling;
     private static EventHandler<CalculateBoundingBoxEventArgs> m_calcbbox;
     private static EventHandler<CalculateBoundingBoxEventArgs> m_calcbbox_zoomextents;
     private static EventHandler<DrawEventArgs> m_predrawobjects;
@@ -198,6 +205,21 @@ namespace Rhino.Display
     private static EventHandler<DrawEventArgs> m_postdrawobjects;
     private static EventHandler<DrawEventArgs> m_drawforeground;
     private static EventHandler<DrawEventArgs> m_drawoverlay;
+
+    private static void OnObjectCulling(IntPtr pPipeline, IntPtr pConduit)
+    {
+      if (m_objectCulling != null)
+      {
+        try
+        {
+          m_objectCulling(null, new CullObjectEventArgs(pPipeline, pConduit));
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
 
     private static void OnCalcBoundingBox(IntPtr pPipeline, IntPtr pConduit)
     {
@@ -298,6 +320,35 @@ namespace Rhino.Display
         }
       }
     }
+
+
+    public static event EventHandler<CullObjectEventArgs> ObjectCulling
+    {
+      add
+      {
+        if (Runtime.HostUtils.ContainsDelegate(m_objectCulling, value))
+          return;
+
+        if (null == m_objectCulling)
+        {
+          m_ObjectCullingCallback = OnObjectCulling;
+          UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxObjectCulling, m_ObjectCullingCallback, m_report);
+        }
+
+        m_objectCulling -= value;
+        m_objectCulling += value;
+      }
+      remove
+      {
+        m_objectCulling -= value;
+        if (m_objectCulling == null)
+        {
+          UnsafeNativeMethods.CRhinoDisplayConduit_SetCallback(idxObjectCulling, null, m_report);
+          m_ObjectCullingCallback = null;
+        }
+      }
+    }
+
 
     public static event EventHandler<CalculateBoundingBoxEventArgs> CalculateBoundingBox
     {
@@ -2350,6 +2401,35 @@ namespace Rhino.Display
     }
   }
 
+  public class CullObjectEventArgs : DrawEventArgs
+  {
+    internal CullObjectEventArgs(IntPtr pDisplayPipeline, IntPtr pDisplayConduit)
+      : base(pDisplayPipeline, pDisplayConduit)
+    {
+    }
+
+    Rhino.DocObjects.RhinoObject m_rhino_object;
+    public Rhino.DocObjects.RhinoObject RhinoObject
+    {
+      get
+      {
+        if (m_rhino_object == null)
+        {
+          IntPtr pRhinoObject = UnsafeNativeMethods.CChannelAttributes_RhinoObject(m_pDisplayConduit);
+          m_rhino_object = Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(pRhinoObject);
+        }
+        return m_rhino_object;
+      }
+    }
+
+    public bool CullObject
+    {
+      get { return !GetChannelAttributeBool(idxDrawObject); }
+      set { SetChannelAttributeBool(idxDrawObject, !value); }
+    }
+  }
+
+
   public class DrawObjectEventArgs : DrawEventArgs
   {
     internal DrawObjectEventArgs(IntPtr pDisplayPipeline, IntPtr pDisplayConduit)
@@ -2406,6 +2486,130 @@ namespace Rhino.Display
       m_bbox.Union(box);
       UnsafeNativeMethods.CChannelAttr_GetSetBBox(m_pDisplayConduit, true, ref m_bbox);
     }
+  }
+
+  /// <summary>
+  /// Provides functionality for getting the zbuffer values from a viewport
+  /// and a given display mode
+  /// </summary>
+  public class ZBufferCapture : IDisposable
+  {
+    IntPtr m_ptr; //CRhinoZBuffer*
+    public ZBufferCapture(RhinoViewport viewport)
+    {
+      IntPtr pViewport = IntPtr.Zero;
+      if( viewport!=null )
+        pViewport = viewport.ConstPointer();
+      m_ptr = UnsafeNativeMethods.CRhinoZBuffer_New(pViewport);
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~ZBufferCapture() { Dispose(false); }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_ptr)
+      {
+        UnsafeNativeMethods.CRhinoZBuffer_Delete(m_ptr);
+      }
+      m_ptr = IntPtr.Zero;
+    }
+
+    IntPtr NonConstPointer(bool destroyCache)
+    {
+      if (destroyCache && m_bitmap != null)
+        m_bitmap = null;
+
+      return m_ptr;
+    }
+
+    public void SetDisplayMode(Guid modeId)
+    {
+      IntPtr pThis = NonConstPointer(true);
+      UnsafeNativeMethods.CRhinoZBuffer_SetDisplayMode(pThis, modeId);
+    }
+
+    void SetBool(int which, bool on)
+    {
+      IntPtr pThis = NonConstPointer(true);
+      UnsafeNativeMethods.CRhinoZBuffer_SetBool(pThis, which, on);
+    }
+
+    const int IDX_SHOW_ISOCURVES = 0;
+    const int IDX_SHOW_MESH_WIRES = 1;
+    const int IDX_SHOW_CURVES = 2;
+    const int IDX_SHOW_POINTS = 3;
+    const int IDX_SHOW_TEXT = 4;
+    const int IDX_SHOW_ANNOTATIONS = 5;
+    const int IDX_SHOW_LIGHTS = 6;
+
+    public void ShowIsocurves(bool on) { SetBool(IDX_SHOW_ISOCURVES, on); }
+    public void ShowMeshWires(bool on) { SetBool(IDX_SHOW_MESH_WIRES, on); }
+    public void ShowCurves(bool on) { SetBool(IDX_SHOW_CURVES, on); }
+    public void ShowPoints(bool on) { SetBool(IDX_SHOW_POINTS, on); }
+    public void ShowText(bool on) { SetBool(IDX_SHOW_TEXT, on); }
+    public void ShowAnnotations(bool on) { SetBool(IDX_SHOW_ANNOTATIONS, on); }
+    public void ShowLights(bool on) { SetBool(IDX_SHOW_LIGHTS, on); }
+
+    public int HitCount()
+    {
+      IntPtr pThis = NonConstPointer(false);
+      return UnsafeNativeMethods.CRhinoZBuffer_HitCount(pThis);
+    }
+    public float MaxZ()
+    {
+      IntPtr pThis = NonConstPointer(false);
+      return UnsafeNativeMethods.CRhinoZBuffer_MaxZ(pThis);
+    }
+    public float MinZ()
+    {
+      IntPtr pThis = NonConstPointer(false);
+      return UnsafeNativeMethods.CRhinoZBuffer_MinZ(pThis);
+    }
+    public float ZValueAt(int x, int y)
+    {
+      IntPtr pThis = NonConstPointer(false);
+      return UnsafeNativeMethods.CRhinoZBuffer_ZValue(pThis, x, y);
+    }
+    public Point3d WorldPointAt(int x, int y)
+    {
+      IntPtr pThis = NonConstPointer(false);
+      Point3d rc = new Point3d();
+      UnsafeNativeMethods.CRhinoZBuffer_WorldPoint(pThis, x, y, ref rc);
+      return rc;
+    }
+
+    System.Drawing.Bitmap m_bitmap;
+    public System.Drawing.Bitmap GrayscaleDib()
+    {
+      if (m_bitmap == null)
+      {
+        IntPtr pThis = NonConstPointer(false);
+        IntPtr hBitmap = UnsafeNativeMethods.CRhinoZBuffer_GrayscaleDib(pThis);
+        m_bitmap = System.Drawing.Image.FromHbitmap(hBitmap);
+      }
+      return m_bitmap;
+    }
+
   }
 }
 #endif

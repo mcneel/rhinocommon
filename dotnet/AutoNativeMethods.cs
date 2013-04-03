@@ -6586,6 +6586,46 @@ internal partial class UnsafeNativeMethods
   //CRhinoDoc* CRhinoDisplayPipeline_RhinoDoc(CRhinoDisplayPipeline* pPipeline)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoDisplayPipeline_RhinoDoc(IntPtr pPipeline);
+
+  //CRhinoZBuffer* CRhinoZBuffer_New(const CRhinoViewport* pRhinoViewport)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoZBuffer_New(IntPtr pRhinoViewport);
+
+  //void CRhinoZBuffer_Delete(CRhinoZBuffer* pRhinoZBuffer)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoZBuffer_Delete(IntPtr pRhinoZBuffer);
+
+  //void CRhinoZBuffer_SetDisplayMode(CRhinoZBuffer* pRhinoZBuffer, ON_UUID mode)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoZBuffer_SetDisplayMode(IntPtr pRhinoZBuffer, Guid mode);
+
+  //void CRhinoZBuffer_SetBool(CRhinoZBuffer* pRhinoZBuffer, int which, bool on)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoZBuffer_SetBool(IntPtr pRhinoZBuffer, int which, [MarshalAs(UnmanagedType.U1)]bool on);
+
+  //int CRhinoZBuffer_HitCount(CRhinoZBuffer* pRhinoZBuffer)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoZBuffer_HitCount(IntPtr pRhinoZBuffer);
+
+  //float CRhinoZBuffer_MaxZ(CRhinoZBuffer* pRhinoZBuffer)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern float CRhinoZBuffer_MaxZ(IntPtr pRhinoZBuffer);
+
+  //float CRhinoZBuffer_MinZ(CRhinoZBuffer* pRhinoZBuffer)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern float CRhinoZBuffer_MinZ(IntPtr pRhinoZBuffer);
+
+  //float CRhinoZBuffer_ZValue(CRhinoZBuffer* pRhinoZBuffer, int x, int y)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern float CRhinoZBuffer_ZValue(IntPtr pRhinoZBuffer, int x, int y);
+
+  //void CRhinoZBuffer_WorldPoint(CRhinoZBuffer* pRhinoZBuffer, int x, int y, ON_3dPoint* point)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoZBuffer_WorldPoint(IntPtr pRhinoZBuffer, int x, int y, ref Point3d point);
+
+  //HBITMAP CRhinoZBuffer_GrayscaleDib(CRhinoZBuffer* pRhinoZBuffer)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoZBuffer_GrayscaleDib(IntPtr pRhinoZBuffer);
   #endregion
 
 

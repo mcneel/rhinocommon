@@ -34,16 +34,16 @@ namespace Rhino.Display
 
   public abstract class DisplayConduit
   {
-    bool m_bEnabled;
+    bool m_enabled;
     protected DisplayConduit() {}
 
     public bool Enabled
     {
-      get { return m_bEnabled; }
+      get { return m_enabled; }
       set
       {
-        m_bEnabled = value;
-        if (m_bEnabled)
+        m_enabled = value;
+        if (m_enabled)
         {
           Type base_type = typeof(DisplayConduit);
           Type t = GetType();
@@ -52,9 +52,9 @@ namespace Rhino.Display
           // https://github.com/mcneel/rhinocommon/issues/29
           // The virtual functions are protected, so we need to call the overload
           // of GetMethod that takes some binding flags
-          const BindingFlags flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public;
+          const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public;
 
-          System.Reflection.MethodInfo mi = t.GetMethod("CalculateBoundingBox", flags);
+          MethodInfo mi = t.GetMethod("CalculateBoundingBox", flags);
           if( mi.DeclaringType != base_type )
             DisplayPipeline.CalculateBoundingBox += _CalculateBoundingBox;
 
@@ -81,6 +81,10 @@ namespace Rhino.Display
           mi = t.GetMethod("PreDrawObjects", flags);
           if (mi.DeclaringType != base_type)
             DisplayPipeline.PreDrawObjects += _PreDrawObjects;
+
+          mi = t.GetMethod("ObjectCulling", flags);
+          if (mi.DeclaringType != base_type)
+            DisplayPipeline.ObjectCulling += _ObjectCulling;
         }
         else
         {
@@ -91,10 +95,12 @@ namespace Rhino.Display
           DisplayPipeline.PostDrawObjects -= _PostDrawObjects;
           DisplayPipeline.PreDrawObjects -= _PreDrawObjects;
           DisplayPipeline.PreDrawObject -= _PreDrawObject;
+          DisplayPipeline.ObjectCulling -= _ObjectCulling;
         }
       }
     }
 
+    private void _ObjectCulling(object sender, CullObjectEventArgs e) { ObjectCulling(e); }
     private void _CalculateBoundingBox(object sender, CalculateBoundingBoxEventArgs e) { CalculateBoundingBox(e); }
     private void _CalculateBoundingBoxZoomExtents(object sender, CalculateBoundingBoxEventArgs e) { CalculateBoundingBoxZoomExtents(e); }
     private void _DrawForeground(object sender, DrawEventArgs e) { DrawForeground(e); }
@@ -102,6 +108,12 @@ namespace Rhino.Display
     private void _PostDrawObjects(object sender, DrawEventArgs e) { PostDrawObjects(e); }
     private void _PreDrawObjects(object sender, DrawEventArgs e) { PreDrawObjects(e); }
     private void _PreDrawObject(object sender, DrawObjectEventArgs e) { PreDrawObject(e); }
+
+    /// <summary>
+    /// <para>The default implementation does nothing.</para>
+    /// </summary>
+    /// <param name="e"></param>
+    protected virtual void ObjectCulling(CullObjectEventArgs e) { }
 
     /// <summary>
     /// Library developers should override this function to increase the bounding box of scene so it includes the

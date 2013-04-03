@@ -118,11 +118,17 @@ namespace Rhino.Geometry
     }
     #endregion
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(Torus other, double epsilon)
     {
-        return m_majorCirclePlane.EpsilonEquals(other.m_majorCirclePlane, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_majorRadius, other.m_majorRadius, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_minorRadius, other.m_minorRadius, epsilon);
+      return m_majorCirclePlane.EpsilonEquals(other.m_majorCirclePlane, epsilon) &&
+             RhinoMath.EpsilonEquals(m_majorRadius, other.m_majorRadius, epsilon) &&
+             RhinoMath.EpsilonEquals(m_minorRadius, other.m_minorRadius, epsilon);
     }
   }
 }

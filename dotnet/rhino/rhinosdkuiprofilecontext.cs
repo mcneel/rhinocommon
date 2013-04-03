@@ -1220,11 +1220,11 @@ namespace Rhino
     /// <param name="defaultValue"></param>
     /// <returns></returns>
     [CLSCompliant(false)]
-    public T GetEnumValue<T>(T defaultValue) 
+    public T GetEnumValue<T>(T defaultValue)
         where T : struct, IConvertible
     {
-        Type enumType = typeof(T);
-        return GetEnumValue(enumType.Name, defaultValue);
+      Type enumType = typeof(T);
+      return GetEnumValue(enumType.Name, defaultValue);
     }
 
     /// <summary>
@@ -1235,14 +1235,14 @@ namespace Rhino
     /// <param name="defaultValue"> </param>
     /// <returns></returns>
     [CLSCompliant(false)]
-    public T GetEnumValue<T>(String key, T defaultValue) 
+    public T GetEnumValue<T>(String key, T defaultValue)
         where T : struct, IConvertible
     {
-        if (null == key) throw new ArgumentNullException("key");
-        if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+      if (null == key) throw new ArgumentNullException("key");
+      if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
 
-        String value = GetString(key, defaultValue.ToString(CultureInfo.InvariantCulture));
-        return (T)Enum.Parse(typeof(T), value);
+      String value = GetString(key, defaultValue.ToString(CultureInfo.InvariantCulture));
+      return (T)Enum.Parse(typeof(T), value);
     }
 
     /// <summary>
@@ -1254,7 +1254,7 @@ namespace Rhino
     public T GetEnumValue<T>()
         where T : struct, IConvertible
     {
-        return GetEnumValue<T>(typeof(T).Name);
+      return GetEnumValue<T>(typeof(T).Name);
     }
 
     /// <summary>
@@ -1268,24 +1268,18 @@ namespace Rhino
     public T GetEnumValue<T>(String key)
         where T : struct, IConvertible
     {
-        if (null == key) throw new ArgumentNullException("key");
-        if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+      if (null == key) throw new ArgumentNullException("key");
+      if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
 
-        Type enumType = typeof(T);
+      Type enumType = typeof(T);
 
-        String value;
-        if (TryGetString(key, out value))
-        {
-            foreach(T e in Enum.GetValues(enumType))
-            {
-                if (value.Equals(e.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase))
-                {
-                    return e;
-                }
-            }
-        }
-        String errMsg = String.Format("Value for key={0} for enum type {1} not found.", key, enumType.Name);
-        throw new KeyNotFoundException(errMsg);
+      String value;
+      if (TryGetString(key, out value))
+      {
+        return (T)Enum.Parse(typeof(T), value);
+      }
+      String errMsg = String.Format("Value for key={0} for enum type {1} not found.", key, enumType.Name);
+      throw new KeyNotFoundException(errMsg);
     }
 
     /// <summary>
@@ -1300,25 +1294,26 @@ namespace Rhino
     public bool TryGetEnumValue<T>(String key, out T enumValue)
         where T : struct, IConvertible
     {
-        if (null == key) throw new ArgumentNullException("key");
-        Type enumType = typeof (T);
-        if (!enumType.IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+      if (null == key) throw new ArgumentNullException("key");
+      Type enumType = typeof(T);
+      if (!enumType.IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
 
-        enumValue = default(T);
+      enumValue = default(T);
 
-        String value;
-        if (TryGetString(key, out value))
+      String value;
+      if (TryGetString(key, out value))
+      {
+        try
         {
-            foreach(T e in Enum.GetValues(enumType))
-            {
-                if (value.Equals(e.ToString(CultureInfo.InvariantCulture),StringComparison.OrdinalIgnoreCase))
-                {
-                    enumValue = e;
-                    return true;
-                }
-            }
+          enumValue = (T)Enum.Parse(typeof(T), value);
+          return true;
         }
-        return false;
+        catch (Exception)
+        {
+          // do nothing, fall through and return false
+        }
+      }
+      return false;
     }
 
     /// <summary>
@@ -1332,11 +1327,11 @@ namespace Rhino
     public bool TryGetEnumValue<T>(out T enumValue)
         where T : struct, IConvertible
     {
-        Type enumType = typeof(T);
-        if (!enumType.IsEnum)
-            throw new ArgumentException("!typeof(T).IsEnum");
+      Type enumType = typeof(T);
+      if (!enumType.IsEnum)
+        throw new ArgumentException("!typeof(T).IsEnum");
 
-        return TryGetEnumValue(enumType.Name, out enumValue);
+      return TryGetEnumValue(enumType.Name, out enumValue);
     }
 
     public void SetBool(string key, bool value)

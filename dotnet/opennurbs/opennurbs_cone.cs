@@ -170,11 +170,17 @@ namespace Rhino.Geometry
     }
     #endregion
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(Cone other, double epsilon)
     {
-        return m_baseplane.EpsilonEquals(other.m_baseplane, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_height, other.m_height, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_radius, other.m_radius, epsilon);
+      return m_baseplane.EpsilonEquals(other.m_baseplane, epsilon) &&
+             RhinoMath.EpsilonEquals(m_height, other.m_height, epsilon) &&
+             RhinoMath.EpsilonEquals(m_radius, other.m_radius, epsilon);
     }
   }
 }

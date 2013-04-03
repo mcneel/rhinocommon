@@ -472,29 +472,35 @@ namespace Rhino.Geometry
     }
 #endif
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(NurbsSurface other, double epsilon)
     {
-        if (null == other) throw new ArgumentNullException("other");
+      if (null == other) throw new ArgumentNullException("other");
 
-        if (ReferenceEquals(this, other))
-            return true;
-
-        if ((Degree(0) != other.Degree(0)) || (Degree(1) != other.Degree(1)))
-            return false;
-
-        if (IsRational != other.IsRational)
-            return false;
-
-        if (Points.CountU != other.Points.CountU || Points.CountV != other.Points.CountV)
-            return false;
-
-        if (!KnotsU.EpsilonEquals(other.KnotsU, epsilon))
-            return false;
-
-        if (!KnotsV.EpsilonEquals(other.KnotsV, epsilon))
-            return false;
-
+      if (ReferenceEquals(this, other))
         return true;
+
+      if ((Degree(0) != other.Degree(0)) || (Degree(1) != other.Degree(1)))
+        return false;
+
+      if (IsRational != other.IsRational)
+        return false;
+
+      if (Points.CountU != other.Points.CountU || Points.CountV != other.Points.CountV)
+        return false;
+
+      if (!KnotsU.EpsilonEquals(other.KnotsU, epsilon))
+        return false;
+
+      if (!KnotsV.EpsilonEquals(other.KnotsV, epsilon))
+        return false;
+
+      return true;
     }
 
     /// <summary>
@@ -856,34 +862,40 @@ namespace Rhino.Geometry.Collections
     }
     #endregion
 
-      public bool EpsilonEquals(NurbsSurfacePointList other, double epsilon)
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
+    public bool EpsilonEquals(NurbsSurfacePointList other, double epsilon)
+    {
+      if (null == other) throw new ArgumentNullException("other");
+
+      if (ReferenceEquals(this, other))
+        return true;
+
+      if (CountU != other.CountU)
+        return false;
+
+      if (CountV != other.CountV)
+        return false;
+
+
+      for (int u = 0; u < CountU; ++u)
       {
-          if (null == other) throw new ArgumentNullException("other");
+        for (int v = 0; v < CountV; ++v)
+        {
+          ControlPoint mine = GetControlPoint(u, v);
+          ControlPoint theirs = other.GetControlPoint(u, v);
 
-          if (ReferenceEquals(this, other))
-              return true;
-
-          if (CountU != other.CountU)
-              return false;
-
-          if (CountV != other.CountV)
-              return false;
-          
-
-          for (int u = 0; u < CountU; ++u)
-          {
-              for (int v = 0; v < CountV; ++v)
-              {
-                  ControlPoint mine = GetControlPoint(u, v);
-                  ControlPoint theirs = other.GetControlPoint(u, v);
-
-                  if (!mine.EpsilonEquals(theirs, epsilon))
-                      return false;
-              }
-          }
-
-          return true;
+          if (!mine.EpsilonEquals(theirs, epsilon))
+            return false;
+        }
       }
+
+      return true;
+    }
   }
   /// <summary>
   /// Provides access to the knot vector of a nurbs surface.
@@ -1050,6 +1062,12 @@ namespace Rhino.Geometry.Collections
     }
     #endregion
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(NurbsSurfaceKnotList other, double epsilon)
     {
         if (null == other) throw new ArgumentNullException("other");
@@ -1068,7 +1086,7 @@ namespace Rhino.Geometry.Collections
         {
             double myDelta = this[i] - this[i - 1];
             double theirDelta = other[i] - other[i - 1];
-            if (!FloatingPointCompare.EpsilonEquals(myDelta, theirDelta, epsilon))
+            if (!RhinoMath.EpsilonEquals(myDelta, theirDelta, epsilon))
                 return false;
         }
 

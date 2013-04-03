@@ -117,13 +117,18 @@ namespace Rhino.Geometry
       return (obj is Quaternion && this == (Quaternion)obj);
     }
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(Quaternion other, double epsilon)
     {
-        return FloatingPointCompare.EpsilonEquals(m_a, other.m_a, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_b, other.m_b, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_c, other.m_c, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_d, other.m_d, epsilon);
-               
+      return RhinoMath.EpsilonEquals(m_a, other.m_a, epsilon) &&
+             RhinoMath.EpsilonEquals(m_b, other.m_b, epsilon) &&
+             RhinoMath.EpsilonEquals(m_c, other.m_c, epsilon) &&
+             RhinoMath.EpsilonEquals(m_d, other.m_d, epsilon);
     }
     /// <summary>
     /// Gets a non-unique but repeatable hashing code for this quaternion.

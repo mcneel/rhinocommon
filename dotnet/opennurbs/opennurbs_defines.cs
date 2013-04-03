@@ -227,6 +227,63 @@ namespace Rhino
     {
       return CRC32(currentRemainder, BitConverter.GetBytes(value));
     }
+
+    /// <summary>
+    /// Compare two doubles for equality within some "epsilon" range
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
+    public static bool EpsilonEquals(double x, double y, double epsilon)
+    {
+      // IEEE standard says that any comparison between NaN should return false;
+      if (double.IsNaN(x) || double.IsNaN(y))
+        return false;
+      if (double.IsPositiveInfinity(x))
+        return double.IsPositiveInfinity(y);
+      if (double.IsNegativeInfinity(x))
+        return double.IsNegativeInfinity(y);
+
+      // if both are smaller than epsilon, their difference may not be.
+      // therefore compare in absolute sense
+      if (Math.Abs(x) < epsilon && Math.Abs(y) < epsilon)
+      {
+        bool result = Math.Abs(x - y) < epsilon;
+        return result;
+      }
+
+      return (x >= y - epsilon && x <= y + epsilon);
+    }
+
+    /// <summary>
+    /// Compare to floats for equality within some "epsilon" range
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
+    public static bool EpsilonEquals(float x, float y, float epsilon)
+    {
+      // IEEE standard says that any comparison between NaN should return false;
+      if (float.IsNaN(x) || float.IsNaN(y))
+        return false;
+      if (float.IsPositiveInfinity(x))
+        return float.IsPositiveInfinity(y);
+      if (float.IsNegativeInfinity(x))
+        return float.IsNegativeInfinity(y);
+
+      // if both are smaller than epsilon, their difference may not be.
+      // therefore compare in absolute sense
+      if (Math.Abs(x) < epsilon && Math.Abs(y) < epsilon)
+      {
+        bool result = Math.Abs(x - y) < epsilon;
+        return result;
+      }
+
+      return (x >= y - epsilon && x <= y + epsilon);
+    }
+
   }
 
   /// <summary>

@@ -661,12 +661,18 @@ namespace Rhino.Geometry
     #endregion
     #endregion
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(Plane other, double epsilon)
     {
-        return m_origin.EpsilonEquals(other.m_origin, epsilon) &&
-               m_xaxis.EpsilonEquals(other.m_xaxis, epsilon) &&
-               m_yaxis.EpsilonEquals(other.m_yaxis, epsilon) &&
-               m_zaxis.EpsilonEquals(other.m_zaxis, epsilon);
+      return m_origin.EpsilonEquals(other.m_origin, epsilon) &&
+             m_xaxis.EpsilonEquals(other.m_xaxis, epsilon) &&
+             m_yaxis.EpsilonEquals(other.m_yaxis, epsilon) &&
+             m_zaxis.EpsilonEquals(other.m_zaxis, epsilon);
     }
   }
 

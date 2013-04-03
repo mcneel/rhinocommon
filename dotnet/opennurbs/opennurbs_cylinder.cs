@@ -225,11 +225,17 @@ namespace Rhino.Geometry
     }
     #endregion
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(Cylinder other, double epsilon)
     {
-        return m_basecircle.EpsilonEquals(other.m_basecircle, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_height1, other.m_height1, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_height2, other.m_height2, epsilon);
+      return m_basecircle.EpsilonEquals(other.m_basecircle, epsilon) &&
+             RhinoMath.EpsilonEquals(m_height1, other.m_height1, epsilon) &&
+             RhinoMath.EpsilonEquals(m_height2, other.m_height2, epsilon);
     }
 
 //  // evaluate parameters and return point

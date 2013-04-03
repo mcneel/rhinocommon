@@ -297,10 +297,16 @@ namespace Rhino.Geometry
       return this == other;
     }
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(Line other, double epsilon)
     {
-        return m_from.EpsilonEquals(other.m_from, epsilon) &&
-               m_to.EpsilonEquals(other.m_to, epsilon);
+      return m_from.EpsilonEquals(other.m_from, epsilon) &&
+             m_to.EpsilonEquals(other.m_to, epsilon);
     }
 
     /// <summary>

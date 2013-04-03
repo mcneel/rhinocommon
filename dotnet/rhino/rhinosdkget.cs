@@ -1575,7 +1575,7 @@ namespace Rhino.Input.Custom
     /// </summary>
     /// <typeparam name="T">The enum type</typeparam>
     /// <param name="englishOptionName">The name of the option</param>
-    /// <param name="defaultValue">The devault value</param>
+    /// <param name="defaultValue">The default value</param>
     /// <exception cref="ArgumentException">Gets thrown if defaultValue provided is not an enum type.</exception>
     /// <returns>Option index</returns>
     [CLSCompliant(false)]

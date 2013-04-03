@@ -88,11 +88,17 @@ namespace Rhino.Geometry
     }
     #endregion
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(Ellipse other, double epsilon)
     {
-        return m_plane.EpsilonEquals(other.m_plane, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_radius1, other.m_radius1, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_radius2, other.m_radius2, epsilon);
+      return m_plane.EpsilonEquals(other.m_plane, epsilon) &&
+             RhinoMath.EpsilonEquals(m_radius1, other.m_radius1, epsilon) &&
+             RhinoMath.EpsilonEquals(m_radius2, other.m_radius2, epsilon);
     }
   }
 }

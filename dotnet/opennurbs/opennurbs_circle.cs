@@ -641,10 +641,16 @@ namespace Rhino.Geometry
     //}
     #endregion
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(Circle other, double epsilon)
     {
-        return FloatingPointCompare.EpsilonEquals(m_radius, other.m_radius, epsilon) &&
-               m_plane.EpsilonEquals(other.m_plane, epsilon);
+      return RhinoMath.EpsilonEquals(m_radius, other.m_radius, epsilon) &&
+             m_plane.EpsilonEquals(other.m_plane, epsilon);
     }
 
     //*

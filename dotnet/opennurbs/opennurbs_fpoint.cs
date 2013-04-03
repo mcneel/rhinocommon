@@ -98,10 +98,16 @@ namespace Rhino.Geometry
       return this == point;
     }
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(Point2f other, float epsilon)
     {
-        return FloatingPointCompare.EpsilonEquals(m_x, other.m_x, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_y, other.m_y, epsilon);
+      return RhinoMath.EpsilonEquals(m_x, other.m_x, epsilon) &&
+             RhinoMath.EpsilonEquals(m_y, other.m_y, epsilon);
     }
 
     /// <summary>
@@ -313,11 +319,17 @@ namespace Rhino.Geometry
       return this == point;
     }
 
+    /// <summary>
+    /// Check that all values in other are withing epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(Point3f other, float epsilon)
     {
-        return FloatingPointCompare.EpsilonEquals(m_x, other.m_x, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_y, other.m_y, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_z, other.m_z, epsilon);
+      return RhinoMath.EpsilonEquals(m_x, other.m_x, epsilon) &&
+             RhinoMath.EpsilonEquals(m_y, other.m_y, epsilon) &&
+             RhinoMath.EpsilonEquals(m_z, other.m_z, epsilon);
     }
 
     /// <summary>
@@ -583,10 +595,16 @@ namespace Rhino.Geometry
       return this == vector;
     }
 
+    /// <summary>
+    /// Check that all values in other are withing epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(Vector2f other, float epsilon)
     {
-        return FloatingPointCompare.EpsilonEquals(m_x, other.m_x, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_y, other.m_y, epsilon);
+      return RhinoMath.EpsilonEquals(m_x, other.m_x, epsilon) &&
+             RhinoMath.EpsilonEquals(m_y, other.m_y, epsilon);
     }
     /// <summary>
     /// Compares this <see cref="Vector2f" /> with another <see cref="Vector2f" />.
@@ -825,11 +843,17 @@ namespace Rhino.Geometry
       return this == vector;
     }
     
+    /// <summary>
+    /// Check that all values in other are withing epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(Vector3f other, float epsilon)
     {
-        return FloatingPointCompare.EpsilonEquals(m_x, other.m_x, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_y, other.m_y, epsilon) &&
-               FloatingPointCompare.EpsilonEquals(m_z, other.m_z, epsilon);
+      return RhinoMath.EpsilonEquals(m_x, other.m_x, epsilon) &&
+             RhinoMath.EpsilonEquals(m_y, other.m_y, epsilon) &&
+             RhinoMath.EpsilonEquals(m_z, other.m_z, epsilon);
     }
 
     /// <summary>

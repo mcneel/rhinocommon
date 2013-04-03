@@ -1634,27 +1634,29 @@ namespace Rhino.Collections
     /// <param name="enumValue"></param>
     /// <returns></returns>
     [CLSCompliant(false)]
-    public bool TryGetEnumValue<T>(String key, out T enumValue) 
+    public bool TryGetEnumValue<T>(String key, out T enumValue)
         where T : struct, IConvertible
     {
-        if (null == key) throw new ArgumentNullException("key");
-        
-        Type enumType = typeof (T);
-        if (!enumType.IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
-        enumValue = default(T);
-        String enumString;
-        if (TryGetString(key, out enumString))
+      if (null == key) throw new ArgumentNullException("key");
+
+      Type enumType = typeof(T);
+      if (!enumType.IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+      enumValue = default(T);
+      String enumString;
+      if (TryGetString(key, out enumString))
+      {
+        try
         {
-            foreach (T e in Enum.GetValues(enumType))
-            {
-                if (enumString.Equals(e.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase))
-                {
-                    enumValue = e;
-                    return true;
-                }
-            }
+          object obj = Enum.Parse(enumType, enumString, true);
+          enumValue = (T)obj;
+          return true;
         }
-        return false;
+        catch (Exception)
+        {
+          //do nothing, just fall through and return false
+        }
+      }
+      return false;
     }
 
 

@@ -502,11 +502,17 @@ namespace Rhino.Geometry
     }
     #endregion
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(Rectangle3d other, double epsilon)
     {
-        return m_plane.EpsilonEquals(other.m_plane, epsilon) &&
-               m_x.EpsilonEquals(other.m_x, epsilon) &&
-               m_y.EpsilonEquals(other.m_y, epsilon);
+      return m_plane.EpsilonEquals(other.m_plane, epsilon) &&
+             m_x.EpsilonEquals(other.m_x, epsilon) &&
+             m_y.EpsilonEquals(other.m_y, epsilon);
     }
   }
 }

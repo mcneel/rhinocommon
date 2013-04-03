@@ -536,30 +536,36 @@ namespace Rhino.Geometry
       return gr_pts;
     }
     #endregion
-    
+
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(NurbsCurve other, double epsilon)
     {
-        if (null == other) throw new ArgumentNullException("other");
-        
-        if (ReferenceEquals(this, other))
-            return true;
+      if (null == other) throw new ArgumentNullException("other");
 
-        if (IsRational != other.IsRational)
-            return false;
-
-        if (Degree != other.Degree)
-            return false;
-
-        if (Points.Count != other.Points.Count)
-            return false;
-
-        if (!Knots.EpsilonEquals(other.Knots, epsilon))
-            return false;
-
-        if (!Points.EpsilonEquals(other.Points, epsilon))
-            return false;
-
+      if (ReferenceEquals(this, other))
         return true;
+
+      if (IsRational != other.IsRational)
+        return false;
+
+      if (Degree != other.Degree)
+        return false;
+
+      if (Points.Count != other.Points.Count)
+        return false;
+
+      if (!Knots.EpsilonEquals(other.Knots, epsilon))
+        return false;
+
+      if (!Points.EpsilonEquals(other.Points, epsilon))
+        return false;
+
+      return true;
     }
     //[skipping]
     //   bool RepairBadKnots(
@@ -703,9 +709,15 @@ namespace Rhino.Geometry
     }
     #endregion
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(ControlPoint other, double epsilon)
     {
-        return m_vertex.EpsilonEquals(other.m_vertex, epsilon);
+      return m_vertex.EpsilonEquals(other.m_vertex, epsilon);
     }
   }
 }
@@ -903,6 +915,12 @@ namespace Rhino.Geometry.Collections
     }
     #endregion
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(NurbsCurveKnotList other, double epsilon)
     {
         if (null == other) 
@@ -919,7 +937,7 @@ namespace Rhino.Geometry.Collections
         {
             double myDelta = this[i] - this[i - 1];
             double theirDelta = other[i] - other[i - 1];
-            if (!FloatingPointCompare.EpsilonEquals(myDelta, theirDelta, epsilon))
+            if (!RhinoMath.EpsilonEquals(myDelta, theirDelta, epsilon))
                 return false;
         }
 
@@ -1120,6 +1138,12 @@ namespace Rhino.Geometry.Collections
     }
     #endregion
 
+    /// <summary>
+    /// Check that all values in other are within epsilon of the values in this
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="epsilon"></param>
+    /// <returns></returns>
     public bool EpsilonEquals(NurbsCurvePointList other, double epsilon)
     {
         if (null == other) throw new ArgumentNullException("other");
@@ -1130,7 +1154,7 @@ namespace Rhino.Geometry.Collections
         if (Count != other.Count)
             return false;
 
-        if (!FloatingPointCompare.EpsilonEquals(ControlPolygonLength, other.ControlPolygonLength, epsilon))
+        if (!RhinoMath.EpsilonEquals(ControlPolygonLength, other.ControlPolygonLength, epsilon))
             return false;
 
         for (int i = 0; i < Count; ++i)

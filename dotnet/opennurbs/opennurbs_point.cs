@@ -1143,7 +1143,6 @@ namespace Rhino.Geometry
 
       double tx = ww * (xform.m_00 * m_x + xform.m_01 * m_y + xform.m_03);
       double ty = ww * (xform.m_10 * m_x + xform.m_11 * m_y + xform.m_13);
-      double tz = ww * (xform.m_20 * m_x + xform.m_21 * m_y + xform.m_23);
       m_x = tx;
       m_y = ty;
     }

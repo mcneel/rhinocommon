@@ -1616,7 +1616,7 @@ namespace Rhino.Render.Fields
     /// <returns></returns>
     static internal Field FieldFromPointer(RenderContent renderContent, IntPtr fieldPointer, string key)
     {
-      if (null == fieldPointer) throw new ArgumentNullException("fieldPointer");
+      if (IntPtr.Zero == fieldPointer) throw new ArgumentNullException("fieldPointer");
       // Get the field user interface prompt string
       string prompt;
       using (Runtime.StringHolder sh = new Runtime.StringHolder())

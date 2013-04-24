@@ -197,6 +197,7 @@ namespace Rhino.Commands
     internal int m_runtime_serial_number;
     internal Style m_style_flags;
     Rhino.PlugIns.PlugIn m_plugin;
+    Guid m_id = Guid.Empty;
 
     internal static Command LookUpBySerialNumber(int sn)
     {
@@ -248,16 +249,22 @@ namespace Rhino.Commands
     }
 
     /// <summary>
-    /// Gets the ID of this command.
-    /// You can associate an ID with the
-    /// <see cref="System.Runtime.InteropServices.GuidAttribute">GuidAttribute</see> attribute
-    /// applied to the class.
+    /// Gets the  unique ID of this command. It is best to use a Guid
+    /// attribute for each custom derived command class since this will
+    /// keep the id consistent between sessions of Rhino
+    /// <see cref="System.Runtime.InteropServices.GuidAttribute">GuidAttribute</see>
     /// </summary>
     public virtual Guid Id
     {
       get
       {
-        return GetType().GUID;
+        if( Guid.Empty == m_id )
+        {
+          m_id = GetType().GUID;
+          if( Guid.Empty== m_id )
+            m_id = Guid.NewGuid();
+        }
+        return m_id;
       }
     }
 

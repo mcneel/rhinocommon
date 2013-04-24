@@ -23,11 +23,11 @@ public:
   ON_UUID ManagedTypeId() const { return m_userdata_uuid; }
   ON_UUID PlugInId() const { return m_application_uuid; }
 
-  virtual BOOL GetDescription( ON_wString& description );
-  virtual BOOL Transform(const ON_Xform& xform);
-  virtual BOOL Archive() const; 
-  virtual BOOL Write( ON_BinaryArchive& binary_archive ) const;
-  virtual BOOL Read( ON_BinaryArchive& binary_archive );
+  virtual ON_BOOL32 GetDescription( ON_wString& description );
+  virtual ON_BOOL32 Transform(const ON_Xform& xform);
+  virtual ON_BOOL32 Archive() const; 
+  virtual ON_BOOL32 Write( ON_BinaryArchive& binary_archive ) const;
+  virtual ON_BOOL32 Read( ON_BinaryArchive& binary_archive );
 
   int m_serial_number;
 public:
@@ -70,13 +70,13 @@ CRhCmnUserData::~CRhCmnUserData()
     m_delete(m_serial_number);
 }
 
-BOOL CRhCmnUserData::GetDescription( ON_wString& description )
+ON_BOOL32 CRhCmnUserData::GetDescription( ON_wString& description )
 {
   description = m_description;
   return TRUE;
 }
 
-BOOL CRhCmnUserData::Transform(const ON_Xform& xform)
+ON_BOOL32 CRhCmnUserData::Transform(const ON_Xform& xform)
 {
   // Tell .NET that Transform virtual function has been called
   if( m_transform )
@@ -96,7 +96,7 @@ RH_C_FUNCTION void ON_UserData_OnTransform(ON_UserData* pUserData, const ON_Xfor
   CRhCmnUserData::m_transform = temp;
 }
 
-BOOL CRhCmnUserData::Archive() const
+ON_BOOL32 CRhCmnUserData::Archive() const
 {
   if( NULL==m_archive || NULL==m_readwrite )
     return FALSE;
@@ -105,7 +105,7 @@ BOOL CRhCmnUserData::Archive() const
   return rc>0?TRUE:FALSE;
 }
 
-BOOL CRhCmnUserData::Write( ON_BinaryArchive& binary_archive ) const
+ON_BOOL32 CRhCmnUserData::Write( ON_BinaryArchive& binary_archive ) const
 {
   BOOL rc = FALSE;
   if( m_readwrite )
@@ -113,7 +113,7 @@ BOOL CRhCmnUserData::Write( ON_BinaryArchive& binary_archive ) const
   return rc;
 }
 
-BOOL CRhCmnUserData::Read( ON_BinaryArchive& binary_archive )
+ON_BOOL32 CRhCmnUserData::Read( ON_BinaryArchive& binary_archive )
 {
   BOOL rc = FALSE;
   if( m_readwrite )
@@ -239,7 +239,7 @@ const ON_ClassId* CRhCmnUserData::ClassId() const
       g_classIds.m_class_ids.Append( pNewClassId );
     }
     if( !m_pClassId )
-      return __super::ClassId();
+      return ON_UserData::ClassId();
   }
   return m_pClassId;
 }

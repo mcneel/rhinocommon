@@ -45,11 +45,19 @@ RH_C_FUNCTION void ON_wString_Delete(ON_wString* pString)
     delete pString;
 }
 
-RH_C_FUNCTION const wchar_t* ON_wString_Get(ON_wString* pString)
+static CRhCmnStringHolder string_get_holder;
+RH_C_FUNCTION const RHMONO_STRING* ON_wString_Get(ON_wString* pString)
 {
-  const wchar_t* rc = NULL;
+  const RHMONO_STRING* rc = NULL;
   if( pString )
+  {
+#if defined (__APPLE__)
+    string_get_holder.Set(*pString);
+    rc = string_get_holder.Array();
+#else
     rc = pString->Array();
+#endif
+  }
   return rc;
 }
 

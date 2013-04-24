@@ -699,8 +699,12 @@ namespace Rhino.Commands
       {
         if (m_english_name == null)
         {
-          IntPtr pName = UnsafeNativeMethods.CRhinoCommand_Name(m_pCommand, true);
-          m_english_name = IntPtr.Zero == pName ? string.Empty : Marshal.PtrToStringUni(pName);
+          using (var sh = new Runtime.StringHolder())
+          {
+            IntPtr pStringHolder = sh.NonConstPointer();
+            UnsafeNativeMethods.CRhinoCommand_Name(m_pCommand, true, pStringHolder);
+            m_english_name = sh.ToString();
+          }
         }
         return m_english_name;
       }
@@ -715,8 +719,12 @@ namespace Rhino.Commands
       {
         if (m_local_name == null)
         {
-          IntPtr pName = UnsafeNativeMethods.CRhinoCommand_Name(m_pCommand, false);
-          m_local_name = IntPtr.Zero == pName ? string.Empty : Marshal.PtrToStringUni(pName);
+          using (var sh = new Runtime.StringHolder())
+          {
+            IntPtr pStringHolder = sh.NonConstPointer();
+            UnsafeNativeMethods.CRhinoCommand_Name(m_pCommand, false, pStringHolder);
+            m_local_name = sh.ToString();
+          }
         }
         return m_local_name;
       }
@@ -733,8 +741,12 @@ namespace Rhino.Commands
       {
         if (m_plugin_name == null)
         {
-          IntPtr pName = UnsafeNativeMethods.CRhinoCommand_PlugInName(m_pCommand);
-          m_plugin_name = IntPtr.Zero == pName ? string.Empty : Marshal.PtrToStringUni(pName);
+          using (var sh = new Runtime.StringHolder())
+          {
+            IntPtr pStringHolder = sh.NonConstPointer();
+            UnsafeNativeMethods.CRhinoCommand_PlugInName(m_pCommand, pStringHolder);
+            m_plugin_name = sh.ToString();
+          }
         }
         return m_plugin_name;
       }

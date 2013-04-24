@@ -2211,7 +2211,7 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_wString_Delete(IntPtr pString);
 
-  //const wchar_t* ON_wString_Get(ON_wString* pString)
+  //const RHMONO_STRING* ON_wString_Get(ON_wString* pString)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_wString_Get(IntPtr pString);
 
@@ -3698,9 +3698,9 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Object_SetUserString(IntPtr pObject, [MarshalAs(UnmanagedType.LPWStr)]string _key, [MarshalAs(UnmanagedType.LPWStr)]string _value);
 
-  //const RHMONO_STRING* ON_Object_GetUserString(const ON_Object* pObject, const RHMONO_STRING* _key)
+  //void ON_Object_GetUserString(const ON_Object* pObject, const RHMONO_STRING* _key, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_Object_GetUserString(IntPtr pObject, [MarshalAs(UnmanagedType.LPWStr)]string _key);
+  internal static extern void ON_Object_GetUserString(IntPtr pObject, [MarshalAs(UnmanagedType.LPWStr)]string _key, IntPtr pStringHolder);
 
   //int ON_Object_UserStringCount(const ON_Object* pObject)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -3727,9 +3727,9 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Object_AttachUserData(IntPtr pOnObject, IntPtr pUserData, [MarshalAs(UnmanagedType.U1)]bool detachIfNeeded);
 
-  //const RHMONO_STRING* ON_UserStringList_KeyValue(const ON_ClassArray<ON_UserString>* pList, int i, bool key)
+  //void ON_UserStringList_KeyValue(const ON_ClassArray<ON_UserString>* pList, int i, bool key, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_UserStringList_KeyValue(IntPtr pList, int i, [MarshalAs(UnmanagedType.U1)]bool key);
+  internal static extern void ON_UserStringList_KeyValue(IntPtr pList, int i, [MarshalAs(UnmanagedType.U1)]bool key, IntPtr pStringHolder);
 
   //void ON_UserStringList_Delete(ON_ClassArray<ON_UserString>* pList)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5762,13 +5762,13 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoCommand_Id(IntPtr pConstCommand);
 
-  //const wchar_t* CRhinoCommand_Name(const CRhinoCommand* pConstCommand, bool english)
+  //void CRhinoCommand_Name(const CRhinoCommand* pConstCommand, bool english, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr CRhinoCommand_Name(IntPtr pConstCommand, [MarshalAs(UnmanagedType.U1)]bool english);
+  internal static extern void CRhinoCommand_Name(IntPtr pConstCommand, [MarshalAs(UnmanagedType.U1)]bool english, IntPtr pStringHolder);
 
-  //const wchar_t* CRhinoCommand_PlugInName(const CRhinoCommand* pConstCommand)
+  //void CRhinoCommand_PlugInName(const CRhinoCommand* pConstCommand, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr CRhinoCommand_PlugInName(IntPtr pConstCommand);
+  internal static extern void CRhinoCommand_PlugInName(IntPtr pConstCommand, IntPtr pStringHolder);
 
   //CRhinoHistory* CRhinoHistory_New(ON_UUID command_id, int version)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

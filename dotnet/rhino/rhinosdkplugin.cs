@@ -987,8 +987,15 @@ namespace Rhino.PlugIns
 
     public static string[] GetInstalledPlugInFolders()
     {
+			System.Collections.Generic.List<string> dirs = new System.Collections.Generic.List<string>(32);
+			for( int i=0; i<m_plugins.Count; i++ )
+			{
+				var dir = System.IO.Path.GetDirectoryName(m_plugins[i].Assembly.Location);
+				if( !dirs.Contains(dir) )
+					dirs.Add(dir);
+			}
+
       int count = InstalledPlugInCount;
-      System.Collections.Generic.List<string> dirs = new System.Collections.Generic.List<string>(32);
       for (int i = 0; i < count; i++)
       {
         IntPtr pFile = UnsafeNativeMethods.CRhinoPlugInManager_GetFileName(i);

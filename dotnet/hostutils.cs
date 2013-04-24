@@ -565,6 +565,7 @@ namespace Rhino.Runtime
     /// </summary>
     public static event ExceptionReportDelegate OnExceptionReport;
 
+#if !OPENNURBS_SDK
     // April 4, 2012 Tim
     // If you don't explicitly set this to null, even though it gets initialized to null, you get compiler
     // warnings in the build process.  This makes Dale jumpy.  So, don't remove the "= null", even though it 
@@ -597,6 +598,7 @@ namespace Rhino.Runtime
 
       return method.DynamicInvoke(args);
     }
+#endif
 
     /// <summary>
     /// Gets the debug dumps. This is a text description of the geometric contents.

@@ -12,7 +12,8 @@ class Import
 #if MONO_BUILD
   public const string lib = "__Internal";
   public const string librdk = "__Internal";
-#elif OPENNURBS_SDK
+#else
+#if OPENNURBS_SDK
   public const string lib = "rhino3dmio_native";
   public const string librdk = "rhino3dmio_native";
 #else
@@ -21,6 +22,7 @@ class Import
   // to append an extension to find the dynamic library
   public const string lib = "rhcommon_c";
   public const string librdk = "rhcommonrdk_c";
+#endif
 #endif
   private Import() { }
 }

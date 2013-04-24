@@ -1,5 +1,25 @@
 #include "StdAfx.h"
 
+#if defined(__APPLE__) && defined(OPENNURBS_BUILD)
+ON_wString UniChar2on(const UniChar* inStr)
+{
+  // get length of inStr
+  int inStrLen;
+  for (inStrLen=0; inStr[inStrLen]; inStrLen++)
+    ;
+  
+  // create an ON_wString with sufficient length
+  ON_wString wstr;
+  wstr.SetLength(inStrLen);
+  
+  // copy inStr into wstr
+  int idx;
+  for (idx=0; idx<inStrLen; idx++)
+    wstr[idx] = inStr[idx];
+  return wstr;
+}
+#endif
+
 CRhCmnStringHolder::CRhCmnStringHolder()
 {
 #if defined(__APPLE__)

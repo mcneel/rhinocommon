@@ -1,5 +1,7 @@
 #pragma once
 
+#if !defined(__APPLE__)
+
 #if defined(OPENNURBS_BUILD)
 
 #if !defined(ON_MSC_SOLUTION_DIR)
@@ -78,3 +80,4 @@
 
 #endif
 
+#endif //!defined(__APPLE__)

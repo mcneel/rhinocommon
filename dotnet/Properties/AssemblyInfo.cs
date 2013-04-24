@@ -60,7 +60,12 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyFileVersion("5.0.20693.0")]
 
+#if MONO_BUILD && OPENNURBS_SDK
+//Mobile platform build has non-compliant classes
+[assembly: System.CLSCompliant(false)]
+#else
 [assembly: System.CLSCompliant(true)]
+#endif
 
 // 23 April 2007 S. Baer (RR 25439)
 // Plug-Ins that are being loaded from a network drive will throw security exceptions
@@ -68,6 +73,6 @@ using System.Runtime.InteropServices;
 // also requires that this attribute be set in order for things to work.
 [assembly: System.Security.AllowPartiallyTrustedCallers]
 
-#if !RHINO_SDK
+#if !RHINO_SDK && !MONO_BUILD
 [assembly: System.Security.SecurityRules(System.Security.SecurityRuleSet.Level1)]
 #endif

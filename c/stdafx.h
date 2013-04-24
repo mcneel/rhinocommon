@@ -9,6 +9,7 @@
 #define VC_EXTRALEAN		      // Exclude rarely-used stuff from Windows headers
 #endif
 
+
 // Rhino SDK Preamble
 #if defined(GRASSHOPPER_V4)
 ////////////////////////////////////////////////////////////////////////////
@@ -78,9 +79,9 @@ __declspec(selectany) int _forceAtlDllManifestRTM;
 // TODO: Add additional include files here
 #include <afxadv.h>
 
-#endif (_WIN32)
+#endif //(_WIN32)
 
-#if defined (__APPLE__)
+#if defined (__APPLE__) && !defined(OPENNURBS_BUILD)
 #include "../../../rhino4/AfxMac.h"
 #include "../../../rhino4/OSX/MacHelpers.h"
 #endif

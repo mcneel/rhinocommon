@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Windows.Forms;
 
+#if !OPENNURBS_SDK
+using System.Windows.Forms;
+#endif
 
 #if RDK_CHECKED
 

@@ -101,9 +101,19 @@ public:
 // for a given platform.
 #define INPUTSTRINGCOERCE( _variablename, _parametername) \
   const wchar_t* _variablename = _parametername;
+//#endif
+#else
+#if defined (__APPLE__)
+
+#if defined (OPENNURBS_BUILD)
+#define CALLBACK
+typedef signed char     BOOL;
+typedef const wchar_t*  LPCTSTR;
+typedef unsigned short                  UInt16;
+typedef UInt16                          UniChar;
+ON_wString UniChar2on(const UniChar* inStr);
 #endif
 
-#if defined (__APPLE__)
 #define RHMONO_STRING UniChar
 // macro used to convert input strings to their appropriate type
 // for a given platform. On Mac I'm expecting that we will be using
@@ -117,7 +127,7 @@ public:
     _variablename = (LPCTSTR) _variablename##_;                        \
   }
 #endif
-
+#endif
 
 #if defined(OPENNURBS_BUILD)
 class CRhCmnStringHolder

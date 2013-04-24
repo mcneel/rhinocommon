@@ -1013,6 +1013,38 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Creates a hollowed out shell from a solid Brep. Function only operates on simple, solid, manifold Breps.
+    /// </summary>
+    /// <param name="brep">The solid Brep to shell.</param>
+    /// <param name="facesToRemove">The indices of the Brep faces to remove. These surfaces are removed and the remainder is offset inward, using the outer parts of the removed surfaces to join the inner and outer parts.</param>
+    /// <param name="distance">The distance, or thickness, for the shell. This is a signed distance value with respect to face normals and flipped faces.</param>
+    /// <param name="tolerance">The offset tolerane. When in doubt, use the document's absolute tolerance.</param>
+    /// <returns>An array of Brep results or null on failure.</returns>
+    public static Brep[] CreateShell(Brep brep, IEnumerable<int> facesToRemove, double distance, double tolerance)
+    {
+      if (null == brep) { throw new ArgumentNullException("brep"); }
+      if (null == facesToRemove) { throw new ArgumentNullException("facesToRemove"); }
+
+      IntPtr pConstBrep = brep.ConstPointer();
+
+      List<int> _facesToRemove = new List<int>();
+      foreach (int fi in facesToRemove)
+        _facesToRemove.Add(fi);
+      int[] __facesToRemove = _facesToRemove.ToArray();
+
+      Runtime.InteropWrappers.SimpleArrayBrepPointer output = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
+      IntPtr pOutput = output.NonConstPointer();
+
+      Brep[] rc = null;
+      if (UnsafeNativeMethods.RHC_RhinoShellBrep(pConstBrep, __facesToRemove.Length, __facesToRemove, distance, tolerance, pOutput) > 0)
+        rc = output.ToNonConstArray();
+
+      output.Dispose();
+
+      return rc;
+    }
+
+    /// <summary>
     /// Joins the breps in the input array at any overlapping edges to form
     /// as few as possible resulting breps. There may be more than one brep in the result array.
     /// </summary>

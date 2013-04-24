@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using Rhino.Runtime;
 
 namespace Rhino.Geometry
 {
@@ -162,13 +163,17 @@ namespace Rhino.Geometry
       get
       {
         IntPtr pThis = ConstPointer();
-        IntPtr pText = UnsafeNativeMethods.ON_Annotation2_Text(pThis, null, false);
-        return pText == IntPtr.Zero ? String.Empty : Marshal.PtrToStringUni(pText);
+        using (var sh = new StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_Annotation2_Text(pThis, pString, null, false);
+          return sh.ToString();
+        }
       }
       set
       {
         IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_Annotation2_Text(pThis, value, false);
+        UnsafeNativeMethods.ON_Annotation2_Text(pThis, IntPtr.Zero, value, false);
       }
     }
 
@@ -180,13 +185,17 @@ namespace Rhino.Geometry
       get
       {
         IntPtr pThis = ConstPointer();
-        IntPtr pText = UnsafeNativeMethods.ON_Annotation2_Text(pThis, null,true);
-        return pText == IntPtr.Zero ? String.Empty : Marshal.PtrToStringUni(pText);
+        using (var sh = new StringHolder())
+        {
+          IntPtr pString = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_Annotation2_Text(pThis, pString, null, true);
+          return sh.ToString();
+        }
       }
       set
       {
         IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_Annotation2_Text(pThis, value,true);
+        UnsafeNativeMethods.ON_Annotation2_Text(pThis, IntPtr.Zero, value,true);
       }
     }
 

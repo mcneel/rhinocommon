@@ -267,9 +267,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Annotation2_SetPoint(IntPtr pAnnotation, int which, Point2d point);
 
-  //const wchar_t* ON_Annotation2_Text(ON_Annotation2* pAnnotation2, const RHMONO_STRING* _str, bool formula)
+  //void ON_Annotation2_Text(ON_Annotation2* pAnnotation2, CRhCmnStringHolder* pStringHolder, const RHMONO_STRING* _str, bool formula)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_Annotation2_Text(IntPtr pAnnotation2, [MarshalAs(UnmanagedType.LPWStr)]string _str, [MarshalAs(UnmanagedType.U1)]bool formula);
+  internal static extern void ON_Annotation2_Text(IntPtr pAnnotation2, IntPtr pStringHolder, [MarshalAs(UnmanagedType.LPWStr)]string _str, [MarshalAs(UnmanagedType.U1)]bool formula);
 
   //double ON_Annotation2_Height(ON_Annotation2* ptr, bool set, double set_value)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -10672,6 +10672,17 @@ internal partial class UnsafeNativeMethods
   //ON_Brep* RHC_CapPlanarHoles(const ON_Brep* pBrep, double tolerance)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr RHC_CapPlanarHoles(IntPtr pBrep, double tolerance);
+
+  //int RHC_RhinoShellBrep(
+  //  const ON_Brep* pBrep,
+  //  int face_count,
+  //  /*ARRAY*/const int* face_indices,
+  //  double distance,
+  //  double tolerance,
+  //  ON_SimpleArray<ON_Brep*>* pOutput
+  //  )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoShellBrep(IntPtr pBrep, int face_count, int[] face_indices, double distance, double tolerance, IntPtr pOutput);
 
   //void RHC_SetReplaceColorDialogCallback( SHOWCUSTOMCOLORDLGPROC proc )
   // SKIPPING - Contains a function pointer which needs to be written by hand

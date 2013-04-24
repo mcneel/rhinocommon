@@ -25,9 +25,8 @@ RH_C_FUNCTION void ON_Annotation2_SetPoint(ON_Annotation2* pAnnotation, int whic
   }
 }
 
-RH_C_FUNCTION const wchar_t* ON_Annotation2_Text(ON_Annotation2* pAnnotation2, const RHMONO_STRING* _str, bool formula)
+RH_C_FUNCTION void ON_Annotation2_Text(ON_Annotation2* pAnnotation2, CRhCmnStringHolder* pStringHolder, const RHMONO_STRING* _str, bool formula)
 {
-  const wchar_t* rc = NULL;
   if( pAnnotation2 )
   {
     if( _str )
@@ -49,16 +48,18 @@ RH_C_FUNCTION const wchar_t* ON_Annotation2_Text(ON_Annotation2* pAnnotation2, c
 #endif
     }
 
+    if( pStringHolder )
+    {
 #if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
-    if( formula )
-      rc = pAnnotation2->TextFormula();
-    else
-      rc = pAnnotation2->TextValue();
+      if( formula )
+        pStringHolder->Set( pAnnotation2->TextFormula() );
+      else
+        pStringHolder->Set( pAnnotation2->TextValue() );
 #else
-    rc = pAnnotation2->UserText();
+      pStringHolder->Set( pAnnotation2->UserText() );
 #endif
+    }
   }
-  return rc;
 }
 
 

@@ -1,5 +1,7 @@
 #include "StdAfx.h"
 
+#if !defined(OPENNURBS_BUILD)
+
 RH_C_FUNCTION void ON_MassProperties_Delete( ON_MassProperties* ptr )
 {
   if( ptr )
@@ -148,3 +150,4 @@ RH_C_FUNCTION bool ON_MassProperties_GetMoments(const ON_MassProperties* pConstM
   }
   return rc;
 }
+#endif

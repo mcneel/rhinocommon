@@ -1746,6 +1746,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Brep_BrepTrimPointer(IntPtr pConstBrep, int trimIndex);
 
+  //const ON_Surface* ON_Brep_BrepSurfacePointer( const ON_Brep* pConstBrep, int surfaceIndex )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_Brep_BrepSurfacePointer(IntPtr pConstBrep, int surfaceIndex);
+
   //ON_Brep* ON_Brep_FromSurface( const ON_Surface* pConstSurface )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Brep_FromSurface(IntPtr pConstSurface);
@@ -1795,9 +1799,115 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Brep_CopyTrims(IntPtr pConstBrepFace, IntPtr pConstSurface, double tolerance);
 
+  //int ON_Brep_AddTrimCurve( ON_Brep* pBrep, const ON_Curve* pConstCurve )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_AddTrimCurve(IntPtr pBrep, IntPtr pConstCurve);
+
+  //int ON_Brep_AddEdgeCurve( ON_Brep* pBrep, const ON_Curve* pConstCurve )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_AddEdgeCurve(IntPtr pBrep, IntPtr pConstCurve);
+
   //int ON_Brep_AddSurface( ON_Brep* pBrep, const ON_Surface* pConstSurface )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Brep_AddSurface(IntPtr pBrep, IntPtr pConstSurface);
+
+  //bool ON_Brep_SetEdgeCurve( ON_Brep* pBrep, int edgecurveIndex, int c3Index, ON_INTERVAL_STRUCT subdomain )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Brep_SetEdgeCurve(IntPtr pBrep, int edgecurveIndex, int c3Index, Interval subdomain);
+
+  //bool ON_Brep_SetTrimCurve( ON_Brep* pBrep, int trimcurveIndex, int c3Index, ON_INTERVAL_STRUCT subdomain )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Brep_SetTrimCurve(IntPtr pBrep, int trimcurveIndex, int c3Index, Interval subdomain);
+
+  //int ON_Brep_NewVertex( ON_Brep* pBrep )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewVertex(IntPtr pBrep);
+
+  //int ON_Brep_NewVertex2( ON_Brep* pBrep, ON_3DPOINT_STRUCT point, double tolerance )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewVertex2(IntPtr pBrep, Point3d point, double tolerance);
+
+  //int ON_Brep_NewEdge( ON_Brep* pBrep, int curveIndex )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewEdge(IntPtr pBrep, int curveIndex);
+
+  //int ON_Brep_NewEdge2( ON_Brep* pBrep, int vertex1, int vertex2, int curveIndex, ON_INTERVAL_STRUCT subdomain, double tolerance )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewEdge2(IntPtr pBrep, int vertex1, int vertex2, int curveIndex, Interval subdomain, double tolerance);
+
+  //int ON_Brep_NewFace(ON_Brep* pBrep, int si)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewFace(IntPtr pBrep, int si);
+
+  //int ON_Brep_NewFace2(ON_Brep* pBrep, const ON_Surface* pConstSurface)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewFace2(IntPtr pBrep, IntPtr pConstSurface);
+
+  //int ON_Brep_NewRuledFace(ON_Brep* pBrep, int edgeA, bool revEdgeA, int edgeB, bool revEdgeB)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewRuledFace(IntPtr pBrep, int edgeA, [MarshalAs(UnmanagedType.U1)]bool revEdgeA, int edgeB, [MarshalAs(UnmanagedType.U1)]bool revEdgeB);
+
+  //int ON_Brep_NewConeFace(ON_Brep* pBrep, int vertexIndex, int edgeIndex, bool revEdge)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewConeFace(IntPtr pBrep, int vertexIndex, int edgeIndex, [MarshalAs(UnmanagedType.U1)]bool revEdge);
+
+  //int ON_Brep_NewLoop(ON_Brep* pBrep, int loopType, ON_BrepFace* pBrepFace)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewLoop(IntPtr pBrep, int loopType, IntPtr pBrepFace);
+
+  //int ON_Brep_NewOuterLoop(ON_Brep* pBrep, int faceIndex)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewOuterLoop(IntPtr pBrep, int faceIndex);
+
+  //int ON_Brep_NewPlanarFaceLoop(ON_Brep* pBrep, int faceIndex, int loopType, ON_SimpleArray<ON_Curve*>* pCurveArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewPlanarFaceLoop(IntPtr pBrep, int faceIndex, int loopType, IntPtr pCurveArray);
+
+  //ON_BrepVertex* ON_BrepVertex_GetPointer(ON_Brep* pBrep, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_BrepVertex_GetPointer(IntPtr pBrep, int index);
+
+  //int ON_Brep_NewTrim( ON_Brep* pBrep, int curveIndex )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewTrim(IntPtr pBrep, int curveIndex);
+
+  //int ON_Brep_NewTrim2( ON_Brep* pBrep, bool bRev3d, int loopIndex, int c2i )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewTrim2(IntPtr pBrep, [MarshalAs(UnmanagedType.U1)]bool bRev3d, int loopIndex, int c2i);
+
+  //int ON_Brep_NewTrim3( ON_Brep* pBrep, bool bRev3d, int edgeIndex, int c2i )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewTrim3(IntPtr pBrep, [MarshalAs(UnmanagedType.U1)]bool bRev3d, int edgeIndex, int c2i);
+
+  //int ON_Brep_NewTrim4( ON_Brep* pBrep, int edgeIndex, bool bRev3d, int loopIndex, int c2i )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewTrim4(IntPtr pBrep, int edgeIndex, [MarshalAs(UnmanagedType.U1)]bool bRev3d, int loopIndex, int c2i);
+
+  //int ON_Brep_NewSingularTrim(ON_Brep* pBrep, int vertexIndex, int loopIndex, int iso, int c2i)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewSingularTrim(IntPtr pBrep, int vertexIndex, int loopIndex, int iso, int c2i);
+
+  //int ON_Brep_NewPointOnFace(ON_Brep* pBrep, int faceIndex, double s, double t)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewPointOnFace(IntPtr pBrep, int faceIndex, double s, double t);
+
+  //int ON_Brep_NewCurveOnFace(ON_Brep* pBrep, int faceIndex, int edgeIndex, bool bRev3d, int c2i)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Brep_NewCurveOnFace(IntPtr pBrep, int faceIndex, int edgeIndex, [MarshalAs(UnmanagedType.U1)]bool bRev3d, int c2i);
+
+  //void ON_Brep_Append(ON_Brep* pBrep, const ON_Brep* pConstOtherBrep)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Brep_Append(IntPtr pBrep, IntPtr pConstOtherBrep);
+
+  //void ON_Brep_SetVertices(ON_Brep* pBrep)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Brep_SetVertices(IntPtr pBrep);
+
+  //void ON_Brep_SetTrimIsoFlags(ON_Brep* pBrep)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Brep_SetTrimIsoFlags(IntPtr pBrep);
 
   //ON_Brep* ONC_ON_BrepCone( const ON_Cone* cone, bool cap )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

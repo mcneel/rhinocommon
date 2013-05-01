@@ -422,10 +422,8 @@ RH_C_FUNCTION bool ON_Brep_SplitKinkyEdge(ON_Brep* pBrep, int edge_index, double
 RH_C_FUNCTION int ON_Brep_SplitEdgeAtParameters(ON_Brep* pBrep, int edge_index, int count, /*ARRAY*/const double* parameters)
 {
   int rc = 0;
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pBrep && count>0 && parameters )
     rc = pBrep->SplitEdgeAtParameters(edge_index, count, parameters);
-#endif
   return rc;
 }
 
@@ -452,6 +450,8 @@ RH_C_FUNCTION int ON_Brep_GetInt(const ON_Brep* pConstBrep, int which)
   const int idxEdgeCount = 3;
   const int idxLoopCount = 4;
   const int idxTrimCount = 5;
+  const int idxSurfaceCount = 6;
+  const int idxVertexCount = 7;
   int rc = 0;
   if( pConstBrep )
   {
@@ -474,6 +474,12 @@ RH_C_FUNCTION int ON_Brep_GetInt(const ON_Brep* pConstBrep, int which)
       break;
     case idxTrimCount:
       rc = pConstBrep->m_T.Count();
+      break;
+    case idxSurfaceCount:
+      rc = pConstBrep->m_S.Count();
+      break;
+    case idxVertexCount:
+      rc = pConstBrep->m_V.Count();
       break;
     default:
       break;
@@ -572,6 +578,16 @@ RH_C_FUNCTION const ON_BrepTrim* ON_Brep_BrepTrimPointer( const ON_Brep* pConstB
   if( pConstBrep )
   {
     rc = pConstBrep->Trim(trimIndex);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION const ON_Surface* ON_Brep_BrepSurfacePointer( const ON_Brep* pConstBrep, int surfaceIndex )
+{
+  const ON_Surface* rc = NULL;
+  if( pConstBrep && surfaceIndex>=0 && surfaceIndex<pConstBrep->m_S.Count() )
+  {
+    rc = pConstBrep->m_S[surfaceIndex];
   }
   return rc;
 }
@@ -839,6 +855,30 @@ RH_C_FUNCTION ON_Brep* ON_Brep_CopyTrims( const ON_BrepFace* pConstBrepFace, con
 
 #endif
 
+RH_C_FUNCTION int ON_Brep_AddTrimCurve( ON_Brep* pBrep, const ON_Curve* pConstCurve )
+{
+  int rc = -1;
+  if( pBrep && pConstCurve )
+  {
+    ON_Curve* pCurve = pConstCurve->DuplicateCurve();
+    if( pCurve )
+      rc = pBrep->AddTrimCurve(pCurve);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_AddEdgeCurve( ON_Brep* pBrep, const ON_Curve* pConstCurve )
+{
+  int rc = -1;
+  if( pBrep && pConstCurve )
+  {
+    ON_Curve* pCurve = pConstCurve->DuplicateCurve();
+    if( pCurve )
+      rc = pBrep->AddEdgeCurve(pCurve);
+  }
+  return rc;
+}
+
 RH_C_FUNCTION int ON_Brep_AddSurface( ON_Brep* pBrep, const ON_Surface* pConstSurface )
 {
   int rc = -1;
@@ -853,6 +893,296 @@ RH_C_FUNCTION int ON_Brep_AddSurface( ON_Brep* pBrep, const ON_Surface* pConstSu
     }
   }
   return rc;
+}
+
+RH_C_FUNCTION bool ON_Brep_SetEdgeCurve( ON_Brep* pBrep, int edgecurveIndex, int c3Index, ON_INTERVAL_STRUCT subdomain )
+{
+  bool rc = false;
+  if( pBrep && edgecurveIndex>=0 && edgecurveIndex<pBrep->m_E.Count() )
+  {
+    ON_BrepEdge& edge = pBrep->m_E[edgecurveIndex];
+    ON_Interval _subdomain(subdomain.val[0], subdomain.val[1]);
+    if( _subdomain.IsValid() )
+      rc = pBrep->SetEdgeCurve(edge, c3Index, &_subdomain);
+    else
+      rc = pBrep->SetEdgeCurve(edge, c3Index);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Brep_SetTrimCurve( ON_Brep* pBrep, int trimcurveIndex, int c3Index, ON_INTERVAL_STRUCT subdomain )
+{
+  bool rc = false;
+  if( pBrep && trimcurveIndex>=0 && trimcurveIndex<pBrep->m_T.Count() )
+  {
+    ON_BrepTrim& trim = pBrep->m_T[trimcurveIndex];
+    ON_Interval _subdomain(subdomain.val[0], subdomain.val[1]);
+    if( _subdomain.IsValid() )
+      rc = pBrep->SetTrimCurve(trim, c3Index, &_subdomain);
+    else
+      rc = pBrep->SetTrimCurve(trim, c3Index);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewVertex( ON_Brep* pBrep )
+{
+  int rc = -1;
+  if( pBrep )
+  {
+    ON_BrepVertex& vertex = pBrep->NewVertex();
+    rc = vertex.m_vertex_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewVertex2( ON_Brep* pBrep, ON_3DPOINT_STRUCT point, double tolerance )
+{
+  int rc = -1;
+  if( pBrep )
+  {
+    ON_3dPoint _point(point.val);
+    ON_BrepVertex& vertex = pBrep->NewVertex(_point, tolerance);
+    rc = vertex.m_vertex_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewEdge( ON_Brep* pBrep, int curveIndex )
+{
+  int rc = -1;
+  if( pBrep )
+  {
+    ON_BrepEdge& edge = pBrep->NewEdge(curveIndex);
+    rc = edge.m_edge_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewEdge2( ON_Brep* pBrep, int vertex1, int vertex2, int curveIndex, ON_INTERVAL_STRUCT subdomain, double tolerance )
+{
+  int rc = -1;
+  if( pBrep && vertex1>=0 && vertex1<pBrep->m_V.Count() && vertex2>=0 && vertex2<pBrep->m_V.Count() )
+  {
+    ON_BrepVertex& start = pBrep->m_V[vertex1];
+    ON_BrepVertex& end = pBrep->m_V[vertex2];
+    ON_Interval _subdomain(subdomain.val[0], subdomain.val[1]);
+    const ON_Interval* interval = _subdomain.IsValid() ? &_subdomain: NULL;
+    ON_BrepEdge& edge = pBrep->NewEdge(start, end, curveIndex, interval, tolerance);
+    rc = edge.m_edge_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewFace(ON_Brep* pBrep, int si)
+{
+  int rc = -1;
+  if( pBrep )
+  {
+    ON_BrepFace& face = pBrep->NewFace(si);
+    rc = face.m_face_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewFace2(ON_Brep* pBrep, const ON_Surface* pConstSurface)
+{
+  int rc = -1;
+  if( pBrep && pConstSurface )
+  {
+    ON_BrepFace* pFace = pBrep->NewFace(*pConstSurface);
+    if( pFace )
+      rc = pFace->m_face_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewRuledFace(ON_Brep* pBrep, int edgeA, bool revEdgeA, int edgeB, bool revEdgeB)
+{
+  int rc = -1;
+  if( pBrep && edgeA>=0 && edgeA<pBrep->m_E.Count() && edgeB>=0 && edgeB<pBrep->m_E.Count() )
+  {
+    ON_BrepEdge& _edgeA = pBrep->m_E[edgeA];
+    ON_BrepEdge& _edgeB = pBrep->m_E[edgeB];
+    ON_BrepFace* pFace = pBrep->NewRuledFace(_edgeA, revEdgeA, _edgeB, revEdgeB);
+    if( pFace )
+      rc = pFace->m_face_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewConeFace(ON_Brep* pBrep, int vertexIndex, int edgeIndex, bool revEdge)
+{
+  int rc = -1;
+  if( pBrep && vertexIndex>=0 && vertexIndex<pBrep->m_V.Count() && edgeIndex>=0 && edgeIndex<pBrep->m_E.Count() )
+  {
+    ON_BrepVertex& vertex = pBrep->m_V[vertexIndex];
+    ON_BrepEdge& edge = pBrep->m_E[edgeIndex];
+    ON_BrepFace* pFace = pBrep->NewConeFace(vertex, edge, revEdge);
+    if( pFace )
+      rc = pFace->m_face_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewLoop(ON_Brep* pBrep, int loopType, ON_BrepFace* pBrepFace)
+{
+  ON_BrepLoop::TYPE _looptype = (ON_BrepLoop::TYPE)loopType;
+  int rc = -1;
+  if( pBrep )
+  {
+    if( pBrepFace )
+    {
+      ON_BrepLoop& loop = pBrep->NewLoop(_looptype, *pBrepFace);
+      rc = loop.m_loop_index;
+    }
+    else
+    {
+      ON_BrepLoop& loop = pBrep->NewLoop(_looptype);
+      rc = loop.m_loop_index;
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewOuterLoop(ON_Brep* pBrep, int faceIndex)
+{
+  int rc = -1;
+  if( pBrep )
+  {
+    ON_BrepLoop* pLoop = pBrep->NewOuterLoop(faceIndex);
+    if( pLoop )
+      rc = pLoop->m_loop_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewPlanarFaceLoop(ON_Brep* pBrep, int faceIndex, int loopType, ON_SimpleArray<ON_Curve*>* pCurveArray)
+{
+  int rc = -1;
+  if( pBrep && pCurveArray )
+  {
+    ON_BrepLoop::TYPE _looptype = (ON_BrepLoop::TYPE)loopType;
+    if( pBrep->NewPlanarFaceLoop(faceIndex, _looptype, *pCurveArray, true) )
+    {
+      ON_BrepLoop* pLoop = pBrep->m_L.Last();
+      if( pLoop )
+        rc = pLoop->m_loop_index;
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION ON_BrepVertex* ON_BrepVertex_GetPointer(ON_Brep* pBrep, int index)
+{
+  if( pBrep )
+    return pBrep->m_V.At(index);
+  return NULL;
+}
+
+RH_C_FUNCTION int ON_Brep_NewTrim( ON_Brep* pBrep, int curveIndex )
+{
+  int rc = -1;
+  if( pBrep )
+  {
+    ON_BrepTrim& trim = pBrep->NewTrim(curveIndex);
+    rc = trim.m_trim_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewTrim2( ON_Brep* pBrep, bool bRev3d, int loopIndex, int c2i )
+{
+  int rc = -1;
+  if( pBrep && loopIndex>=0 && loopIndex<pBrep->m_L.Count() )
+  {
+    ON_BrepLoop& loop = pBrep->m_L[loopIndex];
+    ON_BrepTrim& trim = pBrep->NewTrim(bRev3d, loop, c2i);
+    rc = trim.m_trim_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewTrim3( ON_Brep* pBrep, bool bRev3d, int edgeIndex, int c2i )
+{
+  int rc = -1;
+  if( pBrep && edgeIndex>=0 && edgeIndex<pBrep->m_E.Count() )
+  {
+    ON_BrepEdge& edge = pBrep->m_E[edgeIndex];
+    ON_BrepTrim& trim = pBrep->NewTrim(edge, bRev3d, c2i);
+    rc = trim.m_trim_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewTrim4( ON_Brep* pBrep, int edgeIndex, bool bRev3d, int loopIndex, int c2i )
+{
+  int rc = -1;
+  if( pBrep && edgeIndex>=0 && edgeIndex<pBrep->m_E.Count() && loopIndex>=0 && loopIndex<pBrep->m_L.Count() )
+  {
+    ON_BrepEdge& edge = pBrep->m_E[edgeIndex];
+    ON_BrepLoop& loop = pBrep->m_L[loopIndex];
+    ON_BrepTrim& trim = pBrep->NewTrim(edge, bRev3d, loop, c2i);
+    rc = trim.m_trim_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewSingularTrim(ON_Brep* pBrep, int vertexIndex, int loopIndex, int iso, int c2i)
+{
+  int rc = -1;
+  if( pBrep && vertexIndex>=0 && vertexIndex<pBrep->m_V.Count() && loopIndex>=0 && loopIndex<pBrep->m_L.Count() )
+  {
+    ON_BrepVertex& vertex = pBrep->m_V[vertexIndex];
+    ON_BrepLoop& loop = pBrep->m_L[loopIndex];
+    ON_Surface::ISO _iso = (ON_Surface::ISO)iso;
+    ON_BrepTrim& trim = pBrep->NewSingularTrim(vertex, loop, _iso, c2i);
+    rc = trim.m_trim_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewPointOnFace(ON_Brep* pBrep, int faceIndex, double s, double t)
+{
+  int rc = -1;
+  if( pBrep && faceIndex>=0 && faceIndex<pBrep->m_F.Count() )
+  {
+    ON_BrepFace& face = pBrep->m_F[faceIndex];
+    ON_BrepVertex& vertex = pBrep->NewPointOnFace(face, s, t);
+    rc = vertex.m_vertex_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_NewCurveOnFace(ON_Brep* pBrep, int faceIndex, int edgeIndex, bool bRev3d, int c2i)
+{
+  int rc = -1;
+  if( pBrep && faceIndex>=0 && faceIndex<pBrep->m_F.Count() && edgeIndex>=0 && edgeIndex<pBrep->m_E.Count() )
+  {
+    ON_BrepFace& face = pBrep->m_F[faceIndex];
+    ON_BrepEdge& edge = pBrep->m_E[edgeIndex];
+    ON_BrepTrim& trim = pBrep->NewCurveOnFace(face, edge, bRev3d, c2i);
+    rc = trim.m_trim_index;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION void ON_Brep_Append(ON_Brep* pBrep, const ON_Brep* pConstOtherBrep)
+{
+  if(pBrep && pConstOtherBrep)
+    pBrep->Append(*pConstOtherBrep);
+}
+
+RH_C_FUNCTION void ON_Brep_SetVertices(ON_Brep* pBrep)
+{
+  if( pBrep )
+    pBrep->SetVertices();
+}
+
+RH_C_FUNCTION void ON_Brep_SetTrimIsoFlags(ON_Brep* pBrep)
+{
+  if( pBrep )
+    pBrep->SetTrimIsoFlags();
 }
 
 RH_C_FUNCTION ON_Brep* ONC_ON_BrepCone( const ON_Cone* cone, bool cap )
@@ -946,10 +1276,8 @@ RH_C_FUNCTION bool ON_Brep_StandardizeFaceSurface(ON_Brep* pBrep, int face_index
 
 RH_C_FUNCTION void ON_Brep_StandardizeFaceSurfaces(ON_Brep* pBrep)
 {
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pBrep )
     pBrep->StandardizeFaceSurfaces();
-#endif
 }
 
 RH_C_FUNCTION void ON_Brep_Standardize(ON_Brep* pBrep)

@@ -1160,6 +1160,14 @@ namespace Rhino.Geometry
     #endregion
 
     #region constructors
+    /// <summary>Initializes a new empty brep</summary>
+    public Brep()
+    {
+      IntPtr ptr = UnsafeNativeMethods.ON_Brep_New(IntPtr.Zero);
+      ConstructNonConstObject(ptr);
+      ApplyMemoryPressure();
+    }
+
     internal Brep(IntPtr ptr, object parent)
       : base(ptr, parent, -1)
     {
@@ -1183,6 +1191,23 @@ namespace Rhino.Geometry
     internal const int idxEdgeCount = 3;
     internal const int idxLoopCount = 4;
     internal const int idxTrimCount = 5;
+    internal const int idxSurfaceCount = 6;
+    internal const int idxVertexCount = 7;
+
+    Rhino.Geometry.Collections.BrepVertexList m_vertexlist;
+    /// <summary>
+    /// </summary>
+    public Rhino.Geometry.Collections.BrepVertexList Vertices
+    {
+      get { return m_vertexlist ?? (m_vertexlist = new Rhino.Geometry.Collections.BrepVertexList(this)); }
+    }
+
+    Rhino.Geometry.Collections.BrepSurfaceList m_surfacelist;
+    /// <summary> Parametric surfaces used by faces </summary>
+    public Rhino.Geometry.Collections.BrepSurfaceList Surfaces
+    {
+      get { return m_surfacelist ?? (m_surfacelist = new Rhino.Geometry.Collections.BrepSurfaceList(this)); }
+    }
 
     Rhino.Geometry.Collections.BrepEdgeList m_edgelist;
     /// <summary>
@@ -1415,6 +1440,8 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Brep_DuplicateVertices(pConstPtr, outputPointsPtr);
       return outputPoints.ToArray();
     }
+
+
 
     /// <summary>
     /// Reverses entire brep orientation of all faces.
@@ -1780,6 +1807,35 @@ namespace Rhino.Geometry
       return volume;
     }
 #endif
+    /// <summary>
+    /// Add a 2d curve used by the brep trims
+    /// </summary>
+    /// <param name="curve"></param>
+    /// <returns>
+    /// Index used to reference this geometry in the trimming curve list
+    /// </returns>
+    public int AddTrimCurve(Curve curve)
+    {
+      // Use const curve, the C function will duplicate the curve
+      IntPtr pConstCurve = curve.ConstPointer();
+      IntPtr pBrep = NonConstPointer();
+      return UnsafeNativeMethods.ON_Brep_AddTrimCurve(pBrep, pConstCurve);
+    }
+
+    /// <summary>
+    /// Add a 3d curve used by the brep edges
+    /// </summary>
+    /// <param name="curve"></param>
+    /// <returns>
+    /// Index used to reference this geometry in the edge curve list
+    /// </returns>
+    public int AddEdgeCurve(Curve curve)
+    {
+      // Use const curve, the C function will duplicate the curve
+      IntPtr pConstCurve = curve.ConstPointer();
+      IntPtr pBrep = NonConstPointer();
+      return UnsafeNativeMethods.ON_Brep_AddEdgeCurve(pBrep, pConstCurve);
+    }
 
     /// <summary>
     /// Adds a 3D surface used by BrepFace.
@@ -1794,6 +1850,42 @@ namespace Rhino.Geometry
       IntPtr pConstSurface = surface.ConstPointer();
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.ON_Brep_AddSurface(pThis, pConstSurface);
+    }
+
+    /// <summary>
+    /// Appends a copy of another brep to this and updates indices of appended
+    /// brep parts.  Duplicates are not removed
+    /// </summary>
+    /// <param name="other"></param>
+    public void Append(Brep other)
+    {
+      IntPtr pConstOther = other.ConstPointer();
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_Brep_Append(pThis, pConstOther);
+    }
+
+    /// <summary>
+    /// This function can be used to compute vertex information for a
+    /// b-rep when everything but the Vertices array is properly filled in.
+    /// It is intended to be used when creating a Brep from a 
+    /// definition that does not include explicit vertex information.
+    /// </summary>
+    public void SetVertices()
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_Brep_SetVertices(pThis);
+    }
+
+    /// <summary>
+    /// This function can be used to set the BrepTrim::m_iso
+    /// flag. It is intended to be used when creating a Brep from
+    /// a definition that does not include compatible parameter space
+    /// type information.
+    /// </summary>
+    public void SetTrimIsoFlags()
+    {
+      IntPtr pThis = NonConstPointer();
+
     }
 
     /// <summary>
@@ -1995,6 +2087,50 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
+  /// Brep vertex information
+  /// </summary>
+  public class BrepVertex : Point
+  {
+    readonly Brep m_brep;
+    readonly int m_index;
+    internal BrepVertex(int index, Brep owner) : base(IntPtr.Zero, null)
+    {
+      m_index = index;
+      m_brep = owner;
+    }
+
+    #region properties
+    /// <summary>
+    /// Gets the Brep that owns this vertex.
+    /// </summary>
+    public Brep Brep
+    {
+      get { return m_brep; }
+    }
+
+    /// <summary>
+    /// Gets the index of this vertex in the Brep.Vertices collection.
+    /// </summary>
+    public int VertexIndex
+    {
+      get { return m_index; }
+    }
+    #endregion
+
+    internal override IntPtr _InternalGetConstPointer()
+    {
+      IntPtr pConstBrep = m_brep.ConstPointer();
+      return UnsafeNativeMethods.ON_BrepVertex_GetPointer(pConstBrep, m_index);
+    }
+
+    internal override IntPtr NonConstPointer()
+    {
+      IntPtr pConstBrep = m_brep.NonConstPointer();
+      return UnsafeNativeMethods.ON_BrepVertex_GetPointer(pConstBrep, m_index);
+    }
+  }
+
+  /// <summary>
   /// Represents a single edge curve in a Brep object.
   /// </summary>
   public class BrepEdge : CurveProxy
@@ -2012,7 +2148,6 @@ namespace Rhino.Geometry
     #region properties
 
     //    ON_U m_edge_user;
-    //    int m_edge_index;    
     //    ON_BrepTrim* Trim( int eti ) const;
     //    ON_BrepVertex* Vertex(int evi) const;
     //    int EdgeCurveIndexOf() const;
@@ -2126,6 +2261,29 @@ namespace Rhino.Geometry
 
       int rc = UnsafeNativeMethods.ON_Brep_EdgeFaceIndices(pConstBrep, m_index, fi.m_ptr);
       return rc == 0 ? new int[0] : fi.ToArray();
+    }
+
+    /// <summary>
+    /// Set 3d curve geometry used by a b-rep edge.
+    /// </summary>
+    /// <param name="curve3dIndex">index of 3d curve in m_C3[] array</param>
+    /// <returns>true if successful</returns>
+    public bool SetEdgeCurve(int curve3dIndex)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      return UnsafeNativeMethods.ON_Brep_SetEdgeCurve(pBrep, m_index, curve3dIndex, Interval.Unset);
+    }
+
+    /// <summary>
+    /// Set 3d curve geometry used by a b-rep edge.
+    /// </summary>
+    /// <param name="curve3dIndex">index of 3d curve in m_C3[] array</param>
+    /// <param name="subDomain"></param>
+    /// <returns>true if successful</returns>
+    public bool SetEdgeCurve(int curve3dIndex, Interval subDomain)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      return UnsafeNativeMethods.ON_Brep_SetEdgeCurve(pBrep, m_index, curve3dIndex, subDomain);
     }
 
     internal override IntPtr _InternalGetConstPointer()
@@ -2285,6 +2443,29 @@ namespace Rhino.Geometry
         IntPtr pConstBrep = m_brep.ConstPointer();
         return (BrepTrimType)UnsafeNativeMethods.ON_BrepTrim_Type(pConstBrep, m_index);
       }
+    }
+
+    /// <summary>
+    /// Set 2d curve geometry used by a b-rep trim.
+    /// </summary>
+    /// <param name="curve2dIndex">index of 2d curve in m_C2[] array</param>
+    /// <returns>true if successful</returns>
+    public bool SetTrimCurve(int curve2dIndex)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      return UnsafeNativeMethods.ON_Brep_SetTrimCurve(pBrep, m_index, curve2dIndex, Interval.Unset);
+    }
+
+    /// <summary>
+    /// Set 2d curve geometry used by a b-rep trim.
+    /// </summary>
+    /// <param name="curve2dIndex">index of 2d curve in m_C2[] array</param>
+    /// <param name="subDomain"></param>
+    /// <returns>true if successful</returns>
+    public bool SetTrimCurve(int curve2dIndex, Interval subDomain)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      return UnsafeNativeMethods.ON_Brep_SetTrimCurve(pBrep, m_index, curve2dIndex, subDomain);
     }
 
     internal override IntPtr _InternalGetConstPointer()
@@ -3074,10 +3255,146 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_BrepFace_SurfaceOf(pBrep, m_face.m_index);
     }
   }
+
+  class SurfaceHolder
+  {
+    readonly Brep m_brep;
+    readonly int m_index;
+    public SurfaceHolder(Brep brep, int index)
+    {
+      m_brep = brep;
+      m_index = index;
+    }
+
+    public IntPtr ConstSurfacePointer()
+    {
+      IntPtr pConstBrep = m_brep.ConstPointer();
+      return UnsafeNativeMethods.ON_Brep_BrepSurfacePointer(pConstBrep, m_index);
+    }
+    public IntPtr NonConstSurfacePointer()
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      return UnsafeNativeMethods.ON_Brep_BrepSurfacePointer(pBrep, m_index);
+    }
+  }
 }
 
 namespace Rhino.Geometry.Collections
 {
+  /// <summary>
+  /// Provides access to all the Vertices in a Brep object
+  /// </summary>
+  public class BrepVertexList : IEnumerable<BrepVertex>, Rhino.Collections.IRhinoTable<BrepVertex>
+  {
+    readonly Brep m_brep;
+    internal BrepVertexList(Brep ownerBrep)
+    {
+      m_brep = ownerBrep;
+    }
+
+    #region properties
+    /// <summary>
+    /// Gets the number of brep vertices.
+    /// </summary>
+    public int Count
+    {
+      get
+      {
+        IntPtr pConstBrep = m_brep.ConstPointer();
+        return UnsafeNativeMethods.ON_Brep_GetInt(pConstBrep, Brep.idxVertexCount);
+      }
+    }
+
+    /// <summary>
+    /// Gets the BrepVertex at the given index. 
+    /// The index must be valid or an IndexOutOfRangeException will be thrown.
+    /// </summary>
+    /// <param name="index">Index of BrepVertex to access.</param>
+    /// <exception cref="IndexOutOfRangeException">Thrown when the index is invalid.</exception>
+    /// <returns>The BrepVertex at [index].</returns>
+    public BrepVertex this[int index]
+    {
+      get
+      {
+        int count = Count;
+        if (index < 0 || index >= count)
+          throw new IndexOutOfRangeException();
+
+        return new BrepVertex(index, m_brep);
+      }
+    }
+    #endregion
+
+    /// <summary>
+    /// Create and add a new vertex to this list
+    /// </summary>
+    /// <returns></returns>
+    public BrepVertex Add()
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewVertex(pBrep);
+      if (index < 0)
+        return null;
+      return new BrepVertex(index, m_brep);
+    }
+
+    /// <summary>
+    /// Create and add a new vertex to this list
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="vertexTolerance">Use RhinoMath.UnsetTolerance if you are unsure</param>
+    /// <returns></returns>
+    public BrepVertex Add(Point3d point, double vertexTolerance)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewVertex2(pBrep, point, vertexTolerance);
+      if (index < 0)
+        return null;
+      return new BrepVertex(index, m_brep);
+    }
+
+    /// <summary>Adds a new point on face to the brep</summary>
+    /// <param name="face">face that vertex lies on</param>
+    /// <param name="s">surface parameters</param>
+    /// <param name="t">surface parameters</param>
+    /// <returns>new vertex that represents the point on face</returns>
+    /// <remarks>
+    /// If a vertex is a point on a face, then brep.Edges[m_ei] will
+    /// be an edge with no 3d curve.  This edge will have a single
+    /// trim with type ON_BrepTrim::ptonsrf.  There will be a loop
+    /// containing this single trim.
+    /// </remarks>
+    public BrepVertex AddPointOnFace(BrepFace face, double s, double t)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewPointOnFace(pBrep, face.FaceIndex, s, t);
+      if (index < 0)
+        return null;
+      return new BrepVertex(index, m_brep);
+    }
+
+    #region IEnumerable Implementation
+
+    /// <summary>
+    /// Gets the same enumerator as <see cref="GetEnumerator"/>.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    /// <summary>
+    /// Gets an enumerator that visits all surfaces.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    public IEnumerator<BrepVertex> GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<BrepVertexList, BrepVertex>(this);
+    }
+    #endregion
+  }
+
   /// <summary>
   /// Provides access to all the Faces in a Brep object.
   /// </summary>
@@ -3287,6 +3604,98 @@ namespace Rhino.Geometry.Collections
     }
 #endif
 
+    /// <summary>
+    /// Create and add a new face to this list. An incomplete face is added.
+    /// The caller must create and fill in the loops used by the face.
+    /// </summary>
+    /// <param name="surfaceIndex">index of surface in brep's Surfaces list</param>
+    /// <returns></returns>
+    public BrepFace Add(int surfaceIndex)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewFace(pBrep, surfaceIndex);
+      if (index < 0)
+        return null;
+      return this[index];
+    }
+
+    /// <summary>
+    /// Add a new face to a brep.  This creates a complete face with
+    /// new vertices at the surface corners, new edges along the surface
+    /// boundary, etc.  The loop of the returned face has four trims that
+    /// correspond to the south, east, north, and west side of the 
+    /// surface in that order.  If you use this version of Add to
+    /// add an exiting brep, then you are responsible for using a tool
+    /// like JoinEdges() to hook the new face to its neighbors.
+    /// </summary>
+    /// <param name="surface">surface is copied</param>
+    /// <returns></returns>
+    public BrepFace Add(Surface surface)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      IntPtr pConstSurface = surface.ConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewFace2(pBrep, pConstSurface);
+      if (index < 0)
+        return null;
+      return this[index];
+    }
+
+    /// <summary>
+    /// Add a new face to the brep whose surface geometry is a 
+    /// ruled surface between two edges.
+    /// </summary>
+    /// <param name="edgeA">
+    /// The south side of the face's surface will run along edgeA.
+    /// </param>
+    /// <param name="revEdgeA">
+    /// true if the new face's outer boundary orientation along
+    /// edgeA is opposite the orientation of edgeA.
+    /// </param>
+    /// <param name="edgeB">
+    /// The north side of the face's surface will run along edgeA
+    /// </param>
+    /// <param name="revEdgeB">
+    /// true if the new face's outer boundary orientation along
+    /// edgeB is opposite the orientation of edgeB
+    /// </param>
+    /// <returns></returns>
+    public BrepFace AddRuledFace(BrepEdge edgeA, bool revEdgeA, BrepEdge edgeB, bool revEdgeB)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewRuledFace(pBrep, edgeA.EdgeIndex, revEdgeA, edgeB.EdgeIndex, revEdgeB);
+      if (index < 0)
+        return null;
+      return this[index];
+    }
+
+    /// <summary>
+    /// Add a new face to the brep whose surface geometry is a 
+    /// ruled cone with the edge as the base and the vertex as
+    /// the apex point.
+    /// </summary>
+    /// <param name="vertex">
+    /// The apex of the cone will be at this vertex.
+    /// The north side of the surface's parameter
+    /// space will be a singular point at the vertex.
+    /// </param>
+    /// <param name="edge">
+    /// The south side of the face's surface will run along this edge.
+    /// </param>
+    /// <param name="revEdge">
+    /// true if the new face's outer boundary orientation along
+    /// the edge is opposite the orientation of edge.
+    /// </param>
+    /// <returns></returns>
+    public BrepFace AddConeFace(BrepVertex vertex, BrepEdge edge, bool revEdge)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewConeFace(pBrep, vertex.VertexIndex, edge.EdgeIndex, revEdge);
+      if (index < 0)
+        return null;
+      return this[index];
+    }
+
+
     /*
     /// <summary>
     /// If faceIndex0 != faceIndex1 and Faces[faceIndex0] and Faces[faceIndex1]
@@ -3337,11 +3746,97 @@ namespace Rhino.Geometry.Collections
   }
 
   /// <summary>
+  /// Provides access to all the underlying surfaces in a Brep object.
+  /// </summary>
+  public class BrepSurfaceList : IEnumerable<Surface>, Rhino.Collections.IRhinoTable<Surface>
+  {
+    readonly Brep m_brep;
+
+    #region constructors
+    internal BrepSurfaceList(Brep ownerBrep)
+    {
+      m_brep = ownerBrep;
+    }
+    #endregion
+
+    #region properties
+    /// <summary>
+    /// Gets the number of surfaces in a brep.
+    /// </summary>
+    public int Count
+    {
+      get
+      {
+        IntPtr pConstBrep = m_brep.ConstPointer();
+        return UnsafeNativeMethods.ON_Brep_GetInt(pConstBrep, Brep.idxSurfaceCount);
+      }
+    }
+
+    /// <summary>
+    /// Gets the Surface at the given index. 
+    /// The index must be valid or an IndexOutOfRangeException will be thrown.
+    /// </summary>
+    /// <param name="index">Index of Surface to access.</param>
+    /// <exception cref="IndexOutOfRangeException">Thrown when the index is invalid.</exception>
+    /// <returns>The Surface at [index].</returns>
+    public Surface this[int index]
+    {
+      get
+      {
+        int count = Count;
+        if (index < 0 || index >= count)
+        {
+          throw new IndexOutOfRangeException();
+        }
+        if (m_surfaces == null)
+          m_surfaces = new List<Surface>(count);
+
+        int existing_list_count = m_surfaces.Count;
+        if( existing_list_count<count )
+        {
+          IntPtr pConstBrep = m_brep.ConstPointer();
+          for (int i = existing_list_count; i < count; i++)
+          {
+            IntPtr pSurface = UnsafeNativeMethods.ON_Brep_BrepSurfacePointer(pConstBrep, i);
+            Surface srf = GeometryBase.CreateGeometryHelper(pSurface, new SurfaceHolder(m_brep, i)) as Surface;
+            m_surfaces.Add(srf);
+          }
+        }
+        return m_surfaces[index];
+      }
+    }
+    List<Surface> m_surfaces; // = null; initialized to null by runtime
+    #endregion
+
+    #region IEnumerable Implementation
+
+    /// <summary>
+    /// Gets the same enumerator as <see cref="GetEnumerator"/>.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    /// <summary>
+    /// Gets an enumerator that visits all surfaces.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    public IEnumerator<Surface> GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<BrepSurfaceList, Surface>(this);
+    }
+    #endregion
+  }
+
+  /// <summary>
   /// Provides access to all the Edges in a Brep object.
   /// </summary>
   public class BrepEdgeList : IEnumerable<BrepEdge>, Rhino.Collections.IRhinoTable<BrepEdge>
   {
     readonly Brep m_brep;
+    List<BrepEdge> m_edges; // = null; initialized to null by runtime
 
     #region constructors
     internal BrepEdgeList(Brep ownerBrep)
@@ -3390,7 +3885,6 @@ namespace Rhino.Geometry.Collections
         return m_edges[index];
       }
     }
-    List<BrepEdge> m_edges; // = null; initialized to null by runtime
     #endregion
 
     #region methods
@@ -3428,6 +3922,50 @@ namespace Rhino.Geometry.Collections
       return UnsafeNativeMethods.ON_Brep_SplitEdgeAtParameters(pBrep, edgeIndex, _t.Length, _t);
     }
 
+    /// <summary>
+    /// Create and add a new edge to this list
+    /// </summary>
+    /// <param name="curve3dIndex"></param>
+    /// <returns></returns>
+    public BrepEdge Add(int curve3dIndex)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewEdge(pBrep, curve3dIndex);
+      if (index < 0)
+        return null;
+      return this[index]; // this way the BrepEdge is properly in the list
+    }
+
+    /// <summary>
+    /// Create and add a new edge to this list
+    /// </summary>
+    /// <param name="startVertex"></param>
+    /// <param name="endVertex"></param>
+    /// <param name="curve3dIndex"></param>
+    /// <param name="subDomain"></param>
+    /// <param name="edgeTolerance"></param>
+    /// <returns></returns>
+    public BrepEdge Add(BrepVertex startVertex, BrepVertex endVertex, int curve3dIndex, Interval subDomain, double edgeTolerance)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewEdge2(pBrep, startVertex.VertexIndex, endVertex.VertexIndex, curve3dIndex, subDomain, edgeTolerance);
+      if (index < 0)
+        return null;
+      return this[index]; // this way the BrepEdge is properly in the list
+    }
+
+    /// <summary>
+    /// Create and add a new edge to this list
+    /// </summary>
+    /// <param name="startVertex"></param>
+    /// <param name="endVertex"></param>
+    /// <param name="curve3dIndex"></param>
+    /// <param name="edgeTolerance"></param>
+    /// <returns></returns>
+    public BrepEdge Add(BrepVertex startVertex, BrepVertex endVertex, int curve3dIndex, double edgeTolerance)
+    {
+      return Add(startVertex, endVertex, curve3dIndex, Interval.Unset, edgeTolerance);
+    }
     #endregion
 
     #region IEnumerable Implementation
@@ -3529,6 +4067,109 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     #region methods
+    /// <summary>
+    /// Add a new trim that will be part of an inner, outer, or slit loop
+    /// to the brep.
+    /// </summary>
+    /// <param name="curve2dIndex">index of 2d trimming curve</param>
+    /// <returns>New Trim</returns>
+    /// <remarks>
+    /// You should set the trim's tolerance, type, iso, li, and m_ei values.
+    /// In general, you should try to use the
+    /// Add( edge, bRev3d, loop, c2i ) version of NewTrim.
+    /// If you want to add a singular trim, use AddSingularTrim.
+    /// If you want to add a crvonsrf trim, use AddCurveOnFace.
+    /// If you want to add a ptonsrf trim, use AddPointOnFace.
+    /// </remarks>
+    public BrepTrim Add(int curve2dIndex)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewTrim(pBrep, curve2dIndex);
+      return index < 0 ? null : this[index]; // this way the BrepTrim is properly in the list
+    }
+
+    /// <summary>
+    /// Add a new trim that will be part of an inner, outer, or slit loop
+    /// to the brep
+    /// </summary>
+    /// <param name="rev3d">
+    /// true if the edge and trim have opposite directions
+    /// </param>
+    /// <param name="loop">trim is appended to this loop</param>
+    /// <param name="curve2dIndex">index of 2d trimming curve</param>
+    /// <returns>new trim</returns>
+    public BrepTrim Add(bool rev3d, BrepLoop loop, int curve2dIndex)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewTrim2(pBrep, rev3d, loop.LoopIndex, curve2dIndex);
+      return index < 0 ? null : this[index]; // this way the BrepTrim is properly in the list 
+    }
+
+    /// <summary>
+    /// Add a new trim that will be part of an inner, outer, or slit loop
+    /// to the brep
+    /// </summary>
+    /// <param name="rev3d">
+    /// true if the edge and trim have opposite directions
+    /// </param>
+    /// <param name="edge">3d edge associated with this trim</param>
+    /// <param name="curve2dIndex">index of 2d trimming curve</param>
+    /// <returns>new trim</returns>
+    public BrepTrim Add(bool rev3d, BrepEdge edge, int curve2dIndex)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewTrim3(pBrep, rev3d, edge.EdgeIndex, curve2dIndex);
+      return index < 0 ? null : this[index]; // this way the BrepTrim is properly in the list 
+    }
+
+    /// <summary>
+    /// Add a new trim that will be part of an inner, outer, or slit loop
+    /// to the brep.
+    /// </summary>
+    /// <param name="edge">3d edge associated with this trim</param>
+    /// <param name="rev3d">
+    /// true if the edge and trim have opposite directions
+    /// </param>
+    /// <param name="loop">trim is appended to this loop</param>
+    /// <param name="curve2dIndex">index of 2d trimming curve</param>
+    /// <returns>new trim</returns>
+    public BrepTrim Add(BrepEdge edge, bool rev3d, BrepLoop loop, int curve2dIndex)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewTrim4(pBrep, edge.EdgeIndex, rev3d, loop.LoopIndex, curve2dIndex);
+      return index < 0 ? null : this[index]; // this way the BrepTrim is properly in the list 
+    }
+
+    /// <summary> Add a new singular trim to the brep. </summary>
+    /// <param name="vertex">vertex along collapsed surface edge</param>
+    /// <param name="loop">trim is appended to this loop</param>
+    /// <param name="iso"></param>
+    /// <param name="curve2dIndex">index of 2d trimming curve</param>
+    /// <returns>new trim</returns>
+    public BrepTrim AddSingularTrim(BrepVertex vertex, BrepLoop loop, IsoStatus iso, int curve2dIndex)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewSingularTrim(pBrep, vertex.VertexIndex, loop.LoopIndex, (int)iso, curve2dIndex);
+      return index < 0 ? null : this[index]; // this way the BrepTrim is properly in the list 
+    }
+
+    /// <summary>Add a new curve on face to the brep</summary>
+    /// <param name="face">face that curve lies on</param>
+    /// <param name="edge">3d edge associated with this curve on surface</param>
+    /// <param name="rev3d">
+    /// true if the 3d edge and the 2d parameter space curve have opposite directions.
+    /// </param>
+    /// <param name="curve2dIndex">index of 2d curve in face's parameter space</param>
+    /// <returns>new trim that represents the curve on surface</returns>
+    /// <remarks>
+    /// You should set the trim's tolerance and iso values.
+    /// </remarks>
+    public BrepTrim AddCurveOnFace(BrepFace face, BrepEdge edge, bool rev3d, int curve2dIndex)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewCurveOnFace(pBrep, face.FaceIndex, edge.EdgeIndex, rev3d, curve2dIndex);
+      return index < 0 ? null : this[index]; // this way the BrepTrim is properly in the list 
+    }
     #endregion
 
     #region IEnumerable Implementation
@@ -3631,6 +4272,81 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     #region methods
+    /// <summary>
+    /// Create a new outer boundary loop that runs along the edges
+    /// of the underlying surface.
+    /// </summary>
+    /// <param name="loopType"></param>
+    /// <returns></returns>
+    public BrepLoop Add(BrepLoopType loopType)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewLoop(pBrep, (int)loopType, IntPtr.Zero);
+      return index<0 ? null : this[index];
+    }
+
+    /// <summary>
+    /// Create a new boundary loop on a face.  After you get this
+    /// BrepLoop, you still need to create the vertices, edges, 
+    /// and trims that define the loop.
+    /// </summary>
+    /// <param name="loopType"></param>
+    /// <param name="face"></param>
+    /// <returns>New loop that needs to be filled in</returns>
+    public BrepLoop Add(BrepLoopType loopType, BrepFace face)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      IntPtr pFace = face.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewLoop(pBrep, (int)loopType, pFace);
+      return index < 0 ? null : this[index];
+    }
+
+    /// <summary>
+    /// Create a new outer boundary loop that runs along the sides
+    /// of the face's surface.  All the necessary trims, edges,
+    /// and vertices are created and added to the brep.
+    /// </summary>
+    /// <param name="faceIndex">
+    /// index of face that needs an outer boundary
+    /// that runs along the sides of its surface.
+    /// </param>
+    /// <returns>New outer boundary loop that is complete.</returns>
+    public BrepLoop AddOuterLoop(int faceIndex)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      int index = UnsafeNativeMethods.ON_Brep_NewOuterLoop(pBrep, faceIndex);
+      return index < 0 ? null : this[index];
+    }
+
+    /// <summary>
+    /// Add a planar trimming loop to a planar face
+    /// </summary>
+    /// <param name="faceIndex">
+    /// index of planar face.  The underlying suface must be a PlaneSurface
+    /// </param>
+    /// <param name="loopType">
+    /// type of loop to add.  If loopType is Unknown, then the loop direction
+    /// is tested and the the new loops type will be set to Outer or Inner.
+    /// If the loopType is Outer, then the direction of the new loop is tested
+    /// and flipped if it is clockwise. If the loopType is Inner, then the
+    /// direction of the new loop is tested and flipped if it is counter-clockwise.
+    /// </param>
+    /// <param name="boundaryCurves">
+    /// list of 3d curves that form a simple (no self intersections) closed
+    /// curve.  These curves define the 3d edge geometry and should be near
+    /// the planar surface.
+    /// </param>
+    /// <returns>new loop if successful</returns>
+    public BrepLoop AddPlanarFaceLoop(int faceIndex, BrepLoopType loopType, IEnumerable<Curve> boundaryCurves)
+    {
+      IntPtr pBrep = m_brep.NonConstPointer();
+      using (var crvs = new Runtime.InteropWrappers.SimpleArrayCurvePointer(boundaryCurves))
+      {
+        IntPtr pCrvs = crvs.ConstPointer();
+        int index = UnsafeNativeMethods.ON_Brep_NewPlanarFaceLoop(pBrep, faceIndex, (int)loopType, pCrvs);
+        return index < 0 ? null : this[index];
+      }
+    }
     #endregion
 
     #region IEnumerable Implementation

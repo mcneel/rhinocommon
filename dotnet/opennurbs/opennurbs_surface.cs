@@ -303,8 +303,8 @@ namespace Rhino.Geometry
       // the base class always handles set up of pointers
     }
 
-    internal Surface(IntPtr native_pointer, object parent)
-      : base(native_pointer, parent, -1)
+    internal Surface(IntPtr nativePointer, object parent)
+      : base(nativePointer, parent, -1)
     {
       if (parent == null)
         ApplyMemoryPressure();
@@ -323,6 +323,11 @@ namespace Rhino.Geometry
       if (null != holder)
       {
         return holder.SurfacePointer();
+      }
+      Rhino.Geometry.SurfaceHolder holder2 = m__parent as Rhino.Geometry.SurfaceHolder;
+      if (null != holder2)
+      {
+        return holder2.ConstSurfacePointer();
       }
       return base._InternalGetConstPointer();
     }

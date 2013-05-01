@@ -21,13 +21,11 @@ RH_C_FUNCTION int ON_Version()
 
 RH_C_FUNCTION void ON_Revision(CRhCmnStringHolder* pStringHolder)
 {
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pStringHolder )
   {
     ON_wString s = ON::SourceRevision();
     pStringHolder->Set(s);
   }
-#endif
 }
 
 RH_C_FUNCTION ON_wString* ON_wString_New(const RHMONO_STRING* _text)

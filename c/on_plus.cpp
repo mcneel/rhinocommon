@@ -1,8 +1,6 @@
 #include "StdAfx.h"
 
-// Not available in stand alone OpenNURBS
-
-#if defined(RHINO_V5SR) // only available in V5
+#if !defined(OPENNURBS_BUILD) // only available in rhino.exe
 
 RH_C_FUNCTION ON_SimpleArray<ON_ClashEvent>* ON_SimpleArray_ClashEvent_New()
 {

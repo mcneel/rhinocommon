@@ -538,245 +538,9 @@ RH_C_FUNCTION ON_Object* ON_ReadBufferArchive(int archive_3dm_version, int archi
   return rc;
 }
 
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)
-typedef ON_Write3dmBufferArchive CRhCmnWrite3dmBufferArchive;
-#else
-// Ughh... What a pain!!!!
-// ON_Write3dmBufferArchive had a bug in the write function which was fixed in
-// V5. Placing the fix in RhinoCommon so this will also work in V4/Grasshopper
-class CRhCmnWrite3dmBufferArchive : public ON_BinaryArchive
+RH_C_FUNCTION ON_Write3dmBufferArchive* ON_WriteBufferArchive_NewWriter(const ON_Object* pConstObject, int rhinoversion, bool writeuserdata, unsigned int* length)
 {
-public:
-  CRhCmnWrite3dmBufferArchive( size_t initial_sizeof_buffer, size_t max_sizeof_buffer, 
-    int archive_3dm_version,int archive_opennurbs_version );
-
-  ~CRhCmnWrite3dmBufferArchive();
-  size_t SizeOfArchive() const;
-  size_t SizeOfBuffer() const;
-  const void* Buffer() const;
-  void* HarvestBuffer();
-  size_t CurrentPosition() const; 
-  bool SeekFromCurrentPosition(int); 
-  bool SeekFromStart(size_t);
-  bool AtEnd() const;
-protected:
-  size_t Read( size_t, void* ); 
-  size_t Write( size_t, const void* ); // return actual number of bytes written (like fwrite())
-  bool Flush();
-private:
-  void AllocBuffer(size_t);
-  void* m_p;
-  unsigned char* m_buffer;
-  size_t m_sizeof_buffer;
-  const size_t m_max_sizeof_buffer;
-  size_t m_sizeof_archive;
-  size_t m_buffer_position;
-  ON__INT_PTR m_reserved1;
-  ON__INT_PTR m_reserved2;
-  ON__INT_PTR m_reserved3;
-  ON__INT_PTR m_reserved4;
-private:
-  // prohibit use - no implementation
-  CRhCmnWrite3dmBufferArchive(); 
-  CRhCmnWrite3dmBufferArchive( const CRhCmnWrite3dmBufferArchive& );
-  CRhCmnWrite3dmBufferArchive& operator=(const CRhCmnWrite3dmBufferArchive&);
-};
-
-static void ON_SetBinaryArchiveOpenNURBSVersion(ON_BinaryArchive& file, int value)
-{
-  if ( value >= 200012210 )
-  {
-    file.m_3dm_opennurbs_version = value;
-  }
-  else
-  {
-    ON_ERROR("ON_SetBinaryArchiveOpenNURBSVersion - invalid opennurbs version");
-    file.m_3dm_opennurbs_version = 0;
-  }
-}
-
-
-CRhCmnWrite3dmBufferArchive::CRhCmnWrite3dmBufferArchive( 
-          size_t initial_sizeof_buffer, 
-          size_t max_sizeof_buffer, 
-          int archive_3dm_version,
-          int archive_opennurbs_version
-          )
-: ON_BinaryArchive(ON::write3dm)
-, m_p(0)
-, m_buffer(0)
-, m_sizeof_buffer(0)
-, m_max_sizeof_buffer(max_sizeof_buffer)
-, m_sizeof_archive(0)
-, m_buffer_position(0)
-, m_reserved1(0)
-, m_reserved2(0)
-, m_reserved3(0)
-, m_reserved4(0)
-{
-  if ( initial_sizeof_buffer > 0 )
-    AllocBuffer(initial_sizeof_buffer);
-  SetArchive3dmVersion(archive_3dm_version);
-  ON_SetBinaryArchiveOpenNURBSVersion(*this,archive_opennurbs_version);
-}
-
-CRhCmnWrite3dmBufferArchive::~CRhCmnWrite3dmBufferArchive()
-{
-  if ( m_p )
-    onfree(m_p);
-}
-
-void CRhCmnWrite3dmBufferArchive::AllocBuffer( size_t sz )
-{
-  if ( sz > m_sizeof_buffer 
-       && (m_max_sizeof_buffer == 0 || sz <= m_max_sizeof_buffer) 
-     )
-  {
-    if ( sz < 2*m_sizeof_buffer )
-    {
-      sz = 2*m_sizeof_buffer;
-      if ( sz > m_max_sizeof_buffer )
-        sz = m_max_sizeof_buffer;
-    }
-
-    m_p = onrealloc(m_p,sz);
-    m_buffer = (unsigned char*)m_p;
-
-    if ( 0 != m_buffer )
-    {
-      memset( m_buffer + m_sizeof_buffer, 0, sz - m_sizeof_buffer );
-      m_sizeof_buffer = sz;
-    }
-    else
-    {
-      m_sizeof_buffer = 0;
-    }
-
-  }
-}
-
-// ON_BinaryArchive overrides
-size_t CRhCmnWrite3dmBufferArchive::CurrentPosition() const
-{
-  return m_buffer_position;
-}
-
-bool CRhCmnWrite3dmBufferArchive::SeekFromCurrentPosition( int offset )
-{
-  bool rc = false;
-  if ( m_buffer )
-  {
-    if (offset >= 0 )
-    {
-      m_buffer_position += offset;
-      rc = true;
-    }
-    else if ( size_t(-offset) <= m_buffer_position )
-    {
-      m_buffer_position -= (size_t(-offset));
-      rc = true;
-    }
-  }
-  return rc;
-}
-
-bool CRhCmnWrite3dmBufferArchive::SeekFromStart( size_t offset )
-{
-  bool rc = false;
-  if ( m_buffer ) 
-  {
-    m_buffer_position = offset;
-    rc = true;
-  }
-  return rc;
-}
-
-bool CRhCmnWrite3dmBufferArchive::AtEnd() const
-{
-  return (m_buffer_position >= m_sizeof_buffer) ? true : false;
-}
-
-size_t CRhCmnWrite3dmBufferArchive::Read( size_t count, void* buffer )
-{
-  if ( 0 == count || 0 == buffer )
-    return 0;
-
-  size_t maxcount = ( m_sizeof_buffer > m_buffer_position ) 
-                  ? (m_sizeof_buffer - m_buffer_position)
-                  : 0;
-  if ( count > maxcount )
-    count = maxcount;
-
-  if ( count > 0 ) 
-  {
-    memcpy( buffer, m_buffer+m_buffer_position, count );
-    m_buffer_position += count;
-  }
-
-  return count;
-}
-
-size_t CRhCmnWrite3dmBufferArchive::Write( size_t sz, const void* buffer )
-{
-  if ( 0 == sz || 0 == buffer )
-    return 0;
-
-  if ( m_buffer_position + sz > m_sizeof_buffer )
-  {
-    AllocBuffer(m_buffer_position + sz);
-  }
-
-  if ( m_buffer_position + sz > m_sizeof_buffer )
-    return 0;
-
-  memcpy( m_buffer + m_buffer_position, buffer, sz );
-  m_buffer_position += sz;
-  if ( m_buffer_position > m_sizeof_archive )
-    m_sizeof_archive = m_buffer_position;
-
-  return sz;
-}
-
-bool CRhCmnWrite3dmBufferArchive::Flush()
-{
-  // Nothing to flush
-  return true;
-}
-
-
-size_t CRhCmnWrite3dmBufferArchive::SizeOfBuffer() const
-{
-  return m_sizeof_buffer;
-}
-
-const void* CRhCmnWrite3dmBufferArchive::Buffer() const
-{
-  return (const void*)m_buffer;
-}
-
-void* CRhCmnWrite3dmBufferArchive::HarvestBuffer()
-{
-  void* buffer = m_buffer;
-
-  m_p = 0;
-  m_buffer = 0;
-  m_sizeof_buffer = 0;
-  m_sizeof_archive = 0;
-  m_buffer_position = 0;
-
-  return buffer;
-}
-
-size_t CRhCmnWrite3dmBufferArchive::SizeOfArchive() const
-{
-  return m_sizeof_archive;
-}
-
-#endif
-
-RH_C_FUNCTION CRhCmnWrite3dmBufferArchive* ON_WriteBufferArchive_NewWriter(const ON_Object* pConstObject, int rhinoversion, bool writeuserdata, unsigned int* length)
-{
-  CRhCmnWrite3dmBufferArchive* rc = NULL;
+  ON_Write3dmBufferArchive* rc = NULL;
 
   if( pConstObject && length )
   {
@@ -785,7 +549,7 @@ RH_C_FUNCTION CRhCmnWrite3dmBufferArchive* ON_WriteBufferArchive_NewWriter(const
       holder.MoveUserDataFrom(*pConstObject);
     *length = 0;
     size_t sz = pConstObject->SizeOf() + 512; // 256 was too small on x86 builds to account for extra data written
-    rc = new CRhCmnWrite3dmBufferArchive(sz, 0, rhinoversion, ON::Version());
+    rc = new ON_Write3dmBufferArchive(sz, 0, rhinoversion, ON::Version());
     if( rc->WriteObject(pConstObject) )
     {
       *length = (unsigned int)rc->SizeOfArchive();
@@ -807,7 +571,7 @@ RH_C_FUNCTION void ON_WriteBufferArchive_Delete(ON_BinaryArchive* pBinaryArchive
     delete pBinaryArchive;
 }
 
-RH_C_FUNCTION unsigned char* ON_WriteBufferArchive_Buffer(const CRhCmnWrite3dmBufferArchive* pBinaryArchive)
+RH_C_FUNCTION unsigned char* ON_WriteBufferArchive_Buffer(const ON_Write3dmBufferArchive* pBinaryArchive)
 {
   unsigned char* rc = NULL;
   if( pBinaryArchive )
@@ -1406,11 +1170,7 @@ RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddSphere(ONX_Model* pModel, ON_Sphe
   {
     // make sure the plane equation is in-sync for this sphere
     sphere->plane.UpdateEquation();
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)
     ON_RevSurface* pRevSurface = sphere->RevSurfaceForm(false);
-#else
-    ON_RevSurface* pRevSurface = sphere->RevSurfaceForm();
-#endif
     if( pRevSurface )
     {
       ONX_Model_Object mo;
@@ -1513,12 +1273,8 @@ RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddText(ONX_Model* pModel, const RHM
 
       ON_TextEntity2* text_entity = new ON_TextEntity2();
       text_entity->SetHeight( height );
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
       text_entity->SetTextValue( text );
       text_entity->SetTextFormula( 0 );
-#else
-      text_entity->SetUserText(text);
-#endif
       text_entity->SetPlane( temp );
       text_entity->SetFontIndex( font_index );
       if( justification>0 )
@@ -1555,7 +1311,6 @@ RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddSurface(ONX_Model* pModel, const 
   return ::ON_nil_uuid;
 }
 
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)
 RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddExtrusion(ONX_Model* pModel, const ON_Extrusion* pConstExtrusion, const ON_3dmObjectAttributes* pConstAttributes)
 {
   if( pModel && pConstExtrusion )
@@ -1574,7 +1329,6 @@ RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddExtrusion(ONX_Model* pModel, cons
   }
   return ::ON_nil_uuid;
 }
-#endif
 
 RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddMesh(ONX_Model* pModel, const ON_Mesh* pConstMesh, const ON_3dmObjectAttributes* pConstAttributes)
 {
@@ -1626,11 +1380,7 @@ RH_C_FUNCTION ON_UUID ONX_Model_ObjectTable_AddLeader(ONX_Model* pModel, const R
     for( int i=0; i<count; i++ )
       leader->m_points.Append(points2d[i]);
 
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
     leader->SetTextValue(text);
-#else
-    leader->SetUserText(text);
-#endif
 
     ONX_Model_Object mo;
     if( pConstAttributes )

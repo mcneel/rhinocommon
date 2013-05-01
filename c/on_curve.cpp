@@ -298,13 +298,13 @@ RH_C_FUNCTION bool ON_Curve_FrameAt( const ON_Curve* pConstCurve, double t, ON_P
   if( pConstCurve && plane )
   {
     ON_Plane temp;
-#if defined(RHINO_V5SR) // only available in V5
+#if defined(OPENNURBS_BUILD)
+    rc = pConstCurve->FrameAt(t, temp)?true:false;
+#else // rhino.exe build
     if( zero_twisting )
       rc = RhinoGetPerpendicularCurvePlane(pConstCurve, t, temp);
     else
       rc = pConstCurve->FrameAt(t, temp)?true:false;
-#else
-    rc = pConstCurve->FrameAt(t, temp)?true:false;
 #endif
     CopyToPlaneStruct(*plane, temp);
   }
@@ -489,12 +489,17 @@ RH_C_FUNCTION bool ON_Curve_IsContinuous(const ON_Curve* curvePtr, int continuit
   return rc;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+// Meshing, intersections and mass property calculations are not available in
+// stand alone opennurbs
+
+#if !defined(OPENNURBS_BUILD) //in rhino.exe
+
 RH_C_FUNCTION ON_SimpleArray<ON_X_EVENT>* ON_Curve_IntersectPlane(const ON_Curve* pConstCurve, ON_PLANE_STRUCT* plane, double tolerance)
 {
   ON_SimpleArray<ON_X_EVENT>* rc = NULL;
   if(pConstCurve && plane)
   {
-#if defined(RHINO_V5SR) // only available in V5
     rc = new ON_SimpleArray<ON_X_EVENT>();
     ON_Plane _plane = ::FromPlaneStruct(*plane);
     if( pConstCurve->IntersectPlane( _plane.plane_equation, *rc, tolerance, tolerance) < 1 )
@@ -503,17 +508,11 @@ RH_C_FUNCTION ON_SimpleArray<ON_X_EVENT>* ON_Curve_IntersectPlane(const ON_Curve
       delete rc;
       rc = NULL;
     }
-#endif
   }
  
   return rc;
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////
-// Meshing and mass property calculations are not available in stand alone opennurbs
-
-#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION ON_MassProperties* ON_Curve_AreaMassProperties(const ON_Curve* pCurve, double rel_tol, double abs_tol, double curve_planar_tol)
 {
   ON_MassProperties* rc = NULL;
@@ -540,10 +539,7 @@ RH_C_FUNCTION ON_MassProperties* ON_Curve_AreaMassProperties(const ON_Curve* pCu
   }
   return rc;
 }
-#endif
 
-
-#if defined(RHINO_V5SR) // only available in V5
 RH_C_FUNCTION bool RHC_RhinoTweenCurves( const ON_Curve* pStartCurve, const ON_Curve* pEndCurve, int num_curves, ON_SimpleArray<ON_Curve*>* outputCurves )
 {
   bool rc = false;

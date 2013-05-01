@@ -83,7 +83,7 @@ RH_C_FUNCTION bool ON_Object_SetUserString(const ON_Object* pObject, const RHMON
     INPUTSTRINGCOERCE(key, _key);
     INPUTSTRINGCOERCE(value, _value);
     rc = ptr->SetUserString(key, value);
-#if defined(RHINO_V5SR) // only available in V5
+#if !defined(OPENNURBS_BUILD) // not available in opennurbs
     RhUpdateTextFieldSerialNumber();
 #endif
   }

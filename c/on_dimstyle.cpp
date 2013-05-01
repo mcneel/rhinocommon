@@ -220,19 +220,10 @@ RH_C_FUNCTION void ON_DimStyle_SetString(ON_DimStyle* pDimStyle, const RHMONO_ST
 {
   if( pDimStyle )
   {
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in Rhino 5
     INPUTSTRINGCOERCE(_str, str);
     if( prefix )
       pDimStyle->SetPrefix(_str);
     else
       pDimStyle->SetSuffix(_str);
-#else
-    INPUTSTRINGCOERCE(_str, str);
-    wchar_t* _hack_str = const_cast<wchar_t*>(_str); //this should have been const. It is not modified
-    if( prefix )
-      pDimStyle->SetPrefix(_hack_str);
-    else
-      pDimStyle->SetSuffix(_hack_str);
-#endif
   }
 }

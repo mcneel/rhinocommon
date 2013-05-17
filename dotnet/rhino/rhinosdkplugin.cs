@@ -1065,6 +1065,25 @@ namespace Rhino.PlugIns
       return rc;
     }
 
+    public static Guid IdFromName(string pluginName)
+    {
+      Guid rc = UnsafeNativeMethods.CRhinoPlugInManager_IdFromName(pluginName);
+      if (rc.Equals(Guid.Empty))
+      {
+        // Look in our local collection of plug-ins. We may be in "OnLoad"
+        // and the plug-in hasn't officially been registered with Rhino.
+        for (int i = 0; i < m_plugins.Count; i++)
+        {
+          if (string.Compare(m_plugins[i].Name, pluginName, true) == 0)
+          {
+            rc = m_plugins[i].Id;
+            break;
+          }
+        }
+      }
+      return rc;
+    }
+
     public static bool LoadPlugIn(Guid pluginId)
     {
       return UnsafeNativeMethods.CRhinoPlugInManager_LoadPlugIn(pluginId);
@@ -1090,6 +1109,33 @@ namespace Rhino.PlugIns
         }
       }
       UnsafeNativeMethods.ON_StringArray_Delete(pStrings);
+      return rc;
+    }
+
+    /// <summary>
+    /// Set load protection state for a certain plug-in
+    /// </summary>
+    /// <param name="pluginId"></param>
+    /// <param name="loadSilently"></param>
+    public static void SetLoadProtection(Guid pluginId, bool loadSilently)
+    {
+      int state = loadSilently ? 1 : 2;
+      UnsafeNativeMethods.CRhinoPluginRecord_SetLoadProtection(pluginId, state);
+    }
+
+    /// <summary>
+    /// Get load protection state for a plug-in
+    /// </summary>
+    /// <param name="pluginId"></param>
+    /// <param name="loadSilently"></param>
+    /// <returns></returns>
+    public static bool GetLoadProtection(Guid pluginId, out bool loadSilently)
+    {
+      loadSilently = true;
+      int state = 0;
+      bool rc = UnsafeNativeMethods.CRhinoPluginRecord_GetLoadProtection(pluginId, ref state);
+      if (rc)
+        loadSilently = (state == 0 || state == 1);
       return rc;
     }
     #endregion

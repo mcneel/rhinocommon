@@ -785,7 +785,7 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_ReadBufferArchive(int archive_3dm_version, int archive_on_version, int length, byte[] buffer);
 
-  //CRhCmnWrite3dmBufferArchive* ON_WriteBufferArchive_NewWriter(const ON_Object* pConstObject, int rhinoversion, bool writeuserdata, unsigned int* length)
+  //ON_Write3dmBufferArchive* ON_WriteBufferArchive_NewWriter(const ON_Object* pConstObject, int rhinoversion, bool writeuserdata, unsigned int* length)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_WriteBufferArchive_NewWriter(IntPtr pConstObject, int rhinoversion, [MarshalAs(UnmanagedType.U1)]bool writeuserdata, ref uint length);
 
@@ -793,7 +793,7 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_WriteBufferArchive_Delete(IntPtr pBinaryArchive);
 
-  //unsigned char* ON_WriteBufferArchive_Buffer(const CRhCmnWrite3dmBufferArchive* pBinaryArchive)
+  //unsigned char* ON_WriteBufferArchive_Buffer(const ON_Write3dmBufferArchive* pBinaryArchive)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_WriteBufferArchive_Buffer(IntPtr pBinaryArchive);
 
@@ -10021,6 +10021,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid CRhinoPlugInManager_IdFromPath([MarshalAs(UnmanagedType.LPWStr)]string path);
 
+  //ON_UUID CRhinoPlugInManager_IdFromName(const RHMONO_STRING* name)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid CRhinoPlugInManager_IdFromName([MarshalAs(UnmanagedType.LPWStr)]string name);
+
   //bool CRhinoPlugInManager_LoadPlugIn(ON_UUID plugin_uuid)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -10041,6 +10045,15 @@ internal partial class UnsafeNativeMethods
   //int CRhinoPluginManager_GetCommandNames(ON_UUID id, ON_ClassArray<ON_wString>* pStrings)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoPluginManager_GetCommandNames(Guid id, IntPtr pStrings);
+
+  //void CRhinoPluginRecord_SetLoadProtection(ON_UUID plugin_id, int state)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoPluginRecord_SetLoadProtection(Guid plugin_id, int state);
+
+  //bool CRhinoPluginRecord_GetLoadProtection(ON_UUID plugin_id, int* state)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoPluginRecord_GetLoadProtection(Guid plugin_id, ref int state);
   #endregion
 
 

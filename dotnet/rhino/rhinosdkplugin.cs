@@ -237,6 +237,23 @@ namespace Rhino.PlugIns
       return null;
     }
 
+    /// <summary>
+    /// Finds the plug-in instance that was loaded from a given plug-in Id.
+    /// </summary>
+    /// <param name="plugInId">The plug-in Id.</param>
+    /// <returns>The plug-in instance if successful. Otherwise, null.</returns>
+    public static PlugIn Find(System.Guid plugInId)
+    {
+      if (System.Guid.Empty == plugInId)
+        return null;
+      for (int i = 0; i < m_plugins.Count; i++)
+      {
+        if (m_plugins[i].Id == plugInId)
+          return m_plugins[i];
+      }
+      return null;
+    }
+
 
 
     /// <summary>Source assembly for this plug-in.</summary>

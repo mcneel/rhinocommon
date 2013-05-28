@@ -285,7 +285,7 @@ RH_C_FUNCTION CRhCmnUserData* CRhCmnUserData_New( int serial_number, ON_UUID man
   return rc;
 }
 
-RH_C_FUNCTION void CRhCmnUserData_Delete(CRhCmnUserData* pUserData, int serial_number)
+RH_C_FUNCTION void CRhCmnUserData_Delete(CRhCmnUserData* pUserData)
 {
   if( pUserData )
     delete pUserData;

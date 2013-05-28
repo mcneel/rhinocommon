@@ -513,7 +513,7 @@ namespace Rhino.Geometry
       int count = Points.Count;
       double[] rc = new double[count];
       IntPtr ptr = ConstPointer();
-      bool success = UnsafeNativeMethods.ON_NurbsCurve_GetGrevilleAbcissae(ptr, count, rc);
+      bool success = UnsafeNativeMethods.ON_NurbsCurve_GetGrevilleAbcissae(ptr, rc);
       if (!success) { return null; }
       return rc;
     }

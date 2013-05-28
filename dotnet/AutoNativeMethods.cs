@@ -522,9 +522,9 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_BinaryArchive_Read3dmStartSection(IntPtr pBinaryArchive, ref int version, IntPtr pStringHolder);
 
-  //unsigned int ON_BinaryArchive_Dump3dmChunk(ON_BinaryArchive* pBinaryArchive, ON_TextLog* pTextLog, int recursion_depth)
+  //unsigned int ON_BinaryArchive_Dump3dmChunk(ON_BinaryArchive* pBinaryArchive, ON_TextLog* pTextLog)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern uint ON_BinaryArchive_Dump3dmChunk(IntPtr pBinaryArchive, IntPtr pTextLog, int recursion_depth);
+  internal static extern uint ON_BinaryArchive_Dump3dmChunk(IntPtr pBinaryArchive, IntPtr pTextLog);
 
   //int ON_BinaryArchive_Archive3dmVersion(ON_BinaryArchive* pArchive)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -3614,10 +3614,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern double ON_NurbsCurve_GrevilleAbcissa(IntPtr pCurve, int index);
 
-  //bool ON_NurbsCurve_GetGrevilleAbcissae(const ON_NurbsCurve* pCurve, int count, /*ARRAY*/double* ga)
+  //bool ON_NurbsCurve_GetGrevilleAbcissae(const ON_NurbsCurve* pCurve, /*ARRAY*/double* ga)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_NurbsCurve_GetGrevilleAbcissae(IntPtr pCurve, int count, [In,Out] double[] ga);
+  internal static extern bool ON_NurbsCurve_GetGrevilleAbcissae(IntPtr pCurve, [In,Out] double[] ga);
 
   //bool ON_NurbsCurve_InsertKnot(ON_NurbsCurve* pCurve, double knotValue, int knotMultiplicity)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4407,10 +4407,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_Surface_SpanCount(IntPtr pConstSurface, int direction);
 
-  //bool ON_Surface_GetSpanVector(const ON_Surface* pConstSurface, int direction, int count, /*ARRAY*/double* span_vector)
+  //bool ON_Surface_GetSpanVector(const ON_Surface* pConstSurface, int direction, /*ARRAY*/double* span_vector)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Surface_GetSpanVector(IntPtr pConstSurface, int direction, int count, [In,Out] double[] span_vector);
+  internal static extern bool ON_Surface_GetSpanVector(IntPtr pConstSurface, int direction, [In,Out] double[] span_vector);
 
   //int ON_Surface_Degree(const ON_Surface* pConstSurface, int direction)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4617,9 +4617,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhCmnUserData_New(int serial_number, Guid managed_type_id, Guid plugin_id, [MarshalAs(UnmanagedType.LPWStr)]string description);
 
-  //void CRhCmnUserData_Delete(CRhCmnUserData* pUserData, int serial_number)
+  //void CRhCmnUserData_Delete(CRhCmnUserData* pUserData)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhCmnUserData_Delete(IntPtr pUserData, int serial_number);
+  internal static extern void CRhCmnUserData_Delete(IntPtr pUserData);
 
   //int CRhCmnUserData_Find(const ON_Object* pConstOnObject, ON_UUID managed_type_id)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5757,9 +5757,9 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoBitmap_ExportToFile(int docId, int index, [MarshalAs(UnmanagedType.LPWStr)]string _fileName);
 
-  //int CRhinoBitmapTable_BitmapFromFileName(int docId, const RHMONO_STRING* _name, bool addToBitmapTableIfFileExists)
+  //int CRhinoBitmapTable_BitmapFromFileName(int docId, const RHMONO_STRING* _name)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int CRhinoBitmapTable_BitmapFromFileName(int docId, [MarshalAs(UnmanagedType.LPWStr)]string _name, [MarshalAs(UnmanagedType.U1)]bool addToBitmapTableIfFileExists);
+  internal static extern int CRhinoBitmapTable_BitmapFromFileName(int docId, [MarshalAs(UnmanagedType.LPWStr)]string _name);
 
   //int CRhinoBitmapTable_BitmapCount(int docId)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -7004,13 +7004,13 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoDoc_AddExplodedInstancePieces(int docId, IntPtr pConstInstanceObject, IntPtr pGuids);
 
-  //CRhinoView* CRhinoDoc_ActiveView(int docId)
+  //CRhinoView* CRhinoDoc_ActiveView()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr CRhinoDoc_ActiveView(int docId);
+  internal static extern IntPtr CRhinoDoc_ActiveView();
 
-  //void CRhinoDoc_SetActiveView(int docId, CRhinoView* pRhinoView)
+  //void CRhinoDoc_SetActiveView(CRhinoView* pRhinoView)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhinoDoc_SetActiveView(int docId, IntPtr pRhinoView);
+  internal static extern void CRhinoDoc_SetActiveView(IntPtr pRhinoView);
 
   //void CRhinoDoc_ViewLayout(int docId, int which, bool useMatchingViews)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -7480,9 +7480,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoFileUtilities_GetDataFolder(IntPtr pStringHolder, int which);
 
-  //void CRhinoFileUtilities_FindFile(int docId, const RHMONO_STRING* filename, CRhCmnStringHolder* pFoundFileName)
+  //void CRhinoFileUtilities_FindFile(const RHMONO_STRING* filename, CRhCmnStringHolder* pFoundFileName)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhinoFileUtilities_FindFile(int docId, [MarshalAs(UnmanagedType.LPWStr)]string filename, IntPtr pFoundFileName);
+  internal static extern void CRhinoFileUtilities_FindFile([MarshalAs(UnmanagedType.LPWStr)]string filename, IntPtr pFoundFileName);
   #endregion
 
 
@@ -8839,10 +8839,10 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoLayerTable_UndoModifyLayer(int docId, int layerIndex, uint undoRecordSerialNumber);
 
-  //bool CRhinoLayerTable_DeleteLayer(int docId, int layerIndex, bool quiet)
+  //bool CRhinoLayerTable_DeleteLayer(int docId, int layerIndex, bool quiet, bool purge)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool CRhinoLayerTable_DeleteLayer(int docId, int layerIndex, [MarshalAs(UnmanagedType.U1)]bool quiet);
+  internal static extern bool CRhinoLayerTable_DeleteLayer(int docId, int layerIndex, [MarshalAs(UnmanagedType.U1)]bool quiet, [MarshalAs(UnmanagedType.U1)]bool purge);
 
   //bool CRhinoLayerTable_UndeleteLayer(int docId, int layerIndex)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

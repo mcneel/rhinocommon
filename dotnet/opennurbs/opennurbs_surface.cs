@@ -446,7 +446,7 @@ namespace Rhino.Geometry
 
       double[] rc = new double[count];
       IntPtr ptr = ConstPointer();
-      bool success = UnsafeNativeMethods.ON_Surface_GetSpanVector(ptr, direction, count, rc);
+      bool success = UnsafeNativeMethods.ON_Surface_GetSpanVector(ptr, direction, rc);
       if (success)
         return rc;
       return null;

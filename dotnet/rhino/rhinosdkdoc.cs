@@ -125,7 +125,7 @@ namespace Rhino
       using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
-        UnsafeNativeMethods.CRhinoFileUtilities_FindFile(m_docId, filename, pString);
+        UnsafeNativeMethods.CRhinoFileUtilities_FindFile(filename, pString);
         return sh.ToString();
       }
     }
@@ -2527,7 +2527,7 @@ namespace Rhino.DocObjects.Tables
     {
       get
       {
-        IntPtr ptr = UnsafeNativeMethods.CRhinoDoc_ActiveView(m_doc.m_docId);
+        IntPtr ptr = UnsafeNativeMethods.CRhinoDoc_ActiveView();
         if (ptr == IntPtr.Zero)
           return null;
         return RhinoView.FromIntPtr(ptr);
@@ -2535,7 +2535,7 @@ namespace Rhino.DocObjects.Tables
       set
       {
         IntPtr ptr = value.NonConstPointer();
-        UnsafeNativeMethods.CRhinoDoc_SetActiveView(m_doc.m_docId, ptr);
+        UnsafeNativeMethods.CRhinoDoc_SetActiveView(ptr);
       }
     }
 

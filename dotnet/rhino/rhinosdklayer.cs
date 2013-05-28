@@ -990,14 +990,32 @@ namespace Rhino.DocObjects.Tables
     /// deleted because it is the current layer or it contains active geometry.
     /// </param>
     /// <returns>
-    /// true if successful. false if layer_index is out of range or the the layer cannot be
+    /// true if successful. false if layerIndex is out of range or the the layer cannot be
     /// deleted because it is the current layer or because it layer contains active geometry.
     /// </returns>
     public bool Delete(int layerIndex, bool quiet)
     {
-      return UnsafeNativeMethods.CRhinoLayerTable_DeleteLayer(m_doc.m_docId, layerIndex, quiet);
+      return UnsafeNativeMethods.CRhinoLayerTable_DeleteLayer(m_doc.m_docId, layerIndex, quiet, false);
     }
 
+    /// <summary>
+    /// Delete layer and all geometry objects on a layer
+    /// </summary>
+    /// <param name="layerIndex">
+    /// zero based index of layer to delete. This must be in the range 0 &lt;= layerIndex &lt; LayerTable.Count.
+    /// </param>
+    /// <param name="quiet">
+    /// If true, no warning message box appears if a layer the layer cannot be
+    /// deleted because it is the current layer.
+    /// </param>
+    /// <returns>
+    /// true if successful. false if layerIndex is out of range or the the layer cannot be
+    /// deleted because it is the current layer.
+    /// </returns>
+    public bool Purge(int layerIndex, bool quiet)
+    {
+      return UnsafeNativeMethods.CRhinoLayerTable_DeleteLayer(m_doc.m_docId, layerIndex, quiet, true);
+    }
     //[skipping]
     // int DeleteLayers( int layer_index_count, const int* layer_index_list, bool  bQuiet );
 

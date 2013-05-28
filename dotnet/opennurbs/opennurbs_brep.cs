@@ -2776,13 +2776,13 @@ namespace Rhino.Geometry
     /// Extrude a face in a Brep.
     /// </summary>
     /// <param name="pathCurve">The path to extrude along.</param>
-    /// <param name="bCap">If true, the extrusion is capped with a translation of the face being extruded</param>
+    /// <param name="cap">If true, the extrusion is capped with a translation of the face being extruded</param>
     /// <returns>A Brep on success or null on failure.</returns>
-    public Brep CreateExtrusion(Curve pathCurve, bool bCap)
+    public Brep CreateExtrusion(Curve pathCurve, bool cap)
     {
       IntPtr pConstBrep = m_brep.ConstPointer();
       IntPtr pConstCurve = pathCurve.ConstPointer();
-      IntPtr pBrep = UnsafeNativeMethods.ON_BrepFace_BrepExtrudeFace(pConstBrep, m_index, pConstCurve, bCap);
+      IntPtr pBrep = UnsafeNativeMethods.ON_BrepFace_BrepExtrudeFace(pConstBrep, m_index, pConstCurve, cap);
       if (IntPtr.Zero == pBrep)
         return null;
       // CreateGeometryHelper will create the "actual" surface type (Nurbs, Sum, Rev,...)

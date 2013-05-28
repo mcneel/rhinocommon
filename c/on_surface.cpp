@@ -56,7 +56,7 @@ RH_C_FUNCTION int ON_Surface_SpanCount(const ON_Surface* pConstSurface, int dire
   return rc;
 }
 
-RH_C_FUNCTION bool ON_Surface_GetSpanVector(const ON_Surface* pConstSurface, int direction, int count, /*ARRAY*/double* span_vector)
+RH_C_FUNCTION bool ON_Surface_GetSpanVector(const ON_Surface* pConstSurface, int direction, /*ARRAY*/double* span_vector)
 {
   bool rc = false;
   if( pConstSurface )

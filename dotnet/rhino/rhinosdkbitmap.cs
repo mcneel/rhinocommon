@@ -203,7 +203,7 @@ namespace Rhino.DocObjects.Tables
       {
         fileName = Document.FindFile(name);
         if (string.IsNullOrEmpty(fileName))
-          index = UnsafeNativeMethods.CRhinoBitmapTable_BitmapFromFileName(Document.m_docId, name, false);
+          index = UnsafeNativeMethods.CRhinoBitmapTable_BitmapFromFileName(Document.m_docId, name);
         if (createFile && string.IsNullOrEmpty(fileName) && index >= 0)
         {
           string tempFileName = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "embedded_files");

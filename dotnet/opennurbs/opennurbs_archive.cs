@@ -3361,7 +3361,7 @@ namespace Rhino.FileIO
     {
       IntPtr pThis = NonConstPointer();
       IntPtr pTextLog = log.NonConstPointer();
-      return UnsafeNativeMethods.ON_BinaryArchive_Dump3dmChunk(pThis, pTextLog, 0);
+      return UnsafeNativeMethods.ON_BinaryArchive_Dump3dmChunk(pThis, pTextLog);
     }
 
     /// <summary>

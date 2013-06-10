@@ -24,6 +24,14 @@
 #define RH_EXPORT __attribute__ ((visibility ("default")))
 #endif
 
+
+#if defined (ON_COMPILER_ANDROIDNDK)
+#define RH_C_FUNCTION extern "C" 
+#define RH_CPP_FUNCTION
+#define RH_CPP_CLASS
+#define RH_EXPORT
+#endif
+
 #if !defined(OPENNURBS_BUILD)
 // Always call this function instead of ActiveDoc so
 // we have a single place to fix up code to work on Mac multi-doc build
@@ -126,7 +134,19 @@ ON_wString UniChar2on(const UniChar* inStr);
     _variablename##_ = (UniChar2on(_parametername));                   \
     _variablename = (LPCTSTR) _variablename##_;                        \
   }
+#else //not __APPLE__ and not _WIN32. Maybe android
+
+#define RHMONO_STRING wchar_t
+// macro used to convert input strings to their appropriate type
+// for a given platform.
+#define INPUTSTRINGCOERCE( _variablename, _parametername) \
+const wchar_t* _variablename = _parametername;
+typedef signed char     BOOL;
+#define TRUE 1
+#define FALSE 0
+#define CALLBACK
 #endif
+
 #endif
 
 #if defined(OPENNURBS_BUILD)

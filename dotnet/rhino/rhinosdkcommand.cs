@@ -410,7 +410,7 @@ namespace Rhino.Commands
     /// <returns>true if a script running command is active.</returns>
     public static bool InScriptRunnerCommand()
     {
-      int rc = UnsafeNativeMethods.CRhinoApp_GetInt(RhinoApp.idxInScriptRunner);
+      int rc = RhinoApp.GetInt(RhinoApp.idxInScriptRunner);
       return (1 == rc);
     }
 

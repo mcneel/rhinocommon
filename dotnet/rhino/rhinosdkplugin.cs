@@ -2426,11 +2426,6 @@ namespace Rhino.PlugIns
       return false;
     }
 
-    public static bool AskUserForRhinoLicense()
-    {
-      return UnsafeNativeMethods.CRhinoApp_GetBool(2);
-    }
-
     /// <summary>
     /// This version of Rhino.PlugIns.LicenseUtils.GetLicense
     /// is used by Rhino C++ plug-ins.

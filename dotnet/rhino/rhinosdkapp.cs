@@ -147,13 +147,21 @@ namespace Rhino
     const int idxInstallation = 4;
     const int idxNodeType = 5;
     internal const int idxInScriptRunner = 6;
-    internal const int idxValidationGracePeriodDaysLeft = 7;
-    internal const int idxDaysUntilExpiration = 8;
-    internal const int idxLicenseSavesLeft = 9;
-    internal const int idxLicenseExpires = 0;
-    internal const int idxIsLicenseValidated = 1;
-    internal const int idxAskUserForRhinoLicense = 2;
+    const int idxValidationGracePeriodDaysLeft = 7;
+    const int idxDaysUntilExpiration = 8;
+    const int idxLicenseSavesLeft = 9;
+    internal static int GetInt(int which)
+    {
+      return UnsafeNativeMethods.CRhinoApp_GetInt(which);
+    }
 
+
+    const int idxLicenseExpires = 0;
+    const int idxIsLicenseValidated = 1;
+    static bool GetBool(int which)
+    {
+      return UnsafeNativeMethods.CRhinoApp_GetBool(which);
+    }
 
     ///<summary>
     ///Rhino SDK 9 digit SDK version number in the form YYYYMMDDn
@@ -163,7 +171,7 @@ namespace Rhino
     ///</summary>
     public static int SdkVersion
     {
-      get { return UnsafeNativeMethods.CRhinoApp_GetInt(idxSdkVersion); }
+      get { return GetInt(idxSdkVersion); }
     }
 
     ///<summary>
@@ -178,7 +186,7 @@ namespace Rhino
     ///</summary>
     public static int SdkServiceRelease
     {
-      get { return UnsafeNativeMethods.CRhinoApp_GetInt(idxSdkServiceRelease); }
+      get { return GetInt(idxSdkServiceRelease); }
     }
 
     ///<summary>
@@ -186,7 +194,7 @@ namespace Rhino
     ///</summary>
     public static int ExeVersion
     {
-      get { return UnsafeNativeMethods.CRhinoApp_GetInt(idxExeVersion); }
+      get { return GetInt(idxExeVersion); }
     }
 
     ///<summary>
@@ -197,7 +205,7 @@ namespace Rhino
     ///</summary>
     public static int ExeServiceRelease
     {
-      get { return UnsafeNativeMethods.CRhinoApp_GetInt(idxExeServiceRelease); }
+      get { return GetInt(idxExeServiceRelease); }
     }
 
     /// <summary>
@@ -277,7 +285,7 @@ namespace Rhino
     {
       get
       {
-        int rc = UnsafeNativeMethods.CRhinoApp_GetInt(idxNodeType);
+        int rc = GetInt(idxNodeType);
         return (LicenseNode)rc;
       }
     }
@@ -287,7 +295,7 @@ namespace Rhino
     {
       get
       {
-        int rc = UnsafeNativeMethods.CRhinoApp_GetInt(idxInstallation);
+        int rc = GetInt(idxInstallation);
         return (Installation)rc;
       }
     }
@@ -739,7 +747,7 @@ namespace Rhino
     /// </summary>
     public static bool LicenseExpires
     {
-      get { return UnsafeNativeMethods.CRhinoApp_GetBool(idxLicenseExpires); }
+      get { return GetBool(idxLicenseExpires); }
     }
 
     /// <summary>
@@ -749,7 +757,7 @@ namespace Rhino
     /// </summary>
     public static bool IsLicenseValidated
     {
-      get { return UnsafeNativeMethods.CRhinoApp_GetBool(idxIsLicenseValidated); }
+      get { return GetBool(idxIsLicenseValidated); }
     }
 
     /// <summary>
@@ -763,7 +771,7 @@ namespace Rhino
     /// </summary>
     public static int ValidationGracePeriodDaysLeft
     {
-      get { return UnsafeNativeMethods.CRhinoApp_GetInt(idxValidationGracePeriodDaysLeft); }
+      get { return GetInt(idxValidationGracePeriodDaysLeft); }
     }
 
     /// <summary>
@@ -774,7 +782,7 @@ namespace Rhino
     /// </summary>
     public static int DaysUntilExpiration
     {
-      get { return UnsafeNativeMethods.CRhinoApp_GetInt(idxDaysUntilExpiration); }
+      get { return GetInt(idxDaysUntilExpiration); }
     }
 
     /// <summary>
@@ -784,7 +792,7 @@ namespace Rhino
     /// </summary>
     public static int LicenseSavesLeft
     {
-      get { return UnsafeNativeMethods.CRhinoApp_GetInt(idxLicenseSavesLeft); }
+      get { return GetInt(idxLicenseSavesLeft); }
     }
 
     /// <summary>

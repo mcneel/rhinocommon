@@ -138,9 +138,6 @@ namespace Rhino.DocObjects
       return base.NonConstPointer();
     }
 
-    const int idxIsVisible = 0;
-    const int idxIsLocked = 1;
-    const int idxIsExpanded = 2;
     #region properties
     /// <summary>Gets or sets the name of this layer.</summary>
     /// <example>
@@ -369,6 +366,79 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
+    /// The persistent visbility setting is used for layers whose visibilty can
+    /// be changed by a "parent" object. A common case is when a layer is a
+    /// child layer (ParentId is not nil). In this case, when a parent layer is
+    /// turned off, then child layers are also turned off. The persistent
+    /// visibility setting determines what happens when the parent is turned on
+    /// again.
+    /// </summary>
+    /// <remarks>
+    /// Returns true if this layer's visibility is controlled by a parent
+    /// object and the parent is turned on (after being off), then this
+    /// layer will also be turned on.
+    /// Returns false if this layer's visibility is controlled by a parent
+    /// object and the parent layer is turned on (after being off), then
+    /// this layer will continue to be off.
+    /// 
+    /// When the persistent visbility is not explicitly set, this
+    /// property returns the current value of IsVisible
+    /// </remarks>
+    public bool GetPersistentVisibility()
+    {
+      return GetBool(idxPersistentVisibility);
+    }
+
+    /// <summary>
+    /// Set the persistent visibility setting for this layer
+    /// </summary>
+    /// <param name="persistentVisibility"></param>
+    public void SetPersistentVisibility(bool persistentVisibility)
+    {
+      SetBool(idxPersistentVisibility, persistentVisibility);
+    }
+
+    /// <summary>
+    /// Remove any explicit persistent visibility setting from this layer
+    /// </summary>
+    public void UnsetPersistentVisibility()
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_Layer_UnsetPersistentVisibility(pThis);
+    }
+
+    /// <summary>
+    /// The persistent locking setting is used for layers that can be locked by
+    /// a "parent" object. A common case is when a layer is a child layer
+    /// (Layer.ParentI is not nil). In this case, when a parent layer is locked,
+    /// then child layers are also locked. The persistent locking setting
+    /// determines what happens when the parent is unlocked again.
+    /// </summary>
+    /// <returns></returns>
+    public bool GetPersistentLocking()
+    {
+      return GetBool(idxPersistentLocking);
+    }
+
+    /// <summary>
+    /// Set the persistent locking setting for this layer
+    /// </summary>
+    /// <param name="persistentLocking"></param>
+    public void SetPersistentLocking(bool persistentLocking)
+    {
+      SetBool(idxPersistentLocking, persistentLocking);
+    }
+
+    /// <summary>
+    /// Remove any explicity persistent locking settings from this layer
+    /// </summary>
+    public void UnsetPersistentLocking()
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_Layer_UnsetPersistentLocking(pThis);
+    }
+
+    /// <summary>
     /// Gets or sets a value indicating whether this layer is expanded in the Rhino Layer dialog.
     /// </summary>
     /// <remarks>If you are modifying a layer inside a Rhino document, 
@@ -477,6 +547,11 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.ON_Layer_SetInt(ptr, which, val);
     }
 
+    const int idxIsVisible = 0;
+    const int idxIsLocked = 1;
+    const int idxIsExpanded = 2;
+    const int idxPersistentVisibility = 3;
+    const int idxPersistentLocking = 4;
     bool GetBool(int which)
     {
       IntPtr pConstLayer = ConstPointer();

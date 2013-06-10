@@ -641,7 +641,7 @@ namespace Rhino.Runtime
     /// Parses a plugin and create all the commands defined therein.
     /// </summary>
     /// <param name="plugin">Plugin to harvest for commands.</param>
-    public static void CreateCommands(PlugIn plugin)
+    public static void CreateCommands(PlugIn plugin) 
     {
       if (plugin!=null)
         plugin.InternalCreateCommands();
@@ -832,6 +832,7 @@ namespace Rhino.Runtime
     static readonly GetNowCallback m_getnow_callback = GetNowHelper;
     internal delegate int GetFormattedTimeCallback(int locale, int sec, int min, int hour, int day, int month, int year, IntPtr formatAsStringHolder, IntPtr resultString);
     static readonly GetFormattedTimeCallback m_getformattedtime_callback = GetFormattedTimeHelper;
+
     static HostUtils()
     {
       // These need to be moved somewhere else because they throw security exceptions
@@ -868,6 +869,18 @@ namespace Rhino.Runtime
 
       UnsafeNativeMethods.RHC_SetGetNowProc(m_getnow_callback, m_getformattedtime_callback);
       UnsafeNativeMethods.RHC_SetPythonEvaluateCallback(m_evaluate_callback);
+
+      InitializeZooClient();
+    }
+
+    /// <summary>
+    /// Initializes the ZooClient and Rhino license manager, this should get
+    /// called automatically when RhinoCommon is loaded so you probably won't
+    /// have to call this method.
+    /// </summary>
+    public static void InitializeZooClient()
+    {
+      LicenseManager.SetCallbacks();
     }
 
 #if RHINO_SDK

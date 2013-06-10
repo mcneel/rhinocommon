@@ -46,6 +46,16 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void RHC_SetGetNowProc(Rhino.Runtime.HostUtils.GetNowCallback callback, Rhino.Runtime.HostUtils.GetFormattedTimeCallback formattedTimCallback);
 
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void RHC_SetLicenseManagerCallbacks(Rhino.Runtime.LicenseManager.InitializeCallback initLicenseManagerProc,
+                                                             Rhino.Runtime.LicenseManager.EchoCallback echoProc,
+                                                             Rhino.Runtime.LicenseManager.ShowValidationUiCallback showLicenseValidationProc,
+                                                             Rhino.Runtime.LicenseManager.UuidCallback licenseUuidProc,
+                                                             Rhino.Runtime.LicenseManager.GetLicenseCallback getLicense,
+                                                             Rhino.Runtime.LicenseManager.GetCustomLicenseCallback getCustomLicense,
+                                                             Rhino.Runtime.LicenseManager.AskUserForLicenseCallback askUserForLicense
+    );
+
 #if RHINO_SDK
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.U1)]

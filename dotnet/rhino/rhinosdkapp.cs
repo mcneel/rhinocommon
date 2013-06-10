@@ -1,4 +1,6 @@
 using System;
+using System.Runtime.Serialization;
+using System.Windows.Forms;
 using Rhino.ApplicationSettings;
 
 namespace Rhino.ApplicationSettings
@@ -145,6 +147,12 @@ namespace Rhino
     const int idxInstallation = 4;
     const int idxNodeType = 5;
     internal const int idxInScriptRunner = 6;
+    internal const int idxValidationGracePeriodDaysLeft = 7;
+    internal const int idxDaysUntilExpiration = 8;
+    internal const int idxLicenseSavesLeft = 9;
+    internal const int idxLicenseExpires = 0;
+    internal const int idxIsLicenseValidated = 1;
+    internal const int idxAskUserForRhinoLicense = 2;
 
 
     ///<summary>
@@ -234,6 +242,7 @@ namespace Rhino
     internal const int idxInstallFolder = 4;
     internal const int idxHelpFilePath = 5;
     internal const int idxDefaultRuiFile = 6;
+    private const int idxAskUserForLicense = 7;
 
     /// <summary>Gets the product serial number, as seen in Rhino's ABOUT dialog box.</summary>
     public static string SerialNumber
@@ -679,6 +688,115 @@ namespace Rhino
         plugin_id = UnsafeNativeMethods.CRhinoPlugInManager_GetPlugInId(plugin);
 
       return GetPlugInObject(plugin_id);
+    }
+
+    /// <summary>
+    /// If licenseType is an evaluation license, returns true. An evaluation license limits the ability of
+    /// Rhino to save based on either the number of saves or a fixed period of time.
+    /// </summary>
+    /// <seealso cref="Installation"/>
+    /// <param name="licenseType"></param>
+    /// <returns>true if licenseType is an evaluation license. false otherwise</returns>
+    public static bool IsInstallationEvaluation(Installation licenseType)
+    {
+      return (licenseType == Installation.Evaluation ||
+              licenseType == Installation.EvaluationTimed);
+    }
+
+    /// <summary>
+    /// If licenseType is a commercial license, returns true. A commercial license grants
+    /// full use of the product.
+    /// </summary>
+    /// <param name="licenseType"></param>
+    /// <seealso cref="Installation"/>
+    /// <returns>true if licenseType is a commercial license. false otherwise</returns>
+    public static bool IsInstallationCommercial(Installation licenseType)
+    {
+      return (licenseType == Installation.Commercial     ||
+              licenseType == Installation.Corporate      ||
+              licenseType == Installation.Educational    ||
+              licenseType == Installation.EducationalLab ||
+              licenseType == Installation.NotForResale   ||
+              licenseType == Installation.NotForResaleLab);
+    }
+
+    /// <summary>
+    /// If licenseType is a beta license, returns true. A beta license grants
+    /// full use of the product during the pre-release development period.
+    /// </summary>
+    /// <param name="licenseType"></param>
+    /// <seealso cref="Installation"/>
+    /// <returns>true if licenseType is a beta license. false otherwise</returns>
+    public static bool IsInstallationBeta(Installation licenseType)
+    {
+      return (licenseType == Installation.Beta || licenseType == Installation.BetaLab);
+    }
+
+    /// <summary>
+    /// Returns 
+    ///   true if the license will expire
+    ///   false otherwise
+    /// </summary>
+    public static bool LicenseExpires
+    {
+      get { return UnsafeNativeMethods.CRhinoApp_GetBool(idxLicenseExpires); }
+    }
+
+    /// <summary>
+    /// Returns 
+    ///   true if the license is validated
+    ///   false otherwise
+    /// </summary>
+    public static bool IsLicenseValidated
+    {
+      get { return UnsafeNativeMethods.CRhinoApp_GetBool(idxIsLicenseValidated); }
+    }
+
+    /// <summary>
+    /// Returns number of days within which validation must occur. Zero when
+    ///   validation grace period has expired.
+    /// Raises InvalidLicenseTypeException if LicenseType is one of:
+    ///   EvaluationSaveLimited
+    ///   EvaluationTimeLimited
+    ///   Viewer
+    ///   Unknown
+    /// </summary>
+    public static int ValidationGracePeriodDaysLeft
+    {
+      get { return UnsafeNativeMethods.CRhinoApp_GetInt(idxValidationGracePeriodDaysLeft); }
+    }
+
+    /// <summary>
+    /// Returns number of days until license expires. Zero when
+    ///   license is expired.
+    /// Raises InvalidLicenseTypeException if LicenseExpires
+    /// would return false.
+    /// </summary>
+    public static int DaysUntilExpiration
+    {
+      get { return UnsafeNativeMethods.CRhinoApp_GetInt(idxDaysUntilExpiration); }
+    }
+
+    /// <summary>
+    /// Returns number of saves left in save-limited Evaluation. Zero when
+    ///   evaluation is expired.
+    /// Raises InvalidLicenseTypeException if LicenseType != EvaluationSaveLimited
+    /// </summary>
+    public static int LicenseSavesLeft
+    {
+      get { return UnsafeNativeMethods.CRhinoApp_GetInt(idxLicenseSavesLeft); }
+    }
+
+    /// <summary>
+    /// Causes Rhino to display UI asking the user to enter a license for Rhino or use one from the Zoo.
+    /// </summary>
+    /// <param name="standAlone">True to ask for a stand-alone license, false to ask the user for a license from the Zoo</param>
+    /// <param name="parent">Parent window for the user interface dialog.</param>
+    /// <returns></returns>
+    public static bool AskUserForRhinoLicense(bool standAlone, IWin32Window parent)
+    {
+      IntPtr pParent = parent != null ? parent.Handle : IntPtr.Zero;
+      return UnsafeNativeMethods.CRhinoApp_AskUserForRhinoLicense(standAlone, pParent);
     }
 
     #region events

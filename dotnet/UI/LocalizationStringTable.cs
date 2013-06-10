@@ -21,6 +21,8 @@ namespace Rhino.UI
 
     public Dictionary<string, string> CommandList { get { return m_command_list; } }
 
+    public Dictionary<string, string> DialogList { get { return m_dialog_list; } }
+
     /// <summary>
     /// Look for XML file decorating the name with both the Locale ID as a number and a System.Globalization.CultureInfo.Name.
     /// </summary>

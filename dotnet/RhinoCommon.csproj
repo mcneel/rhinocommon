@@ -108,6 +108,7 @@
     <Compile Include="AutoNativeMethodsRdk.cs" />
     <Compile Include="hostutils.cs" />
     <Compile Include="interop.cs" />
+    <Compile Include="licensemanager.cs" />
     <Compile Include="MonoHost.cs" />
     <Compile Include="NameSpaceDoc.cs" />
     <Compile Include="opennurbs\ON_MesherUtility.cs" />

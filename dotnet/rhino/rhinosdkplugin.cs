@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using Rhino.Runtime;
 using System.Collections.Generic;
 using System.Drawing;
@@ -769,6 +770,56 @@ namespace Rhino.PlugIns
       Guid productId = this.Id;
       string productTitle = this.Name;
       bool rc = LicenseUtils.GetLicense(productPath, productId, (int)productBuildType, productTitle, validateDelegate);
+      return rc;
+    }
+
+    public bool AskUserForLicense(LicenseBuildType productBuildType, bool standAlone, IWin32Window parent,
+                                  ValidateProductKeyDelegate validateDelegate)
+    {
+      string productPath = this.Assembly.Location;
+      Guid productId = this.Id;
+      string productTitle = this.Name;
+      bool rc = LicenseUtils.AskUserForLicense(productPath, standAlone, parent, productId, (int)productBuildType, productTitle, validateDelegate);
+      return rc;
+    }
+
+    /// <summary>
+    /// Verifies that there is a valid product license for your plug-in, using
+    /// the Rhino licensing system. If the plug-in is installed as a standalone
+    /// node, the locally installed license will be validated. If the plug-in
+    /// is installed as a network node, a loaner license will be requested by
+    /// the system's assigned Zoo server. If the Zoo server finds and returns 
+    /// a license, then this license will be validated. If no license is found,
+    /// then the user will be prompted to provide a license key, which will be
+    /// validated.
+    /// </summary>
+    /// <param name="licenseCapabilities">
+    /// In the event that a license was not found, or if the user wants to change
+    /// the way your plug-in is licenses, then provide what capabilities your
+    /// license has by using this enumeration flag.
+    /// </param>
+    /// <param name="textMask">
+    /// In the event that the user needs to be asked for a license, then you can
+    /// provide a text mask, which helps the user to distinguish between proper
+    /// and improper user input of your license code. Note, if you do not want
+    /// to use a text mask, then pass in a null value for this parameter.
+    /// For more information on text masks, search MSDN for the System.Windows.Forms.MaskedTextBox class.
+    /// </param>
+    /// <param name="validateDelegate">
+    /// Since the Rhino licensing system knows nothing about your product license,
+    /// you will need to validate the product license provided by the Rhino 
+    /// licensing system. This is done by supplying a callback function, or delegate,
+    /// that can be called to perform the validation.
+    /// </param>
+    /// <returns>
+    /// true if a valid license was found. false otherwise.
+    /// </returns>
+    public bool GetLicense(LicenseCapabilities licenseCapabilities, string textMask, ValidateProductKeyDelegate validateDelegate)
+    {
+      string productPath = this.Assembly.Location;
+      Guid productId = this.Id;
+      string productTitle = this.Name;
+      bool rc = LicenseUtils.GetLicense(productPath, productId, productTitle, licenseCapabilities, textMask, validateDelegate);
       return rc;
     }
 
@@ -2081,6 +2132,7 @@ namespace Rhino.PlugIns
     /// </summary>
     public static bool Initialize()
     {
+      LicenseManager.SetCallbacks();
       try
       {
         System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
@@ -2202,7 +2254,12 @@ namespace Rhino.PlugIns
         if (mi == null)
           return false;
 
-        object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productBuildType, productTitle, validateDelegate });
+        // 20-May-2013 Dale Fugier, use default capabilities
+        LicenseCapabilities licenseCapabilities = LicenseCapabilities.NoCapabilities;
+        // 29-May-2013 Dale Fugier, use no text mask
+        string textMask = null;
+
+        object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productBuildType, productTitle, licenseCapabilities, textMask, validateDelegate });
         if (null == invoke_rc)
           return false;
 
@@ -2215,6 +2272,53 @@ namespace Rhino.PlugIns
 
       return false;
     }
+
+
+    /// <summary>
+    /// 20-May-2013 Dale Fugier
+    /// This (internal) version of Rhino.PlugIns.LicenseUtils.GetLicense
+    /// is used by Rhino.PlugIns.PlugIn objects.
+    /// </summary>
+    internal static bool GetLicense(string productPath, Guid productId, string productTitle, LicenseCapabilities licenseCapabilities, string textMask, ValidateProductKeyDelegate validateDelegate)
+    {
+      if (null == validateDelegate ||
+          string.IsNullOrEmpty(productPath) ||
+          string.IsNullOrEmpty(productTitle) ||
+          productId.Equals(Guid.Empty)
+        )
+        return false;
+
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
+
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
+
+        System.Reflection.MethodInfo mi = t.GetMethod("GetLicense");
+        if (mi == null)
+          return false;
+
+        // 20-May-2013 Dale Fugier, 0 == any build
+        int productBuildType = 0;
+
+        object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productBuildType, productTitle, licenseCapabilities, textMask, validateDelegate });
+        if (null == invoke_rc)
+          return false;
+
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return false;
+    }
+
 
     /// <summary>
     /// This version of Rhino.PlugIns.LicenseUtils.GetLicense
@@ -2248,6 +2352,181 @@ namespace Rhino.PlugIns
         // information from the Rhino_DotNet wrapper class which is the delegate's target.
 
         System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
+        System.Reflection.Assembly rhCommon = typeof (HostUtils).Assembly;
+        if (delegate_method.Module.Assembly != rhCommon)
+          return false;
+
+        object wrapper_class = validateDelegate.Target;
+        if (null == wrapper_class)
+          return false;
+
+        Type wrapper_type = wrapper_class.GetType();
+        System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
+        System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
+        System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
+        string productPath = get_path_method.Invoke(wrapper_class, null) as string;
+        string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
+        Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
+
+        // 20-May-2013 Dale Fugier, use default capabilities
+        LicenseCapabilities licenseCapabilities = LicenseCapabilities.NoCapabilities;
+        // 29-May-2013 Dale Fugier, use no text mask
+        string textMask = null;
+
+        object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productType, productTitle, licenseCapabilities, textMask, validateDelegate });
+        if (null == invoke_rc)
+          return false;
+
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return false;
+    }
+
+
+    internal static bool AskUserForLicense(string productPath, bool standAlone, IWin32Window parent, Guid productId, int productBuildType, string productTitle,
+                                           ValidateProductKeyDelegate validateDelegate)
+    {
+      if (null == validateDelegate ||
+          string.IsNullOrEmpty(productPath) ||
+          string.IsNullOrEmpty(productTitle) ||
+          productId.Equals(Guid.Empty)
+        )
+        return false;
+
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
+
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
+
+        System.Reflection.MethodInfo mi = t.GetMethod("AskUserForLicense");
+        if (mi == null)
+          return false;
+
+        object invoke_rc = mi.Invoke(null, new object[] { productPath, standAlone, parent, productId, productBuildType, productTitle, validateDelegate });
+        if (null == invoke_rc)
+          return false;
+
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return false;
+    }
+
+    public static bool AskUserForRhinoLicense()
+    {
+      return UnsafeNativeMethods.CRhinoApp_GetBool(2);
+    }
+
+    /// <summary>
+    /// This version of Rhino.PlugIns.LicenseUtils.GetLicense
+    /// is used by Rhino C++ plug-ins.
+    /// </summary>
+    public static bool GetLicense(ValidateProductKeyDelegate validateDelegate, int capabilities, string textMask)
+    {
+      // 20-May-2013 Dale Fugier
+
+      if (null == validateDelegate)
+        return false;
+
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
+
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
+
+        System.Reflection.MethodInfo mi = t.GetMethod("GetLicense");
+        if (mi == null)
+          return false;
+
+        // If this delegate is defined in a C++ plug-in, find the plug-in's descriptive
+        // information from the Rhino_DotNet wrapper class which is the delegate's target.
+
+        System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
+        System.Reflection.Assembly rhCommon = typeof (HostUtils).Assembly;
+        if (delegate_method.Module.Assembly != rhCommon)
+          return false;
+
+        object wrapper_class = validateDelegate.Target;
+        if (null == wrapper_class)
+          return false;
+
+        Type wrapper_type = wrapper_class.GetType();
+        System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
+        System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
+        System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
+        string productPath = get_path_method.Invoke(wrapper_class, null) as string;
+        string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
+        Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
+
+        // 20-May-2013 Dale Fugier, 0 == any build
+        int productBuildType = 0;
+        // Convert int to enum
+        LicenseCapabilities licenseCapabilities = GetLicenseCapabilities(capabilities);
+
+        object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productBuildType, productTitle, licenseCapabilities, textMask, validateDelegate });
+        if (null == invoke_rc)
+          return false;
+
+        return (bool)invoke_rc;
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+
+      return false;
+    }
+
+    /// <summary>
+    /// This version of Rhino.PlugIns.LicenseUtils.AskUserForLicense
+    /// is used by Rhino C++ plug-ins.
+    /// </summary>
+    public static bool AskUserForLicense(int productType, bool standAlone, IWin32Window parent, ValidateProductKeyDelegate validateDelegate)
+    {
+      if (null == validateDelegate)
+        return false;
+
+      // 26 Jan 2012 - S. Baer (RR 97943)
+      // We were able to get this function to thrown exceptions with a bogus license file, but
+      // don't quite understand exactly where the problem was occuring.  Adding a ExceptionReport
+      // to this function in order to try and log the exception before Rhino goes down in a blaze
+      // of glory
+      try
+      {
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
+          return false;
+
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        if (t == null)
+          return false;
+
+        System.Reflection.MethodInfo mi = t.GetMethod("AskUserForLicense");
+        if (mi == null)
+          return false;
+
+        // If this delegate is defined in a C++ plug-in, find the plug-in's descriptive
+        // information from the Rhino_DotNet wrapper class which is the delegate's target.
+
+        System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
         System.Reflection.Assembly rhDotNet = HostUtils.GetRhinoDotNetAssembly();
         if (delegate_method.Module.Assembly != rhDotNet)
           return false;
@@ -2264,7 +2543,7 @@ namespace Rhino.PlugIns
         string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
         Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
 
-        object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productType, productTitle, validateDelegate });
+        object invoke_rc = mi.Invoke(null, new object[] { productPath, standAlone, parent, productId, productType, productTitle, validateDelegate });
         if (null == invoke_rc)
           return false;
 
@@ -2629,6 +2908,23 @@ namespace Rhino.PlugIns
 
       return null;
     }
+
+    /// <summary>
+    /// Converts an integer to a LicenseCapabilities flag
+    /// </summary>
+    public static LicenseCapabilities GetLicenseCapabilities(int filter)
+    {
+      LicenseCapabilities licenseCapabilities = LicenseCapabilities.NoCapabilities;
+      if ((filter & (int)LicenseCapabilities.CanBePurchased) == (int)LicenseCapabilities.CanBePurchased)
+        licenseCapabilities |= LicenseCapabilities.CanBePurchased;
+      if ((filter & (int)LicenseCapabilities.CanBeSpecified) == (int)LicenseCapabilities.CanBeSpecified)
+        licenseCapabilities |= LicenseCapabilities.CanBeSpecified;
+      if ((filter & (int)LicenseCapabilities.CanBeEvaluated) == (int)LicenseCapabilities.CanBeEvaluated)
+        licenseCapabilities |= LicenseCapabilities.CanBeEvaluated;
+      if ((filter & (int)LicenseCapabilities.EvaluationIsExpired) == (int)LicenseCapabilities.EvaluationIsExpired)
+        licenseCapabilities |= LicenseCapabilities.EvaluationIsExpired;
+      return licenseCapabilities;
+    }
   }
 
   /// <summary>ValidateProductKeyDelegate result code.</summary>
@@ -2656,12 +2952,32 @@ namespace Rhino.PlugIns
   /// <summary>License build contentType enumerations.</summary>
   public enum LicenseBuildType
   {
-    /// <summary>A release build (e.g. commercical, education, nfr, etc.)</summary>
+    /// <summary>A release build (e.g. commercial, education, nfr, etc.)</summary>
     Release = 100,
     /// <summary>A evaluation build</summary>
     Evaluation = 200,
     /// <summary>A beta build (e.g. wip)</summary>
     Beta = 300
+  }
+
+  /// <summary>
+  /// Controls the buttons that will appear on the license notification window
+  /// that is displayed if a license for the requesting product is not found.
+  /// Note, the "Close" button will always be displayed.
+  /// </summary>
+  [Flags]
+  public enum LicenseCapabilities
+  {
+    /// <summary>Only the "Close" button will be displayed</summary>
+    NoCapabilities = 0x0,
+    /// <summary>Shows "Buy a license" button</summary>
+    CanBePurchased = 0x1,
+    /// <summary>Shows ""Enter a license" and "Use a Zoo" buttons</summary>
+    CanBeSpecified = 0x2,
+    /// <summary>Shows "Evaluate" button</summary>
+    CanBeEvaluated = 0x4,
+    /// <summary>Shows "Evaluate" button disabled</summary>
+    EvaluationIsExpired = 0x8
   }
 
   /// <summary>Zoo plugin license data.</summary>

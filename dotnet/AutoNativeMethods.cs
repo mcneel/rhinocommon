@@ -5242,6 +5242,11 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoApp_IsAutomated();
 
+  //bool CRhinoApp_GetBool(int which)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoApp_GetBool(int which);
+
   //int CRhinoApp_GetInt(int which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoApp_GetInt(int which);
@@ -5291,6 +5296,11 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhinoApp_RunScript2([MarshalAs(UnmanagedType.LPWStr)]string _script, [MarshalAs(UnmanagedType.LPWStr)]string _mruDisplayString, int echo_mode);
+
+  //bool CRhinoApp_AskUserForRhinoLicense(bool standAlone, HWND parent)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhinoApp_AskUserForRhinoLicense([MarshalAs(UnmanagedType.U1)]bool standAlone, IntPtr parent);
 
   //void CRhinoApp_GetString(int which, CRhCmnStringHolder* pString)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -8865,6 +8875,34 @@ internal partial class UnsafeNativeMethods
   //int CRhinoLayerNode_GetChildren(int docId, int layerIndex, ON_SimpleArray<int>* pIndices)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoLayerNode_GetChildren(int docId, int layerIndex, IntPtr pIndices);
+  #endregion
+
+
+  #region rh_licensemanager.cpp
+  //int RHC_ValidateProductKey(const RHMONO_STRING* productKey, CRhinoLicenseValidator* validator)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_ValidateProductKey([MarshalAs(UnmanagedType.LPWStr)]string productKey, IntPtr validator);
+
+  //void RHC_SetLicenseManagerCallbacks(INITLICENSEMANAGEPROC initLicenseManagerProc,
+  //                                                  ECHOPROC echoProc,
+  //                                                  SHOWLICENSEVALIDATIONUIPROC showLicenseValidationProc,
+  //                                                  LICENSEUUIDPROC licenseUuidProc,
+  //                                                  GETLICENSE getLicense,
+  //                                                  GETCUSTOMLICENSE getCustomLicense,
+  //                                                  ASKUSERFORLICENSE askUserForLicense
+  //                                                 )
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  //HICON RHC_ExtractLicenseData(CRhinoLicenseValidator* validator,
+  //                                          int* year, int* month, int* day, int* hour, int* minute, int* second,
+  //                                          CRhCmnStringHolder* serialNumber,
+  //                                          int* licenseCount,
+  //                                          CRhCmnStringHolder* licenseTitle,
+  //                                          CRhCmnStringHolder* productLicense,
+  //                                          int* buildType
+  //                                         )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr RHC_ExtractLicenseData(IntPtr validator, ref int year, ref int month, ref int day, ref int hour, ref int minute, ref int second, IntPtr serialNumber, ref int licenseCount, IntPtr licenseTitle, IntPtr productLicense, ref int buildType);
   #endregion
 
 

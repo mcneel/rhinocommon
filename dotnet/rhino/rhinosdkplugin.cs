@@ -2087,7 +2087,11 @@ namespace Rhino.PlugIns
       return flags;
     }
   }
-
+  /// <summary>
+  /// Internal class used strictly to verify that the Zoo Client is being called
+  /// from Rhino Common.
+  /// </summary>
+  class VerifyFromZooCommon { }
   /// <summary>
   /// License Manager Utilities.
   /// </summary>
@@ -2147,7 +2151,8 @@ namespace Rhino.PlugIns
         if (mi == null)
           return false;
 
-        object invoke_rc = mi.Invoke(null, null);
+        var args = new object[]{new VerifyFromZooCommon()};
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2183,7 +2188,8 @@ namespace Rhino.PlugIns
         if (mi == null)
           return null;
 
-        string invoke_rc = mi.Invoke(null, new object[] { message }) as String;
+        var args = new object[] { new VerifyFromZooCommon(), message };
+        string invoke_rc = mi.Invoke(null, args) as String;
         return invoke_rc;
       }
       catch (Exception ex)
@@ -2216,7 +2222,8 @@ namespace Rhino.PlugIns
         if (mi == null)
           return false;
 
-        object invoke_rc = mi.Invoke(null, new object[] { cdkey });
+        var args = new object[] { new VerifyFromZooCommon(), cdkey };
+        object invoke_rc = mi.Invoke(null, args);
         return (bool)invoke_rc;
       }
       catch (Exception ex)
@@ -2259,7 +2266,8 @@ namespace Rhino.PlugIns
         // 29-May-2013 Dale Fugier, use no text mask
         string textMask = null;
 
-        object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productBuildType, productTitle, licenseCapabilities, textMask, validateDelegate });
+        var args = new object[] { new VerifyFromZooCommon(), productPath, productId, productBuildType, productTitle, licenseCapabilities, textMask, validateDelegate };
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2305,7 +2313,8 @@ namespace Rhino.PlugIns
         // 20-May-2013 Dale Fugier, 0 == any build
         int productBuildType = 0;
 
-        object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productBuildType, productTitle, licenseCapabilities, textMask, validateDelegate });
+        var args = new object[] { new VerifyFromZooCommon(), productPath, productId, productBuildType, productTitle, licenseCapabilities, textMask, validateDelegate };
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2373,7 +2382,8 @@ namespace Rhino.PlugIns
         // 29-May-2013 Dale Fugier, use no text mask
         string textMask = null;
 
-        object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productType, productTitle, licenseCapabilities, textMask, validateDelegate });
+        var args = new object[] { new VerifyFromZooCommon(), productPath, productId, productType, productTitle, licenseCapabilities, textMask, validateDelegate };
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2412,7 +2422,8 @@ namespace Rhino.PlugIns
         if (mi == null)
           return false;
 
-        object invoke_rc = mi.Invoke(null, new object[] { productPath, standAlone, parent, productId, productBuildType, productTitle, validateDelegate });
+        var args = new object[] { new VerifyFromZooCommon(), productPath, standAlone, parent, productId, productBuildType, productTitle, validateDelegate };
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2424,11 +2435,6 @@ namespace Rhino.PlugIns
       }
 
       return false;
-    }
-
-    public static bool AskUserForRhinoLicense()
-    {
-      return UnsafeNativeMethods.CRhinoApp_GetBool(2);
     }
 
     /// <summary>
@@ -2481,7 +2487,8 @@ namespace Rhino.PlugIns
         // Convert int to enum
         LicenseCapabilities licenseCapabilities = GetLicenseCapabilities(capabilities);
 
-        object invoke_rc = mi.Invoke(null, new object[] { productPath, productId, productBuildType, productTitle, licenseCapabilities, textMask, validateDelegate });
+        var args = new object[] { new VerifyFromZooCommon(), productPath, productId, productBuildType, productTitle, licenseCapabilities, textMask, validateDelegate };
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2543,7 +2550,8 @@ namespace Rhino.PlugIns
         string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
         Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
 
-        object invoke_rc = mi.Invoke(null, new object[] { productPath, standAlone, parent, productId, productType, productTitle, validateDelegate });
+        var args = new object[] { new VerifyFromZooCommon(), productPath, standAlone, parent, productId, productType, productTitle, validateDelegate };
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2583,7 +2591,8 @@ namespace Rhino.PlugIns
         if (mi == null)
           return false;
 
-        object invoke_rc = mi.Invoke(null, new object[] { productId });
+        var args = new object[] { new VerifyFromZooCommon(), productId };
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2640,7 +2649,8 @@ namespace Rhino.PlugIns
         string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
         Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
 
-        object invoke_rc = mi.Invoke(null, new object[] { productId });
+        var args = new object[] { new VerifyFromZooCommon(), productId };
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2673,7 +2683,8 @@ namespace Rhino.PlugIns
         if (mi == null)
           return false;
 
-        object invoke_rc = mi.Invoke(null, new object[] { productId });
+        var args = new object[] { new VerifyFromZooCommon(), productId };
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2714,7 +2725,8 @@ namespace Rhino.PlugIns
         if (mi == null)
           return false;
 
-        object invoke_rc = mi.Invoke(null, new object[] { productId });
+        var args = new object[] { new VerifyFromZooCommon(), productId };
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2755,7 +2767,8 @@ namespace Rhino.PlugIns
         if (mi == null)
           return false;
 
-        object invoke_rc = mi.Invoke(null, new object[] { productId });
+        var args = new object[] { new VerifyFromZooCommon(), productId };
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2796,7 +2809,8 @@ namespace Rhino.PlugIns
         if (mi == null)
           return false;
 
-        object invoke_rc = mi.Invoke(null, new object[] { productId });
+        var args = new object[] { new VerifyFromZooCommon(), productId };
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2829,7 +2843,8 @@ namespace Rhino.PlugIns
         if (mi == null)
           return -1;
 
-        object invoke_rc = mi.Invoke(null, new object[] { productId });
+        var args = new object[] { new VerifyFromZooCommon(), productId };
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return -1;
 
@@ -2862,7 +2877,8 @@ namespace Rhino.PlugIns
         if (mi == null)
           return false;
 
-        object invoke_rc = mi.Invoke(null, null);
+        var args = new object[] { new VerifyFromZooCommon() };
+        object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2895,7 +2911,8 @@ namespace Rhino.PlugIns
         if (mi == null)
           return null;
 
-        LicenseStatus[] invoke_rc = mi.Invoke(null, null) as LicenseStatus[];
+        var args = new object[] { new VerifyFromZooCommon() };
+        LicenseStatus[] invoke_rc = mi.Invoke(null, args) as LicenseStatus[];
         if (null == invoke_rc)
           return null;
 

@@ -31,6 +31,10 @@ public:
 
   int m_serial_number;
 public:
+  static CRhCmnUserData* Cast( ON_Object* );
+  static const CRhCmnUserData* Cast( const ON_Object* );
+
+public:
   virtual const ON_ClassId* ClassId() const;
   
 private:
@@ -60,7 +64,14 @@ CRhCmnUserData::CRhCmnUserData(int serial_number, ON_UUID managed_type_id, ON_UU
   m_userdata_copycount = 1;
 }
 
-
+CRhCmnUserData* CRhCmnUserData::Cast( ON_Object* p )
+{
+  return(CRhCmnUserData*)Cast((const ON_Object*)p);
+}
+const CRhCmnUserData* CRhCmnUserData::Cast( const ON_Object* p )
+{
+  return dynamic_cast<const CRhCmnUserData*>(p);
+}
 
 CRhCmnUserData::~CRhCmnUserData()
 {
@@ -183,8 +194,8 @@ static ON_Object* RhCmnClassIdCreateOnObject()
 
 static bool CopyRhCmnUserData( const ON_Object* src, ON_Object* dst )
 {
-  CRhCmnUserData* d = dynamic_cast<CRhCmnUserData*>(dst);
-  const CRhCmnUserData* s = dynamic_cast<const CRhCmnUserData*>(src);
+  CRhCmnUserData* d = CRhCmnUserData::Cast(dst);
+  const CRhCmnUserData* s = CRhCmnUserData::Cast(src);
   if( !d || !s )
     return false;
 
@@ -297,7 +308,7 @@ RH_C_FUNCTION int CRhCmnUserData_Find(const ON_Object* pConstOnObject, ON_UUID m
   if( pConstOnObject )
   {
     ON_UserData* pUD = pConstOnObject->GetUserData(managed_type_id);
-    CRhCmnUserData* pRhCmnUd = dynamic_cast<CRhCmnUserData*>(pUD);
+    CRhCmnUserData* pRhCmnUd = CRhCmnUserData::Cast(pUD);
     if( pRhCmnUd )
       rc = pRhCmnUd->m_serial_number;
   }

@@ -120,6 +120,8 @@ RH_C_FUNCTION bool ON_Layer_GetSetBool(ON_Layer* pLayer, int which, bool set, bo
   const int idxIsVisible = 0;
   const int idxIsLocked = 1;
   const int idxIsExpanded = 2;
+  const int idxPersistentVisibility = 3;
+  const int idxPersistentLocking = 4;
   bool rc = val;
   if( pLayer )
   {
@@ -131,6 +133,10 @@ RH_C_FUNCTION bool ON_Layer_GetSetBool(ON_Layer* pLayer, int which, bool set, bo
         pLayer->SetLocked(val);
       else if( idxIsExpanded==which )
         pLayer->m_bExpanded = val;
+      else if( idxPersistentVisibility==which )
+        pLayer->SetPersistentVisibility(val);
+      else if( idxPersistentLocking==which )
+        pLayer->SetPersistentLocking(val);
     }
     else 
     {
@@ -140,9 +146,25 @@ RH_C_FUNCTION bool ON_Layer_GetSetBool(ON_Layer* pLayer, int which, bool set, bo
         rc = pLayer->IsLocked();
       else if( idxIsExpanded==which )
         rc = pLayer->m_bExpanded;
+      else if( idxPersistentVisibility==which )
+        rc = pLayer->PersistentVisibility();
+      else if( idxPersistentLocking==which )
+        rc = pLayer->PersistentLocking();
     }
   }
   return rc;
+}
+
+RH_C_FUNCTION void ON_Layer_UnsetPersistentVisibility(ON_Layer* pLayer)
+{
+  if( pLayer )
+    pLayer->UnsetPersistentVisibility();
+}
+
+RH_C_FUNCTION void ON_Layer_UnsetPersistentLocking(ON_Layer* pLayer)
+{
+  if( pLayer )
+    pLayer->UnsetPersistentLocking();
 }
 
 RH_C_FUNCTION double ON_Layer_GetPlotWeight(const ON_Layer* pLayer)

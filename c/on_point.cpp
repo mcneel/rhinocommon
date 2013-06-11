@@ -122,10 +122,10 @@ RH_C_FUNCTION bool ON_3dVector_PerpendicularTo( ON_3dVector* v, ON_3DVECTOR_STRU
 
 RH_C_FUNCTION int ONC_ComparePoint(int dim, bool is_rat, ON_3DPOINT_STRUCT a, ON_3DPOINT_STRUCT b)
 {
-  const ON_3dPoint* _A = (const ON_3dPoint*)&a;
-  const ON_3dPoint* _B = (const ON_3dPoint*)&b;
-  int rat = is_rat?TRUE:FALSE;
-  return ON_ComparePoint(dim, rat, &(_A->x), &(_B->x));
+  const ON_3dPoint* _a = (const ON_3dPoint*)&a;
+  const ON_3dPoint* _b = (const ON_3dPoint*)&b;
+  int rat = is_rat?1:0;
+  return ON_ComparePoint(dim, rat, &(_a->x), &(_b->x));
 }
 
 

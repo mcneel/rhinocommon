@@ -10,8 +10,14 @@ using System.Runtime.InteropServices;
 class Import
 {
 #if MONO_BUILD
+
+#if __ANDROID__
+	public const string lib = "opennurbs";
+	public const string librdk = "opennurbs";
+#else
   public const string lib = "__Internal";
   public const string librdk = "__Internal";
+#endif
 #else
 #if OPENNURBS_SDK
   public const string lib = "rhino3dmio_native";

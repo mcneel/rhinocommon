@@ -2735,6 +2735,14 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Layer_GetSetBool(IntPtr pLayer, int which, [MarshalAs(UnmanagedType.U1)]bool set, [MarshalAs(UnmanagedType.U1)]bool val);
 
+  //void ON_Layer_UnsetPersistentVisibility(ON_Layer* pLayer)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Layer_UnsetPersistentVisibility(IntPtr pLayer);
+
+  //void ON_Layer_UnsetPersistentLocking(ON_Layer* pLayer)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Layer_UnsetPersistentLocking(IntPtr pLayer);
+
   //double ON_Layer_GetPlotWeight(const ON_Layer* pLayer)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern double ON_Layer_GetPlotWeight(IntPtr pLayer);

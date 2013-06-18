@@ -2239,3 +2239,47 @@ RH_C_FUNCTION ON_Mesh* ON_Mesh_BrepToMeshSimple(const ON_Brep* pBrep)
   return newMesh;
 #endif
 }
+
+RH_C_FUNCTION bool ON_Mesh_CreatePartition(ON_Mesh* pMesh, int max_vertices, int max_triangle)
+{
+  bool rc = false;
+  if( pMesh )
+  {
+    const ON_MeshPartition* pPartition = pMesh->CreatePartition(max_vertices, max_triangle);
+    rc = pPartition != NULL;
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Mesh_PartitionCount(const ON_Mesh* pConstMesh)
+{
+  int rc = 0;
+  if( pConstMesh )
+  {
+    const ON_MeshPartition* pPartition = pConstMesh->Partition();
+    if( pPartition )
+      rc = pPartition->m_part.Count();
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Mesh_GetMeshPart(const ON_Mesh* pConstMesh, int which, int* vi0, int* vi1, int* fi0, int* fi1, int* vertex_count, int* triangle_count )
+{
+  bool rc = false;
+  if( pConstMesh && vi0 && vi1 && fi0 && fi1 && vertex_count && triangle_count )
+  {
+    const ON_MeshPartition* pPartition = pConstMesh->Partition();
+    if( pPartition && which>=0 && which<pPartition->m_part.Count() )
+    {
+      const ON_MeshPart& part = pPartition->m_part[which];
+      *vi0 = part.vi[0];
+      *vi1 = part.vi[1];
+      *fi0 = part.fi[0];
+      *fi1 = part.fi[1];
+      *vertex_count = part.vertex_count;
+      *triangle_count = part.triangle_count;
+      rc = true;
+    }
+  }
+  return rc;
+}

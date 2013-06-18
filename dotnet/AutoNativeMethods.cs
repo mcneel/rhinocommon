@@ -3545,6 +3545,20 @@ internal partial class UnsafeNativeMethods
   //ON_Mesh* ON_Mesh_BrepToMeshSimple(const ON_Brep* pBrep)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Mesh_BrepToMeshSimple(IntPtr pBrep);
+
+  //bool ON_Mesh_CreatePartition(ON_Mesh* pMesh, int max_vertices, int max_triangle)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Mesh_CreatePartition(IntPtr pMesh, int max_vertices, int max_triangle);
+
+  //int ON_Mesh_PartitionCount(const ON_Mesh* pConstMesh)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_Mesh_PartitionCount(IntPtr pConstMesh);
+
+  //bool ON_Mesh_GetMeshPart(const ON_Mesh* pConstMesh, int which, int* vi0, int* vi1, int* fi0, int* fi1, int* vertex_count, int* triangle_count )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Mesh_GetMeshPart(IntPtr pConstMesh, int which, ref int vi0, ref int vi1, ref int fi0, ref int fi1, ref int vertex_count, ref int triangle_count);
   #endregion
 
 

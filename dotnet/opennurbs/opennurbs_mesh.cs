@@ -435,6 +435,43 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
+  /// Represents a portion of a mesh for partitioning
+  /// </summary>
+  public class MeshPart
+  {
+    private int m_vi0;
+    private int m_vi1;
+    private int m_fi0;
+    private int m_fi1;
+    private int m_vertex_count;
+    private int m_triangle_count;
+
+    internal MeshPart(int vertexStart, int vertexEnd, int faceStart, int faceEnd, int vertexCount, int triangleCount)
+    {
+      m_vi0 = vertexStart;
+      m_vi1 = vertexEnd;
+      m_fi0 = faceStart;
+      m_fi1 = faceEnd;
+      m_vertex_count = vertexCount;
+      m_triangle_count = triangleCount;
+    }
+
+    /// <summary>Start of subinterval of parent mesh vertex array</summary>
+    public int StartVertexIndex { get { return m_vi0; } }
+    /// <summary>End of subinterval of parent mesh vertex array</summary>
+    public int EndVertexIndex { get { return m_vi1; } }
+    /// <summary>Start of subinterval of parent mesh face array</summary>
+    public int StartFaceIndex { get { return m_fi0; } }
+    /// <summary>End of subinterval of parent mesh face array</summary>
+    public int EndFaceIndex { get { return m_fi1; } }
+
+    /// <summary>EndVertexIndex - StartVertexIndex</summary>
+    public int VertexCount { get { return m_vertex_count; } }
+    /// <summary></summary>
+    public int TriangleCount { get { return m_triangle_count; } }
+  }
+
+  /// <summary>
   /// Represents a geometry type that is defined by vertices and faces.
   /// <para>This is often called a face-vertex mesh.</para>
   /// </summary>
@@ -1795,6 +1832,48 @@ namespace Rhino.Geometry
 
     #endregion
 
+    /// <summary>
+    /// In ancient times (or modern smartphone times), some rendering engines
+    /// were only able to process small batches of triangles and the
+    /// CreatePartitions() function was provided to partition the mesh into
+    /// subsets of vertices and faces that those renering engines could handle.
+    /// </summary>
+    /// <param name="maximumVertexCount"></param>
+    /// <param name="maximumTriangleCount"></param>
+    /// <returns>true on success</returns>
+    public bool CreatePartitions(int maximumVertexCount, int maximumTriangleCount)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Mesh_CreatePartition(pThis, maximumVertexCount, maximumTriangleCount);
+    }
+
+    /// <summary>
+    /// Number of partition information chunks stored on this mesh based
+    /// on the last call to CreatePartitions
+    /// </summary>
+    public int PartitionCount
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_Mesh_PartitionCount(pConstThis);
+      }
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="which"></param>
+    /// <returns></returns>
+    public MeshPart GetPartition(int which)
+    {
+      IntPtr pConstThis = NonConstPointer();
+      int vi0=0, vi1=0, fi0=0, fi1=0;
+      int vert_count = 0;
+      int tri_count = 0;
+      if (UnsafeNativeMethods.ON_Mesh_GetMeshPart(pConstThis, which, ref vi0, ref vi1, ref fi0, ref fi1, ref vert_count, ref tri_count))
+        return new MeshPart(vi0, vi1, fi0, fi1, vert_count, tri_count);
+      return null;
+    }
 
 
     //[skipping]
@@ -1815,7 +1894,6 @@ namespace Rhino.Geometry
     //  bool FaceIsHidden( int meshvi ) const;
     //  const ON_MeshTopology& Topology() const;
     //  void DestroyTopology();
-    //  const ON_MeshPartition* CreatePartition( 
     //  const ON_MeshPartition* Partition() const;
     //  void DestroyPartition();
     //  const class ON_MeshNgonList* NgonList() const;

@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 
 #if RHINO_SDK
 using Rhino.PlugIns;
-#endif
 
 namespace Rhino.Runtime
 {
@@ -98,8 +97,8 @@ namespace Rhino.Runtime
     /// </returns>
     internal delegate int GetCustomLicenseCallback(Guid id, [MarshalAs(UnmanagedType.LPWStr)]string title, uint capabilities, [MarshalAs(UnmanagedType.LPWStr)]string textMask, [MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr validator);
     private static readonly GetCustomLicenseCallback GetCustomLicenseProc = CustomGetLicenseHelper;
-    
-    internal delegate bool AskUserForLicenseCallback([MarshalAs(UnmanagedType.LPWStr)]string productTitle, bool standAlone, IntPtr parent, Guid productId, int productBuildType, [MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr validator);
+
+    internal delegate bool AskUserForLicenseCallback([MarshalAs(UnmanagedType.LPWStr)]string productTitle, bool standAlone, IntPtr parent, Guid productId, int productBuildType, [MarshalAs(UnmanagedType.LPWStr)]string texMask, [MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr validator);
     private static readonly AskUserForLicenseCallback AskUserForLicenseProc = AskUserForLicenseHelper;
     /// <summary>
     /// Gets set to true after initial call to
@@ -339,12 +338,13 @@ namespace Rhino.Runtime
                                                 IntPtr parent,
                                                 Guid productId,
                                                 int productBuildType,
+                                                [MarshalAs(UnmanagedType.LPWStr)] string textMask,
                                                 [MarshalAs(UnmanagedType.LPWStr)] string path,
                                                 IntPtr validator)
     {
       var helper = new ValidatorHelper(validator, productId, productTitle, path);
       var parentControl = System.Windows.Forms.ContainerControl.FromHandle(parent);
-      var rc = LicenseUtils.AskUserForLicense(productBuildType, standAlone, parentControl, helper.ValidateProductKey);
+      var rc = LicenseUtils.AskUserForLicense(productBuildType, standAlone, parentControl, textMask, helper.ValidateProductKey);
       return rc;
     }
     /// <summary>
@@ -382,3 +382,4 @@ namespace Rhino.Runtime
     #endregion rhcommon_c call back methods
   }
 }
+#endif

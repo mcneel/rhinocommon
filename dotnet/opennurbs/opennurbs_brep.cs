@@ -1411,6 +1411,7 @@ namespace Rhino.Geometry
       return output.ToNonConstArray();
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Constructs all the Wireframe curves for this Brep.
     /// </summary>
@@ -1425,6 +1426,7 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Brep_GetWireframe(pConstPtr, density, outputPtr);
       return output.ToNonConstArray();
     }
+#endif
 
     /// <summary>
     /// Duplicate all the corner vertices of this Brep.

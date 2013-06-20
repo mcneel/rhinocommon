@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 
+#if RHINO_SDK
 namespace Rhino.Display
 {
   /// <summary>
@@ -567,3 +568,4 @@ namespace Rhino.Geometry
     #endregion
   }
 }
+#endif

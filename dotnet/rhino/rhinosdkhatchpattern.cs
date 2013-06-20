@@ -116,6 +116,7 @@ namespace Rhino.DocObjects
     }
 
     #region properties
+#if RHINO_SDK
     const int idxIsDeleted = 0;
     const int idxIsReference = 1;
 
@@ -149,6 +150,7 @@ namespace Rhino.DocObjects
         return UnsafeNativeMethods.CRhinoHatchPattern_GetBool(pConstThis, idxIsReference);
       }
     }
+#endif
 
     /// <summary>
     /// Index in the hatch pattern table for this pattern. -1 if not in the table.
@@ -160,7 +162,11 @@ namespace Rhino.DocObjects
         if (!IsDocumentControlled)
           return -1;
         IntPtr pConstThis = ConstPointer();
+#if RHINO_SDK
         return UnsafeNativeMethods.CRhinoHatchPattern_GetIndex(pConstThis);
+#else
+        return UnsafeNativeMethods.ON_HatchPattern_Index(pConstThis);
+#endif
       }
     }
 

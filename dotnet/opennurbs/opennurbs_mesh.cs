@@ -1280,7 +1280,6 @@ namespace Rhino.Geometry
       IntPtr pThis = NonConstPointer();
       UnsafeNativeMethods.RHC_RhinoWeldMesh(pThis, angleToleranceRadians);
     }
-#endif
 
     /// <summary>
     /// Attempts to fix inconsistencies in the directions of meshfaces for a mesh. This function
@@ -1382,7 +1381,6 @@ namespace Rhino.Geometry
       }
     }
 
-#if RHINO_SDK
     /// <summary>
     /// Constructs the outlines of a mesh projected against a plane.
     /// </summary>
@@ -1705,6 +1703,7 @@ namespace Rhino.Geometry
       return rc.ToArray();
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Makes a new mesh with vertices offset a distance in the opposite direction of the existing vertex normals.
     /// Same as Mesh.Offset(distance, false)
@@ -1732,6 +1731,7 @@ namespace Rhino.Geometry
         return null;
       return new Mesh(pNewMesh, null);
     }
+#endif
     #endregion
 
     internal bool IndexOpBool(int which, int index)
@@ -2886,6 +2886,7 @@ namespace Rhino.Geometry.Collections
       return m_mesh.IndexOpBool(Mesh.idxCollapseEdge, topologyEdgeIndex);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Divides a mesh edge to create two or more triangles
     /// </summary>
@@ -2916,6 +2917,7 @@ namespace Rhino.Geometry.Collections
       IntPtr pMesh = m_mesh.NonConstPointer();
       return UnsafeNativeMethods.ON_Mesh_SplitMeshEdge(pMesh, topologyEdgeIndex, point);
     }
+#endif
 
     /// <summary>
     /// Determines if a mesh edge index is valid input for <see cref="SwapEdge"/>.

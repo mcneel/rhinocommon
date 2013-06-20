@@ -226,7 +226,6 @@ namespace Rhino.Geometry
     {
       return CreateFromCorners(corner1, corner2, corner3, corner3, 0.0);
     }
-#endif
 
     /// <summary>
     /// Constructs a railed Surface-of-Revolution.
@@ -246,7 +245,6 @@ namespace Rhino.Geometry
       return new NurbsSurface(pNurbsSurface, null);
     }
 
-#if USING_V5_SDK && RHINO_SDK
     /// <summary>
     /// Builds a surface from an ordered network of curves/edges.
     /// </summary>

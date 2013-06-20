@@ -68,6 +68,7 @@ namespace Rhino.DocObjects
     {
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Constructs a layer with the current default properties.
     /// The default layer properties are:
@@ -87,6 +88,7 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.CRhinoLayerTable_GetDefaultLayerProperties(ptr);
       return layer;
     }
+#endif
     #endregion
 
     public bool CommitChanges()
@@ -575,6 +577,8 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.ON_Layer_Default(pThis);
     }
 
+    #region methods
+#if RHINO_SDK
     /// <summary>
     /// Determines if a given string is valid for a layer name.
     /// </summary>
@@ -589,9 +593,6 @@ namespace Rhino.DocObjects
     {
       return UnsafeNativeMethods.RHC_IsValidName(name);
     }
-
-    #region methods
-#if RHINO_SDK
 
     public bool IsChildOf(int layerIndex)
     {

@@ -40,6 +40,10 @@ internal partial class UnsafeNativeMethods
 
 
   #region on_3dm_attributes.cpp
+  //ON_3dmObjectAttributes* ON_3dmObjectAttributes_New(const ON_3dmObjectAttributes* pOther)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_3dmObjectAttributes_New(IntPtr pOther);
+
   //int ON_3dmObjectAttributes_GetSetInt( ON_3dmObjectAttributes* ptr, int which, bool set, int set_value )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int ON_3dmObjectAttributes_GetSetInt(IntPtr ptr, int which, [MarshalAs(UnmanagedType.U1)]bool set, int set_value);
@@ -2481,6 +2485,10 @@ internal partial class UnsafeNativeMethods
   //ON_HatchPattern* ON_HatchPattern_New()
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_HatchPattern_New();
+
+  //int ON_HatchPattern_Index(const ON_HatchPattern* pConstHatchPattern)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_HatchPattern_Index(IntPtr pConstHatchPattern);
 
   //void ON_HatchPattern_GetString(const ON_HatchPattern* pConstHatchPattern, CRhCmnStringHolder* pString, bool name)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

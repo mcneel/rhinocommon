@@ -1,7 +1,6 @@
 #pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using Rhino.Runtime;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,6 +10,8 @@ using Rhino.Render;
 #endif
 
 #if RHINO_SDK
+using System.Windows.Forms;
+
 namespace Rhino.PlugIns
 {
   public enum DescriptionType
@@ -773,13 +774,13 @@ namespace Rhino.PlugIns
       return rc;
     }
 
-    public bool AskUserForLicense(LicenseBuildType productBuildType, bool standAlone, IWin32Window parent,
+    public bool AskUserForLicense(LicenseBuildType productBuildType, bool standAlone, string textMask, IWin32Window parent,
                                   ValidateProductKeyDelegate validateDelegate)
     {
       string productPath = this.Assembly.Location;
       Guid productId = this.Id;
       string productTitle = this.Name;
-      bool rc = LicenseUtils.AskUserForLicense(productPath, standAlone, parent, productId, (int)productBuildType, productTitle, validateDelegate);
+      bool rc = LicenseUtils.AskUserForLicense(productPath, standAlone, parent, productId, (int)productBuildType, productTitle, textMask, validateDelegate);
       return rc;
     }
 
@@ -2398,7 +2399,8 @@ namespace Rhino.PlugIns
     }
 
 
-    internal static bool AskUserForLicense(string productPath, bool standAlone, IWin32Window parent, Guid productId, int productBuildType, string productTitle,
+    internal static bool AskUserForLicense(string productPath, bool standAlone, IWin32Window parentWindow, Guid productId, 
+                                           int productBuildType, string productTitle, string textMask,
                                            ValidateProductKeyDelegate validateDelegate)
     {
       if (null == validateDelegate ||
@@ -2414,7 +2416,7 @@ namespace Rhino.PlugIns
         if (null == zooAss)
           return false;
 
-        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
         if (t == null)
           return false;
 
@@ -2422,7 +2424,7 @@ namespace Rhino.PlugIns
         if (mi == null)
           return false;
 
-        var args = new object[] { new VerifyFromZooCommon(), productPath, standAlone, parent, productId, productBuildType, productTitle, validateDelegate };
+        var args = new object[] { new VerifyFromZooCommon(), productPath, standAlone, parentWindow, productId, productBuildType, productTitle, textMask, validateDelegate, null };
         object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
@@ -2506,7 +2508,7 @@ namespace Rhino.PlugIns
     /// This version of Rhino.PlugIns.LicenseUtils.AskUserForLicense
     /// is used by Rhino C++ plug-ins.
     /// </summary>
-    public static bool AskUserForLicense(int productType, bool standAlone, IWin32Window parent, ValidateProductKeyDelegate validateDelegate)
+    public static bool AskUserForLicense(int productType, bool standAlone, IWin32Window parentWindow, string textMask, ValidateProductKeyDelegate validateDelegate)
     {
       if (null == validateDelegate)
         return false;
@@ -2534,8 +2536,8 @@ namespace Rhino.PlugIns
         // information from the Rhino_DotNet wrapper class which is the delegate's target.
 
         System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
-        System.Reflection.Assembly rhDotNet = HostUtils.GetRhinoDotNetAssembly();
-        if (delegate_method.Module.Assembly != rhDotNet)
+        System.Reflection.Assembly rhCommon = typeof(HostUtils).Assembly;
+        if (delegate_method.Module.Assembly != rhCommon)
           return false;
 
         object wrapper_class = validateDelegate.Target;
@@ -2550,7 +2552,7 @@ namespace Rhino.PlugIns
         string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
         Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
 
-        var args = new object[] { new VerifyFromZooCommon(), productPath, standAlone, parent, productId, productType, productTitle, validateDelegate };
+        var args = new object[] { new VerifyFromZooCommon(), productPath, standAlone, parentWindow, productId, productType, productTitle, textMask, validateDelegate, null };
         object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;

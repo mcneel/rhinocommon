@@ -352,7 +352,6 @@ namespace Rhino.Geometry
       IntPtr ptr = UnsafeNativeMethods.RHC_RhinoInterpCurve(degree, count, ptArray, startTangent, endTangent, (int)knots);
       return GeometryBase.CreateGeometryHelper(ptr, null) as NurbsCurve;
     }
-#endif
 
 #if !USING_V5_SDK
     //David: this function is disabled in the public SDK until I can get it to work right.
@@ -383,6 +382,7 @@ namespace Rhino.Geometry
       return GeometryBase.CreateGeometryHelper(ptr, null) as NurbsCurve;
     }
 #endif
+#endif //RHINO_SDK
 
     /// <summary>
     /// Constructs a curve from a set of control-point locations.
@@ -1200,11 +1200,13 @@ namespace Rhino.Geometry
     /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected override void Dispose(bool disposing)
     {
+#if RHINO_SDK
       if (IntPtr.Zero != m_pCurveDisplay)
       {
         UnsafeNativeMethods.CurveDisplay_Delete(m_pCurveDisplay);
         m_pCurveDisplay = IntPtr.Zero;
       }
+#endif
       base.Dispose(disposing);
     }
     #endregion
@@ -1230,16 +1232,19 @@ namespace Rhino.Geometry
     /// </summary>
     protected override void NonConstOperation()
     {
+#if RHINO_SDK
       if (IntPtr.Zero != m_pCurveDisplay)
       {
         UnsafeNativeMethods.CurveDisplay_Delete(m_pCurveDisplay);
         m_pCurveDisplay = IntPtr.Zero;
       }
+#endif
       base.NonConstOperation();
     }
 
-    internal IntPtr m_pCurveDisplay = IntPtr.Zero;
 #if RHINO_SDK
+    internal IntPtr m_pCurveDisplay = IntPtr.Zero;
+
     internal virtual void Draw(Display.DisplayPipeline pipeline, System.Drawing.Color color, int thickness)
     {
       IntPtr pDisplayPipeline = pipeline.NonConstPointer();
@@ -3637,7 +3642,6 @@ namespace Rhino.Geometry
         return null;
       return curves;
     }
-#endif
 
     /// <summary>
     /// Offset this curve on a brep face surface. This curve must lie on the surface.
@@ -3773,8 +3777,6 @@ namespace Rhino.Geometry
       Brep b = Brep.CreateFromSurface(surface);
       return OffsetOnSurface(b.Faces[0], curveParameters, offsetDistances, fittingTolerance);
     }
-
-#if USING_V5_SDK && RHINO_SDK
 
     /// <summary>
     /// Pulls this curve to a brep face and returns the result of that operation.

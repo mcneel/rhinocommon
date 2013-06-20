@@ -49,11 +49,16 @@ RH_C_FUNCTION const RHMONO_STRING* ON_wString_Get(ON_wString* pString)
   const RHMONO_STRING* rc = NULL;
   if( pString )
   {
+#if defined (_WIN32)
+    rc = pString->Array();
+#endif
 #if defined (__APPLE__)
     string_get_holder.Set(*pString);
     rc = string_get_holder.Array();
-#else
-    rc = pString->Array();
+#endif
+#if defined(ON_COMPILER_ANDROIDNDK)
+    string_get_holder.Set(*pString);
+    rc = string_get_holder.Array();
 #endif
   }
   return rc;

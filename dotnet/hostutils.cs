@@ -496,7 +496,13 @@ namespace Rhino.Runtime
     public static void DebugString(string msg)
     {
       if (m_bSendDebugToRhino)
+      {
+#if RHINO_SDK
         UnsafeNativeMethods.RHC_DebugPrint(msg);
+#else
+        Console.Write(msg);
+#endif
+      }
     }
     /// <summary>
     /// Prints a debug message to the Rhino Command Line. 
@@ -880,7 +886,9 @@ namespace Rhino.Runtime
     /// </summary>
     public static void InitializeZooClient()
     {
+#if RHINO_SDK
       LicenseManager.SetCallbacks();
+#endif
     }
 
 #if RHINO_SDK
@@ -919,7 +927,6 @@ namespace Rhino.Runtime
       PlugIn.m_plugins.Add(plugin);
       return plugin;
     }
-#endif
 
     static void DelegateReport(System.Delegate d, string name)
     {
@@ -944,7 +951,6 @@ namespace Rhino.Runtime
     internal static ReportCallback m_ew_report = EventWatcherReport;
     internal static void EventWatcherReport(int c)
     {
-#if RHINO_SDK
       UnsafeNativeMethods.CRhinoEventWatcher_LogState("RhinoCommon delegate based event watcher\n");
       DelegateReport(RhinoApp.m_init_app, "InitApp");
       DelegateReport(RhinoApp.m_close_app, "CloseApp");
@@ -964,8 +970,8 @@ namespace Rhino.Runtime
       DelegateReport(RhinoDoc.m_replace_object, "ReplaceObject");
       DelegateReport(RhinoDoc.m_undelete_object, "UndeleteObject");
       DelegateReport(RhinoDoc.m_purge_object, "PurgeObject");
-#endif
     }
+#endif
 
 #if RDK_CHECKED
     internal delegate void RdkReportCallback(int c);
@@ -1053,6 +1059,7 @@ namespace Rhino.Runtime
       }
     }
 
+#if RHINO_SDK
     internal static void WriteIntoSerializationInfo(IntPtr pRhCmnProfileContext, System.Runtime.Serialization.SerializationInfo info, string prefixStrip)
     {
       const int _string = 1;
@@ -1296,6 +1303,7 @@ namespace Rhino.Runtime
       }
       return pProfileContext;
     }
+#endif
   }
 
   /// <summary>

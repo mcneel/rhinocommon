@@ -86,7 +86,11 @@ namespace Rhino.DocObjects
 
     public ObjectAttributes()
     {
+#if RHINO_SDK
       IntPtr ptr = UnsafeNativeMethods.CRhinoObjectAttributes_New(IntPtr.Zero);
+#else
+      IntPtr ptr = UnsafeNativeMethods.ON_3dmObjectAttributes_New(IntPtr.Zero);
+#endif
       ConstructNonConstObject(ptr);
     }
 
@@ -103,7 +107,11 @@ namespace Rhino.DocObjects
     public ObjectAttributes Duplicate()
     {
       IntPtr pThis = ConstPointer();
+#if RHINO_SDK
       IntPtr pNew = UnsafeNativeMethods.CRhinoObjectAttributes_New(pThis);
+#else
+      IntPtr pNew = UnsafeNativeMethods.ON_3dmObjectAttributes_New(pThis);
+#endif
       if (IntPtr.Zero == pNew)
         return null;
       return new ObjectAttributes(pNew);

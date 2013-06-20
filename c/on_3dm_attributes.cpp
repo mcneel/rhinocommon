@@ -1,5 +1,13 @@
 #include "StdAfx.h"
 
+RH_C_FUNCTION ON_3dmObjectAttributes* ON_3dmObjectAttributes_New(const ON_3dmObjectAttributes* pOther)
+{
+  if( NULL==pOther )
+    return new ON_3dmObjectAttributes();
+  return new ON_3dmObjectAttributes(*pOther);
+}
+
+
 // I think that sooner or later, these functions should be moved into core opennurbs.dll
 RH_C_FUNCTION int ON_3dmObjectAttributes_GetSetInt( ON_3dmObjectAttributes* ptr, int which, bool set, int set_value )
 {

@@ -1,5 +1,7 @@
 using System;
 using System.Runtime.Serialization;
+
+#if RHINO_SDK
 using System.Windows.Forms;
 using Rhino.ApplicationSettings;
 
@@ -52,7 +54,6 @@ namespace Rhino.ApplicationSettings
   }
 }
 
-#if RHINO_SDK
 namespace Rhino
 {
   /// <summary>

@@ -509,7 +509,7 @@ namespace Rhino.DocObjects
     {
       IntPtr ptr = ConstPointer();
       int abgr = UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetColor(ptr, which, false, 0);
-      return System.Drawing.ColorTranslator.FromWin32(abgr);
+      return Rhino.Runtime.Interop.ColorFromWin32(abgr);
     }
     void SetColor(int which, System.Drawing.Color c)
     {
@@ -544,7 +544,28 @@ namespace Rhino.DocObjects
     {
       IntPtr pConstThis = ConstPointer();
       int abgr = UnsafeNativeMethods.CRhinoObjectAttributes_DrawColor(pConstThis, document.m_docId, viewportId);
-      return System.Drawing.ColorTranslator.FromWin32(abgr);
+      return Rhino.Runtime.Interop.ColorFromWin32(abgr);
+    }
+
+    public System.Drawing.Color ComputedPlotColor(RhinoDoc document)
+    {
+      return ComputedPlotColor(document, Guid.Empty);
+    }
+    public System.Drawing.Color ComputedPlotColor(RhinoDoc document, Guid viewportId)
+    {
+      IntPtr pConstThis = ConstPointer();
+      int abgr = UnsafeNativeMethods.CRhinoObjectAttributes_PlotColor(pConstThis, document.m_docId, viewportId);
+      return Rhino.Runtime.Interop.ColorFromWin32(abgr);
+    }
+
+    public double ComputedPlotWeight(RhinoDoc document)
+    {
+      return ComputedPlotWeight(document, Guid.Empty);
+    }
+    public double ComputedPlotWeight(RhinoDoc document, Guid viewportId)
+    {
+      IntPtr pConstThis = ConstPointer();
+      return UnsafeNativeMethods.CRhinoObjectAttributes_PlotWeight(pConstThis, document.m_docId, viewportId);
     }
 #endif
 

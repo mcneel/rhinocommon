@@ -19,6 +19,7 @@ namespace Rhino.FileIO
     File3dmLayerTable m_layer_table;
     File3dmDimStyleTable m_dimstyle_table;
     File3dmHatchPatternTable m_hatchpattern_table;
+    File3dmInstanceDefinitionTable m_instance_definition_table;
     File3dmPlugInDataTable m_userdata_table;
     File3dmViewTable m_view_table;
     File3dmViewTable m_named_view_table;
@@ -482,6 +483,17 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
+    /// Instance definitions in this file
+    /// </summary>
+    public IList<Rhino.Geometry.InstanceDefinitionGeometry> InstanceDefinitions
+    {
+      get
+      {
+        return m_instance_definition_table ?? (m_instance_definition_table = new File3dmInstanceDefinitionTable(this));
+      }
+    }
+
+    /// <summary>
     /// Views that represent the RhinoViews which are displayed when Rhino loads this file
     /// </summary>
     public IList<Rhino.DocObjects.ViewInfo> Views
@@ -518,7 +530,7 @@ namespace Rhino.FileIO
     //const int idxFontTable = 9;
     internal const int idxDimStyleTable = 10;
     internal const int idxHatchPatternTable = 11;
-    //const int idxIDefTable = 12;
+    internal const int idxIDefTable = 12;
     internal const int idxObjectTable = 13;
     //const int idxHistoryRecordTable = 14;
     internal const int idxUserDataTable = 15;
@@ -2412,6 +2424,144 @@ namespace Rhino.FileIO
     {
       return new Rhino.Collections.TableEnumerator<File3dmHatchPatternTable, Rhino.DocObjects.HatchPattern>(this);
     }
+  }
+
+  class File3dmInstanceDefinitionTable : IList<Rhino.Geometry.InstanceDefinitionGeometry>, Rhino.Collections.IRhinoTable<Rhino.Geometry.InstanceDefinitionGeometry>
+  {
+    readonly File3dm m_parent;
+    internal File3dmInstanceDefinitionTable(File3dm parent)
+    {
+      m_parent = parent;
+    }
+
+    /// <summary>Prepares a text dump of object table.</summary>
+    /// <returns>A string containing the dump.</returns>
+    public string Dump()
+    {
+      return m_parent.Dump(File3dm.idxIDefTable);
+    }
+
+    public int Find(string name)
+    {
+      int cnt = Count;
+      for (int i = 0; i < cnt; i++)
+      {
+        if (this[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+          return i;
+      }
+      return -1;
+    }
+
+    public int IndexOf(Rhino.Geometry.InstanceDefinitionGeometry item)
+    {
+      File3dm file = item.m__parent as File3dm;
+      if (file == m_parent)
+      {
+        Guid id = item.Id;
+        IntPtr pConstParent = m_parent.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_InstanceDefinitionTable_Index(pConstParent, id);
+      }
+      return -1;
+    }
+
+    public void Insert(int index, Rhino.Geometry.InstanceDefinitionGeometry item)
+    {
+      if (index < 0 || index > Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      IntPtr pConstIdef = item.ConstPointer();
+      UnsafeNativeMethods.ONX_Model_InstanceDefinitionTable_Insert(pParent, pConstIdef, index);
+    }
+
+    public void RemoveAt(int index)
+    {
+      if (index < 0 || index >= Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_InstanceDefinitionTable_RemoveAt(pParent, index);
+    }
+
+    public Rhino.Geometry.InstanceDefinitionGeometry this[int index]
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        Guid id = UnsafeNativeMethods.ONX_Model_InstanceDefinitionTable_Id(pConstParent, index);
+        if (id == Guid.Empty)
+          throw new IndexOutOfRangeException();
+        return new Rhino.Geometry.InstanceDefinitionGeometry(id, m_parent);
+      }
+      set
+      {
+        Insert(index, value);
+      }
+    }
+
+    public void Add(Rhino.Geometry.InstanceDefinitionGeometry item)
+    {
+      int index = Count;
+      Insert(index, item);
+    }
+
+    public void Clear()
+    {
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_TableClear(pParent, File3dm.idxIDefTable);
+    }
+
+    public bool Contains(Rhino.Geometry.InstanceDefinitionGeometry item)
+    {
+      return IndexOf(item) != -1;
+    }
+
+    public void CopyTo(Rhino.Geometry.InstanceDefinitionGeometry[] array, int arrayIndex)
+    {
+      int available = array.Length - arrayIndex;
+      int cnt = Count;
+      if (available < cnt)
+        throw new ArgumentException("The number of elements in the source ICollection<T> is greater than the available space from arrayIndex to the end of the destination array.");
+      for (int i = 0; i < cnt; i++)
+      {
+        array[arrayIndex++] = this[i];
+      }
+    }
+
+    public int Count
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxIDefTable);
+      }
+    }
+
+    public bool IsReadOnly
+    {
+      get { return false; }
+    }
+
+    public bool Remove(Rhino.Geometry.InstanceDefinitionGeometry item)
+    {
+      int index = IndexOf(item);
+      if (index >= 0)
+        RemoveAt(index);
+      return (index >= 0);
+    }
+
+    #region IEnumerable Implementation
+    /// <summary>
+    /// Gets the enumerator that visits any <see cref="Rhino.Geometry.InstanceDefinitionGeometry"/> in this table.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    public IEnumerator<Rhino.Geometry.InstanceDefinitionGeometry> GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmInstanceDefinitionTable, Rhino.Geometry.InstanceDefinitionGeometry>(this);
+    }
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmInstanceDefinitionTable, Rhino.Geometry.InstanceDefinitionGeometry>(this);
+    }
+    #endregion
   }
 
   class File3dmViewTable : IList<Rhino.DocObjects.ViewInfo>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.ViewInfo>

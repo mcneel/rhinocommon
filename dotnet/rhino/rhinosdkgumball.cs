@@ -236,10 +236,10 @@ namespace Rhino.UI.Gumball
       ScaleYEnabled  = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableYScale );
       ScaleZEnabled  = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableZScale );
       FreeTranslate = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idxnEnableFreeTranslate);
-      ColorX = System.Drawing.ColorTranslator.FromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_xcolor));
-      ColorY = System.Drawing.ColorTranslator.FromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_ycolor));
-      ColorZ = System.Drawing.ColorTranslator.FromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_zcolor));
-      ColorMenuButton = System.Drawing.ColorTranslator.FromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_menubuttoncolor));
+      ColorX = Rhino.Runtime.Interop.ColorFromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_xcolor));
+      ColorY = Rhino.Runtime.Interop.ColorFromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_ycolor));
+      ColorZ = Rhino.Runtime.Interop.ColorFromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_zcolor));
+      ColorMenuButton = Rhino.Runtime.Interop.ColorFromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_menubuttoncolor));
       Radius = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_gumball_radius );
       ArrowHeadLength = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_gumball_tip_length );
       ArrowHeadWidth = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_gumball_tip_width );

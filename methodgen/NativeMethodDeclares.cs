@@ -262,7 +262,7 @@ using Rhino.Display;
         if (sType.Contains("RHMONO_STRING"))
           return "string";
 
-        if (sType.Equals("HWND") ||sType.Equals("HBITMAP") || sType.Equals("HCURSOR"))
+        if (sType.Equals("HWND") || sType.Equals("HBITMAP") || sType.Equals("HCURSOR") || sType.Equals("HICON"))
           return "IntPtr";
 
         if (sType.EndsWith("**"))
@@ -646,7 +646,7 @@ using Rhino.Display;
             rc = "ushort";
           else if (rc.Equals("ON_UUID"))
             rc = "Guid";
-          else if (rc.Equals("LPUNKNOWN") || rc.Equals("HBITMAP") || rc.Equals("HWND") || rc.Equals("HCURSOR"))
+          else if (rc.Equals("LPUNKNOWN") || rc.Equals("HBITMAP") || rc.Equals("HWND") || rc.Equals("HCURSOR") || rc.Equals("HICON"))
             rc = "IntPtr";
           else if (rc.Equals("time_t"))
             rc = "Int64";

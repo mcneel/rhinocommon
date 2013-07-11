@@ -9,20 +9,17 @@ namespace Rhino.Geometry
   /// </summary>
   public class InstanceDefinitionGeometry : GeometryBase
   {
+    Guid m_file3dm_id;
     #region internals
     internal InstanceDefinitionGeometry(IntPtr nativePtr, object parent)
       : base(nativePtr, parent, -1)
     { }
 
-#if RHINO_SDK
-    internal override IntPtr _InternalGetConstPointer()
+    internal InstanceDefinitionGeometry(Guid id, Rhino.FileIO.File3dm parent)
+      : base(IntPtr.Zero, parent, -1)
     {
-      Rhino.DocObjects.Tables.InstanceDefinitionTableEventArgs ide = m__parent as Rhino.DocObjects.Tables.InstanceDefinitionTableEventArgs;
-      if (ide != null)
-        return ide.ConstLightPointer();
-      return base._InternalGetConstPointer();
+      m_file3dm_id = id;
     }
-#endif
 
     internal override GeometryBase DuplicateShallowHelper()
     {
@@ -83,6 +80,62 @@ namespace Rhino.Geometry
       {
         IntPtr ptr = NonConstPointer();
         UnsafeNativeMethods.ON_InstanceDefinition_SetString(ptr, idxDescription, value);
+      }
+    }
+
+    /// <summary>
+    /// unique id for this instance definition
+    /// </summary>
+    public Guid Id
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_InstanceDefinition_GetId(pConstThis);
+      }
+      set
+      {
+        IntPtr pThis = NonConstPointer();
+        UnsafeNativeMethods.ON_InstanceDefinition_SetId(pThis, value);
+      }
+    }
+
+    internal override IntPtr _InternalGetConstPointer()
+    {
+#if RHINO_SDK
+      Rhino.DocObjects.Tables.InstanceDefinitionTableEventArgs ide = m__parent as Rhino.DocObjects.Tables.InstanceDefinitionTableEventArgs;
+      if (ide != null)
+        return ide.ConstLightPointer();
+#endif
+      Rhino.FileIO.File3dm parent_file = m__parent as Rhino.FileIO.File3dm;
+      if (parent_file != null)
+      {
+        IntPtr pModel = parent_file.NonConstPointer();
+        return UnsafeNativeMethods.ONX_Model_GetInstanceDefinitionPointer(pModel, m_file3dm_id);
+      }
+      return base._InternalGetConstPointer();
+    }
+
+    internal override IntPtr NonConstPointer()
+    {
+      if (m__parent is Rhino.FileIO.File3dm)
+        return _InternalGetConstPointer();
+
+      return base.NonConstPointer();
+    }
+
+    /// <summary>
+    /// list of object ids in the instance geometry table
+    /// </summary>
+    /// <returns></returns>
+    public Guid[] GetObjectIds()
+    {
+      using (Runtime.InteropWrappers.SimpleArrayGuid ids = new Runtime.InteropWrappers.SimpleArrayGuid())
+      {
+        IntPtr pConstThis = ConstPointer();
+        IntPtr pIds = ids.NonConstPointer();
+        UnsafeNativeMethods.ON_InstanceDefinition_GetObjectIds(pConstThis, pIds);
+        return ids.ToArray();
       }
     }
   }

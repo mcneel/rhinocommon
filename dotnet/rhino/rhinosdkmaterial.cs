@@ -351,7 +351,7 @@ namespace Rhino.DocObjects
     {
       IntPtr pConstThis = ConstPointer();
       int abgr = UnsafeNativeMethods.ON_Material_GetColor(pConstThis, which);
-      return System.Drawing.ColorTranslator.FromWin32(abgr);
+      return Rhino.Runtime.Interop.ColorFromWin32(abgr);
     }
     void SetColor(int which, System.Drawing.Color c)
     {

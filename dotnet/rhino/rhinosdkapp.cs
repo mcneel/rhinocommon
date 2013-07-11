@@ -1,8 +1,6 @@
 using System;
-using System.Runtime.Serialization;
 
 #if RHINO_SDK
-using System.Windows.Forms;
 using Rhino.ApplicationSettings;
 
 namespace Rhino.ApplicationSettings
@@ -802,7 +800,7 @@ namespace Rhino
     /// <param name="standAlone">True to ask for a stand-alone license, false to ask the user for a license from the Zoo</param>
     /// <param name="parent">Parent window for the user interface dialog.</param>
     /// <returns></returns>
-    public static bool AskUserForRhinoLicense(bool standAlone, IWin32Window parent)
+    public static bool AskUserForRhinoLicense(bool standAlone, System.Windows.Forms.IWin32Window parent)
     {
       IntPtr pParent = parent != null ? parent.Handle : IntPtr.Zero;
       return UnsafeNativeMethods.CRhinoApp_AskUserForRhinoLicense(standAlone, pParent);

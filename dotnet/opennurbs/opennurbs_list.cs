@@ -1913,6 +1913,36 @@ namespace Rhino.Collections
     }
 
     /// <summary>
+    /// Set all the X values for the points to a single value
+    /// </summary>
+    /// <param name="xValue"></param>
+    public void SetAllX(double xValue)
+    {
+      for (int i = 0; i < Count; i++)
+        m_items[i].X = xValue;
+    }
+
+    /// <summary>
+    /// Set all the Y values for the points to a single value
+    /// </summary>
+    /// <param name="yValue"></param>
+    public void SetAllY(double yValue)
+    {
+      for (int i = 0; i < Count; i++)
+        m_items[i].Y = yValue;
+    }
+
+    /// <summary>
+    /// Set all the Z values for the points to a single value
+    /// </summary>
+    /// <param name="zValue"></param>
+    public void SetAllZ(double zValue)
+    {
+      for (int i = 0; i < Count; i++)
+        m_items[i].Z = zValue;
+    }
+
+    /// <summary>
     /// Finds the index of the point in a list of points that is closest to a test point.
     /// </summary>
     /// <param name="list">A list of points.</param>

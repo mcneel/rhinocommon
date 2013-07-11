@@ -1128,7 +1128,7 @@ namespace Rhino.Runtime
               {
                 int abgr = 0;
                 UnsafeNativeMethods.CRhinoProfileContext_LoadColor(pRhCmnProfileContext, section, entry, ref abgr);
-                System.Drawing.Color c = System.Drawing.ColorTranslator.FromWin32(abgr);
+                System.Drawing.Color c = Interop.ColorFromWin32(abgr);
                 //string s = System.Drawing.ColorTranslator.ToHtml(c);
                 info.AddValue(name, c);
               }

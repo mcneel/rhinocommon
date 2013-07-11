@@ -37,21 +37,6 @@ RH_C_FUNCTION bool ON_RTree_CreatePointCloudTree(ON_RTree* pTree, const ON_Point
   return rc;
 }
 
-#if defined(GRASSHOPPER_V4)
-struct ON_RTreeSphere
-{
-  double m_point[3];
-  double m_radius;
-};
-
-//struct ON_RTreeCapsule
-//{
-//  double m_point[2][3];
-//  double m_radius;
-//  double m_domain[2];
-//};
-#endif
-
 struct ON_RTreeSearchContext
 {
   int m_serial_number;

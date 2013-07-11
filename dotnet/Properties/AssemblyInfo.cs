@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Robert McNeel & Associates")]
 [assembly: AssemblyProduct("Rhino")]
-[assembly: AssemblyCopyright("Copyright ©  2012")]
+[assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 // Brian Gillespie: 9/22/2010
@@ -57,7 +57,8 @@ using System.Runtime.InteropServices;
 // 21 Feb 2013 (5.1.30000.7) Update for SR3 of Rhino 5
 //  2 Apr 2013 (5.1.30000.8) Update for SR4 of Rhino 5
 // 15 May 2013 (5.1.30000.9) Update for SR5 of Rhino 5
-[assembly: AssemblyVersion("5.1.30000.9")]
+// 19 June 2013 (5.1.30000.10) Update for SR6 of Rhino 5
+[assembly: AssemblyVersion("5.1.30000.10")]
 
 [assembly: AssemblyFileVersion("5.0.20693.0")]
 

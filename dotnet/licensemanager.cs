@@ -330,6 +330,7 @@ namespace Rhino.Runtime
     /// <param name="parent"></param>
     /// <param name="productId"></param>
     /// <param name="productBuildType"></param>
+    /// <param name="textMask"></param>
     /// <param name="path"></param>
     /// <param name="validator"></param>
     /// <returns></returns>

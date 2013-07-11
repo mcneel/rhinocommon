@@ -320,7 +320,7 @@ namespace Rhino.ApplicationSettings
     static Color GetColor(int which, IntPtr pAppearanceSettings)
     {
       int abgr = UnsafeNativeMethods.RhAppearanceSettings_GetSetColor(which, false, 0, pAppearanceSettings);
-      return ColorTranslator.FromWin32(abgr);
+      return Rhino.Runtime.Interop.ColorFromWin32(abgr);
     }
 
     static Color GetColor(int which)
@@ -342,7 +342,7 @@ namespace Rhino.ApplicationSettings
     public static Color GetPaintColor(PaintColor whichColor)
     {
       int abgr = UnsafeNativeMethods.RhColors_GetColor((int)whichColor);
-      return ColorTranslator.FromWin32(abgr);
+      return Rhino.Runtime.Interop.ColorFromWin32(abgr);
     }
 
     /// <summary>
@@ -557,7 +557,7 @@ namespace Rhino.ApplicationSettings
     static Color GetGridColor(int which, IntPtr pSettings)
     {
       int abgr = UnsafeNativeMethods.CRhinoAppGridSettings_GetSetColor(which, false, 0, pSettings);
-      return ColorTranslator.FromWin32(abgr);
+      return Rhino.Runtime.Interop.ColorFromWin32(abgr);
     }
     static void SetGridColor(int which, Color c, IntPtr pSettings)
     {
@@ -944,7 +944,7 @@ namespace Rhino.ApplicationSettings
       EdgeAnalysisSettingsState rc = new EdgeAnalysisSettingsState();
 
       int abgr = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0, pSettings);
-      rc.ShowEdgeColor = ColorTranslator.FromWin32(abgr);
+      rc.ShowEdgeColor = Rhino.Runtime.Interop.ColorFromWin32(abgr);
       rc.ShowEdges = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdges(false, 0, pSettings);
       UnsafeNativeMethods.CRhinoEdgeAnalysisSettings_Delete(pSettings);
       return rc;
@@ -992,7 +992,7 @@ namespace Rhino.ApplicationSettings
       get
       {
         int abgr = UnsafeNativeMethods.RhEdgeAnalysisSettings_ShowEdgeColor(false, 0, IntPtr.Zero);
-        return ColorTranslator.FromWin32(abgr);
+        return Rhino.Runtime.Interop.ColorFromWin32(abgr);
       }
       set
       {
@@ -3310,7 +3310,7 @@ namespace Rhino.ApplicationSettings
     static Color GetColor(int which, IntPtr pSmartTrackSettings)
     {
       int abgr = UnsafeNativeMethods.CRhinoAppSmartTrackSettings_GetSetColor(which, false, 0, pSmartTrackSettings);
-      return ColorTranslator.FromWin32(abgr);
+      return Rhino.Runtime.Interop.ColorFromWin32(abgr);
     }
     static Color GetColor(int which) { return GetColor(which, IntPtr.Zero); }
 
@@ -3415,9 +3415,9 @@ namespace Rhino.ApplicationSettings
       int y = GetInt(idx_yoffset, pSettings);
       rc.Offset = new Point(x, y);
       int abgr = GetInt(idx_background_color, pSettings);
-      rc.BackgroundColor = ColorTranslator.FromWin32(abgr);
+      rc.BackgroundColor = Rhino.Runtime.Interop.ColorFromWin32(abgr);
       abgr = GetInt(idx_text_color, pSettings);
-      rc.TextColor = ColorTranslator.FromWin32(abgr);
+      rc.TextColor = Rhino.Runtime.Interop.ColorFromWin32(abgr);
       rc.OsnapPane = GetInt(idx_bOsnapPane, pSettings) != 0;
       rc.DistancePane = GetInt(idx_bDistancePane, pSettings) != 0;
       rc.PointPane = GetInt(idx_bPointPane, pSettings) != 0;
@@ -3479,7 +3479,7 @@ namespace Rhino.ApplicationSettings
       get
       {
         int abgr = GetInt(idx_background_color, IntPtr.Zero);
-        return ColorTranslator.FromWin32(abgr);
+        return Rhino.Runtime.Interop.ColorFromWin32(abgr);
       }
       set
       {
@@ -3494,7 +3494,7 @@ namespace Rhino.ApplicationSettings
       get
       {
         int abgr = GetInt(idx_text_color, IntPtr.Zero);
-        return ColorTranslator.FromWin32(abgr);
+        return Rhino.Runtime.Interop.ColorFromWin32(abgr);
       }
       set
       {

@@ -1022,6 +1022,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_HatchPatternTable_Insert(IntPtr pModel, IntPtr pConstHatchPattern, int index);
 
+  //void ONX_Model_InstanceDefinitionTable_Insert(ONX_Model* pModel, const ON_InstanceDefinition* pConstInstanceDefinition, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_InstanceDefinitionTable_Insert(IntPtr pModel, IntPtr pConstInstanceDefinition, int index);
+
   //void ONX_Model_MaterialTable_Insert(ONX_Model* pModel, const ON_Material* pConstMaterial, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_MaterialTable_Insert(IntPtr pModel, IntPtr pConstMaterial, int index);
@@ -1042,6 +1046,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_HatchPatternTable_RemoveAt(IntPtr pModel, int index);
 
+  //void ONX_Model_InstanceDefinitionTable_RemoveAt(ONX_Model* pModel, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ONX_Model_InstanceDefinitionTable_RemoveAt(IntPtr pModel, int index);
+
   //void ONX_Model_MaterialTable_RemoveAt(ONX_Model* pModel, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_MaterialTable_RemoveAt(IntPtr pModel, int index);
@@ -1061,6 +1069,18 @@ internal partial class UnsafeNativeMethods
   //ON_UUID ONX_Model_HatchPatternTable_Id(const ONX_Model* pConstModel, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern Guid ONX_Model_HatchPatternTable_Id(IntPtr pConstModel, int index);
+
+  //ON_UUID ONX_Model_InstanceDefinitionTable_Id(const ONX_Model* pConstModel, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ONX_Model_InstanceDefinitionTable_Id(IntPtr pConstModel, int index);
+
+  //int ONX_Model_InstanceDefinitionTable_Index(const ONX_Model* pConstModel, ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ONX_Model_InstanceDefinitionTable_Index(IntPtr pConstModel, Guid id);
+
+  //const ON_InstanceDefinition* ONX_Model_GetInstanceDefinitionPointer(const ONX_Model* pConstModel, ON_UUID id)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_GetInstanceDefinitionPointer(IntPtr pConstModel, Guid id);
 
   //ON_UUID ONX_Model_MaterialTable_Id(const ONX_Model* pConstModel, int index)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -1173,6 +1193,22 @@ internal partial class UnsafeNativeMethods
   //void ON_ComponentIndexArray_CopyValues( const ON_SimpleArray<ON_COMPONENT_INDEX>* pArray, ON_COMPONENT_INDEX* ci )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_ComponentIndexArray_CopyValues(IntPtr pArray, ref ComponentIndex ci);
+
+  //ON_2dPointArray* ON_2dPointArray_New(int capacity)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_2dPointArray_New(int capacity);
+
+  //void ON_2dPointArray_Delete( ON_2dPointArray* pArray )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_2dPointArray_Delete(IntPtr pArray);
+
+  //int ON_2dPointArray_Count( const ON_2dPointArray* pArray )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_2dPointArray_Count(IntPtr pArray);
+
+  //void ON_2dPointArray_CopyValues( const ON_2dPointArray* pArray, /*ARRAY*/ON_2dPoint* pts )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_2dPointArray_CopyValues(IntPtr pArray, [In,Out] Point2d[] pts);
 
   //ON_3dPointArray* ON_3dPointArray_New(int capacity)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -1334,7 +1370,7 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_SimpleArray_BezierCurveNew();
 
-  //void ON_SimpleArray_BezierCurveDelete(ON_SimpleArray<ON_BezierCurve>* pBezArray)
+  //void ON_SimpleArray_BezierCurveDelete(ON_SimpleArray<ON_BezierCurve*>* pBezArray)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_SimpleArray_BezierCurveDelete(IntPtr pBezArray);
 
@@ -2558,6 +2594,18 @@ internal partial class UnsafeNativeMethods
   //void ON_InstanceDefinition_SetString( ON_InstanceDefinition* pInstanceDefinition, int which, const RHMONO_STRING* _str)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_InstanceDefinition_SetString(IntPtr pInstanceDefinition, int which, [MarshalAs(UnmanagedType.LPWStr)]string _str);
+
+  //ON_UUID ON_InstanceDefinition_GetId( const ON_InstanceDefinition* pConstIdef )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern Guid ON_InstanceDefinition_GetId(IntPtr pConstIdef);
+
+  //void ON_InstanceDefinition_SetId( ON_InstanceDefinition* pIdef, ON_UUID id )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_InstanceDefinition_SetId(IntPtr pIdef, Guid id);
+
+  //void ON_InstanceDefinition_GetObjectIds( const ON_InstanceDefinition* pConstIdef, ON_SimpleArray<ON_UUID>* pIds )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_InstanceDefinition_GetObjectIds(IntPtr pConstIdef, IntPtr pIds);
 
   //ON_InstanceRef* ON_InstanceRef_New( ON_UUID instanceDefinitionId, ON_Xform* instanceXform)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5837,6 +5885,10 @@ internal partial class UnsafeNativeMethods
   //void ON_Brep_GetWireframe( const ON_Brep* pBrep, int density, ON_SimpleArray<ON_Curve*>* pWireframe )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_Brep_GetWireframe(IntPtr pBrep, int density, IntPtr pWireframe);
+
+  //void CRhinoExtrusionObject_GetWireFrame( const ON_Extrusion* pConstExtrusion, ON_SimpleArray<ON_Curve*>* pCurveArray )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void CRhinoExtrusionObject_GetWireFrame(IntPtr pConstExtrusion, IntPtr pCurveArray);
   #endregion
 
 
@@ -9223,6 +9275,10 @@ internal partial class UnsafeNativeMethods
   //void RHC_RhinoWeldMesh(ON_Mesh* pMesh, double angle_tol)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void RHC_RhinoWeldMesh(IntPtr pMesh, double angle_tol);
+
+  //int RHC_RhinoMakeConnectedMeshFaceList(const ON_Mesh* pConstMesh, int StartFaceIDX, double AngleInRadians, bool bGreaterThan, ON_SimpleArray<int>* pFaceIDXArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int RHC_RhinoMakeConnectedMeshFaceList(IntPtr pConstMesh, int StartFaceIDX, double AngleInRadians, [MarshalAs(UnmanagedType.U1)]bool bGreaterThan, IntPtr pFaceIDXArray);
   #endregion
 
 
@@ -9785,6 +9841,14 @@ internal partial class UnsafeNativeMethods
   //int CRhinoObjectAttributes_DrawColor( const CRhinoObjectAttributes* pConstAttr, int doc_id, ON_UUID viewport_id )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern int CRhinoObjectAttributes_DrawColor(IntPtr pConstAttr, int doc_id, Guid viewport_id);
+
+  //int CRhinoObjectAttributes_PlotColor( const CRhinoObjectAttributes* pConstAttr, int doc_id, ON_UUID viewport_id )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int CRhinoObjectAttributes_PlotColor(IntPtr pConstAttr, int doc_id, Guid viewport_id);
+
+  //double CRhinoObjectAttributes_PlotWeight( const CRhinoObjectAttributes* pConstAttr, int doc_id, ON_UUID viewport_id )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern double CRhinoObjectAttributes_PlotWeight(IntPtr pConstAttr, int doc_id, Guid viewport_id);
   #endregion
 
 

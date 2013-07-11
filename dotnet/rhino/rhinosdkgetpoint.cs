@@ -90,7 +90,7 @@ namespace Rhino.Input.Custom
         IntPtr ptr = ConstPointer();
         int argb = 0;
         int abgr = UnsafeNativeMethods.CRhinoGetPoint_DynamicDrawColor(ptr, ref argb, false);
-        return System.Drawing.ColorTranslator.FromWin32(abgr);
+        return Rhino.Runtime.Interop.ColorFromWin32(abgr);
       }
       set
       {

@@ -656,7 +656,7 @@ namespace Rhino.Geometry
       {
         IntPtr pConstThis = ConstPointer();
         int abgr = UnsafeNativeMethods.ON_TextEntity2_MaskColor(pConstThis);
-        return System.Drawing.ColorTranslator.FromWin32(abgr);
+        return Interop.ColorFromWin32(abgr);
       }
       set
       {

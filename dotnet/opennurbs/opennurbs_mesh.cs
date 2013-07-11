@@ -3630,6 +3630,29 @@ namespace Rhino.Geometry.Collections
         return new int[0];
       return v;
     }
+
+#if RHINO_SDK
+    /// <summary>
+    /// Find all connected face indices where adjacent face normals meet
+    /// the criteria of angleRadians and greaterThanAngle
+    /// </summary>
+    /// <param name="faceIndex">face index to start from</param>
+    /// <param name="angleRadians">angle to use for comparison of what is connected</param>
+    /// <param name="greaterThanAngle">
+    /// If true angles greater than or equal to are considered connected.
+    /// If false, angles less than or equal to are considerd connected.</param>
+    /// <returns>list of connected face indices</returns>
+    public int[] GetConnectedFaces(int faceIndex, double angleRadians, bool greaterThanAngle)
+    {
+      IntPtr pConstMesh = m_mesh.ConstPointer();
+      using (var indices = new Rhino.Runtime.InteropWrappers.SimpleArrayInt())
+      {
+        IntPtr pIndices = indices.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoMakeConnectedMeshFaceList(pConstMesh, faceIndex, angleRadians, greaterThanAngle, pIndices);
+        return indices.ToArray();
+      }
+    }
+#endif
     #endregion
 
     #region IEnumerable implementation

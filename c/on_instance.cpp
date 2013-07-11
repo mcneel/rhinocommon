@@ -44,6 +44,27 @@ RH_C_FUNCTION void ON_InstanceDefinition_SetString( ON_InstanceDefinition* pInst
   }
 }
 
+RH_C_FUNCTION ON_UUID ON_InstanceDefinition_GetId( const ON_InstanceDefinition* pConstIdef )
+{
+  if( pConstIdef )
+    return pConstIdef->m_uuid;
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION void ON_InstanceDefinition_SetId( ON_InstanceDefinition* pIdef, ON_UUID id )
+{
+  if( pIdef )
+    pIdef->m_uuid = id;
+}
+
+RH_C_FUNCTION void ON_InstanceDefinition_GetObjectIds( const ON_InstanceDefinition* pConstIdef, ON_SimpleArray<ON_UUID>* pIds )
+{
+  if( pConstIdef && pIds )
+  {
+    *pIds = pConstIdef->m_object_uuid;
+  }
+}
+
 RH_C_FUNCTION ON_InstanceRef* ON_InstanceRef_New( ON_UUID instanceDefinitionId, ON_Xform* instanceXform)
 {
   ON_InstanceRef* ptr = new ON_InstanceRef();

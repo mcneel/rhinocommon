@@ -1598,6 +1598,14 @@ RH_C_FUNCTION void ONX_Model_HatchPatternTable_Insert(ONX_Model* pModel, const O
   }
 }
 
+RH_C_FUNCTION void ONX_Model_InstanceDefinitionTable_Insert(ONX_Model* pModel, const ON_InstanceDefinition* pConstInstanceDefinition, int index)
+{
+  if( pModel && pConstInstanceDefinition && index>=0 )
+  {
+    pModel->m_idef_table.Insert(index, *pConstInstanceDefinition);
+  }
+}
+
 RH_C_FUNCTION void ONX_Model_MaterialTable_Insert(ONX_Model* pModel, const ON_Material* pConstMaterial, int index)
 {
   if( pModel && pConstMaterial && index>=0)
@@ -1653,6 +1661,14 @@ RH_C_FUNCTION void ONX_Model_HatchPatternTable_RemoveAt(ONX_Model* pModel, int i
   }
 }
 
+RH_C_FUNCTION void ONX_Model_InstanceDefinitionTable_RemoveAt(ONX_Model* pModel, int index)
+{
+  if( pModel && index>=0)
+  {
+    pModel->m_idef_table.Remove(index);
+  }
+}
+
 RH_C_FUNCTION void ONX_Model_MaterialTable_RemoveAt(ONX_Model* pModel, int index)
 {
   if( pModel && index>=0)
@@ -1698,6 +1714,42 @@ RH_C_FUNCTION ON_UUID ONX_Model_HatchPatternTable_Id(const ONX_Model* pConstMode
     return pConstModel->m_hatch_pattern_table[index].m_hatchpattern_id;
   }
   return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION ON_UUID ONX_Model_InstanceDefinitionTable_Id(const ONX_Model* pConstModel, int index)
+{
+  if( pConstModel && index>=0 && index<pConstModel->m_idef_table.Count())
+  {
+    return pConstModel->m_idef_table[index].m_uuid;
+  }
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION int ONX_Model_InstanceDefinitionTable_Index(const ONX_Model* pConstModel, ON_UUID id)
+{
+  if( pConstModel )
+  {
+    for( int i=0; i<pConstModel->m_idef_table.Count(); i++ )
+    {
+      if( id == pConstModel->m_idef_table[i].m_uuid )
+        return i;
+    }
+  }
+  return -1;
+}
+
+RH_C_FUNCTION const ON_InstanceDefinition* ONX_Model_GetInstanceDefinitionPointer(const ONX_Model* pConstModel, ON_UUID id)
+{
+  if( pConstModel )
+  {
+    for( int i=0; i<pConstModel->m_idef_table.Count(); i++ )
+    {
+      const ON_InstanceDefinition* pIdef = pConstModel->m_idef_table.At(i);
+      if( pIdef && pIdef->m_uuid==id )
+        return pIdef;
+    }
+  }
+  return NULL;
 }
 
 RH_C_FUNCTION ON_UUID ONX_Model_MaterialTable_Id(const ONX_Model* pConstModel, int index)

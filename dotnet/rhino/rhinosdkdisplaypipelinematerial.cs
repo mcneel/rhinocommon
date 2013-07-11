@@ -245,7 +245,7 @@ namespace Rhino.Display
     {
       IntPtr ptr = ConstPointer();
       int abgr = UnsafeNativeMethods.CDisplayPipelineMaterial_GetColor(ptr, which);
-      return ColorTranslator.FromWin32(StripAlpha(abgr));
+      return Rhino.Runtime.Interop.ColorFromWin32(StripAlpha(abgr));
     }
     private void SetColor(int which, Color c)
     {

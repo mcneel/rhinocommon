@@ -10,7 +10,6 @@ using Rhino.Render;
 #endif
 
 #if RHINO_SDK
-using System.Windows.Forms;
 
 namespace Rhino.PlugIns
 {
@@ -774,8 +773,7 @@ namespace Rhino.PlugIns
       return rc;
     }
 
-    public bool AskUserForLicense(LicenseBuildType productBuildType, bool standAlone, string textMask, IWin32Window parent,
-                                  ValidateProductKeyDelegate validateDelegate)
+    public bool AskUserForLicense(LicenseBuildType productBuildType, bool standAlone, string textMask, System.Windows.Forms.IWin32Window parent, ValidateProductKeyDelegate validateDelegate)
     {
       string productPath = this.Assembly.Location;
       Guid productId = this.Id;
@@ -2399,7 +2397,7 @@ namespace Rhino.PlugIns
     }
 
 
-    internal static bool AskUserForLicense(string productPath, bool standAlone, IWin32Window parentWindow, Guid productId, 
+    internal static bool AskUserForLicense(string productPath, bool standAlone, System.Windows.Forms.IWin32Window parentWindow, Guid productId, 
                                            int productBuildType, string productTitle, string textMask,
                                            ValidateProductKeyDelegate validateDelegate)
     {
@@ -2508,7 +2506,7 @@ namespace Rhino.PlugIns
     /// This version of Rhino.PlugIns.LicenseUtils.AskUserForLicense
     /// is used by Rhino C++ plug-ins.
     /// </summary>
-    public static bool AskUserForLicense(int productType, bool standAlone, IWin32Window parentWindow, string textMask, ValidateProductKeyDelegate validateDelegate)
+    public static bool AskUserForLicense(int productType, bool standAlone, System.Windows.Forms.IWin32Window parentWindow, string textMask, ValidateProductKeyDelegate validateDelegate)
     {
       if (null == validateDelegate)
         return false;

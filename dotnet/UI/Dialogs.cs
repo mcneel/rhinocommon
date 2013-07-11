@@ -363,7 +363,7 @@ namespace Rhino
           int abgr = System.Drawing.ColorTranslator.ToWin32(color);
           rc = UnsafeNativeMethods.RHC_RhinoColorDialog(ref abgr, includeButtonColors, dialogTitle);
           if (rc)
-            color = System.Drawing.ColorTranslator.FromWin32(abgr);
+            color = Rhino.Runtime.Interop.ColorFromWin32(abgr);
         }
         catch (EntryPointNotFoundException)
         {

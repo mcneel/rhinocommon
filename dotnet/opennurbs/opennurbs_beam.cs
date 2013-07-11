@@ -480,6 +480,25 @@ namespace Rhino.Geometry
     //skipping
     //  const ON_PolyCurve* PolyProfile() const;
     //  int GetProfileCurves( ON_SimpleArray<const ON_Curve*>& profile_curves ) const;
+
+#if RHINO_SDK
+    /// <summary>
+    /// Constructs all the Wireframe curves for this Extrusion.
+    /// </summary>
+    /// <returns>An array of Wireframe curves.</returns>
+    public Curve[] GetWireframe()
+    {
+      IntPtr pConstPtr = ConstPointer();
+      using (var output = new Runtime.InteropWrappers.SimpleArrayCurvePointer())
+      {
+        IntPtr outputPtr = output.NonConstPointer();
+        UnsafeNativeMethods.CRhinoExtrusionObject_GetWireFrame(pConstPtr, outputPtr);
+        return output.ToNonConstArray();
+      }
+    }
+#endif
+
+
   }
 }
 #endif

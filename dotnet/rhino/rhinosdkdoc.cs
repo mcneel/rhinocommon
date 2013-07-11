@@ -3038,11 +3038,16 @@ namespace Rhino.DocObjects.Tables
     {
       AddRhinoObjectHelper(pointCloudObject, pointCloud);
     }
+    */
+    public void AddRhinoObject(Rhino.DocObjects.Custom.CustomPointObject pointObject)
+    {
+      AddRhinoObjectHelper(pointObject, null);
+    }
     public void AddRhinoObject(Rhino.DocObjects.PointObject pointObject, Rhino.Geometry.Point point)
     {
       AddRhinoObjectHelper(pointObject, point);
     }
-    */
+    
     public void AddRhinoObject(Rhino.DocObjects.CurveObject curveObject, Rhino.Geometry.Curve curve)
     {
       AddRhinoObjectHelper(curveObject, curve);
@@ -3052,7 +3057,8 @@ namespace Rhino.DocObjects.Tables
     {
       bool is_proper_subclass = rhinoObject is Rhino.DocObjects.BrepObject ||
                                 rhinoObject is Rhino.DocObjects.Custom.CustomCurveObject ||
-                                rhinoObject is Rhino.DocObjects.MeshObject;
+                                rhinoObject is Rhino.DocObjects.MeshObject ||
+                                rhinoObject is Rhino.DocObjects.PointObject;
 
       // Once the deprecated functions are removed, we should switch to checking for custom subclasses
       //bool is_proper_subclass = rhinoObject is Rhino.DocObjects.Custom.CustomBrepObject ||
@@ -3073,7 +3079,8 @@ namespace Rhino.DocObjects.Tables
       {
         if ((rhinoObject is Rhino.DocObjects.BrepObject && !(geometry is Rhino.Geometry.Brep)) ||
             (rhinoObject is Rhino.DocObjects.CurveObject && !(geometry is Rhino.Geometry.Curve)) ||
-            (rhinoObject is Rhino.DocObjects.MeshObject && !(geometry is Rhino.Geometry.Mesh)))
+            (rhinoObject is Rhino.DocObjects.MeshObject && !(geometry is Rhino.Geometry.Mesh)) ||
+            (rhinoObject is Rhino.DocObjects.PointObject && !(geometry is Rhino.Geometry.Point)))
         {
           throw new NotImplementedException("geometry type does not match rhino object class");
         }
@@ -4646,7 +4653,8 @@ namespace Rhino.DocObjects.Tables
       // Once the deprecated functions are removed, we should switch to checking for custom subclasses
       bool is_proper_subclass = newObject is Rhino.DocObjects.Custom.CustomBrepObject ||
                                 newObject is Rhino.DocObjects.Custom.CustomCurveObject ||
-                                newObject is Rhino.DocObjects.Custom.CustomMeshObject;
+                                newObject is Rhino.DocObjects.Custom.CustomMeshObject ||
+                                newObject is Rhino.DocObjects.Custom.CustomPointObject;
       if (!is_proper_subclass)
         throw new NotImplementedException();
 

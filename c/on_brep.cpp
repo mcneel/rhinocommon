@@ -40,6 +40,40 @@ RH_C_FUNCTION int ON_BrepTrim_Type(const ON_Brep* pConstBrep, int trim_index)
   return rc;
 }
 
+RH_C_FUNCTION void ON_BrepTrim_SetType(ON_Brep* pBrep, int trim_index, int trimtype)
+{
+  if( pBrep && trim_index>=0 && trim_index<pBrep->m_T.Count() )
+    pBrep->m_T[trim_index].m_type = (ON_BrepTrim::TYPE)trimtype;
+}
+
+RH_C_FUNCTION int ON_BrepTrim_Iso(const ON_Brep* pConstBrep, int trim_index)
+{
+  int rc = 0;
+  if( pConstBrep && trim_index>=0 && trim_index<pConstBrep->m_T.Count() )
+    rc = (int)(pConstBrep->m_T[trim_index].m_iso);
+  return rc;
+}
+
+RH_C_FUNCTION void ON_BrepTrim_SetIso(ON_Brep* pBrep, int trim_index, int iso)
+{
+  if( pBrep && trim_index>=0 && trim_index<pBrep->m_T.Count() )
+    pBrep->m_T[trim_index].m_iso = (ON_Surface::ISO)iso;
+}
+
+RH_C_FUNCTION double ON_BrepTrim_Tolerance(const ON_Brep* pConstBrep, int trim_index, int which)
+{
+  double rc = 0;
+  if( pConstBrep && trim_index>=0 && trim_index<pConstBrep->m_T.Count() )
+    rc = pConstBrep->m_T[trim_index].m_tolerance[which];
+  return rc;
+}
+
+RH_C_FUNCTION void ON_BrepTrim_SetTolerance(ON_Brep* pBrep, int trim_index, int which, double tolerance)
+{
+  if( pBrep && trim_index>=0 && trim_index<pBrep->m_T.Count() )
+    pBrep->m_T[trim_index].m_tolerance[which] = tolerance;
+}
+
 RH_C_FUNCTION int ON_BrepTrim_ItemIndex(const ON_Brep* pConstBrep, int trim_index, int which)
 {
   const int idxLoopIndex=0;
@@ -187,6 +221,14 @@ RH_C_FUNCTION ON_Brep* ON_BrepFace_BrepExtrudeFace(const ON_Brep* pConstBrep, in
       }
     }
   }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_BrepFace_SurfaceIndex(const ON_BrepFace* pConstBrepFace)
+{
+  int rc = -1;
+  if( pConstBrepFace )
+    rc = pConstBrepFace->SurfaceIndexOf();
   return rc;
 }
 
@@ -452,6 +494,9 @@ RH_C_FUNCTION int ON_Brep_GetInt(const ON_Brep* pConstBrep, int which)
   const int idxTrimCount = 5;
   const int idxSurfaceCount = 6;
   const int idxVertexCount = 7;
+  const int idxC2Count = 8;
+  const int idxC3Count = 9;
+
   int rc = 0;
   if( pConstBrep )
   {
@@ -480,6 +525,12 @@ RH_C_FUNCTION int ON_Brep_GetInt(const ON_Brep* pConstBrep, int which)
       break;
     case idxVertexCount:
       rc = pConstBrep->m_V.Count();
+      break;
+    case idxC2Count:
+      rc = pConstBrep->m_C2.Count();
+      break;
+    case idxC3Count:
+      rc = pConstBrep->m_C3.Count();
       break;
     default:
       break;
@@ -547,6 +598,12 @@ RH_C_FUNCTION bool ON_BrepFace_IsReversed( const ON_BrepFace* pConstFace )
   return rc;
 }
 
+RH_C_FUNCTION void ON_BrepFace_SetIsReversed( ON_BrepFace* pBrepFace, bool reversed )
+{
+  if( pBrepFace )
+    pBrepFace->m_bRev = reversed;
+}
+
 // not currently available in stand alone OpenNURBS build
 #if !defined(OPENNURBS_BUILD)
 
@@ -588,6 +645,42 @@ RH_C_FUNCTION const ON_Surface* ON_Brep_BrepSurfacePointer( const ON_Brep* pCons
   if( pConstBrep && surfaceIndex>=0 && surfaceIndex<pConstBrep->m_S.Count() )
   {
     rc = pConstBrep->m_S[surfaceIndex];
+  }
+  return rc;
+}
+
+RH_C_FUNCTION const ON_Curve* ON_Brep_BrepCurvePointer( const ON_Brep* pConstBrep, int curveIndex, bool c2 )
+{
+  const ON_Curve* rc = NULL;
+  if( pConstBrep && curveIndex>=0 )
+  {
+    if( c2 && curveIndex<pConstBrep->m_C2.Count() )
+      rc = pConstBrep->m_C2[curveIndex];
+    else if( !c2 && curveIndex<pConstBrep->m_C3.Count() )
+      rc = pConstBrep->m_C3[curveIndex];
+  }
+  return rc;
+}
+
+RH_C_FUNCTION int ON_Brep_AddCurve( ON_Brep* pBrep, const ON_Curve* pConstCurve, bool c2 )
+{
+  int rc = -1;
+  if( pBrep && pConstCurve )
+  {
+    ON_Curve* pCurve = pConstCurve->Duplicate();
+    if( pCurve )
+    {
+      if( c2 )
+      {
+        pBrep->m_C2.Append(pCurve);
+        rc = pBrep->m_C2.Count()-1;
+      }
+      else
+      {
+        pBrep->m_C3.Append(pCurve);
+        rc = pBrep->m_C3.Count()-1;
+      }
+    }
   }
   return rc;
 }
@@ -1025,16 +1118,20 @@ RH_C_FUNCTION int ON_Brep_NewConeFace(ON_Brep* pBrep, int vertexIndex, int edgeI
   return rc;
 }
 
-RH_C_FUNCTION int ON_Brep_NewLoop(ON_Brep* pBrep, int loopType, ON_BrepFace* pBrepFace)
+RH_C_FUNCTION int ON_Brep_NewLoop(ON_Brep* pBrep, int loopType, int face_index)
 {
   ON_BrepLoop::TYPE _looptype = (ON_BrepLoop::TYPE)loopType;
   int rc = -1;
   if( pBrep )
   {
-    if( pBrepFace )
+    if( face_index>=0 )
     {
-      ON_BrepLoop& loop = pBrep->NewLoop(_looptype, *pBrepFace);
-      rc = loop.m_loop_index;
+      ON_BrepFace* pBrepFace = pBrep->Face(face_index);
+      if( pBrepFace )
+      {
+        ON_BrepLoop& loop = pBrep->NewLoop(_looptype, *pBrepFace);
+        rc = loop.m_loop_index;
+      }
     }
     else
     {

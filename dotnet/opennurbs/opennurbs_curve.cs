@@ -1118,6 +1118,13 @@ namespace Rhino.Geometry
 
     internal override IntPtr _InternalGetConstPointer()
     {
+      Rhino.Geometry.CurveHolder holder2 = m__parent as Rhino.Geometry.CurveHolder;
+      if (null != holder2)
+      {
+        return holder2.ConstCurvePointer();
+      }
+
+
       if (m_subobject_index >= 0)
       {
         Rhino.Geometry.PolyCurve polycurve_parent = m__parent as Rhino.Geometry.PolyCurve;

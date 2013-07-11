@@ -3644,11 +3644,33 @@ namespace Rhino.Geometry.Collections
     /// <returns>list of connected face indices</returns>
     public int[] GetConnectedFaces(int faceIndex, double angleRadians, bool greaterThanAngle)
     {
-      IntPtr pConstMesh = m_mesh.ConstPointer();
-      using (var indices = new Rhino.Runtime.InteropWrappers.SimpleArrayInt())
+      IntPtr ptr_const_mesh = m_mesh.ConstPointer();
+      using (var indices = new Runtime.InteropWrappers.SimpleArrayInt())
       {
-        IntPtr pIndices = indices.NonConstPointer();
-        UnsafeNativeMethods.RHC_RhinoMakeConnectedMeshFaceList(pConstMesh, faceIndex, angleRadians, greaterThanAngle, pIndices);
+        IntPtr ptr_simplearray_int = indices.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoMakeConnectedMeshFaceList(ptr_const_mesh, faceIndex, angleRadians, greaterThanAngle, ptr_simplearray_int);
+        return indices.ToArray();
+      }
+    }
+
+    /// <summary>
+    /// Uses startFaceIndex and finds all connected face indexes up to unwelded
+    /// or naked edges. If treatNonmanifoldLikeUnwelded is true then non-manifold
+    /// edges will be considered as unwelded or naked
+    /// </summary>
+    /// <param name="startFaceIndex">Initial face index</param>
+    /// <param name="treatNonmanifoldLikeUnwelded">
+    /// True means non-manifold edges will be handled like unwelded edges, 
+    /// False means they aren't considered
+    /// </param>
+    /// <returns>Array of connected face indexes</returns>
+    public int[] GetConnectedFacesToEdges(int startFaceIndex, bool treatNonmanifoldLikeUnwelded)
+    {
+      IntPtr ptr_const_mesh = m_mesh.ConstPointer();
+      using (var indices = new Runtime.InteropWrappers.SimpleArrayInt())
+      {
+        IntPtr ptr_simplearray_int = indices.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoMakeMeshPartFaceList(ptr_const_mesh, startFaceIndex, treatNonmanifoldLikeUnwelded, ptr_simplearray_int);
         return indices.ToArray();
       }
     }

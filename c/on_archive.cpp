@@ -618,6 +618,70 @@ RH_C_FUNCTION void ONX_Model_ReadNotes(const RHMONO_STRING* path, CRhCmnStringHo
   }
 }
 
+RH_C_FUNCTION ON_3dmRevisionHistory* ONX_Model_ReadRevisionHistory(const RHMONO_STRING* path, CRhCmnStringHolder* pStringCreated, CRhCmnStringHolder* pStringLastEdited, int* revision)
+{
+  ON_3dmRevisionHistory* rc = NULL;
+  if( path && pStringCreated && pStringLastEdited && revision )
+  {
+    INPUTSTRINGCOERCE(_path, path);
+
+    FILE* fp = ON::OpenFile( _path, L"rb" );
+    if( fp )
+    {
+      ON_BinaryFile file( ON::read3dm, fp);
+      int version = 0;
+      ON_String comments;
+      
+      if(file.Read3dmStartSection( &version, comments ))
+      {
+        ON_3dmProperties prop;
+        file.Read3dmProperties(prop);
+
+        rc = new ON_3dmRevisionHistory(prop.m_RevisionHistory);
+        pStringCreated->Set(prop.m_RevisionHistory.m_sCreatedBy);
+        pStringLastEdited->Set(prop.m_RevisionHistory.m_sLastEditedBy);
+        *revision = prop.m_RevisionHistory.m_revision_count;
+      }
+      ON::CloseFile(fp);
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_3dmRevisionHistory_GetDate(const ON_3dmRevisionHistory* pConstRevisionHistory, bool created, int* seconds, int* minutes,
+                                                 int* hours, int* days, int* months, int* years)
+{
+  bool rc = false;
+  if( pConstRevisionHistory && seconds && minutes && hours && days && months && years )
+  {
+    rc = created ? pConstRevisionHistory->CreateTimeIsSet() : pConstRevisionHistory->LastEditedTimeIsSet();
+    if( rc )
+    {
+      tm revdate = created ? pConstRevisionHistory->m_create_time : pConstRevisionHistory->m_last_edit_time;
+      *seconds = revdate.tm_sec;
+      *minutes = revdate.tm_min;
+      *hours = revdate.tm_hour;
+      *days = revdate.tm_mday;
+      *months = revdate.tm_mon;
+      *years = revdate.tm_year + 1900;
+    }
+  }
+  return rc;
+}
+
+RH_C_FUNCTION ON_3dmRevisionHistory* ONX_Model_RevisionHistory(ONX_Model* pModel)
+{
+  if( pModel )
+    return &(pModel->m_properties.m_RevisionHistory);
+  return 0;
+}
+
+RH_C_FUNCTION void ON_3dmRevisionHistory_Delete(ON_3dmRevisionHistory* pRevisionHistory)
+{
+  if( pRevisionHistory )
+    delete pRevisionHistory;
+}
+
 RH_C_FUNCTION void ONX_Model_ReadApplicationDetails(const RHMONO_STRING* path, CRhCmnStringHolder* pApplicationName, CRhCmnStringHolder* pApplicationUrl, CRhCmnStringHolder* pApplicationDetails)
 {
   if( path && pApplicationName && pApplicationUrl && pApplicationDetails )

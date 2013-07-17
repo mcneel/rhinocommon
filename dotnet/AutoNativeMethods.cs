@@ -809,6 +809,24 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_ReadNotes([MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr pString);
 
+  //ON_3dmRevisionHistory* ONX_Model_ReadRevisionHistory(const RHMONO_STRING* path, CRhCmnStringHolder* pStringCreated, CRhCmnStringHolder* pStringLastEdited, int* revision)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_ReadRevisionHistory([MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr pStringCreated, IntPtr pStringLastEdited, ref int revision);
+
+  //bool ON_3dmRevisionHistory_GetDate(const ON_3dmRevisionHistory* pConstRevisionHistory, bool created, int* seconds, int* minutes,
+  //                                                 int* hours, int* days, int* months, int* years)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_3dmRevisionHistory_GetDate(IntPtr pConstRevisionHistory, [MarshalAs(UnmanagedType.U1)]bool created, ref int seconds, ref int minutes, ref int hours, ref int days, ref int months, ref int years);
+
+  //ON_3dmRevisionHistory* ONX_Model_RevisionHistory(ONX_Model* pModel)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_RevisionHistory(IntPtr pModel);
+
+  //void ON_3dmRevisionHistory_Delete(ON_3dmRevisionHistory* pRevisionHistory)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_3dmRevisionHistory_Delete(IntPtr pRevisionHistory);
+
   //void ONX_Model_ReadApplicationDetails(const RHMONO_STRING* path, CRhCmnStringHolder* pApplicationName, CRhCmnStringHolder* pApplicationUrl, CRhCmnStringHolder* pApplicationDetails)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_ReadApplicationDetails([MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr pApplicationName, IntPtr pApplicationUrl, IntPtr pApplicationDetails);

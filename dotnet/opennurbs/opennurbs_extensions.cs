@@ -95,6 +95,44 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
+    /// Quickly check a file for it's revision information.  This function does
+    /// not read the entire file, just what it needs to get revision information out
+    /// </summary>
+    /// <param name="path">path to the 3dm file</param>
+    /// <param name="createdBy">original author of the file</param>
+    /// <param name="lastEditedBy">last person to edit the file</param>
+    /// <param name="revision">which revision this file is at</param>
+    /// <param name="createdOn">date file was created (DateTime.MinValue if not set in file)</param>
+    /// <param name="lastEditedOn">date file was last edited (DateTime.MinValue if not set in file)</param>
+    /// <returns>true on success</returns>
+    public static bool ReadRevisionHistory(string path, out string createdBy, out string lastEditedBy, out int revision, out DateTime createdOn, out DateTime lastEditedOn)
+    {
+      createdBy = "";
+      lastEditedBy = "";
+      revision = 0;
+      createdOn = DateTime.MinValue;
+      lastEditedOn = DateTime.MinValue;
+      using (Runtime.StringHolder sh_created = new Runtime.StringHolder())
+      using (Runtime.StringHolder sh_edited = new Runtime.StringHolder())
+      {
+        IntPtr ptr_created = sh_created.NonConstPointer();
+        IntPtr ptr_edited = sh_created.NonConstPointer();
+        IntPtr ptr_revhist = UnsafeNativeMethods.ONX_Model_ReadRevisionHistory(path, ptr_created, ptr_edited, ref revision);
+        bool rc = ptr_revhist != IntPtr.Zero;
+        if (rc)
+        {
+          int second = 0, minute = 0, hour = 0, month = 0, day = 0, year = 0;
+          if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, true, ref second, ref minute, ref hour, ref day, ref month, ref year))
+            createdOn = new DateTime(year, month, day, hour, minute, second);
+          if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, false, ref second, ref minute, ref hour, ref day, ref month, ref year))
+            lastEditedOn = new DateTime(year, month, day, hour, minute, second);
+          UnsafeNativeMethods.ON_3dmRevisionHistory_Delete(ptr_revhist);
+        }
+        return rc;
+      }
+    }
+
+    /// <summary>
     /// Reads only the application information from an existing 3dm file.
     /// </summary>
     /// <param name="path">A location on disk or network.</param>
@@ -105,17 +143,17 @@ namespace Rhino.FileIO
     {
       if (!File.Exists(path))
         throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
-      using (Rhino.Runtime.StringHolder shName = new Runtime.StringHolder())
-      using (Rhino.Runtime.StringHolder shUrl = new Runtime.StringHolder())
-      using (Rhino.Runtime.StringHolder shDetails = new Runtime.StringHolder())
+      using (Rhino.Runtime.StringHolder name = new Runtime.StringHolder())
+      using (Rhino.Runtime.StringHolder url = new Runtime.StringHolder())
+      using (Rhino.Runtime.StringHolder details = new Runtime.StringHolder())
       {
-        IntPtr pName = shName.NonConstPointer();
-        IntPtr pUrl = shUrl.NonConstPointer();
-        IntPtr pDetails = shUrl.NonConstPointer();
-        UnsafeNativeMethods.ONX_Model_ReadApplicationDetails(path, pName, pUrl, pDetails);
-        applicationName = shName.ToString();
-        applicationUrl = shUrl.ToString();
-        applicationDetails = shDetails.ToString();
+        IntPtr ptr_name = name.NonConstPointer();
+        IntPtr ptr_url = url.NonConstPointer();
+        IntPtr ptr_details = url.NonConstPointer();
+        UnsafeNativeMethods.ONX_Model_ReadApplicationDetails(path, ptr_name, ptr_url, ptr_details);
+        applicationName = name.ToString();
+        applicationUrl = url.ToString();
+        applicationDetails = details.ToString();
       }
     }
 
@@ -398,8 +436,39 @@ namespace Rhino.FileIO
       get { return GetString(idxLastCreatedBy); }
     }
 
-    //public DateTime Created { get; }
-    //public DateTime LastEdited { get; }
+    /// <summary>
+    /// Get the DateTime that this file was originally created. If the
+    /// value is not set in the 3dm file, then DateTime.MinValue is returned
+    /// </summary>
+    public DateTime Created
+    {
+      get
+      {
+        IntPtr ptr_const_this = ConstPointer();
+        IntPtr ptr_revhist = UnsafeNativeMethods.ONX_Model_RevisionHistory(ptr_const_this);
+        int second = 0, minute = 0, hour = 0, month = 0, day = 0, year = 0;
+        if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, true, ref second, ref minute, ref hour, ref day, ref month, ref year))
+          return new DateTime(year, month, day, hour, minute, second);
+        return DateTime.MinValue;
+      }
+    }
+
+    /// <summary>
+    /// Get the DateTime that this file was last edited. If the
+    /// value is not set in the 3dm file, then DateTime.MinValue is returned
+    /// </summary>
+    public DateTime LastEdited
+    {
+      get
+      {
+        IntPtr ptr_const_this = ConstPointer();
+        IntPtr ptr_revhist = UnsafeNativeMethods.ONX_Model_RevisionHistory(ptr_const_this);
+        int second = 0, minute = 0, hour = 0, month = 0, day = 0, year = 0;
+        if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, false, ref second, ref minute, ref hour, ref day, ref month, ref year))
+          return new DateTime(year, month, day, hour, minute, second);
+        return DateTime.MinValue;
+      }
+    }
 
     /// <summary>
     /// Gets or sets the revision number.

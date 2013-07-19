@@ -116,7 +116,7 @@ namespace Rhino.FileIO
       using (Runtime.StringHolder sh_edited = new Runtime.StringHolder())
       {
         IntPtr ptr_created = sh_created.NonConstPointer();
-        IntPtr ptr_edited = sh_created.NonConstPointer();
+        IntPtr ptr_edited = sh_edited.NonConstPointer();
         IntPtr ptr_revhist = UnsafeNativeMethods.ONX_Model_ReadRevisionHistory(path, ptr_created, ptr_edited, ref revision);
         bool rc = ptr_revhist != IntPtr.Zero;
         if (rc)
@@ -126,6 +126,8 @@ namespace Rhino.FileIO
             createdOn = new DateTime(year, month, day, hour, minute, second);
           if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, false, ref second, ref minute, ref hour, ref day, ref month, ref year))
             lastEditedOn = new DateTime(year, month, day, hour, minute, second);
+          createdBy = sh_created.ToString();
+          lastEditedBy = sh_edited.ToString();
           UnsafeNativeMethods.ON_3dmRevisionHistory_Delete(ptr_revhist);
         }
         return rc;

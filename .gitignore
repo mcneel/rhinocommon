@@ -1,3 +1,5 @@
+*.userprefs
+*.DS_Store
 
 /Debug
 /Rhino3dmIo.sdf
@@ -21,9 +23,13 @@
 /dotnet/RhinoCommon.suo
 /dotnet/RhinoCommon.sln
 /dotnet/RhinoCommon.pidb
+
 /examples/buildwikisamples/bin
 /webhelp.txt
 /MethodGen.exe
+/methodgen/bin/Release/MethodGen.exe
+/methodgen/bin/Release/MethodGen.exe.config
+/methodgen/bin/Release/MethodGen.exe.mdb
 
 /c/Debug
 /c/English.lproj
@@ -182,5 +188,3 @@
 /c/rh_uifile.cpp
 /examples/rhino3dmio/example_read/bin
 /examples/rhino3dmio/example_read/obj
-
-*.userprefs

@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "methodgen", "methodgen.csproj", "{2493E19A-046C-4049-AEDF-44A6BBFEF2DF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+		AppStore|x86 = AppStore|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2493E19A-046C-4049-AEDF-44A6BBFEF2DF}.AppStore|x86.ActiveCfg = Debug|Any CPU
+		{2493E19A-046C-4049-AEDF-44A6BBFEF2DF}.AppStore|x86.Build.0 = Debug|Any CPU
+		{2493E19A-046C-4049-AEDF-44A6BBFEF2DF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2493E19A-046C-4049-AEDF-44A6BBFEF2DF}.Debug|x86.Build.0 = Debug|Any CPU
+		{2493E19A-046C-4049-AEDF-44A6BBFEF2DF}.Release|x86.ActiveCfg = Release|Any CPU
+		{2493E19A-046C-4049-AEDF-44A6BBFEF2DF}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = methodgen.csproj
+	EndGlobalSection
+EndGlobal

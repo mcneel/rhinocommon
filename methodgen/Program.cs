@@ -88,7 +88,7 @@ namespace MethodGen
       {
         if (!GetProjectDirectories(out dirCPP, out dirCS, true))
         {
-          System.Console.WriteLine("ERROR: Unable to locate RDK project directoies");
+          System.Console.WriteLine("Can't locate RDK project directories. This is OK if you are compiling for standalone openNURBS build");
           return;
         }
         //write native methods for rdk
@@ -110,6 +110,9 @@ namespace MethodGen
 
     static bool GetProjectDirectories(out string c, out string dotnet, bool rdk)
     {
+			c = null;
+			dotnet = null;
+
       bool rc = false;
       // start with the directory that this executable is located in and work up
       string path = System.Reflection.Assembly.GetExecutingAssembly().Location;
@@ -132,7 +135,10 @@ namespace MethodGen
         }
         // get parent directory
         dirInfo = dirInfo.Parent;
+				if (dirInfo == null)
+					break;
       }
+
       if (!rc)
       {
         c = null;

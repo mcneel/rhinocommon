@@ -175,7 +175,6 @@ namespace Rhino.Geometry
 			}
 		}  
 
-		Rhino.Geometry.Transform m_cached_transform = Rhino.Geometry.Transform.Identity;
 		/// <summary>
 		/// Transformation for this reference.
 		/// </summary>
@@ -184,9 +183,9 @@ namespace Rhino.Geometry
 			get
 			{
 				IntPtr ptr_const_this = ConstPointer();
-				UnsafeNativeMethods.ON_InstanceRef_GetTransform (ptr_const_this, ref m_cached_transform);
-
-				return m_cached_transform;
+				Transform rc = new Transform();
+				UnsafeNativeMethods.ON_InstanceRef_GetTransform (ptr_const_this, ref rc);
+				return rc;
 			}
 		}
 

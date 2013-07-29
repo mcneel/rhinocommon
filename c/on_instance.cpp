@@ -73,3 +73,16 @@ RH_C_FUNCTION ON_InstanceRef* ON_InstanceRef_New( ON_UUID instanceDefinitionId, 
   ptr->m_instance_definition_uuid = instanceDefinitionId;
   return ptr;
 }
+
+RH_C_FUNCTION ON_UUID ON_InstanceRef_IDefId( const ON_InstanceRef* pConstInstanceRef )
+{
+  if ( pConstInstanceRef )
+    return pConstInstanceRef->m_instance_definition_uuid;
+  return ::ON_nil_uuid;
+}
+
+RH_C_FUNCTION void ON_InstanceRef_GetTransform( const ON_InstanceRef* pConstInstanceRef, ON_Xform* transform )
+{
+  if ( pConstInstanceRef && transform )
+    *transform = pConstInstanceRef->m_xform;
+}

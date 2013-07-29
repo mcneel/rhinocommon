@@ -163,6 +163,31 @@ namespace Rhino.Geometry
       : base(native_ptr, parent, -1)
     { }
 
+		/// <summary>
+		/// The unique id for the parent instance definition of this instance reference.
+		/// </summary>
+		public Guid ParentIdefId
+		{
+			get
+			{
+				IntPtr ptr_const_this = ConstPointer();
+				return UnsafeNativeMethods.ON_InstanceRef_IDefId (ptr_const_this);
+			}
+		}  
+
+		/// <summary>
+		/// Transformation for this reference.
+		/// </summary>
+		public Rhino.Geometry.Transform Xform
+		{
+			get
+			{
+				IntPtr ptr_const_this = ConstPointer();
+				Transform rc = new Transform();
+				UnsafeNativeMethods.ON_InstanceRef_GetTransform (ptr_const_this, ref rc);
+				return rc;
+			}
+		}
 
     internal override GeometryBase DuplicateShallowHelper()
     {

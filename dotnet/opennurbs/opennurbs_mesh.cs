@@ -128,10 +128,10 @@ namespace Rhino.Geometry
     {
       if (doc == null) throw new ArgumentNullException("doc");
 
-      IntPtr pMeshParameters = UnsafeNativeMethods.CRhinoDocProperties_RenderMeshSettings(doc.m_docId);
-      if (IntPtr.Zero == pMeshParameters)
+      IntPtr ptr_mesh_parameters = UnsafeNativeMethods.CRhinoDocProperties_RenderMeshSettings(doc.m_docId);
+      if (IntPtr.Zero == ptr_mesh_parameters)
         return null;
-      return new MeshingParameters(pMeshParameters);
+      return new MeshingParameters(ptr_mesh_parameters);
     }
 #endif
 
@@ -516,7 +516,7 @@ namespace Rhino.Geometry
     /// <param name="yCount">Number of faces in y-direction.</param>
     /// <param name="zCount">Number of faces in z-direction.</param>
     /// <returns>A new brep, or null on failure.</returns>
-    static Mesh CreateFromBox(BoundingBox box, int xCount, int yCount, int zCount)
+    public static Mesh CreateFromBox(BoundingBox box, int xCount, int yCount, int zCount)
     {
       IntPtr ptr = UnsafeNativeMethods.RHC_RhinoMeshBox2(box.Min, box.Max, xCount, yCount, zCount);
       return IntPtr.Zero == ptr ? null : new Mesh(ptr, null);
@@ -611,8 +611,8 @@ namespace Rhino.Geometry
     public static Mesh CreateFromCylinder(Cylinder cylinder, int vertical, int around)
     {
       if (!cylinder.IsValid) { throw new ArgumentException("cylinder is invalid"); }
-      IntPtr pMesh = UnsafeNativeMethods.RHC_RhinoMeshCylinder(ref cylinder, vertical, around);
-      return GeometryBase.CreateGeometryHelper(pMesh, null) as Mesh;
+      IntPtr ptr_mesh = UnsafeNativeMethods.RHC_RhinoMeshCylinder(ref cylinder, vertical, around);
+      return CreateGeometryHelper(ptr_mesh, null) as Mesh;
     }
 
     /// <summary>Constructs a mesh cone</summary>
@@ -624,8 +624,8 @@ namespace Rhino.Geometry
     public static Mesh CreateFromCone(Cone cone, int vertical, int around)
     {
       if (!cone.IsValid) { throw new ArgumentException("cone is invalid"); }
-      IntPtr pMesh = UnsafeNativeMethods.RHC_RhinoMeshCone(ref cone, vertical, around);
-      return GeometryBase.CreateGeometryHelper(pMesh, null) as Mesh;
+      IntPtr ptr_mesh = UnsafeNativeMethods.RHC_RhinoMeshCone(ref cone, vertical, around);
+      return CreateGeometryHelper(ptr_mesh, null) as Mesh;
     }
 
     /// <summary>
@@ -638,12 +638,10 @@ namespace Rhino.Geometry
     /// </returns>
     public static Mesh CreateFromPlanarBoundary(Curve boundary, MeshingParameters parameters)
     {
-      IntPtr pCurve = boundary.ConstPointer();
-      IntPtr pMeshParameters = parameters.ConstPointer();
-      IntPtr pMesh = UnsafeNativeMethods.RHC_RhinoMakePlanarMeshes(pCurve, pMeshParameters);
-      if (IntPtr.Zero == pMesh)
-        return null;
-      return new Mesh(pMesh, null);
+      IntPtr ptr_const_curve = boundary.ConstPointer();
+      IntPtr ptr_const_mesh_parameters = parameters.ConstPointer();
+      IntPtr ptr_mesh = UnsafeNativeMethods.RHC_RhinoMakePlanarMeshes(ptr_const_curve, ptr_const_mesh_parameters);
+      return CreateGeometryHelper(ptr_mesh, null) as Mesh;
     }
 
     /// <summary>
@@ -658,8 +656,8 @@ namespace Rhino.Geometry
       if (!polyline.IsClosed)
         return null;
       Mesh rc = new Mesh();
-      IntPtr pMesh = rc.NonConstPointer();
-      if (UnsafeNativeMethods.TLC_MeshPolyline(polyline.Count, polyline.ToArray(), pMesh))
+      IntPtr ptr_mesh = rc.NonConstPointer();
+      if (UnsafeNativeMethods.TLC_MeshPolyline(polyline.Count, polyline.ToArray(), ptr_mesh))
         return rc;
       return null;
     }
@@ -671,15 +669,13 @@ namespace Rhino.Geometry
     /// <returns>An array of meshes.</returns>
     public static Mesh[] CreateFromBrep(Brep brep)
     {
-      IntPtr pConstBrep = brep.ConstPointer();
-      Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer();
-      IntPtr pMeshes = meshes.NonConstPointer();
-      int count = UnsafeNativeMethods.ON_Brep_CreateMesh(pConstBrep, pMeshes);
-      Mesh[] rc = null;
-      if (count > 0)
-        rc = meshes.ToNonConstArray();
-      meshes.Dispose();
-      return rc;
+      using (Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer())
+      {
+        IntPtr ptr_const_brep = brep.ConstPointer();
+        IntPtr ptr_mesh_array = meshes.NonConstPointer();
+        int count = UnsafeNativeMethods.ON_Brep_CreateMesh(ptr_const_brep, ptr_mesh_array);
+        return count < 1 ? null : meshes.ToNonConstArray();
+      }
     }
 
     /// <summary>
@@ -690,38 +686,15 @@ namespace Rhino.Geometry
     /// <returns>An array of meshes.</returns>
     public static Mesh[] CreateFromBrep(Brep brep, MeshingParameters meshingParameters)
     {
-      IntPtr pConstBrep = brep.ConstPointer();
+      IntPtr ptr_const_brep = brep.ConstPointer();
       IntPtr pMeshParameters = meshingParameters.ConstPointer();
-      using (Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer())
+      using (Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer())
       {
-        IntPtr pMeshes = meshes.NonConstPointer();
-        int count = UnsafeNativeMethods.ON_Brep_CreateMesh3(pConstBrep, pMeshes, pMeshParameters);
-        Mesh[] rc = null;
-        if (count > 0)
-          rc = meshes.ToNonConstArray();
-        return rc;
+        IntPtr ptr_mesh_array = meshes.NonConstPointer();
+        int count = UnsafeNativeMethods.ON_Brep_CreateMesh3(ptr_const_brep, ptr_mesh_array, pMeshParameters);
+        return count < 1 ? null : meshes.ToNonConstArray();
       }
     }
-
-    //DR: I was testing this, but I removed it as it is now possible to get 3D curves out of BrepLoops,
-    //    so this can be implemented in pure .NET.
-    ///// <summary>
-    ///// Create a minimal representation of a Brep. Only Brep Faces with a single loop 
-    ///// containing either 3 or 4 sharp corners will be included in the mesh. 
-    ///// This method is in development and may well disappear, do not use it.
-    ///// </summary>
-    ///// <param name="brep">Brep to approximate.</param>
-    ///// <returns>A minimal representation of the Brep or null on failure.</returns>
-    //[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    //public static Mesh CreateFromBrepSimple(Brep brep)
-    //{
-    //  IntPtr pConstBrep = brep.ConstPointer();
-    //  IntPtr newMesh = UnsafeNativeMethods.ON_Mesh_BrepToMeshSimple(pConstBrep);
-    //  if (newMesh == null)
-    //    return null;
-
-    //  return new Mesh(newMesh, null);
-    //}
 
     /// <summary>
     /// Computes the solid union of a set of meshes.

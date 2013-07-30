@@ -1539,7 +1539,6 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddSurface(pThis, pSurface, pAttr);
     }
 
-#if USING_V5_SDK
     /// <summary>Adds an extrusion object to Rhino.</summary>
     /// <param name="extrusion">A duplicate of this extrusion is added to Rhino.</param>
     /// <returns>A unique identifier for the object.</returns>
@@ -1559,7 +1558,6 @@ namespace Rhino.FileIO
       m_objects = null;
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddExtrusion(pThis, pConstExtrusion, pAttr);
     }
-#endif
 
     /// <summary>Adds a mesh object to Rhino.</summary>
     /// <param name="mesh">A duplicate of this mesh is added to Rhino.</param>

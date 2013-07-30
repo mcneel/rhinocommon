@@ -496,8 +496,6 @@ namespace Rhino.Geometry
       return null;
     }
 
-#if USING_V5_SDK
-
     /// <summary>
     /// Makes a curve blend between 2 curves at the parameters specified
     /// with the directions and continuities specified
@@ -585,8 +583,6 @@ namespace Rhino.Geometry
       bool rc = UnsafeNativeMethods.RHC_RhinoTweenCurveWithSampling(pConstCurve0, pConstCurve1, numCurves, numSamples, outputPtr);
       return rc ? output.ToNonConstArray() : new Curve[0];
     }
-
-#endif
 
     /// <summary>
     /// Joins a collection of curve segments together.
@@ -1171,7 +1167,7 @@ namespace Rhino.Geometry
       return new Curve(IntPtr.Zero, null);
     }
 
-#if USING_V5_SDK && RHINO_SDK
+#if RHINO_SDK
     /// <summary>
     /// Polylines will be exploded into line segments. ExplodeCurves will
     /// return the curves in topological order.
@@ -1904,7 +1900,7 @@ namespace Rhino.Geometry
       return rc;
     }
 
-#if USING_V5_SDK && RHINO_SDK
+#if RHINO_SDK
     /// <summary>
     /// Finds the object (and the closest point in that object) that is closest to
     /// this curve. <para><see cref="Brep">Breps</see>, <see cref="Surface">surfaces</see>,
@@ -1971,9 +1967,7 @@ namespace Rhino.Geometry
       int which;
       return ClosestPoints(a, out pointOnThisCurve, out pointOnOtherCurve, out which, 0.0);
     }
-#endif
 
-#if RHINO_SDK
     /// <summary>
     /// Computes the relationship between a point and a closed curve region. 
     /// This curve must be closed or the return value will be Unset.

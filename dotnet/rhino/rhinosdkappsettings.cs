@@ -332,7 +332,6 @@ namespace Rhino.ApplicationSettings
       int argb = c.ToArgb();
       UnsafeNativeMethods.RhAppearanceSettings_GetSetColor(which, true, argb, IntPtr.Zero);
     }
-#if USING_V5_SDK
 
     /// <summary>
     /// Gets the .Net library color that is currently associated with a paint color.
@@ -381,7 +380,6 @@ namespace Rhino.ApplicationSettings
         UnsafeNativeMethods.RhColors_SetUsingNewSchool(value);
       }
     }
-#endif
 
     /// <summary>
     /// Gets or sets the default layer color.

@@ -382,11 +382,9 @@ namespace Rhino.DocObjects
         case idxCRhinoGripObject: //13
           rc = new GripObject(sn);
           break;
-#if USING_V5_SDK
         case idxCRhinoExtrusionObject: //14
           rc = new ExtrusionObject(sn);
           break;
-#endif
         case idxCRhinoLinearDimension: //15
           rc = new LinearDimensionObject(sn);
           break;

@@ -408,7 +408,7 @@ namespace Rhino.Geometry
 #endif
 
 
-#if USING_V5_SDK && RHINO_SDK
+#if RHINO_SDK
     /// <summary>
     /// Offsets a face including trim information to create a new brep.
     /// </summary>
@@ -2859,8 +2859,8 @@ namespace Rhino.Geometry
       }
       return base.NonConstPointer();
     }
+
 #if RHINO_SDK
-#if USING_V5_SDK // only available in V5
     /// <summary>
     /// Pulls one or more points to a brep face.
     /// </summary>
@@ -2881,43 +2881,6 @@ namespace Rhino.Geometry
         return points_pulled < 1 ? new Point3d[0] : outpoints.ToArray();
       }
     }
-
-#else
-    /// <summary>
-    /// Pulls one or more points to a brep face. This method has been backported in 
-    /// Rhino4 and is not guaranteed to work in the same way as it works within Rhino5.
-    /// </summary>
-    /// <param name="points">Points to pull.</param>
-    /// <param name="tolerance">Tolerance for pulling operation. Only points that are closer than tolerance will be pulled to the face.</param>
-    /// <returns>An array of pulled points.</returns>
-    public Point3d[] PullPointsToFace(IEnumerable<Point3d> points, double tolerance)
-    {
-      if (points == null) { throw new ArgumentNullException("points"); }
-
-      List<Point3d> pulledPoints = new List<Point3d>();
-      foreach (Point3d point in points)
-      {
-        double u, v;
-        if (!ClosestPoint(point, out u, out v))
-          continue;
-
-        if (this.IsPointOnFace(u, v) == PointFaceRelation.Exterior)
-          continue;
-
-        Point3d pp = PointAt(u, v);
-        Vector3d nn = NormalAt(u, v);
-
-        double localTolerance = tolerance * point.DistanceTo(pp);
-        if (localTolerance < RhinoMath.SqrtEpsilon) { localTolerance = RhinoMath.SqrtEpsilon; }
-
-        if (point.DistanceTo(pp + nn * ((point - pp) * nn)) > localTolerance)
-          continue;
-
-        pulledPoints.Add(pp);
-      }
-      return pulledPoints.ToArray();
-    }
-#endif
 #endif
 
     /// <summary>
@@ -3762,14 +3725,12 @@ namespace Rhino.Geometry.Collections
       return UnsafeNativeMethods.ON_Brep_StandardizeFaceSurface(ptr_brep, faceIndex);
     }
 
- #if USING_V5_SDK
     /// <summary>Standardize all faces in the brep.</summary>
     public void StandardizeFaceSurfaces()
     {
       IntPtr ptr_brep = m_brep.NonConstPointer();
       UnsafeNativeMethods.ON_Brep_StandardizeFaceSurfaces(ptr_brep);
     }
-#endif
 
     /// <summary>
     /// Create and add a new face to this list. An incomplete face is added.

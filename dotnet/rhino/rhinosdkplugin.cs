@@ -632,10 +632,8 @@ namespace Rhino.PlugIns
         string localName = new_command.LocalName;
 
         int ct = 0;
-#if USING_V5_SDK
         if (command_type.IsSubclassOf(typeof(Commands.TransformCommand)))
           ct = 1;
-#endif
         if (command_type.IsSubclassOf(typeof(Commands.SelCommand)))
           ct = 2;
 

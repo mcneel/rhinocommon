@@ -432,8 +432,10 @@ namespace Rhino.Collections
           break;
         case ItemType.itFont: //29
           {
+#if !MOBILE_BUILD
             System.Drawing.Font val = archive.ReadFont();
             rc = Set(key, val);
+#endif
           }
           break;
         case ItemType.itInterval: //30
@@ -674,7 +676,9 @@ namespace Rhino.Collections
           archive.WriteSizeF((System.Drawing.SizeF)val);
           break;
         case ItemType.itFont: // 29
+#if !MOBILE_BUILD
           archive.WriteFont((System.Drawing.Font)val);
+#endif
           break;
         case ItemType.itInterval: // 30
           archive.WriteInterval((Rhino.Geometry.Interval)val);
@@ -1400,6 +1404,7 @@ namespace Rhino.Collections
     /// <para>Because <see cref="System.Drawing.SizeF"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     public bool Set(string key, System.Drawing.SizeF val) { return SetItem(key, ItemType.itSizeF, val); }
 
+#if !MOBILE_BUILD
     /// <summary>
     /// Sets a <see cref="System.Drawing.Font"/>.
     /// </summary>
@@ -1407,7 +1412,7 @@ namespace Rhino.Collections
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="System.Drawing.Font"/> is immutable, it is not possible to modify the object while it is in this dictionary.</para></param>
     public bool Set(string key, System.Drawing.Font val) { return SetItem(key, ItemType.itFont, val); }
-
+#endif
     /// <summary>
     /// Sets an <see cref="Rhino.Geometry.Interval"/>.
     /// </summary>
@@ -2332,6 +2337,8 @@ namespace Rhino.FileIO
         throw new BinaryArchiveException("WriteSizeF failed");
     }
 
+
+#if !MOBILE_BUILD
     /// <summary>
     /// Writes a <see cref="System.Drawing.Font"/> value to the archive.
     /// </summary>
@@ -2351,6 +2358,7 @@ namespace Rhino.FileIO
       WriteByte(gdiCharSet);
       WriteBool(gdiVerticalFont);
     }
+#endif
 
     /// <summary>
     /// Writes a <see cref="Rhino.Geometry.Interval"/> value to the archive.
@@ -3083,6 +3091,7 @@ namespace Rhino.FileIO
       return new System.Drawing.SizeF(xy[0], xy[1]);
     }
 
+#if !MOBILE_BUILD
     /// <summary>
     /// Reads a <see cref="System.Drawing.Font"/> from the archive.
     /// </summary>
@@ -3112,6 +3121,7 @@ namespace Rhino.FileIO
       }
       return rc;
     }
+#endif
 
     /// <summary>
     /// Reads a <see cref="Rhino.Geometry.Interval"/> from the archive.

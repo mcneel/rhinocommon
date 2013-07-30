@@ -2261,8 +2261,13 @@ namespace Rhino.Geometry
     /// true if edge is manifold, has exactly 2 trims, and surface normals on either
     /// side agree to within angle_tolerance.
     /// </returns>
+#if !MOBILE_BUILD
     public bool IsSmoothManifoldEdge([Optional, DefaultParameterValue(RhinoMath.DefaultAngleTolerance)]double angleToleranceRadians)
+#else
+    public bool IsSmoothManifoldEdge(double angleToleranceRadians)
+#endif
     {
+      //NOTE!! don't ever use default parameters in RhinoCommon. They just lead to headache
       IntPtr ptr_const_this = ConstPointer();
       return UnsafeNativeMethods.ON_BrepEdge_IsSmoothManifoldEdge(ptr_const_this, angleToleranceRadians);
     }

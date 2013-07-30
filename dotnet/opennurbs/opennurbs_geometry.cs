@@ -296,11 +296,9 @@ namespace Rhino.Geometry
         case idxON_InstanceReference: // 23
           rc = new InstanceReferenceGeometry(pGeometry, parent);
           break;
-#if USING_V5_SDK
         case idxON_Extrusion: //24
           rc = new Extrusion(pGeometry, parent);
           break;
-#endif
         case idxON_LinearDimension2: //25
           rc = new LinearDimension(pGeometry, parent);
           break;

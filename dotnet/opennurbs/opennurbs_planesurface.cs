@@ -39,6 +39,12 @@ namespace Rhino.Geometry
     {
     }
 
+    internal override GeometryBase DuplicateShallowHelper()
+    {
+      return new PlaneSurface(IntPtr.Zero, null);
+    }
+
+#if RHINO_SDK
     /// <summary>
     /// Makes a plane that includes a line and a vector and goes through a bounding box.
     /// </summary>
@@ -67,11 +73,7 @@ namespace Rhino.Geometry
         return null;
       return new PlaneSurface(ptr, null);
     }
-
-    internal override GeometryBase DuplicateShallowHelper()
-    {
-      return new PlaneSurface(IntPtr.Zero, null);
-    }
+#endif
   }
 
   /// <summary>

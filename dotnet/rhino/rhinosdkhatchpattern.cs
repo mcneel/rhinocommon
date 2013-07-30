@@ -58,6 +58,7 @@ namespace Rhino.DocObjects
     }
     #endregion
 
+#if RHINO_SDK
     /// <summary>
     /// Reads hatch pattern definitions from a file.
     /// </summary>
@@ -84,6 +85,7 @@ namespace Rhino.DocObjects
       }
       return rc;
     }
+#endif
 
     internal override IntPtr _InternalGetConstPointer()
     {

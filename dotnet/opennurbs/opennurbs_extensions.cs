@@ -159,6 +159,7 @@ namespace Rhino.FileIO
       }
     }
 
+#if !MOBILE_BUILD
     /// <summary>
     /// Attempts to read the preview image out of a 3dm file.
     /// </summary>
@@ -179,6 +180,7 @@ namespace Rhino.FileIO
       UnsafeNativeMethods.CRhinoDib_Delete(pDib);
       return rc;
     }
+#endif
     #endregion
 
     /// <summary>

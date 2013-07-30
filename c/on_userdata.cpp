@@ -68,10 +68,6 @@ CRhCmnUserData* CRhCmnUserData::Cast( ON_Object* p )
 {
   return(CRhCmnUserData*)Cast((const ON_Object*)p);
 }
-const CRhCmnUserData* CRhCmnUserData::Cast( const ON_Object* p )
-{
-  return dynamic_cast<const CRhCmnUserData*>(p);
-}
 
 CRhCmnUserData::~CRhCmnUserData()
 {
@@ -180,6 +176,31 @@ const CRhCmnClassId* CRhCmnClassIdList::GetClassId( const ON_UUID& id )
 }
 
 static CRhCmnClassIdList g_classIds;
+
+const CRhCmnUserData* CRhCmnUserData::Cast( const ON_Object* p )
+{
+  // The only reason I'm using an #if block below instead of always
+  // using the androidndk approach is because this code is going into
+  // Rhino5 SR code and I don't want to risk any chance of breaking
+  // anything.
+#if defined (ON_COMPILER_ANDROIDNDK)
+  // typical android NDK builds do not include support for the overhead
+  // of dynamic_cast. Just dig through the list of already created class
+  // ids for the rhino common user data classes.
+  if( p )
+  {
+    for( int i=0; i<g_classIds.m_class_ids.Count(); i++ )
+    {
+      const ON_ClassId* pClassId = g_classIds.m_class_ids[i];
+      if( pClassId && p->IsKindOf(pClassId) )
+        return static_cast<const CRhCmnUserData*>(p);
+    }
+  }
+#else
+  return dynamic_cast<const CRhCmnUserData*>(p);
+#endif
+}
+
 
 static ON_Object* RhCmnClassIdCreateOnObject()
 {

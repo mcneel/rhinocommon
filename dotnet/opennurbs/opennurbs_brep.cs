@@ -3376,6 +3376,7 @@ namespace Rhino.Geometry
   class MeshHolder
   {
     readonly BrepFace m_face;
+    readonly Extrusion m_extrusion;
     readonly MeshType m_meshtype;
 
     public MeshHolder(BrepFace face, MeshType meshType)
@@ -3383,10 +3384,25 @@ namespace Rhino.Geometry
       m_face = face;
       m_meshtype = meshType;
     }
+    public MeshHolder(Extrusion extrusion, MeshType meshType)
+    {
+      m_extrusion = extrusion;
+      m_meshtype = meshType;
+    }
+
     public IntPtr MeshPointer()
     {
-      IntPtr ptr_const_brep = m_face.m_brep.ConstPointer();
-      return UnsafeNativeMethods.ON_BrepFace_Mesh(ptr_const_brep, m_face.m_index, (int)m_meshtype);
+      if (m_face != null)
+      {
+        IntPtr ptr_const_brep = m_face.m_brep.ConstPointer();
+        return UnsafeNativeMethods.ON_BrepFace_Mesh(ptr_const_brep, m_face.m_index, (int)m_meshtype);
+      }
+      if (m_extrusion != null)
+      {
+        IntPtr ptr_const_extrusion = m_extrusion.ConstPointer();
+        return UnsafeNativeMethods.ON_Extrusion_GetMesh(ptr_const_extrusion, (int)m_meshtype);
+      }
+      return IntPtr.Zero;
     }
   }
 

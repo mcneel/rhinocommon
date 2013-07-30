@@ -1517,6 +1517,10 @@ internal partial class UnsafeNativeMethods
   //ON_Extrusion* ON_Extrusion_CreateFrom3dCurve(const ON_Curve* pConstCurve, double height, bool cap)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Extrusion_CreateFrom3dCurve(IntPtr pConstCurve, double height, [MarshalAs(UnmanagedType.U1)]bool cap);
+
+  //const ON_Mesh* ON_Extrusion_GetMesh(const ON_Extrusion* pConstExtrusion, int meshtype)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_Extrusion_GetMesh(IntPtr pConstExtrusion, int meshtype);
   #endregion
 
 

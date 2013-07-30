@@ -380,7 +380,6 @@ namespace Rhino.Geometry
       return rc;
     }
 
-#if USING_V5_SDK
     /// <summary>
     /// Searches for items in a sphere.
     /// </summary>
@@ -431,7 +430,6 @@ namespace Rhino.Geometry
       }
       return rc;
     }
-#endif
 
     /// <summary>
     /// Searches two R-trees for all pairs elements whose bounding boxes overlap.

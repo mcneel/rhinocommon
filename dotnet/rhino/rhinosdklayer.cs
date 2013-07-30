@@ -884,7 +884,6 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoLayerTable_FindLayer(m_doc.m_docId, layerName, ignoreDeletedLayers, -1);
     }
 
-#if USING_V5_SDK
     public int FindNext(int index, string layerName, bool ignoreDeletedLayers)
     {
       if (string.IsNullOrEmpty(layerName))
@@ -898,7 +897,6 @@ namespace Rhino.DocObjects.Tables
         return -1;
       return UnsafeNativeMethods.CRhinoLayerTable_FindExact(m_doc.m_docId, layerPath, ignoreDeletedLayers);
     }
-#endif
 
     /// <summary>Finds a layer with a matching ID.</summary>
     /// <param name="layerId">A valid layer ID.</param>

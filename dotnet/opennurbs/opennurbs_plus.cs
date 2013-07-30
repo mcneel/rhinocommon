@@ -188,7 +188,7 @@ namespace Rhino.Geometry.Intersect
 
   //also add ON_RTree
 
-#if USING_V5_SDK // only available in V5
+#if RHINO_SDK
 
   /// <summary>
   /// Represents a particular instance of a clash or intersection between two meshes.

@@ -862,7 +862,6 @@ namespace Rhino.Commands
 
   }
 
-#if USING_V5_SDK
   public abstract class TransformCommand : Command
   {
     /// <summary>
@@ -904,7 +903,6 @@ namespace Rhino.Commands
     //CRhinoView* View() { return m_view; }
     //bool ObjectsWerePreSelected() { return m_objects_were_preselected; }
   }
-#endif
 }
 
 
@@ -1576,14 +1574,12 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.CRhinoObjectPairArray_UpdateToSurface(m_parent.m_pObjectPairArray, m_index, pConstSurface, pConstAttributes);
     }
 
-#if USING_V5_SDK
     public bool UpdateToExtrusion(Geometry.Extrusion extrusion, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pConstAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
       IntPtr pConstExtrusion = extrusion.ConstPointer();
       return UnsafeNativeMethods.CRhinoObjectPairArray_UpdateToExtrusion(m_parent.m_pObjectPairArray, m_index, pConstExtrusion, pConstAttributes);
     }
-#endif
 
     public bool UpdateToMesh(Geometry.Mesh mesh, DocObjects.ObjectAttributes attributes)
     {

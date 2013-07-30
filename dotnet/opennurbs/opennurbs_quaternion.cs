@@ -342,7 +342,7 @@ namespace Rhino.Geometry
       }
     }
 
-#if USING_V5_SDK
+#if RHINO_SDK
     /// <summary>
     /// Returns the length or norm of the quaternion.
     /// </summary>
@@ -367,7 +367,7 @@ namespace Rhino.Geometry
       }
     }
 
-#if USING_V5_SDK
+#if RHINO_SDK
     /// <summary>
     /// Computes the distance or norm of the difference between this and another quaternion.
     /// </summary>
@@ -416,7 +416,7 @@ namespace Rhino.Geometry
       return rc;
     }
 
-#if USING_V5_SDK
+#if RHINO_SDK
     /// <summary>
     /// Scales the quaternion's coordinates so that a*a + b*b + c*c + d*d = 1.
     /// </summary>
@@ -462,7 +462,7 @@ namespace Rhino.Geometry
       return new Quaternion(Math.Cos(0.5*angle),s*axisOfRotation.m_x,s*axisOfRotation.m_y,s*axisOfRotation.m_z);
     }
 
-#if USING_V5_SDK
+#if RHINO_SDK
     /// <summary>
     /// Sets the quaternion to the unit quaternion which rotates
     /// plane0.xaxis to plane1.xaxis, plane0.yaxis to plane1.yaxis,

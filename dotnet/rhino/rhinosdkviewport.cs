@@ -887,7 +887,7 @@ namespace Rhino.Display
         return UnsafeNativeMethods.CRhinoViewport_VP_GetBool(ptr, idxIsPerspectiveProjection);
       }
     }
-#if USING_V5_SDK
+
     public bool IsTwoPointPerspectiveProjection
     {
       get
@@ -896,7 +896,7 @@ namespace Rhino.Display
         return UnsafeNativeMethods.CRhinoViewport_VP_GetBool(ptr, idxIsTwoPointPerspectiveProjection);
       }
     }
-#endif
+
     public bool IsParallelProjection
     {
       get
@@ -906,7 +906,6 @@ namespace Rhino.Display
       }
     }
 
-#if USING_V5_SDK
     /// <summary>
     /// Use this function to change projections of valid viewports from persective to parallel.
     /// It will make common additional adjustments to the frustum so the resulting views are
@@ -967,7 +966,7 @@ namespace Rhino.Display
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.CRhinoViewport_VP_ChangeToPerspectiveProjection(pThis, targetDistance, symmetricFrustum, lensLength);
     }
-#endif
+
     const int idxCameraLocation = 0;
     const int idxCameraDirection = 1;
     const int idxCameraUp = 2;

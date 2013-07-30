@@ -5,7 +5,6 @@ using Rhino.Geometry;
 namespace Rhino.UI.Gumball
 {
 #if RHINO_SDK
-  #if USING_V5_SDK
   /// <summary>
   /// Transformation modes for gumballs.
   /// </summary>
@@ -673,7 +672,6 @@ namespace Rhino.UI.Gumball
     }
 
   }
-#endif
 #endif
 }
 

@@ -40,13 +40,9 @@ namespace Rhino.Input.Custom
     [CLSCompliant(false)]
     public GetResult GetLiteralString()
     {
-#if USING_V5_SDK
       IntPtr ptr = NonConstPointer();
       int rc = UnsafeNativeMethods.CRhinoGetString_Get(ptr, true);
       return (GetResult)rc;
-#else
-      return Get();
-#endif
     }
   }
 

@@ -356,6 +356,7 @@ namespace Rhino.Geometry.Intersect
     #endregion
 
     #region sections
+#if RHINO_SDK
     /// <summary>
     /// Intersects a curve with an (infinite) plane.
     /// </summary>
@@ -368,22 +369,12 @@ namespace Rhino.Geometry.Intersect
       if (!plane.IsValid)
         return null;
 
-#if USING_V5_SDK
       // Use dedicated plane intersector in Rhino5
       IntPtr pConstCurve = curve.ConstPointer();
       IntPtr pIntersectArray = UnsafeNativeMethods.ON_Curve_IntersectPlane(pConstCurve, ref plane, tolerance);
       return CurveIntersections.Create(pIntersectArray);
-#else
-      PlaneSurface section = ExtendThroughBox(plane, curve.GetBoundingBox(false), 1.0); //should this be 1.0 or 100.0*tolerance?
-      if (section == null)
-        return null;
-      CurveIntersections rc = CurveSurface(curve, section, tolerance, 5 * tolerance);
-      section.Dispose();
-      return rc;
-#endif
     }
 
-#if RHINO_SDK
     /// <summary>
     /// Intersects a mesh with an (infinite) plane.
     /// </summary>

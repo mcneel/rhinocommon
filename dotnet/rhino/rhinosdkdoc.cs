@@ -3232,11 +3232,9 @@ namespace Rhino.DocObjects.Tables
           throw new NotImplementedException("Add currently does not support phantom types.");
         case ObjectType.ClipPlane:
           throw new NotSupportedException("Add currently does not support clipping planes.");
-#if USING_V5_SDK
         case ObjectType.Extrusion:
           objId = AddExtrusion((Extrusion)geometry, attributes);
           break;
-#endif
         default:
           throw new NotSupportedException("Only native types can be added to the document.");
       }
@@ -4014,7 +4012,6 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_AddSurface(m_doc.m_docId, surfacePtr, pConstAttributes, pHistory, reference);
     }
 
-#if USING_V5_SDK
     /// <summary>Adds an extrusion object to Rhino.</summary>
     /// <param name="extrusion">A duplicate of this extrusion is added to Rhino.</param>
     /// <returns>A unique identifier for the object.</returns>
@@ -4040,8 +4037,6 @@ namespace Rhino.DocObjects.Tables
       IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
       return UnsafeNativeMethods.CRhinoDoc_AddExtrusion(m_doc.m_docId, pConstExtrusion, pConstAttributes, pHistory, reference);
     }
-#endif
-
 
     /// <summary>Adds a mesh object to Rhino.</summary>
     /// <param name="mesh">A duplicate of this mesh is added to Rhino.</param>

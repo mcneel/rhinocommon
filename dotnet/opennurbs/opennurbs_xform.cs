@@ -753,12 +753,12 @@ namespace Rhino.Geometry
 			return rc;
 		}
 
-		public float[] ToFloatArray(bool rowDominant, bool transpose)
+		public float[] ToFloatArray(bool rowDominant)
 		{
 			float[] rc = new float[16];
 		  for (int r=0; r<4; r++)
 			  for (int c=0; c<4; c++) {
-				double value = transpose ? this [c, r] : this [r, c];
+				double value = this [r, c];
 				if (rowDominant)
 					rc [r * 4 + c] = (float)value;
 				else

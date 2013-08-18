@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
 // none of the UI namespace needs to be in the stand-alone opennurbs library
 #if RHINO_SDK
+using System.Windows.Forms;
 
 namespace Rhino
 {

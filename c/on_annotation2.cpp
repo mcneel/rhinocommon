@@ -25,15 +25,13 @@ RH_C_FUNCTION void ON_Annotation2_SetPoint(ON_Annotation2* pAnnotation, int whic
   }
 }
 
-RH_C_FUNCTION const wchar_t* ON_Annotation2_Text(ON_Annotation2* pAnnotation2, const RHMONO_STRING* _str, bool formula)
+RH_C_FUNCTION void ON_Annotation2_Text(ON_Annotation2* pAnnotation2, CRhCmnStringHolder* pStringHolder, const RHMONO_STRING* _str, bool formula)
 {
-  const wchar_t* rc = NULL;
   if( pAnnotation2 )
   {
     if( _str )
     {
       INPUTSTRINGCOERCE(str, _str);
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
       if( formula )
       {
         pAnnotation2->SetTextFormula(str);
@@ -44,21 +42,16 @@ RH_C_FUNCTION const wchar_t* ON_Annotation2_Text(ON_Annotation2* pAnnotation2, c
         pAnnotation2->SetTextValue(str);
         pAnnotation2->SetTextFormula(NULL);
       }
-#else
-      pAnnotation2->SetUserText(str);
-#endif
     }
 
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
-    if( formula )
-      rc = pAnnotation2->TextFormula();
-    else
-      rc = pAnnotation2->TextValue();
-#else
-    rc = pAnnotation2->UserText();
-#endif
+    if( pStringHolder )
+    {
+      if( formula )
+        pStringHolder->Set( pAnnotation2->TextFormula() );
+      else
+        pStringHolder->Set( pAnnotation2->TextValue() );
+    }
   }
-  return rc;
 }
 
 
@@ -267,106 +260,84 @@ RH_C_FUNCTION ON_TextEntity2* ON_TextEntity2_New()
 
 RH_C_FUNCTION bool ON_TextEntity2_DrawTextMask(const ON_TextEntity2* pConstTextEntity2)
 {
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pConstTextEntity2 )
     return pConstTextEntity2->DrawTextMask();
-#endif
   return false;
 }
 
 RH_C_FUNCTION void ON_TextEntity2_SetDrawTextMask(ON_TextEntity2* pTextEntity2, bool val)
 {
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pTextEntity2 )
     pTextEntity2->SetDrawTextMask(val);
-#endif
 }
 
 RH_C_FUNCTION bool ON_TextEntity2_AnnotativeScaling(const ON_TextEntity2* pConstTextEntity2)
 {
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pConstTextEntity2 )
     return pConstTextEntity2->AnnotativeScaling();
-#endif
   return false;
 }
 
 RH_C_FUNCTION void ON_TextEntity2_SetAnnotativeScaling(ON_TextEntity2* pTextEntity2, bool val)
 {
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pTextEntity2 )
     pTextEntity2->SetAnnotativeScaling(val);
-#endif
 }
 
 RH_C_FUNCTION int ON_TextEntity2_MaskColorSource(const ON_TextEntity2* pConstTextEntity2)
 {
   int rc = 0;
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pConstTextEntity2 )
     rc = pConstTextEntity2->MaskColorSource();
-#endif
   return rc;
 }
 
 RH_C_FUNCTION int ON_TextEntity2_MaskColor(const ON_TextEntity2* pConstTextEntity2)
 {
   int abgr = 0;
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pConstTextEntity2 )
   {
     ON_Color c = pConstTextEntity2->MaskColor();
     abgr = (int)((unsigned int)c);
   }
-#endif
   return abgr;
 }
 
 RH_C_FUNCTION void ON_TextEntity2_SetMaskColor(ON_TextEntity2* pTextEntity2, int argb)
 {
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pTextEntity2 )
   {
     ON_Color c = ARGB_to_ABGR(argb);
     pTextEntity2->SetMaskColor(c);
   }
-#endif
 }
 
 RH_C_FUNCTION int ON_TextEntity2_MaskSource(const ON_TextEntity2* pConstTextEntity2)
 {
   int rc = 0;
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pConstTextEntity2 )
     rc = pConstTextEntity2->MaskColorSource();
-#endif
   return rc;
 }
 
 RH_C_FUNCTION void ON_TextEntity2_SetMaskSource(ON_TextEntity2* pTextEntity2, int source)
 {
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pTextEntity2 )
     pTextEntity2->SetMaskColorSource(source);
-#endif
 }
 
 RH_C_FUNCTION double ON_TextEntity2_MaskOffsetFactor(const ON_TextEntity2* pConstTextEntity2)
 {
   double rc = 0;
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pConstTextEntity2 )
     rc = pConstTextEntity2->MaskOffsetFactor();
-#endif
   return rc;
 }
 
 RH_C_FUNCTION void ON_TextEntity2_SetMaskOffsetFactor(ON_TextEntity2* pTextEntity2, double factor)
 {
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pTextEntity2 )
     pTextEntity2->SetMaskOffsetFactor(factor);
-#endif
 }
 
 #if !defined(OPENNURBS_BUILD) // only available in Rhino

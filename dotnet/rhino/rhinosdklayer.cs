@@ -68,6 +68,7 @@ namespace Rhino.DocObjects
     {
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Constructs a layer with the current default properties.
     /// The default layer properties are:
@@ -87,6 +88,7 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.CRhinoLayerTable_GetDefaultLayerProperties(ptr);
       return layer;
     }
+#endif
     #endregion
 
     public bool CommitChanges()
@@ -138,9 +140,6 @@ namespace Rhino.DocObjects
       return base.NonConstPointer();
     }
 
-    const int idxIsVisible = 0;
-    const int idxIsLocked = 1;
-    const int idxIsExpanded = 2;
     #region properties
     /// <summary>Gets or sets the name of this layer.</summary>
     /// <example>
@@ -269,7 +268,7 @@ namespace Rhino.DocObjects
       {
         IntPtr pConstLayer = ConstPointer();
         int abgr = UnsafeNativeMethods.ON_Layer_GetColor(pConstLayer, true);
-        return System.Drawing.ColorTranslator.FromWin32(abgr);
+        return Rhino.Runtime.Interop.ColorFromWin32(abgr);
       }
       set
       {
@@ -290,7 +289,7 @@ namespace Rhino.DocObjects
       {
         IntPtr pConstLayer = ConstPointer();
         int abgr = UnsafeNativeMethods.ON_Layer_GetColor(pConstLayer, false);
-        return System.Drawing.ColorTranslator.FromWin32(abgr);
+        return Rhino.Runtime.Interop.ColorFromWin32(abgr);
       }
       set
       {
@@ -366,6 +365,79 @@ namespace Rhino.DocObjects
     {
       get { return GetBool(idxIsLocked); }
       set { SetBool(idxIsLocked, value); }
+    }
+
+    /// <summary>
+    /// The persistent visbility setting is used for layers whose visibilty can
+    /// be changed by a "parent" object. A common case is when a layer is a
+    /// child layer (ParentId is not nil). In this case, when a parent layer is
+    /// turned off, then child layers are also turned off. The persistent
+    /// visibility setting determines what happens when the parent is turned on
+    /// again.
+    /// </summary>
+    /// <remarks>
+    /// Returns true if this layer's visibility is controlled by a parent
+    /// object and the parent is turned on (after being off), then this
+    /// layer will also be turned on.
+    /// Returns false if this layer's visibility is controlled by a parent
+    /// object and the parent layer is turned on (after being off), then
+    /// this layer will continue to be off.
+    /// 
+    /// When the persistent visbility is not explicitly set, this
+    /// property returns the current value of IsVisible
+    /// </remarks>
+    public bool GetPersistentVisibility()
+    {
+      return GetBool(idxPersistentVisibility);
+    }
+
+    /// <summary>
+    /// Set the persistent visibility setting for this layer
+    /// </summary>
+    /// <param name="persistentVisibility"></param>
+    public void SetPersistentVisibility(bool persistentVisibility)
+    {
+      SetBool(idxPersistentVisibility, persistentVisibility);
+    }
+
+    /// <summary>
+    /// Remove any explicit persistent visibility setting from this layer
+    /// </summary>
+    public void UnsetPersistentVisibility()
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_Layer_UnsetPersistentVisibility(pThis);
+    }
+
+    /// <summary>
+    /// The persistent locking setting is used for layers that can be locked by
+    /// a "parent" object. A common case is when a layer is a child layer
+    /// (Layer.ParentI is not nil). In this case, when a parent layer is locked,
+    /// then child layers are also locked. The persistent locking setting
+    /// determines what happens when the parent is unlocked again.
+    /// </summary>
+    /// <returns></returns>
+    public bool GetPersistentLocking()
+    {
+      return GetBool(idxPersistentLocking);
+    }
+
+    /// <summary>
+    /// Set the persistent locking setting for this layer
+    /// </summary>
+    /// <param name="persistentLocking"></param>
+    public void SetPersistentLocking(bool persistentLocking)
+    {
+      SetBool(idxPersistentLocking, persistentLocking);
+    }
+
+    /// <summary>
+    /// Remove any explicity persistent locking settings from this layer
+    /// </summary>
+    public void UnsetPersistentLocking()
+    {
+      IntPtr pThis = NonConstPointer();
+      UnsafeNativeMethods.ON_Layer_UnsetPersistentLocking(pThis);
     }
 
     /// <summary>
@@ -477,6 +549,11 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.ON_Layer_SetInt(ptr, which, val);
     }
 
+    const int idxIsVisible = 0;
+    const int idxIsLocked = 1;
+    const int idxIsExpanded = 2;
+    const int idxPersistentVisibility = 3;
+    const int idxPersistentLocking = 4;
     bool GetBool(int which)
     {
       IntPtr pConstLayer = ConstPointer();
@@ -500,6 +577,8 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.ON_Layer_Default(pThis);
     }
 
+    #region methods
+#if RHINO_SDK
     /// <summary>
     /// Determines if a given string is valid for a layer name.
     /// </summary>
@@ -514,9 +593,6 @@ namespace Rhino.DocObjects
     {
       return UnsafeNativeMethods.RHC_IsValidName(name);
     }
-
-    #region methods
-#if RHINO_SDK
 
     public bool IsChildOf(int layerIndex)
     {
@@ -808,7 +884,6 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoLayerTable_FindLayer(m_doc.m_docId, layerName, ignoreDeletedLayers, -1);
     }
 
-#if USING_V5_SDK
     public int FindNext(int index, string layerName, bool ignoreDeletedLayers)
     {
       if (string.IsNullOrEmpty(layerName))
@@ -822,7 +897,6 @@ namespace Rhino.DocObjects.Tables
         return -1;
       return UnsafeNativeMethods.CRhinoLayerTable_FindExact(m_doc.m_docId, layerPath, ignoreDeletedLayers);
     }
-#endif
 
     /// <summary>Finds a layer with a matching ID.</summary>
     /// <param name="layerId">A valid layer ID.</param>
@@ -990,14 +1064,32 @@ namespace Rhino.DocObjects.Tables
     /// deleted because it is the current layer or it contains active geometry.
     /// </param>
     /// <returns>
-    /// true if successful. false if layer_index is out of range or the the layer cannot be
+    /// true if successful. false if layerIndex is out of range or the the layer cannot be
     /// deleted because it is the current layer or because it layer contains active geometry.
     /// </returns>
     public bool Delete(int layerIndex, bool quiet)
     {
-      return UnsafeNativeMethods.CRhinoLayerTable_DeleteLayer(m_doc.m_docId, layerIndex, quiet);
+      return UnsafeNativeMethods.CRhinoLayerTable_DeleteLayer(m_doc.m_docId, layerIndex, quiet, false);
     }
 
+    /// <summary>
+    /// Delete layer and all geometry objects on a layer
+    /// </summary>
+    /// <param name="layerIndex">
+    /// zero based index of layer to delete. This must be in the range 0 &lt;= layerIndex &lt; LayerTable.Count.
+    /// </param>
+    /// <param name="quiet">
+    /// If true, no warning message box appears if a layer the layer cannot be
+    /// deleted because it is the current layer.
+    /// </param>
+    /// <returns>
+    /// true if successful. false if layerIndex is out of range or the the layer cannot be
+    /// deleted because it is the current layer.
+    /// </returns>
+    public bool Purge(int layerIndex, bool quiet)
+    {
+      return UnsafeNativeMethods.CRhinoLayerTable_DeleteLayer(m_doc.m_docId, layerIndex, quiet, true);
+    }
     //[skipping]
     // int DeleteLayers( int layer_index_count, const int* layer_index_list, bool  bQuiet );
 

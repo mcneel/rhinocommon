@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-#if USING_V5_SDK && RHINO_SDK
+#if RHINO_SDK
 namespace Rhino.Geometry
 {
   /// <summary>

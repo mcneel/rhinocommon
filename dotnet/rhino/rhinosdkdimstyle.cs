@@ -5,6 +5,26 @@ using System.Collections.Generic;
 
 namespace Rhino.DocObjects
 {
+  public enum DimensionStyleArrowType : int
+  {
+    /// <summary>2:1</summary>
+    SolidTriangle = 0,
+    /// <summary></summary>
+    Dot = 1,
+    /// <summary></summary>
+    Tick = 2,
+    /// <summary>1:1</summary>
+    ShortTriangle = 3,
+    /// <summary></summary>
+    Arrow = 4,
+    /// <summary></summary>
+    Rectangle = 5,
+    /// <summary>4:1</summary>
+    LongTriangle = 6,
+    /// <summary>6:1</summary>
+    LongerTriangle = 7
+  }
+
   [Serializable]
   public class DimensionStyle : Rhino.Runtime.CommonObject
   {
@@ -214,6 +234,8 @@ namespace Rhino.DocObjects
     const int idxLengthResolution = 2;
     const int idxLengthFormat = 3;
     const int idxTextAlignment = 4;
+    const int idxArrowType = 5;
+    const int idxLeaderArrowType = 6;
 
     int GetInt(int which)
     {
@@ -264,6 +286,27 @@ namespace Rhino.DocObjects
       }
       set { SetInt(idxLengthFormat, (int)value); }
     }
+
+    public DimensionStyleArrowType ArrowType
+    {
+      get
+      {
+        int rc = GetInt(idxArrowType);
+        return (DimensionStyleArrowType)Enum.ToObject(typeof(DimensionStyleArrowType), rc);
+      }
+      set { SetInt(idxArrowType, (int)value); }
+    }
+
+    public DimensionStyleArrowType LeaderArrowType
+    {
+      get
+      {
+        int rc = GetInt(idxLeaderArrowType);
+        return (DimensionStyleArrowType)Enum.ToObject(typeof(DimensionStyleArrowType), rc);
+      }
+      set { SetInt(idxLeaderArrowType, (int)value); }
+    }
+
     #endregion
 
     public string Prefix

@@ -197,6 +197,7 @@ namespace Rhino.Commands
     internal int m_runtime_serial_number;
     internal Style m_style_flags;
     Rhino.PlugIns.PlugIn m_plugin;
+    Guid m_id = Guid.Empty;
 
     internal static Command LookUpBySerialNumber(int sn)
     {
@@ -248,16 +249,22 @@ namespace Rhino.Commands
     }
 
     /// <summary>
-    /// Gets the ID of this command.
-    /// You can associate an ID with the
-    /// <see cref="System.Runtime.InteropServices.GuidAttribute">GuidAttribute</see> attribute
-    /// applied to the class.
+    /// Gets the  unique ID of this command. It is best to use a Guid
+    /// attribute for each custom derived command class since this will
+    /// keep the id consistent between sessions of Rhino
+    /// <see cref="System.Runtime.InteropServices.GuidAttribute">GuidAttribute</see>
     /// </summary>
     public virtual Guid Id
     {
       get
       {
-        return GetType().GUID;
+        if( Guid.Empty == m_id )
+        {
+          m_id = GetType().GUID;
+          if( Guid.Empty== m_id )
+            m_id = Guid.NewGuid();
+        }
+        return m_id;
       }
     }
 
@@ -403,7 +410,7 @@ namespace Rhino.Commands
     /// <returns>true if a script running command is active.</returns>
     public static bool InScriptRunnerCommand()
     {
-      int rc = UnsafeNativeMethods.CRhinoApp_GetInt(RhinoApp.idxInScriptRunner);
+      int rc = RhinoApp.GetInt(RhinoApp.idxInScriptRunner);
       return (1 == rc);
     }
 
@@ -692,8 +699,12 @@ namespace Rhino.Commands
       {
         if (m_english_name == null)
         {
-          IntPtr pName = UnsafeNativeMethods.CRhinoCommand_Name(m_pCommand, true);
-          m_english_name = IntPtr.Zero == pName ? string.Empty : Marshal.PtrToStringUni(pName);
+          using (var sh = new Runtime.StringHolder())
+          {
+            IntPtr pStringHolder = sh.NonConstPointer();
+            UnsafeNativeMethods.CRhinoCommand_Name(m_pCommand, true, pStringHolder);
+            m_english_name = sh.ToString();
+          }
         }
         return m_english_name;
       }
@@ -708,8 +719,12 @@ namespace Rhino.Commands
       {
         if (m_local_name == null)
         {
-          IntPtr pName = UnsafeNativeMethods.CRhinoCommand_Name(m_pCommand, false);
-          m_local_name = IntPtr.Zero == pName ? string.Empty : Marshal.PtrToStringUni(pName);
+          using (var sh = new Runtime.StringHolder())
+          {
+            IntPtr pStringHolder = sh.NonConstPointer();
+            UnsafeNativeMethods.CRhinoCommand_Name(m_pCommand, false, pStringHolder);
+            m_local_name = sh.ToString();
+          }
         }
         return m_local_name;
       }
@@ -726,8 +741,12 @@ namespace Rhino.Commands
       {
         if (m_plugin_name == null)
         {
-          IntPtr pName = UnsafeNativeMethods.CRhinoCommand_PlugInName(m_pCommand);
-          m_plugin_name = IntPtr.Zero == pName ? string.Empty : Marshal.PtrToStringUni(pName);
+          using (var sh = new Runtime.StringHolder())
+          {
+            IntPtr pStringHolder = sh.NonConstPointer();
+            UnsafeNativeMethods.CRhinoCommand_PlugInName(m_pCommand, pStringHolder);
+            m_plugin_name = sh.ToString();
+          }
         }
         return m_plugin_name;
       }
@@ -843,7 +862,6 @@ namespace Rhino.Commands
 
   }
 
-#if USING_V5_SDK
   public abstract class TransformCommand : Command
   {
     /// <summary>
@@ -885,7 +903,6 @@ namespace Rhino.Commands
     //CRhinoView* View() { return m_view; }
     //bool ObjectsWerePreSelected() { return m_objects_were_preselected; }
   }
-#endif
 }
 
 
@@ -1557,14 +1574,12 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.CRhinoObjectPairArray_UpdateToSurface(m_parent.m_pObjectPairArray, m_index, pConstSurface, pConstAttributes);
     }
 
-#if USING_V5_SDK
     public bool UpdateToExtrusion(Geometry.Extrusion extrusion, DocObjects.ObjectAttributes attributes)
     {
       IntPtr pConstAttributes = (attributes == null) ? IntPtr.Zero : attributes.ConstPointer();
       IntPtr pConstExtrusion = extrusion.ConstPointer();
       return UnsafeNativeMethods.CRhinoObjectPairArray_UpdateToExtrusion(m_parent.m_pObjectPairArray, m_index, pConstExtrusion, pConstAttributes);
     }
-#endif
 
     public bool UpdateToMesh(Geometry.Mesh mesh, DocObjects.ObjectAttributes attributes)
     {

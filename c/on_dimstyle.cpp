@@ -148,6 +148,9 @@ RH_C_FUNCTION int ON_DimStyle_GetInt(const ON_DimStyle* pConstDimStyle, int whic
   const int idxLengthResolution = 2;
   const int idxLengthFormat = 3;
   const int idxTextAlignment = 4;
+  const int idxArrowType = 5;
+  const int idxLeaderArrowType = 6;
+
   int rc = 0;
 
   if( pConstDimStyle )
@@ -169,6 +172,12 @@ RH_C_FUNCTION int ON_DimStyle_GetInt(const ON_DimStyle* pConstDimStyle, int whic
     case idxTextAlignment:
       rc = pConstDimStyle->TextAlignment();
       break;
+    case idxArrowType:
+      rc = pConstDimStyle->ArrowType();
+      break;
+    case idxLeaderArrowType:
+      rc = pConstDimStyle->LeaderArrowType();
+      break;
     }
   }
   return rc;
@@ -181,6 +190,8 @@ RH_C_FUNCTION void ON_DimStyle_SetInt(ON_DimStyle* pDimStyle, int which, int val
   const int idxLengthResolution = 2;
   const int idxLengthFormat = 3;
   const int idxTextAlignment = 4;
+  const int idxArrowType = 5;
+  const int idxLeaderArrowType = 6;
 
   if( pDimStyle )
   {
@@ -201,6 +212,12 @@ RH_C_FUNCTION void ON_DimStyle_SetInt(ON_DimStyle* pDimStyle, int which, int val
     case idxTextAlignment:
       pDimStyle->SetTextAlignment(ON::TextDisplayMode(val));
       break;
+    case idxArrowType:
+      pDimStyle->SetArrowType((ON_DimStyle::eArrowType)val);
+      break;
+    case idxLeaderArrowType:
+      pDimStyle->SetLeaderArrowType((ON_DimStyle::eArrowType)val);
+      break;
     }
   }
 }
@@ -220,19 +237,10 @@ RH_C_FUNCTION void ON_DimStyle_SetString(ON_DimStyle* pDimStyle, const RHMONO_ST
 {
   if( pDimStyle )
   {
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in Rhino 5
     INPUTSTRINGCOERCE(_str, str);
     if( prefix )
       pDimStyle->SetPrefix(_str);
     else
       pDimStyle->SetSuffix(_str);
-#else
-    INPUTSTRINGCOERCE(_str, str);
-    wchar_t* _hack_str = const_cast<wchar_t*>(_str); //this should have been const. It is not modified
-    if( prefix )
-      pDimStyle->SetPrefix(_hack_str);
-    else
-      pDimStyle->SetSuffix(_hack_str);
-#endif
   }
 }

@@ -128,10 +128,10 @@ namespace Rhino.Geometry
     {
       if (doc == null) throw new ArgumentNullException("doc");
 
-      IntPtr pMeshParameters = UnsafeNativeMethods.CRhinoDocProperties_RenderMeshSettings(doc.m_docId);
-      if (IntPtr.Zero == pMeshParameters)
+      IntPtr ptr_mesh_parameters = UnsafeNativeMethods.CRhinoDocProperties_RenderMeshSettings(doc.m_docId);
+      if (IntPtr.Zero == ptr_mesh_parameters)
         return null;
-      return new MeshingParameters(pMeshParameters);
+      return new MeshingParameters(ptr_mesh_parameters);
     }
 #endif
 
@@ -435,6 +435,43 @@ namespace Rhino.Geometry
   }
 
   /// <summary>
+  /// Represents a portion of a mesh for partitioning
+  /// </summary>
+  public class MeshPart
+  {
+    private int m_vi0;
+    private int m_vi1;
+    private int m_fi0;
+    private int m_fi1;
+    private int m_vertex_count;
+    private int m_triangle_count;
+
+    internal MeshPart(int vertexStart, int vertexEnd, int faceStart, int faceEnd, int vertexCount, int triangleCount)
+    {
+      m_vi0 = vertexStart;
+      m_vi1 = vertexEnd;
+      m_fi0 = faceStart;
+      m_fi1 = faceEnd;
+      m_vertex_count = vertexCount;
+      m_triangle_count = triangleCount;
+    }
+
+    /// <summary>Start of subinterval of parent mesh vertex array</summary>
+    public int StartVertexIndex { get { return m_vi0; } }
+    /// <summary>End of subinterval of parent mesh vertex array</summary>
+    public int EndVertexIndex { get { return m_vi1; } }
+    /// <summary>Start of subinterval of parent mesh face array</summary>
+    public int StartFaceIndex { get { return m_fi0; } }
+    /// <summary>End of subinterval of parent mesh face array</summary>
+    public int EndFaceIndex { get { return m_fi1; } }
+
+    /// <summary>EndVertexIndex - StartVertexIndex</summary>
+    public int VertexCount { get { return m_vertex_count; } }
+    /// <summary></summary>
+    public int TriangleCount { get { return m_triangle_count; } }
+  }
+
+  /// <summary>
   /// Represents a geometry type that is defined by vertices and faces.
   /// <para>This is often called a face-vertex mesh.</para>
   /// </summary>
@@ -479,7 +516,7 @@ namespace Rhino.Geometry
     /// <param name="yCount">Number of faces in y-direction.</param>
     /// <param name="zCount">Number of faces in z-direction.</param>
     /// <returns>A new brep, or null on failure.</returns>
-    static Mesh CreateFromBox(BoundingBox box, int xCount, int yCount, int zCount)
+    public static Mesh CreateFromBox(BoundingBox box, int xCount, int yCount, int zCount)
     {
       IntPtr ptr = UnsafeNativeMethods.RHC_RhinoMeshBox2(box.Min, box.Max, xCount, yCount, zCount);
       return IntPtr.Zero == ptr ? null : new Mesh(ptr, null);
@@ -574,8 +611,8 @@ namespace Rhino.Geometry
     public static Mesh CreateFromCylinder(Cylinder cylinder, int vertical, int around)
     {
       if (!cylinder.IsValid) { throw new ArgumentException("cylinder is invalid"); }
-      IntPtr pMesh = UnsafeNativeMethods.RHC_RhinoMeshCylinder(ref cylinder, vertical, around);
-      return GeometryBase.CreateGeometryHelper(pMesh, null) as Mesh;
+      IntPtr ptr_mesh = UnsafeNativeMethods.RHC_RhinoMeshCylinder(ref cylinder, vertical, around);
+      return CreateGeometryHelper(ptr_mesh, null) as Mesh;
     }
 
     /// <summary>Constructs a mesh cone</summary>
@@ -587,8 +624,8 @@ namespace Rhino.Geometry
     public static Mesh CreateFromCone(Cone cone, int vertical, int around)
     {
       if (!cone.IsValid) { throw new ArgumentException("cone is invalid"); }
-      IntPtr pMesh = UnsafeNativeMethods.RHC_RhinoMeshCone(ref cone, vertical, around);
-      return GeometryBase.CreateGeometryHelper(pMesh, null) as Mesh;
+      IntPtr ptr_mesh = UnsafeNativeMethods.RHC_RhinoMeshCone(ref cone, vertical, around);
+      return CreateGeometryHelper(ptr_mesh, null) as Mesh;
     }
 
     /// <summary>
@@ -601,12 +638,10 @@ namespace Rhino.Geometry
     /// </returns>
     public static Mesh CreateFromPlanarBoundary(Curve boundary, MeshingParameters parameters)
     {
-      IntPtr pCurve = boundary.ConstPointer();
-      IntPtr pMeshParameters = parameters.ConstPointer();
-      IntPtr pMesh = UnsafeNativeMethods.RHC_RhinoMakePlanarMeshes(pCurve, pMeshParameters);
-      if (IntPtr.Zero == pMesh)
-        return null;
-      return new Mesh(pMesh, null);
+      IntPtr ptr_const_curve = boundary.ConstPointer();
+      IntPtr ptr_const_mesh_parameters = parameters.ConstPointer();
+      IntPtr ptr_mesh = UnsafeNativeMethods.RHC_RhinoMakePlanarMeshes(ptr_const_curve, ptr_const_mesh_parameters);
+      return CreateGeometryHelper(ptr_mesh, null) as Mesh;
     }
 
     /// <summary>
@@ -621,8 +656,8 @@ namespace Rhino.Geometry
       if (!polyline.IsClosed)
         return null;
       Mesh rc = new Mesh();
-      IntPtr pMesh = rc.NonConstPointer();
-      if (UnsafeNativeMethods.TLC_MeshPolyline(polyline.Count, polyline.ToArray(), pMesh))
+      IntPtr ptr_mesh = rc.NonConstPointer();
+      if (UnsafeNativeMethods.TLC_MeshPolyline(polyline.Count, polyline.ToArray(), ptr_mesh))
         return rc;
       return null;
     }
@@ -634,15 +669,13 @@ namespace Rhino.Geometry
     /// <returns>An array of meshes.</returns>
     public static Mesh[] CreateFromBrep(Brep brep)
     {
-      IntPtr pConstBrep = brep.ConstPointer();
-      Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer();
-      IntPtr pMeshes = meshes.NonConstPointer();
-      int count = UnsafeNativeMethods.ON_Brep_CreateMesh(pConstBrep, pMeshes);
-      Mesh[] rc = null;
-      if (count > 0)
-        rc = meshes.ToNonConstArray();
-      meshes.Dispose();
-      return rc;
+      using (Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer())
+      {
+        IntPtr ptr_const_brep = brep.ConstPointer();
+        IntPtr ptr_mesh_array = meshes.NonConstPointer();
+        int count = UnsafeNativeMethods.ON_Brep_CreateMesh(ptr_const_brep, ptr_mesh_array);
+        return count < 1 ? null : meshes.ToNonConstArray();
+      }
     }
 
     /// <summary>
@@ -653,38 +686,15 @@ namespace Rhino.Geometry
     /// <returns>An array of meshes.</returns>
     public static Mesh[] CreateFromBrep(Brep brep, MeshingParameters meshingParameters)
     {
-      IntPtr pConstBrep = brep.ConstPointer();
+      IntPtr ptr_const_brep = brep.ConstPointer();
       IntPtr pMeshParameters = meshingParameters.ConstPointer();
-      using (Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Rhino.Runtime.InteropWrappers.SimpleArrayMeshPointer())
+      using (Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer())
       {
-        IntPtr pMeshes = meshes.NonConstPointer();
-        int count = UnsafeNativeMethods.ON_Brep_CreateMesh3(pConstBrep, pMeshes, pMeshParameters);
-        Mesh[] rc = null;
-        if (count > 0)
-          rc = meshes.ToNonConstArray();
-        return rc;
+        IntPtr ptr_mesh_array = meshes.NonConstPointer();
+        int count = UnsafeNativeMethods.ON_Brep_CreateMesh3(ptr_const_brep, ptr_mesh_array, pMeshParameters);
+        return count < 1 ? null : meshes.ToNonConstArray();
       }
     }
-
-    //DR: I was testing this, but I removed it as it is now possible to get 3D curves out of BrepLoops,
-    //    so this can be implemented in pure .NET.
-    ///// <summary>
-    ///// Create a minimal representation of a Brep. Only Brep Faces with a single loop 
-    ///// containing either 3 or 4 sharp corners will be included in the mesh. 
-    ///// This method is in development and may well disappear, do not use it.
-    ///// </summary>
-    ///// <param name="brep">Brep to approximate.</param>
-    ///// <returns>A minimal representation of the Brep or null on failure.</returns>
-    //[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    //public static Mesh CreateFromBrepSimple(Brep brep)
-    //{
-    //  IntPtr pConstBrep = brep.ConstPointer();
-    //  IntPtr newMesh = UnsafeNativeMethods.ON_Mesh_BrepToMeshSimple(pConstBrep);
-    //  if (newMesh == null)
-    //    return null;
-
-    //  return new Mesh(newMesh, null);
-    //}
 
     /// <summary>
     /// Computes the solid union of a set of meshes.
@@ -1215,7 +1225,7 @@ namespace Rhino.Geometry
     //int GetMeshEdgeList(ON_SimpleArray<ON_2dex>& edge_list, ON_SimpleArray<int>& ci_meshtop_edge_map, int edge_type_partition[5]) const;
     //int GetMeshEdgeList(ON_SimpleArray<ON_2dex>& edge_list, ON_SimpleArray<int>& ci_meshtop_edge_map, ON_SimpleArray<int>& ci_meshtop_vertex_map, int edge_type_partition[5]) const;
 
-#if USING_V5_SDK
+#if RHINO_SDK
     /// <summary>
     /// Makes sure that faces sharing an edge and having a difference of normal greater
     /// than or equal to angleToleranceRadians have unique vertexes along that edge,
@@ -1243,7 +1253,6 @@ namespace Rhino.Geometry
       IntPtr pThis = NonConstPointer();
       UnsafeNativeMethods.RHC_RhinoWeldMesh(pThis, angleToleranceRadians);
     }
-#endif
 
     /// <summary>
     /// Attempts to fix inconsistencies in the directions of meshfaces for a mesh. This function
@@ -1345,7 +1354,6 @@ namespace Rhino.Geometry
       }
     }
 
-#if RHINO_SDK
     /// <summary>
     /// Constructs the outlines of a mesh projected against a plane.
     /// </summary>
@@ -1668,6 +1676,7 @@ namespace Rhino.Geometry
       return rc.ToArray();
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Makes a new mesh with vertices offset a distance in the opposite direction of the existing vertex normals.
     /// Same as Mesh.Offset(distance, false)
@@ -1695,6 +1704,7 @@ namespace Rhino.Geometry
         return null;
       return new Mesh(pNewMesh, null);
     }
+#endif
     #endregion
 
     internal bool IndexOpBool(int which, int index)
@@ -1795,6 +1805,48 @@ namespace Rhino.Geometry
 
     #endregion
 
+    /// <summary>
+    /// In ancient times (or modern smartphone times), some rendering engines
+    /// were only able to process small batches of triangles and the
+    /// CreatePartitions() function was provided to partition the mesh into
+    /// subsets of vertices and faces that those renering engines could handle.
+    /// </summary>
+    /// <param name="maximumVertexCount"></param>
+    /// <param name="maximumTriangleCount"></param>
+    /// <returns>true on success</returns>
+    public bool CreatePartitions(int maximumVertexCount, int maximumTriangleCount)
+    {
+      IntPtr pThis = NonConstPointer();
+      return UnsafeNativeMethods.ON_Mesh_CreatePartition(pThis, maximumVertexCount, maximumTriangleCount);
+    }
+
+    /// <summary>
+    /// Number of partition information chunks stored on this mesh based
+    /// on the last call to CreatePartitions
+    /// </summary>
+    public int PartitionCount
+    {
+      get
+      {
+        IntPtr pConstThis = ConstPointer();
+        return UnsafeNativeMethods.ON_Mesh_PartitionCount(pConstThis);
+      }
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="which"></param>
+    /// <returns></returns>
+    public MeshPart GetPartition(int which)
+    {
+      IntPtr pConstThis = NonConstPointer();
+      int vi0=0, vi1=0, fi0=0, fi1=0;
+      int vert_count = 0;
+      int tri_count = 0;
+      if (UnsafeNativeMethods.ON_Mesh_GetMeshPart(pConstThis, which, ref vi0, ref vi1, ref fi0, ref fi1, ref vert_count, ref tri_count))
+        return new MeshPart(vi0, vi1, fi0, fi1, vert_count, tri_count);
+      return null;
+    }
 
 
     //[skipping]
@@ -1815,7 +1867,6 @@ namespace Rhino.Geometry
     //  bool FaceIsHidden( int meshvi ) const;
     //  const ON_MeshTopology& Topology() const;
     //  void DestroyTopology();
-    //  const ON_MeshPartition* CreatePartition( 
     //  const ON_MeshPartition* Partition() const;
     //  void DestroyPartition();
     //  const class ON_MeshNgonList* NgonList() const;
@@ -2301,6 +2352,30 @@ namespace Rhino.Geometry.Collections
       }
       return rc;
     }
+
+		/// <summary>
+		/// Copies all vertices to a linear array of float in x,y,z order
+		/// </summary>
+		/// <returns>The float array.</returns>
+		public float[] ToFloatArray()
+		{
+			int count = Count;
+			float[] rc = new float[count * 3];
+			IntPtr const_ptr_mesh = m_mesh.ConstPointer();
+			Point3f pt = new Point3f();
+			int index = 0;
+			// There is a much more efficient way to do this with
+			// marshalling the whole array at once, but this will
+			// do for now
+			for (int i=0; i<count; i++)
+			{
+				UnsafeNativeMethods.ON_Mesh_Vertex (const_ptr_mesh, i, ref pt);
+				rc [index++] = pt.X;
+				rc [index++] = pt.Y;
+				rc [index++] = pt.Z;
+			}
+			return rc;
+		}
 
     /// <summary>
     /// Removes the vertex at the given index and all faces that reference that index.
@@ -2808,6 +2883,7 @@ namespace Rhino.Geometry.Collections
       return m_mesh.IndexOpBool(Mesh.idxCollapseEdge, topologyEdgeIndex);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Divides a mesh edge to create two or more triangles
     /// </summary>
@@ -2838,6 +2914,7 @@ namespace Rhino.Geometry.Collections
       IntPtr pMesh = m_mesh.NonConstPointer();
       return UnsafeNativeMethods.ON_Mesh_SplitMeshEdge(pMesh, topologyEdgeIndex, point);
     }
+#endif
 
     /// <summary>
     /// Determines if a mesh edge index is valid input for <see cref="SwapEdge"/>.
@@ -3436,6 +3513,41 @@ namespace Rhino.Geometry.Collections
       face_ids.Keys.CopyTo(rc, 0);
       return rc;
     }
+
+		/// <summary>
+		/// Copies all of the faces to a linear integer of indices
+		/// </summary>
+		/// <returns>The int array.</returns>
+		/// <param name="asTriangles">If set to <c>true</c> as triangles.</param>
+		public int[] ToIntArray(bool asTriangles)
+		{
+			int count = asTriangles ? (QuadCount * 2 + TriangleCount) * 3 : Count * 4;
+			int[] rc = new int[count];
+			int current = 0;
+			int face_count = Count;
+			MeshFace face = new MeshFace();
+			IntPtr const_ptr_mesh = m_mesh.ConstPointer();
+			for (int index=0; index<face_count; index++)
+			{
+				UnsafeNativeMethods.ON_Mesh_GetFace (const_ptr_mesh, index, ref face);
+				rc [current++] = face.A;
+				rc [current++] = face.B;
+				rc [current++] = face.C;
+				if (asTriangles)
+				{
+					if (face.C != face.D) {
+						rc [current++] = face.C;
+						rc [current++] = face.D;
+						rc [current++] = face.A;
+					}
+				}
+				else
+				{
+					rc [current++] = face.D;
+				}
+			}
+			return rc;
+		}
     #endregion
 
     /// <summary>
@@ -3550,6 +3662,51 @@ namespace Rhino.Geometry.Collections
         return new int[0];
       return v;
     }
+
+#if RHINO_SDK
+    /// <summary>
+    /// Find all connected face indices where adjacent face normals meet
+    /// the criteria of angleRadians and greaterThanAngle
+    /// </summary>
+    /// <param name="faceIndex">face index to start from</param>
+    /// <param name="angleRadians">angle to use for comparison of what is connected</param>
+    /// <param name="greaterThanAngle">
+    /// If true angles greater than or equal to are considered connected.
+    /// If false, angles less than or equal to are considerd connected.</param>
+    /// <returns>list of connected face indices</returns>
+    public int[] GetConnectedFaces(int faceIndex, double angleRadians, bool greaterThanAngle)
+    {
+      IntPtr ptr_const_mesh = m_mesh.ConstPointer();
+      using (var indices = new Runtime.InteropWrappers.SimpleArrayInt())
+      {
+        IntPtr ptr_simplearray_int = indices.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoMakeConnectedMeshFaceList(ptr_const_mesh, faceIndex, angleRadians, greaterThanAngle, ptr_simplearray_int);
+        return indices.ToArray();
+      }
+    }
+
+    /// <summary>
+    /// Uses startFaceIndex and finds all connected face indexes up to unwelded
+    /// or naked edges. If treatNonmanifoldLikeUnwelded is true then non-manifold
+    /// edges will be considered as unwelded or naked
+    /// </summary>
+    /// <param name="startFaceIndex">Initial face index</param>
+    /// <param name="treatNonmanifoldLikeUnwelded">
+    /// True means non-manifold edges will be handled like unwelded edges, 
+    /// False means they aren't considered
+    /// </param>
+    /// <returns>Array of connected face indexes</returns>
+    public int[] GetConnectedFacesToEdges(int startFaceIndex, bool treatNonmanifoldLikeUnwelded)
+    {
+      IntPtr ptr_const_mesh = m_mesh.ConstPointer();
+      using (var indices = new Runtime.InteropWrappers.SimpleArrayInt())
+      {
+        IntPtr ptr_simplearray_int = indices.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoMakeMeshPartFaceList(ptr_const_mesh, startFaceIndex, treatNonmanifoldLikeUnwelded, ptr_simplearray_int);
+        return indices.ToArray();
+      }
+    }
+#endif
     #endregion
 
     #region IEnumerable implementation

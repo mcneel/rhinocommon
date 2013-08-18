@@ -56,7 +56,7 @@ RH_C_FUNCTION int ON_Surface_SpanCount(const ON_Surface* pConstSurface, int dire
   return rc;
 }
 
-RH_C_FUNCTION bool ON_Surface_GetSpanVector(const ON_Surface* pConstSurface, int direction, int count, /*ARRAY*/double* span_vector)
+RH_C_FUNCTION bool ON_Surface_GetSpanVector(const ON_Surface* pConstSurface, int direction, /*ARRAY*/double* span_vector)
 {
   bool rc = false;
   if( pConstSurface )
@@ -219,14 +219,7 @@ RH_C_FUNCTION bool ON_Surface_GetBool(const ON_Surface* pConstSurface, int direc
       rc = pConstSurface->IsSingular(direction)?true:false;
     else if( idxIsSolid == which )
     {
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in V5
       rc = pConstSurface->IsSolid();
-#else
-      // Using code from V5 IsSolid that does not include testing for extrusions
-      const bool bIsClosed0 = ( pConstSurface->IsClosed(0) || ( pConstSurface->IsSingular(1) && pConstSurface->IsSingular(3) ) );
-      const bool bIsClosed1 = ( pConstSurface->IsClosed(1) || ( pConstSurface->IsSingular(0) && pConstSurface->IsSingular(2) ) );
-      rc = ( bIsClosed0 && bIsClosed1 );
-#endif
     }
   }
   return rc;

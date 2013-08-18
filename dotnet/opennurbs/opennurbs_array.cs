@@ -84,7 +84,12 @@ namespace Rhino.Runtime
 
     public override string ToString()
     {
-      IntPtr pString = UnsafeNativeMethods.StringHolder_Get(m_ptr);
+      return GetString(m_ptr);
+    }
+
+    public static string GetString(IntPtr pStringHolder)
+    {
+      IntPtr pString = UnsafeNativeMethods.StringHolder_Get(pStringHolder);
       string rc = Marshal.PtrToStringUni(pString);
       return rc ?? String.Empty;
     }
@@ -405,6 +410,103 @@ namespace Rhino.Runtime.InteropWrappers
       if (IntPtr.Zero != m_ptr)
       {
         UnsafeNativeMethods.ON_DoubleArray_Delete(m_ptr);
+        m_ptr = IntPtr.Zero;
+      }
+    }
+  }
+
+  /// <summary>
+  /// ON_SimpleArray&lt;ON_2dPoint&gt; class wrapper.  If you are not writing
+  /// C++ code then this class is not for you.
+  /// </summary>
+  public class SimpleArrayPoint2d : IDisposable
+  {
+    private IntPtr m_ptr;
+
+    /// <summary>
+    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <returns>The const pointer.</returns>
+    public IntPtr ConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Gets the non-const pointer (for modification) of this array.
+    /// </summary>
+    /// <returns>The non-const pointer.</returns>
+    public IntPtr NonConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Initializes a new empty <see cref="SimpleArrayPoint3d"/> instance.
+    /// </summary>
+    public SimpleArrayPoint2d()
+    {
+      m_ptr = UnsafeNativeMethods.ON_2dPointArray_New(0);
+    }
+
+    // not used and internal class, so comment out
+    //public SimpleArrayPoint3d(int initialCapacity)
+    //{
+    //  m_ptr = UnsafeNativeMethods.ON_2dPointArray_New(initialCapacity);
+    //}
+
+    /// <summary>
+    /// Gets the amount of points in this array.
+    /// </summary>
+    public int Count
+    {
+      get
+      {
+        IntPtr ptr = ConstPointer();
+        int count = UnsafeNativeMethods.ON_2dPointArray_Count(ptr);
+        return count;
+      }
+    }
+
+    /// <summary>
+    /// Copies the unmanaged array to a managed counterpart.
+    /// </summary>
+    /// <returns>The managed array.</returns>
+    public Point2d[] ToArray()
+    {
+      int count = Count;
+      if (count < 1)
+        return new Point2d[0];
+
+      Point2d[] rc = new Point2d[count];
+      UnsafeNativeMethods.ON_2dPointArray_CopyValues(m_ptr, rc);
+      return rc;
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~SimpleArrayPoint2d()
+    {
+      Dispose(false);
+    }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_ptr)
+      {
+        UnsafeNativeMethods.ON_2dPointArray_Delete(m_ptr);
         m_ptr = IntPtr.Zero;
       }
     }

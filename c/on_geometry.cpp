@@ -420,11 +420,9 @@ RH_C_FUNCTION int ON_Geometry_GetGeometryType( const ON_Object* pOnObject)
       if( pCastTest )
         return idxON_BrepFace; //20
 
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in Rhino 5
       pCastTest = ON_Extrusion::Cast(pGeometry);
       if( pCastTest )
         return idxON_Extrusion; //24
-#endif
 
       return idxON_Surface;
     }

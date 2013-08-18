@@ -67,6 +67,43 @@ RH_C_FUNCTION void ON_ComponentIndexArray_CopyValues( const ON_SimpleArray<ON_CO
   }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
+
+RH_C_FUNCTION ON_2dPointArray* ON_2dPointArray_New(int capacity)
+{
+  if( capacity < 1 )
+    return new ON_2dPointArray();
+  return new ON_2dPointArray(capacity);
+}
+
+RH_C_FUNCTION void ON_2dPointArray_Delete( ON_2dPointArray* pArray )
+{
+  if( pArray )
+    delete pArray;
+}
+
+
+RH_C_FUNCTION int ON_2dPointArray_Count( const ON_2dPointArray* pArray )
+{
+  int rc = 0;
+  if( pArray )
+    rc = pArray->Count();
+  return rc;
+}
+
+RH_C_FUNCTION void ON_2dPointArray_CopyValues( const ON_2dPointArray* pArray, /*ARRAY*/ON_2dPoint* pts )
+{
+  if( pArray && pts )
+  {
+    int count = pArray->Count();
+    if( count > 0 )
+    {
+      const ON_2dPoint* source = pArray->Array();
+      ::memcpy(pts, source, count * sizeof(ON_2dPoint));
+    }
+  }
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -396,7 +433,7 @@ RH_C_FUNCTION ON_SimpleArray<ON_BezierCurve*>* ON_SimpleArray_BezierCurveNew()
   return new ON_SimpleArray<ON_BezierCurve*>();
 }
 
-RH_C_FUNCTION void ON_SimpleArray_BezierCurveDelete(ON_SimpleArray<ON_BezierCurve>* pBezArray)
+RH_C_FUNCTION void ON_SimpleArray_BezierCurveDelete(ON_SimpleArray<ON_BezierCurve*>* pBezArray)
 {
   if( pBezArray )
     delete pBezArray;

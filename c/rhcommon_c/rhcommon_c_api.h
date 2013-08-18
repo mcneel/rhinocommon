@@ -1,7 +1,7 @@
 #pragma once
 
+// Windows compile
 #if defined (_WIN32)
-
 #if defined (USING_RH_C_SDK)
 #define RH_CPP_FUNCTION __declspec(dllimport)
 #define RH_CPP_CLASS __declspec(dllimport)
@@ -15,22 +15,85 @@
 // RH_C_FUNCTION is always exported and is the token used in the file processor
 #define RH_C_FUNCTION extern "C" __declspec(dllexport)
 
-#endif
+#define RHMONO_STRING wchar_t
+// macro used to convert input strings to their appropriate type
+// for a given platform.
+#define INPUTSTRINGCOERCE( _variablename, _parametername) \
+const wchar_t* _variablename = _parametername;
+#endif // _WIN32
 
+
+// OSX / iOS compiles
 #if defined (__APPLE__)
 #define RH_CPP_FUNCTION __attribute__ ((visibility ("default")))
 #define RH_CPP_CLASS __attribute__ ((visibility ("default")))
 #define RH_C_FUNCTION extern "C" __attribute__ ((visibility ("default")))
 #define RH_EXPORT __attribute__ ((visibility ("default")))
+
+#if defined (OPENNURBS_BUILD)
+#define CALLBACK
+typedef signed char     BOOL;
+typedef const wchar_t*  LPCTSTR;
+typedef unsigned short                  UInt16;
+typedef UInt16                          UniChar;
+ON_wString UniChar2on(const UniChar* inStr);
 #endif
 
+#define RHMONO_STRING UniChar
+// macro used to convert input strings to their appropriate type
+// for a given platform. On Mac I'm expecting that we will be using
+// a class that takes a 2 byte string and performs the proper conversions
+// to get a 4 byte wchar_t
+#define INPUTSTRINGCOERCE( _variablename, _parametername)          \
+const wchar_t* _variablename = NULL;                               \
+ON_wString _variablename##_;                                       \
+if(_parametername) {                                               \
+_variablename##_ = (UniChar2on(_parametername));                   \
+_variablename = (LPCTSTR) _variablename##_;                        \
+}
+#endif // __APPLE__
+
+
+// Android compile
+#if defined (ON_COMPILER_ANDROIDNDK)
+#define RH_C_FUNCTION extern "C" 
+#define RH_CPP_FUNCTION
+#define RH_CPP_CLASS
+#define RH_EXPORT
+
+#define RHMONO_STRING ON__UINT16
+// macro used to convert input strings to their appropriate type
+// for a given platform.
+#define INPUTSTRINGCOERCE( _variablename, _parametername)                    \
+const wchar_t* _variablename = NULL;                                         \
+ON_wString _variablename##_;                                                 \
+if(_parametername) {                                                         \
+  unsigned int __error_status = 0;                                           \
+  int _parametername##count = ON_ConvertUTF16ToUTF32( 0, _parametername,     \
+            -1, NULL, 0, &__error_status, 0xFFFFFFFF, 0xFFFD, 0);            \
+  _variablename##_.ReserveArray(_parametername##count);                      \
+  unsigned int* _variablename##_s = (unsigned int*)_variablename##_.Array(); \
+  ON_ConvertUTF16ToUTF32( 0, _parametername, -1, _variablename##_s,          \
+            _parametername##count, &__error_status, 0xFFFFFFFF, 0xFFFD, 0);  \
+  _variablename = _variablename##_.Array();                                  \
+}
+
+
+typedef signed char     BOOL;
+#define TRUE 1
+#define FALSE 0
+#define CALLBACK
+#endif // ON_COMPILER_ANDROIDNDK
+
+// Only applicable for when compiled for running inside Rhino
 #if !defined(OPENNURBS_BUILD)
 // Always call this function instead of ActiveDoc so
 // we have a single place to fix up code to work on Mac multi-doc build
 RH_CPP_FUNCTION CRhinoDoc* RhDocFromId( int id );
 RH_CPP_FUNCTION int RhIdFromDoc( CRhinoDoc* pDoc );
-RH_CPP_FUNCTION bool RhInShutDown();
 #endif
+RH_CPP_FUNCTION bool RhInShutDown();
+
 
 struct ON_2DPOINT_STRUCT{ double val[2]; };
 struct ON_2DVECTOR_STRUCT{ double val[2]; };
@@ -94,31 +157,6 @@ public:
 };
 
 
-
-#if defined (_WIN32)
-#define RHMONO_STRING wchar_t
-// macro used to convert input strings to their appropriate type
-// for a given platform.
-#define INPUTSTRINGCOERCE( _variablename, _parametername) \
-  const wchar_t* _variablename = _parametername;
-#endif
-
-#if defined (__APPLE__)
-#define RHMONO_STRING UniChar
-// macro used to convert input strings to their appropriate type
-// for a given platform. On Mac I'm expecting that we will be using
-// a class that takes a 2 byte string and performs the proper conversions
-// to get a 4 byte wchar_t
-#define INPUTSTRINGCOERCE( _variablename, _parametername)              \
-  const wchar_t* _variablename = NULL;                                 \
-  ON_wString _variablename##_;                                         \
-  if(_parametername) {                                                 \
-    _variablename##_ = (UniChar2on(_parametername));                   \
-    _variablename = (LPCTSTR) _variablename##_;                        \
-  }
-#endif
-
-
 #if defined(OPENNURBS_BUILD)
 class CRhCmnStringHolder
 #else
@@ -137,5 +175,8 @@ private:
   UniChar* m_macString;
 #else
   ON_wString m_winString;
+#endif
+#if defined(ON_COMPILER_ANDROIDNDK)
+  ON_SimpleArray<ON__UINT16> m_android;
 #endif
 };

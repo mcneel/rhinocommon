@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Robert McNeel & Associates")]
 [assembly: AssemblyProduct("Rhino")]
-[assembly: AssemblyCopyright("Copyright ©  2012")]
+[assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 // Brian Gillespie: 9/22/2010
@@ -56,11 +56,18 @@ using System.Runtime.InteropServices;
 // 21 Feb 2013 (5.1.30000.6) Update for SR2 of Rhino 5
 // 21 Feb 2013 (5.1.30000.7) Update for SR3 of Rhino 5
 //  2 Apr 2013 (5.1.30000.8) Update for SR4 of Rhino 5
-[assembly: AssemblyVersion("5.1.30000.8")]
+// 15 May 2013 (5.1.30000.9) Update for SR5 of Rhino 5
+// 19 June 2013 (5.1.30000.10) Update for SR6 of Rhino 5
+[assembly: AssemblyVersion("5.1.30000.10")]
 
 [assembly: AssemblyFileVersion("5.0.20693.0")]
 
+#if MONO_BUILD && OPENNURBS_SDK
+//Mobile platform build has non-compliant classes
+[assembly: System.CLSCompliant(false)]
+#else
 [assembly: System.CLSCompliant(true)]
+#endif
 
 // 23 April 2007 S. Baer (RR 25439)
 // Plug-Ins that are being loaded from a network drive will throw security exceptions
@@ -68,6 +75,6 @@ using System.Runtime.InteropServices;
 // also requires that this attribute be set in order for things to work.
 [assembly: System.Security.AllowPartiallyTrustedCallers]
 
-#if !RHINO_SDK
+#if !RHINO_SDK && !MONO_BUILD
 [assembly: System.Security.SecurityRules(System.Security.SecurityRuleSet.Level1)]
 #endif

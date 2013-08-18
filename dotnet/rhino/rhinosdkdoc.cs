@@ -125,7 +125,7 @@ namespace Rhino
       using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
-        UnsafeNativeMethods.CRhinoFileUtilities_FindFile(m_docId, filename, pString);
+        UnsafeNativeMethods.CRhinoFileUtilities_FindFile(filename, pString);
         return sh.ToString();
       }
     }
@@ -2527,7 +2527,7 @@ namespace Rhino.DocObjects.Tables
     {
       get
       {
-        IntPtr ptr = UnsafeNativeMethods.CRhinoDoc_ActiveView(m_doc.m_docId);
+        IntPtr ptr = UnsafeNativeMethods.CRhinoDoc_ActiveView();
         if (ptr == IntPtr.Zero)
           return null;
         return RhinoView.FromIntPtr(ptr);
@@ -2535,7 +2535,7 @@ namespace Rhino.DocObjects.Tables
       set
       {
         IntPtr ptr = value.NonConstPointer();
-        UnsafeNativeMethods.CRhinoDoc_SetActiveView(m_doc.m_docId, ptr);
+        UnsafeNativeMethods.CRhinoDoc_SetActiveView(ptr);
       }
     }
 
@@ -3038,11 +3038,16 @@ namespace Rhino.DocObjects.Tables
     {
       AddRhinoObjectHelper(pointCloudObject, pointCloud);
     }
+    */
+    public void AddRhinoObject(Rhino.DocObjects.Custom.CustomPointObject pointObject)
+    {
+      AddRhinoObjectHelper(pointObject, null);
+    }
     public void AddRhinoObject(Rhino.DocObjects.PointObject pointObject, Rhino.Geometry.Point point)
     {
       AddRhinoObjectHelper(pointObject, point);
     }
-    */
+    
     public void AddRhinoObject(Rhino.DocObjects.CurveObject curveObject, Rhino.Geometry.Curve curve)
     {
       AddRhinoObjectHelper(curveObject, curve);
@@ -3052,7 +3057,8 @@ namespace Rhino.DocObjects.Tables
     {
       bool is_proper_subclass = rhinoObject is Rhino.DocObjects.BrepObject ||
                                 rhinoObject is Rhino.DocObjects.Custom.CustomCurveObject ||
-                                rhinoObject is Rhino.DocObjects.MeshObject;
+                                rhinoObject is Rhino.DocObjects.MeshObject ||
+                                rhinoObject is Rhino.DocObjects.PointObject;
 
       // Once the deprecated functions are removed, we should switch to checking for custom subclasses
       //bool is_proper_subclass = rhinoObject is Rhino.DocObjects.Custom.CustomBrepObject ||
@@ -3073,7 +3079,8 @@ namespace Rhino.DocObjects.Tables
       {
         if ((rhinoObject is Rhino.DocObjects.BrepObject && !(geometry is Rhino.Geometry.Brep)) ||
             (rhinoObject is Rhino.DocObjects.CurveObject && !(geometry is Rhino.Geometry.Curve)) ||
-            (rhinoObject is Rhino.DocObjects.MeshObject && !(geometry is Rhino.Geometry.Mesh)))
+            (rhinoObject is Rhino.DocObjects.MeshObject && !(geometry is Rhino.Geometry.Mesh)) ||
+            (rhinoObject is Rhino.DocObjects.PointObject && !(geometry is Rhino.Geometry.Point)))
         {
           throw new NotImplementedException("geometry type does not match rhino object class");
         }
@@ -3225,11 +3232,9 @@ namespace Rhino.DocObjects.Tables
           throw new NotImplementedException("Add currently does not support phantom types.");
         case ObjectType.ClipPlane:
           throw new NotSupportedException("Add currently does not support clipping planes.");
-#if USING_V5_SDK
         case ObjectType.Extrusion:
           objId = AddExtrusion((Extrusion)geometry, attributes);
           break;
-#endif
         default:
           throw new NotSupportedException("Only native types can be added to the document.");
       }
@@ -4007,7 +4012,6 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_AddSurface(m_doc.m_docId, surfacePtr, pConstAttributes, pHistory, reference);
     }
 
-#if USING_V5_SDK
     /// <summary>Adds an extrusion object to Rhino.</summary>
     /// <param name="extrusion">A duplicate of this extrusion is added to Rhino.</param>
     /// <returns>A unique identifier for the object.</returns>
@@ -4033,8 +4037,6 @@ namespace Rhino.DocObjects.Tables
       IntPtr pHistory = (history == null) ? IntPtr.Zero : history.Handle;
       return UnsafeNativeMethods.CRhinoDoc_AddExtrusion(m_doc.m_docId, pConstExtrusion, pConstAttributes, pHistory, reference);
     }
-#endif
-
 
     /// <summary>Adds a mesh object to Rhino.</summary>
     /// <param name="mesh">A duplicate of this mesh is added to Rhino.</param>
@@ -4646,7 +4648,8 @@ namespace Rhino.DocObjects.Tables
       // Once the deprecated functions are removed, we should switch to checking for custom subclasses
       bool is_proper_subclass = newObject is Rhino.DocObjects.Custom.CustomBrepObject ||
                                 newObject is Rhino.DocObjects.Custom.CustomCurveObject ||
-                                newObject is Rhino.DocObjects.Custom.CustomMeshObject;
+                                newObject is Rhino.DocObjects.Custom.CustomMeshObject ||
+                                newObject is Rhino.DocObjects.Custom.CustomPointObject;
       if (!is_proper_subclass)
         throw new NotImplementedException();
 

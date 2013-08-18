@@ -403,6 +403,7 @@ namespace Rhino.Geometry
     }
     #endregion
 
+#if RHINO_SDK
     private IntPtr CurveDisplay()
     {
       if (IntPtr.Zero == m_pCurveDisplay)
@@ -412,7 +413,7 @@ namespace Rhino.Geometry
       }
       return m_pCurveDisplay;
     }
-#if RHINO_SDK
+
     internal override void Draw(DisplayPipeline pipeline, System.Drawing.Color color, int thickness)
     {
       IntPtr pDisplayPipeline = pipeline.NonConstPointer();
@@ -513,7 +514,7 @@ namespace Rhino.Geometry
       int count = Points.Count;
       double[] rc = new double[count];
       IntPtr ptr = ConstPointer();
-      bool success = UnsafeNativeMethods.ON_NurbsCurve_GetGrevilleAbcissae(ptr, count, rc);
+      bool success = UnsafeNativeMethods.ON_NurbsCurve_GetGrevilleAbcissae(ptr, rc);
       if (!success) { return null; }
       return rc;
     }

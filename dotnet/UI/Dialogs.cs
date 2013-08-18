@@ -94,9 +94,9 @@ namespace Rhino
 
       private static EventHandler<GetColorEventArgs> m_ShowCustomColorDialog;
       private static readonly ColorDialogCallback m_callback = OnCustomColorDialog;
-      internal delegate int ColorDialogCallback(ref int argn, int colorButtons, [MarshalAs(UnmanagedType.LPWStr)]string title, IntPtr hParent);
+      internal delegate int ColorDialogCallback(ref int argn, int colorButtons, IntPtr titleAsStringHolder, IntPtr hParent);
 
-      private static int OnCustomColorDialog(ref int argb, int colorButtons, string title, IntPtr hParent)
+      private static int OnCustomColorDialog(ref int argb, int colorButtons, IntPtr titleAsStringHolder, IntPtr hParent)
       {
         int rc = 0;
         if (m_ShowCustomColorDialog != null)
@@ -105,6 +105,7 @@ namespace Rhino
           {
             var color = System.Drawing.Color.FromArgb(argb);
             System.Windows.Forms.IWin32Window parent = null;
+            string title = Rhino.Runtime.StringHolder.GetString(titleAsStringHolder);
             GetColorEventArgs e = new GetColorEventArgs(color, colorButtons==1, title);
 
             if( hParent != IntPtr.Zero )
@@ -362,7 +363,7 @@ namespace Rhino
           int abgr = System.Drawing.ColorTranslator.ToWin32(color);
           rc = UnsafeNativeMethods.RHC_RhinoColorDialog(ref abgr, includeButtonColors, dialogTitle);
           if (rc)
-            color = System.Drawing.ColorTranslator.FromWin32(abgr);
+            color = Rhino.Runtime.Interop.ColorFromWin32(abgr);
         }
         catch (EntryPointNotFoundException)
         {

@@ -1,7 +1,5 @@
 #include "StdAfx.h"
 
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD) // only available in Rhino 5
-
 RH_C_FUNCTION ON_Extrusion* ON_Extrusion_New(const ON_Extrusion* pOther)
 {
   if( pOther )
@@ -259,4 +257,3 @@ RH_C_FUNCTION ON_Extrusion* ON_Extrusion_CreateFrom3dCurve(const ON_Curve* pCons
   return rc;
 }
 
-#endif

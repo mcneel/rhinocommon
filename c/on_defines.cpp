@@ -21,13 +21,11 @@ RH_C_FUNCTION int ON_Version()
 
 RH_C_FUNCTION void ON_Revision(CRhCmnStringHolder* pStringHolder)
 {
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// only available in V5
   if( pStringHolder )
   {
     ON_wString s = ON::SourceRevision();
     pStringHolder->Set(s);
   }
-#endif
 }
 
 RH_C_FUNCTION ON_wString* ON_wString_New(const RHMONO_STRING* _text)
@@ -45,11 +43,24 @@ RH_C_FUNCTION void ON_wString_Delete(ON_wString* pString)
     delete pString;
 }
 
-RH_C_FUNCTION const wchar_t* ON_wString_Get(ON_wString* pString)
+static CRhCmnStringHolder string_get_holder;
+RH_C_FUNCTION const RHMONO_STRING* ON_wString_Get(ON_wString* pString)
 {
-  const wchar_t* rc = NULL;
+  const RHMONO_STRING* rc = NULL;
   if( pString )
+  {
+#if defined (_WIN32)
     rc = pString->Array();
+#endif
+#if defined (__APPLE__)
+    string_get_holder.Set(*pString);
+    rc = string_get_holder.Array();
+#endif
+#if defined(ON_COMPILER_ANDROIDNDK)
+    string_get_holder.Set(*pString);
+    rc = string_get_holder.Array();
+#endif
+  }
   return rc;
 }
 

@@ -177,7 +177,7 @@ namespace Rhino.Input
     {
       int abgr = System.Drawing.ColorTranslator.ToWin32(color);
       uint rc = UnsafeNativeMethods.RhinoSdkGet_RhinoGetColor(prompt, acceptNothing, ref abgr, true);
-      color = System.Drawing.ColorTranslator.FromWin32(abgr);
+      color = Rhino.Runtime.Interop.ColorFromWin32(abgr);
       return (Rhino.Commands.Result)rc;
     }
 
@@ -1944,7 +1944,7 @@ namespace Rhino.Input.Custom
     {
       IntPtr ptr = ConstPointer();
       uint abgr = UnsafeNativeMethods.CRhinoGet_Color(ptr);
-      return System.Drawing.ColorTranslator.FromWin32((int)abgr);
+      return Rhino.Runtime.Interop.ColorFromWin32((int)abgr);
     }
 
     /// <summary>
@@ -2447,7 +2447,7 @@ namespace Rhino.Input.Custom
         if (IntPtr.Zero != m_pOptionHolder)
         {
           int abgr = UnsafeNativeMethods.CRhCommonOptionHolder_Color(m_pOptionHolder);
-          rc = System.Drawing.ColorTranslator.FromWin32(abgr);
+          rc = Rhino.Runtime.Interop.ColorFromWin32(abgr);
         }
         return rc;
       }

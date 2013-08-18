@@ -23,13 +23,17 @@ public:
   ON_UUID ManagedTypeId() const { return m_userdata_uuid; }
   ON_UUID PlugInId() const { return m_application_uuid; }
 
-  virtual BOOL GetDescription( ON_wString& description );
-  virtual BOOL Transform(const ON_Xform& xform);
-  virtual BOOL Archive() const; 
-  virtual BOOL Write( ON_BinaryArchive& binary_archive ) const;
-  virtual BOOL Read( ON_BinaryArchive& binary_archive );
+  virtual ON_BOOL32 GetDescription( ON_wString& description );
+  virtual ON_BOOL32 Transform(const ON_Xform& xform);
+  virtual ON_BOOL32 Archive() const; 
+  virtual ON_BOOL32 Write( ON_BinaryArchive& binary_archive ) const;
+  virtual ON_BOOL32 Read( ON_BinaryArchive& binary_archive );
 
   int m_serial_number;
+public:
+  static CRhCmnUserData* Cast( ON_Object* );
+  static const CRhCmnUserData* Cast( const ON_Object* );
+
 public:
   virtual const ON_ClassId* ClassId() const;
   
@@ -60,7 +64,10 @@ CRhCmnUserData::CRhCmnUserData(int serial_number, ON_UUID managed_type_id, ON_UU
   m_userdata_copycount = 1;
 }
 
-
+CRhCmnUserData* CRhCmnUserData::Cast( ON_Object* p )
+{
+  return(CRhCmnUserData*)Cast((const ON_Object*)p);
+}
 
 CRhCmnUserData::~CRhCmnUserData()
 {
@@ -70,13 +77,13 @@ CRhCmnUserData::~CRhCmnUserData()
     m_delete(m_serial_number);
 }
 
-BOOL CRhCmnUserData::GetDescription( ON_wString& description )
+ON_BOOL32 CRhCmnUserData::GetDescription( ON_wString& description )
 {
   description = m_description;
   return TRUE;
 }
 
-BOOL CRhCmnUserData::Transform(const ON_Xform& xform)
+ON_BOOL32 CRhCmnUserData::Transform(const ON_Xform& xform)
 {
   // Tell .NET that Transform virtual function has been called
   if( m_transform )
@@ -96,7 +103,7 @@ RH_C_FUNCTION void ON_UserData_OnTransform(ON_UserData* pUserData, const ON_Xfor
   CRhCmnUserData::m_transform = temp;
 }
 
-BOOL CRhCmnUserData::Archive() const
+ON_BOOL32 CRhCmnUserData::Archive() const
 {
   if( NULL==m_archive || NULL==m_readwrite )
     return FALSE;
@@ -105,7 +112,7 @@ BOOL CRhCmnUserData::Archive() const
   return rc>0?TRUE:FALSE;
 }
 
-BOOL CRhCmnUserData::Write( ON_BinaryArchive& binary_archive ) const
+ON_BOOL32 CRhCmnUserData::Write( ON_BinaryArchive& binary_archive ) const
 {
   BOOL rc = FALSE;
   if( m_readwrite )
@@ -113,7 +120,7 @@ BOOL CRhCmnUserData::Write( ON_BinaryArchive& binary_archive ) const
   return rc;
 }
 
-BOOL CRhCmnUserData::Read( ON_BinaryArchive& binary_archive )
+ON_BOOL32 CRhCmnUserData::Read( ON_BinaryArchive& binary_archive )
 {
   BOOL rc = FALSE;
   if( m_readwrite )
@@ -170,6 +177,31 @@ const CRhCmnClassId* CRhCmnClassIdList::GetClassId( const ON_UUID& id )
 
 static CRhCmnClassIdList g_classIds;
 
+const CRhCmnUserData* CRhCmnUserData::Cast( const ON_Object* p )
+{
+  // The only reason I'm using an #if block below instead of always
+  // using the androidndk approach is because this code is going into
+  // Rhino5 SR code and I don't want to risk any chance of breaking
+  // anything.
+#if defined (ON_COMPILER_ANDROIDNDK)
+  // typical android NDK builds do not include support for the overhead
+  // of dynamic_cast. Just dig through the list of already created class
+  // ids for the rhino common user data classes.
+  if( p )
+  {
+    for( int i=0; i<g_classIds.m_class_ids.Count(); i++ )
+    {
+      const ON_ClassId* pClassId = g_classIds.m_class_ids[i];
+      if( pClassId && p->IsKindOf(pClassId) )
+        return static_cast<const CRhCmnUserData*>(p);
+    }
+  }
+#else
+  return dynamic_cast<const CRhCmnUserData*>(p);
+#endif
+}
+
+
 static ON_Object* RhCmnClassIdCreateOnObject()
 {
   ON_UUID managed_type_id = ON_GetMostRecentClassIdCreateUuid();
@@ -183,8 +215,8 @@ static ON_Object* RhCmnClassIdCreateOnObject()
 
 static bool CopyRhCmnUserData( const ON_Object* src, ON_Object* dst )
 {
-  CRhCmnUserData* d = dynamic_cast<CRhCmnUserData*>(dst);
-  const CRhCmnUserData* s = dynamic_cast<const CRhCmnUserData*>(src);
+  CRhCmnUserData* d = CRhCmnUserData::Cast(dst);
+  const CRhCmnUserData* s = CRhCmnUserData::Cast(src);
   if( !d || !s )
     return false;
 
@@ -239,7 +271,7 @@ const ON_ClassId* CRhCmnUserData::ClassId() const
       g_classIds.m_class_ids.Append( pNewClassId );
     }
     if( !m_pClassId )
-      return __super::ClassId();
+      return ON_UserData::ClassId();
   }
   return m_pClassId;
 }
@@ -285,10 +317,17 @@ RH_C_FUNCTION CRhCmnUserData* CRhCmnUserData_New( int serial_number, ON_UUID man
   return rc;
 }
 
-RH_C_FUNCTION void CRhCmnUserData_Delete(CRhCmnUserData* pUserData, int serial_number)
+RH_C_FUNCTION bool CRhCmnUserData_Delete(ON_UserData* pUserData, bool only_if_no_parent)
 {
-  if( pUserData )
-    delete pUserData;
+  CRhCmnUserData* pUD = CRhCmnUserData::Cast(pUserData);
+  if( pUD && !RhInShutDown() )
+  {
+    if( only_if_no_parent && pUD->Owner()!=NULL )
+      return false;
+    delete pUD;
+    return true;
+  }
+  return false;
 }
 
 RH_C_FUNCTION int CRhCmnUserData_Find(const ON_Object* pConstOnObject, ON_UUID managed_type_id)
@@ -297,7 +336,7 @@ RH_C_FUNCTION int CRhCmnUserData_Find(const ON_Object* pConstOnObject, ON_UUID m
   if( pConstOnObject )
   {
     ON_UserData* pUD = pConstOnObject->GetUserData(managed_type_id);
-    CRhCmnUserData* pRhCmnUd = dynamic_cast<CRhCmnUserData*>(pUD);
+    CRhCmnUserData* pRhCmnUd = CRhCmnUserData::Cast(pUD);
     if( pRhCmnUd )
       rc = pRhCmnUd->m_serial_number;
   }

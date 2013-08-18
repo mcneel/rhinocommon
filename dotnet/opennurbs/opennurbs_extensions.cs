@@ -19,6 +19,7 @@ namespace Rhino.FileIO
     File3dmLayerTable m_layer_table;
     File3dmDimStyleTable m_dimstyle_table;
     File3dmHatchPatternTable m_hatchpattern_table;
+    File3dmInstanceDefinitionTable m_instance_definition_table;
     File3dmPlugInDataTable m_userdata_table;
     File3dmViewTable m_view_table;
     File3dmViewTable m_named_view_table;
@@ -94,6 +95,46 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
+    /// Quickly check a file for it's revision information.  This function does
+    /// not read the entire file, just what it needs to get revision information out
+    /// </summary>
+    /// <param name="path">path to the 3dm file</param>
+    /// <param name="createdBy">original author of the file</param>
+    /// <param name="lastEditedBy">last person to edit the file</param>
+    /// <param name="revision">which revision this file is at</param>
+    /// <param name="createdOn">date file was created (DateTime.MinValue if not set in file)</param>
+    /// <param name="lastEditedOn">date file was last edited (DateTime.MinValue if not set in file)</param>
+    /// <returns>true on success</returns>
+    public static bool ReadRevisionHistory(string path, out string createdBy, out string lastEditedBy, out int revision, out DateTime createdOn, out DateTime lastEditedOn)
+    {
+      createdBy = "";
+      lastEditedBy = "";
+      revision = 0;
+      createdOn = DateTime.MinValue;
+      lastEditedOn = DateTime.MinValue;
+      using (Runtime.StringHolder sh_created = new Runtime.StringHolder())
+      using (Runtime.StringHolder sh_edited = new Runtime.StringHolder())
+      {
+        IntPtr ptr_created = sh_created.NonConstPointer();
+        IntPtr ptr_edited = sh_edited.NonConstPointer();
+        IntPtr ptr_revhist = UnsafeNativeMethods.ONX_Model_ReadRevisionHistory(path, ptr_created, ptr_edited, ref revision);
+        bool rc = ptr_revhist != IntPtr.Zero;
+        if (rc)
+        {
+          int second = 0, minute = 0, hour = 0, month = 0, day = 0, year = 0;
+          if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, true, ref second, ref minute, ref hour, ref day, ref month, ref year))
+            createdOn = new DateTime(year, month, day, hour, minute, second);
+          if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, false, ref second, ref minute, ref hour, ref day, ref month, ref year))
+            lastEditedOn = new DateTime(year, month, day, hour, minute, second);
+          createdBy = sh_created.ToString();
+          lastEditedBy = sh_edited.ToString();
+          UnsafeNativeMethods.ON_3dmRevisionHistory_Delete(ptr_revhist);
+        }
+        return rc;
+      }
+    }
+
+    /// <summary>
     /// Reads only the application information from an existing 3dm file.
     /// </summary>
     /// <param name="path">A location on disk or network.</param>
@@ -104,20 +145,21 @@ namespace Rhino.FileIO
     {
       if (!File.Exists(path))
         throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
-      using (Rhino.Runtime.StringHolder shName = new Runtime.StringHolder())
-      using (Rhino.Runtime.StringHolder shUrl = new Runtime.StringHolder())
-      using (Rhino.Runtime.StringHolder shDetails = new Runtime.StringHolder())
+      using (Rhino.Runtime.StringHolder name = new Runtime.StringHolder())
+      using (Rhino.Runtime.StringHolder url = new Runtime.StringHolder())
+      using (Rhino.Runtime.StringHolder details = new Runtime.StringHolder())
       {
-        IntPtr pName = shName.NonConstPointer();
-        IntPtr pUrl = shUrl.NonConstPointer();
-        IntPtr pDetails = shUrl.NonConstPointer();
-        UnsafeNativeMethods.ONX_Model_ReadApplicationDetails(path, pName, pUrl, pDetails);
-        applicationName = shName.ToString();
-        applicationUrl = shUrl.ToString();
-        applicationDetails = shDetails.ToString();
+        IntPtr ptr_name = name.NonConstPointer();
+        IntPtr ptr_url = url.NonConstPointer();
+        IntPtr ptr_details = url.NonConstPointer();
+        UnsafeNativeMethods.ONX_Model_ReadApplicationDetails(path, ptr_name, ptr_url, ptr_details);
+        applicationName = name.ToString();
+        applicationUrl = url.ToString();
+        applicationDetails = details.ToString();
       }
     }
 
+#if !MOBILE_BUILD
     /// <summary>
     /// Attempts to read the preview image out of a 3dm file.
     /// </summary>
@@ -138,6 +180,7 @@ namespace Rhino.FileIO
       UnsafeNativeMethods.CRhinoDib_Delete(pDib);
       return rc;
     }
+#endif
     #endregion
 
     /// <summary>
@@ -397,8 +440,39 @@ namespace Rhino.FileIO
       get { return GetString(idxLastCreatedBy); }
     }
 
-    //public DateTime Created { get; }
-    //public DateTime LastEdited { get; }
+    /// <summary>
+    /// Get the DateTime that this file was originally created. If the
+    /// value is not set in the 3dm file, then DateTime.MinValue is returned
+    /// </summary>
+    public DateTime Created
+    {
+      get
+      {
+        IntPtr ptr_const_this = ConstPointer();
+        IntPtr ptr_revhist = UnsafeNativeMethods.ONX_Model_RevisionHistory(ptr_const_this);
+        int second = 0, minute = 0, hour = 0, month = 0, day = 0, year = 0;
+        if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, true, ref second, ref minute, ref hour, ref day, ref month, ref year))
+          return new DateTime(year, month, day, hour, minute, second);
+        return DateTime.MinValue;
+      }
+    }
+
+    /// <summary>
+    /// Get the DateTime that this file was last edited. If the
+    /// value is not set in the 3dm file, then DateTime.MinValue is returned
+    /// </summary>
+    public DateTime LastEdited
+    {
+      get
+      {
+        IntPtr ptr_const_this = ConstPointer();
+        IntPtr ptr_revhist = UnsafeNativeMethods.ONX_Model_RevisionHistory(ptr_const_this);
+        int second = 0, minute = 0, hour = 0, month = 0, day = 0, year = 0;
+        if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, false, ref second, ref minute, ref hour, ref day, ref month, ref year))
+          return new DateTime(year, month, day, hour, minute, second);
+        return DateTime.MinValue;
+      }
+    }
 
     /// <summary>
     /// Gets or sets the revision number.
@@ -482,6 +556,17 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
+    /// Instance definitions in this file
+    /// </summary>
+    public IList<Rhino.Geometry.InstanceDefinitionGeometry> InstanceDefinitions
+    {
+      get
+      {
+        return m_instance_definition_table ?? (m_instance_definition_table = new File3dmInstanceDefinitionTable(this));
+      }
+    }
+
+    /// <summary>
     /// Views that represent the RhinoViews which are displayed when Rhino loads this file
     /// </summary>
     public IList<Rhino.DocObjects.ViewInfo> Views
@@ -518,7 +603,7 @@ namespace Rhino.FileIO
     //const int idxFontTable = 9;
     internal const int idxDimStyleTable = 10;
     internal const int idxHatchPatternTable = 11;
-    //const int idxIDefTable = 12;
+    internal const int idxIDefTable = 12;
     internal const int idxObjectTable = 13;
     //const int idxHistoryRecordTable = 14;
     internal const int idxUserDataTable = 15;
@@ -1454,7 +1539,6 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddSurface(pThis, pSurface, pAttr);
     }
 
-#if USING_V5_SDK
     /// <summary>Adds an extrusion object to Rhino.</summary>
     /// <param name="extrusion">A duplicate of this extrusion is added to Rhino.</param>
     /// <returns>A unique identifier for the object.</returns>
@@ -1474,7 +1558,6 @@ namespace Rhino.FileIO
       m_objects = null;
       return UnsafeNativeMethods.ONX_Model_ObjectTable_AddExtrusion(pThis, pConstExtrusion, pAttr);
     }
-#endif
 
     /// <summary>Adds a mesh object to Rhino.</summary>
     /// <param name="mesh">A duplicate of this mesh is added to Rhino.</param>
@@ -2412,6 +2495,144 @@ namespace Rhino.FileIO
     {
       return new Rhino.Collections.TableEnumerator<File3dmHatchPatternTable, Rhino.DocObjects.HatchPattern>(this);
     }
+  }
+
+  class File3dmInstanceDefinitionTable : IList<Rhino.Geometry.InstanceDefinitionGeometry>, Rhino.Collections.IRhinoTable<Rhino.Geometry.InstanceDefinitionGeometry>
+  {
+    readonly File3dm m_parent;
+    internal File3dmInstanceDefinitionTable(File3dm parent)
+    {
+      m_parent = parent;
+    }
+
+    /// <summary>Prepares a text dump of object table.</summary>
+    /// <returns>A string containing the dump.</returns>
+    public string Dump()
+    {
+      return m_parent.Dump(File3dm.idxIDefTable);
+    }
+
+    public int Find(string name)
+    {
+      int cnt = Count;
+      for (int i = 0; i < cnt; i++)
+      {
+        if (this[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+          return i;
+      }
+      return -1;
+    }
+
+    public int IndexOf(Rhino.Geometry.InstanceDefinitionGeometry item)
+    {
+      File3dm file = item.m__parent as File3dm;
+      if (file == m_parent)
+      {
+        Guid id = item.Id;
+        IntPtr pConstParent = m_parent.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_InstanceDefinitionTable_Index(pConstParent, id);
+      }
+      return -1;
+    }
+
+    public void Insert(int index, Rhino.Geometry.InstanceDefinitionGeometry item)
+    {
+      if (index < 0 || index > Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      IntPtr pConstIdef = item.ConstPointer();
+      UnsafeNativeMethods.ONX_Model_InstanceDefinitionTable_Insert(pParent, pConstIdef, index);
+    }
+
+    public void RemoveAt(int index)
+    {
+      if (index < 0 || index >= Count)
+        throw new IndexOutOfRangeException();
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_InstanceDefinitionTable_RemoveAt(pParent, index);
+    }
+
+    public Rhino.Geometry.InstanceDefinitionGeometry this[int index]
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        Guid id = UnsafeNativeMethods.ONX_Model_InstanceDefinitionTable_Id(pConstParent, index);
+        if (id == Guid.Empty)
+          throw new IndexOutOfRangeException();
+        return new Rhino.Geometry.InstanceDefinitionGeometry(id, m_parent);
+      }
+      set
+      {
+        Insert(index, value);
+      }
+    }
+
+    public void Add(Rhino.Geometry.InstanceDefinitionGeometry item)
+    {
+      int index = Count;
+      Insert(index, item);
+    }
+
+    public void Clear()
+    {
+      IntPtr pParent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_TableClear(pParent, File3dm.idxIDefTable);
+    }
+
+    public bool Contains(Rhino.Geometry.InstanceDefinitionGeometry item)
+    {
+      return IndexOf(item) != -1;
+    }
+
+    public void CopyTo(Rhino.Geometry.InstanceDefinitionGeometry[] array, int arrayIndex)
+    {
+      int available = array.Length - arrayIndex;
+      int cnt = Count;
+      if (available < cnt)
+        throw new ArgumentException("The number of elements in the source ICollection<T> is greater than the available space from arrayIndex to the end of the destination array.");
+      for (int i = 0; i < cnt; i++)
+      {
+        array[arrayIndex++] = this[i];
+      }
+    }
+
+    public int Count
+    {
+      get
+      {
+        IntPtr pConstParent = m_parent.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxIDefTable);
+      }
+    }
+
+    public bool IsReadOnly
+    {
+      get { return false; }
+    }
+
+    public bool Remove(Rhino.Geometry.InstanceDefinitionGeometry item)
+    {
+      int index = IndexOf(item);
+      if (index >= 0)
+        RemoveAt(index);
+      return (index >= 0);
+    }
+
+    #region IEnumerable Implementation
+    /// <summary>
+    /// Gets the enumerator that visits any <see cref="Rhino.Geometry.InstanceDefinitionGeometry"/> in this table.
+    /// </summary>
+    /// <returns>The enumerator.</returns>
+    public IEnumerator<Rhino.Geometry.InstanceDefinitionGeometry> GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmInstanceDefinitionTable, Rhino.Geometry.InstanceDefinitionGeometry>(this);
+    }
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return new Rhino.Collections.TableEnumerator<File3dmInstanceDefinitionTable, Rhino.Geometry.InstanceDefinitionGeometry>(this);
+    }
+    #endregion
   }
 
   class File3dmViewTable : IList<Rhino.DocObjects.ViewInfo>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.ViewInfo>

@@ -110,7 +110,7 @@ namespace Rhino.DocObjects.Custom
     System.Drawing.Color GetColor(int which)
     {
       int abgr = UnsafeNativeMethods.CRhinoDrawGripSettings_GetColor(m_pGripsDrawSettings, which);
-      return System.Drawing.ColorTranslator.FromWin32(abgr);
+      return Rhino.Runtime.Interop.ColorFromWin32(abgr);
     }
 
     public System.Drawing.Color GripColor

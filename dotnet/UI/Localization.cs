@@ -176,7 +176,22 @@ namespace Rhino.UI
       Assembly assembly = GetAssemblyFromObject(assemblyOrObject);
       return LocalizationUtils.LocalizeString(assembly, CurrentLanguageID, english, contextId);
     }
-
+    /// <summary>
+    /// Look in the dialog item list for the specified key and return the translated
+    /// localized string if the key is found otherwise return the English string.
+    /// </summary>
+    /// <param name="assemblyOrObject">An assembly or an object from an assembly.</param>
+    /// <param name="key"></param>
+    /// <param name="english">The text in English.</param>
+    /// <returns>
+    /// Look in the dialog item list for the specified key and return the translated
+    /// localized string if the key is found otherwise return the English string.
+    /// </returns>
+    public static string LocalizeDialogItem(object assemblyOrObject, string key, string english)
+    {
+      Assembly assembly = GetAssemblyFromObject(assemblyOrObject);
+      return LocalizationUtils.LocalizeDialogItem(assembly, CurrentLanguageID, key, english);
+    }
     /// <summary>
     /// Check to see if the passed object is an assembly, if not then get the assembly that owns the object type.
     /// </summary>

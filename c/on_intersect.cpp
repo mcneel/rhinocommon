@@ -46,82 +46,6 @@ RH_C_FUNCTION bool ON_Intersect_PlanePlanePlane(const ON_PLANE_STRUCT* planeA, c
   return rc;
 }
 
-#if !defined(RHINO_V5SR) && !defined(OPENNURBS_BUILD)// fixed in V5
-// Copied from opennurbs_intersect.cpp but with a bug fix.
-// We can remove it once the bug is fixed in OpenNurbs and once 
-// Grasshopper has dropped Rhino4 support.
-int PS_Intersect(
-        const ON_Plane& plane,
-        const ON_Sphere& sphere, 
-        ON_Circle& circle
-        )
-{
-  // 16 April 2011 Dale Lear
-  //   Prior to this date, this function did not return the correct answer.
-
-  int rc = 0;
-  const double sphere_radius = fabs(sphere.radius);
-  double tol = sphere_radius*ON_SQRT_EPSILON;
-  if ( !(tol >= ON_ZERO_TOLERANCE) )
-    tol = ON_ZERO_TOLERANCE;
-  const ON_3dPoint sphere_center = sphere.Center();
-  ON_3dPoint circle_center = plane.ClosestPointTo(sphere_center);
-  double d = circle_center.DistanceTo(sphere_center);
-
-  circle.radius = 0.0;
-
-  if ( ON_IsValid(sphere_radius) && ON_IsValid(d) && d <= sphere_radius + tol )
-  {
-    if ( sphere_radius > 0.0 )
-    {
-      d /= sphere_radius;
-      d = 1.0 - d*d;
-      // The d > 4.0*ON_EPSILON was picked by testing spheres with
-      // radius = 1 and center = (0,0,0).  Do not make 4.0*ON_EPSILON 
-      // any smaller and please discuss changes with Dale Lear.
-      circle.radius = (d > 4.0*ON_EPSILON) ? sphere_radius*sqrt(d) : 0.0;
-    }
-    else
-      circle.radius = 0.0;
-
-    if ( circle.radius <= ON_ZERO_TOLERANCE )
-    {
-      // return a single point
-      rc = 1;
-      
-      circle.radius = 0.0;
-
-      //  When tolerance is in play, put the point on the sphere.
-      //  If the caller prefers the plane, then they can adjust the
-      //  returned answer to get the plane.
-      ON_3dVector R = circle_center - sphere_center;
-      double r0 = R.Length();
-      if ( r0 > 0.0 )
-      {
-        R.Unitize();
-        ON_3dPoint C1 = sphere_center + sphere_radius*R;
-        double r1 = C1.DistanceTo(sphere_center);
-        if ( fabs(sphere.radius-r1) < fabs(sphere.radius-r0) )
-          circle_center = C1;
-      }
-    }
-    else 
-    {
-      // return a circle
-      rc = 2;
-    }
-  }
-
-  // Update circle's plane here in case the input plane 
-  // is the circle's plane member.
-  circle.plane = plane;
-  circle.plane.origin = circle_center;
-  circle.plane.UpdateEquation();
-
-  return rc;
-}
-#endif
-
 RH_C_FUNCTION int ON_Intersect_PlaneSphere(const ON_PLANE_STRUCT* plane, ON_Sphere* sphere, ON_CIRCLE_STRUCT* intersectionCircle)
 {
   int rc = 0;
@@ -130,11 +54,7 @@ RH_C_FUNCTION int ON_Intersect_PlaneSphere(const ON_PLANE_STRUCT* plane, ON_Sphe
     sphere->plane.UpdateEquation();
     ON_Plane temp = FromPlaneStruct(*plane);
     ON_Circle circle = FromCircleStruct(*intersectionCircle);
-#if defined(RHINO_V5SR) || defined(OPENNURBS_BUILD)// fixed in V5
     rc = ON_Intersect(temp, *sphere, circle);
-#else
-    rc = PS_Intersect(temp, *sphere, circle); //Go back to ::ON_Intersect(temp, *sphere, circle); once Grasshopper drops Rhino4 support.
-#endif
     CopyToCircleStruct(*intersectionCircle, circle);
   }
   return rc;
@@ -527,11 +447,8 @@ RH_C_FUNCTION double ON_Intersect_MeshRay1(const ON_Mesh* pMesh, ON_3dRay* ray, 
   // it is ok if face_indices is null
   if( pMesh && ray )
   {
-#if defined(RHINO_V5SR) // only available in V5
     const ON_MeshTree* mt = pMesh->MeshTree(true);
-#else
-    const ON_MeshTree* mt = pMesh->MeshTree();
-#endif
+
     ON_3dVector rayVec = ray->m_V;
     if( mt && rayVec.Unitize() )
     {
@@ -601,11 +518,7 @@ RH_C_FUNCTION ON_SimpleArray<ON_CMX_EVENT>* ON_Intersect_MeshPolyline1(const ON_
   if( pMesh && pCurve && count )
   {
     *count = 0;
-#if defined(RHINO_V5SR) // only available in V5
     const ON_MeshTree* mesh_tree = pMesh->MeshTree(true);
-#else
-    const ON_MeshTree* mesh_tree = pMesh->MeshTree();
-#endif
     if( mesh_tree )
     {
       rc = new ON_SimpleArray<ON_CMX_EVENT>();
@@ -628,11 +541,7 @@ RH_C_FUNCTION ON_SimpleArray<ON_CMX_EVENT>* ON_Intersect_MeshLine(const ON_Mesh*
     ON_3dPoint start(from.val);
     ON_3dPoint end(to.val);
     ON_Line line(start, end);
-#if defined(RHINO_V5SR) // only available in V5
     const ON_MeshTree* mesh_tree = pConstMesh->MeshTree(true);
-#else
-    const ON_MeshTree* mesh_tree = pConstMesh->MeshTree();
-#endif
     if( mesh_tree )
     {
       rc = new ON_SimpleArray<ON_CMX_EVENT>();

@@ -10,9 +10,16 @@ using System.Runtime.InteropServices;
 class Import
 {
 #if MONO_BUILD
+
+#if __ANDROID__
+	public const string lib = "opennurbs";
+	public const string librdk = "opennurbs";
+#else
   public const string lib = "__Internal";
   public const string librdk = "__Internal";
-#elif OPENNURBS_SDK
+#endif
+#else
+#if OPENNURBS_SDK
   public const string lib = "rhino3dmio_native";
   public const string librdk = "rhino3dmio_native";
 #else
@@ -21,6 +28,7 @@ class Import
   // to append an extension to find the dynamic library
   public const string lib = "rhcommon_c";
   public const string librdk = "rhcommonrdk_c";
+#endif
 #endif
   private Import() { }
 }
@@ -45,6 +53,16 @@ internal partial class UnsafeNativeMethods
   internal static extern void RHC_SetGetNowProc(Rhino.Runtime.HostUtils.GetNowCallback callback, Rhino.Runtime.HostUtils.GetFormattedTimeCallback formattedTimCallback);
 
 #if RHINO_SDK
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void RHC_SetLicenseManagerCallbacks(Rhino.Runtime.LicenseManager.InitializeCallback initLicenseManagerProc,
+                                                             Rhino.Runtime.LicenseManager.EchoCallback echoProc,
+                                                             Rhino.Runtime.LicenseManager.ShowValidationUiCallback showLicenseValidationProc,
+                                                             Rhino.Runtime.LicenseManager.UuidCallback licenseUuidProc,
+                                                             Rhino.Runtime.LicenseManager.GetLicenseCallback getLicense,
+                                                             Rhino.Runtime.LicenseManager.GetCustomLicenseCallback getCustomLicense,
+                                                             Rhino.Runtime.LicenseManager.AskUserForLicenseCallback askUserForLicense
+    );
+
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool CRhMainFrame_Invoke(Rhino.RhinoWindow.InvokeAction invoke_proc);

@@ -83,28 +83,22 @@ RH_C_FUNCTION bool ON_Object_SetUserString(const ON_Object* pObject, const RHMON
     INPUTSTRINGCOERCE(key, _key);
     INPUTSTRINGCOERCE(value, _value);
     rc = ptr->SetUserString(key, value);
-#if defined(RHINO_V5SR) // only available in V5
+#if !defined(OPENNURBS_BUILD) // not available in opennurbs
     RhUpdateTextFieldSerialNumber();
 #endif
   }
   return rc;
 }
 
-static CRhCmnStringHolder theGetUserString;
-RH_C_FUNCTION const RHMONO_STRING* ON_Object_GetUserString(const ON_Object* pObject, const RHMONO_STRING* _key)
+RH_C_FUNCTION void ON_Object_GetUserString(const ON_Object* pObject, const RHMONO_STRING* _key, CRhCmnStringHolder* pStringHolder)
 {
-  const RHMONO_STRING* rc = NULL;
-  if( pObject && _key )
+  if( pObject && _key && pStringHolder)
   {
     INPUTSTRINGCOERCE(key, _key);
     ON_wString s;
     if( pObject->GetUserString(key, s) )
-    {
-      theGetUserString.Set(s);
-      rc = theGetUserString.Array();
-    }
+      pStringHolder->Set(s);
   }
-  return rc;
 }
 
 RH_C_FUNCTION int ON_Object_UserStringCount(const ON_Object* pObject)
@@ -183,21 +177,24 @@ RH_C_FUNCTION bool ON_Object_AttachUserData(ON_Object* pOnObject, ON_UserData* p
   return rc;
 }
 
+RH_C_FUNCTION bool ON_Object_DetachUserData(ON_Object* pOnObject, ON_UserData* pUserData)
+{
+  if( pOnObject && pUserData )
+    return pOnObject->DetachUserData(pUserData) ? true : false;
+  return false;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////
 
-static CRhCmnStringHolder theKeyValueHolder;
-RH_C_FUNCTION const RHMONO_STRING* ON_UserStringList_KeyValue(const ON_ClassArray<ON_UserString>* pList, int i, bool key)
+RH_C_FUNCTION void ON_UserStringList_KeyValue(const ON_ClassArray<ON_UserString>* pList, int i, bool key, CRhCmnStringHolder* pStringHolder)
 {
-  const RHMONO_STRING* rc = NULL;
-  if( pList && i>=0 && i<pList->Count() )
+  if( pList && i>=0 && i<pList->Count() && pStringHolder )
   {
     if( key )
-      theKeyValueHolder.Set( (*pList)[i].m_key );
+      pStringHolder->Set( (*pList)[i].m_key );
     else
-      theKeyValueHolder.Set( (*pList)[i].m_string_value );
-    rc = theKeyValueHolder.Array();
+      pStringHolder->Set( (*pList)[i].m_string_value );
   }
-  return rc;
 }
 
 RH_C_FUNCTION void ON_UserStringList_Delete(ON_ClassArray<ON_UserString>* pList)

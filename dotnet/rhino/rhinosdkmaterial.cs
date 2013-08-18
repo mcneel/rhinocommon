@@ -158,6 +158,7 @@ namespace Rhino.DocObjects
     //const int idxIsModified = 2;
     const int idxIsDefaultMaterial = 3;
 
+#if RHINO_SDK
     /// <summary>
     /// Deleted materials are kept in the runtime material table so that undo
     /// will work with materials.  Call IsDeleted to determine to determine if
@@ -173,6 +174,7 @@ namespace Rhino.DocObjects
         return UnsafeNativeMethods.CRhinoMaterial_GetBool(pConstThis, idxIsDeleted);
       }
     }
+#endif
 
     /// <summary>Gets or sets the ID of this material.</summary>
     public Guid Id
@@ -201,6 +203,7 @@ namespace Rhino.DocObjects
       }
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Rhino allows multiple files to be viewed simultaneously. Materials in the
     /// document are "normal" or "reference". Reference materials are not saved.
@@ -221,6 +224,7 @@ namespace Rhino.DocObjects
     //{
     //  get { return UnsafeNativeMethods.CRhinoMaterial_GetBool(m_doc.m_docId, m_index, idxIsModified); }
     //}
+#endif
 
     /// <summary>
     /// By default Rhino layers and objects are assigned the default rendering material.
@@ -232,10 +236,27 @@ namespace Rhino.DocObjects
         if (!IsDocumentControlled)
           return false;
         IntPtr pConstThis = ConstPointer();
+#if RHINO_SDK
         return UnsafeNativeMethods.CRhinoMaterial_GetBool(pConstThis, idxIsDefaultMaterial);
+#else
+        return MaterialIndex == -1;
+#endif
       }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public int MaterialIndex
+    {
+      get
+      {
+        IntPtr pConsThis = ConstPointer();
+        return UnsafeNativeMethods.ON_Material_Index(pConsThis);
+      }
+    }
+
+#if RHINO_SDK
     /// <summary>
     /// Number of objects and layers that use this material.
     /// </summary>
@@ -249,6 +270,7 @@ namespace Rhino.DocObjects
         return UnsafeNativeMethods.CRhinoMaterial_InUse(pConstThis);
       }
     }
+#endif
 
     public string Name
     {
@@ -329,7 +351,7 @@ namespace Rhino.DocObjects
     {
       IntPtr pConstThis = ConstPointer();
       int abgr = UnsafeNativeMethods.ON_Material_GetColor(pConstThis, which);
-      return System.Drawing.ColorTranslator.FromWin32(abgr);
+      return Rhino.Runtime.Interop.ColorFromWin32(abgr);
     }
     void SetColor(int which, System.Drawing.Color c)
     {

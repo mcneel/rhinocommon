@@ -352,7 +352,6 @@ namespace Rhino.Geometry
       IntPtr ptr = UnsafeNativeMethods.RHC_RhinoInterpCurve(degree, count, ptArray, startTangent, endTangent, (int)knots);
       return GeometryBase.CreateGeometryHelper(ptr, null) as NurbsCurve;
     }
-#endif
 
 #if !USING_V5_SDK
     //David: this function is disabled in the public SDK until I can get it to work right.
@@ -383,6 +382,7 @@ namespace Rhino.Geometry
       return GeometryBase.CreateGeometryHelper(ptr, null) as NurbsCurve;
     }
 #endif
+#endif //RHINO_SDK
 
     /// <summary>
     /// Constructs a curve from a set of control-point locations.
@@ -496,8 +496,6 @@ namespace Rhino.Geometry
       return null;
     }
 
-#if USING_V5_SDK
-
     /// <summary>
     /// Makes a curve blend between 2 curves at the parameters specified
     /// with the directions and continuities specified
@@ -585,8 +583,6 @@ namespace Rhino.Geometry
       bool rc = UnsafeNativeMethods.RHC_RhinoTweenCurveWithSampling(pConstCurve0, pConstCurve1, numCurves, numSamples, outputPtr);
       return rc ? output.ToNonConstArray() : new Curve[0];
     }
-
-#endif
 
     /// <summary>
     /// Joins a collection of curve segments together.
@@ -1118,6 +1114,13 @@ namespace Rhino.Geometry
 
     internal override IntPtr _InternalGetConstPointer()
     {
+      Rhino.Geometry.CurveHolder holder2 = m__parent as Rhino.Geometry.CurveHolder;
+      if (null != holder2)
+      {
+        return holder2.ConstCurvePointer();
+      }
+
+
       if (m_subobject_index >= 0)
       {
         Rhino.Geometry.PolyCurve polycurve_parent = m__parent as Rhino.Geometry.PolyCurve;
@@ -1164,7 +1167,7 @@ namespace Rhino.Geometry
       return new Curve(IntPtr.Zero, null);
     }
 
-#if USING_V5_SDK && RHINO_SDK
+#if RHINO_SDK
     /// <summary>
     /// Polylines will be exploded into line segments. ExplodeCurves will
     /// return the curves in topological order.
@@ -1200,11 +1203,13 @@ namespace Rhino.Geometry
     /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected override void Dispose(bool disposing)
     {
+#if RHINO_SDK
       if (IntPtr.Zero != m_pCurveDisplay)
       {
         UnsafeNativeMethods.CurveDisplay_Delete(m_pCurveDisplay);
         m_pCurveDisplay = IntPtr.Zero;
       }
+#endif
       base.Dispose(disposing);
     }
     #endregion
@@ -1230,16 +1235,19 @@ namespace Rhino.Geometry
     /// </summary>
     protected override void NonConstOperation()
     {
+#if RHINO_SDK
       if (IntPtr.Zero != m_pCurveDisplay)
       {
         UnsafeNativeMethods.CurveDisplay_Delete(m_pCurveDisplay);
         m_pCurveDisplay = IntPtr.Zero;
       }
+#endif
       base.NonConstOperation();
     }
 
-    internal IntPtr m_pCurveDisplay = IntPtr.Zero;
 #if RHINO_SDK
+    internal IntPtr m_pCurveDisplay = IntPtr.Zero;
+
     internal virtual void Draw(Display.DisplayPipeline pipeline, System.Drawing.Color color, int thickness)
     {
       IntPtr pDisplayPipeline = pipeline.NonConstPointer();
@@ -1892,7 +1900,7 @@ namespace Rhino.Geometry
       return rc;
     }
 
-#if USING_V5_SDK && RHINO_SDK
+#if RHINO_SDK
     /// <summary>
     /// Finds the object (and the closest point in that object) that is closest to
     /// this curve. <para><see cref="Brep">Breps</see>, <see cref="Surface">surfaces</see>,
@@ -1959,9 +1967,7 @@ namespace Rhino.Geometry
       int which;
       return ClosestPoints(a, out pointOnThisCurve, out pointOnOtherCurve, out which, 0.0);
     }
-#endif
 
-#if RHINO_SDK
     /// <summary>
     /// Computes the relationship between a point and a closed curve region. 
     /// This curve must be closed or the return value will be Unset.
@@ -3637,7 +3643,6 @@ namespace Rhino.Geometry
         return null;
       return curves;
     }
-#endif
 
     /// <summary>
     /// Offset this curve on a brep face surface. This curve must lie on the surface.
@@ -3773,8 +3778,6 @@ namespace Rhino.Geometry
       Brep b = Brep.CreateFromSurface(surface);
       return OffsetOnSurface(b.Faces[0], curveParameters, offsetDistances, fittingTolerance);
     }
-
-#if USING_V5_SDK && RHINO_SDK
 
     /// <summary>
     /// Pulls this curve to a brep face and returns the result of that operation.

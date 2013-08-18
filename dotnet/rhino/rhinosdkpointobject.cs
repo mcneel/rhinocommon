@@ -11,6 +11,8 @@ namespace Rhino.DocObjects
       : base(serialNumber)
     { }
 
+    internal PointObject(bool custom) { }
+
     public Rhino.Geometry.Point PointGeometry
     {
       get
@@ -221,6 +223,41 @@ namespace Rhino.DocObjects
 
 namespace Rhino.DocObjects.Custom
 {
+  public abstract class CustomPointObject : PointObject, IDisposable
+  {
+    protected CustomPointObject()
+      : base(true)
+    {
+      if (SubclassCreateNativePointer)
+        m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomPointObject_New();
+    }
+    protected CustomPointObject(Point point)
+      : base(true)
+    {
+      IntPtr pConstPoint = point.ConstPointer();
+      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New2(pConstPoint);
+    }
+
+    ~CustomPointObject() { Dispose(false); }
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_pRhinoObject)
+      {
+        // This delete is safe in that it makes sure the object is NOT
+        // under control of the Rhino Document
+        UnsafeNativeMethods.CRhinoObject_Delete(m_pRhinoObject);
+      }
+      m_pRhinoObject = IntPtr.Zero;
+    }
+  }
+
+
   public class CustomGripObject : GripObject, IDisposable
   {
     #region statics

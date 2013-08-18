@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 using System;
 
+#if RHINO_SDK
 namespace Rhino.UI
 {
   /// <summary>
@@ -99,3 +100,4 @@ namespace Rhino.UI
     public virtual void OnHelp() { }
   }
 }
+#endif

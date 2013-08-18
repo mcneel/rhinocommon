@@ -50,7 +50,7 @@ namespace Rhino.Runtime
         //System.Windows.Forms.Application.EnableVisualStyles();
 
         InitializeExceptionHandling();
-        AssemblyResolver.InitializeAssemblyResolving();
+        HostUtils.InitializeRhinoCommon();
 
         HostUtils.DebugString("Attempt to initialize MonoMac");
         Type t = typeof(System.Windows.Forms.Application);

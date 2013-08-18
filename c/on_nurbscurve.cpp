@@ -253,7 +253,7 @@ RH_C_FUNCTION double ON_NurbsCurve_GrevilleAbcissa(const ON_NurbsCurve* pCurve, 
   return rc;
 }
 
-RH_C_FUNCTION bool ON_NurbsCurve_GetGrevilleAbcissae(const ON_NurbsCurve* pCurve, int count, /*ARRAY*/double* ga)
+RH_C_FUNCTION bool ON_NurbsCurve_GetGrevilleAbcissae(const ON_NurbsCurve* pCurve, /*ARRAY*/double* ga)
 {
   bool rc = false;
   if( pCurve && ga )

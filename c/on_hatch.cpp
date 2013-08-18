@@ -5,6 +5,14 @@ RH_C_FUNCTION ON_HatchPattern* ON_HatchPattern_New()
   return new ON_HatchPattern();
 }
 
+RH_C_FUNCTION int ON_HatchPattern_Index(const ON_HatchPattern* pConstHatchPattern)
+{
+  int rc = -1;
+  if( pConstHatchPattern )
+    rc = pConstHatchPattern->Index();
+  return rc;
+}
+
 RH_C_FUNCTION void ON_HatchPattern_GetString(const ON_HatchPattern* pConstHatchPattern, CRhCmnStringHolder* pString, bool name)
 {
   if( pConstHatchPattern && pString )

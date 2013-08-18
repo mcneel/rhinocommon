@@ -803,7 +803,7 @@ namespace Rhino.Collections
     /// The value can be a null reference (Nothing in Visual Basic) 
     /// for reference types.</param>
     /// <returns>The zero-based index of the first occurrence of item within 
-    /// the entire List, if found; otherwise, –1.</returns>
+    /// the entire List, if found; otherwise, -1.</returns>
     int IList.IndexOf(object item)
     {
       if (RhinoList<T>.IsCompatibleObject(item))
@@ -821,7 +821,7 @@ namespace Rhino.Collections
     /// The value can be a null reference (Nothing in Visual Basic) 
     /// for reference types.</param>
     /// <returns>The zero-based index of the first occurrence of item within 
-    /// the entire List, if found; otherwise, –1.</returns>
+    /// the entire List, if found; otherwise, -1.</returns>
     public int IndexOf(T item)
     {
       return Array.IndexOf(m_items, item, 0, m_size);
@@ -837,7 +837,7 @@ namespace Rhino.Collections
     /// for reference types.</param>
     /// <param name="index">The zero-based starting index of the search.</param>
     /// <returns>The zero-based index of the first occurrence of item within 
-    /// the entire List, if found; otherwise, –1.</returns>
+    /// the entire List, if found; otherwise, -1.</returns>
     public int IndexOf(T item, int index)
     {
       if (index > m_size) { throw new ArgumentOutOfRangeException("index"); }
@@ -855,7 +855,7 @@ namespace Rhino.Collections
     /// <param name="index">The zero-based starting index of the search.</param>
     /// <param name="count">The number of elements in the section to search.</param>
     /// <returns>The zero-based index of the first occurrence of item within 
-    /// the entire List, if found; otherwise, –1.</returns>
+    /// the entire List, if found; otherwise, -1.</returns>
     public int IndexOf(T item, int index, int count)
     {
       if (index > m_size) { throw new ArgumentOutOfRangeException("index"); }
@@ -874,7 +874,7 @@ namespace Rhino.Collections
     /// <param name="item">The object to locate in the List. 
     /// The value can be a null reference (Nothing in Visual Basic) for reference types.</param>
     /// <returns>The zero-based index of the last occurrence of item within 
-    /// the entire the List, if found; otherwise, –1.</returns>
+    /// the entire the List, if found; otherwise, -1.</returns>
     public int LastIndexOf(T item)
     {
       return LastIndexOf(item, m_size - 1, m_size);
@@ -889,7 +889,7 @@ namespace Rhino.Collections
     /// The value can be a null reference (Nothing in Visual Basic) for reference types.</param>
     /// <param name="index">The zero-based starting index of the backward search.</param>
     /// <returns>The zero-based index of the last occurrence of item within 
-    /// the entire the List, if found; otherwise, –1.</returns>
+    /// the entire the List, if found; otherwise, -1.</returns>
     public int LastIndexOf(T item, int index)
     {
       if (index >= m_size) { throw new ArgumentOutOfRangeException("index"); }
@@ -906,7 +906,7 @@ namespace Rhino.Collections
     /// <param name="index">The zero-based starting index of the backward search.</param>
     /// <param name="count">The number of elements in the section to search.</param>
     /// <returns>The zero-based index of the last occurrence of item within 
-    /// the entire the List, if found; otherwise, –1.</returns>
+    /// the entire the List, if found; otherwise, -1.</returns>
     public int LastIndexOf(T item, int index, int count)
     {
       if (m_size == 0) { return -1; }
@@ -1139,7 +1139,7 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="match">The Predicate(T) delegate that defines the conditions of the element to search for.</param>
     /// <returns>The zero-based index of the first occurrence of an element that 
-    /// matches the conditions defined by match, if found; otherwise, –1.</returns>
+    /// matches the conditions defined by match, if found; otherwise, -1.</returns>
     public int FindIndex(Predicate<T> match)
     {
       return FindIndex(0, m_size, match);
@@ -1153,7 +1153,7 @@ namespace Rhino.Collections
     /// <param name="startIndex">The zero-based starting index of the search.</param>
     /// <param name="match">The Predicate(T) delegate that defines the conditions of the element to search for.</param>
     /// <returns>The zero-based index of the first occurrence of an element that 
-    /// matches the conditions defined by match, if found; otherwise, –1.</returns>
+    /// matches the conditions defined by match, if found; otherwise, -1.</returns>
     public int FindIndex(int startIndex, Predicate<T> match)
     {
       return FindIndex(startIndex, m_size - startIndex, match);
@@ -1168,7 +1168,7 @@ namespace Rhino.Collections
     /// <param name="count">The number of elements in the section to search.</param>
     /// <param name="match">The Predicate(T) delegate that defines the conditions of the element to search for.</param>
     /// <returns>The zero-based index of the first occurrence of an element that 
-    /// matches the conditions defined by match, if found; otherwise, –1.</returns>
+    /// matches the conditions defined by match, if found; otherwise, -1.</returns>
     public int FindIndex(int startIndex, int count, Predicate<T> match)
     {
       if (startIndex > m_size) { throw new ArgumentOutOfRangeException("count"); }
@@ -1195,7 +1195,7 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="match">The Predicate(T) delegate that defines the conditions of the element to search for.</param>
     /// <returns>The zero-based index of the last occurrence of an element that matches 
-    /// the conditions defined by match, if found; otherwise, –1.</returns>
+    /// the conditions defined by match, if found; otherwise, -1.</returns>
     public int FindLastIndex(Predicate<T> match)
     {
       return FindLastIndex(m_size - 1, m_size, match);
@@ -1209,7 +1209,7 @@ namespace Rhino.Collections
     /// <param name="startIndex">The zero-based starting index of the backward search.</param>
     /// <param name="match">The Predicate(T) delegate that defines the conditions of the element to search for.</param>
     /// <returns>The zero-based index of the last occurrence of an element that matches 
-    /// the conditions defined by match, if found; otherwise, –1.</returns>
+    /// the conditions defined by match, if found; otherwise, -1.</returns>
     public int FindLastIndex(int startIndex, Predicate<T> match)
     {
       // avoid overflow
@@ -1228,7 +1228,7 @@ namespace Rhino.Collections
     /// <param name="count">The number of elements in the section to search.</param>
     /// <param name="match">The Predicate(T) delegate that defines the conditions of the element to search for.</param>
     /// <returns>The zero-based index of the last occurrence of an element that matches 
-    /// the conditions defined by match, if found; otherwise, –1.</returns>
+    /// the conditions defined by match, if found; otherwise, -1.</returns>
     public int FindLastIndex(int startIndex, int count, Predicate<T> match)
     {
       if (match == null) { throw new ArgumentNullException("match"); }
@@ -1910,6 +1910,36 @@ namespace Rhino.Collections
         //David: changed this on April 3rd 2010, Transform acts on the point directly.
         m_items[i].Transform(xform);
       }
+    }
+
+    /// <summary>
+    /// Set all the X values for the points to a single value
+    /// </summary>
+    /// <param name="xValue"></param>
+    public void SetAllX(double xValue)
+    {
+      for (int i = 0; i < Count; i++)
+        m_items[i].X = xValue;
+    }
+
+    /// <summary>
+    /// Set all the Y values for the points to a single value
+    /// </summary>
+    /// <param name="yValue"></param>
+    public void SetAllY(double yValue)
+    {
+      for (int i = 0; i < Count; i++)
+        m_items[i].Y = yValue;
+    }
+
+    /// <summary>
+    /// Set all the Z values for the points to a single value
+    /// </summary>
+    /// <param name="zValue"></param>
+    public void SetAllZ(double zValue)
+    {
+      for (int i = 0; i < Count; i++)
+        m_items[i].Z = zValue;
     }
 
     /// <summary>

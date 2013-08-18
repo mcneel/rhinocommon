@@ -429,8 +429,12 @@ namespace Rhino.Runtime
     internal string _GetUserString(string key)
     {
       IntPtr pThis = ConstPointer();
-      IntPtr pValue = UnsafeNativeMethods.ON_Object_GetUserString(pThis, key);
-      return IntPtr.Zero == pValue ? String.Empty : System.Runtime.InteropServices.Marshal.PtrToStringUni(pValue);
+      using (var sh = new StringHolder())
+      {
+        IntPtr pStringHolder = sh.NonConstPointer();
+        UnsafeNativeMethods.ON_Object_GetUserString(pThis, key, pStringHolder);
+        return sh.ToString();
+      }
     }
 
     /// <summary>
@@ -457,14 +461,18 @@ namespace Rhino.Runtime
       int count = 0;
       IntPtr pUserStrings = UnsafeNativeMethods.ON_Object_GetUserStrings(pThis, ref count);
 
-      for (int i = 0; i < count; i++)
+      using( var keyHolder = new StringHolder() )
+      using( var valueHolder = new StringHolder() )
       {
-        IntPtr pKey = UnsafeNativeMethods.ON_UserStringList_KeyValue(pUserStrings, i, true);
-        IntPtr pValue = UnsafeNativeMethods.ON_UserStringList_KeyValue(pUserStrings, i, false);
-        if (IntPtr.Zero != pKey && IntPtr.Zero != pValue)
+        IntPtr pKeyHolder = keyHolder.NonConstPointer();
+        IntPtr pValueHolder = valueHolder.NonConstPointer();
+
+        for (int i = 0; i < count; i++)
         {
-          string key = System.Runtime.InteropServices.Marshal.PtrToStringUni(pKey);
-          string value = System.Runtime.InteropServices.Marshal.PtrToStringUni(pValue);
+          UnsafeNativeMethods.ON_UserStringList_KeyValue(pUserStrings, i, true, pKeyHolder);
+          UnsafeNativeMethods.ON_UserStringList_KeyValue(pUserStrings, i, false, pValueHolder);
+          string key = keyHolder.ToString();
+          string value = valueHolder.ToString();
           if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
             rc.Add(key, value);
         }

@@ -251,7 +251,9 @@ namespace Rhino.Display
         settings |= 0x4;
       Rhino.RhinoDoc doc = Document;
       Guid id = MainViewport.Id;
-      return doc.CreatePreviewImage(imagePath, id, size, settings, true);
+      // 11-Apr-2013 Dale Fugier, http://mcneel.myjetbrains.com/youtrack/issue/RH-18332
+      // return doc.CreatePreviewImage(imagePath, id, size, settings, true);
+      return doc.CreatePreviewImage(imagePath, id, size, settings, false);
     }
 
     /// <summary>

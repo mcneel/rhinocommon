@@ -296,11 +296,9 @@ namespace Rhino.Geometry
         case idxON_InstanceReference: // 23
           rc = new InstanceReferenceGeometry(pGeometry, parent);
           break;
-#if USING_V5_SDK
         case idxON_Extrusion: //24
           rc = new Extrusion(pGeometry, parent);
           break;
-#endif
         case idxON_LinearDimension2: //25
           rc = new LinearDimension(pGeometry, parent);
           break;
@@ -573,9 +571,12 @@ namespace Rhino.Geometry
       return rc;
     }
 
+    #region GetBool constants
     const int idxIsDeformable = 0;
     const int idxMakeDeformable = 1;
     internal const int idxIsMorphable = 2;
+    const int idxHasBrepForm = 3;
+    #endregion
 
     /// <summary>
     /// true if object can be accurately modified with "squishy" transformations like
@@ -611,8 +612,19 @@ namespace Rhino.Geometry
     // virtual bool IsMorphable() const;
     // Moved to SpaceMorph class
 
+    /// <summary>
+    /// Returns true if the Brep.TryConvertBrep function will be successful for this object
+    /// </summary>
+    public bool HasBrepForm
+    {
+      get
+      {
+        IntPtr ptr = ConstPointer();
+        return UnsafeNativeMethods.ON_Geometry_GetBool(ptr, idxHasBrepForm);
+      }
+    }
+
     // Not exposed here
-    // bool HasBrepForm() const;
     // ON_Brep* BrepForm( ON_Brep* brep = NULL ) const;
     // Implemented in static Brep.TryConvertBrep function
 

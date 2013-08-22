@@ -8,9 +8,9 @@ namespace Rhino.DocObjects.Custom
   /// </summary>
   public abstract class UserData : IDisposable
   {
-    static int m_next_serial_number = 1;
+    static int g_next_serial_number = 1;
     int m_serial_number=-1;
-    IntPtr m_pNativePointer = IntPtr.Zero;
+    IntPtr m_native_pointer = IntPtr.Zero;
 
     #region IDisposable implementation
     /// <summary>
@@ -40,40 +40,42 @@ namespace Rhino.DocObjects.Custom
     /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
-      if (IntPtr.Zero == m_pNativePointer)
+      if (IntPtr.Zero == m_native_pointer)
         return;
 
-      // Leak for now. We want to make sure that the class is not
-      // attached to an object before deleting.
-      // UnsafeNativeMethods.CRhCmnUserData_Delete(m_pNativePointer, m_serial_number);
-      m_pNativePointer = IntPtr.Zero;
+      // Make sure that the class is not attached to an object before deleting.
+      if (UnsafeNativeMethods.CRhCmnUserData_Delete(m_native_pointer, true))
+      {
+        g_attached_custom_user_datas.Remove(m_serial_number);
+        m_native_pointer = IntPtr.Zero;
+      }
     }
     #endregion
 
     internal virtual IntPtr NonConstPointer(bool createIfMissing)
     {
 #if RHINO_SDK
-      if (createIfMissing && IntPtr.Zero == m_pNativePointer)
+      if (createIfMissing && IntPtr.Zero == m_native_pointer)
       {
-        m_serial_number = m_next_serial_number++;
+        m_serial_number = g_next_serial_number++;
         Type t = GetType();
         Guid managed_type_id = t.GUID;
         string description = Description;
 
         if (this is UserDictionary)
         {
-          Guid id = Rhino.RhinoApp.Rhino5Id;
-          m_pNativePointer = UnsafeNativeMethods.CRhCmnUserData_New(m_serial_number, managed_type_id, id, description);
+          Guid id = RhinoApp.Rhino5Id;
+          m_native_pointer = UnsafeNativeMethods.CRhCmnUserData_New(m_serial_number, managed_type_id, id, description);
         }
         else
         {
-          Rhino.PlugIns.PlugIn plugin = PlugIns.PlugIn.Find(t.Assembly);
+          PlugIns.PlugIn plugin = PlugIns.PlugIn.Find(t.Assembly);
           Guid plugin_id = plugin.Id;
-          m_pNativePointer = UnsafeNativeMethods.CRhCmnUserData_New(m_serial_number, managed_type_id, plugin_id, description);
+          m_native_pointer = UnsafeNativeMethods.CRhCmnUserData_New(m_serial_number, managed_type_id, plugin_id, description);
         }
       }
 #endif
-      return m_pNativePointer;
+      return m_native_pointer;
     }
 
     /// <summary>Descriptive name of the user data.</summary>
@@ -89,21 +91,21 @@ namespace Rhino.DocObjects.Custom
     /// <summary>Writes the content of this data to a stream archive.</summary>
     /// <param name="archive">An archive.</param>
     /// <returns>true if the data was successfully written. The default implementation always returns false.</returns>
-    protected virtual bool Write(Rhino.FileIO.BinaryArchiveWriter archive) { return false; }
+    protected virtual bool Write(FileIO.BinaryArchiveWriter archive) { return false; }
 
     /// <summary>Reads the content of this data from a stream archive.</summary>
     /// <param name="archive">An archive.</param>
     /// <returns>true if the data was successfully written. The default implementation always returns false.</returns>
-    protected virtual bool Read(Rhino.FileIO.BinaryArchiveReader archive) { return false; }
+    protected virtual bool Read(FileIO.BinaryArchiveReader archive) { return false; }
 
     /// <summary>
     /// Is called when the object associated with this data is transformed. If you override this
     /// function, make sure to call the base class if you want the stored Transform to be updated.
     /// </summary>
     /// <param name="transform">The transform being applied.</param>
-    protected virtual void OnTransform(Rhino.Geometry.Transform transform)
+    protected virtual void OnTransform(Geometry.Transform transform)
     {
-      UnsafeNativeMethods.ON_UserData_OnTransform(m_pNativePointer, ref transform);
+      UnsafeNativeMethods.ON_UserData_OnTransform(m_native_pointer, ref transform);
     }
 
     /// <summary>
@@ -112,23 +114,23 @@ namespace Rhino.DocObjects.Custom
     /// <param name="source">The source data.</param>
     protected virtual void OnDuplicate(UserData source) { }
 
-    internal delegate void TransformUserDataCallback(int serial_number, ref Rhino.Geometry.Transform xform);
-    internal delegate int ArchiveUserDataCallback(int serial_number);
-    internal delegate int ReadWriteUserDataCallback(int serial_number, int writing, IntPtr pBinaryArchive);
-    internal delegate int DuplicateUserDataCallback(int serial_number, IntPtr pNativeUserData);
-    internal delegate IntPtr CreateUserDataCallback(Guid managed_type_id);
-    internal delegate void DeleteUserDataCallback(int serial_number);
+    internal delegate void TransformUserDataCallback(int serialNumber, ref Geometry.Transform xform);
+    internal delegate int ArchiveUserDataCallback(int serialNumber);
+    internal delegate int ReadWriteUserDataCallback(int serialNumber, int writing, IntPtr pBinaryArchive);
+    internal delegate int DuplicateUserDataCallback(int serialNumber, IntPtr pNativeUserData);
+    internal delegate IntPtr CreateUserDataCallback(Guid managedTypeId);
+    internal delegate void DeleteUserDataCallback(int serialNumber);
 
-    private static TransformUserDataCallback m_OnTransformUserData;
-    private static ArchiveUserDataCallback m_OnArchive;
-    private static ReadWriteUserDataCallback m_OnReadWrite;
-    private static DuplicateUserDataCallback m_OnDuplicate;
-    private static CreateUserDataCallback m_OnCreate;
-    private static DeleteUserDataCallback m_OnDelete;
+    private static TransformUserDataCallback g_on_transform_user_data;
+    private static ArchiveUserDataCallback g_on_archive;
+    private static ReadWriteUserDataCallback g_on_read_write;
+    private static DuplicateUserDataCallback g_on_duplicate;
+    private static CreateUserDataCallback g_on_create;
+    private static DeleteUserDataCallback g_on_delete;
 
-    private static void OnTransformUserData(int serial_number, ref Rhino.Geometry.Transform xform)
+    private static void OnTransformUserData(int serialNumber, ref Geometry.Transform xform)
     {
-      UserData ud = FromSerialNumber(serial_number);
+      UserData ud = FromSerialNumber(serialNumber);
       if (ud!=null)
       {
         try
@@ -141,10 +143,10 @@ namespace Rhino.DocObjects.Custom
         }
       }
     }
-    private static int OnArchiveUserData(int serial_number)
+    private static int OnArchiveUserData(int serialNumber)
     {
       int rc = 0; //FALSE
-      UserData ud = FromSerialNumber(serial_number);
+      UserData ud = FromSerialNumber(serialNumber);
       if (ud != null)
       {
         try
@@ -161,22 +163,22 @@ namespace Rhino.DocObjects.Custom
       }
       return rc;
     }
-    private static int OnReadWriteUserData(int serial_number, int writing, IntPtr pBinaryArchive)
+    private static int OnReadWriteUserData(int serialNumber, int writing, IntPtr pBinaryArchive)
     {
       int rc = 0; //FALSE
-      UserData ud = FromSerialNumber(serial_number);
+      UserData ud = FromSerialNumber(serialNumber);
       if (ud != null)
       {
         try
         {
           if (0 == writing)
           {
-            Rhino.FileIO.BinaryArchiveReader reader = new FileIO.BinaryArchiveReader(pBinaryArchive);
+            FileIO.BinaryArchiveReader reader = new FileIO.BinaryArchiveReader(pBinaryArchive);
             rc = ud.Read(reader) ? 1 : 0;
           }
           else
           {
-            Rhino.FileIO.BinaryArchiveWriter writer = new FileIO.BinaryArchiveWriter(pBinaryArchive);
+            FileIO.BinaryArchiveWriter writer = new FileIO.BinaryArchiveWriter(pBinaryArchive);
             rc = ud.Write(writer) ? 1 : 0;
           }
         }
@@ -187,21 +189,21 @@ namespace Rhino.DocObjects.Custom
       }
       return rc;
     }
-    private static int OnDuplcateUserData(int serial_number, IntPtr pNativeUserData)
+    private static int OnDuplcateUserData(int serialNumber, IntPtr pNativeUserData)
     {
       int rc = 0;
-      UserData ud = FromSerialNumber(serial_number);
+      UserData ud = FromSerialNumber(serialNumber);
       if (ud != null)
       {
         try
         {
           Type t = ud.GetType();
-          UserData new_ud = System.Activator.CreateInstance(t) as UserData;
+          UserData new_ud = Activator.CreateInstance(t) as UserData;
           if (new_ud != null)
           {
-            new_ud.m_serial_number = UserData.m_next_serial_number++;
-            new_ud.m_pNativePointer = pNativeUserData;
-            UserData.StoreInRuntimeList(new_ud);
+            new_ud.m_serial_number = g_next_serial_number++;
+            new_ud.m_native_pointer = pNativeUserData;
+            StoreInRuntimeList(new_ud);
             new_ud.OnDuplicate(ud);
             rc = new_ud.m_serial_number;
           }
@@ -217,11 +219,11 @@ namespace Rhino.DocObjects.Custom
     {
       IntPtr rc = IntPtr.Zero;
       Type t = null;
-      for (int i = 0; i < m_types.Count; i++)
+      for (int i = 0; i < g_types.Count; i++)
       {
-        if (m_types[i].GUID == managedTypeId)
+        if (g_types[i].GUID == managedTypeId)
         {
-          t = m_types[i];
+          t = g_types[i];
           break;
         }
       }
@@ -229,12 +231,12 @@ namespace Rhino.DocObjects.Custom
       {
         try
         {
-          UserData ud = System.Activator.CreateInstance(t) as UserData;
+          UserData ud = Activator.CreateInstance(t) as UserData;
           if (ud != null)
           {
             rc = ud.NonConstPointer(true);
             if (ud.m_serial_number > 0)
-              m_attached_custom_user_datas.Add(ud.m_serial_number, ud);
+              g_attached_custom_user_datas.Add(ud.m_serial_number, ud);
           }
         }
         catch (Exception ex)
@@ -244,46 +246,50 @@ namespace Rhino.DocObjects.Custom
       }
       return rc;
     }
-    private static void OnDelete(int serial_number)
+    private static void OnDelete(int serialNumber)
     {
-      UserData ud = UserData.FromSerialNumber(serial_number);
+      UserData ud = FromSerialNumber(serialNumber);
       if( ud!=null )
       {
-        ud.m_pNativePointer = IntPtr.Zero;
+        ud.m_native_pointer = IntPtr.Zero;
         GC.SuppressFinalize(ud);
-        UserData.m_attached_custom_user_datas.Remove(serial_number);
+        g_attached_custom_user_datas.Remove(serialNumber);
       }
     }
 
-    static readonly System.Collections.Generic.List<Type> m_types = new System.Collections.Generic.List<Type>();
+    static readonly System.Collections.Generic.List<Type> g_types = new System.Collections.Generic.List<Type>();
     internal static void RegisterType(Type t)
     {
-      m_types.Add(t);
+      g_types.Add(t);
 
-      m_OnTransformUserData = OnTransformUserData;
-      m_OnArchive = OnArchiveUserData;
-      m_OnReadWrite = OnReadWriteUserData;
-      m_OnDuplicate = OnDuplcateUserData;
-      m_OnCreate = OnCreateInstance;
-      m_OnDelete = OnDelete;
-      UnsafeNativeMethods.CRhCmnUserData_SetCallbacks(m_OnTransformUserData, m_OnArchive, m_OnReadWrite, m_OnDuplicate, m_OnCreate, m_OnDelete);
+      g_on_transform_user_data = OnTransformUserData;
+      g_on_archive = OnArchiveUserData;
+      g_on_read_write = OnReadWriteUserData;
+      g_on_duplicate = OnDuplcateUserData;
+      g_on_create = OnCreateInstance;
+      g_on_delete = OnDelete;
+      UnsafeNativeMethods.CRhCmnUserData_SetCallbacks(g_on_transform_user_data, g_on_archive, g_on_read_write, g_on_duplicate, g_on_create, g_on_delete);
     }
     #region statics
 
-    static readonly System.Collections.Generic.Dictionary<int, UserData> m_attached_custom_user_datas = new System.Collections.Generic.Dictionary<int, UserData>();
-    internal static UserData FromSerialNumber(int serial_number)
+    static readonly System.Collections.Generic.Dictionary<int, UserData> g_attached_custom_user_datas = new System.Collections.Generic.Dictionary<int, UserData>();
+    internal static UserData FromSerialNumber(int serialNumber)
     {
-      if (serial_number < 1)
+      if (serialNumber < 1)
         return null;
       UserData rc;
-      if (m_attached_custom_user_datas.TryGetValue(serial_number, out rc))
+      if (g_attached_custom_user_datas.TryGetValue(serialNumber, out rc))
         return rc;
 
       return null;
     }
     internal static void StoreInRuntimeList(UserData ud)
     {
-      m_attached_custom_user_datas[ud.m_serial_number] = ud;
+      g_attached_custom_user_datas[ud.m_serial_number] = ud;
+    }
+    internal static void RemoveFromRuntimeList(UserData ud)
+    {
+      g_attached_custom_user_datas.Remove(ud.m_serial_number);
     }
 
 
@@ -295,11 +301,11 @@ namespace Rhino.DocObjects.Custom
     /// </summary>
     /// <param name="source">A source object for the data.</param>
     /// <param name="destination">A destination object for the data.</param>
-    public static void Copy(Rhino.Runtime.CommonObject source, Rhino.Runtime.CommonObject destination)
+    public static void Copy(Runtime.CommonObject source, Runtime.CommonObject destination)
     {
-      IntPtr pConstSource = source.ConstPointer();
-      IntPtr pDestination = destination.NonConstPointer();
-      UnsafeNativeMethods.ON_Object_CopyUserData(pConstSource, pDestination);
+      IntPtr const_source = source.ConstPointer();
+      IntPtr ptr_destination = destination.NonConstPointer();
+      UnsafeNativeMethods.ON_Object_CopyUserData(const_source, ptr_destination);
     }
 
     /// <summary>
@@ -314,11 +320,11 @@ namespace Rhino.DocObjects.Custom
     /// to transfer the user data to a different object.
     /// Returns Guid.Empty if there was no user data to transfer.
     /// </returns>
-    public static Guid MoveUserDataFrom(Rhino.Runtime.CommonObject objectWithUserData)
+    public static Guid MoveUserDataFrom(Runtime.CommonObject objectWithUserData)
     {
       Guid id = Guid.NewGuid();
-      IntPtr pConstObject = objectWithUserData.ConstPointer();
-      if (UnsafeNativeMethods.ON_UserDataHolder_MoveUserDataFrom(id, pConstObject))
+      IntPtr const_ptr_onobject = objectWithUserData.ConstPointer();
+      if (UnsafeNativeMethods.ON_UserDataHolder_MoveUserDataFrom(id, const_ptr_onobject))
         return id;
       return Guid.Empty;
     }
@@ -330,16 +336,16 @@ namespace Rhino.DocObjects.Custom
     /// <param name="objectToGetUserData">Object data source.</param>
     /// <param name="id">Target.</param>
     /// <param name="append">If the data should be appended or replaced.</param>
-    public static void MoveUserDataTo(Rhino.Runtime.CommonObject objectToGetUserData, Guid id, bool append)
+    public static void MoveUserDataTo(Runtime.CommonObject objectToGetUserData, Guid id, bool append)
     {
       if (id != Guid.Empty)
       {
-        IntPtr pConstObject = objectToGetUserData.ConstPointer();
-        UnsafeNativeMethods.ON_UserDataHolder_MoveUserDataTo(id, pConstObject, append);
+        IntPtr const_ptr_onobject = objectToGetUserData.ConstPointer();
+        UnsafeNativeMethods.ON_UserDataHolder_MoveUserDataTo(id, const_ptr_onobject, append);
       }
     }
 
-    Rhino.Geometry.Transform m_cached_transform = Rhino.Geometry.Transform.Identity;
+    Geometry.Transform m_cached_transform = Geometry.Transform.Identity;
     /// <summary>
     /// Updated if user data is attached to a piece of geometry that is
     /// transformed and the virtual OnTransform() is not overridden.  If you
@@ -347,22 +353,22 @@ namespace Rhino.DocObjects.Custom
     /// base class OnTransform() in your override.
     /// The default constructor sets Transform to the identity.
     /// </summary>
-    public Rhino.Geometry.Transform Transform
+    public Geometry.Transform Transform
     {
       get
       {
-        if (IntPtr.Zero != m_pNativePointer)
+        if (IntPtr.Zero != m_native_pointer)
         {
-          UnsafeNativeMethods.ON_UserData_GetTransform(m_pNativePointer, ref m_cached_transform);
+          UnsafeNativeMethods.ON_UserData_GetTransform(m_native_pointer, ref m_cached_transform);
         }
         return m_cached_transform;
       }
       protected set
       {
         m_cached_transform = value;
-        if (IntPtr.Zero != m_pNativePointer)
+        if (IntPtr.Zero != m_native_pointer)
         {
-          UnsafeNativeMethods.ON_UserData_SetTransform(m_pNativePointer, ref m_cached_transform);
+          UnsafeNativeMethods.ON_UserData_SetTransform(m_native_pointer, ref m_cached_transform);
         }
       }
     }
@@ -377,32 +383,28 @@ namespace Rhino.DocObjects.Custom
     /// <summary>
     /// Constructs a new unknown data entity.
     /// </summary>
-    /// <param name="pNativeUserData">A pointer to the entity.</param>
-    public UnknownUserData(IntPtr pNativeUserData)
+    /// <param name="pointerNativeUserData">A pointer to the entity.</param>
+    public UnknownUserData(IntPtr pointerNativeUserData)
     {
     }
   }
 
-  /// <summary>
-  /// Represets a regulated collection of user data.
-  /// </summary>
+  /// <summary>Represents a collection of user data.</summary>
   public class UserDataList
   {
-    readonly Rhino.Runtime.CommonObject m_parent;
-    internal UserDataList(Rhino.Runtime.CommonObject parent)
+    readonly Runtime.CommonObject m_parent;
+    internal UserDataList(Runtime.CommonObject parent)
     {
       m_parent = parent;
     }
 
-    /// <summary>
-    /// Number of UserData objects in this list.
-    /// </summary>
+    /// <summary>Number of UserData objects in this list.</summary>
     public int Count
     {
       get
       {
-        IntPtr pOnObject = m_parent.ConstPointer();
-        return UnsafeNativeMethods.ON_Object_UserDataCount(pOnObject);
+        IntPtr const_ptr_onobject = m_parent.ConstPointer();
+        return UnsafeNativeMethods.ON_Object_UserDataCount(const_ptr_onobject);
       }
     }
 
@@ -417,28 +419,34 @@ namespace Rhino.DocObjects.Custom
       if (!(userdata is SharedUserDictionary))
       {
         Type t = userdata.GetType();
-        System.Reflection.ConstructorInfo constructor = t.GetConstructor(System.Type.EmptyTypes);
+        System.Reflection.ConstructorInfo constructor = t.GetConstructor(Type.EmptyTypes);
         if (!t.IsPublic || constructor == null)
           throw new ArgumentException("userdata must be a public class and have a parameterless constructor");
       }
-      IntPtr pOnObject = m_parent.ConstPointer();
-      IntPtr pUserData = userdata.NonConstPointer(true);
-      const bool detachIfNeeded = true;
-      bool rc = UnsafeNativeMethods.ON_Object_AttachUserData(pOnObject, pUserData, detachIfNeeded);
+      IntPtr const_ptr_onobject = m_parent.ConstPointer();
+      IntPtr ptr_userdata = userdata.NonConstPointer(true);
+      const bool detach_if_needed = true;
+      bool rc = UnsafeNativeMethods.ON_Object_AttachUserData(const_ptr_onobject, ptr_userdata, detach_if_needed);
       if (rc)
         UserData.StoreInRuntimeList(userdata);
       return rc;
     }
-/*
-    public void Remove(UserData userdata)
+    
+    /// <summary>
+    /// Remove the userdata from this list
+    /// </summary>
+    /// <param name="userdata"></param>
+    /// <returns>true if the user data was successfully removed</returns>
+    public bool Remove(UserData userdata)
     {
-      IntPtr pOnObject = m_parent.ConstPointer();
-      IntPtr pUserData = userdata.NonConstPointer(false);
-      bool success = UnsafeNativeMethods.ON_Object_DetachUserData(pOnObject, pUserData);
-      if (success)
-        userdata.OnDetachFromList();
+      IntPtr const_ptr_onobject = m_parent.ConstPointer();
+      IntPtr ptr_userdata = userdata.NonConstPointer(false);
+      bool rc = UnsafeNativeMethods.ON_Object_DetachUserData(const_ptr_onobject, ptr_userdata);
+      if( rc )
+        UserData.RemoveFromRuntimeList(userdata);
+      return rc;
     }
-*/
+
 
     /// <summary>
     /// Finds a specific data type in this regulated collection.
@@ -450,8 +458,8 @@ namespace Rhino.DocObjects.Custom
       if (!userdataType.IsSubclassOf(typeof(UserData)))
         return null;
       Guid id = userdataType.GUID;
-      IntPtr pOnObject = m_parent.ConstPointer();
-      int serial_number = UnsafeNativeMethods.CRhCmnUserData_Find(pOnObject, id);
+      IntPtr const_ptr_onobject = m_parent.ConstPointer();
+      int serial_number = UnsafeNativeMethods.CRhCmnUserData_Find(const_ptr_onobject, id);
       return UserData.FromSerialNumber(serial_number);
     }
   }
@@ -462,12 +470,12 @@ namespace Rhino.DocObjects.Custom
   [System.Runtime.InteropServices.Guid("171E831F-7FEF-40E2-9857-E5CCD39446F0")]
   public class UserDictionary : UserData
   {
-    Rhino.Collections.ArchivableDictionary m_dictionary;
+    Collections.ArchivableDictionary m_dictionary;
     /// <summary>
     /// Gets the dictionary that is associated with this class.
     /// <para>This dictionary is unique.</para>
     /// </summary>
-    public Rhino.Collections.ArchivableDictionary Dictionary
+    public Collections.ArchivableDictionary Dictionary
     {
       get { return m_dictionary??(m_dictionary=new Collections.ArchivableDictionary(this)); }
     }

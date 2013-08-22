@@ -91,8 +91,8 @@ typedef signed char     BOOL;
 // we have a single place to fix up code to work on Mac multi-doc build
 RH_CPP_FUNCTION CRhinoDoc* RhDocFromId( int id );
 RH_CPP_FUNCTION int RhIdFromDoc( CRhinoDoc* pDoc );
-RH_CPP_FUNCTION bool RhInShutDown();
 #endif
+RH_CPP_FUNCTION bool RhInShutDown();
 
 
 struct ON_2DPOINT_STRUCT{ double val[2]; };

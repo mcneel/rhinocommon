@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using Rhino.Geometry;
 
 namespace Rhino.DocObjects
 {
@@ -139,19 +141,29 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets a value that indicates whether this projection is perspective.
+    /// Get or set whether this projection is perspective.
     /// </summary>
     public bool IsPerspectiveProjection
     {
       get { return GetBool(idxIsPerspectiveProjection); }
+      set
+      {
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_Viewport_SetProjection(ptr_this, !value);
+      }
     }
 
     /// <summary>
-    /// Gets a value that indicates whether this projection is parallel.
+    /// Get or set whether this projection is parallel.
     /// </summary>
     public bool IsParallelProjection
     {
       get { return GetBool(idxIsParallelProjection); }
+      set
+      {
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_Viewport_SetProjection(ptr_this, value);
+      }
     }
 
     /// <summary>
@@ -1217,6 +1229,64 @@ namespace Rhino.DocObjects
     {
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.ON_Viewport_DollyFrustum(pThis, dollyDistance);
+    }
+
+    /// <summary>
+    /// Dolly the camera location and so that the view frustum contains
+    /// all of the document objects that can be seen in view.
+    /// If the projection is perspective, the camera angle is not changed.
+    /// </summary>
+    /// <param name="geometry"></param>
+    /// <param name="border">
+    /// If border > 1.0, then the fustum in enlarged by this factor
+    /// to provide a border around the view.  1.1 works well for
+    /// parallel projections; 0.0 is suggested for perspective projections.
+    /// </param>
+    /// <returns>True if successful.</returns>
+    public bool DollyExtents(IEnumerable<GeometryBase> geometry, double border)
+    {
+      var world_2_camera = GetXform(CoordinateSystem.World, CoordinateSystem.Camera);
+      BoundingBox cam_bbox = BoundingBox.Unset;
+      foreach( var g in geometry )
+      {
+        var bbox = g.GetBoundingBox(world_2_camera);
+        cam_bbox.Union(bbox);
+      }
+      return DollyExtents(cam_bbox, border);
+    }
+
+    /// <summary>
+    /// Dolly the camera location and so that the view frustum contains
+    /// all of the document objects that can be seen in view.
+    /// If the projection is perspective, the camera angle is not changed.
+    /// </summary>
+    /// <param name="cameraCoordinateBoundingBox"></param>
+    /// <param name="border">
+    /// If border > 1.0, then the fustum in enlarged by this factor
+    /// to provide a border around the view.  1.1 works well for
+    /// parallel projections; 0.0 is suggested for perspective projections.
+    /// </param>
+    /// <returns>True if successful.</returns>
+    public bool DollyExtents(BoundingBox cameraCoordinateBoundingBox, double border)
+    {
+      bool rc = false;
+      if (cameraCoordinateBoundingBox.IsValid)
+      {
+        if (border > 1.0 && RhinoMath.IsValidDouble(border))
+        {
+          double dx = cameraCoordinateBoundingBox.Max.X - cameraCoordinateBoundingBox.Min.X;
+          dx *= 0.5 * (border - 1.0);
+          double dy = cameraCoordinateBoundingBox.Max.Y - cameraCoordinateBoundingBox.Min.Y;
+          dy *= 0.5 * (border - 1.0);
+          var pt = cameraCoordinateBoundingBox.Max;
+          cameraCoordinateBoundingBox.Max = new Point3d(pt.X + dx, pt.Y + dy, pt.Z);
+          pt = cameraCoordinateBoundingBox.Min;
+          cameraCoordinateBoundingBox.Min = new Point3d(pt.X - dx, pt.Y - dy, pt.Z);
+        }
+        IntPtr ptr_this = NonConstPointer();
+        rc = UnsafeNativeMethods.ON_Viewport_DollyExtents(ptr_this, cameraCoordinateBoundingBox.Min, cameraCoordinateBoundingBox.Max);
+      }
+      return rc;
     }
 
     /// <summary>

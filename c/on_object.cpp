@@ -177,6 +177,13 @@ RH_C_FUNCTION bool ON_Object_AttachUserData(ON_Object* pOnObject, ON_UserData* p
   return rc;
 }
 
+RH_C_FUNCTION bool ON_Object_DetachUserData(ON_Object* pOnObject, ON_UserData* pUserData)
+{
+  if( pOnObject && pUserData )
+    return pOnObject->DetachUserData(pUserData) ? true : false;
+  return false;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////
 
 RH_C_FUNCTION void ON_UserStringList_KeyValue(const ON_ClassArray<ON_UserString>* pList, int i, bool key, CRhCmnStringHolder* pStringHolder)

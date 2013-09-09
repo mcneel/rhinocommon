@@ -3958,6 +3958,11 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Object_AttachUserData(IntPtr pOnObject, IntPtr pUserData, [MarshalAs(UnmanagedType.U1)]bool detachIfNeeded);
 
+  //bool ON_Object_DetachUserData(ON_Object* pOnObject, ON_UserData* pUserData)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Object_DetachUserData(IntPtr pOnObject, IntPtr pUserData);
+
   //void ON_UserStringList_KeyValue(const ON_ClassArray<ON_UserString>* pList, int i, bool key, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_UserStringList_KeyValue(IntPtr pList, int i, [MarshalAs(UnmanagedType.U1)]bool key, IntPtr pStringHolder);
@@ -4738,9 +4743,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhCmnUserData_New(int serial_number, Guid managed_type_id, Guid plugin_id, [MarshalAs(UnmanagedType.LPWStr)]string description);
 
-  //void CRhCmnUserData_Delete(CRhCmnUserData* pUserData)
+  //bool CRhCmnUserData_Delete(ON_UserData* pUserData, bool only_if_no_parent)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhCmnUserData_Delete(IntPtr pUserData);
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool CRhCmnUserData_Delete(IntPtr pUserData, [MarshalAs(UnmanagedType.U1)]bool only_if_no_parent);
 
   //int CRhCmnUserData_Find(const ON_Object* pConstOnObject, ON_UUID managed_type_id)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -4782,6 +4788,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Viewport_GetBool(IntPtr pConstViewport, int which);
+
+  //void ON_Viewport_SetProjection(ON_Viewport* pViewport, bool parallel)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_Viewport_SetProjection(IntPtr pViewport, [MarshalAs(UnmanagedType.U1)]bool parallel);
 
   //bool ON_Viewport_ChangeToParallelProjection(ON_Viewport* pVP, bool symmetricFrustum)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
@@ -5116,6 +5126,11 @@ internal partial class UnsafeNativeMethods
   //ON_Viewport* ON_Viewport_New2(const CRhinoViewport* pRhinoViewport)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Viewport_New2(IntPtr pRhinoViewport);
+
+  //bool ON_Viewport_DollyExtents(ON_Viewport* pViewport, ON_3DPOINT_STRUCT camboxmin, ON_3DPOINT_STRUCT camboxmax)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Viewport_DollyExtents(IntPtr pViewport, Point3d camboxmin, Point3d camboxmax);
   #endregion
 
 

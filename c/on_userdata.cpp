@@ -317,10 +317,17 @@ RH_C_FUNCTION CRhCmnUserData* CRhCmnUserData_New( int serial_number, ON_UUID man
   return rc;
 }
 
-RH_C_FUNCTION void CRhCmnUserData_Delete(CRhCmnUserData* pUserData)
+RH_C_FUNCTION bool CRhCmnUserData_Delete(ON_UserData* pUserData, bool only_if_no_parent)
 {
-  if( pUserData )
-    delete pUserData;
+  CRhCmnUserData* pUD = CRhCmnUserData::Cast(pUserData);
+  if( pUD && !RhInShutDown() )
+  {
+    if( only_if_no_parent && pUD->Owner()!=NULL )
+      return false;
+    delete pUD;
+    return true;
+  }
+  return false;
 }
 
 RH_C_FUNCTION int CRhCmnUserData_Find(const ON_Object* pConstOnObject, ON_UUID managed_type_id)

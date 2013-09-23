@@ -104,6 +104,16 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr Rdk_RenderContent_FindChild(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _sChildSlotName);
 
+  //bool Rdk_RenderContent_ChangeChild(CRhRdkContent* pParentContent, CRhRdkContent* pOldChild, CRhRdkContent* pNewChild )
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_RenderContent_ChangeChild(IntPtr pParentContent, IntPtr pOldChild, IntPtr pNewChild);
+
+  //bool Rdk_RenderContent_AddChild(CRhRdkContent* pParentContent, CRhRdkContent* pContent)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool Rdk_RenderContent_AddChild(IntPtr pParentContent, IntPtr pContent);
+
   //void Rdk_RenderContent_SetChildSlotName(CRhRdkContent* pContent, const RHMONO_STRING* _sChildSlotName)
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void Rdk_RenderContent_SetChildSlotName(IntPtr pContent, [MarshalAs(UnmanagedType.LPWStr)]string _sChildSlotName);

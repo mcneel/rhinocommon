@@ -30,19 +30,19 @@ namespace Rhino.Render
       /// <summary>
       /// Corresponds to ON_Texture::bitmap_texture.
       /// </summary>
-      Diffuse = 0,
+      Diffuse = 100,
       /// <summary>
       /// Corresponds to ON_Texture::transparancy_texture.
       /// </summary>
-      Transparency = 1,
+      Transparency = 101,
       /// <summary>
       /// Corresponds to ON_Texture::bump_texture.
       /// </summary>
-      Bump = 2,
+      Bump = 102,
       /// <summary>
       /// Corresponds to ON_Texture::emap_texture.
       /// </summary>
-      Environment = 3,
+      Environment = 103,
     }
 
     /// <summary>

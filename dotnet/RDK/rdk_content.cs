@@ -1335,6 +1335,35 @@ namespace Rhino.Render
       return RenderContent.FromPointer(pChild);
     }
 
+    public bool AddChild(RenderContent renderContent)
+    {
+      IntPtr pThis = NonConstPointer();
+      IntPtr pChild = null == renderContent ? IntPtr.Zero : renderContent.NonConstPointer();
+      bool success = UnsafeNativeMethods.Rdk_RenderContent_AddChild(pThis, pChild);
+      // If successfully added to the child content list then make sure the newContent
+      // pointer does not get deleted when the managed object is disposed of since the
+      // content is now included in this objects child content list
+      if (success && null != renderContent)
+        renderContent.m_bAutoDelete = false;
+      return success;
+    }
+
+    public bool ChangeChild(RenderContent oldContent, RenderContent newContent)
+    {
+      if (null == oldContent)
+        return false;
+      IntPtr pThis = NonConstPointer();
+      IntPtr pOld = oldContent.ConstPointer();
+      IntPtr pNew = null == newContent ? IntPtr.Zero : oldContent.NonConstPointer();
+      bool success = UnsafeNativeMethods.Rdk_RenderContent_ChangeChild(pThis, pOld, pNew);
+      // If successfully added to the child content list then make sure the newContent
+      // pointer does not get deleted when the managed object is disposed of since the
+      // content is now included in this objects child content list
+      if (success && null != newContent)
+        newContent.m_bAutoDelete = false;
+      return success;
+    }
+
     public String ChildSlotName
     {
       get { return GetString(StringIds.ChildSlotName); }

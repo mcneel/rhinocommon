@@ -120,7 +120,7 @@ namespace MethodGen
       System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(path);
       while(true)
       {
-        if( string.Compare(dirInfo.Name, "rhinocommon", true)==0 )
+        if( string.Compare(dirInfo.Name, "RhinoCommon", true)==0 )
         {
           if( rdk )
             c = System.IO.Path.Combine(dirInfo.FullName, "c_rdk");

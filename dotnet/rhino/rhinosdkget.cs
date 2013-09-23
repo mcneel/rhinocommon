@@ -515,20 +515,23 @@ namespace Rhino.Input
     /// <param name="prompts">Optional prompts to display while getting points. May be null.</param>
     /// <param name="corners">Corners of the rectangle in counter-clockwise order will be assigned to this out parameter during this call.</param>
     /// <returns>Commands.Result.Success if successful.</returns>
-    public static Commands.Result GetRectangle(GetBoxMode mode, Rhino.Geometry.Point3d firstPoint, System.Collections.Generic.IEnumerable<string> prompts, out Rhino.Geometry.Point3d[] corners)
+    public static Commands.Result GetRectangle(GetBoxMode mode, Point3d firstPoint, IEnumerable<string> prompts, out Point3d[] corners)
     {
       corners = new Point3d[4];
       IntPtr ptr = UnsafeNativeMethods.CArgsRhinoGetPlane_New();
       UnsafeNativeMethods.CArgsRhinoGetPlane_SetMode(ptr, (int)mode);
       if (firstPoint.IsValid) UnsafeNativeMethods.CArgsRhinoGetPlane_SetFirstPoint(ptr, firstPoint);
-      int i = 0;
-      foreach (string s in prompts)
+      if (prompts != null)
       {
-        if( !string.IsNullOrEmpty(s) )
-          UnsafeNativeMethods.CArgsRhinoGetPlane_SetPrompt(ptr, s, i++);
+        int i = 0;
+        foreach (string s in prompts)
+        {
+          if (!string.IsNullOrEmpty(s))
+            UnsafeNativeMethods.CArgsRhinoGetPlane_SetPrompt(ptr, s, i++);
+        }
       }
 
-      Commands.Result rc = (Rhino.Commands.Result)UnsafeNativeMethods.RHC_RhinoGetRectangle(corners, ptr);
+      Commands.Result rc = (Commands.Result)UnsafeNativeMethods.RHC_RhinoGetRectangle(corners, ptr);
       if (rc != Commands.Result.Success)
         corners = null;
       UnsafeNativeMethods.CArgsRhinoGetPlane_Delete(ptr);

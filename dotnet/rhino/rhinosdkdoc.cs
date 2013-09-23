@@ -23,9 +23,9 @@ namespace Rhino.Commands
     readonly object m_tag;
     readonly RhinoDoc m_doc;
 
-    internal CustomUndoEventArgs(Guid command_id, string description, bool createdByRedo, uint eventSn, object tag, RhinoDoc doc)
+    internal CustomUndoEventArgs(Guid commandId, string description, bool createdByRedo, uint eventSn, object tag, RhinoDoc doc)
     {
-      m_command_id = command_id;
+      m_command_id = commandId;
       m_action_description = description;
       m_created_by_redo = createdByRedo;
       m_undo_event_sn = eventSn;
@@ -70,8 +70,8 @@ namespace Rhino
 {
   class CustomUndoCallback
   {
-    readonly EventHandler<Rhino.Commands.CustomUndoEventArgs> m_handler;
-    public CustomUndoCallback(uint serialNumber, EventHandler<Rhino.Commands.CustomUndoEventArgs> handler, object tag, string description, RhinoDoc document)
+    readonly EventHandler<Commands.CustomUndoEventArgs> m_handler;
+    public CustomUndoCallback(uint serialNumber, EventHandler<Commands.CustomUndoEventArgs> handler, object tag, string description, RhinoDoc document)
     {
       m_handler = handler;
       SerialNumber = serialNumber;
@@ -80,7 +80,7 @@ namespace Rhino
       Document = document;
     }
     public uint SerialNumber { get; private set; }
-    public EventHandler<Rhino.Commands.CustomUndoEventArgs> Handler { get { return m_handler; } }
+    public EventHandler<Commands.CustomUndoEventArgs> Handler { get { return m_handler; } }
     public object Tag { get; private set; }
     public RhinoDoc Document { get; private set; }
     public string Description { get; private set; }
@@ -96,16 +96,16 @@ namespace Rhino
     {
       return UnsafeNativeMethods.CRhinoFileMenu_Open(path);
     }
-    public static bool ReadFile(string path, Rhino.FileIO.FileReadOptions options)
+    public static bool ReadFile(string path, FileIO.FileReadOptions options)
     {
-      IntPtr pOptions = options.ConstPointer();
-      return UnsafeNativeMethods.RHC_RhinoReadFile(path, pOptions);
+      IntPtr const_ptr_options = options.ConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoReadFile(path, const_ptr_options);
     }
 #endregion
-    public bool WriteFile(string path, Rhino.FileIO.FileWriteOptions options)
+    public bool WriteFile(string path, FileIO.FileWriteOptions options)
     {
-      IntPtr pOptions = options.ConstPointer();
-      return UnsafeNativeMethods.RHC_RhinoWriteFile(m_docId, path, pOptions);
+      IntPtr const_ptr_options = options.ConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoWriteFile(m_docId, path, const_ptr_options);
     }
 
     /// <summary>
@@ -122,10 +122,10 @@ namespace Rhino
     /// </returns>
     public string FindFile(string filename)
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new Runtime.StringHolder())
       {
-        IntPtr pString = sh.NonConstPointer();
-        UnsafeNativeMethods.CRhinoFileUtilities_FindFile(filename, pString);
+        IntPtr ptr_string = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoFileUtilities_FindFile(filename, ptr_string);
         return sh.ToString();
       }
     }
@@ -136,7 +136,7 @@ namespace Rhino
       m_docId = id;
     }
 
-    private static RhinoDoc m_doc;
+    private static RhinoDoc g_doc;
     /// <summary>
     /// WARNING!! Do not use the ActiveDoc if you don't have to. Under Mac Rhino the ActiveDoc
     /// can change while a command is running. Use the doc that is passed to you in your RunCommand
@@ -147,10 +147,10 @@ namespace Rhino
       get
       {
         int id = UnsafeNativeMethods.CRhinoDoc_ActiveDocId();
-        if (m_doc == null || m_doc.m_docId != id)
-          m_doc = new RhinoDoc(id);
+        if (g_doc == null || g_doc.m_docId != id)
+          g_doc = new RhinoDoc(id);
 
-        return m_doc;
+        return g_doc;
       }
     }
 
@@ -158,10 +158,10 @@ namespace Rhino
     {
       if (docId == 0)
         return null;
-      if (null != m_doc && m_doc.m_docId == docId)
-        return m_doc;
-      m_doc = new RhinoDoc(docId);
-      return m_doc;
+      if (null != g_doc && g_doc.m_docId == docId)
+        return g_doc;
+      g_doc = new RhinoDoc(docId);
+      return g_doc;
     }
 
     internal static RhinoDoc FromIntPtr(IntPtr pDoc)
@@ -183,18 +183,18 @@ namespace Rhino
 #region docproperties
     string GetString(int which)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new Runtime.StringHolder())
       {
-        IntPtr pString = sh.NonConstPointer();
-        UnsafeNativeMethods.CRhinoDoc_GetSetString(m_docId, which, false, null, pString);
+        IntPtr ptr_string = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoDoc_GetSetString(m_docId, which, false, null, ptr_string);
         return sh.ToString();
       }
     }
     //const int idxName = 0;
-    const int idxPath = 1;
+    const int IDX_PATH = 1;
     //const int idxUrl = 2;
-    const int idxNotes = 3;
-    const int idxTemplateFileUsed = 4;
+    const int IDX_NOTES = 3;
+    const int IDX_TEMPLATE_FILE_USED = 4;
 
     ///<summary>Returns the name of the currently loaded Rhino document (3DM file).</summary>
     public string Name
@@ -215,7 +215,7 @@ namespace Rhino
     {
       get
       {
-        return GetString(idxPath);
+        return GetString(IDX_PATH);
       }
     }
     /*
@@ -232,8 +232,8 @@ namespace Rhino
     ///<summary>Returns or sets the document&apos;s notes.</summary>
     public string Notes
     {
-      get { return GetString(idxNotes); }
-      set { UnsafeNativeMethods.CRhinoDoc_GetSetString(m_docId, idxNotes, true, value, IntPtr.Zero); }
+      get { return GetString(IDX_NOTES); }
+      set { UnsafeNativeMethods.CRhinoDoc_GetSetString(m_docId, IDX_NOTES, true, value, IntPtr.Zero); }
     }
 
     public DateTime DateCreated
@@ -276,24 +276,24 @@ namespace Rhino
       UnsafeNativeMethods.CRhinoDocProperties_GetSetDouble(m_docId, which, true, val);
     }
 
-    const int idxModelAbsTol = 0;
-    const int idxModelAngleTol = 1;
-    const int idxModelRelTol = 2;
-    const int idxPageAbsTol = 3;
-    const int idxPageAngleTol = 4;
-    const int idxPageRelTol = 5;
+    const int IDX_MODEL_ABS_TOL = 0;
+    const int IDX_MODEL_ANGLE_TOL = 1;
+    const int IDX_MODEL_REL_TOL = 2;
+    const int IDX_PAGE_ABS_TOL = 3;
+    const int IDX_PAGE_ANGLE_TOL = 4;
+    const int IDX_PAGE_REL_TOL = 5;
 
     /// <summary>Model space absolute tolerance.</summary>
     public double ModelAbsoluteTolerance
     {
-      get { return GetDouble(idxModelAbsTol); }
-      set { SetDouble(idxModelAbsTol, value); }
+      get { return GetDouble(IDX_MODEL_ABS_TOL); }
+      set { SetDouble(IDX_MODEL_ABS_TOL, value); }
     }
     /// <summary>Model space angle tolerance.</summary>
     public double ModelAngleToleranceRadians
     {
-      get { return GetDouble(idxModelAngleTol); }
-      set { SetDouble(idxModelAngleTol, value); }
+      get { return GetDouble(IDX_MODEL_ANGLE_TOL); }
+      set { SetDouble(IDX_MODEL_ANGLE_TOL, value); }
     }
     /// <summary>Model space angle tolerance.</summary>
     public double ModelAngleToleranceDegrees
@@ -313,20 +313,20 @@ namespace Rhino
     /// <summary>Model space relative tolerance.</summary>
     public double ModelRelativeTolerance
     {
-      get { return GetDouble(idxModelRelTol); }
-      set { SetDouble(idxModelRelTol, value); }
+      get { return GetDouble(IDX_MODEL_REL_TOL); }
+      set { SetDouble(IDX_MODEL_REL_TOL, value); }
     }
     /// <summary>Page space absolute tolerance.</summary>
     public double PageAbsoluteTolerance
     {
-      get { return GetDouble(idxPageAbsTol); }
-      set { SetDouble(idxPageRelTol, value); }
+      get { return GetDouble(IDX_PAGE_ABS_TOL); }
+      set { SetDouble(IDX_PAGE_REL_TOL, value); }
     }
     /// <summary>Page space angle tolerance.</summary>
     public double PageAngleToleranceRadians
     {
-      get { return GetDouble(idxPageAngleTol); }
-      set { SetDouble(idxPageAngleTol, value); }
+      get { return GetDouble(IDX_PAGE_ANGLE_TOL); }
+      set { SetDouble(IDX_PAGE_ANGLE_TOL, value); }
     }
     /// <summary>Page space angle tolerance.</summary>
     public double PageAngleToleranceDegrees
@@ -346,8 +346,8 @@ namespace Rhino
     /// <summary>Page space relative tolerance.</summary>
     public double PageRelativeTolerance
     {
-      get { return GetDouble(idxPageRelTol); }
-      set { SetDouble(idxPageRelTol, value); }
+      get { return GetDouble(IDX_PAGE_REL_TOL); }
+      set { SetDouble(IDX_PAGE_REL_TOL, value); }
     }
 
 
@@ -761,7 +761,7 @@ namespace Rhino
     /// </summary>
     public string TemplateFileUsed
     {
-      get { return GetString(idxTemplateFileUsed); }
+      get { return GetString(IDX_TEMPLATE_FILE_USED); }
     }
 
     public void ClearUndoRecords(bool purgeDeletedObjects)
@@ -1767,7 +1767,7 @@ namespace Rhino
     internal static EventHandler<DocObjects.RhinoModifyObjectAttributesEventArgs> m_modify_object_attributes;
 
     /// <summary>
-    /// Called when all objects are deselected.
+    /// Called when all object attributes are changed.
     /// </summary>
     public static event EventHandler<DocObjects.RhinoModifyObjectAttributesEventArgs> ModifyObjectAttributes
     {
@@ -2877,16 +2877,16 @@ namespace Rhino.DocObjects.Tables
     /// </summary>
     /// <param name="filter">The object enumerator filter to customize inclusion requirements.</param>
     /// <returns>A Rhino object array. This array can be emptry but not null.</returns>
-    public Rhino.DocObjects.RhinoObject[] FindByFilter(Rhino.DocObjects.ObjectEnumeratorSettings filter)
+    public RhinoObject[] FindByFilter(ObjectEnumeratorSettings filter)
     {
-      List<Rhino.DocObjects.RhinoObject> list = new List<RhinoObject>(GetObjectList(filter));
+      List<RhinoObject> list = new List<RhinoObject>(GetObjectList(filter));
       return list.ToArray();
     }
 
     [CLSCompliant(false)]
-    public Rhino.DocObjects.RhinoObject[] FindByObjectType(Rhino.DocObjects.ObjectType typeFilter)
+    public RhinoObject[] FindByObjectType(ObjectType typeFilter)
     {
-      List<Rhino.DocObjects.RhinoObject> list = new List<RhinoObject>(GetObjectList(typeFilter));
+      List<RhinoObject> list = new List<RhinoObject>(GetObjectList(typeFilter));
       return list.ToArray();
     }
 
@@ -2897,7 +2897,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="value">Search pattern for UserString values (supported wildcards are: ? = any single character, * = any sequence of characters).</param>
     /// <param name="caseSensitive">If true, string comparison will be case sensitive.</param>
     /// <returns>An array of all objects whose UserString matches with the search patterns or null when no such objects could be found.</returns>
-    public Rhino.DocObjects.RhinoObject[] FindByUserString(string key, string value, bool caseSensitive)
+    public RhinoObject[] FindByUserString(string key, string value, bool caseSensitive)
     {
       return FindByUserString(key, value, caseSensitive, true, true, ObjectType.AnyObject);
     }
@@ -2912,9 +2912,9 @@ namespace Rhino.DocObjects.Tables
     /// <param name="filter">Object type filter.</param>
     /// <returns>An array of all objects whose UserString matches with the search patterns or null when no such objects could be found.</returns>
     [CLSCompliant(false)]
-    public Rhino.DocObjects.RhinoObject[] FindByUserString(string key, string value, bool caseSensitive, bool searchGeometry, bool searchAttributes, Rhino.DocObjects.ObjectType filter)
+    public RhinoObject[] FindByUserString(string key, string value, bool caseSensitive, bool searchGeometry, bool searchAttributes, Rhino.DocObjects.ObjectType filter)
     {
-      Rhino.DocObjects.ObjectEnumeratorSettings oes = new ObjectEnumeratorSettings();
+      ObjectEnumeratorSettings oes = new ObjectEnumeratorSettings();
       oes.ActiveObjects = true;
       oes.HiddenObjects = true;
       oes.LockedObjects = true;
@@ -2942,7 +2942,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="searchAttributes">If true, UserStrings attached to the attributes of an object will be searched.</param>
     /// <param name="filter">Filter used to restrict the number of objects searched.</param>
     /// <returns>An array of all objects whose UserString matches with the search patterns or null when no such objects could be found.</returns>
-    public Rhino.DocObjects.RhinoObject[] FindByUserString(string key, string value, bool caseSensitive, bool searchGeometry, bool searchAttributes, Rhino.DocObjects.ObjectEnumeratorSettings filter)
+    public RhinoObject[] FindByUserString(string key, string value, bool caseSensitive, bool searchGeometry, bool searchAttributes, Rhino.DocObjects.ObjectEnumeratorSettings filter)
     {
       Rhino.Runtime.INTERNAL_RhinoObjectArray rhobjs = new Rhino.Runtime.INTERNAL_RhinoObjectArray();
       IntPtr pArray = rhobjs.NonConstPointer();
@@ -5628,9 +5628,9 @@ namespace Rhino.DocObjects.Tables
 
 #region Object enumerator
 
-    private IEnumerator<DocObjects.RhinoObject> GetEnumerator(Rhino.DocObjects.ObjectEnumeratorSettings settings)
+    private IEnumerator<RhinoObject> GetEnumerator(ObjectEnumeratorSettings settings)
     {
-      Rhino.DocObjects.ObjectIterator it = new Rhino.DocObjects.ObjectIterator(m_doc, settings);
+      ObjectIterator it = new ObjectIterator(m_doc, settings);
       return it;
     }
 
@@ -5653,12 +5653,12 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
-    public int ObjectCount(Rhino.DocObjects.ObjectEnumeratorSettings filter)
+    public int ObjectCount(ObjectEnumeratorSettings filter)
     {
-      Rhino.DocObjects.ObjectIterator it = new Rhino.DocObjects.ObjectIterator(m_doc, filter);
-      IntPtr pIterator = it.NonConstPointer();
+      ObjectIterator it = new ObjectIterator(m_doc, filter);
+      IntPtr ptr_iterator = it.NonConstPointer();
       string name_filter = filter.m_name_filter;
-      int count = UnsafeNativeMethods.CRhinoObjectIterator_Count(pIterator, name_filter);
+      int count = UnsafeNativeMethods.CRhinoObjectIterator_Count(ptr_iterator, name_filter);
       it.Dispose();
       return count;
     }
@@ -5668,31 +5668,31 @@ namespace Rhino.DocObjects.Tables
     /// <code source='examples\cs\ex_findobjectsbyname.cs' lang='cs'/>
     /// <code source='examples\py\ex_findobjectsbyname.py' lang='py'/>
     /// </example>
-    public IEnumerable<DocObjects.RhinoObject> GetObjectList(Rhino.DocObjects.ObjectEnumeratorSettings settings)
+    public IEnumerable<RhinoObject> GetObjectList(ObjectEnumeratorSettings settings)
     {
-      IEnumerator<DocObjects.RhinoObject> e = GetEnumerator(settings);
+      IEnumerator<RhinoObject> e = GetEnumerator(settings);
       return new EnumeratorWrapper(e);
     }
 
-    public IEnumerable<DocObjects.RhinoObject> GetObjectList(Type typeFilter)
+    public IEnumerable<RhinoObject> GetObjectList(Type typeFilter)
     {
-      Rhino.DocObjects.ObjectEnumeratorSettings settings = new ObjectEnumeratorSettings();
+      ObjectEnumeratorSettings settings = new ObjectEnumeratorSettings();
       settings.ClassTypeFilter = typeFilter;
-      Rhino.DocObjects.ObjectIterator it = new Rhino.DocObjects.ObjectIterator(m_doc, settings);
+      ObjectIterator it = new ObjectIterator(m_doc, settings);
       return new EnumeratorWrapper(it);
     }
 
     [CLSCompliant(false)]
-    public IEnumerable<DocObjects.RhinoObject> GetObjectList(Rhino.DocObjects.ObjectType typeFilter)
+    public IEnumerable<RhinoObject> GetObjectList(ObjectType typeFilter)
     {
-      Rhino.DocObjects.ObjectEnumeratorSettings settings = new ObjectEnumeratorSettings();
+      ObjectEnumeratorSettings settings = new ObjectEnumeratorSettings();
       settings.ObjectTypeFilter = typeFilter;
       return GetObjectList(settings);
     }
 
-    public IEnumerable<DocObjects.RhinoObject> GetSelectedObjects(bool includeLights, bool includeGrips)
+    public IEnumerable<RhinoObject> GetSelectedObjects(bool includeLights, bool includeGrips)
     {
-      Rhino.DocObjects.ObjectEnumeratorSettings s = new Rhino.DocObjects.ObjectEnumeratorSettings();
+      ObjectEnumeratorSettings s = new ObjectEnumeratorSettings();
       s.IncludeLights = includeLights;
       s.IncludeGrips = includeGrips;
       s.IncludePhantoms = true;
@@ -5702,16 +5702,16 @@ namespace Rhino.DocObjects.Tables
 
 
     // for IEnumerable<RhinoObject>
-    public IEnumerator<Rhino.DocObjects.RhinoObject> GetEnumerator()
+    public IEnumerator<RhinoObject> GetEnumerator()
     {
-      Rhino.DocObjects.ObjectEnumeratorSettings s = new Rhino.DocObjects.ObjectEnumeratorSettings();
+      ObjectEnumeratorSettings s = new ObjectEnumeratorSettings();
       return GetEnumerator(s);
     }
 
     // for IEnumerable
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      Rhino.DocObjects.ObjectEnumeratorSettings s = new Rhino.DocObjects.ObjectEnumeratorSettings();
+      ObjectEnumeratorSettings s = new ObjectEnumeratorSettings();
       return GetEnumerator(s);
     }
 
@@ -5935,15 +5935,16 @@ namespace Rhino.DocObjects
     // all variables are set to use same defaults as defined in CRhinoObjectIterator::Init
     internal object_category m_object_category = object_category.active_objects;
     internal object_state m_object_state = object_state.normal_or_locked_objects;
-    internal bool m_bIncludeLights;   //=false (initialized by Runtime)
-    internal bool m_bIncludeGrips;    //=false (initialized by Runtime)
-    internal bool m_bIncludePhantoms; //=false (initialized by Runtime)
-    internal bool m_bSelectedObjects; //=false (initialized by Runtime)
+    bool m_include_lights;   //=false (initialized by Runtime)
+    bool m_include_grips;    //=false (initialized by Runtime)
+    bool m_include_phantoms; //=false (initialized by Runtime)
+    bool m_selected_objects; //=false (initialized by Runtime)
     //internal bool m_bCheckSubObjects; //=false (initialized by Runtime)
-    internal bool m_bVisible; //=false (initialized by Runtime)
+    bool m_visible; //=false (initialized by Runtime)
     internal ObjectType m_objectfilter = ObjectType.None;
-    internal int m_layerindex_filter = -1;
-    internal Type m_classtype_filter; //=null (initialized by Runtime)
+    int m_layerindex_filter = -1;
+    Type m_classtype_filter; //=null (initialized by Runtime)
+    RhinoViewport m_viewport_filter; //=null (initialized by Runtime)
 
     /// <example>
     /// <code source='examples\vbnet\ex_findobjectsbyname.vb' lang='vbnet'/>
@@ -6060,33 +6061,31 @@ namespace Rhino.DocObjects
 
     public bool IncludeLights
     {
-      get { return m_bIncludeLights; }
-      set { m_bIncludeLights = value; }
+      get { return m_include_lights; }
+      set { m_include_lights = value; }
     }
     public bool IncludeGrips
     {
-      get { return m_bIncludeGrips; }
-      set { m_bIncludeGrips = value; }
+      get { return m_include_grips; }
+      set { m_include_grips = value; }
     }
     public bool IncludePhantoms
     {
-      get { return m_bIncludePhantoms; }
-      set { m_bIncludePhantoms = value; }
+      get { return m_include_phantoms; }
+      set { m_include_phantoms = value; }
     }
 
     public bool SelectedObjectsFilter
     {
-      get { return m_bSelectedObjects; }
-      set { m_bSelectedObjects = value; }
+      get { return m_selected_objects; }
+      set { m_selected_objects = value; }
     }
-
 
     public bool VisibleFilter
     {
-      get { return m_bVisible; }
-      set { m_bVisible = value; }
+      get { return m_visible; }
+      set { m_visible = value; }
     }
-
 
     [CLSCompliant(false)]
     public ObjectType ObjectTypeFilter
@@ -6131,6 +6130,15 @@ namespace Rhino.DocObjects
           m_name_filter = value == "*" ? null : value;
         }
       }
+    }
+
+    /// <summary>
+    /// Filter on value of object->IsActiveInViewport()
+    /// </summary>
+    public RhinoViewport ViewportFilter
+    {
+      get { return m_viewport_filter; }
+      set { m_viewport_filter = value; }
     }
   }
 
@@ -6202,16 +6210,21 @@ namespace Rhino.DocObjects
       if (doc != null)
         doc_id = doc.m_docId;
 
+      IntPtr const_ptr_viewport = IntPtr.Zero;
+      if (s.ViewportFilter != null)
+        const_ptr_viewport = s.ViewportFilter.ConstPointer();
+
       m_ptr = UnsafeNativeMethods.CRhinoObjectIterator_New(doc_id, (int)s.m_object_state, (int)s.m_object_category);
       UnsafeNativeMethods.CRhinoObjectIterator_Initialize(m_ptr,
-        s.m_bIncludeLights,
-        s.m_bIncludeGrips,
-        s.m_bIncludePhantoms,
-        s.m_bSelectedObjects,
+        s.IncludeLights,
+        s.IncludeGrips,
+        s.IncludePhantoms,
+        s.SelectedObjectsFilter,
         false, /*s.m_bCheckSubObjects*/
-        s.m_bVisible,
+        s.VisibleFilter,
         (uint)s.m_objectfilter,
-        s.m_layerindex_filter);
+        s.LayerIndexFilter,
+        const_ptr_viewport);
     }
 
     ~ObjectIterator()

@@ -443,17 +443,18 @@ namespace Rhino.Geometry
     /// <returns>The resulting polysurfaces on success or null on failure.</returns>
     public static Brep[] CreateSolid(IEnumerable<Brep> breps, double tolerance)
     {
-      Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer inbreps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer();
-      foreach (Brep b in breps)
-        inbreps.Add(b, true);
-      Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer outbreps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer();
-      IntPtr pInBreps = inbreps.ConstPointer();
-      IntPtr pOutBreps = outbreps.NonConstPointer();
-      UnsafeNativeMethods.RHC_RhinoCreateSolid(pInBreps, pOutBreps, tolerance);
-      Brep[] rc = outbreps.ToNonConstArray();
-      inbreps.Dispose();
-      outbreps.Dispose();
-      return rc;
+      using (Runtime.InteropWrappers.SimpleArrayBrepPointer inbreps = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      {
+        foreach (Brep b in breps)
+          inbreps.Add(b, true);
+        using (Runtime.InteropWrappers.SimpleArrayBrepPointer outbreps = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
+        {
+          IntPtr const_ptr_inbreps = inbreps.ConstPointer();
+          IntPtr ptr_outbreps = outbreps.NonConstPointer();
+          UnsafeNativeMethods.RHC_RhinoCreateSolid(const_ptr_inbreps, ptr_outbreps, tolerance);
+          return outbreps.ToNonConstArray();
+        }
+      }
     }
 
     /// <summary>
@@ -474,14 +475,12 @@ namespace Rhino.Geometry
     /// </returns>
     public static Brep CreatePatch(IEnumerable<GeometryBase> geometry, Surface startingSurface, double tolerance)
     {
-      using (Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer _g = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
+      using (Runtime.InteropWrappers.SimpleArrayGeometryPointer geometry_array = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
       {
-        IntPtr pGeometry = _g.NonConstPointer();
-        IntPtr pSurface = startingSurface.ConstPointer();
-        IntPtr ptr_brep = UnsafeNativeMethods.CRhinoFitPatch_Fit1(pGeometry, pSurface, tolerance);
-        if (IntPtr.Zero == ptr_brep)
-          return null;
-        return new Brep(ptr_brep, null);
+        IntPtr ptr_geometry = geometry_array.NonConstPointer();
+        IntPtr const_ptr_surface = startingSurface.ConstPointer();
+        IntPtr ptr_brep = UnsafeNativeMethods.CRhinoFitPatch_Fit1(ptr_geometry, const_ptr_surface, tolerance);
+        return IntPtr.Zero == ptr_brep ? null : new Brep(ptr_brep, null);
       }
     }
 
@@ -507,13 +506,11 @@ namespace Rhino.Geometry
     /// </returns>
     public static Brep CreatePatch(IEnumerable<GeometryBase> geometry, int uSpans, int vSpans, double tolerance)
     {
-      using (Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer _g = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
+      using (Runtime.InteropWrappers.SimpleArrayGeometryPointer geometry_array = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
       {
-        IntPtr pGeometry = _g.NonConstPointer();
-        IntPtr ptr_brep = UnsafeNativeMethods.CRhinoFitPatch_Fit2(pGeometry, uSpans, vSpans, tolerance);
-        if (IntPtr.Zero == ptr_brep)
-          return null;
-        return new Brep(ptr_brep, null);
+        IntPtr ptr_geometry = geometry_array.NonConstPointer();
+        IntPtr ptr_brep = UnsafeNativeMethods.CRhinoFitPatch_Fit2(ptr_geometry, uSpans, vSpans, tolerance);
+        return IntPtr.Zero == ptr_brep ? null : new Brep(ptr_brep, null);
       }
     }
 
@@ -571,17 +568,15 @@ namespace Rhino.Geometry
     public static Brep CreatePatch(IEnumerable<GeometryBase> geometry, Surface startingSurface, int uSpans, int vSpans, bool trim,
       bool tangency, double pointSpacing, double flexibility, double surfacePull, bool[] fixEdges, double tolerance)
     {
-      using (Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer _g = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
+      using (Runtime.InteropWrappers.SimpleArrayGeometryPointer geometry_array = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
       {
-        IntPtr pGeometry = _g.NonConstPointer();
-        IntPtr pSurface = startingSurface.ConstPointer();
-        int[] _fix_edges = new int[4];
+        IntPtr ptr_geometry = geometry_array.NonConstPointer();
+        IntPtr const_ptr_surface = startingSurface.ConstPointer();
+        int[] fix_edges = new int[4];
         for (int i = 0; i < 4; i++)
-          _fix_edges[i] = fixEdges[i] ? 1 : 0;
-        IntPtr ptr_brep = UnsafeNativeMethods.CRhinoFitPatch_Fit3(pGeometry, pSurface, uSpans, vSpans, trim, tangency, pointSpacing, flexibility, surfacePull, _fix_edges, tolerance);
-        if (IntPtr.Zero == ptr_brep)
-          return null;
-        return new Brep(ptr_brep, null);
+          fix_edges[i] = fixEdges[i] ? 1 : 0;
+        IntPtr ptr_brep = UnsafeNativeMethods.CRhinoFitPatch_Fit3(ptr_geometry, const_ptr_surface, uSpans, vSpans, trim, tangency, pointSpacing, flexibility, surfacePull, fix_edges, tolerance);
+        return IntPtr.Zero == ptr_brep ? null : new Brep(ptr_brep, null);
       }
     }
 
@@ -638,21 +633,17 @@ namespace Rhino.Geometry
     /// <returns>Array of created pipes on success</returns>
     public static Brep[] CreatePipe(Curve rail, IEnumerable<double> railRadiiParameters, IEnumerable<double> radii, bool localBlending, PipeCapMode cap, bool fitRail, double absoluteTolerance, double angleToleranceRadians)
     {
-      List<double> _radii_params = new List<double>();
-      foreach (double d in railRadiiParameters)
-        _radii_params.Add(d);
-      List<double> _radii = new List<double>();
-      foreach (double d in radii)
-        _radii.Add(d);
-      if (_radii_params.Count < 1 || _radii_params.Count != _radii.Count)
+      List<double> list_radii_params = new List<double>(railRadiiParameters);
+      List<double> list_radii = new List<double>(radii);
+      if (list_radii_params.Count < 1 || list_radii_params.Count != list_radii.Count)
         throw new ArgumentException("railRadiiParameters and radii must have at least one element and must have equal lengths");
-      IntPtr pConstRail = rail.ConstPointer();
-      double[] __radii_params = _radii_params.ToArray();
-      double[] __radii = _radii.ToArray();
-      using (Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer breps = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      IntPtr const_ptr_rail = rail.ConstPointer();
+      double[] array_radii_params = list_radii_params.ToArray();
+      double[] array_radii = list_radii.ToArray();
+      using (Runtime.InteropWrappers.SimpleArrayBrepPointer breps = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
       {
         IntPtr ptr_breps = breps.NonConstPointer();
-        UnsafeNativeMethods.RHC_RhinoPipeBreps(pConstRail, __radii_params.Length, __radii_params, __radii, localBlending, (int)cap, fitRail, absoluteTolerance, angleToleranceRadians, ptr_breps);
+        UnsafeNativeMethods.RHC_RhinoPipeBreps(const_ptr_rail, array_radii_params.Length, array_radii_params, array_radii, localBlending, (int)cap, fitRail, absoluteTolerance, angleToleranceRadians, ptr_breps);
         return breps.ToNonConstArray();
       }
     }
@@ -682,13 +673,13 @@ namespace Rhino.Geometry
     /// <returns>Array of Brep sweep results</returns>
     public static Brep[] CreateFromSweep(Curve rail, IEnumerable<Curve> shapes, bool closed, double tolerance)
     {
-      IntPtr pConstRail = rail.ConstPointer();
-      using (var shapearray = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer(shapes))
-      using (var rc = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      IntPtr const_ptr_rail = rail.ConstPointer();
+      using (var shapearray = new Runtime.InteropWrappers.SimpleArrayCurvePointer(shapes))
+      using (var rc = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
       {
-        IntPtr pShapes = shapearray.ConstPointer();
+        IntPtr const_ptr_shapes = shapearray.ConstPointer();
         IntPtr ptr_breps = rc.NonConstPointer();
-        UnsafeNativeMethods.RHC_Rhino1RailSweep(pConstRail, pShapes, closed, tolerance, ptr_breps);
+        UnsafeNativeMethods.RHC_Rhino1RailSweep(const_ptr_rail, const_ptr_shapes, closed, tolerance, ptr_breps);
         return rc.ToNonConstArray();
       }
     }
@@ -720,14 +711,14 @@ namespace Rhino.Geometry
     /// <returns>Array of Brep sweep results</returns>
     public static Brep[] CreateFromSweep(Curve rail1, Curve rail2, IEnumerable<Curve> shapes, bool closed, double tolerance)
     {
-      IntPtr pConstRail1 = rail1.ConstPointer();
-      IntPtr pConstRail2 = rail2.ConstPointer();
-      using (var shapearray = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer(shapes))
-      using (var rc = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      IntPtr const_ptr_rail1 = rail1.ConstPointer();
+      IntPtr const_ptr_rail2 = rail2.ConstPointer();
+      using (var shapearray = new Runtime.InteropWrappers.SimpleArrayCurvePointer(shapes))
+      using (var rc = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
       {
-        IntPtr pShapes = shapearray.ConstPointer();
+        IntPtr const_ptr_shapes = shapearray.ConstPointer();
         IntPtr ptr_breps = rc.NonConstPointer();
-        UnsafeNativeMethods.RHC_Rhino2RailSweep(pConstRail1, pConstRail2, pShapes, closed, tolerance, ptr_breps);
+        UnsafeNativeMethods.RHC_Rhino2RailSweep(const_ptr_rail1, const_ptr_rail2, const_ptr_shapes, closed, tolerance, ptr_breps);
         return rc.ToNonConstArray();
       }
     }
@@ -744,11 +735,11 @@ namespace Rhino.Geometry
     /// <returns>array of breps on success</returns>
     public static Brep[] CreateFromTaperedExtrude(Curve curveToExtrude, double distance, Vector3d direction, Point3d basePoint, double draftAngleRadians, ExtrudeCornerType cornerType)
     {
-      IntPtr pConstCurve = curveToExtrude.ConstPointer();
-      using (var rc = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      IntPtr const_ptr_curve = curveToExtrude.ConstPointer();
+      using (var rc = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
       {
         IntPtr ptr_breps = rc.NonConstPointer();
-        UnsafeNativeMethods.RHC_RhinoCreateTaperedExtrude(pConstCurve, distance, direction, basePoint, draftAngleRadians, (int)cornerType, ptr_breps);
+        UnsafeNativeMethods.RHC_RhinoCreateTaperedExtrude(const_ptr_curve, distance, direction, basePoint, draftAngleRadians, (int)cornerType, ptr_breps);
         return rc.ToNonConstArray();
       }
     }
@@ -777,7 +768,7 @@ namespace Rhino.Geometry
     /// Constructs a closed surface, continuing the surface past the last curve around to the
     /// first curve. Available when you have selected three shape curves.
     /// </returns>
-    public static Brep[] CreateFromLoft(System.Collections.Generic.IEnumerable<Curve> curves, Point3d start, Point3d end, LoftType loftType, bool closed)
+    public static Brep[] CreateFromLoft(IEnumerable<Curve> curves, Point3d start, Point3d end, LoftType loftType, bool closed)
     {
       return LoftHelper(curves, start, end, loftType, 0, 0, 0.0, closed);
     }
@@ -805,7 +796,7 @@ namespace Rhino.Geometry
     /// Constructs a closed surface, continuing the surface past the last curve around to the
     /// first curve. Available when you have selected three shape curves.
     /// </returns>
-    public static Brep[] CreateFromLoftRebuild(System.Collections.Generic.IEnumerable<Curve> curves, Point3d start, Point3d end, LoftType loftType, bool closed, int rebuildPointCount)
+    public static Brep[] CreateFromLoftRebuild(IEnumerable<Curve> curves, Point3d start, Point3d end, LoftType loftType, bool closed, int rebuildPointCount)
     {
       return LoftHelper(curves, start, end, loftType, 1, rebuildPointCount, 0.0, closed);
     }
@@ -833,24 +824,21 @@ namespace Rhino.Geometry
     /// Constructs a closed surface, continuing the surface past the last curve around to the
     /// first curve. Available when you have selected three shape curves.
     /// </returns>
-    public static Brep[] CreateFromLoftRefit(System.Collections.Generic.IEnumerable<Curve> curves, Point3d start, Point3d end, LoftType loftType, bool closed, double refitTolerance)
+    public static Brep[] CreateFromLoftRefit(IEnumerable<Curve> curves, Point3d start, Point3d end, LoftType loftType, bool closed, double refitTolerance)
     {
       return LoftHelper(curves, start, end, loftType, 2, 0, refitTolerance, closed);
     }
-    static Brep[] LoftHelper(System.Collections.Generic.IEnumerable<Curve> curves, Point3d start, Point3d end,
+    static Brep[] LoftHelper(IEnumerable<Curve> curves, Point3d start, Point3d end,
       LoftType loftType, int simplifyMethod, int rebuildCount, double refitTol, bool closed)
     {
-      Runtime.InteropWrappers.SimpleArrayCurvePointer _curves = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer(curves);
-      IntPtr pCurves = _curves.ConstPointer();
-      Runtime.InteropWrappers.SimpleArrayBrepPointer _breps = new Rhino.Runtime.InteropWrappers.SimpleArrayBrepPointer();
-      IntPtr ptr_breps = _breps.NonConstPointer();
-      int count = UnsafeNativeMethods.RHC_RhinoSdkLoft(pCurves, start, end, (int)loftType, simplifyMethod, rebuildCount, refitTol, closed, ptr_breps);
-      _curves.Dispose();
-      Brep[] rc = null;
-      if (count > 0)
-        rc = _breps.ToNonConstArray();
-      _breps.Dispose();
-      return rc;
+      using (var curve_array = new Runtime.InteropWrappers.SimpleArrayCurvePointer(curves))
+      using (var brep_array = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      {
+        IntPtr const_ptr_curves = curve_array.ConstPointer();
+        IntPtr ptr_breps = brep_array.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoSdkLoft(const_ptr_curves, start, end, (int)loftType, simplifyMethod, rebuildCount, refitTol, closed, ptr_breps);
+        return brep_array.ToNonConstArray();
+      }
     }
 
     /// <summary>
@@ -859,76 +847,47 @@ namespace Rhino.Geometry
     /// <param name="breps">Breps to union.</param>
     /// <param name="tolerance">Tolerance to use for union operation.</param>
     /// <returns>An array of Brep results or null on failure.</returns>
-    public static Brep[] CreateBooleanUnion(System.Collections.Generic.IEnumerable<Brep> breps, double tolerance)
+    public static Brep[] CreateBooleanUnion(IEnumerable<Brep> breps, double tolerance)
     {
-      if (null == breps)
-        return null;
-
-      Runtime.InteropWrappers.SimpleArrayBrepPointer input = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
-      foreach (Brep brep in breps)
+      using (var input = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      using (var output = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
       {
-        if (null == brep)
-          continue;
-        input.Add(brep, true);
+        foreach (Brep brep in breps)
+          input.Add(brep, true);
+
+        IntPtr const_ptr_input = input.ConstPointer();
+        IntPtr ptr_output = output.NonConstPointer();
+
+        int join_count = UnsafeNativeMethods.RHC_RhinoBooleanUnion(const_ptr_input, ptr_output, tolerance);
+        return join_count > 0 ? output.ToNonConstArray() : null;
       }
-      Runtime.InteropWrappers.SimpleArrayBrepPointer output = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
-
-      IntPtr pInput = input.ConstPointer();
-      IntPtr pOutput = output.NonConstPointer();
-
-      int joinCount = UnsafeNativeMethods.RHC_RhinoBooleanUnion(pInput, pOutput, tolerance);
-      Brep[] rc = null;
-      if (joinCount > 0)
-      {
-        rc = output.ToNonConstArray();
-      }
-      input.Dispose();
-      output.Dispose();
-
-      return rc;
     }
 
-    static Brep[] BooleanIntDiffHelper(System.Collections.Generic.IEnumerable<Brep> firstSet,
-      System.Collections.Generic.IEnumerable<Brep> secondSet,
-      double tolerance,
-      bool intersection)
+    static Brep[] BooleanIntDiffHelper(IEnumerable<Brep> firstSet, IEnumerable<Brep> secondSet, double tolerance, bool intersection)
     {
       if (null == firstSet || null == secondSet)
         return new Brep[0];
 
-      Runtime.InteropWrappers.SimpleArrayBrepPointer inputSet1 = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
-      foreach (Brep brep in firstSet)
+      using (var input_set1 = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      using (var input_set2 = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      using (var output = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
       {
-        if (null == brep)
-          continue;
-        inputSet1.Add(brep, true);
+        foreach (Brep brep in firstSet)
+          input_set1.Add(brep, true);
+
+        foreach (Brep brep in secondSet)
+          input_set2.Add(brep, true);
+
+        IntPtr const_ptr_inputset1 = input_set1.ConstPointer();
+        IntPtr const_ptr_inputset2 = input_set2.ConstPointer();
+        IntPtr ptr_output = output.NonConstPointer();
+
+        if (UnsafeNativeMethods.RHC_RhinoBooleanIntDiff(const_ptr_inputset1, const_ptr_inputset2, ptr_output, tolerance, intersection))
+          return output.ToNonConstArray();
+        return null;
       }
-
-      Runtime.InteropWrappers.SimpleArrayBrepPointer inputSet2 = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
-      foreach (Brep brep in secondSet)
-      {
-        if (null == brep)
-          continue;
-        inputSet2.Add(brep, true);
-      }
-
-      Runtime.InteropWrappers.SimpleArrayBrepPointer output = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
-
-      IntPtr pInputSet1 = inputSet1.ConstPointer();
-      IntPtr pInputSet2 = inputSet2.ConstPointer();
-      IntPtr pOutput = output.NonConstPointer();
-
-      Brep[] rc = null;
-      if (UnsafeNativeMethods.RHC_RhinoBooleanIntDiff(pInputSet1, pInputSet2, pOutput, tolerance, intersection))
-      {
-        rc = output.ToNonConstArray();
-      }
-
-      inputSet1.Dispose();
-      inputSet2.Dispose();
-      output.Dispose();
-      return rc;
     }
+
     /// <summary>
     /// Compute the Solid Intersection of two sets of Breps.
     /// </summary>
@@ -937,9 +896,7 @@ namespace Rhino.Geometry
     /// <param name="tolerance">Tolerance to use for intersection operation.</param>
     /// <returns>An array of Brep results or null on failure.</returns>
     /// <remarks>The solid orientation of the breps make a difference when calling this function</remarks>
-    public static Brep[] CreateBooleanIntersection(System.Collections.Generic.IEnumerable<Brep> firstSet,
-      System.Collections.Generic.IEnumerable<Brep> secondSet,
-      double tolerance)
+    public static Brep[] CreateBooleanIntersection(IEnumerable<Brep> firstSet, IEnumerable<Brep> secondSet, double tolerance)
     {
       return BooleanIntDiffHelper(firstSet, secondSet, tolerance, true);
     }
@@ -956,13 +913,7 @@ namespace Rhino.Geometry
       if (firstBrep == null) { throw new ArgumentNullException("firstBrep"); }
       if (secondBrep == null) { throw new ArgumentNullException("secondBrep"); }
 
-      Brep[] firstSet = new Brep[1];
-      Brep[] secondSet = new Brep[1];
-
-      firstSet[0] = firstBrep;
-      secondSet[0] = secondBrep;
-
-      return BooleanIntDiffHelper(firstSet, secondSet, tolerance, true);
+      return BooleanIntDiffHelper(new Brep[]{firstBrep}, new Brep[]{secondBrep}, tolerance, true);
     }
 
     /// <summary>
@@ -978,9 +929,7 @@ namespace Rhino.Geometry
     /// <code source='examples\cs\ex_booleandifference.cs' lang='cs'/>
     /// <code source='examples\py\ex_booleandifference.py' lang='py'/>
     /// </example>
-    public static Brep[] CreateBooleanDifference(System.Collections.Generic.IEnumerable<Brep> firstSet,
-      System.Collections.Generic.IEnumerable<Brep> secondSet,
-      double tolerance)
+    public static Brep[] CreateBooleanDifference(IEnumerable<Brep> firstSet, IEnumerable<Brep> secondSet, double tolerance)
     {
       return BooleanIntDiffHelper(firstSet, secondSet, tolerance, false);
     }
@@ -997,13 +946,7 @@ namespace Rhino.Geometry
       if (firstBrep == null) { throw new ArgumentNullException("firstBrep"); }
       if (secondBrep == null) { throw new ArgumentNullException("secondBrep"); }
 
-      Brep[] firstSet = new Brep[1];
-      Brep[] secondSet = new Brep[1];
-
-      firstSet[0] = firstBrep;
-      secondSet[0] = secondBrep;
-
-      return BooleanIntDiffHelper(firstSet, secondSet, tolerance, false);
+      return BooleanIntDiffHelper(new Brep[]{firstBrep}, new Brep[]{secondBrep}, tolerance, false);
     }
 
     /// <summary>
@@ -1019,23 +962,17 @@ namespace Rhino.Geometry
       if (null == brep) { throw new ArgumentNullException("brep"); }
       if (null == facesToRemove) { throw new ArgumentNullException("facesToRemove"); }
 
-      IntPtr ptr_const_brep = brep.ConstPointer();
+      using (var output = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      {
+        IntPtr const_ptr_brep = brep.ConstPointer();
+        List<int> list_faces_to_remove = new List<int>(facesToRemove);
+        int[] array_faces_to_remove = list_faces_to_remove.ToArray();
+        IntPtr ptr_output = output.NonConstPointer();
 
-      List<int> _facesToRemove = new List<int>();
-      foreach (int fi in facesToRemove)
-        _facesToRemove.Add(fi);
-      int[] __facesToRemove = _facesToRemove.ToArray();
-
-      Runtime.InteropWrappers.SimpleArrayBrepPointer output = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
-      IntPtr pOutput = output.NonConstPointer();
-
-      Brep[] rc = null;
-      if (UnsafeNativeMethods.RHC_RhinoShellBrep(ptr_const_brep, __facesToRemove.Length, __facesToRemove, distance, tolerance, pOutput) > 0)
-        rc = output.ToNonConstArray();
-
-      output.Dispose();
-
-      return rc;
+        if (UnsafeNativeMethods.RHC_RhinoShellBrep(const_ptr_brep, array_faces_to_remove.Length, array_faces_to_remove, distance, tolerance, ptr_output) > 0)
+          return output.ToNonConstArray();
+      }
+      return null;
     }
 
     /// <summary>
@@ -1045,40 +982,36 @@ namespace Rhino.Geometry
     /// <param name="brepsToJoin">A list, an array or any enumerable set of breps to join.</param>
     /// <param name="tolerance">3d distance tolerance for detecting overlapping edges.</param>
     /// <returns>new joined breps on success, null on failure.</returns>
-    public static Brep[] JoinBreps(System.Collections.Generic.IEnumerable<Brep> brepsToJoin, double tolerance)
+    public static Brep[] JoinBreps(IEnumerable<Brep> brepsToJoin, double tolerance)
     {
       if (null == brepsToJoin)
         return null;
 
-      Runtime.InteropWrappers.SimpleArrayBrepPointer input = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
-      foreach (Brep brep in brepsToJoin)
+      using (var input = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
+      using (var output = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
       {
-        if (null == brep)
-          continue;
-        input.Add(brep, true);
-      }
-      Runtime.InteropWrappers.SimpleArrayBrepPointer output = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
+        foreach (Brep brep in brepsToJoin)
+          input.Add(brep, true);
 
-      IntPtr pInput = input.NonConstPointer();
-      IntPtr pOutput = output.NonConstPointer();
+        IntPtr ptr_input = input.NonConstPointer();
+        IntPtr ptr_output = output.NonConstPointer();
 
-      int joinCount = UnsafeNativeMethods.RHC_RhinoJoinBreps(pInput, pOutput, tolerance);
-      Brep[] rc = null;
-      if (joinCount > 0)
-      {
-        rc = output.ToNonConstArray();
-
-        //David added this on June 9th 2010. Flip Breps that are inside out.
-        for (int i = 0; i < rc.Length; i++)
+        Brep[] rc = null;
+        if (UnsafeNativeMethods.RHC_RhinoJoinBreps(ptr_input, ptr_output, tolerance) > 0)
         {
-          if (!rc[i].IsSolid) { continue; }
-          if (rc[i].SolidOrientation != BrepSolidOrientation.Inward) { continue; }
-          rc[i].Flip();
+          rc = output.ToNonConstArray();
+
+          // 9 June 2010 - David
+          // Flip Breps that are inside out.
+          for (int i = 0; i < rc.Length; i++)
+          {
+            if (!rc[i].IsSolid || rc[i].SolidOrientation != BrepSolidOrientation.Inward)
+              continue;
+            rc[i].Flip();
+          }
         }
+        return rc;
       }
-      input.Dispose();
-      output.Dispose();
-      return rc;
     }
 
     /// <summary>
@@ -1091,26 +1024,20 @@ namespace Rhino.Geometry
     /// <returns>Single merged Brep on success. Null on error.</returns>
     /// <seealso cref="JoinBreps"/>
     /// <seealso cref="CreateBooleanUnion"/>
-    public static Brep MergeBreps(System.Collections.Generic.IEnumerable<Brep> brepsToMerge, double tolerance)
+    public static Brep MergeBreps(IEnumerable<Brep> brepsToMerge, double tolerance)
     {
       if (null == brepsToMerge)
         return null;
 
-      Runtime.InteropWrappers.SimpleArrayBrepPointer input = new Runtime.InteropWrappers.SimpleArrayBrepPointer();
-      foreach (Brep brep in brepsToMerge)
+      using (var input = new Runtime.InteropWrappers.SimpleArrayBrepPointer())
       {
-        if (null == brep)
-          continue;
-        input.Add(brep, true);
-      }
+        foreach (Brep brep in brepsToMerge)
+          input.Add(brep, true);
 
-      IntPtr pInput = input.NonConstPointer();
-      IntPtr pNewBrep = UnsafeNativeMethods.RHC_RhinoMergeBreps(pInput, tolerance);
-      Brep rc = null;
-      if (pNewBrep != IntPtr.Zero)
-        rc = new Brep(pNewBrep, null);
-      input.Dispose();
-      return rc;
+        IntPtr ptr_input = input.NonConstPointer();
+        IntPtr ptr_newbrep = UnsafeNativeMethods.RHC_RhinoMergeBreps(ptr_input, tolerance);
+        return ptr_newbrep != IntPtr.Zero ? new Brep(ptr_newbrep, null) : null;
+      }
     }
 
     /// <summary>
@@ -1124,11 +1051,11 @@ namespace Rhino.Geometry
     public static Curve[] CreateContourCurves(Brep brepToContour, Point3d contourStart, Point3d contourEnd, double interval)
     {
       IntPtr ptr_const_brep = brepToContour.ConstPointer();
-      using (Runtime.InteropWrappers.SimpleArrayCurvePointer outputcurves = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer())
+      using (var outputcurves = new Runtime.InteropWrappers.SimpleArrayCurvePointer())
       {
         double tolerance = RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
-        IntPtr pCurves = outputcurves.NonConstPointer();
-        int count = UnsafeNativeMethods.RHC_MakeRhinoContours2(ptr_const_brep, contourStart, contourEnd, interval, pCurves, tolerance);
+        IntPtr ptr_curves = outputcurves.NonConstPointer();
+        int count = UnsafeNativeMethods.RHC_MakeRhinoContours2(ptr_const_brep, contourStart, contourEnd, interval, ptr_curves, tolerance);
         return 0 == count ? new Curve[0] : outputcurves.ToNonConstArray();
       }
     }
@@ -1142,11 +1069,11 @@ namespace Rhino.Geometry
     public static Curve[] CreateContourCurves(Brep brepToContour, Plane sectionPlane)
     {
       IntPtr ptr_const_brep = brepToContour.ConstPointer();
-      using (Runtime.InteropWrappers.SimpleArrayCurvePointer outputcurves = new Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer())
+      using (var outputcurves = new Runtime.InteropWrappers.SimpleArrayCurvePointer())
       {
         double tolerance = RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
-        IntPtr pCurves = outputcurves.NonConstPointer();
-        int count = UnsafeNativeMethods.RHC_MakeRhinoContours3(ptr_const_brep, ref sectionPlane, pCurves, tolerance);
+        IntPtr ptr_curves = outputcurves.NonConstPointer();
+        int count = UnsafeNativeMethods.RHC_MakeRhinoContours3(ptr_const_brep, ref sectionPlane, ptr_curves, tolerance);
         return 0 == count ? new Curve[0] : outputcurves.ToNonConstArray();
       }
     }
@@ -1190,73 +1117,73 @@ namespace Rhino.Geometry
     internal const int idxC2Count = 8;
     internal const int idxC3Count = 9;
 
-    Rhino.Geometry.Collections.BrepVertexList m_vertexlist;
+    Collections.BrepVertexList m_vertexlist;
     /// <summary>
     /// </summary>
-    public Rhino.Geometry.Collections.BrepVertexList Vertices
+    public Collections.BrepVertexList Vertices
     {
-      get { return m_vertexlist ?? (m_vertexlist = new Rhino.Geometry.Collections.BrepVertexList(this)); }
+      get { return m_vertexlist ?? (m_vertexlist = new Collections.BrepVertexList(this)); }
     }
 
-    Rhino.Geometry.Collections.BrepSurfaceList m_surfacelist;
+    Collections.BrepSurfaceList m_surfacelist;
     /// <summary> Parametric surfaces used by faces </summary>
-    public Rhino.Geometry.Collections.BrepSurfaceList Surfaces
+    public Collections.BrepSurfaceList Surfaces
     {
-      get { return m_surfacelist ?? (m_surfacelist = new Rhino.Geometry.Collections.BrepSurfaceList(this)); }
+      get { return m_surfacelist ?? (m_surfacelist = new Collections.BrepSurfaceList(this)); }
     }
 
-    Rhino.Geometry.Collections.BrepEdgeList m_edgelist;
+    Collections.BrepEdgeList m_edgelist;
     /// <summary>
     /// Gets the brep edges list accessor.
     /// </summary>
-    public Rhino.Geometry.Collections.BrepEdgeList Edges
+    public Collections.BrepEdgeList Edges
     {
-      get { return m_edgelist ?? (m_edgelist = new Rhino.Geometry.Collections.BrepEdgeList(this)); }
+      get { return m_edgelist ?? (m_edgelist = new Collections.BrepEdgeList(this)); }
     }
 
-    Rhino.Geometry.Collections.BrepTrimList m_trimlist;
+    Collections.BrepTrimList m_trimlist;
     /// <summary>
     /// Gets the brep trims list accessor.
     /// </summary>
-    public Rhino.Geometry.Collections.BrepTrimList Trims
+    public Collections.BrepTrimList Trims
     {
-      get { return m_trimlist ?? (m_trimlist = new Rhino.Geometry.Collections.BrepTrimList(this)); }
+      get { return m_trimlist ?? (m_trimlist = new Collections.BrepTrimList(this)); }
     }
 
-    Rhino.Geometry.Collections.BrepLoopList m_looplist;
+    Collections.BrepLoopList m_looplist;
     /// <summary>
     /// Gets the brep loop list accessor.
     /// </summary>
-    public Rhino.Geometry.Collections.BrepLoopList Loops
+    public Collections.BrepLoopList Loops
     {
-      get { return m_looplist ?? (m_looplist = new Rhino.Geometry.Collections.BrepLoopList(this)); }
+      get { return m_looplist ?? (m_looplist = new Collections.BrepLoopList(this)); }
     }
 
-    Rhino.Geometry.Collections.BrepFaceList m_facelist;
+    Collections.BrepFaceList m_facelist;
     /// <summary>
     /// Gets the brep faces list accessor.
     /// </summary>
-    public Rhino.Geometry.Collections.BrepFaceList Faces
+    public Collections.BrepFaceList Faces
     {
-      get { return m_facelist ?? (m_facelist = new Rhino.Geometry.Collections.BrepFaceList(this)); }
+      get { return m_facelist ?? (m_facelist = new Collections.BrepFaceList(this)); }
     }
 
-    Rhino.Geometry.Collections.BrepCurveList m_C2;
+    Collections.BrepCurveList m_c2;
     /// <summary>
     /// Parameter space trimming curves (used by trims)
     /// </summary>
-    public Rhino.Geometry.Collections.BrepCurveList Curves2D
+    public Collections.BrepCurveList Curves2D
     {
-      get { return m_C2 ?? (m_C2 = new Collections.BrepCurveList(this, true)); }
+      get { return m_c2 ?? (m_c2 = new Collections.BrepCurveList(this, true)); }
     }
 
-    Rhino.Geometry.Collections.BrepCurveList m_C3;
+    Collections.BrepCurveList m_c3;
     /// <summary>
     /// Pointers to 3d curves (used by edges)
     /// </summary>
-    public Rhino.Geometry.Collections.BrepCurveList Curves3D
+    public Collections.BrepCurveList Curves3D
     {
-      get { return m_C3 ?? (m_C3 = new Collections.BrepCurveList(this, false)); }
+      get { return m_c3 ?? (m_c3 = new Collections.BrepCurveList(this, false)); }
     }
 
     /// <summary>
@@ -2776,8 +2703,8 @@ namespace Rhino.Geometry
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_BrepFace_SetIsReversed(pThis, value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_BrepFace_SetIsReversed(ptr_this, value);
       }
     }
 
@@ -3339,6 +3266,7 @@ namespace Rhino.Geometry
   class MeshHolder
   {
     readonly BrepFace m_face;
+    readonly Extrusion m_extrusion;
     readonly MeshType m_meshtype;
 
     public MeshHolder(BrepFace face, MeshType meshType)
@@ -3346,10 +3274,25 @@ namespace Rhino.Geometry
       m_face = face;
       m_meshtype = meshType;
     }
+    public MeshHolder(Extrusion extrusion, MeshType meshType)
+    {
+      m_extrusion = extrusion;
+      m_meshtype = meshType;
+    }
+
     public IntPtr MeshPointer()
     {
-      IntPtr ptr_const_brep = m_face.m_brep.ConstPointer();
-      return UnsafeNativeMethods.ON_BrepFace_Mesh(ptr_const_brep, m_face.m_index, (int)m_meshtype);
+      if (m_face != null)
+      {
+        IntPtr ptr_const_brep = m_face.m_brep.ConstPointer();
+        return UnsafeNativeMethods.ON_BrepFace_Mesh(ptr_const_brep, m_face.m_index, (int)m_meshtype);
+      }
+      if (m_extrusion != null)
+      {
+        IntPtr ptr_const_extrusion = m_extrusion.ConstPointer();
+        return UnsafeNativeMethods.ON_Extrusion_GetMesh(ptr_const_extrusion, (int)m_meshtype);
+      }
+      return IntPtr.Zero;
     }
   }
 

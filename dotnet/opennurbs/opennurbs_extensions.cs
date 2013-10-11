@@ -159,7 +159,7 @@ namespace Rhino.FileIO
       }
     }
 
-#if !MOBILE_BUILD
+#if !MOBILE_BUILD && !OPENNURBS_SDK
     /// <summary>
     /// Attempts to read the preview image out of a 3dm file.
     /// </summary>

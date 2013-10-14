@@ -362,11 +362,6 @@ function buildForiOS() {
 	cd build/Release-ios
 	lipo -create -output libopennurbs.a libopennurbs-i386.a libopennurbs-armv7.a libopennurbs-armv7s.a
 	printf "...Done\n";
-	printf " Removing Device-Specific Libs         "
-	rm libopennurbs-i386.a
-	rm libopennurbs-armv7.a
-	rm libopennurbs-armv7s.a
-	printf "...Done\n";
 	cd ../..
 	
 	did_build_ios_successfully=true;
@@ -377,7 +372,7 @@ function androidFinishedMessage () {
 }
 
 function iOSFinishedMessage () {
-	echo "STATUS: iOS Build Complete.  libopennurbs.a is in build/Release-ios"
+	echo "STATUS: iOS Build Complete.  Libraries are in build/Release-ios"
 }
 
 function help () {

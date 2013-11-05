@@ -188,3 +188,6 @@
 /c/rh_uifile.cpp
 /examples/rhino3dmio/example_read/bin
 /examples/rhino3dmio/example_read/obj
+/c/build/
+/c/obj/
+/c/libs/

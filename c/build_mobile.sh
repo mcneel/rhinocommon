@@ -20,6 +20,7 @@ did_build_android_successfully=false;
 function checkAndroid () {
 	echo ""
 	echo "Android Pre-build check-----------------------------------------"
+	openNURBSCheck
 	jniCheck
 	ndkCheck
 	

@@ -1,7 +1,9 @@
 *.userprefs
 *.DS_Store
+*.swp
 
 /Debug
+/Release
 /Rhino3dmIo.sdf
 /Rhino3dmIo.opensdf
 /Rhino3dmIo.suo
@@ -191,3 +193,10 @@
 /c/build/
 /c/obj/
 /c/libs/
+
+nuget/nupkg_x86/lib/net40/*.dll
+nuget/nupkg_x86/NativeBinaries/x86/*.dll
+nuget/nupkg_x86/*.nupkg
+nuget/nupkg_x64/lib/net40/*.dll
+nuget/nupkg_x64/NativeBinaries/x64/*.dll
+nuget/nupkg_x64/*.nupkg

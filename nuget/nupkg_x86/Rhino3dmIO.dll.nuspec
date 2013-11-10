@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Rhino3dmIO.dll-x86-Windows</id>
+    <version>5.1.30000.10</version>
+    <authors>McNeel</authors>
+    <owners>McNeel</owners>
+    <licenseUrl>https://github.com/mcneel/rhinocommon#legal-stuff</licenseUrl>
+    <projectUrl>https://github.com/mcneel/rhinocommon</projectUrl>
+    <iconUrl>http://wiki.mcneel.com/_media/rhino_discourse_small.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Rhino3dmIO.  An Open NURBS library for your standalone .Net projects</description>
+    <releaseNotes>Rhino3dmIO.  An Open NURBS library for your standalone .Net projects</releaseNotes>
+    <tags>Rhino 3D open NURBS</tags>
+  </metadata>
+  <files>
+    <file src="lib\net40\Rhino3dmIO.dll" target="lib\net40\Rhino3dmIO.dll" />
+    <file src="NativeBinaries\x86\rhino3dmio_native.dll" target="NativeBinaries\x86\rhino3dmio_native.dll" />
+    <file src="Tools\net40\Install.ps1" target="Tools\net40\Install.ps1" />
+    <file src="Tools\net40\Uninstall.ps1" target="Tools\net40\Uninstall.ps1" />
+    <file src="LegalStuff.rtf" target="LegalStuff.rtf" />
+  </files>
+</package>

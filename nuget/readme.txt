@@ -1,7 +1,13 @@
 How to build, pack, and push (to nuget.org) Rhino3dmIO NuGet packages
 ---------------------------------------------------------------------
+note: only tested in VS 2010
 
 1) Build the Rhino3dmIO solution as described here: https://github.com/mcneel/rhinocommon/wiki/Rhino3dmIO-Toolkit-(OpenNURBS-build)
+    - select the menu: Build -> Configuration Manager (and build solution)
+        Active solution configuration = Release
+        Active solution platform = x86
+    - change Active solution platform to x64 and repeat.
+    note: this creates the .Net assemblies and native dlls and copies them in the right location for both 32bit and 64bit packages. 
 
 2) Open a command window in the directory where this file resides. (rhinocommon/nuget)
 

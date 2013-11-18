@@ -110,6 +110,7 @@
     <Compile Include="ex_conduitarrowheads.vb" />
     <Compile Include="ex_createblock.vb" />
     <Compile Include="ex_curveboundingbox.vb" />
+    <Compile Include="ex_curveclosestpoint.vb" />
     <Compile Include="ex_customundo.vb" />
     <Compile Include="ex_dividebylength.vb" />
     <Compile Include="ex_drawoverlay.vb" />

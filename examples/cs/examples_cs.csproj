@@ -100,6 +100,7 @@
     <Compile Include="ex_circlecenter.cs" />
     <Compile Include="ex_closestpoint.cs" />
     <Compile Include="ex_commandlineoptions.cs" />
+    <Compile Include="ex_conduitarrowheads.cs" />
     <Compile Include="ex_createblock.cs" />
     <Compile Include="ex_curveboundingbox.cs" />
     <Compile Include="ex_custompython.cs" />

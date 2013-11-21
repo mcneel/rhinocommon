@@ -1,0 +1,118 @@
+===== projectpointstobreps =====
+
+===== C# =====
+<code c#>
+[System.Runtime.InteropServices.Guid("B4B659D8-DAA0-4970-8149-E4D5C2CF99B7")]
+public class ex_projectpointstobreps : Rhino.Commands.Command
+{
+  public override string EnglishName { get { return "csProjPtsToBreps"; } }
+
+  protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+  {
+    var gs = new Rhino.Input.Custom.GetObject();
+    gs.SetCommandPrompt("select surface");
+    gs.GeometryFilter = Rhino.DocObjects.ObjectType.Surface | Rhino.DocObjects.ObjectType.PolysrfFilter;
+    gs.DisablePreSelect();
+    gs.SubObjectSelect = false;
+    gs.Get();
+    if (gs.CommandResult() != Result.Success)
+      return gs.CommandResult();
+    var brep = gs.Object(0).Brep();
+    if (brep == null)
+      return Result.Failure;
+
+    var pts = Rhino.Geometry.Intersect.Intersection.ProjectPointsToBreps(
+                new List<Brep> {brep}, // brep on which to project
+                new List<Point3d> {new Point3d(0, 0, 0), new Point3d(3,0,3), new Point3d(-2,0,-2)}, // some random points to project
+                new Vector3d(0, 1, 0), // project on Y axis
+                doc.ModelAbsoluteTolerance);
+
+    if (pts != null && pts.Length > 0)
+    {
+      foreach (var pt in pts)
+      {
+        doc.Objects.AddPoint(pt);
+      }
+    }
+    doc.Views.Redraw();
+    return Rhino.Commands.Result.Success;
+  }
+}
+</code>
+===== VB.NET =====
+<code vb>
+<System.Runtime.InteropServices.Guid("4200CA00-D0C4-406E-A58F-BA185FC2A4A9")> _
+Public Class ex_projectpointstobreps
+  Inherits Rhino.Commands.Command
+  Public Overrides ReadOnly Property EnglishName() As String
+    Get
+      Return "vbProjPtsToBreps"
+    End Get
+  End Property
+
+  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
+    Dim gs = New Rhino.Input.Custom.GetObject()
+    gs.SetCommandPrompt("select surface")
+    gs.GeometryFilter = Rhino.DocObjects.ObjectType.Surface Or Rhino.DocObjects.ObjectType.PolysrfFilter
+    gs.DisablePreSelect()
+    gs.SubObjectSelect = False
+    gs.[Get]()
+    If gs.CommandResult() <> Result.Success Then
+      Return gs.CommandResult()
+    End If
+    Dim brep = gs.[Object](0).Brep()
+    If brep Is Nothing Then
+      Return Result.Failure
+    End If
+
+    ' brep on which to project
+    ' some random points to project
+    ' project on Y axis
+    Dim pts = Rhino.Geometry.Intersect.Intersection.ProjectPointsToBreps(New List(Of Brep)() From { _
+     brep _
+    }, New List(Of Point3d)() From { _
+     New Point3d(0, 0, 0), _
+     New Point3d(3, 0, 3), _
+     New Point3d(-2, 0, -2) _
+    }, New Vector3d(0, 1, 0), doc.ModelAbsoluteTolerance)
+
+    If pts IsNot Nothing AndAlso pts.Length > 0 Then
+      For Each pt As Point3d In pts
+        doc.Objects.AddPoint(pt)
+      Next
+    End If
+    doc.Views.Redraw()
+    Return Rhino.Commands.Result.Success
+  End Function
+End Class
+d Namespace
+</code>
+===== Python =====
+<code python>
+import rhinoscriptsyntax as rs
+from scriptcontext import *
+from Rhino.Geometry import *
+
+def RunCommand():
+  srfid = rs.GetObject("select surface", rs.filter.surface | rs.filter.polysurface)
+  if not srfid: return
+  brep = rs.coercebrep(srfid)
+  if not brep: return
+  
+  pts = Intersect.Intersection.ProjectPointsToBreps(
+      [brep], # brep on which to project
+      [Point3d(0, 0, 0), Point3d(3,0,3), Point3d(-2,0,-2)], # points to project
+      Vector3d(0, 1, 0), # project on Y axis
+      doc.ModelAbsoluteTolerance)
+
+  if pts != None and pts.Length > 0:
+    for pt in pts:
+      doc.Objects.AddPoint(pt)
+
+  doc.Views.Redraw()
+
+if __name__ == "__main__":
+    RunCommand()
+</code>
+
+{{tag>Developer rhinocommon}}

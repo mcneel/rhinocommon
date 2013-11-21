@@ -1,0 +1,92 @@
+===== curvereverse =====
+
+===== C# =====
+<code c#>
+[System.Runtime.InteropServices.Guid("B2BD61F7-FFB8-46CA-A03D-92F4811C0D98")]
+public class ex_curvereverse : Rhino.Commands.Command
+{
+  public override string EnglishName { get { return "csReverseCurve"; } }
+
+  protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+  {
+    Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject();
+    go.SetCommandPrompt("Select curves to reverse");
+    go.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
+    go.GetMultiple(1, 0);
+    if (go.CommandResult() != Rhino.Commands.Result.Success)
+      return go.CommandResult();
+
+    for (int i = 0; i < go.ObjectCount; i++)
+    {
+      var objRef = go.Object(i);
+      var crv = objRef.Curve();
+      var dup = crv.DuplicateCurve();
+      if (dup != null)
+      {
+        dup.Reverse();
+        doc.Objects.Replace(objRef, dup);
+      }
+    }      
+
+    return Rhino.Commands.Result.Success;
+  }
+}
+</code>
+===== VB.NET =====
+<code vb>
+<System.Runtime.InteropServices.Guid("26167F88-527C-44BB-BD71-4371144D5992")> _
+Public Class ex_curvereverse
+  Inherits Rhino.Commands.Command
+  Public Overrides ReadOnly Property EnglishName() As String
+    Get
+      Return "vbReverseCurve"
+    End Get
+  End Property
+
+  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
+    Dim go As New Rhino.Input.Custom.GetObject()
+    go.SetCommandPrompt("Select curves to reverse")
+    go.GeometryFilter = Rhino.DocObjects.ObjectType.Curve
+    go.GetMultiple(1, 0)
+    If go.CommandResult() <> Rhino.Commands.Result.Success Then
+      Return go.CommandResult()
+    End If
+
+    For i As Integer = 0 To go.ObjectCount - 1
+      Dim objRef = go.[Object](i)
+      Dim crv = objRef.Curve()
+      Dim dup = crv.DuplicateCurve()
+      If dup IsNot Nothing Then
+        dup.Reverse()
+        doc.Objects.Replace(objRef, dup)
+      End If
+    Next
+
+    Return Rhino.Commands.Result.Success
+  End Function
+End Class
+d Namespace
+</code>
+===== Python =====
+<code python>
+import rhinoscriptsyntax as rs
+from scriptcontext import *
+import Rhino
+
+def ReverseCurves():
+    crvs = rs.GetObjects("Select curves to reverse", rs.filter.curve)
+    if not crvs: return
+    
+    for crvid in crvs:
+        crv = rs.coercecurve(crvid)
+        if not crv: continue
+        dup = crv.DuplicateCurve()
+        if dup:
+            dup.Reverse()
+        doc.Objects.Replace(crvid, dup)
+
+if __name__ == "__main__":
+    ReverseCurves()
+</code>
+
+{{tag>Developer rhinocommon}}

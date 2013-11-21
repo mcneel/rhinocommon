@@ -54,6 +54,10 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="RhinoCommon">
+      <HintPath>..\..\..\..\..\Program Files\Rhinoceros 5.0 (64-bit)\System\RhinoCommon.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -102,14 +106,19 @@
     <Compile Include="ex_commandlineoptions.cs" />
     <Compile Include="ex_conduitarrowheads.cs" />
     <Compile Include="ex_createblock.cs" />
+    <Compile Include="ex_crvdeviation.cs" />
     <Compile Include="ex_curveboundingbox.cs" />
     <Compile Include="ex_curveclosestpoint.cs" />
+    <Compile Include="ex_curvereverse.cs" />
+    <Compile Include="ex_curvesurfaceintersect.cs" />
+    <Compile Include="ex_customgeometryfilter.cs" />
     <Compile Include="ex_custompython.cs" />
     <Compile Include="ex_customundo.cs" />
     <Compile Include="ex_dividebylength.cs" />
     <Compile Include="ex_drawoverlay.cs" />
     <Compile Include="ex_dupborder.cs" />
     <Compile Include="ex_edittext.cs" />
+    <Compile Include="ex_evnormal.cs" />
     <Compile Include="ex_explodehatch.cs" />
     <Compile Include="ex_findobjectsbyname.cs" />
     <Compile Include="ex_constrainedcopy.cs" />
@@ -122,12 +131,14 @@
     <Compile Include="ex_intersectlines.cs" />
     <Compile Include="ex_isbrepbox.cs" />
     <Compile Include="ex_isocurvedensity.cs" />
+    <Compile Include="ex_loft.cs" />
     <Compile Include="ex_movecplane.cs" />
     <Compile Include="ex_nestedblock.cs" />
     <Compile Include="ex_objectdecoration.cs" />
     <Compile Include="ex_objectdisplaymode.cs" />
     <Compile Include="ex_objectlayer.cs" />
     <Compile Include="ex_orientonsrf.cs" />
+    <Compile Include="ex_projectpointstobreps.cs" />
     <Compile Include="ex_sellayer.cs" />
     <Compile Include="ex_showsurfacedirection.cs" />
     <Compile Include="ex_spritedrawing.cs" />
@@ -182,13 +193,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\dotnet\RhinoCommon.csproj">
-      <Project>{ED38373E-290C-4BDE-ACBA-1601484E582A}</Project>
-      <Name>RhinoCommon</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="OptionsControl.resx">

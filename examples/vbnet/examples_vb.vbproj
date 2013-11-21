@@ -60,6 +60,10 @@
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RhinoCommon">
+      <HintPath>..\..\..\..\..\Program Files\Rhinoceros 5.0 (64-bit)\System\RhinoCommon.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -109,13 +113,18 @@
     <Compile Include="ex_commandlineoptions.vb" />
     <Compile Include="ex_conduitarrowheads.vb" />
     <Compile Include="ex_createblock.vb" />
+    <Compile Include="ex_crvdeviation.vb" />
     <Compile Include="ex_curveboundingbox.vb" />
     <Compile Include="ex_curveclosestpoint.vb" />
+    <Compile Include="ex_curvereverse.vb" />
+    <Compile Include="ex_curvesurfaceintersect.vb" />
+    <Compile Include="ex_customgeometryfilter.vb" />
     <Compile Include="ex_customundo.vb" />
     <Compile Include="ex_dividebylength.vb" />
     <Compile Include="ex_drawoverlay.vb" />
     <Compile Include="ex_dupborder.vb" />
     <Compile Include="ex_edittext.vb" />
+    <Compile Include="ex_evnormal.vb" />
     <Compile Include="ex_explodehatch.vb" />
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_constrainedcopy.vb" />
@@ -127,11 +136,13 @@
     <Compile Include="ex_intersectlines.vb" />
     <Compile Include="ex_isbrepbox.vb" />
     <Compile Include="ex_isocurvedensity.vb" />
+    <Compile Include="ex_loft.vb" />
     <Compile Include="ex_movecplane.vb" />
     <Compile Include="ex_objectdecoration.vb" />
     <Compile Include="ex_objectdisplaymode.vb" />
     <Compile Include="ex_objectlayer.vb" />
     <Compile Include="ex_orientonsrf.vb" />
+    <Compile Include="ex_projectpointstobreps.vb" />
     <Compile Include="ex_sellayer.vb" />
     <Compile Include="ex_sweep1.vb" />
     <Compile Include="ex_transformbrep.vb" />
@@ -200,13 +211,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\dotnet\RhinoCommon.csproj">
-      <Project>{ED38373E-290C-4BDE-ACBA-1601484E582A}</Project>
-      <Name>RhinoCommon</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\MyIcon.ico" />

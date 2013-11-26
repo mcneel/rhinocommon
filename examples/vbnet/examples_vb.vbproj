@@ -124,6 +124,7 @@
     <Compile Include="ex_drawoverlay.vb" />
     <Compile Include="ex_dupborder.vb" />
     <Compile Include="ex_edittext.vb" />
+    <Compile Include="ex_elevation.vb" />
     <Compile Include="ex_evnormal.vb" />
     <Compile Include="ex_explodehatch.vb" />
     <Compile Include="ex_findobjectsbyname.vb" />
@@ -142,6 +143,7 @@
     <Compile Include="ex_objectdisplaymode.vb" />
     <Compile Include="ex_objectlayer.vb" />
     <Compile Include="ex_orientonsrf.vb" />
+    <Compile Include="ex_pickobjects.vb" />
     <Compile Include="ex_projectpointstobreps.vb" />
     <Compile Include="ex_sellayer.vb" />
     <Compile Include="ex_sweep1.vb" />

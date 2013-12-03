@@ -38,7 +38,7 @@ Namespace examples_vb
       ' only closed curves
       Dim gcc = New Rhino.Input.Custom.GetObject()
       gcc.SetCommandPrompt("select closed curve")
-      gc.GeometryFilter = Rhino.DocObjects.ObjectType.Curve
+      gcc.GeometryFilter = Rhino.DocObjects.ObjectType.Curve
       gcc.GeometryAttributeFilter = GeometryAttributeFilter.ClosedCurve
       ' simple filter
       gcc.DisablePreSelect()

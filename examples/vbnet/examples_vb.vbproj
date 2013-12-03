@@ -60,6 +60,8 @@
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="RhinoCommon">
       <HintPath>..\..\..\..\..\Program Files\Rhinoceros 5.0 (64-bit)\System\RhinoCommon.dll</HintPath>
       <Private>False</Private>
@@ -67,6 +69,8 @@
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -127,6 +131,7 @@
     <Compile Include="ex_elevation.vb" />
     <Compile Include="ex_evnormal.vb" />
     <Compile Include="ex_explodehatch.vb" />
+    <Compile Include="ex_extractthumbnail.vb" />
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_constrainedcopy.vb" />
     <Compile Include="ex_gumball.vb" />
@@ -137,7 +142,9 @@
     <Compile Include="ex_intersectlines.vb" />
     <Compile Include="ex_isbrepbox.vb" />
     <Compile Include="ex_isocurvedensity.vb" />
+    <Compile Include="ex_leader.vb" />
     <Compile Include="ex_loft.vb" />
+    <Compile Include="ex_meshdrawing.vb" />
     <Compile Include="ex_movecplane.vb" />
     <Compile Include="ex_objectdecoration.vb" />
     <Compile Include="ex_objectdisplaymode.vb" />

@@ -33,7 +33,7 @@ namespace examples_cs
       // only closed curves
       var gcc = new Rhino.Input.Custom.GetObject();
       gcc.SetCommandPrompt("select closed curve");
-      gc.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
+      gcc.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
       gcc.GeometryAttributeFilter = GeometryAttributeFilter.ClosedCurve;
       gcc.DisablePreSelect();
       gcc.SubObjectSelect = false;

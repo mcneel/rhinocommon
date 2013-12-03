@@ -114,13 +114,16 @@
     <Compile Include="ex_customgeometryfilter.cs" />
     <Compile Include="ex_custompython.cs" />
     <Compile Include="ex_customundo.cs" />
+    <Compile Include="ex_displayconduit.cs" />
     <Compile Include="ex_dividebylength.cs" />
+    <Compile Include="ex_dotneteventwatcher.cs" />
     <Compile Include="ex_drawoverlay.cs" />
     <Compile Include="ex_dupborder.cs" />
     <Compile Include="ex_edittext.cs" />
     <Compile Include="ex_elevation.cs" />
     <Compile Include="ex_evnormal.cs" />
     <Compile Include="ex_explodehatch.cs" />
+    <Compile Include="ex_extractthumbnail.cs" />
     <Compile Include="ex_findobjectsbyname.cs" />
     <Compile Include="ex_constrainedcopy.cs" />
     <Compile Include="ex_getmultiplewithoptions.cs" />
@@ -132,7 +135,9 @@
     <Compile Include="ex_intersectlines.cs" />
     <Compile Include="ex_isbrepbox.cs" />
     <Compile Include="ex_isocurvedensity.cs" />
+    <Compile Include="ex_leader.cs" />
     <Compile Include="ex_loft.cs" />
+    <Compile Include="ex_meshdrawing.cs" />
     <Compile Include="ex_movecplane.cs" />
     <Compile Include="ex_nestedblock.cs" />
     <Compile Include="ex_objectdecoration.cs" />
@@ -141,6 +146,7 @@
     <Compile Include="ex_orientonsrf.cs" />
     <Compile Include="ex_pickobjects.cs" />
     <Compile Include="ex_projectpointstobreps.cs" />
+    <Compile Include="ex_rhinogettransform.cs" />
     <Compile Include="ex_sellayer.cs" />
     <Compile Include="ex_showsurfacedirection.cs" />
     <Compile Include="ex_spritedrawing.cs" />

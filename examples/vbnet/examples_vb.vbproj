@@ -151,6 +151,8 @@
     <Compile Include="ex_objectlayer.vb" />
     <Compile Include="ex_orientonsrf.vb" />
     <Compile Include="ex_pickobjects.vb" />
+    <Compile Include="ex_printinstancedefinitions.vb" />
+    <Compile Include="ex_printinstancedefinitiontree.vb" />
     <Compile Include="ex_projectpointstobreps.vb" />
     <Compile Include="ex_sellayer.vb" />
     <Compile Include="ex_sweep1.vb" />

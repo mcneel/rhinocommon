@@ -1,0 +1,166 @@
+===== printinstancedefinitiontree =====
+
+===== C# =====
+<code c#>
+[System.Runtime.InteropServices.Guid("7C98E0BC-C177-46E1-A9AE-092C63911450")]
+public class ex_printinstancedefinitiontree : Rhino.Commands.Command
+{
+  public override string EnglishName { get { return "csInstanceDefinitionTree"; } }
+
+  protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+  {
+    var idefs = doc.InstanceDefinitions;
+    var idefCount = idefs.Count;
+
+    if (idefCount == 0)
+    {
+      RhinoApp.WriteLine("Document contains no instance definitions.");
+      return Rhino.Commands.Result.Nothing;
+    }
+
+    var dump = new TextLog();
+    dump.IndentSize = 4;
+
+    for (int i = 0; i < idefCount; i++)
+      DumpInstanceDefinition(idefs[i], ref dump, true);
+
+    RhinoApp.WriteLine(dump.ToString());
+
+    return Rhino.Commands.Result.Success;
+  }
+
+  private void DumpInstanceDefinition(InstanceDefinition idef, ref TextLog dump, bool bRoot)
+  {
+    if (idef != null && !idef.IsDeleted)
+    {
+      string node;
+      if (bRoot)
+        node = "\u2500";
+      else
+        node = "\u2514";
+      dump.Print(String.Format("{0} Instance definition {1} = {2}\n", node, idef.Index, idef.Name));
+
+      int idefObjectCount = idef.ObjectCount;
+      if (idefObjectCount  > 0)
+      {
+        dump.PushIndent();
+        for (int i = 0; i < idefObjectCount ; i++)
+        {
+          var obj = idef.Object(i);
+          if (obj != null && obj is InstanceObject)
+            DumpInstanceDefinition((obj as InstanceObject).InstanceDefinition, ref dump, false); // Recursive...
+          else
+            dump.Print(String.Format("\u2514 Object {0} = {1}\n", i, obj.ShortDescription(false)));
+        }
+        dump.PopIndent();
+      }
+    }
+  }
+}
+</code>
+===== VB.NET =====
+<code vb>
+<System.Runtime.InteropServices.Guid("03528527-2752-4CE0-B7DA-7872AD3F0151")> _
+Public Class ex_printinstancedefinitiontree
+  Inherits Rhino.Commands.Command
+  Public Overrides ReadOnly Property EnglishName() As String
+    Get
+      Return "vbInstanceDefinitionTree"
+    End Get
+  End Property
+
+  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
+    Dim idefs = doc.InstanceDefinitions
+    Dim idefCount = idefs.Count
+
+    If idefCount = 0 Then
+      RhinoApp.WriteLine("Document contains no instance definitions.")
+      Return Rhino.Commands.Result.[Nothing]
+    End If
+
+    Dim dump = New TextLog()
+    dump.IndentSize = 4
+
+    For i As Integer = 0 To idefCount - 1
+      DumpInstanceDefinition(idefs(i), dump, True)
+    Next
+
+    RhinoApp.WriteLine(dump.ToString())
+
+    Return Rhino.Commands.Result.Success
+  End Function
+
+  Private Sub DumpInstanceDefinition(idef As InstanceDefinition, ByRef dump As TextLog, bRoot As Boolean)
+    If idef IsNot Nothing AndAlso Not idef.IsDeleted Then
+      Dim node As String
+      If bRoot Then
+        node = "─"
+      Else
+        node = "└"
+      End If
+      dump.Print([String].Format("{0} Instance definition {1} = {2}" & vbLf, node, idef.Index, idef.Name))
+
+      Dim idefObjectCount As Integer = idef.ObjectCount
+      If idefObjectCount > 0 Then
+        dump.PushIndent()
+        For i As Integer = 0 To idefObjectCount - 1
+          Dim obj = idef.[Object](i)
+          If obj IsNot Nothing AndAlso TypeOf obj Is InstanceObject Then
+            DumpInstanceDefinition(TryCast(obj, InstanceObject).InstanceDefinition, dump, False)
+          Else
+            ' Recursive...
+            dump.Print([String].Format("└ Object {0} = {1}" & vbLf, i, obj.ShortDescription(False)))
+          End If
+        Next
+        dump.PopIndent()
+      End If
+    End If
+  End Sub
+End Class
+d Namespace
+</code>
+===== Python =====
+<code python>
+from scriptcontext import doc
+import Rhino
+
+def RunCommand():
+  idefs = doc.InstanceDefinitions
+  idefCount = idefs.Count
+
+  if idefCount == 0:
+    print "Document contains no instance definitions."
+    return
+
+  dump = Rhino.FileIO.TextLog()
+  dump.IndentSize = 4
+
+  for i in range(0, idefCount):
+    DumpInstanceDefinition(idefs[i], dump, True)
+
+  print dump.ToString()
+
+def DumpInstanceDefinition(idef, dump, bRoot):
+  if idef != None and not idef.IsDeleted:
+    if bRoot:
+      node = u'\u2500'
+    else:
+      node = u'\u2514'
+    dump.Print(u"{0} Instance definition {1} = {2}\n".format(node, idef.Index, idef.Name))
+
+    idefObjectCount = idef.ObjectCount
+    if idefObjectCount  > 0:
+      dump.PushIndent()
+      for i in range(0, idefObjectCount):
+        obj = idef.Object(i)
+        if obj != None and type(obj) == Rhino.DocObjects.InstanceObject:
+          DumpInstanceDefinition(obj.InstanceDefinition, dump, False) # Recursive...
+        else:
+          dump.Print(u"\u2514 Object {0} = {1}\n".format(i, obj.ShortDescription(False)))
+      dump.PopIndent()
+
+if __name__ == "__main__":
+  RunCommand()
+</code>
+
+{{tag>Developer rhinocommon}}

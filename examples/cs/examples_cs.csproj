@@ -151,7 +151,6 @@
     <Compile Include="ex_printinstancedefinitiontree.cs" />
     <Compile Include="ex_projectpointstobreps.cs" />
     <Compile Include="ex_renameblock.cs" />
-    <Compile Include="ex_rhinogettransform.cs" />
     <Compile Include="ex_sellayer.cs" />
     <Compile Include="ex_showsurfacedirection.cs" />
     <Compile Include="ex_spritedrawing.cs" />

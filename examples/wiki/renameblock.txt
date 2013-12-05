@@ -1,0 +1,145 @@
+===== renameblock =====
+
+===== C# =====
+<code c#>
+[System.Runtime.InteropServices.Guid("76B20E41-A462-4C75-8FCC-4E07AE5E14BB")]
+public class ex_renameblock : Rhino.Commands.Command
+{
+  public override string EnglishName { get { return "csRenameInstanceDefinition"; } }
+
+  protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+  {
+    // Get the name of the instance definition to rename
+    string idefName = "";
+    var rc = Rhino.Input.RhinoGet.GetString("Name of block to rename", true, ref idefName);
+    if (rc != Rhino.Commands.Result.Success)
+      return rc;
+    if (String.IsNullOrWhiteSpace(idefName))
+      return Rhino.Commands.Result.Nothing;
+   
+    // Verify instance definition exists
+    var idef = doc.InstanceDefinitions.Find(idefName, true);
+    if (idef == null) {
+      RhinoApp.WriteLine(String.Format("Block \"{0}\" not found.", idefName));
+      return Rhino.Commands.Result.Nothing;
+    }
+
+    // Verify instance definition is rename-able
+    if (idef.IsDeleted || idef.IsReference) {
+      RhinoApp.WriteLine(String.Format("Unable to rename block \"{0}\".", idefName));
+      return Rhino.Commands.Result.Nothing;
+    }
+   
+    // Get the new instance definition name
+    string idefNewName = "";
+    rc = Rhino.Input.RhinoGet.GetString("Name of block to rename", true, ref idefNewName);
+    if (rc != Rhino.Commands.Result.Success)
+      return rc;
+    if (String.IsNullOrWhiteSpace(idefNewName))
+      return Rhino.Commands.Result.Nothing;
+
+    // Verify the new instance definition name is not already in use
+    var existingIdef = doc.InstanceDefinitions.Find(idefNewName, true);
+    if (existingIdef != null && !existingIdef.IsDeleted) {
+      RhinoApp.WriteLine(String.Format("Block \"{0}\" already exists.", existingIdef));
+      return Rhino.Commands.Result.Nothing;
+    }
+   
+    // change the block name
+    if (!doc.InstanceDefinitions.Modify(idef.Index, idefNewName, idef.Description, true)) {
+      RhinoApp.WriteLine(String.Format("Could not rename {0} to {1}", idef.Name, idefNewName));
+      return Rhino.Commands.Result.Failure;
+    }
+
+    return Rhino.Commands.Result.Success;
+  }
+}
+</code>
+===== VB.NET =====
+<code vb>
+<System.Runtime.InteropServices.Guid("FF8C0F4C-36A4-4CF8-BF17-199E98C97383")> _
+Public Class ex_renameblock
+  Inherits Rhino.Commands.Command
+  Public Overrides ReadOnly Property EnglishName() As String
+    Get
+      Return "vbRenameInstanceDefinition"
+    End Get
+  End Property
+
+  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
+    ' Get the name of the instance definition to rename
+    Dim idefName As String = ""
+    Dim rc = Rhino.Input.RhinoGet.GetString("Name of block to rename", True, idefName)
+    If rc <> Rhino.Commands.Result.Success Then
+      Return rc
+    End If
+    If [String].IsNullOrWhiteSpace(idefName) Then
+      Return Rhino.Commands.Result.[Nothing]
+    End If
+
+    ' Verify instance definition exists
+    Dim idef = doc.InstanceDefinitions.Find(idefName, True)
+    If idef Is Nothing Then
+      RhinoApp.WriteLine([String].Format("Block ""{0}"" not found.", idefName))
+      Return Rhino.Commands.Result.[Nothing]
+    End If
+
+    ' Verify instance definition is rename-able
+    If idef.IsDeleted OrElse idef.IsReference Then
+      RhinoApp.WriteLine([String].Format("Unable to rename block ""{0}"".", idefName))
+      Return Rhino.Commands.Result.[Nothing]
+    End If
+
+    ' Get the new instance definition name
+    Dim idefNewName As String = ""
+    rc = Rhino.Input.RhinoGet.GetString("Name of block to rename", True, idefNewName)
+    If rc <> Rhino.Commands.Result.Success Then
+      Return rc
+    End If
+    If [String].IsNullOrWhiteSpace(idefNewName) Then
+      Return Rhino.Commands.Result.[Nothing]
+    End If
+
+    ' Verify the new instance definition name is not already in use
+    Dim existingIdef = doc.InstanceDefinitions.Find(idefNewName, True)
+    If existingIdef IsNot Nothing AndAlso Not existingIdef.IsDeleted Then
+      RhinoApp.WriteLine([String].Format("Block ""{0}"" already exists.", existingIdef))
+      Return Rhino.Commands.Result.[Nothing]
+    End If
+
+    ' change the block name
+    If Not doc.InstanceDefinitions.Modify(idef.Index, idefNewName, idef.Description, True) Then
+      RhinoApp.WriteLine([String].Format("Could not rename {0} to {1}", idef.Name, idefNewName))
+      Return Rhino.Commands.Result.Failure
+    End If
+
+    Return Rhino.Commands.Result.Success
+  End Function
+End Class
+d Namespace
+</code>
+===== Python =====
+<code python>
+import rhinoscriptsyntax as rs
+from scriptcontext import doc
+
+def Rename():
+    bn = rs.GetString("block to rename")
+    idef = doc.InstanceDefinitions.Find(bn, True)
+    if not idef: 
+        print "{0} block does not exist".format(bn)
+        return
+    
+    nn = rs.GetString("new name")
+    idef = doc.InstanceDefinitions.Find(nn, True)
+    if idef: 
+        print "the name '{0}' is already taken by another block".format(nn)
+        return
+
+    rs.RenameBlock(bn, nn)
+    
+if __name__ == "__main__":
+    Rename()
+</code>
+
+{{tag>Developer rhinocommon}}

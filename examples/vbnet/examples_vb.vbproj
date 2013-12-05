@@ -119,11 +119,13 @@
     <Compile Include="ex_createblock.vb" />
     <Compile Include="ex_crvdeviation.vb" />
     <Compile Include="ex_curveboundingbox.vb" />
+    <Compile Include="ex_curvebrepbox.vb" />
     <Compile Include="ex_curveclosestpoint.vb" />
     <Compile Include="ex_curvereverse.vb" />
     <Compile Include="ex_curvesurfaceintersect.vb" />
     <Compile Include="ex_customgeometryfilter.vb" />
     <Compile Include="ex_customundo.vb" />
+    <Compile Include="ex_deleteblock.vb" />
     <Compile Include="ex_dividebylength.vb" />
     <Compile Include="ex_drawoverlay.vb" />
     <Compile Include="ex_dupborder.vb" />
@@ -154,11 +156,13 @@
     <Compile Include="ex_printinstancedefinitions.vb" />
     <Compile Include="ex_printinstancedefinitiontree.vb" />
     <Compile Include="ex_projectpointstobreps.vb" />
+    <Compile Include="ex_renameblock.vb" />
     <Compile Include="ex_sellayer.vb" />
     <Compile Include="ex_sweep1.vb" />
     <Compile Include="ex_transformbrep.vb" />
     <Compile Include="ex_unrollsurface.vb" />
     <Compile Include="ex_unrollsurface2.vb" />
+    <Compile Include="ex_viewportresolution.vb" />
     <Compile Include="ex_zoomtoobject.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">

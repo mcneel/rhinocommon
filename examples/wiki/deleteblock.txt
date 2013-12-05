@@ -1,0 +1,107 @@
+===== deleteblock =====
+
+===== C# =====
+<code c#>
+[System.Runtime.InteropServices.Guid("E0699E15-C801-4FC9-AE0A-17B5B9168CD0")]
+public class ex_deleteblock : Rhino.Commands.Command
+{
+  public override string EnglishName { get { return "csDeleteInstanceDefinition"; } }
+
+  protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+  {
+    // Get the name of the instance definition to rename
+    string idefName = "";
+    var rc = Rhino.Input.RhinoGet.GetString("Name of block to delete", true, ref idefName);
+    if (rc != Rhino.Commands.Result.Success)
+      return rc;
+    if (String.IsNullOrWhiteSpace(idefName))
+      return Rhino.Commands.Result.Nothing;
+   
+    // Verify instance definition exists
+    var idef = doc.InstanceDefinitions.Find(idefName, true);
+    if (idef == null) {
+      RhinoApp.WriteLine(String.Format("Block \"{0}\" not found.", idefName));
+      return Rhino.Commands.Result.Nothing;
+    }
+
+    // Verify instance definition can be deleted
+    if (idef.IsReference) {
+      RhinoApp.WriteLine(String.Format("Unable to delete block \"{0}\".", idefName));
+      return Rhino.Commands.Result.Nothing;
+    }
+
+    // delete block and all references
+    if (!doc.InstanceDefinitions.Delete(idef.Index, true, true)) {
+      RhinoApp.WriteLine(String.Format("Could not delete {0} block", idef.Name));
+      return Rhino.Commands.Result.Failure;
+    }
+
+    return Rhino.Commands.Result.Success;
+  }
+}
+</code>
+===== VB.NET =====
+<code vb>
+<System.Runtime.InteropServices.Guid("D232D930-7C77-4FE4-9D9D-077748A474A6")> _
+Public Class ex_deleteblock
+  Inherits Rhino.Commands.Command
+  Public Overrides ReadOnly Property EnglishName() As String
+    Get
+      Return "vbDeleteInstanceDefinition"
+    End Get
+  End Property
+
+  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
+    ' Get the name of the instance definition to rename
+    Dim idefName As String = ""
+    Dim rc = Rhino.Input.RhinoGet.GetString("Name of block to delete", True, idefName)
+    If rc <> Rhino.Commands.Result.Success Then
+      Return rc
+    End If
+    If [String].IsNullOrWhiteSpace(idefName) Then
+      Return Rhino.Commands.Result.[Nothing]
+    End If
+
+    ' Verify instance definition exists
+    Dim idef = doc.InstanceDefinitions.Find(idefName, True)
+    If idef Is Nothing Then
+      RhinoApp.WriteLine([String].Format("Block ""{0}"" not found.", idefName))
+      Return Rhino.Commands.Result.[Nothing]
+    End If
+
+    ' Verify instance definition can be deleted
+    If idef.IsReference Then
+      RhinoApp.WriteLine([String].Format("Unable to delete block ""{0}"".", idefName))
+      Return Rhino.Commands.Result.[Nothing]
+    End If
+
+    ' delete block and all references
+    If Not doc.InstanceDefinitions.Delete(idef.Index, True, True) Then
+      RhinoApp.WriteLine([String].Format("Could not delete {0} block", idef.Name))
+      Return Rhino.Commands.Result.Failure
+    End If
+
+    Return Rhino.Commands.Result.Success
+  End Function
+End Class
+d Namespace
+</code>
+===== Python =====
+<code python>
+import rhinoscriptsyntax as rs
+from scriptcontext import doc
+
+def Delete():
+    bn = rs.GetString("block to delete")
+    idef = doc.InstanceDefinitions.Find(bn, True)
+    if not idef:
+        print "{0} block does not exist".format(bn)
+        return
+        
+    rs.DeleteBlock(bn)
+    
+if __name__ == "__main__":
+    Delete()
+</code>
+
+{{tag>Developer rhinocommon}}

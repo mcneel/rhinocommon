@@ -108,12 +108,14 @@
     <Compile Include="ex_createblock.cs" />
     <Compile Include="ex_crvdeviation.cs" />
     <Compile Include="ex_curveboundingbox.cs" />
+    <Compile Include="ex_curvebrepbox.cs" />
     <Compile Include="ex_curveclosestpoint.cs" />
     <Compile Include="ex_curvereverse.cs" />
     <Compile Include="ex_curvesurfaceintersect.cs" />
     <Compile Include="ex_customgeometryfilter.cs" />
     <Compile Include="ex_custompython.cs" />
     <Compile Include="ex_customundo.cs" />
+    <Compile Include="ex_deleteblock.cs" />
     <Compile Include="ex_displayconduit.cs" />
     <Compile Include="ex_dividebylength.cs" />
     <Compile Include="ex_dotneteventwatcher.cs" />
@@ -148,6 +150,7 @@
     <Compile Include="ex_printinstancedefinitions.cs" />
     <Compile Include="ex_printinstancedefinitiontree.cs" />
     <Compile Include="ex_projectpointstobreps.cs" />
+    <Compile Include="ex_renameblock.cs" />
     <Compile Include="ex_rhinogettransform.cs" />
     <Compile Include="ex_sellayer.cs" />
     <Compile Include="ex_showsurfacedirection.cs" />
@@ -159,6 +162,7 @@
     <Compile Include="ex_unrollsurface.cs" />
     <Compile Include="ex_unrollsurface2.cs" />
     <Compile Include="ex_userdataCommand.cs" />
+    <Compile Include="ex_viewportresolution.cs" />
     <Compile Include="ex_zoomtoobject.cs" />
     <Compile Include="OptionsControl.cs">
       <SubType>UserControl</SubType>

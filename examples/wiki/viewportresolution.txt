@@ -1,0 +1,46 @@
+===== viewportresolution =====
+
+===== C# =====
+<code c#>
+[System.Runtime.InteropServices.Guid("75ED2D51-3633-4624-947A-02B15706D3F4")]
+public class ex_viewportresolution : Rhino.Commands.Command
+{
+  public override string EnglishName { get { return "csViewportResolution"; } }
+
+  protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+  {
+    var avp = doc.Views.ActiveView.ActiveViewport;
+    RhinoApp.WriteLine(String.Format("Name = {0}: Width = {1}, Height = {2}", avp.Name, avp.Size.Width, avp.Size.Height));
+    return Rhino.Commands.Result.Success;
+  }
+}
+</code>
+===== VB.NET =====
+<code vb>
+<System.Runtime.InteropServices.Guid("4F4C1AE6-725F-44AA-A35D-6D891681BB0B")> _
+Public Class ex_viewportresolution
+  Inherits Rhino.Commands.Command
+  Public Overrides ReadOnly Property EnglishName() As String
+    Get
+      Return "vbViewportResolution"
+    End Get
+  End Property
+
+  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
+    Dim avp = doc.Views.ActiveView.ActiveViewport
+    RhinoApp.WriteLine([String].Format("Name = {0}: Width = {1}, Height = {2}", avp.Name, avp.Size.Width, avp.Size.Height))
+    Return Rhino.Commands.Result.Success
+  End Function
+End Class
+d Namespace
+</code>
+===== Python =====
+<code python>
+from scriptcontext import doc
+
+avp = doc.Views.ActiveView.ActiveViewport
+print "Name = {0}: Width = {1}, Height = {2}".format(
+    avp.Name, avp.Size.Width, avp.Size.Height)
+</code>
+
+{{tag>Developer rhinocommon}}

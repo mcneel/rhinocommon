@@ -105,6 +105,7 @@ RH_C_FUNCTION double ON_Material_GetDouble(const ON_Material* pConstMaterial, in
   const int idxShine = 0;
   const int idxTransparency = 1;
   const int idxIOR = 2;
+  const int idxReflectivity = 3;
  
   double rc = 0;
   if( pConstMaterial )
@@ -119,6 +120,10 @@ RH_C_FUNCTION double ON_Material_GetDouble(const ON_Material* pConstMaterial, in
       break;
     case idxIOR:
       rc = pConstMaterial->m_index_of_refraction;
+      break;
+    case idxReflectivity:
+      rc = pConstMaterial->m_reflectivity;
+      break;
     }
   }
   return rc;
@@ -129,6 +134,7 @@ RH_C_FUNCTION void ON_Material_SetDouble(ON_Material* pMaterial, int which, doub
   const int idxShine = 0;
   const int idxTransparency = 1;
   const int idxIOR = 2;
+  const int idxReflectivity = 3;
   if( pMaterial )
   {
     switch(which)
@@ -141,6 +147,9 @@ RH_C_FUNCTION void ON_Material_SetDouble(ON_Material* pMaterial, int which, doub
       break;
     case idxIOR:
       pMaterial->m_index_of_refraction = val;
+      break;
+    case idxReflectivity:
+      pMaterial->m_reflectivity = val;
       break;
     }
   }
@@ -209,6 +218,14 @@ RH_C_FUNCTION int ON_Material_GetTexture(const ON_Material* pConstMaterial, int 
   }
   return rc;
 }
+
+RH_C_FUNCTION int ON_Material_GetTextureCount(const ON_Material* pConstMaterial)
+{
+  if( pConstMaterial )
+    return pConstMaterial->m_textures.Count();
+  return 0;
+}
+
 
 RH_C_FUNCTION int ON_Material_GetColor( const ON_Material* pConstMaterial, int which )
 {

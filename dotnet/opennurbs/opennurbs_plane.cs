@@ -370,6 +370,21 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Plane_GetEquation(ref this, rc);
       return rc;
     }
+
+    /// <summary>
+    /// Get the value of the plane equation at the point.
+    /// </summary>
+    /// <param name="p">evaulation point.</param>
+    /// <returns>returns pe[0]*p.X + pe[1]*p.Y + pe[2]*p.Z + pe[3] where
+    /// pe[0], pe[1], pe[2] and pe[3] are the coeeficients of the plane equation.
+    /// 
+    /// </returns>
+    public double ValueAt(Point3d p)
+    {
+      var pe = this.GetPlaneEquation();
+      return (pe[0]*p.X + pe[1]*p.Y + pe[2]*p.Z + pe[3]);
+    }
+
     /// <summary>
     /// Evaluate a point on the plane.
     /// </summary>

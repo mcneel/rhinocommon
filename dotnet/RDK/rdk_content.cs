@@ -1,14 +1,13 @@
 #pragma warning disable 1591
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-
-#if !OPENNURBS_SDK
-using System.Windows.Forms;
-#endif
 
 #if RDK_CHECKED
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Reflection;
+using System.Windows.Forms;
+using Rhino.Render.Fields;
 
 namespace Rhino.Render.UI
 {
@@ -55,42 +54,42 @@ namespace Rhino.Render.UI
     /// <param name="window">The control created and embedded in the expandable tab control in the content browser.</param>
     internal UserInterfaceSection(int serialNumber, IWin32Window window)
     {
-      m_SerialNumber = serialNumber;
-      m_Window = window;
-      if (serialNumber > 0) m_UserInterfaceSectionDictionary.Add(serialNumber, this);
+      m_serial_number = serialNumber;
+      m_window = window;
+      if (serialNumber > 0) g_user_interface_section_dictionary.Add(serialNumber, this);
       SetHooks();
     }
     /// <summary>
     /// C++ pointer serial number returned by the C interface wrapper.
     /// </summary>
-    internal int SerialNumber { get { return m_SerialNumber; } }
+    internal int SerialNumber { get { return m_serial_number; } }
     #endregion Internals
 
     #region private members
     /// <summary>
     /// The control created and embedded in the expandable tab control in the content browser.
     /// </summary>
-    private IWin32Window m_Window;
+    private IWin32Window m_window;
     /// <summary>
     /// C++ pointer serial number returned by the C interface wrapper.
     /// </summary>
-    private int m_SerialNumber;
+    private readonly int m_serial_number;
     /// <summary>
     /// Search hint helper
     /// </summary>
-    private int m_SearchHint = -1;
+    private int m_search_hint = -1;
     /// <summary>
     /// UserInterfaceSection instance dictionary, the constructor adds objects to the dictionary
     /// and the C++ destructor callback removes them when they get destroyed.
     /// </summary>
-    static private Dictionary<int, UserInterfaceSection> m_UserInterfaceSectionDictionary = new Dictionary<int, UserInterfaceSection>();
+    static private readonly Dictionary<int, UserInterfaceSection> g_user_interface_section_dictionary = new Dictionary<int, UserInterfaceSection>();
     #endregion private members
 
     #region C++ function callbacks
     /// <summary>
     /// Set C++ callback function pointers
     /// </summary>
-    private void SetHooks()
+    private static void SetHooks()
     {
       // Need to set the hook using a static member variable otherwise it gets garbage
       // collected to early on shutdown and the C++ code attempts to make a callback
@@ -131,12 +130,12 @@ namespace Rhino.Render.UI
     /// <param name="serialNumber"></param>
     private static void DeleteThisProc(int serialNumber)
     {
-      UserInterfaceSection uiSection = FromSerialNumber(serialNumber);
-      if (uiSection != null)
+      UserInterfaceSection ui_section = FromSerialNumber(serialNumber);
+      if (ui_section != null)
       {
-        if (uiSection.m_Window is IDisposable) (uiSection.m_Window as IDisposable).Dispose();
-        uiSection.m_Window = null;
-        m_UserInterfaceSectionDictionary.Remove(serialNumber);
+        if (ui_section.m_window is IDisposable) (ui_section.m_window as IDisposable).Dispose();
+        ui_section.m_window = null;
+        g_user_interface_section_dictionary.Remove(serialNumber);
       }
     }
     /// <summary>
@@ -145,11 +144,11 @@ namespace Rhino.Render.UI
     /// <param name="serialNumber"></param>
     static private void DisplayDataProc(int serialNumber)
     {
-      UserInterfaceSection uiSection;
-      IUserInterfaceSection iUiSection;
-      if (!UiFromSerialNumber(serialNumber, out uiSection, out iUiSection)) return;
-      var renderContentList = uiSection.GetContentList();
-      iUiSection.UserInterfaceDisplayData(uiSection, renderContentList);
+      UserInterfaceSection ui_section;
+      IUserInterfaceSection i_ui_section;
+      if (!UiFromSerialNumber(serialNumber, out ui_section, out i_ui_section)) return;
+      var render_content_list = ui_section.GetContentList();
+      i_ui_section.UserInterfaceDisplayData(ui_section, render_content_list);
     }
     /// <summary>
     /// Called when a user interface section is being createExpanded or collapsed.
@@ -158,10 +157,10 @@ namespace Rhino.Render.UI
     /// <param name="expanding"></param>
     static private void OnExpandProc(int serialNumber, bool expanding)
     {
-      UserInterfaceSection uiSection;
-      IUserInterfaceSection iUiSection;
-      if (UiFromSerialNumber(serialNumber, out uiSection, out iUiSection))
-        iUiSection.OnUserInterfaceSectionExpanding(uiSection, expanding);
+      UserInterfaceSection ui_section;
+      IUserInterfaceSection i_ui_section;
+      if (UiFromSerialNumber(serialNumber, out ui_section, out i_ui_section))
+        i_ui_section.OnUserInterfaceSectionExpanding(ui_section, expanding);
     }
     #endregion C++ function callbacks
 
@@ -173,7 +172,7 @@ namespace Rhino.Render.UI
     {
       get
       {
-        var pointer = UnsafeNativeMethods.Rdk_CoreContent_RenderContentFromUISection(SerialNumber, ref m_SearchHint);
+        var pointer = UnsafeNativeMethods.Rdk_CoreContent_RenderContentFromUISection(SerialNumber, ref m_search_hint);
         RenderContent found = RenderContent.FromPointer(pointer);
         return found;
       }
@@ -181,7 +180,7 @@ namespace Rhino.Render.UI
     /// <summary>
     /// The user control associated with this user interface object.
     /// </summary>
-    public IWin32Window Window { get { return m_Window; } }
+    public IWin32Window Window { get { return m_window; } }
     #endregion Public properties
 
     #region Public methods
@@ -236,7 +235,7 @@ namespace Rhino.Render.UI
     public static UserInterfaceSection FromWindow(IWin32Window window)
     {
       if (null != window)
-        foreach (var section in m_UserInterfaceSectionDictionary)
+        foreach (var section in g_user_interface_section_dictionary)
           if (window.Equals(section.Value.Window)) return section.Value;
       return null;
     }
@@ -246,14 +245,15 @@ namespace Rhino.Render.UI
     /// <returns>Returns a list of currently selected content items to be edited.</returns>
     public RenderContent[] GetContentList()
     {
-      var idList = GetContentIdList();
-      var renderContentList = new List<RenderContent>(idList.Length);
-      foreach (var guid in idList)
+      var id_list = GetContentIdList();
+      var render_content_list = new List<RenderContent>(id_list.Length);
+      var doc = RhinoDoc.ActiveDoc;
+      foreach (var guid in id_list)
       {
-        RenderContent content = RenderContent.FromInstanceId(guid);
-        if (null != content) renderContentList.Add(content);
+        var content = RenderContent.FromId(doc, guid);
+        if (null != content) render_content_list.Add(content);
       }
-      return renderContentList.ToArray();
+      return render_content_list.ToArray();
     }
     /// <summary>
     /// Show or hide this content section.
@@ -262,7 +262,7 @@ namespace Rhino.Render.UI
     public void Show(bool visible)
     {
       var serialNumber = SerialNumber;
-      UnsafeNativeMethods.Rdk_CoreContent_UiSectionShow(serialNumber, ref m_SearchHint, visible);
+      UnsafeNativeMethods.Rdk_CoreContent_UiSectionShow(serialNumber, ref m_search_hint, visible);
     }
     /// <summary>
     /// Expand or collapse this content section.
@@ -271,7 +271,7 @@ namespace Rhino.Render.UI
     public void Expand(bool expand)
     {
       var serialNumber = SerialNumber;
-      UnsafeNativeMethods.Rdk_CoreContent_UiSectionExpand(serialNumber, ref m_SearchHint, expand);
+      UnsafeNativeMethods.Rdk_CoreContent_UiSectionExpand(serialNumber, ref m_search_hint, expand);
     }
     #endregion Public methods
 
@@ -283,7 +283,7 @@ namespace Rhino.Render.UI
     {
       get
       {
-        IntPtr pointer = UnsafeNativeMethods.Rdk_CoreContent_AddFindContentUISectionPointer(SerialNumber, ref m_SearchHint);
+        IntPtr pointer = UnsafeNativeMethods.Rdk_CoreContent_AddFindContentUISectionPointer(SerialNumber, ref m_search_hint);
         return pointer;
       }
     }
@@ -304,7 +304,7 @@ namespace Rhino.Render.UI
       {
         var pointerToIdList = idList.NonConstPointer();
         var serialNumber = SerialNumber;
-        UnsafeNativeMethods.Rdk_CoreContent_UiSectionConentSiblingList(serialNumber, ref m_SearchHint, pointerToIdList);
+        UnsafeNativeMethods.Rdk_CoreContent_UiSectionConentSiblingList(serialNumber, ref m_search_hint, pointerToIdList);
         return idList.ToArray();
       }
     }
@@ -318,7 +318,7 @@ namespace Rhino.Render.UI
       {
         var pointerToIdList = idList.NonConstPointer();
         var serialNumber = SerialNumber;
-        UnsafeNativeMethods.Rdk_CoreContent_UiSectionConentIdList(serialNumber, ref m_SearchHint, pointerToIdList);
+        UnsafeNativeMethods.Rdk_CoreContent_UiSectionConentIdList(serialNumber, ref m_search_hint, pointerToIdList);
         return idList.ToArray();
       }
     }
@@ -330,7 +330,7 @@ namespace Rhino.Render.UI
     static private UserInterfaceSection FromSerialNumber(int serialNumber)
     {
       UserInterfaceSection found;
-      m_UserInterfaceSectionDictionary.TryGetValue(serialNumber, out found);
+      g_user_interface_section_dictionary.TryGetValue(serialNumber, out found);
       return found;
     }
     /// <summary>
@@ -409,9 +409,10 @@ namespace Rhino.Render
   }
 
   [AttributeUsage(AttributeTargets.Class)]
-  /*public*/ sealed class CustomRenderContentAttribute : Attribute
+  /*public*/
+  sealed class CustomRenderContentAttribute : Attribute
   {
-    private bool m_imageBased;
+    private bool m_image_based;
     private readonly Guid m_renderengine_id;
 
     public CustomRenderContentAttribute()
@@ -430,13 +431,14 @@ namespace Rhino.Render
 
     public bool ImageBased
     {
-      get { return m_imageBased; } 
-      set { m_imageBased = value; }
+      get { return m_image_based; }
+      set { m_image_based = value; }
     }
   }
 
   /// <summary>
-  /// Defines constant values for all render content kinds, such as material, environment or texture.
+  /// Defines constant values for all render content kinds, such as material,
+  /// environment or texture.
   /// </summary>
   [Flags]
   public enum RenderContentKind : int
@@ -449,20 +451,7 @@ namespace Rhino.Render
 
   public abstract class RenderContent : IDisposable
   {
-    #region Kinds
-
-    static RenderContentKind KindFromString(string kind)
-    {
-      RenderContentKind k = RenderContentKind.None;
-      if (kind.Contains("material"))
-        k |= RenderContentKind.Material;
-      if (kind.Contains("environment"))
-        k |= RenderContentKind.Environment;
-      if (kind.Contains("texture"))
-        k |= RenderContentKind.Texture;
-      return k;
-    }
-
+    #region Kinds (internal)
     internal static String KindString(RenderContentKind kinds)
     {
       System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -533,8 +522,8 @@ namespace Rhino.Render
     /// <returns>A new persistent render content.</returns>
     public static RenderContent Create(Guid type, ShowContentChooserFlags flags, RhinoDoc doc)
     {
-      IntPtr pContent = UnsafeNativeMethods.Rdk_Globals_CreateContentByType(type, IntPtr.Zero, String.Empty, (int)flags, doc.m_docId);
-      return pContent == IntPtr.Zero ? null : FromPointer(pContent);
+      IntPtr ptr_content = UnsafeNativeMethods.Rdk_Globals_CreateContentByType(type, IntPtr.Zero, String.Empty, (int)flags, doc.m_docId);
+      return ptr_content == IntPtr.Zero ? null : FromPointer(ptr_content);
     }
 
     /// <summary>
@@ -568,8 +557,8 @@ namespace Rhino.Render
     /// <returns>A new persistent render content.</returns>
     public static RenderContent Create(Guid type, RenderContent parent, String childSlotName, ShowContentChooserFlags flags, RhinoDoc doc)
     {
-      IntPtr pContent = UnsafeNativeMethods.Rdk_Globals_CreateContentByType(type, parent.ConstPointer(), childSlotName, (int)flags, doc.m_docId);
-      return pContent == IntPtr.Zero ? null : FromPointer(pContent);
+      IntPtr ptr_content = UnsafeNativeMethods.Rdk_Globals_CreateContentByType(type, parent.ConstPointer(), childSlotName, (int)flags, doc.m_docId);
+      return ptr_content == IntPtr.Zero ? null : FromPointer(ptr_content);
     }
 
     /// <summary>
@@ -621,7 +610,7 @@ namespace Rhino.Render
       var exportedTypes = assembly.GetExportedTypes();
       // Scan the exported class types for RenderContent derived classes
       var contentTypes = new List<Type>();
-      var renderContentType = typeof (RenderContent);
+      var renderContentType = typeof(RenderContent);
       for (int i = 0; i < exportedTypes.Length; i++)
       {
         var exportedType = exportedTypes[i];
@@ -706,17 +695,27 @@ namespace Rhino.Render
 
 
     /// <summary>
-    /// Search for a C++ pointer of the requested Id
+    /// Search for a content object based on its Id
     /// </summary>
-    /// <param name="instanceId"></param>
-    /// <returns></returns>
-    internal static RenderContent FromInstanceId(Guid instanceId)
+    /// <param name="document">
+    /// The Rhino document containing the content.
+    /// </param>
+    /// <param name="id">
+    /// Id of the content instance to search for.
+    /// </param>
+    /// <returns>
+    /// Returns the content object with the specified Id if it is found
+    /// otherwise it returns null.
+    /// </returns>
+    public static RenderContent FromId(RhinoDoc document, Guid id)
     {
-      IntPtr renderContent = UnsafeNativeMethods.Rdk_FindContentInstance(instanceId);
-      if (renderContent == IntPtr.Zero)
-        return null;
-      return FromPointer(renderContent);
+      // Ask Andy if you can have content without a document
+      //if (null == document)
+      //  return null;
+      var render_content = UnsafeNativeMethods.Rdk_FindContentInstance(id);
+      return render_content == IntPtr.Zero ? null : FromPointer(render_content);
     }
+
     /// <summary>
     /// Create a .NET object of the appropriate type and attach it to the
     /// requested C++ pointer
@@ -747,6 +746,30 @@ namespace Rhino.Render
       //This should never, ever, happen.
       throw new InvalidCastException("renderContent Pointer is not of a recognized type");
     }
+
+    internal static ChangeContexts ChangeContextFromExtraRequirementsSetContext(ExtraRequirementsSetContexts sc) // Static.
+    {
+      switch (sc)
+      {
+        case ExtraRequirementsSetContexts.UI: return ChangeContexts.UI;
+        case ExtraRequirementsSetContexts.Drop: return ChangeContexts.Drop;
+      }
+
+      return ChangeContexts.Program;
+    }
+
+    internal static ExtraRequirementsSetContexts ExtraRequirementsSetContextFromChangeContext(ChangeContexts cc) // Static.
+    {
+      switch (cc)
+      {
+        case ChangeContexts.UI: return ExtraRequirementsSetContexts.UI;
+        case ChangeContexts.Drop: return ExtraRequirementsSetContexts.Drop;
+      }
+
+      return ExtraRequirementsSetContexts.Program;
+    }
+
+
     #endregion
 
     // -1 == Disposed content
@@ -775,14 +798,58 @@ namespace Rhino.Render
     /// Rhino.Render.Fields FieldDictionary which provides access to setting
     /// and retrieving field values.
     /// </summary>
-    private Fields.FieldDictionary m_FieldDictionary;
+    private FieldDictionary m_FieldDictionary;
     /// <summary>
     /// Rhino.Render.Fields FieldDictionary which provides access to setting
     /// and retrieving field values.
     /// </summary>
-    public Fields.FieldDictionary Fields
+    public FieldDictionary Fields
     {
-      get { return m_FieldDictionary ?? (m_FieldDictionary = new Fields.FieldDictionary(this)); }
+      get { return m_FieldDictionary ?? (m_FieldDictionary = new FieldDictionary(this)); }
+    }
+
+    class BoundField
+    {
+      public BoundField(Field field, ChangeContexts cc)
+      {
+        Field = field;
+        ChangeContexts = cc;
+      }
+      public Field Field { get; private set; }
+      public ChangeContexts ChangeContexts { get; private set; }
+    }
+    readonly Dictionary<string, BoundField> m_bound_parameters = new Dictionary<string, BoundField>();
+
+    /// <summary>
+    /// Use bindings to automatically wire parameters to fields
+    /// </summary>
+    /// <param name="parameterName"></param>
+    /// <param name="childSlotName"></param>
+    /// <param name="field"></param>
+    /// <param name="setEvent"></param>
+    public void BindParameterToField(string parameterName, string childSlotName, Field field, ChangeContexts setEvent)
+    {
+      string key = BindingKey(parameterName, childSlotName);
+      m_bound_parameters[key] = new BoundField(field, setEvent);
+    }
+
+    /// <summary>
+    /// Use bindings to automatically wire parameters to fields
+    /// </summary>
+    /// <param name="parameterName"></param>
+    /// <param name="field"></param>
+    /// <param name="setEvent"></param>
+    public void BindParameterToField(string parameterName, Field field, ChangeContexts setEvent)
+    {
+      string key = BindingKey(parameterName, null);
+      m_bound_parameters[key] = new BoundField(field, setEvent);
+    }
+
+    static string BindingKey(string parameterName, string childSlotName)
+    {
+      if (string.IsNullOrEmpty(childSlotName))
+        return parameterName;
+      return parameterName + "~~" + childSlotName;
     }
 
     /// <summary>
@@ -796,7 +863,7 @@ namespace Rhino.Render
     /// </returns>
     bool ClassDefinedInRhinoCommon()
     {
-      var renderContent = typeof (RenderContent);
+      var renderContent = typeof(RenderContent);
       var classType = GetType();
       return renderContent.Assembly.Equals(classType.Assembly);
     }
@@ -812,7 +879,7 @@ namespace Rhino.Render
     {
       return !ClassDefinedInRhinoCommon();
     }
-    
+
     /// <summary>
     /// internal because we don't want people to ever directly subclass RenderContent.
     /// They should always derive from the subclasses of this class
@@ -844,16 +911,19 @@ namespace Rhino.Render
           renderEngine = custom.RenderEngineId;
         }
       }
-      // Crete C++ pointer of the appropriate type
+      // Create C++ pointer of the appropriate type
       const int category = 0;
+      var returned_serial_number = -1;
       if (this is RenderTexture)
-        UnsafeNativeMethods.CRhCmnTexture_New(m_runtime_serial_number, imageBased, renderEngine, pluginId, typeId, category);
+        returned_serial_number = UnsafeNativeMethods.CRhCmnTexture_New(m_runtime_serial_number, imageBased, renderEngine, pluginId, typeId, category);
       else if (this is RenderMaterial)
-        UnsafeNativeMethods.CRhCmnMaterial_New(m_runtime_serial_number, imageBased, renderEngine, pluginId, typeId, category);
+        returned_serial_number = UnsafeNativeMethods.CRhCmnMaterial_New(m_runtime_serial_number, imageBased, renderEngine, pluginId, typeId, category);
       else if (this is RenderEnvironment)
-        UnsafeNativeMethods.CRhCmnEnvironment_New(m_runtime_serial_number, imageBased, renderEngine, pluginId, typeId, category);
+        returned_serial_number = UnsafeNativeMethods.CRhCmnEnvironment_New(m_runtime_serial_number, imageBased, renderEngine, pluginId, typeId, category);
       else
         throw new InvalidCastException("Content is of unknown type");
+      if (returned_serial_number != m_runtime_serial_number)
+        throw new Exception("Error creating new content pointer");
     }
     /// <summary>
     /// Internal method used to get string values from the C++ SDK
@@ -878,13 +948,6 @@ namespace Rhino.Render
     /// Description for your content type.  ie.  "Procedural checker pattern"
     /// </summary>
     public abstract String TypeDescription { get; }
-    // <summary>
-    // Returns either KindMaterial, KindTexture or KindEnvironment.
-    // </summary>
-    //public RenderContentKind Kind
-    //{
-    //  get { return KindFromString(GetString(StringIds.Kind)); }
-    //}
 
     /// <summary>
     /// Instance name for this content.
@@ -937,21 +1000,12 @@ namespace Rhino.Render
     /// <summary>
     /// Returns true if this content is a resident of one of the persistent lists.
     /// </summary>
-    /*public*/ bool InDocument
+    /*public*/
+    bool InDocument
     {
       get { return 1 == UnsafeNativeMethods.Rdk_RenderContent_IsInDocument(ConstPointer()); }
     }
-    /*
-    /// <summary>
-    /// Helper function to check which content kind this content is.
-    /// </summary>
-    /// <param name="kind">Either KindMaterial, KindEnvironment or KindTexture.</param>
-    /// <returns>true if the content is the specified kind, otherwise false.</returns>
-    public bool IsKind(RenderContentKind kind)
-    {
-      return 1 == UnsafeNativeMethods.Rdk_RenderContent_IsKind(ConstPointer(), KindString(kind));
-    }
-    */
+
     /// <summary>
     /// Determines if the content has the hidden flag set.
     /// </summary>
@@ -966,7 +1020,8 @@ namespace Rhino.Render
     /// <summary>
     /// Determines if the content is considered the "Current" content - currently only used for Environments.
     /// </summary>
-    /*public*/ bool Current
+    /*public*/
+    bool Current
     {
       get { return 1 == UnsafeNativeMethods.Rdk_RenderContent_IsCurrent(ConstPointer()); }
     }
@@ -981,6 +1036,33 @@ namespace Rhino.Render
         IntPtr pContent = UnsafeNativeMethods.Rdk_RenderContent_TopLevelParent(ConstPointer());
         return FromPointer(pContent);
       }
+    }
+
+    /// <summary>
+    /// Call this method to open the content in the relevant thumbnail editor
+    /// and select it for editing by the user. The content must be in the
+    /// document or the call will fail.
+    /// </summary>
+    /// <returns>
+    /// Returns true on success or false on error.
+    /// </returns>
+    public bool OpenInEditor()
+    {
+      var const_pointer = ConstPointer();
+      return UnsafeNativeMethods.Rdk_RenderContent_OpenInThumbnailEditor(const_pointer, false);
+    }
+
+    /// <summary>
+    /// Call this method to open the content in the a modal version of the editor.
+    /// The content must be in the document or the call will fail.
+    /// </summary>
+    /// <returns>
+    /// Returns true on success or false on error.
+    /// </returns>
+    public bool OpenInModalEditor()
+    {
+      var const_pointer = ConstPointer();
+      return UnsafeNativeMethods.Rdk_RenderContent_OpenInThumbnailEditor(const_pointer, true);
     }
 
     #region Serialization
@@ -1015,6 +1097,21 @@ namespace Rhino.Render
     }
 
     /// <summary>
+    /// Override this method to prompt user for information necessary to
+    /// create a new content object.  For example, if you are created a
+    /// textured material you may prompt the user for a bitmap file name
+    /// prior to creating the textured material.
+    /// </summary>
+    /// <returns>
+    /// If true is returned the content is created otherwise the creation
+    /// is aborted.
+    /// </returns>
+    protected virtual bool OnGetDefaultsInteractive(IntPtr parentWindowHandle)
+    {
+      return true;
+    }
+
+    /// <summary>
     /// Create a new custom content user interface instance for this
     /// RenderContext.
     /// </summary>
@@ -1033,7 +1130,8 @@ namespace Rhino.Render
     /// Returns the UserInterfaceSection object used to manage the new custom
     /// UI.
     ///  </returns>
-    /*protected*/ Rhino.Render.UI.UserInterfaceSection NewUiPointer(Guid classId, string caption, bool createExpanded, bool createVisible, IWin32Window window)
+    /*protected*/
+    Rhino.Render.UI.UserInterfaceSection NewUiPointer(Guid classId, string caption, bool createExpanded, bool createVisible, IWin32Window window)
     {
       const int idxInvalid = 0;
       const int idxMaterial = 1;
@@ -1089,12 +1187,20 @@ namespace Rhino.Render
       if (attr.Length != 1) throw new ArgumentException("classType must have a GuidAttribute", "classType");
       var control = Activator.CreateInstance(classType) as IWin32Window;
       if (null == control) return null;
-      if (ApplicationSettings.AppearanceSettings.UsePaintColors)
+      var winform_control = control as Control;
+      if (null != winform_control)
       {
-        var asControl = control as Control;
-        if (null != asControl)
-          asControl.BackColor = ApplicationSettings.AppearanceSettings.GetPaintColor(ApplicationSettings.PaintColor.NormalEnd);
+        var argb = UnsafeNativeMethods.Rdk_ContentUiBackgroundColor();
+        var color = System.Drawing.Color.FromArgb(argb);
+        winform_control.BackColor = color;
       }
+      //if (ApplicationSettings.AppearanceSettings.UsePaintColors)
+      //{
+      //  var asControl = control as Control;
+      //  if (null != asControl)
+      //    asControl.BackColor = System.Drawing.SystemColors.ButtonFace;
+      //      //ApplicationSettings.AppearanceSettings.GetPaintColor(ApplicationSettings.PaintColor.NormalEnd);
+      //}
       var newUiSection = NewUiPointer(classType.GUID, caption, createExpanded, createVisible, control);
       if (null == newUiSection)
       {
@@ -1120,8 +1226,10 @@ namespace Rhino.Render
     }
 
 
+    // TODO: Don't release as is. Should make type an interface or something that we can query for id/name/kind/...
     // hiding until I understand what this does
-    /*public virtual*/ bool IsContentTypeAcceptableAsChild(Guid type, String childSlotName)
+    /*public virtual*/
+    bool IsContentTypeAcceptableAsChild(Guid type, String childSlotName)
     {
       if (IsNativeWrapper())
         return 1 == UnsafeNativeMethods.Rdk_RenderContent_IsContentTypeAcceptableAsChild(ConstPointer(), type, childSlotName);
@@ -1129,27 +1237,206 @@ namespace Rhino.Render
       return 1 == UnsafeNativeMethods.Rdk_RenderContent_CallIsContentTypeAcceptableAsChildBase(ConstPointer(), type, childSlotName);
     }
 
-    /*public*/ enum HarvestedResult : int // Return values for HarvestData()
+    /// <summary>
+    /// Query the content instance for the value of a given named parameter.
+    /// If you do not support this parameter, call the base class.
+    /// </summary>
+    /// <param name="parameterName">Name of the parameter</param>
+    /// <returns></returns>
+    public virtual object GetParameter(String parameterName)
+    {
+      Variant value = new Variant();
+
+      if (IsNativeWrapper())
+      {
+        UnsafeNativeMethods.Rdk_RenderContent_GetVariantParameter(ConstPointer(), parameterName, value.NonConstPointer());
+      }
+      else
+      {
+        string key = BindingKey(parameterName, null);
+        BoundField bound_field;
+        if (m_bound_parameters.TryGetValue(key, out bound_field))
+          value.SetValue(bound_field.Field.ValueAsObject());
+        else
+          UnsafeNativeMethods.Rdk_RenderContent_CallGetVariantParameterBase(ConstPointer(), parameterName, value.NonConstPointer());
+      }
+
+      return value;
+    }
+
+    /// <summary>
+    /// Set the named parameter value for this content instance.
+    /// If you do not support this parameter, call the base class.
+    /// </summary>
+    /// <param name="parameterName"></param>
+    /// <param name="value"></param>
+    /// <param name="changeContexts"></param>
+    /// <returns></returns>
+    public virtual bool SetParameter(String parameterName, object value, ChangeContexts changeContexts)
+    {
+      Variant v = value as Variant;
+      if (v != null)
+      {
+        if (IsNativeWrapper())
+        {
+          return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetVariantParameter(ConstPointer(), parameterName, v.ConstPointer(), (int)changeContexts);
+        }
+
+        string key = BindingKey(parameterName, null);
+        BoundField bound_field;
+        if (m_bound_parameters.TryGetValue(key, out bound_field))
+        {
+          bound_field.Field.Set(v, bound_field.ChangeContexts);
+          return true;
+        }
+        else
+          return 1 == UnsafeNativeMethods.Rdk_RenderContent_CallSetVariantParameterBase(ConstPointer(), parameterName, v.ConstPointer(), (int)changeContexts);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Extra requirements are a way of specifying extra functionality on parameters in the automatic UI.
+    /// Implement this function to specify additional functionality for automatic UI sections or the texture summary.
+    /// See IAutoUIExtraRequirements.h in the C++ RDK for string definitions for the parameter names.
+    /// </summary>
+    /// <param name="parameterName">The parameter or field internal name to which this query applies</param>
+    /// <param name="childSlotName">The extra requirement parameter, as listed in IAutoUIExtraRequirements.h in the C++ RDK</param>
+    /// <returns>
+    /// Call the base class if you do not support the extra requirement parameter.
+    /// Current supported return values are (int, bool, float, double, string, Guid, Color, Vector3d, Point3d, DateTime)
+    /// </returns>
+    public virtual object GetChildSlotParameter(String parameterName, String childSlotName)
+    {
+      Variant value = new Variant();
+      if (IsNativeWrapper())
+      {
+        UnsafeNativeMethods.Rdk_RenderContent_GetExtraRequirementParameter(ConstPointer(), parameterName, childSlotName, value.NonConstPointer());
+      }
+      else
+      {
+        string key = BindingKey(parameterName, childSlotName);
+        BoundField bound_field;
+        if( m_bound_parameters.TryGetValue(key, out bound_field) )
+          value.SetValue(bound_field.Field.ValueAsObject());
+        else
+          UnsafeNativeMethods.Rdk_RenderContent_CallGetExtraRequirementParameterBase(ConstPointer(), parameterName, childSlotName, value.NonConstPointer());
+      }
+      return value;
+    }
+
+    /// <summary>
+    /// Extra requirements are a way of specifying extra functionality on parameters in the automatic UI.
+    /// Implement this function to support values being set from automatic UI sections or the texture summary.
+    /// See IAutoUIExtraRequirements.h in the C++ RDK for string definitions for the parameter names.
+    /// </summary>
+    /// <param name="parameterName">The parameter or field internal name to which this query applies</param>
+    /// <param name="childSlotName">The extra requirement parameter, as listed in IAutoUIExtraRequirements.h in the C++ RDK</param>
+    /// <param name="value">The value to set this extra requirement parameter. You will typically use System.Convert to convert the value to the type you need</param>
+    /// <param name="sc">The context of this operation.</param>
+    /// <returns>Null variant if not supported.  Call the base class if you do not support the extra requirement paramter.</returns>
+    public virtual bool SetChildSlotParameter(String parameterName, String childSlotName, object value, ExtraRequirementsSetContexts sc)
+    {
+      Variant v = value as Variant;
+      if (v != null)
+      {
+        if (IsNativeWrapper())
+        {
+          return 1 == UnsafeNativeMethods.Rdk_RenderContent_SetExtraRequirementParameter(ConstPointer(), parameterName, childSlotName, v.ConstPointer(), (int)sc);
+        }
+
+        string key = BindingKey(parameterName, childSlotName);
+        BoundField bound_field;
+        if (m_bound_parameters.TryGetValue(key, out bound_field))
+        {
+          bound_field.Field.Set(v, bound_field.ChangeContexts);
+          return true;
+        }
+        else
+          return 1 == UnsafeNativeMethods.Rdk_RenderContent_CallSetExtraRequirementParameterBase(ConstPointer(), parameterName, childSlotName, v.ConstPointer(), (int)sc);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Gets the on-ness property for the texture in the specified child slot.
+    /// </summary>
+    /// <param name="childSlotName">Child slot name for the child</param>
+    /// <returns></returns>
+    public bool ChildSlotOn(String childSlotName)
+    {
+      object rc = GetChildSlotParameter(childSlotName, "texture-on");
+      if (rc == null)
+        return false;
+      if (rc is bool)
+        return (bool)rc;
+      IConvertible iconvert = rc as IConvertible;
+      if( iconvert!=null )
+        return Convert.ToBoolean(iconvert);
+      return false;
+    }
+
+    /// <summary>
+    /// Sets the on-ness property for the texture in the specified child slot.
+    /// </summary>
+    /// <param name="childSlotName">Child slot name for the child</param>
+    /// <param name="bOn">Value for the on-ness property.</param>
+    /// <param name="cc">Context of the change</param>
+    public void SetChildSlotOn(String childSlotName, bool bOn, ChangeContexts cc)
+    {
+      SetChildSlotParameter(childSlotName, "texture-on", new Variant(bOn), ExtraRequirementsSetContextFromChangeContext(cc));
+    }
+
+    /// <summary>
+    /// Gets the amount property for the texture in the specified child slot.  Values are typically from 0.0 - 100.0
+    /// </summary>
+    /// <param name="childSlotName">Child slot name for the child</param>
+    /// <returns></returns>
+    public double ChildSlotAmount(String childSlotName)
+    {
+      object rc = GetChildSlotParameter(childSlotName, "texture-amount");
+      if (rc == null)
+        return 0;
+      if (rc is double || rc is int || rc is float || rc is IConvertible)
+        return Convert.ToDouble(rc);
+      return 0;
+    }
+
+    /// <summary>
+    /// Sets the amount property for the texture in the specified child slot.  Values are typically from 0.0 - 100.0
+    /// </summary>
+    /// <param name="childSlotName">Child slot name for the child</param>
+    /// <param name="amount">Texture amount. Values are typically from 0.0 - 100.0</param>
+    /// <param name="cc">Context of the change.</param>
+    public void SetChildSlotAmount(String childSlotName, double amount, ChangeContexts cc)
+    {
+      SetChildSlotParameter(childSlotName, "texture-amount", new Variant(amount), ExtraRequirementsSetContextFromChangeContext(cc));
+    }
+
+    /// <summary>
+    /// Return values for MatchData function
+    /// </summary>
+    public enum MatchDataResult : int
     {
       None = 0,
       Some = 1,
       All = 2,
     };
 
-    // hiding until I understand what this does
     /// <summary>
-    /// Implement this to transfer data from another content to this content during creation.
+    /// Implement to transfer data from another content to this content during creation.
     /// </summary>
     /// <param name="oldContent">An old content object from which the implementation may harvest data.</param>
-    /// <returns>The harvested result.</returns>
-    /*public virtual*/ HarvestedResult HarvestData(RenderContent oldContent)
+    /// <returns>Information about how much data was matched.</returns>
+    /*public virtual*/
+    MatchDataResult MatchData(RenderContent oldContent)
     {
       if (IsNativeWrapper())
-        return (HarvestedResult)UnsafeNativeMethods.Rdk_RenderContent_HarvestData(ConstPointer(), oldContent.ConstPointer());
+        return (MatchDataResult)UnsafeNativeMethods.Rdk_RenderContent_HarvestData(ConstPointer(), oldContent.ConstPointer());
 
-      return (HarvestedResult)UnsafeNativeMethods.Rdk_RenderContent_CallHarvestDataBase(ConstPointer(), oldContent.ConstPointer());
+      return (MatchDataResult)UnsafeNativeMethods.Rdk_RenderContent_CallHarvestDataBase(ConstPointer(), oldContent.ConstPointer());
     }
-    
+
     #region Operations
 
     //TODO
@@ -1158,7 +1445,7 @@ namespace Rhino.Render
 	RDK-owned content that is in the persistent content list (either top-level or child).
 	\param wszChildSlotName is the child-slot name of the child to be deleted.
 	\return \e true if successful, else \e false. */
-//RHRDK_SDK bool RhRdkDeleteChildContent(CRhRdkContent& parentContent, const wchar_t* wszChildSlotName);
+    //RHRDK_SDK bool RhRdkDeleteChildContent(CRhRdkContent& parentContent, const wchar_t* wszChildSlotName);
 
     enum ChangeChildContentFlags : int
     {
@@ -1223,6 +1510,22 @@ namespace Rhino.Render
       Point4d = 14,
     }
 
+    public enum ExtraRequirementsSetContexts
+    {
+      /// <summary>
+      /// Setting extra requirement as a result of user activity.
+      /// </summary>
+      UI = 0,
+      /// <summary>
+      /// Setting extra requirement as a result of drag and drop.
+      /// </summary>
+      Drop = 1,
+      /// <summary>
+      /// Setting extra requirement as a result of other (non-user) program activity.
+      /// </summary>
+      Program = 2,
+    }
+
     /// <summary>
     /// Context of a change to content parameters.
     /// </summary>
@@ -1271,7 +1574,8 @@ namespace Rhino.Render
     /// <param name="renderEngineId">The render engine requesting the shader.</param>
     /// <param name="privateData">A pointer to the render engine's own context object.</param>
     /// <returns>A pointer to the unmanaged shader.</returns>
-    /*public virtual*/ IntPtr GetShader(Guid renderEngineId, IntPtr privateData)
+    /*public virtual*/
+    IntPtr GetShader(Guid renderEngineId, IntPtr privateData)
     {
       if (IsNativeWrapper())
       {
@@ -1280,7 +1584,8 @@ namespace Rhino.Render
       return IntPtr.Zero;
     }
 
-    /*public*/ bool IsCompatible(Guid renderEngineId)
+    /*public*/
+    bool IsCompatible(Guid renderEngineId)
     {
       return 1 == UnsafeNativeMethods.Rdk_RenderContent_IsCompatible(ConstPointer(), renderEngineId);
     }
@@ -1423,13 +1728,168 @@ namespace Rhino.Render
     {
       try
       {
-        RenderContent content = RenderContent.FromSerialNumber(serialNumber);
+        RenderContent content = FromSerialNumber(serialNumber);
         if (content != null && childSlotName != IntPtr.Zero)
           return content.IsContentTypeAcceptableAsChild(type, System.Runtime.InteropServices.Marshal.PtrToStringUni(childSlotName));
       }
       catch (Exception ex)
       {
+        Runtime.HostUtils.ExceptionReport(ex);
+      }
+      return false;
+    }
+
+    internal delegate Variant GetParameterCallback(int serialNumber, IntPtr name);
+    internal static GetParameterCallback m_GetParameter = OnGetParameter;
+    static Variant OnGetParameter(int serialNumber, IntPtr name)
+    {
+      try
+      {
+        RenderContent content = RenderContent.FromSerialNumber(serialNumber);
+        if (content != null && name != IntPtr.Zero)
+        {
+          string parameter_name = System.Runtime.InteropServices.Marshal.PtrToStringUni(name);
+          object rc = content.GetParameter(parameter_name);
+          Variant v = rc as Variant;
+          if (v != null)
+            return v;
+          return new Variant(rc);
+        }
+      }
+      catch (Exception ex)
+      {
+        Runtime.HostUtils.ExceptionReport(ex);
+      }
+      return new Variant();
+    }
+
+    internal delegate bool SetParameterCallback(int serialNumber, IntPtr name, IntPtr value, int cc);
+    internal static SetParameterCallback m_SetParameter = OnSetParameter;
+    static bool OnSetParameter(int serialNumber, IntPtr name, IntPtr value, int cc)
+    {
+      try
+      {
+        RenderContent content = FromSerialNumber(serialNumber);
+        if (content != null && name != IntPtr.Zero && value != IntPtr.Zero)
+        {
+          Variant v = Variant.CopyFromPointer(value);
+          return content.SetParameter(System.Runtime.InteropServices.Marshal.PtrToStringUni(name), v, (ChangeContexts)cc);
+        }
+      }
+      catch (Exception ex)
+      {
         Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+      return false;
+    }
+
+
+    internal delegate bool GetExtraRequirementParameterCallback(int serialNumber, IntPtr paramName, IntPtr extraRequirementName, IntPtr value);
+    internal static GetExtraRequirementParameterCallback m_GetExtraRequirementParameter = OnGetExtraRequirementParameter;
+    static bool OnGetExtraRequirementParameter(int serialNumber, IntPtr paramName, IntPtr extraRequirementName, IntPtr value)
+    {
+      try
+      {
+        RenderContent content = FromSerialNumber(serialNumber);
+        if (content != null && paramName != IntPtr.Zero && extraRequirementName != IntPtr.Zero && value != IntPtr.Zero)
+        {
+          string parameter_name = System.Runtime.InteropServices.Marshal.PtrToStringUni(paramName);
+          string requirement_name = System.Runtime.InteropServices.Marshal.PtrToStringUni(extraRequirementName);
+          object rc = content.GetChildSlotParameter(parameter_name, requirement_name);
+
+          Variant v = rc as Variant;
+          if (v == null)
+            v = new Variant(rc);
+          v.CopyToPointer(value);
+          return !v.IsNull;
+        }
+      }
+      catch (Exception ex)
+      {
+        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+      }
+      return false;
+    }
+
+    internal delegate IntPtr SetContentIconCallback(int serialNumber, int width, int height, bool fromBaseClass);
+    internal static SetContentIconCallback SetContentIcon = OnSetContentIcon;
+    private static IntPtr OnSetContentIcon(int serialNumber, int width, int height, bool fromBaseClass)
+    {
+      try
+      {
+        var content = FromSerialNumber(serialNumber);
+        if (content == null) return IntPtr.Zero;
+        if (fromBaseClass)
+        {
+          // Call into the C RDK to get the Icon
+          var const_pointer = content.ConstPointer();
+          return UnsafeNativeMethods.Rdk_RenderContent_GetVirtualIcon(const_pointer, width, height, true);
+        }
+        // Call the .NET RDK to get the bitmap
+        var bitmap = content.Icon(new Size(width, height));
+        if (null == bitmap) return IntPtr.Zero;
+        // If the bitmap was previously returned then just use the HICON we previously got
+        // from it.
+        if (content.m_bitmap_to_icon_dictionary.ContainsKey(bitmap))
+          return content.m_bitmap_to_icon_dictionary[bitmap];
+        // Create a HICON from the bitmap and save it for future use.
+        var hicon = bitmap.GetHicon();
+        content.m_bitmap_to_icon_dictionary.Add(bitmap, hicon);
+        return hicon;
+      }
+
+      catch (Exception exception)
+      {
+        Runtime.HostUtils.ExceptionReport(exception);
+      }
+      return IntPtr.Zero;
+    }
+    private readonly Dictionary<Bitmap, IntPtr> m_bitmap_to_icon_dictionary = new Dictionary<Bitmap, IntPtr>();
+
+    /// <summary>
+    /// Icon to display in the content browser, this bitmap needs to be valid for
+    /// the life of this content object, the content object that returns the bitmap
+    /// is responsible for disposing of the bitmap.
+    /// </summary>
+    /// <param name="size">
+    /// Requested icon size
+    /// </param>
+    /// <returns>
+    /// Return Icon to display in the content browser.
+    /// </returns>
+    virtual public Bitmap Icon(Size size)
+    {
+      var const_pointer = ConstPointer();
+      var hicon = UnsafeNativeMethods.Rdk_RenderContent_GetVirtualIcon(const_pointer, size.Width, size.Height, true);
+      if (hicon == IntPtr.Zero)
+        return null;
+      if (m_bitmap_from_icon_dictionary.ContainsKey(hicon))
+        return m_bitmap_from_icon_dictionary[hicon];
+      var bitmap = Bitmap.FromHicon(hicon);
+      m_bitmap_from_icon_dictionary[hicon] = bitmap;
+      return bitmap;
+    }
+    private readonly Dictionary<IntPtr, Bitmap> m_bitmap_from_icon_dictionary = new Dictionary<IntPtr, Bitmap>();
+
+    internal delegate bool SetExtraRequirementParameterCallback(int serialNumber, IntPtr paramName, IntPtr extraRequirementName, IntPtr value, int sc);
+    internal static SetExtraRequirementParameterCallback m_SetExtraRequirementParameter = OnSetExtraRequirementParameter;
+    static bool OnSetExtraRequirementParameter(int serialNumber, IntPtr paramName, IntPtr extraRequirementName, IntPtr value, int sc)
+    {
+      try
+      {
+        var content = RenderContent.FromSerialNumber(serialNumber);
+        if (content != null && paramName != IntPtr.Zero && value != IntPtr.Zero && extraRequirementName != IntPtr.Zero)
+        {
+          var v = Variant.CopyFromPointer(value);
+          return content.SetChildSlotParameter(System.Runtime.InteropServices.Marshal.PtrToStringUni(paramName),
+                                      System.Runtime.InteropServices.Marshal.PtrToStringUni(extraRequirementName),
+                                      v,
+                                      (ExtraRequirementsSetContexts)sc);
+        }
+      }
+      catch (Exception ex)
+      {
+        Runtime.HostUtils.ExceptionReport(ex);
       }
       return false;
     }
@@ -1440,31 +1900,47 @@ namespace Rhino.Render
     {
       try
       {
-        RenderContent content = RenderContent.FromSerialNumber(serialNumber);
-        RenderContent old = RenderContent.FromPointer(oldContent);
+        RenderContent content = FromSerialNumber(serialNumber);
+        RenderContent old = FromPointer(oldContent);
         if (content != null && old != null)
-          return (int)content.HarvestData(old);
+          return (int)content.MatchData(old);
       }
       catch (Exception ex)
       {
-        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+        Runtime.HostUtils.ExceptionReport(ex);
       }
-      return (int)HarvestedResult.None;
+      return (int)MatchDataResult.None;
     }
 
-    internal delegate void AddUISectionsCallback(int serialNumber);
-    internal static AddUISectionsCallback m_AddUISections = _OnAddUISections;
+    internal delegate void AddUiSectionsCallback(int serialNumber);
+    internal static AddUiSectionsCallback m_AddUISections = _OnAddUISections;
     static void _OnAddUISections(int serialNumber)
     {
       try
       {
-        RenderContent content = RenderContent.FromSerialNumber(serialNumber);
+        RenderContent content = FromSerialNumber(serialNumber);
         if (content != null)
           content.OnAddUserInterfaceSections();
       }
       catch (Exception ex)
       {
-        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+        Runtime.HostUtils.ExceptionReport(ex);
+      }
+    }
+
+    internal delegate void GetDefaultsFromUserCallback(int serialNumber, IntPtr hWndParent);
+    internal static GetDefaultsFromUserCallback m_GetDefaultsFromUser = _OnGetDefaultsFromUser;
+    static void _OnGetDefaultsFromUser(int serialNumber, IntPtr hWndParent)
+    {
+      try
+      {
+        RenderContent content = FromSerialNumber(serialNumber);
+        if (content != null)
+          content.OnGetDefaultsInteractive(hWndParent);
+      }
+      catch (Exception ex)
+      {
+        Runtime.HostUtils.ExceptionReport(ex);
       }
     }
 
@@ -1483,7 +1959,7 @@ namespace Rhino.Render
       }
       catch (Exception ex)
       {
-        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+        Runtime.HostUtils.ExceptionReport(ex);
       }
     }
 
@@ -1493,13 +1969,13 @@ namespace Rhino.Render
     {
       try
       {
-        RenderContent content = RenderContent.FromSerialNumber(serialNumber);
+        RenderContent content = FromSerialNumber(serialNumber);
         if (null != content)
         {
-          var stylesToAdd= (ulong) content.m_StylesToAdd;
-          var stylesToRemove = (ulong)content.m_StylesToRemove;
-          flags |= stylesToAdd;
-          flags &= ~stylesToRemove;
+          var styles_to_add = (ulong)content.m_StylesToAdd;
+          var styles_to_remove = (ulong)content.m_StylesToRemove;
+          flags |= styles_to_add;
+          flags &= ~styles_to_remove;
           return flags;
         }
       }
@@ -1560,40 +2036,6 @@ namespace Rhino.Render
 
     #region events
 
-    /*public*/ class ContentChangedEventArgs : RenderContentEventArgs
-    {
-      internal ContentChangedEventArgs(RenderContent content, RenderContent.ChangeContexts cc)
-        : base(content)
-      { m_cc = cc; }
-
-      readonly RenderContent.ChangeContexts m_cc;
-      public RenderContent.ChangeContexts ChangeContext { get { return m_cc; } }
-    }
-
-    /*public*/ class ContentTypeEventArgs : EventArgs
-    {
-      readonly Guid m_content_type;
-      internal ContentTypeEventArgs(Guid type) { m_content_type = type; }
-      public Guid Content { get { return m_content_type; } }
-    }
-
-    /*public*/ class ContentKindEventArgs : EventArgs
-    {
-      readonly RenderContentKind m_kind;
-      internal ContentKindEventArgs(RenderContentKind kind) { m_kind = kind; }
-      //public RenderContentKind Content { get { return m_kind; } }
-    }
-
-    /*public*/ class CurrentContentChangedEventArgs : RenderContentEventArgs
-    {
-      internal CurrentContentChangedEventArgs(RenderContent content, RenderContentKind kind)
-        : base(content)
-      { m_kind = kind; }
-
-      readonly RenderContentKind m_kind;
-      //public RenderContentKind Kind { get { return m_kind; } }
-    }
-
     internal delegate void ContentAddedCallback(IntPtr pContent);
     internal delegate void ContentRenamedCallback(IntPtr pContent);
     internal delegate void ContentDeletingCallback(IntPtr pContent);
@@ -1613,11 +2055,17 @@ namespace Rhino.Render
     {
       if (m_current_content_changed_event != null)
       {
-        try { m_current_content_changed_event(null, new CurrentContentChangedEventArgs(Rhino.Render.RenderContent.FromPointer(pContent), (RenderContentKind)kind)); }
-        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+        try
+        {
+          m_current_content_changed_event(null, new CurrentRenderContentChangedEventArgs(FromPointer(pContent), (RenderContentKind)kind));
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
       }
     }
-    static EventHandler<CurrentContentChangedEventArgs> m_current_content_changed_event;
+    static EventHandler<CurrentRenderContentChangedEventArgs> m_current_content_changed_event;
 
 
     private static ContentTypeAddedCallback m_OnContentTypeAdded;
@@ -1625,34 +2073,34 @@ namespace Rhino.Render
     {
       if (m_content_type_added_event != null)
       {
-        try { m_content_type_added_event(null, new ContentTypeEventArgs(type));  }
+        try { m_content_type_added_event(null, new RenderContentTypeEventArgs(type)); }
         catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
       }
     }
-    static EventHandler<ContentTypeEventArgs> m_content_type_added_event;
+    static EventHandler<RenderContentTypeEventArgs> m_content_type_added_event;
 
     private static ContentTypeDeletingCallback m_OnContentTypeDeleting;
     private static void OnContentTypeDeleting(Guid type)
     {
       if (m_content_type_deleting_event != null)
       {
-        try { m_content_type_deleting_event(null, new ContentTypeEventArgs(type)); }
+        try { m_content_type_deleting_event(null, new RenderContentTypeEventArgs(type)); }
         catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
       }
     }
-    static EventHandler<ContentTypeEventArgs> m_content_type_deleting_event;
+    static EventHandler<RenderContentTypeEventArgs> m_content_type_deleting_event;
 
     private static ContentTypeDeletedCallback m_OnContentTypeDeleted;
     private static void OnContentTypeDeleted(int kind)
     {
       if (m_content_type_deleted_event != null)
       {
-        try { m_content_type_deleted_event(null, new ContentKindEventArgs((RenderContentKind)kind)); }
+        try { m_content_type_deleted_event(null, new RenderContentKindEventArgs((RenderContentKind)kind)); }
         catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
       }
     }
-    static EventHandler<ContentKindEventArgs> m_content_type_deleted_event;
-    
+    static EventHandler<RenderContentKindEventArgs> m_content_type_deleted_event;
+
 
 
     private static ContentAddedCallback m_OnContentAdded;
@@ -1662,7 +2110,7 @@ namespace Rhino.Render
       {
         try
         {
-          m_content_added_event(null, new RenderContentEventArgs(Rhino.Render.RenderContent.FromPointer(pContent)));
+          m_content_added_event(null, new RenderContentEventArgs(FromPointer(pContent)));
         }
         catch (Exception ex)
         {
@@ -1721,11 +2169,17 @@ namespace Rhino.Render
     {
       if (m_content_changed_event != null)
       {
-        try { m_content_changed_event(null, new ContentChangedEventArgs(Rhino.Render.RenderContent.FromPointer(pContent), (RenderContent.ChangeContexts)cc)); }
-        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
+        try
+        {
+          m_content_changed_event(null, new RenderContentChangedEventArgs(FromPointer(pContent), (ChangeContexts)cc));
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
       }
     }
-    static EventHandler<ContentChangedEventArgs> m_content_changed_event;
+    static EventHandler<RenderContentChangedEventArgs> m_content_changed_event;
 
     private static ContentUpdatePreviewCallback m_OnContentUpdatePreview;
     private static void OnContentUpdatePreview(IntPtr pContent)
@@ -1737,11 +2191,11 @@ namespace Rhino.Render
       }
     }
     static EventHandler<RenderContentEventArgs> m_content_update_preview_event;
-    
+
     /// <summary>
     /// Used to monitor render content addition to the document.
     /// </summary>
-    /*public*/ static event EventHandler<RenderContentEventArgs> RenderContentAdded
+    public static event EventHandler<RenderContentEventArgs> ContentAdded
     {
       add
       {
@@ -1766,7 +2220,7 @@ namespace Rhino.Render
     /// <summary>
     /// Used to monitor render content renaming in the document.
     /// </summary>
-    /*public*/ static event EventHandler<RenderContentEventArgs> RenderContentRenamed
+    public static event EventHandler<RenderContentEventArgs> ContentRenamed
     {
       add
       {
@@ -1791,14 +2245,14 @@ namespace Rhino.Render
     /// <summary>
     /// Used to monitor render content deletion from the document.
     /// </summary>
-    /*public*/ static event EventHandler<RenderContentEventArgs> RenderContentDeleting
+    public static event EventHandler<RenderContentEventArgs> ContentDeleting
     {
       add
       {
         if (m_content_deleting_event == null)
         {
           m_OnContentDeleting = OnContentDeleting;
-          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentDeletingEventCallback(m_OnContentDeleting, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentDeletingEventCallback(m_OnContentDeleting, Runtime.HostUtils.m_rdk_ew_report);
         }
         m_content_deleting_event += value;
       }
@@ -1807,7 +2261,7 @@ namespace Rhino.Render
         m_content_deleting_event -= value;
         if (m_content_deleting_event == null)
         {
-          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentDeletingEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentDeletingEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
           m_OnContentDeleting = null;
         }
       }
@@ -1816,7 +2270,7 @@ namespace Rhino.Render
     /// <summary>
     /// Used to monitor render content replacing in the document.
     /// </summary>
-    /*public*/ static event EventHandler<RenderContentEventArgs> RenderContentReplacing
+    public static event EventHandler<RenderContentEventArgs> ContentReplacing
     {
       add
       {
@@ -1841,14 +2295,14 @@ namespace Rhino.Render
     /// <summary>
     /// Used to monitor render content replacing in the document.
     /// </summary>
-    /*public*/ static event EventHandler<RenderContentEventArgs> RenderContentReplaced
+    public static event EventHandler<RenderContentEventArgs> ContentReplaced
     {
       add
       {
         if (m_content_replaced_event == null)
         {
           m_OnContentReplaced = OnContentReplaced;
-          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentReplacedEventCallback(m_OnContentReplaced, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentReplacedEventCallback(m_OnContentReplaced, Runtime.HostUtils.m_rdk_ew_report);
         }
         m_content_replaced_event += value;
       }
@@ -1857,7 +2311,7 @@ namespace Rhino.Render
         m_content_replaced_event -= value;
         if (m_content_replaced_event == null)
         {
-          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentReplacedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentReplacedEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
           m_OnContentReplaced = null;
         }
       }
@@ -1866,14 +2320,14 @@ namespace Rhino.Render
     /// <summary>
     /// Used to monitor render content modifications.
     /// </summary>
-    /*public*/ static event EventHandler<ContentChangedEventArgs> RenderContentChanged
+    public static event EventHandler<RenderContentChangedEventArgs> ContentChanged
     {
       add
       {
         if (m_content_changed_event == null)
         {
           m_OnContentChanged = OnContentChanged;
-          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentChangedEventCallback(m_OnContentChanged, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentChangedEventCallback(m_OnContentChanged, Runtime.HostUtils.m_rdk_ew_report);
         }
         m_content_changed_event += value;
       }
@@ -1882,7 +2336,7 @@ namespace Rhino.Render
         m_content_changed_event -= value;
         if (m_content_changed_event == null)
         {
-          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentChangedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentChangedEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
           m_OnContentChanged = null;
         }
       }
@@ -1891,7 +2345,7 @@ namespace Rhino.Render
     /// <summary>
     /// Used to monitor render content preview updates.
     /// </summary>
-    /*public*/ static event EventHandler<RenderContentEventArgs> RenderContentUpdatePreview
+    public static event EventHandler<RenderContentEventArgs> ContentUpdatePreview
     {
       add
       {
@@ -1916,14 +2370,15 @@ namespace Rhino.Render
     /// <summary>
     /// Used to monitor render content preview updates.
     /// </summary>
-    /*public*/ static event EventHandler<CurrentContentChangedEventArgs> CurrentRenderContentChanged
+    /*public*/
+    static event EventHandler<CurrentRenderContentChangedEventArgs> CurrentRenderContentChanged
     {
       add
       {
         if (m_current_content_changed_event == null)
         {
           m_OnCurrentContentChanged = OnCurrentContentChanged;
-          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentCurrencyChangedEventCallback(m_OnCurrentContentChanged, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentCurrencyChangedEventCallback(m_OnCurrentContentChanged, Runtime.HostUtils.m_rdk_ew_report);
         }
         m_current_content_changed_event += value;
       }
@@ -1932,7 +2387,7 @@ namespace Rhino.Render
         m_current_content_changed_event -= value;
         if (m_current_content_changed_event == null)
         {
-          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentCurrencyChangedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentCurrencyChangedEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
           m_OnCurrentContentChanged = null;
         }
       }
@@ -1943,7 +2398,8 @@ namespace Rhino.Render
     /// <summary>
     /// Used to monitor render content types being registered.
     /// </summary>
-    /*public*/ static event EventHandler<ContentTypeEventArgs> RenderContentTypeAdded
+    /*public*/
+    static event EventHandler<RenderContentTypeEventArgs> ContentTypeAdded
     {
       add
       {
@@ -1969,7 +2425,8 @@ namespace Rhino.Render
     /// <summary>
     /// Used to monitor render content types being registered.
     /// </summary>
-    /*public*/ static event EventHandler<ContentTypeEventArgs> RenderContentTypeDeleting
+    /*public*/
+    static event EventHandler<RenderContentTypeEventArgs> ContentTypeDeleting
     {
       add
       {
@@ -1995,14 +2452,15 @@ namespace Rhino.Render
     /// <summary>
     /// Used to monitor render content types being registered.
     /// </summary>
-    /*public*/ static event EventHandler<ContentKindEventArgs> RenderContentTypeDeleted
+    /*public*/
+    static event EventHandler<RenderContentKindEventArgs> ContentTypeDeleted
     {
       add
       {
         if (m_content_type_deleted_event == null)
         {
           m_OnContentTypeDeleted = OnContentTypeDeleted;
-          UnsafeNativeMethods.CRdkCmnEventWatcher_SetFactoryDeletedEventCallback(m_OnContentTypeDeleted, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetFactoryDeletedEventCallback(m_OnContentTypeDeleted, Runtime.HostUtils.m_rdk_ew_report);
         }
         m_content_type_deleted_event += value;
       }
@@ -2011,7 +2469,7 @@ namespace Rhino.Render
         m_content_type_deleted_event -= value;
         if (m_content_type_deleted_event == null)
         {
-          UnsafeNativeMethods.CRdkCmnEventWatcher_SetFactoryDeletedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
+          UnsafeNativeMethods.CRdkCmnEventWatcher_SetFactoryDeletedEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
           m_OnContentTypeDeleted = null;
         }
       }
@@ -2075,6 +2533,12 @@ namespace Rhino.Render
       {
         UnsafeNativeMethods.Rdk_RenderContent_DeleteThis(NonConstPointer());
       }
+      foreach (var item in m_bitmap_to_icon_dictionary)
+        UnsafeNativeMethods.DestroyIcon(item.Value);
+      m_bitmap_to_icon_dictionary.Clear();
+      foreach (var item in m_bitmap_from_icon_dictionary)
+        item.Value.Dispose();
+      m_bitmap_from_icon_dictionary.Clear();
       // for now we, don't need to perform any disposal
       //if (IntPtr.Zero != m_pRenderContent)
       //{
@@ -2085,11 +2549,48 @@ namespace Rhino.Render
     #endregion
   }
 
-  /*public*/ class RenderContentEventArgs : EventArgs
+  public class RenderContentEventArgs : EventArgs
   {
     readonly RenderContent m_content;
     internal RenderContentEventArgs(RenderContent content) { m_content = content; }
     public RenderContent Content { get { return m_content; } }
+  }
+
+  public class RenderContentChangedEventArgs : RenderContentEventArgs
+  {
+    internal RenderContentChangedEventArgs(RenderContent content, RenderContent.ChangeContexts cc)
+      : base(content)
+    { m_cc = cc; }
+
+    readonly RenderContent.ChangeContexts m_cc;
+    public RenderContent.ChangeContexts ChangeContext { get { return m_cc; } }
+  }
+
+  /*public*/
+  class RenderContentTypeEventArgs : EventArgs
+  {
+    readonly Guid m_content_type;
+    internal RenderContentTypeEventArgs(Guid type) { m_content_type = type; }
+    public Guid Content { get { return m_content_type; } }
+  }
+
+  /*public*/
+  class RenderContentKindEventArgs : EventArgs
+  {
+    readonly RenderContentKind m_kind;
+    internal RenderContentKindEventArgs(RenderContentKind kind) { m_kind = kind; }
+    //public RenderContentKind Content { get { return m_kind; } }
+  }
+
+  /*public*/
+  class CurrentRenderContentChangedEventArgs : RenderContentEventArgs
+  {
+    internal CurrentRenderContentChangedEventArgs(RenderContent content, RenderContentKind kind)
+      : base(content)
+    { m_kind = kind; }
+
+    readonly RenderContentKind m_kind;
+    //public RenderContentKind Kind { get { return m_kind; } }
   }
 }
 

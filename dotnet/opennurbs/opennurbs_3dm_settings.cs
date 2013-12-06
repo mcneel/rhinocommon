@@ -1,5 +1,7 @@
 using System;
 using Rhino.Geometry;
+using Rhino.Runtime;
+using Rhino.Runtime.InteropWrappers;
 
 // Most of these should not need to be wrapped. Some of their
 // functionality is merged into other wrapper classes
@@ -24,9 +26,9 @@ namespace Rhino.DocObjects
       if (IntPtr.Zero == pConstructionPlane)
         return null;
       ConstructionPlane rc = new ConstructionPlane();
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
-        IntPtr pString = sh.NonConstPointer();
+        IntPtr ptr_string = sh.NonConstPointer();
         UnsafeNativeMethods.ON_3dmConstructionPlane_Copy(pConstructionPlane,
                                                          ref rc.m_plane,
                                                          ref rc.m_grid_spacing,
@@ -34,7 +36,7 @@ namespace Rhino.DocObjects
                                                          ref rc.m_grid_line_count,
                                                          ref rc.m_grid_thick_frequency,
                                                          ref rc.m_bDepthBuffered,
-                                                         pString);
+                                                         ptr_string);
         rc.m_name = sh.ToString();
       }
       return rc;
@@ -42,14 +44,14 @@ namespace Rhino.DocObjects
 
     internal IntPtr CopyToNative()
     {
-      IntPtr pCPlane = UnsafeNativeMethods.ON_3dmConstructionPlane_New( ref m_plane,
+      IntPtr ptr_cplane = UnsafeNativeMethods.ON_3dmConstructionPlane_New( ref m_plane,
                                                                         m_grid_spacing,
                                                                         m_snap_spacing,
                                                                         m_grid_line_count,
                                                                         m_grid_thick_frequency,
                                                                         m_bDepthBuffered,
                                                                         m_name);
-      return pCPlane;
+      return ptr_cplane;
     }
 
     internal Plane m_plane;
@@ -257,19 +259,19 @@ namespace Rhino.DocObjects
 
 #if RHINO_SDK
     private int m_index = -1;
-    internal ViewInfo(Rhino.RhinoDoc doc, int index)
+    internal ViewInfo(RhinoDoc doc, int index)
     {
       m_parent = doc;
       m_index = index;
     }
 #endif
 
-    internal ViewInfo(Rhino.FileIO.File3dm parent, Guid id, IntPtr ptr, bool named_view_table)
+    internal ViewInfo(FileIO.File3dm parent, Guid id, IntPtr ptr, bool namedViewTable)
     {
       m_parent = parent;
       m_id = id;
       m_ptr = ptr;
-      m_named_view_table = named_view_table;
+      m_named_view_table = namedViewTable;
     }
 
     internal IntPtr ConstPointer()
@@ -279,18 +281,18 @@ namespace Rhino.DocObjects
       FileIO.File3dm parent_file = m_parent as FileIO.File3dm;
       if (parent_file != null)
       {
-        IntPtr pParent = parent_file.ConstPointer();
-        return UnsafeNativeMethods.ONX_Model_ViewPointer(pParent, m_id, m_ptr, m_named_view_table);
+        IntPtr ptr_const_parent_file = parent_file.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_ViewPointer(ptr_const_parent_file, m_id, m_ptr, m_named_view_table);
       }
 #if RHINO_SDK
       if (m_index >= 0)
       {
-        Rhino.RhinoDoc doc = m_parent as Rhino.RhinoDoc;
+        RhinoDoc doc = m_parent as RhinoDoc;
         if (doc != null)
           return UnsafeNativeMethods.CRhinoDocProperties_GetNamedView(doc.m_docId, m_index);
       }
 #endif
-      throw new Rhino.Runtime.DocumentCollectedException();
+      throw new Runtime.DocumentCollectedException();
     }
 
     internal IntPtr NonConstPointer()
@@ -298,14 +300,14 @@ namespace Rhino.DocObjects
       FileIO.File3dm parent_file = m_parent as FileIO.File3dm;
       if (parent_file != null)
       {
-        IntPtr pParent = parent_file.ConstPointer();
-        return UnsafeNativeMethods.ONX_Model_ViewPointer(pParent, m_id, m_ptr, m_named_view_table);
+        IntPtr ptr_const_parent_file = parent_file.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_ViewPointer(ptr_const_parent_file, m_id, m_ptr, m_named_view_table);
       }
 
       if (m_ptr == IntPtr.Zero)
       {
-        IntPtr pConstThis = ConstPointer();
-        m_ptr = UnsafeNativeMethods.ON_3dmView_New(pConstThis);
+        IntPtr ptr_const_this = ConstPointer();
+        m_ptr = UnsafeNativeMethods.ON_3dmView_New(ptr_const_this);
 #if RHINO_SDK
         m_index = -1;
         m_parent = null;
@@ -352,18 +354,18 @@ namespace Rhino.DocObjects
     {
       get
       {
-        IntPtr ptr = ConstPointer();
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        IntPtr ptr_const_this = ConstPointer();
+        using (var sh = new StringHolder())
         {
-          IntPtr pString = sh.NonConstPointer();
-          UnsafeNativeMethods.ON_3dmView_NameGet(ptr, pString);
+          IntPtr ptr_string = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_3dmView_NameGet(ptr_const_this, ptr_string);
           return sh.ToString();
         }
       }
       set
       {
-        IntPtr ptr = NonConstPointer();
-        UnsafeNativeMethods.ON_3dmView_NameSet(ptr, value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_3dmView_NameSet(ptr_this, value);
       }
     }
 
@@ -381,13 +383,13 @@ namespace Rhino.DocObjects
     }
     internal IntPtr ConstViewportPointer()
     {
-      IntPtr pConstThis = ConstPointer();
-      return UnsafeNativeMethods.ON_3dmView_ViewportPointer(pConstThis);
+      IntPtr ptr_const_this = ConstPointer();
+      return UnsafeNativeMethods.ON_3dmView_ViewportPointer(ptr_const_this);
     }
     internal IntPtr NonConstViewportPointer()
     {
-      IntPtr pThis = NonConstPointer();
-      return UnsafeNativeMethods.ON_3dmView_ViewportPointer(pThis);
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.ON_3dmView_ViewportPointer(ptr_this);
     }
   }
 
@@ -458,13 +460,13 @@ namespace Rhino.DocObjects
     const int idxEarthBasepointElevation = 2;
     double GetDouble(int which)
     {
-      IntPtr pConstThis = ConstPointer();
-      return UnsafeNativeMethods.ON_EarthAnchorPoint_GetDouble(pConstThis, which);
+      IntPtr ptr_const_this = ConstPointer();
+      return UnsafeNativeMethods.ON_EarthAnchorPoint_GetDouble(ptr_const_this, which);
     }
     void SetDouble(int which, double val)
     {
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.ON_EarthAnchorPoint_SetDouble(pThis, which, val);
+      IntPtr ptr_this = NonConstPointer();
+      UnsafeNativeMethods.ON_EarthAnchorPoint_SetDouble(ptr_this, which, val);
     }
 
     /// <summary>
@@ -504,13 +506,13 @@ namespace Rhino.DocObjects
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        return (BasepointZero)UnsafeNativeMethods.ON_EarthAnchorPoint_GetEarthBasepointElevationZero(pConstThis);
+        IntPtr ptr_const_this = ConstPointer();
+        return (BasepointZero)UnsafeNativeMethods.ON_EarthAnchorPoint_GetEarthBasepointElevationZero(ptr_const_this);
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_EarthAnchorPoint_SetEarthBasepointElevationZero(pThis, (int)value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_SetEarthBasepointElevationZero(ptr_this, (int)value);
       }
     }
 
@@ -520,14 +522,14 @@ namespace Rhino.DocObjects
       get
       {
         Point3d rc = new Point3d(0,0,0);
-        IntPtr pConstThis = ConstPointer();
-        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelBasePoint(pConstThis, false, ref rc);
+        IntPtr ptr_const_this = ConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelBasePoint(ptr_const_this, false, ref rc);
         return rc;
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelBasePoint(pThis, true, ref value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelBasePoint(ptr_this, true, ref value);
       }
     }
 
@@ -537,14 +539,14 @@ namespace Rhino.DocObjects
       get
       {
         Vector3d rc = new Vector3d(0, 0, 0);
-        IntPtr pConstThis = ConstPointer();
-        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelDirection(pConstThis, true, false, ref rc);
+        IntPtr ptr_const_this = ConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelDirection(ptr_const_this, true, false, ref rc);
         return rc;
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelDirection(pThis, true, true, ref value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelDirection(ptr_this, true, true, ref value);
       }
     }
 
@@ -554,14 +556,14 @@ namespace Rhino.DocObjects
       get
       {
         Vector3d rc = new Vector3d(0, 0, 0);
-        IntPtr pConstThis = ConstPointer();
-        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelDirection(pConstThis, false, false, ref rc);
+        IntPtr ptr_const_this = ConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelDirection(ptr_const_this, false, false, ref rc);
         return rc;
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelDirection(pThis, false, true, ref value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_ModelDirection(ptr_this, false, true, ref value);
       }
     }
 
@@ -575,18 +577,18 @@ namespace Rhino.DocObjects
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
-          IntPtr pConstThis = ConstPointer();
-          IntPtr pString = sh.NonConstPointer();
-          UnsafeNativeMethods.ON_EarthAnchorPoint_GetString(pConstThis, true, pString);
+          IntPtr ptr_const_this = ConstPointer();
+          IntPtr ptr_this = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_EarthAnchorPoint_GetString(ptr_const_this, true, ptr_this);
           return sh.ToString();
         }
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_EarthAnchorPoint_SetString(pThis, true, value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_SetString(ptr_this, true, value);
       }
     }
 
@@ -597,18 +599,18 @@ namespace Rhino.DocObjects
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
-          IntPtr pConstThis = ConstPointer();
-          IntPtr pString = sh.NonConstPointer();
-          UnsafeNativeMethods.ON_EarthAnchorPoint_GetString(pConstThis, false, pString);
+          IntPtr ptr_const_this = ConstPointer();
+          IntPtr ptr_string = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_EarthAnchorPoint_GetString(ptr_const_this, false, ptr_string);
           return sh.ToString();
         }
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_EarthAnchorPoint_SetString(pThis, false, value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_EarthAnchorPoint_SetString(ptr_this, false, value);
       }
     }
     //ON_wString m_url;
@@ -624,8 +626,8 @@ namespace Rhino.DocObjects
     public Plane GetModelCompass()
     {
       Plane rc = Plane.Unset;
-      IntPtr pConstThis = ConstPointer();
-      UnsafeNativeMethods.ON_EarthAnchorPoint_GetModelCompass(pConstThis, ref rc);
+      IntPtr ptr_const_this = ConstPointer();
+      UnsafeNativeMethods.ON_EarthAnchorPoint_GetModelCompass(ptr_const_this, ref rc);
       return rc;
     }
 
@@ -661,8 +663,8 @@ namespace Rhino.DocObjects
     public Transform GetModelToEarthTransform(UnitSystem modelUnitSystem)
     {
       Transform rc = Transform.Unset;
-      IntPtr pConstThis = ConstPointer();
-      UnsafeNativeMethods.ON_EarthAnchorPoint_GetModelToEarthTransform(pConstThis, (int)modelUnitSystem, ref rc);
+      IntPtr ptr_const_this = ConstPointer();
+      UnsafeNativeMethods.ON_EarthAnchorPoint_GetModelToEarthTransform(ptr_const_this, (int)modelUnitSystem, ref rc);
       return rc;
     }
   }
@@ -701,7 +703,7 @@ namespace Rhino.Render
   public class RenderSettings : IDisposable
   {
 #if RHINO_SDK
-    readonly Rhino.RhinoDoc m_doc;
+    readonly RhinoDoc m_doc;
 #endif
     IntPtr m_ptr = IntPtr.Zero;
 
@@ -768,20 +770,37 @@ namespace Rhino.Render
       m_ptr = IntPtr.Zero;
     }
 
+    void Commit()
+    {
+#if RHINO_SDK
+      // If this class is not associated with a doc or it is already const then bail
+      if (m_doc == null || m_ptr==IntPtr.Zero)
+        return;
+      // This class is associated with a doc so commit the settings change
+      m_doc.RenderSettings = this;
+      // Delete the current settings pointer, the next time it is
+      // accessed by NonConstPointer() or ConstPointer() it will
+      // make a copy of the documents render settings
+      UnsafeNativeMethods.ON_3dmRenderSettings_Delete(m_ptr);
+      m_ptr = IntPtr.Zero;
+#endif
+    }
+
     const int idxAmbientLight = 0;
     const int idxBackgroundColorTop = 1;
     const int idxBackgroundColorBottom = 2;
     System.Drawing.Color GetColor(int which)
     {
-      IntPtr pConstThis = ConstPointer();
-      int argb = UnsafeNativeMethods.ON_3dmRenderSettings_GetColor(pConstThis, which);
+      IntPtr ptr_const_this = ConstPointer();
+      int argb = UnsafeNativeMethods.ON_3dmRenderSettings_GetColor(ptr_const_this, which);
       return System.Drawing.Color.FromArgb(argb);
     }
     void SetColor(int which, System.Drawing.Color c)
     {
-      IntPtr pThis = NonConstPointer();
+      IntPtr ptr_this = NonConstPointer();
       int argb = c.ToArgb();
-      UnsafeNativeMethods.ON_3dmRenderSettings_SetColor(pThis, which, argb);
+      UnsafeNativeMethods.ON_3dmRenderSettings_SetColor(ptr_this, which, argb);
+      Commit();
     }
 
     /// <summary>
@@ -814,13 +833,14 @@ namespace Rhino.Render
 
     bool GetBool(int which)
     {
-      IntPtr pConstThis = ConstPointer();
-      return UnsafeNativeMethods.ON_3dmRenderSettings_GetBool(pConstThis, which);
+      IntPtr ptr_const_this = ConstPointer();
+      return UnsafeNativeMethods.ON_3dmRenderSettings_GetBool(ptr_const_this, which);
     }
     void SetBool(int which, bool b)
     {
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.ON_3dmRenderSettings_SetBool(pThis, which, b);
+      IntPtr ptr_this = NonConstPointer();
+      UnsafeNativeMethods.ON_3dmRenderSettings_SetBool(ptr_this, which, b);
+      Commit();
     }
 
     const int idxUseHiddenLights = 0;
@@ -919,13 +939,14 @@ namespace Rhino.Render
 
     int GetInt(int which)
     {
-      IntPtr pConstThis = ConstPointer();
-      return UnsafeNativeMethods.ON_3dmRenderSettings_GetInt(pConstThis, which);
+      IntPtr ptr_const_this = ConstPointer();
+      return UnsafeNativeMethods.ON_3dmRenderSettings_GetInt(ptr_const_this, which);
     }
     void SetInt(int which, int i)
     {
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.ON_3dmRenderSettings_SetInt(pThis, which, i);
+      IntPtr ptr_this = NonConstPointer();
+      UnsafeNativeMethods.ON_3dmRenderSettings_SetInt(ptr_this, which, i);
+      Commit();
     }
 
     const int idxBackgroundStyle = 0;
@@ -987,9 +1008,9 @@ namespace Rhino.Render
     /// <summary>
     /// How the viewport's backgroun should be filled.
     /// </summary>
-    public Rhino.Display.BackgroundStyle BackgroundStyle
+    public Display.BackgroundStyle BackgroundStyle
     {
-      get { return (Rhino.Display.BackgroundStyle)GetInt(idxBackgroundStyle); }
+      get { return (Display.BackgroundStyle)GetInt(idxBackgroundStyle); }
       set { SetInt(idxBackgroundStyle, (int)value); }
     }
 
@@ -1051,13 +1072,13 @@ namespace Rhino.FileIO
 
     IntPtr ConstPointer()
     {
-      IntPtr pConstParent = m_parent.ConstPointer();
-      return UnsafeNativeMethods.ONX_Model_3dmSettingsPointer(pConstParent);
+      IntPtr ptr_const_parent = m_parent.ConstPointer();
+      return UnsafeNativeMethods.ONX_Model_3dmSettingsPointer(ptr_const_parent);
     }
     IntPtr NonConstPointer()
     {
-      IntPtr pParent = m_parent.NonConstPointer();
-      return UnsafeNativeMethods.ONX_Model_3dmSettingsPointer(pParent);
+      IntPtr ptr_parent = m_parent.NonConstPointer();
+      return UnsafeNativeMethods.ONX_Model_3dmSettingsPointer(ptr_parent);
     }
 
     /// <summary>
@@ -1067,18 +1088,18 @@ namespace Rhino.FileIO
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        IntPtr ptr_const_this = ConstPointer();
+        using (var sh = new StringHolder())
         {
-          IntPtr pString = sh.NonConstPointer();
-          UnsafeNativeMethods.ON_3dmSettings_GetModelUrl(pConstThis, pString);
+          IntPtr ptr_string = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_3dmSettings_GetModelUrl(ptr_const_this, ptr_string);
           return sh.ToString();
         }
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_3dmSettings_SetModelUrl(pThis, value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_3dmSettings_SetModelUrl(ptr_this, value);
       }
     }
 
@@ -1090,15 +1111,15 @@ namespace Rhino.FileIO
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
+        IntPtr ptr_const_this = ConstPointer();
         Point3d rc = new Point3d();
-        UnsafeNativeMethods.ON_3dmSettings_GetModelBasepoint(pConstThis, ref rc);
+        UnsafeNativeMethods.ON_3dmSettings_GetModelBasepoint(ptr_const_this, ref rc);
         return rc;
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_3dmSettings_SetModelBasepoint(pThis, value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_3dmSettings_SetModelBasepoint(ptr_this, value);
       }
     }
 
@@ -1125,13 +1146,13 @@ namespace Rhino.FileIO
 
     double GetDouble(int which)
     {
-      IntPtr pConstThis = ConstPointer();
-      return UnsafeNativeMethods.ON_3dmSettings_GetDouble(pConstThis, which);
+      IntPtr ptr_const_this = ConstPointer();
+      return UnsafeNativeMethods.ON_3dmSettings_GetDouble(ptr_const_this, which);
     }
     void SetDouble(int which, double val)
     {
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.ON_3dmSettings_SetDouble(pThis, which, val);
+      IntPtr ptr_this = NonConstPointer();
+      UnsafeNativeMethods.ON_3dmSettings_SetDouble(ptr_this, which, val);
     }
 
     const int idxModelAbsTol = 0;
@@ -1211,38 +1232,38 @@ namespace Rhino.FileIO
     /// <summary>
     /// Gets or sets the model unit system, using <see cref="Rhino.UnitSystem"/> enumeration.
     /// </summary>
-    public Rhino.UnitSystem ModelUnitSystem
+    public UnitSystem ModelUnitSystem
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        int rc = UnsafeNativeMethods.ON_3dmSettings_GetSetUnitSystem(pConstThis, true, false, 0);
-        return (Rhino.UnitSystem)rc;
+        IntPtr ptr_const_this = ConstPointer();
+        int rc = UnsafeNativeMethods.ON_3dmSettings_GetSetUnitSystem(ptr_const_this, true, false, 0);
+        return (UnitSystem)rc;
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
+        IntPtr ptr_this = NonConstPointer();
         int set_val = (int)value;
-        UnsafeNativeMethods.ON_3dmSettings_GetSetUnitSystem(pThis, true, true, set_val);
+        UnsafeNativeMethods.ON_3dmSettings_GetSetUnitSystem(ptr_this, true, true, set_val);
       }
     }
 
     /// <summary>
     /// Gets or sets the page unit system, using <see cref="Rhino.UnitSystem"/> enumeration.
     /// </summary>
-    public Rhino.UnitSystem PageUnitSystem
+    public UnitSystem PageUnitSystem
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        int rc = UnsafeNativeMethods.ON_3dmSettings_GetSetUnitSystem(pConstThis, false, false, 0);
-        return (Rhino.UnitSystem)rc;
+        IntPtr ptr_const_this = ConstPointer();
+        int rc = UnsafeNativeMethods.ON_3dmSettings_GetSetUnitSystem(ptr_const_this, false, false, 0);
+        return (UnitSystem)rc;
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
+        IntPtr ptr_this = NonConstPointer();
         int set_val = (int)value;
-        UnsafeNativeMethods.ON_3dmSettings_GetSetUnitSystem(pThis, false, true, set_val);
+        UnsafeNativeMethods.ON_3dmSettings_GetSetUnitSystem(ptr_this, false, true, set_val);
       }
     }
 

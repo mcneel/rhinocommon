@@ -46,6 +46,15 @@ RH_C_FUNCTION double ON_2dVector_Length(ON_2DVECTOR_STRUCT v)
   return ((ON_2dVector*)&v)->Length();
 }
 
+RH_C_FUNCTION bool ON_2dVector_Unitize( ON_2dVector* v )
+{
+  bool rc = false;
+  if( v )
+    rc = v->Unitize();
+  return rc;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////
 
 RH_C_FUNCTION bool ON_3fVector_Unitize( ON_3fVector* v )

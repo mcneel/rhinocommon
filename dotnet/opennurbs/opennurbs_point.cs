@@ -2536,6 +2536,31 @@ namespace Rhino.Geometry
     {
       get { return new Vector2d(RhinoMath.UnsetValue, RhinoMath.UnsetValue); }
     }
+
+    /// <summary>
+    /// Gets a value indicating whether this vector is valid. 
+    /// A valid vector must be formed of valid component values for x, y and z.
+    /// </summary>
+    public bool IsValid
+    {
+      get
+      {
+        return RhinoMath.IsValidDouble(m_x) &&
+               RhinoMath.IsValidDouble(m_y);
+      }
+    }
+
+    /// <summary>
+    /// Unitizes the vector in place. A unit vector has length 1 unit. 
+    /// <para>An invalid or zero length vector cannot be unitized.</para>
+    /// </summary>
+    /// <returns>true on success or false on failure.</returns>
+    public bool Unitize()
+    {
+      bool rc = IsValid && UnsafeNativeMethods.ON_2dVector_Unitize(ref this);
+      return rc;
+    }
+
   }
 
   /// <summary>

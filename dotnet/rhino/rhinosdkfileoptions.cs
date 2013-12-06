@@ -26,26 +26,12 @@ namespace Rhino.FileIO
     }
 
     #region properties
-    const int idxSelectedMode = 0;      // Write selected objects only
-    const int idxTransformMode = 1;     // Apply GetGransform()
-    const int idxRenderMeshesMode = 2;  // Include render meshes
-    const int idxPreviewMode = 3;       // Include preview image
-    const int idxBitmapsMode = 4;       // Include bitmap table
-    const int idxHistoryMode = 5;       // Include history
-    //const int idxAsVersion2 = 6;        // Write as version 2
-    //const int idxAsVersion3 = 7;        // Write as version 3
-    const int idxAsTemplate = 8;        // Write as template
-    const int idxBatchMode = 9;         // Suppress dialog boxes
-    const int idxGeometryOnly = 10;     // Write geometry only
-    //const int idxInstallPlugin = 11;    // Set when the plugin is being installed
-    const int idxSaveUserData = 12;     // Set when user data should be saved.
-    //const int idxAsVersion4 = 13;       // Write as version 4
 
-    bool GetBool(int which)
+    bool GetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts which)
     {
       return UnsafeNativeMethods.CRhinoFileWriteOptions_GetBool(m_ptr, which);
     }
-    void SetBool(int which, bool value)
+    void SetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts which, bool value)
     {
       if (m_bDoDelete) // means this is not "const"
         UnsafeNativeMethods.CRhinoFileWriteOptions_SetBool(m_ptr, which, value);
@@ -53,62 +39,62 @@ namespace Rhino.FileIO
 
     public bool WriteSelectedObjectsOnly
     {
-      get { return GetBool(idxSelectedMode); }
-      set { SetBool(idxSelectedMode, value); }
+      get { return GetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.SelectedMode); }
+      set { SetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.SelectedMode, value); }
     }
 
     public bool ApplyTransform
     {
-      get { return GetBool(idxTransformMode); }
-      set { SetBool(idxTransformMode, value); }
+      get { return GetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.TransformMode); }
+      set { SetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.TransformMode, value); }
     }
 
     public bool IncludeRenderMeshes
     {
-      get { return GetBool(idxRenderMeshesMode); }
-      set { SetBool(idxRenderMeshesMode, value); }
+      get { return GetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.RenderMeshesMode); }
+      set { SetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.RenderMeshesMode, value); }
     }
 
     public bool IncludePreviewImage
     {
-      get { return GetBool(idxPreviewMode); }
-      set { SetBool(idxPreviewMode, value); }
+      get { return GetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.PreviewMode); }
+      set { SetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.PreviewMode, value); }
     }
 
     public bool IncludeBitmapTable
     {
-      get { return GetBool(idxBitmapsMode); }
-      set { SetBool(idxBitmapsMode, value); }
+      get { return GetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.BitmapsMode); }
+      set { SetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.BitmapsMode, value); }
     }
 
     public bool IncludeHistory
     {
-      get { return GetBool(idxHistoryMode); }
-      set { SetBool(idxHistoryMode, value); }
+      get { return GetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.HistoryMode); }
+      set { SetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.HistoryMode, value); }
     }
 
     public bool WriteAsTemplate
     {
-      get { return GetBool(idxAsTemplate); }
-      set { SetBool(idxAsTemplate, value); }
+      get { return GetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.AsTemplate); }
+      set { SetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.AsTemplate, value); }
     }
 
     public bool SuppressDialogBoxes
     {
-      get { return GetBool(idxBatchMode); }
-      set { SetBool(idxBatchMode, value); }
+      get { return GetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.BatchMode); }
+      set { SetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.BatchMode, value); }
     }
 
     public bool WriteGeometryOnly
     {
-      get { return GetBool(idxGeometryOnly); }
-      set { SetBool(idxGeometryOnly, value); }
+      get { return GetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.GeometryOnly); }
+      set { SetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.GeometryOnly, value); }
     }
 
     public bool WriteUserData
     {
-      get { return GetBool(idxSaveUserData); }
-      set { SetBool(idxSaveUserData, value); }
+      get { return GetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.SaveUserData); }
+      set { SetBool(UnsafeNativeMethods.FileWriteOptionsBoolConsts.SaveUserData, value); }
     }
 
     public int FileVersion
@@ -124,11 +110,11 @@ namespace Rhino.FileIO
       }
     }
 
-    public Rhino.Geometry.Transform Xform
+    public Geometry.Transform Xform
     {
       get
       {
-        Rhino.Geometry.Transform xf = new Rhino.Geometry.Transform();
+        Geometry.Transform xf = new Geometry.Transform();
         UnsafeNativeMethods.CRhinoFileWriteOptions_Transform(m_ptr, true, ref xf);
         return xf;
       }
@@ -193,29 +179,12 @@ namespace Rhino.FileIO
     }
 
     #region properties
-    const int idxImportMode          = 0;
-    const int idxOpenMode            = 1;
-    const int idxNewMode             = 2;
-    const int idxInsertMode          = 3; // Will be set when running the Rhino Insert command
-    const int idxImportReferenceMode = 4; // document being imported as a reference 
-    const int idxBatchMode           = 5; // no dialogs
-    const int idxUseScaleGeometry    = 6;
-    const int idxScaleGeometry       = 7;
-    // This is to allow a plugin to support only Open or only Import, etc.
-    // CRhinoPlugInManager::RegisterPlugIn() requires the plugin to add a filetype
-    // but a selective mode plugin doesn't want to add a plugin each time
-    // it gets called.  The plugin will add a filetype when InstallPlugin is set.
-    //const int idxInstallPlugin = 8;    // Set when the plugin is being installed
-    // This is only used when BatchMode is true.  If this is true, and in batch
-    // mode then instance definitions with a IDEF_UPDATE_TYPE equal to
-    // will be updated when the file open is complete otherwise they will not.
-    //const int idxScriptUpdateEmbededInstanceDefinitions = 9;
 
-    bool GetBool(int which)
+    bool GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts which)
     {
       return UnsafeNativeMethods.CRhinoFileReadOptions_GetBool(m_ptr, which);
     }
-    void SetBool(int which, bool value)
+    void SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts which, bool value)
     {
       if (m_bDoDelete) // means this is not "const"
         UnsafeNativeMethods.CRhinoFileReadOptions_SetBool(m_ptr, which, value);
@@ -223,43 +192,43 @@ namespace Rhino.FileIO
 
     public bool ImportMode
     {
-      get { return GetBool(idxImportMode); }
-      set { SetBool(idxImportMode, value); }
+      get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.ImportMode); }
+      set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.ImportMode, value); }
     }
     public bool OpenMode
     {
-      get { return GetBool(idxOpenMode); }
-      set { SetBool(idxOpenMode, value); }
+      get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.OpenMode); }
+      set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.OpenMode, value); }
     }
     public bool NewMode
     {
-      get { return GetBool(idxNewMode); }
-      set { SetBool(idxNewMode, value); }
+      get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.NewMode); }
+      set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.NewMode, value); }
     }
     public bool InsertMode
     {
-      get { return GetBool(idxInsertMode); }
-      set { SetBool(idxInsertMode, value); }
+      get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.InsertMode); }
+      set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.InsertMode, value); }
     }
     public bool ImportReferenceMode
     {
-      get { return GetBool(idxImportReferenceMode); }
-      set { SetBool(idxImportReferenceMode, value); }
+      get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.ImportReferenceMode); }
+      set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.ImportReferenceMode, value); }
     }
     public bool BatchMode
     {
-      get { return GetBool(idxBatchMode); }
-      set { SetBool(idxBatchMode, value); }
+      get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.BatchMode); }
+      set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.BatchMode, value); }
     }
     public bool UseScaleGeometry
     {
-      get { return GetBool(idxUseScaleGeometry); }
-      set { SetBool(idxUseScaleGeometry, value); }
+      get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.UseScaleGeometry); }
+      set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.UseScaleGeometry, value); }
     }
     public bool ScaleGeometry
     {
-      get { return GetBool(idxScaleGeometry); }
-      set { SetBool(idxScaleGeometry, value); }
+      get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.ScaleGeometry); }
+      set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.ScaleGeometry, value); }
     }
 
     #endregion

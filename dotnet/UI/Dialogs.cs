@@ -71,20 +71,24 @@ namespace Rhino
     {
       public static int ShowContextMenu(IEnumerable<string> items, System.Drawing.Point screenPoint, IEnumerable<int> modes)
       {
-        IntPtr pStrings = UnsafeNativeMethods.ON_StringArray_New();
-        int count = 0;
+        IntPtr ptr_string_array = UnsafeNativeMethods.ON_StringArray_New();
         foreach (string item in items)
         {
-          UnsafeNativeMethods.ON_StringArray_Append(pStrings, item);
-          count++;
+          UnsafeNativeMethods.ON_StringArray_Append(ptr_string_array, item);
         }
-        List<int> _modes = new List<int>(modes);
-        count = _modes.Count;
-        int[] arrayModes = _modes.ToArray();
-        int rc = UnsafeNativeMethods.RHC_ShowContextMenu(pStrings, screenPoint.X, screenPoint.Y, count, arrayModes);
-        UnsafeNativeMethods.ON_StringArray_Delete(pStrings);
+        int modecount = 0;
+        int[] array_modes = null;
+        if (modes != null)
+        {
+          List<int> list_modes = new List<int>(modes);
+          modecount = list_modes.Count;
+          array_modes = list_modes.ToArray();
+        }
+        int rc = UnsafeNativeMethods.RHC_ShowContextMenu(ptr_string_array, screenPoint.X, screenPoint.Y, modecount, array_modes);
+        UnsafeNativeMethods.ON_StringArray_Delete(ptr_string_array);
         return rc;
       }
+
 
       public static void SetCustomColorDialog( EventHandler<GetColorEventArgs> handler)
       {

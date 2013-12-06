@@ -296,6 +296,12 @@ namespace Rhino.Runtime
       if (IntPtr.Zero == m_ptr || m__parent is ConstCastHolder)
         return;
 
+      Geometry.MeshHolder mh = m__parent as Geometry.MeshHolder;
+      if (mh!=null)
+      {
+        mh.ReleaseMesh();
+      }
+
       if (m_bDestructOnDispose)
       {
         bool inFinalizer = !disposing;

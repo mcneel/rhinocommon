@@ -8,7 +8,6 @@ using Rhino.Geometry;
 #if RDK_CHECKED
 namespace Rhino.Render.Fields
 {
-  /////////////////////////////////////////////////////////////////////////////
   /// <summary>
   /// Dictionary containing RenderContent data fields, add fields to this
   /// dictionary in your derived RenderContent classes constructor.  Get field
@@ -60,7 +59,7 @@ namespace Rhino.Render.Fields
     /// </summary>
     internal void InternalDispose()
     {
-      foreach (KeyValuePair<string,Field>kvp in m_dictionary)
+      foreach (KeyValuePair<string, Field> kvp in m_dictionary)
         kvp.Value.IneternalDispose();
       m_dictionary.Clear();
     }
@@ -80,16 +79,16 @@ namespace Rhino.Render.Fields
     private Field FieldFromContent(string key)
     {
       // Content pointer
-      IntPtr contentPointer = m_content.ConstPointer();
+      IntPtr content_pointer = m_content.ConstPointer();
       // Content C++ pointer has not been created yet so there is no place to
       // look for the field.
-      if (IntPtr.Zero == contentPointer) return null;
+      if (IntPtr.Zero == content_pointer) return null;
       // Call the C++ SDK and get a pointer to the requested field
-      IntPtr fieldPointer = UnsafeNativeMethods.Rdk_RenderContent_FindField(contentPointer, key);
+      IntPtr field_pointer = UnsafeNativeMethods.Rdk_RenderContent_FindField(content_pointer, key);
       // Field not found so return null
-      if (IntPtr.Zero == fieldPointer) return null;
+      if (IntPtr.Zero == field_pointer) return null;
       // Create a new temporary Field[data type] object and attach it to this pointer.
-      Field result = Field.FieldFromPointer(m_content, fieldPointer, key);
+      Field result = Field.FieldFromPointer(m_content, field_pointer, key);
       return result;
     }
     /// <summary>
@@ -149,7 +148,7 @@ namespace Rhino.Render.Fields
 
     #region Overloaded AddField methods for the supported data types
     /// <summary>
-    /// AddField a new Field to the dictionary, will throw an exception if the key
+    /// Add a new Field to the dictionary.  Will throw an exception if the key
     /// is already in the dictionary or if value is not a supported type.
     /// </summary>
     /// <param name="field">
@@ -163,7 +162,7 @@ namespace Rhino.Render.Fields
       try
       {
         // Key name can not be empty
-        if (string.IsNullOrEmpty(field.Key)) throw new ArgumentNullException("key");
+        if (string.IsNullOrEmpty(field.Key)) throw new ArgumentNullException("field.Key");
         // AddField the new field to the dictionary, this will throw an exception if
         // the key was previously added
         m_dictionary.Add(field.Key, field);
@@ -176,21 +175,24 @@ namespace Rhino.Render.Fields
       }
       return field;
     }
+
     /// <summary>
-    /// AddField a new StringField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new StringField to the dictionary.  This will be a data only
+    /// field and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public StringField Add(string key, string value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new StringField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// Add a new StringField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -200,25 +202,52 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public StringField Add(string key, string value, string prompt)
     {
-      return AddField(new StringField(m_content, IntPtr.Zero, key, prompt, value)) as StringField;
+      return AddField(new StringField(m_content, IntPtr.Zero, key, prompt, value, false)) as StringField;
     }
+
     /// <summary>
-    /// AddField a new BoolField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new StringField to the dictionary. This overload will cause the
+    /// field to be tagged as "textured" so that the texturing UI will appear
+    /// in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public StringField AddTextured(string key, string value, string prompt)
+    {
+      return AddField(new StringField(m_content, IntPtr.Zero, key, prompt, value, true)) as StringField;
+    }
+
+    /// <summary>
+    /// Add a new BoolField to the dictionary. This will be a data only field
+    /// and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public BoolField Add(string key, bool value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new BoolField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// Add a new BoolField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -228,25 +257,52 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public BoolField Add(string key, bool value, string prompt)
     {
-      return AddField(new BoolField(m_content, IntPtr.Zero, key, prompt, value)) as BoolField;
+      return AddField(new BoolField(m_content, IntPtr.Zero, key, prompt, value, false)) as BoolField;
     }
+
     /// <summary>
-    /// AddField a new IntField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new BoolField to the dictionary. This overload will cause the
+    /// field to be tagged as "textured" so that the texturing UI will appear
+    /// in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public BoolField AddTextured(string key, bool value, string prompt)
+    {
+      return AddField(new BoolField(m_content, IntPtr.Zero, key, prompt, value, true)) as BoolField;
+    }
+
+    /// <summary>
+    /// Add a new IntField to the dictionary. This will be a data only field
+    /// and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public IntField Add(string key, int value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new IntField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// Add a new IntField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -256,25 +312,52 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public IntField Add(string key, int value, string prompt)
     {
-      return AddField(new IntField(m_content, IntPtr.Zero, key, prompt, value)) as IntField;
+      return AddField(new IntField(m_content, IntPtr.Zero, key, prompt, value, false)) as IntField;
     }
+
     /// <summary>
-    /// AddField a new FloatField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new IntField to the dictionary. This overload will cause the
+    /// field to be tagged as "textured" so that the texturing UI will appear
+    /// in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public IntField AddTextured(string key, int value, string prompt)
+    {
+      return AddField(new IntField(m_content, IntPtr.Zero, key, prompt, value, true)) as IntField;
+    }
+
+    /// <summary>
+    /// Add a new FloatField to the dictionary. This will be a data only field
+    /// and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public FloatField Add(string key, float value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new FloatField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// AddField a new FloatField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -284,25 +367,51 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public FloatField Add(string key, float value, string prompt)
     {
-      return AddField(new FloatField(m_content, IntPtr.Zero, key, prompt, value)) as FloatField;
+      return AddField(new FloatField(m_content, IntPtr.Zero, key, prompt, value, false)) as FloatField;
+    }
+
+    /// <summary>
+    /// Add a new FloatField to the dictionary. This overload will cause the
+    /// field to be tagged as "textured" so that the texturing UI will appear
+    /// in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public FloatField AddTextured(string key, float value, string prompt)
+    {
+      return AddField(new FloatField(m_content, IntPtr.Zero, key, prompt, value, true)) as FloatField;
     }
     /// <summary>
-    /// AddField a new DoubleField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// AddField a new DoubleField to the dictionary. This will be a data only
+    /// field and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public DoubleField Add(string key, double value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new DoubleField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// Add a new DoubleField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -312,25 +421,52 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public DoubleField Add(string key, double value, string prompt)
     {
-      return AddField(new DoubleField(m_content, IntPtr.Zero, key, prompt, value)) as DoubleField;
+      return AddField(new DoubleField(m_content, IntPtr.Zero, key, prompt, value, false)) as DoubleField;
     }
+
     /// <summary>
-    /// AddField a new Color4fField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new DoubleField to the dictionary. This overload will cause the
+    /// field to be tagged as "textured" so that the texturing UI will appear
+    /// in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public DoubleField AddTextured(string key, double value, string prompt)
+    {
+      return AddField(new DoubleField(m_content, IntPtr.Zero, key, prompt, value, true)) as DoubleField;
+    }
+
+    /// <summary>
+    /// Add a new Color4fField to the dictionary. This will be a data only
+    /// field and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public Color4fField Add(string key, Color4f value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new Color4fField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// Add a new Color4fField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -340,25 +476,52 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public Color4fField Add(string key, Color4f value, string prompt)
     {
-      return AddField(new Color4fField(m_content, IntPtr.Zero, key, prompt, value)) as Color4fField;
+      return AddField(new Color4fField(m_content, IntPtr.Zero, key, prompt, value, false)) as Color4fField;
     }
+
     /// <summary>
-    /// AddField a new Color4fField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new Color4fField to the dictionary. This overload will cause the
+    /// field to be tagged as "textured" so that the texturing UI will appear
+    /// in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public Color4fField AddTextured(string key, Color4f value, string prompt)
+    {
+      return AddField(new Color4fField(m_content, IntPtr.Zero, key, prompt, value, true)) as Color4fField;
+    }
+
+    /// <summary>
+    /// Add a new Color4fField to the dictionary. This will be a data only
+    /// field and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public Color4fField Add(string key, System.Drawing.Color value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new Color4fField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// Add a new Color4fField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -368,25 +531,52 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public Color4fField Add(string key, System.Drawing.Color value, string prompt)
     {
       return Add(key, new Color4f(value), prompt);
     }
+
     /// <summary>
-    /// AddField a new Vector2dField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new Color4fField to the dictionary. This overload will cause the
+    /// field to be tagged as "textured" so that the texturing UI will appear
+    /// in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public Color4fField AddTextured(string key, System.Drawing.Color value, string prompt)
+    {
+      return AddTextured(key, new Color4f(value), prompt);
+    }
+
+    /// <summary>
+    /// Add a new Vector2dField to the dictionary. This will be a data only
+    /// field and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public Vector2dField Add(string key, Vector2d value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new Vector2dField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// Add a new Vector2dField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -396,25 +586,52 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public Vector2dField Add(string key, Vector2d value, string prompt)
     {
-      return AddField(new Vector2dField(m_content, IntPtr.Zero, key, prompt, value)) as Vector2dField;
+      return AddField(new Vector2dField(m_content, IntPtr.Zero, key, prompt, value, false)) as Vector2dField;
     }
+
     /// <summary>
-    /// AddField a new Vector3dField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new Vector2dField to the dictionary. This overload will cause the
+    /// field to be tagged as "textured" so that the texturing UI will appear
+    /// in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public Vector2dField AddTextured(string key, Vector2d value, string prompt)
+    {
+      return AddField(new Vector2dField(m_content, IntPtr.Zero, key, prompt, value, true)) as Vector2dField;
+    }
+
+    /// <summary>
+    /// Add a new Vector3dField to the dictionary. This will be a data only
+    /// field and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public Vector3dField Add(string key, Vector3d value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new Vector3dField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// Add a new Vector3dField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -424,25 +641,52 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public Vector3dField Add(string key, Vector3d value, string prompt)
     {
-      return AddField(new Vector3dField(m_content, IntPtr.Zero, key, prompt, value)) as Vector3dField;
+      return AddField(new Vector3dField(m_content, IntPtr.Zero, key, prompt, value, false)) as Vector3dField;
     }
+
     /// <summary>
-    /// AddField a new Point2dField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new Vector3dField to the dictionary. This overload will cause the
+    /// field to be tagged as "textured" so that the texturing UI will appear
+    /// in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public Vector3dField AddTextured(string key, Vector3d value, string prompt)
+    {
+      return AddField(new Vector3dField(m_content, IntPtr.Zero, key, prompt, value, true)) as Vector3dField;
+    }
+
+    /// <summary>
+    /// Add a new Point2dField to the dictionary. This will be a data only
+    /// field and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public Point2dField Add(string key, Point2d value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new Point2dField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// Add a new Point2dField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -452,25 +696,52 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public Point2dField Add(string key, Point2d value, string prompt)
     {
-      return AddField(new Point2dField(m_content, IntPtr.Zero, key, prompt, value)) as Point2dField;
+      return AddField(new Point2dField(m_content, IntPtr.Zero, key, prompt, value, false)) as Point2dField;
     }
+
     /// <summary>
-    /// AddField a new Point3dField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new Point2dField to the dictionary. This overload will cause the
+    /// field to be tagged as "textured" so that the texturing UI will appear
+    /// in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public Point2dField AddTextured(string key, Point2d value, string prompt)
+    {
+      return AddField(new Point2dField(m_content, IntPtr.Zero, key, prompt, value, true)) as Point2dField;
+    }
+
+    /// <summary>
+    /// Add a new Point3dField to the dictionary. This will be a data only
+    /// field and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public Point3dField Add(string key, Point3d value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new Point3dField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// Add a new Point3dField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -480,25 +751,52 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public Point3dField Add(string key, Point3d value, string prompt)
     {
-      return AddField(new Point3dField(m_content, IntPtr.Zero, key, prompt, value)) as Point3dField;
+      return AddField(new Point3dField(m_content, IntPtr.Zero, key, prompt, value, false)) as Point3dField;
     }
+
     /// <summary>
-    /// AddField a new Point4dField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new Point3dField to the dictionary. This overload will cause the
+    /// field to be tagged as "textured" so that the texturing UI will appear
+    /// in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public Point3dField AddTextured(string key, Point3d value, string prompt)
+    {
+      return AddField(new Point3dField(m_content, IntPtr.Zero, key, prompt, value, true)) as Point3dField;
+    }
+
+    /// <summary>
+    /// Add a new Point4dField to the dictionary. This will be a data only
+    /// field and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public Point4dField Add(string key, Point4d value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new Point4dField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// Add a new Point4dField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -508,25 +806,52 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public Point4dField Add(string key, Point4d value, string prompt)
     {
-      return AddField(new Point4dField(m_content, IntPtr.Zero, key, prompt, value)) as Point4dField;
+      return AddField(new Point4dField(m_content, IntPtr.Zero, key, prompt, value, false)) as Point4dField;
     }
+
     /// <summary>
-    /// AddField a new GuidField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new Point4dField to the dictionary. This overload will cause the
+    /// field to be tagged as "textured" so that the texturing UI will appear
+    /// in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public Point4dField AddTextured(string key, Point4d value, string prompt)
+    {
+      return AddField(new Point4dField(m_content, IntPtr.Zero, key, prompt, value, true)) as Point4dField;
+    }
+
+    /// <summary>
+    /// Add a new GuidField to the dictionary. This will be a data only field
+    /// and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public GuidField Add(string key, Guid value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new GuidField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// Add a new GuidField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -536,25 +861,52 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public GuidField Add(string key, Guid value, string prompt)
     {
-      return AddField(new GuidField(m_content, IntPtr.Zero, key, prompt, value)) as GuidField;
+      return AddField(new GuidField(m_content, IntPtr.Zero, key, prompt, value, false)) as GuidField;
     }
+
     /// <summary>
-    /// AddField a new TransformField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new GuidField to the dictionary. This overload will cause the
+    /// field to be tagged as "textured" so that the texturing UI will appear
+    /// in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public GuidField AddTextured(string key, Guid value, string prompt)
+    {
+      return AddField(new GuidField(m_content, IntPtr.Zero, key, prompt, value, true)) as GuidField;
+    }
+
+    /// <summary>
+    /// Add a new TransformField to the dictionary. This will be a data only
+    /// field and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public TransformField Add(string key, Transform value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new TransformField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// Add a new TransformField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -564,25 +916,52 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public TransformField Add(string key, Transform value, string prompt)
     {
-      return AddField(new TransformField(m_content, IntPtr.Zero, key, prompt, value)) as TransformField;
+      return AddField(new TransformField(m_content, IntPtr.Zero, key, prompt, value, false)) as TransformField;
     }
+
     /// <summary>
-    /// AddField a new DateTimeField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new TransformField to the dictionary. This overload will cause
+    /// the field to be tagged as "textured" so that the texturing UI will
+    /// appear in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public TransformField AddTextured(string key, Transform value, string prompt)
+    {
+      return AddField(new TransformField(m_content, IntPtr.Zero, key, prompt, value, true)) as TransformField;
+    }
+
+    /// <summary>
+    /// Add a new DateTimeField to the dictionary. This will be a data only
+    /// field and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public DateTimeField Add(string key, DateTime value)
     {
       return Add(key, value, string.Empty);
     }
+
     /// <summary>
-    /// AddField a new DateTimeField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.
+    /// Add a new DateTimeField to the dictionary.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
@@ -592,21 +971,48 @@ namespace Rhino.Render.Fields
     /// not appear in the user interface.
     /// </param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public DateTimeField Add(string key, DateTime value, string prompt)
     {
-      return AddField(new DateTimeField(m_content, IntPtr.Zero, key, prompt, value)) as DateTimeField;
+      return AddField(new DateTimeField(m_content, IntPtr.Zero, key, prompt, value, false)) as DateTimeField;
     }
+
     /// <summary>
-    /// AddField a new ByteArrayField to the dictionary, will throw an exception if the
-    /// key is already in the dictionary.  This will be a data only field and
-    /// not show up in the content browsers.
+    /// Add a new DateTimeField to the dictionary. This overload will cause the
+    /// field to be tagged as "textured" so that the texturing UI will appear
+    /// in automatic UIs.
+    /// </summary>
+    /// <param name="key">Key name for the field value to change.</param>
+    /// <param name="value">Initial value for this field.</param>
+    /// <param name="prompt">
+    /// Prompt to display in the user interface (Content Browsers) if this
+    /// is null or an empty string the this field is a data only field and will
+    /// not appear in the user interface.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
+    public DateTimeField AddTextured(string key, DateTime value, string prompt)
+    {
+      return AddField(new DateTimeField(m_content, IntPtr.Zero, key, prompt, value, true)) as DateTimeField;
+    }
+
+    /// <summary>
+    /// AddField a new ByteArrayField to the dictionary. This will be a data
+    /// only field and not show up in the content browsers.
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">Initial value for this field.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException">
+    /// An element with the same key already exists in the dictionary
+    /// </exception>
     public ByteArrayField Add(string key, byte[] value)
     {
-      return AddField(new ByteArrayField(m_content, IntPtr.Zero, key, string.Empty, value)) as ByteArrayField;
+      return AddField(new ByteArrayField(m_content, IntPtr.Zero, key, string.Empty, value, false)) as ByteArrayField;
     }
 
     #endregion Overloaded AddField methods for the supported data types
@@ -1221,55 +1627,51 @@ namespace Rhino.Render.Fields
     /// disposed of, if Attached is called when accessing data provided by
     /// another plug-in then a temporary version of this field will be returned
     /// and its value extracted by the RenderContent.FieldDictionary, in that
-    /// Attach is called instead of CreaetCppPointer() so the m_fieldPointer
+    /// Attach is called instead of CreateCppPointer() so the m_fieldPointer
     /// should not be deleted.
     /// </summary>
-    private bool m_autoDelete = true;
+    private bool m_auto_delete = true;
     /// <summary>
     /// Place holder for the initial field value, this will get used by
     /// CreateCppPointer(), it will call Set(m_initialValue) after creating the
     /// C++ pointer to initialize the field value.
     /// </summary>
-    private object m_initialValue;
+    private object m_initial_value;
     #endregion Members
 
     #region Properties
+    private IntPtr m_field_pointer = IntPtr.Zero;
     /// <summary>
     /// C++ pointer associated with this object, used for data access.
     /// </summary>
-    private IntPtr m_fieldPointer = IntPtr.Zero;
-    /// <summary>
-    /// C++ pointer associated with this object, used for data access.
-    /// </summary>
-    internal IntPtr FieldPointer { get { return m_fieldPointer; } }
-    /// <summary>
-    /// Field key value string set by constructor
-    /// </summary>
+    internal IntPtr FieldPointer { get { return m_field_pointer; } }
+
     readonly string m_key;
     /// <summary>
     /// Field key value string set by constructor
     /// </summary>
     public string Key { get { return m_key; } }
-    /// <summary>
-    /// Optional UI prompt string set by constructor
-    /// </summary>
+
     readonly string m_prompt;
     /// <summary>
     /// Optional UI prompt string set by constructor
     /// </summary>
     public string Prompt { get { return m_prompt; } }
+
+    readonly bool m_is_textured;
+    public bool IsTextured
+    {
+      get { return m_is_textured; }
+    }
+
     /// <summary>
     /// Gets or sets an object that contains data to associate with the field.
     /// </summary>
     /// <returns>
     /// An object that contains information that is associated with the field.
     /// </returns>
-    public object Tag
-    {
-      get { return _tag; }
-      set { _tag = value; }
-    }
-    private object _tag;
+    public object Tag { get; set; }
+
     #endregion Properties
 
     #region Set methods
@@ -1294,11 +1696,11 @@ namespace Rhino.Render.Fields
     /// <param name="changeContext">The reason why the value is changing.</param>
     internal void Set<T>(T value, RenderContent.ChangeContexts changeContext)
     {
-      var fieldPointer = FieldPointer;
-      if (IntPtr.Zero == fieldPointer)
+      var field_pointer = FieldPointer;
+      if (IntPtr.Zero == field_pointer)
       {
         // Cache the value for use by CreateCppPointer()
-        m_initialValue = value;
+        m_initial_value = value;
       }
       else
       {
@@ -1307,9 +1709,9 @@ namespace Rhino.Render.Fields
         using (var varient = new Variant(value))
         {
           // Get the variant C++ pointer
-          var variantPointer = varient.NonConstPointer();
+          var variant_pointer = varient.NonConstPointer();
           // Tell the C++ RDK to change the value
-          var rc = UnsafeNativeMethods.Rdk_ContentField_SetVariantParameter(fieldPointer, variantPointer, (int)changeContext);
+          var rc = UnsafeNativeMethods.Rdk_ContentField_SetVariantParameter(field_pointer, variant_pointer, (int)changeContext);
           // If the C++ RDK failed to set the value throw an exception.
           //  Note: A return value of 1 means the value was changed, 2 means
           //        the current value is equal to "value" so nothing changed
@@ -1322,22 +1724,23 @@ namespace Rhino.Render.Fields
     #endregion Set methods
 
     #region Methods to access value as specific data types
+    public abstract object ValueAsObject();
     /// <summary>
     /// Get field value as a string.
     /// </summary>
     /// <returns>Returns the field value as a string if possible.</returns>
     protected string ValueAsString()
     {
-      IntPtr fieldPointer = FieldPointer;
+      IntPtr field_pointer = FieldPointer;
       // Field is not initialized so return the default value
-      if (fieldPointer == IntPtr.Zero)
-        return (null != m_initialValue ? m_initialValue.ToString() : string.Empty);
+      if (field_pointer == IntPtr.Zero)
+        return (null != m_initial_value ? m_initial_value.ToString() : string.Empty);
       // Call the C++ RDK and get the Variant value as a string
-      using (Runtime.StringHolder stringHolder = new Runtime.StringHolder())
+      using (Runtime.StringHolder string_holder = new Runtime.StringHolder())
       {
-        IntPtr stringPointer = stringHolder.NonConstPointer();
-        UnsafeNativeMethods.Rdk_ContentField_StringValue(FieldPointer, stringPointer);
-        return stringHolder.ToString();
+        IntPtr string_pointer = string_holder.NonConstPointer();
+        UnsafeNativeMethods.Rdk_ContentField_StringValue(FieldPointer, string_pointer);
+        return string_holder.ToString();
       }
     }
     /// <summary>
@@ -1346,12 +1749,12 @@ namespace Rhino.Render.Fields
     /// <returns>Returns field value as a bool. </returns>
     protected bool ValueAsBool()
     {
-      IntPtr fieldPointer = FieldPointer;
+      IntPtr field_pointer = FieldPointer;
       // Field is not initialized so return the default value
-      if (fieldPointer == IntPtr.Zero)
-        return (m_initialValue is bool && (bool)m_initialValue);
+      if (field_pointer == IntPtr.Zero)
+        return (m_initial_value is bool && (bool)m_initial_value);
       // Call the C++ RDK and get the Variant value as a bool
-      int result = UnsafeNativeMethods.Rdk_ContentField_BoolValue(fieldPointer);
+      int result = UnsafeNativeMethods.Rdk_ContentField_BoolValue(field_pointer);
       return (result == 1);
     }
     /// <summary>
@@ -1360,12 +1763,12 @@ namespace Rhino.Render.Fields
     /// <returns>Return the field value as an integer.</returns>
     protected int ValueAsInt()
     {
-      IntPtr fieldPointer = FieldPointer;
+      IntPtr field_pointer = FieldPointer;
       // Field is not initialized so return the default value
-      if (fieldPointer == IntPtr.Zero)
-        return (m_initialValue is int ? (int)m_initialValue : 0);
+      if (field_pointer == IntPtr.Zero)
+        return (m_initial_value is int ? (int)m_initial_value : 0);
       // Call the C++ RDK and get the Variant value as an integer
-      int result = UnsafeNativeMethods.Rdk_ContentField_IntValue(fieldPointer);
+      int result = UnsafeNativeMethods.Rdk_ContentField_IntValue(field_pointer);
       return result;
     }
     /// <summary>
@@ -1374,12 +1777,12 @@ namespace Rhino.Render.Fields
     /// <returns>Return the field value as a double precision number.</returns>
     protected double ValueAsDouble()
     {
-      IntPtr fieldPointer = FieldPointer;
+      IntPtr field_pointer = FieldPointer;
       // Field is not initialized so return the default value
-      if (fieldPointer == IntPtr.Zero)
-        return (m_initialValue is double ? (double)m_initialValue : 0.0);
+      if (field_pointer == IntPtr.Zero)
+        return (m_initial_value is double ? (double)m_initial_value : 0.0);
       // Call the C++ RDK and get the Variant value as a double
-      double result = UnsafeNativeMethods.Rdk_ContentField_DoubleValue(fieldPointer);
+      double result = UnsafeNativeMethods.Rdk_ContentField_DoubleValue(field_pointer);
       return result;
     }
     /// <summary>
@@ -1388,12 +1791,12 @@ namespace Rhino.Render.Fields
     /// <returns>Return the field value as an floating point number.</returns>
     protected float ValueAsFloat()
     {
-      IntPtr fieldPointer = FieldPointer;
+      IntPtr field_pointer = FieldPointer;
       // Field is not initialized so return the default value
-      if (fieldPointer == IntPtr.Zero)
-        return (m_initialValue is float ? (float)m_initialValue : 0f);
+      if (field_pointer == IntPtr.Zero)
+        return (m_initial_value is float ? (float)m_initial_value : 0f);
       // Call the C++ RDK and get the Variant value as a float
-      float result = UnsafeNativeMethods.Rdk_ContentField_FloatValue(fieldPointer);
+      float result = UnsafeNativeMethods.Rdk_ContentField_FloatValue(field_pointer);
       return result;
     }
     /// <summary>
@@ -1402,13 +1805,13 @@ namespace Rhino.Render.Fields
     /// <returns>Return field as a Rhino.Display.Color4f color value.</returns>
     protected Color4f ValueAsColor4f()
     {
-      IntPtr fieldPointer = FieldPointer;
+      IntPtr field_pointer = FieldPointer;
       // Field is not initialized so return the default value
-      if (fieldPointer == IntPtr.Zero)
-        return (m_initialValue is Display.Color4f ? (Display.Color4f)m_initialValue : Display.Color4f.Empty);
+      if (field_pointer == IntPtr.Zero)
+        return (m_initial_value is Display.Color4f ? (Display.Color4f)m_initial_value : Display.Color4f.Empty);
       Color4f result = Color4f.Empty;
       // Call the C++ RDK and get the Variant value as a Color4f value
-      UnsafeNativeMethods.Rdk_ContentField_ColorValue(fieldPointer, ref result);
+      UnsafeNativeMethods.Rdk_ContentField_ColorValue(field_pointer, ref result);
       return result;
     }
     /// <summary>
@@ -1417,13 +1820,13 @@ namespace Rhino.Render.Fields
     /// <returns>Return field as a Rhino.Geometry.Vector2d color value.</returns>
     protected Vector2d ValueAsVector2d()
     {
-      IntPtr fieldPointer = FieldPointer;
+      IntPtr field_pointer = FieldPointer;
       // Field is not initialized so return the default value
-      if (fieldPointer == IntPtr.Zero)
-        return (m_initialValue is Vector2d ? (Vector2d)m_initialValue : Vector2d.Unset);
+      if (field_pointer == IntPtr.Zero)
+        return (m_initial_value is Vector2d ? (Vector2d)m_initial_value : Vector2d.Unset);
       Vector2d result = Vector2d.Unset;
       // Call the C++ RDK and get the Variant value as a Vector2d value
-      UnsafeNativeMethods.Rdk_ContentField_Vector2dValue(fieldPointer, ref result);
+      UnsafeNativeMethods.Rdk_ContentField_Vector2dValue(field_pointer, ref result);
       return result;
     }
     /// <summary>
@@ -1432,13 +1835,13 @@ namespace Rhino.Render.Fields
     /// <returns>Return field as a Rhino.Geometry.Vector3d color value.</returns>
     protected Vector3d ValueAsVector3d()
     {
-      IntPtr fieldPointer = FieldPointer;
+      IntPtr field_pointer = FieldPointer;
       // Field is not initialized so return the default value
-      if (fieldPointer == IntPtr.Zero)
-        return (m_initialValue is Vector3d ? (Vector3d)m_initialValue : Vector3d.Unset);
+      if (field_pointer == IntPtr.Zero)
+        return (m_initial_value is Vector3d ? (Vector3d)m_initial_value : Vector3d.Unset);
       Vector3d result = Vector3d.Unset;
       // Call the C++ RDK and get the Variant value as a Vector3d value
-      UnsafeNativeMethods.Rdk_ContentField_Vector3dValue(fieldPointer, ref result);
+      UnsafeNativeMethods.Rdk_ContentField_Vector3dValue(field_pointer, ref result);
       return result;
     }
     /// <summary>
@@ -1457,13 +1860,13 @@ namespace Rhino.Render.Fields
     /// <returns>Return field as a Rhino.Geometry.Point4d color value.</returns>
     protected Point4d ValueAsPoint4d()
     {
-      IntPtr fieldPointer = FieldPointer;
+      IntPtr field_pointer = FieldPointer;
       // Field is not initialized so return the default value
-      if (fieldPointer == IntPtr.Zero)
-        return (m_initialValue is Point4d ? (Point4d)m_initialValue : Point4d.Unset);
+      if (field_pointer == IntPtr.Zero)
+        return (m_initial_value is Point4d ? (Point4d)m_initial_value : Point4d.Unset);
       Point4d result = Point4d.Unset;
       // Call the C++ RDK and get the Variant value as a Point4d
-      UnsafeNativeMethods.Rdk_ContentField_Point4dValue(fieldPointer, ref result);
+      UnsafeNativeMethods.Rdk_ContentField_Point4dValue(field_pointer, ref result);
       return result;
     }
     /// <summary>
@@ -1472,12 +1875,12 @@ namespace Rhino.Render.Fields
     /// <returns>Return the field value as an Guid.</returns>
     protected Guid ValueAsGuid()
     {
-      IntPtr fieldPointer = FieldPointer;
+      IntPtr field_pointer = FieldPointer;
       // Field is not initialized so return the default value
-      if (fieldPointer == IntPtr.Zero)
-        return (m_initialValue is Guid ? (Guid)m_initialValue : Guid.Empty);
+      if (field_pointer == IntPtr.Zero)
+        return (m_initial_value is Guid ? (Guid)m_initial_value : Guid.Empty);
       // Call the C++ RDK and get the Variant value as a Guid
-      Guid result = UnsafeNativeMethods.Rdk_ContentField_UUIDValue(fieldPointer);
+      Guid result = UnsafeNativeMethods.Rdk_ContentField_UUIDValue(field_pointer);
       return result;
     }
     /// <summary>
@@ -1486,13 +1889,13 @@ namespace Rhino.Render.Fields
     /// <returns>Return field as a Rhino.Geometry.Transform color value.</returns>
     protected Transform ValueAsTransform()
     {
-      IntPtr fieldPointer = FieldPointer;
+      IntPtr field_pointer = FieldPointer;
       // Field is not initialized so return the default value
-      if (fieldPointer == IntPtr.Zero)
-        return (m_initialValue is Transform ? (Transform)m_initialValue : Transform.Unset);
+      if (field_pointer == IntPtr.Zero)
+        return (m_initial_value is Transform ? (Transform)m_initial_value : Transform.Unset);
       // Call the C++ RDK and get the Variant value as a Transform value
       Transform result = Transform.Unset;
-      UnsafeNativeMethods.Rdk_ContentField_XformValue(fieldPointer, ref result);
+      UnsafeNativeMethods.Rdk_ContentField_XformValue(field_pointer, ref result);
       return result;
     }
     /// <summary>
@@ -1501,13 +1904,13 @@ namespace Rhino.Render.Fields
     /// <returns>Return field as a DateTime value.</returns>
     protected DateTime ValueAsDateTime()
     {
-      IntPtr fieldPointer = FieldPointer;
+      IntPtr field_pointer = FieldPointer;
       // Field is not initialized so return the default value
-      if (fieldPointer == IntPtr.Zero)
-        return (m_initialValue is DateTime ? (DateTime)m_initialValue : DateTime.Now);
+      if (field_pointer == IntPtr.Zero)
+        return (m_initial_value is DateTime ? (DateTime)m_initial_value : DateTime.Now);
       // Call the C++ RDK and get the Variant value as a DateTime value
       int month = 0, year = 0, day = 0, hours = 0, minutes = 0, seconds = 0;
-      UnsafeNativeMethods.Rdk_ContentField_TimeValue(fieldPointer, ref year, ref month, ref day, ref hours, ref minutes, ref seconds);
+      UnsafeNativeMethods.Rdk_ContentField_TimeValue(field_pointer, ref year, ref month, ref day, ref hours, ref minutes, ref seconds);
       DateTime result = new DateTime(year, month, day, hours, minutes, seconds);
       return result;
     }
@@ -1517,16 +1920,16 @@ namespace Rhino.Render.Fields
     /// <returns>Return field as a byte array.</returns>
     protected byte[] ValueAsByteArray()
     {
-      IntPtr fieldPointer = FieldPointer;
+      IntPtr field_pointer = FieldPointer;
       // Field is not initialized so return the default value
-      if (IntPtr.Zero == fieldPointer)
-        return (m_initialValue is byte[] ? (byte[])m_initialValue : null);
+      if (IntPtr.Zero == field_pointer)
+        return (m_initial_value is byte[] ? (byte[])m_initial_value : null);
       // Call the C++ RDK and get the size of the Variant buffer
-      int sizeOfResult = UnsafeNativeMethods.Rdk_ContentField_GetByteArrayValueSize(fieldPointer);
+      int size_of_result = UnsafeNativeMethods.Rdk_ContentField_GetByteArrayValueSize(field_pointer);
       // Allocate a buffer to receive a copy of the Variant data
-      byte[] result = new byte[sizeOfResult];
+      byte[] result = new byte[size_of_result];
       // Copy the C++ buffer into the result byte array
-      UnsafeNativeMethods.Rdk_ContentField_GetByteArrayValue(fieldPointer, result, sizeOfResult);
+      UnsafeNativeMethods.Rdk_ContentField_GetByteArrayValue(field_pointer, result, size_of_result);
       return result;
     }
     #endregion Methods to access value as specific data types
@@ -1534,7 +1937,7 @@ namespace Rhino.Render.Fields
     /// <summary>
     /// Field constructor
     /// </summary>
-    /// <param name="renderContent">RenderContent whose Fields owns this filed.</param>
+    /// <param name="renderContent">RenderContent whose Fields owns this field.</param>
     /// <param name="attachToPointer">C++ pointer to attach to.</param>
     /// <param name="key">Unique key for this field</param>
     /// <param name="prompt">Display string used by the user interface</param>
@@ -1542,15 +1945,18 @@ namespace Rhino.Render.Fields
     /// Initial value used to initialize the field after creating the C++
     /// pointer.
     /// </param>
-    protected Field(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, object initialValue)
+    /// <param name="isTextured">Determines whether auto-UIs will show the texture control set</param>
+    protected Field(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, object initialValue, bool isTextured)
     {
       // Value which will be used to set the initial state of the C++ field
       // variant when calling CreateCppPointer()
-      m_initialValue = initialValue;
+      m_initial_value = initialValue;
       // Field key
       m_key = key;
       // User interface display prompt
       m_prompt = prompt;
+      // Textured flag for auto-UI
+      m_is_textured = isTextured;
       // Create the underlying C++ pointer
       CreateCppPointer(renderContent, attachToPointer);
     }
@@ -1569,26 +1975,32 @@ namespace Rhino.Render.Fields
     {
       // Should not happen but you never know, this will bail if the C++ pointer
       // was created by a previous call to CreateCppPointer or Attach
-      if (IntPtr.Zero != m_fieldPointer) return;
+      if (IntPtr.Zero != m_field_pointer) return;
       if (IntPtr.Zero == attachToPointer)
       {
         // Get the RenderContent C++ pointer, fields get added to content field lists
         // so you have to have a valid Content C++ pointer when creating a field.
-        IntPtr contentPointer = content.ConstPointer();
+        IntPtr content_pointer = content.ConstPointer();
         // If there is a user interface prompt string then set the add to user interface flag.
-        bool isVisibleToAutoUi = !string.IsNullOrEmpty(Prompt);
+        bool is_visible_to_auto_ui = !string.IsNullOrEmpty(Prompt);
         // Allocate the objects C++ pointer.
-        m_fieldPointer = UnsafeNativeMethods.Rdk_ContentField_New(contentPointer, Key, Prompt, isVisibleToAutoUi ? 0 : 0x8001);
+        m_field_pointer = UnsafeNativeMethods.Rdk_ContentField_New(content_pointer, Key, Prompt, is_visible_to_auto_ui ? 0 : 0x8001);
+
+        if (IsTextured)
+        {
+          UnsafeNativeMethods.Rdk_ContentField_SetIsTextured(m_field_pointer, 1);
+        }
+
         // Initialize the field value
-        Set(m_initialValue);
+        Set(m_initial_value);
         // If m_initialValue can be disposed of then dispose of it now
-        if (m_initialValue is IDisposable) (m_initialValue as IDisposable).Dispose();
-        m_initialValue = null;
+        if (m_initial_value is IDisposable) (m_initial_value as IDisposable).Dispose();
+        m_initial_value = null;
       }
       else
       {
-        m_autoDelete = false;
-        m_fieldPointer = attachToPointer;
+        m_auto_delete = false;
+        m_field_pointer = attachToPointer;
       }
     }
     /// <summary>
@@ -1596,10 +2008,10 @@ namespace Rhino.Render.Fields
     /// </summary>
     internal void IneternalDispose()
     {
-      if (IntPtr.Zero != m_fieldPointer && m_autoDelete)
+      if (IntPtr.Zero != m_field_pointer && m_auto_delete)
       {
-        UnsafeNativeMethods.Rdk_ContentField_Delete(m_fieldPointer);
-        m_fieldPointer = IntPtr.Zero;
+        UnsafeNativeMethods.Rdk_ContentField_Delete(m_field_pointer);
+        m_field_pointer = IntPtr.Zero;
       }
     }
 
@@ -1621,54 +2033,56 @@ namespace Rhino.Render.Fields
       string prompt;
       using (Runtime.StringHolder sh = new Runtime.StringHolder())
       {
-        IntPtr stringPointer = sh.NonConstPointer();
-        UnsafeNativeMethods.Rdk_ContentField_FriendlyName(fieldPointer, stringPointer);
+        IntPtr string_pointer = sh.NonConstPointer();
+        UnsafeNativeMethods.Rdk_ContentField_FriendlyName(fieldPointer, string_pointer);
         prompt = sh.ToString();
       }
       // Create the field from the values Variant type
       Field result;
-      IntPtr variantPointer = UnsafeNativeMethods.Rdk_ContentField_Value(fieldPointer);
-      switch (UnsafeNativeMethods.Rdk_Variant_Type(variantPointer))
+      IntPtr variant_pointer = UnsafeNativeMethods.Rdk_ContentField_Value(fieldPointer);
+      bool is_textured = 0 != UnsafeNativeMethods.Rdk_ContentField_IsTextured(fieldPointer);
+
+      switch (UnsafeNativeMethods.Rdk_Variant_Type(variant_pointer))
       {
         case (int)Variant.VariantTypes.Bool:
-          result = new BoolField(renderContent, fieldPointer, key, prompt, false);
+          result = new BoolField(renderContent, fieldPointer, key, prompt, false, is_textured);
           break;
         case (int)Variant.VariantTypes.Color:
-          result = new Color4fField(renderContent, fieldPointer, key, prompt, Color4f.Empty);
+          result = new Color4fField(renderContent, fieldPointer, key, prompt, Color4f.Empty, is_textured);
           break;
         case (int)Variant.VariantTypes.Double:
-          result = new DoubleField(renderContent, fieldPointer, key, prompt, 0.0);
+          result = new DoubleField(renderContent, fieldPointer, key, prompt, 0.0, is_textured);
           break;
         case (int)Variant.VariantTypes.Float:
-          result = new FloatField(renderContent, fieldPointer, key, prompt, 0f);
+          result = new FloatField(renderContent, fieldPointer, key, prompt, 0f, is_textured);
           break;
         case (int)Variant.VariantTypes.Integer:
-          result = new IntField(renderContent, fieldPointer, key, prompt, 0);
+          result = new IntField(renderContent, fieldPointer, key, prompt, 0, is_textured);
           break;
         case (int)Variant.VariantTypes.Matrix:
-          result = new TransformField(renderContent, fieldPointer, key, prompt, Transform.Unset);
+          result = new TransformField(renderContent, fieldPointer, key, prompt, Transform.Unset, is_textured);
           break;
         case (int)Variant.VariantTypes.Point4d:
-          result = new Point4dField(renderContent, fieldPointer, key, prompt, Point4d.Unset);
+          result = new Point4dField(renderContent, fieldPointer, key, prompt, Point4d.Unset, is_textured);
           break;
         case (int)Variant.VariantTypes.String:
-          result = new StringField(renderContent, fieldPointer, key, prompt, string.Empty);
+          result = new StringField(renderContent, fieldPointer, key, prompt, string.Empty, is_textured);
           break;
         case (int)Variant.VariantTypes.Time:
-          result = new DateTimeField(renderContent, fieldPointer, key, prompt, DateTime.Now);
+          result = new DateTimeField(renderContent, fieldPointer, key, prompt, DateTime.Now, is_textured);
           break;
         case (int)Variant.VariantTypes.Uuid:
-          result = new GuidField(renderContent, fieldPointer, key, prompt, Guid.Empty);
+          result = new GuidField(renderContent, fieldPointer, key, prompt, Guid.Empty, is_textured);
           break;
         case (int)Variant.VariantTypes.Vector2d:
-          result = new Vector2dField(renderContent, fieldPointer, key, prompt, Vector2d.Unset);
+          result = new Vector2dField(renderContent, fieldPointer, key, prompt, Vector2d.Unset, is_textured);
           break;
         case (int)Variant.VariantTypes.Vector3d:
-          result = new Vector3dField(renderContent, fieldPointer, key, prompt, Vector3d.Unset);
+          result = new Vector3dField(renderContent, fieldPointer, key, prompt, Vector3d.Unset, is_textured);
           break;
         //case (int)Variant.VariantTypes.Pointer:
         default:
-          result = new ByteArrayField(renderContent, fieldPointer, key, prompt, null);
+          result = new ByteArrayField(renderContent, fieldPointer, key, prompt, null, is_textured);
           break;
       }
       return result;
@@ -1687,7 +2101,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal StringField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, string value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    /// <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal StringField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, string value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -1696,6 +2111,7 @@ namespace Rhino.Render.Fields
       get { return ValueAsString(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
   }
   /// <summary>
   /// bool field value class
@@ -1710,7 +2126,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal BoolField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, bool value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    /// <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal BoolField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, bool value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -1719,6 +2136,7 @@ namespace Rhino.Render.Fields
       get { return ValueAsBool(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
   }
   /// <summary>
   /// Integer field value class
@@ -1733,7 +2151,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this IntField</param>
-    internal IntField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, int value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal IntField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, int value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -1742,6 +2161,7 @@ namespace Rhino.Render.Fields
       get { return ValueAsInt(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
   }
   /// <summary>
   /// float field value class
@@ -1756,7 +2176,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal FloatField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, float value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal FloatField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, float value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -1765,6 +2186,7 @@ namespace Rhino.Render.Fields
       get { return ValueAsFloat(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
   }
   /// <summary>
   /// double field value class
@@ -1779,7 +2201,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal DoubleField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, double value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal DoubleField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, double value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -1788,6 +2211,7 @@ namespace Rhino.Render.Fields
       get { return ValueAsDouble(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
   }
   /// <summary>
   /// Color4f field value class
@@ -1802,7 +2226,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal Color4fField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Color4f value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal Color4fField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Color4f value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Constructor
     /// </summary>
@@ -1811,15 +2236,17 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal Color4fField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, System.Drawing.Color value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal Color4fField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, System.Drawing.Color value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
-    public Display.Color4f Value
+    public Color4f Value
     {
       get { return ValueAsColor4f(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -1842,7 +2269,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal Vector2dField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Vector2d value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal Vector2dField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Vector2d value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -1851,6 +2279,7 @@ namespace Rhino.Render.Fields
       get { return ValueAsVector2d(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
   }
   /// <summary>
   /// Vector3d field value class
@@ -1865,7 +2294,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal Vector3dField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Vector3d value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal Vector3dField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Vector3d value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -1874,6 +2304,7 @@ namespace Rhino.Render.Fields
       get { return ValueAsVector3d(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
   }
   /// <summary>
   /// Point2d field value class
@@ -1888,7 +2319,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal Point2dField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Point2d value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal Point2dField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Point2d value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -1897,6 +2329,7 @@ namespace Rhino.Render.Fields
       get { return ValueAsPoint2d(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
   }
   /// <summary>
   /// Point3d field value class
@@ -1911,7 +2344,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal Point3dField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Point3d value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal Point3dField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Point3d value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -1920,6 +2354,7 @@ namespace Rhino.Render.Fields
       get { return ValueAsPoint3d(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
   }
   /// <summary>
   /// Point4d field value class
@@ -1934,7 +2369,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal Point4dField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Point4d value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal Point4dField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Point4d value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -1943,6 +2379,7 @@ namespace Rhino.Render.Fields
       get { return ValueAsPoint4d(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
   }
   /// <summary>
   /// Guid field value class
@@ -1957,7 +2394,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal GuidField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Guid value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal GuidField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Guid value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -1966,6 +2404,7 @@ namespace Rhino.Render.Fields
       get { return ValueAsGuid(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
   }
   /// <summary>
   /// Transform field value class
@@ -1980,7 +2419,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal TransformField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Transform value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal TransformField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Transform value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -1989,6 +2429,7 @@ namespace Rhino.Render.Fields
       get { return ValueAsTransform(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
   }
   /// <summary>
   /// DateTime field value class
@@ -2003,7 +2444,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal DateTimeField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, DateTime value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal DateTimeField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, DateTime value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -2012,6 +2454,7 @@ namespace Rhino.Render.Fields
       get { return ValueAsDateTime(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
   }
   /// <summary>
   /// ByteArray field value class
@@ -2026,7 +2469,8 @@ namespace Rhino.Render.Fields
     /// <param name="key">Field key name</param>
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
-    internal ByteArrayField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, byte[] value) : base(renderContent, attachToPointer, key, prompt, value) { }
+    ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
+    internal ByteArrayField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, byte[] value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -2035,6 +2479,7 @@ namespace Rhino.Render.Fields
       get { return ValueAsByteArray(); }
       set { Set(value); }
     }
+    public override object ValueAsObject() { return Value; }
   }
 }
 

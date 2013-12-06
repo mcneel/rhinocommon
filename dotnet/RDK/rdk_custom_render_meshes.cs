@@ -1,12 +1,16 @@
 ﻿#pragma warning disable 1591
+
 using System;
 using System.Collections.Generic;
 
-#if RDK_UNCHECKED
+using Rhino.Geometry;
+using Rhino.DocObjects;
 
-namespace Rhino.Render.CustomRenderMesh
+#if RDK_CHECKED
+
+namespace Rhino.Render
 {
-  public enum PrimitiveType : int
+  public enum RenderPrimitiveType : int
   {
       None = 0,
       Mesh = 1,
@@ -16,75 +20,183 @@ namespace Rhino.Render.CustomRenderMesh
       Cone = 5,
   }
 
-  public class ObjectMeshes : IDisposable
+  public class RenderPrimitiveList : IDisposable
   {
-    public ObjectMeshes(Rhino.DocObjects.RhinoObject obj)
+    #region internals
+    private IntPtr m_ptr_custom_render_meshes = IntPtr.Zero;
+    internal IntPtr ConstPointer() { return m_ptr_custom_render_meshes; }
+    internal IntPtr NonConstPointer() { return m_ptr_custom_render_meshes; }
+    #endregion
+
+    // Marked as internal, RhinoObject.GetRenderPrimitiveList will create one
+    // but there is currently no reason for anyone else to make one.
+    internal RenderPrimitiveList(RhinoObject obj)
     {
-      m_pRenderMeshes = UnsafeNativeMethods.Rdk_CustomMeshes_New(obj.ConstPointer());
-      m_bAutoDelete = true;
+      m_ptr_custom_render_meshes = UnsafeNativeMethods.Rdk_CustomMeshes_New(obj.ConstPointer());
     }
 
-   internal ObjectMeshes(IntPtr pNative)
+    /* 29 Aug 2013 S. Baer
+     * I'm commenting out this constructor until we need it. Pointer tracking for this class
+     * is complicated and I don't want to deal with this case yet.
+    */
+    /// <summary>
+    /// This constructor gets called when attaching to an unmanaged pointer that the RDK
+    /// passes to a virtual function, there is no clean up need in this case because the
+    /// RDK takes care of freeing the pointer when it is done calling the virtual method.
+    /// </summary>
+    /// <param name="nativePointer"></param>
+    internal RenderPrimitiveList(IntPtr nativePointer)
     {
-      m_pRenderMeshes = pNative;
-      m_bAutoDelete = false;
+      m_ptr_custom_render_meshes = nativePointer;
     }
 
-    public Guid ProviderId
+    internal void DetachPointer()
     {
-        get { return UnsafeNativeMethods.Rdk_CustomMeshes_ProviderId(ConstPointer()); }
-        set { UnsafeNativeMethods.Rdk_CustomMeshes_SetProviderId(NonConstPointer(), value); }
+      m_ptr_custom_render_meshes = IntPtr.Zero;
     }
 
-    public void Add(Rhino.Geometry.Mesh mesh, RenderMaterial material)
+    // See comments in RhinoObject.GetRenderPrimitiveList concerning provider Id
+    //public Guid ProviderId
+    //{
+    //    get { return UnsafeNativeMethods.Rdk_CustomMeshes_ProviderId(ConstPointer()); }
+    //    set { UnsafeNativeMethods.Rdk_CustomMeshes_SetProviderId(NonConstPointer(), value); }
+    //}
+
+    /// <summary>
+    /// Call this method to get a array of meshes, all primitives will get
+    /// meshed and the meshes will get included in the returned array.
+    /// </summary>
+    /// <returns>
+    /// Return an array of meshes from this list, this will convert all
+    /// primitives to meshes.
+    /// </returns>
+    public Mesh[] ToMeshArray()
     {
-      UnsafeNativeMethods.Rdk_CustomMeshes_AddMesh(NonConstPointer(), mesh.ConstPointer(), material.ConstPointer());
+      var mesh_list = new List<Mesh>(Count);
+      for (var i = 0; i < Count; i++)
+      {
+        var mesh = Mesh(i);
+        mesh_list.Add(mesh);
+      }
+      return mesh_list.ToArray();
     }
 
-    public void Add(Rhino.Geometry.Sphere sphere, RenderMaterial material)
+    /// <summary>
+    /// Call this method to see if there are any RenderMaterials associated
+    /// with the meshes.  Each primitive can optionally have a RenderMaterial
+    /// associated with it, if the RenderMaterial is null then check for a
+    /// RhinoObject.RenderMaterial.
+    /// </summary>
+    /// <returns>
+    /// Return an array that of the same size as the ToMeshArray() containing
+    /// the RenderMaterial associated with the mesh, may contain null entries
+    /// if there is no RenderMaterial associated with the custom mesh.
+    /// </returns>
+    public RenderMaterial[] ToMaterialArray()
     {
-      UnsafeNativeMethods.Rdk_CustomMeshes_AddSphere(NonConstPointer(), sphere.Center, 
-                                                     sphere.EquitorialPlane.XAxis, 
-                                                     sphere.EquitorialPlane.YAxis, 
-                                                     sphere.Radius, 
-                                                     material.ConstPointer());
+      var material_list = new List<RenderMaterial>(Count);
+      for (var i = 0; i < Count; i++)
+      {
+        var material = Material(i);
+        material_list.Add(material);
+      }
+      return material_list.ToArray();
     }
-
-    public void Add(Rhino.Geometry.Cone cone, Rhino.Geometry.Plane truncation, RenderMaterial material)
+    /// <summary>
+    /// Add mesh and material.
+    /// </summary>
+    /// <param name="mesh">Mesh to add.</param>
+    /// <param name="material">
+    /// Material to add, may be null if not needed.
+    /// </param>
+    public void Add(Mesh mesh, RenderMaterial material)
     {
-      UnsafeNativeMethods.Rdk_CustomMeshes_AddCone(NonConstPointer(), cone.BasePoint, 
+      var material_pointer = (null == material ? IntPtr.Zero : material.ConstPointer());
+      var pointer = NonConstPointer();
+      UnsafeNativeMethods.Rdk_CustomMeshes_AddMesh(pointer, mesh.ConstPointer(), material_pointer);
+    }
+    /// <summary>
+    /// Add primitive sphere and material.
+    /// </summary>
+    /// <param name="sphere">Sphere to add.</param>
+    /// <param name="material">
+    /// Material to add, may be null if not needed.
+    /// </param>
+    public void Add(Sphere sphere, RenderMaterial material)
+    {
+      var material_pointer = (null == material ? IntPtr.Zero : material.ConstPointer());
+      var pointer = NonConstPointer();
+      UnsafeNativeMethods.Rdk_CustomMeshes_AddSphere(pointer,
+                                                     sphere.Center,
+                                                     sphere.EquitorialPlane.XAxis,
+                                                     sphere.EquitorialPlane.YAxis,
+                                                     sphere.Radius,
+                                                     material_pointer);
+    }
+    /// <summary>
+    /// Add primitive cone and material.
+    /// </summary>
+    /// <param name="cone">Cone to add.</param>
+    /// <param name="truncation">
+    /// The plane used to cut the cone (the non-apex end is kept). Should be
+    /// equal to cone.plane if not truncated.
+    /// </param>
+    /// <param name="material">
+    /// Material to add, may be null if not needed.
+    /// </param>
+    public void Add(Cone cone, Plane truncation, RenderMaterial material)
+    {
+      var material_pointer = (null == material ? IntPtr.Zero : material.ConstPointer());
+      var pointer = NonConstPointer();
+      UnsafeNativeMethods.Rdk_CustomMeshes_AddCone(pointer,
+                                                   cone.BasePoint, 
                                                    cone.Plane.XAxis, 
                                                    cone.Plane.YAxis, 
                                                    cone.Height,
                                                    cone.Radius,
                                                    truncation.Origin, 
                                                    truncation.XAxis, 
-                                                   truncation.YAxis, 
-                                                   material.ConstPointer());
+                                                   truncation.YAxis,
+                                                   material_pointer);
     }
-
-    public void Add(Rhino.Geometry.PlaneSurface plane, RenderMaterial material)
+    /// <summary>
+    /// Add primitive plane and material.
+    /// </summary>
+    /// <param name="plane">Plane to add.</param>
+    /// <param name="material">
+    /// Material to add, may be null if not needed.
+    /// </param>
+    public void Add(PlaneSurface plane, RenderMaterial material)
     {
-      UnsafeNativeMethods.Rdk_CustomMeshes_AddPlane(NonConstPointer(), plane.ConstPointer(), material.ConstPointer());
+      var material_pointer = (null == material ? IntPtr.Zero : material.ConstPointer());
+      var pointer = NonConstPointer();
+      UnsafeNativeMethods.Rdk_CustomMeshes_AddPlane(pointer, plane.ConstPointer(), material_pointer);
     }
-
-    public void Add(Rhino.Geometry.Box box, RenderMaterial material)
+    /// <summary>
+    /// Add primitive box and material.
+    /// </summary>
+    /// <param name="box">Box to add.</param>
+    /// <param name="material">
+    /// Material to add, may be null if not needed.
+    /// </param>
+    public void Add(Box box, RenderMaterial material)
     {
-      UnsafeNativeMethods.Rdk_CustomMeshes_AddBox(NonConstPointer(), 
+      var material_pointer = (null == material ? IntPtr.Zero : material.ConstPointer());
+      var pointer = NonConstPointer();
+      UnsafeNativeMethods.Rdk_CustomMeshes_AddBox(pointer, 
                                                   box.Plane.Origin, 
                                                   box.Plane.XAxis, 
                                                   box.Plane.YAxis, 
                                                   box.X.Min, box.X.Max, 
                                                   box.Y.Min, box.Y.Max, 
-                                                  box.Z.Min, box.Z.Max, 
-                                                  material.ConstPointer());
+                                                  box.Z.Min, box.Z.Max,
+                                                  material_pointer);
     }
-
-    public int Count
-    {
-      get { return UnsafeNativeMethods.Rdk_CustomMeshes_Count(ConstPointer()); }
-    }
-
+    /// <summary>
+    /// Returns true if the texture mapping will be taken from the Rhino
+    /// object otherwise; the texture mapping will use the texture coordinates
+    /// on the mesh only.
+    /// </summary>
     public bool UseObjectsMappingChannels
     {
       get
@@ -96,149 +208,265 @@ namespace Rhino.Render.CustomRenderMesh
         UnsafeNativeMethods.Rdk_CustomMeshes_SetUseObjectsMappingChannels(NonConstPointer(), value);
       }
     }
-
-    public PrimitiveType Type(int index)
+    /// <summary>
+    /// Number of meshes in this list
+    /// </summary>
+    public int Count
     {
-        return (PrimitiveType)UnsafeNativeMethods.Rdk_CustomMeshes_PrimitiveType(ConstPointer(), index);
+      get { return UnsafeNativeMethods.Rdk_CustomMeshes_Count(ConstPointer()); }
     }
-
-    public Rhino.Geometry.Mesh Mesh(int index)
+    /// <summary>
+    /// Type of primitive object at this index.
+    /// </summary>
+    /// <param name="index">
+    /// The zero based index of the item in the list.  Valid values are greater
+    /// than or equal to 0 and less than Count.
+    /// </param>
+    /// <returns>
+    /// Primitive type of the item at this index.
+    /// </returns>
+    public RenderPrimitiveType PrimitiveType(int index)
     {
-      IntPtr pMesh = UnsafeNativeMethods.Rdk_CustomMeshes_Mesh(ConstPointer(), index);
-      if (pMesh != IntPtr.Zero)
+      return (RenderPrimitiveType)UnsafeNativeMethods.Rdk_CustomMeshes_PrimitiveType(ConstPointer(), index);
+    }
+    /// <summary>
+    /// Get the mesh for the primitive at the specified index. If the item at
+    /// this index is a primitive type other than a mesh then it mesh
+    /// representation is returned.
+    /// </summary>
+    /// <param name="index">
+    /// The zero based index of the item in the list.  Valid values are greater
+    /// than or equal to 0 and less than Count.
+    /// </param>
+    /// <returns>
+    /// Returns the mesh for the primitive at the specified index. If the item
+    /// at this index is a primitive type other than a mesh then it mesh
+    /// representation is returned.
+    /// </returns>
+    public Mesh Mesh(int index)
+    {
+      var const_ptr_mesh = UnsafeNativeMethods.Rdk_CustomMeshes_Mesh(ConstPointer(), index);
+      if (const_ptr_mesh != IntPtr.Zero)
       {
-        Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh(pMesh, null);
-        mesh.DoNotDestructOnDispose();
-        return mesh;
+        MeshHolder mh = new MeshHolder(this, index);
+        return new Mesh(const_ptr_mesh, mh);
       }
       return null;
     }
-
-    public bool Sphere(int index, ref Rhino.Geometry.Sphere sphere)
+    /// <summary>
+    /// Call this method to get a box at the specified index.
+    /// </summary>
+    /// <param name="index">
+    /// The zero based index of the item in the list.  Valid values are greater
+    /// than or equal to 0 and less than Count.
+    /// </param>
+    /// <param name="sphere">
+    /// Will contain the sphere at the requested index if the index is in range
+    /// and the primitive at the requested index is a box.
+    /// </param>
+    /// <returns>
+    /// Return true if the index is in range and the primitive at the requested
+    /// index is a box otherwise returns false.
+    /// </returns>
+    public bool TryGetSphere(int index, out Sphere sphere)
     {
-      Rhino.Geometry.Point3d origin = new Rhino.Geometry.Point3d();
-      Rhino.Geometry.Vector3d xaxis = new Rhino.Geometry.Vector3d();
-      Rhino.Geometry.Vector3d yaxis = new Rhino.Geometry.Vector3d();
-      double radius = 0.0;
+      var origin = new Point3d();
+      var xaxis = new Vector3d();
+      var yaxis = new Vector3d();
+      var radius = 0.0;
 
       if (UnsafeNativeMethods.Rdk_CustomMeshes_Sphere(ConstPointer(), index, ref origin, ref xaxis, ref yaxis, ref radius))
       {
-        sphere = new Rhino.Geometry.Sphere(new Rhino.Geometry.Plane(origin, xaxis, yaxis), radius);
+        sphere = new Sphere(new Plane(origin, xaxis, yaxis), radius);
         return true;
       }
+      sphere = new Sphere();
       return false;
     }
-
-    public bool Box(int index, ref Rhino.Geometry.Box box)
+    /// <summary>
+    /// Call this method to get a box at the specified index.
+    /// </summary>
+    /// <param name="index">
+    /// The zero based index of the item in the list.  Valid values are greater
+    /// than or equal to 0 and less than Count.
+    /// </param>
+    /// <param name="box">
+    /// Will contain the box at the requested index if the index is in range
+    /// and the primitive at the requested index is a box.
+    /// </param>
+    /// <returns>
+    /// Return true if the index is in range and the primitive at the requested
+    /// index is a box otherwise returns false.
+    /// </returns>
+    public bool TryGetBox(int index, out Box box)
     {
-      Rhino.Geometry.Point3d origin = new Rhino.Geometry.Point3d();
-      Rhino.Geometry.Vector3d xaxis = new Rhino.Geometry.Vector3d();
-      Rhino.Geometry.Vector3d yaxis = new Rhino.Geometry.Vector3d();
-      double minX = 0.0, maxX = 0.0;
-      double minY = 0.0, maxY = 0.0;
-      double minZ = 0.0, maxZ = 0.0;
+      var origin = new Point3d();
+      var xaxis = new Vector3d();
+      var yaxis = new Vector3d();
+      var min_x = 0.0;
+      var max_x = 0.0;
+      var min_y = 0.0;
+      var max_y = 0.0;
+      var min_z = 0.0;
+      var max_z = 0.0;
 
-      if (UnsafeNativeMethods.Rdk_CustomMeshes_Box(ConstPointer(), index, ref origin, ref xaxis, ref yaxis, ref minX, ref maxX, ref minY, ref maxY, ref minZ, ref maxZ))
+      if (UnsafeNativeMethods.Rdk_CustomMeshes_Box(ConstPointer(), index, ref origin, ref xaxis, ref yaxis, ref min_x, ref max_x, ref min_y, ref max_y, ref min_z, ref max_z))
       {
-        box = new Rhino.Geometry.Box(new Rhino.Geometry.Plane(origin, xaxis, yaxis),
-                                                        new Rhino.Geometry.Interval(minX, maxX),
-                                                        new Rhino.Geometry.Interval(minY, maxY),
-                                                        new Rhino.Geometry.Interval(minZ, maxZ));
+        box = new Box(new Plane(origin, xaxis, yaxis),
+                      new Interval(min_x, max_x),
+                      new Interval(min_y, max_y),
+                      new Interval(min_z, max_z));
         return true;
       }
+      box = new Box();
       return false;
     }
-
-    public bool Plane(int index, ref Rhino.Geometry.PlaneSurface plane)
+    /// <summary>
+    /// Call this method to get a box at the specified index.
+    /// </summary>
+    /// <param name="index">
+    /// The zero based index of the item in the list.  Valid values are greater
+    /// than or equal to 0 and less than Count.
+    /// </param>
+    /// <param name="plane">
+    /// Will contain the plane at the requested index if the index is in range
+    /// and the primitive at the requested index is a plane.
+    /// </param>
+    /// <returns>
+    /// Return true if the index is in range and the primitive at the requested
+    /// index is a plane otherwise returns false.
+    /// </returns>
+    public bool TryGetPlane(int index, out PlaneSurface plane)
     {
-      Rhino.Geometry.Point3d origin = new Rhino.Geometry.Point3d();
-      Rhino.Geometry.Vector3d xaxis = new Rhino.Geometry.Vector3d();
-      Rhino.Geometry.Vector3d yaxis = new Rhino.Geometry.Vector3d();
-      double minX = 0.0, maxX = 0.0;
-      double minY = 0.0, maxY = 0.0;
+      var origin = new Point3d();
+      var xaxis = new Vector3d();
+      var yaxis = new Vector3d();
+      var min_x = 0.0;
+      var max_x = 0.0;
+      var min_y = 0.0;
+      var max_y = 0.0;
 
-      if (UnsafeNativeMethods.Rdk_CustomMeshes_Plane(ConstPointer(), index, ref origin, ref xaxis, ref yaxis, ref minX, ref maxX, ref minY, ref maxY))
+      if (UnsafeNativeMethods.Rdk_CustomMeshes_Plane(ConstPointer(), index, ref origin, ref xaxis, ref yaxis, ref min_x, ref max_x, ref min_y, ref max_y))
       {
-        plane = new Rhino.Geometry.PlaneSurface(new Rhino.Geometry.Plane(origin, xaxis, yaxis),
-                                                        new Rhino.Geometry.Interval(minX, maxX),
-                                                        new Rhino.Geometry.Interval(minY, maxY));
+        plane = new PlaneSurface(new Plane(origin, xaxis, yaxis),
+                                 new Interval(min_x, max_x),
+                                 new Interval(min_y, max_y));
         return true;
       }
+      plane = new PlaneSurface(new Plane(Point3d.Origin, Vector3d.XAxis, Vector3d.YAxis),
+                               new Interval(0.0, 0.0),
+                               new Interval(0.0, 0.0));
       return false;
     }
-
-    public bool Cone(int index, ref Rhino.Geometry.Cone cone, ref Rhino.Geometry.Plane truncation)
+    /// <summary>
+    /// Call this method to get a box at the specified index.
+    /// </summary>
+    /// <param name="index">
+    /// The zero based index of the item in the list.  Valid values are greater
+    /// than or equal to 0 and less than Count.
+    /// </param>
+    /// <param name="cone">
+    /// Will contain the cone at the requested index if the index is in range
+    /// and the primitive at the requested index is a box.
+    /// </param>
+    /// <param name="truncation">
+    /// </param>
+    /// <returns>
+    /// Return true if the index is in range and the primitive at the requested
+    /// index is a box otherwise returns false.
+    /// </returns>
+    public bool TryGetCone(int index, out Cone cone, out Plane truncation)
     {
-      Rhino.Geometry.Point3d origin = new Rhino.Geometry.Point3d();
-      Rhino.Geometry.Vector3d xaxis = new Rhino.Geometry.Vector3d();
-      Rhino.Geometry.Vector3d yaxis = new Rhino.Geometry.Vector3d();
+      var origin = new Point3d();
+      var xaxis = new Vector3d();
+      var yaxis = new Vector3d();
 
-      double height = 0.0;
-      double radius = 0.0;
+      var height = 0.0;
+      var radius = 0.0;
 
-      Rhino.Geometry.Point3d t_origin = new Rhino.Geometry.Point3d();
-      Rhino.Geometry.Vector3d t_xaxis = new Rhino.Geometry.Vector3d();
-      Rhino.Geometry.Vector3d t_yaxis = new Rhino.Geometry.Vector3d();
+      var t_origin = new Point3d();
+      var t_xaxis = new Vector3d();
+      var t_yaxis = new Vector3d();
 
 
       if (UnsafeNativeMethods.Rdk_CustomMeshes_Cone(ConstPointer(), index, 
-                                                       ref origin, 
-                                                       ref xaxis, 
-                                                       ref yaxis, 
-                                                       ref height, ref radius,
-                                                       ref t_origin, ref t_xaxis, ref t_yaxis))
+                                                    ref origin, 
+                                                    ref xaxis, 
+                                                    ref yaxis, 
+                                                    ref height,
+                                                    ref radius,
+                                                    ref t_origin,
+                                                    ref t_xaxis,
+                                                    ref t_yaxis))
       {
-        cone = new Rhino.Geometry.Cone(new Rhino.Geometry.Plane(origin, xaxis, yaxis), height, radius);
-        truncation = new Rhino.Geometry.Plane(t_origin, t_xaxis, t_yaxis);
+        cone = new Cone(new Plane(origin, xaxis, yaxis), height, radius);
+        truncation = new Plane(t_origin, t_xaxis, t_yaxis);
         return true;
       }
+      cone = new Cone();
+      truncation = new Plane();
       return false;
     }
-
+    /// <summary>
+    /// Call this method to get the render material associated with the mesh at
+    /// the specified index.  Will return null if there is no
+    /// material associated with the requested mesh.
+    /// </summary>
+    /// <param name="index">
+    /// The zero based index of the item in the list.  Valid values are greater
+    /// than or equal to 0 and less than Count.
+    /// </param>
+    /// <returns>
+    /// If there is a render material associated at the requested index then
+    /// the material is returned otherwise null is returned.
+    /// </returns>
     public RenderMaterial Material(int index)
     {
-      IntPtr pMaterial = UnsafeNativeMethods.Rdk_CustomMeshes_Material(ConstPointer(), index);
-      if (pMaterial != IntPtr.Zero)
+      var material_pointer = UnsafeNativeMethods.Rdk_CustomMeshes_Material(ConstPointer(), index);
+      if (material_pointer != IntPtr.Zero)
       {
-        RenderMaterial material = RenderContent.FromPointer(pMaterial) as RenderMaterial;
+        var material = RenderContent.FromPointer(material_pointer) as RenderMaterial;
         return material;
       }
       return null;
     }
-
-    public Rhino.DocObjects.RhinoObject Object
+    /// <summary>
+    /// The Rhino object associated with this list
+    /// </summary>
+    public RhinoObject RhinoObject
     {
       get
       {
-        IntPtr pObject = UnsafeNativeMethods.Rdk_CustomMeshes_Object(ConstPointer());
-        if (pObject != IntPtr.Zero)
-        {
-          return Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(pObject);
-        }
-        return null;
+        var object_pointer = UnsafeNativeMethods.Rdk_CustomMeshes_Object(ConstPointer());
+        return (object_pointer != IntPtr.Zero ? RhinoObject.CreateRhinoObjectHelper(object_pointer) : null);
       }
     }
-
-    public Rhino.Geometry.Transform GetInstanceTransform(int index)
-    {
-      Rhino.Geometry.Transform xform = new Rhino.Geometry.Transform();
-      UnsafeNativeMethods.Rdk_CustomMeshes_GetInstanceTransform(ConstPointer(), index, ref xform);
-      return xform;
-    }
-
-    public void SetInstanceTransform(int index, Rhino.Geometry.Transform xform)
-    {
-      UnsafeNativeMethods.Rdk_CustomMeshes_SetInstanceTransform(NonConstPointer(), index, xform);
-    }
-
+    /// <summary>
+    /// Convert mesh quad faces to triangle faces.
+    /// </summary>
     public void ConvertMeshesToTriangles()
     {
       UnsafeNativeMethods.Rdk_CustomMeshes_ConvertMeshesToTriangles(NonConstPointer());
     }
-
+    /// <summary>
+    /// Remove all primitives from this list
+    /// </summary>
     public void Clear()
     {
       UnsafeNativeMethods.Rdk_CustomMeshes_Clear(NonConstPointer());
+    }
+
+#if RDK_UNCHECKED
+    public Transform GetInstanceTransform(int index)
+    {
+      Transform xform = new Transform();
+      UnsafeNativeMethods.Rdk_CustomMeshes_GetInstanceTransform(ConstPointer(), index, ref xform);
+      return xform;
+    }
+
+    public void SetInstanceTransform(int index, Transform xform)
+    {
+      UnsafeNativeMethods.Rdk_CustomMeshes_SetInstanceTransform(NonConstPointer(), index, xform);
     }
 
     public bool AutoDeleteMeshesOn()
@@ -250,16 +478,33 @@ namespace Rhino.Render.CustomRenderMesh
     {
       return UnsafeNativeMethods.Rdk_CustomMeshes_AutoDeleteMaterialsOn(ConstPointer());
     }
-
-    #region internals
-    private IntPtr m_pRenderMeshes = IntPtr.Zero;
-    readonly bool m_bAutoDelete;
-    internal IntPtr ConstPointer()     { return m_pRenderMeshes; }
-    internal IntPtr NonConstPointer()  { return m_pRenderMeshes; }
-    #endregion
+#endif
 
     #region IDisposable pattern implementation
-    ~ObjectMeshes()
+
+    bool m_disposed;
+    int m_dependency_count = 0;
+
+    internal void IncrementDependencyCount()
+    {
+      m_dependency_count++;
+    }
+    internal void DecrementDependencyCount()
+    {
+      m_dependency_count--;
+      DoCleanUpTest();
+    }
+
+    void DoCleanUpTest()
+    {
+      if (m_disposed && m_dependency_count < 1 && m_ptr_custom_render_meshes != IntPtr.Zero)
+      {
+        UnsafeNativeMethods.Rdk_CustomMeshes_Delete(m_ptr_custom_render_meshes);
+        m_ptr_custom_render_meshes = IntPtr.Zero;
+      }
+    }
+
+    ~RenderPrimitiveList()
     {
       Dispose(false);
     }
@@ -267,291 +512,69 @@ namespace Rhino.Render.CustomRenderMesh
     {
       Dispose(true);
     }
-    private bool disposed;
     private void Dispose(bool disposing)
     {
-      if (!disposed)
-      {
-        if (m_bAutoDelete)
-        {
-          UnsafeNativeMethods.Rdk_CustomMeshes_Delete(m_pRenderMeshes);
-        }
-        m_pRenderMeshes = IntPtr.Zero;
-      }
-      disposed = true;
+      m_disposed = true;
+      DoCleanUpTest();
     }
     #endregion
   }
 
-  public enum MeshTypes : int
+#if RDK_UNCHECKED
+  // John Morse:
+  // Per conversation with Andy this is going to get removed soon, the events will get added
+  // to RhinoDoc or the objects table
+  //class CustomRenderMeshManagerDepricated
+  //{
+  //  public static RenderPrimitiveList PreviousMeshes()
+  //  {
+  //    IntPtr pMeshes = UnsafeNativeMethods.Rdk_CRMManager_EVF("PreviousMeshes", IntPtr.Zero);
+  //    if (pMeshes != IntPtr.Zero)
+  //    {
+  //      return new RenderPrimitiveList(pMeshes);
+  //    }
+  //    return null;
+  //  }
+  //  public static void ForceObjectIntoPreviewCache(RhinoObject obj)
+  //  {
+  //    UnsafeNativeMethods.Rdk_CRMManager_EVF("ForceObjectIntoPreviewCache", obj.ConstPointer());
+  //  }
+  //}
+#endif
+
+  /// <summary>
+  /// You must call CustomRenderMeshProvider.RegisterProviders() from your
+  /// plug-ins OnLoad override for each assembly containing a custom mesh
+  /// provider.  Only publicly exported classes derived from
+  /// CustomRenderMeshProvider with a public constructor that has no parameters
+  /// will get registered.
+  /// </summary>
+  public abstract class CustomRenderMeshProvider
   {
-    Standard = 0,
-    Preview  = 1,
-  }
-
-  public class Manager
-  {
-    public static void AllObjectsChanged()
-    {
-      UnsafeNativeMethods.Rdk_CRMManager_Changed();
-    }
-
-    public static void ObjectChanged(Rhino.DocObjects.RhinoObject obj)
-    {
-      UnsafeNativeMethods.Rdk_CRMManager_EVF("ObjectChanged", obj.ConstPointer());
-    }
-
-    public static ObjectMeshes PreviousMeshes()
-    {
-      IntPtr pMeshes = UnsafeNativeMethods.Rdk_CRMManager_EVF("PreviousMeshes", IntPtr.Zero);
-      if (pMeshes != IntPtr.Zero)
-      {
-        return new ObjectMeshes(pMeshes);
-      }
-      return null;
-    }
-
-    public static void ForceObjectIntoPreviewCache(Rhino.DocObjects.RhinoObject obj)
-    {
-      UnsafeNativeMethods.Rdk_CRMManager_EVF("ForceObjectIntoPreviewCache", obj.ConstPointer());
-    }
-
     /// <summary>
-    /// Determines if custom render meshes will be built for a particular object.
+    /// Default constructor
     /// </summary>
-    /// <param name="vp">the viewport being rendered.</param>
-    /// <param name="obj">the Rhino object of interest.</param>
-    /// <param name="requestingPlugIn">type of mesh to build.</param>
-    /// <param name="meshType">UUID of the plug-in requesting the meshes.</param>
-    /// <param name="soleProviderId">the UUID of the sole provider to call.</param>
-    /// <returns>true if BuildCustomMeshes() will build custom render mesh(es) for the given object.</returns>
-    public static bool WillBuildCustomMeshes(Rhino.DocObjects.ViewportInfo vp, Rhino.DocObjects.RhinoObject obj, Guid requestingPlugIn, MeshTypes meshType, Guid soleProviderId)
+    protected CustomRenderMeshProvider()
     {
-      return UnsafeNativeMethods.Rdk_CRMManager_WillBuildCustomMeshSole(vp.ConstPointer(), obj.ConstPointer(), requestingPlugIn, (int)meshType, soleProviderId);
     }
 
+    #region abstract properties
     /// <summary>
-    /// Determines if custom render meshes will be built for a particular object.
+    /// The name of the provider for UI display.
     /// </summary>
-    /// <param name="vp">the viewport being rendered.</param>
-    /// <param name="obj">the Rhino object of interest.</param>
-    /// <param name="requestingPlugIn">type of mesh to build.</param>
-    /// <param name="meshType">UUID of the plug-in requesting the meshes.</param>
-    /// <returns>true if BuildCustomMeshes() will build custom render mesh(es) for the given object.</returns>
-    public static bool WillBuildCustomMeshes(Rhino.DocObjects.ViewportInfo vp, Rhino.DocObjects.RhinoObject obj, Guid requestingPlugIn, MeshTypes meshType)
-    {
-      return UnsafeNativeMethods.Rdk_CRMManager_WillBuildCustomMesh(vp.ConstPointer(), obj.ConstPointer(), requestingPlugIn, (int)meshType);
-    }
-
-    /// <summary>
-    /// Returns a bounding box for the custom render meshes for the given object.
-    /// </summary>
-    /// <param name="vp"> the viewport being rendered.</param>
-    /// <param name="obj">Rhino object of interest.</param>
-    /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes.</param>
-    /// <param name="meshType"> type of mesh(es) to build the bounding box for.</param>
-    /// <param name="soleProviderId">the sole provider to call.</param>
-    /// <returns>ON_BoundingBox for the meshes.</returns>
-    public static Rhino.Geometry.BoundingBox BoundingBox(Rhino.DocObjects.ViewportInfo vp, Rhino.DocObjects.RhinoObject obj, Guid requestingPlugIn, MeshTypes meshType, Guid soleProviderId)
-    {
-      Geometry.Point3d min = new Geometry.Point3d();
-      Geometry.Point3d max = new Geometry.Point3d();
-
-      if (UnsafeNativeMethods.Rdk_CRMManager_BoundingBoxSole(vp.ConstPointer(), obj.ConstPointer(), requestingPlugIn, (int)meshType, soleProviderId, ref min, ref max))
-      {
-        Rhino.Geometry.BoundingBox bb = new Geometry.BoundingBox();
-        return bb;
-      }
-
-      return new Geometry.BoundingBox();
-    }
-
-    /// <summary>
-    /// Returns a bounding box for the custom render meshes for the given object.
-    /// </summary>
-    /// <param name="vp"> the viewport being rendered.</param>
-    /// <param name="obj">Rhino object of interest.</param>
-    /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes.</param>
-    /// <param name="meshType"> type of mesh(es) to build the bounding box for.</param>
-    /// <returns>ON_BoundingBox for the meshes.</returns>
-    public static Rhino.Geometry.BoundingBox BoundingBox(Rhino.DocObjects.ViewportInfo vp, Rhino.DocObjects.RhinoObject obj, Guid requestingPlugIn, MeshTypes meshType)
-    {
-      Rhino.Geometry.Point3d min = new Geometry.Point3d();
-      Rhino.Geometry.Point3d max = new Geometry.Point3d();
-
-      Rhino.Geometry.BoundingBox bb = new Geometry.BoundingBox();
-
-      if (UnsafeNativeMethods.Rdk_CRMManager_BoundingBox(vp.ConstPointer(), obj.ConstPointer(), requestingPlugIn, (int)meshType, ref min, ref max))
-      {
-        bb.Min = min;
-        bb.Max = max;
-      }
-
-      return bb;
-    }
-
-    /// <summary>
-    /// Build custom render mesh(es) for the given object.
-    /// </summary>
-    /// <param name="vp">the viewport being rendered.</param>
-    /// <param name="objMeshes">The meshes object to fill with custom meshes - the Object property will already be set.</param>
-    /// <param name="requestingPlugIn">the UUID of the RDK plug-in requesting the meshes.</param>
-    /// <param name="meshType"> type of mesh(es) to build.</param>
-    /// <param name="soleProviderId">the sole provider to call.</param>
-    /// <returns>true if successful.</returns>
-    public static bool BuildCustomMeshes(Rhino.DocObjects.ViewportInfo vp, ObjectMeshes objMeshes, Guid requestingPlugIn, MeshTypes meshType, Guid soleProviderId)
-    {
-      return UnsafeNativeMethods.Rdk_CRMManager_BuildCustomMeshesSole(vp.ConstPointer(), objMeshes.NonConstPointer(), requestingPlugIn, (int)meshType, soleProviderId);
-    }
-
-    /// <summary>
-    /// Build custom render mesh(es) for the given object.
-    /// </summary>
-    /// <param name="vp">the viewport being rendered.</param>
-    /// <param name="objMeshes">The meshes object to fill with custom meshes - the Object property will already be set.</param>
-    /// <param name="requestingPlugIn">the UUID of the RDK plug-in requesting the meshes.</param>
-    /// <param name="meshType"> type of mesh(es) to build.</param>
-    /// <returns>true if successful.</returns>
-    public static bool BuildCustomMeshes(Rhino.DocObjects.ViewportInfo vp, ObjectMeshes objMeshes, Guid requestingPlugIn, MeshTypes meshType)
-    {
-      return UnsafeNativeMethods.Rdk_CRMManager_BuildCustomMeshes(vp.ConstPointer(), objMeshes.NonConstPointer(), requestingPlugIn, (int)meshType);
-    }
-
-    #region events
-
-    internal delegate void CRMManagerEmptyCallback();
-
-    private static CRMManagerEmptyCallback m_OnCustomRenderMeshesChanged;
-    private static void OnCustomRenderMeshesChanged()
-    {
-      if (m_custom_render_meshes_changed != null)
-      {
-        try { m_custom_render_meshes_changed(null, System.EventArgs.Empty); }
-        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
-      }
-    }
-    internal static EventHandler m_custom_render_meshes_changed;
-
-    /// <summary>
-    /// Monitors when custom render meshes are changed.
-    /// </summary>
-    public static event EventHandler CustomRenderMeshesChanged
-    {
-      add
-      {
-        if (m_custom_render_meshes_changed == null)
-        {
-          m_OnCustomRenderMeshesChanged = OnCustomRenderMeshesChanged;
-          UnsafeNativeMethods.CRdkCmnEventWatcher_SetCustomRenderMeshesChangedEventCallback(m_OnCustomRenderMeshesChanged, Rhino.Runtime.HostUtils.m_rdk_ew_report);
-        }
-        m_custom_render_meshes_changed += value;
-      }
-      remove
-      {
-        m_custom_render_meshes_changed -= value;
-        if (m_custom_render_meshes_changed == null)
-        {
-          UnsafeNativeMethods.CRdkCmnEventWatcher_SetCustomRenderMeshesChangedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
-          m_OnCustomRenderMeshesChanged = null;
-        }
-      }
-    }
-
-    #endregion
-
-  }
-
-  public abstract class Provider
-  {
-    internal int m_runtime_serial_number;
-    static int m_current_serial_number = 1;
-    static readonly Dictionary<int, Provider> m_all_providers = new Dictionary<int, Provider>();
-
-    protected Provider()
-    {
-    }
-
     public abstract String Name { get; }
+    #endregion abstract properties
 
-    protected IntPtr CreateCppObject(Guid pluginId)
-    {
-      Type t = GetType();
-      Guid providerId = t.GUID;
-      m_runtime_serial_number = m_current_serial_number++;
-      
-      return UnsafeNativeMethods.CRhCmnCRMProvider_New(m_runtime_serial_number, providerId, Name, pluginId);
-    }
-
-    public static void RegisterProviders(System.Reflection.Assembly assembly, System.Guid pluginId)
-    {
-      Rhino.PlugIns.PlugIn plugin = Rhino.PlugIns.PlugIn.GetLoadedPlugIn(pluginId);
-      if (plugin == null)
-        return;
-
-      Type[] exported_types = assembly.GetExportedTypes();
-
-      if (exported_types != null)
-      {
-        List<Type> provider_types = new List<Type>();
-        for (int i = 0; i < exported_types.Length; i++)
-        {
-          Type t = exported_types[i];
-          if (!t.IsAbstract && t.IsSubclassOf(typeof(Rhino.Render.CustomRenderMesh.Provider)) && t.GetConstructor(new Type[] { }) != null)
-            provider_types.Add(t);
-        }
-
-        if (provider_types.Count == 0)
-          return;
-
-        RdkPlugIn rdk_plugin = RdkPlugIn.GetRdkPlugIn(plugin);
-        if (rdk_plugin == null)
-          return;
-
-        foreach (Type t in provider_types)
-        {
-          Provider p = System.Activator.CreateInstance(t) as Provider;
-          if (p == null) continue;
-          IntPtr pCppObject = p.CreateCppObject(pluginId);
-          if (pCppObject != IntPtr.Zero)
-          {
-            //rdk_plugin.AddRegisteredCRMProvider(p);
-            m_all_providers.Add(p.m_runtime_serial_number, p);
-            UnsafeNativeMethods.Rdk_RegisterCRMProvider(pCppObject);
-          }
-        }
-
-      }
-    }
-
+    #region abstract methods
     /// <summary>
     /// Determines if custom render meshes will be built for a particular object.
     /// </summary>
     /// <param name="vp">The viewport being rendered.</param>
     /// <param name="obj">The Rhino object of interest.</param>
     /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes.</param>
-    /// <param name="meshType">Type of mesh to build.</param>
+    /// <param name="preview">Type of mesh to build.</param>
     /// <returns>true if custom meshes will be built.</returns>
-    public abstract bool WillBuildCustomMeshes(Rhino.DocObjects.ViewportInfo vp, Rhino.DocObjects.RhinoObject obj, Guid requestingPlugIn, MeshTypes meshType);
-
-    /// <summary>
-    /// Returns a bounding box for the custom render meshes for the given object.
-    /// </summary>
-    /// <param name="vp">The viewport being rendered.</param>
-    /// <param name="obj">The Rhino object of interest.</param>
-    /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes.</param>
-    /// <param name="meshType">Type of mesh to build.</param>
-    /// <returns>A bounding box value.</returns>
-    public virtual Rhino.Geometry.BoundingBox BoundingBox(Rhino.DocObjects.ViewportInfo vp, Rhino.DocObjects.RhinoObject obj, Guid requestingPlugIn, MeshTypes meshType)
-    {
-      Geometry.Point3d min = new Geometry.Point3d();
-      Geometry.Point3d max = new Geometry.Point3d();
-
-      if (UnsafeNativeMethods.Rdk_RMPBoundingBoxImpl(m_runtime_serial_number, vp.ConstPointer(), obj.ConstPointer(), requestingPlugIn, (int)meshType, ref min, ref max))
-        return new Rhino.Geometry.BoundingBox(min, max);
-
-      return new Rhino.Geometry.BoundingBox();
-    }
-
+    public abstract bool WillBuildCustomMeshes(ViewportInfo vp, RhinoObject obj, Guid requestingPlugIn, bool preview);
     /// <summary>
     /// Build custom render mesh(es).
     /// </summary>
@@ -560,78 +583,199 @@ namespace Rhino.Render.CustomRenderMesh
     /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes.</param>
     /// <param name="meshType">Type of mesh to build.</param>
     /// <returns>true if operation was successful.</returns>
-    public abstract bool BuildCustomMeshes(Rhino.DocObjects.ViewportInfo vp, ObjectMeshes objMeshes, Guid requestingPlugIn, MeshTypes meshType);
+    public abstract bool BuildCustomMeshes(ViewportInfo vp, RenderPrimitiveList objMeshes, Guid requestingPlugIn, bool meshType);
+    #endregion abstract methods
 
+    #region members
+    private int m_runtime_serial_number;
+    private static int g_current_serial_number = 1;
+    private static readonly Dictionary<int, CustomRenderMeshProvider> g_all_providers = new Dictionary<int, CustomRenderMeshProvider>();
+    #endregion members
+
+    #region private methods
+    /// <summary>
+    /// RegisterProviders calls this method to create a runtime unmanaged
+    /// pointer for each custom provider registered.
+    /// </summary>
+    /// <param name="pluginId"></param>
+    /// <returns></returns>
+    private IntPtr CreateCppObject(Guid pluginId)
+    {
+      var type = GetType();
+      var provider_id = type.GUID;
+      m_runtime_serial_number = g_current_serial_number++;
+      
+      return UnsafeNativeMethods.CRhCmnCRMProvider_New(m_runtime_serial_number, provider_id, Name, pluginId);
+    }
+    /// <summary>
+    /// This method is called by the virtual hooks to get the runtime managed
+    /// object from a serial number.
+    /// </summary>
+    /// <param name="serialNumber"></param>
+    /// <returns></returns>
+    private static CustomRenderMeshProvider FromSerialNumber(int serialNumber)
+    {
+      CustomRenderMeshProvider rc;
+      g_all_providers.TryGetValue(serialNumber, out rc);
+      return rc;
+    }
+    #endregion private methods
+
+    #region public static methods
+    /// <summary>
+    /// Call this method once from your plug-ins OnLoad override for each
+    /// assembly containing a custom mesh provider.  Only publicly exported
+    /// classes derived from CustomRenderMeshProvider with a public constructor
+    /// that has no parameters will get registered.
+    /// </summary>
+    /// <param name="assembly">
+    /// Assembly to search for valid CustomRenderMeshProvider derived classes.
+    /// </param>
+    /// <param name="pluginId">
+    /// The plug-in that owns the custom mesh providers.
+    /// </param>
+    public static void RegisterProviders(System.Reflection.Assembly assembly, Guid pluginId)
+    {
+      var plugin = PlugIns.PlugIn.GetLoadedPlugIn(pluginId);
+      if (plugin == null)
+        return;
+
+      var exported_types = assembly.GetExportedTypes();
+      var provider_types = new List<Type>();
+      var custom_type = typeof(CustomRenderMeshProvider);
+      var options = new Type[] {};
+
+      foreach (var type in exported_types)
+        if (!type.IsAbstract && type.IsSubclassOf(custom_type) && type.GetConstructor(options) != null)
+          provider_types.Add(type);
+
+      if (provider_types.Count == 0)
+        return;
+
+      var rdk_plugin = RdkPlugIn.GetRdkPlugIn(plugin);
+      if (rdk_plugin == null)
+        return;
+
+      foreach (var type in provider_types)
+      {
+        var provider = Activator.CreateInstance(type) as CustomRenderMeshProvider;
+        if (provider == null) continue;
+        var cpp_object = provider.CreateCppObject(pluginId);
+        if (cpp_object == IntPtr.Zero) continue;
+        g_all_providers.Add(provider.m_runtime_serial_number, provider);
+        UnsafeNativeMethods.Rdk_RegisterCRMProvider(cpp_object);
+      }
+    }
+    /// <summary>
+    /// Call this method if your render meshes change.
+    /// </summary>
+    public static void AllObjectsChanged()
+    {
+      UnsafeNativeMethods.Rdk_CRMManager_Changed();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="obj"></param>
+    public static void ObjectChanged(RhinoObject obj)
+    {
+      UnsafeNativeMethods.Rdk_CRMManager_EVF("ObjectChanged", obj.ConstPointer());
+    }
+    #endregion public static methods
+
+    #region virtual methods
+    /// <summary>
+    /// Returns a bounding box for the custom render meshes for the given object.
+    /// </summary>
+    /// <param name="vp">The viewport being rendered.</param>
+    /// <param name="obj">The Rhino object of interest.</param>
+    /// <param name="requestingPlugIn">UUID of the RDK plug-in requesting the meshes.</param>
+    /// <param name="preview">Type of mesh to build.</param>
+    /// <returns>A bounding box value.</returns>
+    public virtual BoundingBox BoundingBox(ViewportInfo vp, RhinoObject obj, Guid requestingPlugIn, bool preview)
+    {
+      var min = new Point3d();
+      var max = new Point3d();
+
+      if (UnsafeNativeMethods.Rdk_RMPBoundingBoxImpl(m_runtime_serial_number, vp.ConstPointer(), obj.ConstPointer(), requestingPlugIn, preview ? 1 : 0, ref min, ref max))
+        return new BoundingBox(min, max);
+
+      return new BoundingBox();
+    }
+    #endregion virtual methods
 
     #region callbacks
-    internal delegate void CRMProviderDeleteThisCallback(int serialNumber);
-    internal static CRMProviderDeleteThisCallback m_DeleteThis = OnDeleteRhCmnCRMProvider;
-    static void OnDeleteRhCmnCRMProvider(int serialNumber)
+    internal delegate void CrmProviderDeleteThisCallback(int serialNumber);
+    internal static CrmProviderDeleteThisCallback DeleteThis = OnDeleteRhCmnCrmProvider;
+    static private void OnDeleteRhCmnCrmProvider(int serialNumber)
     {
       try
       {
-        Provider p = Provider.FromSerialNumber(serialNumber);
-        if (p != null)
-        {
-          p.m_runtime_serial_number = -1;
-          m_all_providers.Remove(serialNumber);
-        }
+        var p = FromSerialNumber(serialNumber);
+        if (p == null) return;
+        p.m_runtime_serial_number = -1;
+        g_all_providers.Remove(serialNumber);
       }
       catch (Exception ex)
       {
-        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+        Runtime.HostUtils.ExceptionReport(ex);
       }
     }
-
-
-    internal delegate int CRMProviderWillBuildCallback(int serialNumber, IntPtr pViewport, IntPtr pObject, Guid plugInId, int type);
-    internal static CRMProviderWillBuildCallback m_WillBuild = OnWillBuild;
-    static int OnWillBuild(int serialNumber, IntPtr pViewport, IntPtr pObject, Guid plugInId, int type)
+    //-------------------------------------------------------------------------
+    internal delegate int CrmProviderWillBuildCallback(int serialNumber, IntPtr pViewport, IntPtr pObject, Guid plugInId, int type);
+    internal static CrmProviderWillBuildCallback WillBuild = OnWillBuild;
+    static private int OnWillBuild(int serialNumber, IntPtr pViewport, IntPtr pObject, Guid plugInId, int type)
     {
       try
       {
-        Provider p = Provider.FromSerialNumber(serialNumber);
+        var p = FromSerialNumber(serialNumber);
         if (p != null)
-        {
-          return p.WillBuildCustomMeshes(new Rhino.DocObjects.ViewportInfo(pViewport), DocObjects.RhinoObject.CreateRhinoObjectHelper(pObject), plugInId, (MeshTypes)type) ? 1 : 0;
-        }
+          return p.WillBuildCustomMeshes(new ViewportInfo(pViewport), RhinoObject.CreateRhinoObjectHelper(pObject), plugInId, type == 1) ? 1 : 0;
       }
       catch (Exception ex)
       {
-        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+        Runtime.HostUtils.ExceptionReport(ex);
       }
       return 0;
     }
-
-    internal delegate int CRMProviderBuildCallback(int serialNumber, IntPtr pViewport, IntPtr pCRM, Guid plugInId, int type);
-    internal static CRMProviderBuildCallback m_Build = OnBuild;
-    static int OnBuild(int serialNumber, IntPtr pViewport, IntPtr pCRM, Guid plugInId, int type)
+    //-------------------------------------------------------------------------
+    internal delegate int CrmProviderBuildCallback(int serialNumber, IntPtr viewportPointer, IntPtr customRenderMeshPointer, Guid plugInId, int type);
+    internal static CrmProviderBuildCallback Build = OnBuild;
+    static private int OnBuild(int serialNumber, IntPtr viewportPointer, IntPtr customRenderMeshPointer, Guid plugInId, int type)
     {
+      var list = new RenderPrimitiveList(customRenderMeshPointer);
       try
       {
-        Provider p = Provider.FromSerialNumber(serialNumber);
-        if (p != null)
-        {
-          return p.BuildCustomMeshes(new Rhino.DocObjects.ViewportInfo(pViewport), new Render.CustomRenderMesh.ObjectMeshes(pCRM), plugInId, (MeshTypes)type) ? 1 : 0;
-        }
+        var proider = FromSerialNumber(serialNumber);
+        if (proider == null) return 0;
+        // Make a temporary list, you MUST CALL DetachPointer() to avoid a double delete
+        var success = proider.BuildCustomMeshes(new ViewportInfo(viewportPointer), list, plugInId, type == 1);
+        return (success ? 1 : 0);
       }
       catch (Exception ex)
       {
-        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+        Runtime.HostUtils.ExceptionReport(ex);
+      }
+      finally
+      {
+        // This MUST be called because we created the list and attached it to a
+        // pointer owned by the display.
+        list.DetachPointer();
       }
       return 0;
     }
-
-    internal delegate int CRMProviderBBoxCallback(int serialNumber, IntPtr pViewport, IntPtr pObject, Guid plugInId, int type, ref Geometry.Point3d min, ref Geometry.Point3d max);
-    internal static CRMProviderBBoxCallback m_BBox = OnBBox;
-    static int OnBBox(int serialNumber, IntPtr pViewport, IntPtr pObject, Guid plugInId, int type, ref Geometry.Point3d min, ref Geometry.Point3d max)
+    //-------------------------------------------------------------------------
+    internal delegate int CrmProviderBBoxCallback(int serialNumber, IntPtr pViewport, IntPtr pObject, Guid plugInId, int type, ref Point3d min, ref Point3d max);
+    internal static CrmProviderBBoxCallback BBox = OnBBox;
+    static int OnBBox(int serialNumber, IntPtr pViewport, IntPtr pObject, Guid plugInId, int type, ref Point3d min, ref Point3d max)
     {
       try
       {
-        Provider p = Provider.FromSerialNumber(serialNumber);
-        if (p != null)
+        var provider = FromSerialNumber(serialNumber);
+        if (provider != null)
         {
-          Geometry.BoundingBox bbox = p.BoundingBox(new Rhino.DocObjects.ViewportInfo(pViewport), DocObjects.RhinoObject.CreateRhinoObjectHelper(pObject), plugInId, (MeshTypes)type);
+          var bbox = provider.BoundingBox(new ViewportInfo(pViewport), RhinoObject.CreateRhinoObjectHelper(pObject), plugInId, type == 1);
           min = bbox.Min;
           max = bbox.Max;
           return 1;
@@ -639,21 +783,12 @@ namespace Rhino.Render.CustomRenderMesh
       }
       catch (Exception ex)
       {
-        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+        Runtime.HostUtils.ExceptionReport(ex);
       }
       return 0;
     }
 
-    #endregion
-
-    #region internals
-    internal static Provider FromSerialNumber(int serial_number)
-    {
-      Provider rc;
-      m_all_providers.TryGetValue(serial_number, out rc);
-      return rc;
-    }
-    #endregion
+    #endregion callbacks
   }
 }
 

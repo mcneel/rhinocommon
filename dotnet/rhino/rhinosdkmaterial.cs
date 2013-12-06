@@ -318,6 +318,7 @@ namespace Rhino.DocObjects
     const int IDX_SHINE = 0;
     const int IDX_TRANSPARENCY = 1;
     const int IDX_IOR = 2;
+    const int idxReflectivity = 3;
 
     double GetDouble(int which)
     {
@@ -361,6 +362,16 @@ namespace Rhino.DocObjects
     {
       get { return GetDouble(IDX_IOR); }
       set { SetDouble(IDX_IOR, value); }
+    }
+
+    /// <summary>
+    /// Gets or sets how reflective a material is, 0f is no reflection
+    /// 1f is 100% reflective.
+    /// </summary>
+    public double Reflectivity
+    {
+      get { return GetDouble(idxReflectivity); }
+      set { SetDouble(idxReflectivity, value); }
     }
 
     const int IDX_DIFFUSE = 0;
@@ -447,20 +458,38 @@ namespace Rhino.DocObjects
       return null;
     }
 
-#if TODO_RDK_UNCHECKED
-    Rhino.Render.RenderMaterial RenderMaterial
+// This is Private and never called so do we really need it?
+//#if RDK_UNCHECKED
+//    Render.RenderMaterial RenderMaterial
+//    {
+//      get
+//      {
+//        var pointer = ConstPointer();
+//        var instance_id = UnsafeNativeMethods.Rdk_MaterialFromOnMaterial(pointer);
+//        return Render.RenderContent.FromId(m_doc, instance_id) as Render.RenderMaterial;
+//      }
+//      set
+//      {
+//        var pointer = NonConstPointer();
+//        var id = (value == null ? Guid.Empty : value.Id);
+//        UnsafeNativeMethods.Rdk_SetMaterialToOnMaterial(pointer, id);
+//      }
+//    }
+//#endif
+
+    /// <summary>
+    /// Get array of textures that this material uses
+    /// </summary>
+    /// <returns></returns>
+    public Texture[] GetTextures()
     {
-        get
-        {
-            Guid instanceId = UnsafeNativeMethods.Rdk_MaterialFromOnMaterial(ConstPointer());
-            return new Rhino.Render.RenderMaterial(instanceId);
-        }
-        set
-        {
-            UnsafeNativeMethods.Rdk_SetMaterialToOnMaterial(NonConstPointer(), value.Id);
-        }
+      IntPtr ptr_const_this = ConstPointer();
+      int count = UnsafeNativeMethods.ON_Material_GetTextureCount(ptr_const_this);
+      Texture[] rc = new Texture[count];
+      for (int i = 0; i < count; i++)
+        rc[i] = new Texture(i, this);
+      return rc;
     }
-#endif
 
     #region Bitmap
     public Texture GetBitmapTexture()

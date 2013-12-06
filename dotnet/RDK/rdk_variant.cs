@@ -88,7 +88,7 @@ namespace Rhino.Render
     }
   }
 
-  internal sealed class Variant : IDisposable
+  /*public*/ sealed class Variant : IDisposable, IConvertible
   {
     public enum VariantTypes : int
     {
@@ -109,39 +109,47 @@ namespace Rhino.Render
       Point4d = 14,
     }
 
-    /// <summary>
-    /// Constructs from a variant coming from C++
-    /// </summary>
-    internal Variant(IntPtr pVariant)
+    internal static Variant CopyFromPointer(IntPtr pVariant)
     {
-      m_pVariant = UnsafeNativeMethods.Rdk_Variant_New(pVariant);
+      if (pVariant == IntPtr.Zero)
+        return null;
+      Variant v = new Variant();
+      UnsafeNativeMethods.Rdk_Variant_Copy(pVariant, v.NonConstPointer());
+      return v;
     }
+
+    internal void CopyToPointer(IntPtr pOtherVarient)
+    {
+      IntPtr ptr_const_this = ConstPointer();
+      UnsafeNativeMethods.Rdk_Variant_Copy(ptr_const_this, pOtherVarient);
+    }
+
 
     /// <summary>
     /// Constructs as VariantTypes.Null.
     /// </summary>
     public Variant()
     {
-      m_pVariant = UnsafeNativeMethods.Rdk_Variant_New(IntPtr.Zero);
+      m_ptr_variant = UnsafeNativeMethods.Rdk_Variant_New(IntPtr.Zero);
     }
 
     #region constructors
-    public Variant(int  v)                    : this()  { SetValue(v); }
-    public Variant(bool v)                    : this()  { SetValue(v); }
-    public Variant(float v)                   : this()  { SetValue(v); }
-    public Variant(double v)                  : this()  { SetValue(v); }
-    public Variant(string v)                  : this()  { SetValue(v); }
-    public Variant(System.Drawing.Color v)    : this()  { SetValue(v); }
-    public Variant(Rhino.Display.Color4f v)   : this()  { SetValue(v); }
-    public Variant(Rhino.Geometry.Vector2d v) : this()  { SetValue(v); }
-    public Variant(Rhino.Geometry.Vector3d v) : this()  { SetValue(v); }
-    public Variant(Rhino.Geometry.Point4d v)  : this()  { SetValue(v); }
+    public Variant(int v) : this() { SetValue(v); }
+    public Variant(bool v) : this() { SetValue(v); }
+    public Variant(float v) : this() { SetValue(v); }
+    public Variant(double v) : this() { SetValue(v); }
+    public Variant(string v) : this() { SetValue(v); }
+    public Variant(System.Drawing.Color v) : this() { SetValue(v); }
+    public Variant(Rhino.Display.Color4f v) : this() { SetValue(v); }
+    public Variant(Rhino.Geometry.Vector2d v) : this() { SetValue(v); }
+    public Variant(Rhino.Geometry.Vector3d v) : this() { SetValue(v); }
+    public Variant(Rhino.Geometry.Point4d v) : this() { SetValue(v); }
     //public Variant(IntPtr v)                  : this()  { SetValue(v); }
-    public Variant(Guid v)                    : this()  { SetValue(v); }
-    public Variant(Rhino.Geometry.Transform v): this()  { SetValue(v); }
-    public Variant(byte[] v)                  : this()  { SetValue(v); }
+    public Variant(Guid v) : this() { SetValue(v); }
+    public Variant(Rhino.Geometry.Transform v) : this() { SetValue(v); }
+    public Variant(byte[] v) : this() { SetValue(v); }
     public Variant(object v) : this() { SetValue(v); }
-    public Variant(DateTime v)                : this()  { SetValue(v); }
+    public Variant(DateTime v) : this() { SetValue(v); }
     #endregion
 
     /// <summary>
@@ -163,7 +171,7 @@ namespace Rhino.Render
     {
       get
       {
-        return 1==UnsafeNativeMethods.Rdk_Variant_IsNull(ConstPointer());
+        return 1 == UnsafeNativeMethods.Rdk_Variant_IsNull(ConstPointer());
       }
       set
       {
@@ -175,7 +183,7 @@ namespace Rhino.Render
     {
       get
       {
-        return 1==UnsafeNativeMethods.Rdk_Variant_Varies(ConstPointer());
+        return 1 == UnsafeNativeMethods.Rdk_Variant_Varies(ConstPointer());
       }
       set
       {
@@ -192,19 +200,19 @@ namespace Rhino.Render
     }
 
     #region value setters
-    public void SetValue(int v)    
+    public void SetValue(int v)
     { UnsafeNativeMethods.Rdk_Variant_SetIntValue(NonConstPointer(), v); }
 
-    public void SetValue(bool v)    
+    public void SetValue(bool v)
     { UnsafeNativeMethods.Rdk_Variant_SetBoolValue(NonConstPointer(), v); }
 
-    public void SetValue(double v) 
+    public void SetValue(double v)
     { UnsafeNativeMethods.Rdk_Variant_SetDoubleValue(NonConstPointer(), v); }
 
-    public void SetValue(float v) 
+    public void SetValue(float v)
     { UnsafeNativeMethods.Rdk_Variant_SetFloatValue(NonConstPointer(), v); }
 
-    public void SetValue(string v) 
+    public void SetValue(string v)
     { UnsafeNativeMethods.Rdk_Variant_SetStringValue(NonConstPointer(), v); }
 
     public void SetValue(System.Drawing.Color v)
@@ -243,6 +251,13 @@ namespace Rhino.Render
 
     public void SetValue(object v)
     {
+      Fields.Field field = v as Fields.Field;
+      if (field != null)
+      {
+        SetValue(field.ValueAsObject());
+        return;
+      }
+
       if (v is bool) SetValue((bool)v);
       else if (v is int) SetValue((int)v);
       else if (v is float) SetValue((float)v);
@@ -257,13 +272,12 @@ namespace Rhino.Render
       else if (v is Rhino.Geometry.Transform) SetValue((Rhino.Geometry.Transform)v);
       else if (v is DateTime) SetValue((DateTime)v);
       else if (v is byte[]) SetValue((byte[])v);
+      else if (v == null) IsNull = true;
       else
-      {
         throw new InvalidOperationException("Type not supported for Rhino.Rhino.Variant");
-      }
     }
 
-    
+
     #endregion
 
     #region value getters
@@ -276,13 +290,13 @@ namespace Rhino.Render
         case VariantTypes.Null:
           return null;
         case VariantTypes.Bool:
-          return ToBool();
+          return ToBoolean(null);
         case VariantTypes.Integer:
-          return ToInt();
+          return ToInt32(null);
         case VariantTypes.Float:
-          return ToFloat();
+          return ToSingle(null);
         case VariantTypes.Double:
-          return ToDouble();
+          return ToDouble(null);
         case VariantTypes.Color:
           return ToColor4f();
         case VariantTypes.Vector2d:
@@ -298,30 +312,9 @@ namespace Rhino.Render
         case VariantTypes.Matrix:
           return ToTransform();
         case VariantTypes.Time:
-          return ToDateTime();
+          return ToDateTime(null);
       }
       throw new InvalidOperationException("Type not supported by Rhino.Render.Variant");
-    }
-
-    public int ToInt()
-    { return UnsafeNativeMethods.Rdk_Variant_GetIntValue(ConstPointer()); }
-
-    public bool ToBool()
-    { return 1==UnsafeNativeMethods.Rdk_Variant_GetBoolValue(ConstPointer()); }
-
-    public double ToDouble()
-    { return UnsafeNativeMethods.Rdk_Variant_GetDoubleValue(ConstPointer()); }
-
-    public float ToFloat()
-    { return UnsafeNativeMethods.Rdk_Variant_GetFloatValue(ConstPointer()); }
-
-    public override string ToString()
-    {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
-      {
-        UnsafeNativeMethods.Rdk_Variant_GetStringValue(ConstPointer(), sh.NonConstPointer());
-        return sh.ToString();
-      }
     }
 
     public System.Drawing.Color ToSystemColor()
@@ -370,19 +363,13 @@ namespace Rhino.Render
       return v;
     }
 
-    public DateTime ToDateTime()
-    {
-      System.DateTime dt = new DateTime(1970, 1, 1);
-      dt = dt.AddSeconds(UnsafeNativeMethods.Rdk_Variant_GetTimeValue(ConstPointer()));
-      return dt;
-    }
     #endregion
 
     #region units support
     /// <summary>
     /// Retrieves the value as a float in model units. Null or varying returns 0.0.
     /// The value will be converted from the variant's units to model units if necessary.
-		/// \see Units(). \see SetUnits().
+    /// \see Units(). \see SetUnits().
     /// </summary>
     /// <param name="document">A Rhino document.</param>
     /// <returns>The value in model units.
@@ -396,7 +383,7 @@ namespace Rhino.Render
     /// <summary>
     /// Retrieves the value as a double in model units. Null or varying returns 0.0.
     /// The value will be converted from the variant's units to model units if necessary.
-		/// \see Units(). \see SetUnits().
+    /// \see Units(). \see SetUnits().
     /// </summary>
     /// <param name="document">A Rhino document.</param>
     /// <returns>The value in model units.
@@ -430,14 +417,14 @@ namespace Rhino.Render
     #endregion
 
     #region internals
-    private IntPtr m_pVariant = IntPtr.Zero;
+    private IntPtr m_ptr_variant = IntPtr.Zero;
     internal IntPtr ConstPointer()
     {
-      return m_pVariant;
+      return m_ptr_variant;
     }
     internal IntPtr NonConstPointer()
     {
-      return m_pVariant;
+      return m_ptr_variant;
     }
     #endregion
 
@@ -450,15 +437,114 @@ namespace Rhino.Render
     {
       Dispose(true);
     }
-    private bool disposed;
     private void Dispose(bool disposing)
     {
-      if (!disposed)
+      if (m_ptr_variant!=IntPtr.Zero)
       {
-        UnsafeNativeMethods.Rdk_Variant_Delete(m_pVariant);
-        m_pVariant = IntPtr.Zero;
+        UnsafeNativeMethods.Rdk_Variant_Delete(m_ptr_variant);
+        m_ptr_variant = IntPtr.Zero;
       }
-      disposed = true;
+    }
+    #endregion
+
+    #region IConvertible implementation
+    public TypeCode GetTypeCode()
+    {
+      return TypeCode.Object;
+    }
+
+    public bool ToBoolean(IFormatProvider provider)
+    {
+      IntPtr const_ptr_this = ConstPointer();
+      return 1 == UnsafeNativeMethods.Rdk_Variant_GetBoolValue(const_ptr_this);
+    }
+
+    public byte ToByte(IFormatProvider provider)
+    {
+      throw new NotImplementedException();
+    }
+
+    public char ToChar(IFormatProvider provider)
+    {
+      throw new NotImplementedException();
+    }
+
+    public DateTime ToDateTime(IFormatProvider provider)
+    {
+      DateTime dt = new DateTime(1970, 1, 1);
+      IntPtr const_ptr_this = ConstPointer();
+      dt = dt.AddSeconds(UnsafeNativeMethods.Rdk_Variant_GetTimeValue(const_ptr_this));
+      return dt;
+    }
+
+    public decimal ToDecimal(IFormatProvider provider)
+    {
+      throw new NotImplementedException();
+    }
+
+    public double ToDouble(IFormatProvider provider)
+    {
+      IntPtr const_ptr_this = ConstPointer();
+      return UnsafeNativeMethods.Rdk_Variant_GetDoubleValue(const_ptr_this);
+    }
+
+    public short ToInt16(IFormatProvider provider)
+    {
+      throw new NotImplementedException();
+    }
+
+    public int ToInt32(IFormatProvider provider)
+    {
+      IntPtr const_ptr_this = ConstPointer();
+      return UnsafeNativeMethods.Rdk_Variant_GetIntValue(const_ptr_this);
+    }
+
+    public long ToInt64(IFormatProvider provider)
+    {
+      // TODO: support longs
+      return (long)ToInt32(provider);
+    }
+
+    public sbyte ToSByte(IFormatProvider provider)
+    {
+      throw new NotImplementedException();
+    }
+
+    public float ToSingle(IFormatProvider provider)
+    {
+      IntPtr const_ptr_this = ConstPointer();
+      return UnsafeNativeMethods.Rdk_Variant_GetFloatValue(const_ptr_this);
+    }
+
+    public string ToString(IFormatProvider provider)
+    {
+      using (var sh = new Runtime.StringHolder())
+      {
+        UnsafeNativeMethods.Rdk_Variant_GetStringValue(ConstPointer(), sh.NonConstPointer());
+        return sh.ToString();
+      }
+    }
+
+    public object ToType(Type conversionType, IFormatProvider provider)
+    {
+      throw new NotImplementedException();
+    }
+
+    public ushort ToUInt16(IFormatProvider provider)
+    {
+      throw new NotImplementedException();
+    }
+
+    public uint ToUInt32(IFormatProvider provider)
+    {
+      //TODO: support unsigned ints
+      return (uint)ToInt32(provider);
+    }
+
+    public ulong ToUInt64(IFormatProvider provider)
+    {
+      //TODO: support unsigned long
+      return (ulong)ToInt64(provider);
     }
     #endregion
   }

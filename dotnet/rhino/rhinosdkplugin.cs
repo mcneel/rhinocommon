@@ -349,9 +349,7 @@ namespace Rhino.PlugIns
           // an RDK plugin. This is the typical spot where C++ plug-ins perform their
           // RDK initialization.
           if (rc == LoadReturnCode.Success && p is RenderPlugIn)
-          {
-            Rhino.Render.RdkPlugIn.GetRdkPlugIn(p.Id, plugin_serial_number);
-          }
+            RdkPlugIn.GetRdkPlugIn(p.Id, plugin_serial_number);
 #endif
         }
         catch (Exception ex)
@@ -1525,11 +1523,49 @@ namespace Rhino.PlugIns
                                                              m_OnOutputTypes,
                                                              m_OnCreateTexturePreview,
                                                              m_OnCreatePreview,
-                                                             m_OnDecalProperties);
+                                                             m_OnDecalProperties,
+                                                             g_register_content_io_callback);
 #endif
     }
 
 #if RDK_CHECKED
+    internal delegate void RegisterContentIoCallback(int serialNumber, IntPtr ioList);
+    private static readonly RegisterContentIoCallback g_register_content_io_callback = OnRegisterContentIo;
+    private static void OnRegisterContentIo(int serialNumber, IntPtr ioList)
+    {
+      var render_plug_in = LookUpBySerialNumber(serialNumber) as RenderPlugIn;
+      if (null == render_plug_in)
+        return;
+      var serializers = render_plug_in.RenderContentSerializers();
+      if (null == serializers)
+        return;
+      foreach (var serializer in serializers)
+      {
+        if (null == serializer)
+          continue;
+        // Make sure a file extension is provided and that it was not previously registered.
+        var extension = serializer.FileExtension;
+        if (string.IsNullOrEmpty(extension) || UnsafeNativeMethods.Rdk_RenderContentIo_IsExtensionRegistered(extension))
+          continue;
+        // Create a C++ object and attach it to the serialize object
+        serializer.Construct(render_plug_in.Id);
+      }
+    }
+
+    /// <summary>
+    /// Called by Rhino when it is time to register RenderContentSerializer
+    /// derived classes.  Override this method and return an array of an
+    /// instance of each serialize custom content object you wish to add.
+    /// </summary>
+    /// <returns>
+    /// List of RenderContentSerializer objects to register with the Rhino
+    /// render content browsers.
+    /// </returns>
+    protected virtual IEnumerable<RenderContentSerializer> RenderContentSerializers()
+    {
+      return null;
+    }
+
     public enum RenderFeature : int
     {
       Materials = 0,

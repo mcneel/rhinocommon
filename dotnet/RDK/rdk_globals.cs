@@ -131,47 +131,6 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Accesses the material table.
-    /// </summary>
-    /// <param name="doc">A Rhino document.</param>
-    /// <returns>The materials list.</returns>
-    public static ContentList MaterialList(RhinoDoc doc)
-    {
-      return new ContentList(RenderContentKind.Material, doc);
-    }
-
-    /// <summary>
-    /// Accesses the environment table.
-    /// </summary>
-    /// <param name="doc">A Rhino document.</param>
-    /// <returns>The environments list.</returns>
-    public static ContentList EnvironmentList(RhinoDoc doc)
-    {
-      return new ContentList(RenderContentKind.Environment, doc);
-    }
-
-    /// <summary>
-    /// Accesses the texture table.
-    /// </summary>
-    /// <param name="doc">A Rhino document.</param>
-    /// <returns>The textures list.</returns>
-    public static ContentList TextureList(RhinoDoc doc)
-    {
-      return new ContentList(RenderContentKind.Texture, doc);
-    }
-
-    // <summary>
-    // Accesses any content table given a (single) kind.
-    // </summary>
-    // <param name="kind">A single kind.</param>
-    // <param name="doc">A Rhino document.</param>
-    // <returns>The (render content kind) list.</returns>
-    //public static ContentList ContentList(RenderContentKind kind, RhinoDoc doc)
-    //{
-    //  return new ContentList(kind, doc);
-    //}
-
-    /// <summary>
     /// Prompts the user for a save file name and the width, height and depth of an image to be saved.
     /// </summary>
     /// <param name="filename">The original file path.</param>

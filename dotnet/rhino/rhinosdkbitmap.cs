@@ -170,21 +170,22 @@ namespace Rhino.DocObjects.Tables
     }
 
     /// <summary>
-    /// Use Document.FindFile to search for the specified file name, if the
-    /// file is found on the Rhino search path then fileName will contain the
-    /// full path to the requested file otherwise.  If the file was not found
-    /// then search this BitmapTable for a BitmapEntry that contains the
-    /// specified name and return it.  If the file was not found, the
-    /// createFile flag is set and a BitmapEntry is found then the BitmapEntry
-    /// will get saved to the Rhino bitmap file cache and fileName will contain
-    /// the full path to the cached file.
+    /// This function first attempts to find the file with "name" on the disk.
+    /// If it does find it, "fileName" is set to the full path of the file and
+    /// the BitmapEntry returned will be null, even if there was a BitmapEntry
+    /// with "name" in the bitmap table.
+    /// If the function cannot find the file on the disk, it searches the bitmap
+    /// table.  If it finds it, the returned BitmapEntry entry will be the entry
+    /// in the table with that name.
+    /// Additionally, if "createFile" is true, and an entry is found, the file
+    /// will be written to the disk and it's full path will be contained in "fileName".
     /// </summary>
     /// <param name="name">
     /// Name of the file to search for including file extension.
     /// </param>
     /// <param name="createFile">
-    /// If this is true, the file is not found on the disk but is found in
-    /// the BitmapTable then the BitmapEntry will get saved to the Rhino bitmap
+    /// If this is true, and the file is not found on the disk but is found in
+    /// the BitmapTable, then the BitmapEntry will get saved to the Rhino bitmap
     /// file cache and fileName will contain the full path to the cached file.
     /// </param>
     /// <param name="fileName">
@@ -192,8 +193,9 @@ namespace Rhino.DocObjects.Tables
     /// if the file was not found and/or not extracted successfully.
     /// </param>
     /// <returns>
-    /// Returns the BitmapEntry with the specified name if found otherwise;
-    /// returns null.
+    /// Returns null if "name" was found on the disk.  If name was not found on the disk,
+    /// returns the BitmapEntry with the specified name if it is found in the bitmap table
+    /// and null if it was not found in the bitmap table.
     /// </returns>
     public BitmapEntry Find(string name, bool createFile, out string fileName)
     {

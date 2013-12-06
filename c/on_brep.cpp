@@ -189,14 +189,30 @@ RH_C_FUNCTION int ON_BrepFace_LoopIndex(const ON_BrepFace* pConstBrepFace, int i
   return rc;
 }
 
+// 29 Oct 2013 S. Baer
+// We want the index of the loop in the ON_BrepFace list, NOT the index in
+// the parent brep loop list.
 RH_C_FUNCTION int ON_BrepFace_OuterLoopIndex(const ON_BrepFace* pConstBrepFace)
 {
   int rc = -1;
   if( pConstBrepFace )
   {
-    ON_BrepLoop* pLoop = pConstBrepFace->OuterLoop();
-    if( pLoop )
-      rc = pLoop->m_loop_index;
+    const ON_Brep* pBrep = pConstBrepFace->Brep();
+    if( pBrep )
+    {
+      for( int i=0; i<pConstBrepFace->m_li.Count(); i++ )
+      {
+        int li = pConstBrepFace->m_li[i];
+        if( li >= 0 && li < pBrep->m_L.Count() )
+        {
+          if( ON_BrepLoop::outer == pBrep->m_L[li].m_type )
+          {
+            rc = i;
+            break;
+          }
+        }
+      }
+    }
   }
   return rc;
 }
@@ -379,15 +395,26 @@ RH_C_FUNCTION ON_Brep* ON_Brep_FromCylinder(ON_Cylinder* cylinder, bool capBotto
   return rc;
 }
 
-RH_C_FUNCTION void ON_Brep_DuplicateEdgeCurves(const ON_Brep* pBrep, ON_SimpleArray<ON_Curve*>* pOutCurves, bool nakedOnly)
+RH_C_FUNCTION void ON_Brep_DuplicateEdgeCurves(const ON_Brep* pConstBrep, ON_SimpleArray<ON_Curve*>* pOutCurves, bool nakedOnly, bool nakedOuter, bool nakedInner)
 {
-  if (pBrep && pOutCurves)
+  if (pConstBrep && pOutCurves)
   {
-    for(int i = 0; i < pBrep->m_E.Count(); i++)
+    for(int i = 0; i < pConstBrep->m_E.Count(); i++)
     {
-      const ON_BrepEdge& edge = pBrep->m_E[i];
-      if( nakedOnly && edge.m_ti.Count()!=1 )
-        continue;
+      const ON_BrepEdge& edge = pConstBrep->m_E[i];
+      if( nakedOnly )
+      {
+        if( edge.m_ti.Count() != 1 )
+          continue;
+
+        const ON_BrepTrim& trim = pConstBrep->m_T[edge.m_ti[0]];
+        const ON_BrepLoop& loop = pConstBrep->m_L[trim.m_li];
+
+        bool acceptable = (nakedOuter && loop.m_type == ON_BrepLoop::outer) ||
+                          (nakedInner && loop.m_type == ON_BrepLoop::inner);
+        if( !acceptable )
+          continue;
+      }
 
       ON_Curve* curve = edge.DuplicateCurve();
       if(curve)
@@ -395,9 +422,9 @@ RH_C_FUNCTION void ON_Brep_DuplicateEdgeCurves(const ON_Brep* pBrep, ON_SimpleAr
         // From RhinoScript:
         // make the curve direction go in the natural boundary loop direction
         // so that the curve directions come out consistantly
-        if( pBrep->m_T[edge.m_ti[0]].m_bRev3d )
+        if( pConstBrep->m_T[edge.m_ti[0]].m_bRev3d )
           curve->Reverse();
-        if( pBrep->m_T[edge.m_ti[0]].Face()->m_bRev )
+        if( pConstBrep->m_T[edge.m_ti[0]].Face()->m_bRev )
           curve->Reverse();
 
         pOutCurves->Append(curve);

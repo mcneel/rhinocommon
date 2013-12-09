@@ -7,6 +7,8 @@ using System.Drawing;
 
 #if RDK_CHECKED
 using Rhino.Render;
+using Rhino.Runtime.InteropWrappers;
+
 #endif
 
 #if RHINO_SDK
@@ -254,8 +256,6 @@ namespace Rhino.PlugIns
       }
       return null;
     }
-
-
 
     /// <summary>Source assembly for this plug-in.</summary>
     public System.Reflection.Assembly Assembly { get { return m_assembly; } }
@@ -778,6 +778,7 @@ namespace Rhino.PlugIns
       return rc;
     }
 
+
     /// <summary>
     /// Verifies that there is a valid product license for your plug-in, using
     /// the Rhino licensing system. If the plug-in is installed as a standalone
@@ -1085,7 +1086,7 @@ namespace Rhino.PlugIns
     public static string NameFromPath(string pluginPath)
     {
       string rc;
-      using (StringHolder sh = new StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoPlugInManager_NameFromPath(pluginPath, pString);
@@ -1162,7 +1163,7 @@ namespace Rhino.PlugIns
       IntPtr pStrings = UnsafeNativeMethods.ON_StringArray_New();
       int count = UnsafeNativeMethods.CRhinoPluginManager_GetCommandNames(pluginId, pStrings);
       string[] rc = new string[count];
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         for (int i = 0; i < count; i++)
@@ -1632,8 +1633,8 @@ namespace Rhino.PlugIns
     /// <returns>A list of file types.</returns>
     protected virtual List<Rhino.FileIO.FileType> SupportedOutputTypes()
     {
-      using (StringHolder shExt = new StringHolder())
-      using (StringHolder shDesc = new StringHolder())
+      using (var shExt = new StringHolder())
+      using (var shDesc = new StringHolder())
       {
         var rc = new List<Rhino.FileIO.FileType>();
         int iIndex = 0;

@@ -1,4 +1,5 @@
 using System;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.FileIO
 {
@@ -59,7 +60,7 @@ namespace Rhino.FileIO
           return m_notes;
 
         IntPtr pConstParent = m_parent.ConstPointer();
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           bool visible = false;

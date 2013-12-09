@@ -59,7 +59,8 @@ using System.Runtime.InteropServices;
 // 15 May 2013 (5.1.30000.9) Update for SR5 of Rhino 5
 // 19 June 2013 (5.1.30000.10) Update for SR6 of Rhino 5
 // 26 Aug 2013 (5.1.30000.11) Update for SR7 of Rhino 5
-[assembly: AssemblyVersion("5.1.30000.11")]
+// 4 Nov 2013 (5.1.30000.12) Update for SR8 of Rhino 5
+[assembly: AssemblyVersion("5.1.30000.12")]
 
 [assembly: AssemblyFileVersion("5.0.20693.0")]
 

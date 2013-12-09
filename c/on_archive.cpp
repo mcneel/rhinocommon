@@ -448,6 +448,38 @@ RH_C_FUNCTION bool ON_BinaryArchive_WriteGeometry(ON_BinaryArchive* pArchive, co
   return rc;
 }
 
+RH_C_FUNCTION bool ON_BinaryArchive_ReadObjRef(ON_BinaryArchive* pArchive, ON_ObjRef* pObjRef)
+{
+  bool rc = false;
+  if( pArchive && pObjRef )
+    rc = pObjRef->Read(*pArchive);
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_BinaryArchive_WriteObjRef(ON_BinaryArchive* pArchive, const ON_ObjRef* pConstObjRef)
+{
+  bool rc = false;
+  if( pArchive && pConstObjRef )
+    rc = pConstObjRef->Write(*pArchive);
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_BinaryArchive_ReadObjRefArray(ON_BinaryArchive* pArchive, ON_ClassArray<ON_ObjRef>* pObjRefArray)
+{
+  bool rc = false;
+  if( pArchive && pObjRefArray )
+    rc = pArchive->ReadArray(*pObjRefArray);
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_BinaryArchive_WriteObjRefArray(ON_BinaryArchive* pArchive, const ON_ClassArray<ON_ObjRef>* pConstObjRefArray)
+{
+  bool rc = false;
+  if( pArchive && pConstObjRefArray )
+    rc = pArchive->WriteArray(*pConstObjRefArray);
+  return rc;
+}
+
 RH_C_FUNCTION bool ON_BinaryArchive_BeginReadDictionary(ON_BinaryArchive* pArchive, ON_UUID* dictionary_id, unsigned int* version, CRhCmnStringHolder* pStringHolder)
 {
   bool rc = false;

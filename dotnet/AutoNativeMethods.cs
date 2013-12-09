@@ -747,6 +747,26 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_BinaryArchive_WriteGeometry(IntPtr pArchive, IntPtr pConstGeometry);
 
+  //bool ON_BinaryArchive_ReadObjRef(ON_BinaryArchive* pArchive, ON_ObjRef* pObjRef)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_ReadObjRef(IntPtr pArchive, IntPtr pObjRef);
+
+  //bool ON_BinaryArchive_WriteObjRef(ON_BinaryArchive* pArchive, const ON_ObjRef* pConstObjRef)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_WriteObjRef(IntPtr pArchive, IntPtr pConstObjRef);
+
+  //bool ON_BinaryArchive_ReadObjRefArray(ON_BinaryArchive* pArchive, ON_ClassArray<ON_ObjRef>* pObjRefArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_ReadObjRefArray(IntPtr pArchive, IntPtr pObjRefArray);
+
+  //bool ON_BinaryArchive_WriteObjRefArray(ON_BinaryArchive* pArchive, const ON_ClassArray<ON_ObjRef>* pConstObjRefArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_WriteObjRefArray(IntPtr pArchive, IntPtr pConstObjRefArray);
+
   //bool ON_BinaryArchive_BeginReadDictionary(ON_BinaryArchive* pArchive, ON_UUID* dictionary_id, unsigned int* version, CRhCmnStringHolder* pStringHolder)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -1432,6 +1452,26 @@ internal partial class UnsafeNativeMethods
   //void ON_CurveArray_Delete(ON_SimpleArray<ON_Curve*>* arrayPtr)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_CurveArray_Delete(IntPtr arrayPtr);
+
+  //ON_ClassArray<ON_ObjRef>* ON_ClassArrayON_ObjRef_New()
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_ClassArrayON_ObjRef_New();
+
+  //int ON_ClassArrayON_ObjRef_Count(const ON_ClassArray<ON_ObjRef>* pConstObjRefArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ON_ClassArrayON_ObjRef_Count(IntPtr pConstObjRefArray);
+
+  //void ON_ClassArrayON_ObjRef_Append(ON_ClassArray<ON_ObjRef>* pObjRefArray, const ON_ObjRef* pConstObjRef)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_ClassArrayON_ObjRef_Append(IntPtr pObjRefArray, IntPtr pConstObjRef);
+
+  //void ON_ClassArrayON_ObjRef_Delete(ON_ClassArray<ON_ObjRef>* pObjRefArray)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern void ON_ClassArrayON_ObjRef_Delete(IntPtr pObjRefArray);
+
+  //const ON_ObjRef* ON_ClassArrayON_ObjRef_Get(const ON_ClassArray<ON_ObjRef>* pConstObjRefArray, int index)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ON_ClassArrayON_ObjRef_Get(IntPtr pConstObjRefArray, int index);
   #endregion
 
 
@@ -7673,6 +7713,9 @@ internal partial class UnsafeNativeMethods
   //void CRhinoEventWatcher_SetLayerTableEventCallback(LAYERTABLEEVENTPROC cb, REPORTPROC report)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
+  //void CRhinoEventWatcher_SetTextureMappingEventCallback(TEXTUREMAPPINGEVENTPROC cb, REPORTPROC report)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
+
   //void CRhinoEventWatcher_SetIdefTableEventCallback(IDEFTABLEEVENTPROC cb, REPORTPROC report)
   // SKIPPING - Contains a function pointer which needs to be written by hand
 
@@ -7696,6 +7739,16 @@ internal partial class UnsafeNativeMethods
 
   //void CRhinoEventWatcher_SetOnIdleCallback(ONIDLEEVENTPROC cb)
   // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  internal enum RhinoEventWatcherTextureMappingEventConsts : int
+  {
+    Added = 0,
+    Deleted = 1,
+    Undeleted = 2,
+    Modified = 3,
+    Sorted = 4,
+    Current = 5,
+  }
   #endregion
 
 
@@ -8761,22 +8814,59 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void CRhinoGumballAppearance_Delete(IntPtr pAppearance);
 
-  //bool CRhinoGumballAppearance_GetBool(const CRhinoGumballAppearance* pConstAppearance, int which)
+  //bool CRhinoGumballAppearance_GetBool(const CRhinoGumballAppearance* pConstAppearance, enum GumbalAppearanceBools which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool CRhinoGumballAppearance_GetBool(IntPtr pConstAppearance, int which);
+  internal static extern bool CRhinoGumballAppearance_GetBool(IntPtr pConstAppearance, GumbalAppearanceBools which);
 
-  //void CRhinoGumballAppearance_SetBool(CRhinoGumballAppearance* pAppearance, int which, bool val)
+  //void CRhinoGumballAppearance_SetBool(CRhinoGumballAppearance* pAppearance, enum GumbalAppearanceBools which, bool val)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhinoGumballAppearance_SetBool(IntPtr pAppearance, int which, [MarshalAs(UnmanagedType.U1)]bool val);
+  internal static extern void CRhinoGumballAppearance_SetBool(IntPtr pAppearance, GumbalAppearanceBools which, [MarshalAs(UnmanagedType.U1)]bool val);
 
-  //int CRhinoGumballAppearance_GetInt(const CRhinoGumballAppearance* pConstAppearance, int which)
+  //int CRhinoGumballAppearance_GetInt(const CRhinoGumballAppearance* pConstAppearance, enum GumbalAppearanceInts which)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern int CRhinoGumballAppearance_GetInt(IntPtr pConstAppearance, int which);
+  internal static extern int CRhinoGumballAppearance_GetInt(IntPtr pConstAppearance, GumbalAppearanceInts which);
 
-  //void CRhinoGumballAppearance_SetInt(CRhinoGumballAppearance* pAppearance, int which, int val)
+  //void CRhinoGumballAppearance_SetInt(CRhinoGumballAppearance* pAppearance, enum GumbalAppearanceInts which, int val)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern void CRhinoGumballAppearance_SetInt(IntPtr pAppearance, int which, int val);
+  internal static extern void CRhinoGumballAppearance_SetInt(IntPtr pAppearance, GumbalAppearanceInts which, int val);
+
+  internal enum GumbalAppearanceBools : int
+  {
+    EnableRelocate = 0,
+    EnableMenu = 1,
+    EnableXTranslate = 2,
+    EnableYTranslate = 3,
+    EnableZTranslate = 4,
+    EnableXYTranslate = 5,
+    EnableYZTranslate = 6,
+    EnableZXTranslate = 7,
+    EnableXRotate = 8,
+    EnableYRotate = 9,
+    EnableZRotate = 10,
+    EnableXScale = 11,
+    EnableYScale = 12,
+    EnableZScale = 13
+  }
+
+  internal enum GumbalAppearanceInts : int
+  {
+    EnableFreeTranslate = 0,
+    Xcolor = 1,
+    Ycolor = 2,
+    Zcolor = 3,
+    Menubuttoncolor = 4,
+    Gumball_radius = 5,
+    Gumball_tip_length = 6,
+    Gumball_tip_width = 7,
+    Gumball_tail_size = 8,
+    Gumball_ptran_dist = 9,
+    Gumball_ptran_size = 10,
+    Axis_thickness = 11,
+    Arc_thickness = 12,
+    Menu_dist = 13,
+    Menu_size = 14
+  }
   #endregion
 
 
@@ -9627,6 +9717,10 @@ internal partial class UnsafeNativeMethods
   //CRhinoObjRef* CRhinoObjRef_Copy(const CRhinoObjRef* pOther)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr CRhinoObjRef_Copy(IntPtr pOther);
+
+  //CRhinoObjRef* CRhinoObjRef_FromOnObjRef(const ON_ObjRef* pConstObjRef)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr CRhinoObjRef_FromOnObjRef(IntPtr pConstObjRef);
 
   //void CRhinoObjRef_Delete( CRhinoObjRef* p )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

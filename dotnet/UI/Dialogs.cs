@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Rhino.Runtime.InteropWrappers;
 
 // none of the UI namespace needs to be in the stand-alone opennurbs library
 #if RHINO_SDK
@@ -109,7 +110,7 @@ namespace Rhino
           {
             var color = System.Drawing.Color.FromArgb(argb);
             System.Windows.Forms.IWin32Window parent = null;
-            string title = Rhino.Runtime.StringHolder.GetString(titleAsStringHolder);
+            string title = StringHolder.GetString(titleAsStringHolder);
             GetColorEventArgs e = new GetColorEventArgs(color, colorButtons==1, title);
 
             if( hParent != IntPtr.Zero )

@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.DocObjects
 {
@@ -301,7 +302,7 @@ namespace Rhino.DocObjects
         IntPtr ptr_const_this = ConstPointer();
         if (IntPtr.Zero == ptr_const_this)
           return String.Empty;
-        using (Runtime.StringHolder sh = new Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr ptr_string = sh.NonConstPointer();
           UnsafeNativeMethods.ON_Material_GetName(ptr_const_this, ptr_string);

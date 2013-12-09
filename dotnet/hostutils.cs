@@ -3,6 +3,8 @@ using System.Runtime.InteropServices;
 
 #if RHINO_SDK
 using Rhino.PlugIns;
+using Rhino.Runtime.InteropWrappers;
+
 #endif
 
 namespace Rhino.Runtime
@@ -431,7 +433,7 @@ namespace Rhino.Runtime
           m_running_in_rhino_state = 1;
           try
           {
-            if (Rhino.RhinoApp.SdkVersion > 0)
+            if (0 != Rhino.RhinoApp.SdkVersion )
               m_running_in_rhino_state = 2;
           }
           catch (Exception)
@@ -616,7 +618,7 @@ namespace Rhino.Runtime
     public static string DebugDumpToString(Rhino.Geometry.GeometryBase geometry)
     {
       IntPtr pConstThis = geometry.ConstPointer();
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.ON_Object_Dump(pConstThis, pString);
@@ -634,7 +636,7 @@ namespace Rhino.Runtime
     public static string DebugDumpToString(Rhino.Geometry.BezierCurve bezierCurve)
     {
       IntPtr pConstThis = bezierCurve.ConstPointer();
-      using (Rhino.Runtime.StringHolder sh = new StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.ON_BezierCurve_Dump(pConstThis, pString);

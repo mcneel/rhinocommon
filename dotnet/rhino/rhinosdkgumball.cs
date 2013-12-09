@@ -57,20 +57,20 @@ namespace Rhino.UI.Gumball
   {
     public GumballObject()
     {
-      m_pGumball = UnsafeNativeMethods.CRhinoGumball_New(IntPtr.Zero);
+      m_ptr_gumball = UnsafeNativeMethods.CRhinoGumball_New(IntPtr.Zero);
     }
 
     internal GumballObject(GumballDisplayConduit parent, bool baseGumball)
     {
       m_parent = parent;
       m_base_gumball = baseGumball;
-      m_pGumball = IntPtr.Zero;
+      m_ptr_gumball = IntPtr.Zero;
     }
 
     #region IDisposable/Pointer handling
     GumballDisplayConduit m_parent;
     readonly bool m_base_gumball;
-    IntPtr m_pGumball;
+    IntPtr m_ptr_gumball;
     internal IntPtr ConstPointer()
     {
       if (m_parent != null)
@@ -78,19 +78,19 @@ namespace Rhino.UI.Gumball
         IntPtr pConstParent = m_parent.ConstPointer();
         return UnsafeNativeMethods.CRhinoGumballDisplayConduit_GetGumball(pConstParent, m_base_gumball);
       }
-      return m_pGumball;
+      return m_ptr_gumball;
     }
     internal IntPtr NonConstPointer()
     {
       if (m_parent != null)
       {
         IntPtr pConstThis = ConstPointer();
-        m_pGumball = UnsafeNativeMethods.CRhinoGumball_New(pConstThis);
+        m_ptr_gumball = UnsafeNativeMethods.CRhinoGumball_New(pConstThis);
         if (m_parent.m_base_gumball == this)
           m_parent.m_base_gumball = null;
         m_parent = null;
       }
-      return m_pGumball;
+      return m_ptr_gumball;
     }
 
     ~GumballObject()
@@ -106,11 +106,11 @@ namespace Rhino.UI.Gumball
 
     protected virtual void Dispose(bool disposing)
     {
-      if (m_pGumball != IntPtr.Zero)
+      if (m_ptr_gumball != IntPtr.Zero)
       {
-        UnsafeNativeMethods.CRhinoGumball_Delete(m_pGumball);
+        UnsafeNativeMethods.CRhinoGumball_Delete(m_ptr_gumball);
       }
-      m_pGumball = IntPtr.Zero;
+      m_ptr_gumball = IntPtr.Zero;
     }
     #endregion
 
@@ -220,90 +220,74 @@ namespace Rhino.UI.Gumball
     public GumballAppearanceSettings()
     {
       IntPtr pGumballAppearance = UnsafeNativeMethods.CRhinoGumballAppearance_New();
-      RelocateEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableRelocate);
-      MenuEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableMenu);
-      TranslateXEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableXTranslate );
-      TranslateYEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableYTranslate );
-      TranslateZEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableZTranslate );
-      TranslateXYEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableXYTranslate );
-      TranslateYZEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableYZTranslate );
-      TranslateZXEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableZXTranslate );
-      RotateXEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableXRotate );
-      RotateYEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableYRotate );
-      RotateZEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableZRotate );
-      ScaleXEnabled  = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableXScale );
-      ScaleYEnabled  = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableYScale );
-      ScaleZEnabled  = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, idxbEnableZScale );
-      FreeTranslate = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idxnEnableFreeTranslate);
-      ColorX = Rhino.Runtime.Interop.ColorFromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_xcolor));
-      ColorY = Rhino.Runtime.Interop.ColorFromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_ycolor));
-      ColorZ = Rhino.Runtime.Interop.ColorFromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_zcolor));
-      ColorMenuButton = Rhino.Runtime.Interop.ColorFromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_menubuttoncolor));
-      Radius = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_gumball_radius );
-      ArrowHeadLength = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_gumball_tip_length );
-      ArrowHeadWidth = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_gumball_tip_width );
-      ScaleGripSize = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_gumball_tail_size);
-      PlanarTranslationGripCorner = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_gumball_ptran_dist );
-      PlanarTranslationGripSize = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_gumball_ptran_size  );
-      AxisThickness = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_axis_thickness );
-      ArcThickness = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_arc_thickness );
-      MenuDistance = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_menu_dist);
-      MenuSize = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, idx_menu_size );
+      RelocateEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableRelocate);
+      MenuEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableMenu);
+      TranslateXEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableXTranslate);
+      TranslateYEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableYTranslate);
+      TranslateZEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableZTranslate);
+      TranslateXYEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableXYTranslate);
+      TranslateYZEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableYZTranslate);
+      TranslateZXEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableZXTranslate);
+      RotateXEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableXRotate);
+      RotateYEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableYRotate);
+      RotateZEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableZRotate);
+      ScaleXEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableXScale);
+      ScaleYEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableYScale);
+      ScaleZEnabled = UnsafeNativeMethods.CRhinoGumballAppearance_GetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableZScale);
+      FreeTranslate = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.EnableFreeTranslate);
+      ColorX = Rhino.Runtime.Interop.ColorFromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Xcolor));
+      ColorY = Rhino.Runtime.Interop.ColorFromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Ycolor));
+      ColorZ = Rhino.Runtime.Interop.ColorFromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Zcolor));
+      ColorMenuButton = Rhino.Runtime.Interop.ColorFromWin32(UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Menubuttoncolor));
+      Radius = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Gumball_radius);
+      ArrowHeadLength = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Gumball_tip_length);
+      ArrowHeadWidth = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Gumball_tip_width);
+      ScaleGripSize = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Gumball_tail_size);
+      PlanarTranslationGripCorner = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Gumball_ptran_dist);
+      PlanarTranslationGripSize = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Gumball_ptran_size);
+      AxisThickness = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Axis_thickness);
+      ArcThickness = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Arc_thickness);
+      MenuDistance = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Menu_dist);
+      MenuSize = UnsafeNativeMethods.CRhinoGumballAppearance_GetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Menu_size);
       UnsafeNativeMethods.CRhinoGumballAppearance_Delete(pGumballAppearance);
     }
 
     internal IntPtr CreatePointer()
     {
       IntPtr pGumballAppearance = UnsafeNativeMethods.CRhinoGumballAppearance_New();
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, idxbEnableRelocate, RelocateEnabled);
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, idxbEnableMenu, MenuEnabled);
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, idxbEnableXTranslate, TranslateXEnabled );
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, idxbEnableYTranslate, TranslateYEnabled );
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, idxbEnableZTranslate, TranslateZEnabled );
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, idxbEnableXYTranslate, TranslateXYEnabled );
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, idxbEnableYZTranslate, TranslateYZEnabled );
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, idxbEnableZXTranslate, TranslateZXEnabled );
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, idxbEnableXRotate, RotateXEnabled );
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, idxbEnableYRotate, RotateYEnabled );
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, idxbEnableZRotate, RotateZEnabled );
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, idxbEnableXScale, ScaleXEnabled );
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, idxbEnableYScale, ScaleYEnabled );
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, idxbEnableZScale, ScaleZEnabled );
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idxnEnableFreeTranslate, FreeTranslate);
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idx_xcolor, ColorX.ToArgb());
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idx_ycolor, ColorY.ToArgb());
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idx_zcolor, ColorZ.ToArgb());
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idx_menubuttoncolor, ColorMenuButton.ToArgb());
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idx_gumball_radius, Radius);
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idx_gumball_tip_length, ArrowHeadLength);
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idx_gumball_tip_width, ArrowHeadWidth);
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idx_gumball_tail_size, ScaleGripSize);
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idx_gumball_ptran_dist, PlanarTranslationGripCorner);
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idx_gumball_ptran_size, PlanarTranslationGripSize);
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idx_axis_thickness, AxisThickness);
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idx_arc_thickness, ArcThickness);
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idx_menu_dist, MenuDistance);
-      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, idx_menu_size, MenuSize);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableRelocate, RelocateEnabled);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableMenu, MenuEnabled);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableXTranslate, TranslateXEnabled);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableYTranslate, TranslateYEnabled);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableZTranslate, TranslateZEnabled);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableXYTranslate, TranslateXYEnabled);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableYZTranslate, TranslateYZEnabled);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableZXTranslate, TranslateZXEnabled);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableXRotate, RotateXEnabled);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableYRotate, RotateYEnabled);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableZRotate, RotateZEnabled);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableXScale, ScaleXEnabled);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableYScale, ScaleYEnabled);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetBool(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceBools.EnableZScale, ScaleZEnabled);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.EnableFreeTranslate, FreeTranslate);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Xcolor, ColorX.ToArgb());
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Ycolor, ColorY.ToArgb());
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Zcolor, ColorZ.ToArgb());
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Menubuttoncolor, ColorMenuButton.ToArgb());
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Gumball_radius, Radius);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Gumball_tip_length, ArrowHeadLength);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Gumball_tip_width, ArrowHeadWidth);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Gumball_tail_size, ScaleGripSize);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Gumball_ptran_dist, PlanarTranslationGripCorner);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Gumball_ptran_size, PlanarTranslationGripSize);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Axis_thickness, AxisThickness);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Arc_thickness, ArcThickness);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Menu_dist, MenuDistance);
+      UnsafeNativeMethods.CRhinoGumballAppearance_SetInt(pGumballAppearance, UnsafeNativeMethods.GumbalAppearanceInts.Menu_size, MenuSize);
       return pGumballAppearance;
     }
 
     #region bools
-    // bool values
-    const int idxbEnableRelocate = 0;
-    const int idxbEnableMenu = 1;
-    const int idxbEnableXTranslate = 2;
-    const int idxbEnableYTranslate = 3;
-    const int idxbEnableZTranslate = 4;
-    const int idxbEnableXYTranslate = 5;
-    const int idxbEnableYZTranslate = 6;
-    const int idxbEnableZXTranslate = 7;
-    const int idxbEnableXRotate = 8;
-    const int idxbEnableYRotate = 9;
-    const int idxbEnableZRotate = 10;
-    const int idxbEnableXScale = 11;
-    const int idxbEnableYScale = 12;
-    const int idxbEnableZScale = 13;
-
     /// <summary>
     /// When RelocateEnabled is true, the user can reposition the gumball by
     /// tapping the control key while dragging.  Once the repostion drag is
@@ -389,22 +373,7 @@ namespace Rhino.UI.Gumball
     //// CRhinoGumballAppearance::default_bSnappy;
     //bool m_bSnappy; // true = snappy, false = smooth setting 
 
-    const int idxnEnableFreeTranslate = 0;
-    const int idx_xcolor = 1;
-    const int idx_ycolor = 2;
-    const int idx_zcolor = 3;
-    const int idx_menubuttoncolor = 4;
-    const int idx_gumball_radius = 5;
-    const int idx_gumball_tip_length = 6;
-    const int idx_gumball_tip_width = 7;
-    const int idx_gumball_tail_size = 8;
-    const int idx_gumball_ptran_dist = 9;
-    const int idx_gumball_ptran_size = 10;
-    const int idx_axis_thickness = 11;
-    const int idx_arc_thickness = 12;
-    const int idx_menu_dist = 13;
-    const int idx_menu_size = 14;
-    
+  
 
     /// <summary>
     /// When FreeTranslate is 1, the center translation control can be dragged

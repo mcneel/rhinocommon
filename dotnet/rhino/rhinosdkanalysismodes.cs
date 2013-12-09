@@ -1,5 +1,6 @@
 using System;
 using Rhino.Runtime;
+using Rhino.Runtime.InteropWrappers;
 
 #if RHINO_SDK
 namespace Rhino.Display
@@ -549,7 +550,7 @@ namespace Rhino.Display
       get
       {
         IntPtr pConstThis = ConstPointer();
-        using (StringHolder sh = new StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.CRhinoVisualAnalysisMode_GetAnalysisModeName(pConstThis, pString);

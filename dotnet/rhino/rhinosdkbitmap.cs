@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.DocObjects
 {
@@ -72,7 +73,7 @@ namespace Rhino.DocObjects
       {
 #if RHINO_SDK
         if (null != m_doc)
-          using (var sh = new Runtime.StringHolder())
+          using (var sh = new StringHolder())
           {
             IntPtr pString = sh.NonConstPointer();
             UnsafeNativeMethods.CRhinoBitmap_GetBitmapName(m_doc.m_docId, m_index, pString);

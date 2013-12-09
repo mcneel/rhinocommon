@@ -859,7 +859,7 @@ namespace Rhino.DocObjects
     public ComponentIndex[] GetSelectedSubObjects()
     {
       IntPtr ptr = ConstPointer();
-      Runtime.INTERNAL_ComponentIndexArray arr = new Runtime.INTERNAL_ComponentIndexArray();
+      var arr = new Runtime.InteropWrappers.INTERNAL_ComponentIndexArray();
       IntPtr pArray = arr.NonConstPointer();
       int count = UnsafeNativeMethods.CRhinoObject_GetSelectedSubObjects(ptr, pArray, true);
       ComponentIndex[] rc = null;
@@ -1098,7 +1098,7 @@ namespace Rhino.DocObjects
     public ComponentIndex[] GetHighlightedSubObjects()
     {
       IntPtr ptr = ConstPointer();
-      Runtime.INTERNAL_ComponentIndexArray arr = new Runtime.INTERNAL_ComponentIndexArray();
+      var arr = new Runtime.InteropWrappers.INTERNAL_ComponentIndexArray();
       IntPtr pArray = arr.NonConstPointer();
       int count = UnsafeNativeMethods.CRhinoObject_GetSelectedSubObjects(ptr, pArray, false);
       ComponentIndex[] rc = null;
@@ -1275,7 +1275,7 @@ namespace Rhino.DocObjects
     /// <returns>A string with the short localized descriptive name.</returns>
     public virtual string ShortDescription(bool plural)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pConstThis = ConstPointer();
         IntPtr pString = sh.NonConstPointer();
@@ -1565,7 +1565,8 @@ namespace Rhino.DocObjects
       //}
     }
     /// <summary>
-    /// Gets the render material associated with this object.
+    /// Gets and sets the render material associated with this object.
+    /// Note that if you are setting the material, the RenderMaterial object must already be in the Rhino.Render.RenderMaterialTable
     /// </summary>
     public Render.RenderMaterial RenderMaterial
     {
@@ -1773,6 +1774,14 @@ namespace Rhino.DocObjects
       m_ptr = UnsafeNativeMethods.CRhinoObjRef_Copy(pOtherObjRef);
     }
 
+    internal ObjRef(IntPtr pOtherObjRef, bool ptrIsCRhinoObjRef)
+    {
+      if (ptrIsCRhinoObjRef)
+        m_ptr = UnsafeNativeMethods.CRhinoObjRef_Copy(pOtherObjRef);
+      else
+        m_ptr = UnsafeNativeMethods.CRhinoObjRef_FromOnObjRef(pOtherObjRef);
+    }
+
     internal ObjRef(RhinoObject parent, IntPtr pGeometry)
     {
       IntPtr pParent = parent.ConstPointer();
@@ -1900,15 +1909,15 @@ namespace Rhino.DocObjects
       return ObjRefToGeometryHelper(pClippingPlaneSurface) as Rhino.Geometry.ClippingPlaneSurface;
     }
 
+    /// <summary>
+    /// Gets the curve if this reference targeted one.
+    /// </summary>
+    /// <returns>A curve, or null if this reference targeted something else.</returns>
     /// <example>
     /// <code source='examples\vbnet\ex_intersectcurves.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_intersectcurves.cs' lang='cs'/>
     /// <code source='examples\py\ex_intersectcurves.py' lang='py'/>
     /// </example>
-    /// <summary>
-    /// Gets the curve if this reference targeted one.
-    /// </summary>
-    /// <returns>A curve, or null if this reference targeted something else.</returns>
     public Geometry.Curve Curve()
     {
       IntPtr pCurve = UnsafeNativeMethods.CRhinoObjRef_Curve(m_ptr);

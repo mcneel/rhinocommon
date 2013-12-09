@@ -3,6 +3,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using Rhino.Runtime.InteropWrappers;
 
 #if RHINO_SDK
 namespace Rhino.Commands
@@ -172,7 +173,7 @@ namespace Rhino.Commands
       IntPtr pMacros = UnsafeNativeMethods.ON_StringArray_New();
       int count = UnsafeNativeMethods.CRhinoApp_GetMRUCommands(pDisplayStrings, pMacros);
       MostRecentCommandDescription[] rc = new MostRecentCommandDescription[count];
-      using(var sh = new Rhino.Runtime.StringHolder() )
+      using(var sh = new StringHolder() )
       {
         IntPtr pString = sh.NonConstPointer();
         for (int i = 0; i < count; i++)
@@ -470,7 +471,7 @@ namespace Rhino.Commands
       IntPtr pStrings = UnsafeNativeMethods.ON_StringArray_New();
       int count = UnsafeNativeMethods.CRhinoCommandManager_GetCommandNames(pStrings, english, loaded);
       string[] rc = new string[count];
-      using( Rhino.Runtime.StringHolder sh = new Runtime.StringHolder() )
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         for( int i=0; i<count; i++ )
@@ -699,7 +700,7 @@ namespace Rhino.Commands
       {
         if (m_english_name == null)
         {
-          using (var sh = new Runtime.StringHolder())
+          using (var sh = new StringHolder())
           {
             IntPtr pStringHolder = sh.NonConstPointer();
             UnsafeNativeMethods.CRhinoCommand_Name(m_pCommand, true, pStringHolder);
@@ -719,7 +720,7 @@ namespace Rhino.Commands
       {
         if (m_local_name == null)
         {
-          using (var sh = new Runtime.StringHolder())
+          using (var sh = new StringHolder())
           {
             IntPtr pStringHolder = sh.NonConstPointer();
             UnsafeNativeMethods.CRhinoCommand_Name(m_pCommand, false, pStringHolder);
@@ -741,7 +742,7 @@ namespace Rhino.Commands
       {
         if (m_plugin_name == null)
         {
-          using (var sh = new Runtime.StringHolder())
+          using (var sh = new StringHolder())
           {
             IntPtr pStringHolder = sh.NonConstPointer();
             UnsafeNativeMethods.CRhinoCommand_PlugInName(m_pCommand, pStringHolder);
@@ -1284,7 +1285,7 @@ namespace Rhino.DocObjects
     public bool TryGetString(int id, out string value)
     {
       value = string.Empty;
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         bool rc = UnsafeNativeMethods.CRhinoHistoryRecord_GetString(m_pConstRhinoHistoryRecord, id, pString);

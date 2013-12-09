@@ -166,7 +166,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pLayer = ConstPointer();
           IntPtr pString = sh.NonConstPointer();
@@ -192,7 +192,7 @@ namespace Rhino.DocObjects
         if (null == m_doc)
           return Name;
         int index = LayerIndex;
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           if (!UnsafeNativeMethods.CRhinoLayer_GetLayerPathName(m_doc.m_docId, index, pString))
@@ -1150,7 +1150,7 @@ namespace Rhino.DocObjects.Tables
     /// </example>
     public string GetUnusedLayerName(bool ignoreDeleted)
     {
-      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoLayerTable_GetUnusedLayerName(m_doc.m_docId, ignoreDeleted, pString);

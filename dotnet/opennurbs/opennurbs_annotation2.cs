@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using Rhino.Runtime;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.Geometry
 {
@@ -800,7 +801,7 @@ namespace Rhino.Geometry
       get
       {
         IntPtr ptr = ConstPointer();
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.ON_TextDot_GetSetText(ptr, false, null, pString);
@@ -836,17 +837,17 @@ namespace Rhino.Geometry
     {
       get
       { 
-        IntPtr pConstThis = ConstPointer();
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        var pConstThis = ConstPointer();
+        using (var sh = new StringHolder())
         {
-          IntPtr pStringHolder = sh.NonConstPointer();
+          var pStringHolder = sh.NonConstPointer();
           UnsafeNativeMethods.ON_TextDot_GetFontFace(pConstThis, pStringHolder);
           return sh.ToString();
         }
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
+        var pThis = NonConstPointer();
         UnsafeNativeMethods.ON_TextDot_SetFontFace(pThis, value);
       }
     }

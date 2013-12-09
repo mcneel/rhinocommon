@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.Geometry
 {
@@ -523,7 +524,7 @@ namespace Rhino.Geometry
       get
       {
         IntPtr pConstThis = ConstPointer();
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.ON_Light_GetName(pConstThis, pString);

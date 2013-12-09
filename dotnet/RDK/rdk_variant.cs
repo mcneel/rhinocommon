@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 using System;
 using System.Collections.Generic;
+using Rhino.Runtime.InteropWrappers;
 
 #if RDK_CHECKED
 namespace Rhino.Render
@@ -67,7 +68,7 @@ namespace Rhino.Render
       {
         while (true)
         {
-          using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+          using (var sh = new StringHolder())
           {
             Variant variant = new Variant();
 
@@ -518,7 +519,7 @@ namespace Rhino.Render
 
     public string ToString(IFormatProvider provider)
     {
-      using (var sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         UnsafeNativeMethods.Rdk_Variant_GetStringValue(ConstPointer(), sh.NonConstPointer());
         return sh.ToString();

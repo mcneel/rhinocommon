@@ -1,5 +1,6 @@
 #pragma warning disable 1591
 using System;
+using Rhino.Runtime.InteropWrappers;
 
 #if RDK_CHECKED
 namespace Rhino.Render
@@ -92,7 +93,7 @@ namespace Rhino.Render
         return GetString(iString);
       }
 
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.Rdk_RenderMaterial_CallTextureChildSlotNameBase(ConstPointer(), pString, (int)slot);

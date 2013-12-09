@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.Geometry
 {
@@ -135,11 +136,17 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="box">A box to use for creation.</param>
     /// <returns>A new brep; or null on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_curvebrepbox.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_curvebrepbox.cs' lang='cs'/>
+    /// <code source='examples\py\ex_curvebrepbox.py' lang='py'/>
+    /// </example>
     public static Brep CreateFromBox(BoundingBox box)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_Brep_FromBox(box.Min, box.Max);
       return IntPtr.Zero == ptr ? null : new Brep(ptr, null);
     }
+
     /// <summary>
     /// Constructs new brep that matches an aligned box.
     /// </summary>
@@ -1437,7 +1444,7 @@ namespace Rhino.Geometry
     /// <returns>true if the topology is valid; false otherwise.</returns>
     public bool IsValidTopology(out string log)
     {
-      using (Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr ptr_const_this = ConstPointer();
         IntPtr pString = sh.NonConstPointer();
@@ -1461,7 +1468,7 @@ namespace Rhino.Geometry
     /// <returns>A value that indicates whether the geometry is valid.</returns>
     public bool IsValidGeometry(out string log)
     {
-      using (Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr ptr_const_this = ConstPointer();
         IntPtr pString = sh.NonConstPointer();
@@ -1486,7 +1493,7 @@ namespace Rhino.Geometry
     /// <returns>A value that indicates </returns>
     public bool IsValidTolerancesAndFlags(out string log)
     {
-      using (Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr ptr_const_this = ConstPointer();
         IntPtr pString = sh.NonConstPointer();

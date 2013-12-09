@@ -1,5 +1,6 @@
 #pragma warning disable 1591
 using System;
+using Rhino.Runtime.InteropWrappers;
 
 #if RDK_CHECKED
 namespace Rhino.Render
@@ -57,7 +58,7 @@ namespace Rhino.Render
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.Rdk_SimulatedTexture_Filename(ConstPointer(), pString);
@@ -74,7 +75,7 @@ namespace Rhino.Render
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.Rdk_SimulatedTexture_OriginalFilename(ConstPointer(), pString);

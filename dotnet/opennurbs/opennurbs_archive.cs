@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.Collections
 {
@@ -33,70 +34,72 @@ namespace Rhino.Collections
       // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       // NEVER EVER Change ItemType values as this will break I/O code
       // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      itUndefined = 0,
+      Undefined = 0,
       // some basic types
-      itBool = 1, // bool
-      itByte = 2, // unsigned char
-      itSByte = 3, // char
-      itShort = 4, // short
-      itUShort = 5, // unsigned short
-      itInt32 = 6, // int
-      itUInt32 = 7, // unsigned int
-      itInt64 = 8, // time_t
-      itSingle = 9, // float
-      itDouble = 10, // double
-      itGuid = 11,
-      itString = 12,
+      Bool = 1, // bool
+      Byte = 2, // unsigned char
+      SByte = 3, // char
+      Short = 4, // short
+      UShort = 5, // unsigned short
+      Int32 = 6, // int
+      UInt32 = 7, // unsigned int
+      Int64 = 8, // time_t
+      Single = 9, // float
+      Double = 10, // double
+      Guid = 11,
+      String = 12,
 
       // array of basic .NET data types
-      itArrayBool = 13,
-      itArrayByte = 14,
-      itArraySByte = 15,
-      itArrayShort = 16,
-      itArrayInt32 = 17,
-      itArraySingle = 18,
-      itArrayDouble = 19,
-      itArrayGuid = 20,
-      itArrayString = 21,
+      ArrayBool = 13,
+      ArrayByte = 14,
+      ArraySByte = 15,
+      ArrayShort = 16,
+      ArrayInt32 = 17,
+      ArraySingle = 18,
+      ArrayDouble = 19,
+      ArrayGuid = 20,
+      ArrayString = 21,
 
       // System::Drawing structs
-      itColor = 22,
-      itPoint = 23,
-      itPointF = 24,
-      itRectangle = 25,
-      itRectangleF = 26,
-      itSize = 27,
-      itSizeF = 28,
-      itFont = 29,
+      Color = 22,
+      Point = 23,
+      PointF = 24,
+      Rectangle = 25,
+      RectangleF = 26,
+      Size = 27,
+      SizeF = 28,
+      Font = 29,
 
       // RMA::OpenNURBS::ValueTypes structs
-      itInterval = 30,
-      itPoint2d = 31,
-      itPoint3d = 32,
-      itPoint4d = 33,
-      itVector2d = 34,
-      itVector3d = 35,
-      itBoundingBox = 36,
-      itRay3d = 37,
-      itPlaneEquation = 38,
-      itXform = 39,
-      itPlane = 40,
-      itLine = 41,
-      itPoint3f = 42,
-      itVector3f = 43,
+      Interval = 30,
+      Point2d = 31,
+      Point3d = 32,
+      Point4d = 33,
+      Vector2d = 34,
+      Vector3d = 35,
+      BoundingBox = 36,
+      Ray3d = 37,
+      PlaneEquation = 38,
+      Xform = 39,
+      Plane = 40,
+      Line = 41,
+      Point3f = 42,
+      Vector3f = 43,
 
       // RMA::OpenNURBS classes
-      itOnBinaryArchiveDictionary = 44,
-      itOnObject = 45, // don't use this anymore
-      itOnMeshParameters = 46,
-      itOnGeometry = 47,
-      itMAXVALUE = 47
+      OnBinaryArchiveDictionary = 44,
+      OnObject = 45, // don't use this anymore
+      OnMeshParameters = 46,
+      OnGeometry = 47,
+      OnObjRef = 48,
+      ArrayObjRef = 49,
+      MAXVALUE = 49
     }
 
     int m_version;
     string m_name;
-    readonly System.Collections.Generic.Dictionary<string, DictionaryItem> m_items = new Dictionary<string, DictionaryItem>();
-    Rhino.DocObjects.Custom.UserData m_parent_userdata;
+    readonly Dictionary<string, DictionaryItem> m_items = new Dictionary<string, DictionaryItem>();
+    DocObjects.Custom.UserData m_parent_userdata;
 
     /// <summary>
     /// Gets or sets the version of this <see cref="ArchivableDictionary"/>.
@@ -137,7 +140,7 @@ namespace Rhino.Collections
     /// <param name="parentUserData">
     /// parent user data if this dictionary is associated with user data
     /// </param>
-    public ArchivableDictionary(Rhino.DocObjects.Custom.UserData parentUserData)
+    public ArchivableDictionary(DocObjects.Custom.UserData parentUserData)
     {
       m_parent_userdata = parentUserData;
       m_version = 0;
@@ -178,7 +181,7 @@ namespace Rhino.Collections
     /// this is the parent user data. null if this dictionary is not part of
     /// userdata
     /// </summary>
-    public Rhino.DocObjects.Custom.UserData ParentUserData
+    public DocObjects.Custom.UserData ParentUserData
     {
       get { return m_parent_userdata; }
     }
@@ -187,7 +190,7 @@ namespace Rhino.Collections
     /// Recursively sets the parent user data for this dictionary
     /// </summary>
     /// <param name="parent"></param>
-    internal void SetParentUserData(Rhino.DocObjects.Custom.UserData parent)
+    internal void SetParentUserData(DocObjects.Custom.UserData parent)
     {
       m_parent_userdata = parent;
       object[] values = Values;
@@ -208,7 +211,7 @@ namespace Rhino.Collections
     ///the dictionary
     ///</param>
     ///<returns>new filled dictionary on success. null on failure.</returns>
-    internal static ArchivableDictionary Read(Rhino.FileIO.BinaryArchiveReader archive)
+    internal static ArchivableDictionary Read(FileIO.BinaryArchiveReader archive)
     {
       Guid dictionary_id;
       uint version;
@@ -225,24 +228,24 @@ namespace Rhino.Collections
 
       ArchivableDictionary dict = new ArchivableDictionary((int)version, dictionary_name);
 
-      const int MAX_ITYPE = (int)ItemType.itMAXVALUE;
+      const int MAX_ITYPE = (int)ItemType.MAXVALUE;
       while( true )
       {
-        int iType;
+        int i_type;
         string key;
-        int read_rc = archive.BeginReadDictionaryEntry( out iType, out key );
+        int read_rc = archive.BeginReadDictionaryEntry( out i_type, out key );
         if( 0 == read_rc )
           return null;
         if( 1 != read_rc )
           break;
 
         // Make sure this type is readable with the current version of RhinoCommon.
-        // ItemTypes wiil be expanded with future supported type
-        bool readableType = iType > 0 && iType <= MAX_ITYPE;
-        if( readableType )
+        // ItemTypes will be expanded with future supported type
+        bool readable_type = i_type > 0 && i_type <= MAX_ITYPE;
+        if( readable_type )
         {
-          ItemType _it = (ItemType)iType;
-          dict.ReadAndSetItemType( _it, key, archive );
+          ItemType it = (ItemType)i_type;
+          dict.ReadAndSetItemType( it, key, archive );
         }
         if (!archive.EndReadDictionaryEntry())
           return null;
@@ -253,7 +256,7 @@ namespace Rhino.Collections
 
     // private helper function for Read. Reads ItemType specific items from an archive
     // should ONLY be called by Read function
-    private bool ReadAndSetItemType(ItemType it, string key, Rhino.FileIO.BinaryArchiveReader archive)
+    private bool ReadAndSetItemType(ItemType it, string key, FileIO.BinaryArchiveReader archive)
     {
       if( String.IsNullOrEmpty(key) || archive==null )
         return false;
@@ -261,176 +264,176 @@ namespace Rhino.Collections
       bool rc = false;
       switch(it)
       {
-        case ItemType.itBool: //1
+        case ItemType.Bool: //1
           {
             bool val = archive.ReadBool();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itByte: //2
+        case ItemType.Byte: //2
           {
             byte val = archive.ReadByte();
             rc = Set(key, val);
           }
           break;
 
-        case ItemType.itSByte: //3
+        case ItemType.SByte: //3
           {
             sbyte val = archive.ReadSByte();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itShort: //4
+        case ItemType.Short: //4
           {
             short val = archive.ReadShort();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itUShort: //5
+        case ItemType.UShort: //5
           {
             ushort val = archive.ReadUShort();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itInt32: //6
+        case ItemType.Int32: //6
           {
             int val = archive.ReadInt();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itUInt32: //7
+        case ItemType.UInt32: //7
           {
             uint val = archive.ReadUInt();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itInt64: //8
+        case ItemType.Int64: //8
           {
             Int64 val=archive.ReadInt64();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itSingle: //9
+        case ItemType.Single: //9
           {
             float val = archive.ReadSingle();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itDouble: //10
+        case ItemType.Double: //10
           {
             double val = archive.ReadDouble();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itGuid: //11
+        case ItemType.Guid: //11
           {
             Guid val = archive.ReadGuid();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itString: //12
+        case ItemType.String: //12
           {
             string val = archive.ReadString();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itArrayBool: //13
+        case ItemType.ArrayBool: //13
           {
             bool[] arr = archive.ReadBoolArray();
             rc = Set(key, arr);
           }
           break;
-        case ItemType.itArrayByte: //14
+        case ItemType.ArrayByte: //14
           {
             byte[] arr = archive.ReadByteArray();
             rc = Set(key, arr);
           }
           break;
-        case ItemType.itArraySByte: //15
+        case ItemType.ArraySByte: //15
           {
             sbyte[] arr = archive.ReadSByteArray();
             rc = Set(key, arr);
           }
           break;
-        case ItemType.itArrayShort: //16
+        case ItemType.ArrayShort: //16
           {
             short[] arr = archive.ReadShortArray();
             rc = Set(key, arr);
           }
           break;
-        case ItemType.itArrayInt32: //17
+        case ItemType.ArrayInt32: //17
           {
             int[] arr = archive.ReadIntArray();
             rc = Set(key, arr);
           }
           break;
-        case ItemType.itArraySingle: //18
+        case ItemType.ArraySingle: //18
           {
             float[] arr = archive.ReadSingleArray();
             rc = Set(key, arr);
           }
           break;
-        case ItemType.itArrayDouble: //19
+        case ItemType.ArrayDouble: //19
           {
             double[] arr = archive.ReadDoubleArray();
             rc = Set(key, arr);
           }
           break;
-        case ItemType.itArrayGuid: //20
+        case ItemType.ArrayGuid: //20
           {
             Guid[] arr = archive.ReadGuidArray();
             rc = Set(key, arr);
           }
           break;
-        case ItemType.itArrayString: //21
+        case ItemType.ArrayString: //21
           {
             string[] arr = archive.ReadStringArray();
             rc = Set(key, arr);
           }
           break;
-        case ItemType.itColor: //22
+        case ItemType.Color: //22
           {
             System.Drawing.Color val = archive.ReadColor();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itPoint: //23
+        case ItemType.Point: //23
           {
             System.Drawing.Point val = archive.ReadPoint();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itPointF: //24
+        case ItemType.PointF: //24
           {
             System.Drawing.PointF val = archive.ReadPointF();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itRectangle: //25
+        case ItemType.Rectangle: //25
           {
             System.Drawing.Rectangle val = archive.ReadRectangle();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itRectangleF: //26
+        case ItemType.RectangleF: //26
           {
             System.Drawing.RectangleF val = archive.ReadRectangleF();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itSize: //27
+        case ItemType.Size: //27
           {
             System.Drawing.Size val = archive.ReadSize();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itSizeF: //28
+        case ItemType.SizeF: //28
           {
             System.Drawing.SizeF val = archive.ReadSizeF();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itFont: //29
+        case ItemType.Font: //29
           {
 #if !MOBILE_BUILD
             System.Drawing.Font val = archive.ReadFont();
@@ -438,103 +441,103 @@ namespace Rhino.Collections
 #endif
           }
           break;
-        case ItemType.itInterval: //30
+        case ItemType.Interval: //30
           {
-            Rhino.Geometry.Interval val = archive.ReadInterval();
+            Geometry.Interval val = archive.ReadInterval();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itPoint2d: //31
+        case ItemType.Point2d: //31
           {
-            Rhino.Geometry.Point2d val = archive.ReadPoint2d();
+            Geometry.Point2d val = archive.ReadPoint2d();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itPoint3d: //32
+        case ItemType.Point3d: //32
           {
-            Rhino.Geometry.Point3d val = archive.ReadPoint3d();
+            Geometry.Point3d val = archive.ReadPoint3d();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itPoint4d: //33
+        case ItemType.Point4d: //33
           {
-            Rhino.Geometry.Point4d val = archive.ReadPoint4d();
+            Geometry.Point4d val = archive.ReadPoint4d();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itVector2d: //34
+        case ItemType.Vector2d: //34
           {
-            Rhino.Geometry.Vector2d val = archive.ReadVector2d();
+            Geometry.Vector2d val = archive.ReadVector2d();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itVector3d: //35
+        case ItemType.Vector3d: //35
           {
-            Rhino.Geometry.Vector3d val = archive.ReadVector3d();
+            Geometry.Vector3d val = archive.ReadVector3d();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itBoundingBox: //36
+        case ItemType.BoundingBox: //36
           {
-            Rhino.Geometry.BoundingBox val = archive.ReadBoundingBox();
+            Geometry.BoundingBox val = archive.ReadBoundingBox();
               rc = Set(key, val);
           }
           break;
-        case ItemType.itRay3d: //37
+        case ItemType.Ray3d: //37
           {
-            Rhino.Geometry.Ray3d val = archive.ReadRay3d();
+            Geometry.Ray3d val = archive.ReadRay3d();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itPlaneEquation: //38
+        case ItemType.PlaneEquation: //38
           {
             double[] val = archive.ReadPlaneEquation();
             rc = SetPlaneEquation(key, val);
           }
           break;
-        case ItemType.itXform: //39
+        case ItemType.Xform: //39
           {
-            Rhino.Geometry.Transform val = archive.ReadTransform();
+            Geometry.Transform val = archive.ReadTransform();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itPlane: //40
+        case ItemType.Plane: //40
           {
-            Rhino.Geometry.Plane val = archive.ReadPlane();
+            Geometry.Plane val = archive.ReadPlane();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itLine: //41
+        case ItemType.Line: //41
           {
-            Rhino.Geometry.Line val = archive.ReadLine();
+            Geometry.Line val = archive.ReadLine();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itPoint3f: //42
+        case ItemType.Point3f: //42
           {
-            Rhino.Geometry.Point3f val = archive.ReadPoint3f();
+            Geometry.Point3f val = archive.ReadPoint3f();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itVector3f: //43
+        case ItemType.Vector3f: //43
           {
-            Rhino.Geometry.Vector3f val = archive.ReadVector3f();
+            Geometry.Vector3f val = archive.ReadVector3f();
             rc = Set(key, val);
           }
           break;
-        case ItemType.itOnBinaryArchiveDictionary: //44
+        case ItemType.OnBinaryArchiveDictionary: //44
           {
             ArchivableDictionary dict = Read(archive);
             if( dict != null )
               rc = Set(key, dict);
           }
           break;
-        case ItemType.itOnObject: //45
-        case ItemType.itOnGeometry: //47
+        case ItemType.OnObject: //45
+        case ItemType.OnGeometry: //47
           {
             int read_rc = 0;
             IntPtr pObject = UnsafeNativeMethods.ON_BinaryArchive_ReadObject(archive.NonConstPointer(), ref read_rc);
-            Rhino.Geometry.GeometryBase geom = Rhino.Geometry.GeometryBase.CreateGeometryHelper(pObject, null);
+            Geometry.GeometryBase geom = Geometry.GeometryBase.CreateGeometryHelper(pObject, null);
             if( geom!=null )
             {
               rc = Set(key, geom);
@@ -546,9 +549,21 @@ namespace Rhino.Collections
             }
           }
           break;
-        case ItemType.itOnMeshParameters: //46
+        case ItemType.OnMeshParameters: //46
           {
-            Rhino.Geometry.MeshingParameters val = archive.ReadMeshingParameters();
+            Geometry.MeshingParameters val = archive.ReadMeshingParameters();
+            rc = Set(key, val);
+          }
+          break;
+        case ItemType.OnObjRef: //48
+          {
+            DocObjects.ObjRef val = archive.ReadObjRef();
+            rc = Set(key, val);
+          }
+          break;
+        case ItemType.ArrayObjRef: //49
+          {
+            DocObjects.ObjRef[] val = archive.ReadObjRefArray();
             rc = Set(key, val);
           }
           break;
@@ -561,7 +576,7 @@ namespace Rhino.Collections
     /// </summary>
     /// <param name="archive">The archive to write to.</param>
     /// <returns>true on success.</returns>
-    internal bool Write(Rhino.FileIO.BinaryArchiveWriter archive)
+    internal bool Write(FileIO.BinaryArchiveWriter archive)
     {
       uint version = (uint)m_version;
       if( !archive.BeginWriteDictionary( RhinoDotNetDictionaryId, version, m_name ) )
@@ -572,7 +587,7 @@ namespace Rhino.Collections
         DictionaryItem item = kvp.Value;
         if( item==null || string.IsNullOrEmpty(kvp.Key) )
           continue;
-        if( item.m_type==ItemType.itUndefined || item.m_value==null )
+        if( item.m_type==ItemType.Undefined || item.m_value==null )
           continue;
         if( !WriteItem(archive, kvp.Key, item.m_type, item.m_value) )
           return false;
@@ -581,158 +596,164 @@ namespace Rhino.Collections
     }
 
     // private helper function for Write. Should ONLY be called by Write function
-    private static bool WriteItem(Rhino.FileIO.BinaryArchiveWriter archive, string entry_name, ItemType it, object val)
+    private static bool WriteItem(FileIO.BinaryArchiveWriter archive, string entryName, ItemType it, object val)
     {
-      if (archive == null || it == ItemType.itUndefined || string.IsNullOrEmpty(entry_name) || val == null)
+      if (archive == null || it == ItemType.Undefined || string.IsNullOrEmpty(entryName) || val == null)
         return false;
 
-      if (!archive.BeginWriteDictionaryEntry((int)it, entry_name))
+      if (!archive.BeginWriteDictionaryEntry((int)it, entryName))
         return false;
 
       switch (it)
       {
-        case ItemType.itBool: // 1
+        case ItemType.Bool: // 1
           archive.WriteBool((bool)val);
           break;
-        case ItemType.itByte: // 2
+        case ItemType.Byte: // 2
           archive.WriteByte((byte)val);
           break;
-        case ItemType.itSByte: // 3
+        case ItemType.SByte: // 3
           archive.WriteSByte((sbyte)val);
           break;
-        case ItemType.itShort: // 4
+        case ItemType.Short: // 4
           archive.WriteShort((short)val);
           break;
-        case ItemType.itUShort: // 5
+        case ItemType.UShort: // 5
           archive.WriteUShort((ushort)val);
           break;
-        case ItemType.itInt32: // 6
+        case ItemType.Int32: // 6
           archive.WriteInt((int)val);
           break;
-        case ItemType.itUInt32: // 7
+        case ItemType.UInt32: // 7
           archive.WriteUInt((uint)val);
           break;
-        case ItemType.itInt64: // 8
+        case ItemType.Int64: // 8
           archive.WriteInt64((Int64)val);
           break;
-        case ItemType.itSingle: // 9
+        case ItemType.Single: // 9
           archive.WriteSingle((float)val);
           break;
-        case ItemType.itDouble: // 10
+        case ItemType.Double: // 10
           archive.WriteDouble((double)val);
           break;
-        case ItemType.itGuid: // 11
+        case ItemType.Guid: // 11
           archive.WriteGuid((Guid)val);
           break;
-        case ItemType.itString: // 12
+        case ItemType.String: // 12
           archive.WriteString((String)val);
           break;
-        case ItemType.itArrayBool: // 13
+        case ItemType.ArrayBool: // 13
           archive.WriteBoolArray((IEnumerable<bool>)val);
           break;
-        case ItemType.itArrayByte: // 14
+        case ItemType.ArrayByte: // 14
           archive.WriteByteArray((IEnumerable<byte>)val);
           break;
-        case ItemType.itArraySByte: // 15
+        case ItemType.ArraySByte: // 15
           archive.WriteSByteArray((IEnumerable<sbyte>)val);
           break;
-        case ItemType.itArrayShort: // 16
+        case ItemType.ArrayShort: // 16
           archive.WriteShortArray((IEnumerable<short>)val);
           break;
-        case ItemType.itArrayInt32: // 17
+        case ItemType.ArrayInt32: // 17
           archive.WriteIntArray((IEnumerable<int>)val);
           break;
-        case ItemType.itArraySingle: // 18
+        case ItemType.ArraySingle: // 18
           archive.WriteSingleArray((IEnumerable<float>)val);
           break;
-        case ItemType.itArrayDouble: // 19
+        case ItemType.ArrayDouble: // 19
           archive.WriteDoubleArray((IEnumerable<double>)val);
           break;
-        case ItemType.itArrayGuid: // 20
+        case ItemType.ArrayGuid: // 20
           archive.WriteGuidArray((IEnumerable<Guid>)val);
           break;
-        case ItemType.itArrayString: // 21
+        case ItemType.ArrayString: // 21
           archive.WriteStringArray((IEnumerable<string>)val);
           break;
-        case ItemType.itColor: // 22
+        case ItemType.Color: // 22
           archive.WriteColor((System.Drawing.Color)val);
           break;
-        case ItemType.itPoint: // 23
+        case ItemType.Point: // 23
           archive.WritePoint((System.Drawing.Point)val);
           break;
-        case ItemType.itPointF: // 24
+        case ItemType.PointF: // 24
           archive.WritePointF((System.Drawing.PointF)val);
           break;
-        case ItemType.itRectangle: // 25
+        case ItemType.Rectangle: // 25
           archive.WriteRectangle((System.Drawing.Rectangle)val);
           break;
-        case ItemType.itRectangleF: // 26
+        case ItemType.RectangleF: // 26
           archive.WriteRectangleF((System.Drawing.RectangleF)val);
           break;
-        case ItemType.itSize: // 27
+        case ItemType.Size: // 27
           archive.WriteSize((System.Drawing.Size)val);
           break;
-        case ItemType.itSizeF: // 28
+        case ItemType.SizeF: // 28
           archive.WriteSizeF((System.Drawing.SizeF)val);
           break;
-        case ItemType.itFont: // 29
+        case ItemType.Font: // 29
 #if !MOBILE_BUILD
           archive.WriteFont((System.Drawing.Font)val);
 #endif
           break;
-        case ItemType.itInterval: // 30
-          archive.WriteInterval((Rhino.Geometry.Interval)val);
+        case ItemType.Interval: // 30
+          archive.WriteInterval((Geometry.Interval)val);
           break;
-        case ItemType.itPoint2d: // 31
-          archive.WritePoint2d((Rhino.Geometry.Point2d)val);
+        case ItemType.Point2d: // 31
+          archive.WritePoint2d((Geometry.Point2d)val);
           break;
-        case ItemType.itPoint3d: // 32
-          archive.WritePoint3d((Rhino.Geometry.Point3d)val);
+        case ItemType.Point3d: // 32
+          archive.WritePoint3d((Geometry.Point3d)val);
           break;
-        case ItemType.itPoint4d: // 33
-          archive.WritePoint4d((Rhino.Geometry.Point4d)val);
+        case ItemType.Point4d: // 33
+          archive.WritePoint4d((Geometry.Point4d)val);
           break;
-        case ItemType.itVector2d: // 34
-          archive.WriteVector2d((Rhino.Geometry.Vector2d)val);
+        case ItemType.Vector2d: // 34
+          archive.WriteVector2d((Geometry.Vector2d)val);
           break;
-        case ItemType.itVector3d: // 35
-          archive.WriteVector3d((Rhino.Geometry.Vector3d)val);
+        case ItemType.Vector3d: // 35
+          archive.WriteVector3d((Geometry.Vector3d)val);
           break;
-        case ItemType.itBoundingBox: // 36
-          archive.WriteBoundingBox((Rhino.Geometry.BoundingBox)val);
+        case ItemType.BoundingBox: // 36
+          archive.WriteBoundingBox((Geometry.BoundingBox)val);
           break;
-        case ItemType.itRay3d: // 37
-          archive.WriteRay3d((Rhino.Geometry.Ray3d)val);
+        case ItemType.Ray3d: // 37
+          archive.WriteRay3d((Geometry.Ray3d)val);
           break;
-        case ItemType.itPlaneEquation: // 38
+        case ItemType.PlaneEquation: // 38
           archive.WritePlaneEquation((double[])val);
           break;
-        case ItemType.itXform: // 39
-          archive.WriteTransform((Rhino.Geometry.Transform)val);
+        case ItemType.Xform: // 39
+          archive.WriteTransform((Geometry.Transform)val);
           break;
-        case ItemType.itPlane: // 40
-          archive.WritePlane((Rhino.Geometry.Plane)val);
+        case ItemType.Plane: // 40
+          archive.WritePlane((Geometry.Plane)val);
           break;
-        case ItemType.itLine: // 41
-          archive.WriteLine((Rhino.Geometry.Line)val);
+        case ItemType.Line: // 41
+          archive.WriteLine((Geometry.Line)val);
           break;
-        case ItemType.itPoint3f: // 42
-          archive.WritePoint3f((Rhino.Geometry.Point3f)val);
+        case ItemType.Point3f: // 42
+          archive.WritePoint3f((Geometry.Point3f)val);
           break;
-        case ItemType.itVector3f: // 43
-          archive.WriteVector3f((Rhino.Geometry.Vector3f)val);
+        case ItemType.Vector3f: // 43
+          archive.WriteVector3f((Geometry.Vector3f)val);
           break;
-        case ItemType.itOnBinaryArchiveDictionary: // 44
+        case ItemType.OnBinaryArchiveDictionary: // 44
           ArchivableDictionary dict = (ArchivableDictionary)val;
           dict.Write(archive);
           break;
-        case ItemType.itOnObject: // 45
+        case ItemType.OnObject: // 45
           break; // skip
-        case ItemType.itOnMeshParameters: // 46
-          archive.WriteMeshingParameters((Rhino.Geometry.MeshingParameters)val);
+        case ItemType.OnMeshParameters: // 46
+          archive.WriteMeshingParameters((Geometry.MeshingParameters)val);
           break;
-        case ItemType.itOnGeometry: // 47
-          archive.WriteGeometry((Rhino.Geometry.GeometryBase)val);
+        case ItemType.OnGeometry: // 47
+          archive.WriteGeometry((Geometry.GeometryBase)val);
+          break;
+        case ItemType.OnObjRef: //48
+          archive.WriteObjRef((DocObjects.ObjRef)val);
+          break;
+        case ItemType.ArrayObjRef: //49
+          archive.WriteObjRefArray((IEnumerable<DocObjects.ObjRef>)val);
           break;
       }
       bool rc = archive.EndWriteDictionaryEntry();
@@ -1032,18 +1053,18 @@ namespace Rhino.Collections
     /// <param name="key"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public bool TryGetPoint3f(string key, out Rhino.Geometry.Point3f value)
+    public bool TryGetPoint3f(string key, out Geometry.Point3f value)
     {
-      return TryGetHelper(key, out value, Rhino.Geometry.Point3f.Unset);
+      return TryGetHelper(key, out value, Geometry.Point3f.Unset);
     }
     /// <summary>
     /// Get value as Point3f, will only succeed if value was created using Set(string key, Point3f value)
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public Rhino.Geometry.Point3f GetPoint3f(string key)
+    public Geometry.Point3f GetPoint3f(string key)
     {
-      return GetHelper(key, Rhino.Geometry.Point3f.Unset);
+      return GetHelper(key, Geometry.Point3f.Unset);
     }
     /// <summary>
     /// Get value as Point3f, will return defaultValue unless value was created using Set(string key, Point3f value)
@@ -1051,7 +1072,7 @@ namespace Rhino.Collections
     /// <param name="key"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public Rhino.Geometry.Point3f GetPoint3f(string key, Rhino.Geometry.Point3f defaultValue)
+    public Geometry.Point3f GetPoint3f(string key, Geometry.Point3f defaultValue)
     {
       return GetWithDefaultHelper(key, defaultValue);
     }
@@ -1061,18 +1082,18 @@ namespace Rhino.Collections
     /// <param name="key"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public bool TryGetPoint3d(string key, out Rhino.Geometry.Point3d value)
+    public bool TryGetPoint3d(string key, out Geometry.Point3d value)
     {
-      return TryGetHelper(key, out value, Rhino.Geometry.Point3d.Unset);
+      return TryGetHelper(key, out value, Geometry.Point3d.Unset);
     }
     /// <summary>
     /// Get value as Point3d, will only succeed if value was created using Set(string key, Point3d value)
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public Rhino.Geometry.Point3d GetPoint3d(string key)
+    public Geometry.Point3d GetPoint3d(string key)
     {
-      return GetHelper(key, Rhino.Geometry.Point3d.Unset);
+      return GetHelper(key, Geometry.Point3d.Unset);
     }
     /// <summary>
     /// Get value as Point3d, will return defaultValue unless value was created using Set(string key, Point3d value)
@@ -1080,7 +1101,7 @@ namespace Rhino.Collections
     /// <param name="key"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public Rhino.Geometry.Point3d GetPoint3d(string key, Rhino.Geometry.Point3d defaultValue)
+    public Geometry.Point3d GetPoint3d(string key, Geometry.Point3d defaultValue)
     {
       return GetWithDefaultHelper(key, defaultValue);
     }
@@ -1090,16 +1111,16 @@ namespace Rhino.Collections
     /// <param name="key"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public bool TryGetVector3d(string key, out Rhino.Geometry.Vector3d value)
+    public bool TryGetVector3d(string key, out Geometry.Vector3d value)
     {
-      return TryGetHelper(key, out value, Rhino.Geometry.Vector3d.Unset);
+      return TryGetHelper(key, out value, Geometry.Vector3d.Unset);
     }
     /// <summary>
     /// Get value as Vector3d, will only succeed if value was created using Set(string key, Vector3d value)
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public Rhino.Geometry.Vector3d GetVector3d(string key)
+    public Geometry.Vector3d GetVector3d(string key)
     {
       return GetHelper(key, Rhino.Geometry.Vector3d.Unset);
     }
@@ -1109,7 +1130,7 @@ namespace Rhino.Collections
     /// <param name="key"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public Rhino.Geometry.Vector3d GetVector3d(string key, Rhino.Geometry.Vector3d defaultValue)
+    public Geometry.Vector3d GetVector3d(string key, Geometry.Vector3d defaultValue)
     {
       return GetWithDefaultHelper(key, defaultValue);
     }
@@ -1151,7 +1172,7 @@ namespace Rhino.Collections
     /// <para>Because <see cref="bool"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para>
     /// </param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, bool val) { return SetItem(key, ItemType.itBool, val); }
+    public bool Set(string key, bool val) { return SetItem(key, ItemType.Bool, val); }
 
     /// <summary>
     /// Sets a <see cref="byte"/>.
@@ -1160,7 +1181,7 @@ namespace Rhino.Collections
     /// <param name="val">A <see cref="byte"/>.
     /// <para>Because <see cref="byte"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, byte val) { return SetItem(key, ItemType.itByte, val); }
+    public bool Set(string key, byte val) { return SetItem(key, ItemType.Byte, val); }
 
     /// <summary>
     /// Sets a <see cref="sbyte"/>.
@@ -1170,7 +1191,7 @@ namespace Rhino.Collections
     /// <para>Because <see cref="sbyte"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     [CLSCompliant(false)]
-    public bool Set(string key, sbyte val) { return SetItem(key, ItemType.itSByte, val); }
+    public bool Set(string key, sbyte val) { return SetItem(key, ItemType.SByte, val); }
 
     /// <summary>
     /// Sets a <see cref="short"/>.
@@ -1179,7 +1200,7 @@ namespace Rhino.Collections
     /// <param name="val">A <see cref="short"/>.
     /// <para>Because <see cref="short"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, short val) { return SetItem(key, ItemType.itShort, val); }
+    public bool Set(string key, short val) { return SetItem(key, ItemType.Short, val); }
 
     /// <summary>
     /// Sets a <see cref="ushort"/>.
@@ -1189,7 +1210,7 @@ namespace Rhino.Collections
     /// <para>Because <see cref="ushort"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     [CLSCompliant(false)]
-    public bool Set(string key, ushort val) { return SetItem(key, ItemType.itUShort, val); }
+    public bool Set(string key, ushort val) { return SetItem(key, ItemType.UShort, val); }
 
     /// <summary>
     /// Sets a <see cref="int"/>.
@@ -1198,7 +1219,7 @@ namespace Rhino.Collections
     /// <param name="val">A <see cref="int"/>.
     /// <para>Because <see cref="int"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, int val) { return SetItem(key, ItemType.itInt32, val); }
+    public bool Set(string key, int val) { return SetItem(key, ItemType.Int32, val); }
 
     /// <summary>
     /// Sets a <see cref="uint"/>.
@@ -1208,7 +1229,7 @@ namespace Rhino.Collections
     /// <para>Because <see cref="uint"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     [CLSCompliant(false)]
-    public bool Set(string key, uint val) { return SetItem(key, ItemType.itUInt32, val); }
+    public bool Set(string key, uint val) { return SetItem(key, ItemType.UInt32, val); }
 
     /// <summary>
     /// Sets a <see cref="long"/>.
@@ -1217,7 +1238,7 @@ namespace Rhino.Collections
     /// <param name="val">A <see cref="long"/>.
     /// <para>Because <see cref="long"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, Int64 val) { return SetItem(key, ItemType.itInt64, val); }
+    public bool Set(string key, Int64 val) { return SetItem(key, ItemType.Int64, val); }
 
     /// <summary>
     /// Sets a <see cref="float"/>.
@@ -1226,7 +1247,7 @@ namespace Rhino.Collections
     /// <param name="val">A <see cref="float"/>.
     /// <para>Because <see cref="float"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, float val) { return SetItem(key, ItemType.itSingle, val); }
+    public bool Set(string key, float val) { return SetItem(key, ItemType.Single, val); }
 
     /// <summary>
     /// Sets a <see cref="double"/>.
@@ -1235,7 +1256,7 @@ namespace Rhino.Collections
     /// <param name="val">A <see cref="double"/>.
     /// <para>Because <see cref="double"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, double val) { return SetItem(key, ItemType.itDouble, val); }
+    public bool Set(string key, double val) { return SetItem(key, ItemType.Double, val); }
 
     /// <summary>
     /// Sets a <see cref="Guid"/>.
@@ -1244,7 +1265,7 @@ namespace Rhino.Collections
     /// <param name="val">A <see cref="Guid"/>.
     /// <para>Because <see cref="Guid"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, Guid val) { return SetItem(key, ItemType.itGuid, val); }
+    public bool Set(string key, Guid val) { return SetItem(key, ItemType.Guid, val); }
 
     /// <summary>
     /// Sets a <see cref="string"/>.
@@ -1253,7 +1274,7 @@ namespace Rhino.Collections
     /// <param name="val">A <see cref="string"/>.
     /// <para>Because <see cref="string"/> is immutable, it is not possible to modify the object while it is in this dictionary.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, string val) { return SetItem(key, ItemType.itString, val); }
+    public bool Set(string key, string val) { return SetItem(key, ItemType.String, val); }
 
     /// <summary>
     /// Sets a list, an array or any enumerable of <see cref="bool"/>.
@@ -1263,7 +1284,7 @@ namespace Rhino.Collections
     /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
     /// <para>It is up to the user to clone this entry when appropriate.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, IEnumerable<bool> val) { return SetItem(key, ItemType.itArrayBool, val); }
+    public bool Set(string key, IEnumerable<bool> val) { return SetItem(key, ItemType.ArrayBool, val); }
 
     /// <summary>
     /// Sets a list, an array or any enumerable of <see cref="byte"/>.
@@ -1273,7 +1294,7 @@ namespace Rhino.Collections
     /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
     /// <para>It is up to the user to clone this entry when appropriate.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, IEnumerable<byte> val) { return SetItem(key, ItemType.itArrayByte, val); }
+    public bool Set(string key, IEnumerable<byte> val) { return SetItem(key, ItemType.ArrayByte, val); }
 
     /// <summary>
     /// Sets a list, an array or any enumerable of <see cref="sbyte"/>.
@@ -1284,7 +1305,7 @@ namespace Rhino.Collections
     /// <para>It is up to the user to clone this entry when appropriate.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
     [CLSCompliant(false)]
-    public bool Set(string key, IEnumerable<sbyte> val) { return SetItem(key, ItemType.itArraySByte, val); }
+    public bool Set(string key, IEnumerable<sbyte> val) { return SetItem(key, ItemType.ArraySByte, val); }
 
     /// <summary>
     /// Sets a list, an array or any enumerable of <see cref="short"/>.
@@ -1294,7 +1315,7 @@ namespace Rhino.Collections
     /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
     /// <para>It is up to the user to clone this entry when appropriate.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, IEnumerable<short> val) { return SetItem(key, ItemType.itArrayShort, val); }
+    public bool Set(string key, IEnumerable<short> val) { return SetItem(key, ItemType.ArrayShort, val); }
 
     /// <summary>
     /// Sets a list, an array or any enumerable of <see cref="int"/>.
@@ -1304,7 +1325,7 @@ namespace Rhino.Collections
     /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
     /// <para>It is up to the user to clone this entry when appropriate.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, IEnumerable<int> val) { return SetItem(key, ItemType.itArrayInt32, val); }
+    public bool Set(string key, IEnumerable<int> val) { return SetItem(key, ItemType.ArrayInt32, val); }
 
     /// <summary>
     /// Sets a list, an array or any enumerable of <see cref="float"/>.
@@ -1314,7 +1335,7 @@ namespace Rhino.Collections
     /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
     /// <para>It is up to the user to clone this entry when appropriate.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, IEnumerable<float> val) { return SetItem(key, ItemType.itArraySingle, val); }
+    public bool Set(string key, IEnumerable<float> val) { return SetItem(key, ItemType.ArraySingle, val); }
 
     /// <summary>
     /// Sets a list, an array or any enumerable of <see cref="double"/>.
@@ -1324,7 +1345,7 @@ namespace Rhino.Collections
     /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
     /// <para>It is up to the user to clone this entry when appropriate.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, IEnumerable<double> val) { return SetItem(key, ItemType.itArrayDouble, val); }
+    public bool Set(string key, IEnumerable<double> val) { return SetItem(key, ItemType.ArrayDouble, val); }
 
     /// <summary>
     /// Sets a list, an array or any enumerable of <see cref="Guid"/>.
@@ -1334,7 +1355,7 @@ namespace Rhino.Collections
     /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
     /// <para>It is up to the user to clone this entry when appropriate.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, IEnumerable<Guid> val) { return SetItem(key, ItemType.itArrayGuid, val); }
+    public bool Set(string key, IEnumerable<Guid> val) { return SetItem(key, ItemType.ArrayGuid, val); }
 
     /// <summary>
     /// Sets a list, an array or any enumerable of <see cref="string"/>.
@@ -1344,7 +1365,7 @@ namespace Rhino.Collections
     /// <para>Because this interface is a reference type, changes to the assigned object <b>will modify</b> this entry inside the dictionary.</para>
     /// <para>It is up to the user to clone this entry when appropriate.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, IEnumerable<string> val) { return SetItem(key, ItemType.itArrayString, val); }
+    public bool Set(string key, IEnumerable<string> val) { return SetItem(key, ItemType.ArrayString, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.Color"/>.
@@ -1354,7 +1375,7 @@ namespace Rhino.Collections
     /// <para>Because <see cref="System.Drawing.Color"/> has value semantics, changes to the
     /// assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, System.Drawing.Color val) { return SetItem(key, ItemType.itColor, val); }
+    public bool Set(string key, System.Drawing.Color val) { return SetItem(key, ItemType.Color, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.Point"/>.
@@ -1362,7 +1383,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="System.Drawing.Point"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, System.Drawing.Point val) { return SetItem(key, ItemType.itPoint, val); }
+    public bool Set(string key, System.Drawing.Point val) { return SetItem(key, ItemType.Point, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.PointF"/>.
@@ -1370,7 +1391,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="System.Drawing.PointF"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, System.Drawing.PointF val) { return SetItem(key, ItemType.itPointF, val); }
+    public bool Set(string key, System.Drawing.PointF val) { return SetItem(key, ItemType.PointF, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.Rectangle"/>.
@@ -1378,7 +1399,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="System.Drawing.Rectangle"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, System.Drawing.Rectangle val) { return SetItem(key, ItemType.itRectangle, val); }
+    public bool Set(string key, System.Drawing.Rectangle val) { return SetItem(key, ItemType.Rectangle, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.RectangleF"/>.
@@ -1386,7 +1407,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="System.Drawing.RectangleF"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, System.Drawing.RectangleF val) { return SetItem(key, ItemType.itRectangleF, val); }
+    public bool Set(string key, System.Drawing.RectangleF val) { return SetItem(key, ItemType.RectangleF, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.Size"/>.
@@ -1394,7 +1415,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="System.Drawing.Size"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, System.Drawing.Size val) { return SetItem(key, ItemType.itSize, val); }
+    public bool Set(string key, System.Drawing.Size val) { return SetItem(key, ItemType.Size, val); }
 
     /// <summary>
     /// Sets a <see cref="System.Drawing.SizeF"/>.
@@ -1402,7 +1423,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="System.Drawing.SizeF"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, System.Drawing.SizeF val) { return SetItem(key, ItemType.itSizeF, val); }
+    public bool Set(string key, System.Drawing.SizeF val) { return SetItem(key, ItemType.SizeF, val); }
 
 #if !MOBILE_BUILD
     /// <summary>
@@ -1411,7 +1432,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="System.Drawing.Font"/> is immutable, it is not possible to modify the object while it is in this dictionary.</para></param>
-    public bool Set(string key, System.Drawing.Font val) { return SetItem(key, ItemType.itFont, val); }
+    public bool Set(string key, System.Drawing.Font val) { return SetItem(key, ItemType.Font, val); }
 #endif
     /// <summary>
     /// Sets an <see cref="Rhino.Geometry.Interval"/>.
@@ -1419,7 +1440,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="Rhino.Geometry.Interval"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, Rhino.Geometry.Interval val) { return SetItem(key, ItemType.itInterval, val); }
+    public bool Set(string key, Geometry.Interval val) { return SetItem(key, ItemType.Interval, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Point2d"/>.
@@ -1427,7 +1448,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A point for that key.
     /// <para>Because <see cref="Rhino.Geometry.Point2d"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, Rhino.Geometry.Point2d val) { return SetItem(key, ItemType.itPoint2d, val); }
+    public bool Set(string key, Geometry.Point2d val) { return SetItem(key, ItemType.Point2d, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Point3d"/>.
@@ -1435,7 +1456,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A point for that key.
     /// <para>Because <see cref="Rhino.Geometry.Point3d"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, Rhino.Geometry.Point3d val) { return SetItem(key, ItemType.itPoint3d, val); }
+    public bool Set(string key, Geometry.Point3d val) { return SetItem(key, ItemType.Point3d, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Point4d"/>.
@@ -1443,7 +1464,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="Rhino.Geometry.Point4d"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, Rhino.Geometry.Point4d val) { return SetItem(key, ItemType.itPoint4d, val); }
+    public bool Set(string key, Geometry.Point4d val) { return SetItem(key, ItemType.Point4d, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Vector2d"/>.
@@ -1451,7 +1472,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="Rhino.Geometry.Vector2d"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, Rhino.Geometry.Vector2d val) { return SetItem(key, ItemType.itVector2d, val); }
+    public bool Set(string key, Geometry.Vector2d val) { return SetItem(key, ItemType.Vector2d, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Vector3d"/>.
@@ -1459,7 +1480,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="Rhino.Geometry.Vector3d"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, Rhino.Geometry.Vector3d val) { return SetItem(key, ItemType.itVector3d, val); }
+    public bool Set(string key, Geometry.Vector3d val) { return SetItem(key, ItemType.Vector3d, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.BoundingBox"/>.
@@ -1467,7 +1488,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="Rhino.Geometry.BoundingBox"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, Rhino.Geometry.BoundingBox val) { return SetItem(key, ItemType.itBoundingBox, val); }
+    public bool Set(string key, Geometry.BoundingBox val) { return SetItem(key, ItemType.BoundingBox, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Ray3d"/>.
@@ -1475,9 +1496,9 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="Rhino.Geometry.Ray3d"/> has value semantics and is immutable, no changes to this object are possible.</para></param>
-    public bool Set(string key, Rhino.Geometry.Ray3d val) { return SetItem(key, ItemType.itRay3d, val); }
+    public bool Set(string key, Geometry.Ray3d val) { return SetItem(key, ItemType.Ray3d, val); }
 
-    bool SetPlaneEquation(string key, double[] eq) { return SetItem(key, ItemType.itPlaneEquation, eq); }
+    bool SetPlaneEquation(string key, double[] eq) { return SetItem(key, ItemType.PlaneEquation, eq); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Transform"/>.
@@ -1485,7 +1506,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A transform for that key.
     /// <para>Because <see cref="Rhino.Geometry.Transform"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, Rhino.Geometry.Transform val) { return SetItem(key, ItemType.itXform, val); }
+    public bool Set(string key, Geometry.Transform val) { return SetItem(key, ItemType.Xform, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Plane"/>.
@@ -1493,7 +1514,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A plane for that key.
     /// <para>Because <see cref="Rhino.Geometry.Plane"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, Rhino.Geometry.Plane val) { return SetItem(key, ItemType.itPlane, val); }
+    public bool Set(string key, Geometry.Plane val) { return SetItem(key, ItemType.Plane, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Line"/>.
@@ -1501,7 +1522,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="Rhino.Geometry.Line"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, Rhino.Geometry.Line val) { return SetItem(key, ItemType.itLine, val); }
+    public bool Set(string key, Geometry.Line val) { return SetItem(key, ItemType.Line, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Point3f"/>.
@@ -1509,7 +1530,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="Rhino.Geometry.Point3f"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, Rhino.Geometry.Point3f val) { return SetItem(key, ItemType.itPoint3f, val); }
+    public bool Set(string key, Geometry.Point3f val) { return SetItem(key, ItemType.Point3f, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.Vector3f"/>.
@@ -1517,7 +1538,7 @@ namespace Rhino.Collections
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
     /// <para>Because <see cref="Rhino.Geometry.Vector3f"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, Rhino.Geometry.Vector3f val) { return SetItem(key, ItemType.itVector3f, val); }
+    public bool Set(string key, Geometry.Vector3f val) { return SetItem(key, ItemType.Vector3f, val); }
 
     /// <summary>
     /// Sets another <see cref="ArchivableDictionary"/> as entry in this dictionary.
@@ -1526,7 +1547,7 @@ namespace Rhino.Collections
     /// <param name="val">An object for that key.
     /// <para>Because this class is a reference type and is mutable, changes to this object <b>will propagate</b> to the object inside the dictionary.</para>
     /// <para>It is up to the user to clone this entry when appropriate.</para></param>
-    public bool Set(string key, ArchivableDictionary val) { return SetItem(key, ItemType.itOnBinaryArchiveDictionary, val); }
+    public bool Set(string key, ArchivableDictionary val) { return SetItem(key, ItemType.OnBinaryArchiveDictionary, val); }
 
     /// <summary>
     /// Sets a <see cref="Rhino.Geometry.MeshingParameters"/>.
@@ -1535,7 +1556,7 @@ namespace Rhino.Collections
     /// <param name="val">An object for that key.
     /// <para>Because this class is a reference type and is mutable, changes to this object <b>will propagate</b> to the object inside the dictionary.</para>
     /// <para>It is up to the user to clone this entry when appropriate.</para></param>
-    public bool Set(string key, Rhino.Geometry.MeshingParameters val) { return SetItem(key, ItemType.itOnMeshParameters, val); }
+    public bool Set(string key, Geometry.MeshingParameters val) { return SetItem(key, ItemType.OnMeshParameters, val); }
 
     /// <summary>
     /// Sets any class deriving from the <see cref="Rhino.Geometry.GeometryBase"/> base class.
@@ -1544,11 +1565,29 @@ namespace Rhino.Collections
     /// <param name="val">A geometry object for that key.
     /// <para>Because this class is a reference type and is mutable, changes to this object <b>will propagate</b> to the object inside the dictionary.</para>
     /// <para>It is up to the user to clone this entry when appropriate. You can use <see cref="Rhino.Geometry.GeometryBase.Duplicate"/> for this.</para></param>
-    public bool Set(string key, Rhino.Geometry.GeometryBase val) { return SetItem(key, ItemType.itOnGeometry, val); }
+    public bool Set(string key, Geometry.GeometryBase val) { return SetItem(key, ItemType.OnGeometry, val); }
+
+    /// <summary>
+    /// Sets a <see cref="Rhino.DocObjects.ObjRef"/>
+    /// </summary>
+    /// <param name="key">A text key</param>
+    /// <param name="val">An object for that key
+    /// <para>Because this class is a reference type and is mutable, changes to this object <b>will propagate</b> to the object inside the dictionary.</para>
+    /// <para>It is up to the user to clone this entry when appropriate.</para></param>
+    public bool Set(string key, DocObjects.ObjRef val) { return SetItem(key, ItemType.OnObjRef, val); }
+
+    /// <summary>
+    /// Sets an array of <see cref="Rhino.DocObjects.ObjRef"/>
+    /// </summary>
+    /// <param name="key">A text key</param>
+    /// <param name="val">An object for that key
+    /// <para>Because this class is a reference type and is mutable, changes to this object <b>will propagate</b> to the object inside the dictionary.</para>
+    /// <para>It is up to the user to clone this entry when appropriate.</para></param>
+    public bool Set(string key, IEnumerable<DocObjects.ObjRef> val) { return SetItem(key, ItemType.ArrayObjRef, val); }
 
     bool SetItem(string key, ItemType it, object val)
     {
-      if (string.IsNullOrEmpty(key) || val == null || it == ItemType.itUndefined)
+      if (string.IsNullOrEmpty(key) || val == null || it == ItemType.Undefined)
         return false;
       m_items[key] = new DictionaryItem(it, val);
       return true;
@@ -1564,11 +1603,9 @@ namespace Rhino.Collections
     public bool SetEnumValue<T>(T enumValue) 
         where T : struct, IConvertible
     {
-        if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
-
-        Type enumType = typeof(T);
-
-        return SetEnumValue(enumType.Name, enumValue);
+      if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+      Type enum_type = typeof(T);
+      return SetEnumValue(enum_type.Name, enumValue);
     }
 
     /// <summary>
@@ -1582,10 +1619,9 @@ namespace Rhino.Collections
     public bool SetEnumValue<T>(String key, T enumValue) 
         where T : struct, IConvertible
     {
-        if (null == key) throw new ArgumentNullException("key");
-
-        if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
-        return Set(key, enumValue.ToString(CultureInfo.InvariantCulture));
+      if (null == key) throw new ArgumentNullException("key");
+      if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+      return Set(key, enumValue.ToString(CultureInfo.InvariantCulture));
     }
 
     /// <summary>
@@ -1599,10 +1635,9 @@ namespace Rhino.Collections
     public T GetEnumValue<T>()
         where T : struct, IConvertible
     {
-        if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
-        Type enumType = typeof(T);
-
-        return GetEnumValue<T>(enumType.Name);
+      if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+      Type enum_type = typeof(T);
+      return GetEnumValue<T>(enum_type.Name);
     }
 
     /// <summary>
@@ -1617,17 +1652,17 @@ namespace Rhino.Collections
     public T GetEnumValue<T>(String key) 
         where T : struct, IConvertible
     {
-        if (null == key) throw new ArgumentNullException("key");
+      if (null == key) throw new ArgumentNullException("key");
 
-        if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
-        if (ContainsKey(key))
-        {
-            T enumValue;
-            if (TryGetEnumValue(key, out enumValue))
-                return enumValue;
-            throw new FormatException("Could not recognize the value in the ArchivableDictionary as enum value.");
-        }
-        throw new KeyNotFoundException();
+      if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+      if (ContainsKey(key))
+      {
+        T enum_value;
+        if (TryGetEnumValue(key, out enum_value))
+          return enum_value;
+        throw new FormatException("Could not recognize the value in the ArchivableDictionary as enum value.");
+      }
+      throw new KeyNotFoundException();
     }
 
 
@@ -1644,15 +1679,15 @@ namespace Rhino.Collections
     {
       if (null == key) throw new ArgumentNullException("key");
 
-      Type enumType = typeof(T);
-      if (!enumType.IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+      Type enum_type = typeof(T);
+      if (!enum_type.IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
       enumValue = default(T);
-      String enumString;
-      if (TryGetString(key, out enumString))
+      String enum_string;
+      if (TryGetString(key, out enum_string))
       {
         try
         {
-          object obj = Enum.Parse(enumType, enumString, true);
+          object obj = Enum.Parse(enum_type, enum_string, true);
           enumValue = (T)obj;
           return true;
         }
@@ -1674,15 +1709,14 @@ namespace Rhino.Collections
     public bool RemoveEnumValue<T>()
         where T : struct, IConvertible
     {
-        Type enumType = typeof(T);
-        if (!enumType.IsEnum)
-            throw new ArgumentException("!typeof(T).IsEnum");
+      Type enum_type = typeof(T);
+      if (!enum_type.IsEnum)
+        throw new ArgumentException("!typeof(T).IsEnum");
 
-        if (ContainsKey(enumType.Name))
-        {
-            return Remove(enumType.Name);
-        }
-        return false;
+      if (ContainsKey(enum_type.Name))
+        return Remove(enum_type.Name);
+
+      return false;
     }
 
     /// <summary>
@@ -1693,24 +1727,24 @@ namespace Rhino.Collections
     /// <exception cref="ArgumentException"></exception>
     public bool AddContentsFrom(ArchivableDictionary source)
     {
-        if (null == source) throw new ArgumentNullException("source");
+      if (null == source) throw new ArgumentNullException("source");
 
-        Type archDictType = GetType();
-        foreach (String key in source.Keys)
+      Type arch_dict_type = GetType();
+      foreach (String key in source.Keys)
+      {
+        object o = source[key];
+        MethodInfo setter = arch_dict_type.GetMethod("Set", new[] { typeof(String), o.GetType() });
+        if (setter != null)
         {
-            object o = source[key];
-            MethodInfo setter = archDictType.GetMethod("Set", new[] { typeof(String), o.GetType() });
-            if (setter != null)
-            {
-                setter.Invoke(this, new[] { key, o });
-            }
-            else
-            {
-                String err = "Could not find setter for type " + o.GetType();
-                throw new ArgumentException(err);
-            }
+          setter.Invoke(this, new[] { key, o });
         }
-        return true;
+        else
+        {
+          String err = "Could not find setter for type " + o.GetType();
+          throw new ArgumentException(err);
+        }
+      }
+      return true;
     }
 
     /// <summary>
@@ -1720,10 +1754,10 @@ namespace Rhino.Collections
     /// <returns></returns>
     public bool ReplaceContentsWith(ArchivableDictionary source)
     {
-        if (null == source) throw new ArgumentNullException("source");
+      if (null == source) throw new ArgumentNullException("source");
 
-        Clear();
-        return AddContentsFrom(source);
+      Clear();
+      return AddContentsFrom(source);
     }
 
     private class DictionaryItem
@@ -1755,7 +1789,7 @@ namespace Rhino.Collections
     public ArchivableDictionary Clone()
     {
       ArchivableDictionary clone = new ArchivableDictionary(m_version, m_name);
-      foreach (System.Collections.Generic.KeyValuePair<string, DictionaryItem> item in m_items)
+      foreach (KeyValuePair<string, DictionaryItem> item in m_items)
       {
         clone.m_items.Add(item.Key, item.Value.CreateCopy());
       }
@@ -1900,19 +1934,19 @@ namespace Rhino.FileIO
       m_ptr = IntPtr.Zero;
     }
 
-    bool m_bWriteErrorOccured;
+    bool m_write_error_occured;
 
     /// <summary>
     /// Gets or sets whether an error occurred.
     /// </summary>
     public bool WriteErrorOccured
     {
-      get { return m_bWriteErrorOccured; }
+      get { return m_write_error_occured; }
       set
       {
         // 17 Sept. 2010 S. Baer
         // ?? should we only allow going from false to true??
-        m_bWriteErrorOccured = value;
+        m_write_error_occured = value;
       }
     }
 
@@ -1948,8 +1982,8 @@ namespace Rhino.FileIO
     /// <returns>true on successful read.</returns>
     public void Write3dmChunkVersion(int major, int minor)
     {
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_Write3dmChunkVersion(m_ptr, major, minor);
-      if (m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_Write3dmChunkVersion(m_ptr, major, minor);
+      if (m_write_error_occured )
         throw new BinaryArchiveException("Write3dmChunkVersion failed");
     }
 
@@ -1957,10 +1991,10 @@ namespace Rhino.FileIO
     /// Delivers the complete content of a dictionary to the archive.
     /// </summary>
     /// <param name="dictionary">A dictionary to archive.</param>
-    public void WriteDictionary(Rhino.Collections.ArchivableDictionary dictionary)
+    public void WriteDictionary(Collections.ArchivableDictionary dictionary)
     {
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !dictionary.Write(this);
-      if (m_bWriteErrorOccured)
+      m_write_error_occured = m_write_error_occured || !dictionary.Write(this);
+      if (m_write_error_occured)
         throw new BinaryArchiveException("WriteDictionary failed");
     }
 
@@ -1980,8 +2014,8 @@ namespace Rhino.FileIO
     /// <param name="value">A value to write.</param>
     public void WriteByte(byte value)
     {
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteByte(m_ptr, value);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteByte(m_ptr, value);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteByte failed");
     }
 
@@ -2001,8 +2035,8 @@ namespace Rhino.FileIO
     /// <param name="value">A value to write.</param>
     public void WriteShort(short value)
     {
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteShort(m_ptr, value);
-      if (m_bWriteErrorOccured)
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteShort(m_ptr, value);
+      if (m_write_error_occured)
         throw new BinaryArchiveException("WriteShort failed");
     }
 
@@ -2022,8 +2056,8 @@ namespace Rhino.FileIO
     /// <param name="value">A value to write.</param>
     public void WriteInt(int value)
     {
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt(m_ptr, value);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt(m_ptr, value);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteInt failed");
     }
 
@@ -2043,8 +2077,8 @@ namespace Rhino.FileIO
     /// <param name="value">A value to write.</param>
     public void WriteInt64(Int64 value)
     {
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt64(m_ptr, value);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt64(m_ptr, value);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteInt64 failed");
     }
 
@@ -2054,8 +2088,8 @@ namespace Rhino.FileIO
     /// <param name="value">A value to write.</param>
     public void WriteSingle(float value)
     {
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle(m_ptr, value);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle(m_ptr, value);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteSingle failed");
     }
 
@@ -2065,8 +2099,8 @@ namespace Rhino.FileIO
     /// <param name="value">A value to write.</param>
     public void WriteDouble(double value)
     {
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble(m_ptr, value);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble(m_ptr, value);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteDouble failed");
     }
 
@@ -2076,8 +2110,8 @@ namespace Rhino.FileIO
     /// <param name="value">A value to write.</param>
     public void WriteGuid(Guid value)
     {
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteGuid(m_ptr, ref value);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteGuid(m_ptr, ref value);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteGuid failed");
     }
 
@@ -2087,8 +2121,8 @@ namespace Rhino.FileIO
     /// <param name="value">A value to write.</param>
     public void WriteString(string value)
     {
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteString(m_ptr, value);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteString(m_ptr, value);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteString failed");
     }
 
@@ -2104,8 +2138,8 @@ namespace Rhino.FileIO
       WriteInt(count);
       if (count > 0)
       {
-        m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteBool2(m_ptr, count, l.ToArray());
-        if( m_bWriteErrorOccured )
+        m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteBool2(m_ptr, count, l.ToArray());
+        if( m_write_error_occured )
           throw new BinaryArchiveException("WriteBoolArray failed");
       }
     }
@@ -2122,8 +2156,8 @@ namespace Rhino.FileIO
       WriteInt(count);
       if (count > 0)
       {
-        m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteByte2(m_ptr, count, l.ToArray());
-        if( m_bWriteErrorOccured )
+        m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteByte2(m_ptr, count, l.ToArray());
+        if( m_write_error_occured )
           throw new BinaryArchiveException("WriteByteArray failed");
       }
     }
@@ -2155,8 +2189,8 @@ namespace Rhino.FileIO
       WriteInt(count);
       if (count > 0)
       {
-        m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteShort2(m_ptr, count, l.ToArray());
-        if( m_bWriteErrorOccured )
+        m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteShort2(m_ptr, count, l.ToArray());
+        if( m_write_error_occured )
           throw new BinaryArchiveException("WriteShortArray failed");
       }
     }
@@ -2173,8 +2207,8 @@ namespace Rhino.FileIO
       WriteInt(count);
       if (count > 0)
       {
-        m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt2(m_ptr, count, l.ToArray());
-        if( m_bWriteErrorOccured )
+        m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt2(m_ptr, count, l.ToArray());
+        if( m_write_error_occured )
           throw new BinaryArchiveException("WriteIntArray failed");
       }
     }
@@ -2191,8 +2225,8 @@ namespace Rhino.FileIO
       WriteInt(count);
       if (count > 0)
       {
-        m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, count, l.ToArray());
-        if (m_bWriteErrorOccured)
+        m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, count, l.ToArray());
+        if (m_write_error_occured)
           throw new BinaryArchiveException("WriteSingleArray failed");
       }
     }
@@ -2209,8 +2243,8 @@ namespace Rhino.FileIO
       WriteInt(count);
       if (count > 0)
       {
-        m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, count, l.ToArray());
-        if( m_bWriteErrorOccured )
+        m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, count, l.ToArray());
+        if( m_write_error_occured )
           throw new BinaryArchiveException("WriteDoubleArray failed");
       }
     }
@@ -2247,8 +2281,8 @@ namespace Rhino.FileIO
 
       foreach (string s in value)
       {
-        m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteString(m_ptr, s);
-        if (m_bWriteErrorOccured)
+        m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteString(m_ptr, s);
+        if (m_write_error_occured)
           throw new BinaryArchiveException("WriteStringArray failed");
       }
     }
@@ -2260,8 +2294,8 @@ namespace Rhino.FileIO
     public void WriteColor(System.Drawing.Color value)
     {
       int argb = value.ToArgb();
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteColor(m_ptr, argb);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteColor(m_ptr, argb);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteColor failed");
     }
 
@@ -2272,8 +2306,8 @@ namespace Rhino.FileIO
     public void WritePoint(System.Drawing.Point value)
     {
       int[] xy = new int[] { value.X, value.Y };
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt2(m_ptr, 2, xy);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt2(m_ptr, 2, xy);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WritePoint failed");
     }
 
@@ -2284,8 +2318,8 @@ namespace Rhino.FileIO
     public void WritePointF(System.Drawing.PointF value)
     {
       float[] xy = new float[] { value.X, value.Y };
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, 2, xy);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, 2, xy);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WritePointF failed");
     }
 
@@ -2296,8 +2330,8 @@ namespace Rhino.FileIO
     public void WriteRectangle(System.Drawing.Rectangle value)
     {
       int[] xywh = new int[] { value.X, value.Y, value.Width, value.Height };
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt2(m_ptr, 4, xywh);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt2(m_ptr, 4, xywh);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteRectangle failed");
     }
 
@@ -2308,8 +2342,8 @@ namespace Rhino.FileIO
     public void WriteRectangleF(System.Drawing.RectangleF value)
     {
       float[] f = new float[] { value.X, value.Y, value.Width, value.Height };
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, 4, f);
-      if (m_bWriteErrorOccured)
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, 4, f);
+      if (m_write_error_occured)
         throw new BinaryArchiveException("WriteRectangleF failed");
     }
 
@@ -2320,8 +2354,8 @@ namespace Rhino.FileIO
     public void WriteSize(System.Drawing.Size value)
     {
       int[] xy = new int[] { value.Width, value.Height };
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt2(m_ptr, 2, xy);
-      if (m_bWriteErrorOccured)
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt2(m_ptr, 2, xy);
+      if (m_write_error_occured)
         throw new BinaryArchiveException("WriteSize failed");
     }
 
@@ -2332,8 +2366,8 @@ namespace Rhino.FileIO
     public void WriteSizeF(System.Drawing.SizeF value)
     {
       float[] xy = new float[] { value.Width, value.Height };
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, 2, xy);
-      if (m_bWriteErrorOccured)
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, 2, xy);
+      if (m_write_error_occured)
         throw new BinaryArchiveException("WriteSizeF failed");
     }
 
@@ -2346,17 +2380,45 @@ namespace Rhino.FileIO
     public void WriteFont(System.Drawing.Font value)
     {
       string family_name = value.FontFamily.Name;
-      float emSize = value.Size;
+      float em_size = value.Size;
       uint font_style = (uint)(value.Style);
       uint graphics_unit = (uint)(value.Unit);
-      byte gdiCharSet = value.GdiCharSet;
-      bool gdiVerticalFont = value.GdiVerticalFont;
+      byte gdi_char_set = value.GdiCharSet;
+      bool gdi_vertical_font = value.GdiVerticalFont;
       WriteString(family_name);
-      WriteSingle(emSize);
+      WriteSingle(em_size);
       WriteUInt(font_style);
       WriteUInt(graphics_unit);
-      WriteByte(gdiCharSet);
-      WriteBool(gdiVerticalFont);
+      WriteByte(gdi_char_set);
+      WriteBool(gdi_vertical_font);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="Rhino.DocObjects.ObjRef"/> to the archive
+    /// </summary>
+    /// <returns>the element that was read</returns>
+    public void WriteObjRef( DocObjects.ObjRef objref )
+    {
+      IntPtr ptr_const_objref = objref.ConstPointer();
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteObjRef(m_ptr, ptr_const_objref);
+      if (m_write_error_occured)
+        throw new BinaryArchiveException("WriteObjRef failed");
+    }
+
+    /// <summary>
+    /// Writes a list, an array, or any enumerable of <see cref="Rhino.DocObjects.ObjRef"/> to the archive.
+    /// <para>The return will always be an array.</para>
+    /// </summary>
+    /// <param name="objrefs">A value to write.</param>
+    public void WriteObjRefArray(IEnumerable<DocObjects.ObjRef> objrefs)
+    {
+      using (var array = new Runtime.InteropWrappers.ClassArrayOnObjRef(objrefs))
+      {
+        IntPtr ptr_objrefs = array.ConstPointer();
+        m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteObjRefArray(m_ptr, ptr_objrefs);
+        if (m_write_error_occured)
+          throw new BinaryArchiveException("WriteObjRefArray failed");
+      }
     }
 #endif
 
@@ -2364,11 +2426,11 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.Interval"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteInterval(Rhino.Geometry.Interval value)
+    public void WriteInterval(Geometry.Interval value)
     {
       double[] d = new double[] { value.T0, value.T1 };
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, 2, d);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, 2, d);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteInterval failed");
     }
 
@@ -2376,11 +2438,11 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.Point2d"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WritePoint2d(Rhino.Geometry.Point2d value)
+    public void WritePoint2d(Geometry.Point2d value)
     {
       double[] d = new double[] { value.X, value.Y };
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, 2, d);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, 2, d);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WritePoint2d failed");
     }
 
@@ -2388,11 +2450,11 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.Point3d"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WritePoint3d(Rhino.Geometry.Point3d value)
+    public void WritePoint3d(Geometry.Point3d value)
     {
       double[] d = new double[] { value.X, value.Y, value.Z };
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, 3, d);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, 3, d);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WritePoint3d failed");
     }
 
@@ -2400,11 +2462,11 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.Point4d"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WritePoint4d(Rhino.Geometry.Point4d value)
+    public void WritePoint4d(Geometry.Point4d value)
     {
       double[] d = new double[] { value.X, value.Y, value.Z, value.W };
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, 4, d);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, 4, d);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WritePoint4d failed");
     }
 
@@ -2412,11 +2474,11 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.Vector2d"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteVector2d(Rhino.Geometry.Vector2d value)
+    public void WriteVector2d(Geometry.Vector2d value)
     {
       double[] d = new double[] { value.X, value.Y };
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, 2, d);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, 2, d);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteVector2d failed");
     }
 
@@ -2424,11 +2486,11 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.Vector3d"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteVector3d(Rhino.Geometry.Vector3d value)
+    public void WriteVector3d(Geometry.Vector3d value)
     {
       double[] d = new double[] { value.X, value.Y, value.Z };
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, 3, d);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, 3, d);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteVector3d failed");
     }
 
@@ -2436,7 +2498,7 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.BoundingBox"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteBoundingBox(Rhino.Geometry.BoundingBox value)
+    public void WriteBoundingBox(Geometry.BoundingBox value)
     {
       WritePoint3d(value.Min);
       WritePoint3d(value.Max);
@@ -2446,7 +2508,7 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.Ray3d"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteRay3d(Rhino.Geometry.Ray3d value)
+    public void WriteRay3d(Geometry.Ray3d value)
     {
       WritePoint3d(value.Position);
       WriteVector3d(value.Direction);
@@ -2456,8 +2518,8 @@ namespace Rhino.FileIO
     {
       if (value.Length != 4)
         throw new ArgumentException("Plane equation must have 4 values");
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, 4, value);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteDouble2(m_ptr, 4, value);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WritePlaneEquation failed");
     }
 
@@ -2465,10 +2527,10 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.Transform"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteTransform(Rhino.Geometry.Transform value)
+    public void WriteTransform(Geometry.Transform value)
     {
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteTransform(m_ptr, ref value);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteTransform(m_ptr, ref value);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteTransform failed");
     }
 
@@ -2476,10 +2538,10 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.Plane"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WritePlane(Rhino.Geometry.Plane value)
+    public void WritePlane(Geometry.Plane value)
     {
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WritePlane(m_ptr, ref value);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WritePlane(m_ptr, ref value);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WritePlane failed");
     }
 
@@ -2487,7 +2549,7 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.Line"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteLine(Rhino.Geometry.Line value)
+    public void WriteLine(Geometry.Line value)
     {
       WritePoint3d(value.From);
       WritePoint3d(value.To);
@@ -2497,11 +2559,11 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.Point3f"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WritePoint3f(Rhino.Geometry.Point3f value)
+    public void WritePoint3f(Geometry.Point3f value)
     {
       float[] f = new float[] { value.X, value.Y, value.Z };
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, 3, f);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, 3, f);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WritePoint3f failed");
     }
 
@@ -2509,11 +2571,11 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.Vector3f"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteVector3f(Rhino.Geometry.Vector3f value)
+    public void WriteVector3f(Geometry.Vector3f value)
     {
       float[] f = new float[] { value.X, value.Y, value.Z };
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, 3, f);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, 3, f);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteVector3f failed");
     }
 
@@ -2521,11 +2583,11 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.MeshingParameters"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteMeshingParameters(Rhino.Geometry.MeshingParameters value)
+    public void WriteMeshingParameters(Geometry.MeshingParameters value)
     {
       IntPtr pMeshParameters = value.ConstPointer();
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteMeshParameters(m_ptr, pMeshParameters);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteMeshParameters(m_ptr, pMeshParameters);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteMeshParameters failed");
     }
 
@@ -2533,11 +2595,11 @@ namespace Rhino.FileIO
     /// Writes a <see cref="Rhino.Geometry.GeometryBase"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteGeometry(Rhino.Geometry.GeometryBase value)
+    public void WriteGeometry(Geometry.GeometryBase value)
     {
       IntPtr pGeometry = value.ConstPointer();
-      m_bWriteErrorOccured = m_bWriteErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_WriteGeometry(m_ptr, pGeometry);
-      if( m_bWriteErrorOccured )
+      m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteGeometry(m_ptr, pGeometry);
+      if( m_write_error_occured )
         throw new BinaryArchiveException("WriteGeometry failed");
     }
 
@@ -2550,9 +2612,9 @@ namespace Rhino.FileIO
       return UnsafeNativeMethods.ON_BinaryArchive_EndWriteDictionary(m_ptr);
     }
 
-    internal bool BeginWriteDictionaryEntry(int de_type, string de_name)
+    internal bool BeginWriteDictionaryEntry(int dictionaryEntryType, string dictionaryEntryName)
     {
-      return UnsafeNativeMethods.ON_BinaryArchive_BeginWriteDictionaryEntry(m_ptr, de_type, de_name);
+      return UnsafeNativeMethods.ON_BinaryArchive_BeginWriteDictionaryEntry(m_ptr, dictionaryEntryType, dictionaryEntryName);
     }
     internal bool EndWriteDictionaryEntry()
     {
@@ -2576,19 +2638,19 @@ namespace Rhino.FileIO
       m_ptr = IntPtr.Zero;
     }
 
-    bool m_bReadErrorOccured;
+    bool m_read_error_occured;
 
     /// <summary>
     /// Gets or sets whether en error occurred during reading.
     /// </summary>
     public bool ReadErrorOccured
     {
-      get { return m_bReadErrorOccured; }
+      get { return m_read_error_occured; }
       set
       {
         // 17 Sept. 2010 S. Baer
         // ?? should we only allow going from false to true??
-        m_bReadErrorOccured = value;
+        m_read_error_occured = value;
       }
     }
 
@@ -2626,8 +2688,8 @@ namespace Rhino.FileIO
     {
       major = 0;
       minor = 0;
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_Read3dmChunkVersion(m_ptr, ref major, ref minor);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_Read3dmChunkVersion(m_ptr, ref major, ref minor);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("Read3dmChunkVersion failed");
     }
 
@@ -2642,14 +2704,14 @@ namespace Rhino.FileIO
     /// <returns>The newly instantiated object.</returns>
     public Rhino.Collections.ArchivableDictionary ReadDictionary()
     {
-      Rhino.Collections.ArchivableDictionary rc = null;
-      if (!m_bReadErrorOccured)
+      Collections.ArchivableDictionary rc = null;
+      if (!m_read_error_occured)
       {
-        rc = Rhino.Collections.ArchivableDictionary.Read(this);
+        rc = Collections.ArchivableDictionary.Read(this);
         if (null == rc)
-          m_bReadErrorOccured = true;
+          m_read_error_occured = true;
       }
-      if (m_bReadErrorOccured)
+      if (m_read_error_occured)
         throw new BinaryArchiveException("ReadDictionary failed");
       return rc;      
     }
@@ -2661,8 +2723,8 @@ namespace Rhino.FileIO
     public bool ReadBool()
     {
       bool rc = false;
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadBool(m_ptr, ref rc);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadBool(m_ptr, ref rc);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadBool failed");
       return rc;
     }
@@ -2674,8 +2736,8 @@ namespace Rhino.FileIO
     public byte ReadByte()
     {
       byte rc = 0;
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadByte(m_ptr, ref rc);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadByte(m_ptr, ref rc);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadByte failed");
       return rc;
     }
@@ -2697,8 +2759,8 @@ namespace Rhino.FileIO
     public short ReadShort()
     {
       short rc = 0;
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadShort(m_ptr, ref rc);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadShort(m_ptr, ref rc);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadShort failed");
       return rc;
     }
@@ -2720,8 +2782,8 @@ namespace Rhino.FileIO
     public int ReadInt()
     {
       int rc = 0;
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt(m_ptr, ref rc);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt(m_ptr, ref rc);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadInt failed");
       return rc;
     }
@@ -2743,8 +2805,8 @@ namespace Rhino.FileIO
     public Int64 ReadInt64()
     {
       Int64 rc = 0; 
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt64(m_ptr, ref rc);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt64(m_ptr, ref rc);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadInt64 failed");
       return rc;
     }
@@ -2756,8 +2818,8 @@ namespace Rhino.FileIO
     public float ReadSingle()
     {
       float rc = 0;
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle(m_ptr, ref rc);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle(m_ptr, ref rc);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadSingle failed");
       return rc;
     }
@@ -2769,8 +2831,8 @@ namespace Rhino.FileIO
     public double ReadDouble()
     {
       double rc = 0;
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble(m_ptr, ref rc);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble(m_ptr, ref rc);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadDouble failed");
       return rc;
     }
@@ -2782,8 +2844,8 @@ namespace Rhino.FileIO
     public Guid ReadGuid()
     {
       Guid rc = Guid.Empty;
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadGuid(m_ptr, ref rc);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadGuid(m_ptr, ref rc);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadGuid failed");
       return rc;
     }
@@ -2794,13 +2856,14 @@ namespace Rhino.FileIO
     /// <returns>The value that was read.</returns>
     public string ReadString()
     {
-      Rhino.Runtime.StringHolder str = new Rhino.Runtime.StringHolder();
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadString(m_ptr, str.NonConstPointer());
-      string rc = str.ToString();
-      str.Dispose();
-      if (m_bReadErrorOccured)
-        throw new BinaryArchiveException("ReadString failed");
-      return rc;
+      using (var str = new StringHolder())
+      {
+        IntPtr ptr_string = str.NonConstPointer();
+        m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadString(m_ptr, ptr_string);
+        if (m_read_error_occured)
+          throw new BinaryArchiveException("ReadString failed");
+        return str.ToString();
+      }
     }
 
     /// <summary>
@@ -2817,8 +2880,8 @@ namespace Rhino.FileIO
         rc = new bool[count];
         if (count > 0)
         {
-          m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadBool2(m_ptr, count, rc);
-          if (m_bReadErrorOccured)
+          m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadBool2(m_ptr, count, rc);
+          if (m_read_error_occured)
             throw new BinaryArchiveException("ReadBoolArray failed");
         }
       }
@@ -2839,8 +2902,8 @@ namespace Rhino.FileIO
         rc = new byte[count];
         if (count > 0)
         {
-          m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadByte2(m_ptr, count, rc);
-          if( m_bReadErrorOccured )
+          m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadByte2(m_ptr, count, rc);
+          if( m_read_error_occured )
             throw new BinaryArchiveException("ReadByteArray failed");
         }
       }
@@ -2881,8 +2944,8 @@ namespace Rhino.FileIO
         rc = new short[count];
         if (count > 0)
         {
-          m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadShort2(m_ptr, count, rc);
-          if( m_bReadErrorOccured )
+          m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadShort2(m_ptr, count, rc);
+          if( m_read_error_occured )
             throw new BinaryArchiveException("ReadShortArray failed");
         }
       }
@@ -2903,8 +2966,8 @@ namespace Rhino.FileIO
         rc = new int[count];
         if (count > 0)
         {
-          m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt2(m_ptr, count, rc);
-          if( m_bReadErrorOccured )
+          m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt2(m_ptr, count, rc);
+          if( m_read_error_occured )
             throw new BinaryArchiveException("ReadIntArray failed");
         }
       }
@@ -2925,8 +2988,8 @@ namespace Rhino.FileIO
         rc = new float[count];
         if (count > 0)
         {
-          m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, count, rc);
-          if( m_bReadErrorOccured )
+          m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, count, rc);
+          if( m_read_error_occured )
             throw new BinaryArchiveException("ReadSingleArray failed");
         }
       }
@@ -2947,8 +3010,8 @@ namespace Rhino.FileIO
         rc = new double[count];
         if (count > 0)
         {
-          m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, count, rc);
-          if( m_bReadErrorOccured )
+          m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, count, rc);
+          if( m_read_error_occured )
             throw new BinaryArchiveException("ReadDoubleArray failed");
         }
       }
@@ -2985,16 +3048,16 @@ namespace Rhino.FileIO
       if (count >= 0)
       {
         rc = new string[count];
-        Rhino.Runtime.StringHolder str = new Rhino.Runtime.StringHolder();
+        var str = new StringHolder();
         for (int i = 0; i < count; i++)
         {
-          m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadString(m_ptr, str.NonConstPointer());
-          if (m_bReadErrorOccured)
+          m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadString(m_ptr, str.NonConstPointer());
+          if (m_read_error_occured)
             break;
           rc[i] = str.ToString();
         }
         str.Dispose();
-        if (m_bReadErrorOccured)
+        if (m_read_error_occured)
           throw new BinaryArchiveException("ReadStringArray failed");
       }
       return rc;
@@ -3007,8 +3070,8 @@ namespace Rhino.FileIO
     public System.Drawing.Color ReadColor()
     {
       int argb = 0;
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadColor(m_ptr, ref argb);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadColor(m_ptr, ref argb);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadColor failed");
       return System.Drawing.Color.FromArgb(argb);
     }
@@ -3020,8 +3083,8 @@ namespace Rhino.FileIO
     public System.Drawing.Point ReadPoint()
     {
       int[] xy = new int[2];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt2(m_ptr, 2, xy);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt2(m_ptr, 2, xy);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadPoint failed");
       return new System.Drawing.Point(xy[0], xy[1]);
     }
@@ -3033,8 +3096,8 @@ namespace Rhino.FileIO
     public System.Drawing.PointF ReadPointF()
     {
       float[] xy = new float[2];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, 2, xy);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, 2, xy);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadPointF failed");
       return new System.Drawing.PointF(xy[0], xy[1]);
     }
@@ -3046,8 +3109,8 @@ namespace Rhino.FileIO
     public System.Drawing.Rectangle ReadRectangle()
     {
       int[] xywh = new int[4];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt2(m_ptr, 4, xywh);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt2(m_ptr, 4, xywh);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadRectangle failed");
       return new System.Drawing.Rectangle(xywh[0], xywh[1], xywh[2], xywh[3]);
     }
@@ -3059,8 +3122,8 @@ namespace Rhino.FileIO
     public System.Drawing.RectangleF ReadRectangleF()
     {
       float[] f = new float[4];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, 4, f);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, 4, f);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadRectangleF failed");
       return new System.Drawing.RectangleF(f[0], f[1], f[2], f[3]);
     }
@@ -3072,8 +3135,8 @@ namespace Rhino.FileIO
     public System.Drawing.Size ReadSize()
     {
       int[] xy = new int[2];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt2(m_ptr, 2, xy);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt2(m_ptr, 2, xy);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadSize failed");
       return new System.Drawing.Size(xy[0], xy[1]);
     }
@@ -3085,8 +3148,8 @@ namespace Rhino.FileIO
     public System.Drawing.SizeF ReadSizeF()
     {
       float[] xy = new float[2];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, 2, xy);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, 2, xy);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadSizeF failed");
       return new System.Drawing.SizeF(xy[0], xy[1]);
     }
@@ -3101,134 +3164,166 @@ namespace Rhino.FileIO
       System.Drawing.Font rc;
 
       string family_name = ReadString();
-      float emSize = ReadSingle();
+      float em_size = ReadSingle();
       uint font_style = ReadUInt();
       uint graphics_unit= ReadUInt();
-      byte gdiCharSet = ReadByte();
-      bool gdiVerticalFont = ReadBool();
+      byte gdi_char_set = ReadByte();
+      bool gdi_vertical_font = ReadBool();
 
       try
       {
-        if (emSize <= 0.0)
-          emSize = 1.0f;
-        System.Drawing.FontStyle _font_style = (System.Drawing.FontStyle)font_style;
-        System.Drawing.GraphicsUnit _graphics_unit = (System.Drawing.GraphicsUnit)graphics_unit;
-        rc = new System.Drawing.Font(family_name, emSize, _font_style, _graphics_unit, gdiCharSet, gdiVerticalFont);
+        if (em_size <= 0.0)
+          em_size = 1.0f;
+        System.Drawing.FontStyle e_font_style = (System.Drawing.FontStyle)font_style;
+        System.Drawing.GraphicsUnit e_graphics_unit = (System.Drawing.GraphicsUnit)graphics_unit;
+        rc = new System.Drawing.Font(family_name, em_size, e_font_style, e_graphics_unit, gdi_char_set, gdi_vertical_font);
       }
-      catch (System.Exception)
+      catch (Exception)
       {
         rc = null; 
       }
       return rc;
     }
+
+    /// <summary>
+    /// Reads a <see cref="Rhino.DocObjects.ObjRef"/> from the archive
+    /// </summary>
+    /// <returns>the element that was read</returns>
+    public DocObjects.ObjRef ReadObjRef()
+    {
+      DocObjects.ObjRef rc = new DocObjects.ObjRef();
+      IntPtr ptr_objref = rc.NonConstPointer();
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadObjRef(m_ptr, ptr_objref);
+      if (m_read_error_occured)
+        throw new BinaryArchiveException("ReadObjRef failed");
+      return rc;
+    }
+
+    /// <summary>
+    /// Reads an array of <see cref="double"/> from the archive.
+    /// <para>An array is returned even if the input was another enumerable type.</para>
+    /// </summary>
+    /// <returns>The array that was read.</returns>
+    public DocObjects.ObjRef[] ReadObjRefArray()
+    {
+      using(var objrefs = new Runtime.InteropWrappers.ClassArrayOnObjRef())
+      {
+        IntPtr ptr_objrefs = objrefs.NonConstPointer();
+        m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadObjRefArray(m_ptr, ptr_objrefs);
+        if (m_read_error_occured)
+          throw new BinaryArchiveException("ReadObjRefArray failed");
+        return objrefs.ToNonConstArray();
+      }
+    }
+
 #endif
 
     /// <summary>
     /// Reads a <see cref="Rhino.Geometry.Interval"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public Rhino.Geometry.Interval ReadInterval()
+    public Geometry.Interval ReadInterval()
     {
       double[] d = new double[2];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, 2, d);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, 2, d);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadInterval failed");
-      return new Rhino.Geometry.Interval(d[0], d[1]);
+      return new Geometry.Interval(d[0], d[1]);
     }
 
     /// <summary>
     /// Reads a <see cref="Rhino.Geometry.Point2d"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public Rhino.Geometry.Point2d ReadPoint2d()
+    public Geometry.Point2d ReadPoint2d()
     {
       double[] d = new double[2];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, 2, d);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, 2, d);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadPoint2d failed");
-      return new Rhino.Geometry.Point2d(d[0], d[1]);
+      return new Geometry.Point2d(d[0], d[1]);
     }
 
     /// <summary>
     /// Reads a <see cref="Rhino.Geometry.Point3d"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public  Rhino.Geometry.Point3d ReadPoint3d()
+    public Geometry.Point3d ReadPoint3d()
     {
       double[] d = new double[3];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, 3, d);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, 3, d);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadPoint3d failed");
-      return new Rhino.Geometry.Point3d(d[0], d[1], d[2]);
+      return new Geometry.Point3d(d[0], d[1], d[2]);
     }
 
     /// <summary>
     /// Reads a <see cref="Rhino.Geometry.Point4d"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public Rhino.Geometry.Point4d ReadPoint4d()
+    public Geometry.Point4d ReadPoint4d()
     {
       double[] d = new double[4];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, 4, d);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, 4, d);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadPoint4d failed");
-      return new Rhino.Geometry.Point4d(d[0], d[1], d[2], d[3]);
+      return new Geometry.Point4d(d[0], d[1], d[2], d[3]);
     }
 
     /// <summary>
     /// Reads a <see cref="Rhino.Geometry.Vector2d"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public Rhino.Geometry.Vector2d ReadVector2d()
+    public Geometry.Vector2d ReadVector2d()
     {
       double[] d = new double[2];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, 2, d);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, 2, d);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadVector2d failed");
-      return new Rhino.Geometry.Vector2d(d[0], d[1]);
+      return new Geometry.Vector2d(d[0], d[1]);
     }
 
     /// <summary>
     /// Reads a <see cref="Rhino.Geometry.Vector3d"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public Rhino.Geometry.Vector3d ReadVector3d()
+    public Geometry.Vector3d ReadVector3d()
     {
       double[] d = new double[3];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, 3, d);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, 3, d);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadVector3d failed");
-      return new Rhino.Geometry.Vector3d(d[0], d[1], d[2]);
+      return new Geometry.Vector3d(d[0], d[1], d[2]);
     }
 
     /// <summary>
     /// Reads a <see cref="Rhino.Geometry.BoundingBox"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public Rhino.Geometry.BoundingBox ReadBoundingBox()
+    public Geometry.BoundingBox ReadBoundingBox()
     {
-      Rhino.Geometry.Point3d p0 = ReadPoint3d();
-      Rhino.Geometry.Point3d p1 = ReadPoint3d();
-      return new Rhino.Geometry.BoundingBox(p0, p1);
+      Geometry.Point3d p0 = ReadPoint3d();
+      Geometry.Point3d p1 = ReadPoint3d();
+      return new Geometry.BoundingBox(p0, p1);
     }
 
     /// <summary>
     /// Reads a <see cref="Rhino.Geometry.Ray3d"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public Rhino.Geometry.Ray3d ReadRay3d()
+    public Geometry.Ray3d ReadRay3d()
     {
-      Rhino.Geometry.Point3d p = ReadPoint3d();
-      Rhino.Geometry.Vector3d v = ReadVector3d();
-      return new Rhino.Geometry.Ray3d(p, v);
+      Geometry.Point3d p = ReadPoint3d();
+      Geometry.Vector3d v = ReadVector3d();
+      return new Geometry.Ray3d(p, v);
     }
 
 
     internal double[] ReadPlaneEquation()
     {
       double[] d = new double[4];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, 4, d);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadDouble2(m_ptr, 4, d);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadPlaneEquation failed");
       return d;
     }
@@ -3237,11 +3332,11 @@ namespace Rhino.FileIO
     /// Reads a <see cref="Rhino.Geometry.Transform"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public Rhino.Geometry.Transform ReadTransform()
+    public Geometry.Transform ReadTransform()
     {
-      Rhino.Geometry.Transform rc = new Rhino.Geometry.Transform();
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadTransform(m_ptr, ref rc);
-      if( m_bReadErrorOccured )
+      Geometry.Transform rc = new Geometry.Transform();
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadTransform(m_ptr, ref rc);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadTransform failed");
       return rc;
     }
@@ -3250,11 +3345,11 @@ namespace Rhino.FileIO
     /// Reads a <see cref="Rhino.Geometry.Plane"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public Rhino.Geometry.Plane ReadPlane()
+    public Geometry.Plane ReadPlane()
     {
       Rhino.Geometry.Plane rc = new Rhino.Geometry.Plane();
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadPlane(m_ptr, ref rc);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadPlane(m_ptr, ref rc);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadPlane failed");
       return rc;
     }
@@ -3263,52 +3358,52 @@ namespace Rhino.FileIO
     /// Reads a <see cref="Rhino.Geometry.Line"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public Rhino.Geometry.Line ReadLine()
+    public Geometry.Line ReadLine()
     {
-      Rhino.Geometry.Point3d p0 = ReadPoint3d();
-      Rhino.Geometry.Point3d p1 = ReadPoint3d();
-      return new Rhino.Geometry.Line(p0, p1);
+      Geometry.Point3d p0 = ReadPoint3d();
+      Geometry.Point3d p1 = ReadPoint3d();
+      return new Geometry.Line(p0, p1);
     }
 
     /// <summary>
     /// Reads a <see cref="Rhino.Geometry.Point3f"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public Rhino.Geometry.Point3f ReadPoint3f()
+    public Geometry.Point3f ReadPoint3f()
     {
       float[] f = new float[3];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, 3, f);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, 3, f);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadPoint3f failed");
-      return new Rhino.Geometry.Point3f(f[0], f[1], f[2]);
+      return new Geometry.Point3f(f[0], f[1], f[2]);
     }
 
     /// <summary>
     /// Reads a <see cref="Rhino.Geometry.Vector3f"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public Rhino.Geometry.Vector3f ReadVector3f()
+    public Geometry.Vector3f ReadVector3f()
     {
       float[] f = new float[3];
-      m_bReadErrorOccured = m_bReadErrorOccured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, 3, f);
-      if( m_bReadErrorOccured )
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, 3, f);
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadVector3f failed");
-      return new Rhino.Geometry.Vector3f(f[0], f[1], f[2]);
+      return new Geometry.Vector3f(f[0], f[1], f[2]);
     }
 
     /// <summary>
     /// Reads a <see cref="Rhino.Geometry.MeshingParameters"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public Rhino.Geometry.MeshingParameters ReadMeshingParameters()
+    public Geometry.MeshingParameters ReadMeshingParameters()
     {
-      IntPtr pMeshParameters = IntPtr.Zero;
-      if( !m_bReadErrorOccured )
-        pMeshParameters = UnsafeNativeMethods.ON_BinaryArchive_ReadMeshParameters(m_ptr);
-      m_bReadErrorOccured = m_bReadErrorOccured || IntPtr.Zero == pMeshParameters;
-      if (m_bReadErrorOccured)
+      IntPtr ptr_meshparameters = IntPtr.Zero;
+      if( !m_read_error_occured )
+        ptr_meshparameters = UnsafeNativeMethods.ON_BinaryArchive_ReadMeshParameters(m_ptr);
+      m_read_error_occured = m_read_error_occured || IntPtr.Zero == ptr_meshparameters;
+      if (m_read_error_occured)
         throw new BinaryArchiveException("ReadMeshParameters failed");
-      return new Rhino.Geometry.MeshingParameters(pMeshParameters);
+      return new Geometry.MeshingParameters(ptr_meshparameters);
     }
 
     /// <summary>
@@ -3316,19 +3411,19 @@ namespace Rhino.FileIO
     /// <para>The <see cref="Rhino.Geometry.GeometryBase"/> class is abstract.</para>
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public Rhino.Geometry.GeometryBase ReadGeometry()
+    public Geometry.GeometryBase ReadGeometry()
     {
-      IntPtr pGeometry = IntPtr.Zero;
-      if (!m_bReadErrorOccured)
+      IntPtr ptr_geometry = IntPtr.Zero;
+      if (!m_read_error_occured)
       {
         int read_rc = 0;
-        pGeometry = UnsafeNativeMethods.ON_BinaryArchive_ReadGeometry(m_ptr, ref read_rc);
+        ptr_geometry = UnsafeNativeMethods.ON_BinaryArchive_ReadGeometry(m_ptr, ref read_rc);
         if (read_rc == 0)
-          m_bReadErrorOccured = true;
+          m_read_error_occured = true;
       }
-      if( m_bReadErrorOccured )
+      if( m_read_error_occured )
         throw new BinaryArchiveException("ReadGeometry failed");
-      return Rhino.Geometry.GeometryBase.CreateGeometryHelper(pGeometry, null);
+      return Geometry.GeometryBase.CreateGeometryHelper(ptr_geometry, null);
     }
 
     /// <summary>
@@ -3344,12 +3439,12 @@ namespace Rhino.FileIO
     /// <returns>true on success</returns>
     public bool Read3dmStartSection(out int version, out string comment)
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
-        IntPtr pThis = NonConstPointer();
-        IntPtr pString = sh.NonConstPointer();
+        IntPtr ptr_this = NonConstPointer();
+        IntPtr ptr_string = sh.NonConstPointer();
         version = 0;
-        bool rc = UnsafeNativeMethods.ON_BinaryArchive_Read3dmStartSection(pThis, ref version, pString);
+        bool rc = UnsafeNativeMethods.ON_BinaryArchive_Read3dmStartSection(ptr_this, ref version, ptr_string);
         comment = sh.ToString();
         return rc;
       }
@@ -3369,9 +3464,9 @@ namespace Rhino.FileIO
     [CLSCompliant(false)]
     public uint Dump3dmChunk(TextLog log)
     {
-      IntPtr pThis = NonConstPointer();
-      IntPtr pTextLog = log.NonConstPointer();
-      return UnsafeNativeMethods.ON_BinaryArchive_Dump3dmChunk(pThis, pTextLog);
+      IntPtr ptr_this = NonConstPointer();
+      IntPtr ptr_textlog = log.NonConstPointer();
+      return UnsafeNativeMethods.ON_BinaryArchive_Dump3dmChunk(ptr_this, ptr_textlog);
     }
 
     /// <summary>
@@ -3380,8 +3475,8 @@ namespace Rhino.FileIO
     /// <returns></returns>
     public bool AtEnd()
     {
-      IntPtr pConstThis = NonConstPointer();
-      return UnsafeNativeMethods.ON_BinaryArchive_AtEnd(pConstThis);
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.ON_BinaryArchive_AtEnd(ptr_this);
     }
 
 
@@ -3390,7 +3485,7 @@ namespace Rhino.FileIO
     {
       dictionaryId = Guid.Empty;
       version = 0;
-      using(Runtime.StringHolder str = new Rhino.Runtime.StringHolder())
+      using(var str = new StringHolder())
       {
         bool rc = UnsafeNativeMethods.ON_BinaryArchive_BeginReadDictionary(m_ptr, ref dictionaryId, ref version,
                                                                            str.NonConstPointer());
@@ -3413,7 +3508,7 @@ namespace Rhino.FileIO
     internal int BeginReadDictionaryEntry(out int entryType, out string entryName)
     {
       entryType = 0;
-      using (Runtime.StringHolder str = new Rhino.Runtime.StringHolder())
+      using (var str = new StringHolder())
       {
         int rc = UnsafeNativeMethods.ON_BinaryArchive_BeginReadDictionaryEntry(m_ptr, ref entryType, str.NonConstPointer());
         entryName = str.ToString();
@@ -3441,9 +3536,9 @@ namespace Rhino.FileIO
 
   public class BinaryArchiveFile : IDisposable
   {
-    string m_filename;
-    BinaryArchiveMode m_mode;
-    IntPtr m_pBinaryFile = IntPtr.Zero;
+    readonly string m_filename;
+    readonly BinaryArchiveMode m_mode;
+    IntPtr m_ptr_binaryfile = IntPtr.Zero;
 
     BinaryArchiveReader m_reader;
     BinaryArchiveWriter m_writer;
@@ -3456,15 +3551,15 @@ namespace Rhino.FileIO
 
     public bool Open()
     {
-      if( m_pBinaryFile == IntPtr.Zero )
-        m_pBinaryFile = UnsafeNativeMethods.ON_BinaryFile_Open(m_filename, (int)m_mode);
-      return m_pBinaryFile != IntPtr.Zero;
+      if( m_ptr_binaryfile == IntPtr.Zero )
+        m_ptr_binaryfile = UnsafeNativeMethods.ON_BinaryFile_Open(m_filename, (int)m_mode);
+      return m_ptr_binaryfile != IntPtr.Zero;
     }
 
     public void Close()
     {
-      UnsafeNativeMethods.ON_BinaryFile_Close(m_pBinaryFile);
-      m_pBinaryFile = IntPtr.Zero;
+      UnsafeNativeMethods.ON_BinaryFile_Close(m_ptr_binaryfile);
+      m_ptr_binaryfile = IntPtr.Zero;
       if (m_reader != null)
         m_reader.ClearPointer();
       m_reader = null;
@@ -3475,9 +3570,9 @@ namespace Rhino.FileIO
 
     IntPtr NonConstPointer()
     {
-      if (m_pBinaryFile == IntPtr.Zero)
+      if (m_ptr_binaryfile == IntPtr.Zero)
         throw new BinaryArchiveException("File has not been opened");
-      return m_pBinaryFile;
+      return m_ptr_binaryfile;
     }
 
     public BinaryArchiveReader Reader
@@ -3486,10 +3581,10 @@ namespace Rhino.FileIO
       {
         if (m_reader == null)
         {
-          IntPtr pFile = NonConstPointer();
+          IntPtr ptr_this = NonConstPointer();
           if (m_mode != BinaryArchiveMode.Read && m_mode != BinaryArchiveMode.Read3dm && m_mode != BinaryArchiveMode.ReadWrite)
             throw new BinaryArchiveException("File not created with a read mode");
-          m_reader = new BinaryArchiveReader(pFile);
+          m_reader = new BinaryArchiveReader(ptr_this);
         }
         return m_reader;
       }
@@ -3501,10 +3596,10 @@ namespace Rhino.FileIO
       {
         if (m_writer == null)
         {
-          IntPtr pFile = NonConstPointer();
+          IntPtr ptr_this = NonConstPointer();
           if (m_mode != BinaryArchiveMode.Write && m_mode != BinaryArchiveMode.Write3dm && m_mode != BinaryArchiveMode.ReadWrite)
             throw new BinaryArchiveException("File not created with a write mode");
-          m_writer = new BinaryArchiveWriter(pFile);
+          m_writer = new BinaryArchiveWriter(ptr_this);
         }
         return m_writer;
       }

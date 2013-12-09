@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Rhino.Display;
 using Rhino.Geometry;
+using Rhino.Runtime.InteropWrappers;
 
 
 #if RDK_CHECKED
@@ -1736,7 +1737,7 @@ namespace Rhino.Render.Fields
       if (field_pointer == IntPtr.Zero)
         return (null != m_initial_value ? m_initial_value.ToString() : string.Empty);
       // Call the C++ RDK and get the Variant value as a string
-      using (Runtime.StringHolder string_holder = new Runtime.StringHolder())
+      using (var string_holder = new StringHolder())
       {
         IntPtr string_pointer = string_holder.NonConstPointer();
         UnsafeNativeMethods.Rdk_ContentField_StringValue(FieldPointer, string_pointer);
@@ -2031,7 +2032,7 @@ namespace Rhino.Render.Fields
       if (IntPtr.Zero == fieldPointer) throw new ArgumentNullException("fieldPointer");
       // Get the field user interface prompt string
       string prompt;
-      using (Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr string_pointer = sh.NonConstPointer();
         UnsafeNativeMethods.Rdk_ContentField_FriendlyName(fieldPointer, string_pointer);

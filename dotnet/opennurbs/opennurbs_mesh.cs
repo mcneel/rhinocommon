@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Rhino.Collections;
 using System.Runtime.Serialization;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.Render
 {
@@ -559,7 +560,7 @@ namespace Rhino.Geometry
     /// <param name="yCount">Number of faces in y-direction.</param>
     /// <param name="zCount">Number of faces in z-direction.</param>
     /// <returns>A new brep, or null on failure.</returns>
-        /// <returns>A new box mesh, on null on error.</returns>
+    /// <returns>A new box mesh, on null on error.</returns>
     public static Mesh CreateFromBox(IEnumerable<Point3d> corners, int xCount, int yCount, int zCount)
     {
       Point3d[] box_corners = new Point3d[8];
@@ -1819,7 +1820,7 @@ namespace Rhino.Geometry
     /// In ancient times (or modern smartphone times), some rendering engines
     /// were only able to process small batches of triangles and the
     /// CreatePartitions() function was provided to partition the mesh into
-    /// subsets of vertices and faces that those renering engines could handle.
+    /// subsets of vertices and faces that those rendering engines could handle.
     /// </summary>
     /// <param name="maximumVertexCount"></param>
     /// <param name="maximumTriangleCount"></param>
@@ -1844,8 +1845,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Retrieves a partition. See <see cref="CreatePartitions"/> for details.
     /// </summary>
-    /// <param name="which"></param>
+    /// <param name="which">The partition index.</param>
     /// <returns></returns>
     public MeshPart GetPartition(int which)
     {

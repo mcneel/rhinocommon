@@ -8,6 +8,7 @@ using Rhino.Display;
 using Rhino.Collections;
 using System.Collections.Generic;
 using Rhino.Render;
+using Rhino.Runtime.InteropWrappers;
 
 #if RHINO_SDK
 namespace Rhino.Commands
@@ -123,7 +124,7 @@ namespace Rhino
     /// </returns>
     public string FindFile(string filename)
     {
-      using (var sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr ptr_string = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoFileUtilities_FindFile(filename, ptr_string);
@@ -184,7 +185,7 @@ namespace Rhino
 #region docproperties
     string GetString(int which)
     {
-      using (var sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr ptr_string = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoDoc_GetSetString(m_docId, which, false, null, ptr_string);
@@ -408,7 +409,7 @@ namespace Rhino
 
     public string GetUnitSystemName(bool modelUnits, bool capitalize, bool singular, bool abbreviate)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoDocProperties_GetUnitSystemName(m_docId, modelUnits, capitalize, singular, abbreviate, pString);
@@ -2384,6 +2385,140 @@ namespace Rhino
 
     #endregion RenderTexturesTable events
 #endif
+    public enum TextureMappingEventType : int
+    {
+      /// <summary>
+      /// Adding texture mapping to a document
+      /// </summary>
+      Added = UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Added,
+      /// <summary>
+      /// A texture mapping was deleted from a document
+      /// </summary>
+      Deleted = UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Deleted,
+      /// <summary>
+      /// A texture mapping was undeleted in a document
+      /// </summary>
+      Undeleted = UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Undeleted,
+      /// <summary>
+      /// A texture mapping was modified in a document
+      /// </summary>
+      Modified = UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Modified,
+      //Sorted = UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Sorted,
+      //Current = UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Current,
+    }
+    /// <summary>
+    /// Event arguments passed to the RhinoDoc.TextureMappingEvent.
+    /// </summary>
+    public class TextureMappingEventArgs : EventArgs
+    {
+      readonly int m_doc_id;
+      readonly TextureMappingEventType m_event_type = TextureMappingEventType.Modified;
+      readonly IntPtr m_const_pointer_new_mapping;
+      readonly IntPtr m_const_pointer_old_mapping;
+
+      internal TextureMappingEventArgs(int docId, UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts eventType, IntPtr constPointerConstNewMapping, IntPtr pConstOldMapping)
+      {
+        m_doc_id = docId;
+        switch (eventType)
+        {
+          case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Added:
+          case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Deleted:
+          case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Modified:
+          case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Undeleted:
+            m_event_type = (TextureMappingEventType)eventType;
+            break;
+          case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Current:
+          case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Sorted:
+            break;
+        }
+        m_const_pointer_new_mapping = constPointerConstNewMapping;
+        m_const_pointer_old_mapping = m_const_pointer_new_mapping;
+      }
+
+      RhinoDoc m_doc;
+      public RhinoDoc Document
+      {
+        get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_doc_id)); }
+      }
+
+      public TextureMappingEventType EventType
+      {
+        get { return m_event_type; }
+      }
+
+      public TextureMapping OldMapping
+      {
+        get { return (m_old_mapping ?? (m_old_mapping = new TextureMapping(m_const_pointer_old_mapping))); }
+      }
+      private TextureMapping m_old_mapping;
+
+      public TextureMapping NewMapping
+      {
+        get { return (m_new_mapping ?? (m_new_mapping = new TextureMapping(m_const_pointer_new_mapping))); }
+      }
+      TextureMapping m_new_mapping;
+    }
+    /// <summary>
+    /// Called when any modification happens to a document objects texture mapping.
+    /// </summary>
+    public static event EventHandler<TextureMappingEventArgs> TextureMappingEvent
+    {
+      add
+      {
+        lock (m_event_lock)
+        {
+          if (g_texture_mapping_event == null)
+          {
+            m_OnTextureMappingEventCallback = OnTextureMappingEvent;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetTextureMappingEventCallback(m_OnTextureMappingEventCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          g_texture_mapping_event -= value;
+          g_texture_mapping_event += value;
+        }
+      }
+      remove
+      {
+        lock (m_event_lock)
+        {
+          g_texture_mapping_event -= value;
+          if (g_texture_mapping_event == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetTextureMappingEventCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            g_texture_mapping_event = null;
+          }
+        }
+      }
+    }
+    internal delegate void TextureMappingEventCallback(int docId, UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts eventType, IntPtr pConstNewSettings, IntPtr pConstOldSettings);
+    private static TextureMappingEventCallback m_OnTextureMappingEventCallback;
+    private static void OnTextureMappingEvent(int docId, UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts eventType, IntPtr pConstNewSettings, IntPtr pConstOldSettings)
+    {
+      if (g_texture_mapping_event != null)
+      {
+        try
+        {
+          switch (eventType)
+          {
+            case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Added:
+            case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Deleted:
+            case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Modified:
+            case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Undeleted:
+              break;
+            case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Current:
+            case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Sorted:
+              return; // Ignore these for now
+          }
+          var args = new TextureMappingEventArgs(docId, eventType, pConstNewSettings, pConstOldSettings);
+          g_texture_mapping_event(null, args);
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
+    private static EventHandler<TextureMappingEventArgs> g_texture_mapping_event;
+
 
     #region rdk events
 #if RDK_UNCHECKED
@@ -6227,7 +6362,7 @@ namespace Rhino.DocObjects.Tables
 
     public string GetKey(int i)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoDoc_GetDocTextString(m_doc.m_docId, i, true, pString);
@@ -6237,7 +6372,7 @@ namespace Rhino.DocObjects.Tables
 
     public string GetValue(int i)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoDoc_GetDocTextString(m_doc.m_docId, i, false, pString);
@@ -6246,7 +6381,7 @@ namespace Rhino.DocObjects.Tables
     }
     public string GetValue(string key)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoDoc_GetDocTextString2(m_doc.m_docId, key, pString);

@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Rhino.Render.Fields;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.Render.UI
 {
@@ -933,7 +934,7 @@ namespace Rhino.Render
     internal string GetString(StringIds which)
     {
       IntPtr pConstThis = ConstPointer();
-      using (Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.Rdk_RenderContent_GetString(pConstThis, pString, (int)which);
@@ -1606,7 +1607,7 @@ namespace Rhino.Render
     /// </returns>
     public string ChildSlotNameFromParamName(String paramName)
     {
-      using (Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         IntPtr pConstThis = ConstPointer();
@@ -1624,7 +1625,7 @@ namespace Rhino.Render
     /// <returns>The default behaviour for these functions is to return the input string.  Sub-classes may (in the future) override these functions to provide different mappings.</returns>
     public string ParamNameFromChildSlotName(String childSlotName)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         IntPtr pConstThis = ConstPointer();

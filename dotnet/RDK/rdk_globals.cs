@@ -1,5 +1,6 @@
 #pragma warning disable 1591
 using System;
+using Rhino.Runtime.InteropWrappers;
 
 #if RDK_CHECKED
 namespace Rhino.Render
@@ -140,7 +141,7 @@ namespace Rhino.Render
     /// <returns>The new file name.</returns>
     public static string PromptForSaveImageFileParameters(string filename, ref int width, ref int height, ref int colorDepth)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         bool bRet = 1==UnsafeNativeMethods.Rdk_Globals_PromptForSaveImageFileParams(filename, ref width, ref height, ref colorDepth, pString);
@@ -208,7 +209,7 @@ namespace Rhino.Render
     /// <returns>The found file.</returns>
     public static string FindFile(string fullPathToFile)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         bool found = (1 == UnsafeNativeMethods.Rdk_Globals_FindFile(fullPathToFile, pString));

@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 using System;
 using Rhino.Geometry;
+using Rhino.Runtime.InteropWrappers;
 
 
 namespace Rhino.Display
@@ -217,7 +218,7 @@ namespace Rhino.Display
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pThis = NonConstPointer();
           IntPtr pString = sh.NonConstPointer();
@@ -1486,7 +1487,7 @@ namespace Rhino.Display
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           IntPtr pConstThis = ConstPointer();

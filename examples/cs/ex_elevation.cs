@@ -76,7 +76,7 @@ namespace examples_cs
       try {
         maxZ = (from pt in Intersection.ProjectPointsToBreps(breps, points, new Vector3d(0, 0, 1), tolerance) select pt.Z)
           .Aggregate((z1, z2) => Math.Abs(z1) > Math.Abs(z2) ? z1 : z2);
-      } catch (InvalidOperationException ioe) {/*Sequence contains no elements*/}
+      } catch (InvalidOperationException) {/*Sequence contains no elements*/}
       return maxZ;
     }
 

@@ -3,54 +3,53 @@
 ===== C# =====
 <code c#>
 [System.Runtime.InteropServices.Guid("7C98E0BC-C177-46E1-A9AE-092C63911450")]
-public class ex_printinstancedefinitiontree : Rhino.Commands.Command
+public class InstanceDefinitionTreeCommand : Command
 {
   public override string EnglishName { get { return "csInstanceDefinitionTree"; } }
 
-  protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+  protected override Result RunCommand(RhinoDoc doc, RunMode mode)
   {
-    var idefs = doc.InstanceDefinitions;
-    var idefCount = idefs.Count;
+    var instanceDefinitions = doc.InstanceDefinitions;
+    var instanceDefinitionCount = instanceDefinitions.Count;
 
-    if (idefCount == 0)
+    if (instanceDefinitionCount == 0)
     {
       RhinoApp.WriteLine("Document contains no instance definitions.");
-      return Rhino.Commands.Result.Nothing;
+      return Result.Nothing;
     }
 
     var dump = new TextLog();
     dump.IndentSize = 4;
 
-    for (int i = 0; i < idefCount; i++)
-      DumpInstanceDefinition(idefs[i], ref dump, true);
+    for (int i = 0; i < instanceDefinitionCount; i++)
+      DumpInstanceDefinition(instanceDefinitions[i], ref dump, true);
 
     RhinoApp.WriteLine(dump.ToString());
 
-    return Rhino.Commands.Result.Success;
+    return Result.Success;
   }
 
-  private void DumpInstanceDefinition(InstanceDefinition idef, ref TextLog dump, bool bRoot)
+  private void DumpInstanceDefinition(InstanceDefinition instanceDefinition, ref TextLog dump, bool isRoot)
   {
-    if (idef != null && !idef.IsDeleted)
+    if (instanceDefinition != null && !instanceDefinition.IsDeleted)
     {
       string node;
-      if (bRoot)
-        node = "\u2500";
+      if (isRoot)
+        node = "─"; //"\u2500"; 
       else
-        node = "\u2514";
-      dump.Print(String.Format("{0} Instance definition {1} = {2}\n", node, idef.Index, idef.Name));
+        node = "└"; //"\u2514"; 
+      dump.Print(string.Format("{0} Instance definition {1} = {2}\n", node, instanceDefinition.Index, instanceDefinition.Name));
 
-      int idefObjectCount = idef.ObjectCount;
-      if (idefObjectCount  > 0)
+      if (instanceDefinition.ObjectCount  > 0)
       {
         dump.PushIndent();
-        for (int i = 0; i < idefObjectCount ; i++)
+        for (int i = 0; i < instanceDefinition.ObjectCount ; i++)
         {
-          var obj = idef.Object(i);
+          var obj = instanceDefinition.Object(i);
           if (obj != null && obj is InstanceObject)
             DumpInstanceDefinition((obj as InstanceObject).InstanceDefinition, ref dump, false); // Recursive...
           else
-            dump.Print(String.Format("\u2514 Object {0} = {1}\n", i, obj.ShortDescription(false)));
+            dump.Print(string.Format("\u2514 Object {0} = {1}\n", i, obj.ShortDescription(false)));
         }
         dump.PopIndent();
       }
@@ -60,56 +59,57 @@ public class ex_printinstancedefinitiontree : Rhino.Commands.Command
 </code>
 ===== VB.NET =====
 <code vb>
-<System.Runtime.InteropServices.Guid("03528527-2752-4CE0-B7DA-7872AD3F0151")> _
-Public Class ex_printinstancedefinitiontree
-  Inherits Rhino.Commands.Command
+<System.Runtime.InteropServices.Guid("F37DB289-6B0E-472C-9F39-FA0A7ECF0AB8")> _
+Public Class InstanceDefinitionTreeCommand
+  Inherits Command
   Public Overrides ReadOnly Property EnglishName() As String
     Get
       Return "vbInstanceDefinitionTree"
     End Get
   End Property
 
-  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
-    Dim idefs = doc.InstanceDefinitions
-    Dim idefCount = idefs.Count
+  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
+    Dim instanceDefinitions = doc.InstanceDefinitions
+    Dim instanceDefinitionCount = instanceDefinitions.Count
 
-    If idefCount = 0 Then
+    If instanceDefinitionCount = 0 Then
       RhinoApp.WriteLine("Document contains no instance definitions.")
-      Return Rhino.Commands.Result.[Nothing]
+      Return Result.[Nothing]
     End If
 
     Dim dump = New TextLog()
     dump.IndentSize = 4
 
-    For i As Integer = 0 To idefCount - 1
-      DumpInstanceDefinition(idefs(i), dump, True)
+    For i As Integer = 0 To instanceDefinitionCount - 1
+      DumpInstanceDefinition(instanceDefinitions(i), dump, True)
     Next
 
     RhinoApp.WriteLine(dump.ToString())
 
-    Return Rhino.Commands.Result.Success
+    Return Result.Success
   End Function
 
-  Private Sub DumpInstanceDefinition(idef As InstanceDefinition, ByRef dump As TextLog, bRoot As Boolean)
-    If idef IsNot Nothing AndAlso Not idef.IsDeleted Then
+  Private Sub DumpInstanceDefinition(instanceDefinition As InstanceDefinition, ByRef dump As TextLog, isRoot As Boolean)
+    If instanceDefinition IsNot Nothing AndAlso Not instanceDefinition.IsDeleted Then
       Dim node As String
-      If bRoot Then
+      If isRoot Then
         node = "─"
       Else
+        ' "─"
         node = "└"
       End If
-      dump.Print([String].Format("{0} Instance definition {1} = {2}" & vbLf, node, idef.Index, idef.Name))
+      ' "└" 
+      dump.Print(String.Format("{0} Instance definition {1} = {2}" & vbLf, node, instanceDefinition.Index, instanceDefinition.Name))
 
-      Dim idefObjectCount As Integer = idef.ObjectCount
-      If idefObjectCount > 0 Then
+      If instanceDefinition.ObjectCount > 0 Then
         dump.PushIndent()
-        For i As Integer = 0 To idefObjectCount - 1
-          Dim obj = idef.[Object](i)
+        For i As Integer = 0 To instanceDefinition.ObjectCount - 1
+          Dim obj = instanceDefinition.[Object](i)
           If obj IsNot Nothing AndAlso TypeOf obj Is InstanceObject Then
             DumpInstanceDefinition(TryCast(obj, InstanceObject).InstanceDefinition, dump, False)
           Else
             ' Recursive...
-            dump.Print([String].Format("└ Object {0} = {1}" & vbLf, i, obj.ShortDescription(False)))
+            dump.Print(String.Format("└ Object {0} = {1}" & vbLf, i, obj.ShortDescription(False)))
           End If
         Next
         dump.PopIndent()
@@ -140,12 +140,12 @@ def RunCommand():
 
   print dump.ToString()
 
-def DumpInstanceDefinition(idef, dump, bRoot):
+def DumpInstanceDefinition(idef, dump, isRoot):
   if idef != None and not idef.IsDeleted:
-    if bRoot:
-      node = u'\u2500'
+    if isRoot:
+      node = '-'
     else:
-      node = u'\u2514'
+      node = '+'
     dump.Print(u"{0} Instance definition {1} = {2}\n".format(node, idef.Index, idef.Name))
 
     idefObjectCount = idef.ObjectCount

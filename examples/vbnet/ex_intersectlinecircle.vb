@@ -1,21 +1,22 @@
 ﻿Imports Rhino
+Imports Rhino.Commands
 Imports Rhino.Geometry
 Imports Rhino.Geometry.Intersect
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("DFE91F17-5F1C-401E-A9F1-79A336B959A4")> _
-  Public Class ex_intersectlinecurve
-    Inherits Rhino.Commands.Command
+  <System.Runtime.InteropServices.Guid("C12295A5-0EE4-4370-A754-4C8DFE8374E7")> _
+  Public Class IntersectLineCircleCommand
+    Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
       Get
-        Return "vbIntersectLineCurve"
+        Return "vbIntersectLineCircle"
       End Get
     End Property
 
-    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
+    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
       Dim circle As Circle
       Dim rc = Rhino.Input.RhinoGet.GetCircle(circle)
-      If rc <> Rhino.Commands.Result.Success Then
+      If rc <> Result.Success Then
         Return rc
       End If
       doc.Objects.AddCircle(circle)
@@ -23,7 +24,7 @@ Namespace examples_vb
 
       Dim line As Line
       rc = Rhino.Input.RhinoGet.GetLine(line)
-      If rc <> Rhino.Commands.Result.Success Then
+      If rc <> Result.Success Then
         Return rc
       End If
       doc.Objects.AddLine(line)
@@ -50,7 +51,7 @@ Namespace examples_vb
       End Select
       RhinoApp.WriteLine(msg)
       doc.Views.Redraw()
-      Return Rhino.Commands.Result.Success
+      Return Result.Success
     End Function
   End Class
 End Namespace

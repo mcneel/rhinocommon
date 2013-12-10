@@ -2,13 +2,13 @@ import rhinoscriptsyntax as rs
 from scriptcontext import doc
 
 def Delete():
-    bn = rs.GetString("block to delete")
-    idef = doc.InstanceDefinitions.Find(bn, True)
-    if not idef:
-        print "{0} block does not exist".format(bn)
+    blockName = rs.GetString("block to delete")
+    instanceDefinition = doc.InstanceDefinitions.Find(blockName, True)
+    if not instanceDefinition:
+        print "{0} block does not exist".format(blockName)
         return
         
-    rs.DeleteBlock(bn)
+    rs.DeleteBlock(blockName)
     
 if __name__ == "__main__":
     Delete()

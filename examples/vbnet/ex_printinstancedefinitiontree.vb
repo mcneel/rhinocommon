@@ -1,59 +1,60 @@
 ﻿Imports Rhino
 Imports Rhino.DocObjects
 Imports Rhino.FileIO
-Imports System.Linq
+Imports Rhino.Commands
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("03528527-2752-4CE0-B7DA-7872AD3F0151")> _
-  Public Class ex_printinstancedefinitiontree
-    Inherits Rhino.Commands.Command
+  <System.Runtime.InteropServices.Guid("6A110A45-0EF1-4AF2-8FF0-41AC79B99693")> _
+  Public Class InstanceDefinitionTreeCommand
+    Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
       Get
         Return "vbInstanceDefinitionTree"
       End Get
     End Property
 
-    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
-      Dim idefs = doc.InstanceDefinitions
-      Dim idefCount = idefs.Count
+    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
+      Dim instanceDefinitions = doc.InstanceDefinitions
+      Dim instanceDefinitionCount = instanceDefinitions.Count
 
-      If idefCount = 0 Then
+      If instanceDefinitionCount = 0 Then
         RhinoApp.WriteLine("Document contains no instance definitions.")
-        Return Rhino.Commands.Result.[Nothing]
+        Return Result.[Nothing]
       End If
 
       Dim dump = New TextLog()
       dump.IndentSize = 4
 
-      For i As Integer = 0 To idefCount - 1
-        DumpInstanceDefinition(idefs(i), dump, True)
+      For i As Integer = 0 To instanceDefinitionCount - 1
+        DumpInstanceDefinition(instanceDefinitions(i), dump, True)
       Next
 
       RhinoApp.WriteLine(dump.ToString())
 
-      Return Rhino.Commands.Result.Success
+      Return Result.Success
     End Function
 
-    Private Sub DumpInstanceDefinition(idef As InstanceDefinition, ByRef dump As TextLog, bRoot As Boolean)
-      If idef IsNot Nothing AndAlso Not idef.IsDeleted Then
+    Private Sub DumpInstanceDefinition(instanceDefinition As InstanceDefinition, ByRef dump As TextLog, isRoot As Boolean)
+      If instanceDefinition IsNot Nothing AndAlso Not instanceDefinition.IsDeleted Then
         Dim node As String
-        If bRoot Then
+        If isRoot Then
           node = "─"
         Else
+          '"\u2500"; 
           node = "└"
         End If
-        dump.Print([String].Format("{0} Instance definition {1} = {2}" & vbLf, node, idef.Index, idef.Name))
+        '"\u2514"; 
+        dump.Print(String.Format("{0} Instance definition {1} = {2}" & vbLf, node, instanceDefinition.Index, instanceDefinition.Name))
 
-        Dim idefObjectCount As Integer = idef.ObjectCount
-        If idefObjectCount > 0 Then
+        If instanceDefinition.ObjectCount > 0 Then
           dump.PushIndent()
-          For i As Integer = 0 To idefObjectCount - 1
-            Dim obj = idef.[Object](i)
+          For i As Integer = 0 To instanceDefinition.ObjectCount - 1
+            Dim obj = instanceDefinition.[Object](i)
             If obj IsNot Nothing AndAlso TypeOf obj Is InstanceObject Then
               DumpInstanceDefinition(TryCast(obj, InstanceObject).InstanceDefinition, dump, False)
             Else
               ' Recursive...
-              dump.Print([String].Format("└ Object {0} = {1}" & vbLf, i, obj.ShortDescription(False)))
+              dump.Print(String.Format("└ Object {0} = {1}" & vbLf, i, obj.ShortDescription(False)))
             End If
           Next
           dump.PopIndent()

@@ -1,9 +1,10 @@
 Imports Rhino
+Imports Rhino.Commands
 Imports Rhino.Geometry
 Imports System.Collections.Generic
 Imports Rhino.Input.Custom
 
-Namespace examples_cs
+Namespace examples_vb
   Class DrawArrowHeadsConduit
     Inherits Rhino.Display.DisplayConduit
     Private _line As Line
@@ -21,23 +22,23 @@ Namespace examples_cs
     End Sub
   End Class
 
-  <System.Runtime.InteropServices.Guid("A7236E94-85BD-4D63-9950-19C268E63661")> _
-  Public Class ex_conduitarrowheads
-    Inherits Rhino.Commands.Command
+  <System.Runtime.InteropServices.Guid("65FE68EE-B809-4F47-B88A-3B3A944FF44C")> _
+  Public Class DrawArrowheadsCommand
+    Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
       Get
         Return "vbDrawArrowHeads"
       End Get
     End Property
 
-    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
+    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
       ' get arrow head size
       Dim go = New Rhino.Input.Custom.GetOption()
       go.SetCommandPrompt("ArrowHead length in screen size (pixles) or world size (percentage of arrow lenght)?")
       go.AddOption("screen")
       go.AddOption("world")
       go.[Get]()
-      If go.CommandResult() <> Rhino.Commands.Result.Success Then
+      If go.CommandResult() <> Result.Success Then
         Return go.CommandResult()
       End If
 
@@ -48,7 +49,7 @@ Namespace examples_cs
         gi.SetLowerLimit(0, True)
         gi.SetCommandPrompt("Length of arrow head in pixels")
         gi.[Get]()
-        If gi.CommandResult() <> Rhino.Commands.Result.Success Then
+        If gi.CommandResult() <> Result.Success Then
           Return gi.CommandResult()
         End If
         screenSize = gi.Number()
@@ -58,7 +59,7 @@ Namespace examples_cs
         gi.SetUpperLimit(100, False)
         gi.SetCommandPrompt("Lenght of arrow head in percentage of total arrow lenght")
         gi.[Get]()
-        If gi.CommandResult() <> Rhino.Commands.Result.Success Then
+        If gi.CommandResult() <> Result.Success Then
           Return gi.CommandResult()
         End If
         worldSize = gi.Number() / 100.0
@@ -69,26 +70,26 @@ Namespace examples_cs
       Dim gp = New Rhino.Input.Custom.GetPoint()
       gp.SetCommandPrompt("Start of line")
       gp.[Get]()
-      If gp.CommandResult() <> Rhino.Commands.Result.Success Then
+      If gp.CommandResult() <> Result.Success Then
         Return gp.CommandResult()
       End If
-      Dim ptStart = gp.Point()
+      Dim startPoint = gp.Point()
 
       gp.SetCommandPrompt("End of line")
-      gp.SetBasePoint(ptStart, False)
-      gp.DrawLineFromPoint(ptStart, True)
+      gp.SetBasePoint(startPoint, False)
+      gp.DrawLineFromPoint(startPoint, True)
       gp.[Get]()
-      If gp.CommandResult() <> Rhino.Commands.Result.Success Then
+      If gp.CommandResult() <> Result.Success Then
         Return gp.CommandResult()
       End If
-      Dim ptEnd = gp.Point()
+      Dim endPoint = gp.Point()
 
-      Dim v = ptEnd - ptStart
+      Dim v = endPoint - startPoint
       If v.IsTiny(Rhino.RhinoMath.ZeroTolerance) Then
-        Return Rhino.Commands.Result.[Nothing]
+        Return Result.[Nothing]
       End If
 
-      Dim line = New Line(ptStart, ptEnd)
+      Dim line = New Line(startPoint, endPoint)
 
       Dim conduit = New DrawArrowHeadsConduit(line, screenSize, worldSize)
       ' toggle conduit on/off
@@ -96,7 +97,7 @@ Namespace examples_cs
       RhinoApp.WriteLine("draw arrowheads conduit enabled = {0}", conduit.Enabled)
 
       doc.Views.Redraw()
-      Return Rhino.Commands.Result.Success
+      Return Result.Success
     End Function
   End Class
 End Namespace

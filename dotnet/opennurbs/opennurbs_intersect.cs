@@ -237,6 +237,11 @@ namespace Rhino.Geometry.Intersect
     /// If <see cref="LineCircleIntersection.Single"/> is returned, only t1 and point1 will have valid values. 
     /// If <see cref="LineCircleIntersection.Multiple"/> is returned, t2 and point2 will also be filled out.
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_intersectlinecircle.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_intersectlinecircle.cs' lang='cs'/>
+    /// <code source='examples\py\ex_intersectlinecircle.py' lang='py'/>
+    /// </example>
     public static LineCircleIntersection LineCircle(Line line, Circle circle, out double t1, out Point3d point1, out double t2, out Point3d point2)
     {
       t1 = 0.0;

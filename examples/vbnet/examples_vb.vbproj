@@ -145,7 +145,7 @@
     <Compile Include="ex_insertknot.vb" />
     <Compile Include="ex_instancedefinitionobjects.vb" />
     <Compile Include="ex_intersectcurves.vb" />
-    <Compile Include="ex_intersectlinecurve.vb" />
+    <Compile Include="ex_intersectlinecircle.vb" />
     <Compile Include="ex_intersectlines.vb" />
     <Compile Include="ex_isbrepbox.vb" />
     <Compile Include="ex_isocurvedensity.vb" />

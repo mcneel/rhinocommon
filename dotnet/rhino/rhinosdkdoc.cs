@@ -668,6 +668,12 @@ namespace Rhino
     }
 
     private Rhino.DocObjects.Tables.InstanceDefinitionTable m_instance_definition_table;
+
+    /// <example>
+    /// <code source='examples\vbnet\ex_printinstancedefinitiontree.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_printinstancedefinitiontree.cs' lang='cs'/>
+    /// <code source='examples\py\ex_printinstancedefinitiontree.py' lang='py'/>
+    /// </example>
     public Rhino.DocObjects.Tables.InstanceDefinitionTable InstanceDefinitions
     {
       get

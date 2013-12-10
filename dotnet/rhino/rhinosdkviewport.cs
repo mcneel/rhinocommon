@@ -188,6 +188,11 @@ namespace Rhino.Display
     /// <summary>
     /// Gets or sets the height and width of the viewport (in pixels)
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_viewportresolution.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_vieportresolution.cs' lang='cs'/>
+    /// <code source='examples\py\ex_viewportresolution.py' lang='py'/>
+    /// </example>
     public System.Drawing.Size Size
     {
       get { return Bounds.Size; }

@@ -26,6 +26,9 @@
 /dotnet/RhinoCommon.sln
 /dotnet/RhinoCommon.pidb
 
+/examples/*/*.suo
+/examples/*/*.user
+/examples/*/*.sln
 /examples/buildwikisamples/bin
 /examples/buildwikisamples/obj
 /examples/buildwikisamples/buildwikisamples.sln
@@ -33,6 +36,7 @@
 
 /examples/cs/bin
 /examples/cs/obj
+/examples/cs/examples_cs.sln
 /examples/vbnet/bin
 /examples/vbnet/obj
 

@@ -2,19 +2,19 @@ import rhinoscriptsyntax as rs
 from scriptcontext import doc
 
 def Rename():
-    bn = rs.GetString("block to rename")
-    idef = doc.InstanceDefinitions.Find(bn, True)
-    if not idef: 
-        print "{0} block does not exist".format(bn)
+    blockName = rs.GetString("block to rename")
+    instanceDefinition = doc.InstanceDefinitions.Find(blockName, True)
+    if not instanceDefinition: 
+        print "{0} block does not exist".format(blockName)
         return
     
-    nn = rs.GetString("new name")
-    idef = doc.InstanceDefinitions.Find(nn, True)
-    if idef: 
-        print "the name '{0}' is already taken by another block".format(nn)
+    newName = rs.GetString("new name")
+    instanceDefinition = doc.InstanceDefinitions.Find(newName, True)
+    if instanceDefinition: 
+        print "the name '{0}' is already taken by another block".format(newName)
         return
 
-    rs.RenameBlock(bn, nn)
+    rs.RenameBlock(blockName, newName)
     
 if __name__ == "__main__":
     Rename()

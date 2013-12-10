@@ -371,6 +371,11 @@ namespace Rhino.DocObjects
     /// reference object and cannot be modified.  An object is a reference
     /// object if, and only if, it is on a reference layer.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_renameblock.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_renameblock.cs' lang='cs'/>
+    /// <code source='examples\py\ex_renameblock.py' lang='py'/>
+    /// </example>
     public bool IsReference
     {
       get
@@ -411,6 +416,11 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_renameblock.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_renameblock.cs' lang='cs'/>
+    /// <code source='examples\py\ex_renameblock.py' lang='py'/>
+    /// </example>
     public bool IsDeleted
     {
       get
@@ -772,6 +782,11 @@ namespace Rhino.DocObjects.Tables
     /// <returns>
     /// true if successful.
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_renameblock.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_renameblock.cs' lang='cs'/>
+    /// <code source='examples\py\ex_renameblock.py' lang='py'/>
+    /// </example>    
     public bool Modify(int idefIndex, string newName, string newDescription, bool quiet)
     {
       return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_ModifyInstanceDefinition(m_doc.m_docId, idefIndex, newName, newDescription, quiet);

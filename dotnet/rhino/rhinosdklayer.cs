@@ -93,6 +93,11 @@ namespace Rhino.DocObjects
 #endif
     #endregion
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_locklayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_locklayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_locklayer.py' lang='py'/>
+    /// </example>
     public bool CommitChanges()
     {
 #if RHINO_SDK
@@ -184,6 +189,11 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets the full path to this layer. The full path includes nesting information.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_locklayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_locklayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_locklayer.py' lang='py'/>
+    /// </example>
     public string FullPath
     {
       get
@@ -374,6 +384,11 @@ namespace Rhino.DocObjects
     /// </summary>
     /// <remarks>If you are modifying a layer inside a Rhino document, 
     /// you must call CommitChanges for the modifications to take effect.</remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_locklayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_locklayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_locklayer.py' lang='py'/>
+    /// </example>
     public bool IsLocked
     {
       get { return GetBool(idxIsLocked); }

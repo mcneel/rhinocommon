@@ -1,30 +1,30 @@
 import Rhino
-import System
+from Rhino.Geometry import *
+from Rhino.Input import RhinoGet
+from Rhino.Commands import Result
+from Rhino.DocObjects import ObjectType
 import rhinoscriptsyntax as rs
 from scriptcontext import doc
 
 def RunCommand():
-  gs = Rhino.Input.Custom.GetObject()
-  gs.SetCommandPrompt("Select surface or polysurface to mesh")
-  gs.GeometryFilter = Rhino.DocObjects.ObjectType.Surface | Rhino.DocObjects.ObjectType.PolysrfFilter
-  gs.AcceptNothing(True)
-  gs.Get()
-  if gs.CommandResult() != Rhino.Commands.Result.Success:
-    return gs.CommandResult()
-  brep = gs.Object(0).Brep()
+  rc, objRef = RhinoGet.GetOneObject("Select surface or polysurface to mesh", True, 
+                                     ObjectType.Surface | ObjectType.PolysrfFilter)
+  if rc <> Result.Success:
+    return rc
+  brep = objRef.Brep()
   if None == brep:
-    return Rhino.Commands.Result.Failure
+    return Result.Failure
 
-  jaggedAndFaster = Rhino.Geometry.MeshingParameters.Coarse
-  smoothAndSlower = Rhino.Geometry.MeshingParameters.Smooth
-  defaultMeshParams = Rhino.Geometry.MeshingParameters.Default
-  minimal = Rhino.Geometry.MeshingParameters.Minimal
+  jaggedAndFaster = MeshingParameters.Coarse
+  smoothAndSlower = MeshingParameters.Smooth
+  defaultMeshParams = MeshingParameters.Default
+  minimal = MeshingParameters.Minimal
 
-  meshes = Rhino.Geometry.Mesh.CreateFromBrep(brep, smoothAndSlower)
+  meshes = Mesh.CreateFromBrep(brep, smoothAndSlower)
   if meshes == None or meshes.Length == 0:
-    return Rhino.Commands.Result.Failure
+    return Result.Failure
 
-  brepMesh = Rhino.Geometry.Mesh()
+  brepMesh = Mesh()
   for mesh in meshes:
     brepMesh.Append(mesh)
   doc.Objects.AddMesh(brepMesh)

@@ -147,7 +147,7 @@
     <Compile Include="ex_instancearchivefilestatus.cs" />
     <Compile Include="ex_instancedefinitionobjects.cs" />
     <Compile Include="ex_intersectcurves.cs" />
-    <Compile Include="ex_intersectlinecurve.cs" />
+    <Compile Include="ex_intersectlinecircle.cs" />
     <Compile Include="ex_intersectlines.cs" />
     <Compile Include="ex_isbrepbox.cs" />
     <Compile Include="ex_isocurvedensity.cs" />

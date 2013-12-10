@@ -1,60 +1,58 @@
 ﻿using Rhino;
 using Rhino.DocObjects;
 using Rhino.FileIO;
-using System;
-using System.Linq;
+using Rhino.Commands;
 
 namespace examples_cs
 {
   [System.Runtime.InteropServices.Guid("7C98E0BC-C177-46E1-A9AE-092C63911450")]
-  public class ex_printinstancedefinitiontree : Rhino.Commands.Command
+  public class InstanceDefinitionTreeCommand : Command
   {
     public override string EnglishName { get { return "csInstanceDefinitionTree"; } }
 
-    protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+    protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      var idefs = doc.InstanceDefinitions;
-      var idefCount = idefs.Count;
+      var instanceDefinitions = doc.InstanceDefinitions;
+      var instanceDefinitionCount = instanceDefinitions.Count;
 
-      if (idefCount == 0)
+      if (instanceDefinitionCount == 0)
       {
         RhinoApp.WriteLine("Document contains no instance definitions.");
-        return Rhino.Commands.Result.Nothing;
+        return Result.Nothing;
       }
 
       var dump = new TextLog();
       dump.IndentSize = 4;
 
-      for (int i = 0; i < idefCount; i++)
-        DumpInstanceDefinition(idefs[i], ref dump, true);
+      for (int i = 0; i < instanceDefinitionCount; i++)
+        DumpInstanceDefinition(instanceDefinitions[i], ref dump, true);
 
       RhinoApp.WriteLine(dump.ToString());
 
-      return Rhino.Commands.Result.Success;
+      return Result.Success;
     }
 
-    private void DumpInstanceDefinition(InstanceDefinition idef, ref TextLog dump, bool bRoot)
+    private void DumpInstanceDefinition(InstanceDefinition instanceDefinition, ref TextLog dump, bool isRoot)
     {
-      if (idef != null && !idef.IsDeleted)
+      if (instanceDefinition != null && !instanceDefinition.IsDeleted)
       {
         string node;
-        if (bRoot)
-          node = "\u2500";
+        if (isRoot)
+          node = "─"; //"\u2500"; 
         else
-          node = "\u2514";
-        dump.Print(String.Format("{0} Instance definition {1} = {2}\n", node, idef.Index, idef.Name));
+          node = "└"; //"\u2514"; 
+        dump.Print(string.Format("{0} Instance definition {1} = {2}\n", node, instanceDefinition.Index, instanceDefinition.Name));
 
-        int idefObjectCount = idef.ObjectCount;
-        if (idefObjectCount  > 0)
+        if (instanceDefinition.ObjectCount  > 0)
         {
           dump.PushIndent();
-          for (int i = 0; i < idefObjectCount ; i++)
+          for (int i = 0; i < instanceDefinition.ObjectCount ; i++)
           {
-            var obj = idef.Object(i);
+            var obj = instanceDefinition.Object(i);
             if (obj != null && obj is InstanceObject)
               DumpInstanceDefinition((obj as InstanceObject).InstanceDefinition, ref dump, false); // Recursive...
             else
-              dump.Print(String.Format("\u2514 Object {0} = {1}\n", i, obj.ShortDescription(false)));
+              dump.Print(string.Format("\u2514 Object {0} = {1}\n", i, obj.ShortDescription(false)));
           }
           dump.PopIndent();
         }

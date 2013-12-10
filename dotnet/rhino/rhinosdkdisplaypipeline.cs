@@ -1256,6 +1256,11 @@ namespace Rhino.Display
     /// <param name="color">Color of arrow.</param>
     /// <param name="screenSize">If screenSize != 0.0 then the size (in screen pixels) of the arrow head will be equal to screenSize.</param>
     /// <param name="relativeSize">If relativeSize != 0.0 and screensize == 0.0 the size of the arrow head will be proportional to the arrow shaft length.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_conduitarrowheads.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_conduitarrowheads.cs' lang='cs'/>
+    /// <code source='examples\py\ex_conduitarrowheads.py' lang='py'/>
+    /// </example>
     public void DrawArrow(Line line, System.Drawing.Color color, double screenSize, double relativeSize)
     {
       Line[] lines = new Line[] { line };

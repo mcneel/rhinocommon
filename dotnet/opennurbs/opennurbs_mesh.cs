@@ -137,6 +137,11 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>Gets minimal meshing parameters.</summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createmeshfrombrep.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createmeshfrombrep.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createmeshfrombrep.py' lang='py'/>
+    /// </example>
     public static MeshingParameters Minimal
     {
       get
@@ -169,8 +174,13 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets default meshing parameters.
+    /// Get default meshing parameters.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createmeshfrombrep.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createmeshfrombrep.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createmeshfrombrep.py' lang='py'/>
+    /// </example>
     public static MeshingParameters Default
     {
       get
@@ -207,6 +217,11 @@ namespace Rhino.Geometry
     /// Gets meshing parameters for coarse meshing. 
     /// <para>This corresponds with the "Jagged and Faster" default in Rhino.</para>
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createmeshfrombrep.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createmeshfrombrep.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createmeshfrombrep.py' lang='py'/>
+    /// </example>
     public static MeshingParameters Coarse
     {
       get
@@ -230,6 +245,11 @@ namespace Rhino.Geometry
     /// Gets meshing parameters for smooth meshing. 
     /// <para>This corresponds with the "Smooth and Slower" default in Rhino.</para>
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createmeshfrombrep.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createmeshfrombrep.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createmeshfrombrep.py' lang='py'/>
+    /// </example>
     public static MeshingParameters Smooth
     {
       get
@@ -685,6 +705,11 @@ namespace Rhino.Geometry
     /// <param name="brep">Brep to approximate.</param>
     /// <param name="meshingParameters">Parameters to use during meshing.</param>
     /// <returns>An array of meshes.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createmeshfrombrep.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createmeshfrombrep.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createmeshfrombrep.py' lang='py'/>
+    /// </example>
     public static Mesh[] CreateFromBrep(Brep brep, MeshingParameters meshingParameters)
     {
       IntPtr ptr_const_brep = brep.ConstPointer();
@@ -1484,6 +1509,11 @@ namespace Rhino.Geometry
     /// Appends a copy of another mesh to this one and updates indices of appended mesh parts.
     /// </summary>
     /// <param name="other">Mesh to append to this one.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createmeshfrombrep.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createmeshfrombrep.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createmeshfrombrep.py' lang='py'/>
+    /// </example>
     public void Append(Mesh other)
     {
       if (null == other || other.ConstPointer() == ConstPointer())

@@ -1,9 +1,10 @@
 from scriptcontext import doc
 
 def RunCommand():
-  idefNames = [idef.Name for idef in doc.InstanceDefinitions if idef != None and not idef.IsDeleted]
+  instanceDefinitionNames = [instanceDefinition.Name for instanceDefinition in doc.InstanceDefinitions 
+                             if instanceDefinition != None and not instanceDefinition.IsDeleted]
 
-  for n in idefNames:
+  for n in instanceDefinitionNames:
     print "instance definition = {0}".format(n)
 
 if __name__ == "__main__":

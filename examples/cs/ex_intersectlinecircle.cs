@@ -1,4 +1,5 @@
 ﻿using Rhino;
+using Rhino.Commands;
 using Rhino.Geometry;
 using Rhino.Geometry.Intersect;
 using System;
@@ -6,22 +7,22 @@ using System;
 namespace examples_cs
 {
   [System.Runtime.InteropServices.Guid("FCD0CD1E-B92C-44A9-B17C-05E7044650C8")]
-  public class ex_intersectlinecurve : Rhino.Commands.Command
+  public class IntersectLineCircleCommand : Command
   {
-    public override string EnglishName { get { return "csIntersectLineCurve"; } }
+    public override string EnglishName { get { return "csIntersectLineCircle"; } }
 
-    protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+    protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
       Circle circle;
       var rc = Rhino.Input.RhinoGet.GetCircle(out circle);
-      if (rc != Rhino.Commands.Result.Success)
+      if (rc != Result.Success)
         return rc;
       doc.Objects.AddCircle(circle);
       doc.Views.Redraw();
 
       Line line;
       rc = Rhino.Input.RhinoGet.GetLine(out line);
-      if (rc != Rhino.Commands.Result.Success)
+      if (rc != Result.Success)
         return rc;
       doc.Objects.AddLine(line);
       doc.Views.Redraw();
@@ -47,7 +48,7 @@ namespace examples_cs
       }
       RhinoApp.WriteLine(msg);
       doc.Views.Redraw();
-      return Rhino.Commands.Result.Success;
+      return Result.Success;
     }
   }
 }

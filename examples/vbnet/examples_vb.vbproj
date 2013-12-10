@@ -117,6 +117,8 @@
     <Compile Include="ex_commandlineoptions.vb" />
     <Compile Include="ex_conduitarrowheads.vb" />
     <Compile Include="ex_createblock.vb" />
+    <Compile Include="ex_createmeshfrombrep.vb" />
+    <Compile Include="ex_createsurfaceexample.vb" />
     <Compile Include="ex_crvdeviation.vb" />
     <Compile Include="ex_curveboundingbox.vb" />
     <Compile Include="ex_curvebrepbox.vb" />
@@ -141,10 +143,12 @@
     <Compile Include="ex_insertknot.vb" />
     <Compile Include="ex_instancedefinitionobjects.vb" />
     <Compile Include="ex_intersectcurves.vb" />
+    <Compile Include="ex_intersectlinecurve.vb" />
     <Compile Include="ex_intersectlines.vb" />
     <Compile Include="ex_isbrepbox.vb" />
     <Compile Include="ex_isocurvedensity.vb" />
     <Compile Include="ex_leader.vb" />
+    <Compile Include="ex_locklayer.vb" />
     <Compile Include="ex_loft.vb" />
     <Compile Include="ex_meshdrawing.vb" />
     <Compile Include="ex_movecplane.vb" />
@@ -153,6 +157,7 @@
     <Compile Include="ex_objectlayer.vb" />
     <Compile Include="ex_orientonsrf.vb" />
     <Compile Include="ex_pickobjects.vb" />
+    <Compile Include="ex_pointatcursor.vb" />
     <Compile Include="ex_printinstancedefinitions.vb" />
     <Compile Include="ex_printinstancedefinitiontree.vb" />
     <Compile Include="ex_projectpointstobreps.vb" />

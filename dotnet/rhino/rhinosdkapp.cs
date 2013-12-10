@@ -2,6 +2,7 @@ using System;
 
 #if RHINO_SDK
 using Rhino.ApplicationSettings;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.ApplicationSettings
 {
@@ -233,7 +234,7 @@ namespace Rhino
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.ON_Revision(pString);
@@ -249,14 +250,14 @@ namespace Rhino
     internal const int idxInstallFolder = 4;
     internal const int idxHelpFilePath = 5;
     internal const int idxDefaultRuiFile = 6;
-    private const int idxAskUserForLicense = 7;
+    internal const int idxLocalProfileDataFolder = 7;
 
     /// <summary>Gets the product serial number, as seen in Rhino's ABOUT dialog box.</summary>
     public static string SerialNumber
     {
       get
       {
-        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.CRhinoApp_GetString(idxSerialNumber, pString);
@@ -270,7 +271,7 @@ namespace Rhino
     {
       get
       {
-        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.CRhinoApp_GetString(idxApplicationName, pString);
@@ -431,7 +432,7 @@ namespace Rhino
     {
       get
       {
-        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.CRhinoApp_GetString(idxCommandPrompt, pString);
@@ -451,7 +452,7 @@ namespace Rhino
     {
       get
       {
-        using (Rhino.Runtime.StringHolder holder = new Rhino.Runtime.StringHolder())
+        using (var holder = new StringHolder())
         {
           UnsafeNativeMethods.CRhinoApp_GetCommandHistoryWindowText(holder.NonConstPointer());
           string rc = holder.ToString();

@@ -170,7 +170,7 @@ namespace Rhino.DocObjects
         IntPtr pConstTexture = ConstPointer();
         if (IntPtr.Zero == pConstTexture)
           return String.Empty;
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new Runtime.InteropWrappers.StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.ON_Texture_GetFileName(pConstTexture, pString);

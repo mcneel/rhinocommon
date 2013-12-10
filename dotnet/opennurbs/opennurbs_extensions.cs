@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Rhino.Geometry;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.FileIO
 {
@@ -65,7 +66,7 @@ namespace Rhino.FileIO
       errorLog = string.Empty;
       if (!File.Exists(path))
         throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         IntPtr pONX_Model = UnsafeNativeMethods.ONX_Model_ReadFile(path, pString);
@@ -86,7 +87,7 @@ namespace Rhino.FileIO
       if (!File.Exists(path))
         throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
 
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.ONX_Model_ReadNotes(path, pString);
@@ -112,8 +113,8 @@ namespace Rhino.FileIO
       revision = 0;
       createdOn = DateTime.MinValue;
       lastEditedOn = DateTime.MinValue;
-      using (Runtime.StringHolder sh_created = new Runtime.StringHolder())
-      using (Runtime.StringHolder sh_edited = new Runtime.StringHolder())
+      using (var sh_created = new StringHolder())
+      using (var sh_edited = new StringHolder())
       {
         IntPtr ptr_created = sh_created.NonConstPointer();
         IntPtr ptr_edited = sh_edited.NonConstPointer();
@@ -145,9 +146,9 @@ namespace Rhino.FileIO
     {
       if (!File.Exists(path))
         throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
-      using (Rhino.Runtime.StringHolder name = new Runtime.StringHolder())
-      using (Rhino.Runtime.StringHolder url = new Runtime.StringHolder())
-      using (Rhino.Runtime.StringHolder details = new Runtime.StringHolder())
+      using (var name = new StringHolder())
+      using (var url = new StringHolder())
+      using (var details = new StringHolder())
       {
         IntPtr ptr_name = name.NonConstPointer();
         IntPtr ptr_url = url.NonConstPointer();
@@ -159,7 +160,7 @@ namespace Rhino.FileIO
       }
     }
 
-#if !MOBILE_BUILD && !OPENNURBS_SDK
+#if !MOBILE_BUILD
     /// <summary>
     /// Attempts to read the preview image out of a 3dm file.
     /// </summary>
@@ -230,7 +231,7 @@ namespace Rhino.FileIO
     /// </returns>
     public bool WriteWithLog(string path, int version, out string errorLog)
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pConstThis = ConstPointer();
         IntPtr pString = sh.NonConstPointer();
@@ -250,7 +251,7 @@ namespace Rhino.FileIO
     public bool IsValid(out string errors)
     {
       IntPtr pConstThis = ConstPointer();
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         bool rc = UnsafeNativeMethods.ONX_Model_IsValid(pConstThis, pString);
@@ -320,7 +321,7 @@ namespace Rhino.FileIO
     {
       IntPtr pThis = NonConstPointer();
       repairCount = 0;
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         Rhino.Runtime.InteropWrappers.SimpleArrayInt w = new Runtime.InteropWrappers.SimpleArrayInt();
@@ -344,7 +345,7 @@ namespace Rhino.FileIO
       get
       {
         IntPtr pConstThis = ConstPointer();
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.ONX_Model_GetStartSectionComments(pConstThis, pString);
@@ -383,7 +384,7 @@ namespace Rhino.FileIO
 
     string GetString(int which)
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pConstThis = ConstPointer();
         IntPtr pString = sh.NonConstPointer();
@@ -611,7 +612,7 @@ namespace Rhino.FileIO
     internal const int idxNamedViewTable = 17;
     internal string Dump(int which)
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pConstThis = ConstPointer();
         IntPtr pString = sh.NonConstPointer();

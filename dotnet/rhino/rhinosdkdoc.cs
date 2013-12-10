@@ -7,6 +7,8 @@ using Rhino.Geometry;
 using Rhino.Display;
 using Rhino.Collections;
 using System.Collections.Generic;
+using Rhino.Render;
+using Rhino.Runtime.InteropWrappers;
 
 #if RHINO_SDK
 namespace Rhino.Commands
@@ -122,7 +124,7 @@ namespace Rhino
     /// </returns>
     public string FindFile(string filename)
     {
-      using (var sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr ptr_string = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoFileUtilities_FindFile(filename, ptr_string);
@@ -183,7 +185,7 @@ namespace Rhino
 #region docproperties
     string GetString(int which)
     {
-      using (var sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr ptr_string = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoDoc_GetSetString(m_docId, which, false, null, ptr_string);
@@ -407,7 +409,7 @@ namespace Rhino
 
     public string GetUnitSystemName(bool modelUnits, bool capitalize, bool singular, bool abbreviate)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoDocProperties_GetUnitSystemName(m_docId, modelUnits, capitalize, singular, abbreviate, pString);
@@ -704,9 +706,39 @@ namespace Rhino
     {
       get { return m_strings ?? (m_strings = new Rhino.DocObjects.Tables.StringTable(this)); }
     }
-    #endregion
+
+#endregion
 
 #if RDK_CHECKED
+    private RenderMaterialTable m_render_materials;
+    public RenderMaterialTable RenderMaterials
+    {
+      get { return (m_render_materials ?? (m_render_materials = new RenderMaterialTable(this))); }
+    }
+    private RenderEnvironmentTable m_render_environments;
+    public RenderEnvironmentTable RenderEnvironments
+    {
+      get { return (m_render_environments ?? (m_render_environments = new RenderEnvironmentTable(this))); }
+    }
+    private RenderTextureTable m_render_textures;
+    public RenderTextureTable RenderTextures
+    {
+      get { return (m_render_textures ?? (m_render_textures = new RenderTextureTable(this))); }
+    }
+
+    public IEnumerable<RenderPrimitive> GetRenderPrimitives(bool forceTriangleMeshes)
+    {
+      return new RenderPrimitiveEnumerable(Guid.Empty, null, forceTriangleMeshes);
+    }
+    public IEnumerable<RenderPrimitive> GetRenderPrimitives(DocObjects.ViewportInfo viewport, bool forceTriangleMeshes)
+    {
+      return new RenderPrimitiveEnumerable(Guid.Empty, viewport, forceTriangleMeshes);
+    }
+    public IEnumerable<RenderPrimitive> GetRenderPrimitives(Guid plugInId, DocObjects.ViewportInfo viewport, bool forceTriangleMeshes)
+    {
+      return new RenderPrimitiveEnumerable(plugInId, viewport, forceTriangleMeshes);
+    }
+
     private Rhino.Render.GroundPlane m_ground_plane;
     /// <summary>Gets the ground plane of this document.</summary>
     /// <exception cref="Rhino.Runtime.RdkNotLoadedException">If the RDK is not loaded.</exception>
@@ -2055,12 +2087,452 @@ namespace Rhino
 
     #endregion
 
-#if RDK_UNCHECKED
-#region rdk events
+#if RDK_CHECKED
+    #region RenderContentTable events
+    /// <summary>
+    /// Type of content table event
+    /// </summary>
+    public enum RenderContentTableEventType
+    {
+      /// <summary>
+      /// The document has been read and the table has been loaded
+      /// </summary>
+      Loaded,
+      /// <summary>
+      /// The table is about to be cleared
+      /// </summary>
+      Clearing,
+      /// <summary>
+      /// The table has been cleared
+      /// </summary>
+      Cleared
+    }
+    /// <summary>
+    /// Passed to the <see cref="RenderMaterialsTableEvent"/>, <see cref="RenderEnvironmentTableEvent"/> and the
+    /// <see cref="RenderTextureTableEvent"/> events.
+    /// </summary>
+    public class RenderContentTableEventArgs : EventArgs
+    {
+      internal RenderContentTableEventArgs(RhinoDoc document, RenderContentTableEventType eventType)
+      {
+        m_rhino_doc = document;
+        m_event_type = eventType;
+      }
 
+      /// <summary>
+      /// Document the table belongs to
+      /// </summary>
+      public RhinoDoc Document { get { return m_rhino_doc; } }
+      /// <summary>
+      /// Event type
+      /// </summary>
+      public RenderContentTableEventType EventType { get { return m_event_type; } }
+
+      private readonly RhinoDoc m_rhino_doc;
+      private readonly RenderContentTableEventType m_event_type;
+    }
+    private static RenderContentTable.ContentListLoadedCallback g_on_render_content_loaded_event_callback;
+    private static void OnRenderContentdLoadedEvent(int kind, int docId)
+    {
+      var document = FromId(docId);
+      switch ((RenderContentKind)kind)
+      {
+        case RenderContentKind.Material:
+          OnRenderMaterialTabledEvent(document, RenderContentTableEventType.Loaded);
+          break;
+        case RenderContentKind.Environment:
+          OnRenderEnvironmentTabledEvent(document, RenderContentTableEventType.Loaded);
+          break;
+        case RenderContentKind.Texture:
+          OnRenderTextureTabledEvent(document, RenderContentTableEventType.Loaded);
+          break;
+      }
+    }
+
+    private static RenderContentTable.ContentListClearingCallback g_on_render_content_clearing_event_callback;
+    private static void OnRenderContentdClearingEvent(int kind, int docId)
+    {
+      var document = FromId(docId);
+      switch ((RenderContentKind)kind)
+      {
+        case RenderContentKind.Material:
+          OnRenderMaterialTabledEvent(document, RenderContentTableEventType.Clearing);
+          break;
+        case RenderContentKind.Environment:
+          OnRenderEnvironmentTabledEvent(document, RenderContentTableEventType.Clearing);
+          break;
+        case RenderContentKind.Texture:
+          OnRenderTextureTabledEvent(document, RenderContentTableEventType.Clearing);
+          break;
+      }
+    }
+
+    private static RenderContentTable.ContentListClearedCallback g_on_render_content_cleared_event_callback;
+    private static void OnRenderContentdClearedEvent(int kind, int docId)
+    {
+      var document = FromId(docId);
+      switch ((RenderContentKind)kind)
+      {
+        case RenderContentKind.Material:
+          OnRenderMaterialTabledEvent(document, RenderContentTableEventType.Cleared);
+          break;
+        case RenderContentKind.Environment:
+          OnRenderEnvironmentTabledEvent(document, RenderContentTableEventType.Cleared);
+          break;
+        case RenderContentKind.Texture:
+          OnRenderTextureTabledEvent(document, RenderContentTableEventType.Cleared);
+          break;
+      }
+    }
+    #endregion RenderContentTable events
+
+    #region RenderMaterialsTable events
+    private static void OnRenderMaterialTabledEvent(RhinoDoc document, RenderContentTableEventType eventType)
+    {
+      if (g_render_materials_table_event == null)
+        return;
+      try
+      {
+        var args = new RenderContentTableEventArgs(document, eventType);
+        g_render_materials_table_event(null == document ? null : document.RenderMaterials, args);
+      }
+      catch (Exception ex)
+      {
+        Runtime.HostUtils.ExceptionReport(ex);
+      }
+    }
+
+    private static event EventHandler<RenderContentTableEventArgs> g_render_materials_table_event;
+    /// Called when the <see cref="RenderMaterialTable"/> has been loaded, is
+    /// about to be cleared or has been cleared.  See <see cref="RenderContentTableEventType"/> for more
+    /// information.
+    public static event EventHandler<RenderContentTableEventArgs> RenderMaterialsTableEvent
+    {
+      add
+      {
+        lock (m_event_lock)
+        {
+          if (g_on_render_content_loaded_event_callback == null)
+          {
+            g_on_render_content_loaded_event_callback = OnRenderContentdLoadedEvent;
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListLoadedEventCallback(g_on_render_content_loaded_event_callback, Runtime.HostUtils.m_rdk_ew_report);
+          }
+          if (g_on_render_content_clearing_event_callback == null)
+          {
+            g_on_render_content_clearing_event_callback = OnRenderContentdClearingEvent;
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearingEventCallback(g_on_render_content_clearing_event_callback, Runtime.HostUtils.m_rdk_ew_report);
+          }
+          if (g_on_render_content_cleared_event_callback == null)
+          {
+            g_on_render_content_cleared_event_callback = OnRenderContentdClearedEvent;
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearedEventCallback(g_on_render_content_cleared_event_callback, Runtime.HostUtils.m_rdk_ew_report);
+          }
+          g_render_materials_table_event -= value;
+          g_render_materials_table_event += value;
+        }
+      }
+      remove
+      {
+        lock (m_event_lock)
+        {
+          g_render_materials_table_event -= value;
+          if (g_render_materials_table_event == null && g_render_environment_table_event == null && g_render_texture_table_event == null)
+          {
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListLoadedEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearingEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearedEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
+            g_on_render_content_loaded_event_callback = null;
+            g_on_render_content_clearing_event_callback = null;
+            g_on_render_content_cleared_event_callback = null;
+          }
+        }
+      }
+    }
+    #endregion RenderMaterialsTable events
+
+    #region RenderEnvironmentsTable events
+
+    private static void OnRenderEnvironmentTabledEvent(RhinoDoc document, RenderContentTableEventType eventType)
+    {
+      if (g_render_environment_table_event == null)
+        return;
+      try
+      {
+        var args = new RenderContentTableEventArgs(document, eventType);
+        g_render_environment_table_event(null == document ? null : document.RenderEnvironments, args);
+      }
+      catch (Exception ex)
+      {
+        Runtime.HostUtils.ExceptionReport(ex);
+      }
+    }
+
+    private static event EventHandler<RenderContentTableEventArgs> g_render_environment_table_event;
+    /// Called when the <see cref="RenderEnvironmentTable"/> has been loaded, is
+    /// about to be cleared or has been cleared.  See <see cref="RenderContentTableEventType"/> for more
+    /// information.
+    public static event EventHandler<RenderContentTableEventArgs> RenderEnvironmentTableEvent
+    {
+      add
+      {
+        lock (m_event_lock)
+        {
+          if (g_on_render_content_loaded_event_callback == null)
+          {
+            g_on_render_content_loaded_event_callback = OnRenderContentdLoadedEvent;
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListLoadedEventCallback(g_on_render_content_loaded_event_callback, Runtime.HostUtils.m_rdk_ew_report);
+          }
+          if (g_on_render_content_clearing_event_callback == null)
+          {
+            g_on_render_content_clearing_event_callback = OnRenderContentdClearingEvent;
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearingEventCallback(g_on_render_content_clearing_event_callback, Runtime.HostUtils.m_rdk_ew_report);
+          }
+          if (g_on_render_content_cleared_event_callback == null)
+          {
+            g_on_render_content_cleared_event_callback = OnRenderContentdClearedEvent;
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearedEventCallback(g_on_render_content_cleared_event_callback, Runtime.HostUtils.m_rdk_ew_report);
+          }
+          g_render_environment_table_event -= value;
+          g_render_environment_table_event += value;
+        }
+      }
+      remove
+      {
+        lock (m_event_lock)
+        {
+          g_render_environment_table_event -= value;
+          if (g_render_materials_table_event == null && g_render_environment_table_event == null && g_render_texture_table_event == null)
+          {
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListLoadedEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearingEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearedEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
+            g_on_render_content_loaded_event_callback = null;
+            g_on_render_content_clearing_event_callback = null;
+            g_on_render_content_cleared_event_callback = null;
+          }
+        }
+      }
+    }
+
+    #endregion RenderEnvironmentsTable events
+
+    #region RenderTexturesTable events
+
+    private static void OnRenderTextureTabledEvent(RhinoDoc document, RenderContentTableEventType eventType)
+    {
+      if (g_render_texture_table_event == null)
+        return;
+      try
+      {
+        var args = new RenderContentTableEventArgs(document, eventType);
+        g_render_texture_table_event(null == document ? null : document.RenderTextures, args);
+      }
+      catch (Exception ex)
+      {
+        Runtime.HostUtils.ExceptionReport(ex);
+      }
+    }
+
+    private static event EventHandler<RenderContentTableEventArgs> g_render_texture_table_event;
+    /// <summary>
+    /// Called when the <see cref="RenderTextureTable"/> has been loaded, is
+    /// about to be cleared or has been cleared.  See <see cref="RenderContentTableEventType"/> for more
+    /// information.
+    /// </summary>
+    public static event EventHandler<RenderContentTableEventArgs> RenderTextureTableEvent
+    {
+      add
+      {
+        lock (m_event_lock)
+        {
+          if (g_on_render_content_loaded_event_callback == null)
+          {
+            g_on_render_content_loaded_event_callback = OnRenderContentdLoadedEvent;
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListLoadedEventCallback(g_on_render_content_loaded_event_callback, Runtime.HostUtils.m_rdk_ew_report);
+          }
+          if (g_on_render_content_clearing_event_callback == null)
+          {
+            g_on_render_content_clearing_event_callback = OnRenderContentdClearingEvent;
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearingEventCallback(g_on_render_content_clearing_event_callback, Runtime.HostUtils.m_rdk_ew_report);
+          }
+          if (g_on_render_content_cleared_event_callback == null)
+          {
+            g_on_render_content_cleared_event_callback = OnRenderContentdClearedEvent;
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearedEventCallback(g_on_render_content_cleared_event_callback, Runtime.HostUtils.m_rdk_ew_report);
+          }
+          g_render_texture_table_event -= value;
+          g_render_texture_table_event += value;
+        }
+      }
+      remove
+      {
+        lock (m_event_lock)
+        {
+          g_render_texture_table_event -= value;
+          if (g_render_materials_table_event == null && g_render_environment_table_event == null && g_render_texture_table_event == null)
+          {
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListLoadedEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearingEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearedEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
+            g_on_render_content_loaded_event_callback = null;
+            g_on_render_content_clearing_event_callback = null;
+            g_on_render_content_cleared_event_callback = null;
+          }
+        }
+      }
+    }
+
+
+    #endregion RenderTexturesTable events
+#endif
+    public enum TextureMappingEventType : int
+    {
+      /// <summary>
+      /// Adding texture mapping to a document
+      /// </summary>
+      Added = UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Added,
+      /// <summary>
+      /// A texture mapping was deleted from a document
+      /// </summary>
+      Deleted = UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Deleted,
+      /// <summary>
+      /// A texture mapping was undeleted in a document
+      /// </summary>
+      Undeleted = UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Undeleted,
+      /// <summary>
+      /// A texture mapping was modified in a document
+      /// </summary>
+      Modified = UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Modified,
+      //Sorted = UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Sorted,
+      //Current = UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Current,
+    }
+    /// <summary>
+    /// Event arguments passed to the RhinoDoc.TextureMappingEvent.
+    /// </summary>
+    public class TextureMappingEventArgs : EventArgs
+    {
+      readonly int m_doc_id;
+      readonly TextureMappingEventType m_event_type = TextureMappingEventType.Modified;
+      readonly IntPtr m_const_pointer_new_mapping;
+      readonly IntPtr m_const_pointer_old_mapping;
+
+      internal TextureMappingEventArgs(int docId, UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts eventType, IntPtr constPointerConstNewMapping, IntPtr pConstOldMapping)
+      {
+        m_doc_id = docId;
+        switch (eventType)
+        {
+          case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Added:
+          case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Deleted:
+          case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Modified:
+          case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Undeleted:
+            m_event_type = (TextureMappingEventType)eventType;
+            break;
+          case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Current:
+          case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Sorted:
+            break;
+        }
+        m_const_pointer_new_mapping = constPointerConstNewMapping;
+        m_const_pointer_old_mapping = m_const_pointer_new_mapping;
+      }
+
+      RhinoDoc m_doc;
+      public RhinoDoc Document
+      {
+        get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_doc_id)); }
+      }
+
+      public TextureMappingEventType EventType
+      {
+        get { return m_event_type; }
+      }
+
+      public TextureMapping OldMapping
+      {
+        get { return (m_old_mapping ?? (m_old_mapping = new TextureMapping(m_const_pointer_old_mapping))); }
+      }
+      private TextureMapping m_old_mapping;
+
+      public TextureMapping NewMapping
+      {
+        get { return (m_new_mapping ?? (m_new_mapping = new TextureMapping(m_const_pointer_new_mapping))); }
+      }
+      TextureMapping m_new_mapping;
+    }
+    /// <summary>
+    /// Called when any modification happens to a document objects texture mapping.
+    /// </summary>
+    public static event EventHandler<TextureMappingEventArgs> TextureMappingEvent
+    {
+      add
+      {
+        lock (m_event_lock)
+        {
+          if (g_texture_mapping_event == null)
+          {
+            m_OnTextureMappingEventCallback = OnTextureMappingEvent;
+            UnsafeNativeMethods.CRhinoEventWatcher_SetTextureMappingEventCallback(m_OnTextureMappingEventCallback, Rhino.Runtime.HostUtils.m_ew_report);
+          }
+          g_texture_mapping_event -= value;
+          g_texture_mapping_event += value;
+        }
+      }
+      remove
+      {
+        lock (m_event_lock)
+        {
+          g_texture_mapping_event -= value;
+          if (g_texture_mapping_event == null)
+          {
+            UnsafeNativeMethods.CRhinoEventWatcher_SetTextureMappingEventCallback(null, Rhino.Runtime.HostUtils.m_ew_report);
+            g_texture_mapping_event = null;
+          }
+        }
+      }
+    }
+    internal delegate void TextureMappingEventCallback(int docId, UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts eventType, IntPtr pConstNewSettings, IntPtr pConstOldSettings);
+    private static TextureMappingEventCallback m_OnTextureMappingEventCallback;
+    private static void OnTextureMappingEvent(int docId, UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts eventType, IntPtr pConstNewSettings, IntPtr pConstOldSettings)
+    {
+      if (g_texture_mapping_event != null)
+      {
+        try
+        {
+          switch (eventType)
+          {
+            case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Added:
+            case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Deleted:
+            case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Modified:
+            case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Undeleted:
+              break;
+            case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Current:
+            case UnsafeNativeMethods.RhinoEventWatcherTextureMappingEventConsts.Sorted:
+              return; // Ignore these for now
+          }
+          var args = new TextureMappingEventArgs(docId, eventType, pConstNewSettings, pConstOldSettings);
+          g_texture_mapping_event(null, args);
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+        }
+      }
+    }
+    private static EventHandler<TextureMappingEventArgs> g_texture_mapping_event;
+
+
+    #region rdk events
+#if RDK_UNCHECKED
+    // Notes from John and Steve: 27 August 2013
+    // 1) Never use the work RDK, what should these be called?
+    // 2) Do we need these or should there be separate events for each case
+    // 3) Don't write nested enum or classes that are public
+    // 4) What should the public event(s) be?
+    // 5) Where is the associated document
+    // 6) Event args should derive from common DocumentEventArgs class
     /// <summary>
     /// Bit flags for RdkDocumentSettingsChangedArgs flags parameter.
     /// </summary>
+    [Flags]
 	  public enum DocSettingsChangedFlags
 	  {
 		  Rendering         = 0x0001, // Rendering settings changed (see enum 2 below).
@@ -2139,8 +2611,8 @@ namespace Rhino
       }
     }
 
-#endregion
 #endif
+    #endregion
   }
 
   /// <summary>
@@ -2963,20 +3435,71 @@ namespace Rhino.DocObjects.Tables
     /// <param name="drawColor">The alpha value of this color is ignored.</param>
     /// <param name="includeLights">true if lights should be included.</param>
     /// <returns>An array of Rhino document objects. This array can be empty.</returns>
-    public Rhino.DocObjects.RhinoObject[] FindByDrawColor(System.Drawing.Color drawColor, bool includeLights)
+    public RhinoObject[] FindByDrawColor(System.Drawing.Color drawColor, bool includeLights)
     {
       ObjectEnumeratorSettings it = new ObjectEnumeratorSettings();
       it.IncludeLights = includeLights;
       it.IncludeGrips = false;
       it.IncludePhantoms = true;
-      List<Rhino.DocObjects.RhinoObject> rc = new List<RhinoObject>();
+      List<RhinoObject> rc = new List<RhinoObject>();
       foreach( RhinoObject obj in GetObjectList(it))
       {
-        System.Drawing.Color objColor = obj.Attributes.DrawColor(m_doc);
-        if( objColor.R == drawColor.R && objColor.G == drawColor.G && objColor.B==drawColor.B)
+        System.Drawing.Color object_color = obj.Attributes.DrawColor(m_doc);
+        if (object_color.R == drawColor.R && object_color.G == drawColor.G && object_color.B == drawColor.B)
           rc.Add(obj);
       }
       return rc.ToArray();
+    }
+
+    RhinoObject[] FindByRegion(RhinoViewport viewport, IEnumerable<Point3d> region, int mode, ObjectType filter)
+    {
+      IntPtr ptr_const_viewport = viewport.ConstPointer();
+      List<Point3d> list_region = new List<Point3d>(region);
+      Point3d[] array_points = list_region.ToArray();
+      using (var objrefs = new Runtime.InteropWrappers.ClassArrayObjRef())
+      {
+        IntPtr ptr_objref_array = objrefs.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoRegionSelect(ptr_const_viewport, array_points.Length, array_points, mode, (uint)filter, ptr_objref_array);
+        ObjRef[] objref_array = objrefs.ToNonConstArray();
+        List<RhinoObject> rc = new List<RhinoObject>();
+        for (int i = 0; i < objref_array.Length; i++)
+        {
+          RhinoObject rhobj = objref_array[i].Object();
+          if (rhobj != null)
+            rc.Add(rhobj);
+        }
+        return rc.ToArray();
+      }
+    }
+
+    /// <summary>
+    /// Finds objects bounded by a polyline region
+    /// </summary>
+    /// <param name="viewport">viewport to use for selection</param>
+    /// <param name="region">list of points that define the </param>
+    /// <param name="inside">should objects returned be the ones inside of this region (or outside)</param>
+    /// <param name="filter">filter down list by object type</param>
+    /// <returns>An array of RhinoObjects that are inside of this region</returns>
+    [CLSCompliant(false)]
+    public RhinoObject[] FindByWindowRegion(RhinoViewport viewport, IEnumerable<Point3d> region, bool inside, ObjectType filter)
+    {
+      // 0=window, 1=crossing, 2=outside window, 3=outside crossing window
+      return FindByRegion(viewport, region, inside ? 0 : 2, filter);
+    }
+
+    /// <summary>
+    /// Finds objects bounded by a polyline region
+    /// </summary>
+    /// <param name="viewport">viewport to use for selection</param>
+    /// <param name="region">list of points that define the </param>
+    /// <param name="inside">should objects returned be the ones inside of this region (or outside)</param>
+    /// <param name="filter">filter down list by object type</param>
+    /// <returns>An array of RhinoObjects that are inside of this region</returns>
+    [CLSCompliant(false)]
+    public RhinoObject[] FindByCrossingWindowRegion(RhinoViewport viewport, IEnumerable<Point3d> region, bool inside, ObjectType filter)
+    {
+      // 0=window, 1=crossing, 2=outside window, 3=outside crossing window
+      return FindByRegion(viewport, region, inside ? 1 : 3, filter);
     }
 
     /// <summary>
@@ -4631,6 +5154,100 @@ namespace Rhino.DocObjects.Tables
       return rc;
     }
 
+#if RDK_CHECKED
+    /// <summary>
+    /// Modifies an object's render material assignment, this will set the
+    /// objects material source to ObjectMaterialSource.MaterialFromObject.
+    /// </summary>
+    /// <param name="obj">Object to modify.</param>
+    /// <param name="material">
+    /// Material to assign to this object.
+    /// </param>
+    /// <returns>
+    /// Returns true on success otherwise returns false.
+    /// </returns>
+    public bool ModifyRenderMaterial(RhinoObject obj, RenderMaterial material)
+    {
+      if (null == obj) return false;
+      var material_id = (material == null ? Guid.Empty : material.Id);
+      var pointer = obj.ConstPointer();
+      var success = UnsafeNativeMethods.Rdk_RenderContent_SetObjectMaterialInstanceid(pointer, material_id);
+      return (success != 0);
+    }
+    /// <summary>
+    /// Modifies an object's render material assignment, this will set the
+    /// objects material source to ObjectMaterialSource.MaterialFromObject.
+    /// </summary>
+    /// <param name="objRef">Object to modify.</param>
+    /// <param name="material">
+    /// Material to assign to this object.
+    /// </param>
+    /// <returns>
+    /// Returns true on success otherwise returns false.
+    /// </returns>
+    public bool ModifyRenderMaterial(ObjRef objRef, RenderMaterial material)
+    {
+      if (null == objRef) return false;
+      var obj = objRef.Object();
+      return ModifyRenderMaterial(obj, material);
+    }
+    /// <summary>
+    /// Modifies an object's render material assignment, this will set the
+    /// objects material source to ObjectMaterialSource.MaterialFromObject.
+    /// </summary>
+    /// <param name="objectId">Id of object to modify.</param>
+    /// <param name="material">
+    /// Material to assign to this object.
+    /// </param>
+    /// <returns>
+    /// Returns true on success otherwise returns false.
+    /// </returns>
+    public bool ModifyRenderMaterial(Guid objectId, RenderMaterial material)
+    {
+      var objref = new ObjRef(objectId);
+      var obj = objref.Object();
+      return ModifyRenderMaterial(obj, material);
+    }
+#endif
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="objRef"></param>
+    /// <param name="channel"></param>
+    /// <param name="mapping"></param>
+    /// <returns></returns>
+    public bool ModifyTextureMapping(ObjRef objRef, int channel, TextureMapping mapping)
+    {
+      var obj = (objRef == null ? null : objRef.Object());
+      return ModifyTextureMapping(obj, channel, mapping);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="objId"></param>
+    /// <param name="channel"></param>
+    /// <param name="mapping"></param>
+    /// <returns></returns>
+    public bool ModifyTextureMapping(Guid objId, int channel, TextureMapping mapping)
+    {
+      var obj_ref = new ObjRef(objId);
+      return ModifyTextureMapping(obj_ref, channel, mapping);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="channel"></param>
+    /// <param name="mapping"></param>
+    /// <returns></returns>
+    public bool ModifyTextureMapping(RhinoObject obj, int channel, TextureMapping mapping)
+    {
+      if (null == obj) return false;
+      var pointer = obj.ConstPointer();
+      var mapping_pointer = (null == mapping ? IntPtr.Zero : mapping.ConstPointer());
+      var success = UnsafeNativeMethods.ON_TextureMapping_SetObjectMapping(pointer, channel, mapping_pointer);
+      return (success != 0);
+    }
     /// <summary>
     /// Replaces one object with another. Conceptually, this function is the same as calling
     /// Setting new_object attributes = old_object attributes
@@ -5745,7 +6362,7 @@ namespace Rhino.DocObjects.Tables
 
     public string GetKey(int i)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoDoc_GetDocTextString(m_doc.m_docId, i, true, pString);
@@ -5755,7 +6372,7 @@ namespace Rhino.DocObjects.Tables
 
     public string GetValue(int i)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoDoc_GetDocTextString(m_doc.m_docId, i, false, pString);
@@ -5764,7 +6381,7 @@ namespace Rhino.DocObjects.Tables
     }
     public string GetValue(string key)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoDoc_GetDocTextString2(m_doc.m_docId, key, pString);
@@ -5998,6 +6615,10 @@ namespace Rhino.DocObjects
           m_object_state &= ~object_state.hidden_objects;
       }
     }
+
+    /// <summary>
+    /// When true, ONLY Instance Definitions will be returned
+    /// </summary>
     public bool IdefObjects
     {
       get

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.DocObjects
 {
@@ -99,7 +100,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pLinetype = ConstPointer();
           IntPtr pString = sh.NonConstPointer();
@@ -598,7 +599,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>The unused linetype name.</returns>
     public string GetUnusedLinetypeName(bool ignoreDeleted)
     {
-      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoLinetypeTable_GetUnusedLinetypeName(m_doc.m_docId, ignoreDeleted, pString);

@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using Rhino.Runtime.InteropWrappers;
 
 #if RHINO_SDK
 namespace Rhino.ApplicationSettings
@@ -171,7 +172,7 @@ namespace Rhino.ApplicationSettings
     {
       IntPtr pAppearanceSettings = UnsafeNativeMethods.CRhinoAppAppearanceSettings_New(current);
       AppearanceSettingsState rc = new AppearanceSettingsState();
-      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoAppearanceSettings_DefaultFontFaceNameGet(pString, pAppearanceSettings);
@@ -283,7 +284,7 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.CRhinoAppearanceSettings_DefaultFontFaceNameGet(pString, IntPtr.Zero);
@@ -774,7 +775,7 @@ namespace Rhino.ApplicationSettings
     {
       int count = UnsafeNativeMethods.CRhinoAppAliasList_Count(IntPtr.Zero);
       string[] rc = new string[count];
-      using(Runtime.StringHolder sh = new Runtime.StringHolder())
+      using(var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         for (int i = 0; i < count; i++)
@@ -796,7 +797,7 @@ namespace Rhino.ApplicationSettings
     ///<param name='alias'>[in] The name of the command alias.</param>
     public static string GetMacro(string alias)
     {
-      using (Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pMacro = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoAppAliasList_GetMacro(alias, pMacro, IntPtr.Zero);
@@ -889,8 +890,8 @@ namespace Rhino.ApplicationSettings
       var rc = new System.Collections.Generic.Dictionary<string,string>();
       IntPtr pCommandAliasList = UnsafeNativeMethods.CRhinoAppAliasList_New();
       int count = UnsafeNativeMethods.CRhinoAppAliasList_Count(pCommandAliasList);
-      using(Runtime.StringHolder shName = new Runtime.StringHolder())
-      using (Runtime.StringHolder shMacro = new Runtime.StringHolder())
+      using (var shName = new StringHolder())
+      using (var shMacro = new StringHolder())
       {
         IntPtr pName = shName.NonConstPointer();
         IntPtr pMacro = shMacro.NonConstPointer();
@@ -1115,7 +1116,7 @@ namespace Rhino.ApplicationSettings
     /// <returns>A directory to user or machine data.</returns>
     public static string GetDataFolder(bool currentUser)
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pStringHolder = sh.NonConstPointer();
         int which = currentUser ? idxGetRhinoRoamingProfileDataFolder : idxGetRhinoApplicationDataFolder;
@@ -1136,7 +1137,7 @@ namespace Rhino.ApplicationSettings
       string[] rc = new string[count];
       if (count > 0)
       {
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pStringHolder = sh.NonConstPointer();
           for (int i = 0; i < count; i++)
@@ -1189,7 +1190,7 @@ namespace Rhino.ApplicationSettings
     /// <returns> full imagePath on success; null on error.</returns>
     public static string FindFile(string fileName)
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pStringHolder = sh.NonConstPointer();
         UnsafeNativeMethods.RhDirectoryManager_FindFile(fileName, pStringHolder);
@@ -1213,7 +1214,7 @@ namespace Rhino.ApplicationSettings
     /// </summary>
     public static string[] GetSearchPaths()
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         int count = SearchPathCount;
         string[] rc = new string[count];
@@ -1235,7 +1236,7 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pStringHolder = sh.NonConstPointer();
           UnsafeNativeMethods.RhDirectoryManager_WorkingFolder(null,pStringHolder);
@@ -1257,7 +1258,7 @@ namespace Rhino.ApplicationSettings
     }
     static string GetFileString(int which)
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoAppFileSettings_GetFile(which, pString);
@@ -1361,7 +1362,7 @@ namespace Rhino.ApplicationSettings
     ///<summary>Input list of commands that force AutoSave prior to running.</summary>
     public static string[] AutoSaveBeforeCommands()
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pStringHolder = sh.NonConstPointer();
         UnsafeNativeMethods.RhFileSettings_AutosaveBeforeCommands(pStringHolder);
@@ -1448,7 +1449,7 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.CRhinoApp_GetString(RhinoApp.idxExecutableFolder, pString);
@@ -1462,7 +1463,7 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.CRhinoApp_GetString(RhinoApp.idxInstallFolder, pString);
@@ -1481,10 +1482,33 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.CRhinoApp_GetString(RhinoApp.idxHelpFilePath, pString);
+          return sh.ToString();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get full path to a Rhino specific sub-folder under the per-user Local
+    /// (non-roaming) Profile folder.  This is the folder where user-specific
+    /// data is stored.
+    /// 
+    /// Windows NT4, 2000, XP, usually someplace like:
+    ///   "C:\Documents and Settings\[USERNAME]\Local Settings\Application Data\McNeel\Rhinoceros\[VERSION_NUMBER]\"
+    /// Windows Vista, 7, usually someplace like:
+    ///   "C:\Users\[USERNAME]\AppData\Local\McNeel\Rhinoceros\[VERSION_NUMBER]\"
+    /// </summary>
+    public static string LocalProfileDataFolder
+    {
+      get
+      {
+        using (var sh = new StringHolder())
+        {
+          var pointer = sh.NonConstPointer();
+          UnsafeNativeMethods.CRhinoApp_GetString(RhinoApp.idxLocalProfileDataFolder, pointer);
           return sh.ToString();
         }
       }
@@ -1497,7 +1521,7 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.CRhinoApp_GetString(RhinoApp.idxDefaultRuiFile, pString);
@@ -1545,7 +1569,7 @@ namespace Rhino.ApplicationSettings
     ///<summary>The list of commands to not repeat.</summary>
     public static string[] CommandNames()
     {
-      using(Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using(var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoAppDontRepeatCommandSettings_GetDontRepeatList(pString);
@@ -1684,7 +1708,7 @@ namespace Rhino.ApplicationSettings
       rc.NewObjectIsoparmCount = UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(pGeneralSettings, idxNewObjectIsoparmCount);
       rc.MiddleMouseMode = (MiddleMouseMode)UnsafeNativeMethods.CRhinoAppGeneralSettings_GetInt(pGeneralSettings, idxMiddleMouseMode);
 
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pStringHolder = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoAppGeneralSettings_GetString(IntPtr.Zero, idxMiddleMousePopupToolbar, pStringHolder);
@@ -1806,7 +1830,7 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pStringHolder = sh.NonConstPointer();
           UnsafeNativeMethods.CRhinoAppGeneralSettings_GetString(IntPtr.Zero, idxMiddleMousePopupToolbar, pStringHolder);
@@ -1825,7 +1849,7 @@ namespace Rhino.ApplicationSettings
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pStringHolder = sh.NonConstPointer();
           UnsafeNativeMethods.CRhinoAppGeneralSettings_GetString(IntPtr.Zero, idxMiddleMouseMacro, pStringHolder);
@@ -3117,7 +3141,7 @@ namespace Rhino.ApplicationSettings
     /// <returns></returns>
     public static string GetMacro(ShortcutKey key)
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoAppShortcutKeys_Macro((int)key, pString);

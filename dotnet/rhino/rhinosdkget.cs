@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using Rhino.Geometry;
 using Rhino.Display;
 using System.Collections.Generic;
+using Rhino.Runtime.InteropWrappers;
 
 #if RHINO_SDK
 namespace Rhino.Input
@@ -808,7 +809,7 @@ namespace Rhino.Input
 
     public static string GetFileName(Custom.GetFileNameMode mode, string defaultName, string title, System.Windows.Forms.IWin32Window parent)
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         IntPtr pParent = parent != null ? parent.Handle : IntPtr.Zero;
@@ -819,7 +820,7 @@ namespace Rhino.Input
 
     public static string GetFileNameScripted(Custom.GetFileNameMode mode, string defaultName)
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoGetFileDialog_Get2((int)mode, defaultName, pString);

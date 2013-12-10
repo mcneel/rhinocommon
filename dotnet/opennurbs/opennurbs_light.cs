@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.Geometry
 {
@@ -399,6 +400,26 @@ namespace Rhino.Geometry
       IntPtr pThis = NonConstPointer();
       UnsafeNativeMethods.ON_Light_SetAttenuation(pThis, a0, a1, a2);
     }
+
+    /// <summary>
+    /// Gets or Sets the attenuation vector.
+    /// </summary>
+    public Vector3d AttenuationVector
+    {
+      get
+      {
+        IntPtr ptr_const_this = ConstPointer();
+        Vector3d rc = new Vector3d();
+        UnsafeNativeMethods.ON_Light_GetAttenuationVector(ptr_const_this, ref rc);
+        return rc;
+      }
+
+      set
+      {
+        SetAttenuation(value.X, value.Y, value.Z);
+      }
+    }
+
     /// <summary>
     /// Gets the attenuation settings (ignored for "directional" and "ambient" lights).
     /// <para>attenuation = 1/(a0 + d*a1 + d^2*a2) where d = distance to light.</para>
@@ -503,7 +524,7 @@ namespace Rhino.Geometry
       get
       {
         IntPtr pConstThis = ConstPointer();
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.ON_Light_GetName(pConstThis, pString);

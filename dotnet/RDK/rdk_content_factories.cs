@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 using System;
 using System.Collections.Generic;
+using Rhino.Runtime.InteropWrappers;
 
 #if RDK_UNCHECKED
 
@@ -94,7 +95,7 @@ namespace Rhino.Render
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.Rdk_Factory_InternalName(ConstPointer(), pString);

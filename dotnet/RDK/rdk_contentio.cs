@@ -1,148 +1,157 @@
 ﻿#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
 
 namespace Rhino.Render
 {
-
-  [AttributeUsage(AttributeTargets.Class)]
-  public sealed class CustomRenderContentIoAttribute : System.Attribute
-  {
-    private readonly String m_ext = "";
-    private readonly bool   m_bLoad = false;
-    private readonly bool   m_bSave = false;
-    //private readonly String m_description = "";
-    private readonly RenderContentKind m_kind = RenderContentKind.None;
-
-    public CustomRenderContentIoAttribute(String extension, 
-                                          //String description, 
-                                          RenderContentKind kind, 
-                                          bool canLoad, 
-                                          bool canSave)
-    {
-      m_ext = extension;
-      //m_description = description;
-      m_kind = kind;
-      m_bLoad = canLoad;
-      m_bSave = canSave;
-    }
-
-    public String Extension       {      get { return m_ext; }            }
-    //public String Description     {      get { return m_description; }    }
-    public bool CanLoad           {      get { return m_bLoad; }          }
-    public bool CanSave           {      get { return m_bSave; }          }
-    public RenderContentKind Kind {      get { return m_kind; }           }
-  }
-
-
-
-  public abstract class IOPlugIn
+  /// <summary>
+  /// Used to import and export custom render content types such as
+  /// materials, environments and textures.  You must override
+  /// RenderPlugIn.RenderContentSerializers() and return an array of
+  /// derived RenderContentSerializer class types to add to the content
+  /// browsers.
+  /// </summary>
+  public abstract class RenderContentSerializer
   {
     //Currently IOPlugIn cannot be initialized from native IO plugins because we don't allow access
     //to the list - so you only get to define custom RhinoCommon ones.
-    public IOPlugIn()
+    /// <summary>
+    /// Protected constructor to be called from derived class
+    /// </summary>
+    /// <param name="fileExtension">
+    /// File extension associated with this serialize object
+    /// </param>
+    /// <param name="contentKind">
+    /// Type of content created when importing or exporting this file type.
+    /// </param>
+    /// <param name="canRead">
+    /// If true then the file type can be imported and will be included in the
+    /// file open box when importing the specified render content type.
+    /// </param>
+    /// <param name="canWrite">
+    /// If true then the file type can be exported and will be included in the
+    /// file save box when exporting the specified render content type.
+    /// </param>
+    protected RenderContentSerializer(string fileExtension, RenderContentKind contentKind, bool canRead, bool canWrite)
     {
       m_runtime_serial_number = m_current_serial_number++;
       m_all_custom_content_io_plugins.Add(m_runtime_serial_number, this);
+      m_file_extension = fileExtension;
+      m_content_kind = contentKind;
+      m_can_read = canRead;
+      m_can_write = canWrite;
     }
 
-    public abstract RenderContent Load(String pathToFile);
-    public abstract bool Save(String pathToFile, RenderContent rc, CreatePreviewEventArgs ss);
+    #region private members
+    private readonly string m_file_extension;
+    private readonly RenderContentKind m_content_kind;
+    private readonly bool m_can_read;
+    private readonly bool m_can_write;
+    #endregion private members
 
+    #region public properties
+    /// <summary>
+    /// File extension associated with this serialize object
+    /// </summary>
+    public string FileExtension { get { return m_file_extension; } }
+
+    /// <summary>
+    /// Type of content created when importing or exporting this file type.
+    /// </summary>
+    public RenderContentKind ContentType { get { return m_content_kind; } }
+
+    /// <summary>
+    /// If true then the file type can be imported and will be included in the
+    /// file open box when importing the specified render content type.
+    /// </summary>
+    public bool CanRead { get { return m_can_read; } }
+
+    /// <summary>
+    /// If true then the file type can be exported and will be included in the
+    /// file save box when exporting the specified render content type.
+    /// </summary>
+    public bool CanWrite { get { return m_can_write; } }
+    #endregion public properties
+
+    #region Abstract methods and properties
+    /// <summary>
+    /// Called to when importing a file, file should be parsed and converted to
+    /// a valid RenderContent object.
+    /// </summary>
+    /// <param name="pathToFile">
+    /// Full path of the file to load.
+    /// </param>
+    /// <returns>
+    /// Returns a valid RenderContent object such as RenderMaterial if the file
+    /// was successfully parsed otherwise returns null.
+    /// </returns>
+    public abstract RenderContent Read(String pathToFile);
+
+    /// <summary>
+    /// Called to save a custom RenderContent object as an external file.
+    /// </summary>
+    /// <param name="pathToFile">
+    /// Full path of file to write
+    /// </param>
+    /// <param name="renderContent">
+    /// Render content to save
+    /// </param>
+    /// <param name="previewArgs">
+    /// Parameters used to generate a preview image which may be embedded in
+    /// the exported file.
+    /// </param>
+    /// <returns></returns>
+    public abstract bool Write(String pathToFile, RenderContent renderContent, CreatePreviewEventArgs previewArgs);
+    
+    /// <summary>
+    /// English string describing this plug-in
+    /// </summary>
     public abstract String EnglishDescription { get; }
+    
+    /// <summary>
+    /// Localized plug-in description
+    /// </summary>
     public virtual String LocalDescription { get { return EnglishDescription; } }
+    #endregion Abstract methods and properties
 
     #region InternalRegistration
 
     private int m_runtime_serial_number;// = 0; initialized by runtime
     private static int m_current_serial_number = 1;
-    private static readonly Dictionary<int, IOPlugIn> m_all_custom_content_io_plugins = new Dictionary<int, IOPlugIn>();
+    private static readonly Dictionary<int, RenderContentSerializer> m_all_custom_content_io_plugins = new Dictionary<int, RenderContentSerializer>();
 
-    private String m_ext = "";
-    private bool m_bLoad = false;
-    private bool m_bSave = false;
-    //private String m_description = "";
+    private String m_ext = string.Empty;
+    private bool m_load;
+    private bool m_save;
+
     private RenderContentKind m_kind = RenderContentKind.None;
 
     internal void Destroy()
     {
-      bool bRet = m_all_custom_content_io_plugins.Remove(m_runtime_serial_number);
-      Debug.Assert(bRet);
+      var success = m_all_custom_content_io_plugins.Remove(m_runtime_serial_number);
+      Debug.Assert(success);
     }
 
     internal void Construct(Guid pluginId)
     {
-      Type t = GetType();
-      object[] attr = t.GetCustomAttributes(typeof(CustomRenderContentIoAttribute), false);
-      if (attr != null && attr.Length > 0)
-      {
-        CustomRenderContentIoAttribute custom = attr[0] as CustomRenderContentIoAttribute;
-        if (custom != null)
-        {
-          m_ext = custom.Extension;
-          m_bLoad = custom.CanLoad;
-          m_bSave = custom.CanSave;
-          //m_description = custom.Description;
-          m_kind = custom.Kind;
-        }
-      }
-
-      String m_description = "";
-
-      UnsafeNativeMethods.CRhCmnContentIOPlugIn_New(m_runtime_serial_number, m_ext, m_description, (int)m_kind, m_bSave, m_bLoad, pluginId);
+      m_ext = FileExtension;
+      m_load = CanRead;
+      m_save = CanWrite;
+      m_kind = ContentType;
+      UnsafeNativeMethods.CRhCmnContentIOPlugIn_New(m_runtime_serial_number, m_ext, string.Empty, (int)m_kind, m_save, m_load, pluginId);
     }
     #endregion
 
     #region statics
-    internal static IOPlugIn FromSerialNumber(int serial)
+    internal static RenderContentSerializer FromSerialNumber(int serial)
     {
-      IOPlugIn rc;
+      RenderContentSerializer rc;
       m_all_custom_content_io_plugins.TryGetValue(serial, out rc);
       return rc;
-    }
-
-    public static Type[] RegisterContentIo(System.Reflection.Assembly assembly, System.Guid pluginId)
-    {
-      Rhino.PlugIns.PlugIn plugin = Rhino.PlugIns.PlugIn.GetLoadedPlugIn(pluginId);
-      if (plugin == null)
-        return null;
-
-      //Find all public types exported in the plug-in that we're dealing with
-      Type[] exported_types = assembly.GetExportedTypes();
-      if (exported_types != null)
-      {
-        List<Type> contentio_types = new List<Type>();
-        for (int i = 0; i < exported_types.Length; i++)
-        {
-          //If the type is a Render.IOPlugIn, add it to the "to register" list.
-          Type t = exported_types[i];
-          if (!t.IsAbstract && t.IsSubclassOf(typeof(Rhino.Render.IOPlugIn)) && t.GetConstructor(new Type[] { }) != null)
-          {
-            contentio_types.Add(t);
-          }
-        }
-
-        // make sure that content types have not already been registered
-        for (int i = 0; i < contentio_types.Count; i++)
-        {
-          Type t = contentio_types[i];
-
-          if (!RdkPlugIn.RenderContentIoTypeIsRegistered(t))
-          {
-            //The object registers itself in a static array
-            IOPlugIn pi = System.Activator.CreateInstance(t) as IOPlugIn;
-            pi.Construct(pluginId);
-          }
-        }        
-        
-        return contentio_types.ToArray();
-      }
-      return null;
     }
     #endregion
 
@@ -153,7 +162,7 @@ namespace Rhino.Render
     {
       try
       {
-        IOPlugIn io = IOPlugIn.FromSerialNumber(serial_number) as IOPlugIn;
+        var io = FromSerialNumber(serial_number);
         if (io != null)
         {
           io.Destroy();
@@ -170,11 +179,11 @@ namespace Rhino.Render
     {
       try
       {
-        IOPlugIn io = IOPlugIn.FromSerialNumber(serial_number) as IOPlugIn;
+        RenderContentSerializer io = RenderContentSerializer.FromSerialNumber(serial_number) as RenderContentSerializer;
         if (io != null)
         {
           string _filename = Marshal.PtrToStringUni(filename);
-          RenderContent content = io.Load(_filename);
+          RenderContent content = io.Read(_filename);
           if (content != null)
             return content.m_runtime_serial_number;
         }
@@ -192,7 +201,7 @@ namespace Rhino.Render
     {
       try
       {
-        IOPlugIn io = IOPlugIn.FromSerialNumber(serial_number) as IOPlugIn;
+        RenderContentSerializer io = RenderContentSerializer.FromSerialNumber(serial_number) as RenderContentSerializer;
         RenderContent content = RenderContent.FromPointer(content_ptr);
 
         CreatePreviewEventArgs pc = null;
@@ -203,7 +212,7 @@ namespace Rhino.Render
         if (io != null && content != null)
         {
           string _filename = Marshal.PtrToStringUni(filename);
-          return io.Save(_filename, content, pc);
+          return io.Write(_filename, content, pc);
         }
       }
       catch
@@ -218,7 +227,7 @@ namespace Rhino.Render
     {
       try
       {
-        IOPlugIn io = IOPlugIn.FromSerialNumber(serial_number) as IOPlugIn;
+        RenderContentSerializer io = RenderContentSerializer.FromSerialNumber(serial_number) as RenderContentSerializer;
         if (io != null)
         {
           string str = local ? io.LocalDescription : io.EnglishDescription;
@@ -236,8 +245,5 @@ namespace Rhino.Render
 
   }
 }
-
-
-
 
 #endif

@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Rhino.Collections;
 using System.Runtime.Serialization;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.Render
 {
@@ -559,7 +560,7 @@ namespace Rhino.Geometry
     /// <param name="yCount">Number of faces in y-direction.</param>
     /// <param name="zCount">Number of faces in z-direction.</param>
     /// <returns>A new brep, or null on failure.</returns>
-        /// <returns>A new box mesh, on null on error.</returns>
+    /// <returns>A new box mesh, on null on error.</returns>
     public static Mesh CreateFromBox(IEnumerable<Point3d> corners, int xCount, int yCount, int zCount)
     {
       Point3d[] box_corners = new Point3d[8];
@@ -847,12 +848,22 @@ namespace Rhino.Geometry
       if (mh != null)
         return mh.MeshPointer();
 
-#if RDK_UNCHECKED
-      Rhino.Render.RenderMesh rm = m__parent as Rhino.Render.RenderMesh;
-      if( rm!=null )
-        return rm.GetConst_ON_Mesh_Pointer();
-#endif
       return base._InternalGetConstPointer();
+    }
+
+    /// <summary>
+    /// Performs some memory cleanup if necessary
+    /// </summary>
+    protected override void OnSwitchToNonConst()
+    {
+      MeshHolder mh = m__parent as MeshHolder;
+      base.OnSwitchToNonConst();
+
+      if (mh != null)
+      {
+        m__parent = null;
+        mh.ReleaseMesh();
+      }
     }
 
     internal override object _GetConstObjectParent()
@@ -862,8 +873,8 @@ namespace Rhino.Geometry
       return base._GetConstObjectParent();
     }
 
-    internal Mesh(IntPtr native_pointer, object parent)
-      : base(native_pointer, parent, -1)
+    internal Mesh(IntPtr nativePointer, object parent)
+      : base(nativePointer, parent, -1)
     {
       if (null == parent)
         ApplyMemoryPressure();
@@ -1809,7 +1820,7 @@ namespace Rhino.Geometry
     /// In ancient times (or modern smartphone times), some rendering engines
     /// were only able to process small batches of triangles and the
     /// CreatePartitions() function was provided to partition the mesh into
-    /// subsets of vertices and faces that those renering engines could handle.
+    /// subsets of vertices and faces that those rendering engines could handle.
     /// </summary>
     /// <param name="maximumVertexCount"></param>
     /// <param name="maximumTriangleCount"></param>
@@ -1834,8 +1845,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Retrieves a partition. See <see cref="CreatePartitions"/> for details.
     /// </summary>
-    /// <param name="which"></param>
+    /// <param name="which">The partition index.</param>
     /// <returns></returns>
     public MeshPart GetPartition(int which)
     {
@@ -2352,30 +2364,6 @@ namespace Rhino.Geometry.Collections
       }
       return rc;
     }
-
-		/// <summary>
-		/// Copies all vertices to a linear array of float in x,y,z order
-		/// </summary>
-		/// <returns>The float array.</returns>
-		public float[] ToFloatArray()
-		{
-			int count = Count;
-			float[] rc = new float[count * 3];
-			IntPtr const_ptr_mesh = m_mesh.ConstPointer();
-			Point3f pt = new Point3f();
-			int index = 0;
-			// There is a much more efficient way to do this with
-			// marshalling the whole array at once, but this will
-			// do for now
-			for (int i=0; i<count; i++)
-			{
-				UnsafeNativeMethods.ON_Mesh_Vertex (const_ptr_mesh, i, ref pt);
-				rc [index++] = pt.X;
-				rc [index++] = pt.Y;
-				rc [index++] = pt.Z;
-			}
-			return rc;
-		}
 
     /// <summary>
     /// Removes the vertex at the given index and all faces that reference that index.
@@ -3513,41 +3501,6 @@ namespace Rhino.Geometry.Collections
       face_ids.Keys.CopyTo(rc, 0);
       return rc;
     }
-
-		/// <summary>
-		/// Copies all of the faces to a linear integer of indices
-		/// </summary>
-		/// <returns>The int array.</returns>
-		/// <param name="asTriangles">If set to <c>true</c> as triangles.</param>
-		public int[] ToIntArray(bool asTriangles)
-		{
-			int count = asTriangles ? (QuadCount * 2 + TriangleCount) * 3 : Count * 4;
-			int[] rc = new int[count];
-			int current = 0;
-			int face_count = Count;
-			MeshFace face = new MeshFace();
-			IntPtr const_ptr_mesh = m_mesh.ConstPointer();
-			for (int index=0; index<face_count; index++)
-			{
-				UnsafeNativeMethods.ON_Mesh_GetFace (const_ptr_mesh, index, ref face);
-				rc [current++] = face.A;
-				rc [current++] = face.B;
-				rc [current++] = face.C;
-				if (asTriangles)
-				{
-					if (face.C != face.D) {
-						rc [current++] = face.C;
-						rc [current++] = face.D;
-						rc [current++] = face.A;
-					}
-				}
-				else
-				{
-					rc [current++] = face.D;
-				}
-			}
-			return rc;
-		}
     #endregion
 
     /// <summary>

@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using Rhino.Geometry;
 
-namespace Rhino.Runtime
+namespace Rhino.Runtime.InteropWrappers
 {
   class INTERNAL_ComponentIndexArray : IDisposable
   {
@@ -51,28 +51,51 @@ namespace Rhino.Runtime
     }
   }
 
-  class StringHolder : IDisposable
+  /// <summary>
+  /// This class is used to pass strings back and forth between managed
+  /// and unmanaged code.  This should not be be needed by plug-ins.
+  /// </summary>
+  public class StringHolder : IDisposable
   {
     IntPtr m_ptr; // CRhCmnString*
-    internal IntPtr ConstPointer() { return m_ptr; }
-    internal IntPtr NonConstPointer() { return m_ptr; }
-
+    /// <summary>
+    /// C++ pointer used to access the ON_wString, managed plug-ins should
+    /// never need this.
+    /// </summary>
+    /// <returns></returns>
+    public IntPtr ConstPointer() { return m_ptr; }
+    /// <summary>
+    /// C++ pointer used to access the ON_wString, managed plug-ins should
+    /// never need this.
+    /// </summary>
+    /// <returns></returns>
+    public IntPtr NonConstPointer() { return m_ptr; }
+    /// <summary>
+    /// Constructor
+    /// </summary>
     public StringHolder()
     {
       m_ptr = UnsafeNativeMethods.StringHolder_New();
     }
-
+    /// <summary>
+    /// Destructor
+    /// </summary>
     ~StringHolder()
     {
       Dispose(false);
     }
-
+    /// <summary>
+    /// IDispose implementation
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
-
+    /// <summary>
+    /// Called by Dispose and finalizer
+    /// </summary>
+    /// <param name="disposing"></param>
     protected virtual void Dispose( bool disposing )
     {
       if (IntPtr.Zero != m_ptr)
@@ -81,12 +104,19 @@ namespace Rhino.Runtime
         m_ptr = IntPtr.Zero;
       }
     }
-
+    /// <summary>
+    /// Marshal unmanaged ON_wString to a managed .NET string
+    /// </summary>
+    /// <returns></returns>
     public override string ToString()
     {
       return GetString(m_ptr);
     }
-
+    /// <summary>
+    /// Get managed string from unmanaged ON_wString pointer.
+    /// </summary>
+    /// <param name="pStringHolder"></param>
+    /// <returns></returns>
     public static string GetString(IntPtr pStringHolder)
     {
       IntPtr pString = UnsafeNativeMethods.StringHolder_Get(pStringHolder);
@@ -94,10 +124,6 @@ namespace Rhino.Runtime
       return rc ?? String.Empty;
     }
   }
-}
-
-namespace Rhino.Runtime.InteropWrappers
-{
   /// <summary>
   /// Wrapper for ON_SimpleArray&lt;int&gt;. If you are not writing C++ code
   /// then this class is not for you.
@@ -1352,4 +1378,119 @@ namespace Rhino.Runtime.InteropWrappers
     }
   }
 #endif
+
+  /// <summary>
+  /// Represents a wrapper to an unmanaged "array" (list) of ON_ObjRef instances.
+  /// <para>Wrapper for a C++ ON_ClassArray of ON_ObjRef</para>
+  /// </summary>
+  public sealed class ClassArrayOnObjRef : IDisposable
+  {
+    IntPtr m_ptr; // ON_ClassArray<ON_ObjRef>*
+
+    /// <summary>
+    /// Gets the const (immutable) pointer of this array.
+    /// </summary>
+    /// <returns>The const pointer.</returns>
+    public IntPtr ConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Gets the non-const pointer (for modification) of this array.
+    /// </summary>
+    /// <returns>The non-const pointer.</returns>
+    public IntPtr NonConstPointer() { return m_ptr; }
+
+    /// <summary>
+    /// Initializes a new <see cref="ClassArrayOnObjRef"/> instance.
+    /// </summary>
+    public ClassArrayOnObjRef()
+    {
+      m_ptr = UnsafeNativeMethods.ON_ClassArrayON_ObjRef_New();
+    }
+
+    /// <summary>
+    /// Initializes a new instances from a set of ObjRefs
+    /// </summary>
+    /// <param name="objrefs">An array, a list or any enumerable set of Rhino object references.</param>
+    public ClassArrayOnObjRef(System.Collections.Generic.IEnumerable<Rhino.DocObjects.ObjRef> objrefs)
+    {
+      m_ptr = UnsafeNativeMethods.ON_ClassArrayON_ObjRef_New();
+      foreach (var objref in objrefs)
+      {
+        Add(objref);
+      }
+    }
+
+    /// <summary>
+    /// Gets the number of ObjRef instances in this array.
+    /// </summary>
+    public int Count
+    {
+      get
+      {
+        IntPtr ptr = ConstPointer();
+        return UnsafeNativeMethods.ON_ClassArrayON_ObjRef_Count(ptr);
+      }
+    }
+
+    /// <summary>
+    /// Adds an ObjRef to the list.
+    /// </summary>
+    /// <param name="objref">An ObjRef to add.</param>
+    public void Add(DocObjects.ObjRef objref)
+    {
+      if (null != objref)
+      {
+        IntPtr ptr_const_objref = objref.ConstPointer();
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_ClassArrayON_ObjRef_Append(ptr_this, ptr_const_objref);
+      }
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~ClassArrayOnObjRef()
+    {
+      Dispose(false);
+    }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_ptr)
+      {
+        UnsafeNativeMethods.ON_ClassArrayON_ObjRef_Delete(m_ptr);
+        m_ptr = IntPtr.Zero;
+      }
+    }
+
+    /// <summary>
+    /// Copies the unmanaged array to a managed counterpart.
+    /// </summary>
+    /// <returns>The managed array.</returns>
+    public DocObjects.ObjRef[] ToNonConstArray()
+    {
+      int count = Count;
+      if (count < 1)
+        return new DocObjects.ObjRef[0];
+      IntPtr ptr_const_this = ConstPointer();
+
+      DocObjects.ObjRef[] rc = new DocObjects.ObjRef[count];
+      for (int i = 0; i < count; i++)
+      {
+        IntPtr ptr_const_objref = UnsafeNativeMethods.ON_ClassArrayON_ObjRef_Get(ptr_const_this, i);
+        if (IntPtr.Zero != ptr_const_objref)
+          rc[i] = new DocObjects.ObjRef(ptr_const_objref, false);
+      }
+      return rc;
+    }
+  }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.Geometry
 {
@@ -135,11 +136,17 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="box">A box to use for creation.</param>
     /// <returns>A new brep; or null on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_curvebrepbox.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_curvebrepbox.cs' lang='cs'/>
+    /// <code source='examples\py\ex_curvebrepbox.py' lang='py'/>
+    /// </example>
     public static Brep CreateFromBox(BoundingBox box)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_Brep_FromBox(box.Min, box.Max);
       return IntPtr.Zero == ptr ? null : new Brep(ptr, null);
     }
+
     /// <summary>
     /// Constructs new brep that matches an aligned box.
     /// </summary>
@@ -1348,10 +1355,26 @@ namespace Rhino.Geometry
       Runtime.InteropWrappers.SimpleArrayCurvePointer output = new Runtime.InteropWrappers.SimpleArrayCurvePointer();
       IntPtr outputPtr = output.NonConstPointer();
 
-      UnsafeNativeMethods.ON_Brep_DuplicateEdgeCurves(pConstPtr, outputPtr, nakedOnly);
+      UnsafeNativeMethods.ON_Brep_DuplicateEdgeCurves(pConstPtr, outputPtr, nakedOnly, true, true);
       return output.ToNonConstArray();
     }
 
+    /// <summary>
+    /// Duplicate naked edges of this Brep
+    /// </summary>
+    /// <param name="outer"></param>
+    /// <param name="inner"></param>
+    /// <returns></returns>
+    public Curve[] DuplicateNakedEdgeCurves(bool outer, bool inner)
+    {
+      IntPtr const_ptr_this = ConstPointer();
+      using (var output = new Runtime.InteropWrappers.SimpleArrayCurvePointer())
+      {
+        IntPtr output_curves_ptr = output.NonConstPointer();
+        UnsafeNativeMethods.ON_Brep_DuplicateEdgeCurves(const_ptr_this, output_curves_ptr, true, outer, inner);
+        return output.ToNonConstArray();
+      }
+    }
 #if RHINO_SDK
     /// <summary>
     /// Constructs all the Wireframe curves for this Brep.
@@ -1421,7 +1444,7 @@ namespace Rhino.Geometry
     /// <returns>true if the topology is valid; false otherwise.</returns>
     public bool IsValidTopology(out string log)
     {
-      using (Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr ptr_const_this = ConstPointer();
         IntPtr pString = sh.NonConstPointer();
@@ -1445,7 +1468,7 @@ namespace Rhino.Geometry
     /// <returns>A value that indicates whether the geometry is valid.</returns>
     public bool IsValidGeometry(out string log)
     {
-      using (Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr ptr_const_this = ConstPointer();
         IntPtr pString = sh.NonConstPointer();
@@ -1470,7 +1493,7 @@ namespace Rhino.Geometry
     /// <returns>A value that indicates </returns>
     public bool IsValidTolerancesAndFlags(out string log)
     {
-      using (Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr ptr_const_this = ConstPointer();
         IntPtr pString = sh.NonConstPointer();
@@ -2891,13 +2914,13 @@ namespace Rhino.Geometry
     {
       if (null == curves) { return DuplicateFace(false); }
 
-      Rhino.Collections.CurveList crv_list = new Rhino.Collections.CurveList(curves);
-      if (crv_list.Count == 0) { return DuplicateFace(false); }
-
-      IntPtr p_curves = new Runtime.InteropWrappers.SimpleArrayCurvePointer(crv_list.m_items).ConstPointer();
-      IntPtr rc = UnsafeNativeMethods.ON_Brep_SplitFace(m_brep.ConstPointer(), m_index, p_curves, tolerance);
-
-      return IntPtr.Zero == rc ? null : new Brep(rc, null);
+      using (var curve_array = new Runtime.InteropWrappers.SimpleArrayCurvePointer(curves))
+      {
+        IntPtr ptr_curve_array = curve_array.ConstPointer();
+        IntPtr ptr_const_brep = m_brep.ConstPointer();
+        IntPtr rc = UnsafeNativeMethods.ON_Brep_SplitFace(ptr_const_brep, m_index, ptr_curve_array, tolerance);
+        return IntPtr.Zero == rc ? null : new Brep(rc, null);
+      }
     }
 
     /// <summary>
@@ -3268,6 +3291,11 @@ namespace Rhino.Geometry
     readonly BrepFace m_face;
     readonly Extrusion m_extrusion;
     readonly MeshType m_meshtype;
+#if RDK_CHECKED
+    Render.RenderPrimitive m_primitive;
+    Render.RenderPrimitiveList m_parent_list;
+    readonly int m_index;
+#endif
 
     public MeshHolder(BrepFace face, MeshType meshType)
     {
@@ -3278,6 +3306,32 @@ namespace Rhino.Geometry
     {
       m_extrusion = extrusion;
       m_meshtype = meshType;
+    }
+#if RDK_CHECKED
+    public MeshHolder(Render.RenderPrimitiveList parentList, int index)
+    {
+      m_parent_list = parentList;
+      m_index = index;
+      if (m_parent_list != null)
+        m_parent_list.IncrementDependencyCount();
+    }
+
+    public MeshHolder(Render.RenderPrimitive primitive)
+    {
+      m_primitive = primitive;
+    }
+#endif
+
+    public void ReleaseMesh()
+    {
+#if RDK_CHECKED
+      if (m_parent_list != null)
+      {
+        m_parent_list.DecrementDependencyCount();
+        m_parent_list = null;
+      }
+      m_primitive = null;
+#endif
     }
 
     public IntPtr MeshPointer()
@@ -3292,6 +3346,18 @@ namespace Rhino.Geometry
         IntPtr ptr_const_extrusion = m_extrusion.ConstPointer();
         return UnsafeNativeMethods.ON_Extrusion_GetMesh(ptr_const_extrusion, (int)m_meshtype);
       }
+#if RDK_CHECKED
+      if (m_parent_list != null)
+      {
+        IntPtr const_ptr_parent = m_parent_list.ConstPointer();
+        return UnsafeNativeMethods.Rdk_CustomMeshes_Mesh(const_ptr_parent, m_index);
+      }
+      if (m_primitive != null)
+      {
+        IntPtr const_ptr_primitive = m_primitive.ConstPointer();
+        return UnsafeNativeMethods.Rdk_RenderMesh_Mesh(const_ptr_primitive);
+      }
+#endif
       return IntPtr.Zero;
     }
   }

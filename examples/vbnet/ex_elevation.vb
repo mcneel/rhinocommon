@@ -95,8 +95,8 @@ Namespace examples_vb
       ' multiply distance by 2 to make sure line intersects completely
       Dim lineCurve = New LineCurve(New Point3d(x, y, 0), New Point3d(x, y, maxDistFromXY * 2))
 
-      Dim overlapCurves As Curve()
-      Dim interPoints As Point3d()
+      Dim overlapCurves As Curve() = Nothing
+      Dim interPoints As Point3d() = Nothing
       If Intersection.CurveBrep(lineCurve, brep, tolerance, overlapCurves, interPoints) Then
         If overlapCurves.Length > 0 OrElse interPoints.Length > 0 Then
           ' grab all the points resulting frem the intersection. 

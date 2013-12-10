@@ -72,16 +72,23 @@ namespace Rhino.UI
       // Convert string to upper case so our checks can be case insensitive
       string s_upper = s.ToUpper();
       const string key = ".LOCALIZATION.";
-      string substring = s_upper.Substring(s_upper.IndexOf(key, StringComparison.Ordinal) + key.Length);
-      if (s_upper.Contains(key))
-      { // Contains the localization key
-        string s_language_id = languageId.ToString(CultureInfo.InvariantCulture);
-        // Check to see if it starts or ends with language ID or ends with langage id + ".xml"
-        if (substring.StartsWith(s_language_id) || substring.EndsWith(s_language_id) || substring.EndsWith(s_language_id + ".XML"))
-          return true;
-        // Check to see if it starts or ends with culture string or ends with culture string + ".xml"
-        if (substring.StartsWith(cultureName) || substring.EndsWith(cultureName) || substring.EndsWith(cultureName + ".XML"))
-          return true;
+      int index = s_upper.IndexOf(key, StringComparison.Ordinal) + key.Length;
+      if (index <= s_upper.Length)
+      {
+        string substring = s_upper.Substring(index);
+        if (s_upper.Contains(key))
+        {
+          // Contains the localization key
+          string s_language_id = languageId.ToString(CultureInfo.InvariantCulture);
+          // Check to see if it starts or ends with language ID or ends with langage id + ".xml"
+          if (substring.StartsWith(s_language_id) || substring.EndsWith(s_language_id) ||
+              substring.EndsWith(s_language_id + ".XML"))
+            return true;
+          // Check to see if it starts or ends with culture string or ends with culture string + ".xml"
+          if (substring.StartsWith(cultureName) || substring.EndsWith(cultureName) ||
+              substring.EndsWith(cultureName + ".XML"))
+            return true;
+        }
       }
       return false;
     }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Rhino.Geometry;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.DocObjects
 {
@@ -976,7 +977,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>An unused instance definition name string.</returns>
     public string GetUnusedInstanceDefinitionName()
     {
-      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName(m_doc.m_docId, pString);
@@ -994,7 +995,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>An unused instance definition name string.</returns>
     public string GetUnusedInstanceDefinitionName(string root)
     {
-      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName2(m_doc.m_docId, root, pString);
@@ -1019,7 +1020,7 @@ namespace Rhino.DocObjects.Tables
     [CLSCompliant(false)]
     public string GetUnusedInstanceDefinitionName(string root, uint defaultSuffix)
     {
-      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName3(m_doc.m_docId, root, defaultSuffix, pString);

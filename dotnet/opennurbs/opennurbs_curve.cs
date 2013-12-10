@@ -3067,6 +3067,17 @@ namespace Rhino.Geometry
     {
       return Extend(domain.T0, domain.T1);
     }
+
+    static UnsafeNativeMethods.ExtendCurveConsts ConvertExtensionStyle(CurveExtensionStyle style)
+    {
+      if (style == CurveExtensionStyle.Arc)
+        return UnsafeNativeMethods.ExtendCurveConsts.ExtendTypeArc;
+      if (style == CurveExtensionStyle.Line)
+        return UnsafeNativeMethods.ExtendCurveConsts.ExtendTypeLine;
+
+      return UnsafeNativeMethods.ExtendCurveConsts.ExtendTypeSmooth;
+    }
+
     /// <summary>
     /// Extends a curve by a specific length.
     /// </summary>
@@ -3090,13 +3101,9 @@ namespace Rhino.Geometry
         l1 = 0.0;
 
       IntPtr ptr = ConstPointer();
-      IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve(ptr, l0, l1, (int)style);
+      IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve(ptr, l0, l1, ConvertExtensionStyle(style));
       return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
     }
-
-    const int idxExtendTypeLine = 0;
-    const int idxExtendTypeArc = 1;
-    const int idxExtendTypeSmooth = 2;
 
     /// <summary>
     /// Extends a curve until it intersects a collection of objects.
@@ -3121,13 +3128,7 @@ namespace Rhino.Geometry
       {
         IntPtr geometryArrayPtr = geometryArray.ConstPointer();
 
-        int extendStyle = idxExtendTypeLine;
-        if (style == CurveExtensionStyle.Arc)
-          extendStyle = idxExtendTypeArc;
-        else if (style == CurveExtensionStyle.Smooth)
-          extendStyle = idxExtendTypeSmooth;
-
-        IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve1(pConstPtr, extendStyle, _side, geometryArrayPtr);
+        IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve1(pConstPtr, ConvertExtensionStyle(style), _side, geometryArrayPtr);
         return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
       }
     }
@@ -3151,13 +3152,7 @@ namespace Rhino.Geometry
 
       IntPtr pConstPtr = ConstPointer();
 
-      int extendStyle = idxExtendTypeLine;
-      if (style == CurveExtensionStyle.Arc)
-        extendStyle = idxExtendTypeArc;
-      else if (style == CurveExtensionStyle.Smooth)
-        extendStyle = idxExtendTypeSmooth;
-
-      IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve2(pConstPtr, extendStyle, _side, endPoint);
+      IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve2(pConstPtr, ConvertExtensionStyle(style), _side, endPoint);
       return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
     }
 

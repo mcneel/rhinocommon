@@ -1,6 +1,6 @@
 #pragma warning disable 1591
 using System;
-using System.Diagnostics;
+using Rhino.Runtime.InteropWrappers;
 
 #if RDK_CHECKED
 namespace Rhino.Render
@@ -12,14 +12,14 @@ namespace Rhino.Render
     /// </summary>
     /// <param name="material">(optional)The material to create the basic material from.</param>
     /// <returns>A new basic material.</returns>
-    public static RenderMaterial CreateBasicMaterial(Rhino.DocObjects.Material material)
+    public static RenderMaterial CreateBasicMaterial(DocObjects.Material material)
     {
-      IntPtr pConstSourceMaterial = (material == null ? IntPtr.Zero : material.ConstPointer());
-      IntPtr pNewMaterial = UnsafeNativeMethods.Rdk_Globals_NewBasicMaterial(pConstSourceMaterial);
-      NativeRenderMaterial newMaterial = RenderContent.FromPointer(pNewMaterial) as NativeRenderMaterial;
-      if (newMaterial != null)
-        newMaterial.AutoDelete = true;
-      return newMaterial;
+      IntPtr const_ptr_source_material = (material == null ? IntPtr.Zero : material.ConstPointer());
+      IntPtr ptr_new_material = UnsafeNativeMethods.Rdk_Globals_NewBasicMaterial(const_ptr_source_material);
+      NativeRenderMaterial new_material = FromPointer(ptr_new_material) as NativeRenderMaterial;
+      if (new_material != null)
+        new_material.AutoDelete = true;
+      return new_material;
     }
 
     /// <summary>
@@ -93,7 +93,7 @@ namespace Rhino.Render
         return GetString(iString);
       }
 
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.Rdk_RenderMaterial_CallTextureChildSlotNameBase(ConstPointer(), pString, (int)slot);
@@ -173,7 +173,6 @@ namespace Rhino.Render
         Rhino.Runtime.HostUtils.ExceptionReport(ex);
       }
     }
-
     #endregion
   }
 

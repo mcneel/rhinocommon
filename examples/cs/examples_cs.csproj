@@ -69,7 +69,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomMeshCommand.cs" />
     <Compile Include="ex_addlayout.cs" />
+    <Compile Include="ex_addmeshbox.cs" />
+    <Compile Include="ex_addtwistedcube.cs" />
     <Compile Include="ex_analysismode.cs" />
     <Compile Include="examples_csPlugIn.cs" />
     <Compile Include="examples_csCommand.cs" />
@@ -101,13 +104,16 @@
     <Compile Include="ex_arraybydistance.cs" />
     <Compile Include="ex_blockinsertionpoint.cs" />
     <Compile Include="ex_booleandifference.cs" />
+    <Compile Include="ex_boxshell.cs" />
     <Compile Include="ex_circlecenter.cs" />
     <Compile Include="ex_closestpoint.cs" />
     <Compile Include="ex_commandlineoptions.cs" />
+    <Compile Include="ex_conduitdrawshadedmesh.cs" />
     <Compile Include="ex_conduitarrowheads.cs" />
     <Compile Include="ex_createblock.cs" />
     <Compile Include="ex_createmeshfrombrep.cs" />
     <Compile Include="ex_createsurfaceexample.cs" />
+    <Compile Include="ex_createspiral.cs" />
     <Compile Include="ex_crvdeviation.cs" />
     <Compile Include="ex_curveboundingbox.cs" />
     <Compile Include="ex_curvebrepbox.cs" />
@@ -128,12 +134,17 @@
     <Compile Include="ex_evnormal.cs" />
     <Compile Include="ex_explodehatch.cs" />
     <Compile Include="ex_extractthumbnail.cs" />
+    <Compile Include="ex_extractrendermesh.cs" />
+    <Compile Include="ex_extrudebrepface.cs" />
     <Compile Include="ex_findobjectsbyname.cs" />
     <Compile Include="ex_constrainedcopy.cs" />
     <Compile Include="ex_getmultiplewithoptions.cs" />
     <Compile Include="ex_gumball.cs" />
     <Compile Include="ex_hatchcurve.cs" />
+    <Compile Include="ex_historyCommand.cs" />
+    <Compile Include="ex_import3dm.cs" />
     <Compile Include="ex_insertknot.cs" />
+    <Compile Include="ex_instancearchivefilestatus.cs" />
     <Compile Include="ex_instancedefinitionobjects.cs" />
     <Compile Include="ex_intersectcurves.cs" />
     <Compile Include="ex_intersectlinecurve.cs" />
@@ -145,7 +156,9 @@
     <Compile Include="ex_loft.cs" />
     <Compile Include="ex_meshdrawing.cs" />
     <Compile Include="ex_movecplane.cs" />
+    <Compile Include="ex_movegripobjects.cs" />
     <Compile Include="ex_nestedblock.cs" />
+    <Compile Include="ex_objectcolor.cs" />
     <Compile Include="ex_objectdecoration.cs" />
     <Compile Include="ex_objectdisplaymode.cs" />
     <Compile Include="ex_objectlayer.cs" />
@@ -163,6 +176,7 @@
     <Compile Include="ex_sweep2.cs" />
     <Compile Include="ex_transformbrep.cs" />
     <Compile Include="ex_tweakcolors.cs" />
+    <Compile Include="ex_tweencurve.cs" />
     <Compile Include="ex_unrollsurface.cs" />
     <Compile Include="ex_unrollsurface2.cs" />
     <Compile Include="ex_userdataCommand.cs" />

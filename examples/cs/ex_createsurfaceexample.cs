@@ -69,7 +69,7 @@ namespace examples_cs
       {
         for (int v = 0; v < nurbsSurface.Points.CountV; v++)
         {
-          nurbsSurface.Points.SetControlPoint(u, v, new ControlPoint(controlPoints[u, v]));
+          nurbsSurface.Points.SetControlPoint(u, v, controlPoints[u, v]);
         }
       }
 

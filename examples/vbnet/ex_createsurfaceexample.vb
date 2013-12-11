@@ -62,7 +62,7 @@ Namespace examples_vb
       ' add the control points
       For u As Integer = 0 To nurbsSurface__1.Points.CountU - 1
         For v As Integer = 0 To nurbsSurface__1.Points.CountV - 1
-          nurbsSurface__1.Points.SetControlPoint(u, v, New ControlPoint(controlPoints(u, v)))
+          nurbsSurface__1.Points.SetControlPoint(u, v, controlPoints(u, v))
         Next
       Next
 

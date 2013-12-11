@@ -775,6 +775,11 @@ namespace Rhino.Geometry
     /// Constructs a closed surface, continuing the surface past the last curve around to the
     /// first curve. Available when you have selected three shape curves.
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_loft.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_loft.cs' lang='cs'/>
+    /// <code source='examples\py\ex_loft.py' lang='py'/>
+    /// </example>
     public static Brep[] CreateFromLoft(IEnumerable<Curve> curves, Point3d start, Point3d end, LoftType loftType, bool closed)
     {
       return LoftHelper(curves, start, end, loftType, 0, 0, 0.0, closed);
@@ -2717,6 +2722,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// true if face orientation is opposite of natural surface orientation.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_evnormal.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_evnormal.cs' lang='cs'/>
+    /// <code source='examples\py\ex_evnormal.py' lang='py'/>
+    /// </example>
     public bool OrientationIsReversed
     {
       get

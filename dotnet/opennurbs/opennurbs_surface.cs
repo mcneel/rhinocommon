@@ -552,6 +552,11 @@ namespace Rhino.Geometry
     /// <param name="u">A U parameter.</param>
     /// <param name="v">A V parameter.</param>
     /// <returns>The normal.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_evnormal.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_evnormal.cs' lang='cs'/>
+    /// <code source='examples\py\ex_evnormal.py' lang='py'/>
+    /// </example>
     public Vector3d NormalAt(double u, double v)
     {
       Vector3d rc = new Vector3d();

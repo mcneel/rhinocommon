@@ -1063,6 +1063,11 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="mesh">Mesh for wire drawing.</param>
     /// <param name="color">Color of mesh wires.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_meshdrawing.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_meshdrawing.cs' lang='cs'/>
+    /// <code source='examples\py\ex_meshdrawing.py' lang='py'/>
+    /// </example>
     public void DrawMeshWires(Mesh mesh, System.Drawing.Color color)
     {
       DrawMeshWires(mesh, color, 1);
@@ -1099,6 +1104,11 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="mesh">Mesh to draw.</param>
     /// <param name="material">Material to draw faces with.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_meshdrawing.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_meshdrawing.cs' lang='cs'/>
+    /// <code source='examples\py\ex_meshdrawing.py' lang='py'/>
+    /// </example>
     public void DrawMeshShaded(Mesh mesh, DisplayMaterial material)
     {
       IntPtr pMesh = mesh.ConstPointer();

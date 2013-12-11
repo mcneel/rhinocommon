@@ -4672,7 +4672,11 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_AddInstanceObject(m_doc.m_docId, instanceDefinitionIndex, ref instanceXform, pAttributes);
     }
 
-
+    /// <example>
+    /// <code source='examples\vbnet\ex_leader.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_leader.cs' lang='cs'/>
+    /// <code source='examples\py\ex_leader.py' lang='py'/>
+    /// </example>
     public Guid AddLeader(Plane plane, IEnumerable<Point2d> points)
     {
       return AddLeader(null, plane, points);
@@ -5071,6 +5075,11 @@ namespace Rhino.DocObjects.Tables
     /// </summary>
     /// <param name="objectIds">Ids of objects to select.</param>
     /// <returns>Number of objects successfully selected.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_curvesurfaceintersect.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_curvesurfaceintersect.cs' lang='cs'/>
+    /// <code source='examples\py\ex_curvesurfaceintersect.py' lang='py'/>
+    /// </example>
     public int Select(IEnumerable<Guid> objectIds)
     {
       return Select(objectIds, true);
@@ -5106,6 +5115,11 @@ namespace Rhino.DocObjects.Tables
     }
     /// <summary>Unselect objects.</summary>
     /// <returns>Number of object that were unselected.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_crvdeviation.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_crvdeviation.cs' lang='cs'/>
+    /// <code source='examples\py\ex_crvdeviation.py' lang='py'/>
+    /// </example>
     public int UnselectAll()
     {
       return UnselectAll(false);

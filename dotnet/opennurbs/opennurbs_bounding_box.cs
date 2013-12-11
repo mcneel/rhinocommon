@@ -535,6 +535,11 @@ namespace Rhino.Geometry
     /// <para>[6] Max.X, Max.Y, Max.Z</para>
     /// <para>[7] Min.X, Max.Y, Max.Z</para>
     /// </remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_elevation.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_elevation.cs' lang='cs'/>
+    /// <code source='examples\py\ex_elevation.py' lang='py'/>
+    /// </example>
     public Point3d[] GetCorners()
     {
       if (!IsValid)

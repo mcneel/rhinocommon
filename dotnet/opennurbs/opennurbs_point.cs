@@ -1116,6 +1116,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="other">Another point.</param>
     /// <returns>The length of the line between the two points, or 0 if either point is invalid.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_leader.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_leader.cs' lang='cs'/>
+    /// <code source='examples\py\ex_leader.py' lang='py'/>
+    /// </example>
     public double DistanceTo(Point2d other)
     {
       double d;
@@ -1897,6 +1902,11 @@ namespace Rhino.Geometry
     /// <para>result = transformation*point</para>
     /// </summary>
     /// <param name="xform">Transformation to apply.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_pointatcursor.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_pointatcursor.cs' lang='cs'/>
+    /// <code source='examples\py\ex_pointatcursor.py' lang='py'/>
+    /// </example>
     public void Transform(Transform xform)
     {
       //David: this method doesn't test for validity. Should it?

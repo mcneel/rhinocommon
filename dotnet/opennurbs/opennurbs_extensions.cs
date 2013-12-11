@@ -167,6 +167,11 @@ namespace Rhino.FileIO
     /// <param name="path">The location of the file.</param>
     /// <returns>A bitmap, or null on failure.</returns>
     /// <exception cref="FileNotFoundException">If the provided path is null, does not exist or cannot be accessed.</exception>
+    /// <example>
+    /// <code source='examples\vbnet\ex_extractthumbnail.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_extractthumbnail.cs' lang='cs'/>
+    /// <code source='examples\py\ex_extractthumbnail.py' lang='py'/>
+    /// </example>
     public static System.Drawing.Bitmap ReadPreviewImage(string path)
     {
       if (!File.Exists(path))

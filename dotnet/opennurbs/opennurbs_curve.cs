@@ -1040,6 +1040,11 @@ namespace Rhino.Geometry
     /// <param name="minDistanceParameterA">The minimum distance parameter on curve A. This is an out reference argument.</param>
     /// <param name="minDistanceParameterB">The minimum distance parameter on curve B. This is an out reference argument.</param>
     /// <returns>true if the operation succeeded; otherwise false.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_crvdeviation.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_crvdeviation.cs' lang='cs'/>
+    /// <code source='examples\py\ex_crvdeviation.py' lang='py'/>
+    /// </example>
     public static bool GetDistancesBetweenCurves(Curve curveA, Curve curveB, double tolerance,
       out double maxDistance, out double maxDistanceParameterA, out double maxDistanceParameterB,
       out double minDistance, out double minDistanceParameterA, out double minDistanceParameterB)
@@ -1156,6 +1161,11 @@ namespace Rhino.Geometry
     /// Constructs an exact duplicate of this curve.
     /// </summary>
     /// <returns>An exact copy of this curve.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_curvereverse.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_curvereverse.cs' lang='cs'/>
+    /// <code source='examples\py\ex_curvereverse.py' lang='py'/>
+    /// </example>
     public Curve DuplicateCurve()
     {
       Curve rc = Duplicate() as Curve;
@@ -1538,6 +1548,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="circle">On success, the Circle will be filled in.</param>
     /// <returns>true if the curve could be converted into a Circle.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_customgeometryfilter.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_customgeometryfilter.cs' lang='cs'/>
+    /// <code source='examples\py\ex_customgeometryfilter.py' lang='py'/>
+    /// </example>
     public bool TryGetCircle(out Circle circle)
     {
       return TryGetCircle(out circle, RhinoMath.ZeroTolerance);
@@ -1860,6 +1875,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <returns>true on success, false on failure.</returns>
     /// <remarks>If reversed, the domain changes from [a,b] to [-b,-a]</remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_curvereverse.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_curvereverse.cs' lang='cs'/>
+    /// <code source='examples\py\ex_curvereverse.py' lang='py'/>
+    /// </example>
     public bool Reverse()
     {
       IntPtr ptr = NonConstPointer();

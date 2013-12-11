@@ -807,6 +807,11 @@ namespace Rhino.Input
       return Commands.Result.Failure;
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_extractthumbnail.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_extractthumbnail.cs' lang='cs'/>
+    /// <code source='examples\py\ex_extractthumbnail.py' lang='py'/>
+    /// </example>
     public static string GetFileName(Custom.GetFileNameMode mode, string defaultName, string title, System.Windows.Forms.IWin32Window parent)
     {
       using (var sh = new StringHolder())

@@ -1368,6 +1368,11 @@ namespace Rhino.Display
     /// 4x4 transformation matrix (acts on the left)
     /// Identity matrix is returned if this function fails.
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_pointatcursor.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_pointatcursor.cs' lang='cs'/>
+    /// <code source='examples\py\ex_pointatcursor.py' lang='py'/>
+    /// </example>
     public Transform GetTransform(Rhino.DocObjects.CoordinateSystem sourceSystem, Rhino.DocObjects.CoordinateSystem destinationSystem)
     {
       Transform matrix = new Transform();

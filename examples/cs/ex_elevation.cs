@@ -69,7 +69,10 @@ namespace examples_cs
       // grab all the points projected in Z dir.  Aggregate finds furthest Z from XY plane
       try {
         maxZ = (from pt in Intersection.ProjectPointsToBreps(breps, points, new Vector3d(0, 0, 1), tolerance) select pt.Z)
-          .Aggregate((z1, z2) => Math.Abs(z1) > Math.Abs(z2) ? z1 : z2);
+                // Here you might be tempted to use .Max() to get the largest Z value but that doesn't work because
+                // Z might be negative.  This custom aggregate returns the max Z independant of the sign.  If it had a name
+                // it could be MaxAbs()
+                .Aggregate((z1, z2) => Math.Abs(z1) > Math.Abs(z2) ? z1 : z2);
       } catch (InvalidOperationException) {/*Sequence contains no elements*/}
       return maxZ;
     }
@@ -80,7 +83,10 @@ namespace examples_cs
 
       var bbox = brep.GetBoundingBox(true);
       var maxDistFromXY = (from corner in bbox.GetCorners() select corner.Z)
-                          // furthest Z from XY plane.  Max() doesn't work because of possible negative Z values
+                          // furthest Z from XY plane.
+                          // Here you might be tempted to use .Max() to get the largest Z value but that doesn't work because
+                          // Z might be negative.  This custom aggregate returns the max Z independant of the sign.  If it had a name
+                          // it could be MaxAbs()
                           .Aggregate((z1, z2) => Math.Abs(z1) > Math.Abs(z2) ? z1 : z2);
       // multiply distance by 2 to make sure line intersects completely
       var lineCurve = new LineCurve(new Point3d(x, y, 0), new Point3d(x, y, maxDistFromXY*2));
@@ -98,6 +104,9 @@ namespace examples_cs
           maxZ = (from c in overlapCurves select Math.Abs(c.PointAtEnd.Z) > Math.Abs(c.PointAtStart.Z) ? c.PointAtEnd.Z : c.PointAtStart.Z)
                  .Union
                  (from p in interPoints select p.Z)
+                  // Here you might be tempted to use .Max() to get the largest Z value but that doesn't work because
+                  // Z might be negative.  This custom aggregate returns the max Z independant of the sign.  If it had a name
+                  // it could be MaxAbs()
                  .Aggregate((z1, z2) => Math.Abs(z1) > Math.Abs(z2) ? z1 : z2);
         }
       }

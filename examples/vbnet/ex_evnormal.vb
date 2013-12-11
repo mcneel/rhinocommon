@@ -1,28 +1,29 @@
 ﻿Imports Rhino
+Imports Rhino.Input.Custom
+Imports Rhino.DocObjects
 Imports Rhino.Commands
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("A02FA1F8-ACB4-4367-B7D8-DBEE26A96433")> _
-  Public Class ex_evnormal
-    Inherits Rhino.Commands.Command
+  <System.Runtime.InteropServices.Guid("99890A83-3F13-4016-A3F5-3015B04E24E5")> _
+  Public Class NormalDirectionOfBrepFaceCommand
+    Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
       Get
-        Return "vbDetermineNormDirOfBrepFace"
+        Return "vbDetermineNormDirectionOfBrepFace"
       End Get
     End Property
 
-    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
+    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
       ' select a surface
-      Dim gs = New Rhino.Input.Custom.GetObject()
+      Dim gs = New GetObject()
       gs.SetCommandPrompt("select surface")
-      gs.GeometryFilter = Rhino.DocObjects.ObjectType.Surface
+      gs.GeometryFilter = ObjectType.Surface
       gs.DisablePreSelect()
       gs.SubObjectSelect = False
       gs.[Get]()
       If gs.CommandResult() <> Result.Success Then
         Return gs.CommandResult()
       End If
-
       ' get the selected face
       Dim face = gs.[Object](0).Face()
       If face Is Nothing Then
@@ -31,7 +32,7 @@ Namespace examples_vb
 
       ' pick a point on the surface.  Constain
       ' picking to the face.
-      Dim gp = New Rhino.Input.Custom.GetPoint()
+      Dim gp = New GetPoint()
       gp.SetCommandPrompt("select point on surface")
       gp.Constrain(face, False)
       gp.[Get]()
@@ -43,13 +44,13 @@ Namespace examples_vb
       ' surface that is clesest to gp.Point()
       Dim u As Double, v As Double
       If face.ClosestPoint(gp.Point(), u, v) Then
-        Dim dir = face.NormalAt(u, v)
+        Dim direction = face.NormalAt(u, v)
         If face.OrientationIsReversed Then
-          dir.Reverse()
+          direction.Reverse()
         End If
-        RhinoApp.WriteLine(String.Format("Surface normal at uv({0:f},{1:f}) = ({2:f},{3:f},{4:f})", u, v, dir.X, dir.Y, dir.Z))
+        RhinoApp.WriteLine(String.Format("Surface normal at uv({0:f},{1:f}) = ({2:f},{3:f},{4:f})", u, v, direction.X, direction.Y, direction.Z))
       End If
-      Return Rhino.Commands.Result.Success
+      Return Result.Success
     End Function
   End Class
 End Namespace

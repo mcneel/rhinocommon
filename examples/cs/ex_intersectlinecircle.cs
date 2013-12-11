@@ -1,8 +1,8 @@
 ﻿using Rhino;
 using Rhino.Commands;
+using Rhino.Input;
 using Rhino.Geometry;
 using Rhino.Geometry.Intersect;
-using System;
 
 namespace examples_cs
 {
@@ -14,14 +14,14 @@ namespace examples_cs
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
       Circle circle;
-      var rc = Rhino.Input.RhinoGet.GetCircle(out circle);
+      var rc = RhinoGet.GetCircle(out circle);
       if (rc != Result.Success)
         return rc;
       doc.Objects.AddCircle(circle);
       doc.Views.Redraw();
 
       Line line;
-      rc = Rhino.Input.RhinoGet.GetLine(out line);
+      rc = RhinoGet.GetLine(out line);
       if (rc != Result.Success)
         return rc;
       doc.Objects.AddLine(line);
@@ -36,11 +36,11 @@ namespace examples_cs
           msg = "line does not intersect circle";
           break;
         case LineCircleIntersection.Single:
-          msg = String.Format("line intersects circle at point ({0},{1},{2})", point1.X, point1.Y, point1.Z);
+          msg = string.Format("line intersects circle at point ({0},{1},{2})", point1.X, point1.Y, point1.Z);
           doc.Objects.AddPoint(point1);
           break;
         case LineCircleIntersection.Multiple:
-          msg = String.Format("line intersects circle at points ({0},{1},{2}) and ({3},{4},{5})",
+          msg = string.Format("line intersects circle at points ({0},{1},{2}) and ({3},{4},{5})",
             point1.X, point1.Y, point1.Z, point2.X, point2.Y, point2.Z);
           doc.Objects.AddPoint(point1);
           doc.Objects.AddPoint(point2);

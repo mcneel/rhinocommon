@@ -1,69 +1,72 @@
 ﻿using System;
 using Rhino;
+using Rhino.Geometry.Intersect;
+using Rhino.Input.Custom;
+using Rhino.DocObjects;
 using Rhino.Commands;
 using System.Collections.Generic;
 
 namespace examples_cs
 {
   [System.Runtime.InteropServices.Guid("D3E509D4-3791-42C1-A136-FFBA37359290")]
-  public class ex_curvesurfaceintersect : Rhino.Commands.Command
+  public class CurveSurfaceIntersectCommand : Command
   {
-    public override string EnglishName { get { return "csCrvSrfIntersect"; } }
+    public override string EnglishName { get { return "csCurveSurfaceIntersect"; } }
 
-    protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+    protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      var gs = new Rhino.Input.Custom.GetObject();
+      var gs = new GetObject();
       gs.SetCommandPrompt("select surface");
-      gs.GeometryFilter = Rhino.DocObjects.ObjectType.Surface;
+      gs.GeometryFilter = ObjectType.Surface;
       gs.DisablePreSelect();
       gs.SubObjectSelect = false;
       gs.Get();
       if (gs.CommandResult() != Result.Success)
         return gs.CommandResult();
-      var srf = gs.Object(0).Surface();
+      var surface = gs.Object(0).Surface();
 
-      var gc = new Rhino.Input.Custom.GetObject();
+      var gc = new GetObject();
       gc.SetCommandPrompt("select curve");
-      gc.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
+      gc.GeometryFilter = ObjectType.Curve;
       gc.DisablePreSelect();
       gc.SubObjectSelect = false;
       gc.Get();
       if (gc.CommandResult() != Result.Success)
         return gc.CommandResult();
-      var crv = gc.Object(0).Curve();
+      var curve = gc.Object(0).Curve();
 
-      if (srf == null || crv == null)
+      if (surface == null || curve == null)
         return Result.Failure;
 
-      var tol = doc.ModelAbsoluteTolerance;
+      var tolerance = doc.ModelAbsoluteTolerance;
 
-      var cis = Rhino.Geometry.Intersect.Intersection.CurveSurface(crv, srf, tol, tol);
-      if (cis != null)
+      var curveIntersections = Intersection.CurveSurface(curve, surface, tolerance, tolerance);
+      if (curveIntersections != null)
       {
-        var addedObjs = new List<Guid>();
-        foreach (var ie in cis)
+        var addedObjects = new List<Guid>();
+        foreach (var curveIntersection in curveIntersections)
         {
-          if (ie.IsOverlap)
+          if (curveIntersection.IsOverlap)
           {
             double t0;
             double t1;
-            crv.ClosestPoint(ie.PointA, out t0);
-            crv.ClosestPoint(ie.PointA2, out t1);
-            var overlapCrv = crv.DuplicateCurve().Trim(t0, t1);
-            addedObjs.Add(doc.Objects.AddCurve(overlapCrv));
+            curve.ClosestPoint(curveIntersection.PointA, out t0);
+            curve.ClosestPoint(curveIntersection.PointA2, out t1);
+            var overlapCurve = curve.DuplicateCurve().Trim(t0, t1);
+            addedObjects.Add(doc.Objects.AddCurve(overlapCurve));
           }
           else // IsPoint
           {
-            addedObjs.Add(doc.Objects.AddPoint(ie.PointA));
+            addedObjects.Add(doc.Objects.AddPoint(curveIntersection.PointA));
           }
         }
-        if (addedObjs.Count > 0)
-          doc.Objects.Select(addedObjs);
+        if (addedObjects.Count > 0)
+          doc.Objects.Select(addedObjects);
       }
 
       doc.Views.Redraw();
 
-      return Rhino.Commands.Result.Success;
+      return Result.Success;
     }
   }
 }

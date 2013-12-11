@@ -3,18 +3,18 @@
 ===== C# =====
 <code c#>
 [System.Runtime.InteropServices.Guid("A77507C3-DEEE-4A2C-ADB3-3FFAF89B7EDD")]
-public class ex_locklayer : Rhino.Commands.Command
+public class LockLayerCommand : Command
 {
   public override string EnglishName { get { return "csLockLayer"; } }
 
-  protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+  protected override Result RunCommand(RhinoDoc doc, RunMode mode)
   {
     string layerName = "";
-    var rc = Rhino.Input.RhinoGet.GetString("Name of layer to lock", true, ref layerName);
-    if (rc != Rhino.Commands.Result.Success)
+    var rc = RhinoGet.GetString("Name of layer to lock", true, ref layerName);
+    if (rc != Result.Success)
       return rc;
     if (String.IsNullOrWhiteSpace(layerName))
-      return Rhino.Commands.Result.Nothing;
+      return Result.Nothing;
    
     // because of sublayers it's possible that mone than one layer has the same name
     // so simply calling doc.Layers.Find(layerName) isn't good enough.  If "layerName" returns
@@ -27,7 +27,7 @@ public class ex_locklayer : Rhino.Commands.Command
     if (matchingLayers.Count == 0)
     {
       RhinoApp.WriteLine(String.Format("Layer \"{0}\" does not exist.", layerName));
-      return Rhino.Commands.Result.Nothing;
+      return Result.Nothing;
     }
     else if (matchingLayers.Count == 1)
     {
@@ -40,47 +40,50 @@ public class ex_locklayer : Rhino.Commands.Command
         RhinoApp.WriteLine(String.Format("({0}) {1}", i+1, matchingLayers[i].FullPath.Replace("::", "->")));
       }
       int selectedLayer = -1;
-      rc = Rhino.Input.RhinoGet.GetInteger("which layer?", true, ref selectedLayer);
-      if (rc != Rhino.Commands.Result.Success)
+      rc = RhinoGet.GetInteger("which layer?", true, ref selectedLayer);
+      if (rc != Result.Success)
         return rc;
       if (selectedLayer > 0 && selectedLayer <= matchingLayers.Count)
         layerToRename = matchingLayers[selectedLayer - 1];
-      else return Rhino.Commands.Result.Nothing;
+      else return Result.Nothing;
     }
+
+    if (layerToRename == null)
+      return Result.Nothing;
 
     if (!layerToRename.IsLocked)
     {
       layerToRename.IsLocked = true;
       layerToRename.CommitChanges();
-      return Rhino.Commands.Result.Success;
+      return Result.Success;
     }
     else
     {
       RhinoApp.WriteLine(String.Format("layer {0} is already locked.", layerToRename.FullPath));
-      return Rhino.Commands.Result.Nothing;
+      return Result.Nothing;
     } 
   }
 }
 </code>
 ===== VB.NET =====
 <code vb>
-<System.Runtime.InteropServices.Guid("72203654-7B13-444B-BBC8-5A9EB5C8F8A3")> _
-Public Class ex_locklayer
-  Inherits Rhino.Commands.Command
+<System.Runtime.InteropServices.Guid("5F44BAEA-6675-46AB-8221-77BD341C5563")> _
+Public Class LockLayerCommand
+  Inherits Command
   Public Overrides ReadOnly Property EnglishName() As String
     Get
       Return "vbLockLayer"
     End Get
   End Property
 
-  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
+  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
     Dim layerName As String = ""
     Dim rc = Rhino.Input.RhinoGet.GetString("Name of layer to lock", True, layerName)
-    If rc <> Rhino.Commands.Result.Success Then
+    If rc <> Result.Success Then
       Return rc
     End If
     If [String].IsNullOrWhiteSpace(layerName) Then
-      Return Rhino.Commands.Result.[Nothing]
+      Return Result.[Nothing]
     End If
 
     ' because of sublayers it's possible that mone than one layer has the same name
@@ -91,7 +94,7 @@ Public Class ex_locklayer
     Dim layerToRename As Rhino.DocObjects.Layer = Nothing
     If matchingLayers.Count = 0 Then
       RhinoApp.WriteLine([String].Format("Layer ""{0}"" does not exist.", layerName))
-      Return Rhino.Commands.Result.[Nothing]
+      Return Result.[Nothing]
     ElseIf matchingLayers.Count = 1 Then
       layerToRename = matchingLayers(0)
     ElseIf matchingLayers.Count > 1 Then
@@ -100,23 +103,27 @@ Public Class ex_locklayer
       Next
       Dim selectedLayer As Integer = -1
       rc = Rhino.Input.RhinoGet.GetInteger("which layer?", True, selectedLayer)
-      If rc <> Rhino.Commands.Result.Success Then
+      If rc <> Result.Success Then
         Return rc
       End If
       If selectedLayer > 0 AndAlso selectedLayer <= matchingLayers.Count Then
         layerToRename = matchingLayers(selectedLayer - 1)
       Else
-        Return Rhino.Commands.Result.[Nothing]
+        Return Result.[Nothing]
       End If
+    End If
+
+    If layerToRename Is Nothing Then
+      Return Result.Nothing
     End If
 
     If Not layerToRename.IsLocked Then
       layerToRename.IsLocked = True
       layerToRename.CommitChanges()
-      Return Rhino.Commands.Result.Success
+      Return Result.Success
     Else
       RhinoApp.WriteLine([String].Format("layer {0} is already locked.", layerToRename.FullPath))
-      Return Rhino.Commands.Result.[Nothing]
+      Return Result.[Nothing]
     End If
   End Function
 End Class

@@ -1,20 +1,23 @@
 ﻿using Rhino;
+using Rhino.DocObjects;
+using Rhino.Input.Custom;
 using Rhino.Commands;
 using System.Collections.Generic;
 using Rhino.Geometry;
+using Rhino.Geometry.Intersect;
 
 namespace examples_cs
 {
   [System.Runtime.InteropServices.Guid("B4B659D8-DAA0-4970-8149-E4D5C2CF99B7")]
-  public class ex_projectpointstobreps : Rhino.Commands.Command
+  public class ProjectPointsToBrepsCommand : Command
   {
-    public override string EnglishName { get { return "csProjPtsToBreps"; } }
+    public override string EnglishName { get { return "csProjectPtointsToBreps"; } }
 
-    protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+    protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      var gs = new Rhino.Input.Custom.GetObject();
+      var gs = new GetObject();
       gs.SetCommandPrompt("select surface");
-      gs.GeometryFilter = Rhino.DocObjects.ObjectType.Surface | Rhino.DocObjects.ObjectType.PolysrfFilter;
+      gs.GeometryFilter = ObjectType.Surface | ObjectType.PolysrfFilter;
       gs.DisablePreSelect();
       gs.SubObjectSelect = false;
       gs.Get();
@@ -24,21 +27,21 @@ namespace examples_cs
       if (brep == null)
         return Result.Failure;
 
-      var pts = Rhino.Geometry.Intersect.Intersection.ProjectPointsToBreps(
-                  new List<Brep> {brep}, // brep on which to project
-                  new List<Point3d> {new Point3d(0, 0, 0), new Point3d(3,0,3), new Point3d(-2,0,-2)}, // some random points to project
-                  new Vector3d(0, 1, 0), // project on Y axis
-                  doc.ModelAbsoluteTolerance);
+      var points = Intersection.ProjectPointsToBreps(
+                   new List<Brep> {brep}, // brep on which to project
+                   new List<Point3d> {new Point3d(0, 0, 0), new Point3d(3,0,3), new Point3d(-2,0,-2)}, // some random points to project
+                   new Vector3d(0, 1, 0), // project on Y axis
+                   doc.ModelAbsoluteTolerance);
 
-      if (pts != null && pts.Length > 0)
+      if (points != null && points.Length > 0)
       {
-        foreach (var pt in pts)
+        foreach (var point in points)
         {
-          doc.Objects.AddPoint(pt);
+          doc.Objects.AddPoint(point);
         }
       }
       doc.Views.Redraw();
-      return Rhino.Commands.Result.Success;
+      return Result.Success;
     }
   }
 }

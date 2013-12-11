@@ -4,22 +4,26 @@ Imports Rhino
 Imports Rhino.Commands
 Imports Rhino.Geometry
 Imports Rhino.Geometry.Intersect
+Imports Rhino.Input
+Imports Rhino.Input.Custom
+Imports Rhino.DocObjects
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("8960A186-9807-4950-AF31-1143BD9851EE")> _
-  Public Class ex_elevation
-    Inherits Rhino.Commands.Command
+  <System.Runtime.InteropServices.Guid("61256DAE-8491-4D18-B757-70212215CB29")> _
+  Public Class FurthestZOnSurfaceCommand
+    Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
       Get
-        Return "vbFurthestZOnSrfGivenXY"
+        Return "vbFurthestZOnSurfaceGivenXY"
       End Get
     End Property
 
-    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
+    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
+      '#Region "user input"
       ' select a surface
-      Dim gs = New Rhino.Input.Custom.GetObject()
+      Dim gs = New GetObject()
       gs.SetCommandPrompt("select surface")
-      gs.GeometryFilter = Rhino.DocObjects.ObjectType.Surface
+      gs.GeometryFilter = ObjectType.Surface
       gs.DisablePreSelect()
       gs.SubObjectSelect = False
       gs.[Get]()
@@ -34,23 +38,15 @@ Namespace examples_vb
 
       ' get X and Y
       Dim x As Double = 0.0, y As Double = 0.0
-      Dim gx = New Rhino.Input.Custom.GetNumber()
-      gx.SetCommandPrompt("value of X coordinate")
-      gx.SetDefaultNumber(x)
-      gx.[Get]()
-      If gs.CommandResult() <> Result.Success Then
-        Return gs.CommandResult()
+      Dim rc = RhinoGet.GetNumber("value of X coordinate", True, x)
+      If rc <> Result.Success Then
+        Return rc
       End If
-      x = gx.Number()
-
-      Dim gy = New Rhino.Input.Custom.GetNumber()
-      gy.SetCommandPrompt("value of Y coordinate")
-      gy.SetDefaultNumber(y)
-      gy.[Get]()
-      If gs.CommandResult() <> Result.Success Then
-        Return gs.CommandResult()
+      rc = RhinoGet.GetNumber("value of Y coordinate", True, y)
+      If rc <> Result.Success Then
+        Return rc
       End If
-      y = gy.Number()
+      '#End Region
 
       ' an earlier version of this sample used a curve-brep intersection to find Z
       'var maxZ = maxZIntersectionMethod(brep, x, y, doc.ModelAbsoluteTolerance);
@@ -59,29 +55,29 @@ Namespace examples_vb
       Dim maxZ = maxZProjectionMethod(brep, x, y, doc.ModelAbsoluteTolerance)
 
       If maxZ IsNot Nothing Then
-        RhinoApp.WriteLine([String].Format("Maximum surface Z coordinate at X={0}, Y={1} is {2}", x, y, maxZ))
+        RhinoApp.WriteLine(String.Format("Maximum surface Z coordinate at X={0}, Y={1} is {2}", x, y, maxZ))
         doc.Objects.AddPoint(New Point3d(x, y, maxZ.Value))
         doc.Views.Redraw()
       Else
-        RhinoApp.WriteLine([String].Format("no maximum surface Z coordinate at X={0}, Y={1} found.", x, y))
+        RhinoApp.WriteLine(String.Format("no maximum surface Z coordinate at X={0}, Y={1} found.", x, y))
       End If
 
-      Return Rhino.Commands.Result.Success
+      Return Result.Success
     End Function
 
     Private Function maxZProjectionMethod(brep As Brep, x As Double, y As Double, tolerance As Double) As System.Nullable(Of Double)
       Dim maxZ As System.Nullable(Of Double) = Nothing
       Dim breps = New List(Of Brep)() From { _
-       brep _
+        brep _
       }
       Dim points = New List(Of Point3d)() From { _
-       New Point3d(x, y, 0) _
+        New Point3d(x, y, 0) _
       }
       ' grab all the points projected in Z dir.  Aggregate finds furthest Z from XY plane
       Try
         maxZ = (From pt In Intersection.ProjectPointsToBreps(breps, points, New Vector3d(0, 0, 1), tolerance) Select pt.Z).Aggregate(Function(z1, z2) If(Math.Abs(z1) > Math.Abs(z2), z1, z2))
         'Sequence contains no elements
-      Catch ioe As InvalidOperationException
+      Catch generatedExceptionName As InvalidOperationException
       End Try
       Return maxZ
     End Function
@@ -95,8 +91,8 @@ Namespace examples_vb
       ' multiply distance by 2 to make sure line intersects completely
       Dim lineCurve = New LineCurve(New Point3d(x, y, 0), New Point3d(x, y, maxDistFromXY * 2))
 
-      Dim overlapCurves As Curve() = Nothing
-      Dim interPoints As Point3d() = Nothing
+      Dim overlapCurves As Curve()
+      Dim interPoints As Point3d()
       If Intersection.CurveBrep(lineCurve, brep, tolerance, overlapCurves, interPoints) Then
         If overlapCurves.Length > 0 OrElse interPoints.Length > 0 Then
           ' grab all the points resulting frem the intersection. 

@@ -49,6 +49,10 @@ Namespace examples_vb
         End If
       End If
 
+      If layerToRename Is Nothing Then
+        Return Result.Nothing
+      End If
+
       If Not layerToRename.IsLocked Then
         layerToRename.IsLocked = True
         layerToRename.CommitChanges()

@@ -1,16 +1,15 @@
 using Rhino;
 using Rhino.Commands;
 using Rhino.Geometry;
-using System.Collections.Generic;
 using Rhino.Input.Custom;
 
 namespace examples_cs
 {
   class DrawArrowHeadsConduit : Rhino.Display.DisplayConduit
   {
-    private Line _line;
-    private int _screenSize;
-    private double _worldSize;
+    private readonly Line _line;
+    private readonly int _screenSize;
+    private readonly double _worldSize;
 
     public DrawArrowHeadsConduit(Line line, int screenSize, double worldSize)
     {
@@ -33,7 +32,7 @@ namespace examples_cs
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
       // get arrow head size
-      var go = new Rhino.Input.Custom.GetOption();
+      var go = new GetOption();
       go.SetCommandPrompt("ArrowHead length in screen size (pixles) or world size (percentage of arrow lenght)?");
       go.AddOption("screen");
       go.AddOption("world");
@@ -45,7 +44,7 @@ namespace examples_cs
       double worldSize = 0.0;
       if (go.Option().EnglishName == "screen")
       {
-        var gi = new Rhino.Input.Custom.GetInteger();
+        var gi = new GetInteger();
         gi.SetLowerLimit(0,true);
         gi.SetCommandPrompt("Length of arrow head in pixels");
         gi.Get();
@@ -55,7 +54,7 @@ namespace examples_cs
       }
       else
       {
-        var gi = new Rhino.Input.Custom.GetInteger();
+        var gi = new GetInteger();
         gi.SetLowerLimit(0, true);
         gi.SetUpperLimit(100, false);
         gi.SetCommandPrompt("Lenght of arrow head in percentage of total arrow lenght");
@@ -67,7 +66,7 @@ namespace examples_cs
 
 
       // get arrow start and end points
-      var gp = new Rhino.Input.Custom.GetPoint();
+      var gp = new GetPoint();
       gp.SetCommandPrompt("Start of line");
       gp.Get();
       if (gp.CommandResult() != Result.Success)

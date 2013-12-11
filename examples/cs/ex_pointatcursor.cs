@@ -1,40 +1,38 @@
 ﻿using Rhino;
+using Rhino.Commands;
+using Rhino.DocObjects;
 using System;
 
 namespace examples_cs
 {
   [System.Runtime.InteropServices.Guid("1552E348-A3B8-42B9-9948-829F9BA0D9C4")]
-  public class ex_pointatcursor : Rhino.Commands.Command
+  public class PointAtCursorCommand : Command
   {
     public override string EnglishName { get { return "csPointAtCursor"; } }
 
     [System.Runtime.InteropServices.DllImport("user32.dll")]
-    public static extern bool GetCursorPos(out System.Drawing.Point pt);
+    public static extern bool GetCursorPos(out System.Drawing.Point point);
  
     [System.Runtime.InteropServices.DllImport("user32.dll")]
-    public static extern bool ScreenToClient(IntPtr hWnd, ref System.Drawing.Point pt);
+    public static extern bool ScreenToClient(IntPtr hWnd, ref System.Drawing.Point point);
 
-    protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+    protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      var rslt = Rhino.Commands.Result.Failure;
+      var result = Result.Failure;
       var view = doc.Views.ActiveView;
-      if (view != null)
-      {
-        System.Drawing.Point pt;
-        if (GetCursorPos(out pt) && ScreenToClient(view.Handle, ref pt))
-        {
-          var xform = view.ActiveViewport.GetTransform(Rhino.DocObjects.CoordinateSystem.Screen, Rhino.DocObjects.CoordinateSystem.World);
-          if (xform != null)
-          {
-            var point = new Rhino.Geometry.Point3d(pt.X, pt.Y, 0.0);
-            RhinoApp.WriteLine(String.Format("screen point: ({0}, {1}, {2})", point.X, point.Y, point.Z));
-            point.Transform(xform);
-            RhinoApp.WriteLine(String.Format("world point: ({0}, {1}, {2})", point.X, point.Y, point.Z));
-            rslt = Rhino.Commands.Result.Success;
-          }
-        }
-      }
-      return rslt;
+      if (view == null) return result;
+
+      System.Drawing.Point windowsDrawingPoint;
+      if (!GetCursorPos(out windowsDrawingPoint) || !ScreenToClient(view.Handle, ref windowsDrawingPoint))
+        return result;
+
+      var xform = view.ActiveViewport.GetTransform(CoordinateSystem.Screen, CoordinateSystem.World);
+      var point = new Rhino.Geometry.Point3d(windowsDrawingPoint.X, windowsDrawingPoint.Y, 0.0);
+      RhinoApp.WriteLine(String.Format("screen point: ({0}, {1}, {2})", point.X, point.Y, point.Z));
+      point.Transform(xform);
+      RhinoApp.WriteLine(String.Format("world point: ({0}, {1}, {2})", point.X, point.Y, point.Z));
+      result = Result.Success;
+      return result;
     }
   }
 }

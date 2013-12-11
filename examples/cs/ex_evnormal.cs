@@ -1,25 +1,26 @@
 ﻿using Rhino;
+using Rhino.Input.Custom;
+using Rhino.DocObjects;
 using Rhino.Commands;
 
 namespace examples_cs
 {
   [System.Runtime.InteropServices.Guid("CB7F7039-A986-44DC-BD51-C3EBEC6A212A")]
-  public class ex_evnormal : Rhino.Commands.Command
+  public class NormalDirectionOfBrepFaceCommand : Command
   {
-    public override string EnglishName { get { return "csDetermineNormDirOfBrepFace"; } }
+    public override string EnglishName { get { return "csDetermineNormDirectionOfBrepFace"; } }
 
-    protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+    protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
       // select a surface
-      var gs = new Rhino.Input.Custom.GetObject();
+      var gs = new GetObject();
       gs.SetCommandPrompt("select surface");
-      gs.GeometryFilter = Rhino.DocObjects.ObjectType.Surface;
+      gs.GeometryFilter = ObjectType.Surface;
       gs.DisablePreSelect();
       gs.SubObjectSelect = false;
       gs.Get();
       if (gs.CommandResult() != Result.Success)
         return gs.CommandResult();
-
       // get the selected face
       var face = gs.Object(0).Face();
       if (face == null)
@@ -27,7 +28,7 @@ namespace examples_cs
 
       // pick a point on the surface.  Constain
       // picking to the face.
-      var gp = new Rhino.Input.Custom.GetPoint();
+      var gp = new GetPoint();
       gp.SetCommandPrompt("select point on surface");
       gp.Constrain(face, false);
       gp.Get();
@@ -39,15 +40,15 @@ namespace examples_cs
       double u, v;
       if (face.ClosestPoint(gp.Point(), out u, out v))
       {
-        var dir = face.NormalAt(u, v);
+        var direction = face.NormalAt(u, v);
         if (face.OrientationIsReversed)
-          dir.Reverse();
+          direction.Reverse();
         RhinoApp.WriteLine(
           string.Format(
             "Surface normal at uv({0:f},{1:f}) = ({2:f},{3:f},{4:f})", 
-            u, v, dir.X, dir.Y, dir.Z));
+            u, v, direction.X, direction.Y, direction.Z));
       }
-      return Rhino.Commands.Result.Success;
+      return Result.Success;
     }
   }
 }

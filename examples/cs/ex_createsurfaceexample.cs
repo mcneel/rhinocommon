@@ -1,88 +1,87 @@
 ﻿using Rhino;
+using Rhino.Commands;
 using Rhino.Geometry;
-using System;
-using System.Collections.Generic; 
 
 namespace examples_cs
 {
   [System.Runtime.InteropServices.Guid("29530E9C-8A5B-47BD-A2F8-0A7BF311D8D3")]
-  public class ex_createsurfaceexample : Rhino.Commands.Command
+  public class CreateSurfaceFromPointsAndKnotsCommand : Command
   {
-    public override string EnglishName { get { return "csCreateSrfExample"; } }
+    public override string EnglishName { get { return "csCreateSurfaceFromPointsAndKnots"; } }
 
-    protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+    protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      const bool bIsRational = false;
-      const int dim = 3;
-      const int u_degree = 2;
-      const int v_degree = 3;
-      const int u_cv_count = 3;
-      const int v_cv_count = 5;
+      const bool isRational = false;
+      const int numberOfDimensions = 3;
+      const int uDegree = 2;
+      const int vDegree = 3;
+      const int uControlPointCount = 3;
+      const int vControlPointCount = 5;
      
       // The knot vectors do NOT have the 2 superfluous knots
       // at the start and end of the knot vector.  If you are
       // coming from a system that has the 2 superfluous knots,
       // just ignore them when creating NURBS surfaces.
-      double[] u_knot = new double[u_cv_count + u_degree - 1];
-      double[] v_knot = new double[v_cv_count + v_degree - 1];
+      var uKnots = new double[uControlPointCount + uDegree - 1];
+      var vKnots = new double[vControlPointCount + vDegree - 1];
      
       // make up a quadratic knot vector with no interior knots
-      u_knot[0] = u_knot[1] = 0.0;
-      u_knot[2] = u_knot[3] = 1.0;
+      uKnots[0] = uKnots[1] = 0.0;
+      uKnots[2] = uKnots[3] = 1.0;
      
       // make up a cubic knot vector with one simple interior knot
-      v_knot[0] = v_knot[1] = v_knot[2] = 0.0;
-      v_knot[3] = 1.5;
-      v_knot[4] = v_knot[5] = v_knot[6] = 2.0;
+      vKnots[0] = vKnots[1] = vKnots[2] = 0.0;
+      vKnots[3] = 1.5;
+      vKnots[4] = vKnots[5] = vKnots[6] = 2.0;
      
       // Rational control points can be in either homogeneous
       // or euclidean form. Non-rational control points do not
       // need to specify a weight.  
-      var CV = new Point3d[u_cv_count, v_cv_count];
+      var controlPoints = new Point3d[uControlPointCount, vControlPointCount];
 
-      for (int i = 0; i < u_cv_count; i++)
+      for (int u = 0; u < uControlPointCount; u++)
       {
-        for (int j = 0; j < v_cv_count; j++)
+        for (int v = 0; v < vControlPointCount; v++)
         {
-          CV[i,j] = new Point3d(i, j, i-j);
+          controlPoints[u,v] = new Point3d(u, v, u-v);
         }
       }
      
       // creates internal uninitialized arrays for 
       // control points and knots
-      var nurbs_surface = NurbsSurface.Create(
-        dim,
-        bIsRational,
-        u_degree + 1,
-        v_degree + 1,
-        u_cv_count,
-        v_cv_count
+      var nurbsSurface = NurbsSurface.Create(
+        numberOfDimensions,
+        isRational,
+        uDegree + 1,
+        vDegree + 1,
+        uControlPointCount,
+        vControlPointCount
         );
      
       // add the knots
-      for (int i = 0;  i < nurbs_surface.KnotsU.Count; i++)
-        nurbs_surface.KnotsU[i] = u_knot[i];
-      for (int j = 0; j < nurbs_surface.KnotsV.Count; j++)
-        nurbs_surface.KnotsV[j] = v_knot[j];
+      for (int u = 0;  u < nurbsSurface.KnotsU.Count; u++)
+        nurbsSurface.KnotsU[u] = uKnots[u];
+      for (int v = 0; v < nurbsSurface.KnotsV.Count; v++)
+        nurbsSurface.KnotsV[v] = vKnots[v];
 
       // add the control points
-      for (int i = 0; i < nurbs_surface.Points.CountU; i++)
+      for (int u = 0; u < nurbsSurface.Points.CountU; u++)
       {
-        for (int j = 0; j < nurbs_surface.Points.CountV; j++)
+        for (int v = 0; v < nurbsSurface.Points.CountV; v++)
         {
-          nurbs_surface.Points.SetControlPoint(i, j, new ControlPoint(CV[i, j]));
+          nurbsSurface.Points.SetControlPoint(u, v, new ControlPoint(controlPoints[u, v]));
         }
       }
 
-      if (nurbs_surface.IsValid)
+      if (nurbsSurface.IsValid)
       {
-        doc.Objects.AddSurface(nurbs_surface);
+        doc.Objects.AddSurface(nurbsSurface);
         doc.Views.Redraw();
-        return Rhino.Commands.Result.Success;
+        return Result.Success;
       }
       else
       {
-        return Rhino.Commands.Result.Failure;
+        return Result.Failure;
       }
     }
   }

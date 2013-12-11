@@ -1,25 +1,23 @@
-﻿using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Collections;
+﻿using Rhino;
 using Rhino.Commands;
-using System.Collections.Generic;
 using Rhino.Display;
 using Rhino.Geometry;
 using Rhino.Input.Custom;
+using Rhino.DocObjects;
 using System.Drawing;
 
 namespace examples_cs
 {
   [System.Runtime.InteropServices.Guid("DE24BC2C-B2E7-4CA1-B2BE-BC0ED742E645")]
-  public class ex_meshdrawing : Rhino.Commands.Command
+  public class MeshDrawingCommand : Command
   {
     public override string EnglishName { get { return "csDrawMesh"; } }
 
-    protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+    protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      var gs = new Rhino.Input.Custom.GetObject();
+      var gs = new GetObject();
       gs.SetCommandPrompt("select sphere");
-      gs.GeometryFilter = Rhino.DocObjects.ObjectType.Surface;
+      gs.GeometryFilter = ObjectType.Surface;
       gs.DisablePreSelect();
       gs.SubObjectSelect = false;
       gs.Get();
@@ -34,8 +32,7 @@ namespace examples_cs
         if (mesh == null)
           return Result.Failure;
 
-        var conduit = new DrawBlueMeshConduit(mesh);
-        conduit.Enabled = true;
+        var conduit = new DrawBlueMeshConduit(mesh) {Enabled = true};
         doc.Views.Redraw();
 
         string inStr = "";
@@ -43,14 +40,14 @@ namespace examples_cs
 
         conduit.Enabled = false;
         doc.Views.Redraw();
-        return Rhino.Commands.Result.Success;
+        return Result.Success;
       }
       else
-        return Rhino.Commands.Result.Failure;
+        return Result.Failure;
     }
   }
 
-  class DrawBlueMeshConduit : Rhino.Display.DisplayConduit
+  class DrawBlueMeshConduit : DisplayConduit
   {
     Mesh _mesh = null;
     Color _color;

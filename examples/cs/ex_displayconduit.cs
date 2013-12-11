@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Rhino;
+﻿using Rhino;
 using Rhino.Geometry;
 using Rhino.Commands;
 using Rhino.Display;
@@ -10,16 +6,15 @@ using Rhino.Display;
 namespace examples_cs
 {
   [System.Runtime.InteropServices.Guid("422669A5-52B9-48A1-8DDD-61A13D9ACAB6")]
-  public class ex_displayconduit : Rhino.Commands.Command
+  public class DisplayConduitCommand : Command
   {
     public override string EnglishName { get { return "csIntroToDisplayConduits"; } }
 
-    protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+    protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      var conduit = new MyConduit();
-      conduit.Enabled = true;
+      var conduit = new MyConduit {Enabled = true};
       doc.Views.Redraw();
-      return Rhino.Commands.Result.Success;
+      return Result.Success;
     }
   }
 

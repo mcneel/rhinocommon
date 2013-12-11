@@ -3,131 +3,131 @@
 ===== C# =====
 <code c#>
 [System.Runtime.InteropServices.Guid("D3E509D4-3791-42C1-A136-FFBA37359290")]
-public class ex_curvesurfaceintersect : Rhino.Commands.Command
+public class CurveSurfaceIntersectCommand : Command
 {
-  public override string EnglishName { get { return "csCrvSrfIntersect"; } }
+  public override string EnglishName { get { return "csCurveSurfaceIntersect"; } }
 
-  protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+  protected override Result RunCommand(RhinoDoc doc, RunMode mode)
   {
-    var gs = new Rhino.Input.Custom.GetObject();
+    var gs = new GetObject();
     gs.SetCommandPrompt("select surface");
-    gs.GeometryFilter = Rhino.DocObjects.ObjectType.Surface;
+    gs.GeometryFilter = ObjectType.Surface;
     gs.DisablePreSelect();
     gs.SubObjectSelect = false;
     gs.Get();
     if (gs.CommandResult() != Result.Success)
       return gs.CommandResult();
-    var srf = gs.Object(0).Surface();
+    var surface = gs.Object(0).Surface();
 
-    var gc = new Rhino.Input.Custom.GetObject();
+    var gc = new GetObject();
     gc.SetCommandPrompt("select curve");
-    gc.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
+    gc.GeometryFilter = ObjectType.Curve;
     gc.DisablePreSelect();
     gc.SubObjectSelect = false;
     gc.Get();
     if (gc.CommandResult() != Result.Success)
       return gc.CommandResult();
-    var crv = gc.Object(0).Curve();
+    var curve = gc.Object(0).Curve();
 
-    if (srf == null || crv == null)
+    if (surface == null || curve == null)
       return Result.Failure;
 
-    var tol = doc.ModelAbsoluteTolerance;
+    var tolerance = doc.ModelAbsoluteTolerance;
 
-    var cis = Rhino.Geometry.Intersect.Intersection.CurveSurface(crv, srf, tol, tol);
-    if (cis != null)
+    var curveIntersections = Intersection.CurveSurface(curve, surface, tolerance, tolerance);
+    if (curveIntersections != null)
     {
-      var addedObjs = new List<Guid>();
-      foreach (var ie in cis)
+      var addedObjects = new List<Guid>();
+      foreach (var curveIntersection in curveIntersections)
       {
-        if (ie.IsOverlap)
+        if (curveIntersection.IsOverlap)
         {
           double t0;
           double t1;
-          crv.ClosestPoint(ie.PointA, out t0);
-          crv.ClosestPoint(ie.PointA2, out t1);
-          var overlapCrv = crv.DuplicateCurve().Trim(t0, t1);
-          addedObjs.Add(doc.Objects.AddCurve(overlapCrv));
+          curve.ClosestPoint(curveIntersection.PointA, out t0);
+          curve.ClosestPoint(curveIntersection.PointA2, out t1);
+          var overlapCurve = curve.DuplicateCurve().Trim(t0, t1);
+          addedObjects.Add(doc.Objects.AddCurve(overlapCurve));
         }
         else // IsPoint
         {
-          addedObjs.Add(doc.Objects.AddPoint(ie.PointA));
+          addedObjects.Add(doc.Objects.AddPoint(curveIntersection.PointA));
         }
       }
-      if (addedObjs.Count > 0)
-        doc.Objects.Select(addedObjs);
+      if (addedObjects.Count > 0)
+        doc.Objects.Select(addedObjects);
     }
 
     doc.Views.Redraw();
 
-    return Rhino.Commands.Result.Success;
+    return Result.Success;
   }
 }
 </code>
 ===== VB.NET =====
 <code vb>
-<System.Runtime.InteropServices.Guid("9376B50C-7F64-43FC-A9EA-D0402D84DF0A")> _
-Public Class ex_curvesurfaceintersect
-  Inherits Rhino.Commands.Command
+<System.Runtime.InteropServices.Guid("336908EB-273C-4A81-BE53-8EEFC0470B6C")> _
+Public Class CurveSurfaceIntersectCommand
+  Inherits Command
   Public Overrides ReadOnly Property EnglishName() As String
     Get
-      Return "vbCrvSrfIntersect"
+      Return "vbCurveSurfaceIntersect"
     End Get
   End Property
 
-  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
-    Dim gs = New Rhino.Input.Custom.GetObject()
+  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
+    Dim gs = New GetObject()
     gs.SetCommandPrompt("select surface")
-    gs.GeometryFilter = Rhino.DocObjects.ObjectType.Surface
+    gs.GeometryFilter = ObjectType.Surface
     gs.DisablePreSelect()
     gs.SubObjectSelect = False
     gs.[Get]()
     If gs.CommandResult() <> Result.Success Then
       Return gs.CommandResult()
     End If
-    Dim srf = gs.[Object](0).Surface()
+    Dim surface = gs.[Object](0).Surface()
 
-    Dim gc = New Rhino.Input.Custom.GetObject()
+    Dim gc = New GetObject()
     gc.SetCommandPrompt("select curve")
-    gc.GeometryFilter = Rhino.DocObjects.ObjectType.Curve
+    gc.GeometryFilter = ObjectType.Curve
     gc.DisablePreSelect()
     gc.SubObjectSelect = False
     gc.[Get]()
     If gc.CommandResult() <> Result.Success Then
       Return gc.CommandResult()
     End If
-    Dim crv = gc.[Object](0).Curve()
+    Dim curve = gc.[Object](0).Curve()
 
-    If srf Is Nothing OrElse crv Is Nothing Then
+    If surface Is Nothing OrElse curve Is Nothing Then
       Return Result.Failure
     End If
 
-    Dim tol = doc.ModelAbsoluteTolerance
+    Dim tolerance = doc.ModelAbsoluteTolerance
 
-    Dim cis = Rhino.Geometry.Intersect.Intersection.CurveSurface(crv, srf, tol, tol)
-    If cis IsNot Nothing Then
-      Dim addedObjs = New List(Of Guid)()
-      For Each ie As IntersectionEvent In cis
-        If ie.IsOverlap Then
+    Dim curveIntersections = Intersection.CurveSurface(curve, surface, tolerance, tolerance)
+    If curveIntersections IsNot Nothing Then
+      Dim addedObjects = New List(Of Guid)()
+      For Each curveIntersection As IntersectionEvent In curveIntersections
+        If curveIntersection.IsOverlap Then
           Dim t0 As Double
           Dim t1 As Double
-          crv.ClosestPoint(ie.PointA, t0)
-          crv.ClosestPoint(ie.PointA2, t1)
-          Dim overlapCrv = crv.DuplicateCurve().Trim(t0, t1)
-          addedObjs.Add(doc.Objects.AddCurve(overlapCrv))
+          curve.ClosestPoint(curveIntersection.PointA, t0)
+          curve.ClosestPoint(curveIntersection.PointA2, t1)
+          Dim overlapCurve = curve.DuplicateCurve().Trim(t0, t1)
+          addedObjects.Add(doc.Objects.AddCurve(overlapCurve))
         Else
           ' IsPoint
-          addedObjs.Add(doc.Objects.AddPoint(ie.PointA))
+          addedObjects.Add(doc.Objects.AddPoint(curveIntersection.PointA))
         End If
       Next
-      If addedObjs.Count > 0 Then
-        doc.Objects.[Select](addedObjs)
+      If addedObjects.Count > 0 Then
+        doc.Objects.[Select](addedObjects)
       End If
     End If
 
     doc.Views.Redraw()
 
-    Return Rhino.Commands.Result.Success
+    Return Result.Success
   End Function
 End Class
 d Namespace

@@ -34,10 +34,7 @@ public class InstanceDefinitionTreeCommand : Command
     if (instanceDefinition != null && !instanceDefinition.IsDeleted)
     {
       string node;
-      if (isRoot)
-        node = "─"; //"\u2500"; 
-      else
-        node = "└"; //"\u2514"; 
+      node = isRoot ? "─" : "└"; // "\u2500" : "\u2514"
       dump.Print(string.Format("{0} Instance definition {1} = {2}\n", node, instanceDefinition.Index, instanceDefinition.Name));
 
       if (instanceDefinition.ObjectCount  > 0)
@@ -46,7 +43,8 @@ public class InstanceDefinitionTreeCommand : Command
         for (int i = 0; i < instanceDefinition.ObjectCount ; i++)
         {
           var obj = instanceDefinition.Object(i);
-          if (obj != null && obj is InstanceObject)
+          if (obj == null) continue;
+          if (obj is InstanceObject)
             DumpInstanceDefinition((obj as InstanceObject).InstanceDefinition, ref dump, false); // Recursive...
           else
             dump.Print(string.Format("\u2514 Object {0} = {1}\n", i, obj.ShortDescription(false)));
@@ -59,7 +57,7 @@ public class InstanceDefinitionTreeCommand : Command
 </code>
 ===== VB.NET =====
 <code vb>
-<System.Runtime.InteropServices.Guid("F37DB289-6B0E-472C-9F39-FA0A7ECF0AB8")> _
+<System.Runtime.InteropServices.Guid("6A110A45-0EF1-4AF2-8FF0-41AC79B99693")> _
 Public Class InstanceDefinitionTreeCommand
   Inherits Command
   Public Overrides ReadOnly Property EnglishName() As String
@@ -95,17 +93,20 @@ Public Class InstanceDefinitionTreeCommand
       If isRoot Then
         node = "─"
       Else
-        ' "─"
+        '"\u2500"; 
         node = "└"
       End If
-      ' "└" 
+      '"\u2514"; 
       dump.Print(String.Format("{0} Instance definition {1} = {2}" & vbLf, node, instanceDefinition.Index, instanceDefinition.Name))
 
       If instanceDefinition.ObjectCount > 0 Then
         dump.PushIndent()
         For i As Integer = 0 To instanceDefinition.ObjectCount - 1
           Dim obj = instanceDefinition.[Object](i)
-          If obj IsNot Nothing AndAlso TypeOf obj Is InstanceObject Then
+
+          If obj Is Nothing Then Continue For
+
+          If TypeOf obj Is InstanceObject Then
             DumpInstanceDefinition(TryCast(obj, InstanceObject).InstanceDefinition, dump, False)
           Else
             ' Recursive...
@@ -125,38 +126,37 @@ from scriptcontext import doc
 import Rhino
 
 def RunCommand():
-  idefs = doc.InstanceDefinitions
-  idefCount = idefs.Count
+  instanceDefinitions = doc.InstanceDefinitions
+  instanceDefinitionCount = instanceDefinitions.Count
 
-  if idefCount == 0:
+  if instanceDefinitionCount == 0:
     print "Document contains no instance definitions."
     return
 
   dump = Rhino.FileIO.TextLog()
   dump.IndentSize = 4
 
-  for i in range(0, idefCount):
-    DumpInstanceDefinition(idefs[i], dump, True)
+  for i in range(0, instanceDefinitionCount):
+    DumpInstanceDefinition(instanceDefinitions[i], dump, True)
 
   print dump.ToString()
 
-def DumpInstanceDefinition(idef, dump, isRoot):
-  if idef != None and not idef.IsDeleted:
+def DumpInstanceDefinition(instanceDefinition, dump, isRoot):
+  if instanceDefinition != None and not instanceDefinition.IsDeleted:
     if isRoot:
       node = '-'
     else:
       node = '+'
-    dump.Print(u"{0} Instance definition {1} = {2}\n".format(node, idef.Index, idef.Name))
+    dump.Print(u"{0} Instance definition {1} = {2}\n".format(node, instanceDefinition.Index, instanceDefinition.Name))
 
-    idefObjectCount = idef.ObjectCount
-    if idefObjectCount  > 0:
+    if instanceDefinition.ObjectCount  > 0:
       dump.PushIndent()
-      for i in range(0, idefObjectCount):
-        obj = idef.Object(i)
+      for i in range(0, instanceDefinition.ObjectCount):
+        obj = instanceDefinition.Object(i)
         if obj != None and type(obj) == Rhino.DocObjects.InstanceObject:
           DumpInstanceDefinition(obj.InstanceDefinition, dump, False) # Recursive...
         else:
-          dump.Print(u"\u2514 Object {0} = {1}\n".format(i, obj.ShortDescription(False)))
+          dump.Print(u"+ Object {0} = {1}\n".format(i, obj.ShortDescription(False)))
       dump.PopIndent()
 
 if __name__ == "__main__":

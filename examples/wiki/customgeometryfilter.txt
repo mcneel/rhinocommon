@@ -3,21 +3,21 @@
 ===== C# =====
 <code c#>
 [System.Runtime.InteropServices.Guid("5EB284F1-60E6-420A-AE53-6D99732AAE1D")]
-public class ex_customgeometryfilter : Rhino.Commands.Command
+public class CustomGeometryFilterCommand : Command
 {
   private double _tolerance;
-  public override string EnglishName { get { return "csCustomGeoFilter"; } }
+  public override string EnglishName { get { return "csCustomGeometryFilter"; } }
 
-  protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+  protected override Result RunCommand(RhinoDoc doc, RunMode mode)
   {
     _tolerance = doc.ModelAbsoluteTolerance;
     
     // only use a custom geometry filter if no simpler filter does the job
 
     // only curves
-    var gc = new Rhino.Input.Custom.GetObject();
+    var gc = new GetObject();
     gc.SetCommandPrompt("select curve");
-    gc.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
+    gc.GeometryFilter = ObjectType.Curve;
     gc.DisablePreSelect();
     gc.SubObjectSelect = false;
     gc.Get();
@@ -28,9 +28,9 @@ public class ex_customgeometryfilter : Rhino.Commands.Command
     Rhino.RhinoApp.WriteLine("curve was selected");
 
     // only closed curves
-    var gcc = new Rhino.Input.Custom.GetObject();
+    var gcc = new GetObject();
     gcc.SetCommandPrompt("select closed curve");
-    gc.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
+    gcc.GeometryFilter = ObjectType.Curve;
     gcc.GeometryAttributeFilter = GeometryAttributeFilter.ClosedCurve;
     gcc.DisablePreSelect();
     gcc.SubObjectSelect = false;
@@ -42,10 +42,10 @@ public class ex_customgeometryfilter : Rhino.Commands.Command
     Rhino.RhinoApp.WriteLine("closed curve was selected");
 
     // only circles with a radius of 10
-    var gcc10 = new Rhino.Input.Custom.GetObject();
+    var gcc10 = new GetObject();
     gcc10.SetCommandPrompt("select circle with radius of 10");
-    gc.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
-    gcc10.SetCustomGeometryFilter(circleWithRadiusOf10GeometryFilter); // custom geometry filter
+    gc.GeometryFilter = ObjectType.Curve;
+    gcc10.SetCustomGeometryFilter(CircleWithRadiusOf10GeometryFilter); // custom geometry filter
     gcc10.DisablePreSelect();
     gcc10.SubObjectSelect = false;
     gcc10.Get();
@@ -55,10 +55,10 @@ public class ex_customgeometryfilter : Rhino.Commands.Command
       return Result.Failure;
     Rhino.RhinoApp.WriteLine("circle with radius of 10 was selected");
 
-    return Rhino.Commands.Result.Success;
+    return Result.Success;
   }
 
-  private bool circleWithRadiusOf10GeometryFilter (Rhino.DocObjects.RhinoObject rhObject, GeometryBase geometry,
+  private bool CircleWithRadiusOf10GeometryFilter (Rhino.DocObjects.RhinoObject rhObject, GeometryBase geometry,
     ComponentIndex componentIndex)
   {
     bool isCircleWithRadiusOf10 = false;
@@ -71,26 +71,25 @@ public class ex_customgeometryfilter : Rhino.Commands.Command
 </code>
 ===== VB.NET =====
 <code vb>
-<System.Runtime.InteropServices.Guid("5EB284F1-60E6-420A-AE53-6D99732AAE1D")> _
-Public Class ex_customgeometryfilter
-  Inherits Rhino.Commands.Command
+<System.Runtime.InteropServices.Guid("360ED369-3CE1-47A1-A77E-7CF690CB0786")> _
+Public Class CustomGeometryFilterCommand
+  Inherits Command
   Private _tolerance As Double
   Public Overrides ReadOnly Property EnglishName() As String
     Get
-      Return "vbCustomGeoFilter"
+      Return "vbCustomGeometryFilter"
     End Get
   End Property
 
-  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
+  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
     _tolerance = doc.ModelAbsoluteTolerance
 
     ' only use a custom geometry filter if no simpler filter does the job
 
     ' only curves
-    Dim gc = New Rhino.Input.Custom.GetObject()
+    Dim gc = New GetObject()
     gc.SetCommandPrompt("select curve")
-    gc.GeometryFilter = Rhino.DocObjects.ObjectType.Curve
-    ' simple filter
+    gc.GeometryFilter = ObjectType.Curve
     gc.DisablePreSelect()
     gc.SubObjectSelect = False
     gc.[Get]()
@@ -103,11 +102,10 @@ Public Class ex_customgeometryfilter
     Rhino.RhinoApp.WriteLine("curve was selected")
 
     ' only closed curves
-    Dim gcc = New Rhino.Input.Custom.GetObject()
+    Dim gcc = New GetObject()
     gcc.SetCommandPrompt("select closed curve")
-    gc.GeometryFilter = Rhino.DocObjects.ObjectType.Curve
+    gcc.GeometryFilter = ObjectType.Curve
     gcc.GeometryAttributeFilter = GeometryAttributeFilter.ClosedCurve
-    ' simple filter
     gcc.DisablePreSelect()
     gcc.SubObjectSelect = False
     gcc.[Get]()
@@ -120,10 +118,10 @@ Public Class ex_customgeometryfilter
     Rhino.RhinoApp.WriteLine("closed curve was selected")
 
     ' only circles with a radius of 10
-    Dim gcc10 = New Rhino.Input.Custom.GetObject()
+    Dim gcc10 = New GetObject()
     gcc10.SetCommandPrompt("select circle with radius of 10")
-    gc.GeometryFilter = Rhino.DocObjects.ObjectType.Curve
-    gcc10.SetCustomGeometryFilter(AddressOf circleWithRadiusOf10GeometryFilter)
+    gc.GeometryFilter = ObjectType.Curve
+    gcc10.SetCustomGeometryFilter(AddressOf CircleWithRadiusOf10GeometryFilter)
     ' custom geometry filter
     gcc10.DisablePreSelect()
     gcc10.SubObjectSelect = False
@@ -136,10 +134,10 @@ Public Class ex_customgeometryfilter
     End If
     Rhino.RhinoApp.WriteLine("circle with radius of 10 was selected")
 
-    Return Rhino.Commands.Result.Success
+    Return Result.Success
   End Function
 
-  Private Function circleWithRadiusOf10GeometryFilter(rhObject As Rhino.DocObjects.RhinoObject, geometry As GeometryBase, componentIndex As ComponentIndex) As Boolean
+  Private Function CircleWithRadiusOf10GeometryFilter(rhObject As Rhino.DocObjects.RhinoObject, geometry As GeometryBase, componentIndex As ComponentIndex) As Boolean
     Dim isCircleWithRadiusOf10 As Boolean = False
     Dim circle As Circle
     If TypeOf geometry Is Curve AndAlso TryCast(geometry, Curve).TryGetCircle(circle) Then

@@ -1,38 +1,33 @@
 ﻿Imports Rhino
-Imports Rhino.Geometry
 Imports Rhino.Commands
-Imports Rhino.Input.Custom
+Imports Rhino.Input
+Imports Rhino.DocObjects
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("26167F88-527C-44BB-BD71-4371144D5992")> _
-  Public Class ex_curvereverse
-    Inherits Rhino.Commands.Command
+  <System.Runtime.InteropServices.Guid("732BA8B1-6436-4556-8303-F3D9C7F41A8F")> _
+  Public Class ReverseCurveCommand
+    Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
       Get
         Return "vbReverseCurve"
       End Get
     End Property
 
-    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
-      Dim go As New Rhino.Input.Custom.GetObject()
-      go.SetCommandPrompt("Select curves to reverse")
-      go.GeometryFilter = Rhino.DocObjects.ObjectType.Curve
-      go.GetMultiple(1, 0)
-      If go.CommandResult() <> Rhino.Commands.Result.Success Then
-        Return go.CommandResult()
+    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
+      Dim objRefs As ObjRef()
+      Dim rc = RhinoGet.GetMultipleObjects("Select curves to reverse", True, ObjectType.Curve, objRefs)
+      If rc <> Result.Success Then
+        Return rc
       End If
 
-      For i As Integer = 0 To go.ObjectCount - 1
-        Dim objRef = go.[Object](i)
-        Dim crv = objRef.Curve()
-        Dim dup = crv.DuplicateCurve()
-        If dup IsNot Nothing Then
-          dup.Reverse()
-          doc.Objects.Replace(objRef, dup)
+      For Each objRef As ObjRef In objRefs
+        Dim curveCopy = objRef.Curve().DuplicateCurve()
+        If curveCopy IsNot Nothing Then
+          curveCopy.Reverse()
+          doc.Objects.Replace(objRef, curveCopy)
         End If
       Next
-
-      Return Rhino.Commands.Result.Success
+      Return Result.Success
     End Function
   End Class
 End Namespace

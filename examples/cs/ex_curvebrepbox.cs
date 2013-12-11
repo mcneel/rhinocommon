@@ -2,6 +2,7 @@
 using Rhino.Geometry;
 using Rhino.Commands;
 using Rhino.Input;
+using Rhino.DocObjects;
 
 namespace examples_cs
 {
@@ -13,7 +14,7 @@ namespace examples_cs
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
       Rhino.DocObjects.ObjRef objref;
-      var rc = RhinoGet.GetOneObject("Select Curve", false, Rhino.DocObjects.ObjectType.Curve, out objref);
+      var rc = RhinoGet.GetOneObject("Select Curve", false, ObjectType.Curve, out objref);
       if( rc != Result.Success )
         return rc;
       var curve = objref.Curve();

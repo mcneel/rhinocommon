@@ -1,4 +1,5 @@
 ﻿using Rhino;
+using Rhino.Input;
 using Rhino.Commands;
 using System;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace examples_cs
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
       string layerName = "";
-      var rc = Rhino.Input.RhinoGet.GetString("Name of layer to lock", true, ref layerName);
+      var rc = RhinoGet.GetString("Name of layer to lock", true, ref layerName);
       if (rc != Result.Success)
         return rc;
       if (String.IsNullOrWhiteSpace(layerName))
@@ -43,13 +44,16 @@ namespace examples_cs
           RhinoApp.WriteLine(String.Format("({0}) {1}", i+1, matchingLayers[i].FullPath.Replace("::", "->")));
         }
         int selectedLayer = -1;
-        rc = Rhino.Input.RhinoGet.GetInteger("which layer?", true, ref selectedLayer);
+        rc = RhinoGet.GetInteger("which layer?", true, ref selectedLayer);
         if (rc != Result.Success)
           return rc;
         if (selectedLayer > 0 && selectedLayer <= matchingLayers.Count)
           layerToRename = matchingLayers[selectedLayer - 1];
         else return Result.Nothing;
       }
+
+      if (layerToRename == null)
+        return Result.Nothing;
 
       if (!layerToRename.IsLocked)
       {

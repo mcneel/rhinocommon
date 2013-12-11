@@ -1,77 +1,77 @@
 ﻿Imports Rhino
+Imports Rhino.Commands
 Imports Rhino.Geometry
-Imports System.Collections.Generic
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("F96CEFCF-C5E0-4013-A773-995794899506")> _
-  Public Class ex_createsurfaceexample
-    Inherits Rhino.Commands.Command
+  <System.Runtime.InteropServices.Guid("652FCBE5-D8DC-4472-AB94-5A70998A3895")> _
+  Public Class CreateSurfaceFromPointsAndKnotsCommand
+    Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
       Get
-        Return "vbCreateSrfExample"
+        Return "vbCreateSurfaceFromPointsAndKnots"
       End Get
     End Property
 
-    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
-      Const bIsRational As Boolean = False
-      Const [dim] As Integer = 3
-      Const u_degree As Integer = 2
-      Const v_degree As Integer = 3
-      Const u_cv_count As Integer = 3
-      Const v_cv_count As Integer = 5
+    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
+      Const isRational As Boolean = False
+      Const numberOfDimensions As Integer = 3
+      Const uDegree As Integer = 2
+      Const vDegree As Integer = 3
+      Const uControlPointCount As Integer = 3
+      Const vControlPointCount As Integer = 5
 
       ' The knot vectors do NOT have the 2 superfluous knots
       ' at the start and end of the knot vector.  If you are
       ' coming from a system that has the 2 superfluous knots,
       ' just ignore them when creating NURBS surfaces.
-      Dim u_knot As Double() = New Double(u_cv_count + u_degree - 2) {}
-      Dim v_knot As Double() = New Double(v_cv_count + v_degree - 2) {}
+      Dim uKnots = New Double(uControlPointCount + uDegree - 2) {}
+      Dim vKnots = New Double(vControlPointCount + vDegree - 2) {}
 
       ' make up a quadratic knot vector with no interior knots
-      u_knot(0) = InlineAssignHelper(u_knot(1), 0.0)
-      u_knot(2) = InlineAssignHelper(u_knot(3), 1.0)
+      uKnots(0) = InlineAssignHelper(uKnots(1), 0.0)
+      uKnots(2) = InlineAssignHelper(uKnots(3), 1.0)
 
       ' make up a cubic knot vector with one simple interior knot
-      v_knot(0) = InlineAssignHelper(v_knot(1), InlineAssignHelper(v_knot(2), 0.0))
-      v_knot(3) = 1.5
-      v_knot(4) = InlineAssignHelper(v_knot(5), InlineAssignHelper(v_knot(6), 2.0))
+      vKnots(0) = InlineAssignHelper(vKnots(1), InlineAssignHelper(vKnots(2), 0.0))
+      vKnots(3) = 1.5
+      vKnots(4) = InlineAssignHelper(vKnots(5), InlineAssignHelper(vKnots(6), 2.0))
 
       ' Rational control points can be in either homogeneous
       ' or euclidean form. Non-rational control points do not
       ' need to specify a weight.  
-      Dim CV = New Point3d(u_cv_count - 1, v_cv_count - 1) {}
+      Dim controlPoints = New Point3d(uControlPointCount - 1, vControlPointCount - 1) {}
 
-      For i As Integer = 0 To u_cv_count - 1
-        For j As Integer = 0 To v_cv_count - 1
-          CV(i, j) = New Point3d(i, j, i - j)
+      For u As Integer = 0 To uControlPointCount - 1
+        For v As Integer = 0 To vControlPointCount - 1
+          controlPoints(u, v) = New Point3d(u, v, u - v)
         Next
       Next
 
       ' creates internal uninitialized arrays for 
       ' control points and knots
-      Dim nurbs_surface = NurbsSurface.Create([dim], bIsRational, u_degree + 1, v_degree + 1, u_cv_count, v_cv_count)
+      Dim nurbsSurface__1 = NurbsSurface.Create(numberOfDimensions, isRational, uDegree + 1, vDegree + 1, uControlPointCount, vControlPointCount)
 
       ' add the knots
-      For i As Integer = 0 To nurbs_surface.KnotsU.Count - 1
-        nurbs_surface.KnotsU(i) = u_knot(i)
+      For u As Integer = 0 To nurbsSurface__1.KnotsU.Count - 1
+        nurbsSurface__1.KnotsU(u) = uKnots(u)
       Next
-      For j As Integer = 0 To nurbs_surface.KnotsV.Count - 1
-        nurbs_surface.KnotsV(j) = v_knot(j)
+      For v As Integer = 0 To nurbsSurface__1.KnotsV.Count - 1
+        nurbsSurface__1.KnotsV(v) = vKnots(v)
       Next
 
       ' add the control points
-      For i As Integer = 0 To nurbs_surface.Points.CountU - 1
-        For j As Integer = 0 To nurbs_surface.Points.CountV - 1
-          nurbs_surface.Points.SetControlPoint(i, j, New ControlPoint(CV(i, j)))
+      For u As Integer = 0 To nurbsSurface__1.Points.CountU - 1
+        For v As Integer = 0 To nurbsSurface__1.Points.CountV - 1
+          nurbsSurface__1.Points.SetControlPoint(u, v, New ControlPoint(controlPoints(u, v)))
         Next
       Next
 
-      If nurbs_surface.IsValid Then
-        doc.Objects.AddSurface(nurbs_surface)
+      If nurbsSurface__1.IsValid Then
+        doc.Objects.AddSurface(nurbsSurface__1)
         doc.Views.Redraw()
-        Return Rhino.Commands.Result.Success
+        Return Result.Success
       Else
-        Return Rhino.Commands.Result.Failure
+        Return Result.Failure
       End If
     End Function
     Private Shared Function InlineAssignHelper(Of T)(ByRef target As T, value As T) As T

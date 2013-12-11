@@ -50,7 +50,10 @@ Namespace examples_vb
           dump.PushIndent()
           For i As Integer = 0 To instanceDefinition.ObjectCount - 1
             Dim obj = instanceDefinition.[Object](i)
-            If obj IsNot Nothing AndAlso TypeOf obj Is InstanceObject Then
+
+            If obj Is Nothing Then Continue For
+
+            If TypeOf obj Is InstanceObject Then
               DumpInstanceDefinition(TryCast(obj, InstanceObject).InstanceDefinition, dump, False)
             Else
               ' Recursive...

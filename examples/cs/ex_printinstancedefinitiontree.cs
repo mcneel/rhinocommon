@@ -37,10 +37,7 @@ namespace examples_cs
       if (instanceDefinition != null && !instanceDefinition.IsDeleted)
       {
         string node;
-        if (isRoot)
-          node = "─"; //"\u2500"; 
-        else
-          node = "└"; //"\u2514"; 
+        node = isRoot ? "─" : "└"; // "\u2500" : "\u2514"
         dump.Print(string.Format("{0} Instance definition {1} = {2}\n", node, instanceDefinition.Index, instanceDefinition.Name));
 
         if (instanceDefinition.ObjectCount  > 0)
@@ -49,7 +46,8 @@ namespace examples_cs
           for (int i = 0; i < instanceDefinition.ObjectCount ; i++)
           {
             var obj = instanceDefinition.Object(i);
-            if (obj != null && obj is InstanceObject)
+            if (obj == null) continue;
+            if (obj is InstanceObject)
               DumpInstanceDefinition((obj as InstanceObject).InstanceDefinition, ref dump, false); // Recursive...
             else
               dump.Print(string.Format("\u2514 Object {0} = {1}\n", i, obj.ShortDescription(false)));

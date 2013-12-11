@@ -3,77 +3,77 @@
 ===== C# =====
 <code c#>
 [System.Runtime.InteropServices.Guid("DA8EA15E-977F-4FB3-8123-235578D18548")]
-public class ex_curveclosestpoint : Rhino.Commands.Command
+public class CurveClosestPointCommand : Command
 {
   public override string EnglishName { get { return "csFindCurveParameterAtPoint"; } }
 
-  protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+  protected override Result RunCommand(RhinoDoc doc, RunMode mode)
   {
     Rhino.DocObjects.ObjRef objref;
-    var rc = Rhino.Input.RhinoGet.GetOneObject("Select curve", true, Rhino.DocObjects.ObjectType.Curve,out objref);
-    if(rc!= Rhino.Commands.Result.Success)
+    var rc = RhinoGet.GetOneObject("Select curve", true, ObjectType.Curve,out objref);
+    if(rc!= Result.Success)
       return rc;
-    var crv = objref.Curve();
-    if( crv==null )
-      return Rhino.Commands.Result.Failure;
+    var curve = objref.Curve();
+    if( curve==null )
+      return Result.Failure;
 
-    var gp = new Rhino.Input.Custom.GetPoint();
+    var gp = new GetPoint();
     gp.SetCommandPrompt("Pick a location on the curve");
-    gp.Constrain(crv, false);
+    gp.Constrain(curve, false);
     gp.Get();
-    if (gp.CommandResult() != Rhino.Commands.Result.Success)
+    if (gp.CommandResult() != Result.Success)
       return gp.CommandResult();
 
-    var p = gp.Point();
-    double cp;
-    if (crv.ClosestPoint(p, out cp))
+    var point = gp.Point();
+    double closestPointParam;
+    if (curve.ClosestPoint(point, out closestPointParam))
     {
-      Rhino.RhinoApp.WriteLine(String.Format("point: ({0},{1},{2}), parameter: {3}", p.X, p.Y, p.Z, cp));
-      doc.Objects.AddPoint(p);
+      RhinoApp.WriteLine(string.Format("point: ({0},{1},{2}), parameter: {3}", point.X, point.Y, point.Z, closestPointParam));
+      doc.Objects.AddPoint(point);
       doc.Views.Redraw();
     }
-    return Rhino.Commands.Result.Success;
+    return Result.Success;
   }
 }
 </code>
 ===== VB.NET =====
 <code vb>
-<System.Runtime.InteropServices.Guid("2C395C2C-DF9E-4758-A1D9-9800C0E93E5D")> _
-Public Class ex_curveclosestpoint
-  Inherits Rhino.Commands.Command
+<System.Runtime.InteropServices.Guid("6BB1D924-10B4-4998-A3FE-0D4FFA78E070")> _
+Public Class CurveClosestPointCommand
+  Inherits Command
   Public Overrides ReadOnly Property EnglishName() As String
     Get
       Return "vbFindCurveParameterAtPoint"
     End Get
   End Property
 
-  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
+  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
     Dim objref As Rhino.DocObjects.ObjRef
-    Dim rc = Rhino.Input.RhinoGet.GetOneObject("Select curve", True, Rhino.DocObjects.ObjectType.Curve, objref)
-    If rc <> Rhino.Commands.Result.Success Then
+    Dim rc = RhinoGet.GetOneObject("Select curve", True, ObjectType.Curve, objref)
+    If rc <> Result.Success Then
       Return rc
     End If
-    Dim crv = objref.Curve()
-    If crv Is Nothing Then
-      Return Rhino.Commands.Result.Failure
+    Dim curve = objref.Curve()
+    If curve Is Nothing Then
+      Return Result.Failure
     End If
 
-    Dim gp = New Rhino.Input.Custom.GetPoint()
+    Dim gp = New GetPoint()
     gp.SetCommandPrompt("Pick a location on the curve")
-    gp.Constrain(crv, False)
+    gp.Constrain(curve, False)
     gp.[Get]()
-    If gp.CommandResult() <> Rhino.Commands.Result.Success Then
+    If gp.CommandResult() <> Result.Success Then
       Return gp.CommandResult()
     End If
 
-    Dim p = gp.Point()
-    Dim cp As Double
-    If crv.ClosestPoint(p, cp) Then
-      Rhino.RhinoApp.WriteLine([String].Format("point: ({0},{1},{2}), parameter: {3}", p.X, p.Y, p.Z, cp))
-      doc.Objects.AddPoint(p)
+    Dim point = gp.Point()
+    Dim closestPointParam As Double
+    If curve.ClosestPoint(point, closestPointParam) Then
+      RhinoApp.WriteLine(String.Format("point: ({0},{1},{2}), parameter: {3}", point.X, point.Y, point.Z, closestPointParam))
+      doc.Objects.AddPoint(point)
       doc.Views.Redraw()
     End If
-    Return Rhino.Commands.Result.Success
+    Return Result.Success
   End Function
 End Class
 d Namespace

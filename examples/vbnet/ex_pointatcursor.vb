@@ -1,9 +1,11 @@
 ﻿Imports Rhino
+Imports Rhino.Commands
+Imports Rhino.DocObjects
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("B1999883-CE95-4727-A047-4CD3881AD866")> _
-  Public Class ex_pointatcursor
-    Inherits Rhino.Commands.Command
+  <System.Runtime.InteropServices.Guid("17BBF146-6110-47F7-A55E-9E38FBC39E9F")> _
+  Public Class PointAtCursorCommand
+    Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
       Get
         Return "vbPointAtCursor"
@@ -11,30 +13,32 @@ Namespace examples_vb
     End Property
 
     <System.Runtime.InteropServices.DllImport("user32.dll")> _
-    Public Shared Function GetCursorPos(ByRef pt As System.Drawing.Point) As Boolean
+    Public Shared Function GetCursorPos(ByRef point As System.Drawing.Point) As Boolean
     End Function
 
     <System.Runtime.InteropServices.DllImport("user32.dll")> _
-    Public Shared Function ScreenToClient(hWnd As IntPtr, ByRef pt As System.Drawing.Point) As Boolean
+    Public Shared Function ScreenToClient(hWnd As IntPtr, ByRef point As System.Drawing.Point) As Boolean
     End Function
 
-    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
-      Dim rslt = Rhino.Commands.Result.Failure
+    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
+      Dim result__1 = Result.Failure
       Dim view = doc.Views.ActiveView
-      If view IsNot Nothing Then
-        Dim pt As System.Drawing.Point
-        If GetCursorPos(pt) AndAlso ScreenToClient(view.Handle, pt) Then
-          Dim xform = view.ActiveViewport.GetTransform(Rhino.DocObjects.CoordinateSystem.Screen, Rhino.DocObjects.CoordinateSystem.World)
-          If xform <> Nothing Then
-            Dim point = New Rhino.Geometry.Point3d(pt.X, pt.Y, 0.0)
-            RhinoApp.WriteLine([String].Format("screen point: ({0}, {1}, {2})", point.X, point.Y, point.Z))
-            point.Transform(xform)
-            RhinoApp.WriteLine([String].Format("world point: ({0}, {1}, {2})", point.X, point.Y, point.Z))
-            rslt = Rhino.Commands.Result.Success
-          End If
-        End If
+      If view Is Nothing Then
+        Return result__1
       End If
-      Return rslt
+
+      Dim windowsDrawingPoint As System.Drawing.Point
+      If Not GetCursorPos(windowsDrawingPoint) OrElse Not ScreenToClient(view.Handle, windowsDrawingPoint) Then
+        Return result__1
+      End If
+
+      Dim xform = view.ActiveViewport.GetTransform(CoordinateSystem.Screen, CoordinateSystem.World)
+      Dim point = New Rhino.Geometry.Point3d(windowsDrawingPoint.X, windowsDrawingPoint.Y, 0.0)
+      RhinoApp.WriteLine([String].Format("screen point: ({0}, {1}, {2})", point.X, point.Y, point.Z))
+      point.Transform(xform)
+      RhinoApp.WriteLine([String].Format("world point: ({0}, {1}, {2})", point.X, point.Y, point.Z))
+      result__1 = Result.Success
+      Return result__1
     End Function
   End Class
 End Namespace

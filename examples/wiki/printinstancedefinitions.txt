@@ -3,20 +3,20 @@
 ===== C# =====
 <code c#>
 [System.Runtime.InteropServices.Guid("71692574-73D4-4665-A617-72A937EBADEE")]
-public class ex_printinstancedefinitions : Rhino.Commands.Command
+public class InstanceDefinitionNamesCommand : Command
 {
   public override string EnglishName { get { return "csInstanceDefinitionNames"; } }
 
-  protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+  protected override Result RunCommand(RhinoDoc doc, RunMode mode)
   {
-    var idefNames = (from idef in doc.InstanceDefinitions 
-                     where idef != null && !idef.IsDeleted
-                     select idef.Name);
+    var instanceDefinitionNames = (from instanceDefinition in doc.InstanceDefinitions 
+                                   where instanceDefinition != null && !instanceDefinition.IsDeleted
+                                   select instanceDefinition.Name);
 
-    foreach (var n in idefNames)
+    foreach (var n in instanceDefinitionNames)
       RhinoApp.WriteLine(String.Format("Instance definition = {0}", n));
 
-    return Rhino.Commands.Result.Success;
+    return Result.Success;
   }
 }
 </code>
@@ -24,23 +24,23 @@ public class ex_printinstancedefinitions : Rhino.Commands.Command
 <code vb>
 <System.Runtime.InteropServices.Guid("B7391004-8A5D-4B54-88F5-1D2004D70BAC")> _
 Public Class ex_printinstancedefinitions
-  Inherits Rhino.Commands.Command
+  Inherits Command
   Public Overrides ReadOnly Property EnglishName() As String
     Get
       Return "vbInstanceDefinitionNames"
     End Get
   End Property
 
-  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
-    Dim idefNames = (From idef In doc.InstanceDefinitions
-                     Where idef IsNot Nothing AndAlso Not idef.IsDeleted
-                     Select idef.Name)
+  Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
+    Dim instanceDefinitionNames = (From instanceDefinition In doc.InstanceDefinitions
+                                   Where instanceDefinition IsNot Nothing AndAlso Not instanceDefinition.IsDeleted
+                                   Select instanceDefinition.Name)
 
-    For Each n As String In idefNames
+    For Each n As String In instanceDefinitionNames
       RhinoApp.WriteLine([String].Format("Instance definition = {0}", n))
     Next
 
-    Return Rhino.Commands.Result.Success
+    Return Result.Success
   End Function
 End Class
 d Namespace
@@ -50,9 +50,10 @@ d Namespace
 from scriptcontext import doc
 
 def RunCommand():
-  idefNames = [idef.Name for idef in doc.InstanceDefinitions if idef != None and not idef.IsDeleted]
+  instanceDefinitionNames = [instanceDefinition.Name for instanceDefinition in doc.InstanceDefinitions 
+                             if instanceDefinition != None and not instanceDefinition.IsDeleted]
 
-  for n in idefNames:
+  for n in instanceDefinitionNames:
     print "instance definition = {0}".format(n)
 
 if __name__ == "__main__":

@@ -1,8 +1,8 @@
 ﻿using Rhino;
 using Rhino.Commands;
+using Rhino.Input;
 using Rhino.Geometry;
 using Rhino.DocObjects;
-using System;
 
 namespace examples_cs
 {
@@ -14,7 +14,7 @@ namespace examples_cs
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
       ObjRef objRef;
-      var rc = Rhino.Input.RhinoGet.GetOneObject("Select surface or polysurface to mesh", true, ObjectType.Surface | ObjectType.PolysrfFilter, out objRef);
+      var rc = RhinoGet.GetOneObject("Select surface or polysurface to mesh", true, ObjectType.Surface | ObjectType.PolysrfFilter, out objRef);
       if (rc != Result.Success)
         return rc;
       var brep = objRef.Brep();

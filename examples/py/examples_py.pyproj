@@ -84,7 +84,7 @@
     <Compile Include="ex_insertknot.py" />
     <Compile Include="ex_instancedefinitionobjects.py" />
     <Compile Include="ex_intersectcurves.py" />
-    <Compile Include="ex_intersectlinecurve.py" />
+    <Compile Include="ex_intersectlinecircle.py" />
     <Compile Include="ex_intersectlines.py" />
     <Compile Include="ex_isbrepbox.py" />
     <Compile Include="ex_isocurvedensity.py" />

@@ -1,24 +1,25 @@
-﻿Imports Rhino.DocObjects
-Imports Rhino
+﻿Imports Rhino
+Imports Rhino.Input.Custom
+Imports Rhino.DocObjects
 Imports Rhino.Commands
 Imports System.Collections.Generic
 Imports Rhino.Geometry
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("3CEE907B-1325-429E-A2DA-FA1DCA437567")> _
-  Public Class ex_loft
-    Inherits Rhino.Commands.Command
+  <System.Runtime.InteropServices.Guid("DB81E4AA-9CD2-4556-AF31-614C739048B9")> _
+  Public Class LoftCommand
+    Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
       Get
         Return "vbLoft"
       End Get
     End Property
 
-    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
+    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Result
       ' select curves to loft
-      Dim gs = New Rhino.Input.Custom.GetObject()
+      Dim gs = New GetObject()
       gs.SetCommandPrompt("select curves to loft")
-      gs.GeometryFilter = Rhino.DocObjects.ObjectType.Curve
+      gs.GeometryFilter = ObjectType.Curve
       gs.DisablePreSelect()
       gs.SubObjectSelect = False
       gs.GetMultiple(2, 0)
@@ -26,18 +27,18 @@ Namespace examples_vb
         Return gs.CommandResult()
       End If
 
-      Dim crvs = New List(Of Curve)()
+      Dim curves = New List(Of Curve)()
       For Each obj As ObjRef In gs.Objects()
-        crvs.Add(obj.Curve())
+        curves.Add(obj.Curve())
       Next
 
-      Dim breps = Rhino.Geometry.Brep.CreateFromLoft(crvs, Point3d.Unset, Point3d.Unset, LoftType.Tight, False)
+      Dim breps = Rhino.Geometry.Brep.CreateFromLoft(curves, Point3d.Unset, Point3d.Unset, LoftType.Tight, False)
       For Each brep As Brep In breps
         doc.Objects.AddBrep(brep)
       Next
 
       doc.Views.Redraw()
-      Return Rhino.Commands.Result.Success
+      Return Result.Success
     End Function
   End Class
 End Namespace

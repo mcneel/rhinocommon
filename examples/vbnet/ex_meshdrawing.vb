@@ -1,27 +1,25 @@
-﻿Imports System.Runtime.InteropServices
-Imports Rhino
-Imports Rhino.Collections
+﻿Imports Rhino
 Imports Rhino.Commands
-Imports System.Collections.Generic
 Imports Rhino.Display
 Imports Rhino.Geometry
 Imports Rhino.Input.Custom
+Imports Rhino.DocObjects
 Imports System.Drawing
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("03F2949F-F6BD-42C2-942B-18E22B7F84A1")> _
-  Public Class ex_meshdrawing
-    Inherits Rhino.Commands.Command
+  <System.Runtime.InteropServices.Guid("083735A9-1D78-46DB-A569-0CE94F30949F")> _
+  Public Class MeshDrawingCommand
+    Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
       Get
         Return "vbDrawMesh"
       End Get
     End Property
 
-    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As Rhino.Commands.RunMode) As Rhino.Commands.Result
-      Dim gs = New Rhino.Input.Custom.GetObject()
+    Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
+      Dim gs = New GetObject()
       gs.SetCommandPrompt("select sphere")
-      gs.GeometryFilter = Rhino.DocObjects.ObjectType.Surface
+      gs.GeometryFilter = ObjectType.Surface
       gs.DisablePreSelect()
       gs.SubObjectSelect = False
       gs.[Get]()
@@ -36,9 +34,9 @@ Namespace examples_vb
         If mesh__1 Is Nothing Then
           Return Result.Failure
         End If
-
         Dim conduit = New DrawBlueMeshConduit(mesh__1)
         conduit.Enabled = True
+
         doc.Views.Redraw()
 
         Dim inStr As String = ""
@@ -46,15 +44,15 @@ Namespace examples_vb
 
         conduit.Enabled = False
         doc.Views.Redraw()
-        Return Rhino.Commands.Result.Success
+        Return Result.Success
       Else
-        Return Rhino.Commands.Result.Failure
+        Return Result.Failure
       End If
     End Function
   End Class
 
   Class DrawBlueMeshConduit
-    Inherits Rhino.Display.DisplayConduit
+    Inherits DisplayConduit
     Private _mesh As Mesh = Nothing
     Private _color As Color
     Private _material As DisplayMaterial = Nothing

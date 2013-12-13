@@ -196,6 +196,7 @@ d Namespace
 ===== Python =====
 <code python>
 import Rhino
+import System.Drawing
 import scriptcontext
 import rhinoscriptsyntax as rs
 
@@ -204,10 +205,9 @@ class DrawArrowHeadsConduit(Rhino.Display.DisplayConduit):
     self.line = line
     self.screenSize = screenSize
     self.worldSize = worldSize
-    #Rhino.Display.DisplayPipeline.DrawForeground += self.DrawForeground
 
   def DrawForeground(self, e):
-    e.Display.DrawArrow(line, System.Drawing.Color.Black, screenSize, worldSize)
+    e.Display.DrawArrow(self.line, System.Drawing.Color.Black, self.screenSize, self.worldSize)
 
 def RunCommand():
   # get arrow head size
@@ -263,18 +263,13 @@ def RunCommand():
 
   line = Rhino.Geometry.Line(ptStart, ptEnd)
 
-  conduit = None
-  if scriptcontext.sticky.has_key("arrowheadconduit"):
-      conduit = scriptcontext.sticky["arrowheadconduit"]
-  else:
-    conduit = DrawArrowHeadsConduit(line, screenSize, worldSize)
-    scriptcontext.sticky["arrowheadconduit"] = conduit
-    
-  # toggle conduit on/off
-  conduit.Enabled = True #not conduit.Enabled
-  Rhino.RhinoApp.WriteLine("draw arrowheads conduit enabled = {0}", conduit.Enabled)
-
+  conduit = DrawArrowHeadsConduit(line, screenSize, worldSize)
+  conduit.Enabled = True
   scriptcontext.doc.Views.Redraw()
+  rs.GetString("Pausing for user input")
+  conduit.Enabled = False
+  scriptcontext.doc.Views.Redraw()
+
   return Rhino.Commands.Result.Success
 
 if __name__=="__main__":

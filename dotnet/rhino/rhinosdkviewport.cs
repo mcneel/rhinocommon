@@ -1371,7 +1371,6 @@ namespace Rhino.Display
     /// <example>
     /// <code source='examples\vbnet\ex_pointatcursor.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_pointatcursor.cs' lang='cs'/>
-    /// <code source='examples\py\ex_pointatcursor.py' lang='py'/>
     /// </example>
     public Transform GetTransform(Rhino.DocObjects.CoordinateSystem sourceSystem, Rhino.DocObjects.CoordinateSystem destinationSystem)
     {

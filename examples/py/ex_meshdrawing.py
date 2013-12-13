@@ -2,6 +2,7 @@ import rhinoscriptsyntax as rs
 from scriptcontext import doc
 import Rhino
 import System
+import System.Drawing
 
 def RunCommand():
   gs = Rhino.Input.Custom.GetObject()
@@ -41,16 +42,16 @@ class DrawBlueMeshConduit(Rhino.Display.DisplayConduit):
       self.bbox = mesh.GetBoundingBox(True)
 
   def CalculateBoundingBox(self, calculateBoundingBoxEventArgs):
-    base.CalculateBoundingBox(calculateBoundingBoxEventArgs)
-    calculateBoundingBoxEventArgs.BoundingBox.Union(bbox)
+    #super.CalculateBoundingBox(calculateBoundingBoxEventArgs)
+    calculateBoundingBoxEventArgs.BoundingBox.Union(self.bbox)
 
   def PreDrawObjects(self, drawEventArgs):
-    base.PreDrawObjects(rawEventArgs)
-    gvp = rawEventArgs.Display.Viewport
-    if vp.DisplayMode.EnglishName.ToLower() == "wireframe":
-      rawEventArgs.Display.DrawMeshWires(mesh, color)
+    #base.PreDrawObjects(rawEventArgs)
+    gvp = drawEventArgs.Display.Viewport
+    if gvp.DisplayMode.EnglishName.ToLower() == "wireframe":
+      drawEventArgs.Display.DrawMeshWires(self.mesh, self.color)
     else:
-      rawEventArgs.Display.DrawMeshShaded(mesh, material)
+      drawEventArgs.Display.DrawMeshShaded(self.mesh, self.material)
 
 if __name__ == "__main__":
     RunCommand()

@@ -1,10 +1,9 @@
-﻿using System;
-using Rhino;
+﻿using Rhino;
+using Rhino.Geometry;
 using Rhino.Geometry.Intersect;
 using Rhino.Input.Custom;
 using Rhino.DocObjects;
 using Rhino.Commands;
-using System.Collections.Generic;
 
 namespace examples_cs
 {
@@ -16,14 +15,14 @@ namespace examples_cs
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
       var gs = new GetObject();
-      gs.SetCommandPrompt("select surface");
-      gs.GeometryFilter = ObjectType.Surface;
+      gs.SetCommandPrompt("select brep");
+      gs.GeometryFilter = ObjectType.Brep;
       gs.DisablePreSelect();
       gs.SubObjectSelect = false;
       gs.Get();
       if (gs.CommandResult() != Result.Success)
         return gs.CommandResult();
-      var surface = gs.Object(0).Surface();
+      var brep = gs.Object(0).Brep();
 
       var gc = new GetObject();
       gc.SetCommandPrompt("select curve");
@@ -35,35 +34,25 @@ namespace examples_cs
         return gc.CommandResult();
       var curve = gc.Object(0).Curve();
 
-      if (surface == null || curve == null)
+      if (brep == null || curve == null)
         return Result.Failure;
 
       var tolerance = doc.ModelAbsoluteTolerance;
 
-      var curveIntersections = Intersection.CurveSurface(curve, surface, tolerance, tolerance);
-      if (curveIntersections != null)
+      Point3d[] intersectionPoints;
+      Curve[] overlapCurves;
+      if (!Intersection.CurveBrep(curve, brep, tolerance, out overlapCurves, out intersectionPoints))
       {
-        var addedObjects = new List<Guid>();
-        foreach (var curveIntersection in curveIntersections)
-        {
-          if (curveIntersection.IsOverlap)
-          {
-            double t0;
-            double t1;
-            curve.ClosestPoint(curveIntersection.PointA, out t0);
-            curve.ClosestPoint(curveIntersection.PointA2, out t1);
-            var overlapCurve = curve.DuplicateCurve().Trim(t0, t1);
-            addedObjects.Add(doc.Objects.AddCurve(overlapCurve));
-          }
-          else // IsPoint
-          {
-            addedObjects.Add(doc.Objects.AddPoint(curveIntersection.PointA));
-          }
-        }
-        if (addedObjects.Count > 0)
-          doc.Objects.Select(addedObjects);
+        RhinoApp.WriteLine("curve brep intersection failed");
+        return Result.Nothing;
       }
 
+      foreach (var overlapCurve in overlapCurves)
+        doc.Objects.AddCurve(overlapCurve);
+      foreach (var intersectionPoint in intersectionPoints)
+        doc.Objects.AddPoint(intersectionPoint);
+
+      RhinoApp.WriteLine(string.Format("{0} overlap curves, and {1} intersection points", overlapCurves.Length, intersectionPoints.Length));
       doc.Views.Redraw();
 
       return Result.Success;

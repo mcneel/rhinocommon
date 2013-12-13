@@ -1,12 +1,12 @@
 ﻿Imports Rhino
+Imports Rhino.Geometry
 Imports Rhino.Geometry.Intersect
 Imports Rhino.Input.Custom
 Imports Rhino.DocObjects
 Imports Rhino.Commands
-Imports System.Collections.Generic
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("336908EB-273C-4A81-BE53-8EEFC0470B6C")> _
+  <System.Runtime.InteropServices.Guid("926342E4-A665-4932-9E41-BD25F4A12F35")> _
   Public Class CurveSurfaceIntersectCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
@@ -17,15 +17,15 @@ Namespace examples_vb
 
     Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
       Dim gs = New GetObject()
-      gs.SetCommandPrompt("select surface")
-      gs.GeometryFilter = ObjectType.Surface
+      gs.SetCommandPrompt("select brep")
+      gs.GeometryFilter = ObjectType.Brep
       gs.DisablePreSelect()
       gs.SubObjectSelect = False
       gs.[Get]()
       If gs.CommandResult() <> Result.Success Then
         Return gs.CommandResult()
       End If
-      Dim surface = gs.[Object](0).Surface()
+      Dim brep = gs.[Object](0).Brep()
 
       Dim gc = New GetObject()
       gc.SetCommandPrompt("select curve")
@@ -38,33 +38,27 @@ Namespace examples_vb
       End If
       Dim curve = gc.[Object](0).Curve()
 
-      If surface Is Nothing OrElse curve Is Nothing Then
+      If brep Is Nothing OrElse curve Is Nothing Then
         Return Result.Failure
       End If
 
       Dim tolerance = doc.ModelAbsoluteTolerance
 
-      Dim curveIntersections = Intersection.CurveSurface(curve, surface, tolerance, tolerance)
-      If curveIntersections IsNot Nothing Then
-        Dim addedObjects = New List(Of Guid)()
-        For Each curveIntersection As IntersectionEvent In curveIntersections
-          If curveIntersection.IsOverlap Then
-            Dim t0 As Double
-            Dim t1 As Double
-            curve.ClosestPoint(curveIntersection.PointA, t0)
-            curve.ClosestPoint(curveIntersection.PointA2, t1)
-            Dim overlapCurve = curve.DuplicateCurve().Trim(t0, t1)
-            addedObjects.Add(doc.Objects.AddCurve(overlapCurve))
-          Else
-            ' IsPoint
-            addedObjects.Add(doc.Objects.AddPoint(curveIntersection.PointA))
-          End If
-        Next
-        If addedObjects.Count > 0 Then
-          doc.Objects.[Select](addedObjects)
-        End If
+      Dim intersectionPoints As Point3d()
+      Dim overlapCurves As Curve()
+      If Not Intersection.CurveBrep(curve, brep, tolerance, overlapCurves, intersectionPoints) Then
+        RhinoApp.WriteLine("curve brep intersection failed")
+        Return Result.[Nothing]
       End If
 
+      For Each overlapCurve As Curve In overlapCurves
+        doc.Objects.AddCurve(overlapCurve)
+      Next
+      For Each intersectionPoint As Point3d In intersectionPoints
+        doc.Objects.AddPoint(intersectionPoint)
+      Next
+
+      RhinoApp.WriteLine(String.Format("{0} overlap curves, and {1} intersection points", overlapCurves.Length, intersectionPoints.Length))
       doc.Views.Redraw()
 
       Return Result.Success

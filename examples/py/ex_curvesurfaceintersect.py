@@ -11,23 +11,17 @@ def RunCommand():
   crvid = rs.GetObject("select curve", rs.filter.curve)
   if not crvid: return
 
-  evs = rs.CurveSurfaceIntersection(crvid, srfid)
+  result = rs.CurveBrepIntersect(crvid, srfid)
+  if result == None:
+    print "no intersection"
+    return
+  
+  curves, points = result
+  for curve in curves:
+    doc.Objects.AddCurve(rs.coercecurve(curve))
+  for point in points:
+    rs.AddPoint(point)
 
-  if evs:
-      addedObjs = []
-      for ev in evs:
-          if ev[0] == 2: #overlap
-              crv = rs.coercecurve(crvid)
-              if crv:
-                  t0 = crv.ClosestPoint(ev[1])[1]
-                  t1 = crv.ClosestPoint(ev[2])[1]
-                  overlapCrv = crv.DuplicateCurve().Trim(t0,t1)
-                  addedObjs.Add(doc.Objects.AddCurve(overlapCrv))
-          else: #point
-              addedObjs.Add(doc.Objects.AddPoint(ev[1]))
-
-      if len(addedObjs) > 0:
-          doc.Objects.Select.Overloads[scg.IEnumerable[s.Guid]](addedObjs)
   doc.Views.Redraw()
 
 if __name__ == "__main__":

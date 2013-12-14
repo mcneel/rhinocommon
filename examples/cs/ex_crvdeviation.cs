@@ -9,34 +9,34 @@ namespace examples_cs
 {
   class DeviationConduit : Rhino.Display.DisplayConduit
   {
-    private readonly Curve _curveA;
-    private readonly Curve _curveB;
-    private readonly Point3d _minDistPointA ;
-    private readonly Point3d _minDistPointB ;
-    private readonly Point3d _maxDistPointA ;
-    private readonly Point3d _maxDistPointB ;
+    private readonly Curve m_curve_a;
+    private readonly Curve m_curve_b;
+    private readonly Point3d m_min_dist_point_a ;
+    private readonly Point3d m_min_dist_point_b ;
+    private readonly Point3d m_max_dist_point_a ;
+    private readonly Point3d m_max_dist_point_b ;
 
     public DeviationConduit(Curve curveA, Curve curveB, Point3d minDistPointA, Point3d minDistPointB, Point3d maxDistPointA, Point3d maxDistPointB)
     {
-      _curveA = curveA;
-      _curveB = curveB;
-      _minDistPointA = minDistPointA;
-      _minDistPointB = minDistPointB;
-      _maxDistPointA = maxDistPointA;
-      _maxDistPointB = maxDistPointB;
+      m_curve_a = curveA;
+      m_curve_b = curveB;
+      m_min_dist_point_a = minDistPointA;
+      m_min_dist_point_b = minDistPointB;
+      m_max_dist_point_a = maxDistPointA;
+      m_max_dist_point_b = maxDistPointB;
     }
 
     protected override void DrawForeground(Rhino.Display.DrawEventArgs e)
     {
-      e.Display.DrawCurve(_curveA, Color.Red);
-      e.Display.DrawCurve(_curveB, Color.Red);
+      e.Display.DrawCurve(m_curve_a, Color.Red);
+      e.Display.DrawCurve(m_curve_b, Color.Red);
 
-      e.Display.DrawPoint(_minDistPointA, Color.LawnGreen);
-      e.Display.DrawPoint(_minDistPointB, Color.LawnGreen);
-      e.Display.DrawLine(new Line(_minDistPointA, _minDistPointB), Color.LawnGreen);
-      e.Display.DrawPoint(_maxDistPointA, Color.Red);
-      e.Display.DrawPoint(_maxDistPointB, Color.Red);
-      e.Display.DrawLine(new Line(_maxDistPointA, _maxDistPointB), Color.Red);
+      e.Display.DrawPoint(m_min_dist_point_a, Color.LawnGreen);
+      e.Display.DrawPoint(m_min_dist_point_b, Color.LawnGreen);
+      e.Display.DrawLine(new Line(m_min_dist_point_a, m_min_dist_point_b), Color.LawnGreen);
+      e.Display.DrawPoint(m_max_dist_point_a, Color.Red);
+      e.Display.DrawPoint(m_max_dist_point_b, Color.Red);
+      e.Display.DrawLine(new Line(m_max_dist_point_a, m_max_dist_point_b), Color.Red);
     }
   }
 
@@ -49,14 +49,14 @@ namespace examples_cs
     {
       doc.Objects.UnselectAll();
 
-      ObjRef objRef1;
-      var rc1 = RhinoGet.GetOneObject("first curve", true, ObjectType.Curve, out objRef1);
+      ObjRef obj_ref1;
+      var rc1 = RhinoGet.GetOneObject("first curve", true, ObjectType.Curve, out obj_ref1);
       if (rc1 != Result.Success)
         return rc1;
-      Curve curveA = null;
-      if (objRef1 != null)
-        curveA = objRef1.Curve();
-      if (curveA == null)
+      Curve curve_a = null;
+      if (obj_ref1 != null)
+        curve_a = obj_ref1.Curve();
+      if (curve_a == null)
         return Result.Failure;
 
       // Since you already selected a curve if you don't unselect it
@@ -66,51 +66,51 @@ namespace examples_cs
       // instead of Rhino.Input.RhinoGet as GetObject has a DisablePreSelect() method.
       doc.Objects.UnselectAll();
 
-      ObjRef objRef2;
-      var rc2 = RhinoGet.GetOneObject("second curve", true, ObjectType.Curve, out objRef2);
+      ObjRef obj_ref2;
+      var rc2 = RhinoGet.GetOneObject("second curve", true, ObjectType.Curve, out obj_ref2);
       if (rc2 != Result.Success)
         return rc2;
-      Curve curveB = null;
-      if (objRef2 != null)
-        curveB = objRef2.Curve();
-      if (curveB == null)
+      Curve curve_b = null;
+      if (obj_ref2 != null)
+        curve_b = obj_ref2.Curve();
+      if (curve_b == null)
         return Result.Failure;
 
       var tolerance = doc.ModelAbsoluteTolerance;
 
-      double maxDistance;
-      double maxDistanceParameterA;
-      double maxDistanceParameterB;
-      double minDistance;
-      double minDistanceParameterA;
-      double minDistanceParameterB;
+      double max_distance;
+      double max_distance_parameter_a;
+      double max_distance_parameter_b;
+      double min_distance;
+      double min_distance_parameter_a;
+      double min_distance_parameter_b;
 
       DeviationConduit conduit;
-      if (!Curve.GetDistancesBetweenCurves(curveA, curveB, tolerance, out maxDistance, 
-                out maxDistanceParameterA, out maxDistanceParameterB,
-                out minDistance, out minDistanceParameterA, out minDistanceParameterB))
+      if (!Curve.GetDistancesBetweenCurves(curve_a, curve_b, tolerance, out max_distance, 
+                out max_distance_parameter_a, out max_distance_parameter_b,
+                out min_distance, out min_distance_parameter_a, out min_distance_parameter_b))
       {
         Rhino.RhinoApp.WriteLine("Unable to find overlap intervals.");
         return Result.Success;
       } else
       {
-        if (minDistance <= RhinoMath.ZeroTolerance)
-          minDistance = 0.0;
-        var maxDistPtA = curveA.PointAt(maxDistanceParameterA);
-        var maxDistPtB = curveB.PointAt(maxDistanceParameterB);
-        var minDistPtA = curveA.PointAt(minDistanceParameterA);
-        var minDistPtB = curveB.PointAt(minDistanceParameterB);
+        if (min_distance <= RhinoMath.ZeroTolerance)
+          min_distance = 0.0;
+        var max_dist_pt_a = curve_a.PointAt(max_distance_parameter_a);
+        var max_dist_pt_b = curve_b.PointAt(max_distance_parameter_b);
+        var min_dist_pt_a = curve_a.PointAt(min_distance_parameter_a);
+        var min_dist_pt_b = curve_b.PointAt(min_distance_parameter_b);
 
-        conduit = new DeviationConduit(curveA, curveB, minDistPtA, minDistPtB, maxDistPtA, maxDistPtB) {Enabled = true};
+        conduit = new DeviationConduit(curve_a, curve_b, min_dist_pt_a, min_dist_pt_b, max_dist_pt_a, max_dist_pt_b) {Enabled = true};
         doc.Views.Redraw();
 
-        RhinoApp.WriteLine(string.Format("Minimum deviation = {0}   pointA({1}, {2}, {3}), pointB({4}, {5}, {6})", minDistance, 
-          minDistPtA.X, minDistPtA.Y, minDistPtA.Z, minDistPtB.X, minDistPtB.Y, minDistPtB.Z));
-        RhinoApp.WriteLine(string.Format("Maximum deviation = {0}   pointA({1}, {2}, {3}), pointB({4}, {5}, {6})", maxDistance, 
-          maxDistPtA.X, maxDistPtA.Y, maxDistPtA.Z, maxDistPtB.X, maxDistPtB.Y, maxDistPtB.Z));
+        RhinoApp.WriteLine(string.Format("Minimum deviation = {0}   pointA({1}, {2}, {3}), pointB({4}, {5}, {6})", min_distance, 
+          min_dist_pt_a.X, min_dist_pt_a.Y, min_dist_pt_a.Z, min_dist_pt_b.X, min_dist_pt_b.Y, min_dist_pt_b.Z));
+        RhinoApp.WriteLine(string.Format("Maximum deviation = {0}   pointA({1}, {2}, {3}), pointB({4}, {5}, {6})", max_distance, 
+          max_dist_pt_a.X, max_dist_pt_a.Y, max_dist_pt_a.Z, max_dist_pt_b.X, max_dist_pt_b.Y, max_dist_pt_b.Z));
       }
 
-      string str = "";
+      var str = "";
       var s = RhinoGet.GetString("Press Enter when done", true, ref str);
       conduit.Enabled = false;
 

@@ -35,8 +35,8 @@ namespace examples_cs
         var conduit = new DrawBlueMeshConduit(mesh) {Enabled = true};
         doc.Views.Redraw();
 
-        string inStr = "";
-        Rhino.Input.RhinoGet.GetString("press <Enter> to continue", true, ref inStr);
+        var in_str = "";
+        Rhino.Input.RhinoGet.GetString("press <Enter> to continue", true, ref in_str);
 
         conduit.Enabled = false;
         doc.Views.Redraw();
@@ -49,21 +49,21 @@ namespace examples_cs
 
   class DrawBlueMeshConduit : DisplayConduit
   {
-    Mesh _mesh = null;
-    Color _color;
-    DisplayMaterial _material = null;
-    BoundingBox _bbox;
+    readonly Mesh m_mesh = null;
+    readonly Color m_color;
+    readonly DisplayMaterial m_material = null;
+    readonly BoundingBox m_bbox;
 
     public DrawBlueMeshConduit(Mesh mesh)
     {
       // set up as much data as possible so we do the minimum amount of work possible inside
       // the actual display code
-      _mesh = mesh;
-      _color = System.Drawing.Color.Blue;
-      _material = new DisplayMaterial();
-      _material.Diffuse = _color;
-      if (_mesh != null && _mesh.IsValid)
-        _bbox = _mesh.GetBoundingBox(true);
+      m_mesh = mesh;
+      m_color = System.Drawing.Color.Blue;
+      m_material = new DisplayMaterial();
+      m_material.Diffuse = m_color;
+      if (m_mesh != null && m_mesh.IsValid)
+        m_bbox = m_mesh.GetBoundingBox(true);
     }
 
     // this is called every frame inside the drawing code so try to do as little as possible
@@ -77,7 +77,7 @@ namespace examples_cs
       // dynamically drawing geometry would get clipped.
  
       // Union the mesh's bbox with the scene's bounding box
-      e.BoundingBox.Union(_bbox);
+      e.BoundingBox.Union(m_bbox);
     }
 
     protected override void PreDrawObjects(DrawEventArgs e)
@@ -85,9 +85,9 @@ namespace examples_cs
       base.PreDrawObjects(e);
       var vp = e.Display.Viewport;
       if (vp.DisplayMode.EnglishName.ToLower() == "wireframe")
-        e.Display.DrawMeshWires(_mesh, _color);
+        e.Display.DrawMeshWires(m_mesh, m_color);
       else
-        e.Display.DrawMeshShaded(_mesh, _material);
+        e.Display.DrawMeshShaded(m_mesh, m_material);
     }
   }
 }

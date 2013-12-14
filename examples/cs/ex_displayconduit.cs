@@ -30,18 +30,18 @@ namespace examples_cs
     {
       base.PreDrawObjects(e);
 
-      var cPlane = e.Display.Viewport.ConstructionPlane();
-      var xColor = Rhino.ApplicationSettings.AppearanceSettings.GridXAxisLineColor;
-      var yColor = Rhino.ApplicationSettings.AppearanceSettings.GridYAxisLineColor;
-      var zColor = Rhino.ApplicationSettings.AppearanceSettings.GridZAxisLineColor;
+      var c_plane = e.Display.Viewport.ConstructionPlane();
+      var x_color = Rhino.ApplicationSettings.AppearanceSettings.GridXAxisLineColor;
+      var y_color = Rhino.ApplicationSettings.AppearanceSettings.GridYAxisLineColor;
+      var z_color = Rhino.ApplicationSettings.AppearanceSettings.GridZAxisLineColor;
 
       e.Display.EnableDepthWriting(false);
       e.Display.EnableDepthTesting(false);
 
-      e.Display.DrawPoint(cPlane.Origin, System.Drawing.Color.White);
-      e.Display.DrawArrow(new Line(cPlane.Origin, new Vector3d(cPlane.XAxis) * 10.0), xColor);
-      e.Display.DrawArrow(new Line(cPlane.Origin, new Vector3d(cPlane.YAxis) * 10.0), yColor);
-      e.Display.DrawArrow(new Line(cPlane.Origin, new Vector3d(cPlane.ZAxis) * 10.0), zColor);
+      e.Display.DrawPoint(c_plane.Origin, System.Drawing.Color.White);
+      e.Display.DrawArrow(new Line(c_plane.Origin, new Vector3d(c_plane.XAxis) * 10.0), x_color);
+      e.Display.DrawArrow(new Line(c_plane.Origin, new Vector3d(c_plane.YAxis) * 10.0), y_color);
+      e.Display.DrawArrow(new Line(c_plane.Origin, new Vector3d(c_plane.ZAxis) * 10.0), z_color);
 
       e.Display.EnableDepthWriting(false);
       e.Display.EnableDepthTesting(false);

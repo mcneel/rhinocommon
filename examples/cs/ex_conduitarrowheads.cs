@@ -7,20 +7,20 @@ namespace examples_cs
 {
   class DrawArrowHeadsConduit : Rhino.Display.DisplayConduit
   {
-    private readonly Line _line;
-    private readonly int _screenSize;
-    private readonly double _worldSize;
+    private readonly Line m_line;
+    private readonly int m_screen_size;
+    private readonly double m_world_size;
 
     public DrawArrowHeadsConduit(Line line, int screenSize, double worldSize)
     {
-      _line = line;
-      _screenSize = screenSize;
-      _worldSize = worldSize;
+      m_line = line;
+      m_screen_size = screenSize;
+      m_world_size = worldSize;
     }
 
     protected override void DrawForeground(Rhino.Display.DrawEventArgs e)
     {
-      e.Display.DrawArrow(_line, System.Drawing.Color.Black, _screenSize, _worldSize);
+      e.Display.DrawArrow(m_line, System.Drawing.Color.Black, m_screen_size, m_world_size);
     }
   }
 
@@ -40,8 +40,8 @@ namespace examples_cs
       if (go.CommandResult() != Result.Success)
         return go.CommandResult();
 
-      int screenSize = 0;
-      double worldSize = 0.0;
+      int screen_size = 0;
+      double world_size = 0.0;
       if (go.Option().EnglishName == "screen")
       {
         var gi = new GetInteger();
@@ -50,7 +50,7 @@ namespace examples_cs
         gi.Get();
         if (gi.CommandResult() != Result.Success)
           return gi.CommandResult();
-        screenSize = gi.Number();
+        screen_size = gi.Number();
       }
       else
       {
@@ -61,7 +61,7 @@ namespace examples_cs
         gi.Get();
         if (gi.CommandResult() != Result.Success)
           return gi.CommandResult();
-        worldSize = gi.Number()/100.0;
+        world_size = gi.Number()/100.0;
       }
 
 
@@ -71,23 +71,23 @@ namespace examples_cs
       gp.Get();
       if (gp.CommandResult() != Result.Success)
         return gp.CommandResult();
-      var startPoint = gp.Point();
+      var start_point = gp.Point();
   
       gp.SetCommandPrompt("End of line");
-      gp.SetBasePoint(startPoint, false);
-      gp.DrawLineFromPoint(startPoint, true);
+      gp.SetBasePoint(start_point, false);
+      gp.DrawLineFromPoint(start_point, true);
       gp.Get();
       if (gp.CommandResult() != Result.Success)
         return gp.CommandResult();
-      var endPoint = gp.Point();
+      var end_point = gp.Point();
 
-      var v = endPoint - startPoint;
+      var v = end_point - start_point;
       if (v.IsTiny(Rhino.RhinoMath.ZeroTolerance))
         return Result.Nothing;
 
-      var line = new Line(startPoint, endPoint);
+      var line = new Line(start_point, end_point);
 
-      var conduit = new DrawArrowHeadsConduit(line, screenSize, worldSize);
+      var conduit = new DrawArrowHeadsConduit(line, screen_size, world_size);
       // toggle conduit on/off
       conduit.Enabled = !conduit.Enabled;
       RhinoApp.WriteLine("draw arrowheads conduit enabled = {0}", conduit.Enabled);

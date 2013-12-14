@@ -21,12 +21,12 @@ namespace examples_cs
 
       var bitmap = Rhino.FileIO.File3dm.ReadPreviewImage(gf);
       // convert System.Drawing.Bitmap to BitmapSource
-      var imageSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero,
+      var image_source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero,
         Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
 
       // show in WPF window
       var window = new Window();
-      var image = new Image {Source = imageSource};
+      var image = new Image {Source = image_source};
       window.Content = image;
       window.Show();
 

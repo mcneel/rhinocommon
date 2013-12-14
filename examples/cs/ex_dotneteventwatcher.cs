@@ -13,19 +13,19 @@ namespace examples_cs
   public class ChangeUiFromDifferentThreadCommand : Command
   {
     public override string EnglishName { get { return "csChangeUIFromDifferentThread"; } }
-    private RhinoDoc _doc;
-    private Label _label;
-    private Window _window;
+    private RhinoDoc m_doc;
+    private Label m_label;
+    private Window m_window;
 
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      _doc = doc;
+      m_doc = doc;
 
-      _window = new Window {Title = "Object ID and Thread ID", Width = 500, Height = 75};
-      _label = new Label();
-      _window.Content = _label;
-      new System.Windows.Interop.WindowInteropHelper(_window).Owner = Rhino.RhinoApp.MainWindowHandle();
-      _window.Show();
+      m_window = new Window {Title = "Object ID and Thread ID", Width = 500, Height = 75};
+      m_label = new Label();
+      m_window.Content = m_label;
+      new System.Windows.Interop.WindowInteropHelper(m_window).Owner = Rhino.RhinoApp.MainWindowHandle();
+      m_window.Show();
 
 
       // register the rhinoObjectAdded method with the AddRhinoObject event
@@ -36,8 +36,8 @@ namespace examples_cs
 
       // add a sphere from a secondary thread. Not good: the rhinoObjectAdded method
       // doesn't work well when called from another thread
-      var addSphereDelegate = new Action<Point3d>(AddSphere);
-      addSphereDelegate.BeginInvoke(new Point3d(0, 10, 0), null, null);
+      var add_sphere_delegate = new Action<Point3d>(AddSphere);
+      add_sphere_delegate.BeginInvoke(new Point3d(0, 10, 0), null, null);
 
       // handle the AddRhinoObject event with rhinoObjectAddedSafe which is
       // desgined to work no matter which thread the call is comming from.
@@ -45,7 +45,7 @@ namespace examples_cs
       RhinoDoc.AddRhinoObject += RhinoObjectAddedSafe;
 
       // try again adding a sphere from a secondary thread.  All is good!
-      addSphereDelegate.BeginInvoke(new Point3d(0, 20, 0), null, null);
+      add_sphere_delegate.BeginInvoke(new Point3d(0, 20, 0), null, null);
 
       doc.Views.Redraw();
 
@@ -53,7 +53,7 @@ namespace examples_cs
     }
 
     private void AddSphere(Point3d center) {
-      _doc.Objects.AddSphere(new Sphere(center, 3));
+      m_doc.Objects.AddSphere(new Sphere(center, 3));
     }
 
     private void RhinoObjectAdded(Object sender, RhinoObjectEventArgs e)
@@ -68,7 +68,7 @@ namespace examples_cs
         // when a sphere is added from a secondary thread this line will
         // throw an exception because UI controls can only be accessed from
         // the main UI thread
-        _label.Content = message;
+        m_label.Content = message;
       } catch (InvalidOperationException ioe) {RhinoApp.WriteLine(ioe.Message);}
     }
 
@@ -82,14 +82,14 @@ namespace examples_cs
 
       // checks if the calling thread is the thread the dispatcher is associated with.
       // In other words, checks if the calling thread is the UI thread
-      if (_label.Dispatcher.CheckAccess())
+      if (m_label.Dispatcher.CheckAccess())
         // if we're on the UI thread then just update the component
-        _label.Content = message;
+        m_label.Content = message;
       else
       {
         // invoke the setLabelTextDelegate on the thread the dispatcher is associated with, i.e., the UI thread
-        var setLabelTextDelegate = new Action<string>(txt => _label.Content = txt);
-        _label.Dispatcher.BeginInvoke(setLabelTextDelegate, new String[] { message });
+        var set_label_text_delegate = new Action<string>(txt => m_label.Content = txt);
+        m_label.Dispatcher.BeginInvoke(set_label_text_delegate, new String[] { message });
       }
     }
   }

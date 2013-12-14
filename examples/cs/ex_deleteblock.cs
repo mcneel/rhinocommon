@@ -12,29 +12,29 @@ namespace examples_cs
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
       // Get the name of the instance definition to rename
-      string instanceDefinitionName = "";
-      var rc = RhinoGet.GetString("Name of block to delete", true, ref instanceDefinitionName);
+      string instance_definition_name = "";
+      var rc = RhinoGet.GetString("Name of block to delete", true, ref instance_definition_name);
       if (rc != Result.Success)
         return rc;
-      if (string.IsNullOrWhiteSpace(instanceDefinitionName))
+      if (string.IsNullOrWhiteSpace(instance_definition_name))
         return Result.Nothing;
      
       // Verify instance definition exists
-      var instanceDefinition = doc.InstanceDefinitions.Find(instanceDefinitionName, true);
-      if (instanceDefinition == null) {
-        RhinoApp.WriteLine(string.Format("Block \"{0}\" not found.", instanceDefinitionName));
+      var instance_definition = doc.InstanceDefinitions.Find(instance_definition_name, true);
+      if (instance_definition == null) {
+        RhinoApp.WriteLine(string.Format("Block \"{0}\" not found.", instance_definition_name));
         return Result.Nothing;
       }
 
       // Verify instance definition can be deleted
-      if (instanceDefinition.IsReference) {
-        RhinoApp.WriteLine(string.Format("Unable to delete block \"{0}\".", instanceDefinitionName));
+      if (instance_definition.IsReference) {
+        RhinoApp.WriteLine(string.Format("Unable to delete block \"{0}\".", instance_definition_name));
         return Result.Nothing;
       }
 
       // delete block and all references
-      if (!doc.InstanceDefinitions.Delete(instanceDefinition.Index, true, true)) {
-        RhinoApp.WriteLine(string.Format("Could not delete {0} block", instanceDefinition.Name));
+      if (!doc.InstanceDefinitions.Delete(instance_definition.Index, true, true)) {
+        RhinoApp.WriteLine(string.Format("Could not delete {0} block", instance_definition.Name));
         return Result.Failure;
       }
 

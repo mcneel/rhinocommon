@@ -13,28 +13,28 @@ namespace examples_cs
 
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      ObjRef objRef;
-      var rc = RhinoGet.GetOneObject("Select surface or polysurface to mesh", true, ObjectType.Surface | ObjectType.PolysrfFilter, out objRef);
+      ObjRef obj_ref;
+      var rc = RhinoGet.GetOneObject("Select surface or polysurface to mesh", true, ObjectType.Surface | ObjectType.PolysrfFilter, out obj_ref);
       if (rc != Result.Success)
         return rc;
-      var brep = objRef.Brep();
+      var brep = obj_ref.Brep();
       if (null == brep)
         return Result.Failure;
 
       // you could choose anyone of these for example
-      var jaggedAndFaster = MeshingParameters.Coarse;
-      var smoothAndSlower = MeshingParameters.Smooth;
-      var defaultMeshParams = MeshingParameters.Default;
+      var jagged_and_faster = MeshingParameters.Coarse;
+      var smooth_and_slower = MeshingParameters.Smooth;
+      var default_mesh_params = MeshingParameters.Default;
       var minimal = MeshingParameters.Minimal;
 
-      var meshes = Mesh.CreateFromBrep(brep, smoothAndSlower);
+      var meshes = Mesh.CreateFromBrep(brep, smooth_and_slower);
       if (meshes == null || meshes.Length == 0)
         return Result.Failure;
 
-      var brepMesh = new Mesh();
+      var brep_mesh = new Mesh();
       foreach (var mesh in meshes)
-        brepMesh.Append(mesh);
-      doc.Objects.AddMesh(brepMesh);
+        brep_mesh.Append(mesh);
+      doc.Objects.AddMesh(brep_mesh);
       doc.Views.Redraw();
 
       return Result.Success;

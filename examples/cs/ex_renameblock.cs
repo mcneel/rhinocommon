@@ -12,44 +12,44 @@ namespace examples_cs
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
       // Get the name of the insance definition to rename
-      string instanceDefinitionName = "";
-      var rc = RhinoGet.GetString("Name of block to rename", true, ref instanceDefinitionName);
+      var instance_definition_name = "";
+      var rc = RhinoGet.GetString("Name of block to rename", true, ref instance_definition_name);
       if (rc != Result.Success)
         return rc;
-      if (string.IsNullOrWhiteSpace(instanceDefinitionName))
+      if (string.IsNullOrWhiteSpace(instance_definition_name))
         return Result.Nothing;
      
       // Verify instance definition exists
-      var instanceDefinition = doc.InstanceDefinitions.Find(instanceDefinitionName, true);
-      if (instanceDefinition == null) {
-        RhinoApp.WriteLine(string.Format("Block \"{0}\" not found.", instanceDefinitionName));
+      var instance_definition = doc.InstanceDefinitions.Find(instance_definition_name, true);
+      if (instance_definition == null) {
+        RhinoApp.WriteLine(string.Format("Block \"{0}\" not found.", instance_definition_name));
         return Result.Nothing;
       }
 
       // Verify instance definition is rename-able
-      if (instanceDefinition.IsDeleted || instanceDefinition.IsReference) {
-        RhinoApp.WriteLine(string.Format("Unable to rename block \"{0}\".", instanceDefinitionName));
+      if (instance_definition.IsDeleted || instance_definition.IsReference) {
+        RhinoApp.WriteLine(string.Format("Unable to rename block \"{0}\".", instance_definition_name));
         return Result.Nothing;
       }
      
       // Get the new instance definition name
-      string instanceDefinitionNewName = "";
-      rc = RhinoGet.GetString("Name of block to rename", true, ref instanceDefinitionNewName);
+      string instance_definition_new_name = "";
+      rc = RhinoGet.GetString("Name of block to rename", true, ref instance_definition_new_name);
       if (rc != Result.Success)
         return rc;
-      if (string.IsNullOrWhiteSpace(instanceDefinitionNewName))
+      if (string.IsNullOrWhiteSpace(instance_definition_new_name))
         return Result.Nothing;
 
       // Verify the new instance definition name is not already in use
-      var existingInstanceDefinition = doc.InstanceDefinitions.Find(instanceDefinitionNewName, true);
-      if (existingInstanceDefinition != null && !existingInstanceDefinition.IsDeleted) {
-        RhinoApp.WriteLine(string.Format("Block \"{0}\" already exists.", existingInstanceDefinition));
+      var existing_instance_definition = doc.InstanceDefinitions.Find(instance_definition_new_name, true);
+      if (existing_instance_definition != null && !existing_instance_definition.IsDeleted) {
+        RhinoApp.WriteLine(string.Format("Block \"{0}\" already exists.", existing_instance_definition));
         return Result.Nothing;
       }
      
       // change the block name
-      if (!doc.InstanceDefinitions.Modify(instanceDefinition.Index, instanceDefinitionNewName, instanceDefinition.Description, true)) {
-        RhinoApp.WriteLine(string.Format("Could not rename {0} to {1}", instanceDefinition.Name, instanceDefinitionNewName));
+      if (!doc.InstanceDefinitions.Modify(instance_definition.Index, instance_definition_new_name, instance_definition.Description, true)) {
+        RhinoApp.WriteLine(string.Format("Could not rename {0} to {1}", instance_definition.Name, instance_definition_new_name));
         return Result.Failure;
       }
 

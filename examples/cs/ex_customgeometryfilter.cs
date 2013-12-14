@@ -9,12 +9,12 @@ namespace examples_cs
   [System.Runtime.InteropServices.Guid("5EB284F1-60E6-420A-AE53-6D99732AAE1D")]
   public class CustomGeometryFilterCommand : Command
   {
-    private double _tolerance;
+    private double m_tolerance;
     public override string EnglishName { get { return "csCustomGeometryFilter"; } }
 
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      _tolerance = doc.ModelAbsoluteTolerance;
+      m_tolerance = doc.ModelAbsoluteTolerance;
       
       // only use a custom geometry filter if no simpler filter does the job
 
@@ -65,11 +65,11 @@ namespace examples_cs
     private bool CircleWithRadiusOf10GeometryFilter (Rhino.DocObjects.RhinoObject rhObject, GeometryBase geometry,
       ComponentIndex componentIndex)
     {
-      bool isCircleWithRadiusOf10 = false;
+      bool is_circle_with_radius_of10 = false;
       Circle circle;
       if (geometry is Curve && (geometry as Curve).TryGetCircle(out circle))
-        isCircleWithRadiusOf10 = circle.Radius <= 10.0 + _tolerance && circle.Radius >= 10.0 - _tolerance;
-      return isCircleWithRadiusOf10;
+        is_circle_with_radius_of10 = circle.Radius <= 10.0 + m_tolerance && circle.Radius >= 10.0 - m_tolerance;
+      return is_circle_with_radius_of10;
     }
   }
 }

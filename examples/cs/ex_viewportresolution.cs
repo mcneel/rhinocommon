@@ -11,9 +11,9 @@ namespace examples_cs
 
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      var activeViewport = doc.Views.ActiveView.ActiveViewport;
+      var active_viewport = doc.Views.ActiveView.ActiveViewport;
       RhinoApp.WriteLine(String.Format("Name = {0}: Width = {1}, Height = {2}", 
-        activeViewport.Name, activeViewport.Size.Width, activeViewport.Size.Height));
+        active_viewport.Name, active_viewport.Size.Width, active_viewport.Size.Height));
       return Result.Success;
     }
   }

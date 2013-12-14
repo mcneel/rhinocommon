@@ -12,10 +12,10 @@ namespace examples_cs
 
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      var instanceDefinitions = doc.InstanceDefinitions;
-      var instanceDefinitionCount = instanceDefinitions.Count;
+      var instance_definitions = doc.InstanceDefinitions;
+      var instance_definition_count = instance_definitions.Count;
 
-      if (instanceDefinitionCount == 0)
+      if (instance_definition_count == 0)
       {
         RhinoApp.WriteLine("Document contains no instance definitions.");
         return Result.Nothing;
@@ -24,8 +24,8 @@ namespace examples_cs
       var dump = new TextLog();
       dump.IndentSize = 4;
 
-      for (int i = 0; i < instanceDefinitionCount; i++)
-        DumpInstanceDefinition(instanceDefinitions[i], ref dump, true);
+      for (int i = 0; i < instance_definition_count; i++)
+        DumpInstanceDefinition(instance_definitions[i], ref dump, true);
 
       RhinoApp.WriteLine(dump.ToString());
 
@@ -36,8 +36,7 @@ namespace examples_cs
     {
       if (instanceDefinition != null && !instanceDefinition.IsDeleted)
       {
-        string node;
-        node = isRoot ? "─" : "└"; // "\u2500" : "\u2514"
+        string node = isRoot ? "─" : "└";
         dump.Print(string.Format("{0} Instance definition {1} = {2}\n", node, instanceDefinition.Index, instanceDefinition.Name));
 
         if (instanceDefinition.ObjectCount  > 0)

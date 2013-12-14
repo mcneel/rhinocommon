@@ -12,18 +12,18 @@ namespace examples_cs
 
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      ObjRef[] objRefs; 
-      var rc = RhinoGet.GetMultipleObjects("Select curves to reverse", true, ObjectType.Curve, out objRefs);
+      ObjRef[] obj_refs; 
+      var rc = RhinoGet.GetMultipleObjects("Select curves to reverse", true, ObjectType.Curve, out obj_refs);
       if (rc != Result.Success)
         return rc;
 
-      foreach (var objRef in objRefs)
+      foreach (var obj_ref in obj_refs)
       {
-        var curveCopy = objRef.Curve().DuplicateCurve();
-        if (curveCopy != null)
+        var curve_copy = obj_ref.Curve().DuplicateCurve();
+        if (curve_copy != null)
         {
-          curveCopy.Reverse();
-          doc.Objects.Replace(objRef, curveCopy);
+          curve_copy.Reverse();
+          doc.Objects.Replace(obj_ref, curve_copy);
         }
       }
       return Result.Success;

@@ -12,11 +12,11 @@ namespace examples_cs
 
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      var instanceDefinitionNames = (from instanceDefinition in doc.InstanceDefinitions 
-                                     where instanceDefinition != null && !instanceDefinition.IsDeleted
-                                     select instanceDefinition.Name);
+      var instance_definition_names = (from instance_definition in doc.InstanceDefinitions 
+                                       where instance_definition != null && !instance_definition.IsDeleted
+                                       select instance_definition.Name);
 
-      foreach (var n in instanceDefinitionNames)
+      foreach (var n in instance_definition_names)
         RhinoApp.WriteLine(String.Format("Instance definition = {0}", n));
 
       return Result.Success;

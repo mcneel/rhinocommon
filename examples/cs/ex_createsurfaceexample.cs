@@ -11,71 +11,71 @@ namespace examples_cs
 
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      const bool isRational = false;
-      const int numberOfDimensions = 3;
-      const int uDegree = 2;
-      const int vDegree = 3;
-      const int uControlPointCount = 3;
-      const int vControlPointCount = 5;
+      const bool is_rational = false;
+      const int number_of_dimensions = 3;
+      const int u_degree = 2;
+      const int v_degree = 3;
+      const int u_control_point_count = 3;
+      const int v_control_point_count = 5;
      
       // The knot vectors do NOT have the 2 superfluous knots
       // at the start and end of the knot vector.  If you are
       // coming from a system that has the 2 superfluous knots,
       // just ignore them when creating NURBS surfaces.
-      var uKnots = new double[uControlPointCount + uDegree - 1];
-      var vKnots = new double[vControlPointCount + vDegree - 1];
+      var u_knots = new double[u_control_point_count + u_degree - 1];
+      var v_knots = new double[v_control_point_count + v_degree - 1];
      
       // make up a quadratic knot vector with no interior knots
-      uKnots[0] = uKnots[1] = 0.0;
-      uKnots[2] = uKnots[3] = 1.0;
+      u_knots[0] = u_knots[1] = 0.0;
+      u_knots[2] = u_knots[3] = 1.0;
      
       // make up a cubic knot vector with one simple interior knot
-      vKnots[0] = vKnots[1] = vKnots[2] = 0.0;
-      vKnots[3] = 1.5;
-      vKnots[4] = vKnots[5] = vKnots[6] = 2.0;
+      v_knots[0] = v_knots[1] = v_knots[2] = 0.0;
+      v_knots[3] = 1.5;
+      v_knots[4] = v_knots[5] = v_knots[6] = 2.0;
      
       // Rational control points can be in either homogeneous
       // or euclidean form. Non-rational control points do not
       // need to specify a weight.  
-      var controlPoints = new Point3d[uControlPointCount, vControlPointCount];
+      var control_points = new Point3d[u_control_point_count, v_control_point_count];
 
-      for (int u = 0; u < uControlPointCount; u++)
+      for (int u = 0; u < u_control_point_count; u++)
       {
-        for (int v = 0; v < vControlPointCount; v++)
+        for (int v = 0; v < v_control_point_count; v++)
         {
-          controlPoints[u,v] = new Point3d(u, v, u-v);
+          control_points[u,v] = new Point3d(u, v, u-v);
         }
       }
      
       // creates internal uninitialized arrays for 
       // control points and knots
-      var nurbsSurface = NurbsSurface.Create(
-        numberOfDimensions,
-        isRational,
-        uDegree + 1,
-        vDegree + 1,
-        uControlPointCount,
-        vControlPointCount
+      var nurbs_surface = NurbsSurface.Create(
+        number_of_dimensions,
+        is_rational,
+        u_degree + 1,
+        v_degree + 1,
+        u_control_point_count,
+        v_control_point_count
         );
      
       // add the knots
-      for (int u = 0;  u < nurbsSurface.KnotsU.Count; u++)
-        nurbsSurface.KnotsU[u] = uKnots[u];
-      for (int v = 0; v < nurbsSurface.KnotsV.Count; v++)
-        nurbsSurface.KnotsV[v] = vKnots[v];
+      for (int u = 0;  u < nurbs_surface.KnotsU.Count; u++)
+        nurbs_surface.KnotsU[u] = u_knots[u];
+      for (int v = 0; v < nurbs_surface.KnotsV.Count; v++)
+        nurbs_surface.KnotsV[v] = v_knots[v];
 
       // add the control points
-      for (int u = 0; u < nurbsSurface.Points.CountU; u++)
+      for (int u = 0; u < nurbs_surface.Points.CountU; u++)
       {
-        for (int v = 0; v < nurbsSurface.Points.CountV; v++)
+        for (int v = 0; v < nurbs_surface.Points.CountV; v++)
         {
-          nurbsSurface.Points.SetControlPoint(u, v, controlPoints[u, v]);
+          nurbs_surface.Points.SetControlPoint(u, v, control_points[u, v]);
         }
       }
 
-      if (nurbsSurface.IsValid)
+      if (nurbs_surface.IsValid)
       {
-        doc.Objects.AddSurface(nurbsSurface);
+        doc.Objects.AddSurface(nurbs_surface);
         doc.Views.Redraw();
         return Result.Success;
       }

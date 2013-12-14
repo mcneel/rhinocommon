@@ -39,20 +39,20 @@ namespace examples_cs
 
       var tolerance = doc.ModelAbsoluteTolerance;
 
-      Point3d[] intersectionPoints;
-      Curve[] overlapCurves;
-      if (!Intersection.CurveBrep(curve, brep, tolerance, out overlapCurves, out intersectionPoints))
+      Point3d[] intersection_points;
+      Curve[] overlap_curves;
+      if (!Intersection.CurveBrep(curve, brep, tolerance, out overlap_curves, out intersection_points))
       {
         RhinoApp.WriteLine("curve brep intersection failed");
         return Result.Nothing;
       }
 
-      foreach (var overlapCurve in overlapCurves)
-        doc.Objects.AddCurve(overlapCurve);
-      foreach (var intersectionPoint in intersectionPoints)
-        doc.Objects.AddPoint(intersectionPoint);
+      foreach (var overlap_curve in overlap_curves)
+        doc.Objects.AddCurve(overlap_curve);
+      foreach (var intersection_point in intersection_points)
+        doc.Objects.AddPoint(intersection_point);
 
-      RhinoApp.WriteLine(string.Format("{0} overlap curves, and {1} intersection points", overlapCurves.Length, intersectionPoints.Length));
+      RhinoApp.WriteLine(string.Format("{0} overlap curves, and {1} intersection points", overlap_curves.Length, intersection_points.Length));
       doc.Views.Redraw();
 
       return Result.Success;

@@ -29,9 +29,9 @@ namespace examples_cs
 
       double t1, t2;
       Point3d point1, point2;
-      var lineCircleIntersect = Intersection.LineCircle(line, circle, out t1, out point1, out t2, out point2);
+      var line_circle_intersect = Intersection.LineCircle(line, circle, out t1, out point1, out t2, out point2);
       string msg = "";
-      switch (lineCircleIntersect) {
+      switch (line_circle_intersect) {
         case LineCircleIntersection.None:
           msg = "line does not intersect circle";
           break;

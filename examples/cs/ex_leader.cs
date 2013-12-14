@@ -21,13 +21,13 @@ namespace examples_cs
         new Point3d(9, 5, 0)
       };
 
-      var xyPlane = Plane.WorldXY;
+      var xy_plane = Plane.WorldXY;
 
       var points2d = new List<Point2d>();
       foreach (var point3d in points)
       {
         double x, y;
-        if (xyPlane.ClosestParameter(point3d, out x, out y))
+        if (xy_plane.ClosestParameter(point3d, out x, out y))
         {
           var point2d = new Point2d(x, y);
           if (points2d.Count < 1 || point2d.DistanceTo(points2d.Last<Point2d>()) > RhinoMath.SqrtEpsilon)
@@ -35,7 +35,7 @@ namespace examples_cs
         }
       }
 
-      doc.Objects.AddLeader(xyPlane, points2d);
+      doc.Objects.AddLeader(xy_plane, points2d);
       doc.Views.Redraw();
       return Result.Success;
     }

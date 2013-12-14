@@ -1,8 +1,8 @@
-﻿using Rhino;
+﻿using System.Linq;
+using Rhino;
 using Rhino.Input.Custom;
 using Rhino.DocObjects;
 using Rhino.Commands;
-using System.Collections.Generic;
 using Rhino.Geometry;
 
 namespace examples_cs
@@ -24,9 +24,7 @@ namespace examples_cs
       if (gs.CommandResult() != Result.Success)
         return gs.CommandResult();
 
-      var curves = new List<Curve>();
-      foreach (var obj in gs.Objects())
-        curves.Add(obj.Curve());
+      var curves = gs.Objects().Select(obj => obj.Curve()).ToList();
 
       var breps = Rhino.Geometry.Brep.CreateFromLoft(curves, Point3d.Unset, Point3d.Unset, LoftType.Tight, false);
       foreach (var brep in breps)

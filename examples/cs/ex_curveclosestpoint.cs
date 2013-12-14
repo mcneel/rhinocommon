@@ -29,10 +29,10 @@ namespace examples_cs
         return gp.CommandResult();
 
       var point = gp.Point();
-      double closestPointParam;
-      if (curve.ClosestPoint(point, out closestPointParam))
+      double closest_point_param;
+      if (curve.ClosestPoint(point, out closest_point_param))
       {
-        RhinoApp.WriteLine(string.Format("point: ({0},{1},{2}), parameter: {3}", point.X, point.Y, point.Z, closestPointParam));
+        RhinoApp.WriteLine(string.Format("point: ({0},{1},{2}), parameter: {3}", point.X, point.Y, point.Z, closest_point_param));
         doc.Objects.AddPoint(point);
         doc.Views.Redraw();
       }

@@ -30,6 +30,12 @@ class Import
   public const string librdk = "rhcommonrdk_c";
 #endif
 #endif
+
+  static Import()
+  {
+    Rhino.Runtime.HostUtils.Init();
+  }
+
   private Import() { }
 }
 

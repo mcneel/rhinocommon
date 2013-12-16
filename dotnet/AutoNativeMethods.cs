@@ -16,6 +16,11 @@ using Rhino.Runtime.InteropWrappers;
 // the support 'C' DLL (rhcommon_c.dll).
 internal partial class UnsafeNativeMethods
 {
+  static UnsafeNativeMethods()
+  {
+    Rhino.Runtime.HostUtils.Init();
+  }
+
   private UnsafeNativeMethods(){}
   #region curvedisplay.cpp
   //CRhCmnCurveDisplay* CurveDisplay_FromArcCurve(const ON_ArcCurve* pCurve)

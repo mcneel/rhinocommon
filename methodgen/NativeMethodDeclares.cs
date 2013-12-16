@@ -30,6 +30,11 @@ using Rhino.Runtime.InteropWrappers;
 ");
       }
 
+      foreach (string using_statement in Program.m_extra_usings)
+      {
+        sw.Write(using_statement);
+      }
+
       sw.Write(
 @"
 // Atuomatically generated function declarations for calling into
@@ -295,7 +300,7 @@ using Rhino.Runtime.InteropWrappers;
         if (sType.Contains("RHMONO_STRING"))
           return "string";
 
-        if (sType.Equals("HWND") || sType.Equals("HBITMAP") || sType.Equals("HCURSOR") || sType.Equals("HICON") || sType.Equals("HBRUSH") || sType.Equals("HFONT"))
+        if (sType.Equals("HWND") || sType.Equals("HBITMAP") || sType.Equals("HCURSOR") || sType.Equals("HICON") || sType.Equals("HBRUSH") || sType.Equals("HFONT") || sType.Equals("HMENU") || sType.Equals("HDC"))
           return "IntPtr";
 
         if (sType.EndsWith("**"))
@@ -376,6 +381,17 @@ using Rhino.Runtime.InteropWrappers;
 
           if (s.Equals("ON_2fPoint") || s.Equals("AR_2fPoint"))
             return "ref Point2f";
+
+          if (s.Equals("PointF"))
+          {
+            if (isArray)
+            {
+              if (isConst)
+                return "PointF[]";
+              else
+                return "[In,Out] PointF[]";
+            }
+          }
 
           if (s.Equals("ON_2dPoint") || s.Equals("AR_2dPoint"))
           {
@@ -540,6 +556,9 @@ using Rhino.Runtime.InteropWrappers;
         if( sType.Equals("ON_2DPOINT_STRUCT") )
           return "Point2d";
 
+        if (sType.Equals("ON_2FPOINT_STRUCT"))
+          return "PointF";
+
         if( sType.Equals("ON_2DVECTOR_STRUCT") )
           return "Vector2d";
 
@@ -679,7 +698,7 @@ using Rhino.Runtime.InteropWrappers;
             rc = "ushort";
           else if (rc.Equals("ON_UUID"))
             rc = "Guid";
-          else if (rc.Equals("LPUNKNOWN") || rc.Equals("HBITMAP") || rc.Equals("HWND") || rc.Equals("HCURSOR") || rc.Equals("HICON") || rc.Equals("HBRUSH") || rc.Equals("HFONT"))
+          else if (rc.Equals("LPUNKNOWN") || rc.Equals("HBITMAP") || rc.Equals("HWND") || rc.Equals("HCURSOR") || rc.Equals("HICON") || rc.Equals("HBRUSH") || rc.Equals("HFONT") || rc.Equals("HMENU") || rc.Equals("HDC"))
             rc = "IntPtr";
           else if (rc.Equals("time_t"))
             rc = "Int64";

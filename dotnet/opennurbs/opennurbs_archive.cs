@@ -557,14 +557,18 @@ namespace Rhino.Collections
           break;
         case ItemType.OnObjRef: //48
           {
+#if RHINO_SDK
             DocObjects.ObjRef val = archive.ReadObjRef();
             rc = Set(key, val);
+#endif
           }
           break;
         case ItemType.ArrayObjRef: //49
           {
+#if RHINO_SDK
             DocObjects.ObjRef[] val = archive.ReadObjRefArray();
             rc = Set(key, val);
+#endif
           }
           break;
       }
@@ -750,10 +754,14 @@ namespace Rhino.Collections
           archive.WriteGeometry((Geometry.GeometryBase)val);
           break;
         case ItemType.OnObjRef: //48
+#if RHINO_SDK
           archive.WriteObjRef((DocObjects.ObjRef)val);
+#endif
           break;
         case ItemType.ArrayObjRef: //49
+#if RHINO_SDK
           archive.WriteObjRefArray((IEnumerable<DocObjects.ObjRef>)val);
+#endif
           break;
       }
       bool rc = archive.EndWriteDictionaryEntry();
@@ -1567,6 +1575,7 @@ namespace Rhino.Collections
     /// <para>It is up to the user to clone this entry when appropriate. You can use <see cref="Rhino.Geometry.GeometryBase.Duplicate"/> for this.</para></param>
     public bool Set(string key, Geometry.GeometryBase val) { return SetItem(key, ItemType.OnGeometry, val); }
 
+#if RHINO_SDK
     /// <summary>
     /// Sets a <see cref="Rhino.DocObjects.ObjRef"/>
     /// </summary>
@@ -1584,6 +1593,7 @@ namespace Rhino.Collections
     /// <para>Because this class is a reference type and is mutable, changes to this object <b>will propagate</b> to the object inside the dictionary.</para>
     /// <para>It is up to the user to clone this entry when appropriate.</para></param>
     public bool Set(string key, IEnumerable<DocObjects.ObjRef> val) { return SetItem(key, ItemType.ArrayObjRef, val); }
+#endif
 
     bool SetItem(string key, ItemType it, object val)
     {
@@ -2393,6 +2403,7 @@ namespace Rhino.FileIO
       WriteBool(gdi_vertical_font);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Writes a <see cref="Rhino.DocObjects.ObjRef"/> to the archive
     /// </summary>
@@ -2420,6 +2431,7 @@ namespace Rhino.FileIO
           throw new BinaryArchiveException("WriteObjRefArray failed");
       }
     }
+#endif //RHINO_SDK
 #endif
 
     /// <summary>
@@ -3185,6 +3197,7 @@ namespace Rhino.FileIO
       return rc;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Reads a <see cref="Rhino.DocObjects.ObjRef"/> from the archive
     /// </summary>
@@ -3216,6 +3229,7 @@ namespace Rhino.FileIO
       }
     }
 
+#endif //RHINO_SDK
 #endif
 
     /// <summary>

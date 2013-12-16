@@ -309,6 +309,7 @@
     <Compile Include="UI\StringBox.Designer.cs">
       <DependentUpon>StringBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="UnsafeNativeMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\ComboListBox.resx">

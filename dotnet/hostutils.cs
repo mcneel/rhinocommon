@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
+using Rhino.Runtime.InteropWrappers;
 
 #if RHINO_SDK
 using Rhino.PlugIns;
-using Rhino.Runtime.InteropWrappers;
 
 #endif
 
@@ -875,9 +875,10 @@ namespace Rhino.Runtime
         Rhino.DocObjects.Custom.UserData.RegisterType(t);
       }
 
+#if RHINO_SDK
       UnsafeNativeMethods.RHC_SetGetNowProc(m_getnow_callback, m_getformattedtime_callback);
       UnsafeNativeMethods.RHC_SetPythonEvaluateCallback(m_evaluate_callback);
-
+#endif
       InitializeZooClient();
     }
 

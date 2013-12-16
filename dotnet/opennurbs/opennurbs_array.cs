@@ -1377,7 +1377,7 @@ namespace Rhino.Runtime.InteropWrappers
       return rc;
     }
   }
-#endif
+
 
   /// <summary>
   /// Represents a wrapper to an unmanaged "array" (list) of ON_ObjRef instances.
@@ -1493,4 +1493,5 @@ namespace Rhino.Runtime.InteropWrappers
       return rc;
     }
   }
+#endif
 }

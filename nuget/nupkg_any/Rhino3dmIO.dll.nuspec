@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Rhino3dmIO.dll-x86-Windows</id>
+    <id>Rhino3dmIO.dll-AnyCPU-Windows</id>
     <version>5.1.30000.20</version>
     <authors>McNeel</authors>
     <owners>McNeel</owners>
@@ -11,11 +11,12 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An Open NURBS library for your standalone .Net projects. (based on openNURBS C++ Toolkit July 2013 release)</description>
     <releaseNotes>An Open NURBS library for your standalone .Net projects. (based on openNURBS C++ Toolkit July 2013 release)</releaseNotes>
-    <tags>Rhino 3D open NURBS 32 Rhinoceros</tags>
+    <tags>Rhino 3D open NURBS AnyCPU Rhinoceros</tags>
   </metadata>
   <files>
     <file src="lib\net40\Rhino3dmIO.dll" target="lib\net40\Rhino3dmIO.dll" />
     <file src="NativeBinaries\x86\rhino3dmio_native.dll" target="NativeBinaries\x86\rhino3dmio_native.dll" />
+    <file src="NativeBinaries\x64\rhino3dmio_native.dll" target="NativeBinaries\x64\rhino3dmio_native.dll" />
     <file src="Tools\net40\Install.ps1" target="Tools\net40\Install.ps1" />
     <file src="Tools\net40\Uninstall.ps1" target="Tools\net40\Uninstall.ps1" />
     <file src="LegalStuff.rtf" target="LegalStuff.rtf" />

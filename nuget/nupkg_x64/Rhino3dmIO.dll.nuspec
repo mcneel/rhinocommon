@@ -2,15 +2,15 @@
 <package >
   <metadata>
     <id>Rhino3dmIO.dll-x64-Windows</id>
-    <version>5.1.30000.12</version>
+    <version>5.1.30000.20</version>
     <authors>McNeel</authors>
     <owners>McNeel</owners>
     <licenseUrl>https://github.com/mcneel/rhinocommon#legal-stuff</licenseUrl>
     <projectUrl>https://github.com/mcneel/rhinocommon</projectUrl>
     <iconUrl>https://raw.github.com/mcneel/rhinocommon/master/nuget/3dmio.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Rhino3dmIO.  An Open NURBS library for your standalone .Net projects</description>
-    <releaseNotes>Rhino3dmIO.  An Open NURBS library for your standalone .Net projects</releaseNotes>
+    <description>An Open NURBS library for your standalone .Net projects. (based on openNURBS C++ Toolkit July 2013 release)</description>
+    <releaseNotes>An Open NURBS library for your standalone .Net projects. (based on openNURBS C++ Toolkit July 2013 release)</releaseNotes>
     <tags>Rhino 3D open NURBS 64 Rhinoceros</tags>
   </metadata>
   <files>

@@ -16,10 +16,12 @@ using Rhino.Runtime.InteropWrappers;
 // the support 'C' DLL (rhcommon_c.dll).
 internal partial class UnsafeNativeMethods
 {
+#if MULTIARCH
   static UnsafeNativeMethods()
   {
     Rhino.Runtime.HostUtils.Init();
   }
+#endif
 
   private UnsafeNativeMethods(){}
   #region curvedisplay.cpp

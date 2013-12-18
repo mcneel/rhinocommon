@@ -10,8 +10,10 @@ msbuild ..\c\rhcommon_opennurbs.vcxproj /p:Configuration=Release /p:Platform=x64
 robocopy .\_tmp\x64 .\nupkg_any\NativeBinaries\x64 rhino3dmio_native.dll
 robocopy .\_tmp\x64 .\nupkg_x64\NativeBinaries\x64 rhino3dmio_native.dll
 
-msbuild ..\dotnet\Rhino3dmIO.csproj /p:Configuration=Release /p:Platform="Any CPU" /p:OutputPath=..\nuget\_tmp\ /t:rebuild
+msbuild ..\dotnet\Rhino3dmIO.csproj /p:Configuration=Release /p:Platform="Any CPU" /p:DefineConstants="TRACE;OPENNURBS_SDK;MULTIARCH" /p:OutputPath=..\nuget\_tmp\ /t:rebuild
 robocopy .\_tmp .\nupkg_any\lib\net40 Rhino3dmIO.dll
+
+msbuild ..\dotnet\Rhino3dmIO.csproj /p:Configuration=Release /p:Platform="Any CPU" /p:DefineConstants="TRACE;OPENNURBS_SDK" /p:OutputPath=..\nuget\_tmp\ /t:rebuild
 robocopy .\_tmp .\nupkg_x86\lib\net40 Rhino3dmIO.dll
 robocopy .\_tmp .\nupkg_x64\lib\net40 Rhino3dmIO.dll
 

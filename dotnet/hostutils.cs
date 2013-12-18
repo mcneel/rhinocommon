@@ -344,6 +344,7 @@ namespace Rhino.Runtime
   /// </summary>
   public static class HostUtils
   {
+#if MULTIARCH
     [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern IntPtr LoadLibrary(string libname);
 
@@ -365,7 +366,7 @@ namespace Rhino.Runtime
         }
       }
     }
-
+#endif
     /// <summary>
     /// Returns list of directory names where additional assemblies (plug-ins, DLLs, Grasshopper components)
     /// may be located

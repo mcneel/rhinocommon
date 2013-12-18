@@ -7,9 +7,11 @@ $NativeAssembliesDir = Join-Path $path "NativeBinaries"
 $x86 = $(Join-Path $NativeAssembliesDir "x86\*.*")
 $x64 = $(Join-Path $NativeAssembliesDir "x64\*.*")
 
-$postBuildCmdNewLine32 = "xcopy /s /y `"$x86`" `"`$(TargetDir)x86\`"`r`n"
+$postBuildCmdNewLine32 = "
+xcopy /s /y `"$x86`" `"`$(TargetDir)x86\`""
 
-$postBuildCmdNewLine64 = "xcopy /s /y `"$x64`" `"`$(TargetDir)x64\`"`r`n"
+$postBuildCmdNewLine64 = "
+xcopy /s /y `"$x64`" `"`$(TargetDir)x64\`"`r`n"
 
 # Get the current Post Build Event cmd
 $currentPostBuildCmd = $project.Properties.Item("PostBuildEvent").Value

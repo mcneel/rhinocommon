@@ -151,6 +151,7 @@
     <Compile Include="ex_intersectlines.cs" />
     <Compile Include="ex_isbrepbox.cs" />
     <Compile Include="ex_isocurvedensity.cs" />
+    <Compile Include="ex_issurfaceinplane.cs" />
     <Compile Include="ex_leader.cs" />
     <Compile Include="ex_locklayer.cs" />
     <Compile Include="ex_loft.cs" />
@@ -164,6 +165,7 @@
     <Compile Include="ex_objectlayer.cs" />
     <Compile Include="ex_orientonsrf.cs" />
     <Compile Include="ex_pickobjects.cs" />
+    <Compile Include="ex_planesurface.cs" />
     <Compile Include="ex_pointatcursor.cs" />
     <Compile Include="ex_printinstancedefinitions.cs" />
     <Compile Include="ex_printinstancedefinitiontree.cs" />

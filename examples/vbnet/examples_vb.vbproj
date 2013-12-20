@@ -149,6 +149,7 @@
     <Compile Include="ex_intersectlines.vb" />
     <Compile Include="ex_isbrepbox.vb" />
     <Compile Include="ex_isocurvedensity.vb" />
+    <Compile Include="ex_issurfaceinplane.vb" />
     <Compile Include="ex_leader.vb" />
     <Compile Include="ex_locklayer.vb" />
     <Compile Include="ex_loft.vb" />
@@ -159,6 +160,7 @@
     <Compile Include="ex_objectlayer.vb" />
     <Compile Include="ex_orientonsrf.vb" />
     <Compile Include="ex_pickobjects.vb" />
+    <Compile Include="ex_planesurface.vb" />
     <Compile Include="ex_pointatcursor.vb" />
     <Compile Include="ex_printinstancedefinitions.vb" />
     <Compile Include="ex_printinstancedefinitiontree.vb" />

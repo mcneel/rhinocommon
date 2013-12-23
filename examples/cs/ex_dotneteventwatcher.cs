@@ -9,7 +9,6 @@ using System.Windows.Controls;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("E4A93905-6E61-43BB-9FF0-4D5F6AF76704")]
   public class ChangeUiFromDifferentThreadCommand : Command
   {
     public override string EnglishName { get { return "csChangeUIFromDifferentThread"; } }

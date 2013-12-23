@@ -8,7 +8,6 @@ using System.Windows.Controls;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("9E940874-883B-4537-81C2-F001654DC497")]
   public class ExtractThumbnailCommand : Command
   {
     public override string EnglishName { get { return "csExtractThumbnail"; } }

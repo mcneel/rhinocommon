@@ -4,7 +4,6 @@ using Rhino.Geometry;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("29530E9C-8A5B-47BD-A2F8-0A7BF311D8D3")]
   public class CreateSurfaceFromPointsAndKnotsCommand : Command
   {
     public override string EnglishName { get { return "csCreateSurfaceFromPointsAndKnots"; } }
@@ -79,10 +78,7 @@ namespace examples_cs
         doc.Views.Redraw();
         return Result.Success;
       }
-      else
-      {
-        return Result.Failure;
-      }
+      return Result.Failure;
     }
   }
 }

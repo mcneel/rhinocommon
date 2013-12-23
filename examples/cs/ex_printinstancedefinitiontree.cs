@@ -5,7 +5,6 @@ using Rhino.Commands;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("7C98E0BC-C177-46E1-A9AE-092C63911450")]
   public class InstanceDefinitionTreeCommand : Command
   {
     public override string EnglishName { get { return "csInstanceDefinitionTree"; } }
@@ -49,7 +48,7 @@ namespace examples_cs
             if (obj is InstanceObject)
               DumpInstanceDefinition((obj as InstanceObject).InstanceDefinition, ref dump, false); // Recursive...
             else
-              dump.Print(string.Format("\u2514 Object {0} = {1}\n", i, obj.ShortDescription(false)));
+              dump.Print("\u2514 Object {0} = {1}\n", i, obj.ShortDescription(false));
           }
           dump.PopIndent();
         }

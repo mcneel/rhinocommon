@@ -37,7 +37,7 @@ Namespace examples_vb
     End Sub
   End Class
 
-  <System.Runtime.InteropServices.Guid("C22DB90D-28F9-4D34-92F0-4358459FCAE4")> _
+
   Public Class CurveDeviationCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
@@ -49,7 +49,7 @@ Namespace examples_vb
     Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
       doc.Objects.UnselectAll()
 
-      Dim objRef1 As ObjRef
+      Dim objRef1 As ObjRef = Nothing
       Dim rc1 = RhinoGet.GetOneObject("first curve", True, ObjectType.Curve, objRef1)
       If rc1 <> Result.Success Then
         Return rc1
@@ -69,7 +69,7 @@ Namespace examples_vb
       ' instead of Rhino.Input.RhinoGet as GetObject has a DisablePreSelect() method.
       doc.Objects.UnselectAll()
 
-      Dim objRef2 As ObjRef
+      Dim objRef2 As ObjRef = Nothing
       Dim rc2 = RhinoGet.GetOneObject("second curve", True, ObjectType.Curve, objRef2)
       If rc2 <> Result.Success Then
         Return rc2
@@ -94,7 +94,7 @@ Namespace examples_vb
       Dim conduit As DeviationConduit
       If Not Curve.GetDistancesBetweenCurves(curveA, curveB, tolerance, maxDistance, maxDistanceParameterA, maxDistanceParameterB, _
         minDistance, minDistanceParameterA, minDistanceParameterB) Then
-        Rhino.RhinoApp.WriteLine("Unable to find overlap intervals.")
+        RhinoApp.WriteLine("Unable to find overlap intervals.")
         Return Result.Success
       Else
         If minDistance <= RhinoMath.ZeroTolerance Then
@@ -109,15 +109,12 @@ Namespace examples_vb
         conduit.Enabled = True
 
         doc.Views.Redraw()
-
-        RhinoApp.WriteLine(String.Format("Minimum deviation = {0}   pointA({1}, {2}, {3}), pointB({4}, {5}, {6})", minDistance, minDistPtA.X, minDistPtA.Y, minDistPtA.Z, minDistPtB.X, _
-          minDistPtB.Y, minDistPtB.Z))
-        RhinoApp.WriteLine(String.Format("Maximum deviation = {0}   pointA({1}, {2}, {3}), pointB({4}, {5}, {6})", maxDistance, maxDistPtA.X, maxDistPtA.Y, maxDistPtA.Z, maxDistPtB.X, _
-          maxDistPtB.Y, maxDistPtB.Z))
+        RhinoApp.WriteLine("Minimum deviation= {0}   pointA= {1}, pointB= {2}", minDistance, minDistPtA, minDistPtB)
+        RhinoApp.WriteLine("Maximum deviation= {0}   pointA= {1}, pointB= {2}", maxDistance, maxDistPtA, maxDistPtB)
       End If
 
       Dim str As String = ""
-      Dim s = RhinoGet.GetString("Press Enter when done", True, str)
+      RhinoGet.GetString("Press Enter when done", True, str)
       conduit.Enabled = False
 
       Return Result.Success

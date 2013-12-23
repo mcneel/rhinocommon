@@ -40,7 +40,7 @@ namespace examples_cs
     }
   }
 
-  [System.Runtime.InteropServices.Guid("B2A5B553-FAB5-48B9-B4C8-0EF653983D04")]
+
   public class CurveDeviationCommand : Command
   {
     public override string EnglishName { get { return "csCurveDeviation"; } }
@@ -90,9 +90,10 @@ namespace examples_cs
                 out max_distance_parameter_a, out max_distance_parameter_b,
                 out min_distance, out min_distance_parameter_a, out min_distance_parameter_b))
       {
-        Rhino.RhinoApp.WriteLine("Unable to find overlap intervals.");
+        RhinoApp.WriteLine("Unable to find overlap intervals.");
         return Result.Success;
-      } else
+      }
+      else
       {
         if (min_distance <= RhinoMath.ZeroTolerance)
           min_distance = 0.0;
@@ -104,14 +105,12 @@ namespace examples_cs
         conduit = new DeviationConduit(curve_a, curve_b, min_dist_pt_a, min_dist_pt_b, max_dist_pt_a, max_dist_pt_b) {Enabled = true};
         doc.Views.Redraw();
 
-        RhinoApp.WriteLine(string.Format("Minimum deviation = {0}   pointA({1}, {2}, {3}), pointB({4}, {5}, {6})", min_distance, 
-          min_dist_pt_a.X, min_dist_pt_a.Y, min_dist_pt_a.Z, min_dist_pt_b.X, min_dist_pt_b.Y, min_dist_pt_b.Z));
-        RhinoApp.WriteLine(string.Format("Maximum deviation = {0}   pointA({1}, {2}, {3}), pointB({4}, {5}, {6})", max_distance, 
-          max_dist_pt_a.X, max_dist_pt_a.Y, max_dist_pt_a.Z, max_dist_pt_b.X, max_dist_pt_b.Y, max_dist_pt_b.Z));
+        RhinoApp.WriteLine("Minimum deviation = {0}   pointA({1}), pointB({2})", min_distance, min_dist_pt_a, min_dist_pt_b);
+        RhinoApp.WriteLine("Maximum deviation = {0}   pointA({1}), pointB({2})", max_distance, max_dist_pt_a, max_dist_pt_b);
       }
 
       var str = "";
-      var s = RhinoGet.GetString("Press Enter when done", true, ref str);
+      RhinoGet.GetString("Press Enter when done", true, ref str);
       conduit.Enabled = false;
 
       return Result.Success;

@@ -8,7 +8,6 @@ using Rhino.Geometry.Intersect;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("B4B659D8-DAA0-4970-8149-E4D5C2CF99B7")]
   public class ProjectPointsToBrepsCommand : Command
   {
     public override string EnglishName { get { return "csProjectPtointsToBreps"; } }

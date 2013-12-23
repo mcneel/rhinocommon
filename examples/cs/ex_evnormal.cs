@@ -5,10 +5,9 @@ using Rhino.Commands;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("CB7F7039-A986-44DC-BD51-C3EBEC6A212A")]
   public class NormalDirectionOfBrepFaceCommand : Command
   {
-    public override string EnglishName { get { return "csDetermineNormDirectionOfBrepFace"; } }
+    public override string EnglishName { get { return "csDetermineNormalDirectionOfBrepFace"; } }
 
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {

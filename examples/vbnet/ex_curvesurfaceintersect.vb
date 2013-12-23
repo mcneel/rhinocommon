@@ -6,7 +6,6 @@ Imports Rhino.DocObjects
 Imports Rhino.Commands
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("926342E4-A665-4932-9E41-BD25F4A12F35")> _
   Public Class CurveSurfaceIntersectCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
@@ -21,7 +20,7 @@ Namespace examples_vb
       gs.GeometryFilter = ObjectType.Brep
       gs.DisablePreSelect()
       gs.SubObjectSelect = False
-      gs.[Get]()
+      gs.Get()
       If gs.CommandResult() <> Result.Success Then
         Return gs.CommandResult()
       End If
@@ -32,11 +31,11 @@ Namespace examples_vb
       gc.GeometryFilter = ObjectType.Curve
       gc.DisablePreSelect()
       gc.SubObjectSelect = False
-      gc.[Get]()
+      gc.Get()
       If gc.CommandResult() <> Result.Success Then
         Return gc.CommandResult()
       End If
-      Dim curve = gc.[Object](0).Curve()
+      Dim curve = gc.Object(0).Curve()
 
       If brep Is Nothing OrElse curve Is Nothing Then
         Return Result.Failure
@@ -44,11 +43,11 @@ Namespace examples_vb
 
       Dim tolerance = doc.ModelAbsoluteTolerance
 
-      Dim intersectionPoints As Point3d()
-      Dim overlapCurves As Curve()
+      Dim intersectionPoints As Point3d() = Nothing
+      Dim overlapCurves As Curve() = Nothing
       If Not Intersection.CurveBrep(curve, brep, tolerance, overlapCurves, intersectionPoints) Then
         RhinoApp.WriteLine("curve brep intersection failed")
-        Return Result.[Nothing]
+        Return Result.Nothing
       End If
 
       For Each overlapCurve As Curve In overlapCurves
@@ -58,7 +57,7 @@ Namespace examples_vb
         doc.Objects.AddPoint(intersectionPoint)
       Next
 
-      RhinoApp.WriteLine(String.Format("{0} overlap curves, and {1} intersection points", overlapCurves.Length, intersectionPoints.Length))
+      RhinoApp.WriteLine("{0} overlap curves, and {1} intersection points", overlapCurves.Length, intersectionPoints.Length)
       doc.Views.Redraw()
 
       Return Result.Success

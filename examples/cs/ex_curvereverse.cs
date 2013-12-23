@@ -5,7 +5,6 @@ using Rhino.DocObjects;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("B2BD61F7-FFB8-46CA-A03D-92F4811C0D98")]
   public class ReverseCurveCommand : Command
   {
     public override string EnglishName { get { return "csReverseCurve"; } }

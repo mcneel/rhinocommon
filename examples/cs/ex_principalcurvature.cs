@@ -1,12 +1,10 @@
 ﻿using Rhino;
 using Rhino.DocObjects;
-using Rhino.Geometry;
 using Rhino.Input;
 using Rhino.Commands;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("1309B0D7-0598-4B42-9460-10A3DFD6429B")]
   public class PrincipalCurvatureCommand : Command
   {
     public override string EnglishName { get { return "csPrincipalCurvature"; } }

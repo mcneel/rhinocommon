@@ -4,7 +4,6 @@ using Rhino.Commands;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("FF4A7FB1-52AF-4654-A7C9-73B3885243FB")]
   public class PlaneSurfaceCommand : Command
   {
     public override string EnglishName { get { return "csPlaneSurface"; } }

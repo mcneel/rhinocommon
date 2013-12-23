@@ -4,7 +4,6 @@ Imports Rhino.Commands
 Imports Rhino.Input
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("A7E8558B-5F4E-426C-9352-BEFFA645AC33")> _
   Public Class BrepFromCurveBBoxCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
@@ -14,8 +13,8 @@ Namespace examples_vb
     End Property
 
     Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
-      Dim objref As Rhino.DocObjects.ObjRef
-      Dim rc = RhinoGet.GetOneObject("Select Curve", False, Rhino.DocObjects.ObjectType.Curve, objref)
+      Dim objref As DocObjects.ObjRef = Nothing
+      Dim rc = RhinoGet.GetOneObject("Select Curve", False, DocObjects.ObjectType.Curve, objref)
       If rc <> Result.Success Then
         Return rc
       End If
@@ -30,8 +29,8 @@ Namespace examples_vb
         RhinoApp.WriteLine("the curve's bounding box is degenerate (flat) in at least one direction so a box cannot be created.")
         Return Result.Failure
       End If
-      Dim brep__1 = Brep.CreateFromBox(bbox)
-      doc.Objects.AddBrep(brep__1)
+      Dim brepbox = Brep.CreateFromBox(bbox)
+      doc.Objects.AddBrep(brepbox)
       doc.Views.Redraw()
       Return Result.Success
     End Function

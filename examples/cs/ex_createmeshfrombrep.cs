@@ -6,10 +6,9 @@ using Rhino.DocObjects;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("BF92CA69-3628-4167-96C1-3FA90E460333")]
   public class CreateMeshFromBrepCommand : Command
   {
-    public override string EnglishName { get { return "csCreateMeshesFromBrep"; } }
+    public override string EnglishName { get { return "csCreateMeshFromBrep"; } }
 
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {

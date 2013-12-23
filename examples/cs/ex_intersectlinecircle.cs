@@ -6,7 +6,6 @@ using Rhino.Geometry.Intersect;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("FCD0CD1E-B92C-44A9-B17C-05E7044650C8")]
   public class IntersectLineCircleCommand : Command
   {
     public override string EnglishName { get { return "csIntersectLineCircle"; } }
@@ -36,12 +35,12 @@ namespace examples_cs
           msg = "line does not intersect circle";
           break;
         case LineCircleIntersection.Single:
-          msg = string.Format("line intersects circle at point ({0},{1},{2})", point1.X, point1.Y, point1.Z);
+          msg = string.Format("line intersects circle at point ({0})", point1);
           doc.Objects.AddPoint(point1);
           break;
         case LineCircleIntersection.Multiple:
-          msg = string.Format("line intersects circle at points ({0},{1},{2}) and ({3},{4},{5})",
-            point1.X, point1.Y, point1.Z, point2.X, point2.Y, point2.Z);
+          msg = string.Format("line intersects circle at points ({0}) and ({1})",
+            point1, point2);
           doc.Objects.AddPoint(point1);
           doc.Objects.AddPoint(point2);
           break;

@@ -7,7 +7,6 @@ using Rhino.Commands;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("D3E509D4-3791-42C1-A136-FFBA37359290")]
   public class CurveSurfaceIntersectCommand : Command
   {
     public override string EnglishName { get { return "csCurveSurfaceIntersect"; } }
@@ -52,7 +51,7 @@ namespace examples_cs
       foreach (var intersection_point in intersection_points)
         doc.Objects.AddPoint(intersection_point);
 
-      RhinoApp.WriteLine(string.Format("{0} overlap curves, and {1} intersection points", overlap_curves.Length, intersection_points.Length));
+      RhinoApp.WriteLine("{0} overlap curves, and {1} intersection points", overlap_curves.Length, intersection_points.Length);
       doc.Views.Redraw();
 
       return Result.Success;

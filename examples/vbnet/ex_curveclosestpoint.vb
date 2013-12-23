@@ -5,7 +5,6 @@ Imports Rhino.DocObjects
 Imports Rhino.Commands
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("6BB1D924-10B4-4998-A3FE-0D4FFA78E070")> _
   Public Class CurveClosestPointCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
@@ -15,7 +14,7 @@ Namespace examples_vb
     End Property
 
     Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
-      Dim objref As Rhino.DocObjects.ObjRef
+      Dim objref As Rhino.DocObjects.ObjRef = Nothing
       Dim rc = RhinoGet.GetOneObject("Select curve", True, ObjectType.Curve, objref)
       If rc <> Result.Success Then
         Return rc
@@ -36,7 +35,7 @@ Namespace examples_vb
       Dim point = gp.Point()
       Dim closestPointParam As Double
       If curve.ClosestPoint(point, closestPointParam) Then
-        RhinoApp.WriteLine(String.Format("point: ({0},{1},{2}), parameter: {3}", point.X, point.Y, point.Z, closestPointParam))
+        RhinoApp.WriteLine("point: {0}, parameter: {1}", point, closestPointParam)
         doc.Objects.AddPoint(point)
         doc.Views.Redraw()
       End If

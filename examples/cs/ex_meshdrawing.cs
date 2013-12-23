@@ -8,7 +8,6 @@ using System.Drawing;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("DE24BC2C-B2E7-4CA1-B2BE-BC0ED742E645")]
   public class MeshDrawingCommand : Command
   {
     public override string EnglishName { get { return "csDrawMesh"; } }
@@ -49,9 +48,9 @@ namespace examples_cs
 
   class DrawBlueMeshConduit : DisplayConduit
   {
-    readonly Mesh m_mesh = null;
+    readonly Mesh m_mesh;
     readonly Color m_color;
-    readonly DisplayMaterial m_material = null;
+    readonly DisplayMaterial m_material;
     readonly BoundingBox m_bbox;
 
     public DrawBlueMeshConduit(Mesh mesh)

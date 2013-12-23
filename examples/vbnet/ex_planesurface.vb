@@ -3,7 +3,6 @@ Imports Rhino.Geometry
 Imports Rhino.Commands
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("742C3173-B25A-4C43-9BB9-8636C26928AC")> _
   Public Class PlaneSurfaceCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
@@ -13,8 +12,8 @@ Namespace examples_vb
     End Property
 
     Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
-      Dim corners As Point3d()
-      Dim rc = Rhino.Input.RhinoGet.GetRectangle(corners)
+      Dim corners As Point3d() = Nothing
+      Dim rc = Input.RhinoGet.GetRectangle(corners)
       If rc <> Result.Success Then
         Return rc
       End If

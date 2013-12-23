@@ -11,7 +11,6 @@ using Rhino.DocObjects;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("F26DAC86-F6D6-46D7-9796-8770E6B51F18")]
   public class FurthestZOnSurfaceCommand : Command
   {
     public override string EnglishName { get { return "csFurthestZOnSurfaceGivenXY"; } }
@@ -47,21 +46,21 @@ namespace examples_cs
       //var maxZ = maxZIntersectionMethod(brep, x, y, doc.ModelAbsoluteTolerance);
 
       // projecting points is another way to find Z
-      var max_z = maxZProjectionMethod(brep, x, y, doc.ModelAbsoluteTolerance);
+      var max_z = MaxZProjectionMethod(brep, x, y, doc.ModelAbsoluteTolerance);
 
       if (max_z != null)
       {
-        RhinoApp.WriteLine(string.Format("Maximum surface Z coordinate at X={0}, Y={1} is {2}", x, y, max_z));
+        RhinoApp.WriteLine("Maximum surface Z coordinate at X={0}, Y={1} is {2}", x, y, max_z);
         doc.Objects.AddPoint(new Point3d(x, y, max_z.Value));
         doc.Views.Redraw();
       }
       else
-        RhinoApp.WriteLine(string.Format("no maximum surface Z coordinate at X={0}, Y={1} found.", x, y));
+        RhinoApp.WriteLine("no maximum surface Z coordinate at X={0}, Y={1} found.", x, y);
 
       return Result.Success;
     }
 
-    private double? maxZProjectionMethod(Brep brep, double x, double y, double tolerance)
+    private static double? MaxZProjectionMethod(Brep brep, double x, double y, double tolerance)
     {
       double? max_z = null;
       var breps = new List<Brep> {brep};
@@ -77,7 +76,7 @@ namespace examples_cs
       return max_z;
     }
 
-    private double? maxZIntersectionMethod(Brep brep, double x, double y, double tolerance)
+    private double? MaxZIntersectionMethod(Brep brep, double x, double y, double tolerance)
     {
       double? max_z = null;
 

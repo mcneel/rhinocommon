@@ -7,7 +7,6 @@ using Rhino.Input;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("AA5F4D6D-F87E-4053-9058-29C9AF7B64CC")]
   public class IsPlanarSurfaceInPlaneCommand : Command
   {
     public override string EnglishName { get { return "csIsPlanarSurfaceInPlane"; } }
@@ -31,7 +30,7 @@ namespace examples_cs
       if (IsSurfaceInPlane(surface, plane, doc.ModelAbsoluteTolerance))
         is_or_isnt = " not ";
 
-      RhinoApp.WriteLine(string.Format("Surface is{0} in plane.", is_or_isnt));
+      RhinoApp.WriteLine("Surface is{0} in plane.", is_or_isnt);
       return Result.Success;
     }
 

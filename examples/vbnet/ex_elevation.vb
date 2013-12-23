@@ -9,7 +9,6 @@ Imports Rhino.Input.Custom
 Imports Rhino.DocObjects
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("61256DAE-8491-4D18-B757-70212215CB29")> _
   Public Class FurthestZOnSurfaceCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
@@ -49,23 +48,23 @@ Namespace examples_vb
       '#End Region
 
       ' an earlier version of this sample used a curve-brep intersection to find Z
-      'var maxZ = maxZIntersectionMethod(brep, x, y, doc.ModelAbsoluteTolerance);
+      'var maxZ = MaxZIntersectionMethod(brep, x, y, doc.ModelAbsoluteTolerance);
 
       ' projecting points is another way to find Z
-      Dim maxZ = maxZProjectionMethod(brep, x, y, doc.ModelAbsoluteTolerance)
+      Dim maxZ = MaxZProjectionMethod(brep, x, y, doc.ModelAbsoluteTolerance)
 
       If maxZ IsNot Nothing Then
-        RhinoApp.WriteLine(String.Format("Maximum surface Z coordinate at X={0}, Y={1} is {2}", x, y, maxZ))
+        RhinoApp.WriteLine("Maximum surface Z coordinate at X={0}, Y={1} is {2}", x, y, maxZ)
         doc.Objects.AddPoint(New Point3d(x, y, maxZ.Value))
         doc.Views.Redraw()
       Else
-        RhinoApp.WriteLine(String.Format("no maximum surface Z coordinate at X={0}, Y={1} found.", x, y))
+        RhinoApp.WriteLine("no maximum surface Z coordinate at X={0}, Y={1} found.", x, y)
       End If
 
       Return Result.Success
     End Function
 
-    Private Function maxZProjectionMethod(brep As Brep, x As Double, y As Double, tolerance As Double) As System.Nullable(Of Double)
+    Private Function MaxZProjectionMethod(brep As Brep, x As Double, y As Double, tolerance As Double) As System.Nullable(Of Double)
       Dim maxZ As System.Nullable(Of Double) = Nothing
       Dim breps = New List(Of Brep)() From { _
         brep _
@@ -82,7 +81,7 @@ Namespace examples_vb
       Return maxZ
     End Function
 
-    Private Function maxZIntersectionMethod(brep As Brep, x As Double, y As Double, tolerance As Double) As System.Nullable(Of Double)
+    Private Function MaxZIntersectionMethod(brep As Brep, x As Double, y As Double, tolerance As Double) As System.Nullable(Of Double)
       Dim maxZ As System.Nullable(Of Double) = Nothing
 
       Dim bbox = brep.GetBoundingBox(True)
@@ -91,8 +90,8 @@ Namespace examples_vb
       ' multiply distance by 2 to make sure line intersects completely
       Dim lineCurve = New LineCurve(New Point3d(x, y, 0), New Point3d(x, y, maxDistFromXY * 2))
 
-      Dim overlapCurves As Curve()
-      Dim interPoints As Point3d()
+      Dim overlapCurves As Curve() = Nothing
+      Dim interPoints As Point3d() = Nothing
       If Intersection.CurveBrep(lineCurve, brep, tolerance, overlapCurves, interPoints) Then
         If overlapCurves.Length > 0 OrElse interPoints.Length > 0 Then
           ' grab all the points resulting frem the intersection. 

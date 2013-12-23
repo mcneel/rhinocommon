@@ -6,7 +6,6 @@ using Rhino.DocObjects;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("5EB284F1-60E6-420A-AE53-6D99732AAE1D")]
   public class CustomGeometryFilterCommand : Command
   {
     private double m_tolerance;
@@ -57,7 +56,7 @@ namespace examples_cs
         return gcc10.CommandResult();
       if (null == gcc10.Object(0).Curve())
         return Result.Failure;
-      Rhino.RhinoApp.WriteLine("circle with radius of 10 was selected");
+      RhinoApp.WriteLine("circle with radius of 10 was selected");
 
       return Result.Success;
     }

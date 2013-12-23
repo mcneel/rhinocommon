@@ -7,12 +7,11 @@ using Rhino.Geometry;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("5D48CD31-B300-42B4-98F0-A7A4004B5227")]
   public class LoftCommand : Command
   {
     public override string EnglishName { get { return "csLoft"; } }
 
-    protected override Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
+    protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
       // select curves to loft
       var gs = new GetObject();
@@ -26,7 +25,7 @@ namespace examples_cs
 
       var curves = gs.Objects().Select(obj => obj.Curve()).ToList();
 
-      var breps = Rhino.Geometry.Brep.CreateFromLoft(curves, Point3d.Unset, Point3d.Unset, LoftType.Tight, false);
+      var breps = Brep.CreateFromLoft(curves, Point3d.Unset, Point3d.Unset, LoftType.Tight, false);
       foreach (var brep in breps)
         doc.Objects.AddBrep(brep);
 

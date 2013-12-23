@@ -6,7 +6,6 @@ using Rhino.DocObjects;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("6F954183-C359-4CEF-94C1-3A108D36B366")]
   public class BrepFromCurveBBoxCommand : Command
   {
     public override string EnglishName { get { return "csBrepFromCurveBBox"; } }

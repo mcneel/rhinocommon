@@ -4,7 +4,6 @@ Imports Rhino.Input
 Imports Rhino.Commands
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("EA0FC71E-53A2-41D4-9C3B-4F34EA342D0A")> _
   Public Class ObjectNameCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
@@ -14,12 +13,12 @@ Namespace examples_vb
     End Property
 
     Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
-      Dim obj_ref As ObjRef
+      Dim obj_ref As ObjRef = Nothing
       Dim rc = RhinoGet.GetOneObject("Select object to change name", True, ObjectType.AnyObject, obj_ref)
       If rc <> Result.Success Then
         Return rc
       End If
-      Dim rhino_object = obj_ref.[Object]()
+      Dim rhino_object = obj_ref.Object()
 
       Dim new_object_name = ""
       rc = RhinoGet.GetString("New object name", True, new_object_name)
@@ -27,7 +26,7 @@ Namespace examples_vb
         Return rc
       End If
       If String.IsNullOrWhiteSpace(new_object_name) Then
-        Return Result.[Nothing]
+        Return Result.Nothing
       End If
 
       If rhino_object.Name <> new_object_name Then

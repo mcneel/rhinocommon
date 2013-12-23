@@ -6,14 +6,13 @@ using System.Linq;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("891F5AE0-DBE0-40A2-8C28-F59B8A757933")]
   public class LeaderCommand : Command
   {
     public override string EnglishName { get { return "csLeader"; } }
 
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      var points = new List<Point3d>
+      var points = new Point3d[]
       {
         new Point3d(1, 1, 0),
         new Point3d(5, 1, 0),

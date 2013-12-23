@@ -5,7 +5,6 @@ using Rhino.Commands;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("68C15008-B635-4BB2-975C-4A16EEBA3E9C")]
   public class ObjectNameCommand : Command
   {
     public override string EnglishName { get { return "csRenameObject"; } }

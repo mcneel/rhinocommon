@@ -6,7 +6,6 @@ Imports Rhino.Commands
 Imports Rhino.Input
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("76683BCC-8A16-4E5A-A87F-B32DB885629A")> _
   Public Class IsPlanarSurfaceInPlaneCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String
@@ -16,15 +15,15 @@ Namespace examples_vb
     End Property
 
     Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
-      Dim obj_ref As ObjRef
+      Dim obj_ref As ObjRef = Nothing
       Dim rc = RhinoGet.GetOneObject("select surface", True, ObjectType.Surface, obj_ref)
       If rc <> Result.Success Then
         Return rc
       End If
       Dim surface = obj_ref.Surface()
 
-      Dim corners As Point3d()
-      rc = Rhino.Input.RhinoGet.GetRectangle(corners)
+      Dim corners As Point3d() = Nothing
+      rc = RhinoGet.GetRectangle(corners)
       If rc <> Result.Success Then
         Return rc
       End If
@@ -32,7 +31,7 @@ Namespace examples_vb
       Dim plane = New Plane(corners(0), corners(1), corners(2))
 
       Dim is_or_isnt = If(IsSurfaceInPlane(surface, plane, doc.ModelAbsoluteTolerance), "", " not ")
-      RhinoApp.WriteLine(String.Format("Surface is{0} in plane.", is_or_isnt))
+      RhinoApp.WriteLine("Surface is{0} in plane.", is_or_isnt)
       Return Result.Success
     End Function
 
@@ -42,7 +41,7 @@ Namespace examples_vb
       End If
 
       Dim bbox = surface.GetBoundingBox(True)
-      Return bbox.GetCorners().All(Function(corner) System.Math.Abs(plane.DistanceTo(corner)) <= tolerance)
+      Return bbox.GetCorners().All(Function(corner) Math.Abs(plane.DistanceTo(corner)) <= tolerance)
     End Function
   End Class
 End Namespace

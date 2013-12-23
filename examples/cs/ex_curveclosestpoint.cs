@@ -6,7 +6,6 @@ using Rhino.Commands;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("DA8EA15E-977F-4FB3-8123-235578D18548")]
   public class CurveClosestPointCommand : Command
   {
     public override string EnglishName { get { return "csFindCurveParameterAtPoint"; } }
@@ -32,7 +31,7 @@ namespace examples_cs
       double closest_point_param;
       if (curve.ClosestPoint(point, out closest_point_param))
       {
-        RhinoApp.WriteLine(string.Format("point: ({0},{1},{2}), parameter: {3}", point.X, point.Y, point.Z, closest_point_param));
+        RhinoApp.WriteLine("point: ({0}), parameter: {1}", point, closest_point_param);
         doc.Objects.AddPoint(point);
         doc.Views.Redraw();
       }

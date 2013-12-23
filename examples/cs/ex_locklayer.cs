@@ -6,7 +6,6 @@ using System.Linq;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("A77507C3-DEEE-4A2C-ADB3-3FFAF89B7EDD")]
   public class LockLayerCommand : Command
   {
     public override string EnglishName { get { return "csLockLayer"; } }
@@ -30,7 +29,7 @@ namespace examples_cs
       Rhino.DocObjects.Layer layer_to_rename = null;
       if (matching_layers.Count == 0)
       {
-        RhinoApp.WriteLine(String.Format("Layer \"{0}\" does not exist.", layer_name));
+        RhinoApp.WriteLine("Layer \"{0}\" does not exist.", layer_name);
         return Result.Nothing;
       }
       else if (matching_layers.Count == 1)
@@ -41,7 +40,7 @@ namespace examples_cs
       {
         for (int i = 0; i < matching_layers.Count; i++)
         {
-          RhinoApp.WriteLine(String.Format("({0}) {1}", i+1, matching_layers[i].FullPath.Replace("::", "->")));
+          RhinoApp.WriteLine("({0}) {1}", i+1, matching_layers[i].FullPath.Replace("::", "->"));
         }
         int selected_layer = -1;
         rc = RhinoGet.GetInteger("which layer?", true, ref selected_layer);
@@ -63,7 +62,7 @@ namespace examples_cs
       }
       else
       {
-        RhinoApp.WriteLine(String.Format("layer {0} is already locked.", layer_to_rename.FullPath));
+        RhinoApp.WriteLine("layer {0} is already locked.", layer_to_rename.FullPath);
         return Result.Nothing;
       } 
     }

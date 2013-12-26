@@ -541,6 +541,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="testPoint">Point to test.</param>
     /// <returns>Signed distance from this plane to testPoint.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_issurfaceinplane.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_issurfaceinplane.cs' lang='cs'/>
+    /// <code source='examples\py\ex_issurfaceinplane.py' lang='py'/>
+    /// </example>
     public double DistanceTo(Point3d testPoint)
     {
       return UnsafeNativeMethods.ON_Plane_DistanceTo(ref this, testPoint);

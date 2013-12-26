@@ -94,6 +94,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets the surface point at UV.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_principalcurvature.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_principalcurvature.cs' lang='cs'/>
+    /// <code source='examples\py\ex_principalcurvature.py' lang='py'/>
+    /// </example>
     public Point3d Point
     {
       get { return m_point; }
@@ -101,6 +106,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets the surface normal at UV.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_principalcurvature.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_principalcurvature.cs' lang='cs'/>
+    /// <code source='examples\py\ex_principalcurvature.py' lang='py'/>
+    /// </example>
     public Vector3d Normal
     {
       get { return m_normal; }
@@ -111,6 +121,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="direction">Direction index, valid values are 0 and 1.</param>
     /// <returns>The specified direction vector.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_principalcurvature.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_principalcurvature.cs' lang='cs'/>
+    /// <code source='examples\py\ex_principalcurvature.py' lang='py'/>
+    /// </example>
     public Vector3d Direction(int direction)
     {
       return direction == 0 ? m_dir1 : m_dir2;
@@ -121,6 +136,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="direction">Kappa index, valid values are 0 and 1.</param>
     /// <returns>The specified kappa value.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_principalcurvature.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_principalcurvature.cs' lang='cs'/>
+    /// <code source='examples\py\ex_principalcurvature.py' lang='py'/>
+    /// </example>
     public double Kappa(int direction)
     {
       return direction == 0 ? m_kappa1 : m_kappa2;
@@ -129,6 +149,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets the Gaussian curvature value at UV.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_principalcurvature.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_principalcurvature.cs' lang='cs'/>
+    /// <code source='examples\py\ex_principalcurvature.py' lang='py'/>
+    /// </example>
     public double Gaussian
     {
       get { return m_gauss; }
@@ -136,6 +161,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets the Mean curvature value at UV.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_principalcurvature.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_principalcurvature.cs' lang='cs'/>
+    /// <code source='examples\py\ex_principalcurvature.py' lang='py'/>
+    /// </example>
     public double Mean
     {
       get { return m_mean; }
@@ -589,6 +619,11 @@ namespace Rhino.Geometry
     /// <param name="u">U parameter for evaluation.</param>
     /// <param name="v">V parameter for evaluation.</param>
     /// <returns>Surface Curvature data for the point at uv or null on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_principalcurvature.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_principalcurvature.cs' lang='cs'/>
+    /// <code source='examples\py\ex_principalcurvature.py' lang='py'/>
+    /// </example>
     public SurfaceCurvature CurvatureAt(double u, double v)
     {
       IntPtr pConstThis = ConstPointer();
@@ -1133,6 +1168,11 @@ namespace Rhino.Geometry
     /// <returns>
     /// true if the surface is planar (flat) to within RhinoMath.ZeroTolerance units (1e-12).
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_issurfaceinplane.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_issurfaceinplane.cs' lang='cs'/>
+    /// <code source='examples\py\ex_issurfaceinplane.py' lang='py'/>
+    /// </example>
     public bool IsPlanar()
     {
       return IsPlanar(RhinoMath.ZeroTolerance);

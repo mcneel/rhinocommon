@@ -35,7 +35,7 @@ partial class Examples
           break;
       }
 
-      Rhino.RhinoApp.WriteLine(string.Format("{0} - {1}", iDef.Name, status));
+      Rhino.RhinoApp.WriteLine("{0} - {1}", iDef.Name, status);
     }
 
     return Rhino.Commands.Result.Success;

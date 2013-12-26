@@ -23,6 +23,11 @@ namespace Rhino.Geometry
     /// <param name="yExtents">The y interval of the plane that defines the rectangle.
     /// The corresponding evaluation interval domain is set so that it matches the
     /// extents interval.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_planesurface.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_planesurface.cs' lang='cs'/>
+    /// <code source='examples\py\ex_planesurface.py' lang='py'/>
+    /// </example>
     public PlaneSurface(Plane plane, Interval xExtents, Interval yExtents)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_PlaneSurface_New(ref plane, xExtents, yExtents);

@@ -97,8 +97,10 @@
     <Compile Include="ex_objectdecoration.py" />
     <Compile Include="ex_objectdisplaymode.py" />
     <Compile Include="ex_objectlayer.py" />
+    <Compile Include="ex_objectname.py" />
     <Compile Include="ex_orientonsrf.py" />
     <Compile Include="ex_pickobjects.py" />
+    <Compile Include="ex_principalcurvature.py" />
     <Compile Include="ex_printinstancedefinitions.py" />
     <Compile Include="ex_printinstancedefinitiontree.py" />
     <Compile Include="ex_projectpointstobreps.py" />

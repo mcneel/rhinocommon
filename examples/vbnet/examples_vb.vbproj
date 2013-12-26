@@ -135,6 +135,7 @@
     <Compile Include="ex_elevation.vb" />
     <Compile Include="ex_evnormal.vb" />
     <Compile Include="ex_explodehatch.vb" />
+    <Compile Include="ex_extendsurface.vb" />
     <Compile Include="ex_extractthumbnail.vb" />
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_constrainedcopy.vb" />
@@ -168,6 +169,7 @@
     <Compile Include="ex_printinstancedefinitiontree.vb" />
     <Compile Include="ex_projectpointstobreps.vb" />
     <Compile Include="ex_renameblock.vb" />
+    <Compile Include="ex_rhinogettransform.vb" />
     <Compile Include="ex_sellayer.vb" />
     <Compile Include="ex_sweep1.vb" />
     <Compile Include="ex_transformbrep.vb" />

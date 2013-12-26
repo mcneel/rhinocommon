@@ -34,18 +34,17 @@ namespace examples_cs
       if (surface_curvature == null)
         return Result.Failure;
 
-      RhinoApp.WriteLine(string.Format(
-        "Surface curvature evaluation at parameter: ({0}, {1})", u, v));
+      RhinoApp.WriteLine("Surface curvature evaluation at parameter: ({0}, {1})", u, v);
 
-      RhinoApp.WriteLine(string.Format("  3-D Point: ({0}, {1}, {2})",
+      RhinoApp.WriteLine("  3-D Point: ({0}, {1}, {2})",
         surface_curvature.Point.X,
         surface_curvature.Point.Y,
-        surface_curvature.Point.Z));
+        surface_curvature.Point.Z);
 
-      RhinoApp.WriteLine(string.Format("  3-D Normal: ({0}, {1}, {2})",
+      RhinoApp.WriteLine("  3-D Normal: ({0}, {1}, {2})",
         surface_curvature.Normal.X,
         surface_curvature.Normal.Y,
-        surface_curvature.Normal.Z));
+        surface_curvature.Normal.Z);
 
       RhinoApp.WriteLine(string.Format("  Maximum principal curvature: {0} ({1}, {2}, {3})", 
         surface_curvature.Kappa(0), 
@@ -57,10 +56,10 @@ namespace examples_cs
         surface_curvature.Kappa(1), 
         surface_curvature.Direction(1).X, 
         surface_curvature.Direction(1).Y, 
-        surface_curvature.Direction(1).Z));
+        surface_curvature.Direction(1).Z)));
 
-      RhinoApp.WriteLine(string.Format("  Gaussian curvature: {0}", surface_curvature.Gaussian));
-      RhinoApp.WriteLine(string.Format("  Mean curvature: {0}", surface_curvature.Mean));
+      RhinoApp.WriteLine("  Gaussian curvature: {0}", surface_curvature.Gaussian);
+      RhinoApp.WriteLine("  Mean curvature: {0}", surface_curvature.Mean);
 
       return Result.Success;
     }

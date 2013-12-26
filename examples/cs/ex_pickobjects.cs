@@ -1,7 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Rhino;
-using Rhino.Collections;
-using Rhino.Commands;
+﻿using Rhino;
 using System.Collections.Generic;
 using Rhino.Display;
 using Rhino.Geometry;
@@ -9,16 +6,15 @@ using Rhino.Input.Custom;
 
 namespace examples_cs
 {
-  [System.Runtime.InteropServices.Guid("9F849A9F-ED1D-41F8-9413-C2104939C126")]
-  public class ex_pickobjects : Rhino.Commands.Command
+  public class PickPointsOnConduitCommand : Rhino.Commands.Command
   {
-    private List<ConduitPoint> conduitPoints = new List<ConduitPoint>();
+    private readonly List<ConduitPoint> m_conduit_points = new List<ConduitPoint>();
 
     public override string EnglishName { get { return "csPickPoints"; } }
 
     protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
     {
-      var conduit = new PointsConduit(conduitPoints);
+      var conduit = new PointsConduit(m_conduit_points);
       conduit.Enabled = true;
 
       var gp = new Rhino.Input.Custom.GetPoint();
@@ -29,11 +25,11 @@ namespace examples_cs
         gp.Get();
         if (gp.CommandResult() != Rhino.Commands.Result.Success)
           break;
-        conduitPoints.Add(new ConduitPoint(gp.Point()));
+        m_conduit_points.Add(new ConduitPoint(gp.Point()));
         doc.Views.Redraw();
       }
 
-      var gcp = new GetConduitPoint(conduitPoints);
+      var gcp = new GetConduitPoint(m_conduit_points);
       while (true)
       {
         gcp.SetCommandPrompt("select conduit point. (<ESC> to exit)");
@@ -61,11 +57,11 @@ namespace examples_cs
 
   public class GetConduitPoint : GetPoint
   {
-    private List<ConduitPoint> _conduitPoints;
+    private readonly List<ConduitPoint> m_conduit_points;
  
     public GetConduitPoint(List<ConduitPoint> conduitPoints )
     {
-      _conduitPoints = conduitPoints;
+      m_conduit_points = conduitPoints;
     }
 
     protected override void OnMouseDown(GetPointMouseEventArgs e)
@@ -79,7 +75,7 @@ namespace examples_cs
       var xform = e.Viewport.GetPickTransform(e.WindowPoint);
       picker.SetPickTransform(xform);
 
-      foreach (var cp in _conduitPoints)
+      foreach (var cp in m_conduit_points)
       {
         double depth;
         double distance;
@@ -93,17 +89,17 @@ namespace examples_cs
 
   class PointsConduit : Rhino.Display.DisplayConduit
   {
-    private List<ConduitPoint> _conduitPoints;
+    private readonly List<ConduitPoint> m_conduit_points;
  
     public PointsConduit(List<ConduitPoint> conduitPoints )
     {
-      _conduitPoints = conduitPoints;
+      m_conduit_points = conduitPoints;
     }
 
     protected override void DrawForeground(Rhino.Display.DrawEventArgs e)
     {
-      if (_conduitPoints != null)
-        foreach (var cp in _conduitPoints) 
+      if (m_conduit_points != null)
+        foreach (var cp in m_conduit_points) 
         e.Display.DrawPoint(cp.Point, PointStyle.Simple, 3, cp.Color);
     }
   }

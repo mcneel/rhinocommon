@@ -22,7 +22,6 @@ Namespace examples_vb
     End Sub
   End Class
 
-  <System.Runtime.InteropServices.Guid("65FE68EE-B809-4F47-B88A-3B3A944FF44C")> _
   Public Class DrawArrowheadsCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

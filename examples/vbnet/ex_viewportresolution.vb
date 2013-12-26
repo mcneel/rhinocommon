@@ -2,7 +2,6 @@
 Imports Rhino.Commands
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("A58C34C4-AF2D-4426-9DDE-15754B6B5FEE")> _
   Public Class ViewportResolutionCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

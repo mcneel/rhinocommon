@@ -2,7 +2,6 @@
 Imports Rhino.Commands
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("8FE26C83-3361-497D-B26A-CB2B2A9F0D56")> _
   Public Class RenameBlockCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

@@ -2,7 +2,6 @@
 Imports Rhino.Commands
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("93453BA7-6F93-46F4-AEF8-5A90D15AD4E9")> _
   Public Class DeleteBlockCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

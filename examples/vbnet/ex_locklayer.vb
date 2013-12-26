@@ -3,7 +3,6 @@ Imports Rhino.Commands
 Imports System.Linq
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("5F44BAEA-6675-46AB-8221-77BD341C5563")> _
   Public Class LockLayerCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

@@ -5,7 +5,6 @@ Imports Rhino.Input.Custom
 Imports Rhino.DocObjects
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("360ED369-3CE1-47A1-A77E-7CF690CB0786")> _
   Public Class CustomGeometryFilterCommand
     Inherits Command
     Private _tolerance As Double

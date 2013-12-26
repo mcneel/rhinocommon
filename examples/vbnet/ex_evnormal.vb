@@ -4,7 +4,6 @@ Imports Rhino.DocObjects
 Imports Rhino.Commands
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("99890A83-3F13-4016-A3F5-3015B04E24E5")> _
   Public Class NormalDirectionOfBrepFaceCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

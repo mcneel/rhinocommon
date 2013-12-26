@@ -6,7 +6,6 @@ Imports System.Windows
 Imports System.Windows.Controls
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("96F966CC-F8DA-4C09-A6B0-A4351BEC40FC")> _
   Public Class ExtractThumbnailCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

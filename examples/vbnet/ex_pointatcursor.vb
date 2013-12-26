@@ -3,7 +3,6 @@ Imports Rhino.Commands
 Imports Rhino.DocObjects
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("17BBF146-6110-47F7-A55E-9E38FBC39E9F")> _
   Public Class PointAtCursorCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

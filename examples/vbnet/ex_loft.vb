@@ -6,7 +6,6 @@ Imports System.Collections.Generic
 Imports Rhino.Geometry
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("DB81E4AA-9CD2-4556-AF31-614C739048B9")> _
   Public Class LoftCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

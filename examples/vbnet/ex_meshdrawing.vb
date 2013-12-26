@@ -7,7 +7,6 @@ Imports Rhino.DocObjects
 Imports System.Drawing
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("083735A9-1D78-46DB-A569-0CE94F30949F")> _
   Public Class MeshDrawingCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

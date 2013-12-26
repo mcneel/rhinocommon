@@ -116,6 +116,7 @@
     <Compile Include="ex_closestpoint.vb" />
     <Compile Include="ex_commandlineoptions.vb" />
     <Compile Include="ex_conduitarrowheads.vb" />
+    <Compile Include="ex_copygroups.vb" />
     <Compile Include="ex_createblock.vb" />
     <Compile Include="ex_createmeshfrombrep.vb" />
     <Compile Include="ex_createsurfaceexample.vb" />

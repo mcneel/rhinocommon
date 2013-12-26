@@ -58,6 +58,7 @@
     <Compile Include="ex_commandlineoptions.py" />
     <Compile Include="ex_conduitarrowheads.py" />
     <Compile Include="ex_constrainedcopy.py" />
+    <Compile Include="ex_copygroups.py" />
     <Compile Include="ex_createblock.py" />
     <Compile Include="ex_createmeshfrombrep.py" />
     <Compile Include="ex_createsurfaceexample.py" />
@@ -77,6 +78,7 @@
     <Compile Include="ex_elevation.py" />
     <Compile Include="ex_evnormal.py" />
     <Compile Include="ex_explodehatch.py" />
+    <Compile Include="ex_extendsurface.py" />
     <Compile Include="ex_extractthumbnail.py" />
     <Compile Include="ex_findobjectsbyname.py" />
     <Compile Include="ex_getmultiplewithoptions.py" />

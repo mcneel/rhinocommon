@@ -56,7 +56,7 @@ namespace examples_cs
         surface_curvature.Kappa(1), 
         surface_curvature.Direction(1).X, 
         surface_curvature.Direction(1).Y, 
-        surface_curvature.Direction(1).Z)));
+        surface_curvature.Direction(1).Z));
 
       RhinoApp.WriteLine("  Gaussian curvature: {0}", surface_curvature.Gaussian);
       RhinoApp.WriteLine("  Mean curvature: {0}", surface_curvature.Mean);

@@ -9,8 +9,7 @@ Imports Rhino.Geometry
 Imports Rhino.Input.Custom
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("E215AEB1-6A4C-4180-90F7-3926D9C6DD77")> _
-  Public Class ex_pickobjects
+  Public Class PickPointsOnConduitCommand
     Inherits Rhino.Commands.Command
     Private conduitPoints As New List(Of ConduitPoint)()
 

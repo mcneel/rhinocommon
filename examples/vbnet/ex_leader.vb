@@ -5,7 +5,6 @@ Imports System.Collections.Generic
 Imports System.Linq
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("055686DA-E4DF-4241-99AF-212546C26F08")> _
   Public Class LeaderCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

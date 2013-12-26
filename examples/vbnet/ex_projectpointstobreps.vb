@@ -7,7 +7,6 @@ Imports Rhino.Geometry
 Imports Rhino.Geometry.Intersect
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("37B8FA8A-DDE2-45C1-AC07-432701C6605C")> _
   Public Class ProjectPointsToBrepsCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

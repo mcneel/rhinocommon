@@ -4,7 +4,6 @@ Imports Rhino.Geometry
 Imports Rhino.Geometry.Intersect
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("C12295A5-0EE4-4370-A754-4C8DFE8374E7")> _
   Public Class IntersectLineCircleCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

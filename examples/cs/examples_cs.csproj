@@ -110,6 +110,7 @@
     <Compile Include="ex_commandlineoptions.cs" />
     <Compile Include="ex_conduitdrawshadedmesh.cs" />
     <Compile Include="ex_conduitarrowheads.cs" />
+    <Compile Include="ex_copygroups.cs" />
     <Compile Include="ex_createblock.cs" />
     <Compile Include="ex_createmeshfrombrep.cs" />
     <Compile Include="ex_createsurfaceexample.cs" />

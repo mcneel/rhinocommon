@@ -4,7 +4,6 @@ Imports Rhino.FileIO
 Imports Rhino.Commands
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("6A110A45-0EF1-4AF2-8FF0-41AC79B99693")> _
   Public Class InstanceDefinitionTreeCommand
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

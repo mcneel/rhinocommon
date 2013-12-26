@@ -3,7 +3,6 @@ Imports Rhino.Commands
 Imports System.Linq
 
 Namespace examples_vb
-  <System.Runtime.InteropServices.Guid("B7391004-8A5D-4B54-88F5-1D2004D70BAC")> _
   Public Class ex_printinstancedefinitions
     Inherits Command
     Public Overrides ReadOnly Property EnglishName() As String

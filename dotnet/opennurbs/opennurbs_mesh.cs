@@ -1459,6 +1459,11 @@ namespace Rhino.Geometry
     /// sense that the edge only has one face.
     /// </summary>
     /// <returns>An array of polylines, or null on error.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_dupmeshboundary.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_dupmeshboundary.cs' lang='cs'/>
+    /// <code source='examples\py\ex_dupmeshboundary.py' lang='py'/>
+    /// </example>
     public Polyline[] GetNakedEdges()
     {
       IntPtr pConstThis = ConstPointer();

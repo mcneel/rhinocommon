@@ -130,6 +130,7 @@
     <Compile Include="ex_dotneteventwatcher.cs" />
     <Compile Include="ex_drawoverlay.cs" />
     <Compile Include="ex_dupborder.cs" />
+    <Compile Include="ex_dupmeshboundary.cs" />
     <Compile Include="ex_edittext.cs" />
     <Compile Include="ex_elevation.cs" />
     <Compile Include="ex_evnormal.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="ex_locklayer.cs" />
     <Compile Include="ex_loft.cs" />
     <Compile Include="ex_meshdrawing.cs" />
+    <Compile Include="ex_meshvolume.cs" />
     <Compile Include="ex_movecplane.cs" />
     <Compile Include="ex_movegripobjects.cs" />
     <Compile Include="ex_nestedblock.cs" />

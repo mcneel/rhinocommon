@@ -132,6 +132,7 @@
     <Compile Include="ex_dividebylength.vb" />
     <Compile Include="ex_drawoverlay.vb" />
     <Compile Include="ex_dupborder.vb" />
+    <Compile Include="ex_dupmeshboundary.vb" />
     <Compile Include="ex_edittext.vb" />
     <Compile Include="ex_elevation.vb" />
     <Compile Include="ex_evnormal.vb" />
@@ -156,6 +157,7 @@
     <Compile Include="ex_locklayer.vb" />
     <Compile Include="ex_loft.vb" />
     <Compile Include="ex_meshdrawing.vb" />
+    <Compile Include="ex_meshvolume.vb" />
     <Compile Include="ex_movecplane.vb" />
     <Compile Include="ex_objectdecoration.vb" />
     <Compile Include="ex_objectdisplaymode.vb" />

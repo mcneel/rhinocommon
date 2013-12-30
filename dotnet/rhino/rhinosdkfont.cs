@@ -128,6 +128,11 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_textjustify.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_textjustify.cs' lang='cs'/>
+    /// <code source='examples\py\ex_textjustify.py' lang='py'/>
+    /// </example>
     public int FindOrCreate(string face, bool bold, bool italic)
     {
       return UnsafeNativeMethods.CRhinoFontTable_FindOrCreate(m_doc.m_docId, face, bold, italic);

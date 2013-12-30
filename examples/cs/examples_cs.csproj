@@ -185,6 +185,8 @@
     <Compile Include="ex_spritedrawing.cs" />
     <Compile Include="ex_sweep1.cs" />
     <Compile Include="ex_sweep2.cs" />
+    <Compile Include="ex_textjustify.cs" />
+    <Compile Include="ex_tightboundingbox.cs" />
     <Compile Include="ex_transformbrep.cs" />
     <Compile Include="ex_tweakcolors.cs" />
     <Compile Include="ex_tweencurve.cs" />
@@ -266,6 +268,7 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>Copy "$(TargetPath)" "$(TargetDir)\$(ProjectName).rhp"
+
 Erase "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
 </Project>

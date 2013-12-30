@@ -688,6 +688,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="brep">Brep to approximate.</param>
     /// <returns>An array of meshes.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_tightboundingbox.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_tightboundingbox.cs' lang='cs'/>
+    /// <code source='examples\py\ex_tightboundingbox.py' lang='py'/>
+    /// </example>
     public static Mesh[] CreateFromBrep(Brep brep)
     {
       using (Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer())

@@ -4196,6 +4196,11 @@ namespace Rhino.DocObjects.Tables
     /// <summary>Adds a polyline object to Rhino.</summary>
     /// <param name="points">A <see cref="Polyline"/>; a list, an array, or any enumerable set of <see cref="Point3d"/>.</param>
     /// <returns>A unique identifier for the object.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_tightboundingbox.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_tightboundingbox.cs' lang='cs'/>
+    /// <code source='examples\py\ex_tightboundingbox.py' lang='py'/>
+    /// </example>
     public Guid AddPolyline(IEnumerable<Point3d> points)
     {
       return AddPolyline(points, null);
@@ -4405,6 +4410,11 @@ namespace Rhino.DocObjects.Tables
     /// </summary>
     /// <param name="text3d">The text object to add.</param>
     /// <returns>The Guid of the newly added object or Guid.Empty on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_textjustify.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_textjustify.cs' lang='cs'/>
+    /// <code source='examples\py\ex_textjustify.py' lang='py'/>
+    /// </example>
     public Guid AddText(Rhino.Display.Text3d text3d)
     {
       return AddText(text3d.Text, text3d.TextPlane, text3d.Height, text3d.FontFace, text3d.Bold, text3d.Italic);

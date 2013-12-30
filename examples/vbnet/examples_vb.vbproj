@@ -175,6 +175,8 @@
     <Compile Include="ex_rhinogettransform.vb" />
     <Compile Include="ex_sellayer.vb" />
     <Compile Include="ex_sweep1.vb" />
+    <Compile Include="ex_textjustify.vb" />
+    <Compile Include="ex_tightboundingbox.vb" />
     <Compile Include="ex_transformbrep.vb" />
     <Compile Include="ex_unrollsurface.vb" />
     <Compile Include="ex_unrollsurface2.vb" />

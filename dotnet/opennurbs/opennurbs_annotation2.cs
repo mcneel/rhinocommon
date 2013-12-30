@@ -553,6 +553,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Initializes a new instance of the <see cref="TextEntity"/> class.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_textjustify.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_textjustify.cs' lang='cs'/>
+    /// <code source='examples\py\ex_textjustify.py' lang='py'/>
+    /// </example>
     public TextEntity()
     {
       IntPtr ptr = UnsafeNativeMethods.ON_TextEntity2_New();
@@ -596,6 +601,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets or sets the justification of text in relation to its base point.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_textjustify.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_textjustify.cs' lang='cs'/>
+    /// <code source='examples\py\ex_textjustify.py' lang='py'/>
+    /// </example>
     public TextJustification Justification
     {
       get

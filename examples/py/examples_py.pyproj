@@ -74,6 +74,7 @@
     <Compile Include="ex_dividebylength.py" />
     <Compile Include="ex_drawoverlay.py" />
     <Compile Include="ex_dupborder.py" />
+    <Compile Include="ex_dupmeshboundary.py" />
     <Compile Include="ex_edittext.py" />
     <Compile Include="ex_elevation.py" />
     <Compile Include="ex_evnormal.py" />

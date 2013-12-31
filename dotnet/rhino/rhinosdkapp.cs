@@ -2,6 +2,7 @@ using System;
 
 #if RHINO_SDK
 using Rhino.ApplicationSettings;
+using Rhino.Geometry;
 using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.ApplicationSettings
@@ -1366,6 +1367,19 @@ namespace Rhino.UI
     public static void SetToolTip(string tooltip)
     {
       UnsafeNativeMethods.CRhinoApp_SetCursorTooltip(tooltip);
+    }
+
+    /// <summary>
+    /// Retrieves the position of the mouse cursor, in screen coordinates
+    /// </summary>
+    public static Point2d Location
+    {
+      get
+      {
+        UnsafeNativeMethods.Point pt;
+        UnsafeNativeMethods.GetCursorPos(out pt);
+        return new Point2d(pt.X, pt.Y);
+      }
     }
   }
 

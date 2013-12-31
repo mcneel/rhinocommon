@@ -838,6 +838,11 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ONX_Model_WriteFile(IntPtr pModel, [MarshalAs(UnmanagedType.LPWStr)]string path, int version, IntPtr pStringHolder);
 
+  //bool ONX_Model_WriteFile2(ONX_Model* pModel, const RHMONO_STRING* path, int version, bool writeRenderMeshes, bool writeAnalysisMeshes, bool writeUserData)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ONX_Model_WriteFile2(IntPtr pModel, [MarshalAs(UnmanagedType.LPWStr)]string path, int version, [MarshalAs(UnmanagedType.U1)]bool writeRenderMeshes, [MarshalAs(UnmanagedType.U1)]bool writeAnalysisMeshes, [MarshalAs(UnmanagedType.U1)]bool writeUserData);
+
   //void ONX_Model_Delete(ONX_Model* pModel)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_Delete(IntPtr pModel);

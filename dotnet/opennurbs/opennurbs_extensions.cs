@@ -47,10 +47,8 @@ namespace Rhino.FileIO
     {
       if (!File.Exists(path))
         throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
-      IntPtr pONX_Model = UnsafeNativeMethods.ONX_Model_ReadFile(path, IntPtr.Zero);
-      if (pONX_Model == IntPtr.Zero)
-        return null;
-      return new File3dm(pONX_Model);
+      IntPtr ptr_onx_model = UnsafeNativeMethods.ONX_Model_ReadFile(path, IntPtr.Zero);
+      return ptr_onx_model == IntPtr.Zero ? null : new File3dm(ptr_onx_model);
     }
 
     /// <summary>
@@ -68,12 +66,10 @@ namespace Rhino.FileIO
         throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
       using (var sh = new StringHolder())
       {
-        IntPtr pString = sh.NonConstPointer();
-        IntPtr pONX_Model = UnsafeNativeMethods.ONX_Model_ReadFile(path, pString);
+        IntPtr ptr_string = sh.NonConstPointer();
+        IntPtr ptr_onx_model = UnsafeNativeMethods.ONX_Model_ReadFile(path, ptr_string);
         errorLog = sh.ToString();
-        if (pONX_Model == IntPtr.Zero)
-          return null;
-        return new File3dm(pONX_Model);
+        return ptr_onx_model == IntPtr.Zero ? null : new File3dm(ptr_onx_model);
       }
     }
     
@@ -89,8 +85,8 @@ namespace Rhino.FileIO
 
       using (var sh = new StringHolder())
       {
-        IntPtr pString = sh.NonConstPointer();
-        UnsafeNativeMethods.ONX_Model_ReadNotes(path, pString);
+        IntPtr ptr_string = sh.NonConstPointer();
+        UnsafeNativeMethods.ONX_Model_ReadNotes(path, ptr_string);
         return sh.ToString();
       }
     }
@@ -212,8 +208,26 @@ namespace Rhino.FileIO
     /// </returns>
     public bool Write(string path, int version)
     {
-      IntPtr pThis = NonConstPointer();
-      return UnsafeNativeMethods.ONX_Model_WriteFile(pThis, path, version, IntPtr.Zero);
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.ONX_Model_WriteFile(ptr_this, path, version, IntPtr.Zero);
+    }
+    /// <summary>
+    /// Writes contents of this model to an openNURBS archive. I STRONGLY
+    /// suggested that you call Polish() before calling Write so that your
+    /// file has all the "fluff" that makes it complete.  If the model is
+    /// not valid, then Write will refuse to write it.
+    /// </summary>
+    /// <param name="path">The file name to use for writing.</param>
+    /// <param name="options">
+    /// </param>
+    /// <returns>
+    /// true if archive is written with no error.
+    /// false if errors occur.
+    /// </returns>
+    public bool Write(string path, File3dmWriteOptions options)
+    {
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.ONX_Model_WriteFile2(ptr_this, path, options.Version, options.SaveRenderMeshes, options.SaveAnalysisMeshes, options.SaveUserData);
     }
 
     /// <summary>
@@ -240,9 +254,9 @@ namespace Rhino.FileIO
     {
       using (var sh = new StringHolder())
       {
-        IntPtr pConstThis = ConstPointer();
-        IntPtr pString = sh.NonConstPointer();
-        bool rc = UnsafeNativeMethods.ONX_Model_WriteFile(pConstThis, path, version, pString);
+        IntPtr ptr_const_this = ConstPointer();
+        IntPtr ptr_string = sh.NonConstPointer();
+        bool rc = UnsafeNativeMethods.ONX_Model_WriteFile(ptr_const_this, path, version, ptr_string);
         errorLog = sh.ToString();
         return rc;
       }
@@ -257,11 +271,11 @@ namespace Rhino.FileIO
     /// <returns>true if the model is valid.</returns>
     public bool IsValid(out string errors)
     {
-      IntPtr pConstThis = ConstPointer();
+      IntPtr ptr_const_this = ConstPointer();
       using (var sh = new StringHolder())
       {
-        IntPtr pString = sh.NonConstPointer();
-        bool rc = UnsafeNativeMethods.ONX_Model_IsValid(pConstThis, pString);
+        IntPtr ptr_string = sh.NonConstPointer();
+        bool rc = UnsafeNativeMethods.ONX_Model_IsValid(ptr_const_this, ptr_string);
         errors = sh.ToString();
         return rc;
       }
@@ -276,9 +290,9 @@ namespace Rhino.FileIO
     /// <returns>true if the model is valid.</returns>
     public bool IsValid(TextLog errors)
     {
-      IntPtr pConstThis = ConstPointer();
-      IntPtr pTextLog = errors.NonConstPointer();
-      return UnsafeNativeMethods.ONX_Model_IsValid2(pConstThis, pTextLog);
+      IntPtr ptr_const_this = ConstPointer();
+      IntPtr ptr_text_log = errors.NonConstPointer();
+      return UnsafeNativeMethods.ONX_Model_IsValid2(ptr_const_this, ptr_text_log);
     }
 
     /// <summary>
@@ -288,8 +302,8 @@ namespace Rhino.FileIO
     /// </summary>
     public void Polish()
     {
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.ONX_Model_Polish(pThis);
+      IntPtr ptr_this = NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_Polish(ptr_this);
     }
 
     /// <summary>
@@ -326,16 +340,15 @@ namespace Rhino.FileIO
     /// </returns>
     public int Audit(bool attemptRepair, out int repairCount, out string errors, out int[] warnings)
     {
-      IntPtr pThis = NonConstPointer();
+      IntPtr ptr_this = NonConstPointer();
       repairCount = 0;
       using (var sh = new StringHolder())
+      using (var w = new SimpleArrayInt())
       {
-        IntPtr pString = sh.NonConstPointer();
-        Rhino.Runtime.InteropWrappers.SimpleArrayInt w = new Runtime.InteropWrappers.SimpleArrayInt();
-        IntPtr pWarnings = w.NonConstPointer();
-        int rc = UnsafeNativeMethods.ONX_Model_Audit(pThis, attemptRepair, ref repairCount, pString, pWarnings);
+        IntPtr ptr_string = sh.NonConstPointer();
+        IntPtr ptr_warninga = w.NonConstPointer();
+        int rc = UnsafeNativeMethods.ONX_Model_Audit(ptr_this, attemptRepair, ref repairCount, ptr_string, ptr_warninga);
         warnings = w.ToArray();
-        w.Dispose();
         errors = sh.ToString();
         return rc;
       }
@@ -351,18 +364,18 @@ namespace Rhino.FileIO
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
+        IntPtr ptr_const_this = ConstPointer();
         using (var sh = new StringHolder())
         {
-          IntPtr pString = sh.NonConstPointer();
-          UnsafeNativeMethods.ONX_Model_GetStartSectionComments(pConstThis, pString);
+          IntPtr ptr_string = sh.NonConstPointer();
+          UnsafeNativeMethods.ONX_Model_GetStartSectionComments(ptr_const_this, ptr_string);
           return sh.ToString();
         }
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ONX_Model_SetStartSectionComments(pThis, value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ONX_Model_SetStartSectionComments(ptr_this, value);
       }
     }
 
@@ -393,16 +406,16 @@ namespace Rhino.FileIO
     {
       using (var sh = new StringHolder())
       {
-        IntPtr pConstThis = ConstPointer();
-        IntPtr pString = sh.NonConstPointer();
-        UnsafeNativeMethods.ONX_Model_GetString(pConstThis, which, pString);
+        IntPtr ptr_const_this = ConstPointer();
+        IntPtr ptr_string = sh.NonConstPointer();
+        UnsafeNativeMethods.ONX_Model_GetString(ptr_const_this, which, ptr_string);
         return sh.ToString();
       }
     }
     void SetString(int which, string val)
     {
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.ONX_Model_SetString(pThis, which, val);
+      IntPtr ptr_this = NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_SetString(ptr_this, which, val);
     }
 
     /// <summary>
@@ -534,7 +547,7 @@ namespace Rhino.FileIO
     /// <summary>
     /// Linetypes in this file.
     /// </summary>
-    public IList<Rhino.DocObjects.Linetype> Linetypes
+    public IList<DocObjects.Linetype> Linetypes
     {
       get { return m_linetype_table ?? (m_linetype_table = new File3dmLinetypeTable(this)); }
     }
@@ -542,7 +555,7 @@ namespace Rhino.FileIO
     /// <summary>
     /// Layers in this file.
     /// </summary>
-    public IList<Rhino.DocObjects.Layer> Layers
+    public IList<DocObjects.Layer> Layers
     {
       get { return m_layer_table ?? (m_layer_table = new File3dmLayerTable(this)); }
     }
@@ -550,7 +563,7 @@ namespace Rhino.FileIO
     /// <summary>
     /// Dimension Styles in this file
     /// </summary>
-    public IList<Rhino.DocObjects.DimensionStyle> DimStyles
+    public IList<DocObjects.DimensionStyle> DimStyles
     {
       get { return m_dimstyle_table ?? (m_dimstyle_table = new File3dmDimStyleTable(this)); }
     }
@@ -558,7 +571,7 @@ namespace Rhino.FileIO
     /// <summary>
     /// Hatch patterns in this file
     /// </summary>
-    public IList<Rhino.DocObjects.HatchPattern> HatchPatterns
+    public IList<DocObjects.HatchPattern> HatchPatterns
     {
       get { return m_hatchpattern_table ?? (m_hatchpattern_table = new File3dmHatchPatternTable(this)); }
     }
@@ -566,7 +579,7 @@ namespace Rhino.FileIO
     /// <summary>
     /// Instance definitions in this file
     /// </summary>
-    public IList<Rhino.Geometry.InstanceDefinitionGeometry> InstanceDefinitions
+    public IList<InstanceDefinitionGeometry> InstanceDefinitions
     {
       get
       {
@@ -577,7 +590,7 @@ namespace Rhino.FileIO
     /// <summary>
     /// Views that represent the RhinoViews which are displayed when Rhino loads this file
     /// </summary>
-    public IList<Rhino.DocObjects.ViewInfo> Views
+    public IList<DocObjects.ViewInfo> Views
     {
       get { return m_view_table ?? (m_view_table = new File3dmViewTable(this, false)); }
     }
@@ -585,7 +598,7 @@ namespace Rhino.FileIO
     /// <summary>
     /// Named view list
     /// </summary>
-    public IList<Rhino.DocObjects.ViewInfo> NamedViews
+    public IList<DocObjects.ViewInfo> NamedViews
     {
       get { return m_named_view_table ?? (m_named_view_table = new File3dmViewTable(this, true)); }
     }
@@ -791,6 +804,20 @@ namespace Rhino.FileIO
     #endregion
   }
 
+  public class File3dmWriteOptions
+  {
+    public File3dmWriteOptions()
+    {
+      Version = 5;
+      SaveRenderMeshes = true;
+      SaveAnalysisMeshes = true;
+      SaveUserData = true;
+    }
+    public int Version { get; set; }
+    public bool SaveRenderMeshes { get; set; }
+    public bool SaveAnalysisMeshes { get; set; }
+    public bool SaveUserData { get; set; }
+  }
 
   /// <summary>
   /// Used to store geometry table object definition and attributes in a File3dm.
@@ -865,7 +892,7 @@ namespace Rhino.FileIO
   /// Represents a simple object table for a file that is open externally.
   /// <para>This class mimics Rhino.DocObjects.Tables.ObjectTable while providing external eccess to the file.</para>
   /// </summary>
-  public class File3dmObjectTable : IEnumerable<File3dmObject>, Rhino.Collections.IRhinoTable<File3dmObject>
+  public class File3dmObjectTable : IEnumerable<File3dmObject>, Collections.IRhinoTable<File3dmObject>
   {
     readonly File3dm m_parent;
     internal File3dmObjectTable(File3dm parent)
@@ -1813,7 +1840,7 @@ namespace Rhino.FileIO
   /// <summary>
   /// Table of custom data provided by plug-ins
   /// </summary>
-  public class File3dmPlugInDataTable : IEnumerable<File3dmPlugInData>, Rhino.Collections.IRhinoTable<File3dmPlugInData>
+  public class File3dmPlugInDataTable : IEnumerable<File3dmPlugInData>, Collections.IRhinoTable<File3dmPlugInData>
   {
     readonly File3dm m_parent;
     internal File3dmPlugInDataTable(File3dm parent)
@@ -1892,7 +1919,7 @@ namespace Rhino.FileIO
 
   }
 
-  class File3dmMaterialTable : IList<Rhino.DocObjects.Material>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.Material>
+  class File3dmMaterialTable : IList<DocObjects.Material>, Collections.IRhinoTable<DocObjects.Material>
   {
     readonly File3dm m_parent;
     internal File3dmMaterialTable(File3dm parent)
@@ -2017,7 +2044,7 @@ namespace Rhino.FileIO
     }
   }
 
-  class File3dmLinetypeTable : IList<Rhino.DocObjects.Linetype>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.Linetype>
+  class File3dmLinetypeTable : IList<DocObjects.Linetype>, Collections.IRhinoTable<DocObjects.Linetype>
   {
     readonly File3dm m_parent;
     internal File3dmLinetypeTable(File3dm parent)
@@ -2139,7 +2166,7 @@ namespace Rhino.FileIO
     }
   }
 
-  class File3dmLayerTable : IList<Rhino.DocObjects.Layer>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.Layer>
+  class File3dmLayerTable : IList<DocObjects.Layer>, Collections.IRhinoTable<DocObjects.Layer>
   {
     readonly File3dm m_parent;
     internal File3dmLayerTable(File3dm parent)
@@ -2261,7 +2288,7 @@ namespace Rhino.FileIO
     }
   }
 
-  class File3dmDimStyleTable : IList<Rhino.DocObjects.DimensionStyle>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.DimensionStyle>
+  class File3dmDimStyleTable : IList<DocObjects.DimensionStyle>, Collections.IRhinoTable<DocObjects.DimensionStyle>
   {
     readonly File3dm m_parent;
     internal File3dmDimStyleTable(File3dm parent)
@@ -2383,7 +2410,7 @@ namespace Rhino.FileIO
     }
   }
 
-  class File3dmHatchPatternTable : IList<Rhino.DocObjects.HatchPattern>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.HatchPattern>
+  class File3dmHatchPatternTable : IList<DocObjects.HatchPattern>, Collections.IRhinoTable<DocObjects.HatchPattern>
   {
     readonly File3dm m_parent;
     internal File3dmHatchPatternTable(File3dm parent)
@@ -2505,7 +2532,7 @@ namespace Rhino.FileIO
     }
   }
 
-  class File3dmInstanceDefinitionTable : IList<Rhino.Geometry.InstanceDefinitionGeometry>, Rhino.Collections.IRhinoTable<Rhino.Geometry.InstanceDefinitionGeometry>
+  class File3dmInstanceDefinitionTable : IList<InstanceDefinitionGeometry>, Collections.IRhinoTable<InstanceDefinitionGeometry>
   {
     readonly File3dm m_parent;
     internal File3dmInstanceDefinitionTable(File3dm parent)
@@ -2643,7 +2670,7 @@ namespace Rhino.FileIO
     #endregion
   }
 
-  class File3dmViewTable : IList<Rhino.DocObjects.ViewInfo>, Rhino.Collections.IRhinoTable<Rhino.DocObjects.ViewInfo>
+  class File3dmViewTable : IList<DocObjects.ViewInfo>, Collections.IRhinoTable<DocObjects.ViewInfo>
   {
     readonly File3dm m_parent;
     readonly bool m_named_views;

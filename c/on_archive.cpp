@@ -777,6 +777,25 @@ RH_C_FUNCTION bool ONX_Model_WriteFile(ONX_Model* pModel, const RHMONO_STRING* p
   return rc;
 }
 
+RH_C_FUNCTION bool ONX_Model_WriteFile2(ONX_Model* pModel, const RHMONO_STRING* path, int version, bool writeRenderMeshes, bool writeAnalysisMeshes, bool writeUserData)
+{
+  bool rc = false;
+  INPUTSTRINGCOERCE(_path, path);
+  if( pModel && _path )
+  {
+    FILE* fp = ON::OpenFile(_path, L"wb");
+    if( 0==fp )
+      return false;
+    ON_BinaryFile binary_file(ON::write3dm, fp);
+    binary_file.EnableSave3dmRenderMeshes(writeRenderMeshes?1:0);
+    binary_file.EnableSave3dmAnalysisMeshes(writeAnalysisMeshes?1:0);
+    binary_file.EnableSaveUserData(writeUserData?1:0);
+    rc = pModel->Write(binary_file, version, 0, 0);
+    ON::CloseFile(fp);
+  }
+  return rc;
+}
+
 RH_C_FUNCTION void ONX_Model_Delete(ONX_Model* pModel)
 {
   if( pModel )

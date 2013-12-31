@@ -269,33 +269,26 @@ namespace Rhino
       }
     }
 
-    double GetDouble(int which)
+    double GetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts which)
     {
       return UnsafeNativeMethods.CRhinoDocProperties_GetSetDouble(m_docId, which, false, 0.0);
     }
-    void SetDouble(int which, double val)
+    void SetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts which, double val)
     {
       UnsafeNativeMethods.CRhinoDocProperties_GetSetDouble(m_docId, which, true, val);
     }
 
-    const int IDX_MODEL_ABS_TOL = 0;
-    const int IDX_MODEL_ANGLE_TOL = 1;
-    const int IDX_MODEL_REL_TOL = 2;
-    const int IDX_PAGE_ABS_TOL = 3;
-    const int IDX_PAGE_ANGLE_TOL = 4;
-    const int IDX_PAGE_REL_TOL = 5;
-
     /// <summary>Model space absolute tolerance.</summary>
     public double ModelAbsoluteTolerance
     {
-      get { return GetDouble(IDX_MODEL_ABS_TOL); }
-      set { SetDouble(IDX_MODEL_ABS_TOL, value); }
+      get { return GetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts.ModelAbsTol); }
+      set { SetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts.ModelAbsTol, value); }
     }
     /// <summary>Model space angle tolerance.</summary>
     public double ModelAngleToleranceRadians
     {
-      get { return GetDouble(IDX_MODEL_ANGLE_TOL); }
-      set { SetDouble(IDX_MODEL_ANGLE_TOL, value); }
+      get { return GetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts.ModelAngleTol); }
+      set { SetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts.ModelAngleTol, value); }
     }
     /// <summary>Model space angle tolerance.</summary>
     public double ModelAngleToleranceDegrees
@@ -315,20 +308,33 @@ namespace Rhino
     /// <summary>Model space relative tolerance.</summary>
     public double ModelRelativeTolerance
     {
-      get { return GetDouble(IDX_MODEL_REL_TOL); }
-      set { SetDouble(IDX_MODEL_REL_TOL, value); }
+      get { return GetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts.ModelRelTol); }
+      set { SetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts.ModelRelTol, value); }
     }
+
+    public int ModelDistanceDisplayPrecision
+    {
+      get { return UnsafeNativeMethods.CRhinoDocProperties_DistanceDisplayPrecision(m_docId, true, 0, false); }
+      set { UnsafeNativeMethods.CRhinoDocProperties_DistanceDisplayPrecision(m_docId, true, value, true); }
+    }
+
+    public int PageDistanceDisplayPrecision
+    {
+      get { return UnsafeNativeMethods.CRhinoDocProperties_DistanceDisplayPrecision(m_docId, false, 0, false); }
+      set { UnsafeNativeMethods.CRhinoDocProperties_DistanceDisplayPrecision(m_docId, false, value, true); }
+    }
+
     /// <summary>Page space absolute tolerance.</summary>
     public double PageAbsoluteTolerance
     {
-      get { return GetDouble(IDX_PAGE_ABS_TOL); }
-      set { SetDouble(IDX_PAGE_REL_TOL, value); }
+      get { return GetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts.PageAbsTol); }
+      set { SetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts.PageAbsTol, value); }
     }
     /// <summary>Page space angle tolerance.</summary>
     public double PageAngleToleranceRadians
     {
-      get { return GetDouble(IDX_PAGE_ANGLE_TOL); }
-      set { SetDouble(IDX_PAGE_ANGLE_TOL, value); }
+      get { return GetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts.PageAngleTol); }
+      set { SetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts.PageAngleTol, value); }
     }
     /// <summary>Page space angle tolerance.</summary>
     public double PageAngleToleranceDegrees
@@ -348,8 +354,8 @@ namespace Rhino
     /// <summary>Page space relative tolerance.</summary>
     public double PageRelativeTolerance
     {
-      get { return GetDouble(IDX_PAGE_REL_TOL); }
-      set { SetDouble(IDX_PAGE_REL_TOL, value); }
+      get { return GetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts.PageRelTol); }
+      set { SetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts.PageRelTol, value); }
     }
 
 
@@ -449,8 +455,7 @@ namespace Rhino
     {
       get
       {
-        int rc = UnsafeNativeMethods.CRhinoDocProperties_DistanceDisplayPrecision(m_docId);
-        return rc;
+        return ModelDistanceDisplayPrecision;
       }
     }
 
@@ -3478,6 +3483,24 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
+    RhinoObject[] FindByRegion(RhinoViewport viewport, Point2d screen1, Point2d screen2, int mode, ObjectType filter)
+    {
+      double min_x = screen1.X < screen2.X ? screen1.X : screen2.X;
+      double max_x = screen1.X > screen2.X ? screen1.X : screen2.X;
+      double min_y = screen1.Y < screen2.Y ? screen1.Y : screen2.Y;
+      double max_y = screen1.Y > screen2.Y ? screen1.Y : screen2.Y;
+      var screen_to_world = viewport.GetTransform(CoordinateSystem.Screen, CoordinateSystem.World);
+      Point3d[] pts = new Point3d[]{new Point3d(min_x, min_y, 0),
+        new Point3d(max_x, min_y, 0),
+        new Point3d(max_x, max_y, 0),
+        new Point3d(min_x, max_y, 0)};
+      for (int i = 0; i < pts.Length; i++)
+      {
+        pts[i].Transform(screen_to_world);
+      }
+      return FindByRegion(viewport, pts, mode, filter);
+    }
+
     /// <summary>
     /// Finds objects bounded by a polyline region
     /// </summary>
@@ -3497,6 +3520,22 @@ namespace Rhino.DocObjects.Tables
     /// Finds objects bounded by a polyline region
     /// </summary>
     /// <param name="viewport">viewport to use for selection</param>
+    /// <param name="screen1">first screen corner</param>
+    /// <param name="screen2">second screen corner</param>
+    /// <param name="inside">should objects returned be the ones inside of this region (or outside)</param>
+    /// <param name="filter">filter down list by object type</param>
+    /// <returns>An array of RhinoObjects that are inside of this region</returns>
+    [CLSCompliant(false)]
+    public RhinoObject[] FindByWindowRegion(RhinoViewport viewport, Point2d screen1, Point2d screen2, bool inside, ObjectType filter)
+    {
+      // 0=window, 1=crossing, 2=outside window, 3=outside crossing window
+      return FindByRegion(viewport, screen1, screen2, inside ? 0 : 2, filter);
+    }
+
+    /// <summary>
+    /// Finds objects bounded by a polyline region
+    /// </summary>
+    /// <param name="viewport">viewport to use for selection</param>
     /// <param name="region">list of points that define the </param>
     /// <param name="inside">should objects returned be the ones inside of this region (or outside)</param>
     /// <param name="filter">filter down list by object type</param>
@@ -3506,6 +3545,22 @@ namespace Rhino.DocObjects.Tables
     {
       // 0=window, 1=crossing, 2=outside window, 3=outside crossing window
       return FindByRegion(viewport, region, inside ? 1 : 3, filter);
+    }
+
+    /// <summary>
+    /// Finds objects bounded by a region
+    /// </summary>
+    /// <param name="viewport">viewport to use for selection</param>
+    /// <param name="screen1">first screen corner</param>
+    /// <param name="screen2">second screen corner</param>
+    /// <param name="inside">should objects returned be the ones inside of this region (or outside)</param>
+    /// <param name="filter">filter down list by object type</param>
+    /// <returns>An array of RhinoObjects that are inside of this region</returns>
+    [CLSCompliant(false)]
+    public RhinoObject[] FindByCrossingWindowRegion(RhinoViewport viewport, Point2d screen1, Point2d screen2, bool inside, ObjectType filter)
+    {
+      // 0=window, 1=crossing, 2=outside window, 3=outside crossing window
+      return FindByRegion(viewport, screen1, screen2, inside ? 1 : 3, filter);
     }
 
     /// <summary>

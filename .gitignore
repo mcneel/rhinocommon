@@ -217,4 +217,11 @@ nuget/nupkg_any/lib/net40/*.dll
 nuget/nupkg_any/NativeBinaries/*/*.dll
 rh3dmio_native_out
 
+/examples/rhino3dmio/example_read_nuget/bin
+/examples/rhino3dmio/example_read_nuget/obj
+/examples/rhino3dmio/example_read_nuget/packages
+/examples/rhino3dmio/example_read_nuget/packages.config
+/examples/rhino3dmio/example_read_nuget/*.suo
+/examples/rhino3dmio/example_read_nuget/*.user
 /*.suo
+

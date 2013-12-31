@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Rhino3dmIO.dll-AnyCPU-Windows</id>
-    <version>5.1.30000.21</version>
+    <version>5.1.30000.22</version>
     <authors>McNeel</authors>
     <owners>McNeel</owners>
     <licenseUrl>https://github.com/mcneel/rhinocommon#legal-stuff</licenseUrl>

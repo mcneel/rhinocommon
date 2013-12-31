@@ -1877,7 +1877,7 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.CRhinoObjRef_Geometry(m_ptr);
     }
 
-    private Rhino.Geometry.GeometryBase ObjRefToGeometryHelper(IntPtr pGeometry)
+    private GeometryBase ObjRefToGeometryHelper(IntPtr pGeometry)
     {
       if (pGeometry == IntPtr.Zero)
         return null;
@@ -1886,7 +1886,7 @@ namespace Rhino.DocObjects
         parent = Object();
       else
         parent = new ObjRef(this); // copy in case user decides to call Dispose on this ObjRef
-      return null == parent ? null : Rhino.Geometry.GeometryBase.CreateGeometryHelper(pGeometry, parent);
+      return null == parent ? null : GeometryBase.CreateGeometryHelper(pGeometry, parent);
     }
 
     /// <summary>
@@ -1918,20 +1918,20 @@ namespace Rhino.DocObjects
     /// <code source='examples\cs\ex_intersectcurves.cs' lang='cs'/>
     /// <code source='examples\py\ex_intersectcurves.py' lang='py'/>
     /// </example>
-    public Geometry.Curve Curve()
+    public Curve Curve()
     {
-      IntPtr pCurve = UnsafeNativeMethods.CRhinoObjRef_Curve(m_ptr);
-      return ObjRefToGeometryHelper(pCurve) as Rhino.Geometry.Curve;
+      IntPtr ptr_curve = UnsafeNativeMethods.CRhinoObjRef_Curve(m_ptr);
+      return ObjRefToGeometryHelper(ptr_curve) as Rhino.Geometry.Curve;
     }
 
     /// <summary>
     /// Gets the edge if this reference geometry is one.
     /// </summary>
     /// <returns>A boundary representation edge; or null on error.</returns>
-    public Geometry.BrepEdge Edge()
+    public BrepEdge Edge()
     {
-      IntPtr pBrepEdge = UnsafeNativeMethods.CRhinoObjRef_Edge(m_ptr);
-      return ObjRefToGeometryHelper(pBrepEdge) as BrepEdge;
+      IntPtr pre_brep_edge = UnsafeNativeMethods.CRhinoObjRef_Edge(m_ptr);
+      return ObjRefToGeometryHelper(pre_brep_edge) as BrepEdge;
     }
 
     /// <summary>
@@ -1939,10 +1939,21 @@ namespace Rhino.DocObjects
     /// a surface, this returns the brep face.
     /// </summary>
     /// <returns>A boundary representation face; or null on error.</returns>
-    public Geometry.BrepFace Face()
+    public BrepFace Face()
     {
-      IntPtr pBrepFace = UnsafeNativeMethods.CRhinoObjRef_Face(m_ptr);
-      return ObjRefToGeometryHelper(pBrepFace) as BrepFace;
+      IntPtr ptr_brep_face = UnsafeNativeMethods.CRhinoObjRef_Face(m_ptr);
+      return ObjRefToGeometryHelper(ptr_brep_face) as BrepFace;
+    }
+
+    /// <summary>
+    /// If the referenced geometry is an edge of a surface,
+    /// this returns the associated brep trim.
+    /// </summary>
+    /// <returns>A boundary representation trim; or null on error</returns>
+    public BrepTrim Trim()
+    {
+      IntPtr ptr_brep_trim = UnsafeNativeMethods.CRhinoObjRef_Trim(m_ptr);
+      return ObjRefToGeometryHelper(ptr_brep_trim) as BrepTrim;
     }
 
     /// <summary>

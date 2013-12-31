@@ -207,10 +207,14 @@
 /c/obj/
 /c/libs/
 
+nuget/*.nupkg
+nuget/_tmp
 nuget/nupkg_x86/lib/net40/*.dll
 nuget/nupkg_x86/NativeBinaries/x86/*.dll
-nuget/nupkg_x86/*.nupkg
 nuget/nupkg_x64/lib/net40/*.dll
 nuget/nupkg_x64/NativeBinaries/x64/*.dll
-nuget/nupkg_x64/*.nupkg
+nuget/nupkg_any/lib/net40/*.dll
+nuget/nupkg_any/NativeBinaries/*/*.dll
+rh3dmio_native_out
+
 /*.suo

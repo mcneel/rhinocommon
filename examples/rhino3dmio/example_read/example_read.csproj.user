@@ -7,4 +7,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <StartArguments>-out:example_dump_log.txt -c -r C:\dev\github\mcneel\rhinocommon\c\opennurbs\sample_files</StartArguments>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <StartArguments>-out:example_dump_log.txt -c -r C:\dev\github\mcneel\rhinocommon\c\opennurbs\sample_files</StartArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <StartArguments>Air\ Cleaner.3dm -c</StartArguments>
+  </PropertyGroup>
 </Project>

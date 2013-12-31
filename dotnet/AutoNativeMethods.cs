@@ -16,6 +16,13 @@ using Rhino.Runtime.InteropWrappers;
 // the support 'C' DLL (rhcommon_c.dll).
 internal partial class UnsafeNativeMethods
 {
+#if MULTIARCH
+  static UnsafeNativeMethods()
+  {
+    Rhino.Runtime.HostUtils.Init();
+  }
+#endif
+
   private UnsafeNativeMethods(){}
   #region on_3dm_attributes.cpp
   //ON_3dmObjectAttributes* ON_3dmObjectAttributes_New(const ON_3dmObjectAttributes* pOther)

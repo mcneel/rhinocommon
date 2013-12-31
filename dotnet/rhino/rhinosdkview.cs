@@ -13,7 +13,7 @@ namespace Rhino.Display
   /// </summary>
   public class RhinoView
   {
-    private Guid m_mainviewport_id; // id of mainviewport for this view. The view m_ptr is nulled
+    private Guid m_main_viewport_id; // id of mainviewport for this view. The view m_ptr is nulled
                                     // out at the end of a command. This is is used to reassocaite
                                     // the view pointer is if a plug-in developer attempts to hold
                                     // on to a view longer than a command
@@ -62,10 +62,10 @@ namespace Rhino.Display
       return m_ptr;
     }
 
-    internal RhinoView(IntPtr viewptr, Guid mainviewport_id)
+    internal RhinoView(IntPtr viewptr, Guid mainViewportId)
     {
       m_ptr = viewptr;
-      m_mainviewport_id = mainviewport_id;
+      m_main_viewport_id = mainViewportId;
     }
 
 
@@ -79,8 +79,8 @@ namespace Rhino.Display
     {
       get
       {
-        IntPtr pConstView = ConstPointer();
-        return UnsafeNativeMethods.CRhinoView_HWND(pConstView);
+        IntPtr ptr_const_view = ConstPointer();
+        return UnsafeNativeMethods.CRhinoView_HWND(ptr_const_view);
       }
     }
 
@@ -142,6 +142,14 @@ namespace Rhino.Display
       return new System.Drawing.Point(x,y);
     }
 
+    public Geometry.Point2d ScreenToClient(Geometry.Point2d screenPoint)
+    {
+      System.Drawing.Rectangle screen = ScreenRectangle;
+      double x = screenPoint.X - screen.Left;
+      double y = screenPoint.Y - screen.Top;
+      return new Geometry.Point2d(x, y);
+    }
+
     public System.Drawing.Point ClientToScreen(System.Drawing.Point clientPoint)
     {
       System.Drawing.Rectangle screen = ScreenRectangle;
@@ -150,12 +158,12 @@ namespace Rhino.Display
       return new System.Drawing.Point(x, y);
     }
 
-    public Rhino.Geometry.Point2d ClientToScreen(Rhino.Geometry.Point2d clientPoint)
+    public Geometry.Point2d ClientToScreen(Geometry.Point2d clientPoint)
     {
       System.Drawing.Rectangle screen = ScreenRectangle;
       double x = clientPoint.X + screen.Left;
       double y = clientPoint.Y + screen.Top;
-      return new Rhino.Geometry.Point2d(x, y);
+      return new Geometry.Point2d(x, y);
     }
 
     //[skipping]
@@ -458,7 +466,7 @@ namespace Rhino.Display
       {
         // note: this function is virtual and the PageView implements the case where
         // a little bit of work needs to be done
-        return m_mainviewport_id;
+        return m_main_viewport_id;
       }
     }
 
@@ -549,7 +557,7 @@ namespace Rhino.Display
       if (rc)
       {
         m_ptr = IntPtr.Zero;
-        m_mainviewport_id = Guid.Empty;
+        m_main_viewport_id = Guid.Empty;
         m_view_list.Remove(this);
       }
       return rc;

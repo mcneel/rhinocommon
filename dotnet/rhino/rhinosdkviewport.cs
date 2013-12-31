@@ -618,8 +618,8 @@ namespace Rhino.Display
     /// </example>
     public bool ZoomExtents()
     {
-      IntPtr pThis = NonConstPointer();
-      return UnsafeNativeMethods.RHC_RhinoDollyExtents(pThis, false);
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoDollyExtents(ptr_this, false);
     }
 
     /// <summary>
@@ -630,8 +630,8 @@ namespace Rhino.Display
     /// <returns>true if successful.</returns>
     public bool ZoomExtentsSelected()
     {
-      IntPtr pThis = NonConstPointer();
-      return UnsafeNativeMethods.RHC_RhinoDollyExtents(pThis, true);
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoDollyExtents(ptr_this, true);
     }
 
     /// <summary>
@@ -641,8 +641,8 @@ namespace Rhino.Display
     /// <returns>true if operation succeeded; otherwise false.</returns>
     public bool ZoomBoundingBox(BoundingBox box)
     {
-      IntPtr pThis = NonConstPointer();
-      return UnsafeNativeMethods.RHC_RhZoomExtentsHelper(pThis, box.m_min, box.m_max);
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.RHC_RhZoomExtentsHelper(ptr_this, box.m_min, box.m_max);
     }
 
     #region mouse
@@ -1372,11 +1372,11 @@ namespace Rhino.Display
     /// <code source='examples\vbnet\ex_pointatcursor.vb' lang='vbnet'/>
     /// <code source='examples\cs\ex_pointatcursor.cs' lang='cs'/>
     /// </example>
-    public Transform GetTransform(Rhino.DocObjects.CoordinateSystem sourceSystem, Rhino.DocObjects.CoordinateSystem destinationSystem)
+    public Transform GetTransform(DocObjects.CoordinateSystem sourceSystem, DocObjects.CoordinateSystem destinationSystem)
     {
       Transform matrix = new Transform();
-      IntPtr ptr = ConstPointer();
-      if (!UnsafeNativeMethods.CRhinoViewport_VP_GetXform(ptr, (int)sourceSystem, (int)destinationSystem, ref matrix))
+      IntPtr const_ptr_this = ConstPointer();
+      if (!UnsafeNativeMethods.CRhinoViewport_VP_GetXform(const_ptr_this, (int)sourceSystem, (int)destinationSystem, ref matrix))
         return Transform.Identity;
       return matrix;
     }

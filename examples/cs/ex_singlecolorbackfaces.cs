@@ -13,14 +13,15 @@ namespace examples_cs
 
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      var display_mode_descs =
+      var display_mode_descs = //DisplayModeDescription.GetDisplayModes();
         from dm in DisplayModeDescription.GetDisplayModes()
         where dm.EnglishName == "Shaded"
         select dm;
 
       foreach (var dmd in display_mode_descs)
       {
-        //RhinoApp.WriteLine(dmd.DisplayAttributes.);
+        RhinoApp.WriteLine("CurveColor {0}", dmd.DisplayAttributes.CurveColor.ToKnownColor());
+        RhinoApp.WriteLine("ObjectColor {0}", dmd.DisplayAttributes.ObjectColor.ToKnownColor());
       }
       return Result.Success;
     }

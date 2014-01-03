@@ -180,9 +180,12 @@
     <Compile Include="ex_projectpointstobreps.cs" />
     <Compile Include="ex_renameblock.cs" />
     <Compile Include="ex_rhinogettransform.cs" />
+    <Compile Include="ex_screencaptureview.cs" />
     <Compile Include="ex_sellayer.cs" />
+    <Compile Include="ex_setactiveview.cs" />
     <Compile Include="ex_showsurfacedirection.cs" />
     <Compile Include="ex_spritedrawing.cs" />
+    <Compile Include="ex_srfpt.cs" />
     <Compile Include="ex_sweep1.cs" />
     <Compile Include="ex_sweep2.cs" />
     <Compile Include="ex_textjustify.cs" />

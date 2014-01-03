@@ -344,6 +344,11 @@ namespace Rhino
       /// [in/out] Default color for dialog, and will receive new color if function returns true.
       /// </param>
       /// <returns>true if the color changed. false if the color has not changed or the user pressed cancel.</returns>
+      /// <example>
+      /// <code source='examples\vbnet\ex_modifylightcolor.vb' lang='vbnet'/>
+      /// <code source='examples\cs\ex_modifylightcolor.cs' lang='cs'/>
+      /// <code source='examples\py\ex_modifylightcolor.py' lang='py'/>
+      /// </example>
       public static bool ShowColorDialog(ref System.Drawing.Color color)
       {
         return ShowColorDialog(ref color, false, null);

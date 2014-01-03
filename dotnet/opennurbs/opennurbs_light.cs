@@ -373,6 +373,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets or sets the diffuse color.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_modifylightcolor.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_modifylightcolor.cs' lang='cs'/>
+    /// <code source='examples\py\ex_modifylightcolor.py' lang='py'/>
+    /// </example>
     public System.Drawing.Color Diffuse
     {
       get { return GetColor(idxDiffuse); }

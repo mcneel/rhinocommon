@@ -190,6 +190,11 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoLightTable_Add(m_doc.m_docId, pConstLight, pConstAttributes);
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_modifylightcolor.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_modifylightcolor.cs' lang='cs'/>
+    /// <code source='examples\py\ex_modifylightcolor.py' lang='py'/>
+    /// </example>
     public bool Modify(Guid id, Geometry.Light light)
     {
       int index = Find(id, true);

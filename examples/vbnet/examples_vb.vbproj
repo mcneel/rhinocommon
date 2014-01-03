@@ -158,6 +158,7 @@
     <Compile Include="ex_loft.vb" />
     <Compile Include="ex_meshdrawing.vb" />
     <Compile Include="ex_meshvolume.vb" />
+    <Compile Include="ex_modifylightcolor.vb" />
     <Compile Include="ex_movecplane.vb" />
     <Compile Include="ex_objectdecoration.vb" />
     <Compile Include="ex_objectdisplaymode.vb" />

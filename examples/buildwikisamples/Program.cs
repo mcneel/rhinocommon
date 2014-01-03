@@ -18,7 +18,7 @@ namespace buildwikisamples
       for (int i = 0; i < csfiles.Length; i++)
       {
         string filename = System.IO.Path.GetFileNameWithoutExtension(csfiles[i]);
-        //if (filename != "ex_setactiveview") continue;
+        //if (filename != "ex_modifylightcolor") continue;
         string wikiname = filename.Substring(3) + ".txt"; // prune "ex_"
         string wikifile = System.IO.Path.Combine(wikidir, wikiname);
         StringBuilder sb = new StringBuilder();

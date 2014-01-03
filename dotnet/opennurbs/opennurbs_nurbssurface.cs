@@ -200,6 +200,11 @@ namespace Rhino.Geometry
     /// <param name="corner3">The third corner.</param>
     /// <param name="corner4">The fourth corner.</param>
     /// <returns>the resulting surface or null on error.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_srfpt.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_srfpt.cs' lang='cs'/>
+    /// <code source='examples\py\ex_srfpt.py' lang='py'/>
+    /// </example>
     public static NurbsSurface CreateFromCorners(Point3d corner1, Point3d corner2, Point3d corner3, Point3d corner4)
     {
       return CreateFromCorners(corner1, corner2, corner3, corner4, 0.0);

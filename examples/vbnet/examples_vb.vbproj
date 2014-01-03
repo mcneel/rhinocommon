@@ -173,7 +173,10 @@
     <Compile Include="ex_projectpointstobreps.vb" />
     <Compile Include="ex_renameblock.vb" />
     <Compile Include="ex_rhinogettransform.vb" />
+    <Compile Include="ex_screencaptureview.vb" />
     <Compile Include="ex_sellayer.vb" />
+    <Compile Include="ex_setactiveview.vb" />
+    <Compile Include="ex_srfpt.vb" />
     <Compile Include="ex_sweep1.vb" />
     <Compile Include="ex_textjustify.vb" />
     <Compile Include="ex_tightboundingbox.vb" />

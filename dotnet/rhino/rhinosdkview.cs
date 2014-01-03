@@ -323,6 +323,11 @@ namespace Rhino.Display
     /// <param name="worldAxes">true if the world axis should be visible.</param>
     /// <param name="cplaneAxes">true if the construction plane close the the grid should be visible.</param>
     /// <returns>A new bitmap.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_screencaptureview.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_screencaptureview.cs' lang='cs'/>
+    /// <code source='examples\py\ex_screencaptureview.py' lang='py'/>
+    /// </example>
     public System.Drawing.Bitmap CaptureToBitmap(bool grid, bool worldAxes, bool cplaneAxes)
     {
       return CaptureToBitmap(ClientRectangle.Size, grid, worldAxes, cplaneAxes);

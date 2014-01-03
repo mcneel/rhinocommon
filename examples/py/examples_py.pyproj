@@ -109,8 +109,13 @@
     <Compile Include="ex_printinstancedefinitiontree.py" />
     <Compile Include="ex_projectpointstobreps.py" />
     <Compile Include="ex_renameblock.py" />
+    <Compile Include="ex_screencaptureview.py" />
     <Compile Include="ex_sellayer.py" />
+    <Compile Include="ex_setactiveview.py" />
+    <Compile Include="ex_srfpt.py" />
     <Compile Include="ex_sweep1.py" />
+    <Compile Include="ex_textjustify.py" />
+    <Compile Include="ex_tightboundingbox.py" />
     <Compile Include="ex_transformbrep.py" />
     <Compile Include="ex_unrollsurface.py" />
     <Compile Include="ex_unrollsurface2.py" />

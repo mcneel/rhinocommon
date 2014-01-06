@@ -456,6 +456,11 @@ namespace Rhino.Geometry
     /// <param name="xAxis">x axis of the dimension's plane</param>
     /// <param name="normal">normal to the dimension's plane</param>
     /// <param name="offsetDistance">distance from arrow tip to knee point</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addradialdimension.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addradialdimension.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addradialdimension.py' lang='py'/>
+    /// </example>
     public RadialDimension(Point3d center, Point3d arrowTip, Vector3d xAxis, Vector3d normal, double offsetDistance)
     {
       IntPtr pThis = UnsafeNativeMethods.ON_RadialDimension2_New();

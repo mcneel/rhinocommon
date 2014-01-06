@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ex_addlayout.vb" />
+    <Compile Include="ex_addradialdimension.vb" />
     <Compile Include="ex_analysismode.vb" />
     <Compile Include="examples_vbPlugIn.vb" />
     <Compile Include="examples_vbCommand.vb" />
@@ -129,6 +130,7 @@
     <Compile Include="ex_customgeometryfilter.vb" />
     <Compile Include="ex_customundo.vb" />
     <Compile Include="ex_deleteblock.vb" />
+    <Compile Include="ex_dimstyle.vb" />
     <Compile Include="ex_dividebylength.vb" />
     <Compile Include="ex_drawoverlay.vb" />
     <Compile Include="ex_dupborder.vb" />
@@ -142,6 +144,7 @@
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_constrainedcopy.vb" />
     <Compile Include="ex_getmultiplewithoptions.vb" />
+    <Compile Include="ex_gettext.vb" />
     <Compile Include="ex_gumball.vb" />
     <Compile Include="ex_hatchcurve.vb" />
     <Compile Include="ex_historyCommand.vb" />

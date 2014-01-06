@@ -17,6 +17,7 @@ namespace examples_cs
       var file_name = "";
 
       var bitmap = doc.Views.ActiveView.CaptureToBitmap(true, true, true);
+      bitmap.MakeTransparent();
 
       // copy bitmap to clipboard
       Clipboard.SetImage(bitmap);

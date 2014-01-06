@@ -97,6 +97,7 @@
     <Compile Include="ex_loft.py" />
     <Compile Include="ex_meshdrawing.py" />
     <Compile Include="ex_meshvolume.py" />
+    <Compile Include="ex_modifylightcolor.py" />
     <Compile Include="ex_movecplane.py" />
     <Compile Include="ex_objectdecoration.py" />
     <Compile Include="ex_objectdisplaymode.py" />

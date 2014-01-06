@@ -650,6 +650,11 @@ namespace Rhino
     }
 
     private Rhino.DocObjects.Tables.DimStyleTable m_dimstyle_table;
+    /// <example>
+    /// <code source='examples\vbnet\ex_dimstyle.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_dimstyle.cs' lang='cs'/>
+    /// <code source='examples\py\ex_dimstyle.py' lang='py'/>
+    /// </example>
     public Rhino.DocObjects.Tables.DimStyleTable DimStyles
     {
       get { return m_dimstyle_table ?? (m_dimstyle_table = new Rhino.DocObjects.Tables.DimStyleTable(this)); }
@@ -4166,6 +4171,11 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDoc_AddLinearDimension(m_doc.m_docId, pConstDimension, pAttributes, pHistory, reference);
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_addradialdimension.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addradialdimension.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addradialdimension.py' lang='py'/>
+    /// </example>
     public Guid AddRadialDimension(RadialDimension dimension)
     {
       return AddRadialDimension(dimension, null);
@@ -6376,6 +6386,11 @@ namespace Rhino.DocObjects.Tables
       return new EnumeratorWrapper(e);
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_dimstyle.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_dimstyle.cs' lang='cs'/>
+    /// <code source='examples\py\ex_dimstyle.py' lang='py'/>
+    /// </example>
     public IEnumerable<RhinoObject> GetObjectList(Type typeFilter)
     {
       ObjectEnumeratorSettings settings = new ObjectEnumeratorSettings();

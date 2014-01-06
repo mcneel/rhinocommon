@@ -2167,6 +2167,11 @@ namespace Rhino.DocObjects
     /// the picked curve. This can be misleading so it may be necessary
     /// to call SelectionMethod() first, before calling CurveParameter
     /// to get the desired information.</remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addradialdimension.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addradialdimension.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addradialdimension.py' lang='py'/>
+    /// </example>
     public Curve CurveParameter(out double parameter)
     {
       parameter = 0.0;

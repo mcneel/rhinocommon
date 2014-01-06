@@ -429,6 +429,11 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDimStyleTable_Add(m_doc.m_docId, name, reference);
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_dimstyle.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_dimstyle.cs' lang='cs'/>
+    /// <code source='examples\py\ex_dimstyle.py' lang='py'/>
+    /// </example>
     public int CurrentDimensionStyleIndex
     {
       get

@@ -125,6 +125,8 @@
     <Compile Include="ex_custompython.cs" />
     <Compile Include="ex_customundo.cs" />
     <Compile Include="ex_deleteblock.cs" />
+    <Compile Include="ex_addradialdimension.cs" />
+    <Compile Include="ex_dimstyle.cs" />
     <Compile Include="ex_displayconduit.cs" />
     <Compile Include="ex_dividebylength.cs" />
     <Compile Include="ex_dotneteventwatcher.cs" />
@@ -142,6 +144,7 @@
     <Compile Include="ex_findobjectsbyname.cs" />
     <Compile Include="ex_constrainedcopy.cs" />
     <Compile Include="ex_getmultiplewithoptions.cs" />
+    <Compile Include="ex_gettext.cs" />
     <Compile Include="ex_gumball.cs" />
     <Compile Include="ex_hatchcurve.cs" />
     <Compile Include="ex_historyCommand.cs" />

@@ -1353,6 +1353,11 @@ namespace Rhino.Geometry
     /// Test a curve to see if it is linear to within RhinoMath.ZeroTolerance units (1e-12).
     /// </summary>
     /// <returns>true if the curve is linear.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addradialdimension.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addradialdimension.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addradialdimension.py' lang='py'/>
+    /// </example>
     public bool IsLinear()
     {
       return IsLinear(RhinoMath.ZeroTolerance);
@@ -1380,6 +1385,11 @@ namespace Rhino.Geometry
     /// represented as a polyline.
     /// </summary>
     /// <returns>true if this curve can be represented as a polyline; otherwise, false.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addradialdimension.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addradialdimension.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addradialdimension.py' lang='py'/>
+    /// </example>
     public bool IsPolyline()
     {
       IntPtr ptr = ConstPointer();
@@ -1658,6 +1668,11 @@ namespace Rhino.Geometry
     /// <returns>
     /// true if the curve is planar (flat) to within RhinoMath.ZeroTolerance units (1e-12).
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addradialdimension.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addradialdimension.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addradialdimension.py' lang='py'/>
+    /// </example>
     public bool IsPlanar()
     {
       return IsPlanar(RhinoMath.ZeroTolerance);
@@ -2053,6 +2068,11 @@ namespace Rhino.Geometry
     /// <param name="t">Evaluation parameter.</param>
     /// <returns>Point (location of curve at the parameter t).</returns>
     /// <remarks>No error handling.</remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addradialdimension.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addradialdimension.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addradialdimension.py' lang='py'/>
+    /// </example>
     public Point3d PointAt(double t)
     {
       Point3d rc = new Point3d();
@@ -2220,6 +2240,11 @@ namespace Rhino.Geometry
     /// <param name="t">Evaluation parameter.</param>
     /// <returns>Curvature vector of the curve at the parameter t.</returns>
     /// <remarks>No error handling.</remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addradialdimension.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addradialdimension.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addradialdimension.py' lang='py'/>
+    /// </example>
     public Vector3d CurvatureAt(double t)
     {
       Vector3d rc = new Vector3d();

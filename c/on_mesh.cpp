@@ -2159,6 +2159,193 @@ RH_C_FUNCTION bool ON_TextureMapping_SetBoxMapping(ON_TextureMapping* pTextureMa
   return rc;
 }
 
+#if !defined OPENNURBS_BUILD
+static const ON_MappingRef* GetValidMappingRef(const CRhinoObject* pObject, bool withChannels)
+{
+	// Helper function - implementation only.
+	if (NULL == pObject)
+		return NULL;
+
+	const ON_ObjectRenderingAttributes& attr = pObject->Attributes().m_rendering_attributes;
+
+	// There are no mappings at all - just get out.
+	if (0 == attr.m_mappings.Count())
+		return NULL;
+
+	// Try with the current renderer first.
+	const ON_MappingRef* pRef = attr.MappingRef(RhinoApp().GetDefaultRenderApp());
+
+	// 5DC0192D-73DC-44F5-9141-8E72542E792D
+	ON_UUID uuidRhinoRender = RhinoApp().RhinoRenderPlugInUUID();
+	if (NULL == pRef)
+	{
+		//Prefer the Rhino renderer mappings next
+		pRef = attr.MappingRef(uuidRhinoRender);
+	}
+
+	// Then just run through the list until we find one with some channels.
+	int i = 0;
+	while (NULL == pRef && withChannels && i < attr.m_mappings.Count())
+	{
+		pRef = attr.m_mappings.At(i++);
+	}
+
+	return pRef;
+}
+
+RH_C_FUNCTION ON_TextureMapping* ON_TextureMapping_GetMappingFromObject(const CRhinoObject* pRhinoObject, int iChannelId, ON_Xform* objectXformOut)
+{
+  if (NULL == pRhinoObject)
+    return NULL;
+  CRhinoDoc* pRhinoDoc = pRhinoObject->Document();
+  if(NULL == pRhinoDoc)
+    return NULL;
+  const ON_MappingRef* pRef = GetValidMappingRef(pRhinoObject, true);
+	if(NULL == pRef)
+    return NULL;
+  CRhinoTextureMappingTable& table = pRhinoDoc->m_texture_mapping_table;
+	for (int i = 0; i < pRef->m_mapping_channels.Count(); i++)
+	{
+		const ON_MappingChannel& chan = pRef->m_mapping_channels[i];
+		if (chan.m_mapping_channel_id != iChannelId)
+      continue;
+    ON_UUID id = chan.m_mapping_id;
+    ON_TextureMapping mapping;
+    if (!table.GetTextureMapping(id, mapping))
+      return false;
+    if (objectXformOut)
+      *objectXformOut = chan.m_object_xform;
+    return new ON_TextureMapping(mapping);
+	}
+	return NULL;
+}
+
+RH_C_FUNCTION int ON_TextureMapping_GetObjectTextureChannels(const CRhinoObject* rhinoObject, int channelCount, /*ARRAY*/int* channels)
+{
+  if (NULL == rhinoObject)
+    return 0;
+  const UUID plug_in_id = RhinoApp().GetDefaultRenderApp();
+	const ON_MappingRef* mapping_ref = rhinoObject->Attributes().m_rendering_attributes.MappingRef(plug_in_id);
+  if (NULL == mapping_ref)
+    return 0;
+  const int count = mapping_ref->m_mapping_channels.Count();
+  if (channelCount < 1)
+    return count;
+  if (channelCount < count)
+    return 0;
+	for (int i = 0; i < count && i < channelCount; i++)
+    channels[i] = mapping_ref->m_mapping_channels[i].m_mapping_channel_id;
+  return channelCount;
+}
+
+RH_C_FUNCTION int ON_TextureMapping_SetObjectMapping(const CRhinoObject* rhinoObject, int iChannelId, ON_TextureMapping* mapping)
+{
+  if (NULL == rhinoObject)
+    return 0;
+	CRhinoDoc* rhino_doc = rhinoObject->Document();
+	if (NULL == rhino_doc)
+		return 0;
+
+  const UUID plug_in_id = RhinoApp().GetDefaultRenderApp();
+	const ON_MappingRef* mapping_ref = rhinoObject->Attributes().m_rendering_attributes.MappingRef(plug_in_id);
+	ON_Xform xform(1);
+	int index = -1;
+	
+	//If there's no mapping ref, we can assume that there's no custom mapping
+	if (mapping_ref)
+	{
+		//There are count mapping channels on this object.  Iterate through them looking for the channel
+		const int count = mapping_ref->m_mapping_channels.Count();
+		for (int i = 0; i < count; i++)
+		{
+			const ON_MappingChannel& mc = mapping_ref->m_mapping_channels[i];
+			if (iChannelId == mc.m_mapping_channel_id)
+			{
+				//OK - this is the guy.
+				index = mc.m_mapping_index;
+
+				//The mapping for an object is modified per object by its local transform.
+				xform = mc.m_object_xform;
+			}
+		}
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	//Set the texture mapping on an object
+	///////////////////////////////////////////////////////////////////////////////////////
+
+  bool success = false;
+	CRhinoTextureMappingTable& table = rhino_doc->m_texture_mapping_table;
+
+  if (NULL == mapping)
+  {
+    // Removing the mapping
+
+    // No mapping ref so just return success
+    if (NULL == mapping_ref)
+      return 1; 
+
+    // No previous mapping so return success
+    if (index < 0)
+      return 1;
+  
+    // If there was a previous mapping then remove it now
+    success = table.DeleteTextureMapping(index);
+    return (success ? 1 : 0);
+  }
+
+  // Add or replace the mapping
+
+	if (-1 != index)
+	{
+		//This does everything.
+		success = table.ModifyTextureMapping(*mapping, index);
+	}
+	else
+	{
+		//There's no entry in the table.  We have to add one.
+		index = table.AddTextureMapping(*mapping);
+
+		//In this case, we're going to have to build new attributes for the object
+		//because there's no existing custom texture mapping.
+
+		ON_3dmObjectAttributes new_attr = rhinoObject->Attributes();
+		ON_MappingRef* new_mapping_ref = const_cast<ON_MappingRef*>(new_attr.m_rendering_attributes.MappingRef(plug_in_id));
+
+    if (NULL == new_mapping_ref)
+			new_mapping_ref = new_attr.m_rendering_attributes.AddMappingRef(plug_in_id);
+
+		ASSERT(new_mapping_ref);
+    if (NULL == new_mapping_ref)
+      return 0;
+
+		bool found = false;
+		for ( int i = 0; i < new_mapping_ref->m_mapping_channels.Count(); i++)
+		{
+			ON_MappingChannel& mc = const_cast<ON_MappingChannel&>(new_mapping_ref->m_mapping_channels[i]);
+			if (mc.m_mapping_channel_id != iChannelId)
+        continue;
+			//We found one - we can just modify it.
+			mc.m_mapping_index = index;
+			mc.m_object_xform = xform;
+			found = true;
+      break;
+		}
+
+		if (!found)
+		{
+			//Couldn't modify - have to add.
+			new_mapping_ref->AddMappingChannel(iChannelId, table[index].m_mapping_id);
+		}
+
+		//Now just modify the attributes
+		success = rhino_doc->ModifyObjectAttributes(CRhinoObjRef(rhinoObject), new_attr);
+	}
+
+  return (success ? 1 : 0);
+}
+#endif
+
 static bool GetBrepFaceCorners(const ON_BrepFace& face, ON_SimpleArray<ON_3fPoint>& points)
 {
   points.Destroy();

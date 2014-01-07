@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Rhino.Runtime.InteropWrappers;
 
 // none of the UI namespace needs to be in the stand-alone opennurbs library
 #if RHINO_SDK
@@ -71,20 +72,24 @@ namespace Rhino
     {
       public static int ShowContextMenu(IEnumerable<string> items, System.Drawing.Point screenPoint, IEnumerable<int> modes)
       {
-        IntPtr pStrings = UnsafeNativeMethods.ON_StringArray_New();
-        int count = 0;
+        IntPtr ptr_string_array = UnsafeNativeMethods.ON_StringArray_New();
         foreach (string item in items)
         {
-          UnsafeNativeMethods.ON_StringArray_Append(pStrings, item);
-          count++;
+          UnsafeNativeMethods.ON_StringArray_Append(ptr_string_array, item);
         }
-        List<int> _modes = new List<int>(modes);
-        count = _modes.Count;
-        int[] arrayModes = _modes.ToArray();
-        int rc = UnsafeNativeMethods.RHC_ShowContextMenu(pStrings, screenPoint.X, screenPoint.Y, count, arrayModes);
-        UnsafeNativeMethods.ON_StringArray_Delete(pStrings);
+        int modecount = 0;
+        int[] array_modes = null;
+        if (modes != null)
+        {
+          List<int> list_modes = new List<int>(modes);
+          modecount = list_modes.Count;
+          array_modes = list_modes.ToArray();
+        }
+        int rc = UnsafeNativeMethods.RHC_ShowContextMenu(ptr_string_array, screenPoint.X, screenPoint.Y, modecount, array_modes);
+        UnsafeNativeMethods.ON_StringArray_Delete(ptr_string_array);
         return rc;
       }
+
 
       public static void SetCustomColorDialog( EventHandler<GetColorEventArgs> handler)
       {
@@ -105,7 +110,7 @@ namespace Rhino
           {
             var color = System.Drawing.Color.FromArgb(argb);
             System.Windows.Forms.IWin32Window parent = null;
-            string title = Rhino.Runtime.StringHolder.GetString(titleAsStringHolder);
+            string title = StringHolder.GetString(titleAsStringHolder);
             GetColorEventArgs e = new GetColorEventArgs(color, colorButtons==1, title);
 
             if( hParent != IntPtr.Zero )
@@ -339,6 +344,11 @@ namespace Rhino
       /// [in/out] Default color for dialog, and will receive new color if function returns true.
       /// </param>
       /// <returns>true if the color changed. false if the color has not changed or the user pressed cancel.</returns>
+      /// <example>
+      /// <code source='examples\vbnet\ex_modifylightcolor.vb' lang='vbnet'/>
+      /// <code source='examples\cs\ex_modifylightcolor.cs' lang='cs'/>
+      /// <code source='examples\py\ex_modifylightcolor.py' lang='py'/>
+      /// </example>
       public static bool ShowColorDialog(ref System.Drawing.Color color)
       {
         return ShowColorDialog(ref color, false, null);

@@ -247,6 +247,12 @@ RH_C_FUNCTION void ON_Light_SetAttenuation(ON_Light* pLight, double a0, double a
     pLight->SetAttenuation(a0,a1,a2);
 }
 
+RH_C_FUNCTION void ON_Light_GetAttenuationVector(const ON_Light* pConstLight, ON_3dVector* v)
+{
+  if( pConstLight && v)
+    *v = pConstLight->Attenuation();
+}
+
 RH_C_FUNCTION double ON_Light_GetAttenuation(const ON_Light* pConstLight, double d)
 {
   double rc = 0;

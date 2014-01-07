@@ -147,7 +147,8 @@ namespace Rhino.Render
       get
       {
         Initialize();
-        return Rhino.Render.RenderContent.FromInstanceId(m_content_instance_id);
+        var doc = RhinoDoc.ActiveDoc;
+        return Rhino.Render.RenderContent.FromId(doc, m_content_instance_id);
       }
     }
 

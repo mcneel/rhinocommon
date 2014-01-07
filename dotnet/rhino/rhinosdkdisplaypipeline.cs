@@ -1063,6 +1063,11 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="mesh">Mesh for wire drawing.</param>
     /// <param name="color">Color of mesh wires.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_meshdrawing.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_meshdrawing.cs' lang='cs'/>
+    /// <code source='examples\py\ex_meshdrawing.py' lang='py'/>
+    /// </example>
     public void DrawMeshWires(Mesh mesh, System.Drawing.Color color)
     {
       DrawMeshWires(mesh, color, 1);
@@ -1099,6 +1104,11 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="mesh">Mesh to draw.</param>
     /// <param name="material">Material to draw faces with.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_meshdrawing.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_meshdrawing.cs' lang='cs'/>
+    /// <code source='examples\py\ex_meshdrawing.py' lang='py'/>
+    /// </example>
     public void DrawMeshShaded(Mesh mesh, DisplayMaterial material)
     {
       IntPtr pMesh = mesh.ConstPointer();
@@ -1256,6 +1266,11 @@ namespace Rhino.Display
     /// <param name="color">Color of arrow.</param>
     /// <param name="screenSize">If screenSize != 0.0 then the size (in screen pixels) of the arrow head will be equal to screenSize.</param>
     /// <param name="relativeSize">If relativeSize != 0.0 and screensize == 0.0 the size of the arrow head will be proportional to the arrow shaft length.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_conduitarrowheads.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_conduitarrowheads.cs' lang='cs'/>
+    /// <code source='examples\py\ex_conduitarrowheads.py' lang='py'/>
+    /// </example>
     public void DrawArrow(Line line, System.Drawing.Color color, double screenSize, double relativeSize)
     {
       Line[] lines = new Line[] { line };

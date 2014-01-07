@@ -1,238 +1,26 @@
 #pragma warning disable 1591
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Rhino.Geometry;
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
 
 namespace Rhino.Render
 {
-  public class RenderMesh
+  public class RenderPrimitive : IDisposable
   {
-    private readonly IntPtr m_renderMesh = IntPtr.Zero;
-    private RenderMeshIterator m_iterator;
+    private IntPtr m_ptr_render_mesh = IntPtr.Zero;
+    private RenderPrimitiveEnumerator m_parent;
 
-    internal RenderMesh(IntPtr pRenderMesh, RenderMeshIterator iterator)
+    internal RenderPrimitive(RenderPrimitiveEnumerator parent, IntPtr ptrRenderMesh)
     {
-      m_renderMesh = pRenderMesh;
-      m_iterator = iterator;
+      m_parent = parent;
+      m_parent.IncrementDependencyCount();
+      m_ptr_render_mesh = ptrRenderMesh;
     }
 
-    public Rhino.DocObjects.RhinoObject Object
-    {
-      get
-      {
-        IntPtr pObject = UnsafeNativeMethods.Rdk_RenderMesh_Object(ConstPointer());
-        return Rhino.DocObjects.RhinoObject.CreateRhinoObjectHelper(pObject);
-      }
-    }
-
-
-
-    public enum PrimitiveTypes : int
-    {
-      None = 0,
-      Mesh = 1,
-      Sphere = 2,
-      Plane = 3,
-      Box = 4,
-      Cone = 5,
-    }
-
-    /// <summary>
-    /// Call this before extracting meshes. Although the Mesh property
-    /// will always work correctly no matter what the primitive type is,
-    /// if your renderer supports rendering any of these primitives, you can
-    /// extract the data using the Sphere, Plane, Cone and Box properties.
-    /// </summary>
-    public PrimitiveTypes PrimitiveType
-    {
-      get
-      {
-        return (PrimitiveTypes)UnsafeNativeMethods.Rdk_RenderMesh_PrimitiveType(ConstPointer());
-      }
-    }
-
-    /// <summary>
-    /// Returns the mesh associated with the object.
-    /// </summary>
-    public Rhino.Geometry.Mesh Mesh
-    {
-      get
-      {
-        IntPtr pMesh = UnsafeNativeMethods.Rdk_RenderMesh_Mesh(ConstPointer());
-        if (pMesh == IntPtr.Zero)
-          return null;
-        return new Rhino.Geometry.Mesh(pMesh, this);
-      }
-    }
-
-    internal IntPtr GetConst_ON_Mesh_Pointer()
-    {
-      IntPtr pConstThis = ConstPointer();
-      return UnsafeNativeMethods.Rdk_RenderMesh_Mesh(pConstThis);
-    }
-
-    /// <summary>
-    /// Returns a sphere if this object represents a primitive sphere, or null.
-    /// </summary>
-    public Rhino.Geometry.Sphere Sphere
-    {
-      get
-      {
-        double radius = 1.0;
-        Rhino.Geometry.Point3d center = new Rhino.Geometry.Point3d();
-        bool isSphere = 1 == UnsafeNativeMethods.Rdk_RenderMesh_Sphere(ConstPointer(), ref center, ref radius);
-
-        if (isSphere)
-        {
-          return new Rhino.Geometry.Sphere(center, radius);
-        }
-        return new Rhino.Geometry.Sphere();
-      }
-    }
-
-    //bool Box(ON_PlaneSurface& plane, ON_Interval& z_interval) const;
-    //void SetBox(const ON_PlaneSurface& plane, const ON_Interval& z_interval);
-
-    //bool Plane(ON_PlaneSurface& plane) const;
-    //void SetPlane(const ON_PlaneSurface& plane);	
-
-    //bool Cone(ON_Cone& cone, ON_Plane& truncation) const;
-    //void SetCone(const ON_Cone& cone, const ON_Plane& plane);
-
-    public Rhino.Geometry.Transform InstanceTransform
-    {
-      get
-      {
-        Rhino.Geometry.Transform t = new Transform();
-        UnsafeNativeMethods.Rdk_RenderMesh_XformInstance(ConstPointer(), ref t);
-        return t;
-      }
-    }
-
-    public bool IsRenderMaterial
-    {
-      get
-      {
-        return 1 == UnsafeNativeMethods.Rdk_RenderMesh_IsRdkMaterial(ConstPointer());
-      }
-    }
-
-    /// <summary>
-    /// Implmented as !IsRenderMaterial - the material is always either a RenderMaterial or a Legacy material (Rhino.DocObjects.Material)
-    /// </summary>
-    public bool IsLegacyMaterial
-    {
-      get
-      {
-        return !IsRenderMaterial;
-      }
-    }
-
-    /// <summary>
-    /// Will return null if "IsRenderMaterial" returns false.
-    /// </summary>
-    public Rhino.Render.RenderMaterial Material
-    {
-      get
-      {
-        IntPtr pMaterial = UnsafeNativeMethods.Rdk_RenderMesh_RdkMaterial(ConstPointer());
-        if (pMaterial != IntPtr.Zero)
-        {
-          return RenderContent.FromPointer(pMaterial) as RenderMaterial;
-        }
-        return null;
-      }
-    }
-
-    //Will return null if "IsLegacyMaterial" returns false
-    public Rhino.DocObjects.Material LegacyMaterial
-    {
-      get
-      {
-        IntPtr pMaterial = UnsafeNativeMethods.Rdk_RenderMesh_OnMaterial(ConstPointer());
-
-        return pMaterial!=IntPtr.Zero ? Rhino.DocObjects.Material.NewTemporaryMaterial(pMaterial) : null;
-      }
-    }
-
-    public Rhino.Geometry.BoundingBox BoundingBox
-    {
-      get
-      {
-        Point3d min = new Point3d();
-        Point3d max = new Point3d();
-
-        UnsafeNativeMethods.Rdk_RenderMesh_BoundingBox(ConstPointer(), ref min, ref max);
-
-        return new BoundingBox(min, max);
-      }
-    }
-
-    #region internals
-    internal IntPtr ConstPointer()
-    {
-      return m_renderMesh;
-    }
-    internal IntPtr NonConstPointer()
-    {
-      return m_renderMesh;
-    }
-    #endregion
-
-
-  }
-
-  public class RenderMeshIterator : IDisposable, IEnumerator
-  {
-    public RenderMeshIterator(Guid plugInId, Rhino.DocObjects.ViewportInfo vp, bool needTriangleMesh)
-    {
-      IntPtr pIt = UnsafeNativeMethods.Rdk_RenderMeshIterator_New(plugInId, needTriangleMesh, vp.ConstPointer());
-      if (pIt != IntPtr.Zero)
-      {
-        m_pIterator = pIt;
-      }
-    }
-
-    private readonly IntPtr m_pIterator = IntPtr.Zero;
-    internal RenderMeshIterator(IntPtr pIterator)
-    {
-      m_pIterator = pIterator;
-    }
-
-    public void EnsureRenderMeshesCreated()
-    {
-      UnsafeNativeMethods.Rdk_RenderMeshIterator_EnsureRenderMeshesCreated(ConstPointer());
-    }
-
-
-    public Rhino.Geometry.BoundingBox SceneBoundingBox
-    {
-      get
-      {
-        Point3d min = new Point3d();
-        Point3d max = new Point3d();
-
-        UnsafeNativeMethods.Rdk_RenderMeshIterator_SceneBoundingBox(ConstPointer(), ref min, ref max);
-
-        return new BoundingBox(min, max);
-      }
-    }
-
-    public bool SupportsAutomaticInstancing
-    {
-      get
-      {
-        return 1 == UnsafeNativeMethods.Rdk_RenderMeshIterator_SupportsAutomaticInstancing(ConstPointer());
-      }
-    }
-
-
-
-    #region IDisposable Members
-
-    ~RenderMeshIterator()
+    ~RenderPrimitive()
     {
       Dispose(false);
       GC.SuppressFinalize(this);
@@ -245,7 +33,401 @@ namespace Rhino.Render
 
     protected void Dispose(bool isDisposing)
     {
-      UnsafeNativeMethods.Rdk_RenderMeshIterator_Delete(m_pIterator);
+      if( m_parent != null )
+      {
+        m_parent.DecrementDependencyCount();
+      }
+      m_parent = null;
+      m_ptr_render_mesh = IntPtr.Zero;
+    }
+
+    /// <summary>
+    /// The Rhino object associated with this render primitive.
+    /// </summary>
+    public DocObjects.RhinoObject RhinoObject
+    {
+      get
+      {
+        var const_pointer = ConstPointer();
+        var mesh_object = UnsafeNativeMethods.Rdk_RenderMesh_Object(const_pointer);
+        return DocObjects.RhinoObject.CreateRhinoObjectHelper(mesh_object);
+      }
+    }
+
+    /// <summary>
+    /// Call this before extracting meshes if you support render primitives to
+    /// get the <see cref="RenderPrimitiveType"/> of this mesh then call the
+    /// associated <see cref="TryGetSphere"/>, <see cref="TryGetPlane"/>, <see cref="TryGetCone"/>, or
+    /// <see cref="TryGetBox"/> method.  Calling the <see cref="Mesh"/> property
+    /// will mesh the primitive and return a mesh always.
+    /// </summary>
+    public RenderPrimitiveType PrimitiveType
+    {
+      get
+      {
+        var const_pointer = ConstPointer();
+        return (RenderPrimitiveType)UnsafeNativeMethods.Rdk_RenderMesh_PrimitiveType(const_pointer);
+      }
+    }
+
+    /// <summary>
+    /// Returns the mesh associated with the object, this will mesh primitives
+    /// and always return a mesh.
+    /// </summary>
+    /// <returns></returns>
+    public Mesh Mesh()
+    {
+      var const_pointer = ConstPointer();
+      var mesh = UnsafeNativeMethods.Rdk_RenderMesh_Mesh(const_pointer);
+      MeshHolder mh = new MeshHolder(this);
+      return (mesh == IntPtr.Zero ? null : new Mesh(mesh, mh));
+    }
+
+    /// <summary>
+    /// Call this method to get a sphere primitive for this mesh.  If this
+    /// meshes <see cref="PrimitiveType"/> is not a <see cref="Rhino.Render.RenderPrimitiveType.Sphere"/>
+    /// then the sphere parameter is set to <see cref="Sphere.Unset"/>.
+    /// </summary>
+    /// <param name="sphere">
+    /// Gets set to the primitive sphere for this object on success. 
+    /// </param>
+    /// <returns>
+    /// Returns true if <see cref="PrimitiveType"/> is <see cref="Rhino.Render.RenderPrimitiveType.Sphere"/> and
+    /// the sphere parameter was initialized otherwise returns false.
+    /// </returns>
+    public bool TryGetSphere(out Sphere sphere)
+    {
+      var radius = 1.0;
+      var center = new Point3d();
+      var const_pointer = ConstPointer();
+      var success = (1 == UnsafeNativeMethods.Rdk_RenderMesh_Sphere(const_pointer, ref center, ref radius));
+      sphere = (success ? new Sphere(center, radius) : Sphere.Unset);
+      return success;
+    }
+
+    /// <summary>
+    /// Call this method to get a <see cref="Box"/> primitive for this mesh.  If this
+    /// meshes <see cref="PrimitiveType"/> is not a <see cref="Rhino.Render.RenderPrimitiveType.Box"/>
+    /// then the box parameter is set to <see cref="Box.Empty"/>.
+    /// </summary>
+    /// <param name="box">
+    /// Gets set to the box primitive for this object on success or <see cref="Box.Empty"/> on error.
+    /// </param>
+    /// <returns>
+    /// Returns true if <see cref="PrimitiveType"/> is <see cref="Rhino.Render.RenderPrimitiveType.Box"/> and
+    /// the box parameter was initialized otherwise returns false.
+    /// </returns>
+    public bool TryGetBox(out Box box)
+    {
+      var origin = new Point3d();
+      var xaxis = new Vector3d();
+      var yaxis = new Vector3d();
+      var min_x = 0.0;
+      var max_x = 0.0;
+      var min_y = 0.0;
+      var max_y = 0.0;
+      var min_z = 0.0;
+      var max_z = 0.0;
+      var const_pointer = ConstPointer();
+      var success = (1 == UnsafeNativeMethods.Rdk_RenderMesh_Box(const_pointer, ref origin, ref xaxis, ref yaxis, ref min_x, ref max_x, ref min_y, ref max_y, ref min_z, ref max_z));
+      if (success)
+      {
+        box = new Box(new Plane(origin, xaxis, yaxis),
+                      new Interval(min_x, max_x),
+                      new Interval(min_y, max_y),
+                      new Interval(min_z, max_z));
+      }
+      else
+      {
+        box = Box.Empty;
+      }
+      return success;
+    }
+
+    /// <summary>
+    /// Call this method to get a <see cref="Plane"/> primitive for this mesh.  If this
+    /// meshes <see cref="PrimitiveType"/> is not a <see cref="Rhino.Render.RenderPrimitiveType.Plane"/>
+    /// then the plane parameter is set to null.
+    /// </summary>
+    /// <param name="plane">
+    /// Gets set to the plane primitive for this object on success or null on error.
+    /// </param>
+    /// <returns>
+    /// Returns true if <see cref="PrimitiveType"/> is <see cref="Rhino.Render.RenderPrimitiveType.Plane"/> and
+    /// the plane parameter was initialized otherwise returns false.
+    /// </returns>
+    public bool TryGetPlane(out PlaneSurface plane)
+    {
+      var origin = new Point3d();
+      var xaxis = new Vector3d();
+      var yaxis = new Vector3d();
+      var min_x = 0.0;
+      var max_x = 0.0;
+      var min_y = 0.0;
+      var max_y = 0.0;
+      var const_pointer = ConstPointer();
+      var success = (1 == UnsafeNativeMethods.Rdk_RenderMesh_Plane(const_pointer, ref origin, ref xaxis, ref yaxis, ref min_x, ref max_x, ref min_y, ref max_y));
+      if (success)
+        plane = new PlaneSurface(new Plane(origin, xaxis, yaxis),
+                                 new Interval(min_x, max_x),
+                                 new Interval(min_y, max_y));
+      else
+        plane = null;
+      return success;
+    }
+
+    /// <summary>
+    /// Call this method to get a <see cref="Cone"/> primitive for this mesh.  If this
+    /// meshes <see cref="PrimitiveType"/> is not a <see cref="Rhino.Render.RenderPrimitiveType.Cone"/>
+    /// then the cone parameter is set to <see cref="Cone.Unset"/> and the truncation
+    /// parameter is set to <see cref="Plane.Unset"/>.
+    /// </summary>
+    /// <param name="cone">
+    /// Gets set to the cone primitive for this object on success or <see cref="Cone.Unset"/> on error.
+    /// </param>
+    /// <param name="truncation">
+    /// Gets set to the truncation plane for this object on success or <see cref="Plane.Unset"/> on error.
+    /// </param>
+    /// <returns>
+    /// Returns true if <see cref="PrimitiveType"/> is <see cref="Rhino.Render.RenderPrimitiveType.Cone"/> and
+    /// the cone and truncation parameters were initialized otherwise returns false.
+    /// </returns>
+    public bool TryGetCone(out Cone cone, out Plane truncation)
+    {
+      var origin = new Point3d();
+      var xaxis = new Vector3d();
+      var yaxis = new Vector3d();
+
+      var height = 0.0;
+      var radius = 0.0;
+
+      var t_origin = new Point3d();
+      var t_xaxis = new Vector3d();
+      var t_yaxis = new Vector3d();
+
+      var const_pointer = ConstPointer();
+
+      var success = (1 == UnsafeNativeMethods.Rdk_RenderMesh_Cone(const_pointer, ref origin, ref xaxis, ref yaxis, ref height, ref radius, ref origin, ref xaxis, ref yaxis));
+      if (success)
+      {
+        cone = new Cone(new Plane(origin, xaxis, yaxis), height, radius);
+        truncation = new Plane(t_origin, t_xaxis, t_yaxis);
+      }
+      else
+      {
+        cone = Cone.Unset;
+        truncation = Plane.Unset;
+      }
+      return success;
+    }
+
+    /// <summary>
+    /// Instance reference transform or Identity if not an instance reference.
+    /// </summary>
+    public Transform InstanceTransform
+    {
+      get
+      {
+        var transform = new Transform();
+        var const_pointer = ConstPointer();
+        UnsafeNativeMethods.Rdk_RenderMesh_XformInstance(const_pointer, ref transform);
+        return transform;
+      }
+    }
+
+    /// <summary>
+    /// This property will be true if this mesh has a <see cref="RenderMaterial"/> associated with
+    /// it or false if there is a <see cref="Material"/>.
+    /// </summary>
+    public bool HasRenderMaterial
+    {
+      get
+      {
+        var const_pointer = ConstPointer();
+        return (1 == UnsafeNativeMethods.Rdk_RenderMesh_IsRdkMaterial(const_pointer));
+      }
+    }
+
+    /// <summary>
+    /// The <see cref="RenderMaterial"/> associated with this mesh or null if there is not one.
+    /// </summary>
+    public RenderMaterial RenderMaterial
+    {
+      get
+      {
+        var const_pointer = ConstPointer();
+        var material = UnsafeNativeMethods.Rdk_RenderMesh_RdkMaterial(const_pointer);
+        var result = (material == IntPtr.Zero ? null : RenderContent.FromPointer(material) as RenderMaterial);
+        return result;
+      }
+    }
+
+    /// <summary>
+    /// The <see cref="Material"/>associated with this mesh or null if the
+    /// <see cref="RenderPrimitive"/> property has a value.
+    /// </summary>
+    public DocObjects.Material Material
+    {
+      get
+      {
+        var const_pointer = ConstPointer();
+        var material = UnsafeNativeMethods.Rdk_RenderMesh_OnMaterial(const_pointer);
+        var result = (material == IntPtr.Zero ? null : DocObjects.Material.NewTemporaryMaterial(material));
+        return result;
+      }
+    }
+
+    /// <summary>
+    /// The bounding box for this primitive.
+    /// </summary>
+    public BoundingBox BoundingBox
+    {
+      get
+      {
+        var min = new Point3d();
+        var max = new Point3d();
+        var const_pointer = ConstPointer();
+
+        UnsafeNativeMethods.Rdk_RenderMesh_BoundingBox(const_pointer, ref min, ref max);
+
+        return new BoundingBox(min, max);
+      }
+    }
+
+    #region internals
+    internal IntPtr ConstPointer()
+    {
+      return m_ptr_render_mesh;
+    }
+    internal IntPtr NonConstPointer()
+    {
+      return m_ptr_render_mesh;
+    }
+    #endregion
+  }
+
+  class RenderPrimitiveEnumerable : IEnumerable<RenderPrimitive>
+  {
+    readonly Guid m_plugin_id;
+    readonly DocObjects.ViewportInfo m_viewport;
+    readonly bool m_force_triangles;
+    public RenderPrimitiveEnumerable(Guid plugInId, DocObjects.ViewportInfo viewport, bool forceTriangleMeshes)
+    {
+      m_plugin_id = plugInId;
+      m_viewport = viewport;
+      m_force_triangles = forceTriangleMeshes;
+    }
+    public IEnumerator<RenderPrimitive> GetEnumerator()
+    {
+      return new RenderPrimitiveEnumerator(m_plugin_id, m_viewport, m_force_triangles);
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return new RenderPrimitiveEnumerator(m_plugin_id, m_viewport, m_force_triangles);
+    }
+  }
+
+  class RenderPrimitiveEnumerator : IEnumerator<RenderPrimitive>
+  {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="plugInId">
+    /// The Id of the plug-in creating the iterator.
+    /// </param>
+    /// <param name="viewport">
+    /// The rendering view camera.
+    /// </param>
+    /// <param name="forceTriangleMeshes">
+    /// If true quad meshes will be triangulated
+    /// </param>
+    public RenderPrimitiveEnumerator(Guid plugInId, DocObjects.ViewportInfo viewport, bool forceTriangleMeshes)
+    {
+      var viewport_pointer = null == viewport ? IntPtr.Zero : viewport.ConstPointer();
+      var iterator_pointer = UnsafeNativeMethods.Rdk_RenderMeshIterator_New(plugInId, forceTriangleMeshes, viewport_pointer);
+      if (iterator_pointer != IntPtr.Zero)
+        m_iterator_pointer = iterator_pointer;
+    }
+
+    private IntPtr m_iterator_pointer = IntPtr.Zero;
+    
+    internal RenderPrimitiveEnumerator(IntPtr iteratorPointer)
+    {
+      m_iterator_pointer = iteratorPointer;
+    }
+
+    public void EnsureRenderMeshesCreated()
+    {
+      var const_pointer = ConstPointer();
+      UnsafeNativeMethods.Rdk_RenderMeshIterator_EnsureRenderMeshesCreated(const_pointer);
+    }
+
+    /// <summary>
+    /// Bounding box containing all meshes in the scene.
+    /// </summary>
+    public BoundingBox SceneBoundingBox
+    {
+      get
+      {
+        var min = new Point3d();
+        var max = new Point3d();
+        var const_pointer = ConstPointer();
+
+        UnsafeNativeMethods.Rdk_RenderMeshIterator_SceneBoundingBox(const_pointer, ref min, ref max);
+
+        return new BoundingBox(min, max);
+      }
+    }
+
+    public bool SupportsAutomaticInstancing
+    {
+      get
+      {
+        var const_pointer = ConstPointer();
+        return 1 == UnsafeNativeMethods.Rdk_RenderMeshIterator_SupportsAutomaticInstancing(const_pointer);
+      }
+    }
+
+    #region IDisposable Members
+    
+    bool m_disposed;
+    int m_dependency_count;
+
+    internal void IncrementDependencyCount()
+    {
+      m_dependency_count++;
+    }
+    internal void DecrementDependencyCount()
+    {
+      m_dependency_count--;
+      DoCleanUpTest();
+    }
+
+    void DoCleanUpTest()
+    {
+      if (m_disposed && m_dependency_count < 1 && m_iterator_pointer != IntPtr.Zero)
+      {
+        UnsafeNativeMethods.Rdk_RenderMeshIterator_Delete(m_iterator_pointer);
+        m_iterator_pointer = IntPtr.Zero;
+      }
+    }
+
+    ~RenderPrimitiveEnumerator()
+    {
+      Dispose(false);
+      GC.SuppressFinalize(this);
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+    }
+
+    protected void Dispose(bool isDisposing)
+    {
+      m_disposed = true;
+      DoCleanUpTest();
     }
 
     #endregion
@@ -253,39 +435,38 @@ namespace Rhino.Render
     #region internals
     internal IntPtr ConstPointer()
     {
-      return m_pIterator;
+      return m_iterator_pointer;
     }
     #endregion
 
-
-
-
-
     #region IEnumerator Members
 
-    private RenderMesh m_current;
-    public object Current
-    {
-      get
-      {
-        return m_current;
-      }
-    }
+    private RenderPrimitive m_current;
 
     public bool MoveNext()
     {
-      RenderMesh mesh = new RenderMesh(UnsafeNativeMethods.Rdk_RenderMesh_New(), this);
-
-      bool bRet = 1 == UnsafeNativeMethods.Rdk_RenderMeshIterator_Next(ConstPointer(), mesh.NonConstPointer());
-
-      m_current = bRet ? mesh : null;
-
-      return bRet;
+      IntPtr ptr_rendermesh = UnsafeNativeMethods.Rdk_RenderMesh_New();
+      IntPtr const_ptr_this = ConstPointer();
+      bool success = (1 == UnsafeNativeMethods.Rdk_RenderMeshIterator_Next(const_ptr_this, ptr_rendermesh));
+      m_current = success ? new RenderPrimitive(this, ptr_rendermesh) : null;
+      return success;
     }
 
     public void Reset()
     {
-      UnsafeNativeMethods.Rdk_RenderMeshIterator_Reset(ConstPointer());
+      m_current = null;
+      IntPtr const_ptr_this = ConstPointer();
+      UnsafeNativeMethods.Rdk_RenderMeshIterator_Reset(const_ptr_this);
+    }
+
+    public object Current
+    {
+      get { return m_current; }
+    }
+
+    RenderPrimitive IEnumerator<RenderPrimitive>.Current
+    {
+      get { return m_current; }
     }
 
     #endregion

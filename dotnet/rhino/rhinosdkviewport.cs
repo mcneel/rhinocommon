@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 using System;
 using Rhino.Geometry;
+using Rhino.Runtime.InteropWrappers;
 
 
 namespace Rhino.Display
@@ -187,6 +188,11 @@ namespace Rhino.Display
     /// <summary>
     /// Gets or sets the height and width of the viewport (in pixels)
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_viewportresolution.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_vieportresolution.cs' lang='cs'/>
+    /// <code source='examples\py\ex_viewportresolution.py' lang='py'/>
+    /// </example>
     public System.Drawing.Size Size
     {
       get { return Bounds.Size; }
@@ -217,7 +223,7 @@ namespace Rhino.Display
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pThis = NonConstPointer();
           IntPtr pString = sh.NonConstPointer();
@@ -612,8 +618,8 @@ namespace Rhino.Display
     /// </example>
     public bool ZoomExtents()
     {
-      IntPtr pThis = NonConstPointer();
-      return UnsafeNativeMethods.RHC_RhinoDollyExtents(pThis, false);
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoDollyExtents(ptr_this, false);
     }
 
     /// <summary>
@@ -624,8 +630,8 @@ namespace Rhino.Display
     /// <returns>true if successful.</returns>
     public bool ZoomExtentsSelected()
     {
-      IntPtr pThis = NonConstPointer();
-      return UnsafeNativeMethods.RHC_RhinoDollyExtents(pThis, true);
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoDollyExtents(ptr_this, true);
     }
 
     /// <summary>
@@ -635,8 +641,8 @@ namespace Rhino.Display
     /// <returns>true if operation succeeded; otherwise false.</returns>
     public bool ZoomBoundingBox(BoundingBox box)
     {
-      IntPtr pThis = NonConstPointer();
-      return UnsafeNativeMethods.RHC_RhZoomExtentsHelper(pThis, box.m_min, box.m_max);
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.RHC_RhZoomExtentsHelper(ptr_this, box.m_min, box.m_max);
     }
 
     #region mouse
@@ -1362,11 +1368,15 @@ namespace Rhino.Display
     /// 4x4 transformation matrix (acts on the left)
     /// Identity matrix is returned if this function fails.
     /// </returns>
-    public Transform GetTransform(Rhino.DocObjects.CoordinateSystem sourceSystem, Rhino.DocObjects.CoordinateSystem destinationSystem)
+    /// <example>
+    /// <code source='examples\vbnet\ex_pointatcursor.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_pointatcursor.cs' lang='cs'/>
+    /// </example>
+    public Transform GetTransform(DocObjects.CoordinateSystem sourceSystem, DocObjects.CoordinateSystem destinationSystem)
     {
       Transform matrix = new Transform();
-      IntPtr ptr = ConstPointer();
-      if (!UnsafeNativeMethods.CRhinoViewport_VP_GetXform(ptr, (int)sourceSystem, (int)destinationSystem, ref matrix))
+      IntPtr const_ptr_this = ConstPointer();
+      if (!UnsafeNativeMethods.CRhinoViewport_VP_GetXform(const_ptr_this, (int)sourceSystem, (int)destinationSystem, ref matrix))
         return Transform.Identity;
       return matrix;
     }
@@ -1486,7 +1496,7 @@ namespace Rhino.Display
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           IntPtr pConstThis = ConstPointer();

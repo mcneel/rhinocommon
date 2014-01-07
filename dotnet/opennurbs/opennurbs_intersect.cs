@@ -237,6 +237,11 @@ namespace Rhino.Geometry.Intersect
     /// If <see cref="LineCircleIntersection.Single"/> is returned, only t1 and point1 will have valid values. 
     /// If <see cref="LineCircleIntersection.Multiple"/> is returned, t2 and point2 will also be filled out.
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_intersectlinecircle.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_intersectlinecircle.cs' lang='cs'/>
+    /// <code source='examples\py\ex_intersectlinecircle.py' lang='py'/>
+    /// </example>
     public static LineCircleIntersection LineCircle(Line line, Circle circle, out double t1, out Point3d point1, out double t2, out Point3d point2)
     {
       t1 = 0.0;
@@ -543,6 +548,11 @@ namespace Rhino.Geometry.Intersect
     /// an intersection is assumed.</param>
     /// <param name="overlapTolerance">The tolerance with which the curves are tested.</param>
     /// <returns>A collection of intersection events.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_curvesurfaceintersect.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_curvesurfaceintersect.cs' lang='cs'/>
+    /// <code source='examples\py\ex_curvesurfaceintersect.py' lang='py'/>
+    /// </example>
     public static CurveIntersections CurveSurface(Curve curve, Surface surface, double tolerance, double overlapTolerance)
     {
       IntPtr pCurve = curve.ConstPointer();
@@ -588,6 +598,11 @@ namespace Rhino.Geometry.Intersect
     /// <param name="overlapCurves">The overlap curves will be returned here.</param>
     /// <param name="intersectionPoints">The intersection points will be returned here.</param>
     /// <returns>true on success, false on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_elevation.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_elevation.cs' lang='cs'/>
+    /// <code source='examples\py\ex_elevation.py' lang='py'/>
+    /// </example>
     public static bool CurveBrep(Curve curve, Brep brep, double tolerance, out Curve[] overlapCurves, out Point3d[] intersectionPoints)
     {
       overlapCurves = new Curve[0];
@@ -1002,6 +1017,11 @@ namespace Rhino.Geometry.Intersect
     /// <returns>
     /// Array of projected points, or null in case of any error or invalid input.
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_projectpointstobreps.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_projectpointstobreps.cs' lang='cs'/>
+    /// <code source='examples\py\ex_projectpointstobreps.py' lang='py'/>
+    /// </example>
     public static Point3d[] ProjectPointsToBreps(IEnumerable<Brep> breps, IEnumerable<Point3d> points, Vector3d direction, double tolerance)
     {
       Point3d[] rc = null;

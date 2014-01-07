@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using Rhino.Geometry;
 using Rhino.Display;
 using System.Collections.Generic;
+using Rhino.Runtime.InteropWrappers;
 
 #if RHINO_SDK
 namespace Rhino.Input
@@ -515,20 +516,23 @@ namespace Rhino.Input
     /// <param name="prompts">Optional prompts to display while getting points. May be null.</param>
     /// <param name="corners">Corners of the rectangle in counter-clockwise order will be assigned to this out parameter during this call.</param>
     /// <returns>Commands.Result.Success if successful.</returns>
-    public static Commands.Result GetRectangle(GetBoxMode mode, Rhino.Geometry.Point3d firstPoint, System.Collections.Generic.IEnumerable<string> prompts, out Rhino.Geometry.Point3d[] corners)
+    public static Commands.Result GetRectangle(GetBoxMode mode, Point3d firstPoint, IEnumerable<string> prompts, out Point3d[] corners)
     {
       corners = new Point3d[4];
       IntPtr ptr = UnsafeNativeMethods.CArgsRhinoGetPlane_New();
       UnsafeNativeMethods.CArgsRhinoGetPlane_SetMode(ptr, (int)mode);
       if (firstPoint.IsValid) UnsafeNativeMethods.CArgsRhinoGetPlane_SetFirstPoint(ptr, firstPoint);
-      int i = 0;
-      foreach (string s in prompts)
+      if (prompts != null)
       {
-        if( !string.IsNullOrEmpty(s) )
-          UnsafeNativeMethods.CArgsRhinoGetPlane_SetPrompt(ptr, s, i++);
+        int i = 0;
+        foreach (string s in prompts)
+        {
+          if (!string.IsNullOrEmpty(s))
+            UnsafeNativeMethods.CArgsRhinoGetPlane_SetPrompt(ptr, s, i++);
+        }
       }
 
-      Commands.Result rc = (Rhino.Commands.Result)UnsafeNativeMethods.RHC_RhinoGetRectangle(corners, ptr);
+      Commands.Result rc = (Commands.Result)UnsafeNativeMethods.RHC_RhinoGetRectangle(corners, ptr);
       if (rc != Commands.Result.Success)
         corners = null;
       UnsafeNativeMethods.CArgsRhinoGetPlane_Delete(ptr);
@@ -803,9 +807,14 @@ namespace Rhino.Input
       return Commands.Result.Failure;
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_extractthumbnail.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_extractthumbnail.cs' lang='cs'/>
+    /// <code source='examples\py\ex_extractthumbnail.py' lang='py'/>
+    /// </example>
     public static string GetFileName(Custom.GetFileNameMode mode, string defaultName, string title, System.Windows.Forms.IWin32Window parent)
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         IntPtr pParent = parent != null ? parent.Handle : IntPtr.Zero;
@@ -816,7 +825,7 @@ namespace Rhino.Input
 
     public static string GetFileNameScripted(Custom.GetFileNameMode mode, string defaultName)
     {
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoGetFileDialog_Get2((int)mode, defaultName, pString);

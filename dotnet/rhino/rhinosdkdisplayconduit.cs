@@ -121,6 +121,11 @@ namespace Rhino.Display
     /// <para>The default implementation does nothing.</para>
     /// </summary>
     /// <param name="e">The event argument contain the current bounding box state.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_meshdrawing.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_meshdrawing.cs' lang='cs'/>
+    /// <code source='examples\py\ex_meshdrawing.py' lang='py'/>
+    /// </example>
     protected virtual void CalculateBoundingBox(CalculateBoundingBoxEventArgs e) {}
 
     /// <summary>
@@ -139,6 +144,11 @@ namespace Rhino.Display
     /// <para>The default implementation does nothing.</para>
     /// </summary>
     /// <param name="e">The event argument contain the current viewport and display state.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_meshdrawing.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_meshdrawing.cs' lang='cs'/>
+    /// <code source='examples\py\ex_meshdrawing.py' lang='py'/>
+    /// </example>
     protected virtual void PreDrawObjects(DrawEventArgs e) {}
 
     /// <summary>

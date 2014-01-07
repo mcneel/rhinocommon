@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 
 namespace MethodGen
@@ -18,6 +19,7 @@ namespace MethodGen
   {
     public static string m_namespace;
     public static bool m_includeRhinoDeclarations = true;
+    public static List<string> m_extra_usings = new List<string>();
 
     static void Main(string[] args)
     {
@@ -40,6 +42,14 @@ namespace MethodGen
           string[] lines = System.IO.File.ReadAllLines(path);
           dirCPP = System.IO.Path.GetFullPath(lines[0]);
           dirCS = System.IO.Path.GetFullPath(lines[1]);
+          if (lines.Length > 0 && lines[2].StartsWith("using"))
+          {
+            m_includeRhinoDeclarations = false;
+            for (int i = 2; i < lines.Length; i++)
+            {
+              m_extra_usings.Add(lines[i].Trim());
+            }
+          }
         }
         else
         {
@@ -120,7 +130,7 @@ namespace MethodGen
       System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(path);
       while(true)
       {
-        if( string.Compare(dirInfo.Name, "rhinocommon", true)==0 )
+        if( string.Compare(dirInfo.Name, "RhinoCommon", true)==0 )
         {
           if( rdk )
             c = System.IO.Path.Combine(dirInfo.FullName, "c_rdk");

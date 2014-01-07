@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.DocObjects
 {
@@ -127,7 +128,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        using(Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pStringHolder = sh.NonConstPointer();
           IntPtr pConstThis = ConstPointer();
@@ -313,7 +314,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pConstThis = ConstPointer();
           IntPtr pString = sh.NonConstPointer();
@@ -332,7 +333,7 @@ namespace Rhino.DocObjects
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pConstThis = ConstPointer();
           IntPtr pString = sh.NonConstPointer();
@@ -428,6 +429,11 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoDimStyleTable_Add(m_doc.m_docId, name, reference);
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_dimstyle.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_dimstyle.cs' lang='cs'/>
+    /// <code source='examples\py\ex_dimstyle.py' lang='py'/>
+    /// </example>
     public int CurrentDimensionStyleIndex
     {
       get
@@ -459,7 +465,7 @@ namespace Rhino.DocObjects.Tables
 
     public string GetUnusedDimensionStyleName()
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pStringHolder = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoDimStyleTable_GetUnusedDimensionStyleName(m_doc.m_docId, pStringHolder);

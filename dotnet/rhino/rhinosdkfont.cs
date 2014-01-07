@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using Rhino.Runtime.InteropWrappers;
 
 #if RHINO_SDK
 namespace Rhino.DocObjects
@@ -13,7 +14,7 @@ namespace Rhino.DocObjects
       IntPtr pStringArray = UnsafeNativeMethods.ON_StringArray_New();
       int count = UnsafeNativeMethods.CRhinoFontTable_GetFontNames(pStringArray);
       string[] rc = new string[count];
-      using(Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pStringHolder = sh.NonConstPointer();
         for( int i=0; i<count; i++ )
@@ -127,6 +128,11 @@ namespace Rhino.DocObjects.Tables
       }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_textjustify.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_textjustify.cs' lang='cs'/>
+    /// <code source='examples\py\ex_textjustify.py' lang='py'/>
+    /// </example>
     public int FindOrCreate(string face, bool bold, bool italic)
     {
       return UnsafeNativeMethods.CRhinoFontTable_FindOrCreate(m_doc.m_docId, face, bold, italic);

@@ -741,31 +741,6 @@ namespace Rhino.Geometry
         rc = UnsafeNativeMethods.ON_Xform_Invert(ref inverseTransform);
       return rc;
     }
-
-		public Transform Transpose()
-		{
-			Transform rc = new Transform ();
-			for (int r=0; r<4; r++) {
-				for (int c=0; c<4; c++) {
-					rc [r, c] = this [c, r];
-				}
-			}
-			return rc;
-		}
-
-		public float[] ToFloatArray(bool rowDominant)
-		{
-			float[] rc = new float[16];
-		  for (int r=0; r<4; r++)
-			  for (int c=0; c<4; c++) {
-				double value = this [r, c];
-				if (rowDominant)
-					rc [r * 4 + c] = (float)value;
-				else
-					rc [c * 4 + r] = (float)value;
-			}
-			return rc;
-		}
     #endregion
 
     /// <summary>

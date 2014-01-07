@@ -175,27 +175,6 @@ namespace Rhino.Render
       }
     }
 
-#if RDK_UNCHECKED
-    /// <summary>
-    /// A new render mesh iterator.
-    /// <para>The caller shall dispose the iterator.
-    /// Meshes created by the iterator are accessible up till when the iterator is disposed.</para>
-    /// </summary>
-    /// <param name="forceTriMesh">true if quad meshes should be triangulated.</param>
-    /// <param name="vp">The rendering view camera.</param>
-    /// <returns>A render mesh iterator.</returns>
-    /// //TODO - ON_Viewport
-    public RenderMeshIterator NewRenderMeshIterator(Rhino.DocObjects.ViewportInfo vp, bool forceTriMesh)
-    {
-      IntPtr pIterator = UnsafeNativeMethods.Rdk_SdkRender_NewRenderMeshIterator(ConstPointer(), vp.ConstPointer(), forceTriMesh);
-      if (pIterator != IntPtr.Zero)
-      {
-        return new RenderMeshIterator(pIterator);
-      }
-      return null;
-    }
-#endif
-
     #region Abstract methods
     /// <summary>
     /// Called by the framework when it is time to start rendering, the render window will be created at this point and it is safe to start 

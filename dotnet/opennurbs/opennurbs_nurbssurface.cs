@@ -25,6 +25,11 @@ namespace Rhino.Geometry
     /// <param name="controlPointCount0">Control point count in U direction.<para>&gt;= order0.</para></param>
     /// <param name="controlPointCount1">Control point count in V direction.<para>&gt;= order1.</para></param>
     /// <returns>A new NURBS surface, or null on error.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createsurfaceexample.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createsurfaceexample.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createsurfaceexample.py' lang='py'/>
+    /// </example>
     public static NurbsSurface Create(int dimension, bool isRational, int order0, int order1, int controlPointCount0, int controlPointCount1)
     {
       if (dimension < 1 || order0 < 2 || order1 < 2 || controlPointCount0 < order0 || controlPointCount1 < order1)
@@ -195,6 +200,11 @@ namespace Rhino.Geometry
     /// <param name="corner3">The third corner.</param>
     /// <param name="corner4">The fourth corner.</param>
     /// <returns>the resulting surface or null on error.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_srfpt.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_srfpt.cs' lang='cs'/>
+    /// <code source='examples\py\ex_srfpt.py' lang='py'/>
+    /// </example>
     public static NurbsSurface CreateFromCorners(Point3d corner1, Point3d corner2, Point3d corner3, Point3d corner4)
     {
       return CreateFromCorners(corner1, corner2, corner3, corner4, 0.0);
@@ -357,6 +367,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// The U direction knot vector.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createsurfaceexample.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createsurfaceexample.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createsurfaceexample.py' lang='py'/>
+    /// </example>
     public Collections.NurbsSurfaceKnotList KnotsU
     {
       get { return m_KnotsU ?? (m_KnotsU = new Rhino.Geometry.Collections.NurbsSurfaceKnotList(this, 0)); }
@@ -365,6 +380,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// The V direction knot vector.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createsurfaceexample.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createsurfaceexample.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createsurfaceexample.py' lang='py'/>
+    /// </example>
     public Collections.NurbsSurfaceKnotList KnotsV
     {
       get { return m_KnotsV ?? (m_KnotsV = new Rhino.Geometry.Collections.NurbsSurfaceKnotList(this, 1)); }
@@ -375,6 +395,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets a collection of surface control points that form this surface.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createsurfaceexample.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createsurfaceexample.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createsurfaceexample.py' lang='py'/>
+    /// </example>
     public Collections.NurbsSurfacePointList Points
     {
       get { return m_Points ?? (m_Points = new Rhino.Geometry.Collections.NurbsSurfacePointList(this)); }
@@ -746,6 +771,11 @@ namespace Rhino.Geometry.Collections
     /// <param name="v">Index of control-point along surface V direction.</param>
     /// <param name="cp">The control point location to set (weight is assumed to be 1.0).</param>
     /// <returns>true on success, false on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createsurfaceexample.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createsurfaceexample.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createsurfaceexample.py' lang='py'/>
+    /// </example>
     public bool SetControlPoint(int u, int v, Point3d cp)
     {
       return SetControlPoint(u, v, new ControlPoint(cp));

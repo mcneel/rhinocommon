@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Rhino.Geometry;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.DocObjects
 {
@@ -370,6 +371,11 @@ namespace Rhino.DocObjects
     /// reference object and cannot be modified.  An object is a reference
     /// object if, and only if, it is on a reference layer.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_renameblock.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_renameblock.cs' lang='cs'/>
+    /// <code source='examples\py\ex_renameblock.py' lang='py'/>
+    /// </example>
     public bool IsReference
     {
       get
@@ -410,6 +416,11 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_renameblock.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_renameblock.cs' lang='cs'/>
+    /// <code source='examples\py\ex_renameblock.py' lang='py'/>
+    /// </example>
     public bool IsDeleted
     {
       get
@@ -771,6 +782,11 @@ namespace Rhino.DocObjects.Tables
     /// <returns>
     /// true if successful.
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_renameblock.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_renameblock.cs' lang='cs'/>
+    /// <code source='examples\py\ex_renameblock.py' lang='py'/>
+    /// </example>    
     public bool Modify(int idefIndex, string newName, string newDescription, bool quiet)
     {
       return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_ModifyInstanceDefinition(m_doc.m_docId, idefIndex, newName, newDescription, quiet);
@@ -976,7 +992,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>An unused instance definition name string.</returns>
     public string GetUnusedInstanceDefinitionName()
     {
-      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName(m_doc.m_docId, pString);
@@ -994,7 +1010,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>An unused instance definition name string.</returns>
     public string GetUnusedInstanceDefinitionName(string root)
     {
-      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName2(m_doc.m_docId, root, pString);
@@ -1019,7 +1035,7 @@ namespace Rhino.DocObjects.Tables
     [CLSCompliant(false)]
     public string GetUnusedInstanceDefinitionName(string root, uint defaultSuffix)
     {
-      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName3(m_doc.m_docId, root, defaultSuffix, pString);

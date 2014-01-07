@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 
 #if RHINO_SDK
 using Rhino.PlugIns;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.Runtime
 {

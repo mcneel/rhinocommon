@@ -8,14 +8,17 @@ namespace buildwikisamples
   {
     static void Main(string[] args)
     {
-      string[] csfiles = System.IO.Directory.GetFiles("C:\\dev\\rhino\\V5Beta1\\src4\\DotNetSDK\\rhinocommon\\examples\\cs", "ex_*");
-      string vbdir = "C:\\dev\\rhino\\V5Beta1\\src4\\DotNetSDK\\rhinocommon\\examples\\vbnet";
-      string pydir = "C:\\dev\\rhino\\V5Beta1\\src4\\DotNetSDK\\rhinocommon\\examples\\py";
-      string wikidir = "C:\\dev\\rhino\\V5Beta1\\src4\\DotNetSDK\\rhinocommon\\examples\\wiki";
+      //string rootDir = "C:\\dev\\rhino\\V5Beta1\\src4\\DotNetSDK";
+      string rootDir = @"C:\src\mcneel.com";
+      string[] csfiles = System.IO.Directory.GetFiles(System.IO.Path.Combine(rootDir, "rhinocommon\\examples\\cs"), "ex_*");
+      string vbdir = System.IO.Path.Combine(rootDir, "rhinocommon\\examples\\vbnet");
+      string pydir = System.IO.Path.Combine(rootDir, "rhinocommon\\examples\\py");
+      string wikidir = System.IO.Path.Combine(rootDir, "rhinocommon\\examples\\wiki");
 
       for (int i = 0; i < csfiles.Length; i++)
       {
         string filename = System.IO.Path.GetFileNameWithoutExtension(csfiles[i]);
+        //if (filename != "ex_modifylightcolor") continue;
         string wikiname = filename.Substring(3) + ".txt"; // prune "ex_"
         string wikifile = System.IO.Path.Combine(wikidir, wikiname);
         StringBuilder sb = new StringBuilder();

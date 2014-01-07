@@ -448,6 +448,38 @@ RH_C_FUNCTION bool ON_BinaryArchive_WriteGeometry(ON_BinaryArchive* pArchive, co
   return rc;
 }
 
+RH_C_FUNCTION bool ON_BinaryArchive_ReadObjRef(ON_BinaryArchive* pArchive, ON_ObjRef* pObjRef)
+{
+  bool rc = false;
+  if( pArchive && pObjRef )
+    rc = pObjRef->Read(*pArchive);
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_BinaryArchive_WriteObjRef(ON_BinaryArchive* pArchive, const ON_ObjRef* pConstObjRef)
+{
+  bool rc = false;
+  if( pArchive && pConstObjRef )
+    rc = pConstObjRef->Write(*pArchive);
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_BinaryArchive_ReadObjRefArray(ON_BinaryArchive* pArchive, ON_ClassArray<ON_ObjRef>* pObjRefArray)
+{
+  bool rc = false;
+  if( pArchive && pObjRefArray )
+    rc = pArchive->ReadArray(*pObjRefArray);
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_BinaryArchive_WriteObjRefArray(ON_BinaryArchive* pArchive, const ON_ClassArray<ON_ObjRef>* pConstObjRefArray)
+{
+  bool rc = false;
+  if( pArchive && pConstObjRefArray )
+    rc = pArchive->WriteArray(*pConstObjRefArray);
+  return rc;
+}
+
 RH_C_FUNCTION bool ON_BinaryArchive_BeginReadDictionary(ON_BinaryArchive* pArchive, ON_UUID* dictionary_id, unsigned int* version, CRhCmnStringHolder* pStringHolder)
 {
   bool rc = false;
@@ -741,6 +773,25 @@ RH_C_FUNCTION bool ONX_Model_WriteFile(ONX_Model* pModel, const RHMONO_STRING* p
     rc = pModel->Write(_path, version, NULL, pLog);
     if( pStringHolder )
       pStringHolder->Set(s);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ONX_Model_WriteFile2(ONX_Model* pModel, const RHMONO_STRING* path, int version, bool writeRenderMeshes, bool writeAnalysisMeshes, bool writeUserData)
+{
+  bool rc = false;
+  INPUTSTRINGCOERCE(_path, path);
+  if( pModel && _path )
+  {
+    FILE* fp = ON::OpenFile(_path, L"wb");
+    if( 0==fp )
+      return false;
+    ON_BinaryFile binary_file(ON::write3dm, fp);
+    binary_file.EnableSave3dmRenderMeshes(writeRenderMeshes?1:0);
+    binary_file.EnableSave3dmAnalysisMeshes(writeAnalysisMeshes?1:0);
+    binary_file.EnableSaveUserData(writeUserData?1:0);
+    rc = pModel->Write(binary_file, version, 0, 0);
+    ON::CloseFile(fp);
   }
   return rc;
 }

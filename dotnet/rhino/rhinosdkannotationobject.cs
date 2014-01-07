@@ -16,6 +16,11 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets the text that is displayed to users.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_gettext.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_gettext.cs' lang='cs'/>
+    /// <code source='examples\py\ex_gettext.py' lang='py'/>
+    /// </example>
     public string DisplayText
     {
       get

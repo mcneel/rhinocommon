@@ -126,6 +126,11 @@ namespace Rhino.Input.Custom
     /// Set filter callback function that will be called by the CustomGeometryFilter
     /// </summary>
     /// <param name="filter"></param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_customgeometryfilter.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_customgeometryfilter.cs' lang='cs'/>
+    /// <code source='examples\py\ex_customgeometryfilter.py' lang='py'/>
+    /// </example>
     public void SetCustomGeometryFilter(GetObjectGeometryFilter filter)
     {
       m_filter = filter;

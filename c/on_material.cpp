@@ -105,6 +105,7 @@ RH_C_FUNCTION double ON_Material_GetDouble(const ON_Material* pConstMaterial, in
   const int idxShine = 0;
   const int idxTransparency = 1;
   const int idxIOR = 2;
+  const int idxReflectivity = 3;
  
   double rc = 0;
   if( pConstMaterial )
@@ -119,6 +120,10 @@ RH_C_FUNCTION double ON_Material_GetDouble(const ON_Material* pConstMaterial, in
       break;
     case idxIOR:
       rc = pConstMaterial->m_index_of_refraction;
+      break;
+    case idxReflectivity:
+      rc = pConstMaterial->m_reflectivity;
+      break;
     }
   }
   return rc;
@@ -129,6 +134,7 @@ RH_C_FUNCTION void ON_Material_SetDouble(ON_Material* pMaterial, int which, doub
   const int idxShine = 0;
   const int idxTransparency = 1;
   const int idxIOR = 2;
+  const int idxReflectivity = 3;
   if( pMaterial )
   {
     switch(which)
@@ -141,6 +147,9 @@ RH_C_FUNCTION void ON_Material_SetDouble(ON_Material* pMaterial, int which, doub
       break;
     case idxIOR:
       pMaterial->m_index_of_refraction = val;
+      break;
+    case idxReflectivity:
+      pMaterial->m_reflectivity = val;
       break;
     }
   }
@@ -209,6 +218,14 @@ RH_C_FUNCTION int ON_Material_GetTexture(const ON_Material* pConstMaterial, int 
   }
   return rc;
 }
+
+RH_C_FUNCTION int ON_Material_GetTextureCount(const ON_Material* pConstMaterial)
+{
+  if( pConstMaterial )
+    return pConstMaterial->m_textures.Count();
+  return 0;
+}
+
 
 RH_C_FUNCTION int ON_Material_GetColor( const ON_Material* pConstMaterial, int which )
 {
@@ -373,6 +390,13 @@ RH_C_FUNCTION void ON_Texture_SetFileName(ON_Texture* pTexture, const RHMONO_STR
   }
 }
 
+RH_C_FUNCTION ON_UUID ON_Texture_GetId(const ON_Texture* pConstTexture)
+{
+  if( pConstTexture )
+    return pConstTexture->m_texture_id;
+  return ON_nil_uuid;
+}
+
 RH_C_FUNCTION bool ON_Texture_GetEnabled(const ON_Texture* pConstTexture)
 {
   if( pConstTexture )
@@ -388,13 +412,114 @@ RH_C_FUNCTION void ON_Texture_SetEnabled(ON_Texture* pTexture, bool enabled)
   }
 }
 
-
-RH_C_FUNCTION ON_UUID ON_Texture_GetId(const ON_Texture* pConstTexture)
+RH_C_FUNCTION int ON_Texture_TextureType(const ON_Texture* pConstTexture)
 {
   if( pConstTexture )
-    return pConstTexture->m_texture_id;
-  return ON_nil_uuid;
+    return (int)pConstTexture->m_type;
+  return (int)ON_Texture::no_texture_type;
 }
+
+RH_C_FUNCTION void ON_Texture_SetTextureType(ON_Texture* pTexture, int texture_type)
+{
+  if( pTexture )
+    pTexture->m_type = ON_Texture::TypeFromInt(texture_type);
+}
+
+
+RH_C_FUNCTION int ON_Texture_Mode(const ON_Texture* pConstTexture)
+{
+  if( pConstTexture )
+    return (int)pConstTexture->m_mode;
+  return (int)ON_Texture::no_texture_mode;
+}
+
+RH_C_FUNCTION void ON_Texture_SetMode(ON_Texture* pTexture, int value)
+{
+  if( pTexture )
+    pTexture->m_mode = ON_Texture::ModeFromInt(value);
+}
+
+const int IDX_WRAPMODE_U = 0;
+const int IDX_WRAPMODE_V = 1;
+const int IDX_WRAPMODE_W = 2;
+
+RH_C_FUNCTION int ON_Texture_wrapuvw(const ON_Texture* pConstTexture, int uvw)
+{
+  if( pConstTexture )
+  {
+    if (uvw == IDX_WRAPMODE_U)
+      return pConstTexture->m_wrapu;
+    if (uvw == IDX_WRAPMODE_V)
+      return pConstTexture->m_wrapv;
+    if (uvw == IDX_WRAPMODE_W)
+      return pConstTexture->m_wrapw;
+  }
+  return (int)ON_Texture::force_32bit_texture_wrap;
+}
+
+RH_C_FUNCTION void ON_Texture_Set_wrapuvw(ON_Texture* pTexture, int uvw, int value)
+{
+  if( pTexture )
+  {
+    if (uvw == IDX_WRAPMODE_U)
+      pTexture->m_wrapu = ON_Texture::WrapFromInt(value);
+    else if (uvw == IDX_WRAPMODE_V)
+      pTexture->m_wrapv = ON_Texture::WrapFromInt(value);
+    else if (uvw == IDX_WRAPMODE_W)
+      pTexture->m_wrapw = ON_Texture::WrapFromInt(value);
+  }
+}
+
+RH_C_FUNCTION bool ON_Texture_Apply_uvw(const ON_Texture* pConstTexture)
+{
+  if( pConstTexture )
+    return pConstTexture->m_bApply_uvw;
+  return false;
+}
+
+RH_C_FUNCTION void ON_Texture_SetApply_uvw(ON_Texture* pTexture, bool value)
+{
+  if( pTexture )
+    pTexture->m_bApply_uvw = value;
+}
+
+
+RH_C_FUNCTION void ON_Texture_uvw(const ON_Texture* pConstTexture, ON_Xform* instanceXform)
+{
+  if (pConstTexture && instanceXform)
+    *instanceXform = pConstTexture->m_uvw;
+}
+
+RH_C_FUNCTION void ON_Texture_Setuvw(ON_Texture* pTexture, ON_Xform* instanceXform)
+{
+  if (pTexture && instanceXform)
+    pTexture->m_uvw = *instanceXform;
+}
+
+RH_C_FUNCTION void ON_Texture_GetAlphaBlendValues(const ON_Texture* pConstTexture, double* c, double* a0, double* a1, double* a2, double* a3)
+{
+  if( pConstTexture && c && a0 && a1 && a2 && a3 )
+  {
+    *c = pConstTexture->m_blend_constant_A;
+    *a0 = pConstTexture->m_blend_A[0];
+    *a1 = pConstTexture->m_blend_A[1];
+    *a2 = pConstTexture->m_blend_A[2];
+    *a3 = pConstTexture->m_blend_A[3];
+  }
+}
+
+RH_C_FUNCTION void ON_Texture_SetAlphaBlendValues(ON_Texture* pTexture, double c, double a0, double a1, double a2, double a3)
+{
+  if( pTexture )
+  {
+    pTexture->m_blend_constant_A = c;
+    pTexture->m_blend_A[0] = a0;
+    pTexture->m_blend_A[1] = a1;
+    pTexture->m_blend_A[2] = a2;
+    pTexture->m_blend_A[3] = a3;
+  }
+}
+
 
 RH_C_FUNCTION ON_UUID ON_Material_ModelObjectId(const ON_Material* pConstMaterial)
 {

@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 using System;
 using System.Runtime.Serialization;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.DocObjects
 {
@@ -410,7 +411,7 @@ namespace Rhino.DocObjects
     string GetString(int which)
     {
       IntPtr ptr = ConstPointer();
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetString(ptr, which, false, null, pString);

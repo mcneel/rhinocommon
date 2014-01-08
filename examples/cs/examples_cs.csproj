@@ -129,6 +129,7 @@
     <Compile Include="ex_dimstyle.cs" />
     <Compile Include="ex_displayconduit.cs" />
     <Compile Include="ex_dividebylength.cs" />
+    <Compile Include="ex_dividebysegments.cs" />
     <Compile Include="ex_dotneteventwatcher.cs" />
     <Compile Include="ex_drawoverlay.cs" />
     <Compile Include="ex_dupborder.cs" />

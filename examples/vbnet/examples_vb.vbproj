@@ -132,6 +132,8 @@
     <Compile Include="ex_deleteblock.vb" />
     <Compile Include="ex_dimstyle.vb" />
     <Compile Include="ex_dividebylength.vb" />
+    <Compile Include="ex_dividebysegments.vb" />
+    <Compile Include="ex_dividecurvestraight.vb" />
     <Compile Include="ex_drawoverlay.vb" />
     <Compile Include="ex_dupborder.vb" />
     <Compile Include="ex_dupmeshboundary.vb" />

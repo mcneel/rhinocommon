@@ -24,6 +24,8 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Compile Include="ex_dividebysegments.py" />
+    <Compile Include="ex_dividecurvestraight.py" />
     <Compile Include="ex_activeviewport.py" />
     <Compile Include="ex_addbackgroundbitmap.py" />
     <Compile Include="ex_addbrepbox.py" />
@@ -43,6 +45,7 @@
     <Compile Include="ex_addnurbscircle.py" />
     <Compile Include="ex_addnurbscurve.py" />
     <Compile Include="ex_addobjectstogroup.py" />
+    <Compile Include="ex_addradialdimension.py" />
     <Compile Include="ex_addsphere.py" />
     <Compile Include="ex_addtext.py" />
     <Compile Include="ex_addtexture.py" />
@@ -71,6 +74,7 @@
     <Compile Include="ex_customgeometryfilter.py" />
     <Compile Include="ex_customundo.py" />
     <Compile Include="ex_deleteblock.py" />
+    <Compile Include="ex_dimstyle.py" />
     <Compile Include="ex_dividebylength.py" />
     <Compile Include="ex_drawoverlay.py" />
     <Compile Include="ex_dupborder.py" />
@@ -83,6 +87,7 @@
     <Compile Include="ex_extractthumbnail.py" />
     <Compile Include="ex_findobjectsbyname.py" />
     <Compile Include="ex_getmultiplewithoptions.py" />
+    <Compile Include="ex_gettext.py" />
     <Compile Include="ex_hatchcurve.py" />
     <Compile Include="ex_insertknot.py" />
     <Compile Include="ex_instancedefinitionobjects.py" />

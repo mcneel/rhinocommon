@@ -115,6 +115,7 @@
     <Compile Include="ex_printinstancedefinitiontree.py" />
     <Compile Include="ex_projectpointstobreps.py" />
     <Compile Include="ex_renameblock.py" />
+    <Compile Include="ex_replacehatchpattern.py" />
     <Compile Include="ex_screencaptureview.py" />
     <Compile Include="ex_sellayer.py" />
     <Compile Include="ex_setactiveview.py" />

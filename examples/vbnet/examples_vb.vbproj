@@ -178,6 +178,7 @@
     <Compile Include="ex_printinstancedefinitiontree.vb" />
     <Compile Include="ex_projectpointstobreps.vb" />
     <Compile Include="ex_renameblock.vb" />
+    <Compile Include="ex_replacehatchpattern.vb" />
     <Compile Include="ex_rhinogettransform.vb" />
     <Compile Include="ex_screencaptureview.vb" />
     <Compile Include="ex_sellayer.vb" />

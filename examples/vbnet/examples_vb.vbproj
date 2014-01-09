@@ -182,6 +182,7 @@
     <Compile Include="ex_screencaptureview.vb" />
     <Compile Include="ex_sellayer.vb" />
     <Compile Include="ex_setactiveview.vb" />
+    <Compile Include="ex_splitbrepwithplane.vb" />
     <Compile Include="ex_srfpt.vb" />
     <Compile Include="ex_sweep1.vb" />
     <Compile Include="ex_textjustify.vb" />

@@ -130,6 +130,7 @@
     <Compile Include="ex_displayconduit.cs" />
     <Compile Include="ex_dividebylength.cs" />
     <Compile Include="ex_dividebysegments.cs" />
+    <Compile Include="ex_dividecurvestraight.cs" />
     <Compile Include="ex_dotneteventwatcher.cs" />
     <Compile Include="ex_drawoverlay.cs" />
     <Compile Include="ex_dupborder.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="ex_sellayer.cs" />
     <Compile Include="ex_setactiveview.cs" />
     <Compile Include="ex_showsurfacedirection.cs" />
+    <Compile Include="ex_splitbrepwithplane.cs" />
     <Compile Include="ex_spritedrawing.cs" />
     <Compile Include="ex_srfpt.cs" />
     <Compile Include="ex_sweep1.cs" />

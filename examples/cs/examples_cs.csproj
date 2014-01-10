@@ -168,6 +168,7 @@
     <Compile Include="ex_modifylightcolor.cs" />
     <Compile Include="ex_movecplane.cs" />
     <Compile Include="ex_movegripobjects.cs" />
+    <Compile Include="ex_moveobjectstocurrentlayer.cs" />
     <Compile Include="ex_nestedblock.cs" />
     <Compile Include="ex_objectcolor.cs" />
     <Compile Include="ex_objectdecoration.cs" />
@@ -175,6 +176,7 @@
     <Compile Include="ex_objectlayer.cs" />
     <Compile Include="ex_objectname.cs" />
     <Compile Include="ex_orientonsrf.cs" />
+    <Compile Include="ex_ortho.cs" />
     <Compile Include="ex_pickobjects.cs" />
     <Compile Include="ex_planesurface.cs" />
     <Compile Include="ex_pointatcursor.cs" />
@@ -185,9 +187,11 @@
     <Compile Include="ex_printinstancedefinitiontree.cs" />
     <Compile Include="ex_projectpointstobreps.cs" />
     <Compile Include="ex_renameblock.cs" />
+    <Compile Include="ex_renamelayer.cs" />
     <Compile Include="ex_replacehatchpattern.cs" />
     <Compile Include="ex_rhinogettransform.cs" />
     <Compile Include="ex_screencaptureview.cs" />
+    <Compile Include="ex_selectgroupobject.cs" />
     <Compile Include="ex_sellayer.cs" />
     <Compile Include="ex_setactiveview.cs" />
     <Compile Include="ex_showsurfacedirection.cs" />

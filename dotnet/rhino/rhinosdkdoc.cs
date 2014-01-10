@@ -6647,6 +6647,11 @@ namespace Rhino.DocObjects
   /// Settings used for getting an enumerator of objects in a document
   /// See Rhino.Collections.ObjectTable.GetEnumerator()
   /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_moveobjectstocurrentlayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_moveobjectstocurrentlayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_moveobjectstocurrentlayer.py' lang='py'/>
+    /// </example>
   public class ObjectEnumeratorSettings
   {
     // all variables are set to use same defaults as defined in CRhinoObjectIterator::Init

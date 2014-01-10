@@ -482,6 +482,11 @@ namespace Rhino.Input
     /// <para>Commands.Result.Nothing - user pressed enter.</para>
     /// <para>Commands.Result.Cancel - user cancel number getting.</para>
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_splitbrepwithplane.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_splitbrepwithplane.cs' lang='cs'/>
+    /// <code source='examples\py\ex_splitbrepwithplane.py' lang='py'/>
+    /// </example>
     public static Commands.Result GetPlane(out Rhino.Geometry.Plane plane)
     {
       plane = Rhino.Geometry.Plane.Unset;

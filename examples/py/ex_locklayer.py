@@ -6,11 +6,11 @@ def lock():
     
     matchingLayers = [layer for layer in doc.Layers if layer.Name == layerName]
     
-    layerToRename = None
+    layerToLock = None
     if len(matchingLayers) == 0:
         print "Layer \"{0}\" does not exist.".format(layerName)
     elif len(matchingLayers) == 1:
-        layerToRename = matchingLayers[0]
+        layerToLock = matchingLayers[0]
     elif len(matchingLayers) > 1:
         i = 0;
         for layer in matchingLayers:
@@ -20,13 +20,13 @@ def lock():
         selectedLayer = rs.GetInteger("which layer?", -1, 1, len(matchingLayers))
         if selectedLayer == None:
             return
-        layerToRename = matchingLayers[selectedLayer - 1]
+        layerToLock = matchingLayers[selectedLayer - 1]
         
-    if layerToRename.IsLocked:
-        print "layer {0} is already locked.".format(layerToRename.FullPath)
+    if layerToLock.IsLocked:
+        print "layer {0} is already locked.".format(layerToLock.FullPath)
     else:
-        layerToRename.IsLocked = True
-        layerToRename.CommitChanges()
+        layerToLock.IsLocked = True
+        layerToLock.CommitChanges()
           
 if __name__ == "__main__":
     lock()

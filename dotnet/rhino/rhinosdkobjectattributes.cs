@@ -456,6 +456,11 @@ namespace Rhino.DocObjects
     /// OpenNURBS object in a model is on some layer.  The object's layer
     /// is specified by zero based indicies into the ON_Layer array.</para>
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_moveobjectstocurrentlayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_moveobjectstocurrentlayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_moveobjectstocurrentlayer.py' lang='py'/>
+    /// </example>
     public int LayerIndex
     {
       get { return GetInt(idxLayerIndex); }

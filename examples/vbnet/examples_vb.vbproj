@@ -165,11 +165,13 @@
     <Compile Include="ex_meshvolume.vb" />
     <Compile Include="ex_modifylightcolor.vb" />
     <Compile Include="ex_movecplane.vb" />
+    <Compile Include="ex_moveobjectstocurrentlayer.vb" />
     <Compile Include="ex_objectdecoration.vb" />
     <Compile Include="ex_objectdisplaymode.vb" />
     <Compile Include="ex_objectlayer.vb" />
     <Compile Include="ex_objectname.vb" />
     <Compile Include="ex_orientonsrf.vb" />
+    <Compile Include="ex_ortho.vb" />
     <Compile Include="ex_pickobjects.vb" />
     <Compile Include="ex_planesurface.vb" />
     <Compile Include="ex_pointatcursor.vb" />
@@ -178,9 +180,11 @@
     <Compile Include="ex_printinstancedefinitiontree.vb" />
     <Compile Include="ex_projectpointstobreps.vb" />
     <Compile Include="ex_renameblock.vb" />
+    <Compile Include="ex_renamelayer.vb" />
     <Compile Include="ex_replacehatchpattern.vb" />
     <Compile Include="ex_rhinogettransform.vb" />
     <Compile Include="ex_screencaptureview.vb" />
+    <Compile Include="ex_selectgroupobject.vb" />
     <Compile Include="ex_sellayer.vb" />
     <Compile Include="ex_setactiveview.vb" />
     <Compile Include="ex_splitbrepwithplane.vb" />

@@ -2232,6 +2232,11 @@ namespace Rhino.ApplicationSettings
     }
 
     ///<summary>Gets or sets the enabled state of Rhino&apos;s ortho modeling aid.</summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_ortho.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_ortho.cs' lang='cs'/>
+    /// <code source='examples\py\ex_ortho.py' lang='py'/>
+    /// </example>
     public static bool Ortho
     {
       get { return GetBool(idxOrtho); }

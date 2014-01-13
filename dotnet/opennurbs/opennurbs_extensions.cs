@@ -804,8 +804,12 @@ namespace Rhino.FileIO
     #endregion
   }
 
+  /// <summary>Options used by File3dm.Write</summary>
   public class File3dmWriteOptions
   {
+    /// <summary>
+    /// Initializes properties to defaults
+    /// </summary>
     public File3dmWriteOptions()
     {
       Version = 5;
@@ -813,9 +817,25 @@ namespace Rhino.FileIO
       SaveAnalysisMeshes = true;
       SaveUserData = true;
     }
+
+    /// <summary>
+    /// File version. Default is 5
+    /// </summary>
     public int Version { get; set; }
+
+    /// <summary>
+    /// Include Render meshes in the file. Default is true
+    /// </summary>
     public bool SaveRenderMeshes { get; set; }
+
+    /// <summary>
+    /// Include analysis meshes in the file. Default is true
+    /// </summary>
     public bool SaveAnalysisMeshes { get; set; }
+
+    /// <summary>
+    /// Include custom user data in the file. Default is true
+    /// </summary>
     public bool SaveUserData { get; set; }
   }
 

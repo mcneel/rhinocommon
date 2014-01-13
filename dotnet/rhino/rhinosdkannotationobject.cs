@@ -25,19 +25,28 @@ namespace Rhino.DocObjects
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        IntPtr rc = UnsafeNativeMethods.CRhinoAnnotationObject_DisplayText(pConstThis);
-        if (rc == IntPtr.Zero)
-          return string.Empty;
-        return Marshal.PtrToStringUni(rc);
+        IntPtr ptr_const_this = ConstPointer();
+        IntPtr rc = UnsafeNativeMethods.CRhinoAnnotationObject_DisplayText(ptr_const_this);
+        return rc == IntPtr.Zero ? string.Empty : Marshal.PtrToStringUni(rc);
       }
     }
 
   }
-  //public class AnnotationBase : RhinoObject { }
-  //public class AnnotationEx : RhinoObject { }
-  //public class AnnotationObject : RhinoObject { }
-  //public class AnnotationLeader : AnnotationObject { }
+
+  /// <summary>
+  /// Represents a <see cref="Rhino.Geometry.Leader"/> that
+  /// is picked in a document
+  /// </summary>
+  public class LeaderObject : AnnotationObjectBase
+  {
+    internal LeaderObject(uint serialNumber)
+      : base(serialNumber) { }
+
+    internal override CommitGeometryChangesFunc GetCommitFunc()
+    {
+      return UnsafeNativeMethods.CRhinoLeaderObject_InternalCommitChanges;
+    }
+  }
 
 
   /// <summary>
@@ -53,11 +62,11 @@ namespace Rhino.DocObjects
     /// Gets the <see cref="DocObjects.DimensionStyle"/>
     /// associated with this LinearDimensionObject.
     /// </summary>
-    public DocObjects.DimensionStyle DimensionStyle
+    public DimensionStyle DimensionStyle
     {
       get
       {
-        Rhino.Geometry.LinearDimension ld = Geometry as Rhino.Geometry.LinearDimension;
+        Rhino.Geometry.LinearDimension ld = Geometry as Geometry.LinearDimension;
         if( ld==null || Document==null )
           return null;
         return Document.DimStyles[ld.DimensionStyleIndex];

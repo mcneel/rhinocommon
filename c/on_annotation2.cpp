@@ -35,7 +35,7 @@ RH_C_FUNCTION void ON_Annotation2_Text(ON_Annotation2* pAnnotation2, CRhCmnStrin
       if( formula )
       {
         pAnnotation2->SetTextFormula(str);
-        pAnnotation2->SetTextValue(NULL);
+        pAnnotation2->SetTextValue(str);
       }
       else
       {

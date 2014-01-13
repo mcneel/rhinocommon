@@ -14,6 +14,22 @@ using System.Runtime.InteropServices;
 [System.Security.SuppressUnmanagedCodeSecurity]
 internal partial class UnsafeNativeMethods
 {
+  [StructLayout(LayoutKind.Sequential)]
+  public struct Point
+  {
+    public int X;
+    public int Y;
+
+    public Point(int x, int y)
+    {
+      this.X = x;
+      this.Y = y;
+    }
+  }
+  [DllImport("user32.dll")]
+  [return: MarshalAs(UnmanagedType.Bool)]
+  internal static extern bool GetCursorPos(out Point lpPoint);
+
   [DllImport("user32.dll", CharSet = CharSet.Auto)]
   internal extern static bool DestroyIcon(IntPtr handle);
 

@@ -19,37 +19,37 @@ namespace Rhino.Display
                                     // on to a view longer than a command
     private IntPtr m_ptr; // CRhinoView*
 
-    private static readonly List<RhinoView> m_view_list = new List<RhinoView>();
+    private static readonly List<RhinoView> g_view_list = new List<RhinoView>();
 
     // Users should never be able to directly make a new instance of a rhino view
-    internal static RhinoView FromIntPtr(IntPtr view_pointer)
+    internal static RhinoView FromIntPtr(IntPtr viewPointer)
     {
-      if (IntPtr.Zero == view_pointer)
+      if (IntPtr.Zero == viewPointer)
         return null;
 
       // look through the cached viewlist first
-      int count = m_view_list.Count;
+      int count = g_view_list.Count;
       RhinoView view;
       for (int i = 0; i < count; i++)
       {
-        view = m_view_list[i];
-        if (view.m_ptr == view_pointer)
+        view = g_view_list[i];
+        if (view.m_ptr == viewPointer)
         {
           if( i>0 )
           {
-            RhinoView tmp = m_view_list[0];
-            m_view_list[0] = m_view_list[i];
-            m_view_list[i] = tmp;
+            RhinoView tmp = g_view_list[0];
+            g_view_list[0] = g_view_list[i];
+            g_view_list[i] = tmp;
           }
           return view;
         }
       }
 
       // view is not in the list, add it
-      bool isPageView = false;
-      Guid id = UnsafeNativeMethods.CRhinoView_Details(view_pointer, ref isPageView);
-      view = isPageView ? new RhinoPageView(view_pointer, id) : new RhinoView(view_pointer, id);
-      m_view_list.Add(view);
+      bool is_page_view = false;
+      Guid id = UnsafeNativeMethods.CRhinoView_Details(viewPointer, ref is_page_view);
+      view = is_page_view ? new RhinoPageView(viewPointer, id) : new RhinoView(viewPointer, id);
+      g_view_list.Add(view);
       return view;
     }
 
@@ -205,6 +205,12 @@ namespace Rhino.Display
         return rc;
       }
       set { UnsafeNativeMethods.CRhinoView_EnableDrawing(true, ref value); }
+    }
+
+    public double SpeedTest(int frameCount, bool freezeDrawList, int direction, double angleDeltaRadians)
+    {
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.RhViewSpeedTest(ptr_this, frameCount, freezeDrawList, direction, angleDeltaRadians);
     }
 
     // [skipping]
@@ -563,7 +569,7 @@ namespace Rhino.Display
       {
         m_ptr = IntPtr.Zero;
         m_main_viewport_id = Guid.Empty;
-        m_view_list.Remove(this);
+        g_view_list.Remove(this);
       }
       return rc;
     }
@@ -579,26 +585,23 @@ namespace Rhino.Display
     private static EventHandler<ViewEventArgs> m_setactive_view;
     private static EventHandler<ViewEventArgs> m_rename_view;
 
-    private static void OnCreateView(IntPtr pView)
+    static void ViewEventHelper(EventHandler<ViewEventArgs> handler, IntPtr pView)
     {
-      if (m_create_view != null)
-        m_create_view(null, new ViewEventArgs(pView));
+      if (handler == null) return;
+      try
+      {
+        handler(null, new ViewEventArgs(pView));
+      }
+      catch (Exception ex)
+      {
+        Runtime.HostUtils.ExceptionReport(ex);
+      }
     }
-    private static void OnDestroyView(IntPtr pView)
-    {
-      if (m_destroy_view != null)
-        m_destroy_view(null, new ViewEventArgs(pView));
-    }
-    private static void OnSetActiveView(IntPtr pView)
-    {
-      if (m_setactive_view != null)
-        m_setactive_view(null, new ViewEventArgs(pView));
-    }
-    private static void OnRenameView(IntPtr pView)
-    {
-      if (m_rename_view != null)
-        m_rename_view(null, new ViewEventArgs(pView));
-    }
+
+    private static void OnCreateView(IntPtr pView)   { ViewEventHelper(m_create_view, pView); }
+    private static void OnDestroyView(IntPtr pView)  { ViewEventHelper(m_destroy_view, pView); }
+    private static void OnSetActiveView(IntPtr pView){ ViewEventHelper(m_setactive_view, pView); }
+    private static void OnRenameView(IntPtr pView)   { ViewEventHelper(m_rename_view, pView); }
 
     public static event EventHandler<ViewEventArgs> Create
     {

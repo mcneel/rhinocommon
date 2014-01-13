@@ -54,7 +54,6 @@ namespace examples_cs
           case 3:
           case 2:
             return Result.Failure;
-            break;
           case 1:
             // rectangle
             // box with 8 corners flattened to rectangle with 4 corners

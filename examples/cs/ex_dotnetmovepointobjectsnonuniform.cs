@@ -2,8 +2,6 @@
 using Rhino.DocObjects;
 using Rhino.Commands;
 using Rhino.Input;
-using Rhino.Input.Custom;
-using Rhino.Geometry;
 
 namespace examples_cs
 {

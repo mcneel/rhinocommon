@@ -34,7 +34,7 @@ Namespace examples_vb
 
     Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
       ' user input
-      Dim obj_refs As ObjRef()
+      Dim obj_refs As ObjRef() = Nothing
       Dim rc = RhinoGet.GetMultipleObjects("Select curve to divide", False, ObjectType.Curve Or ObjectType.EdgeFilter, obj_refs)
       If rc <> Result.Success OrElse obj_refs Is Nothing Then
         Return rc
@@ -63,8 +63,8 @@ Namespace examples_vb
         Dim rest_of_curve = curve
         While True
           Dim sphere = New Sphere(sphere_center, distance_between_divisions)
-          Dim overlap_curves As Curve()
-          Dim intersect_points As Point3d()
+          Dim overlap_curves As Curve() = Nothing
+          Dim intersect_points As Point3d() = Nothing
           Dim b = Intersection.CurveBrep(rest_of_curve, sphere.ToBrep(), 0.0, overlap_curves, intersect_points)
           If Not b OrElse (overlap_curves.Length = 0 AndAlso intersect_points.Length = 0) Then
             Exit While

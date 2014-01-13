@@ -16,7 +16,7 @@ Namespace examples_vb
     End Property
 
     Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
-      Dim obj_ref As ObjRef
+      Dim obj_ref As ObjRef = Nothing
       Dim rc = RhinoGet.GetOneObject("Select surface to split", True, ObjectType.Surface, obj_ref)
       If rc <> Result.Success Then
         Return rc

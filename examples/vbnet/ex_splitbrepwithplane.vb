@@ -15,7 +15,7 @@ Namespace examples_vb
 
     Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
       'First, collect all the breps to split
-      Dim obj_refs As ObjRef()
+      Dim obj_refs As ObjRef() = Nothing
       Dim rc = RhinoGet.GetMultipleObjects("Select breps to split", False, ObjectType.Brep, obj_refs)
       If rc <> Result.Success OrElse obj_refs Is Nothing Then
         Return rc

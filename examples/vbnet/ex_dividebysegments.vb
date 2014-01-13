@@ -15,7 +15,7 @@ Namespace examples_vb
 
     Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
       Const filter As ObjectType = ObjectType.Curve
-      Dim objref As ObjRef
+      Dim objref As ObjRef = Nothing
       Dim rc = RhinoGet.GetOneObject("Select curve to divide", False, filter, objref)
       If rc <> Result.Success OrElse objref Is Nothing Then
         Return rc
@@ -32,7 +32,7 @@ Namespace examples_vb
         Return rc
       End If
 
-      Dim points As Point3d()
+      Dim points As Point3d() = Nothing
       curve.DivideByCount(segment_count, True, points)
       If points Is Nothing Then
         Return Result.Failure

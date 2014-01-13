@@ -26,6 +26,36 @@ internal partial class UnsafeNativeMethods
       this.Y = y;
     }
   }
+
+#if OPENNURBS_SDK_ANYCPU
+  static UnsafeNativeMethods()
+  {
+    Init();
+  }
+
+  [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+  private static extern IntPtr LoadLibrary(string libname);
+
+  private static IntPtr g_rh3dm_native_handle = IntPtr.Zero;
+  public static void Init()
+  {
+    if (g_rh3dm_native_handle == IntPtr.Zero)
+    {
+      var assembly_name = System.Reflection.Assembly.GetExecutingAssembly().Location;
+      var assembly_path = assembly_name.Substring(0, assembly_name.LastIndexOf('\\'));
+      var sub_directory = Environment.Is64BitProcess ? "x64" : "x86";
+      var native_dll_name = System.IO.Path.Combine(assembly_path, sub_directory, "rhino3dmio_native");
+      Console.WriteLine(string.Format("Rhino3dmIO native: {0}", native_dll_name));
+      g_rh3dm_native_handle = LoadLibrary(native_dll_name);
+      if (g_rh3dm_native_handle  == IntPtr.Zero)
+      {
+        int error_code = Marshal.GetLastWin32Error();
+        throw new Exception(string.Format("Failed to load library (ErrorCode: {0})", error_code));
+      }
+    }
+  }
+#endif
+  
   [DllImport("user32.dll")]
   [return: MarshalAs(UnmanagedType.Bool)]
   internal static extern bool GetCursorPos(out Point lpPoint);

@@ -76,6 +76,8 @@
     <Compile Include="ex_deleteblock.py" />
     <Compile Include="ex_dimstyle.py" />
     <Compile Include="ex_dividebylength.py" />
+    <Compile Include="ex_dotnetmovepointobjects.py" />
+    <Compile Include="ex_dotnetmovepointobjectsnonuniform.py" />
     <Compile Include="ex_drawoverlay.py" />
     <Compile Include="ex_dupborder.py" />
     <Compile Include="ex_dupmeshboundary.py" />

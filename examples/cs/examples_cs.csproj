@@ -132,6 +132,8 @@
     <Compile Include="ex_dividebysegments.cs" />
     <Compile Include="ex_dividecurvestraight.cs" />
     <Compile Include="ex_dotneteventwatcher.cs" />
+    <Compile Include="ex_dotnetmovepointobjects.cs" />
+    <Compile Include="ex_dotnetmovepointobjectsnonuniform.cs" />
     <Compile Include="ex_drawoverlay.cs" />
     <Compile Include="ex_dupborder.cs" />
     <Compile Include="ex_dupmeshboundary.cs" />

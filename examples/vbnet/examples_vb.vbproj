@@ -149,6 +149,7 @@
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_constrainedcopy.vb" />
     <Compile Include="ex_getmultiplewithoptions.vb" />
+    <Compile Include="ex_getpointdynamicdraw.vb" />
     <Compile Include="ex_gettext.vb" />
     <Compile Include="ex_gumball.vb" />
     <Compile Include="ex_hatchcurve.vb" />

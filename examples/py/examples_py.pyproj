@@ -90,6 +90,7 @@
     <Compile Include="ex_extractthumbnail.py" />
     <Compile Include="ex_findobjectsbyname.py" />
     <Compile Include="ex_getmultiplewithoptions.py" />
+    <Compile Include="ex_getpointdynamicdraw.py" />
     <Compile Include="ex_gettext.py" />
     <Compile Include="ex_hatchcurve.py" />
     <Compile Include="ex_insertknot.py" />

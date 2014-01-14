@@ -149,6 +149,7 @@
     <Compile Include="ex_findobjectsbyname.cs" />
     <Compile Include="ex_constrainedcopy.cs" />
     <Compile Include="ex_getmultiplewithoptions.cs" />
+    <Compile Include="ex_getpointdynamicdraw.cs" />
     <Compile Include="ex_gettext.cs" />
     <Compile Include="ex_gumball.cs" />
     <Compile Include="ex_hatchcurve.cs" />

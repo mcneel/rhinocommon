@@ -25,7 +25,6 @@ namespace examples_cs
       var gp = new GetPoint();
       gp.SetCommandPrompt("Point on surface");
       gp.Constrain(surface, false);
-      //gp.GeometryFilter = ObjectType.Point;
       var option_toggle = new OptionToggle(false, "U", "V");
       gp.AddOptionToggle("Direction", ref option_toggle);
       Point3d point = Point3d.Unset;

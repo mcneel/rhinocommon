@@ -954,6 +954,11 @@ namespace Rhino.Geometry
     /// In the other Surface functions that take a "direction" argument,
     /// "direction" indicates if "constantParameter" is a "u" or "v" parameter.
     /// </remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_extractisocurve.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_extractisocurve.cs' lang='cs'/>
+    /// <code source='examples\py\ex_extractisocurve.py' lang='py'/>
+    /// </example>
     public Curve IsoCurve(int direction, double constantParameter)
     {
       IntPtr ptr = ConstPointer();

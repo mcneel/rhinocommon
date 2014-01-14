@@ -6783,11 +6783,22 @@ namespace Rhino.DocObjects
     }
     #endregion
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_objectiterator.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_objectiterator.cs' lang='cs'/>
+    /// <code source='examples\py\ex_objectiterator.py' lang='py'/>
+    /// </example>
     public bool IncludeLights
     {
       get { return m_include_lights; }
       set { m_include_lights = value; }
     }
+    
+    /// <example>
+    /// <code source='examples\vbnet\ex_objectiterator.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_objectiterator.cs' lang='cs'/>
+    /// <code source='examples\py\ex_objectiterator.py' lang='py'/>
+    /// </example>
     public bool IncludeGrips
     {
       get { return m_include_grips; }

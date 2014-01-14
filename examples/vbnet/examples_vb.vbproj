@@ -144,6 +144,7 @@
     <Compile Include="ex_evnormal.vb" />
     <Compile Include="ex_explodehatch.vb" />
     <Compile Include="ex_extendsurface.vb" />
+    <Compile Include="ex_extractisocurve.vb" />
     <Compile Include="ex_extractthumbnail.vb" />
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_constrainedcopy.vb" />

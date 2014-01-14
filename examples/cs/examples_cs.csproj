@@ -142,6 +142,7 @@
     <Compile Include="ex_evnormal.cs" />
     <Compile Include="ex_explodehatch.cs" />
     <Compile Include="ex_extendsurface.cs" />
+    <Compile Include="ex_extractisocurve.cs" />
     <Compile Include="ex_extractthumbnail.cs" />
     <Compile Include="ex_extractrendermesh.cs" />
     <Compile Include="ex_extrudebrepface.cs" />

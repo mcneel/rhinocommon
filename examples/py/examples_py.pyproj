@@ -86,6 +86,7 @@
     <Compile Include="ex_evnormal.py" />
     <Compile Include="ex_explodehatch.py" />
     <Compile Include="ex_extendsurface.py" />
+    <Compile Include="ex_extractisocurve.py" />
     <Compile Include="ex_extractthumbnail.py" />
     <Compile Include="ex_findobjectsbyname.py" />
     <Compile Include="ex_getmultiplewithoptions.py" />

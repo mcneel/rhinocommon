@@ -26,7 +26,7 @@ Namespace examples_vb
       doc.Views.Redraw()
 
       ' selects a point that already exists
-      Dim obj_ref As ObjRef
+      Dim obj_ref As ObjRef = Nothing
       Dim rc = RhinoGet.GetOneObject("Select point", False, ObjectType.Point, obj_ref)
       If rc <> Result.Success Then
         Return rc
@@ -36,7 +36,7 @@ Namespace examples_vb
       doc.Objects.UnselectAll()
 
       ' selects multiple points that already exist
-      Dim obj_refs As ObjRef()
+      Dim obj_refs As ObjRef() = Nothing
       rc = RhinoGet.GetMultipleObjects("Select point", False, ObjectType.Point, obj_refs)
       If rc <> Result.Success Then
         Return rc

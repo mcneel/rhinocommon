@@ -1952,6 +1952,11 @@ namespace Rhino.Geometry
     /// <param name="contourEnd">An end point of the contouring axis.</param>
     /// <param name="interval">An interval distance.</param>
     /// <returns>An array of curves. This array can be empty.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_makerhinocontours.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_makerhinocontours.cs' lang='cs'/>
+    /// <code source='examples\py\ex_makerhinocontours.py' lang='py'/>
+    /// </example>
     public static Curve[] CreateContourCurves(Mesh meshToContour, Point3d contourStart, Point3d contourEnd, double interval)
     {
       IntPtr pConstMesh = meshToContour.ConstPointer();

@@ -212,6 +212,11 @@ namespace Rhino.DocObjects
     /// render material is used.  See ON_3dmObjectAttributes::MaterialSource() to
     /// determine where to get the definition of the object's render material.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_modifyobjectcolor.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_modifyobjectcolor.cs' lang='cs'/>
+    /// <code source='examples\py\ex_modifyobjectcolor.py' lang='py'/>
+    /// </example>
     public ObjectColorSource ColorSource
     {
       get
@@ -527,6 +532,11 @@ namespace Rhino.DocObjects
     /// <summary>
     /// If ON::color_from_object == ColorSource, then color is the object's display color.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_modifyobjectcolor.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_modifyobjectcolor.cs' lang='cs'/>
+    /// <code source='examples\py\ex_modifyobjectcolor.py' lang='py'/>
+    /// </example>
     public System.Drawing.Color ObjectColor
     {
       get { return GetColor(idxColor); }

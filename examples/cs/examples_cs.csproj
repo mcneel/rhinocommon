@@ -128,6 +128,7 @@
     <Compile Include="ex_addradialdimension.cs" />
     <Compile Include="ex_dimstyle.cs" />
     <Compile Include="ex_displayconduit.cs" />
+    <Compile Include="ex_displayprecision.cs" />
     <Compile Include="ex_dividebylength.cs" />
     <Compile Include="ex_dividebysegments.cs" />
     <Compile Include="ex_dividecurvestraight.cs" />
@@ -135,12 +136,14 @@
     <Compile Include="ex_dotnetmovepointobjects.cs" />
     <Compile Include="ex_dotnetmovepointobjectsnonuniform.cs" />
     <Compile Include="ex_drawoverlay.cs" />
+    <Compile Include="ex_drawstring.cs" />
     <Compile Include="ex_dupborder.cs" />
     <Compile Include="ex_dupmeshboundary.cs" />
     <Compile Include="ex_edittext.cs" />
     <Compile Include="ex_elevation.cs" />
     <Compile Include="ex_evnormal.cs" />
     <Compile Include="ex_explodehatch.cs" />
+    <Compile Include="ex_extendcurve.cs" />
     <Compile Include="ex_extendsurface.cs" />
     <Compile Include="ex_extractisocurve.cs" />
     <Compile Include="ex_extractthumbnail.cs" />
@@ -167,9 +170,11 @@
     <Compile Include="ex_leader.cs" />
     <Compile Include="ex_locklayer.cs" />
     <Compile Include="ex_loft.cs" />
+    <Compile Include="ex_makerhinocontours.cs" />
     <Compile Include="ex_meshdrawing.cs" />
     <Compile Include="ex_meshvolume.cs" />
     <Compile Include="ex_modifylightcolor.cs" />
+    <Compile Include="ex_modifyobjectcolor.cs" />
     <Compile Include="ex_movecplane.cs" />
     <Compile Include="ex_movegripobjects.cs" />
     <Compile Include="ex_moveobjectstocurrentlayer.cs" />

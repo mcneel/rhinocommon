@@ -312,6 +312,11 @@ namespace Rhino
       set { SetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts.ModelRelTol, value); }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_displayprecision.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_displayprecision.cs' lang='cs'/>
+    /// <code source='examples\py\ex_displayprecision.py' lang='py'/>
+    /// </example>
     public int ModelDistanceDisplayPrecision
     {
       get { return UnsafeNativeMethods.CRhinoDocProperties_DistanceDisplayPrecision(m_docId, true, 0, false); }

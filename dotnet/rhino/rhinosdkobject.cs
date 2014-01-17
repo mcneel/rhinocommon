@@ -689,6 +689,11 @@ namespace Rhino.DocObjects
     /// Constructs a deep (full) copy of the geometry.
     /// </summary>
     /// <returns>A copy of the internal geometry.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_duplicateobject.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_duplicateobject.cs' lang='cs'/>
+    /// <code source='examples\py\ex_duplicateobject.py' lang='py'/>
+    /// </example>
     public Rhino.Geometry.GeometryBase DuplicateGeometry()
     {
       if (null != m_edited_geometry)

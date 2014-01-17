@@ -367,6 +367,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="curves">A list, an array or any enumerable set of curves.</param>
     /// <returns>resulting brep or null on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_edgesrf.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_edgesrf.cs' lang='cs'/>
+    /// <code source='examples\py\ex_edgesrf.py' lang='py'/>
+    /// </example>
     public static Brep CreateEdgeSurface(IEnumerable<Curve> curves)
     {
       NurbsCurve[] nurbs_curves = new NurbsCurve[4];

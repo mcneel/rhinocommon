@@ -82,7 +82,9 @@
     <Compile Include="ex_drawoverlay.py" />
     <Compile Include="ex_drawstring.py" />
     <Compile Include="ex_dupborder.py" />
+    <Compile Include="ex_duplicateobject.py" />
     <Compile Include="ex_dupmeshboundary.py" />
+    <Compile Include="ex_edgesrf.py" />
     <Compile Include="ex_edittext.py" />
     <Compile Include="ex_elevation.py" />
     <Compile Include="ex_evnormal.py" />
@@ -92,6 +94,7 @@
     <Compile Include="ex_extractisocurve.py" />
     <Compile Include="ex_extractthumbnail.py" />
     <Compile Include="ex_findobjectsbyname.py" />
+    <Compile Include="ex_getangle.py" />
     <Compile Include="ex_getmultiplewithoptions.py" />
     <Compile Include="ex_getpointdynamicdraw.py" />
     <Compile Include="ex_gettext.py" />
@@ -129,6 +132,8 @@
     <Compile Include="ex_projectpointstobreps.py" />
     <Compile Include="ex_renameblock.py" />
     <Compile Include="ex_renamelayer.py" />
+    <Compile Include="ex_reparameterizecrv.py" />
+    <Compile Include="ex_replacecolordialog.py" />
     <Compile Include="ex_replacehatchpattern.py" />
     <Compile Include="ex_screencaptureview.py" />
     <Compile Include="ex_selectgroupobject.py" />

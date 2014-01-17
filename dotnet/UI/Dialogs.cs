@@ -91,6 +91,11 @@ namespace Rhino
       }
 
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_replacecolordialog.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_replacecolordialog.cs' lang='cs'/>
+    /// <code source='examples\py\ex_replacecolordialog.py' lang='py'/>
+    /// </example>
       public static void SetCustomColorDialog( EventHandler<GetColorEventArgs> handler)
       {
         m_ShowCustomColorDialog = handler;

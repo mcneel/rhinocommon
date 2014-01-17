@@ -138,7 +138,9 @@
     <Compile Include="ex_drawoverlay.cs" />
     <Compile Include="ex_drawstring.cs" />
     <Compile Include="ex_dupborder.cs" />
+    <Compile Include="ex_duplicateobject.cs" />
     <Compile Include="ex_dupmeshboundary.cs" />
+    <Compile Include="ex_edgesrf.cs" />
     <Compile Include="ex_edittext.cs" />
     <Compile Include="ex_elevation.cs" />
     <Compile Include="ex_evnormal.cs" />
@@ -151,6 +153,7 @@
     <Compile Include="ex_extrudebrepface.cs" />
     <Compile Include="ex_findobjectsbyname.cs" />
     <Compile Include="ex_constrainedcopy.cs" />
+    <Compile Include="ex_getangle.cs" />
     <Compile Include="ex_getmultiplewithoptions.cs" />
     <Compile Include="ex_getpointdynamicdraw.cs" />
     <Compile Include="ex_gettext.cs" />
@@ -199,6 +202,8 @@
     <Compile Include="ex_projectpointstobreps.cs" />
     <Compile Include="ex_renameblock.cs" />
     <Compile Include="ex_renamelayer.cs" />
+    <Compile Include="ex_reparameterizecrv.cs" />
+    <Compile Include="ex_replacecolordialog.cs" />
     <Compile Include="ex_replacehatchpattern.cs" />
     <Compile Include="ex_rhinogettransform.cs" />
     <Compile Include="ex_screencaptureview.cs" />

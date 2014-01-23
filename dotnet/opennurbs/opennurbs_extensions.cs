@@ -120,9 +120,9 @@ namespace Rhino.FileIO
         {
           int second = 0, minute = 0, hour = 0, month = 0, day = 0, year = 0;
           if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, true, ref second, ref minute, ref hour, ref day, ref month, ref year))
-            createdOn = new DateTime(year, month, day, hour, minute, second);
+						createdOn = new DateTime(year, month+1, day, hour, minute, second);
           if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, false, ref second, ref minute, ref hour, ref day, ref month, ref year))
-            lastEditedOn = new DateTime(year, month, day, hour, minute, second);
+						lastEditedOn = new DateTime(year, month+1, day, hour, minute, second);
           createdBy = sh_created.ToString();
           lastEditedBy = sh_edited.ToString();
           UnsafeNativeMethods.ON_3dmRevisionHistory_Delete(ptr_revhist);

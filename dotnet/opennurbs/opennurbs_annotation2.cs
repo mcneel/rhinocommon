@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using Rhino.Runtime;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.Geometry
 {
@@ -455,6 +456,11 @@ namespace Rhino.Geometry
     /// <param name="xAxis">x axis of the dimension's plane</param>
     /// <param name="normal">normal to the dimension's plane</param>
     /// <param name="offsetDistance">distance from arrow tip to knee point</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addradialdimension.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addradialdimension.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addradialdimension.py' lang='py'/>
+    /// </example>
     public RadialDimension(Point3d center, Point3d arrowTip, Vector3d xAxis, Vector3d normal, double offsetDistance)
     {
       IntPtr pThis = UnsafeNativeMethods.ON_RadialDimension2_New();
@@ -552,6 +558,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Initializes a new instance of the <see cref="TextEntity"/> class.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_textjustify.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_textjustify.cs' lang='cs'/>
+    /// <code source='examples\py\ex_textjustify.py' lang='py'/>
+    /// </example>
     public TextEntity()
     {
       IntPtr ptr = UnsafeNativeMethods.ON_TextEntity2_New();
@@ -595,6 +606,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets or sets the justification of text in relation to its base point.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_textjustify.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_textjustify.cs' lang='cs'/>
+    /// <code source='examples\py\ex_textjustify.py' lang='py'/>
+    /// </example>
     public TextJustification Justification
     {
       get
@@ -800,7 +816,7 @@ namespace Rhino.Geometry
       get
       {
         IntPtr ptr = ConstPointer();
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.ON_TextDot_GetSetText(ptr, false, null, pString);
@@ -836,17 +852,17 @@ namespace Rhino.Geometry
     {
       get
       { 
-        IntPtr pConstThis = ConstPointer();
-        using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+        var pConstThis = ConstPointer();
+        using (var sh = new StringHolder())
         {
-          IntPtr pStringHolder = sh.NonConstPointer();
+          var pStringHolder = sh.NonConstPointer();
           UnsafeNativeMethods.ON_TextDot_GetFontFace(pConstThis, pStringHolder);
           return sh.ToString();
         }
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
+        var pThis = NonConstPointer();
         UnsafeNativeMethods.ON_TextDot_SetFontFace(pThis, value);
       }
     }

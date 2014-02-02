@@ -1,4 +1,5 @@
 using System;
+using Rhino.Runtime.InteropWrappers;
 
 //don't make serializable yet.
 
@@ -47,7 +48,7 @@ namespace Rhino.Geometry
       get
       {
         IntPtr ptr = ConstPointer();
-        using (Runtime.StringHolder sh = new Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr ptr_string = sh.NonConstPointer();
           UnsafeNativeMethods.ON_InstanceDefinition_GetString(ptr, IDX_NAME, ptr_string);
@@ -69,7 +70,7 @@ namespace Rhino.Geometry
       get
       {
         IntPtr ptr = ConstPointer();
-        using (Runtime.StringHolder sh = new Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr ptr_string = sh.NonConstPointer();
           UnsafeNativeMethods.ON_InstanceDefinition_GetString(ptr, IDX_DESCRIPTION, ptr_string);

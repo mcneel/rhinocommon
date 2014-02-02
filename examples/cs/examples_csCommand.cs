@@ -282,9 +282,9 @@ namespace examples_cs
       Test(Examples.AddLayer, doc);
       Test(Examples.AddLayout, doc);
       Test(Examples.AddLine, doc);
-      Test(Examples.AddLinearDimension, doc);
+      Test(Examples.AddLinearDimension, doc);*/
       Test(Examples.AddLinearDimension2, doc);
-      Test(Examples.AddMaterial, doc);
+      /*Test(Examples.AddMaterial, doc);
       Test(Examples.AddMesh, doc);
       Test(Examples.AddNamedView, doc);
       Test(Examples.AddNurbsCircle, doc);
@@ -316,9 +316,7 @@ namespace examples_cs
       Test
       Test(Examples.IsocurveDensity, doc);
       Test(Examples.MoveCPlane, doc);
-      */
       Test(Examples.AddNestedBlock, doc);
-      /* 
       Test(Examples.ObjectDecoration, doc);
       Test(Examples.ObjectDisplayMode, doc);
       Test(Examples.OrientOnSrf, doc);

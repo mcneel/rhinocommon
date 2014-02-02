@@ -7,6 +7,8 @@ using System.Drawing;
 
 #if RDK_CHECKED
 using Rhino.Render;
+using Rhino.Runtime.InteropWrappers;
+
 #endif
 
 #if RHINO_SDK
@@ -255,8 +257,6 @@ namespace Rhino.PlugIns
       return null;
     }
 
-
-
     /// <summary>Source assembly for this plug-in.</summary>
     public System.Reflection.Assembly Assembly { get { return m_assembly; } }
 
@@ -349,9 +349,7 @@ namespace Rhino.PlugIns
           // an RDK plugin. This is the typical spot where C++ plug-ins perform their
           // RDK initialization.
           if (rc == LoadReturnCode.Success && p is RenderPlugIn)
-          {
-            Rhino.Render.RdkPlugIn.GetRdkPlugIn(p.Id, plugin_serial_number);
-          }
+            RdkPlugIn.GetRdkPlugIn(p.Id, plugin_serial_number);
 #endif
         }
         catch (Exception ex)
@@ -780,6 +778,7 @@ namespace Rhino.PlugIns
       return rc;
     }
 
+
     /// <summary>
     /// Verifies that there is a valid product license for your plug-in, using
     /// the Rhino licensing system. If the plug-in is installed as a standalone
@@ -1087,7 +1086,7 @@ namespace Rhino.PlugIns
     public static string NameFromPath(string pluginPath)
     {
       string rc;
-      using (StringHolder sh = new StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoPlugInManager_NameFromPath(pluginPath, pString);
@@ -1164,7 +1163,7 @@ namespace Rhino.PlugIns
       IntPtr pStrings = UnsafeNativeMethods.ON_StringArray_New();
       int count = UnsafeNativeMethods.CRhinoPluginManager_GetCommandNames(pluginId, pStrings);
       string[] rc = new string[count];
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         for (int i = 0; i < count; i++)
@@ -1525,11 +1524,49 @@ namespace Rhino.PlugIns
                                                              m_OnOutputTypes,
                                                              m_OnCreateTexturePreview,
                                                              m_OnCreatePreview,
-                                                             m_OnDecalProperties);
+                                                             m_OnDecalProperties,
+                                                             g_register_content_io_callback);
 #endif
     }
 
 #if RDK_CHECKED
+    internal delegate void RegisterContentIoCallback(int serialNumber, IntPtr ioList);
+    private static readonly RegisterContentIoCallback g_register_content_io_callback = OnRegisterContentIo;
+    private static void OnRegisterContentIo(int serialNumber, IntPtr ioList)
+    {
+      var render_plug_in = LookUpBySerialNumber(serialNumber) as RenderPlugIn;
+      if (null == render_plug_in)
+        return;
+      var serializers = render_plug_in.RenderContentSerializers();
+      if (null == serializers)
+        return;
+      foreach (var serializer in serializers)
+      {
+        if (null == serializer)
+          continue;
+        // Make sure a file extension is provided and that it was not previously registered.
+        var extension = serializer.FileExtension;
+        if (string.IsNullOrEmpty(extension) || UnsafeNativeMethods.Rdk_RenderContentIo_IsExtensionRegistered(extension))
+          continue;
+        // Create a C++ object and attach it to the serialize object
+        serializer.Construct(render_plug_in.Id);
+      }
+    }
+
+    /// <summary>
+    /// Called by Rhino when it is time to register RenderContentSerializer
+    /// derived classes.  Override this method and return an array of an
+    /// instance of each serialize custom content object you wish to add.
+    /// </summary>
+    /// <returns>
+    /// List of RenderContentSerializer objects to register with the Rhino
+    /// render content browsers.
+    /// </returns>
+    protected virtual IEnumerable<RenderContentSerializer> RenderContentSerializers()
+    {
+      return null;
+    }
+
     public enum RenderFeature : int
     {
       Materials = 0,
@@ -1596,8 +1633,8 @@ namespace Rhino.PlugIns
     /// <returns>A list of file types.</returns>
     protected virtual List<Rhino.FileIO.FileType> SupportedOutputTypes()
     {
-      using (StringHolder shExt = new StringHolder())
-      using (StringHolder shDesc = new StringHolder())
+      using (var shExt = new StringHolder())
+      using (var shDesc = new StringHolder())
       {
         var rc = new List<Rhino.FileIO.FileType>();
         int iIndex = 0;

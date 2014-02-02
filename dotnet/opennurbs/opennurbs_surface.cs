@@ -94,6 +94,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets the surface point at UV.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_principalcurvature.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_principalcurvature.cs' lang='cs'/>
+    /// <code source='examples\py\ex_principalcurvature.py' lang='py'/>
+    /// </example>
     public Point3d Point
     {
       get { return m_point; }
@@ -101,6 +106,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets the surface normal at UV.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_principalcurvature.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_principalcurvature.cs' lang='cs'/>
+    /// <code source='examples\py\ex_principalcurvature.py' lang='py'/>
+    /// </example>
     public Vector3d Normal
     {
       get { return m_normal; }
@@ -111,6 +121,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="direction">Direction index, valid values are 0 and 1.</param>
     /// <returns>The specified direction vector.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_principalcurvature.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_principalcurvature.cs' lang='cs'/>
+    /// <code source='examples\py\ex_principalcurvature.py' lang='py'/>
+    /// </example>
     public Vector3d Direction(int direction)
     {
       return direction == 0 ? m_dir1 : m_dir2;
@@ -121,6 +136,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="direction">Kappa index, valid values are 0 and 1.</param>
     /// <returns>The specified kappa value.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_principalcurvature.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_principalcurvature.cs' lang='cs'/>
+    /// <code source='examples\py\ex_principalcurvature.py' lang='py'/>
+    /// </example>
     public double Kappa(int direction)
     {
       return direction == 0 ? m_kappa1 : m_kappa2;
@@ -129,6 +149,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets the Gaussian curvature value at UV.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_principalcurvature.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_principalcurvature.cs' lang='cs'/>
+    /// <code source='examples\py\ex_principalcurvature.py' lang='py'/>
+    /// </example>
     public double Gaussian
     {
       get { return m_gauss; }
@@ -136,6 +161,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets the Mean curvature value at UV.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_principalcurvature.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_principalcurvature.cs' lang='cs'/>
+    /// <code source='examples\py\ex_principalcurvature.py' lang='py'/>
+    /// </example>
     public double Mean
     {
       get { return m_mean; }
@@ -521,6 +551,28 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Same as Reverse, but if inPlace is set to true this Surface is modified
+    /// instead of a new copy being created.
+    /// </summary>
+    /// <param name="direction">
+    /// 0 for first parameter's domain, 1 for second parameter's domain.
+    /// </param>
+    /// <param name="inPlace"></param>
+    /// <returns>
+    /// If inPlace is False, a new reversed surface on success. If inPlace is
+    /// true, this surface instance is returned on success.
+    /// </returns>
+    public Surface Reverse(int direction, bool inPlace)
+    {
+      if (!inPlace)
+        return Reverse(direction);
+      IntPtr ptr_this = NonConstPointer();
+      if( UnsafeNativeMethods.ON_Surface_Reverse2(ptr_this, direction) )
+        return this;
+      return null;
+    }
+
+    /// <summary>
     /// Transposes surface parameterization (swap U and V)
     /// </summary>
     /// <returns>New transposed surface on success, null on failure.</returns>
@@ -529,6 +581,21 @@ namespace Rhino.Geometry
       IntPtr pConstThis = ConstPointer();
       IntPtr pNewSurface = UnsafeNativeMethods.ON_Surface_Transpose(pConstThis);
       return GeometryBase.CreateGeometryHelper(pNewSurface, null) as Surface;
+    }
+
+    /// <summary>
+    /// Transposes surface parameterization (swap U and V)
+    /// </summary>
+    /// <param name="inPlace"></param>
+    /// <returns>New transposed surface on success, null on failure.</returns>
+    public Surface Transpose(bool inPlace)
+    {
+      if (!inPlace)
+        return Transpose();
+      IntPtr ptr_this = NonConstPointer();
+      if (UnsafeNativeMethods.ON_Surface_Transpose2(ptr_this))
+        return this;
+      return null;
     }
 
     /// <summary>
@@ -552,6 +619,11 @@ namespace Rhino.Geometry
     /// <param name="u">A U parameter.</param>
     /// <param name="v">A V parameter.</param>
     /// <returns>The normal.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_evnormal.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_evnormal.cs' lang='cs'/>
+    /// <code source='examples\py\ex_evnormal.py' lang='py'/>
+    /// </example>
     public Vector3d NormalAt(double u, double v)
     {
       Vector3d rc = new Vector3d();
@@ -584,6 +656,11 @@ namespace Rhino.Geometry
     /// <param name="u">U parameter for evaluation.</param>
     /// <param name="v">V parameter for evaluation.</param>
     /// <returns>Surface Curvature data for the point at uv or null on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_principalcurvature.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_principalcurvature.cs' lang='cs'/>
+    /// <code source='examples\py\ex_principalcurvature.py' lang='py'/>
+    /// </example>
     public SurfaceCurvature CurvatureAt(double u, double v)
     {
       IntPtr pConstThis = ConstPointer();
@@ -877,6 +954,11 @@ namespace Rhino.Geometry
     /// In the other Surface functions that take a "direction" argument,
     /// "direction" indicates if "constantParameter" is a "u" or "v" parameter.
     /// </remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_extractisocurve.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_extractisocurve.cs' lang='cs'/>
+    /// <code source='examples\py\ex_extractisocurve.py' lang='py'/>
+    /// </example>
     public Curve IsoCurve(int direction, double constantParameter)
     {
       IntPtr ptr = ConstPointer();
@@ -1128,6 +1210,11 @@ namespace Rhino.Geometry
     /// <returns>
     /// true if the surface is planar (flat) to within RhinoMath.ZeroTolerance units (1e-12).
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_issurfaceinplane.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_issurfaceinplane.cs' lang='cs'/>
+    /// <code source='examples\py\ex_issurfaceinplane.py' lang='py'/>
+    /// </example>
     public bool IsPlanar()
     {
       return IsPlanar(RhinoMath.ZeroTolerance);

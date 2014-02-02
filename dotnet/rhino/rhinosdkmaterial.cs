@@ -2,25 +2,32 @@
 using System;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.DocObjects
 {
   class MaterialHolder
   {
-    IntPtr m_pConstMaterial;
-    public MaterialHolder(IntPtr pConstMaterial)
+    IntPtr m_ptr_const_material;
+    readonly bool m_is_opennurbs_material;
+
+    public MaterialHolder(IntPtr pConstMaterial, bool isOpenNurbsMaterial)
     {
-      m_pConstMaterial = pConstMaterial;
+      m_ptr_const_material = pConstMaterial;
+      m_is_opennurbs_material = isOpenNurbsMaterial;
     }
     public void Done()
     {
-      m_pConstMaterial = IntPtr.Zero;
+      m_ptr_const_material = IntPtr.Zero;
     }
     public IntPtr ConstMaterialPointer()
     {
-      return m_pConstMaterial;
+      return m_ptr_const_material;
     }
-
+    public bool IsOpenNurbsMaterial
+    {
+      get { return m_is_opennurbs_material; }
+    }
     Material m_cached_material;
     public Material GetMaterial()
     {
@@ -29,7 +36,7 @@ namespace Rhino.DocObjects
   }
 
   [Serializable]
-  public class Material : Rhino.Runtime.CommonObject
+  public class Material : Runtime.CommonObject
   {
     #region members
     // Represents both a CRhinoMaterial and an ON_Material. When m_ptr is
@@ -39,7 +46,7 @@ namespace Rhino.DocObjects
 #if RHINO_SDK
     readonly RhinoDoc m_doc;
     bool m_is_default;
-    static Material m_default_material;
+    static Material g_default_material;
 #endif
     #endregion
 
@@ -47,8 +54,8 @@ namespace Rhino.DocObjects
     public Material()
     {
       // Creates a new non-document control ON_Material
-      IntPtr pMaterial = UnsafeNativeMethods.ON_Material_New(IntPtr.Zero);
-      ConstructNonConstObject(pMaterial);
+      IntPtr ptr_material = UnsafeNativeMethods.ON_Material_New(IntPtr.Zero);
+      ConstructNonConstObject(ptr_material);
     }
 #if RHINO_SDK
     internal Material(int index, RhinoDoc doc)
@@ -62,17 +69,17 @@ namespace Rhino.DocObjects
     {
       get
       {
-        if (m_default_material == null || !m_default_material.IsDocumentControlled)
-          m_default_material = new Material(true);
-        return m_default_material;
+        if (g_default_material == null || !g_default_material.IsDocumentControlled)
+          g_default_material = new Material(true);
+        return g_default_material;
       }
     }
 
     Material(bool defaultMaterial)
     {
-      IntPtr pConstThis = UnsafeNativeMethods.CRhinoMaterial_DefaultMaterial();
+      IntPtr ptr_const_material = UnsafeNativeMethods.CRhinoMaterial_DefaultMaterial();
       m_is_default = true;
-      m_id = UnsafeNativeMethods.ON_Material_ModelObjectId(pConstThis);
+      m_id = UnsafeNativeMethods.ON_Material_ModelObjectId(ptr_const_material);
       m_doc = null;
       m__parent = null;
     }
@@ -80,11 +87,11 @@ namespace Rhino.DocObjects
 
     // This is for temporary wrappers. You should always call
     // ReleaseNonConstPointer after you are done using this material
-    internal static Material NewTemporaryMaterial(IntPtr pON_Material)
+    internal static Material NewTemporaryMaterial(IntPtr pOpennurbsMaterial)
     {
-      if (IntPtr.Zero == pON_Material)
+      if (IntPtr.Zero == pOpennurbsMaterial)
         return null;
-      Material rc = new Material(pON_Material);
+      Material rc = new Material(pOpennurbsMaterial);
       rc.DoNotDestructOnDispose();
       return rc;
     }
@@ -98,7 +105,7 @@ namespace Rhino.DocObjects
       ConstructConstObject(holder, -1);
     }
 
-    internal Material(Guid id, Rhino.FileIO.File3dm parent)
+    internal Material(Guid id, FileIO.File3dm parent)
     {
       m_id = id;
       m__parent = parent;
@@ -122,18 +129,18 @@ namespace Rhino.DocObjects
       if (m_doc != null)
         return UnsafeNativeMethods.CRhinoMaterialTable_GetMaterialPointer(m_doc.m_docId, m_id);
 #endif
-      Rhino.FileIO.File3dm parent_file = m__parent as Rhino.FileIO.File3dm;
+      FileIO.File3dm parent_file = m__parent as FileIO.File3dm;
       if (parent_file != null)
       {
-        IntPtr pModel = parent_file.ConstPointer();
-        return UnsafeNativeMethods.ONX_Model_GetMaterialPointer(pModel, m_id);
+        IntPtr ptr_model = parent_file.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_GetMaterialPointer(ptr_model, m_id);
       }
       return IntPtr.Zero;
     }
 
     internal override IntPtr NonConstPointer()
     {
-      if (m__parent is Rhino.FileIO.File3dm)
+      if (m__parent is FileIO.File3dm)
         return _InternalGetConstPointer();
 
       return base.NonConstPointer();
@@ -142,8 +149,8 @@ namespace Rhino.DocObjects
     internal override IntPtr _InternalDuplicate(out bool applymempressure)
     {
       applymempressure = false;
-      IntPtr pConstPointer = ConstPointer();
-      return UnsafeNativeMethods.ON_Object_Duplicate(pConstPointer);
+      IntPtr ptr_const_this = ConstPointer();
+      return UnsafeNativeMethods.ON_Object_Duplicate(ptr_const_this);
     }
     protected override void OnSwitchToNonConst()
     {
@@ -153,10 +160,10 @@ namespace Rhino.DocObjects
       base.OnSwitchToNonConst();
     }
     #region properties
-    const int idxIsDeleted = 0;
-    const int idxIsReference = 1;
+    const int IDX_IS_DELETED = 0;
+    const int IDX_IS_REFERENCE = 1;
     //const int idxIsModified = 2;
-    const int idxIsDefaultMaterial = 3;
+    const int IDX_IS_DEFAULT_MATERIAL = 3;
 
 #if RHINO_SDK
     /// <summary>
@@ -170,8 +177,8 @@ namespace Rhino.DocObjects
       {
         if (!IsDocumentControlled)
           return false;
-        IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.CRhinoMaterial_GetBool(pConstThis, idxIsDeleted);
+        IntPtr ptr_const_this = ConstPointer();
+        return UnsafeNativeMethods.CRhinoMaterial_GetBool(ptr_const_this, IDX_IS_DELETED);
       }
     }
 #endif
@@ -181,8 +188,8 @@ namespace Rhino.DocObjects
     {
       get
       {
-        IntPtr pMaterial = ConstPointer();
-        return UnsafeNativeMethods.ON_Material_ModelObjectId(pMaterial);
+        IntPtr ptr_const_this = ConstPointer();
+        return UnsafeNativeMethods.ON_Material_ModelObjectId(ptr_const_this);
       }
     }
 
@@ -193,13 +200,13 @@ namespace Rhino.DocObjects
     {
       get
       {
-        IntPtr pMaterial = ConstPointer();
-        return UnsafeNativeMethods.ON_Material_PlugInId(pMaterial);
+        IntPtr ptr_const_this = ConstPointer();
+        return UnsafeNativeMethods.ON_Material_PlugInId(ptr_const_this);
       }
       set
       {
-        IntPtr pMaterial = NonConstPointer();
-        UnsafeNativeMethods.ON_Material_SetPlugInId(pMaterial, value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_Material_SetPlugInId(ptr_this, value);
       }
     }
 
@@ -214,8 +221,8 @@ namespace Rhino.DocObjects
       {
         if (!IsDocumentControlled)
           return false;
-        IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.CRhinoMaterial_GetBool(pConstThis, idxIsReference);
+        IntPtr ptr_const_this = ConstPointer();
+        return UnsafeNativeMethods.CRhinoMaterial_GetBool(ptr_const_this, IDX_IS_REFERENCE);
       }
     }
 
@@ -235,9 +242,9 @@ namespace Rhino.DocObjects
       {
         if (!IsDocumentControlled)
           return false;
-        IntPtr pConstThis = ConstPointer();
+        IntPtr ptr_const_this = ConstPointer();
 #if RHINO_SDK
-        return UnsafeNativeMethods.CRhinoMaterial_GetBool(pConstThis, idxIsDefaultMaterial);
+        return UnsafeNativeMethods.CRhinoMaterial_GetBool(ptr_const_this, IDX_IS_DEFAULT_MATERIAL);
 #else
         return MaterialIndex == -1;
 #endif
@@ -251,8 +258,8 @@ namespace Rhino.DocObjects
     {
       get
       {
-        IntPtr pConsThis = ConstPointer();
-        return UnsafeNativeMethods.ON_Material_Index(pConsThis);
+        IntPtr ptr_const_this = ConstPointer();
+        return UnsafeNativeMethods.ON_Material_Index(ptr_const_this);
       }
     }
 
@@ -266,46 +273,63 @@ namespace Rhino.DocObjects
       {
         if (!IsDocumentControlled)
           return 0;
-        IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.CRhinoMaterial_InUse(pConstThis);
+        IntPtr ptr_const_this = ConstPointer();
+        return UnsafeNativeMethods.CRhinoMaterial_InUse(ptr_const_this);
       }
     }
+
+    /// <summary>
+    /// If true this object may not be modified. Any properties or functions that attempt
+    /// to modify this object when it is set to "IsReadOnly" will throw a NotSupportedException.
+    /// </summary>
+    public override bool IsDocumentControlled
+    {
+      get
+      {
+        MaterialHolder mh = m__parent as MaterialHolder;
+        if (mh != null && mh.IsOpenNurbsMaterial)
+          return false;
+        return base.IsDocumentControlled;
+      }
+    }
+
 #endif
 
     public string Name
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        if (IntPtr.Zero == pConstThis)
+        IntPtr ptr_const_this = ConstPointer();
+        if (IntPtr.Zero == ptr_const_this)
           return String.Empty;
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
-          IntPtr pString = sh.NonConstPointer();
-          UnsafeNativeMethods.ON_Material_GetName(pConstThis, pString);
+          IntPtr ptr_string = sh.NonConstPointer();
+          UnsafeNativeMethods.ON_Material_GetName(ptr_const_this, ptr_string);
           return sh.ToString();
         }
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_Material_SetName(pThis, value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_Material_SetName(ptr_this, value);
       }
     }
 
-    const int idxShine = 0;
-    const int idxTransparency = 1;
-    const int idxIOR = 2;
+    const int IDX_SHINE = 0;
+    const int IDX_TRANSPARENCY = 1;
+    const int IDX_IOR = 2;
+    const int idxReflectivity = 3;
 
     double GetDouble(int which)
     {
-      IntPtr pConstThis = ConstPointer();
-      return UnsafeNativeMethods.ON_Material_GetDouble(pConstThis, which);
+      IntPtr ptr_const_this = ConstPointer();
+      return UnsafeNativeMethods.ON_Material_GetDouble(ptr_const_this, which);
     }
     void SetDouble(int which, double val)
     {
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.ON_Material_SetDouble(pThis, which, val);
+      IntPtr ptr_this = NonConstPointer();
+      UnsafeNativeMethods.ON_Material_SetDouble(ptr_this, which, val);
     }
 
     public static double MaxShine
@@ -318,8 +342,8 @@ namespace Rhino.DocObjects
     /// </summary>
     public double Shine
     {
-      get { return GetDouble(idxShine); }
-      set { SetDouble(idxShine, value); }
+      get { return GetDouble(IDX_SHINE); }
+      set { SetDouble(IDX_SHINE, value); }
     }
 
     /// <summary>
@@ -327,8 +351,8 @@ namespace Rhino.DocObjects
     /// </summary>
     public double Transparency
     {
-      get { return GetDouble(idxTransparency); }
-      set { SetDouble(idxTransparency, value); }
+      get { return GetDouble(IDX_TRANSPARENCY); }
+      set { SetDouble(IDX_TRANSPARENCY, value); }
     }
 
     /// <summary>
@@ -337,58 +361,68 @@ namespace Rhino.DocObjects
     /// </summary>
     public double IndexOfRefraction
     {
-      get { return GetDouble(idxIOR); }
-      set { SetDouble(idxIOR, value); }
+      get { return GetDouble(IDX_IOR); }
+      set { SetDouble(IDX_IOR, value); }
     }
 
-    const int idxDiffuse = 0;
-    const int idxAmbient = 1;
-    const int idxEmission = 2;
-    const int idxSpecular = 3;
-    const int idxReflection = 4;
-    const int idxTransparent = 5;
+    /// <summary>
+    /// Gets or sets how reflective a material is, 0f is no reflection
+    /// 1f is 100% reflective.
+    /// </summary>
+    public double Reflectivity
+    {
+      get { return GetDouble(idxReflectivity); }
+      set { SetDouble(idxReflectivity, value); }
+    }
+
+    const int IDX_DIFFUSE = 0;
+    const int IDX_AMBIENT = 1;
+    const int IDX_EMISSION = 2;
+    const int IDX_SPECULAR = 3;
+    const int IDX_REFLECTION = 4;
+    const int IDX_TRANSPARENT = 5;
     System.Drawing.Color GetColor(int which)
     {
-      IntPtr pConstThis = ConstPointer();
-      int abgr = UnsafeNativeMethods.ON_Material_GetColor(pConstThis, which);
-      return Rhino.Runtime.Interop.ColorFromWin32(abgr);
+      IntPtr ptr_const_this = ConstPointer();
+      int abgr = UnsafeNativeMethods.ON_Material_GetColor(ptr_const_this, which);
+      return Runtime.Interop.ColorFromWin32(abgr);
     }
     void SetColor(int which, System.Drawing.Color c)
     {
-      IntPtr pThis = NonConstPointer();
+      IntPtr ptr_this = NonConstPointer();
       int argb = c.ToArgb();
-      UnsafeNativeMethods.ON_Material_SetColor(pThis, which, argb);
+      UnsafeNativeMethods.ON_Material_SetColor(ptr_this, which, argb);
     }
 
     public System.Drawing.Color DiffuseColor
     {
-      get{ return GetColor(idxDiffuse); }
-      set{ SetColor(idxDiffuse, value); }
+      get{ return GetColor(IDX_DIFFUSE); }
+      set{ SetColor(IDX_DIFFUSE, value); }
     }
     public System.Drawing.Color AmbientColor
     {
-      get { return GetColor(idxAmbient); }
-      set { SetColor(idxAmbient, value); }
+      get { return GetColor(IDX_AMBIENT); }
+      set { SetColor(IDX_AMBIENT, value); }
     }
     public System.Drawing.Color EmissionColor
     {
-      get { return GetColor(idxEmission); }
-      set { SetColor(idxEmission, value); }
+      get { return GetColor(IDX_EMISSION); }
+      set { SetColor(IDX_EMISSION, value); }
     }
     public System.Drawing.Color SpecularColor
     {
-      get { return GetColor(idxSpecular); }
-      set { SetColor(idxSpecular, value); }
+      get { return GetColor(IDX_SPECULAR); }
+      set { SetColor(IDX_SPECULAR, value); }
     }
     public System.Drawing.Color ReflectionColor
     {
-      get { return GetColor(idxReflection); }
-      set { SetColor(idxReflection, value); }
+      get { return GetColor(IDX_REFLECTION); }
+      set { SetColor(IDX_REFLECTION, value); }
     }
     public System.Drawing.Color TransparentColor
     {
-      get { return GetColor(idxTransparent); }
-      set { SetColor(idxTransparent, value); }
+      get { return GetColor(IDX_TRANSPARENT); }
+      set { SetColor(IDX_TRANSPARENT, value); }
     }
     #endregion
 
@@ -397,8 +431,8 @@ namespace Rhino.DocObjects
     /// </summary>
     public void Default()
     {
-      IntPtr pConstThis = NonConstPointer();
-      UnsafeNativeMethods.ON_Material_Default(pConstThis);
+      IntPtr ptr_const_this = NonConstPointer();
+      UnsafeNativeMethods.ON_Material_Default(ptr_const_this);
     }
 
     internal const int idxBitmapTexture = 0;
@@ -407,38 +441,56 @@ namespace Rhino.DocObjects
     internal const int idxTransparencyTexture = 3;
     bool AddTexture(string filename, int which)
     {
-      IntPtr pThis = NonConstPointer();
-      return UnsafeNativeMethods.ON_Material_AddTexture(pThis, filename, which);
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.ON_Material_AddTexture(ptr_this, filename, which);
     }
     bool SetTexture(Texture texture, int which)
     {
-      IntPtr pThis = NonConstPointer();
-      IntPtr pTexture = texture.ConstPointer();
-      return UnsafeNativeMethods.ON_Material_SetTexture(pThis, pTexture, which);
+      IntPtr ptr_this = NonConstPointer();
+      IntPtr ptr_const_texture = texture.ConstPointer();
+      return UnsafeNativeMethods.ON_Material_SetTexture(ptr_this, ptr_const_texture, which);
     }
     Texture GetTexture(int which)
     {
-      IntPtr pConstThis = ConstPointer();
-      int index = UnsafeNativeMethods.ON_Material_GetTexture(pConstThis, which);
+      IntPtr ptr_const_this = ConstPointer();
+      int index = UnsafeNativeMethods.ON_Material_GetTexture(ptr_const_this, which);
       if (index >= 0)
         return new Texture(index, this);
       return null;
     }
 
-#if TODO_RDK_UNCHECKED
-    Rhino.Render.RenderMaterial RenderMaterial
+// This is Private and never called so do we really need it?
+//#if RDK_UNCHECKED
+//    Render.RenderMaterial RenderMaterial
+//    {
+//      get
+//      {
+//        var pointer = ConstPointer();
+//        var instance_id = UnsafeNativeMethods.Rdk_MaterialFromOnMaterial(pointer);
+//        return Render.RenderContent.FromId(m_doc, instance_id) as Render.RenderMaterial;
+//      }
+//      set
+//      {
+//        var pointer = NonConstPointer();
+//        var id = (value == null ? Guid.Empty : value.Id);
+//        UnsafeNativeMethods.Rdk_SetMaterialToOnMaterial(pointer, id);
+//      }
+//    }
+//#endif
+
+    /// <summary>
+    /// Get array of textures that this material uses
+    /// </summary>
+    /// <returns></returns>
+    public Texture[] GetTextures()
     {
-        get
-        {
-            Guid instanceId = UnsafeNativeMethods.Rdk_MaterialFromOnMaterial(ConstPointer());
-            return new Rhino.Render.RenderMaterial(instanceId);
-        }
-        set
-        {
-            UnsafeNativeMethods.Rdk_SetMaterialToOnMaterial(NonConstPointer(), value.Id);
-        }
+      IntPtr ptr_const_this = ConstPointer();
+      int count = UnsafeNativeMethods.ON_Material_GetTextureCount(ptr_const_this);
+      Texture[] rc = new Texture[count];
+      for (int i = 0; i < count; i++)
+        rc[i] = new Texture(i, this);
+      return rc;
     }
-#endif
 
     #region Bitmap
     public Texture GetBitmapTexture()
@@ -509,8 +561,8 @@ namespace Rhino.DocObjects
 #if RHINO_SDK
       if (m_id == Guid.Empty || IsDocumentControlled)
         return false;
-      IntPtr pThis = NonConstPointer();
-      return UnsafeNativeMethods.CRhinoMaterialTable_CommitChanges(m_doc.m_docId, pThis, m_id);
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.CRhinoMaterialTable_CommitChanges(m_doc.m_docId, ptr_this, m_id);
 #else
       return true;
 #endif
@@ -573,18 +625,18 @@ namespace Rhino.DocObjects.Tables
 
   public class MaterialTableEventArgs : EventArgs
   {
-    readonly int m_docId;
+    readonly int m_document_id;
     readonly MaterialTableEventType m_event_type;
     readonly int m_material_index;
     readonly MaterialHolder m_holder;
 
-    internal MaterialTableEventArgs(int docId, int event_type, int index, IntPtr pOldSettings)
+    internal MaterialTableEventArgs(int docId, int eventType, int index, IntPtr pOldSettings)
     {
-      m_docId = docId;
-      m_event_type = (MaterialTableEventType)event_type;
+      m_document_id = docId;
+      m_event_type = (MaterialTableEventType)eventType;
       m_material_index = index;
       if( pOldSettings!=IntPtr.Zero )
-        m_holder = new MaterialHolder(pOldSettings);
+        m_holder = new MaterialHolder(pOldSettings, true);
     }
 
     internal void Done()
@@ -595,7 +647,7 @@ namespace Rhino.DocObjects.Tables
     RhinoDoc m_doc;
     public RhinoDoc Document
     {
-      get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_docId)); }
+      get { return m_doc ?? (m_doc = RhinoDoc.FromId(m_document_id)); }
     }
 
     public MaterialTableEventType EventType
@@ -619,7 +671,7 @@ namespace Rhino.DocObjects.Tables
     }
   }
 
-  public sealed class MaterialTable : IEnumerable<Material>, Rhino.Collections.IRhinoTable<Material>
+  public sealed class MaterialTable : IEnumerable<Material>, Collections.IRhinoTable<Material>
   {
     private readonly RhinoDoc m_doc;
     internal MaterialTable(RhinoDoc doc)
@@ -633,10 +685,10 @@ namespace Rhino.DocObjects.Tables
       get { return m_doc; }
     }
 
-    const int idxMaterialCount = 0;
-    const int idxCurrentMaterialIndex = 1;
-    const int idxCurrentMaterialSource = 2;
-    const int idxAddDefaultMaterial = 3;
+    const int IDX_MATERIAL_COUNT = 0;
+    const int IDX_CURRENT_MATERIAL_INDEX = 1;
+    const int IDX_CURRENT_MATERIAL_SOURCE = 2;
+    const int IDX_ADD_DEFAULT_MATERIAL = 3;
 
     /// <summary>
     /// Returns number of materials in the material table, including deleted materials.
@@ -645,7 +697,7 @@ namespace Rhino.DocObjects.Tables
     {
       get
       {
-        return UnsafeNativeMethods.CRhinoMaterialTable_GetInt(m_doc.m_docId, idxMaterialCount);
+        return UnsafeNativeMethods.CRhinoMaterialTable_GetInt(m_doc.m_docId, IDX_MATERIAL_COUNT);
       }
     }
 
@@ -658,13 +710,13 @@ namespace Rhino.DocObjects.Tables
     /// <returns>
     /// If index is out of range, the current material is returned.
     /// </returns>
-    public DocObjects.Material this[int index]
+    public Material this[int index]
     {
       get
       {
         if (index < 0 || index >= Count)
           index = CurrentMaterialIndex;
-        return new Rhino.DocObjects.Material(index, m_doc);
+        return new Material(index, m_doc);
       }
     }
 
@@ -678,7 +730,7 @@ namespace Rhino.DocObjects.Tables
     {
       get
       {
-        return UnsafeNativeMethods.CRhinoMaterialTable_GetInt(m_doc.m_docId, idxCurrentMaterialIndex);
+        return UnsafeNativeMethods.CRhinoMaterialTable_GetInt(m_doc.m_docId, IDX_CURRENT_MATERIAL_INDEX);
       }
       set
       {
@@ -693,7 +745,7 @@ namespace Rhino.DocObjects.Tables
     {
       get
       {
-        int rc = UnsafeNativeMethods.CRhinoMaterialTable_GetInt(m_doc.m_docId, idxCurrentMaterialSource);
+        int rc = UnsafeNativeMethods.CRhinoMaterialTable_GetInt(m_doc.m_docId, IDX_CURRENT_MATERIAL_SOURCE);
         return (ObjectMaterialSource)rc;
       }
       set
@@ -708,7 +760,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>The position of the new material in the table.</returns>
     public int Add()
     {
-      return UnsafeNativeMethods.CRhinoMaterialTable_GetInt(m_doc.m_docId, idxAddDefaultMaterial);
+      return UnsafeNativeMethods.CRhinoMaterialTable_GetInt(m_doc.m_docId, IDX_ADD_DEFAULT_MATERIAL);
     }
 
     /// <summary>
@@ -732,8 +784,8 @@ namespace Rhino.DocObjects.Tables
     /// <returns>The position of the new material in the table.</returns>
     public int Add(Material material, bool reference)
     {
-      IntPtr pConstMaterial = material.ConstPointer();
-      return UnsafeNativeMethods.CRhinoMaterialTable_Add(m_doc.m_docId, pConstMaterial, reference);
+      IntPtr ptr_const_material = material.ConstPointer();
+      return UnsafeNativeMethods.CRhinoMaterialTable_Add(m_doc.m_docId, ptr_const_material, reference);
     }
 
     /// <summary>
@@ -772,10 +824,10 @@ namespace Rhino.DocObjects.Tables
     /// true if successful. false if materialIndex is out of range or the settings attempt
     /// to lock or hide the current material.
     /// </returns>
-    public bool Modify(Rhino.DocObjects.Material newSettings, int materialIndex, bool quiet)
+    public bool Modify(Material newSettings, int materialIndex, bool quiet)
     {
-      IntPtr pConstMaterial = newSettings.ConstPointer();
-      return UnsafeNativeMethods.CRhinoMaterialTable_ModifyMaterial(m_doc.m_docId, pConstMaterial, materialIndex, quiet);
+      IntPtr ptr_const_material = newSettings.ConstPointer();
+      return UnsafeNativeMethods.CRhinoMaterialTable_ModifyMaterial(m_doc.m_docId, ptr_const_material, materialIndex, quiet);
     }
 
     public bool ResetMaterial(int materialIndex)
@@ -800,11 +852,11 @@ namespace Rhino.DocObjects.Tables
     #region enumerator
     public IEnumerator<Material> GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<MaterialTable, Material>(this);
+      return new Collections.TableEnumerator<MaterialTable, Material>(this);
     }
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<MaterialTable, Material>(this);
+      return new Collections.TableEnumerator<MaterialTable, Material>(this);
     }
     #endregion
   }

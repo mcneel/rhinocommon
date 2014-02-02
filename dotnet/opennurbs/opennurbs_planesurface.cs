@@ -23,6 +23,11 @@ namespace Rhino.Geometry
     /// <param name="yExtents">The y interval of the plane that defines the rectangle.
     /// The corresponding evaluation interval domain is set so that it matches the
     /// extents interval.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_planesurface.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_planesurface.cs' lang='cs'/>
+    /// <code source='examples\py\ex_planesurface.py' lang='py'/>
+    /// </example>
     public PlaneSurface(Plane plane, Interval xExtents, Interval yExtents)
     {
       IntPtr ptr = UnsafeNativeMethods.ON_PlaneSurface_New(ref plane, xExtents, yExtents);
@@ -66,6 +71,11 @@ namespace Rhino.Geometry
     /// <param name="plane">An original plane value.</param>
     /// <param name="box">A box to use for extension boundary.</param>
     /// <returns>A new plane surface on success, or null on error.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_splitbrepwithplane.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_splitbrepwithplane.cs' lang='cs'/>
+    /// <code source='examples\py\ex_splitbrepwithplane.py' lang='py'/>
+    /// </example>
     public static PlaneSurface CreateThroughBox(Plane plane, BoundingBox box)
     {
       IntPtr ptr = UnsafeNativeMethods.RHC_RhinoPlaneThroughBox2(ref plane, ref box);

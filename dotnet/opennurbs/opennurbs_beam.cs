@@ -474,7 +474,20 @@ namespace Rhino.Geometry
     {
       IntPtr ptr_const_this = ConstPointer();
       return UnsafeNativeMethods.ON_Extrusion_ProfileIndex(ptr_const_this, profileParameter);
+    }
 
+    /// <summary>
+    /// Obtains a reference to a specified type of mesh for this extrusion.
+    /// </summary>
+    /// <param name="meshType">The mesh type.</param>
+    /// <returns>A mesh.</returns>
+    public Mesh GetMesh(MeshType meshType)
+    {
+      IntPtr ptr_const_this = ConstPointer();
+      IntPtr ptr_const_mesh = UnsafeNativeMethods.ON_Extrusion_GetMesh(ptr_const_this, (int)meshType);
+      if (IntPtr.Zero == ptr_const_mesh)
+        return null;
+      return CreateGeometryHelper(ptr_const_mesh, new MeshHolder(this, meshType)) as Mesh;
     }
 
     //skipping

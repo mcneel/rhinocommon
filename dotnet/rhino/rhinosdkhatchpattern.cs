@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.DocObjects
 {
@@ -184,7 +185,7 @@ namespace Rhino.DocObjects
         IntPtr pConstThis = ConstPointer();
         if (IntPtr.Zero == pConstThis)
           return String.Empty;
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.ON_HatchPattern_GetString(pConstThis, pString, true);
@@ -205,7 +206,7 @@ namespace Rhino.DocObjects
         IntPtr pConstThis = ConstPointer();
         if (IntPtr.Zero == pConstThis)
           return String.Empty;
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           UnsafeNativeMethods.ON_HatchPattern_GetString(pConstThis, pString, false);

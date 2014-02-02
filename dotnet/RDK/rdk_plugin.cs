@@ -9,13 +9,13 @@ namespace Rhino.Render
   sealed class RdkPlugIn : IDisposable
   {
     #region statics
-    static bool m_callbacks_set;
+    static bool g_callbacks_set;
     internal static void SetRdkCallbackFunctions(bool on)
     {
       // All of the RDK callback functions - gets called every time a new RdkPlugIn is created
       if (on)
       {
-#if RDK_UNCHECKED
+#if RDK_CHECKED
         UnsafeNativeMethods.Rdk_SetNewTextureCallback(RenderTexture.m_NewTextureCallback);
         UnsafeNativeMethods.Rdk_SetNewMaterialCallback(RenderMaterial.m_NewMaterialCallback);
         UnsafeNativeMethods.Rdk_SetNewEnvironmentCallback(RenderEnvironment.m_NewEnvironmentCallback);
@@ -26,10 +26,22 @@ namespace Rhino.Render
         UnsafeNativeMethods.Rdk_SetNewTextureEvaluatorCallback(RenderTexture.m_NewTextureEvaluator);
         UnsafeNativeMethods.Rdk_SetTextureEvaluatorCallbacks(TextureEvaluator.m_GetColor, TextureEvaluator.m_OnDeleteThis);
         UnsafeNativeMethods.Rdk_SetSimulateTextureCallback(RenderTexture.m_SimulateTexture);
+        UnsafeNativeMethods.RdkSetTextureSetVirtualIntCallback(RenderTexture.SetVirtualInt);
+        UnsafeNativeMethods.RdkSetTextureGetVirtualIntCallback(RenderTexture.GetVirtualInt);
+        UnsafeNativeMethods.RdkSetTextureSetVirtualVector3dCallback(RenderTexture.SetVirtual3DVector);
+        UnsafeNativeMethods.RdkSetTextureGetVirtualVector3dCallback(RenderTexture.GetVirtual3DVector);
         UnsafeNativeMethods.Rdk_SetAddUISectionsCallback(RenderContent.m_AddUISections);
+        UnsafeNativeMethods.Rdk_SetGetDefaultsFromUserCallback(RenderContent.m_GetDefaultsFromUser);
         UnsafeNativeMethods.Rdk_SetIsContentTypeAcceptableAsChildCallback(RenderContent.m_IsContentTypeAcceptableAsChild);
         UnsafeNativeMethods.Rdk_SetHarvestDataCallback(RenderContent.m_HarvestData);
         UnsafeNativeMethods.Rdk_SetGetShaderCallback(RenderContent.m_GetShader);
+        UnsafeNativeMethods.Rdk_SetGetContentIconCallback(RenderContent.SetContentIcon);
+
+        UnsafeNativeMethods.Rdk_SetSetParameterCallback(RenderContent.m_SetParameter);
+        UnsafeNativeMethods.Rdk_SetGetParameterCallback(RenderContent.m_GetParameter);
+
+        UnsafeNativeMethods.Rdk_SetSetExtraRequirementParameterCallback(RenderContent.m_SetExtraRequirementParameter);
+        UnsafeNativeMethods.Rdk_SetGetExtraRequirementParameterCallback(RenderContent.m_GetExtraRequirementParameter);
 
         //Materials
         UnsafeNativeMethods.Rdk_SetTextureChildSlotNameCallback(RenderMaterial.m_TextureChildSlotName);
@@ -39,28 +51,25 @@ namespace Rhino.Render
         UnsafeNativeMethods.Rdk_SetSimulateEnvironmentCallback(RenderEnvironment.m_SimulateEnvironment);
 
         //CustomRenderMeshes
-        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_DeleteThis(CustomRenderMesh.Provider.m_DeleteThis);
-        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_WillBuild(CustomRenderMesh.Provider.m_WillBuild);
-        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_BBox(CustomRenderMesh.Provider.m_BBox);
-        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_Build(CustomRenderMesh.Provider.m_Build);
+        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_DeleteThis(CustomRenderMeshProvider.DeleteThis);
+        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_WillBuild(CustomRenderMeshProvider.WillBuild);
+        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_BBox(CustomRenderMeshProvider.BBox);
+        UnsafeNativeMethods.Rdk_SetCallback_CRMProvider_Build(CustomRenderMeshProvider.Build);
 
         //IoPlugins
-        UnsafeNativeMethods.Rdk_SetRenderContentIoDeleteThisCallback(IOPlugIn.m_DeleteThis);
-        UnsafeNativeMethods.Rdk_SetRenderContentIoLoadCallback(IOPlugIn.m_Load);
-        UnsafeNativeMethods.Rdk_SetRenderContentIoSaveCallback(IOPlugIn.m_Save);
-        UnsafeNativeMethods.Rdk_SetRenderContentIoStringCallback(Rhino.Render.IOPlugIn.m_GetRenderContentIoString);
-#endif
-#if RDK_CHECKED
+        UnsafeNativeMethods.Rdk_SetRenderContentIoDeleteThisCallback(RenderContentSerializer.m_DeleteThis);
+        UnsafeNativeMethods.Rdk_SetRenderContentIoLoadCallback(RenderContentSerializer.m_Load);
+        UnsafeNativeMethods.Rdk_SetRenderContentIoSaveCallback(RenderContentSerializer.m_Save);
+        UnsafeNativeMethods.Rdk_SetRenderContentIoStringCallback(RenderContentSerializer.m_GetRenderContentIoString);
+
         //SdkRender
         UnsafeNativeMethods.Rdk_SetSdkRenderCallback(RenderPipeline.m_ReturnBoolGeneralCallback);
-#endif
-        m_callbacks_set = true;
+        g_callbacks_set = true;
       }
       else
       {
-        if (m_callbacks_set)
+        if (g_callbacks_set)
         {
-#if RDK_UNCHECKED
           UnsafeNativeMethods.Rdk_SetNewTextureCallback(null);
           UnsafeNativeMethods.Rdk_SetNewMaterialCallback(null);
           UnsafeNativeMethods.Rdk_SetNewEnvironmentCallback(null);
@@ -71,7 +80,10 @@ namespace Rhino.Render
           UnsafeNativeMethods.Rdk_SetNewTextureEvaluatorCallback(null);
           UnsafeNativeMethods.Rdk_SetTextureEvaluatorCallbacks(null, null);
           UnsafeNativeMethods.Rdk_SetSimulateTextureCallback(null);
+          UnsafeNativeMethods.RdkSetTextureSetVirtualIntCallback(null);
+          UnsafeNativeMethods.RdkSetTextureGetVirtualIntCallback(null);
           UnsafeNativeMethods.Rdk_SetAddUISectionsCallback(null);
+          UnsafeNativeMethods.Rdk_SetGetDefaultsFromUserCallback(null);
           UnsafeNativeMethods.Rdk_SetIsContentTypeAcceptableAsChildCallback(null);
           UnsafeNativeMethods.Rdk_SetHarvestDataCallback(null);
           UnsafeNativeMethods.Rdk_SetGetShaderCallback(null);
@@ -94,19 +106,17 @@ namespace Rhino.Render
           UnsafeNativeMethods.Rdk_SetRenderContentIoLoadCallback(null);
           UnsafeNativeMethods.Rdk_SetRenderContentIoSaveCallback(null);
           UnsafeNativeMethods.Rdk_SetRenderContentIoStringCallback(null);
-#endif
           //SdkRender
-#if RDK_CHECKED
           UnsafeNativeMethods.Rdk_SetSdkRenderCallback(null);
 #endif
-          m_callbacks_set = false;
+          g_callbacks_set = false;
         }
       }
     }
     /// <summary>
     /// Dictionary of valid RdkPlugIn's
     /// </summary>
-    static readonly Dictionary<Guid, RdkPlugIn> m_rdkPlugInDictionary = new Dictionary<Guid, RdkPlugIn>();
+    static readonly Dictionary<Guid, RdkPlugIn> g_rdk_plugin_dictionary = new Dictionary<Guid, RdkPlugIn>();
     /// <summary>
     /// Find loaded RdkPlugIn in the Render Development Kit(RDK) plug-in
     /// dictionary.
@@ -119,7 +129,7 @@ namespace Rhino.Render
     public static RdkPlugIn FromPlugInId(Guid plugInId)
     {
       RdkPlugIn found;
-      m_rdkPlugInDictionary.TryGetValue(plugInId, out found);
+      g_rdk_plugin_dictionary.TryGetValue(plugInId, out found);
       return found;
     }
     /// <summary>
@@ -146,8 +156,8 @@ namespace Rhino.Render
     /// </returns>
     public static RdkPlugIn FromRenderConentClassType(Type type)
     {
-      foreach (var item in m_rdkPlugInDictionary)
-        if (item.Value.m_renderContentTypes.Contains(type))
+      foreach (var item in g_rdk_plugin_dictionary)
+        if (item.Value.m_render_content_types.Contains(type))
           return item.Value;
       return null;
     }
@@ -161,8 +171,8 @@ namespace Rhino.Render
     {
       var found = FromRhinoPlugIn(plugIn);
       if (null != found) return found;
-      var pluginPointer = plugIn.NonConstPointer();
-      return AddPlugInToDictionary(pluginPointer, plugIn.Id, plugIn.m_runtime_serial_number);
+      var plugin_pointer = plugIn.NonConstPointer();
+      return AddPlugInToDictionary(plugin_pointer, plugIn.Id, plugIn.m_runtime_serial_number);
     }
     /// <summary>
     /// If the specified plug-in is not currently in the plug-in dictionary do
@@ -180,16 +190,16 @@ namespace Rhino.Render
       var found = FromPlugInId(rhinoPlugInId);
       if (null != found) return found;
 
-      var pRhinoPlugIn = UnsafeNativeMethods.CRhinoPlugInManager_GetPlugInFromId(rhinoPlugInId, true);
+      var ptr_rhino_plugin = UnsafeNativeMethods.CRhinoPlugInManager_GetPlugInFromId(rhinoPlugInId, true);
 
-      if (IntPtr.Zero == pRhinoPlugIn)
+      if (IntPtr.Zero == ptr_rhino_plugin)
       {
-        var cmnPlugIn = PlugIns.PlugIn.GetLoadedPlugIn(rhinoPlugInId);
-        if (null != cmnPlugIn)
-          pRhinoPlugIn = cmnPlugIn.NonConstPointer();
+        var rhcmn_plugin = PlugIns.PlugIn.GetLoadedPlugIn(rhinoPlugInId);
+        if (null != rhcmn_plugin)
+          ptr_rhino_plugin = rhcmn_plugin.NonConstPointer();
       }
 
-      return AddPlugInToDictionary(pRhinoPlugIn, rhinoPlugInId, serialNumber);
+      return AddPlugInToDictionary(ptr_rhino_plugin, rhinoPlugInId, serialNumber);
     }
     /// <summary>
     /// Create a new C++ runtime RDK plug-in object then create a RhinoCommon
@@ -207,13 +217,13 @@ namespace Rhino.Render
     {
       if (rhinoPlugIn != IntPtr.Zero)
       {
-        var pRdkPlugIn = UnsafeNativeMethods.CRhCmnRdkPlugIn_New(rhinoPlugIn, serialNumber);
-        if (pRdkPlugIn != IntPtr.Zero)
+        var ptr_rdk_plugin = UnsafeNativeMethods.CRhCmnRdkPlugIn_New(rhinoPlugIn, serialNumber);
+        if (ptr_rdk_plugin != IntPtr.Zero)
         {
           SetRdkCallbackFunctions(true);
-          var rdkPlugIn = new RdkPlugIn(pRdkPlugIn, rhinoPlugInId);
-          m_rdkPlugInDictionary.Add(rhinoPlugInId, rdkPlugIn);
-          return rdkPlugIn;
+          var plugin = new RdkPlugIn(ptr_rdk_plugin, rhinoPlugInId);
+          g_rdk_plugin_dictionary.Add(rhinoPlugInId, plugin);
+          return plugin;
         }
       }
       return null;
@@ -248,61 +258,30 @@ namespace Rhino.Render
     public static Type GetRenderContentType(Guid id, out Guid pluginId)
     {
       pluginId = Guid.Empty;
-      foreach (var item in m_rdkPlugInDictionary)
+      foreach (var item in g_rdk_plugin_dictionary)
       {
-        var foundType = item.Value.m_renderContentTypes.Find(t => t.GUID == id);
-        if (foundType == null) continue;
+        var found_type = item.Value.m_render_content_types.Find(t => t.GUID == id);
+        if (found_type == null) continue;
         pluginId = item.Key;
-        return foundType;
+        return found_type;
       }
       return null;
     }
-
-#if RDK_UNCHECKED
-    /// <summary>
-    /// Check the specified class type for a custom attribute of the class type
-    /// CustomRenderContentIoAttribute and if one is found ask the C++ SDK if
-    /// the type is registered.
-    /// </summary>
-    /// <param name="type">Class type to test</param>
-    /// <returns>
-    /// Returns true if the class type contains a CustomRenderContentIoAttribute
-    /// with a file extension that is registered with the C++ SDK otherwise; 
-    /// returns false.
-    /// </returns>
-    internal static bool RenderContentIoTypeIsRegistered(Type type)
-    {
-      // Get the class type custom attribute list
-      var attr = type.GetCustomAttributes(typeof(CustomRenderContentIoAttribute), false);
-      // Search the attribute list for a CustomRenderContentIoAttribute
-      foreach (var att in attr)
-        if (att is CustomRenderContentIoAttribute)
-        { // if this attribute is a CustomRenderContentIoAttribute
-          var custom = att as CustomRenderContentIoAttribute;
-          var extension = custom.Extension;
-          // Check the C++ SDK to see if the file extension is registered
-          return UnsafeNativeMethods.Rdk_RenderContentIo_IsExtensionRegistered(extension);
-        }
-      // There is no CustomRenderContentIoAttribute associated with the
-      // specified class type
-      return false;
-    }
-#endif
     #endregion statics
 
     #region class members
     /// <summary>
-    /// CRhinoPluIn Id that owns this RdkPlugIn
+    /// CRhinoPlugIn Id that owns this RdkPlugIn
     /// </summary>
-    readonly Guid m_rhinoPlugInId;
+    readonly Guid m_rhino_plug_in_id;
     /// <summary>
     /// The RDK C++ CRdkPlugIn pointer associated with this object
     /// </summary>
-    readonly IntPtr m_rdkPlugInPointer = IntPtr.Zero;
+    readonly IntPtr m_rdk_plug_in_pointer = IntPtr.Zero;
     /// <summary>
     /// List of valid RenderContent class types associated with this plug-in.
     /// </summary>
-    readonly List<Type> m_renderContentTypes = new List<Type>();
+    readonly List<Type> m_render_content_types = new List<Type>();
     #endregion class members
 
     /// <summary>
@@ -314,8 +293,8 @@ namespace Rhino.Render
     /// <param name="rhinoPlugInId">C++ CRhinoPlugIn Id</param>
     private RdkPlugIn(IntPtr rdkPlugInPointer, Guid rhinoPlugInId)
     {
-      m_rdkPlugInPointer = rdkPlugInPointer;
-      m_rhinoPlugInId = rhinoPlugInId;
+      m_rdk_plug_in_pointer = rdkPlugInPointer;
+      m_rhino_plug_in_id = rhinoPlugInId;
     }
     /// <summary>
     /// Add list of class types, the type list has been sanitized and should
@@ -325,7 +304,7 @@ namespace Rhino.Render
     /// <param name="types">Types to add to the plug-ins contenet type list.</param>
     internal void AddRegisteredContentTypes(IEnumerable<Type> types)
     {
-      m_renderContentTypes.AddRange(types);
+      m_render_content_types.AddRange(types);
     }
 
     #region IDisposable Members
@@ -337,11 +316,11 @@ namespace Rhino.Render
       // We need to find the reference to this thing in the list, un-initialize the C++
       // object, delete it and then remove it to actually make sure thing gets garbage
       // collected.
-      RdkPlugIn plugIn;
-      if (m_rdkPlugInDictionary.TryGetValue(m_rhinoPlugInId, out plugIn))
+      RdkPlugIn plugin;
+      if (g_rdk_plugin_dictionary.TryGetValue(m_rhino_plug_in_id, out plugin))
       {
-        m_rdkPlugInDictionary.Remove(m_rhinoPlugInId);
-        UnsafeNativeMethods.CRhCmnRdkPlugIn_Delete(plugIn.m_rdkPlugInPointer);
+        g_rdk_plugin_dictionary.Remove(m_rhino_plug_in_id);
+        UnsafeNativeMethods.CRhCmnRdkPlugIn_Delete(plugin.m_rdk_plug_in_pointer);
       }
     }
     #endregion

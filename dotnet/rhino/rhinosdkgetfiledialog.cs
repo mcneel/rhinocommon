@@ -275,6 +275,11 @@ namespace Rhino.UI
     readonly FileDialogBase m_base;
     //OpenFileDialogType m_type = OpenFileDialogType.Standard;
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_screencaptureview.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_screencaptureview.cs' lang='cs'/>
+    /// <code source='examples\py\ex_screencaptureview.py' lang='py'/>
+    /// </example>
     public SaveFileDialog()
     {
       m_base = new FileDialogBase();
@@ -298,6 +303,11 @@ namespace Rhino.UI
     /// <summary>
     /// Gets or sets a string containing the file name selected in the file dialog box. 
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_screencaptureview.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_screencaptureview.cs' lang='cs'/>
+    /// <code source='examples\py\ex_screencaptureview.py' lang='py'/>
+    /// </example>
     public string FileName
     {
       get { return m_base.FileName; }
@@ -318,6 +328,11 @@ namespace Rhino.UI
     /// the choices that appear in the "Save as file type" or "Files of type"
     /// box in the dialog box. See System.Windows.Forms.FileDialog for details.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_screencaptureview.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_screencaptureview.cs' lang='cs'/>
+    /// <code source='examples\py\ex_screencaptureview.py' lang='py'/>
+    /// </example>
     public string Filter
     {
       get { return m_base.Filter; }
@@ -327,12 +342,22 @@ namespace Rhino.UI
     /// <summary>
     /// Gets or sets the initial directory displayed by the file dialog box.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_screencaptureview.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_screencaptureview.cs' lang='cs'/>
+    /// <code source='examples\py\ex_screencaptureview.py' lang='py'/>
+    /// </example>
     public string InitialDirectory
     {
       get { return m_base.InitialDirectory; }
       set { m_base.InitialDirectory = value; }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_screencaptureview.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_screencaptureview.cs' lang='cs'/>
+    /// <code source='examples\py\ex_screencaptureview.py' lang='py'/>
+    /// </example>
     public System.Windows.Forms.DialogResult ShowDialog()
     {
       string _defExt = DefaultExt;

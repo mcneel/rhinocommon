@@ -2,6 +2,8 @@
 using System;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
+using Rhino.Render;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.DocObjects
 {
@@ -91,13 +93,29 @@ namespace Rhino.DocObjects
 #endif
     #endregion
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_locklayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_locklayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_locklayer.py' lang='py'/>
+    /// </example>
     public bool CommitChanges()
     {
 #if RHINO_SDK
+#if RDK_CHECKED
+      if ((m_set_render_material != Guid.Empty || m_set_render_material_to_null) && null != m_doc)
+      {
+        var doc_id = m_doc.DocumentId;
+        var layer_index = LayerIndex;
+        UnsafeNativeMethods.Rdk_RenderContent_SetLayerMaterialInstanceId((uint)doc_id, layer_index, m_set_render_material);
+      }
+      m_set_render_material = Guid.Empty;
+      m_set_render_material_to_null = false;
+#endif
       if (m_id == Guid.Empty || IsDocumentControlled)
         return false;
       IntPtr pThis = NonConstPointer();
-      return UnsafeNativeMethods.CRhinoLayerTable_CommitChanges(m_doc.m_docId, pThis, m_id);
+      var result = UnsafeNativeMethods.CRhinoLayerTable_CommitChanges(m_doc.m_docId, pThis, m_id);
+      return result;
 #else
       return true;
 #endif
@@ -149,11 +167,16 @@ namespace Rhino.DocObjects
     /// </example>
     /// <remarks>If you are modifying a layer inside a Rhino document, 
     /// you must call CommitChanges for the modifications to take effect.</remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_renamelayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_renamelayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_renamelayer.py' lang='py'/>
+    /// </example>
     public string Name
     {
       get
       {
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pLayer = ConstPointer();
           IntPtr pString = sh.NonConstPointer();
@@ -171,6 +194,11 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets the full path to this layer. The full path includes nesting information.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_locklayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_locklayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_locklayer.py' lang='py'/>
+    /// </example>
     public string FullPath
     {
       get
@@ -179,7 +207,7 @@ namespace Rhino.DocObjects
         if (null == m_doc)
           return Name;
         int index = LayerIndex;
-        using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+        using (var sh = new StringHolder())
         {
           IntPtr pString = sh.NonConstPointer();
           if (!UnsafeNativeMethods.CRhinoLayer_GetLayerPathName(m_doc.m_docId, index, pString))
@@ -361,6 +389,11 @@ namespace Rhino.DocObjects
     /// </summary>
     /// <remarks>If you are modifying a layer inside a Rhino document, 
     /// you must call CommitChanges for the modifications to take effect.</remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_locklayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_locklayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_locklayer.py' lang='py'/>
+    /// </example>
     public bool IsLocked
     {
       get { return GetBool(idxIsLocked); }
@@ -489,31 +522,48 @@ namespace Rhino.DocObjects
       }
     }
 
-#if RDK_UNCHECKED
-    public Guid RenderMaterialInstanceId
+#if RDK_CHECKED
+    /// <summary>
+    /// Gets or sets the <see cref="Render.RenderMaterial"/> for objects on
+    /// this layer that have MaterialSource() == MaterialFromLayer.
+    /// A null result indicates that no <see cref="Render.RenderMaterial"/> has
+    /// been assigned  and the material created by the default Material
+    /// constructor or the <see cref="RenderMaterialIndex"/> should be used.
+    /// </summary>
+    /// <remarks>If you are modifying a layer inside a Rhino document, 
+    /// you must call CommitChanges for the modifications to take effect.</remarks>
+    public RenderMaterial RenderMaterial
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.Rdk_RenderContent_LayerMaterialInstanceId(pConstThis);
+        // If set was called and the render material was changed or set to null
+        // then return the cached set to render material.
+        if (m_set_render_material_to_null || m_set_render_material != Guid.Empty)
+        {
+          var result = RenderContent.FromId(m_doc, m_set_render_material) as RenderMaterial;
+          return result;
+        }
+        // Get the document Id
+        var doc_id = (null == m_doc ? 0 : m_doc.DocumentId);
+        if (doc_id < 1) return null;
+        var pointer = ConstPointer();
+        // Get the render material associated with the layers render material
+        // index into the documents material table.
+        var id = UnsafeNativeMethods.Rdk_RenderContent_LayerMaterialInstanceId((uint)doc_id, pointer);
+        var content = RenderContent.FromId(m_doc, id) as RenderMaterial;
+        return content;
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.Rdk_RenderContent_SetLayerMaterialInstanceId(pThis, value);
+        // Cache the new values Id and set a flag that tells CommitChanges() to
+        // remove the render material Id as necessary.
+        m_set_render_material_to_null = (value == null);
+        m_set_render_material = value == null ? Guid.Empty : value.Id;
       }
     }
-    public Rhino.Render.RenderMaterial RenderMaterial
-    {
-      get
-      {
-        return Rhino.Render.RenderContent.FromInstanceId(RenderMaterialInstanceId) as Rhino.Render.RenderMaterial;
-      }
-      set
-      {
-        RenderMaterialInstanceId = value.Id;
-      }
-    }
+
+    private Guid m_set_render_material = Guid.Empty;
+    private bool m_set_render_material_to_null;
 #endif
 
     /// <summary>
@@ -816,6 +866,11 @@ namespace Rhino.DocObjects.Tables
     /// are assigned to the current layer. The current layer is never locked, hidden, or deleted.
     /// Resturns: Zero based layer table index of the current layer.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_moveobjectstocurrentlayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_moveobjectstocurrentlayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_moveobjectstocurrentlayer.py' lang='py'/>
+    /// </example>
     public int CurrentLayerIndex
     {
       get
@@ -1120,7 +1175,7 @@ namespace Rhino.DocObjects.Tables
     /// </example>
     public string GetUnusedLayerName(bool ignoreDeleted)
     {
-      using (Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CRhinoLayerTable_GetUnusedLayerName(m_doc.m_docId, ignoreDeleted, pString);

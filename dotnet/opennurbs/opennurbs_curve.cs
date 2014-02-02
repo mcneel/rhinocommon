@@ -234,6 +234,11 @@ namespace Rhino.Geometry
   /// <summary>
   /// Defines the extremes of a curve through a flagged enumeration. 
   /// </summary>
+  /// <example>
+  /// <code source='examples\vbnet\ex_extendcurve.vb' lang='vbnet'/>
+  /// <code source='examples\cs\ex_extendcurve.cs' lang='cs'/>
+  /// <code source='examples\py\ex_extendcurve.py' lang='py'/>
+  /// </example>
   [FlagsAttribute]
   public enum CurveEnd : int
   {
@@ -1040,6 +1045,11 @@ namespace Rhino.Geometry
     /// <param name="minDistanceParameterA">The minimum distance parameter on curve A. This is an out reference argument.</param>
     /// <param name="minDistanceParameterB">The minimum distance parameter on curve B. This is an out reference argument.</param>
     /// <returns>true if the operation succeeded; otherwise false.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_crvdeviation.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_crvdeviation.cs' lang='cs'/>
+    /// <code source='examples\py\ex_crvdeviation.py' lang='py'/>
+    /// </example>
     public static bool GetDistancesBetweenCurves(Curve curveA, Curve curveB, double tolerance,
       out double maxDistance, out double maxDistanceParameterA, out double maxDistanceParameterB,
       out double minDistance, out double minDistanceParameterA, out double minDistanceParameterB)
@@ -1156,6 +1166,11 @@ namespace Rhino.Geometry
     /// Constructs an exact duplicate of this curve.
     /// </summary>
     /// <returns>An exact copy of this curve.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_curvereverse.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_curvereverse.cs' lang='cs'/>
+    /// <code source='examples\py\ex_curvereverse.py' lang='py'/>
+    /// </example>
     public Curve DuplicateCurve()
     {
       Curve rc = Duplicate() as Curve;
@@ -1343,6 +1358,11 @@ namespace Rhino.Geometry
     /// Test a curve to see if it is linear to within RhinoMath.ZeroTolerance units (1e-12).
     /// </summary>
     /// <returns>true if the curve is linear.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addradialdimension.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addradialdimension.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addradialdimension.py' lang='py'/>
+    /// </example>
     public bool IsLinear()
     {
       return IsLinear(RhinoMath.ZeroTolerance);
@@ -1370,6 +1390,11 @@ namespace Rhino.Geometry
     /// represented as a polyline.
     /// </summary>
     /// <returns>true if this curve can be represented as a polyline; otherwise, false.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addradialdimension.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addradialdimension.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addradialdimension.py' lang='py'/>
+    /// </example>
     public bool IsPolyline()
     {
       IntPtr ptr = ConstPointer();
@@ -1538,6 +1563,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="circle">On success, the Circle will be filled in.</param>
     /// <returns>true if the curve could be converted into a Circle.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_customgeometryfilter.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_customgeometryfilter.cs' lang='cs'/>
+    /// <code source='examples\py\ex_customgeometryfilter.py' lang='py'/>
+    /// </example>
     public bool TryGetCircle(out Circle circle)
     {
       return TryGetCircle(out circle, RhinoMath.ZeroTolerance);
@@ -1643,6 +1673,11 @@ namespace Rhino.Geometry
     /// <returns>
     /// true if the curve is planar (flat) to within RhinoMath.ZeroTolerance units (1e-12).
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addradialdimension.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addradialdimension.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addradialdimension.py' lang='py'/>
+    /// </example>
     public bool IsPlanar()
     {
       return IsPlanar(RhinoMath.ZeroTolerance);
@@ -1860,6 +1895,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <returns>true on success, false on failure.</returns>
     /// <remarks>If reversed, the domain changes from [a,b] to [-b,-a]</remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_curvereverse.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_curvereverse.cs' lang='cs'/>
+    /// <code source='examples\py\ex_curvereverse.py' lang='py'/>
+    /// </example>
     public bool Reverse()
     {
       IntPtr ptr = NonConstPointer();
@@ -2033,6 +2073,11 @@ namespace Rhino.Geometry
     /// <param name="t">Evaluation parameter.</param>
     /// <returns>Point (location of curve at the parameter t).</returns>
     /// <remarks>No error handling.</remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addradialdimension.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addradialdimension.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addradialdimension.py' lang='py'/>
+    /// </example>
     public Point3d PointAt(double t)
     {
       Point3d rc = new Point3d();
@@ -2200,6 +2245,11 @@ namespace Rhino.Geometry
     /// <param name="t">Evaluation parameter.</param>
     /// <returns>Curvature vector of the curve at the parameter t.</returns>
     /// <remarks>No error handling.</remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_addradialdimension.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_addradialdimension.cs' lang='cs'/>
+    /// <code source='examples\py\ex_addradialdimension.py' lang='py'/>
+    /// </example>
     public Vector3d CurvatureAt(double t)
     {
       Vector3d rc = new Vector3d();
@@ -3067,6 +3117,17 @@ namespace Rhino.Geometry
     {
       return Extend(domain.T0, domain.T1);
     }
+
+    static UnsafeNativeMethods.ExtendCurveConsts ConvertExtensionStyle(CurveExtensionStyle style)
+    {
+      if (style == CurveExtensionStyle.Arc)
+        return UnsafeNativeMethods.ExtendCurveConsts.ExtendTypeArc;
+      if (style == CurveExtensionStyle.Line)
+        return UnsafeNativeMethods.ExtendCurveConsts.ExtendTypeLine;
+
+      return UnsafeNativeMethods.ExtendCurveConsts.ExtendTypeSmooth;
+    }
+
     /// <summary>
     /// Extends a curve by a specific length.
     /// </summary>
@@ -3090,13 +3151,9 @@ namespace Rhino.Geometry
         l1 = 0.0;
 
       IntPtr ptr = ConstPointer();
-      IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve(ptr, l0, l1, (int)style);
+      IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve(ptr, l0, l1, ConvertExtensionStyle(style));
       return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
     }
-
-    const int idxExtendTypeLine = 0;
-    const int idxExtendTypeArc = 1;
-    const int idxExtendTypeSmooth = 2;
 
     /// <summary>
     /// Extends a curve until it intersects a collection of objects.
@@ -3105,6 +3162,11 @@ namespace Rhino.Geometry
     /// <param name="style">The style or type of extension to use.</param>
     /// <param name="geometry">A collection of objects. Allowable object types are Curve, Surface, Brep.</param>
     /// <returns>New extended curve result on success, null on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_extendcurve.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_extendcurve.cs' lang='cs'/>
+    /// <code source='examples\py\ex_extendcurve.py' lang='py'/>
+    /// </example>
     public Curve Extend(CurveEnd side, CurveExtensionStyle style, System.Collections.Generic.IEnumerable<GeometryBase> geometry)
     {
       if (CurveEnd.None == side)
@@ -3121,13 +3183,7 @@ namespace Rhino.Geometry
       {
         IntPtr geometryArrayPtr = geometryArray.ConstPointer();
 
-        int extendStyle = idxExtendTypeLine;
-        if (style == CurveExtensionStyle.Arc)
-          extendStyle = idxExtendTypeArc;
-        else if (style == CurveExtensionStyle.Smooth)
-          extendStyle = idxExtendTypeSmooth;
-
-        IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve1(pConstPtr, extendStyle, _side, geometryArrayPtr);
+        IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve1(pConstPtr, ConvertExtensionStyle(style), _side, geometryArrayPtr);
         return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
       }
     }
@@ -3151,13 +3207,7 @@ namespace Rhino.Geometry
 
       IntPtr pConstPtr = ConstPointer();
 
-      int extendStyle = idxExtendTypeLine;
-      if (style == CurveExtensionStyle.Arc)
-        extendStyle = idxExtendTypeArc;
-      else if (style == CurveExtensionStyle.Smooth)
-        extendStyle = idxExtendTypeSmooth;
-
-      IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve2(pConstPtr, extendStyle, _side, endPoint);
+      IntPtr rc = UnsafeNativeMethods.RHC_RhinoExtendCurve2(pConstPtr, ConvertExtensionStyle(style), _side, endPoint);
       return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
     }
 

@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MethodGen
 {
   class NativeMethodDeclares
   {
-    List<DeclarationList> m_declarations = new List<DeclarationList>();
+    readonly List<DeclarationList> m_declarations = new List<DeclarationList>();
     public bool Write(string path, string libname)
     {
       System.IO.StreamWriter sw = new System.IO.StreamWriter(path);
@@ -27,7 +26,13 @@ using Rhino.Geometry;
 using Rhino.Geometry.Intersect;
 using Rhino.Collections;
 using Rhino.Display;
+using Rhino.Runtime.InteropWrappers;
 ");
+      }
+
+      foreach (string using_statement in Program.m_extra_usings)
+      {
+        sw.Write(using_statement);
       }
 
       sw.Write(
@@ -77,7 +82,8 @@ using Rhino.Display;
   class DeclarationList
   {
     string m_source_filename;
-    List<Declaration> m_declarations = new List<Declaration>();
+    readonly List<Declaration> m_declarations = new List<Declaration>();
+    readonly List<EnumDeclaration> m_enums = new List<EnumDeclaration>();
 
     public static DeclarationList Construct(string cppFileName)
     {
@@ -89,13 +95,13 @@ using Rhino.Display;
       // If you have multi-line comments that need to be dealt with, this would probably suffice:
       // sourceCode = System.Text.RegularExpressions.Regex.Replace(sourceCode, @"/\*.*?\*/", "");
       List<int> startIndices = new List<int>();
-      int prevIndex = -1;
+      int previous_index = -1;
       while (true)
       {
-        int index = sourceCode.IndexOf(EXPORT_DECLARE, prevIndex + 1);
+        int index = sourceCode.IndexOf(EXPORT_DECLARE, previous_index + 1);
         if (-1 == index)
           break;
-        prevIndex = index;
+        previous_index = index;
         // make sure this function is not commented out
         // walk backward to the newline and try to find a //
         if (index > 2)
@@ -142,6 +148,30 @@ using Rhino.Display;
         decl = decl.Trim();
         d.m_declarations.Add(new Declaration(decl));
       }
+
+      // walk through file and attempt to find all enum declarations
+      previous_index = -1;
+      while (true)
+      {
+        int index = sourceCode.IndexOf("enum ", previous_index + 1);
+        if (-1 == index)
+          break;
+        previous_index = index;
+
+        // now see if the enum word is a declaration or inside a function declaration
+        int colon_index = sourceCode.IndexOf(':', index);
+        int brace_index = sourceCode.IndexOf('{', index);
+        int paren_index = sourceCode.IndexOf(')', index);
+        if (paren_index < colon_index || brace_index < colon_index)
+          continue;
+
+        int semi_colon = sourceCode.IndexOf(';', index);
+        if (colon_index == -1 || semi_colon == -1 || brace_index == -1)
+          continue;
+
+        string enumdecl = sourceCode.Substring(index, semi_colon - index + 1);
+        d.m_enums.Add(new EnumDeclaration(enumdecl));
+      }
       return d;
     }
 
@@ -157,6 +187,11 @@ using Rhino.Display;
         if (i > 0)
           sw.WriteLine();
         m_declarations[i].Write(sw, libname);
+      }
+      for (int i = 0; i < m_enums.Count; i++)
+      {
+        sw.WriteLine();
+        m_enums[i].Write(sw);
       }
       sw.WriteLine("  #endregion");
       return true;
@@ -248,6 +283,9 @@ using Rhino.Display;
 
       static string ParameterTypeAsCSharp(string ctype, bool isArray)
       {
+        if (ctype.StartsWith("enum ", StringComparison.InvariantCulture))
+          return ctype.Substring("enum ".Length).Trim();
+
         // 2010-08-03, Brian Gillespie
         // Moved const check outside the if statements to support
         // const basic types: const int, const unsigned int, etc.
@@ -262,7 +300,7 @@ using Rhino.Display;
         if (sType.Contains("RHMONO_STRING"))
           return "string";
 
-        if (sType.Equals("HWND") || sType.Equals("HBITMAP") || sType.Equals("HCURSOR") || sType.Equals("HICON"))
+        if (sType.Equals("HWND") || sType.Equals("HBITMAP") || sType.Equals("HCURSOR") || sType.Equals("HICON") || sType.Equals("HBRUSH") || sType.Equals("HFONT") || sType.Equals("HMENU") || sType.Equals("HDC"))
           return "IntPtr";
 
         if (sType.EndsWith("**"))
@@ -343,6 +381,17 @@ using Rhino.Display;
 
           if (s.Equals("ON_2fPoint") || s.Equals("AR_2fPoint"))
             return "ref Point2f";
+
+          if (s.Equals("PointF"))
+          {
+            if (isArray)
+            {
+              if (isConst)
+                return "PointF[]";
+              else
+                return "[In,Out] PointF[]";
+            }
+          }
 
           if (s.Equals("ON_2dPoint") || s.Equals("AR_2dPoint"))
           {
@@ -507,6 +556,9 @@ using Rhino.Display;
         if( sType.Equals("ON_2DPOINT_STRUCT") )
           return "Point2d";
 
+        if (sType.Equals("ON_2FPOINT_STRUCT"))
+          return "PointF";
+
         if( sType.Equals("ON_2DVECTOR_STRUCT") )
           return "Vector2d";
 
@@ -646,7 +698,7 @@ using Rhino.Display;
             rc = "ushort";
           else if (rc.Equals("ON_UUID"))
             rc = "Guid";
-          else if (rc.Equals("LPUNKNOWN") || rc.Equals("HBITMAP") || rc.Equals("HWND") || rc.Equals("HCURSOR") || rc.Equals("HICON"))
+          else if (rc.Equals("LPUNKNOWN") || rc.Equals("HBITMAP") || rc.Equals("HWND") || rc.Equals("HCURSOR") || rc.Equals("HICON") || rc.Equals("HBRUSH") || rc.Equals("HFONT") || rc.Equals("HMENU") || rc.Equals("HDC"))
             rc = "IntPtr";
           else if (rc.Equals("time_t"))
             rc = "Int64";
@@ -655,5 +707,48 @@ using Rhino.Display;
         return rc;
       }
     }
+
+    class EnumDeclaration
+    {
+      readonly string m_cdecl;
+      public EnumDeclaration(string cdecl)
+      {
+        m_cdecl = cdecl;
+      }
+
+      public void Write(System.IO.StreamWriter sw)
+      {
+        var cs_decl = m_cdecl.TrimEnd(new char[] { ';' }).Split(new char[]{'\n'});
+        for (int i = 0; i < cs_decl.Length; i++)
+        {
+          if (i == 0)
+          {
+            string name = cs_decl[i].Trim();
+            sw.WriteLine("  internal " + name);
+            continue;
+          }
+          if (i == (cs_decl.Length - 1) || i == 1)
+          {
+            sw.WriteLine("  " + cs_decl[i].Trim());
+            continue;
+          }
+
+          string entry = cs_decl[i].Trim();
+          // find first upper case character
+          int prefix = 0;
+          for (int j = 0; j < entry.Length; j++)
+          {
+            if (char.IsUpper(entry, j))
+            {
+              prefix = j;
+              break;
+            }
+          }
+          entry = entry.Substring(prefix);
+          sw.WriteLine("    " + entry);
+        }
+      }
+    }
+  
   }
 }

@@ -257,3 +257,10 @@ RH_C_FUNCTION ON_Extrusion* ON_Extrusion_CreateFrom3dCurve(const ON_Curve* pCons
   return rc;
 }
 
+RH_C_FUNCTION const ON_Mesh* ON_Extrusion_GetMesh(const ON_Extrusion* pConstExtrusion, int meshtype)
+{
+  const ON_Mesh* rc = NULL;
+  if( pConstExtrusion )
+    rc = pConstExtrusion->Mesh(ON::MeshType(meshtype));
+  return rc;
+}

@@ -13,43 +13,43 @@ namespace Rhino.Display
   /// </summary>
   public class RhinoView
   {
-    private Guid m_mainviewport_id; // id of mainviewport for this view. The view m_ptr is nulled
+    private Guid m_main_viewport_id; // id of mainviewport for this view. The view m_ptr is nulled
                                     // out at the end of a command. This is is used to reassocaite
                                     // the view pointer is if a plug-in developer attempts to hold
                                     // on to a view longer than a command
     private IntPtr m_ptr; // CRhinoView*
 
-    private static readonly List<RhinoView> m_view_list = new List<RhinoView>();
+    private static readonly List<RhinoView> g_view_list = new List<RhinoView>();
 
     // Users should never be able to directly make a new instance of a rhino view
-    internal static RhinoView FromIntPtr(IntPtr view_pointer)
+    internal static RhinoView FromIntPtr(IntPtr viewPointer)
     {
-      if (IntPtr.Zero == view_pointer)
+      if (IntPtr.Zero == viewPointer)
         return null;
 
       // look through the cached viewlist first
-      int count = m_view_list.Count;
+      int count = g_view_list.Count;
       RhinoView view;
       for (int i = 0; i < count; i++)
       {
-        view = m_view_list[i];
-        if (view.m_ptr == view_pointer)
+        view = g_view_list[i];
+        if (view.m_ptr == viewPointer)
         {
           if( i>0 )
           {
-            RhinoView tmp = m_view_list[0];
-            m_view_list[0] = m_view_list[i];
-            m_view_list[i] = tmp;
+            RhinoView tmp = g_view_list[0];
+            g_view_list[0] = g_view_list[i];
+            g_view_list[i] = tmp;
           }
           return view;
         }
       }
 
       // view is not in the list, add it
-      bool isPageView = false;
-      Guid id = UnsafeNativeMethods.CRhinoView_Details(view_pointer, ref isPageView);
-      view = isPageView ? new RhinoPageView(view_pointer, id) : new RhinoView(view_pointer, id);
-      m_view_list.Add(view);
+      bool is_page_view = false;
+      Guid id = UnsafeNativeMethods.CRhinoView_Details(viewPointer, ref is_page_view);
+      view = is_page_view ? new RhinoPageView(viewPointer, id) : new RhinoView(viewPointer, id);
+      g_view_list.Add(view);
       return view;
     }
 
@@ -62,10 +62,10 @@ namespace Rhino.Display
       return m_ptr;
     }
 
-    internal RhinoView(IntPtr viewptr, Guid mainviewport_id)
+    internal RhinoView(IntPtr viewptr, Guid mainViewportId)
     {
       m_ptr = viewptr;
-      m_mainviewport_id = mainviewport_id;
+      m_main_viewport_id = mainViewportId;
     }
 
 
@@ -79,8 +79,8 @@ namespace Rhino.Display
     {
       get
       {
-        IntPtr pConstView = ConstPointer();
-        return UnsafeNativeMethods.CRhinoView_HWND(pConstView);
+        IntPtr ptr_const_view = ConstPointer();
+        return UnsafeNativeMethods.CRhinoView_HWND(ptr_const_view);
       }
     }
 
@@ -142,6 +142,14 @@ namespace Rhino.Display
       return new System.Drawing.Point(x,y);
     }
 
+    public Geometry.Point2d ScreenToClient(Geometry.Point2d screenPoint)
+    {
+      System.Drawing.Rectangle screen = ScreenRectangle;
+      double x = screenPoint.X - screen.Left;
+      double y = screenPoint.Y - screen.Top;
+      return new Geometry.Point2d(x, y);
+    }
+
     public System.Drawing.Point ClientToScreen(System.Drawing.Point clientPoint)
     {
       System.Drawing.Rectangle screen = ScreenRectangle;
@@ -150,12 +158,12 @@ namespace Rhino.Display
       return new System.Drawing.Point(x, y);
     }
 
-    public Rhino.Geometry.Point2d ClientToScreen(Rhino.Geometry.Point2d clientPoint)
+    public Geometry.Point2d ClientToScreen(Geometry.Point2d clientPoint)
     {
       System.Drawing.Rectangle screen = ScreenRectangle;
       double x = clientPoint.X + screen.Left;
       double y = clientPoint.Y + screen.Top;
-      return new Rhino.Geometry.Point2d(x, y);
+      return new Geometry.Point2d(x, y);
     }
 
     //[skipping]
@@ -197,6 +205,12 @@ namespace Rhino.Display
         return rc;
       }
       set { UnsafeNativeMethods.CRhinoView_EnableDrawing(true, ref value); }
+    }
+
+    public double SpeedTest(int frameCount, bool freezeDrawList, int direction, double angleDeltaRadians)
+    {
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.RhViewSpeedTest(ptr_this, frameCount, freezeDrawList, direction, angleDeltaRadians);
     }
 
     // [skipping]
@@ -315,6 +329,11 @@ namespace Rhino.Display
     /// <param name="worldAxes">true if the world axis should be visible.</param>
     /// <param name="cplaneAxes">true if the construction plane close the the grid should be visible.</param>
     /// <returns>A new bitmap.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_screencaptureview.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_screencaptureview.cs' lang='cs'/>
+    /// <code source='examples\py\ex_screencaptureview.py' lang='py'/>
+    /// </example>
     public System.Drawing.Bitmap CaptureToBitmap(bool grid, bool worldAxes, bool cplaneAxes)
     {
       return CaptureToBitmap(ClientRectangle.Size, grid, worldAxes, cplaneAxes);
@@ -458,7 +477,7 @@ namespace Rhino.Display
       {
         // note: this function is virtual and the PageView implements the case where
         // a little bit of work needs to be done
-        return m_mainviewport_id;
+        return m_main_viewport_id;
       }
     }
 
@@ -549,8 +568,8 @@ namespace Rhino.Display
       if (rc)
       {
         m_ptr = IntPtr.Zero;
-        m_mainviewport_id = Guid.Empty;
-        m_view_list.Remove(this);
+        m_main_viewport_id = Guid.Empty;
+        g_view_list.Remove(this);
       }
       return rc;
     }
@@ -566,26 +585,23 @@ namespace Rhino.Display
     private static EventHandler<ViewEventArgs> m_setactive_view;
     private static EventHandler<ViewEventArgs> m_rename_view;
 
-    private static void OnCreateView(IntPtr pView)
+    static void ViewEventHelper(EventHandler<ViewEventArgs> handler, IntPtr pView)
     {
-      if (m_create_view != null)
-        m_create_view(null, new ViewEventArgs(pView));
+      if (handler == null) return;
+      try
+      {
+        handler(null, new ViewEventArgs(pView));
+      }
+      catch (Exception ex)
+      {
+        Runtime.HostUtils.ExceptionReport(ex);
+      }
     }
-    private static void OnDestroyView(IntPtr pView)
-    {
-      if (m_destroy_view != null)
-        m_destroy_view(null, new ViewEventArgs(pView));
-    }
-    private static void OnSetActiveView(IntPtr pView)
-    {
-      if (m_setactive_view != null)
-        m_setactive_view(null, new ViewEventArgs(pView));
-    }
-    private static void OnRenameView(IntPtr pView)
-    {
-      if (m_rename_view != null)
-        m_rename_view(null, new ViewEventArgs(pView));
-    }
+
+    private static void OnCreateView(IntPtr pView)   { ViewEventHelper(m_create_view, pView); }
+    private static void OnDestroyView(IntPtr pView)  { ViewEventHelper(m_destroy_view, pView); }
+    private static void OnSetActiveView(IntPtr pView){ ViewEventHelper(m_setactive_view, pView); }
+    private static void OnRenameView(IntPtr pView)   { ViewEventHelper(m_rename_view, pView); }
 
     public static event EventHandler<ViewEventArgs> Create
     {

@@ -559,6 +559,11 @@ namespace Rhino.Geometry
     /// <param name="mesh">Mesh to measure.</param>
     /// <returns>The VolumeMassProperties for the given Mesh or null on failure.</returns>
     /// <exception cref="System.ArgumentNullException">When mesh is null.</exception>
+    /// <example>
+    /// <code source='examples\vbnet\ex_meshvolume.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_meshvolume.cs' lang='cs'/>
+    /// <code source='examples\py\ex_meshvolume.py' lang='py'/>
+    /// </example>
     public static VolumeMassProperties Compute(Mesh mesh)
     {
       if (mesh == null)
@@ -615,6 +620,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets the volume solution.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_meshvolume.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_meshvolume.cs' lang='cs'/>
+    /// <code source='examples\py\ex_meshvolume.py' lang='py'/>
+    /// </example>
     public double Volume
     {
       get { return UnsafeNativeMethods.ON_MassProperties_Mass(m_ptr); }
@@ -623,6 +633,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets the uncertainty in the volume calculation.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_meshvolume.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_meshvolume.cs' lang='cs'/>
+    /// <code source='examples\py\ex_meshvolume.py' lang='py'/>
+    /// </example>
     public double VolumeError
     {
       get { return UnsafeNativeMethods.ON_MassProperties_MassError(m_ptr); }

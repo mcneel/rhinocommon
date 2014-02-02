@@ -55,6 +55,11 @@ namespace Rhino.FileIO
     /// <summary>
     /// Increase the indentation level
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_printinstancedefinitiontree.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_printinstancedefinitiontree.cs' lang='cs'/>
+    /// <code source='examples\py\ex_printinstancedefinitiontree.py' lang='py'/>
+    /// </example>
     public void PushIndent()
     {
       IntPtr pThis = NonConstPointer();
@@ -64,6 +69,11 @@ namespace Rhino.FileIO
     /// <summary>
     /// Decrease the indentation level
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_printinstancedefinitiontree.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_printinstancedefinitiontree.cs' lang='cs'/>
+    /// <code source='examples\py\ex_printinstancedefinitiontree.py' lang='py'/>
+    /// </example>
     public void PopIndent()
     {
       IntPtr pThis = NonConstPointer();
@@ -102,6 +112,11 @@ namespace Rhino.FileIO
     /// Send text to the textlog
     /// </summary>
     /// <param name="text"></param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_printinstancedefinitiontree.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_printinstancedefinitiontree.cs' lang='cs'/>
+    /// <code source='examples\py\ex_printinstancedefinitiontree.py' lang='py'/>
+    /// </example>
     public void Print(string text)
     {
       IntPtr pThis = NonConstPointer();

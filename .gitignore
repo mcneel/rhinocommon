@@ -1,7 +1,9 @@
 *.userprefs
 *.DS_Store
+*.swp
 
 /Debug
+/Release
 /Rhino3dmIo.sdf
 /Rhino3dmIo.opensdf
 /Rhino3dmIo.suo
@@ -24,7 +26,20 @@
 /dotnet/RhinoCommon.sln
 /dotnet/RhinoCommon.pidb
 
+/examples/*/*.suo
+/examples/*/*.user
+/examples/*/*.sln
 /examples/buildwikisamples/bin
+/examples/buildwikisamples/obj
+/examples/buildwikisamples/buildwikisamples.sln
+/examples/buildwikisamples/buildwikisamples.suo
+
+/examples/cs/bin
+/examples/cs/obj
+/examples/cs/examples_cs.sln
+/examples/vbnet/bin
+/examples/vbnet/obj
+
 /webhelp.txt
 /MethodGen.exe
 /methodgen/bin/Release/MethodGen.exe
@@ -188,3 +203,25 @@
 /c/rh_uifile.cpp
 /examples/rhino3dmio/example_read/bin
 /examples/rhino3dmio/example_read/obj
+/c/build/
+/c/obj/
+/c/libs/
+
+nuget/*.nupkg
+nuget/_tmp
+nuget/nupkg_x86/lib/net40/*.dll
+nuget/nupkg_x86/NativeBinaries/x86/*.dll
+nuget/nupkg_x64/lib/net40/*.dll
+nuget/nupkg_x64/NativeBinaries/x64/*.dll
+nuget/nupkg_any/lib/net40/*.dll
+nuget/nupkg_any/NativeBinaries/*/*.dll
+rh3dmio_native_out
+
+/examples/rhino3dmio/example_read_nuget/bin
+/examples/rhino3dmio/example_read_nuget/obj
+/examples/rhino3dmio/example_read_nuget/packages
+/examples/rhino3dmio/example_read_nuget/packages.config
+/examples/rhino3dmio/example_read_nuget/*.suo
+/examples/rhino3dmio/example_read_nuget/*.user
+/*.suo
+

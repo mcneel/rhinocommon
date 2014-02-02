@@ -6,7 +6,7 @@ using Rhino.DocObjects;
 #if RHINO_SDK
 namespace Rhino.Input.Custom
 {
-  public delegate bool GetObjectGeometryFilter(DocObjects.RhinoObject rhObject, GeometryBase geometry, ComponentIndex componentIndex);
+  public delegate bool GetObjectGeometryFilter(RhinoObject rhObject, GeometryBase geometry, ComponentIndex componentIndex);
 
   /// <summary>
   /// The GetObject class is the tool commands use to interactively select objects.
@@ -113,7 +113,7 @@ namespace Rhino.Input.Custom
     /// The default returns true unless you've set a custom geometry filter. If a custom
     /// filter has been set, that delegate is called
     /// </returns>
-    public virtual bool CustomGeometryFilter( DocObjects.RhinoObject rhObject, GeometryBase geometry, ComponentIndex componentIndex )
+    public virtual bool CustomGeometryFilter( RhinoObject rhObject, GeometryBase geometry, ComponentIndex componentIndex )
     {
       if (m_filter != null)
         return m_filter(rhObject, geometry, componentIndex);
@@ -126,6 +126,11 @@ namespace Rhino.Input.Custom
     /// Set filter callback function that will be called by the CustomGeometryFilter
     /// </summary>
     /// <param name="filter"></param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_customgeometryfilter.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_customgeometryfilter.cs' lang='cs'/>
+    /// <code source='examples\py\ex_customgeometryfilter.py' lang='py'/>
+    /// </example>
     public void SetCustomGeometryFilter(GetObjectGeometryFilter filter)
     {
       m_filter = filter;
@@ -140,16 +145,16 @@ namespace Rhino.Input.Custom
     /// <returns>
     /// true if the geometry passes the filter returned by GeometryAttributeFilter().
     /// </returns>
-    public bool PassesGeometryAttributeFilter(DocObjects.RhinoObject rhObject, GeometryBase geometry, ComponentIndex componentIndex)
+    public bool PassesGeometryAttributeFilter(RhinoObject rhObject, GeometryBase geometry, ComponentIndex componentIndex)
     {
-      IntPtr pRhinoObject = IntPtr.Zero;
+      IntPtr const_ptr_rhino_object = IntPtr.Zero;
       if (rhObject != null)
-        pRhinoObject = rhObject.ConstPointer();
-      IntPtr pGeometry = IntPtr.Zero;
+        const_ptr_rhino_object = rhObject.ConstPointer();
+      IntPtr const_ptr_geometry = IntPtr.Zero;
       if (geometry != null)
-        pGeometry = geometry.ConstPointer();
+        const_ptr_geometry = geometry.ConstPointer();
       IntPtr ptr = NonConstPointer();
-      return UnsafeNativeMethods.CRhinoGetObject_PassesGeometryAttributeFilter(ptr, pRhinoObject, pGeometry, componentIndex);
+      return UnsafeNativeMethods.CRhinoGetObject_PassesGeometryAttributeFilter(ptr, const_ptr_rhino_object, const_ptr_geometry, componentIndex);
     }
 
     /// <summary>
@@ -176,31 +181,15 @@ namespace Rhino.Input.Custom
       EnablePreSelect(false, true);
     }
 
-    const int idxEnablePostSelect            = 0;
-    const int idxDeselectAllBeforePostSelect = 1;
-    const int idxOneByOnePostSelect          = 2;
-    const int idxSubObjectSelect             = 3;
-    const int idxChooseOneQuestion           = 4;
-    const int idxBottomObjectPreference      = 5;
-    const int idxGroupSelect                 = 6;
-    const int idxSelPrev                     = 7;
-    const int idxHighlight                   = 8;
-    const int idxReferenceObjectSelect       = 9;
-    const int idxIgnoreGrips                 = 10;
-    const int idxPressEnterWhenDonePrompt    = 11;
-    const int idxAlreadySelectedObjectSelect = 12;
-    const int idxObjectsWerePreselected      = 13;
-    const int idxClearObjectsOnEntry         = 14;
-    const int idxUnselectObjectsOnExit       = 15;
-    bool GetBool(int which)
+    bool GetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts which)
     {
       IntPtr ptr = NonConstPointer();
       return UnsafeNativeMethods.CRhinoGetObject_GetSetBool(ptr, which, false, false);
     }
-    void SetBool(int which, bool set_val)
+    void SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts which, bool setValue)
     {
       IntPtr ptr = NonConstPointer();
-      UnsafeNativeMethods.CRhinoGetObject_GetSetBool(ptr, which, true, set_val);
+      UnsafeNativeMethods.CRhinoGetObject_GetSetBool(ptr, which, true, setValue);
     }
 
     /// <summary>
@@ -213,7 +202,7 @@ namespace Rhino.Input.Custom
     /// </remarks>
     public void EnablePostSelect( bool enable )
     {
-      SetBool(idxEnablePostSelect, enable);
+      SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.EnablePostSelect, enable);
     }
 
     /// <summary>
@@ -227,8 +216,8 @@ namespace Rhino.Input.Custom
     /// </example>
     public bool DeselectAllBeforePostSelect
     {
-      get { return GetBool(idxDeselectAllBeforePostSelect); }
-      set { SetBool(idxDeselectAllBeforePostSelect, value); }
+      get { return GetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.DeselectAllBeforePostSelect); }
+      set { SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.DeselectAllBeforePostSelect, value); }
     }
 
     /// <summary>
@@ -242,8 +231,8 @@ namespace Rhino.Input.Custom
     /// </example>
     public bool OneByOnePostSelect
     {
-      get { return GetBool(idxOneByOnePostSelect); }
-      set { SetBool(idxOneByOnePostSelect, value); }
+      get { return GetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.OneByOnePostSelect); }
+      set { SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.OneByOnePostSelect, value); }
     }
 
     /// <summary>
@@ -259,8 +248,8 @@ namespace Rhino.Input.Custom
     /// </example>
     public bool SubObjectSelect
     {
-      get { return GetBool(idxSubObjectSelect); }
-      set { SetBool(idxSubObjectSelect, value); }
+      get { return GetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.SubObjectSelect); }
+      set { SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.SubObjectSelect, value); }
     }
 
     /// <summary>
@@ -272,8 +261,8 @@ namespace Rhino.Input.Custom
     /// </summary>
     public bool ChooseOneQuestion
     {
-      get { return GetBool(idxChooseOneQuestion); }
-      set { SetBool(idxChooseOneQuestion, value); }
+      get { return GetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.ChooseOneQuestion); }
+      set { SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.ChooseOneQuestion, value); }
     }
 
     /// <summary>
@@ -285,8 +274,8 @@ namespace Rhino.Input.Custom
     /// </summary>
     public bool BottomObjectPreference
     {
-      get { return GetBool(idxBottomObjectPreference); }
-      set { SetBool(idxBottomObjectPreference, value); }
+      get { return GetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.BottomObjectPreference); }
+      set { SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.BottomObjectPreference, value); }
     }
 
     /// <summary>
@@ -301,8 +290,18 @@ namespace Rhino.Input.Custom
     /// </example>
     public bool GroupSelect
     {
-      get { return GetBool(idxGroupSelect); }
-      set { SetBool(idxGroupSelect, value); }
+      get { return GetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.GroupSelect); }
+      set { SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.GroupSelect, value); }
+    }
+
+    /// <summary>
+    /// By default, objects in inactive details are not permitted to be picked.
+    /// In a few rare cases this is used (ex. picking circles during DimRadius)
+    /// </summary>
+    public bool InactiveDetailPickEnabled
+    {
+      get { return GetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.InactiveDetailPick); }
+      set { SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.InactiveDetailPick, value); }
     }
 
     /// <summary>
@@ -313,7 +312,7 @@ namespace Rhino.Input.Custom
     /// </summary>
     public void EnableSelPrevious(bool enable)
     {
-      SetBool(idxSelPrev, enable);
+      SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.SelPrev, enable);
     }
 
     /// <summary>
@@ -323,7 +322,7 @@ namespace Rhino.Input.Custom
     /// </summary>
     public void EnableHighlight( bool enable )
     {
-      SetBool(idxHighlight, enable);
+      SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.Highlight, enable);
     }
 
     /// <summary>
@@ -337,8 +336,8 @@ namespace Rhino.Input.Custom
     /// </example>
     public bool ReferenceObjectSelect
     {
-      get { return GetBool(idxReferenceObjectSelect); }
-      set { SetBool(idxReferenceObjectSelect, value); }
+      get { return GetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.ReferenceObjectSelect); }
+      set { SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.ReferenceObjectSelect, value); }
     }
 
     /// <summary>
@@ -350,7 +349,7 @@ namespace Rhino.Input.Custom
     /// </summary>
     public void EnableIgnoreGrips( bool enable )
     {
-      SetBool(idxIgnoreGrips, enable);
+      SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.IgnoreGrips, enable);
     }
 
     /// <summary>
@@ -362,7 +361,7 @@ namespace Rhino.Input.Custom
     /// </summary>
     public void EnablePressEnterWhenDonePrompt( bool enable )
     {
-      SetBool(idxPressEnterWhenDonePrompt, enable);
+      SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.PressEnterWhenDonePrompt, enable);
     }
 
     /// <summary>
@@ -389,23 +388,23 @@ namespace Rhino.Input.Custom
     /// </summary>
     public bool AlreadySelectedObjectSelect
     {
-      get { return GetBool(idxAlreadySelectedObjectSelect); }
-      set { SetBool(idxAlreadySelectedObjectSelect, value); }
+      get { return GetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.AlreadySelectedObjectSelect); }
+      set { SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.AlreadySelectedObjectSelect, value); }
     }
 
     internal delegate bool GeometryFilterCallback(IntPtr rhObject, IntPtr geometry, ComponentIndex componentIndex);
-    private static GetObject m_active_go; // = null; [runtime default]
-    internal static GetObject ActiveGetObject { get { return m_active_go; } }
-    private static bool CustomGeometryFilter(IntPtr rhObject, IntPtr geometry, ComponentIndex componentIndex)
+    private static GetObject g_active_go; // = null; [runtime default]
+    internal static GetObject ActiveGetObject { get { return g_active_go; } }
+    private static bool CustomGeometryFilter(IntPtr rhObject, IntPtr ptrGeometry, ComponentIndex componentIndex)
     {
       bool rc = true;
-      if (m_active_go != null)
+      if (g_active_go != null)
       {
         try
         {
-          DocObjects.RhinoObject _rhObj = DocObjects.RhinoObject.CreateRhinoObjectHelper(rhObject);
-          GeometryBase _geom = GeometryBase.CreateGeometryHelper(geometry, _rhObj);
-          rc = m_active_go.CustomGeometryFilter(_rhObj, _geom, componentIndex);
+          RhinoObject rh_object = RhinoObject.CreateRhinoObjectHelper(rhObject);
+          GeometryBase geom = GeometryBase.CreateGeometryHelper(ptrGeometry, rh_object);
+          rc = g_active_go.CustomGeometryFilter(rh_object, geom, componentIndex);
         }
         catch (Exception ex)
         {
@@ -453,8 +452,8 @@ namespace Rhino.Input.Custom
     [CLSCompliant(false)]
     public GetResult GetMultiple(int minimumNumber, int maximumNumber)
     {
-      GetObject old = m_active_go;
-      m_active_go = this;
+      GetObject old = g_active_go;
+      g_active_go = this;
       GeometryFilterCallback cb = null;
       Type t = GetType();
       // Hook up CustomGeometryFilter virtual function if this is a subclass. This way we
@@ -465,7 +464,7 @@ namespace Rhino.Input.Custom
       IntPtr ptr = NonConstPointer();
       uint rc = UnsafeNativeMethods.CRhinoGetObject_GetObjects(ptr, minimumNumber, maximumNumber, cb);
 
-      m_active_go = old;
+      g_active_go = old;
       return (GetResult)rc;
     }
 
@@ -486,23 +485,23 @@ namespace Rhino.Input.Custom
     /// <code source='examples\cs\ex_orientonsrf.cs' lang='cs'/>
     /// <code source='examples\py\ex_orientonsrf.py' lang='py'/>
     /// </example>
-    public DocObjects.ObjRef Object(int index)
+    public ObjRef Object(int index)
     {
-      DocObjects.ObjRef rc = new Rhino.DocObjects.ObjRef();
+      ObjRef rc = new ObjRef();
       IntPtr ptr = NonConstPointer();
       UnsafeNativeMethods.CRhinoGetObject_Object(ptr, index, rc.NonConstPointer());
       return rc;
     }
 
-    public DocObjects.ObjRef[] Objects()
+    public ObjRef[] Objects()
     {
       int count = ObjectCount;
       if (count < 1)
         return null;
-      Rhino.Collections.RhinoList<DocObjects.ObjRef> objrefs = new Rhino.Collections.RhinoList<Rhino.DocObjects.ObjRef>(count);
+      Collections.RhinoList<ObjRef> objrefs = new Collections.RhinoList<ObjRef>(count);
       for(int i=0; i<count; i++)
       {
-        DocObjects.ObjRef objref = Object(i);
+        ObjRef objref = Object(i);
         objrefs.Add(objref);
       }
       return objrefs.ToArray();
@@ -510,7 +509,7 @@ namespace Rhino.Input.Custom
 
     public bool ObjectsWerePreselected
     {
-      get { return GetBool(idxObjectsWerePreselected); }
+      get { return GetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.ObjectsWerePreselected); }
     }
 
     /// <summary>
@@ -536,7 +535,7 @@ namespace Rhino.Input.Custom
     /// <param name="enable">The state to set.</param>
     public void EnableClearObjectsOnEntry(bool enable)
     {
-      SetBool(idxClearObjectsOnEntry, enable);
+      SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.ClearObjectsOnEntry, enable);
     }
 
     /// <summary>
@@ -548,7 +547,7 @@ namespace Rhino.Input.Custom
     /// <param name="enable">The state to set.</param>
     public void EnableUnselectObjectsOnExit(bool enable)
     {
-      SetBool(idxUnselectObjectsOnExit, enable);
+      SetBool(UnsafeNativeMethods.RhinoGetObjectBoolConsts.UnselectObjectsOnExit, enable);
     }
   }
 

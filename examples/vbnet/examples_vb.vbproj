@@ -60,9 +60,17 @@
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RhinoCommon">
+      <HintPath>..\..\..\..\..\Program Files\Rhinoceros 5.0 (64-bit)\System\RhinoCommon.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -73,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ex_addlayout.vb" />
+    <Compile Include="ex_addradialdimension.vb" />
     <Compile Include="ex_analysismode.vb" />
     <Compile Include="examples_vbPlugIn.vb" />
     <Compile Include="examples_vbCommand.vb" />
@@ -107,34 +116,102 @@
     <Compile Include="ex_circlecenter.vb" />
     <Compile Include="ex_closestpoint.vb" />
     <Compile Include="ex_commandlineoptions.vb" />
+    <Compile Include="ex_conduitarrowheads.vb" />
+    <Compile Include="ex_copygroups.vb" />
     <Compile Include="ex_createblock.vb" />
+    <Compile Include="ex_createmeshfrombrep.vb" />
+    <Compile Include="ex_createsurfaceexample.vb" />
+    <Compile Include="ex_crvdeviation.vb" />
     <Compile Include="ex_curveboundingbox.vb" />
+    <Compile Include="ex_curvebrepbox.vb" />
+    <Compile Include="ex_curveclosestpoint.vb" />
+    <Compile Include="ex_curvereverse.vb" />
+    <Compile Include="ex_curvesurfaceintersect.vb" />
+    <Compile Include="ex_customgeometryfilter.vb" />
     <Compile Include="ex_customundo.vb" />
+    <Compile Include="ex_deleteblock.vb" />
+    <Compile Include="ex_dimstyle.vb" />
+    <Compile Include="ex_displayprecision.vb" />
     <Compile Include="ex_dividebylength.vb" />
+    <Compile Include="ex_dividebysegments.vb" />
+    <Compile Include="ex_dividecurvestraight.vb" />
+    <Compile Include="ex_dotnetmovepointobjects.vb" />
+    <Compile Include="ex_dotnetmovepointobjectsnonuniform.vb" />
     <Compile Include="ex_drawoverlay.vb" />
+    <Compile Include="ex_drawstring.vb" />
     <Compile Include="ex_dupborder.vb" />
+    <Compile Include="ex_duplicateobject.vb" />
+    <Compile Include="ex_dupmeshboundary.vb" />
+    <Compile Include="ex_edgesrf.vb" />
     <Compile Include="ex_edittext.vb" />
+    <Compile Include="ex_elevation.vb" />
+    <Compile Include="ex_evnormal.vb" />
     <Compile Include="ex_explodehatch.vb" />
+    <Compile Include="ex_extendcurve.vb" />
+    <Compile Include="ex_extendsurface.vb" />
+    <Compile Include="ex_extractisocurve.vb" />
+    <Compile Include="ex_extractthumbnail.vb" />
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_constrainedcopy.vb" />
+    <Compile Include="ex_getangle.vb" />
+    <Compile Include="ex_getmultiplewithoptions.vb" />
+    <Compile Include="ex_getpointdynamicdraw.vb" />
+    <Compile Include="ex_gettext.vb" />
     <Compile Include="ex_gumball.vb" />
     <Compile Include="ex_hatchcurve.vb" />
+    <Compile Include="ex_historyCommand.vb" />
     <Compile Include="ex_insertknot.vb" />
     <Compile Include="ex_instancedefinitionobjects.vb" />
     <Compile Include="ex_intersectcurves.vb" />
+    <Compile Include="ex_intersectlinecircle.vb" />
     <Compile Include="ex_intersectlines.vb" />
     <Compile Include="ex_isbrepbox.vb" />
     <Compile Include="ex_isocurvedensity.vb" />
+    <Compile Include="ex_issurfaceinplane.vb" />
+    <Compile Include="ex_leader.vb" />
+    <Compile Include="ex_locklayer.vb" />
+    <Compile Include="ex_loft.vb" />
+    <Compile Include="ex_makerhinocontours.vb" />
+    <Compile Include="ex_meshdrawing.vb" />
+    <Compile Include="ex_meshvolume.vb" />
+    <Compile Include="ex_modifylightcolor.vb" />
+    <Compile Include="ex_modifyobjectcolor.vb" />
     <Compile Include="ex_movecplane.vb" />
+    <Compile Include="ex_moveobjectstocurrentlayer.vb" />
     <Compile Include="ex_objectdecoration.vb" />
     <Compile Include="ex_objectdisplaymode.vb" />
+    <Compile Include="ex_objectiterator.vb" />
     <Compile Include="ex_objectlayer.vb" />
+    <Compile Include="ex_objectname.vb" />
     <Compile Include="ex_orientonsrf.vb" />
+    <Compile Include="ex_ortho.vb" />
+    <Compile Include="ex_pickobjects.vb" />
+    <Compile Include="ex_pickpoint.vb" />
+    <Compile Include="ex_planesurface.vb" />
+    <Compile Include="ex_pointatcursor.vb" />
+    <Compile Include="ex_principalcurvature.vb" />
+    <Compile Include="ex_printinstancedefinitions.vb" />
+    <Compile Include="ex_printinstancedefinitiontree.vb" />
+    <Compile Include="ex_projectpointstobreps.vb" />
+    <Compile Include="ex_renameblock.vb" />
+    <Compile Include="ex_renamelayer.vb" />
+    <Compile Include="ex_reparameterizecrv.vb" />
+    <Compile Include="ex_replacecolordialog.vb" />
+    <Compile Include="ex_replacehatchpattern.vb" />
+    <Compile Include="ex_rhinogettransform.vb" />
+    <Compile Include="ex_screencaptureview.vb" />
+    <Compile Include="ex_selectgroupobject.vb" />
     <Compile Include="ex_sellayer.vb" />
+    <Compile Include="ex_setactiveview.vb" />
+    <Compile Include="ex_splitbrepwithplane.vb" />
+    <Compile Include="ex_srfpt.vb" />
     <Compile Include="ex_sweep1.vb" />
+    <Compile Include="ex_textjustify.vb" />
+    <Compile Include="ex_tightboundingbox.vb" />
     <Compile Include="ex_transformbrep.vb" />
     <Compile Include="ex_unrollsurface.vb" />
     <Compile Include="ex_unrollsurface2.vb" />
+    <Compile Include="ex_viewportresolution.vb" />
     <Compile Include="ex_zoomtoobject.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -198,13 +275,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\dotnet\RhinoCommon.csproj">
-      <Project>{ED38373E-290C-4BDE-ACBA-1601484E582A}</Project>
-      <Name>RhinoCommon</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\MyIcon.ico" />

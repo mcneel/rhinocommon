@@ -513,3 +513,35 @@ RH_C_FUNCTION void ON_CurveArray_Delete(ON_SimpleArray<ON_Curve*>* arrayPtr)
     delete arrayPtr;
 }
 
+////////////////////////////////////////////////////////////
+
+RH_C_FUNCTION ON_ClassArray<ON_ObjRef>* ON_ClassArrayON_ObjRef_New()
+{
+  return new ON_ClassArray<ON_ObjRef>();
+}
+
+RH_C_FUNCTION int ON_ClassArrayON_ObjRef_Count(const ON_ClassArray<ON_ObjRef>* pConstObjRefArray)
+{
+  if( pConstObjRefArray )
+    return pConstObjRefArray->Count();
+  return 0;
+}
+
+RH_C_FUNCTION void ON_ClassArrayON_ObjRef_Append(ON_ClassArray<ON_ObjRef>* pObjRefArray, const ON_ObjRef* pConstObjRef)
+{
+  if( pObjRefArray && pConstObjRef )
+    pObjRefArray->Append(*pConstObjRef);
+}
+
+RH_C_FUNCTION void ON_ClassArrayON_ObjRef_Delete(ON_ClassArray<ON_ObjRef>* pObjRefArray)
+{
+  if( pObjRefArray )
+    delete pObjRefArray;
+}
+
+RH_C_FUNCTION const ON_ObjRef* ON_ClassArrayON_ObjRef_Get(const ON_ClassArray<ON_ObjRef>* pConstObjRefArray, int index)
+{
+  if( pConstObjRefArray )
+    return pConstObjRefArray->At(index);
+  return 0;
+}

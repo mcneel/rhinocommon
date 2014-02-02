@@ -490,6 +490,11 @@ namespace Rhino.Geometry
     /// 3 = box is a point (degenerate in three directions)
     /// 4 = box is not valid.
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_curvebrepbox.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_curvebrepbox.cs' lang='cs'/>
+    /// <code source='examples\py\ex_curvebrepbox.py' lang='py'/>
+    /// </example>
     public int IsDegenerate(double tolerance)
     {
       Vector3d diag = Diagonal;
@@ -530,6 +535,11 @@ namespace Rhino.Geometry
     /// <para>[6] Max.X, Max.Y, Max.Z</para>
     /// <para>[7] Min.X, Max.Y, Max.Z</para>
     /// </remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_elevation.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_elevation.cs' lang='cs'/>
+    /// <code source='examples\py\ex_elevation.py' lang='py'/>
+    /// </example>
     public Point3d[] GetCorners()
     {
       if (!IsValid)

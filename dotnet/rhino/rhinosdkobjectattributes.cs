@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 using System;
 using System.Runtime.Serialization;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.DocObjects
 {
@@ -211,6 +212,11 @@ namespace Rhino.DocObjects
     /// render material is used.  See ON_3dmObjectAttributes::MaterialSource() to
     /// determine where to get the definition of the object's render material.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_modifyobjectcolor.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_modifyobjectcolor.cs' lang='cs'/>
+    /// <code source='examples\py\ex_modifyobjectcolor.py' lang='py'/>
+    /// </example>
     public ObjectColorSource ColorSource
     {
       get
@@ -410,7 +416,7 @@ namespace Rhino.DocObjects
     string GetString(int which)
     {
       IntPtr ptr = ConstPointer();
-      using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetString(ptr, which, false, null, pString);
@@ -455,6 +461,11 @@ namespace Rhino.DocObjects
     /// OpenNURBS object in a model is on some layer.  The object's layer
     /// is specified by zero based indicies into the ON_Layer array.</para>
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_moveobjectstocurrentlayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_moveobjectstocurrentlayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_moveobjectstocurrentlayer.py' lang='py'/>
+    /// </example>
     public int LayerIndex
     {
       get { return GetInt(idxLayerIndex); }
@@ -521,6 +532,11 @@ namespace Rhino.DocObjects
     /// <summary>
     /// If ON::color_from_object == ColorSource, then color is the object's display color.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_modifyobjectcolor.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_modifyobjectcolor.cs' lang='cs'/>
+    /// <code source='examples\py\ex_modifyobjectcolor.py' lang='py'/>
+    /// </example>
     public System.Drawing.Color ObjectColor
     {
       get { return GetColor(idxColor); }

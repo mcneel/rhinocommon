@@ -6,8 +6,8 @@ namespace Rhino.Display
 {
   public class RhinoPageView : RhinoView
   {
-    internal RhinoPageView(IntPtr ptr, Guid mainviewport_id)
-      : base(ptr, mainviewport_id)
+    internal RhinoPageView(IntPtr ptr, Guid mainViewportId)
+      : base(ptr, mainViewportId)
     {
     }
 

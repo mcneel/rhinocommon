@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Rhino.Collections;
 using System.Runtime.Serialization;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.Render
 {
@@ -136,6 +137,11 @@ namespace Rhino.Geometry
 #endif
 
     /// <summary>Gets minimal meshing parameters.</summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createmeshfrombrep.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createmeshfrombrep.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createmeshfrombrep.py' lang='py'/>
+    /// </example>
     public static MeshingParameters Minimal
     {
       get
@@ -168,8 +174,13 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Gets default meshing parameters.
+    /// Get default meshing parameters.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createmeshfrombrep.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createmeshfrombrep.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createmeshfrombrep.py' lang='py'/>
+    /// </example>
     public static MeshingParameters Default
     {
       get
@@ -206,6 +217,11 @@ namespace Rhino.Geometry
     /// Gets meshing parameters for coarse meshing. 
     /// <para>This corresponds with the "Jagged and Faster" default in Rhino.</para>
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createmeshfrombrep.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createmeshfrombrep.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createmeshfrombrep.py' lang='py'/>
+    /// </example>
     public static MeshingParameters Coarse
     {
       get
@@ -229,6 +245,11 @@ namespace Rhino.Geometry
     /// Gets meshing parameters for smooth meshing. 
     /// <para>This corresponds with the "Smooth and Slower" default in Rhino.</para>
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createmeshfrombrep.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createmeshfrombrep.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createmeshfrombrep.py' lang='py'/>
+    /// </example>
     public static MeshingParameters Smooth
     {
       get
@@ -559,7 +580,7 @@ namespace Rhino.Geometry
     /// <param name="yCount">Number of faces in y-direction.</param>
     /// <param name="zCount">Number of faces in z-direction.</param>
     /// <returns>A new brep, or null on failure.</returns>
-        /// <returns>A new box mesh, on null on error.</returns>
+    /// <returns>A new box mesh, on null on error.</returns>
     public static Mesh CreateFromBox(IEnumerable<Point3d> corners, int xCount, int yCount, int zCount)
     {
       Point3d[] box_corners = new Point3d[8];
@@ -667,6 +688,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="brep">Brep to approximate.</param>
     /// <returns>An array of meshes.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_tightboundingbox.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_tightboundingbox.cs' lang='cs'/>
+    /// <code source='examples\py\ex_tightboundingbox.py' lang='py'/>
+    /// </example>
     public static Mesh[] CreateFromBrep(Brep brep)
     {
       using (Runtime.InteropWrappers.SimpleArrayMeshPointer meshes = new Runtime.InteropWrappers.SimpleArrayMeshPointer())
@@ -684,6 +710,11 @@ namespace Rhino.Geometry
     /// <param name="brep">Brep to approximate.</param>
     /// <param name="meshingParameters">Parameters to use during meshing.</param>
     /// <returns>An array of meshes.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createmeshfrombrep.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createmeshfrombrep.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createmeshfrombrep.py' lang='py'/>
+    /// </example>
     public static Mesh[] CreateFromBrep(Brep brep, MeshingParameters meshingParameters)
     {
       IntPtr ptr_const_brep = brep.ConstPointer();
@@ -847,12 +878,22 @@ namespace Rhino.Geometry
       if (mh != null)
         return mh.MeshPointer();
 
-#if RDK_UNCHECKED
-      Rhino.Render.RenderMesh rm = m__parent as Rhino.Render.RenderMesh;
-      if( rm!=null )
-        return rm.GetConst_ON_Mesh_Pointer();
-#endif
       return base._InternalGetConstPointer();
+    }
+
+    /// <summary>
+    /// Performs some memory cleanup if necessary
+    /// </summary>
+    protected override void OnSwitchToNonConst()
+    {
+      MeshHolder mh = m__parent as MeshHolder;
+      base.OnSwitchToNonConst();
+
+      if (mh != null)
+      {
+        m__parent = null;
+        mh.ReleaseMesh();
+      }
     }
 
     internal override object _GetConstObjectParent()
@@ -862,8 +903,8 @@ namespace Rhino.Geometry
       return base._GetConstObjectParent();
     }
 
-    internal Mesh(IntPtr native_pointer, object parent)
-      : base(native_pointer, parent, -1)
+    internal Mesh(IntPtr nativePointer, object parent)
+      : base(nativePointer, parent, -1)
     {
       if (null == parent)
         ApplyMemoryPressure();
@@ -1423,6 +1464,11 @@ namespace Rhino.Geometry
     /// sense that the edge only has one face.
     /// </summary>
     /// <returns>An array of polylines, or null on error.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_dupmeshboundary.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_dupmeshboundary.cs' lang='cs'/>
+    /// <code source='examples\py\ex_dupmeshboundary.py' lang='py'/>
+    /// </example>
     public Polyline[] GetNakedEdges()
     {
       IntPtr pConstThis = ConstPointer();
@@ -1473,6 +1519,11 @@ namespace Rhino.Geometry
     /// Appends a copy of another mesh to this one and updates indices of appended mesh parts.
     /// </summary>
     /// <param name="other">Mesh to append to this one.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_createmeshfrombrep.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_createmeshfrombrep.cs' lang='cs'/>
+    /// <code source='examples\py\ex_createmeshfrombrep.py' lang='py'/>
+    /// </example>
     public void Append(Mesh other)
     {
       if (null == other || other.ConstPointer() == ConstPointer())
@@ -1809,7 +1860,7 @@ namespace Rhino.Geometry
     /// In ancient times (or modern smartphone times), some rendering engines
     /// were only able to process small batches of triangles and the
     /// CreatePartitions() function was provided to partition the mesh into
-    /// subsets of vertices and faces that those renering engines could handle.
+    /// subsets of vertices and faces that those rendering engines could handle.
     /// </summary>
     /// <param name="maximumVertexCount"></param>
     /// <param name="maximumTriangleCount"></param>
@@ -1834,8 +1885,9 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Retrieves a partition. See <see cref="CreatePartitions"/> for details.
     /// </summary>
-    /// <param name="which"></param>
+    /// <param name="which">The partition index.</param>
     /// <returns></returns>
     public MeshPart GetPartition(int which)
     {
@@ -1900,6 +1952,11 @@ namespace Rhino.Geometry
     /// <param name="contourEnd">An end point of the contouring axis.</param>
     /// <param name="interval">An interval distance.</param>
     /// <returns>An array of curves. This array can be empty.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_makerhinocontours.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_makerhinocontours.cs' lang='cs'/>
+    /// <code source='examples\py\ex_makerhinocontours.py' lang='py'/>
+    /// </example>
     public static Curve[] CreateContourCurves(Mesh meshToContour, Point3d contourStart, Point3d contourEnd, double interval)
     {
       IntPtr pConstMesh = meshToContour.ConstPointer();
@@ -2353,29 +2410,29 @@ namespace Rhino.Geometry.Collections
       return rc;
     }
 
-		/// <summary>
-		/// Copies all vertices to a linear array of float in x,y,z order
-		/// </summary>
-		/// <returns>The float array.</returns>
-		public float[] ToFloatArray()
-		{
-			int count = Count;
-			float[] rc = new float[count * 3];
-			IntPtr const_ptr_mesh = m_mesh.ConstPointer();
-			Point3f pt = new Point3f();
-			int index = 0;
-			// There is a much more efficient way to do this with
-			// marshalling the whole array at once, but this will
-			// do for now
-			for (int i=0; i<count; i++)
-			{
-				UnsafeNativeMethods.ON_Mesh_Vertex (const_ptr_mesh, i, ref pt);
-				rc [index++] = pt.X;
-				rc [index++] = pt.Y;
-				rc [index++] = pt.Z;
-			}
-			return rc;
-		}
+    /// <summary>
+    /// Copies all vertices to a linear array of float in x,y,z order
+    /// </summary>
+    /// <returns>The float array.</returns>
+    public float[] ToFloatArray()
+    {
+      int count = Count;
+      float[] rc = new float[count * 3];
+      IntPtr const_ptr_mesh = m_mesh.ConstPointer();
+      Point3f pt = new Point3f();
+      int index = 0;
+      // There is a much more efficient way to do this with
+      // marshalling the whole array at once, but this will
+      // do for now
+      for (int i = 0; i < count; i++)
+      {
+        UnsafeNativeMethods.ON_Mesh_Vertex(const_ptr_mesh, i, ref pt);
+        rc[index++] = pt.X;
+        rc[index++] = pt.Y;
+        rc[index++] = pt.Z;
+      }
+      return rc;
+    }
 
     /// <summary>
     /// Removes the vertex at the given index and all faces that reference that index.
@@ -3514,40 +3571,43 @@ namespace Rhino.Geometry.Collections
       return rc;
     }
 
-		/// <summary>
-		/// Copies all of the faces to a linear integer of indices
-		/// </summary>
-		/// <returns>The int array.</returns>
-		/// <param name="asTriangles">If set to <c>true</c> as triangles.</param>
-		public int[] ToIntArray(bool asTriangles)
-		{
-			int count = asTriangles ? (QuadCount * 2 + TriangleCount) * 3 : Count * 4;
-			int[] rc = new int[count];
-			int current = 0;
-			int face_count = Count;
-			MeshFace face = new MeshFace();
-			IntPtr const_ptr_mesh = m_mesh.ConstPointer();
-			for (int index=0; index<face_count; index++)
-			{
-				UnsafeNativeMethods.ON_Mesh_GetFace (const_ptr_mesh, index, ref face);
-				rc [current++] = face.A;
-				rc [current++] = face.B;
-				rc [current++] = face.C;
-				if (asTriangles)
-				{
-					if (face.C != face.D) {
-						rc [current++] = face.C;
-						rc [current++] = face.D;
-						rc [current++] = face.A;
-					}
-				}
-				else
-				{
-					rc [current++] = face.D;
-				}
-			}
-			return rc;
-		}
+
+    /// <summary>
+    /// Copies all of the faces to a linear integer of indices
+    /// </summary>
+    /// <returns>The int array.</returns>
+    /// <param name="asTriangles">If set to <c>true</c> as triangles.</param>
+    public int[] ToIntArray(bool asTriangles)
+    {
+      int count = asTriangles ? (QuadCount * 2 + TriangleCount) * 3 : Count * 4;
+      int[] rc = new int[count];
+      int current = 0;
+      int face_count = Count;
+      MeshFace face = new MeshFace();
+      IntPtr const_ptr_mesh = m_mesh.ConstPointer();
+      for (int index = 0; index < face_count; index++)
+      {
+        UnsafeNativeMethods.ON_Mesh_GetFace(const_ptr_mesh, index, ref face);
+        rc[current++] = face.A;
+        rc[current++] = face.B;
+        rc[current++] = face.C;
+        if (asTriangles)
+        {
+          if (face.C != face.D)
+          {
+            rc[current++] = face.C;
+            rc[current++] = face.D;
+            rc[current++] = face.A;
+          }
+        }
+        else
+        {
+          rc[current++] = face.D;
+        }
+      }
+      return rc;
+    }
+
     #endregion
 
     /// <summary>

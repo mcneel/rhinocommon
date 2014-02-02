@@ -160,6 +160,11 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets or sets the index of the pattern in the document hatch pattern table.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_replacehatchpattern.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_replacehatchpattern.cs' lang='cs'/>
+    /// <code source='examples\py\ex_replacehatchpattern.py' lang='py'/>
+    /// </example>
     public int PatternIndex
     {
       get

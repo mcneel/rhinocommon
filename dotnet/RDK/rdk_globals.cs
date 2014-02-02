@@ -1,5 +1,6 @@
 #pragma warning disable 1591
 using System;
+using Rhino.Runtime.InteropWrappers;
 
 #if RDK_CHECKED
 namespace Rhino.Render
@@ -131,47 +132,6 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Accesses the material table.
-    /// </summary>
-    /// <param name="doc">A Rhino document.</param>
-    /// <returns>The materials list.</returns>
-    public static ContentList MaterialList(RhinoDoc doc)
-    {
-      return new ContentList(RenderContentKind.Material, doc);
-    }
-
-    /// <summary>
-    /// Accesses the environment table.
-    /// </summary>
-    /// <param name="doc">A Rhino document.</param>
-    /// <returns>The environments list.</returns>
-    public static ContentList EnvironmentList(RhinoDoc doc)
-    {
-      return new ContentList(RenderContentKind.Environment, doc);
-    }
-
-    /// <summary>
-    /// Accesses the texture table.
-    /// </summary>
-    /// <param name="doc">A Rhino document.</param>
-    /// <returns>The textures list.</returns>
-    public static ContentList TextureList(RhinoDoc doc)
-    {
-      return new ContentList(RenderContentKind.Texture, doc);
-    }
-
-    // <summary>
-    // Accesses any content table given a (single) kind.
-    // </summary>
-    // <param name="kind">A single kind.</param>
-    // <param name="doc">A Rhino document.</param>
-    // <returns>The (render content kind) list.</returns>
-    //public static ContentList ContentList(RenderContentKind kind, RhinoDoc doc)
-    //{
-    //  return new ContentList(kind, doc);
-    //}
-
-    /// <summary>
     /// Prompts the user for a save file name and the width, height and depth of an image to be saved.
     /// </summary>
     /// <param name="filename">The original file path.</param>
@@ -181,7 +141,7 @@ namespace Rhino.Render
     /// <returns>The new file name.</returns>
     public static string PromptForSaveImageFileParameters(string filename, ref int width, ref int height, ref int colorDepth)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         bool bRet = 1==UnsafeNativeMethods.Rdk_Globals_PromptForSaveImageFileParams(filename, ref width, ref height, ref colorDepth, pString);
@@ -249,7 +209,7 @@ namespace Rhino.Render
     /// <returns>The found file.</returns>
     public static string FindFile(string fullPathToFile)
     {
-      using (Rhino.Runtime.StringHolder sh = new Rhino.Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         bool found = (1 == UnsafeNativeMethods.Rdk_Globals_FindFile(fullPathToFile, pString));

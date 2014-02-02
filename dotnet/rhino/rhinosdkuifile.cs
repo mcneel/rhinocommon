@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 using System;
 using System.Collections.Generic;
+using Rhino.Runtime.InteropWrappers;
 
 // none of the UI namespace needs to be in the stand-alone opennurbs library
 #if RHINO_SDK
@@ -24,7 +25,7 @@ namespace Rhino
       {
         get
         {
-          using(Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+          using (var sh = new StringHolder())
           {
             IntPtr pString = sh.NonConstPointer();
             UnsafeNativeMethods.CRhinoUiFile_FileName(m_id, pString, false);
@@ -37,7 +38,7 @@ namespace Rhino
       {
         get
         {
-          using(Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+          using (var sh = new StringHolder())
           {
             IntPtr pString = sh.NonConstPointer();
             UnsafeNativeMethods.CRhinoUiFile_FileName(m_id, pString, true);
@@ -128,7 +129,7 @@ namespace Rhino
       {
         get
         {
-          using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+          using (var sh = new StringHolder())
           {
             IntPtr pString = sh.NonConstPointer();
             UnsafeNativeMethods.CRhinoUiFile_ToolBarName(m_parent.Id, m_id, pString);
@@ -158,7 +159,7 @@ namespace Rhino
       {
         get
         {
-          using (Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+          using (var sh = new StringHolder())
           {
             IntPtr pString = sh.NonConstPointer();
             UnsafeNativeMethods.CRhinoUiFile_GroupName(m_parent.Id, m_id, pString);

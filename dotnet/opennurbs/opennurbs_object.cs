@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.Runtime
 {
@@ -238,7 +239,7 @@ namespace Rhino.Runtime
     public bool IsValidWithLog(out string log)
     {
       IntPtr pConstThis = ConstPointer();
-      using (StringHolder sh = new StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         bool rc = UnsafeNativeMethods.ON_Object_IsValid(pConstThis, pString);
@@ -295,6 +296,12 @@ namespace Rhino.Runtime
     {
       if (IntPtr.Zero == m_ptr || m__parent is ConstCastHolder)
         return;
+
+      Geometry.MeshHolder mh = m__parent as Geometry.MeshHolder;
+      if (mh!=null)
+      {
+        mh.ReleaseMesh();
+      }
 
       if (m_bDestructOnDispose)
       {

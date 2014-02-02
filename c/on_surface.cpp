@@ -468,6 +468,13 @@ RH_C_FUNCTION ON_Surface* ON_Surface_Reverse( const ON_Surface* pConstSurface, i
   return rc;
 }
 
+RH_C_FUNCTION bool ON_Surface_Reverse2( ON_Surface* pSurface, int direction )
+{
+  if( pSurface )
+    return pSurface->Reverse(direction)?true:false;
+  return false;
+}
+
 RH_C_FUNCTION ON_Surface* ON_Surface_Transpose( const ON_Surface* pConstSurface )
 {
   ON_Surface* rc = NULL;
@@ -484,6 +491,13 @@ RH_C_FUNCTION ON_Surface* ON_Surface_Transpose( const ON_Surface* pConstSurface 
     }
   }
   return rc;
+}
+
+RH_C_FUNCTION bool ON_Surface_Transpose2( ON_Surface* pSurface )
+{
+  if( pSurface )
+    return pSurface->Transpose()? true: false;
+  return false;
 }
 
 RH_C_FUNCTION void ON_Surface_Split(const ON_Surface* pConstSurface, int direction, double c, ON_SimpleArray<ON_Surface*>* pSurfaceArray)

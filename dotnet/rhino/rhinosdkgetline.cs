@@ -1,5 +1,6 @@
 #pragma warning disable 1591
 using System;
+using Rhino.Runtime.InteropWrappers;
 
 #if RHINO_SDK
 namespace Rhino.Input.Custom
@@ -86,7 +87,7 @@ namespace Rhino.Input.Custom
     string GetStringHelper(int which)
     {
       IntPtr pConstThis = ConstPointer();
-      using(Rhino.Runtime.StringHolder sh = new Runtime.StringHolder())
+      using (var sh = new StringHolder())
       {
         IntPtr pString = sh.NonConstPointer();
         UnsafeNativeMethods.CArgsRhinoGetLine_GetString(pConstThis, which, pString);

@@ -26,6 +26,22 @@ namespace Rhino.UI
 
         if (selectedItem != null)
           m_list.SelectedItem = selectedItem;
+
+        var graphics = CreateGraphics();
+        int max_width = 0;
+        foreach (var item in items)
+        {
+          string s = item.ToString();
+          var width = (int)(graphics.MeasureString(s, this.Font).Width+0.5F);
+          if (width > max_width)
+            max_width = width;
+        }
+        max_width += 12; //padding
+        if (max_width > m_list.ClientSize.Width)
+        {
+          int increase_amount = max_width - m_list.ClientSize.Width;
+          this.Width += increase_amount;
+        }
       }
     }
 

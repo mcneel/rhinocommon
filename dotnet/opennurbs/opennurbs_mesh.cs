@@ -1952,6 +1952,11 @@ namespace Rhino.Geometry
     /// <param name="contourEnd">An end point of the contouring axis.</param>
     /// <param name="interval">An interval distance.</param>
     /// <returns>An array of curves. This array can be empty.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_makerhinocontours.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_makerhinocontours.cs' lang='cs'/>
+    /// <code source='examples\py\ex_makerhinocontours.py' lang='py'/>
+    /// </example>
     public static Curve[] CreateContourCurves(Mesh meshToContour, Point3d contourStart, Point3d contourEnd, double interval)
     {
       IntPtr pConstMesh = meshToContour.ConstPointer();
@@ -2401,6 +2406,30 @@ namespace Rhino.Geometry.Collections
         Point3f pt = new Point3f();
         UnsafeNativeMethods.ON_Mesh_Vertex(pConstMesh, i, ref pt);
         rc[i] = new Point3d(pt);
+      }
+      return rc;
+    }
+
+    /// <summary>
+    /// Copies all vertices to a linear array of float in x,y,z order
+    /// </summary>
+    /// <returns>The float array.</returns>
+    public float[] ToFloatArray()
+    {
+      int count = Count;
+      float[] rc = new float[count * 3];
+      IntPtr const_ptr_mesh = m_mesh.ConstPointer();
+      Point3f pt = new Point3f();
+      int index = 0;
+      // There is a much more efficient way to do this with
+      // marshalling the whole array at once, but this will
+      // do for now
+      for (int i = 0; i < count; i++)
+      {
+        UnsafeNativeMethods.ON_Mesh_Vertex(const_ptr_mesh, i, ref pt);
+        rc[index++] = pt.X;
+        rc[index++] = pt.Y;
+        rc[index++] = pt.Z;
       }
       return rc;
     }
@@ -3541,6 +3570,44 @@ namespace Rhino.Geometry.Collections
       face_ids.Keys.CopyTo(rc, 0);
       return rc;
     }
+
+
+    /// <summary>
+    /// Copies all of the faces to a linear integer of indices
+    /// </summary>
+    /// <returns>The int array.</returns>
+    /// <param name="asTriangles">If set to <c>true</c> as triangles.</param>
+    public int[] ToIntArray(bool asTriangles)
+    {
+      int count = asTriangles ? (QuadCount * 2 + TriangleCount) * 3 : Count * 4;
+      int[] rc = new int[count];
+      int current = 0;
+      int face_count = Count;
+      MeshFace face = new MeshFace();
+      IntPtr const_ptr_mesh = m_mesh.ConstPointer();
+      for (int index = 0; index < face_count; index++)
+      {
+        UnsafeNativeMethods.ON_Mesh_GetFace(const_ptr_mesh, index, ref face);
+        rc[current++] = face.A;
+        rc[current++] = face.B;
+        rc[current++] = face.C;
+        if (asTriangles)
+        {
+          if (face.C != face.D)
+          {
+            rc[current++] = face.C;
+            rc[current++] = face.D;
+            rc[current++] = face.A;
+          }
+        }
+        else
+        {
+          rc[current++] = face.D;
+        }
+      }
+      return rc;
+    }
+
     #endregion
 
     /// <summary>

@@ -551,6 +551,28 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
+    /// Same as Reverse, but if inPlace is set to true this Surface is modified
+    /// instead of a new copy being created.
+    /// </summary>
+    /// <param name="direction">
+    /// 0 for first parameter's domain, 1 for second parameter's domain.
+    /// </param>
+    /// <param name="inPlace"></param>
+    /// <returns>
+    /// If inPlace is False, a new reversed surface on success. If inPlace is
+    /// true, this surface instance is returned on success.
+    /// </returns>
+    public Surface Reverse(int direction, bool inPlace)
+    {
+      if (!inPlace)
+        return Reverse(direction);
+      IntPtr ptr_this = NonConstPointer();
+      if( UnsafeNativeMethods.ON_Surface_Reverse2(ptr_this, direction) )
+        return this;
+      return null;
+    }
+
+    /// <summary>
     /// Transposes surface parameterization (swap U and V)
     /// </summary>
     /// <returns>New transposed surface on success, null on failure.</returns>
@@ -559,6 +581,21 @@ namespace Rhino.Geometry
       IntPtr pConstThis = ConstPointer();
       IntPtr pNewSurface = UnsafeNativeMethods.ON_Surface_Transpose(pConstThis);
       return GeometryBase.CreateGeometryHelper(pNewSurface, null) as Surface;
+    }
+
+    /// <summary>
+    /// Transposes surface parameterization (swap U and V)
+    /// </summary>
+    /// <param name="inPlace"></param>
+    /// <returns>New transposed surface on success, null on failure.</returns>
+    public Surface Transpose(bool inPlace)
+    {
+      if (!inPlace)
+        return Transpose();
+      IntPtr ptr_this = NonConstPointer();
+      if (UnsafeNativeMethods.ON_Surface_Transpose2(ptr_this))
+        return this;
+      return null;
     }
 
     /// <summary>
@@ -917,6 +954,11 @@ namespace Rhino.Geometry
     /// In the other Surface functions that take a "direction" argument,
     /// "direction" indicates if "constantParameter" is a "u" or "v" parameter.
     /// </remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_extractisocurve.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_extractisocurve.cs' lang='cs'/>
+    /// <code source='examples\py\ex_extractisocurve.py' lang='py'/>
+    /// </example>
     public Curve IsoCurve(int direction, double constantParameter)
     {
       IntPtr ptr = ConstPointer();

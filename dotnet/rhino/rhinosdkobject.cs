@@ -243,7 +243,7 @@ namespace Rhino.DocObjects
           {
             rhobj.m_pRhinoObject = IntPtr.Zero;
             rhobj.m_rhinoobject_serial_number = 0;
-            System.GC.SuppressFinalize(rhobj);
+            GC.SuppressFinalize(rhobj);
             g_custom_objects.RemoveAt(i);
             return;
           }
@@ -255,10 +255,10 @@ namespace Rhino.DocObjects
     {
       for (int i = count - 1; i >= 0; i--)
       {
-        IntPtr pRhinoObjRef = UnsafeNativeMethods.CRhinoObjRefArray_GetLastItem(pRhinoObjRefArray, i);
-        if( IntPtr.Zero!=pRhinoObjRef )
+        IntPtr ptr_rhinoobjref = UnsafeNativeMethods.CRhinoObjRefArray_GetLastItem(pRhinoObjRefArray, i);
+        if( IntPtr.Zero!=ptr_rhinoobjref )
         {
-          yield return new ObjRef(pRhinoObjRef);
+          yield return new ObjRef(ptr_rhinoobjref);
         }
       }
     }
@@ -319,6 +319,7 @@ namespace Rhino.DocObjects
     const int idxCRhinoMorphControl = 18;
     const int idxCRhinoRadialDimension = 19;
     const int idxCRhinoAngularDimension = 20;
+    const int idxCRhinoAnnotationLeader = 21;
 
     internal static RhinoObject CreateRhinoObjectHelper(IntPtr pRhinoObject)
     {
@@ -404,6 +405,9 @@ namespace Rhino.DocObjects
           break;
         case idxCRhinoAngularDimension: //20
           rc = new AngularDimensionObject(sn);
+          break;
+        case idxCRhinoAnnotationLeader: //21
+          rc = new LeaderObject(sn);
           break;
         default:
           rc = new RhinoObject(sn);
@@ -685,6 +689,11 @@ namespace Rhino.DocObjects
     /// Constructs a deep (full) copy of the geometry.
     /// </summary>
     /// <returns>A copy of the internal geometry.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_duplicateobject.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_duplicateobject.cs' lang='cs'/>
+    /// <code source='examples\py\ex_duplicateobject.py' lang='py'/>
+    /// </example>
     public Rhino.Geometry.GeometryBase DuplicateGeometry()
     {
       if (null != m_edited_geometry)

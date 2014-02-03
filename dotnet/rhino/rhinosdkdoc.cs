@@ -312,6 +312,11 @@ namespace Rhino
       set { SetDouble(UnsafeNativeMethods.CRhDocPropertiesDoubleConsts.ModelRelTol, value); }
     }
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_displayprecision.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_displayprecision.cs' lang='cs'/>
+    /// <code source='examples\py\ex_displayprecision.py' lang='py'/>
+    /// </example>
     public int ModelDistanceDisplayPrecision
     {
       get { return UnsafeNativeMethods.CRhinoDocProperties_DistanceDisplayPrecision(m_docId, true, 0, false); }
@@ -5352,16 +5357,16 @@ namespace Rhino.DocObjects.Tables
     /// <param name="objref">reference to old object to be replaced. The objref.Object() will be deleted.</param>
     /// <param name="newObject">new replacement object - must not be in document.</param>
     /// <returns>true if successful.</returns>
-    public bool Replace(DocObjects.ObjRef objref, DocObjects.RhinoObject newObject)
+    public bool Replace(ObjRef objref, RhinoObject newObject)
     {
       if (null == objref || null == newObject || newObject.Document != null)
         return false;
 
       // Once the deprecated functions are removed, we should switch to checking for custom subclasses
-      bool is_proper_subclass = newObject is Rhino.DocObjects.Custom.CustomBrepObject ||
-                                newObject is Rhino.DocObjects.Custom.CustomCurveObject ||
-                                newObject is Rhino.DocObjects.Custom.CustomMeshObject ||
-                                newObject is Rhino.DocObjects.Custom.CustomPointObject;
+      bool is_proper_subclass = newObject is Custom.CustomBrepObject ||
+                                newObject is Custom.CustomCurveObject ||
+                                newObject is Custom.CustomMeshObject ||
+                                newObject is Custom.CustomPointObject;
       if (!is_proper_subclass)
         throw new NotImplementedException();
 
@@ -5370,17 +5375,17 @@ namespace Rhino.DocObjects.Tables
         throw new NotImplementedException("class must have a public parameterless constructor");
 
 
-      IntPtr pObjRef = objref.ConstPointer();
-      IntPtr pRhinoObject = newObject.NonConstPointer();
-      bool rc = UnsafeNativeMethods.CRhinoDoc_ReplaceObject1(m_doc.m_docId, pObjRef, pRhinoObject);
+      IntPtr ptr_const_objref = objref.ConstPointer();
+      IntPtr ptr_rhino_object = newObject.NonConstPointer();
+      bool rc = UnsafeNativeMethods.CRhinoDoc_ReplaceObject1(m_doc.m_docId, ptr_const_objref, ptr_rhino_object);
       if (rc)
       {
-        uint serial_number = UnsafeNativeMethods.CRhinoObject_RuntimeSN(pRhinoObject);
+        uint serial_number = UnsafeNativeMethods.CRhinoObject_RuntimeSN(ptr_rhino_object);
         if (serial_number > 0)
           newObject.m_rhinoobject_serial_number = serial_number;
         newObject.m_pRhinoObject = IntPtr.Zero;
         GC.SuppressFinalize(newObject);
-        AddCustomObjectForTracking(serial_number, newObject, pRhinoObject);
+        AddCustomObjectForTracking(serial_number, newObject, ptr_rhino_object);
       }
       return rc;
     }
@@ -5391,7 +5396,7 @@ namespace Rhino.DocObjects.Tables
     /// </param>
     /// <param name="point">new point to be added.  The point is copied.</param>
     /// <returns>true if successful.</returns>
-    public bool Replace(DocObjects.ObjRef objref, Point3d point)
+    public bool Replace(ObjRef objref, Point3d point)
     {
       // 7 Jan. 2009 S. Baer
       // I looked at every call to ReplaceObject in core Rhino and we only use the return
@@ -5400,10 +5405,8 @@ namespace Rhino.DocObjects.Tables
       // functions in the future
       if (null == objref)
         return false;
-      IntPtr pPointObject = UnsafeNativeMethods.CRhinoDoc_ReplaceObject2(m_doc.m_docId, objref.ConstPointer(), point);
-      if (IntPtr.Zero == pPointObject)
-        return false;
-      return true;
+      IntPtr ptr_rhino_object = UnsafeNativeMethods.CRhinoDoc_ReplaceObject2(m_doc.m_docId, objref.ConstPointer(), point);
+      return IntPtr.Zero != ptr_rhino_object;
     }
 
     /// <summary>Replaces one object with new point object.</summary>
@@ -5424,13 +5427,13 @@ namespace Rhino.DocObjects.Tables
     /// </param>
     /// <param name="dot">new textdot to be added.  The textdot is copied.</param>
     /// <returns>true if successful.</returns>
-    public bool Replace(DocObjects.ObjRef objref, Geometry.TextDot dot)
+    public bool Replace(ObjRef objref, TextDot dot)
     {
       if (null == objref || null == dot)
         return false;
-      IntPtr pObjRef = objref.ConstPointer();
-      IntPtr pDot = dot.ConstPointer();
-      bool rc = UnsafeNativeMethods.CRhinoDoc_ReplaceTextDot(m_doc.m_docId, pObjRef, pDot);
+      IntPtr ptr_const_objref = objref.ConstPointer();
+      IntPtr ptr_const_dot = dot.ConstPointer();
+      bool rc = UnsafeNativeMethods.CRhinoDoc_ReplaceTextDot(m_doc.m_docId, ptr_const_objref, ptr_const_dot);
       return rc;
     }
 
@@ -5438,7 +5441,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="objectId">Id of object to be replaced.</param>
     /// <param name="dot">new textdot to be added.  The textdot is copied.</param>
     /// <returns>true if successful.</returns>
-    public bool Replace(Guid objectId, Geometry.TextDot dot)
+    public bool Replace(Guid objectId, TextDot dot)
     {
       using (ObjRef objref = new ObjRef(objectId))
       {
@@ -5452,7 +5455,7 @@ namespace Rhino.DocObjects.Tables
     /// </param>
     /// <param name="line">new line to be added.  The line is copied.</param>
     /// <returns>true if successful.</returns>
-    public bool Replace(DocObjects.ObjRef objref, Geometry.Line line)
+    public bool Replace(ObjRef objref, Line line)
     {
       return Replace(objref, new LineCurve(line));
     }
@@ -5461,7 +5464,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="objectId">Id of object to be replaced.</param>
     /// <param name="line">new line to be added.  The line is copied.</param>
     /// <returns>true if successful.</returns>
-    public bool Replace(Guid objectId, Geometry.Line line)
+    public bool Replace(Guid objectId, Line line)
     {
       using (ObjRef objref = new ObjRef(objectId))
       {
@@ -5475,7 +5478,7 @@ namespace Rhino.DocObjects.Tables
     /// </param>
     /// <param name="circle">new circle to be added.  The circle is copied.</param>
     /// <returns>true if successful.</returns>
-    public bool Replace(DocObjects.ObjRef objref, Geometry.Circle circle)
+    public bool Replace(ObjRef objref, Circle circle)
     {
       return Replace(objref, new ArcCurve(circle));
     }
@@ -5484,7 +5487,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="objectId">Id of object to be replaced.</param>
     /// <param name="circle">new circle to be added.  The circle is copied.</param>
     /// <returns>true if successful.</returns>
-    public bool Replace(Guid objectId, Geometry.Circle circle)
+    public bool Replace(Guid objectId, Circle circle)
     {
       using (ObjRef objref = new ObjRef(objectId))
       {
@@ -5498,7 +5501,7 @@ namespace Rhino.DocObjects.Tables
     /// </param>
     /// <param name="arc">new arc to be added.  The arc is copied.</param>
     /// <returns>true if successful.</returns>
-    public bool Replace(DocObjects.ObjRef objref, Geometry.Arc arc)
+    public bool Replace(ObjRef objref, Arc arc)
     {
       return Replace(objref, new ArcCurve(arc));
     }
@@ -5507,7 +5510,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="objectId">Id of object to be replaced.</param>
     /// <param name="arc">new arc to be added.  The arc is copied.</param>
     /// <returns>true if successful.</returns>
-    public bool Replace(Guid objectId, Geometry.Arc arc)
+    public bool Replace(Guid objectId, Arc arc)
     {
       using (ObjRef objref = new ObjRef(objectId))
       {
@@ -5521,7 +5524,7 @@ namespace Rhino.DocObjects.Tables
     /// </param>
     /// <param name="polyline">new polyline to be added.  The polyline is copied.</param>
     /// <returns>true if successful.</returns>
-    public bool Replace(DocObjects.ObjRef objref, Geometry.Polyline polyline)
+    public bool Replace(ObjRef objref, Polyline polyline)
     {
       return Replace(objref, new PolylineCurve(polyline));
     }
@@ -5530,7 +5533,7 @@ namespace Rhino.DocObjects.Tables
     /// <param name="objectId">Id of object to be replaced.</param>
     /// <param name="polyline">new polyline to be added.  The polyline is copied.</param>
     /// <returns>true if successful.</returns>
-    public bool Replace(Guid objectId, Geometry.Polyline polyline)
+    public bool Replace(Guid objectId, Polyline polyline)
     {
       using (ObjRef objref = new ObjRef(objectId))
       {
@@ -5551,14 +5554,14 @@ namespace Rhino.DocObjects.Tables
     /// <code source='examples\cs\ex_insertknot.cs' lang='cs'/>
     /// <code source='examples\py\ex_insertknot.py' lang='py'/>
     /// </example>
-    public bool Replace(DocObjects.ObjRef objref, Geometry.Curve curve)
+    public bool Replace(ObjRef objref, Curve curve)
     {
       if (null == objref || null == curve)
         return false;
-      IntPtr pObjRef = objref.ConstPointer();
-      IntPtr pCurve = curve.ConstPointer();
-      IntPtr pCurveObject = UnsafeNativeMethods.CRhinoDoc_ReplaceObject3(m_doc.m_docId, pObjRef, pCurve);
-      return (IntPtr.Zero != pCurveObject);
+      IntPtr ptr_const_objref = objref.ConstPointer();
+      IntPtr ptr_const_curve = curve.ConstPointer();
+      IntPtr ptr_curve_object = UnsafeNativeMethods.CRhinoDoc_ReplaceObject3(m_doc.m_docId, ptr_const_objref, ptr_const_curve);
+      return (IntPtr.Zero != ptr_curve_object);
     }
 
     /// <summary>Replaces one object with new curve object.</summary>
@@ -5567,7 +5570,7 @@ namespace Rhino.DocObjects.Tables
     /// New curve to be added. A duplicate of the curve is added to the Rhino model.
     /// </param>
     /// <returns>true if successful.</returns>
-    public bool Replace(Guid objectId, Geometry.Curve curve)
+    public bool Replace(Guid objectId, Curve curve)
     {
       using (ObjRef objref = new ObjRef(objectId))
       {
@@ -5584,14 +5587,14 @@ namespace Rhino.DocObjects.Tables
     /// A duplicate of the surface is added to the Rhino model.
     /// </param>
     /// <returns>true if successful.</returns>
-    public bool Replace(DocObjects.ObjRef objref, Geometry.Surface surface)
+    public bool Replace(ObjRef objref, Surface surface)
     {
       if (null == objref || null == surface)
         return false;
-      IntPtr pObjRef = objref.ConstPointer();
-      IntPtr pSurface = surface.ConstPointer();
-      IntPtr pSurfaceObject = UnsafeNativeMethods.CRhinoDoc_ReplaceObject4(m_doc.m_docId, pObjRef, pSurface);
-      return (IntPtr.Zero != pSurfaceObject);
+      IntPtr ptr_const_objref = objref.ConstPointer();
+      IntPtr ptr_const_surface = surface.ConstPointer();
+      IntPtr ptr_surface_object = UnsafeNativeMethods.CRhinoDoc_ReplaceObject4(m_doc.m_docId, ptr_const_objref, ptr_const_surface);
+      return (IntPtr.Zero != ptr_surface_object);
     }
 
     /// <summary>Replaces one object with new surface object.</summary>
@@ -5601,7 +5604,7 @@ namespace Rhino.DocObjects.Tables
     /// A duplicate of the surface is added to the Rhino model.
     /// </param>
     /// <returns>true if successful.</returns>
-    public bool Replace(Guid objectId, Geometry.Surface surface)
+    public bool Replace(Guid objectId, Surface surface)
     {
       using (ObjRef objref = new ObjRef(objectId))
       {
@@ -5618,14 +5621,14 @@ namespace Rhino.DocObjects.Tables
     /// A duplicate of the brep is added to the Rhino model.
     /// </param>
     /// <returns>true if successful.</returns>
-    public bool Replace(DocObjects.ObjRef objref, Geometry.Brep brep)
+    public bool Replace(ObjRef objref, Brep brep)
     {
       if (null == objref || null == brep)
         return false;
-      IntPtr pObjRef = objref.ConstPointer();
-      IntPtr pBrep = brep.ConstPointer();
-      IntPtr pBrepObject = UnsafeNativeMethods.CRhinoDoc_ReplaceObject5(m_doc.m_docId, pObjRef, pBrep);
-      return (IntPtr.Zero != pBrepObject);
+      IntPtr ptr_const_objref = objref.ConstPointer();
+      IntPtr pre_const_brep = brep.ConstPointer();
+      IntPtr pre_brep_object = UnsafeNativeMethods.CRhinoDoc_ReplaceObject5(m_doc.m_docId, ptr_const_objref, pre_const_brep);
+      return (IntPtr.Zero != pre_brep_object);
     }
 
     /// <summary>Replaces one object with new brep object.</summary>
@@ -5635,7 +5638,7 @@ namespace Rhino.DocObjects.Tables
     /// A duplicate of the brep is added to the Rhino model.
     /// </param>
     /// <returns>true if successful.</returns>
-    public bool Replace(Guid objectId, Geometry.Brep brep)
+    public bool Replace(Guid objectId, Brep brep)
     {
       using (ObjRef objref = new ObjRef(objectId))
       {
@@ -5652,14 +5655,14 @@ namespace Rhino.DocObjects.Tables
     /// A duplicate of the mesh is added to the Rhino model.
     /// </param>
     /// <returns>true if successful.</returns>
-    public bool Replace(DocObjects.ObjRef objref, Geometry.Mesh mesh)
+    public bool Replace(ObjRef objref, Mesh mesh)
     {
       if (null == objref || null == mesh)
         return false;
-      IntPtr pObjRef = objref.ConstPointer();
-      IntPtr pMesh = mesh.ConstPointer();
-      IntPtr pMeshObject = UnsafeNativeMethods.CRhinoDoc_ReplaceObject6(m_doc.m_docId, pObjRef, pMesh);
-      return (IntPtr.Zero != pMeshObject);
+      IntPtr ptr_const_objref = objref.ConstPointer();
+      IntPtr ptr_const_mesh = mesh.ConstPointer();
+      IntPtr ptr_mesh_object = UnsafeNativeMethods.CRhinoDoc_ReplaceObject6(m_doc.m_docId, ptr_const_objref, ptr_const_mesh);
+      return (IntPtr.Zero != ptr_mesh_object);
     }
 
     /// <summary>Replaces one object with new mesh object.</summary>
@@ -5669,7 +5672,7 @@ namespace Rhino.DocObjects.Tables
     /// A duplicate of the mesh is added to the Rhino model.
     /// </param>
     /// <returns>true if successful.</returns>
-    public bool Replace(Guid objectId, Geometry.Mesh mesh)
+    public bool Replace(Guid objectId, Mesh mesh)
     {
       using (ObjRef objref = new ObjRef(objectId))
       {
@@ -5686,13 +5689,13 @@ namespace Rhino.DocObjects.Tables
     /// A duplicate of the text is added to the Rhino model.
     /// </param>
     /// <returns>true if successful.</returns>
-    public bool Replace(DocObjects.ObjRef objref, Geometry.TextEntity text)
+    public bool Replace(ObjRef objref, TextEntity text)
     {
       if (null == objref || null == text)
         return false;
-      IntPtr pObjRef = objref.ConstPointer();
-      IntPtr pText = text.ConstPointer();
-      bool rc = UnsafeNativeMethods.CRhinoDoc_ReplaceTextEntity(m_doc.m_docId, pObjRef, pText);
+      IntPtr ptr_const_objref = objref.ConstPointer();
+      IntPtr ptr_const_text = text.ConstPointer();
+      bool rc = UnsafeNativeMethods.CRhinoDoc_ReplaceTextEntity(m_doc.m_docId, ptr_const_objref, ptr_const_text);
       return rc;
     }
 
@@ -5705,7 +5708,7 @@ namespace Rhino.DocObjects.Tables
     /// A duplicate of the text is added to the Rhino model.
     /// </param>
     /// <returns>true if successful.</returns>
-    public bool Replace(Guid objectId, Geometry.TextEntity text)
+    public bool Replace(Guid objectId, TextEntity text)
     {
       using (ObjRef objref = new ObjRef(objectId))
       {
@@ -5722,13 +5725,13 @@ namespace Rhino.DocObjects.Tables
     /// A duplicate of the pointcloud is added to the Rhino model.
     /// </param>
     /// <returns>true if successful.</returns>
-    public bool Replace(DocObjects.ObjRef objref, Geometry.PointCloud pointcloud)
+    public bool Replace(ObjRef objref, PointCloud pointcloud)
     {
       if (null == objref || null == pointcloud)
         return false;
-      IntPtr pObjRef = objref.ConstPointer();
-      IntPtr pCloud = pointcloud.ConstPointer();
-      bool rc = UnsafeNativeMethods.CRhinoDoc_ReplacePointCloud(m_doc.m_docId, pObjRef, pCloud);
+      IntPtr ptr_const_objref = objref.ConstPointer();
+      IntPtr ptr_const_pointcloud = pointcloud.ConstPointer();
+      bool rc = UnsafeNativeMethods.CRhinoDoc_ReplacePointCloud(m_doc.m_docId, ptr_const_objref, ptr_const_pointcloud);
       return rc;
     }
     
@@ -5741,7 +5744,7 @@ namespace Rhino.DocObjects.Tables
     /// A duplicate of the pointcloud is added to the Rhino model.
     /// </param>
     /// <returns>true if successful.</returns>
-    public bool Replace(Guid objectId, Geometry.PointCloud pointcloud)
+    public bool Replace(Guid objectId, PointCloud pointcloud)
     {
       using (ObjRef objref = new ObjRef(objectId))
       {
@@ -6647,6 +6650,11 @@ namespace Rhino.DocObjects
   /// Settings used for getting an enumerator of objects in a document
   /// See Rhino.Collections.ObjectTable.GetEnumerator()
   /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_moveobjectstocurrentlayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_moveobjectstocurrentlayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_moveobjectstocurrentlayer.py' lang='py'/>
+    /// </example>
   public class ObjectEnumeratorSettings
   {
     // all variables are set to use same defaults as defined in CRhinoObjectIterator::Init
@@ -6780,11 +6788,22 @@ namespace Rhino.DocObjects
     }
     #endregion
 
+    /// <example>
+    /// <code source='examples\vbnet\ex_objectiterator.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_objectiterator.cs' lang='cs'/>
+    /// <code source='examples\py\ex_objectiterator.py' lang='py'/>
+    /// </example>
     public bool IncludeLights
     {
       get { return m_include_lights; }
       set { m_include_lights = value; }
     }
+    
+    /// <example>
+    /// <code source='examples\vbnet\ex_objectiterator.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_objectiterator.cs' lang='cs'/>
+    /// <code source='examples\py\ex_objectiterator.py' lang='py'/>
+    /// </example>
     public bool IncludeGrips
     {
       get { return m_include_grips; }

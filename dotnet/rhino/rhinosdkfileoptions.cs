@@ -162,12 +162,6 @@ namespace Rhino.FileIO
       m_bDoDelete = true;
     }
 
-    //public FileReadOptions(bool import)
-    //{
-    //  m_ptr = UnsafeNativeMethods.CRhinoFileReadOptions_New2(import);
-    //  m_bDoDelete = true;
-    //}
-
     internal FileReadOptions(IntPtr ptr)
     {
       m_ptr = ptr;
@@ -190,41 +184,103 @@ namespace Rhino.FileIO
         UnsafeNativeMethods.CRhinoFileReadOptions_SetBool(m_ptr, which, value);
     }
 
+    /// <summary>
+    /// true means we are merging whatever is being read into an existing document.
+    ///  This means you need to consider things like:
+    /// <para>
+    /// If the information being read is in a different unit system, it should be
+    /// scaled if UseScaleGeometry is true.
+    /// </para>
+    /// <para>
+    /// There can be existing layers, fonts, materials, dimension styles, hatch
+    /// patterns, and so on with the same name as items being read from the file.
+    /// </para>
+    /// </summary>
     public bool ImportMode
     {
       get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.ImportMode); }
       set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.ImportMode, value); }
     }
+
+    /// <summary>
+    /// true means we are reading the information into an empty document.  This
+    /// means you need to consider things like:
+    /// <list type="bullet">
+    /// <item><description>Setting the unit system (if the file has a unit system)</description></item>
+    /// <item><description>Creating a default layer if one is not there.</description></item>
+    /// <item><description>Setting up appropriate views when you're finished reading.</description></item>
+    /// </list>
+    /// </summary>
     public bool OpenMode
     {
       get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.OpenMode); }
       set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.OpenMode, value); }
     }
+
+    /// <summary>
+    /// true means we are reading template information in something like
+    /// a OnFileNew event.
+    /// </summary>
     public bool NewMode
     {
       get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.NewMode); }
       set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.NewMode, value); }
     }
+
+    /// <summary>
+    /// true means we are reading information that will be used to create an
+    /// instance definition or some other type of "inserting" that is supported
+    /// by Rhino's "Insert" command.
+    /// </summary>
     public bool InsertMode
     {
       get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.InsertMode); }
       set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.InsertMode, value); }
     }
+
+    /// <summary>
+    /// true means we are reading information for a work session reference model
+    /// or a linked instance definition.
+    /// </summary>
     public bool ImportReferenceMode
     {
       get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.ImportReferenceMode); }
       set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.ImportReferenceMode, value); }
     }
+
+    /// <summary>
+    /// true means you cannot ask questions during reading. (no dialogs, no "getters", etc.)
+    /// </summary>
     public bool BatchMode
     {
       get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.BatchMode); }
       set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.BatchMode, value); }
     }
+
+    /// <summary>
+    /// If this parameter is true, then no questions are asked when unit conversion
+    /// scaling is optional and the setting specified by ScaleGeometry is used.
+    /// </summary>
     public bool UseScaleGeometry
     {
       get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.UseScaleGeometry); }
       set { SetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.UseScaleGeometry, value); }
     }
+
+    /// <summary>
+    /// <para>
+    /// true: If ImportMode is true and the geometry in the file being read has
+    /// a unit system different from the model's unit system, then apply the unit
+    /// conversion scale to the file's geometry before adding it to the model.
+    /// </para>
+    /// <para>
+    /// false: Do not scale. Once case where this happens is when an instance
+    /// definition is read from a file and the model space instance references
+    /// have been scaled. In case the instance definition geometry cannot be
+    /// scaled or the net result is that the size of the instance reference
+    /// object is scaled by the square of the scale factor.
+    /// </para>
+    /// </summary>
     public bool ScaleGeometry
     {
       get { return GetBool(UnsafeNativeMethods.FileReadOptionsBoolConsts.ScaleGeometry); }

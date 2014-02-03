@@ -26,12 +26,12 @@ Namespace examples_vb
       ' more than one layer then present them to the user and let him decide.
       Dim matchingLayers = (From layer In doc.Layers Where layer.Name = layerName Select layer).ToList()
 
-      Dim layerToRename As Rhino.DocObjects.Layer = Nothing
+      Dim layerToLock As Rhino.DocObjects.Layer = Nothing
       If matchingLayers.Count = 0 Then
         RhinoApp.WriteLine([String].Format("Layer ""{0}"" does not exist.", layerName))
         Return Result.[Nothing]
       ElseIf matchingLayers.Count = 1 Then
-        layerToRename = matchingLayers(0)
+        layerToLock = matchingLayers(0)
       ElseIf matchingLayers.Count > 1 Then
         For i As Integer = 0 To matchingLayers.Count - 1
           RhinoApp.WriteLine([String].Format("({0}) {1}", i + 1, matchingLayers(i).FullPath.Replace("::", "->")))
@@ -42,22 +42,22 @@ Namespace examples_vb
           Return rc
         End If
         If selectedLayer > 0 AndAlso selectedLayer <= matchingLayers.Count Then
-          layerToRename = matchingLayers(selectedLayer - 1)
+          layerToLock = matchingLayers(selectedLayer - 1)
         Else
           Return Result.[Nothing]
         End If
       End If
 
-      If layerToRename Is Nothing Then
+      If layerToLock Is Nothing Then
         Return Result.Nothing
       End If
 
-      If Not layerToRename.IsLocked Then
-        layerToRename.IsLocked = True
-        layerToRename.CommitChanges()
+      If Not layerToLock.IsLocked Then
+        layerToLock.IsLocked = True
+        layerToLock.CommitChanges()
         Return Result.Success
       Else
-        RhinoApp.WriteLine([String].Format("layer {0} is already locked.", layerToRename.FullPath))
+        RhinoApp.WriteLine([String].Format("layer {0} is already locked.", layerToLock.FullPath))
         Return Result.[Nothing]
       End If
     End Function

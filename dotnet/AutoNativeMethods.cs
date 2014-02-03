@@ -16,13 +16,6 @@ using Rhino.Runtime.InteropWrappers;
 // the support 'C' DLL (rhcommon_c.dll).
 internal partial class UnsafeNativeMethods
 {
-#if MULTIARCH
-  static UnsafeNativeMethods()
-  {
-    Rhino.Runtime.HostUtils.Init();
-  }
-#endif
-
   private UnsafeNativeMethods(){}
   #region on_3dm_attributes.cpp
   //ON_3dmObjectAttributes* ON_3dmObjectAttributes_New(const ON_3dmObjectAttributes* pOther)
@@ -4791,9 +4784,19 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Surface_Reverse(IntPtr pConstSurface, int direction);
 
+  //bool ON_Surface_Reverse2( ON_Surface* pSurface, int direction )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Surface_Reverse2(IntPtr pSurface, int direction);
+
   //ON_Surface* ON_Surface_Transpose( const ON_Surface* pConstSurface )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern IntPtr ON_Surface_Transpose(IntPtr pConstSurface);
+
+  //bool ON_Surface_Transpose2( ON_Surface* pSurface )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_Surface_Transpose2(IntPtr pSurface);
 
   //void ON_Surface_Split(const ON_Surface* pConstSurface, int direction, double c, ON_SimpleArray<ON_Surface*>* pSurfaceArray)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

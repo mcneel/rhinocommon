@@ -234,6 +234,11 @@ namespace Rhino.Geometry
   /// <summary>
   /// Defines the extremes of a curve through a flagged enumeration. 
   /// </summary>
+  /// <example>
+  /// <code source='examples\vbnet\ex_extendcurve.vb' lang='vbnet'/>
+  /// <code source='examples\cs\ex_extendcurve.cs' lang='cs'/>
+  /// <code source='examples\py\ex_extendcurve.py' lang='py'/>
+  /// </example>
   [FlagsAttribute]
   public enum CurveEnd : int
   {
@@ -3157,6 +3162,11 @@ namespace Rhino.Geometry
     /// <param name="style">The style or type of extension to use.</param>
     /// <param name="geometry">A collection of objects. Allowable object types are Curve, Surface, Brep.</param>
     /// <returns>New extended curve result on success, null on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_extendcurve.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_extendcurve.cs' lang='cs'/>
+    /// <code source='examples\py\ex_extendcurve.py' lang='py'/>
+    /// </example>
     public Curve Extend(CurveEnd side, CurveExtensionStyle style, System.Collections.Generic.IEnumerable<GeometryBase> geometry)
     {
       if (CurveEnd.None == side)

@@ -14,7 +14,7 @@ Namespace examples_vb
     End Property
 
     Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
-      Dim obj_ref As ObjRef
+      Dim obj_ref As ObjRef = Nothing
       Dim rc = RhinoGet.GetOneObject("Select light to change color", True, ObjectType.Light, obj_ref)
       If rc <> Result.Success Then
         Return rc

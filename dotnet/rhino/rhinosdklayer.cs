@@ -167,6 +167,11 @@ namespace Rhino.DocObjects
     /// </example>
     /// <remarks>If you are modifying a layer inside a Rhino document, 
     /// you must call CommitChanges for the modifications to take effect.</remarks>
+    /// <example>
+    /// <code source='examples\vbnet\ex_renamelayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_renamelayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_renamelayer.py' lang='py'/>
+    /// </example>
     public string Name
     {
       get
@@ -861,6 +866,11 @@ namespace Rhino.DocObjects.Tables
     /// are assigned to the current layer. The current layer is never locked, hidden, or deleted.
     /// Resturns: Zero based layer table index of the current layer.
     /// </summary>
+    /// <example>
+    /// <code source='examples\vbnet\ex_moveobjectstocurrentlayer.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_moveobjectstocurrentlayer.cs' lang='cs'/>
+    /// <code source='examples\py\ex_moveobjectstocurrentlayer.py' lang='py'/>
+    /// </example>
     public int CurrentLayerIndex
     {
       get

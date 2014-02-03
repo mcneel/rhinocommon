@@ -1889,6 +1889,11 @@ namespace Rhino.Display
     /// <param name="color">text color.</param>
     /// <param name="screenCoordinate">definition point in screen coordinates (0,0 is top-left corner)</param>
     /// <param name="middleJustified">if true text is centered around the definition point, otherwise it is lower-left justified.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_drawstring.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_drawstring.cs' lang='cs'/>
+    /// <code source='examples\py\ex_drawstring.py' lang='py'/>
+    /// </example>
     public void Draw2dText(string text, System.Drawing.Color color, Point2d screenCoordinate, bool middleJustified)
     {
       IntPtr pThis = NonConstPointer();
@@ -2098,6 +2103,11 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="circle">Circle to draw.</param>
     /// <param name="color">Color to draw with.</param>
+    /// <example>
+    /// <code source='examples\vbnet\ex_getpointdynamicdraw.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_getpointdynamicdraw.cs' lang='cs'/>
+    /// <code source='examples\py\ex_getpointdynamicdraw.py' lang='py'/>
+    /// </example>
     public void DrawCircle(Circle circle, System.Drawing.Color color)
     {
       int argb = color.ToArgb();

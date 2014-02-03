@@ -367,6 +367,11 @@ namespace Rhino.Geometry
     /// </summary>
     /// <param name="curves">A list, an array or any enumerable set of curves.</param>
     /// <returns>resulting brep or null on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_edgesrf.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_edgesrf.cs' lang='cs'/>
+    /// <code source='examples\py\ex_edgesrf.py' lang='py'/>
+    /// </example>
     public static Brep CreateEdgeSurface(IEnumerable<Curve> curves)
     {
       NurbsCurve[] nurbs_curves = new NurbsCurve[4];
@@ -1060,6 +1065,11 @@ namespace Rhino.Geometry
     /// <param name="contourEnd">A point to use as the end.</param>
     /// <param name="interval">The interaxial offset in world units.</param>
     /// <returns>An array with intersected curves. This array can be empty.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_makerhinocontours.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_makerhinocontours.cs' lang='cs'/>
+    /// <code source='examples\py\ex_makerhinocontours.py' lang='py'/>
+    /// </example>
     public static Curve[] CreateContourCurves(Brep brepToContour, Point3d contourStart, Point3d contourEnd, double interval)
     {
       IntPtr ptr_const_brep = brepToContour.ConstPointer();

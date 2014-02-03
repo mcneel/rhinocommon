@@ -732,7 +732,52 @@ namespace Rhino.Geometry
     {
       return (a.X > b.X) || (a.X == b.X && a.Y >= b.Y);
     }
-  }
+
+	/// <summary>
+	/// Multiplies a vector by a number, having the effect of scaling it.
+	/// </summary>
+	/// <param name="vector">A vector.</param>
+	/// <param name="t">A number.</param>
+	/// <returns>A new vector that is the original vector coordinatewise multiplied by t.</returns>
+	public static Vector2f operator *(Vector2f vector, float t)
+	{
+		return new Vector2f(vector.m_x*t, vector.m_y*t);
+	}
+
+	/// <summary>
+	/// Multiplies a vector by a number, having the effect of scaling it.
+	/// </summary>
+	/// <param name="vector">A vector.</param>
+	/// <param name="t">A number.</param>
+	/// <returns>A new vector that is the original vector coordinatewise multiplied by t.</returns>
+	public static Vector2f operator *(Vector2f vector, double t)
+	{
+		return new Vector2f(vector.m_x*t, vector.m_y*t);
+	}
+
+	/// <summary>
+	/// Multiplies a vector by a number, having the effect of scaling it.
+	/// </summary>
+	/// <param name="vector">A vector.</param>
+	/// <param name="t">A number.</param>
+	/// <returns>A new vector that is the original vector coordinatewise multiplied by t.</returns>
+	public static Vector2f operator *(float t, Vector2f vector)
+	{
+		return new Vector2f(vector.m_x*t, vector.m_y*t);
+	}
+	
+	/// <summary>
+	/// Multiplies a vector by a number, having the effect of scaling it.
+	/// </summary>
+	/// <param name="vector">A vector.</param>
+	/// <param name="t">A number.</param>
+	/// <returns>A new vector that is the original vector coordinatewise multiplied by t.</returns>
+	public static Vector2f operator *(double t, Vector2f vector)
+	{
+		return new Vector2f(vector.m_x*t, vector.m_y*t);
+	}
+
+}
 
   /// <summary>
   /// Represents the three components of a vector in three-dimensional space,
@@ -1107,6 +1152,17 @@ namespace Rhino.Geometry
       return new Vector3f(vector.m_x * t, vector.m_y * t, vector.m_z * t);
     }
 
+	/// <summary>
+	/// Multiplies a vector by a number, having the effect of scaling it.
+	/// </summary>
+	/// <param name="vector">A vector.</param>
+	/// <param name="t">A number.</param>
+	/// <returns>A new vector that is the original vector coordinatewise multiplied by t.</returns>
+	public static Vector3f operator *(Vector3f vector, double t)
+	{
+		return new Vector3f(vector.m_x * t, vector.m_y * t, vector.m_z * t);
+	}
+
     /// <summary>
     /// Multiplies a vector by a number, having the effect of scaling it.
     /// <para>(Provided for languages that do not support operator overloading. You can use the * operator otherwise)</para>
@@ -1119,7 +1175,19 @@ namespace Rhino.Geometry
       return new Vector3f(vector.m_x * t, vector.m_y * t, vector.m_z * t);
     }
 
-    /// <summary>
+	/// <summary>
+	/// Multiplies a vector by a number, having the effect of scaling it.
+	/// <para>(Provided for languages that do not support operator overloading. You can use the * operator otherwise)</para>
+	/// </summary>
+	/// <param name="vector">A vector.</param>
+	/// <param name="t">A number.</param>
+	/// <returns>A new vector that is the original vector coordinatewise multiplied by t.</returns>
+	public static Vector3f Multiply(Vector3f vector, double t)
+	{
+		return new Vector3f(vector.m_x * t, vector.m_y * t, vector.m_z * t);
+	}
+	
+	/// <summary>
     /// Multiplies a vector by a number, having the effect of scaling it.
     /// </summary>
     /// <param name="t">A number.</param>
@@ -1130,7 +1198,19 @@ namespace Rhino.Geometry
       return new Vector3f(vector.m_x * t, vector.m_y * t, vector.m_z * t);
     }
 
-    /// <summary>
+	/// <summary>
+	/// Multiplies a vector by a number, having the effect of scaling it.
+	/// </summary>
+	/// <param name="t">A number.</param>
+	/// <param name="vector">A vector.</param>
+	/// <returns>A new vector that is the original vector coordinatewise multiplied by t.</returns>
+	public static Vector3f operator *(double t, Vector3f vector)
+	{
+		return new Vector3f(vector.m_x * t, vector.m_y * t, vector.m_z * t);
+	}
+
+
+	/// <summary>
     /// Multiplies a vector by a number, having the effect of scaling it.
     /// <para>(Provided for languages that do not support operator overloading. You can use the * operator otherwise)</para>
     /// </summary>

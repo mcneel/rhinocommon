@@ -122,6 +122,7 @@
     <Compile Include="ex_objectiterator.py" />
     <Compile Include="ex_objectlayer.py" />
     <Compile Include="ex_objectname.py" />
+    <Compile Include="ex_offsetcurve.py" />
     <Compile Include="ex_orientonsrf.py" />
     <Compile Include="ex_ortho.py" />
     <Compile Include="ex_pickobjects.py" />

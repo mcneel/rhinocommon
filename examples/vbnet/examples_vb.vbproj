@@ -172,6 +172,7 @@
     <Compile Include="ex_locklayer.vb" />
     <Compile Include="ex_loft.vb" />
     <Compile Include="ex_makerhinocontours.vb" />
+    <Compile Include="ex_maximizeview.vb" />
     <Compile Include="ex_meshdrawing.vb" />
     <Compile Include="ex_meshvolume.vb" />
     <Compile Include="ex_modifylightcolor.vb" />
@@ -183,6 +184,7 @@
     <Compile Include="ex_objectiterator.vb" />
     <Compile Include="ex_objectlayer.vb" />
     <Compile Include="ex_objectname.vb" />
+    <Compile Include="ex_offsetcurve.vb" />
     <Compile Include="ex_orientonsrf.vb" />
     <Compile Include="ex_ortho.vb" />
     <Compile Include="ex_pickobjects.vb" />

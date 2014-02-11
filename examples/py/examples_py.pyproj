@@ -24,6 +24,7 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Compile Include="ex_determinecurrentlanguage.py" />
     <Compile Include="ex_displayprecision.py" />
     <Compile Include="ex_dividebysegments.py" />
     <Compile Include="ex_dividecurvestraight.py" />
@@ -98,6 +99,7 @@
     <Compile Include="ex_getmultiplewithoptions.py" />
     <Compile Include="ex_getpointdynamicdraw.py" />
     <Compile Include="ex_gettext.py" />
+    <Compile Include="ex_getuuid.py" />
     <Compile Include="ex_hatchcurve.py" />
     <Compile Include="ex_insertknot.py" />
     <Compile Include="ex_instancedefinitionobjects.py" />
@@ -127,6 +129,7 @@
     <Compile Include="ex_ortho.py" />
     <Compile Include="ex_pickobjects.py" />
     <Compile Include="ex_pickpoint.py" />
+    <Compile Include="ex_prepostpick.py" />
     <Compile Include="ex_principalcurvature.py" />
     <Compile Include="ex_printinstancedefinitions.py" />
     <Compile Include="ex_printinstancedefinitiontree.py" />
@@ -140,6 +143,7 @@
     <Compile Include="ex_selectgroupobject.py" />
     <Compile Include="ex_sellayer.py" />
     <Compile Include="ex_setactiveview.py" />
+    <Compile Include="ex_setviewname.py" />
     <Compile Include="ex_splitbrepwithplane.py" />
     <Compile Include="ex_srfpt.py" />
     <Compile Include="ex_sweep1.py" />

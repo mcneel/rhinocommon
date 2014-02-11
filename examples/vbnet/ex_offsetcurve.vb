@@ -14,7 +14,7 @@ Namespace examples_vb
     End Property
 
     Protected Overrides Function RunCommand(doc As RhinoDoc, mode As RunMode) As Result
-      Dim obj_ref As ObjRef
+      Dim obj_ref As ObjRef = Nothing
       Dim rs = RhinoGet.GetOneObject("Select Curve", False, ObjectType.Curve, obj_ref)
       If rs <> Result.Success Then
         Return rs

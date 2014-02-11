@@ -130,6 +130,7 @@
     <Compile Include="ex_customgeometryfilter.vb" />
     <Compile Include="ex_customundo.vb" />
     <Compile Include="ex_deleteblock.vb" />
+    <Compile Include="ex_determinecurrentlanguage.vb" />
     <Compile Include="ex_dimstyle.vb" />
     <Compile Include="ex_displayprecision.vb" />
     <Compile Include="ex_dividebylength.vb" />
@@ -157,6 +158,7 @@
     <Compile Include="ex_getmultiplewithoptions.vb" />
     <Compile Include="ex_getpointdynamicdraw.vb" />
     <Compile Include="ex_gettext.vb" />
+    <Compile Include="ex_getuuid.vb" />
     <Compile Include="ex_gumball.vb" />
     <Compile Include="ex_hatchcurve.vb" />
     <Compile Include="ex_historyCommand.vb" />
@@ -191,6 +193,7 @@
     <Compile Include="ex_pickpoint.vb" />
     <Compile Include="ex_planesurface.vb" />
     <Compile Include="ex_pointatcursor.vb" />
+    <Compile Include="ex_prepostpick.vb" />
     <Compile Include="ex_principalcurvature.vb" />
     <Compile Include="ex_printinstancedefinitions.vb" />
     <Compile Include="ex_printinstancedefinitiontree.vb" />
@@ -205,6 +208,7 @@
     <Compile Include="ex_selectgroupobject.vb" />
     <Compile Include="ex_sellayer.vb" />
     <Compile Include="ex_setactiveview.vb" />
+    <Compile Include="ex_setviewname.vb" />
     <Compile Include="ex_splitbrepwithplane.vb" />
     <Compile Include="ex_srfpt.vb" />
     <Compile Include="ex_sweep1.vb" />

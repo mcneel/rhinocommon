@@ -126,6 +126,7 @@
     <Compile Include="ex_customundo.cs" />
     <Compile Include="ex_deleteblock.cs" />
     <Compile Include="ex_addradialdimension.cs" />
+    <Compile Include="ex_determinecurrentlanguage.cs" />
     <Compile Include="ex_dimstyle.cs" />
     <Compile Include="ex_displayconduit.cs" />
     <Compile Include="ex_displayprecision.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="ex_getmultiplewithoptions.cs" />
     <Compile Include="ex_getpointdynamicdraw.cs" />
     <Compile Include="ex_gettext.cs" />
+    <Compile Include="ex_getuuid.cs" />
     <Compile Include="ex_gumball.cs" />
     <Compile Include="ex_hatchcurve.cs" />
     <Compile Include="ex_historyCommand.cs" />
@@ -196,6 +198,7 @@
     <Compile Include="ex_pickpoint.cs" />
     <Compile Include="ex_planesurface.cs" />
     <Compile Include="ex_pointatcursor.cs" />
+    <Compile Include="ex_prepostpick.cs" />
     <Compile Include="ex_principalcurvature.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -212,6 +215,7 @@
     <Compile Include="ex_selectgroupobject.cs" />
     <Compile Include="ex_sellayer.cs" />
     <Compile Include="ex_setactiveview.cs" />
+    <Compile Include="ex_setviewname.cs" />
     <Compile Include="ex_showsurfacedirection.cs" />
     <Compile Include="ex_splitbrepwithplane.cs" />
     <Compile Include="ex_spritedrawing.cs" />

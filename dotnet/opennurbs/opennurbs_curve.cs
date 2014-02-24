@@ -1033,7 +1033,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Computes the distance between two arbitrary curves.
+    /// Computes the distances between two arbitrary curves that overlap.
     /// </summary>
     /// <param name="curveA">A curve.</param>
     /// <param name="curveB">Another curve.</param>

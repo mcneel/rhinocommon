@@ -2080,13 +2080,13 @@ namespace Rhino.ApplicationSettings
     /// <summary>Gets or sets the base orthogonal angle.</summary>
     public double OrthoAngle{ get; set; }
 
-    ///<summary>Enables or disables Rhino&apos;s object snap projection.</summary>
+    ///<summary>Gets or sets the nudge step amount.</summary>
     public double NudgeKeyStep{ get; set; }
 
-    /// <summary>Gets or sets the Ctrl-key based nurge step amount.</summary>
+    /// <summary>Gets or sets the Ctrl-key based nudge step amount.</summary>
     public double CtrlNudgeKeyStep{ get; set; }
 
-    /// <summary>Gets or sets the Shift-key based nurge step amount.</summary>
+    /// <summary>Gets or sets the Shift-key based nudge step amount.</summary>
     public double ShiftNudgeKeyStep{ get; set; }
 
     ///<summary>Enables or disables Rhino's planar modeling aid.</summary>
@@ -2344,21 +2344,21 @@ namespace Rhino.ApplicationSettings
       set { SetDouble(idxOrthoAngle, value); }
     }
 
-    ///<summary>Enables or disables Rhino&apos;s object snap projection.</summary>
+    ///<summary>Gets or sets the nudge step amount.</summary>
     public static double NudgeKeyStep
     {
       get { return GetDouble(idxNudgeKeyStep); }
       set { SetDouble(idxNudgeKeyStep, value); }
     }
 
-    /// <summary>Gets or sets the Ctrl-key based nurge step amount.</summary>
+    /// <summary>Gets or sets the Ctrl-key based nudge step amount.</summary>
     public static double CtrlNudgeKeyStep
     {
       get { return GetDouble(idxCtrlNudgeKeyStep); }
       set { SetDouble(idxCtrlNudgeKeyStep, value); }
     }
 
-    /// <summary>Gets or sets the Shift-key based nurge step amount.</summary>
+    /// <summary>Gets or sets the Shift-key based nudge step amount.</summary>
     public static double ShiftNudgeKeyStep
     {
       get { return GetDouble(idxShiftNudgeKeyStep); }

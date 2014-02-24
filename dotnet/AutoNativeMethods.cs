@@ -562,6 +562,21 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_BinaryArchive_WriteByte2(IntPtr pArchive, int count, byte[] val);
 
+  //bool ON_BinaryArchive_ReadCompressedBufferSize( ON_BinaryArchive* pArchive, unsigned int* size )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_ReadCompressedBufferSize(IntPtr pArchive, ref uint size);
+
+  //bool ON_BinaryArchive_ReadCompressedBuffer( ON_BinaryArchive* pArchive, unsigned int size, /*ARRAY*/char* pBuffer )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_ReadCompressedBuffer(IntPtr pArchive, uint size, [In,Out] byte[] pBuffer);
+
+  //bool ON_BinaryArchive_WriteCompressedBuffer( ON_BinaryArchive* pArchive, unsigned int size, /*ARRAY*/const char* pBuffer )
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_WriteCompressedBuffer(IntPtr pArchive, uint size, byte[] pBuffer);
+
   //bool ON_BinaryArchive_ReadShort(ON_BinaryArchive* pArchive, short* readShort)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -1179,6 +1194,51 @@ internal partial class UnsafeNativeMethods
   //void ON_BinaryFile_Close(CBinaryFileHelper* pBinaryFile)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_BinaryFile_Close(IntPtr pBinaryFile);
+
+  //ONX_Model* ONX_Model_ReadFile2(const RHMONO_STRING* path, ReadFileTableTypeFilter tableFilter, ObjectTypeFilter objectTypeFilter, CRhCmnStringHolder* pStringHolder)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern IntPtr ONX_Model_ReadFile2([MarshalAs(UnmanagedType.LPWStr)]string path, ReadFileTableTypeFilter tableFilter, ObjectTypeFilter objectTypeFilter, IntPtr pStringHolder);
+
+  internal enum ReadFileTableTypeFilter : int
+  {
+    None = 0,
+    PropertiesTable          = 0x000001,
+    SettingsTable            = 0x000002,
+    BitmapTable              = 0x000004,
+    TextureMappingTable      = 0x000008,
+    MaterialTable            = 0x000010,
+    LinetypeTable            = 0x000020,
+    LayerTable               = 0x000040,
+    GroupTable               = 0x000080,
+    FontTable                = 0x000100,
+    FutureFontTable          = 0x000200,
+    DimstyleTable            = 0x000400,
+    LightTable               = 0x000800,
+    HatchpatternTable        = 0x001000,
+    InstanceDefinitionTable  = 0x002000,
+    ObjectTable              = 0x004000,
+    HistoryrecordTable       = 0x008000,
+    UserTable                = 0x010000
+  }
+
+  internal enum ObjectTypeFilter : uint
+  {
+    None  =          0,
+    Point         =          1, // some type of ON_Point
+    Pointset      =          2, // some type of ON_PointCloud, ON_PointGrid, ...
+    Curve         =          4, // some type of ON_Curve like ON_LineCurve, ON_NurbsCurve, etc.
+    Surface       =          8, // some type of ON_Surface like ON_PlaneSurface, ON_NurbsSurface, etc.
+    Brep          =       0x10, // some type of ON_Brep
+    Mesh          =       0x20, // some type of ON_Mesh
+    Annotation    =      0x200, // some type of ON_Annotation
+    InstanceDefinition  =      0x800, // some type of ON_InstanceDefinition
+    InstanceReference   =     0x1000, // some type of ON_InstanceRef
+    TextDot             =     0x2000, // some type of ON_TextDot
+    Detail        =     0x8000, // some type of ON_DetailView
+    Hatch         =    0x10000, // some type of ON_Hatch
+    Extrusion     = 0x40000000, // some type of ON_Extrusion
+    Any           = 0xFFFFFFFF
+  }
   #endregion
 
 

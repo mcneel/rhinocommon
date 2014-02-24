@@ -190,7 +190,7 @@ namespace Rhino.Display
     /// </summary>
     /// <example>
     /// <code source='examples\vbnet\ex_viewportresolution.vb' lang='vbnet'/>
-    /// <code source='examples\cs\ex_vieportresolution.cs' lang='cs'/>
+    /// <code source='examples\cs\ex_viewportresolution.cs' lang='cs'/>
     /// <code source='examples\py\ex_viewportresolution.py' lang='py'/>
     /// </example>
     public System.Drawing.Size Size

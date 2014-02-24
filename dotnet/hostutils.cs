@@ -878,6 +878,8 @@ namespace Rhino.Runtime
 #if RHINO_SDK
       UnsafeNativeMethods.RHC_SetGetNowProc(m_getnow_callback, m_getformattedtime_callback);
       UnsafeNativeMethods.RHC_SetPythonEvaluateCallback(m_evaluate_callback);
+
+      UnsafeNativeMethods.RHC_SetCmnUtilitiesCallbacks(PlugIn.GetPlugInSettingsFolderHook, PlugIn.GetPlugInRuiFileNameHook, PlugIn.ValidateRegisteredPlugInRuiFileNameHook);
 #endif
       InitializeZooClient();
     }

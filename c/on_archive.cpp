@@ -139,6 +139,41 @@ RH_C_FUNCTION bool ON_BinaryArchive_WriteByte2(ON_BinaryArchive* pArchive, int c
   return rc;
 }
 
+// 10-Feb-2014 Dale Fugier, http://mcneel.myjetbrains.com/youtrack/issue/RH-24156
+RH_C_FUNCTION bool ON_BinaryArchive_ReadCompressedBufferSize( ON_BinaryArchive* pArchive, unsigned int* size )
+{
+  bool rc = false;
+  if( pArchive && size )
+  {
+    size_t sizeof_outbuffer = 0;
+    rc = pArchive->ReadCompressedBufferSize( &sizeof_outbuffer );
+    if( rc )
+      *size = (unsigned int)sizeof_outbuffer;
+  }
+  return rc;
+}
+
+// 10-Feb-2014 Dale Fugier, http://mcneel.myjetbrains.com/youtrack/issue/RH-24156
+RH_C_FUNCTION bool ON_BinaryArchive_ReadCompressedBuffer( ON_BinaryArchive* pArchive, unsigned int size, /*ARRAY*/char* pBuffer )
+{
+  bool rc = false;
+  if( pArchive && size > 0 && pBuffer )
+  {
+    int bFailedCRC = 0;
+    rc = pArchive->ReadCompressedBuffer( size, pBuffer, &bFailedCRC );
+  }
+  return rc;
+}
+
+// 10-Feb-2014 Dale Fugier, http://mcneel.myjetbrains.com/youtrack/issue/RH-24156
+RH_C_FUNCTION bool ON_BinaryArchive_WriteCompressedBuffer( ON_BinaryArchive* pArchive, unsigned int size, /*ARRAY*/const char* pBuffer )
+{
+  bool rc = false;
+  if( pArchive && size > 0 && pBuffer )
+    rc = pArchive->WriteCompressedBuffer( size, pBuffer );
+  return rc;
+}
+
 RH_C_FUNCTION bool ON_BinaryArchive_ReadShort(ON_BinaryArchive* pArchive, short* readShort)
 {
   bool rc = false;
@@ -2215,13 +2250,25 @@ public:
 
 RH_C_FUNCTION CBinaryFileHelper* ON_BinaryFile_Open(const RHMONO_STRING* path, int mode)
 {
+  // 22-Jan-2014 Dale Fugier, http://mcneel.myjetbrains.com/youtrack/issue/RH-23765
+
+  ON::archive_mode archive_mode = ON::ArchiveMode(mode);
+  if( archive_mode == ON::unknown_archive_mode )
+    return NULL;
+
   INPUTSTRINGCOERCE(_path, path);
-  FILE* fp = ON::OpenFile( _path, L"rb" );
+
+  FILE* fp = 0;
+  if( archive_mode == ON::read || archive_mode == ON::read3dm )
+    fp = ON::OpenFile( _path, L"rb" );
+  else if( archive_mode == ON::write || archive_mode == ON::write3dm )
+    fp = ON::OpenFile( _path, L"wb" );
+  else
+    fp = ON::OpenFile( _path, L"r+b" );
+  
   if( fp )
-  {
-    ON::archive_mode archive_mode = ON::ArchiveMode(mode);
-    return new CBinaryFileHelper(archive_mode, fp);
-  }
+    return new CBinaryFileHelper( archive_mode, fp );
+
   return NULL;
 }
 

@@ -52,6 +52,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GH_IO">
+      <HintPath>..\..\..\..\..\Users\acormier\AppData\Roaming\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper (b45a29b1-4343-4035-989e-044e8580d9cf)\0.9.70.0\GH_IO.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="GH_Util">
+      <HintPath>..\..\..\..\..\Users\acormier\AppData\Roaming\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper (b45a29b1-4343-4035-989e-044e8580d9cf)\0.9.70.0\GH_Util.dll</HintPath>
+    </Reference>
+    <Reference Include="Grasshopper">
+      <HintPath>..\..\..\..\..\Users\acormier\AppData\Roaming\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper (b45a29b1-4343-4035-989e-044e8580d9cf)\0.9.70.0\Grasshopper.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="RhinoCommon">
@@ -155,6 +166,7 @@
     <Compile Include="ex_findobjectsbyname.cs" />
     <Compile Include="ex_constrainedcopy.cs" />
     <Compile Include="ex_getangle.cs" />
+    <Compile Include="ex_getedgefaces.cs" />
     <Compile Include="ex_getmultiplewithoptions.cs" />
     <Compile Include="ex_getpointdynamicdraw.cs" />
     <Compile Include="ex_gettext.cs" />
@@ -172,6 +184,7 @@
     <Compile Include="ex_isbrepbox.cs" />
     <Compile Include="ex_isocurvedensity.cs" />
     <Compile Include="ex_issurfaceinplane.cs" />
+    <Compile Include="ex_junk.cs" />
     <Compile Include="ex_leader.cs" />
     <Compile Include="ex_locklayer.cs" />
     <Compile Include="ex_loft.cs" />
@@ -217,6 +230,7 @@
     <Compile Include="ex_setactiveview.cs" />
     <Compile Include="ex_setviewname.cs" />
     <Compile Include="ex_showsurfacedirection.cs" />
+    <Compile Include="ex_sortpoints.cs" />
     <Compile Include="ex_splitbrepwithplane.cs" />
     <Compile Include="ex_spritedrawing.cs" />
     <Compile Include="ex_srfpt.cs" />

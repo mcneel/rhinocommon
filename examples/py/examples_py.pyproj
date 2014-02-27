@@ -96,6 +96,7 @@
     <Compile Include="ex_extractthumbnail.py" />
     <Compile Include="ex_findobjectsbyname.py" />
     <Compile Include="ex_getangle.py" />
+    <Compile Include="ex_getedgefaces.py" />
     <Compile Include="ex_getmultiplewithoptions.py" />
     <Compile Include="ex_getpointdynamicdraw.py" />
     <Compile Include="ex_gettext.py" />
@@ -144,6 +145,7 @@
     <Compile Include="ex_sellayer.py" />
     <Compile Include="ex_setactiveview.py" />
     <Compile Include="ex_setviewname.py" />
+    <Compile Include="ex_sortpoints.py" />
     <Compile Include="ex_splitbrepwithplane.py" />
     <Compile Include="ex_srfpt.py" />
     <Compile Include="ex_sweep1.py" />

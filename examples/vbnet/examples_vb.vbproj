@@ -155,6 +155,7 @@
     <Compile Include="ex_findobjectsbyname.vb" />
     <Compile Include="ex_constrainedcopy.vb" />
     <Compile Include="ex_getangle.vb" />
+    <Compile Include="ex_getedgefaces.vb" />
     <Compile Include="ex_getmultiplewithoptions.vb" />
     <Compile Include="ex_getpointdynamicdraw.vb" />
     <Compile Include="ex_gettext.vb" />
@@ -209,6 +210,7 @@
     <Compile Include="ex_sellayer.vb" />
     <Compile Include="ex_setactiveview.vb" />
     <Compile Include="ex_setviewname.vb" />
+    <Compile Include="ex_sortpoints.vb" />
     <Compile Include="ex_splitbrepwithplane.vb" />
     <Compile Include="ex_srfpt.vb" />
     <Compile Include="ex_sweep1.vb" />

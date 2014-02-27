@@ -78,6 +78,12 @@ internal partial class UnsafeNativeMethods
 
 #if RHINO_SDK
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void RHC_SetCmnUtilitiesCallbacks(Rhino.PlugIns.PlugIn.GetPlugInSettingsFolderDelegate getPlugInSettingsHook,
+                                                           Rhino.PlugIns.PlugIn.GetPlugInRuiFileNameDelegate getPlugInRuiFileNameHook,
+                                                           Rhino.PlugIns.PlugIn.ValidateRegisteredPlugInRuiFileNameDelegate validateRegisteredRuiFileName
+                                                          );
+
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void RHC_SetLicenseManagerCallbacks(Rhino.Runtime.LicenseManager.InitializeCallback initLicenseManagerProc,
                                                              Rhino.Runtime.LicenseManager.EchoCallback echoProc,
                                                              Rhino.Runtime.LicenseManager.ShowValidationUiCallback showLicenseValidationProc,

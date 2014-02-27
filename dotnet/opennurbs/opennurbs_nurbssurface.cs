@@ -112,7 +112,7 @@ namespace Rhino.Geometry
 
 #if RHINO_SDK
     /// <summary>
-    /// Constructs a surface from control-points.
+    /// Constructs a NURBS surface from a 2D grid of control points.
     /// </summary>
     /// <param name="points">Control point locations.</param>
     /// <param name="uCount">Number of points in U direction.</param>
@@ -151,7 +151,7 @@ namespace Rhino.Geometry
     }
 
     /// <summary>
-    /// Constructs a surface from control-points.
+    /// Constructs a NURBS surface from a 2D grid of points.
     /// </summary>
     /// <param name="points">Control point locations.</param>
     /// <param name="uCount">Number of points in U direction.</param>

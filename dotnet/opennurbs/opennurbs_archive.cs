@@ -2173,6 +2173,24 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
+    /// Writes a list, an array, or any enumerable of <see cref="byte"/> to the archive as a compressed buffer.
+    /// <para>The return will always be an array.</para>
+    /// </summary>
+    /// <param name="value">A value to write.</param>
+    public void WriteCompressedBuffer(IEnumerable<byte> value)
+    {
+      // 10-Feb-2014 Dale Fugier, http://mcneel.myjetbrains.com/youtrack/issue/RH-24156
+      List<byte> l = new List<byte>(value);
+      uint count = (uint)l.Count;
+      if (count > 0)
+      {
+        m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteCompressedBuffer(m_ptr, count, l.ToArray());
+        if (m_write_error_occured)
+          throw new BinaryArchiveException("WriteCompressedBuffer failed");
+      }
+    }
+
+    /// <summary>
     /// Writes a list, an array, or any enumerable of <see cref="sbyte"/> to the archive.
     /// <para>The return will always be an array.</para>
     /// </summary>
@@ -2918,6 +2936,31 @@ namespace Rhino.FileIO
           if( m_read_error_occured )
             throw new BinaryArchiveException("ReadByteArray failed");
         }
+      }
+      return rc;
+    }
+
+    /// <summary>
+    /// Reads an array of compressed <see cref="byte"/> information from the archive and uncompresses it.
+    /// <para>An array is returned even if the input was another enumerable type.</para>
+    /// </summary>
+    /// <returns>The array that was read.</returns>
+    public byte[] ReadCompressedBuffer()
+    {
+      // 10-Feb-2014 Dale Fugier, http://mcneel.myjetbrains.com/youtrack/issue/RH-24156
+      byte[] rc = null;
+      uint count = 0;
+      m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadCompressedBufferSize(m_ptr, ref count);
+      if (m_read_error_occured)
+      {
+        throw new BinaryArchiveException("ReadCompressedBufferSize failed");
+      }
+      else if (count > 0)
+      {
+        rc = new byte[count];
+        m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadCompressedBuffer(m_ptr, count, rc);
+        if (m_read_error_occured)
+          throw new BinaryArchiveException("ReadCompressedBuffer failed");
       }
       return rc;
     }

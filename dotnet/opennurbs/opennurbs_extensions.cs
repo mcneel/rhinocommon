@@ -13,6 +13,86 @@ namespace Rhino.FileIO
   /// </summary>
   public class File3dm : IDisposable
   {
+    /// <summary></summary>
+    [CLSCompliant(false)]
+    [Flags]
+    public enum TableTypeFilter : uint
+    {
+      /// <summary></summary>
+      None = UnsafeNativeMethods.ReadFileTableTypeFilter.None,
+      /// <summary></summary>
+      Properties = UnsafeNativeMethods.ReadFileTableTypeFilter.PropertiesTable,
+      /// <summary></summary>
+      Settings = UnsafeNativeMethods.ReadFileTableTypeFilter.SettingsTable,
+      /// <summary></summary>
+      Bitmap = UnsafeNativeMethods.ReadFileTableTypeFilter.BitmapTable,
+      /// <summary></summary>
+      TextureMapping = UnsafeNativeMethods.ReadFileTableTypeFilter.TextureMappingTable,
+      /// <summary></summary>
+      Material = UnsafeNativeMethods.ReadFileTableTypeFilter.MaterialTable,
+      /// <summary></summary>
+      Linetype = UnsafeNativeMethods.ReadFileTableTypeFilter.LinetypeTable,
+      /// <summary></summary>
+      Layer = UnsafeNativeMethods.ReadFileTableTypeFilter.LayerTable,
+      /// <summary></summary>
+      Group = UnsafeNativeMethods.ReadFileTableTypeFilter.GroupTable,
+      /// <summary></summary>
+      Font = UnsafeNativeMethods.ReadFileTableTypeFilter.FontTable,
+      /// <summary></summary>
+      FutureFont = UnsafeNativeMethods.ReadFileTableTypeFilter.FutureFontTable,
+      /// <summary></summary>
+      Dimstyle = UnsafeNativeMethods.ReadFileTableTypeFilter.DimstyleTable,
+      /// <summary></summary>
+      Light = UnsafeNativeMethods.ReadFileTableTypeFilter.LightTable,
+      /// <summary></summary>
+      Hatchpattern = UnsafeNativeMethods.ReadFileTableTypeFilter.HatchpatternTable,
+      /// <summary></summary>
+      InstanceDefinition = UnsafeNativeMethods.ReadFileTableTypeFilter.InstanceDefinitionTable,
+      /// <summary></summary>
+      ObjectTable = UnsafeNativeMethods.ReadFileTableTypeFilter.ObjectTable,
+      /// <summary></summary>
+      Historyrecord = UnsafeNativeMethods.ReadFileTableTypeFilter.HistoryrecordTable,
+      /// <summary></summary>
+      UserTable = UnsafeNativeMethods.ReadFileTableTypeFilter.UserTable
+    }
+
+    /// <summary></summary>
+    [CLSCompliant(false)]
+    [Flags]
+    public enum ObjectTypeFilter : uint
+    {
+      /// <summary></summary>
+      None = UnsafeNativeMethods.ObjectTypeFilter.None,
+      /// <summary>some type of Point</summary>
+      Point = UnsafeNativeMethods.ObjectTypeFilter.Point,
+      /// <summary>some type of PointCloud, PointGrid, ...</summary>
+      Pointset = UnsafeNativeMethods.ObjectTypeFilter.Pointset,
+      /// <summary>some type of Curve like LineCurve, NurbsCurve, etc.</summary>
+      Curve = UnsafeNativeMethods.ObjectTypeFilter.Curve,
+      /// <summary>some type of Surface like PlaneSurface, NurbsSurface, etc.</summary>
+      Surface = UnsafeNativeMethods.ObjectTypeFilter.Surface,
+      /// <summary>some type of Brep</summary>
+      Brep = UnsafeNativeMethods.ObjectTypeFilter.Brep,
+      /// <summary>some type of Mesh</summary>
+      Mesh = UnsafeNativeMethods.ObjectTypeFilter.Mesh,
+      /// <summary>some type of Annotation</summary>
+      Annotation = UnsafeNativeMethods.ObjectTypeFilter.Annotation,
+      /// <summary>some type of InstanceDefinition</summary>
+      InstanceDefinition = UnsafeNativeMethods.ObjectTypeFilter.InstanceDefinition,
+      /// <summary>some type of InstanceReference</summary>
+      InstanceReference = UnsafeNativeMethods.ObjectTypeFilter.InstanceReference,
+      /// <summary>some type of TextDot</summary>
+      TextDot = UnsafeNativeMethods.ObjectTypeFilter.TextDot,
+      /// <summary>some type of DetailView</summary>
+      DetailView = UnsafeNativeMethods.ObjectTypeFilter.Detail,
+      /// <summary>some type of Hatch</summary>
+      Hatch = UnsafeNativeMethods.ObjectTypeFilter.Hatch,
+      /// <summary>some type of Extrusion</summary>
+      Extrusion = UnsafeNativeMethods.ObjectTypeFilter.Extrusion,
+      /// <summary></summary>
+      Any = UnsafeNativeMethods.ObjectTypeFilter.Any
+    }
+
     IntPtr m_ptr = IntPtr.Zero; //ONX_Model*
     File3dmObjectTable m_object_table;
     File3dmMaterialTable m_material_table;
@@ -42,7 +122,7 @@ namespace Rhino.FileIO
     /// </summary>
     /// <param name="path">The file to read.</param>
     /// <returns>new File3dm on success, null on error.</returns>
-    /// <exception cref="FileNotFoundException">If path does not exist, is null or cannot be accessed because of permissions.</exception>
+    /// <exception cref="FileNotFoundException">If path does not exist.</exception>
     public static File3dm Read(string path)
     {
       if (!File.Exists(path))
@@ -52,13 +132,69 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
+    /// Reads a 3dm file from a specified location.
+    /// </summary>
+    /// <param name="path">The file to read.</param>
+    /// <param name="tableTypeFilterFilter">
+    /// If tableTypeFilterFilter is None, then everything in the archive is read.
+    /// Otherwise tableTypeFilterFilter identifies what tables should be read.
+    /// </param>
+    /// <param name="objectTypeFilter">
+    /// If objectTypeFilter is not None, then is a filter made by bitwise oring
+    /// values to select which types of objects will be read from the model object
+    /// table.
+    /// </param>
+    /// <returns>new File3dm on success, null on error.</returns>
+    /// <exception cref="FileNotFoundException">If path does not exist.</exception>
+    [CLSCompliant(false)]
+    public static File3dm Read(string path, TableTypeFilter tableTypeFilterFilter, ObjectTypeFilter objectTypeFilter)
+    {
+      if (!File.Exists(path))
+        throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
+
+      IntPtr ptr_onx_model = UnsafeNativeMethods.ONX_Model_ReadFile2(path, (UnsafeNativeMethods.ReadFileTableTypeFilter)tableTypeFilterFilter, (UnsafeNativeMethods.ObjectTypeFilter)objectTypeFilter, IntPtr.Zero);
+      return ptr_onx_model == IntPtr.Zero ? null : new File3dm(ptr_onx_model);
+    }
+
+    /// <summary>
+    /// Reads a 3dm file from a specified location.
+    /// </summary>
+    /// <param name="path">The file to read.</param>
+    /// <param name="tableTypeFilterFilter">
+    /// If tableTypeFilterFilter is None, then everything in the archive is read.
+    /// Otherwise tableTypeFilterFilter identifies what tables should be read.
+    /// </param>
+    /// <param name="objectTypeFilter">
+    /// If objectTypeFilter is not None, then is a filter made by bitwise oring
+    /// values to select which types of objects will be read from the model object
+    /// table.
+    /// </param>
+    /// <param name="errorLog">Any archive reading errors are logged here.</param>
+    /// <returns>new File3dm on success, null on error.</returns>
+    /// <exception cref="FileNotFoundException">If path does not exist.</exception>
+    [CLSCompliant(false)]
+    public static File3dm ReadWithLog(string path, TableTypeFilter tableTypeFilterFilter, ObjectTypeFilter objectTypeFilter, out string errorLog)
+    {
+      if (!File.Exists(path))
+        throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
+
+      using (var sh = new StringHolder())
+      {
+        IntPtr ptr_string = sh.NonConstPointer();
+        IntPtr ptr_onx_model = UnsafeNativeMethods.ONX_Model_ReadFile2(path, (UnsafeNativeMethods.ReadFileTableTypeFilter)tableTypeFilterFilter, (UnsafeNativeMethods.ObjectTypeFilter)objectTypeFilter, ptr_string);
+        errorLog = sh.ToString();
+        return ptr_onx_model == IntPtr.Zero ? null : new File3dm(ptr_onx_model);
+      }
+    }
+
+    /// <summary>
     /// Read a 3dm file from a specified location and log any archive
     /// reading errors.
     /// </summary>
     /// <param name="path">The file to read.</param>
     /// <param name="errorLog">Any archive reading errors are logged here.</param>
     /// <returns>New File3dm on success, null on error.</returns>
-    /// <exception cref="FileNotFoundException">If path does not exist, is null or cannot be accessed because of permissions.</exception>
+    /// <exception cref="FileNotFoundException">If path does not exist.</exception>
     public static File3dm ReadWithLog(string path, out string errorLog)
     {
       errorLog = string.Empty;
@@ -120,9 +256,9 @@ namespace Rhino.FileIO
         {
           int second = 0, minute = 0, hour = 0, month = 0, day = 0, year = 0;
           if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, true, ref second, ref minute, ref hour, ref day, ref month, ref year))
-						createdOn = new DateTime(year, month+1, day, hour, minute, second);
+            createdOn = new DateTime(year, month+1, day, hour, minute, second);
           if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, false, ref second, ref minute, ref hour, ref day, ref month, ref year))
-						lastEditedOn = new DateTime(year, month+1, day, hour, minute, second);
+            lastEditedOn = new DateTime(year, month+1, day, hour, minute, second);
           createdBy = sh_created.ToString();
           lastEditedBy = sh_edited.ToString();
           UnsafeNativeMethods.ON_3dmRevisionHistory_Delete(ptr_revhist);

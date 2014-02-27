@@ -909,6 +909,169 @@ namespace Rhino.PlugIns
       return result;
     }
 
+    internal delegate bool GetPlugInSettingsFolderDelegate(bool localUser, Guid plugInId, IntPtr pResult);
+    internal static GetPlugInSettingsFolderDelegate GetPlugInSettingsFolderHook = GetPlugInSettingsFolderHelper;
+    internal static bool GetPlugInSettingsFolderHelper(bool localUser, Guid plugInId, IntPtr pResult)
+    {
+      var result = SettingsDirectoryHelper(localUser, null, plugInId);
+      if (string.IsNullOrEmpty(result))
+        return false;
+      UnsafeNativeMethods.ON_wString_Set(pResult, result);
+      return true;
+    }
+
+    private static bool CopyRuiFile(Guid plugInId, string fromFullPath, string fileNamePlusExtension, IntPtr pResult)
+    {
+      var settings_directory = SettingsDirectoryHelper(true, null, plugInId);
+      if (string.IsNullOrEmpty(settings_directory))
+        return false;
+      var settings_rui_file = settings_directory + System.IO.Path.DirectorySeparatorChar + fileNamePlusExtension;
+      m_plug_in_rui_dictionary[fromFullPath] = settings_rui_file;
+      if (System.IO.File.Exists(settings_rui_file))
+      {
+        UnsafeNativeMethods.ON_wString_Set(pResult, settings_rui_file);
+        return true;
+      }
+      if (!System.IO.Directory.Exists(settings_directory))
+      {
+        try
+        {
+          System.IO.Directory.CreateDirectory(settings_directory);
+        }
+        catch (Exception e1)
+        {
+          var message = string.Format(UI.LOC.STR("Error creating plug-in settings folder {0}.\n\nException:{1}\n"), settings_directory, e1.Message);
+          System.Windows.Forms.MessageBox.Show(message,
+                                                UI.LOC.STR("Create Plug-in Settings Folder Error"),
+                                                System.Windows.Forms.MessageBoxButtons.OK,
+                                                System.Windows.Forms.MessageBoxIcon.Asterisk,
+                                                System.Windows.Forms.MessageBoxDefaultButton.Button1,
+                                                System.Windows.Forms.MessageBoxOptions.DefaultDesktopOnly
+                                              );
+          return false;
+        }
+      }
+      try
+      {
+        System.IO.File.Copy(fromFullPath, settings_rui_file);
+      }
+      catch (Exception e2)
+      {
+        var message = string.Format(UI.LOC.STR("Error copying plug-in RUI file from {0} to {1}.\n\nException:{2}\n"), fromFullPath, settings_rui_file, e2.Message);
+        System.Windows.Forms.MessageBox.Show(message,
+                                              UI.LOC.STR("Copy Plug-in RUI File Error"),
+                                              System.Windows.Forms.MessageBoxButtons.OK,
+                                              System.Windows.Forms.MessageBoxIcon.Asterisk,
+                                              System.Windows.Forms.MessageBoxDefaultButton.Button1,
+                                              System.Windows.Forms.MessageBoxOptions.DefaultDesktopOnly
+                                            );
+        return false;
+      }
+      UnsafeNativeMethods.ON_wString_Set(pResult, settings_rui_file);
+      return true;
+    }
+
+    internal delegate bool GetPlugInRuiFileNameDelegate(IntPtr fullPathToPlugIn, Guid plugInId, IntPtr pResult);
+    internal static GetPlugInRuiFileNameDelegate GetPlugInRuiFileNameHook = GetPlugInRuiFileNameHelper;
+    internal static bool GetPlugInRuiFileNameHelper(IntPtr fullPathToPlugIn, Guid plugInId, IntPtr pResult)
+    {
+      var full_path_to_plug_in = Marshal.PtrToStringUni(fullPathToPlugIn);
+      if (string.IsNullOrEmpty(full_path_to_plug_in) || !System.IO.File.Exists(full_path_to_plug_in))
+        return false;
+      var directory = System.IO.Path.GetDirectoryName(full_path_to_plug_in);
+      var file_name = System.IO.Path.GetFileNameWithoutExtension(full_path_to_plug_in);
+      const string extension = ".rui";
+      var rui_file = directory + System.IO.Path.DirectorySeparatorChar + file_name + extension;
+      if (!System.IO.File.Exists(rui_file))
+      {
+        var parent_dir = System.IO.Path.GetDirectoryName(directory);
+        rui_file = parent_dir + System.IO.Path.DirectorySeparatorChar + file_name + extension;
+        if (!System.IO.File.Exists(rui_file))
+          return false;
+      }
+      UnsafeNativeMethods.ON_wString_Set(pResult, rui_file);
+      return CopyRuiFile(plugInId, rui_file, file_name + extension, pResult);
+    }
+
+    /// <summary>
+    /// Toolbars uses reflection to access this method, do NOT remove or rename it
+    /// without updating the references in the Toolbars plug-in.  This is a hack for
+    /// Rhino 5 only, in V6 all of the toolbar related plug-in stuff has been moved
+    /// into the Toolbars plug-in.
+    /// </summary>
+    /// <returns></returns>
+    internal static Dictionary<string, string> PlugInRuiDictionary()
+    {
+      return m_plug_in_rui_dictionary;
+    }
+    internal delegate void ValidateRegisteredPlugInRuiFileNameDelegate(IntPtr registerdRuiFile, IntPtr fullPathToPlugIn, Guid plugInId, IntPtr pResult);
+    internal static ValidateRegisteredPlugInRuiFileNameDelegate ValidateRegisteredPlugInRuiFileNameHook = ValidateRegisteredPlugInRuiFileNameHelper;
+    private static readonly Dictionary<string,string> m_plug_in_rui_dictionary = new Dictionary<string, string>();
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="registeredRuiFile"></param>
+    /// <param name="fullPathToPlugIn"></param>
+    /// <param name="plugInId"></param>
+    /// <param name="pResult"></param>
+    /// <returns>
+    /// 0 = no file name or do noting
+    /// 1 = file name found and useable
+    /// 2 = file name modified, update the registered file name
+    /// </returns>
+    internal static void ValidateRegisteredPlugInRuiFileNameHelper(IntPtr registeredRuiFile, IntPtr fullPathToPlugIn, Guid plugInId, IntPtr pResult)
+    {
+      var registerd_rui_file = Marshal.PtrToStringUni(registeredRuiFile);
+      if (string.IsNullOrEmpty(registerd_rui_file)) return;
+      var full_path_to_plug_in = Marshal.PtrToStringUni(fullPathToPlugIn);
+      if (string.IsNullOrEmpty(full_path_to_plug_in)) return;
+      var plug_in_folder = System.IO.Path.GetDirectoryName(full_path_to_plug_in);
+      if (plug_in_folder == null) return;
+      var rui_folder = System.IO.Path.GetDirectoryName(registerd_rui_file);
+      // Check to see if the registered file name is equal to the plug-in file name
+      var rui_file_name = System.IO.Path.GetFileNameWithoutExtension(registerd_rui_file);
+      var plug_in_file_name = System.IO.Path.GetFileNameWithoutExtension(full_path_to_plug_in);
+      if (rui_file_name != null && rui_file_name.Equals(plug_in_file_name, StringComparison.Ordinal))
+      {
+        // Now check to see if the registered folder is the same as the settings folder
+        var settings_folder = SettingsDirectoryHelper(true, null, plugInId);
+        // If pointing to the settings folder make sure the file gets copied as necessary
+        // and return.
+        if (rui_folder != null && rui_folder.Equals(settings_folder, StringComparison.Ordinal))
+        {
+          GetPlugInRuiFileNameHelper(fullPathToPlugIn, plugInId, pResult);
+          return;
+
+        }
+      }
+      // Now check to see if the registered file name is in the plug-in folder
+      var in_plug_in_folder = plug_in_folder.Equals(rui_folder, StringComparison.Ordinal);
+      if (!in_plug_in_folder)
+      {
+        // Check to see if it is in the plug-in's parent folder
+        var parent_folder = System.IO.Path.GetDirectoryName(rui_folder);
+        in_plug_in_folder = plug_in_folder.Equals(parent_folder, StringComparison.Ordinal);
+      }
+      if (!in_plug_in_folder)
+      {
+        // Not in the plug-in or plug-in parent folder
+        UnsafeNativeMethods.ON_wString_Set(pResult, registerd_rui_file);
+        return;
+      }
+      // In the plug-in folder so check to see if it has the same name as the RHP file 
+      var rui_file_test = System.IO.Path.GetDirectoryName(registerd_rui_file) + System.IO.Path.DirectorySeparatorChar + System.IO.Path.GetFileNameWithoutExtension(registerd_rui_file);
+      var plug_in_file_test = System.IO.Path.GetDirectoryName(full_path_to_plug_in) + System.IO.Path.DirectorySeparatorChar + System.IO.Path.GetFileNameWithoutExtension(full_path_to_plug_in);
+      if (!rui_file_test.Equals(plug_in_file_test, StringComparison.Ordinal))
+      {
+        // The file name does not match the plug-in file name so use the file name
+        UnsafeNativeMethods.ON_wString_Set(pResult, registerd_rui_file);
+        return;
+      }
+      // The file name is the same as the plug-in file so copy RUI file to the
+      // plug-in's settings folder and use the settings folder name.
+      CopyRuiFile(plugInId, registerd_rui_file, System.IO.Path.GetFileName(registerd_rui_file), pResult);
+    }
+
     internal static string SettingsDirectoryHelper(bool bLocalUser, System.Reflection.Assembly assembly, Guid pluginId)
     {
       string result = null;

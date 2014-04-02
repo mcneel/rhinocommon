@@ -1029,7 +1029,7 @@ namespace Rhino.DocObjects
     /// film rather than the image when the aspect of the frustum
     /// is not 36/24.  (35mm film is 36mm wide and 24mm high.)
     /// Setting preserves camera location,
-    /// changes the frustum, but maintains the frsutrum's aspect.
+    /// changes the frustum, but maintains the frustum's aspect.
     /// </summary>
     public double Camera35mmLensLength
     {

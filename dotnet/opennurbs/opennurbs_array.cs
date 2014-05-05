@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Rhino.Geometry;
 
@@ -130,6 +131,7 @@ namespace Rhino.Runtime.InteropWrappers
   /// </summary>
   public class SimpleArrayInt : IDisposable
   {
+    //This should be private eventually and have everything call either ConstPointer or NonConstPointer
     internal IntPtr m_ptr; // ON_SimpleArray<int>
 
     /// <summary>
@@ -150,6 +152,24 @@ namespace Rhino.Runtime.InteropWrappers
     public SimpleArrayInt()
     {
       m_ptr = UnsafeNativeMethods.ON_IntArray_New();
+    }
+
+    /// <summary>
+    /// Initializes a new <see cref="SimpleArrayInt"/> class
+    /// </summary>
+    /// <param name="values">initial set of integers to add to the array</param>
+    public SimpleArrayInt(IEnumerable<int> values)
+    {
+      if (values == null)
+      {
+        m_ptr = UnsafeNativeMethods.ON_IntArray_New();
+      }
+      else
+      {
+        List<int> list_values = new List<int>(values);
+        int[] array_values = list_values.ToArray();
+        m_ptr = UnsafeNativeMethods.ON_IntArray_New2(array_values, list_values.Count);
+      }
     }
 
     /// <summary>

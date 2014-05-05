@@ -67,6 +67,7 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.Bool)]
   internal static extern bool EnableWindow(IntPtr hWnd, bool bEnable);
 
+#if RHINO_SDK
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern bool ON_SpaceMorph_MorphGeometry(IntPtr pConstGeometry, double tolerance, [MarshalAs(UnmanagedType.U1)]bool quickpreview, [MarshalAs(UnmanagedType.U1)]bool preserveStructure, SpaceMorph.MorphPointCallback callback);
 
@@ -76,7 +77,6 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void RHC_SetGetNowProc(Rhino.Runtime.HostUtils.GetNowCallback callback, Rhino.Runtime.HostUtils.GetFormattedTimeCallback formattedTimCallback);
 
-#if RHINO_SDK
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void RHC_SetCmnUtilitiesCallbacks(Rhino.PlugIns.PlugIn.GetPlugInSettingsFolderDelegate getPlugInSettingsHook,
                                                            Rhino.PlugIns.PlugIn.GetPlugInRuiFileNameDelegate getPlugInRuiFileNameHook,

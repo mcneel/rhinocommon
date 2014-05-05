@@ -98,7 +98,7 @@ using Rhino.Runtime.InteropWrappers;
         // perform a very simplified preprocessor stage on the source
         while (true)
         {
-          const string token = "#if !defined(";
+          const string token = "#if !defined";
           int start = source_code.IndexOf(token);
           if (-1 == start)
             break;
@@ -107,7 +107,7 @@ using Rhino.Runtime.InteropWrappers;
           bool add_section = true;
           foreach (string define in preprocessorDefines)
           {
-            if( source_code.IndexOf(define, start + token.Length) == (start+token.Length) )
+            if( source_code.IndexOf(define, start + token.Length + 1) == (start+token.Length + 1) )
             {
               add_section = false;
               break;

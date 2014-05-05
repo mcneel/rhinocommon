@@ -861,6 +861,7 @@ namespace Rhino.Geometry
     private bool m_bPreserveStructure;
 
     #region from ON_Geometry - moved here to keep clutter out of geometry class
+#if RHINO_SDK
     /// <summary>Apply the space morph to geometry.</summary>
     /// <param name="geometry">Geometry to morph.</param>
     /// <returns>true on success, false on failure.</returns>
@@ -868,6 +869,7 @@ namespace Rhino.Geometry
     {
       return PerformGeometryMorph(geometry);
     }
+#endif
 
     /// <summary>
     /// true if the geometry can be morphed by calling SpaceMorph.Morph(geometry)
@@ -925,6 +927,7 @@ namespace Rhino.Geometry
     }
 
 
+#if RHINO_SDK
     internal delegate void MorphPointCallback(Point3d point, ref Point3d out_point);
     static void OnMorphPoint(Point3d point, ref Point3d out_point)
     {
@@ -933,6 +936,7 @@ namespace Rhino.Geometry
         out_point = m_active_morph.MorphPoint(point);
       }
     }
+
     static SpaceMorph m_active_morph;
     internal bool PerformGeometryMorph(Geometry.GeometryBase geometry)
     {
@@ -941,13 +945,11 @@ namespace Rhino.Geometry
         return false;
 
       IntPtr pGeometry = geometry.NonConstPointer();
-#if RHINO_SDK
       NativeSpaceMorphWrapper native_wrapper = this as NativeSpaceMorphWrapper;
       if (native_wrapper!=null)
       {
         return UnsafeNativeMethods.ON_SpaceMorph_MorphGeometry2(pGeometry, native_wrapper.m_pSpaceMorph);
       }
-#endif
 
       SpaceMorph oldActive = m_active_morph;
       m_active_morph = this;
@@ -956,6 +958,7 @@ namespace Rhino.Geometry
       m_active_morph = oldActive;
       return rc;
     }
+#endif
   }
 }
 

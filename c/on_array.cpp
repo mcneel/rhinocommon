@@ -460,7 +460,9 @@ RH_C_FUNCTION void ON_BezierCurve_Delete(ON_BezierCurve* pBez)
     delete pBez;
 }
 
-
+// The following is available in opennurbs but only used the Rhino SDK
+// version of RhinoCommon.
+#if !defined(OPENNURBS_BUILD)
 RH_C_FUNCTION ON_SimpleArray<const ON_3dmObjectAttributes*>* ON_SimpleArray_3dmObjectAttributes_New()
 {
   return new ON_SimpleArray<const ON_3dmObjectAttributes*>();
@@ -491,7 +493,7 @@ RH_C_FUNCTION const ON_3dmObjectAttributes* ON_SimpleArray_3dmObjectAttributes_G
     return (*pArray)[index];
   return 0;
 }
-
+#endif
 /////////////////////////////////////////////////////////////////////////////
 // ON_SimpleArray<ON_Curve*> 
 

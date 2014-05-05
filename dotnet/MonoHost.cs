@@ -363,9 +363,12 @@ namespace Rhino.Runtime
   }
 }
 
+#if RHINO_SDK
 partial class UnsafeNativeMethods
 {
   // These functions must never be called unless RhinoCommon is being run from Mono
   [DllImport("__Internal", CallingConvention=CallingConvention.Cdecl)]
   internal static extern void RhMono_SetPlugInLoadString(int which, [MarshalAs(UnmanagedType.LPWStr)]string str);
 }
+
+#endif

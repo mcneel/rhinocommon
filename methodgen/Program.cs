@@ -26,6 +26,7 @@ namespace MethodGen
       bool rhinocommon_build = false;
       string dirCPP=null;
       string dirCS=null;
+      List<string> preprocessor_defines = null;
       if (args.Length >= 2)
       {
         dirCPP = args[0];
@@ -42,12 +43,19 @@ namespace MethodGen
           string[] lines = System.IO.File.ReadAllLines(path);
           dirCPP = System.IO.Path.GetFullPath(lines[0]);
           dirCS = System.IO.Path.GetFullPath(lines[1]);
-          if (lines.Length > 0 && lines[2].StartsWith("using"))
+          for (int i = 2; i < lines.Length; i++)
           {
-            m_includeRhinoDeclarations = false;
-            for (int i = 2; i < lines.Length; i++)
+            if (lines[i].StartsWith("using"))
             {
+              m_includeRhinoDeclarations = false;
               m_extra_usings.Add(lines[i].Trim());
+            }
+            if (lines[i].StartsWith("define"))
+            {
+              if (preprocessor_defines == null)
+                preprocessor_defines = new List<string>();
+              string define = lines[i].Substring("define".Length).Trim();
+              preprocessor_defines.Add(define);
             }
           }
         }
@@ -85,11 +93,11 @@ namespace MethodGen
       // get all of the .cpp files
       string[] files = System.IO.Directory.GetFiles(dirCPP, "*.cpp");
       foreach (var file in files)
-        nmd.BuildDeclarations(file);
+        nmd.BuildDeclarations(file, preprocessor_defines);
       // get all of the .h files
       files = System.IO.Directory.GetFiles(dirCPP, "*.h");
       foreach (var file in files)
-        nmd.BuildDeclarations(file);
+        nmd.BuildDeclarations(file, preprocessor_defines);
 
       string outputfile = System.IO.Path.Combine(dirCS, "AutoNativeMethods.cs");
       nmd.Write(outputfile, "lib");
@@ -107,11 +115,11 @@ namespace MethodGen
         // get all of the .cpp files
         files = System.IO.Directory.GetFiles(dirCPP, "*.cpp");
         foreach (var file in files)
-          nmd.BuildDeclarations(file);
+          nmd.BuildDeclarations(file, preprocessor_defines);
         // get all of the .h files
         files = System.IO.Directory.GetFiles(dirCPP, "*.h");
         foreach (var file in files)
-          nmd.BuildDeclarations(file);
+          nmd.BuildDeclarations(file, preprocessor_defines);
 
         outputfile = System.IO.Path.Combine(dirCS, "AutoNativeMethodsRdk.cs");
         nmd.Write(outputfile, "librdk");

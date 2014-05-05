@@ -1533,6 +1533,7 @@ namespace Rhino.Geometry
       UnsafeNativeMethods.ON_Mesh_Append(ptr, otherPtr);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Gets the point on the mesh that is closest to a given test point.
     /// </summary>
@@ -1727,7 +1728,6 @@ namespace Rhino.Geometry
       return rc.ToArray();
     }
 
-#if RHINO_SDK
     /// <summary>
     /// Makes a new mesh with vertices offset a distance in the opposite direction of the existing vertex normals.
     /// Same as Mesh.Offset(distance, false)

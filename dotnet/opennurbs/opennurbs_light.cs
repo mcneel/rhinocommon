@@ -215,6 +215,7 @@ namespace Rhino.Geometry
       get { return LightStyle == LightStyle.WorldRectangular; }
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Gets a value indicating whether this object is a Sun light.
     /// </summary>
@@ -224,9 +225,10 @@ namespace Rhino.Geometry
       {
         Rhino.Runtime.HostUtils.CheckForRdk(true, true);
         IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.Rdk_Sun_IsSunLight(pConstThis); 
+        return UnsafeNativeMethods.Rdk_Sun_IsSunLight(pConstThis);
       }
     }
+#endif
 
     /// <summary>
     /// Gets a value, determined by LightStyle, that explains whether

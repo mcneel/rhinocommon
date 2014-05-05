@@ -98,6 +98,7 @@ namespace Rhino.Geometry
       return IntPtr.Zero == ptr ? null : new Brep(ptr_newbrep, null);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Copy all trims from a Brep face onto a surface.
     /// </summary>
@@ -113,6 +114,7 @@ namespace Rhino.Geometry
       IntPtr ptr = UnsafeNativeMethods.ON_Brep_CopyTrims(ptr_const_face, ptr_const_surface, tolerance);
       return IntPtr.Zero == ptr ? null : new Brep(ptr, null);
     }
+#endif
 
     /// <summary>
     /// Create a brep representation of a mesh
@@ -1869,6 +1871,7 @@ namespace Rhino.Geometry
 
     }
 
+#if RHINO_SDK
     /// <summary>
     /// No support is available for this function.
     /// <para>Expert user function used by MakeValidForV2 to convert trim
@@ -1890,6 +1893,7 @@ namespace Rhino.Geometry
       IntPtr pConstSurface = nurbsSurface.ConstPointer();
       UnsafeNativeMethods.ON_Brep_RebuildTrimsForV2(pThis, pFace, pConstSurface);
     }
+#endif
 
     /// <summary>
     /// Deletes any unreferenced objects from arrays, reindexes as needed, and
@@ -2215,6 +2219,8 @@ namespace Rhino.Geometry
     #endregion
 
     #region methods
+
+#if RHINO_SDK
     /// <summary>
     /// For a manifold, non-boundary edge, decides whether or not the two surfaces
     /// on either side meet smoothly.
@@ -2226,16 +2232,13 @@ namespace Rhino.Geometry
     /// true if edge is manifold, has exactly 2 trims, and surface normals on either
     /// side agree to within angle_tolerance.
     /// </returns>
-#if !MOBILE_BUILD
     public bool IsSmoothManifoldEdge([Optional, DefaultParameterValue(RhinoMath.DefaultAngleTolerance)]double angleToleranceRadians)
-#else
-    public bool IsSmoothManifoldEdge(double angleToleranceRadians)
-#endif
     {
       //NOTE!! don't ever use default parameters in RhinoCommon. They just lead to headache
       IntPtr ptr_const_this = ConstPointer();
       return UnsafeNativeMethods.ON_BrepEdge_IsSmoothManifoldEdge(ptr_const_this, angleToleranceRadians);
     }
+#endif
 
     /// <summary>
     /// Gets the indices of all the BrepFaces that use this edge.
@@ -3096,6 +3099,7 @@ namespace Rhino.Geometry
       ON_Brep::RebuildEdges
       ON_Brep::CullUnusedSurfaces
     */
+#if RHINO_SDK
     /// <summary>
     /// Expert user tool that replaces the 3d surface geometry use by the face.
     /// </summary>
@@ -3131,6 +3135,7 @@ namespace Rhino.Geometry
       IntPtr ptr_brep = m_brep.NonConstPointer();
       return UnsafeNativeMethods.ON_Brep_RebuildEdges(ptr_brep, m_index, tolerance, rebuildSharedEdges, rebuildVertices);
     }
+#endif
     #endregion
   }
 
@@ -3629,6 +3634,7 @@ namespace Rhino.Geometry.Collections
       return UnsafeNativeMethods.ON_Brep_ShrinkFaces(ptr_brep);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Splits any faces with creases into G1 pieces.
     /// </summary>
@@ -3705,6 +3711,7 @@ namespace Rhino.Geometry.Collections
       IntPtr ptr_brep = m_brep.NonConstPointer();
       return UnsafeNativeMethods.ON_Brep_SplitBipolarFaces(ptr_brep);
     }
+#endif
 
     /// <summary>
     /// Flips the orientation of faces.
@@ -4149,6 +4156,7 @@ namespace Rhino.Geometry.Collections
     #endregion
 
     #region methods
+#if RHINO_SDK
     /// <summary>Splits the edge into G1 pieces.</summary>
     /// <param name="edgeIndex">Index of edge to test and split.</param>
     /// <param name="kinkToleranceRadians">The split tolerance in radians.</param>
@@ -4182,6 +4190,7 @@ namespace Rhino.Geometry.Collections
       IntPtr ptr_brep = m_brep.NonConstPointer();
       return UnsafeNativeMethods.ON_Brep_SplitEdgeAtParameters(ptr_brep, edgeIndex, _t.Length, _t);
     }
+#endif
 
     /// <summary>
     /// Create and add a new edge to this list

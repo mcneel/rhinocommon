@@ -825,6 +825,7 @@ namespace Rhino.Geometry
   //public class ON_ClippingRegion { }
   //public class ON_Localizer { }
 
+#if RHINO_SDK
   class NativeSpaceMorphWrapper : SpaceMorph
   {
     internal IntPtr m_pSpaceMorph;
@@ -848,6 +849,7 @@ namespace Rhino.Geometry
       return point;
     }
   }
+#endif
 
   /// <summary>
   /// Represents a spacial, Euclidean morph.
@@ -939,11 +941,13 @@ namespace Rhino.Geometry
         return false;
 
       IntPtr pGeometry = geometry.NonConstPointer();
+#if RHINO_SDK
       NativeSpaceMorphWrapper native_wrapper = this as NativeSpaceMorphWrapper;
       if (native_wrapper!=null)
       {
         return UnsafeNativeMethods.ON_SpaceMorph_MorphGeometry2(pGeometry, native_wrapper.m_pSpaceMorph);
       }
+#endif
 
       SpaceMorph oldActive = m_active_morph;
       m_active_morph = this;

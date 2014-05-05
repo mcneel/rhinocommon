@@ -20,19 +20,18 @@ namespace Rhino.Input.Custom
   };
 
   /// <summary>
-  /// Use GetLine class to interactively get a line.  The Rhino "Line"
-  /// command uses GetLine.
+  /// Use to interactively get a line.  The Rhino "Line" command uses GetLine.
   /// </summary>
   public class GetLine : IDisposable
   {
-    IntPtr m_pArgsRhinoGetLine;
+    IntPtr m_ptr_argsrhinogetline;
     public GetLine()
     {
-      m_pArgsRhinoGetLine = UnsafeNativeMethods.CArgsRhinoGetLine_New();
+      m_ptr_argsrhinogetline = UnsafeNativeMethods.CArgsRhinoGetLine_New();
     }
 
-    internal IntPtr ConstPointer() { return m_pArgsRhinoGetLine; }
-    internal IntPtr NonConstPointer() { return m_pArgsRhinoGetLine; }
+    IntPtr ConstPointer() { return m_ptr_argsrhinogetline; }
+    IntPtr NonConstPointer() { return m_ptr_argsrhinogetline; }
 
     /// <summary>
     /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
@@ -61,10 +60,10 @@ namespace Rhino.Input.Custom
     /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
-      if (IntPtr.Zero != m_pArgsRhinoGetLine)
+      if (IntPtr.Zero != m_ptr_argsrhinogetline)
       {
-        UnsafeNativeMethods.CArgsRhinoGetLine_Delete(m_pArgsRhinoGetLine);
-        m_pArgsRhinoGetLine = IntPtr.Zero;
+        UnsafeNativeMethods.CArgsRhinoGetLine_Delete(m_ptr_argsrhinogetline);
+        m_ptr_argsrhinogetline = IntPtr.Zero;
       }
     }
 
@@ -73,69 +72,61 @@ namespace Rhino.Input.Custom
     /// </summary>
     /// <param name="line"></param>
     /// <returns></returns>
-    public Commands.Result Get(out Rhino.Geometry.Line line)
+    public Commands.Result Get(out Geometry.Line line)
     {
-      IntPtr pThis = NonConstPointer();
-      line = Rhino.Geometry.Line.Unset;
-      int rc = UnsafeNativeMethods.RHC_RhinoGetLine2(pThis, ref line, IntPtr.Zero);
+      IntPtr ptr_this = NonConstPointer();
+      line = Geometry.Line.Unset;
+      int rc = UnsafeNativeMethods.RHC_RhinoGetLine2(ptr_this, ref line, IntPtr.Zero);
       return (Commands.Result)rc;
     }
 
-    const int idxFirstPointPrompt = 0;
-    const int idxMidPointPrompt = 1;
-    const int idxSecondPointPrompt = 2;
-    string GetStringHelper(int which)
+    string GetStringHelper(UnsafeNativeMethods.ArgsGetLineStringConsts which)
     {
-      IntPtr pConstThis = ConstPointer();
+      IntPtr ptr_const_this = ConstPointer();
       using (var sh = new StringHolder())
       {
-        IntPtr pString = sh.NonConstPointer();
-        UnsafeNativeMethods.CArgsRhinoGetLine_GetString(pConstThis, which, pString);
+        IntPtr ptr_string = sh.NonConstPointer();
+        UnsafeNativeMethods.CArgsRhinoGetLine_GetString(ptr_const_this, which, ptr_string);
         return sh.ToString();
       }
     }
-    void SetStringHelper(int which, string s)
+    void SetStringHelper(UnsafeNativeMethods.ArgsGetLineStringConsts which, string s)
     {
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.CArgsRhinoGetLine_SetString(pThis, which, s);
+      IntPtr ptr_this = NonConstPointer();
+      UnsafeNativeMethods.CArgsRhinoGetLine_SetString(ptr_this, which, s);
     }
 
     /// <summary>Prompt when getting first point</summary>
     public string FirstPointPrompt
     {
-      get { return GetStringHelper(idxFirstPointPrompt); }
-      set { SetStringHelper(idxFirstPointPrompt, value); }
+      get { return GetStringHelper(UnsafeNativeMethods.ArgsGetLineStringConsts.FirstPointPrompt); }
+      set { SetStringHelper(UnsafeNativeMethods.ArgsGetLineStringConsts.FirstPointPrompt, value); }
     }
 
     /// <summary>Prompt when getting midpoint</summary>
     public string MidPointPrompt
     {
-      get { return GetStringHelper(idxMidPointPrompt); }
-      set { SetStringHelper(idxMidPointPrompt, value); }
+      get { return GetStringHelper(UnsafeNativeMethods.ArgsGetLineStringConsts.MidPointPrompt); }
+      set { SetStringHelper(UnsafeNativeMethods.ArgsGetLineStringConsts.MidPointPrompt, value); }
     }
 
     /// <summary>Prompt when getting second point</summary>
     public string SecondPointPrompt
     {
-      get { return GetStringHelper(idxSecondPointPrompt); }
-      set { SetStringHelper(idxSecondPointPrompt, value); }
+      get { return GetStringHelper(UnsafeNativeMethods.ArgsGetLineStringConsts.SecondPointPrompt); }
+      set { SetStringHelper(UnsafeNativeMethods.ArgsGetLineStringConsts.SecondPointPrompt, value); }
     }
 
-    const int idxAcceptZeroLengthLine = 0;
-    const int idxHaveFeedbackColor = 1;
-    const int idxEnableFromBothSidesOption = 2;
-    const int idxEnableFromMidPointOption = 3;
-    const int idxEnableAllVariations = 4;
-    bool GetBoolHelper(int which)
+    bool GetBoolHelper(UnsafeNativeMethods.ArgsGetLineBoolConsts which)
     {
-      IntPtr pConstThis = ConstPointer();
-      return UnsafeNativeMethods.CArgsRhinoGetLine_GetBool(pConstThis, which);
+      IntPtr ptr_const_this = ConstPointer();
+      return UnsafeNativeMethods.CArgsRhinoGetLine_GetBool(ptr_const_this, which);
     }
 
-    void SetBoolHelper(int which, bool value)
+    void SetBoolHelper(UnsafeNativeMethods.ArgsGetLineBoolConsts which, bool value)
     {
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.CArgsRhinoGetLine_SetBool(pThis, which, value);
+      IntPtr ptr_this = NonConstPointer();
+      UnsafeNativeMethods.CArgsRhinoGetLine_SetBool(ptr_this, which, value);
     }
 
 
@@ -146,8 +137,8 @@ namespace Rhino.Input.Custom
     /// </summary>
     public bool AcceptZeroLengthLine
     {
-      get { return GetBoolHelper(idxAcceptZeroLengthLine); }
-      set { SetBoolHelper(idxAcceptZeroLengthLine, value); }
+      get { return GetBoolHelper(UnsafeNativeMethods.ArgsGetLineBoolConsts.AcceptZeroLengthLine); }
+      set { SetBoolHelper(UnsafeNativeMethods.ArgsGetLineBoolConsts.AcceptZeroLengthLine, value); }
     }
 
     /// <summary>
@@ -157,7 +148,7 @@ namespace Rhino.Input.Custom
     /// </summary>
     public bool HaveFeedbackColor
     {
-      get { return GetBoolHelper(idxHaveFeedbackColor); }
+      get { return GetBoolHelper(UnsafeNativeMethods.ArgsGetLineBoolConsts.HaveFeedbackColor); }
     }
 
     /// <summary>
@@ -169,15 +160,15 @@ namespace Rhino.Input.Custom
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        int argb = UnsafeNativeMethods.CArgsRhinoGetLine_GetFeedbackColor(pConstThis);
+        IntPtr ptr_const_this = ConstPointer();
+        int argb = UnsafeNativeMethods.CArgsRhinoGetLine_GetFeedbackColor(ptr_const_this);
         return System.Drawing.Color.FromArgb(argb);
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
+        IntPtr ptr_this = NonConstPointer();
         int argb = value.ToArgb();
-        UnsafeNativeMethods.CArgsRhinoGetLine_SetFeedbackColor(pThis, argb);
+        UnsafeNativeMethods.CArgsRhinoGetLine_SetFeedbackColor(ptr_this, argb);
       }
     }
 
@@ -188,13 +179,13 @@ namespace Rhino.Input.Custom
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.CArgsRhinoGetLine_GetFixedLength(pConstThis);
+        IntPtr ptr_const_this = ConstPointer();
+        return UnsafeNativeMethods.CArgsRhinoGetLine_GetFixedLength(ptr_const_this);
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.CArgsRhinoGetLine_SetFixedLength(pThis, value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.CArgsRhinoGetLine_SetFixedLength(ptr_this, value);
       }
     }
 
@@ -205,7 +196,7 @@ namespace Rhino.Input.Custom
     /// <param name="on"></param>
     public void EnableFromBothSidesOption(bool on)
     {
-      SetBoolHelper(idxEnableFromBothSidesOption, on);
+      SetBoolHelper(UnsafeNativeMethods.ArgsGetLineBoolConsts.EnableFromBothSidesOption, on);
     }
 
     /// <summary>
@@ -214,7 +205,7 @@ namespace Rhino.Input.Custom
     /// <param name="on"></param>
     public void EnableFromMidPointOption(bool on)
     {
-      SetBoolHelper(idxEnableFromMidPointOption, on);
+      SetBoolHelper(UnsafeNativeMethods.ArgsGetLineBoolConsts.EnableFromMidPointOption, on);
     }
 
     /// <summary>
@@ -223,7 +214,7 @@ namespace Rhino.Input.Custom
     /// <param name="on"></param>
     public void EnableAllVariations(bool on)
     {
-      SetBoolHelper(idxEnableAllVariations, on);
+      SetBoolHelper(UnsafeNativeMethods.ArgsGetLineBoolConsts.EnableAllVariations, on);
     }
 
     /// <summary>
@@ -231,10 +222,10 @@ namespace Rhino.Input.Custom
     /// the start point interactive picking
     /// </summary>
     /// <param name="point"></param>
-    public void SetFirstPoint(Rhino.Geometry.Point3d point)
+    public void SetFirstPoint(Geometry.Point3d point)
     {
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.CArgsRhinoGetLine_SetFirstPoint(pThis, point);
+      IntPtr ptr_this = NonConstPointer();
+      UnsafeNativeMethods.CArgsRhinoGetLine_SetFirstPoint(ptr_this, point);
     }
 
     /// <summary>
@@ -244,14 +235,14 @@ namespace Rhino.Input.Custom
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        int rc = UnsafeNativeMethods.CArgsRhinoGetLine_GetLineMode(pConstThis);
+        IntPtr ptr_const_this = ConstPointer();
+        int rc = UnsafeNativeMethods.CArgsRhinoGetLine_GetLineMode(ptr_const_this);
         return (GetLineMode)rc;
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.CArgsRhinoGetLine_SetLineMode(pThis, (int)value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.CArgsRhinoGetLine_SetLineMode(ptr_this, (int)value);
       }
     }
 

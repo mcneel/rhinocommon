@@ -448,6 +448,7 @@ namespace Rhino.Runtime
       }
     }
 
+#if RHINO_SDK
     // 0== unknown
     // 1== loaded
     //-1== not loaded
@@ -485,9 +486,9 @@ namespace Rhino.Runtime
 
       if (throwOnFalse)
         throw new RdkNotLoadedException();
-
       return false;
     }
+#endif
 
     static bool m_bSendDebugToRhino; // = false; initialized by runtime
     /// <summary>

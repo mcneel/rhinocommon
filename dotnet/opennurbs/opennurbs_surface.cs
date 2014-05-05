@@ -423,6 +423,7 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Surface_Degree(ptr, direction);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Gets an estimate of the size of the rectangle that would be created
     /// if the 3d surface where flattened into a rectangle.
@@ -447,6 +448,7 @@ namespace Rhino.Geometry
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.ON_Surface_GetSurfaceSize(ptr, ref width, ref height);
     }
+#endif
 
     /// <summary>
     /// Gets number of smooth nonempty spans in the parameter direction.
@@ -482,6 +484,7 @@ namespace Rhino.Geometry
       return null;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Gets the side that is closest, in terms of 3D-distance, to a U and V parameter.
     /// </summary>
@@ -494,7 +497,6 @@ namespace Rhino.Geometry
       return (IsoStatus)UnsafeNativeMethods.ON_Surface_ClosestSide(pConstThis, u, v);
     }
 
-#if RHINO_SDK
     /// <summary>
     /// Extends an untrimmed surface along one edge.
     /// </summary>
@@ -825,6 +827,7 @@ namespace Rhino.Geometry
     //  const ON_SurfaceTree* SurfaceTree() const;
     //  virtual ON_SurfaceTree* CreateSurfaceTree() const;
 
+#if RHINO_SDK
     /// <summary>
     /// Input the parameters of the point on the surface that is closest to testPoint.
     /// </summary>
@@ -845,6 +848,7 @@ namespace Rhino.Geometry
       bool rc = UnsafeNativeMethods.ON_Surface_GetClosestPoint(ptr, testPoint, ref u, ref v);
       return rc;
     }
+#endif
 
     /// <summary>
     /// Constructs a sub-surface that covers the specified UV trimming domain.
@@ -869,6 +873,7 @@ namespace Rhino.Geometry
       return rc;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Constructs a new surface which is offset from the current surface.
     /// </summary>
@@ -884,7 +889,6 @@ namespace Rhino.Geometry
       return rc;
     }
 
-#if RHINO_SDK
     /// <summary>Fits a new surface through an existing surface.</summary>
     /// <param name="uDegree">the output surface U degree. Must be bigger than 1.</param>
     /// <param name="vDegree">the output surface V degree. Must be bigger than 1.</param>
@@ -1061,7 +1065,6 @@ namespace Rhino.Geometry
       IntPtr pNewCurve = UnsafeNativeMethods.RHC_RhinoShortPath(pConstSurface, start, end, tolerance);
       return GeometryBase.CreateGeometryHelper(pNewCurve, null) as Curve;
     }
-#endif
 
     /// <summary>
     /// Computes a 3d curve that is the composite of a 2d curve and the surface map.
@@ -1126,6 +1129,7 @@ namespace Rhino.Geometry
       IntPtr rc = UnsafeNativeMethods.ON_Surface_Pullback(ptr, pCurve3d, tolerance, curve3dSubdomain);
       return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
     }
+#endif
 
     #region converters
     /// <summary>

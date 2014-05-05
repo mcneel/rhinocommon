@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Rhino.Geometry.Intersect
 {
+#if RHINO_SDK
   /// <summary>
   /// Provides all the information for a single Curve Intersection event.
   /// </summary>
@@ -445,4 +446,5 @@ namespace Rhino.Geometry.Intersect
     }
     #endregion
   }
+#endif
 }

@@ -69,9 +69,9 @@ using Rhino.Runtime.InteropWrappers;
       return true;
     }
 
-    public bool BuildDeclarations(string cppFilePath)
+    public bool BuildDeclarations(string cppFilePath, List<string> preprocessorDefines)
     {
-      DeclarationList d = DeclarationList.Construct(cppFilePath);
+      DeclarationList d = DeclarationList.Construct(cppFilePath, preprocessorDefines);
       if (d!=null)
         m_declarations.Add(d);
       return (d != null);
@@ -85,20 +85,58 @@ using Rhino.Runtime.InteropWrappers;
     readonly List<Declaration> m_declarations = new List<Declaration>();
     readonly List<EnumDeclaration> m_enums = new List<EnumDeclaration>();
 
-    public static DeclarationList Construct(string cppFileName)
+    public static DeclarationList Construct(string cppFileName, List<string> preprocessorDefines)
     {
       const string EXPORT_DECLARE = "RH_C_FUNCTION";
       const string MANUAL = "/*MANUAL*/";
       DeclarationList d = new DeclarationList();
       d.m_source_filename = cppFileName;
-      string sourceCode = System.IO.File.ReadAllText(cppFileName);
+      string source_code = System.IO.File.ReadAllText(cppFileName);
+
+      if (preprocessorDefines != null)
+      {
+        // perform a very simplified preprocessor stage on the source
+        while (true)
+        {
+          const string token = "#if !defined(";
+          int start = source_code.IndexOf(token);
+          if (-1 == start)
+            break;
+          int end = source_code.IndexOf("#endif", start);
+
+          bool add_section = true;
+          foreach (string define in preprocessorDefines)
+          {
+            if( source_code.IndexOf(define, start + token.Length) == (start+token.Length) )
+            {
+              add_section = false;
+              break;
+            }
+          }
+
+          string source_start = source_code.Substring(0, start);
+          string source_end = source_code.Substring(end + "#endif".Length);
+          if (add_section)
+          {
+            start = start + token.Length + ")".Length;
+            string source_mid = source_code.Substring(start, end - start);
+            source_code = source_start + source_mid + source_end;
+          }
+          else
+          {
+            source_code = source_start + source_end;
+          }
+        }
+      }
+
+
       // If you have multi-line comments that need to be dealt with, this would probably suffice:
       // sourceCode = System.Text.RegularExpressions.Regex.Replace(sourceCode, @"/\*.*?\*/", "");
       List<int> startIndices = new List<int>();
       int previous_index = -1;
       while (true)
       {
-        int index = sourceCode.IndexOf(EXPORT_DECLARE, previous_index + 1);
+        int index = source_code.IndexOf(EXPORT_DECLARE, previous_index + 1);
         if (-1 == index)
           break;
         previous_index = index;
@@ -110,17 +148,17 @@ using Rhino.Runtime.InteropWrappers;
           int testIndex = index - 1;
           while (testIndex > 0)
           {
-            if (sourceCode[testIndex] == '/' && sourceCode[testIndex - 1] == '/')
+            if (source_code[testIndex] == '/' && source_code[testIndex - 1] == '/')
             {
               skipThisDeclaration = true;
               break;
             }
-            if (sourceCode[testIndex] == '#')
+            if (source_code[testIndex] == '#')
             {
               skipThisDeclaration = true;
               break;
             }
-            if (sourceCode[testIndex] == '\n')
+            if (source_code[testIndex] == '\n')
               break;
             testIndex--;
           }
@@ -133,7 +171,7 @@ using Rhino.Runtime.InteropWrappers;
         if (index > MANUAL.Length)
         {
           int manStart = index - MANUAL.Length;
-          if (sourceCode.Substring(manStart, MANUAL.Length) == MANUAL)
+          if (source_code.Substring(manStart, MANUAL.Length) == MANUAL)
             continue;
         }
         startIndices.Add(index);
@@ -143,8 +181,8 @@ using Rhino.Runtime.InteropWrappers;
       for (int i = 0; i < startIndices.Count; i++)
       {
         int start = startIndices[i] + EXPORT_DECLARE.Length;
-        int end = sourceCode.IndexOf(')', start) + 1;
-        string decl = sourceCode.Substring(start, end - start);
+        int end = source_code.IndexOf(')', start) + 1;
+        string decl = source_code.Substring(start, end - start);
         decl = decl.Trim();
         d.m_declarations.Add(new Declaration(decl));
       }
@@ -153,23 +191,28 @@ using Rhino.Runtime.InteropWrappers;
       previous_index = -1;
       while (true)
       {
-        int index = sourceCode.IndexOf("enum ", previous_index + 1);
+        int index = source_code.IndexOf("enum ", previous_index + 1);
         if (-1 == index)
           break;
         previous_index = index;
 
         // now see if the enum word is a declaration or inside a function declaration
-        int colon_index = sourceCode.IndexOf(':', index);
-        int brace_index = sourceCode.IndexOf('{', index);
-        int paren_index = sourceCode.IndexOf(')', index);
+        int colon_index = source_code.IndexOf(':', index);
+        int brace_index = source_code.IndexOf('{', index);
+        int paren_index = source_code.IndexOf(')', index);
         if (paren_index < colon_index || brace_index < colon_index)
           continue;
 
-        int semi_colon = sourceCode.IndexOf(';', index);
+        int semi_colon = source_code.IndexOf(';', index);
         if (colon_index == -1 || semi_colon == -1 || brace_index == -1)
           continue;
 
-        string enumdecl = sourceCode.Substring(index, semi_colon - index + 1);
+        string enumdecl = source_code.Substring(index, semi_colon - index + 1);
+
+        // special case for enums deriving from "unsigned int". Convert this to uint
+        // for C#
+        enumdecl = enumdecl.Replace(" unsigned int", " uint");
+
         d.m_enums.Add(new EnumDeclaration(enumdecl));
       }
       return d;

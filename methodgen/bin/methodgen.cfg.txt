@@ -1,0 +1,3 @@
+..\..\c
+..\..\dotnet
+define OPENNURBS_BUILD

@@ -150,6 +150,13 @@ RH_C_FUNCTION ON_SimpleArray<int>* ON_IntArray_New()
   return new ON_SimpleArray<int>();
 }
 
+RH_C_FUNCTION ON_SimpleArray<int>* ON_IntArray_New2(/*ARRAY*/const int* vals, int count)
+{
+  ON_SimpleArray<int>* rc = new ON_SimpleArray<int>(count);
+  rc->Append(count, vals);
+  return rc;
+}
+
 RH_C_FUNCTION void ON_IntArray_CopyValues(const ON_SimpleArray<int>* ptr, /*ARRAY*/int* vals)
 {
   if( ptr && vals )
@@ -469,6 +476,20 @@ RH_C_FUNCTION void ON_SimpleArray_3dmObjectAttributes_Add( ON_SimpleArray<const 
 {
   if( pArray && pAttributes )
     pArray->Append(pAttributes);
+}
+
+RH_C_FUNCTION int ON_SimpleArray_3dmObjectAttributes_Count( ON_SimpleArray<const ON_3dmObjectAttributes*>* pArray )
+{
+  if( pArray )
+    return pArray->Count();
+  return 0;
+}
+
+RH_C_FUNCTION const ON_3dmObjectAttributes* ON_SimpleArray_3dmObjectAttributes_Get( ON_SimpleArray<const ON_3dmObjectAttributes*>* pArray, int index )
+{
+  if( pArray && index>=0 && index<pArray->Count() )
+    return (*pArray)[index];
+  return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////

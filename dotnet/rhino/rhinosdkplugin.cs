@@ -4,10 +4,10 @@ using System.Runtime.InteropServices;
 using Rhino.Runtime;
 using System.Collections.Generic;
 using System.Drawing;
+using Rhino.Runtime.InteropWrappers;
 
 #if RDK_CHECKED
 using Rhino.Render;
-using Rhino.Runtime.InteropWrappers;
 
 #endif
 
@@ -86,7 +86,7 @@ namespace Rhino.PlugIns
   {
     System.Reflection.Assembly m_assembly;
     internal int m_runtime_serial_number; // = 0; runtime initializes this to 0
-    internal List<Rhino.Commands.Command> m_commands = new List<Commands.Command>();
+    internal List<Commands.Command> m_commands = new List<Commands.Command>();
     PersistentSettingsManager m_SettingsManager;
     Guid m_id;
     string m_name;
@@ -1099,7 +1099,7 @@ namespace Rhino.PlugIns
           pluginName = pluginName.Remove(index, 1);
           index = pluginName.IndexOfAny(invalid_chars);
         }
-        string commonDir = System.Environment.GetFolderPath(bLocalUser ? System.Environment.SpecialFolder.ApplicationData : System.Environment.SpecialFolder.CommonApplicationData);
+        string commonDir = Environment.GetFolderPath(bLocalUser ? Environment.SpecialFolder.ApplicationData : Environment.SpecialFolder.CommonApplicationData);
         char sep = System.IO.Path.DirectorySeparatorChar;
         commonDir = System.IO.Path.Combine(commonDir, "McNeel" + sep + "Rhinoceros" + sep + "5.0" + sep + "Plug-ins");
         path = System.IO.Path.Combine(commonDir, pluginName);
@@ -1156,21 +1156,21 @@ namespace Rhino.PlugIns
       return true;
     }
 
-    public static System.Collections.Generic.Dictionary<Guid, string> GetInstalledPlugIns()
+    public static Dictionary<Guid, string> GetInstalledPlugIns()
     {
       int count = InstalledPlugInCount;
-      System.Collections.Generic.Dictionary<Guid, string> plug_in_dictionary = new System.Collections.Generic.Dictionary<Guid, string>(32);
+      Dictionary<Guid, string> plug_in_dictionary = new Dictionary<Guid, string>(32);
       for (int i = 0; i < count; i++)
       {
-        IntPtr name = UnsafeNativeMethods.CRhinoPlugInManager_GetName(i);
-        if (name != IntPtr.Zero)
+        IntPtr ptr_name = UnsafeNativeMethods.CRhinoPlugInManager_GetName(i);
+        if (ptr_name != IntPtr.Zero)
         {
-          string sName = Marshal.PtrToStringUni(name);
-          if (!string.IsNullOrEmpty(sName))
+          string name = Marshal.PtrToStringUni(ptr_name);
+          if (!string.IsNullOrEmpty(name))
           {
             Guid id = UnsafeNativeMethods.CRhinoPlugInManager_GetID(i);
             if (id != Guid.Empty && !plug_in_dictionary.ContainsKey(id))
-              plug_in_dictionary.Add(id, sName);
+              plug_in_dictionary.Add(id, name);
           }
         }
       }
@@ -1194,17 +1194,17 @@ namespace Rhino.PlugIns
     public static string[] GetInstalledPlugInNames(PlugInType typeFilter, bool loaded, bool unloaded)
     {
       int count = InstalledPlugInCount;
-      System.Collections.Generic.List<string> names = new System.Collections.Generic.List<string>(32);
+      List<string> names = new List<string>(32);
       for (int i = 0; i < count; i++)
       {
-        IntPtr name = UnsafeNativeMethods.CRhinoPlugInManager_GetName(i);
-        if (name != IntPtr.Zero)
+        IntPtr ptr_name = UnsafeNativeMethods.CRhinoPlugInManager_GetName(i);
+        if (ptr_name != IntPtr.Zero)
         {
           if (UnsafeNativeMethods.CRhinoPlugInManager_PassesFilter(i, (int)typeFilter, loaded, unloaded, false))
           {
-            string sName = Marshal.PtrToStringUni(name);
-            if (!string.IsNullOrEmpty(sName))
-              names.Add(sName);
+            string name = Marshal.PtrToStringUni(ptr_name);
+            if (!string.IsNullOrEmpty(name))
+              names.Add(name);
 
           }
         }
@@ -1214,7 +1214,7 @@ namespace Rhino.PlugIns
 
     public static string[] GetInstalledPlugInFolders()
     {
-      System.Collections.Generic.List<string> dirs = new System.Collections.Generic.List<string>(32);
+      List<string> dirs = new List<string>(32);
       for( int i=0; i<m_plugins.Count; i++ )
       {
         var dir = System.IO.Path.GetDirectoryName(m_plugins[i].Assembly.Location);
@@ -1225,10 +1225,10 @@ namespace Rhino.PlugIns
       int count = InstalledPlugInCount;
       for (int i = 0; i < count; i++)
       {
-        IntPtr pFile = UnsafeNativeMethods.CRhinoPlugInManager_GetFileName(i);
-        if (pFile != IntPtr.Zero)
+        IntPtr ptr_filename = UnsafeNativeMethods.CRhinoPlugInManager_GetFileName(i);
+        if (ptr_filename != IntPtr.Zero)
         {
-          string path = Marshal.PtrToStringUni(pFile);
+          string path = Marshal.PtrToStringUni(ptr_filename);
           if (System.IO.File.Exists(path))
           {
             path = System.IO.Path.GetDirectoryName(path);
@@ -1251,8 +1251,8 @@ namespace Rhino.PlugIns
       string rc;
       using (var sh = new StringHolder())
       {
-        IntPtr pString = sh.NonConstPointer();
-        UnsafeNativeMethods.CRhinoPlugInManager_NameFromPath(pluginPath, pString);
+        IntPtr ptr_string = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoPlugInManager_NameFromPath(pluginPath, ptr_string);
         rc = sh.ToString();
       }
       if (string.IsNullOrEmpty(rc))
@@ -1270,6 +1270,32 @@ namespace Rhino.PlugIns
         }
       }
       return rc;
+    }
+
+    /// <summary>
+    /// Gets the path to an installed plug-in given the name of that plug-in
+    /// </summary>
+    /// <param name="pluginName"></param>
+    /// <returns></returns>
+    public static string PathFromName(string pluginName)
+    {
+      Guid id = IdFromName(pluginName);
+      return PathFromId(id);
+    }
+
+    /// <summary>
+    /// Gets the path to an installed plug-in given the id of that plug-in
+    /// </summary>
+    /// <param name="pluginId"></param>
+    /// <returns></returns>
+    public static string PathFromId(Guid pluginId)
+    {
+      using (var sh = new StringHolder())
+      {
+        IntPtr ptr_string = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoPlugInManager_PathFromId(pluginId, ptr_string);
+        return sh.ToString();
+      }
     }
 
     public static Guid IdFromPath(string pluginPath)
@@ -2058,7 +2084,10 @@ namespace Rhino.PlugIns
       }
       finally
       {
-        p.ActivePreviewArgs.Remove(args);
+        // 3 March 2014, John Morse
+        // Fixed crash report: http://mcneel.myjetbrains.com/youtrack/issue/RH-24622
+        if (p.ActivePreviewArgs.Contains(args))
+          p.ActivePreviewArgs.Remove(args);
       }
 
       return pBitmap;
@@ -2778,20 +2807,11 @@ namespace Rhino.PlugIns
 
       try
       {
-        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-        if (null == zooAss)
-          return false;
-
-        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-        if (t == null)
-          return false;
-
-        System.Reflection.MethodInfo mi = t.GetMethod("ReturnLicense");
-        if (mi == null)
-          return false;
+        var method_info = GetReturnLicenseMethod();
+        if (method_info == null) return false;
 
         var args = new object[] { new VerifyFromZooCommon(), productId };
-        object invoke_rc = mi.Invoke(null, args);
+        var invoke_rc = method_info.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2799,7 +2819,7 @@ namespace Rhino.PlugIns
       }
       catch (Exception ex)
       {
-        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+        HostUtils.ExceptionReport(ex);
       }
 
       return false;
@@ -2816,40 +2836,27 @@ namespace Rhino.PlugIns
 
       try
       {
-        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-        if (null == zooAss)
-          return false;
-
-        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-        if (t == null)
-          return false;
-
-        System.Reflection.MethodInfo mi = t.GetMethod("ReturnLicense");
-        if (mi == null)
-          return false;
+        var method_info = GetReturnLicenseMethod();
+        if (method_info == null) return false;
 
         // If this delegate is defined in a C++ plug-in, find the plug-in's descriptive
         // information from the Rhino_DotNet wrapper class which is the delegate's target.
 
-        System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
-        System.Reflection.Assembly rhDotNet = HostUtils.GetRhinoDotNetAssembly();
-        if (delegate_method.Module.Assembly != rhDotNet)
+        var delegate_method = validateDelegate.Method;
+        var rhino_dot_net_assembly = HostUtils.GetRhinoDotNetAssembly();
+        if (delegate_method.Module.Assembly != rhino_dot_net_assembly)
           return false;
 
-        object wrapper_class = validateDelegate.Target;
+        var wrapper_class = validateDelegate.Target;
         if (null == wrapper_class)
           return false;
 
-        Type wrapper_type = wrapper_class.GetType();
-        System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
-        System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
-        System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
-        string productPath = get_path_method.Invoke(wrapper_class, null) as string;
-        string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
-        Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
+        var wrapper_type = wrapper_class.GetType();
+        var get_id_method = wrapper_type.GetMethod("ProductId");
+        var product_id = (Guid)get_id_method.Invoke(wrapper_class, null);
 
-        var args = new object[] { new VerifyFromZooCommon(), productId };
-        object invoke_rc = mi.Invoke(null, args);
+        var args = new object[] { new VerifyFromZooCommon(), product_id };
+        var invoke_rc = method_info.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2857,7 +2864,7 @@ namespace Rhino.PlugIns
       }
       catch (Exception ex)
       {
-        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+        HostUtils.ExceptionReport(ex);
       }
 
       return false;
@@ -2870,20 +2877,10 @@ namespace Rhino.PlugIns
     {
       try
       {
-        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-        if (null == zooAss)
-          return false;
-
-        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
-        if (t == null)
-          return false;
-
-        System.Reflection.MethodInfo mi = t.GetMethod("ReturnLicense");
-        if (mi == null)
-          return false;
-
+        var method_info = GetReturnLicenseMethod();
+        if (method_info == null) return false;
         var args = new object[] { new VerifyFromZooCommon(), productId };
-        object invoke_rc = mi.Invoke(null, args);
+        var invoke_rc = method_info.Invoke(null, args);
         if (null == invoke_rc)
           return false;
 
@@ -2891,10 +2888,20 @@ namespace Rhino.PlugIns
       }
       catch (Exception ex)
       {
-        Rhino.Runtime.HostUtils.ExceptionReport(ex);
+        HostUtils.ExceptionReport(ex);
       }
 
       return false;
+    }
+
+    static System.Reflection.MethodInfo GetReturnLicenseMethod()
+    {
+      var assembly = GetLicenseClientAssembly();
+      if (null == assembly) return null;
+      var type = assembly.GetType("ZooClient.ZooClientUtilities", false);
+      if (type == null) return null;
+      var method_info = type.GetMethod("ReturnLicense", new [] { typeof(string), typeof(Guid)});
+      return method_info;
     }
 
     /// <summary>

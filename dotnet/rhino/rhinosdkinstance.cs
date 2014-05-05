@@ -144,12 +144,12 @@ namespace Rhino.DocObjects
     {
       get
       {
-        IntPtr ptr = ConstPointer();
-        int docId = 0;
-        int idef_index = UnsafeNativeMethods.CRhinoInstanceObject_InstanceDefinition(ptr, ref docId);
+        IntPtr const_ptr_this = ConstPointer();
+        int doc_id = 0;
+        int idef_index = UnsafeNativeMethods.CRhinoInstanceObject_InstanceDefinition(const_ptr_this, ref doc_id);
         if (idef_index < 0)
           return null;
-        RhinoDoc doc = RhinoDoc.FromId(docId);
+        RhinoDoc doc = RhinoDoc.FromId(doc_id);
         return new InstanceDefinition(idef_index, doc);
       }
     }
@@ -163,8 +163,8 @@ namespace Rhino.DocObjects
     public bool UsesDefinition(int definitionIndex, out int nestingLevel)
     {
       nestingLevel = 0;
-      IntPtr pConstThis = ConstPointer();
-      int rc = UnsafeNativeMethods.CRhinoInstanceObject_UsesDefinition(pConstThis, definitionIndex);
+      IntPtr const_ptr_this = ConstPointer();
+      int rc = UnsafeNativeMethods.CRhinoInstanceObject_UsesDefinition(const_ptr_this, definitionIndex);
       if (rc >= 0)
         nestingLevel = rc;
       return rc >= 0;
@@ -183,9 +183,9 @@ namespace Rhino.DocObjects
     /// <param name="pieceTransforms">An array of the previously applied transform matrices will be assigned to this out parameter during this call.</param>
     public void Explode(bool explodeNestedInstances, out RhinoObject[] pieces, out ObjectAttributes[] pieceAttributes, out Transform[] pieceTransforms)
     {
-      IntPtr pConstThis = ConstPointer();
-      IntPtr pPieceList = UnsafeNativeMethods.CRhinoInstanceObject_Explode(pConstThis, explodeNestedInstances);
-      int count = UnsafeNativeMethods.CRhinoInstanceObjectPieceArray_Count(pPieceList);
+      IntPtr const_ptr_this = ConstPointer();
+      IntPtr ptr_piece_list = UnsafeNativeMethods.CRhinoInstanceObject_Explode(const_ptr_this, explodeNestedInstances);
+      int count = UnsafeNativeMethods.CRhinoInstanceObjectPieceArray_Count(ptr_piece_list);
       pieces = new RhinoObject[count];
       pieceAttributes = new ObjectAttributes[count];
       pieceTransforms = new Transform[count];
@@ -193,13 +193,13 @@ namespace Rhino.DocObjects
       {
         Transform xform = new Transform();
         ObjectAttributes attrs = new ObjectAttributes();
-        IntPtr pAttrs = attrs.NonConstPointer();
-        IntPtr pRhinoObject = UnsafeNativeMethods.CRhinoInstanceObjectPieceArray_Item(pPieceList, i, pAttrs, ref xform);
-        pieces[i] = RhinoObject.CreateRhinoObjectHelper(pRhinoObject);
+        IntPtr ptr_attributes = attrs.NonConstPointer();
+        IntPtr ptr_rhino_object = UnsafeNativeMethods.CRhinoInstanceObjectPieceArray_Item(ptr_piece_list, i, ptr_attributes, ref xform);
+        pieces[i] = CreateRhinoObjectHelper(ptr_rhino_object);
         pieceAttributes[i] = attrs;
         pieceTransforms[i] = xform;
       }
-      UnsafeNativeMethods.CRhinoInstanceObjectPieceArray_Delete(pPieceList);
+      UnsafeNativeMethods.CRhinoInstanceObjectPieceArray_Delete(ptr_piece_list);
     }
   }
 
@@ -243,10 +243,10 @@ namespace Rhino.DocObjects
     /// Returns an object that is used to define the geometry.
     /// Does NOT return an object that references this definition.count the number of references to this instance.
     /// </returns>
-    public DocObjects.RhinoObject Object(int index)
+    public RhinoObject Object(int index)
     {
       IntPtr ptr = UnsafeNativeMethods.CRhinoInstanceDefinition_Object(m_doc.m_docId, m_index, index);
-      return DocObjects.RhinoObject.CreateRhinoObjectHelper(ptr);
+      return RhinoObject.CreateRhinoObjectHelper(ptr);
     }
 
     /// <summary>
@@ -258,14 +258,14 @@ namespace Rhino.DocObjects
     /// <code source='examples\cs\ex_instancedefinitionobjects.cs' lang='cs'/>
     /// <code source='examples\py\ex_instancedefinitionobjects.py' lang='py'/>
     /// </example>
-    public DocObjects.RhinoObject[] GetObjects()
+    public RhinoObject[] GetObjects()
     {
       int count = ObjectCount;
-      DocObjects.RhinoObject[] rc = new RhinoObject[count];
+      RhinoObject[] rc = new RhinoObject[count];
       for (int i = 0; i < count; i++)
       {
         IntPtr ptr = UnsafeNativeMethods.CRhinoInstanceDefinition_Object(m_doc.m_docId, m_index, i);
-        rc[i] = DocObjects.RhinoObject.CreateRhinoObjectHelper(ptr);
+        rc[i] = RhinoObject.CreateRhinoObjectHelper(ptr);
       }
       return rc;
     }
@@ -282,11 +282,11 @@ namespace Rhino.DocObjects
     /// <returns>An array of instance objects. The returned array can be empty, but not null.</returns>
     public InstanceObject[] GetReferences(int wheretoLook)
     {
-      int refCount = UnsafeNativeMethods.CRhinoInstanceDefintition_GetReferences1(m_doc.m_docId, m_index, wheretoLook);
-      if (refCount < 1)
+      int ref_count = UnsafeNativeMethods.CRhinoInstanceDefintition_GetReferences1(m_doc.m_docId, m_index, wheretoLook);
+      if (ref_count < 1)
         return new InstanceObject[0];
-      InstanceObject[] rc = new InstanceObject[refCount];
-      for (int i = 0; i < refCount; i++)
+      InstanceObject[] rc = new InstanceObject[ref_count];
+      for (int i = 0; i < ref_count; i++)
       {
         IntPtr ptr = UnsafeNativeMethods.CRhinoInstanceDefinition_GetReferences2(i);
         if (ptr != IntPtr.Zero)
@@ -305,7 +305,7 @@ namespace Rhino.DocObjects
     /// <returns>An array of instance definitions. The returned array can be empty, but not null.</returns>
     public InstanceDefinition[] GetContainers()
     {
-      using (Runtime.InteropWrappers.SimpleArrayInt arr = new Rhino.Runtime.InteropWrappers.SimpleArrayInt())
+      using (SimpleArrayInt arr = new SimpleArrayInt())
       {
         IntPtr ptr = arr.m_ptr;
         int count = UnsafeNativeMethods.CRhinoInstanceDefinition_GetContainers(m_doc.m_docId, m_index, ptr);
@@ -407,10 +407,10 @@ namespace Rhino.DocObjects
     {
       get
       {
-        int layerStyle = UnsafeNativeMethods.CRhinoInstanceDefinition_LayerStyle(m_doc.m_docId, m_index);
-        if (layerStyle == (int)InstanceDefinitionLayerStyle.Active)
+        int layer_style = UnsafeNativeMethods.CRhinoInstanceDefinition_LayerStyle(m_doc.m_docId, m_index);
+        if (layer_style == (int)InstanceDefinitionLayerStyle.Active)
           return InstanceDefinitionLayerStyle.Active;
-        if (layerStyle == (int)InstanceDefinitionLayerStyle.Reference)
+        if (layer_style == (int)InstanceDefinitionLayerStyle.Reference)
           return InstanceDefinitionLayerStyle.Reference;
         return InstanceDefinitionLayerStyle.None;
       }
@@ -429,7 +429,6 @@ namespace Rhino.DocObjects
       }
     }
     //[skipping]
-    //bool IsTenuous() const;
     //BOOL CRhinoInstanceDefinition::GetBBox(
     //bool UsesLayer( int layer_index ) const;
     //bool UsesLinetype( int linetype_index) const;
@@ -437,13 +436,7 @@ namespace Rhino.DocObjects
 
     ////////////////////////////////////////////////////////
     //from ON_InstanceDefinition
-    const int idxName = 0;
-    const int idxDescription = 1;
-    const int idxSourceArchive = 2;
-    const int idxUrlTag = 3;
-    const int idxUrl = 4;
-
-    string GetString(int which)
+    string GetString(UnsafeNativeMethods.InstanceDefinitionStringConsts which)
     {
       IntPtr ptr = UnsafeNativeMethods.CRhinoInstanceDefinition_GetString(m_doc.m_docId, m_index, which);
       if (IntPtr.Zero == ptr)
@@ -453,12 +446,12 @@ namespace Rhino.DocObjects
 
     public string Name
     {
-      get{ return GetString(idxName); }
+      get{ return GetString(UnsafeNativeMethods.InstanceDefinitionStringConsts.Name); }
     }
 
     public string Description
     {
-      get{ return GetString(idxDescription); }
+      get{ return GetString(UnsafeNativeMethods.InstanceDefinitionStringConsts.Description); }
     }
 
     public Guid Id
@@ -468,42 +461,42 @@ namespace Rhino.DocObjects
 
     public string SourceArchive
     {
-      get { return GetString(idxSourceArchive); }
+      get { return GetString(UnsafeNativeMethods.InstanceDefinitionStringConsts.SourceArchive); }
     }
     /// <summary>
     /// The URL description displayed as a hyperlink in the Insert and Block UI
     /// </summary>
     public string UrlDescription
     {
-      get { return GetString(idxUrlTag); }
+      get { return GetString(UnsafeNativeMethods.InstanceDefinitionStringConsts.UrlTag); }
     }
     /// <summary>
     /// The hyperlink URL that is executed when the UrlDescription hyperlink is clicked on in the Insert and Block UI
     /// </summary>
     public string Url
     {
-      get { return GetString(idxUrl); }
+      get { return GetString(UnsafeNativeMethods.InstanceDefinitionStringConsts.Url); }
     }
 
-    public System.Drawing.Bitmap CreatePreviewBitmap(Rhino.Display.DefinedViewportProjection definedViewportProjection, Rhino.DocObjects.DisplayMode displayMode, System.Drawing.Size bitmapSize)
+    public System.Drawing.Bitmap CreatePreviewBitmap(Display.DefinedViewportProjection definedViewportProjection, DisplayMode displayMode, System.Drawing.Size bitmapSize)
     {
-      IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoInstanceDefinition_GetPreviewBitmap(m_doc.m_docId, m_index, (int)definedViewportProjection, (int)displayMode, bitmapSize.Width, bitmapSize.Height);
-      if (IntPtr.Zero == pRhinoDib)
+      IntPtr ptr_rhino_dib = UnsafeNativeMethods.CRhinoInstanceDefinition_GetPreviewBitmap(m_doc.m_docId, m_index, (int)definedViewportProjection, (int)displayMode, bitmapSize.Width, bitmapSize.Height);
+      if (IntPtr.Zero == ptr_rhino_dib)
         return null;
 
-      IntPtr hBmp = UnsafeNativeMethods.CRhinoDib_Bitmap(pRhinoDib);
+      IntPtr hbitmap = UnsafeNativeMethods.CRhinoDib_Bitmap(ptr_rhino_dib);
       System.Drawing.Bitmap rc = null;
-      if (IntPtr.Zero != hBmp)
+      if (IntPtr.Zero != hbitmap)
       {
-        rc = System.Drawing.Image.FromHbitmap(hBmp);
+        rc = System.Drawing.Image.FromHbitmap(hbitmap);
       }
-      UnsafeNativeMethods.CRhinoDib_Delete(pRhinoDib);
+      UnsafeNativeMethods.CRhinoDib_Delete(ptr_rhino_dib);
       return rc;
     }
 
-    public System.Drawing.Bitmap CreatePreviewBitmap(Rhino.Display.DefinedViewportProjection definedViewportProjection, System.Drawing.Size bitmapSize)
+    public System.Drawing.Bitmap CreatePreviewBitmap(Display.DefinedViewportProjection definedViewportProjection, System.Drawing.Size bitmapSize)
     {
-      return CreatePreviewBitmap(definedViewportProjection, Rhino.DocObjects.DisplayMode.Wireframe, bitmapSize);
+      return CreatePreviewBitmap(definedViewportProjection, DisplayMode.Wireframe, bitmapSize);
     }
 
     /// <summary>
@@ -538,19 +531,19 @@ namespace Rhino.DocObjects.Tables
     readonly int m_doc_id;
     readonly InstanceDefinitionTableEventType m_event_type;
     readonly int m_idef_index;
-    readonly IntPtr m_pOldInstanceDefinition;
+    readonly IntPtr m_ptr_old_intance_definition;
 
-    internal InstanceDefinitionTableEventArgs(int docId, int eventType, int index, IntPtr pConstInstanceDefinition)
+    internal InstanceDefinitionTableEventArgs(int docId, int eventType, int index, IntPtr ptrConstIntanceDefinition)
     {
       m_doc_id = docId;
       m_event_type = (InstanceDefinitionTableEventType)eventType;
       m_idef_index = index;
-      m_pOldInstanceDefinition = pConstInstanceDefinition;
+      m_ptr_old_intance_definition = ptrConstIntanceDefinition;
     }
 
     internal IntPtr ConstLightPointer()
     {
-      return m_pOldInstanceDefinition;
+      return m_ptr_old_intance_definition;
     }
 
     RhinoDoc m_doc;
@@ -580,9 +573,9 @@ namespace Rhino.DocObjects.Tables
     {
       get
       {
-        if (m_old_idef == null && m_pOldInstanceDefinition != IntPtr.Zero)
+        if (m_old_idef == null && m_ptr_old_intance_definition != IntPtr.Zero)
         {
-          m_old_idef = new InstanceDefinitionGeometry(m_pOldInstanceDefinition, this);
+          m_old_idef = new InstanceDefinitionGeometry(m_ptr_old_intance_definition, this);
         }
         return m_old_idef;
       }
@@ -590,7 +583,7 @@ namespace Rhino.DocObjects.Tables
   }
 
 
-  public sealed class InstanceDefinitionTable : IEnumerable<InstanceDefinition>, Rhino.Collections.IRhinoTable<InstanceDefinition>
+  public sealed class InstanceDefinitionTable : IEnumerable<InstanceDefinition>, Collections.IRhinoTable<InstanceDefinition>
   {
     private readonly RhinoDoc m_doc;
     internal InstanceDefinitionTable(RhinoDoc doc)
@@ -633,7 +626,7 @@ namespace Rhino.DocObjects.Tables
     /// </summary>
     /// <param name="index">zero based array index.</param>
     /// <returns>The instance definition at the specified index.</returns>
-    public DocObjects.InstanceDefinition this[int index]
+    public InstanceDefinition this[int index]
     {
       get
       {
@@ -656,28 +649,28 @@ namespace Rhino.DocObjects.Tables
     /// <code source='examples\cs\ex_createblock.cs' lang='cs'/>
     /// <code source='examples\py\ex_createblock.py' lang='py'/>
     /// </example>
-    public DocObjects.InstanceDefinition Find(string instanceDefinitionName, bool ignoreDeletedInstanceDefinitions)
+    public InstanceDefinition Find(string instanceDefinitionName, bool ignoreDeletedInstanceDefinitions)
     {
       int index = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_FindInstanceDefinition(m_doc.m_docId,
                                                                                       instanceDefinitionName,
                                                                                       ignoreDeletedInstanceDefinitions);
       if (index < 0)
         return null;
-      return new Rhino.DocObjects.InstanceDefinition(index, m_doc);
+      return new InstanceDefinition(index, m_doc);
     }
 
     /// <summary>Finds the instance definition with a given id.</summary>
     /// <param name="instanceId">Unique id of the instance definition to search for.</param>
     /// <param name="ignoreDeletedInstanceDefinitions">true means don't search deleted instance definitions.</param>
     /// <returns>The specified instance definition, or null if nothing matching was found.</returns>
-    public DocObjects.InstanceDefinition Find(Guid instanceId, bool ignoreDeletedInstanceDefinitions)
+    public InstanceDefinition Find(Guid instanceId, bool ignoreDeletedInstanceDefinitions)
     {
       int index = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_FindInstanceDefinition2(m_doc.m_docId,
                                                                                        instanceId,
                                                                                        ignoreDeletedInstanceDefinitions);
       if (index < 0)
         return null;
-      return new Rhino.DocObjects.InstanceDefinition(index, m_doc);
+      return new InstanceDefinition(index, m_doc);
     }
 
     /// <summary>
@@ -696,23 +689,23 @@ namespace Rhino.DocObjects.Tables
     /// <code source='examples\cs\ex_createblock.cs' lang='cs'/>
     /// <code source='examples\py\ex_createblock.py' lang='py'/>
     /// </example>
-    public int Add(string name, string description, Point3d basePoint, IEnumerable<GeometryBase> geometry, IEnumerable<DocObjects.ObjectAttributes> attributes)
+    public int Add(string name, string description, Point3d basePoint, IEnumerable<GeometryBase> geometry, IEnumerable<ObjectAttributes> attributes)
     {
-      using (Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer g = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
+      using (SimpleArrayGeometryPointer g = new SimpleArrayGeometryPointer(geometry))
       {
-        IntPtr pAttributes = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_New();
+        IntPtr ptr_array_attributes = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_New();
         if (attributes != null)
         {
           foreach (ObjectAttributes att in attributes)
           {
-            IntPtr pAtt = att.ConstPointer();
-            UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Add(pAttributes, pAtt);
+            IntPtr const_ptr_attributes = att.ConstPointer();
+            UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Add(ptr_array_attributes, const_ptr_attributes);
           }
         }
-        IntPtr pGeometry = g.ConstPointer();
-        int rc = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_Add(m_doc.m_docId, name, description, basePoint, pGeometry, pAttributes);
+        IntPtr const_ptr_geometry = g.ConstPointer();
+        int rc = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_Add(m_doc.m_docId, name, description, basePoint, const_ptr_geometry, ptr_array_attributes);
 
-        UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Delete(pAttributes);
+        UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Delete(ptr_array_attributes);
         return rc;
       }
     }
@@ -746,7 +739,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>
     /// &gt;=0  index of instance definition in the instance definition table. -1 on failure.
     /// </returns>
-    public int Add(string name, string description, Point3d basePoint, GeometryBase geometry, DocObjects.ObjectAttributes attributes)
+    public int Add(string name, string description, Point3d basePoint, GeometryBase geometry, ObjectAttributes attributes)
     {
       return Add(name, description, basePoint, new GeometryBase[] { geometry }, new ObjectAttributes[] { attributes });
     }
@@ -764,7 +757,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>
     /// true if successful.
     /// </returns>
-    public bool Modify(DocObjects.InstanceDefinition idef, string newName, string newDescription, bool quiet)
+    public bool Modify(InstanceDefinition idef, string newName, string newDescription, bool quiet)
     {
       return Modify(idef.Index, newName, newDescription, quiet);
     }
@@ -813,21 +806,21 @@ namespace Rhino.DocObjects.Tables
     /// <returns>true if operation succeeded.</returns>
     public bool ModifyGeometry(int idefIndex, IEnumerable<GeometryBase> newGeometry, IEnumerable<ObjectAttributes> newAttributes)
     {
-      using (Rhino.Runtime.InteropWrappers.SimpleArrayGeometryPointer g = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(newGeometry))
+      using (SimpleArrayGeometryPointer g = new SimpleArrayGeometryPointer(newGeometry))
       {
-        IntPtr pAttributes = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_New();
+        IntPtr ptr_array_attributes = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_New();
         if (newAttributes != null)
         {
           foreach (ObjectAttributes att in newAttributes)
           {
-            IntPtr pAtt = att.ConstPointer();
-            UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Add(pAttributes, pAtt);
+            IntPtr const_ptr_attributes = att.ConstPointer();
+            UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Add(ptr_array_attributes, const_ptr_attributes);
           }
         }
-        IntPtr pGeometry = g.ConstPointer();
-        bool rc = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_ModifyGeometry(m_doc.m_docId, idefIndex, pGeometry, pAttributes);
+        IntPtr const_ptr_geometry = g.ConstPointer();
+        bool rc = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_ModifyGeometry(m_doc.m_docId, idefIndex, const_ptr_geometry, ptr_array_attributes);
 
-        UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Delete(pAttributes);
+        UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Delete(ptr_array_attributes);
         return rc;
       }
     }
@@ -854,7 +847,7 @@ namespace Rhino.DocObjects.Tables
     /// <returns>
     /// true if the instance defintion could be modified.
     /// </returns>
-    public bool MakeSourcePathRelative(DocObjects.InstanceDefinition idef, bool relative, bool quiet)
+    public bool MakeSourcePathRelative(InstanceDefinition idef, bool relative, bool quiet)
     {
       if (null == idef)
         return false;
@@ -884,100 +877,97 @@ namespace Rhino.DocObjects.Tables
       return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_DeleteInstanceDefinition(m_doc.m_docId, idefIndex, deleteReferences, quiet);
     }
 
-  //Description:
-  //  Purges an instance definition and its definition geometry.
-  //Parameters:
-  //  idef_index - [in] zero based index of instance definition to delete.
-  //      This must be in the range 
-  //      0 <= idefIndex < InstanceDefinitionTable.Count
-  //Returns:
-  //  True if successful. False if the instance definition cannot be purged
-  //  because it is in use by reference objects or undo information.
-  //bool PurgeInstanceDefinition( int idef_index );
+    /// <summary>
+    /// Purges an instance definition and its definition geometry.
+    /// </summary>
+    /// <param name="idefIndex">
+    /// zero based index of instance definition to delete.
+    /// This must be in the range 0 &lt;= idefIndex &lt; InstanceDefinitionTable.Count.
+    /// </param>
+    /// <returns>
+    /// True if successful. False if the instance definition cannot be purged
+    /// because it is in use by reference objects or undo information.
+    /// </returns>
+    public bool Purge(int idefIndex)
+    {
+      return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_PurgeInstanceDefinition(m_doc.m_docId, idefIndex);
+    }
 
-  //Description:
-  //  Purge deleted instance definition information that is not
-  //  in use.  This function is time consuming and should be used
-  //  in a thoughtful manner.    
-  //Parameters:
-  //  bIgnoreUndoReferences:
-  //    If false, then deleted instance definition information
-  //    that could possibly be undeleted by the Undo command
-  //    will not be deleted.
-  //    If true, then all deleted instance definition information
-  //    is deleted.
-  //void Compact( bool bIgnoreUndoReferences );
+    /// <summary>
+    /// Purge deleted instance definition information that is not in use.
+    /// This function is time consuming and should be used in a thoughtful manner.    
+    /// </summary>
+    /// <param name="ignoreUndoReferences">
+    /// If false, then deleted instance definition information that could possibly
+    /// be undeleted by the Undo command will not be deleted. If true, then all
+    /// deleted instance definition information is deleted.
+    /// </param>
+    public void Compact(bool ignoreUndoReferences)
+    {
+      UnsafeNativeMethods.CRhinoInstanceDefinitionTable_Compact(m_doc.m_docId, ignoreUndoReferences);
+    }
 
-  //Description:
-  //  Undeletes an instance definition that has been deleted by DeleteLayer().
-  //Parameters:
-  //  idef_index - [in] zero based index of an instance definition
-  //      to undelete. This must be in the range
-  //      0 <= idefIndex < InstanceDefinitionTable.Count
-  //Returns:
-  //  TRUE if successful.
-  //bool UndeleteInstanceDefinition( int idef_index );
+    /// <summary>
+    /// Undeletes an instance definition that has been deleted by Delete()
+    /// </summary>
+    /// <param name="idefIndex">
+    /// zero based index of instance definition to delete.
+    /// This must be in the range 0 &lt;= idefIndex &lt; InstanceDefinitionTable.Count.
+    /// </param>
+    /// <returns>true if successful</returns>
+    public bool Undelete(int idefIndex)
+    {
+      return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_UndeleteInstanceDefinition(m_doc.m_docId, idefIndex);
+    }
 
-  //Description:
-  //  Read the objects from a file and use them as the instance's
-  //  definition geometry.
-  //Parameters:
-  //  idef_index - [in]
-  //    instance definition index
-  //  filename - [in]
-  //    name of file (can be any type of file that Rhino or a plug-in can read).
-  //  bUpdateNestedLinks - [in]
-  //    If true and the instance definition referes to a linked instance definition,
-  //    that needs to be updated, then the nested defition is also updated.
-  //    If false, nested updates are skipped.
-  //Returns:
-  //  True if successful.
-  //bool UpdateLinkedInstanceDefinition(
-  //        int idef_index,
-  //        const wchar_t* filename,
-  //        bool bUpdateNestedLinks
-  //        );
+    /// <summary>
+    /// Read the objects from a file and use them as the instance's definition geometry.
+    /// </summary>
+    /// <param name="idefIndex">
+    /// zero based index of instance definition to delete.
+    /// This must be in the range 0 &lt;= idefIndex &lt; InstanceDefinitionTable.Count.
+    /// </param>
+    /// <param name="filename">
+    /// name of file (can be any type of file that Rhino or a plug-in can read)
+    /// </param>
+    /// <param name="updateNestedLinks">
+    /// If true and the instance definition referes to a linked instance definition,
+    /// that needs to be updated, then the nested defition is also updated. If
+    /// false, nested updates are skipped.
+    /// </param>
+    /// <param name="quiet"></param>
+    /// <returns></returns>
+    public bool UpdateLinkedInstanceDefinition(int idefIndex, string filename, bool updateNestedLinks, bool quiet)
+    {
+      return UnsafeNativeMethods.CRhinoInstanceDefinitionTable_UpdateLinkedInstanceDefinition(m_doc.m_docId, idefIndex, filename, updateNestedLinks, quiet);
+    }
 
-  //Description:
-  //  Gets an array of pointers to layers that is sorted by
-  //  the values of CRhinoInstanceDefinition::m_sort_index.
-  //Parameters:
-  //  sorted_list - [out] this array is filled in with
-  //      CRhinoInstanceDefinition pointers sorted by
-  //      the values of CRhinoInstanceDefinition::m_sort_index.
-  //  bIgnoreDeleted - [in] if TRUE then deleted layers are filtered out.
-  //Remarks:
-  //  Use Sort() to set the values of m_sort_index.
-  //void GetSortedList(
-  //  ON_SimpleArray<const CRhinoInstanceDefinition*>& sorted_list,
-  //  bool bIgnoreDeleted = false
-  //  ) const;
     /// <summary>
     /// Gets an array of instance definitions.
     /// </summary>
     /// <param name="ignoreDeleted">If true then deleted idefs are filtered out.</param>
     /// <returns>An array of instance definitions. This can be empty, but not null.</returns>
-    public DocObjects.InstanceDefinition[] GetList(bool ignoreDeleted)
+    public InstanceDefinition[] GetList(bool ignoreDeleted)
     {
-      Runtime.InteropWrappers.SimpleArrayInt arr = new Runtime.InteropWrappers.SimpleArrayInt();
+      SimpleArrayInt arr = new SimpleArrayInt();
       IntPtr ptr = arr.m_ptr;
       int count = UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetList(m_doc.m_docId, ptr, ignoreDeleted);
-      DocObjects.InstanceDefinition[] rc = new InstanceDefinition[0];
+      InstanceDefinition[] rc = new InstanceDefinition[0];
       if( count>0 )
       {
         int[] indices = arr.ToArray();
         if (indices!=null && indices.Length > 0)
         {
           count = indices.Length;
-          rc = new Rhino.DocObjects.InstanceDefinition[count];
-          int docId = m_doc.m_docId;
+          rc = new InstanceDefinition[count];
+          int doc_id = m_doc.m_docId;
           for (int i = 0; i < count; i++)
           {
             // Purged instance definitions will still be in the document as null
             // pointers so check to see if the index is pointing to a null
             // definition and if it is then put a null entry in the array.
-            IntPtr idef = UnsafeNativeMethods.CRhinoInstanceDefinition_GetInstanceDef(docId, indices[i]);
-            rc[i] = IntPtr.Zero.Equals(idef) ? null : new Rhino.DocObjects.InstanceDefinition(indices[i], m_doc);
+            IntPtr idef = UnsafeNativeMethods.CRhinoInstanceDefinition_GetInstanceDef(doc_id, indices[i]);
+            rc[i] = IntPtr.Zero.Equals(idef) ? null : new InstanceDefinition(indices[i], m_doc);
           }
         }
       }
@@ -994,8 +984,8 @@ namespace Rhino.DocObjects.Tables
     {
       using (var sh = new StringHolder())
       {
-        IntPtr pString = sh.NonConstPointer();
-        UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName(m_doc.m_docId, pString);
+        IntPtr ptr_string = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName(m_doc.m_docId, ptr_string);
         return sh.ToString();
       }
     }
@@ -1012,8 +1002,8 @@ namespace Rhino.DocObjects.Tables
     {
       using (var sh = new StringHolder())
       {
-        IntPtr pString = sh.NonConstPointer();
-        UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName2(m_doc.m_docId, root, pString);
+        IntPtr ptr_string = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName2(m_doc.m_docId, root, ptr_string);
         return sh.ToString();
       }
     }
@@ -1037,8 +1027,8 @@ namespace Rhino.DocObjects.Tables
     {
       using (var sh = new StringHolder())
       {
-        IntPtr pString = sh.NonConstPointer();
-        UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName3(m_doc.m_docId, root, defaultSuffix, pString);
+        IntPtr ptr_string = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoInstanceDefinitionTable_GetUnusedName3(m_doc.m_docId, root, defaultSuffix, ptr_string);
         return sh.ToString();
       }
     }
@@ -1048,13 +1038,13 @@ namespace Rhino.DocObjects.Tables
     // for IEnumerable<Layer>
     public IEnumerator<InstanceDefinition> GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<InstanceDefinitionTable, InstanceDefinition>(this);
+      return new Collections.TableEnumerator<InstanceDefinitionTable, InstanceDefinition>(this);
     }
 
     // for IEnumerable
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<InstanceDefinitionTable, InstanceDefinition>(this);
+      return new Collections.TableEnumerator<InstanceDefinitionTable, InstanceDefinition>(this);
     }
     #endregion
   }

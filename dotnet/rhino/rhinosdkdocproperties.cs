@@ -9,7 +9,7 @@ namespace Rhino.DocObjects.Tables
   /// Contains all named construction planes in a rhino document.
   /// <para>This class cannot be inherited.</para>
   /// </summary>
-  public sealed class NamedConstructionPlaneTable : IEnumerable<ConstructionPlane>, Rhino.Collections.IRhinoTable<ConstructionPlane>
+  public sealed class NamedConstructionPlaneTable : IEnumerable<ConstructionPlane>, Collections.IRhinoTable<ConstructionPlane>
   {
     private readonly RhinoDoc m_doc;
     internal NamedConstructionPlaneTable(RhinoDoc doc)
@@ -40,12 +40,12 @@ namespace Rhino.DocObjects.Tables
     /// <returns>
     /// A construction plane at the index, or null on error.
     /// </returns>
-    public DocObjects.ConstructionPlane this[int index]
+    public ConstructionPlane this[int index]
     {
       get
       {
-        IntPtr pConstructionPlane = UnsafeNativeMethods.CRhinoDocProperties_GetCPlane(m_doc.m_docId, index);
-        return DocObjects.ConstructionPlane.FromIntPtr(pConstructionPlane);
+        IntPtr ptr_construction_plane = UnsafeNativeMethods.CRhinoDocProperties_GetCPlane(m_doc.m_docId, index);
+        return ConstructionPlane.FromIntPtr(ptr_construction_plane);
       }
     }
 
@@ -75,7 +75,7 @@ namespace Rhino.DocObjects.Tables
     /// 0 based index of named construction plane.
     /// -1 on failure.
     /// </returns>
-    public int Add(string name, Rhino.Geometry.Plane plane)
+    public int Add(string name, Geometry.Plane plane)
     {
       return UnsafeNativeMethods.CRhinoDocProperties_AddCPlane(m_doc.m_docId, name, ref plane);
     }
@@ -104,11 +104,11 @@ namespace Rhino.DocObjects.Tables
     #region enumerator
     public IEnumerator<ConstructionPlane> GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<NamedConstructionPlaneTable, ConstructionPlane>(this);
+      return new Collections.TableEnumerator<NamedConstructionPlaneTable, ConstructionPlane>(this);
     }
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<NamedConstructionPlaneTable, ConstructionPlane>(this);
+      return new Collections.TableEnumerator<NamedConstructionPlaneTable, ConstructionPlane>(this);
     }
     #endregion
   }
@@ -116,7 +116,7 @@ namespace Rhino.DocObjects.Tables
   /// <summary>
   /// All named views in a rhino document.
   /// </summary>
-  public sealed class NamedViewTable : IEnumerable<ViewInfo>, Rhino.Collections.IRhinoTable<ViewInfo>
+  public sealed class NamedViewTable : IEnumerable<ViewInfo>, Collections.IRhinoTable<ViewInfo>
   {
     private readonly RhinoDoc m_doc;
     internal NamedViewTable(RhinoDoc doc)
@@ -145,14 +145,14 @@ namespace Rhino.DocObjects.Tables
     /// </summary>
     /// <param name="index">Zero based array index.</param>
     /// <returns>The view that was found.</returns>
-    public DocObjects.ViewInfo this[int index]
+    public ViewInfo this[int index]
     {
       get
       {
-        IntPtr pViewInfo = UnsafeNativeMethods.CRhinoDocProperties_GetNamedView(m_doc.m_docId, index);
-        if (IntPtr.Zero == pViewInfo)
+        IntPtr ptr_viewinfo = UnsafeNativeMethods.CRhinoDocProperties_GetNamedView(m_doc.m_docId, index);
+        if (IntPtr.Zero == ptr_viewinfo)
           return null;
-        return new Rhino.DocObjects.ViewInfo(m_doc, index);
+        return new ViewInfo(m_doc, index);
       }
     }
 
@@ -192,8 +192,8 @@ namespace Rhino.DocObjects.Tables
 
     public int Add(ViewInfo view)
     {
-      IntPtr pConstView = view.ConstPointer();
-      return UnsafeNativeMethods.CRhinoDocProperties_AddNamedView2(m_doc.m_docId, pConstView);
+      IntPtr ptr_const_view = view.ConstPointer();
+      return UnsafeNativeMethods.CRhinoDocProperties_AddNamedView2(m_doc.m_docId, ptr_const_view);
     }
 
     /// <summary>Remove named view from the document.</summary>
@@ -213,31 +213,58 @@ namespace Rhino.DocObjects.Tables
       return Delete(index);
     }
 
-    public bool Restore(int index, Rhino.Display.RhinoView viewport, bool backgroundBitmap)
+    /// <summary>
+    /// Sets the MainViewport of a standard RhinoView to a named views settings
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="view"></param>
+    /// <param name="backgroundBitmap"></param>
+    /// <returns></returns>
+    public bool Restore(int index, Display.RhinoView view, bool backgroundBitmap)
     {
-      IntPtr pConstViewport = viewport.NonConstPointer();
-      return UnsafeNativeMethods.RHC_RhinoRestoreNamedView(m_doc.m_docId, index, pConstViewport, backgroundBitmap, 0, 0);
+      if (view is Display.RhinoPageView)
+        throw new Exception("Use form of Restore that takes a RhinoViewport for layout views");
+      return Restore(index, view.MainViewport, backgroundBitmap);
     }
 
-    public bool RestoreAnimated(int index, Rhino.Display.RhinoView viewport, bool backgroundBitmap)
+    public bool Restore(int index, Display.RhinoViewport viewport, bool backgroundBitmap)
+    {
+      IntPtr ptr_const_viewport = viewport.NonConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoRestoreNamedView(m_doc.m_docId, index, ptr_const_viewport, backgroundBitmap, 0, 0);
+    }
+
+    public bool RestoreAnimated(int index, Display.RhinoView view, bool backgroundBitmap)
+    {
+      return RestoreAnimated(index, view, backgroundBitmap, 100, 10);
+    }
+
+    public bool RestoreAnimated(int index, Display.RhinoView view, bool backgroundBitmap, int frames, int frameRate)
+    {
+      if (view is Display.RhinoPageView)
+        throw new Exception("Use form of RestoreAnimated that takes a RhinoViewport for layout views");
+      return RestoreAnimated(index, view.MainViewport, backgroundBitmap, frames, frameRate);
+    }
+
+    public bool RestoreAnimated(int index, Display.RhinoViewport viewport, bool backgroundBitmap)
     {
       return RestoreAnimated(index, viewport, backgroundBitmap, 100, 10);
     }
 
-    public bool RestoreAnimated(int index, Rhino.Display.RhinoView viewport, bool backgroundBitmap, int frames, int frameRate)
+    public bool RestoreAnimated(int index, Display.RhinoViewport viewport, bool backgroundBitmap, int frames, int frameRate)
     {
-      IntPtr pConstViewport = viewport.NonConstPointer();
-      return UnsafeNativeMethods.RHC_RhinoRestoreNamedView(m_doc.m_docId, index, pConstViewport, backgroundBitmap, frames, frameRate);
+      IntPtr ptr_const_viewport = viewport.NonConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoRestoreNamedView(m_doc.m_docId, index, ptr_const_viewport, backgroundBitmap, frames, frameRate);
     }
+
 
     #region enumerator
     public IEnumerator<ViewInfo> GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<NamedViewTable, ViewInfo>(this);
+      return new Collections.TableEnumerator<NamedViewTable, ViewInfo>(this);
     }
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<NamedViewTable, ViewInfo>(this);
+      return new Collections.TableEnumerator<NamedViewTable, ViewInfo>(this);
     }
     #endregion
 

@@ -225,3 +225,4 @@ rh3dmio_native_out
 /examples/rhino3dmio/example_read_nuget/*.user
 /*.suo
 
+/methodgen/bin/Debug

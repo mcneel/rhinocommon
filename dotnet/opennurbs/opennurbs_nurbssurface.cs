@@ -655,6 +655,7 @@ namespace Rhino.Geometry
       }
     }
 
+#if RHINO_SDK
     /// <summary>Applies the space morph to geometry.</summary>
     /// <param name="geometry">The geometry to be morphed.</param>
     /// <returns>true on success, false on failure.</returns>
@@ -668,7 +669,7 @@ namespace Rhino.Geometry
       IntPtr pGeometry = geometry.NonConstPointer();
       return UnsafeNativeMethods.ON_MorphControl_MorphGeometry(pConstThis, pGeometry);
     }
-
+#endif
   }
 }
 

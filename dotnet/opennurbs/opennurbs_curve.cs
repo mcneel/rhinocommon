@@ -1906,6 +1906,7 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Curve_Reverse(ptr);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Finds parameter of the point on a curve that is closest to testPoint.
     /// If the maximumDistance parameter is > 0, then only points whose distance
@@ -1940,7 +1941,6 @@ namespace Rhino.Geometry
       return rc;
     }
 
-#if RHINO_SDK
     /// <summary>
     /// Finds the object (and the closest point in that object) that is closest to
     /// this curve. <para><see cref="Brep">Breps</see>, <see cref="Surface">surfaces</see>,
@@ -2112,6 +2112,7 @@ namespace Rhino.Geometry
       }
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Gets a point at a certain length along the curve. The length must be 
     /// non-negative and less than or equal to the length of the curve. 
@@ -2141,6 +2142,7 @@ namespace Rhino.Geometry
       double t;
       return !NormalizedLengthParameter(length, out t) ? Point3d.Unset : PointAt(t);
     }
+#endif
 
     /// <summary>Forces the curve to start at a specified point. 
     /// Not all curve types support this operation.</summary>
@@ -2363,6 +2365,7 @@ namespace Rhino.Geometry
     #endregion
 
     #region size related methods
+#if RHINO_SDK
     /// <summary>
     /// Gets the length of the curve with a fractional tolerance of 1.0e-8.
     /// </summary>
@@ -2740,7 +2743,6 @@ namespace Rhino.Geometry
       return null;
     }
 
-#if RHINO_SDK
     /// <summary>
     /// Divide the curve into a number of equal-length segments.
     /// </summary>
@@ -2966,6 +2968,7 @@ namespace Rhino.Geometry
       return Trim(domain.T0, domain.T1);
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Shortens a curve by a given length
     /// </summary>
@@ -2996,6 +2999,7 @@ namespace Rhino.Geometry
       }
       return Trim(t0,t1);
     }
+#endif
 
     /// <summary>
     /// Splits (divides) the curve at the specified parameter. 

@@ -107,7 +107,6 @@ namespace Rhino.Geometry
         lines = line_array.ToArray();
       }
     }
-#endif
 
     /// <summary>
     /// Decomposes the hatch pattern into an array of geometry.
@@ -124,14 +123,12 @@ namespace Rhino.Geometry
       {
         IntPtr pParentRhinoObject = IntPtr.Zero;
 
-#if RHINO_SDK
         if (IsDocumentControlled)
         {
           Rhino.DocObjects.RhinoObject rhobj = ParentRhinoObject();
           if (rhobj != null)
             pParentRhinoObject = rhobj.ConstPointer();
         }
-#endif
         IntPtr pGeometryArray = geometry.NonConstPointer();
         IntPtr pConstThis = ConstPointer();
 
@@ -140,6 +137,7 @@ namespace Rhino.Geometry
         return rc;
       }
     }
+#endif
 
     /// <summary>
     /// Gets 3d curves that define the boundaries of the hatch

@@ -124,7 +124,7 @@ namespace Rhino.Input
     {
       point = new Point3d();
       uint rc = UnsafeNativeMethods.RhinoSdkGet_RhinoGetPoint(prompt, acceptNothing, ref point);
-      return (Rhino.Commands.Result)rc;
+      return (Commands.Result)rc;
     }
 
     /// <summary>
@@ -139,13 +139,13 @@ namespace Rhino.Input
     {
       point = new Point3d();
       int gprc = UnsafeNativeMethods.RHC_RhinoGetPointOnMesh(meshObjectId, prompt, acceptNothing, ref point);
-      Commands.Result rc = Rhino.Commands.Result.Failure;
+      Commands.Result rc = Commands.Result.Failure;
       if (0 == gprc)
-        rc = Rhino.Commands.Result.Success;
+        rc = Commands.Result.Success;
       else if (1 == gprc)
-        rc = Rhino.Commands.Result.Nothing;
+        rc = Commands.Result.Nothing;
       else if (2 == gprc)
-        rc = Rhino.Commands.Result.Cancel;
+        rc = Commands.Result.Cancel;
       return rc;
     }
 
@@ -157,7 +157,7 @@ namespace Rhino.Input
     /// <param name="acceptNothing">true if nothing else should be accepted.</param>
     /// <param name="point">A point value will be assigned to this out parameter during this call.</param>
     /// <returns>The command result based on user choice.</returns>
-    public static Commands.Result GetPointOnMesh(Rhino.DocObjects.MeshObject meshObject, string prompt, bool acceptNothing, out Point3d point)
+    public static Commands.Result GetPointOnMesh(DocObjects.MeshObject meshObject, string prompt, bool acceptNothing, out Point3d point)
     {
       return GetPointOnMesh(meshObject.Id, prompt, acceptNothing, out point);
     }
@@ -178,8 +178,8 @@ namespace Rhino.Input
     {
       int abgr = System.Drawing.ColorTranslator.ToWin32(color);
       uint rc = UnsafeNativeMethods.RhinoSdkGet_RhinoGetColor(prompt, acceptNothing, ref abgr, true);
-      color = Rhino.Runtime.Interop.ColorFromWin32(abgr);
-      return (Rhino.Commands.Result)rc;
+      color = Runtime.Interop.ColorFromWin32(abgr);
+      return (Commands.Result)rc;
     }
 
     /// <summary>Easy to use object getter.</summary>
@@ -201,16 +201,16 @@ namespace Rhino.Input
     /// <code source='examples\py\ex_dividebylength.py' lang='py'/>
     /// </example>
     [CLSCompliant(false)]
-    public static Commands.Result GetOneObject(string prompt, bool acceptNothing, Rhino.DocObjects.ObjectType filter, out Rhino.DocObjects.ObjRef rhObject)
+    public static Commands.Result GetOneObject(string prompt, bool acceptNothing, DocObjects.ObjectType filter, out DocObjects.ObjRef rhObject)
     {
       rhObject = null;
-      Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject();
+      Custom.GetObject go = new Custom.GetObject();
       go.SetCommandPrompt(prompt);
       go.AcceptNothing(acceptNothing);
       go.GeometryFilter = filter;
       go.Get();
       Commands.Result rc = go.CommandResult();
-      if (rc == Rhino.Commands.Result.Success && go.ObjectCount > 0)
+      if (rc == Commands.Result.Success && go.ObjectCount > 0)
       {
         rhObject = go.Object(0);
       }
@@ -232,16 +232,16 @@ namespace Rhino.Input
     /// <remarks>
     /// If you need options or more advanced user interface, then use GetObject class.
     /// </remarks>
-    public static Commands.Result GetOneObject(string prompt, bool acceptNothing, Rhino.Input.Custom.GetObjectGeometryFilter filter, out Rhino.DocObjects.ObjRef objref)
+    public static Commands.Result GetOneObject(string prompt, bool acceptNothing, Custom.GetObjectGeometryFilter filter, out DocObjects.ObjRef objref)
     {
       objref = null;
-      Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject();
+      Custom.GetObject go = new Custom.GetObject();
       go.SetCommandPrompt(prompt);
       go.AcceptNothing(acceptNothing);
       go.SetCustomGeometryFilter(filter);
       go.Get();
       Commands.Result rc = go.CommandResult();
-      if (rc == Rhino.Commands.Result.Success && go.ObjectCount > 0)
+      if (rc == Commands.Result.Success && go.ObjectCount > 0)
       {
         objref = go.Object(0);
       }
@@ -268,16 +268,16 @@ namespace Rhino.Input
     /// <code source='examples\py\ex_booleandifference.py' lang='py'/>
     /// </example>
     [CLSCompliant(false)]
-    public static Commands.Result GetMultipleObjects(string prompt, bool acceptNothing, Rhino.DocObjects.ObjectType filter, out Rhino.DocObjects.ObjRef[] rhObjects)
+    public static Commands.Result GetMultipleObjects(string prompt, bool acceptNothing, DocObjects.ObjectType filter, out DocObjects.ObjRef[] rhObjects)
     {
       rhObjects = null;
-      Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject();
+      Custom.GetObject go = new Custom.GetObject();
       go.SetCommandPrompt(prompt);
       go.AcceptNothing(acceptNothing);
       go.GeometryFilter = filter;
       go.GetMultiple(1, 0); //David: changed this from GetMultiple(1, -1), which is a much rarer case (imo).
       Commands.Result rc = go.CommandResult();
-      if (rc == Rhino.Commands.Result.Success && go.ObjectCount > 0)
+      if (rc == Commands.Result.Success && go.ObjectCount > 0)
       {
         rhObjects = go.Objects();
       }
@@ -298,16 +298,16 @@ namespace Rhino.Input
     /// <remarks>
     /// If you need options or more advanced user interface, then use GetObject class.
     /// </remarks>
-    public static Commands.Result GetMultipleObjects(string prompt, bool acceptNothing, Rhino.Input.Custom.GetObjectGeometryFilter filter, out Rhino.DocObjects.ObjRef[] rhObjects)
+    public static Commands.Result GetMultipleObjects(string prompt, bool acceptNothing, Custom.GetObjectGeometryFilter filter, out DocObjects.ObjRef[] rhObjects)
     {
       rhObjects = null;
-      Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject();
+      Custom.GetObject go = new Custom.GetObject();
       go.SetCommandPrompt(prompt);
       go.AcceptNothing(acceptNothing);
       go.SetCustomGeometryFilter(filter);
       go.GetMultiple(1, 0); //David: changed this from GetMultiple(1, -1), which is a much rarer case (imo).
       Commands.Result rc = go.CommandResult();
-      if (rc == Rhino.Commands.Result.Success && go.ObjectCount > 0)
+      if (rc == Commands.Result.Success && go.ObjectCount > 0)
       {
         rhObjects = go.Objects();
       }
@@ -338,7 +338,7 @@ namespace Rhino.Input
       IntPtr resultstring = UnsafeNativeMethods.RhinoSdkGet_RhinoGetString(prompt, acceptNothing, outputString, ref rc);
       if (resultstring != IntPtr.Zero)
         outputString = Marshal.PtrToStringUni(resultstring);
-      return (Rhino.Commands.Result)rc;
+      return (Commands.Result)rc;
     }
 
     /// <summary>Easy to use bool getter.</summary>
@@ -354,24 +354,24 @@ namespace Rhino.Input
     /// </returns>
     public static Commands.Result GetBool(string prompt, bool acceptNothing, string offPrompt, string onPrompt, ref bool boolValue)
     {
-      using (Rhino.Input.Custom.GetOption get = new Rhino.Input.Custom.GetOption())
+      using (Custom.GetOption get = new Custom.GetOption())
       {
         get.SetCommandPrompt(prompt);
         get.AcceptNothing(acceptNothing);
         if (acceptNothing)
           get.SetDefaultString(boolValue ? onPrompt : offPrompt);
-        int onValue = get.AddOption(onPrompt);
-        int offValue = get.AddOption(offPrompt);
+        int on_value = get.AddOption(onPrompt);
+        int off_value = get.AddOption(offPrompt);
         get.Get();
         Commands.Result result = get.CommandResult();
         if (result == Commands.Result.Success && get.Result() == GetResult.Option)
         {
-          Rhino.Input.Custom.CommandLineOption option = get.Option();
+          Custom.CommandLineOption option = get.Option();
           if (null != option)
           {
-            if (option.Index == onValue)
+            if (option.Index == on_value)
               boolValue = true;
-            else if (option.Index == offValue)
+            else if (option.Index == off_value)
               boolValue = false;
           }
         }
@@ -403,7 +403,7 @@ namespace Rhino.Input
     public static Commands.Result GetNumber(string prompt, bool acceptNothing, ref double outputNumber, double lowerLimit, double upperLimit)
     {
       uint rc = UnsafeNativeMethods.RhinoSdkGet_RhinoGetNumber(prompt, acceptNothing, false, ref outputNumber, lowerLimit, upperLimit);
-      return (Rhino.Commands.Result)rc;
+      return (Commands.Result)rc;
     }
     /// <summary>
     /// Easy to use number getter.
@@ -470,7 +470,7 @@ namespace Rhino.Input
         outputNumber = int.MinValue;
       else
         outputNumber = (int)output;
-      return (Rhino.Commands.Result)rc;
+      return (Commands.Result)rc;
     }
 
     /// <summary>
@@ -487,10 +487,10 @@ namespace Rhino.Input
     /// <code source='examples\cs\ex_splitbrepwithplane.cs' lang='cs'/>
     /// <code source='examples\py\ex_splitbrepwithplane.py' lang='py'/>
     /// </example>
-    public static Commands.Result GetPlane(out Rhino.Geometry.Plane plane)
+    public static Commands.Result GetPlane(out Plane plane)
     {
-      plane = Rhino.Geometry.Plane.Unset;
-      Commands.Result rc = (Rhino.Commands.Result)UnsafeNativeMethods.RHC_RhinoGetPlane(ref plane);
+      plane = Plane.Unset;
+      Commands.Result rc = (Commands.Result)UnsafeNativeMethods.RHC_RhinoGetPlane(ref plane);
       return rc;
     }
 
@@ -504,10 +504,10 @@ namespace Rhino.Input
     /// <code source='examples\cs\ex_addclippingplane.cs' lang='cs'/>
     /// <code source='examples\py\ex_addclippingplane.py' lang='py'/>
     /// </example>
-    public static Commands.Result GetRectangle(out Rhino.Geometry.Point3d[] corners)
+    public static Commands.Result GetRectangle(out Point3d[] corners)
     {
       corners = new Point3d[4];
-      Commands.Result rc = (Rhino.Commands.Result)UnsafeNativeMethods.RHC_RhinoGetRectangle(corners, IntPtr.Zero);
+      Commands.Result rc = (Commands.Result)UnsafeNativeMethods.RHC_RhinoGetRectangle(corners, IntPtr.Zero);
       if (rc != Commands.Result.Success)
         corners = null;
       return rc;
@@ -558,19 +558,19 @@ namespace Rhino.Input
     /// view that the user selected the window in.
     /// </param>
     /// <returns>Success or Cancel.</returns>
-    public static Commands.Result Get2dRectangle(bool solidPen, out System.Drawing.Rectangle rectangle, out Rhino.Display.RhinoView rectView)
+    public static Commands.Result Get2dRectangle(bool solidPen, out System.Drawing.Rectangle rectangle, out RhinoView rectView)
     {
       rectangle = System.Drawing.Rectangle.Empty;
       rectView = null;
       const int PS_SOLID = 0;
       const int PS_DOT = 2;
       int left = 0, top = 0, right = 0, bottom = 0;
-      IntPtr pView = UnsafeNativeMethods.RHC_RhinoGet2dRectangle(ref left, ref top, ref right, ref bottom, solidPen ? PS_SOLID : PS_DOT);
-      if (IntPtr.Zero == pView)
-        return Rhino.Commands.Result.Cancel;
-      rectView = Rhino.Display.RhinoView.FromIntPtr(pView);
+      IntPtr ptr_view = UnsafeNativeMethods.RHC_RhinoGet2dRectangle(ref left, ref top, ref right, ref bottom, solidPen ? PS_SOLID : PS_DOT);
+      if (IntPtr.Zero == ptr_view)
+        return Commands.Result.Cancel;
+      rectView = RhinoView.FromIntPtr(ptr_view);
       rectangle = System.Drawing.Rectangle.FromLTRB(left, top, right, bottom);
-      return Rhino.Commands.Result.Success;
+      return Commands.Result.Success;
     }
 
     /// <summary>
@@ -578,7 +578,7 @@ namespace Rhino.Input
     /// </summary>
     /// <param name="box">If the result is Success, this parameter will be filled out.</param>
     /// <returns>Commands.Result.Success if successful.</returns>
-    public static Commands.Result GetBox(out Rhino.Geometry.Box box)
+    public static Commands.Result GetBox(out Box box)
     {
       return GetBox(out box, GetBoxMode.All, Point3d.Unset, null, null, null);
     }
@@ -593,7 +593,7 @@ namespace Rhino.Input
     /// <param name="prompt2">Optional second prompt. Supply null to use the default prompt.</param>
     /// <param name="prompt3">Optional third prompt. Supply null to use the default prompt.</param>
     /// <returns>Commands.Result.Success if successful.</returns>
-    public static Commands.Result GetBox(out Rhino.Geometry.Box box, GetBoxMode mode, Point3d basePoint, string prompt1, string prompt2, string prompt3)
+    public static Commands.Result GetBox(out Box box, GetBoxMode mode, Point3d basePoint, string prompt1, string prompt2, string prompt3)
     {
       Point3d[] corners = new Point3d[8];
       // 19 Feb 2010 S. Baer
@@ -601,12 +601,12 @@ namespace Rhino.Input
       // before passing it off to unmanaged code.
       for (int i = 0; i < corners.Length; i++)
         corners[i] = new Point3d();
-      Rhino.Commands.Result rc = (Rhino.Commands.Result)UnsafeNativeMethods.RHC_RhinoGetBox(corners, (int)mode, basePoint, prompt1, prompt2, prompt3);
+      Commands.Result rc = (Commands.Result)UnsafeNativeMethods.RHC_RhinoGetBox(corners, (int)mode, basePoint, prompt1, prompt2, prompt3);
 
       // David: This code is untested.
       box = new Box();
 
-      if (rc == Rhino.Commands.Result.Success)
+      if (rc == Commands.Result.Success)
       {
         Vector3d x = corners[1] - corners[0];
         Vector3d y = corners[3] - corners[0];
@@ -628,13 +628,13 @@ namespace Rhino.Input
 
         // Boxes were getting inverted if the "height" pick was on the negative side of the base plane.
         Plane base_plane = new Plane(corners[0], x, y);
-        Point3d C0, C1;
-        base_plane.RemapToPlaneSpace(corners[0], out C0);
-        base_plane.RemapToPlaneSpace(corners[6], out C1);
+        Point3d c0, c1;
+        base_plane.RemapToPlaneSpace(corners[0], out c0);
+        base_plane.RemapToPlaneSpace(corners[6], out c1);
 
-        Interval ix = new Interval(C0.X, C1.X); ix.MakeIncreasing();
-        Interval iy = new Interval(C0.Y, C1.Y); iy.MakeIncreasing();
-        Interval iz = new Interval(C0.Z, C1.Z); iz.MakeIncreasing();
+        Interval ix = new Interval(c0.X, c1.X); ix.MakeIncreasing();
+        Interval iy = new Interval(c0.Y, c1.Y); iy.MakeIncreasing();
+        Interval iz = new Interval(c0.Z, c1.Z); iz.MakeIncreasing();
 
         box = new Box(base_plane, ix, iy, iz);
       }
@@ -642,15 +642,15 @@ namespace Rhino.Input
       return rc;
     }
 
-    static Commands.Result GetGripsHelper(out Rhino.DocObjects.GripObject[] grips, string prompt, bool singleGrip)
+    static Commands.Result GetGripsHelper(out DocObjects.GripObject[] grips, string prompt, bool singleGrip)
     {
       grips = null;
-      using (Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject())
+      using (Custom.GetObject go = new Custom.GetObject())
       {
         if (!string.IsNullOrEmpty(prompt))
           go.SetCommandPrompt(prompt);
         go.SubObjectSelect = false;
-        go.GeometryFilter = Rhino.DocObjects.ObjectType.Grip;
+        go.GeometryFilter = DocObjects.ObjectType.Grip;
         go.GroupSelect = false;
         go.AcceptNothing(true);
         if (singleGrip)
@@ -658,18 +658,18 @@ namespace Rhino.Input
         else
           go.GetMultiple(1, 0);
         Commands.Result rc = go.CommandResult();
-        if (Rhino.Commands.Result.Success == rc)
+        if (Commands.Result.Success == rc)
         {
-          Rhino.DocObjects.ObjRef[] objrefs = go.Objects();
+          DocObjects.ObjRef[] objrefs = go.Objects();
           if (null != objrefs && objrefs.Length > 0)
           {
-            System.Collections.Generic.List<Rhino.DocObjects.GripObject> griplist = new System.Collections.Generic.List<Rhino.DocObjects.GripObject>();
+            List<DocObjects.GripObject> griplist = new List<DocObjects.GripObject>();
             for (int i = 0; i < objrefs.Length; i++)
             {
-              Rhino.DocObjects.ObjRef ob = objrefs[i];
+              DocObjects.ObjRef ob = objrefs[i];
               if (null == ob)
                 continue;
-              Rhino.DocObjects.GripObject grip = ob.Object() as Rhino.DocObjects.GripObject;
+              DocObjects.GripObject grip = ob.Object() as DocObjects.GripObject;
               if (grip != null)
                 griplist.Add(grip);
               ob.Dispose();
@@ -682,73 +682,84 @@ namespace Rhino.Input
       }
     }
 
-    public static Commands.Result GetGrips(out Rhino.DocObjects.GripObject[] grips, string prompt)
+    public static Commands.Result GetGrips(out DocObjects.GripObject[] grips, string prompt)
     {
       return GetGripsHelper(out grips, prompt, false);
     }
 
-    public static Commands.Result GetGrip(out Rhino.DocObjects.GripObject grip, string prompt)
+    public static Commands.Result GetGrip(out DocObjects.GripObject grip, string prompt)
     {
       grip = null;
-      Rhino.DocObjects.GripObject[] grips;
+      DocObjects.GripObject[] grips;
       Commands.Result rc = GetGripsHelper(out grips, prompt, true);
       if (grips != null && grips.Length > 0)
         grip = grips[0];
       return rc;
     }
 
-    public static Commands.Result GetSpiral(out Rhino.Geometry.NurbsCurve spiral)
+    public static Commands.Result GetSpiral(out NurbsCurve spiral)
     {
       spiral = null;
-      Rhino.Geometry.NurbsCurve nc = new NurbsCurve();
-      IntPtr pCurve = nc.NonConstPointer();
-      uint rc = UnsafeNativeMethods.RHC_RhinoGetSpiralHelix(pCurve, true);
-      Rhino.Commands.Result cmdRc = (Rhino.Commands.Result)rc;
-      if (cmdRc == Rhino.Commands.Result.Success)
+      NurbsCurve nc = new NurbsCurve();
+      IntPtr ptr_curve = nc.NonConstPointer();
+      uint rc = UnsafeNativeMethods.RHC_RhinoGetSpiralHelix(ptr_curve, true);
+      Commands.Result command_rc = (Commands.Result)rc;
+      if (command_rc == Commands.Result.Success)
         spiral = nc;
-      return cmdRc;
+      return command_rc;
     }
 
-    public static Commands.Result GetHelix(out Rhino.Geometry.NurbsCurve helix)
+    public static Commands.Result GetHelix(out NurbsCurve helix)
     {
       helix = null;
-      Rhino.Geometry.NurbsCurve nc = new NurbsCurve();
-      IntPtr pCurve = nc.NonConstPointer();
-      uint rc = UnsafeNativeMethods.RHC_RhinoGetSpiralHelix(pCurve, false);
-      Rhino.Commands.Result cmdRc = (Rhino.Commands.Result)rc;
-      if (cmdRc == Rhino.Commands.Result.Success)
+      NurbsCurve nc = new NurbsCurve();
+      IntPtr ptr_curve = nc.NonConstPointer();
+      uint rc = UnsafeNativeMethods.RHC_RhinoGetSpiralHelix(ptr_curve, false);
+      Commands.Result command_rc = (Commands.Result)rc;
+      if (command_rc == Commands.Result.Success)
         helix = nc;
-      return cmdRc;
+      return command_rc;
     }
 
-    public static Commands.Result GetLine(out Rhino.Geometry.Line line)
+    public static Commands.Result GetLine(out Line line)
     {
       line = new Line();
       uint rc = UnsafeNativeMethods.RHC_RhinoGetLine(ref line);
-      Rhino.Commands.Result cmdRc = (Rhino.Commands.Result)rc;
-      if (cmdRc != Rhino.Commands.Result.Success)
+      Commands.Result command_rc = (Commands.Result)rc;
+      if (command_rc != Commands.Result.Success)
         line = Line.Unset;
-      return cmdRc;
+      return command_rc;
     }
 
-    public static Commands.Result GetArc(out Rhino.Geometry.Arc arc)
+    public static Commands.Result GetPolyline(out Polyline polyline)
+    {
+      using (var points = new SimpleArrayPoint3d())
+      {
+        IntPtr ptr_points = points.NonConstPointer();
+        uint rc = UnsafeNativeMethods.RHC_RhinoGetPolyline(IntPtr.Zero, ptr_points);
+        polyline = new Polyline(points.ToArray());
+        return (Commands.Result)rc;
+      }
+    }
+
+    public static Commands.Result GetArc(out Arc arc)
     {
       arc = new Arc();
       uint rc = UnsafeNativeMethods.RHC_RhinoGetArc(ref arc);
-      Rhino.Commands.Result cmdRc = (Rhino.Commands.Result)rc;
-      if (cmdRc != Rhino.Commands.Result.Success)
+      Commands.Result command_rc = (Commands.Result)rc;
+      if (command_rc != Commands.Result.Success)
         arc = new Arc();
-      return cmdRc;
+      return command_rc;
     }
 
-    public static Commands.Result GetCircle(out Rhino.Geometry.Circle circle)
+    public static Commands.Result GetCircle(out Circle circle)
     {
       circle = new Circle();
       uint rc = UnsafeNativeMethods.RHC_RhinoGetCircle(ref circle);
-      Rhino.Commands.Result cmdRc = (Rhino.Commands.Result)rc;
-      if (cmdRc != Rhino.Commands.Result.Success)
+      Commands.Result command_rc = (Commands.Result)rc;
+      if (command_rc != Commands.Result.Success)
         circle = new Circle();
-      return cmdRc;
+      return command_rc;
     }
 
     /// <example>
@@ -756,12 +767,12 @@ namespace Rhino.Input
     /// <code source='examples\cs\ex_addlineardimension.cs' lang='cs'/>
     /// <code source='examples\py\ex_addlineardimension.py' lang='py'/>
     /// </example>
-    public static Commands.Result GetLinearDimension(out Rhino.Geometry.LinearDimension dimension)
+    public static Commands.Result GetLinearDimension(out LinearDimension dimension)
     {
       uint command_rc = 0;
-      IntPtr pDimension = UnsafeNativeMethods.RHC_RhinoGetDimLinear(ref command_rc);
-      dimension = Rhino.Geometry.GeometryBase.CreateGeometryHelper(pDimension, null) as Rhino.Geometry.LinearDimension;
-      return (Rhino.Commands.Result)command_rc;
+      IntPtr ptr_dimension = UnsafeNativeMethods.RHC_RhinoGetDimLinear(ref command_rc);
+      dimension = GeometryBase.CreateGeometryHelper(ptr_dimension, null) as LinearDimension;
+      return (Commands.Result)command_rc;
     }
 
     /// <summary>
@@ -777,12 +788,12 @@ namespace Rhino.Input
     /// <code source='examples\cs\ex_addnamedview.cs' lang='cs'/>
     /// <code source='examples\py\ex_addnamedview.py' lang='py'/>
     /// </example>
-    public static Commands.Result GetView(string commandPrompt, out Rhino.Display.RhinoView view)
+    public static Commands.Result GetView(string commandPrompt, out RhinoView view)
     {
       uint command_rc = 0;
-      IntPtr pView = UnsafeNativeMethods.RHC_RhinoGetView(commandPrompt, ref command_rc);
-      view = Rhino.Display.RhinoView.FromIntPtr(pView);
-      return (Rhino.Commands.Result)command_rc;
+      IntPtr ptr_view = UnsafeNativeMethods.RHC_RhinoGetView(commandPrompt, ref command_rc);
+      view = RhinoView.FromIntPtr(ptr_view);
+      return (Commands.Result)command_rc;
     }
 
     /// <summary>
@@ -821,9 +832,9 @@ namespace Rhino.Input
     {
       using (var sh = new StringHolder())
       {
-        IntPtr pString = sh.NonConstPointer();
+        IntPtr ptr_string = sh.NonConstPointer();
         IntPtr pParent = parent != null ? parent.Handle : IntPtr.Zero;
-        UnsafeNativeMethods.CRhinoGetFileDialog_Get((int)mode, defaultName, title, pParent, pString);
+        UnsafeNativeMethods.CRhinoGetFileDialog_Get((int)mode, defaultName, title, pParent, ptr_string);
         return sh.ToString();
       }
     }
@@ -832,8 +843,8 @@ namespace Rhino.Input
     {
       using (var sh = new StringHolder())
       {
-        IntPtr pString = sh.NonConstPointer();
-        UnsafeNativeMethods.CRhinoGetFileDialog_Get2((int)mode, defaultName, pString);
+        IntPtr ptr_string = sh.NonConstPointer();
+        UnsafeNativeMethods.CRhinoGetFileDialog_Get2((int)mode, defaultName, ptr_string);
         return sh.ToString();
       }
     }

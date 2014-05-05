@@ -149,6 +149,7 @@ namespace Rhino.Geometry
 
     //bool IsValid( ON_TextLog* text_log ) const;
 
+#if RHINO_SDK
     /// <summary>
     /// Gets the mesh face indices of the triangle where the
     /// intersection is on the face takes into consideration
@@ -162,6 +163,7 @@ namespace Rhino.Geometry
       c = -1;
       return UnsafeNativeMethods.ON_MESHPOINT_GetTriangle(pConstMesh, ref m_data, ref a, ref b, ref b);
     }
+#endif
 
     /// <summary>
     /// Face triangle where the intersection takes place:

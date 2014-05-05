@@ -81,7 +81,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoNativeMethods.cs" />
-    <Compile Include="AutoNativeMethodsRdk.cs" />
     <Compile Include="hostutils.cs" />
     <Compile Include="Import.cs" />
     <Compile Include="interop.cs" />

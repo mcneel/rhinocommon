@@ -2,9 +2,10 @@
 
 RH_C_FUNCTION ON_LineCurve* ON_LineCurve_New( ON_LineCurve* pOther )
 {
+  // 26-Feb-2014 Dale Fugier, http://mcneel.myjetbrains.com/youtrack/issue/RH-24773
   if( pOther )
-    return new ON_LineCurve();
-  return new ON_LineCurve(*pOther);
+    return new ON_LineCurve(*pOther);
+  return new ON_LineCurve();
 }
 
 RH_C_FUNCTION ON_LineCurve* ON_LineCurve_New2(ON_2DPOINT_STRUCT from, ON_2DPOINT_STRUCT to)

@@ -505,6 +505,7 @@ namespace Rhino.Geometry.Intersect
     #endregion
 
     #region geometric
+#if RHINO_SDK
     /// <summary>
     /// Finds the places where a curve intersects itself. 
     /// </summary>
@@ -586,7 +587,6 @@ namespace Rhino.Geometry.Intersect
       return CurveIntersections.Create(pIntersectArray);
     }
 
-#if RHINO_SDK
     /// <summary>
     /// Intersects a curve with a Brep. This function returns the 3D points of intersection
     /// and 3D overlap curves. If an error occurs while processing overlap curves, this function 
@@ -778,7 +778,6 @@ namespace Rhino.Geometry.Intersect
 
       return rc;
     }
-#endif
     
     /// <summary>
     /// Quickly intersects two meshes. Overlaps and near misses are ignored.
@@ -950,7 +949,7 @@ namespace Rhino.Geometry.Intersect
         return rc;
       }
     }
-
+#endif
     //public static Point3d[] RaySurfaces(Ray3d ray, IEnumerable<Surface> surfaces, int maxReflections)
     //{
     //  if (maxReflections < 1 || maxReflections > 1000)

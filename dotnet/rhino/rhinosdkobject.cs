@@ -431,6 +431,68 @@ namespace Rhino.DocObjects
       }
     }
 
+    /// <summary>Mesh Rhino Objects</summary>
+    /// <param name="rhinoObjects">Objects to mesh</param>
+    /// <param name="parameters">The parameters used to create the meshes</param>
+    /// <param name="meshes"></param>
+    /// <param name="attributes"></param>
+    /// <returns></returns>
+    public static Commands.Result MeshObjects(System.Collections.Generic.IEnumerable<RhinoObject> rhinoObjects, MeshingParameters parameters, out Mesh[] meshes, out ObjectAttributes[] attributes)
+    {
+      using (var rhinoobject_array = new Runtime.INTERNAL_RhinoObjectArray(rhinoObjects))
+      using (var mesh_array = new SimpleArrayMeshPointer())
+      {
+        IntPtr ptr_rhinoobject_array = rhinoobject_array.NonConstPointer();
+        int ui_style = 2; //no ui
+        IntPtr ptr_mesh_parameters = parameters.NonConstPointer();
+        IntPtr ptr_mesharray = mesh_array.NonConstPointer();
+        IntPtr ptr_attributesarray = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_New();
+        int rc = UnsafeNativeMethods.RHC_RhinoMeshObjects(ptr_rhinoobject_array, ref ui_style, ptr_mesh_parameters, ptr_mesharray, ptr_attributesarray);
+        meshes = mesh_array.ToNonConstArray();
+        int attrib_count = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Count(ptr_attributesarray);
+        attributes = new ObjectAttributes[attrib_count];
+        for (int i = 0; i < attrib_count; i++)
+        {
+          IntPtr ptr_attribute = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Get(ptr_attributesarray, i);
+          attributes[i] = new ObjectAttributes(ptr_attribute);
+        }
+        UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Delete(ptr_attributesarray);
+        return (Commands.Result)rc;
+      }
+    }
+
+    /// <summary>Mesh Rhino Objects</summary>
+    /// <param name="rhinoObjects">Objects to mesh</param>
+    /// <param name="parameters">The parameters used to create the meshes</param>
+    /// <param name="simpleDialog"></param>
+    /// <param name="meshes"></param>
+    /// <param name="attributes"></param>
+    /// <returns></returns>
+    public static Commands.Result MeshObjects(System.Collections.Generic.IEnumerable<RhinoObject> rhinoObjects, ref MeshingParameters parameters, ref bool simpleDialog, out Mesh[] meshes, out ObjectAttributes[] attributes)
+    {
+      using (var rhinoobject_array = new Runtime.INTERNAL_RhinoObjectArray(rhinoObjects))
+      using (var mesh_array = new SimpleArrayMeshPointer())
+      {
+        IntPtr ptr_rhinoobject_array = rhinoobject_array.NonConstPointer();
+        int ui_style = simpleDialog ? 0: 1;
+        IntPtr ptr_mesh_parameters = parameters.NonConstPointer();
+        IntPtr ptr_mesharray = mesh_array.NonConstPointer();
+        IntPtr ptr_attributesarray = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_New();
+        int rc = UnsafeNativeMethods.RHC_RhinoMeshObjects(ptr_rhinoobject_array, ref ui_style, ptr_mesh_parameters, ptr_mesharray, ptr_attributesarray);
+        simpleDialog = ui_style == 0;
+        meshes = mesh_array.ToNonConstArray();
+        int attrib_count = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Count(ptr_attributesarray);
+        attributes = new ObjectAttributes[attrib_count];
+        for (int i = 0; i < attrib_count; i++)
+        {
+          IntPtr ptr_attribute = UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Get(ptr_attributesarray, i);
+          attributes[i] = new ObjectAttributes(ptr_attribute);
+        }
+        UnsafeNativeMethods.ON_SimpleArray_3dmObjectAttributes_Delete(ptr_attributesarray);
+        return (Commands.Result)rc;
+      }
+    }
+
     /// <summary>
     /// Gets the render meshes of some objects.
     /// </summary>

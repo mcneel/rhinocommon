@@ -1992,8 +1992,9 @@ namespace Rhino.Render.Fields
           UnsafeNativeMethods.Rdk_ContentField_SetIsTextured(m_field_pointer, 1);
         }
 
-        // Initialize the field value
-        Set(m_initial_value);
+        // Initialize the field value (RenderContent.ChangeContexts.Ignore is
+        // used to avoid a ContentModified event from getting raised)
+        Set(m_initial_value, RenderContent.ChangeContexts.Ignore);
         // If m_initialValue can be disposed of then dispose of it now
         if (m_initial_value is IDisposable) (m_initial_value as IDisposable).Dispose();
         m_initial_value = null;

@@ -1,7 +1,6 @@
 #pragma warning disable 1591
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Rhino.Runtime.InteropWrappers;
 
 // none of the UI namespace needs to be in the stand-alone opennurbs library
@@ -51,8 +50,8 @@ namespace Rhino
 
     public class WaitCursor : IDisposable
     {
-      private readonly int idxDefaultCursor = 0;
-      private readonly int idxWaitCursor = 1;
+      const int idxDefaultCursor = 0;
+      const int idxWaitCursor = 1;
 
       public WaitCursor()
       {
@@ -139,7 +138,6 @@ namespace Rhino
       //[in rhinosdkutilities.h]
       //  RhinoLineTypeDialog
       //  RhinoPrintWidthDialog
-      //  RhinoSelectMultipleLayersDialog
       //  RhinoYesNoMessageBox
 
 
@@ -158,7 +156,7 @@ namespace Rhino
       /// </summary>
       /// <param name="form">A form window.</param>
       /// <param name="pickFunction">A picking delegate.</param>
-      public static void PushPickButton(System.Windows.Forms.Form form, System.EventHandler<EventArgs> pickFunction)
+      public static void PushPickButton(System.Windows.Forms.Form form, EventHandler<EventArgs> pickFunction)
       {
         if (form == null || pickFunction == null)
           return;
@@ -168,13 +166,13 @@ namespace Rhino
           return;
         if( form.Modal )
         {
-          IntPtr pList = UnsafeNativeMethods.RHC_PushPickButtonHide(handle);
-          if (IntPtr.Zero!=pList)
+          IntPtr ptr_list = UnsafeNativeMethods.RHC_PushPickButtonHide(handle);
+          if (IntPtr.Zero!=ptr_list)
           {
             RhinoApp.Wait();
             RhinoApp.SetFocusToMainWindow();
             pickFunction(form, EventArgs.Empty);
-            UnsafeNativeMethods.RHC_PushPickButtonShow(pList);
+            UnsafeNativeMethods.RHC_PushPickButtonShow(ptr_list);
           }
         }
         else
@@ -198,15 +196,15 @@ namespace Rhino
       /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
       public static System.Windows.Forms.DialogResult ShowSemiModal(System.Windows.Forms.Form form)
       {
-        if (Rhino.Runtime.HostUtils.RunningOnWindows)
+        if (Runtime.HostUtils.RunningOnWindows)
           form.Load += SemiModalFormLoad;
         return form.ShowDialog(RhinoApp.MainWindow());
       }
 
       static void SemiModalFormLoad(object sender, EventArgs e)
       {
-        IntPtr hMainWnd = RhinoApp.MainWindowHandle();
-        UnsafeNativeMethods.EnableWindow(hMainWnd, true);
+        IntPtr handle_mainwnd = RhinoApp.MainWindowHandle();
+        UnsafeNativeMethods.EnableWindow(handle_mainwnd, true);
       }
 
 
@@ -299,33 +297,33 @@ namespace Rhino
         else if (System.Windows.Forms.MessageBoxButtons.YesNoCancel == buttons)
           buttonFlags = MB_YESNOCANCEL;
 
-        uint iconFlags = 0; //System.Windows.Forms.MessageBoxIcon.None
+        uint icon_flags = 0; //System.Windows.Forms.MessageBoxIcon.None
         if (System.Windows.Forms.MessageBoxIcon.Asterisk == icon)
-          iconFlags = MB_ICONASTERISK;
+          icon_flags = MB_ICONASTERISK;
         else if (System.Windows.Forms.MessageBoxIcon.Error == icon)
-          iconFlags = MB_ICONERROR;
+          icon_flags = MB_ICONERROR;
         else if (System.Windows.Forms.MessageBoxIcon.Exclamation == icon)
-          iconFlags = MB_ICONEXCLAMATION;
+          icon_flags = MB_ICONEXCLAMATION;
         else if (System.Windows.Forms.MessageBoxIcon.Hand == icon)
-          iconFlags = MB_ICONHAND;
+          icon_flags = MB_ICONHAND;
         else if (System.Windows.Forms.MessageBoxIcon.Information == icon)
-          iconFlags = MB_ICONINFORMATION;
+          icon_flags = MB_ICONINFORMATION;
         else if (System.Windows.Forms.MessageBoxIcon.Question == icon)
-          iconFlags = MB_ICONQUESTION;
+          icon_flags = MB_ICONQUESTION;
         else if (System.Windows.Forms.MessageBoxIcon.Stop == icon)
-          iconFlags = MB_ICONSTOP;
+          icon_flags = MB_ICONSTOP;
         else if (System.Windows.Forms.MessageBoxIcon.Warning == icon)
-          iconFlags = MB_ICONWARNING;
+          icon_flags = MB_ICONWARNING;
 
-        uint defaultButtonFlags = 0;
+        uint default_button_flags = 0;
         if (System.Windows.Forms.MessageBoxDefaultButton.Button1 == defaultButton)
-          defaultButtonFlags = MB_DEFBUTTON1;
+          default_button_flags = MB_DEFBUTTON1;
         else if (System.Windows.Forms.MessageBoxDefaultButton.Button2 == defaultButton)
-          defaultButtonFlags = MB_DEFBUTTON2;
+          default_button_flags = MB_DEFBUTTON2;
         else if (System.Windows.Forms.MessageBoxDefaultButton.Button3 == defaultButton)
-          defaultButtonFlags = MB_DEFBUTTON3;
+          default_button_flags = MB_DEFBUTTON3;
 
-        uint flags = buttonFlags | iconFlags | defaultButtonFlags;
+        uint flags = buttonFlags | icon_flags | default_button_flags;
         System.Windows.Forms.DialogResult result = System.Windows.Forms.DialogResult.None;
         try
         {
@@ -378,11 +376,11 @@ namespace Rhino
           int abgr = System.Drawing.ColorTranslator.ToWin32(color);
           rc = UnsafeNativeMethods.RHC_RhinoColorDialog(ref abgr, includeButtonColors, dialogTitle);
           if (rc)
-            color = Rhino.Runtime.Interop.ColorFromWin32(abgr);
+            color = Runtime.Interop.ColorFromWin32(abgr);
         }
         catch (EntryPointNotFoundException)
         {
-          if (!Rhino.Runtime.HostUtils.RunningInRhino)
+          if (!Runtime.HostUtils.RunningInRhino)
           {
             System.Windows.Forms.ColorDialog cd = new System.Windows.Forms.ColorDialog();
             cd.Color = color;
@@ -404,18 +402,18 @@ namespace Rhino
       /// <param name="color">The initial color to set the picker to and also accepts the user's choice.</param>
       /// <param name="allowAlpha">Specifies if the color picker should allow changes to the alpha channel or not.</param>
       /// <returns>true if a color was picked, false if the user canceled the picker dialog.</returns>
-      public static bool ShowColorDialog(System.Windows.Forms.IWin32Window parent, ref Rhino.Display.Color4f color, bool allowAlpha)
+      public static bool ShowColorDialog(System.Windows.Forms.IWin32Window parent, ref Display.Color4f color, bool allowAlpha)
       {
         if (null == parent)
           parent = RhinoApp.MainWindow();
 
-        IntPtr hWnd = IntPtr.Zero;
+        IntPtr handle_parent = IntPtr.Zero;
         if (null != parent)
-          hWnd = parent.Handle;
+          handle_parent = parent.Handle;
 
-        Rhino.Display.Color4f c = Rhino.Display.Color4f.Empty;
+        Display.Color4f c = Display.Color4f.Empty;
 
-        bool rc = (1 == UnsafeNativeMethods.Rdk_Globals_ShowColorPicker(hWnd, color, allowAlpha, ref c));
+        bool rc = (1 == UnsafeNativeMethods.Rdk_Globals_ShowColorPicker(handle_parent, color, allowAlpha, ref c));
         if (rc)
           color = c;
         return rc;
@@ -426,7 +424,7 @@ namespace Rhino
       /// <param name="color">The initial color to set the picker to and also accepts the user's choice.</param>
       /// <param name="allowAlpha">Specifies if the color picker should allow changes to the alpha channel or not.</param>
       /// <returns>true if a color was picked, false if the user canceled the picker dialog.</returns>
-      public static bool ShowColorDialog(ref Rhino.Display.Color4f color, bool allowAlpha)
+      public static bool ShowColorDialog(ref Display.Color4f color, bool allowAlpha)
       {
         return ShowColorDialog(null, ref color, allowAlpha);
       }
@@ -447,9 +445,18 @@ namespace Rhino
       public static System.Windows.Forms.DialogResult ShowSelectLayerDialog(ref int layerIndex, string dialogTitle, bool showNewLayerButton, bool showSetCurrentButton, ref bool initialSetCurrentState)
       {
         bool rc = UnsafeNativeMethods.RHC_RhinoSelectLayerDialog(dialogTitle, ref layerIndex, showNewLayerButton, showSetCurrentButton, ref initialSetCurrentState);
-        if (rc)
-          return System.Windows.Forms.DialogResult.OK;
-        return System.Windows.Forms.DialogResult.Cancel;
+        return rc ? System.Windows.Forms.DialogResult.OK : System.Windows.Forms.DialogResult.Cancel;
+      }
+
+      public static System.Windows.Forms.DialogResult ShowSelectMultipleLayersDialog(IEnumerable<int> defaultLayerIndices, string dialogTitle, bool showNewLayerButton, out int[] layerIndices)
+      {
+        using (var array_int = new SimpleArrayInt(defaultLayerIndices))
+        {
+          IntPtr ptr_array_int = array_int.NonConstPointer();
+          bool rc = UnsafeNativeMethods.RHC_RhinoSelectMultipleLayersDialog(dialogTitle, ptr_array_int, true, showNewLayerButton);
+          layerIndices = rc ? array_int.ToArray() : new int[0];
+          return rc ? System.Windows.Forms.DialogResult.OK : System.Windows.Forms.DialogResult.Cancel;
+        }
       }
 
       /// <summary>
@@ -499,7 +506,7 @@ namespace Rhino
       /// <param name="items">A list of items to show.</param>
       /// <param name="checkState">A list of true/false boolean values.</param>
       /// <returns>An array or boolean values determining if the user checked the corresponding box. On error, null.</returns>
-      public static bool[] ShowCheckListBox(string title, string message, System.Collections.IList items, System.Collections.Generic.IList<bool> checkState)
+      public static bool[] ShowCheckListBox(string title, string message, System.Collections.IList items, IList<bool> checkState)
       {
         bool[] rc = null;
         if (items != null && items.Count > 0 && checkState != null && checkState.Count == items.Count)
@@ -582,10 +589,10 @@ namespace Rhino
 
       public static System.Windows.Forms.DialogResult ShowNumberBox(string title, string message, ref double number, double minimum, double maximum)
       {
-        string defaultText = String.Empty;
+        string default_text = String.Empty;
         if (number != RhinoMath.UnsetValue)
-          defaultText = number.ToString();
-        StringBoxForm dlg = new StringBoxForm(title, message, defaultText);
+          default_text = number.ToString();
+        StringBoxForm dlg = new StringBoxForm(title, message, default_text);
         dlg.SetAsNumberInput(minimum, maximum);
         System.Windows.Forms.DialogResult rc = dlg.ShowDialog(RhinoApp.MainWindow());
         if (rc == System.Windows.Forms.DialogResult.OK)

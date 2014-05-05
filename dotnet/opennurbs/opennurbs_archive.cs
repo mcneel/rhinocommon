@@ -940,6 +940,70 @@ namespace Rhino.Collections
       return GetWithDefaultHelper(key, defaultValue);
     }
     /// <summary>
+    /// Get value as ArchivableDictionary, will only succeed if value was
+    /// created using Set(string key, ArchivableDictionary value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public bool TryGetDictionary(string key, out ArchivableDictionary value)
+    {
+      return TryGetHelper<ArchivableDictionary>(key, out value, null);
+    }
+    /// <summary>
+    /// Get value as ArchivableDictionary, will only succeed if value was created
+    /// using Set(string key, ArchivableDictionary value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public ArchivableDictionary GetDictionary(string key)
+    {
+      return GetHelper< ArchivableDictionary>(key, null);
+    }
+    /// <summary>
+    /// Get value as ArchivableDictionary, will return defaultValue unless
+    /// value was created using Set(string key, ArchivableDictionary value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public ArchivableDictionary GetDictionary(string key, ArchivableDictionary defaultValue)
+    {
+      return GetWithDefaultHelper(key, defaultValue);
+    }
+    /// <summary>
+    /// Get value as byte[], will only succeed if value was
+    /// created using Set(string key, byte[] value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public bool TryGetBytes(string key, out byte[] value)
+    {
+      return TryGetHelper(key, out value, new byte[0]);
+    }
+    /// <summary>
+    /// Get value as byte[], will only succeed if value was created
+    /// using Set(string key, byte[] value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public byte[] GetBytes(string key)
+    {
+      return GetHelper<byte[]>(key, null);
+    }
+    /// <summary>
+    /// Get value as byte[], will return defaultValue unless
+    /// value was created using Set(string key, byte[] value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public byte[] GetBytes(string key, byte[] defaultValue)
+    {
+      return GetWithDefaultHelper<byte[]>(key, defaultValue);
+    }
+    /// <summary>
     /// Get value as bool, will only succeed if value was created using Set(string key, bool value)
     /// </summary>
     /// <param name="key"></param>

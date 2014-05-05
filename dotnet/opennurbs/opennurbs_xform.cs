@@ -965,31 +965,31 @@ namespace Rhino.Geometry
 #if RHINO_SDK
 namespace Rhino.Geometry.Morphs
 {
-  /// <summary>Twist Morph</summary>
+  /// <summary>Deforms objects by rotating them around an axis.</summary>
   public class TwistSpaceMorph : Rhino.Geometry.SpaceMorph, IDisposable
   {
-    internal IntPtr m_pSpaceMorph;
-    IntPtr ConstPointer() { return m_pSpaceMorph; }
-    IntPtr NonConstPointer() { return m_pSpaceMorph; }
+    internal IntPtr m_space_morph;
+    IntPtr ConstPointer() { return m_space_morph; }
+    IntPtr NonConstPointer() { return m_space_morph; }
 
     /// <summary>
-    /// 
+    /// Constructs a twist space morph.
     /// </summary>
     public TwistSpaceMorph()
     {
-      m_pSpaceMorph = UnsafeNativeMethods.CRhinoTwistSpaceMorph_New();
+      m_space_morph = UnsafeNativeMethods.CRhinoTwistSpaceMorph_New();
       double tolerance = 0;
-      bool quickpreview = false;
-      bool preservestructure = true;
-      if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_pSpaceMorph, ref tolerance, ref quickpreview, ref preservestructure))
+      bool quick_preview = false;
+      bool preserve_structure = true;
+      if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_space_morph, ref tolerance, ref quick_preview, ref preserve_structure))
       {
         Tolerance = tolerance;
-        QuickPreview = quickpreview;
-        PreserveStructure = preservestructure;
+        QuickPreview = quick_preview;
+        PreserveStructure = preserve_structure;
       }
     }
 
-    /// <summary>Axis about which to twist</summary>
+    /// <summary>Axis to rotate about.</summary>
     public Line TwistAxis
     {
       get
@@ -1007,7 +1007,7 @@ namespace Rhino.Geometry.Morphs
     }
 
     /// <summary>
-    /// 
+    /// Twist angle in radians.
     /// </summary>
     public double TwistAngleRadians
     {
@@ -1024,7 +1024,8 @@ namespace Rhino.Geometry.Morphs
     }
 
     /// <summary>
-    /// 
+    /// If true, the deformation is constant throughout the object, even if the axis is shorter than the object. 
+    /// If false, the deformation takes place only the length of the axis.
     /// </summary>
     public bool InfiniteTwist
     {
@@ -1045,7 +1046,7 @@ namespace Rhino.Geometry.Morphs
     /// <returns>Resulting morphed point.</returns>
     public override Point3d MorphPoint(Point3d point)
     {
-      UnsafeNativeMethods.ON_SpaceMorph_MorphPoint(m_pSpaceMorph, ref point);
+      UnsafeNativeMethods.ON_SpaceMorph_MorphPoint(m_space_morph, ref point);
       return point;
     }
 
@@ -1066,6 +1067,118 @@ namespace Rhino.Geometry.Morphs
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_space_morph)
+      {
+        UnsafeNativeMethods.ON_SpaceMorph_Delete(m_space_morph);
+        m_space_morph = IntPtr.Zero;
+      }
+    }
+  }
+
+
+  /// <summary>
+  /// Deforms objects by bending along a spine arc.
+  /// </summary>
+  public class BendSpaceMorph : Rhino.Geometry.SpaceMorph, IDisposable
+  {
+    internal IntPtr m_space_morph;
+    IntPtr ConstPointer() { return m_space_morph; }
+    IntPtr NonConstPointer() { return m_space_morph; }
+
+    /// <summary>
+    /// Constructs a bend space morph.
+    /// </summary>
+    /// <param name="start">Start of spine that represents the original orientation of the object.</param>
+    /// <param name="end">End of spine.</param>
+    /// <param name="point">Point to bend through.</param>
+    /// <param name="straight">If false, then point determines the region to bend. If true, only the spine region is bent.</param>
+    /// <param name="symmetric">If false, then only one end of the object bends. If true, then the object will bend symmetrically around the center if you start the spine in the middle of the object.</param>
+    public BendSpaceMorph(Point3d start, Point3d end, Point3d point, bool straight, bool symmetric)
+    {
+      double tolerance = 0;
+      bool quick_preview = false;
+      bool preserve_structure = false;
+      m_space_morph = UnsafeNativeMethods.RHC_BendSpaceMorph(start, end, point, Rhino.RhinoMath.UnsetValue, straight, symmetric);
+      if (m_space_morph != IntPtr.Zero)
+      {
+        if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_space_morph, ref tolerance, ref quick_preview, ref preserve_structure))
+        {
+          Tolerance = tolerance;
+          QuickPreview = quick_preview;
+          PreserveStructure = preserve_structure;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Constructs a bend space morph.
+    /// </summary>
+    /// <param name="start">Start of spine that represents the original orientation of the object.</param>
+    /// <param name="end">End of spine.</param>
+    /// <param name="point">Used for bend direction.</param>
+    /// <param name="angle">Bend angle in radians.</param>
+    /// <param name="straight">If false, then point determines the region to bend. If true, only the spine region is bent.</param>
+    /// <param name="symmetric">If false, then only one end of the object bends. If true, then the object will bend symmetrically around the center if you start the spine in the middle of the object.</param>
+    public BendSpaceMorph(Point3d start, Point3d end, Point3d point, double angle, bool straight, bool symmetric)
+    {
+      double tolerance = 0;
+      bool quick_preview = false;
+      bool preserve_structure = false;
+      m_space_morph = UnsafeNativeMethods.RHC_BendSpaceMorph(start, end, point, angle, straight, symmetric);
+      if (m_space_morph != IntPtr.Zero)
+      {
+        if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_space_morph, ref tolerance, ref quick_preview, ref preserve_structure))
+        {
+          Tolerance = tolerance;
+          QuickPreview = quick_preview;
+          PreserveStructure = preserve_structure;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Returns true if the space morph definition is valid, false otherwise.
+    /// </summary>
+    public bool IsValid 
+    { 
+      get { return (m_space_morph != IntPtr.Zero); } 
+    }
+
+    /// <summary>Morphs an Euclidean point.</summary>
+    /// <param name="point">A point that will be morphed by this object.</param>
+    /// <returns>Resulting morphed point.</returns>
+    public override Point3d MorphPoint(Point3d point)
+    {
+      UnsafeNativeMethods.ON_SpaceMorph_MorphPoint(m_space_morph, ref point);
+      return point;
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~BendSpaceMorph()
+    {
+      Dispose(false);
+    }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
 
     /// <summary>
     /// For derived class implementers.
@@ -1077,12 +1190,698 @@ namespace Rhino.Geometry.Morphs
     /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
-      if (IntPtr.Zero != m_pSpaceMorph)
+      if (IntPtr.Zero != m_space_morph)
       {
-        UnsafeNativeMethods.ON_SpaceMorph_Delete(m_pSpaceMorph);
-        m_pSpaceMorph = IntPtr.Zero;
+        UnsafeNativeMethods.ON_SpaceMorph_Delete(m_space_morph);
+        m_space_morph = IntPtr.Zero;
       }
     }
   }
+
+
+  /// <summary>
+  /// Deforms objects toward or away from a specified axis.
+  /// </summary>
+  public class TaperSpaceMorph : Rhino.Geometry.SpaceMorph, IDisposable
+  {
+    internal IntPtr m_space_morph;
+    IntPtr ConstPointer() { return m_space_morph; }
+    IntPtr NonConstPointer() { return m_space_morph; }
+
+    /// <summary>
+    /// Constructs a taper space morph.
+    /// </summary>
+    /// <param name="start">Start of the taper axis.</param>
+    /// <param name="end">End of the taper axis.</param>
+    /// <param name="startRadius">Radius at start point.</param>
+    /// <param name="endRadius">Radius at end point.</param>
+    /// <param name="bFlat">If true, then a one-directional, one-dimensional taper is created.</param>
+    /// <param name="infiniteTaper">If false, the deformation takes place only the length of the axis. If true, the deformation happens throughout the object, even if the axis is shorter.</param>
+    public TaperSpaceMorph(Point3d start, Point3d end, double startRadius, double endRadius, bool bFlat, bool infiniteTaper)
+    {
+      double tolerance = 0;
+      bool quick_preview = false;
+      bool preserve_structure = false;
+      m_space_morph = UnsafeNativeMethods.RHC_TaperSpaceMorph(start, end, startRadius, endRadius, bFlat, infiniteTaper);
+      if (m_space_morph != IntPtr.Zero)
+      {
+        if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_space_morph, ref tolerance, ref quick_preview, ref preserve_structure))
+        {
+          Tolerance = tolerance;
+          QuickPreview = quick_preview;
+          PreserveStructure = preserve_structure;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Returns true if the space morph definition is valid, false otherwise.
+    /// </summary>
+    public bool IsValid
+    {
+      get { return (m_space_morph != IntPtr.Zero); }
+    }
+
+    /// <summary>Morphs an Euclidean point.</summary>
+    /// <param name="point">A point that will be morphed by this object.</param>
+    /// <returns>Resulting morphed point.</returns>
+    public override Point3d MorphPoint(Point3d point)
+    {
+      UnsafeNativeMethods.ON_SpaceMorph_MorphPoint(m_space_morph, ref point);
+      return point;
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~TaperSpaceMorph()
+    {
+      Dispose(false);
+    }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_space_morph)
+      {
+        UnsafeNativeMethods.ON_SpaceMorph_Delete(m_space_morph);
+        m_space_morph = IntPtr.Zero;
+      }
+    }
+  }
+
+
+  /// <summary>
+  /// Deforms objects in a spiral as if they were caught in a whirlpool.
+  /// </summary>
+  public class MaelstromSpaceMorph : Rhino.Geometry.SpaceMorph, IDisposable
+  {
+    internal IntPtr m_space_morph;
+    IntPtr ConstPointer() { return m_space_morph; }
+    IntPtr NonConstPointer() { return m_space_morph; }
+
+    /// <summary>
+    /// Constructs a maelstrom space morph.
+    /// </summary>
+    /// <param name="plane">Plane on which the base circle will lie. Origin of the plane will be the center point of the circle.</param>
+    /// <param name="radius0">First radius.</param>
+    /// <param name="radius1">Second radius.</param>
+    /// <param name="angle">Coil angle in radians.</param>
+    /// <remarks>
+    /// <para>
+    /// If radius0 = radius1 &gt; 0, then the morph is a rotation where the angle of rotation is proportional to the radius.
+    /// 
+    /// If radius0 &lt; radius1, then everything inside of the circle of radius radius0 if fixed, the rotation angle increases
+    /// smoothly from 0 at radius0 to m_a at radius1, and everything outside of the circle of radius radius1 is rotated by angle.
+    /// 
+    /// If radius0 &gt; radius1, then everything outside of the circle of radius radius0 if fixed, the rotation angle increases
+    /// smoothly from 0 at radius0 to m_a at radius1, and everything inside of the circle of radius radius1 is rotated by angle.
+    /// </para>
+    /// </remarks>
+    public MaelstromSpaceMorph(Plane plane, double radius0, double radius1, double angle)
+    {
+      double tolerance = 0;
+      bool quick_preview = false;
+      bool preserve_structure = false;
+      m_space_morph = UnsafeNativeMethods.RHC_MaelstromSpaceMorph(plane, radius0, radius1, angle);
+      if (m_space_morph != IntPtr.Zero)
+      {
+        if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_space_morph, ref tolerance, ref quick_preview, ref preserve_structure))
+        {
+          Tolerance = tolerance;
+          QuickPreview = quick_preview;
+          PreserveStructure = preserve_structure;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Returns true if the space morph definition is valid, false otherwise.
+    /// </summary>
+    public bool IsValid
+    {
+      get 
+      { 
+        return (m_space_morph != IntPtr.Zero); 
+      }
+    }
+
+    /// <summary>Morphs an Euclidean point.</summary>
+    /// <param name="point">A point that will be morphed by this object.</param>
+    /// <returns>Resulting morphed point.</returns>
+    public override Point3d MorphPoint(Point3d point)
+    {
+      UnsafeNativeMethods.ON_SpaceMorph_MorphPoint(m_space_morph, ref point);
+      return point;
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~MaelstromSpaceMorph()
+    {
+      Dispose(false);
+    }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_space_morph)
+      {
+        UnsafeNativeMethods.ON_SpaceMorph_Delete(m_space_morph);
+        m_space_morph = IntPtr.Zero;
+      }
+    }
+  }
+
+
+  /// <summary>
+  /// Deforms objects toward or away from a specified axis.
+  /// </summary>
+  public class StretchSpaceMorph : Rhino.Geometry.SpaceMorph, IDisposable
+  {
+    internal IntPtr m_space_morph;
+    IntPtr ConstPointer() { return m_space_morph; }
+    IntPtr NonConstPointer() { return m_space_morph; }
+
+    /// <summary>
+    /// Constructs a stretch space morph.
+    /// </summary>
+    /// <param name="start">Start of stretch axis.</param>
+    /// <param name="end">End of stretch axis.></param>
+    /// <param name="point">End of new stretch axis.</param>
+    public StretchSpaceMorph(Point3d start, Point3d end, Point3d point)
+    {
+      double tolerance = 0;
+      bool quick_preview = false;
+      bool preserve_structure = false;
+      m_space_morph = UnsafeNativeMethods.RHC_StretchSpaceMorph(start, end, point, Rhino.RhinoMath.UnsetValue);
+      if (m_space_morph != IntPtr.Zero)
+      {
+        if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_space_morph, ref tolerance, ref quick_preview, ref preserve_structure))
+        {
+          Tolerance = tolerance;
+          QuickPreview = quick_preview;
+          PreserveStructure = preserve_structure;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Constructs a stretch space morph.
+    /// </summary>
+    /// <param name="start">Start of stretch axis.</param>
+    /// <param name="end">End of stretch axis.></param>
+    /// <param name="length">Length of new stretch axis.</param>
+    public StretchSpaceMorph(Point3d start, Point3d end, double length)
+    {
+      double tolerance = 0;
+      bool quick_preview = false;
+      bool preserve_structure = false;
+      m_space_morph = UnsafeNativeMethods.RHC_StretchSpaceMorph(start, end, Rhino.Geometry.Point3d.Unset, length);
+      if (m_space_morph != IntPtr.Zero)
+      {
+        if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_space_morph, ref tolerance, ref quick_preview, ref preserve_structure))
+        {
+          Tolerance = tolerance;
+          QuickPreview = quick_preview;
+          PreserveStructure = preserve_structure;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Returns true if the space morph definition is valid, false otherwise.
+    /// </summary>
+    public bool IsValid
+    {
+      get 
+      { 
+        return (m_space_morph != IntPtr.Zero); 
+      }
+    }
+
+    /// <summary>Morphs an Euclidean point.</summary>
+    /// <param name="point">A point that will be morphed by this object.</param>
+    /// <returns>Resulting morphed point.</returns>
+    public override Point3d MorphPoint(Point3d point)
+    {
+      UnsafeNativeMethods.ON_SpaceMorph_MorphPoint(m_space_morph, ref point);
+      return point;
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~StretchSpaceMorph()
+    {
+      Dispose(false);
+    }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_space_morph)
+      {
+        UnsafeNativeMethods.ON_SpaceMorph_Delete(m_space_morph);
+        m_space_morph = IntPtr.Zero;
+      }
+    }
+  }
+
+
+  /// <summary>
+  /// Deforms an object from a source surface to a target surface.
+  /// </summary>
+  public class SporphSpaceMorph : Rhino.Geometry.SpaceMorph, IDisposable
+  {
+    internal IntPtr m_space_morph;
+    IntPtr ConstPointer() { return m_space_morph; }
+    IntPtr NonConstPointer() { return m_space_morph; }
+
+    /// <summary>
+    /// Constructs a sporph space morph.
+    /// </summary>
+    /// <param name="surface0">Base surface.</param>
+    /// <param name="surface1">Target surface.</param>
+    public SporphSpaceMorph(Surface surface0, Surface surface1)
+    {
+      double tolerance = 0;
+      bool quick_preview = false;
+      bool preserve_structure = false;
+
+      IntPtr const_surface0 = surface0.ConstPointer();
+      IntPtr const_surface1 = surface1.ConstPointer();
+
+      m_space_morph = UnsafeNativeMethods.RHC_SporphSpaceMorph(const_surface0, const_surface1, Rhino.Geometry.Point2d.Unset, Rhino.Geometry.Point2d.Unset);
+      if (m_space_morph != IntPtr.Zero)
+      {
+        if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_space_morph, ref tolerance, ref quick_preview, ref preserve_structure))
+        {
+          Tolerance = tolerance;
+          QuickPreview = quick_preview;
+          PreserveStructure = preserve_structure;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Constructs a sporph space morph.
+    /// </summary>
+    /// <param name="surface0">Base surface.</param>
+    /// <param name="surface1">Target surface.</param>
+    /// <param name="surface0Param">U,V parameter on surface0 used for orienting.</param>
+    /// <param name="surface1Param">U,V parameter on surface1 used for orienting.</param>
+    public SporphSpaceMorph(Surface surface0, Surface surface1, Point2d surface0Param, Point2d surface1Param)
+    {
+      double tolerance = 0;
+      bool quick_preview = false;
+      bool preserve_structure = false;
+
+      IntPtr const_surface0 = surface0.ConstPointer();
+      IntPtr const_surface1 = surface1.ConstPointer();
+
+      m_space_morph = UnsafeNativeMethods.RHC_SporphSpaceMorph(const_surface0, const_surface1, surface0Param, surface1Param);
+      if (m_space_morph != IntPtr.Zero)
+      {
+        if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_space_morph, ref tolerance, ref quick_preview, ref preserve_structure))
+        {
+          Tolerance = tolerance;
+          QuickPreview = quick_preview;
+          PreserveStructure = preserve_structure;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Returns true if the space morph definition is valid, false otherwise.
+    /// </summary>
+    public bool IsValid
+    {
+      get 
+      { 
+        return (m_space_morph != IntPtr.Zero); 
+      }
+    }
+
+    /// <summary>Morphs an Euclidean point.</summary>
+    /// <param name="point">A point that will be morphed by this object.</param>
+    /// <returns>Resulting morphed point.</returns>
+    public override Point3d MorphPoint(Point3d point)
+    {
+      UnsafeNativeMethods.ON_SpaceMorph_MorphPoint(m_space_morph, ref point);
+      return point;
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~SporphSpaceMorph()
+    {
+      Dispose(false);
+    }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_space_morph)
+      {
+        UnsafeNativeMethods.ON_SpaceMorph_Delete(m_space_morph);
+        m_space_morph = IntPtr.Zero;
+      }
+    }
+  }
+
+
+  /// <summary>
+  /// Re-aligns objects from a base curve to a target curve.
+  /// </summary>
+  public class FlowSpaceMorph : Rhino.Geometry.SpaceMorph, IDisposable
+  {
+    internal IntPtr m_space_morph;
+    IntPtr ConstPointer() { return m_space_morph; }
+    IntPtr NonConstPointer() { return m_space_morph; }
+
+    /// <summary>
+    /// Constructs a flow space morph.
+    /// </summary>
+    /// <param name="curve0">Base curve.</param>
+    /// <param name="curve1">Target curve.</param>
+    /// <param name="preventStretching"></param>
+    public FlowSpaceMorph(Curve curve0, Curve curve1, bool preventStretching)
+    {
+      double tolerance = 0;
+      bool quick_preview = false;
+      bool preserve_structure = false;
+
+      IntPtr const_curve0 = curve0.ConstPointer();
+      IntPtr const_curve1 = curve1.ConstPointer();
+
+      m_space_morph = UnsafeNativeMethods.RHC_FlowSpaceMorph(const_curve0, const_curve1, false, false, preventStretching);
+      if (m_space_morph != IntPtr.Zero)
+      {
+        if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_space_morph, ref tolerance, ref quick_preview, ref preserve_structure))
+        {
+          Tolerance = tolerance;
+          QuickPreview = quick_preview;
+          PreserveStructure = preserve_structure;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Constructs a flow space morph.
+    /// </summary>
+    /// <param name="curve0">Base curve.</param>
+    /// <param name="curve1">Target curve.</param>
+    /// <param name="reverseCurve0">If true, then direction of curve0 is reversed.</param>
+    /// <param name="reverseCurve1">If true, then direction of curve1 is reversed.</param>
+    /// <param name="preventStretching">If true, the length of the objects along the curve directions are not changed. If false, objects are stretched or compressed in the curve direction so that the relationship to the target curve is the same as it is to the base curve.</param>
+    public FlowSpaceMorph(Curve curve0, Curve curve1, bool reverseCurve0, bool reverseCurve1, bool preventStretching)
+    {
+      double tolerance = 0;
+      bool quick_preview = false;
+      bool preserve_structure = false;
+
+      IntPtr const_curve0 = curve0.ConstPointer();
+      IntPtr const_curve1 = curve1.ConstPointer();
+
+      m_space_morph = UnsafeNativeMethods.RHC_FlowSpaceMorph(const_curve0, const_curve1, reverseCurve0, reverseCurve1, preventStretching);
+      if (m_space_morph != IntPtr.Zero)
+      {
+        if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_space_morph, ref tolerance, ref quick_preview, ref preserve_structure))
+        {
+          Tolerance = tolerance;
+          QuickPreview = quick_preview;
+          PreserveStructure = preserve_structure;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Returns true if the space morph definition is valid, false otherwise.
+    /// </summary>
+    public bool IsValid
+    {
+      get 
+      { 
+        return (m_space_morph != IntPtr.Zero); 
+      }
+    }
+
+    /// <summary>Morphs an Euclidean point.</summary>
+    /// <param name="point">A point that will be morphed by this object.</param>
+    /// <returns>Resulting morphed point.</returns>
+    public override Point3d MorphPoint(Point3d point)
+    {
+      UnsafeNativeMethods.ON_SpaceMorph_MorphPoint(m_space_morph, ref point);
+      return point;
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~FlowSpaceMorph()
+    {
+      Dispose(false);
+    }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_space_morph)
+      {
+        UnsafeNativeMethods.ON_SpaceMorph_Delete(m_space_morph);
+        m_space_morph = IntPtr.Zero;
+      }
+    }
+  }
+
+
+  /// <summary>
+  /// Rotates, scales, and wraps objects on a surface.
+  /// </summary>
+  public class SplopSpaceMorph : Rhino.Geometry.SpaceMorph, IDisposable
+  {
+    internal IntPtr m_space_morph;
+    IntPtr ConstPointer() { return m_space_morph; }
+    IntPtr NonConstPointer() { return m_space_morph; }
+
+    /// <summary>
+    /// Constructs a flow space morph.
+    /// </summary>
+    /// <param name="plane">Source plane of deformation.</param>
+    /// <param name="surface">Surface to wrap objects onto.</param>
+    /// <param name="surfaceParam">U,V parameter on surface used for orienting.</param>
+    public SplopSpaceMorph(Plane plane, Surface surface, Point2d surfaceParam)
+    {
+      double tolerance = 0;
+      bool quick_preview = false;
+      bool preserve_structure = false;
+
+      IntPtr const_surface = surface.ConstPointer();
+
+      m_space_morph = UnsafeNativeMethods.RHC_SplopSpaceMorph(plane, const_surface, surfaceParam, Rhino.RhinoMath.UnsetValue, Rhino.RhinoMath.UnsetValue);
+      if (m_space_morph != IntPtr.Zero)
+      {
+        if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_space_morph, ref tolerance, ref quick_preview, ref preserve_structure))
+        {
+          Tolerance = tolerance;
+          QuickPreview = quick_preview;
+          PreserveStructure = preserve_structure;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Constructs a flow space morph.
+    /// </summary>
+    /// <param name="plane">Source plane of deformation.</param>
+    /// <param name="surface">Surface to wrap objects onto.</param>
+    /// <param name="surfaceParam">U,V parameter on surface used for orienting.</param>
+    /// <param name="scale">Scale factor.</param>
+    public SplopSpaceMorph(Plane plane, Surface surface, Point2d surfaceParam, double scale)
+    {
+      double tolerance = 0;
+      bool quick_preview = false;
+      bool preserve_structure = false;
+
+      IntPtr const_surface = surface.ConstPointer();
+
+      m_space_morph = UnsafeNativeMethods.RHC_SplopSpaceMorph(plane, const_surface, surfaceParam, scale, Rhino.RhinoMath.UnsetValue);
+      if (m_space_morph != IntPtr.Zero)
+      {
+        if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_space_morph, ref tolerance, ref quick_preview, ref preserve_structure))
+        {
+          Tolerance = tolerance;
+          QuickPreview = quick_preview;
+          PreserveStructure = preserve_structure;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Constructs a flow space morph.
+    /// </summary>
+    /// <param name="plane">Source plane of deformation.</param>
+    /// <param name="surface">Surface to wrap objects onto.</param>
+    /// <param name="surfaceParam">U,V parameter on surface used for orienting.</param>
+    /// <param name="scale">Scale factor. To ignore, use Rhino.RhinoMath.UnsetValue.</param>
+    /// <param name="angle">Rotation angle in radians. To ignore, use Rhino.RhinoMath.UnsetValue.</param>
+    public SplopSpaceMorph(Plane plane, Surface surface, Point2d surfaceParam, double scale, double angle)
+    {
+      double tolerance = 0;
+      bool quick_preview = false;
+      bool preserve_structure = false;
+
+      IntPtr const_surface = surface.ConstPointer();
+
+      m_space_morph = UnsafeNativeMethods.RHC_SplopSpaceMorph(plane, const_surface, surfaceParam, scale, angle);
+      if (m_space_morph != IntPtr.Zero)
+      {
+        if (UnsafeNativeMethods.ON_SpaceMorph_GetValues(m_space_morph, ref tolerance, ref quick_preview, ref preserve_structure))
+        {
+          Tolerance = tolerance;
+          QuickPreview = quick_preview;
+          PreserveStructure = preserve_structure;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Returns true if the space morph definition is valid, false otherwise.
+    /// </summary>
+    public bool IsValid
+    {
+      get 
+      { 
+        return (m_space_morph != IntPtr.Zero); 
+      }
+    }
+
+    /// <summary>Morphs an Euclidean point.</summary>
+    /// <param name="point">A point that will be morphed by this object.</param>
+    /// <returns>Resulting morphed point.</returns>
+    public override Point3d MorphPoint(Point3d point)
+    {
+      UnsafeNativeMethods.ON_SpaceMorph_MorphPoint(m_space_morph, ref point);
+      return point;
+    }
+
+    /// <summary>
+    /// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+    /// </summary>
+    ~SplopSpaceMorph()
+    {
+      Dispose(false);
+    }
+
+    /// <summary>
+    /// Actively reclaims unmanaged resources that this instance uses.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// For derived class implementers.
+    /// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+    /// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+    /// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+    /// <para>Also, you must call the base virtual method within your overriding method.</para>
+    /// </summary>
+    /// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (IntPtr.Zero != m_space_morph)
+      {
+        UnsafeNativeMethods.ON_SpaceMorph_Delete(m_space_morph);
+        m_space_morph = IntPtr.Zero;
+      }
+    }
+  }
+
 }
 #endif

@@ -78,6 +78,66 @@ namespace Rhino.Render
       }
     }
 
+    /// <summary>Set angles directly or use place/date/time</summary>
+    public bool ManualControl
+    {
+      get
+      {
+        if (null == m_doc)
+          return false;
+
+        IntPtr pConstSun = ConstPointer();
+        return UnsafeNativeMethods.Rdk_Sun_ManualControlOn(pConstSun);
+      }
+      set
+      {
+        if (m_doc != null)
+          UnsafeNativeMethods.Rdk_Sun_SetManualControlOn(NonConstPointer(), value);
+      }
+    }
+
+
+    /// <summary>Daylight savings time</summary>
+    public bool DaylightSaving
+    {
+      get
+      {
+        if (null == m_doc)
+          return false;
+
+        IntPtr pConstSun = ConstPointer();
+        return UnsafeNativeMethods.Rdk_Sun_DaylightSavingOn(pConstSun);
+      }
+      set
+      {
+        if (m_doc != null)
+          UnsafeNativeMethods.Rdk_Sun_SetDaylightSavingOn(NonConstPointer(), value);
+      }
+    }
+
+
+
+
+    /// <summary>
+    /// Measured in hours += UTC
+    /// </summary>
+
+    public double TimeZone
+    {
+      get
+      {
+        IntPtr pConstSun = ConstPointer();
+        return UnsafeNativeMethods.Rdk_Sun_TimeZone(pConstSun);
+      }
+      set
+      {
+        IntPtr pSun = NonConstPointer();
+        UnsafeNativeMethods.Rdk_Sun_SetTimeZone(pSun, value);
+      }
+    }
+
+
+
     /// <summary>
     /// Angle in degrees on world X-Y plane that should be considered north in the model. Angle is
     /// measured starting at X-Axis and travels counterclockwise. Y-Axis would be a north angle of 90
@@ -134,7 +194,7 @@ namespace Rhino.Render
       bool local = (when.Kind == DateTimeKind.Local || when.Kind == DateTimeKind.Unspecified);
       UnsafeNativeMethods.Rdk_Sun_SetDateTime(pSun, local, when.Year, when.Month, when.Day, when.Hour, when.Minute, when.Second);
     }
-
+    
     public double Azimuth
     {
       get
@@ -185,6 +245,9 @@ namespace Rhino.Render
       
       return new DateTime(year, month, day, hours, minutes, seconds);
     }
+
+    
+
     
     /// <summary>Show the tabbed sun dialog.</summary>
     public void ShowDialog()

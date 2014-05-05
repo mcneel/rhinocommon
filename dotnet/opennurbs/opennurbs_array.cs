@@ -151,7 +151,7 @@ namespace Rhino.Runtime.InteropWrappers
     /// </summary>
     public SimpleArrayInt()
     {
-      m_ptr = UnsafeNativeMethods.ON_IntArray_New();
+      m_ptr = UnsafeNativeMethods.ON_IntArray_New(null,0);
     }
 
     /// <summary>
@@ -162,13 +162,13 @@ namespace Rhino.Runtime.InteropWrappers
     {
       if (values == null)
       {
-        m_ptr = UnsafeNativeMethods.ON_IntArray_New();
+        m_ptr = UnsafeNativeMethods.ON_IntArray_New(null,0);
       }
       else
       {
         List<int> list_values = new List<int>(values);
         int[] array_values = list_values.ToArray();
-        m_ptr = UnsafeNativeMethods.ON_IntArray_New2(array_values, list_values.Count);
+        m_ptr = UnsafeNativeMethods.ON_IntArray_New(array_values, list_values.Count);
       }
     }
 

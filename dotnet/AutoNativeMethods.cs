@@ -1298,13 +1298,9 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_3dPointArray_CopyValues(IntPtr pArray, [In,Out] Point3d[] pts);
 
-  //ON_SimpleArray<int>* ON_IntArray_New()
+  //ON_SimpleArray<int>* ON_IntArray_New(/*ARRAY*/const int* vals, int count)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_IntArray_New();
-
-  //ON_SimpleArray<int>* ON_IntArray_New2(/*ARRAY*/const int* vals, int count)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ON_IntArray_New2(int[] vals, int count);
+  internal static extern IntPtr ON_IntArray_New(int[] vals, int count);
 
   //void ON_IntArray_CopyValues(const ON_SimpleArray<int>* ptr, /*ARRAY*/int* vals)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

@@ -1,9 +1,19 @@
 #!/usr/bin/env python
-import subprocess, sys, getopt, os, glob, logging, shutil
+import subprocess
+import sys
+import getopt
+import os
+import glob
+import logging
+import shutil
+from sys import platform as _platform
 from os import listdir
 from os.path import isfile, isdir, join
 
 verbose = False
+overwrite = False
+has_built_ios = False
+has_built_android = False
 
 #openNURBS globals
 has_openNURBS = False
@@ -31,6 +41,8 @@ def check_android():
     check_opennurbs()
     check_jni()
     check_ndk()
+    check_has_built_for_android()
+
     global is_ready_for_android_build
 
     if has_jni and has_ndk:
@@ -68,6 +80,7 @@ def check_ios():
     check_xcodeproj()
     check_xcode_tools()
     check_lipo()
+    check_has_built_for_ios()
 
     global is_ready_for_ios_build
 
@@ -128,7 +141,7 @@ def check_jni():
         if os.path.exists("jni/Application.mk"):
             has_application_makefile = True
         if has_android_makefile and has_application_makefile:
-            sys.stdout.write("...Ok\n")
+            sys.stdout.write("...Found\n")
             has_jni = True
         else:
             sys.stdout.write("...missing Android.mk or Application.mk\n")
@@ -149,7 +162,7 @@ def check_ndk():
         has_ndk = True
 
     if has_ndk:
-        sys.stdout.write("...Ok\n")
+        sys.stdout.write("...Found\n")
         has_ndk = True
         return
 
@@ -169,7 +182,7 @@ def check_ndk():
             has_ndk = False
 
     if has_ndk:
-        sys.stdout.write("...Ok\n")
+        sys.stdout.write("...Found\n")
     else:
         sys.stdout.write("...ndk NOT FOUND\n")
 
@@ -178,7 +191,7 @@ def check_opennurbs():
     sys.stdout.write(" Checking for opennurbs                ")
     global has_openNURBS
     if os.path.exists("opennurbs/opennurbs.xcodeproj"):
-        sys.stdout.write("...Ok\n")
+        sys.stdout.write("...Found\n")
         has_openNURBS = True
     else:
         sys.stdout.write("...opennurbs NOT FOUND\n")
@@ -189,7 +202,7 @@ def check_xcodeproj():
     sys.stdout.write(" Checking for xcodeproj                ")
     global has_xcodeProj
     if os.path.exists("rhcommon_opennurbs.xcodeproj"):
-        sys.stdout.write("...Ok\n")
+        sys.stdout.write("...Found\n")
         has_xcodeProj = True
     else:
         sys.stdout.write("...rhcommon_opennurbs.xcodeproj NOT FOUND\n")
@@ -204,7 +217,7 @@ def check_xcode_tools():
         sys.stdout.write("...xcodebuild NOT FOUND\n")
         has_xcodeTools = False
     else:
-        sys.stdout.write("...Ok\n")
+        sys.stdout.write("...Found\n")
         has_xcodeTools = True
 
 
@@ -216,8 +229,30 @@ def check_lipo():
         sys.stdout.write("...lipo NOT FOUND\n")
         has_lipo = False
     else:
-        sys.stdout.write("...Ok\n")
+        sys.stdout.write("...Found\n")
         has_lipo = True
+
+
+def check_has_built_for_android():
+    sys.stdout.write(" Checking for existing builds          ")
+    global has_built_android
+    if os.path.exists("build/Release-android/libs/armeabi/libopennurbs.so") and os.path.exists("build/Release-android/libs/armeabi-v7a/libopennurbs.so") and os.path.exists("build/Release-android/libs/x86/libopennurbs.so"):
+        sys.stdout.write("...Found\n")
+        has_built_android = True
+    else:
+        sys.stdout.write("...Not Found\n")
+        has_built_android = False
+
+
+def check_has_built_for_ios():
+    sys.stdout.write(" Checking for existing builds          ")
+    global has_built_ios
+    if os.path.exists("build/Release-ios/libopennurbs.a"):
+        sys.stdout.write("...Found\n")
+        has_built_ios = True
+    else:
+        sys.stdout.write("...Not Found\n")
+        has_built_ios = False
 
 
 def create_build_folders_for_ios():
@@ -387,11 +422,13 @@ def usage():
     print "                         ios             perform pre-requisites check for iOS"
     print "    -h   --help                          display this screen"
     print "    -v   --verbose                       show verbose build messages"
+    print "    -o   --overwrite                     overwrite existing builds"
     print ""
     print "Examples:"
-    print "./build_mobile.py -p all     (build libopennurbs for all mobile platforms)"
-    print "./build_mobile.py -p ios -v  (build libopennurbs for all iOS with verbose messages)"
-    print "./build_mobile.py -c android (check pre-requisites for Android)"
+    print "./build_mobile.py -p all         (build libopennurbs for all mobile platforms)"
+    print "./build_mobile.py -p ios -v      (build libopennurbs for all iOS with verbose messages)"
+    print "./build_mobile.py -c android     (check pre-requisites for Android)"
+    print "./build_mobile.py -p android -o  (build libopennurbs for android overwriting existing builds)"
     print ""
     print "NOTE: Builds are stored in the build/[platform]/ folder."
     print ""
@@ -400,18 +437,32 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hc:p:v", ["help", "check=", "platform=", "verbose"])
+        opts, args = getopt.getopt(sys.argv[1:], "hvoc:p:", ["help", "verbose", "overwrite", "check=", "platform="])
     except getopt.GetoptError as err:
         # print help information and exit:
         usage()
         sys.exit(2)
     platform = None
     check = None
+    linux = False
+    osx = False
+    windows = False
+
+    #check os
+    if _platform == "linux" or _platform == "linux2":
+        linux = True
+    elif _platform == "darwin":
+        osx = True
+    elif _platform == "win32" or _platform == "cygwin":
+        windows = True
 
     for o, a in opts:
         if o == "-v" or o == "--verbose":
             global verbose
             verbose = True
+        elif o == "-o" or o == "--overwrite":
+            global overwrite
+            overwrite = True
         elif o in ("-h", "--help"):
             usage()
             sys.exit()
@@ -427,7 +478,10 @@ def main():
         usage()
         sys.exit()
 
-    #check...
+    if not osx:
+        print ("WARNING: Building for iOS requires running this script on Mac OSX 10.9.2 or higher.")
+
+    #check prerequisites
     if check == "all":
         check_android()
         check_ios()
@@ -439,14 +493,26 @@ def main():
     #platform compiles
     if platform == "all":
         check_android()
-        create_build_folders_for_android()
         check_ios()
-        create_build_folders_for_ios()
 
-        if is_ready_for_android_build:
+        if overwrite or not has_built_android:
+            create_build_folders_for_android()
+        elif has_built_android and not overwrite:
+            print ("STATUS: Existing Android build found.  NOT BUILDING.  (Use -o argument to overwrite existing.)")
+
+        if overwrite or not has_built_ios:
+            create_build_folders_for_ios()
+        elif has_built_ios and not overwrite:
+            print ("STATUS: Existing iOS build found.  NOT BUILDING.  (Use -o argument to overwrite existing.)")
+
+        if overwrite and is_ready_for_android_build:
+            build_for_android()
+        elif not has_built_android and is_ready_for_android_build:
             build_for_android()
 
-        if is_ready_for_ios_build:
+        if overwrite and is_ready_for_ios_build:
+            build_for_ios()
+        elif not has_built_ios and is_ready_for_ios_build:
             build_for_ios()
 
         if did_build_android_successfully:
@@ -456,24 +522,38 @@ def main():
             write_ios_finished_message()
     elif platform == "android":
         check_android()
-        create_build_folders_for_android()
-        if is_ready_for_android_build:
-            build_for_android()
-        else:
+
+        if has_built_android and not overwrite:
+            print ("STATUS: Existing build found.  NOT BUILDING.  Use -o argument to overwrite the existing builds")
             sys.exit()
 
-        if did_build_android_successfully:
-            write_android_finished_message()
+        if overwrite or not has_built_android:
+            create_build_folders_for_android()
+
+            if is_ready_for_android_build:
+                build_for_android()
+            else:
+                sys.exit()
+
+            if did_build_android_successfully:
+                write_android_finished_message()
     elif platform == "ios":
         check_ios()
-        create_build_folders_for_ios()
-        if is_ready_for_ios_build:
-            build_for_ios()
-        else:
+
+        if has_built_ios and not overwrite:
+            print ("STATUS: Existing build found.  NOT BUILDING.  Use -o argument to overwrite the existing builds")
             sys.exit()
 
-        if did_build_ios_successfully:
-            write_ios_finished_message()
+        if overwrite or not has_built_ios:
+            create_build_folders_for_ios()
+
+            if is_ready_for_ios_build:
+                build_for_ios()
+            else:
+                sys.exit()
+
+            if did_build_ios_successfully:
+                write_ios_finished_message()
 
 
 if __name__ == "__main__":

@@ -226,3 +226,15 @@ rh3dmio_native_out
 /*.suo
 
 /methodgen/bin/Debug
+
+examples/rhino3dmio/example_read_mac/bin/
+examples/rhino3dmio/example_read_mac/obj/
+c/rhcommon_opennurbs.xcodeproj/xcuserdata/
+c/rhcommon_opennurbs.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.xcuserstate
+
+c/rhcommon_opennurbs.xcodeproj/project.xcworkspace/xcuserdata/dan.xcuserdatad/UserInterfaceState.xcuserstate
+
+c/rhcommon_opennurbs.xcodeproj/project.xcworkspace/xcshareddata/rhcommon_opennurbs.xccheckout

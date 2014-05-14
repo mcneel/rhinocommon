@@ -121,7 +121,12 @@ static bool RhCmnTreeSearch2(void* context, ON__INT_PTR a_id, ON__INT_PTR b_id)
   bool rc = false;
   if( g_theRTreeSearcher )
   {
-    int cbrc = g_theRTreeSearcher((int)context, (void*)a_id, (void*)b_id, NULL);
+    // The "void* context" parameter is used to pass
+    // the 4 byte int serial_number parameter in ON_RTree_Search2().
+    ON__INT_PTR icontext = (ON__INT_PTR)context;
+    int serial_number = static_cast<int>(icontext);
+    int cbrc = g_theRTreeSearcher(serial_number, (void*)a_id, (void*)b_id, NULL);
+    
     rc = cbrc?true:false;
   }
   return rc;
@@ -173,7 +178,12 @@ RH_C_FUNCTION bool ON_RTree_Search2(const ON_RTree* pConstTreeA, const ON_RTree*
   if( pConstTreeA && pConstTreeB && searchCB )
   {
     g_theRTreeSearcher = searchCB;
-    ON_RTree::Search(*pConstTreeA, *pConstTreeB, tolerance, RhCmnTreeSearch2, (void*)serial_number);
+    
+    // The 4 byte "int serial_number" is passed as
+    // the "void* context" parameter to the
+    // static function RhCmnTreeSearch2().
+    ON__INT_PTR iptr_serial_number = serial_number;
+    ON_RTree::Search(*pConstTreeA, *pConstTreeB, tolerance, RhCmnTreeSearch2, (void*)iptr_serial_number);
   }
   return rc;
 }
@@ -212,4 +222,5 @@ RH_C_FUNCTION int ON_RTree_ElementCount(ON_RTree* pTree)
   if( pTree )
     rc = pTree->ElementCount();
   return rc;
+  
 }

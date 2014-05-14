@@ -63,5 +63,6 @@
       <Link>libopennurbs.dylib</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

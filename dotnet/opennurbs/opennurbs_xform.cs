@@ -766,16 +766,20 @@ namespace Rhino.Geometry
     /// <returns></returns>
     public float[] ToFloatArray(bool rowDominant)
     {
-      float[] rc = new float[16];
-      for (int r = 0; r < 4; r++)
-        for (int c = 0; c < 4; c++)
-        {
-          double value = this[r, c];
-          if (rowDominant)
-            rc[r * 4 + c] = (float)value;
-          else
-            rc[c * 4 + r] = (float)value;
-        }
+      var rc = new float[16];
+     
+			if (rowDominant) {
+				rc [0]  = (float)m_00; rc [1]  = (float)m_01; rc [2]  = (float)m_02; rc [3]  = (float)m_03;
+				rc [4]  = (float)m_10; rc [5]  = (float)m_11; rc [6]  = (float)m_12; rc [7]  = (float)m_13;
+				rc [8]  = (float)m_20; rc [9]  = (float)m_21; rc [10] = (float)m_22; rc [11] = (float)m_23;
+				rc [12] = (float)m_30; rc [13] = (float)m_31; rc [14] = (float)m_32; rc [15] = (float)m_33;
+			} else {
+				rc [0]  = (float)m_00; rc [1]  = (float)m_10; rc [2]  = (float)m_20; rc [3]  = (float)m_30;
+				rc [4]  = (float)m_01; rc [5]  = (float)m_11; rc [6]  = (float)m_21; rc [7]  = (float)m_31;
+				rc [8]  = (float)m_02; rc [9]  = (float)m_12; rc [10] = (float)m_22; rc [11] = (float)m_32;
+				rc [12] = (float)m_03; rc [13] = (float)m_13; rc [14] = (float)m_23; rc [15] = (float)m_33;
+			}
+
       return rc;
     }
 

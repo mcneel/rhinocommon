@@ -1708,7 +1708,9 @@ namespace Rhino.Geometry
       int argb = UnsafeNativeMethods.ON_Mesh_MeshColorAt(pConstThis, faceIndex, t0, t1, t2, t3);
 
       if (argb < 0) { return Color.Transparent; }
-      return System.Drawing.Color.FromArgb(argb);
+      Color col = Color.FromArgb(argb);
+      col = Color.FromArgb(255, col.B, col.G, col.R);
+      return col;
     }
 
     /// <summary>

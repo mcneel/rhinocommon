@@ -44,13 +44,15 @@ namespace Rhino.DocObjects.Custom
   {
     protected CustomCurveObject() : base()
     {
+      Guid type_id = GetType().GUID;
       if (SubclassCreateNativePointer)
-        m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomCurveObject_New();
+        m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomCurveObject_New(type_id);
     }
     protected CustomCurveObject(Curve curve) : base()
     {
+      Guid type_id = GetType().GUID;
       IntPtr pConstCurve = curve.ConstPointer();
-      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New2(pConstCurve);
+      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New2(type_id, pConstCurve);
     }
 
     ~CustomCurveObject() { Dispose(false); }

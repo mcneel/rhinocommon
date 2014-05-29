@@ -2678,11 +2678,11 @@ namespace Rhino.PlugIns
 
       try
       {
-        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
-        if (null == zooAss)
+        System.Reflection.Assembly zoo_ass = GetLicenseClientAssembly();
+        if (null == zoo_ass)
           return false;
 
-        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
+        System.Type t = zoo_ass.GetType("ZooClient.ZooClientUtilities", false);
         if (t == null)
           return false;
 
@@ -2694,8 +2694,8 @@ namespace Rhino.PlugIns
         // information from the Rhino_DotNet wrapper class which is the delegate's target.
 
         System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
-        System.Reflection.Assembly rhCommon = typeof (HostUtils).Assembly;
-        if (delegate_method.Module.Assembly != rhCommon)
+        System.Reflection.Assembly rh_common = typeof (HostUtils).Assembly;
+        if (delegate_method.Module.Assembly != rh_common)
           return false;
 
         object wrapper_class = validateDelegate.Target;
@@ -2706,16 +2706,17 @@ namespace Rhino.PlugIns
         System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
         System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
         System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
-        string productPath = get_path_method.Invoke(wrapper_class, null) as string;
-        string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
-        Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
+        string product_path = get_path_method.Invoke(wrapper_class, null) as string;
+        string product_title = get_title_method.Invoke(wrapper_class, null) as string;
+        Guid product_id = (Guid)get_id_method.Invoke(wrapper_class, null);
 
-        // 20-May-2013 Dale Fugier, 0 == any build
-        int productBuildType = 0;
+        // 22-May-2014 Dale Fugier, 0 == Unspecified
+        const int product_build_type = (int)LicenseBuildType.Unspecified;
+
         // Convert int to enum
-        LicenseCapabilities licenseCapabilities = GetLicenseCapabilities(capabilities);
+        LicenseCapabilities license_capabilities = GetLicenseCapabilities(capabilities);
 
-        var args = new object[] { new VerifyFromZooCommon(), productPath, productId, productBuildType, productTitle, licenseCapabilities, textMask, validateDelegate };
+        var args = new object[] { new VerifyFromZooCommon(), product_path, product_id, product_build_type, product_title, license_capabilities, textMask, validateDelegate };
         object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
@@ -3275,6 +3276,8 @@ namespace Rhino.PlugIns
   /// <summary>License build contentType enumerations.</summary>
   public enum LicenseBuildType
   {
+    /// <summary>An unspecified build</summary>
+    Unspecified = 0,
     /// <summary>A release build (e.g. commercial, education, nfr, etc.)</summary>
     Release = 100,
     /// <summary>A evaluation build</summary>

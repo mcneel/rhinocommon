@@ -424,6 +424,10 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool Rdk_RenderContent_OpenInThumbnailEditor(IntPtr pContent, [MarshalAs(UnmanagedType.U1)]bool bModal);
+
+  //unsigned int Rdk_RenderContent_Document(const CRhRdkContent* pContent)
+  [DllImport(Import.librdk, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern uint Rdk_RenderContent_Document(IntPtr pContent);
   #endregion
 
 
@@ -1116,6 +1120,29 @@ internal partial class UnsafeNativeMethods
 
   //void CRdkCmnEventWatcher_SetDocumentSettingsChangedEventCallback(TWOINTSEVENTPROC cep, RDKREPORTPROC report)
   // SKIPPING - Contains a function pointer which needs to be written by hand
+
+  internal enum EventSyncDocumentSettingsChangedFlag : int
+  {
+    Rendering          = 0x0001, // Rendering settings changed (see enum 2 below).
+    SafeFrame          = 0x0002, // Safe frame settings changed.
+    DocumentSun        = 0x0004, // Document sun settings changed.
+    PostEffects        = 0x0008, // Post effects settings changed.
+    GroundPlane        = 0x0010, // Ground plane settings changed.
+    ContentFilter      = 0x0020, // Content filter (excluded render engines) changed.
+    CustomRenderMesh   = 0x0040, // Custom render mesh settings changed.
+    Unspecified        = 0x8000, // Unspecified settings changed. For future use.
+    All                = 0xFFFF, // All RDK document settings changed.
+  }
+
+  internal enum EventSyncRenderingInfo : int
+  {
+    SaveSupportFiles    = 1, // Save support files in 3dm file checkbox changed.
+    Dithering           = 2, // Dithering method changed.
+    Gamma               = 3, // Gamma value changed.
+    UseLinearWorkflow   = 4, // Use linear workflow checkbox changed.
+    ToneMapping         = 5, // Tone mapping method changed.
+    ToneMapperParams    = 6, // Tone mapper parameter(s) changed.
+  }
   #endregion
 
 

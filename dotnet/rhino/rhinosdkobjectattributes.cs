@@ -551,6 +551,17 @@ namespace Rhino.DocObjects
       set { SetColor(idxPlotColor, value); }
     }
 
+    /// <summary>
+    /// A mapping from any plugin source is associated with these attributes
+    /// Need to do this here to respond correctly to ModifyObjectAttributes event
+    /// </summary>
+    public bool HasMapping
+    {
+      get { return UnsafeNativeMethods.ON_3dmObjectAttributes_HasMapping(NonConstPointer()); }
+    }
+
+
+
 #if RHINO_SDK
     public System.Drawing.Color DrawColor(RhinoDoc document)
     {

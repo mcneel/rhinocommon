@@ -222,5 +222,4 @@ RH_C_FUNCTION int ON_RTree_ElementCount(ON_RTree* pTree)
   if( pTree )
     rc = pTree->ElementCount();
   return rc;
-  
 }

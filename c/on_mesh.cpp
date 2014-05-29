@@ -2193,13 +2193,33 @@ static const ON_MappingRef* GetValidMappingRef(const CRhinoObject* pObject, bool
 	return pRef;
 }
 
+//
+// return true if object has a mapping provided from any render plugin
+//
+
+RH_C_FUNCTION  bool ON_TextureMapping_ObjectHasMapping(const CRhinoObject* pRhinoObject)
+{
+
+  if (NULL == pRhinoObject)
+    return false;
+
+  for (int i = 0; i < pRhinoObject->Attributes().m_rendering_attributes.m_mappings.Count(); i++)
+  {
+    const ON_MappingRef *pRef = pRhinoObject->Attributes().m_rendering_attributes.m_mappings.At(i);
+    if (pRef->m_mapping_channels.Count())
+      return true;
+  }
+
+  return false;
+}
+
 RH_C_FUNCTION ON_TextureMapping* ON_TextureMapping_GetMappingFromObject(const CRhinoObject* pRhinoObject, int iChannelId, ON_Xform* objectXformOut)
 {
   if (NULL == pRhinoObject)
     return NULL;
   CRhinoDoc* pRhinoDoc = pRhinoObject->Document();
   if(NULL == pRhinoDoc)
-    return NULL;
+		return NULL;
   const ON_MappingRef* pRef = GetValidMappingRef(pRhinoObject, true);
 	if(NULL == pRef)
     return NULL;

@@ -236,15 +236,23 @@ namespace Rhino.Runtime
         // Icon associated with the specified license type
         if (hIcon != IntPtr.Zero)
         {
-          // Create a new icon from the handle.
-          var newIcon = System.Drawing.Icon.FromHandle(hIcon);
+          // 19 May 214 - John Morse
+          // Added try catch to the icon copy code, an exception here should not cause
+          // license validation to fail.
+          try
+          {
+            // Create a new icon from the handle.
+            var newIcon = System.Drawing.Icon.FromHandle(hIcon);
 
-          // Set the LicenseData icon. Note, LicenseData creates it's own copy of the icon.
-          licenseData.ProductIcon = newIcon;
+            // Set the LicenseData icon. Note, LicenseData creates it's own copy of the icon.
+            licenseData.ProductIcon = newIcon;
 
-          // When using Icon::FromHandle, you must dispose of the original icon by using the
-          // DestroyIcon method in the Win32 API to ensure that the resources are released.
-          DestroyIcon(newIcon.Handle);
+            // When using Icon::FromHandle, you must dispose of the original icon by using the
+            // DestroyIcon method in the Win32 API to ensure that the resources are released.
+            if (newIcon != null)
+              DestroyIcon(newIcon.Handle);
+          }
+          catch { }
         }
 
         return ValidateResult.Success;

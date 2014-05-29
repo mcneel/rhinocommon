@@ -1040,6 +1040,20 @@ namespace Rhino.Render
     }
 
     /// <summary>
+    /// Get the document this content belongs to or null if the content has not
+    /// yet been added to a document.  This will be null when content is
+    /// generated for browsers or preview generation.
+    /// </summary>
+    public RhinoDoc Document
+    {
+      get
+      {
+        var doc_id = UnsafeNativeMethods.Rdk_RenderContent_Document(ConstPointer());
+        return RhinoDoc.FromId((int)doc_id);
+      }
+    }
+
+    /// <summary>
     /// Call this method to open the content in the relevant thumbnail editor
     /// and select it for editing by the user. The content must be in the
     /// document or the call will fail.

@@ -197,7 +197,7 @@ namespace Rhino.Commands
 
     internal int m_runtime_serial_number;
     internal Style m_style_flags;
-    Rhino.PlugIns.PlugIn m_plugin;
+    Rhino.PlugIns.PlugIn m_plugin; 
     Guid m_id = Guid.Empty;
 
     internal static Command LookUpBySerialNumber(int sn)

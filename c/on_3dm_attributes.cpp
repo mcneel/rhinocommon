@@ -344,3 +344,19 @@ RH_C_FUNCTION void ON_3dmObjectAttributes_ClearDisplayMode(ON_3dmObjectAttribute
     pObjectAttributes->RemoveDisplayMaterialRef(rhinoViewportId);
   }
 }
+
+
+RH_C_FUNCTION bool ON_3dmObjectAttributes_HasMapping(ON_3dmObjectAttributes* pObjectAttributes)
+{
+  for (int i = 0; i < pObjectAttributes->m_rendering_attributes.m_mappings.Count(); i++)
+  {
+    const ON_MappingRef *pRef = pObjectAttributes->m_rendering_attributes.m_mappings.At(i);
+    if (pRef->m_mapping_channels.Count())
+      return true;
+  }
+
+  return false;
+}
+
+
+

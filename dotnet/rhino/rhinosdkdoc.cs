@@ -1,5 +1,5 @@
+using Rhino.Runtime;
 #pragma warning disable 1591
-
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -2539,101 +2539,6 @@ namespace Rhino
       }
     }
     private static EventHandler<TextureMappingEventArgs> g_texture_mapping_event;
-
-
-    #region rdk events
-#if RDK_UNCHECKED
-    // Notes from John and Steve: 27 August 2013
-    // 1) Never use the work RDK, what should these be called?
-    // 2) Do we need these or should there be separate events for each case
-    // 3) Don't write nested enum or classes that are public
-    // 4) What should the public event(s) be?
-    // 5) Where is the associated document
-    // 6) Event args should derive from common DocumentEventArgs class
-    /// <summary>
-    /// Bit flags for RdkDocumentSettingsChangedArgs flags parameter.
-    /// </summary>
-    [Flags]
-	  public enum DocSettingsChangedFlags
-	  {
-		  Rendering         = 0x0001, // Rendering settings changed (see enum 2 below).
-		  SafeFrame         = 0x0002, // Safe frame settings changed.
-		  DocumentSun       = 0x0004, // Document sun settings changed.
-		  PostEffects       = 0x0008, // Post effects settings changed.
-		  GroundPlane       = 0x0010, // Ground plane settings changed.
-		  ContentFilter     = 0x0020, // Content filter (excluded render engines) changed.
-		  CustomRenderMesh  = 0x0040, // Custom render mesh settings changed.
-		  Unspecified       = 0x8000, // Unspecified settings changed. For future use.
-		  All               = 0xFFFF, // All RDK document settings changed.
-	  };
-
-	  /// <summary>
-	  /// Values for RdkDocumentSettingsChangedArgs RenderingInfo parameter when Flags is 'Rendering'
-	  /// </summary>
-	  public enum DocSettingsChangedRenderingInfo
-	  {
-		  SaveSupportFiles    = 1, // Save support files in 3dm file checkbox changed.
-		  Dithering           = 2, // Dithering method changed.
-		  Gamma               = 3, // Gamma value changed.
-		  UseLinearWorkflow   = 4, // Use linear workflow checkbox changed.
-		  ToneMapping         = 5, // Tone mapping method changed.
-		  ToneMapperParams    = 6, // Tone mapper parameter(s) changed.
-	  };
-
-    public class RdkDocumentSettingsChangedArgs : EventArgs
-    {
-      readonly DocSettingsChangedFlags m_flags;
-      readonly DocSettingsChangedRenderingInfo m_context;
-      internal RdkDocumentSettingsChangedArgs(DocSettingsChangedFlags flags, DocSettingsChangedRenderingInfo context) 
-      {
-        m_flags = flags;
-        m_context = context; 
-      }
-      public DocSettingsChangedFlags         Flags { get { return m_flags; } }
-      public DocSettingsChangedRenderingInfo RenderingInfo { get { return m_context; } }
-    }
-
-    internal delegate void RdkDocumentSettingsChangedCallback(int flags, int context);
-
-    private static RdkDocumentSettingsChangedCallback m_OnRdkDocumentSettingsChanged;
-    private static void OnRdkDocumentSettingsChanged(int flags, int context)
-    {
-      if (m_rdk_doc_settings_changed_event != null)
-      {
-        try { m_rdk_doc_settings_changed_event(null, new RdkDocumentSettingsChangedArgs((DocSettingsChangedFlags)flags, (DocSettingsChangedRenderingInfo)context)); }
-        catch (Exception ex) { Runtime.HostUtils.ExceptionReport(ex); }
-      }
-    }
-    internal static EventHandler<RdkDocumentSettingsChangedArgs> m_rdk_doc_settings_changed_event;
-
-
-    /// <summary>
-    /// Called when RDK document settings are changed.
-    /// </summary>
-    public static event EventHandler<RdkDocumentSettingsChangedArgs> RdkSettingsChanged
-    {
-      add
-      {
-        if (m_rdk_doc_settings_changed_event == null)
-        {
-          m_OnRdkDocumentSettingsChanged = OnRdkDocumentSettingsChanged;
-          UnsafeNativeMethods.CRdkCmnEventWatcher_SetDocumentSettingsChangedEventCallback(m_OnRdkDocumentSettingsChanged, Rhino.Runtime.HostUtils.m_rdk_ew_report);
-        }
-        m_rdk_doc_settings_changed_event += value;
-      }
-      remove
-      {
-        m_rdk_doc_settings_changed_event -= value;
-        if (m_rdk_doc_settings_changed_event == null)
-        {
-          UnsafeNativeMethods.CRdkCmnEventWatcher_SetDocumentSettingsChangedEventCallback(null, Rhino.Runtime.HostUtils.m_rdk_ew_report);
-          m_OnRdkDocumentSettingsChanged = null;
-        }
-      }
-    }
-
-#endif
-    #endregion
   }
 
   /// <summary>
@@ -3704,6 +3609,17 @@ namespace Rhino.DocObjects.Tables
     {
       if (m_custom_objects == null)
         m_custom_objects = new SortedList<uint, RhinoObject>();
+
+      // 27 May 2014 S. Baer (RH-27356)
+      // This function is just responsible for tracking Custom RhinoObject classes
+      // and may be called multiple times with the same object. That's fine, we just
+      // want to be able to track and being called several times is much better than
+      // never being called.
+      //
+      // If the dictionary already contains the custom object, just bail out
+      if (m_custom_objects.ContainsKey(serialNumber))
+        return;
+
       m_custom_objects.Add(serialNumber, rhobj);
 
       // 17 Sept 2012 S. Baer

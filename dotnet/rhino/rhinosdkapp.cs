@@ -1,5 +1,5 @@
 using System;
-
+using System.Diagnostics;
 #if RHINO_SDK
 using Rhino.ApplicationSettings;
 using Rhino.Geometry;
@@ -241,6 +241,21 @@ namespace Rhino
           UnsafeNativeMethods.ON_Revision(pString);
           return sh.ToString();
         }
+      }
+    }
+
+    static Version g_version;
+    /// <summary> File version of the main Rhino process </summary>
+    public static Version Version
+    {
+      get
+      {
+        if( g_version==null )
+        {
+          FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(Process.GetCurrentProcess().MainModule.FileName);
+          g_version = new Version(fvi.ProductMajorPart, fvi.ProductMinorPart, fvi.ProductBuildPart, fvi.ProductPrivatePart);
+        }
+        return g_version;
       }
     }
 

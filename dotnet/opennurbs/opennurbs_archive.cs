@@ -1081,6 +1081,16 @@ namespace Rhino.Collections
       return GetHelper(key, 0.0);
     }
     /// <summary>
+    /// Get value as double, will only succeed if value was created using Set(string key, double value)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public double GetDouble(string key, double defaultValue)
+    {
+      return GetHelper(key, defaultValue);
+    }
+    /// <summary>
     /// Get value as int, will return defaultValue unless value was created using Set(string key, int value)
     /// </summary>
     /// <param name="key"></param>

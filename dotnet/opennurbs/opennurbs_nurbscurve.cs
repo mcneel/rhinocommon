@@ -39,14 +39,14 @@ namespace Rhino.Geometry
     /// <returns>Curve on success, null on failure.</returns>
     public static NurbsCurve CreateFromArc(Arc arc)
     {
-      IntPtr pNC = UnsafeNativeMethods.ON_NurbsCurve_New(IntPtr.Zero);
-      int success = UnsafeNativeMethods.ON_Arc_GetNurbForm(ref arc, pNC);
+      IntPtr ptr_nurbs_curve = UnsafeNativeMethods.ON_NurbsCurve_New(IntPtr.Zero);
+      int success = UnsafeNativeMethods.ON_Arc_GetNurbForm(ref arc, ptr_nurbs_curve);
       if (0 == success)
       {
-        UnsafeNativeMethods.ON_Object_Delete(pNC);
+        UnsafeNativeMethods.ON_Object_Delete(ptr_nurbs_curve);
         return null;
       }
-      return GeometryBase.CreateGeometryHelper(pNC, null) as NurbsCurve;
+      return CreateGeometryHelper(ptr_nurbs_curve, null) as NurbsCurve;
     }
 
     /// <summary>
@@ -60,14 +60,14 @@ namespace Rhino.Geometry
     /// <returns>Curve on success, null on failure.</returns>
     public static NurbsCurve CreateFromCircle(Circle circle)
     {
-      IntPtr pNC = UnsafeNativeMethods.ON_NurbsCurve_New(IntPtr.Zero);
-      int success = UnsafeNativeMethods.ON_Circle_GetNurbForm(ref circle, pNC);
+      IntPtr ptr_nurbs_curve = UnsafeNativeMethods.ON_NurbsCurve_New(IntPtr.Zero);
+      int success = UnsafeNativeMethods.ON_Circle_GetNurbForm(ref circle, ptr_nurbs_curve);
       if (0 == success)
       {
-        UnsafeNativeMethods.ON_Object_Delete(pNC);
+        UnsafeNativeMethods.ON_Object_Delete(ptr_nurbs_curve);
         return null;
       }
-      return GeometryBase.CreateGeometryHelper(pNC, null) as NurbsCurve;
+      return CreateGeometryHelper(ptr_nurbs_curve, null) as NurbsCurve;
     }
 
     /// <summary>
@@ -81,7 +81,7 @@ namespace Rhino.Geometry
       NurbsCurve nc = CreateFromCircle(new Circle(ellipse.Plane, 1.0));
       if (nc == null) { return null; }
 
-      Transform scale = Rhino.Geometry.Transform.Scale(ellipse.Plane, ellipse.Radius1, ellipse.Radius2, 1.0);
+      Transform scale = Geometry.Transform.Scale(ellipse.Plane, ellipse.Radius1, ellipse.Radius2, 1.0);
       nc.Transform(scale);
 
       return nc;
@@ -111,12 +111,12 @@ namespace Rhino.Geometry
     /// <returns>true if curves are similar within tolerance.</returns>
     public static bool IsDuplicate(NurbsCurve curveA, NurbsCurve curveB, bool ignoreParameterization, double tolerance)
     {
-      IntPtr ptrA = curveA.ConstPointer();
-      IntPtr ptrB = curveB.ConstPointer();
-      if (ptrA == ptrB)
+      IntPtr const_ptr_a = curveA.ConstPointer();
+      IntPtr const_ptr_b = curveB.ConstPointer();
+      if (const_ptr_a == const_ptr_b)
         return true;
 
-      return UnsafeNativeMethods.ON_NurbsCurve_IsDuplicate(ptrA, ptrB, ignoreParameterization, tolerance);
+      return UnsafeNativeMethods.ON_NurbsCurve_IsDuplicate(const_ptr_a, const_ptr_b, ignoreParameterization, tolerance);
     }
 
     /// <summary>
@@ -140,18 +140,18 @@ namespace Rhino.Geometry
         return null;
 
       const int dimension = 3;
-      const double knotDelta = 1.0;
+      const double knot_delta = 1.0;
       int count;
       int order = degree + 1;
-      Point3d[] ptArray = Rhino.Collections.Point3dList.GetConstPointArray(points, out count);
-      if (null == ptArray || count < 2)
+      Point3d[] point_array = Point3dList.GetConstPointArray(points, out count);
+      if (null == point_array || count < 2)
         return null;
 
       NurbsCurve nc = new NurbsCurve();
-      IntPtr pCurve = nc.NonConstPointer();
+      IntPtr ptr_curve = nc.NonConstPointer();
 
-      bool rc = periodic ? UnsafeNativeMethods.ON_NurbsCurve_CreatePeriodicUniformNurbs(pCurve, dimension, order, count, ptArray, knotDelta) :
-                           UnsafeNativeMethods.ON_NurbsCurve_CreateClampedUniformNurbs(pCurve, dimension, order, count, ptArray, knotDelta);
+      bool rc = periodic ? UnsafeNativeMethods.ON_NurbsCurve_CreatePeriodicUniformNurbs(ptr_curve, dimension, order, count, point_array, knot_delta) :
+                           UnsafeNativeMethods.ON_NurbsCurve_CreateClampedUniformNurbs(ptr_curve, dimension, order, count, point_array, knot_delta);
 
       if (false == rc)
       {
@@ -160,93 +160,6 @@ namespace Rhino.Geometry
       }
       return nc;
     }
-
-#if RHINO_SDK
-    /// <summary>
-    /// Creates a C1 cubic NURBS approximation of a helix or spiral. For a helix,
-    /// you may have radius0 == radius1. For a spiral radius0 == radius0 produces
-    /// a circle. Zero and negative radii are permissible.
-    /// </summary>
-    /// <param name="axisStart">Helix's axis starting point or center of spiral.</param>
-    /// <param name="axisDir">Helix's axis vector or normal to spiral's plane.</param>
-    /// <param name="radiusPoint">
-    /// Point used only to get a vector that is perpedicular to the axis. In
-    /// particular, this vector must not be (anti)parallel to the axis vector.
-    /// </param>
-    /// <param name="pitch">
-    /// The pitch, where a spiral has a pitch = 0, and pitch > 0 is the distance
-    /// between the helix's "threads".
-    /// </param>
-    /// <param name="turnCount">The number of turns in spiral or helix. Positive
-    /// values produce counter-clockwise orientation, negitive values produce
-    /// clockwise orientation. Note, for a helix, turnCount * pitch = length of
-    /// the helix's axis.
-    /// </param>
-    /// <param name="radius0">The starting radius.</param>
-    /// <param name="radius1">The ending radius.</param>
-    /// <returns>NurbsCurve on success, null on failure.</returns>
-    public static NurbsCurve CreateSpiral(Point3d axisStart, Vector3d axisDir, Point3d radiusPoint,
-      double pitch, double turnCount, double radius0, double radius1)
-    {
-      NurbsCurve curve = new NurbsCurve();
-      IntPtr pCurve = curve.NonConstPointer();
-      bool rc = UnsafeNativeMethods.RHC_RhinoCreateSpiral0(axisStart, axisDir, radiusPoint, pitch, turnCount, radius0, radius1, pCurve);
-      if (!rc)
-      {
-        curve.Dispose();
-        return null;
-      }
-      return curve;
-    }
-
-    /// <summary>
-    /// Create a C2 non-rational uniform cubic NURBS approximation of a swept helix or spiral.
-    /// </summary>
-    /// <param name="railCurve">The rail curve.</param>
-    /// <param name="t0">Starting portion of rail curve's domain to sweep along.</param>
-    /// <param name="t1">Ending portion of rail curve's domain to sweep along.</param>
-    /// <param name="radiusPoint">
-    /// Point used only to get a vector that is perpedicular to the axis. In
-    /// particular, this vector must not be (anti)parallel to the axis vector.
-    /// </param>
-    /// <param name="pitch">
-    /// The pitch. Positive values produce counter-clockwise orientation,
-    /// negative values produce clockwise orientation.
-    /// </param>
-    /// <param name="turnCount">
-    /// The turn count. If != 0, then the resulting helix will have this many
-    /// turns. If = 0, then pitch must be != 0 and the approximate distance
-    /// between turns will be set to pitch. Positive values produce counter-clockwise
-    /// orientation, negitive values produce clockwise orientation.
-    /// </param>
-    /// <param name="radius0">
-    /// The starting radius. At least one radii must benonzero. Negative values
-    /// are allowed.
-    /// </param>
-    /// <param name="radius1">
-    /// The ending radius. At least ont radii must be nonzero. Negative values
-    /// are allowed.
-    /// </param>
-    /// <param name="pointsPerTurn">
-    /// Number of points to intepolate per turn. Must be greater than 4.
-    /// When in doubt, use 12.
-    /// </param>
-    /// <returns>NurbsCurve on success, null on failure.</returns>
-    public static NurbsCurve CreateSpiral(Curve railCurve, double t0, double t1, Point3d radiusPoint, double pitch,
-      double turnCount, double radius0, double radius1, int pointsPerTurn)
-    {
-      IntPtr pRail = railCurve.ConstPointer();
-      NurbsCurve curve = new NurbsCurve();
-      IntPtr pCurve = curve.NonConstPointer();
-      bool rc = UnsafeNativeMethods.RHC_RhinoCreateSpiral1(pRail, t0, t1, radiusPoint, pitch, turnCount, radius0, radius1, pointsPerTurn, pCurve);
-      if (!rc)
-      {
-        curve.Dispose();
-        return null;
-      }
-      return curve;
-    }
-#endif
 
     #endregion
 
@@ -257,10 +170,10 @@ namespace Rhino.Geometry
     /// <param name="other">The other curve. This value can be null.</param>
     public NurbsCurve(NurbsCurve other)
     {
-      IntPtr pOther = IntPtr.Zero;
+      IntPtr const_ptr_other = IntPtr.Zero;
       if (other != null)
-        pOther = other.ConstPointer();
-      IntPtr ptr = UnsafeNativeMethods.ON_NurbsCurve_New(pOther);
+        const_ptr_other = other.ConstPointer();
+      IntPtr ptr = UnsafeNativeMethods.ON_NurbsCurve_New(const_ptr_other);
       ConstructNonConstObject(ptr);
     }
     internal NurbsCurve()
@@ -319,8 +232,8 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_NurbsCurve_Create(ptr, dimension, isRational, order, cvCount);
     }
 
-    internal NurbsCurve(IntPtr ptr, object parent, int subobject_index)
-      : base(ptr, parent, subobject_index)
+    internal NurbsCurve(IntPtr ptr, object parent, int subobjectIndex)
+      : base(ptr, parent, subobjectIndex)
     {
     }
 
@@ -374,7 +287,7 @@ namespace Rhino.Geometry
     /// </summary>
     public Collections.NurbsCurvePointList Points
     {
-      get { return m_points ?? (m_points = new Rhino.Geometry.Collections.NurbsCurvePointList(this)); }
+      get { return m_points ?? (m_points = new Collections.NurbsCurvePointList(this)); }
     }
     #endregion
 
@@ -403,26 +316,6 @@ namespace Rhino.Geometry
     }
     #endregion
 
-#if RHINO_SDK
-    private IntPtr CurveDisplay()
-    {
-      if (IntPtr.Zero == m_pCurveDisplay)
-      {
-        IntPtr pThis = ConstPointer();
-        m_pCurveDisplay = UnsafeNativeMethods.CurveDisplay_FromNurbsCurve(pThis);
-      }
-      return m_pCurveDisplay;
-    }
-
-    internal override void Draw(DisplayPipeline pipeline, System.Drawing.Color color, int thickness)
-    {
-      IntPtr pDisplayPipeline = pipeline.NonConstPointer();
-      int argb = color.ToArgb();
-      IntPtr pCurveDisplay = CurveDisplay();
-      UnsafeNativeMethods.CurveDisplay_Draw(pCurveDisplay, pDisplayPipeline, argb, thickness);
-    }
-#endif
-
     /// <summary>
     /// Increase the degree of this curve.
     /// </summary>
@@ -442,8 +335,8 @@ namespace Rhino.Geometry
     {
       get
       {
-        IntPtr ptr = ConstPointer();
-        return UnsafeNativeMethods.ON_NurbsCurve_GetBool(ptr, idxHasBezierSpans);
+        IntPtr const_ptr_this = ConstPointer();
+        return UnsafeNativeMethods.ON_NurbsCurve_GetBool(const_ptr_this, idxHasBezierSpans);
       }
     }
 
@@ -458,8 +351,8 @@ namespace Rhino.Geometry
     /// <returns>true on success, false on failure.</returns>
     public bool MakePiecewiseBezier(bool setEndWeightsToOne)
     {
-      IntPtr ptr = NonConstPointer();
-      return UnsafeNativeMethods.ON_NurbsCurve_MakePiecewiseBezier(ptr, setEndWeightsToOne);
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.ON_NurbsCurve_MakePiecewiseBezier(ptr_this, setEndWeightsToOne);
     }
 
     /// <summary>
@@ -593,6 +486,112 @@ namespace Rhino.Geometry
 
     //[skipping]
     //  bool ConvertSpanToBezier(
+
+
+#if RHINO_SDK
+    /// <summary>
+    /// Creates a C1 cubic NURBS approximation of a helix or spiral. For a helix,
+    /// you may have radius0 == radius1. For a spiral radius0 == radius0 produces
+    /// a circle. Zero and negative radii are permissible.
+    /// </summary>
+    /// <param name="axisStart">Helix's axis starting point or center of spiral.</param>
+    /// <param name="axisDir">Helix's axis vector or normal to spiral's plane.</param>
+    /// <param name="radiusPoint">
+    /// Point used only to get a vector that is perpedicular to the axis. In
+    /// particular, this vector must not be (anti)parallel to the axis vector.
+    /// </param>
+    /// <param name="pitch">
+    /// The pitch, where a spiral has a pitch = 0, and pitch > 0 is the distance
+    /// between the helix's "threads".
+    /// </param>
+    /// <param name="turnCount">The number of turns in spiral or helix. Positive
+    /// values produce counter-clockwise orientation, negitive values produce
+    /// clockwise orientation. Note, for a helix, turnCount * pitch = length of
+    /// the helix's axis.
+    /// </param>
+    /// <param name="radius0">The starting radius.</param>
+    /// <param name="radius1">The ending radius.</param>
+    /// <returns>NurbsCurve on success, null on failure.</returns>
+    public static NurbsCurve CreateSpiral(Point3d axisStart, Vector3d axisDir, Point3d radiusPoint,
+      double pitch, double turnCount, double radius0, double radius1)
+    {
+      NurbsCurve curve = new NurbsCurve();
+      IntPtr ptr_curve = curve.NonConstPointer();
+      bool rc = UnsafeNativeMethods.RHC_RhinoCreateSpiral0(axisStart, axisDir, radiusPoint, pitch, turnCount, radius0, radius1, ptr_curve);
+      if (!rc)
+      {
+        curve.Dispose();
+        return null;
+      }
+      return curve;
+    }
+
+    /// <summary>
+    /// Create a C2 non-rational uniform cubic NURBS approximation of a swept helix or spiral.
+    /// </summary>
+    /// <param name="railCurve">The rail curve.</param>
+    /// <param name="t0">Starting portion of rail curve's domain to sweep along.</param>
+    /// <param name="t1">Ending portion of rail curve's domain to sweep along.</param>
+    /// <param name="radiusPoint">
+    /// Point used only to get a vector that is perpedicular to the axis. In
+    /// particular, this vector must not be (anti)parallel to the axis vector.
+    /// </param>
+    /// <param name="pitch">
+    /// The pitch. Positive values produce counter-clockwise orientation,
+    /// negative values produce clockwise orientation.
+    /// </param>
+    /// <param name="turnCount">
+    /// The turn count. If != 0, then the resulting helix will have this many
+    /// turns. If = 0, then pitch must be != 0 and the approximate distance
+    /// between turns will be set to pitch. Positive values produce counter-clockwise
+    /// orientation, negitive values produce clockwise orientation.
+    /// </param>
+    /// <param name="radius0">
+    /// The starting radius. At least one radii must benonzero. Negative values
+    /// are allowed.
+    /// </param>
+    /// <param name="radius1">
+    /// The ending radius. At least ont radii must be nonzero. Negative values
+    /// are allowed.
+    /// </param>
+    /// <param name="pointsPerTurn">
+    /// Number of points to intepolate per turn. Must be greater than 4.
+    /// When in doubt, use 12.
+    /// </param>
+    /// <returns>NurbsCurve on success, null on failure.</returns>
+    public static NurbsCurve CreateSpiral(Curve railCurve, double t0, double t1, Point3d radiusPoint, double pitch,
+      double turnCount, double radius0, double radius1, int pointsPerTurn)
+    {
+      IntPtr const_ptr_rail = railCurve.ConstPointer();
+      NurbsCurve curve = new NurbsCurve();
+      IntPtr ptr_curve = curve.NonConstPointer();
+      bool rc = UnsafeNativeMethods.RHC_RhinoCreateSpiral1(const_ptr_rail, t0, t1, radiusPoint, pitch, turnCount, radius0, radius1, pointsPerTurn, ptr_curve);
+      if (!rc)
+      {
+        curve.Dispose();
+        return null;
+      }
+      return curve;
+    }
+
+    private IntPtr CurveDisplay()
+    {
+      if (IntPtr.Zero == m_pCurveDisplay)
+      {
+        IntPtr const_ptr_this = ConstPointer();
+        m_pCurveDisplay = UnsafeNativeMethods.CurveDisplay_FromNurbsCurve(const_ptr_this);
+      }
+      return m_pCurveDisplay;
+    }
+
+    internal override void Draw(DisplayPipeline pipeline, System.Drawing.Color color, int thickness)
+    {
+      IntPtr ptr_display_pipeline = pipeline.NonConstPointer();
+      int argb = color.ToArgb();
+      IntPtr ptr_curve_display = CurveDisplay();
+      UnsafeNativeMethods.CurveDisplay_Draw(ptr_curve_display, ptr_display_pipeline, argb, thickness);
+    }
+#endif
   }
 
   /// <summary>
@@ -728,7 +727,7 @@ namespace Rhino.Geometry.Collections
   /// <summary>
   /// Provides access to the knot vector of a nurbs curve.
   /// </summary>
-  public sealed class NurbsCurveKnotList : IEnumerable<double>, Rhino.Collections.IRhinoTable<double>, IEpsilonComparable<NurbsCurveKnotList>
+  public sealed class NurbsCurveKnotList : IEnumerable<double>, IRhinoTable<double>, IEpsilonComparable<NurbsCurveKnotList>
   {
     private readonly NurbsCurve m_curve;
 
@@ -900,19 +899,19 @@ namespace Rhino.Geometry.Collections
     /// <returns>A component.</returns>
     public double SuperfluousKnot(bool start)
     {
-      IntPtr pConstCurve = m_curve.ConstPointer();
-      return UnsafeNativeMethods.ON_NurbsCurve_SuperfluousKnot(pConstCurve, start ? 0 : 1);
+      IntPtr const_ptr_curve = m_curve.ConstPointer();
+      return UnsafeNativeMethods.ON_NurbsCurve_SuperfluousKnot(const_ptr_curve, start ? 0 : 1);
     }
     #endregion
 
     #region IEnumerable<double> Members
     IEnumerator<double> IEnumerable<double>.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<NurbsCurveKnotList, double>(this);
+      return new TableEnumerator<NurbsCurveKnotList, double>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<NurbsCurveKnotList, double>(this);
+      return new TableEnumerator<NurbsCurveKnotList, double>(this);
     }
     #endregion
 
@@ -936,9 +935,9 @@ namespace Rhino.Geometry.Collections
         // check for span equality
         for (int i = 1; i < Count; ++i)
         {
-            double myDelta = this[i] - this[i - 1];
-            double theirDelta = other[i] - other[i - 1];
-            if (!RhinoMath.EpsilonEquals(myDelta, theirDelta, epsilon))
+            double my_delta = this[i] - this[i - 1];
+            double their_delta = other[i] - other[i - 1];
+            if (!RhinoMath.EpsilonEquals(my_delta, their_delta, epsilon))
                 return false;
         }
 
@@ -949,7 +948,7 @@ namespace Rhino.Geometry.Collections
   /// <summary>
   /// Provides access to the control points of a nurbs curve.
   /// </summary>
-  public class NurbsCurvePointList : IEnumerable<ControlPoint>, Rhino.Collections.IRhinoTable<ControlPoint>, IEpsilonComparable<NurbsCurvePointList>
+  public class NurbsCurvePointList : IEnumerable<ControlPoint>, IRhinoTable<ControlPoint>, IEpsilonComparable<NurbsCurvePointList>
   {
     private readonly NurbsCurve m_curve;
 
@@ -1123,19 +1122,19 @@ namespace Rhino.Geometry.Collections
     /// <param name="point">Coordinate and weight of control-point.</param>
     public bool SetPoint(int index, Point4d point)
     {
-      IntPtr pCurve = m_curve.NonConstPointer();
-      return UnsafeNativeMethods.ON_NurbsCurve_SetCV2(pCurve, index, ref point);
+      IntPtr ptr_curve = m_curve.NonConstPointer();
+      return UnsafeNativeMethods.ON_NurbsCurve_SetCV2(ptr_curve, index, ref point);
     }
     #endregion
 
     #region IEnumerable<ControlPoint> Members
     IEnumerator<ControlPoint> IEnumerable<ControlPoint>.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<NurbsCurvePointList, ControlPoint>(this);
+      return new TableEnumerator<NurbsCurvePointList, ControlPoint>(this);
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<NurbsCurvePointList, ControlPoint>(this);
+      return new TableEnumerator<NurbsCurvePointList, ControlPoint>(this);
     }
     #endregion
 

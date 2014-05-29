@@ -145,17 +145,15 @@ RH_C_FUNCTION void ON_3dPointArray_CopyValues( const ON_3dPointArray* pArray, /*
 
 /////////////////////////////////////////////////////////////////////////////////
 
-RH_C_FUNCTION ON_SimpleArray<int>* ON_IntArray_New()
+RH_C_FUNCTION ON_SimpleArray<int>* ON_IntArray_New(/*ARRAY*/const int* vals, int count)
 {
-  return new ON_SimpleArray<int>();
-}
-
-RH_C_FUNCTION ON_SimpleArray<int>* ON_IntArray_New2(/*ARRAY*/const int* vals, int count)
-{
+  if( 0==vals || count<1 )
+    return new ON_SimpleArray<int>();
   ON_SimpleArray<int>* rc = new ON_SimpleArray<int>(count);
   rc->Append(count, vals);
   return rc;
 }
+
 
 RH_C_FUNCTION void ON_IntArray_CopyValues(const ON_SimpleArray<int>* ptr, /*ARRAY*/int* vals)
 {

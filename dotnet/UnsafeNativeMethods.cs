@@ -408,14 +408,10 @@ internal partial class UnsafeNativeMethods
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetCallback_CRMProvider_Build(Rhino.Render.CustomRenderMeshProvider.CrmProviderBuildCallback callback_func);
-#endif
 
-#if RDK_UNCHECKED
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void CRdkCmnEventWatcher_SetDocumentSettingsChangedEventCallback(Rhino.RhinoDoc.RdkDocumentSettingsChangedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
-#endif
+  internal static extern void CRdkCmnEventWatcher_SetDocumentSettingsChangedEventCallback(Rhino.Render.RdkCmnEventWatcher.RdkDocumentSettingsChangedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
 
-#if RDK_CHECKED
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRdkCmnEventWatcher_SetContentListClearingEventCallback(Rhino.Render.RenderContentTable.ContentListClearingCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
 

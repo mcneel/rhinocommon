@@ -56,7 +56,17 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <!-- This post-build event is for convenience when using automated build processes that depend on a hard-coded path  -->
+  <!-- Windows version -->
+  <!--
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "..\..\..\$(TargetFileName)"</PostBuildEvent>
   </PropertyGroup>
+  -->
+  <!-- Mac OS X/bash version -->
+  <!--
+  <PropertyGroup>
+    <PostBuildEvent>cp "$(TargetPath)" "..\..\..\$(TargetFileName)"</PostBuildEvent>
+  </PropertyGroup>
+  -->
 </Project>

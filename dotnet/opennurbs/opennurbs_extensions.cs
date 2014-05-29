@@ -227,6 +227,18 @@ namespace Rhino.FileIO
       }
     }
 
+    /// <summary> Reads only the archive 3dm version from an existing 3dm file. </summary>
+    /// <param name="path">The file from which to read the archive version.</param>
+    /// <returns>The 3dm file archive version.</returns>
+    /// <exception cref="FileNotFoundException">If path does not exist, is null or cannot be accessed because of permissions.</exception>
+    public static int ReadArchiveVersion(string path)
+    {
+      if (!File.Exists (path))
+        throw new FileNotFoundException ("The provided path is null, does not exist or cannot be accessed.", path);
+
+      return UnsafeNativeMethods.ONX_Model_ReadArchiveVersion (path);
+    }
+
     /// <summary>
     /// Quickly check a file for it's revision information.  This function does
     /// not read the entire file, just what it needs to get revision information out

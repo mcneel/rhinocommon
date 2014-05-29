@@ -685,6 +685,31 @@ RH_C_FUNCTION void ONX_Model_ReadNotes(const RHMONO_STRING* path, CRhCmnStringHo
   }
 }
 
+RH_C_FUNCTION int ONX_Model_ReadArchiveVersion(const RHMONO_STRING* path)
+{
+  if( path )
+  {
+    INPUTSTRINGCOERCE(_path, path);
+    
+    FILE* fp = ON::OpenFile( _path, L"rb" );
+    if( fp )
+    {
+      ON_BinaryFile file( ON::read3dm, fp);
+      int version = 0;
+      ON_String comment_block;
+      ON_BOOL32 rc = file.Read3dmStartSection( &version, comment_block );
+      if(rc)
+      {
+        ON::CloseFile(fp);
+        return version;
+      }
+      ON::CloseFile(fp);
+    }
+  }
+  
+  return 0;
+}
+
 RH_C_FUNCTION ON_3dmRevisionHistory* ONX_Model_ReadRevisionHistory(const RHMONO_STRING* path, CRhCmnStringHolder* pStringCreated, CRhCmnStringHolder* pStringLastEdited, int* revision)
 {
   ON_3dmRevisionHistory* rc = NULL;

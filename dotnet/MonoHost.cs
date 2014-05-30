@@ -1,5 +1,3 @@
-#if needed
-
 #pragma warning disable 1591
 using System;
 using System.Runtime.InteropServices;
@@ -58,7 +56,7 @@ namespace Rhino.Runtime
         Type t = typeof(System.Windows.Forms.Application);
         if (t != null)
         {
-          System.Reflection.MethodInfo mi = t.GetRuntimeMethod("MonoMacInit", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+          System.Reflection.MethodInfo mi = t.GetMethod("MonoMacInit", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
           if (mi != null)
           {
             HostUtils.DebugString("Got methodinfo for MonoMacInit");
@@ -372,7 +370,5 @@ partial class UnsafeNativeMethods
   [DllImport("__Internal", CallingConvention=CallingConvention.Cdecl)]
   internal static extern void RhMono_SetPlugInLoadString(int which, [MarshalAs(UnmanagedType.LPWStr)]string str);
 }
-
-#endif
 
 #endif

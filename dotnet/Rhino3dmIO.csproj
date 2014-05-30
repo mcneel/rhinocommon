@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,11 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Rhino</RootNamespace>
     <AssemblyName>Rhino3dmIO</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -77,19 +74,13 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="AutoNativeMethods.cs" />
-    <Compile Include="Drawing\Color.cs" />
-    <Compile Include="Drawing\ColorTranslator.cs" />
-    <Compile Include="Drawing\Font.cs" />
-    <Compile Include="Drawing\FontFamily.cs" />
-    <Compile Include="Drawing\FontStyle.cs" />
-    <Compile Include="Drawing\GraphicsUnit.cs" />
-    <Compile Include="Drawing\Point.cs" />
-    <Compile Include="Drawing\PointF.cs" />
-    <Compile Include="Drawing\Rectangle.cs" />
-    <Compile Include="Drawing\RectangleF.cs" />
-    <Compile Include="Drawing\Size.cs" />
-    <Compile Include="Drawing\SizeF.cs" />
     <Compile Include="hostutils.cs" />
     <Compile Include="Import.cs" />
     <Compile Include="interop.cs" />
@@ -309,13 +300,54 @@
     <Compile Include="rhino\rhinosdkunrollsrf.cs" />
     <Compile Include="rhino\rhinosdkview.cs" />
     <Compile Include="rhino\rhinosdkviewport.cs" />
+    <Compile Include="UI\ComboListBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ComboListBox.Designer.cs">
+      <DependentUpon>ComboListBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs.cs" />
+    <Compile Include="UI\EditBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\EditBox.Designer.cs">
+      <DependentUpon>EditBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ListBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ListBox.Designer.cs">
+      <DependentUpon>ListBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Localization.cs" />
+    <Compile Include="UI\LocalizationStringTable.cs" />
+    <Compile Include="UI\LocalizationUtils.cs" />
+    <Compile Include="UI\StringBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\StringBox.Designer.cs">
+      <DependentUpon>StringBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="UnsafeNativeMethods.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\ComboListBox.resx">
+      <DependentUpon>ComboListBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\EditBox.resx">
+      <DependentUpon>EditBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ListBox.resx">
+      <DependentUpon>ListBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\StringBox.resx">
+      <DependentUpon>StringBox.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="RDN_StrongName.snk" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>

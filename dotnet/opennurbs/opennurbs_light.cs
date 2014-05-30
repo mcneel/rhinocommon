@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// <summary>
   /// Represents a light that shines in the modeling space.
   /// </summary>
-  //[Serializable]
+  [Serializable]
   public class Light : GeometryBase
   {
 #if RDK_CHECKED
@@ -99,15 +99,15 @@ namespace Rhino.Geometry
       ConstructNonConstObject(pLight);
     }
 
-    ///// <summary>
-    ///// Protected constructor used in serialization.
-    ///// </summary>
-    ///// <param name="info">Serialization data.</param>
-    ///// <param name="context">Serialization stream.</param>
-    //protected Light(SerializationInfo info, StreamingContext context)
-    //  : base (info, context)
-    //{
-    //}
+    /// <summary>
+    /// Protected constructor used in serialization.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
+    protected Light(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
 
 #if RHINO_SDK
     internal override IntPtr _InternalGetConstPointer()
@@ -350,13 +350,13 @@ namespace Rhino.Geometry
     const int idxAmbient = 0;
     const int idxDiffuse = 1;
     const int idxSpecular = 2;
-    Rhino.Drawing.Color GetColor(int which)
+    System.Drawing.Color GetColor(int which)
     {
       IntPtr pConstThis = ConstPointer();
       int argb = UnsafeNativeMethods.ON_Light_GetColor(pConstThis, which);
-      return Rhino.Drawing.Color.FromArgb(argb);
+      return System.Drawing.Color.FromArgb(argb);
     }
-    void SetColor(int which, Rhino.Drawing.Color c)
+    void SetColor(int which, System.Drawing.Color c)
     {
       IntPtr pThis = NonConstPointer();
       int argb = c.ToArgb();
@@ -366,7 +366,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets or sets the ambient color.
     /// </summary>
-    public Rhino.Drawing.Color Ambient
+    public System.Drawing.Color Ambient
     {
       get { return GetColor(idxAmbient); }
       set { SetColor(idxAmbient, value); }
@@ -380,7 +380,7 @@ namespace Rhino.Geometry
     /// <code source='examples\cs\ex_modifylightcolor.cs' lang='cs'/>
     /// <code source='examples\py\ex_modifylightcolor.py' lang='py'/>
     /// </example>
-    public Rhino.Drawing.Color Diffuse
+    public System.Drawing.Color Diffuse
     {
       get { return GetColor(idxDiffuse); }
       set { SetColor(idxDiffuse, value); }
@@ -389,7 +389,7 @@ namespace Rhino.Geometry
     /// <summary>
     /// Gets or sets the specular color.
     /// </summary>
-    public Rhino.Drawing.Color Specular
+    public System.Drawing.Color Specular
     {
       get { return GetColor(idxSpecular); }
       set { SetColor(idxSpecular, value); }

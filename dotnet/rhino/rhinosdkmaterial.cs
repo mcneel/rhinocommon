@@ -35,7 +35,7 @@ namespace Rhino.DocObjects
     }
   }
 
-  //[Serializable]
+  [Serializable]
   public class Material : Runtime.CommonObject
   {
     #region members
@@ -111,11 +111,11 @@ namespace Rhino.DocObjects
       m__parent = parent;
     }
 
-    //// serialization constructor
-    //protected Material(SerializationInfo info, StreamingContext context)
-    //  : base (info, context)
-    //{
-    //}
+    // serialization constructor
+    protected Material(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
     #endregion
 
     internal override IntPtr _InternalGetConstPointer()
@@ -381,45 +381,45 @@ namespace Rhino.DocObjects
     const int IDX_SPECULAR = 3;
     const int IDX_REFLECTION = 4;
     const int IDX_TRANSPARENT = 5;
-    Rhino.Drawing.Color GetColor(int which)
+    System.Drawing.Color GetColor(int which)
     {
       IntPtr ptr_const_this = ConstPointer();
       int abgr = UnsafeNativeMethods.ON_Material_GetColor(ptr_const_this, which);
       return Runtime.Interop.ColorFromWin32(abgr);
     }
-    void SetColor(int which, Rhino.Drawing.Color c)
+    void SetColor(int which, System.Drawing.Color c)
     {
       IntPtr ptr_this = NonConstPointer();
       int argb = c.ToArgb();
       UnsafeNativeMethods.ON_Material_SetColor(ptr_this, which, argb);
     }
 
-    public Rhino.Drawing.Color DiffuseColor
+    public System.Drawing.Color DiffuseColor
     {
       get{ return GetColor(IDX_DIFFUSE); }
       set{ SetColor(IDX_DIFFUSE, value); }
     }
-    public Rhino.Drawing.Color AmbientColor
+    public System.Drawing.Color AmbientColor
     {
       get { return GetColor(IDX_AMBIENT); }
       set { SetColor(IDX_AMBIENT, value); }
     }
-    public Rhino.Drawing.Color EmissionColor
+    public System.Drawing.Color EmissionColor
     {
       get { return GetColor(IDX_EMISSION); }
       set { SetColor(IDX_EMISSION, value); }
     }
-    public Rhino.Drawing.Color SpecularColor
+    public System.Drawing.Color SpecularColor
     {
       get { return GetColor(IDX_SPECULAR); }
       set { SetColor(IDX_SPECULAR, value); }
     }
-    public Rhino.Drawing.Color ReflectionColor
+    public System.Drawing.Color ReflectionColor
     {
       get { return GetColor(IDX_REFLECTION); }
       set { SetColor(IDX_REFLECTION, value); }
     }
-    public Rhino.Drawing.Color TransparentColor
+    public System.Drawing.Color TransparentColor
     {
       get { return GetColor(IDX_TRANSPARENT); }
       set { SetColor(IDX_TRANSPARENT, value); }
@@ -597,14 +597,14 @@ namespace Rhino.DocObjects
       }
     }
 
-    ///// <summary>
-    ///// Gets an independent copy of the collection of (user text key, user text value) pairs attached to this object.
-    ///// </summary>
-    ///// <returns>A collection of key strings and values strings. This </returns>
-    //public System.Collections.Specialized.NameValueCollection GetUserStrings()
-    //{
-    //  return _GetUserStrings();
-    //}
+    /// <summary>
+    /// Gets an independent copy of the collection of (user text key, user text value) pairs attached to this object.
+    /// </summary>
+    /// <returns>A collection of key strings and values strings. This </returns>
+    public System.Collections.Specialized.NameValueCollection GetUserStrings()
+    {
+      return _GetUserStrings();
+    }
     #endregion
 
   }

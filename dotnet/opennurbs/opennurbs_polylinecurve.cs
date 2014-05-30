@@ -9,7 +9,7 @@ namespace Rhino.Geometry
   /// <para>This is fundamentally a class that derives from <see cref="Curve"/>
   /// and internally contains a <see cref="Polyline"/>.</para>
   /// </summary>
-  //[Serializable]
+  [Serializable]
   public class PolylineCurve : Curve
   {
     #region constructors
@@ -62,15 +62,15 @@ namespace Rhino.Geometry
     {
     }
 
-    ///// <summary>
-    ///// Protected constructor for internal use.
-    ///// </summary>
-    ///// <param name="info">Serialization data.</param>
-    ///// <param name="context">Serialization stream.</param>
-    //protected PolylineCurve(SerializationInfo info, StreamingContext context)
-    //  : base (info, context)
-    //{
-    //}
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
+    protected PolylineCurve(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
     #endregion
 
     internal static PolylineCurve FromArray(Point3d[] points)
@@ -86,7 +86,7 @@ namespace Rhino.Geometry
     }
 
 #if RHINO_SDK
-    internal override void Draw(DisplayPipeline pipeline, Rhino.Drawing.Color color, int thickness)
+    internal override void Draw(DisplayPipeline pipeline, System.Drawing.Color color, int thickness)
     {
       IntPtr ptr = ConstPointer();
       IntPtr pDisplayPipeline = pipeline.NonConstPointer();

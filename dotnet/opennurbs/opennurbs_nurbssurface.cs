@@ -11,7 +11,7 @@ namespace Rhino.Geometry
   /// <summary>
   /// Represents a Non Uniform Rational B-Splines (NURBS) surface.
   /// </summary>
-  //[Serializable]
+  [Serializable]
   public class NurbsSurface : Surface, IEpsilonComparable<NurbsSurface>
   {
     #region static create functions
@@ -345,15 +345,15 @@ namespace Rhino.Geometry
       : base(ptr, parent)
     { }
 
-    ///// <summary>
-    ///// Protected constructor for internal use.
-    ///// </summary>
-    ///// <param name="info">Serialization data.</param>
-    ///// <param name="context">Serialization stream.</param>
-    //protected NurbsSurface(SerializationInfo info, StreamingContext context)
-    //  : base (info, context)
-    //{
-    //}
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
+    protected NurbsSurface(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
 
     internal override GeometryBase DuplicateShallowHelper()
     {
@@ -486,7 +486,7 @@ namespace Rhino.Geometry
     }
 
 #if RHINO_SDK
-    internal override void Draw(Display.DisplayPipeline pipeline, Rhino.Drawing.Color color, int density)
+    internal override void Draw(Display.DisplayPipeline pipeline, System.Drawing.Color color, int density)
     {
       IntPtr pDisplayPipeline = pipeline.NonConstPointer();
       IntPtr ptr = ConstPointer();
@@ -548,7 +548,7 @@ namespace Rhino.Geometry
   /// <summary>
   /// Represents a geometry that is able to control the morphing behaviour of some other geometry.
   /// </summary>
-  //[Serializable]
+  [Serializable]
   public class MorphControl : GeometryBase
   {
     #region constructors
@@ -585,15 +585,15 @@ namespace Rhino.Geometry
       : base(ptr, parent, -1)
     { }
 
-    ///// <summary>
-    ///// Protected constructor for internal use.
-    ///// </summary>
-    ///// <param name="info">Serialization data.</param>
-    ///// <param name="context">Serialization stream.</param>
-    //protected MorphControl(SerializationInfo info, StreamingContext context)
-    //  : base (info, context)
-    //{
-    //}
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
+    protected MorphControl(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
     #endregion
 
     /// <summary>

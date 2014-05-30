@@ -228,14 +228,16 @@ namespace Rhino.DocObjects.Custom
     protected CustomPointObject()
       : base(true)
     {
+      Guid type_id = GetType().GUID;
       if (SubclassCreateNativePointer)
-        m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomPointObject_New();
+        m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomPointObject_New(type_id);
     }
     protected CustomPointObject(Point point)
       : base(true)
     {
+      Guid type_id = GetType().GUID;
       IntPtr pConstPoint = point.ConstPointer();
-      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New2(pConstPoint);
+      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New2(type_id, pConstPoint);
     }
 
     ~CustomPointObject() { Dispose(false); }

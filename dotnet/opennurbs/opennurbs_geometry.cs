@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// <summary>
   /// Provides a common base for most geometric classes. This class is abstract.
   /// </summary>
-  //[Serializable]
+  [Serializable]
   public abstract class GeometryBase : Runtime.CommonObject
   {
     #region constructors / wrapped pointer manipulation
@@ -16,15 +16,15 @@ namespace Rhino.Geometry
     // make internal so outside DLLs can't directly subclass GeometryBase
     internal GeometryBase() { }
 
-    ///// <summary>
-    ///// Protected constructor for internal use.
-    ///// </summary>
-    ///// <param name="info">Serialization data.</param>
-    ///// <param name="context">Serialization stream.</param>
-    //protected GeometryBase(SerializationInfo info, StreamingContext context)
-    //  :base(info, context)
-    //{
-    //}
+    /// <summary>
+    /// Protected constructor for internal use.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
+    protected GeometryBase(SerializationInfo info, StreamingContext context)
+      :base(info, context)
+    {
+    }
 
     internal override IntPtr _InternalDuplicate(out bool applymempressure)
     {
@@ -681,14 +681,14 @@ namespace Rhino.Geometry
       }
     }
 
-    ///// <summary>
-    ///// Gets a copy of all (user key string, user value string) pairs attached to this geometry.
-    ///// </summary>
-    ///// <returns>A new collection.</returns>
-    //public System.Collections.Specialized.NameValueCollection GetUserStrings()
-    //{
-    //  return _GetUserStrings();
-    //}
+    /// <summary>
+    /// Gets a copy of all (user key string, user value string) pairs attached to this geometry.
+    /// </summary>
+    /// <returns>A new collection.</returns>
+    public System.Collections.Specialized.NameValueCollection GetUserStrings()
+    {
+      return _GetUserStrings();
+    }
     #endregion
   }
 

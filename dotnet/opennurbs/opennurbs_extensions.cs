@@ -125,8 +125,8 @@ namespace Rhino.FileIO
     /// <exception cref="FileNotFoundException">If path does not exist.</exception>
     public static File3dm Read(string path)
     {
-      //if (!File.Exists(path))
-      //  throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
+      if (!File.Exists(path))
+        throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
       IntPtr ptr_onx_model = UnsafeNativeMethods.ONX_Model_ReadFile(path, IntPtr.Zero);
       return ptr_onx_model == IntPtr.Zero ? null : new File3dm(ptr_onx_model);
     }
@@ -149,8 +149,8 @@ namespace Rhino.FileIO
     [CLSCompliant(false)]
     public static File3dm Read(string path, TableTypeFilter tableTypeFilterFilter, ObjectTypeFilter objectTypeFilter)
     {
-      //if (!File.Exists(path))
-      //  throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
+      if (!File.Exists(path))
+        throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
 
       IntPtr ptr_onx_model = UnsafeNativeMethods.ONX_Model_ReadFile2(path, (UnsafeNativeMethods.ReadFileTableTypeFilter)tableTypeFilterFilter, (UnsafeNativeMethods.ObjectTypeFilter)objectTypeFilter, IntPtr.Zero);
       return ptr_onx_model == IntPtr.Zero ? null : new File3dm(ptr_onx_model);
@@ -175,8 +175,8 @@ namespace Rhino.FileIO
     [CLSCompliant(false)]
     public static File3dm ReadWithLog(string path, TableTypeFilter tableTypeFilterFilter, ObjectTypeFilter objectTypeFilter, out string errorLog)
     {
-      //if (!File.Exists(path))
-      //  throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
+      if (!File.Exists(path))
+        throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
 
       using (var sh = new StringHolder())
       {
@@ -198,8 +198,8 @@ namespace Rhino.FileIO
     public static File3dm ReadWithLog(string path, out string errorLog)
     {
       errorLog = string.Empty;
-      //if (!File.Exists(path))
-      //  throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
+      if (!File.Exists(path))
+        throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
       using (var sh = new StringHolder())
       {
         IntPtr ptr_string = sh.NonConstPointer();
@@ -216,8 +216,8 @@ namespace Rhino.FileIO
     /// <exception cref="FileNotFoundException">If path does not exist, is null or cannot be accessed because of permissions.</exception>
     public static string ReadNotes(string path)
     {
-      //if (!File.Exists(path))
-      //  throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
+      if (!File.Exists(path))
+        throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
 
       using (var sh = new StringHolder())
       {
@@ -225,6 +225,18 @@ namespace Rhino.FileIO
         UnsafeNativeMethods.ONX_Model_ReadNotes(path, ptr_string);
         return sh.ToString();
       }
+    }
+
+    /// <summary> Reads only the archive 3dm version from an existing 3dm file. </summary>
+    /// <param name="path">The file from which to read the archive version.</param>
+    /// <returns>The 3dm file archive version.</returns>
+    /// <exception cref="FileNotFoundException">If path does not exist, is null or cannot be accessed because of permissions.</exception>
+    public static int ReadArchiveVersion(string path)
+    {
+      if (!File.Exists (path))
+        throw new FileNotFoundException ("The provided path is null, does not exist or cannot be accessed.", path);
+
+      return UnsafeNativeMethods.ONX_Model_ReadArchiveVersion (path);
     }
 
     /// <summary>
@@ -276,8 +288,8 @@ namespace Rhino.FileIO
     /// <param name="applicationDetails">The application details. This out parameter is assigned during this call.</param>
     public static void ReadApplicationData(string path, out string applicationName, out string applicationUrl, out string applicationDetails)
     {
-      //if (!File.Exists(path))
-      //  throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
+      if (!File.Exists(path))
+        throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
       using (var name = new StringHolder())
       using (var url = new StringHolder())
       using (var details = new StringHolder())
@@ -305,16 +317,16 @@ namespace Rhino.FileIO
     /// <code source='examples\cs\ex_extractthumbnail.cs' lang='cs'/>
     /// <code source='examples\py\ex_extractthumbnail.py' lang='py'/>
     /// </example>
-    public static Rhino.Drawing.Bitmap ReadPreviewImage(string path)
+    public static System.Drawing.Bitmap ReadPreviewImage(string path)
     {
       if (!File.Exists(path))
         throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
-      Rhino.Drawing.Bitmap rc = null;
+      System.Drawing.Bitmap rc = null;
       IntPtr pDib = UnsafeNativeMethods.CRhinoDib_New();
       if (UnsafeNativeMethods.ONX_Model_ReadPreviewImage(path, pDib))
       {
         IntPtr hBitmap = UnsafeNativeMethods.CRhinoDib_Bitmap(pDib);
-        rc = Rhino.Drawing.Image.FromHbitmap(hBitmap);
+        rc = System.Drawing.Image.FromHbitmap(hBitmap);
       }
       UnsafeNativeMethods.CRhinoDib_Delete(pDib);
       return rc;
@@ -648,7 +660,7 @@ namespace Rhino.FileIO
       }
     }
 
-    //public Rhino.Drawing.Bitmap PreviewImage { get; set; }
+    //public System.Drawing.Bitmap PreviewImage { get; set; }
 
     File3dmSettings m_settings;
     /// <summary>

@@ -1,6 +1,6 @@
 #pragma warning disable 1591
 using System;
-using Rhino.Drawing;
+using System.Drawing;
 
 #if RHINO_SDK
 namespace Rhino.Display

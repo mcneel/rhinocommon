@@ -478,23 +478,23 @@ namespace Rhino.DocObjects
       get { return GetString(UnsafeNativeMethods.InstanceDefinitionStringConsts.Url); }
     }
 
-    public Rhino.Drawing.Bitmap CreatePreviewBitmap(Display.DefinedViewportProjection definedViewportProjection, DisplayMode displayMode, Rhino.Drawing.Size bitmapSize)
+    public System.Drawing.Bitmap CreatePreviewBitmap(Display.DefinedViewportProjection definedViewportProjection, DisplayMode displayMode, System.Drawing.Size bitmapSize)
     {
       IntPtr ptr_rhino_dib = UnsafeNativeMethods.CRhinoInstanceDefinition_GetPreviewBitmap(m_doc.m_docId, m_index, (int)definedViewportProjection, (int)displayMode, bitmapSize.Width, bitmapSize.Height);
       if (IntPtr.Zero == ptr_rhino_dib)
         return null;
 
       IntPtr hbitmap = UnsafeNativeMethods.CRhinoDib_Bitmap(ptr_rhino_dib);
-      Rhino.Drawing.Bitmap rc = null;
+      System.Drawing.Bitmap rc = null;
       if (IntPtr.Zero != hbitmap)
       {
-        rc = Rhino.Drawing.Image.FromHbitmap(hbitmap);
+        rc = System.Drawing.Image.FromHbitmap(hbitmap);
       }
       UnsafeNativeMethods.CRhinoDib_Delete(ptr_rhino_dib);
       return rc;
     }
 
-    public Rhino.Drawing.Bitmap CreatePreviewBitmap(Display.DefinedViewportProjection definedViewportProjection, Rhino.Drawing.Size bitmapSize)
+    public System.Drawing.Bitmap CreatePreviewBitmap(Display.DefinedViewportProjection definedViewportProjection, System.Drawing.Size bitmapSize)
     {
       return CreatePreviewBitmap(definedViewportProjection, DisplayMode.Wireframe, bitmapSize);
     }

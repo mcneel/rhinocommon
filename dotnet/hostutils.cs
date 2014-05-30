@@ -105,7 +105,7 @@ namespace Rhino.Runtime
         m_ShowSplash = OnShowSplash;
       }
 
-      Rhino.Drawing.Bitmap icon = MainRhinoIcon;
+      System.Drawing.Bitmap icon = MainRhinoIcon;
       string name = ApplicationName;
 
       IntPtr hicon = IntPtr.Zero;
@@ -151,7 +151,7 @@ namespace Rhino.Runtime
     protected virtual void OnEndLoadAtStartPlugIns() { }
 
     /// <summary>If you want to provide a custom icon for your skin.</summary>
-    protected virtual Rhino.Drawing.Bitmap MainRhinoIcon
+    protected virtual System.Drawing.Bitmap MainRhinoIcon
     {
       get { return null; }
     }
@@ -386,34 +386,34 @@ namespace Rhino.Runtime
       }
     }
 
-    ///// <summary>
-    ///// Tests if this process is currently executing on the Windows platform.
-    ///// </summary>
-    //public static bool RunningOnWindows
-    //{
-    //  get { return !RunningOnOSX; }
-    //}
+    /// <summary>
+    /// Tests if this process is currently executing on the Windows platform.
+    /// </summary>
+    public static bool RunningOnWindows
+    {
+      get { return !RunningOnOSX; }
+    }
 
-    ///// <summary>
-    ///// Tests if this process is currently executing on the Mac OSX platform.
-    ///// </summary>
-    //public static bool RunningOnOSX
-    //{
-    //  get
-    //  {
-    //    System.PlatformID pid = System.Environment.OSVersion.Platform;
-    //    // unfortunately Mono reports Unix when running on Mac
-    //    return (System.PlatformID.MacOSX == pid || System.PlatformID.Unix == pid);
-    //  }
-    //}
+    /// <summary>
+    /// Tests if this process is currently executing on the Mac OSX platform.
+    /// </summary>
+    public static bool RunningOnOSX
+    {
+      get
+      {
+        System.PlatformID pid = System.Environment.OSVersion.Platform;
+        // unfortunately Mono reports Unix when running on Mac
+        return (System.PlatformID.MacOSX == pid || System.PlatformID.Unix == pid);
+      }
+    }
 
-    ///// <summary>
-    ///// Tests if this process is currently executing under the Mono runtime.
-    ///// </summary>
-    //public static bool RunningInMono
-    //{
-    //  get { return Type.GetType("Mono.Runtime") != null; }
-    //}
+    /// <summary>
+    /// Tests if this process is currently executing under the Mono runtime.
+    /// </summary>
+    public static bool RunningInMono
+    {
+      get { return Type.GetType("Mono.Runtime") != null; }
+    }
 
     static int m_running_in_rhino_state; //0=unknown, 1=false, 2=true
     /// <summary>
@@ -503,7 +503,7 @@ namespace Rhino.Runtime
 #if RHINO_SDK
         UnsafeNativeMethods.RHC_DebugPrint(msg);
 #else
-        //Console.Write(msg);
+        Console.Write(msg);
 #endif
       }
     }
@@ -720,50 +720,50 @@ namespace Rhino.Runtime
       return rc;
     }
 #endif
-    //static int GetNowHelper(int localeId, IntPtr pStringHolderFormat, IntPtr pResultString)
-    //{
-    //  int rc;
-    //  try
-    //  {
-    //    string dateformat = StringHolder.GetString(pStringHolderFormat);
-    //    if (string.IsNullOrEmpty(dateformat))
-    //      return 0;
-    //    // surround apostrophe with quotes in order to keep the formatter happy
-    //    dateformat = dateformat.Replace("'", "\"'\"");
-    //    System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo(localeId);
-    //    DateTime now = System.DateTime.Now;
-    //    string s = string.IsNullOrEmpty(dateformat) ? now.ToString(ci) : now.ToString(dateformat, ci);
-    //    UnsafeNativeMethods.ON_wString_Set(pResultString, s);
-    //    rc = 1;
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    UnsafeNativeMethods.ON_wString_Set(pResultString, ex.Message);
-    //    rc = 0;
-    //  }
-    //  return rc;
-    //}
+    static int GetNowHelper(int localeId, IntPtr pStringHolderFormat, IntPtr pResultString)
+    {
+      int rc;
+      try
+      {
+        string dateformat = StringHolder.GetString(pStringHolderFormat);
+        if (string.IsNullOrEmpty(dateformat))
+          return 0;
+        // surround apostrophe with quotes in order to keep the formatter happy
+        dateformat = dateformat.Replace("'", "\"'\"");
+        System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo(localeId);
+        DateTime now = System.DateTime.Now;
+        string s = string.IsNullOrEmpty(dateformat) ? now.ToString(ci) : now.ToString(dateformat, ci);
+        UnsafeNativeMethods.ON_wString_Set(pResultString, s);
+        rc = 1;
+      }
+      catch (Exception ex)
+      {
+        UnsafeNativeMethods.ON_wString_Set(pResultString, ex.Message);
+        rc = 0;
+      }
+      return rc;
+    }
 
-    //static int GetFormattedTimeHelper(int localeId, int sec, int min, int hour, int day, int month, int year, IntPtr pStringHolderFormat, IntPtr pResultString)
-    //{
-    //  int rc;
-    //  try
-    //  {
-    //    string dateformat = StringHolder.GetString(pStringHolderFormat);
-    //    System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo(localeId);
-    //    DateTime dt = new DateTime(year, month, day, hour, min, sec);
-    //    dt = dt.ToLocalTime();
-    //    string s = string.IsNullOrEmpty(dateformat) ? dt.ToString(ci) : dt.ToString(dateformat, ci);
-    //    UnsafeNativeMethods.ON_wString_Set(pResultString, s);
-    //    rc = 1;
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    UnsafeNativeMethods.ON_wString_Set(pResultString, ex.Message);
-    //    rc = 0;
-    //  }
-    //  return rc;
-    //}
+    static int GetFormattedTimeHelper(int localeId, int sec, int min, int hour, int day, int month, int year, IntPtr pStringHolderFormat, IntPtr pResultString)
+    {
+      int rc;
+      try
+      {
+        string dateformat = StringHolder.GetString(pStringHolderFormat);
+        System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo(localeId);
+        DateTime dt = new DateTime(year, month, day, hour, min, sec);
+        dt = dt.ToLocalTime();
+        string s = string.IsNullOrEmpty(dateformat) ? dt.ToString(ci) : dt.ToString(dateformat, ci);
+        UnsafeNativeMethods.ON_wString_Set(pResultString, s);
+        rc = 1;
+      }
+      catch (Exception ex)
+      {
+        UnsafeNativeMethods.ON_wString_Set(pResultString, ex.Message);
+        rc = 0;
+      }
+      return rc;
+    }
 
     static int EvaluateExpressionHelper(IntPtr statementsAsStringHolder, IntPtr expressionAsStringHolder, int rhinoDocId, IntPtr pResultString)
     {
@@ -837,10 +837,10 @@ namespace Rhino.Runtime
     }
     internal delegate int EvaluateExpressionCallback(IntPtr statementsAsStringHolder, IntPtr expressionAsStringHolder, int rhinoDocId, IntPtr resultString);
     static readonly EvaluateExpressionCallback m_evaluate_callback = EvaluateExpressionHelper;
-    //internal delegate int GetNowCallback(int localeId, IntPtr formatAsStringHolder, IntPtr resultString);
-    //static readonly GetNowCallback m_getnow_callback = GetNowHelper;
-    //internal delegate int GetFormattedTimeCallback(int locale, int sec, int min, int hour, int day, int month, int year, IntPtr formatAsStringHolder, IntPtr resultString);
-    //static readonly GetFormattedTimeCallback m_getformattedtime_callback = GetFormattedTimeHelper;
+    internal delegate int GetNowCallback(int localeId, IntPtr formatAsStringHolder, IntPtr resultString);
+    static readonly GetNowCallback m_getnow_callback = GetNowHelper;
+    internal delegate int GetFormattedTimeCallback(int locale, int sec, int min, int hour, int day, int month, int year, IntPtr formatAsStringHolder, IntPtr resultString);
+    static readonly GetFormattedTimeCallback m_getformattedtime_callback = GetFormattedTimeHelper;
 
     static HostUtils()
     {
@@ -852,38 +852,38 @@ namespace Rhino.Runtime
       */
     }
 
-//    private static bool m_rhinocommoninitialized;
-//    /// <summary>
-//    /// Makes sure all static RhinoCommon components is set up correctly. 
-//    /// This happens automatically when a plug-in is loaded, so you probably won't 
-//    /// have to call this method.
-//    /// </summary>
-//    /// <remarks>Subsequent calls to this method will be ignored.</remarks>
-//    public static void InitializeRhinoCommon()
-//    {
-//      if (m_rhinocommoninitialized)
-//        return;
-//      m_rhinocommoninitialized = true;
+    private static bool m_rhinocommoninitialized;
+    /// <summary>
+    /// Makes sure all static RhinoCommon components is set up correctly. 
+    /// This happens automatically when a plug-in is loaded, so you probably won't 
+    /// have to call this method.
+    /// </summary>
+    /// <remarks>Subsequent calls to this method will be ignored.</remarks>
+    public static void InitializeRhinoCommon()
+    {
+      if (m_rhinocommoninitialized)
+        return;
+      m_rhinocommoninitialized = true;
 
-//      AssemblyResolver.InitializeAssemblyResolving();
-//      {
-//        Type t = typeof(Rhino.DocObjects.Custom.UserDictionary);
-//        UnsafeNativeMethods.ON_UserData_RegisterCustomUserData(t.FullName, t.GUID);
-//        Rhino.DocObjects.Custom.UserData.RegisterType(t);
+      AssemblyResolver.InitializeAssemblyResolving();
+      {
+        Type t = typeof(Rhino.DocObjects.Custom.UserDictionary);
+        UnsafeNativeMethods.ON_UserData_RegisterCustomUserData(t.FullName, t.GUID);
+        Rhino.DocObjects.Custom.UserData.RegisterType(t);
 
-//        t = typeof(Rhino.DocObjects.Custom.SharedUserDictionary);
-//        UnsafeNativeMethods.ON_UserData_RegisterCustomUserData(t.FullName, t.GUID);
-//        Rhino.DocObjects.Custom.UserData.RegisterType(t);
-//      }
+        t = typeof(Rhino.DocObjects.Custom.SharedUserDictionary);
+        UnsafeNativeMethods.ON_UserData_RegisterCustomUserData(t.FullName, t.GUID);
+        Rhino.DocObjects.Custom.UserData.RegisterType(t);
+      }
 
-//#if RHINO_SDK
-//      UnsafeNativeMethods.RHC_SetGetNowProc(m_getnow_callback, m_getformattedtime_callback);
-//      UnsafeNativeMethods.RHC_SetPythonEvaluateCallback(m_evaluate_callback);
+#if RHINO_SDK
+      UnsafeNativeMethods.RHC_SetGetNowProc(m_getnow_callback, m_getformattedtime_callback);
+      UnsafeNativeMethods.RHC_SetPythonEvaluateCallback(m_evaluate_callback);
 
-//      UnsafeNativeMethods.RHC_SetCmnUtilitiesCallbacks(PlugIn.GetPlugInSettingsFolderHook, PlugIn.GetPlugInRuiFileNameHook, PlugIn.ValidateRegisteredPlugInRuiFileNameHook);
-//#endif
-//      InitializeZooClient();
-//    }
+      UnsafeNativeMethods.RHC_SetCmnUtilitiesCallbacks(PlugIn.GetPlugInSettingsFolderHook, PlugIn.GetPlugInRuiFileNameHook, PlugIn.ValidateRegisteredPlugInRuiFileNameHook);
+#endif
+      InitializeZooClient();
+    }
 
     /// <summary>
     /// Initializes the ZooClient and Rhino license manager, this should get
@@ -1024,27 +1024,27 @@ namespace Rhino.Runtime
       return false;
     }
 
-    ///// <summary>
-    ///// Only works on Windows. Returns null on Mac.
-    ///// </summary>
-    ///// <returns>An assembly.</returns>
-    //public static System.Reflection.Assembly GetRhinoDotNetAssembly()
-    //{
-    //    if (m_rhdn_assembly == null && RunningOnWindows)
-    //    {
-    //        System.Reflection.Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-    //        for (int i = 0; i < assemblies.Length; i++)
-    //        {
-    //            if (assemblies[i].FullName.StartsWith("Rhino_DotNet", StringComparison.OrdinalIgnoreCase))
-    //            {
-    //                m_rhdn_assembly = assemblies[i];
-    //                break;
-    //            }
-    //        }
-    //    }
-    //    return m_rhdn_assembly;
-    //}
-    //static System.Reflection.Assembly m_rhdn_assembly;
+    /// <summary>
+    /// Only works on Windows. Returns null on Mac.
+    /// </summary>
+    /// <returns>An assembly.</returns>
+    public static System.Reflection.Assembly GetRhinoDotNetAssembly()
+    {
+      if (m_rhdn_assembly == null && RunningOnWindows)
+      {
+        System.Reflection.Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        for (int i = 0; i < assemblies.Length; i++)
+        {
+          if (assemblies[i].FullName.StartsWith("Rhino_DotNet", StringComparison.OrdinalIgnoreCase))
+          {
+            m_rhdn_assembly = assemblies[i];
+            break;
+          }
+        }
+      }
+      return m_rhdn_assembly;
+    }
+    static System.Reflection.Assembly m_rhdn_assembly;
 
     /// <summary>
     /// Informs the runtime that the application is shutting down.
@@ -1134,8 +1134,8 @@ namespace Rhino.Runtime
               {
                 int abgr = 0;
                 UnsafeNativeMethods.CRhinoProfileContext_LoadColor(pRhCmnProfileContext, section, entry, ref abgr);
-                Rhino.Drawing.Color c = Interop.ColorFromWin32(abgr);
-                //string s = Rhino.Drawing.ColorTranslator.ToHtml(c);
+                System.Drawing.Color c = Interop.ColorFromWin32(abgr);
+                //string s = System.Drawing.ColorTranslator.ToHtml(c);
                 info.AddValue(name, c);
               }
               break;
@@ -1157,7 +1157,7 @@ namespace Rhino.Runtime
               {
                 int left = 0, top = 0, right = 0, bottom = 0;
                 UnsafeNativeMethods.CRhinoProfileContext_LoadRect(pRhCmnProfileContext, section, entry, ref left, ref top, ref right, ref bottom);
-                Rhino.Drawing.Rectangle r = Rhino.Drawing.Rectangle.FromLTRB(left, top, right, bottom);
+                System.Drawing.Rectangle r = System.Drawing.Rectangle.FromLTRB(left, top, right, bottom);
                 info.AddValue(name, r);
               }
               break;
@@ -1165,7 +1165,7 @@ namespace Rhino.Runtime
               {
                 int x = 0, y = 0;
                 UnsafeNativeMethods.CRhinoProfileContext_LoadPoint(pRhCmnProfileContext, section, entry, ref x, ref y);
-                Rhino.Drawing.Point pt = new Rhino.Drawing.Point(x, y);
+                System.Drawing.Point pt = new System.Drawing.Point(x, y);
                 info.AddValue(name, pt);
               }
               break;
@@ -1240,9 +1240,9 @@ namespace Rhino.Runtime
           UnsafeNativeMethods.CRhinoProfileContext_SaveProfileString(pProfileContext, section, entry, e.Value as string);
         else if( typeof(Guid) == t )
           UnsafeNativeMethods.CRhinoProfileContext_SaveProfileUuid(pProfileContext, section, entry, (Guid)e.Value);
-        else if( typeof(Rhino.Drawing.Color) == t )
+        else if( typeof(System.Drawing.Color) == t )
         {
-          Rhino.Drawing.Color c = (Rhino.Drawing.Color)e.Value;
+          System.Drawing.Color c = (System.Drawing.Color)e.Value;
           int argb = c.ToArgb();
           UnsafeNativeMethods.CRhinoProfileContext_SaveProfileColor(pProfileContext, section, entry, argb);
         }
@@ -1250,14 +1250,14 @@ namespace Rhino.Runtime
           UnsafeNativeMethods.CRhinoProfileContext_SaveProfileInt(pProfileContext, section, entry, (int)e.Value);
         else if( typeof(double) == t )
           UnsafeNativeMethods.CRhinoProfileContext_SaveProfileDouble(pProfileContext, section, entry, (double)e.Value);
-        else if( typeof(Rhino.Drawing.Rectangle) == t )
+        else if( typeof(System.Drawing.Rectangle) == t )
         {
-          Rhino.Drawing.Rectangle r = (Rhino.Drawing.Rectangle)e.Value;
+          System.Drawing.Rectangle r = (System.Drawing.Rectangle)e.Value;
           UnsafeNativeMethods.CRhinoProfileContext_SaveProfileRect(pProfileContext, section, entry, r.Left, r.Top, r.Right, r.Bottom);
         }
-        else if( typeof(Rhino.Drawing.Point) == t )
+        else if( typeof(System.Drawing.Point) == t )
         {
-          Rhino.Drawing.Point pt = (Rhino.Drawing.Point)e.Value;
+          System.Drawing.Point pt = (System.Drawing.Point)e.Value;
           UnsafeNativeMethods.CRhinoProfileContext_SaveProfilePoint(pProfileContext, section, entry, pt.X, pt.Y);
         }
         else if( typeof(Rhino.Geometry.Point3d) == t )
@@ -1315,7 +1315,7 @@ namespace Rhino.Runtime
   /// <summary>
   /// Is thrown when the RDK is not loaded.
   /// </summary>
-  //[Serializable]
+  [Serializable]
   public class RdkNotLoadedException : Exception
   {
     /// <summary>

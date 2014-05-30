@@ -26,11 +26,11 @@ namespace Rhino.Render
       Dispose(false);
     }
 
-    public Rhino.Drawing.Color BackgroundColor
+    public System.Drawing.Color BackgroundColor
     {
       get
       {
-        return Rhino.Drawing.Color.FromArgb(UnsafeNativeMethods.Rdk_SimulatedEnvironment_BackgroundColor(m_pSim));
+        return System.Drawing.Color.FromArgb(UnsafeNativeMethods.Rdk_SimulatedEnvironment_BackgroundColor(m_pSim));
       }
       set
       {

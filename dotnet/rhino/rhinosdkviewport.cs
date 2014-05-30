@@ -193,7 +193,7 @@ namespace Rhino.Display
     /// <code source='examples\cs\ex_viewportresolution.cs' lang='cs'/>
     /// <code source='examples\py\ex_viewportresolution.py' lang='py'/>
     /// </example>
-    public Rhino.Drawing.Size Size
+    public System.Drawing.Size Size
     {
       get { return Bounds.Size; }
       set
@@ -658,7 +658,7 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="mousePreviousPoint">The mouse previous point.</param>
     /// <param name="mouseCurrentPoint">The mouse current point.</param>
-    public bool MouseRotateAroundTarget(Rhino.Drawing.Point mousePreviousPoint, Rhino.Drawing.Point mouseCurrentPoint)
+    public bool MouseRotateAroundTarget(System.Drawing.Point mousePreviousPoint, System.Drawing.Point mouseCurrentPoint)
     {
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.CRhinoViewport_MouseAdjust(pThis, idxMouseRotateView, mousePreviousPoint.X, mousePreviousPoint.Y, mouseCurrentPoint.X, mouseCurrentPoint.Y);
@@ -669,25 +669,25 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="mousePreviousPoint">The mouse previous point.</param>
     /// <param name="mouseCurrentPoint">The mouse current point.</param>
-    public bool MouseRotateCamera(Rhino.Drawing.Point mousePreviousPoint, Rhino.Drawing.Point mouseCurrentPoint)
+    public bool MouseRotateCamera(System.Drawing.Point mousePreviousPoint, System.Drawing.Point mouseCurrentPoint)
     {
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.CRhinoViewport_MouseAdjust(pThis, idxMouseRotateCamera, mousePreviousPoint.X, mousePreviousPoint.Y, mouseCurrentPoint.X, mouseCurrentPoint.Y);
     }
 
-    public bool MouseInOutDolly(Rhino.Drawing.Point mousePreviousPoint, Rhino.Drawing.Point mouseCurrentPoint)
+    public bool MouseInOutDolly(System.Drawing.Point mousePreviousPoint, System.Drawing.Point mouseCurrentPoint)
     {
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.CRhinoViewport_MouseAdjust(pThis, idxMouseInOutDolly, mousePreviousPoint.X, mousePreviousPoint.Y, mouseCurrentPoint.X, mouseCurrentPoint.Y);
     }
 
-    public bool MouseMagnify(Rhino.Drawing.Point mousePreviousPoint, Rhino.Drawing.Point mouseCurrentPoint)
+    public bool MouseMagnify(System.Drawing.Point mousePreviousPoint, System.Drawing.Point mouseCurrentPoint)
     {
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.CRhinoViewport_MouseAdjust(pThis, idxMouseMagnify, mousePreviousPoint.X, mousePreviousPoint.Y, mouseCurrentPoint.X, mouseCurrentPoint.Y);
     }
 
-    public bool MouseTilt(Rhino.Drawing.Point mousePreviousPoint, Rhino.Drawing.Point mouseCurrentPoint)
+    public bool MouseTilt(System.Drawing.Point mousePreviousPoint, System.Drawing.Point mouseCurrentPoint)
     {
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.CRhinoViewport_MouseAdjust(pThis, idxMouseTilt, mousePreviousPoint.X, mousePreviousPoint.Y, mouseCurrentPoint.X, mouseCurrentPoint.Y);
@@ -696,7 +696,7 @@ namespace Rhino.Display
     //[skipping]
     //bool MouseAdjustLensLength( const CPoint& mouse0, const CPoint& mouse1, bool bMoveTarget = false);
 
-    public bool MouseDollyZoom(Rhino.Drawing.Point mousePreviousPoint, Rhino.Drawing.Point mouseCurrentPoint)
+    public bool MouseDollyZoom(System.Drawing.Point mousePreviousPoint, System.Drawing.Point mouseCurrentPoint)
     {
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.CRhinoViewport_MouseAdjust(pThis, idxMouseDollyZoom, mousePreviousPoint.X, mousePreviousPoint.Y, mouseCurrentPoint.X, mouseCurrentPoint.Y);
@@ -756,7 +756,7 @@ namespace Rhino.Display
     /// <returns>true if operation succeeded; otherwise false.</returns>
     public bool Magnify(double magnificationFactor, bool mode)
     {
-      Rhino.Drawing.Point pt = new Rhino.Drawing.Point(-1, -1);
+      System.Drawing.Point pt = new System.Drawing.Point(-1, -1);
       return Magnify(magnificationFactor, mode, pt);
     }
     /// <summary>
@@ -770,7 +770,7 @@ namespace Rhino.Display
     /// </param>
     /// <param name="fixedScreenPoint">A point in the sceen that should remain fixed.</param>
     /// <returns>true if operation succeeded; otherwise false.</returns>
-    public bool Magnify(double magnificationFactor, bool mode, Rhino.Drawing.Point fixedScreenPoint)
+    public bool Magnify(double magnificationFactor, bool mode, System.Drawing.Point fixedScreenPoint)
     {
       int _mode = mode ? 1 : 0;
       IntPtr pThis = NonConstPointer();
@@ -812,7 +812,7 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="clientPoint">The client point.</param>
     /// <returns>A transformation matrix.</returns>
-    public Transform GetPickTransform(Rhino.Drawing.Point clientPoint)
+    public Transform GetPickTransform(System.Drawing.Point clientPoint)
     {
       return GetPickTransform(clientPoint.X, clientPoint.Y);
     }
@@ -825,7 +825,7 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="clientRectangle">The client rectangle.</param>
     /// <returns>A transformation matrix.</returns>
-    public Transform GetPickTransform(Rhino.Drawing.Rectangle clientRectangle)
+    public Transform GetPickTransform(System.Drawing.Rectangle clientRectangle)
     {
       IntPtr pConstThis = ConstPointer();
       Transform rc = Transform.Unset;
@@ -1315,13 +1315,13 @@ namespace Rhino.Display
     /// <summary>
     /// Gets the size and location of the viewport, in pixels, relative to the parent view.
     /// </summary>
-    public Rhino.Drawing.Rectangle Bounds
+    public System.Drawing.Rectangle Bounds
     {
       get
       {
         int l, r, t, b, n, f;
         GetScreenPort(out l, out r, out b, out t, out n, out f);
-        return Rhino.Drawing.Rectangle.FromLTRB(l, t, r, b);
+        return System.Drawing.Rectangle.FromLTRB(l, t, r, b);
       }
     }
 
@@ -1431,18 +1431,18 @@ namespace Rhino.Display
       return new Point2d(screen_point.X, screen_point.Y);
     }
 
-    public Rhino.Drawing.Point ClientToScreen(Point2d clientPoint)
+    public System.Drawing.Point ClientToScreen(Point2d clientPoint)
     {
-      Rhino.Drawing.Point _point = new Rhino.Drawing.Point();
+      System.Drawing.Point _point = new System.Drawing.Point();
       _point.X = (int)clientPoint.X;
       _point.Y = (int)clientPoint.Y;
       return ClientToScreen(_point);
     }
 
-    public Rhino.Drawing.Point ClientToScreen(Rhino.Drawing.Point clientPoint)
+    public System.Drawing.Point ClientToScreen(System.Drawing.Point clientPoint)
     {
       var bounds = Bounds;
-      Rhino.Drawing.Point rc = new Rhino.Drawing.Point();
+      System.Drawing.Point rc = new System.Drawing.Point();
       rc.X = clientPoint.X - bounds.Left;
       rc.Y = clientPoint.Y - bounds.Top;
       var parent = ParentView;
@@ -1451,9 +1451,9 @@ namespace Rhino.Display
       return rc;
     }
 
-    public Rhino.Drawing.Point ScreenToClient(Rhino.Drawing.Point screenPoint)
+    public System.Drawing.Point ScreenToClient(System.Drawing.Point screenPoint)
     {
-      Rhino.Drawing.Point rc = screenPoint;
+      System.Drawing.Point rc = screenPoint;
       var parent = ParentView;
       if (parent != null)
         rc = parent.ScreenToClient(rc);
@@ -1463,7 +1463,7 @@ namespace Rhino.Display
       return rc;
     }
 
-    public Line ClientToWorld(Rhino.Drawing.Point clientPoint)
+    public Line ClientToWorld(System.Drawing.Point clientPoint)
     {
       Point2d pt = new Point2d(clientPoint.X, clientPoint.Y);
       return ClientToWorld(pt);

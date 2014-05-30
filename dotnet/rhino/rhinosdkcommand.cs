@@ -197,7 +197,7 @@ namespace Rhino.Commands
 
     internal int m_runtime_serial_number;
     internal Style m_style_flags;
-    Rhino.PlugIns.PlugIn m_plugin;
+    Rhino.PlugIns.PlugIn m_plugin; 
     Guid m_id = Guid.Empty;
 
     internal static Command LookUpBySerialNumber(int sn)
@@ -990,7 +990,7 @@ namespace Rhino.DocObjects
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.CRhinoHistory_SetXform(pThis, id, ref value);
     }
-    public bool SetColor(int id, Rhino.Drawing.Color value)
+    public bool SetColor(int id, System.Drawing.Color value)
     {
       IntPtr pThis = NonConstPointer();
       return UnsafeNativeMethods.CRhinoHistory_SetColor(pThis, id, value.ToArgb());
@@ -1092,10 +1092,10 @@ namespace Rhino.DocObjects
     //  return UnsafeNativeMethods.CRhinoHistory_SetXforms(pThis, id, _v.Length, _v);
     //}
 
-    public bool SetColors(int id, IEnumerable<Rhino.Drawing.Color> values)
+    public bool SetColors(int id, IEnumerable<System.Drawing.Color> values)
     {
       List<int> argb = new List<int>();
-      foreach (Rhino.Drawing.Color c in values)
+      foreach (System.Drawing.Color c in values)
         argb.Add(c.ToArgb());
       var _v = argb.ToArray();
       IntPtr pThis = NonConstPointer();
@@ -1252,13 +1252,13 @@ namespace Rhino.DocObjects
       return UnsafeNativeMethods.CRhinoHistoryRecord_GetTransform(m_pConstRhinoHistoryRecord, id, ref value);
     }
 
-    public bool TryGetColor(int id, out Rhino.Drawing.Color value)
+    public bool TryGetColor(int id, out System.Drawing.Color value)
     {
-      value = Rhino.Drawing.Color.Empty;
+      value = System.Drawing.Color.Empty;
       int argb = 0;
       bool rc = UnsafeNativeMethods.CRhinoHistoryRecord_GetColor(m_pConstRhinoHistoryRecord, id, ref argb);
       if (rc)
-        value = Rhino.Drawing.Color.FromArgb(argb);
+        value = System.Drawing.Color.FromArgb(argb);
       return rc;
     }
     /*
@@ -1371,10 +1371,10 @@ namespace Rhino.DocObjects
     //  return UnsafeNativeMethods.CRhinoHistory_SetXforms(pThis, id, _v.Length, _v);
     //}
 
-    public bool SetColors(int id, IEnumerable<Rhino.Drawing.Color> values)
+    public bool SetColors(int id, IEnumerable<System.Drawing.Color> values)
     {
       List<int> argb = new List<int>();
-      foreach (Rhino.Drawing.Color c in values)
+      foreach (System.Drawing.Color c in values)
         argb.Add(c.ToArgb());
       var _v = argb.ToArray();
       IntPtr pThis = NonConstPointer();

@@ -107,23 +107,23 @@ namespace Rhino.DocObjects.Custom
     const int idxGripColor = 0;
     const int idxLockedGripColor = 1;
     const int idxSelectedGripColor = 2;
-    Rhino.Drawing.Color GetColor(int which)
+    System.Drawing.Color GetColor(int which)
     {
       int abgr = UnsafeNativeMethods.CRhinoDrawGripSettings_GetColor(m_pGripsDrawSettings, which);
       return Rhino.Runtime.Interop.ColorFromWin32(abgr);
     }
 
-    public Rhino.Drawing.Color GripColor
+    public System.Drawing.Color GripColor
     {
       get { return GetColor(idxGripColor); }
       set { UnsafeNativeMethods.CRhinoDrawGripSettings_SetColor(m_pGripsDrawSettings, idxGripColor, value.ToArgb()); }
     }
-    public Rhino.Drawing.Color LockedGripColor
+    public System.Drawing.Color LockedGripColor
     {
       get { return GetColor(idxLockedGripColor); }
       set { UnsafeNativeMethods.CRhinoDrawGripSettings_SetColor(m_pGripsDrawSettings, idxLockedGripColor, value.ToArgb()); }
     }
-    public Rhino.Drawing.Color SelectedGripColor
+    public System.Drawing.Color SelectedGripColor
     {
       get { return GetColor(idxSelectedGripColor); }
       set { UnsafeNativeMethods.CRhinoDrawGripSettings_SetColor(m_pGripsDrawSettings, idxSelectedGripColor, value.ToArgb()); }

@@ -76,6 +76,11 @@ internal partial class UnsafeNativeMethods
   //void ON_3dmObjectAttributes_ClearDisplayMode(ON_3dmObjectAttributes* pObjectAttributes, ON_UUID rhinoViewportId)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_3dmObjectAttributes_ClearDisplayMode(IntPtr pObjectAttributes, Guid rhinoViewportId);
+
+  //bool ON_3dmObjectAttributes_HasMapping(ON_3dmObjectAttributes* pObjectAttributes)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_3dmObjectAttributes_HasMapping(IntPtr pObjectAttributes);
   #endregion
 
 
@@ -817,6 +822,10 @@ internal partial class UnsafeNativeMethods
   //void ONX_Model_ReadNotes(const RHMONO_STRING* path, CRhCmnStringHolder* pString)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ONX_Model_ReadNotes([MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr pString);
+
+  //int ONX_Model_ReadArchiveVersion(const RHMONO_STRING* path)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern int ONX_Model_ReadArchiveVersion([MarshalAs(UnmanagedType.LPWStr)]string path);
 
   //ON_3dmRevisionHistory* ONX_Model_ReadRevisionHistory(const RHMONO_STRING* path, CRhCmnStringHolder* pStringCreated, CRhCmnStringHolder* pStringLastEdited, int* revision)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

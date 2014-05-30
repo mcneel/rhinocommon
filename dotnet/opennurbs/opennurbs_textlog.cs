@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Rhino.FileIO
 {
-    [System.Security.SecuritySafeCritical]
   /// <summary>
   /// Used for collecting text data
   /// </summary>

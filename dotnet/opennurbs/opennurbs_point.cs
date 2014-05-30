@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
-//using System.Security.Permissions;
+using System.Security.Permissions;
 
 namespace Rhino.Geometry
 {
@@ -12,9 +12,8 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_t0}, {m_t1})")]
-  //[Serializable]
-  public struct Interval : //ISerializable, 
-      IEquatable<Interval>, IComparable<Interval>, IComparable, IEpsilonComparable<Interval>
+  [Serializable]
+  public struct Interval : ISerializable, IEquatable<Interval>, IComparable<Interval>, IComparable, IEpsilonComparable<Interval>
   {
     #region Members
     private double m_t0;
@@ -43,18 +42,18 @@ namespace Rhino.Geometry
       m_t1 = other.m_t1;
     }
 
-    //private Interval(SerializationInfo info, StreamingContext context)
-    //{
-    //  m_t0 = info.GetDouble("T0");
-    //  m_t1 = info.GetDouble("T1");
-    //}
+    private Interval(SerializationInfo info, StreamingContext context)
+    {
+      m_t0 = info.GetDouble("T0");
+      m_t1 = info.GetDouble("T1");
+    }
 
-    //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-    //void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-    //{
-    //  info.AddValue("T0", m_t0);
-    //  info.AddValue("T1", m_t1);
-    //}
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("T0", m_t0);
+      info.AddValue("T1", m_t1);
+    }
 
     #endregion
 
@@ -592,9 +591,8 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_x}, {m_y})")]
-  //[Serializable]
-  public struct Point2d : //ISerializable, 
-      IEquatable<Point2d>, IComparable<Point2d>, IComparable, IEpsilonComparable<Point2d>
+  [Serializable]
+  public struct Point2d : ISerializable, IEquatable<Point2d>, IComparable<Point2d>, IComparable, IEpsilonComparable<Point2d>
   {
     private double m_x;
     private double m_y;
@@ -652,18 +650,18 @@ namespace Rhino.Geometry
       m_y = point.m_y;
     }
 
-    //private Point2d(SerializationInfo info, StreamingContext context)
-    //{
-    //  m_x = info.GetDouble("X");
-    //  m_y = info.GetDouble("Y");
-    //}
+    private Point2d(SerializationInfo info, StreamingContext context)
+    {
+      m_x = info.GetDouble("X");
+      m_y = info.GetDouble("Y");
+    }
 
-    //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-    //void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-    //{
-    //  info.AddValue("X", m_x);
-    //  info.AddValue("Y", m_y);
-    //}
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("X", m_x);
+      info.AddValue("Y", m_y);
+    }
     #endregion
 
     #region operators
@@ -1166,9 +1164,8 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 24)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
-  //[Serializable]
-  public struct Point3d : //ISerializable, 
-      IEquatable<Point3d>, IComparable<Point3d>, IComparable, IEpsilonComparable<Point3d>
+  [Serializable]
+  public struct Point3d : ISerializable, IEquatable<Point3d>, IComparable<Point3d>, IComparable, IEpsilonComparable<Point3d>
   {
     #region members
     internal double m_x;
@@ -1259,20 +1256,20 @@ namespace Rhino.Geometry
       get { return new Point3d(RhinoMath.UnsetValue, RhinoMath.UnsetValue, RhinoMath.UnsetValue); }
     }
 
-    //private Point3d(SerializationInfo info, StreamingContext context)
-    //{
-    //  m_x = info.GetDouble("X");
-    //  m_y = info.GetDouble("Y");
-    //  m_z = info.GetDouble("Z");
-    //}
+    private Point3d(SerializationInfo info, StreamingContext context)
+    {
+      m_x = info.GetDouble("X");
+      m_y = info.GetDouble("Y");
+      m_z = info.GetDouble("Z");
+    }
 
-    //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-    //void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-    //{
-    //  info.AddValue("X", m_x);
-    //  info.AddValue("Y", m_y);
-    //  info.AddValue("Z", m_z);
-    //}
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("X", m_x);
+      info.AddValue("Y", m_y);
+      info.AddValue("Z", m_z);
+    }
 
     #endregion
 
@@ -2020,9 +2017,8 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 32)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z}, [{m_w}])")]
-  //[Serializable]
-  public struct Point4d : //ISerializable, 
-      IEquatable<Point4d>, IEpsilonComparable<Point4d>
+  [Serializable]
+  public struct Point4d : ISerializable, IEquatable<Point4d>, IEpsilonComparable<Point4d>
   {
     internal double m_x;
     internal double m_y;
@@ -2056,22 +2052,22 @@ namespace Rhino.Geometry
       m_w = 1.0;
     }
 
-    //private Point4d(SerializationInfo info, StreamingContext context)
-    //{
-    //  m_x = info.GetDouble("X");
-    //  m_y = info.GetDouble("Y");
-    //  m_z = info.GetDouble("Z");
-    //  m_w = info.GetDouble("W");
-    //}
+    private Point4d(SerializationInfo info, StreamingContext context)
+    {
+      m_x = info.GetDouble("X");
+      m_y = info.GetDouble("Y");
+      m_z = info.GetDouble("Z");
+      m_w = info.GetDouble("W");
+    }
 
-    //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-    //void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-    //{
-    //  info.AddValue("X", m_x);
-    //  info.AddValue("Y", m_y);
-    //  info.AddValue("Z", m_z);
-    //  info.AddValue("W", m_w);
-    //}
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("X", m_x);
+      info.AddValue("Y", m_y);
+      info.AddValue("Z", m_z);
+      info.AddValue("W", m_w);
+    }
 
     /// <summary>
     /// Gets or sets the X (first) coordinate of this point.
@@ -2328,9 +2324,8 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 16)]
   [DebuggerDisplay("({m_x}, {m_y})")]
-  //[Serializable]
-  public struct Vector2d : //ISerializable, 
-      IEquatable<Vector2d>, IComparable<Vector2d>, IComparable, IEpsilonComparable<Vector2d>
+  [Serializable]
+  public struct Vector2d : ISerializable, IEquatable<Vector2d>, IComparable<Vector2d>, IComparable, IEpsilonComparable<Vector2d>
   {
     private double m_x;
     private double m_y;
@@ -2346,18 +2341,18 @@ namespace Rhino.Geometry
       m_y = y;
     }
 
-    //private Vector2d(SerializationInfo info, StreamingContext context)
-    //{
-    //  m_x = info.GetDouble("X");
-    //  m_y = info.GetDouble("Y");
-    //}
+    private Vector2d(SerializationInfo info, StreamingContext context)
+    {
+      m_x = info.GetDouble("X");
+      m_y = info.GetDouble("Y");
+    }
 
-    //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-    //void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-    //{
-    //  info.AddValue("X", m_x);
-    //  info.AddValue("Y", m_y);
-    //}
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("X", m_x);
+      info.AddValue("Y", m_y);
+    }
 
     /// <summary>
     /// Gets or sets the X (first) component of this vector.
@@ -2588,9 +2583,8 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 24)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
-  //[Serializable]
-  public struct Vector3d : //ISerializable, 
-      IEquatable<Vector3d>, IComparable<Vector3d>, IComparable, IEpsilonComparable<Vector3d>
+  [Serializable]
+  public struct Vector3d : ISerializable, IEquatable<Vector3d>, IComparable<Vector3d>, IComparable, IEpsilonComparable<Vector3d>
   {
     #region fields
     internal double m_x;
@@ -2686,20 +2680,20 @@ namespace Rhino.Geometry
       get { return new Vector3d(RhinoMath.UnsetValue, RhinoMath.UnsetValue, RhinoMath.UnsetValue); }
     }
 
-    //private Vector3d(SerializationInfo info, StreamingContext context)
-    //{
-    //  m_x = info.GetDouble("X");
-    //  m_y = info.GetDouble("Y");
-    //  m_z = info.GetDouble("Z");
-    //}
+    private Vector3d(SerializationInfo info, StreamingContext context)
+    {
+      m_x = info.GetDouble("X");
+      m_y = info.GetDouble("Y");
+      m_z = info.GetDouble("Z");
+    }
 
-    //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-    //void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-    //{
-    //  info.AddValue("X", m_x);
-    //  info.AddValue("Y", m_y);
-    //  info.AddValue("Z", m_z);
-    //}
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("X", m_x);
+      info.AddValue("Y", m_y);
+      info.AddValue("Z", m_z);
+    }
 
     #endregion
 
@@ -3506,9 +3500,8 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]
   [DebuggerDisplay("Pt({m_P.X},{m_P.Y},{m_P.Z}) Dir({m_V.X},{m_V.Y},{m_V.Z})")]
-  //[Serializable]
-  public struct Ray3d : //ISerializable, 
-      IEquatable<Ray3d>, IEpsilonComparable<Ray3d>
+  [Serializable]
+  public struct Ray3d : ISerializable, IEquatable<Ray3d>, IEpsilonComparable<Ray3d>
   {
     readonly Point3d m_P;
     readonly Vector3d m_V;
@@ -3524,18 +3517,18 @@ namespace Rhino.Geometry
       m_V = direction;
     }
 
-    //private Ray3d(SerializationInfo info, StreamingContext context)
-    //{
-    //  m_P = (Point3d)info.GetValue("Position", typeof(Point3d));
-    //  m_V = (Vector3d)info.GetValue("Direction", typeof(Vector3d));
-    //}
+    private Ray3d(SerializationInfo info, StreamingContext context)
+    {
+      m_P = (Point3d)info.GetValue("Position", typeof(Point3d));
+      m_V = (Vector3d)info.GetValue("Direction", typeof(Vector3d));
+    }
 
-    //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-    //void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-    //{
-    //  info.AddValue("Position", m_P);
-    //  info.AddValue("Direction", m_V);
-    //}
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("Position", m_P);
+      info.AddValue("Direction", m_V);
+    }
 
     /// <summary>
     /// Gets the starting position of this ray.

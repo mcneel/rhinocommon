@@ -1,1 +1,1 @@
-// skip. Use Rhino.Drawing.Color instead
+// skip. Use System.Drawing.Color instead

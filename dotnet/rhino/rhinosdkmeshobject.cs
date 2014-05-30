@@ -73,14 +73,16 @@ namespace Rhino.DocObjects.Custom
     protected CustomMeshObject()
       : base(true)
     {
-      if( SubclassCreateNativePointer )
-        m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomMeshObject_New();
+      Guid type_id = GetType().GUID;
+      if (SubclassCreateNativePointer)
+        m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomMeshObject_New(type_id);
     }
     protected CustomMeshObject(Mesh mesh)
       : base(true)
     {
+      Guid type_id = GetType().GUID;
       IntPtr pConstMesh = mesh.ConstPointer();
-      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New2(pConstMesh);
+      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New2(type_id, pConstMesh);
     }
 
     ~CustomMeshObject() { Dispose(false); }

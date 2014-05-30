@@ -3,30 +3,29 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using Rhino.Drawing;
+using System.Drawing;
 using System.Globalization;
 using System.Text;
 using System.Runtime.Serialization;
-using System.Reflection;
-//using System.Security.Permissions;
+using System.Security.Permissions;
 
 using Rhino.Geometry;
 
 namespace Rhino
 {
   /// <summary> PersistentSettings contains a dictionary of these items. </summary>
-  class SettingValue //: ISerializable
+  class SettingValue : ISerializable
   {
-    ///// <summary>
-    ///// ISerializable constructor.
-    ///// </summary>
-    ///// <param name="info">Serialization data.</param>
-    ///// <param name="context">Serialization stream.</param>
-    //protected SettingValue(SerializationInfo info, StreamingContext context)
-    //{
-    //  m_value = info.GetString("value");
-    //  m_default_value = info.GetString("default_value");
-    //}
+    /// <summary>
+    /// ISerializable constructor.
+    /// </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
+    protected SettingValue(SerializationInfo info, StreamingContext context)
+    {
+      m_value = info.GetString("value");
+      m_default_value = info.GetString("default_value");
+    }
 
     /// <summary> Constructor. </summary>
     /// <param name="value">Current value string.</param>
@@ -39,15 +38,15 @@ namespace Rhino
         m_default_value = default_value;
     }
 
-    ///// <summary> ISerializable required method. </summary>
-    ///// <param name="info">Serialization data.</param>
-    ///// <param name="context">Serialization stream.</param>
-    //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-    //void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-    //{
-    //  info.AddValue("value", m_value);
-    //  info.AddValue("default_value", m_default_value);
-    //}
+    /// <summary> ISerializable required method. </summary>
+    /// <param name="info">Serialization data.</param>
+    /// <param name="context">Serialization stream.</param>
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("value", m_value);
+      info.AddValue("default_value", m_default_value);
+    }
     /// <summary>
     /// Copies values from another SettingsValue object. If the destination contains more than one item,
     /// assumes it is a string list and appends values from the source object that are not currently in
@@ -254,15 +253,15 @@ namespace Rhino
       return false;
     }
 
-    public bool TryGetPoint(bool bDefault, out Rhino.Drawing.Point value)
+    public bool TryGetPoint(bool bDefault, out System.Drawing.Point value)
     {
       Size sz;
       bool rc = TryGetSize(bDefault, out sz);
-      value = new Rhino.Drawing.Point(sz.Width, sz.Height);
+      value = new System.Drawing.Point(sz.Width, sz.Height);
       return rc;
     }
 
-    public bool TryGetRectangle(bool bDefault, out Rhino.Drawing.Rectangle value)
+    public bool TryGetRectangle(bool bDefault, out System.Drawing.Rectangle value)
     {
       value = Rectangle.Empty;
 
@@ -278,7 +277,7 @@ namespace Rhino
           && int.TryParse(rect[2], System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture.NumberFormat, out width)
           && int.TryParse(rect[3], System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture.NumberFormat, out height))
       {
-        value = new Rhino.Drawing.Rectangle(x, y, width, height);
+        value = new System.Drawing.Rectangle(x, y, width, height);
         return true;
       }
 
@@ -297,7 +296,7 @@ namespace Rhino
           return;
         value = a.NewValue;
       }
-      SetValue(bDefault, value.ToString());
+      SetValue(bDefault, value.ToString(CultureInfo.InvariantCulture.NumberFormat));
     }
 
     public void SetByte(bool bDefault, byte value, EventHandler<PersistentSettingsEventArgs> validator)
@@ -372,7 +371,7 @@ namespace Rhino
           return;
         value = a.NewValue;
       }
-      SetValue(bDefault, value.ToString());
+      SetValue(bDefault, value.ToString(CultureInfo.InvariantCulture.NumberFormat));
     }
 
     public void SetString(bool bDefault, string value, EventHandler<PersistentSettingsEventArgs> validator)
@@ -506,13 +505,13 @@ namespace Rhino
                                        value.Height.ToString(CultureInfo.InvariantCulture.NumberFormat)));
     }
 
-    public void SetPoint(bool bDefault, Rhino.Drawing.Point value, EventHandler<PersistentSettingsEventArgs> validator)
+    public void SetPoint(bool bDefault, System.Drawing.Point value, EventHandler<PersistentSettingsEventArgs> validator)
     {
       if (validator != null)
       {
-        Rhino.Drawing.Point old_value;
+        System.Drawing.Point old_value;
         TryGetPoint(bDefault, out old_value);
-        PersistentSettingsEventArgs<Rhino.Drawing.Point> a = new PersistentSettingsEventArgs<Rhino.Drawing.Point>(old_value, value);
+        PersistentSettingsEventArgs<System.Drawing.Point> a = new PersistentSettingsEventArgs<System.Drawing.Point>(old_value, value);
         validator(this, a);
         if (a.Cancel)
           return;
@@ -563,21 +562,21 @@ namespace Rhino
   /// <summary>
   /// A dictionary of SettingValue items.
   /// </summary>
-  //[Serializable]
-  public class PersistentSettings //: ISerializable
+  [Serializable]
+  public class PersistentSettings : ISerializable
   {
     readonly Dictionary<string, SettingValue> m_Settings;
     readonly Dictionary<string, EventHandler<PersistentSettingsEventArgs>> m_SettingsValidators;
 
-    //protected PersistentSettings(SerializationInfo info, StreamingContext context)
-    //{
-    //}
+    protected PersistentSettings(SerializationInfo info, StreamingContext context)
+    {
+    }
 
-    //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-    //void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-    //{
-    //  m_Settings.GetObjectData(info, context);
-    //}
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      m_Settings.GetObjectData(info, context);
+    }
 
     private readonly PersistentSettings AllUserSettings;
 
@@ -989,27 +988,27 @@ namespace Rhino
       return GetColor(key);
     }
 
-    public bool TryGetPoint(string key, out Rhino.Drawing.Point value)
+    public bool TryGetPoint(string key, out System.Drawing.Point value)
     {
-      value = Rhino.Drawing.Point.Empty;
+      value = System.Drawing.Point.Empty;
       if (m_Settings.ContainsKey(key))
         return m_Settings[key].TryGetPoint(false, out value);
       return false;
     }
 
-    public Rhino.Drawing.Point GetPoint(string key)
+    public System.Drawing.Point GetPoint(string key)
     {
       if (!m_Settings.ContainsKey(key))
         throw new KeyNotFoundException(key);
-      Rhino.Drawing.Point rc;
+      System.Drawing.Point rc;
       if (TryGetPoint(key, out rc))
         return rc;
       throw new Exception("key '" + key + "' value type is not a Point");
     }
 
-    public Rhino.Drawing.Point GetPoint(string key, Rhino.Drawing.Point defaultValue)
+    public System.Drawing.Point GetPoint(string key, System.Drawing.Point defaultValue)
     {
-      Rhino.Drawing.Point rc;
+      System.Drawing.Point rc;
       if (TryGetPoint(key, out rc))
       {
         m_Settings[key].SetPoint(true, defaultValue, GetValidator(key));
@@ -1082,7 +1081,7 @@ namespace Rhino
       return GetSize(key);
     }
 
-    public bool TryGetRectangle(string key, out Rhino.Drawing.Rectangle value)
+    public bool TryGetRectangle(string key, out System.Drawing.Rectangle value)
     {
       value = Rectangle.Empty;
       if (m_Settings.ContainsKey(key))
@@ -1206,7 +1205,7 @@ namespace Rhino
       return false;
     }
 
-    public bool TryGetDefault(string key, out Rhino.Drawing.Rectangle value)
+    public bool TryGetDefault(string key, out System.Drawing.Rectangle value)
     {
       if (m_Settings.ContainsKey(key))
         return m_Settings[key].TryGetRectangle(true, out value);
@@ -1222,10 +1221,10 @@ namespace Rhino
     /// <returns></returns>
     [CLSCompliant(false)]
     public T GetEnumValue<T>(T defaultValue)
-        where T : struct//, IConvertible
+        where T : struct, IConvertible
     {
-        Type enumType = typeof(T);
-        return GetEnumValue(enumType.Name, defaultValue);
+      Type enumType = typeof(T);
+      return GetEnumValue(enumType.Name, defaultValue);
     }
 
     /// <summary>
@@ -1237,13 +1236,13 @@ namespace Rhino
     /// <returns></returns>
     [CLSCompliant(false)]
     public T GetEnumValue<T>(String key, T defaultValue)
-        where T : struct//, IConvertible
+        where T : struct, IConvertible
     {
-        if (null == key) throw new ArgumentNullException("key");
-        if (!typeof(T).GetTypeInfo().IsEnum) throw new ArgumentException("!typeof(T).GetTypeInfo().IsEnum");
+      if (null == key) throw new ArgumentNullException("key");
+      if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
 
-        String value = GetString(key, defaultValue.ToString());
-        return (T)Enum.Parse(typeof(T), value);
+      String value = GetString(key, defaultValue.ToString(CultureInfo.InvariantCulture));
+      return (T)Enum.Parse(typeof(T), value);
     }
 
     /// <summary>
@@ -1253,7 +1252,7 @@ namespace Rhino
     /// <returns></returns>
     [CLSCompliant(false)]
     public T GetEnumValue<T>()
-        where T : struct//, IConvertible
+        where T : struct, IConvertible
     {
       return GetEnumValue<T>(typeof(T).Name);
     }
@@ -1267,10 +1266,10 @@ namespace Rhino
     /// <exception cref="KeyNotFoundException"></exception>
     [CLSCompliant(false)]
     public T GetEnumValue<T>(String key)
-        where T : struct//, IConvertible
+        where T : struct, IConvertible
     {
       if (null == key) throw new ArgumentNullException("key");
-      if (!typeof(T).GetTypeInfo().IsEnum) throw new ArgumentException("!typeof(T).GetTypeInfo().IsEnum");
+      if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
 
       Type enumType = typeof(T);
 
@@ -1293,11 +1292,11 @@ namespace Rhino
     /// <returns>true if successful</returns>
     [CLSCompliant(false)]
     public bool TryGetEnumValue<T>(String key, out T enumValue)
-        where T : struct//, IConvertible
+        where T : struct, IConvertible
     {
       if (null == key) throw new ArgumentNullException("key");
       Type enumType = typeof(T);
-      if (!enumType.GetTypeInfo().IsEnum) throw new ArgumentException("!typeof(T).GetTypeInfo().IsEnum");
+      if (!enumType.IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
 
       enumValue = default(T);
 
@@ -1326,11 +1325,11 @@ namespace Rhino
     /// <returns></returns>
     [CLSCompliant(false)]
     public bool TryGetEnumValue<T>(out T enumValue)
-        where T : struct//, IConvertible
+        where T : struct, IConvertible
     {
       Type enumType = typeof(T);
-      if (!enumType.GetTypeInfo().IsEnum)
-        throw new ArgumentException("!typeof(T).GetTypeInfo().IsEnum");
+      if (!enumType.IsEnum)
+        throw new ArgumentException("!typeof(T).IsEnum");
 
       return TryGetEnumValue(enumType.Name, out enumValue);
     }
@@ -1407,7 +1406,7 @@ namespace Rhino
       GetValue(key).SetPoint3d(false, value, GetValidator(key));
     }
 
-    public void SetRectangle(string key, Rhino.Drawing.Rectangle value)
+    public void SetRectangle(string key, System.Drawing.Rectangle value)
     {
       GetValue(key).SetRectangle(false, value, GetValidator(key));
     }
@@ -1417,7 +1416,7 @@ namespace Rhino
       GetValue(key).SetSize(false, value, GetValidator(key));
     }
 
-    public void SetPoint(string key, Rhino.Drawing.Point value)
+    public void SetPoint(string key, System.Drawing.Point value)
     {
       GetValue(key).SetPoint(false, value, GetValidator(key));
     }
@@ -1467,7 +1466,7 @@ namespace Rhino
       GetValue(key).SetColor(true, value, GetValidator(key));
     }
 
-    public void SetDefault(string key, Rhino.Drawing.Rectangle value)
+    public void SetDefault(string key, System.Drawing.Rectangle value)
     {
       GetValue(key).SetRectangle(true, value, GetValidator(key));
     }
@@ -1477,7 +1476,7 @@ namespace Rhino
       GetValue(key).SetSize(true, value, GetValidator(key));
     }
 
-    public void SetDefault(string key, Rhino.Drawing.Point value)
+    public void SetDefault(string key, System.Drawing.Point value)
     {
       GetValue(key).SetPoint(true, value, GetValidator(key));
     }
@@ -1494,7 +1493,7 @@ namespace Rhino
     /// <param name="enumValue"></param>
     [CLSCompliant(false)]
     public void SetEnumValue<T>(T enumValue)
-        where T : struct//, IConvertible
+        where T : struct, IConvertible
     {
         Type enumType = typeof(T);
         SetEnumValue(enumType.Name, enumValue);
@@ -1508,14 +1507,14 @@ namespace Rhino
     /// <param name="enumValue"></param>
     [CLSCompliant(false)]
     public void SetEnumValue<T>(String key, T enumValue)
-        where T : struct//, IConvertible
+        where T : struct, IConvertible
     {
         if (null == key) throw new ArgumentNullException("key");
 
-        if (!typeof(T).GetTypeInfo().IsEnum) 
-            throw new ArgumentException("!typeof(T).GetTypeInfo().IsEnum");
+        if (!typeof(T).IsEnum) 
+            throw new ArgumentException("!typeof(T).IsEnum");
 
-        SetString(key, enumValue.ToString());
+        SetString(key, enumValue.ToString(CultureInfo.InvariantCulture));
     }
 
     /// <summary>
@@ -1567,37 +1566,37 @@ namespace Rhino
         xmlWriter.WriteEndElement();
       }
     }
-    ///// <summary>
-    ///// Parse XmlNode for settings "entry" elements, add entry elements to the dictionary
-    ///// first and if then check the defaults list and make sure the entry is in the list before setting the 
-    ///// default value.
-    ///// </summary>
-    //internal void ParseXmlNodes(XmlNode nodeRoot)
-    //{
-    //  if (null != m_Settings && null != nodeRoot)
-    //  {
-    //    XmlNodeList nodeList = nodeRoot.SelectNodes("./entry");
-    //    if (nodeList != null)
-    //    {
-    //      foreach (XmlNode entry in nodeList)
-    //      {
-    //        XmlNode attr = null == entry.Attributes ? null : entry.Attributes["key"];
-    //        if (attr != null && !string.IsNullOrEmpty(attr.Value))
-    //        {
-    //          SetString(attr.Value, entry.InnerText);
-    //          //// Set this to true if you want to read the "DefaultValue" attribute from the node
-    //          //const bool bSetDefault = false;
-    //          //if (bSetDefault)
-    //          //{
-    //          //  XmlNode attrDefault = null == entry.Attributes ? null : entry.Attributes["DefaultValue"];
-    //          //  if (null != attrDefault && !string.IsNullOrEmpty(attrDefault.Value))
-    //          //    SetDefault(attr.Value, attrDefault.Value);
-    //          //}
-    //        }
-    //      }
-    //    }
-    //  }
-    //}
+    /// <summary>
+    /// Parse XmlNode for settings "entry" elements, add entry elements to the dictionary
+    /// first and if then check the defaults list and make sure the entry is in the list before setting the 
+    /// default value.
+    /// </summary>
+    internal void ParseXmlNodes(XmlNode nodeRoot)
+    {
+      if (null != m_Settings && null != nodeRoot)
+      {
+        XmlNodeList nodeList = nodeRoot.SelectNodes("./entry");
+        if (nodeList != null)
+        {
+          foreach (XmlNode entry in nodeList)
+          {
+            XmlNode attr = null == entry.Attributes ? null : entry.Attributes["key"];
+            if (attr != null && !string.IsNullOrEmpty(attr.Value))
+            {
+              SetString(attr.Value, entry.InnerText);
+              //// Set this to true if you want to read the "DefaultValue" attribute from the node
+              //const bool bSetDefault = false;
+              //if (bSetDefault)
+              //{
+              //  XmlNode attrDefault = null == entry.Attributes ? null : entry.Attributes["DefaultValue"];
+              //  if (null != attrDefault && !string.IsNullOrEmpty(attrDefault.Value))
+              //    SetDefault(attr.Value, attrDefault.Value);
+              //}
+            }
+          }
+        }
+      }
+    }
 
     /* commented out since this does not appear to be used anywhere
     private string[] XmlNodeToStringArray(XmlNode node)

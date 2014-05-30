@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 
 namespace Rhino.Runtime
 {
@@ -9,14 +8,14 @@ namespace Rhino.Runtime
   public static class Interop
   {
     //eventually this could go away if we just do all of the abgr->argb conversions in C++
-      internal static Rhino.Drawing.Color ColorFromWin32(int abgr)
-      {
+    internal static System.Drawing.Color ColorFromWin32(int abgr)
+    {
 #if MONO_BUILD
-      return Rhino.Drawing.Color.FromArgb(0xFF, (abgr & 0xFF), ((abgr >> 8) & 0xFF), ((abgr >> 16) & 0xFF));
+      return System.Drawing.Color.FromArgb(0xFF, (abgr & 0xFF), ((abgr >> 8) & 0xFF), ((abgr >> 16) & 0xFF));
 #else
-          return Rhino.Drawing.ColorTranslator.FromWin32(abgr);
+      return System.Drawing.ColorTranslator.FromWin32(abgr);
 #endif
-      }    
+    }    
 
 #if RHINO_SDK
     /// <summary>
@@ -152,7 +151,7 @@ namespace Rhino.Runtime
         System.Type t = rhinoDotNetObject.GetType();
         if (t.FullName == name)
         {
-          System.Reflection.PropertyInfo pi = t.GetRuntimeProperty("InternalPointer");
+          System.Reflection.PropertyInfo pi = t.GetProperty("InternalPointer");
           rc = (IntPtr)pi.GetValue(rhinoDotNetObject, null);
         }
       }
@@ -253,123 +252,123 @@ namespace Rhino.Runtime
       return rc;
     }
 
-    //static Type GetRhinoDotNetType(string name)
-    //{
-    //  System.Reflection.Assembly rhinoDotNet = HostUtils.GetRhinoDotNetAssembly();
-    //  if (null == rhinoDotNet)
-    //    return null;
-    //  return rhinoDotNet.GetType(name);
-    //}
+    static Type GetRhinoDotNetType(string name)
+    {
+      System.Reflection.Assembly rhinoDotNet = HostUtils.GetRhinoDotNetAssembly();
+      if (null == rhinoDotNet)
+        return null;
+      return rhinoDotNet.GetType(name);
+    }
 
-    ///// <summary>
-    ///// Constructs a Rhino_DotNet OnBrep that is a copy of a given brep.
-    ///// </summary>
-    ///// <param name="source">A source brep.</param>
-    ///// <returns>
-    ///// Rhino_DotNet object on success. This will be an independent copy.
-    ///// </returns>
-    //public static object ToOnBrep(Rhino.Geometry.Brep source)
-    //{
-    //  object rc = null;
-    //  IntPtr pSource = source.ConstPointer();
-    //  Type onBrepType = GetRhinoDotNetType("RMA.OpenNURBS.OnBrep");
-    //  if (IntPtr.Zero != pSource && null != onBrepType)
-    //  {
-    //    System.Reflection.MethodInfo mi = onBrepType.GetRuntimeMethod("WrapNativePointer", new Type[] { typeof(IntPtr), typeof(bool), typeof(bool) });
-    //    IntPtr pNewBrep = UnsafeNativeMethods.ON_Brep_New(pSource);
-    //    rc = mi.Invoke(null, new object[] { pNewBrep, false, true });
-    //  }
-    //  return rc;
-    //}
+    /// <summary>
+    /// Constructs a Rhino_DotNet OnBrep that is a copy of a given brep.
+    /// </summary>
+    /// <param name="source">A source brep.</param>
+    /// <returns>
+    /// Rhino_DotNet object on success. This will be an independent copy.
+    /// </returns>
+    public static object ToOnBrep(Rhino.Geometry.Brep source)
+    {
+      object rc = null;
+      IntPtr pSource = source.ConstPointer();
+      Type onBrepType = GetRhinoDotNetType("RMA.OpenNURBS.OnBrep");
+      if (IntPtr.Zero != pSource && null != onBrepType)
+      {
+        System.Reflection.MethodInfo mi = onBrepType.GetMethod("WrapNativePointer", new Type[] { typeof(IntPtr), typeof(bool), typeof(bool) });
+        IntPtr pNewBrep = UnsafeNativeMethods.ON_Brep_New(pSource);
+        rc = mi.Invoke(null, new object[] { pNewBrep, false, true });
+      }
+      return rc;
+    }
 
-    ///// <summary>
-    ///// Constructs a Rhino_DotNet OnSurface that is a copy of a given curve.
-    ///// </summary>
-    ///// <param name="source">A source brep.</param>
-    ///// <returns>
-    ///// Rhino_DotNet object on success. This will be an independent copy.
-    ///// </returns>
-    //public static object ToOnSurface(Rhino.Geometry.Surface source)
-    //{
-    //  object rc = null;
-    //  IntPtr pSource = source.ConstPointer();
-    //  Type onType = GetRhinoDotNetType("RMA.OpenNURBS.OnSurface");
-    //  if (IntPtr.Zero != pSource && null != onType)
-    //  {
-    //    System.Reflection.MethodInfo mi = onType.GetRuntimeMethod("WrapNativePointer", new Type[] { typeof(IntPtr), typeof(bool), typeof(bool) });
-    //    IntPtr pNewSurface = UnsafeNativeMethods.ON_Surface_DuplicateSurface(pSource);
-    //    rc = mi.Invoke(null, new object[] { pNewSurface, false, true });
-    //  }
-    //  return rc;
-    //}
+    /// <summary>
+    /// Constructs a Rhino_DotNet OnSurface that is a copy of a given curve.
+    /// </summary>
+    /// <param name="source">A source brep.</param>
+    /// <returns>
+    /// Rhino_DotNet object on success. This will be an independent copy.
+    /// </returns>
+    public static object ToOnSurface(Rhino.Geometry.Surface source)
+    {
+      object rc = null;
+      IntPtr pSource = source.ConstPointer();
+      Type onType = GetRhinoDotNetType("RMA.OpenNURBS.OnSurface");
+      if (IntPtr.Zero != pSource && null != onType)
+      {
+        System.Reflection.MethodInfo mi = onType.GetMethod("WrapNativePointer", new Type[] { typeof(IntPtr), typeof(bool), typeof(bool) });
+        IntPtr pNewSurface = UnsafeNativeMethods.ON_Surface_DuplicateSurface(pSource);
+        rc = mi.Invoke(null, new object[] { pNewSurface, false, true });
+      }
+      return rc;
+    }
 
-    ///// <summary>
-    ///// Constructs a Rhino_DotNet OnMesh that is a copy of a given mesh.
-    ///// </summary>
-    ///// <param name="source">A source brep.</param>
-    ///// <returns>
-    ///// Rhino_DotNet object on success. This will be an independent copy.
-    ///// </returns>
-    //public static object ToOnMesh(Rhino.Geometry.Mesh source)
-    //{
-    //  object rc = null;
-    //  IntPtr pSource = source.ConstPointer();
-    //  Type onType = GetRhinoDotNetType("RMA.OpenNURBS.OnMesh");
-    //  if (IntPtr.Zero != pSource && null != onType)
-    //  {
-    //    System.Reflection.MethodInfo mi = onType.GetRuntimeMethod("WrapNativePointer", new Type[] { typeof(IntPtr), typeof(bool), typeof(bool) });
-    //    IntPtr pNewMesh = UnsafeNativeMethods.ON_Mesh_New(pSource);
-    //    rc = mi.Invoke(null, new object[] { pNewMesh, false, true });
-    //  }
-    //  return rc;
-    //}
+    /// <summary>
+    /// Constructs a Rhino_DotNet OnMesh that is a copy of a given mesh.
+    /// </summary>
+    /// <param name="source">A source brep.</param>
+    /// <returns>
+    /// Rhino_DotNet object on success. This will be an independent copy.
+    /// </returns>
+    public static object ToOnMesh(Rhino.Geometry.Mesh source)
+    {
+      object rc = null;
+      IntPtr pSource = source.ConstPointer();
+      Type onType = GetRhinoDotNetType("RMA.OpenNURBS.OnMesh");
+      if (IntPtr.Zero != pSource && null != onType)
+      {
+        System.Reflection.MethodInfo mi = onType.GetMethod("WrapNativePointer", new Type[] { typeof(IntPtr), typeof(bool), typeof(bool) });
+        IntPtr pNewMesh = UnsafeNativeMethods.ON_Mesh_New(pSource);
+        rc = mi.Invoke(null, new object[] { pNewMesh, false, true });
+      }
+      return rc;
+    }
 
-    ///// <summary>
-    ///// Constructs a Rhino_DotNet OnCurve that is a copy of a given curve.
-    ///// </summary>
-    ///// <param name="source">A RhinoCommon source curve.</param>
-    ///// <returns>
-    ///// Rhino_DotNet object on success. This will be an independent copy.
-    ///// </returns>
-    //public static object ToOnCurve(Rhino.Geometry.Curve source)
-    //{
-    //  object rc = null;
-    //  IntPtr pSource = source.ConstPointer();
-    //  Type onType = GetRhinoDotNetType("RMA.OpenNURBS.OnCurve");
-    //  if (IntPtr.Zero != pSource && null != onType)
-    //  {
-    //    System.Reflection.MethodInfo mi = onType.GetRuntimeMethod("WrapNativePointer", new Type[] { typeof(IntPtr), typeof(bool), typeof(bool) });
-    //    IntPtr pNewCurve = UnsafeNativeMethods.ON_Curve_DuplicateCurve(pSource);
-    //    rc = mi.Invoke(null, new object[] { pNewCurve, false, true });
-    //  }
-    //  return rc;
-    //}
+    /// <summary>
+    /// Constructs a Rhino_DotNet OnCurve that is a copy of a given curve.
+    /// </summary>
+    /// <param name="source">A RhinoCommon source curve.</param>
+    /// <returns>
+    /// Rhino_DotNet object on success. This will be an independent copy.
+    /// </returns>
+    public static object ToOnCurve(Rhino.Geometry.Curve source)
+    {
+      object rc = null;
+      IntPtr pSource = source.ConstPointer();
+      Type onType = GetRhinoDotNetType("RMA.OpenNURBS.OnCurve");
+      if (IntPtr.Zero != pSource && null != onType)
+      {
+        System.Reflection.MethodInfo mi = onType.GetMethod("WrapNativePointer", new Type[] { typeof(IntPtr), typeof(bool), typeof(bool) });
+        IntPtr pNewCurve = UnsafeNativeMethods.ON_Curve_DuplicateCurve(pSource);
+        rc = mi.Invoke(null, new object[] { pNewCurve, false, true });
+      }
+      return rc;
+    }
 
-    ///// <summary>
-    ///// Constructs a Rhino_DotNet OnXform from a given RhinoCommon Transform.
-    ///// </summary>
-    ///// <param name="source">A RhinoCommon source transform.</param>
-    ///// <returns>
-    ///// Rhino_DotNet object on success. This will be an independent copy.
-    ///// </returns>
-    //public static object ToOnXform(Rhino.Geometry.Transform source)
-    //{
-    //  object rc = null;
-    //  Type onType = GetRhinoDotNetType("RMA.OpenNURBS.OnXform");
-    //  if (null != onType)
-    //  {
-    //    double[] vals = new double[16];
-    //    for( int row=0; row<4; row++ )
-    //    {
-    //      for (int column = 0; column < 4; column++)
-    //      {
-    //        vals[4 * row + column] = source[row, column];
-    //      }
-    //    }
-    //    rc = System.Activator.CreateInstance(onType, new object[] { vals });
-    //  }
-    //  return rc;
-    //}
+    /// <summary>
+    /// Constructs a Rhino_DotNet OnXform from a given RhinoCommon Transform.
+    /// </summary>
+    /// <param name="source">A RhinoCommon source transform.</param>
+    /// <returns>
+    /// Rhino_DotNet object on success. This will be an independent copy.
+    /// </returns>
+    public static object ToOnXform(Rhino.Geometry.Transform source)
+    {
+      object rc = null;
+      Type onType = GetRhinoDotNetType("RMA.OpenNURBS.OnXform");
+      if (null != onType)
+      {
+        double[] vals = new double[16];
+        for( int row=0; row<4; row++ )
+        {
+          for (int column = 0; column < 4; column++)
+          {
+            vals[4 * row + column] = source[row, column];
+          }
+        }
+        rc = System.Activator.CreateInstance(onType, new object[] { vals });
+      }
+      return rc;
+    }
 
 #if RHINO_SDK
     /// <summary>
@@ -386,7 +385,7 @@ namespace Rhino.Runtime
       Type rhType = GetRhinoDotNetType("RMA.Rhino.MRhinoViewport");
       if (IntPtr.Zero != pSource && null != rhType)
       {
-        System.Reflection.MethodInfo mi = rhType.GetRuntimeMethod("WrapNativePointer", new Type[] { typeof(IntPtr), typeof(bool), typeof(bool) });
+        System.Reflection.MethodInfo mi = rhType.GetMethod("WrapNativePointer", new Type[] { typeof(IntPtr), typeof(bool), typeof(bool) });
         const bool isConst = true;
         const bool doDelete = false;
         rc = mi.Invoke(null, new object[] { pSource, isConst, doDelete });

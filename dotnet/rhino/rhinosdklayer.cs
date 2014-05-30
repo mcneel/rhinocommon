@@ -7,7 +7,7 @@ using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.DocObjects
 {
-  //[Serializable]
+  [Serializable]
   public class Layer : Rhino.Runtime.CommonObject
   {
     #region members
@@ -64,11 +64,11 @@ namespace Rhino.DocObjects
       m__parent = onxModel;
     }
 
-    //// serialization constructor
-    //protected Layer(SerializationInfo info, StreamingContext context)
-    //  : base (info, context)
-    //{
-    //}
+    // serialization constructor
+    protected Layer(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
 
 #if RHINO_SDK
     /// <summary>
@@ -290,7 +290,7 @@ namespace Rhino.DocObjects
     /// </summary>
     /// <remarks>If you are modifying a layer inside a Rhino document, 
     /// you must call CommitChanges for the modifications to take effect.</remarks>
-    public Rhino.Drawing.Color Color
+    public System.Drawing.Color Color
     {
       get
       {
@@ -311,7 +311,7 @@ namespace Rhino.DocObjects
     /// </summary>
     /// <remarks>If you are modifying a layer inside a Rhino document, 
     /// you must call CommitChanges for the modifications to take effect.</remarks>
-    public Rhino.Drawing.Color PlotColor
+    public System.Drawing.Color PlotColor
     {
       get
       {
@@ -724,14 +724,14 @@ namespace Rhino.DocObjects
       }
     }
 
-    ///// <summary>
-    ///// Gets a copy of all (user key string, user value string) pairs attached to this geometry.
-    ///// </summary>
-    ///// <returns>A new collection.</returns>
-    //public System.Collections.Specialized.NameValueCollection GetUserStrings()
-    //{
-    //  return _GetUserStrings();
-    //}
+    /// <summary>
+    /// Gets a copy of all (user key string, user value string) pairs attached to this geometry.
+    /// </summary>
+    /// <returns>A new collection.</returns>
+    public System.Collections.Specialized.NameValueCollection GetUserStrings()
+    {
+      return _GetUserStrings();
+    }
     #endregion
   }
 }
@@ -1002,7 +1002,7 @@ namespace Rhino.DocObjects.Tables
     /// <code source='examples\cs\ex_addlayer.cs' lang='cs'/>
     /// <code source='examples\py\ex_addlayer.py' lang='py'/>
     /// </example>
-    public int Add(string layerName, Rhino.Drawing.Color layerColor)
+    public int Add(string layerName, System.Drawing.Color layerColor)
     {
       if (string.IsNullOrEmpty(layerName)) { return -1; }
 

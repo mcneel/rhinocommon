@@ -9,6 +9,17 @@ namespace Rhino.Render
   /// </summary>
   public class Sun : IDisposable
   {
+#if RDK_CHECKED
+    /// <summary>
+    /// This event is raised when a GroundPlane property value is changed.
+    /// </summary>
+    public static event EventHandler<RenderPropertyChangedEvent> Changed
+    {
+      add { RdkCmnEventWatcher.Add(UnsafeNativeMethods.EventSyncDocumentSettingsChangedFlag.DocumentSun, value); }
+      remove { RdkCmnEventWatcher.Remove(UnsafeNativeMethods.EventSyncDocumentSettingsChangedFlag.DocumentSun, value); }
+    }
+#endif
+
     public static Rhino.Geometry.Vector3d SunDirection(double latitude, double longitude, DateTime when)
     {
       Rhino.Geometry.Vector3d rc = new Geometry.Vector3d();
@@ -93,6 +104,24 @@ namespace Rhino.Render
       {
         if (m_doc != null)
           UnsafeNativeMethods.Rdk_Sun_SetManualControlOn(NonConstPointer(), value);
+      }
+    }
+
+    /// <summary>Turn skylight on or off</summary>
+    public bool SkylightOn
+    {
+      get
+      {
+        if (null == m_doc)
+          return false;
+
+        IntPtr pConstSun = ConstPointer();
+        return UnsafeNativeMethods.Rdk_Sun_SkylightOn(pConstSun);
+      }
+      set
+      {
+        if (m_doc != null)
+          UnsafeNativeMethods.Rdk_Sun_SetSkylightOn(NonConstPointer(), value);
       }
     }
 

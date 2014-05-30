@@ -7,7 +7,7 @@ using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.DocObjects
 {
-  //[Serializable]
+  [Serializable]
   public class Linetype : Rhino.Runtime.CommonObject
   {
     #region members
@@ -37,11 +37,11 @@ namespace Rhino.DocObjects
     }
 #endif
 
-    //// serialization constructor
-    //protected Linetype(SerializationInfo info, StreamingContext context)
-    //  : base (info, context)
-    //{
-    //}
+    // serialization constructor
+    protected Linetype(SerializationInfo info, StreamingContext context)
+      : base (info, context)
+    {
+    }
 
     internal Linetype(Guid id, Rhino.FileIO.File3dm onxModel)
     {
@@ -260,7 +260,7 @@ namespace Rhino.DocObjects
 
     /// <summary>Sets the length and type of the segment at index.</summary>
     /// <param name="index">Zero based index of the segment.</param>
-    /// <param name="length">The length of the segment to be added.</param>
+    /// <param name="length">The length of the segment to be added in millimeters.</param>
     /// <param name="isSolid">
     /// If true, the length is interpreted as a line. If false,
     /// then the length is interpreted as a space.
@@ -276,7 +276,7 @@ namespace Rhino.DocObjects
     /// Gets the segment information at a index.
     /// </summary>
     /// <param name="index">Zero based index of the segment.</param>
-    /// <param name="length">The length of the segment is assigned to the out parameter during this call.</param>
+    /// <param name="length">The length of the segment in millimeters.</param>
     /// <param name="isSolid">
     /// If the length is interpreted as a line, true is assigned during the call to this out parameter.
     /// <para>If the length is interpreted as a space, then false is assigned during the call to this out parameter.</para>

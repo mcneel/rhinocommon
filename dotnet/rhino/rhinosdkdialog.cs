@@ -106,7 +106,7 @@ namespace Rhino
       /// </param>
       /// <param name="caption"></param>
       /// <param name="icon">Use a 32bit depth icon in order to get proper transparency</param>
-      public static void RegisterPanel(Rhino.PlugIns.PlugIn plugin, Type panelType, string caption, System.Drawing.Icon icon)
+      public static void RegisterPanel(Rhino.PlugIns.PlugIn plugin, Type panelType, string caption, Rhino.Drawing.Icon icon)
       {
         if (!typeof(IWin32Window).IsAssignableFrom(panelType))
           throw new ArgumentException("panelType must implement IWin32Window interface", "panelType");

@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// Represents the value of a plane and two radii in a torus that is oriented in three-dimensional space.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 144)]
-  [Serializable]
+  //[Serializable]
   public struct Torus : IEpsilonComparable<Torus>
   {
     internal Plane m_majorCirclePlane;

@@ -13,7 +13,7 @@ namespace Rhino.Geometry
   /// </summary>
   /// <remarks>>An IsValid circle has positive radius and an IsValid plane defining the frame.</remarks>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 136)]
-  [Serializable]
+  //[Serializable]
   public struct Circle : IEpsilonComparable<Circle>
   {
     #region "Static creation methods"

@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
-using System.Drawing;
+using Rhino.Drawing;
 using Rhino.Runtime.InteropWrappers;
 
 #if RHINO_SDK
@@ -734,7 +734,7 @@ namespace Rhino.ApplicationSettings
     /// <param name="bounds">The rectangle in which the main window attempts to shows is assigned to this out parameter during the call.</param>
     /// <param name="state">The form state is assigned to this out parameter during the call.</param>
     /// <returns>false if the information could not be retrieved.</returns>
-    public static bool InitialMainWindowState(out System.Drawing.Rectangle bounds, out System.Windows.Forms.FormWindowState state)
+    public static bool InitialMainWindowState(out Rhino.Drawing.Rectangle bounds, out System.Windows.Forms.FormWindowState state)
     {
       bounds = Rectangle.Empty;
       state = System.Windows.Forms.FormWindowState.Normal;
@@ -3388,13 +3388,13 @@ namespace Rhino.ApplicationSettings
     /// <summary>
     /// The x and y distances in pixels from the cursor location to the tooltip.
     /// </summary>
-    public System.Drawing.Point Offset { get; set; }
+    public Rhino.Drawing.Point Offset { get; set; }
 
     /// <summary>Tooltip background color.</summary>
-    public System.Drawing.Color BackgroundColor { get; set; }
+    public Rhino.Drawing.Color BackgroundColor { get; set; }
 
     /// <summary>Tooltip text color.</summary>
-    public System.Drawing.Color TextColor { get; set; }
+    public Rhino.Drawing.Color TextColor { get; set; }
 
     /// <summary>
     /// Displays the current object snap selection.
@@ -3485,7 +3485,7 @@ namespace Rhino.ApplicationSettings
     /// <summary>
     /// The x and y distances in pixels from the cursor location to the tooltip.
     /// </summary>
-    public static System.Drawing.Point Offset
+    public static Rhino.Drawing.Point Offset
     {
       get
       {
@@ -3501,7 +3501,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>Tooltip background color.</summary>
-    public static System.Drawing.Color BackgroundColor
+    public static Rhino.Drawing.Color BackgroundColor
     {
       get
       {
@@ -3516,7 +3516,7 @@ namespace Rhino.ApplicationSettings
     }
 
     /// <summary>Tooltip text color.</summary>
-    public static System.Drawing.Color TextColor
+    public static Rhino.Drawing.Color TextColor
     {
       get
       {

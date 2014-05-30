@@ -6,7 +6,7 @@ namespace Rhino.Geometry
   /// <summary>
   /// Represents a plane surface, with plane and two intervals.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class PlaneSurface : Surface
   {
     internal PlaneSurface(IntPtr ptr, object parent) 
@@ -34,15 +34,15 @@ namespace Rhino.Geometry
       ConstructNonConstObject(ptr);
     }
 
-    /// <summary>
-    /// Protected constructor for internal use.
-    /// </summary>
-    /// <param name="info">Serialization data.</param>
-    /// <param name="context">Serialization stream.</param>
-    protected PlaneSurface(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor for internal use.
+    ///// </summary>
+    ///// <param name="info">Serialization data.</param>
+    ///// <param name="context">Serialization stream.</param>
+    //protected PlaneSurface(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
     internal override GeometryBase DuplicateShallowHelper()
     {
@@ -89,22 +89,22 @@ namespace Rhino.Geometry
   /// <summary>
   /// Represents a planar surface that is used as clipping plane in viewports.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class ClippingPlaneSurface : PlaneSurface
   {
     internal ClippingPlaneSurface(IntPtr ptr, object parent)
       : base(ptr, parent)
     { }
 
-    /// <summary>
-    /// Protected constructor for internal use.
-    /// </summary>
-    /// <param name="info">Serialization data.</param>
-    /// <param name="context">Serialization stream.</param>
-    protected ClippingPlaneSurface(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor for internal use.
+    ///// </summary>
+    ///// <param name="info">Serialization data.</param>
+    ///// <param name="context">Serialization stream.</param>
+    //protected ClippingPlaneSurface(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
     internal override GeometryBase DuplicateShallowHelper()
     {

@@ -26,7 +26,7 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.ON_StringArray_Delete(pStringArray);
       if (count < 1)
       {
-        System.Drawing.Text.InstalledFontCollection fonts = new System.Drawing.Text.InstalledFontCollection();
+        Rhino.Drawing.Text.InstalledFontCollection fonts = new Rhino.Drawing.Text.InstalledFontCollection();
         rc = new string[fonts.Families.Length];
         for (int i = 0; i < fonts.Families.Length; i++)
           rc[i] = fonts.Families[i].Name;

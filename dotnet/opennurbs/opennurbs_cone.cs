@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// Represents the center plane, radius and height values in a right circular cone.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 144)]
-  [Serializable]
+  //[Serializable]
   public struct Cone : IEpsilonComparable<Cone>
   {
     internal Plane m_baseplane;

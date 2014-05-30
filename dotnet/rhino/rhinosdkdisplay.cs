@@ -82,7 +82,7 @@ namespace Rhino.Display
     /// Constructs a DisplayBitmap from an existing bitmap.
     /// </summary>
     /// <param name="bitmap">The original bitmap.</param>
-    public DisplayBitmap(System.Drawing.Bitmap bitmap)
+    public DisplayBitmap(Rhino.Drawing.Bitmap bitmap)
     {
       IntPtr hBitmap = bitmap.GetHbitmap();
       m_pDisplayBmp = UnsafeNativeMethods.CRhCmnDisplayBitmap_New(hBitmap);
@@ -265,10 +265,10 @@ namespace Rhino.Display
 
     public void SetPoints(IEnumerable<Rhino.Geometry.Point3d> points)
     {
-      SetPoints(points, System.Drawing.Color.White);
+      SetPoints(points, Rhino.Drawing.Color.White);
     }
 
-    public void SetPoints(IEnumerable<Rhino.Geometry.Point3d> points, System.Drawing.Color blendColor)
+    public void SetPoints(IEnumerable<Rhino.Geometry.Point3d> points, Rhino.Drawing.Color blendColor)
     {
       m_order = new LinkedList<DirectedOrder>();
       List<Rhino.Geometry.Point3d> _points = new List<Geometry.Point3d>(points);
@@ -277,10 +277,10 @@ namespace Rhino.Display
       m_bbox = new Geometry.BoundingBox(m_points);
     }
 
-    public void SetPoints(IEnumerable<Rhino.Geometry.Point3d> points, IEnumerable<System.Drawing.Color> colors)
+    public void SetPoints(IEnumerable<Rhino.Geometry.Point3d> points, IEnumerable<Rhino.Drawing.Color> colors)
     {
       var _points = new List<Geometry.Point3d>(points);
-      var _colors = new List<System.Drawing.Color>(colors);
+      var _colors = new List<Rhino.Drawing.Color>(colors);
       if (_points.Count != _colors.Count)
         throw new ArgumentException("length of points must be the same as length of colors");
 
@@ -313,7 +313,7 @@ namespace Rhino.Geometry
     /// </summary>
     public Particle()
     {
-      Color = System.Drawing.Color.White;
+      Color = Rhino.Drawing.Color.White;
     }
 
     /// <summary>
@@ -356,7 +356,7 @@ namespace Rhino.Geometry
 
     public float Size { get; set; }
 
-    public System.Drawing.Color Color { get; set; }
+    public Rhino.Drawing.Color Color { get; set; }
 
     public int DisplayBitmapIndex { get; set; }
 

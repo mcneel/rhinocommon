@@ -9,7 +9,7 @@ namespace Rhino.Geometry
   /// <para>This box is therefore aligned to the world X, Y and Z axes.</para>
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]
-  [Serializable]
+  //[Serializable]
   public struct BoundingBox
   {
     #region members

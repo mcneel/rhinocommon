@@ -18,7 +18,7 @@ namespace Rhino.Geometry
   /// containing the circle.</para>
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 152)]
-  [Serializable]
+  //[Serializable]
   public struct Arc : IEquatable<Arc>, IEpsilonComparable<Arc>
   {
     #region members

@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// Represents a surface of revolution.
   /// <para>Revolutions can be incomplete (they can form arcs).</para>
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class RevSurface : Surface
   {
     #region static create functions
@@ -162,15 +162,15 @@ namespace Rhino.Geometry
       : base(ptr, parent)
     { }
 
-    /// <summary>
-    /// Protected constructor for internal use.
-    /// </summary>
-    /// <param name="info">Serialization data.</param>
-    /// <param name="context">Serialization stream.</param>
-    protected RevSurface(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor for internal use.
+    ///// </summary>
+    ///// <param name="info">Serialization data.</param>
+    ///// <param name="context">Serialization stream.</param>
+    //protected RevSurface(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
     internal override GeometryBase DuplicateShallowHelper()
     {

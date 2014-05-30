@@ -11,7 +11,8 @@ using System.Runtime.InteropServices;
 // 19 Dec. 2010 S. Baer
 // Giulio saw a significant performance increase by marking this class with the
 // SuppressUnmanagedCodeSecurity attribute. See MSDN for details
-[System.Security.SuppressUnmanagedCodeSecurity]
+//[System.Security.SuppressUnmanagedCodeSecurity]
+[System.Security.SecurityCritical]
 internal partial class UnsafeNativeMethods
 {
   [StructLayout(LayoutKind.Sequential)]
@@ -60,7 +61,7 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.Bool)]
   internal static extern bool GetCursorPos(out Point lpPoint);
 
-  [DllImport("user32.dll", CharSet = CharSet.Auto)]
+  [DllImport("user32.dll")]
   internal extern static bool DestroyIcon(IntPtr handle);
 
   [DllImport("user32.dll")]
@@ -408,10 +409,14 @@ internal partial class UnsafeNativeMethods
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void Rdk_SetCallback_CRMProvider_Build(Rhino.Render.CustomRenderMeshProvider.CrmProviderBuildCallback callback_func);
+#endif
 
+#if RDK_UNCHECKED
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void CRdkCmnEventWatcher_SetDocumentSettingsChangedEventCallback(Rhino.Render.RdkCmnEventWatcher.RdkDocumentSettingsChangedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+  internal static extern void CRdkCmnEventWatcher_SetDocumentSettingsChangedEventCallback(Rhino.RhinoDoc.RdkDocumentSettingsChangedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+#endif
 
+#if RDK_CHECKED
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRdkCmnEventWatcher_SetContentListClearingEventCallback(Rhino.Render.RenderContentTable.ContentListClearingCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
 

@@ -17,7 +17,7 @@ namespace Rhino.FileIO
     string m_notes;
     bool m_visible;
     bool m_html;
-    System.Drawing.Rectangle m_winrect;
+    Rhino.Drawing.Rectangle m_winrect;
 
     /// <summary>
     /// Creates empty default notes
@@ -108,7 +108,7 @@ namespace Rhino.FileIO
           return;
         }
         IntPtr pParent = m_parent.NonConstPointer();
-        System.Drawing.Rectangle r = WindowRectangle;
+        Rhino.Drawing.Rectangle r = WindowRectangle;
         UnsafeNativeMethods.ONX_Model_SetNotes(pParent, value, IsHtml, r.Left, r.Top, r.Right, r.Bottom);
       }
     }
@@ -138,7 +138,7 @@ namespace Rhino.FileIO
           return;
         }
         IntPtr pParent = m_parent.NonConstPointer();
-        System.Drawing.Rectangle r = WindowRectangle;
+        Rhino.Drawing.Rectangle r = WindowRectangle;
         UnsafeNativeMethods.ONX_Model_SetNotes(pParent, IsVisible, value, r.Left, r.Top, r.Right, r.Bottom);
       }
     }
@@ -146,7 +146,7 @@ namespace Rhino.FileIO
     /// <summary>
     /// Gets or sets the position of the Notes when they were saved.
     /// </summary>
-    public System.Drawing.Rectangle WindowRectangle
+    public Rhino.Drawing.Rectangle WindowRectangle
     {
       get
       {
@@ -158,7 +158,7 @@ namespace Rhino.FileIO
         bool html = false;
         int top = 0, bottom = 0, left = 0, right = 0;
         UnsafeNativeMethods.ONX_Model_GetNotes(pConstParent, IntPtr.Zero, ref visible, ref html, ref left, ref top, ref right, ref bottom);
-        return System.Drawing.Rectangle.FromLTRB(left, top, right, bottom);
+        return Rhino.Drawing.Rectangle.FromLTRB(left, top, right, bottom);
       }
       set
       {

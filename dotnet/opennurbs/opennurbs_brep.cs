@@ -71,7 +71,7 @@ namespace Rhino.Geometry
   /// <summary>
   /// Boundary Representation. A surface or polysurface along with trim curve information.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class Brep : GeometryBase
   {
     #region statics
@@ -1120,13 +1120,13 @@ namespace Rhino.Geometry
         ApplyMemoryPressure();
     }
 
-    /// <summary>
-    /// Protected constructor used in serialization.
-    /// </summary>
-    protected Brep(SerializationInfo info, StreamingContext context)
-      : base(info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor used in serialization.
+    ///// </summary>
+    //protected Brep(SerializationInfo info, StreamingContext context)
+    //  : base(info, context)
+    //{
+    //}
     #endregion
 
     #region properties

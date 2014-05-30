@@ -516,7 +516,7 @@ namespace Rhino.Render.Fields
     /// <exception cref="ArgumentException">
     /// An element with the same key already exists in the dictionary
     /// </exception>
-    public Color4fField Add(string key, System.Drawing.Color value)
+    public Color4fField Add(string key, Rhino.Drawing.Color value)
     {
       return Add(key, value, string.Empty);
     }
@@ -535,7 +535,7 @@ namespace Rhino.Render.Fields
     /// <exception cref="ArgumentException">
     /// An element with the same key already exists in the dictionary
     /// </exception>
-    public Color4fField Add(string key, System.Drawing.Color value, string prompt)
+    public Color4fField Add(string key, Rhino.Drawing.Color value, string prompt)
     {
       return Add(key, new Color4f(value), prompt);
     }
@@ -556,7 +556,7 @@ namespace Rhino.Render.Fields
     /// <exception cref="ArgumentException">
     /// An element with the same key already exists in the dictionary
     /// </exception>
-    public Color4fField AddTextured(string key, System.Drawing.Color value, string prompt)
+    public Color4fField AddTextured(string key, Rhino.Drawing.Color value, string prompt)
     {
       return AddTextured(key, new Color4f(value), prompt);
     }
@@ -1159,7 +1159,7 @@ namespace Rhino.Render.Fields
     /// </summary>
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">New value for this field.</param>
-    public void Set(string key, System.Drawing.Color value) { SetHelper(key, value); }
+    public void Set(string key, Rhino.Drawing.Color value) { SetHelper(key, value); }
     /// <summary>
     /// Set the field value and send the appropriate change notification to the
     /// render SDK.  Will throw a InvalidOperationException exception if the key
@@ -1168,7 +1168,7 @@ namespace Rhino.Render.Fields
     /// <param name="key">Key name for the field value to change.</param>
     /// <param name="value">New value for this field.</param>
     /// <param name="changeContext">The reason why the value is changing.</param>
-    public void Set(string key, System.Drawing.Color value, RenderContent.ChangeContexts changeContext) { SetHelper(key, value, changeContext); }
+    public void Set(string key, Rhino.Drawing.Color value, RenderContent.ChangeContexts changeContext) { SetHelper(key, value, changeContext); }
     /// <summary>
     /// Set the field value and send the appropriate change notification to the
     /// render SDK.  Will throw a InvalidOperationException exception if the key
@@ -1455,10 +1455,10 @@ namespace Rhino.Render.Fields
     /// Returns true if the key is found and the value parameter is set to the
     /// field value.  Returns false if the field was not found.
     /// </returns>
-    public bool TryGetValue(string key, out System.Drawing.Color value)
+    public bool TryGetValue(string key, out Rhino.Drawing.Color value)
     {
       Color4fField field = FindField(key, true) as Color4fField;
-      value = null == field ? System.Drawing.Color.Empty : field.SystemColorValue;
+      value = null == field ? Rhino.Drawing.Color.Empty : field.SystemColorValue;
       return (null != field);
     }
     /// <summary>
@@ -2239,7 +2239,7 @@ namespace Rhino.Render.Fields
     /// <param name="prompt">Field user interface prompt string</param>
     /// <param name="value">Initial value for this string field</param>
     ///  <param name="isTextured">Determines whether the texture control set is added to auto gen UIs for this field</param>
-    internal Color4fField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, System.Drawing.Color value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
+    internal Color4fField(RenderContent renderContent, IntPtr attachToPointer, string key, string prompt, Rhino.Drawing.Color value, bool isTextured) : base(renderContent, attachToPointer, key, prompt, value, isTextured) { }
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
@@ -2252,7 +2252,7 @@ namespace Rhino.Render.Fields
     /// <summary>
     /// Gets or sets the field value
     /// </summary>
-    public System.Drawing.Color SystemColorValue
+    public Rhino.Drawing.Color SystemColorValue
     {
       get { return ValueAsColor4f().AsSystemColor(); }
       set { Value = new Color4f(value); }

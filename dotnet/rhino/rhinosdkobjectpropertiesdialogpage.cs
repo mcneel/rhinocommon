@@ -20,7 +20,7 @@ namespace Rhino.UI
       if (rhdn != null)
       {
         Type t = rhdn.GetType("RMA.UI.MRhinoObjectPropertiesDialogPage");
-        System.Reflection.MethodInfo mi = t.GetMethod("RhinoCommonCreateObjPropPage");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("RhinoCommonCreateObjPropPage");
         object rc = mi.Invoke(null, new object[] { this });
         if (rc == null)
           return IntPtr.Zero;
@@ -29,7 +29,7 @@ namespace Rhino.UI
       return IntPtr.Zero;
     }
 
-    public abstract System.Drawing.Icon Icon { get; }
+    public abstract Rhino.Drawing.Icon Icon { get; }
     ///<summary>
     /// Return the control that represents this page. This will typically be a custom user control.
     /// </summary>

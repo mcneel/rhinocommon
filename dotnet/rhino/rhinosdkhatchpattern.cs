@@ -13,7 +13,7 @@ namespace Rhino.DocObjects
     Gradient = 2
   }
 
-  [Serializable]
+  //[Serializable]
   public class HatchPattern : Rhino.Runtime.CommonObject
   {
     #region members
@@ -52,11 +52,11 @@ namespace Rhino.DocObjects
       m__parent = parent;
     }
 
-    // serialization constructor
-    protected HatchPattern(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    //// serialization constructor
+    //protected HatchPattern(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
     #endregion
 
 #if RHINO_SDK

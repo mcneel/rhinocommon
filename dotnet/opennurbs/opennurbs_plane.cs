@@ -29,7 +29,7 @@ namespace Rhino.Geometry
   /// Represents the value of a center point and two axes in a plane in three dimensions.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 128)]
-  [Serializable]
+  //[Serializable]
   public struct Plane : IEquatable<Plane>, IEpsilonComparable<Plane>
   {
     // This is a special case struct that does not match it's C++ counterpart (ON_Plane)

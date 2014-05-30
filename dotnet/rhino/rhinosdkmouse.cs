@@ -11,7 +11,7 @@ namespace Rhino.UI
     private readonly IntPtr m_pRhinoView;
     private Rhino.Display.RhinoView m_view;
     private readonly System.Windows.Forms.MouseButtons m_button;
-    private readonly System.Drawing.Point m_point;
+    private readonly Rhino.Drawing.Point m_point;
 
     internal MouseCallbackEventArgs(IntPtr pRhinoView, int button, int x, int y)
     {
@@ -40,7 +40,7 @@ namespace Rhino.UI
           m_button = System.Windows.Forms.MouseButtons.None;
           break;
       }
-      m_point = new System.Drawing.Point(x, y);
+      m_point = new Rhino.Drawing.Point(x, y);
     }
 
     public Rhino.Display.RhinoView View
@@ -53,7 +53,7 @@ namespace Rhino.UI
       get { return m_button; }
     }
 
-    public System.Drawing.Point ViewportPoint
+    public Rhino.Drawing.Point ViewportPoint
     {
       get { return m_point; }
     }

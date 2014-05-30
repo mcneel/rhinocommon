@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
+//using System.Security.Permissions;
 
 namespace Rhino.Display
 {
@@ -12,15 +12,15 @@ namespace Rhino.Display
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 16)]
   [DebuggerDisplay("{m_r}, {m_g}, {m_b}, {m_a}")]
-  [Serializable]
-  public struct Color4f : ISerializable
+  //[Serializable]
+  public struct Color4f //: ISerializable
   {
     readonly float m_r;
     readonly float m_g;
     readonly float m_b;
     readonly float m_a;
 
-    public Color4f(System.Drawing.Color color)
+    public Color4f(Rhino.Drawing.Color color)
     {
       m_r = color.R / 255.0f;
       m_g = color.G / 255.0f;
@@ -44,22 +44,22 @@ namespace Rhino.Display
       m_a = alpha;
     }
 
-    private Color4f(SerializationInfo info, StreamingContext context)
-    {
-      m_r = info.GetSingle("R");
-      m_g = info.GetSingle("G");
-      m_b = info.GetSingle("B");
-      m_a = info.GetSingle("A");
-    }
+    //private Color4f(SerializationInfo info, StreamingContext context)
+    //{
+    //  m_r = info.GetSingle("R");
+    //  m_g = info.GetSingle("G");
+    //  m_b = info.GetSingle("B");
+    //  m_a = info.GetSingle("A");
+    //}
 
-    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-      info.AddValue("R", m_r);
-      info.AddValue("G", m_g);
-      info.AddValue("B", m_b);
-      info.AddValue("A", m_a);
-    }
+    //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    //void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    //{
+    //  info.AddValue("R", m_r);
+    //  info.AddValue("G", m_g);
+    //  info.AddValue("B", m_b);
+    //  info.AddValue("A", m_a);
+    //}
 
 
     public static Color4f Empty
@@ -114,9 +114,9 @@ namespace Rhino.Display
       return new Color4f(r, g, b, a);
     }
 
-    public System.Drawing.Color AsSystemColor()
+    public Rhino.Drawing.Color AsSystemColor()
     {
-      return System.Drawing.Color.FromArgb((int)(m_a * 255.0f),
+      return Rhino.Drawing.Color.FromArgb((int)(m_a * 255.0f),
                                            (int)(m_r * 255.0f),
                                            (int)(m_g * 255.0f),
                                            (int)(m_b * 255.0f));

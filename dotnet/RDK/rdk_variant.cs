@@ -140,7 +140,7 @@ namespace Rhino.Render
     public Variant(float v) : this() { SetValue(v); }
     public Variant(double v) : this() { SetValue(v); }
     public Variant(string v) : this() { SetValue(v); }
-    public Variant(System.Drawing.Color v) : this() { SetValue(v); }
+    public Variant(Rhino.Drawing.Color v) : this() { SetValue(v); }
     public Variant(Rhino.Display.Color4f v) : this() { SetValue(v); }
     public Variant(Rhino.Geometry.Vector2d v) : this() { SetValue(v); }
     public Variant(Rhino.Geometry.Vector3d v) : this() { SetValue(v); }
@@ -216,7 +216,7 @@ namespace Rhino.Render
     public void SetValue(string v)
     { UnsafeNativeMethods.Rdk_Variant_SetStringValue(NonConstPointer(), v); }
 
-    public void SetValue(System.Drawing.Color v)
+    public void SetValue(Rhino.Drawing.Color v)
     { UnsafeNativeMethods.Rdk_Variant_SetOnColorValue(NonConstPointer(), v.ToArgb()); }
 
     public void SetValue(Rhino.Display.Color4f v)
@@ -264,7 +264,7 @@ namespace Rhino.Render
       else if (v is float) SetValue((float)v);
       else if (v is double) SetValue((double)v);
       else if (v is string) SetValue((string)v);
-      else if (v is System.Drawing.Color) SetValue((System.Drawing.Color)v);
+      else if (v is Rhino.Drawing.Color) SetValue((Rhino.Drawing.Color)v);
       else if (v is Rhino.Display.Color4f) SetValue((Rhino.Display.Color4f)v);
       else if (v is Rhino.Geometry.Vector2d) SetValue((Rhino.Geometry.Vector2d)v);
       else if (v is Rhino.Geometry.Vector3d) SetValue((Rhino.Geometry.Vector3d)v);
@@ -318,9 +318,9 @@ namespace Rhino.Render
       throw new InvalidOperationException("Type not supported by Rhino.Render.Variant");
     }
 
-    public System.Drawing.Color ToSystemColor()
+    public Rhino.Drawing.Color ToSystemColor()
     {
-      return System.Drawing.Color.FromArgb(UnsafeNativeMethods.Rdk_Variant_GetOnColorValue(ConstPointer()));
+      return Rhino.Drawing.Color.FromArgb(UnsafeNativeMethods.Rdk_Variant_GetOnColorValue(ConstPointer()));
     }
 
     public Rhino.Display.Color4f ToColor4f()

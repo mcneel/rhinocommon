@@ -54,35 +54,35 @@ namespace Rhino.Display
           // of GetMethod that takes some binding flags
           const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public;
 
-          MethodInfo mi = t.GetMethod("CalculateBoundingBox", flags);
+          MethodInfo mi = t.GetRuntimeMethod("CalculateBoundingBox", flags);
           if( mi.DeclaringType != base_type )
             DisplayPipeline.CalculateBoundingBox += _CalculateBoundingBox;
 
-          mi = t.GetMethod("CalculateBoundingBoxZoomExtents", flags);
+          mi = t.GetRuntimeMethod("CalculateBoundingBoxZoomExtents", flags);
           if (mi.DeclaringType != base_type)
             DisplayPipeline.CalculateBoundingBoxZoomExtents += _CalculateBoundingBoxZoomExtents;
 
-          mi = t.GetMethod("DrawForeground", flags);
+          mi = t.GetRuntimeMethod("DrawForeground", flags);
           if (mi.DeclaringType != base_type)
             DisplayPipeline.DrawForeground += _DrawForeground;
 
-          mi = t.GetMethod("DrawOverlay", flags);
+          mi = t.GetRuntimeMethod("DrawOverlay", flags);
           if (mi.DeclaringType != base_type)
             DisplayPipeline.DrawOverlay += _DrawOverlay;
 
-          mi = t.GetMethod("PostDrawObjects", flags);
+          mi = t.GetRuntimeMethod("PostDrawObjects", flags);
           if (mi.DeclaringType != base_type)
             DisplayPipeline.PostDrawObjects += _PostDrawObjects;
 
-          mi = t.GetMethod("PreDrawObject", flags);
+          mi = t.GetRuntimeMethod("PreDrawObject", flags);
           if (mi.DeclaringType != base_type)
             DisplayPipeline.PreDrawObject += _PreDrawObject;
 
-          mi = t.GetMethod("PreDrawObjects", flags);
+          mi = t.GetRuntimeMethod("PreDrawObjects", flags);
           if (mi.DeclaringType != base_type)
             DisplayPipeline.PreDrawObjects += _PreDrawObjects;
 
-          mi = t.GetMethod("ObjectCulling", flags);
+          mi = t.GetRuntimeMethod("ObjectCulling", flags);
           if (mi.DeclaringType != base_type)
             DisplayPipeline.ObjectCulling += _ObjectCulling;
         }

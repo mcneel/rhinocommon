@@ -1,7 +1,7 @@
 #pragma warning disable 1591
 using System;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
+//using System.Security.Permissions;
 
 #if RHINO_SDK
 namespace Rhino.Display
@@ -10,7 +10,7 @@ namespace Rhino.Display
   /// Description of a how Rhino will display in a viewport. These are the modes
   /// that are listed under "Advanced display" in the options dialog.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class DisplayModeDescription : IDisposable, ISerializable
   {
     #region pointer tracking

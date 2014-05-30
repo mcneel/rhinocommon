@@ -18,7 +18,7 @@ namespace Rhino.Render
     private IntPtr m_pSdkRender;
     private Rhino.PlugIns.PlugIn m_plugin;
     private int m_serial_number;
-    private System.Drawing.Size m_size;
+    private Rhino.Drawing.Size m_size;
     private Rhino.Render.RenderWindow.StandardChannels m_channels;
 
     private static int m_current_serial_number = 1;
@@ -38,7 +38,7 @@ namespace Rhino.Render
     protected RenderPipeline(RhinoDoc doc,
                           Rhino.Commands.RunMode mode,
                           Rhino.PlugIns.PlugIn plugin,
-                          System.Drawing.Size sizeRendering,
+                          Rhino.Drawing.Size sizeRendering,
                           string caption,
                           Rhino.Render.RenderWindow.StandardChannels channels,
                           bool reuseRenderWindow,
@@ -128,7 +128,7 @@ namespace Rhino.Render
     /// <param name="inWindow">true to render directly into the view window.</param>
     /// <returns>A code that explains how rendering completed.</returns>
     /// //TODO - ViewInfo is wrong here
-    public RenderReturnCode RenderWindow(Rhino.Display.RhinoView view, System.Drawing.Rectangle rect, bool inWindow)
+    public RenderReturnCode RenderWindow(Rhino.Display.RhinoView view, Rhino.Drawing.Rectangle rect, bool inWindow)
     {
       m_ReturnCode = RenderReturnCode.InternalError;
       if (m_pSdkRender != IntPtr.Zero)
@@ -142,13 +142,13 @@ namespace Rhino.Render
     /// Gets the render size as specified in the ON_3dmRenderSettings. Will automatically return the correct size based on the ActiveView or custom settings.
     /// </summary>
     /// <returns>The render size.</returns>
-    public static System.Drawing.Size RenderSize()
+    public static Rhino.Drawing.Size RenderSize()
     {
       int width = 0; int height = 0;
 
       UnsafeNativeMethods.Rdk_SdkRender_RenderSize(ref width, ref height);
 
-      System.Drawing.Size size = new System.Drawing.Size(width, height);
+      Rhino.Drawing.Size size = new Rhino.Drawing.Size(width, height);
       return size;
 
     }
@@ -187,7 +187,7 @@ namespace Rhino.Render
     /// <param name="view"></param>
     /// <param name="rectangle"></param>
     /// <returns></returns>
-    protected abstract bool OnRenderWindowBegin(Rhino.Display.RhinoView view, System.Drawing.Rectangle rectangle);
+    protected abstract bool OnRenderWindowBegin(Rhino.Display.RhinoView view, Rhino.Drawing.Rectangle rectangle);
 
     public Rhino.PlugIns.PlugIn PlugIn
     {
@@ -283,7 +283,7 @@ namespace Rhino.Render
             case VirtualFunctions.StartRenderingInWindow:
               {
                 Rhino.Display.RhinoView view = Rhino.Display.RhinoView.FromIntPtr(pView);
-                System.Drawing.Rectangle rect = System.Drawing.Rectangle.FromLTRB(rectLeft, rectTop, rectRight, rectBottom);
+                Rhino.Drawing.Rectangle rect = Rhino.Drawing.Rectangle.FromLTRB(rectLeft, rectTop, rectRight, rectBottom);
                 return pipe.OnRenderWindowBegin(view, rect) ? 1 : 0;
               }
             case VirtualFunctions.StopRendering:

@@ -384,13 +384,13 @@ namespace Rhino.UI.Gumball
     public int FreeTranslate { get; set; }
 
     /// <summary>Default is Red.</summary>
-    public System.Drawing.Color ColorX { get; set; }
+    public Rhino.Drawing.Color ColorX { get; set; }
     /// <summary>Default is Green.</summary>
-    public System.Drawing.Color ColorY { get; set; }
+    public Rhino.Drawing.Color ColorY { get; set; }
     /// <summary>Default is Blue.</summary>
-    public System.Drawing.Color ColorZ { get; set; }
+    public Rhino.Drawing.Color ColorZ { get; set; }
 
-    public System.Drawing.Color ColorMenuButton { get; set; }
+    public Rhino.Drawing.Color ColorMenuButton { get; set; }
 
     /// <summary>in pixels.</summary>
     public int Radius { get; set; }

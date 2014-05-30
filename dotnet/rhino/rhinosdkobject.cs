@@ -57,7 +57,6 @@ namespace Rhino.DocObjects
     // this protected constructor should only be used by "custom" subclasses
     internal RhinoObject()
     {
-      RegisterCustomObjectType(GetType());
       m_rhinoobject_serial_number = 0;
       g_the_draw_callback = OnRhinoObjectDraw;
       g_the_duplicate_callback = OnRhinoObjectDuplicate;
@@ -70,9 +69,8 @@ namespace Rhino.DocObjects
       g_the_space_morph_callback = OnRhinoObjectSpaceMorph;
       g_the_delete_callback = OnRhinoObjectDeleted;
 
-      UnsafeNativeMethods.CRhinoObject_SetCallbacks(g_the_duplicate_callback, g_the_draw_callback,
-                                                    g_the_doc_notify_callback, g_the_active_in_viewport_callback,
-                                                    g_the_selection_callback, g_the_transform_callback,
+      UnsafeNativeMethods.CRhinoObject_SetCallbacks(g_the_duplicate_callback, g_the_draw_callback, g_the_doc_notify_callback,
+                                                    g_the_active_in_viewport_callback, g_the_selection_callback, g_the_transform_callback,
                                                     g_the_space_morph_callback, g_the_delete_callback);
       UnsafeNativeMethods.CRhinoObject_SetPickCallbacks(g_the_pick_callback, g_the_picked_callback);
     }
@@ -84,7 +82,7 @@ namespace Rhino.DocObjects
 
     internal delegate void RhinoObjectDrawCallback(IntPtr pConstRhinoObject, IntPtr pDisplayPipeline);
     internal delegate void RhinoObjectDuplicateCallback(int docId, uint sourceObjectSerialNumber, uint newObjectSerialNumber, IntPtr newObjectPointer);
-    internal delegate void RhinoObjectDocNotifyCallback(int docId, uint serialNumber, int add, Guid managedTypeId);
+    internal delegate void RhinoObjectDocNotifyCallback(int docId, uint serialNumber, int add);
     internal delegate int RhinoObjectActiveInViewportCallback(int docId, uint serialNumber, IntPtr pRhinoViewport);
     internal delegate void RhinoObjectSelectionCallback(int docId, uint serialNumber);
     internal delegate void RhinoObjectTransformCallback(int docId, uint serialNumber, IntPtr pConstTransform);
@@ -115,7 +113,6 @@ namespace Rhino.DocObjects
     {
       SubclassCreateNativePointer = true;
     }
-
     static void OnRhinoObjectDuplicate(int docId, uint sourceObjectSerialNumber, uint newObjectSerialNumber, IntPtr newObjectPointer)
     {
       RhinoDoc doc = RhinoDoc.FromId(docId);
@@ -149,22 +146,8 @@ namespace Rhino.DocObjects
     }
 
     static System.Collections.Generic.List<RhinoObject> g_custom_objects;
-    static System.Collections.Generic.List<Type> g_custom_object_types;
-    static void RegisterCustomObjectType(Type t)
-    {
-      if (t == null)
-        throw new ArgumentNullException();
-      if (g_custom_object_types == null)
-        g_custom_object_types = new System.Collections.Generic.List<Type>();
-      foreach (var registered in g_custom_object_types)
-      {
-        if (registered.GUID == t.GUID)
-          return;
-      }
-      g_custom_object_types.Add(t);
-    }
 
-    static void OnRhinoObjectDocNotify(int docId, uint serialNumber, int add, Guid managedTypeId)
+    static void OnRhinoObjectDocNotify(int docId, uint serialNumber, int add)
     {
       try
       {
@@ -172,28 +155,6 @@ namespace Rhino.DocObjects
         if (doc != null)
         {
           RhinoObject rhobj = doc.Objects.FindCustomObject(serialNumber);
-          if (rhobj == null && add == 1 && managedTypeId!=Guid.Empty && g_custom_object_types!=null)
-          {
-            // create the managed parallel object and add it to the document list of custom objects
-            foreach (var registered in g_custom_object_types)
-            {
-              if (registered.GUID == managedTypeId)
-              {
-                SubclassCreateNativePointer = false;
-                rhobj = System.Activator.CreateInstance(registered) as RhinoObject;
-                SubclassCreateNativePointer = true;
-                if (rhobj != null)
-                {
-                  rhobj.m_rhinoobject_serial_number = serialNumber;
-                  IntPtr ptr_object = UnsafeNativeMethods.CRhinoDoc_LookupObjectByRuntimeSerialNumber(docId, serialNumber);
-                  rhobj.m_pRhinoObject = ptr_object;
-                  doc.Objects.AddCustomObjectForTracking(serialNumber, rhobj, ptr_object);
-                }
-                break;
-              }
-            }
-          }
-
           if (rhobj != null)
           {
             if (add == 1)
@@ -205,13 +166,6 @@ namespace Rhino.DocObjects
             }
             else
               rhobj.OnDeleteFromDocument(doc);
-
-            // 8 May 2014 S. Baer (RH-21330)
-            // When a custom object is added to or deleted from the document
-            // clear out the "edited" geometry and attributes since we don't
-            // want them hanging around and causing problems in the future
-            rhobj.m_edited_attributes = null;
-            rhobj.m_edited_geometry = null;
           }
         }
       }
@@ -1641,30 +1595,6 @@ namespace Rhino.DocObjects
       var mapping = UnsafeNativeMethods.ON_TextureMapping_GetMappingFromObject(pointer, channel, ref objectTransform);
       return (IntPtr.Zero == mapping ? null : new TextureMapping(mapping));
     }
-
-     /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="channel"></param>
-    /// <param name="tm"></param>
-    /// <returns></returns>
-    public int SetTextureMapping(int channel, TextureMapping tm)
-    {
-      return UnsafeNativeMethods.ON_TextureMapping_SetObjectMapping(ConstPointer(), channel, tm.ConstPointer());
-     }
-    
-    
-    /// <summary>
-    /// Returns true if this object has a texture mapping form any source (pluginId)
-    /// </summary>
-    /// <returns></returns>
-   public bool HasTextureMapping()
-    {
-      return UnsafeNativeMethods.ON_TextureMapping_ObjectHasMapping(ConstPointer());
-    }
-
-
-
     /// <summary>
     /// Get a list of the texture mapping channel Id's associated with object. 
     /// </summary>

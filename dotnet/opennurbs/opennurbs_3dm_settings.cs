@@ -63,10 +63,10 @@ namespace Rhino.DocObjects
 
     internal bool m_bShowGrid;
     internal bool m_bShowAxes;
-    System.Drawing.Color m_thick_line_color;
-    System.Drawing.Color m_grid_x_color;
-    System.Drawing.Color m_grid_y_color;
-    System.Drawing.Color m_grid_z_color;
+    Rhino.Drawing.Color m_thick_line_color;
+    Rhino.Drawing.Color m_grid_x_color;
+    Rhino.Drawing.Color m_grid_y_color;
+    Rhino.Drawing.Color m_grid_z_color;
 
     #region ON_3dmConstructionPlane
 
@@ -198,12 +198,12 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets or sets the color of the thinner, less prominent line.
     /// </summary>
-    public System.Drawing.Color ThinLineColor { get; set; }
+    public Rhino.Drawing.Color ThinLineColor { get; set; }
 
     /// <summary>
     /// Gets or sets the color of the thicker, wider line.
     /// </summary>
-    public System.Drawing.Color ThickLineColor
+    public Rhino.Drawing.Color ThickLineColor
     {
       get { return m_thick_line_color; }
       set { m_thick_line_color = value; }
@@ -212,7 +212,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets or sets the color of the grid X-axis mark.
     /// </summary>
-    public System.Drawing.Color GridXColor
+    public Rhino.Drawing.Color GridXColor
     {
       get { return m_grid_x_color; }
       set { m_grid_x_color = value; }
@@ -221,7 +221,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets or sets the color of the grid Y-axis mark.
     /// </summary>
-    public System.Drawing.Color GridYColor
+    public Rhino.Drawing.Color GridYColor
     {
       get { return m_grid_y_color; }
       set { m_grid_y_color = value; }
@@ -230,7 +230,7 @@ namespace Rhino.DocObjects
     /// <summary>
     /// Gets or sets the color of the grid Z-axis mark.
     /// </summary>
-    public System.Drawing.Color GridZColor
+    public Rhino.Drawing.Color GridZColor
     {
       get { return m_grid_z_color; }
       set { m_grid_z_color = value; }
@@ -788,13 +788,13 @@ namespace Rhino.Render
     const int idxAmbientLight = 0;
     const int idxBackgroundColorTop = 1;
     const int idxBackgroundColorBottom = 2;
-    System.Drawing.Color GetColor(int which)
+    Rhino.Drawing.Color GetColor(int which)
     {
       IntPtr ptr_const_this = ConstPointer();
       int argb = UnsafeNativeMethods.ON_3dmRenderSettings_GetColor(ptr_const_this, which);
-      return System.Drawing.Color.FromArgb(argb);
+      return Rhino.Drawing.Color.FromArgb(argb);
     }
-    void SetColor(int which, System.Drawing.Color c)
+    void SetColor(int which, Rhino.Drawing.Color c)
     {
       IntPtr ptr_this = NonConstPointer();
       int argb = c.ToArgb();
@@ -805,7 +805,7 @@ namespace Rhino.Render
     /// <summary>
     /// Gets or sets the ambient light color used in rendering.
     /// </summary>
-    public System.Drawing.Color AmbientLight
+    public Rhino.Drawing.Color AmbientLight
     {
       get { return GetColor(idxAmbientLight); }
       set { SetColor(idxAmbientLight, value); }
@@ -815,7 +815,7 @@ namespace Rhino.Render
     /// Gets or sets the background top color used in rendering.
     /// <para>Sets also the background color if a solid background color is set.</para>
     /// </summary>
-    public System.Drawing.Color BackgroundColorTop
+    public Rhino.Drawing.Color BackgroundColorTop
     {
       get { return GetColor(idxBackgroundColorTop); }
       set { SetColor(idxBackgroundColorTop, value); }
@@ -824,7 +824,7 @@ namespace Rhino.Render
     /// <summary>
     /// Gets or sets the background bottom color used in rendering.
     /// </summary>
-    public System.Drawing.Color BackgroundColorBottom
+    public Rhino.Drawing.Color BackgroundColorBottom
     {
       get { return GetColor(idxBackgroundColorBottom); }
       set { SetColor(idxBackgroundColorBottom, value); }
@@ -980,13 +980,13 @@ namespace Rhino.Render
     /// UseViewportSize is set to false.  If UseViewportSize is set to true,
     /// then this value is ignored.
     /// </summary>
-    public System.Drawing.Size ImageSize
+    public Rhino.Drawing.Size ImageSize
     {
       get
       {
         int width = GetInt(idxImageWidth);
         int height = GetInt(idxImageHeight);
-        return new System.Drawing.Size(width, height);
+        return new Rhino.Drawing.Size(width, height);
       }
       set
       {

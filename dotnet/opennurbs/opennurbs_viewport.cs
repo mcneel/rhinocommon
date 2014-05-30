@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
+//using System.Security.Permissions;
 using Rhino.Geometry;
 
 namespace Rhino.DocObjects
@@ -9,8 +9,8 @@ namespace Rhino.DocObjects
   /// <summary>
   /// Represents a viewing frustum.
   /// </summary>
-  [Serializable]
-  public sealed class ViewportInfo : IDisposable, ISerializable
+  //[Serializable]
+  public sealed class ViewportInfo : IDisposable//, ISerializable
   {
     readonly object m_parent;
     IntPtr m_pViewportPointer = IntPtr.Zero;
@@ -82,22 +82,22 @@ namespace Rhino.DocObjects
       m_parent = parent;
     }
 
-    private ViewportInfo(SerializationInfo info, StreamingContext context)
-    {
-      m_pViewportPointer = Rhino.Runtime.CommonObject.SerializeReadON_Object(info, context);
-     }
+    //private ViewportInfo(SerializationInfo info, StreamingContext context)
+    //{
+    //  m_pViewportPointer = Rhino.Runtime.CommonObject.SerializeReadON_Object(info, context);
+    // }
 
-    /// <summary>
-    /// Populates a System.Runtime.Serialization.SerializationInfo with the data needed to serialize the target object.
-    /// </summary>
-    /// <param name="info">The System.Runtime.Serialization.SerializationInfo to populate with data.</param>
-    /// <param name="context">The destination (see System.Runtime.Serialization.StreamingContext) for this serialization.</param>
-    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-    public void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-      IntPtr pConstThis = ConstPointer();
-      Rhino.Runtime.CommonObject.SerializeWriteON_Object(pConstThis, info, context);
-    }
+    ///// <summary>
+    ///// Populates a System.Runtime.Serialization.SerializationInfo with the data needed to serialize the target object.
+    ///// </summary>
+    ///// <param name="info">The System.Runtime.Serialization.SerializationInfo to populate with data.</param>
+    ///// <param name="context">The destination (see System.Runtime.Serialization.StreamingContext) for this serialization.</param>
+    //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+    //public void GetObjectData(SerializationInfo info, StreamingContext context)
+    //{
+    //  IntPtr pConstThis = ConstPointer();
+    //  Rhino.Runtime.CommonObject.SerializeWriteON_Object(pConstThis, info, context);
+    //}
 
     const int idxIsValidCamera = 0;
     const int idxIsValidFrustum = 1;
@@ -920,7 +920,7 @@ namespace Rhino.DocObjects
     /// <param name="near">The near value.</param>
     /// <param name="far">The far value.</param>
     /// <returns>true if input is valid.</returns>
-    public bool SetScreenPort(System.Drawing.Rectangle windowRectangle, int near, int far)
+    public bool SetScreenPort(Rhino.Drawing.Rectangle windowRectangle, int near, int far)
     {
       return SetScreenPort(windowRectangle.Left, windowRectangle.Right, windowRectangle.Bottom, windowRectangle.Top, near, far);
     }
@@ -931,7 +931,7 @@ namespace Rhino.DocObjects
     /// </summary>
     /// <param name="windowRectangle">A new rectangle.</param>
     /// <returns>true if input is valid.</returns>
-    public bool SetScreenPort(System.Drawing.Rectangle windowRectangle)
+    public bool SetScreenPort(Rhino.Drawing.Rectangle windowRectangle)
     {
       return SetScreenPort(windowRectangle, 0, 0);
     }
@@ -942,8 +942,8 @@ namespace Rhino.DocObjects
     /// </summary>
     /// <param name="near">The near value. This out parameter is assigned during the call.</param>
     /// <param name="far">The far value. This out parameter is assigned during the call.</param>
-    /// <returns>The rectangle, or <see cref="System.Drawing.Rectangle.Empty">Empty</see> rectangle on error.</returns>
-    public System.Drawing.Rectangle GetScreenPort(out int near, out int far)
+    /// <returns>The rectangle, or <see cref="Rhino.Drawing.Rectangle.Empty">Empty</see> rectangle on error.</returns>
+    public Rhino.Drawing.Rectangle GetScreenPort(out int near, out int far)
     {
       int left = 0;
       int right = 0;
@@ -953,19 +953,19 @@ namespace Rhino.DocObjects
       far = 0;
       IntPtr pConstThis = ConstPointer();
       if (!UnsafeNativeMethods.ON_Viewport_GetScreenPort(pConstThis, ref left, ref right, ref bottom, ref top, ref near, ref far))
-        return System.Drawing.Rectangle.Empty;
+        return Rhino.Drawing.Rectangle.Empty;
       // .NET/Windows uses Y down so make sure the top and bottom are passed correctly to Rectangle.FromLTRB()
       // OpenNurbs appears to by Y-Down and the RDK appears to by Y-Up so this check should ensure a Rectangle
       // with a positive height.
-      return System.Drawing.Rectangle.FromLTRB(left, top > bottom ? bottom : top, right, top > bottom ? top : bottom);
+      return Rhino.Drawing.Rectangle.FromLTRB(left, top > bottom ? bottom : top, right, top > bottom ? top : bottom);
     }
 
     /// <summary>
     /// Gets the location of viewport in pixels.
     /// See documentation for <see cref="SetScreenPort(int, int, int, int, int, int)">SetScreenPort</see>.
     /// </summary>
-    /// <returns>The rectangle, or <see cref="System.Drawing.Rectangle.Empty">Empty</see> rectangle on error.</returns>
-    public System.Drawing.Rectangle GetScreenPort()
+    /// <returns>The rectangle, or <see cref="Rhino.Drawing.Rectangle.Empty">Empty</see> rectangle on error.</returns>
+    public Rhino.Drawing.Rectangle GetScreenPort()
     {
       int near;
       int far;
@@ -1085,7 +1085,7 @@ namespace Rhino.DocObjects
     /// </summary>
     /// <param name="screenPoint">screen location</param>
     /// <returns>3d world coordinate line segment starting on the near clipping plane and ending on the far clipping plane.</returns>
-    public Rhino.Geometry.Line GetFrustumLine(System.Drawing.Point screenPoint)
+    public Rhino.Geometry.Line GetFrustumLine(Rhino.Drawing.Point screenPoint)
     {
       return GetFrustumLine(screenPoint.X, screenPoint.Y);
     }
@@ -1096,7 +1096,7 @@ namespace Rhino.DocObjects
     /// </summary>
     /// <param name="screenPoint">screen location</param>
     /// <returns>3d world coordinate line segment starting on the near clipping plane and ending on the far clipping plane.</returns>
-    public Rhino.Geometry.Line GetFrustumLine(System.Drawing.PointF screenPoint)
+    public Rhino.Geometry.Line GetFrustumLine(Rhino.Drawing.PointF screenPoint)
     {
       return GetFrustumLine(screenPoint.X, screenPoint.Y);
     }
@@ -1170,7 +1170,7 @@ namespace Rhino.DocObjects
     /// </summary>
     /// <param name="windowRectangle">The new window rectangle in screen space.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-    public bool ZoomToScreenRect(System.Drawing.Rectangle windowRectangle)
+    public bool ZoomToScreenRect(Rhino.Drawing.Rectangle windowRectangle)
     {
       return ZoomToScreenRect(windowRectangle.Left, windowRectangle.Top, windowRectangle.Right, windowRectangle.Bottom);
     }
@@ -1215,7 +1215,7 @@ namespace Rhino.DocObjects
     /// <param name="screen1">End point.</param>
     /// <param name="projectionPlaneDistance">Distance of projection plane from camera. When in doubt, use 0.5*(frus_near+frus_far).</param>
     /// <returns>The world coordinate dolly vector.</returns>
-    public Rhino.Geometry.Vector3d GetDollyCameraVector(System.Drawing.Point screen0, System.Drawing.Point screen1, double projectionPlaneDistance)
+    public Rhino.Geometry.Vector3d GetDollyCameraVector(Rhino.Drawing.Point screen0, Rhino.Drawing.Point screen1, double projectionPlaneDistance)
     {
       return GetDollyCameraVector(screen0.X, screen0.Y, screen1.X, screen1.Y, projectionPlaneDistance);
     }
@@ -1295,7 +1295,7 @@ namespace Rhino.DocObjects
     /// If you want to compress the view projection across the viewing
     /// plane, then set x = 0.5, y = 1.0, and z = 1.0.
     /// </summary>
-    public System.Drawing.SizeF ViewScale
+    public Rhino.Drawing.SizeF ViewScale
     {
       get
       {
@@ -1303,7 +1303,7 @@ namespace Rhino.DocObjects
         double h = 0.0;
         IntPtr pConstThis = ConstPointer();
         UnsafeNativeMethods.ON_Viewport_GetViewScale(pConstThis, ref w, ref h);
-        return new System.Drawing.SizeF((float)w, (float)h);
+        return new Rhino.Drawing.SizeF((float)w, (float)h);
       }
       set
       {

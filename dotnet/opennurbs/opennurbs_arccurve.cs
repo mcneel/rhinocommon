@@ -16,7 +16,7 @@ namespace Rhino.Geometry
   /// <para>A valid ArcCurve has Radius()>0 and  0&lt;AngleRadians()&lt;=2*PI
   /// and a strictly increasing Domain.</para>
   /// </remarks>
-  [Serializable]
+  //[Serializable]
   public class ArcCurve : Curve
   {
     #region constructors
@@ -102,13 +102,13 @@ namespace Rhino.Geometry
       ConstructNonConstObject(ptr);
     }
 
-    /// <summary>
-    /// Protected constructor used in serialization.
-    /// </summary>
-    protected ArcCurve(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor used in serialization.
+    ///// </summary>
+    //protected ArcCurve(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
     internal override GeometryBase DuplicateShallowHelper()
     {
@@ -197,7 +197,7 @@ namespace Rhino.Geometry
       return m_pCurveDisplay;
     }
 
-    internal sealed override void Draw(DisplayPipeline pipeline, System.Drawing.Color color, int thickness)
+    internal sealed override void Draw(DisplayPipeline pipeline, Rhino.Drawing.Color color, int thickness)
     {
       IntPtr pDisplayPipeline = pipeline.NonConstPointer();
       int argb = color.ToArgb();

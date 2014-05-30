@@ -46,14 +46,14 @@ namespace Rhino.Render
       return UnsafeNativeMethods.Rdk_RenderWindow_StandardChannelId((int)ch);
     }
 
-    public System.Drawing.Size Size()
+    public Rhino.Drawing.Size Size()
     {
       int width = 0;int height = 0;
       UnsafeNativeMethods.Rdk_RenderWindow_Size(ConstPointer(), ref width, ref height);
-      return new System.Drawing.Size(width, height);
+      return new Rhino.Drawing.Size(width, height);
     }
 
-    public void SetSize(System.Drawing.Size size)
+    public void SetSize(Rhino.Drawing.Size size)
     {
       int width = size.Width, height = size.Height;
       UnsafeNativeMethods.Rdk_RenderWindow_SetSize(ConstPointer(), width, height);
@@ -92,7 +92,7 @@ namespace Rhino.Render
     /// <param name="region">The area of the rendering you want to display.  This should match the size
     /// of the render window itself (ie - the one set using SetSize)</param>
     /// <returns>Returns true if the wireframe channel was successfully added.</returns>
-    public bool AddWireframeChannel(Rhino.RhinoDoc doc, Rhino.DocObjects.ViewportInfo viewport, System.Drawing.Size size, System.Drawing.Rectangle region)
+    public bool AddWireframeChannel(Rhino.RhinoDoc doc, Rhino.DocObjects.ViewportInfo viewport, Rhino.Drawing.Size size, Rhino.Drawing.Rectangle region)
     {
       int[] xy = { size.Width, size.Height };
       int[] lrtb = { region.Left, region.Right, region.Top, region.Bottom };
@@ -132,9 +132,9 @@ namespace Rhino.Render
     /// </summary>
     /// <param name="size">Size of the area to set. No validation is done on this value</param>
     /// <param name="colors">Array of Color4f values used to set the RenderWindow.StandardChannels.RGBA </param>
-    public void SetRGBAChannelColors(System.Drawing.Size size, Rhino.Display.Color4f[] colors)
+    public void SetRGBAChannelColors(Rhino.Drawing.Size size, Rhino.Display.Color4f[] colors)
     {
-      SetRGBAChannelColors(System.Drawing.Rectangle.FromLTRB(0, 0, size.Width, size.Height), colors);
+      SetRGBAChannelColors(Rhino.Drawing.Rectangle.FromLTRB(0, 0, size.Width, size.Height), colors);
     }
 
     /// <summary>
@@ -149,7 +149,7 @@ namespace Rhino.Render
     /// rectangle.Height is the height of the rectangle in pixels. No validation is done on this value.
     /// </param>
     /// <param name="colors">Array of Color4f values used to set the RenderWindow.StandardChannels.RGBA </param>
-    public void SetRGBAChannelColors(System.Drawing.Rectangle rectangle, Rhino.Display.Color4f[] colors)
+    public void SetRGBAChannelColors(Rhino.Drawing.Rectangle rectangle, Rhino.Display.Color4f[] colors)
     {
       using (Rhino.Render.RenderWindow.Channel channel = OpenChannel(Rhino.Render.RenderWindow.StandardChannels.RGBA))
         channel.SetValues(rectangle, colors);
@@ -163,7 +163,7 @@ namespace Rhino.Render
       UnsafeNativeMethods.Rdk_RenderWindow_Invalidate(ConstPointer());
     }
 
-    public void InvalidateArea(System.Drawing.Rectangle rect)
+    public void InvalidateArea(Rhino.Drawing.Rectangle rect)
     {
       UnsafeNativeMethods.Rdk_RenderWindow_InvalidateArea(ConstPointer(), rect.Top, rect.Left, rect.Bottom, rect.Right);
     }
@@ -207,7 +207,7 @@ namespace Rhino.Render
         UnsafeNativeMethods.Rdk_RenderWindowChannel_SetFloatValue(ConstPointer(), x, y, value);
       }
 
-      internal void SetValues(System.Drawing.Rectangle rectangle, Rhino.Display.Color4f[] colors)
+      internal void SetValues(Rhino.Drawing.Rectangle rectangle, Rhino.Display.Color4f[] colors)
       {
         UnsafeNativeMethods.Rdk_RenderWindowChannel_SetValueRect(ConstPointer(), rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height, colors);
       }

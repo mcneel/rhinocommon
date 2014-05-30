@@ -6,22 +6,22 @@ namespace Rhino.Geometry
   /// <summary>
   /// Represents a view of the model placed on a page layout.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class DetailView : GeometryBase
   {
     internal DetailView(IntPtr native_ptr, object parent)
       : base(native_ptr, parent, -1)
     { }
 
-    /// <summary>
-    /// Protected serialization constructor for internal use.
-    /// </summary>
-    /// <param name="info">Data to be serialized.</param>
-    /// <param name="context">Serialization stream.</param>
-    protected DetailView(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected serialization constructor for internal use.
+    ///// </summary>
+    ///// <param name="info">Data to be serialized.</param>
+    ///// <param name="context">Serialization stream.</param>
+    //protected DetailView(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
     internal override GeometryBase DuplicateShallowHelper()
     {

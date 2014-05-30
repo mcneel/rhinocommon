@@ -3,7 +3,7 @@
 #if RDK_CHECKED
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using Rhino.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -1040,20 +1040,6 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Get the document this content belongs to or null if the content has not
-    /// yet been added to a document.  This will be null when content is
-    /// generated for browsers or preview generation.
-    /// </summary>
-    public RhinoDoc Document
-    {
-      get
-      {
-        var doc_id = UnsafeNativeMethods.Rdk_RenderContent_Document(ConstPointer());
-        return RhinoDoc.FromId((int)doc_id);
-      }
-    }
-
-    /// <summary>
     /// Call this method to open the content in the relevant thumbnail editor
     /// and select it for editing by the user. The content must be in the
     /// document or the call will fail.
@@ -1206,14 +1192,14 @@ namespace Rhino.Render
       if (null != winform_control)
       {
         var argb = UnsafeNativeMethods.Rdk_ContentUiBackgroundColor();
-        var color = System.Drawing.Color.FromArgb(argb);
+        var color = Rhino.Drawing.Color.FromArgb(argb);
         winform_control.BackColor = color;
       }
       //if (ApplicationSettings.AppearanceSettings.UsePaintColors)
       //{
       //  var asControl = control as Control;
       //  if (null != asControl)
-      //    asControl.BackColor = System.Drawing.SystemColors.ButtonFace;
+      //    asControl.BackColor = Rhino.Drawing.SystemColors.ButtonFace;
       //      //ApplicationSettings.AppearanceSettings.GetPaintColor(ApplicationSettings.PaintColor.NormalEnd);
       //}
       var newUiSection = NewUiPointer(classType.GUID, caption, createExpanded, createVisible, control);

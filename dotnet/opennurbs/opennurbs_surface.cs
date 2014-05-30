@@ -198,7 +198,7 @@ namespace Rhino.Geometry
   /// <para>A surface represents an entity that can be all visited by providing
   /// two independent parameters, usually called (u, v), or sometimes (s, t).</para>
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class Surface : GeometryBase
   {
     #region statics
@@ -233,13 +233,13 @@ namespace Rhino.Geometry
       if (surfaceA == null) throw new ArgumentNullException("surfaceA");
       if (surfaceB == null) throw new ArgumentNullException("surfaceB");
 
-      IntPtr const_ptr_surface_a = surfaceA.ConstPointer();
-      IntPtr const_ptr_surface_b = surfaceB.ConstPointer();
-      using (Runtime.InteropWrappers.SimpleArraySurfacePointer srfs = new Runtime.InteropWrappers.SimpleArraySurfacePointer())
+      IntPtr pConstSurfaceA = surfaceA.ConstPointer();
+      IntPtr pConstSurfaceB = surfaceB.ConstPointer();
+      using (Runtime.InteropWrappers.SimpleArraySurfacePointer srfs = new Rhino.Runtime.InteropWrappers.SimpleArraySurfacePointer())
       {
-        IntPtr ptr_surfaces = srfs.NonConstPointer();
-        UnsafeNativeMethods.RHC_RhinoSimpleRollingBallFillet(const_ptr_surface_a, flipA,
-          const_ptr_surface_b, flipB, radius, tolerance, ptr_surfaces);
+        IntPtr pSurfaces = srfs.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoSimpleRollingBallFillet(pConstSurfaceA, flipA,
+          pConstSurfaceB, flipB, radius, tolerance, pSurfaces);
         return srfs.ToNonConstArray();
       }
     }
@@ -260,13 +260,13 @@ namespace Rhino.Geometry
       if (surfaceA == null) throw new ArgumentNullException("surfaceA");
       if (surfaceB == null) throw new ArgumentNullException("surfaceB");
 
-      IntPtr const_ptr_surface_a = surfaceA.ConstPointer();
-      IntPtr const_ptr_surface_b = surfaceB.ConstPointer();
-      using (Runtime.InteropWrappers.SimpleArraySurfacePointer srfs = new Runtime.InteropWrappers.SimpleArraySurfacePointer())
+      IntPtr pConstSurfaceA = surfaceA.ConstPointer();
+      IntPtr pConstSurfaceB = surfaceB.ConstPointer();
+      using (Runtime.InteropWrappers.SimpleArraySurfacePointer srfs = new Rhino.Runtime.InteropWrappers.SimpleArraySurfacePointer())
       {
-        IntPtr ptr_surfaces = srfs.NonConstPointer();
-        UnsafeNativeMethods.RHC_RhinoSimpleRollingBallFillet2(const_ptr_surface_a, uvA,
-          const_ptr_surface_b, uvB, radius, tolerance, ptr_surfaces);
+        IntPtr pSurfaces = srfs.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhinoSimpleRollingBallFillet2(pConstSurfaceA, uvA,
+          pConstSurfaceB, uvB, radius, tolerance, pSurfaces);
         return srfs.ToNonConstArray();
       }
     }
@@ -279,12 +279,12 @@ namespace Rhino.Geometry
     /// <returns>A surface on success or null on failure.</returns>
     public static Surface CreateExtrusion(Curve profile, Vector3d direction)
     {
-      IntPtr const_ptr_curve = profile.ConstPointer();
-      IntPtr ptr_surface = UnsafeNativeMethods.RHC_RhinoExtrudeCurveStraight(const_ptr_curve, direction);
-      if (IntPtr.Zero == ptr_surface)
+      IntPtr pConstCurve = profile.ConstPointer();
+      IntPtr pSurface = UnsafeNativeMethods.RHC_RhinoExtrudeCurveStraight(pConstCurve, direction);
+      if (IntPtr.Zero == pSurface)
         return null;
       // CreateGeometryHelper will create the "actual" surface type (Nurbs, Sum, Rev,...)
-      GeometryBase g = CreateGeometryHelper(ptr_surface, null);
+      GeometryBase g = GeometryBase.CreateGeometryHelper(pSurface, null);
       Surface rc = g as Surface;
       return rc;
     }
@@ -297,12 +297,12 @@ namespace Rhino.Geometry
     /// <returns>A Surface on success or null on failure.</returns>
     public static Surface CreateExtrusionToPoint(Curve profile, Point3d apexPoint)
     {
-      IntPtr const_ptr_curve = profile.ConstPointer();
-      IntPtr ptr_surface = UnsafeNativeMethods.RHC_RhinoExtrudeCurveToPoint(const_ptr_curve, apexPoint);
-      if (IntPtr.Zero == ptr_surface)
+      IntPtr pConstCurve = profile.ConstPointer();
+      IntPtr pSurface = UnsafeNativeMethods.RHC_RhinoExtrudeCurveToPoint(pConstCurve, apexPoint);
+      if (IntPtr.Zero == pSurface)
         return null;
       // CreateGeometryHelper will create the "actual" surface type (Nurbs, Sum, Rev,...)
-      GeometryBase g = CreateGeometryHelper(ptr_surface, null);
+      GeometryBase g = GeometryBase.CreateGeometryHelper(pSurface, null);
       Surface rc = g as Surface;
       return rc;
     }
@@ -315,9 +315,9 @@ namespace Rhino.Geometry
     /// <returns>A new surface; or null on error.</returns>
     public static Surface CreatePeriodicSurface(Surface baseSurface, int direction)
     {
-      IntPtr const_ptr_surface = baseSurface.ConstPointer();
-      IntPtr ptr_new_surface = UnsafeNativeMethods.TL_Surface_MakePeriodic(const_ptr_surface, direction);
-      return CreateGeometryHelper(ptr_new_surface, null) as Surface;
+      IntPtr pConstSurface = baseSurface.ConstPointer();
+      IntPtr pNewSurf = UnsafeNativeMethods.TL_Surface_MakePeriodic(pConstSurface, direction);
+      return GeometryBase.CreateGeometryHelper(pNewSurf, null) as Surface;
     }
 #endif
 
@@ -343,18 +343,18 @@ namespace Rhino.Geometry
     internal override IntPtr _InternalDuplicate(out bool applymempressure)
     {
       applymempressure = true;
-      IntPtr const_ptr_this = ConstPointer();
-      return UnsafeNativeMethods.ON_Surface_DuplicateSurface(const_ptr_this);
+      IntPtr pConstPointer = ConstPointer();
+      return UnsafeNativeMethods.ON_Surface_DuplicateSurface(pConstPointer);
     }
 
     internal override IntPtr _InternalGetConstPointer()
     {
-      SurfaceOfHolder holder = m__parent as SurfaceOfHolder;
+      Rhino.Geometry.SurfaceOfHolder holder = m__parent as Rhino.Geometry.SurfaceOfHolder;
       if (null != holder)
       {
         return holder.SurfacePointer();
       }
-      SurfaceHolder holder2 = m__parent as SurfaceHolder;
+      Rhino.Geometry.SurfaceHolder holder2 = m__parent as Rhino.Geometry.SurfaceHolder;
       if (null != holder2)
       {
         return holder2.ConstSurfacePointer();
@@ -367,15 +367,15 @@ namespace Rhino.Geometry
       return new Surface(IntPtr.Zero, null);
     }
 
-    /// <summary>
-    /// Protected constructor for internal use.
-    /// </summary>
-    /// <param name="info">Serialization data.</param>
-    /// <param name="context">Serialization stream.</param>
-    protected Surface(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor for internal use.
+    ///// </summary>
+    ///// <param name="info">Serialization data.</param>
+    ///// <param name="context">Serialization stream.</param>
+    //protected Surface(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
     #endregion
 
     #region methods
@@ -493,8 +493,8 @@ namespace Rhino.Geometry
     /// <returns>A side.</returns>
     public IsoStatus ClosestSide(double u, double v)
     {
-      IntPtr const_ptr_this = ConstPointer();
-      return (IsoStatus)UnsafeNativeMethods.ON_Surface_ClosestSide(const_ptr_this, u, v);
+      IntPtr pConstThis = ConstPointer();
+      return (IsoStatus)UnsafeNativeMethods.ON_Surface_ClosestSide(pConstThis, u, v);
     }
 
     /// <summary>
@@ -511,9 +511,9 @@ namespace Rhino.Geometry
     /// <returns>New extended surface on success.</returns>
     public Surface Extend(IsoStatus edge, double extensionLength, bool smooth)
     {
-      IntPtr const_ptr_this = ConstPointer();
-      IntPtr ptr_new_surface = UnsafeNativeMethods.RHC_RhinoExtendSurface(const_ptr_this, (int)edge, extensionLength, smooth);
-      return CreateGeometryHelper(ptr_new_surface, null) as Surface;
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pNewSurface = UnsafeNativeMethods.RHC_RhinoExtendSurface(pConstThis, (int)edge, extensionLength, smooth);
+      return GeometryBase.CreateGeometryHelper(pNewSurface, null) as Surface;
     }
 
     /// <summary>
@@ -532,9 +532,9 @@ namespace Rhino.Geometry
     /// <returns>new rebuilt surface on success. null on failure.</returns>
     public NurbsSurface Rebuild(int uDegree, int vDegree, int uPointCount, int vPointCount)
     {
-      IntPtr const_ptr_this = ConstPointer();
-      IntPtr ptr_new_surface = UnsafeNativeMethods.RHC_RhinoRebuildSurface(const_ptr_this, uDegree, vDegree, uPointCount, vPointCount);
-      return CreateGeometryHelper(ptr_new_surface, null) as NurbsSurface;
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pNewSurface = UnsafeNativeMethods.RHC_RhinoRebuildSurface(pConstThis, uDegree, vDegree, uPointCount, vPointCount);
+      return GeometryBase.CreateGeometryHelper(pNewSurface, null) as NurbsSurface;
     }
 #endif
 
@@ -547,9 +547,9 @@ namespace Rhino.Geometry
     /// <returns>a new reversed surface on success.</returns>
     public Surface Reverse(int direction)
     {
-      IntPtr const_ptr_this = ConstPointer();
-      IntPtr ptr_new_surface = UnsafeNativeMethods.ON_Surface_Reverse(const_ptr_this, direction);
-      return CreateGeometryHelper(ptr_new_surface, null) as Surface;
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pNewSurface = UnsafeNativeMethods.ON_Surface_Reverse(pConstThis, direction);
+      return GeometryBase.CreateGeometryHelper(pNewSurface, null) as Surface;
     }
 
     /// <summary>
@@ -580,9 +580,9 @@ namespace Rhino.Geometry
     /// <returns>New transposed surface on success, null on failure.</returns>
     public Surface Transpose()
     {
-      IntPtr const_ptr_this = ConstPointer();
-      IntPtr ptr_new_surface = UnsafeNativeMethods.ON_Surface_Transpose(const_ptr_this);
-      return CreateGeometryHelper(ptr_new_surface, null) as Surface;
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pNewSurface = UnsafeNativeMethods.ON_Surface_Transpose(pConstThis);
+      return GeometryBase.CreateGeometryHelper(pNewSurface, null) as Surface;
     }
 
     /// <summary>
@@ -665,8 +665,8 @@ namespace Rhino.Geometry
     /// </example>
     public SurfaceCurvature CurvatureAt(double u, double v)
     {
-      IntPtr const_ptr_this = ConstPointer();
-      return SurfaceCurvature._FromSurfacePointer(const_ptr_this, u, v);
+      IntPtr pConstThis = ConstPointer();
+      return SurfaceCurvature._FromSurfacePointer(pConstThis, u, v);
     }
 
     //[skipping]
@@ -682,9 +682,9 @@ namespace Rhino.Geometry
     {
       if (null == curve)
         return IsoStatus.None;
-      IntPtr const_ptr_this = ConstPointer();
-      IntPtr const_ptr_curve = curve.ConstPointer();
-      int rc = UnsafeNativeMethods.ON_Surface_IsIsoparametric(const_ptr_this, const_ptr_curve, curveDomain);
+      IntPtr ptr = ConstPointer();
+      IntPtr pCurve = curve.ConstPointer();
+      int rc = UnsafeNativeMethods.ON_Surface_IsIsoparametric(ptr, pCurve, curveDomain);
       return (IsoStatus)rc;
     }
     /// <summary>
@@ -866,9 +866,9 @@ namespace Rhino.Geometry
       if (!v.IsValid || v.IsSingleton)
         return null;
 
-      IntPtr const_ptr_this = ConstPointer();
-      IntPtr ptr_surface = UnsafeNativeMethods.ON_Surface_Trim(const_ptr_this, u, v);
-      GeometryBase g = CreateGeometryHelper(ptr_surface, null);
+      IntPtr ptr = ConstPointer();
+      IntPtr pSurface = UnsafeNativeMethods.ON_Surface_Trim(ptr, u, v);
+      GeometryBase g = GeometryBase.CreateGeometryHelper(pSurface, null);
       Surface rc = g as Surface;
       return rc;
     }
@@ -882,9 +882,9 @@ namespace Rhino.Geometry
     /// <returns>The offsetted surface or null on failure.</returns>
     public Surface Offset(double distance, double tolerance)
     {
-      IntPtr const_ptr_this = ConstPointer();
-      IntPtr ptr_new_surface = UnsafeNativeMethods.ON_Surface_Offset(const_ptr_this, distance, tolerance);
-      GeometryBase g = CreateGeometryHelper(ptr_new_surface, null);
+      IntPtr pConstThis = ConstPointer();
+      IntPtr pNewSurface = UnsafeNativeMethods.ON_Surface_Offset(pConstThis, distance, tolerance);
+      GeometryBase g = GeometryBase.CreateGeometryHelper(pNewSurface, null);
       Surface rc = g as Surface;
       return rc;
     }
@@ -896,10 +896,10 @@ namespace Rhino.Geometry
     /// <returns>A surface, or null on error.</returns>
     public Surface Fit(int uDegree, int vDegree, double fitTolerance)
     {
-      IntPtr const_ptr_this = ConstPointer();
-      double achieved_tolerance = 0;
-      IntPtr rc = UnsafeNativeMethods.RHC_RhinoFitSurface(const_ptr_this, uDegree, vDegree, fitTolerance, ref achieved_tolerance);
-      return CreateGeometryHelper(rc, null) as Surface;
+      IntPtr pConstThis = ConstPointer();
+      double achievedTol = 0;
+      IntPtr rc = UnsafeNativeMethods.RHC_RhinoFitSurface(pConstThis, uDegree, vDegree, fitTolerance, ref achievedTol);
+      return GeometryBase.CreateGeometryHelper(rc, null) as Surface;
     }
 #endif
 
@@ -918,12 +918,12 @@ namespace Rhino.Geometry
       derivatives = null;
       if (numberDerivatives < 0)
         return false;
-      IntPtr const_ptr_this = ConstPointer();
+      IntPtr pConstThis = ConstPointer();
       const int stride = 3;
       int count = (numberDerivatives + 1) * (numberDerivatives + 2) / 2;
       int size = stride * count;
       double[] der_array = new double[size];
-      bool rc = UnsafeNativeMethods.ON_Surface_Evaluate(const_ptr_this, u, v, numberDerivatives, stride, der_array);
+      bool rc = UnsafeNativeMethods.ON_Surface_Evaluate(pConstThis, u, v, numberDerivatives, stride, der_array);
       if (rc)
       {
         point = new Point3d(der_array[0], der_array[1], der_array[2]);
@@ -965,9 +965,9 @@ namespace Rhino.Geometry
     /// </example>
     public Curve IsoCurve(int direction, double constantParameter)
     {
-      IntPtr const_ptr_this = ConstPointer();
-      IntPtr ptr_curve = UnsafeNativeMethods.ON_Surface_IsoCurve(const_ptr_this, direction, constantParameter);
-      return CreateGeometryHelper(ptr_curve, null) as Curve;
+      IntPtr ptr = ConstPointer();
+      IntPtr pCurve = UnsafeNativeMethods.ON_Surface_IsoCurve(ptr, direction, constantParameter);
+      return GeometryBase.CreateGeometryHelper(pCurve, null) as Curve;
     }
 
 #if RHINO_SDK
@@ -983,14 +983,14 @@ namespace Rhino.Geometry
       if (null == points)
         return null;
 
-      Point2d[] point_array = points as Point2d[];
-      if (null == point_array)
+      Point2d[] ptArray = points as Point2d[];
+      if (null == ptArray)
       {
-        System.Collections.Generic.IList<Point2d> point_list = points as System.Collections.Generic.IList<Point2d>;
-        if (point_list != null)
+        System.Collections.Generic.IList<Point2d> pointList = points as System.Collections.Generic.IList<Point2d>;
+        if (pointList != null)
         {
-          point_array = new Point2d[point_list.Count];
-          point_list.CopyTo(point_array, 0);
+          ptArray = new Point2d[pointList.Count];
+          pointList.CopyTo(ptArray, 0);
         }
         else
         {
@@ -999,25 +999,25 @@ namespace Rhino.Geometry
           {
             list.Add(pt);
           }
-          point_array = list.ToArray();
+          ptArray = list.ToArray();
         }
       }
 
-      int count = point_array.Length;
+      int count = ptArray.Length;
       if (count >= 2)
       {
         // check for closed curve
         int is_closed = 0;
         if (count > 3)
         {
-          Point2d pt = point_array[0];
-          if (pt.DistanceTo(point_array[count - 1]) < RhinoMath.SqrtEpsilon)
+          Point2d pt = ptArray[0];
+          if (pt.DistanceTo(ptArray[count - 1]) < RhinoMath.SqrtEpsilon)
             is_closed = 1;
         }
 
-        IntPtr const_ptr_this = ConstPointer();
-        IntPtr ptr_nurbscurve = UnsafeNativeMethods.ON_Surface_InterpCrvOnSrf(const_ptr_this, count, point_array, is_closed, tolerance, 1);
-        rc = CreateGeometryHelper(ptr_nurbscurve, null) as NurbsCurve;
+        IntPtr ptr = ConstPointer();
+        IntPtr pNC = UnsafeNativeMethods.ON_Surface_InterpCrvOnSrf(ptr, count, ptArray, is_closed, tolerance, 1);
+        rc = GeometryBase.CreateGeometryHelper(pNC, null) as NurbsCurve;
       }
       return rc;
     }
@@ -1061,9 +1061,9 @@ namespace Rhino.Geometry
     /// <returns>a geodesic curve on the surface on success. null on failure.</returns>
     public Curve ShortPath(Point2d start, Point2d end, double tolerance)
     {
-      IntPtr const_ptr_this = ConstPointer();
-      IntPtr ptr_new_curve = UnsafeNativeMethods.RHC_RhinoShortPath(const_ptr_this, start, end, tolerance);
-      return CreateGeometryHelper(ptr_new_curve, null) as Curve;
+      IntPtr pConstSurface = ConstPointer();
+      IntPtr pNewCurve = UnsafeNativeMethods.RHC_RhinoShortPath(pConstSurface, start, end, tolerance);
+      return GeometryBase.CreateGeometryHelper(pNewCurve, null) as Curve;
     }
 
     /// <summary>
@@ -1079,10 +1079,10 @@ namespace Rhino.Geometry
     {
       if (null == curve2d)
         return null;
-      IntPtr const_ptr_this = ConstPointer();
-      IntPtr const_ptr_curve = curve2d.ConstPointer();
-      IntPtr rc = UnsafeNativeMethods.ON_Surface_Pushup(const_ptr_this, const_ptr_curve, tolerance, curve2dSubdomain);
-      return CreateGeometryHelper(rc, null) as Curve;
+      IntPtr ptr = ConstPointer();
+      IntPtr pCurve2d = curve2d.ConstPointer();
+      IntPtr rc = UnsafeNativeMethods.ON_Surface_Pushup(ptr, pCurve2d, tolerance, curve2dSubdomain);
+      return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
     }
     /// <summary>
     /// Computes a 3d curve that is the composite of a 2d curve and the surface map.
@@ -1124,10 +1124,10 @@ namespace Rhino.Geometry
       if (null == curve3d)
         return null;
 
-      IntPtr const_ptr_this = ConstPointer();
-      IntPtr const_ptr_curve = curve3d.ConstPointer();
-      IntPtr rc = UnsafeNativeMethods.ON_Surface_Pullback(const_ptr_this, const_ptr_curve, tolerance, curve3dSubdomain);
-      return CreateGeometryHelper(rc, null) as Curve;
+      IntPtr ptr = ConstPointer();
+      IntPtr pCurve3d = curve3d.ConstPointer();
+      IntPtr rc = UnsafeNativeMethods.ON_Surface_Pullback(ptr, pCurve3d, tolerance, curve3dSubdomain);
+      return GeometryBase.CreateGeometryHelper(rc, null) as Curve;
     }
 #endif
 
@@ -1429,9 +1429,9 @@ namespace Rhino.Geometry
     {
       using (var surfaces = new Runtime.InteropWrappers.SimpleArraySurfacePointer())
       {
-        IntPtr const_ptr_surfaces = surfaces.NonConstPointer();
-        IntPtr cosnt_ptr_this = ConstPointer();
-        UnsafeNativeMethods.ON_Surface_Split(cosnt_ptr_this, direction, parameter, const_ptr_surfaces);
+        IntPtr pSurfaces = surfaces.NonConstPointer();
+        IntPtr pConstThis = ConstPointer();
+        UnsafeNativeMethods.ON_Surface_Split(pConstThis, direction, parameter, pSurfaces);
         return surfaces.ToNonConstArray();
       }
     }
@@ -1473,12 +1473,12 @@ namespace Rhino.Geometry
     }
 
 #if RHINO_SDK
-    internal virtual void Draw(Display.DisplayPipeline pipeline, System.Drawing.Color color, int density)
+    internal virtual void Draw(Display.DisplayPipeline pipeline, Rhino.Drawing.Color color, int density)
     {
-      IntPtr ptr_display_pipeline = pipeline.NonConstPointer();
+      IntPtr pDisplayPipeline = pipeline.NonConstPointer();
       IntPtr ptr = ConstPointer();
       int argb = color.ToArgb();
-      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawSurface(ptr_display_pipeline, ptr, argb, density);
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawSurface(pDisplayPipeline, ptr, argb, density);
     }
 #endif
   }

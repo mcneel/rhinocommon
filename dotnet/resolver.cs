@@ -1,3 +1,5 @@
+#if FILESYSTEM_SUPPORTED
+
 #pragma warning disable 1591
 using System;
 using System.Reflection;
@@ -334,3 +336,5 @@ namespace Rhino.Runtime
     #endregion
   }
 }
+
+#endif

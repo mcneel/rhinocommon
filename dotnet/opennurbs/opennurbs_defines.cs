@@ -9,7 +9,7 @@ namespace Rhino
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
   [System.Diagnostics.DebuggerDisplay("{m_i}, {m_j}")]
-  [Serializable]
+  //[Serializable]
   public struct IndexPair
   {
     int m_i, m_j;
@@ -1066,7 +1066,7 @@ namespace Rhino.Geometry
   /// Represents an index of an element contained in another object.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
-  [Serializable]
+  //[Serializable]
   public struct ComponentIndex
   {
     private readonly uint m_type;

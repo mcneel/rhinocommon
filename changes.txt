@@ -1,71 +1,146 @@
-The solution was upgraded to VS2013, so all C++ Projects now target Microsoft Visual C++ 2013, all .NET projects target .NET 4.5.
-The solution *will not run* in VS2010 or earlier.
-The PCL target profile includes the following targets:
-	.NET Framework 4.5
-	Windows 8 (Windows Store Apps)
-	Windows Phone 8.1
-	Xamarin.iOS (When Xamarin is installed)
-	Xamarin.Android (When Xamarin is installed)
+The solution was upgraded to VS2013, so: 
+	All C++ Projects now target Microsoft Visual C++ 2013.
+	All .NET projects target .NET 4.5.
+	The solution *will not run* in VS2010 or earlier.
+	The PCL target profile includes the following targets:
+		.NET Framework 4.5
+		Windows 8 (Windows Store Apps)
+		Windows Phone 8.1
+		Xamarin.iOS (When Xamarin is installed)
+		Xamarin.Android (When Xamarin is installed)
 
 ****FURTHER ACTION RECOMMENDED****
 
 System.Windows.Forms Incompatibility
-	Removed the rhinocommon\dotnet\UI directory and all of its contents, as well as any references to source files therein from the Rhino3dmIO project.
+
+	Removed the rhinocommon\dotnet\UI directory and all of its contents, as well as any references to source files 
+		therein from the Rhino3dmIO project.
+
 	Recommended action: Move this stuff into a separate assembly which references Rhino3dmIO.
+
 Legacy .NET Serialization Incompatibility (Really not sure how much this stuff mattered)
-	Commented out all usages of [Serializable] 
-	Commented out all usages of ISerializable in class declarations and their associated implementations
-	Commented out all protected serialization constructors bearing the (SerializationInfo info, StreamingContext context) signature.
-	Recommended action: If built-in .NET serialization is still desired, consider using the more modern alternative, [DataContract]. It is supported in Portable Class Libraries: http://msdn.microsoft.com/en-us/library/system.runtime.serialization.datacontractattribute(v=vs.110).aspx
+
+	Commented out all usages of [Serializable].
+	Commented out all usages of ISerializable in class declarations and their associated implementations.
+	Commented out all protected serialization constructors with the (SerializationInfo, StreamingContext) signature.
+
+	Recommended action: If built-in .NET serialization is still desired, consider using the more modern alternative, 
+		[DataContract]. It is supported in Portable Class Libraries: 
+		http://msdn.microsoft.com/en-us/library/system.runtime.serialization.datacontractattribute(v=vs.110).aspx
+
 System.Security Incompatibility
+
 	Commented out all using directives for System.Security.Permissions
 	Commented out all usages of [System.Security.SuppressUnmanagedCodeSecurity]
-		My System.Security is rusty and I did not bother to research why this attribute is not supported by the PCL.
-		I’ve made note that a performance increase was yielded while using this attribute when the project was targeting .NET 4.0, but I have not yet compared performance with/without this attribute myself.
-	Recommended action: Do further research on the performance implications of .NET Code Access Security (CAS), with special attention to how it applies to the Portable Class Library, Windows Store Apps and/or Windows Phone Apps.
-		Does the absence of this attribute only impact performance in certain modes of deployment? (with/without digital signatures, strong names, etc.)
-		Was CAS changed in .NET 4.5 or 4.5.1 to address performance issues that may have been present with P/Invoke (DllImport)?
-		Do PCL’s have their own way of dealing with CAS? (i.e. have SuppressUnmanagedCodeSecurity and other related attributes been superseded?)
+
+	My System.Security knowledge is rusty and I have not yet researched why this attribute is not supported by the PCL.
+
+	I’ve made note that a performance increase was yielded while using this attribute when the project was targeting 
+		.NET 4.0, but I have not yet compared performance with/without this attribute myself.
+
+	Recommended action: Do further research on the performance implications of .NET Code Access Security (CAS), with 
+		special attention to how it applies to the Portable Class Library, Windows Store Apps and/or 
+		Windows Phone Apps.
+
+		Does the absence of this attribute only impact performance in certain modes of deployment? 
+			(with/without digital signatures, strong names, etc.)
+		Was CAS changed in .NET 4.5 or 4.5.1 to address performance issues that may have been present with 
+			P/Invoke (DllImport)?
+		Do PCL’s have their own way of dealing with CAS? (i.e. have SuppressUnmanagedCodeSecurity and other
+			related attributes been superseded?)
+
 System.Xml Incompatibility
-	Commented out the ParseXmlNodes method of SettingValue, which accepted XmlNode as a parameter, which is not supported in PCLs.
-	Recommended action: For parsing XML manually, consider using the more modern XML library of .NET, LINQ to XML (System.Xml.Linq)
+
+	Commented out the ParseXmlNodes method of SettingValue, which accepted XmlNode as a parameter, 
+		which is not supported in PCLs.
+
+	Recommended action: For parsing XML manually, consider using the more modern XML library of .NET, 
+		LINQ to XML (System.Xml.Linq): http://msdn.microsoft.com/en-us/library/bb387098.aspx
+		
+
 NameValueCollection Incompatibility
+
 	Commented out any methods relying on this object (GetUserStrings)
-	I don’t know enough about the systems using this object to feel comfortable making a recommendation. Why was a Dictionary not used?
+
+	I don’t know enough about the systems using this object to feel comfortable making a recommendation. 
+		Why was a Dictionary not used?
+
 ICloneable Incompatibility
-	The ICloneable interface is not available in PCLs. Reason: http://blogs.msdn.com/b/brada/archive/2004/05/03/125427.aspx
+
+	The ICloneable interface is not available in PCLs.
+		Reason: http://blogs.msdn.com/b/brada/archive/2004/05/03/125427.aspx
+
 	Affected source (all in dotnet\opennurbs\opennurbs_archive.cs):
-		DictionaryItem.CreateCopy() no longer checks whether its m_value field implements ICloneable, and now simply creates a new DictionaryItem with the existing object instance.
+		DictionaryItem.CreateCopy() no longer checks whether its m_value field implements ICloneable, 
+			and now simply creates a new DictionaryItem with the existing object instance.
 		ArchivableDictionary.Clone() and the related ICloneable.Clone() implementation were simply commented out.
+
 	Were these needed? It is relatively harmless and easy to define our own ICloneable, but do we really want to?
-	It is clear that the intent of its implementation in ArchivableDictionary was to provide a means of deep copying the dictionary,
-	however it doesn't look like any of the OpenNURBS types actually implement ICloneable. Also, if externally defined objects
-	can be used as items, there is no guarantee that their ICloneable implementations (if present) implement a deep copy.
+		It is clear that the intent of its implementation in ArchivableDictionary was to provide a means of
+		deep copying the dictionary, however it doesn't look like any of the OpenNURBS types actually implement 
+		ICloneable. Also, if externally defined objects can be used as items, there is no guarantee that their 
+		ICloneable implementations (if present) implement a deep copy.
+
 IConvertible Incompatibility
-	I am not sure why IConvertible is not supported in PCLs (or for that matter, why MSDN claims it IS supported), but all usages of it have been commented out.
-	This broke numerous implementations in opennurbs_archive.cs and rhinosdkuiprofilecontext where CultureInfo.InvariantCulture was being passed to ToString calls.
-	If it is necessary for strings to be handled in invariant culture, I recommend using IFormattable instead. This will also let you get rid of a few [CLSCompliant(false)] tags (which can actually be done anyway since the use of IConvertible was the only thing requiring it anyway).
+
+	I am not sure why IConvertible is not supported in PCLs (or for that matter, why MSDN claims it IS supported), 
+		but all usages of it have been commented out.
+
+	This broke numerous implementations in opennurbs_archive.cs and rhinosdkuiprofilecontext where 
+		CultureInfo.InvariantCulture was being passed to ToString calls.
+
+	If it is necessary for strings to be handled in invariant culture, I recommend using IFormattable instead. 
+		This will also let you get rid of a few [CLSCompliant(false)] tags (which can actually be done anyway 
+		since the use of IConvertible was the only thing requiring it).
+
 AssemblyResolver Incompatibility
-	AssemblyResolver is an implementation of a plugin architecture, which, for security reasons, are not supported in Windows Store Apps or Windows Phone Apps. This means that the various System.Reflection.Assembly.Load methods are not available in PCLs. The entire source file containing AssemblyResolver was wrapped in a preprocessor if directive FILESYSTEM_SUPPORTED, which as of now, always evaluates to false.
-	Recommended action: Move the plugin architecture to a different assembly which references Rhino3dmIO
+
+	AssemblyResolver is an implementation of a plugin architecture, which, for security reasons, are not supported 
+		in Windows Store Apps or Windows Phone Apps. This means that the various System.Reflection.Assembly.Load 
+		methods are not available in PCLs. The entire source file containing AssemblyResolver was wrapped in a 
+		preprocessor if directive FILESYSTEM_SUPPORTED, which as of now, always evaluates to false.
+
+	Recommended action: Move the plugin architecture to a different assembly, intended only for desktop platforms,
+		which references Rhino3dmIO.
+
 MonoHost Incompatibility
-	MonoHost.cs was broken all over the place in a PCL so it has been similarly wrapped in a preprocessor if. Without having looked closely at its contents, I wonder if it’s necessary… since a PCL should not have any compatibility issues with Mono.
+
+	MonoHost.cs was broken all over the place in a PCL so it has been similarly wrapped in a preprocessor #if.
+
+	Without having looked closely at its contents, I wonder if it’s necessary… since a PCL should not have any 
+		compatibility issues with Mono.
+
 HostUtils Incompatibility
-	Many of the platform checking implementations in HostUtils were broken, and were commented out. This ultimately broke Rhino_DotNet interoperability.
+
+	Many of the platform checking implementations in HostUtils were broken, and were commented out. This ultimately 
+		broke Rhino_DotNet (legacy?) interoperability.
+
+	If Rhino_DotNet is legacy, and presumably only works on desktop platforms (perhaps as far as Windows only), this
+		is another thing that can be moved to a regular .NET assembly.
+
 File Existence Checking
-	Many of the file read operations in File3dm made use of File.Exists, which is not available in the .NET Portable Subset. 
-	Perhaps the native methods could return a value indicating success/failure, which could then be interpreted as FileNotFound or otherwise.
+
+	Many of the file read operations in File3dm used of File.Exists, which is not available in the .NET Portable
+		Subset. Perhaps the native methods could return a value indicating success/failure, which could then be 
+		interpreted as FileNotFound or otherwise.
 
 ****RESOLVED****
 
 System.Type Incompatibility
-	In the .NET Portable Subset, some members of Type were moved to a new type called TypeInfo, which is accessible for any instance of Type by calling its GetTypeInfo method.
-		This was fixed pretty easily by adding the GetTypeInfo() call and a using directive for System.Reflection where necessary.
-	Some other members were moved to extension methods operable on Type, but renamed and only accessible with a using directive for System.Reflection.
+
+	In the .NET Portable Subset, some members of Type were moved to a new type called TypeInfo, which is accessible 
+		for any instance of Type by calling its GetTypeInfo() method. This was fixed pretty easily by adding the 
+		GetTypeInfo() call and a using directive for System.Reflection where necessary.
+
+	Some other members were moved to extension methods operable on Type, but renamed and only accessible with a using 
+		directive for System.Reflection.
 
 Convert<TInput, TOutput> Incompatibility
-	The Convert<> delegate was superseded by the Func<> delegate and has been dropped from the .NET Portable Subset. Replaced the usage of it with Func.
+
+	The Convert<> delegate was superseded by the Func<> delegate and has been dropped from the .NET Portable Subset. 
+		Replaced the usage of it with Func.
 
 System.Drawing Incompatibility
+
 	Replaced all references to System.Drawing with references to Rhino.Drawing.
 	Replaced the necessary System.Drawing structs with a new set of minimal structs in a “Rhino.Drawing” namespace.

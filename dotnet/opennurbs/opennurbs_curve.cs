@@ -289,7 +289,7 @@ namespace Rhino.Geometry
   /// <para>A curve represents an entity that can be all visited by providing
   /// a single parameter, usually called t.</para>
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class Curve : GeometryBase
   {
     #region statics
@@ -1229,15 +1229,15 @@ namespace Rhino.Geometry
     }
     #endregion
 
-    /// <summary>
-    /// Protected serialization constructor for internal use.
-    /// </summary>
-    /// <param name="info">Serialization data.</param>
-    /// <param name="context">Serialization stream.</param>
-    protected Curve(SerializationInfo info, StreamingContext context)
-      : base(info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected serialization constructor for internal use.
+    ///// </summary>
+    ///// <param name="info">Serialization data.</param>
+    ///// <param name="context">Serialization stream.</param>
+    //protected Curve(SerializationInfo info, StreamingContext context)
+    //  : base(info, context)
+    //{
+    //}
 
     #region internal methods
     const int idxIgnoreNone = 0;
@@ -1263,7 +1263,7 @@ namespace Rhino.Geometry
 #if RHINO_SDK
     internal IntPtr m_pCurveDisplay = IntPtr.Zero;
 
-    internal virtual void Draw(Display.DisplayPipeline pipeline, System.Drawing.Color color, int thickness)
+    internal virtual void Draw(Display.DisplayPipeline pipeline, Rhino.Drawing.Color color, int thickness)
     {
       IntPtr pDisplayPipeline = pipeline.NonConstPointer();
       IntPtr ptr = ConstPointer();

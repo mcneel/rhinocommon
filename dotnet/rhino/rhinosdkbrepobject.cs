@@ -87,16 +87,14 @@ namespace Rhino.DocObjects.Custom
     protected CustomBrepObject()
       : base(true)
     {
-      Guid type_id = GetType().GUID;
       if (SubclassCreateNativePointer)
-        m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomBrepObject_New(type_id);
+        m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomBrepObject_New();
     }
     protected CustomBrepObject(Brep brep)
       : base(true)
     {
-      Guid type_id = GetType().GUID;
       IntPtr pConstBrep = brep.ConstPointer();
-      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New2(type_id, pConstBrep);
+      m_pRhinoObject = UnsafeNativeMethods.CRhinoCustomObject_New2(pConstBrep);
     }
 
     ~CustomBrepObject() { Dispose(false); }

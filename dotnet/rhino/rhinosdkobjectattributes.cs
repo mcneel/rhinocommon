@@ -8,7 +8,7 @@ namespace Rhino.DocObjects
   /// <summary>
   /// Attributes (color, material, layer,...) associated with a rhino object
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class ObjectAttributes : Runtime.CommonObject
   {
 #if RHINO_SDK
@@ -95,11 +95,11 @@ namespace Rhino.DocObjects
       ConstructNonConstObject(ptr);
     }
 
-    // serialization constructor
-    protected ObjectAttributes(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    //// serialization constructor
+    //protected ObjectAttributes(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
     /// <summary>
     /// Constructs a copy of this <see cref="ObjectAttributes"/> instance.
@@ -516,13 +516,13 @@ namespace Rhino.DocObjects
 
     const int idxColor = 0;
     const int idxPlotColor = 1;
-    System.Drawing.Color GetColor(int which)
+    Rhino.Drawing.Color GetColor(int which)
     {
       IntPtr ptr = ConstPointer();
       int abgr = UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetColor(ptr, which, false, 0);
       return Rhino.Runtime.Interop.ColorFromWin32(abgr);
     }
-    void SetColor(int which, System.Drawing.Color c)
+    void SetColor(int which, Rhino.Drawing.Color c)
     {
       IntPtr ptr = NonConstPointer();
       int argb = c.ToArgb();
@@ -537,7 +537,7 @@ namespace Rhino.DocObjects
     /// <code source='examples\cs\ex_modifyobjectcolor.cs' lang='cs'/>
     /// <code source='examples\py\ex_modifyobjectcolor.py' lang='py'/>
     /// </example>
-    public System.Drawing.Color ObjectColor
+    public Rhino.Drawing.Color ObjectColor
     {
       get { return GetColor(idxColor); }
       set { SetColor(idxColor, value); }
@@ -545,40 +545,29 @@ namespace Rhino.DocObjects
     /// <summary>
     /// If plot_color_from_object == PlotColorSource, then PlotColor is the object's plotting color.
     /// </summary>
-    public System.Drawing.Color PlotColor
+    public Rhino.Drawing.Color PlotColor
     {
       get { return GetColor(idxPlotColor); }
       set { SetColor(idxPlotColor, value); }
     }
 
-    /// <summary>
-    /// A mapping from any plugin source is associated with these attributes
-    /// Need to do this here to respond correctly to ModifyObjectAttributes event
-    /// </summary>
-    public bool HasMapping
-    {
-      get { return UnsafeNativeMethods.ON_3dmObjectAttributes_HasMapping(NonConstPointer()); }
-    }
-
-
-
 #if RHINO_SDK
-    public System.Drawing.Color DrawColor(RhinoDoc document)
+    public Rhino.Drawing.Color DrawColor(RhinoDoc document)
     {
       return DrawColor(document, Guid.Empty);
     }
-    public System.Drawing.Color DrawColor(RhinoDoc document, Guid viewportId)
+    public Rhino.Drawing.Color DrawColor(RhinoDoc document, Guid viewportId)
     {
       IntPtr pConstThis = ConstPointer();
       int abgr = UnsafeNativeMethods.CRhinoObjectAttributes_DrawColor(pConstThis, document.m_docId, viewportId);
       return Rhino.Runtime.Interop.ColorFromWin32(abgr);
     }
 
-    public System.Drawing.Color ComputedPlotColor(RhinoDoc document)
+    public Rhino.Drawing.Color ComputedPlotColor(RhinoDoc document)
     {
       return ComputedPlotColor(document, Guid.Empty);
     }
-    public System.Drawing.Color ComputedPlotColor(RhinoDoc document, Guid viewportId)
+    public Rhino.Drawing.Color ComputedPlotColor(RhinoDoc document, Guid viewportId)
     {
       IntPtr pConstThis = ConstPointer();
       int abgr = UnsafeNativeMethods.CRhinoObjectAttributes_PlotColor(pConstThis, document.m_docId, viewportId);
@@ -778,14 +767,14 @@ namespace Rhino.DocObjects
       }
     }
 
-    /// <summary>
-    /// Gets an independent copy of the collection of (user text key, user text value) pairs attached to this object.
-    /// </summary>
-    /// <returns>A collection of key strings and values strings. This </returns>
-    public System.Collections.Specialized.NameValueCollection GetUserStrings()
-    {
-      return _GetUserStrings();
-    }
+    ///// <summary>
+    ///// Gets an independent copy of the collection of (user text key, user text value) pairs attached to this object.
+    ///// </summary>
+    ///// <returns>A collection of key strings and values strings. This </returns>
+    //public System.Collections.Specialized.NameValueCollection GetUserStrings()
+    //{
+    //  return _GetUserStrings();
+    //}
     #endregion
   }
 }

@@ -9,7 +9,7 @@ namespace Rhino.DocObjects
   /// <summary>
   /// Rhino.DocObjects.Tables.BitmapTable entry
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class BitmapEntry : Runtime.CommonObject
   {
     #region members

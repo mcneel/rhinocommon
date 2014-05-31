@@ -8,7 +8,7 @@ namespace Rhino.Geometry
   /// Represents the value of start and end points in a single line segment.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 48)]
-  [Serializable]
+  //[Serializable]
   public struct Line : IEquatable<Line>, IEpsilonComparable<Line>
   {
     #region members

@@ -12,22 +12,22 @@ namespace Rhino.Geometry
   /// Fill definitions are in the HatchPattern or class derived from HatchPattern
   /// Hatch has an index to get the pattern definition from the pattern table.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class Hatch : GeometryBase
   {
     internal Hatch(IntPtr native_ptr, object parent)
       : base(native_ptr, parent, -1)
     { }
 
-    /// <summary>
-    /// Protected constructor for internal use.
-    /// </summary>
-    /// <param name="info">Serialization data.</param>
-    /// <param name="context">Serialization stream.</param>
-    protected Hatch(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor for internal use.
+    ///// </summary>
+    ///// <param name="info">Serialization data.</param>
+    ///// <param name="context">Serialization stream.</param>
+    //protected Hatch(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
     internal override GeometryBase DuplicateShallowHelper()
     {

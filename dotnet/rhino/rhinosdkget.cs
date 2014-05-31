@@ -174,9 +174,9 @@ namespace Rhino.Input
     /// <remarks>
     /// If you need options or more advanced user interface, then use GetColor class.
     /// </remarks>
-    public static Commands.Result GetColor(string prompt, bool acceptNothing, ref System.Drawing.Color color)
+    public static Commands.Result GetColor(string prompt, bool acceptNothing, ref Rhino.Drawing.Color color)
     {
-      int abgr = System.Drawing.ColorTranslator.ToWin32(color);
+      int abgr = Rhino.Drawing.ColorTranslator.ToWin32(color);
       uint rc = UnsafeNativeMethods.RhinoSdkGet_RhinoGetColor(prompt, acceptNothing, ref abgr, true);
       color = Runtime.Interop.ColorFromWin32(abgr);
       return (Commands.Result)rc;
@@ -558,9 +558,9 @@ namespace Rhino.Input
     /// view that the user selected the window in.
     /// </param>
     /// <returns>Success or Cancel.</returns>
-    public static Commands.Result Get2dRectangle(bool solidPen, out System.Drawing.Rectangle rectangle, out RhinoView rectView)
+    public static Commands.Result Get2dRectangle(bool solidPen, out Rhino.Drawing.Rectangle rectangle, out RhinoView rectView)
     {
-      rectangle = System.Drawing.Rectangle.Empty;
+      rectangle = Rhino.Drawing.Rectangle.Empty;
       rectView = null;
       const int PS_SOLID = 0;
       const int PS_DOT = 2;
@@ -569,7 +569,7 @@ namespace Rhino.Input
       if (IntPtr.Zero == ptr_view)
         return Commands.Result.Cancel;
       rectView = RhinoView.FromIntPtr(ptr_view);
-      rectangle = System.Drawing.Rectangle.FromLTRB(left, top, right, bottom);
+      rectangle = Rhino.Drawing.Rectangle.FromLTRB(left, top, right, bottom);
       return Commands.Result.Success;
     }
 
@@ -1155,7 +1155,7 @@ namespace Rhino.Input.Custom
     /// GetResult.Color is returned and RhinoGet.GotDefault() will return true. Calling
     /// SetDefaultColor will clear any previous calls to SetDefaultString or SetDefaultPoint.
     /// </remarks>
-    public void SetDefaultColor(System.Drawing.Color defaultColor)
+    public void SetDefaultColor(Rhino.Drawing.Color defaultColor)
     {
       IntPtr ptr = NonConstPointer();
       int argb = defaultColor.ToArgb();
@@ -1608,7 +1608,7 @@ namespace Rhino.Input.Custom
         where T : struct, IConvertible
     {
         Type enumType = typeof(T);
-        if (!enumType.IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+        if (!enumType.GetTypeInfo().IsEnum) throw new ArgumentException("!typeof(T).GetTypeInfo().IsEnum");
         
         string[] names = Enum.GetNames(enumType);
         int index = Array.IndexOf(names, defaultValue.ToString(CultureInfo.InvariantCulture));
@@ -1627,7 +1627,7 @@ namespace Rhino.Input.Custom
     public int AddOptionEnumSelectionList<T>(string englishOptionName, IEnumerable<T> enumSelection, int listCurrentIndex)
         where T : struct, IConvertible
     {
-        if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+        if (!typeof(T).GetTypeInfo().IsEnum) throw new ArgumentException("!typeof(T).GetTypeInfo().IsEnum");
         if (null == enumSelection) throw new ArgumentNullException("enumSelection");
 
         List<String> names = new List<String>();
@@ -1649,7 +1649,7 @@ namespace Rhino.Input.Custom
         where T : struct, IConvertible
     {
         Type enumType = typeof(T);
-        if (!enumType.IsEnum) throw new ArgumentException("!enumType.IsEnum");
+        if (!enumType.GetTypeInfo().IsEnum) throw new ArgumentException("!enumType.GetTypeInfo().IsEnum");
 
         Array values = Enum.GetValues(enumType);
         T[] tValues = new T[values.Length];
@@ -1674,7 +1674,7 @@ namespace Rhino.Input.Custom
         where T : struct, IConvertible
     {
         Type enumType = typeof(T);
-        if (!enumType.IsEnum) throw new ArgumentException("!enumType.IsEnum");
+        if (!enumType.GetTypeInfo().IsEnum) throw new ArgumentException("!enumType.GetTypeInfo().IsEnum");
 
         List<T> values = new List<T>(selectionList);
 
@@ -1965,7 +1965,7 @@ namespace Rhino.Input.Custom
 
     /// <summary>Gets a color if Get*() returns GetResult.Color.</summary>
     /// <returns>The color chosen by the user.</returns>
-    public System.Drawing.Color Color()
+    public Rhino.Drawing.Color Color()
     {
       IntPtr ptr = ConstPointer();
       uint abgr = UnsafeNativeMethods.CRhinoGet_Color(ptr);
@@ -1999,12 +1999,12 @@ namespace Rhino.Input.Custom
     /// In all other cases, left=right=top=bottom=0;
     /// </summary>
     /// <returns>The picking rectangle; or 0 in the specified cases.</returns>
-    public System.Drawing.Rectangle PickRectangle()
+    public Rhino.Drawing.Rectangle PickRectangle()
     {
       int[] lrtb = new int[4];
       IntPtr ptr = ConstPointer();
       UnsafeNativeMethods.CRhinoGet_GetRectangle(ptr, ref lrtb[0], idxPickRectangle);
-      return System.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[1], lrtb[2], lrtb[3]);
+      return Rhino.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[1], lrtb[2], lrtb[3]);
     }
 
     /// <summary>
@@ -2012,13 +2012,13 @@ namespace Rhino.Input.Custom
     /// (0,0) = upper left corner of window.
     /// </summary>
     /// <returns>The location.</returns>
-    public System.Drawing.Point Point2d()
+    public Rhino.Drawing.Point Point2d()
     {
       IntPtr ptr = ConstPointer();
       int x = 0;
       int y = 0;
       UnsafeNativeMethods.CRhinoGet_Point2d(ptr, ref x, ref y);
-      return new System.Drawing.Point(x, y);
+      return new Rhino.Drawing.Point(x, y);
     }
 
     //[skipping]
@@ -2031,12 +2031,12 @@ namespace Rhino.Input.Custom
     /// (0,0) = upper left corner of window.
     /// </summary>
     /// <returns>The rectangle.</returns>
-    public System.Drawing.Rectangle Rectangle2d()
+    public Rhino.Drawing.Rectangle Rectangle2d()
     {
       int[] lrtb = new int[4];
       IntPtr ptr = ConstPointer();
       UnsafeNativeMethods.CRhinoGet_GetRectangle(ptr, ref lrtb[0], idxRectangle2d);
-      return System.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[1], lrtb[2], lrtb[3]);
+      return Rhino.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[1], lrtb[2], lrtb[3]);
     }
 
     /// <summary>
@@ -2045,14 +2045,14 @@ namespace Rhino.Input.Custom
     /// <para>(0,0) = upper left corner of window.</para>
     /// </summary>
     /// <returns>An array with two 2D points.</returns>
-    public System.Drawing.Point[] Line2d()
+    public Rhino.Drawing.Point[] Line2d()
     {
       int x0 = 0, y0 = 0, x1 = 0, y1 = 0;
       IntPtr ptr = ConstPointer();
       UnsafeNativeMethods.CRhinoGet_Line2d(ptr, ref x0, ref y0, ref x1, ref y1);
-      System.Drawing.Point[] rc = new System.Drawing.Point[2];
-      rc[0] = new System.Drawing.Point(x0, y0);
-      rc[1] = new System.Drawing.Point(x1, y1);
+      Rhino.Drawing.Point[] rc = new Rhino.Drawing.Point[2];
+      rc[0] = new Rhino.Drawing.Point(x0, y0);
+      rc[1] = new Rhino.Drawing.Point(x1, y1);
       return rc;
     }
   }
@@ -2438,9 +2438,9 @@ namespace Rhino.Input.Custom
   public class OptionColor : IDisposable
   {
     internal IntPtr m_pOptionHolder = IntPtr.Zero;
-    System.Drawing.Color m_initialValue;
+    Rhino.Drawing.Color m_initialValue;
 
-    public OptionColor(System.Drawing.Color initialValue)
+    public OptionColor(Rhino.Drawing.Color initialValue)
     {
       m_initialValue = initialValue;
     }
@@ -2464,7 +2464,7 @@ namespace Rhino.Input.Custom
       }
     }
 
-    public System.Drawing.Color CurrentValue
+    public Rhino.Drawing.Color CurrentValue
     {
       get
       {
@@ -2484,7 +2484,7 @@ namespace Rhino.Input.Custom
       }
     }
 
-    public System.Drawing.Color InitialValue
+    public Rhino.Drawing.Color InitialValue
     {
       get { return m_initialValue; }
     }

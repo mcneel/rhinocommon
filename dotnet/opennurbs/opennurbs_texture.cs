@@ -70,7 +70,7 @@ namespace Rhino.DocObjects
   /// <summary>
   /// Represents a texture that is mapped on objects.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class Texture : Runtime.CommonObject
   {
     private readonly int m_index;
@@ -138,15 +138,15 @@ namespace Rhino.DocObjects
       return IntPtr.Zero;
     }
 
-    /// <summary>
-    /// Protected constructor for internal use.
-    /// </summary>
-    /// <param name="info">Serialization data.</param>
-    /// <param name="context">Serialization stream.</param>
-    protected Texture(SerializationInfo info, StreamingContext context)
-      : base(info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor for internal use.
+    ///// </summary>
+    ///// <param name="info">Serialization data.</param>
+    ///// <param name="context">Serialization stream.</param>
+    //protected Texture(SerializationInfo info, StreamingContext context)
+    //  : base(info, context)
+    //{
+    //}
 
     internal override IntPtr _InternalDuplicate(out bool applymempressure)
     {

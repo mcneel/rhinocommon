@@ -6,7 +6,7 @@ namespace Rhino.Geometry
   /// <summary>
   /// Represents a rectangular grid of 3D points.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class Point3dGrid : GeometryBase
   {
     /// <summary>
@@ -34,15 +34,15 @@ namespace Rhino.Geometry
       : base(ptr, parent, -1)
     { }
 
-    /// <summary>
-    /// Protected constructor for internal use.
-    /// </summary>
-    /// <param name="info">Serialization data.</param>
-    /// <param name="context">Serialization stream.</param>
-    protected Point3dGrid(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor for internal use.
+    ///// </summary>
+    ///// <param name="info">Serialization data.</param>
+    ///// <param name="context">Serialization stream.</param>
+    //protected Point3dGrid(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
   }
 }

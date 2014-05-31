@@ -90,42 +90,42 @@ namespace Rhino.Display
     /// <summary>
     /// Gets or sets the size and location of the view including its nonclient elements, in pixels, relative to the parent control.
     /// </summary>
-    public System.Drawing.Rectangle Bounds
+    public Rhino.Drawing.Rectangle Bounds
     {
       get
       {
         IntPtr ptr = ConstPointer();
         int[] lrtb = new int[4];
         UnsafeNativeMethods.CRhinoView_GetRect(ptr, idxBounds, ref lrtb[0]);
-        return System.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[2], lrtb[1], lrtb[3]);
+        return Rhino.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[2], lrtb[1], lrtb[3]);
       }
       //set { }
     }
     /// <summary>
     /// Gets the rectangle that represents the client area of the view. 
     /// </summary>
-    public System.Drawing.Rectangle ClientRectangle
+    public Rhino.Drawing.Rectangle ClientRectangle
     {
       get
       {
         IntPtr ptr = ConstPointer();
         int[] lrtb = new int[4];
         UnsafeNativeMethods.CRhinoView_GetRect(ptr, idxClientRectangle, ref lrtb[0]);
-        return System.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[2], lrtb[1], lrtb[3]);
+        return Rhino.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[2], lrtb[1], lrtb[3]);
       }
     }
 
     /// <summary>
     /// Gets the rectangle that represents the client area of the view in screen coordinates.
     /// </summary>
-    public System.Drawing.Rectangle ScreenRectangle
+    public Rhino.Drawing.Rectangle ScreenRectangle
     {
       get
       {
         IntPtr ptr = ConstPointer();
         int[] lrtb = new int[4];
         UnsafeNativeMethods.CRhinoView_GetRect(ptr, idxScreenRectangle, ref lrtb[0]);
-        return System.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[2], lrtb[1], lrtb[3]);
+        return Rhino.Drawing.Rectangle.FromLTRB(lrtb[0], lrtb[2], lrtb[1], lrtb[3]);
       }
     }
 
@@ -134,33 +134,33 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="screenPoint">The 2D screen point.</param>
     /// <returns>A 2D point in client coordinates.</returns>
-    public System.Drawing.Point ScreenToClient(System.Drawing.Point screenPoint)
+    public Rhino.Drawing.Point ScreenToClient(Rhino.Drawing.Point screenPoint)
     {
-      System.Drawing.Rectangle screen = ScreenRectangle;
+      Rhino.Drawing.Rectangle screen = ScreenRectangle;
       int x = screenPoint.X - screen.Left;
       int y = screenPoint.Y - screen.Top;
-      return new System.Drawing.Point(x,y);
+      return new Rhino.Drawing.Point(x,y);
     }
 
     public Geometry.Point2d ScreenToClient(Geometry.Point2d screenPoint)
     {
-      System.Drawing.Rectangle screen = ScreenRectangle;
+      Rhino.Drawing.Rectangle screen = ScreenRectangle;
       double x = screenPoint.X - screen.Left;
       double y = screenPoint.Y - screen.Top;
       return new Geometry.Point2d(x, y);
     }
 
-    public System.Drawing.Point ClientToScreen(System.Drawing.Point clientPoint)
+    public Rhino.Drawing.Point ClientToScreen(Rhino.Drawing.Point clientPoint)
     {
-      System.Drawing.Rectangle screen = ScreenRectangle;
+      Rhino.Drawing.Rectangle screen = ScreenRectangle;
       int x = clientPoint.X + screen.Left;
       int y = clientPoint.Y + screen.Top;
-      return new System.Drawing.Point(x, y);
+      return new Rhino.Drawing.Point(x, y);
     }
 
     public Geometry.Point2d ClientToScreen(Geometry.Point2d clientPoint)
     {
-      System.Drawing.Rectangle screen = ScreenRectangle;
+      Rhino.Drawing.Rectangle screen = ScreenRectangle;
       double x = clientPoint.X + screen.Left;
       double y = clientPoint.Y + screen.Top;
       return new Geometry.Point2d(x, y);
@@ -226,7 +226,7 @@ namespace Rhino.Display
     ///<param name="drawConstructionPlane">true if the CPlane should be drawn.</param>
     ///<returns>true if successful.</returns>
     public bool CreateWireframePreviewImage(string imagePath,
-                                            System.Drawing.Size size,
+                                            Rhino.Drawing.Size size,
                                             bool ignoreHighlights,
                                             bool drawConstructionPlane)
     {
@@ -251,7 +251,7 @@ namespace Rhino.Display
     /// <param name="useGhostedShading">true if ghosted shading (partially transparent shading) should be used.</param>
     ///<returns>true if successful.</returns>
     public bool CreateShadedPreviewImage(string imagePath,
-                                         System.Drawing.Size size,
+                                         Rhino.Drawing.Size size,
                                          bool ignoreHighlights,
                                          bool drawConstructionPlane,
                                          bool useGhostedShading)
@@ -274,7 +274,7 @@ namespace Rhino.Display
     /// Capture View contents to a bitmap.
     /// </summary>
     /// <returns>The bitmap of the complete view.</returns>
-    public System.Drawing.Bitmap CaptureToBitmap()
+    public Rhino.Drawing.Bitmap CaptureToBitmap()
     {
       return CaptureToBitmap(ClientRectangle.Size);
     }
@@ -284,16 +284,16 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="size">Size of Bitmap to capture to.</param>
     /// <returns>The bitmap of the specified part of the view.</returns>
-    public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size)
+    public Rhino.Drawing.Bitmap CaptureToBitmap(Rhino.Drawing.Size size)
     {
       IntPtr pConstView = ConstPointer();
       IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoDib_New();
-      System.Drawing.Bitmap rc = null;
+      Rhino.Drawing.Bitmap rc = null;
       if (UnsafeNativeMethods.CRhinoView_CaptureToBitmap(pConstView, pRhinoDib, size.Width, size.Height, IntPtr.Zero))
       {
         IntPtr hBmp = UnsafeNativeMethods.CRhinoDib_Bitmap(pRhinoDib);
         if (IntPtr.Zero != hBmp)
-          rc = System.Drawing.Image.FromHbitmap(hBmp);
+          rc = Rhino.Drawing.Image.FromHbitmap(hBmp);
       }
       UnsafeNativeMethods.CRhinoDib_Delete(pRhinoDib);
       return rc;
@@ -307,16 +307,16 @@ namespace Rhino.Display
     /// <param name="worldAxes">true if the world axis should be visible.</param>
     /// <param name="cplaneAxes">true if the construction plane close the the grid should be visible.</param>
     /// <returns>A new bitmap.</returns>
-    public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size, bool grid, bool worldAxes, bool cplaneAxes)
+    public Rhino.Drawing.Bitmap CaptureToBitmap(Rhino.Drawing.Size size, bool grid, bool worldAxes, bool cplaneAxes)
     {
       IntPtr pConstView = ConstPointer();
       IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoDib_New();
-      System.Drawing.Bitmap rc = null;
+      Rhino.Drawing.Bitmap rc = null;
       if (UnsafeNativeMethods.CRhinoView_CaptureToBitmap2(pConstView, pRhinoDib, size.Width, size.Height, grid, worldAxes, cplaneAxes))
       {
         IntPtr hBmp = UnsafeNativeMethods.CRhinoDib_Bitmap(pRhinoDib);
         if (IntPtr.Zero != hBmp)
-          rc = System.Drawing.Image.FromHbitmap(hBmp);
+          rc = Rhino.Drawing.Image.FromHbitmap(hBmp);
       }
       UnsafeNativeMethods.CRhinoDib_Delete(pRhinoDib);
       return rc;
@@ -334,7 +334,7 @@ namespace Rhino.Display
     /// <code source='examples\cs\ex_screencaptureview.cs' lang='cs'/>
     /// <code source='examples\py\ex_screencaptureview.py' lang='py'/>
     /// </example>
-    public System.Drawing.Bitmap CaptureToBitmap(bool grid, bool worldAxes, bool cplaneAxes)
+    public Rhino.Drawing.Bitmap CaptureToBitmap(bool grid, bool worldAxes, bool cplaneAxes)
     {
       return CaptureToBitmap(ClientRectangle.Size, grid, worldAxes, cplaneAxes);
     }
@@ -346,7 +346,7 @@ namespace Rhino.Display
     /// <param name="size">The width and height of the returned bitmap.</param>
     /// <param name="mode">The display mode.</param>
     /// <returns>A new bitmap.</returns>
-    public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size, Rhino.Display.DisplayModeDescription mode)
+    public Rhino.Drawing.Bitmap CaptureToBitmap(Rhino.Drawing.Size size, Rhino.Display.DisplayModeDescription mode)
     {
       Rhino.Display.DisplayPipelineAttributes attr = new DisplayPipelineAttributes(mode);
       return CaptureToBitmap(size, attr);
@@ -358,7 +358,7 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="mode">The display mode.</param>
     /// <returns>A new bitmap.</returns>
-    public System.Drawing.Bitmap CaptureToBitmap(Rhino.Display.DisplayModeDescription mode)
+    public Rhino.Drawing.Bitmap CaptureToBitmap(Rhino.Display.DisplayModeDescription mode)
     {
       return CaptureToBitmap(ClientRectangle.Size, mode);
     }
@@ -370,17 +370,17 @@ namespace Rhino.Display
     /// <param name="size">The width and height of the returned bitmap.</param>
     /// <param name="attributes">The specific display mode attributes.</param>
     /// <returns>A new bitmap.</returns>
-    public System.Drawing.Bitmap CaptureToBitmap(System.Drawing.Size size, Rhino.Display.DisplayPipelineAttributes attributes)
+    public Rhino.Drawing.Bitmap CaptureToBitmap(Rhino.Drawing.Size size, Rhino.Display.DisplayPipelineAttributes attributes)
     {
       IntPtr pConstView = ConstPointer();
       IntPtr pAttributes = attributes.ConstPointer();
       IntPtr pRhinoDib = UnsafeNativeMethods.CRhinoDib_New();
-      System.Drawing.Bitmap rc = null;
+      Rhino.Drawing.Bitmap rc = null;
       if (UnsafeNativeMethods.CRhinoView_CaptureToBitmap(pConstView, pRhinoDib, size.Width, size.Height, pAttributes))
       {
         IntPtr hBmp = UnsafeNativeMethods.CRhinoDib_Bitmap(pRhinoDib);
         if (IntPtr.Zero != hBmp)
-          rc = System.Drawing.Image.FromHbitmap(hBmp);
+          rc = Rhino.Drawing.Image.FromHbitmap(hBmp);
       }
       UnsafeNativeMethods.CRhinoDib_Delete(pRhinoDib);
       return rc;
@@ -392,7 +392,7 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="attributes">The specific display mode attributes.</param>
     /// <returns>A new bitmap.</returns>
-    public System.Drawing.Bitmap CaptureToBitmap(Rhino.Display.DisplayPipelineAttributes attributes)
+    public Rhino.Drawing.Bitmap CaptureToBitmap(Rhino.Display.DisplayPipelineAttributes attributes)
     {
       return CaptureToBitmap(ClientRectangle.Size, attributes);
     }

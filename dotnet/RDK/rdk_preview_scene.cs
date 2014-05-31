@@ -23,13 +23,13 @@ namespace Rhino.Render
   public class CreatePreviewEventArgs : EventArgs
   {
     IntPtr m_pSceneServer;
-    readonly System.Drawing.Size m_preview_size;
+    readonly Rhino.Drawing.Size m_preview_size;
     readonly PreviewSceneQuality m_quality;
     int m_sig;
     Rhino.DocObjects.ViewportInfo m_viewport;
 
 
-    internal CreatePreviewEventArgs(IntPtr pSceneServer, System.Drawing.Size preview_size, PreviewSceneQuality quality)
+    internal CreatePreviewEventArgs(IntPtr pSceneServer, Rhino.Drawing.Size preview_size, PreviewSceneQuality quality)
     {
       m_pSceneServer = pSceneServer;
       m_preview_size = preview_size;
@@ -39,7 +39,7 @@ namespace Rhino.Render
     /// <summary>
     /// Pixel size of the image that is being requested for the preview scene
     /// </summary>
-    public System.Drawing.Size PreviewImageSize
+    public Rhino.Drawing.Size PreviewImageSize
     {
       get { return m_preview_size; }
     }
@@ -57,7 +57,7 @@ namespace Rhino.Render
     /// the preview.  If never set, the default internal simulation preview will
     /// be used.
     /// </summary>
-    public System.Drawing.Bitmap PreviewImage { get; set; }
+    public Rhino.Drawing.Bitmap PreviewImage { get; set; }
 
     /// <summary>
     /// Get set by Rhino if the preview generation should be canceled for this 
@@ -217,10 +217,10 @@ namespace Rhino.Render
 
   public class CreateTexture2dPreviewEventArgs : EventArgs
   {
-    readonly System.Drawing.Size m_preview_size;
+    readonly Rhino.Drawing.Size m_preview_size;
     readonly RenderTexture m_render_texture;
 
-    internal CreateTexture2dPreviewEventArgs(RenderTexture texture, System.Drawing.Size size)
+    internal CreateTexture2dPreviewEventArgs(RenderTexture texture, Rhino.Drawing.Size size)
     {
       m_preview_size = size;
       m_render_texture = texture;
@@ -231,7 +231,7 @@ namespace Rhino.Render
     /// <summary>
     /// Pixel size of the image that is being requested for the preview scene
     /// </summary>
-    public System.Drawing.Size PreviewImageSize
+    public Rhino.Drawing.Size PreviewImageSize
     {
       get { return m_preview_size; }
     }
@@ -241,7 +241,7 @@ namespace Rhino.Render
     /// the preview.  If never set, the default internal simulation preview will
     /// be used.
     /// </summary>
-    public System.Drawing.Bitmap PreviewImage { get; set; }
+    public Rhino.Drawing.Bitmap PreviewImage { get; set; }
   }
 }
 

@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// Represents an extrusion, or objects such as beams or linearly extruded elements,
   /// that can be represented by profile curves and two miter planes at the extremes.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class Extrusion : Surface
   {
     #region internals
@@ -21,15 +21,15 @@ namespace Rhino.Geometry
     }
     #endregion
 
-    /// <summary>
-    /// Protected serialization constructor.
-    /// </summary>
-    /// <param name="info">The serialization data.</param>
-    /// <param name="context">The serialization context stream.</param>
-    protected Extrusion(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected serialization constructor.
+    ///// </summary>
+    ///// <param name="info">The serialization data.</param>
+    ///// <param name="context">The serialization context stream.</param>
+    //protected Extrusion(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
     #region statics
 
     /// <summary>

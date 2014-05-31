@@ -38,7 +38,7 @@ namespace Rhino.UI
       if (rhdn != null)
       {
         Type t = rhdn.GetType("RMA.UI.MRhinoStackedDialogPage");
-        System.Reflection.MethodInfo mi = t.GetMethod("RhinoCommonCreate");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("RhinoCommonCreate");
         object rc = mi.Invoke(null, new object[] { this });
         if (rc == null)
           return IntPtr.Zero;

@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Reflection;
 
 namespace Rhino.DocObjects.Custom
 {
@@ -152,8 +154,8 @@ namespace Rhino.DocObjects.Custom
         try
         {
           // the user data class MUST have a GuidAttribute in order to write
-          object[] attr = ud.GetType().GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), false);
-          if( attr.Length==1 )
+          var attr = ud.GetType().GetTypeInfo().GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), false);
+          if( attr.Count()==1 )
             rc = ud.ShouldWrite ? 1 : 0;
         }
         catch (Exception ex)
@@ -221,7 +223,7 @@ namespace Rhino.DocObjects.Custom
       Type t = null;
       for (int i = 0; i < g_types.Count; i++)
       {
-        if (g_types[i].GUID == managedTypeId)
+        if (g_types[i].GetTypeInfo().GUID == managedTypeId)
         {
           t = g_types[i];
           break;
@@ -419,8 +421,7 @@ namespace Rhino.DocObjects.Custom
       if (!(userdata is SharedUserDictionary))
       {
         Type t = userdata.GetType();
-        System.Reflection.ConstructorInfo constructor = t.GetConstructor(Type.EmptyTypes);
-        if (!t.IsPublic || constructor == null)
+        if (!t.GetRuntimeMethods().Any(m => m.IsConstructor && m.GetParameters().Length == 0 && m.IsPublic))
           throw new ArgumentException("userdata must be a public class and have a parameterless constructor");
       }
       IntPtr const_ptr_onobject = m_parent.ConstPointer();
@@ -455,9 +456,9 @@ namespace Rhino.DocObjects.Custom
     /// <returns>The found data, or null of nothing was found.</returns>
     public UserData Find(Type userdataType)
     {
-      if (!userdataType.IsSubclassOf(typeof(UserData)))
+      if (!userdataType.GetTypeInfo().IsSubclassOf(typeof(UserData)))
         return null;
-      Guid id = userdataType.GUID;
+      Guid id = userdataType.GetTypeInfo().GUID;
       IntPtr const_ptr_onobject = m_parent.ConstPointer();
       int serial_number = UnsafeNativeMethods.CRhCmnUserData_Find(const_ptr_onobject, id);
       return UserData.FromSerialNumber(serial_number);
@@ -491,19 +492,19 @@ namespace Rhino.DocObjects.Custom
       }
     }
 
-    /// <summary>
-    /// Clones the user data.
-    /// </summary>
-    /// <param name="source">The source data.</param>
-    protected override void OnDuplicate(UserData source)
-    {
-      UserDictionary dict = source as UserDictionary;
-      if (dict != null)
-      {
-        m_dictionary = dict.m_dictionary.Clone();
-        m_dictionary.SetParentUserData(this);
-      }
-    }
+    ///// <summary>
+    ///// Clones the user data.
+    ///// </summary>
+    ///// <param name="source">The source data.</param>
+    //protected override void OnDuplicate(UserData source)
+    //{
+    //  UserDictionary dict = source as UserDictionary;
+    //  if (dict != null)
+    //  {
+    //    m_dictionary = dict.m_dictionary.Clone();
+    //    m_dictionary.SetParentUserData(this);
+    //  }
+    //}
 
     /// <summary>
     /// Writes this entity if the count is larger than 0.

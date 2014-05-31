@@ -26,7 +26,7 @@ namespace Rhino.DocObjects
     LongerTriangle = 7
   }
 
-  [Serializable]
+  //[Serializable]
   public class DimensionStyle : Rhino.Runtime.CommonObject
   {
     // Represents both a CRhinoDimStyle and an ON_DimStyle. When m_ptr
@@ -59,11 +59,11 @@ namespace Rhino.DocObjects
       m__parent = parent;
     }
 
-    // serialization constructor
-    protected DimensionStyle(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    //// serialization constructor
+    //protected DimensionStyle(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
 
     public bool CommitChanges()

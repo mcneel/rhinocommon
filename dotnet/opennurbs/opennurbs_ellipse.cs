@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// Represents the values of a plane and the two semiaxes radii in an ellipse.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 144)]
-  [Serializable]
+  //[Serializable]
   public struct Ellipse : IEpsilonComparable<Ellipse>
   {
     #region members

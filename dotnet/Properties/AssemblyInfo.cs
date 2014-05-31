@@ -61,8 +61,7 @@ using System.Runtime.InteropServices;
 // 26 Aug 2013 (5.1.30000.11) Update for SR7 of Rhino 5
 // 4 Nov 2013 (5.1.30000.12) Update for SR8 of Rhino 5
 // 26 Feb 2014 (5.1.30000.13) Update for SR9 of Rhino 5
-// 5 May 2014 (5.1.30000.14) Update for SR10 of Rhino 5
-[assembly: AssemblyVersion("5.1.30000.14")]
+[assembly: AssemblyVersion("5.1.30000.13")]
 
 [assembly: AssemblyFileVersion("5.0.20693.0")]
 
@@ -80,5 +79,5 @@ using System.Runtime.InteropServices;
 [assembly: System.Security.AllowPartiallyTrustedCallers]
 
 #if !RHINO_SDK && !MONO_BUILD
-[assembly: System.Security.SecurityRules(System.Security.SecurityRuleSet.Level1)]
+//[assembly: System.Security.SecurityRules(System.Security.SecurityRuleSet.Level1)]
 #endif

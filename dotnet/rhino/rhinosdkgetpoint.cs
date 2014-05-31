@@ -83,7 +83,7 @@ namespace Rhino.Input.Custom
     /// Color used by CRhinoGetPoint::DynamicDraw to draw the current point and
     /// the line from the base point to the current point.
     /// </summary>
-    public System.Drawing.Color DynamicDrawColor
+    public Rhino.Drawing.Color DynamicDrawColor
     {
       get
       {
@@ -668,10 +668,10 @@ namespace Rhino.Input.Custom
     }
 
     internal static GetPoint m_active_gp; // = null; [runtime default]
-    internal delegate void MouseCallback( IntPtr pRhinoViewport, uint flags, Point3d point, System.Drawing.Point viewWndPoint, int mousemove);
+    internal delegate void MouseCallback( IntPtr pRhinoViewport, uint flags, Point3d point, Rhino.Drawing.Point viewWndPoint, int mousemove);
     internal delegate int DrawCallback(IntPtr pDisplayPipeline, Point3d point);
 
-    private static void CustomMouseCallback(IntPtr pRhinoViewport, uint flags, Point3d point, System.Drawing.Point viewWndPoint, int move)
+    private static void CustomMouseCallback(IntPtr pRhinoViewport, uint flags, Point3d point, Rhino.Drawing.Point viewWndPoint, int move)
     {
       if (null == m_active_gp)
         return;
@@ -852,7 +852,7 @@ namespace Rhino.Input.Custom
         Type baseType = typeof(GetPoint);
         try
         {
-          System.Reflection.MethodInfo mi = this.GetType().GetMethod("OnPostDrawObjects", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+          System.Reflection.MethodInfo mi = this.GetType().GetRuntimeMethod("OnPostDrawObjects", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
           if (mi.DeclaringType != baseType)
             postDrawCB = GetPointPostDrawObjectsCallback;
         }
@@ -891,7 +891,7 @@ namespace Rhino.Input.Custom
         Type baseType = typeof(GetPoint);
         try
         {
-          System.Reflection.MethodInfo mi = this.GetType().GetMethod("OnPostDrawObjects", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+          System.Reflection.MethodInfo mi = this.GetType().GetRuntimeMethod("OnPostDrawObjects", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
           if (mi.DeclaringType != baseType)
             postDrawCB = GetPointPostDrawObjectsCallback;
         }
@@ -1003,10 +1003,10 @@ namespace Rhino.Input.Custom
     private RhinoViewport m_viewport;
     private readonly uint m_flags;
     private readonly Point3d m_point;
-    private readonly System.Drawing.Point m_windowPoint;
+    private readonly Rhino.Drawing.Point m_windowPoint;
     private readonly GetPoint m_source;
 
-    internal GetPointMouseEventArgs(GetPoint source, IntPtr pRhinoViewport, uint flags, Point3d point, System.Drawing.Point wndPoint)
+    internal GetPointMouseEventArgs(GetPoint source, IntPtr pRhinoViewport, uint flags, Point3d point, Rhino.Drawing.Point wndPoint)
     {
       m_pRhinoViewport = pRhinoViewport;
       m_flags = flags;
@@ -1025,7 +1025,7 @@ namespace Rhino.Input.Custom
     {
       get{ return m_point; }
     }
-    public System.Drawing.Point WindowPoint
+    public Rhino.Drawing.Point WindowPoint
     {
       get{ return m_windowPoint; }
     }

@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// Represents an ordered set of points connected by linear segments.
   /// <para>Polylines are closed if start and end points coincide.</para>
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class Polyline : Rhino.Collections.Point3dList
   {
     #region constructors

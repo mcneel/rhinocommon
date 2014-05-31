@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Reflection;
 using Rhino.Runtime.InteropWrappers;
@@ -25,7 +26,8 @@ namespace Rhino.Collections
   /// <para>   |- ENDCHUNK (TCODE_ANONYMOUS_CHUNK)</para>
   /// <para>ENDCHUNK (TCODE_ANONYMOUS_CHUNK)</para>
   /// </remarks>
-  public class ArchivableDictionary : ICloneable, IDictionary<string, object>
+  public class ArchivableDictionary : //ICloneable, 
+      IDictionary<string, object>
   {
     private enum ItemType : int
     {
@@ -393,50 +395,50 @@ namespace Rhino.Collections
           break;
         case ItemType.Color: //22
           {
-            System.Drawing.Color val = archive.ReadColor();
+            Rhino.Drawing.Color val = archive.ReadColor();
             rc = Set(key, val);
           }
           break;
         case ItemType.Point: //23
           {
-            System.Drawing.Point val = archive.ReadPoint();
+            Rhino.Drawing.Point val = archive.ReadPoint();
             rc = Set(key, val);
           }
           break;
         case ItemType.PointF: //24
           {
-            System.Drawing.PointF val = archive.ReadPointF();
+            Rhino.Drawing.PointF val = archive.ReadPointF();
             rc = Set(key, val);
           }
           break;
         case ItemType.Rectangle: //25
           {
-            System.Drawing.Rectangle val = archive.ReadRectangle();
+            Rhino.Drawing.Rectangle val = archive.ReadRectangle();
             rc = Set(key, val);
           }
           break;
         case ItemType.RectangleF: //26
           {
-            System.Drawing.RectangleF val = archive.ReadRectangleF();
+            Rhino.Drawing.RectangleF val = archive.ReadRectangleF();
             rc = Set(key, val);
           }
           break;
         case ItemType.Size: //27
           {
-            System.Drawing.Size val = archive.ReadSize();
+            Rhino.Drawing.Size val = archive.ReadSize();
             rc = Set(key, val);
           }
           break;
         case ItemType.SizeF: //28
           {
-            System.Drawing.SizeF val = archive.ReadSizeF();
+            Rhino.Drawing.SizeF val = archive.ReadSizeF();
             rc = Set(key, val);
           }
           break;
         case ItemType.Font: //29
           {
 #if !MOBILE_BUILD
-            System.Drawing.Font val = archive.ReadFont();
+            Rhino.Drawing.Font val = archive.ReadFont();
             rc = Set(key, val);
 #endif
           }
@@ -674,29 +676,29 @@ namespace Rhino.Collections
           archive.WriteStringArray((IEnumerable<string>)val);
           break;
         case ItemType.Color: // 22
-          archive.WriteColor((System.Drawing.Color)val);
+          archive.WriteColor((Rhino.Drawing.Color)val);
           break;
         case ItemType.Point: // 23
-          archive.WritePoint((System.Drawing.Point)val);
+          archive.WritePoint((Rhino.Drawing.Point)val);
           break;
         case ItemType.PointF: // 24
-          archive.WritePointF((System.Drawing.PointF)val);
+          archive.WritePointF((Rhino.Drawing.PointF)val);
           break;
         case ItemType.Rectangle: // 25
-          archive.WriteRectangle((System.Drawing.Rectangle)val);
+          archive.WriteRectangle((Rhino.Drawing.Rectangle)val);
           break;
         case ItemType.RectangleF: // 26
-          archive.WriteRectangleF((System.Drawing.RectangleF)val);
+          archive.WriteRectangleF((Rhino.Drawing.RectangleF)val);
           break;
         case ItemType.Size: // 27
-          archive.WriteSize((System.Drawing.Size)val);
+          archive.WriteSize((Rhino.Drawing.Size)val);
           break;
         case ItemType.SizeF: // 28
-          archive.WriteSizeF((System.Drawing.SizeF)val);
+          archive.WriteSizeF((Rhino.Drawing.SizeF)val);
           break;
         case ItemType.Font: // 29
 #if !MOBILE_BUILD
-          archive.WriteFont((System.Drawing.Font)val);
+          archive.WriteFont((Rhino.Drawing.Font)val);
 #endif
           break;
         case ItemType.Interval: // 30
@@ -1081,16 +1083,6 @@ namespace Rhino.Collections
       return GetHelper(key, 0.0);
     }
     /// <summary>
-    /// Get value as double, will only succeed if value was created using Set(string key, double value)
-    /// </summary>
-    /// <param name="key"></param>
-    /// <param name="defaultValue"></param>
-    /// <returns></returns>
-    public double GetDouble(string key, double defaultValue)
-    {
-      return GetHelper(key, defaultValue);
-    }
-    /// <summary>
     /// Get value as int, will return defaultValue unless value was created using Set(string key, int value)
     /// </summary>
     /// <param name="key"></param>
@@ -1450,71 +1442,71 @@ namespace Rhino.Collections
     public bool Set(string key, IEnumerable<string> val) { return SetItem(key, ItemType.ArrayString, val); }
 
     /// <summary>
-    /// Sets a <see cref="System.Drawing.Color"/>.
+    /// Sets a <see cref="Rhino.Drawing.Color"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because <see cref="System.Drawing.Color"/> has value semantics, changes to the
+    /// <para>Because <see cref="Rhino.Drawing.Color"/> has value semantics, changes to the
     /// assigning value will leave this entry unchanged.</para></param>
     /// <returns>true if set operation succeeded, otherwise false.</returns>
-    public bool Set(string key, System.Drawing.Color val) { return SetItem(key, ItemType.Color, val); }
+    public bool Set(string key, Rhino.Drawing.Color val) { return SetItem(key, ItemType.Color, val); }
 
     /// <summary>
-    /// Sets a <see cref="System.Drawing.Point"/>.
+    /// Sets a <see cref="Rhino.Drawing.Point"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because <see cref="System.Drawing.Point"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, System.Drawing.Point val) { return SetItem(key, ItemType.Point, val); }
+    /// <para>Because <see cref="Rhino.Drawing.Point"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
+    public bool Set(string key, Rhino.Drawing.Point val) { return SetItem(key, ItemType.Point, val); }
 
     /// <summary>
-    /// Sets a <see cref="System.Drawing.PointF"/>.
+    /// Sets a <see cref="Rhino.Drawing.PointF"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because <see cref="System.Drawing.PointF"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, System.Drawing.PointF val) { return SetItem(key, ItemType.PointF, val); }
+    /// <para>Because <see cref="Rhino.Drawing.PointF"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
+    public bool Set(string key, Rhino.Drawing.PointF val) { return SetItem(key, ItemType.PointF, val); }
 
     /// <summary>
-    /// Sets a <see cref="System.Drawing.Rectangle"/>.
+    /// Sets a <see cref="Rhino.Drawing.Rectangle"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because <see cref="System.Drawing.Rectangle"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, System.Drawing.Rectangle val) { return SetItem(key, ItemType.Rectangle, val); }
+    /// <para>Because <see cref="Rhino.Drawing.Rectangle"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
+    public bool Set(string key, Rhino.Drawing.Rectangle val) { return SetItem(key, ItemType.Rectangle, val); }
 
     /// <summary>
-    /// Sets a <see cref="System.Drawing.RectangleF"/>.
+    /// Sets a <see cref="Rhino.Drawing.RectangleF"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because <see cref="System.Drawing.RectangleF"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, System.Drawing.RectangleF val) { return SetItem(key, ItemType.RectangleF, val); }
+    /// <para>Because <see cref="Rhino.Drawing.RectangleF"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
+    public bool Set(string key, Rhino.Drawing.RectangleF val) { return SetItem(key, ItemType.RectangleF, val); }
 
     /// <summary>
-    /// Sets a <see cref="System.Drawing.Size"/>.
+    /// Sets a <see cref="Rhino.Drawing.Size"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because <see cref="System.Drawing.Size"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, System.Drawing.Size val) { return SetItem(key, ItemType.Size, val); }
+    /// <para>Because <see cref="Rhino.Drawing.Size"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
+    public bool Set(string key, Rhino.Drawing.Size val) { return SetItem(key, ItemType.Size, val); }
 
     /// <summary>
-    /// Sets a <see cref="System.Drawing.SizeF"/>.
+    /// Sets a <see cref="Rhino.Drawing.SizeF"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because <see cref="System.Drawing.SizeF"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
-    public bool Set(string key, System.Drawing.SizeF val) { return SetItem(key, ItemType.SizeF, val); }
+    /// <para>Because <see cref="Rhino.Drawing.SizeF"/> has value semantics, changes to the assigning value will leave this entry unchanged.</para></param>
+    public bool Set(string key, Rhino.Drawing.SizeF val) { return SetItem(key, ItemType.SizeF, val); }
 
 #if !MOBILE_BUILD
     /// <summary>
-    /// Sets a <see cref="System.Drawing.Font"/>.
+    /// Sets a <see cref="Rhino.Drawing.Font"/>.
     /// </summary>
     /// <param name="key">A text key.</param>
     /// <param name="val">A value for that key.
-    /// <para>Because <see cref="System.Drawing.Font"/> is immutable, it is not possible to modify the object while it is in this dictionary.</para></param>
-    public bool Set(string key, System.Drawing.Font val) { return SetItem(key, ItemType.Font, val); }
+    /// <para>Because <see cref="Rhino.Drawing.Font"/> is immutable, it is not possible to modify the object while it is in this dictionary.</para></param>
+    public bool Set(string key, Rhino.Drawing.Font val) { return SetItem(key, ItemType.Font, val); }
 #endif
     /// <summary>
     /// Sets an <see cref="Rhino.Geometry.Interval"/>.
@@ -1685,9 +1677,9 @@ namespace Rhino.Collections
     /// <returns></returns>
     [CLSCompliant(false)]
     public bool SetEnumValue<T>(T enumValue) 
-        where T : struct, IConvertible
+        where T : struct//, IConvertible
     {
-      if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+      if (!typeof(T).GetTypeInfo().IsEnum) throw new ArgumentException("!typeof(T).GetTypeInfo().IsEnum");
       Type enum_type = typeof(T);
       return SetEnumValue(enum_type.Name, enumValue);
     }
@@ -1701,11 +1693,11 @@ namespace Rhino.Collections
     /// <returns></returns>
     [CLSCompliant(false)]
     public bool SetEnumValue<T>(String key, T enumValue) 
-        where T : struct, IConvertible
+        where T : struct//, IConvertible
     {
       if (null == key) throw new ArgumentNullException("key");
-      if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
-      return Set(key, enumValue.ToString(CultureInfo.InvariantCulture));
+      if (!typeof(T).GetTypeInfo().IsEnum) throw new ArgumentException("!typeof(T).GetTypeInfo().IsEnum");
+      return Set(key, enumValue.ToString());
     }
 
     /// <summary>
@@ -1717,9 +1709,9 @@ namespace Rhino.Collections
     /// <returns></returns>
     [CLSCompliant(false)]
     public T GetEnumValue<T>()
-        where T : struct, IConvertible
+        where T : struct//, IConvertible
     {
-      if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+      if (!typeof(T).GetTypeInfo().IsEnum) throw new ArgumentException("!typeof(T).GetTypeInfo().IsEnum");
       Type enum_type = typeof(T);
       return GetEnumValue<T>(enum_type.Name);
     }
@@ -1734,11 +1726,11 @@ namespace Rhino.Collections
     /// <returns></returns>
     [CLSCompliant(false)]
     public T GetEnumValue<T>(String key) 
-        where T : struct, IConvertible
+        where T : struct//, IConvertible
     {
       if (null == key) throw new ArgumentNullException("key");
 
-      if (!typeof(T).IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+      if (!typeof(T).GetTypeInfo().IsEnum) throw new ArgumentException("!typeof(T).GetTypeInfo().IsEnum");
       if (ContainsKey(key))
       {
         T enum_value;
@@ -1759,12 +1751,12 @@ namespace Rhino.Collections
     /// <returns></returns>
     [CLSCompliant(false)]
     public bool TryGetEnumValue<T>(String key, out T enumValue)
-        where T : struct, IConvertible
+        where T : struct//, IConvertible
     {
       if (null == key) throw new ArgumentNullException("key");
 
       Type enum_type = typeof(T);
-      if (!enum_type.IsEnum) throw new ArgumentException("!typeof(T).IsEnum");
+      if (!enum_type.GetTypeInfo().IsEnum) throw new ArgumentException("!typeof(T).GetTypeInfo().IsEnum");
       enumValue = default(T);
       String enum_string;
       if (TryGetString(key, out enum_string))
@@ -1791,11 +1783,11 @@ namespace Rhino.Collections
     /// <returns></returns>
     [CLSCompliant(false)]
     public bool RemoveEnumValue<T>()
-        where T : struct, IConvertible
+        where T : struct//, IConvertible
     {
       Type enum_type = typeof(T);
-      if (!enum_type.IsEnum)
-        throw new ArgumentException("!typeof(T).IsEnum");
+      if (!enum_type.GetTypeInfo().IsEnum)
+        throw new ArgumentException("!typeof(T).GetTypeInfo().IsEnum");
 
       if (ContainsKey(enum_type.Name))
         return Remove(enum_type.Name);
@@ -1817,7 +1809,7 @@ namespace Rhino.Collections
       foreach (String key in source.Keys)
       {
         object o = source[key];
-        MethodInfo setter = arch_dict_type.GetMethod("Set", new[] { typeof(String), o.GetType() });
+        MethodInfo setter = arch_dict_type.GetRuntimeMethod("Set", new[] { typeof(String), o.GetType() });
         if (setter != null)
         {
           setter.Invoke(this, new[] { key, o });
@@ -1856,34 +1848,34 @@ namespace Rhino.Collections
 
       public DictionaryItem CreateCopy()
       {
-        object val = m_value;
-        ICloneable clonable = m_value as ICloneable;
-        if (clonable != null)
-        {
-          val = clonable.Clone();
-        }
-        return new DictionaryItem(m_type, val);
+          object val = m_value;
+          //ICloneable clonable = m_value as ICloneable;
+          //if (clonable != null)
+          //{
+          //    val = clonable.Clone();
+          //}
+          return new DictionaryItem(m_type, val);
       }
     }
 
-    /// <summary>
-    /// Constructs a deep copy of this object.
-    /// </summary>
-    /// <returns>The copy of this object.</returns>
-    public ArchivableDictionary Clone()
-    {
-      ArchivableDictionary clone = new ArchivableDictionary(m_version, m_name);
-      foreach (KeyValuePair<string, DictionaryItem> item in m_items)
-      {
-        clone.m_items.Add(item.Key, item.Value.CreateCopy());
-      }
-      return clone;
-    }
+    ///// <summary>
+    ///// Constructs a deep copy of this object.
+    ///// </summary>
+    ///// <returns>The copy of this object.</returns>
+    //public ArchivableDictionary Clone()
+    //{
+    //  ArchivableDictionary clone = new ArchivableDictionary(m_version, m_name);
+    //  foreach (KeyValuePair<string, DictionaryItem> item in m_items)
+    //  {
+    //    clone.m_items.Add(item.Key, item.Value.CreateCopy());
+    //  }
+    //  return clone;
+    //}
 
-    object ICloneable.Clone()
-    {
-      return Clone();
-    }
+    //object ICloneable.Clone()
+    //{
+    //  return Clone();
+    //}
 
     /// <summary>
     /// This is not supported and always throws <see cref="NotSupportedException"/> at the moment.
@@ -1897,7 +1889,7 @@ namespace Rhino.Collections
 
     ICollection<string> IDictionary<string, object>.Keys
     {
-      get { return Array.AsReadOnly(Keys); }
+      get { return new ReadOnlyCollection<string>(Keys); }
     }
 
     ICollection<object> IDictionary<string, object>.Values
@@ -2390,10 +2382,10 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Writes a <see cref="System.Drawing.Color"/> value to the archive.
+    /// Writes a <see cref="Rhino.Drawing.Color"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteColor(System.Drawing.Color value)
+    public void WriteColor(Rhino.Drawing.Color value)
     {
       int argb = value.ToArgb();
       m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteColor(m_ptr, argb);
@@ -2402,10 +2394,10 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Writes a <see cref="System.Drawing.Point"/> value to the archive.
+    /// Writes a <see cref="Rhino.Drawing.Point"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WritePoint(System.Drawing.Point value)
+    public void WritePoint(Rhino.Drawing.Point value)
     {
       int[] xy = new int[] { value.X, value.Y };
       m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt2(m_ptr, 2, xy);
@@ -2414,10 +2406,10 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Writes a <see cref="System.Drawing.PointF"/> value to the archive.
+    /// Writes a <see cref="Rhino.Drawing.PointF"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WritePointF(System.Drawing.PointF value)
+    public void WritePointF(Rhino.Drawing.PointF value)
     {
       float[] xy = new float[] { value.X, value.Y };
       m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, 2, xy);
@@ -2426,10 +2418,10 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Writes a <see cref="System.Drawing.Rectangle"/> value to the archive.
+    /// Writes a <see cref="Rhino.Drawing.Rectangle"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteRectangle(System.Drawing.Rectangle value)
+    public void WriteRectangle(Rhino.Drawing.Rectangle value)
     {
       int[] xywh = new int[] { value.X, value.Y, value.Width, value.Height };
       m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt2(m_ptr, 4, xywh);
@@ -2438,10 +2430,10 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Writes a <see cref="System.Drawing.RectangleF"/> value to the archive.
+    /// Writes a <see cref="Rhino.Drawing.RectangleF"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteRectangleF(System.Drawing.RectangleF value)
+    public void WriteRectangleF(Rhino.Drawing.RectangleF value)
     {
       float[] f = new float[] { value.X, value.Y, value.Width, value.Height };
       m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, 4, f);
@@ -2450,10 +2442,10 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Writes a <see cref="System.Drawing.Size"/> value to the archive.
+    /// Writes a <see cref="Rhino.Drawing.Size"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteSize(System.Drawing.Size value)
+    public void WriteSize(Rhino.Drawing.Size value)
     {
       int[] xy = new int[] { value.Width, value.Height };
       m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteInt2(m_ptr, 2, xy);
@@ -2462,10 +2454,10 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Writes a <see cref="System.Drawing.SizeF"/> value to the archive.
+    /// Writes a <see cref="Rhino.Drawing.SizeF"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteSizeF(System.Drawing.SizeF value)
+    public void WriteSizeF(Rhino.Drawing.SizeF value)
     {
       float[] xy = new float[] { value.Width, value.Height };
       m_write_error_occured = m_write_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_WriteSingle2(m_ptr, 2, xy);
@@ -2476,10 +2468,10 @@ namespace Rhino.FileIO
 
 #if !MOBILE_BUILD
     /// <summary>
-    /// Writes a <see cref="System.Drawing.Font"/> value to the archive.
+    /// Writes a <see cref="Rhino.Drawing.Font"/> value to the archive.
     /// </summary>
     /// <param name="value">A value to write.</param>
-    public void WriteFont(System.Drawing.Font value)
+    public void WriteFont(Rhino.Drawing.Font value)
     {
       string family_name = value.FontFamily.Name;
       float em_size = value.Size;
@@ -3193,104 +3185,104 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
-    /// Reads a <see cref="System.Drawing.Color"/> from the archive.
+    /// Reads a <see cref="Rhino.Drawing.Color"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public System.Drawing.Color ReadColor()
+    public Rhino.Drawing.Color ReadColor()
     {
       int argb = 0;
       m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadColor(m_ptr, ref argb);
       if( m_read_error_occured )
         throw new BinaryArchiveException("ReadColor failed");
-      return System.Drawing.Color.FromArgb(argb);
+      return Rhino.Drawing.Color.FromArgb(argb);
     }
 
     /// <summary>
-    /// Reads a <see cref="System.Drawing.Point"/> from the archive.
+    /// Reads a <see cref="Rhino.Drawing.Point"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public System.Drawing.Point ReadPoint()
+    public Rhino.Drawing.Point ReadPoint()
     {
       int[] xy = new int[2];
       m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt2(m_ptr, 2, xy);
       if( m_read_error_occured )
         throw new BinaryArchiveException("ReadPoint failed");
-      return new System.Drawing.Point(xy[0], xy[1]);
+      return new Rhino.Drawing.Point(xy[0], xy[1]);
     }
 
     /// <summary>
-    /// Reads a <see cref="System.Drawing.PointF"/> from the archive.
+    /// Reads a <see cref="Rhino.Drawing.PointF"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public System.Drawing.PointF ReadPointF()
+    public Rhino.Drawing.PointF ReadPointF()
     {
       float[] xy = new float[2];
       m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, 2, xy);
       if( m_read_error_occured )
         throw new BinaryArchiveException("ReadPointF failed");
-      return new System.Drawing.PointF(xy[0], xy[1]);
+      return new Rhino.Drawing.PointF(xy[0], xy[1]);
     }
 
     /// <summary>
-    /// Reads a <see cref="System.Drawing.Rectangle"/> from the archive.
+    /// Reads a <see cref="Rhino.Drawing.Rectangle"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public System.Drawing.Rectangle ReadRectangle()
+    public Rhino.Drawing.Rectangle ReadRectangle()
     {
       int[] xywh = new int[4];
       m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt2(m_ptr, 4, xywh);
       if( m_read_error_occured )
         throw new BinaryArchiveException("ReadRectangle failed");
-      return new System.Drawing.Rectangle(xywh[0], xywh[1], xywh[2], xywh[3]);
+      return new Rhino.Drawing.Rectangle(xywh[0], xywh[1], xywh[2], xywh[3]);
     }
 
     /// <summary>
-    /// Reads a <see cref="System.Drawing.RectangleF"/> from the archive.
+    /// Reads a <see cref="Rhino.Drawing.RectangleF"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public System.Drawing.RectangleF ReadRectangleF()
+    public Rhino.Drawing.RectangleF ReadRectangleF()
     {
       float[] f = new float[4];
       m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, 4, f);
       if( m_read_error_occured )
         throw new BinaryArchiveException("ReadRectangleF failed");
-      return new System.Drawing.RectangleF(f[0], f[1], f[2], f[3]);
+      return new Rhino.Drawing.RectangleF(f[0], f[1], f[2], f[3]);
     }
 
     /// <summary>
-    /// Reads a <see cref="System.Drawing.Size"/> from the archive.
+    /// Reads a <see cref="Rhino.Drawing.Size"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public System.Drawing.Size ReadSize()
+    public Rhino.Drawing.Size ReadSize()
     {
       int[] xy = new int[2];
       m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadInt2(m_ptr, 2, xy);
       if( m_read_error_occured )
         throw new BinaryArchiveException("ReadSize failed");
-      return new System.Drawing.Size(xy[0], xy[1]);
+      return new Rhino.Drawing.Size(xy[0], xy[1]);
     }
 
     /// <summary>
-    /// Reads a <see cref="System.Drawing.SizeF"/> from the archive.
+    /// Reads a <see cref="Rhino.Drawing.SizeF"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public System.Drawing.SizeF ReadSizeF()
+    public Rhino.Drawing.SizeF ReadSizeF()
     {
       float[] xy = new float[2];
       m_read_error_occured = m_read_error_occured || !UnsafeNativeMethods.ON_BinaryArchive_ReadSingle2(m_ptr, 2, xy);
       if( m_read_error_occured )
         throw new BinaryArchiveException("ReadSizeF failed");
-      return new System.Drawing.SizeF(xy[0], xy[1]);
+      return new Rhino.Drawing.SizeF(xy[0], xy[1]);
     }
 
 #if !MOBILE_BUILD
     /// <summary>
-    /// Reads a <see cref="System.Drawing.Font"/> from the archive.
+    /// Reads a <see cref="Rhino.Drawing.Font"/> from the archive.
     /// </summary>
     /// <returns>The element that was read.</returns>
-    public System.Drawing.Font ReadFont()
+    public Rhino.Drawing.Font ReadFont()
     {
-      System.Drawing.Font rc;
+      Rhino.Drawing.Font rc;
 
       string family_name = ReadString();
       float em_size = ReadSingle();
@@ -3303,9 +3295,9 @@ namespace Rhino.FileIO
       {
         if (em_size <= 0.0)
           em_size = 1.0f;
-        System.Drawing.FontStyle e_font_style = (System.Drawing.FontStyle)font_style;
-        System.Drawing.GraphicsUnit e_graphics_unit = (System.Drawing.GraphicsUnit)graphics_unit;
-        rc = new System.Drawing.Font(family_name, em_size, e_font_style, e_graphics_unit, gdi_char_set, gdi_vertical_font);
+        Rhino.Drawing.FontStyle e_font_style = (Rhino.Drawing.FontStyle)font_style;
+        Rhino.Drawing.GraphicsUnit e_graphics_unit = (Rhino.Drawing.GraphicsUnit)graphics_unit;
+        rc = new Rhino.Drawing.Font(family_name, em_size, e_font_style, e_graphics_unit, gdi_char_set, gdi_vertical_font);
       }
       catch (Exception)
       {
@@ -3665,6 +3657,7 @@ namespace Rhino.FileIO
     Write3dm = 6
   }
 
+    [System.Security.SecuritySafeCritical]
   public class BinaryArchiveFile : IDisposable
   {
     readonly string m_filename;

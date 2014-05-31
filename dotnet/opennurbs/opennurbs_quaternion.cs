@@ -10,7 +10,7 @@ namespace Rhino.Geometry
   /// <para>quaternion = a + bi + cj + dk</para>
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 32)]
-  [Serializable]
+  //[Serializable]
   public struct Quaternion : IEquatable<Quaternion>, IEpsilonComparable<Quaternion>
   {
     #region statics

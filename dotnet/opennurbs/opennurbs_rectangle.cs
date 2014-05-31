@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// Represents the values of a plane and two intervals
   /// that form an oriented rectangle in three dimensions.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public struct Rectangle3d : IEpsilonComparable<Rectangle3d>
   {
     #region Members

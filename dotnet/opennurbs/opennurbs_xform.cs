@@ -9,7 +9,7 @@ namespace Rhino.Geometry
   /// <para>This is parallel to C++ ON_Xform.</para>
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 128)]
-  [Serializable]
+  //[Serializable]
   public struct Transform : IComparable<Transform>, IEquatable<Transform>
   {
     #region members

@@ -7,7 +7,7 @@ namespace Rhino.Geometry
   /// Represents the plane and radius values of a sphere.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 136)]
-  [Serializable]
+  //[Serializable]
   public struct Sphere : IEpsilonComparable<Sphere>
   {
     #region members

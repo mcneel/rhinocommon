@@ -8,7 +8,7 @@ namespace Rhino.Geometry
   /// <para>This is fundamentally a class that derives from
   /// <see cref="GeometryBase"/> and contains a single <see cref="Point3d"/> location.</para>
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class Point : GeometryBase
   {
     internal Point(IntPtr native_pointer, object parent)
@@ -25,15 +25,15 @@ namespace Rhino.Geometry
       ConstructNonConstObject(ptr);
     }
 
-    /// <summary>
-    /// Protected constructor for internal use.
-    /// </summary>
-    /// <param name="info">Serialization data.</param>
-    /// <param name="context">Serialization stream.</param>
-    protected Point(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor for internal use.
+    ///// </summary>
+    ///// <param name="info">Serialization data.</param>
+    ///// <param name="context">Serialization stream.</param>
+    //protected Point(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
     /// <summary>
     /// Gets or sets the location (position) of this point.

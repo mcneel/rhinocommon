@@ -8,7 +8,7 @@ namespace Rhino.Geometry
   /// Represents a curve that is the result of joining several (possibly different)
   /// types of curves.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class PolyCurve : Curve
   {
     #region constructors
@@ -25,15 +25,15 @@ namespace Rhino.Geometry
       ConstructNonConstObject(ptr);
     }
 
-    /// <summary>
-    /// Protected constructor for internal use.
-    /// </summary>
-    /// <param name="info">Serialization data.</param>
-    /// <param name="context">Serialization stream.</param>
-    protected PolyCurve(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor for internal use.
+    ///// </summary>
+    ///// <param name="info">Serialization data.</param>
+    ///// <param name="context">Serialization stream.</param>
+    //protected PolyCurve(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
     internal override GeometryBase DuplicateShallowHelper()
     {
@@ -343,7 +343,7 @@ namespace Rhino.Geometry
       return m_pCurveDisplay;
     }
 
-    internal override void Draw(DisplayPipeline pipeline, System.Drawing.Color color, int thickness)
+    internal override void Draw(DisplayPipeline pipeline, Rhino.Drawing.Color color, int thickness)
     {
       IntPtr pDisplayPipeline = pipeline.NonConstPointer();
       int argb = color.ToArgb();

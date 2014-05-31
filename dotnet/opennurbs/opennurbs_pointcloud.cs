@@ -1,5 +1,5 @@
 using System;
-using System.Drawing;
+using Rhino.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -162,7 +162,7 @@ namespace Rhino.Geometry
   /// <summary>
   /// Represents a collection of coordinates with optional normal vectors and colors.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class PointCloud : GeometryBase, IEnumerable<PointCloudItem>
   {
     #region constructors
@@ -226,16 +226,16 @@ namespace Rhino.Geometry
       return new PointCloud(IntPtr.Zero, null);
     }
 
-    // serialization constructor
-    /// <summary>
-    /// Binds with the Rhino default serializer to support object persistence.
-    /// </summary>
-    /// <param name="info">Some storage.</param>
-    /// <param name="context">The source and destination of the stream.</param>
-    protected PointCloud(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    //// serialization constructor
+    ///// <summary>
+    ///// Binds with the Rhino default serializer to support object persistence.
+    ///// </summary>
+    ///// <param name="info">Some storage.</param>
+    ///// <param name="context">The source and destination of the stream.</param>
+    //protected PointCloud(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
     #endregion
 
     const int idx_PointCount = 0;

@@ -7,7 +7,7 @@ namespace Rhino.Display
   /// HSL colors are used primarily in Graphical User Interface environments as they provide a 
   /// very natural approach to picking colors.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public struct ColorHSL
   {
     #region members
@@ -26,7 +26,7 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="rgb">RGB color to mimic.</param>
     /// <remarks>Exact conversions between color spaces are often not possible.</remarks>
-    public ColorHSL(System.Drawing.Color rgb)
+    public ColorHSL(Rhino.Drawing.Color rgb)
     {
       m_a = 1.0 - Clip(rgb.A);
       ColorConverter.RGB_To_HSL(rgb.R, rgb.G, rgb.B, out m_h, out m_s, out m_l);
@@ -104,7 +104,7 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="hsl">A HSL color.</param>
     /// <returns>A ARGB .Net library color.</returns>
-    public static implicit operator System.Drawing.Color(ColorHSL hsl)
+    public static implicit operator Rhino.Drawing.Color(ColorHSL hsl)
     {
       return hsl.ToArgbColor();
     }
@@ -158,15 +158,15 @@ namespace Rhino.Display
     }
 
     /// <summary>
-    /// Convert HSL color to an equivalent System.Drawing.Color.
+    /// Convert HSL color to an equivalent Rhino.Drawing.Color.
     /// </summary>
     /// <returns>A .Net framework library color value.</returns>
-    public System.Drawing.Color ToArgbColor()
+    public Rhino.Drawing.Color ToArgbColor()
     {
       byte a = (byte)(255.0 * A);
       byte r, g, b;
       ColorConverter.HSL_To_RGB(m_h, m_s, m_l, out r, out g, out b);
-      return System.Drawing.Color.FromArgb(a, r, g, b);
+      return Rhino.Drawing.Color.FromArgb(a, r, g, b);
     }
     #endregion
   }
@@ -175,7 +175,7 @@ namespace Rhino.Display
   /// Represents a CMYK (Cyan, Magenta, Yellow, Key) color with double precision floating point channels. 
   /// CMYK colors are used primarily in printing environments as they provide a good simulation of physical ink.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public struct ColorCMYK
   {
     #region members
@@ -195,7 +195,7 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="rgb">RGB color to mimic.</param>
     /// <remarks>Exact conversions between color spaces are often not possible.</remarks>
-    public ColorCMYK(System.Drawing.Color rgb)
+    public ColorCMYK(Rhino.Drawing.Color rgb)
     {
       double c0, m0, y0;
       ColorConverter.RGB_To_CMY(rgb.R, rgb.G, rgb.B, out c0, out m0, out y0);
@@ -312,7 +312,7 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="cmyk">A CMYK color.</param>
     /// <returns>A ARGB .Net library color.</returns>
-    public static implicit operator System.Drawing.Color(ColorCMYK cmyk)
+    public static implicit operator Rhino.Drawing.Color(ColorCMYK cmyk)
     {
       double c0, m0, y0;
       ColorConverter.CMYK_To_CMY(cmyk.m_c, cmyk.m_m, cmyk.m_y, cmyk.m_k, out c0, out m0, out y0);
@@ -321,7 +321,7 @@ namespace Rhino.Display
       byte r, g, b;
       ColorConverter.CMY_To_RGB(c0, m0, y0, out r, out g, out b);
 
-      return System.Drawing.Color.FromArgb(a, r, g, b);
+      return Rhino.Drawing.Color.FromArgb(a, r, g, b);
     }
     #endregion
 
@@ -388,7 +388,7 @@ namespace Rhino.Display
   /// XYZ colors are based on the CIE 1931 XYZ color space standard and they mimic the natural 
   /// sensitivity of cones in the human retina.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public struct ColorXYZ
   {
     #region members
@@ -407,7 +407,7 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="rgb">RGB color to mimic.</param>
     /// <remarks>Exact conversions between color spaces are often not possible.</remarks>
-    public ColorXYZ(System.Drawing.Color rgb)
+    public ColorXYZ(Rhino.Drawing.Color rgb)
     {
       m_a = 1.0 - ((double)rgb.A / 255.0);
       ColorConverter.RGB_To_XYZ(rgb.R, rgb.G, rgb.B, out m_x, out m_y, out m_z); 
@@ -539,12 +539,12 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="xyz">A XYZ color.</param>
     /// <returns>A ARGB .Net library color.</returns>
-    public static implicit operator System.Drawing.Color(ColorXYZ xyz)
+    public static implicit operator Rhino.Drawing.Color(ColorXYZ xyz)
     {
       byte a = (byte)(xyz.A * 255.0);
       byte r, g, b;
       ColorConverter.XYZ_To_RGB(xyz.m_x, xyz.m_y, xyz.m_z, out r, out g, out b);
-      return System.Drawing.Color.FromArgb(a, r, g, b);
+      return Rhino.Drawing.Color.FromArgb(a, r, g, b);
     }
     #endregion
 
@@ -598,7 +598,7 @@ namespace Rhino.Display
   /// LAB colors are based on nonlinearly compressed CIE XYZ color space coordinates.  
   /// The A and B parameters of a LAB color represent the opponents.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public struct ColorLAB
   {
     #region members
@@ -617,7 +617,7 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="rgb">RGB color to mimic.</param>
     /// <remarks>Exact conversions between color spaces are often not possible.</remarks>
-    public ColorLAB(System.Drawing.Color rgb)
+    public ColorLAB(Rhino.Drawing.Color rgb)
     {
       this = CreateFromXYZ(new ColorXYZ(rgb));
     }
@@ -704,9 +704,9 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="lab">A LAB color.</param>
     /// <returns>A ARGB .Net library color.</returns>
-    public static implicit operator System.Drawing.Color(ColorLAB lab)
+    public static implicit operator Rhino.Drawing.Color(ColorLAB lab)
     {
-      System.Drawing.Color col = ColorXYZ.CreateFromLAB(lab);
+      Rhino.Drawing.Color col = ColorXYZ.CreateFromLAB(lab);
       return col;
     }
     #endregion
@@ -762,7 +762,7 @@ namespace Rhino.Display
   /// in order to approach perceptual uniformity. They are primarily used in computer graphics which 
   /// deal with colored lights.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public struct ColorLCH
   {
     #region members
@@ -781,7 +781,7 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="rgb">RGB color to mimic.</param>
     /// <remarks>Exact conversions between color spaces are often not possible.</remarks>
-    public ColorLCH(System.Drawing.Color rgb)
+    public ColorLCH(Rhino.Drawing.Color rgb)
     {
       this = CreateFromLAB(new ColorLAB(rgb));
     }
@@ -862,9 +862,9 @@ namespace Rhino.Display
     /// </summary>
     /// <param name="lch">A LCH color.</param>
     /// <returns>A ARGB .Net library color.</returns>
-    public static implicit operator System.Drawing.Color(ColorLCH lch)
+    public static implicit operator Rhino.Drawing.Color(ColorLCH lch)
     {
-      System.Drawing.Color col = ColorLAB.CreateFromLCH(lch);
+      Rhino.Drawing.Color col = ColorLAB.CreateFromLCH(lch);
       return col;
     }
     #endregion

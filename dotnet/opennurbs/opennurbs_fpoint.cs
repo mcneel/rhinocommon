@@ -10,7 +10,7 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
   [DebuggerDisplay("({m_x}, {m_y})")]
-  [Serializable]
+  //[Serializable]
   public struct Point2f : IEquatable<Point2f>, IComparable<Point2f>, IComparable, IEpsilonFComparable<Point2f>
   {
     #region members
@@ -248,7 +248,7 @@ namespace Rhino.Geometry
   // of the rules that FxCop states about IComparable classes
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 12)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
-  [Serializable]
+  //[Serializable]
   public struct Point3f : IEquatable<Point3f>, IComparable<Point3f>, IComparable, IEpsilonFComparable<Point3f>
   {
     internal float m_x;
@@ -559,7 +559,7 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
   [DebuggerDisplay("({m_x}, {m_y})")]
-  [Serializable]
+  //[Serializable]
   public struct Vector2f : IEquatable<Vector2f>, IComparable<Vector2f>, IComparable, IEpsilonFComparable<Vector2f>
   {
     internal float m_x;
@@ -740,7 +740,7 @@ namespace Rhino.Geometry
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 12)]
   [DebuggerDisplay("({m_x}, {m_y}, {m_z})")]
-  [Serializable]
+  //[Serializable]
   public struct Vector3f : IEquatable<Vector3f>, IComparable<Vector3f>, IComparable, IEpsilonFComparable<Vector3f>
   {
     #region members

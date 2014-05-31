@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading;
+using System.Reflection;
 
 using Rhino.Geometry;
 
@@ -75,8 +76,8 @@ namespace Rhino.Collections
   /// Represents a list of generic data. This class is similar to System.Collections.Generic.List(T) 
   /// but exposes a few more methods.
   /// </summary>
-  [Serializable,
-  DebuggerTypeProxy(typeof(ListDebuggerDisplayProxy<>)),
+  //[Serializable]
+  [DebuggerTypeProxy(typeof(ListDebuggerDisplayProxy<>)),
   DebuggerDisplay("Count = {Count}")]
   public class RhinoList<T> : IList<T>, IList
   {
@@ -96,7 +97,7 @@ namespace Rhino.Collections
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     internal int m_size;
 
-    [NonSerialized]
+    //[NonSerialized]
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private object m_syncRoot;
 
@@ -296,7 +297,7 @@ namespace Rhino.Collections
       get
       {
         Type Tt = typeof(T);
-        if (Tt.IsValueType) { return 0; }
+        if (Tt.GetTypeInfo().IsValueType) { return 0; }
 
         int N = 0;
         for (int i = 0; i < m_size; i++)
@@ -468,7 +469,7 @@ namespace Rhino.Collections
     }
     private static bool IsCompatibleObject(object value)
     {
-      if (!(value is T) && ((value != null) || typeof(T).IsValueType))
+      if (!(value is T) && ((value != null) || typeof(T).GetTypeInfo().IsValueType))
       {
         return false;
       }
@@ -523,7 +524,7 @@ namespace Rhino.Collections
           continue;
         }
 
-        if (Tt.IsAssignableFrom(obj.GetType()))
+        if (Tt.GetTypeInfo().IsAssignableFrom(obj.GetType().GetTypeInfo()))
         {
           Add((T)obj);
         }
@@ -721,7 +722,7 @@ namespace Rhino.Collections
     public int RemoveNulls()
     {
       Type Tt = typeof(T);
-      if (Tt.IsValueType) { return 0; }
+      if (Tt.GetTypeInfo().IsValueType) { return 0; }
       return RemoveAll(ON_Null_Predicate);
     }
     internal bool ON_Null_Predicate(T val) { return val == null; }
@@ -1312,61 +1313,61 @@ namespace Rhino.Collections
       m_version++;
     }
 
-    /// <summary>
-    /// Sort this list based on a list of numeric keys of equal length. 
-    /// The keys array will not be altered.
-    /// </summary>
-    /// <param name="keys">Numeric keys to sort with.</param>
-    /// <remarks>This function does not exist on the DotNET List class. 
-    /// David thought it was a good idea.</remarks>
-    public void Sort(double[] keys)
-    {
-      if (keys == null) { throw new ArgumentNullException("keys"); }
-      if (keys.Length != m_size)
-      {
-        throw new ArgumentException("Keys array must have same length as this List.");
-      }
+    ///// <summary>
+    ///// Sort this list based on a list of numeric keys of equal length. 
+    ///// The keys array will not be altered.
+    ///// </summary>
+    ///// <param name="keys">Numeric keys to sort with.</param>
+    ///// <remarks>This function does not exist on the DotNET List class. 
+    ///// David thought it was a good idea.</remarks>
+    //public void Sort(double[] keys)
+    //{
+    //  if (keys == null) { throw new ArgumentNullException("keys"); }
+    //  if (keys.Length != m_size)
+    //  {
+    //    throw new ArgumentException("Keys array must have same length as this List.");
+    //  }
 
-      //cannot sort 1 item or less...
-      if (m_size < 2) { return; }
+    //  //cannot sort 1 item or less...
+    //  if (m_size < 2) { return; }
 
-      //trim my internal array
-      Capacity = m_size;
+    //  //trim my internal array
+    //  Capacity = m_size;
 
-      //duplicate the keys array
-      double[] copy_keys = (double[])keys.Clone();
-      Array.Sort(copy_keys, m_items);
+    //  //duplicate the keys array
+    //  double[] copy_keys = (double[])keys.Clone();
+    //  Array.Sort(copy_keys, m_items);
 
-      m_version++;
-    }
+    //  m_version++;
+    //}
 
-    /// <summary>
-    /// Sort this list based on a list of numeric keys of equal length. 
-    /// The keys array will not be altered.
-    /// </summary>
-    /// <param name="keys">Numeric keys to sort with.</param>
-    /// <remarks>This function does not exist on the DotNET List class. 
-    /// David thought it was a good idea.</remarks>
-    public void Sort(int[] keys)
-    {
-      if (keys == null) { throw new ArgumentNullException("keys"); }
-      if (keys.Length != m_size)
-      {
-        throw new ArgumentException("Keys array must have same length as this List.");
-      }
+    ///// <summary>
+    ///// Sort this list based on a list of numeric keys of equal length. 
+    ///// The keys array will not be altered.
+    ///// </summary>
+    ///// <param name="keys">Numeric keys to sort with.</param>
+    ///// <remarks>This function does not exist on the DotNET List class. 
+    ///// David thought it was a good idea.</remarks>
+    //public void Sort(int[] keys)
+    //{
+    //  if (keys == null) { throw new ArgumentNullException("keys"); }
+    //  if (keys.Length != m_size)
+    //  {
+    //    throw new ArgumentException("Keys array must have same length as this List.");
+    //  }
 
-      //cannot sort 1 item or less...
-      if (m_size < 2) { return; }
+    //  //cannot sort 1 item or less...
+    //  if (m_size < 2) { return; }
 
-      //trim my internal array
-      Capacity = m_size;
+    //  //trim my internal array
+    //  Capacity = m_size;
 
-      //duplicate the keys array
-      int[] copy_keys = (int[])keys.Clone();
-      Array.Sort(copy_keys, m_items);
+    //  //duplicate the keys array
+    //  int[] copy_keys = (int[])keys.Clone();
+    //  Array.Sort(copy_keys, m_items);
 
-      m_version++;
-    }
+    //  m_version++;
+    //}
 
     /// <summary>
     /// Utility class which ties together functionality in Comparer(T) and Comparison(T)
@@ -1430,7 +1431,7 @@ namespace Rhino.Collections
     /// <typeparam name="TOutput">The type returned by the function.</typeparam>
     /// <param name="converter">A conversion function that can transform from T to TOutput.</param>
     /// <returns>The new list.</returns>
-    public RhinoList<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter)
+    public RhinoList<TOutput> ConvertAll<TOutput>(Func<T, TOutput> converter)
     {
       if (converter == null) { throw new ArgumentNullException("converter"); }
 
@@ -1627,7 +1628,7 @@ namespace Rhino.Collections
   /// <summary>
   /// Represents a list of <see cref="Point3d"/>.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class Point3dList : RhinoList<Point3d>
   {
     /// <summary>

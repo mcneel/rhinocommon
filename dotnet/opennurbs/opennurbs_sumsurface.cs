@@ -6,7 +6,7 @@ namespace Rhino.Geometry
   /// <summary>
   /// Represents a sum surface, or an extrusion of a curve along a curved path.
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class SumSurface : Surface
   {
     /// <summary>
@@ -29,15 +29,15 @@ namespace Rhino.Geometry
       : base(ptr, parent)
     { }
 
-    /// <summary>
-    /// Protected constructor for internal use.
-    /// </summary>
-    /// <param name="info">Serialization data.</param>
-    /// <param name="context">Serialization stream.</param>
-    protected SumSurface(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor for internal use.
+    ///// </summary>
+    ///// <param name="info">Serialization data.</param>
+    ///// <param name="context">Serialization stream.</param>
+    //protected SumSurface(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
     internal override GeometryBase DuplicateShallowHelper()
     {

@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using Rhino.Runtime;
 using System.Collections.Generic;
-using System.Drawing;
+using Rhino.Drawing;
 using Rhino.Runtime.InteropWrappers;
 
 #if RDK_CHECKED
@@ -1686,7 +1686,7 @@ namespace Rhino.PlugIns
           if (modes > 0)
             rm = Rhino.Commands.RunMode.Scripted;
           Rhino.Display.RhinoView view = Rhino.Display.RhinoView.FromIntPtr(pRhinoView);
-          System.Drawing.Rectangle rect = System.Drawing.Rectangle.FromLTRB(rLeft, rTop, rRight, rBottom);
+          Rhino.Drawing.Rectangle rect = Rhino.Drawing.Rectangle.FromLTRB(rLeft, rTop, rRight, rBottom);
           rc = p.RenderWindow(doc, rm, render_preview != 0, view, rect, inWindow != 0);
         }
         catch (Exception ex)
@@ -2066,7 +2066,7 @@ namespace Rhino.PlugIns
         return IntPtr.Zero;
       }
 
-      var size = new System.Drawing.Size(x, y);
+      var size = new Rhino.Drawing.Size(x, y);
       var args = new CreatePreviewEventArgs(pPreviewScene, size, (PreviewSceneQuality)iQuality);
 
       IntPtr pBitmap = IntPtr.Zero;
@@ -2145,7 +2145,7 @@ namespace Rhino.PlugIns
     /// <returns>If true, then the renderer is reuired to construct a rapid preview and not the high-quality final result.</returns>
     protected abstract Rhino.Commands.Result Render(RhinoDoc doc, Rhino.Commands.RunMode mode, bool fastPreview);
 
-    protected abstract Rhino.Commands.Result RenderWindow(RhinoDoc doc, Rhino.Commands.RunMode modes, bool fastPreview, Rhino.Display.RhinoView view, System.Drawing.Rectangle rect, bool inWindow);
+    protected abstract Rhino.Commands.Result RenderWindow(RhinoDoc doc, Rhino.Commands.RunMode modes, bool fastPreview, Rhino.Display.RhinoView view, Rhino.Drawing.Rectangle rect, bool inWindow);
   }
 
   
@@ -2373,7 +2373,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return false;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("Initialize");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("Initialize");
         if (mi == null)
           return false;
 
@@ -2410,7 +2410,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return null;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("Echo");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("Echo");
         if (mi == null)
           return null;
 
@@ -2444,7 +2444,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return false;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("ShowLicenseValidationUi");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("ShowLicenseValidationUi");
         if (mi == null)
           return false;
 
@@ -2483,7 +2483,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return false;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("GetLicense");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("GetLicense");
         if (mi == null)
           return false;
 
@@ -2532,7 +2532,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return false;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("GetLicense");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("GetLicense");
         if (mi == null)
           return false;
 
@@ -2579,7 +2579,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return false;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("GetLicense");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("GetLicense");
         if (mi == null)
           return false;
 
@@ -2596,9 +2596,9 @@ namespace Rhino.PlugIns
           return false;
 
         Type wrapper_type = wrapper_class.GetType();
-        System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
-        System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
-        System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
+        System.Reflection.MethodInfo get_path_method = wrapper_type.GetRuntimeMethod("Path");
+        System.Reflection.MethodInfo get_id_method = wrapper_type.GetRuntimeMethod("ProductId");
+        System.Reflection.MethodInfo get_title_method = wrapper_type.GetRuntimeMethod("ProductTitle");
         string productPath = get_path_method.Invoke(wrapper_class, null) as string;
         string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
         Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
@@ -2646,7 +2646,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return false;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("AskUserForLicense");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("AskUserForLicense");
         if (mi == null)
           return false;
 
@@ -2678,15 +2678,15 @@ namespace Rhino.PlugIns
 
       try
       {
-        System.Reflection.Assembly zoo_ass = GetLicenseClientAssembly();
-        if (null == zoo_ass)
+        System.Reflection.Assembly zooAss = GetLicenseClientAssembly();
+        if (null == zooAss)
           return false;
 
-        System.Type t = zoo_ass.GetType("ZooClient.ZooClientUtilities", false);
+        System.Type t = zooAss.GetType("ZooClient.ZooClientUtilities", false);
         if (t == null)
           return false;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("GetLicense");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("GetLicense");
         if (mi == null)
           return false;
 
@@ -2694,8 +2694,8 @@ namespace Rhino.PlugIns
         // information from the Rhino_DotNet wrapper class which is the delegate's target.
 
         System.Reflection.MethodInfo delegate_method = validateDelegate.Method;
-        System.Reflection.Assembly rh_common = typeof (HostUtils).Assembly;
-        if (delegate_method.Module.Assembly != rh_common)
+        System.Reflection.Assembly rhCommon = typeof (HostUtils).Assembly;
+        if (delegate_method.Module.Assembly != rhCommon)
           return false;
 
         object wrapper_class = validateDelegate.Target;
@@ -2703,20 +2703,19 @@ namespace Rhino.PlugIns
           return false;
 
         Type wrapper_type = wrapper_class.GetType();
-        System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
-        System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
-        System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
-        string product_path = get_path_method.Invoke(wrapper_class, null) as string;
-        string product_title = get_title_method.Invoke(wrapper_class, null) as string;
-        Guid product_id = (Guid)get_id_method.Invoke(wrapper_class, null);
+        System.Reflection.MethodInfo get_path_method = wrapper_type.GetRuntimeMethod("Path");
+        System.Reflection.MethodInfo get_id_method = wrapper_type.GetRuntimeMethod("ProductId");
+        System.Reflection.MethodInfo get_title_method = wrapper_type.GetRuntimeMethod("ProductTitle");
+        string productPath = get_path_method.Invoke(wrapper_class, null) as string;
+        string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
+        Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
 
-        // 22-May-2014 Dale Fugier, 0 == Unspecified
-        const int product_build_type = (int)LicenseBuildType.Unspecified;
-
+        // 20-May-2013 Dale Fugier, 0 == any build
+        int productBuildType = 0;
         // Convert int to enum
-        LicenseCapabilities license_capabilities = GetLicenseCapabilities(capabilities);
+        LicenseCapabilities licenseCapabilities = GetLicenseCapabilities(capabilities);
 
-        var args = new object[] { new VerifyFromZooCommon(), product_path, product_id, product_build_type, product_title, license_capabilities, textMask, validateDelegate };
+        var args = new object[] { new VerifyFromZooCommon(), productPath, productId, productBuildType, productTitle, licenseCapabilities, textMask, validateDelegate };
         object invoke_rc = mi.Invoke(null, args);
         if (null == invoke_rc)
           return false;
@@ -2755,7 +2754,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return false;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("AskUserForLicense");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("AskUserForLicense");
         if (mi == null)
           return false;
 
@@ -2772,9 +2771,9 @@ namespace Rhino.PlugIns
           return false;
 
         Type wrapper_type = wrapper_class.GetType();
-        System.Reflection.MethodInfo get_path_method = wrapper_type.GetMethod("Path");
-        System.Reflection.MethodInfo get_id_method = wrapper_type.GetMethod("ProductId");
-        System.Reflection.MethodInfo get_title_method = wrapper_type.GetMethod("ProductTitle");
+        System.Reflection.MethodInfo get_path_method = wrapper_type.GetRuntimeMethod("Path");
+        System.Reflection.MethodInfo get_id_method = wrapper_type.GetRuntimeMethod("ProductId");
+        System.Reflection.MethodInfo get_title_method = wrapper_type.GetRuntimeMethod("ProductTitle");
         string productPath = get_path_method.Invoke(wrapper_class, null) as string;
         string productTitle = get_title_method.Invoke(wrapper_class, null) as string;
         Guid productId = (Guid)get_id_method.Invoke(wrapper_class, null);
@@ -2853,7 +2852,7 @@ namespace Rhino.PlugIns
           return false;
 
         var wrapper_type = wrapper_class.GetType();
-        var get_id_method = wrapper_type.GetMethod("ProductId");
+        var get_id_method = wrapper_type.GetRuntimeMethod("ProductId");
         var product_id = (Guid)get_id_method.Invoke(wrapper_class, null);
 
         var args = new object[] { new VerifyFromZooCommon(), product_id };
@@ -2901,7 +2900,7 @@ namespace Rhino.PlugIns
       if (null == assembly) return null;
       var type = assembly.GetType("ZooClient.ZooClientUtilities", false);
       if (type == null) return null;
-      var method_info = type.GetMethod("ReturnLicense", new [] { typeof(string), typeof(Guid)});
+      var method_info = type.GetRuntimeMethod("ReturnLicense", new [] { typeof(string), typeof(Guid)});
       return method_info;
     }
 
@@ -2928,7 +2927,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return false;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("CheckOutLicense");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("CheckOutLicense");
         if (mi == null)
           return false;
 
@@ -2970,7 +2969,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return false;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("CheckInLicense");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("CheckInLicense");
         if (mi == null)
           return false;
 
@@ -3012,7 +3011,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return false;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("ConvertLicense");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("ConvertLicense");
         if (mi == null)
           return false;
 
@@ -3046,7 +3045,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return -1;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("GetLicenseType");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("GetLicenseType");
         if (mi == null)
           return -1;
 
@@ -3080,7 +3079,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return false;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("IsCheckOutEnabled");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("IsCheckOutEnabled");
         if (mi == null)
           return false;
 
@@ -3114,7 +3113,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return null;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("GetLicenseStatus");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("GetLicenseStatus");
         if (mi == null)
           return null;
 
@@ -3148,7 +3147,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return null;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("GetOneLicenseStatus");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("GetOneLicenseStatus");
         if (mi == null)
           return null;
 
@@ -3205,7 +3204,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return false;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("LicenseOptionsHandler");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("LicenseOptionsHandler");
         if (mi == null)
           return false;
 
@@ -3237,7 +3236,7 @@ namespace Rhino.PlugIns
         if (t == null)
           return;
 
-        System.Reflection.MethodInfo mi = t.GetMethod("ShowBuyLicenseUi");
+        System.Reflection.MethodInfo mi = t.GetRuntimeMethod("ShowBuyLicenseUi");
         if (mi == null)
           return;
 
@@ -3276,8 +3275,6 @@ namespace Rhino.PlugIns
   /// <summary>License build contentType enumerations.</summary>
   public enum LicenseBuildType
   {
-    /// <summary>An unspecified build</summary>
-    Unspecified = 0,
     /// <summary>A release build (e.g. commercial, education, nfr, etc.)</summary>
     Release = 100,
     /// <summary>A evaluation build</summary>

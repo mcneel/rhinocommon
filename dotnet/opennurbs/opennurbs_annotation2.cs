@@ -97,7 +97,7 @@ namespace Rhino.Geometry
   /// Provides a common base class to all annotation geometry.
   /// <para>This class refers to the geometric element that is independent from the document.</para>
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class AnnotationBase : GeometryBase
   {
     internal AnnotationBase(IntPtr native_pointer, object parent)
@@ -109,15 +109,15 @@ namespace Rhino.Geometry
     /// </summary>
     protected AnnotationBase() { }
 
-    /// <summary>
-    /// Protected constructor used in serialization.
-    /// </summary>
-    /// <param name="info">Serialization data.</param>
-    /// <param name="context">Serialization stream.</param>
-    protected AnnotationBase(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor used in serialization.
+    ///// </summary>
+    ///// <param name="info">Serialization data.</param>
+    ///// <param name="context">Serialization stream.</param>
+    //protected AnnotationBase(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
     #region internal helper functions
     internal Point2d GetPoint(int which)
@@ -259,7 +259,7 @@ namespace Rhino.Geometry
   /// Represents a linear dimension.
   /// <para>This entity refers to the geometric element that is independent from the document.</para>
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class LinearDimension : AnnotationBase
   {
     /// <summary>
@@ -284,13 +284,13 @@ namespace Rhino.Geometry
       SetLocations(extensionLine1End, extensionLine2End, pointOnDimensionLine);
     }
 
-    /// <summary>
-    /// Protected constructor used in serialization.
-    /// </summary>
-    protected LinearDimension(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor used in serialization.
+    ///// </summary>
+    //protected LinearDimension(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
 #if RHINO_SDK
     /// <summary>
@@ -433,20 +433,20 @@ namespace Rhino.Geometry
   /// Represents a dimension of a circular entity that can be measured with radius or diameter.
   /// <para>This entity refers to the geometric element that is independent from the document.</para>
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class RadialDimension : AnnotationBase
   {
     internal RadialDimension(IntPtr native_pointer, object parent)
       : base(native_pointer, parent)
     { }
 
-    /// <summary>
-    /// Protected constructor used in serialization.
-    /// </summary>
-    protected RadialDimension(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor used in serialization.
+    ///// </summary>
+    //protected RadialDimension(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
     /// <summary>
     /// Construct a radial dimension from 3d input
@@ -501,7 +501,7 @@ namespace Rhino.Geometry
   /// Represents a dimension of an entity that can be measured with an angle.
   /// <para>This entity refers to the geometric element that is independent from the document.</para>
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class AngularDimension : AnnotationBase
   {
     /// <summary>
@@ -519,40 +519,40 @@ namespace Rhino.Geometry
       : base(native_pointer, parent)
     { }
 
-    /// <summary>
-    /// Protected constructor used in serialization.
-    /// </summary>
-    protected AngularDimension(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor used in serialization.
+    ///// </summary>
+    //protected AngularDimension(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
   }
 
   /// <summary>
   /// Represents the geometry of a dimension that displays a coordinate of a point.
   /// <para>This class refers to the geometric element that is independent from the document.</para>
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class OrdinateDimension : AnnotationBase
   {
     internal OrdinateDimension(IntPtr native_pointer, object parent)
       : base(native_pointer, parent)
     { }
 
-    /// <summary>
-    /// Protected constructor used in serialization.
-    /// </summary>
-    protected OrdinateDimension(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor used in serialization.
+    ///// </summary>
+    //protected OrdinateDimension(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
   }
 
   /// <summary>
   /// Represents text geometry.
   /// <para>This class refers to the geometric element that is independent from the document.</para>
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class TextEntity : AnnotationBase
   {
     /// <summary>
@@ -573,13 +573,13 @@ namespace Rhino.Geometry
       : base(native_pointer, parent)
     { }
 
-    /// <summary>
-    /// Protected constructor used in serialization.
-    /// </summary>
-    protected TextEntity(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor used in serialization.
+    ///// </summary>
+    //protected TextEntity(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
     internal override GeometryBase DuplicateShallowHelper()
     {
@@ -663,10 +663,10 @@ namespace Rhino.Geometry
 
     /// <summary>
     /// Color to use for drawing a text mask when it is enabled. If the mask is
-    /// enabled and MaskColor is System.Drawing.Color.Transparent, then the
+    /// enabled and MaskColor is Rhino.Drawing.Color.Transparent, then the
     /// viewport's color will be used for the MaskColor
     /// </summary>
-    public System.Drawing.Color MaskColor
+    public Rhino.Drawing.Color MaskColor
     {
       get
       {
@@ -738,40 +738,40 @@ namespace Rhino.Geometry
   /// Represents a leader, or an annotation entity with text that resembles an arrow pointing to something.
   /// <para>This class refers to the geometric element that is independent from the document.</para>
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class Leader : AnnotationBase
   {
     internal Leader(IntPtr native_pointer, object parent)
       : base(native_pointer, parent)
     { }
 
-    /// <summary>
-    /// Protected constructor used in serialization.
-    /// </summary>
-    protected Leader(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor used in serialization.
+    ///// </summary>
+    //protected Leader(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
   }
 
   /// <summary>
   /// Represents a text dot, or an annotation entity with text that always faces the camera and always has the same size.
   /// <para>This class refers to the geometric element that is independent from the document.</para>
   /// </summary>
-  [Serializable]
+  //[Serializable]
   public class TextDot : GeometryBase
   {
     internal TextDot(IntPtr native_pointer, object parent)
       :base(native_pointer, parent, -1)
     { }
 
-    /// <summary>
-    /// Protected constructor used in serialization.
-    /// </summary>
-    protected TextDot(SerializationInfo info, StreamingContext context)
-      : base (info, context)
-    {
-    }
+    ///// <summary>
+    ///// Protected constructor used in serialization.
+    ///// </summary>
+    //protected TextDot(SerializationInfo info, StreamingContext context)
+    //  : base (info, context)
+    //{
+    //}
 
     internal override GeometryBase DuplicateShallowHelper()
     {

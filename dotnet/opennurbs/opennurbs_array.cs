@@ -51,7 +51,7 @@ namespace Rhino.Runtime.InteropWrappers
       }
     }
   }
-
+    [System.Security.SecuritySafeCritical]
   /// <summary>
   /// This class is used to pass strings back and forth between managed
   /// and unmanaged code.  This should not be be needed by plug-ins.
@@ -71,6 +71,8 @@ namespace Rhino.Runtime.InteropWrappers
     /// </summary>
     /// <returns></returns>
     public IntPtr NonConstPointer() { return m_ptr; }
+
+        [System.Security.SecuritySafeCritical]
     /// <summary>
     /// Constructor
     /// </summary>

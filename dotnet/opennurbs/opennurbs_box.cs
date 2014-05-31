@@ -9,7 +9,7 @@ namespace Rhino.Geometry
   /// an orthogonal, oriented box that is not necessarily parallel to the world Y, X, Z axes.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 176)]
-  [Serializable]
+  //[Serializable]
   public struct Box : IEpsilonComparable<Box>
   {
     #region Members

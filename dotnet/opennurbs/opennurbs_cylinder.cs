@@ -8,7 +8,7 @@ namespace Rhino.Geometry
   /// that define a right circular cylinder.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 8, Size = 152)]
-  [Serializable]
+  //[Serializable]
   public struct Cylinder : IEpsilonComparable<Cylinder>
   {
     #region members

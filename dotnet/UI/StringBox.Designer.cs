@@ -1,4 +1,5 @@
-﻿namespace Rhino.UI
+﻿#if RHINO_SDK
+namespace Rhino.UI
 {
   partial class StringBoxForm
   {
@@ -106,3 +107,4 @@
     private System.Windows.Forms.Button m_btnCancel;
   }
 }
+#endif

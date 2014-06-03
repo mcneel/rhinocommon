@@ -1,4 +1,5 @@
-﻿namespace Rhino.UI
+﻿#if RHINO_SDK
+namespace Rhino.UI
 {
   partial class ComboListBoxForm
   {
@@ -105,3 +106,4 @@
     private System.Windows.Forms.ComboBox m_comboBox;
   }
 }
+#endif

@@ -242,8 +242,8 @@ namespace Rhino.DocObjects
       {
         if (!IsDocumentControlled)
           return false;
-        IntPtr ptr_const_this = ConstPointer();
 #if RHINO_SDK
+        IntPtr ptr_const_this = ConstPointer();
         return UnsafeNativeMethods.CRhinoMaterial_GetBool(ptr_const_this, IDX_IS_DEFAULT_MATERIAL);
 #else
         return MaterialIndex == -1;

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Windows.Forms;
 using System.Xml;
 
 // RMA_DONT_LOCALIZE (Tells the build process string parser to ignore this file)
@@ -339,10 +338,11 @@ namespace Rhino.UI
       return rc;
     }
 
+		#if RHINO_SDK
     /// <summary>
     /// Recursive helper function for LocalizeUtils.LocalizeForm.
     /// </summary>
-    internal void LocalizeControlTree(string formName, string formClassName, Control ctrl, ToolTip[] tooltips)
+		internal void LocalizeControlTree(string formName, string formClassName, System.Windows.Forms.Control ctrl, System.Windows.Forms.ToolTip[] tooltips)
     {
       if (formName == null || ctrl == null)
         return;
@@ -434,7 +434,7 @@ namespace Rhino.UI
     /// <summary>
     /// Recursive helper function for LocalizeUtils.LocalizeForm.
     /// </summary>
-    internal void LocalizeToolStripCollection(string formName, string formClassName, ToolStripItemCollection collection)
+		internal void LocalizeToolStripCollection(string formName, string formClassName, System.Windows.Forms.ToolStripItemCollection collection)
     {
       if (null == formName || null == collection)
         return;
@@ -483,7 +483,7 @@ namespace Rhino.UI
       }
     }
 
-    void LocalizeListBoxItems(string formName, string formClassName, ListBox lb)
+		void LocalizeListBoxItems(string formName, string formClassName, System.Windows.Forms.ListBox lb)
     {
       if (null == formName || null == lb || string.IsNullOrEmpty(lb.Name))
         return;
@@ -515,7 +515,7 @@ namespace Rhino.UI
       }
     }
 
-    void LocalizeListView(string formName, string formClassName, ListView lv)
+		void LocalizeListView(string formName, string formClassName, System.Windows.Forms.ListView lv)
     {
       if (null == formName || null == lv || string.IsNullOrEmpty(lv.Name))
         return;
@@ -585,7 +585,7 @@ namespace Rhino.UI
     /// <param name="formName">The form name.</param>
     /// <param name="formClassName">The form class name.</param>
     /// <param name="cb">A Windows Forms combo box.</param>
-    public void LocalizeComboBoxItems(string formName, string formClassName, ComboBox cb)
+		public void LocalizeComboBoxItems(string formName, string formClassName, System.Windows.Forms.ComboBox cb)
     {
       if (null == formName || null == cb || string.IsNullOrEmpty(cb.Name))
         return;
@@ -620,5 +620,6 @@ namespace Rhino.UI
         }
       }
     }
+		#endif
   }
 }

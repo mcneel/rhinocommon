@@ -1,4 +1,5 @@
-﻿namespace Rhino.UI
+﻿#if RHINO_SDK
+namespace Rhino.UI
 {
   partial class EditBoxForm
   {
@@ -109,3 +110,4 @@
     private System.Windows.Forms.Button m_btnOk;
   }
 }
+#endif

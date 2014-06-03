@@ -1,4 +1,5 @@
-﻿#pragma warning disable 1591
+﻿#if RHINO_SDK
+#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -100,3 +101,4 @@ namespace Rhino.UI
     }
   }
 }
+#endif

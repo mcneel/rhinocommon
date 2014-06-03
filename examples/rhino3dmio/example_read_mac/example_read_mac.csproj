@@ -50,12 +50,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\..\dotnet\Rhino3dmIO.csproj">
-      <Project>{E10F2F27-4825-4BFB-83B4-E929BDC6E027}</Project>
-      <Name>Rhino3dmIO</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="AirCleaner.3dm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

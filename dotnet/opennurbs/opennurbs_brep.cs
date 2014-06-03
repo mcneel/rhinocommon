@@ -1867,8 +1867,8 @@ namespace Rhino.Geometry
     /// </summary>
     public void SetTrimIsoFlags()
     {
-      IntPtr pThis = NonConstPointer();
-
+      IntPtr ptr_this = NonConstPointer();
+      UnsafeNativeMethods.ON_Brep_SetTrimIsoFlags (ptr_this);
     }
 
 #if RHINO_SDK

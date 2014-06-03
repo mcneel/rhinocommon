@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Reflection;
-using System.Windows.Forms;
 
 // RMA_DONT_LOCALIZE (Tells the build process string parser to ignore this file)
 
@@ -137,7 +136,8 @@ namespace Rhino.UI
       return LocalizeString(assembly, languageId, english, -1);
     }
 
-    public static void LocalizeForm(Assembly assembly, int languageId, Control form)
+		#if RHINO_SDK
+		public static void LocalizeForm(Assembly assembly, int languageId, System.Windows.Forms.Control form)
     {
       LocalizationStringTable st = LocalizationUtils.GetStringTable(assembly, languageId);
       if (st != null)
@@ -153,7 +153,7 @@ namespace Rhino.UI
     /// </summary>
     /// <param name="c">A control.</param>
     /// <param name="components">A list of components is returned.</param>
-    public static void GetContainersPropertiesFromControl(Control c, out List<System.ComponentModel.IContainer> components)
+		public static void GetContainersPropertiesFromControl(System.Windows.Forms.Control c, out List<System.ComponentModel.IContainer> components)
     {
       components = null;
       Type t = null == c ? null : c.GetType();
@@ -190,7 +190,7 @@ namespace Rhino.UI
     /// </summary>
     /// <param name="control">A control that might need to be localized.</param>
     /// <returns>An array of controls.</returns>
-    static public Control[] GetComponentControls(Control control)
+		static public System.Windows.Forms.Control[] GetComponentControls(System.Windows.Forms.Control control)
     {
       List<Control> result = null;
       List<System.ComponentModel.IContainer> components;
@@ -218,7 +218,7 @@ namespace Rhino.UI
     /// </summary>
     /// <param name="control">A control.</param>
     /// <returns>An array of tooltips.</returns>
-    static public ToolTip[] GetToolTip(Control control)
+		static public System.Windows.Forms.ToolTip[] GetToolTip(System.Windows.Forms.Control control)
     {
       List<ToolTip> result = null;
       List<System.ComponentModel.IContainer> components;
@@ -241,7 +241,7 @@ namespace Rhino.UI
       return (null != result && result.Count > 0 ? result.ToArray() : null);
     }
 
-    public static void LocalizeToolStripItemCollection(Assembly a, int language_id, Control parent, ToolStripItemCollection collection)
+		public static void LocalizeToolStripItemCollection(Assembly a, int language_id, System.Windows.Forms.Control parent, System.Windows.Forms.ToolStripItemCollection collection)
     {
       LocalizationStringTable st = LocalizationUtils.GetStringTable(a, language_id);
       if (st != null && parent!=null)
@@ -252,6 +252,7 @@ namespace Rhino.UI
         st.LocalizeToolStripCollection(form_name, form_class_name, collection);
       }
     }
+		#endif
   }
 
 

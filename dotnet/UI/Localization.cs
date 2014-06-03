@@ -2,6 +2,7 @@
 using System;
 using System.Reflection;
 #if RHINO_SDK
+using System.Windows.Forms;
 using Rhino.Runtime.InteropWrappers;
 #endif
 

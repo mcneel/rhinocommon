@@ -299,49 +299,10 @@
     <Compile Include="rhino\rhinosdkunrollsrf.cs" />
     <Compile Include="rhino\rhinosdkview.cs" />
     <Compile Include="rhino\rhinosdkviewport.cs" />
-    <Compile Include="UI\ComboListBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\ComboListBox.Designer.cs">
-      <DependentUpon>ComboListBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs.cs" />
-    <Compile Include="UI\EditBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\EditBox.Designer.cs">
-      <DependentUpon>EditBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ListBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\ListBox.Designer.cs">
-      <DependentUpon>ListBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\Localization.cs" />
     <Compile Include="UI\LocalizationStringTable.cs" />
     <Compile Include="UI\LocalizationUtils.cs" />
-    <Compile Include="UI\StringBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\StringBox.Designer.cs">
-      <DependentUpon>StringBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="UnsafeNativeMethods.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="UI\ComboListBox.resx">
-      <DependentUpon>ComboListBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\EditBox.resx">
-      <DependentUpon>EditBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ListBox.resx">
-      <DependentUpon>ListBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\StringBox.resx">
-      <DependentUpon>StringBox.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="RDN_StrongName.snk" />

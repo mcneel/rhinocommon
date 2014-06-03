@@ -1642,7 +1642,7 @@ namespace Rhino.DocObjects
       return (IntPtr.Zero == mapping ? null : new TextureMapping(mapping));
     }
 
-     /// <summary>
+    /// <summary>
     /// 
     /// </summary>
     /// <param name="channel"></param>
@@ -1658,7 +1658,7 @@ namespace Rhino.DocObjects
     /// Returns true if this object has a texture mapping form any source (pluginId)
     /// </summary>
     /// <returns></returns>
-   public bool HasTextureMapping()
+    public bool HasTextureMapping()
     {
       return UnsafeNativeMethods.ON_TextureMapping_ObjectHasMapping(ConstPointer());
     }

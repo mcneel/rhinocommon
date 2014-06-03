@@ -250,7 +250,7 @@ namespace Rhino.UI
       return new LocalizeStringPair(english, local);
     }
 
-		#if RHINO_SDK
+#if RHINO_SDK
     ///<summary>
     /// A form or user control should call this in its constructor if it wants to be localized
     /// the typical constructor for a localize form would look like:
@@ -262,7 +262,7 @@ namespace Rhino.UI
     ///   ResumeLayout(true);
     /// }
     ///</summary>
-		public static void LocalizeForm(System.Windows.Forms.Control form)
+    public static void LocalizeForm(Control form)
     {
       if (null == form)
         return;
@@ -281,12 +281,12 @@ namespace Rhino.UI
     ///   Rhino.UI.Localize.LocalizeToolStripItemCollection( this, this.MyToolStrip.Items );
     /// }
     ///</summary>
-		public static void LocalizeToolStripItemCollection(System.Windows.Forms.Control parent, System.Windows.Forms.ToolStripItemCollection collection)
+    public static void LocalizeToolStripItemCollection(Control parent, ToolStripItemCollection collection)
     {
       Assembly assembly = null == collection ? null : collection.GetType().Assembly;
       LocalizationUtils.LocalizeToolStripItemCollection(assembly, CurrentLanguageID, parent, collection);
     }
-		#endif
+#endif
 
     static int m_language_id = -1;
     static int CurrentLanguageID

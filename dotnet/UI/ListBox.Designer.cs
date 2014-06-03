@@ -1,5 +1,4 @@
-﻿#if RHINO_SDK
-namespace Rhino.UI
+﻿namespace Rhino.UI
 {
   partial class ListBoxForm
   {
@@ -123,4 +122,3 @@ namespace Rhino.UI
     private System.Windows.Forms.CheckedListBox m_checkedListBox;
   }
 }
-#endif

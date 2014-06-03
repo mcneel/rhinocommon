@@ -2099,7 +2099,7 @@ namespace Rhino.PlugIns
     {
       RenderPlugIn p = LookUpBySerialNumber(serial_number) as RenderPlugIn;
       
-      if (null == p || pXmlSection!=IntPtr.Zero)
+      if (null == p || pXmlSection==IntPtr.Zero)
       {
         HostUtils.DebugString("ERROR: Invalid input for OnDecalProperties");
       }

@@ -7,6 +7,10 @@ RH_C_FUNCTION ON_3dmObjectAttributes* ON_3dmObjectAttributes_New(const ON_3dmObj
   return new ON_3dmObjectAttributes(*pOther);
 }
 
+RH_C_FUNCTION void ON_3dmObjectAttributes_Delete(ON_3dmObjectAttributes* pointer)
+{
+  if (pointer) delete pointer;
+}
 
 // I think that sooner or later, these functions should be moved into core opennurbs.dll
 RH_C_FUNCTION int ON_3dmObjectAttributes_GetSetInt( ON_3dmObjectAttributes* ptr, int which, bool set, int set_value )

@@ -529,6 +529,20 @@ namespace Rhino.DocObjects
       UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetColor(ptr, which, true, argb);
     }
 
+#if RDK_CHECKED
+    /// <summary>
+    /// Gets all object decals associated with this object.
+    /// </summary>
+    public Render.Decals Decals
+    {
+      get
+      {
+        return (m_decals ?? (m_decals = new Render.Decals(this)));
+      }
+    }
+    private Render.Decals m_decals;
+#endif
+
     /// <summary>
     /// If ON::color_from_object == ColorSource, then color is the object's display color.
     /// </summary>

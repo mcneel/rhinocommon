@@ -2109,6 +2109,132 @@ RH_C_FUNCTION ON_TextureMapping* ON_TextureMapping_New()
   return new ON_TextureMapping();
 }
 
+enum TextureMappingType : int
+{
+  tmtNoMapping       = 0,
+  tmtSrfpMapping     = 1, // u,v = linear transform of surface params,w = 0
+  tmtPlaneMapping    = 2, // u,v,w = 3d coordinates wrt frame
+  tmtCylinderMapping = 3, // u,v,w = longitude, height, radius
+  tmtSphereMapping   = 4, // (u,v,w) = longitude,latitude,radius
+  tmtBoxMapping      = 5,
+  tmtMeshMappingPrimitive = 6, // m_mapping_primitive is an ON_Mesh 
+  tmtSrfMappingPrimitive  = 7, // m_mapping_primitive is an ON_Surface
+  tmtBrepMappingPrimitive = 8, // m_mapping_primitive is an ON_Brep
+};
+
+RH_C_FUNCTION TextureMappingType ON_TextureMapping_GetMappingType(const ON_TextureMapping* pTextureMapping)
+{
+  if (pTextureMapping == NULL) return tmtNoMapping;
+  switch (pTextureMapping->m_type)
+  {
+    case ON_TextureMapping::no_mapping:
+      return tmtNoMapping;
+    case ON_TextureMapping::srfp_mapping:
+      return tmtSrfpMapping;
+    case ON_TextureMapping::plane_mapping:
+      return tmtPlaneMapping;
+    case ON_TextureMapping::cylinder_mapping:
+      return tmtCylinderMapping;
+    case ON_TextureMapping::sphere_mapping:
+      return tmtSphereMapping;
+    case ON_TextureMapping::box_mapping:
+      return tmtBoxMapping;
+    case ON_TextureMapping::mesh_mapping_primitive:
+      return tmtMeshMappingPrimitive;
+    case ON_TextureMapping::srf_mapping_primitive:
+      return tmtSrfMappingPrimitive;
+    case ON_TextureMapping::brep_mapping_primitive:
+      return tmtBrepMappingPrimitive;
+  }
+  // Unknown type, add support for it to the list above
+  return tmtNoMapping; 
+}
+
+enum TextureMappingGetTransform : int
+{
+  gettUVW,
+  gettPxyz,
+  gettNxyz
+};
+
+RH_C_FUNCTION bool ON_TextureMapping_GetTransform(const ON_TextureMapping* pTextureMapping, TextureMappingGetTransform type, ON_Xform* xformOut)
+{
+  if (pTextureMapping == NULL || xformOut == NULL) return false;
+  switch (type)
+  {
+    case gettUVW:
+      *xformOut = pTextureMapping->m_uvw;
+      return true;
+    case gettPxyz:
+      *xformOut = pTextureMapping->m_Pxyz;
+      return true;
+    case gettNxyz:
+      *xformOut = pTextureMapping->m_Nxyz;
+      return true;
+  }
+  return false;
+}
+
+RH_C_FUNCTION bool ON_TextureMapping_SetTransform(ON_TextureMapping* pTextureMapping, TextureMappingGetTransform type, ON_Xform* xform)
+{
+  if (pTextureMapping == NULL || xform == NULL) return false;
+  switch (type)
+  {
+    case gettUVW:
+      pTextureMapping->m_uvw = *xform;
+      return true;
+    case gettPxyz:
+      pTextureMapping->m_Pxyz = *xform;
+      return true;
+    case gettNxyz:
+      pTextureMapping->m_Nxyz = *xform;
+      return true;
+  }
+  return false;
+}
+
+RH_C_FUNCTION bool ON_TextureMapping_GetMappingBox(const ON_TextureMapping* pTextureMapping, ON_PLANE_STRUCT* planeOut, ON_Interval* dxOut, ON_Interval* dyOut, ON_Interval* dzOut)
+{
+  if (pTextureMapping == NULL) return false;
+  ON_Plane plane;
+  ON_Interval dx, dy, dz;
+  if (!pTextureMapping->GetMappingBox(plane, dx, dy, dz))
+    return false;
+  if (planeOut) CopyToPlaneStruct(*planeOut, plane);
+  if (dxOut) *dxOut = dx;
+  if (dyOut) *dyOut = dy;
+  if (dzOut) *dzOut = dz;
+  return true;
+}
+
+RH_C_FUNCTION bool ON_TextureMapping_GetMappingSphere(const ON_TextureMapping* pTextureMapping, ON_Sphere* sphere)
+{
+  if (pTextureMapping == NULL || sphere == NULL) return false;
+  bool success = pTextureMapping->GetMappingSphere(*sphere);
+  return success;
+}
+
+RH_C_FUNCTION bool ON_TextureMapping_GetMappingCylinder(const ON_TextureMapping* pTextureMapping, ON_Cylinder* cylinder)
+{
+  if (pTextureMapping == NULL || cylinder == NULL) return false;
+  bool success = pTextureMapping->GetMappingCylinder(*cylinder);
+  return success;
+}
+
+RH_C_FUNCTION bool ON_TextureMapping_GetMappingPlane(const ON_TextureMapping* pTextureMapping, ON_PLANE_STRUCT* planeOut, ON_Interval* dxOut, ON_Interval* dyOut, ON_Interval* dzOut)
+{
+  if (pTextureMapping == NULL) return false;
+  ON_Plane plane;
+  ON_Interval dx, dy, dz;
+  if (!pTextureMapping->GetMappingPlane(plane, dx, dy, dz))
+    return false;
+  if (planeOut) CopyToPlaneStruct(*planeOut, plane);
+  if (dxOut) *dxOut = dx;
+  if (dyOut) *dyOut = dy;
+  if (dzOut) *dzOut = dz;
+  return true;
+}
+
 RH_C_FUNCTION bool ON_TextureMapping_SetPlaneMapping(ON_TextureMapping* pTextureMapping, const ON_PLANE_STRUCT* plane, ON_INTERVAL_STRUCT dx, ON_INTERVAL_STRUCT dy, ON_INTERVAL_STRUCT dz)
 {
   bool rc = false;

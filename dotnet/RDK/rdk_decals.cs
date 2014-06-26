@@ -1,8 +1,10 @@
+using System.Collections;
+using Rhino.DocObjects;
 #pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 
-#if RDK_UNCHECKED
+#if RDK_CHECKED
 
 namespace Rhino.Render
 {
@@ -11,44 +13,105 @@ namespace Rhino.Render
     /// <summary>
     /// Planar mapping. Uses projection, origin, up and across vectors (not unitized).
     /// </summary>
-    Planar = 0,
+    Planar = (int)UnsafeNativeMethods.RhRdkDecalMapping.Planar,
     /// <summary>
     /// Cylindrical mapping. Uses origin, up, across, height, radius, latitude start and stop.
     /// </summary>
-    Cylindrical = 1,
+    Cylindrical = (int)UnsafeNativeMethods.RhRdkDecalMapping.Cylindrical,
     /// <summary>
     /// Spherical mapping. Uses origin, up, across, radius, latitude/longitude start and stop.
     /// </summary>
-    Spherical = 2,
+    Spherical = (int)UnsafeNativeMethods.RhRdkDecalMapping.Spherical,
     /// <summary>
     /// UV mapping.
     /// </summary>
-    UV = 3
+    UV = (int)UnsafeNativeMethods.RhRdkDecalMapping.UV
   }
 
   public enum DecalProjection : int
   {
     /// <summary>Project forward</summary>
-    Forward = 0,
+    Forward = (int)UnsafeNativeMethods.RhRdkDecalProjection.Forward,
     /// <summary>Project backward</summary>
-    Backward = 1,
+    Backward = (int)UnsafeNativeMethods.RhRdkDecalProjection.Backward,
     /// <summary>Project forward and backward</summary>
-    Both = 2
+    Both = (int)UnsafeNativeMethods.RhRdkDecalProjection.Both
   }
 
   /// <summary>
   /// Represents a decal, or a picture that can be moved on an object.
   /// </summary>
-  public class Decal
+  public class Decal : IDisposable
   {
-    readonly IntPtr m_pDecal = IntPtr.Zero;
+    IntPtr m_pDecal = IntPtr.Zero;
     //Forces a reference to the decal iterator to stick around until this object is GCd.
-    ObjectDecals m_decals;
-
-    internal Decal(IntPtr pDecal, ObjectDecals decals)
+    DecalEnumerator m_decals;
+    // Used by Decal.Create() to hold a temporary object attributes
+    // pointer which the decal will get attached to
+    private IntPtr m_object_attributes_pointer = IntPtr.Zero;
+    private bool m_delete_decal_pointer;
+    
+    internal Decal(IntPtr pDecal, DecalEnumerator decals)
     {
       m_pDecal = pDecal;
       m_decals = decals;
+    }
+
+    internal Decal(IntPtr objectAttributesPointer, uint decalId)
+    {
+      m_object_attributes_pointer = objectAttributesPointer;
+      m_delete_decal_pointer = true;
+      m_pDecal = UnsafeNativeMethods.Rdk_Decals_FindDecalOnObjectAttributes(m_object_attributes_pointer, decalId);
+    }
+
+    ~Decal()
+    {
+      Dispose(false);
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+    }
+
+    public void Dispose(bool isDisposing)
+    {
+      if (m_object_attributes_pointer != IntPtr.Zero)
+      {
+        UnsafeNativeMethods.ON_3dmObjectAttributes_Delete(m_object_attributes_pointer);
+        m_object_attributes_pointer = IntPtr.Zero;
+      }
+      if (!m_delete_decal_pointer || m_pDecal == IntPtr.Zero) return;
+      UnsafeNativeMethods.IRhRdkDecal_Delete(m_pDecal);
+      m_pDecal = IntPtr.Zero;
+    }
+
+    static public Decal Create(DecalCreateParams createParams)
+    {
+      var pointer = UnsafeNativeMethods.Rdk_DecalCreateParams_New();
+      if (pointer == IntPtr.Zero) return null;
+      var origin = createParams.Origin;
+      var up_vector = createParams.VectorUp;
+      var across_vector = createParams.VectorAcross;
+      UnsafeNativeMethods.Rdk_DecalCreateParams_SetFrame(pointer, ref origin, ref up_vector, ref across_vector);
+      UnsafeNativeMethods.Rdk_DecalCreateParams_SetMap(pointer, createParams.TextureInstanceId, (int)createParams.DecalMapping, (int)createParams.DecalProjection, createParams.MapToInside, createParams.Transparency);
+      UnsafeNativeMethods.Rdk_DecalCreateParams_SetCylindricalAndSpherical(pointer, createParams.Height, createParams.Radius, createParams.StartLatitude, createParams.EndLatitude, createParams.StartLongitude, createParams.EndLongitude);
+      UnsafeNativeMethods.Rdk_DecalCreateParams_SetUV(pointer, createParams.MinU, createParams.MinV, createParams.MaxU, createParams.MaxV);
+
+      var attributes_pointer = UnsafeNativeMethods.ON_3dmObjectAttributes_New(IntPtr.Zero);
+      var id = UnsafeNativeMethods.Rdk_Decals_AddDecal(pointer, attributes_pointer);
+
+      UnsafeNativeMethods.Rdk_DecalCreateParams_Delete(pointer);
+      pointer = IntPtr.Zero;
+
+      if (id < 1)
+      {
+        UnsafeNativeMethods.ON_3dmObjectAttributes_Delete(attributes_pointer);
+        return null;
+      }
+
+      var new_decal = new Decal(attributes_pointer, id);
+      return new_decal;
     }
 
     /// <summary>
@@ -83,7 +146,19 @@ namespace Rhino.Render
       get
       {
         IntPtr pConstThis = ConstPointer();
-        return (DecalMapping)UnsafeNativeMethods.Rdk_Decal_Mapping(pConstThis);
+        var mapping = UnsafeNativeMethods.Rdk_Decal_Mapping(pConstThis);
+        switch (mapping)
+        {
+          case UnsafeNativeMethods.RhRdkDecalMapping.Planar:
+            return DecalMapping.Planar;
+          case UnsafeNativeMethods.RhRdkDecalMapping.Cylindrical:
+            return DecalMapping.Cylindrical;
+          case UnsafeNativeMethods.RhRdkDecalMapping.Spherical:
+            return DecalMapping.Spherical;
+          case UnsafeNativeMethods.RhRdkDecalMapping.UV:
+            return DecalMapping.UV;
+        }
+        throw new Exception("Unknown DecalMapping type");
       }
     }
 
@@ -95,7 +170,17 @@ namespace Rhino.Render
       get
       {
         IntPtr pConstThis = ConstPointer();
-        return (DecalProjection)UnsafeNativeMethods.Rdk_Decal_Projection(pConstThis);
+        var projection = UnsafeNativeMethods.Rdk_Decal_Projection(pConstThis);
+        switch (projection)
+        {
+          case UnsafeNativeMethods.RhRdkDecalProjection.Forward:
+            return DecalProjection.Forward;
+          case UnsafeNativeMethods.RhRdkDecalProjection.Backward:
+            return DecalProjection.Backward;
+          case UnsafeNativeMethods.RhRdkDecalProjection.Both:
+            return DecalProjection.Both;
+        }
+        throw new Exception("Unknown DecalProjection type");
       }
     }
 
@@ -182,7 +267,7 @@ namespace Rhino.Render
     }
 
     /// <summary>
-    /// Gets thhe radius of the decal. Only used when mapping is cylindrical or spherical.
+    /// Gets the radius of the decal. Only used when mapping is cylindrical or spherical.
     /// </summary>
     public double Radius
     {
@@ -250,6 +335,7 @@ namespace Rhino.Render
       UnsafeNativeMethods.Rdk_Decal_UVBounds(pConstThis, ref minUOut, ref minVOut, ref maxUOut, ref maxVOut);
     }
 
+#if RDK_UNCHECKED
     /// <summary>
     /// Gets custom data associated with this decal - see Rhino.Plugins.RenderPlugIn.ShowDecalProperties.
     /// </summary>
@@ -263,6 +349,7 @@ namespace Rhino.Render
 
       return Rhino.Render.XMLSectionUtilities.ConvertToNamedValueList(pXmlSection);
     }    
+#endif
 
     /// <summary>
     /// Blend color with the decal color at a given point.
@@ -272,13 +359,18 @@ namespace Rhino.Render
     /// <param name="colInOut">The color to blend the decal color to.</param>
     /// <param name="uvOut">the UV on the texture that the color point was read from.</param>
     /// <returns>true if the given point hits the decal, else false.</returns>
-    public bool Color(Rhino.Geometry.Point3d point, Rhino.Geometry.Vector3d normal, ref Rhino.Display.Color4f colInOut, ref Rhino.Geometry.Point2d uvOut)
+    public bool TryGetColor(Rhino.Geometry.Point3d point, Rhino.Geometry.Vector3d normal, ref Rhino.Display.Color4f colInOut, ref Rhino.Geometry.Point2d uvOut)
     {
       return 1 == UnsafeNativeMethods.Rdk_Decal_Color(ConstPointer(), point, normal, ref colInOut, ref uvOut);
     }
 
     #region internals
-    IntPtr ConstPointer()
+    public IntPtr ConstPointer()
+    {
+      return m_pDecal;
+    }
+
+    public IntPtr NonConstPointer()
     {
       return m_pDecal;
     }
@@ -287,39 +379,105 @@ namespace Rhino.Render
 
 
 
-
+  // TODO
+  // Modify this to be derived from IList<Decal> instead when possible
   /// <summary>Represents all the decals of an object.</summary>
-  public class ObjectDecals : IEnumerator<Decal>
+  public class Decals : IEnumerable<Decal>
   {
-    private readonly IntPtr m_pDecalIterator;
-    internal ObjectDecals(Rhino.DocObjects.RhinoObject obj)
+    private readonly ObjectAttributes m_parent_attributes;
+
+    internal Decals(ObjectAttributes parent)
     {
-      m_pDecalIterator = UnsafeNativeMethods.Rdk_Decals_NewDecalIterator(obj.Attributes.ObjectId);
+      m_parent_attributes = parent;
     }
 
-    ~ObjectDecals()
+    /// <summary>
+    /// Add a new Decal to the decals list, use Decal.Create to create
+    /// a new decal instance to add.
+    /// </summary>
+    /// <param name="decal"></param>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public uint Add(Decal decal)
+    {
+      if (decal == null) throw new ArgumentNullException("decal");
+      var pointer = UnsafeNativeMethods.Rdk_DecalCreateParams_New();
+      var origin = decal.Origin;
+      var up_vector = decal.VectorUp;
+      var across_vector = decal.VectorAcross;
+      UnsafeNativeMethods.Rdk_DecalCreateParams_SetFrame(pointer, ref origin, ref up_vector, ref across_vector);
+      UnsafeNativeMethods.Rdk_DecalCreateParams_SetMap(pointer, decal.TextureInstanceId, (int)decal.DecalMapping, (int)decal.DecalProjection, decal.MapToInside, decal.Transparency);
+      UnsafeNativeMethods.Rdk_DecalCreateParams_SetCylindricalAndSpherical(pointer, decal.Height, decal.Radius, decal.StartLatitude, decal.EndLatitude, decal.StartLongitude, decal.EndLongitude);
+      double minu = 0.0, maxu = 0.0, minv = 0.0, maxv = 0.0;
+      decal.UVBounds(ref minu, ref minv, ref maxu, ref maxv);
+      UnsafeNativeMethods.Rdk_DecalCreateParams_SetUV(pointer, minu, minv, maxu, maxv);
+      var non_const_pointer = m_parent_attributes.NonConstPointer();
+      var success = UnsafeNativeMethods.Rdk_Decals_AddDecal(pointer, non_const_pointer);
+      UnsafeNativeMethods.Rdk_DecalCreateParams_Delete(pointer);
+      // TODO
+      // Eventually this class will be derived from IList<Decal> which requires
+      // a "int Add(T)" method so return the index of the new decal instead of
+      // the Id.
+      return success;
+    }
+
+    public void Clear()
+    {
+      var non_const_pointer = m_parent_attributes.NonConstPointer();
+      UnsafeNativeMethods.Rdk_Decals_RemoveAllDecalsFromObjectAttributes(non_const_pointer);
+    }
+
+    public bool Remove(Decal decal)
+    {
+      if (decal == null) return false;
+      var non_const_pointer = m_parent_attributes.NonConstPointer();
+      var success = UnsafeNativeMethods.Rdk_Decals_RemoveDecalFromObjectAttributes(non_const_pointer, (uint)decal.Id);
+      return success;
+    }
+
+    public IEnumerator<Decal> GetEnumerator()
+    {
+      return new DecalEnumerator(m_parent_attributes);
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+  }
+
+  /// <summary>Represents all the decals of an object.</summary>
+  internal class DecalEnumerator : IEnumerator<Decal>
+  {
+    private IntPtr m_decal_iterator;
+    internal DecalEnumerator(ObjectAttributes attributes)
+    {
+      var pointer = attributes.NonConstPointer();
+      m_decal_iterator = UnsafeNativeMethods.Rdk_Decals_NewDecalIteratorForObjectAttributes(pointer);
+    }
+
+    ~DecalEnumerator()
     {
       Dispose(false);
     }
 
     #region IEnumerator Members
 
-    Decal m_current;
-    public Decal Current { get { return m_current; } }
+    public Decal Current { get; private set; }
 
-    object System.Collections.IEnumerator.Current { get { return Current; } }
+    object IEnumerator.Current { get { return Current; } }
 
     public bool MoveNext()
     {
-      IntPtr pDecal = UnsafeNativeMethods.Rdk_Decals_Next(NonConstPointer());
+      var decal = UnsafeNativeMethods.Rdk_Decals_Next(NonConstPointer());
 
-      if (pDecal == IntPtr.Zero)
+      if (decal == IntPtr.Zero)
       {
-        m_current = null;
+        Current = null;
         return false;
       }
 
-      m_current = new Decal(pDecal, this);
+      Current = new Decal(decal, this);
       return true;
     }
 
@@ -333,7 +491,7 @@ namespace Rhino.Render
     #region internals
     private IntPtr NonConstPointer()
     {
-      return m_pDecalIterator;
+      return m_decal_iterator;
     }
     #endregion
 
@@ -346,12 +504,38 @@ namespace Rhino.Render
 
     protected void Dispose(bool isDisposiing)
     {
-      UnsafeNativeMethods.Rdk_Decals_DeleteDecalIterator(NonConstPointer());
+      if (m_decal_iterator != IntPtr.Zero)
+        UnsafeNativeMethods.Rdk_Decals_DeleteDecalIterator(m_decal_iterator);
+      m_decal_iterator = IntPtr.Zero;
     }
 
     #endregion
   }
 }
 
-#endif
+/// <summary>
+/// Used by RhinoObject.AddDecal() to create and add a decal
+/// </summary>
+public class DecalCreateParams
+{
+  public Guid TextureInstanceId { get; set; }
+  public Rhino.Render.DecalMapping DecalMapping { get; set; }
+  public Rhino.Render.DecalProjection DecalProjection { get; set; }
+  public bool MapToInside { get; set; }
+  public double Transparency { get; set; }
+  public Rhino.Geometry.Point3d Origin { get; set; }
+  public Rhino.Geometry.Vector3d VectorUp { get; set; }
+  public Rhino.Geometry.Vector3d VectorAcross { get; set; }
+  public double Height { get; set; }
+  public double Radius { get; set; }
+  public double StartLatitude { get; set; }
+  public double EndLatitude { get; set; }
+  public double StartLongitude { get; set; }
+  public double EndLongitude { get; set; }
+  public double MinU  { get; set; }
+  public double MinV { get; set; }
+  public double MaxU { get; set; }
+  public double MaxV { get; set; }
+}
 
+#endif

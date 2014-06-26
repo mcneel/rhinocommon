@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Rhino.Geometry;
 using Rhino.Render;
 using Rhino.Runtime.InteropWrappers;
@@ -1641,28 +1642,8 @@ namespace Rhino.DocObjects
       var mapping = UnsafeNativeMethods.ON_TextureMapping_GetMappingFromObject(pointer, channel, ref objectTransform);
       return (IntPtr.Zero == mapping ? null : new TextureMapping(mapping));
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="channel"></param>
-    /// <param name="tm"></param>
-    /// <returns></returns>
-    public int SetTextureMapping(int channel, TextureMapping tm)
-    {
-      return UnsafeNativeMethods.ON_TextureMapping_SetObjectMapping(ConstPointer(), channel, tm.ConstPointer());
-     }
-    
-    
-    /// <summary>
-    /// Returns true if this object has a texture mapping form any source (pluginId)
-    /// </summary>
-    /// <returns></returns>
-    public bool HasTextureMapping()
-    {
-      return UnsafeNativeMethods.ON_TextureMapping_ObjectHasMapping(ConstPointer());
-    }
-
+     
+  
 
 
     /// <summary>
@@ -1722,19 +1703,6 @@ namespace Rhino.DocObjects
       //{
       //  RenderMaterialInstanceId = value.Id;
       //}
-    }
-#endif
-#if RDK_UNCHECKED
-    /// <summary>
-    /// Gets all object decals associated with this object.
-    /// </summary>
-    public Rhino.Render.ObjectDecals Decals
-    {
-      get
-      {
-        Rhino.Render.ObjectDecals decals = new Rhino.Render.ObjectDecals(this);
-        return decals;
-      }
     }
 #endif
     /// <summary>

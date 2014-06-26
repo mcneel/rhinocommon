@@ -468,6 +468,9 @@ internal partial class UnsafeNativeMethods
 
   //Events
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern void CRdkCmnEventWatcher_SetCustomEventEventCallback(Rhino.Render.RenderContentTable.ContentCustomEventCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
+
+  [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRdkCmnEventWatcher_SetContentAddedEventCallback(Rhino.Render.RenderContent.ContentAddedCallback cb, Rhino.Runtime.HostUtils.RdkReportCallback report_cb);
 
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]

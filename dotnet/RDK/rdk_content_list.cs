@@ -146,6 +146,7 @@ namespace Rhino.Render
     internal delegate void ContentListClearingCallback(int kind, int docId);
     internal delegate void ContentListClearedCallback(int kind, int docId);
     internal delegate void ContentListLoadedCallback(int kind, int docId);
+    internal delegate void ContentCustomEventCallback(Guid eventId, IntPtr contextPtr);
 
     public class RenderContentTableEventArgs : EventArgs
     {

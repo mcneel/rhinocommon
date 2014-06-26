@@ -998,76 +998,82 @@ RH_C_FUNCTION void ONX_Model_SetNotes(ONX_Model* pModel, bool visible, bool html
   }
 }
 
-RH_C_FUNCTION int ONX_Model_TableCount(const ONX_Model* pConstModel, int which)
+enum ONXModelTable : int
 {
-  const int idxBitmapTable = 2;
-  const int idxTextureMappingTable = 3;
-  const int idxMaterialTable = 4;
-  const int idxLinetypeTable = 5;
-  const int idxLayerTable = 6;
-  const int idxLightTable = 7;
-  const int idxGroupTable = 8;
-  const int idxFontTable = 9;
-  const int idxDimStyleTable = 10;
-  const int idxHatchPatternTable = 11;
-  const int idxIDefTable = 12;
-  const int idxObjectTable = 13;
-  const int idxHistoryRecordTable = 14;
-  const int idxUserDataTable = 15;
-  const int idxViewTable = 16;
-  const int idxNamedViewTable = 17;
+  onxDumpAll = 0,
+  onxDumpSummary = 1,
+  onxBitmapTable = 2,
+  onxTextureMappingTable = 3,
+  onxMaterialTable = 4,
+  onxLinetypeTable = 5,
+  onxLayerTable = 6,
+  onxLightTable = 7,
+  onxGroupTable = 8,
+  onxFontTable = 9,
+  onxDimStyleTable = 10,
+  onxHatchPatternTable = 11,
+  onxIDefTable = 12,
+  onxObjectTable = 13,
+  onxHistoryRecordTable = 14,
+  onxUserDataTable = 15,
+  onxViewTable = 16,
+  onxNamedViewTable = 17,
+};
+
+RH_C_FUNCTION int ONX_Model_TableCount(const ONX_Model* pConstModel, enum ONXModelTable which)
+{
 
   int rc = 0;
   if( pConstModel )
   {
     switch(which)
     {
-    case idxBitmapTable:
+    case onxBitmapTable:
       rc = pConstModel->m_bitmap_table.Count();
       break;
-    case idxTextureMappingTable:
+    case onxTextureMappingTable:
       rc = pConstModel->m_mapping_table.Count();
       break;
-    case idxMaterialTable:
+    case onxMaterialTable:
       rc = pConstModel->m_material_table.Count();
       break;
-    case idxLinetypeTable:
+    case onxLinetypeTable:
       rc = pConstModel->m_linetype_table.Count();
       break;
-    case idxLayerTable:
+    case onxLayerTable:
       rc = pConstModel->m_layer_table.Count();
       break;
-    case idxLightTable:
+    case onxLightTable:
       rc = pConstModel->m_light_table.Count();
       break;
-    case idxGroupTable:
+    case onxGroupTable:
       rc = pConstModel->m_group_table.Count();
       break;
-    case idxFontTable:
+    case onxFontTable:
       rc = pConstModel->m_font_table.Count();
       break;
-    case idxDimStyleTable:
+    case onxDimStyleTable:
       rc = pConstModel->m_dimstyle_table.Count();
       break;
-    case idxHatchPatternTable:
+    case onxHatchPatternTable:
       rc = pConstModel->m_hatch_pattern_table.Count();
       break;
-    case idxIDefTable:
+    case onxIDefTable:
       rc = pConstModel->m_idef_table.Count();
       break;
-    case idxObjectTable:
+    case onxObjectTable:
       rc = pConstModel->m_object_table.Count();
       break;
-    case idxHistoryRecordTable:
+    case onxHistoryRecordTable:
       rc = pConstModel->m_history_record_table.Count();
       break;
-    case idxUserDataTable:
+    case onxUserDataTable:
       rc = pConstModel->m_userdata_table.Count();
       break;
-    case idxViewTable:
+    case onxViewTable:
       rc = pConstModel->m_settings.m_views.Count();
       break;
-    case idxNamedViewTable:
+    case onxNamedViewTable:
       rc = pConstModel->m_settings.m_named_views.Count();
       break;
     default:
@@ -1077,77 +1083,60 @@ RH_C_FUNCTION int ONX_Model_TableCount(const ONX_Model* pConstModel, int which)
   return rc;
 }
 
-RH_C_FUNCTION void ONX_Model_Dump(const ONX_Model* pConstModel, int which, CRhCmnStringHolder* pStringHolder)
+RH_C_FUNCTION void ONX_Model_Dump(const ONX_Model* pConstModel, enum ONXModelTable which, CRhCmnStringHolder* pStringHolder)
 {
-  const int idxDumpAll = 0;
-  const int idxDumpSummary = 1;
-  const int idxBitmapTable = 2;
-  const int idxTextureMappingTable = 3;
-  const int idxMaterialTable = 4;
-  const int idxLinetypeTable = 5;
-  const int idxLayerTable = 6;
-  const int idxLightTable = 7;
-  const int idxGroupTable = 8;
-  const int idxFontTable = 9;
-  const int idxDimStyleTable = 10;
-  const int idxHatchPatternTable = 11;
-  const int idxIDefTable = 12;
-  const int idxObjectTable = 13;
-  const int idxHistoryRecordTable = 14;
-  const int idxUserDataTable = 15;
-
   if( pConstModel && pStringHolder )
   {
     ON_wString s;
     ON_TextLog log(s);
     switch(which)
     {
-    case idxDumpAll:
+    case onxDumpAll:
       pConstModel->Dump(log);
       break;
-    case idxDumpSummary:
+    case onxDumpSummary:
       pConstModel->DumpSummary(log);
       break;
-    case idxBitmapTable:
+    case onxBitmapTable:
       pConstModel->DumpBitmapTable(log);
       break;
-    case idxTextureMappingTable:
+    case onxTextureMappingTable:
       pConstModel->DumpTextureMappingTable(log);
       break;
-    case idxMaterialTable:
+    case onxMaterialTable:
       pConstModel->DumpMaterialTable(log);
       break;
-    case idxLinetypeTable:
+    case onxLinetypeTable:
       pConstModel->DumpLinetypeTable(log);
       break;
-    case idxLayerTable:
+    case onxLayerTable:
       pConstModel->DumpLayerTable(log);
       break;
-    case idxLightTable:
+    case onxLightTable:
       pConstModel->DumpLightTable(log);
       break;
-    case idxGroupTable:
+    case onxGroupTable:
       pConstModel->DumpGroupTable(log);
       break;
-    case idxFontTable:
+    case onxFontTable:
       pConstModel->DumpFontTable(log);
       break;
-    case idxDimStyleTable:
+    case onxDimStyleTable:
       pConstModel->DumpDimStyleTable(log);
       break;
-    case idxHatchPatternTable:
+    case onxHatchPatternTable:
       pConstModel->DumpHatchPatternTable(log);
       break;
-    case idxIDefTable:
+    case onxIDefTable:
       pConstModel->DumpIDefTable(log);
       break;
-    case idxObjectTable:
+    case onxObjectTable:
       pConstModel->DumpObjectTable(log);
       break;
-    case idxHistoryRecordTable:
+    case onxHistoryRecordTable:
       pConstModel->DumpHistoryRecordTable(log);
       break;
-    case idxUserDataTable:
+    case onxUserDataTable:
       pConstModel->DumpUserDataTable(log);
       break;
     default:
@@ -1977,31 +1966,14 @@ RH_C_FUNCTION ON_UUID ONX_Model_MaterialTable_Id(const ONX_Model* pConstModel, i
   return ::ON_nil_uuid;
 }
 
-RH_C_FUNCTION void ONX_Model_TableClear(ONX_Model* pModel, int which_table)
+RH_C_FUNCTION void ONX_Model_TableClear(ONX_Model* pModel, enum ONXModelTable which_table)
 {
-  const int idxBitmapTable = 2;
-  const int idxTextureMappingTable = 3;
-  const int idxMaterialTable = 4;
-  const int idxLinetypeTable = 5;
-  const int idxLayerTable = 6;
-  const int idxLightTable = 7;
-  const int idxGroupTable = 8;
-  const int idxFontTable = 9;
-  const int idxDimStyleTable = 10;
-  const int idxHatchPatternTable = 11;
-  const int idxIDefTable = 12;
-  const int idxObjectTable = 13;
-  const int idxHistoryRecordTable = 14;
-  const int idxUserDataTable = 15;
-  //const int idxViewTable = 16;
-  //const int idxNamedViewTable = 17;
-
   if( pModel )
   {
     pModel->m_layer_table.Empty();
     switch(which_table)
     {
-    case idxBitmapTable:
+    case onxBitmapTable:
       {
         for( int i=0; i<pModel->m_bitmap_table.Count(); i++ )
         {
@@ -2013,40 +1985,40 @@ RH_C_FUNCTION void ONX_Model_TableClear(ONX_Model* pModel, int which_table)
         pModel->m_bitmap_table.Empty();
       }
       break;
-    case idxTextureMappingTable:
+    case onxTextureMappingTable:
       pModel->m_mapping_table.Empty();
       break;
-    case idxMaterialTable:
+    case onxMaterialTable:
       pModel->m_material_table.Empty();
       break;
-    case idxLinetypeTable:
+    case onxLinetypeTable:
       pModel->m_linetype_table.Empty();
       break;
-    case idxLayerTable:
+    case onxLayerTable:
       pModel->m_layer_table.Empty();
       break;
-    case idxLightTable:
+    case onxLightTable:
       pModel->m_light_table.Empty();
       break;
-    case idxGroupTable:
+    case onxGroupTable:
       pModel->m_group_table.Empty();
       break;
-    case idxFontTable:
+    case onxFontTable:
       pModel->m_font_table.Empty();
       break;
-    case idxDimStyleTable:
+    case onxDimStyleTable:
       pModel->m_dimstyle_table.Empty();
       break;
-    case idxHatchPatternTable:
+    case onxHatchPatternTable:
       pModel->m_hatch_pattern_table.Empty();
       break;
-    case idxIDefTable:
+    case onxIDefTable:
       pModel->m_idef_table.Empty();
       break;
-    case idxObjectTable:
+    case onxObjectTable:
       pModel->m_object_table.Empty();
       break;
-    case idxHistoryRecordTable:
+    case onxHistoryRecordTable:
       {
         for( int i=0; i<pModel->m_history_record_table.Count(); i++ )
         {
@@ -2058,7 +2030,7 @@ RH_C_FUNCTION void ONX_Model_TableClear(ONX_Model* pModel, int which_table)
         pModel->m_history_record_table.Empty();
       }
       break;
-    case idxUserDataTable:
+    case onxUserDataTable:
       pModel->m_userdata_table.Empty();
       break;
     }
@@ -3019,10 +2991,23 @@ bool ONX_Model_WithFilter::FilteredRead(ON_BinaryArchive& archive, unsigned int 
       }
       if ( pObject ) 
       {
-        ONX_Model_Object& mo = m_object_table.AppendNew();
-        mo.m_object = pObject;
-        mo.m_bDeleteObject = true;
-        mo.m_attributes = attributes;
+        // 20 June 2014 S. Baer
+        // The filtered Read3dmObject function does not appear to actually do filtering.
+        // While we wait for that to get fixed in OpenNURBS, just check the object type
+        // here and make sure it passes the filter test. This is being done here because
+        // Dan needs access to this funtionality with the currently available OpenNURBS
+        if( 0==object_filter || (pObject->ObjectType() & object_filter) != 0)
+        {
+          ONX_Model_Object& mo = m_object_table.AppendNew();
+          mo.m_object = pObject;
+          mo.m_bDeleteObject = true;
+          mo.m_attributes = attributes;
+        }
+        else
+        {
+          delete pObject;
+          pObject = 0;
+        }
       }
       else
       {

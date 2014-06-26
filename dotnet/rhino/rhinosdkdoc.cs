@@ -2126,7 +2126,11 @@ namespace Rhino
       /// <summary>
       /// The table has been cleared
       /// </summary>
-      Cleared
+      Cleared,
+      /// <summary>
+      /// Object or layer material assignment changed
+      /// </summary>
+      MaterialAssignmentChanged,
     }
     /// <summary>
     /// Passed to the <see cref="RenderMaterialsTableEvent"/>, <see cref="RenderEnvironmentTableEvent"/> and the
@@ -2169,6 +2173,13 @@ namespace Rhino
           break;
       }
     }
+    private static RenderContentTable.ContentCustomEventCallback g_on_render_content_custom_event_callback;
+    private static void OnRenderContentdCustomEvent(Guid eventId, IntPtr contextPtr)
+    {
+      if (eventId == UnsafeNativeMethods.CRdkCmnEventWatcher_ObjectMaterialAssignmentChangedId() || 
+          eventId == UnsafeNativeMethods.CRdkCmnEventWatcher_LayerMaterialAssignmentChangedId())
+        OnRenderMaterialTabledCustomEvent(eventId, contextPtr);
+    }
 
     private static RenderContentTable.ContentListClearingCallback g_on_render_content_clearing_event_callback;
     private static void OnRenderContentdClearingEvent(int kind, int docId)
@@ -2208,6 +2219,34 @@ namespace Rhino
     #endregion RenderContentTable events
 
     #region RenderMaterialsTable events
+    private static void OnRenderMaterialTabledCustomEvent(Guid eventId, IntPtr contextPtr)
+    {
+      if (g_render_materials_table_event == null)
+        return;
+      try
+      {
+        var document_id = 0;
+        var layer_id = Guid.Empty;
+        var object_id = Guid.Empty;
+        var old_material_id = Guid.Empty;
+        var new_material_id = Guid.Empty;
+        UnsafeNativeMethods.CRdkCmnEventWatcher_GetMaterialAssignmentChangedArgs(
+          eventId,
+          contextPtr,
+          ref document_id,
+          ref object_id,
+          ref layer_id,
+          ref old_material_id,
+          ref new_material_id);
+        var document = FromId(document_id) ?? ActiveDoc;
+        var args = new RenderMaterialAssignmentChangedEventArgs(document, RenderContentTableEventType.MaterialAssignmentChanged, layer_id, object_id, old_material_id, new_material_id);
+        g_render_materials_table_event(null == document ? null : document.RenderMaterials, args);
+      }
+      catch (Exception ex)
+      {
+        HostUtils.ExceptionReport(ex);
+      }
+    }
     private static void OnRenderMaterialTabledEvent(RhinoDoc document, RenderContentTableEventType eventType)
     {
       if (g_render_materials_table_event == null)
@@ -2219,11 +2258,41 @@ namespace Rhino
       }
       catch (Exception ex)
       {
-        Runtime.HostUtils.ExceptionReport(ex);
+        HostUtils.ExceptionReport(ex);
       }
     }
 
     private static event EventHandler<RenderContentTableEventArgs> g_render_materials_table_event;
+
+    public class RenderMaterialAssignmentChangedEventArgs : RenderContentTableEventArgs
+    {
+      internal RenderMaterialAssignmentChangedEventArgs(
+        RhinoDoc document,
+        RenderContentTableEventType eventType,
+        Guid layerId,
+        Guid objectId,
+        Guid oldMaterialContentId,
+        Guid newMaterialContentId)
+        : base(document, eventType)
+      {
+        m_layer_id = layerId;
+        m_object_id = objectId;
+        m_old_material_content_id = oldMaterialContentId;
+        m_new_material_content_id = newMaterialContentId;
+      }
+      public bool IsLayer{get { return LayerId != Guid.Empty; } }
+      public bool IsObject { get { return ObjectId != Guid.Empty; } }
+      public Guid LayerId { get { return m_layer_id; } }
+      public Guid ObjectId { get { return m_object_id; } }
+      public Guid OldRenderMaterial { get { return m_old_material_content_id; } }
+      public Guid NewRenderMaterial { get { return m_new_material_content_id; } }
+
+      private readonly Guid m_layer_id;
+      private readonly Guid m_object_id;
+      private readonly Guid m_old_material_content_id;
+      private readonly Guid m_new_material_content_id;
+    }
+
     /// Called when the <see cref="RenderMaterialTable"/> has been loaded, is
     /// about to be cleared or has been cleared.  See <see cref="RenderContentTableEventType"/> for more
     /// information.
@@ -2233,20 +2302,25 @@ namespace Rhino
       {
         lock (m_event_lock)
         {
+          if (g_on_render_content_custom_event_callback == null)
+          {
+            g_on_render_content_custom_event_callback = OnRenderContentdCustomEvent;
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetCustomEventEventCallback(g_on_render_content_custom_event_callback, HostUtils.m_rdk_ew_report);
+          }
           if (g_on_render_content_loaded_event_callback == null)
           {
             g_on_render_content_loaded_event_callback = OnRenderContentdLoadedEvent;
-            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListLoadedEventCallback(g_on_render_content_loaded_event_callback, Runtime.HostUtils.m_rdk_ew_report);
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListLoadedEventCallback(g_on_render_content_loaded_event_callback, HostUtils.m_rdk_ew_report);
           }
           if (g_on_render_content_clearing_event_callback == null)
           {
             g_on_render_content_clearing_event_callback = OnRenderContentdClearingEvent;
-            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearingEventCallback(g_on_render_content_clearing_event_callback, Runtime.HostUtils.m_rdk_ew_report);
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearingEventCallback(g_on_render_content_clearing_event_callback, HostUtils.m_rdk_ew_report);
           }
           if (g_on_render_content_cleared_event_callback == null)
           {
             g_on_render_content_cleared_event_callback = OnRenderContentdClearedEvent;
-            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearedEventCallback(g_on_render_content_cleared_event_callback, Runtime.HostUtils.m_rdk_ew_report);
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearedEventCallback(g_on_render_content_cleared_event_callback, HostUtils.m_rdk_ew_report);
           }
           g_render_materials_table_event -= value;
           g_render_materials_table_event += value;
@@ -2257,14 +2331,16 @@ namespace Rhino
         lock (m_event_lock)
         {
           g_render_materials_table_event -= value;
-          if (g_render_materials_table_event == null && g_render_environment_table_event == null && g_render_texture_table_event == null)
+          if (g_render_materials_table_event == null && g_render_environment_table_event == null && g_render_texture_table_event == null && g_on_render_content_custom_event_callback == null)
           {
             UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListLoadedEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
             UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearingEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
             UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearedEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetCustomEventEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
             g_on_render_content_loaded_event_callback = null;
             g_on_render_content_clearing_event_callback = null;
             g_on_render_content_cleared_event_callback = null;
+            g_on_render_content_custom_event_callback = null;
           }
         }
       }
@@ -2298,6 +2374,11 @@ namespace Rhino
       {
         lock (m_event_lock)
         {
+          if (g_on_render_content_custom_event_callback == null)
+          {
+            g_on_render_content_custom_event_callback = OnRenderContentdCustomEvent;
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetCustomEventEventCallback(g_on_render_content_custom_event_callback, HostUtils.m_rdk_ew_report);
+          }
           if (g_on_render_content_loaded_event_callback == null)
           {
             g_on_render_content_loaded_event_callback = OnRenderContentdLoadedEvent;
@@ -2322,7 +2403,7 @@ namespace Rhino
         lock (m_event_lock)
         {
           g_render_environment_table_event -= value;
-          if (g_render_materials_table_event == null && g_render_environment_table_event == null && g_render_texture_table_event == null)
+          if (g_render_materials_table_event == null && g_render_environment_table_event == null && g_render_texture_table_event == null && g_on_render_content_custom_event_callback == null)
           {
             UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListLoadedEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
             UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearingEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
@@ -2330,6 +2411,7 @@ namespace Rhino
             g_on_render_content_loaded_event_callback = null;
             g_on_render_content_clearing_event_callback = null;
             g_on_render_content_cleared_event_callback = null;
+            g_on_render_content_custom_event_callback = null;
           }
         }
       }
@@ -2366,6 +2448,11 @@ namespace Rhino
       {
         lock (m_event_lock)
         {
+          if (g_on_render_content_custom_event_callback == null)
+          {
+            g_on_render_content_custom_event_callback = OnRenderContentdCustomEvent;
+            UnsafeNativeMethods.CRdkCmnEventWatcher_SetCustomEventEventCallback(g_on_render_content_custom_event_callback, HostUtils.m_rdk_ew_report);
+          }
           if (g_on_render_content_loaded_event_callback == null)
           {
             g_on_render_content_loaded_event_callback = OnRenderContentdLoadedEvent;
@@ -2390,7 +2477,7 @@ namespace Rhino
         lock (m_event_lock)
         {
           g_render_texture_table_event -= value;
-          if (g_render_materials_table_event == null && g_render_environment_table_event == null && g_render_texture_table_event == null)
+          if (g_render_materials_table_event == null && g_render_environment_table_event == null && g_render_texture_table_event == null && g_on_render_content_custom_event_callback == null)
           {
             UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListLoadedEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
             UnsafeNativeMethods.CRdkCmnEventWatcher_SetContentListClearingEventCallback(null, Runtime.HostUtils.m_rdk_ew_report);
@@ -2398,6 +2485,7 @@ namespace Rhino
             g_on_render_content_loaded_event_callback = null;
             g_on_render_content_clearing_event_callback = null;
             g_on_render_content_cleared_event_callback = null;
+            g_on_render_content_custom_event_callback = null;
           }
         }
       }
@@ -5293,15 +5381,25 @@ namespace Rhino.DocObjects.Tables
 
       IntPtr ptr_const_objref = objref.ConstPointer();
       IntPtr ptr_rhino_object = newObject.NonConstPointer();
+
+      // 3 June 2014 (RH-27446)
+      // Add the object to our tracking list before calling the native replace object
+      // code. The native replace object code will attempt to wire up a new instance
+      // of the custom object if it isn't already in our tracking list
+      uint serial_number = UnsafeNativeMethods.CRhinoObject_RuntimeSN(ptr_rhino_object);
+      if (serial_number > 0)
+        newObject.m_rhinoobject_serial_number = serial_number;
+      newObject.m_pRhinoObject = IntPtr.Zero;
+      GC.SuppressFinalize(newObject);
+      AddCustomObjectForTracking(serial_number, newObject, ptr_rhino_object);
+
       bool rc = UnsafeNativeMethods.CRhinoDoc_ReplaceObject1(m_doc.m_docId, ptr_const_objref, ptr_rhino_object);
-      if (rc)
+      if (!rc)
       {
-        uint serial_number = UnsafeNativeMethods.CRhinoObject_RuntimeSN(ptr_rhino_object);
-        if (serial_number > 0)
-          newObject.m_rhinoobject_serial_number = serial_number;
-        newObject.m_pRhinoObject = IntPtr.Zero;
-        GC.SuppressFinalize(newObject);
-        AddCustomObjectForTracking(serial_number, newObject, ptr_rhino_object);
+        // let the object get garbage collected
+        m_custom_objects.Remove(serial_number);
+        newObject.m_pRhinoObject = ptr_rhino_object;
+        GC.ReRegisterForFinalize(newObject);
       }
       return rc;
     }

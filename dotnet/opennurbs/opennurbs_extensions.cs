@@ -104,6 +104,7 @@ namespace Rhino.FileIO
     File3dmPlugInDataTable m_userdata_table;
     File3dmViewTable m_view_table;
     File3dmViewTable m_named_view_table;
+    File3dmHistoryRecordTable m_history_record_table;
 
     internal IntPtr ConstPointer()
     {
@@ -322,13 +323,13 @@ namespace Rhino.FileIO
       if (!File.Exists(path))
         throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
       System.Drawing.Bitmap rc = null;
-      IntPtr pDib = UnsafeNativeMethods.CRhinoDib_New();
-      if (UnsafeNativeMethods.ONX_Model_ReadPreviewImage(path, pDib))
+      IntPtr ptr_dib = UnsafeNativeMethods.CRhinoDib_New();
+      if (UnsafeNativeMethods.ONX_Model_ReadPreviewImage(path, ptr_dib))
       {
-        IntPtr hBitmap = UnsafeNativeMethods.CRhinoDib_Bitmap(pDib);
-        rc = System.Drawing.Image.FromHbitmap(hBitmap);
+        IntPtr handle_bitmap = UnsafeNativeMethods.CRhinoDib_Bitmap(ptr_dib);
+        rc = System.Drawing.Image.FromHbitmap(handle_bitmap);
       }
-      UnsafeNativeMethods.CRhinoDib_Delete(pDib);
+      UnsafeNativeMethods.CRhinoDib_Delete(ptr_dib);
       return rc;
     }
 #endif
@@ -650,13 +651,13 @@ namespace Rhino.FileIO
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.ONX_Model_GetRevision(pConstThis);
+        IntPtr const_ptr_this = ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_GetRevision(const_ptr_this);
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ONX_Model_SetRevision(pThis, value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ONX_Model_SetRevision(ptr_this, value);
       }
     }
 
@@ -687,7 +688,7 @@ namespace Rhino.FileIO
     /// <summary>
     /// Materials in this file.
     /// </summary>
-    public IList<Rhino.DocObjects.Material> Materials
+    public IList<DocObjects.Material> Materials
     {
       get { return m_material_table ?? (m_material_table = new File3dmMaterialTable(this)); }
     }
@@ -759,32 +760,22 @@ namespace Rhino.FileIO
       get { return m_userdata_table ?? (m_userdata_table = new File3dmPlugInDataTable(this)); }
     }
 
+    /// <summary>
+    /// History records stored in this file
+    /// </summary>
+    public File3dmHistoryRecordTable HistoryRecords
+    {
+      get { return m_history_record_table ?? (m_history_record_table = new File3dmHistoryRecordTable(this)); }
+    }
+
     #region diagnostic dumps
-    const int idxDumpAll = 0;
-    const int idxDumpSummary = 1;
-    //const int idxBitmapTable = 2;
-    //const int idxTextureMappingTable = 3;
-    internal const int idxMaterialTable = 4;
-    internal const int idxLinetypeTable = 5;
-    internal const int idxLayerTable = 6;
-    //const int idxLightTable = 7;
-    //const int idxGroupTable = 8;
-    //const int idxFontTable = 9;
-    internal const int idxDimStyleTable = 10;
-    internal const int idxHatchPatternTable = 11;
-    internal const int idxIDefTable = 12;
-    internal const int idxObjectTable = 13;
-    //const int idxHistoryRecordTable = 14;
-    internal const int idxUserDataTable = 15;
-    internal const int idxViewTable = 16;
-    internal const int idxNamedViewTable = 17;
-    internal string Dump(int which)
+    internal string Dump(UnsafeNativeMethods.ONXModelTable which)
     {
       using (var sh = new StringHolder())
       {
-        IntPtr pConstThis = ConstPointer();
-        IntPtr pString = sh.NonConstPointer();
-        UnsafeNativeMethods.ONX_Model_Dump(pConstThis, which, pString);
+        IntPtr const_ptr_this = ConstPointer();
+        IntPtr ptr_stringholder = sh.NonConstPointer();
+        UnsafeNativeMethods.ONX_Model_Dump(const_ptr_this, which, ptr_stringholder);
         return sh.ToString();
       }
     }
@@ -794,23 +785,23 @@ namespace Rhino.FileIO
     /// <returns>The text dump.</returns>
     public string Dump()
     {
-      return Dump(idxDumpAll);
+      return Dump(UnsafeNativeMethods.ONXModelTable.DumpAll);
     }
 
     /// <summary>Prepares a text dump of model properties and settings.</summary>
     /// <returns>The text dump.</returns>
     public string DumpSummary()
     {
-      return Dump(idxDumpSummary);
+      return Dump(UnsafeNativeMethods.ONXModelTable.DumpSummary);
     }
 
     /// <summary>Prepares a text dump of the entire model.</summary>
     /// <param name="log"></param>
     public void DumpToTextLog(TextLog log)
     {
-      IntPtr pConstThis = ConstPointer();
-      IntPtr pTextLog = log.NonConstPointer();
-      UnsafeNativeMethods.ONX_Model_Dump2(pConstThis, pTextLog);
+      IntPtr const_ptr_this = ConstPointer();
+      IntPtr ptr_textlog = log.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_Dump2(const_ptr_this, ptr_textlog);
     }
     /*
     /// <summary>text dump of bitmap table.</summary>
@@ -914,9 +905,9 @@ namespace Rhino.FileIO
     {
       m_ptr = UnsafeNativeMethods.ONX_Model_New();
     }
-    private File3dm(IntPtr pONX_Model)
+    private File3dm(IntPtr pOnxModel)
     {
-      m_ptr = pONX_Model;
+      m_ptr = pOnxModel;
     }
 
     /// <summary>
@@ -994,8 +985,8 @@ namespace Rhino.FileIO
   {
     readonly int m_index;
     readonly File3dm m_parent;
-    Rhino.Geometry.GeometryBase m_geometry;
-    Rhino.DocObjects.ObjectAttributes m_attributes;
+    GeometryBase m_geometry;
+    DocObjects.ObjectAttributes m_attributes;
 
     internal File3dmObject(int index, File3dm parent)
     {
@@ -1005,20 +996,20 @@ namespace Rhino.FileIO
 
     internal IntPtr GetGeometryConstPointer()
     {
-      IntPtr pModel = m_parent.ConstPointer();
-      return UnsafeNativeMethods.ONX_Model_ModelObjectGeometry(pModel, m_index);
+      IntPtr ptr_model = m_parent.ConstPointer();
+      return UnsafeNativeMethods.ONX_Model_ModelObjectGeometry(ptr_model, m_index);
     }
 
     internal IntPtr GetAttributesConstPointer()
     {
-      IntPtr pModel = m_parent.ConstPointer();
-      return UnsafeNativeMethods.ONX_Model_ModelObjectAttributes(pModel, m_index);
+      IntPtr ptr_model = m_parent.ConstPointer();
+      return UnsafeNativeMethods.ONX_Model_ModelObjectAttributes(ptr_model, m_index);
     }
 
     /// <summary>
     /// Gets the geometry that is linked with this document object.
     /// </summary>
-    public Rhino.Geometry.GeometryBase Geometry
+    public GeometryBase Geometry
     {
       get
       {
@@ -1032,7 +1023,7 @@ namespace Rhino.FileIO
     /// <summary>
     /// Gets the attributes that are linked with this document object.
     /// </summary>
-    public Rhino.DocObjects.ObjectAttributes Attributes
+    public DocObjects.ObjectAttributes Attributes
     {
       get
       {
@@ -1072,7 +1063,7 @@ namespace Rhino.FileIO
     /// <returns>A string containing the dump.</returns>
     public string Dump()
     {
-      return m_parent.Dump(File3dm.idxObjectTable);
+      return m_parent.Dump(UnsafeNativeMethods.ONXModelTable.ObjectTable);
     }
 
     #region properties
@@ -1084,7 +1075,7 @@ namespace Rhino.FileIO
       get
       {
         IntPtr pConstParent = m_parent.ConstPointer();
-        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxObjectTable);
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, UnsafeNativeMethods.ONXModelTable.ObjectTable);
       }
     }
 
@@ -2020,7 +2011,7 @@ namespace Rhino.FileIO
     /// <returns>A string containing the dump.</returns>
     public string Dump()
     {
-      return m_parent.Dump(File3dm.idxLayerTable);
+      return m_parent.Dump(UnsafeNativeMethods.ONXModelTable.LayerTable);
     }
 
     #region properties
@@ -2032,7 +2023,7 @@ namespace Rhino.FileIO
       get
       {
         IntPtr pConstParent = m_parent.ConstPointer();
-        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxUserDataTable);
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, UnsafeNativeMethods.ONXModelTable.UserDataTable);
       }
     }
 
@@ -2085,6 +2076,49 @@ namespace Rhino.FileIO
     }
     #endregion
 
+  }
+
+  /// <summary>
+  /// Table of custom data provided by plug-ins
+  /// </summary>
+  public class File3dmHistoryRecordTable
+  {
+    readonly File3dm m_parent;
+    internal File3dmHistoryRecordTable(File3dm parent)
+    {
+      m_parent = parent;
+    }
+
+    /// <summary>Prepares a text dump of table.</summary>
+    /// <returns>A string containing the dump.</returns>
+    public string Dump()
+    {
+      return m_parent.Dump(UnsafeNativeMethods.ONXModelTable.HistoryRecordTable);
+    }
+
+    #region properties
+    /// <summary>
+    /// Gets the number of history records in this table.
+    /// </summary>
+    public int Count
+    {
+      get
+      {
+        IntPtr const_ptr_parent = m_parent.ConstPointer();
+        return UnsafeNativeMethods.ONX_Model_TableCount(const_ptr_parent, UnsafeNativeMethods.ONXModelTable.HistoryRecordTable);
+      }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Remove all entries from this table
+    /// </summary>
+    public void Clear()
+    {
+      IntPtr ptr_parent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_TableClear(ptr_parent, UnsafeNativeMethods.ONXModelTable.HistoryRecordTable);
+    }
   }
 
   class File3dmMaterialTable : IList<DocObjects.Material>, Collections.IRhinoTable<DocObjects.Material>
@@ -2159,7 +2193,7 @@ namespace Rhino.FileIO
     public void Clear()
     {
       IntPtr pParent = m_parent.NonConstPointer();
-      UnsafeNativeMethods.ONX_Model_TableClear(pParent, File3dm.idxMaterialTable);
+      UnsafeNativeMethods.ONX_Model_TableClear(pParent, UnsafeNativeMethods.ONXModelTable.MaterialTable);
     }
 
     public bool Contains(DocObjects.Material item)
@@ -2184,7 +2218,7 @@ namespace Rhino.FileIO
       get
       {
         IntPtr pConstParent = m_parent.ConstPointer();
-        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxMaterialTable);
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, UnsafeNativeMethods.ONXModelTable.MaterialTable);
       }
     }
 
@@ -2281,7 +2315,7 @@ namespace Rhino.FileIO
     public void Clear()
     {
       IntPtr pParent = m_parent.NonConstPointer();
-      UnsafeNativeMethods.ONX_Model_TableClear(pParent, File3dm.idxLinetypeTable);
+      UnsafeNativeMethods.ONX_Model_TableClear(pParent, UnsafeNativeMethods.ONXModelTable.LinetypeTable);
     }
 
     public bool Contains(DocObjects.Linetype item)
@@ -2306,7 +2340,7 @@ namespace Rhino.FileIO
       get
       {
         IntPtr pConstParent = m_parent.ConstPointer();
-        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxLinetypeTable);
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, UnsafeNativeMethods.ONXModelTable.LinetypeTable);
       }
     }
 
@@ -2403,7 +2437,7 @@ namespace Rhino.FileIO
     public void Clear()
     {
       IntPtr pParent = m_parent.NonConstPointer();
-      UnsafeNativeMethods.ONX_Model_TableClear(pParent, File3dm.idxLayerTable);
+      UnsafeNativeMethods.ONX_Model_TableClear(pParent, UnsafeNativeMethods.ONXModelTable.LayerTable);
     }
 
     public bool Contains(DocObjects.Layer item)
@@ -2428,7 +2462,7 @@ namespace Rhino.FileIO
       get
       {
         IntPtr pConstParent = m_parent.ConstPointer();
-        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxLayerTable);
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, UnsafeNativeMethods.ONXModelTable.LayerTable);
       }
     }
 
@@ -2525,7 +2559,7 @@ namespace Rhino.FileIO
     public void Clear()
     {
       IntPtr pParent = m_parent.NonConstPointer();
-      UnsafeNativeMethods.ONX_Model_TableClear(pParent, File3dm.idxDimStyleTable);
+      UnsafeNativeMethods.ONX_Model_TableClear(pParent, UnsafeNativeMethods.ONXModelTable.DimStyleTable);
     }
 
     public bool Contains(DocObjects.DimensionStyle item)
@@ -2550,7 +2584,7 @@ namespace Rhino.FileIO
       get
       {
         IntPtr pConstParent = m_parent.ConstPointer();
-        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxDimStyleTable);
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, UnsafeNativeMethods.ONXModelTable.DimStyleTable);
       }
     }
 
@@ -2647,7 +2681,7 @@ namespace Rhino.FileIO
     public void Clear()
     {
       IntPtr pParent = m_parent.NonConstPointer();
-      UnsafeNativeMethods.ONX_Model_TableClear(pParent, File3dm.idxHatchPatternTable);
+      UnsafeNativeMethods.ONX_Model_TableClear(pParent, UnsafeNativeMethods.ONXModelTable.HatchPatternTable);
     }
 
     public bool Contains(DocObjects.HatchPattern item)
@@ -2672,7 +2706,7 @@ namespace Rhino.FileIO
       get
       {
         IntPtr pConstParent = m_parent.ConstPointer();
-        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxHatchPatternTable);
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, UnsafeNativeMethods.ONXModelTable.HatchPatternTable);
       }
     }
 
@@ -2712,7 +2746,7 @@ namespace Rhino.FileIO
     /// <returns>A string containing the dump.</returns>
     public string Dump()
     {
-      return m_parent.Dump(File3dm.idxIDefTable);
+      return m_parent.Dump(UnsafeNativeMethods.ONXModelTable.IDefTable);
     }
 
     public int Find(string name)
@@ -2780,7 +2814,7 @@ namespace Rhino.FileIO
     public void Clear()
     {
       IntPtr pParent = m_parent.NonConstPointer();
-      UnsafeNativeMethods.ONX_Model_TableClear(pParent, File3dm.idxIDefTable);
+      UnsafeNativeMethods.ONX_Model_TableClear(pParent, UnsafeNativeMethods.ONXModelTable.IDefTable);
     }
 
     public bool Contains(Rhino.Geometry.InstanceDefinitionGeometry item)
@@ -2805,7 +2839,7 @@ namespace Rhino.FileIO
       get
       {
         IntPtr pConstParent = m_parent.ConstPointer();
-        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, File3dm.idxIDefTable);
+        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, UnsafeNativeMethods.ONXModelTable.IDefTable);
       }
     }
 
@@ -2913,8 +2947,8 @@ namespace Rhino.FileIO
 
     public void Clear()
     {
-      IntPtr pParent = m_parent.NonConstPointer();
-      UnsafeNativeMethods.ONX_Model_ViewTable_Clear(pParent, m_named_views);
+      IntPtr ptr_parent = m_parent.NonConstPointer();
+      UnsafeNativeMethods.ONX_Model_ViewTable_Clear(ptr_parent, m_named_views);
     }
 
     public bool Contains(DocObjects.ViewInfo item)
@@ -2938,9 +2972,9 @@ namespace Rhino.FileIO
     {
       get
       {
-        IntPtr pConstParent = m_parent.ConstPointer();
-        int which = m_named_views ? File3dm.idxNamedViewTable : File3dm.idxViewTable;
-        return UnsafeNativeMethods.ONX_Model_TableCount(pConstParent, which);
+        IntPtr const_ptr_parent = m_parent.ConstPointer();
+        var which = m_named_views ? UnsafeNativeMethods.ONXModelTable.NamedViewTable : UnsafeNativeMethods.ONXModelTable.ViewTable;
+        return UnsafeNativeMethods.ONX_Model_TableCount(const_ptr_parent, which);
       }
     }
 
@@ -2959,12 +2993,12 @@ namespace Rhino.FileIO
 
     public IEnumerator<DocObjects.ViewInfo> GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<File3dmViewTable, Rhino.DocObjects.ViewInfo>(this);
+      return new Collections.TableEnumerator<File3dmViewTable, DocObjects.ViewInfo>(this);
     }
 
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return new Rhino.Collections.TableEnumerator<File3dmViewTable, Rhino.DocObjects.ViewInfo>(this);
+      return new Collections.TableEnumerator<File3dmViewTable, DocObjects.ViewInfo>(this);
     }
   }
 }

@@ -1208,9 +1208,8 @@ internal partial class UnsafeNativeMethods
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   internal static extern void ON_BinaryFile_Close(IntPtr pBinaryFile);
 
-  //ONX_Model* ONX_Model_ReadFile2(const RHMONO_STRING* path, ReadFileTableTypeFilter tableFilter, ObjectTypeFilter objectTypeFilter, CRhCmnStringHolder* pStringHolder)
-  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
-  internal static extern IntPtr ONX_Model_ReadFile2([MarshalAs(UnmanagedType.LPWStr)]string path, ReadFileTableTypeFilter tableFilter, ObjectTypeFilter objectTypeFilter, IntPtr pStringHolder);
+  //ONX_Model* ONX_Model_ReadFile2(const RHMONO_STRING* path, ReadFileTableTypeFilter tableFilter, ObjectTypeFilter objectTypeFilter, CRhCmnStringHolder* pStringHolder, READFILEOBJECTCALLBACKPROC callback)
+  // SKIPPING - Contains a function pointer which needs to be written by hand
 
   internal enum ReadFileTableTypeFilter : int
   {

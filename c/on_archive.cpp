@@ -2322,14 +2322,15 @@ RH_C_FUNCTION void ON_BinaryFile_Close(CBinaryFileHelper* pBinaryFile)
 
 
 
+typedef int (CALLBACK* READFILEOBJECTCALLBACKPROC)(ON_Geometry* pGeometry, ON_3dmObjectAttributes* pAttributes);
 
 
 class ONX_Model_WithFilter : public ONX_Model
 {
 public:
-  bool FilteredRead( ON_BinaryArchive& archive, unsigned int table_filter, unsigned int model_object_type_filter, ON_TextLog* error_log );
+  bool FilteredRead( ON_BinaryArchive& archive, unsigned int table_filter, unsigned int model_object_type_filter, ON_TextLog* error_log, READFILEOBJECTCALLBACKPROC callback );
 
-  bool FilteredRead( const wchar_t* filename, unsigned int table_filter, unsigned int model_object_type_filter, ON_TextLog* error_log );
+  bool FilteredRead( const wchar_t* filename, unsigned int table_filter, unsigned int model_object_type_filter, ON_TextLog* error_log, READFILEOBJECTCALLBACKPROC callback );
 };
 
 static 
@@ -2359,7 +2360,7 @@ bool CheckForCRCErrors(
 }
 
 
-bool ONX_Model_WithFilter::FilteredRead(ON_BinaryArchive& archive, unsigned int table_filter, unsigned int model_object_type_filter, ON_TextLog* error_log )
+bool ONX_Model_WithFilter::FilteredRead(ON_BinaryArchive& archive, unsigned int table_filter, unsigned int model_object_type_filter, ON_TextLog* error_log, READFILEOBJECTCALLBACKPROC callback )
 {
   const int max_error_count = 2000;
   int error_count = 0;
@@ -2991,6 +2992,7 @@ bool ONX_Model_WithFilter::FilteredRead(ON_BinaryArchive& archive, unsigned int 
       }
       if ( pObject ) 
       {
+        bool delete_object = false;
         // 20 June 2014 S. Baer
         // The filtered Read3dmObject function does not appear to actually do filtering.
         // While we wait for that to get fixed in OpenNURBS, just check the object type
@@ -2998,12 +3000,30 @@ bool ONX_Model_WithFilter::FilteredRead(ON_BinaryArchive& archive, unsigned int 
         // Dan needs access to this funtionality with the currently available OpenNURBS
         if( 0==object_filter || (pObject->ObjectType() & object_filter) != 0)
         {
-          ONX_Model_Object& mo = m_object_table.AppendNew();
-          mo.m_object = pObject;
-          mo.m_bDeleteObject = true;
-          mo.m_attributes = attributes;
+          if( callback )
+          {
+            ON_Geometry* pGeometry = ON_Geometry::Cast(pObject);
+            if( pGeometry )
+            {
+              int keep = callback(pGeometry, &attributes);
+              delete_object = (0==keep);
+            }
+          }
+
+          if( !delete_object )
+          {
+            ONX_Model_Object& mo = m_object_table.AppendNew();
+            mo.m_object = pObject;
+            mo.m_bDeleteObject = true;
+            mo.m_attributes = attributes;
+          }
         }
         else
+        {
+          delete_object = true;
+        }
+
+        if( delete_object )
         {
           delete pObject;
           pObject = 0;
@@ -3192,7 +3212,7 @@ bool ONX_Model_WithFilter::FilteredRead(ON_BinaryArchive& archive, unsigned int 
   return return_code;
 }
 
-bool ONX_Model_WithFilter::FilteredRead( const wchar_t* filename, unsigned int table_filter, unsigned int model_object_type_filter, ON_TextLog* error_log )
+bool ONX_Model_WithFilter::FilteredRead( const wchar_t* filename, unsigned int table_filter, unsigned int model_object_type_filter, ON_TextLog* error_log, READFILEOBJECTCALLBACKPROC callback )
 {
   bool bCallDestroy = true;
   bool rc = false;
@@ -3203,7 +3223,7 @@ bool ONX_Model_WithFilter::FilteredRead( const wchar_t* filename, unsigned int t
     if ( 0 != fp )
     {
       ON_BinaryFile file(ON::read3dm,fp);
-      rc = FilteredRead(file, table_filter, model_object_type_filter, error_log);
+      rc = FilteredRead(file, table_filter, model_object_type_filter, error_log, callback);
       ON::CloseFile(fp);
       bCallDestroy = false;
     }
@@ -3217,7 +3237,8 @@ bool ONX_Model_WithFilter::FilteredRead( const wchar_t* filename, unsigned int t
 
 
 
-RH_C_FUNCTION ONX_Model* ONX_Model_ReadFile2(const RHMONO_STRING* path, ReadFileTableTypeFilter tableFilter, ObjectTypeFilter objectTypeFilter, CRhCmnStringHolder* pStringHolder)
+
+RH_C_FUNCTION ONX_Model* ONX_Model_ReadFile2(const RHMONO_STRING* path, ReadFileTableTypeFilter tableFilter, ObjectTypeFilter objectTypeFilter, CRhCmnStringHolder* pStringHolder, READFILEOBJECTCALLBACKPROC callback)
 {
   ONX_Model_WithFilter* rc = NULL;
   if( path )
@@ -3229,7 +3250,7 @@ RH_C_FUNCTION ONX_Model* ONX_Model_ReadFile2(const RHMONO_STRING* path, ReadFile
     ON_TextLog* pLog = pStringHolder ? &log : NULL;
     unsigned int table_filter = (unsigned int)tableFilter;
     unsigned int obj_filter = (unsigned int)objectTypeFilter;
-    if( !rc->FilteredRead(_path, table_filter, obj_filter, pLog) )
+    if( !rc->FilteredRead(_path, table_filter, obj_filter, pLog, callback) )
     {
       delete rc;
       rc = NULL;

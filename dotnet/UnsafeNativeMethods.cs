@@ -539,18 +539,28 @@ internal partial class UnsafeNativeMethods
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_RTree_Search(IntPtr pConstRtree, Point3d pt0, Point3d pt1, int serial_number, RTree.SearchCallback searchCB);
+  internal static extern bool ON_RTree_Search(IntPtr pConstRtree, Point3d pt0, Point3d pt1, int serialNumber, RTree.SearchCallback searchCallback);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_RTree_SearchSphere(IntPtr pConstRtree, Point3d center, double radius, int serial_number, RTree.SearchCallback searchCB);
+  internal static extern bool ON_RTree_SearchSphere(IntPtr pConstRtree, Point3d center, double radius, int serialNumber, RTree.SearchCallback searchCallback);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_RTree_Search2(IntPtr pConstRtreeA, IntPtr pConstRtreeB, double tolerance, int serial_number, RTree.SearchCallback searchCB);
+  internal static extern bool ON_RTree_Search2(IntPtr pConstRtreeA, IntPtr pConstRtreeB, double tolerance, int serialNumber, RTree.SearchCallback searchCallback);
 
   //bool ON_Arc_Copy(ON_Arc* pRdnArc, ON_Arc* pRhCmnArc, bool rdn_to_rhc)
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_Arc_Copy(IntPtr pRdnArc, ref Arc pRhCmnArc, [MarshalAs(UnmanagedType.U1)]bool rdn_to_rhc);
+  internal static extern bool ON_Arc_Copy(IntPtr pRdnArc, ref Arc pRhCmnArc, [MarshalAs(UnmanagedType.U1)]bool rhinoDotNetToRhinoCommon);
+
+  //ONX_Model* ONX_Model_ReadFile2(const RHMONO_STRING* path, ReadFileTableTypeFilter tableFilter,
+  //                               ObjectTypeFilter objectTypeFilter, CRhCmnStringHolder* pStringHolder,
+  //                               READFILEOBJECTCALLBACKPROC callback)
+  [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+  internal static extern IntPtr ONX_Model_ReadFile2([MarshalAs(UnmanagedType.LPWStr)]string path, ReadFileTableTypeFilter tableFilter, ObjectTypeFilter objectFilter,
+    IntPtr pStringHolder, Rhino.FileIO.File3dm.ReadFileObjectCallback callback);
+
+
+
 }

@@ -5,6 +5,7 @@ import getopt
 import os
 import glob
 import logging
+import distutils.dir_util
 import shutil
 from sys import platform as _platform
 from os import listdir
@@ -73,7 +74,11 @@ def check_android():
             print " ---ERROR: NDK not found------------------------------------------------"
             print "  Building an android native library requires Google's ndk tools."
             print "  Xamarin.Android comes with a copy of the Android NDK.  Normally,"
-            print "  this is in /Users/you/Library/Developer/Xamarin/android-ndk/"
+            if osx:
+                print "  this is in /Users/you/Library/Developer/Xamarin/android-ndk/"
+            if windows:
+                print "  this is in C:\\Program Files\\Android\\ndk\\ but using this script"
+                print "  requires that the ndk be placed in C:\\Android\\ndk\\"
             print "  If you are missing the NKD, you can download a new copy here:"
             print "  http://developer.android.com/tools/sdk/ndk/index.html"
             print "  Once installed, you will need to add the path to the NDK toolkit"
@@ -220,20 +225,51 @@ def check_ndk():
         has_ndk = True
         return
 
+    global android_ndk_path
+
     #check to see if the ndk-build tool is in a typical path and store that in a variable
-    home = os.path.expanduser("~")
-    if os.path.exists(home + '/Library/Developer/Xamarin/android-ndk'):
-        if glob.glob(home + '/Library/Developer/Xamarin/android-ndk/android-ndk-r??/ndk-build'):
-            has_ndk = True
-            path_to_search = home + '/Library/Developer/Xamarin/android-ndk/'
+    if osx:
+        home = os.path.expanduser("~")
+        if os.path.exists(home + '/Library/Developer/Xamarin/android-ndk'):
+            if glob.glob(home + '/Library/Developer/Xamarin/android-ndk/android-ndk-r??/ndk-build'):
+                has_ndk = True
+                path_to_search = home + '/Library/Developer/Xamarin/android-ndk/'
 
-            only_folders = [d for d in listdir(path_to_search) if isdir(join(path_to_search, d))]
-            most_recent_ndk = only_folders[-1]
+                only_folders = [d for d in listdir(path_to_search) if isdir(join(path_to_search, d))]
+                most_recent_ndk = only_folders[-1]
 
-            global android_ndk_path
-            android_ndk_path = home + '/Library/Developer/Xamarin/android-ndk/' + most_recent_ndk + '/'
-        else:
-            has_ndk = False
+                android_ndk_path = home + '/Library/Developer/Xamarin/android-ndk/' + most_recent_ndk + '/'
+            else:
+                has_ndk = False
+
+    if windows:
+        progfiles = os.environ["ProgramW6432"]
+        if os.path.exists(progfiles + '/Android/ndk/'):
+            if glob.glob(progfiles + '/Android/ndk/android-ndk-r??/ndk-build'):
+                has_ndk = True
+                path_to_search = progfiles + '/Android/ndk/'
+
+                only_folders = [d for d in listdir(path_to_search) if isdir(join(path_to_search, d))]
+                most_recent_ndk = only_folders[-1]
+
+                android_ndk_path = progfiles + '/Android/ndk/' + most_recent_ndk + '/'
+
+                #the ndk does not allow spaces in its path on windows, so we need to copy the ndk to the
+                #root folder so that we can run it from there.
+
+                #check to see if the ndk has been copied already
+                drive_prefix = os.path.splitdrive(sys.executable)[0]
+                android_on_root_path = drive_prefix + '\\' + 'Android\\' + 'ndk\\' + most_recent_ndk + '\\'
+
+                if os.path.exists(android_on_root_path):
+                    android_ndk_path = android_on_root_path
+                else:
+                    sys.stdout.write("...Copying")
+                    distutils.dir_util.copy_tree(android_ndk_path, android_on_root_path, True, True)
+                    android_ndk_path = android_on_root_path
+
+            else:
+                has_ndk = False
 
     if has_ndk:
         sys.stdout.write("...Found\n")
@@ -379,7 +415,11 @@ def build_for_android():
     print "Android Build---------------------------------------------------"
     print "WARNING: go get coffee, this can take 20 minutes."
     print "Making libopennurbs.so for Android..."
-    ndk_command = "ndk-build"
+    if osx:
+        ndk_command = "ndk-build"
+    if windows:
+        ndk_command = "ndk-build.cmd"
+
     ndk_build = android_ndk_path + ndk_command
 
     if verbose:
@@ -599,67 +639,72 @@ def main():
         usage()
         sys.exit()
 
-    if not osx:
-        print ("ERROR: Building for iOS or OS X requires running this script on Mac OSX 10.9.2 or higher.")
-        print ("Android build support for Windows will be added in a future version of this script.")
-        sys.exit()
-
     #check prerequisites
     if check == "all":
         check_android()
-        check_ios()
-        check_osx()
+        if osx:
+            check_ios()
+            check_osx()
     elif check == "android":
         check_android()
     elif check == "ios":
-        check_ios()
+        if osx:
+            check_ios()
+        else:
+            print ("ERROR: Targeting iOS or OS X requires running this script on Mac OSX 10.9.2 +")
     elif check == "osx":
-        check_osx()
+        if osx:
+            check_osx()
+        else:
+            print ("ERROR: Targeting iOS or OS X requires running this script on Mac OSX 10.9.2 +")
 
     #platform compiles
     if platform == "all":
         check_android()
-        check_ios()
-        check_osx()
+        if osx:
+            check_ios()
+            check_osx()
 
         if overwrite or not has_built_android:
             create_build_folders_for_android()
         elif has_built_android and not overwrite:
             print ("STATUS: Existing Android build found.  NOT BUILDING.  (Use -o argument to overwrite existing.)")
 
-        if overwrite or not has_built_ios:
-            create_build_folders_for_ios()
-        elif has_built_ios and not overwrite:
-            print ("STATUS: Existing iOS build found.  NOT BUILDING.  (Use -o argument to overwrite existing.)")
+        if osx:
+            if overwrite or not has_built_ios:
+                create_build_folders_for_ios()
+            elif has_built_ios and not overwrite:
+                print ("STATUS: Existing iOS build found.  NOT BUILDING.  (Use -o argument to overwrite existing.)")
 
-        if overwrite or not has_built_osx:
-            create_build_folders_for_osx()
-        elif has_built_osx and not overwrite:
-            print ("STATUS: Existing OS X build found.  NOT BUILDING.  (Use -o argument to overwrite existing.)")
+            if overwrite or not has_built_osx:
+                create_build_folders_for_osx()
+            elif has_built_osx and not overwrite:
+                print ("STATUS: Existing OS X build found.  NOT BUILDING.  (Use -o argument to overwrite existing.)")
 
         if overwrite and is_ready_for_android_build:
             build_for_android()
         elif not has_built_android and is_ready_for_android_build:
             build_for_android()
 
-        if overwrite and is_ready_for_ios_build:
-            build_for_ios()
-        elif not has_built_ios and is_ready_for_ios_build:
-            build_for_ios()
+        if osx:
+            if overwrite and is_ready_for_ios_build:
+                build_for_ios()
+            elif not has_built_ios and is_ready_for_ios_build:
+                build_for_ios()
 
-        if overwrite and is_ready_for_osx_build:
-            build_for_osx()
-        elif not has_built_osx and is_ready_for_osx_build:
-            build_for_osx()
+            if overwrite and is_ready_for_osx_build:
+                build_for_osx()
+            elif not has_built_osx and is_ready_for_osx_build:
+                build_for_osx()
 
         if did_build_android_successfully:
             write_android_finished_message()
 
-        if did_build_ios_successfully:
-            write_ios_finished_message()
-
-        if did_build_for_osx_successfully:
-            write_osx_finished_message()
+        if osx:
+            if did_build_ios_successfully:
+                write_ios_finished_message()
+            if did_build_for_osx_successfully:
+                write_osx_finished_message()
 
     elif platform == "android":
         check_android()
@@ -680,7 +725,11 @@ def main():
                 write_android_finished_message()
 
     elif platform == "ios":
-        check_ios()
+        if osx:
+            check_ios()
+        else:
+            print ("ERROR: Targeting iOS or OS X requires running this script on Mac OSX 10.9.2 +")
+            sys.exit()
 
         if has_built_ios and not overwrite:
             print ("STATUS: Existing build found.  NOT BUILDING.  Use -o argument to overwrite the existing builds")
@@ -698,7 +747,11 @@ def main():
                 write_ios_finished_message()
 
     elif platform == "osx":
-        check_osx()
+        if osx:
+            check_osx()
+        else:
+            print ("ERROR: Targeting iOS or OS X requires running this script on Mac OSX 10.9.2 +")
+            sys.exit()
 
         if has_built_osx and not overwrite:
             print ("STATUS: Existing build found.  NOT BUILDING.  Use -o argument to overwrite the existing builds")

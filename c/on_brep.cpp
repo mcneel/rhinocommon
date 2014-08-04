@@ -17,6 +17,17 @@ RH_C_FUNCTION void ON_BrepEdge_SetTolerance(ON_BrepEdge* pBrepEdge, double tol)
     pBrepEdge->m_tolerance = tol;
 }
 
+RH_C_FUNCTION int ON_BrepEdge_BrepVertex(const ON_BrepEdge* pConstEdge, int which)
+{
+  if( pConstEdge )
+  {
+    ON_BrepVertex* pVertex = pConstEdge->Vertex(which);
+    if(pVertex)
+      return pVertex->m_vertex_index;
+  }
+  return -1;
+}
+
 // IsSmoothManifoldEdge is not currently available in stand alone OpenNURBS build
 #if !defined(OPENNURBS_BUILD)
 
@@ -1142,6 +1153,14 @@ RH_C_FUNCTION int ON_Brep_NewConeFace(ON_Brep* pBrep, int vertexIndex, int edgeI
     if( pFace )
       rc = pFace->m_face_index;
   }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_Brep_RemoveSlits(ON_Brep* pBrep)
+{
+  bool rc = false;
+  if( pBrep )
+    rc = pBrep->RemoveSlits();
   return rc;
 }
 

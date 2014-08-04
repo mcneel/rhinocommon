@@ -68,10 +68,9 @@ namespace Rhino.Display
 
   /// <summary>
   /// A bitmap resource that can be used by the display pipeline (currently only
-  /// in OpenGL display).  Current limitation is that the bitmap should always
-  /// have a witdh and height which are a power of 2 in value.  Reuse DisplayBitmaps
-  /// for drawing if possible;  it is much more expensive to construct new DisplayBitmaps
-  /// than it is to reuse existing DisplayBitmaps.
+  /// in OpenGL display).  Reuse DisplayBitmaps for drawing if possible; it is
+  /// much more expensive to construct new DisplayBitmaps than it is to reuse
+  /// existing DisplayBitmaps.
   /// </summary>
   public class DisplayBitmap : IDisposable
   {

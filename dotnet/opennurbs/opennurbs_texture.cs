@@ -233,6 +233,14 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
+    /// 
+    /// </summary>
+    public int MappingChannelId
+    {
+      get { return UnsafeNativeMethods.ON_Texture_GetMappingChannelId(ConstPointer()); }
+    }
+    
+    /// <summary>
     /// Determines how this texture is combined with others in a material's
     /// texture list.
     /// </summary>
@@ -310,7 +318,7 @@ namespace Rhino.DocObjects
         UnsafeNativeMethods.ON_Texture_Set_wrapuvw(ptr_this, IDX_WRAPMODE_W, (int)value);
       }
     }
-
+    
     /// <summary>
     /// If true then the UVW transform is applied to the texture
     /// otherwise the UVW transform is ignored.

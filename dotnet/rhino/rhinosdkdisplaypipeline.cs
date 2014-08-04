@@ -1526,6 +1526,32 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeLine_DrawPolygon(m_ptr, count, ptArray, argb, filled);
     }
 
+
+    /// <summary>
+    /// Draws a bitmap in screen coordinates
+    /// </summary>
+    /// <param name="bitmap">bitmap to draw</param>
+    /// <param name="left">where top/left corner of bitmap should appear in screen coordinates</param>
+    /// <param name="top">where top/left corner of bitmap should appear in screen coordinates</param>
+    public void DrawBitmap(DisplayBitmap bitmap, int left, int top)
+    {
+      DrawBitmap(bitmap, left, top, System.Drawing.Color.Empty);
+    }
+
+    /// <summary>
+    /// Draws a bitmap in screen coordinates
+    /// </summary>
+    /// <param name="bitmap">bitmap to draw</param>
+    /// <param name="left">where top/left corner of bitmap should appear in screen coordinates</param>
+    /// <param name="top">where top/left corner of bitmap should appear in screen coordinates</param>
+    /// <param name="maskColor">mask color to apply to bitmap for transparent regions</param>
+    public void DrawBitmap(DisplayBitmap bitmap, int left, int top, System.Drawing.Color maskColor)
+    {
+      IntPtr ptr_bitmap = bitmap.NonConstPointer();
+      int argb = maskColor.ToArgb();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBitmap3(m_ptr, ptr_bitmap, left, top, argb);
+    }
+
     /// <summary>
     /// Draws a text dot in screen coordinates.
     /// </summary>
@@ -1536,10 +1562,10 @@ namespace Rhino.Display
     /// <param name="textColor">Dot foreground color.</param>
     public void DrawDot(int screenX, int screenY, string text, System.Drawing.Color dotColor, System.Drawing.Color textColor)
     {
-      int argbDot = dotColor.ToArgb();
-      int argbText = textColor.ToArgb();
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawDot3(pThis, screenX, screenY, text, argbDot, argbText);
+      int argb_dot = dotColor.ToArgb();
+      int argb_text = textColor.ToArgb();
+      IntPtr ptr_this = NonConstPointer();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawDot3(ptr_this, screenX, screenY, text, argb_dot, argb_text);
     }
     /// <summary>
     /// Draws a text dot in screen coordinates.
@@ -1549,8 +1575,8 @@ namespace Rhino.Display
     /// <param name="text">Text content of dot.</param>
     public void DrawDot(int screenX, int screenY, string text)
     {
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawDot4(pThis, screenX, screenY, text);
+      IntPtr ptr_this = NonConstPointer();
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawDot4(ptr_this, screenX, screenY, text);
     }
     /// <summary>
     /// Draw a text dot in world coordinates.
@@ -2010,29 +2036,26 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_Draw3dText4(pThis, pAnnotationText, text.FontFace, color.ToArgb(), text.Bold, text.Italic, textPlaneOrigin);
     }
 
-    /*
-
     /// <summary>
-    /// Determines screen rectangle that would be drawn to using the DrawString(..) function
+    /// Determines screen rectangle that would be drawn to using the Draw2dText(..) function
     /// with the same parameters.
     /// </summary>
-    /// <param name="measuredRectangle">rectangle in the viewport's screen coordinates on success.</param>
     /// <param name="text">text to measure.</param>
     /// <param name="definitionPoint">either lower-left or middle of text.</param>
     /// <param name="middleJustified">true=middle justified. false=lower-left justified.</param>
-    /// <param name="rotation">text rotation in 1/10 degrees.</param>
+    /// <param name="rotationRadians">text rotation in radians</param>
     /// <param name="height">height in pixels (good default is 12)</param>
-    /// <param name="fontface">font name (good default is "Arial")</param>
-    /// <returns>true on success, false on failure.</returns>
-    public bool MeasureString( out System.Drawing.Rectangle measuredRectangle, string text, ON_2dPoint definitionPoint, bool middleJustified, int rotation, int height, string fontFace )
+    /// <param name="fontFace">font name (good default is "Arial")</param>
+    /// <returns>rectangle in the viewport's screen coordinates on success.</returns>
+    public System.Drawing.Rectangle Measure2dText( string text, Point2d definitionPoint, bool middleJustified, double rotationRadians, int height, string fontFace )
     {
+      int left=0, top=0, right=0, bottom=0;
+      if( UnsafeNativeMethods.CRhinoDisplayPipeline_MeasureString(m_ptr, ref left, ref top, ref right, ref bottom, text, definitionPoint, middleJustified, rotationRadians, height, fontFace) )
+      {
+        return System.Drawing.Rectangle.FromLTRB(left, top, right, bottom);
+      }
+      return System.Drawing.Rectangle.Empty;
     }
-
-    public void DrawTriangle( ON_3dPoint p0, ON_3dPoint p1, ON_3dPoint p2, System.Drawing.Color color )
-    {
-    }
-
-    */
 
     public void DrawObject(DocObjects.RhinoObject rhinoObject)
     {
@@ -2314,20 +2337,20 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawBitmaps(m_ptr, pBitmap, items.m_points.Length, items.m_points, items.m_colors_argb.Length, items.m_colors_argb, indices, size, translation, sizeInWorldSpace);
     }
 
-    public void DrawParticles(Rhino.Geometry.ParticleSystem particles)
+    public void DrawParticles(ParticleSystem particles)
     {
       particles.UpdateDrawCache();
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawParticles1(m_ptr, IntPtr.Zero, particles.m_points.Length, particles.m_points, particles.m_sizes, particles.m_colors_argb, particles.DisplaySizesInWorldUnits);
     }
 
-    public void DrawParticles(Rhino.Geometry.ParticleSystem particles, DisplayBitmap bitmap)
+    public void DrawParticles(ParticleSystem particles, DisplayBitmap bitmap)
     {
       particles.UpdateDrawCache();
       IntPtr pBitmap = bitmap.NonConstPointer();
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawParticles1(m_ptr, pBitmap, particles.m_points.Length, particles.m_points, particles.m_sizes, particles.m_colors_argb, particles.DisplaySizesInWorldUnits);
     }
 
-    public void DrawParticles(Rhino.Geometry.ParticleSystem particles, DisplayBitmap[] bitmaps)
+    public void DrawParticles(ParticleSystem particles, DisplayBitmap[] bitmaps)
     {
       particles.UpdateDrawCache();
       uint[] ids = new uint[bitmaps.Length];
@@ -2337,17 +2360,13 @@ namespace Rhino.Display
       UnsafeNativeMethods.CRhinoDisplayPipeline_DrawParticles2(m_ptr, ids.Length, ids, particles.m_points.Length, particles.m_points, particles.m_sizes, particles.m_colors_argb, particles.m_display_bitmap_ids, particles.DisplaySizesInWorldUnits);
     }
 
-    /*
-    //public void Draw2dRectangle( System.Drawing.Rectangle rectangle, HPEN pen, bool=true);
-    //public void Draw2dLine(const CPoint&, const CPoint&, HPEN, bool=true);
-  
-    public void FillSolidRect( System.Drawing.Rectangle screenRectangle, System.Drawing.Color color, int transparency)
+    public void Draw2dRectangle(System.Drawing.Rectangle rectangle, System.Drawing.Color strokeColor, int thickness, System.Drawing.Color fillColor)
     {
+      UnsafeNativeMethods.CRhinoDisplayPipeline_Draw2dRectangle(m_ptr, rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height, strokeColor.ToArgb(), thickness, fillColor.ToArgb());
     }
-    */
   }
 
-  public class DrawEventArgs : System.EventArgs
+  public class DrawEventArgs : EventArgs
   {
     internal IntPtr m_pDisplayPipeline;
     internal readonly IntPtr m_pDisplayConduit;

@@ -47,10 +47,10 @@ namespace Rhino.Geometry
     /// <returns>A new NURBS surface, or null on error.</returns>
     public static NurbsSurface CreateFromCone(Cone cone)
     {
-      IntPtr pNurbsSurface = UnsafeNativeMethods.ON_Cone_GetNurbForm(ref cone);
-      if (IntPtr.Zero == pNurbsSurface)
+      IntPtr ptr_nurbs_surface = UnsafeNativeMethods.ON_Cone_GetNurbForm(ref cone);
+      if (IntPtr.Zero == ptr_nurbs_surface)
         return null;
-      return new NurbsSurface(pNurbsSurface, null);
+      return new NurbsSurface(ptr_nurbs_surface, null);
     }
 
     /// <summary>
@@ -60,10 +60,10 @@ namespace Rhino.Geometry
     /// <returns>A new NURBS surface, or null on error.</returns>
     public static NurbsSurface CreateFromCylinder(Cylinder cylinder)
     {
-      IntPtr pNurbsSurface = UnsafeNativeMethods.ON_Cylinder_GetNurbForm(ref cylinder);
-      if (IntPtr.Zero == pNurbsSurface)
+      IntPtr ptr_nurbs_surface = UnsafeNativeMethods.ON_Cylinder_GetNurbForm(ref cylinder);
+      if (IntPtr.Zero == ptr_nurbs_surface)
         return null;
-      return new NurbsSurface(pNurbsSurface, null);
+      return new NurbsSurface(ptr_nurbs_surface, null);
     }
 
     /// <summary>
@@ -73,10 +73,10 @@ namespace Rhino.Geometry
     /// <returns>A new NURBS surface, or null on error.</returns>
     public static NurbsSurface CreateFromSphere(Sphere sphere)
     {
-      IntPtr pNurbsSurface = UnsafeNativeMethods.ON_Sphere_GetNurbsForm(ref sphere);
-      if (IntPtr.Zero == pNurbsSurface)
+      IntPtr ptr_nurbs_surface = UnsafeNativeMethods.ON_Sphere_GetNurbsForm(ref sphere);
+      if (IntPtr.Zero == ptr_nurbs_surface)
         return null;
-      return new NurbsSurface(pNurbsSurface, null);
+      return new NurbsSurface(ptr_nurbs_surface, null);
     }
 
     /// <summary>
@@ -86,10 +86,10 @@ namespace Rhino.Geometry
     /// <returns>A new NURBS surface, or null on error.</returns>
     public static NurbsSurface CreateFromTorus(Torus torus)
     {
-      IntPtr pNurbsSurface = UnsafeNativeMethods.ON_Torus_GetNurbForm(ref torus);
-      if (IntPtr.Zero == pNurbsSurface)
+      IntPtr ptr_nurbs_surface = UnsafeNativeMethods.ON_Torus_GetNurbForm(ref torus);
+      if (IntPtr.Zero == ptr_nurbs_surface)
         return null;
-      return new NurbsSurface(pNurbsSurface, null);
+      return new NurbsSurface(ptr_nurbs_surface, null);
     }
 
     /// <summary>
@@ -126,7 +126,7 @@ namespace Rhino.Geometry
       if (null == points) { throw new ArgumentNullException("points"); }
 
       int total_count;
-      Point3d[] ptArray = Rhino.Collections.Point3dList.GetConstPointArray(points, out total_count);
+      Point3d[] point_array = Rhino.Collections.Point3dList.GetConstPointArray(points, out total_count);
       if (total_count < 4)
       {
         throw new InvalidOperationException("Insufficient points for a nurbs surface");
@@ -144,7 +144,7 @@ namespace Rhino.Geometry
       vDegree = Math.Min(vDegree, 11);
       vDegree = Math.Min(vDegree, vCount - 1);
 
-      IntPtr ptr = UnsafeNativeMethods.ON_NurbsSurface_SurfaceFromPoints(ptArray, uCount, vCount, uDegree, vDegree);
+      IntPtr ptr = UnsafeNativeMethods.ON_NurbsSurface_SurfaceFromPoints(point_array, uCount, vCount, uDegree, vDegree);
 
       if (IntPtr.Zero == ptr) { return null; }
       return new NurbsSurface(ptr, null);
@@ -167,7 +167,7 @@ namespace Rhino.Geometry
       if (null == points) { throw new ArgumentNullException("points"); }
 
       int total_count;
-      Point3d[] ptArray = Rhino.Collections.Point3dList.GetConstPointArray(points, out total_count);
+      Point3d[] point_array = Rhino.Collections.Point3dList.GetConstPointArray(points, out total_count);
       if (total_count < 4)
       {
         throw new InvalidOperationException("Insufficient points for a nurbs surface");
@@ -185,7 +185,7 @@ namespace Rhino.Geometry
       vDegree = Math.Min(vDegree, 11);
       vDegree = Math.Min(vDegree, vCount - 1);
 
-      IntPtr ptr = UnsafeNativeMethods.ON_NurbsSurface_SurfaceThroughPoints(ptArray, uCount, vCount, uDegree, vDegree, uClosed, vClosed);
+      IntPtr ptr = UnsafeNativeMethods.ON_NurbsSurface_SurfaceThroughPoints(point_array, uCount, vCount, uDegree, vDegree, uClosed, vClosed);
       if (IntPtr.Zero == ptr)
         return null;
       return new NurbsSurface(ptr, null);
@@ -220,10 +220,10 @@ namespace Rhino.Geometry
     /// <returns>The resulting surface or null on error.</returns>
     public static NurbsSurface CreateFromCorners(Point3d corner1, Point3d corner2, Point3d corner3, Point3d corner4, double tolerance)
     {
-      IntPtr pSurface = UnsafeNativeMethods.RHC_RhinoCreateSurfaceFromCorners(corner1, corner2, corner3, corner4, tolerance);
-      if (IntPtr.Zero == pSurface)
+      IntPtr ptr_surface = UnsafeNativeMethods.RHC_RhinoCreateSurfaceFromCorners(corner1, corner2, corner3, corner4, tolerance);
+      if (IntPtr.Zero == ptr_surface)
         return null;
-      return new NurbsSurface(pSurface, null);
+      return new NurbsSurface(ptr_surface, null);
     }
     /// <summary>
     /// Makes a surface from 3 corner points.
@@ -247,12 +247,12 @@ namespace Rhino.Geometry
     /// <returns>A NurbsSurface or null on failure.</returns>
     public static NurbsSurface CreateRailRevolvedSurface(Curve profile, Curve rail, Line axis, bool scaleHeight)
     {
-      IntPtr pConstProfile = profile.ConstPointer();
-      IntPtr pConstRail = rail.ConstPointer();
-      IntPtr pNurbsSurface = UnsafeNativeMethods.RHC_RhinoRailRevolve(pConstProfile, pConstRail, ref axis, scaleHeight);
-      if (IntPtr.Zero == pNurbsSurface)
+      IntPtr const_ptr_profile = profile.ConstPointer();
+      IntPtr const_ptr_rail = rail.ConstPointer();
+      IntPtr ptr_nurbs_surface = UnsafeNativeMethods.RHC_RhinoRailRevolve(const_ptr_profile, const_ptr_rail, ref axis, scaleHeight);
+      if (IntPtr.Zero == ptr_nurbs_surface)
         return null;
-      return new NurbsSurface(pNurbsSurface, null);
+      return new NurbsSurface(ptr_nurbs_surface, null);
     }
 
     /// <summary>
@@ -286,16 +286,16 @@ namespace Rhino.Geometry
                                                     double edgeTolerance, double interiorTolerance, double angleTolerance,
                                                     out int error)
     {
-      Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer _uCurves = new Runtime.InteropWrappers.SimpleArrayCurvePointer(uCurves);
-      Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer _vCurves = new Runtime.InteropWrappers.SimpleArrayCurvePointer(vCurves);
-      IntPtr pUCurves = _uCurves.NonConstPointer();
-      IntPtr pVCurves = _vCurves.NonConstPointer();
+      Runtime.InteropWrappers.SimpleArrayCurvePointer u_curves_simplearray = new Runtime.InteropWrappers.SimpleArrayCurvePointer(uCurves);
+      Runtime.InteropWrappers.SimpleArrayCurvePointer v_curves_simplearray = new Runtime.InteropWrappers.SimpleArrayCurvePointer(vCurves);
+      IntPtr ptr_u_curves = u_curves_simplearray.NonConstPointer();
+      IntPtr ptr_v_curves = v_curves_simplearray.NonConstPointer();
       error = 0;
-      IntPtr pNS = UnsafeNativeMethods.RHC_RhinoNetworkSurface(pUCurves, uContinuityStart, uContinuityEnd, pVCurves, vContinuityStart, vContinuityEnd, edgeTolerance, interiorTolerance, angleTolerance, ref error);
-      _uCurves.Dispose();
-      _vCurves.Dispose();
-      if (pNS != IntPtr.Zero)
-        return new NurbsSurface(pNS, null);
+      IntPtr ptr_nurbs_surface = UnsafeNativeMethods.RHC_RhinoNetworkSurface(ptr_u_curves, uContinuityStart, uContinuityEnd, ptr_v_curves, vContinuityStart, vContinuityEnd, edgeTolerance, interiorTolerance, angleTolerance, ref error);
+      u_curves_simplearray.Dispose();
+      v_curves_simplearray.Dispose();
+      if (ptr_nurbs_surface != IntPtr.Zero)
+        return new NurbsSurface(ptr_nurbs_surface, null);
       return null;
     }
 
@@ -317,13 +317,13 @@ namespace Rhino.Geometry
                                                     double edgeTolerance, double interiorTolerance, double angleTolerance,
                                                     out int error)
     {
-      Rhino.Runtime.InteropWrappers.SimpleArrayCurvePointer _curves = new Runtime.InteropWrappers.SimpleArrayCurvePointer(curves);
-      IntPtr pCurves = _curves.NonConstPointer();
+      Runtime.InteropWrappers.SimpleArrayCurvePointer curves_simplearray = new Runtime.InteropWrappers.SimpleArrayCurvePointer(curves);
+      IntPtr ptr_curves = curves_simplearray.NonConstPointer();
       error = 0;
-      IntPtr pNS = UnsafeNativeMethods.RHC_RhinoNetworkSurface2(pCurves, continuity, edgeTolerance, interiorTolerance, angleTolerance, ref error);
-      _curves.Dispose();
-      if (pNS != IntPtr.Zero)
-        return new NurbsSurface(pNS, null);
+      IntPtr ptr_nurbs_surface = UnsafeNativeMethods.RHC_RhinoNetworkSurface2(ptr_curves, continuity, edgeTolerance, interiorTolerance, angleTolerance, ref error);
+      curves_simplearray.Dispose();
+      if (ptr_nurbs_surface != IntPtr.Zero)
+        return new NurbsSurface(ptr_nurbs_surface, null);
       return null;
     }
 #endif    
@@ -336,9 +336,9 @@ namespace Rhino.Geometry
     /// <param name="other">Another surface.</param>
     public NurbsSurface(NurbsSurface other)
     {
-      IntPtr pConstOther = other.ConstPointer();
-      IntPtr pThis = UnsafeNativeMethods.ON_NurbsSurface_New2(pConstOther);
-      ConstructNonConstObject(pThis);
+      IntPtr const_ptr_other = other.ConstPointer();
+      IntPtr ptr_this = UnsafeNativeMethods.ON_NurbsSurface_New2(const_ptr_other);
+      ConstructNonConstObject(ptr_this);
     }
 
     internal NurbsSurface(IntPtr ptr, object parent)
@@ -362,8 +362,8 @@ namespace Rhino.Geometry
     #endregion
 
     #region properties
-    private Collections.NurbsSurfaceKnotList m_KnotsU;
-    private Collections.NurbsSurfaceKnotList m_KnotsV;
+    private Collections.NurbsSurfaceKnotList m_knots_u;
+    private Collections.NurbsSurfaceKnotList m_knots_v;
     /// <summary>
     /// The U direction knot vector.
     /// </summary>
@@ -374,7 +374,7 @@ namespace Rhino.Geometry
     /// </example>
     public Collections.NurbsSurfaceKnotList KnotsU
     {
-      get { return m_KnotsU ?? (m_KnotsU = new Rhino.Geometry.Collections.NurbsSurfaceKnotList(this, 0)); }
+      get { return m_knots_u ?? (m_knots_u = new Collections.NurbsSurfaceKnotList(this, 0)); }
     }
 
     /// <summary>
@@ -387,10 +387,10 @@ namespace Rhino.Geometry
     /// </example>
     public Collections.NurbsSurfaceKnotList KnotsV
     {
-      get { return m_KnotsV ?? (m_KnotsV = new Rhino.Geometry.Collections.NurbsSurfaceKnotList(this, 1)); }
+      get { return m_knots_v ?? (m_knots_v = new Collections.NurbsSurfaceKnotList(this, 1)); }
     }
 
-    private Collections.NurbsSurfacePointList m_Points;
+    private Collections.NurbsSurfacePointList m_points;
 
     /// <summary>
     /// Gets a collection of surface control points that form this surface.
@@ -402,7 +402,7 @@ namespace Rhino.Geometry
     /// </example>
     public Collections.NurbsSurfacePointList Points
     {
-      get { return m_Points ?? (m_Points = new Rhino.Geometry.Collections.NurbsSurfacePointList(this)); }
+      get { return m_points ?? (m_points = new Collections.NurbsSurfacePointList(this)); }
     }
 
     /// <summary>
@@ -412,8 +412,8 @@ namespace Rhino.Geometry
     {
       get
       {
-        IntPtr ptr = ConstPointer();
-        return UnsafeNativeMethods.ON_NurbsSurface_GetBool(ptr, idxIsRational);
+        IntPtr const_ptr_this = ConstPointer();
+        return UnsafeNativeMethods.ON_NurbsSurface_GetBool(const_ptr_this, idxIsRational);
       }
     }
 
@@ -423,8 +423,8 @@ namespace Rhino.Geometry
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
     public bool MakeRational()
     {
-      IntPtr pThis = NonConstPointer();
-      return UnsafeNativeMethods.ON_NurbsSurface_GetBool(pThis, idxMakeRational);
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.ON_NurbsSurface_GetBool(ptr_this, idxMakeRational);
     }
 
     /// <summary>
@@ -433,10 +433,33 @@ namespace Rhino.Geometry
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
     public bool MakeNonRational()
     {
-      IntPtr pThis = NonConstPointer();
-      return UnsafeNativeMethods.ON_NurbsSurface_GetBool(pThis, idxMakeNonRational);
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.ON_NurbsSurface_GetBool(ptr_this, idxMakeNonRational);
     }
 
+    /// <summary>
+    /// Increase the degree of this surface in U direction.
+    /// </summary>
+    /// <param name="desiredDegree">The desired degree. 
+    /// Degrees should be number between and including 1 and 11.</param>
+    /// <returns>true on success, false on failure.</returns>
+    public bool IncreaseDegreeU(int desiredDegree)
+    {
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.ON_NurbsSurface_IncreaseDegree(ptr_this, 0, desiredDegree);
+    }
+
+    /// <summary>
+    /// Increase the degree of this surface in V direction.
+    /// </summary>
+    /// <param name="desiredDegree">The desired degree. 
+    /// Degrees should be number between and including 1 and 11.</param>
+    /// <returns>true on success, false on failure.</returns>
+    public bool IncreaseDegreeV(int desiredDegree)
+    {
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.ON_NurbsSurface_IncreaseDegree(ptr_this, 1, desiredDegree);
+    }
     #endregion
 
     /// <summary>
@@ -445,9 +468,9 @@ namespace Rhino.Geometry
     /// <param name="other">The other NURBS surface to use as source.</param>
     public void CopyFrom(NurbsSurface other)
     {
-      IntPtr pConstOther = other.ConstPointer();
-      IntPtr pThis = NonConstPointer();
-      UnsafeNativeMethods.ON_NurbsSurface_CopyFrom(pConstOther, pThis);
+      IntPtr const_ptr_other = other.ConstPointer();
+      IntPtr ptr_this = NonConstPointer();
+      UnsafeNativeMethods.ON_NurbsSurface_CopyFrom(const_ptr_other, ptr_this);
     }
     /*
     public double[] GetGrevilleAbcissae(int direction)
@@ -488,10 +511,10 @@ namespace Rhino.Geometry
 #if RHINO_SDK
     internal override void Draw(Display.DisplayPipeline pipeline, System.Drawing.Color color, int density)
     {
-      IntPtr pDisplayPipeline = pipeline.NonConstPointer();
+      IntPtr ptr_display_pipeline = pipeline.NonConstPointer();
       IntPtr ptr = ConstPointer();
       int argb = color.ToArgb();
-      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawNurbsSurface(pDisplayPipeline, ptr, argb, density);
+      UnsafeNativeMethods.CRhinoDisplayPipeline_DrawNurbsSurface(ptr_display_pipeline, ptr, argb, density);
     }
 #endif
 
@@ -572,12 +595,12 @@ namespace Rhino.Geometry
     /// <param name="targetCurve">The target curve for morphing.</param>
     public MorphControl(NurbsCurve originCurve, NurbsCurve targetCurve)
     {
-      IntPtr pCurve0 = originCurve.ConstPointer();
-      IntPtr pCurve1 = targetCurve.ConstPointer();
+      IntPtr const_ptr_curve0 = originCurve.ConstPointer();
+      IntPtr const_ptr_curve1 = targetCurve.ConstPointer();
 
-      IntPtr pThis = UnsafeNativeMethods.ON_MorphControl_New(IntPtr.Zero);
-      ConstructNonConstObject(pThis);
-      UnsafeNativeMethods.ON_MorphControl_SetCurves(pThis, pCurve0, pCurve1);
+      IntPtr ptr_this = UnsafeNativeMethods.ON_MorphControl_New(IntPtr.Zero);
+      ConstructNonConstObject(ptr_this);
+      UnsafeNativeMethods.ON_MorphControl_SetCurves(ptr_this, const_ptr_curve0, const_ptr_curve1);
     }
 
 
@@ -605,13 +628,13 @@ namespace Rhino.Geometry
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.ON_MorphControl_GetSporhTolerance(pConstThis);
+        IntPtr const_ptr_this = ConstPointer();
+        return UnsafeNativeMethods.ON_MorphControl_GetSporhTolerance(const_ptr_this);
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_MorphControl_SetSporhTolerance(pThis, value);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_MorphControl_SetSporhTolerance(ptr_this, value);
       }
     }
 
@@ -625,13 +648,13 @@ namespace Rhino.Geometry
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.ON_MorphControl_GetBool(pConstThis, true);
+        IntPtr const_ptr_this = ConstPointer();
+        return UnsafeNativeMethods.ON_MorphControl_GetBool(const_ptr_this, true);
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_MorphControl_SetBool(pThis, value, true);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_MorphControl_SetBool(ptr_this, value, true);
       }
     }
 
@@ -645,13 +668,13 @@ namespace Rhino.Geometry
     {
       get
       {
-        IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.ON_MorphControl_GetBool(pConstThis, false);
+        IntPtr const_ptr_this = ConstPointer();
+        return UnsafeNativeMethods.ON_MorphControl_GetBool(const_ptr_this, false);
       }
       set
       {
-        IntPtr pThis = NonConstPointer();
-        UnsafeNativeMethods.ON_MorphControl_SetBool(pThis, value, false);
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.ON_MorphControl_SetBool(ptr_this, value, false);
       }
     }
 
@@ -665,9 +688,9 @@ namespace Rhino.Geometry
       if (null == geometry || !SpaceMorph.IsMorphable(geometry))
         return false;
 
-      IntPtr pConstThis = ConstPointer();
-      IntPtr pGeometry = geometry.NonConstPointer();
-      return UnsafeNativeMethods.ON_MorphControl_MorphGeometry(pConstThis, pGeometry);
+      IntPtr const_ptr_this = ConstPointer();
+      IntPtr ptr_geometry = geometry.NonConstPointer();
+      return UnsafeNativeMethods.ON_MorphControl_MorphGeometry(const_ptr_this, ptr_geometry);
     }
 #endif
   }
@@ -817,15 +840,15 @@ namespace Rhino.Geometry.Collections
       readonly int m_count_u = -1;
       readonly int m_count_v = -1;
       bool m_disposed; // = false; <- initialized by runtime
-      int position = -1;
+      int m_position = -1;
       #endregion
 
       #region constructor
-      public NurbsSrfEnum(NurbsSurfacePointList surface_cv)
+      public NurbsSrfEnum(NurbsSurfacePointList surfacePoints)
       {
-        m_surface_cv = surface_cv;
-        m_count_u = surface_cv.CountU;
-        m_count_v = surface_cv.CountV;
+        m_surface_cv = surfacePoints;
+        m_count_u = surfacePoints.CountU;
+        m_count_v = surfacePoints.CountV;
       }
       #endregion
 
@@ -837,12 +860,12 @@ namespace Rhino.Geometry.Collections
 
       public bool MoveNext()
       {
-        position++;
-        return (position < Count);
+        m_position++;
+        return (m_position < Count);
       }
       public void Reset()
       {
-        position = -1;
+        m_position = -1;
       }
 
       public ControlPoint Current
@@ -851,8 +874,8 @@ namespace Rhino.Geometry.Collections
         {
           try
           {
-            int u = position / m_count_v;
-            int v = position % m_count_v;
+            int u = m_position / m_count_v;
+            int v = m_position % m_count_v;
             return m_surface_cv.GetControlPoint(u, v);
           }
           catch (IndexOutOfRangeException)
@@ -867,8 +890,8 @@ namespace Rhino.Geometry.Collections
         {
           try
           {
-            int u = position / m_count_v;
-            int v = position % m_count_v;
+            int u = m_position / m_count_v;
+            int v = m_position % m_count_v;
             return m_surface_cv.GetControlPoint(u, v);
           }
           catch (IndexOutOfRangeException)
@@ -958,8 +981,8 @@ namespace Rhino.Geometry.Collections
     {
       get
       {
-        IntPtr pConstSurf = m_surface.ConstPointer();
-        return UnsafeNativeMethods.ON_NurbsSurface_GetBoolDir(pConstSurf, NurbsSurface.idxIsClampedStart, m_direction);
+        IntPtr const_ptr_surface = m_surface.ConstPointer();
+        return UnsafeNativeMethods.ON_NurbsSurface_GetBoolDir(const_ptr_surface, NurbsSurface.idxIsClampedStart, m_direction);
       }
     }
     /// <summary>Determines if a knot vector is clamped.</summary>
@@ -967,8 +990,8 @@ namespace Rhino.Geometry.Collections
     {
       get
       {
-        IntPtr pConstSurf = m_surface.ConstPointer();
-        return UnsafeNativeMethods.ON_NurbsSurface_GetBoolDir(pConstSurf, NurbsSurface.idxIsClampedEnd, m_direction);
+        IntPtr const_ptr_surface = m_surface.ConstPointer();
+        return UnsafeNativeMethods.ON_NurbsSurface_GetBoolDir(const_ptr_surface, NurbsSurface.idxIsClampedEnd, m_direction);
       }
     }
 
@@ -981,8 +1004,8 @@ namespace Rhino.Geometry.Collections
     /// <returns>A component.</returns>
     public double SuperfluousKnot(bool start)
     {
-      IntPtr pConstSurf = m_surface.ConstPointer();
-      return UnsafeNativeMethods.ON_NurbsSurface_SuperfluousKnot(pConstSurf, m_direction, start ? 0 : 1);
+      IntPtr const_ptr_surface = m_surface.ConstPointer();
+      return UnsafeNativeMethods.ON_NurbsSurface_SuperfluousKnot(const_ptr_surface, m_direction, start ? 0 : 1);
     }
 
     /// <summary>
@@ -1113,9 +1136,9 @@ namespace Rhino.Geometry.Collections
         // check for equality of spans
         for (int i = 1; i < Count; ++i)
         {
-            double myDelta = this[i] - this[i - 1];
-            double theirDelta = other[i] - other[i - 1];
-            if (!RhinoMath.EpsilonEquals(myDelta, theirDelta, epsilon))
+            double my_delta = this[i] - this[i - 1];
+            double their_delta = other[i] - other[i - 1];
+            if (!RhinoMath.EpsilonEquals(my_delta, their_delta, epsilon))
                 return false;
         }
 

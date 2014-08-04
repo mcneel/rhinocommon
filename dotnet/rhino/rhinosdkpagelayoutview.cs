@@ -199,6 +199,40 @@ namespace Rhino.Display
       }
     }
 
+    /// <summary>
+    /// Width of the page in the document's PageUnitSystem
+    /// </summary>
+    public double PageWidth
+    {
+      get
+      {
+        IntPtr const_ptr_this = ConstPointer();
+        return UnsafeNativeMethods.CRhinoPageView_GetSize(const_ptr_this, true);
+      }
+      set
+      {
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.CRhinoPageView_SetSize(ptr_this, true, value);
+      }
+    }
+
+    /// <summary>
+    /// Height of the page in the document's PageUnitSystem
+    /// </summary>
+    public double PageHeight
+    {
+      get
+      {
+        IntPtr const_ptr_this = ConstPointer();
+        return UnsafeNativeMethods.CRhinoPageView_GetSize(const_ptr_this, false);
+      }
+      set
+      {
+        IntPtr ptr_this = NonConstPointer();
+        UnsafeNativeMethods.CRhinoPageView_SetSize(ptr_this, false, value);
+      }
+    }
+
     /// <summary>Same as the MainViewport.Name.</summary>
     /// <example>
     /// <code source='examples\vbnet\ex_activeviewport.vb' lang='vbnet'/>

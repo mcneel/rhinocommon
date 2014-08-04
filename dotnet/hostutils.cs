@@ -771,10 +771,15 @@ namespace Rhino.Runtime
 #if RHINO_SDK
       try
       {
+        // 11 July 2014 S. Baer (RH-28010)
+        // Force the culture to invarient while running the evaluation
+        var current = System.Threading.Thread.CurrentThread.CurrentCulture;
+        System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
         string state = StringHolder.GetString(statementsAsStringHolder);
         string expr = StringHolder.GetString(expressionAsStringHolder);
         PythonScript py = PythonScript.Create();
         object eval_result = py.EvaluateExpression(state, expr);
+        System.Threading.Thread.CurrentThread.CurrentCulture = current;
         if (null != eval_result)
         {
           string s = null;

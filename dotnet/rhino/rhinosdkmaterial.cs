@@ -1,3 +1,4 @@
+using System.Collections;
 #pragma warning disable 1591
 using System;
 using System.Runtime.Serialization;
@@ -6,6 +7,560 @@ using Rhino.Runtime.InteropWrappers;
 
 namespace Rhino.DocObjects
 {
+  public class MaterialRef : IDisposable
+  {
+    #region Constructors
+    internal MaterialRef(IntPtr pointer, Guid plugInId)
+    {
+      m_temp_pointer = pointer;
+      PlugInId = plugInId;
+    }
+
+    internal MaterialRef(MaterialRefs parent, Guid plugInId)
+    {
+      m_parent = parent;
+      PlugInId = plugInId;
+    }
+    #endregion Constructors
+
+    #region Private properties
+    private readonly MaterialRefs m_parent;
+    private IntPtr m_temp_pointer = IntPtr.Zero;
+    #endregion Private properties
+
+    #region Internal/Private methods
+    internal IntPtr ConstPointer
+    {
+      get { return (m_temp_pointer == IntPtr.Zero ? m_parent.Parent.ConstPointer() : m_temp_pointer); }
+    }
+    private Guid GetMaterialId(bool backFace)
+    {
+      var pointer = ConstPointer;
+      var value = Guid.Empty;
+      UnsafeNativeMethods.ON_3dmObjectAttributes_MaterialId(pointer, PlugInId, ref value, backFace);
+      return value;
+    }
+
+    private int GetMaterialIndex(bool backFace)
+    {
+      var pointer = ConstPointer;
+      var value = -1;
+      UnsafeNativeMethods.ON_3dmObjectAttributes_MaterialIndex(pointer, PlugInId, ref value, backFace);
+      return value;
+    }
+    #endregion Internal/Private methods
+
+    #region Public properties
+    /// <summary>
+    /// Determines if the simple material should come from the object or from
+    /// it's layer.
+    /// </summary>
+    public ObjectMaterialSource MaterialSource
+    {
+      get
+      {
+        var pointer = ConstPointer;
+        var value = (int)ObjectMaterialSource.MaterialFromLayer;
+        UnsafeNativeMethods.ON_3dmObjectAttributes_MaterialRefSource(pointer, PlugInId, ref value);
+        switch (value)
+        {
+          case (int)ObjectMaterialSource.MaterialFromLayer:
+            return ObjectMaterialSource.MaterialFromLayer;
+          case (int)ObjectMaterialSource.MaterialFromObject:
+            return ObjectMaterialSource.MaterialFromObject;
+          case (int)ObjectMaterialSource.MaterialFromParent:
+            return ObjectMaterialSource.MaterialFromParent;
+        }
+        throw new Exception("Unknown ObjectMaterialSource type");
+      }
+    }
+
+    /// <summary>
+    /// Identifies a rendering plug-in
+    /// </summary>
+    public Guid PlugInId { get; private set; }
+    /// <summary>
+    /// The Id of the Material used to render the front of an object.
+    /// </summary>
+    public Guid FrontFaceMaterialId { get { return GetMaterialId(false); } }
+    /// <summary>
+    /// The Id of the Material used to render the back of an object.
+    /// </summary>
+    public Guid BackFaceMaterialId { get { return GetMaterialId(true); } }
+    /// <summary>
+    /// The index of the material used to render the front of an object
+    /// </summary>
+    public int FrontFaceMaterialIndex { get { return GetMaterialIndex(false); } }
+    /// <summary>
+    /// The index of the material used to render the back of an object
+    /// </summary>
+    public int BackFaceMaterialIndex { get { return GetMaterialIndex(true); } }
+    #endregion Public properties
+
+    #region IDisposable implementation
+    public void Dispose() { Dispose(true); }
+    ~MaterialRef() { Dispose(false); }
+    void Dispose(bool disposing)
+    {
+      if (m_temp_pointer == IntPtr.Zero) return;
+      UnsafeNativeMethods.ON_3dmObjectAttributes_Delete(m_temp_pointer);
+      m_temp_pointer = IntPtr.Zero;
+    }
+    #endregion IDisposable implementation
+  }
+
+  /// <summary>
+  /// Options passed to MaterialRefs.Create
+  /// </summary>
+  public class MaterialRefCreateParams
+  {
+    /// <summary>
+    /// Identifies a rendering plug-in
+    /// </summary>
+    public Guid PlugInId { get; set; }
+    /// <summary>
+    /// Determines if the simple material should come from the object or from
+    /// it's layer.
+    /// </summary>
+    public ObjectMaterialSource MaterialSource { get; set; }
+    /// <summary>
+    /// The Id of the Material used to render the front of an object.
+    /// </summary>
+    public Guid FrontFaceMaterialId { get; set; }
+    /// <summary>
+    /// The index of the material used to render the front of an object
+    /// </summary>
+    public int FrontFaceMaterialIndex { get; set; }
+    /// <summary>
+    /// The Id of the Material used to render the back of an object.
+    /// </summary>
+    public Guid BackFaceMaterialId { get; set; }
+    /// <summary>
+    /// The index of the material used to render the back of an object
+    /// </summary>
+    public int BackFaceMaterialIndex { get; set; }
+  }
+
+  /// <summary>
+  /// If you are developing a high quality plug-in renderer, and a user is
+  /// assigning a custom render material to this object, then add rendering
+  /// material information to the MaterialRefs dictionary.
+  /// 
+  /// Note to developers:
+  ///  As soon as the MaterialRefs dictionary contains items rendering
+  ///  material queries slow down.  Do not populate the MaterialRefs
+  /// dictionary when setting the MaterialIndex will take care of your needs.
+  /// </summary>
+  public class MaterialRefs : IDictionary<Guid, MaterialRef>
+  {
+    #region Constructors
+    internal MaterialRefs(ObjectAttributes parent)
+    {
+      Parent = parent;
+    }
+    #endregion
+
+    #region Internal properties and methods
+    internal ObjectAttributes Parent { get; private set; }
+
+    internal IntPtr ConstPointer
+    {
+      get { return Parent.ConstPointer(); }
+    }
+
+    internal IntPtr NonConstPointer
+    {
+      get { return Parent.NonConstPointer(); }
+    }
+    #endregion Internal properties and methods
+
+    /// <summary>
+    /// Call this method to create a MaterialRef which can be used when calling
+    /// one of the Add methods.
+    /// </summary>
+    /// <param name="createParams">
+    /// Values used to initialize the MaterialRef
+    /// </param>
+    /// <returns>
+    /// A temporary MaterialRef object, the caller is responsible for disposing
+    /// of this object.
+    /// </returns>
+    public MaterialRef Create(MaterialRefCreateParams createParams)
+    {
+      if (createParams == null) throw new ArgumentNullException("createParams");
+      if (createParams.PlugInId == Guid.Empty) throw new ArgumentException("The PlugInId property can not be empty", "createParams");
+      var attributes_pointer = UnsafeNativeMethods.ON_3dmObjectAttributes_New(IntPtr.Zero);
+      var pointer = UnsafeNativeMethods.ON_MaterialRef_New(attributes_pointer);
+      UnsafeNativeMethods.ON_MaterialRef_SetPlugInId(pointer, createParams.PlugInId);
+      UnsafeNativeMethods.ON_MaterialRef_SetMaterialSource(pointer, (int)createParams.MaterialSource);
+      UnsafeNativeMethods.ON_MaterialRef_SetMaterialId(pointer, createParams.FrontFaceMaterialId, true);
+      UnsafeNativeMethods.ON_MaterialRef_SetMaterialIndex(pointer, createParams.FrontFaceMaterialIndex, true);
+      UnsafeNativeMethods.ON_MaterialRef_SetMaterialId(pointer, createParams.BackFaceMaterialId, false);
+      UnsafeNativeMethods.ON_MaterialRef_SetMaterialIndex(pointer, createParams.BackFaceMaterialIndex, false);
+      UnsafeNativeMethods.ON_3dmObjectAttributes_AddMaterialRef(attributes_pointer, pointer);
+      UnsafeNativeMethods.ON_MaterialRef_Delete(pointer);
+      return new MaterialRef(attributes_pointer, createParams.PlugInId);
+    }
+
+    #region IDictionary implementation
+    // Summary:
+    //     Returns an enumerator that iterates through the collection.
+    //
+    // Returns:
+    //     A System.Collections.Generic.IEnumerator<T> that can be used to iterate through
+    //     the collection.
+
+    /// <summary>
+    /// Returns an enumerator that iterates through this dictionary.
+    /// </summary>
+    /// <returns>
+    /// A IEnumerator that can be used to iterate this dictionary.
+    /// </returns>
+    public IEnumerator<KeyValuePair<Guid, MaterialRef>> GetEnumerator()
+    {
+      var result = new MaterialRefDictionaryEnumerator(this);
+      return result;
+    }
+    /// <summary>
+    /// Returns an enumerator that iterates through this dictionary.
+    /// </summary>
+    /// <returns>
+    /// An System.Collections.IEnumerator object that can be used to iterate
+    /// through this dictionary.
+    /// </returns>
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+    /// <summary>
+    /// Adds an item to this dictionary.
+    /// </summary>
+    /// <param name="item">
+    /// The object to add to this dictionary
+    /// </param>
+    /// <exception cref="System.ArgumentNullException">
+    /// value is null.
+    /// </exception>
+    /// <exception cref="System.ArgumentException">
+    /// key is empty.
+    /// </exception>
+    public void Add(KeyValuePair<Guid, MaterialRef> item)
+    {
+      Add(item.Key, item.Value);
+    }
+    /// <summary>
+    /// Add or replace an element with the provided key and value to this dictionary.
+    /// </summary>
+    /// <param name="key">
+    /// The plug-in associated with this MaterialRef
+    /// </param>
+    /// <param name="value">
+    /// MaterialRef to add to this dictionary
+    /// </param>
+    /// <exception cref="System.ArgumentNullException">
+    /// value is null.
+    /// </exception>
+    /// <exception cref="System.ArgumentException">
+    /// key is empty.
+    /// </exception>
+    public void Add(Guid key, MaterialRef value)
+    {
+      if (key == Guid.Empty) throw new ArgumentException("key");
+      if (value == null) throw new ArgumentNullException("value");
+      var non_const_pointer = NonConstPointer;
+      var material_ref_attr_pointer = value.ConstPointer;
+      var material_ref_pointer = UnsafeNativeMethods.ON_3dmObjectAttributes_MaterialRef(material_ref_attr_pointer, key);
+      UnsafeNativeMethods.ON_3dmObjectAttributes_AddMaterialRef(non_const_pointer, material_ref_pointer);
+    }
+    /// <summary>
+    /// Removes all items from this dictionary.
+    /// </summary>
+    public void Clear()
+    {
+      var non_const_pointer = NonConstPointer;
+      UnsafeNativeMethods.ON_3dmObjectAttributes_EmptyMaterialRefs(non_const_pointer);
+    }
+    /// <summary>
+    /// Determines whether this dictionary contains a specific value.
+    /// </summary>
+    /// <param name="item">
+    /// The object to locate in this dictionary.
+    /// </param>
+    /// <returns>
+    /// true if item is found in this dictionary; otherwise, false.
+    /// </returns>
+    public bool Contains(KeyValuePair<Guid, MaterialRef> item)
+    {
+      return ContainsKey(item.Key);
+    }
+    //
+    // Summary:
+    //     Copies the elements of the System.Collections.Generic.ICollection<T> to an
+    //     System.Array, starting at a particular System.Array index.
+    //
+    // Parameters:
+    //   array:
+    //     The one-dimensional System.Array that is the destination of the elements
+    //     copied from System.Collections.Generic.ICollection<T>. The System.Array must
+    //     have zero-based indexing.
+    //
+    //   arrayIndex:
+    //     The zero-based index in array at which copying begins.
+    //
+    // Exceptions:
+    //   System.ArgumentNullException:
+    //     array is null.
+    //
+    //   System.ArgumentOutOfRangeException:
+    //     arrayIndex is less than 0.
+    //
+    //   System.ArgumentException:
+    //     The number of elements in the source System.Collections.Generic.ICollection<T>
+    //     is greater than the available space from arrayIndex to the end of the destination
+    //     array.
+    /// <summary>
+    /// Copies the elements of this dictionary to an System.Array, starting at
+    /// a particular System.Array index.
+    /// </summary>
+    /// <param name="array">
+    /// The one-dimensional System.Array that is the destination of the
+    /// elements copied from this dictionary. The System.Array must have
+    /// zero-based indexing.
+    /// </param>
+    /// <param name="arrayIndex">
+    /// The zero-based index in array at which copying begins.
+    /// </param>
+    /// <exception cref="System.ArgumentNullException">
+    /// array is null
+    /// </exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">
+    /// arrayIndex is less than 0.
+    /// </exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">
+    /// The number of elements in the source dictionary is greater than the
+    /// available space from arrayIndex to the end of the destination array.
+    /// </exception>
+    public void CopyTo(KeyValuePair<Guid, MaterialRef>[] array, int arrayIndex)
+    {
+      if (array == null) throw new ArgumentNullException("array");
+      if (arrayIndex < 0) throw new ArgumentOutOfRangeException("arrayIndex");
+      var length = Count - arrayIndex;
+      if (array.Length < length) throw new ArgumentException("The number of elements in the MaterialRefs is greater than the available space from arrayIndex to the end of the destination array.", "array");
+      var const_pointer = ConstPointer;
+      for (var i = arrayIndex; i < Count; i++)
+      {
+        var pointer = UnsafeNativeMethods.ON_3dmObjectAttributes_MaterialFromIndex(const_pointer, i);
+        var id = Guid.Empty;
+        UnsafeNativeMethods.ON_MaterialRef_PlugInId(pointer, ref id);
+        array[i] = new KeyValuePair<Guid, MaterialRef>(id, new MaterialRef(this, id));
+      }
+    }
+    /// <summary>
+    /// Removes the element with the specified plug-in id from the this dictionary.
+    /// </summary>
+    /// <param name="item">
+    /// The object to remove from this dictionary
+    /// </param>
+    /// <returns></returns>
+    public bool Remove(KeyValuePair<Guid, MaterialRef> item)
+    {
+      var const_pointer = ConstPointer;
+      var index = UnsafeNativeMethods.ON_3dmObjectAttributes_MaterialRefIndexOf(const_pointer, item.Key);
+      if (index < 0) return false;
+      var non_const_pointer = NonConstPointer;
+      UnsafeNativeMethods.ON_3dmObjectAttributes_RemoveMaterialRefAt(non_const_pointer, index);
+      return true;
+    }
+    /// <summary>
+    /// Gets the number of elements contained in this dictionary
+    /// </summary>
+    public int Count
+    {
+      get
+      {
+        var const_pointer = ConstPointer;
+        var value = UnsafeNativeMethods.ON_3dmObjectAttributes_MaterialRefCount(const_pointer);
+        return value;
+      }
+    }
+    /// <summary>
+    /// IDictionary required property, always returns false for this dictionary.
+    /// </summary>
+    public bool IsReadOnly { get { return false; } }
+    /// <summary>
+    /// Determines whether this dictionary contains an MaterialRef with the
+    /// specified plug-in id.
+    /// </summary>
+    /// <param name="key">
+    /// The plug-in Id used to locate a MaterialRef in this dictionary.
+    /// </param>
+    /// <returns>
+    /// true if this dictionary contains an element with the specified plug-in
+    /// Id; otherwise, false.
+    /// </returns>
+    public bool ContainsKey(Guid key)
+    {
+      var const_pointer = ConstPointer;
+      var index = UnsafeNativeMethods.ON_3dmObjectAttributes_MaterialRefIndexOf(const_pointer, key);
+      return (index >= 0);
+    }
+    /// <summary>
+    /// Removes the MaterialRef with the specified plug-in Id from this
+    /// dictionary.
+    /// </summary>
+    /// <param name="key">
+    /// The plug-in Id for the MaterialRef to remove.
+    /// </param>
+    /// <returns>
+    /// true if the MaterialRef is successfully removed; otherwise, false. This
+    /// method also returns false if key was not found in the original dictionary.
+    /// </returns>
+    public bool Remove(Guid key)
+    {
+      var const_pointer = ConstPointer;
+      var index = UnsafeNativeMethods.ON_3dmObjectAttributes_MaterialRefIndexOf(const_pointer, key);
+      if (index < 0) return false;
+      var non_const_pointer = NonConstPointer;
+      UnsafeNativeMethods.ON_3dmObjectAttributes_RemoveMaterialRefAt(non_const_pointer, index);
+      return true;
+    }
+    /// <summary>
+    /// Gets the value associated with the specified key.
+    /// </summary>
+    /// <param name="key">
+    /// The plug-in Id whose MaterialRef to get.
+    /// </param>
+    /// <param name="value">
+    /// When this method returns, the MaterialRef associated with the specified
+    /// key, if the key is found; otherwise, null. This parameter is passed
+    /// uninitialized.
+    /// </param>
+    /// <returns>
+    /// true if this dictionary contains a MaterialRef with the specified key;
+    /// otherwise, false.
+    /// </returns>
+    public bool TryGetValue(Guid key, out MaterialRef value)
+    {
+      var contains_key = ContainsKey(key);
+      value = (contains_key ? new MaterialRef(this, key) : null);
+      return contains_key;
+    }
+    /// <summary>
+    /// Gets or sets the element with the specified plug-in Id.
+    /// </summary>
+    /// <param name="key">
+    /// The plug-in Id of the MaterialRef to get or set.
+    /// </param>
+    /// <returns>
+    /// The MaterialRef with the specified key.
+    /// </returns>
+    /// <exception cref="System.ArgumentNullException">
+    /// value is null.
+    /// </exception>
+    /// <exception cref="System.ArgumentException">
+    /// key is empty.
+    /// </exception>
+    public MaterialRef this[Guid key]
+    {
+      get
+      {
+        if (key == Guid.Empty) throw new ArgumentException("key");
+        if (!ContainsKey(key)) throw new KeyNotFoundException();
+        return new MaterialRef(this, key);
+      }
+      set
+      {
+        Add(key, value);
+      }
+    }
+    /// <summary>
+    /// Gets an ICollection containing the plug-in Id's in this dictionary.
+    /// </summary>
+    public ICollection<Guid> Keys
+    {
+      get
+      {
+        var keys = new List<Guid>();
+        var const_pointer = ConstPointer;
+        for (int i = 0, count = Count; i < count; i++)
+        {
+          var pointer = UnsafeNativeMethods.ON_3dmObjectAttributes_MaterialFromIndex(const_pointer, i);
+          if (pointer == IntPtr.Zero) continue;
+          var id = Guid.Empty;
+          if (UnsafeNativeMethods.ON_MaterialRef_PlugInId(pointer, ref id) && id != Guid.Empty)
+            keys.Add(id);
+        }
+        return keys;
+      }
+    }
+    /// <summary>
+    /// Gets an ICollection containing the MaterialRef objects in this
+    /// dictionary.
+    /// </summary>
+    public ICollection<MaterialRef> Values
+    {
+      get
+      {
+        var keys = new List<MaterialRef>();
+        var const_pointer = ConstPointer;
+        for (int i = 0, count = Count; i < count; i++)
+        {
+          var pointer = UnsafeNativeMethods.ON_3dmObjectAttributes_MaterialFromIndex(const_pointer, i);
+          if (pointer == IntPtr.Zero) continue;
+          var id = Guid.Empty;
+          if (UnsafeNativeMethods.ON_MaterialRef_PlugInId(pointer, ref id) && id != Guid.Empty)
+            keys.Add(new MaterialRef(this, id));
+        }
+        return keys;
+      }
+    }
+    #endregion IDictionary implementation
+  }
+  internal class MaterialRefDictionaryEnumerator : IEnumerator<KeyValuePair<Guid,MaterialRef>>
+  {
+    internal MaterialRefDictionaryEnumerator(MaterialRefs parent)
+    {
+      m_parent = parent;
+      var pointer = m_parent.ConstPointer;
+      m_count = UnsafeNativeMethods.ON_3dmObjectAttributes_MaterialRefCount(pointer);
+    }
+    private readonly MaterialRefs m_parent;
+    private int m_index = -1;
+    private readonly int m_count;
+
+    public void Dispose()
+    {
+    }
+
+    public bool MoveNext()
+    {
+      if (m_index < m_count) m_index++;
+      if (m_index >= m_count)
+      {
+        Current = new KeyValuePair<Guid, MaterialRef>(Guid.Empty, null);
+        return false;
+      }
+      var pointer = m_parent.ConstPointer;
+      var ref_pointer = UnsafeNativeMethods.ON_3dmObjectAttributes_MaterialFromIndex(pointer, m_index);
+      var id = Guid.Empty;
+      UnsafeNativeMethods.ON_MaterialRef_PlugInId(ref_pointer, ref id);
+      Current = new KeyValuePair<Guid,MaterialRef>(id, new MaterialRef(m_parent, id));
+      return true;
+    }
+
+    public void Reset()
+    {
+      m_index = -1;
+      Current = new KeyValuePair<Guid, MaterialRef>(Guid.Empty, null);
+    }
+
+    public KeyValuePair<Guid,MaterialRef> Current { get; private set; }
+
+    object IEnumerator.Current
+    {
+      get { return Current; }
+    }
+  }
   class MaterialHolder
   {
     IntPtr m_ptr_const_material;
@@ -641,7 +1196,7 @@ namespace Rhino.DocObjects.Tables
 
     internal void Done()
     {
-      m_holder.Done();
+      if (m_holder != null) m_holder.Done();
     }
 
     RhinoDoc m_doc;

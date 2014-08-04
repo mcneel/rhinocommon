@@ -6,10 +6,326 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Rhino.Collections;
 using System.Runtime.Serialization;
+using Rhino.Geometry;
 using Rhino.Runtime.InteropWrappers;
+using Rhino.Render;
 
 namespace Rhino.Render
 {
+  /// <summary>
+  /// Used for cached texture coordinates
+  /// </summary>
+  public class CachedTextureCoordinates : Runtime.CommonObject, IList<Point3d>
+  {
+    /// <summary>
+    /// Internal constructor used to wrap ON_TextureCoordinates* retrieved from
+    /// a Rhino mesh.
+    /// </summary>
+    /// <param name="pTextureCoordinates"></param>
+    internal CachedTextureCoordinates(IntPtr pTextureCoordinates)
+    {
+      ConstructNonConstObject(pTextureCoordinates);
+      DoNotDestructOnDispose();
+    }
+    /// <summary>
+    /// Call this method to get the cached texture coordinates from a Rhino
+    /// mesh.
+    /// </summary>
+    /// <param name="mesh">
+    /// Mesh to query for cached coordinates.
+    /// </param>
+    /// <param name="textureMappingId">
+    /// The texture mapping ID to look for.
+    /// </param>
+    /// <returns>
+    /// Returns the cached coordinates if found or null if not.
+    /// </returns>
+    internal static CachedTextureCoordinates GetCachedTextureCoordinates(Mesh mesh, Guid textureMappingId)
+    {
+      var tc_pointer = UnsafeNativeMethods.ON_Mesh_CachedTextureCoordinates(mesh.ConstPointer(), textureMappingId);
+      if (tc_pointer == IntPtr.Zero)
+        return null;
+      var tc = new CachedTextureCoordinates(tc_pointer);
+      return tc;
+    }
+    /// <summary>
+    /// Use this method to iterate the cached texture coordinate array.
+    /// </summary>
+    /// <param name="index">
+    /// Index for the vertex to fetch.
+    /// </param>
+    /// <param name="u">
+    /// Output parameter which will receive the U value.
+    /// </param>
+    /// <param name="v">
+    /// Output parameter which will receive the V value.
+    /// </param>
+    /// <param name="w">
+    /// Output parameter which will receive the W value, this is only
+    /// meaningful if <see cref="Dim"/> is 3.
+    /// </param>
+    /// <returns>
+    /// Returns true if index is valid; otherwise returns false.
+    /// </returns>
+    public bool TryGetAt(int index, out double u, out double v, out double w)
+    {
+      u = v = w = -1.0;
+      var success = UnsafeNativeMethods.ON_TextureCoordinates_GetTextureCoordinate(ConstPointer(), index, ref u, ref v, ref w);
+      return (success > 0);
+    }
+
+    /// <summary>
+    /// Coordinate dimension: 2 = UV, 3 = UVW
+    /// </summary>
+    public int Dim
+    {
+      get { return UnsafeNativeMethods.ON_TextureCoordinates_GetDimension(ConstPointer()); }
+    }
+    /// <summary>
+    /// The texture mapping Id.
+    /// </summary>
+    public Guid MappingId
+    {
+      get { return UnsafeNativeMethods.ON_TextureCoordinates_GetMappingId(ConstPointer()); }
+    }
+
+    internal override IntPtr _InternalGetConstPointer()
+    {
+      return IntPtr.Zero;
+    }
+
+    internal override IntPtr _InternalDuplicate(out bool applymempressure)
+    {
+      applymempressure = false;
+      var const_pointer = ConstPointer();
+      return UnsafeNativeMethods.ON_Object_Duplicate(const_pointer);
+    }
+
+    #region IList<Point3d> implementation
+    /// <summary>
+    /// IList implementation, this list is always read-only so calling this
+    /// will cause a NotSupportedException to be thrown.
+    /// </summary>
+    /// <param name="item"></param>
+    public void Add(Point3d item)
+    {
+      throw new NotSupportedException("The cached texture coordinate list is read-only");
+    }
+    /// <summary>
+    /// IList implementation, this list is always read-only so calling this
+    /// will cause a NotSupportedException to be thrown.
+    /// </summary>
+    public void Clear()
+    {
+      throw new NotSupportedException("The cached texture coordinate list is read-only");
+    }
+    /// <summary>
+    /// Determines whether this collection contains a specific value.
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    public bool Contains(Point3d item)
+    {
+      var index = IndexOf(item);
+      return (index >= 0);
+    }
+    /// <summary>
+    /// Copies the elements of the this collection to an System.Array,
+    /// starting at a particular System.Array index.
+    /// </summary>
+    /// <param name="array">
+    /// The one-dimensional System.Array that is the destination of the
+    /// elements copied from this collection. The System.Array must have
+    /// zero-based indexing.
+    /// </param>
+    /// <param name="arrayIndex">
+    /// The zero-based index in array at which copying begins.
+    /// </param>
+    /// <exception cref="System.ArgumentNullException">
+    /// array is null
+    /// </exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">
+    /// arrayIndex is less than 0.
+    /// </exception>
+    /// <exception cref="System.ArgumentException">
+    /// The number of elements in this collection is greater than the available
+    /// space from arrayIndex to the end of the destination array.
+    /// </exception>
+    public void CopyTo(Point3d[] array, int arrayIndex)
+    {
+      if (array == null) throw new ArgumentNullException("array");
+      if (arrayIndex < 0) throw new ArgumentOutOfRangeException("arrayIndex");
+      if ((arrayIndex + Count) >= array.Length) throw new ArgumentException("Array not big enough for the point list");
+      var count = Count;
+      for (int i = 0, j = arrayIndex; i < count; i++, j++)
+      {
+        double u, v, w;
+        TryGetAt(i, out u, out v, out w);
+        array[j].X = u;
+        array[j].Y = v;
+        array[j].Z = w;
+      }
+    }
+    /// <summary>
+    /// IList implementation, this list is always read-only so calling this
+    /// will cause a NotSupportedException to be thrown.
+    /// </summary>
+    public bool Remove(Point3d item)
+    {
+      throw new NotSupportedException("The cached texture coordinate list is read-only");
+    }
+    /// <summary>
+    /// Number of cached coordinates.
+    /// </summary>
+    public int Count
+    {
+      get { return UnsafeNativeMethods.ON_TextureCoordinates_GetPointListCount(ConstPointer()); }
+    }
+    /// <summary>
+    /// This collection is always read-only
+    /// </summary>
+    public bool IsReadOnly { get { return true; } }
+    /// <summary>
+    /// Returns an enumerator that iterates through this collection.
+    /// </summary>
+    /// <returns>
+    /// A enumerator that can be used to iterate through this collection.
+    /// </returns>
+    public IEnumerator<Point3d> GetEnumerator()
+    {
+      var const_pointer = ConstPointer();
+      return new CachedTextureCoordinatesEnumerator(const_pointer);
+    }
+    /// <summary>
+    /// Returns an enumerator that iterates through this collection.
+    /// </summary>
+    /// <returns>
+    /// A enumerator that can be used to iterate through this collection.
+    /// </returns>
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+    /// <summary>
+    /// Determines the index of a specific point in this collection.
+    /// </summary>
+    /// <param name="item">
+    /// The point (UV or UVW) to locate in this collection.
+    /// </param>
+    /// <returns>
+    /// The index of item if found in the list; otherwise, -1.
+    /// </returns>
+    public int IndexOf(Point3d item)
+    {
+      var count = Count;
+      for (var i = 0; i < count; i++)
+      {
+        double u, v, w;
+        var success = TryGetAt(i, out u, out v, out w);
+        if (success && u == item.X && v == item.Y && (Dim < 3 || w == item.Z))
+          return i;
+      }
+      return -1;
+    }
+    /// <summary>
+    /// IList implementation, this list is always read-only so calling this
+    /// will cause a NotSupportedException to be thrown.
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="item"></param>
+    public void Insert(int index, Point3d item)
+    {
+      throw new NotSupportedException("The cached texture coordinate list is read-only");
+    }
+    /// <summary>
+    /// IList implementation, this list is always read-only so calling this
+    /// will cause a NotSupportedException to be thrown.
+    /// </summary>
+    /// <param name="index"></param>
+    public void RemoveAt(int index)
+    {
+      throw new NotSupportedException("The cached texture coordinate list is read-only");
+    }
+    /// <summary>
+    /// Gets the element at the specified index. Never call the set method, it
+    /// will always throw a NotSupportedException because this list is
+    /// read-only.
+    /// </summary>
+    /// <param name="index">
+    /// The zero-based index of the element to get.
+    /// </param>
+    /// <returns>
+    /// The element at the specified index.
+    /// </returns>
+    /// <exception cref="NotSupportedException">
+    /// IList implementation, this list is always read-only so calling the set
+    /// method will always cause a NotSupportedException to be thrown.
+    /// </exception>
+    public Point3d this[int index]
+    {
+      get
+      {
+        if (index < 0 || index >= Count) throw new ArgumentOutOfRangeException("index", "index is not a valid index in this list");
+        double u, v, w;
+        TryGetAt(index, out u, out v, out w);
+        return new Point3d(u, v, w);
+      }
+      set { throw new NotSupportedException("The cached texture coordinate list is read-only"); }
+    }
+    #endregion IList<Point3d> implementation
+  }
+
+  /// <summary>
+  /// Internal class used to enumerate a list of CachedTextureCoordinates
+  /// </summary>
+  class CachedTextureCoordinatesEnumerator : IEnumerator<Point3d>
+  {
+    internal CachedTextureCoordinatesEnumerator(IntPtr constPointer)
+    {
+      m_const_pointer = constPointer;
+      m_count = UnsafeNativeMethods.ON_TextureCoordinates_GetPointListCount(constPointer);
+    }
+
+    private readonly IntPtr m_const_pointer;
+    private readonly int m_count;
+    private int m_position = -1;
+
+    public void Dispose()
+    {
+    }
+
+    public bool MoveNext()
+    {
+      m_position++;
+      return (m_position < m_count);
+    }
+
+    public void Reset()
+    {
+      m_position = -1;
+    }
+
+    public Point3d Current
+    {
+      get
+      {
+        if (m_position < 0 || m_position >= m_count)
+          throw new InvalidOperationException();
+        var u = 0.0;
+        var v = 0.0;
+        var w = 0.0;
+        UnsafeNativeMethods.ON_TextureCoordinates_GetTextureCoordinate(m_const_pointer, m_position, ref u, ref v, ref w);
+        return new Point3d(u, v, w);
+      }
+    }
+
+    object IEnumerator.Current
+    {
+      get { return Current; }
+    }
+  }
+
+
   /// <summary>
   /// Holds texture mapping information.
   /// </summary>
@@ -1063,6 +1379,20 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Mesh_IsManifold(ptr, topologicalTest, ref isOriented, ref hasBoundary);
     }
 
+    /// <summary>
+    /// Will return true if SetCachedTextureCoordinates has been called;
+    /// otherwise will return false.
+    /// </summary>
+    public bool HasCachedTextureCoordinates
+    {
+      get
+      {
+        var const_pointer = ConstPointer();
+        var value  = UnsafeNativeMethods.ON_Mesh_HasCachedTextureCoordinates(const_pointer);
+        return value;
+      }
+    }
+
     #region fake list access
     private Rhino.Geometry.Collections.MeshVertexList m_vertices;
     /// <summary>
@@ -1189,6 +1519,31 @@ namespace Rhino.Geometry
       IntPtr pThis = NonConstPointer();
       IntPtr pConstSurface = surface.ConstPointer();
       return UnsafeNativeMethods.ON_Mesh_EvaluateMeshGeometry(pThis, pConstSurface);
+    }
+
+    /// <summary>
+    /// Set cached texture coordinates using the specified mapping.
+    /// </summary>
+    /// <param name="tm"></param>
+    /// <param name="xf"></param>
+    public void SetCachedTextureCoordinates(TextureMapping tm, ref Transform xf)
+    {
+      UnsafeNativeMethods.ON_Mesh_SetCachedTextureCoordinates(ConstPointer(), tm.ConstPointer(), ref xf, false);
+    }
+
+    /// <summary>
+    /// Call this method to get cached texture coordinates for a texture
+    /// mapping with the specified Id.
+    /// </summary>
+    /// <param name="textureMappingId">
+    /// Texture mapping Id
+    /// </param>
+    /// <returns>
+    /// Object which allows access to coordinates and other props.
+    /// </returns>
+    public CachedTextureCoordinates GetCachedTextureCoordinates(Guid textureMappingId)
+    {
+      return CachedTextureCoordinates.GetCachedTextureCoordinates(this, textureMappingId);
     }
 
     /// <summary>
@@ -1905,9 +2260,6 @@ namespace Rhino.Geometry
 
     //[skipping]
     //  bool SetTextureCoordinates( 
-    //  bool HasCachedTextureCoordinates() const;
-    //  const ON_TextureCoordinates* CachedTextureCoordinates( 
-    //  const ON_TextureCoordinates* SetCachedTextureCoordinates( 
     //  bool EvaluateMeshGeometry( const ON_Surface& ); // evaluate surface at tcoords
     //  int GetVertexEdges( 
     //  int GetMeshEdges( 

@@ -1636,8 +1636,10 @@ namespace Rhino.PlugIns
     #region render and render window virtual function implementation
     internal delegate int RenderFunc(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr context);
     internal delegate int RenderWindowFunc(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr pRhinoView, int rLeft, int rTop, int rRight, int rBottom, int inWindow, IntPtr context);
+    internal delegate void OnSetCurrrentRenderPlugInFunc(int plugin_serial_number, bool current);
     private static readonly RenderFunc m_OnRender = InternalOnRender;
     private static readonly RenderWindowFunc m_OnRenderWindow = InternalOnRenderWindow;
+    private static readonly OnSetCurrrentRenderPlugInFunc m_OnSetCurrrentRenderPlugInFunc = InternalOnSetCurrrentRenderPlugInFunc;
     private static int InternalOnRender(int plugin_serial_number, int doc_id, int modes, int render_preview, IntPtr context)
     {
       m_render_command_context = context;
@@ -1699,11 +1701,24 @@ namespace Rhino.PlugIns
       m_render_command_context = IntPtr.Zero;
       return (int)rc;
     }
+
+    private static void InternalOnSetCurrrentRenderPlugInFunc(int plugin_serial_number, bool current)
+    {
+      var p = LookUpBySerialNumber(plugin_serial_number) as RenderPlugIn;
+      if (null == p)
+      {
+        HostUtils.DebugString("ERROR: Invalid input for OnRenderWindow");
+      }
+      else
+      {
+        p.OnSetCurrent(current);
+      }
+    }
     #endregion
 
     protected RenderPlugIn()
     {
-      UnsafeNativeMethods.CRhinoRenderPlugIn_SetCallbacks(m_OnRender, m_OnRenderWindow);
+      UnsafeNativeMethods.CRhinoRenderPlugIn_SetCallbacks(m_OnRender, m_OnRenderWindow, m_OnSetCurrrentRenderPlugInFunc);
 
 #if RDK_CHECKED
       UnsafeNativeMethods.CRhinoRenderPlugIn_SetRdkCallbacks(m_OnSupportsFeature, 
@@ -2146,6 +2161,15 @@ namespace Rhino.PlugIns
     protected abstract Rhino.Commands.Result Render(RhinoDoc doc, Rhino.Commands.RunMode mode, bool fastPreview);
 
     protected abstract Rhino.Commands.Result RenderWindow(RhinoDoc doc, Rhino.Commands.RunMode modes, bool fastPreview, Rhino.Display.RhinoView view, System.Drawing.Rectangle rect, bool inWindow);
+
+    /// <summary>
+    /// This plug-in (has become)/(is no longer) the current render plug-in
+    /// </summary>
+    /// <param name="current">
+    /// If true then this plug-in is now the current render plug-in otherwise
+    /// it is no longer the current render plug-in.
+    /// </param>
+    protected virtual void OnSetCurrent(bool current) {}
   }
 
   

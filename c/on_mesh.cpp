@@ -64,6 +64,61 @@ RH_C_FUNCTION bool ON_Mesh_SetTextureCoordinate(ON_Mesh* pMesh, int index, float
   return rc;
 }
 
+
+RH_C_FUNCTION bool ON_Mesh_HasCachedTextureCoordinates(ON_Mesh* pMesh)
+{
+  bool rc = false;
+  if( pMesh )
+  {
+    rc = pMesh->HasCachedTextureCoordinates();
+  }
+  return rc;
+}
+
+RH_C_FUNCTION void ON_Mesh_SetCachedTextureCoordinates(ON_Mesh* pMesh, ON_TextureMapping* pMapping, ON_Xform* pXform, bool bLazy)
+{
+  pMesh->SetCachedTextureCoordinates(*pMapping, pXform, bLazy);
+}
+
+RH_C_FUNCTION const ON_TextureCoordinates* ON_Mesh_CachedTextureCoordinates(ON_Mesh* pMesh, ON_UUID id) 
+
+{
+  const ON_TextureCoordinates* value = pMesh ? pMesh->CachedTextureCoordinates(id) : NULL;
+  return value;
+}
+
+RH_C_FUNCTION int ON_TextureCoordinates_GetDimension(const ON_TextureCoordinates* pointer)
+
+{
+  if (pointer) return pointer->m_dim;
+  return 0;
+}
+
+
+RH_C_FUNCTION int ON_TextureCoordinates_GetPointListCount(const ON_TextureCoordinates* pointer)
+{
+  if (pointer) return pointer->m_T.Count();
+  return 0;
+}
+
+RH_C_FUNCTION int ON_TextureCoordinates_GetTextureCoordinate(const ON_TextureCoordinates* pointer, int vertex_index, double* u, double* v, double* w)
+{
+  if (pointer == NULL) return 0;
+  if (vertex_index < 0 || vertex_index >= pointer->m_T.Count()) return 0;
+  *u = pointer->m_T[vertex_index].x;
+  *v = pointer->m_T[vertex_index].y;
+  *w = pointer->m_T[vertex_index].z;
+  return pointer->m_dim;
+}
+
+RH_C_FUNCTION ON_UUID ON_TextureCoordinates_GetMappingId(const ON_TextureCoordinates* pointer)
+
+{
+ if (pointer == NULL) return ON_nil_uuid;
+ return pointer->m_tag.m_mapping_id;
+}
+
+
 RH_C_FUNCTION int ON_Mesh_AddFace(ON_Mesh* pMesh, int vertex1, int vertex2, int vertex3, int vertex4)
 {
   int rc = -1;
@@ -2107,6 +2162,13 @@ RH_C_FUNCTION ON_MassProperties* ON_Mesh_MassProperties(bool bArea, const ON_Mes
 RH_C_FUNCTION ON_TextureMapping* ON_TextureMapping_New()
 {
   return new ON_TextureMapping();
+}
+
+RH_C_FUNCTION ON_UUID ON_TextureMapping_GetId(const ON_TextureMapping* pTextureMapping) 
+{
+  if (pTextureMapping == NULL)
+    return ON_nil_uuid;
+  return pTextureMapping->m_mapping_id;
 }
 
 enum TextureMappingType : int

@@ -520,6 +520,12 @@ RH_C_FUNCTION void ON_Texture_SetAlphaBlendValues(ON_Texture* pTexture, double c
   }
 }
 
+RH_C_FUNCTION int ON_Texture_GetMappingChannelId(const ON_Texture* pConstTexture)
+{
+  if (pConstTexture) return pConstTexture->m_mapping_channel_id;
+  return 0;
+}
+
 
 RH_C_FUNCTION ON_UUID ON_Material_ModelObjectId(const ON_Material* pConstMaterial)
 {

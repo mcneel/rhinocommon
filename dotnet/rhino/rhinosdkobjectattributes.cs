@@ -535,14 +535,26 @@ namespace Rhino.DocObjects
     /// </summary>
     public Render.Decals Decals
     {
-      get
-      {
-        return (m_decals ?? (m_decals = new Render.Decals(this)));
-      }
+      get { return (m_decals ?? (m_decals = new Render.Decals(this))); }
     }
     private Render.Decals m_decals;
 #endif
 
+    /// <summary>
+    /// If you are developing a high quality plug-in renderer, and a user is
+    /// assigning a custom render material to this object, then add rendering
+    /// material information to the MaterialRefs dictionary.
+    /// 
+    /// Note to developers:
+    ///  As soon as the MaterialRefs dictionary contains items rendering
+    ///  material queries slow down.  Do not populate the MaterialRefs
+    /// dictionary when setting the MaterialIndex will take care of your needs.
+    /// </summary>
+    public MaterialRefs MaterialRefs
+    {
+      get { return m_material_refs ?? (m_material_refs = new MaterialRefs(this)); }
+    }
+    private MaterialRefs m_material_refs;
     /// <summary>
     /// If ON::color_from_object == ColorSource, then color is the object's display color.
     /// </summary>

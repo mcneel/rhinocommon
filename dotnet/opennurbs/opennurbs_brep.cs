@@ -480,7 +480,7 @@ namespace Rhino.Geometry
     /// Curves and trims are sampled to get points. Trims are sampled for
     /// points and normals.
     /// </param>
-    /// <param name="startingSurface">A starting surface.</param>
+    /// <param name="startingSurface">A starting surface (can be null).</param>
     /// <param name="tolerance">
     /// Tolerance used by input analysis functions for loop finding, trimming, etc.
     /// </param>
@@ -489,10 +489,10 @@ namespace Rhino.Geometry
     /// </returns>
     public static Brep CreatePatch(IEnumerable<GeometryBase> geometry, Surface startingSurface, double tolerance)
     {
-      using (Runtime.InteropWrappers.SimpleArrayGeometryPointer geometry_array = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
+      using (SimpleArrayGeometryPointer geometry_array = new SimpleArrayGeometryPointer(geometry))
       {
         IntPtr ptr_geometry = geometry_array.NonConstPointer();
-        IntPtr const_ptr_surface = startingSurface.ConstPointer();
+        IntPtr const_ptr_surface = startingSurface==null?IntPtr.Zero : startingSurface.ConstPointer();
         IntPtr ptr_brep = UnsafeNativeMethods.CRhinoFitPatch_Fit1(ptr_geometry, const_ptr_surface, tolerance);
         return IntPtr.Zero == ptr_brep ? null : new Brep(ptr_brep, null);
       }
@@ -520,7 +520,7 @@ namespace Rhino.Geometry
     /// </returns>
     public static Brep CreatePatch(IEnumerable<GeometryBase> geometry, int uSpans, int vSpans, double tolerance)
     {
-      using (Runtime.InteropWrappers.SimpleArrayGeometryPointer geometry_array = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
+      using (SimpleArrayGeometryPointer geometry_array = new SimpleArrayGeometryPointer(geometry))
       {
         IntPtr ptr_geometry = geometry_array.NonConstPointer();
         IntPtr ptr_brep = UnsafeNativeMethods.CRhinoFitPatch_Fit2(ptr_geometry, uSpans, vSpans, tolerance);
@@ -537,7 +537,7 @@ namespace Rhino.Geometry
     /// Curves and trims are sampled to get points. Trims are sampled for
     /// points and normals.
     /// </param>
-    /// <param name="startingSurface">A starting surface.</param>
+    /// <param name="startingSurface">A starting surface (can be null).</param>
     /// <param name="uSpans">
     /// Number of surface spans used when a plane is fit through points to start in the U direction.
     /// </param>
@@ -582,10 +582,10 @@ namespace Rhino.Geometry
     public static Brep CreatePatch(IEnumerable<GeometryBase> geometry, Surface startingSurface, int uSpans, int vSpans, bool trim,
       bool tangency, double pointSpacing, double flexibility, double surfacePull, bool[] fixEdges, double tolerance)
     {
-      using (Runtime.InteropWrappers.SimpleArrayGeometryPointer geometry_array = new Runtime.InteropWrappers.SimpleArrayGeometryPointer(geometry))
+      using (SimpleArrayGeometryPointer geometry_array = new SimpleArrayGeometryPointer(geometry))
       {
         IntPtr ptr_geometry = geometry_array.NonConstPointer();
-        IntPtr const_ptr_surface = startingSurface.ConstPointer();
+        IntPtr const_ptr_surface = startingSurface==null ? IntPtr.Zero : startingSurface.ConstPointer();
         int[] fix_edges = new int[4];
         for (int i = 0; i < 4; i++)
           fix_edges[i] = fixEdges[i] ? 1 : 0;
@@ -2275,6 +2275,36 @@ namespace Rhino.Geometry
       return UnsafeNativeMethods.ON_Brep_SetEdgeCurve(ptr_brep, m_index, curve3dIndex, subDomain);
     }
 
+    /// <summary>
+    /// BrepVertex at start of edge
+    /// </summary>
+    public BrepVertex StartVertex
+    {
+      get
+      {
+        IntPtr const_ptr_this = ConstPointer();
+        int index = UnsafeNativeMethods.ON_BrepEdge_BrepVertex(const_ptr_this, 0);
+        if( index<0 )
+          return null;
+        return new BrepVertex(index, m_brep);
+      }
+    }
+
+    /// <summary>
+    /// BrepVertex at end of edge
+    /// </summary>
+    public BrepVertex EndVertex
+    {
+      get
+      {
+        IntPtr const_ptr_this = ConstPointer();
+        int index = UnsafeNativeMethods.ON_BrepEdge_BrepVertex(const_ptr_this, 1);
+        if (index < 0)
+          return null;
+        return new BrepVertex(index, m_brep);
+      }
+    }
+
     internal override IntPtr _InternalGetConstPointer()
     {
       if (null != m_brep)
@@ -3864,6 +3894,15 @@ namespace Rhino.Geometry.Collections
       return this[index];
     }
 
+    /// <summary>
+    /// Remove slit trims and slit boundaries from each face.
+    /// </summary>
+    /// <returns>true if any slits were removed</returns>
+    public bool RemoveSlits()
+    {
+      IntPtr ptr_brep = m_brep.NonConstPointer();
+      return UnsafeNativeMethods.ON_Brep_RemoveSlits(ptr_brep);
+    }
 
     /*
     /// <summary>

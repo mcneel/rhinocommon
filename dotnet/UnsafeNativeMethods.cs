@@ -129,7 +129,7 @@ internal partial class UnsafeNativeMethods
     Rhino.PlugIns.FileExportPlugIn.WriteFileFunc writefile);
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-  internal static extern void CRhinoRenderPlugIn_SetCallbacks(Rhino.PlugIns.RenderPlugIn.RenderFunc render, Rhino.PlugIns.RenderPlugIn.RenderWindowFunc renderwindow);
+  internal static extern void CRhinoRenderPlugIn_SetCallbacks(Rhino.PlugIns.RenderPlugIn.RenderFunc render, Rhino.PlugIns.RenderPlugIn.RenderWindowFunc renderwindow, Rhino.PlugIns.RenderPlugIn.OnSetCurrrentRenderPlugInFunc onsetcurrent);
 
 #if RDK_CHECKED
   [DllImport(Import.librdk, CallingConvention = CallingConvention.Cdecl)]

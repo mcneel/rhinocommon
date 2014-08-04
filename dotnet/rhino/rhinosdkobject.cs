@@ -1675,7 +1675,7 @@ namespace Rhino.DocObjects
       get
       {
         IntPtr pConstThis = ConstPointer();
-        return UnsafeNativeMethods.Rdk_RenderContent_ObjectMaterialInstanceId(pConstThis);
+        return UnsafeNativeMethods.Rdk_RenderContent_ObjectInstanceId(pConstThis);
       }
       // DO NOT DO THIS!  See the comment below which came from NonConstPointer()
       // This was moved to RhinoDoc.Objects.ModifyRenderMaterialInstanceId
@@ -1687,10 +1687,11 @@ namespace Rhino.DocObjects
       //}
     }
     /// <summary>
-    /// Gets and sets the render material associated with this object.
-    /// Note that if you are setting the material, the RenderMaterial object must already be in the Rhino.Render.RenderMaterialTable
+    /// Gets the render material associated with this object or null if there
+    /// is none.  This does not pay attention to the material source and will
+    /// not check parent objects or layers for a RenderMaterial.
     /// </summary>
-    public Render.RenderMaterial RenderMaterial
+    public RenderMaterial RenderMaterial
     {
       get
       {
@@ -1704,6 +1705,28 @@ namespace Rhino.DocObjects
       //  RenderMaterialInstanceId = value.Id;
       //}
     }
+    /// <summary>
+    /// Gets the RenderMaterial that this object uses based on it's attributes
+    /// and the document that the object is associated with. If there is no 
+    /// RenderMaterial associated with this object then null is returned.  If
+    /// null is returned you should call GetMaterial to get the material used
+    /// to render this object.
+    /// </summary>
+    /// <param name="frontMaterial">
+    /// If true, gets the material used to render the object's front side
+    /// otherwise; gets the material used to render the back side of the
+    /// object.
+    /// </param>
+    /// <returns>
+    /// If there is a RenderMaterial associated with this objects' associated
+    /// Material then it is returned otherwise; null is returned.
+    /// </returns>
+    public RenderMaterial GetRenderMaterial(bool frontMaterial)
+    {
+      var const_pointer = ConstPointer();
+      var id = UnsafeNativeMethods.Rdk_RenderContent_ObjectMaterialInstanceId(const_pointer, frontMaterial);
+      return RenderContent.FromId(Document, id) as RenderMaterial;
+    }
 #endif
     /// <summary>
     /// Gets material that this object uses based on it's attributes and the document
@@ -1716,11 +1739,11 @@ namespace Rhino.DocObjects
     /// <returns></returns>
     public Material GetMaterial(bool frontMaterial)
     {
-      IntPtr pConstThis = ConstPointer();
+      IntPtr const_pointer = ConstPointer();
       var doc = Document;
       if (doc == null)
         return null;
-      int index = UnsafeNativeMethods.CRhinoObject_GetMaterial(pConstThis, frontMaterial);
+      var index = UnsafeNativeMethods.CRhinoObject_GetMaterial(const_pointer, frontMaterial);
       if( index<-2 ) // -1 and -2 are valid since the material may be the "default" or "locked default" material
         return null;
 

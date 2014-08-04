@@ -82,6 +82,16 @@ RH_C_FUNCTION bool ON_NurbsSurface_GetBool(ON_NurbsSurface* pSurface, int which)
   return rc;
 }
 
+RH_C_FUNCTION bool ON_NurbsSurface_IncreaseDegree( ON_NurbsSurface* pSurface, int dir, int desiredDegree )
+{
+  bool rc = false;
+  if( pSurface )
+  {
+    rc = pSurface->IncreaseDegree(dir, desiredDegree);
+  }
+  return rc;
+}
+
 RH_C_FUNCTION int ON_NurbsSurface_GetIntDir( const ON_NurbsSurface* pSurface, int which, int dir )
 {
   const int idxOrder = 1;

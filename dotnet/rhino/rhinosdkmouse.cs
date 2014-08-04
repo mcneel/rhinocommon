@@ -8,8 +8,8 @@ namespace Rhino.UI
 {
   public class MouseCallbackEventArgs : System.ComponentModel.CancelEventArgs
   {
-    private readonly IntPtr m_pRhinoView;
-    private Rhino.Display.RhinoView m_view;
+    private readonly IntPtr m_ptr_rhinoview;
+    private Display.RhinoView m_view;
     private readonly System.Windows.Forms.MouseButtons m_button;
     private readonly System.Drawing.Point m_point;
 
@@ -21,7 +21,7 @@ namespace Rhino.UI
       const int btnMiddle = 3;
       const int btnX = 4;
 
-      m_pRhinoView = pRhinoView;
+      m_ptr_rhinoview = pRhinoView;
       switch (button)
       {
         case btnLeft:
@@ -43,9 +43,9 @@ namespace Rhino.UI
       m_point = new System.Drawing.Point(x, y);
     }
 
-    public Rhino.Display.RhinoView View
+    public Display.RhinoView View
     {
-      get { return m_view ?? (m_view = Rhino.Display.RhinoView.FromIntPtr(m_pRhinoView)); }
+      get { return m_view ?? (m_view = Display.RhinoView.FromIntPtr(m_ptr_rhinoview)); }
     }
 
     public System.Windows.Forms.MouseButtons Button
@@ -73,9 +73,9 @@ namespace Rhino.UI
 
     protected virtual void OnMouseDoubleClick(MouseCallbackEventArgs e) { }
 
-    protected virtual void OnMouseEnter(Rhino.Display.RhinoView view) { }
-    protected virtual void OnMouseLeave(Rhino.Display.RhinoView view) { }
-    protected virtual void OnMouseHover(Rhino.Display.RhinoView view) { }
+    protected virtual void OnMouseEnter(Display.RhinoView view) { }
+    protected virtual void OnMouseLeave(Display.RhinoView view) { }
+    protected virtual void OnMouseHover(Display.RhinoView view) { }
     
     private static readonly List<MouseCallback> m_enabled_list = new List<MouseCallback>();
 
@@ -129,36 +129,44 @@ namespace Rhino.UI
       {
         MouseCallbackEventArgs e = new MouseCallbackEventArgs(pRhinoView, which_button, x, y);
 
-        for (int i = 0; i < m_enabled_list.Count; i++)
+        try
         {
-          switch (which_callback)
+          for (int i = 0; i < m_enabled_list.Count; i++)
           {
-            case callbackMouseDown:
-              m_enabled_list[i].OnMouseDown(e);
-              break;
-            case callbackMouseMove:
-              m_enabled_list[i].OnMouseMove(e);
-              break;
-            case callbackMouseUp:
-              m_enabled_list[i].OnMouseUp(e);
-              break;
-            case callbackMouseDoubleClick:
-              m_enabled_list[i].OnMouseDoubleClick(e);
-              break;
-            case callbackMouseEnter:
-              m_enabled_list[i].OnMouseEnter(e.View);
-              break;
-            case callbackMouseLeave:
-              m_enabled_list[i].OnMouseLeave(e.View);
-              break;
-            case callbackMouseHover:
-              m_enabled_list[i].OnMouseHover(e.View);
+            switch (which_callback)
+            {
+              case callbackMouseDown:
+                m_enabled_list[i].OnMouseDown(e);
+                break;
+              case callbackMouseMove:
+                m_enabled_list[i].OnMouseMove(e);
+                break;
+              case callbackMouseUp:
+                m_enabled_list[i].OnMouseUp(e);
+                break;
+              case callbackMouseDoubleClick:
+                m_enabled_list[i].OnMouseDoubleClick(e);
+                break;
+              case callbackMouseEnter:
+                m_enabled_list[i].OnMouseEnter(e.View);
+                break;
+              case callbackMouseLeave:
+                m_enabled_list[i].OnMouseLeave(e.View);
+                break;
+              case callbackMouseHover:
+                m_enabled_list[i].OnMouseHover(e.View);
+                break;
+            }
+
+            rc = e.Cancel ? 1 : 0;
+            if (1 == rc)
               break;
           }
-
-          rc = e.Cancel ? 1 : 0;
-          if (1 == rc)
-            break;
+        }
+        catch (Exception ex)
+        {
+          Runtime.HostUtils.ExceptionReport(ex);
+          rc = 0;
         }
       }
       return rc;

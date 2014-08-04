@@ -564,3 +564,10 @@ RH_C_FUNCTION bool RHC_RhinoTweenCurveWithSampling( const ON_Curve* pStartCurve,
   return rc;
 }
 #endif
+
+RH_C_FUNCTION bool ON_CurveProxy_IsReversed( const ON_CurveProxy* pConstCurveProxy )
+{
+  if( pConstCurveProxy )
+    return pConstCurveProxy->ProxyCurveIsReversed();
+  return false;
+}

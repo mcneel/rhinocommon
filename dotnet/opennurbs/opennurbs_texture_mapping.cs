@@ -86,6 +86,17 @@ namespace Rhino.Render
     }
 
     /// <summary>
+    /// The unique Id for this texture mapping object.
+    /// </summary>
+    public Guid Id
+    {
+      get
+      {
+        return UnsafeNativeMethods.ON_TextureMapping_GetId(ConstPointer());
+      }
+    }
+
+    /// <summary>
     /// Transform applied to mapping coordinate (u,v,w) to convert it into a
     /// texture coordinate.
     /// </summary>

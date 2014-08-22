@@ -46,6 +46,18 @@ namespace Rhino.DocObjects
     {
       return UnsafeNativeMethods.CRhinoLeaderObject_InternalCommitChanges;
     }
+
+    /// <summary>
+    /// Gets the text entity geometry of this text object.
+    /// </summary>
+    public Rhino.Geometry.Leader LeaderGeometry
+    {
+        get
+        {
+            Rhino.Geometry.Leader rc = Geometry as Rhino.Geometry.Leader;
+            return rc;
+        }
+    }
   }
 
 

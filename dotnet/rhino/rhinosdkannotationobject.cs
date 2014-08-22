@@ -48,7 +48,7 @@ namespace Rhino.DocObjects
     }
 
     /// <summary>
-    /// Gets the text entity geometry of this text object.
+    /// Gets the leader geometry of this leader object.
     /// </summary>
     public Rhino.Geometry.Leader LeaderGeometry
     {

@@ -28,7 +28,7 @@ Rhino3dmIo on Mac OS X depends on two libraries:
 - Rhino3dmIO.dll (the C# .NET wrapper around opennurbs)
 - libopennurbs.dylib (the C/C++ native opennurbs library)
 
-example\_read\_mac references Rhino3dmIO.  For the native libopennurbs.dylib, there is BeforeBuild command that builds the native libopennurbs.dylib if it is not already built (consequently, building this project for the first time takes longer than subsequent builds).  There is an After Build command that copies the libopennurbs.dylib to the target folder and renames it to rhino3dmio_native (note the lack of file extension).  According to [this documentation](http://www.mono-project.com/Interop\_with\_Native\_Libraries), the rename step should be unnecessary, but it only seems to work if the name of the library is literally the same name as that found in rhinocommon/c/Import.cs.  We hope to fix this problem if possible.
+example\_read\_mac references Rhino3dmIO.  For the native libopennurbs.dylib, there is BeforeBuild command that builds the native libopennurbs.dylib if it is not already built (consequently, building this project for the first time takes longer than subsequent builds).  There is an After Build command that copies the libopennurbs.dylib to the target folder and renames it to rhino3dmio_native (note the lack of file extension).  According to [this documentation](http://www.mono-project.com/docs/advanced/pinvoke/), the rename step should be unnecessary, but it only seems to work if the name of the library is literally the same name as that found in rhinocommon/c/Import.cs.  We hope to fix this problem if possible.
 
 
 Authors

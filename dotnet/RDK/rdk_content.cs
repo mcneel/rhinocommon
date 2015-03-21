@@ -1030,6 +1030,18 @@ namespace Rhino.Render
     /// <summary>
     /// Returns the top content in this parent/child chain.
     /// </summary>
+    public RenderContent Parent
+    {
+      get
+      {
+        IntPtr pContent = UnsafeNativeMethods.Rdk_RenderContent_Parent(ConstPointer());
+        return FromPointer(pContent);
+      }
+    }
+
+    /// <summary>
+    /// Returns the top content in this parent/child chain.
+    /// </summary>
     public RenderContent TopLevelParent
     {
       get
@@ -1668,6 +1680,72 @@ namespace Rhino.Render
       return success;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="childSlotName"></param>
+    /// <param name="changeContexts">
+    /// Currently ignored, reserved for future use
+    /// </param>
+    /// <returns></returns>
+    public bool DeleteChild(string childSlotName, ChangeContexts changeContexts)
+    {
+      // The changeContexts is there for compatibility with V6 only
+      var pointer = ConstPointer();
+      var success = UnsafeNativeMethods.Rdk_RenderContent_DeleteChild(pointer, childSlotName);
+      return success;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="changeContexts">
+    /// Currently ignored, reserved for future use
+    /// </param>
+    public void DeleteAllChildren(ChangeContexts changeContexts)
+    {
+      // The changeContexts is there for compatibility with V6 only
+      var pointer = ConstPointer();
+      UnsafeNativeMethods.Rdk_RenderContent_DeleteAllChildren(pointer);
+    }
+
+    /// <summary>
+    /// Set another content as a child of this content. This content may or may
+    /// not be attached to a document.  If this content already has a child
+    /// with the specified child slot name, that child will be deleted.  If
+    /// this content is not attached to a document, the child will be added
+    /// without sending any events.  If this content is attached to a document,
+    /// the necessary events will be sent to update the UI.
+    /// Note:
+    ///   Do not call this method to add children in your constructor. If you
+    ///   want to add default children, you should override Initialize() and add
+    ///   them there.
+    /// </summary>
+    /// <param name="renderContent">
+    /// Child content to add to this content. If pChild is NULL, the function
+    /// will fail.  If pChild is already attached to a document, the function
+    /// will fail.  If pChild is already a child of this or another content,
+    /// the function will fail.
+    /// </param>
+    /// <param name="childSlotName">
+    /// The name that will be assigned to this child slot. The child slot name
+    /// cannot be an empty string. If it is, the function will fail.
+    /// </param>
+    /// <param name="changeContexts">
+    /// </param>
+    /// <returns>
+    /// Returns true if the content was added or the child slot with this name
+    /// was modified otherwise; returns false.
+    /// </returns>
+    public bool SetChild(RenderContent renderContent, String childSlotName, ChangeContexts changeContexts)
+    {
+      if (renderContent == null)
+        return DeleteChild(childSlotName, changeContexts);
+      var found = FindChild(childSlotName);
+      renderContent.ChildSlotName = childSlotName;
+      return (found == null ? AddChild(renderContent) : ChangeChild(found, renderContent));
+    }
+
     public bool ChangeChild(RenderContent oldContent, RenderContent newContent)
     {
       if (null == oldContent)
@@ -1735,6 +1813,41 @@ namespace Rhino.Render
         Runtime.HostUtils.ExceptionReport(exception);
       }
       return null;
+    }
+
+    internal delegate bool IsFactoryProductAcceptableAsChildCallback(int serialNumber, IntPtr contentFactoryPointer, IntPtr childSlotName);
+    internal static IsFactoryProductAcceptableAsChildCallback IsFactoryProductAcceptableAsChildHook = OnIsFactoryProductAcceptableAsChild;
+    static bool OnIsFactoryProductAcceptableAsChild(int serialNumber, IntPtr contentFactoryPointer, IntPtr childSlotName)
+    {
+      var content = FromSerialNumber(serialNumber);
+      if (content == null) return true;
+      var child_slot_name = System.Runtime.InteropServices.Marshal.PtrToStringUni(childSlotName);
+      using (var string_holder = new StringHolder())
+      {
+        var pointer = string_holder.NonConstPointer();
+        UnsafeNativeMethods.Rdk_Factory_Kind(contentFactoryPointer, pointer);
+        var factory_kind = string_holder.ToString();
+        var id = UnsafeNativeMethods.Rdk_Factory_TypeId(contentFactoryPointer);
+        var result = content.IsFactoryProductAcceptableAsChild(id, factory_kind, child_slot_name);
+        return result;
+      }
+    }
+
+    /// <summary>
+    /// Override this method to restrict the type of acceptable child content.
+    /// The default implementation of this method just returns true.
+    /// </summary>
+    /// <param name="kindId"></param>
+    /// <param name="factoryKind"></param>
+    /// <param name="childSlotName">
+    /// </param>
+    /// <returns>
+    /// Return true only if content with the specified kindId can be  accepted
+    /// as a child in the specified child slot.
+    /// </returns>
+    virtual public bool IsFactoryProductAcceptableAsChild(Guid kindId, string factoryKind, string childSlotName)
+    {
+      return true;
     }
 
     internal delegate bool IsContentTypeAcceptableAsChildCallback(int serialNumber, Guid type, IntPtr childSlotName);
@@ -2356,6 +2469,52 @@ namespace Rhino.Render
         }
       }
     }
+    /// <summary>
+    /// This event is raised when a field value is modified.
+    /// </summary>
+    public static event EventHandler<RenderContentFieldChangedEventArgs> ContentFieldChanged
+    {
+      add
+      {
+        if (g_on_conent_field_changed == null)
+        {
+          g_on_conent_field_changed = OnContentFieldChanged;
+          UnsafeNativeMethods.Rdk_SetOnContentFieldChangeCallback(g_on_conent_field_changed);
+        }
+        g_content_field_changed_event += value;
+      }
+      remove
+      {
+        g_content_field_changed_event -= value;
+        if (g_content_field_changed_event == null)
+        {
+          UnsafeNativeMethods.Rdk_SetOnContentFieldChangeCallback(null);
+          g_content_field_changed_event = null;
+        }
+      }
+    }
+    internal delegate void OnContentFieldChangedCallback(int serialNumber, IntPtr name, IntPtr value, int cc);
+    internal static OnContentFieldChangedCallback g_on_conent_field_changed;
+    static EventHandler<RenderContentFieldChangedEventArgs> g_content_field_changed_event;
+    private static void OnContentFieldChanged(int serialNumber, IntPtr name, IntPtr value, int cc)
+    {
+      try
+      {
+        if (name == IntPtr.Zero) return;
+        var content = FromSerialNumber(serialNumber);
+        if (content == null) return;
+        //var v = Variant.CopyFromPointer(value);
+        //var old_value = v.AsObject();
+        var name_string = System.Runtime.InteropServices.Marshal.PtrToStringUni(name);
+        var args = new RenderContentFieldChangedEventArgs(content, name_string, (ChangeContexts) cc);
+        g_content_field_changed_event(content, args);
+      }
+      catch (Exception ex)
+      {
+        Runtime.HostUtils.ExceptionReport(ex);
+      }
+    }
+
 
     /// <summary>
     /// Used to monitor render content preview updates.
@@ -2579,6 +2738,17 @@ namespace Rhino.Render
 
     readonly RenderContent.ChangeContexts m_cc;
     public RenderContent.ChangeContexts ChangeContext { get { return m_cc; } }
+  }
+
+  public class RenderContentFieldChangedEventArgs : RenderContentChangedEventArgs
+  {
+    internal RenderContentFieldChangedEventArgs(RenderContent content, string fieldName, RenderContent.ChangeContexts cc)
+      : base(content, cc)
+    {
+      m_field_name = fieldName;
+    }
+    public string FieldName {get { return m_field_name; } }
+    private readonly string m_field_name;
   }
 
   /*public*/

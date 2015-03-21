@@ -1088,7 +1088,7 @@ namespace Rhino.Collections
     /// <returns></returns>
     public double GetDouble(string key, double defaultValue)
     {
-      return GetHelper(key, defaultValue);
+      return GetWithDefaultHelper(key, defaultValue);
     }
     /// <summary>
     /// Get value as int, will return defaultValue unless value was created using Set(string key, int value)

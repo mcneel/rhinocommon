@@ -207,7 +207,7 @@ namespace Rhino.Render
         CreatePreviewEventArgs pc = null;
         
         if (scene_server_ptr != IntPtr.Zero)
-          pc = new CreatePreviewEventArgs(scene_server_ptr, new System.Drawing.Size(100, 100), PreviewSceneQuality.RefineThirdPass);
+          pc = new CreatePreviewEventArgs(scene_server_ptr, new System.Drawing.Size(100, 100), PreviewSceneQuality.RefineThirdPass, UnsafeNativeMethods.CRhRdkPlugInQuickPreviewReason.Other);
         
         if (io != null && content != null)
         {

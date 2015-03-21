@@ -2299,6 +2299,24 @@ namespace Rhino.Geometry
 
 #if RHINO_SDK
     /// <summary>
+    /// Reduce polygon count
+    /// </summary>
+    /// <param name="desiredPolygonCount">desired or target number of faces</param>
+    /// <param name="allowDistortion">
+    /// If true mesh appearance is not changed even if the target polygon count is not reached
+    /// </param>
+    /// <param name="accuracy">Integer from 1 to 10 telling how accurate reduction algorithm
+    ///  to use. Greater number gives more accurate results
+    /// </param>
+    /// <param name="normalizeSize">If true mesh is fitted to an axis aligned unit cube until reduction is complete</param>
+    /// <returns>True if mesh is successfully reduced and false if mesh could not be reduced for some reason.</returns>
+    public bool Reduce(int desiredPolygonCount, bool allowDistortion, int accuracy, bool normalizeSize)
+    {
+      IntPtr ptr_this = NonConstPointer();
+      return UnsafeNativeMethods.RHC_RhinoReduceMesh(ptr_this, desiredPolygonCount, allowDistortion, accuracy, normalizeSize);
+    }
+
+    /// <summary>
     /// Constructs contour curves for a mesh, sectioned along a linear axis.
     /// </summary>
     /// <param name="meshToContour">A mesh to contour.</param>

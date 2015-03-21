@@ -12,24 +12,28 @@ RH_C_FUNCTION void ON_3dmObjectAttributes_Delete(ON_3dmObjectAttributes* pointer
   if (pointer) delete pointer;
 }
 
-// I think that sooner or later, these functions should be moved into core opennurbs.dll
-RH_C_FUNCTION int ON_3dmObjectAttributes_GetSetInt( ON_3dmObjectAttributes* ptr, int which, bool set, int set_value )
+enum ObjectAttrsInteger : int
 {
-  const int idxMode = 0;
-  const int idxLineTypeSource = 1;
-  const int idxColorSource = 2;
-  const int idxPlotColorSource = 3;
-  const int idxPlotWeightSource = 4;
-  const int idxDisplayMode = 5;
-  const int idxLayerIndex = 6;
-  const int idxLinetypeIndex = 7;
-  const int idxMaterialIndex = 8;
-  const int idxMaterialSource = 9;
-  const int idxObjectDecoration = 10;
-  const int idxWireDensity = 11;
-  const int idxSpace = 12;
-  const int idxGroupCount = 13;
+  oaiMode = 0,
+  oaiLineTypeSource = 1,
+  oaiColorSource = 2,
+  oaiPlotColorSource = 3,
+  oaiPlotWeightSource = 4,
+  oaiDisplayMode = 5,
+  oaiLayerIndex = 6,
+  oaiLinetypeIndex = 7,
+  oaiMaterialIndex = 8,
+  oaiMaterialSource = 9,
+  oaiObjectDecoration = 10,
+  oaiWireDensity = 11,
+  oaiSpace = 12,
+  oaiGroupCount = 13,
+  oaiDisplayOrder = 14
+};
 
+// I think that sooner or later, these functions should be moved into core opennurbs.dll
+RH_C_FUNCTION int ON_3dmObjectAttributes_GetSetInt( ON_3dmObjectAttributes* ptr, enum ObjectAttrsInteger which, bool set, int set_value )
+{
   int rc = set_value;
   if( ptr )
   {
@@ -37,49 +41,52 @@ RH_C_FUNCTION int ON_3dmObjectAttributes_GetSetInt( ON_3dmObjectAttributes* ptr,
     {
       switch( which )
       {
-      case idxMode:
+      case oaiMode:
         ptr->SetMode( ON::ObjectMode(set_value) );
         break;
-      case idxLineTypeSource:
+      case oaiLineTypeSource:
         ptr->SetLinetypeSource( ON::ObjectLinetypeSource(set_value) );
         break;
-      case idxColorSource:
+      case oaiColorSource:
         ptr->SetColorSource( ON::ObjectColorSource(set_value) );
         break;
-      case idxPlotColorSource:
+      case oaiPlotColorSource:
         ptr->SetPlotColorSource( ON::PlotColorSource(set_value) );
         break;
-      case idxPlotWeightSource:
+      case oaiPlotWeightSource:
         ptr->SetPlotWeightSource( ON::PlotWeightSource(set_value) );
         break;
-      case idxDisplayMode:
+      case oaiDisplayMode:
         ptr->SetDisplayMode( ON::DisplayMode(set_value) );
         break;
-      case idxLayerIndex:
+      case oaiLayerIndex:
         ptr->m_layer_index = set_value;
         break;
-      case idxLinetypeIndex:
+      case oaiLinetypeIndex:
         ptr->m_linetype_index = set_value;
         break;
-      case idxMaterialIndex:
+      case oaiMaterialIndex:
         ptr->m_material_index = set_value;
         break;
-      case idxMaterialSource:
+      case oaiMaterialSource:
         ptr->SetMaterialSource( ON::ObjectMaterialSource(set_value) );
         break;
-      case idxObjectDecoration:
+      case oaiObjectDecoration:
         ptr->m_object_decoration = ON::ObjectDecoration(set_value);
         break;
-      case idxWireDensity:
+      case oaiWireDensity:
         // 28-Feb-2012 Dale Fugier, -1 is acceptable
         // ptr->m_wire_density = set_value<0?0:set_value;
         ptr->m_wire_density = set_value<-1?-1:set_value;
         break;
-      case idxSpace:
+      case oaiSpace:
         ptr->m_space = ON::ActiveSpace(set_value);
         break;
-      case idxGroupCount:
+      case oaiGroupCount:
         // no set available
+        break;
+      case oaiDisplayOrder:
+        ptr->m_display_order = set_value;
         break;
       }
     }
@@ -87,59 +94,65 @@ RH_C_FUNCTION int ON_3dmObjectAttributes_GetSetInt( ON_3dmObjectAttributes* ptr,
     {
       switch( which )
       {
-      case idxMode:
+      case oaiMode:
         rc = (int)ptr->Mode();
         break;
-      case idxLineTypeSource:
+      case oaiLineTypeSource:
         rc = (int)ptr->LinetypeSource();
         break;
-      case idxColorSource:
+      case oaiColorSource:
         rc = (int)ptr->ColorSource();
         break;
-      case idxPlotColorSource:
+      case oaiPlotColorSource:
         rc = (int)ptr->PlotColorSource();
         break;
-      case idxPlotWeightSource:
+      case oaiPlotWeightSource:
         rc = (int)ptr->PlotWeightSource();
         break;
-      case idxDisplayMode:
+      case oaiDisplayMode:
         rc = (int)ptr->DisplayMode();
         break;
-      case idxLayerIndex:
+      case oaiLayerIndex:
         rc = ptr->m_layer_index;
         break;
-      case idxLinetypeIndex:
+      case oaiLinetypeIndex:
         rc = ptr->m_linetype_index;
         break;
-      case idxMaterialIndex:
+      case oaiMaterialIndex:
         rc = ptr->m_material_index;
         break;
-      case idxMaterialSource:
+      case oaiMaterialSource:
         rc = (int)ptr->MaterialSource();
         break;
-      case idxObjectDecoration:
+      case oaiObjectDecoration:
         rc = (int)ptr->m_object_decoration;
         break;
-      case idxWireDensity:
+      case oaiWireDensity:
         rc = ptr->m_wire_density;
         break;
-      case idxSpace:
+      case oaiSpace:
         rc = (int)ptr->m_space;
         break;
-      case idxGroupCount:
+      case oaiGroupCount:
         rc = ptr->GroupCount();
+        break;
+      case oaiDisplayOrder:
+        rc = ptr->m_display_order;
+        break;
       }
     }
   }
   return rc;
 }
 
-
-RH_C_FUNCTION bool ON_3dmObjectAttributes_GetSetBool( ON_3dmObjectAttributes* ptr, int which, bool set, bool set_value )
+enum ObjectAttrsBool : int
 {
-  const int idxIsInstanceDefinitionObject = 0;
-  const int idxIsVisible = 1;
+  oabIsInstanceDefinitionObject = 0,
+  oabIsVisible = 1
+};
 
+RH_C_FUNCTION bool ON_3dmObjectAttributes_GetSetBool( ON_3dmObjectAttributes* ptr, enum ObjectAttrsBool which, bool set, bool set_value )
+{
   bool rc = set_value;
   if( ptr )
   {
@@ -147,10 +160,10 @@ RH_C_FUNCTION bool ON_3dmObjectAttributes_GetSetBool( ON_3dmObjectAttributes* pt
     {
       switch(which)
       {
-      case idxIsInstanceDefinitionObject:
+      case oabIsInstanceDefinitionObject:
         // nothing to set
         break;
-      case idxIsVisible:
+      case oabIsVisible:
         ptr->SetVisible( set_value );
         break;
       }
@@ -159,10 +172,10 @@ RH_C_FUNCTION bool ON_3dmObjectAttributes_GetSetBool( ON_3dmObjectAttributes* pt
     {
       switch(which)
       {
-      case idxIsInstanceDefinitionObject:
+      case oabIsInstanceDefinitionObject:
         rc = ptr->IsInstanceDefinitionObject();
         break;
-      case idxIsVisible:
+      case oabIsVisible:
         rc = ptr->IsVisible();
         break;
       }

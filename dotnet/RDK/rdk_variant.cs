@@ -228,6 +228,18 @@ namespace Rhino.Render
     public void SetValue(Rhino.Geometry.Vector3d v)
     { UnsafeNativeMethods.Rdk_Variant_Set3dVectorValue(NonConstPointer(), v); }
 
+    public void SetValue(Rhino.Geometry.Point2d p)
+    {
+      var value = new Geometry.Vector2d(p.X, p.Y);
+      UnsafeNativeMethods.Rdk_Variant_Set2dVectorValue(NonConstPointer(), value);
+    }
+
+    public void SetValue(Rhino.Geometry.Point3d p)
+    {
+      var value = new Geometry.Vector3d(p.X, p.Y, p.Z);
+      UnsafeNativeMethods.Rdk_Variant_Set3dVectorValue(NonConstPointer(), value);
+    }
+
     public void SetValue(Rhino.Geometry.Point4d v)
     { UnsafeNativeMethods.Rdk_Variant_Set4dPointValue(NonConstPointer(), v); }
 
@@ -268,6 +280,8 @@ namespace Rhino.Render
       else if (v is Rhino.Display.Color4f) SetValue((Rhino.Display.Color4f)v);
       else if (v is Rhino.Geometry.Vector2d) SetValue((Rhino.Geometry.Vector2d)v);
       else if (v is Rhino.Geometry.Vector3d) SetValue((Rhino.Geometry.Vector3d)v);
+      else if (v is Rhino.Geometry.Point2d) SetValue((Geometry.Point2d)v);
+      else if (v is Rhino.Geometry.Point3d) SetValue((Geometry.Point3d)v);
       else if (v is Rhino.Geometry.Point4d) SetValue((Rhino.Geometry.Point4d)v);
       else if (v is Guid) SetValue((Guid)v);
       else if (v is Rhino.Geometry.Transform) SetValue((Rhino.Geometry.Transform)v);

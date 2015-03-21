@@ -77,6 +77,16 @@ namespace Rhino.Display
       get { return new Color4f(1, 1, 1, 1); }
     }
 
+    public static Color4f FromArgb(float a, float r, float g, float b)
+    {
+      return new Color4f(r, g, b, a);
+    }
+
+    public static Color4f FromArgb(float a, Color4f color)
+    {
+      return new Color4f(color.R, color.G, color.B, a);
+    }
+
     public float R { get { return m_r; } }
     public float G { get { return m_g; } }
     public float B { get { return m_b; } }

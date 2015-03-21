@@ -1019,6 +1019,11 @@ namespace Rhino.Geometry.Intersect
     /// <returns>
     /// Array of projected points, or null in case of any error or invalid input.
     /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_projectpointstomeshesex.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_projectpointstomeshesex.cs' lang='cs'/>
+    /// <code source='examples\py\ex_projectpointstomeshesex.py' lang='py'/>
+    /// </example>
     public static Point3d[] ProjectPointsToMeshesEx(IEnumerable<Mesh> meshes, IEnumerable<Point3d> points, Vector3d direction, double tolerance, out int[] indices)
     {
       Point3d[] rc = null;

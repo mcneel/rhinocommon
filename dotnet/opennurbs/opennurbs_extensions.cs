@@ -150,65 +150,12 @@ namespace Rhino.FileIO
     [CLSCompliant(false)]
     public static File3dm Read(string path, TableTypeFilter tableTypeFilterFilter, ObjectTypeFilter objectTypeFilter)
     {
-      return Read(path, tableTypeFilterFilter, objectTypeFilter, null);
-    }
-
-    /// <summary>
-    /// Reads a 3dm file from a specified location. This overload is primarily used
-    /// under memory constrained environments (ie mobile)
-    /// </summary>
-    /// <param name="path">The file to read.</param>
-    /// <param name="tableTypeFilterFilter">
-    /// If tableTypeFilterFilter is None, then everything in the archive is read.
-    /// Otherwise tableTypeFilterFilter identifies what tables should be read.
-    /// </param>
-    /// <param name="objectTypeFilter">
-    /// If objectTypeFilter is not None, then is a filter made by bitwise oring
-    /// values to select which types of objects will be read from the model object
-    /// table.
-    /// </param>
-    /// <param name="objectReadCallback">
-    /// Function called while each object is read from the document. If the function returns
-    /// false, the object will be deleted and not be part of the File3dm. If the function
-    /// returns true, the object will be kept in the File3dm.
-    /// </param>
-    /// <returns>new File3dm on success, null on error.</returns>
-    /// <exception cref="FileNotFoundException">If path does not exist.</exception>
-    [CLSCompliant(false)]
-    public static File3dm Read(string path, TableTypeFilter tableTypeFilterFilter, ObjectTypeFilter objectTypeFilter, Func<GeometryBase, DocObjects.ObjectAttributes, bool> objectReadCallback)
-    {
       if (!File.Exists(path))
         throw new FileNotFoundException("The provided path is null, does not exist or cannot be accessed.", path);
-      g_readfileobject_callback = OnReadFileObject;
-      g_active_read_callback = objectReadCallback;
-      if (objectReadCallback == null)
-        g_readfileobject_callback = null;
-      
-      IntPtr ptr_onx_model = UnsafeNativeMethods.ONX_Model_ReadFile2(path, (UnsafeNativeMethods.ReadFileTableTypeFilter)tableTypeFilterFilter, (UnsafeNativeMethods.ObjectTypeFilter)objectTypeFilter, IntPtr.Zero, g_readfileobject_callback);
+
+      IntPtr ptr_onx_model = UnsafeNativeMethods.ONX_Model_ReadFile2(path, (UnsafeNativeMethods.ReadFileTableTypeFilter)tableTypeFilterFilter, (UnsafeNativeMethods.ObjectTypeFilter)objectTypeFilter, IntPtr.Zero);
       return ptr_onx_model == IntPtr.Zero ? null : new File3dm(ptr_onx_model);
     }
-
-    internal delegate int ReadFileObjectCallback(IntPtr pGeometry, IntPtr pAttributes);
-    private static ReadFileObjectCallback g_readfileobject_callback;
-    private static Func<GeometryBase, DocObjects.ObjectAttributes, bool> g_active_read_callback;
-
-    private static int OnReadFileObject(IntPtr pGeometry, IntPtr pAttributes)
-    {
-      int rc = 1;
-      if (g_active_read_callback != null)
-      {
-        var geometry = GeometryBase.CreateGeometryHelper(pGeometry, null);
-        var attributes = new DocObjects.ObjectAttributes(pAttributes);
-        bool keep = g_active_read_callback(geometry, attributes);
-        if (geometry != null)
-          geometry.ReleaseNonConstPointer();
-        if (attributes != null)
-          attributes.ReleaseNonConstPointer();
-        rc = keep ? 1 : 0;
-      }
-      return rc;
-    }
-
 
     /// <summary>
     /// Reads a 3dm file from a specified location.
@@ -235,7 +182,7 @@ namespace Rhino.FileIO
       using (var sh = new StringHolder())
       {
         IntPtr ptr_string = sh.NonConstPointer();
-        IntPtr ptr_onx_model = UnsafeNativeMethods.ONX_Model_ReadFile2(path, (UnsafeNativeMethods.ReadFileTableTypeFilter)tableTypeFilterFilter, (UnsafeNativeMethods.ObjectTypeFilter)objectTypeFilter, ptr_string, null);
+        IntPtr ptr_onx_model = UnsafeNativeMethods.ONX_Model_ReadFile2(path, (UnsafeNativeMethods.ReadFileTableTypeFilter)tableTypeFilterFilter, (UnsafeNativeMethods.ObjectTypeFilter)objectTypeFilter, ptr_string);
         errorLog = sh.ToString();
         return ptr_onx_model == IntPtr.Zero ? null : new File3dm(ptr_onx_model);
       }

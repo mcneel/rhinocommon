@@ -420,6 +420,27 @@ RH_C_FUNCTION void ON_3dmRenderSettings_SetColor(ON_3dmRenderSettings* pRenderSe
   }
 }
 
+RH_C_FUNCTION int ON_3dmRenderSettings_GetSetUnitSystem(ON_3dmRenderSettings* pSettings, bool set, int set_val)
+{
+  if (pSettings == NULL)
+    return set_val;
+  if (!set)
+    return pSettings->m_image_us;
+  int rc = pSettings->m_image_us;
+  pSettings->m_image_us = ON::UnitSystem(set_val);
+  return rc;
+}
+
+RH_C_FUNCTION double ON_3dmRenderSettings_GetImageDpi(const ON_3dmRenderSettings* pConstRenderSettings)
+{
+  return (pConstRenderSettings ? pConstRenderSettings->m_image_dpi : 0.0);
+}
+
+RH_C_FUNCTION void ON_3dmRenderSettings_SetImageDpi(ON_3dmRenderSettings* pRenderSettings, double value)
+{
+  if (pRenderSettings) pRenderSettings->m_image_dpi = value;
+}
+
 RH_C_FUNCTION bool ON_3dmRenderSettings_GetBool(const ON_3dmRenderSettings* pConstRenderSettings, int which)
 {
   const int idxUseHiddenLights = 0;

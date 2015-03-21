@@ -322,6 +322,11 @@ namespace Rhino.Geometry
     /// <param name="desiredDegree">The desired degree. 
     /// Degrees should be number between and including 1 and 11.</param>
     /// <returns>true on success, false on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_nurbscurveincreasedegree.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_nurbscurveincreasedegree.cs' lang='cs'/>
+    /// <code source='examples\py\ex_nurbscurveincreasedegree.py' lang='py'/>
+    /// </example>
     public bool IncreaseDegree(int desiredDegree)
     {
       IntPtr ptr = NonConstPointer();

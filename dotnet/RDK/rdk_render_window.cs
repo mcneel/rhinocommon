@@ -5,12 +5,55 @@ using System;
 
 namespace Rhino.Render
 {
+  public class RenderWindowClonedEventArgs : EventArgs
+  {
+    internal RenderWindowClonedEventArgs(Guid oldSessionId, Guid newSessionId)
+    {
+      OldSessionId = oldSessionId;
+      NewSessionId = newSessionId;
+    }
+    public Guid OldSessionId { get; private set; }
+    public Guid NewSessionId { get; private set; }
+    public RenderWindow OldRenderWindow { get { return RenderWindow.FromSessionId(OldSessionId); } }
+    public RenderWindow NewRenderWindow { get { return RenderWindow.FromSessionId(NewSessionId); } }
+  }
+
   public class RenderWindow
   {
-    private readonly Rhino.Render.RenderPipeline m_renderPipe;
-    internal RenderWindow(Rhino.Render.RenderPipeline pipe)
+    private readonly Guid m_render_window_id = Guid.Empty;
+    internal RenderWindow(Guid renderWindowId)
     {
-      m_renderPipe = pipe;
+      m_render_window_id = renderWindowId;
+    }
+
+    public Guid SessionId { get { return m_render_window_id; } }
+
+    public static event EventHandler<RenderWindowClonedEventArgs> Cloned
+    {
+      add
+      {
+        CustomRenderEventCallback.CustomEvent += OnCustomRenderEventCallback;
+        ClonedEvent += value;
+      }
+      remove
+      {
+        CustomRenderEventCallback.CustomEvent -= OnCustomRenderEventCallback;
+        ClonedEvent -= value;
+      }
+    }
+    private static event EventHandler<RenderWindowClonedEventArgs> ClonedEvent;
+
+    private static void OnCustomRenderEventCallback(Guid eventId, IntPtr pointer)
+    {
+      if (eventId != UnsafeNativeMethods.CRdkCmnEventWatcher_RenderRenderWindowClonedId())
+        return;
+      if (ClonedEvent == null)
+        return;
+      var old_id = Guid.Empty;
+      var new_id = Guid.Empty;
+      UnsafeNativeMethods.CRdkCmnEventWatcher_GetRenderWindowClonedArgs(pointer, ref old_id, ref new_id);
+      var e = new RenderWindowClonedEventArgs(old_id, new_id);
+      ClonedEvent.Invoke(FromSessionId(old_id), e);
     }
 
     [Flags]
@@ -168,10 +211,30 @@ namespace Rhino.Render
       UnsafeNativeMethods.Rdk_RenderWindow_InvalidateArea(ConstPointer(), rect.Top, rect.Left, rect.Bottom, rect.Right);
     }
 
+    public static RenderWindow FromSessionId(Guid sessionId)
+    {
+      var pointer = UnsafeNativeMethods.IRhRdkRenderWindow_Find(sessionId);
+      if (pointer == IntPtr.Zero) return null;
+      var value = new RenderWindow(sessionId);
+      return value;
+    }
+
     #region internals
     IntPtr ConstPointer()
     {
-      return UnsafeNativeMethods.Rdk_SdkRender_GetRenderWindow(m_renderPipe.ConstPointer());
+      //IRhRdkRenderWindow* RhRdkFindRenderWindow
+      //var pointer = UnsafeNativeMethods.Rdk_SdkRender_GetRenderWindow(m_renderPipe.ConstPointer());
+      // The above call attempts to get the render frame associated with this pipeline
+      // then get the render frame associated with the pipeline then get the render
+      // window from the frame.  The problem is that the underlying unmanaged object
+      // attached to this pipeline gets destroyed after the rendering is completed.
+      // The render frame and window exist until the user closes the render frame so
+      // the above call will fail when trying to access the render window for post
+      // processing or tone operator adjustments after a render is completed. The
+      // method bellow will get the render window using the render session Id associated
+      // with this render instance and work as long as the render frame is available.
+      var pointer = UnsafeNativeMethods.IRhRdkRenderWindow_Find(m_render_window_id);
+      return pointer;
     }
     #endregion
 

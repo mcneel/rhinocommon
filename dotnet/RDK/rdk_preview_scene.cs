@@ -19,6 +19,17 @@ namespace Rhino.Render
     RefineThirdPass = 3,
   }
 
+  /// <summary>
+  /// Reason the content preview is being generated
+  /// </summary>
+  public enum CreatePreviewReason
+  {
+    ContentChanged = UnsafeNativeMethods.CRhRdkPlugInQuickPreviewReason.ContentChanged,
+    ViewChanged = UnsafeNativeMethods.CRhRdkPlugInQuickPreviewReason.ViewChanged,
+    RefreshDisplay = UnsafeNativeMethods.CRhRdkPlugInQuickPreviewReason.RefreshDisplay,
+    Other = UnsafeNativeMethods.CRhRdkPlugInQuickPreviewReason.Other,
+  }
+
   /// <summary>Used in RenderPlugIn virtual CreatePreview function</summary>
   public class CreatePreviewEventArgs : EventArgs
   {
@@ -26,15 +37,31 @@ namespace Rhino.Render
     readonly System.Drawing.Size m_preview_size;
     readonly PreviewSceneQuality m_quality;
     int m_sig;
-    Rhino.DocObjects.ViewportInfo m_viewport;
+    DocObjects.ViewportInfo m_viewport;
+    readonly CreatePreviewReason m_reason = CreatePreviewReason.Other;
 
-
-    internal CreatePreviewEventArgs(IntPtr pSceneServer, System.Drawing.Size preview_size, PreviewSceneQuality quality)
+    internal CreatePreviewEventArgs(IntPtr sceneServerPointer, System.Drawing.Size preview_size, PreviewSceneQuality quality, UnsafeNativeMethods.CRhRdkPlugInQuickPreviewReason unsafeReason)
     {
-      m_pSceneServer = pSceneServer;
+      m_pSceneServer = sceneServerPointer;
       m_preview_size = preview_size;
       m_quality = quality;
+      switch (unsafeReason)
+      {
+        case UnsafeNativeMethods.CRhRdkPlugInQuickPreviewReason.ContentChanged:
+        case UnsafeNativeMethods.CRhRdkPlugInQuickPreviewReason.Other:
+        case UnsafeNativeMethods.CRhRdkPlugInQuickPreviewReason.RefreshDisplay:
+        case UnsafeNativeMethods.CRhRdkPlugInQuickPreviewReason.ViewChanged:
+          m_reason = (CreatePreviewReason) unsafeReason;
+          break;
+        default:
+          throw new Exception("Unknown UnsafeNativeMethods.CRhRdkPlugInQuickPreviewReason");
+      }
     }
+
+    /// <summary>
+    /// Reason the preview is getting generated
+    /// </summary>
+    public CreatePreviewReason Reason { get { return m_reason; } }
 
     /// <summary>
     /// Pixel size of the image that is being requested for the preview scene

@@ -473,7 +473,16 @@ using Rhino.Runtime.InteropWrappers;
           }
 
           if (s.Equals("ON_3fPoint") || s.Equals("AR_3fPoint") || s.Equals("Point3f"))
+          {
+            if (isArray)
+            {
+              if (isConst)
+                return "Point3f[]";
+              else
+                return "[In,Out] Point3f[]";
+            }
             return "ref Point3f";
+          }
 
           if (s.Equals("ON_4dPoint") || s.Equals("AR_4dPoint"))
           {

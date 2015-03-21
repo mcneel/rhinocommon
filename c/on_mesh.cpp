@@ -940,7 +940,10 @@ RH_C_FUNCTION void ON_Mesh_ClearList( ON_Mesh* pMesh, int which )
     else if( idxClearColors == which )
       pMesh->m_C.SetCount(0);
     else if( idxClearTextureCoordinates == which )
+	{
       pMesh->m_T.SetCount(0);
+	  pMesh->m_S.SetCount(0);
+	}
     else if( idxClearHiddenVertices == which )
       pMesh->m_H.SetCount(0);
   }

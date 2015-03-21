@@ -1,12 +1,407 @@
+using System.Drawing;
+using System.IO;
+using Rhino.PlugIns;
 #pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 #if RDK_CHECKED
 
 namespace Rhino.Render
 {
+  /// <summary>
+  /// Contains the custom user interfaces that may be provided
+  /// </summary>
+  public enum RenderPanelType
+  {
+    /// <summary>
+    /// A custom control panel added to the render output window.
+    /// </summary>
+    RenderWindow = UnsafeNativeMethods.RhRdkCustomUiType.RenderWindowCustomDlgInterface,
+  }
+
+  class RenderTabData
+  {
+    public Type PanelType { get; set; }
+    public Guid PlugInId { get; set; }
+    public RenderPanelType RenderPanelType { get; set; }
+    public Icon Icon { get; set; }
+    public Dictionary<Guid, IWin32Window> Tabs = new Dictionary<Guid, IWin32Window>();
+  }
+
+  public sealed class RenderTabs
+  {
+    internal RenderTabs() { }
+    /// <summary>
+    /// Get the instance of a render tab associated with a specific render
+    /// session, this is useful when it is necessary to update a control from a
+    /// <see cref="RenderPipeline"/>
+    /// </summary>
+    /// <param name="plugIn">
+    /// The plug-in that registered the custom user interface
+    /// </param>
+    /// <param name="tabType">
+    /// The type of tab to return
+    /// </param>
+    /// <param name="renderSessionId">
+    /// The <see cref="RenderPipeline.RenderSessionId"/> of a specific render
+    /// session.
+    /// </param>
+    /// <returns>
+    /// Returns the custom tab object if found; otherwise null is returned.
+    /// </returns>
+    public static object FromRenderSessionId(PlugIn plugIn, Type tabType, Guid renderSessionId)
+    {
+      if (plugIn == null) throw new ArgumentNullException("plugIn");
+      if (tabType == null) throw new ArgumentNullException("tabType");
+      var attr = tabType.GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), false);
+      if (attr.Length != 1)
+        return null;
+      var data = FindExistingTabData(plugIn.Id, tabType.GUID);
+      if (data == null)
+        return null;
+      IWin32Window tab;
+      data.Tabs.TryGetValue(renderSessionId, out tab);
+      return tab;
+    }
+    /// <summary>
+    /// Get the session Id that created the specified tab object.
+    /// </summary>
+    /// <param name="tab"></param>
+    /// <returns></returns>
+    public static Guid SessionIdFromTab(object tab)
+    {
+      if (tab == null) return Guid.Empty;
+      var tab_type = tab.GetType();
+      var attr = tab_type.GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), false);
+      if (attr.Length != 1) return Guid.Empty;
+      var id = tab_type.GUID;
+      foreach (var item in g_existing_dockbar_tabs)
+      {
+        if (!item.PanelType.GUID.Equals(id))
+          continue;
+        foreach (var kvp in item.Tabs)
+          if (tab.Equals(kvp.Value)) return kvp.Key;
+        return Guid.Empty;
+      }
+      return Guid.Empty;
+    }
+    /// <summary>
+    /// Register custom render user interface with Rhino.  This should only be
+    /// done in <see cref="RenderPlugIn.RegisterRenderPanels"/>.  Panels
+    /// registered after <see cref="RenderPlugIn.RegisterRenderPanels"/> is called
+    /// will be ignored.
+    /// </summary>
+    /// <param name="plugin">
+    /// The plug-in providing the custom user interface
+    /// </param>
+    /// <param name="tabType">
+    /// The type of object to be created and added to the render container.
+    /// </param>
+    /// <param name="caption">
+    /// The caption for the custom user interface.
+    /// </param>
+    /// <param name="icon">
+    /// </param>
+    public void RegisterTab(PlugIn plugin, Type tabType, string caption, Icon icon)
+    {
+      if (!typeof(IWin32Window).IsAssignableFrom(tabType))
+        throw new ArgumentException("tabType must implement IWin32Window interface", "tabType");
+      var constructor = tabType.GetConstructor(Type.EmptyTypes);
+      if (!tabType.IsPublic || constructor == null)
+        throw new ArgumentException("tabType must be a public class and have a parameterless constructor", "tabType");
+      var attr = tabType.GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), false);
+      if (attr.Length != 1)
+        throw new ArgumentException("tabType must have a GuidAttribute", "tabType");
+
+      if (g_existing_dockbar_tabs == null)
+        g_existing_dockbar_tabs = new List<RenderTabData>();
+      // make sure the type is not already registered
+      for (var i = 0; i < g_existing_dockbar_tabs.Count; i++)
+      {
+        var pd = g_existing_dockbar_tabs[i];
+        if (pd != null && pd.PlugInId == plugin.Id && pd.PanelType == tabType)
+          return;
+      }
+
+      var panel_data = new RenderTabData() { PlugInId = plugin.Id, PanelType = tabType, Icon = icon };
+      g_existing_dockbar_tabs.Add(panel_data);
+
+      var render_panel_type = RenderPanelTypeToRhRdkCustomUiType(panel_data.RenderPanelType);
+
+      g_create_dockbar_tab_callback = OnCreateDockBarTabCallback;
+      g_visible_dockbar_tab_callback = OnVisibleDockBarTabCallback;
+      g_destroy_dockbar_tab_callback = OnDestroyDockBarTabCallback;
+
+      UnsafeNativeMethods.CRhCmnRdkRenderPlugIn_RegisterCustomDockBarTab(
+        render_panel_type,
+        caption,
+        tabType.GUID,
+        plugin.Id,
+        icon == null ? IntPtr.Zero : icon.Handle,
+        g_create_dockbar_tab_callback,
+        g_visible_dockbar_tab_callback,
+        g_destroy_dockbar_tab_callback
+        );
+    }
+
+    UnsafeNativeMethods.RhRdkCustomUiType RenderPanelTypeToRhRdkCustomUiType(RenderPanelType type)
+    {
+      switch (type)
+      {
+        case RenderPanelType.RenderWindow:
+          return UnsafeNativeMethods.RhRdkCustomUiType.RenderWindowCustomDlgInterface;
+      }
+      throw new Exception("Unknown RenderPanelTypeToRhRdkCustomUiType");
+    }
+
+    private static RenderPanels.CreatePanelCallback g_create_dockbar_tab_callback;
+    private static RenderPanels.VisiblePanelCallback g_visible_dockbar_tab_callback;
+    private static RenderPanels.DestroyPanelCallback g_destroy_dockbar_tab_callback;
+    private static List<RenderTabData> g_existing_dockbar_tabs;
+
+    private static IntPtr OnCreateDockBarTabCallback(Guid pluginId, Guid tabId, Guid sessionId, IntPtr hParent)
+    {
+      var tab = FindOrCreateTab(pluginId, tabId, sessionId);
+      if (tab == null) return IntPtr.Zero;
+      var type = tab.GetType();
+      var property = type.GetProperty("Handle");
+      return (property == null ? IntPtr.Zero : (IntPtr) property.GetValue(tab, new object[0]));
+    }
+
+    private static int OnVisibleDockBarTabCallback(Guid pluginId, Guid tabId, Guid sessionId, uint state)
+    {
+      var data = FindExistingTabData(pluginId, tabId);
+      if (data == null)
+        return 0;
+      IWin32Window window;
+      data.Tabs.TryGetValue(sessionId, out window);
+      var panel = window as Control;
+      if (panel == null)
+        return 0;
+      panel.Visible = (state != 0);
+      return 1;
+    }
+    private static void OnDestroyDockBarTabCallback(Guid pluginId, Guid tabId, Guid sessionId)
+    {
+      var data = FindExistingTabData(pluginId, tabId);
+      if (data == null)
+        return;
+      if (data.Tabs.ContainsKey(sessionId))
+        data.Tabs.Remove(sessionId);
+    }
+    private static RenderTabData FindExistingTabData(Guid pluginId, Guid tabId)
+    {
+      if (g_existing_dockbar_tabs == null) return null;
+      for (var i = 0; i < g_existing_dockbar_tabs.Count; i++)
+      {
+        var pd = g_existing_dockbar_tabs[i];
+        if (pd != null && pd.PlugInId == pluginId && pd.PanelType.GUID == tabId)
+          return pd;
+      }
+      return null;
+    }
+
+    private static object FindOrCreateTab(Guid pluginId, Guid tabId, Guid sessionId)
+    {
+      if (sessionId == Guid.Empty) throw new InvalidDataException("sessionId can't be Guid.Empty");
+      var data = FindExistingTabData(pluginId, tabId);
+      if (data == null)
+        return null;
+      IWin32Window window;
+      data.Tabs.TryGetValue(sessionId, out window);
+      if (window != null) return window;
+      window = Activator.CreateInstance(data.PanelType) as IWin32Window;
+      data.Tabs.Add(sessionId, window);
+      return window;
+    }
+  }
+
+  class RenderPanelData
+  {
+    public Type PanelType { get; set; }
+    public Guid PlugInId { get; set; }
+    public RenderPanelType RenderPanelType { get; set; }
+    public Dictionary<Guid, IWin32Window> Panels = new Dictionary<Guid, IWin32Window>();
+  }
+
+  /// <summary>
+  /// This class is used to extend the standard Render user interface
+  /// </summary>
+  public sealed class RenderPanels
+  {
+    internal RenderPanels() {}
+    /// <summary>
+    /// Get the instance of a render panel associated with a specific render
+    /// session, this is useful when it is necessary to update a control from a
+    /// <see cref="RenderPipeline"/>
+    /// </summary>
+    /// <param name="plugIn">
+    /// The plug-in that registered the custom user interface
+    /// </param>
+    /// <param name="panelType">
+    /// The type of panel to return
+    /// </param>
+    /// <param name="renderSessionId">
+    /// The <see cref="RenderPipeline.RenderSessionId"/> of a specific render
+    /// session.
+    /// </param>
+    /// <returns>
+    /// Returns the custom panel object if found; otherwise null is returned.
+    /// </returns>
+    public static object FromRenderSessionId(PlugIn plugIn, Type panelType, Guid renderSessionId)
+    {
+      if (plugIn == null) throw new ArgumentNullException("plugIn");
+      if (panelType == null) throw new ArgumentNullException("panelType");
+      var attr = panelType.GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), false);
+      if (attr.Length != 1)
+        return null;
+      var data = FindExistingPanelData(plugIn.Id, panelType.GUID);
+      if (data == null)
+        return null;
+      IWin32Window panel;
+      data.Panels.TryGetValue(renderSessionId, out panel);
+      return panel;
+    }
+    /// <summary>
+    /// Register custom render user interface with Rhino.  This should only be
+    /// done in <see cref="RenderPlugIn.RegisterRenderPanels"/>.  Panels
+    /// registered after <see cref="RenderPlugIn.RegisterRenderPanels"/> is called
+    /// will be ignored.
+    /// </summary>
+    /// <param name="plugin">
+    /// The plug-in providing the custom user interface
+    /// </param>
+    /// <param name="renderPanelType">
+    /// See <see cref="RenderPanelType"/> for supported user interface types.
+    /// </param>
+    /// <param name="panelType">
+    /// The type of object to be created and added to the render container.
+    /// </param>
+    /// <param name="caption">
+    /// The caption for the custom user interface.
+    /// </param>
+    /// <param name="alwaysShow">
+    /// If true the custom user interface will always be visible, if false then
+    /// it may be hidden or shown as requested by the user.
+    /// </param>
+    /// <param name="initialShow">
+    /// Initial visibility state of the custom user interface control.
+    /// </param>
+    public void RegisterPanel(PlugIn plugin, RenderPanelType renderPanelType, Type panelType, string caption, bool alwaysShow, bool initialShow)
+    {
+      if (!typeof(IWin32Window).IsAssignableFrom(panelType))
+        throw new ArgumentException("panelType must implement IWin32Window interface", "panelType");
+      var constructor = panelType.GetConstructor(System.Type.EmptyTypes);
+      if (!panelType.IsPublic || constructor == null)
+        throw new ArgumentException("panelType must be a public class and have a parameterless constructor", "panelType");
+      var attr = panelType.GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), false);
+      if (attr.Length != 1)
+        throw new ArgumentException("panelType must have a GuidAttribute", "panelType");
+
+      if (g_existing_panels == null)
+        g_existing_panels = new List<RenderPanelData>();
+      // make sure the type is not already registered
+      for (var i = 0; i < g_existing_panels.Count; i++)
+      {
+        var pd = g_existing_panels[i];
+        if (pd != null && pd.PlugInId == plugin.Id && pd.PanelType == panelType)
+          return;
+      }
+      var panel_data = new RenderPanelData { PlugInId = plugin.Id, PanelType = panelType, RenderPanelType = renderPanelType };
+      g_existing_panels.Add(panel_data);
+
+
+      g_create_panel_callback = OnCreatePanelCallback;
+      g_visible_panel_callback = OnVisiblePanelCallback;
+      g_destroy_panel_callback = OnDestroyPanelCallback;
+
+      var render_panel_type = RenderPanelTypeToRhRdkCustomUiType(renderPanelType);
+
+      UnsafeNativeMethods.CRhCmnRdkRenderPlugIn_RegisterCustomPlugInUi(
+        render_panel_type,
+        caption,
+        panelType.GUID, 
+        plugin.Id,
+        alwaysShow,
+        initialShow,
+        g_create_panel_callback,
+        g_visible_panel_callback,
+        g_destroy_panel_callback);
+    }
+
+    UnsafeNativeMethods.RhRdkCustomUiType RenderPanelTypeToRhRdkCustomUiType(RenderPanelType type)
+    {
+      switch (type)
+      {
+        case RenderPanelType.RenderWindow:
+          return UnsafeNativeMethods.RhRdkCustomUiType.RenderWindowCustomDlgInterface;
+      }
+      throw new Exception("Unknown RenderPanelTypeToRhRdkCustomUiType");
+    }
+
+    internal delegate IntPtr CreatePanelCallback(Guid pluginId, Guid tabId, Guid sessionId, IntPtr hParent);
+    internal delegate int VisiblePanelCallback(Guid pluginId, Guid tabId, Guid sessionId, uint state);
+    internal delegate void DestroyPanelCallback(Guid pluginId, Guid tabId, Guid sessionId);
+
+    private static CreatePanelCallback g_create_panel_callback;
+    private static VisiblePanelCallback g_visible_panel_callback;
+    private static DestroyPanelCallback g_destroy_panel_callback;
+    private static List<RenderPanelData> g_existing_panels;
+
+    private static IntPtr OnCreatePanelCallback(Guid pluginId, Guid tabId, Guid sessionId, IntPtr hParent)
+    {
+      var panel = FindOrCreatePanel(pluginId, tabId, sessionId);
+      return (panel != null ? panel.Handle : IntPtr.Zero);
+    }
+    private static int OnVisiblePanelCallback(Guid pluginId, Guid tabId, Guid sessionId, uint state)
+    {
+      var data = FindExistingPanelData(pluginId, tabId);
+      if (data == null)
+        return 0;
+      IWin32Window window;
+      data.Panels.TryGetValue(sessionId, out window);
+      var panel = window as Control;
+      if (panel == null)
+        return 0;
+      panel.Visible = (state != 0);
+      return 1;
+    }
+    private static void OnDestroyPanelCallback(Guid pluginId, Guid tabId, Guid sessionId)
+    {
+      var data = FindExistingPanelData(pluginId, tabId);
+      if (data == null)
+        return;
+      if (data.Panels.ContainsKey(sessionId))
+        data.Panels.Remove(sessionId);
+    }
+    private static RenderPanelData FindExistingPanelData(Guid pluginId, Guid tabId)
+    {
+      if (g_existing_panels == null) return null;
+      for (var i = 0; i < g_existing_panels.Count; i++)
+      {
+        var pd = g_existing_panels[i];
+        if (pd != null && pd.PlugInId == pluginId && pd.PanelType.GUID == tabId)
+          return pd;
+      }
+      return null;
+    }
+    private static IWin32Window FindOrCreatePanel(Guid pluginId, Guid tabId, Guid sessionId)
+    {
+      var data = FindExistingPanelData(pluginId, tabId);
+      if (data == null)
+        return null;
+      IWin32Window window;
+      data.Panels.TryGetValue(sessionId, out window);
+      if (window != null) return window;
+      window = Activator.CreateInstance(data.PanelType) as IWin32Window;
+      data.Panels.Add(sessionId, window);
+      return window;
+    }
+  }
+
   /// <summary>
   /// Provides facilities to a render plug-in for integrating with the standard
   /// Rhino render window. Also adds helper functions for processing a render
@@ -20,6 +415,9 @@ namespace Rhino.Render
     private int m_serial_number;
     private System.Drawing.Size m_size;
     private Rhino.Render.RenderWindow.StandardChannels m_channels;
+    private readonly Guid m_session_id = Guid.Empty;
+
+
 
     private static int m_current_serial_number = 1;
     private static readonly Dictionary<int, RenderPipeline> m_all_render_pipelines = new Dictionary<int, RenderPipeline>();
@@ -53,6 +451,7 @@ namespace Rhino.Render
       m_channels = channels;
 
       m_pSdkRender = UnsafeNativeMethods.Rdk_SdkRender_New(m_serial_number, Rhino.PlugIns.RenderPlugIn.RenderCommandContextPointer, plugin.NonConstPointer(), caption, reuseRenderWindow, clearLastRendering);
+      m_session_id = UnsafeNativeMethods.CRhRdkSdkRender_RenderSessionId(m_pSdkRender);
       m_plugin = plugin;
 
       UnsafeNativeMethods.Rdk_RenderWindow_Initialize(m_pSdkRender, (int)channels, m_size.Width, m_size.Height);
@@ -119,7 +518,21 @@ namespace Rhino.Render
       }
       return m_ReturnCode;
     }
-
+    /// <summary>
+    /// Get the Id associated with this render session, this is useful when
+    /// looking up Rhino.Render.RenderPanels.
+    /// </summary>
+    public Guid RenderSessionId
+    {
+      get
+      {
+        if (m_render_session_id != Guid.Empty) return m_render_session_id;
+        var pointer = ConstPointer();
+        m_render_session_id = UnsafeNativeMethods.CRhRdkSdkRender_RenderSessionId(pointer);
+        return m_render_session_id;
+      }
+    }
+    private Guid m_render_session_id = Guid.Empty;
     /// <summary>
     /// Call this function to render the scene in a view window. The function returns when rendering is complete (or cancelled).
     /// </summary>
@@ -155,13 +568,21 @@ namespace Rhino.Render
 
     public RenderWindow GetRenderWindow()
     {
-      IntPtr pRW = UnsafeNativeMethods.Rdk_SdkRender_GetRenderWindow(ConstPointer());
-      if (pRW != IntPtr.Zero)
-      {
-        RenderWindow rw = new RenderWindow(this);
-        return rw;
-      }
-      return null;
+      //IntPtr pRW = UnsafeNativeMethods.Rdk_SdkRender_GetRenderWindow(ConstPointer());
+      // The above call attempts to get the render frame associated with this pipeline
+      // then get the render frame associated with the pipeline then get the render
+      // window from the frame.  The problem is that the underlying unmanaged object
+      // attached to this pipeline gets destroyed after the rendering is completed.
+      // The render frame and window exist until the user closes the render frame so
+      // the above call will fail when trying to access the render window for post
+      // processing or tone operator adjustments after a render is completed. The
+      // method bellow will get the render window using the render session Id associated
+      // with this render instance and work as long as the render frame is available.
+      var pointer = UnsafeNativeMethods.IRhRdkRenderWindow_Find(m_session_id);
+      if (pointer == IntPtr.Zero)
+        return null;
+      var value = new RenderWindow(m_session_id);
+      return value;
     }
 
     /// <summary>

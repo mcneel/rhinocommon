@@ -174,6 +174,140 @@ namespace Rhino.Render
       }
     }
     #endregion
+
+
+    #region Public properties
+
+    /// <summary>
+    /// Geometry that appears in preview panes
+    /// </summary>
+    public enum PreviewGeometryType
+    {
+      Cone = UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.Cone,
+      Cube = UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.Cuboid,
+      //Mesh = UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.Mesh,
+      Plane = UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.Plane,
+      Pyramid = UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.Pyramid,
+      Sphere = UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.Sphere,
+      Torus = UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.Torus,
+      //SelectedObjects = UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.SelectedObjects
+    }
+
+    /// <summary>
+    /// Set or get the default geometry that appears in preview panes
+    /// </summary>
+    public PreviewGeometryType DefaultPreviewGeometryType
+    {
+      get
+      {
+        var pointer = ConstPointer();
+        var value = UnsafeNativeMethods.Rdk_RenderMaterial_GetDefaultPreviewGeometry(pointer);
+        switch (value)
+        {
+          case UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.Cone:
+            return PreviewGeometryType.Cone;
+          case UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.Cuboid:
+            return PreviewGeometryType.Cube;
+          case UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.Pyramid:
+            return PreviewGeometryType.Pyramid;
+          case UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.Plane:
+            return PreviewGeometryType.Plane;
+          case UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.Torus:
+            return PreviewGeometryType.Torus;
+          case UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.Mesh:
+          case UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.Sphere:
+          case UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry.SelectedObjects:
+            return PreviewGeometryType.Sphere;
+        }
+        throw new Exception("Unknown RhRdkPreviewSceneServerGeometry value");
+      }
+      set
+      {
+        switch (value)
+        {
+          case PreviewGeometryType.Cone:
+          case PreviewGeometryType.Cube:
+          case PreviewGeometryType.Pyramid:
+          case PreviewGeometryType.Plane:
+          case PreviewGeometryType.Sphere:
+          case PreviewGeometryType.Torus:
+            break;
+          default:
+            throw new Exception("Unhandled PreviewGeometryType");
+        }
+        var pointer = NonConstPointer();
+        UnsafeNativeMethods.Rdk_RenderMaterial_SetDefaultPreviewGeometry(pointer, (UnsafeNativeMethods.RhRdkPreviewSceneServerGeometry) value);
+      }
+    }
+
+    /// <summary>
+    /// The default scene background for the image that appears in
+    /// preview panes
+    /// </summary>
+    public enum PreviewBackgroundType
+    {
+      None = UnsafeNativeMethods.RhCmnMaterialPreviewBackground.None,
+      Checkered = UnsafeNativeMethods.RhCmnMaterialPreviewBackground.Checkered,
+      //Unused = UnsafeNativeMethods.RhCmnMaterialPreviewBackground.Unused,
+      //Custom = UnsafeNativeMethods.RhCmnMaterialPreviewBackground.Custom,
+    };
+
+    /// <summary>
+    /// Set or get the default scene background for the image that appears in
+    /// preview panes
+    /// </summary>
+    public PreviewBackgroundType DefaultPreviewBackgroundType
+    {
+      get
+      {
+        var pointer = ConstPointer();
+        var value = UnsafeNativeMethods.Rdk_RenderMaterial_GetDefaultPreviewBackground(pointer);
+        switch (value)
+        {
+          case UnsafeNativeMethods.RhCmnMaterialPreviewBackground.Checkered:
+            return PreviewBackgroundType.Checkered;
+          case UnsafeNativeMethods.RhCmnMaterialPreviewBackground.None:
+          case UnsafeNativeMethods.RhCmnMaterialPreviewBackground.Unused:
+          case UnsafeNativeMethods.RhCmnMaterialPreviewBackground.Custom:
+            return PreviewBackgroundType.None;
+        }
+        throw new Exception("Unknown RhCmnMaterialPreviewBackground value");
+      }
+      set
+      {
+        switch (value)
+        {
+          case PreviewBackgroundType.Checkered:
+          case PreviewBackgroundType.None:
+            break;
+          default:
+            throw new Exception("Unhandled PreviewBackgroundType");
+        }
+        var pointer = NonConstPointer();
+        UnsafeNativeMethods.Rdk_RenderMaterial_SetDefaultPreviewBackground(pointer, (UnsafeNativeMethods.RhCmnMaterialPreviewBackground)value);
+      }
+    }
+
+    /// <summary>
+    /// The default preview geometry size
+    /// </summary>
+    public double DefaultPreviewSize
+    {
+      get
+      {
+        var pointer = ConstPointer();
+        var value = UnsafeNativeMethods.Rdk_RenderMaterial_GetDefaultPreviewSize(pointer);
+        return value;
+      }
+      set
+      {
+        if (value < 0.0) throw new Exception("DefaultPreviewSize must be greater than 0.0");
+        var pointer = NonConstPointer();
+        UnsafeNativeMethods.Rdk_RenderMaterial_SetDefaultPreviewSize(pointer, value);
+      }
+    }
+
+    #endregion Public properties
   }
 
   #region Native wrapper

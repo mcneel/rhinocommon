@@ -443,6 +443,11 @@ namespace Rhino.Geometry
     /// <param name="desiredDegree">The desired degree. 
     /// Degrees should be number between and including 1 and 11.</param>
     /// <returns>true on success, false on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_nurbssurfaceincreasedegree.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_nurbssurfaceincreasedegree.cs' lang='cs'/>
+    /// <code source='examples\py\ex_nurbssurfaceincreasedegree.py' lang='py'/>
+    /// </example>
     public bool IncreaseDegreeU(int desiredDegree)
     {
       IntPtr ptr_this = NonConstPointer();
@@ -455,6 +460,11 @@ namespace Rhino.Geometry
     /// <param name="desiredDegree">The desired degree. 
     /// Degrees should be number between and including 1 and 11.</param>
     /// <returns>true on success, false on failure.</returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_nurbssurfaceincreasedegree.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_nurbssurfaceincreasedegree.cs' lang='cs'/>
+    /// <code source='examples\py\ex_nurbssurfaceincreasedegree.py' lang='py'/>
+    /// </example>
     public bool IncreaseDegreeV(int desiredDegree)
     {
       IntPtr ptr_this = NonConstPointer();

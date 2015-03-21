@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Reflection;
-#if RHINO_SDK
 using System.Windows.Forms;
-#endif
 
 // RMA_DONT_LOCALIZE (Tells the build process string parser to ignore this file)
 
@@ -139,7 +137,6 @@ namespace Rhino.UI
       return LocalizeString(assembly, languageId, english, -1);
     }
 
-#if RHINO_SDK
     public static void LocalizeForm(Assembly assembly, int languageId, Control form)
     {
       LocalizationStringTable st = LocalizationUtils.GetStringTable(assembly, languageId);
@@ -255,7 +252,6 @@ namespace Rhino.UI
         st.LocalizeToolStripCollection(form_name, form_class_name, collection);
       }
     }
-#endif
   }
 
 

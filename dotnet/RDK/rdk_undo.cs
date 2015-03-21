@@ -1,10 +1,9 @@
 #pragma warning disable 1591
 using System;
 
-#if RDK_UNCHECKED
-
 namespace Rhino.Render
 {
+#if RDK_UNCHECKED
   /// <summary>
   /// Content undo helper to be used with "using {}" to enclose a block of changes.
   /// </summary>
@@ -75,6 +74,8 @@ namespace Rhino.Render
     private readonly IntPtr m_pUndo;
     #endregion
   }
+#endif
+#if RDK_CHECKED
 
   public class ContentUndoBlocker : IDisposable
   {
@@ -111,6 +112,5 @@ namespace Rhino.Render
     private readonly IntPtr m_pUndoBlocker;
     #endregion
   }
-}
-
 #endif
+}

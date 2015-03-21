@@ -503,6 +503,8 @@ namespace Rhino.Runtime
       int archive_opennurbs_version = info.GetInt32(ARCHIVE_OPENNURBS_VERSION);
       byte[] stream = info.GetValue("data", typeof(byte[])) as byte[];
       IntPtr rc = UnsafeNativeMethods.ON_ReadBufferArchive(archive_3dm_version, archive_opennurbs_version, stream.Length, stream);
+      if (IntPtr.Zero == rc)
+        throw new SerializationException("Unable to read ON_Object from binary archive");
       return rc;
     }
 
@@ -529,9 +531,14 @@ namespace Rhino.Runtime
 #else
       int rhino_version = (options != null) ? options.RhinoVersion : 5;
 #endif
+      // 28 Aug 2014 S. Baer (RH-28446)
+      // We switched to 50,60,70,... type numbers after Rhino 4
+      if (rhino_version > 4 && rhino_version < 50)
+        rhino_version *= 10;
+
       IntPtr pWriteBuffer = UnsafeNativeMethods.ON_WriteBufferArchive_NewWriter(pConstOnObject, rhino_version, writeuserdata, ref length);
 
-      if (length < int.MaxValue)
+      if (length < int.MaxValue && length > 0 && pWriteBuffer != IntPtr.Zero)
       {
         int sz = (int)length;
         IntPtr pByteArray = UnsafeNativeMethods.ON_WriteBufferArchive_Buffer(pWriteBuffer);

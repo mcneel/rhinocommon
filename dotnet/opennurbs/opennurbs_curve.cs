@@ -729,6 +729,63 @@ namespace Rhino.Geometry
       return arc;
     }
 
+    /// <summary>
+    /// Creates a tangent arc between two curves and trims or extends the curves to the arc.
+    /// </summary>
+    /// <param name="curve0">The first curve to fillet.</param>
+    /// <param name="point0">
+    /// A point on the first curve that is near the end where the fillet will
+    /// be created.
+    /// </param>
+    /// <param name="curve1">The second curve to fillet.</param>
+    /// <param name="point1">
+    /// A point on the second curve that is near the end where the fillet will
+    /// be created.
+    /// </param>
+    /// <param name="radius">The radius of the fillet.</param>
+    /// <param name="join">Join the output curves.</param>
+    /// <param name="trim">
+    /// Trim copies of the input curves to the output fillet curve.
+    /// </param>
+    /// <param name="arcExtension">
+    /// Applies when arcs are filleted but need to be extended to meet the
+    /// fillet curve or chamfer line. If true, then the arc is extended
+    /// maintaining its validity. If false, then the arc is extended with a
+    /// line segment, which is joined to the arc converting it to a polycurve.
+    /// </param>
+    /// <param name="tolerance">
+    /// The tolerance, generally the document's absolute tolerance.
+    /// </param>
+    /// <param name="angleTolerance"></param>
+    /// <returns>
+    /// The results of the fillet operation. The number of output curves depends
+    /// on the input curves and the values of the parameters that were used
+    /// during the fillet operation. In most cases, the output array will contain
+    /// either one or three curves, although two curves can be returned if the
+    /// radius is zero and join = false.
+    /// For example, if both join and trim = true, then the output curve
+    /// will be a polycurve containing the fillet curve joined with trimmed copies
+    /// of the input curves. If join = false and trim = true, then three curves,
+    /// the fillet curve and trimmed copies of the input curves, will be returned.
+    /// If both join and trim = false, then just the fillet curve is returned.
+    /// </returns>
+    /// <example>
+    /// <code source='examples\vbnet\ex_filletcurves.vb' lang='vbnet'/>
+    /// <code source='examples\cs\ex_filletcurves.cs' lang='cs'/>
+    /// <code source='examples\py\ex_filletcurves.py' lang='py'/>
+    /// </example>
+    public static Curve[] CreateFilletCurves( Curve curve0, Point3d point0, Curve curve1, Point3d point1, double radius, bool join, bool trim, bool arcExtension, double tolerance, double angleTolerance)
+    {
+      IntPtr const_ptr_curve0 = curve0.ConstPointer();
+      IntPtr const_ptr_curve1 = curve1.ConstPointer();
+      using (var output_array = new SimpleArrayCurvePointer())
+      {
+        IntPtr ptr_output_array = output_array.NonConstPointer();
+        UnsafeNativeMethods.RHC_RhFilletCurve(const_ptr_curve0, point0, const_ptr_curve1, point1, radius, join, trim, arcExtension, tolerance, angleTolerance, ptr_output_array);
+        return output_array.ToNonConstArray();
+      }
+    }
+
     const int idxBooleanUnion = 0;
     const int idxBooleanIntersection = 1;
     const int idxBooleanDifference = 2;

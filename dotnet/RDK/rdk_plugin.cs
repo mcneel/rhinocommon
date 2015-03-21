@@ -32,6 +32,7 @@ namespace Rhino.Render
         UnsafeNativeMethods.RdkSetTextureGetVirtualVector3dCallback(RenderTexture.GetVirtual3DVector);
         UnsafeNativeMethods.Rdk_SetAddUISectionsCallback(RenderContent.m_AddUISections);
         UnsafeNativeMethods.Rdk_SetGetDefaultsFromUserCallback(RenderContent.m_GetDefaultsFromUser);
+        UnsafeNativeMethods.Rdk_IsFactoryProductAcceptableAsChildCallback(RenderContent.IsFactoryProductAcceptableAsChildHook);
         UnsafeNativeMethods.Rdk_SetIsContentTypeAcceptableAsChildCallback(RenderContent.m_IsContentTypeAcceptableAsChild);
         UnsafeNativeMethods.Rdk_SetHarvestDataCallback(RenderContent.m_HarvestData);
         UnsafeNativeMethods.Rdk_SetGetShaderCallback(RenderContent.m_GetShader);
@@ -320,7 +321,8 @@ namespace Rhino.Render
       if (g_rdk_plugin_dictionary.TryGetValue(m_rhino_plug_in_id, out plugin))
       {
         g_rdk_plugin_dictionary.Remove(m_rhino_plug_in_id);
-        UnsafeNativeMethods.CRhCmnRdkPlugIn_Delete(plugin.m_rdk_plug_in_pointer);
+        // This is now handled by the rhcommonrdk_c.dll
+        //UnsafeNativeMethods.CRhCmnRdkPlugIn_Delete(plugin.m_rdk_plug_in_pointer);
       }
     }
     #endregion

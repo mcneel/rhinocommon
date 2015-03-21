@@ -976,6 +976,44 @@ namespace Rhino.Render
     }
 
     /// <summary>
+    /// unit system to use when converting image pixel size and dpi information
+    /// into a print size.  Default = inches
+    /// </summary>
+    public UnitSystem ImageUnitSystem
+    {
+      get
+      {
+        var pointer = ConstPointer();
+        var value = UnsafeNativeMethods.ON_3dmRenderSettings_GetSetUnitSystem(pointer, false, 0);
+        return (UnitSystem)value;
+      }
+      set
+      {
+        var pointer = NonConstPointer();
+        UnsafeNativeMethods.ON_3dmRenderSettings_GetSetUnitSystem(pointer, true, (int)value);
+        Commit();
+      }
+    }
+    /// <summary>
+    /// Number of dots/inch (dots=pixels) to use when printing and saving
+    /// bitmaps. The default is 72.0 dots/inch.
+    /// </summary>
+    public double ImageDpi
+    {
+      get
+      {
+        var pointer = ConstPointer();
+        return UnsafeNativeMethods.ON_3dmRenderSettings_GetImageDpi(pointer);
+      }
+      set
+      {
+        var pointer = NonConstPointer();
+        UnsafeNativeMethods.ON_3dmRenderSettings_SetImageDpi(pointer, value);
+        Commit();
+      }
+    }
+
+    /// <summary>
     /// Gets or sets a value indicating the size of the rendering result if
     /// UseViewportSize is set to false.  If UseViewportSize is set to true,
     /// then this value is ignored.

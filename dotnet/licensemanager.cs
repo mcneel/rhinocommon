@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 
 #if RHINO_SDK
@@ -15,7 +15,7 @@ namespace Rhino.Runtime
     /// <returns>
     /// Returns LicenseUtils.Initialize()
     /// </returns>
-    internal delegate bool InitializeCallback();
+    internal delegate int InitializeCallback();
     private static readonly InitializeCallback InitializeProc = InitializeHelper;
     /// <summary>
     /// Delegate passed to rhcommon_c as a call back function pointer
@@ -101,6 +101,13 @@ namespace Rhino.Runtime
 
     internal delegate bool AskUserForLicenseCallback([MarshalAs(UnmanagedType.LPWStr)]string productTitle, bool standAlone, IntPtr parent, Guid productId, int productBuildType, [MarshalAs(UnmanagedType.LPWStr)]string texMask, [MarshalAs(UnmanagedType.LPWStr)]string path, IntPtr validator);
     private static readonly AskUserForLicenseCallback AskUserForLicenseProc = AskUserForLicenseHelper;
+
+    internal delegate bool GetRegisteredOwnerInfoCallback(Guid productId, IntPtr ownerWStringPointer, IntPtr companyWStringPointer);
+    private static readonly GetRegisteredOwnerInfoCallback g_get_registered_owner_info_proc = GetRegisteredOwnerInfoHelper;
+
+    internal delegate void ShowExpiredMessageCallback(UnsafeNativeMethods.LicenseManagerRuntimeMode mode);
+    private static readonly ShowExpiredMessageCallback g_show_expired_message_proc = ShowExpiredMessageHelper;
+
     /// <summary>
     /// Gets set to true after initial call to
     /// UnsafeNativeMethods.RHC_SetLicenseManagerCallbacks and is checked to
@@ -121,7 +128,10 @@ namespace Rhino.Runtime
                                                          UuidProc,
                                                          GetLicenseProc,
                                                          GetCustomLicenseProc,
-                                                         AskUserForLicenseProc);
+                                                         AskUserForLicenseProc,
+                                                         g_get_registered_owner_info_proc,
+                                                         g_show_expired_message_proc
+                                                         );
     }
 
     #region rhcommon_c call back methods
@@ -129,9 +139,10 @@ namespace Rhino.Runtime
     /// 
     /// </summary>
     /// <returns></returns>
-    static bool InitializeHelper()
+    static int InitializeHelper()
     {
-      return LicenseUtils.Initialize();
+      var success = LicenseUtils.Initialize();
+      return success;
     }
     /// <summary>
     /// 
@@ -330,6 +341,27 @@ namespace Rhino.Runtime
       var helper = new ValidatorHelper(validator, id, title, path);
       var result = LicenseUtils.GetLicense(helper.ValidateProductKey, (int)capabilities, textMask);
       return (result ? 1 : 0);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="productId"></param>
+    /// <param name="ownerWStringPointer"></param>
+    /// <param name="companyWStringPointer"></param>
+    /// <returns></returns>
+    static bool GetRegisteredOwnerInfoHelper(Guid productId, IntPtr ownerWStringPointer, IntPtr companyWStringPointer)
+    {
+      var owner = string.Empty;
+      var company = string.Empty;
+      var rc = LicenseUtils.GetRegisteredOwnerInfo(productId, ref owner, ref company);
+      if (!rc) return false;
+      UnsafeNativeMethods.ON_wString_Set(ownerWStringPointer, owner);
+      UnsafeNativeMethods.ON_wString_Set(companyWStringPointer, company);
+      return true;
+    }
+    private static void ShowExpiredMessageHelper(UnsafeNativeMethods.LicenseManagerRuntimeMode mode)
+    {
+      LicenseUtils.ShowRhinoExpiredMessage((int)mode);
     }
     /// <summary>
     /// 

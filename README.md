@@ -14,7 +14,7 @@ Compiling the Source
 --------------------
 You are going to need:
 
-* The latest Rhino5 WIP (http://www.rhino3d.com/nr.htm)
+* The latest Rhino5 (http://www.rhino3d.com/nr.htm)
 * Visual C# 2010
 
 Steps:
@@ -44,7 +44,7 @@ Specific people to contact about this project:
 
 Legal Stuff
 -----------
-Copyright (c) 2012 Robert McNeel & Associates. All Rights Reserved.
+Copyright (c) 2015 Robert McNeel & Associates. All Rights Reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

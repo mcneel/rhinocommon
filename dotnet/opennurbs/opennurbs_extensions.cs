@@ -622,7 +622,10 @@ namespace Rhino.FileIO
         IntPtr ptr_revhist = UnsafeNativeMethods.ONX_Model_RevisionHistory(ptr_const_this);
         int second = 0, minute = 0, hour = 0, month = 0, day = 0, year = 0;
         if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, true, ref second, ref minute, ref hour, ref day, ref month, ref year))
-          return new DateTime(year, month, day, hour, minute, second);
+        {
+          if( year > 1900 ) // old files (V2) will not have a datetime set
+            return new DateTime(year, month, day, hour, minute, second);
+        }
         return DateTime.MinValue;
       }
     }
@@ -639,7 +642,10 @@ namespace Rhino.FileIO
         IntPtr ptr_revhist = UnsafeNativeMethods.ONX_Model_RevisionHistory(ptr_const_this);
         int second = 0, minute = 0, hour = 0, month = 0, day = 0, year = 0;
         if (UnsafeNativeMethods.ON_3dmRevisionHistory_GetDate(ptr_revhist, false, ref second, ref minute, ref hour, ref day, ref month, ref year))
-          return new DateTime(year, month, day, hour, minute, second);
+        {
+          if (year > 1900) // old files (V2) will not have a datetime set
+            return new DateTime(year, month, day, hour, minute, second);
+        }
         return DateTime.MinValue;
       }
     }

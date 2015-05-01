@@ -596,10 +596,12 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_Arc_Copy(IntPtr pRdnArc, ref Arc pRhCmnArc, [MarshalAs(UnmanagedType.U1)]bool rdn_to_rhc);
 
+#if RHINO_SDK
   #region rh_menu.cpp
 
   [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
   internal static extern void CRuiOnUpdateMenuItems_SetHooks(Rhino.UI.RuiOnUpdateMenuItems.OnUpdateMenuItemCallback onUpdateCallback);
 
   #endregion rh_menu.cpp
+#endif
 }

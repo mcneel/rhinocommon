@@ -5,8 +5,9 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Xml;
+#if RHINO_SDK
 using System.Windows.Forms;
-
+#endif
 // RMA_DONT_LOCALIZE (Tells the build process string parser to ignore this file)
 
 // ReSharper disable CheckNamespace
@@ -339,6 +340,7 @@ namespace Rhino.UI
       return rc;
     }
 
+#if RHINO_SDK
     /// <summary>
     /// Recursive helper function for LocalizeUtils.LocalizeForm.
     /// </summary>
@@ -620,5 +622,6 @@ namespace Rhino.UI
         }
       }
     }
+#endif
   }
 }

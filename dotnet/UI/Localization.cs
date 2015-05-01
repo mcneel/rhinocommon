@@ -1,8 +1,8 @@
 #pragma warning disable 1591
 using System;
 using System.Reflection;
-using System.Windows.Forms;
 #if RHINO_SDK
+using System.Windows.Forms;
 using Rhino.Runtime.InteropWrappers;
 #endif
 
@@ -251,6 +251,7 @@ namespace Rhino.UI
       return new LocalizeStringPair(english, local);
     }
 
+#if RHINO_SDK
     ///<summary>
     /// A form or user control should call this in its constructor if it wants to be localized
     /// the typical constructor for a localize form would look like:
@@ -286,6 +287,7 @@ namespace Rhino.UI
       Assembly assembly = null == collection ? null : collection.GetType().Assembly;
       LocalizationUtils.LocalizeToolStripItemCollection(assembly, CurrentLanguageID, parent, collection);
     }
+#endif
 
     static int m_language_id = -1;
     static int CurrentLanguageID

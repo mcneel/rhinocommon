@@ -1,13 +1,13 @@
 using System.Drawing;
 using System.IO;
-using Rhino.PlugIns;
 #pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Forms;
 
 #if RDK_CHECKED
+using Rhino.PlugIns;
+using System.Windows.Forms;
 
 namespace Rhino.Render
 {
@@ -596,7 +596,7 @@ namespace Rhino.Render
       }
     }
 
-    #region Abstract methods
+#region Abstract methods
     /// <summary>
     /// Called by the framework when it is time to start rendering, the render window will be created at this point and it is safe to start 
     /// </summary>
@@ -670,7 +670,7 @@ namespace Rhino.Render
       return true;
     }
 
-    #region virtual function implementation
+#region virtual function implementation
     enum VirtualFunctions : int
     {
       StartRendering = 0,
@@ -773,7 +773,7 @@ namespace Rhino.Render
 
     #endregion
 
-    #region internals
+#region internals
     internal IntPtr ConstPointer()
     {
       return m_pSdkRender;
@@ -781,7 +781,7 @@ namespace Rhino.Render
     #endregion
 
 
-    #region IDisposable Members
+#region IDisposable Members
 
     ~RenderPipeline()
     {

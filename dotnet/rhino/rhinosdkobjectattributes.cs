@@ -118,30 +118,16 @@ namespace Rhino.DocObjects
       return new ObjectAttributes(pNew);
     }
 
-    int GetInt(int which)
+    int GetInt(UnsafeNativeMethods.ObjectAttrsInteger which)
     {
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetInt(ptr, which, false, 0);
     }
-    void SetInt(int which, int set_value)
+    void SetInt(UnsafeNativeMethods.ObjectAttrsInteger which, int setValue)
     {
       IntPtr ptr = NonConstPointer();
-      UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetInt(ptr, which, true, set_value);
+      UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetInt(ptr, which, true, setValue);
     }
-    const int idxMode = 0;
-    const int idxLineTypeSource = 1;
-    const int idxColorSource = 2;
-    const int idxPlotColorSource = 3;
-    const int idxPlotWeightSource = 4;
-    //const int idxDisplayMode = 5;
-    const int idxLayerIndex = 6;
-    const int idxLinetypeIndex = 7;
-    const int idxMaterialIndex = 8;
-    const int idxMaterialSource = 9;
-    const int idxObjectDecoration = 10;
-    const int idxWireDensity = 11;
-    const int idxSpace = 12;
-    const int idxGroupCount = 13;
 
 
     /// <summary>
@@ -155,38 +141,36 @@ namespace Rhino.DocObjects
     {
       get
       {
-        int rc = GetInt(idxMode);
+        int rc = GetInt(UnsafeNativeMethods.ObjectAttrsInteger.Mode);
         return (ObjectMode)rc;
       }
-      set { SetInt(idxMode, (int)value); }
+      set { SetInt(UnsafeNativeMethods.ObjectAttrsInteger.Mode, (int)value); }
     }
 
-    bool GetBool(int which)
+    bool GetBool(UnsafeNativeMethods.ObjectAttrsBool which)
     {
       IntPtr ptr = ConstPointer();
       return UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetBool(ptr, which, false, false);
     }
-    void SetBool(int which, bool setValue)
+    void SetBool(UnsafeNativeMethods.ObjectAttrsBool which, bool setValue)
     {
       IntPtr ptr = NonConstPointer();
       UnsafeNativeMethods.ON_3dmObjectAttributes_GetSetBool(ptr, which, true, setValue);
     }
-    const int idxIsInstanceDefinitionObject = 0;
-    const int idxIsVisible = 1;
 
     /// <summary>
     /// Use this query to determine if an object is part of an instance definition.
     /// </summary>
     public bool IsInstanceDefinitionObject
     {
-      get { return GetBool(idxIsInstanceDefinitionObject); }
+      get { return GetBool(UnsafeNativeMethods.ObjectAttrsBool.IsInstanceDefinitionObject); }
     }
 
     /// <summary>object visibility.</summary>
     public bool Visible
     {
-      get { return GetBool(idxIsVisible); }
-      set { SetBool(idxIsVisible, value); }
+      get { return GetBool(UnsafeNativeMethods.ObjectAttrsBool.IsVisible); }
+      set { SetBool(UnsafeNativeMethods.ObjectAttrsBool.IsVisible, value); }
     }
 
     /// <summary>
@@ -198,10 +182,10 @@ namespace Rhino.DocObjects
     {
       get
       {
-        int rc = GetInt(idxLineTypeSource);
+        int rc = GetInt(UnsafeNativeMethods.ObjectAttrsInteger.LineTypeSource);
         return (ObjectLinetypeSource)rc;
       }
-      set { SetInt(idxLineTypeSource, (int)value); }
+      set { SetInt(UnsafeNativeMethods.ObjectAttrsInteger.LineTypeSource, (int)value); }
     }
 
     /// <summary>
@@ -221,10 +205,10 @@ namespace Rhino.DocObjects
     {
       get
       {
-        int rc = GetInt(idxColorSource);
+        int rc = GetInt(UnsafeNativeMethods.ObjectAttrsInteger.ColorSource);
         return (ObjectColorSource)rc;
       }
-      set { SetInt(idxColorSource, (int)value); }
+      set { SetInt(UnsafeNativeMethods.ObjectAttrsInteger.ColorSource, (int)value); }
     }
 
     /// <summary>
@@ -236,20 +220,20 @@ namespace Rhino.DocObjects
     {
       get
       {
-        int rc = GetInt(idxPlotColorSource);
+        int rc = GetInt(UnsafeNativeMethods.ObjectAttrsInteger.PlotColorSource);
         return (ObjectPlotColorSource)rc;
       }
-      set { SetInt(idxPlotColorSource, (int)value); }
+      set { SetInt(UnsafeNativeMethods.ObjectAttrsInteger.PlotColorSource, (int)value); }
     }
 
     public ObjectPlotWeightSource PlotWeightSource
     {
       get
       {
-        int rc = GetInt(idxPlotWeightSource);
+        int rc = GetInt(UnsafeNativeMethods.ObjectAttrsInteger.PlotWeightSource);
         return (ObjectPlotWeightSource)rc;
       }
-      set { SetInt(idxPlotWeightSource, (int)value); }
+      set { SetInt(UnsafeNativeMethods.ObjectAttrsInteger.PlotWeightSource, (int)value); }
     }
 
     /// <summary>
@@ -468,8 +452,8 @@ namespace Rhino.DocObjects
     /// </example>
     public int LayerIndex
     {
-      get { return GetInt(idxLayerIndex); }
-      set { SetInt(idxLayerIndex, value); }
+      get { return GetInt(UnsafeNativeMethods.ObjectAttrsInteger.LayerIndex); }
+      set { SetInt(UnsafeNativeMethods.ObjectAttrsInteger.LayerIndex, value); }
     }
     /// <summary>
     /// Gets or sets the linetype index.
@@ -481,8 +465,8 @@ namespace Rhino.DocObjects
     /// </summary>
     public int LinetypeIndex
     {
-      get { return GetInt(idxLinetypeIndex); }
-      set { SetInt(idxLinetypeIndex, value); }
+      get { return GetInt(UnsafeNativeMethods.ObjectAttrsInteger.LinetypeIndex); }
+      set { SetInt(UnsafeNativeMethods.ObjectAttrsInteger.LinetypeIndex, value); }
     }
     /// <summary>
     /// Gets or sets the material index.
@@ -497,8 +481,8 @@ namespace Rhino.DocObjects
     */
     public int MaterialIndex
     {
-      get { return GetInt(idxMaterialIndex); }
-      set { SetInt(idxMaterialIndex, value); }
+      get { return GetInt(UnsafeNativeMethods.ObjectAttrsInteger.MaterialIndex); }
+      set { SetInt(UnsafeNativeMethods.ObjectAttrsInteger.MaterialIndex, value); }
     }
 
     // [skipping]
@@ -510,8 +494,8 @@ namespace Rhino.DocObjects
     /// </summary>
     public ObjectMaterialSource MaterialSource
     {
-      get { return (ObjectMaterialSource)GetInt(idxMaterialSource); }
-      set { SetInt(idxMaterialSource, (int)value); }
+      get { return (ObjectMaterialSource)GetInt(UnsafeNativeMethods.ObjectAttrsInteger.MaterialSource); }
+      set { SetInt(UnsafeNativeMethods.ObjectAttrsInteger.MaterialSource, (int)value); }
     }
 
     const int idxColor = 0;
@@ -646,8 +630,8 @@ namespace Rhino.DocObjects
     /// </summary>
     public ObjectDecoration ObjectDecoration
     {
-      get { return (ObjectDecoration)GetInt(idxObjectDecoration); }
-      set { SetInt(idxObjectDecoration, (int)value); }
+      get { return (ObjectDecoration)GetInt(UnsafeNativeMethods.ObjectAttrsInteger.ObjectDecoration); }
+      set { SetInt(UnsafeNativeMethods.ObjectAttrsInteger.ObjectDecoration, (int)value); }
     }
 
     /// <summary>
@@ -666,8 +650,8 @@ namespace Rhino.DocObjects
     /// </example>
     public int WireDensity
     {
-      get { return GetInt(idxWireDensity); }
-      set { SetInt(idxWireDensity, value); }
+      get { return GetInt(UnsafeNativeMethods.ObjectAttrsInteger.WireDensity); }
+      set { SetInt(UnsafeNativeMethods.ObjectAttrsInteger.WireDensity, value); }
     }
 
 
@@ -698,14 +682,14 @@ namespace Rhino.DocObjects
     /// </summary>
     public ActiveSpace Space
     {
-      get { return (ActiveSpace)GetInt(idxSpace); }
-      set { SetInt(idxSpace, (int)value); }
+      get { return (ActiveSpace)GetInt(UnsafeNativeMethods.ObjectAttrsInteger.Space); }
+      set { SetInt(UnsafeNativeMethods.ObjectAttrsInteger.Space, (int)value); }
     }
 
     /// <summary>number of groups object belongs to.</summary>
     public int GroupCount
     {
-      get { return GetInt(idxGroupCount); }
+      get { return GetInt(UnsafeNativeMethods.ObjectAttrsInteger.GroupCount); }
     }
 
 

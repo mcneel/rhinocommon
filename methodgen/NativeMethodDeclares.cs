@@ -343,7 +343,7 @@ using Rhino.Runtime.InteropWrappers;
         if (sType.Contains("RHMONO_STRING"))
           return "string";
 
-        if (sType.Equals("HWND") || sType.Equals("HBITMAP") || sType.Equals("HCURSOR") || sType.Equals("HICON") || sType.Equals("HBRUSH") || sType.Equals("HFONT") || sType.Equals("HMENU") || sType.Equals("HDC"))
+        if (sType.Equals("HWND") || sType.Equals("HBITMAP") || sType.Equals("HCURSOR") || sType.Equals("HICON") || sType.Equals("HBRUSH") || sType.Equals("HFONT") || sType.Equals("HMENU") || sType.Equals("HDC") || sType.Equals("HIMAGELIST"))
           return "IntPtr";
 
         if (sType.EndsWith("**"))
@@ -361,7 +361,7 @@ using Rhino.Runtime.InteropWrappers;
           s = ParameterTypeAsCSharp(s, isArray);
           
           if (s.Equals("int") || s.Equals("uint") || s.Equals("double") || s.Equals("float") || s.Equals("Guid") ||
-              s.Equals("short") || s.Equals("Int64") || s.Equals("byte"))
+              s.Equals("short") || s.Equals("Int64") || s.Equals("long") || s.Equals("ulong") || s.Equals("byte"))
           {
             if (isArray)
             {
@@ -687,7 +687,10 @@ using Rhino.Runtime.InteropWrappers;
           return "byte";
 
         if (sType.Equals("ON__INT64"))
-          return "Int64";
+          return "long";
+
+        if (sType.Equals("ON__UINT64"))
+          return "ulong";
 
         if (sType.Equals("COleDateTime"))
           return "DateTime";
@@ -697,6 +700,9 @@ using Rhino.Runtime.InteropWrappers;
 
         if (sType.Equals("ON_UUID"))
           return "Guid";
+
+        if (sType.Equals("DWORD"))
+          return "UInt32";
 
         return sType;
       }
@@ -750,10 +756,16 @@ using Rhino.Runtime.InteropWrappers;
             rc = "ushort";
           else if (rc.Equals("ON_UUID"))
             rc = "Guid";
-          else if (rc.Equals("LPUNKNOWN") || rc.Equals("HBITMAP") || rc.Equals("HWND") || rc.Equals("HCURSOR") || rc.Equals("HICON") || rc.Equals("HBRUSH") || rc.Equals("HFONT") || rc.Equals("HMENU") || rc.Equals("HDC"))
+          else if (rc.Equals("LPUNKNOWN") || rc.Equals("HBITMAP") || rc.Equals("HWND") || rc.Equals("HCURSOR") || rc.Equals("HICON") || rc.Equals("HBRUSH") || rc.Equals("HFONT") || rc.Equals("HMENU") || rc.Equals("HDC") || rc.Equals("HIMAGELIST"))
             rc = "IntPtr";
           else if (rc.Equals("time_t"))
             rc = "Int64";
+          else if (rc.Equals("DWORD"))
+            rc = "UInt32";
+          else if(rc.Equals("ON__UINT64"))
+            rc ="ulong";
+          else if(rc.Equals("ON__INT64"))
+            rc = "long";
         }
 
         return rc;

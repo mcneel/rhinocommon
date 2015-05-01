@@ -38,6 +38,8 @@ RH_C_FUNCTION bool ON_BinaryArchive_Read3dmStartSection(ON_BinaryArchive* pBinar
   return rc;
 }
 
+
+
 RH_C_FUNCTION unsigned int ON_BinaryArchive_Dump3dmChunk(ON_BinaryArchive* pBinaryArchive, ON_TextLog* pTextLog)
 {
   unsigned int rc = 0;
@@ -211,6 +213,13 @@ RH_C_FUNCTION bool ON_BinaryArchive_WriteByte2(ON_BinaryArchive* pArchive, int c
   if( pArchive && count>0 && val )
     rc = pArchive->WriteByte(count, val);
   return rc;
+}
+
+RH_C_FUNCTION bool ON_BinaryArchive_EnableCRCCalculation(ON_BinaryArchive* pArchive, bool enable)
+{
+  if(pArchive)
+    return pArchive->EnableCRCCalculation(enable);
+  return false;
 }
 
 // 10-Feb-2014 Dale Fugier, http://mcneel.myjetbrains.com/youtrack/issue/RH-24156

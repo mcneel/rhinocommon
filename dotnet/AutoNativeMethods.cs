@@ -725,6 +725,11 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_BinaryArchive_WriteByte2(IntPtr pArchive, int count, byte[] val);
 
+  //bool ON_BinaryArchive_EnableCRCCalculation(ON_BinaryArchive* pArchive, bool enable)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_EnableCRCCalculation(IntPtr pArchive, [MarshalAs(UnmanagedType.U1)]bool enable);
+
   //bool ON_BinaryArchive_ReadCompressedBufferSize( ON_BinaryArchive* pArchive, unsigned int* size )
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]

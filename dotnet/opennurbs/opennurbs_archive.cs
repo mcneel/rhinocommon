@@ -2081,6 +2081,22 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
+    /// Expert user function to control CRC calculation while reading and writing.
+    /// Typically this is used when seeking around and reading/writing information
+    /// in non-serial order.
+    /// </summary>
+    /// <param name="enable"></param>
+    /// <returns>
+    /// Current state of CRC calculation.  Use the returned value to restore the
+    /// CRC calculation setting after you are finished doing your fancy pants
+    /// expert IO.
+    /// </returns>
+    public bool EnableCRCCalculation(bool enable)
+    {
+      return UnsafeNativeMethods.ON_BinaryArchive_EnableCRCCalculation(m_ptr, enable);
+    }
+
+    /// <summary>
     /// A chunk version is a single byte that encodes a major.minor
     /// version number.  Useful when creating I/O code for 3dm chunks
     /// that may change in the future.  Increment the minor version 
@@ -2802,6 +2818,22 @@ namespace Rhino.FileIO
       {
         return UnsafeNativeMethods.ON_BinaryArchive_Archive3dmVersion(m_ptr);
       }
+    }
+
+    /// <summary>
+    /// Expert user function to control CRC calculation while reading and writing.
+    /// Typically this is used when seeking around and reading/writing information
+    /// in non-serial order.
+    /// </summary>
+    /// <param name="enable"></param>
+    /// <returns>
+    /// Current state of CRC calculation.  Use the returned value to restore the
+    /// CRC calculation setting after you are finished doing your fancy pants
+    /// expert IO.
+    /// </returns>
+    public bool EnableCRCCalculation(bool enable)
+    {
+      return UnsafeNativeMethods.ON_BinaryArchive_EnableCRCCalculation(m_ptr, enable);
     }
 
     /// <summary>current offset (in bytes) into archive ( like ftell() )</summary>

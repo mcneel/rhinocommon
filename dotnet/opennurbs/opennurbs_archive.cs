@@ -2054,6 +2054,33 @@ namespace Rhino.FileIO
     }
 
     /// <summary>
+    /// Begins writing a chunk
+    /// </summary>
+    /// <param name="typecode">chunk's typecode</param>
+    /// <param name="majorVersion"></param>
+    /// <param name="minorVersion"></param>
+    /// <returns>
+    /// True if input was valid and chunk was started.  In this case you must call
+    /// EndWrite3dmChunk(), even if something goes wrong while you attempt to write
+    /// the contents of the chunk.
+    /// False if input was not valid or the write failed.
+    /// </returns>
+    [CLSCompliant(false)]
+    public bool BeginWrite3dmChunk(uint typecode, int majorVersion, int minorVersion)
+    {
+      return UnsafeNativeMethods.ON_BinaryArchive_BeginWrite3dmChunk(m_ptr, typecode, majorVersion, minorVersion);
+    }
+
+    /// <summary>
+    /// updates length in chunk header
+    /// </summary>
+    /// <returns></returns>
+    public bool EndWrite3dmChunk()
+    {
+      return UnsafeNativeMethods.ON_BinaryArchive_EndWrite3dmChunk(m_ptr);
+    }
+
+    /// <summary>
     /// A chunk version is a single byte that encodes a major.minor
     /// version number.  Useful when creating I/O code for 3dm chunks
     /// that may change in the future.  Increment the minor version 
@@ -2775,6 +2802,82 @@ namespace Rhino.FileIO
       {
         return UnsafeNativeMethods.ON_BinaryArchive_Archive3dmVersion(m_ptr);
       }
+    }
+
+    /// <summary>current offset (in bytes) into archive ( like ftell() )</summary>
+    [CLSCompliant(false)]
+    public ulong CurrentPosition
+    {
+      get
+      {
+        return UnsafeNativeMethods.ON_BinaryArchive_CurrentPosition(m_ptr);
+      }
+    }
+
+    /// <summary>
+    /// seek from current position ( like fseek( ,SEEK_CUR) )
+    /// </summary>
+    /// <param name="byteOffset"></param>
+    /// <returns></returns>
+    public bool SeekFromCurrentPosition(long byteOffset)
+    {
+      return UnsafeNativeMethods.ON_BinaryArchive_SeekFromCurrentPosition(m_ptr, byteOffset);
+    }
+
+    /// <summary>
+    /// seek from current position ( like fseek( ,SEEK_CUR) )
+    /// </summary>
+    /// <param name="byteOffset"></param>
+    /// <param name="forward">seek forward of backward in the archive</param>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public bool SeekFromCurrentPosition(ulong byteOffset, bool forward)
+    {
+      return UnsafeNativeMethods.ON_BinaryArchive_SeekFromCurrentPosition2(m_ptr, byteOffset, forward);
+    }
+
+    /// <summary>
+    /// seek from start position ( like fseek( ,SEEK_SET) )
+    /// </summary>
+    /// <param name="byteOffset"></param>
+    /// <returns></returns>
+    [CLSCompliant(false)]
+    public bool SeekFromStart(ulong byteOffset) 
+    {
+      return UnsafeNativeMethods.ON_BinaryArchive_SeekFromStart(m_ptr, byteOffset);
+    }
+
+    /// <summary>
+    /// Begins reading a chunk that must be in the archive at this location.
+    /// </summary>
+    /// <param name="expectedTypeCode"></param>
+    /// <param name="majorVersion"></param>
+    /// <param name="minorVersion"></param>
+    /// <returns>
+    /// True if beginning of the chunk was read.  In this case you must call EndRead3dmChunk(),
+    /// even if something goes wrong while you attempt to read the interior of the chunk.
+    /// False if the chunk did not exist at the current location in the file.
+    /// </returns>
+    [CLSCompliant(false)]
+    public bool BeginRead3dmChunk(uint expectedTypeCode, out int majorVersion, out int minorVersion)
+    {
+      majorVersion = 0;
+      minorVersion = 0;
+      return UnsafeNativeMethods.ON_BinaryArchive_BeginRead3dmChunk(m_ptr, expectedTypeCode, ref majorVersion, ref minorVersion);
+    }
+
+    /// <summary>
+    /// Calling this will skip rest of stuff in chunk if it was only partially read.
+    /// </summary>
+    /// <param name="suppressPartiallyReadChunkWarning">
+    /// Generally, a call to ON_WARNING is made when a chunk is partially read.
+    /// If suppressPartiallyReadChunkWarning is true, then no warning is issued
+    /// for partially read chunks.
+    /// </param>
+    /// <returns></returns>
+    public bool EndRead3dmChunk(bool suppressPartiallyReadChunkWarning)
+    {
+      return UnsafeNativeMethods.ON_BinaryArchive_EndRead3dmChunk(m_ptr, suppressPartiallyReadChunkWarning);
     }
 
     /// <summary>

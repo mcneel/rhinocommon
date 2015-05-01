@@ -73,6 +73,80 @@ RH_C_FUNCTION bool ON_BinaryArchive_Read3dmChunkVersion(ON_BinaryArchive* pArchi
   return rc;
 }
 
+RH_C_FUNCTION bool ON_BinaryArchive_BeginRead3dmChunk(ON_BinaryArchive* pArchive, unsigned int typecode, int* major, int* minor)
+{
+  bool rc = false;
+  if(pArchive)
+  {
+    rc = pArchive->BeginRead3dmChunk(typecode, major, minor);
+  }
+  return rc;
+}
+RH_C_FUNCTION bool ON_BinaryArchive_BeginWrite3dmChunk(ON_BinaryArchive* pArchive, unsigned int typecode, int major, int minor)
+{
+  bool rc = false;
+  if(pArchive)
+  {
+    rc = pArchive->BeginWrite3dmChunk(typecode, major, minor);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_BinaryArchive_EndRead3dmChunk(ON_BinaryArchive* pArchive, bool suppressWarning)
+{
+  bool rc = false;
+  if(pArchive)
+  {
+    rc = pArchive->EndRead3dmChunk(suppressWarning);
+  }
+  return rc;
+}
+RH_C_FUNCTION bool ON_BinaryArchive_EndWrite3dmChunk(ON_BinaryArchive* pArchive)
+{
+  bool rc = false;
+  if(pArchive)
+  {
+    rc = pArchive->EndWrite3dmChunk();
+  }
+  return rc;
+}
+
+RH_C_FUNCTION ON__UINT64 ON_BinaryArchive_CurrentPosition(const ON_BinaryArchive* pConstArchive)
+{
+  if(pConstArchive)
+    return pConstArchive->CurrentPosition();
+  return 0;
+}
+
+RH_C_FUNCTION bool ON_BinaryArchive_SeekFromCurrentPosition(ON_BinaryArchive* pArchive, ON__INT64 offset)
+{
+  bool rc = false;
+  if(pArchive)
+    rc = pArchive->BigSeekFromCurrentPosition(offset);
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_BinaryArchive_SeekFromCurrentPosition2(ON_BinaryArchive* pArchive, ON__UINT64 offset, bool forward)
+{
+  bool rc = false;
+  if(pArchive)
+  {
+    if(forward)
+      rc = pArchive->BigSeekForward(offset);
+    else
+      rc = pArchive->BigSeekBackward(offset);
+  }
+  return rc;
+}
+
+RH_C_FUNCTION bool ON_BinaryArchive_SeekFromStart(ON_BinaryArchive* pArchive, ON__UINT64 offset)
+{
+  if(pArchive)
+    return pArchive->BigSeekFromStart(offset);
+  return false;
+}
+
+
 RH_C_FUNCTION bool ON_BinaryArchive_ReadBool(ON_BinaryArchive* pArchive, bool* readBool)
 {
   bool rc = false;

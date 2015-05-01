@@ -646,6 +646,45 @@ internal partial class UnsafeNativeMethods
   [return: MarshalAs(UnmanagedType.U1)]
   internal static extern bool ON_BinaryArchive_Read3dmChunkVersion(IntPtr pArchive, ref int major, ref int minor);
 
+  //bool ON_BinaryArchive_BeginRead3dmChunk(ON_BinaryArchive* pArchive, unsigned int typecode, int* major, int* minor)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_BeginRead3dmChunk(IntPtr pArchive, uint typecode, ref int major, ref int minor);
+
+  //bool ON_BinaryArchive_BeginWrite3dmChunk(ON_BinaryArchive* pArchive, unsigned int typecode, int major, int minor)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_BeginWrite3dmChunk(IntPtr pArchive, uint typecode, int major, int minor);
+
+  //bool ON_BinaryArchive_EndRead3dmChunk(ON_BinaryArchive* pArchive, bool suppressWarning)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_EndRead3dmChunk(IntPtr pArchive, [MarshalAs(UnmanagedType.U1)]bool suppressWarning);
+
+  //bool ON_BinaryArchive_EndWrite3dmChunk(ON_BinaryArchive* pArchive)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_EndWrite3dmChunk(IntPtr pArchive);
+
+  //ON__UINT64 ON_BinaryArchive_CurrentPosition(const ON_BinaryArchive* pConstArchive)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  internal static extern ulong ON_BinaryArchive_CurrentPosition(IntPtr pConstArchive);
+
+  //bool ON_BinaryArchive_SeekFromCurrentPosition(ON_BinaryArchive* pArchive, ON__INT64 offset)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_SeekFromCurrentPosition(IntPtr pArchive, long offset);
+
+  //bool ON_BinaryArchive_SeekFromCurrentPosition2(ON_BinaryArchive* pArchive, ON__UINT64 offset, bool forward)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_SeekFromCurrentPosition2(IntPtr pArchive, ulong offset, [MarshalAs(UnmanagedType.U1)]bool forward);
+
+  //bool ON_BinaryArchive_SeekFromStart(ON_BinaryArchive* pArchive, ON__UINT64 offset)
+  [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
+  [return: MarshalAs(UnmanagedType.U1)]
+  internal static extern bool ON_BinaryArchive_SeekFromStart(IntPtr pArchive, ulong offset);
+
   //bool ON_BinaryArchive_ReadBool(ON_BinaryArchive* pArchive, bool* readBool)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
@@ -744,12 +783,12 @@ internal partial class UnsafeNativeMethods
   //bool ON_BinaryArchive_ReadInt64(ON_BinaryArchive* pArchive, ON__INT64* readInt)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_BinaryArchive_ReadInt64(IntPtr pArchive, ref Int64 readInt);
+  internal static extern bool ON_BinaryArchive_ReadInt64(IntPtr pArchive, ref long readInt);
 
   //bool ON_BinaryArchive_WriteInt64(ON_BinaryArchive* pArchive, ON__INT64 val)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]
   [return: MarshalAs(UnmanagedType.U1)]
-  internal static extern bool ON_BinaryArchive_WriteInt64(IntPtr pArchive, Int64 val);
+  internal static extern bool ON_BinaryArchive_WriteInt64(IntPtr pArchive, long val);
 
   //bool ON_BinaryArchive_ReadSingle(ON_BinaryArchive* pArchive, float* readFloat)
   [DllImport(Import.lib, CallingConvention=CallingConvention.Cdecl )]

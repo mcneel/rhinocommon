@@ -491,12 +491,26 @@ def build_for_ios():
         sys.stdout.write("...FAILED\n")
         sys.exit()
 
-    sys.stdout.write(" Creating Universal Binary             ")
+    sys.stdout.write(" Compiling arm64 version               ")
     if verbose:
-        subprocess.call(["lipo", "-create", "-output", "build/Release-ios/libopennurbs.a", "build/Release-ios/libopennurbs-i386.a", "build/Release-ios/libopennurbs-armv7.a", "build/Release-ios/libopennurbs-armv7s.a"])
+        subprocess.call(["xcodeBuild", "-project", "rhcommon_opennurbs.xcodeproj", "-target", "rhcommon_opennurbs_ios", "-sdk", "iphoneos", "-arch", "arm64", "-configuration", "Release", "clean", "build"])
     else:
         devnull = open(os.devnull, 'w')
-        subprocess.call(["lipo", "-create", "-output", "build/Release-ios/libopennurbs.a", "build/Release-ios/libopennurbs-i386.a", "build/Release-ios/libopennurbs-armv7.a", "build/Release-ios/libopennurbs-armv7s.a"], stdout=devnull, stderr=devnull)
+        subprocess.call(["xcodeBuild", "-project", "rhcommon_opennurbs.xcodeproj", "-target", "rhcommon_opennurbs_ios", "-sdk", "iphoneos", "-arch", "arm64", "-configuration", "Release", "clean", "build"], stdout=devnull, stderr=devnull)
+
+    if os.path.exists("build/Release-iphoneos/librhcommon_opennurbs_ios.a"):
+        shutil.move("build/Release-iphoneos/librhcommon_opennurbs_ios.a", "build/Release-ios/libopennurbs-arm64.a")
+        sys.stdout.write("...Done\n")
+    else:
+        sys.stdout.write("...FAILED\n")
+        sys.exit()
+
+    sys.stdout.write(" Creating Universal Binary             ")
+    if verbose:
+        subprocess.call(["lipo", "-create", "-output", "build/Release-ios/libopennurbs.a", "build/Release-ios/libopennurbs-i386.a", "build/Release-ios/libopennurbs-armv7.a", "build/Release-ios/libopennurbs-armv7s.a", "build/Release-ios/libopennurbs-arm64.a"])
+    else:
+        devnull = open(os.devnull, 'w')
+        subprocess.call(["lipo", "-create", "-output", "build/Release-ios/libopennurbs.a", "build/Release-ios/libopennurbs-i386.a", "build/Release-ios/libopennurbs-armv7.a", "build/Release-ios/libopennurbs-armv7s.a", "build/Release-ios/libopennurbs-arm64.a"], stdout=devnull, stderr=devnull)
 
     sys.stdout.write("...Done\n")
 

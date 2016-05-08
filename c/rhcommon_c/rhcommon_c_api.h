@@ -23,12 +23,47 @@ const wchar_t* _variablename = _parametername;
 #endif // _WIN32
 
 
+
+// OSX / iOS compiles
+#if defined (__LINUX__)
+#define RH_C_FUNCTION extern "C" 
+#define RH_CPP_FUNCTION
+#define RH_CPP_CLASS
+#define RH_EXPORT
+
+#define RHMONO_STRING ON__UINT16
+// macro used to convert input strings to their appropriate type
+// for a given platform.
+#define INPUTSTRINGCOERCE( _variablename, _parametername)                    \
+const wchar_t* _variablename = NULL;                                         \
+ON_wString _variablename##_;                                                 \
+if(_parametername) {                                                         \
+  unsigned int __error_status = 0;                                           \
+  int _parametername##count = ON_ConvertUTF16ToUTF32( 0, _parametername,     \
+            -1, NULL, 0, &__error_status, 0xFFFFFFFF, 0xFFFD, 0);            \
+  _variablename##_.ReserveArray(_parametername##count);                      \
+  unsigned int* _variablename##_s = (unsigned int*)_variablename##_.Array(); \
+  ON_ConvertUTF16ToUTF32( 0, _parametername, -1, _variablename##_s,          \
+            _parametername##count, &__error_status, 0xFFFFFFFF, 0xFFFD, 0);  \
+  _variablename = _variablename##_.Array();                                  \
+}
+
+typedef signed char     BOOL;
+#define TRUE 1
+#define FALSE 0
+#define CALLBACK
+#endif // __LINUX__
+
+
 // OSX / iOS compiles
 #if defined (__APPLE__)
 #define RH_CPP_FUNCTION __attribute__ ((visibility ("default")))
 #define RH_CPP_CLASS __attribute__ ((visibility ("default")))
 #define RH_C_FUNCTION extern "C" __attribute__ ((visibility ("default")))
 #define RH_EXPORT __attribute__ ((visibility ("default")))
+
+
+
 
 #if defined (OPENNURBS_BUILD)
 #define CALLBACK
@@ -51,6 +86,7 @@ if(_parametername) {                                               \
 _variablename##_ = (UniChar2on(_parametername));                   \
 _variablename = (LPCTSTR) _variablename##_;                        \
 }
+
 #endif // __APPLE__
 
 

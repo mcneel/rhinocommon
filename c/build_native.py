@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ #!/usr/bin/env python
 import subprocess
 import sys
 import getopt
@@ -16,6 +16,7 @@ overwrite = False
 has_built_ios = False
 has_built_android = False
 has_built_osx = False
+has_built_linux = False
 windows = False
 osx = False
 linux = False
@@ -39,6 +40,9 @@ is_ready_for_android_build = False
 android_ndk_path = ''
 did_build_android_successfully = False
 
+#Linux globals
+is_ready_for_android_build = False
+did_build_linux_successfully = False
 #OS X globals
 is_ready_for_osx_build = False
 did_build_for_osx_successfully = False
@@ -85,6 +89,23 @@ def check_android():
             print "  to your shell profile so that ndk-build can be called from anywhere."
     return
 
+def check_linux():
+    print ""
+    print "Linux Pre-build check-----------------------------------------"
+    check_opennurbs()
+
+    global is_ready_for_linux_build
+    is_ready_for_linux_build = has_openNURBS
+
+    if not has_openNURBS:
+        print " ---ERROR: opennurbs is missing or incomplete---------------------------"
+        print "  Building this library requires openNURBS. Please place a complete"
+        print "  copy of openNURBS in the opennurbs folder before continuing."
+        print "  Go to http://www.rhino3d.com/opennurbs and download the C++"
+        print "  openNURBS SDK and place it in the opennurbs folder contained in"
+        print "  rhinocommon/c/ folder."
+
+    return
 
 def check_osx():
     print ""
@@ -333,6 +354,15 @@ def check_has_built_for_android():
         sys.stdout.write("...Not Found\n")
         has_built_android = False
 
+def check_has_built_for_linux():
+    sys.stdout.write(" Checking for existing builds          ")
+    global has_built_android
+    if os.path.exists("build/Release-linux/libs/libopennurbs.so"):
+        sys.stdout.write("...Found\n")
+        has_built_linux = True
+    else:
+        sys.stdout.write("...Not Found\n")
+        has_built_linux = False
 
 def check_has_built_for_ios():
     sys.stdout.write(" Checking for existing builds          ")
@@ -373,6 +403,22 @@ def create_build_folders_for_ios():
         print "ERROR: Unable to create build folders.  Please make sure you have admin privileges and try again."
         sys.exit()
 
+def create_build_folders_for_linux():
+    if not os.path.exists("build"):
+        os.mkdir("build")
+
+    #check to make sure the folder was created successfully
+    if not os.path.exists("build"):
+        print "ERROR: Unable to create build folders.  Please make sure you have admin privileges and try again."
+        sys.exit()
+
+    if not os.path.exists("build/Release-linux"):
+        os.mkdir("build/Release-linux")
+
+    #check to make sure the folder was created successfully
+    if not os.path.exists("build/Release-linux"):
+        print "ERROR: Unable to create build folders.  Please make sure you have admin privileges and try again."
+        sys.exit()
 
 def create_build_folders_for_android():
     if not os.path.exists("build"):
@@ -443,6 +489,27 @@ def build_for_android():
     global did_build_android_successfully
     did_build_android_successfully = True
 
+
+def build_for_linux():
+    print ""
+    print "Linux Build---------------------------------------------------"
+    print "Making libopennurbs.so for linux..."
+
+    #cleanup any old builds...
+    if os.path.exists("build/Release-linux/libopennurbs.so"):
+        print "STATUS: Cleaning old builds"
+        subprocess.call(["make","clean"])
+
+    build_command = ["make", "libopennurbs.so"]
+
+    if verbose:
+        subprocess.call(["make", "libopennurbs.so"])
+    else:
+        devnull = open(os.devnull, 'w')
+        subprocess.call(build_command, stdout=devnull, stderr=devnull)
+
+    global did_build_linux_successfully
+    did_build_linux_successfully = True
 
 def build_for_ios():
     print ""
@@ -539,6 +606,10 @@ def write_ios_finished_message():
 
 def write_osx_finished_message():
     print "STATUS: OS X Build Complete.  Libraries are in build/Release-osx"
+
+def write_linux_finished_message():
+    print "STATUS: Linux Build Complete.  Libraries are in build/Release-linux"
+
 
 
 def which(program):
@@ -657,6 +728,9 @@ def main():
             check_osx()
         else:
             print ("ERROR: Targeting iOS or OS X requires running this script on Mac OSX 10.9.2 +")
+    elif check == "linux":
+        print "checking linux"
+        check_linux()
 
     #platform compiles
     if platform == "all":
@@ -767,6 +841,21 @@ def main():
 
             if did_build_for_osx_successfully:
                 write_osx_finished_message()
+
+    elif platform == "linux":
+        if linux:
+            check_linux()
+        else:
+            print ("ERROR: Targeting requires a linux operating system")
+            sys.exit()
+
+        if (overwrite or not has_built_linux):
+            build_for_linux()
+        else:
+            print ("STATUS: Build found in build/Release-linux")
+            sys.exit()
+        if (did_build_linux_successfully):
+            write_linux_finished_message()
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ namespace Rhino.UI
     {
       InitializeComponent();
       m_checkedListBox.Visible = false;
+      m_list.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended #This would enable multiple selection for the list box, maybe a switch like a boolean input parameter or another Override ?
 
       if (!string.IsNullOrEmpty(title))
         Text = title;

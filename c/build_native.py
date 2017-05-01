@@ -449,7 +449,7 @@ def build_for_ios():
     print "iOS Build-------------------------------------------------------"
     print "Making static libopennurbs.a for iOS..."
 
-    sys.stdout.write(" Compiling i386 version                ")
+    sys.stdout.write(" Compiling i386 & x86_64  (Simulator)  ")
     if verbose:
         subprocess.call(["xcodeBuild", "-project", "rhcommon_opennurbs.xcodeproj", "-target", "rhcommon_opennurbs_ios", "-sdk", "iphonesimulator", "-configuration", "Release", "clean", "build"])
     else:
@@ -458,20 +458,6 @@ def build_for_ios():
 
     if os.path.exists("build/Release-iphonesimulator/librhcommon_opennurbs_ios.a"):
         shutil.move("build/Release-iphonesimulator/librhcommon_opennurbs_ios.a", "build/Release-ios/libopennurbs-i386.a")
-        sys.stdout.write("...Done\n")
-    else:
-        sys.stdout.write("...FAILED\n")
-        sys.exit()
-
-    sys.stdout.write(" Compiling armv7 version               ")
-    if verbose:
-        subprocess.call(["xcodeBuild", "-project", "rhcommon_opennurbs.xcodeproj", "-target", "rhcommon_opennurbs_ios", "-sdk", "iphoneos", "-arch", "armv7", "-configuration", "Release", "clean", "build"])
-    else:
-        devnull = open(os.devnull, 'w')
-        subprocess.call(["xcodeBuild", "-project", "rhcommon_opennurbs.xcodeproj", "-target", "rhcommon_opennurbs_ios", "-sdk", "iphoneos", "-arch", "armv7", "-configuration", "Release", "clean", "build"], stdout=devnull, stderr=devnull)
-
-    if os.path.exists("build/Release-iphoneos/librhcommon_opennurbs_ios.a"):
-        shutil.move("build/Release-iphoneos/librhcommon_opennurbs_ios.a", "build/Release-ios/libopennurbs-armv7.a")
         sys.stdout.write("...Done\n")
     else:
         sys.stdout.write("...FAILED\n")
@@ -493,10 +479,10 @@ def build_for_ios():
 
     sys.stdout.write(" Creating Universal Binary             ")
     if verbose:
-        subprocess.call(["lipo", "-create", "-output", "build/Release-ios/libopennurbs.a", "build/Release-ios/libopennurbs-i386.a", "build/Release-ios/libopennurbs-armv7.a", "build/Release-ios/libopennurbs-arm64.a"])
+        subprocess.call(["lipo", "-create", "-output", "build/Release-ios/libopennurbs.a", "build/Release-ios/libopennurbs-i386.a", "build/Release-ios/libopennurbs-arm64.a"])
     else:
         devnull = open(os.devnull, 'w')
-        subprocess.call(["lipo", "-create", "-output", "build/Release-ios/libopennurbs.a", "build/Release-ios/libopennurbs-i386.a", "build/Release-ios/libopennurbs-armv7.a", "build/Release-ios/libopennurbs-arm64.a"], stdout=devnull, stderr=devnull)
+        subprocess.call(["lipo", "-create", "-output", "build/Release-ios/libopennurbs.a", "build/Release-ios/libopennurbs-i386.a", "build/Release-ios/libopennurbs-arm64.a"], stdout=devnull, stderr=devnull)
 
     sys.stdout.write("...Done\n")
 

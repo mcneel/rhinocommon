@@ -239,3 +239,5 @@ c/rhcommon_opennurbs.xcodeproj/project.xcworkspace/xcuserdata/
 c/rhcommon_opennurbs.xcodeproj/project.xcworkspace/xcuserdata/dan.xcuserdatad/UserInterfaceState.xcuserstate
 
 c/rhcommon_opennurbs.xcodeproj/project.xcworkspace/xcshareddata/rhcommon_opennurbs.xccheckout
+.vs/
+packages/

@@ -81,4 +81,18 @@ const RHMONO_STRING* CRhCmnStringHolder::Array() const
                          &error_status, error_mask, error_code_point, 0);
   return sUTF16;
 #endif
+#if defined (__LINUX__)
+  const ON__UINT32* sUTF32 = (const ON__UINT32*)m_winString.Array();
+  int length = m_winString.Length();
+  CRhCmnStringHolder* pThis = const_cast<CRhCmnStringHolder*>(this);
+  pThis->m_linux.Reserve(length+1);
+  pThis->m_linux.Zero();
+  ON__UINT16* sUTF16 = pThis->m_linux.Array();
+  unsigned int error_status = 0;
+  unsigned int error_mask = 0xFFFFFFFF;
+  ON__UINT32 error_code_point = 0xFFFD;
+  ON_ConvertUTF32ToUTF16( 0, sUTF32, length, sUTF16, length,
+                         &error_status, error_mask, error_code_point, 0);
+  return sUTF16;
+#endif
 }

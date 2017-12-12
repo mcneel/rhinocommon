@@ -212,6 +212,9 @@ private:
 #else
   ON_wString m_winString;
 #endif
+#if defined(__LINUX__)
+  ON_SimpleArray<ON__UINT16> m_linux;
+#endif
 #if defined(ON_COMPILER_ANDROIDNDK)
   ON_SimpleArray<ON__UINT16> m_android;
 #endif

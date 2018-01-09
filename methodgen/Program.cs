@@ -5,8 +5,8 @@ using System.Collections.Generic;
 namespace MethodGen
 {
   /// <summary>
-  /// The primary purpose of this application is to auto-generate the function
-  /// declarations for the UnsafeNativeMethods in RhinoCommon by parsing exported
+  /// Purpose of this application is to auto-generate the function declarations
+  /// for the UnsafeNativeMethods in RhinoCommon by parsing exported
   /// C functions in rhcommon_c
   /// 
   /// This application can also be used for generating UnsafeNatimeMethod C#
@@ -21,16 +21,23 @@ namespace MethodGen
     public static bool m_includeRhinoDeclarations = true;
     public static List<string> m_extra_usings = new List<string>();
 
-    static void Main(string[] args)
+    static int Main(string[] args)
     {
+      bool rhino3dmio_build = false;
       bool rhinocommon_build = false;
-      string dirCPP=null;
-      string dirCS=null;
-      List<string> preprocessor_defines = null;
-      if (args.Length >= 2)
+      string dir_cpp;
+      string dir_cs;
+
+      if (1 == args.Length && string.Equals(args[0], "rhino3dmio", StringComparison.InvariantCultureIgnoreCase))
       {
-        dirCPP = args[0];
-        dirCS = args[1];
+        rhino3dmio_build = true;
+        // find directories for rhcommon_c and RhinoCommon
+        GetProjectDirectories(out dir_cpp, out dir_cs, false);
+      }
+      else if (args.Length >= 2)
+      {
+        dir_cpp = args[0];
+        dir_cs = args[1];
       }
       else
       {
@@ -41,8 +48,8 @@ namespace MethodGen
         if (System.IO.File.Exists(path))
         {
           string[] lines = System.IO.File.ReadAllLines(path);
-          dirCPP = System.IO.Path.GetFullPath(lines[0]);
-          dirCS = System.IO.Path.GetFullPath(lines[1]);
+          dir_cpp = System.IO.Path.GetFullPath(lines[0]);
+          dir_cs = System.IO.Path.GetFullPath(lines[1]);
           for (int i = 2; i < lines.Length; i++)
           {
             if (lines[i].StartsWith("using"))
@@ -50,80 +57,87 @@ namespace MethodGen
               m_includeRhinoDeclarations = false;
               m_extra_usings.Add(lines[i].Trim());
             }
-            if (lines[i].StartsWith("define"))
-            {
-              if (preprocessor_defines == null)
-                preprocessor_defines = new List<string>();
-              string define = lines[i].Substring("define".Length).Trim();
-              preprocessor_defines.Add(define);
-            }
           }
         }
         else
         {
           rhinocommon_build = true;
           // find directories for rhcommon_c and RhinoCommon
-          GetProjectDirectories(out dirCPP, out dirCS, false);
+          GetProjectDirectories(out dir_cpp, out dir_cs, false);
         }
       }
 
-      if (System.IO.Directory.Exists(dirCPP) && !string.IsNullOrWhiteSpace(dirCS))
+      if (System.IO.Directory.Exists(dir_cpp) && !string.IsNullOrWhiteSpace(dir_cs))
       {
-        Console.WriteLine("Parsing C files from {0}", dirCPP);
-        Console.WriteLine("Saving AutoNativeMethods.cs to {0}", dirCS);
+        Console.WriteLine("Parsing C files from {0}", dir_cpp);
+        Console.WriteLine("Saving AutoNativeMethods.cs to {0}", dir_cs);
       }
       else
       {
-        var color = System.Console.ForegroundColor;
-        System.Console.ForegroundColor = ConsoleColor.Red;
-        System.Console.WriteLine("ERROR: Unable to locate project directories");
-        System.Console.ForegroundColor = color;
-        System.Console.WriteLine("Press any key to exit");
-        System.Console.Read();
-        return;
+        var color = Console.ForegroundColor;
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("ERROR: Unable to locate project directories");
+        Console.ForegroundColor = color;
+        Console.WriteLine("Press any key to exit");
+        Console.Read();
+        return 0;
       }
 
-      CommandlineParser cmd = new CommandlineParser(args);
+      var cmd = new CommandlineParser(args);
       m_namespace = cmd["namespace"];
       if (cmd.ContainsKey("IncludeRhinoDeclarations"))
         m_includeRhinoDeclarations = bool.Parse(cmd["IncludeRhinoDeclarations"]);
 
-      NativeMethodDeclares nmd = new NativeMethodDeclares();
+      var nmd = new NativeMethodDeclareFile();
 
       // get all of the .cpp files
-      string[] files = System.IO.Directory.GetFiles(dirCPP, "*.cpp");
+      string[] files = System.IO.Directory.GetFiles(dir_cpp, "*.cpp");
       foreach (var file in files)
-        nmd.BuildDeclarations(file, preprocessor_defines);
-      // get all of the .h files
-      files = System.IO.Directory.GetFiles(dirCPP, "*.h");
-      foreach (var file in files)
-        nmd.BuildDeclarations(file, preprocessor_defines);
-
-      string outputfile = System.IO.Path.Combine(dirCS, "AutoNativeMethods.cs");
-      nmd.Write(outputfile, "lib");
-
-      if(rhinocommon_build)
       {
-        if (!GetProjectDirectories(out dirCPP, out dirCS, true))
+        if (rhino3dmio_build && (System.IO.Path.GetFileName(file).StartsWith("rh_") || System.IO.Path.GetFileName(file).StartsWith("tl_")))
+          continue;
+        nmd.BuildDeclarations(file, rhino3dmio_build);
+      }
+      // get all of the .h files
+      files = System.IO.Directory.GetFiles(dir_cpp, "*.h");
+      foreach (var file in files)
+        nmd.BuildDeclarations(file, rhino3dmio_build);
+
+      string output_file_methods = System.IO.Path.Combine(dir_cs, "AutoNativeMethods.cs");
+      nmd.Write(output_file_methods, "lib");
+
+      string output_file_enums = System.IO.Path.Combine(dir_cs, "AutoNativeEnums.cs");
+
+      nmd.WriteEnums(output_file_enums);
+
+      if (rhinocommon_build)
+      {
+        if (!GetProjectDirectories(out dir_cpp, out dir_cs, true))
         {
           System.Console.WriteLine("Can't locate RDK project directories. This is OK if you are compiling for standalone openNURBS build");
-          return;
+          return 0;
         }
         //write native methods for rdk
-        nmd = new NativeMethodDeclares();
+        nmd = new NativeMethodDeclareFile();
 
         // get all of the .cpp files
-        files = System.IO.Directory.GetFiles(dirCPP, "*.cpp");
+        files = System.IO.Directory.GetFiles(dir_cpp, "*.cpp");
         foreach (var file in files)
-          nmd.BuildDeclarations(file, preprocessor_defines);
+          nmd.BuildDeclarations(file, false);
         // get all of the .h files
-        files = System.IO.Directory.GetFiles(dirCPP, "*.h");
+        files = System.IO.Directory.GetFiles(dir_cpp, "*.h");
         foreach (var file in files)
-          nmd.BuildDeclarations(file, preprocessor_defines);
+          nmd.BuildDeclarations(file, false);
 
-        outputfile = System.IO.Path.Combine(dirCS, "AutoNativeMethodsRdk.cs");
-        nmd.Write(outputfile, "librdk");
+        output_file_methods = System.IO.Path.Combine(dir_cs, "AutoNativeMethodsRdk.cs");
+        nmd.Write(output_file_methods, "librdk");
+
+        output_file_enums = System.IO.Path.Combine(dir_cs, "AutoNativeEnumsRdk.cs");
+
+        nmd.WriteEnums(output_file_enums);
       }
+
+      return 0;
     }
 
     static bool GetProjectDirectories(out string c, out string dotnet, bool rdk)
@@ -135,16 +149,13 @@ namespace MethodGen
       // start with the directory that this executable is located in and work up
       string path = System.Reflection.Assembly.GetExecutingAssembly().Location;
       path = System.IO.Path.GetDirectoryName(path);
-      System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(path);
+      var dir_info = new System.IO.DirectoryInfo(path);
       while(true)
       {
-        if( string.Compare(dirInfo.Name, "RhinoCommon", true)==0 )
+        if( string.Compare(dir_info.Name, "RhinoCommon", true)==0 )
         {
-          if( rdk )
-            c = System.IO.Path.Combine(dirInfo.FullName, "c_rdk");
-          else
-            c = System.IO.Path.Combine( dirInfo.FullName, "c");
-          dotnet = System.IO.Path.Combine( dirInfo.FullName, "dotnet");
+          c = System.IO.Path.Combine(dir_info.FullName, rdk ? "c_rdk" : "c");
+          dotnet = System.IO.Path.Combine( dir_info.FullName, "dotnet");
           if( System.IO.Directory.Exists(c) && System.IO.Directory.Exists(dotnet) )
           {
             rc = true;
@@ -152,8 +163,8 @@ namespace MethodGen
           }
         }
         // get parent directory
-        dirInfo = dirInfo.Parent;
-				if (dirInfo == null)
+        dir_info = dir_info.Parent;
+				if (dir_info == null)
 					break;
       }
 
@@ -163,6 +174,21 @@ namespace MethodGen
         dotnet = null;
       }
       return rc;
+    }
+
+    // [Giulio] Sept 20, 2015: Brian suggested to use this VS-aware format
+    // http://blogs.msdn.com/b/msbuild/archive/2006/11/03/msbuild-visual-studio-aware-error-messages-and-message-formats.aspx
+    public static void VsSendConsoleMessage(bool error, string origin, int line, int errorCode, string message)
+    {
+      string err = error ? "error" : "warning";
+      var result = string.Format("{1}({2}) : {3} {0} {4} : {5}",
+        err, origin, line, "methodgen"/*subc*/, "mg"+errorCode.ToString("x6"), message
+        );
+
+      if (error)
+        Console.Error.WriteLine(result);
+      else
+        Console.WriteLine(result);
     }
   }
 }

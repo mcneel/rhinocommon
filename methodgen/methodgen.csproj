@@ -29,7 +29,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandlineParser.cs" />
+    <Compile Include="CppEnumImports.cs" />
     <Compile Include="NativeMethodDeclares.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -56,17 +57,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <!-- This post-build event is for convenience when using automated build processes that depend on a hard-coded path  -->
-  <!-- Windows version -->
-  <!--
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "..\..\..\$(TargetFileName)"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
-  -->
-  <!-- Mac OS X/bash version -->
-  <!--
-  <PropertyGroup>
-    <PostBuildEvent>cp "$(TargetPath)" "..\..\..\$(TargetFileName)"</PostBuildEvent>
-  </PropertyGroup>
-  -->
 </Project>

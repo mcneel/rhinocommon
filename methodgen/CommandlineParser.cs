@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MethodGen
 {
   public class CommandlineParser
   {
-    private Dictionary<string, string> m_name_value_pairs;
+    private readonly Dictionary<string, string> m_name_value_pairs;
 
     public CommandlineParser(string[] args)
     {
@@ -16,10 +15,9 @@ namespace MethodGen
 
     private void ProcessArguments(string[] args)
     {
-      string current_arg;
       for (int i=0; i<args.Length; i++)
       {
-        current_arg = args[i];
+        string current_arg = args[i];
 
         if (current_arg.Contains("="))
         {
@@ -66,9 +64,8 @@ namespace MethodGen
       {
         if (m_name_value_pairs.ContainsKey(index.ToUpperInvariant()))
           return m_name_value_pairs[index.ToUpperInvariant()];
-        else if (m_name_value_pairs.ContainsKey(index))
+        if (m_name_value_pairs.ContainsKey(index))
           return m_name_value_pairs[index];
-        else
           return null;
       }
       set
@@ -95,7 +92,8 @@ namespace MethodGen
 
   public class CommandlineParserException : Exception
   {
-    public CommandlineParserException() : base() {}
+    public CommandlineParserException()
+    {}
     public CommandlineParserException(string message) : base (message) {}
     public CommandlineParserException(string message, Exception innerException) : base (message, innerException) {}
   }

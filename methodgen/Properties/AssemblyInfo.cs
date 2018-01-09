@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Robert McNeel & Associates")]
 [assembly: AssemblyProduct("preprocess")]
-[assembly: AssemblyCopyright("Copyright © Robert McNeel & Assocaites 2012")]
+[assembly: AssemblyCopyright("Copyright © Robert McNeel & Associates 2012-2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

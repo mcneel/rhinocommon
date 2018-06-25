@@ -26,7 +26,7 @@ namespace Rhino.Geometry
   public enum CurveOffsetCornerStyle : int
   {
     /// <summary>
-    /// The dafault value.
+    /// The default value.
     /// </summary>
     None = 0,
 

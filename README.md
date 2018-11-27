@@ -1,7 +1,16 @@
 RhinoCommon SDK for Rhino
 =========================
-![Rhino](https://lh6.googleusercontent.com/-pQtuyrwmcmg/TYtWECHGYNI/AAAAAAAAA7Y/rphjSmq1cuo/s200/Rhino_logo_wire.jpg)
 
+---
+
+### _A Note for Rhino 6 Developers_ :warning:
+
+_**This repository is out of date.** This is a mirror of the RhinoCommon source from Rhino 5, which is no longer in active development.
+If you're here looking for [Rhino3dmIO](https://developer.rhino3d.com/guides/opennurbs/what-is-rhino3dmio/), please see the new [NuGet packages](https://www.nuget.org/profiles/McNeel) – they're backwards compatible and available for a number of platforms._
+
+---
+
+![Rhino](https://lh6.googleusercontent.com/-pQtuyrwmcmg/TYtWECHGYNI/AAAAAAAAA7Y/rphjSmq1cuo/s200/Rhino_logo_wire.jpg)
 
 Get Involved (contributing)
 ---------------------------

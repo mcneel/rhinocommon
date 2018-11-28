@@ -206,6 +206,7 @@
     <Compile Include="ex_objectname.cs" />
     <Compile Include="ex_offsetcurve.cs" />
     <Compile Include="ex_orientonsrf.cs" />
+    <Compile Include="ex_registerplugins_fromcode.cs" />
     <Compile Include="ex_ortho.cs" />
     <Compile Include="ex_pickobjects.cs" />
     <Compile Include="ex_pickpoint.cs" />
